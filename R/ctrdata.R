@@ -1,0 +1,22 @@
+#' \pkg{ctrdata} makes accessing clinical trials registers easier.
+#'
+#' \code{ctrdata} comprises as main functions:
+#' \code{\link{openCTRWebBrowser}}.
+#'
+#' \pkg{ctrdata} was tested with
+#' - version 2.1 (current on 2015-09-01) and possibly later version of the EU Clinical Trials Register (EUCTR)
+#' - version x.x.x (current on 2015-09-01) and possibly later versions of the ClinicalTrials.gov register (CTGOV)
+#'
+#' \pkg{ctrdata} currently supports
+#' - protocol-related information in the EU Clinical Trials Register (EUCTR)
+#' - protocol-related information in the ClinicalTrials.gov register (CTGOV)
+#'
+#' Please note the copyright of information from the EUCTR, which can be found here: http://www.ema.europa.eu/ema/index.jsp?curl=pages/regulation/general/general_content_000178.jsp&mid=".
+#'
+#' Please note the Terms and Conditions for CTGOV, which can be found here: https://www.clinicaltrials.gov/ct2/about-site/terms-conditions#Use
+#'
+#' For information from both registers, mentioning and attribution of the source is needed as well as explanation of the processing.
+#'
+#' @name ctrdata
+#' @docType package
+NULL
