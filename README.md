@@ -8,6 +8,10 @@ Warnings to manage expectations:
 
 * Does not yet work on MS Windows, see Issues below. 
 
+* So far, no attempts are made to harmonise and map field names between different registers, such as by using standardised identifiers. 
+
+* So far, no efforts were made to type variables; they are all strings (`2L` in mongo). 
+
 Key features:
 
 * Protocol-related information on clinical trials is retrieved from online sources, transformed and stored in a document-centric database (mongo). 
@@ -43,67 +47,67 @@ The executables should be on the path.
 
 ## Example workflow
 
-1. (Optional) Create a local database
-```R
-mongo <- mongo.create(host = "localhost:27017", db = "users")
-```
-
-2. Attach package `ctrdata` 
+1. Attach package `ctrdata` 
 ```R
 library(ctrdata)
-# alternative: require(ctrdata)
 ```
 
-3. Open register's advanced search page, click search parameters and execute search in browser 
+2. Open register's advanced search page, click search parameters and execute search in browser 
 ```R
 openCTRWebBrowser()
 ```
 
-4. Click search parameters and execute search in browser 
+3. Click search parameters and execute search in browser 
 
-5. Copy address from browser address bar to clipboard
+4. Copy address from browser address bar to clipboard
 
-6. Get address from clipboard
+5. Get address from clipboard
 ```R
 q <- getCTRQueryUrl()
 ```
 
-7. Retrieve protocol-related information, transform, save to database
+6. Retrieve protocol-related information, transform, save to database
 ```R
 getCTRdata(q)
 ```
 
-8. Find names of fields of interest in database
+7. Find names of fields of interest in database
 ```R
-findCTRkey("sites")   # first time: will download and install variety.js
+findCTRkey("sites")   # note: when run for first time, will download and install variety.js
 findCTRkey("n_date")
 findCTRkey("f11_number_of_subjects")
 findCTRkey("subjects", allmatches = TRUE)
 ```
 
-9. Histogram of clinical trial starts by time (based on authorisation dates)
+8. Visualise some clinical trial information
 ```R
-# define a convenient wrapper function for data retrieval
-dbGet <- function (f) {
-  result <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns = "ctrdata"), 
-                                     fields = f, data.frame = TRUE)
-}
 # get certain fields for all records
-result <- dbGet(list("_id"=2L, "trial_status"=2L))
+result <- dbCTRGet (c("_id", "trial_status"))
 table (result$trial_status)
-#
-result <- dbGet(list("a1_member_state_concerned"=2L, "f41_in_the_member_state"=2L, "f422_in_the_whole_clinical_trial"=2L
-result <- dbGet(list("a1_member_state_concerned"=2L, "trial_status"=2L))
-str(result)
-hist  (data)
+```
+```R
+# is there a relation between the number of study participants in a country and those in whole trial? 
+result <- dbCTRGet(c("a1_member_state_concerned", "f41_in_the_member_state", "f422_in_the_whole_clinical_trial"))
+plot (f41_in_the_member_state ~ f422_in_the_whole_clinical_trial, result)
+```
+```R
+# how many clinical trials are ongoing or completed, per country? 
+result <- dbCTRGet(c("a1_member_state_concerned", "trial_status"))
+table (result$a1_member_state_concerned, result$trial_status)
+```
+```R
+# how many clinical trials where started in which year? 
+result <- dbCTRGet(c("a1_member_state_concerned", "n_date_of_competent_authority_decision"))
+result$startdate <- strptime(result$n_date_of_competent_authority_decision, "%Y-%m-%d")
+hist (result$startdate, breaks = "years")
 ```
 
-11. Retrieve additional trials from other register, deduplicate and combine for analysis
+9. Retrieve additional trials from other register, deduplicate and combine for analysis
 ```R
 # 
 ```
 
-10. Do more 
+10. Do more - suggestions
 
 * Inspect database contents for example using [Robomongo](http://www.robomongo.org)
 
