@@ -160,17 +160,18 @@ getCTRdata <- function (queryterm = "", register = "EUCTR", updaterecords = FALS
     }
 
     # get first result page
-    h = RCurl::getCurlHandle()
+    h = RCurl::getCurlHandle() # does not work: , httpheader = c(Accept = "Accept-Encoding: gzip,deflate")
     resultsEuPages <- RCurl::getURL(paste0(queryEuRoot, queryEuType1, queryterm), curl = h, ssl.verifypeer = FALSE)
-    resultsEuNumTrials <- as.numeric (sub (".*Trials with a EudraCT protocol \\(([0-9]*)\\).*", "\\1", resultsEuPages))
-    resultsEuNumPages  <- ifelse (!grepl ("page=", resultsEuPages), 1, as.numeric (sub (".*page=([0-9]+)\">\\s*Last.*", "\\1", resultsEuPages)))
+    resultsEuNumTrials <- sub (".*Trials with a EudraCT protocol \\(([0-9,.]*)\\).*", "\\1", resultsEuPages)
+    resultsEuNumTrials <- as.numeric (gsub ("[,.]", "", resultsEuNumTrials))
+    resultsEuNumPages  <- ceiling(resultsEuNumTrials / 20) # this is simpler than parsing "next" or "last" links ...
     if (is.na(resultsEuNumPages) | is.na(resultsEuNumTrials)) stop("first result page empty")
-    cat(paste0("Retrieved overview: ", resultsEuNumTrials, " trials from ", resultsEuNumPages, " pages are to be downloaded.\n"))
+    cat(paste0("Retrieved overview: ", resultsEuNumTrials, " trials from ", resultsEuNumPages, " page(s) are to be downloaded.\n"))
 
     # get data
     resultsNumBatches <- resultsEuNumPages %/% parallelretrievals
     resultsNumModulo  <- resultsEuNumPages %%  parallelretrievals
-    cat(paste0("Downloading trials (from ", parallelretrievals, " pages in parallel):\n"))
+    cat(paste0("Downloading trials (from ", parallelretrievals, " page(s) in parallel):\n"))
     #
     for (i in 1: (resultsNumBatches + 1) ) {
       # parallel requests by using startpage:stoppage

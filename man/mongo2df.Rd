@@ -7,7 +7,7 @@
 mongo2df(x)
 }
 \arguments{
-\item{x}{A result of object of a mongo query TODO create link}
+\item{x}{A result of object of a mongo query}
 }
 \value{
 A data frame with the data that was stored in the input object

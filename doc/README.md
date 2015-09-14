@@ -60,8 +60,6 @@ openCTRWebBrowser(copyright = TRUE)
 5. Get address from clipboard
 ```R
 q <- getCTRQueryUrl()
-# > q
-# [1] "cancer&age=adult&status=completed"
 ```
 
 6. Retrieve protocol-related information, transform, save to database
@@ -100,10 +98,9 @@ result$startdate <- strptime(result$n_date_of_competent_authority_decision, "%Y-
 hist (result$startdate, breaks = "years")
 ```
 
-9. Retrieve additional trials from other register and check for duplicates
+9. Retrieve additional trials from other register, deduplicate and combine for analysis
 ```R
-getCTRdata(queryterm = "cancer&recr=Open&type=Intr&age=0", register = "CTGOV")
-uniquetrialsCTRdata()
+# 
 ```
 
 10. Do more - suggestions

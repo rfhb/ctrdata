@@ -54,19 +54,22 @@ getCTRQueryUrl <- function (content = clipr::read_clip()) {
     return(NULL)
   }
   #
-  # TODO change to use switch in prepration for other registers
-  if(grepl("https://www.clinicaltrialsregister.eu/ctr-search/", content) |
-     grepl("https://clinicaltrials.gov/ct2/results", content) ) {
+  if(grepl("https://www.clinicaltrialsregister.eu/ctr-search/", content)) {
     #
     queryterm <- sub ("https://www.clinicaltrialsregister.eu/ctr-search/search[?]query=(.*)", "\\1", content)
-    queryterm <- sub ("https://clinicaltrials.gov/ct2/results[?]term=(.*)", "\\1", content)
-    #
+    cat("Found search query from EUCTR.\n")
     return(queryterm)
   }
-  else {
-    warning(paste ("System clipboard content is not a clinical trial register search URL. Returning NULL. Clipboard content: ", content, "\n"))
-    return(NULL)
+  #
+  if(grepl("https://clinicaltrials.gov/ct2/results", content)) {
+    #
+    queryterm <- sub ("https://clinicaltrials.gov/ct2/results[?]term=(.*)", "\\1", content)
+    cat("Found search query from CTGOV.\n")
+    return(queryterm)
   }
+  #
+  warning(paste ("System clipboard content is not a clinical trial register search URL. Returning NULL. Clipboard content: ", content, "\n"))
+  return(NULL)
 }
 
 
@@ -98,11 +101,12 @@ findCTRkey <- function (namepart = "id",
     # check if extension is available, if not load it
     varietylocalurl <- system.file("exec/variety.js", package = "ctrdata")
     if (varietylocalurl == "") {
-      cat("Downloading variety.js and adding keys to data base ...\n")
+      cat("Downloading variety.js and installing into package exec folder ...\n")
       varietysourceurl <- "https://raw.githubusercontent.com/variety/variety/master/variety.js"
       curl::curl_download(varietysourceurl, paste0(system.file("", package = "ctrdata"), "exec/variety.js"))
     }
     #
+    cat("Calling variety.js and adding keys to data base ...\n")
     varietymongo <- paste0("mongo ", attr(mongo, "db"),
                            ifelse (attr(mongo, "username") != "", paste0(" --username ", attr(mongo, "username")), ""),
                            ifelse (attr(mongo, "password") != "", paste0(" --password ", attr(mongo, "password")), ""),
@@ -127,7 +131,7 @@ findCTRkey <- function (namepart = "id",
 
 #' Convert a mongo query result object into a data frame
 #'
-#' @param x A result of object of a mongo query TODO create link
+#' @param x A result of object of a mongo query
 #' @return A data frame with the data that was stored in the input object
 #' @import rmongodb
 #' @export mongo2df
@@ -169,14 +173,10 @@ mongo2df <- function (x) {
 #'
 uniquetrialsCTRdata <- function (mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata") {
   #
-  stop("uniquetrialsCTRdata: function is not yet completely implemented.\n")
-  #
   # CTGOV: "Other IDs" has been split into the indexed array "otherids"
   listofCTGOVids <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns),
-                                             query  = list('otherids' = list('$regex' = 'EUDRACT-.*')),
+                                             query  = list('_id' = list('$regex' = 'NCT.*')),
                                              fields = list("otherids"=1L))
-  # extract _ids of records that have a EUCTR / EudraCT number
-  listofCTGOVids <- sapply(listofCTGOVids, "[[", "_id")
   #
   # EUCTR / EudraCT number is "_id" for EUCTR records
   listofEUCTRids <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns = "ctrdata"),
@@ -184,13 +184,27 @@ uniquetrialsCTRdata <- function (mongo = rmongodb::mongo.create(host = "localhos
                                              fields = list("_id"=1L))
   listofEUCTRids <- sapply(listofEUCTRids, "[[", "_id")
   #
-  dupes   <- listofEUCTRids %in% listofCTGOVids
-  uniques <- listofEUCTRids[!dupes]
-  numres  <- as.data.frame(table(dupes))
+  # search for eudract numbers among otherids, by euctr _ids
+  #  for this search write eudract numbers as stored in ctgov
+  #  for this search make all otherids into atomic vector of strings
+  #dupes <- paste0("EUDRACT-", substr(listofEUCTRids, 1, 14)) %in% unlist(sapply(listofCTGOVids, "[[", "otherids"))
+  #uniques <- c(listofEUCTRids[!dupes], unlist(sapply(listofCTGOVids, "[[", "_id")))
   #
-  cat(paste0("Total ", numres$Freq[2], " duplicates found, returning keys (_id) of ", numres$Freq[1], " records.\n"))
+  # search for eudract numbers among otherids, by ctgov _ids
+  #  for this search write eudract numbers as stored in ctgov =
+  #  sometimes with prefix EUDRACT- sometimes without such prefix
+  listofEUCTRidsForSearch <- c(substr(listofEUCTRids, 1, 14), paste0("EUDRACT-", substr(listofEUCTRids, 1, 14)))
+  #test
+  #listofEUCTRidsForSearch <- c("2014-004697-41","2015-002154-12", "EUDRACT-2006-000205-34")
+  uniques <- sapply(listofCTGOVids, "[[", "_id")[!sapply(sapply(listofCTGOVids, "[[", "otherids"),
+                                                         function(x) sum(listofEUCTRidsForSearch %in% unlist(x)))]
+  uniques <- c(listofEUCTRids, uniques)
   #
-  return(res)
+  countall <- length(listofCTGOVids) + length(listofEUCTRids)
+  #
+  cat(paste0("Total ", countall - length(uniques), " duplicate(s) found, returning keys (_id) of ", countall, " records.\n"))
+  #
+  return(uniques)
   #
 }
 
