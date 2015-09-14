@@ -50,7 +50,7 @@ openCTRWebBrowser <- function (register = c("EUCTR"), copyright = FALSE, ...) {
 getCTRQueryUrl <- function (content = clipr::read_clip()) {
   #
   if(length(content) == 0) {
-    warning("System clipboard contained no readable text. Returning NULL.")
+    warning("System clipboard contained no readable text. Returning NULL.\n")
     return(NULL)
   }
   #
@@ -64,7 +64,7 @@ getCTRQueryUrl <- function (content = clipr::read_clip()) {
     return(queryterm)
   }
   else {
-    warning(paste ("System clipboard content is not a clinical trial register search URL. Returning NULL. Clipboard content: ", content))
+    warning(paste ("System clipboard content is not a clinical trial register search URL. Returning NULL. Clipboard content: ", content, "\n"))
     return(NULL)
   }
 }
@@ -88,9 +88,9 @@ findCTRkey <- function (namepart = "id",
                         mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata",
                         allmatches = TRUE) {
   #
-  if (!is.atomic(namepart)) stop("Name part should be atomic.")
-  if (length(namepart) > 1) stop("Name part should only have one element.")
-  if (namepart == "")       stop("Empty name part string.")
+  if (!is.atomic(namepart)) stop("Name part should be atomic.\n")
+  if (length(namepart) > 1) stop("Name part should only have one element.\n")
+  if (namepart == "")       stop("Empty name part string.\n")
   #
   # check if database with variety results exists
   if (!(paste0(ns, "Keys") %in% mongo.get.database.collections(mongo, db = attr(mongo, "db")))) {
@@ -146,7 +146,7 @@ mongo2df <- function (x) {
     return(df)
   }
   # other type of object
-  warning("Could not use input, not a bson or mongo cursor.")
+  warning("Could not use input, not a bson or mongo cursor.\n")
   return(NULL)
 }
 
@@ -169,7 +169,7 @@ mongo2df <- function (x) {
 #'
 uniquetrialsCTRdata <- function (mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata") {
   #
-  stop("uniquetrialsCTRdata: function is not yet completely implemented.")
+  stop("uniquetrialsCTRdata: function is not yet completely implemented.\n")
   #
   # CTGOV: "Other IDs" has been split into the indexed array "otherids"
   listofCTGOVids <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns),
@@ -179,17 +179,10 @@ uniquetrialsCTRdata <- function (mongo = rmongodb::mongo.create(host = "localhos
   listofCTGOVids <- sapply(listofCTGOVids, "[[", "_id")
   #
   # EUCTR / EudraCT number is "_id" for EUCTR records
-  #listofEUCTRids <- rmongodb::mongo.distinct(mongo, paste0(attr(mongo, "db"), ".", ns), key = "_id")
-  #listofEUCTRids <- listofEUCTRids[ grepl("[0-9]{4}-[0-9]{6}-[0-9]{2}-[A-Z]{2}", listofEUCTRids)]
-  # TODO - a faster implementation?
   listofEUCTRids <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns = "ctrdata"),
                                              query  = list('_id' = list('$regex' = '[0-9]{4}-[0-9]{6}-[0-9]{2}-[A-Z]{2}')),
                                              fields = list("_id"=1L))
   listofEUCTRids <- sapply(listofEUCTRids, "[[", "_id")
-  # for testing : NCT01914107
-  #listofEUCTRids <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns),
-  #                                           query = list('_id' = list('$regex' = 'NCT[0-9]{8}')),
-  #                                           fields = list("_id"=1L))
   #
   dupes   <- listofEUCTRids %in% listofCTGOVids
   uniques <- listofEUCTRids[!dupes]
@@ -202,29 +195,42 @@ uniquetrialsCTRdata <- function (mongo = rmongodb::mongo.create(host = "localhos
 }
 
 
-
-#' Create a data frame from fields in the data base
+#' Create a data frame from records that have specified fields in the data base
 #'
 #' @param fields Vector of strings, with names of the sought fields. (Do not use a list)
 #' @return A data frame with columns corresponding to the sought fields.
+#' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on localhost port 27017.
+#' @param ns Name of the collection in mongo database ("namespace"), defaults to "ctrdata"
 #' @export dbCTRGet
 #'
-dbCTRGet <- function (fields = "") {
-  if (!is.vector(fields) | class(fields)!="character"  | fields == "") stop("Input should just be a vector of strings of field names.")
+dbCTRGet <- function (fields = "", mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata") {
+  if (!is.vector(fields) | class(fields)!="character") stop("Input should just be a vector of strings of field names.\n")
   #
   countall <- rmongodb::mongo.count(mongo, paste0(attr(mongo, "db"), ".", ns = "ctrdata"))
   #
-  q <- ""
-  f <- ""
+  q <- sapply(fields, function (x) list (list ('$gt' = '')))
+  f <- sapply(fields, function (x) list (2L))
   #
   result <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns = "ctrdata"),
                                      query = q, fields = f, data.frame = TRUE)
   #
-  if (countall > nrow(result)) warning("Some of the specified fields were not found in all records, therefore some records were dropped.")
+  if (countall > nrow(result)) warning(paste0(countall - nrow(result), " of ", countall,
+                                              " records dropped as one or more of the specified fields were not found.\n"))
   #
   return(result)
 }
 
-
-
+#' Create a data frame from all records in the data base
+#'
+#' @return A data frame with columns corresponding to the sought fields.
+#' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on localhost port 27017.
+#' @param ns Name of the collection in mongo database ("namespace"), defaults to "ctrdata"
+#' @export dbCTRGetAll
+#'
+dbCTRGetAll <- function (mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata") {
+  #
+  result <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns = "ctrdata"), data.frame = TRUE)
+  #
+  return(result)
+}
 
