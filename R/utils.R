@@ -49,7 +49,7 @@ openCTRWebBrowser <- function (register = c("EUCTR"), copyright = FALSE, ...) {
 #'
 getCTRQueryUrl <- function (content = clipr::read_clip()) {
   #
-  if(length(content) == 0) {
+  if(length(content) == 0L) {
     warning("System clipboard contained no readable text. Returning NULL.\n")
     return(NULL)
   }
@@ -87,7 +87,7 @@ getCTRQueryUrl <- function (content = clipr::read_clip()) {
 #'  findCTRkey ("other")
 #' }
 #'
-findCTRkey <- function (namepart = "id",
+findCTRkey <- function(namepart = "id",
                         mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata",
                         allmatches = FALSE) {
   #
@@ -96,7 +96,8 @@ findCTRkey <- function (namepart = "id",
   if (namepart == "")       stop("Empty name part string.\n")
   #
   # check if database with variety results exists
-  if (!grepl(paste0(ns, "Keys"), mongo.get.database.collections(mongo, db = "varietyResults"))) {
+  if (length(mongo.get.database.collections(mongo, db = "varietyResults")) == 0L ||
+      !grepl(paste0(ns, "Keys"), mongo.get.database.collections(mongo, db = "varietyResults"))) {
     #
     # check if extension is available, if not load it
     varietylocalurl <- system.file("exec/variety.js", package = "ctrdata")
@@ -108,8 +109,8 @@ findCTRkey <- function (namepart = "id",
     #
     cat("Calling variety.js and adding keys to data base ...\n")
     varietymongo <- paste0("mongo ", attr(mongo, "db"),
-                           ifelse (attr(mongo, "username") != "", paste0(" --username ", attr(mongo, "username")), ""),
-                           ifelse (attr(mongo, "password") != "", paste0(" --password ", attr(mongo, "password")), ""),
+                           ifelse(attr(mongo, "username") != "", paste0(" --username ", attr(mongo, "username")), ""),
+                           ifelse(attr(mongo, "password") != "", paste0(" --password ", attr(mongo, "password")), ""),
                            " --eval \"var collection = '", ns, "', persistResults=true\" ", varietylocalurl)
     tmp <- system(paste0(varietymongo), intern = TRUE)
     #
@@ -117,13 +118,13 @@ findCTRkey <- function (namepart = "id",
   #
   # mongo get fieldnames
   # TODO avoid data.frame = TRUE
-  tmp <- rmongodb::mongo.find.all(mongo, paste0("varietyResults", ".", ns, "Keys"), fields = list("key"=1L), data.frame = TRUE)
+  tmp <- rmongodb::mongo.find.all(mongo, paste0("varietyResults", ".", ns, "Keys"), fields = list("key" = 1L), data.frame = TRUE)
   fieldnames <- tmp[,1]
   #
   # actually now find fieldnames
   fieldname <- fieldnames[grepl(tolower(namepart), tolower(fieldnames))]
   if (!allmatches) {
-    if ((tmp <- length(fieldname))>1) cat(paste0("Returning first of ", tmp, " keys found.\n"))
+    if ((tmp <- length(fieldname)) > 1) cat(paste0("Returning first of ", tmp, " keys found.\n"))
     fieldname <- fieldname[1]
   }
   # return the first match / all matches
@@ -139,16 +140,16 @@ findCTRkey <- function (namepart = "id",
 #' @import rmongodb
 #' @export mongo2df
 #'
-mongo2df <- function (x) {
-  xclass <- class (x)
+mongo2df <- function(x) {
+  xclass <- class(x)
   #
-  if(xclass == "mongo.bson") {
+  if (xclass == "mongo.bson") {
     tmp <- rmongodb::mongo.bson.to.list(x)
     df <- data.frame(do.call(rbind, tmp))
-    df <- df [2 : nrow(df), ]
+    df <- df [2:nrow(df), ]
     return(df)
   }
-  if(xclass == "mongo.cursor") {
+  if (xclass == "mongo.cursor") {
     df <- rmongodb::mongo.cursor.to.data.frame(x)
     return(df)
   }
@@ -174,17 +175,17 @@ mongo2df <- function (x) {
 #' uniqueCTRdata (mongo, "ctrdata")
 #' }
 #'
-uniquetrialsCTRdata <- function (mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata") {
+uniquetrialsCTRdata <- function(mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata") {
   #
   # CTGOV: "Other IDs" has been split into the indexed array "otherids"
   listofCTGOVids <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns),
                                              query  = list('_id' = list('$regex' = 'NCT.*')),
-                                             fields = list("otherids"=1L))
+                                             fields = list("otherids" = 1L))
   #
   # EUCTR / EudraCT number is "_id" for EUCTR records
   listofEUCTRids <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns = "ctrdata"),
                                              query  = list('_id' = list('$regex' = '[0-9]{4}-[0-9]{6}-[0-9]{2}-[A-Z]{2}')),
-                                             fields = list("_id"=1L))
+                                             fields = list("_id" = 1L))
   listofEUCTRids <- sapply(listofEUCTRids, "[[", "_id")
   #
   # search for eudract numbers among otherids, by euctr _ids
@@ -220,8 +221,8 @@ uniquetrialsCTRdata <- function (mongo = rmongodb::mongo.create(host = "localhos
 #' @param ns Name of the collection in mongo database ("namespace"), defaults to "ctrdata"
 #' @export dbCTRGet
 #'
-dbCTRGet <- function (fields = "", mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata") {
-  if (!is.vector(fields) | class(fields)!="character") stop("Input should just be a vector of strings of field names.\n")
+dbCTRGet <- function(fields = "", mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata") {
+  if (!is.vector(fields) | class(fields) != "character") stop("Input should just be a vector of strings of field names.\n")
   #
   countall <- rmongodb::mongo.count(mongo, paste0(attr(mongo, "db"), ".", ns = "ctrdata"))
   #
