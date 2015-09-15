@@ -1,15 +1,12 @@
 #!/bin/sh
 
-## ralf.herold@gmx.net - 2015-08-15 last edited: 2015-08-21
-# for 49 documents: ~ 11 ms per trial (time euctr2json.sh)
+## ralf.herold@gmx.net - 2015-08-15 last edited: 2015-09-15
+# 2.4 s for 221 documents: ~ 11 ms per trial (time euctr2json.sh)
 
 # TODO: adapt for MS Windows
 # copy /b *.txt combined.txt
 
-#DEBUG:
-rm "$1/allfiles.json"
-
-ME="$PWD/$0"
+#ME="$PWD/$0"
 
 cat "$1/euctr-trials-page_"* > "$1/allfiles.txt"
 
@@ -18,10 +15,10 @@ cat "$1/euctr-trials-page_"* > "$1/allfiles.txt"
 # perl: The -p argument makes sure the code gets executed on
 # every line, and that the line gets printed out after that.
 
-# transform to json for import in mongodb
+# transform to json for import in mongodb, reference:
 # http://docs.mongodb.org/manual/reference/bios-example-collection/
 
-< "$1/allfiles.txt" perl -pe '
+LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   # this section is faster with perl compared to sed
 
   # delete non-informative lines
@@ -37,8 +34,13 @@ cat "$1/euctr-trials-page_"* > "$1/allfiles.txt"
   next if /Information not present in EudraCT/;
 
   # add identifiers for special cases
-  #s/^(EudraCT Number .*)$/X.1 $1/g;
-  #,Sponsor,National Competent,Clinical Trial Type,Trial Status,Date on,Link
+  s/^(EudraCT Number.*)$/X.1 $1/g;
+  s/^(Sponsor.*)$/X.2 $1/g;
+  s/^(National Competent.*)$/X.3 $1/g;
+  s/^(Clinical Trial.*)$/X.4 $1/g;
+  s/^(Trial Status.*)$/X.5 $1/g;
+  s/^(Date on.*)$/X.6 $1/g;
+  s/^(Link.*)$/X.7 $1/g;
 
   # sanitise file
   s/\t/ /g;
@@ -46,31 +48,19 @@ cat "$1/euctr-trials-page_"* > "$1/allfiles.txt"
   s/\n+/\n/g;
   s/\"|\{|\}//g;
 
-  # create id per record from eudract number + country 2 character id
-  s/^Link.*search\/trial\/([0-9-]*)\/([A-Z][A-Z])\/$/"_id": "$1-$2"/g;
-
   # handle single case where colon is in key
   s/^(.+)Opinion: Reason(.+)$/\1Opinion Reason\2/g;
-  ' | \
-perl -pe '
-  # special handling by concatenating multi-line values in D.3.7.
-  BEGIN{undef $/;}
-  s/(D\.3\.7.+?)\nD\./ ( my $tmp = $1 ) =~ s! \n ! !xg; $tmp."\nD" /exgs;
-  #
-  #s/\n+([^ABCDEFGNPX][^.][^I 1-9])/$1 /gs;
-  #
-  s/\n([^ABCDEF])/$1 /gs;
-  #
-  #s/\n+([^A,B,C,D,E,F,G,N,P,EudraCT Number,Sponsor,National Competent,Clinical Trial Type,Trial Status,Date on,Link]\. )/$1 /gs;
-  #s/\n+([^ABCDEFGNP]\. )/$1 /gs;
-  # EudraCT Number,Sponsor,National Competent,Clinical Trial Type,Trial Status,Date on,Link]\. )/$1 /gs;
-  #
-  #s/\n/\r/gs;
-  #s/\r+(A|B|C|D|E|F|G|N|P|EudraCT Number|Sponsor|National Competent|Clinical Trial Type|Trial Status|Date on|Link)\. /\n$1. /gs;
-  #s/\r/ /gs;
-  #
-  #s/\n+(?<!=A|B|C|D|E|F|G|N|P|EudraCT Number|Sponsor|National Competent|Clinical Trial Type|Trial Status|Date on|Link)\. /\n$1. /xgs;
-  #
+
+  # create id per record from eudract number + country 2 character id
+  s/^X.7 Link.*search\/trial\/([0-9-]*)\/([A-Z][A-Z])\/$/"xxxxxxxxxx_id": "$1-$2"/g;
+
+  # crude attack on newlines within variable fields
+  s/^([ABCDEFGNPX][.][1-9 I].+)$/\nxxxxxxxxxx$1/g;
+  s/\n/ /g;
+  s/xxxxxxxxxx/\n/g;
+
+  print $_;
+
   ' | \
 perl -pe '
    # split key and value, delete special characters, transform, trim, construct quuoted key value pair
@@ -82,7 +72,7 @@ perl -pe '
    "\"".$tmp1."\": \"".$tmp2."\",\n" /exgs;
    ' | \
 sed \
-  -e 's/\("eudract_number.*$\)/}{\1/g' \
+  -e 's/\("x1_eudract_number.*$\)/}{\1/g' \
   -e 's/^"dimp": "1",$/"dimp": [ { "_dimp": "1",/g' \
   -e '/^["{}]/!d' \
   -e '/""/d' \
@@ -102,16 +92,18 @@ perl -pe 'BEGIN{undef $/;}
   ' \
 > "$1/allfiles.json"
 
-# to change:
-# lines start with [A,B,C,D,E,F,GN,P,][.] plus
-# [Summary,EudraCT Number,Sponsor's Protocol Code Number,National Competent Authority,Clinical Trial Type,Trial Status,Date on which,Link]
-# within these blocks remove all punctuation
-
-
 # to the above the following could be added:
 #      $tmp1 =~ s!([a-z0-9]+?_){3}.*!$1!g ;
 #   $F[0] =  substr $F[0], 0, 25;
 # in order to limit the field width
+
+# no more needed - could be adapted to create an array:
+# perl -pe '
+#   # special handling by concatenating multi-line values in D.3.7.
+#   #BEGIN{undef $/;}
+#   #s/(D\.3\.7.+?)\nD\./ ( my $tmp = $1 ) =~ s! \n ! !xg; $tmp."\nD" /exgs;
+#   #
+#   ' | \
 
 # adapt delimiters for last entry in document, see
 # http://stackoverflow.com/questions/1030787/multiline-search-replace-with-perl
@@ -120,4 +112,8 @@ perl -pe 'BEGIN{undef $/;}
 #mongo users --eval "db.dropDatabase()"
 #importdate=`date +%Y%m%d%H%M%S`
 # mongoimport does not return upon exit any useful value, hence redirect stderr to stdout
-#mongoimport --db="$2" --collection="$3" --upsert --type=json --file "$1/allfiles.json" 2>&1
+mongoimport --db="$2" --collection="$3" --upsert --type=json --file "$1/allfiles.json" 2>&1
+
+# clean up
+rm "$1/allfiles.json"
+rm "$1/allfiles.txt"
