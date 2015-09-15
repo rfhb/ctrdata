@@ -5,11 +5,11 @@
 ## global variable definitions
 #
 # EUCTR definitions
-agegroupsEUCTR <- c ("Preterm newborn infants", "Newborns", "Infants and toddlers", "Children", "Adolescents",
+agegroupsEUCTR <- c("Preterm newborn infants", "Newborns", "Infants and toddlers", "Children", "Adolescents",
                      "Under 18", "Adults", "Elderly")
-variablesEUCTR <- c ("EudraCT Number", "Sponsor Protocol Number", "Sponsor Name", "Full Title", "Start Date",
+variablesEUCTR <- c("EudraCT Number", "Sponsor Protocol Number", "Sponsor Name", "Full Title", "Start Date",
                      "Medical condition", "Disease", "Population Age", "Gender", "Trial protocol", "Link")
-countriesEUCTR <- c ("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IS", "IE", "IT",
+countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IS", "IE", "IT",
                      "LV", "LI", "LT", "LU", "MT", "NL", "NO", "PL", "PT", "RO", "SK", "SE", "SI", "ES", "GB")
 
 
@@ -21,7 +21,7 @@ countriesEUCTR <- c ("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR",
 #' @export openCTRWebBrowser
 #' @return Is always true, invisibly.
 #'
-openCTRWebBrowser <- function (register = c("EUCTR"), copyright = FALSE, ...) {
+openCTRWebBrowser <- function(register = c("EUCTR"), copyright = FALSE, ...) {
   #
   if (copyright == TRUE) {
     if ("CTGOV" %in% register) browseURL("https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use", ...)
@@ -47,28 +47,28 @@ openCTRWebBrowser <- function (register = c("EUCTR"), copyright = FALSE, ...) {
 #' getCTRdata (getCTRQueryUrl, register = "CTGOV")
 #' }
 #'
-getCTRQueryUrl <- function (content = clipr::read_clip()) {
+getCTRQueryUrl <- function(content = clipr::read_clip()) {
   #
-  if(length(content) == 0L) {
+  if (length(content) == 0L) {
     warning("System clipboard contained no readable text. Returning NULL.\n")
     return(NULL)
   }
   #
-  if(grepl("https://www.clinicaltrialsregister.eu/ctr-search/", content)) {
+  if (grepl("https://www.clinicaltrialsregister.eu/ctr-search/", content)) {
     #
-    queryterm <- sub ("https://www.clinicaltrialsregister.eu/ctr-search/search[?]query=(.*)", "\\1", content)
+    queryterm <- sub("https://www.clinicaltrialsregister.eu/ctr-search/search[?]query=(.*)", "\\1", content)
     cat("Found search query from EUCTR.\n")
     return(queryterm)
   }
   #
-  if(grepl("https://clinicaltrials.gov/ct2/results", content)) {
+  if (grepl("https://clinicaltrials.gov/ct2/results", content)) {
     #
-    queryterm <- sub ("https://clinicaltrials.gov/ct2/results[?]term=(.*)", "\\1", content)
+    queryterm <- sub("https://clinicaltrials.gov/ct2/results[?]term=(.*)", "\\1", content)
     cat("Found search query from CTGOV.\n")
     return(queryterm)
   }
   #
-  warning(paste ("System clipboard content is not a clinical trial register search URL. Returning NULL. Clipboard content: ", content, "\n"))
+  warning(paste("System clipboard content is not a clinical trial register search URL. Returning NULL. Clipboard content: ", content, "\n"))
   return(NULL)
 }
 
@@ -146,7 +146,7 @@ mongo2df <- function(x) {
   if (xclass == "mongo.bson") {
     tmp <- rmongodb::mongo.bson.to.list(x)
     df <- data.frame(do.call(rbind, tmp))
-    df <- df [2:nrow(df), ]
+    df <- df[2:nrow(df), ]
     return(df)
   }
   if (xclass == "mongo.cursor") {
@@ -226,8 +226,8 @@ dbCTRGet <- function(fields = "", mongo = rmongodb::mongo.create(host = "localho
   #
   countall <- rmongodb::mongo.count(mongo, paste0(attr(mongo, "db"), ".", ns = "ctrdata"))
   #
-  q <- sapply(fields, function (x) list (list ('$gt' = '')))
-  f <- sapply(fields, function (x) list (2L))
+  q <- sapply(fields, function(x) list(list('$gt' = '')))
+  f <- sapply(fields, function(x) list(2L))
   #
   result <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns = "ctrdata"),
                                      query = q, fields = f, data.frame = TRUE)
@@ -245,7 +245,7 @@ dbCTRGet <- function(fields = "", mongo = rmongodb::mongo.create(host = "localho
 #' @param ns Name of the collection in mongo database ("namespace"), defaults to "ctrdata"
 #' @export dbCTRGetAll
 #'
-dbCTRGetAll <- function (mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata") {
+dbCTRGetAll <- function(mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata") {
   #
   result <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns = "ctrdata"), data.frame = TRUE)
   #
