@@ -6,6 +6,9 @@
 # TODO: adapt for MS Windows
 # copy /b *.txt combined.txt
 
+#DEBUG:
+rm "$1/allfiles.json"
+
 ME="$PWD/$0"
 
 cat "$1/euctr-trials-page_"* > "$1/allfiles.txt"
@@ -24,7 +27,7 @@ cat "$1/euctr-trials-page_"* > "$1/allfiles.txt"
   # delete non-informative lines
   next if /^$/;
   next if /^Summary$/;
-  next if /^This file contains.*$/;
+  next if /^This file contains .*$/;
 
   # remove explanatory information from key F.3.3.1
   next if /^\(For clinical trials recorded/;
@@ -33,9 +36,14 @@ cat "$1/euctr-trials-page_"* > "$1/allfiles.txt"
   next if /^database on [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]/;
   next if /Information not present in EudraCT/;
 
+  # add identifiers for special cases
+  #s/^(EudraCT Number .*)$/X.1 $1/g;
+  #,Sponsor,National Competent,Clinical Trial Type,Trial Status,Date on,Link
+
   # sanitise file
   s/\t/ /g;
-  s/\r\n|\r/\n/g;
+  s/\r/\n/g;
+  s/\n+/\n/g;
   s/\"|\{|\}//g;
 
   # create id per record from eudract number + country 2 character id
@@ -46,7 +54,23 @@ cat "$1/euctr-trials-page_"* > "$1/allfiles.txt"
   ' | \
 perl -pe '
   # special handling by concatenating multi-line values in D.3.7.
-  BEGIN{undef $/;} s/(D\.3\.7.+?)\nD\./ ( my $tmp = $1 ) =~ s! \n ! !xg; $tmp."\nD" /exgs;
+  BEGIN{undef $/;}
+  s/(D\.3\.7.+?)\nD\./ ( my $tmp = $1 ) =~ s! \n ! !xg; $tmp."\nD" /exgs;
+  #
+  #s/\n+([^ABCDEFGNPX][^.][^I 1-9])/$1 /gs;
+  #
+  s/\n([^ABCDEF])/$1 /gs;
+  #
+  #s/\n+([^A,B,C,D,E,F,G,N,P,EudraCT Number,Sponsor,National Competent,Clinical Trial Type,Trial Status,Date on,Link]\. )/$1 /gs;
+  #s/\n+([^ABCDEFGNP]\. )/$1 /gs;
+  # EudraCT Number,Sponsor,National Competent,Clinical Trial Type,Trial Status,Date on,Link]\. )/$1 /gs;
+  #
+  #s/\n/\r/gs;
+  #s/\r+(A|B|C|D|E|F|G|N|P|EudraCT Number|Sponsor|National Competent|Clinical Trial Type|Trial Status|Date on|Link)\. /\n$1. /gs;
+  #s/\r/ /gs;
+  #
+  #s/\n+(?<!=A|B|C|D|E|F|G|N|P|EudraCT Number|Sponsor|National Competent|Clinical Trial Type|Trial Status|Date on|Link)\. /\n$1. /xgs;
+  #
   ' | \
 perl -pe '
    # split key and value, delete special characters, transform, trim, construct quuoted key value pair
@@ -78,6 +102,12 @@ perl -pe 'BEGIN{undef $/;}
   ' \
 > "$1/allfiles.json"
 
+# to change:
+# lines start with [A,B,C,D,E,F,GN,P,][.] plus
+# [Summary,EudraCT Number,Sponsor's Protocol Code Number,National Competent Authority,Clinical Trial Type,Trial Status,Date on which,Link]
+# within these blocks remove all punctuation
+
+
 # to the above the following could be added:
 #      $tmp1 =~ s!([a-z0-9]+?_){3}.*!$1!g ;
 #   $F[0] =  substr $F[0], 0, 25;
@@ -90,4 +120,4 @@ perl -pe 'BEGIN{undef $/;}
 #mongo users --eval "db.dropDatabase()"
 #importdate=`date +%Y%m%d%H%M%S`
 # mongoimport does not return upon exit any useful value, hence redirect stderr to stdout
-mongoimport --db="$2" --collection="$3" --upsert --type=json --file "$1/allfiles.json" 2>&1
+#mongoimport --db="$2" --collection="$3" --upsert --type=json --file "$1/allfiles.json" 2>&1
