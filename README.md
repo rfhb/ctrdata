@@ -61,7 +61,7 @@ openCTRWebBrowser(copyright = TRUE)
 ```R
 q <- getCTRQueryUrl()
 # > q
-# [1] "cancer&age=adult&status=completed"
+# [1] "cancer&age=children&status=completed"
 ```
 
 6. Retrieve protocol-related information, transform, save to database
@@ -73,8 +73,8 @@ getCTRdata(q)
 ```R
 findCTRkey("sites")   # note: when run for first time, will download and install variety.js
 findCTRkey("n_date")
-findCTRkey("f11_number_of_subjects")
-findCTRkey("subjects", allmatches = TRUE)
+findCTRkey("number_of_subjects", allmatches = TRUE)
+findCTRkey("time", allmatches = TRUE)
 ```
 
 8. Visualise some clinical trial information
