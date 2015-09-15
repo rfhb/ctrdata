@@ -61,12 +61,12 @@ img {
 
 
 
-<div id="readme.md-for-ctrdata-package-on-github.com" class="section level1">
-<h1>README.md for ctrdata package on github.com</h1>
+<div id="readme.md-for-r-package-ctrdata-on-github.com" class="section level1">
+<h1>README.md for R package ctrdata on github.com</h1>
 <div id="aims" class="section level2">
 <h2>Aims</h2>
-<p>The main aim of <code>ctrdata</code> is to provide functions for querying and retrieving information on clinical trials from two public registers, the European Union Clinical Trials Register (“EUCTR”, <a href="https://www.clinicaltrialsregister.eu/" class="uri">https://www.clinicaltrialsregister.eu/</a>) and ClinicalTrials.gov (“CTGOV”, <a href="https://clinicaltrials.gov/" class="uri">https://clinicaltrials.gov/</a>). The package is motivated by the wish for aggregating and trend analysing information on clinical trials, particularly in the field of oncology. The public registers at this time do not provide a programming interface and divergent, limited means for aggregating. Metaregisters such as offered by the WHO (“ICTRP”, <a href="http://apps.who.int/trialsearch/" class="uri">http://apps.who.int/trialsearch/</a>) do not hold latest information. By choice and for the author’s objectives, the EUCTR is the main target of this package. Development started mid 2015, first push to github.com mid September 2015.</p>
-<p>Warnings to manage expectations: Does not yet work on MS Windows, see Issues below.</p>
+<p>The main aim of <code>ctrdata</code> is to provide functions for querying and retrieving information on clinical trials from two public registers, the European Union Clinical Trials Register (“EUCTR”, <a href="https://www.clinicaltrialsregister.eu/" class="uri">https://www.clinicaltrialsregister.eu/</a>) and ClinicalTrials.gov (“CTGOV”, <a href="https://clinicaltrials.gov/" class="uri">https://clinicaltrials.gov/</a>). The package addresses the wish for aggregating and trend-analysing information on clinical trials, particularly in the field of oncology. The public registers at this time do not provide a programming interface and provide divergent, limited means for aggregating. Metaregisters such as offered by the WHO (“ICTRP”, <a href="http://apps.who.int/trialsearch/" class="uri">http://apps.who.int/trialsearch/</a>) do not hold latest information. By choice and for the author’s objectives, the EUCTR is the main target of this package. Development started mid 2015, first push to github.com mid September 2015.</p>
+<p>Warnings to manage expectations: <em>Does not yet work on MS Windows</em>, see Issues below.</p>
 <p>Key features:</p>
 <ul>
 <li><p>Protocol-related information on clinical trials is retrieved from online sources, transformed and stored in a document-centric database (mongo).</p></li>
@@ -79,7 +79,7 @@ img {
 </div>
 <div id="installation" class="section level2">
 <h2>Installation</h2>
-<p>Within R, use the following comments to get and install the current development version of package <code>ctrdata</code> from github.com:</p>
+<p>Within R, use the following commands to get and install the current development version of package <code>ctrdata</code> from github.com:</p>
 <pre class="r"><code>install.packages(&quot;devtools&quot;)
 devtools::install_github(&quot;rfhb/ctrdata&quot;)</code></pre>
 <p>Other requirements:</p>
@@ -115,8 +115,6 @@ findCTRkey(&quot;time&quot;, allmatches = TRUE)</code></pre></li>
 <pre class="r"><code># get certain fields for all records
 result &lt;- dbCTRGet (c(&quot;_id&quot;, &quot;x5_trial_status&quot;))
 table (result$x5_trial_status)
-#
-#&gt; table (result$x5_trial_status)
 #
 #  Completed   Not Authorised   Ongoing   Prematurely Ended   Restarted   Temporarily Halted 
 #         95                4        96                  17           4                  3 </code></pre>

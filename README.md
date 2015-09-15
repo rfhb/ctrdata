@@ -1,13 +1,10 @@
----
-output: html_document
----
-# README.md for ctrdata package on github.com
+# README.md for R package ctrdata on github.com
 
 ## Aims
 
-The main aim of `ctrdata` is to provide functions for querying and retrieving information on clinical trials from two public registers, the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/).  The package is motivated by the wish for aggregating and trend analysing information on clinical trials, particularly in the field of oncology. The public registers at this time do not provide a programming interface and divergent, limited means for aggregating. Metaregisters such as offered by the WHO ("ICTRP", http://apps.who.int/trialsearch/) do not hold latest information. By choice and for the author's objectives, the EUCTR is the main target of this package. Development started mid 2015, first push to github.com mid September 2015. 
+The main aim of `ctrdata` is to provide functions for querying and retrieving information on clinical trials from two public registers, the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). The package addresses the wish for aggregating and trend-analysing information on clinical trials, particularly in the field of oncology. The public registers at this time do not provide a programming interface and provide divergent, limited means for aggregating. Metaregisters such as offered by the WHO ("ICTRP", http://apps.who.int/trialsearch/) do not hold latest information. By choice and for the author's objectives, the EUCTR is the main target of this package. Development started mid 2015, first push to github.com mid September 2015. 
 
-Warnings to manage expectations: Does not yet work on MS Windows, see Issues below. 
+Warnings to manage expectations: *Does not yet work on MS Windows*, see Issues below. 
 
 Key features:
 
@@ -25,7 +22,7 @@ This package `ctrdata` has been made possible based on the work done for [RCurl]
 
 ## Installation
 
-Within R, use the following comments to get and install the current development version of package `ctrdata` from github.com:
+Within R, use the following commands to get and install the current development version of package `ctrdata` from github.com:
 
 ```R
 install.packages("devtools")
@@ -84,8 +81,6 @@ findCTRkey("time", allmatches = TRUE)
 # get certain fields for all records
 result <- dbCTRGet (c("_id", "x5_trial_status"))
 table (result$x5_trial_status)
-#
-#> table (result$x5_trial_status)
 #
 #  Completed   Not Authorised   Ongoing   Prematurely Ended   Restarted   Temporarily Halted 
 #         95                4        96                  17           4                  3 
