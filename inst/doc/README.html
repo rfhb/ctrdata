@@ -129,7 +129,7 @@ table (result$a1_member_state_concerned, result$x5_trial_status)</code></pre>
 <pre class="r"><code># how many clinical trials where started in which year? 
 result &lt;- dbCTRGet(c(&quot;a1_member_state_concerned&quot;, &quot;n_date_of_competent_authority_decision&quot;))
 result$startdate &lt;- strptime(result$n_date_of_competent_authority_decision, &quot;%Y-%m-%d&quot;)
-hist (result$startdate, breaks = &quot;years&quot;)</code></pre></li>
+hist (result$startdate, breaks = &quot;years&quot;, freq = TRUE, xlab = q)</code></pre></li>
 <li><p>Retrieve additional trials from other register and check for duplicates</p>
 <pre class="r"><code>getCTRdata(queryterm = &quot;cancer&amp;recr=Open&amp;type=Intr&amp;age=0&quot;, register = &quot;CTGOV&quot;)
 uniquetrialsCTRdata()</code></pre></li>
@@ -146,6 +146,7 @@ uniquetrialsCTRdata()</code></pre></li>
 <div id="issues" class="section level2">
 <h2>Issues</h2>
 <ul>
+<li><p>By design, each record from EUCTR when using details = TRUE (the default) represents information on the trial concerning the respective member state. This is necessary for some analyses, but not for others.</p></li>
 <li><p>So far, no attempts are made to harmonise and map field names between different registers, such as by using standardised identifiers.</p></li>
 <li><p>So far, no efforts were made to type variables; they are all strings (<code>2L</code> in mongo).</p></li>
 <li><p>Package <code>ctrdata</code> currently is expected to work on linux and Mac OS X system, but one of its main functions is not yet working on MS Windows because an executable script (<code>euctr2json.sh</code>) in the package has not yet been ported to this system (2015-09-13). This will be addressed soon.</p></li>
