@@ -1,3 +1,6 @@
+---
+output: html_document
+---
 # README.md for ctrdata package on github.com
 
 ## Aims
@@ -41,35 +44,34 @@ The executables should be on the path.
 
 ## Example workflow
 
-1. Attach package `ctrdata` 
+* Attach package `ctrdata` 
 ```R
 library(ctrdata)
 ```
 
-2. Open register's advanced search page in browser 
+* Open register's advanced search page in browser 
 ```R
 openCTRWebBrowser()
 # please review and respect register copyrights
 openCTRWebBrowser(copyright = TRUE)
 ```
 
-3. Click search parameters and execute search in browser 
+* Click search parameters and execute search in browser 
 
-4. Copy address from browser address bar to clipboard
+* Copy address from browser address bar to clipboard
 
-5. Get address from clipboard
+* Get address from clipboard
 ```R
 q <- getCTRQueryUrl()
 # > q
 # [1] "cancer&age=children&status=completed"
 ```
 
-6. Retrieve protocol-related information, transform, save to database
-```R
+* Retrieve protocol-related information, transform, save to database```R
 getCTRdata(q)
 ```
 
-7. Find names of fields of interest in database
+* Find names of fields of interest in database
 ```R
 findCTRkey("sites")   # note: when run for first time, will download and install variety.js
 findCTRkey("n_date")
@@ -77,7 +79,7 @@ findCTRkey("number_of_subjects", allmatches = TRUE)
 findCTRkey("time", allmatches = TRUE)
 ```
 
-8. Visualise some clinical trial information
+* Visualise some clinical trial information
 ```R
 # get certain fields for all records
 result <- dbCTRGet (c("_id", "trial_status"))
@@ -100,17 +102,13 @@ result$startdate <- strptime(result$n_date_of_competent_authority_decision, "%Y-
 hist (result$startdate, breaks = "years")
 ```
 
-9. Retrieve additional trials from other register and check for duplicates
+* Retrieve additional trials from other register and check for duplicates
 ```R
 getCTRdata(queryterm = "cancer&recr=Open&type=Intr&age=0", register = "CTGOV")
 uniquetrialsCTRdata()
 ```
 
-10. Do more - suggestions
-
-* Inspect database contents for example using [Robomongo](http://www.robomongo.org)
-
-* Analyse time trends of numbers and features of clinical trials
+* Do more, for example inspect database contents for example using [Robomongo](http://www.robomongo.org) or analyse time trends of numbers and features of clinical trials
 
 
 ## Acknowledgements 

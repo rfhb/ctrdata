@@ -88,8 +88,8 @@ getCTRQueryUrl <- function(content = clipr::read_clip()) {
 #' }
 #'
 findCTRkey <- function(namepart = "id",
-                        mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata",
-                        allmatches = FALSE) {
+                       mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata",
+                       allmatches = FALSE) {
   #
   if (!is.atomic(namepart)) stop("Name part should be atomic.\n")
   if (length(namepart) > 1) stop("Name part should only have one element.\n")
@@ -97,14 +97,15 @@ findCTRkey <- function(namepart = "id",
   #
   # check if database with variety results exists
   if (length(mongo.get.database.collections(mongo, db = "varietyResults")) == 0L ||
-      !grepl(paste0(ns, "Keys"), mongo.get.database.collections(mongo, db = "varietyResults"))) {
+      length(grepl(paste0(ns, "Keys"), mongo.get.database.collections(mongo, db = "varietyResults"))) == 0L) {
     #
-    # check if extension is available, if not load it
-    varietylocalurl <- system.file("exec/variety.js", package = "ctrdata")
-    if (varietylocalurl == "") {
+    # check if extension is available ...
+    varietylocalurl <- paste0(system.file("", package = "ctrdata"), "exec/variety.js")
+    # ... if not, load it
+    if (system.file("exec/variety.js", package = "ctrdata") == "") {
       cat("Downloading variety.js and installing into package exec folder ...\n")
       varietysourceurl <- "https://raw.githubusercontent.com/variety/variety/master/variety.js"
-      curl::curl_download(varietysourceurl, paste0(system.file("", package = "ctrdata"), "exec/variety.js"))
+      curl::curl_download(varietysourceurl, varietylocalurl)
     }
     #
     cat("Calling variety.js and adding keys to data base ...\n")
