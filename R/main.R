@@ -34,12 +34,12 @@
 #' @import RCurl rmongodb curl
 #' @export getCTRdata
 #'
-getCTRdata <- function (queryterm = "", register = "EUCTR", updaterecords = FALSE, details = TRUE, parallelretrievals = 10,
+getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE, details = TRUE, parallelretrievals = 10,
                         mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata") {
 
   # sanity checks
   if ((queryterm == "") & !updaterecords) stop("Empty search string.")
-  if (class (mongo) != "mongo") stop("'mongo' is not a mongo connection object.")
+  if (class(mongo) != "mongo") stop("'mongo' is not a mongo connection object.")
   if (register  == "")          stop("Register choice empty.")
 
   ############################
@@ -66,10 +66,10 @@ getCTRdata <- function (queryterm = "", register = "EUCTR", updaterecords = FALS
     write(fieldsCTGOV, paste0(tempDir, "/field_names.txt"))
 
     # try to re-use previous query as recorded in the collection
-    if (updaterecords){
+    if (updaterecords) {
       rerunquery <- rmongodb::mongo.find.one(mongo, paste0(attr(mongo, "db"), ".", ns),
                                          query  = list('_id' = 'meta-info'),
-                                         fields = list("query-terms"=1L, "query-timestamp"=1L))
+                                         fields = list("query-terms" = 1L, "query-timestamp" = 1L))
       if (is.null(rerunquery)) stop("Could not find previous query in specified collection, aborting because of updaterecords = TRUE.")
       rerunquery <- rmongodb::mongo.bson.to.list(rerunquery)
       if (rerunquery$`query-register` == "CTGOV") {
@@ -90,32 +90,32 @@ getCTRdata <- function (queryterm = "", register = "EUCTR", updaterecords = FALS
 
     # call to import in csv format (not possible from within R)
     ctgov2mongo <- paste0("mongoimport --db ", attr(mongo, "db"), " --collection ", ns,
-                          ifelse (attr(mongo, "username") != "", paste0(" --username ", attr(mongo, "username")), ""),
-                          ifelse (attr(mongo, "password") != "", paste0(" --password ", attr(mongo, "password")), ""),
+                          ifelse(attr(mongo, "username") != "", paste0(" --username ", attr(mongo, "username")), ""),
+                          ifelse(attr(mongo, "password") != "", paste0(" --password ", attr(mongo, "password")), ""),
                           " --fieldFile ", paste0(tempDir, "/field_names.txt"),
                           " --upsert --type=csv --file ")
     imported <- system(paste(ctgov2mongo, resultsCTGOV, "2>&1"), intern = TRUE)
 
     # remove document that was the headerline in the imported file
-    rmongodb::mongo.remove(mongo, paste0(attr(mongo, "db"), ".", ns), list("_id"="NCT Number"))
+    rmongodb::mongo.remove(mongo, paste0(attr(mongo, "db"), ".", ns), list("_id" = "NCT Number"))
 
     # split otherids into new array for later perusal
     cursor <- rmongodb::mongo.find(mongo, paste0(attr(mongo, "db"), ".", ns),
-                                   query = list('Other IDs' = list('$gt' = '')), fields = list("Other IDs"=1L))
+                                   query = list('Other IDs' = list('$gt' = '')), fields = list("Other IDs" = 1L))
     while (rmongodb::mongo.cursor.next(cursor)) {
       # get other ids
       oids <- unlist(strsplit(rmongodb::mongo.bson.to.list(rmongodb::mongo.cursor.value(cursor))[[2]], "[|]"))
       # update record with additional field
-      rmongodb::mongo.update (mongo, paste0(attr(mongo, "db"), ".", ns), criteria = rmongodb::mongo.cursor.value(cursor),
-                              objNew = list('$set'=list("otherids"=oids)))
+      rmongodb::mongo.update(mongo, paste0(attr(mongo, "db"), ".", ns), criteria = rmongodb::mongo.cursor.value(cursor),
+                             objNew = list('$set' = list("otherids" = oids)))
     } # cleanup
     rmongodb::mongo.cursor.destroy(cursor)
 
     # add index on otherids for later queries
-    rmongodb::mongo.index.create(mongo, paste0(attr(mongo, "db"), ".", ns), key = list("otherids"=1L))
+    rmongodb::mongo.index.create(mongo, paste0(attr(mongo, "db"), ".", ns), key = list("otherids" = 1L))
 
     # find out number of trials imported into database
-    imported <- as.integer(gsub (".*imported ([0-9]+) document.*", "\\1", imported [length(imported)])) - 1
+    imported <- as.integer(gsub(".*imported ([0-9]+) document.*", "\\1", imported[length(imported)])) - 1
     cat(paste0("Done - imported or updated ", imported, " trial(s).\n"))
 
     # clean up temporary directory
@@ -147,10 +147,10 @@ getCTRdata <- function (queryterm = "", register = "EUCTR", updaterecords = FALS
     queryEuPost  <- "&mode=current_page&format=text&dContent=summary&number=current_page&submit-download=Download"
 
     # try to re-use previous query as recorded in the collection
-    if (updaterecords){
+    if (updaterecords) {
       rerunquery <- rmongodb::mongo.find.one(mongo, paste0(attr(mongo, "db"), ".", ns),
                                              query  = list('_id' = 'meta-info'),
-                                             fields = list("query-terms"=1L, "query-timestamp"=1L))
+                                             fields = list("query-terms" = 1L, "query-timestamp" = 1L))
       if (is.null(rerunquery)) stop("Could not find previous query in specified collection, aborting because of updaterecords = TRUE.")
       rerunquery <- rmongodb::mongo.bson.to.list(rerunquery)
       if (rerunquery$`query-register` == "EUCTR") {
@@ -162,8 +162,8 @@ getCTRdata <- function (queryterm = "", register = "EUCTR", updaterecords = FALS
     # get first result page
     h = RCurl::getCurlHandle() # does not work: , httpheader = c(Accept = "Accept-Encoding: gzip,deflate")
     resultsEuPages <- RCurl::getURL(paste0(queryEuRoot, queryEuType1, queryterm), curl = h, ssl.verifypeer = FALSE)
-    resultsEuNumTrials <- sub (".*Trials with a EudraCT protocol \\(([0-9,.]*)\\).*", "\\1", resultsEuPages)
-    resultsEuNumTrials <- as.numeric (gsub ("[,.]", "", resultsEuNumTrials))
+    resultsEuNumTrials <- sub(".*Trials with a EudraCT protocol \\(([0-9,.]*)\\).*", "\\1", resultsEuPages)
+    resultsEuNumTrials <- as.numeric(gsub("[,.]", "", resultsEuNumTrials))
     resultsEuNumPages  <- ceiling(resultsEuNumTrials / 20) # this is simpler than parsing "next" or "last" links ...
     if (is.na(resultsEuNumPages) | is.na(resultsEuNumTrials)) stop("first result page empty")
     cat(paste0("Retrieved overview: ", resultsEuNumTrials, " trials from ", resultsEuNumPages, " page(s) are to be downloaded.\n"))
@@ -173,19 +173,19 @@ getCTRdata <- function (queryterm = "", register = "EUCTR", updaterecords = FALS
     resultsNumModulo  <- resultsEuNumPages %%  parallelretrievals
     cat(paste0("Downloading trials (from ", parallelretrievals, " page(s) in parallel):\n"))
     #
-    for (i in 1: (resultsNumBatches + 1) ) {
+    for (i in 1:(resultsNumBatches + 1) ) {
       # parallel requests by using startpage:stoppage
       # TODO use queue and re-queueing
       startpage <- (i - 1) * parallelretrievals + 1
-      stoppage  <- ifelse (i > resultsNumBatches, startpage + resultsNumModulo, startpage + parallelretrievals) - 1
+      stoppage  <- ifelse(i > resultsNumBatches, startpage + resultsNumModulo, startpage + parallelretrievals) - 1
       cat(paste0("(", i, ") ", startpage, "-", stoppage, ". "))
       #
-      tmp <- RCurl::getURL(paste0(queryEuRoot, ifelse (details, queryEuType3, queryEuType2), queryterm, "&page=", startpage:stoppage,
+      tmp <- RCurl::getURL(paste0(queryEuRoot, ifelse(details, queryEuType3, queryEuType2), queryterm, "&page=", startpage:stoppage,
                                   queryEuPost), curl = h, async = TRUE, binary = FALSE, ssl.verifypeer = FALSE)
       #
       for (i in startpage:stoppage)
-        write (tmp[[1 + i - startpage]],
-               paste0(tempDir, "/euctr-trials-page_", formatC(i, digits=0, width=nchar (resultsEuNumPages), flag=0), ".txt"))
+        write(tmp[[1 + i - startpage]],
+              paste0(tempDir, "/euctr-trials-page_", formatC(i, digits = 0, width = nchar(resultsEuNumPages), flag = 0), ".txt"))
     }
 
     # call external script on all files in temporary directory
@@ -194,7 +194,7 @@ getCTRdata <- function (queryterm = "", register = "EUCTR", updaterecords = FALS
     imported <- system(paste(euctr2json, tempDir, attr(mongo, "db"), ns), intern = TRUE)
 
     # find out number of trials imported into database
-    imported <- as.integer(gsub (".*imported ([0-9]+) document.*", "\\1", imported [length(imported)]))
+    imported <- as.integer(gsub(".*imported ([0-9]+) document.*", "\\1", imported[length(imported)]))
     cat(paste0("Done - imported or updated ", imported, " records on ", resultsEuNumTrials, " trial(s).\n"))
 
     # clean up temporary directory
