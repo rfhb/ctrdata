@@ -5,7 +5,7 @@
 \title{Find names of keys (fields) in the data base}
 \usage{
 findCTRkey(namepart = "id", mongo = rmongodb::mongo.create(host =
-  "localhost:27017", db = "users"), ns = "ctrdata", allmatches = TRUE)
+  "localhost:27017", db = "users"), ns = "ctrdata", allmatches = FALSE)
 }
 \arguments{
 \item{namepart}{A plain string (not a regular expression) to be searched for among all field names (keys) in the database.}

@@ -33,19 +33,25 @@ you have to include a mongo connection object to such an empty database.
 }
 \examples{
 # Retrieve protocl-related information on a single trial identified by EudraCT number
+\dontrun{
 getCTRdata (queryterm = "2013-001291-38 ")
+}
 
 # For use with EudraCT: define paediatric population and cancer terms, for a query of more than 400 trials
 \dontrun{
-#queryEuDefPaedPopulation  <- "age=adolescent&age=children&age=infant-and-toddler&age=newborn&age=preterm-new-born-infants&age=under-18"
-#queryEuDef01paedOncTrials <- "cancer leukaem leukem sarcoma tumour tumor blastom gliom lymphom malign hodgkin ewing rhabdo teratom tumeur leucemi"
-#queryEuDef01paedOncTrials <- gsub (" ", "\%20OR\%20", queryEuDef01paedOncTrials)
-#queryEuDef01paedOncTrials <- paste (queryEuDef01paedOncTrials, queryEuDefPaedPopulation, sep="&")
-#getCTRdata (queryterm = queryEuDef01paedOncTrials, parallelretrivals = 5)
+queryEuDefPaedPopulation  <- "age=adolescent&age=children&age=infant-and-toddler&age=newborn&age=preterm-new-born-infants&age=under-18"
+queryEuDef01paedOncTrials <- "cancer leukaem leukem sarcoma tumour tumor blastom gliom lymphom malign hodgkin ewing rhabdo teratom tumeur leucemi"
+queryEuDef01paedOncTrials <- gsub (" ", "\%20OR\%20", queryEuDef01paedOncTrials)
+queryEuDef01paedOncTrials <- paste (queryEuDef01paedOncTrials, queryEuDefPaedPopulation, sep="&")
+getCTRdata (queryterm = queryEuDef01paedOncTrials, parallelretrivals = 5)
 }
 
 # Retrieve protocol-related information on ongoing interventional cancer trials in children
+\dontrun{
 getCTRdata (queryterm = "cancer&recr=Open&type=Intr&age=0", register = "CTGOV")
+}
+\dontrun{
 getCTRdata (queryterm = "NCT02239861", register = "CTGOV")
+}
 }
 

@@ -6,6 +6,7 @@ Date: 2015-08-24
 Depends: rmongodb, RCurl, curl, clipr
 Author: Ralf Herold
 Maintainer: Ralf Herold <ralf.herold@gmx.net>
+URL: https://github.com/rfhb/ctrdata
 Description: The package provides functions for querying and retrieving information on clinical trials from two public registers, the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). The information is transformed so that it can be locally stored in a database (mongo). Functions are also provided for visualising the locally stored information on the clinical trials. The package is motivated by the wish for aggregating and trend analysing information on clinical trials, particularly in the field of oncology. The public registers at this time do not provide a programming interface and divergent, limited means for aggregating. By choice and for the author's objectives, the EUCTR is the main target of this package. Efforts are made to deduplicate clinical trial records when retrieved from more than one register. Metaregisters such as offered by the WHO ("ICTRP", http://apps.who.int/trialsearch/) do not hold latest information. Future versions may include functionality to mirror EUCTR, provided this is legally acceptable.
 License: GPL-2
 LazyData: TRUE
