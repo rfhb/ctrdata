@@ -89,14 +89,14 @@ getCTRQueryUrl <- function (content = clipr::read_clip()) {
 #'
 findCTRkey <- function (namepart = "id",
                         mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata",
-                        allmatches = TRUE) {
+                        allmatches = FALSE) {
   #
   if (!is.atomic(namepart)) stop("Name part should be atomic.\n")
   if (length(namepart) > 1) stop("Name part should only have one element.\n")
   if (namepart == "")       stop("Empty name part string.\n")
   #
   # check if database with variety results exists
-  if (!(paste0(ns, "Keys") %in% mongo.get.database.collections(mongo, db = attr(mongo, "db")))) {
+  if (!grepl(paste0(ns, "Keys"), mongo.get.database.collections(mongo, db = "varietyResults"))) {
     #
     # check if extension is available, if not load it
     varietylocalurl <- system.file("exec/variety.js", package = "ctrdata")
@@ -110,7 +110,7 @@ findCTRkey <- function (namepart = "id",
     varietymongo <- paste0("mongo ", attr(mongo, "db"),
                            ifelse (attr(mongo, "username") != "", paste0(" --username ", attr(mongo, "username")), ""),
                            ifelse (attr(mongo, "password") != "", paste0(" --password ", attr(mongo, "password")), ""),
-                           " --eval \"var collection = '", ns, "', persistResults=true\" variety.js")
+                           " --eval \"var collection = '", ns, "', persistResults=true\" ", varietylocalurl)
     tmp <- system(paste0(varietymongo), intern = TRUE)
     #
   }
@@ -120,10 +120,13 @@ findCTRkey <- function (namepart = "id",
   tmp <- rmongodb::mongo.find.all(mongo, paste0("varietyResults", ".", ns, "Keys"), fields = list("key"=1L), data.frame = TRUE)
   fieldnames <- tmp[,1]
   #
+  # actually now find fieldnames
+  fieldname <- fieldnames[grepl(tolower(namepart), tolower(fieldnames))]
+  if (!allmatches) {
+    if ((tmp <- length(fieldname))>1) cat(paste0("Returning first of ", tmp, " keys found.\n"))
+    fieldname <- fieldname[1]
+  }
   # return the first match / all matches
-  fieldname <- fieldnames[grep(tolower(namepart), tolower(fieldnames))]
-  fieldname <- ifelse (allmatches, fieldname, fieldname[1])
-  #
   return(fieldname)
   #
 }
