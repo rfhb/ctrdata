@@ -113,14 +113,19 @@ findCTRkey(&quot;number_of_subjects&quot;, allmatches = TRUE)
 findCTRkey(&quot;time&quot;, allmatches = TRUE)</code></pre></li>
 <li><p>Visualise some clinical trial information</p>
 <pre class="r"><code># get certain fields for all records
-result &lt;- dbCTRGet (c(&quot;_id&quot;, &quot;trial_status&quot;))
-table (result$trial_status)</code></pre>
+result &lt;- dbCTRGet (c(&quot;_id&quot;, &quot;x5_trial_status&quot;))
+table (result$x5_trial_status)
+#
+#&gt; table (result$x5_trial_status)
+#
+#  Completed   Not Authorised   Ongoing   Prematurely Ended   Restarted   Temporarily Halted 
+#         95                4        96                  17           4                  3 </code></pre>
 <pre class="r"><code># is there a relation between the number of study participants in a country and those in whole trial? 
 result &lt;- dbCTRGet(c(&quot;f41_in_the_member_state&quot;, &quot;f422_in_the_whole_clinical_trial&quot;))
 plot (f41_in_the_member_state ~ f422_in_the_whole_clinical_trial, result)</code></pre>
 <pre class="r"><code># how many clinical trials are ongoing or completed, per country? 
-result &lt;- dbCTRGet(c(&quot;a1_member_state_concerned&quot;, &quot;trial_status&quot;))
-table (result$a1_member_state_concerned, result$trial_status)</code></pre>
+result &lt;- dbCTRGet(c(&quot;a1_member_state_concerned&quot;, &quot;x5_trial_status&quot;))
+table (result$a1_member_state_concerned, result$x5_trial_status)</code></pre>
 <pre class="r"><code># how many clinical trials where started in which year? 
 result &lt;- dbCTRGet(c(&quot;a1_member_state_concerned&quot;, &quot;n_date_of_competent_authority_decision&quot;))
 result$startdate &lt;- strptime(result$n_date_of_competent_authority_decision, &quot;%Y-%m-%d&quot;)

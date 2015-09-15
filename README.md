@@ -82,8 +82,13 @@ findCTRkey("time", allmatches = TRUE)
 * Visualise some clinical trial information
 ```R
 # get certain fields for all records
-result <- dbCTRGet (c("_id", "trial_status"))
-table (result$trial_status)
+result <- dbCTRGet (c("_id", "x5_trial_status"))
+table (result$x5_trial_status)
+#
+#> table (result$x5_trial_status)
+#
+#  Completed   Not Authorised   Ongoing   Prematurely Ended   Restarted   Temporarily Halted 
+#         95                4        96                  17           4                  3 
 ```
 ```R
 # is there a relation between the number of study participants in a country and those in whole trial? 
@@ -92,8 +97,8 @@ plot (f41_in_the_member_state ~ f422_in_the_whole_clinical_trial, result)
 ```
 ```R
 # how many clinical trials are ongoing or completed, per country? 
-result <- dbCTRGet(c("a1_member_state_concerned", "trial_status"))
-table (result$a1_member_state_concerned, result$trial_status)
+result <- dbCTRGet(c("a1_member_state_concerned", "x5_trial_status"))
+table (result$a1_member_state_concerned, result$x5_trial_status)
 ```
 ```R
 # how many clinical trials where started in which year? 
