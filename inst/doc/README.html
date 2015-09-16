@@ -105,7 +105,8 @@ openCTRWebBrowser(copyright = TRUE)</code></pre></li>
 <pre class="r"><code>q &lt;- getCTRQueryUrl()
 # &gt; q
 # [1] &quot;cancer&amp;age=children&amp;status=completed&quot;</code></pre></li>
-<li><p>Retrieve protocol-related information, transform, save to database<code>R getCTRdata(q)</code></p></li>
+<li><p>Retrieve protocol-related information, transform, save to database</p>
+<pre class="r"><code>getCTRdata(q)</code></pre></li>
 <li><p>Find names of fields of interest in database</p>
 <pre class="r"><code>findCTRkey(&quot;sites&quot;)   # note: when run for first time, will download and install variety.js
 findCTRkey(&quot;n_date&quot;)

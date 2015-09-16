@@ -64,7 +64,8 @@ q <- getCTRQueryUrl()
 # [1] "cancer&age=children&status=completed"
 ```
 
-* Retrieve protocol-related information, transform, save to database```R
+* Retrieve protocol-related information, transform, save to database
+```R
 getCTRdata(q)
 ```
 
