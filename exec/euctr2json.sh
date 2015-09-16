@@ -55,7 +55,7 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   s/^X.7 Link.*search\/trial\/([0-9-]*)\/([A-Z][A-Z])\/$/"xxxxxxxxxx_id": "$1-$2"/g;
 
   # crude attack on newlines within variable fields
-  s/^([ABCDEFGNPX][.][1-9 I].+)$/\nxxxxxxxxxx$1/g;
+  s/^([ABDEFGNPX][.][1-9 I].+)$/\nxxxxxxxxxx$1/g;
   s/\n/ /g;
   s/xxxxxxxxxx/\n/g;
 
@@ -113,7 +113,3 @@ perl -pe 'BEGIN{undef $/;}
 #importdate=`date +%Y%m%d%H%M%S`
 # mongoimport does not return upon exit any useful value, hence redirect stderr to stdout
 mongoimport --db="$2" --collection="$3" --upsert --type=json --file "$1/allfiles.json" 2>&1
-
-# clean up
-rm "$1/allfiles.json"
-rm "$1/allfiles.txt"
