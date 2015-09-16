@@ -48,6 +48,9 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
   if (class(mongo) != "mongo") stop("'mongo' is not a mongo connection object.")
   if (register  == "")          stop("Register choice empty.")
 
+  # remove trailing or leading whitespace
+  queryterm <- gsub("^\\s+|\\s+$", "", queryterm)
+
   ############################
 
   if ("CTGOV" %in% register) {
