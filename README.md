@@ -31,11 +31,13 @@ devtools::install_github("rfhb/ctrdata")
 
 Other requirements: 
 
+* on Windows only: installation of [Rtools](https://cran.r-project.org/bin/windows/Rtools/)
+
 * installation of [perl](https://www.perl.org/get.html)
 
 * installation of [sed](http://www.gnu.org/software/sed/)
 
-* installation of [mongodb](https://www.mongodb.org/)
+* a running [mongodb](https://www.mongodb.org/) server, either locally installed or remotely accessible [e.g. mongolab](https://mongolab.com/)
 
 The executables should be on the path.
 
