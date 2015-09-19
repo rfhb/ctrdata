@@ -111,7 +111,7 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
     #
     if (.Platform$OS.type == "windows") {
       #
-      ctgov2mongo <- paste(mongoBinaryLocation, ctgov2mongo)
+      ctgov2mongo <- paste0(mongoBinaryLocation, ctgov2mongo)
       #
     } else {
       #
@@ -232,7 +232,7 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
       euctr2json <- gsub("([A-Z]):/", "/cygdrive/\\1/", euctr2json)
       euctr2json <- paste0('cmd.exe /c c:\\cygwin\\bin\\bash.exe --login -c "', euctr2json, '"')
       #
-      json2mongo <- paste(mongoBinaryLocation, json2mongo)
+      json2mongo <- paste0(mongoBinaryLocation, json2mongo)
       #
     } else {
       #
