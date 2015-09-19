@@ -103,7 +103,7 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
     resultsCTGOV <- paste0(tempDir, "/study_fields.csv")
 
     # call to import in csv format (not possible from within R)
-    ctgov2mongo <- paste0('mongoimport --db="', attr(mongo, "db"), '" --collection="', ns, '"',
+    ctgov2mongo <- paste0('mongoimport --host="', attr(mongo, "host"), '" --db="', attr(mongo, "db"), '" --collection="', ns, '"',
                           ifelse(attr(mongo, "username") != "", paste0(' --username="', attr(mongo, "username"), '"'), ''),
                           ifelse(attr(mongo, "password") != "", paste0(' --password="', attr(mongo, "password"), '"'), ''),
                           ' --fieldFile="', paste0(tempDir, '/field_names.txt"'),
@@ -219,7 +219,7 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
     # compose commands: for external script on all files in temporary directory and for import
     euctr2json <- system.file("exec/euctr2json.sh", package = "ctrdata", mustWork = TRUE)
     euctr2json <- paste(euctr2json, tempDir)
-    json2mongo <- paste0('mongoimport --db="', attr(mongo, "db"), '" --collection="', ns, '"',
+    json2mongo <- paste0('mongoimport --host="', attr(mongo, "host"), '" --db="', attr(mongo, "db"), '" --collection="', ns, '"',
                          ifelse(attr(mongo, "username") != "", paste0(' --username="', attr(mongo, "username"), '"'), ''),
                          ifelse(attr(mongo, "password") != "", paste0(' --password="', attr(mongo, "password"), '"'), ''),
                          ' --upsert --type=json --file="', tempDir, '/allfiles.json"')
