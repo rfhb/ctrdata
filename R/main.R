@@ -95,6 +95,7 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
     }
 
     # get results
+    message(paste0("Downloading trials from CTGOV ..."))
     h <- curl::new_handle()
     curl::handle_setopt(h, ssl_verifypeer = FALSE)
     curl::curl_download(paste0(queryUSRoot, queryUSType1, queryterm, queryUSPost), paste0(tempDir, "/ctgov.zip"), mode = "wb", handle = h)
@@ -106,7 +107,7 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
                           ifelse(attr(mongo, "username") != "", paste0(' --username="', attr(mongo, "username"), '"'), ''),
                           ifelse(attr(mongo, "password") != "", paste0(' --password="', attr(mongo, "password"), '"'), ''),
                           ' --fieldFile="', paste0(tempDir, '/field_names.txt"'),
-                          ' --upsert --type=csv --file="', resultsCTGOV)
+                          ' --upsert --type=csv --file="', resultsCTGOV, '"')
     #
     if (.Platform$OS.type == "windows") {
       #
