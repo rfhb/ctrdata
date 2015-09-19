@@ -90,7 +90,8 @@ devtools::install_github(&quot;rfhb/ctrdata&quot;)</code></pre>
 <li>An installation of <a href="https://cygwin.com/install.html">cygwin</a>.</li>
 </ul>
 <p>In R, simply run <code>ctrdata::installCygwin()</code> for an automated installation.</p>
-<p>For manual instalation, cygwin can be installed without administrator credentials as explained <a href="https://cygwin.com/faq/faq.html#faq.setup.noroot">here</a>. In the graphical interface of the cygwin installer, type <code>perl</code> in the `<code>Select packages</code> field and click on <code>Perl () Default</code> so that this changes to <code>Perl () Install</code>, as also shown <a href="http://slu.livejournal.com/17395.html">here</a>.</p>
+<p>For manual instalation, cygwin can be installed without administrator credentials as explained <a href="https://cygwin.com/faq/faq.html#faq.setup.noroot">here</a>. In the graphical interface of the cygwin installer, type <code>perl</code> in the <code>Select packages</code> field and click on <code>Perl () Default</code> so that this changes to <code>Perl () Install</code>, as also shown <a href="http://slu.livejournal.com/17395.html">here</a>.</p>
+<p>Note that Rtools is <em>not</em> required for <code>ctrdata</code> on MS Windows.</p>
 </div>
 <div id="example-workflow" class="section level2">
 <h2>Example workflow</h2>
@@ -152,7 +153,7 @@ uniquetrialsCTRdata()</code></pre></li>
 <li><p>So far, no attempts are made to harmonise and map field names between different registers, such as by using standardised identifiers.</p></li>
 <li><p>So far, no efforts were made to type data base fields; they are all strings (<code>2L</code> in mongo).</p></li>
 <li><p>Package <code>ctrdata</code> is expected to work on Linux, Mac OS X and MS Windows systems, if requirements (above) are met.</p></li>
-<li><p>Package <code>ctrdata</code> also uses <a href="https://github.com/variety/variety">Variety</a>. Its file <code>variety.js</code> is will automatically be downloaded into the package’s <code>exec</code> directory when first using the function that needs it. This may however fail if this directory is not writable for the user and this issue is not yet addressed.</p></li>
+<li><p>Package <code>ctrdata</code> also uses <a href="https://github.com/variety/variety">Variety</a>. Its file <code>variety.js</code> is will automatically be downloaded into the package’s <code>exec</code> directory when first using the function that needs it. This may however fail if this directory is not writable for the user and this issue is not yet addressed. However, <code>variety.js</code> may not work well with remote mongo databases, see <code>findCTRkeys()</code>.</p></li>
 <li><p>In case <code>curl</code> fails with an SSL error, run this code to update the certificates in the root of package <code>curl</code>:</p>
 <pre class="r"><code>httr::GET(&quot;https://github.com/bagder/ca-bundle/raw/e9175fec5d0c4d42de24ed6d84a06d504d5e5a09/ca-bundle.crt&quot;, write_disk(system.file(&quot;&quot;, package = &quot;curl&quot;), &quot;inst/cacert.pem&quot;, overwrite = TRUE))</code></pre></li>
 </ul>

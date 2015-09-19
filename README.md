@@ -134,7 +134,7 @@ uniquetrialsCTRdata()
 
 * Package `ctrdata` is expected to work on Linux, Mac OS X and MS Windows systems, if requirements (above) are met.  
 
-* Package `ctrdata` also uses [Variety](https://github.com/variety/variety). Its file `variety.js` is will automatically be downloaded into the package's `exec` directory when first using the function that needs it. This may however fail if this directory is not writable for the user and this issue is not yet addressed.
+* Package `ctrdata` also uses [Variety](https://github.com/variety/variety). Its file `variety.js` is will automatically be downloaded into the package's `exec` directory when first using the function that needs it. This may however fail if this directory is not writable for the user and this issue is not yet addressed. However, `variety.js` may not work well with remote mongo databases, see `findCTRkeys()`. 
 
 * In case `curl` fails with an SSL error, run this code to update the certificates in the root of package `curl`:
 ```R
