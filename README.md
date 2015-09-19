@@ -101,7 +101,7 @@ result <- dbCTRGet(c("a1_member_state_concerned", "n_date_of_competent_authority
 result$startdate <- strptime(result$n_date_of_competent_authority_decision, "%Y-%m-%d")
 hist(result$startdate, breaks = "years", freq = TRUE, las = 1); box()
 ```
-![Histogram][1]
+[![Histogram](./Rplot.svg) 
 
 
 * Retrieve additional trials from another register and check for duplicates:
@@ -138,4 +138,3 @@ uniquetrialsCTRdata()
 httr::GET("https://github.com/bagder/ca-bundle/raw/e9175fec5d0c4d42de24ed6d84a06d504d5e5a09/ca-bundle.crt", write_disk(system.file("", package = "curl"), "inst/cacert.pem", overwrite = TRUE))
 ```
 
-[1]: ./Rplot.svg "Number of trials authorised to start per year"
