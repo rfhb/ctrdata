@@ -51,7 +51,7 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
 
   # check program availability
   if (.Platform$OS.type == "windows") {
-    findMongoimport()
+    findMongo()
     if (is.na(mongoBinaryLocation)) stop("Not starting getCTRdata because mongoimport was not found.")
   }
 

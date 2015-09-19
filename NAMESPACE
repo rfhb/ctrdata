@@ -3,7 +3,7 @@
 export(dbCTRGet)
 export(dbCTRGetAll)
 export(findCTRkey)
-export(findMongoimport)
+export(findMongo)
 export(getCTRQueryUrl)
 export(getCTRdata)
 export(installCygwin)
