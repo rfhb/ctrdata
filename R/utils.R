@@ -355,9 +355,9 @@ findMongoimport <- function() {
     #
     # first test for binary in the path
     tmp <- try(if (.Platform$OS.type != "windows") {
-      system('mongoimport --version', intern = FALSE, ignore.stdout = TRUE, ignore.stderr = TRUE, show.output.on.console = FALSE)
-    } else {
       system('mongoimport --version', intern = FALSE, ignore.stdout = TRUE, ignore.stderr = TRUE)
+    } else {
+      system('mongoimport --version', intern = FALSE, ignore.stdout = TRUE, ignore.stderr = TRUE, show.output.on.console = FALSE)
     }, silent = TRUE)
     #
     if (class(tmp) != "try-error") {
