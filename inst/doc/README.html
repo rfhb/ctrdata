@@ -66,16 +66,15 @@ img {
 <div id="aims" class="section level2">
 <h2>Aims</h2>
 <p>The main aim of <code>ctrdata</code> is to provide functions for querying and retrieving information on clinical trials from two public registers, the European Union Clinical Trials Register (“EUCTR”, <a href="https://www.clinicaltrialsregister.eu/" class="uri">https://www.clinicaltrialsregister.eu/</a>) and ClinicalTrials.gov (“CTGOV”, <a href="https://clinicaltrials.gov/" class="uri">https://clinicaltrials.gov/</a>). The package addresses the wish for aggregating and trend-analysing information on clinical trials, particularly in the field of oncology. The public registers at this time do not provide a programming interface and provide divergent, limited means for aggregating. Metaregisters such as offered by the WHO (“ICTRP”, <a href="http://apps.who.int/trialsearch/" class="uri">http://apps.who.int/trialsearch/</a>) do not hold latest information. By choice and for the author’s objectives, the EUCTR is the main target of this package. Development started mid 2015, first push to github.com mid September 2015.</p>
-<p>Warnings to manage expectations: <em>Does not yet work on MS Windows</em>, see Issues below.</p>
 <p>Key features:</p>
 <ul>
 <li><p>Protocol-related information on clinical trials is retrieved from online sources, transformed and stored in a document-centric database (mongo).</p></li>
 <li><p>Fast and offline access to detailed information on clinical trials. (Records will be updated when the query to retrieve the information is repeated).</p></li>
 <li><p>Utility functions are included to facilitate defining queries of the registers by using their respective browser-based user interface.</p></li>
-<li><p>Information also provided for visualising the stored information on the clinical trials.</p></li>
+<li><p>Information is also provided for visualising the information stored on the clinical trials.</p></li>
 <li><p>Efforts are made to deduplicate clinical trial records when retrieved from more than one register.</p></li>
 </ul>
-<p>This package <code>ctrdata</code> has been made possible based on the work done for <a href="http://www.omegahat.org/RCurl/">RCurl</a>, <a href="https://github.com/jeroenooms/curl">curl</a>, <a href="https://github.com/mongosoup/rmongodb">rmongodb</a> and of course for R itself <a href="http://www.r-project.org/">R</a>.</p>
+<p>This package <code>ctrdata</code> has been made possible based on the work done for <a href="http://www.omegahat.org/RCurl/">RCurl</a>, <a href="https://github.com/jeroenooms/curl">curl</a>, <a href="https://github.com/mongosoup/rmongodb">rmongodb</a> and of course for <a href="http://www.r-project.org/">R</a>.</p>
 </div>
 <div id="installation" class="section level2">
 <h2>Installation</h2>
@@ -84,40 +83,41 @@ img {
 devtools::install_github(&quot;rfhb/ctrdata&quot;)</code></pre>
 <p>Other requirements:</p>
 <ul>
-<li><p>on Windows only: installation of <a href="https://cran.r-project.org/bin/windows/Rtools/">Rtools</a></p></li>
-<li><p>installation of <a href="https://www.perl.org/get.html">perl</a></p></li>
-<li><p>installation of <a href="http://www.gnu.org/software/sed/">sed</a></p></li>
-<li><p>a running <a href="https://www.mongodb.org/">mongodb</a> server, either locally installed or remotely accessible <a href="https://mongolab.com/">e.g. mongolab</a></p></li>
+<li>A local <a href="https://www.mongodb.org/">mongodb</a> installation. From this installation, <code>mongoimport</code> is required. The database itself may be in a locally running MongoDB server or remotely accessible <a href="https://mongolab.com/">e.g. mongolab</a>.</li>
 </ul>
-<p>The executables should be on the path.</p>
+<p>Additional requirements on MS Windows:</p>
+<ul>
+<li>An installation of <a href="https://cygwin.com/install.html">cygwin</a>.</li>
+</ul>
+<p>In R, simply run <code>ctrdata::installCygwin()</code> for an automated installation.</p>
+<p>For manual instalation, cygwin can be installed without administrator credentials as explained <a href="https://cygwin.com/faq/faq.html#faq.setup.noroot">here</a>. In the graphical interface of the cygwin installer, type <code>perl</code> in the `<code>Select packages</code> field and click on <code>Perl () Default</code> so that this changes to <code>Perl () Install</code>, as also shown <a href="http://slu.livejournal.com/17395.html">here</a>.</p>
 </div>
 <div id="example-workflow" class="section level2">
 <h2>Example workflow</h2>
 <ul>
-<li><p>Attach package <code>ctrdata</code></p>
+<li><p>Attach package <code>ctrdata</code>:</p>
 <pre class="r"><code>library(ctrdata)</code></pre></li>
-<li><p>Open register’s advanced search page in browser</p>
+<li><p>Open register’s advanced search page in browser:</p>
 <pre class="r"><code>openCTRWebBrowser()
 # please review and respect register copyrights
 openCTRWebBrowser(copyright = TRUE)</code></pre></li>
 <li><p>Click search parameters and execute search in browser</p></li>
 <li><p>Copy address from browser address bar to clipboard</p></li>
-<li><p>Get address from clipboard</p>
+<li><p>Get address from clipboard:</p>
 <pre class="r"><code>q &lt;- getCTRQueryUrl()
-# &gt; q
+# Found search query from EUCTR.
 # [1] &quot;cancer&amp;age=children&amp;status=completed&quot;</code></pre></li>
-<li><p>Retrieve protocol-related information, transform, save to database</p>
+<li><p>Retrieve protocol-related information, transform, save to database:</p>
 <pre class="r"><code>getCTRdata(q)</code></pre></li>
-<li><p>Find names of fields of interest in database</p>
-<pre class="r"><code>findCTRkey(&quot;sites&quot;)   # note: when run for first time, will download and install variety.js
+<li><p>Find names of fields of interest in database:</p>
+<pre class="r"><code>findCTRkey(&quot;sites&quot;)   # note: when run for first time, will download variety.js
 findCTRkey(&quot;n_date&quot;)
 findCTRkey(&quot;number_of_subjects&quot;, allmatches = TRUE)
 findCTRkey(&quot;time&quot;, allmatches = TRUE)</code></pre></li>
-<li><p>Visualise some clinical trial information</p>
+<li><p>Visualise some clinical trial information:</p>
 <pre class="r"><code># get certain fields for all records
 result &lt;- dbCTRGet (c(&quot;_id&quot;, &quot;x5_trial_status&quot;))
 table (result$x5_trial_status)
-#
 #  Completed   Not Authorised   Ongoing   Prematurely Ended   Restarted   Temporarily Halted 
 #         95                4        96                  17           4                  3 </code></pre>
 <pre class="r"><code># is there a relation between the number of study participants in a country and those in whole trial? 
@@ -130,29 +130,30 @@ table (result$a1_member_state_concerned, result$x5_trial_status)</code></pre>
 result &lt;- dbCTRGet(c(&quot;a1_member_state_concerned&quot;, &quot;n_date_of_competent_authority_decision&quot;))
 result$startdate &lt;- strptime(result$n_date_of_competent_authority_decision, &quot;%Y-%m-%d&quot;)
 hist (result$startdate, breaks = &quot;years&quot;, freq = TRUE, xlab = q)</code></pre></li>
-<li><p>Retrieve additional trials from other register and check for duplicates</p>
+<li><p>Retrieve additional trials from another register and check for duplicates:</p>
 <pre class="r"><code>getCTRdata(queryterm = &quot;cancer&amp;recr=Open&amp;type=Intr&amp;age=0&quot;, register = &quot;CTGOV&quot;)
 uniquetrialsCTRdata()</code></pre></li>
-<li><p>Do more, for example inspect database contents for example using <a href="http://www.robomongo.org">Robomongo</a> or analyse time trends of numbers and features of clinical trials</p></li>
+<li><p>More examples and analysis functions to come. Further suggestions: inspect database contents for example using <a href="http://www.robomongo.org">Robomongo</a> or analyse time trends of numbers and features of clinical trials.</p></li>
 </ul>
 </div>
 <div id="acknowledgements" class="section level2">
 <h2>Acknowledgements</h2>
 <ul>
-<li><p>Many thanks to those contributing to community documentation</p></li>
+<li><p>Data providers and curators of the clinical trial registers</p></li>
+<li><p>Contributors to community documentation</p></li>
 <li><p><a href="https://github.com/variety/variety">Variety</a>, a Schema Analyzer for MongoDB</p></li>
 </ul>
 </div>
 <div id="issues" class="section level2">
 <h2>Issues</h2>
 <ul>
-<li><p>By design, each record from EUCTR when using details = TRUE (the default) represents information on the trial concerning the respective member state. This is necessary for some analyses, but not for others.</p></li>
+<li><p>By design, each record from EUCTR when using <code>details = TRUE</code> (the default) represents information on the trial concerning the respective member state. This is necessary for some analyses, but not for others.</p></li>
 <li><p>So far, no attempts are made to harmonise and map field names between different registers, such as by using standardised identifiers.</p></li>
-<li><p>So far, no efforts were made to type variables; they are all strings (<code>2L</code> in mongo).</p></li>
-<li><p>Package <code>ctrdata</code> currently is expected to work on linux and Mac OS X system, but one of its main functions is not yet working on MS Windows because an executable script (<code>euctr2json.sh</code>) in the package has not yet been ported to this system (2015-09-13). This will be addressed soon.</p></li>
+<li><p>So far, no efforts were made to type data base fields; they are all strings (<code>2L</code> in mongo).</p></li>
+<li><p>Package <code>ctrdata</code> is expected to work on Linux, Mac OS X and MS Windows systems, if requirements (above) are met.</p></li>
 <li><p>Package <code>ctrdata</code> also uses <a href="https://github.com/variety/variety">Variety</a>. Its file <code>variety.js</code> is will automatically be downloaded into the package’s <code>exec</code> directory when first using the function that needs it. This may however fail if this directory is not writable for the user and this issue is not yet addressed.</p></li>
-<li><p>In case <code>curl</code> fails with an SSL error, run this code to update the certificates in root of package <code>curl</code>:</p>
-<pre class="r"><code>httr::GET(&quot;https://github.com/bagder/ca-bundle/raw/e9175fec5d0c4d42de24ed6d84a06d504d5e5a09/ca-bundle.crt&quot;, write_disk(system.file(&quot;&quot;, package = &quot;curl&quot;), inst/cacert.pem overwrite = TRUE))</code></pre></li>
+<li><p>In case <code>curl</code> fails with an SSL error, run this code to update the certificates in the root of package <code>curl</code>:</p>
+<pre class="r"><code>httr::GET(&quot;https://github.com/bagder/ca-bundle/raw/e9175fec5d0c4d42de24ed6d84a06d504d5e5a09/ca-bundle.crt&quot;, write_disk(system.file(&quot;&quot;, package = &quot;curl&quot;), &quot;inst/cacert.pem&quot;, overwrite = TRUE))</code></pre></li>
 </ul>
 </div>
 </div>

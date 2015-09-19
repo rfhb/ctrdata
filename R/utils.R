@@ -49,8 +49,8 @@ openCTRWebBrowser <- function(register = c("EUCTR"), copyright = FALSE, ...) {
 #'
 getCTRQueryUrl <- function(content = clipr::read_clip()) {
   #
-  if (length(content) == 0L) {
-    warning("System clipboard contained no readable text. Returning NULL.\n")
+  if (length(content) != 1L) {
+    stop(paste("System clipboard content is not a clinical trial register search URL. Returning NULL."))
     return(NULL)
   }
   #
@@ -68,7 +68,7 @@ getCTRQueryUrl <- function(content = clipr::read_clip()) {
     return(queryterm)
   }
   #
-  warning(paste("System clipboard content is not a clinical trial register search URL. Returning NULL. Clipboard content: ", content, "\n"))
+  stop(paste("System clipboard content is not a clinical trial register search URL. Returning NULL."))
   return(NULL)
 }
 
@@ -257,7 +257,7 @@ dbCTRGetAll <- function(mongo = rmongodb::mongo.create(host = "localhost:27017",
 
 #' Convenience function to install a cygwin environment under MS Windows, including perl
 #'
-#' @export installCYGWIN
+#' @export installCygwin
 #' @param overwrite Set to true to force updating and overwriting an existing installation in \code{c:\\cygwin}
 #'
 installCygwin <- function(overwrite = FALSE){
@@ -296,7 +296,7 @@ installCygwin <- function(overwrite = FALSE){
 #' Convenience function to test for working cygwin installation
 #'
 #' @return Information if cygwin can be used, \code{TRUE} or \code{FALSE}
-#' @export testCYGWIN
+#' @export testCygwin
 #'
 testCygwin <- function() {
   #
@@ -350,7 +350,7 @@ findMongoimport <- function() {
       if (.Platform$OS.type != "windows") stop("Cannot continue. Search function is only for MS Windows operating systems.")
       #
       # second search for folder into which mongo was installed
-      location <- readRegistry('SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Installer\\Folders', hive = "HLM")
+      location <- utils::readRegistry('SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Installer\\Folders', hive = "HLM")
       location <- names(tmp)
       location <- tmp[grepl("Mongo", tmp)]
       location <- tmp[grepl("bin", tmp)]

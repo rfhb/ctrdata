@@ -1,8 +1,8 @@
 Package: ctrdata
 Type: Package
 Title: Retrieve and prepare information on clinical trials from public registers of trials
-Version: 0.1
-Date: 2015-08-24
+Version: 0.2
+Date: 2015-09-19
 Depends: rmongodb, RCurl, curl, clipr
 Author: Ralf Herold
 Maintainer: Ralf Herold <ralf.herold@gmx.net>
