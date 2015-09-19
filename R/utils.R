@@ -300,7 +300,7 @@ installCygwin <- function(overwrite = FALSE){
     unlink(tmpfile, recursive = TRUE)
     #
     # test cygwin installation
-    testCYGWIN()
+    ctrdata::testCygwin()
     #
   } else {
     #
@@ -330,7 +330,7 @@ testCygwin <- function() {
     warning("cygwin does not seem to be installed correctly.")
   }
   #
-  return(tmpcygwin)
+  invisible(tmpcygwin)
   #
 }
 
