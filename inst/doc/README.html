@@ -109,7 +109,9 @@ openCTRWebBrowser(copyright = TRUE)</code></pre></li>
 # Found search query from EUCTR.
 # [1] &quot;cancer&amp;age=children&amp;status=completed&quot;</code></pre></li>
 <li><p>Retrieve protocol-related information, transform, save to database:</p>
-<pre class="r"><code>getCTRdata(q)</code></pre></li>
+<pre class="r"><code>getCTRdata(q)
+# if no parameters are given for a database connection: uses mongodb
+# on localhost, port 27017, database &quot;users&quot;, collection &quot;ctrdata&quot;</code></pre></li>
 <li><p>Find names of fields of interest in database:</p>
 <pre class="r"><code>findCTRkey(&quot;sites&quot;)   # note: when run for first time, will download variety.js
 findCTRkey(&quot;n_date&quot;)

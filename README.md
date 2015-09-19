@@ -1,5 +1,6 @@
 # README.md for R package ctrdata on github.com
 
+
 ## Aims
 
 The main aim of `ctrdata` is to provide functions for querying and retrieving information on clinical trials from two public registers, the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). The package addresses the wish for aggregating and trend-analysing information on clinical trials, particularly in the field of oncology. The public registers at this time do not provide a programming interface and provide divergent, limited means for aggregating. Metaregisters such as offered by the WHO ("ICTRP", http://apps.who.int/trialsearch/) do not hold latest information. By choice and for the author's objectives, the EUCTR is the main target of this package. Development started mid 2015, first push to github.com mid September 2015. 
@@ -17,6 +18,7 @@ Key features:
 * Efforts are made to deduplicate clinical trial records when retrieved from more than one register. 
   
 This package `ctrdata` has been made possible based on the work done for [RCurl](http://www.omegahat.org/RCurl/), [curl](https://github.com/jeroenooms/curl), [rmongodb](https://github.com/mongosoup/rmongodb) and of course for [R](http://www.r-project.org/). 
+
 
 ## Installation
 
@@ -40,6 +42,7 @@ In R, simply run `ctrdata::installCygwin()` for an automated installation.
 For manual instalation, cygwin can be installed without administrator credentials as explained [here](https://cygwin.com/faq/faq.html#faq.setup.noroot). In the graphical interface of the cygwin installer, type `perl` in the `Select packages` field and click on `Perl () Default` so that this changes to `Perl () Install`, as also shown [here](http://slu.livejournal.com/17395.html). 
 
 Note that Rtools is *not* required for `ctrdata` on MS Windows. 
+
 
 ## Example workflow
 
@@ -69,6 +72,8 @@ q <- getCTRQueryUrl()
 * Retrieve protocol-related information, transform, save to database:
 ```R
 getCTRdata(q)
+# if no parameters are given for a database connection: uses mongodb
+# on localhost, port 27017, database "users", collection "ctrdata"
 ```
 
 * Find names of fields of interest in database:
@@ -78,6 +83,7 @@ findCTRkey("n_date")
 findCTRkey("number_of_subjects", allmatches = TRUE)
 findCTRkey("time", allmatches = TRUE)
 ```
+
 
 * Visualise some clinical trial information:
 ```R
@@ -123,6 +129,7 @@ uniquetrialsCTRdata()
 * Contributors to community documentation
 
 * [Variety](https://github.com/variety/variety), a Schema Analyzer for MongoDB
+
 
 ## Issues
 
