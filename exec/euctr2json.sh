@@ -3,11 +3,6 @@
 ## ralf.herold@gmx.net - 2015-08-15 last edited: 2015-09-15
 # 2.4 s for 221 documents: ~ 11 ms per trial (time euctr2json.sh)
 
-# TODO: adapt for MS Windows
-# copy /b *.txt combined.txt
-
-#ME="$PWD/$0"
-
 cat "$1/euctr-trials-page_"* > "$1/allfiles.txt"
 
 # notes to myself: sed cannot use + or other
@@ -92,24 +87,16 @@ perl -pe 'BEGIN{undef $/;}
   ' \
 > "$1/allfiles.json"
 
-# to the above the following could be added:
-#      $tmp1 =~ s!([a-z0-9]+?_){3}.*!$1!g ;
+# the following could be added to limit field width:
+#   $tmp1 =~ s!([a-z0-9]+?_){3}.*!$1!g ;
 #   $F[0] =  substr $F[0], 0, 25;
-# in order to limit the field width
 
 # no more needed - could be adapted to create an array:
 # perl -pe '
 #   # special handling by concatenating multi-line values in D.3.7.
 #   #BEGIN{undef $/;}
 #   #s/(D\.3\.7.+?)\nD\./ ( my $tmp = $1 ) =~ s! \n ! !xg; $tmp."\nD" /exgs;
-#   #
-#   ' | \
 
 # adapt delimiters for last entry in document, see
 # http://stackoverflow.com/questions/1030787/multiline-search-replace-with-perl
 
-# finally import
-#mongo users --eval "db.dropDatabase()"
-#importdate=`date +%Y%m%d%H%M%S`
-# mongoimport does not return upon exit any useful value, hence redirect stderr to stdout
-#mongoimport --db="$2" --collection="$3" --upsert --type=json --file "$1/allfiles.json" 2>&1
