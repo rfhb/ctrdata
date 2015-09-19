@@ -104,7 +104,7 @@ findCTRkey <- function(namepart = "",
 
   # check program availability
   if (.Platform$OS.type == "windows") {
-    findMongoimport()
+    findMongo()
     if (is.na(mongoBinaryLocation)) stop("Not starting findCTRkey because mongo was not found.")
   }
 
@@ -344,15 +344,18 @@ testCygwin <- function() {
 #' Convenience function to find location of mongoimport
 #'
 #' @return Either an empty string if \code{mongoimport} was found on the path or, under MS Windows, a string representing the path
-#' @export findMongoimport
+#' @export findMongo
 #'
-findMongoimport <- function() {
+findMongo <- function() {
   #
-  # debug: mongoBinaryLocation <- "/usr/bin/env"
-  if (exists("mongoBinaryLocation") && !is.na(mongoBinaryLocation) && file.exists(mongoBinaryLocation)) {
+  # debug: mongoBinaryLocation <- "/usr/bin/"
+  tmp <- ifelse(.Platform$OS.type != "windows", "mongoimport", "mongoimport.exe")
+  #
+  if (exists("mongoBinaryLocation") && !is.na(mongoBinaryLocation)
+      && file.exists(paste0(mongoBinaryLocation, tmp))) {
     #
-    # message("mongoimport is in ", mongoBinaryLocation)
-    return(mongoBinaryLocation)
+    message("mongoimport / mongo is in ", mongoBinaryLocation)
+    invisible(mongoBinaryLocation)
     #
   } else {
     #
@@ -361,9 +364,9 @@ findMongoimport <- function() {
     #
     # first test for binary in the path
     tmp <- try(if (.Platform$OS.type != "windows") {
-      system('mongoimport --version', intern = FALSE, ignore.stdout = TRUE, ignore.stderr = TRUE)
+      system('mongoimport --version', intern = TRUE, ignore.stdout = TRUE, ignore.stderr = TRUE)
     } else {
-      system('mongoimport --version', intern = FALSE, ignore.stdout = TRUE, ignore.stderr = TRUE, show.output.on.console = FALSE)
+      system('mongoimport --version', intern = TRUE, ignore.stdout = TRUE, ignore.stderr = TRUE, show.output.on.console = FALSE)
     }, silent = TRUE)
     #
     if (class(tmp) != "try-error") {
@@ -371,33 +374,35 @@ findMongoimport <- function() {
       # found it in the path, save empty location string in user's global environment
       message("mongoimport / mongo found in the path.")
       assign("mongoBinaryLocation", "", envir = .GlobalEnv)
-      return("")
+      invisible("")
       #
     } else {
       #
-      warning("mongoimport / mongo was not found in the path (%PATH%).")
+      warning("mongoimport / mongo was not found in the path (%PATH%).", immediate. = TRUE)
       #
       if (.Platform$OS.type != "windows") stop("Cannot continue. Search function is only for MS Windows operating systems.")
       #
       # second search for folder into which mongo was installed
       location <- utils::readRegistry('SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Installer\\Folders', hive = "HLM")
-      location <- names(tmp)
-      location <- tmp[grepl("Mongo", tmp)]
-      location <- tmp[grepl("bin", tmp)]
+      location <- names(location)
+      location <- location[grepl("Mongo", location)]
+      location <- location[grepl("bin", location)]
       #
-      tmp <- try(system2(paste0(tmp, '\\mongoimport.exe'), intern = FALSE, ignore.stdout = TRUE, ignore.stderr = TRUE), silent = TRUE)
+      tmp <- file.exists(paste0(location, 'mongoimport.exe'))
       #
-      if (class(tmp) == "try-error") stop("Cannot continue. mongoimport not found in folder recorded in the registry, ", location, ".")
+      if (!tmp) stop("Cannot continue. mongoimport not found in folder recorded in the registry, ", location, ".")
       #
       # found it, save in user's global environment
       assign("mongoBinaryLocation", location, envir = .GlobalEnv)
-      return(location)
+      invisible(location)
       #
     }
     #
   }
   #
 }
+
+
 
 
 
