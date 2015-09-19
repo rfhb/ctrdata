@@ -88,19 +88,21 @@ table (result$x5_trial_status)
 ```R
 # is there a relation between the number of study participants in a country and those in whole trial? 
 result <- dbCTRGet(c("f41_in_the_member_state", "f422_in_the_whole_clinical_trial"))
-plot (f41_in_the_member_state ~ f422_in_the_whole_clinical_trial, result)
+plot(f41_in_the_member_state ~ f422_in_the_whole_clinical_trial, result)
 ```
 ```R
 # how many clinical trials are ongoing or completed, per country? 
 result <- dbCTRGet(c("a1_member_state_concerned", "x5_trial_status"))
-table (result$a1_member_state_concerned, result$x5_trial_status)
+table(result$a1_member_state_concerned, result$x5_trial_status)
 ```
 ```R
 # how many clinical trials where started in which year? 
 result <- dbCTRGet(c("a1_member_state_concerned", "n_date_of_competent_authority_decision"))
 result$startdate <- strptime(result$n_date_of_competent_authority_decision, "%Y-%m-%d")
-hist (result$startdate, breaks = "years", freq = TRUE)
+hist(result$startdate, breaks = "years", freq = TRUE, las = 1); box()
 ```
+![Histogram][1]
+
 
 * Retrieve additional trials from another register and check for duplicates:
 ```R
@@ -135,3 +137,5 @@ uniquetrialsCTRdata()
 ```R
 httr::GET("https://github.com/bagder/ca-bundle/raw/e9175fec5d0c4d42de24ed6d84a06d504d5e5a09/ca-bundle.crt", write_disk(system.file("", package = "curl"), "inst/cacert.pem", overwrite = TRUE))
 ```
+
+[1]: ./Rplot.svg "Number of trials authorised to start per year"
