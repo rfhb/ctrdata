@@ -11,6 +11,8 @@ Key features:
 
 * Fast and offline access to detailed information on clinical trials. (Records will be updated when the query to retrieve the information is repeated). 
 
+* A workhorse in the background is `exec/euctr2json.sh`, a special script that transforms plain text files to json format. 
+
 * Utility functions are included to facilitate defining queries of the registers by using their respective browser-based user interface. 
 
 * Information is also provided for visualising the information stored on the clinical trials.
