@@ -4,17 +4,22 @@
 \alias{findCTRkey}
 \title{Find names of keys (fields) in the data base}
 \usage{
-findCTRkey(namepart = "id", mongo = rmongodb::mongo.create(host =
-  "localhost:27017", db = "users"), ns = "ctrdata", allmatches = FALSE)
+findCTRkey(namepart = "", mongo = rmongodb::mongo.create(host =
+  "localhost:27017", db = "users"), ns = "ctrdata", allmatches = FALSE,
+  debug = FALSE, forceupdate = FALSE)
 }
 \arguments{
 \item{namepart}{A plain string (not a regular expression) to be searched for among all field names (keys) in the database.}
 
 \item{mongo}{(\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on localhost port 27017.}
 
-\item{ns}{Name of the collection in mongo database ("namespace"), defaults to "ctrdata"}
+\item{ns}{Name of the collection in mongo database ("namespace"), defaults to "ctrdata".}
 
-\item{allmatches}{If \code{TRUE}, returns all keys if more than one is found (default is \code{FALSE})}
+\item{allmatches}{If \code{TRUE}, returns all keys if more than one is found (default is \code{FALSE}).}
+
+\item{debug}{If \code{TRUE}, prints additional information (default is \code{FALSE}).}
+
+\item{forceupdate}{If \code{TRUE}, refreshes collection of keys (default is \code{FALSE}).}
 }
 \value{
 Vector of first keys (fields) found (or of all keys, see above)

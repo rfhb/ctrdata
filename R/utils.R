@@ -57,14 +57,14 @@ getCTRQueryUrl <- function(content = clipr::read_clip()) {
   if (grepl("https://www.clinicaltrialsregister.eu/ctr-search/", content)) {
     #
     queryterm <- sub("https://www.clinicaltrialsregister.eu/ctr-search/search[?]query=(.*)", "\\1", content)
-    cat("Found search query from EUCTR.\n")
+    message("Found search query from EUCTR.")
     return(queryterm)
   }
   #
   if (grepl("https://clinicaltrials.gov/ct2/results", content)) {
     #
     queryterm <- sub("https://clinicaltrials.gov/ct2/results[?]term=(.*)", "\\1", content)
-    cat("Found search query from CTGOV.\n")
+    message("Found search query from CTGOV.")
     return(queryterm)
   }
   #
@@ -77,8 +77,10 @@ getCTRQueryUrl <- function(content = clipr::read_clip()) {
 #'
 #' @param namepart A plain string (not a regular expression) to be searched for among all field names (keys) in the database.
 #' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on localhost port 27017.
-#' @param ns Name of the collection in mongo database ("namespace"), defaults to "ctrdata"
-#' @param allmatches If \code{TRUE}, returns all keys if more than one is found (default is \code{FALSE})
+#' @param ns Name of the collection in mongo database ("namespace"), defaults to "ctrdata".
+#' @param allmatches If \code{TRUE}, returns all keys if more than one is found (default is \code{FALSE}).
+#' @param forceupdate If \code{TRUE}, refreshes collection of keys (default is \code{FALSE}).
+#' @param debug If \code{TRUE}, prints additional information (default is \code{FALSE}).
 #' @return Vector of first keys (fields) found (or of all keys, see above)
 #' @import rmongodb curl
 #' @export findCTRkey
@@ -87,35 +89,35 @@ getCTRQueryUrl <- function(content = clipr::read_clip()) {
 #'  findCTRkey ("other")
 #' }
 #'
-findCTRkey <- function(namepart = "id",
+findCTRkey <- function(namepart = "",
                        mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata",
-                       allmatches = FALSE) {
+                       allmatches = FALSE, debug = FALSE, forceupdate = FALSE) {
 
   # sanity checks
-  if (!is.atomic(namepart)) stop("Name part should be atomic.\n")
-  if (length(namepart) > 1) stop("Name part should only have one element.\n")
-  if (namepart == "")       stop("Empty name part string.\n")
-  #
+  if (!is.atomic(namepart)) stop("Name part should be atomic.")
+  if (length(namepart) > 1) stop("Name part should only have one element.")
+  if (namepart == "" & !forceupdate) stop("Empty name part string.")
+
   # check program availability
   if (.Platform$OS.type == "windows") {
     findMongoimport()
     if (is.na(mongoBinaryLocation)) stop("Not starting findCTRkey because mongo was not found.")
   }
 
-  # check if database with variety results exists
-  if (length(mongo.get.database.collections(mongo, db = "varietyResults")) == 0L ||
+  # check if database with variety results exists or should be forced to be updated
+  if (forceupdate || length(mongo.get.database.collections(mongo, db = "varietyResults")) == 0L ||
       length(grepl(paste0(ns, "Keys"), mongo.get.database.collections(mongo, db = "varietyResults"))) == 0L) {
     #
     # check if extension is available (system.file under MS Windows does not end with slash) ...
     varietylocalurl <- paste0(system.file("", package = "ctrdata"), "/exec/variety.js")
     # if variety.js is not found, download it
-    if (file.exists(varietylocalurl)) {
-      cat("Downloading variety.js and installing into package exec folder ...\n")
+    if (!file.exists(varietylocalurl)) {
+      message("Downloading variety.js and installing into package exec folder ...")
       varietysourceurl <- "https://raw.githubusercontent.com/variety/variety/master/variety.js"
       curl::curl_download(varietysourceurl, varietylocalurl)
     }
-    #
-    message("Calling mongo with variety.js and adding keys to data base ...\n")
+
+    # compose actual command to call mongo with variety.js
     varietymongo <- paste0("mongo ", attr(mongo, "db"),
                            ifelse(attr(mongo, "username") != "", paste0(" --username ", attr(mongo, "username")), ""),
                            ifelse(attr(mongo, "password") != "", paste0(" --password ", attr(mongo, "password")), ""),
@@ -125,24 +127,30 @@ findCTRkey <- function(namepart = "id",
       varietymongo <- paste(mongoBinaryLocation, varietymongo)
     }
     #
-    tmp <- system(paste0(varietymongo), intern = TRUE)
+    message("Calling mongo with variety.js and adding keys to data base ...")
+    if (debug) message(varietymongo)
+    tmp <- system(varietymongo, intern = TRUE)
     #
   }
-  #
-  # mongo get fieldnames
-  # TODO avoid data.frame = TRUE
-  tmp <- rmongodb::mongo.find.all(mongo, paste0("varietyResults", ".", ns, "Keys"), fields = list("key" = 1L), data.frame = TRUE)
-  fieldnames <- tmp[,1]
-  #
-  # actually now find fieldnames
-  fieldname <- fieldnames[grepl(tolower(namepart), tolower(fieldnames))]
-  if (!allmatches) {
-    if ((tmp <- length(fieldname)) > 1) cat(paste0("Returning first of ", tmp, " keys found.\n"))
-    fieldname <- fieldname[1]
+
+  if (namepart != "") {
+    #
+    # mongo get fieldnames
+    # TODO avoid data.frame = TRUE
+    tmp <- rmongodb::mongo.find.all(mongo, paste0("varietyResults", ".", ns, "Keys"), fields = list("key" = 1L), data.frame = TRUE)
+    fieldnames <- tmp[,1]
+    #
+    # actually now find fieldnames
+    fieldname <- fieldnames[grepl(tolower(namepart), tolower(fieldnames))]
+    if (!allmatches) {
+      if ((tmp <- length(fieldname)) > 1) message(paste0("Returning first of ", tmp, " keys found."))
+      fieldname <- fieldname[1]
+    }
+    # return the first match / all matches
+    return(fieldname)
+    #
   }
-  # return the first match / all matches
-  return(fieldname)
-  #
+
 }
 
 
@@ -167,7 +175,7 @@ mongo2df <- function(x) {
     return(df)
   }
   # other type of object
-  warning("Could not use input, not a bson or mongo cursor.\n")
+  warning("Could not use input, not a bson or mongo cursor.")
   return(NULL)
 }
 
@@ -219,7 +227,7 @@ uniquetrialsCTRdata <- function(mongo = rmongodb::mongo.create(host = "localhost
   #
   countall <- length(listofCTGOVids) + length(listofEUCTRids)
   #
-  cat(paste0("Total ", countall - length(uniques), " duplicate(s) found, returning keys (_id) of ", countall, " records.\n"))
+  message(paste0("Total ", countall - length(uniques), " duplicate(s) found, returning keys (_id) of ", countall, " records."))
   #
   return(uniques)
   #
@@ -235,7 +243,7 @@ uniquetrialsCTRdata <- function(mongo = rmongodb::mongo.create(host = "localhost
 #' @export dbCTRGet
 #'
 dbCTRGet <- function(fields = "", mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata") {
-  if (!is.vector(fields) | class(fields) != "character") stop("Input should just be a vector of strings of field names.\n")
+  if (!is.vector(fields) | class(fields) != "character") stop("Input should just be a vector of strings of field names.")
   #
   countall <- rmongodb::mongo.count(mongo, paste0(attr(mongo, "db"), ".", ns = "ctrdata"))
   #
@@ -246,7 +254,7 @@ dbCTRGet <- function(fields = "", mongo = rmongodb::mongo.create(host = "localho
                                      query = q, fields = f, data.frame = TRUE)
   #
   if (countall > nrow(result)) warning(paste0(countall - nrow(result), " of ", countall,
-                                              " records dropped as one or more of the specified fields were not found.\n"))
+                                              " records dropped as one or more of the specified fields were not found."))
   #
   return(result)
 }
@@ -346,18 +354,18 @@ findMongoimport <- function() {
     assign("mongoBinaryLocation", NA, envir = .GlobalEnv)
     #
     # first test for binary in the path
-    tmp <- try(system('mongoimport', intern = FALSE, ignore.stdout = TRUE, ignore.stderr = TRUE), silent = TRUE)
+    tmp <- try(system('mongoimport --version', intern = FALSE, ignore.stdout = TRUE, ignore.stderr = TRUE), silent = TRUE)
     #
     if (class(tmp) != "try-error") {
       #
       # found it in the path, save empty location string in user's global environment
-      message("mongoimport found in the path.")
+      message("mongoimport / mongo found in the path.")
       assign("mongoBinaryLocation", "", envir = .GlobalEnv)
       return("")
       #
     } else {
       #
-      warning("mongoimport was not found in the path (%PATH%).")
+      warning("mongoimport / mongo was not found in the path (%PATH%).")
       #
       if (.Platform$OS.type != "windows") stop("Cannot continue. Search function is only for MS Windows operating systems.")
       #
@@ -367,7 +375,7 @@ findMongoimport <- function() {
       location <- tmp[grepl("Mongo", tmp)]
       location <- tmp[grepl("bin", tmp)]
       #
-      tmp <- try(system(paste0(tmp, '\\mongoimport.exe'), intern = FALSE, ignore.stdout = TRUE, ignore.stderr = TRUE), silent = TRUE)
+      tmp <- try(system2(paste0(tmp, '\\mongoimport.exe'), intern = FALSE, ignore.stdout = TRUE, ignore.stderr = TRUE), silent = TRUE)
       #
       if (class(tmp) == "try-error") stop("Cannot continue. mongoimport not found in folder recorded in the registry, ", location, ".")
       #
