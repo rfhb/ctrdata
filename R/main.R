@@ -11,7 +11,7 @@
 #' @param details If \code{TRUE}, retrieve full protocol-related information from EUCTR (rather slow), if \code{FALSE} retrieve only summary information (no country-specific information). Default is \code{TRUE}.
 #' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on localhost port 27017.
 #' @param ns Name of the collection in mongo database ("namespace"), defaults to "ctrdata"
-#' @param updaterecords Re-run last query for this collection.
+#' @param updaterecords Re-run last query for this collection. This parameter takes precedence over \code{queryterm}.
 #' @param parallelretrievals Number of parallel downloads of information from the register
 #' @return Number of trials imported or updated in the database
 #' @examples
@@ -47,6 +47,12 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
   if ((queryterm == "") & !updaterecords) stop("Empty search string.")
   if (class(mongo) != "mongo") stop("'mongo' is not a mongo connection object.")
   if (register  == "")          stop("Register choice empty.")
+
+  # check program availability
+  if (.Platform$OS.type == "windows") {
+    findMongoimport()
+    if (is.na(mongoImportLocation)) stop("Not starting getCTRdata because mongoimport was not found.")
+  }
 
   # remove trailing or leading whitespace
   queryterm <- gsub("^\\s+|\\s+$", "", queryterm)
@@ -197,10 +203,36 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
               paste0(tempDir, "/euctr-trials-page_", formatC(i, digits = 0, width = nchar(resultsEuNumPages), flag = 0), ".txt"))
     }
 
-    # call external script on all files in temporary directory
+    # compose command for external script on all files in temporary directory and for import
     euctr2json <- system.file("exec/euctr2json.sh", package = "ctrdata", mustWork = TRUE)
-    cat(paste0("\nConverting to JSON ...\n"))
-    imported <- system(paste(euctr2json, tempDir, attr(mongo, "db"), ns), intern = TRUE)
+    euctr2json <- paste(euctr2json, tempDir)
+    #euctr2json <- paste(euctr2json, tempDir, attr(mongo, "db"), ns)
+    json2mongo <- paste0('mongoimport --db="', attr(mongo, "db"), '" --collection="', ns,'" --upsert --type=json --file="', tempDir, '/allfiles.json"')
+
+    if (.Platform$OS.type == "windows") {
+      #
+      # transform paths for cygwin use, for testing:
+      # euctr2json <- 'C:/Programme/R/R-3.2.2/library/ctrdata/exec/euctr2json.sh C:\\Temp\\RtmpUpg0Dt\\ctrDATAb83435686'
+      euctr2json <- gsub("\\\\", "/", euctr2json)
+      euctr2json <- gsub("([A-Z]):/", "/cygdrive/\\1/", euctr2json)
+      euctr2json <- paste0('cmd.exe /c c:\\cygwin\\bin\\bash.exe --login -c "', euctr2json, '"')
+      #
+      json2mongo <- paste(mongoImportLocation, json2mongo)
+      #
+    } else {
+      #
+      # mongoimport does not return exit value, hence redirect stderr to stdout
+      json2mongo <- paste(json2mongo, '2>&1')
+      #
+    }
+    #
+    # run conversion
+    message(paste0("Converting to JSON ..."))
+    imported <- system(euctr2json, intern = TRUE)
+    #
+    # run import
+    message(paste0("Importing JSON into mongoDB ..."))
+    imported <- system(json2mongo, intern = TRUE)
 
     # find out number of trials imported into database
     imported <- as.integer(gsub(".*imported ([0-9]+) document.*", "\\1", imported[length(imported)]))

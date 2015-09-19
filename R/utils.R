@@ -6,11 +6,11 @@
 #
 # EUCTR definitions
 agegroupsEUCTR <- c("Preterm newborn infants", "Newborns", "Infants and toddlers", "Children", "Adolescents",
-                     "Under 18", "Adults", "Elderly")
+                    "Under 18", "Adults", "Elderly")
 variablesEUCTR <- c("EudraCT Number", "Sponsor Protocol Number", "Sponsor Name", "Full Title", "Start Date",
-                     "Medical condition", "Disease", "Population Age", "Gender", "Trial protocol", "Link")
+                    "Medical condition", "Disease", "Population Age", "Gender", "Trial protocol", "Link")
 countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IS", "IE", "IT",
-                     "LV", "LI", "LT", "LU", "MT", "NL", "NO", "PL", "PT", "RO", "SK", "SE", "SI", "ES", "GB")
+                    "LV", "LI", "LT", "LU", "MT", "NL", "NO", "PL", "PT", "RO", "SK", "SE", "SI", "ES", "GB")
 
 
 #' Open advanced search pages of register(s) in default web browser.
@@ -252,4 +252,122 @@ dbCTRGetAll <- function(mongo = rmongodb::mongo.create(host = "localhost:27017",
   #
   return(result)
 }
+
+
+
+#' Convenience function to install a cygwin environment under MS Windows, including perl
+#'
+#' @export installCYGWIN
+#' @param overwrite Set to true to force updating and overwriting an existing installation in \code{c:\\cygwin}
+#'
+installCygwin <- function(overwrite = FALSE){
+  #
+  if (.Platform$OS.type == "windows") {
+    #
+    if (!overwrite & dir.exists("c:\\cygwin")) stop("cygwin is already installed. To overwrite, call this function with overwrite = TRUE.")
+    #
+    installcmd <- "--no-admin --quiet-mode --verbose --site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages perl"
+    tmpfile <- tempdir()
+    dstfile <- paste0(tmpfile, "/cygwinsetup.exe")
+    #
+    if (.Platform$r_arch == "x86_64") download.file(url = "http://cygwin.org/setup-x86_64.exe", destfile = dstfile, quiet = TRUE, mode = "wb")
+    if (.Platform$r_arch == "i386")   download.file(url = "http://cygwin.org/setup-x86.exe", destfile = dstfile, quiet = TRUE, mode = "wb")
+    #
+    if (!file.exists(dstfile))         stop("Download failed. Please install manually.")
+    if (file.size(dstfile) < 5*10 ^ 5) stop("Download seem to have failed - file too small. Please install manually.")
+    #
+    system(paste0(dstfile, ' ', installcmd))
+    unlink(tmpfile, recursive = TRUE)
+    #
+    # test cygwin installation
+    testCYGWIN()
+    #
+  } else {
+    #
+    warning("This function is only for MS Windows operating systems.")
+    #
+  }
+  #
+}
+
+
+
+
+#' Convenience function to test for working cygwin installation
+#'
+#' @return Information if cygwin can be used, \code{TRUE} or \code{FALSE}
+#' @export testCYGWIN
+#'
+testCygwin <- function() {
+  #
+  if (.Platform$OS.type != "windows") stop("This function is only for MS Windows operating systems.")
+  #
+  tmpcygwin <- system("cmd.exe /c c:\\cygwin\\bin\\env", intern = TRUE)
+  #
+  if (length(tmpcygwin) > 5) {
+    message("cygwin seems to be working correctly.")
+  } else {
+    warning("cygwin does not seem to be installed correctly.")
+  }
+  #
+  return(tmpcygwin)
+  #
+}
+
+
+#' Convenience function to find location of mongoimport
+#'
+#' @return Either an empty string if \code{mongoimport} was found on the path or, under MS Windows, a string representing the path
+#' @export findMongoimport
+#'
+findMongoimport <- function() {
+  #
+  # debug: mongoImportLocation <- "/usr/bin/env"
+  if (exists("mongoImportLocation") && !is.na(mongoImportLocation) && file.exists(mongoImportLocation)) {
+    #
+    # message("mongoimport is in ", mongoImportLocation)
+    return(mongoImportLocation)
+    #
+  } else {
+    #
+    # not found: reset any information and start searching
+    assign("mongoImportLocation", NA, envir = .GlobalEnv)
+    #
+    # first test for binary in the path
+    tmp <- try(system('mongoimport', intern = FALSE, ignore.stdout = TRUE, ignore.stderr = TRUE), silent = TRUE)
+    #
+    if (class(tmp) != "try-error") {
+      #
+      # found it in the path, save empty location string in user's global environment
+      message("mongoimport found in the path.")
+      assign("mongoImportLocation", "", envir = .GlobalEnv)
+      return("")
+      #
+    } else {
+      #
+      warning("mongoimport was not found in the path (%PATH%).")
+      #
+      if (.Platform$OS.type != "windows") stop("Cannot continue. Search function is only for MS Windows operating systems.")
+      #
+      # second search for folder into which mongo was installed
+      location <- readRegistry('SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Installer\\Folders', hive = "HLM")
+      location <- names(tmp)
+      location <- tmp[grepl("Mongo", tmp)]
+      location <- tmp[grepl("bin", tmp)]
+      #
+      tmp <- try(system(paste0(tmp, '\\mongoimport.exe'), intern = FALSE, ignore.stdout = TRUE, ignore.stderr = TRUE), silent = TRUE)
+      #
+      if (class(tmp) == "try-error") stop("Cannot continue. mongoimport not found in folder recorded in the registry, ", location, ".")
+      #
+      # found it, save in user's global environment
+      assign("mongoImportLocation", location, envir = .GlobalEnv)
+      return(location)
+      #
+    }
+    #
+  }
+  #
+}
+
+
 

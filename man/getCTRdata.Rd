@@ -14,7 +14,7 @@ getCTRdata(queryterm = "", register = "EUCTR", updaterecords = FALSE,
 
 \item{register}{Vector of abbreviations of registers to query, defaults to "EUCTR"}
 
-\item{updaterecords}{Re-run last query for this collection.}
+\item{updaterecords}{Re-run last query for this collection. This parameter takes precedence over \code{queryterm}.}
 
 \item{details}{If \code{TRUE}, retrieve full protocol-related information from EUCTR (rather slow), if \code{FALSE} retrieve only summary information (no country-specific information). Default is \code{TRUE}.}
 

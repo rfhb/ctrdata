@@ -112,4 +112,4 @@ perl -pe 'BEGIN{undef $/;}
 #mongo users --eval "db.dropDatabase()"
 #importdate=`date +%Y%m%d%H%M%S`
 # mongoimport does not return upon exit any useful value, hence redirect stderr to stdout
-mongoimport --db="$2" --collection="$3" --upsert --type=json --file "$1/allfiles.json" 2>&1
+#mongoimport --db="$2" --collection="$3" --upsert --type=json --file "$1/allfiles.json" 2>&1
