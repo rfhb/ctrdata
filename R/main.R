@@ -89,7 +89,7 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
       if (is.null(rerunquery)) stop("Could not find previous query in specified collection, aborting because of updaterecords = TRUE.")
       rerunquery <- rmongodb::mongo.bson.to.list(rerunquery)
       if (rerunquery$`query-register` == "CTGOV") {
-        message(paste0("Rerunning query: ", rerunquery$`query-terms` , "\nLast run: ", rerunquery$`query-timestamp`, "\n"))
+        message(paste0("Rerunning query: ", rerunquery$`query-terms` , "\nLast run: ", rerunquery$`query-timestamp`))
         queryterm <- rerunquery$`query-terms`
       }
     }
@@ -143,10 +143,10 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
 
     # find out number of trials imported into database
     imported <- as.integer(gsub(".*imported ([0-9]+) document.*", "\\1", imported[length(imported)])) - 1
-    message(paste0("Done - imported or updated ", imported, " trial(s).\n"))
+    message(paste0("Done - imported or updated ", imported, " trial(s)."))
 
     # clean up temporary directory
-    unlink(tempDir, recursive = TRUE)
+    if (!debug) unlink(tempDir, recursive = TRUE)
 
     # add query parameters to database
     # document query in database
@@ -181,7 +181,7 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
       if (is.null(rerunquery)) stop("Could not find previous query in specified collection, aborting because of updaterecords = TRUE.")
       rerunquery <- rmongodb::mongo.bson.to.list(rerunquery)
       if (rerunquery$`query-register` == "EUCTR") {
-        message(paste0("Rerunning query: ", rerunquery$`query-terms` , "\nLast run: ", rerunquery$`query-timestamp`, "\n"))
+        message(paste0("Rerunning query: ", rerunquery$`query-terms` , "\nLast run: ", rerunquery$`query-timestamp`))
         queryterm <- rerunquery$`query-terms`
       }
     }
@@ -193,12 +193,12 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
     resultsEuNumTrials <- as.numeric(gsub("[,.]", "", resultsEuNumTrials))
     resultsEuNumPages  <- ceiling(resultsEuNumTrials / 20) # this is simpler than parsing "next" or "last" links ...
     if (is.na(resultsEuNumPages) | is.na(resultsEuNumTrials)) stop("first result page empty")
-    message(paste0("Retrieved overview: ", resultsEuNumTrials, " trials from ", resultsEuNumPages, " page(s) are to be downloaded.\n"))
+    message(paste0("Retrieved overview: ", resultsEuNumTrials, " trials from ", resultsEuNumPages, " page(s) are to be downloaded."))
 
     # get data
     resultsNumBatches <- resultsEuNumPages %/% parallelretrievals
     resultsNumModulo  <- resultsEuNumPages %%  parallelretrievals
-    message(paste0("Downloading trials (from ", parallelretrievals, " page(s) in parallel):\n"))
+    message(paste0("Downloading trials (from ", parallelretrievals, " page(s) in parallel):"))
     #
     for (i in 1:(resultsNumBatches + 1) ) {
       # parallel requests by using startpage:stoppage
@@ -252,10 +252,10 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
 
     # find out number of trials imported into database
     imported <- as.integer(gsub(".*imported ([0-9]+) document.*", "\\1", imported[length(imported)]))
-    message(paste0("Done - imported or updated ", imported, " records on ", resultsEuNumTrials, " trial(s).\n"))
+    message(paste0("Done - imported or updated ", imported, " records on ", resultsEuNumTrials, " trial(s)."))
 
     # clean up temporary directory
-    unlink(tempDir, recursive = TRUE)
+    if (!debug) unlink(tempDir, recursive = TRUE)
 
     # add query parameters to database
     # document query in database
