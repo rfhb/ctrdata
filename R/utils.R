@@ -130,7 +130,7 @@ findCTRkey <- function(namepart = "",
                            " --eval \"var collection = '", ns, "', persistResults=true\" ", varietylocalurl)
     #
     if (.Platform$OS.type == "windows") {
-      varietymongo <- paste(mongoBinaryLocation, varietymongo)
+      varietymongo <- paste0(mongoBinaryLocation, varietymongo)
     }
     #
     message("Calling mongo with variety.js and adding keys to data base ...")
