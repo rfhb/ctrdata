@@ -50,7 +50,7 @@ openCTRWebBrowser <- function(register = c("EUCTR"), copyright = FALSE, ...) {
 getCTRQueryUrl <- function(content = clipr::read_clip()) {
   #
   if (length(content) != 1L) {
-    stop(paste("System clipboard content is not a clinical trial register search URL. Returning NULL."))
+    stop(paste("Clipboard content is not a clinical trial register search URL. Returning NULL."))
     return(NULL)
   }
   #
@@ -68,7 +68,7 @@ getCTRQueryUrl <- function(content = clipr::read_clip()) {
     return(queryterm)
   }
   #
-  stop(paste("System clipboard content is not a clinical trial register search URL. Returning NULL."))
+  stop(paste("Clipboard content is not a clinical trial register search URL. Returning NULL."))
   return(NULL)
 }
 
@@ -90,29 +90,41 @@ getCTRQueryUrl <- function(content = clipr::read_clip()) {
 findCTRkey <- function(namepart = "id",
                        mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata",
                        allmatches = FALSE) {
-  #
+
+  # sanity checks
   if (!is.atomic(namepart)) stop("Name part should be atomic.\n")
   if (length(namepart) > 1) stop("Name part should only have one element.\n")
   if (namepart == "")       stop("Empty name part string.\n")
   #
+  # check program availability
+  if (.Platform$OS.type == "windows") {
+    findMongoimport()
+    if (is.na(mongoBinaryLocation)) stop("Not starting findCTRkey because mongo was not found.")
+  }
+
   # check if database with variety results exists
   if (length(mongo.get.database.collections(mongo, db = "varietyResults")) == 0L ||
       length(grepl(paste0(ns, "Keys"), mongo.get.database.collections(mongo, db = "varietyResults"))) == 0L) {
     #
-    # check if extension is available ...
-    varietylocalurl <- paste0(system.file("", package = "ctrdata"), "exec/variety.js")
-    # ... if not, load it
-    if (system.file("exec/variety.js", package = "ctrdata") == "") {
+    # check if extension is available (system.file under MS Windows does not end with slash) ...
+    varietylocalurl <- paste0(system.file("", package = "ctrdata"), "/exec/variety.js")
+    # if variety.js is not found, download it
+    if (file.exists(varietylocalurl)) {
       cat("Downloading variety.js and installing into package exec folder ...\n")
       varietysourceurl <- "https://raw.githubusercontent.com/variety/variety/master/variety.js"
       curl::curl_download(varietysourceurl, varietylocalurl)
     }
     #
-    cat("Calling variety.js and adding keys to data base ...\n")
+    message("Calling mongo with variety.js and adding keys to data base ...\n")
     varietymongo <- paste0("mongo ", attr(mongo, "db"),
                            ifelse(attr(mongo, "username") != "", paste0(" --username ", attr(mongo, "username")), ""),
                            ifelse(attr(mongo, "password") != "", paste0(" --password ", attr(mongo, "password")), ""),
                            " --eval \"var collection = '", ns, "', persistResults=true\" ", varietylocalurl)
+    #
+    if (.Platform$OS.type == "windows") {
+      varietymongo <- paste(mongoBinaryLocation, varietymongo)
+    }
+    #
     tmp <- system(paste0(varietymongo), intern = TRUE)
     #
   }
@@ -322,16 +334,16 @@ testCygwin <- function() {
 #'
 findMongoimport <- function() {
   #
-  # debug: mongoImportLocation <- "/usr/bin/env"
-  if (exists("mongoImportLocation") && !is.na(mongoImportLocation) && file.exists(mongoImportLocation)) {
+  # debug: mongoBinaryLocation <- "/usr/bin/env"
+  if (exists("mongoBinaryLocation") && !is.na(mongoBinaryLocation) && file.exists(mongoBinaryLocation)) {
     #
-    # message("mongoimport is in ", mongoImportLocation)
-    return(mongoImportLocation)
+    # message("mongoimport is in ", mongoBinaryLocation)
+    return(mongoBinaryLocation)
     #
   } else {
     #
     # not found: reset any information and start searching
-    assign("mongoImportLocation", NA, envir = .GlobalEnv)
+    assign("mongoBinaryLocation", NA, envir = .GlobalEnv)
     #
     # first test for binary in the path
     tmp <- try(system('mongoimport', intern = FALSE, ignore.stdout = TRUE, ignore.stderr = TRUE), silent = TRUE)
@@ -340,7 +352,7 @@ findMongoimport <- function() {
       #
       # found it in the path, save empty location string in user's global environment
       message("mongoimport found in the path.")
-      assign("mongoImportLocation", "", envir = .GlobalEnv)
+      assign("mongoBinaryLocation", "", envir = .GlobalEnv)
       return("")
       #
     } else {
@@ -360,7 +372,7 @@ findMongoimport <- function() {
       if (class(tmp) == "try-error") stop("Cannot continue. mongoimport not found in folder recorded in the registry, ", location, ".")
       #
       # found it, save in user's global environment
-      assign("mongoImportLocation", location, envir = .GlobalEnv)
+      assign("mongoBinaryLocation", location, envir = .GlobalEnv)
       return(location)
       #
     }

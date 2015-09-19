@@ -29,7 +29,7 @@ devtools::install_github("rfhb/ctrdata")
 
 Other requirements:
 
-* A local [mongodb](https://www.mongodb.org/) installation. From this installation, `mongoimport` is required. The database itself may be in a locally running MongoDB server or remotely accessible [e.g. mongolab](https://mongolab.com/). 
+* A local [mongodb](https://www.mongodb.org/) installation. From this installation, `mongoimport` and `mongo` required. The database itself may be in a locally running MongoDB server or remotely accessible [e.g. mongolab](https://mongolab.com/). 
 
 Additional requirements on MS Windows:
 
@@ -99,7 +99,7 @@ table (result$a1_member_state_concerned, result$x5_trial_status)
 # how many clinical trials where started in which year? 
 result <- dbCTRGet(c("a1_member_state_concerned", "n_date_of_competent_authority_decision"))
 result$startdate <- strptime(result$n_date_of_competent_authority_decision, "%Y-%m-%d")
-hist (result$startdate, breaks = "years", freq = TRUE, xlab = q)
+hist (result$startdate, breaks = "years", freq = TRUE)
 ```
 
 * Retrieve additional trials from another register and check for duplicates:

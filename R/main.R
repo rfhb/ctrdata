@@ -13,6 +13,7 @@
 #' @param ns Name of the collection in mongo database ("namespace"), defaults to "ctrdata"
 #' @param updaterecords Re-run last query for this collection. This parameter takes precedence over \code{queryterm}.
 #' @param parallelretrievals Number of parallel downloads of information from the register
+#' @param debug Printing additional information if set to \code{TRUE}; default is \code{FALSE}.
 #' @return Number of trials imported or updated in the database
 #' @examples
 #' # Retrieve protocl-related information on a single trial identified by EudraCT number
@@ -41,7 +42,7 @@
 #' @export getCTRdata
 #'
 getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE, details = TRUE, parallelretrievals = 10,
-                        mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata") {
+                        mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata", debug = FALSE) {
 
   # sanity checks
   if ((queryterm == "") & !updaterecords) stop("Empty search string.")
@@ -51,7 +52,7 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
   # check program availability
   if (.Platform$OS.type == "windows") {
     findMongoimport()
-    if (is.na(mongoImportLocation)) stop("Not starting getCTRdata because mongoimport was not found.")
+    if (is.na(mongoBinaryLocation)) stop("Not starting getCTRdata because mongoimport was not found.")
   }
 
   # remove trailing or leading whitespace
@@ -100,16 +101,27 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
     unzip(paste0(tempDir, "/ctgov.zip"), exdir = tempDir)
     resultsCTGOV <- paste0(tempDir, "/study_fields.csv")
 
-    # for testing
-    #resultsCTGOV <- system.file("samples/study_fields.csv", package = "ctrdata", mustWork = TRUE)
-
     # call to import in csv format (not possible from within R)
-    ctgov2mongo <- paste0("mongoimport --db ", attr(mongo, "db"), " --collection ", ns,
-                          ifelse(attr(mongo, "username") != "", paste0(" --username ", attr(mongo, "username")), ""),
-                          ifelse(attr(mongo, "password") != "", paste0(" --password ", attr(mongo, "password")), ""),
-                          " --fieldFile ", paste0(tempDir, "/field_names.txt"),
-                          " --upsert --type=csv --file ")
-    imported <- system(paste(ctgov2mongo, resultsCTGOV, "2>&1"), intern = TRUE)
+    ctgov2mongo <- paste0('mongoimport --db="', attr(mongo, "db"), '" --collection="', ns, '"',
+                          ifelse(attr(mongo, "username") != "", paste0(' --username="', attr(mongo, "username"), '"'), ''),
+                          ifelse(attr(mongo, "password") != "", paste0(' --password="', attr(mongo, "password"), '"'), ''),
+                          ' --fieldFile="', paste0(tempDir, '/field_names.txt"'),
+                          ' --upsert --type=csv --file="', resultsCTGOV)
+    #
+    if (.Platform$OS.type == "windows") {
+      #
+      ctgov2mongo <- paste(mongoBinaryLocation, ctgov2mongo)
+      #
+    } else {
+      #
+      # mongoimport does not return exit value, hence redirect stderr to stdout
+      ctgov2mongo <- paste(ctgov2mongo, '2>&1')
+      #
+    }
+    #
+    message(paste0("Importing CTGOV CSV into mongoDB ..."))
+    if (debug) message(ctgov2mongo)
+    imported <- system(ctgov2mongo, intern = TRUE)
 
     # remove document that was the headerline in the imported file
     rmongodb::mongo.remove(mongo, paste0(attr(mongo, "db"), ".", ns), list("_id" = "NCT Number"))
@@ -203,21 +215,23 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
               paste0(tempDir, "/euctr-trials-page_", formatC(i, digits = 0, width = nchar(resultsEuNumPages), flag = 0), ".txt"))
     }
 
-    # compose command for external script on all files in temporary directory and for import
+    # compose commands: for external script on all files in temporary directory and for import
     euctr2json <- system.file("exec/euctr2json.sh", package = "ctrdata", mustWork = TRUE)
     euctr2json <- paste(euctr2json, tempDir)
-    #euctr2json <- paste(euctr2json, tempDir, attr(mongo, "db"), ns)
-    json2mongo <- paste0('mongoimport --db="', attr(mongo, "db"), '" --collection="', ns,'" --upsert --type=json --file="', tempDir, '/allfiles.json"')
-
+    json2mongo <- paste0('mongoimport --db="', attr(mongo, "db"), '" --collection="', ns, '"',
+                         ifelse(attr(mongo, "username") != "", paste0(' --username="', attr(mongo, "username"), '"'), ''),
+                         ifelse(attr(mongo, "password") != "", paste0(' --password="', attr(mongo, "password"), '"'), ''),
+                         ' --upsert --type=json --file="', tempDir, '/allfiles.json"')
+    #
     if (.Platform$OS.type == "windows") {
       #
-      # transform paths for cygwin use, for testing:
+      # euctr2json requires cygwin. transform paths for cygwin use, for testing:
       # euctr2json <- 'C:/Programme/R/R-3.2.2/library/ctrdata/exec/euctr2json.sh C:\\Temp\\RtmpUpg0Dt\\ctrDATAb83435686'
       euctr2json <- gsub("\\\\", "/", euctr2json)
       euctr2json <- gsub("([A-Z]):/", "/cygdrive/\\1/", euctr2json)
       euctr2json <- paste0('cmd.exe /c c:\\cygwin\\bin\\bash.exe --login -c "', euctr2json, '"')
       #
-      json2mongo <- paste(mongoImportLocation, json2mongo)
+      json2mongo <- paste(mongoBinaryLocation, json2mongo)
       #
     } else {
       #
@@ -228,10 +242,12 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
     #
     # run conversion
     message(paste0("Converting to JSON ..."))
+    if (debug) message(euctr2json)
     imported <- system(euctr2json, intern = TRUE)
     #
     # run import
     message(paste0("Importing JSON into mongoDB ..."))
+    if (debug) message(json2mongo)
     imported <- system(json2mongo, intern = TRUE)
 
     # find out number of trials imported into database

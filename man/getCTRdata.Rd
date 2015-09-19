@@ -7,7 +7,7 @@
 getCTRdata(queryterm = "", register = "EUCTR", updaterecords = FALSE,
   details = TRUE, parallelretrievals = 10,
   mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"),
-  ns = "ctrdata")
+  ns = "ctrdata", debug = FALSE)
 }
 \arguments{
 \item{queryterm}{Part of the URL of a search in a register. The queryterms is recorded in the collection for later use to update records.}
@@ -23,6 +23,8 @@ getCTRdata(queryterm = "", register = "EUCTR", updaterecords = FALSE,
 \item{mongo}{(\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on localhost port 27017.}
 
 \item{ns}{Name of the collection in mongo database ("namespace"), defaults to "ctrdata"}
+
+\item{debug}{Printing additional information if set to \code{TRUE}; default is \code{FALSE}.}
 }
 \value{
 Number of trials imported or updated in the database
