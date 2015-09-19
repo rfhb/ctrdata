@@ -393,6 +393,7 @@ findMongo <- function() {
       if (!tmp) stop("Cannot continue. mongoimport not found in folder recorded in the registry, ", location, ".")
       #
       # found it, save in user's global environment
+      message("mongoimport / mongo found in ", mongoBinaryLocation)
       assign("mongoBinaryLocation", location, envir = .GlobalEnv)
       invisible(location)
       #
