@@ -354,7 +354,11 @@ findMongoimport <- function() {
     assign("mongoBinaryLocation", NA, envir = .GlobalEnv)
     #
     # first test for binary in the path
-    tmp <- try(system('mongoimport --version', intern = FALSE, ignore.stdout = TRUE, ignore.stderr = TRUE), silent = TRUE)
+    tmp <- try(if (.Platform$OS.type != "windows") {
+      system('mongoimport --version', intern = FALSE, ignore.stdout = TRUE, ignore.stderr = TRUE, show.output.on.console = FALSE)
+    } else {
+      system('mongoimport --version', intern = FALSE, ignore.stdout = TRUE, ignore.stderr = TRUE)
+    }, silent = TRUE)
     #
     if (class(tmp) != "try-error") {
       #
