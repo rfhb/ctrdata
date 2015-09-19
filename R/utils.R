@@ -343,7 +343,8 @@ testCygwin <- function() {
 
 #' Convenience function to find location of mongoimport
 #'
-#' @return Either an empty string if \code{mongoimport} was found on the path or, under MS Windows, a string representing the path
+#' @return Either an empty string if \code{mongoimport} was found on the path or, under MS Windows,
+#' a string representing the path to the folder of the mongo binaries
 #' @export findMongo
 #'
 findMongo <- function() {

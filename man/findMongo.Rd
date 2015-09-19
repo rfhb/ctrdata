@@ -7,7 +7,8 @@
 findMongo()
 }
 \value{
-Either an empty string if \code{mongoimport} was found on the path or, under MS Windows, a string representing the path
+Either an empty string if \code{mongoimport} was found on the path or, under MS Windows,
+a string representing the path to the folder of the mongo binaries
 }
 \description{
 Convenience function to find location of mongoimport
