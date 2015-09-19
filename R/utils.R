@@ -64,6 +64,7 @@ getCTRQueryUrl <- function(content = clipr::read_clip()) {
   if (grepl("https://clinicaltrials.gov/ct2/results", content)) {
     #
     queryterm <- sub("https://clinicaltrials.gov/ct2/results[?]term=(.*)", "\\1", content)
+    queryterm <- sub("(.*)&Search=Search", "\\1", queryterm)
     message("Found search query from CTGOV.")
     return(queryterm)
   }
@@ -74,6 +75,9 @@ getCTRQueryUrl <- function(content = clipr::read_clip()) {
 
 
 #' Find names of keys (fields) in the data base
+#'
+#' Note that generating a list of keys with variety.js as used in this function may not work with certain remote mongo databases,
+#' for example when the host or port is different per database, such as with a free mongolab plan
 #'
 #' @param namepart A plain string (not a regular expression) to be searched for among all field names (keys) in the database.
 #' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on localhost port 27017.
@@ -108,6 +112,9 @@ findCTRkey <- function(namepart = "",
   if (forceupdate || length(mongo.get.database.collections(mongo, db = "varietyResults")) == 0L ||
       length(grepl(paste0(ns, "Keys"), mongo.get.database.collections(mongo, db = "varietyResults"))) == 0L) {
     #
+    if (!grepl("localhost", attr(mongo, "host"))) warning("variety.js may fail with certain remote servers (for example when the host or port ",
+                                                          "is different per database, such as with a free mongolab plan).", immediate. = TRUE)
+    #
     # check if extension is available (system.file under MS Windows does not end with slash) ...
     varietylocalurl <- paste0(system.file("", package = "ctrdata"), "/exec/variety.js")
     # if variety.js is not found, download it
@@ -116,9 +123,8 @@ findCTRkey <- function(namepart = "",
       varietysourceurl <- "https://raw.githubusercontent.com/variety/variety/master/variety.js"
       curl::curl_download(varietysourceurl, varietylocalurl)
     }
-
     # compose actual command to call mongo with variety.js
-    varietymongo <- paste0("mongo ", attr(mongo, "db"),
+    varietymongo <- paste0('mongo "', attr(mongo, "host"), '/', attr(mongo, "db"), '"',
                            ifelse(attr(mongo, "username") != "", paste0(" --username ", attr(mongo, "username")), ""),
                            ifelse(attr(mongo, "password") != "", paste0(" --password ", attr(mongo, "password")), ""),
                            " --eval \"var collection = '", ns, "', persistResults=true\" ", varietylocalurl)

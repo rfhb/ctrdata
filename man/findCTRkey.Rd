@@ -25,7 +25,8 @@ findCTRkey(namepart = "", mongo = rmongodb::mongo.create(host =
 Vector of first keys (fields) found (or of all keys, see above)
 }
 \description{
-Find names of keys (fields) in the data base
+Note that generating a list of keys with variety.js as used in this function may not work with certain remote mongo databases,
+for example when the host or port is different per database, such as with a free mongolab plan
 }
 \examples{
 \dontrun{
