@@ -41,7 +41,9 @@ Other requirements:
 
 * A local [mongodb](https://www.mongodb.org/) version 3 installation. From this installation, `mongoimport` and `mongo` required. Note that Ubuntu seems to ship mongodb version 2.x, not the required version 3. Please follow installation instruction [here for Ubuntu 15, same as for Debian](http://docs.mongodb.org/manual/tutorial/install-mongodb-on-debian/#install-mongodb) and here for [Ubuntu 14 and earlier](http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/#install-mongodb).   
 
-Additional requirements on MS Windows:
+* In the future, an installation of [node.js](https://nodejs.org/en/download/) will be required, and [xml2json](https://github.com/parmentf/xml2json) for node.js will be installed automatically by `ctrdata` (using `npm install -g xml2json-command`). 
+
+Additional requirements on MS Windows, only:
 
 * An installation of [cygwin](https://cygwin.com/install.html). 
 
@@ -148,7 +150,7 @@ uniquetrialsCTRdata()
 
 ## Issues
 
-* Query terms are not checked or parsed within `ctrdata`; this is not a priority because queries are conveniently composed in a web brower. 
+* Information from CTGOV is currently downloaded as CSV and this does not include all public information. A new implementation is in the works based on the XML provided by the register. 
 
 * By design, each record from EUCTR when using `details = TRUE` (the default) represents information on the trial concerning the respective member state. This is necessary for some analyses, but not for others. 
 

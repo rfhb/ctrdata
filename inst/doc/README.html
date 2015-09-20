@@ -97,9 +97,10 @@ img {
 devtools::install_github(&quot;rfhb/ctrdata&quot;)</code></pre>
 <p>Other requirements:</p>
 <ul>
-<li>A local <a href="https://www.mongodb.org/">mongodb</a> version 3 installation. From this installation, <code>mongoimport</code> and <code>mongo</code> required. Note that Ubuntu seems to ship mongodb version 2.x, not the required version 3. Please follow installation instruction <a href="http://docs.mongodb.org/manual/tutorial/install-mongodb-on-debian/#install-mongodb">here for Ubuntu 15, same as for Debian</a> and here for <a href="http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/#install-mongodb">Ubuntu 14 and earlier</a>.</li>
+<li><p>A local <a href="https://www.mongodb.org/">mongodb</a> version 3 installation. From this installation, <code>mongoimport</code> and <code>mongo</code> required. Note that Ubuntu seems to ship mongodb version 2.x, not the required version 3. Please follow installation instruction <a href="http://docs.mongodb.org/manual/tutorial/install-mongodb-on-debian/#install-mongodb">here for Ubuntu 15, same as for Debian</a> and here for <a href="http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/#install-mongodb">Ubuntu 14 and earlier</a>.</p></li>
+<li><p>In the future, an installation of <a href="https://nodejs.org/en/download/">node.js</a> will be required, and <a href="https://github.com/parmentf/xml2json">xml2json</a> for node.js will be installed automatically by <code>ctrdata</code> (using <code>npm install -g xml2json-command</code>).</p></li>
 </ul>
-<p>Additional requirements on MS Windows:</p>
+<p>Additional requirements on MS Windows, only:</p>
 <ul>
 <li>An installation of <a href="https://cygwin.com/install.html">cygwin</a>.</li>
 </ul>
@@ -173,7 +174,7 @@ uniquetrialsCTRdata()</code></pre></li>
 <div id="issues" class="section level2">
 <h2>Issues</h2>
 <ul>
-<li><p>Query terms are not checked or parsed within <code>ctrdata</code>; this is not a priority because queries are conveniently composed in a web brower.</p></li>
+<li><p>Information from CTGOV is currently downloaded as CSV and this does not include all public information. A new implementation is in the works based on the XML provided by the register.</p></li>
 <li><p>By design, each record from EUCTR when using <code>details = TRUE</code> (the default) represents information on the trial concerning the respective member state. This is necessary for some analyses, but not for others.</p></li>
 <li><p>So far, no attempts are made to harmonise and map field names between different registers, such as by using standardised identifiers.</p></li>
 <li><p>So far, no efforts were made to type data base fields; they are all strings (<code>2L</code> in mongo).</p></li>
