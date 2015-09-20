@@ -15,7 +15,7 @@ Key features implemented:
 
 * Utility functions are included for defining queries in the registers' browser-based user interfaces. 
 
-* Retrieved information is transformed and stored in a document-centric database (mongo) for further access. 
+* Retrieved information is transformed and stored in a document-centric database (mongo) for further access. (The database may be in a locally running MongoDB server or remotely accessible [e.g. mongolab](https://mongolab.com/).) 
 
 * Fast and offline access to detailed information on clinical trials, for use with `R`. 
 
@@ -39,7 +39,7 @@ devtools::install_github("rfhb/ctrdata")
 
 Other requirements:
 
-* A local [mongodb](https://www.mongodb.org/) installation. From this installation, `mongoimport` and `mongo` required. The database itself may be in a locally running MongoDB server or remotely accessible [e.g. mongolab](https://mongolab.com/). 
+* A local [mongodb](https://www.mongodb.org/) version 3 installation. From this installation, `mongoimport` and `mongo` required. Note that Ubuntu seems to ship mongodb version 2.x, not the required version 3. Please follow installation instruction [here for Ubuntu 15, same as for Debian](http://docs.mongodb.org/manual/tutorial/install-mongodb-on-debian/#install-mongodb) and here for [Ubuntu 14 and earlier](http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/#install-mongodb).   
 
 Additional requirements on MS Windows:
 

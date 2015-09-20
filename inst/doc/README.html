@@ -82,7 +82,7 @@ img {
 <ul>
 <li><p>Protocol-related information on clinical trials is retrieved from public online sources, from queries defined by the user.</p></li>
 <li><p>Utility functions are included for defining queries in the registers’ browser-based user interfaces.</p></li>
-<li><p>Retrieved information is transformed and stored in a document-centric database (mongo) for further access.</p></li>
+<li><p>Retrieved information is transformed and stored in a document-centric database (mongo) for further access. (The database may be in a locally running MongoDB server or remotely accessible <a href="https://mongolab.com/">e.g. mongolab</a>.)</p></li>
 <li><p>Fast and offline access to detailed information on clinical trials, for use with <code>R</code>.</p></li>
 <li><p>Unique (de-duplicated) clinical trial records are identified, as the database may well hold information from more than one register.</p></li>
 <li><p>Records in a database will be updated by a simple query command.</p></li>
@@ -97,7 +97,7 @@ img {
 devtools::install_github(&quot;rfhb/ctrdata&quot;)</code></pre>
 <p>Other requirements:</p>
 <ul>
-<li>A local <a href="https://www.mongodb.org/">mongodb</a> installation. From this installation, <code>mongoimport</code> and <code>mongo</code> required. The database itself may be in a locally running MongoDB server or remotely accessible <a href="https://mongolab.com/">e.g. mongolab</a>.</li>
+<li>A local <a href="https://www.mongodb.org/">mongodb</a> version 3 installation. From this installation, <code>mongoimport</code> and <code>mongo</code> required. Note that Ubuntu seems to ship mongodb version 2.x, not the required version 3. Please follow installation instruction <a href="http://docs.mongodb.org/manual/tutorial/install-mongodb-on-debian/#install-mongodb">here for Ubuntu 15, same as for Debian</a> and here for <a href="http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/#install-mongodb">Ubuntu 14 and earlier</a>.</li>
 </ul>
 <p>Additional requirements on MS Windows:</p>
 <ul>
