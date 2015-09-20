@@ -4,7 +4,7 @@
 \alias{openCTRWebBrowser}
 \title{Open advanced search pages of register(s) in default web browser.}
 \usage{
-openCTRWebBrowser(register = c("EUCTR"), copyright = FALSE, ...)
+openCTRWebBrowser(register = c("EUCTR", "CTGOV"), copyright = FALSE, ...)
 }
 \arguments{
 \item{register}{Register(s) to open. Either "EUCTR" or "CTGOV" or a vector of both. Default is to open both registers' advanced search pages.}

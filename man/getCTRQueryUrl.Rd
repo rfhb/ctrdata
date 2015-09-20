@@ -12,14 +12,14 @@ getCTRQueryUrl(content = clipr::read_clip())
 \value{
 A string of query parameters that can be used to retrieve data from the register.
 
-A query term that can be used with \link{getCTRdata}
+A list with a query term and the register name that can directly be used in \link{getCTRdata}
 }
 \description{
 Import from clipboard the URL of a search in one of the registers
 }
 \examples{
 \dontrun{
-getCTRdata (getCTRQueryUrl, register = "CTGOV")
+getCTRdata (getCTRQueryUrl())
 }
 }
 

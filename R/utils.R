@@ -21,7 +21,7 @@ countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", 
 #' @export openCTRWebBrowser
 #' @return Is always true, invisibly.
 #'
-openCTRWebBrowser <- function(register = c("EUCTR"), copyright = FALSE, ...) {
+openCTRWebBrowser <- function(register = c("EUCTR", "CTGOV"), copyright = FALSE, ...) {
   #
   if (copyright == TRUE) {
     if ("CTGOV" %in% register) browseURL("https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use", ...)
@@ -41,10 +41,10 @@ openCTRWebBrowser <- function(register = c("EUCTR"), copyright = FALSE, ...) {
 #' @return A string of query parameters that can be used to retrieve data from the register.
 #' @import clipr
 #' @export getCTRQueryUrl
-#' @return A query term that can be used with \link{getCTRdata}
+#' @return A list with a query term and the register name that can directly be used in \link{getCTRdata}
 #' @examples
 #' \dontrun{
-#' getCTRdata (getCTRQueryUrl, register = "CTGOV")
+#' getCTRdata (getCTRQueryUrl())
 #' }
 #'
 getCTRQueryUrl <- function(content = clipr::read_clip()) {
@@ -58,7 +58,7 @@ getCTRQueryUrl <- function(content = clipr::read_clip()) {
     #
     queryterm <- sub("https://www.clinicaltrialsregister.eu/ctr-search/search[?]query=(.*)", "\\1", content)
     message("Found search query from EUCTR.")
-    return(queryterm)
+    return(list(queryterm = queryterm, register = "EUCTR"))
   }
   #
   if (grepl("https://clinicaltrials.gov/ct2/results", content)) {
@@ -66,7 +66,7 @@ getCTRQueryUrl <- function(content = clipr::read_clip()) {
     queryterm <- sub("https://clinicaltrials.gov/ct2/results[?]term=(.*)", "\\1", content)
     queryterm <- sub("(.*)&Search=Search", "\\1", queryterm)
     message("Found search query from CTGOV.")
-    return(queryterm)
+    return(list(queryterm = queryterm, register = "CTGOV"))
   }
   #
   stop(paste("Clipboard content is not a clinical trial register search URL. Returning NULL."))

@@ -34,7 +34,7 @@ Note that upsert is used to store in database, which means that records may be a
 you have to include a mongo connection object to such an empty database.
 }
 \examples{
-# Retrieve protocl-related information on a single trial identified by EudraCT number
+# Retrieve protocol-related information on a single trial identified by EudraCT number
 \dontrun{
 getCTRdata (queryterm = "2013-001291-38 ")
 }

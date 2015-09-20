@@ -16,7 +16,7 @@
 #' @param debug Printing additional information if set to \code{TRUE}; default is \code{FALSE}.
 #' @return Number of trials imported or updated in the database
 #' @examples
-#' # Retrieve protocl-related information on a single trial identified by EudraCT number
+#' # Retrieve protocol-related information on a single trial identified by EudraCT number
 #' \dontrun{
 #' getCTRdata (queryterm = "2013-001291-38 ")
 #' }
@@ -44,10 +44,22 @@
 getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE, details = TRUE, parallelretrievals = 10,
                         mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata", debug = FALSE) {
 
-  # sanity checks
-  if ((queryterm == "") & !updaterecords) stop("Empty search string.")
+  # deal with querystring such as returned from getCTRQueryUrl()
+  if (is.list(queryterm)) {
+    #
+    tmp <- queryterm
+    #
+    queryterm <- tmp$queryterm
+    register  <- tmp$register
+    #
+  }
+  # basic sanity check if query term should be valid
+  if (grepl("[^a-zA-Z0-9=+&%_]", queryterm)) stop('Queryterm has unexpected characters: "', queryterm, '" (expected: a-zA-Z0-9=+&%_).')
+
+  # other sanity checks
+  if ((queryterm == "") & !updaterecords) stop("Empty query term.")
   if (class(mongo) != "mongo") stop("'mongo' is not a mongo connection object.")
-  if (register  == "")          stop("Register choice empty.")
+  if (register  == "")         stop("Register name empty.")
 
   # check program availability
   if (.Platform$OS.type == "windows") {
@@ -82,7 +94,8 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
     write(fieldsCTGOV, paste0(tempDir, "/field_names.txt"))
 
     # try to re-use previous query as recorded in the collection
-    if (updaterecords) {
+    if (updaterecords && queryterm != "") warning("New query term specified despite updaterecords = TRUE, continuing with new query", immediate. = TRUE)
+    if (updaterecords && queryterm == "") {
       rerunquery <- rmongodb::mongo.find.one(mongo, paste0(attr(mongo, "db"), ".", ns),
                                          query  = list('_id' = 'meta-info'),
                                          fields = list("query-terms" = 1L, "query-timestamp" = 1L))
@@ -156,6 +169,9 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
     bson <- rmongodb::mongo.bson.from.JSON(bson)
     rmongodb::mongo.insert(mongo, paste0(attr(mongo, "db"), ".", ns), bson)
 
+    # update keys database
+    findCTRkey(forceupdate = TRUE, mongo = mongo, ns = ns)
+
   }
 
   ############################
@@ -178,7 +194,8 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
     queryEuPost  <- "&mode=current_page&format=text&dContent=summary&number=current_page&submit-download=Download"
 
     # try to re-use previous query as recorded in the collection
-    if (updaterecords) {
+    if (updaterecords && queryterm != "") warning("New query term specified despite updaterecords = TRUE, continuing with new query", immediate. = TRUE)
+    if (updaterecords && queryterm == "") {
       rerunquery <- rmongodb::mongo.find.one(mongo, paste0(attr(mongo, "db"), ".", ns),
                                              query  = list('_id' = 'meta-info'),
                                              fields = list("query-terms" = 1L, "query-timestamp" = 1L))
@@ -268,6 +285,9 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
                    '", "query-timestamp": ', '"', format(Sys.time(), "%Y-%m-%d-%H-%M-%S"), '"}')
     bson <- rmongodb::mongo.bson.from.JSON(bson)
     rmongodb::mongo.insert(mongo, paste0(attr(mongo, "db"), ".", ns), bson)
+
+    # update keys database
+    findCTRkey(forceupdate = TRUE, mongo = mongo, ns = ns)
 
   }
 
