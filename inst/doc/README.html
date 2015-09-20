@@ -60,19 +60,33 @@ img {
 
 
 
+<div id="TOC">
+<ul>
+<li><a href="#readme.md-for-r-package-ctrdata-on-github.com">README.md for R package ctrdata on github.com</a><ul>
+<li><a href="#aims">Aims</a></li>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#example-workflow">Example workflow</a></li>
+<li><a href="#in-the-works---next-steps">In the works - next steps</a></li>
+<li><a href="#acknowledgements">Acknowledgements</a></li>
+<li><a href="#issues">Issues</a></li>
+</ul></li>
+</ul>
+</div>
 
 <div id="readme.md-for-r-package-ctrdata-on-github.com" class="section level1">
 <h1>README.md for R package ctrdata on github.com</h1>
 <div id="aims" class="section level2">
 <h2>Aims</h2>
-<p>The main aim of <code>ctrdata</code> is to provide functions for querying and retrieving information on clinical trials from two public registers, the European Union Clinical Trials Register (“EUCTR”, <a href="https://www.clinicaltrialsregister.eu/" class="uri">https://www.clinicaltrialsregister.eu/</a>) and ClinicalTrials.gov (“CTGOV”, <a href="https://clinicaltrials.gov/" class="uri">https://clinicaltrials.gov/</a>). The package addresses the wish for aggregating and trend-analysing information on clinical trials, particularly in the field of oncology. The public registers at this time do not provide a programming interface and provide divergent, limited means for aggregating. Metaregisters such as offered by the WHO (“ICTRP”, <a href="http://apps.who.int/trialsearch/" class="uri">http://apps.who.int/trialsearch/</a>) do not hold latest information. By choice and for the author’s objectives, the EUCTR is the main target of this package. Development started mid 2015, first push to github.com mid September 2015.</p>
-<p>Key features:</p>
+<p>The aims of <code>ctrdata</code> are to provide functions for retrieving, aggregating and analysing information on clinical trials from public registers, primarily the European Union Clinical Trials Register (“EUCTR”, <a href="https://www.clinicaltrialsregister.eu/" class="uri">https://www.clinicaltrialsregister.eu/</a>) and also ClinicalTrials.gov (“CTGOV”, <a href="https://clinicaltrials.gov/" class="uri">https://clinicaltrials.gov/</a>). The registers are not known to provide an application programming interface (API) and have limited aggregation options. Development of <code>ctrdata</code> started mid 2015, first push to github.com mid September 2015, last edit 2015-09-20.</p>
+<p>Key features implemented:</p>
 <ul>
-<li><p>Protocol-related information on clinical trials is retrieved from online sources, transformed and stored in a document-centric database (mongo).</p></li>
-<li><p>Fast and offline access to detailed information on clinical trials. (Records will be updated when the query to retrieve the information is repeated).</p></li>
-<li><p>Utility functions are included to facilitate defining queries of the registers by using their respective browser-based user interface.</p></li>
-<li><p>Information is also provided for visualising the information stored on the clinical trials.</p></li>
-<li><p>Efforts are made to deduplicate clinical trial records when retrieved from more than one register.</p></li>
+<li><p>Protocol-related information on clinical trials is retrieved from public online sources, from queries defined by the user.</p></li>
+<li><p>Utility functions are included for defining queries in the registers’ browser-based user interfaces.</p></li>
+<li><p>Retrieved information is transformed and stored in a document-centric database (mongo) for further access.</p></li>
+<li><p>Fast and offline access to detailed information on clinical trials, for use with <code>R</code>.</p></li>
+<li><p>Unique (de-duplicated) clinical trial records are identified, as the database may well hold information from more than one register.</p></li>
+<li><p>Records in a database will be updated by a simple query command.</p></li>
+<li><p>In the background, <code>exec/euctr2json.sh</code> is a special script that transforms EUCTR plain text files to json format.</p></li>
 </ul>
 <p>This package <code>ctrdata</code> has been made possible based on the work done for <a href="http://www.omegahat.org/RCurl/">RCurl</a>, <a href="https://github.com/jeroenooms/curl">curl</a>, <a href="https://github.com/mongosoup/rmongodb">rmongodb</a> and of course for <a href="http://www.r-project.org/">R</a>.</p>
 </div>
@@ -123,7 +137,7 @@ result &lt;- dbCTRGet (c(&quot;_id&quot;, &quot;x5_trial_status&quot;))
 table (result$x5_trial_status)
 #  Completed   Not Authorised   Ongoing   Prematurely Ended   Restarted   Temporarily Halted 
 #         95                4        96                  17           4                  3 </code></pre>
-<pre class="r"><code># is there a relation between the number of study participants in a country and those in whole trial? 
+<pre class="r"><code># Relation between number of study participants in one country and those in whole trial? 
 result &lt;- dbCTRGet(c(&quot;f41_in_the_member_state&quot;, &quot;f422_in_the_whole_clinical_trial&quot;))
 plot(f41_in_the_member_state ~ f422_in_the_whole_clinical_trial, result)</code></pre>
 <pre class="r"><code># how many clinical trials are ongoing or completed, per country? 
@@ -137,7 +151,15 @@ hist(result$startdate, breaks = &quot;years&quot;, freq = TRUE, las = 1); box()<
 <li><p>Retrieve additional trials from another register and check for duplicates:</p>
 <pre class="r"><code>getCTRdata(queryterm = &quot;cancer&amp;recr=Open&amp;type=Intr&amp;age=0&quot;, register = &quot;CTGOV&quot;)
 uniquetrialsCTRdata()</code></pre></li>
-<li><p>More examples and analysis functions to come. Further suggestions: inspect database contents for example using <a href="http://www.robomongo.org">Robomongo</a> or analyse time trends of numbers and features of clinical trials.</p></li>
+</ul>
+</div>
+<div id="in-the-works---next-steps" class="section level2">
+<h2>In the works - next steps</h2>
+<ul>
+<li><p>An efficient, differential update mechanism will be finalised and provided, using the RSS feeds that the registers provide after executing a query.</p></li>
+<li><p>A function to get into one column similar information (e.g., number of trial participants) from different registers (which use different fieldnames) in the mongo database.</p></li>
+<li><p>More examples for analyses will be provided, with special functions to support analysing time trends of numbers and features of clinical trials.</p></li>
+<li><p>Have a look at the database contents for example using <a href="http://www.robomongo.org">Robomongo</a>.</p></li>
 </ul>
 </div>
 <div id="acknowledgements" class="section level2">
@@ -151,11 +173,12 @@ uniquetrialsCTRdata()</code></pre></li>
 <div id="issues" class="section level2">
 <h2>Issues</h2>
 <ul>
+<li><p>Query terms are not checked or parsed within <code>ctrdata</code>; this is not a priority because queries are conveniently composed in a web brower.</p></li>
 <li><p>By design, each record from EUCTR when using <code>details = TRUE</code> (the default) represents information on the trial concerning the respective member state. This is necessary for some analyses, but not for others.</p></li>
 <li><p>So far, no attempts are made to harmonise and map field names between different registers, such as by using standardised identifiers.</p></li>
 <li><p>So far, no efforts were made to type data base fields; they are all strings (<code>2L</code> in mongo).</p></li>
-<li><p>Package <code>ctrdata</code> is expected to work on Linux, Mac OS X and MS Windows systems, if requirements (above) are met.</p></li>
-<li><p>Package <code>ctrdata</code> also uses <a href="https://github.com/variety/variety">Variety</a>. Its file <code>variety.js</code> is will automatically be downloaded into the package’s <code>exec</code> directory when first using the function that needs it. This may however fail if this directory is not writable for the user and this issue is not yet addressed. However, <code>variety.js</code> may not work well with remote mongo databases, see <code>findCTRkeys()</code>.</p></li>
+<li><p>Package <code>ctrdata</code> is expected to work on Linux, Mac OS X and MS Windows systems, if installation requirements (above) are met.</p></li>
+<li><p>Package <code>ctrdata</code> also uses <a href="https://github.com/variety/variety">Variety</a>. In fact, <code>variety.js</code> will automatically be downloaded into the package’s <code>exec</code> directory when first using the function that needs it. This may fail if this directory is not writable for the user and this issue is not yet addressed. Note that <code>variety.js</code> may not work well with remote mongo databases, see documentation of <code>findCTRkeys()</code>.</p></li>
 <li><p>In case <code>curl</code> fails with an SSL error, run this code to update the certificates in the root of package <code>curl</code>:</p>
 <pre class="r"><code>httr::GET(&quot;https://github.com/bagder/ca-bundle/raw/e9175fec5d0c4d42de24ed6d84a06d504d5e5a09/ca-bundle.crt&quot;, write_disk(system.file(&quot;&quot;, package = &quot;curl&quot;), &quot;inst/cacert.pem&quot;, overwrite = TRUE))</code></pre></li>
 </ul>
