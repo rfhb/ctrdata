@@ -162,6 +162,9 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
 
   if ("EUCTR" %in% register) {
 
+    # check program version as acceptable json format changed from 2.x to 3.x
+    checkMongoVersionOk()
+
     # create empty temporary directory on localhost for
     # download from register into temporary directy
     tempDir <- tempfile(pattern = "ctrDATA")
@@ -222,7 +225,8 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
     json2mongo <- paste0('mongoimport --host="', attr(mongo, "host"), '" --db="', attr(mongo, "db"), '" --collection="', ns, '"',
                          ifelse(attr(mongo, "username") != "", paste0(' --username="', attr(mongo, "username"), '"'), ''),
                          ifelse(attr(mongo, "password") != "", paste0(' --password="', attr(mongo, "password"), '"'), ''),
-                         ' --upsert --type=json --file="', tempDir, '/allfiles.json"')
+                         ' --upsert --type=json --file="', tempDir, '/allfiles.json"',
+                         ifelse(checkMongoVersionOk(), '', ' --jsonArray'))
     #
     if (.Platform$OS.type == "windows") {
       #

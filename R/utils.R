@@ -423,5 +423,32 @@ findMongo <- function(mongoDirWin = "c:\\mongo\\bin\\") {
 
 
 
-
+#' Check the version of the build of the mongo server to be used
+#'
+#' In addition to the returned value, the function will generate a warning message if applicable.
+#'
+#' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on localhost port 27017.
+#'
+#' @return A logical value indicating if the mongodb version is acceptable for use with this package.
+#' @export checkMongoVersionOk
+#'
+checkMongoVersionOk <- function(mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users")) {
+  #
+  result <- rmongodb::mongo.command(mongo, attr(mongo, "db"), list("buildInfo" = 1L))
+  result <- rmongodb::mongo.bson.to.Robject(result)
+  #
+  # for testing
+  #result$version <- "2.6.3"
+  #
+  if (grepl("^3", result$version)) {
+    #
+    return(TRUE)
+    #
+  } else {
+    #
+    warning("mongodb not version 3. Earlier versions have limitations that may break function getCTRdata() in package ctrdata.\n Please upgrade, see http://docs.mongodb.org/manual/installation/. \n Trying to continue. Support for versions other than 3 may be discontinued.", immediate. = TRUE)
+    return(FALSE)
+  }
+  #
+}
 
