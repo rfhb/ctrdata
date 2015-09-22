@@ -4,10 +4,13 @@
 \alias{installCygwin}
 \title{Convenience function to install a cygwin environment under MS Windows, including perl}
 \usage{
-installCygwin(overwrite = FALSE)
+installCygwin(overwrite = FALSE, proxy = "")
 }
 \arguments{
 \item{overwrite}{Set to true to force updating and overwriting an existing installation in \code{c:\\cygwin}}
+
+\item{proxy}{Specify any proxy to be used for downloading via http, e.g. "host_or_ip:port". \code{installCygwin}
+detects and uses the proxy configuration unless this is set in MS Windows to use an automatic proxy configuration script}
 }
 \description{
 Convenience function to install a cygwin environment under MS Windows, including perl

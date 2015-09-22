@@ -285,34 +285,53 @@ dbCTRGetAll <- function(mongo = rmongodb::mongo.create(host = "localhost:27017",
 #'
 #' @export installCygwin
 #' @param overwrite Set to true to force updating and overwriting an existing installation in \code{c:\\cygwin}
+#' @param proxy Specify any proxy to be used for downloading via http, e.g. "host_or_ip:port". \code{installCygwin}
+#' detects and uses the proxy configuration unless this is set in MS Windows to use an automatic proxy configuration script
 #'
-installCygwin <- function(overwrite = FALSE){
+installCygwin <- function(overwrite = FALSE, proxy = ""){
   #
-  if (.Platform$OS.type == "windows") {
-    #
-    if (!overwrite & dir.exists("c:\\cygwin")) stop("cygwin is already installed. To overwrite, call this function with overwrite = TRUE.")
-    #
-    installcmd <- "--no-admin --quiet-mode --verbose --site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages perl"
-    tmpfile <- tempdir()
-    dstfile <- paste0(tmpfile, "/cygwinsetup.exe")
-    #
-    if (.Platform$r_arch == "x86_64") download.file(url = "http://cygwin.org/setup-x86_64.exe", destfile = dstfile, quiet = TRUE, mode = "wb")
-    if (.Platform$r_arch == "i386")   download.file(url = "http://cygwin.org/setup-x86.exe", destfile = dstfile, quiet = TRUE, mode = "wb")
-    #
-    if (!file.exists(dstfile))         stop("Download failed. Please install manually.")
-    if (file.size(dstfile) < 5*10 ^ 5) stop("Download seem to have failed - file too small. Please install manually.")
-    #
-    system(paste0(dstfile, ' ', installcmd))
-    unlink(tmpfile, recursive = TRUE)
-    #
-    # test cygwin installation
-    ctrdata::testCygwin()
-    #
+  if (.Platform$OS.type != "windows")        stop("This function is only for MS Windows operating systems.")
+  if (!overwrite & dir.exists("c:\\cygwin")) stop("cygwin is already installed. To overwrite, call this function with overwrite = TRUE.")
+  #
+  tmpfile <- tempdir()
+  dstfile <- paste0(tmpfile, "/cygwinsetup.exe")
+  #
+  if (.Platform$r_arch == "x86_64") download.file(url = "http://cygwin.org/setup-x86_64.exe", destfile = dstfile, quiet = TRUE, mode = "wb")
+  if (.Platform$r_arch == "i386")   download.file(url = "http://cygwin.org/setup-x86.exe",    destfile = dstfile, quiet = TRUE, mode = "wb")
+  #
+  if (!file.exists(dstfile))         stop("Download failed. Please install manually.")
+  if (file.size(dstfile) < 5*10 ^ 5) stop("Download seem to have failed - file too small. Please install manually.")
+  #
+  # find and use proxy settings. seems only needed for install because download.file() respects system settings.
+  # so far only simplest case covered, $AutoConfigURL not yet implemented
+  tmp <- utils::readRegistry('Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings', hive = "HCU")
+  if (proxy != "") {
+    # manual setting overrides all
+    proxy <- paste0('--proxy ', proxy)
   } else {
-    #
-    warning("This function is only for MS Windows operating systems.")
-    #
+    # detect if any proxy to be used
+    if (tmp$ProxyEnable == 1) {
+      # automatically or manually configured?
+      if (tmp$AutoConfigURL == 1) {
+        # GET('http://wpad/wpad.dat')
+        stop('A proxy is to be used on this system but cannot be detected at this time. Please set manually a proxy = "host_or_ip:port"')
+      } else {
+        proxy <- paste0('--proxy ', tmp$ProxyServer)
+      }
+    }
   }
+  #
+  # compose installation command
+  installcmd <- "--no-admin --quiet-mode --verbose --site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages perl"
+  #
+  # first change to temporary directory, then execute command
+  system(paste0('cd ', tmpfile, ' & ', dstfile, ' ', installcmd, ' ', proxy))
+  #
+  # clean up after installation
+  unlink(tmpfile, recursive = TRUE)
+  #
+  # test cygwin installation
+  ctrdata::testCygwin()
   #
 }
 
