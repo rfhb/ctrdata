@@ -293,7 +293,9 @@ installCygwin <- function(overwrite = FALSE, proxy = ""){
   if (.Platform$OS.type != "windows")        stop("This function is only for MS Windows operating systems.")
   if (!overwrite & dir.exists("c:\\cygwin")) stop("cygwin is already installed. To overwrite, call this function with overwrite = TRUE.")
   #
-  tmpfile <- tempdir()
+  # create directory within R sessions temporary directory
+  tmpfile <- paste0(tempdir(), '/cygwin_inst')
+  dir.create(tmpfile)
   dstfile <- paste0(tmpfile, "/cygwinsetup.exe")
   #
   if (.Platform$r_arch == "x86_64") download.file(url = "http://cygwin.org/setup-x86_64.exe", destfile = dstfile, quiet = TRUE, mode = "wb")
@@ -325,10 +327,7 @@ installCygwin <- function(overwrite = FALSE, proxy = ""){
   installcmd <- "--no-admin --quiet-mode --verbose --site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages perl"
   #
   # first change to temporary directory, then execute command
-  system(paste0('cd ', tmpfile, ' & ', dstfile, ' ', installcmd, ' ', proxy))
-  #
-  # clean up after installation
-  unlink(tmpfile, recursive = TRUE)
+  system(paste0(dstfile, " ", installcmd, " --local-package-dir ", tmpfile, ' ', proxy))
   #
   # test cygwin installation
   ctrdata::testCygwin()
