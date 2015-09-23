@@ -314,9 +314,17 @@ installCygwin <- function(overwrite = FALSE, proxy = ""){
     # detect if any proxy to be used
     if (tmp$ProxyEnable == 1) {
       # automatically or manually configured?
-      if (tmp$AutoConfigURL == 1) {
-        # GET('http://wpad/wpad.dat')
-        stop('A proxy is to be used on this system but cannot be detected at this time. Please set manually a proxy = "host_or_ip:port"')
+      if (tmp$AutoConfigURL != "") {
+        # retrieve settings
+        proxypacfile <- paste0(tmpfile, 'pacfile.txt')
+        download.file(tmp$AutoConfigURL, proxypacfile)
+        # for testing: proxypacfile <- "private/proxypacfile"
+        # find out and select last mentioned proxy line
+        proxypac <- readLines(proxypacfile)
+        proxypac <- proxypac[grepl('PROXY', proxypac)]
+        proxypac <- proxypac[length(proxypac)]
+        proxy <- sub('.* PROXY ([0-9]+.[0-9]+.[0-9]+.[0-9]+:[0-9]+).*', '\\1', proxypac)
+        if (proxy == '') stop('A proxy could not be identified from the automatic configuration script used by the system. Please set manually a proxy = "host_or_ip:port"')
       } else {
         proxy <- paste0('--proxy ', tmp$ProxyServer)
       }
