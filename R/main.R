@@ -170,7 +170,7 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
     rmongodb::mongo.insert(mongo, paste0(attr(mongo, "db"), ".", ns), bson)
 
     # update keys database
-    findCTRkey(forceupdate = TRUE, mongo = mongo, ns = ns)
+    dbFindCTRkey(forceupdate = TRUE, mongo = mongo, ns = ns)
 
   }
 
@@ -287,7 +287,7 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
     rmongodb::mongo.insert(mongo, paste0(attr(mongo, "db"), ".", ns), bson)
 
     # update keys database
-    findCTRkey(forceupdate = TRUE, mongo = mongo, ns = ns)
+    dbFindCTRkey(forceupdate = TRUE, mongo = mongo, ns = ns)
 
   }
 
