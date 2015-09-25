@@ -2,22 +2,25 @@
 % Please edit documentation in R/utils.R
 \name{dbCTRGet}
 \alias{dbCTRGet}
-\title{Create a data frame from records that have specified fields in the data base}
+\title{Create a data frame from records in the data base that have specified fields in the data base}
 \usage{
 dbCTRGet(fields = "", mongo = rmongodb::mongo.create(host =
-  "localhost:27017", db = "users"), ns = "ctrdata")
+  "localhost:27017", db = "users"), ns = "ctrdata", all.x = FALSE)
 }
 \arguments{
-\item{fields}{Vector of strings, with names of the sought fields. (Do not use a list)}
+\item{fields}{Vector of strings, with names of the sought fields. (Do not use a list.)}
 
 \item{mongo}{(\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on localhost port 27017.}
 
 \item{ns}{Name of the collection in mongo database ("namespace"), defaults to "ctrdata"}
+
+\item{all.x}{If \code{TRUE}, returns one row for each record, even if \code{fields} could not be found. This is
+useful if the data base includes records from different registers. Default is \code{FALSE} to avoid time intensive operations.}
 }
 \value{
-A data frame with columns corresponding to the sought fields.
+A data frame with columns corresponding to the sought fields. Note that a column for the record _id will always be included.
 }
 \description{
-Create a data frame from records that have specified fields in the data base
+Create a data frame from records in the data base that have specified fields in the data base
 }
 
