@@ -88,17 +88,17 @@ getCTRdata(q)
 
 * Find names of fields of interest in database:
 ```R
-findCTRkey("sites")   # note: when run for first time, will download variety.js
-findCTRkey("n_date")
-findCTRkey("number_of_subjects", allmatches = TRUE)
-findCTRkey("time", allmatches = TRUE)
+dbFindCTRkey("sites")   # note: when run for first time, will download variety.js
+dbFindCTRkey("n_date")
+dbFindCTRkey("number_of_subjects", allmatches = TRUE)
+dbFindCTRkey("time", allmatches = TRUE)
 ```
 
 
 * Visualise some clinical trial information:
 ```R
-# get certain fields for all records
-result <- dbCTRGet (c("_id", "x5_trial_status"))
+# get all records that have values in all specified fields
+result <- dbCTRGet(c("b31_and_b32_status_of_the_sponsor", "x5_trial_status"))
 table (result$x5_trial_status)
 #  Completed   Not Authorised   Ongoing   Prematurely Ended   Restarted   Temporarily Halted 
 #         95                4        96                  17           4                  3 
@@ -109,22 +109,47 @@ result <- dbCTRGet(c("f41_in_the_member_state", "f422_in_the_whole_clinical_tria
 plot(f41_in_the_member_state ~ f422_in_the_whole_clinical_trial, result)
 ```
 ```R
-# how many clinical trials are ongoing or completed, per country? 
+# how many clinical trials are ongoing or completed, per country? (see also other example below) 
 result <- dbCTRGet(c("a1_member_state_concerned", "x5_trial_status"))
 table(result$a1_member_state_concerned, result$x5_trial_status)
 ```
 ```R
 # how many clinical trials where started in which year? 
-result <- dbCTRGet(c("a1_member_state_concerned", "n_date_of_competent_authority_decision"))
+result <- dbCTRGet(c("a1_member_state_concerned", "n_date_of_competent_authority_decision", "a2_eudract_number"))
+#
+# to eliminate trials records duplicated by member state: 
+result <- uniqueTrialsEUCTRrecords(result)
+# 
 result$startdate <- strptime(result$n_date_of_competent_authority_decision, "%Y-%m-%d")
 hist(result$startdate, breaks = "years", freq = TRUE, las = 1); box()
 ```
 ![Histogram][1]
 
-* Retrieve additional trials from another register and check for duplicates:
+* Retrieve trials from another register into the same data base and check for duplicates:
 ```R
 getCTRdata(queryterm = "cancer&recr=Open&type=Intr&age=0", register = "CTGOV")
-uniquetrialsCTRdata()
+#
+# this takes a bit of time because variable sets are merged: 
+result <- dbCTRGet(c("Recruitment", "x5_trial_status"), all.x = TRUE)
+#
+# find ids of unique trials and subset the result set to these
+ids_of_unique_trials <- dbCTRGetUniqueTrials()
+result <- subset (result, subset = `_id` %in% ids_of_unique_trials)
+#
+# now condense two variables into a new one for analysis
+tmp <- mergeVariables(result, c("Recruitment", "x5_trial_status"))
+table(tmp)
+#
+# condense two variables and in addition, condense their values into new value
+statusvalues <- list("ongoing" = c("Recruiting", "Active", "Ongoing", "Active, not recruiting", 
+                                   "Enrolling by invitation"),
+                    "completed" = c("Completed", "Prematurely Ended", "Terminated"),
+                    "other" = c("Withdrawn", "Suspended", "No longer available", "Not yet recruiting"))
+tmp <- mergeVariables(result, c("Recruitment", "x5_trial_status"), statusvalues)
+table(tmp)
+#
+# completed   ongoing     other 
+#      1059       671       115
 ```
 
 
@@ -132,9 +157,7 @@ uniquetrialsCTRdata()
  
 * An efficient, differential update mechanism will be finalised and provided, using the RSS feeds that the registers provide after executing a query. 
 
-* A function to get into one column similar information (e.g., number of trial participants) from different registers (which use different fieldnames) in the mongo database. 
-
-* More examples for analyses will be provided, with special functions to support analysing time trends of numbers and features of clinical trials. 
+* More examples for analyses will be provided in a separate document, with special functions to support analysing time trends of numbers and features of clinical trials. 
 
 * Have a look at the database contents for example using [Robomongo](http://www.robomongo.org). 
 

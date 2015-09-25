@@ -1,3 +1,9 @@
+0.2.7
+ - Added function for merging variables such as from different registers and optionally to merge values into new values
+ - Note that function findCTRkey was renamed to dbFindCTRkey because it acts on the database
+0.2.5
+ - Added function for selecting preferred language versions of trials from EUCTR
+ - Improved use of automatic proxy configuration script
 0.2.2
  - Added proxy function and improved installation of cygwin under MS Windows
 0.2
