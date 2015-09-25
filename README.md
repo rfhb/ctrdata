@@ -7,7 +7,7 @@ output:
 
 ## Aims
 
-The aims of `ctrdata` are to provide functions for retrieving, aggregating and analysing information on clinical trials from public registers, primarily the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and also ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). The registers are not known to provide an application programming interface (API) and have limited aggregation options. Development of `ctrdata` started mid 2015, first push to github.com mid September 2015, last edit 2015-09-20. 
+The aims of `ctrdata` are to provide functions for retrieving, aggregating and analysing information on clinical trials from public registers, primarily the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and also ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). The registers are not known to provide an application programming interface (API) and have limited aggregation options. Development of `ctrdata` started mid 2015, first push to github.com mid September 2015, last edit 2015-09-25 for version 0.2.7. 
 
 Key features implemented:
 
