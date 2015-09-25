@@ -87,15 +87,15 @@ getCTRQueryUrl <- function(content = clipr::read_clip()) {
 #' @param debug If \code{TRUE}, prints additional information (default is \code{FALSE}).
 #' @return Vector of first keys (fields) found (or of all keys, see above)
 #' @import rmongodb curl
-#' @export findCTRkey
+#' @export dbFindCTRkey
 #' @examples
 #' \dontrun{
-#'  findCTRkey ("other")
+#'  dbFindCTRkey ("date")
 #' }
 #'
-findCTRkey <- function(namepart = "",
-                       mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata",
-                       allmatches = FALSE, debug = FALSE, forceupdate = FALSE) {
+dbFindCTRkey <- function(namepart = "",
+                         mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata",
+                         allmatches = FALSE, debug = FALSE, forceupdate = FALSE) {
 
   # sanity checks
   if (!is.atomic(namepart)) stop("Name part should be atomic.")
@@ -195,14 +195,14 @@ mongo2df <- function(x) {
 #' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on localhost port 27017.
 #' @param ns Name of the collection in mongo database ("namespace"), defaults to "ctrdata"
 #' @return A vector with strings of keys (_id in the database) that are non-duplicate trials.
-#' @export uniquetrialsCTRdata
+#' @export dbCTRGetUniqueTrials
 #' @import rmongodb
 #' @examples
 #' \dontrun{
 #' uniqueCTRdata (mongo, "ctrdata")
 #' }
 #'
-uniquetrialsCTRdata <- function(mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata") {
+dbCTRGetUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata") {
   #
   # CTGOV: "Other IDs" has been split into the indexed array "otherids"
   listofCTGOVids <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns),
@@ -225,7 +225,8 @@ uniquetrialsCTRdata <- function(mongo = rmongodb::mongo.create(host = "localhost
   #  for this search write eudract numbers as stored in ctgov =
   #  sometimes with prefix EUDRACT- sometimes without such prefix
   listofEUCTRidsForSearch <- c(substr(listofEUCTRids, 1, 14), paste0("EUDRACT-", substr(listofEUCTRids, 1, 14)))
-  #test
+  #
+  #test:
   #listofEUCTRidsForSearch <- c("2014-004697-41","2015-002154-12", "EUDRACT-2006-000205-34")
   uniques <- sapply(listofCTGOVids, "[[", "_id")[!sapply(sapply(listofCTGOVids, "[[", "otherids"),
                                                          function(x) sum(listofEUCTRidsForSearch %in% unlist(x)))]
@@ -240,43 +241,141 @@ uniquetrialsCTRdata <- function(mongo = rmongodb::mongo.create(host = "localhost
 }
 
 
-#' Create a data frame from records that have specified fields in the data base
+#' Create a data frame from records in the data base that have specified fields in the data base
 #'
-#' @param fields Vector of strings, with names of the sought fields. (Do not use a list)
-#' @return A data frame with columns corresponding to the sought fields.
+#' @param fields Vector of strings, with names of the sought fields. (Do not use a list.)
+#' @return A data frame with columns corresponding to the sought fields. Note that a column for the record _id will always be included.
 #' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on localhost port 27017.
 #' @param ns Name of the collection in mongo database ("namespace"), defaults to "ctrdata"
+#' @param all.x If \code{TRUE}, returns one row for each record, even if \code{fields} could not be found. This is
+#' useful if the data base includes records from different registers. Default is \code{FALSE} to avoid time intensive operations.
 #' @export dbCTRGet
 #'
-dbCTRGet <- function(fields = "", mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata") {
+dbCTRGet <- function(fields = "", mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"),
+                     ns = "ctrdata", all.x = FALSE) {
+  #
   if (!is.vector(fields) | class(fields) != "character") stop("Input should just be a vector of strings of field names.")
   #
-  countall <- rmongodb::mongo.count(mongo, paste0(attr(mongo, "db"), ".", ns = "ctrdata"))
-  #
-  q <- sapply(fields, function(x) list(list('$gt' = '')))
-  f <- sapply(fields, function(x) list(2L))
-  #
-  result <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns = "ctrdata"),
-                                     query = q, fields = f, data.frame = TRUE)
-  #
-  if (countall > nrow(result)) warning(paste0(countall - nrow(result), " of ", countall,
-                                              " records dropped as one or more of the specified fields were not found."))
+  countall <- rmongodb::mongo.count(mongo, paste0(attr(mongo, "db"), ".", ns))
+
+  if (all.x) {
+    # in this case create a data frame with a row for each _id
+    #
+    # initialise output
+    result <- NULL
+    #
+    for (item in fields) {
+      #
+      q <- sapply(item, function(x) list(list('$gt' = '')))
+      f <- sapply(item, function(x) list(2L))
+      #
+      dfi <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns), query = q, fields = f, data.frame = TRUE)
+      #
+      if (is.null(result)) {
+        result <- dfi
+      } else {
+        result <- merge(result, dfi, by = '_id', all = TRUE)
+      }
+    }
+    #
+    if (countall > nrow(result)) warning(paste0(countall - nrow(result), " of ", countall,
+                                                " records dropped which did not have values for any of the specified fields."))
+    #
+  } else {
+    #
+    q <- sapply(fields, function(x) list(list('$gt' = '')))
+    f <- sapply(fields, function(x) list(2L))
+    #
+    result <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns), query = q, fields = f, data.frame = TRUE)
+    #
+    if (is.null(result)) stop('No records found which had values for all specified fields. Consider specifying all.x = TRUE.')
+    #
+    diff <- countall - nrow(result)
+    if (diff > 0) warning(diff, " of ", countall, " records dropped which did not have values for all specified fields.", immediate. = TRUE)
+    if ((diff / countall) > 0.3) message('  Consider specifying all.x = TRUE.')
+    #
+  }
   #
   return(result)
 }
 
-#' Create a data frame from all records in the data base
+
+#' Select a single trial record when there are records for different EU Member States for this trial.
 #'
-#' @return A data frame with columns corresponding to the sought fields.
-#' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on localhost port 27017.
-#' @param ns Name of the collection in mongo database ("namespace"), defaults to "ctrdata"
-#' @export dbCTRGetAll
+#' The EUCTR provides one record per trial per EU Member State in which the trial is conducted.
+#' For all trials conducted in more than one Member State, this function returns only one record
+#' per trial. A preferred Member State can be specified by the user, and a record of the trial in the
+#' preferred Member State will be returned if available. If not, an english record ("GB") or lacking this,
+#' any other available record will be returned.
 #'
-dbCTRGetAll <- function(mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata") {
+#' Note: To depuplicate trials from different registers (EUCTR and CTGOV), please first use function
+#' \code{\link{dbCTRGetUniqueTrials}}.
+#'
+#' @return A data frame as subset of \code{df} corresponding to the sought records.
+#'
+#' @param df A data frame created from the data base that includes the keys (variables) "_id" and "a2_eudract_number",
+#' for example created with function dbCTRGet(c("_id", "a2_eudract_number")).
+#' @param prefer Code of single EU Member State for which records should returned if available. (If not available,
+#' a record for GB or lacking this any other record for the trial will be returned.) For a list of codes of EU
+#' Member States, please see vector \code{countriesEUCTR}.
+#' \code{\link{countries}}
+#' @export uniqueTrialsEUCTRrecords
+#'
+uniqueTrialsEUCTRrecords <- function(df = NULL, prefer = "GB") {
   #
-  result <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns = "ctrdata"), data.frame = TRUE)
+  if (class(df) != "data.frame") stop("Parameter df is not a data frame.")
+  if (is.null(df$`_id`) || is.null(df$a2_eudract_number)) stop('Data frame does not include "_id" and "a2_eudract_number" columns.')
+  if (nrow(df) == 0) stop("Data frame does not contain records (0 rows).")
+  if (!(prefer %in% countriesEUCTR)) stop("Value specified for prefer does not match recognised codes, see countriesEUCTR.")
+
+  # count number of records by eudract number
+  tbl <- table(df$`_id`, df$a2_eudract_number)
+  tbl <- as.matrix(tbl)
+  # nms has names of all records
+  nms <- dimnames(tbl)[[1]]
+
+  # nrs has eudract numbers for which is there more than 1 record
+  nrs <- colSums(tbl)
+  nrs <- nrs[nrs > 1]
+  nrs <- names(nrs)
+
+  # nst is a list of nrs trials of a logical vector along nms
+  # that indicates if the indexed record belongs to the trial
+  nst <- lapply(nrs, function(x) substr(nms, 1, 14) %in% x)
+
+  # helper function to find the Member State version
+  removeMSversions <- function(indexofrecords){
+    # given a vector of records (nnnn-nnnnnnn-nn-MS) of a single trial, this
+    # returns all those _ids of records that do not correspond to the preferred
+    # Member State record, based on the user's choices and defaults.
+    # Function uses prefer, nms from the caller environment
+    #
+    recordnames <- nms[indexofrecords]
+    #
+    # fnd should be only a single string, may need to be checked
+    if (sum(fnd <- grepl(prefer, recordnames)) != 0) {
+      result <- recordnames[!fnd]
+      return(result)
+    }
+    if (sum(fnd <- grepl("GB", recordnames)) != 0) {
+      result <- recordnames[!fnd]
+      return(result)
+    }
+    return(recordnames[-1])
+  }
+
+  # finds per trial the desired record; uses prefer and nms
+  result <- lapply(nst, function(x) removeMSversions(x))
+  result <- unlist(result)
+
+  # eleminate the unwanted EUCTR records
+  df <- subset(df, subset = !(`_id` %in% result))
+
+  # inform user about changes to data frame
+  if (length(nms) > (tmp <- length(result))) message(tmp, ' records dropped that were not the preferred of multiple EUCTR records for a trial.')
+
+  return(df)
   #
-  return(result)
 }
 
 
@@ -440,13 +539,9 @@ findMongo <- function(mongoDirWin = "c:\\mongo\\bin\\") {
         invisible(location)
         #
       }
-      #
     }
-    #
   }
-  #
 }
-
 
 
 #' Check the version of the build of the mongo server to be used
@@ -477,4 +572,71 @@ checkMongoVersionOk <- function(mongo = rmongodb::mongo.create(host = "localhost
   }
   #
 }
+
+
+
+#' Merge related variables into a single variable, and optionally map values to a new set of values.
+#'
+#' @param df A data frame in which there are two variables (columns) to be merged into one.
+#' @param varnames A vector with names of the two variables to be merged.
+#' @param levelslist A list with one slice each for a new value to be used for a vector of old values.
+#'
+#' @return A vector of strings
+#' @export mergeVariables
+#' @examples
+#' \dontrun{
+#' statusvalues <- list("ongoing" = c("Recruiting", "Active", "Ongoing", "Active, not recruiting", "Enrolling by invitation"),
+#'                      "completed" = c("Completed", "Prematurely Ended", "Terminated"),
+#'                      "other" = c("Withdrawn", "Suspended", "No longer available", "Not yet recruiting"))
+#' mergeVariables(result, c("Recruitment", "x5_trial_status"), statusvalues)
+#' }
+#'
+mergeVariables <- function(df = NULL, varnames = "", levelslist = NULL) {
+  #
+  if (class(df) != "data.frame")   stop("Need a data frame as input.")
+  if (length(varnames)  != 2)      stop("Please provide exactly two variable names.")
+
+  # find variables in data frame and merge
+  tmp <- match(varnames, names(df))
+  tmp <- df[, tmp]
+  tmp1 <- ifelse(is.na(tt <- tmp[ ,1]), "", tt)
+  tmp2 <- ifelse(is.na(tt <- tmp[ ,2]), "", tt)
+  tmp <- paste0(tmp1, tmp2)
+
+  # inform user on levels found
+  message("Unique values found in the new variable: ", paste(unique(tmp), collapse = ", "))
+
+  if (!is.null(levelslist)) {
+
+    # check
+    if (class(levelslist) != "list") stop("Need lists for parameter levelslist.")
+
+    # helper function to collapse factor levels into the first mentioned level
+    refactor <- function(x, collapselevels, levelgroupname){
+      levels(x) [match(collapselevels, levels(x))] <- levelgroupname
+      return(x)
+    }
+
+    # convert result to factor as this is needed for helper function
+    tmp <- as.factor(tmp)
+
+    # apply helperfunction to elements of the list
+    for (i in 1:length(levelslist)) {
+      tmp <- refactor(tmp, unlist(levelslist[i]), attr(levelslist[i], "names"))
+    }
+
+    # convert factor back into string vector
+    tmp <- as.character(tmp)
+
+  }
+
+  return(tmp)
+}
+
+
+
+
+
+
+
 
