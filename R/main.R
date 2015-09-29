@@ -87,7 +87,7 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
     if (!is.null(hist)) {
       tmp <- ', '
       for (i in 1:nrow(hist)) {
-        if (queryterm != hist[i,]$`query-term`) {
+        if (queryterm != hist[i,]$`query-term` & register != hist[i,]$`query-register`) {
           # if query has been run before, do not include its history
           tmp <- paste0(tmp, '"query": {')
           tmprow <- paste0(apply(hist[i,], 1, function(x) paste0('"', names(x), '": "', x, '",')), collapse = '')
