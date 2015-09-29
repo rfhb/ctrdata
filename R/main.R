@@ -42,7 +42,7 @@
 #' @export getCTRdata
 #'
 getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE, details = TRUE, parallelretrievals = 10,
-                        mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata", debug = FALSE) {
+                       mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata", debug = FALSE) {
 
   # deal with querystring such as returned from getCTRQueryUrl()
   if (is.list(queryterm)) {
@@ -73,17 +73,44 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
   # helper function for adding query parameters and results to database
   dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber, mongo, ns){
     #
-    bson <- paste0('{"_id": "meta-info", "query-terms": "', queryterm, '", "query-register": "', register,
-                   '", "query-timestamp": ', '"', format(Sys.time(), "%Y-%m-%d-%H-%M-%S"), '"}')
+    json <- paste0('{"_id": "meta-info", ',
+                   '"query": {',
+                   '"query-timestamp": "', format(Sys.time(), "%Y-%m-%d-%H-%M-%S"), '", ',
+                   '"query-register": "', register, '", ',
+                   '"query-records": "', recordnumber, '", ',
+                   '"query-term": "', queryterm, '" ',
+                   '}')
     #
-    bson <- rmongodb::mongo.bson.from.JSON(bson)
-    #
-    #
-    # TODO retrieve existing history data and add to it
-    #
-    rmongodb::mongo.insert(mongo, paste0(attr(mongo, "db"), ".", ns), bson)
+    # retrieve existing history data
+    hist <- dbCTRQueryHistory()
+    # rewrite hist dataframe into json object
+    if (!is.null(hist)) {
+      tmp <- ', '
+      for (i in 1:nrow(hist)) {
+        if (queryterm != hist[i,]$`query-term`) {
+          # if query has been run before, do not include its history
+          tmp <- paste0(tmp, '"query": {')
+          tmprow <- paste0(apply(hist[i,], 1, function(x) paste0('"', names(x), '": "', x, '",')), collapse = '')
+          tmp <- paste0(tmp, tmprow, '},', collapse = '')
+        }
+      } # only if tmp has relevant content
+      if (nchar(tmp) > 2) {
+        tmp <- gsub(',}', '}', tmp)
+        tmp <- gsub(',$',  '', tmp)
+        json <- paste0(json, tmp)
+      }
+    }
+    # close json object
+    json <- paste0(json, '}')
+    # convert to bson
+    bson <- rmongodb::mongo.bson.from.JSON(json)
+    # insert into data base
+    rmongodb::mongo.update(mongo, paste0(attr(mongo, "db"), ".", ns),
+                           criteria = list("_id" = "meta-info"),
+                           objNew = bson, flags = rmongodb::mongo.update.upsert)
     #
   }
+  # end dbCTRUpdateQueryHistory
 
 
   ############################
@@ -112,11 +139,10 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
     # try to re-use previous query as recorded in the collection
     if (updaterecords && queryterm != "") warning("New query term specified despite updaterecords = TRUE, continuing with new query", immediate. = TRUE)
     if (updaterecords && queryterm == "") {
-      rerunquery <- rmongodb::mongo.find.one(mongo, paste0(attr(mongo, "db"), ".", ns),
-                                         query  = list('_id' = 'meta-info'),
-                                         fields = list("query-terms" = 1L, "query-timestamp" = 1L))
+      rerunquery <- dbCTRQueryHistory()
       if (is.null(rerunquery)) stop("Could not find previous query in specified collection, aborting because of updaterecords = TRUE.")
-      rerunquery <- rmongodb::mongo.bson.to.list(rerunquery)
+      # TODO allow rerunning more queries
+      rerunquery <- rerunquery[1,]
       if (rerunquery$`query-register` == "CTGOV") {
         message(paste0("Rerunning query: ", rerunquery$`query-terms` , "\nLast run: ", rerunquery$`query-timestamp`))
         queryterm <- rerunquery$`query-terms`
@@ -209,11 +235,10 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
     # try to re-use previous query as recorded in the collection
     if (updaterecords && queryterm != "") warning("New query term specified despite updaterecords = TRUE, continuing with new query", immediate. = TRUE)
     if (updaterecords && queryterm == "") {
-      rerunquery <- rmongodb::mongo.find.one(mongo, paste0(attr(mongo, "db"), ".", ns),
-                                             query  = list('_id' = 'meta-info'),
-                                             fields = list("query-terms" = 1L, "query-timestamp" = 1L))
+      rerunquery <- dbCTRQueryHistory()
       if (is.null(rerunquery)) stop("Could not find previous query in specified collection, aborting because of updaterecords = TRUE.")
-      rerunquery <- rmongodb::mongo.bson.to.list(rerunquery)
+      # TODO allow rerunning more queries
+      rerunquery <- rerunquery[1,]
       if (rerunquery$`query-register` == "EUCTR") {
         message(paste0("Rerunning query: ", rerunquery$`query-terms` , "\nLast run: ", rerunquery$`query-timestamp`))
         queryterm <- rerunquery$`query-terms`
@@ -227,12 +252,12 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
     resultsEuNumTrials <- as.numeric(gsub("[,.]", "", resultsEuNumTrials))
     resultsEuNumPages  <- ceiling(resultsEuNumTrials / 20) # this is simpler than parsing "next" or "last" links ...
     if (is.na(resultsEuNumPages) | is.na(resultsEuNumTrials)) stop("first result page empty")
-    message(paste0("Retrieved overview: ", resultsEuNumTrials, " trials from ", resultsEuNumPages, " page(s) are to be downloaded."))
+    message(paste0("Retrieved overview, ", resultsEuNumTrials, " trial(s) from ", resultsEuNumPages, " page(s) are to be downloaded."))
 
     # get data
     resultsNumBatches <- resultsEuNumPages %/% parallelretrievals
     resultsNumModulo  <- resultsEuNumPages %%  parallelretrievals
-    message(paste0("Downloading trials (from ", parallelretrievals, " page(s) in parallel):"))
+    message(paste0("Downloading trials (from a maximum of ", parallelretrievals, " page(s) in parallel):"))
     #
     for (i in 1:(resultsNumBatches + 1) ) {
       # parallel requests by using startpage:stoppage

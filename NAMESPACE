@@ -3,6 +3,7 @@
 export(checkMongoVersionOk)
 export(dbCTRGet)
 export(dbCTRGetUniqueTrials)
+export(dbCTRQueryHistory)
 export(dbFindCTRkey)
 export(findMongo)
 export(getCTRQueryUrl)

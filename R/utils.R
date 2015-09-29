@@ -256,7 +256,8 @@ dbCTRGet <- function(fields = "", mongo = rmongodb::mongo.create(host = "localho
   #
   if (!is.vector(fields) | class(fields) != "character") stop("Input should just be a vector of strings of field names.")
   #
-  countall <- rmongodb::mongo.count(mongo, paste0(attr(mongo, "db"), ".", ns))
+  countall <- rmongodb::mongo.count(mongo, paste0(attr(mongo, "db"), ".", ns),
+                                    query  = rmongodb::mongo.bson.from.JSON('{"_id":{"$ne":"meta-info"}}'))
 
   if (all.x) {
     # in this case create a data frame with a row for each _id
@@ -632,11 +633,50 @@ mergeVariables <- function(df = NULL, varnames = "", levelslist = NULL) {
 
   return(tmp)
 }
+# end mergeVariables
 
 
 
-
-
+#' Show the history of queries that were loaded into a database
+#'
+#' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on localhost port 27017.
+#' @param ns Name of the collection in mongo database ("namespace"), defaults to "ctrdata"
+#'
+#' @return A data frame with variables: timestamp, register, number of records loaded, query term
+#' @export dbCTRQueryHistory
+#'
+#' @examples
+#' \dontrun{
+#' dbCTRQueryHistory()
+#' }
+#'
+dbCTRQueryHistory <- function(mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata") {
+  #
+  tmp <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns),
+                                  query = list("_id" = "meta-info"), fields = list("query" = 1L, "_id" = 0L))
+  if (length(tmp) == 0) {
+    # no history found
+    tmp <- NULL
+    message("No query history found in data base in expected format.")
+    #
+  } else {
+    #
+    tmp <- tmp[[1]]
+    tmp <- sapply(tmp, function(x) do.call(rbind, x))
+    tmp <- t(tmp)
+    tmp <- data.frame(tmp, row.names = NULL, check.names = FALSE, stringsAsFactors = FALSE)
+    names(tmp) <- c("query-timestamp", "query-register", "query-records", "query-term")
+    # TODO: type timestampt, number of records
+  }
+  #
+  message("Total number of records: ",
+          rmongodb::mongo.count(mongo, paste0(attr(mongo, "db"), ".", ns),
+                                query  = rmongodb::mongo.bson.from.JSON('{"_id":{"$ne":"meta-info"}}')))
+  #
+  return(tmp)
+  #
+}
+# end dbCTRQueryHistory
 
 
 

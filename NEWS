@@ -1,3 +1,6 @@
+0.2.8
+ - Changed and extended how history of queries is included in database.
+ - New function dbCTRQueryHistory()
 0.2.7
  - Added function for merging variables such as from different registers and optionally to merge values into new values
  - Note that function findCTRkey was renamed to dbFindCTRkey because it acts on the database
