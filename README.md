@@ -7,7 +7,7 @@ output:
 
 ## Aims
 
-The aims of `ctrdata` are to provide functions for retrieving, aggregating and analysing information on clinical trials from public registers, primarily the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and also ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). The registers are not known to provide an application programming interface (API) and have limited aggregation options. Development of `ctrdata` started mid 2015, first push to github.com mid September 2015, last edit 2015-09-25 for version 0.2.7. 
+The aims of `ctrdata` are to provide functions for retrieving, aggregating and analysing information on clinical trials from public registers, primarily the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and also ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). The registers are not known to provide an application programming interface (API) and have limited aggregation options. Development of `ctrdata` started mid 2015, first push to github.com mid September 2015, last edit 2015-09-30 for version 0.2.8. 
 
 Key features implemented:
 
@@ -127,8 +127,13 @@ hist(result$startdate, breaks = "years", freq = TRUE, las = 1); box()
 
 * Retrieve trials from another register into the same data base and check for duplicates:
 ```R
+# get data from another register
 getCTRdata(queryterm = "cancer&recr=Open&type=Intr&age=0", register = "CTGOV")
 #
+# data from which queries were downloaded into the database? 
+dbCTRQueryHistory()
+# 
+# get two columns from the database from different registers - 
 # this takes a bit of time because variable sets are merged: 
 result <- dbCTRGet(c("Recruitment", "x5_trial_status"), all.x = TRUE)
 #
@@ -142,7 +147,7 @@ table(tmp)
 #
 # condense two variables and in addition, condense their values into new value
 statusvalues <- list("ongoing" = c("Recruiting", "Active", "Ongoing", "Active, not recruiting", 
-                                   "Enrolling by invitation"),
+                                   "Enrolling by invitation", "Restarted"),
                     "completed" = c("Completed", "Prematurely Ended", "Terminated"),
                     "other" = c("Withdrawn", "Suspended", "No longer available", "Not yet recruiting"))
 tmp <- mergeVariables(result, c("Recruitment", "x5_trial_status"), statusvalues)
