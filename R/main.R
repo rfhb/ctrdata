@@ -70,6 +70,22 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
   # remove trailing or leading whitespace
   queryterm <- gsub("^\\s+|\\s+$", "", queryterm)
 
+  # helper function for adding query parameters and results to database
+  dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber, mongo, ns){
+    #
+    bson <- paste0('{"_id": "meta-info", "query-terms": "', queryterm, '", "query-register": "', register,
+                   '", "query-timestamp": ', '"', format(Sys.time(), "%Y-%m-%d-%H-%M-%S"), '"}')
+    #
+    bson <- rmongodb::mongo.bson.from.JSON(bson)
+    #
+    #
+    # TODO retrieve existing history data and add to it
+    #
+    rmongodb::mongo.insert(mongo, paste0(attr(mongo, "db"), ".", ns), bson)
+    #
+  }
+
+
   ############################
 
   if ("CTGOV" %in% register) {
@@ -157,17 +173,14 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
 
     # find out number of trials imported into database
     imported <- as.integer(gsub(".*imported ([0-9]+) document.*", "\\1", imported[length(imported)])) - 1
+    if (!is.numeric(imported) || imported == 0) stop("Import has apparently failed, returned ", imported)
     message(paste0("Done - imported or updated ", imported, " trial(s)."))
 
     # clean up temporary directory
     if (!debug) unlink(tempDir, recursive = TRUE)
 
     # add query parameters to database
-    # document query in database
-    bson <- paste0('{"_id": "meta-info", "query-terms": "', queryterm, '", "query-register": "', register,
-                   '", "query-timestamp": ', '"', format(Sys.time(), "%Y-%m-%d-%H-%M-%S"), '"}')
-    bson <- rmongodb::mongo.bson.from.JSON(bson)
-    rmongodb::mongo.insert(mongo, paste0(attr(mongo, "db"), ".", ns), bson)
+    dbCTRUpdateQueryHistory(register = register, queryterm = queryterm, recordnumber = imported, mongo = mongo, ns = ns)
 
     # update keys database
     dbFindCTRkey(forceupdate = TRUE, mongo = mongo, ns = ns)
@@ -274,17 +287,14 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
 
     # find out number of trials imported into database
     imported <- as.integer(gsub(".*imported ([0-9]+) document.*", "\\1", imported[length(imported)]))
+    if (!is.numeric(imported) || imported == 0) stop("Import has apparently failed, returned ", imported)
     message(paste0("Done - imported or updated ", imported, " records on ", resultsEuNumTrials, " trial(s)."))
 
     # clean up temporary directory
     if (!debug) unlink(tempDir, recursive = TRUE)
 
     # add query parameters to database
-    # document query in database
-    bson <- paste0('{"_id": "meta-info", "query-terms": "', queryterm, '", "query-register": "', register,
-                   '", "query-timestamp": ', '"', format(Sys.time(), "%Y-%m-%d-%H-%M-%S"), '"}')
-    bson <- rmongodb::mongo.bson.from.JSON(bson)
-    rmongodb::mongo.insert(mongo, paste0(attr(mongo, "db"), ".", ns), bson)
+    dbCTRUpdateQueryHistory(register = register, queryterm = queryterm, recordnumber = imported, mongo = mongo, ns = ns)
 
     # update keys database
     dbFindCTRkey(forceupdate = TRUE, mongo = mongo, ns = ns)
