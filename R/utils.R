@@ -112,8 +112,9 @@ dbFindCTRkey <- function(namepart = "",
   if (forceupdate || length(mongo.get.database.collections(mongo, db = "varietyResults")) == 0L ||
       length(grepl(paste0(ns, "Keys"), mongo.get.database.collections(mongo, db = "varietyResults"))) == 0L) {
     #
-    if (!grepl("localhost", attr(mongo, "host"))) warning("variety.js may fail with certain remote servers (for example when the host or port ",
-                                                          "is different per database, such as with a free mongolab plan).", immediate. = TRUE)
+    if (!grepl("localhost", attr(mongo, "host")))
+      warning("variety.js may fail with certain remote servers (for example when the host or port ",
+              "is different per database, such as with a free mongolab plan).", immediate. = TRUE)
     #
     # check if extension is available (system.file under MS Windows does not end with slash) ...
     varietylocalurl <- paste0(system.file("", package = "ctrdata"), "/exec/variety.js")
