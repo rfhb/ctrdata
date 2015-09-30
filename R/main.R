@@ -82,7 +82,7 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
                    '}')
     #
     # retrieve existing history data
-    hist <- dbCTRQueryHistory()
+    hist <- dbCTRQueryHistory(mongo = mongo, ns = ns)
     # rewrite hist dataframe into json object
     if (!is.null(hist)) {
       tmp <- ', '
@@ -139,7 +139,7 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
     # try to re-use previous query as recorded in the collection
     if (updaterecords && queryterm != "") warning("New query term specified despite updaterecords = TRUE, continuing with new query", immediate. = TRUE)
     if (updaterecords && queryterm == "") {
-      rerunquery <- dbCTRQueryHistory()
+      rerunquery <- dbCTRQueryHistory(mongo = mongo, ns = ns)
       if (is.null(rerunquery)) stop("Could not find previous query in specified collection, aborting because of updaterecords = TRUE.")
       # TODO allow rerunning more queries
       rerunquery <- rerunquery[1,]
@@ -235,7 +235,7 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
     # try to re-use previous query as recorded in the collection
     if (updaterecords && queryterm != "") warning("New query term specified despite updaterecords = TRUE, continuing with new query", immediate. = TRUE)
     if (updaterecords && queryterm == "") {
-      rerunquery <- dbCTRQueryHistory()
+      rerunquery <- dbCTRQueryHistory(mongo = mongo, ns = ns)
       if (is.null(rerunquery)) stop("Could not find previous query in specified collection, aborting because of updaterecords = TRUE.")
       # TODO allow rerunning more queries
       rerunquery <- rerunquery[1,]
