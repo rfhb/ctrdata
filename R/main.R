@@ -70,6 +70,8 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
   # remove trailing or leading whitespace
   queryterm <- gsub("^\\s+|\\s+$", "", queryterm)
 
+  ############################
+
   # helper function for adding query parameters and results to database
   dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber, mongo, ns){
     #
@@ -105,18 +107,15 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
     # convert to bson
     bson <- rmongodb::mongo.bson.from.JSON(json)
     # insert into data base
-    rmongodb::mongo.update(mongo, paste0(attr(mongo, "db"), ".", ns),
-                           criteria = list("_id" = "meta-info"),
+    rmongodb::mongo.update(mongo, paste0(attr(mongo, "db"), ".", ns), criteria = list("_id" = "meta-info"),
                            objNew = bson, flags = rmongodb::mongo.update.upsert)
     #
   }
   # end dbCTRUpdateQueryHistory
 
-
   ############################
 
   if ("CTGOV" %in% register) {
-    #stop("CTGOV query is not yet implemented.")
 
     # create empty temporary directory on localhost for
     # download from register into temporary directy
@@ -124,9 +123,10 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
     dir.create(tempDir)
 
     # CTGOV standard identifiers
-    queryUSRoot  <- "https://clinicaltrials.gov/"
-    queryUSType1 <- "ct2/results/download?term="
-    queryUSPost  <- "&down_stds=all&down_typ=fields&down_flds=all&down_fmt=csv&show_down=Y"
+    queryUSRoot    <- "https://clinicaltrials.gov/"
+    queryUSType1   <- "ct2/results/download?term="
+    queryUSPostCSV <- "&down_stds=all&down_typ=fields&down_flds=all&down_fmt=csv&show_down=Y"
+    queryUSPostXML <- "&down_stds=all&down_typ=study&down_flds=shown&down_fmt=xml&show_down=Y"
 
     # CTGOV field names - use NCT for mongodb index
     fieldsCTGOV  <- c("Rank","NCT Number","Title","Recruitment","Study Results","Conditions","Interventions","Sponsor/Collaborators",
@@ -139,48 +139,72 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
     # try to re-use previous query as recorded in the collection
     if (updaterecords && queryterm != "") warning("New query term specified despite updaterecords = TRUE, continuing with new query", immediate. = TRUE)
     if (updaterecords && queryterm == "") {
+      #
       rerunquery <- dbCTRQueryHistory(mongo = mongo, ns = ns)
       if (is.null(rerunquery)) stop("Could not find previous query in specified collection, aborting because of updaterecords = TRUE.")
       # TODO allow rerunning more queries
       rerunquery <- rerunquery[1,]
+      #
       if (rerunquery$`query-register` == "CTGOV") {
         message(paste0("Rerunning query: ", rerunquery$`query-terms` , "\nLast run: ", rerunquery$`query-timestamp`))
         queryterm <- rerunquery$`query-terms`
       }
     }
 
-    # get results
-    message(paste0("Downloading trials from CTGOV ..."))
-    h <- curl::new_handle()
-    curl::handle_setopt(h, ssl_verifypeer = FALSE)
-    curl::curl_download(paste0(queryUSRoot, queryUSType1, queryterm, queryUSPost), paste0(tempDir, "/ctgov.zip"), mode = "wb", handle = h)
-    unzip(paste0(tempDir, "/ctgov.zip"), exdir = tempDir)
-    resultsCTGOV <- paste0(tempDir, "/study_fields.csv")
+    #### START csv
+    if (!details) {
 
-    # call to import in csv format (not possible from within R)
-    ctgov2mongo <- paste0('mongoimport --host="', attr(mongo, "host"), '" --db="', attr(mongo, "db"), '" --collection="', ns, '"',
-                          ifelse(attr(mongo, "username") != "", paste0(' --username="', attr(mongo, "username"), '"'), ''),
-                          ifelse(attr(mongo, "password") != "", paste0(' --password="', attr(mongo, "password"), '"'), ''),
-                          ' --fieldFile="', paste0(tempDir, '/field_names.txt"'),
-                          ' --upsert --type=csv --file="', resultsCTGOV, '"')
-    #
-    if (.Platform$OS.type == "windows") {
-      #
-      ctgov2mongo <- paste0(mongoBinaryLocation, ctgov2mongo)
-      #
-    } else {
-      #
-      # mongoimport does not return exit value, hence redirect stderr to stdout
-      ctgov2mongo <- paste(ctgov2mongo, '2>&1')
-      #
-    }
-    #
-    message(paste0("Importing CTGOV CSV into mongoDB ..."))
-    if (debug) message(ctgov2mongo)
-    imported <- system(ctgov2mongo, intern = TRUE)
+      # get result files
+      message(paste0("Downloading trials from CTGOV as csv ..."))
+      h <- curl::new_handle()
+      curl::handle_setopt(h, ssl_verifypeer = FALSE)
+      curl::curl_download(paste0(queryUSRoot, queryUSType1, queryterm, queryUSPostCSV), paste0(tempDir, "/ctgov.zip"), mode = "wb", handle = h)
+      unzip(paste0(tempDir, "/ctgov.zip"), exdir = tempDir)
+      resultsCTGOV <- paste0(tempDir, "/study_fields.csv")
 
-    # remove document that was the headerline in the imported file
-    rmongodb::mongo.remove(mongo, paste0(attr(mongo, "db"), ".", ns), list("_id" = "NCT Number"))
+      # call to import in csv format (not possible from within R)
+      ctgov2mongo <- paste0('mongoimport --host="', attr(mongo, "host"), '" --db="', attr(mongo, "db"), '" --collection="', ns, '"',
+                            ifelse(attr(mongo, "username") != "", paste0(' --username="', attr(mongo, "username"), '"'), ''),
+                            ifelse(attr(mongo, "password") != "", paste0(' --password="', attr(mongo, "password"), '"'), ''),
+                            ' --fieldFile="', paste0(tempDir, '/field_names.txt"'),
+                            ' --upsert --type=csv --file="', resultsCTGOV, '"')
+      #
+      if (.Platform$OS.type == "windows") {
+        #
+        ctgov2mongo <- paste0(mongoBinaryLocation, ctgov2mongo)
+        #
+      } else {
+        #
+        # mongoimport does not return exit value, hence redirect stderr to stdout
+        ctgov2mongo <- paste(ctgov2mongo, '2>&1')
+        #
+      }
+      #
+      message(paste0("Importing CTGOV CSV into mongoDB ..."))
+      if (debug) message(ctgov2mongo)
+      imported <- system(ctgov2mongo, intern = TRUE)
+
+      # remove document that was the headerline in the imported file
+      rmongodb::mongo.remove(mongo, paste0(attr(mongo, "db"), ".", ns), list("_id" = "NCT Number"))
+
+    } #### END csv
+
+
+    #### START xml
+    if (details) {
+
+      # get results
+
+      # unzip into folder
+
+      # transform xml into json
+
+      # concat jsons and modify elements (? _id, ...) possible with external script
+
+      # call to import
+
+    } #### END xml
+
 
     # split otherids into new array for later perusal
     cursor <- rmongodb::mongo.find(mongo, paste0(attr(mongo, "db"), ".", ns),
@@ -236,9 +260,11 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
     if (updaterecords && queryterm != "") warning("New query term specified despite updaterecords = TRUE, continuing with new query", immediate. = TRUE)
     if (updaterecords && queryterm == "") {
       rerunquery <- dbCTRQueryHistory(mongo = mongo, ns = ns)
+      #
       if (is.null(rerunquery)) stop("Could not find previous query in specified collection, aborting because of updaterecords = TRUE.")
       # TODO allow rerunning more queries
       rerunquery <- rerunquery[1,]
+      #
       if (rerunquery$`query-register` == "EUCTR") {
         message(paste0("Rerunning query: ", rerunquery$`query-terms` , "\nLast run: ", rerunquery$`query-timestamp`))
         queryterm <- rerunquery$`query-terms`
