@@ -105,7 +105,7 @@ dbFindCTRkey <- function(namepart = "",
   # check program availability
   if (.Platform$OS.type == "windows") {
     findMongo()
-    if (is.na(mongoBinaryLocation)) stop("Not starting findCTRkey because mongo was not found.")
+    if (is.na(mongoBinaryLocation)) stop("Not starting findCTRkey because mongo binary was not found.")
   }
 
   # check if database with variety results exists or should be forced to be updated
@@ -425,7 +425,8 @@ installCygwin <- function(overwrite = FALSE, proxy = ""){
         proxypac <- proxypac[grepl('PROXY', proxypac)]
         proxypac <- proxypac[length(proxypac)]
         proxy <- sub('.* PROXY ([0-9]+.[0-9]+.[0-9]+.[0-9]+:[0-9]+).*', '\\1', proxypac)
-        if (proxy == '') stop('A proxy could not be identified from the automatic configuration script used by the system. Please set manually a proxy = "host_or_ip:port"')
+        if (proxy == '') stop('A proxy could not be identified from the automatic configuration script used by the system.',
+                              ' Please set manually a proxy = "host_or_ip:port"')
       } else {
         proxy <- paste0('--proxy ', tmp$ProxyServer)
       }
@@ -433,13 +434,13 @@ installCygwin <- function(overwrite = FALSE, proxy = ""){
   }
   #
   # compose installation command
-  installcmd <- "--no-admin --quiet-mode --verbose --site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages perl"
+  installcmd <- "--no-admin --quiet-mode --verbose --site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages perl php"
   #
   # first change to temporary directory, then execute command
   system(paste0(dstfile, " ", installcmd, " --local-package-dir ", tmpfile, ' ', proxy))
   #
   # test cygwin installation
-  ctrdata::testCygwin()
+  testCygwin()
   #
 }
 
@@ -456,15 +457,15 @@ testCygwin <- function() {
   if (.Platform$OS.type != "windows") stop("This function is only for MS Windows operating systems.")
   #
   tmpcygwin <- system("cmd.exe /c c:\\cygwin\\bin\\env", intern = TRUE)
+  # TODO check for packages perl and php installed?
   #
   if (length(tmpcygwin) > 5) {
     message("cygwin seems to be working correctly.")
+    invisible(TRUE)
   } else {
     warning("cygwin does not seem to be installed correctly.")
+    invisible(FALSE)
   }
-  #
-  invisible(tmpcygwin)
-  #
 }
 
 
