@@ -65,7 +65,11 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
   if (.Platform$OS.type == "windows") {
     findMongo()
     if (is.na(mongoBinaryLocation)) stop("Not starting getCTRdata because mongoimport was not found.")
+    testCygwin()
   }
+
+  # check program version as acceptable json format changed from 2.x to 3.x
+  checkMongoVersionOk()
 
   # remove trailing or leading whitespace
   queryterm <- gsub("^\\s+|\\s+$", "", queryterm)
@@ -154,7 +158,7 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
     #### START csv
     if (!details) {
 
-      # get result files
+      # get result file and unzip into folder, identify import file
       message(paste0("Downloading trials from CTGOV as csv ..."))
       h <- curl::new_handle()
       curl::handle_setopt(h, ssl_verifypeer = FALSE)
@@ -187,36 +191,84 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
       # remove document that was the headerline in the imported file
       rmongodb::mongo.remove(mongo, paste0(attr(mongo, "db"), ".", ns), list("_id" = "NCT Number"))
 
+      # split otherids into new array for later perusal
+      cursor <- rmongodb::mongo.find(mongo, paste0(attr(mongo, "db"), ".", ns),
+                                     query = list('Other IDs' = list('$gt' = '')), fields = list("Other IDs" = 1L))
+      while (rmongodb::mongo.cursor.next(cursor)) {
+        # get other ids
+        oids <- unlist(strsplit(rmongodb::mongo.bson.to.list(rmongodb::mongo.cursor.value(cursor))[[2]], "[|]"))
+        # update record with additional field
+        rmongodb::mongo.update(mongo, paste0(attr(mongo, "db"), ".", ns), criteria = rmongodb::mongo.cursor.value(cursor),
+                               objNew = list('$set' = list("otherids" = oids)))
+      } # cleanup
+      rmongodb::mongo.cursor.destroy(cursor)
+
     } #### END csv
 
 
     #### START xml
     if (details) {
 
-      # get results
+      # get result file and unzip into folder
+      message(paste0("Downloading trials from CTGOV as xml ..."))
+      h <- curl::new_handle()
+      curl::handle_setopt(h, ssl_verifypeer = FALSE)
+      curl::curl_download(paste0(queryUSRoot, queryUSType1, queryterm, queryUSPostXML), paste0(tempDir, "/ctgov.zip"), mode = "wb", handle = h)
+      unzip(paste0(tempDir, "/ctgov.zip"), exdir = tempDir)
 
-      # unzip into folder
+      # compose commands - transform xml into json, a single allfiles.json in the temporaray directory
+      xml2json <- system.file("exec/xml2json.php", package = "ctrdata", mustWork = TRUE)
+      xml2json <- paste0('php -n -f ', xml2json, ' ', tempDir)
+      json2mongo <- paste0('mongoimport --host="', attr(mongo, "host"), '" --db="', attr(mongo, "db"), '" --collection="', ns, '"',
+                           ifelse(attr(mongo, "username") != "", paste0(' --username="', attr(mongo, "username"), '"'), ''),
+                           ifelse(attr(mongo, "password") != "", paste0(' --password="', attr(mongo, "password"), '"'), ''),
+                           ' --upsert --type=json --file="', tempDir, '/allfiles.json"',
+                           ifelse(checkMongoVersionOk(), '', ' --jsonArray'))
 
-      # transform xml into json
+      if (.Platform$OS.type == "windows") {
+        # xml2json requires cygwin's php. transform paths for cygwin use:
+        xml2json <- gsub("\\\\", "/", xml2json)
+        xml2json <- gsub("([A-Z]):/", "/cygdrive/\\1/", xml2json)
+        xml2json <- paste0('cmd.exe /c c:\\cygwin\\bin\\bash.exe --login -c "', xml2json, '"')
+        #
+        json2mongo <- paste0(mongoBinaryLocation, json2mongo)
+        #
+      } else {
+        #
+        # mongoimport does not return exit value, hence redirect stderr to stdout
+        json2mongo <- paste(json2mongo, '2>&1')
+        #
+      }
+      #
+      # run transformation
+      message(paste0("Converting to JSON ..."))
+      if (debug) message(xml2json)
+      imported <- system(xml2json, intern = TRUE)
 
-      # concat jsons and modify elements (? _id, ...) possible with external script
+      # run import
+      message(paste0("Importing JSON into mongoDB ..."))
+      if (debug) message(json2mongo)
+      imported <- system(json2mongo, intern = TRUE)
 
-      # call to import
+      # split otherids into new array for later perusal
+      #"id_info" : {
+      #  "org_study_id" : "DAIT ITN027AI",
+      #  "nct_id" : "NCT00129259"
+      #},
+
+      # # the following code is from the CSV part and either CSV and functions need to be adapted (dbCTRGetUniqueTrials)
+      # cursor <- rmongodb::mongo.find(mongo, paste0(attr(mongo, "db"), ".", ns),
+      #                                query = list('Other IDs' = list('$gt' = '')), fields = list("Other IDs" = 1L))
+      # while (rmongodb::mongo.cursor.next(cursor)) {
+      #   # get other ids
+      #   oids <- unlist(strsplit(rmongodb::mongo.bson.to.list(rmongodb::mongo.cursor.value(cursor))[[2]], "[|]"))
+      #   # update record with additional field
+      #   rmongodb::mongo.update(mongo, paste0(attr(mongo, "db"), ".", ns), criteria = rmongodb::mongo.cursor.value(cursor),
+      #                          objNew = list('$set' = list("otherids" = oids)))
+      # } # cleanup
+      # rmongodb::mongo.cursor.destroy(cursor)
 
     } #### END xml
-
-
-    # split otherids into new array for later perusal
-    cursor <- rmongodb::mongo.find(mongo, paste0(attr(mongo, "db"), ".", ns),
-                                   query = list('Other IDs' = list('$gt' = '')), fields = list("Other IDs" = 1L))
-    while (rmongodb::mongo.cursor.next(cursor)) {
-      # get other ids
-      oids <- unlist(strsplit(rmongodb::mongo.bson.to.list(rmongodb::mongo.cursor.value(cursor))[[2]], "[|]"))
-      # update record with additional field
-      rmongodb::mongo.update(mongo, paste0(attr(mongo, "db"), ".", ns), criteria = rmongodb::mongo.cursor.value(cursor),
-                             objNew = list('$set' = list("otherids" = oids)))
-    } # cleanup
-    rmongodb::mongo.cursor.destroy(cursor)
 
     # add index on otherids for later queries
     rmongodb::mongo.index.create(mongo, paste0(attr(mongo, "db"), ".", ns), key = list("otherids" = 1L))
@@ -240,9 +292,6 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
   ############################
 
   if ("EUCTR" %in% register) {
-
-    # check program version as acceptable json format changed from 2.x to 3.x
-    checkMongoVersionOk()
 
     # create empty temporary directory on localhost for
     # download from register into temporary directy
@@ -311,7 +360,7 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
     #
     if (.Platform$OS.type == "windows") {
       #
-      # euctr2json requires cygwin. transform paths for cygwin use, for testing:
+      # euctr2json requires cygwin's perl, sed. transform paths for cygwin use, for testing:
       # euctr2json <- 'C:/Programme/R/R-3.2.2/library/ctrdata/exec/euctr2json.sh C:\\Temp\\RtmpUpg0Dt\\ctrDATAb83435686'
       euctr2json <- gsub("\\\\", "/", euctr2json)
       euctr2json <- gsub("([A-Z]):/", "/cygdrive/\\1/", euctr2json)
