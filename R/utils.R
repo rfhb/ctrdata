@@ -207,7 +207,7 @@ dbCTRGetUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "localhos
   #
   # CTGOV: "Other IDs" has been split into the indexed array "otherids"
   listofCTGOVids <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns),
-                                             query  = list('_id' = list('$regex' = 'NCT.*')),
+                                             query  = list('_id' = list('$regex' = 'NCT[0-9]{8}')),
                                              fields = list("otherids" = 1L))
   #
   # EUCTR / EudraCT number is "_id" for EUCTR records
