@@ -193,7 +193,8 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
 
       # split otherids into new array for later perusal
       cursor <- rmongodb::mongo.find(mongo, paste0(attr(mongo, "db"), ".", ns),
-                                     query = list('Other IDs' = list('$gt' = '')), fields = list("Other IDs" = 1L))
+                                     query  = list('_id' = list('$regex' = 'NCT[0-9]{8}'), 'Other IDs' = 1L),
+                                     fields = list("Other IDs" = 1L))
       while (rmongodb::mongo.cursor.next(cursor)) {
         # get other ids
         oids <- unlist(strsplit(rmongodb::mongo.bson.to.list(rmongodb::mongo.cursor.value(cursor))[[2]], "[|]"))
@@ -251,22 +252,19 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
       imported <- system(json2mongo, intern = TRUE)
 
       # split otherids into new array for later perusal
-      #"id_info" : {
-      #  "org_study_id" : "DAIT ITN027AI",
-      #  "nct_id" : "NCT00129259"
-      #},
-
-      # # the following code is from the CSV part and either CSV and functions need to be adapted (dbCTRGetUniqueTrials)
-      # cursor <- rmongodb::mongo.find(mongo, paste0(attr(mongo, "db"), ".", ns),
-      #                                query = list('Other IDs' = list('$gt' = '')), fields = list("Other IDs" = 1L))
-      # while (rmongodb::mongo.cursor.next(cursor)) {
-      #   # get other ids
-      #   oids <- unlist(strsplit(rmongodb::mongo.bson.to.list(rmongodb::mongo.cursor.value(cursor))[[2]], "[|]"))
-      #   # update record with additional field
-      #   rmongodb::mongo.update(mongo, paste0(attr(mongo, "db"), ".", ns), criteria = rmongodb::mongo.cursor.value(cursor),
-      #                          objNew = list('$set' = list("otherids" = oids)))
-      # } # cleanup
-      # rmongodb::mongo.cursor.destroy(cursor)
+      cursor <- rmongodb::mongo.find(mongo, paste0(attr(mongo, "db"), ".", ns),
+                                     query  = list('_id' = list('$regex' = 'NCT[0-9]{8}'), 'id_info' = 1L),
+                                     fields = list("id_info" = 1L))
+      while (rmongodb::mongo.cursor.next(cursor)) {
+        if (!is.null(tmp)) {
+          # get other ids into vector
+          oids <- as.character(unlist(rmongodb::mongo.bson.to.list(rmongodb::mongo.cursor.value(cursor))[[2]]))
+          # update record with additional field
+          rmongodb::mongo.update(mongo, paste0(attr(mongo, "db"), ".", ns), criteria = rmongodb::mongo.cursor.value(cursor),
+                                 objNew = list('$set' = list("otherids" = oids)))
+        }
+      } # cleanup
+      rmongodb::mongo.cursor.destroy(cursor)
 
     } #### END xml
 
