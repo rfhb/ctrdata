@@ -8,8 +8,9 @@
 #'
 #' @param queryterm Part of the URL of a search in a register. The queryterms is recorded in the collection for later use to update records.
 #' @param register Vector of abbreviations of registers to query, defaults to "EUCTR"
-#' @param details If \code{TRUE}, retrieve full protocol-related information from EUCTR (rather slow), if \code{FALSE} retrieve only summary information (no country-specific information). Default is \code{TRUE}.
-#' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on localhost port 27017.
+#' @param details If \code{TRUE}, retrieve full protocol-related information from EUCTR (rather slow), if \code{FALSE} retrieve only summary
+#' information (no country-specific information). Default is \code{TRUE}.
+#' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on 127.0.0.1 port 27017.
 #' @param ns Name of the collection in mongo database ("namespace"), defaults to "ctrdata"
 #' @param updaterecords Re-run last query for this collection. This parameter takes precedence over \code{queryterm}.
 #' @param parallelretrievals Number of parallel downloads of information from the register
@@ -42,7 +43,7 @@
 #' @export getCTRdata
 #'
 getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE, details = TRUE, parallelretrievals = 10,
-                       mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata", debug = FALSE) {
+                       mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"), ns = "ctrdata", debug = FALSE) {
 
   # deal with querystring such as returned from getCTRQueryUrl()
   if (is.list(queryterm)) {

@@ -94,7 +94,7 @@ getCTRQueryUrl <- function(content = clipr::read_clip()) {
 #' }
 #'
 dbFindCTRkey <- function(namepart = "",
-                         mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata",
+                         mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"), ns = "ctrdata",
                          allmatches = FALSE, debug = FALSE, forceupdate = FALSE) {
 
   # sanity checks
@@ -112,7 +112,7 @@ dbFindCTRkey <- function(namepart = "",
   if (forceupdate || length(mongo.get.database.collections(mongo, db = "varietyResults")) == 0L ||
       length(grepl(paste0(ns, "Keys"), mongo.get.database.collections(mongo, db = "varietyResults"))) == 0L) {
     #
-    if (!grepl("localhost", attr(mongo, "host")))
+    if (!grepl("127.0.0.1", attr(mongo, "host")))
       warning("variety.js may fail with certain remote servers (for example when the host or port ",
               "is different per database, such as with a free mongolab plan).", immediate. = TRUE)
     #
@@ -193,7 +193,7 @@ mongo2df <- function(x) {
 #' In case a record for a clinical trial is found from more than one register, the record from EUCTR is returned. The function currently
 #' relies on CTGOV recording other identifiers such as the EudraCT number in the field "Other IDs".
 #'
-#' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on localhost port 27017.
+#' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on 127.0.0.1 port 27017.
 #' @param ns Name of the collection in mongo database ("namespace"), defaults to "ctrdata"
 #' @return A vector with strings of keys (_id in the database) that are non-duplicate trials.
 #' @export dbCTRGetUniqueTrials
@@ -203,36 +203,37 @@ mongo2df <- function(x) {
 #' uniqueCTRdata (mongo, "ctrdata")
 #' }
 #'
-dbCTRGetUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata") {
+dbCTRGetUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"), ns = "ctrdata") {
   #
   # CTGOV: "Other IDs" has been split into the indexed array "otherids"
   listofCTGOVids <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns),
                                              query  = list('_id' = list('$regex' = 'NCT[0-9]{8}')),
-                                             fields = list("otherids" = 1L))
-  #
+                                             fields = list('otherids' = 1L, '_id' = 1L))
+  listofCTGOVotherids <- as.character(unlist(listofCTGOVotherids))
+
   # EUCTR / EudraCT number is "_id" for EUCTR records
   listofEUCTRids <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns = "ctrdata"),
                                              query  = list('_id' = list('$regex' = '[0-9]{4}-[0-9]{6}-[0-9]{2}-[A-Z]{2}')),
-                                             fields = list("_id" = 1L))
+                                             fields = list('_id' = 1L))
   listofEUCTRids <- sapply(listofEUCTRids, "[[", "_id")
-  #
-  # search for eudract numbers among otherids, by euctr _ids
-  #  for this search write eudract numbers as stored in ctgov
-  #  for this search make all otherids into atomic vector of strings
-  #dupes <- paste0("EUDRACT-", substr(listofEUCTRids, 1, 14)) %in% unlist(sapply(listofCTGOVids, "[[", "otherids"))
-  #uniques <- c(listofEUCTRids[!dupes], unlist(sapply(listofCTGOVids, "[[", "_id")))
-  #
+
   # search for eudract numbers among otherids, by ctgov _ids
   #  for this search write eudract numbers as stored in ctgov =
   #  sometimes with prefix EUDRACT- sometimes without such prefix
   listofEUCTRidsForSearch <- c(substr(listofEUCTRids, 1, 14), paste0("EUDRACT-", substr(listofEUCTRids, 1, 14)))
-  #
-  #test:
-  #listofEUCTRidsForSearch <- c("2014-004697-41","2015-002154-12", "EUDRACT-2006-000205-34")
+  #test: listofEUCTRidsForSearch <- c("2014-004697-41","2015-002154-12", "EUDRACT-2006-000205-34")
+
   uniques <- sapply(listofCTGOVids, "[[", "_id")[!sapply(sapply(listofCTGOVids, "[[", "otherids"),
                                                          function(x) sum(listofEUCTRidsForSearch %in% unlist(x)))]
   uniques <- c(listofEUCTRids, uniques)
-  #
+
+  # TODO
+  # search for ctgov numbers among otherids, by ctgov _ids
+  dupes <- listofCTGOVids %in% unlist(sapply(listofCTGOVids, "[[", "otherids"))
+
+  #uniques <- c(listofEUCTRids[!dupes], unlist(sapply(listofCTGOVids, "[[", "_id")))
+
+
   countall <- length(listofCTGOVids) + length(listofEUCTRids)
   #
   message(paste0("Total ", countall - length(uniques), " duplicate(s) found, returning keys (_id) of ", countall, " records."))
@@ -246,13 +247,13 @@ dbCTRGetUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "localhos
 #'
 #' @param fields Vector of strings, with names of the sought fields. (Do not use a list.)
 #' @return A data frame with columns corresponding to the sought fields. Note that a column for the record _id will always be included.
-#' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on localhost port 27017.
+#' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on 127.0.0.1 port 27017.
 #' @param ns Name of the collection in mongo database ("namespace"), defaults to "ctrdata"
 #' @param all.x If \code{TRUE}, returns one row for each record, even if \code{fields} could not be found. This is
 #' useful if the data base includes records from different registers. Default is \code{FALSE} to avoid time intensive operations.
 #' @export dbCTRGet
 #'
-dbCTRGet <- function(fields = "", mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"),
+dbCTRGet <- function(fields = "", mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"),
                      ns = "ctrdata", all.x = FALSE) {
   #
   if (!is.vector(fields) | class(fields) != "character") stop("Input should just be a vector of strings of field names.")
@@ -551,12 +552,12 @@ findMongo <- function(mongoDirWin = "c:\\mongo\\bin\\") {
 #'
 #' In addition to the returned value, the function will generate a warning message if applicable.
 #'
-#' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on localhost port 27017.
+#' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on 127.0.0.1 port 27017.
 #'
 #' @return A logical value indicating if the mongodb version is acceptable for use with this package.
 #' @export checkMongoVersionOk
 #'
-checkMongoVersionOk <- function(mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users")) {
+checkMongoVersionOk <- function(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users")) {
   #
   result <- rmongodb::mongo.command(mongo, attr(mongo, "db"), list("buildInfo" = 1L))
   result <- rmongodb::mongo.bson.to.Robject(result)
@@ -641,7 +642,7 @@ mergeVariables <- function(df = NULL, varnames = "", levelslist = NULL) {
 
 #' Show the history of queries that were loaded into a database
 #'
-#' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on localhost port 27017.
+#' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on 127.0.0.1 port 27017.
 #' @param ns Name of the collection in mongo database ("namespace"), defaults to "ctrdata"
 #'
 #' @return A data frame with variables: timestamp, register, number of records loaded, query term
@@ -652,7 +653,7 @@ mergeVariables <- function(df = NULL, varnames = "", levelslist = NULL) {
 #' dbCTRQueryHistory()
 #' }
 #'
-dbCTRQueryHistory <- function(mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"), ns = "ctrdata") {
+dbCTRQueryHistory <- function(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"), ns = "ctrdata") {
   #
   tmp <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns),
                                   query = list("_id" = "meta-info"), fields = list("query" = 1L, "_id" = 0L))
