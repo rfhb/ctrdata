@@ -16,8 +16,10 @@ getCTRdata(queryterm = "", register = "EUCTR", updaterecords = FALSE,
 
 \item{updaterecords}{Re-run last query for this collection. This parameter takes precedence over \code{queryterm}.}
 
-\item{details}{If \code{TRUE}, retrieve full protocol-related information from EUCTR (rather slow), if \code{FALSE} retrieve only summary
-information (no country-specific information). Default is \code{TRUE}.}
+\item{details}{If \code{TRUE} (default), retrieve full protocol-related information from EUCTR or XML data from CTGOV, depending on the
+register selected. This gives all of the available details for the trials. Alternatively, set to \code{FALSE} to retrieve only summary
+information from EUCTR or CSV data from CTGOV. The full EUCTR information includes separate records for every country in which the trial
+is opened; use function \code{uniqueTrialsEUCTRrecords} in a subsequent step to limit to one record from EUCTR per trial.}
 
 \item{parallelretrievals}{Number of parallel downloads of information from the register}
 

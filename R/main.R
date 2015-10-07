@@ -8,8 +8,10 @@
 #'
 #' @param queryterm Part of the URL of a search in a register. The queryterms is recorded in the collection for later use to update records.
 #' @param register Vector of abbreviations of registers to query, defaults to "EUCTR"
-#' @param details If \code{TRUE}, retrieve full protocol-related information from EUCTR (rather slow), if \code{FALSE} retrieve only summary
-#' information (no country-specific information). Default is \code{TRUE}.
+#' @param details If \code{TRUE} (default), retrieve full protocol-related information from EUCTR or XML data from CTGOV, depending on the
+#' register selected. This gives all of the available details for the trials. Alternatively, set to \code{FALSE} to retrieve only summary
+#' information from EUCTR or CSV data from CTGOV. The full EUCTR information includes separate records for every country in which the trial
+#' is opened; use function \code{uniqueTrialsEUCTRrecords} in a subsequent step to limit to one record from EUCTR per trial.
 #' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on 127.0.0.1 port 27017.
 #' @param ns Name of the collection in mongo database ("namespace"), defaults to "ctrdata"
 #' @param updaterecords Re-run last query for this collection. This parameter takes precedence over \code{queryterm}.
