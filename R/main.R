@@ -255,20 +255,21 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
       if (debug) message(json2mongo)
       imported <- system(json2mongo, intern = TRUE)
 
+      # TODO: "secondary_id" in CTGOV example not yet covered
       # split otherids into new array for later perusal
       cursor <- rmongodb::mongo.find(mongo, paste0(attr(mongo, "db"), ".", ns),
-                                     query  = list('_id' = list('$regex' = 'NCT[0-9]{8}'), 'id_info' = 1L),
-                                     fields = list("id_info" = 1L))
+                                     query  = list('_id' = list('$regex' = 'NCT[0-9]{8}')),
+                                     fields = list('id_info' = 1L, '_id' = 0L))
       while (rmongodb::mongo.cursor.next(cursor)) {
-        if (!is.null(tmp)) {
-          # get other ids into vector
-          oids <- as.character(unlist(rmongodb::mongo.bson.to.list(rmongodb::mongo.cursor.value(cursor))[[2]]))
-          # update record with additional field
-          rmongodb::mongo.update(mongo, paste0(attr(mongo, "db"), ".", ns), criteria = rmongodb::mongo.cursor.value(cursor),
-                                 objNew = list('$set' = list("otherids" = oids)))
-        }
+        # get all other ids into vector except id_info$nct_id
+        oids <- rmongodb::mongo.bson.to.list(rmongodb::mongo.cursor.value(cursor))
+        oids <- as.character(c(oids$id_info$org_study_id, oids$id_info$secondary_id))
+        # update record with additional field
+        rmongodb::mongo.update(mongo, paste0(attr(mongo, "db"), ".", ns), criteria = rmongodb::mongo.cursor.value(cursor),
+                               objNew = list('$set' = list("otherids" = oids)))
       } # cleanup
       rmongodb::mongo.cursor.destroy(cursor)
+      message('Added index field "otherids".')
 
     } #### END xml
 
