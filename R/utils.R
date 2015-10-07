@@ -226,34 +226,37 @@ dbCTRGetUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "127.0.0.
   listofCTGOVids <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns),
                                              query  = list('_id' = list('$regex' = 'NCT[0-9]{8}')),
                                              fields = list('otherids' = 1L, '_id' = 1L))
-  listofCTGOVotherids <- as.character(unlist(listofCTGOVotherids))
 
   # EUCTR / EudraCT number is "_id" for EUCTR records
   listofEUCTRids <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns = "ctrdata"),
                                              query  = list('_id' = list('$regex' = '[0-9]{4}-[0-9]{6}-[0-9]{2}-[A-Z]{2}')),
                                              fields = list('_id' = 1L))
-  listofEUCTRids <- sapply(listofEUCTRids, "[[", "_id")
 
-  # search for eudract numbers among otherids, by ctgov _ids
-  #  for this search write eudract numbers as stored in ctgov =
-  #  sometimes with prefix EUDRACT- sometimes without such prefix
+  # 1. search for eudract numbers among otherids, by ctgov _ids
+  # for this search, write eudract numbers as stored in ctgov =
+  # sometimes with prefix EUDRACT-, sometimes without such prefix
+  listofEUCTRids <- sapply(listofEUCTRids, "[[", "_id")
   listofEUCTRidsForSearch <- c(substr(listofEUCTRids, 1, 14), paste0("EUDRACT-", substr(listofEUCTRids, 1, 14)))
   #test: listofEUCTRidsForSearch <- c("2014-004697-41","2015-002154-12", "EUDRACT-2006-000205-34")
 
+  # find CTGOV _ids with respective otherids NOT being one of the EUCTR numbers in database
   uniques <- sapply(listofCTGOVids, "[[", "_id")[!sapply(sapply(listofCTGOVids, "[[", "otherids"),
                                                          function(x) sum(listofEUCTRidsForSearch %in% unlist(x)))]
+  # add found records to vector of unique _ids
   uniques <- c(listofEUCTRids, uniques)
+  message("Searched for EUCTR identifiers in second id fields of CTGOV records.")
 
-  # TODO
-  # search for ctgov numbers among otherids, by ctgov _ids
-  dupes <- listofCTGOVids %in% unlist(sapply(listofCTGOVids, "[[", "otherids"))
+  # 2. search for ctgov numbers among otherids, by ctgov _ids
+  dupes <- sapply(listofCTGOVids, "[[", "_id") %in% unlist(sapply(listofCTGOVids, "[[", "otherids"))
+  message("Searched for CTGOV identifiers in second id fields of CTGOV records.")
+  # there may be circular references for records _id1 -> otherid2, _id2 -> otherid1
+  # these are currently unresolved and require more work to be found. for now just flag:
+  if (sum(dupes) > 0) warning('Please manually check "_id" and "otherids", because more than one record found for CTGOV trial(s): \n',
+                              listofCTGOVids[dupes])
 
-  #uniques <- c(listofEUCTRids[!dupes], unlist(sapply(listofCTGOVids, "[[", "_id")))
-
-
+  # prepare output
   countall <- length(listofCTGOVids) + length(listofEUCTRids)
-  #
-  message(paste0("Total ", countall - length(uniques), " duplicate(s) found, returning keys (_id) of ", countall, " records."))
+  message(paste0("Total ", countall - length(uniques), " duplicate(s) found, returning keys (_id) of ", length(uniques), " records."))
   #
   return(uniques)
   #
