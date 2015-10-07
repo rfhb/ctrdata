@@ -177,36 +177,37 @@ dbFindCTRkey <- function(namepart = "",
 }
 
 
-#' Convert a mongo query result object into a data frame
-#'
-#' @param x A result of object of a mongo query
-#' @return A data frame with the data that was stored in the input object
-#' @import rmongodb
-#' @export mongo2df
-#'
-mongo2df <- function(x) {
-  xclass <- class(x)
-  #
-  if (xclass == "mongo.bson") {
-    tmp <- rmongodb::mongo.bson.to.list(x)
-    df <- data.frame(do.call(rbind, tmp))
-    df <- df[2:nrow(df), ]
-    return(df)
-  }
-  if (xclass == "mongo.cursor") {
-    df <- rmongodb::mongo.cursor.to.data.frame(x)
-    return(df)
-  }
-  # other type of object
-  warning("Could not use input, not a bson or mongo cursor.")
-  return(NULL)
-}
+# Convert a mongo query result object into a data frame
+#
+# @param x A result of object of a mongo query
+# @return A data frame with the data that was stored in the input object
+# @import rmongodb
+# @export mongo2df
+#
+# mongo2df <- function(x) {
+#   xclass <- class(x)
+#   #
+#   if (xclass == "mongo.bson") {
+#     tmp <- rmongodb::mongo.bson.to.list(x)
+#     df <- data.frame(do.call(rbind, tmp))
+#     df <- df[2:nrow(df), ]
+#     return(df)
+#   }
+#   if (xclass == "mongo.cursor") {
+#     df <- rmongodb::mongo.cursor.to.data.frame(x)
+#     return(df)
+#   }
+#   # other type of object
+#   warning("Could not use input, not a bson or mongo cursor.")
+#   return(NULL)
+# }
 
 
 
-#' This function checks for duplicates in the database based on the clinical trial identifier and returns a list of ids of unique trials.
+#' This function checks for duplicate records of clinical trialss in the database based on the clinical trial identifier,
+#' and it returns a list of ids of unique trials.
 #'
-#' In case a record for a clinical trial is found from more than one register, the record from EUCTR is returned. The function currently
+#' If records for a clinical trial are found from more than one register, the record from EUCTR is returned. The function currently
 #' relies on CTGOV recording other identifiers such as the EudraCT number in the field "Other IDs".
 #'
 #' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on 127.0.0.1 port 27017.
