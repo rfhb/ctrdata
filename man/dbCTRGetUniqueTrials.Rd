@@ -4,11 +4,11 @@
 \alias{dbCTRGetUniqueTrials}
 \title{This function checks for duplicates in the database based on the clinical trial identifier and returns a list of ids of unique trials.}
 \usage{
-dbCTRGetUniqueTrials(mongo = rmongodb::mongo.create(host = "localhost:27017",
+dbCTRGetUniqueTrials(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017",
   db = "users"), ns = "ctrdata")
 }
 \arguments{
-\item{mongo}{(\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on localhost port 27017.}
+\item{mongo}{(\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on 127.0.0.1 port 27017.}
 
 \item{ns}{Name of the collection in mongo database ("namespace"), defaults to "ctrdata"}
 }
@@ -16,7 +16,7 @@ dbCTRGetUniqueTrials(mongo = rmongodb::mongo.create(host = "localhost:27017",
 A vector with strings of keys (_id in the database) that are non-duplicate trials.
 }
 \description{
-In case a record for a clinical trial is found from more than one register, the record from EUCTR is returned. The function currently
+If records for a clinical trial are found from more than one register, the record from EUCTR is returned. The function currently
 relies on CTGOV recording other identifiers such as the EudraCT number in the field "Other IDs".
 }
 \examples{

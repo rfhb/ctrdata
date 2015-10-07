@@ -5,7 +5,7 @@
 \title{Find names of keys (fields) in the data base}
 \usage{
 dbFindCTRkey(namepart = "", mongo = rmongodb::mongo.create(host =
-  "localhost:27017", db = "users"), ns = "ctrdata", allmatches = FALSE,
+  "127.0.0.1:27017", db = "users"), ns = "ctrdata", allmatches = FALSE,
   debug = FALSE, forceupdate = FALSE)
 }
 \arguments{

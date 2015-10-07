@@ -5,12 +5,12 @@
 \title{Create a data frame from records in the data base that have specified fields in the data base}
 \usage{
 dbCTRGet(fields = "", mongo = rmongodb::mongo.create(host =
-  "localhost:27017", db = "users"), ns = "ctrdata", all.x = FALSE)
+  "127.0.0.1:27017", db = "users"), ns = "ctrdata", all.x = FALSE)
 }
 \arguments{
 \item{fields}{Vector of strings, with names of the sought fields. (Do not use a list.)}
 
-\item{mongo}{(\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on localhost port 27017.}
+\item{mongo}{(\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on 127.0.0.1 port 27017.}
 
 \item{ns}{Name of the collection in mongo database ("namespace"), defaults to "ctrdata"}
 

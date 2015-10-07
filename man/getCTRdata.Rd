@@ -6,7 +6,7 @@
 \usage{
 getCTRdata(queryterm = "", register = "EUCTR", updaterecords = FALSE,
   details = TRUE, parallelretrievals = 10,
-  mongo = rmongodb::mongo.create(host = "localhost:27017", db = "users"),
+  mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"),
   ns = "ctrdata", debug = FALSE)
 }
 \arguments{
@@ -16,11 +16,12 @@ getCTRdata(queryterm = "", register = "EUCTR", updaterecords = FALSE,
 
 \item{updaterecords}{Re-run last query for this collection. This parameter takes precedence over \code{queryterm}.}
 
-\item{details}{If \code{TRUE}, retrieve full protocol-related information from EUCTR (rather slow), if \code{FALSE} retrieve only summary information (no country-specific information). Default is \code{TRUE}.}
+\item{details}{If \code{TRUE}, retrieve full protocol-related information from EUCTR (rather slow), if \code{FALSE} retrieve only summary
+information (no country-specific information). Default is \code{TRUE}.}
 
 \item{parallelretrievals}{Number of parallel downloads of information from the register}
 
-\item{mongo}{(\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on localhost port 27017.}
+\item{mongo}{(\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on 127.0.0.1 port 27017.}
 
 \item{ns}{Name of the collection in mongo database ("namespace"), defaults to "ctrdata"}
 

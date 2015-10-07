@@ -4,11 +4,11 @@
 \alias{checkMongoVersionOk}
 \title{Check the version of the build of the mongo server to be used}
 \usage{
-checkMongoVersionOk(mongo = rmongodb::mongo.create(host = "localhost:27017",
+checkMongoVersionOk(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017",
   db = "users"))
 }
 \arguments{
-\item{mongo}{(\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on localhost port 27017.}
+\item{mongo}{(\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on 127.0.0.1 port 27017.}
 }
 \value{
 A logical value indicating if the mongodb version is acceptable for use with this package.
