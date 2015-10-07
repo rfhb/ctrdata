@@ -280,44 +280,64 @@ dbCTRGet <- function(fields = "", mongo = rmongodb::mongo.create(host = "127.0.0
   #
   countall <- rmongodb::mongo.count(mongo, paste0(attr(mongo, "db"), ".", ns),
                                     query  = rmongodb::mongo.bson.from.JSON('{"_id":{"$ne":"meta-info"}}'))
-
-  if (all.x) {
-    # in this case create a data frame with a row for each _id
+  #
+  # initialise output
+  result <- NULL
+  #
+  # helper function
+  fieldIsArray <- function(fieldsearched) {
+    tmp <- mongo.find.all(mongo, paste0("varietyResults.", ns, "Keys"),
+                          query  = rmongodb::mongo.bson.from.JSON(paste0('{"_id.key": "', fieldsearched, '"}')),
+                          fields = rmongodb::mongo.bson.from.JSON('{"_id": 0, "value.types": 1, "value.types": {"$slice": 1}}'))
+    tmp <- unlist(tmp)
+    return(ifelse(tmp == "Array", TRUE, FALSE))
+  }
+  #
+  for (item in fields) {
+    # for testing:
+    # item <- "primary_outcome.measure"
+    part1 <- sub("(.*)[.].*", "\\1", item)
     #
-    # initialise output
-    result <- NULL
-    #
-    for (item in fields) {
-      #
-      q <- sapply(item, function(x) list(list('$gt' = '')))
-      f <- sapply(item, function(x) list(2L))
-      #
-      dfi <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns), query = q, fields = f, data.frame = TRUE)
-      #
-      if (is.null(result)) {
-        result <- dfi
-      } else {
-        result <- merge(result, dfi, by = '_id', all = TRUE)
-      }
+    if (fieldIsArray(part1)) {
+      tmp <- try({
+        dfi <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), '.', ns), data.frame = TRUE,
+                                        query  = rmongodb::mongo.bson.from.JSON(paste0('{"_id": {"$ne": "meta-info"}, "', item, '": {"$gt": ""}}')),
+                                        fields = rmongodb::mongo.bson.from.JSON(paste0('{"_id": 1, "', part1, '": {"$slice": 1}, "', item, '": 1}')))
+      }, silent = FALSE)
+    } else {
+      tmp <- try({
+        dfi <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), '.', ns), data.frame = TRUE,
+                                        query  = rmongodb::mongo.bson.from.JSON(paste0('{"_id": {"$ne": "meta-info"}, "', item, '": {"$gt": ""}}')),
+                                        fields = rmongodb::mongo.bson.from.JSON(paste0('{"_id": 1, "', item, '": 1}')))
+      }, silent = FALSE)
     }
     #
-    if (countall > nrow(result)) warning(paste0(countall - nrow(result), " of ", countall,
-                                                " records dropped which did not have values for any of the specified fields."))
-    #
-  } else {
-    #
-    q <- sapply(fields, function(x) list(list('$gt' = '')))
-    f <- sapply(fields, function(x) list(2L))
-    #
-    result <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns), query = q, fields = f, data.frame = TRUE)
-    #
-    if (is.null(result)) stop('No records found which had values for all specified fields. Consider specifying all.x = TRUE.')
-    #
-    diff <- countall - nrow(result)
-    if (diff > 0) warning(diff, " of ", countall, " records dropped which did not have values for all specified fields.", immediate. = TRUE)
-    if ((diff / countall) > 0.3) message('  Consider specifying all.x = TRUE.')
-    #
-  }
+    if (class(tmp) != "try-error") {
+
+      if (all.x) {
+        # in this case create a data frame
+        # with a row for each _id
+        if (is.null(result)) {
+          result <- dfi
+        } else {
+          result <- merge(result, dfi, by = '_id', all = TRUE)
+        }
+      } else {#all.x = FALSE
+        result <- dfi
+      }
+
+    } else {# try-error occured
+      warning(paste0("For variable: ", item, " no data could be extracted, please check the contents of the database."))
+    }
+  } # end for item in fields
+
+  # finalise output
+  if (is.null(result)) stop(paste0('No records found which had values for the specified fields.',
+                                   ifelse(all.x, '', 'Consider specifying all.x = TRUE.')))
+  # some results were obtained
+  diff <- countall - nrow(result)
+  if (diff > 0) warning(paste0(diff, " of ", countall, " records dropped which did not have values for the specified fields. "))
+  if ((diff / countall) > 0.3 & !all.x) message('Consider specifying "all.x = TRUE".')
   #
   return(result)
 }
