@@ -16,12 +16,13 @@ countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", 
 #' Open advanced search pages of register(s) in default web browser.
 #'
 #' @param register Register(s) to open. Either "EUCTR" or "CTGOV" or a vector of both. Default is to open both registers' advanced search pages.
-#' @param copyright If set to \code{TRUE}, opens copyright pages of register.
+#' @param copyright (Optional) If set to \code{TRUE}, opens copyright pages of register.
+#' @param queryterm (Optional) Show results of search for \code{queryterm} in browser.
 #' @param ... Any additional parameter to use with browseURL, which is called by this function.
 #' @export openCTRWebBrowser
 #' @return Is always true, invisibly.
 #'
-openCTRWebBrowser <- function(register = c("EUCTR", "CTGOV"), copyright = FALSE, ...) {
+openCTRWebBrowser <- function(register = c("EUCTR", "CTGOV"), copyright = FALSE, queryterm = "", ...) {
   #
   if (copyright == TRUE) {
     if ("CTGOV" %in% register) browseURL("https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use", ...)
@@ -29,6 +30,21 @@ openCTRWebBrowser <- function(register = c("EUCTR", "CTGOV"), copyright = FALSE,
   } else {
     if ("CTGOV" %in% register) browseURL("https://clinicaltrials.gov/ct2/search/advanced", ...)
     if ("EUCTR" %in% register) browseURL("https://www.clinicaltrialsregister.eu/ctr-search/search", ...)
+  }
+  #
+  # deal with queryterm such as returned from getCTRQueryUrl()
+  if (is.list(queryterm)) {
+    #
+    tmp <- queryterm
+    #
+    queryterm <- tmp$queryterm
+    register  <- tmp$register
+    #
+  }
+  #
+  if (queryterm != "") {
+    if ("CTGOV" %in% register) browseURL(paste0("https://clinicaltrials.gov/ct2/results?term=", queryterm), ...)
+    if ("EUCTR" %in% register) browseURL(paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=", queryterm), ...)
   }
   #
   invisible(TRUE)
