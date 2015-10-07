@@ -4,12 +4,15 @@
 \alias{openCTRWebBrowser}
 \title{Open advanced search pages of register(s) in default web browser.}
 \usage{
-openCTRWebBrowser(register = c("EUCTR", "CTGOV"), copyright = FALSE, ...)
+openCTRWebBrowser(register = c("EUCTR", "CTGOV"), copyright = FALSE,
+  queryterm = "", ...)
 }
 \arguments{
 \item{register}{Register(s) to open. Either "EUCTR" or "CTGOV" or a vector of both. Default is to open both registers' advanced search pages.}
 
-\item{copyright}{If set to \code{TRUE}, opens copyright pages of register.}
+\item{copyright}{(Optional) If set to \code{TRUE}, opens copyright pages of register.}
+
+\item{queryterm}{(Optional) Show results of search for \code{queryterm} in browser.}
 
 \item{...}{Any additional parameter to use with browseURL, which is called by this function.}
 }

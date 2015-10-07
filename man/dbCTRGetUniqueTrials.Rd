@@ -2,7 +2,8 @@
 % Please edit documentation in R/utils.R
 \name{dbCTRGetUniqueTrials}
 \alias{dbCTRGetUniqueTrials}
-\title{This function checks for duplicates in the database based on the clinical trial identifier and returns a list of ids of unique trials.}
+\title{This function checks for duplicate records of clinical trialss in the database based on the clinical trial identifier,
+and it returns a list of ids of unique trials.}
 \usage{
 dbCTRGetUniqueTrials(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017",
   db = "users"), ns = "ctrdata")
