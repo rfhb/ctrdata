@@ -7,7 +7,7 @@ output:
 
 ## Aims
 
-The aims of `ctrdata` are to provide functions for retrieving, aggregating and analysing information on clinical trials from public registers, primarily the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and also ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). The registers are not known to provide an application programming interface (API) and have limited aggregation options. Development of `ctrdata` started mid 2015, first push to github.com mid September 2015, last edit 2015-09-30 for version 0.2.8. 
+The aims of `ctrdata` are to provide functions primarily for retrieving information from public registers on clinical trials, and functions for aggregating and analysing information are also included. This is for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and also for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). The registers are not known to provide an application programming interface (API) and have limited aggregation options. Development of `ctrdata` started mid 2015, first push to github.com mid September 2015, last edit 2015-10 for version 0.3. 
 
 Key features implemented:
 
@@ -21,7 +21,7 @@ Key features implemented:
 
 * Unique (de-duplicated) clinical trial records are identified, as the database may well hold information from more than one register. 
   
-* Records in a database will be updated by a simple query command. 
+* Records in a database can be updated by a simple query command. 
 
 * In the background, `exec/euctr2json.sh` is a special script that transforms EUCTR plain text files to json format. 
 
@@ -39,11 +39,11 @@ devtools::install_github("rfhb/ctrdata")
 
 Other requirements:
 
-* A local [mongodb](https://www.mongodb.org/) version 3 installation. From this installation, `mongoimport` and `mongo` required. Note that Ubuntu seems to ship mongodb version 2.x, not the required version 3. Please follow installation instruction [here for Ubuntu 15, same as for Debian](http://docs.mongodb.org/manual/tutorial/install-mongodb-on-debian/#install-mongodb) and here for [Ubuntu 14 and earlier](http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/#install-mongodb).   
+* A local [mongodb](https://www.mongodb.org/) version 3 installation. From this installation, binaries `mongoimport` and `mongo` required. Note that Ubuntu seems to ship mongodb version 2.x, not the required version 3. Please follow installation instruction [here for Ubuntu 15, same as for Debian](http://docs.mongodb.org/manual/tutorial/install-mongodb-on-debian/#install-mongodb) and here for [Ubuntu 14 and earlier](http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/#install-mongodb).   
 
-* In the future, an installation of [node.js](https://nodejs.org/en/download/) will be required, and [xml2json](https://github.com/parmentf/xml2json) for node.js will be installed automatically by `ctrdata` (using `npm install -g xml2json-command`). 
+* Command line tools `perl`, `sed`, `cat` and `php` (5.2 or higher). 
 
-Additional requirements on MS Windows, only:
+To satisfy requirements for MS Windows, the recommendation is:
 
 * An installation of [cygwin](https://cygwin.com/install.html). 
 
@@ -51,7 +51,7 @@ In R, simply run `ctrdata::installCygwin()` for an automated installation.
 
 For manual instalation, cygwin can be installed without administrator credentials as explained [here](https://cygwin.com/faq/faq.html#faq.setup.noroot). In the graphical interface of the cygwin installer, type `perl` in the `Select packages` field and click on `Perl () Default` so that this changes to `Perl () Install`, as also shown [here](http://slu.livejournal.com/17395.html). 
 
-Note that Rtools is *not* required for `ctrdata` on MS Windows. 
+`Rtools` is *not* required for `ctrdata` on MS Windows. 
 
 
 ## Example workflow
@@ -84,11 +84,12 @@ q <- getCTRQueryUrl()
 getCTRdata(q)
 # if no parameters are given for a database connection: uses mongodb
 # on localhost, port 27017, database "users", collection "ctrdata"
+# note: when run for first time, may download variety.js
 ```
 
 * Find names of fields of interest in database:
 ```R
-dbFindCTRkey("sites")   # note: when run for first time, will download variety.js
+dbFindCTRkey("sites")   # note: when run for first time, may download variety.js
 dbFindCTRkey("n_date")
 dbFindCTRkey("number_of_subjects", allmatches = TRUE)
 dbFindCTRkey("time", allmatches = TRUE)
@@ -133,16 +134,18 @@ getCTRdata(queryterm = "cancer&recr=Open&type=Intr&age=0", register = "CTGOV")
 # data from which queries were downloaded into the database? 
 dbCTRQueryHistory()
 # 
-# get two columns from the database from different registers - 
-# this takes a bit of time because variable sets are merged: 
-result <- dbCTRGet(c("Recruitment", "x5_trial_status"), all.x = TRUE)
+# get columns from the database from different registers
+# this takes some time because variables are merged sequentially
+dbFindCTRkey("status", allmatches = TRUE)
+result <- dbCTRGet(c("overall_status", "x5_trial_status", "a2_eudract_number"))
 #
 # find ids of unique trials and subset the result set to these
 ids_of_unique_trials <- dbCTRGetUniqueTrials()
 result <- subset (result, subset = `_id` %in% ids_of_unique_trials)
+result <- uniqueTrialsEUCTRrecords(result)
 #
 # now condense two variables into a new one for analysis
-tmp <- mergeVariables(result, c("Recruitment", "x5_trial_status"))
+tmp <- mergeVariables(result, c("overall_status", "x5_trial_status"))
 table(tmp)
 #
 # condense two variables and in addition, condense their values into new value
@@ -150,7 +153,7 @@ statusvalues <- list("ongoing" = c("Recruiting", "Active", "Ongoing", "Active, n
                                    "Enrolling by invitation", "Restarted"),
                     "completed" = c("Completed", "Prematurely Ended", "Terminated"),
                     "other" = c("Withdrawn", "Suspended", "No longer available", "Not yet recruiting"))
-tmp <- mergeVariables(result, c("Recruitment", "x5_trial_status"), statusvalues)
+tmp <- mergeVariables(result, c("overall_status", "x5_trial_status"), statusvalues)
 table(tmp)
 #
 # completed   ongoing     other 
@@ -178,13 +181,11 @@ table(tmp)
 
 ## Issues
 
-* Information from CTGOV is currently downloaded as CSV and this does not include all public information. A new implementation is in the works based on the XML provided by the register. 
-
 * By design, each record from EUCTR when using `details = TRUE` (the default) represents information on the trial concerning the respective member state. This is necessary for some analyses, but not for others. 
 
 * So far, no attempts are made to harmonise and map field names between different registers, such as by using standardised identifiers. 
 
-* So far, no efforts were made to type data base fields; they are all strings (`2L` in mongo). 
+* So far, no efforts were made to type data base fields; they are all strings. 
 
 * Package `ctrdata` is expected to work on Linux, Mac OS X and MS Windows systems, if installation requirements (above) are met.  
 
