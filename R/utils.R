@@ -672,6 +672,10 @@ mergeVariables <- function(df = NULL, varnames = "", levelslist = NULL) {
 #'
 dbCTRQueryHistory <- function(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"), ns = "ctrdata") {
   #
+  message("Total number of records: ",
+          rmongodb::mongo.count(mongo, paste0(attr(mongo, "db"), ".", ns),
+                                query  = rmongodb::mongo.bson.from.JSON('{"_id":{"$ne":"meta-info"}}')))
+  #
   tmp <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns),
                                   query = list("_id" = "meta-info"), fields = list("query" = 1L, "_id" = 0L))
   if (length(tmp) == 0) {
@@ -686,12 +690,9 @@ dbCTRQueryHistory <- function(mongo = rmongodb::mongo.create(host = "127.0.0.1:2
     tmp <- t(tmp)
     tmp <- data.frame(tmp, row.names = NULL, check.names = FALSE, stringsAsFactors = FALSE)
     names(tmp) <- c("query-timestamp", "query-register", "query-records", "query-term")
+    message("Number of queries in history: ", nrow(tmp))
     # TODO: type timestampt, number of records
   }
-  #
-  message("Total number of records: ",
-          rmongodb::mongo.count(mongo, paste0(attr(mongo, "db"), ".", ns),
-                                query  = rmongodb::mongo.bson.from.JSON('{"_id":{"$ne":"meta-info"}}')))
   #
   return(tmp)
   #
