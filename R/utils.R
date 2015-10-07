@@ -390,9 +390,11 @@ uniqueTrialsEUCTRrecords <- function(df = NULL, prefer = "GB") {
 
   # eleminate the unwanted EUCTR records
   df <- subset(df, subset = !(`_id` %in% result))
+  # also eliminate the meta-info record
+  df <- subset(df, subset = !(`_id` == "meta-info"))
 
   # inform user about changes to data frame
-  if (length(nms) > (tmp <- length(result))) message(tmp, ' records dropped that were not the preferred of multiple EUCTR records for a trial.')
+  if (length(nms) > (tmp <- length(result))) message(tmp, ' EUCTR records dropped that were not the preferred of multiple records for the trial.')
 
   return(df)
   #
