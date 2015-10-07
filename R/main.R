@@ -45,7 +45,7 @@
 getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE, details = TRUE, parallelretrievals = 10,
                        mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"), ns = "ctrdata", debug = FALSE) {
 
-  # deal with querystring such as returned from getCTRQueryUrl()
+  # deal with queryterm such as returned from getCTRQueryUrl()
   if (is.list(queryterm)) {
     #
     tmp <- queryterm
@@ -100,7 +100,8 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
           tmprow <- paste0(apply(hist[i,], 1, function(x) paste0('"', names(x), '": "', x, '",')), collapse = '')
           tmp <- paste0(tmp, tmprow, '},', collapse = '')
         }
-      } # only if tmp has relevant content
+      }
+      # only if tmp has relevant content
       if (nchar(tmp) > 2) {
         tmp <- gsub(',}', '}', tmp)
         tmp <- gsub(',$',  '', tmp)
@@ -114,6 +115,8 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
     # insert into data base
     rmongodb::mongo.update(mongo, paste0(attr(mongo, "db"), ".", ns), criteria = list("_id" = "meta-info"),
                            objNew = bson, flags = rmongodb::mongo.update.upsert)
+    #
+    message("Added query to history.")
     #
   }
   # end dbCTRUpdateQueryHistory
