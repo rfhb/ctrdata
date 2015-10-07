@@ -269,12 +269,10 @@ dbCTRGetUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "127.0.0.
 #' @return A data frame with columns corresponding to the sought fields. Note that a column for the record _id will always be included.
 #' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on 127.0.0.1 port 27017.
 #' @param ns Name of the collection in mongo database ("namespace"), defaults to "ctrdata"
-#' @param all.x If \code{TRUE}, returns one row for each record, even if \code{fields} could not be found. This is
-#' useful if the data base includes records from different registers. Default is \code{FALSE} to avoid time intensive operations.
+#' useful if the data base includes records from different registers.
 #' @export dbCTRGet
 #'
-dbCTRGet <- function(fields = "", mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"),
-                     ns = "ctrdata", all.x = FALSE) {
+dbCTRGet <- function(fields = "", mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"), ns = "ctrdata") {
   #
   if (!is.vector(fields) | class(fields) != "character") stop("Input should just be a vector of strings of field names.")
   #
@@ -290,40 +288,34 @@ dbCTRGet <- function(fields = "", mongo = rmongodb::mongo.create(host = "127.0.0
                           query  = rmongodb::mongo.bson.from.JSON(paste0('{"_id.key": "', fieldsearched, '"}')),
                           fields = rmongodb::mongo.bson.from.JSON('{"_id": 0, "value.types": 1, "value.types": {"$slice": 1}}'))
     tmp <- unlist(tmp)
-    return(ifelse(tmp == "Array", TRUE, FALSE))
+    return(ifelse(!is.null(tmp) && tmp == "Array", TRUE, FALSE))
   }
   #
   for (item in fields) {
-    # for testing:
-    # item <- "primary_outcome.measure"
+    #
+    query <- paste0('{"_id": {"$ne": "meta-info"}, "', item, '": {"$gt": ""}}')
     part1 <- sub("(.*)[.].*", "\\1", item)
     #
     if (fieldIsArray(part1)) {
       tmp <- try({
         dfi <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), '.', ns), data.frame = TRUE,
-                                        query  = rmongodb::mongo.bson.from.JSON(paste0('{"_id": {"$ne": "meta-info"}, "', item, '": {"$gt": ""}}')),
+                                        query  = rmongodb::mongo.bson.from.JSON(query),
                                         fields = rmongodb::mongo.bson.from.JSON(paste0('{"_id": 1, "', part1, '": {"$slice": 1}, "', item, '": 1}')))
       }, silent = FALSE)
     } else {
       tmp <- try({
         dfi <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), '.', ns), data.frame = TRUE,
-                                        query  = rmongodb::mongo.bson.from.JSON(paste0('{"_id": {"$ne": "meta-info"}, "', item, '": {"$gt": ""}}')),
+                                        query  = rmongodb::mongo.bson.from.JSON(query),
                                         fields = rmongodb::mongo.bson.from.JSON(paste0('{"_id": 1, "', item, '": 1}')))
       }, silent = FALSE)
     }
     #
     if (class(tmp) != "try-error") {
 
-      if (all.x) {
-        # in this case create a data frame
-        # with a row for each _id
-        if (is.null(result)) {
-          result <- dfi
-        } else {
-          result <- merge(result, dfi, by = '_id', all = TRUE)
-        }
-      } else {#all.x = FALSE
+      if (is.null(result)) {
         result <- dfi
+      } else {
+        result <- merge(result, dfi, by = '_id', all = TRUE)
       }
 
     } else {# try-error occured
@@ -332,12 +324,10 @@ dbCTRGet <- function(fields = "", mongo = rmongodb::mongo.create(host = "127.0.0
   } # end for item in fields
 
   # finalise output
-  if (is.null(result)) stop(paste0('No records found which had values for the specified fields.',
-                                   ifelse(all.x, '', 'Consider specifying all.x = TRUE.')))
+  if (is.null(result)) stop('No records found which had values for the specified fields.')
   # some results were obtained
   diff <- countall - nrow(result)
-  if (diff > 0) warning(paste0(diff, " of ", countall, " records dropped which did not have values for the specified fields. "))
-  if ((diff / countall) > 0.3 & !all.x) message('Consider specifying "all.x = TRUE".')
+  if (diff > 0) warning(paste0(diff, " of ", countall, " records dropped which did not have values for any of the specified fields."))
   #
   return(result)
 }
