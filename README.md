@@ -97,7 +97,7 @@ ctrOpenSearchPagesInBrowser(copyright = TRUE)
 ```R
 q <- ctrGetQueryUrlFromBrowser()
 # Found search query from EUCTR.
-# [1] "cancer&age=children&status=completed"
+# [1] "cancer&age=children&status=ongoing"
 ```
 
 * Retrieve protocol-related information, transform, save to database:
@@ -106,6 +106,9 @@ ctrLoadQueryIntoDb(q)
 # if no parameters are given for a database connection: uses mongodb
 # on localhost, port 27017, database "users", collection "ctrdata"
 # note: when run for first time, may download variety.js
+#
+# show which queries have been imported into the database so far
+ctrQueryHistoryInDb()
 ```
 
 * Find names of fields of interest in database:
@@ -151,7 +154,7 @@ hist(result$startdate, breaks = "years", freq = TRUE, las = 1); box()
 
 ```R
 # get data from another register
-ctrLoadQueryIntoDb(queryterm = "cancer&recr=Open&type=Intr&age=0", register = "CTGOV")
+ctrLoadQueryIntoDb(queryterm = "ependymoma&recr=Open&type=Intr&age=0", register = "CTGOV")
 #
 # data from which queries were downloaded into the database? 
 ctrQueryHistoryInDb()
@@ -161,7 +164,7 @@ ctrQueryHistoryInDb()
 dbFindVariable("status", allmatches = TRUE)
 result <- dbGetVariablesIntoDf(c("overall_status", "x5_trial_status", "a2_eudract_number"))
 #
-# find ids of unique trials and subset the result set to these
+# find ids of unique trials and subset the result set to these unique trials
 ids_of_unique_trials <- dbFindIdsUniqueTrials()
 result <- subset (result, subset = `_id` %in% ids_of_unique_trials)
 result <- dbFindUniqueEuctrRecord(result)
@@ -213,7 +216,6 @@ out <- subset (out, subset=number_of_sites >= 1)
 # draw histogram
 hist (out$number_of_sites)
 hist (log(out$number_of_sites))
-#
 #
 ```
 
