@@ -416,7 +416,7 @@ dbFindUniqueEuctrRecord <- function(df = NULL, prefer = "GB") {
 
 
 
-#' Convenience function to install a cygwin environment under MS Windows, including perl
+#' Convenience function to install a cygwin environment under MS Windows, including perl and php
 #'
 #' @export installCygwinWindowsDoInstall
 #' @param overwrite Set to true to force updating and overwriting an existing installation in \code{c:\\cygwin}
@@ -468,7 +468,7 @@ installCygwinWindowsDoInstall <- function(overwrite = FALSE, proxy = ""){
   }
   #
   # compose installation command
-  installcmd <- "--no-admin --quiet-mode --verbose --site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages perl php"
+  installcmd <- "--no-admin --quiet-mode --verbose --site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages perl,php"
   #
   # first change to temporary directory, then execute command
   system(paste0(dstfile, " ", installcmd, " --local-package-dir ", tmpfile, ' ', proxy))

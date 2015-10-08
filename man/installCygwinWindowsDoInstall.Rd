@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{installCygwinWindowsDoInstall}
 \alias{installCygwinWindowsDoInstall}
-\title{Convenience function to install a cygwin environment under MS Windows, including perl}
+\title{Convenience function to install a cygwin environment under MS Windows, including perl and php}
 \usage{
 installCygwinWindowsDoInstall(overwrite = FALSE, proxy = "")
 }
@@ -13,6 +13,6 @@ installCygwinWindowsDoInstall(overwrite = FALSE, proxy = "")
 detects and uses the proxy configuration unless this is set in MS Windows to use an automatic proxy configuration script}
 }
 \description{
-Convenience function to install a cygwin environment under MS Windows, including perl
+Convenience function to install a cygwin environment under MS Windows, including perl and php
 }
 
