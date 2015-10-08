@@ -24,7 +24,7 @@
 #' getCTRdata (queryterm = "2013-001291-38 ")
 #' }
 #'
-#' # For use with EudraCT: define paediatric population and cancer terms, for a query of more than 400 trials
+#' # For use with EudraCT: define paediatric population and cancer terms, retrieving more than 400 trials
 #' \dontrun{
 #' queryEuDefPaedPopulation  <- "age=adolescent&age=children&age=infant-and-toddler&age=newborn&age=preterm-new-born-infants&age=under-18"
 #' queryEuDef01paedOncTrials <- "cancer leukaem leukem sarcoma tumour tumor blastom gliom lymphom malign hodgkin ewing rhabdo teratom tumeur leucemi"
