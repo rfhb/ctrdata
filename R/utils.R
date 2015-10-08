@@ -542,9 +542,9 @@ installMongoFindBinaries <- function(mongoDirWin = "c:\\mongo\\bin\\") {
       #
       # first test for binary in the path
       tmp <- try(if (.Platform$OS.type != "windows") {
-        system('mongoimport --version', intern = TRUE, ignore.stdout = TRUE, ignore.stderr = TRUE)
+        system('mongoimport --version', intern = TRUE)
       } else {
-        system('mongoimport --version', intern = TRUE, ignore.stdout = TRUE, ignore.stderr = TRUE, show.output.on.console = FALSE)
+        system('mongoimport --version', intern = TRUE)
       }, silent = TRUE)
       #
       if (class(tmp) != "try-error") {
