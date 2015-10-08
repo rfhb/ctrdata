@@ -468,7 +468,7 @@ installCygwinWindowsDoInstall <- function(overwrite = FALSE, proxy = ""){
   }
   #
   # compose installation command
-  installcmd <- "--no-admin --quiet-mode --verbose --site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages perl,php"
+  installcmd <- "--no-admin --quiet-mode --verbose --site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages perl,php-jsonc,php-simplexml"
   #
   # first change to temporary directory, then execute command
   system(paste0(dstfile, " ", installcmd, " --local-package-dir ", tmpfile, ' ', proxy))

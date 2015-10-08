@@ -225,7 +225,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", updaterecords
 
       # compose commands - transform xml into json, a single allfiles.json in the temporaray directory
       xml2json <- system.file("exec/xml2json.php", package = "ctrdata", mustWork = TRUE)
-      xml2json <- paste0('php -n -f ', xml2json, ' ', tempDir)
+      xml2json <- paste0('php -f ', xml2json, ' ', tempDir)
       json2mongo <- paste0('mongoimport --host="', attr(mongo, "host"), '" --db="', attr(mongo, "db"), '" --collection="', ns, '"',
                            ifelse(attr(mongo, "username") != "", paste0(' --username="', attr(mongo, "username"), '"'), ''),
                            ifelse(attr(mongo, "password") != "", paste0(' --password="', attr(mongo, "password"), '"'), ''),
