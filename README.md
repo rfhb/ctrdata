@@ -47,14 +47,34 @@ To satisfy requirements for MS Windows, the recommendation is:
 
 * An installation of [cygwin](https://cygwin.com/install.html). 
 
-In R, simply run `ctrdata::installCygwin()` for an automated installation. 
+In R, simply run `ctrdata::installCygwin()` for an automated installation into `c:\cygwin`. 
 
-For manual instalation, cygwin can be installed without administrator credentials as explained [here](https://cygwin.com/faq/faq.html#faq.setup.noroot). In the graphical interface of the cygwin installer, type `perl` in the `Select packages` field and click on `Perl () Default` so that this changes to `Perl () Install`, as also shown [here](http://slu.livejournal.com/17395.html). 
+For manual instalation, cygwin can be installed without administrator credentials (details are explained [here](https://cygwin.com/faq/faq.html#faq.setup.noroot)). In the graphical interface of the cygwin installer, type `perl` in the `Select packages` field and click on `Perl () Default` so that this changes to `Perl () Install`, repeat with `Php` (details are shown [here](http://slu.livejournal.com/17395.html)). 
 
 `Rtools` is *not* required for `ctrdata` on MS Windows. 
 
 
-## Example workflow
+## Overview of functions in `ctrdata`
+
+Name  | Function
+------------- | -------------
+checkMongoVersionOk	| Check the version of the build of the mongo server to be used
+dbCTRGet	| Create a data frame from records in the data base that have specified fields in the data base
+dbCTRGetUniqueTrials	| This function checks for duplicates in the database based on the clinical trial identifier and returns a list of ids of unique trials
+dbCTRQueryHistory	| Show the history of queries that were loaded into a database
+dbFindCTRkey	| Find names of keys (fields) in the data base
+findMongo	| Convenience function to find location of mongo database binaries (mongo, mongoimport)
+getCTRdata	| Retrieve information on clinical trials from register and store in database
+getCTRQueryUrl	| Import from clipboard the URL of a search in one of the registers
+installCygwin	| Convenience function to install a cygwin environment under MS Windows, including perl
+mergeVariables	| Merge related variables into a single variable, and optionally map values to a new set of values.
+openCTRWebBrowser	| Open advanced search pages of register(s) in default web browser.
+testCygwin	| Convenience function to test for working cygwin installation
+uniqueTrialsEUCTRrecords	| Select a single trial record when there are records for different EU Member States for this trial
+
+## Examples
+
+### Download trial information and tabulate trial status
 
 * Attach package `ctrdata`: 
 ```R
@@ -95,8 +115,7 @@ dbFindCTRkey("number_of_subjects", allmatches = TRUE)
 dbFindCTRkey("time", allmatches = TRUE)
 ```
 
-
-* Visualise some clinical trial information:
+* Analyse some clinical trial information:
 ```R
 # get all records that have values in all specified fields
 result <- dbCTRGet(c("b31_and_b32_status_of_the_sponsor", "x5_trial_status"))
@@ -104,17 +123,18 @@ table (result$x5_trial_status)
 #  Completed   Not Authorised   Ongoing   Prematurely Ended   Restarted   Temporarily Halted 
 #         95                4        96                  17           4                  3 
 ```
+
+### Deduplicate country-specific records of a trial, visualise trial information
+
 ```R
 # Relation between number of study participants in one country and those in whole trial? 
 result <- dbCTRGet(c("f41_in_the_member_state", "f422_in_the_whole_clinical_trial"))
 plot(f41_in_the_member_state ~ f422_in_the_whole_clinical_trial, result)
-```
-```R
+#
 # how many clinical trials are ongoing or completed, per country? (see also other example below) 
 result <- dbCTRGet(c("a1_member_state_concerned", "x5_trial_status"))
 table(result$a1_member_state_concerned, result$x5_trial_status)
-```
-```R
+#
 # how many clinical trials where started in which year? 
 result <- dbCTRGet(c("a1_member_state_concerned", "n_date_of_competent_authority_decision", "a2_eudract_number"))
 #
@@ -126,7 +146,8 @@ hist(result$startdate, breaks = "years", freq = TRUE, las = 1); box()
 ```
 ![Histogram][1]
 
-* Retrieve trials from another register into the same data base and check for duplicates:
+### Download from another register, check for duplicates, merge variables and re-organise values 
+
 ```R
 # get data from another register
 getCTRdata(queryterm = "cancer&recr=Open&type=Intr&age=0", register = "CTGOV")
@@ -160,14 +181,89 @@ table(tmp)
 #      1059       671       115
 ```
 
+### Use another mongo library for analysis, for example count sites per trial
+
+```R
+library(mongolite)
+#
+m <- mongo(db = "users", collection = "ctrdata")
+# 
+# check if there are any duplicates
+ids_of_unique_trials <- dbCTRGetUniqueTrials()
+#
+# find the elements that represent a site
+out <- m$find('{}', '{"location.facility.name": 1}')
+#
+# if there were duplicates, the unique trials could be retained like this
+out <- subset (out, subset = `_id` %in% ids_of_unique_trials)
+#
+# helper function to count elements, 
+# whether these are an array or a set
+# of subdocuments in the data base 
+count.elements <- function (dataframecolumn) {
+   return(sapply(dataframecolumn, function(x) ifelse (is.data.frame(tmp <- unlist (x[[1]])), nrow(tmp), length(tmp))))
+}
+#
+# sum up number of sites per trial
+out$number_of_sites <- count.elements (out$location)
+# for many trials, no locations are specified
+out <- subset (out, subset=number_of_sites >= 1)
+#
+# draw histogram
+hist (out$number_of_sites)
+hist (log(out$number_of_sites))
+#
+#
+```
+
+### Use aggregation functions of the data base to find endpoints
+
+```R
+library(mongolite)
+#
+m <- mongo(db = "users", collection = "ctrdata")
+#
+# number of all entries
+m$count()
+# number of ctgov records
+m$count('{"_id": {"$regex": "NCT[0-9]{8}"}}')
+#
+# count number of records in which certain terms occur,
+# in any of the elements of the array in primary_outcome
+#
+# regular expressions are used (after "$regex"), case insensitive ("i")
+#
+# OS
+m$aggregate('[{"$match": {"primary_outcome.measure": {"$regex": "overall survival", "$options": "i"}}}, 
+              {"$group": {"_id": "null", "count": {"$sum": 1}}}]')
+# 
+# PFS, EFS, RFS, DFS
+m$aggregate('[{"$match": {"primary_outcome.measure": {"$regex": "(progression|event|relapse|recurrence|disease)[- ]free", "$options": "i"}}}, 
+              {"$group": {"_id": "null", "count": {"$sum": 1}}}]')
+#
+#
+# now by year (in the future may be integrated into a mapreduce operation):
+# 
+# OS by year (firstreceived_date, example: August 29, 2009)
+out <- m$aggregate('[{"$match": {"primary_outcome.measure": {"$regex": "overall survival", "$options": "i"}}}, 
+                     {"$project": {"_id": 1, "firstreceived_date": 1}}]')
+out$year <- substr (out$firstreceived_date, tmp <- nchar(out$firstreceived_date) - 4, tmp + 4)
+table (out$year)
+#
+# PFS, EFS, RFS, DFS by year (firstreceived_date)
+out <- m$aggregate('[{"$match": {"primary_outcome.measure": {"$regex": "(progression|event|relapse|recurrence|disease)[- ]free", "$options": "i"}}}, 
+                     {"$project": {"_id": 1, "firstreceived_date": 1}}]')
+out$year <- substr (out$firstreceived_date, tmp <- nchar(out$firstreceived_date) - 4, tmp + 4)
+table (out$year)
+#
+```
+
 
 ## In the works - next steps
  
 * An efficient, differential update mechanism will be finalised and provided, using the RSS feeds that the registers provide after executing a query. 
 
 * More examples for analyses will be provided in a separate document, with special functions to support analysing time trends of numbers and features of clinical trials. 
-
-* Have a look at the database contents for example using [Robomongo](http://www.robomongo.org). 
 
 
 ## Acknowledgements 
@@ -179,7 +275,7 @@ table(tmp)
 * [Variety](https://github.com/variety/variety), a Schema Analyzer for MongoDB
 
 
-## Issues
+## Notes
 
 * By design, each record from EUCTR when using `details = TRUE` (the default) represents information on the trial concerning the respective member state. This is necessary for some analyses, but not for others. 
 
