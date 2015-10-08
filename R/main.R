@@ -11,7 +11,7 @@
 #' @param details If \code{TRUE} (default), retrieve full protocol-related information from EUCTR or XML data from CTGOV, depending on the
 #' register selected. This gives all of the available details for the trials. Alternatively, set to \code{FALSE} to retrieve only summary
 #' information from EUCTR or CSV data from CTGOV. The full EUCTR information includes separate records for every country in which the trial
-#' is opened; use function \code{uniqueTrialsEUCTRrecords} in a subsequent step to limit to one record from EUCTR per trial.
+#' is opened; use function \code{dbFindUniqueEuctrRecord} in a subsequent step to limit to one record from EUCTR per trial.
 #' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on 127.0.0.1 port 27017.
 #' @param ns Name of the collection in mongo database ("namespace"), defaults to "ctrdata"
 #' @param updaterecords Re-run last query for this collection. This parameter takes precedence over \code{queryterm}.
@@ -21,7 +21,7 @@
 #' @examples
 #' # Retrieve protocol-related information on a single trial identified by EudraCT number
 #' \dontrun{
-#' getCTRdata (queryterm = "2013-001291-38 ")
+#' ctrLoadQueryIntoDb (queryterm = "2013-001291-38 ")
 #' }
 #'
 #' # For use with EudraCT: define paediatric population and cancer terms, retrieving more than 400 trials
@@ -30,24 +30,24 @@
 #' queryEuDef01paedOncTrials <- "cancer leukaem leukem sarcoma tumour tumor blastom gliom lymphom malign hodgkin ewing rhabdo teratom tumeur leucemi"
 #' queryEuDef01paedOncTrials <- gsub (" ", "%20OR%20", queryEuDef01paedOncTrials)
 #' queryEuDef01paedOncTrials <- paste (queryEuDef01paedOncTrials, queryEuDefPaedPopulation, sep="&")
-#' getCTRdata (queryterm = queryEuDef01paedOncTrials, parallelretrivals = 5)
+#' ctrLoadQueryIntoDb (queryterm = queryEuDef01paedOncTrials, parallelretrivals = 5)
 #' }
 #'
 #' # Retrieve protocol-related information on ongoing interventional cancer trials in children
 #' \dontrun{
-#' getCTRdata (queryterm = "cancer&recr=Open&type=Intr&age=0", register = "CTGOV")
+#' ctrLoadQueryIntoDb (queryterm = "cancer&recr=Open&type=Intr&age=0", register = "CTGOV")
 #' }
 #' \dontrun{
-#' getCTRdata (queryterm = "NCT02239861", register = "CTGOV")
+#' ctrLoadQueryIntoDb (queryterm = "NCT02239861", register = "CTGOV")
 #' }
 #'
 #' @import RCurl rmongodb curl
-#' @export getCTRdata
+#' @export ctrLoadQueryIntoDb
 #'
-getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE, details = TRUE, parallelretrievals = 10,
+ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE, details = TRUE, parallelretrievals = 10,
                        mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"), ns = "ctrdata", debug = FALSE) {
 
-  # deal with queryterm such as returned from getCTRQueryUrl()
+  # deal with queryterm such as returned from ctrGetQueryUrlFromBrowser()
   if (is.list(queryterm)) {
     #
     tmp <- queryterm
@@ -66,13 +66,13 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
 
   # check program availability
   if (.Platform$OS.type == "windows") {
-    findMongo()
-    if (is.na(mongoBinaryLocation)) stop("Not starting getCTRdata because mongoimport was not found.")
-    testCygwin()
+    installMongoFindBinaries()
+    if (is.na(mongoBinaryLocation)) stop("Not starting ctrLoadQueryIntoDb because mongoimport was not found.")
+    installCygwinWindowsTest()
   }
 
   # check program version as acceptable json format changed from 2.x to 3.x
-  checkMongoVersionOk()
+  installMongoCheckVersion()
 
   # remove trailing or leading whitespace
   queryterm <- gsub("^\\s+|\\s+$", "", queryterm)
@@ -91,7 +91,7 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
                    '}')
     #
     # retrieve existing history data
-    hist <- dbCTRQueryHistory(mongo = mongo, ns = ns)
+    hist <- ctrQueryHistoryInDb(mongo = mongo, ns = ns)
     # rewrite hist dataframe into json object
     if (!is.null(hist)) {
       tmp <- ', '
@@ -150,7 +150,7 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
     if (updaterecords && queryterm != "") warning("New query term specified despite updaterecords = TRUE, continuing with new query", immediate. = TRUE)
     if (updaterecords && queryterm == "") {
       #
-      rerunquery <- dbCTRQueryHistory(mongo = mongo, ns = ns)
+      rerunquery <- ctrQueryHistoryInDb(mongo = mongo, ns = ns)
       if (is.null(rerunquery)) stop("Could not find previous query in specified collection, aborting because of updaterecords = TRUE.")
       # TODO allow rerunning more queries
       rerunquery <- rerunquery[1,]
@@ -230,7 +230,7 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
                            ifelse(attr(mongo, "username") != "", paste0(' --username="', attr(mongo, "username"), '"'), ''),
                            ifelse(attr(mongo, "password") != "", paste0(' --password="', attr(mongo, "password"), '"'), ''),
                            ' --upsert --type=json --file="', tempDir, '/allfiles.json"',
-                           ifelse(checkMongoVersionOk(), '', ' --jsonArray'))
+                           ifelse(installMongoCheckVersion(), '', ' --jsonArray'))
 
       if (.Platform$OS.type == "windows") {
         # xml2json requires cygwin's php. transform paths for cygwin use:
@@ -290,7 +290,7 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
     dbCTRUpdateQueryHistory(register = register, queryterm = queryterm, recordnumber = imported, mongo = mongo, ns = ns)
 
     # update keys database
-    dbFindCTRkey(forceupdate = TRUE, mongo = mongo, ns = ns)
+    dbFindVariable(forceupdate = TRUE, mongo = mongo, ns = ns)
 
   }
 
@@ -313,7 +313,7 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
     # try to re-use previous query as recorded in the collection
     if (updaterecords && queryterm != "") warning("New query term specified despite updaterecords = TRUE, continuing with new query", immediate. = TRUE)
     if (updaterecords && queryterm == "") {
-      rerunquery <- dbCTRQueryHistory(mongo = mongo, ns = ns)
+      rerunquery <- ctrQueryHistoryInDb(mongo = mongo, ns = ns)
       #
       if (is.null(rerunquery)) stop("Could not find previous query in specified collection, aborting because of updaterecords = TRUE.")
       # TODO allow rerunning more queries
@@ -361,7 +361,7 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
                          ifelse(attr(mongo, "username") != "", paste0(' --username="', attr(mongo, "username"), '"'), ''),
                          ifelse(attr(mongo, "password") != "", paste0(' --password="', attr(mongo, "password"), '"'), ''),
                          ' --upsert --type=json --file="', tempDir, '/allfiles.json"',
-                         ifelse(checkMongoVersionOk(), '', ' --jsonArray'))
+                         ifelse(installMongoCheckVersion(), '', ' --jsonArray'))
     #
     if (.Platform$OS.type == "windows") {
       #
@@ -402,7 +402,7 @@ getCTRdata <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE
     dbCTRUpdateQueryHistory(register = register, queryterm = queryterm, recordnumber = imported, mongo = mongo, ns = ns)
 
     # update keys database
-    dbFindCTRkey(forceupdate = TRUE, mongo = mongo, ns = ns)
+    dbFindVariable(forceupdate = TRUE, mongo = mongo, ns = ns)
 
   }
 

@@ -19,10 +19,10 @@ countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", 
 #' @param copyright (Optional) If set to \code{TRUE}, opens copyright pages of register.
 #' @param queryterm (Optional) Show results of search for \code{queryterm} in browser.
 #' @param ... Any additional parameter to use with browseURL, which is called by this function.
-#' @export openCTRWebBrowser
+#' @export ctrOpenSearchPagesInBrowser
 #' @return Is always true, invisibly.
 #'
-openCTRWebBrowser <- function(register = c("EUCTR", "CTGOV"), copyright = FALSE, queryterm = "", ...) {
+ctrOpenSearchPagesInBrowser <- function(register = c("EUCTR", "CTGOV"), copyright = FALSE, queryterm = "", ...) {
   #
   if (copyright == TRUE) {
     if ("CTGOV" %in% register) browseURL("https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use", ...)
@@ -32,7 +32,7 @@ openCTRWebBrowser <- function(register = c("EUCTR", "CTGOV"), copyright = FALSE,
     if ("EUCTR" %in% register) browseURL("https://www.clinicaltrialsregister.eu/ctr-search/search", ...)
   }
   #
-  # deal with queryterm such as returned from getCTRQueryUrl()
+  # deal with queryterm such as returned from ctrGetQueryUrlFromBrowser()
   if (is.list(queryterm)) {
     #
     tmp <- queryterm
@@ -56,14 +56,14 @@ openCTRWebBrowser <- function(register = c("EUCTR", "CTGOV"), copyright = FALSE,
 #' @param content URL from browser address bar. Defaults to clipboard contents.
 #' @return A string of query parameters that can be used to retrieve data from the register.
 #' @import clipr
-#' @export getCTRQueryUrl
-#' @return A list with a query term and the register name that can directly be used in \link{getCTRdata}
+#' @export ctrGetQueryUrlFromBrowser
+#' @return A list with a query term and the register name that can directly be used in \link{ctrLoadQueryIntoDb}
 #' @examples
 #' \dontrun{
-#' getCTRdata (getCTRQueryUrl())
+#' ctrLoadQueryIntoDb (ctrGetQueryUrlFromBrowser())
 #' }
 #'
-getCTRQueryUrl <- function(content = clipr::read_clip()) {
+ctrGetQueryUrlFromBrowser <- function(content = clipr::read_clip()) {
   #
   if (length(content) != 1L) {
     stop(paste("Clipboard content is not a clinical trial register search URL. Returning NULL."))
@@ -103,13 +103,13 @@ getCTRQueryUrl <- function(content = clipr::read_clip()) {
 #' @param debug If \code{TRUE}, prints additional information (default is \code{FALSE}).
 #' @return Vector of first keys (fields) found (or of all keys, see above)
 #' @import rmongodb curl
-#' @export dbFindCTRkey
+#' @export dbFindVariable
 #' @examples
 #' \dontrun{
-#'  dbFindCTRkey ("date")
+#'  dbFindVariable ("date")
 #' }
 #'
-dbFindCTRkey <- function(namepart = "",
+dbFindVariable <- function(namepart = "",
                          mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"), ns = "ctrdata",
                          allmatches = FALSE, debug = FALSE, forceupdate = FALSE) {
 
@@ -120,7 +120,7 @@ dbFindCTRkey <- function(namepart = "",
 
   # check program availability
   if (.Platform$OS.type == "windows") {
-    findMongo()
+    installMongoFindBinaries()
     if (is.na(mongoBinaryLocation)) stop("Not starting findCTRkey because mongo binary was not found.")
   }
 
@@ -213,14 +213,14 @@ dbFindCTRkey <- function(namepart = "",
 #' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on 127.0.0.1 port 27017.
 #' @param ns Name of the collection in mongo database ("namespace"), defaults to "ctrdata"
 #' @return A vector with strings of keys (_id in the database) that are non-duplicate trials.
-#' @export dbCTRGetUniqueTrials
+#' @export dbFindIdsUniqueTrials
 #' @import rmongodb
 #' @examples
 #' \dontrun{
 #' uniqueCTRdata (mongo, "ctrdata")
 #' }
 #'
-dbCTRGetUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"), ns = "ctrdata") {
+dbFindIdsUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"), ns = "ctrdata") {
   #
   # CTGOV: "Other IDs" has been split into the indexed array "otherids"
   listofCTGOVids <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns),
@@ -270,9 +270,9 @@ dbCTRGetUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "127.0.0.
 #' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on 127.0.0.1 port 27017.
 #' @param ns Name of the collection in mongo database ("namespace"), defaults to "ctrdata"
 #' useful if the data base includes records from different registers.
-#' @export dbCTRGet
+#' @export dbGetVariablesIntoDf
 #'
-dbCTRGet <- function(fields = "", mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"), ns = "ctrdata") {
+dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"), ns = "ctrdata") {
   #
   if (!is.vector(fields) | class(fields) != "character") stop("Input should just be a vector of strings of field names.")
   #
@@ -343,19 +343,19 @@ dbCTRGet <- function(fields = "", mongo = rmongodb::mongo.create(host = "127.0.0
 #' any other available record will be returned.
 #'
 #' Note: To depuplicate trials from different registers (EUCTR and CTGOV), please first use function
-#' \code{\link{dbCTRGetUniqueTrials}}.
+#' \code{\link{dbFindIdsUniqueTrials}}.
 #'
 #' @return A data frame as subset of \code{df} corresponding to the sought records.
 #'
 #' @param df A data frame created from the data base that includes the keys (variables) "_id" and "a2_eudract_number",
-#' for example created with function dbCTRGet(c("_id", "a2_eudract_number")).
+#' for example created with function dbGetVariablesIntoDf(c("_id", "a2_eudract_number")).
 #' @param prefer Code of single EU Member State for which records should returned if available. (If not available,
 #' a record for GB or lacking this any other record for the trial will be returned.) For a list of codes of EU
 #' Member States, please see vector \code{countriesEUCTR}.
 #' \code{\link{countries}}
-#' @export uniqueTrialsEUCTRrecords
+#' @export dbFindUniqueEuctrRecord
 #'
-uniqueTrialsEUCTRrecords <- function(df = NULL, prefer = "GB") {
+dbFindUniqueEuctrRecord <- function(df = NULL, prefer = "GB") {
   #
   if (class(df) != "data.frame") stop("Parameter df is not a data frame.")
   if (is.null(df$`_id`) || is.null(df$a2_eudract_number)) stop('Data frame does not include "_id" and "a2_eudract_number" columns.')
@@ -418,12 +418,12 @@ uniqueTrialsEUCTRrecords <- function(df = NULL, prefer = "GB") {
 
 #' Convenience function to install a cygwin environment under MS Windows, including perl
 #'
-#' @export installCygwin
+#' @export installCygwinWindowsDoInstall
 #' @param overwrite Set to true to force updating and overwriting an existing installation in \code{c:\\cygwin}
-#' @param proxy Specify any proxy to be used for downloading via http, e.g. "host_or_ip:port". \code{installCygwin}
+#' @param proxy Specify any proxy to be used for downloading via http, e.g. "host_or_ip:port". \code{installCygwinWindowsDoInstall}
 #' detects and uses the proxy configuration unless this is set in MS Windows to use an automatic proxy configuration script
 #'
-installCygwin <- function(overwrite = FALSE, proxy = ""){
+installCygwinWindowsDoInstall <- function(overwrite = FALSE, proxy = ""){
   #
   if (.Platform$OS.type != "windows")        stop("This function is only for MS Windows operating systems.")
   if (!overwrite & dir.exists("c:\\cygwin")) stop("cygwin is already installed. To overwrite, call this function with overwrite = TRUE.")
@@ -474,7 +474,7 @@ installCygwin <- function(overwrite = FALSE, proxy = ""){
   system(paste0(dstfile, " ", installcmd, " --local-package-dir ", tmpfile, ' ', proxy))
   #
   # test cygwin installation
-  testCygwin()
+  installCygwinWindowsTest()
   #
 }
 
@@ -484,9 +484,9 @@ installCygwin <- function(overwrite = FALSE, proxy = ""){
 #' Convenience function to test for working cygwin installation
 #'
 #' @return Information if cygwin can be used, \code{TRUE} or \code{FALSE}
-#' @export testCygwin
+#' @export installCygwinWindowsTest
 #'
-testCygwin <- function() {
+installCygwinWindowsTest <- function() {
   #
   if (.Platform$OS.type != "windows") stop("This function is only for MS Windows operating systems.")
   #
@@ -511,9 +511,9 @@ testCygwin <- function() {
 #' as used on \url{http://docs.mongodb.org/manual/tutorial/install-mongodb-on-windows#interactive-installation}
 #' @return Either an empty string if \code{mongoimport} was found on the path or, under MS Windows,
 #' a string representing the path to the folder of the mongo binaries
-#' @export findMongo
+#' @export installMongoFindBinaries
 #'
-findMongo <- function(mongoDirWin = "c:\\mongo\\bin\\") {
+installMongoFindBinaries <- function(mongoDirWin = "c:\\mongo\\bin\\") {
   #
   # debug: mongoBinaryLocation <- "/usr/bin/"
   tmp <- ifelse(.Platform$OS.type != "windows", "mongoimport", "mongoimport.exe")
@@ -588,9 +588,9 @@ findMongo <- function(mongoDirWin = "c:\\mongo\\bin\\") {
 #' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on 127.0.0.1 port 27017.
 #'
 #' @return A logical value indicating if the mongodb version is acceptable for use with this package.
-#' @export checkMongoVersionOk
+#' @export installMongoCheckVersion
 #'
-checkMongoVersionOk <- function(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users")) {
+installMongoCheckVersion <- function(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users")) {
   #
   result <- rmongodb::mongo.command(mongo, attr(mongo, "db"), list("buildInfo" = 1L))
   result <- rmongodb::mongo.bson.to.Robject(result)
@@ -604,7 +604,7 @@ checkMongoVersionOk <- function(mongo = rmongodb::mongo.create(host = "127.0.0.1
     #
   } else {
     #
-    warning("mongodb not version 3. Earlier versions have limitations that may break function getCTRdata() in package ctrdata.\n Please upgrade, see http://docs.mongodb.org/manual/installation/. \n Trying to continue. Support for versions other than 3 may be discontinued.", immediate. = TRUE)
+    warning("mongodb not version 3. Earlier versions have limitations that may break function ctrLoadQueryIntoDb() in package ctrdata.\n Please upgrade, see http://docs.mongodb.org/manual/installation/. \n Trying to continue. Support for versions other than 3 may be discontinued.", immediate. = TRUE)
     return(FALSE)
   }
   #
@@ -619,16 +619,16 @@ checkMongoVersionOk <- function(mongo = rmongodb::mongo.create(host = "127.0.0.1
 #' @param levelslist A list with one slice each for a new value to be used for a vector of old values.
 #'
 #' @return A vector of strings
-#' @export mergeVariables
+#' @export dfMergeTwoVariablesRelevel
 #' @examples
 #' \dontrun{
 #' statusvalues <- list("ongoing" = c("Recruiting", "Active", "Ongoing", "Active, not recruiting", "Enrolling by invitation"),
 #'                      "completed" = c("Completed", "Prematurely Ended", "Terminated"),
 #'                      "other" = c("Withdrawn", "Suspended", "No longer available", "Not yet recruiting"))
-#' mergeVariables(result, c("Recruitment", "x5_trial_status"), statusvalues)
+#' dfMergeTwoVariablesRelevel(result, c("Recruitment", "x5_trial_status"), statusvalues)
 #' }
 #'
-mergeVariables <- function(df = NULL, varnames = "", levelslist = NULL) {
+dfMergeTwoVariablesRelevel <- function(df = NULL, varnames = "", levelslist = NULL) {
   #
   if (class(df) != "data.frame")   stop("Need a data frame as input.")
   if (length(varnames)  != 2)      stop("Please provide exactly two variable names.")
@@ -669,7 +669,7 @@ mergeVariables <- function(df = NULL, varnames = "", levelslist = NULL) {
 
   return(tmp)
 }
-# end mergeVariables
+# end dfMergeTwoVariablesRelevel
 
 
 
@@ -679,14 +679,14 @@ mergeVariables <- function(df = NULL, varnames = "", levelslist = NULL) {
 #' @param ns Name of the collection in mongo database ("namespace"), defaults to "ctrdata"
 #'
 #' @return A data frame with variables: timestamp, register, number of records loaded, query term
-#' @export dbCTRQueryHistory
+#' @export ctrQueryHistoryInDb
 #'
 #' @examples
 #' \dontrun{
-#' dbCTRQueryHistory()
+#' ctrQueryHistoryInDb()
 #' }
 #'
-dbCTRQueryHistory <- function(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"), ns = "ctrdata") {
+ctrQueryHistoryInDb <- function(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"), ns = "ctrdata") {
   #
   message("Total number of records: ",
           rmongodb::mongo.count(mongo, paste0(attr(mongo, "db"), ".", ns),
@@ -713,7 +713,7 @@ dbCTRQueryHistory <- function(mongo = rmongodb::mongo.create(host = "127.0.0.1:2
   return(tmp)
   #
 }
-# end dbCTRQueryHistory
+# end ctrQueryHistoryInDb
 
 
 

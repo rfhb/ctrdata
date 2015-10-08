@@ -7,7 +7,7 @@ output:
 
 ## Aims
 
-The aims of `ctrdata` are to provide functions primarily for retrieving information from public registers on clinical trials, and functions for aggregating and analysing information are also included. This is for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and also for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). The registers are not known to provide an application programming interface (API) and have limited aggregation options. Development of `ctrdata` started mid 2015, first push to github.com mid September 2015, last edit 2015-10 for version 0.3. 
+The aims of `ctrdata` are to provide functions primarily for retrieving information from public registers on clinical trials, and functions for aggregating and analysing information are also included. This is for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and also for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). The registers are not known to provide an application programming interface (API) and have limited aggregation options. Development of `ctrdata` started mid 2015, first push to github.com mid September 2015, last edit 2015-10-08 for version 0.4. 
 
 Key features implemented:
 
@@ -47,7 +47,7 @@ To satisfy requirements for MS Windows, the recommendation is:
 
 * An installation of [cygwin](https://cygwin.com/install.html). 
 
-In R, simply run `ctrdata::installCygwin()` for an automated installation into `c:\cygwin`. 
+In R, simply run `ctrdata::installCygwinWindowsDoInstall()` for an automated installation into `c:\cygwin`. 
 
 For manual instalation, cygwin can be installed without administrator credentials (details are explained [here](https://cygwin.com/faq/faq.html#faq.setup.noroot)). In the graphical interface of the cygwin installer, type `perl` in the `Select packages` field and click on `Perl () Default` so that this changes to `Perl () Install`, repeat with `Php` (details are shown [here](http://slu.livejournal.com/17395.html)). 
 
@@ -58,19 +58,20 @@ For manual instalation, cygwin can be installed without administrator credential
 
 Name  | Function
 ------------- | -------------
-checkMongoVersionOk	| Check the version of the build of the mongo server to be used
-dbCTRGet	| Create a data frame from records in the data base that have specified fields in the data base
-dbCTRGetUniqueTrials	| This function checks for duplicates in the database based on the clinical trial identifier and returns a list of ids of unique trials
-dbCTRQueryHistory	| Show the history of queries that were loaded into a database
-dbFindCTRkey	| Find names of keys (fields) in the data base
-findMongo	| Convenience function to find location of mongo database binaries (mongo, mongoimport)
-getCTRdata	| Retrieve information on clinical trials from register and store in database
-getCTRQueryUrl	| Import from clipboard the URL of a search in one of the registers
-installCygwin	| Convenience function to install a cygwin environment under MS Windows, including perl
-mergeVariables	| Merge related variables into a single variable, and optionally map values to a new set of values.
-openCTRWebBrowser	| Open advanced search pages of register(s) in default web browser.
-testCygwin	| Convenience function to test for working cygwin installation
-uniqueTrialsEUCTRrecords	| Select a single trial record when there are records for different EU Member States for this trial
+ctrOpenSearchPagesInBrowser	| Open advanced search pages of register(s) in default web browser.
+ctrQueryHistoryInDb	| Show the history of queries that were loaded into a database
+ctrGetQueryUrlFromBrowser	| Import from clipboard the URL of a search in one of the registers
+ctrLoadQueryIntoDb	| Retrieve information on clinical trials from register and store in database
+dbFindIdsUniqueTrials	| This function checks for duplicates in the database based on the clinical trial identifier and returns a list of ids of unique trials
+dbFindVariable	| Find names of keys (fields) in the data base
+dbFindUniqueEuctrRecord	| Select a single trial record when there are records for different EU Member States for this trial
+dbGetVariablesIntoDf	| Create a data frame from records in the data base that have specified fields in the data base
+dfMergeTwoVariablesRelevel	| Merge related variables into a single variable, and optionally map values to a new set of values.
+installMongoCheckVersion	| Check the version of the build of the mongo server to be used
+installMongoFindBinaries	| Convenience function to find location of mongo database binaries (mongo, mongoimport)
+installCygwinWindowsDoInstall	| Convenience function to install a cygwin environment under MS Windows, including perl
+installCygwinWindowsTest	| Convenience function to test for working cygwin installation
+
 
 ## Examples
 
@@ -83,9 +84,9 @@ library(ctrdata)
 
 * Open register's advanced search page in browser: 
 ```R
-openCTRWebBrowser()
+ctrOpenSearchPagesInBrowser()
 # please review and respect register copyrights
-openCTRWebBrowser(copyright = TRUE)
+ctrOpenSearchPagesInBrowser(copyright = TRUE)
 ```
 
 * Click search parameters and execute search in browser 
@@ -94,14 +95,14 @@ openCTRWebBrowser(copyright = TRUE)
 
 * Get address from clipboard: 
 ```R
-q <- getCTRQueryUrl()
+q <- ctrGetQueryUrlFromBrowser()
 # Found search query from EUCTR.
 # [1] "cancer&age=children&status=completed"
 ```
 
 * Retrieve protocol-related information, transform, save to database:
 ```R
-getCTRdata(q)
+ctrLoadQueryIntoDb(q)
 # if no parameters are given for a database connection: uses mongodb
 # on localhost, port 27017, database "users", collection "ctrdata"
 # note: when run for first time, may download variety.js
@@ -109,16 +110,16 @@ getCTRdata(q)
 
 * Find names of fields of interest in database:
 ```R
-dbFindCTRkey("sites")   # note: when run for first time, may download variety.js
-dbFindCTRkey("n_date")
-dbFindCTRkey("number_of_subjects", allmatches = TRUE)
-dbFindCTRkey("time", allmatches = TRUE)
+dbFindVariable("sites")   # note: when run for first time, may download variety.js
+dbFindVariable("n_date")
+dbFindVariable("number_of_subjects", allmatches = TRUE)
+dbFindVariable("time", allmatches = TRUE)
 ```
 
 * Analyse some clinical trial information:
 ```R
 # get all records that have values in all specified fields
-result <- dbCTRGet(c("b31_and_b32_status_of_the_sponsor", "x5_trial_status"))
+result <- dbGetVariablesIntoDf(c("b31_and_b32_status_of_the_sponsor", "x5_trial_status"))
 table (result$x5_trial_status)
 #  Completed   Not Authorised   Ongoing   Prematurely Ended   Restarted   Temporarily Halted 
 #         95                4        96                  17           4                  3 
@@ -128,18 +129,18 @@ table (result$x5_trial_status)
 
 ```R
 # Relation between number of study participants in one country and those in whole trial? 
-result <- dbCTRGet(c("f41_in_the_member_state", "f422_in_the_whole_clinical_trial"))
+result <- dbGetVariablesIntoDf(c("f41_in_the_member_state", "f422_in_the_whole_clinical_trial"))
 plot(f41_in_the_member_state ~ f422_in_the_whole_clinical_trial, result)
 #
 # how many clinical trials are ongoing or completed, per country? (see also other example below) 
-result <- dbCTRGet(c("a1_member_state_concerned", "x5_trial_status"))
+result <- dbGetVariablesIntoDf(c("a1_member_state_concerned", "x5_trial_status"))
 table(result$a1_member_state_concerned, result$x5_trial_status)
 #
 # how many clinical trials where started in which year? 
-result <- dbCTRGet(c("a1_member_state_concerned", "n_date_of_competent_authority_decision", "a2_eudract_number"))
+result <- dbGetVariablesIntoDf(c("a1_member_state_concerned", "n_date_of_competent_authority_decision", "a2_eudract_number"))
 #
 # to eliminate trials records duplicated by member state: 
-result <- uniqueTrialsEUCTRrecords(result)
+result <- dbFindUniqueEuctrRecord(result)
 # 
 result$startdate <- strptime(result$n_date_of_competent_authority_decision, "%Y-%m-%d")
 hist(result$startdate, breaks = "years", freq = TRUE, las = 1); box()
@@ -150,23 +151,23 @@ hist(result$startdate, breaks = "years", freq = TRUE, las = 1); box()
 
 ```R
 # get data from another register
-getCTRdata(queryterm = "cancer&recr=Open&type=Intr&age=0", register = "CTGOV")
+ctrLoadQueryIntoDb(queryterm = "cancer&recr=Open&type=Intr&age=0", register = "CTGOV")
 #
 # data from which queries were downloaded into the database? 
-dbCTRQueryHistory()
+ctrQueryHistoryInDb()
 # 
 # get columns from the database from different registers
 # this takes some time because variables are merged sequentially
-dbFindCTRkey("status", allmatches = TRUE)
-result <- dbCTRGet(c("overall_status", "x5_trial_status", "a2_eudract_number"))
+dbFindVariable("status", allmatches = TRUE)
+result <- dbGetVariablesIntoDf(c("overall_status", "x5_trial_status", "a2_eudract_number"))
 #
 # find ids of unique trials and subset the result set to these
-ids_of_unique_trials <- dbCTRGetUniqueTrials()
+ids_of_unique_trials <- dbFindIdsUniqueTrials()
 result <- subset (result, subset = `_id` %in% ids_of_unique_trials)
-result <- uniqueTrialsEUCTRrecords(result)
+result <- dbFindUniqueEuctrRecord(result)
 #
 # now condense two variables into a new one for analysis
-tmp <- mergeVariables(result, c("overall_status", "x5_trial_status"))
+tmp <- dfMergeTwoVariablesRelevel(result, c("overall_status", "x5_trial_status"))
 table(tmp)
 #
 # condense two variables and in addition, condense their values into new value
@@ -174,7 +175,7 @@ statusvalues <- list("ongoing" = c("Recruiting", "Active", "Ongoing", "Active, n
                                    "Enrolling by invitation", "Restarted"),
                     "completed" = c("Completed", "Prematurely Ended", "Terminated"),
                     "other" = c("Withdrawn", "Suspended", "No longer available", "Not yet recruiting"))
-tmp <- mergeVariables(result, c("overall_status", "x5_trial_status"), statusvalues)
+tmp <- dfMergeTwoVariablesRelevel(result, c("overall_status", "x5_trial_status"), statusvalues)
 table(tmp)
 #
 # completed   ongoing     other 
@@ -189,7 +190,7 @@ library(mongolite)
 m <- mongo(db = "users", collection = "ctrdata")
 # 
 # check if there are any duplicates
-ids_of_unique_trials <- dbCTRGetUniqueTrials()
+ids_of_unique_trials <- dbFindIdsUniqueTrials()
 #
 # find the elements that represent a site
 out <- m$find('{}', '{"location.facility.name": 1}')
