@@ -302,6 +302,7 @@ dbCTRGet <- function(fields = "", mongo = rmongodb::mongo.create(host = "127.0.0
                                         query  = rmongodb::mongo.bson.from.JSON(query),
                                         fields = rmongodb::mongo.bson.from.JSON(paste0('{"_id": 1, "', part1, '": {"$slice": 1}, "', item, '": 1}')))
       }, silent = FALSE)
+      warning(paste0("For variable: ", item, " only the first slice of the array is returned."))
     } else {
       tmp <- try({
         dfi <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), '.', ns), data.frame = TRUE,
