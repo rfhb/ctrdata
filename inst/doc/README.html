@@ -104,7 +104,7 @@ img {
 devtools::install_github(&quot;rfhb/ctrdata&quot;)</code></pre>
 <p>Other requirements:</p>
 <ul>
-<li><p>A local <a href="https://www.mongodb.org/">mongodb</a> version 3 installation. From this installation, binaries <code>mongoimport</code> and <code>mongo</code> required. Note that Ubuntu seems to ship mongodb version 2.x, not the required version 3. Please follow installation instruction <a href="http://docs.mongodb.org/manual/tutorial/install-mongodb-on-debian/#install-mongodb">here for Ubuntu 15, same as for Debian</a> and here for <a href="http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/#install-mongodb">Ubuntu 14 and earlier</a>.</p></li>
+<li><p>A local <a href="https://www.mongodb.org/">mongodb</a> version 3 installation. From this installation, binaries <code>mongoimport</code> and <code>mongo</code> required. Note Ubuntu seems to ship mongodb version 2.x, not the required version 3. Please follow installation instructions <a href="http://docs.mongodb.org/manual/tutorial/install-mongodb-on-debian/#install-mongodb">here for Ubuntu 15, same as for Debian</a> and here for <a href="http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/#install-mongodb">Ubuntu 14 and earlier</a>.</p></li>
 <li><p>Command line tools <code>perl</code>, <code>sed</code>, <code>cat</code> and <code>php</code> (5.2 or higher).</p></li>
 </ul>
 <p>To satisfy requirements for MS Windows, the recommendation is:</p>
@@ -112,7 +112,7 @@ devtools::install_github(&quot;rfhb/ctrdata&quot;)</code></pre>
 <li>An installation of <a href="https://cygwin.com/install.html">cygwin</a>.</li>
 </ul>
 <p>In R, simply run <code>ctrdata::installCygwinWindowsDoInstall()</code> for an automated installation into <code>c:\cygwin</code>.</p>
-<p>For manual instalation, cygwin can be installed without administrator credentials (details are explained <a href="https://cygwin.com/faq/faq.html#faq.setup.noroot">here</a>). In the graphical interface of the cygwin installer, type <code>perl</code> in the <code>Select packages</code> field and click on <code>Perl () Default</code> so that this changes to <code>Perl () Install</code>, repeat with <code>Php</code> (details are shown <a href="http://slu.livejournal.com/17395.html">here</a>).</p>
+<p>For manual instalation, cygwin can be installed without administrator credentials (details are explained <a href="https://cygwin.com/faq/faq.html#faq.setup.noroot">here</a>). In the graphical interface of the cygwin installer, type <code>perl</code> in the <code>Select packages</code> field and click on <code>Perl () Default</code> so that this changes to <code>Perl () Install</code>, repeat with <code>php-jsonc</code> and <code>php-simplexml</code> (details are shown <a href="http://slu.livejournal.com/17395.html">here</a>).</p>
 <p><code>Rtools</code> is <em>not</em> required for <code>ctrdata</code> on MS Windows.</p>
 </div>
 <div id="overview-of-functions-in-ctrdata" class="section level2">
@@ -171,7 +171,7 @@ devtools::install_github(&quot;rfhb/ctrdata&quot;)</code></pre>
 </tr>
 <tr class="even">
 <td align="left">installCygwinWindowsDoInstall</td>
-<td align="left">Convenience function to install a cygwin environment under MS Windows, including perl</td>
+<td align="left">Convenience function to install a cygwin environment under MS Windows, including perl and php</td>
 </tr>
 <tr class="odd">
 <td align="left">installCygwinWindowsTest</td>
@@ -196,17 +196,29 @@ ctrOpenSearchPagesInBrowser(copyright = TRUE)</code></pre></li>
 <li><p>Get address from clipboard:</p>
 <pre class="r"><code>q &lt;- ctrGetQueryUrlFromBrowser()
 # Found search query from EUCTR.
-# [1] &quot;cancer&amp;age=children&amp;status=completed&quot;</code></pre></li>
+# [1] &quot;cancer&amp;age=children&amp;status=ongoing&quot;</code></pre></li>
 <li><p>Retrieve protocol-related information, transform, save to database:</p>
 <pre class="r"><code>ctrLoadQueryIntoDb(q)
 # if no parameters are given for a database connection: uses mongodb
 # on localhost, port 27017, database &quot;users&quot;, collection &quot;ctrdata&quot;
-# note: when run for first time, may download variety.js</code></pre></li>
+# note: when run for first time, may download variety.js
+#
+# show which queries have been imported into the database so far
+ctrQueryHistoryInDb()
+# Total number of records: 1553
+# Number of queries in history: 2
+#       query-timestamp query-register query-records                           query-term
+# 1 2015-10-08-23-06-34          CTGOV            26 ependymoma&amp;recr=Open&amp;type=Intr&amp;age=0
+# 2 2015-10-08-23-02-51          EUCTR            24            ependymoma&amp;status=ongoing</code></pre></li>
 <li><p>Find names of fields of interest in database:</p>
-<pre class="r"><code>dbFindVariable(&quot;sites&quot;)   # note: when run for first time, may download variety.js
-dbFindVariable(&quot;n_date&quot;)
+<pre class="r"><code>dbFindVariable(&quot;date&quot;)
+# Returning first of 5 keys found.
+# [1] &quot;firstreceived_date&quot;
+#
 dbFindVariable(&quot;number_of_subjects&quot;, allmatches = TRUE)
-dbFindVariable(&quot;time&quot;, allmatches = TRUE)</code></pre></li>
+# [1] &quot;f1151_number_of_subjects_for_this_age_range&quot; &quot;f1161_number_of_subjects_for_this_age_range&quot; &quot;f11_number_of_subjects_for_this_age_range&quot;  
+# [4] &quot;f1141_number_of_subjects_for_this_age_range&quot; &quot;f121_number_of_subjects_for_this_age_range&quot;  &quot;f1111_number_of_subjects_for_this_age_range&quot;
+# [7] &quot;f1121_number_of_subjects_for_this_age_range&quot; &quot;f1131_number_of_subjects_for_this_age_range&quot; &quot;f131_number_of_subjects_for_this_age_range&quot; </code></pre></li>
 <li><p>Analyse some clinical trial information:</p>
 <pre class="r"><code># get all records that have values in all specified fields
 result &lt;- dbGetVariablesIntoDf(c(&quot;b31_and_b32_status_of_the_sponsor&quot;, &quot;x5_trial_status&quot;))
@@ -238,7 +250,7 @@ hist(result$startdate, breaks = &quot;years&quot;, freq = TRUE, las = 1); box()<
 <div id="download-from-another-register-check-for-duplicates-merge-variables-and-re-organise-values" class="section level3">
 <h3>Download from another register, check for duplicates, merge variables and re-organise values</h3>
 <pre class="r"><code># get data from another register
-ctrLoadQueryIntoDb(queryterm = &quot;cancer&amp;recr=Open&amp;type=Intr&amp;age=0&quot;, register = &quot;CTGOV&quot;)
+ctrLoadQueryIntoDb(queryterm = &quot;ependymoma&amp;recr=Open&amp;type=Intr&amp;age=0&quot;, register = &quot;CTGOV&quot;)
 #
 # data from which queries were downloaded into the database? 
 ctrQueryHistoryInDb()
@@ -248,7 +260,7 @@ ctrQueryHistoryInDb()
 dbFindVariable(&quot;status&quot;, allmatches = TRUE)
 result &lt;- dbGetVariablesIntoDf(c(&quot;overall_status&quot;, &quot;x5_trial_status&quot;, &quot;a2_eudract_number&quot;))
 #
-# find ids of unique trials and subset the result set to these
+# find ids of unique trials and subset the result set to these unique trials
 ids_of_unique_trials &lt;- dbFindIdsUniqueTrials()
 result &lt;- subset (result, subset = `_id` %in% ids_of_unique_trials)
 result &lt;- dbFindUniqueEuctrRecord(result)
@@ -298,7 +310,6 @@ out &lt;- subset (out, subset=number_of_sites &gt;= 1)
 # draw histogram
 hist (out$number_of_sites)
 hist (log(out$number_of_sites))
-#
 #</code></pre>
 </div>
 <div id="use-aggregation-functions-of-the-data-base-to-find-endpoints" class="section level3">
@@ -333,13 +344,16 @@ out &lt;- m$aggregate('[{&quot;$match&quot;: {&quot;primary_outcome.measure&quot
                      {&quot;$project&quot;: {&quot;_id&quot;: 1, &quot;firstreceived_date&quot;: 1}}]')
 out$year &lt;- substr (out$firstreceived_date, tmp &lt;- nchar(out$firstreceived_date) - 4, tmp + 4)
 table (out$year)
+# 2005  2006  2007  2008  2009  2010  2011  2012  2013  2014  2015 
+#    8     5     4    13     3     8     3     8     4     6     6 
 #
 # PFS, EFS, RFS, DFS by year (firstreceived_date)
 out &lt;- m$aggregate('[{&quot;$match&quot;: {&quot;primary_outcome.measure&quot;: {&quot;$regex&quot;: &quot;(progression|event|relapse|recurrence|disease)[- ]free&quot;, &quot;$options&quot;: &quot;i&quot;}}}, 
                      {&quot;$project&quot;: {&quot;_id&quot;: 1, &quot;firstreceived_date&quot;: 1}}]')
 out$year &lt;- substr (out$firstreceived_date, tmp &lt;- nchar(out$firstreceived_date) - 4, tmp + 4)
 table (out$year)
-#</code></pre>
+# 2005  2006  2007  2008  2009  2010  2011  2012  2013  2014  2015 
+#   13     6     7    11    16    17    17    19    25    26    17</code></pre>
 </div>
 </div>
 <div id="in-the-works---next-steps" class="section level2">
@@ -364,7 +378,7 @@ table (out$year)
 <li><p>So far, no attempts are made to harmonise and map field names between different registers, such as by using standardised identifiers.</p></li>
 <li><p>So far, no efforts were made to type data base fields; they are all strings.</p></li>
 <li><p>Package <code>ctrdata</code> is expected to work on Linux, Mac OS X and MS Windows systems, if installation requirements (above) are met.</p></li>
-<li><p>Package <code>ctrdata</code> also uses <a href="https://github.com/variety/variety">Variety</a>. In fact, <code>variety.js</code> will automatically be downloaded into the package’s <code>exec</code> directory when first using the function that needs it. This may fail if this directory is not writable for the user and this issue is not yet addressed. Note that <code>variety.js</code> may not work well with remote mongo databases, see documentation of <code>findCTRkeys()</code>.</p></li>
+<li><p>Package <code>ctrdata</code> also uses <a href="https://github.com/variety/variety">Variety</a>. In fact, <code>variety.js</code> will automatically be downloaded into the package’s <code>exec</code> directory when first using the function that needs it. This may fail if this directory is not writable for the user and this issue is not yet addressed. Note that <code>variety.js</code> may not work well with remote mongo databases, see documentation of <code>dbFindVariable()</code>.</p></li>
 <li><p>In case <code>curl</code> fails with an SSL error, run this code to update the certificates in the root of package <code>curl</code>:</p>
 <pre class="r"><code>httr::GET(&quot;https://github.com/bagder/ca-bundle/raw/e9175fec5d0c4d42de24ed6d84a06d504d5e5a09/ca-bundle.crt&quot;, write_disk(system.file(&quot;&quot;, package = &quot;curl&quot;), &quot;inst/cacert.pem&quot;, overwrite = TRUE))</code></pre></li>
 </ul>

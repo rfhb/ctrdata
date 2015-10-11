@@ -39,7 +39,7 @@ devtools::install_github("rfhb/ctrdata")
 
 Other requirements:
 
-* A local [mongodb](https://www.mongodb.org/) version 3 installation. From this installation, binaries `mongoimport` and `mongo` required. Note that Ubuntu seems to ship mongodb version 2.x, not the required version 3. Please follow installation instruction [here for Ubuntu 15, same as for Debian](http://docs.mongodb.org/manual/tutorial/install-mongodb-on-debian/#install-mongodb) and here for [Ubuntu 14 and earlier](http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/#install-mongodb).   
+* A local [mongodb](https://www.mongodb.org/) version 3 installation. From this installation, binaries `mongoimport` and `mongo` required. Note Ubuntu seems to ship mongodb version 2.x, not the required version 3. Please follow installation instructions [here for Ubuntu 15, same as for Debian](http://docs.mongodb.org/manual/tutorial/install-mongodb-on-debian/#install-mongodb) and here for [Ubuntu 14 and earlier](http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/#install-mongodb).   
 
 * Command line tools `perl`, `sed`, `cat` and `php` (5.2 or higher). 
 
@@ -49,7 +49,7 @@ To satisfy requirements for MS Windows, the recommendation is:
 
 In R, simply run `ctrdata::installCygwinWindowsDoInstall()` for an automated installation into `c:\cygwin`. 
 
-For manual instalation, cygwin can be installed without administrator credentials (details are explained [here](https://cygwin.com/faq/faq.html#faq.setup.noroot)). In the graphical interface of the cygwin installer, type `perl` in the `Select packages` field and click on `Perl () Default` so that this changes to `Perl () Install`, repeat with `Php` (details are shown [here](http://slu.livejournal.com/17395.html)). 
+For manual instalation, cygwin can be installed without administrator credentials (details are explained [here](https://cygwin.com/faq/faq.html#faq.setup.noroot)). In the graphical interface of the cygwin installer, type `perl` in the `Select packages` field and click on `Perl () Default` so that this changes to `Perl () Install`, repeat with `php-jsonc` and `php-simplexml` (details are shown [here](http://slu.livejournal.com/17395.html)). 
 
 `Rtools` is *not* required for `ctrdata` on MS Windows. 
 
@@ -69,7 +69,7 @@ dbGetVariablesIntoDf	| Create a data frame from records in the data base that ha
 dfMergeTwoVariablesRelevel	| Merge related variables into a single variable, and optionally map values to a new set of values.
 installMongoCheckVersion	| Check the version of the build of the mongo server to be used
 installMongoFindBinaries	| Convenience function to find location of mongo database binaries (mongo, mongoimport)
-installCygwinWindowsDoInstall	| Convenience function to install a cygwin environment under MS Windows, including perl
+installCygwinWindowsDoInstall	| Convenience function to install a cygwin environment under MS Windows, including perl and php
 installCygwinWindowsTest	| Convenience function to test for working cygwin installation
 
 
@@ -109,14 +109,23 @@ ctrLoadQueryIntoDb(q)
 #
 # show which queries have been imported into the database so far
 ctrQueryHistoryInDb()
+# Total number of records: 1553
+# Number of queries in history: 2
+#       query-timestamp query-register query-records                           query-term
+# 1 2015-10-08-23-06-34          CTGOV            26 ependymoma&recr=Open&type=Intr&age=0
+# 2 2015-10-08-23-02-51          EUCTR            24            ependymoma&status=ongoing
 ```
 
 * Find names of fields of interest in database:
 ```R
-dbFindVariable("sites")   # note: when run for first time, may download variety.js
-dbFindVariable("n_date")
+dbFindVariable("date")
+# Returning first of 5 keys found.
+# [1] "firstreceived_date"
+#
 dbFindVariable("number_of_subjects", allmatches = TRUE)
-dbFindVariable("time", allmatches = TRUE)
+# [1] "f1151_number_of_subjects_for_this_age_range" "f1161_number_of_subjects_for_this_age_range" "f11_number_of_subjects_for_this_age_range"  
+# [4] "f1141_number_of_subjects_for_this_age_range" "f121_number_of_subjects_for_this_age_range"  "f1111_number_of_subjects_for_this_age_range"
+# [7] "f1121_number_of_subjects_for_this_age_range" "f1131_number_of_subjects_for_this_age_range" "f131_number_of_subjects_for_this_age_range" 
 ```
 
 * Analyse some clinical trial information:
@@ -252,13 +261,16 @@ out <- m$aggregate('[{"$match": {"primary_outcome.measure": {"$regex": "overall 
                      {"$project": {"_id": 1, "firstreceived_date": 1}}]')
 out$year <- substr (out$firstreceived_date, tmp <- nchar(out$firstreceived_date) - 4, tmp + 4)
 table (out$year)
+# 2005  2006  2007  2008  2009  2010  2011  2012  2013  2014  2015 
+#    8     5     4    13     3     8     3     8     4     6     6 
 #
 # PFS, EFS, RFS, DFS by year (firstreceived_date)
 out <- m$aggregate('[{"$match": {"primary_outcome.measure": {"$regex": "(progression|event|relapse|recurrence|disease)[- ]free", "$options": "i"}}}, 
                      {"$project": {"_id": 1, "firstreceived_date": 1}}]')
 out$year <- substr (out$firstreceived_date, tmp <- nchar(out$firstreceived_date) - 4, tmp + 4)
 table (out$year)
-#
+# 2005  2006  2007  2008  2009  2010  2011  2012  2013  2014  2015 
+#   13     6     7    11    16    17    17    19    25    26    17
 ```
 
 
@@ -288,7 +300,7 @@ table (out$year)
 
 * Package `ctrdata` is expected to work on Linux, Mac OS X and MS Windows systems, if installation requirements (above) are met.  
 
-* Package `ctrdata` also uses [Variety](https://github.com/variety/variety). In fact, `variety.js` will automatically be downloaded into the package's `exec` directory when first using the function that needs it. This may fail if this directory is not writable for the user and this issue is not yet addressed. Note that `variety.js` may not work well with remote mongo databases, see documentation of `findCTRkeys()`. 
+* Package `ctrdata` also uses [Variety](https://github.com/variety/variety). In fact, `variety.js` will automatically be downloaded into the package's `exec` directory when first using the function that needs it. This may fail if this directory is not writable for the user and this issue is not yet addressed. Note that `variety.js` may not work well with remote mongo databases, see documentation of `dbFindVariable()`. 
 
 * In case `curl` fails with an SSL error, run this code to update the certificates in the root of package `curl`:
 ```R
