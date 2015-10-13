@@ -7,26 +7,29 @@ output:
 
 ## Aims
 
-The aims of `ctrdata` are to provide functions primarily for retrieving information from public registers on clinical trials, and functions for aggregating and analysing information are also included. This is for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and also for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). The registers are not known to provide an application programming interface (API) and have limited aggregation options. Development of `ctrdata` started mid 2015, first push to github.com mid September 2015, last edit 2015-10-08 for version 0.4. 
+The aims of `ctrdata` include to provide functions primarily for retrieving information from public registers on clinical trials, and for aggregating and analysing downloaded information. This is primarily for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/), but also for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). The registers have limited options in terms of aggregation and an application programming interface (API). Development of `ctrdata` started mid 2015, first push to github.com mid September 2015, last edit 2015-10-08 for version 0.4. 
 
-Key features implemented:
+Key features implemented so far:
 
-* Protocol-related information on clinical trials is retrieved from public online sources, from queries defined by the user. 
+* Protocol-related information on clinical trials is retrieved from public online sources. 
 
-* Utility functions are included for defining queries in the registers' browser-based user interfaces. 
+* Users can define queries in the registers' browser-based interfaces and then use for retrieval. 
 
-* Retrieved information is transformed and stored in a document-centric database (mongo) for further access. (The database may be in a locally running MongoDB server or remotely accessible [e.g. mongolab](https://mongolab.com/).) 
+* Retrieved (downloaded) information is transformed and stored in a document-centric database (mongo) for further access.  
 
-* Fast and offline access to detailed information on clinical trials, for use with `R`. 
+* This provides fast and offline access to detailed information on clinical trials, for analysis in `R` (examples below). 
 
 * Unique (de-duplicated) clinical trial records are identified, as the database may well hold information from more than one register. 
   
-* Records in a database can be updated by a simple query command. 
+* Records in a database can be updated by a simple command. 
 
 * In the background, `exec/euctr2json.sh` is a special script that transforms EUCTR plain text files to json format. 
 
-This package `ctrdata` has been made possible based on the work done for [RCurl](http://www.omegahat.org/RCurl/), [curl](https://github.com/jeroenooms/curl), [rmongodb](https://github.com/mongosoup/rmongodb) and of course for [R](http://www.r-project.org/). 
+* Reminder of the copyrights and terms and conditions of the respective register shown when loading the package. 
 
+Please read the "Acknowledgments" and "Notes" sectionsbelow. 
+
+Please file issues and bugs here: [https://github.com/rfhb/ctrdata/issues](https://github.com/rfhb/ctrdata/issues). 
 
 ## Installation
 
@@ -153,10 +156,9 @@ table(result$a1_member_state_concerned, result$x5_trial_status)
 # how many clinical trials where started in which year? 
 result <- dbGetVariablesIntoDf(c("a1_member_state_concerned", "n_date_of_competent_authority_decision", 
                                  "a2_eudract_number"))
-#
 # to eliminate trials records duplicated by member state: 
 result <- dbFindUniqueEuctrRecord(result)
-# 
+# visualise 
 result$startdate <- strptime(result$n_date_of_competent_authority_decision, "%Y-%m-%d")
 hist(result$startdate, breaks = "years", freq = TRUE, las = 1); box()
 ```
@@ -189,10 +191,10 @@ table(tmp)
 statusvalues <- list("ongoing" = c("Recruiting", "Active", "Ongoing", "Active, not recruiting", 
                                    "Enrolling by invitation", "Restarted"),
                     "completed" = c("Completed", "Prematurely Ended", "Terminated"),
-                    "other" = c("Withdrawn", "Suspended", "No longer available", "Not yet recruiting"))
+                    "other"     = c("Withdrawn", "Suspended", "No longer available", 
+                                    "Not yet recruiting"))
 tmp <- dfMergeTwoVariablesRelevel(result, c("overall_status", "x5_trial_status"), statusvalues)
 table(tmp)
-#
 # completed   ongoing     other 
 #      1059       671       115
 ```
@@ -218,7 +220,8 @@ out <- subset (out, subset = `_id` %in% ids_of_unique_trials)
 # of subdocuments in the data base 
 count.elements <- function (dataframecolumn) {
    return(sapply(dataframecolumn, 
-                 function(x) ifelse (is.data.frame(tmp <- unlist (x[[1]])), nrow(tmp), length(tmp))))
+                 function(x) ifelse (is.data.frame(tmp <- unlist (x[[1]])), 
+                                     nrow(tmp), length(tmp))))
 }
 #
 # sum up number of sites per trial
@@ -241,13 +244,17 @@ m <- mongo(db = "users", collection = "ctrdata")
 #
 # number of all entries
 m$count()
-# number of ctgov records
+# number of ctgov records using json for query:
 m$count('{"_id": {"$regex": "NCT[0-9]{8}"}}')
 #
 # count number of records in which certain terms occur,
 # in any of the elements of the array in primary_outcome
 #
 # regular expressions are used (after "$regex"), case insensitive ("i")
+#
+# recommendation: to best define regular expressions for analyses, 
+# inspect field primary_outcome.measure in data base, or print:
+m$distinct("primary_outcome.measure", query = '{"_id": {"$regex": "NCT[0-9]{8}"}}')
 #
 # OS
 m$aggregate('[{"$match": {"primary_outcome.measure": 
@@ -264,11 +271,12 @@ m$aggregate('[{"$match": {"primary_outcome.measure":
 #
 # now by year (in the future may be integrated into a mapreduce operation):
 # 
-# OS by year (firstreceived_date, example: August 29, 2009)
+# OS by year (firstreceived_date)
 out <- m$aggregate('[{"$match": {"primary_outcome.measure": 
                                 {"$regex": "overall survival", 
                                  "$options": "i"}}}, 
                      {"$project": {"_id": 1, "firstreceived_date": 1}}]')
+# simple extraction of year from firstreceived_date such as "August 29, 2009"
 out$year <- substr (out$firstreceived_date, tmp <- nchar(out$firstreceived_date) - 4, tmp + 4)
 table (out$year)
 # 2005  2006  2007  2008  2009  2010  2011  2012  2013  2014  2015 
@@ -279,6 +287,7 @@ out <- m$aggregate('[{"$match": {"primary_outcome.measure":
                                 {"$regex": "(progression|event|relapse|recurrence|disease)[- ]free", 
                                  "$options": "i"}}}, 
                      {"$project": {"_id": 1, "firstreceived_date": 1}}]')
+# simple extraction of year from firstreceived_date such as "August 29, 2009"
 out$year <- substr (out$firstreceived_date, tmp <- nchar(out$firstreceived_date) - 4, tmp + 4)
 table (out$year)
 # 2005  2006  2007  2008  2009  2010  2011  2012  2013  2014  2015 
@@ -295,24 +304,26 @@ table (out$year)
 
 ## Acknowledgements 
 
-* Data providers and curators of the clinical trial registers
+* Data providers and curators of the clinical trial registers. Please review and respect their copyrights and terms and conditions (`ctrOpenSearchPagesInBrowser(copyright = TRUE)`). 
 
-* Contributors to community documentation
+* This package `ctrdata` has been made possible based on the work done for [RCurl](http://www.omegahat.org/RCurl/), [curl](https://github.com/jeroenooms/curl), [rmongodb](https://github.com/mongosoup/rmongodb) and of course for [R](http://www.r-project.org/). 
 
 * [Variety](https://github.com/variety/variety), a Schema Analyzer for MongoDB
+
+* Contributors to community documentation
 
 
 ## Notes
 
 * By design, each record from EUCTR when using `details = TRUE` (the default) represents information on the trial concerning the respective member state. This is necessary for some analyses, but not for others. 
 
-* So far, no attempts are made to harmonise and map field names between different registers, such as by using standardised identifiers. 
+* So far, no attempts are made to harmonise and map field names between different registers, but the function `dfMergeTwoVariablesRelevel()` can be used to manually merge and map two variables / fields. 
 
-* So far, no efforts were made to type data base fields; they are all strings. 
+* So far, no efforts were made to type data base fields; they are all strings in the database. 
 
 * Package `ctrdata` is expected to work on Linux, Mac OS X and MS Windows systems, if installation requirements (above) are met.  
 
-* Package `ctrdata` also uses [Variety](https://github.com/variety/variety). In fact, `variety.js` will automatically be downloaded into the package's `exec` directory when first using the function that needs it. This may fail if this directory is not writable for the user and this issue is not yet addressed. Note that `variety.js` may not work well with remote mongo databases, see documentation of `dbFindVariable()`. 
+* Package `ctrdata` also uses [Variety](https://github.com/variety/variety), which will automatically be downloaded into the package's `exec` directory when first using a function that needs it. This may fail if this directory is not writable for the user and this issue is not yet addressed. Note that `variety.js` may work well with remote mongo databases, see documentation of `dbFindVariable()`. 
 
 * In case `curl` fails with an SSL error, run this code to update the certificates in the root of package `curl`:
 ```R
