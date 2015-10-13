@@ -216,9 +216,11 @@ ctrQueryHistoryInDb()
 # [1] &quot;firstreceived_date&quot;
 #
 dbFindVariable(&quot;number_of_subjects&quot;, allmatches = TRUE)
-# [1] &quot;f1151_number_of_subjects_for_this_age_range&quot; &quot;f1161_number_of_subjects_for_this_age_range&quot; &quot;f11_number_of_subjects_for_this_age_range&quot;  
-# [4] &quot;f1141_number_of_subjects_for_this_age_range&quot; &quot;f121_number_of_subjects_for_this_age_range&quot;  &quot;f1111_number_of_subjects_for_this_age_range&quot;
-# [7] &quot;f1121_number_of_subjects_for_this_age_range&quot; &quot;f1131_number_of_subjects_for_this_age_range&quot; &quot;f131_number_of_subjects_for_this_age_range&quot; </code></pre></li>
+# [1] &quot;f1151_number_of_subjects_for_this_age_range&quot; &quot;f1161_number_of_subjects_for_this_age_range&quot; 
+# [3] &quot;f11_number_of_subjects_for_this_age_range&quot; &quot;f1141_number_of_subjects_for_this_age_range&quot; 
+# [5] &quot;f121_number_of_subjects_for_this_age_range&quot;  &quot;f1111_number_of_subjects_for_this_age_range&quot;
+# [7] &quot;f1121_number_of_subjects_for_this_age_range&quot; &quot;f1131_number_of_subjects_for_this_age_range&quot; 
+# [9] &quot;f131_number_of_subjects_for_this_age_range&quot; </code></pre></li>
 <li><p>Analyse some clinical trial information:</p>
 <pre class="r"><code># get all records that have values in all specified fields
 result &lt;- dbGetVariablesIntoDf(c(&quot;b31_and_b32_status_of_the_sponsor&quot;, &quot;x5_trial_status&quot;))
@@ -238,7 +240,8 @@ result &lt;- dbGetVariablesIntoDf(c(&quot;a1_member_state_concerned&quot;, &quot
 table(result$a1_member_state_concerned, result$x5_trial_status)
 #
 # how many clinical trials where started in which year? 
-result &lt;- dbGetVariablesIntoDf(c(&quot;a1_member_state_concerned&quot;, &quot;n_date_of_competent_authority_decision&quot;, &quot;a2_eudract_number&quot;))
+result &lt;- dbGetVariablesIntoDf(c(&quot;a1_member_state_concerned&quot;, &quot;n_date_of_competent_authority_decision&quot;, 
+                                 &quot;a2_eudract_number&quot;))
 #
 # to eliminate trials records duplicated by member state: 
 result &lt;- dbFindUniqueEuctrRecord(result)
@@ -299,7 +302,8 @@ out &lt;- subset (out, subset = `_id` %in% ids_of_unique_trials)
 # whether these are an array or a set
 # of subdocuments in the data base 
 count.elements &lt;- function (dataframecolumn) {
-   return(sapply(dataframecolumn, function(x) ifelse (is.data.frame(tmp &lt;- unlist (x[[1]])), nrow(tmp), length(tmp))))
+   return(sapply(dataframecolumn, 
+                 function(x) ifelse (is.data.frame(tmp &lt;- unlist (x[[1]])), nrow(tmp), length(tmp))))
 }
 #
 # sum up number of sites per trial
@@ -329,18 +333,24 @@ m$count('{&quot;_id&quot;: {&quot;$regex&quot;: &quot;NCT[0-9]{8}&quot;}}')
 # regular expressions are used (after &quot;$regex&quot;), case insensitive (&quot;i&quot;)
 #
 # OS
-m$aggregate('[{&quot;$match&quot;: {&quot;primary_outcome.measure&quot;: {&quot;$regex&quot;: &quot;overall survival&quot;, &quot;$options&quot;: &quot;i&quot;}}}, 
+m$aggregate('[{&quot;$match&quot;: {&quot;primary_outcome.measure&quot;: 
+                         {&quot;$regex&quot;: &quot;overall survival&quot;, 
+                          &quot;$options&quot;: &quot;i&quot;}}}, 
               {&quot;$group&quot;: {&quot;_id&quot;: &quot;null&quot;, &quot;count&quot;: {&quot;$sum&quot;: 1}}}]')
 # 
 # PFS, EFS, RFS, DFS
-m$aggregate('[{&quot;$match&quot;: {&quot;primary_outcome.measure&quot;: {&quot;$regex&quot;: &quot;(progression|event|relapse|recurrence|disease)[- ]free&quot;, &quot;$options&quot;: &quot;i&quot;}}}, 
+m$aggregate('[{&quot;$match&quot;: {&quot;primary_outcome.measure&quot;: 
+                         {&quot;$regex&quot;: &quot;(progression|event|relapse|recurrence|disease)[- ]free&quot;, 
+                          &quot;$options&quot;: &quot;i&quot;}}}, 
               {&quot;$group&quot;: {&quot;_id&quot;: &quot;null&quot;, &quot;count&quot;: {&quot;$sum&quot;: 1}}}]')
 #
 #
 # now by year (in the future may be integrated into a mapreduce operation):
 # 
 # OS by year (firstreceived_date, example: August 29, 2009)
-out &lt;- m$aggregate('[{&quot;$match&quot;: {&quot;primary_outcome.measure&quot;: {&quot;$regex&quot;: &quot;overall survival&quot;, &quot;$options&quot;: &quot;i&quot;}}}, 
+out &lt;- m$aggregate('[{&quot;$match&quot;: {&quot;primary_outcome.measure&quot;: 
+                                {&quot;$regex&quot;: &quot;overall survival&quot;, 
+                                 &quot;$options&quot;: &quot;i&quot;}}}, 
                      {&quot;$project&quot;: {&quot;_id&quot;: 1, &quot;firstreceived_date&quot;: 1}}]')
 out$year &lt;- substr (out$firstreceived_date, tmp &lt;- nchar(out$firstreceived_date) - 4, tmp + 4)
 table (out$year)
@@ -348,7 +358,9 @@ table (out$year)
 #    8     5     4    13     3     8     3     8     4     6     6 
 #
 # PFS, EFS, RFS, DFS by year (firstreceived_date)
-out &lt;- m$aggregate('[{&quot;$match&quot;: {&quot;primary_outcome.measure&quot;: {&quot;$regex&quot;: &quot;(progression|event|relapse|recurrence|disease)[- ]free&quot;, &quot;$options&quot;: &quot;i&quot;}}}, 
+out &lt;- m$aggregate('[{&quot;$match&quot;: {&quot;primary_outcome.measure&quot;: 
+                                {&quot;$regex&quot;: &quot;(progression|event|relapse|recurrence|disease)[- ]free&quot;, 
+                                 &quot;$options&quot;: &quot;i&quot;}}}, 
                      {&quot;$project&quot;: {&quot;_id&quot;: 1, &quot;firstreceived_date&quot;: 1}}]')
 out$year &lt;- substr (out$firstreceived_date, tmp &lt;- nchar(out$firstreceived_date) - 4, tmp + 4)
 table (out$year)

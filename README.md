@@ -123,9 +123,11 @@ dbFindVariable("date")
 # [1] "firstreceived_date"
 #
 dbFindVariable("number_of_subjects", allmatches = TRUE)
-# [1] "f1151_number_of_subjects_for_this_age_range" "f1161_number_of_subjects_for_this_age_range" "f11_number_of_subjects_for_this_age_range"  
-# [4] "f1141_number_of_subjects_for_this_age_range" "f121_number_of_subjects_for_this_age_range"  "f1111_number_of_subjects_for_this_age_range"
-# [7] "f1121_number_of_subjects_for_this_age_range" "f1131_number_of_subjects_for_this_age_range" "f131_number_of_subjects_for_this_age_range" 
+# [1] "f1151_number_of_subjects_for_this_age_range" "f1161_number_of_subjects_for_this_age_range" 
+# [3] "f11_number_of_subjects_for_this_age_range" "f1141_number_of_subjects_for_this_age_range" 
+# [5] "f121_number_of_subjects_for_this_age_range"  "f1111_number_of_subjects_for_this_age_range"
+# [7] "f1121_number_of_subjects_for_this_age_range" "f1131_number_of_subjects_for_this_age_range" 
+# [9] "f131_number_of_subjects_for_this_age_range" 
 ```
 
 * Analyse some clinical trial information:
@@ -149,7 +151,8 @@ result <- dbGetVariablesIntoDf(c("a1_member_state_concerned", "x5_trial_status")
 table(result$a1_member_state_concerned, result$x5_trial_status)
 #
 # how many clinical trials where started in which year? 
-result <- dbGetVariablesIntoDf(c("a1_member_state_concerned", "n_date_of_competent_authority_decision", "a2_eudract_number"))
+result <- dbGetVariablesIntoDf(c("a1_member_state_concerned", "n_date_of_competent_authority_decision", 
+                                 "a2_eudract_number"))
 #
 # to eliminate trials records duplicated by member state: 
 result <- dbFindUniqueEuctrRecord(result)
@@ -214,7 +217,8 @@ out <- subset (out, subset = `_id` %in% ids_of_unique_trials)
 # whether these are an array or a set
 # of subdocuments in the data base 
 count.elements <- function (dataframecolumn) {
-   return(sapply(dataframecolumn, function(x) ifelse (is.data.frame(tmp <- unlist (x[[1]])), nrow(tmp), length(tmp))))
+   return(sapply(dataframecolumn, 
+                 function(x) ifelse (is.data.frame(tmp <- unlist (x[[1]])), nrow(tmp), length(tmp))))
 }
 #
 # sum up number of sites per trial
@@ -246,18 +250,24 @@ m$count('{"_id": {"$regex": "NCT[0-9]{8}"}}')
 # regular expressions are used (after "$regex"), case insensitive ("i")
 #
 # OS
-m$aggregate('[{"$match": {"primary_outcome.measure": {"$regex": "overall survival", "$options": "i"}}}, 
+m$aggregate('[{"$match": {"primary_outcome.measure": 
+                         {"$regex": "overall survival", 
+                          "$options": "i"}}}, 
               {"$group": {"_id": "null", "count": {"$sum": 1}}}]')
 # 
 # PFS, EFS, RFS, DFS
-m$aggregate('[{"$match": {"primary_outcome.measure": {"$regex": "(progression|event|relapse|recurrence|disease)[- ]free", "$options": "i"}}}, 
+m$aggregate('[{"$match": {"primary_outcome.measure": 
+                         {"$regex": "(progression|event|relapse|recurrence|disease)[- ]free", 
+                          "$options": "i"}}}, 
               {"$group": {"_id": "null", "count": {"$sum": 1}}}]')
 #
 #
 # now by year (in the future may be integrated into a mapreduce operation):
 # 
 # OS by year (firstreceived_date, example: August 29, 2009)
-out <- m$aggregate('[{"$match": {"primary_outcome.measure": {"$regex": "overall survival", "$options": "i"}}}, 
+out <- m$aggregate('[{"$match": {"primary_outcome.measure": 
+                                {"$regex": "overall survival", 
+                                 "$options": "i"}}}, 
                      {"$project": {"_id": 1, "firstreceived_date": 1}}]')
 out$year <- substr (out$firstreceived_date, tmp <- nchar(out$firstreceived_date) - 4, tmp + 4)
 table (out$year)
@@ -265,7 +275,9 @@ table (out$year)
 #    8     5     4    13     3     8     3     8     4     6     6 
 #
 # PFS, EFS, RFS, DFS by year (firstreceived_date)
-out <- m$aggregate('[{"$match": {"primary_outcome.measure": {"$regex": "(progression|event|relapse|recurrence|disease)[- ]free", "$options": "i"}}}, 
+out <- m$aggregate('[{"$match": {"primary_outcome.measure": 
+                                {"$regex": "(progression|event|relapse|recurrence|disease)[- ]free", 
+                                 "$options": "i"}}}, 
                      {"$project": {"_id": 1, "firstreceived_date": 1}}]')
 out$year <- substr (out$firstreceived_date, tmp <- nchar(out$firstreceived_date) - 4, tmp + 4)
 table (out$year)
