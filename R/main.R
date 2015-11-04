@@ -281,7 +281,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", updaterecords
     # find out number of trials imported into database
     imported <- as.integer(gsub(".*imported ([0-9]+) document.*", "\\1", imported[length(imported)])) - 1
     if (!is.numeric(imported) || imported == 0) stop("Import has apparently failed, returned ", imported)
-    message(paste0("Done - imported or updated ", imported, " trial(s)."))
+    message(paste0("Imported or updated ", imported, " trial(s)."))
 
     # clean up temporary directory
     if (!debug) unlink(tempDir, recursive = TRUE)
@@ -393,7 +393,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", updaterecords
     # find out number of trials imported into database
     imported <- as.integer(gsub(".*imported ([0-9]+) document.*", "\\1", imported[length(imported)]))
     if (!is.numeric(imported) || imported == 0) stop("Import has apparently failed, returned ", imported)
-    message(paste0("Done - imported or updated ", imported, " records on ", resultsEuNumTrials, " trial(s)."))
+    message(paste0("Imported or updated ", imported, " records on ", resultsEuNumTrials, " trial(s)."))
 
     # clean up temporary directory
     if (!debug) unlink(tempDir, recursive = TRUE)
