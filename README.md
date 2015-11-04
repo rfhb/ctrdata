@@ -1,13 +1,16 @@
 ---
-output: 
-  html_document: 
+output:
+  html_document:
     toc: yes
+  pdf_document:
+    toc: yes
+  word_document: default
 ---
 # README.md for R package ctrdata on github.com
 
 ## Aims
 
-The aims of `ctrdata` include to provide functions primarily for retrieving information from public registers on clinical trials, and for aggregating and analysing downloaded information. This is primarily for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/), but also for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). The registers have limited options in terms of aggregation and an application programming interface (API). Development of `ctrdata` started mid 2015, first push to github.com mid September 2015, last edit 2015-10-08 for version 0.4. 
+The aims of `ctrdata` include to provide functions primarily for retrieving information from public registers on clinical trials, and for aggregating and analysing downloaded information. This is primarily for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/), but also for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). The registers have limited options in terms of aggregation and an application programming interface (API). Development of `ctrdata` started mid 2015, last edit 2015-10-08 for version 0.4. 
 
 Key features implemented so far:
 
@@ -330,4 +333,4 @@ table (out$year)
 httr::GET("https://github.com/bagder/ca-bundle/raw/e9175fec5d0c4d42de24ed6d84a06d504d5e5a09/ca-bundle.crt", write_disk(system.file("", package = "curl"), "inst/cacert.pem", overwrite = TRUE))
 ```
 
-[1]: ./Rplot.svg "Number of trials authorised to start, by year"
+[1]: ./Rplot01.png "Number of trials authorised to start, by year"
