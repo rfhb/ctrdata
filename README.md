@@ -139,10 +139,20 @@ dbFindVariable("number_of_subjects", allmatches = TRUE)
 * Analyse some clinical trial information:
 ```R
 # get all records that have values in all specified fields
-result <- dbGetVariablesIntoDf(c("b31_and_b32_status_of_the_sponsor", "x5_trial_status"))
+# note that b31_... is an element within the array b1_...
+result <- dbGetVariablesIntoDf(c("b1_sponsor.b31_and_b32_status_of_the_sponsor", "x5_trial_status"))
 table (result$x5_trial_status)
 #  Completed   Not Authorised   Ongoing   Prematurely Ended   Restarted   Temporarily Halted 
 #         95                4        96                  17           4                  3 
+
+table (result$x5_trial_status, result$b31_and_b32_status_of_the_sponsor)
+#                    Commercial Non-Commercial
+#  Completed                  60             14
+#  Not Authorised              3              0
+#  Ongoing                   207            234
+#  Prematurely Ended          21              2
+#  Restarted                   5              0
+#  Temporarily Halted          5              1
 ```
 
 ### Deduplicate country-specific records of a trial, visualise trial information
