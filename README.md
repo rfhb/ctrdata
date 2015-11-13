@@ -307,6 +307,25 @@ table (out$year)
 #   13     6     7    11    16    17    17    19    25    26    17
 ```
 
+### Examples using mapreduce operations to prepare for analysis
+```R
+library(mongolite)
+#
+m <- mongo(db = "users", collection = "ctrdata")
+#
+# count number of trials (trial records) with number of study participants in 
+# bins of hundreds of participants
+hist <- m$mapreduce(
+  map = "function(){emit(Math.floor(this.f422_in_the_whole_clinical_trial/100)*100, 1)}", 
+  reduce = "function(id, counts){return Array.sum(counts)}"
+)
+#
+hist
+#
+plot (hist, type = "h", las = 1)
+#
+```
+
 
 ## In the works - next steps
  
