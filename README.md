@@ -320,6 +320,9 @@ hist <- m$mapreduce(
   reduce = "function(id, counts){return Array.sum(counts)}"
 )
 #
+# the mongodb documentation includes that a mapreduce operation might
+# not be as fast and efficient as using the aggregation pipeline
+#
 hist
 #
 plot (hist, type = "h", las = 1)
