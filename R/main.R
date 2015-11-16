@@ -168,7 +168,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", updaterecords
       message(paste0("Downloading trials from CTGOV as csv ..."))
       h <- curl::new_handle()
       curl::handle_setopt(h, ssl_verifypeer = FALSE)
-      curl::curl_download(paste0(queryUSRoot, queryUSType1, queryterm, queryUSPostCSV), paste0(tempDir, "/ctgov.zip"), mode = "wb", handle = h)
+      curl::curl_download(paste0(queryUSRoot, queryUSType1, queryterm, queryUSPostCSV), paste0(tempDir, "/ctgov.zip"), mode = "wb", handle = h, quiet = (getOption("internet.info") >= 2))
       unzip(paste0(tempDir, "/ctgov.zip"), exdir = tempDir)
       resultsCTGOV <- paste0(tempDir, "/study_fields.csv")
 
@@ -220,7 +220,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", updaterecords
       message(paste0("Downloading trials from CTGOV as xml ..."))
       h <- curl::new_handle()
       curl::handle_setopt(h, ssl_verifypeer = FALSE)
-      curl::curl_download(paste0(queryUSRoot, queryUSType1, queryterm, queryUSPostXML), paste0(tempDir, "/ctgov.zip"), mode = "wb", handle = h)
+      curl::curl_download(paste0(queryUSRoot, queryUSType1, queryterm, queryUSPostXML), paste0(tempDir, "/ctgov.zip"), mode = "wb", handle = h, quiet = (getOption("internet.info") >= 2))
       unzip(paste0(tempDir, "/ctgov.zip"), exdir = tempDir)
 
       # compose commands - transform xml into json, a single allfiles.json in the temporaray directory
