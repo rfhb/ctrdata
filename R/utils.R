@@ -92,8 +92,18 @@ ctrGetQueryUrlFromBrowser <- function(content = clipr::read_clip()) {
 
 #' Find names of keys (fields) in the data base
 #'
-#' Note that generating a list of keys with variety.js as used in this function may not work with certain remote mongo databases,
-#' for example when the host or port is different per database, such as with a free mongolab plan
+#' Given part of the name of a field of interest to the user, this function returns the full field names
+#' as found in the data base. It is not necessary to add wild cards to the name of the field of interest.
+#'
+#' For fields in EUCTR (protocol-related information), see also the register's documentation:
+#' \url{https://eudract.ema.europa.eu/protocol.html}.
+#'
+#' For fields in CTGOV (protocol-related information), see also the register's definitions:
+#' \url{https://prsinfo.clinicaltrials.gov/definitions.html}
+#'
+#' Note that generating a list of keys with variety.js as used in this function may not work with certain
+#' mongo databases, for example when the host or port is different per database, such as found with a
+#' free mongolab plan.
 #'
 #' @param namepart A plain string (not a regular expression) to be searched for among all field names (keys) in the database.
 #' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on localhost port 27017.
@@ -115,7 +125,7 @@ dbFindVariable <- function(namepart = "",
 
   # sanity checks
   if (!is.atomic(namepart)) stop("Name part should be atomic.")
-  if (length(namepart) > 1) stop("Name part should only have one element.")
+  if (length(namepart) > 1) stop("Name part should have only one element.")
   if (namepart == "" & !forceupdate) stop("Empty name part string.")
 
   # check program availability
@@ -477,7 +487,6 @@ installCygwinWindowsDoInstall <- function(overwrite = FALSE, proxy = ""){
   installCygwinWindowsTest()
   #
 }
-
 
 
 
