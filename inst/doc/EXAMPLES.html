@@ -62,227 +62,265 @@ img {
 
 <div id="TOC">
 <ul>
-<li><a href="#readme.md-for-r-package-ctrdata-on-github.com">README.md for R package ctrdata on github.com</a><ul>
-<li><a href="#background">Background</a></li>
-<li><a href="#installation">Installation</a></li>
-<li><a href="#overview-of-functions-in-ctrdata">Overview of functions in <code>ctrdata</code></a></li>
-<li><a href="#example-workflow">Example workflow</a><ul>
-<li><a href="#download-protocol-related-trial-information-and-tabulate-trial-status">Download protocol-related trial information and tabulate trial status</a></li>
-<li><a href="#more-and-complex-examples">More and complex examples</a></li>
-</ul></li>
-<li><a href="#in-the-works---next-steps">In the works - next steps</a></li>
-<li><a href="#acknowledgements">Acknowledgements</a></li>
-<li><a href="#issues-and-notes">Issues and notes</a></li>
+<li><a href="#examples-for-using-r-package-ctrdata-for-clinical-trial-protocol-related-information">Examples for using R package <code>ctrdata</code> for clinical trial protocol-related information</a><ul>
+<li><a href="#find-fields-variables-of-interest">Find fields / variables of interest</a></li>
+<li><a href="#update-data-base-from-query-in-specified-register">Update data base from query in specified register</a></li>
+<li><a href="#deduplicate-country-specific-records-of-a-trial-visualise-trial-information">Deduplicate country-specific records of a trial, visualise trial information</a></li>
+<li><a href="#download-from-another-register-check-for-duplicates-merge-variables-and-re-organise-values">Download from another register, check for duplicates, merge variables and re-organise values</a></li>
+<li><a href="#use-another-mongo-package-for-analysis-for-example-to-count-sites-per-trial">Use another mongo package for analysis, for example to count sites per trial</a></li>
+<li><a href="#use-aggregation-functions-of-the-data-base-to-find-specific-trial-endpoints">Use aggregation functions of the data base to find specific trial endpoints</a></li>
+<li><a href="#using-mapreduce-operations-to-analyse-participant-numbers">Using mapreduce operations to analyse participant numbers</a></li>
 </ul></li>
 </ul>
 </div>
 
-<div id="readme.md-for-r-package-ctrdata-on-github.com" class="section level1">
-<h1>README.md for R package ctrdata on github.com</h1>
-<div id="background" class="section level2">
-<h2>Background</h2>
-<p>The package <code>ctrdata</code> provides functions for retrieving information from public registers, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register (“EUCTR”, <a href="https://www.clinicaltrialsregister.eu/" class="uri">https://www.clinicaltrialsregister.eu/</a>) and for ClinicalTrials.gov (“CTGOV”, <a href="https://clinicaltrials.gov/" class="uri">https://clinicaltrials.gov/</a>). Development of <code>ctrdata</code> started mid 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package can only be used within the <a href="https://www.r-project.org/">R</a> computing system. Last edit 2015-11-29 for version 0.5.</p>
-<p>Features implemented so far:</p>
-<ul>
-<li><p>Protocol-related information on clinical trials is retrieved from public online sources.</p></li>
-<li><p>Users define queries using the registers’ web pages interfaces and then use <code>ctrdata</code> for retrieving the results of the queries.</p></li>
-<li><p>Retrieved (downloaded) information is transformed and stored in a document-centric database (mongo) for further access. This provides fast and offline access to detailed information on clinical trials, for analysis in <code>R</code> (see examples).</p></li>
-<li><p>Unique (de-duplicated) clinical trial records are identified, as the same database may hold information from more than one register.</p></li>
-<li><p>Records in a database can be updated by a simple command.</p></li>
-<li><p>In the background, specially-written scripts <code>exec/euctr2json.sh</code> and <code>exec/xml2json.php</code> transform EUCTR plain text files and CTGOV xml files to json format.</p></li>
-<li><p>Reminder to respect the registers’ copyrights and terms and conditions is shown when loading the package. Please also read the “Acknowledgments” and “Notes” sections below.</p></li>
-</ul>
-</div>
-<div id="installation" class="section level2">
-<h2>Installation</h2>
-<p>Within <a href="https://www.r-project.org/">R</a>, use the following commands to get and install the current development version of package <code>ctrdata</code> from github.com:</p>
-<pre class="r"><code>#
-install.packages(&quot;devtools&quot;)
-devtools::install_github(&quot;rfhb/ctrdata&quot;)
+<div id="examples-for-using-r-package-ctrdata-for-clinical-trial-protocol-related-information" class="section level1">
+<h1>Examples for using R package <code>ctrdata</code> for clinical trial protocol-related information</h1>
+<p>Last edit 2015-11-29. General information on the library is available here: <a href="https://github.com/rfhb/ctrdata"><a href="https://github.com/rfhb/ctrdata" class="uri">https://github.com/rfhb/ctrdata</a></a>.</p>
+<div id="find-fields-variables-of-interest" class="section level2">
+<h2>Find fields / variables of interest</h2>
+<pre class="r"><code>dbFindVariable(&quot;number_of_subjects&quot;, allmatches = TRUE)
 #
-# Note the packages that will be installed 
-# automatically as dependencies of ctrdata: 
-# rmongodb, RCurl, curl, clipr
+# [1] &quot;f1151_number_of_subjects_for_this_age_range&quot; &quot;f1161_number_of_subjects_for_this_age_range&quot; 
+# [3] &quot;f11_number_of_subjects_for_this_age_range&quot; &quot;f1141_number_of_subjects_for_this_age_range&quot; 
+# [5] &quot;f121_number_of_subjects_for_this_age_range&quot;  &quot;f1111_number_of_subjects_for_this_age_range&quot;
+# [7] &quot;f1121_number_of_subjects_for_this_age_range&quot; &quot;f1131_number_of_subjects_for_this_age_range&quot; 
+# [9] &quot;f131_number_of_subjects_for_this_age_range&quot; 
 #</code></pre>
-<p>Other requirements:</p>
-<ul>
-<li>A local <a href="https://www.mongodb.org/">mongodb</a> version 3 installation:</li>
-</ul>
-<p>From this installation, binaries <code>mongoimport</code> and <code>mongo</code> required. For Ubuntu, please note this seems to ship mongodb version 2.x, not the required version 3; please follow installation instructions <a href="http://docs.mongodb.org/manual/tutorial/install-mongodb-on-debian/#install-mongodb">here for Ubuntu 15, same as for Debian</a> and here for <a href="http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/#install-mongodb">Ubuntu 14 and earlier</a>. For Mac OS X and Windows, please follow installation instructions <a href="https://www.mongodb.org/downloads#production">here</a>. For Mac OS X alternatively install mongo using <a href="http://brew.sh/">homebrew</a> using the command line <code>brew install mongodb</code>.</p>
-<ul>
-<li>Command line tools <code>perl</code>, <code>sed</code>, <code>cat</code> and <code>php</code> (5.2 or higher):</li>
-</ul>
-<p>In Linux and Mac OS X systems, these are usually already installed. For MS Windows, the recommendation is to install <a href="https://cygwin.com/install.html">cygwin</a>: In <code>R</code>, run <code>ctrdata::installCygwinWindowsDoInstall()</code> for an automated installation into <code>c:\cygwin</code>. Manual cygwin installation: In the graphical interface of the cygwin installer, type <code>perl</code> in the <code>Select packages</code> field and click on <code>Perl () Default</code> so that this changes to <code>Perl () Install</code>, repeat with <code>php-jsonc</code> and <code>php-simplexml</code> (shown <a href="http://slu.livejournal.com/17395.html">here</a>). An installation does not require administrator credentials, see <a href="https://cygwin.com/faq/faq.html#faq.setup.noroot">here</a>. <code>Rtools</code> is <em>not</em> required for <code>ctrdata</code> on MS Windows.</p>
 </div>
-<div id="overview-of-functions-in-ctrdata" class="section level2">
-<h2>Overview of functions in <code>ctrdata</code></h2>
-<table>
-<thead>
-<tr class="header">
-<th align="left">Name</th>
-<th align="left">Function</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">ctrOpenSearchPagesInBrowser</td>
-<td align="left">Open advanced search pages of register(s) in default web browser.</td>
-</tr>
-<tr class="even">
-<td align="left">ctrQueryHistoryInDb</td>
-<td align="left">Show the history of queries that were loaded into a database</td>
-</tr>
-<tr class="odd">
-<td align="left">ctrGetQueryUrlFromBrowser</td>
-<td align="left">Import from clipboard the URL of a search in one of the registers</td>
-</tr>
-<tr class="even">
-<td align="left">ctrLoadQueryIntoDb</td>
-<td align="left">Retrieve information on clinical trials from register and store in database</td>
-</tr>
-<tr class="odd">
-<td align="left">dbFindIdsUniqueTrials</td>
-<td align="left">This function checks for duplicates in the database based on the clinical trial identifier and returns a list of ids of unique trials</td>
-</tr>
-<tr class="even">
-<td align="left">dbFindVariable</td>
-<td align="left">Find names of keys (fields) in the database</td>
-</tr>
-<tr class="odd">
-<td align="left">dbFindUniqueEuctrRecord</td>
-<td align="left">Select a single trial record when there are records for different EU Member States for this trial</td>
-</tr>
-<tr class="even">
-<td align="left">dbGetVariablesIntoDf</td>
-<td align="left">Create a data frame from records in the database that have specified fields in the database</td>
-</tr>
-<tr class="odd">
-<td align="left">dfMergeTwoVariablesRelevel</td>
-<td align="left">Merge related variables into a single variable, and optionally map values to a new set of values.</td>
-</tr>
-<tr class="even">
-<td align="left">installMongoCheckVersion</td>
-<td align="left">Check the version of the build of the mongo server to be used</td>
-</tr>
-<tr class="odd">
-<td align="left">installMongoFindBinaries</td>
-<td align="left">Convenience function to find location of mongo database binaries (mongo, mongoimport)</td>
-</tr>
-<tr class="even">
-<td align="left">installCygwinWindowsDoInstall</td>
-<td align="left">Convenience function to install a cygwin environment under MS Windows, including perl and php</td>
-</tr>
-<tr class="odd">
-<td align="left">installCygwinWindowsTest</td>
-<td align="left">Convenience function to test for working cygwin installation</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div id="example-workflow" class="section level2">
-<h2>Example workflow</h2>
-<div id="download-protocol-related-trial-information-and-tabulate-trial-status" class="section level3">
-<h3>Download protocol-related trial information and tabulate trial status</h3>
-<ul>
-<li><p>Attach package <code>ctrdata</code>:</p>
-<pre class="r"><code>library(ctrdata)</code></pre></li>
-<li><p>Open register’s advanced search page in browser:</p>
-<pre class="r"><code>#
-ctrOpenSearchPagesInBrowser()
-#
-# Please review and respect register copyrights:
-#
-ctrOpenSearchPagesInBrowser(copyright = TRUE)
-#</code></pre></li>
-<li><p>Click search parameters and execute search in browser</p></li>
-<li><p>Copy address from browser address bar to clipboard</p></li>
-<li><p>Get address from clipboard:</p>
-<pre class="r"><code>#
-q &lt;- ctrGetQueryUrlFromBrowser()
-#
-# Found search query from EUCTR.
-# [1] &quot;cancer&amp;age=children&amp;status=ongoing&quot;
-#</code></pre></li>
-<li><p>Retrieve protocol-related information, transform, save to database and analyse:</p>
-<pre class="r"><code>#
-ctrLoadQueryIntoDb(q)
-#
-# If no parameters are given for a database connection: uses mongodb
-# on localhost, port 27017, database &quot;users&quot;, collection &quot;ctrdata&quot;
-# note: when run for first time, may download variety.js
-#
-# Show which queries have been downloaded into the database so far
+<div id="update-data-base-from-query-in-specified-register" class="section level2">
+<h2>Update data base from query in specified register</h2>
+<p>Note the update functionality will be further improved.</p>
+<pre class="r"><code># List queries 
 #
 ctrQueryHistoryInDb()
+# 
+# Update query number 1 in the history (re-downloading data)
 #
-# Total number of records: 1553
-# Number of queries in history: 2
-#       query-timestamp query-register query-records                           query-term
-# 1 2015-10-08-23-06-34          CTGOV            26 ependymoma&amp;recr=Open&amp;type=Intr&amp;age=0
-# 2 2015-10-08-23-02-51          EUCTR            24            ependymoma&amp;status=ongoing
-#
-# find names of fields of interest in database:
-#
-dbFindVariable(&quot;date&quot;)
-#
-# Returning first of 5 keys found.
-# [1] &quot;firstreceived_date&quot;
-#
-# Get all records that have values in all specified fields.
-# Note that b31_... is an element within the array b1_...
-#
-result &lt;- dbGetVariablesIntoDf(c(&quot;b1_sponsor.b31_and_b32_status_of_the_sponsor&quot;, &quot;x5_trial_status&quot;))
-#
-# Tabulate the status of the clinical trial on the date of information retrieval
-#
-with (result, table (x5_trial_status, b31_and_b32_status_of_the_sponsor))
-#
-#                    b31_and_b32_status_of_the_sponsor
-# x5_trial_status      Commercial Non-Commercial
-#   Completed                  60             14
-#   Not Authorised              3              0
-#   Ongoing                   207            234
-#   Prematurely Ended          21              2
-#   Restarted                   5              0
-#   Temporarily Halted          5              1
-#</code></pre></li>
-</ul>
+ctrLoadQueryIntoDb(querytoupdate = 1) 
+#</code></pre>
 </div>
-<div id="more-and-complex-examples" class="section level3">
-<h3>More and complex examples</h3>
-<p>Can be found here: <a href="https://cdn.rawgit.com/rfhb/ctrdata/master/inst/doc/EXAMPLES.html"><a href="https://cdn.rawgit.com/rfhb/ctrdata/master/inst/doc/EXAMPLES.html" class="uri">https://cdn.rawgit.com/rfhb/ctrdata/master/inst/doc/EXAMPLES.html</a></a></p>
+<div id="deduplicate-country-specific-records-of-a-trial-visualise-trial-information" class="section level2">
+<h2>Deduplicate country-specific records of a trial, visualise trial information</h2>
+<p>Note EUCTR provides country-specific records for trials, see README.md.</p>
+<pre class="r"><code>#
+# Relation between number of study participants in one country and in whole trial? 
+#
+result &lt;- dbGetVariablesIntoDf(c(&quot;f41_in_the_member_state&quot;, &quot;f422_in_the_whole_clinical_trial&quot;))
+#
+plot(f41_in_the_member_state ~ f422_in_the_whole_clinical_trial, result)
+#
+# How many clinical trials are ongoing or completed, per country?
+#
+result &lt;- dbGetVariablesIntoDf(c(&quot;a1_member_state_concerned&quot;, &quot;x5_trial_status&quot;))
+#
+table(result$a1_member_state_concerned, result$x5_trial_status)
+#
+# How many clinical trials where started in which year?
+#
+result &lt;- dbGetVariablesIntoDf(c(&quot;a1_member_state_concerned&quot;, &quot;n_date_of_competent_authority_decision&quot;, 
+                                 &quot;a2_eudract_number&quot;))
+#
+# Eliminate trials records duplicated by member state: 
+#
+result &lt;- dbFindUniqueEuctrRecord(result)
+#
+# Visualise 
+#
+result$startdate &lt;- strptime(result$n_date_of_competent_authority_decision, &quot;%Y-%m-%d&quot;)
+hist(result$startdate, breaks = &quot;years&quot;, freq = TRUE, las = 1); box()
+#</code></pre>
+<p><img src="data:image/png;base64,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7L+rr746ahn+8Ic/2OU1atTwlq9evdrb7pFHHvHmZ+fNrFmznKZNmzpdu3bNzmasGyHwj3/8wzsW7rGcMWNGxFoFZ7Jbt25efY4ePWoL/ssvvzgPP/ywU7x4cWfFihVhlenRo4e3vlt/fT3xxBMdE5CErRvvRFb5xbuPWOtl9/wP/ZszAVes3Uddnt08o+6EmUkrQMuI+eQgFSyBkiVLSocOHey/008/PUeFP//882XevHk52paNfheYPXu2nUhPT5eFCxeKuWjZ1pHf1yj475555hnp37+/HDx4MKwyWt9XXnnFzvvf//1fKV++vLRq1UrS0tJsC8pzzz0Xtn68E5nlF+/28aznx/nvR57xWLBOMATSg1EMSoFA/AKVKlWS//znP5luYL7RyoYNG+TYsWNStWpV0eAlp2nbtm1SqFAhewsiq31onuvXr5datWrZi1FW64Yu021q1qwZOsuWW5vF9+7dK+XKlZMqVaqELY828euvv4re9qpevXrYYt3H4cOHpWLFimHz452IVX911lSvXj17qybe/brrRau/LtNy6y2Rk046yV016quuY1rYrJPWUY9VopLeltFUqlQp0QDivffek7Zt29ogeePGjXLGGWdELUpelHnfvn2yadMmKVKkiD3HS5QoETUvd6bmqTalS5d2Z8V81WNfuHBhG2TFWjm75Ym2P/OVX9asWSOVK1fO1d9stH0zrwAIJG2bDxULvEBOb9OsXbvWMRcA+69fv35ePXV/N910k2O+pXtN5+ZbqmO+rTq6jaZvv/3Wbmf+NO06uq7u64UXXvD2c+DAAad3795O/fr1vf3obaJnn33WMQGOt56+0XXvvPNO24Sv+zTBgzNgwAC7rltGd4OvvvrKK/fHH3/smAu43b+54HpN+lqfsmXLevnqPk8++WTn888/d3fjmEDM28+SJUucjh07OuaiZLc55ZRTnDlz5jgmSHAuueQSx1xMHDVo0KCBY/rHePvI6k089Tf9QmwZzAXO5quvWt8LL7ww013HU39d56yzzrJl1rqrxd133+2YVomw/ZoLv1O7du0wJxO0OUOHDg1bz/Q5suUyAWzY/OnTp3uG//73v71lkbdprrnmGs9Wy2Mu+o4JcO36pu+El78eB83DtIZ4+4p8E0+Zs8pP9/f99987poXBy1fLVLRoUeeWW25xTEDqZdm+fXtbP739afrB2PNAz5G//OUvdr5up/+inf///e9/nbp169rleu6ce+65zpQpU7w8Q2/TxFOeWH9zemzvuecexwRKNg89l0wfJEfPBVLqCGgHLBICvgiEBiP6gffBBx9k+Ge+7doPqHj6jOiF0P2A1Qta6EVNL8ym85y9ULsfxKGv7kVEP9A1eAldFvpeP+RDk067y/VD9IQTTvDK68531585c6a3rl443eXnnHOOXeWjjz7y5pnWHMc0+3vTeiH54Ycf7Hpjx4715lerVs3RfEP3pwGReumFRPsuuPmYFhgbPLnlifYab/0nT57s7dfdv742a9Ys2m7tvFj114ugBk/u/kLLftFFF3n71UBI66braQCgF2c3gNP5uh836cVd19NAKTTpOm4+phO0tygyGDEtHd567vplypSx669atcoLfLWsxYoVc0KDY2+n5k28Zc4qPw2E9e/ELYdpBbPH3p2++eabvSzdc1h9XCtdT89zd/3QV/f81wBAzyd3mdZV32vd3HluMBJveTQ4drcNfXXzvOyyy7zlGpC4+WugpEEQKTUECEZS4zgHspahwUjoh1S097GCEdMs7n2gjRgxwqvvu+++6zRu3NjRi8xPP/1kv2FrJ0Q3D9P3xHZKNLc47Db6zdFdph/u+s1PO2SaUT/efNNPwK4bekHTC6IGC+b2gqOdat196KubQi/GOn/IkCG2lePTTz+1q9x44402ALniiiscc2vFBk/6Td/d16uvvmrXCw1G9ILktvrcdddd3roaxOnFUoMLbR1w96Hf4LNK8dZf96v5aouL7ltbkXRaj2lmKav6a2fRM8880+5LWx702/SRI0eskVv2CRMm2F3ffvvtdj2tuwaYmvTb9cUXX+y0adPG+de//mXn6X+5DUa0hUlbydwyTJ061bq6GTz55JPeMncdDS7ff/99dxX7Gm+Zs8pPW3NMHynbUuMGXOb2i+N28tYWNje5wYiW6bzzzrMXdW0h0c6xWZ3/F1xwgVefl156yTl06JBtoXCPs+7PDUbiLY8em8zyHDVqlJefto5o+fS8Pfvss+187WROSg2B3z8pU6O+1DJAApHBiH4jivznfsDHCkY0CHC/Veu3Kw0k3nzzTcfcV49aY3e/kaNp3A92M0zVcUdT6A70A9LdpkWLFnafoUGHNsG7SQMJt4VEt3FT6MW4Xbt27uwMr7q9Jr0wmb4I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" title="Number of trials authorised to start, by year" alt="Histogram" /></p>
 </div>
+<div id="download-from-another-register-check-for-duplicates-merge-variables-and-re-organise-values" class="section level2">
+<h2>Download from another register, check for duplicates, merge variables and re-organise values</h2>
+<pre class="r"><code>#
+# Get data from another register
+#
+ctrLoadQueryIntoDb(queryterm = &quot;ependymoma&amp;recr=Open&amp;type=Intr&amp;age=0&quot;, register = &quot;CTGOV&quot;)
+#
+# Data from which queries were downloaded into the database? 
+#
+ctrQueryHistoryInDb()
+# 
+# Get columns from the database from different registers.
+# This takes some time because variables are merged sequentially.
+#
+dbFindVariable(&quot;status&quot;, allmatches = TRUE)
+result &lt;- dbGetVariablesIntoDf(c(&quot;overall_status&quot;, &quot;x5_trial_status&quot;, &quot;a2_eudract_number&quot;))
+#
+# Find ids of unique trials and subset the result set to these unique trials
+#
+ids_of_unique_trials &lt;- dbFindIdsUniqueTrials()
+#
+# Subset the result set to these unique trials
+#
+result &lt;- subset (result, subset = `_id` %in% ids_of_unique_trials)
+result &lt;- dbFindUniqueEuctrRecord(result)
+#
+# Now merge two variables into a new one for analysis
+#
+tmp &lt;- dfMergeTwoVariablesRelevel(result, c(&quot;overall_status&quot;, &quot;x5_trial_status&quot;))
+#
+table(tmp)
+#
+# Merge two variables and in addition, condense their values into a new value
+#
+statusvalues &lt;- list(&quot;ongoing&quot; = c(&quot;Recruiting&quot;, &quot;Active&quot;, &quot;Ongoing&quot;, &quot;Active, not recruiting&quot;, 
+                                   &quot;Enrolling by invitation&quot;, &quot;Restarted&quot;),
+                    &quot;completed&quot; = c(&quot;Completed&quot;, &quot;Prematurely Ended&quot;, &quot;Terminated&quot;),
+                    &quot;other&quot;     = c(&quot;Withdrawn&quot;, &quot;Suspended&quot;, &quot;No longer available&quot;, 
+                                    &quot;Not yet recruiting&quot;))
+#
+tmp &lt;- dfMergeTwoVariablesRelevel(result, c(&quot;overall_status&quot;, &quot;x5_trial_status&quot;), statusvalues)
+#
+table(tmp)
+#
+# completed   ongoing     other 
+#      1059       671       115
+#</code></pre>
 </div>
-<div id="in-the-works---next-steps" class="section level2">
-<h2>In the works - next steps</h2>
-<ul>
-<li><p>Provide differential update mechanism (using the RSS feeds provided by the registers), which should be more efficient than the current full re-download</p></li>
-<li><p>Provide examples and possibly special functions to support analysing time trends of clinical trials</p></li>
-<li><p>Make internal access to mongo database more generic</p></li>
-</ul>
+<div id="use-another-mongo-package-for-analysis-for-example-to-count-sites-per-trial" class="section level2">
+<h2>Use another mongo package for analysis, for example to count sites per trial</h2>
+<p>Note: Packages to access mango such as <code>mongolite</code> or <code>RMongo</code> may work to access data that are already in the dababase. However, package <code>rmongodb</code> is still necessary to retrieve data from registers and to store these data into the database.</p>
+<pre class="r"><code>#
+library(mongolite)
+#
+m &lt;- mongo(db = &quot;users&quot;, collection = &quot;ctrdata&quot;)
+# 
+# Check if there are any duplicates
+#
+ids_of_unique_trials &lt;- dbFindIdsUniqueTrials()
+#
+# Find the database elements that represent a site
+#
+out &lt;- m$find('{}', '{&quot;location.facility.name&quot;: 1}')
+#
+# If there were duplicates, the unique trials could be retained like this
+#
+out &lt;- subset (out, subset = `_id` %in% ids_of_unique_trials)
+#
+# Define a helper function to count elements, irrespective of whether
+# the elements are in an array or are a set of subdocuments in the database
+#
+count.elements &lt;- function (dataframecolumn) {
+   return(sapply(dataframecolumn, 
+                 function(x) ifelse (is.data.frame(tmp &lt;- unlist (x[[1]])), 
+                                     nrow(tmp), length(tmp))))
+}
+#
+# Sum up number of sites per trial
+#
+out$number_of_sites &lt;- count.elements (out$location)
+#
+# For many trials, no locations seem to be specified
+#
+out &lt;- subset (out, subset=number_of_sites &gt;= 1)
+#
+# Draw histogram
+#
+hist (out$number_of_sites)
+#</code></pre>
 </div>
-<div id="acknowledgements" class="section level2">
-<h2>Acknowledgements</h2>
-<ul>
-<li><p>Data providers and curators of the clinical trial registers. Please review and respect their copyrights and terms and conditions (<code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>).</p></li>
-<li><p>This package <code>ctrdata</code> has been made possible based on the work done for <a href="http://www.omegahat.org/RCurl/">RCurl</a>, <a href="https://github.com/jeroenooms/curl">curl</a>, <a href="https://github.com/mdlincoln/clipr">clipr</a>, <a href="https://github.com/mongosoup/rmongodb">rmongodb</a> and of course for <a href="http://www.r-project.org/">R</a>.</p></li>
-<li><p><a href="https://github.com/variety/variety">Variety</a>, a Schema Analyzer for MongoDB</p></li>
-<li><p>Contributors to community documentation</p></li>
-</ul>
+<div id="use-aggregation-functions-of-the-data-base-to-find-specific-trial-endpoints" class="section level2">
+<h2>Use aggregation functions of the data base to find specific trial endpoints</h2>
+<pre class="r"><code>#
+library(mongolite)
+#
+m &lt;- mongo(db = &quot;users&quot;, collection = &quot;ctrdata&quot;)
+#
+# Number of all records
+#
+m$count()
+#
+# Number of ctgov records using json for query
+#
+m$count('{&quot;_id&quot;: {&quot;$regex&quot;: &quot;NCT[0-9]{8}&quot;}}')
+#
+# The following uses the aggregation pipeline in mongo.
+#
+# Count number of records in which certain terms occur,
+# in any of the elements of the array in primary_outcome. 
+# Regular expressions (&quot;$regex&quot;) are case insensitive (&quot;i&quot;)
+#
+# Recommendation: to best define regular expressions for analyses, 
+# inspect the field primary_outcome.measure in data base, or print:
+#
+m$distinct(&quot;primary_outcome.measure&quot;, query = '{&quot;_id&quot;: {&quot;$regex&quot;: &quot;NCT[0-9]{8}&quot;}}')
+#
+# OS
+#
+m$aggregate('[{&quot;$match&quot;: {&quot;primary_outcome.measure&quot;: 
+                         {&quot;$regex&quot;: &quot;overall survival&quot;, 
+                          &quot;$options&quot;: &quot;i&quot;}}}, 
+              {&quot;$group&quot;: {&quot;_id&quot;: &quot;null&quot;, &quot;count&quot;: {&quot;$sum&quot;: 1}}}]')
+#
+# PFS, EFS, RFS or DFS
+#
+m$aggregate('[{&quot;$match&quot;: {&quot;primary_outcome.measure&quot;: 
+                         {&quot;$regex&quot;: &quot;(progression|event|relapse|recurrence|disease)[- ]free&quot;, 
+                          &quot;$options&quot;: &quot;i&quot;}}}, 
+              {&quot;$group&quot;: {&quot;_id&quot;: &quot;null&quot;, &quot;count&quot;: {&quot;$sum&quot;: 1}}}]')
+#
+#
+# Now by year (see details on [mongo's aggregation pipleline](https://docs.mongodb.org/manual/core/aggregation-pipeline/) )
+# 
+# OS by year
+#
+out &lt;- m$aggregate('[{&quot;$match&quot;: {&quot;primary_outcome.measure&quot;: 
+                                {&quot;$regex&quot;: &quot;overall survival&quot;, 
+                                 &quot;$options&quot;: &quot;i&quot;}}}, 
+                     {&quot;$project&quot;: {&quot;_id&quot;: 1, &quot;firstreceived_date&quot;: 1}}]')
+#                     
+# Extraction of year from firstreceived_date such as &quot;August 29, 2009&quot;
+#
+out$year &lt;- substr (out$firstreceived_date, tmp &lt;- nchar(out$firstreceived_date) - 4, tmp + 4)
+#
+table (out$year)
+#
+# 2005  2006  2007  2008  2009  2010  2011  2012  2013  2014  2015 
+#    8     5     4    13     3     8     3     8     4     6     6 
+#
+# PFS, EFS, RFS, DFS by year (firstreceived_date)
+#
+out &lt;- m$aggregate('[{&quot;$match&quot;: {&quot;primary_outcome.measure&quot;: 
+                                {&quot;$regex&quot;: &quot;(progression|event|relapse|recurrence|disease)[- ]free&quot;, 
+                                 &quot;$options&quot;: &quot;i&quot;}}}, 
+                     {&quot;$project&quot;: {&quot;_id&quot;: 1, &quot;firstreceived_date&quot;: 1}}]')
+#
+# Extraction of year from firstreceived_date such as &quot;August 29, 2009&quot;
+#
+out$year &lt;- substr (out$firstreceived_date, tmp &lt;- nchar(out$firstreceived_date) - 4, tmp + 4)
+#
+table (out$year)
+#
+# 2005  2006  2007  2008  2009  2010  2011  2012  2013  2014  2015 
+#   13     6     7    11    16    17    17    19    25    26    17
+#</code></pre>
 </div>
-<div id="issues-and-notes" class="section level2">
-<h2>Issues and notes</h2>
-<ul>
-<li><p>Please file issues and bugs here: <a href="https://github.com/rfhb/ctrdata/issues"><a href="https://github.com/rfhb/ctrdata/issues" class="uri">https://github.com/rfhb/ctrdata/issues</a></a>.</p></li>
-<li><p>Package <code>ctrdata</code> should work on Linux, Mac OS X and MS Windows systems, but these could not all be tested, please file an issue in case of problems.</p></li>
-<li><p>Be aware that the information in the registers may or may not be fully correct; for example see <a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3066456/#S7">this publication on CTGOV</a>.</p></li>
-<li><p>Similar to the EUCTR design, one record per concerned EU Member state per trial is retrieved from EUCTR with the default setting <code>details = TRUE</code>.</p></li>
-<li><p>So far, no attempts are made to harmonise and map field names between different registers directly in the database. However, the function <code>dfMergeTwoVariablesRelevel()</code> can be used to manually merge and map two variables / fields.</p></li>
-<li><p>So far, there is no typing of database fields; they are all strings (except for indices).</p></li>
-<li><p>Package <code>ctrdata</code> also uses <a href="https://github.com/variety/variety">Variety</a>, which will automatically be downloaded into the package’s <code>exec</code> directory when first using a function that needs it. This may fail if this directory is not writable for the user and this issue is not yet addressed. Note that <code>variety.js</code> may not work with remote mongo databases, see documentation of <code>dbFindVariable()</code>.</p></li>
-<li><p>In case <code>curl</code> fails with an SSL error, run this code to update the certificates in the root of package <code>curl</code>:</p>
-<pre class="r"><code>httr::GET(&quot;https://github.com/bagder/ca-bundle/raw/e9175fec5d0c4d42de24ed6d84a06d504d5e5a09/ca-bundle.crt&quot;, write_disk(system.file(&quot;&quot;, package = &quot;curl&quot;), &quot;inst/cacert.pem&quot;, overwrite = TRUE))</code></pre></li>
-</ul>
+<div id="using-mapreduce-operations-to-analyse-participant-numbers" class="section level2">
+<h2>Using mapreduce operations to analyse participant numbers</h2>
+<p>Note that the mongodb documentation includes that a mapreduce operation might not be as fast and efficient as using the aggregation pipeline, which was used in the preceding example.</p>
+<pre class="r"><code>#
+library(mongolite)
+#
+m &lt;- mongo(db = &quot;users&quot;, collection = &quot;ctrdata&quot;)
+#
+# Count number of trials (trial records) with number of study participants 
+# in bins of hundreds of participants
+#
+hist &lt;- m$mapreduce(
+#
+  map = &quot;function(){emit(Math.floor(this.f422_in_the_whole_clinical_trial/100)*100, 1)}&quot;, 
+  #
+  reduce = &quot;function(id, counts){return Array.sum(counts)}&quot;
+  #
+)
+#
+hist
+#
+plot (hist, type = &quot;h&quot;, las = 1)
+#</code></pre>
 </div>
 </div>
 

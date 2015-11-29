@@ -362,7 +362,7 @@ dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(hos
 #' @param prefer Code of single EU Member State for which records should returned if available. (If not available,
 #' a record for GB or lacking this any other record for the trial will be returned.) For a list of codes of EU
 #' Member States, please see vector \code{countriesEUCTR}.
-#' \code{\link{countries}}
+#'
 #' @export dbFindUniqueEuctrRecord
 #'
 dbFindUniqueEuctrRecord <- function(df = NULL, prefer = "GB") {
