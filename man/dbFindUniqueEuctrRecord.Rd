@@ -7,7 +7,7 @@
 dbFindUniqueEuctrRecord(df = NULL, prefer = "GB")
 }
 \arguments{
-\item{df}{A data frame created from the data base that includes the keys (variables) "_id" and "a2_eudract_number",
+\item{df}{A data frame created from the database that includes the keys (variables) "_id" and "a2_eudract_number",
 for example created with function dbGetVariablesIntoDf(c("_id", "a2_eudract_number")).}
 
 \item{prefer}{Code of single EU Member State for which records should returned if available. (If not available,

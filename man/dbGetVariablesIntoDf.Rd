@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{dbGetVariablesIntoDf}
 \alias{dbGetVariablesIntoDf}
-\title{Create a data frame from records in the data base that have specified fields in the data base}
+\title{Create a data frame from records in the database that have specified fields in the database}
 \usage{
 dbGetVariablesIntoDf(fields = "", mongo = rmongodb::mongo.create(host =
   "127.0.0.1:27017", db = "users"), ns = "ctrdata")
@@ -13,12 +13,12 @@ dbGetVariablesIntoDf(fields = "", mongo = rmongodb::mongo.create(host =
 \item{mongo}{(\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on 127.0.0.1 port 27017.}
 
 \item{ns}{Name of the collection in mongo database ("namespace"), defaults to "ctrdata"
-useful if the data base includes records from different registers.}
+useful if the database includes records from different registers.}
 }
 \value{
 A data frame with columns corresponding to the sought fields. Note that a column for the record _id will always be included.
 }
 \description{
-Create a data frame from records in the data base that have specified fields in the data base
+Create a data frame from records in the database that have specified fields in the database
 }
 

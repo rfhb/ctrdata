@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{dbFindVariable}
 \alias{dbFindVariable}
-\title{Find names of keys (fields) in the data base}
+\title{Find names of keys (fields) in the database}
 \usage{
 dbFindVariable(namepart = "", mongo = rmongodb::mongo.create(host =
   "127.0.0.1:27017", db = "users"), ns = "ctrdata", allmatches = FALSE,
@@ -25,14 +25,14 @@ dbFindVariable(namepart = "", mongo = rmongodb::mongo.create(host =
 Vector of first keys (fields) found (or of all keys, see above)
 }
 \description{
-Given part of the name of field(s) of interest to the user, this function returns the full field names
-as found in the data base. It is not necessary to add wild cards to the name of the field(s) of interest.
+Given part of the name of a field of interest to the user, this function returns the full field names
+as found in the database. It is not necessary to add wild cards to the name of the field of interest.
 }
 \details{
-For an overview of fields in EUCTR (protocol-related information), please see the register's documentation:
+For fields in EUCTR (protocol-related information), see also the register's documentation:
 \url{https://eudract.ema.europa.eu/protocol.html}.
 
-For defintions of fields in CTGOV (protocol-related information), please see the register's definitions:
+For fields in CTGOV (protocol-related information), see also the register's definitions:
 \url{https://prsinfo.clinicaltrials.gov/definitions.html}
 
 Note that generating a list of keys with variety.js as used in this function may not work with certain
