@@ -12,8 +12,7 @@ for example created with function dbGetVariablesIntoDf(c("_id", "a2_eudract_numb
 
 \item{prefer}{Code of single EU Member State for which records should returned if available. (If not available,
 a record for GB or lacking this any other record for the trial will be returned.) For a list of codes of EU
-Member States, please see vector \code{countriesEUCTR}.
-\code{\link{countries}}}
+Member States, please see vector \code{countriesEUCTR}.}
 }
 \value{
 A data frame as subset of \code{df} corresponding to the sought records.
