@@ -4,8 +4,8 @@
 \alias{ctrLoadQueryIntoDb}
 \title{Retrieve information on clinical trials from register and store in database}
 \usage{
-ctrLoadQueryIntoDb(queryterm = "", register = "EUCTR",
-  updaterecords = FALSE, details = TRUE, parallelretrievals = 10,
+ctrLoadQueryIntoDb(queryterm = "", register = "EUCTR", querytoupdate = 0,
+  details = TRUE, parallelretrievals = 10,
   mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"),
   ns = "ctrdata", debug = FALSE)
 }
@@ -14,7 +14,7 @@ ctrLoadQueryIntoDb(queryterm = "", register = "EUCTR",
 
 \item{register}{Vector of abbreviations of registers to query, defaults to "EUCTR"}
 
-\item{updaterecords}{Re-run last query for this collection. This parameter takes precedence over \code{queryterm}.}
+\item{querytoupdate}{Number of query to be updated (re-downloaded). This parameter takes precedence over \code{queryterm}.}
 
 \item{details}{If \code{TRUE} (default), retrieve full protocol-related information from EUCTR or XML data from CTGOV, depending on the
 register selected. This gives all of the available details for the trials. Alternatively, set to \code{FALSE} to retrieve only summary

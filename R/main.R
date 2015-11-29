@@ -13,7 +13,7 @@
 #' is opened; use function \code{dbFindUniqueEuctrRecord} in a subsequent step to limit to one record from EUCTR per trial.
 #' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on 127.0.0.1 port 27017.
 #' @param ns Name of the collection in mongo database ("namespace"), defaults to "ctrdata"
-#' @param updaterecords Re-run last query for this collection. This parameter takes precedence over \code{queryterm}.
+#' @param querytoupdate Number of query to be updated (re-downloaded). This parameter takes precedence over \code{queryterm}.
 #' @param parallelretrievals Number of parallel downloads of information from the register
 #' @param debug Printing additional information if set to \code{TRUE}; default is \code{FALSE}.
 #' @return Number of trials imported or updated in the database
@@ -43,7 +43,7 @@
 #' @import RCurl rmongodb curl
 #' @export ctrLoadQueryIntoDb
 #'
-ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", updaterecords = FALSE, details = TRUE, parallelretrievals = 10,
+ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate = 0, details = TRUE, parallelretrievals = 10,
                        mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"), ns = "ctrdata", debug = FALSE) {
 
   # deal with queryterm such as returned from ctrGetQueryUrlFromBrowser()
@@ -59,9 +59,10 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", updaterecords
   if (grepl("[^a-zA-Z0-9=+&%_]", queryterm)) stop('Queryterm has unexpected characters: "', queryterm, '" (expected: a-zA-Z0-9=+&%_).')
 
   # other sanity checks
-  if ((queryterm == "") & !updaterecords) stop("Empty query term.")
-  if (class(mongo) != "mongo") stop("'mongo' is not a mongo connection object.")
-  if (register  == "")         stop("Register name empty.")
+  if ((queryterm == "") & querytoupdate == 0)     stop("'query term' is empty.")
+  if (querytoupdate == is.integer(querytoupdate)) stop("'querytoupdate' does not have an integer value.")
+  if (class(mongo) != "mongo")    stop("'mongo' is not a mongo connection object.")
+  if (register  == "")            stop("'register' is empty.")
 
   # check program availability
   if (.Platform$OS.type == "windows") {
@@ -124,6 +125,26 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", updaterecords
 
   ############################
 
+  # try to re-use previous query as recorded in the collection
+  if ((querytoupdate > 0) && (queryterm != "")) warning("'query term' and 'querytoupdate' specified, continuing only with new query", immediate. = TRUE)
+  if ((querytoupdate > 0) && (queryterm == "")) {
+    #
+    rerunquery <- ctrQueryHistoryInDb(mongo = mongo, ns = ns)
+    #
+    if (is.null(rerunquery)) stop("'querytoupdate': no previous queries found in collection, aborting query update.")
+    #
+    # try to select the query to be updated
+    if (querytoupdate > nrow (rerunquery)) stop("'querytoupdate': specified number of query not found, check 'ctrQueryHistoryInDb()', aborting.")
+    #
+    rerunquery <- rerunquery[querytoupdate,]
+    queryterm  <- rerunquery$`query-term`
+    register   <- rerunquery$`query-register`
+    #
+    message(paste0("Rerunning query: ", rerunquery$`query-term` , "\nLast run: ", rerunquery$`query-timestamp`))
+  }
+
+  ############################
+
   if ("CTGOV" %in% register) {
 
     # create empty temporary directory on localhost for
@@ -144,21 +165,6 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", updaterecords
                       "Primary Completion Date","Outcome Measures","URL")
     fieldsCTGOV <- sub("NCT Number", "_id", fieldsCTGOV)
     write(fieldsCTGOV, paste0(tempDir, "/field_names.txt"))
-
-    # try to re-use previous query as recorded in the collection
-    if (updaterecords && queryterm != "") warning("New query term specified despite updaterecords = TRUE, continuing with new query", immediate. = TRUE)
-    if (updaterecords && queryterm == "") {
-      #
-      rerunquery <- ctrQueryHistoryInDb(mongo = mongo, ns = ns)
-      if (is.null(rerunquery)) stop("Could not find previous query in specified collection, aborting because of updaterecords = TRUE.")
-      # TODO allow rerunning more queries
-      rerunquery <- rerunquery[1,]
-      #
-      if (rerunquery$`query-register` == "CTGOV") {
-        message(paste0("Rerunning query: ", rerunquery$`query-term` , "\nLast run: ", rerunquery$`query-timestamp`))
-        queryterm <- rerunquery$`query-term`
-      }
-    }
 
     #### START csv
     if (!details) {
@@ -308,21 +314,6 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", updaterecords
     queryEuType2 <- "ctr-search/rest/download/summary?query="
     queryEuType3 <- "ctr-search/rest/download/full?query="
     queryEuPost  <- "&mode=current_page&format=text&dContent=summary&number=current_page&submit-download=Download"
-
-    # try to re-use previous query as recorded in the collection
-    if (updaterecords && queryterm != "") warning("New query term specified despite updaterecords = TRUE, continuing with new query", immediate. = TRUE)
-    if (updaterecords && queryterm == "") {
-      rerunquery <- ctrQueryHistoryInDb(mongo = mongo, ns = ns)
-      #
-      if (is.null(rerunquery)) stop("Could not find previous query in specified collection, aborting because of updaterecords = TRUE.")
-      # TODO allow rerunning more queries
-      rerunquery <- rerunquery[1,]
-      #
-      if (rerunquery$`query-register` == "EUCTR") {
-        message(paste0("Rerunning query: ", rerunquery$`query-term` , "\nLast run: ", rerunquery$`query-timestamp`))
-        queryterm <- rerunquery$`query-term`
-      }
-    }
 
     # get first result page
     h = RCurl::getCurlHandle() # does not work: , httpheader = c(Accept = "Accept-Encoding: gzip,deflate")
