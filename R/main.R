@@ -5,7 +5,6 @@
 #'
 #' Note that upsert is used to store in database, which means that records may be accumulated. If you want to insert into an empty database,
 #' you have to include a mongo connection object to such an empty database.
-#'
 #' @param queryterm Part of the URL of a search in a register. The queryterms is recorded in the collection for later use to update records.
 #' @param register Vector of abbreviations of registers to query, defaults to "EUCTR"
 #' @param details If \code{TRUE} (default), retrieve full protocol-related information from EUCTR or XML data from CTGOV, depending on the
@@ -156,8 +155,8 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", updaterecords
       rerunquery <- rerunquery[1,]
       #
       if (rerunquery$`query-register` == "CTGOV") {
-        message(paste0("Rerunning query: ", rerunquery$`query-terms` , "\nLast run: ", rerunquery$`query-timestamp`))
-        queryterm <- rerunquery$`query-terms`
+        message(paste0("Rerunning query: ", rerunquery$`query-term` , "\nLast run: ", rerunquery$`query-timestamp`))
+        queryterm <- rerunquery$`query-term`
       }
     }
 
@@ -320,8 +319,8 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", updaterecords
       rerunquery <- rerunquery[1,]
       #
       if (rerunquery$`query-register` == "EUCTR") {
-        message(paste0("Rerunning query: ", rerunquery$`query-terms` , "\nLast run: ", rerunquery$`query-timestamp`))
-        queryterm <- rerunquery$`query-terms`
+        message(paste0("Rerunning query: ", rerunquery$`query-term` , "\nLast run: ", rerunquery$`query-timestamp`))
+        queryterm <- rerunquery$`query-term`
       }
     }
 
