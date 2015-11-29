@@ -90,10 +90,10 @@ ctrGetQueryUrlFromBrowser <- function(content = clipr::read_clip()) {
 }
 
 
-#' Find names of keys (fields) in the data base
+#' Find names of keys (fields) in the database
 #'
 #' Given part of the name of a field of interest to the user, this function returns the full field names
-#' as found in the data base. It is not necessary to add wild cards to the name of the field of interest.
+#' as found in the database. It is not necessary to add wild cards to the name of the field of interest.
 #'
 #' For fields in EUCTR (protocol-related information), see also the register's documentation:
 #' \url{https://eudract.ema.europa.eu/protocol.html}.
@@ -160,7 +160,7 @@ dbFindVariable <- function(namepart = "",
       varietymongo <- paste0(mongoBinaryLocation, varietymongo)
     }
     #
-    message("Calling mongo with variety.js and adding keys to data base ...")
+    message("Calling mongo with variety.js and adding keys to database ...")
     if (debug) message(varietymongo)
     tmp <- system(varietymongo, intern = TRUE)
     #
@@ -273,13 +273,13 @@ dbFindIdsUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "127.0.0
 }
 
 
-#' Create a data frame from records in the data base that have specified fields in the data base
+#' Create a data frame from records in the database that have specified fields in the database
 #'
 #' @param fields Vector of strings, with names of the sought fields. (Do not use a list.)
 #' @return A data frame with columns corresponding to the sought fields. Note that a column for the record _id will always be included.
 #' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on 127.0.0.1 port 27017.
 #' @param ns Name of the collection in mongo database ("namespace"), defaults to "ctrdata"
-#' useful if the data base includes records from different registers.
+#' useful if the database includes records from different registers.
 #' @export dbGetVariablesIntoDf
 #'
 dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"), ns = "ctrdata") {
@@ -357,7 +357,7 @@ dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(hos
 #'
 #' @return A data frame as subset of \code{df} corresponding to the sought records.
 #'
-#' @param df A data frame created from the data base that includes the keys (variables) "_id" and "a2_eudract_number",
+#' @param df A data frame created from the database that includes the keys (variables) "_id" and "a2_eudract_number",
 #' for example created with function dbGetVariablesIntoDf(c("_id", "a2_eudract_number")).
 #' @param prefer Code of single EU Member State for which records should returned if available. (If not available,
 #' a record for GB or lacking this any other record for the trial will be returned.) For a list of codes of EU
@@ -706,7 +706,7 @@ ctrQueryHistoryInDb <- function(mongo = rmongodb::mongo.create(host = "127.0.0.1
   if (length(tmp) == 0) {
     # no history found
     tmp <- NULL
-    message("No query history found in data base in expected format.")
+    message("No query history found in database in expected format.")
     #
   } else {
     #

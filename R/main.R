@@ -114,7 +114,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", updaterecords
     json <- paste0(json, '}')
     # convert to bson
     bson <- rmongodb::mongo.bson.from.JSON(json)
-    # insert into data base
+    # insert into database
     rmongodb::mongo.update(mongo, paste0(attr(mongo, "db"), ".", ns), criteria = list("_id" = "meta-info"),
                            objNew = bson, flags = rmongodb::mongo.update.upsert)
     #
