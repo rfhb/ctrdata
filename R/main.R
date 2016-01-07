@@ -56,11 +56,12 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     #
   }
   # basic sanity check if query term should be valid
-  if (grepl("[^a-zA-Z0-9=+&%_]", queryterm)) stop('Queryterm has unexpected characters: "', queryterm, '" (expected: a-zA-Z0-9=+&%_).')
+  if (grepl("[^a-zA-Z0-9=+&%_]", queryterm)) stop('Queryterm has unexpected characters: "', queryterm,
+                                                  '" (expected: a-zA-Z0-9=+&%_).')
 
   # other sanity checks
-  if ((queryterm == "") & querytoupdate == 0)     stop("'query term' is empty.")
-  if (querytoupdate == is.integer(querytoupdate)) stop("'querytoupdate' does not have an integer value.")
+  if ((queryterm == "") & querytoupdate == 0) stop("'query term' is empty.")
+  if (querytoupdate != trunc(querytoupdate))  stop("'querytoupdate' does not have an integer value.")
   if (class(mongo) != "mongo")    stop("'mongo' is not a mongo connection object.")
   if (register  == "")            stop("'register' is empty.")
 
