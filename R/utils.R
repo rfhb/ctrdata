@@ -649,9 +649,6 @@ dfMergeTwoVariablesRelevel <- function(df = NULL, varnames = "", levelslist = NU
   tmp2 <- ifelse(is.na(tt <- tmp[ ,2]), "", tt)
   tmp <- paste0(tmp1, tmp2)
 
-  # inform user on levels found
-  message("Unique values found in the new variable: ", paste(unique(tmp), collapse = ", "))
-
   if (!is.null(levelslist)) {
 
     # check
@@ -675,6 +672,9 @@ dfMergeTwoVariablesRelevel <- function(df = NULL, varnames = "", levelslist = NU
     tmp <- as.character(tmp)
 
   }
+
+  # inform user on levels found
+  message("Unique values found in the new variable: ", paste(unique(tmp), collapse = ", "))
 
   return(tmp)
 }
