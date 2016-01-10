@@ -259,7 +259,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
       }
       #
       message(paste0("Importing CTGOV CSV into mongoDB ..."))
-      if (debug) message(ctgov2mongo)
+      if (debug) message("DEBUG: ", ctgov2mongo)
       imported <- system(ctgov2mongo, intern = TRUE)
 
       # remove document that was the headerline in the imported file
@@ -335,12 +335,12 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
       #
       # run transformation
       message(paste0("Converting to JSON ..."))
-      if (debug) message(xml2json)
+      if (debug) message("DEBUG: ", xml2json)
       imported <- system(xml2json, intern = TRUE)
 
       # run import
       message(paste0("Importing JSON into mongoDB ..."))
-      if (debug) message(json2mongo)
+      if (debug) message("DEBUG: ", json2mongo)
       imported <- system(json2mongo, intern = TRUE)
 
       # TODO: "secondary_id" in CTGOV example not yet covered
@@ -365,7 +365,8 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     rmongodb::mongo.index.create(mongo, paste0(attr(mongo, "db"), ".", ns), key = list("otherids" = 1L))
 
     # find out number of trials imported into database
-    imported <- as.integer(gsub(".*imported ([0-9]+) document.*", "\\1", imported[length(imported)])) - 1
+    if (debug) print (imported)
+    imported <- as.integer(gsub(".*imported ([0-9]+) document.*", "\\1", imported[length(imported)]))
     if (!is.numeric(imported) || imported == 0) stop("Import has apparently failed, returned ", imported)
     message(paste0("Imported or updated ", imported, " trial(s)."))
 
@@ -453,12 +454,12 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     #
     # run conversion
     message(paste0("Converting to JSON ..."))
-    if (debug) message(euctr2json)
+    if (debug) message("DEBUG: ", euctr2json)
     imported <- system(euctr2json, intern = TRUE)
     #
     # run import
     message(paste0("Importing JSON into mongoDB ..."))
-    if (debug) message(json2mongo)
+    if (debug) message("DEBUG: ", json2mongo)
     imported <- system(json2mongo, intern = TRUE)
 
     # find out number of trials imported into database
