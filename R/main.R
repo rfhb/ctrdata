@@ -81,6 +81,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   ############################
 
   # helper function for adding query parameters and results to database
+  # query-timestamp is a fixed string format (character variable)
   dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber, mongo, ns){
     #
     json <- paste0('{"_id": "meta-info", ',
@@ -97,7 +98,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     if (!is.null(hist)) {
       tmp <- ', '
       for (i in 1:nrow(hist)) {
-        if (queryterm != hist[i,]$`query-term` & register != hist[i,]$`query-register`) {
+        if (queryterm != hist[i,]$`query-term` | register != hist[i,]$`query-register`) {
           # if query has been run before, do not include its history
           tmp <- paste0(tmp, '"query": {')
           tmprow <- paste0(apply(hist[i,], 1, function(x) paste0('"', names(x), '": "', x, '",')), collapse = '')
@@ -119,14 +120,31 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     rmongodb::mongo.update(mongo, paste0(attr(mongo, "db"), ".", ns), criteria = list("_id" = "meta-info"),
                            objNew = bson, flags = rmongodb::mongo.update.upsert)
     #
-    message("Added query to history.")
+    message("Updated history.")
     #
   }
   # end dbCTRUpdateQueryHistory
 
   ############################
 
-  # try to re-use previous query as recorded in the collection
+  # updating previously run queries - try to re-use previous query as recorded in the collection
+  # two different mechanisms to update:
+  # 1. using RSS feeds to do differential update (only possible for some days after initial query)
+  # 2. using original query and adding or updating records (no records are being deleted)
+
+  # query urls for mechanism 1. = differential update:
+  #
+  # studies added or updated in the last 7 days:
+  # https://www.clinicaltrialsregister.eu/ctr-search/rest/feed/bydates?query=cancer&age=children
+  #
+  # speficy any date - "lup_" last updated since:
+  # https://clinicaltrials.gov/ct2/results?term=&recr=&rslt=&type=Intr&cond=Cancer&intr=&titles=&outc=&spons=&lead=
+  # &id=&state1=&cntry1=&state2=&cntry2=&state3=&cntry3=&locn=&gndr=&age=0&rcv_s=&rcv_e=&
+  # lup_s=01%2F01%2F2015&lup_e=12%2F31%2F2016
+
+  # initialise variable that is filled only if an update is to be made
+  queryupdateterm <- ""
+  #
   if ((querytoupdate > 0) && (queryterm != "")) warning("'query term' and 'querytoupdate' specified, continuing only with new query", immediate. = TRUE)
   if ((querytoupdate > 0) && (queryterm == "")) {
     #
@@ -135,13 +153,31 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     if (is.null(rerunquery)) stop("'querytoupdate': no previous queries found in collection, aborting query update.")
     #
     # try to select the query to be updated
-    if (querytoupdate > nrow (rerunquery)) stop("'querytoupdate': specified number of query not found, check 'ctrQueryHistoryInDb()', aborting.")
+    if (querytoupdate > nrow(rerunquery)) stop("'querytoupdate': specified number of query not found, check 'ctrQueryHistoryInDb()', aborting.")
     #
     rerunquery <- rerunquery[querytoupdate,]
     queryterm  <- rerunquery$`query-term`
     register   <- rerunquery$`query-register`
+    initialday <- substr(rerunquery$`query-timestamp`, start = 1, stop = 10)
     #
-    message(paste0("Rerunning query: ", rerunquery$`query-term` , "\nLast run: ", rerunquery$`query-timestamp`))
+    # adapt updating procedure to register
+    if (register == "CTGOV") {
+      # if "lup_s" is already in query term, just re-run full query to avoid
+      # multiple queries in history that only differe in date / time:
+      if (grepl("&lup_s=[0-9]{2}", queryterm)) {
+        # remove queryupdateterm, thus running full again
+        queryupdateterm <- ""
+        warning("Query term already included date of last update; therefore, full query run again.")
+      } else {
+        queryupdateterm <- strftime(strptime(initialday, format = "%Y-%m-%d"), format = "%m/%d/%Y")
+        queryupdateterm <- paste0("&lup_s=", queryupdateterm)
+        if (debug) message("DEBUG: Updating using this additional query term: ", queryupdateterm)
+      }
+    }
+    if (register == "EUCTR") {
+    }
+    #
+    message(paste0("Rerunning query: ", queryterm, "\nLast run: ", initialday))
   }
 
   ############################
