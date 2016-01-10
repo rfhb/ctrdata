@@ -190,10 +190,29 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     dir.create(tempDir)
 
     # CTGOV standard identifiers
-    queryUSRoot    <- "https://clinicaltrials.gov/"
-    queryUSType1   <- "ct2/results/download?term="
-    queryUSPostCSV <- "&down_stds=all&down_typ=fields&down_flds=all&down_fmt=csv&show_down=Y"
-    queryUSPostXML <- "&down_stds=all&down_typ=study&down_flds=shown&down_fmt=xml&show_down=Y"
+    queryUSRoot   <- "https://clinicaltrials.gov/"
+    queryUSType1  <- "ct2/results/download?"
+    queryUSPreCSV <- "&down_stds=all&down_typ=fields&down_flds=all&down_fmt=csv"
+    queryUSPreXML <- "&down_stds=all&down_typ=study&down_flds=all&down_fmt=xml"
+    queryUSPost   <- "&show_down=Y"
+
+    # examples
+    #
+    # condition ependymoma, children, interventional study, added or modified from 1 Dec 2014 onwards:
+    #
+    # https://clinicaltrials.gov/ct2/results?term=&recr=&rslt=&type=Intr&cond=ependymoma&intr=&titles=&
+    # outc=&spons=&lead=&id=&state1=&cntry1=&state2=&cntry2=&state3=&cntry3=&locn=&gndr=&age=0&rcv_s=&rcv_e=&
+    # lup_s=12%2F01%2F2014&lup_e=
+    #
+    # "Download Selected Fields", all fields, all studies, comma separated format:
+    #
+    # https://clinicaltrials.gov/ct2/results/download?down_stds=all&down_typ=fields&down_flds=all&down_fmt=csv ||
+    # &type=Intr&cond=ependymoma&age=0&lup_s=12%2F01%2F2014& || show_down=Y
+    #
+    # "Download All Study Fields as XML", all studies:
+    #
+    # https://clinicaltrials.gov/ct2/results/download?down_stds=all&down_typ=study&down_flds=all&down_fmt=xml ||
+    # &type=Intr&cond=ependymoma&age=0&lup_s=12%2F01%2F2014& || show_down=Y
 
     # CTGOV field names - use NCT for mongodb index
     fieldsCTGOV  <- c("Rank","NCT Number","Title","Recruitment","Study Results","Conditions","Interventions","Sponsor/Collaborators",
@@ -207,11 +226,18 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     if (!details) {
 
       # get result file and unzip into folder, identify import file
-      message(paste0("Downloading trials from CTGOV as csv ..."))
+      message("Downloading trials from CTGOV as csv ...")
+      ctgovdownloadcsvurl <- paste0(queryUSRoot, queryUSType1, queryUSPreCSV, "&", queryterm, queryupdateterm, queryUSPost)
+      if (debug) message ("DEBUG: ", ctgovdownloadcsvurl)
+      #
+      f <- paste0(tempDir, "/ctgov.zip")
       h <- curl::new_handle()
+      #
       curl::handle_setopt(h, ssl_verifypeer = FALSE)
-      curl::curl_download(paste0(queryUSRoot, queryUSType1, queryterm, queryUSPostCSV), paste0(tempDir, "/ctgov.zip"), mode = "wb", handle = h, quiet = (getOption("internet.info") >= 2))
-      unzip(paste0(tempDir, "/ctgov.zip"), exdir = tempDir)
+      curl::curl_download(ctgovdownloadcsvurl, destfile = f, mode = "wb", handle = h, quiet = (getOption("internet.info") >= 2))
+      #
+      if (file.size(f) == 0) stop("No studies downloaded. Please check query term or run again with debug = TRUE.")
+      unzip(f, exdir = tempDir)
       resultsCTGOV <- paste0(tempDir, "/study_fields.csv")
 
       # call to import in csv format (not possible from within R)
@@ -259,11 +285,18 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     if (details) {
 
       # get result file and unzip into folder
-      message(paste0("Downloading trials from CTGOV as xml ..."))
+      message("Downloading trials from CTGOV as xml ...")
+      ctgovdownloadcsvurl <- paste0(queryUSRoot, queryUSType1, queryUSPreXML, "&", queryterm, queryupdateterm, queryUSPost)
+      if (debug) message ("DEBUG: ", ctgovdownloadcsvurl)
+      #
+      f <- paste0(tempDir, "/ctgov.zip")
       h <- curl::new_handle()
+      #
       curl::handle_setopt(h, ssl_verifypeer = FALSE)
-      curl::curl_download(paste0(queryUSRoot, queryUSType1, queryterm, queryUSPostXML), paste0(tempDir, "/ctgov.zip"), mode = "wb", handle = h, quiet = (getOption("internet.info") >= 2))
-      unzip(paste0(tempDir, "/ctgov.zip"), exdir = tempDir)
+      curl::curl_download(ctgovdownloadcsvurl, destfile = f, mode = "wb", handle = h, quiet = (getOption("internet.info") >= 2))
+      #
+      if (file.size(f) == 0) stop("No studies downloaded. Please check query term or run again with debug = TRUE.")
+      unzip(f, exdir = tempDir)
 
       # compose commands - transform xml into json, a single allfiles.json in the temporaray directory
       xml2json <- system.file("exec/xml2json.php", package = "ctrdata", mustWork = TRUE)
@@ -273,6 +306,17 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
                            ifelse(attr(mongo, "password") != "", paste0(' --password="', attr(mongo, "password"), '"'), ''),
                            ' --upsert --type=json --file="', tempDir, '/allfiles.json"',
                            ifelse(installMongoCheckVersion(), '', ' --jsonArray'))
+
+      # prepare for alternative method to split large file and import split files one by one
+      # #!/bin/bash
+      # FILE=allfiles.json
+      # COUNT=1
+      # sed 's/EudraCT/\n/g' "$FILE" | while read LINE ; do
+      #   if [ "$LINE" ] ; then
+      #     echo "$LINE" >"${FILE%.*}-${COUNT}.${FILE##*.}"
+      #     COUNT=$((COUNT+1))
+      #   fi
+      # done
 
       if (.Platform$OS.type == "windows") {
         # xml2json requires cygwin's php. transform paths for cygwin use:
