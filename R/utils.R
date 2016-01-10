@@ -79,8 +79,10 @@ ctrGetQueryUrlFromBrowser <- function(content = clipr::read_clip()) {
   #
   if (grepl("https://clinicaltrials.gov/ct2/results", content)) {
     #
-    queryterm <- sub("https://clinicaltrials.gov/ct2/results[?]term=(.*)", "\\1", content)
+    queryterm <- sub("https://clinicaltrials.gov/ct2/results[?](.*)", "\\1", content)
     queryterm <- sub("(.*)&Search=Search", "\\1", queryterm)
+    queryterm <- gsub("[a-z_0-9]+=&", "", queryterm)
+    queryterm <- sub("&[a-z_0-9]+=$", "", queryterm)
     message("Found search query from CTGOV.")
     return(list(queryterm = queryterm, register = "CTGOV"))
   }
