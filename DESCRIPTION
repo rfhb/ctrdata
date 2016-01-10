@@ -1,6 +1,7 @@
 Package: ctrdata
 Type: Package
-Title: Retrieve and prepare for analysis information on clinical trials from public registers
+Title: Retrieve and prepare for analysis information on clinical trials from
+    public registers
 Version: 0.5
 Date: 2015-11-29
 Depends:
