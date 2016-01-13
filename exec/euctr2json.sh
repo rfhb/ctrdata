@@ -53,7 +53,6 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   s/^X.7 Link.*search\/trial\/([0-9-]*)\/([A-Z][A-Z]|3rd)\/$/"xxxxxxxxxx_id": "$1-\U$2\E"/g;
 
   # crude attack on newlines within variable fields
-  #s/^([ABDEFGNPX][.][1-9 I].+)$/xxxxxxxxxx$1/g;
   s/^([ABDEFGNPX][.][1-9 I].+)$/\nxxxxxxxxxx$1/g;
   s/\n/ /g;
   s/xxxxxxxxxx/\n/g;
