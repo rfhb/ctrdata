@@ -48,8 +48,9 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   # handle single case where colon is in key
   s/^(.+)Opinion: Reason(.+)$/$1Opinion Reason$2/g;
 
-  # create id per record from eudract number + country 2 character id
-  s/^X.7 Link.*search\/trial\/([0-9-]*)\/([A-Z][A-Z])\/$/"xxxxxxxxxx_id": "$1-$2"/g;
+  # create id per record from eudract number followed by
+  # country 2 character id or by "3rd" for non-EU countries
+  s/^X.7 Link.*search\/trial\/([0-9-]*)\/([A-Z][A-Z]|3rd)\/$/"xxxxxxxxxx_id": "$1-\U$2\E"/g;
 
   # crude attack on newlines within variable fields
   #s/^([ABDEFGNPX][.][1-9 I].+)$/xxxxxxxxxx$1/g;
