@@ -56,8 +56,8 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     #
   }
   # basic sanity check if query term should be valid
-  if (grepl("[^a-zA-Z0-9=+&%_]", queryterm)) stop('Queryterm has unexpected characters: "', queryterm,
-                                                  '" (expected: a-zA-Z0-9=+&%_).')
+  if (grepl("[^a-zA-Z0-9=+&%_-]", queryterm)) stop('Queryterm has unexpected characters: "', queryterm,
+                                                  '" (expected: a-zA-Z0-9=+&%_-).')
 
   # other sanity checks
   if ((queryterm == "") & querytoupdate == 0) stop("'query term' is empty.")
