@@ -282,12 +282,15 @@ dbFindIdsUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "127.0.0
 #' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on 127.0.0.1 port 27017.
 #' @param ns Name of the collection in mongo database ("namespace"), defaults to "ctrdata"
 #' useful if the database includes records from different registers.
+#' @param debug Printing additional information if set to \code{TRUE}; default is \code{FALSE}.
 #' @export dbGetVariablesIntoDf
 #'
-dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"), ns = "ctrdata") {
+dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"),
+                                 ns = "ctrdata", debug = FALSE) {
   #
   if (!is.vector(fields) | class(fields) != "character") stop("Input should just be a vector of strings of field names.")
   #
+  # total number of records in collection. for information of user at end of function.
   countall <- rmongodb::mongo.count(mongo, paste0(attr(mongo, "db"), ".", ns),
                                     query  = rmongodb::mongo.bson.from.JSON('{"_id":{"$ne":"meta-info"}}'))
   #
@@ -296,17 +299,29 @@ dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(hos
   #
   # helper function
   fieldIsArray <- function(fieldsearched) {
+    # retrieve from varietyKeys what type of variable the searched field is
     tmp <- mongo.find.all(mongo, paste0("varietyResults.", ns, "Keys"),
                           query  = rmongodb::mongo.bson.from.JSON(paste0('{"_id.key": "', fieldsearched, '"}')),
                           fields = rmongodb::mongo.bson.from.JSON('{"_id": 0, "value.types": 1, "value.types": {"$slice": 1}}'))
+    # no relevant result retrieved
+    if(is.null(tmp) || length(tmp) == 0) return(FALSE)
+    # result is not empty
+    if (debug) message("DEBUG: variable info according to varietyKeys: ", tmp)
+    # example content of tmp: list(value = list(types = list(Array = 951)))
     tmp <- unlist(tmp)
-    return(ifelse(!is.null(tmp) && tmp == "Array", TRUE, FALSE))
+    tmp <- names(tmp)
+    tmp <- sub('value\\.types\\.(.+)', '\\1', tmp)
+    if(tmp == "String") return(FALSE)
+    if(tmp == "Array")  return(TRUE)
+    # default return
+    return(FALSE)
   }
   #
   for (item in fields) {
     #
     query <- paste0('{"_id": {"$ne": "meta-info"}, "', item, '": {"$gt": ""}}')
     part1 <- sub("(.*)[.].*", "\\1", item)
+    if (debug) message("DEBUG: variable corresponding to first part of field, before dot: ", part1)
     #
     if (fieldIsArray(part1)) {
       tmp <- try({
@@ -323,7 +338,7 @@ dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(hos
       }, silent = FALSE)
     }
     #
-    if (class(tmp) != "try-error") {
+    if (class(tmp) != "try-error" && !is.null(dfi)) {
 
       if (is.null(result)) {
         result <- dfi
