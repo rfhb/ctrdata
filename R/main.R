@@ -175,6 +175,8 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
       }
     }
     if (register == "EUCTR") {
+      # request
+      queryupdateterm <- ""
     }
     #
     message(paste0("Rerunning query: ", queryterm, "\nLast run: ", initialday))
