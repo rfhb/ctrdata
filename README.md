@@ -104,7 +104,7 @@ ctrOpenSearchPagesInBrowser(copyright = TRUE)
 q <- ctrGetQueryUrlFromBrowser()
 #
 # Found search query from EUCTR.
-# [1] "cancer&age=children&status=ongoing"
+# [1] "cancer&age=under-18"
 #
 ```
 
@@ -121,17 +121,17 @@ ctrLoadQueryIntoDb(q)
 #
 ctrQueryHistoryInDb()
 #
-# Total number of records: 1553
+# Total number of records: 6143
 # Number of queries in history: 2
-#       query-timestamp query-register query-records                           query-term
-# 1 2015-10-08-23-06-34          CTGOV            26 ependymoma&recr=Open&type=Intr&age=0
-# 2 2015-10-08-23-02-51          EUCTR            24            ependymoma&status=ongoing
+#       query-timestamp query-register query-records                  query-term
+# 1 2016-01-13-10-51-56          CTGOV          5233 type=Intr&cond=cancer&age=0
+# 2 2016-01-13-10-40-16          EUCTR           910         cancer&age=under-18
 #
 # find names of fields of interest in database:
 #
 dbFindVariable("date")
 #
-# Returning first of 5 keys found.
+# Returning first of 20 keys found.
 # [1] "firstreceived_date"
 #
 # Get all records that have values in all specified fields.
@@ -143,14 +143,14 @@ result <- dbGetVariablesIntoDf(c("b1_sponsor.b31_and_b32_status_of_the_sponsor",
 #
 with (result, table (x5_trial_status, b31_and_b32_status_of_the_sponsor))
 #
-#                    b31_and_b32_status_of_the_sponsor
+#                     b31_and_b32_status_of_the_sponsor
 # x5_trial_status      Commercial Non-Commercial
-#   Completed                  60             14
+#   Completed                 138             30
 #   Not Authorised              3              0
-#   Ongoing                   207            234
-#   Prematurely Ended          21              2
-#   Restarted                   5              0
-#   Temporarily Halted          5              1
+#   Ongoing                   339            290
+#   Prematurely Ended          35              4
+#   Restarted                   8              0
+#   Temporarily Halted         14              4
 #
 ```
 
