@@ -5,7 +5,7 @@
 \title{Create a data frame from records in the database that have specified fields in the database}
 \usage{
 dbGetVariablesIntoDf(fields = "", mongo = rmongodb::mongo.create(host =
-  "127.0.0.1:27017", db = "users"), ns = "ctrdata")
+  "127.0.0.1:27017", db = "users"), ns = "ctrdata", debug = FALSE)
 }
 \arguments{
 \item{fields}{Vector of strings, with names of the sought fields. (Do not use a list.)}
@@ -14,6 +14,8 @@ dbGetVariablesIntoDf(fields = "", mongo = rmongodb::mongo.create(host =
 
 \item{ns}{Name of the collection in mongo database ("namespace"), defaults to "ctrdata"
 useful if the database includes records from different registers.}
+
+\item{debug}{Printing additional information if set to \code{TRUE}; default is \code{FALSE}.}
 }
 \value{
 A data frame with columns corresponding to the sought fields. Note that a column for the record _id will always be included.
