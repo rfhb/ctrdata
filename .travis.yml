@@ -1,2 +1,5 @@
 language: r
 sudo: required
+
+apt_packages:
+ - mongodb
