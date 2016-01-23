@@ -133,7 +133,7 @@ dbFindVariable <- function(namepart = "",
   # check program availability
   if (.Platform$OS.type == "windows") {
     installMongoFindBinaries()
-    if (is.na(mongoBinaryLocation)) stop("Not starting findCTRkey because mongo binary was not found.")
+    if (is.na(get("mongoBinaryLocation", envir = .privateEnv))) stop("Not starting findCTRkey because mongo binary was not found.")
   }
 
   # check if database with variety results exists or should be forced to be updated
@@ -159,7 +159,7 @@ dbFindVariable <- function(namepart = "",
                            " --eval \"var collection = '", ns, "', persistResults=true\" ", varietylocalurl)
     #
     if (.Platform$OS.type == "windows") {
-      varietymongo <- paste0(mongoBinaryLocation, varietymongo)
+      varietymongo <- paste0(get("mongoBinaryLocation", envir = .privateEnv), varietymongo)
     }
     #
     message("Calling mongo with variety.js and adding keys to database ...")
@@ -550,11 +550,11 @@ installMongoFindBinaries <- function(mongoDirWin = "c:\\mongo\\bin\\") {
   # debug: mongoBinaryLocation <- "/usr/bin/"
   tmp <- ifelse(.Platform$OS.type != "windows", "mongoimport", "mongoimport.exe")
   #
-  if (exists("mongoBinaryLocation") && !is.na(mongoBinaryLocation)
-      && file.exists(paste0(mongoBinaryLocation, tmp))) {
+  if (exists("mongoBinaryLocation", envir = .privateEnv) && !is.na(get("mongoBinaryLocation", envir = .privateEnv))
+      && file.exists(paste0(get("mongoBinaryLocation", envir = .privateEnv), tmp))) {
     #
-    message("mongoimport / mongo is in ", mongoBinaryLocation)
-    invisible(mongoBinaryLocation)
+    message("mongoimport / mongo is in ", get("mongoBinaryLocation", envir = .privateEnv))
+    invisible(get("mongoBinaryLocation", envir = .privateEnv))
     #
   } else {
     #
@@ -565,7 +565,7 @@ installMongoFindBinaries <- function(mongoDirWin = "c:\\mongo\\bin\\") {
       #
       assign("mongoBinaryLocation", mongoDirWin, envir = .privateEnv)
       message("mongoimport / mongo is in ", mongoDirWin)
-      invisible(mongoBinaryLocation)
+      invisible(get("mongoBinaryLocation", envir = .privateEnv))
       #
     } else {
       #

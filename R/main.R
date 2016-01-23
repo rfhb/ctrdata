@@ -63,13 +63,14 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   # other sanity checks
   if ((queryterm == "") & querytoupdate == 0) stop("'query term' is empty.")
   if (querytoupdate != trunc(querytoupdate))  stop("'querytoupdate' does not have an integer value.")
-  if (class(mongo) != "mongo")    stop("'mongo' is not a mongo connection object.")
-  if (register  == "")            stop("'register' is empty.")
+  if (class(mongo) != "mongo") stop("'mongo' is not a mongo connection object.")
+  if (register  == "")         stop("'register' is empty.")
 
   # check program availability
   if (.Platform$OS.type == "windows") {
     installMongoFindBinaries()
-    if (is.na(mongoBinaryLocation)) stop("Not starting ctrLoadQueryIntoDb because mongoimport was not found.")
+    if (is.na(get("mongoBinaryLocation", envir = .privateEnv)))
+      stop("Not starting ctrLoadQueryIntoDb because mongoimport was not found.")
     installCygwinWindowsTest()
   }
 
@@ -252,7 +253,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
       #
       if (.Platform$OS.type == "windows") {
         #
-        ctgov2mongo <- paste0(mongoBinaryLocation, ctgov2mongo)
+        ctgov2mongo <- paste0(get("mongoBinaryLocation", envir = .privateEnv), ctgov2mongo)
         #
       } else {
         #
@@ -327,7 +328,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
         xml2json <- gsub("([A-Z]):/", "/cygdrive/\\1/", xml2json)
         xml2json <- paste0('cmd.exe /c c:\\cygwin\\bin\\bash.exe --login -c "', xml2json, '"')
         #
-        json2mongo <- paste0(mongoBinaryLocation, json2mongo)
+        json2mongo <- paste0(get("mongoBinaryLocation", envir = .privateEnv), json2mongo)
         #
       } else {
         #
@@ -446,7 +447,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
       euctr2json <- gsub("([A-Z]):/", "/cygdrive/\\1/", euctr2json)
       euctr2json <- paste0('cmd.exe /c c:\\cygwin\\bin\\bash.exe --login -c "', euctr2json, '"')
       #
-      json2mongo <- paste0(mongoBinaryLocation, json2mongo)
+      json2mongo <- paste0(get("mongoBinaryLocation", envir = .privateEnv), json2mongo)
       #
     } else {
       #
