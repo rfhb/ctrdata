@@ -8,6 +8,7 @@ Depends:
     RCurl,
     curl,
     clipr
+SystemRequirements: mongo database, sed, php, cat, perl
 Author: Ralf Herold
 Maintainer: Ralf Herold <ralf.herold@gmx.net>
 URL: https://github.com/rfhb/ctrdata
@@ -22,3 +23,4 @@ Description: Provides functions for querying and retrieving
     by the wish for aggregating and trend-analysing clinical trial design and conduct.
 License: GPL-2
 RoxygenNote: 5.0.1
+Suggests: testthat
