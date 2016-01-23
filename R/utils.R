@@ -393,12 +393,12 @@ dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(hos
 dbFindUniqueEuctrRecord <- function(df = NULL, prefer = "GB") {
   #
   if (class(df) != "data.frame") stop("Parameter df is not a data frame.")
-  if (is.null(df$`_id`) || is.null(df$a2_eudract_number)) stop('Data frame does not include "_id" and "a2_eudract_number" columns.')
+  if (is.null(df [['_id']]) || is.null(df$a2_eudract_number)) stop('Data frame does not include "_id" and "a2_eudract_number" columns.')
   if (nrow(df) == 0) stop("Data frame does not contain records (0 rows).")
   if (!(prefer %in% countriesEUCTR)) stop("Value specified for prefer does not match recognised codes, see countriesEUCTR.")
 
   # count number of records by eudract number
-  tbl <- table(df$`_id`, df$a2_eudract_number)
+  tbl <- table(df [['_id']], df$a2_eudract_number)
   tbl <- as.matrix(tbl)
   # nms has names of all records
   nms <- dimnames(tbl)[[1]]
@@ -438,9 +438,9 @@ dbFindUniqueEuctrRecord <- function(df = NULL, prefer = "GB") {
   result <- unlist(result)
 
   # eleminate the unwanted EUCTR records
-  df <- subset(df, subset = !(`_id` %in% result))
+  df <- df [!(df [['_id']] %in% result), ]
   # also eliminate the meta-info record
-  df <- subset(df, subset = !(`_id` == "meta-info"))
+  df <- df [!(df [['_id']] == "meta-info"), ]
 
   # inform user about changes to data frame
   if (length(nms) > (tmp <- length(result))) message(tmp, ' EUCTR records dropped that were not the preferred of multiple records for the trial.')
