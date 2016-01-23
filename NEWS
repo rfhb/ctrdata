@@ -1,3 +1,8 @@
+0.5.9
+ - 2016-01-23
+ - Corrected bugs
+ - Started preparation of submission to CRAN
+ - Preparing to include package unit tests
 0.5
  - 2015-11-29
  - Published on github

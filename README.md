@@ -6,11 +6,14 @@ output:
     toc: yes
   word_document: default
 ---
+
+[![Build Status](https://travis-ci.org/rfhb/ctrdata.svg?branch=master)](https://travis-ci.org/rfhb/ctrdata)
+
 # README.md for R package ctrdata on github.com
 
 ## Background
 
-The package `ctrdata` provides functions for retrieving information from public registers, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started mid 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package can only be used within the [R](https://www.r-project.org/) computing system. Last edit 2015-11-29 for version 0.5. 
+The package `ctrdata` provides functions for retrieving information from public registers, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started mid 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package can only be used within the [R](https://www.r-project.org/) computing system. Last edit 2016-01-23 for version 0.5.9 (preparations ongoing for CRAN submission). 
 
 Features implemented so far:
 

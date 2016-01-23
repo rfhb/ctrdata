@@ -15,6 +15,6 @@ Either an empty string if \code{mongoimport} was found on the path or, under MS 
 a string representing the path to the folder of the mongo binaries
 }
 \description{
-Sets variable \code{mongoBinaryLocation} in the user's global environment for access by other functions of the package.
+Convenience function to find location of mongo database binaries (mongo, mongoimport)
 }
 

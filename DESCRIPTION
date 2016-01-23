@@ -1,9 +1,8 @@
 Package: ctrdata
 Type: Package
-Title: Retrieve and prepare for analysis information on clinical trials from
-    public registers
-Version: 0.5
-Date: 2015-11-29
+Title: Retrieve and Prepare for Analysis Information on Clinical Trials from Public Registers
+Version: 0.5.9
+Date: 2016-01-23
 Depends:
     rmongodb,
     RCurl,
@@ -13,13 +12,13 @@ Author: Ralf Herold
 Maintainer: Ralf Herold <ralf.herold@gmx.net>
 URL: https://github.com/rfhb/ctrdata
 BugReports: https://github.com/rfhb/ctrdata/issues
-Description: The package provides functions for querying and retrieving
+Description: Provides functions for querying and retrieving
     information on clinical trials from two public registers, the European Union
     Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and
     ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). The information is
-    transformed so that it can be locally stored in a database (mongo). Functions
-    are provided for accessing and analysing the locally stored information on the
-    clinical trials, and for identifying duplicate records. The package is motivated
-    by the wish for aggregating and trend analysing clinical trials.
+    transformed and then stored in a database (mongo). Functions are provided for
+    accessing and analysing the locally stored information on the clinical trials,
+    as well as for identifying duplicate records. The package is motivated
+    by the wish for aggregating and trend-analysing clinical trial design and conduct.
 License: GPL-2
 RoxygenNote: 5.0.1

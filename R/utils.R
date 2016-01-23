@@ -656,9 +656,11 @@ installMongoCheckVersion <- function(mongo = rmongodb::mongo.create(host = "127.
 #' @export dfMergeTwoVariablesRelevel
 #' @examples
 #' \dontrun{
-#' statusvalues <- list("ongoing" = c("Recruiting", "Active", "Ongoing", "Active, not recruiting", "Enrolling by invitation"),
+#' statusvalues <- list("ongoing" = c("Recruiting", "Active", "Ongoing",
+#'                                    "Active, not recruiting", "Enrolling by invitation"),
 #'                      "completed" = c("Completed", "Prematurely Ended", "Terminated"),
-#'                      "other" = c("Withdrawn", "Suspended", "No longer available", "Not yet recruiting"))
+#'                      "other" = c("Withdrawn", "Suspended",
+#'                                  "No longer available", "Not yet recruiting"))
 #' dfMergeTwoVariablesRelevel(result, c("Recruitment", "x5_trial_status"), statusvalues)
 #' }
 #'
