@@ -1,3 +1,11 @@
+### ctrdata package
+### initialising
+
+# create environment private to this package
+.privateEnv <- new.env()
+# for caching the location of mongo binaries
+assign("mongoBinaryLocation", NA, envir = .privateEnv)
+
 .onAttach <- function(libname, pkgname) {
 
   packageStartupMessage("\nPlease respect the requirements of the copyrights of \n",

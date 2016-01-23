@@ -2,7 +2,7 @@
 ### utility functions
 
 
-## global variable definitions
+## variable definitions
 #
 # EUCTR definitions
 agegroupsEUCTR <- c("Preterm newborn infants", "Newborns", "Infants and toddlers", "Children", "Adolescents",
@@ -539,8 +539,6 @@ installCygwinWindowsTest <- function() {
 
 #' Convenience function to find location of mongo database binaries (mongo, mongoimport)
 #'
-#' Sets variable \code{mongoBinaryLocation} in the user's global environment for access by other functions of the package.
-#'
 #' @param mongoDirWin Only used under MS Windows: folder that contains mongo binaries, defaults to "c:\\mongo\\bin\\"
 #' as used on \url{http://docs.mongodb.org/manual/tutorial/install-mongodb-on-windows#interactive-installation}
 #' @return Either an empty string if \code{mongoimport} was found on the path or, under MS Windows,
@@ -565,14 +563,14 @@ installMongoFindBinaries <- function(mongoDirWin = "c:\\mongo\\bin\\") {
     #
     if ((.Platform$OS.type == "windows") && (file.exists(paste0(mongoDirWin, 'mongoimport.exe')))) {
       #
-      assign("mongoBinaryLocation", mongoDirWin, envir = .GlobalEnv)
+      assign("mongoBinaryLocation", mongoDirWin, envir = .privateEnv)
       message("mongoimport / mongo is in ", mongoDirWin)
       invisible(mongoBinaryLocation)
       #
     } else {
       #
       # not found: reset any information and start searching
-      assign("mongoBinaryLocation", NA, envir = .GlobalEnv)
+      assign("mongoBinaryLocation", NA, envir = .privateEnv)
       #
       # first test for binary in the path
       tmp <- try(if (.Platform$OS.type != "windows") {
@@ -583,9 +581,9 @@ installMongoFindBinaries <- function(mongoDirWin = "c:\\mongo\\bin\\") {
       #
       if (class(tmp) != "try-error") {
         #
-        # found it in the path, save empty location string in user's global environment
+        # found it in the path, save empty location string in package environment
         message("mongoimport / mongo found in the path.")
-        assign("mongoBinaryLocation", "", envir = .GlobalEnv)
+        assign("mongoBinaryLocation", "", envir = .privateEnv)
         invisible("")
         #
       } else {
@@ -604,8 +602,8 @@ installMongoFindBinaries <- function(mongoDirWin = "c:\\mongo\\bin\\") {
         #
         if (!tmp) stop("Cannot continue. mongoimport not found in folder recorded in the registry, ", location, ".")
         #
-        # found it, save in user's global environment
-        assign("mongoBinaryLocation", location, envir = .GlobalEnv)
+        # found it, save in package environment
+        assign("mongoBinaryLocation", location, envir = .privateEnv)
         message("mongoimport / mongo found in ", location)
         invisible(location)
         #
