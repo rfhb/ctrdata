@@ -1,3 +1,12 @@
+\.DS_Store
+\.git.*
+\.RData
+\.Rhistory
+\.travis.yml
+private.*
+\.Rproj*
+EXAMPLES\.md
+IMG_8368\.JPG
+Rplot01\.png
 ^.*\.Rproj$
 ^\.Rproj\.user$
-.DS_Store
