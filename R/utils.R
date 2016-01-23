@@ -122,8 +122,8 @@ ctrGetQueryUrlFromBrowser <- function(content = clipr::read_clip()) {
 #' }
 #'
 dbFindVariable <- function(namepart = "",
-                         mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"), ns = "ctrdata",
-                         allmatches = FALSE, debug = FALSE, forceupdate = FALSE) {
+                           mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"), ns = "ctrdata",
+                           allmatches = FALSE, debug = FALSE, forceupdate = FALSE) {
 
   # sanity checks
   if (!is.atomic(namepart)) stop("Name part should be atomic.")
