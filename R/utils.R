@@ -468,8 +468,8 @@ installCygwinWindowsDoInstall <- function(overwrite = FALSE, proxy = ""){
   dir.create(tmpfile)
   dstfile <- paste0(tmpfile, "/cygwinsetup.exe")
   #
-  if (.Platform$r_arch == "x86_64") download.file(url = "http://cygwin.org/setup-x86_64.exe", destfile = dstfile, quiet = TRUE, mode = "wb")
-  if (.Platform$r_arch == "i386")   download.file(url = "http://cygwin.org/setup-x86.exe",    destfile = dstfile, quiet = TRUE, mode = "wb")
+  if (grepl("64-bit", sessionInfo()$platform)) download.file(url = "http://cygwin.org/setup-x86_64.exe", destfile = dstfile, quiet = TRUE, mode = "wb")
+  if (grepl("32-bit", sessionInfo()$platform)) download.file(url = "http://cygwin.org/setup-x86.exe",    destfile = dstfile, quiet = TRUE, mode = "wb")
   #
   if (!file.exists(dstfile))         stop("Download failed. Please install manually.")
   if (file.size(dstfile) < 5*10 ^ 5) stop("Download seem to have failed - file too small. Please install manually.")
