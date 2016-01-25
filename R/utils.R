@@ -455,11 +455,12 @@ dbFindUniqueEuctrRecord <- function(df = NULL, prefer = "GB") {
 #'
 #' @export installCygwinWindowsDoInstall
 #' @param overwrite Set to true to force updating and overwriting an existing installation in \code{c:\\cygwin}
-#' @param proxy Specify any proxy to be used for downloading via http, e.g. "host_or_ip:port". \code{installCygwinWindowsDoInstall}
-#' detects and uses the proxy configuration unless this is set in MS Windows to use an automatic proxy configuration script.
-#' Authenticated proxies are not supported at this time. Alternatively, run the setup yourself as follows:
-#' cygwinsetup.exe --no-admin --quiet-mode --verbose --site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/
-#' --packages perl,php-jsonc,php-simplexml
+#' @param proxy Specify any proxy to be used for downloading via http, e.g. "host_or_ip:port".
+#' \code{installCygwinWindowsDoInstall} may detect and use the proxy configuration uset in MS Windows
+#' to use an automatic proxy configuration script. Authenticated proxies are not supported at this time.
+#' Alternatively and in case of difficulties, download and run the cygwin setup yourself as follows:
+#' cygwinsetup.exe --no-admin --quiet-mode --verbose --root c:/cygwin
+#' --site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages perl,php-jsonc,php-simplexml
 #'
 installCygwinWindowsDoInstall <- function(overwrite = FALSE, proxy = ""){
   #
@@ -507,7 +508,7 @@ installCygwinWindowsDoInstall <- function(overwrite = FALSE, proxy = ""){
   }
   #
   # compose installation command
-  installcmd <- "--no-admin --quiet-mode --verbose --site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages perl,php-jsonc,php-simplexml"
+  installcmd <- "--no-admin --quiet-mode --verbose  --root c:/cygwin --site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages perl,php-jsonc,php-simplexml"
   #
   # execute cygwin setup command
   system(paste0(dstfile, " ", installcmd, " --local-package-dir ", tmpfile, ' ', proxy))
