@@ -10,7 +10,10 @@ installCygwinWindowsDoInstall(overwrite = FALSE, proxy = "")
 \item{overwrite}{Set to true to force updating and overwriting an existing installation in \code{c:\\cygwin}}
 
 \item{proxy}{Specify any proxy to be used for downloading via http, e.g. "host_or_ip:port". \code{installCygwinWindowsDoInstall}
-detects and uses the proxy configuration unless this is set in MS Windows to use an automatic proxy configuration script}
+detects and uses the proxy configuration unless this is set in MS Windows to use an automatic proxy configuration script.
+Authenticated proxies are not supported at this time. Alternatively, run the setup yourself as follows:
+cygwinsetup.exe --no-admin --quiet-mode --verbose --site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/
+--packages perl,php-jsonc,php-simplexml}
 }
 \description{
 Convenience function to install a cygwin environment under MS Windows, including perl and php
