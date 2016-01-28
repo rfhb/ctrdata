@@ -211,12 +211,7 @@ m$aggregate('[{"$match": {"primary_outcome.measure":
               {"$group": {"_id": "null", "count": {"$sum": 1}}}]')
 #
 #
-<<<<<<< HEAD
-# Now by year (see details on mongo's aggregation pipleline: 
-# https://docs.mongodb.org/manual/core/aggregation-pipeline/)
-=======
 # Now by year (see details on [mongo's aggregation pipleline](https://docs.mongodb.org/manual/core/aggregation-pipeline/) )
->>>>>>> cb7ea668f79f781d43c9b1a78334fb40d2270e93
 # 
 # OS by year
 #
@@ -273,11 +268,8 @@ hist <- m$mapreduce(
   #
 )
 #
-<<<<<<< HEAD
-=======
 hist
 #
->>>>>>> cb7ea668f79f781d43c9b1a78334fb40d2270e93
 plot (hist, type = "h", las = 1)
 #
 ```
