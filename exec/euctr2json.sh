@@ -18,9 +18,15 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
 
   # delete non-informative lines
   next if /^$/;
-  next if /^Summary$/;
-  next if /^This file contains .*$/;
-  next if /Sponsor Information/;
+  next if /^Summary/;
+  next if /^This file contains/;
+  next if /A\. Protocol Information/;
+  next if /B\. Sponsor Information/;
+  next if /D\. IMP Identification/;
+  next if /E\. General Information on the Trial/;
+  next if /F\. Population of Trial Subjects/;
+  next if /N\. Review by the/;
+  next if /P\. End of Trial.$/;
 
   # remove explanatory information from key F.3.3.1
   next if /^\(For clinical trials recorded/;
@@ -28,6 +34,10 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   next if /^or not they would be using contraception/;
   next if /^database on [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]/;
   next if /Information not present in EudraCT/;
+
+  # workarounds
+  # - sponsor records were added but left empty -> create placeholder
+  s/^(B\.1\.1 Name of Sponsor: )$/$1(empty)/g;
 
   # add identifiers for special cases
   s/^(EudraCT Number.*)$/X.1 $1/g;
