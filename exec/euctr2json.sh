@@ -50,7 +50,7 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
 
   # create id per record from eudract number followed by
   # country 2 character id or by "3rd" for non-EU countries
-  s/^X.7 Link.*search\/trial\/([0-9-]*)\/([A-Z][A-Z]|3rd)\/$/"xxxxxxxxxx_id": "$1-\U$2\E"/g;
+  s/^X.7 Link.*search\/trial\/([0-9-]*)\/([A-Z][A-Z]|3rd)\/$/xxxxxxxxxx"_id": "$1-\U$2\E"/g;
 
   # crude attack on newlines within variable fields
   s/^([ABDEFGNPX][.][1-9 I].+)$/\nxxxxxxxxxx$1/g;
