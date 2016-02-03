@@ -37,7 +37,7 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
 
   # workarounds
   # - sponsor records were added but left empty -> create placeholder
-  s/^(B\.1\.1 Name of Sponsor: )$/$1(empty)/g;
+  s/^(B\.1\.1 Name of Sponsor:)\s+$/$1 empty/g;
 
   # add identifiers for special cases
   s/^(EudraCT Number.*)$/X.1 $1/g;
