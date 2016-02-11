@@ -2,7 +2,7 @@
 # to install command line client:
 # gem install travis --no-rdoc --no-ri
 
-# to validate:
+# to validate (note that r raises a misleading error):
 # travis lint [path to your .travis.yml]
 
 language: r
@@ -15,5 +15,3 @@ sudo: required
 services:
   - mongodb
 
-#apt_packages:
-# - mongodb

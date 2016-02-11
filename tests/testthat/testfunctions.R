@@ -5,12 +5,12 @@
 library(ctrdata)
 context("Background functions")
 
-# as of 2016-01-23
+# as of 2016-01-23:
 #
 # Name                           | Testing?
 # ------------------------------ | -------------
 # ctrOpenSearchPagesInBrowser	   | no (would require graphical environment)
-# ctrQueryHistoryInDb            |
+# ctrQueryHistoryInDb            | yes (todo: check afterr ctrLoadQueryIntoDb)
 # ctrGetQueryUrlFromBrowser      |
 # ctrLoadQueryIntoDb             |
 # dbFindIdsUniqueTrials          |
@@ -18,10 +18,10 @@ context("Background functions")
 # dbFindUniqueEuctrRecord        |
 # dbGetVariablesIntoDf           |
 # dfMergeTwoVariablesRelevel     |
-# installMongoCheckVersion       |
-# installMongoFindBinaries	     |
-# installCygwinWindowsDoInstall	 |
-# installCygwinWindowsTest	     |
+# installMongoCheckVersion       | (implicit)
+# installMongoFindBinaries       | (implicit)
+# installCygwinWindowsDoInstall  |
+# installCygwinWindowsTest       |
 #
 
 
