@@ -3,11 +3,13 @@ output:
   html_document: 
     number_sections: no
     toc: yes
+params: 
+  output_dir = "`r paste0(getwd (), "inst/doc")`"
 ---
 
 # Examples for using R package `ctrdata` for clinical trial protocol-related information
 
-Last edit 2015-11-29. General information on the library is available here: [https://github.com/rfhb/ctrdata](https://github.com/rfhb/ctrdata). 
+Last edit 2016-02-11. General information on the library is available here: [https://github.com/rfhb/ctrdata](https://github.com/rfhb/ctrdata). 
 
 ## Find fields / variables of interest
 
@@ -33,7 +35,7 @@ ctrQueryHistoryInDb()
 # 
 # Update query number 1 in the history (re-downloading data)
 #
-ctrLoadQueryIntoDb(querytoupdate = 1) 
+ctrLoadQueryIntoDb(querytoupdate = 1)
 #
 ```
 
@@ -58,7 +60,8 @@ table(result$a1_member_state_concerned, result$x5_trial_status)
 #
 # How many clinical trials where started in which year?
 #
-result <- dbGetVariablesIntoDf(c("a1_member_state_concerned", "n_date_of_competent_authority_decision", 
+result <- dbGetVariablesIntoDf(c("a1_member_state_concerned", 
+                                 "n_date_of_competent_authority_decision", 
                                  "a2_eudract_number"))
 #
 # Eliminate trials records duplicated by member state: 
@@ -90,7 +93,9 @@ ctrQueryHistoryInDb()
 # This takes some time because variables are merged sequentially.
 #
 dbFindVariable("status", allmatches = TRUE)
-result <- dbGetVariablesIntoDf(c("overall_status", "x5_trial_status", "a2_eudract_number"))
+result <- dbGetVariablesIntoDf(c("overall_status", 
+                                 "x5_trial_status", 
+                                 "a2_eudract_number"))
 #
 # Find ids of unique trials and subset the result set to these unique trials
 #
@@ -113,7 +118,7 @@ statusvalues <- list("ongoing" = c("Recruiting", "Active", "Ongoing", "Active, n
                                    "Enrolling by invitation", "Restarted"),
                     "completed" = c("Completed", "Prematurely Ended", "Terminated"),
                     "other"     = c("Withdrawn", "Suspended", "No longer available", 
-                                    "Not yet recruiting"))
+                                    "Not yet recruiting", "Temporarily Halted"))
 #
 tmp <- dfMergeTwoVariablesRelevel(result, c("overall_status", "x5_trial_status"), statusvalues)
 #
@@ -161,13 +166,76 @@ out$number_of_sites <- count.elements (out$location)
 #
 # For many trials, no locations seem to be specified
 #
-out <- subset (out, subset=number_of_sites >= 1)
+out <- out [out$number_of_sites >= 1 & out$number_of_sites <150, ]
 #
 # Draw histogram
 #
 hist (out$number_of_sites)
 #
 ```
+
+## Plot frequency of certain end points
+
+```R
+#
+# search for interesting variables 
+# note the spelling in euctr
+dbFindVariable("end_point", allmatches = TRUE)
+##
+#
+# get interesting variables from database 
+# for further analysis within R
+result <- dbGetVariablesIntoDf(c("a2_eudract_number", 
+                                 "a41_sponsors_protocol_code_number", 
+                                 "n_date_of_competent_authority_decision", 
+                                 "e73_therapeutic_confirmatory_phase_iii", 
+                                 "e51_primary_end_points"))
+#
+#
+# eliminate trials records duplicated by member state
+# keep a single record and if available use preference
+result <- dbFindUniqueEuctrRecord(result)
+#
+#
+# checking expected number of trials
+nrow(result)
+length(unique(result$a2_eudract_number))
+#
+#
+# only use phase 3 trials
+table(result$e73_therapeutic_confirmatory_phase_iii, exclude = "")
+result <- result[!is.na(result$e73_therapeutic_confirmatory_phase_iii) &
+                        result$e73_therapeutic_confirmatory_phase_iii == "Yes", ]
+#
+#
+# is primary endpoint of interest? this uses regular expressions.
+#
+# PFS / EFS / RFS / DFS
+result$pe_is_efs <- grepl("((progression|event|relapse|recurrence|disease)[- ]free)|pfs|dfs|efs)", 
+                          result$e51_primary_end_points, ignore.case = TRUE)
+#
+# prepare for summarising
+result$trial_start_year <- as.numeric(substr(result$n_date_of_competent_authority_decision, 1, 4))
+#
+#
+# plot
+library(ggplot2)
+ggplot(data = result, aes(x = trial_start_year, fill = pe_is_efs)) + 
+  geom_histogram()  + 
+  labs(title = "Completed breast cancer phase 3\nclinical trials primary endpoint", 
+       x = "Year of clinical trial authorisation in EU", 
+       y = "Number of clinical trials", 
+       fill = "PFS / EFS / DFS?")
+#
+#
+# plausibility check - what is the primary endpoint
+# if not one of the endpoints of interest? 
+# look into first ten examples found
+substr(result$e51_primary_end_points[result$pe_is_efs == FALSE], 1, 80)[1:10]
+#
+```
+![Histogram2][2]
+
 
 ## Use aggregation functions of the data base to find specific trial endpoints
 
@@ -275,4 +343,5 @@ plot (hist, type = "h", las = 1)
 ```
 
 [1]: ./Rplot01.png "Number of trials authorised to start, by year"
+[2]: ./Rplot02.png "Trials with specific primary endpoint"
 
