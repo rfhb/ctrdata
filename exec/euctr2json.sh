@@ -55,6 +55,13 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   s/\n+/\n/g;
   s/\"|\{|\}//g;
 
+  # todo
+  # - eliminate this extra lines that duplicate other fields
+  #   "x1_eudract_number"
+  #   "x2_sponsor_protocol_code_number"
+  #   "x3_national_competent_authority"
+  #   "x5_trial_status"
+
   # handle single case where colon is in key
   s/^(.+)Opinion: Reason(.+)$/$1Opinion Reason$2/g;
 
