@@ -62,7 +62,7 @@ In Linux and Mac OS X systems, these are usually already installed. For MS Windo
 
 Name  | Function
 ------------- | -------------
-ctrOpenSearchPagesInBrowser	| Open advanced search pages of register(s) in default web browser.
+ctrOpenSearchPagesInBrowser	| Open advanced search pages of register(s) or execute search in default web browser.
 ctrQueryHistoryInDb	| Show the history of queries that were loaded into a database
 ctrGetQueryUrlFromBrowser	| Import from clipboard the URL of a search in one of the registers
 ctrLoadQueryIntoDb	| Retrieve information on clinical trials from register and store in database

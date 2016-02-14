@@ -11,9 +11,31 @@ params:
 
 Last edit 2016-02-11. General information on the library is available here: [https://github.com/rfhb/ctrdata](https://github.com/rfhb/ctrdata). 
 
+
+## Execute in browser a search query that was previously stored
+
+```R
+# 
+# The function ctrOpenSearchPagesInBrowser() can be used to open blank search pages, but 
+# also to execute a previous search. This can be used to check if user searches are 
+# properly handled by this package, for example by comparing the number of search results.
+# 
+# Example 1: a search is done in the browser and the address has been placed onto the clipboard
+q <- ctrGetQueryUrlFromBrowser()  # read search from clipboard
+ctrOpenSearchPagesInBrowser(q)    # open search newly in broweser
+#
+# Example 2: records have already been downloaded
+q <- ctrQueryHistoryInDb()        # list the searches in the database (returns a data frame)
+q <- q [2,]                       # select exactly one of the searches (by subsetting q)
+ctrOpenSearchPagesInBrowser(q)    # open selected search newly in broweser
+#
+```
+
+
 ## Find fields / variables of interest
 
 ```R
+# 
 dbFindVariable("number_of_subjects", allmatches = TRUE)
 #
 # [1] "f1151_number_of_subjects_for_this_age_range" "f1161_number_of_subjects_for_this_age_range" 

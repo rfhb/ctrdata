@@ -63,6 +63,7 @@ img {
 <div id="TOC">
 <ul>
 <li><a href="#examples-for-using-r-package-ctrdata-for-clinical-trial-protocol-related-information">Examples for using R package <code>ctrdata</code> for clinical trial protocol-related information</a><ul>
+<li><a href="#execute-in-browser-a-search-query-that-was-previously-stored">Execute in browser a search query that was previously stored</a></li>
 <li><a href="#find-fields-variables-of-interest">Find fields / variables of interest</a></li>
 <li><a href="#update-data-base-from-query-in-specified-register">Update data base from query in specified register</a></li>
 <li><a href="#deduplicate-country-specific-records-of-a-trial-visualise-trial-information">Deduplicate country-specific records of a trial, visualise trial information</a></li>
@@ -78,9 +79,27 @@ img {
 <div id="examples-for-using-r-package-ctrdata-for-clinical-trial-protocol-related-information" class="section level1">
 <h1>Examples for using R package <code>ctrdata</code> for clinical trial protocol-related information</h1>
 <p>Last edit 2016-02-11. General information on the library is available here: <a href="https://github.com/rfhb/ctrdata" class="uri">https://github.com/rfhb/ctrdata</a>.</p>
+<div id="execute-in-browser-a-search-query-that-was-previously-stored" class="section level2">
+<h2>Execute in browser a search query that was previously stored</h2>
+<pre class="r"><code># 
+# The function ctrOpenSearchPagesInBrowser() can be used to open blank search pages, but 
+# also to execute a previous search. This can be used to check if user searches are 
+# properly handled by this package, for example by comparing the number of search results.
+# 
+# Example 1: a search is done in the browser and the address has been placed onto the clipboard
+q &lt;- ctrGetQueryUrlFromBrowser()  # read search from clipboard
+ctrOpenSearchPagesInBrowser(q)    # open search newly in broweser
+#
+# Example 2: records have already been downloaded
+q &lt;- ctrQueryHistoryInDb()        # list the searches in the database (returns a data frame)
+q &lt;- q [2,]                       # select exactly one of the searches (by subsetting q)
+ctrOpenSearchPagesInBrowser(q)    # open selected search newly in broweser
+#</code></pre>
+</div>
 <div id="find-fields-variables-of-interest" class="section level2">
 <h2>Find fields / variables of interest</h2>
-<pre class="r"><code>dbFindVariable(&quot;number_of_subjects&quot;, allmatches = TRUE)
+<pre class="r"><code># 
+dbFindVariable(&quot;number_of_subjects&quot;, allmatches = TRUE)
 #
 # [1] &quot;f1151_number_of_subjects_for_this_age_range&quot; &quot;f1161_number_of_subjects_for_this_age_range&quot; 
 # [3] &quot;f11_number_of_subjects_for_this_age_range&quot; &quot;f1141_number_of_subjects_for_this_age_range&quot; 

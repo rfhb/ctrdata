@@ -2,17 +2,19 @@
 % Please edit documentation in R/utils.R
 \name{ctrOpenSearchPagesInBrowser}
 \alias{ctrOpenSearchPagesInBrowser}
-\title{Open advanced search pages of register(s) in default web browser.}
+\title{Open advanced search pages of register(s) or execute search in default web browser.}
 \usage{
 ctrOpenSearchPagesInBrowser(register = c("EUCTR", "CTGOV"),
   copyright = FALSE, queryterm = "", ...)
 }
 \arguments{
-\item{register}{Register(s) to open. Either "EUCTR" or "CTGOV" or a vector of both. Default is to open both registers' advanced search pages.}
+\item{register}{Register(s) to open. Either "EUCTR" or "CTGOV" or a vector of both. Default is to open both registers' advanced search pages.
+To open the browser with a previous search, register (or queryterm) can be the output of ctrGetQueryUrlFromBrowser() or can be one row from ctrQueryHistoryInDb().}
 
-\item{copyright}{(Optional) If set to \code{TRUE}, opens copyright pages of register.}
+\item{copyright}{(Optional) If set to \code{TRUE}, opens copyright pages of register(s).}
 
-\item{queryterm}{(Optional) Show results of search for \code{queryterm} in browser.}
+\item{queryterm}{(Optional) Show results of search for \code{queryterm} in browser.
+To open the browser with a previous search, (register or) queryterm can be the output of ctrGetQueryUrlFromBrowser() or can be one row from ctrQueryHistoryInDb().}
 
 \item{...}{Any additional parameter to use with browseURL, which is called by this function.}
 }
@@ -20,6 +22,6 @@ ctrOpenSearchPagesInBrowser(register = c("EUCTR", "CTGOV"),
 Is always true, invisibly.
 }
 \description{
-Open advanced search pages of register(s) in default web browser.
+Open advanced search pages of register(s) or execute search in default web browser.
 }
 

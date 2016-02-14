@@ -13,11 +13,13 @@ countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", 
                     "LV", "LI", "LT", "LU", "MT", "NL", "NO", "PL", "PT", "RO", "SK", "SE", "SI", "ES", "GB")
 
 
-#' Open advanced search pages of register(s) in default web browser.
+#' Open advanced search pages of register(s) or execute search in default web browser.
 #'
 #' @param register Register(s) to open. Either "EUCTR" or "CTGOV" or a vector of both. Default is to open both registers' advanced search pages.
-#' @param copyright (Optional) If set to \code{TRUE}, opens copyright pages of register.
+#' To open the browser with a previous search, register (or queryterm) can be the output of ctrGetQueryUrlFromBrowser() or can be one row from ctrQueryHistoryInDb().
+#' @param copyright (Optional) If set to \code{TRUE}, opens copyright pages of register(s).
 #' @param queryterm (Optional) Show results of search for \code{queryterm} in browser.
+#' To open the browser with a previous search, (register or) queryterm can be the output of ctrGetQueryUrlFromBrowser() or can be one row from ctrQueryHistoryInDb().
 #' @param ... Any additional parameter to use with browseURL, which is called by this function.
 #' @export ctrOpenSearchPagesInBrowser
 #' @return Is always true, invisibly.
@@ -32,18 +34,35 @@ ctrOpenSearchPagesInBrowser <- function(register = c("EUCTR", "CTGOV"), copyrigh
     if ("EUCTR" %in% register) browseURL("https://www.clinicaltrialsregister.eu/ctr-search/search", ...)
   }
   #
-  # deal with queryterm such as returned from ctrGetQueryUrlFromBrowser()
-  if (is.list(queryterm)) {
-    #
-    tmp <- queryterm
-    #
-    queryterm <- tmp$queryterm
-    register  <- tmp$register
-    #
+  # deal with register or queryterm being
+  # a list as returned from ctrGetQueryUrlFromBrowser() or
+  # a data frame as returned from ctrQueryHistoryInDb()
+  if (is.data.frame(queryterm)) query <- queryterm
+  if (is.data.frame(register))  query <- register
+  if (exists("query")) {
+    tmp <- try ({
+      if(nrow(query) > 1) warning("Parameter included data frame with more than one row, only using first row.", immediate. = TRUE)
+      queryterm <- query [1, "query-term"]
+      register  <- query [1, "query-register"]
+      rm("query")
+    }, silent = TRUE)
+  }
+  if (is.list(queryterm)) query <- queryterm
+  if (is.list(register))  query <- register
+  if (exists("query")) {
+    tmp <- try ({
+      queryterm <- query$queryterm
+      register  <- query$register
+      rm("query")
+    }, silent = TRUE)
   }
   #
+  if (class(tmp) == "try-error") stop("ctrOpenSearchPagesInBrowser(): Could not use parameters, please check.")
+  #
+  #
   if (queryterm != "") {
-    if ("CTGOV" %in% register) browseURL(paste0("https://clinicaltrials.gov/ct2/results?term=", queryterm), ...)
+    message("Opening in browser previous search: ", queryterm, ", in register: ", register)
+    if ("CTGOV" %in% register) browseURL(paste0("https://clinicaltrials.gov/ct2/results?", queryterm), ...)
     if ("EUCTR" %in% register) browseURL(paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=", queryterm), ...)
   }
   #
