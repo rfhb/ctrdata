@@ -136,9 +136,11 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
 
   # query urls for mechanism 1. = differential update:
   #
+  # euctr:
   # studies added or updated in the last 7 days:
   # https://www.clinicaltrialsregister.eu/ctr-search/rest/feed/bydates?query=cancer&age=children
   #
+  # ctgov:
   # speficy any date - "lup_" last updated since:
   # https://clinicaltrials.gov/ct2/results?term=&recr=&rslt=&type=Intr&cond=Cancer&intr=&titles=&outc=&spons=&lead=
   # &id=&state1=&cntry1=&state2=&cntry2=&state3=&cntry3=&locn=&gndr=&age=0&rcv_s=&rcv_e=&
@@ -369,7 +371,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     rmongodb::mongo.index.create(mongo, paste0(attr(mongo, "db"), ".", ns), key = list("otherids" = 1L))
 
     # find out number of trials imported into database
-    if (debug) print (imported)
+    if (debug) message("DEBUG: ", imported)
     imported <- as.integer(gsub(".*imported ([0-9]+) document.*", "\\1", imported[length(imported)]))
     if (!is.numeric(imported) || imported == 0) stop("Import has apparently failed, returned ", imported)
     message(paste0("Imported or updated ", imported, " trial(s)."))
