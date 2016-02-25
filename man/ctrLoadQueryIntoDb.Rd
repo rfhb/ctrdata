@@ -2,7 +2,7 @@
 % Please edit documentation in R/main.R
 \name{ctrLoadQueryIntoDb}
 \alias{ctrLoadQueryIntoDb}
-\title{Retrieve information on clinical trials from register and store in database}
+\title{Retrieve or update information on clinical trials from register and store in database}
 \usage{
 ctrLoadQueryIntoDb(queryterm = "", register = "EUCTR", querytoupdate = 0,
   details = TRUE, parallelretrievals = 10,
