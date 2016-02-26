@@ -88,16 +88,25 @@ installCygwinWindowsTest	| Convenience function to test for working cygwin insta
 library(DiagrammeR)
 mermaid("
 sequenceDiagram
-  user_R->>register: ctrOpenSearchPagesInBrowser()
-  register->>user_R: ctrGetQueryUrlFromBrowser()
-  register->>database: ctrLoadQueryIntoDb()
-  database->>user_R: ctrQueryHistoryInDb()
-  register->>database: ctrLoadQueryIntoDb(querytoupdate = 1)
+
+  user_R->>database: define collection and namespace
+
+  user_R->>euctr: ctrOpenSearchPagesInBrowser()
+  euctr->>user_R: ctrGetQueryUrlFromBrowser()
+  euctr->>database: ctrLoadQueryIntoDb()
+    
+  user_R->>ctgov: ctrOpenSearchPagesInBrowser()
+  ctgov->>user_R: ctrGetQueryUrlFromBrowser()
+  ctgov->>database: ctrLoadQueryIntoDb()
+  
   user_R->>database: dbFindVariable()
   database->>user_R: dbGetVariablesIntoDf()
+  database->>user_R: dbFindIdsUniqueTrials()
+
   user_R->>user_R: dfFindUniqueEuctrRecord()
   user_R->>user_R: dfMergeTwoVariablesRelevel()
-   ")
+
+")
 #
 ```
 -->
