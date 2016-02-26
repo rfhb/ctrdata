@@ -17,7 +17,7 @@ The package `ctrdata` provides functions for retrieving information from public 
 
 Features implemented so far:
 
-* Protocol-related information on clinical trials is retrieved from public online sources. 
+* Protocol-related information on clinical trials is easily retrieved from public online sources. 
 
 * Users define queries using the registers' web pages interfaces and then use `ctrdata` for retrieving the results of the queries. 
 
@@ -25,12 +25,16 @@ Features implemented so far:
 
 * Unique (de-duplicated) clinical trial records are identified, as the same database may hold information from more than one register. 
   
-* Records in a database can be updated by a simple command. 
+* Easily re-run a previous query to update records in the database (using a differential update mechanism whenever available) 
 
 * In the background, specially-written scripts `exec/euctr2json.sh` and `exec/xml2json.php` transform EUCTR plain text files and CTGOV xml files to json format. 
 
 * Reminder to respect the registers' copyrights and terms and conditions is shown when loading the package. Please also read the "Acknowledgments" and "Notes" sections below. 
 
+* Detailed [examples](https://cdn.rawgit.com/rfhb/ctrdata/master/inst/doc/EXAMPLES.html) for analyses such as of time trends of details of clinical trials
+
+Overview of functions used in sequence:
+![Overview workflow][1]
 
 ## Installation
 
@@ -60,21 +64,44 @@ In Linux and Mac OS X systems, these are usually already installed. For MS Windo
 
 ## Overview of functions in `ctrdata`
 
+
 Name  | Function
-------------- | -------------
-ctrOpenSearchPagesInBrowser	| Open advanced search pages of register(s) or execute search in default web browser.
+------------- | ----------------------------------------------------
+ctrOpenSearchPagesInBrowser	| Open advanced search pages of register(s) or execute search in default web browser
 ctrQueryHistoryInDb	| Show the history of queries that were loaded into a database
 ctrGetQueryUrlFromBrowser	| Import from clipboard the URL of a search in one of the registers
-ctrLoadQueryIntoDb	| Retrieve information on clinical trials from register and store in database
+ctrLoadQueryIntoDb	| Retrieve or update information on clinical trials from register and store in database
 dbFindIdsUniqueTrials	| This function checks for duplicates in the database based on the clinical trial identifier and returns a list of ids of unique trials
 dbFindVariable	| Find names of keys (fields) in the database
-dbFindUniqueEuctrRecord	| Select a single trial record when there are records for different EU Member States for this trial
 dbGetVariablesIntoDf	| Create a data frame from records in the database that have specified fields in the database
-dfMergeTwoVariablesRelevel	| Merge related variables into a single variable, and optionally map values to a new set of values.
+dfFindUniqueEuctrRecord	| Select a single trial record when there are records for different EU Member States for this trial
+dfMergeTwoVariablesRelevel	| Merge related variables into a single variable, and optionally map values to a new set of values
 installMongoCheckVersion	| Check the version of the build of the mongo server to be used
 installMongoFindBinaries	| Convenience function to find location of mongo database binaries (mongo, mongoimport)
 installCygwinWindowsDoInstall	| Convenience function to install a cygwin environment under MS Windows, including perl and php
 installCygwinWindowsTest	| Convenience function to test for working cygwin installation
+
+
+<!--
+```R
+#
+library(DiagrammeR)
+mermaid("
+sequenceDiagram
+  user_R->>register: ctrOpenSearchPagesInBrowser()
+  register->>user_R: ctrGetQueryUrlFromBrowser()
+  register->>database: ctrLoadQueryIntoDb()
+  database->>user_R: ctrQueryHistoryInDb()
+  register->>database: ctrLoadQueryIntoDb(querytoupdate = 1)
+  user_R->>database: dbFindVariable()
+  database->>user_R: dbGetVariablesIntoDf()
+  user_R->>user_R: dfFindUniqueEuctrRecord()
+  user_R->>user_R: dfMergeTwoVariablesRelevel()
+   ")
+#
+```
+-->
+
 
 
 ## Example workflow
@@ -164,12 +191,9 @@ Can be found here: [https://cdn.rawgit.com/rfhb/ctrdata/master/inst/doc/EXAMPLES
 
 ## In the works - next steps
  
-* Provide differential update mechanism (using the RSS feeds provided by the registers), which should be more efficient than the current full re-download
-
-* Provide examples and possibly special functions to support analysing time trends of clinical trials
+* Add comprehensive package tests
 
 * Make internal access to mongo database more generic
-
 
 ## Acknowledgements 
 
@@ -203,3 +227,4 @@ Can be found here: [https://cdn.rawgit.com/rfhb/ctrdata/master/inst/doc/EXAMPLES
 httr::GET("https://github.com/bagder/ca-bundle/raw/e9175fec5d0c4d42de24ed6d84a06d504d5e5a09/ca-bundle.crt", write_disk(system.file("", package = "curl"), "inst/cacert.pem", overwrite = TRUE))
 ```
 
+[1]: ./Rplot.png "Sequence diagram"

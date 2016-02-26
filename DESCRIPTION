@@ -1,7 +1,7 @@
 Package: ctrdata
 Type: Package
 Title: Retrieve and Prepare for Analysis Information on Clinical Trials from Public Registers
-Version: 0.5.9
+Version: 0.6
 Date: 2016-01-23
 Depends:
     rmongodb,

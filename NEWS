@@ -1,3 +1,7 @@
+0.6
+ - 2016-02-25
+ - different update mechanism for EUCTR implemented
+ - corrected function name from db... to dfFindUniqueEuctrRecord()
 0.5.9
  - 2016-01-23
  - Corrected bugs
