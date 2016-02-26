@@ -26,12 +26,14 @@ countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", 
 #'
 ctrOpenSearchPagesInBrowser <- function(register = c("EUCTR", "CTGOV"), copyright = FALSE, queryterm = "", ...) {
   #
-  if (copyright == TRUE) {
-    if ("CTGOV" %in% register) browseURL("https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use", ...)
-    if ("EUCTR" %in% register) browseURL("http://www.ema.europa.eu/ema/index.jsp?curl=pages/regulation/general/general_content_000178.jsp&mid=", ...)
-  } else {
-    if ("CTGOV" %in% register) browseURL("https://clinicaltrials.gov/ct2/search/advanced", ...)
-    if ("EUCTR" %in% register) browseURL("https://www.clinicaltrialsregister.eu/ctr-search/search", ...)
+  if(queryterm == '') {
+    if (copyright == TRUE) {
+      if ("CTGOV" %in% register) browseURL("https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use", ...)
+      if ("EUCTR" %in% register) browseURL("http://www.ema.europa.eu/ema/index.jsp?curl=pages/regulation/general/general_content_000178.jsp&mid=", ...)
+    } else {
+      if ("CTGOV" %in% register) browseURL("https://clinicaltrials.gov/ct2/search/advanced", ...)
+      if ("EUCTR" %in% register) browseURL("https://www.clinicaltrialsregister.eu/ctr-search/search", ...)
+    }
   }
   #
   # deal with register or queryterm being
@@ -39,6 +41,7 @@ ctrOpenSearchPagesInBrowser <- function(register = c("EUCTR", "CTGOV"), copyrigh
   # a data frame as returned from ctrQueryHistoryInDb()
   if (is.data.frame(queryterm)) query <- queryterm
   if (is.data.frame(register))  query <- register
+  #
   if (exists("query")) {
     tmp <- try ({
       if(nrow(query) > 1) warning("Parameter included data frame with more than one row, only using first row.", immediate. = TRUE)
@@ -47,18 +50,20 @@ ctrOpenSearchPagesInBrowser <- function(register = c("EUCTR", "CTGOV"), copyrigh
       rm("query")
     }, silent = TRUE)
   }
+  #
   if (is.list(queryterm)) query <- queryterm
   if (is.list(register))  query <- register
+  #
   if (exists("query")) {
     tmp <- try ({
       queryterm <- query$queryterm
       register  <- query$register
       rm("query")
     }, silent = TRUE)
+    #
+    if (class(tmp) == "try-error") stop("ctrOpenSearchPagesInBrowser(): Could not use parameters, please check.")
+    #
   }
-  #
-  if (class(tmp) == "try-error") stop("ctrOpenSearchPagesInBrowser(): Could not use parameters, please check.")
-  #
   #
   if (queryterm != "") {
     message("Opening in browser previous search: ", queryterm, ", in register: ", register)
