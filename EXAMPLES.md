@@ -88,7 +88,7 @@ result <- dbGetVariablesIntoDf(c("a1_member_state_concerned",
 #
 # Eliminate trials records duplicated by member state: 
 #
-result <- dbFindUniqueEuctrRecord(result)
+result <- dfFindUniqueEuctrRecord(result)
 #
 # Visualise 
 #
@@ -126,7 +126,7 @@ ids_of_unique_trials <- dbFindIdsUniqueTrials()
 # Subset the result set to these unique trials
 #
 result <- subset (result, subset = `_id` %in% ids_of_unique_trials)
-result <- dbFindUniqueEuctrRecord(result)
+result <- dfFindUniqueEuctrRecord(result)
 #
 # Now merge two variables into a new one for analysis
 #
@@ -216,7 +216,7 @@ result <- dbGetVariablesIntoDf(c("a2_eudract_number",
 #
 # eliminate trials records duplicated by member state
 # keep a single record and if available use preference
-result <- dbFindUniqueEuctrRecord(result)
+result <- dfFindUniqueEuctrRecord(result)
 #
 #
 # checking expected number of trials

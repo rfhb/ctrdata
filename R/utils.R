@@ -407,9 +407,9 @@ dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(hos
 #' a record for GB or lacking this any other record for the trial will be returned.) For a list of codes of EU
 #' Member States, please see vector \code{countriesEUCTR}.
 #'
-#' @export dbFindUniqueEuctrRecord
+#' @export dfFindUniqueEuctrRecord
 #'
-dbFindUniqueEuctrRecord <- function(df = NULL, prefer = "GB") {
+dfFindUniqueEuctrRecord <- function(df = NULL, prefer = "GB") {
   #
   if (class(df) != "data.frame") stop("Parameter df is not a data frame.")
   if (is.null(df [['_id']]) || is.null(df$a2_eudract_number)) stop('Data frame does not include "_id" and "a2_eudract_number" columns.')
