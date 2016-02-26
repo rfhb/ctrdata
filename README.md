@@ -13,7 +13,7 @@ output:
 
 ## Background
 
-The package `ctrdata` provides functions for retrieving information from public registers, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started mid 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package can only be used within the [R](https://www.r-project.org/) computing system. Last edit 2016-01-23 for version 0.5.9 (preparations ongoing for CRAN submission). 
+The package `ctrdata` provides functions for retrieving information from public registers, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started mid 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package can only be used within the [R](https://www.r-project.org/) computing system. Last edit 2016-02-25 for version 0.6 (see NEWS). 
 
 Features implemented so far:
 
