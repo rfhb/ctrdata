@@ -160,11 +160,14 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     register   <- rerunquery$`query-register`
     initialday <- substr(rerunquery$`query-timestamp`, start = 1, stop = 10)
     #
+    if(queryterm == '')                stop("Query term empty - cannot update query ",   querytoupdate)
+    if(!grepl(register, "CTGOVEUCTR")) stop("Register not known - cannot update query ", querytoupdate)
+    #
     # adapt updating procedure to respective register
     if (register == "CTGOV") {
       #
       # if "lup_s" is already in query term, just re-run full query to avoid
-      # multiple queries in history that only differe in date / time:
+      # multiple queries in history that only differ in the timestamp:
       if (grepl("&lup_s=[0-9]{2}", queryterm)) {
         #
         # remove queryupdateterm, thus running full again

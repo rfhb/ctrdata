@@ -101,7 +101,7 @@ sequenceDiagram
   
   user_R->>database: dbFindVariable()
   database->>user_R: dbGetVariablesIntoDf()
-  database->>user_R: dbFindIdsUniqueTrials()
+  user_R->>database: dbFindIdsUniqueTrials()
 
   user_R->>user_R: dfFindUniqueEuctrRecord()
   user_R->>user_R: dfMergeTwoVariablesRelevel()
