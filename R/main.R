@@ -434,7 +434,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     resultsEuNumTrials <- sub(".*Trials with a EudraCT protocol \\(([0-9,.]*)\\).*", "\\1", resultsEuPages)
     resultsEuNumTrials <- as.numeric(gsub("[,.]", "", resultsEuNumTrials))
     resultsEuNumPages  <- ceiling(resultsEuNumTrials / 20) # this is simpler than parsing "next" or "last" links ...
-    if (is.na(resultsEuNumPages) | is.na(resultsEuNumTrials)) stop("first result page empty")
+    if (is.na(resultsEuNumPages) || is.na(resultsEuNumTrials) || resultsEuNumTrials == 0) stop("First result page empty - no trials found?")
     message(paste0("Retrieved overview, ", resultsEuNumTrials, " trial(s) from ", resultsEuNumPages, " page(s) are to be downloaded."))
 
     # get data
