@@ -259,7 +259,7 @@ dbFindIdsUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "127.0.0
                                              fields = list('otherids' = 1L, '_id' = 1L))
 
   # EUCTR / EudraCT number is "_id" for EUCTR records
-  listofEUCTRids <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns = "ctrdata"),
+  listofEUCTRids <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns),
                                              query  = list('_id' = list('$regex' = '[0-9]{4}-[0-9]{6}-[0-9]{2}-[A-Z]{2}')),
                                              fields = list('_id' = 1L))
 
