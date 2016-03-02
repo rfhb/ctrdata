@@ -91,20 +91,27 @@ sequenceDiagram
 
   user_R->>database: define collection and namespace
 
+  note left of user_R: query and download
+    
   user_R->>euctr: ctrOpenSearchPagesInBrowser()
+  euctr->>euctr: user defines query
   euctr->>user_R: ctrGetQueryUrlFromBrowser()
+
   euctr->>database: ctrLoadQueryIntoDb()
     
-  user_R->>ctgov: ctrOpenSearchPagesInBrowser()
-  ctgov->>user_R: ctrGetQueryUrlFromBrowser()
-  ctgov->>database: ctrLoadQueryIntoDb()
+  ctgov-->>ctgov: user defines query
+  ctgov-->>database: ctrLoadQueryIntoDb()
   
-  user_R->>database: dbFindVariable()
+  note left of user_R: prepare and analyse
+    
+  database->>user_R: dbFindVariable()
   database->>user_R: dbGetVariablesIntoDf()
-  user_R->>database: dbFindIdsUniqueTrials()
+  database-->>user_R: dbFindIdsUniqueTrials()
 
   user_R->>user_R: dfFindUniqueEuctrRecord()
-  user_R->>user_R: dfMergeTwoVariablesRelevel()
+  user_R-->>user_R: dfMergeTwoVariablesRelevel()
+
+  user_R->>user_R: any R functions such as summary()
 
 ")
 #
