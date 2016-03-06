@@ -31,7 +31,7 @@ Features implemented so far:
 
 * Reminder to respect the registers' copyrights and terms and conditions is shown when loading the package. Please also read the "Acknowledgments" and "Notes" sections below. 
 
-* Detailed [examples](https://cdn.rawgit.com/rfhb/ctrdata/master/inst/doc/EXAMPLES.html) for analyses such as of time trends of details of clinical trials
+* Detailed [examples](https://rawgit.com/rfhb/ctrdata/master/inst/doc/EXAMPLES.html) for analyses such as of time trends of details of clinical trials
 
 Overview of functions used in sequence:
 ![Overview workflow][1]
