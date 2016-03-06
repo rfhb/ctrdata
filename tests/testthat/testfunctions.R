@@ -36,7 +36,7 @@ test_that("access to mongo db", {
 
 test_that("browser interaction", {
 
-  expect_error(ctrGetQueryUrlFromBrowser(content = "ThisDoesNotExist"), "Clipboard content is not a clinical trial register search URL.")
+  expect_error(ctrGetQueryUrlFromBrowser(content = "ThisDoesNotExist"), "Content is not a clinical trial register search URL.")
   expect_is(ctrGetQueryUrlFromBrowser(content = "https://clinicaltrials.gov/ct2/results?type=Intr&cond=cancer&age=0"), "list")
 
   expect_equal(ctrOpenSearchPagesInBrowser(register = "EUCTR", queryterm = "cancer&age=under-18"), TRUE)
