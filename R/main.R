@@ -47,6 +47,9 @@
 ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate = 0, details = TRUE, parallelretrievals = 10,
                        mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"), ns = "ctrdata", debug = FALSE) {
 
+  # graciously deduce queryterm and register if a full url is unexpectedly provided as queryterm
+  if(is.character(queryterm) && grepl ("^https.+clinicaltrials.+", queryterm)) queryterm <- ctrdata::ctrGetQueryUrlFromBrowser(content = queryterm)
+
   # deal with queryterm such as returned from ctrGetQueryUrlFromBrowser()
   if (is.list(queryterm)) {
     #
@@ -56,9 +59,9 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     register  <- tmp$register
     #
   }
-  # basic sanity check if query term should be valid
-  if (grepl("[^a-zA-Z0-9=+&%_-]", queryterm)) stop('Queryterm has unexpected characters: "', queryterm,
-                                                  '" (expected: a-zA-Z0-9=+&%_-).')
+  # basic sanity check if query term should be considered valid
+  if (grepl('[^a-zA-Z0-9=+&%_-]', gsub('\\[', '', gsub('\\]', '', queryterm))))
+    stop('Queryterm has unexpected characters: "', queryterm, '", expected are: a-zA-Z0-9=+&%_-[].')
 
   # other sanity checks
   if ((queryterm == "") & querytoupdate == 0) stop("'query term' is empty.")
