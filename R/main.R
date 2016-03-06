@@ -445,7 +445,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     resultsNumModulo  <- resultsEuNumPages %%  parallelretrievals
     message(paste0("Downloading trials (from a maximum of ", parallelretrievals, " page(s) in parallel):"))
     #
-    for (i in 1:(resultsNumBatches + 1) ) {
+    for (i in 1:(resultsNumBatches + ifelse(resultsNumModulo > 0, 1, 0))) {
       # parallel requests by using startpage:stoppage
       # TODO use queue and re-queueing
       startpage <- (i - 1) * parallelretrievals + 1
