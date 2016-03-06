@@ -36,10 +36,10 @@ ctrOpenSearchPagesInBrowser <- function(register = c("EUCTR", "CTGOV"), copyrigh
     }
   }
   # try to deduce queryterm and register from a url that is provided as anonymous first parameter
-  if(queryterm == '' & grepl ("^https.+clinicaltrials.+", register)) queryterm <- ctrdata::ctrGetQueryUrlFromBrowser(content = register)
+  if(queryterm == '' && grepl ("^https.+clinicaltrials.+", register)) queryterm <- ctrdata::ctrGetQueryUrlFromBrowser(content = register)
   #
   # graciously deduce queryterm and register if a url is unexpectedly provided as queryterm
-  if(grepl ("^https.+clinicaltrials.+", queryterm)) queryterm <- ctrdata::ctrGetQueryUrlFromBrowser(content = queryterm)
+  if(is.character(queryterm) && grepl ("^https.+clinicaltrials.+", queryterm)) queryterm <- ctrdata::ctrGetQueryUrlFromBrowser(content = queryterm)
   #
   # deal with register or queryterm being
   # - a list as returned from ctrGetQueryUrlFromBrowser() or
