@@ -111,7 +111,7 @@ ctrGetQueryUrlFromBrowser <- function(content = clipr::read_clip()) {
     return(list(queryterm = queryterm, register = "CTGOV"))
   }
   #
-  stop(paste("Clipboard content is not a clinical trial register search URL. Returning NULL."))
+  stop(paste("Content is not a clinical trial register search URL. Returning NULL."))
   return(NULL)
 }
 
