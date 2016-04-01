@@ -1,20 +1,26 @@
 ---
-output: 
-  html_document: 
-    number_sections: no
-    toc: yes
-params: 
-  output_dir = "`r paste0(getwd (), "inst/doc")`"
+title: "ctrdata usage examples"
+author: "Ralf Herold"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 # Examples for using R package `ctrdata` for clinical trial protocol-related information
 
-Last edit 2016-02-11. General information on the library is available here: [https://github.com/rfhb/ctrdata](https://github.com/rfhb/ctrdata). 
+```{r, include=FALSE}
+knitr::opts_chunk$set(eval=FALSE)
+```
+
+General information on the library is available here: [https://github.com/rfhb/ctrdata](https://github.com/rfhb/ctrdata). 
 
 
 ## Execute in browser a search query that was previously stored
 
-```R
+```{r}
 # 
 # The function ctrOpenSearchPagesInBrowser() can be used to open blank search pages, but 
 # also to execute a previous search. This can be used to check if user searches are 
@@ -34,7 +40,7 @@ ctrOpenSearchPagesInBrowser(q)    # open selected search newly in broweser
 
 ## Find fields / variables of interest
 
-```R
+```{r}
 # 
 dbFindVariable("number_of_subjects", allmatches = TRUE)
 #
@@ -66,7 +72,7 @@ ctrLoadQueryIntoDb(querytoupdate = 1)
 
 Note EUCTR provides country-specific records for trials, see README.md. 
 
-```R
+```{r}
 #
 # Relation between number of study participants in one country and in whole trial? 
 #
@@ -101,7 +107,7 @@ hist(result$startdate, breaks = "years", freq = TRUE, las = 1); box()
 
 ## Download from another register, check for duplicates, merge variables and re-organise values 
 
-```R
+```{r}
 #
 # Get data from another register
 #
@@ -136,7 +142,8 @@ table(tmp)
 #
 # Merge two variables and in addition, condense their values into a new value
 #
-statusvalues <- list("ongoing" = c("Recruiting", "Active", "Ongoing", "Active, not recruiting", 
+statusvalues <- list("ongoing" = c("Recruiting", "Active", "Ongoing", 
+                                   "Active, not recruiting", 
                                    "Enrolling by invitation", "Restarted"),
                     "completed" = c("Completed", "Prematurely Ended", "Terminated"),
                     "other"     = c("Withdrawn", "Suspended", "No longer available", 
@@ -155,7 +162,7 @@ table(tmp)
 
 Note: Packages to access mango such as `mongolite` or `RMongo` may work to access data that are already in the dababase. However, package `rmongodb` is still necessary to retrieve data from registers and to store these data into the database. 
 
-```R
+```{r}
 #
 library(mongolite)
 #
@@ -198,7 +205,7 @@ hist (out$number_of_sites)
 
 ## Plot frequency of certain end points
 
-```R
+```{r}
 #
 # search for interesting variables 
 # note the spelling in euctr
@@ -261,7 +268,7 @@ substr(result$e51_primary_end_points[result$pe_is_efs == FALSE], 1, 80)[1:10]
 
 ## Use aggregation functions of the data base to find specific trial endpoints
 
-```R
+```{r}
 #
 library(mongolite)
 #
@@ -312,7 +319,9 @@ out <- m$aggregate('[{"$match": {"primary_outcome.measure":
 #                     
 # Extraction of year from firstreceived_date such as "August 29, 2009"
 #
-out$year <- substr (out$firstreceived_date, tmp <- nchar(out$firstreceived_date) - 4, tmp + 4)
+out$year <- substr (out$firstreceived_date, 
+                    tmp <- nchar(out$firstreceived_date) - 4, 
+                    tmp + 4)
 #
 table (out$year)
 #
@@ -328,7 +337,9 @@ out <- m$aggregate('[{"$match": {"primary_outcome.measure":
 #
 # Extraction of year from firstreceived_date such as "August 29, 2009"
 #
-out$year <- substr (out$firstreceived_date, tmp <- nchar(out$firstreceived_date) - 4, tmp + 4)
+out$year <- substr (out$firstreceived_date, 
+                    tmp <- nchar(out$firstreceived_date) - 4, 
+                    tmp + 4)
 #
 table (out$year)
 #
@@ -341,7 +352,7 @@ table (out$year)
 
 Note that the mongodb documentation includes that a mapreduce operation might not be as fast and efficient as using the aggregation pipeline, which was used in the preceding example. 
 
-```R
+```{r}
 #
 library(mongolite)
 #

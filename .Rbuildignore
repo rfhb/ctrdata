@@ -6,7 +6,7 @@
 private.*
 \.Rproj*
 EXAMPLES\.md
-IMG_8368\.JPG
-Rplot01\.png
+.*\.JPG
+.*\.png
 ^.*\.Rproj$
 ^\.Rproj\.user$

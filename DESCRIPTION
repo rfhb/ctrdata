@@ -1,8 +1,8 @@
 Package: ctrdata
 Type: Package
 Title: Retrieve and Prepare for Analysis Information on Clinical Trials from Public Registers
-Version: 0.6
-Date: 2016-01-23
+Version: 0.6.1
+Date: 2016-04-02
 Depends:
     rmongodb,
     RCurl,
@@ -11,6 +11,9 @@ Depends:
 SystemRequirements: mongo database, sed, php, cat, perl
 Author: Ralf Herold
 Maintainer: Ralf Herold <ralf.herold@gmx.net>
+Authors@R: as.person(c(
+    "Ralf Herold <ralf.herold@gmx.net> [aut, cre]"
+    ))
 URL: https://github.com/rfhb/ctrdata
 BugReports: https://github.com/rfhb/ctrdata/issues
 Description: Provides functions for querying and retrieving
@@ -23,4 +26,6 @@ Description: Provides functions for querying and retrieving
     by the wish for aggregating and trend-analysing clinical trial design and conduct.
 License: GPL-2
 RoxygenNote: 5.0.1
-Suggests: testthat
+LazyData: true
+Suggests: testthat, ggplot2, httr, mongolite, devtools, knitr
+VignetteBuilder: knitr

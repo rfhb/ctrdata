@@ -31,7 +31,7 @@ Features implemented so far:
 
 * Reminder to respect the registers' copyrights and terms and conditions is shown when loading the package. Please also read the "Acknowledgments" and "Notes" sections below. 
 
-* Detailed [examples](https://rawgit.com/rfhb/ctrdata/master/inst/doc/EXAMPLES.html) for analyses such as of time trends of details of clinical trials
+* Vignettes provided to get started and with detailed examples such as analyses of time trends of details of clinical trials
 
 Overview of functions used in sequence:
 ![Overview workflow][1]
@@ -83,37 +83,38 @@ installCygwinWindowsTest	| Convenience function to test for working cygwin insta
 
 
 <!--
+
 ```R
 #
-library(DiagrammeR)
-mermaid("
-sequenceDiagram
-
-  user_R->>database: define collection and namespace
-
-  note left of user_R: query and download
-    
-  user_R->>euctr: ctrOpenSearchPagesInBrowser()
-  euctr->>euctr: user defines query
-  euctr->>user_R: ctrGetQueryUrlFromBrowser()
-
-  euctr->>database: ctrLoadQueryIntoDb()
-    
-  ctgov-->>ctgov: user defines query
-  ctgov-->>database: ctrLoadQueryIntoDb()
-  
-  note left of user_R: prepare and analyse
-    
-  database->>user_R: dbFindVariable()
-  database->>user_R: dbGetVariablesIntoDf()
-  database-->>user_R: dbFindIdsUniqueTrials()
-
-  user_R->>user_R: dfFindUniqueEuctrRecord()
-  user_R-->>user_R: dfMergeTwoVariablesRelevel()
-
-  user_R->>user_R: any R functions such as summary()
-
-")
+# library(DiagrammeR)
+# mermaid("
+# sequenceDiagram
+# 
+#   user_R->>database: define collection and namespace
+# 
+#   note left of user_R: query and download
+#     
+#   user_R->>euctr: ctrOpenSearchPagesInBrowser()
+#   euctr->>euctr: user defines query
+#   euctr->>user_R: ctrGetQueryUrlFromBrowser()
+# 
+#   euctr->>database: ctrLoadQueryIntoDb()
+#     
+#   ctgov->>ctgov: user defines query
+#   ctgov->>database: ctrLoadQueryIntoDb()
+#   
+#   note left of user_R: prepare and analyse
+#     
+#   database->>user_R: dbFindVariable()
+#   database->>user_R: dbGetVariablesIntoDf()
+#   database->>user_R: dbFindIdsUniqueTrials()
+# 
+#   user_R->>user_R: dfFindUniqueEuctrRecord()
+#   user_R->>user_R: dfMergeTwoVariablesRelevel()
+# 
+#   user_R->>user_R: any R functions such as summary()
+# 
+# ")
 #
 ```
 -->
@@ -200,9 +201,9 @@ with (result, table (x5_trial_status, b31_and_b32_status_of_the_sponsor))
 #
 ```
 
-### More and complex examples
+### Representation in mongodb, as JSON
 
-Can be found here: [https://cdn.rawgit.com/rfhb/ctrdata/master/inst/doc/EXAMPLES.html](https://cdn.rawgit.com/rfhb/ctrdata/master/inst/doc/EXAMPLES.html)
+![Example JSON representation][2]
 
 
 ## In the works - next steps
@@ -238,9 +239,22 @@ Can be found here: [https://cdn.rawgit.com/rfhb/ctrdata/master/inst/doc/EXAMPLES
 
 * Package `ctrdata` also uses [Variety](https://github.com/variety/variety), which will automatically be downloaded into the package's `exec` directory when first using a function that needs it. This may fail if this directory is not writable for the user and this issue is not yet addressed. Note that `variety.js` may not work with remote mongo databases, see documentation of `dbFindVariable()`. 
 
+* In case `devtool::install_github("rfhb/ctrdata")` fails, you may have to: 
+```R
+# - set a proxy
+library(httr)
+set_config(use_proxy("proxy.server.domain", 8080))
+# and / or
+# - on windows change library path to not use an UNC notation (\\server\directory)
+.libPaths("D:/my/directory/")
+#
+```
+
 * In case `curl` fails with an SSL error, run this code to update the certificates in the root of package `curl`:
 ```R
 httr::GET("https://github.com/bagder/ca-bundle/raw/e9175fec5d0c4d42de24ed6d84a06d504d5e5a09/ca-bundle.crt", write_disk(system.file("", package = "curl"), "inst/cacert.pem", overwrite = TRUE))
 ```
 
-[1]: ./Rplot.png "Sequence diagram"
+[1]: ./ctrdata_sequence_diagram.png "Sequence diagram"
+[2]: ./ctrdata_json.jpg "JSON representation"
+

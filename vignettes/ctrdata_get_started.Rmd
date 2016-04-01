@@ -1,0 +1,109 @@
+---
+title: "ctrdata getting started"
+author: "Ralf Herold"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Getting started with R package `ctrdata` for clinical trial protocol-related information
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(eval=FALSE)
+```
+
+* Install package `ctrdata` from a vanilla system: 
+```{r}
+install.packages(c("devtools", "httr"))
+#
+# set proxy if needed
+library(httr)
+set_config(use_proxy("proxy.server.domain", 8080))
+#
+# on windows change library path to not use an UNC notation (\\server\directory)
+.libPaths("D:/my/directory/")
+#
+devtools::install_github("rfhb/ctrdata")
+#
+```
+
+
+* Attach package `ctrdata`: 
+```{r}
+library(ctrdata)
+```
+
+* Open register's advanced search page in browser: 
+```{r}
+#
+ctrOpenSearchPagesInBrowser()
+#
+# Please review and respect register copyrights:
+#
+ctrOpenSearchPagesInBrowser(copyright = TRUE)
+#
+```
+
+* Click search parameters and execute search in browser 
+
+* Copy address from browser address bar to clipboard
+
+* Get address from clipboard: 
+```{r}
+#
+q <- ctrGetQueryUrlFromBrowser()
+#
+# Found search query from EUCTR.
+# [1] "cancer&age=under-18"
+#
+```
+
+* Retrieve protocol-related information, transform, save to database and analyse:
+```{r}
+#
+ctrLoadQueryIntoDb(q)
+#
+# If no parameters are given for a database connection: uses mongodb
+# on localhost, port 27017, database "users", collection "ctrdata"
+# note: when run for first time, may download variety.js
+#
+# Show which queries have been downloaded into the database so far
+#
+ctrQueryHistoryInDb()
+#
+# Total number of records: 6143
+# Number of queries in history: 2
+#       query-timestamp query-register query-records                  query-term
+# 1 2016-01-13-10-51-56          CTGOV          5233 type=Intr&cond=cancer&age=0
+# 2 2016-01-13-10-40-16          EUCTR           910         cancer&age=under-18
+#
+# find names of fields of interest in database:
+#
+dbFindVariable("date")
+#
+# Returning first of 20 keys found.
+# [1] "firstreceived_date"
+#
+# Get all records that have values in all specified fields.
+# Note that b31_... is an element within the array b1_...
+#
+result <- dbGetVariablesIntoDf(c("b1_sponsor.b31_and_b32_status_of_the_sponsor", "x5_trial_status"))
+#
+# Tabulate the status of the clinical trial on the date of information retrieval
+#
+with (result, table (x5_trial_status, b31_and_b32_status_of_the_sponsor))
+#
+#                     b31_and_b32_status_of_the_sponsor
+# x5_trial_status      Commercial Non-Commercial
+#   Completed                 138             30
+#   Not Authorised              3              0
+#   Ongoing                   339            290
+#   Prematurely Ended          35              4
+#   Restarted                   8              0
+#   Temporarily Halted         14              4
+#
+```
+

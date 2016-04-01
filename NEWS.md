@@ -1,37 +1,40 @@
-0.6
+# ctrdata 0.6.1
+ - 2016-04-02
+ - changed to provide vignettes
+# ctrdata 0.6
  - 2016-02-25
  - different update mechanism for EUCTR implemented
  - corrected function name from db... to dfFindUniqueEuctrRecord()
-0.5.9
+# ctrdata 0.5.9
  - 2016-01-23
  - Corrected bugs
  - Started preparation of submission to CRAN
  - Preparing to include package unit tests
-0.5
+# ctrdata 0.5
  - 2015-11-29
  - Published on github
  - Improved documentation
-0.4
+# ctrdata 0.4
  - 2015-10-08
  - Renamed all functions for consistency and ease-of-use
-0.3
+# ctrdata 0.3
  - 2015-10-06
  - Added functionality to download xml data from CTGOV, which includes more data than the csv format
-0.2.8
+# ctrdata 0.2.8
  - Changed and extended how history of queries is included in database.
  - New function dbCTRQueryHistory()
-0.2.7
+# ctrdata 0.2.7
  - Added function for merging variables such as from different registers and optionally to merge values into new values
  - Note that function findCTRkey was renamed to dbFindCTRkey because it acts on the database
-0.2.5
+# ctrdata 0.2.5
  - Added function for selecting preferred language versions of trials from EUCTR
  - Improved use of automatic proxy configuration script
-0.2.2
+# ctrdata 0.2.2
  - Added proxy function and improved installation of cygwin under MS Windows
-0.2
+# ctrdata 0.2
  - 2015-09-19
  - Now also working on MS Windows
-0.1
+# ctrdata 0.1
  - 2015-09-15
  - First version with basic functionality
  - Limited testing
