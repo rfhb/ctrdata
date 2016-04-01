@@ -271,7 +271,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
       curl::curl_download(ctgovdownloadcsvurl, destfile = f, mode = "wb", handle = h, quiet = (getOption("internet.info") >= 2))
       #
       if (file.size(f) == 0) stop("No studies downloaded. Please check query term or run again with debug = TRUE.")
-      unzip(f, exdir = tempDir)
+      utils::unzip(f, exdir = tempDir)
       resultsCTGOV <- paste0(tempDir, "/study_fields.csv")
 
       # call to import in csv format (not possible from within R)
@@ -330,7 +330,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
       curl::curl_download(ctgovdownloadcsvurl, destfile = f, mode = "wb", handle = h, quiet = (getOption("internet.info") >= 2))
       #
       if (file.size(f) == 0) stop("No studies downloaded. Please check query term or run again with debug = TRUE.")
-      unzip(f, exdir = tempDir)
+      utils::unzip(f, exdir = tempDir)
 
       # compose commands - transform xml into json, a single allfiles.json in the temporaray directory
       xml2json <- system.file("exec/xml2json.php", package = "ctrdata", mustWork = TRUE)

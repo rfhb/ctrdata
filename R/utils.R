@@ -28,11 +28,11 @@ ctrOpenSearchPagesInBrowser <- function(register = c("EUCTR", "CTGOV"), copyrigh
   #
   if(queryterm == '') {
     if (copyright == TRUE) {
-      if ("CTGOV" %in% register) browseURL("https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use", ...)
-      if ("EUCTR" %in% register) browseURL("http://www.ema.europa.eu/ema/index.jsp?curl=pages/regulation/general/general_content_000178.jsp&mid=", ...)
+      if ("CTGOV" %in% register) utils::browseURL("https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use", ...)
+      if ("EUCTR" %in% register) utils::browseURL("http://www.ema.europa.eu/ema/index.jsp?curl=pages/regulation/general/general_content_000178.jsp&mid=", ...)
     } else {
-      if ("CTGOV" %in% register) browseURL("https://clinicaltrials.gov/ct2/search/advanced", ...)
-      if ("EUCTR" %in% register) browseURL("https://www.clinicaltrialsregister.eu/ctr-search/search", ...)
+      if ("CTGOV" %in% register) utils::browseURL("https://clinicaltrials.gov/ct2/search/advanced", ...)
+      if ("EUCTR" %in% register) utils::browseURL("https://www.clinicaltrialsregister.eu/ctr-search/search", ...)
     }
   }
   # try to deduce queryterm and register from a url that is provided as anonymous first parameter
@@ -72,8 +72,8 @@ ctrOpenSearchPagesInBrowser <- function(register = c("EUCTR", "CTGOV"), copyrigh
   #
   if (queryterm != "") {
     message("Opening in browser previous search: ", queryterm, ", in register: ", register)
-    if ("CTGOV" %in% register) browseURL(paste0("https://clinicaltrials.gov/ct2/results?", queryterm), ...)
-    if ("EUCTR" %in% register) browseURL(paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=", queryterm), ...)
+    if ("CTGOV" %in% register) utils::browseURL(paste0("https://clinicaltrials.gov/ct2/results?", queryterm), ...)
+    if ("EUCTR" %in% register) utils::browseURL(paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=", queryterm), ...)
   }
   #
   invisible(TRUE)
@@ -502,8 +502,8 @@ installCygwinWindowsDoInstall <- function(overwrite = FALSE, proxy = ""){
   dstfile <- paste0(tmpfile, "/cygwinsetup.exe")
   #
   # download.file uses the proxy configured in the system
-  if (grepl("64-bit", sessionInfo()$platform)) download.file(url = "http://cygwin.org/setup-x86_64.exe", destfile = dstfile, quiet = TRUE, mode = "wb")
-  if (grepl("32-bit", sessionInfo()$platform)) download.file(url = "http://cygwin.org/setup-x86.exe",    destfile = dstfile, quiet = TRUE, mode = "wb")
+  if (grepl("64-bit", utils::sessionInfo()$platform)) utils::download.file(url = "http://cygwin.org/setup-x86_64.exe", destfile = dstfile, quiet = TRUE, mode = "wb")
+  if (grepl("32-bit", utils::sessionInfo()$platform)) utils::download.file(url = "http://cygwin.org/setup-x86.exe",    destfile = dstfile, quiet = TRUE, mode = "wb")
   #
   # check
   if (!file.exists(dstfile))         stop("Download failed. Please install manually.")
@@ -519,7 +519,7 @@ installCygwinWindowsDoInstall <- function(overwrite = FALSE, proxy = ""){
     if (tmp$AutoConfigURL != "") {
       # retrieve settings
       proxypacfile <- paste0(tmpfile, '/pacfile.txt')
-      download.file(tmp$AutoConfigURL, proxypacfile)
+      utils::download.file(tmp$AutoConfigURL, proxypacfile)
       # for testing: proxypacfile <- "private/proxypacfile"
       # find out and select last mentioned proxy line
       proxypac <- readLines(proxypacfile)
