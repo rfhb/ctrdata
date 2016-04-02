@@ -1,10 +1,3 @@
----
-output:
-  html_document: default
-  pdf_document: default
-  word_document: default
----
-
 [![Build Status](https://travis-ci.org/rfhb/ctrdata.svg?branch=master)](https://travis-ci.org/rfhb/ctrdata)
 
 # README.md for R package ctrdata on github.com
@@ -53,7 +46,7 @@ Other requirements:
 
 * A local [mongodb](https://www.mongodb.org/) version 3 installation: 
 
-From this installation, binaries `mongoimport` and `mongo` required. For Ubuntu, please note this seems to ship mongodb version 2.x, not the required version 3; please follow installation instructions [here for Ubuntu 15, same as for Debian](http://docs.mongodb.org/manual/tutorial/install-mongodb-on-debian/#install-mongodb) and here for [Ubuntu 14 and earlier](http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/#install-mongodb). For Mac OS X and Windows, please follow installation instructions [here](https://www.mongodb.org/downloads#production). For Mac OS X alternatively install mongo using [homebrew](http://brew.sh/) using the command line `brew install mongodb`. 
+From this installation, binaries `mongoimport` and `mongo` need to be accessed. For Ubuntu, please note this seems to ship mongodb version 2.x, not the required version 3; please follow installation instructions [here for Ubuntu 15, same as for Debian](http://docs.mongodb.org/manual/tutorial/install-mongodb-on-debian/#install-mongodb) and here for [Ubuntu 14 and earlier](http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/#install-mongodb). For Mac OS X and Windows, please follow installation instructions [here](https://www.mongodb.org/downloads#production). For Mac OS X alternatively install mongo using [homebrew](http://brew.sh/) using the command line `brew install mongodb`. 
 
 * Command line tools `perl`, `sed`, `cat` and `php` (5.2 or higher): 
 
