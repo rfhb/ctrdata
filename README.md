@@ -1,9 +1,7 @@
 ---
 output:
-  html_document:
-    toc: yes
-  pdf_document:
-    toc: yes
+  html_document: default
+  pdf_document: default
   word_document: default
 ---
 
@@ -163,23 +161,6 @@ ctrLoadQueryIntoDb(q)
 # If no parameters are given for a database connection: uses mongodb
 # on localhost, port 27017, database "users", collection "ctrdata"
 # note: when run for first time, may download variety.js
-#
-# Show which queries have been downloaded into the database so far
-#
-ctrQueryHistoryInDb()
-#
-# Total number of records: 6143
-# Number of queries in history: 2
-#       query-timestamp query-register query-records                  query-term
-# 1 2016-01-13-10-51-56          CTGOV          5233 type=Intr&cond=cancer&age=0
-# 2 2016-01-13-10-40-16          EUCTR           910         cancer&age=under-18
-#
-# find names of fields of interest in database:
-#
-dbFindVariable("date")
-#
-# Returning first of 20 keys found.
-# [1] "firstreceived_date"
 #
 # Get all records that have values in all specified fields.
 # Note that b31_... is an element within the array b1_...
