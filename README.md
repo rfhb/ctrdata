@@ -1,35 +1,20 @@
----
-output:
-  html_document: default
-  pdf_document: default
-  word_document: default
----
-
 [![Build Status](https://travis-ci.org/rfhb/ctrdata.svg?branch=master)](https://travis-ci.org/rfhb/ctrdata)
 
 # README.md for R package ctrdata on github.com
 
 ## Background
 
-The package `ctrdata` provides functions for retrieving information from public registers, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started mid 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package can only be used within the [R](https://www.r-project.org/) computing system. Last edit 2016-02-25 for version 0.6 (see NEWS). 
+The package `ctrdata` provides functions for retrieving information from public registers of clinical trials, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started mid 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package can only be used within the [R](https://www.r-project.org/) computing system. Last edit 2016-04-02 for version 0.6.1 (see NEWS.md). 
 
-Features implemented so far:
+Main features:
 
-* Protocol-related information on clinical trials is easily retrieved from public online sources. 
+* Protocol-related information on clinical trials is easily retrieved from public online sources: Users define queries using the registers' web pages interfaces and then use `ctrdata` for retrieving the results of the queries. 
 
-* Users define queries using the registers' web pages interfaces and then use `ctrdata` for retrieving the results of the queries. 
+* Retrieved (downloaded) information is transformed and stored in a document-centric database (mongo), for fast and offline access to detailed information on clinical trial protocols. This can then be analysed with `R` (or others systems). Easily re-run a previous query to update the database. In `ctrdata/exec`, scripts `euctr2json.sh` and `xml2json.php` transform EUCTR plain text files and CTGOV xml files to json format. 
 
-* Retrieved (downloaded) information is transformed and stored in a document-centric database (mongo) for further access. This provides fast and offline access to detailed information on clinical trials, for analysis in `R` (see examples). 
+* Unique (de-duplicated) clinical trial records are identified (as a database may hold information from more than one register, and trials may have more than one record in a register). `ctrdata` has also functions to merge information from different registers and to recode it. Vignettes are provided to get started and with detailed examples such as analyses of time trends of details of clinical trial protocols. 
 
-* Unique (de-duplicated) clinical trial records are identified, as the same database may hold information from more than one register. 
-  
-* Easily re-run a previous query to update records in the database (using a differential update mechanism whenever available) 
-
-* In the background, specially-written scripts `exec/euctr2json.sh` and `exec/xml2json.php` transform EUCTR plain text files and CTGOV xml files to json format. 
-
-* Reminder to respect the registers' copyrights and terms and conditions is shown when loading the package. Please also read the "Acknowledgments" and "Notes" sections below. 
-
-* Vignettes provided to get started and with detailed examples such as analyses of time trends of details of clinical trials
+Remember to respect the registers' copyrights and terms and condition. 
 
 Overview of functions used in sequence:
 ![Overview workflow][1]
@@ -43,6 +28,8 @@ Within [R](https://www.r-project.org/), use the following commands to get and in
 install.packages("devtools")
 devtools::install_github("rfhb/ctrdata")
 #
+# If this fails, see 'Issues and Notes' below.
+#
 # Note the packages that will be installed 
 # automatically as dependencies of ctrdata: 
 # rmongodb, RCurl, curl, clipr
@@ -53,7 +40,7 @@ Other requirements:
 
 * A local [mongodb](https://www.mongodb.org/) version 3 installation: 
 
-From this installation, binaries `mongoimport` and `mongo` required. For Ubuntu, please note this seems to ship mongodb version 2.x, not the required version 3; please follow installation instructions [here for Ubuntu 15, same as for Debian](http://docs.mongodb.org/manual/tutorial/install-mongodb-on-debian/#install-mongodb) and here for [Ubuntu 14 and earlier](http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/#install-mongodb). For Mac OS X and Windows, please follow installation instructions [here](https://www.mongodb.org/downloads#production). For Mac OS X alternatively install mongo using [homebrew](http://brew.sh/) using the command line `brew install mongodb`. 
+From this installation, binaries `mongoimport` and `mongo` need to be accessed. For Ubuntu, please note this seems to ship mongodb version 2.x, not the required version 3; please follow installation instructions [here for Ubuntu 15, same as for Debian](http://docs.mongodb.org/manual/tutorial/install-mongodb-on-debian/#install-mongodb) and here for [Ubuntu 14 and earlier](http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/#install-mongodb). For Mac OS X and Windows, please follow installation instructions [here](https://www.mongodb.org/downloads#production). For Mac OS X alternatively install mongo using [homebrew](http://brew.sh/) using the command line `brew install mongodb`. 
 
 * Command line tools `perl`, `sed`, `cat` and `php` (5.2 or higher): 
 
@@ -189,7 +176,7 @@ with (result, table (x5_trial_status, b31_and_b32_status_of_the_sponsor))
 
 ## In the works - next steps
  
-* Add comprehensive package tests
+* Add more package tests
 
 * Make internal access to mongo database more generic
 
@@ -210,6 +197,17 @@ with (result, table (x5_trial_status, b31_and_b32_status_of_the_sponsor))
 
 * Package `ctrdata` should work on Linux, Mac OS X and MS Windows systems, but these could not all be tested, please file an issue in case of problems. 
 
+* In case `devtool::install_github("rfhb/ctrdata")` fails, you may have to: 
+```R
+# set a proxy
+library(httr)
+set_config(use_proxy("proxy.server.domain", 8080))
+# and / or
+# change library path on windows to not use UNC notation (\\server\directory)
+.libPaths("D:/my/directory/")
+#
+```
+
 * Be aware that the information in the registers may or may not be fully correct; for example see [this publication on CTGOV](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3066456/#S7). 
 
 * Similar to the EUCTR design, one record per concerned EU Member state per trial is retrieved from EUCTR with the default setting `details = TRUE`. 
@@ -219,17 +217,6 @@ with (result, table (x5_trial_status, b31_and_b32_status_of_the_sponsor))
 * So far, there is no typing of database fields; they are all strings (except for indices). 
 
 * Package `ctrdata` also uses [Variety](https://github.com/variety/variety), which will automatically be downloaded into the package's `exec` directory when first using a function that needs it. This may fail if this directory is not writable for the user and this issue is not yet addressed. Note that `variety.js` may not work with remote mongo databases, see documentation of `dbFindVariable()`. 
-
-* In case `devtool::install_github("rfhb/ctrdata")` fails, you may have to: 
-```R
-# - set a proxy
-library(httr)
-set_config(use_proxy("proxy.server.domain", 8080))
-# and / or
-# - on windows change library path to not use an UNC notation (\\server\directory)
-.libPaths("D:/my/directory/")
-#
-```
 
 * In case `curl` fails with an SSL error, run this code to update the certificates in the root of package `curl`:
 ```R
