@@ -9,6 +9,8 @@ language: r
 
 sudo: required
 
+cache: packages
+
 # https://docs.travis-ci.com/user/database-setup/#MongoDB
 # MongoDB binds to 127.0.0.1 and requires no authentication
 # or database creation up front
