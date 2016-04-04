@@ -54,7 +54,7 @@ dbFindVariable("number_of_subjects", allmatches = TRUE)
 
 ## Update data base from query in specified register
 
-```R
+```{r}
 # List queries 
 #
 ctrQueryHistoryInDb()
