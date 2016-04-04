@@ -21,8 +21,8 @@ context("ctrdata functions")
 # dfFindUniqueEuctrRecord        | some
 # installMongoCheckVersion       | (implicit)
 # installMongoFindBinaries       | (implicit)
-# installCygwinWindowsDoInstall  |
-# installCygwinWindowsTest       |
+# installCygwinWindowsDoInstall  | not planned
+# installCygwinWindowsTest       | not planned
 
 
 test_that("access to mongo db", {
@@ -61,7 +61,7 @@ test_that("operations on database", {
   expect_is(dbFindIdsUniqueTrials(ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "list")
 
   expect_is(dbFindVariable(namepart = "ThisDoesNotExist", ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "NULL")
-  expect_error(dbGetVariablesIntoDf(fields = "ThisDoesNotExist", ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "No records found")
+  expect_error(dbGetVariablesIntoDf(fields = "ThisDoesNotExist", ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "For variable: ThisDoesNotExist no data could be extracted")
 
 })
 
