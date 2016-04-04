@@ -355,10 +355,11 @@ dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(hos
     #
     if (fieldIsArray(part1)) {
       tmp <- try({
-        if (debug) message("DEBUG: variable handled as array")
+        if (debug) message("DEBUG: variable ", item, " handled as array")
         dfi <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), '.', ns), data.frame = FALSE,
                                         query  = rmongodb::mongo.bson.from.JSON(query),
                                         fields = rmongodb::mongo.bson.from.JSON(paste0('{"_id": 1, "', part1, '": {"$slice": 1}, "', item, '": 1}')))
+        if (debug) message("DEBUG: variable ", item, " has length ", length(dfi))
         # attempt custom function to condense into a data frame instead of using data.frame = TRUE
         dfi <- as.data.frame(cbind(sapply(dfi, function(x) as.vector(x[[1]])),
                                    sapply(dfi, function(x) as.vector(unlist (x[[2]])))))
@@ -368,10 +369,16 @@ dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(hos
       warning(paste0("For variable: ", item, " only the first slice of the array is returned."))
     } else {
       tmp <- try({
-        if (debug) message("DEBUG: variable handled as string")
-        dfi <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), '.', ns), data.frame = TRUE,
+        if (debug) message("DEBUG: variable ", item, " handled as string")
+        dfi <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), '.', ns), data.frame = FALSE,
                                         query  = rmongodb::mongo.bson.from.JSON(query),
                                         fields = rmongodb::mongo.bson.from.JSON(paste0('{"_id": 1, "', item, '": 1}')))
+        if (debug) message("DEBUG: variable ", item, " has length ", length(dfi))
+        # attempt custom function to condense into a data frame instead of using data.frame = TRUE
+        dfi <- as.data.frame(cbind(sapply(dfi, function(x) as.vector(x[[1]])),
+                                   sapply(dfi, function(x) as.vector(unlist (x[[2]])))))
+        names(dfi) <- c("_id", item)
+        #
       }, silent = FALSE)
     }
     #
