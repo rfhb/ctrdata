@@ -54,14 +54,15 @@ dbFindVariable("number_of_subjects", allmatches = TRUE)
 
 ## Update data base from query in specified register
 
-Note the update functionality will be further improved. 
-
 ```R
 # List queries 
 #
 ctrQueryHistoryInDb()
 # 
-# Update query number 1 in the history (re-downloading data)
+# Update query number 1 in the history
+#  - EUCTR information can be incrementally downloaded or updated only
+#    for the last 7 days, after which a full new download is necessary. 
+#  - CTGOV intformation can always be incrementally downloaded or updated. 
 #
 ctrLoadQueryIntoDb(querytoupdate = 1)
 #

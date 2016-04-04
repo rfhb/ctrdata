@@ -14,7 +14,7 @@ Main features:
 
 * Unique (de-duplicated) clinical trial records are identified (as a database may hold information from more than one register, and trials may have more than one record in a register). `ctrdata` has also functions to merge information from different registers and to recode it. Vignettes are provided to get started and with detailed examples such as analyses of time trends of details of clinical trial protocols. 
 
-Remember to respect the registers' copyrights and terms and condition. 
+Remember to respect the registers' copyrights and terms and conditions. 
 
 Overview of functions used in sequence:
 ![Overview workflow][1]
