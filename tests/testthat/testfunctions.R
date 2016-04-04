@@ -60,7 +60,9 @@ test_that("operations on database", {
   expect_message(dbFindIdsUniqueTrials(ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Searched for EUCTR identifiers")
   expect_is(dbFindIdsUniqueTrials(ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "list")
 
-  expect_is(dbFindVariable(namepart = "ThisDoesNotExist", ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "NULL")
+  # assumes that varietyResults namespace exists - but this can only be assumed if variety had been installed
+  # expect_is(dbFindVariable(namepart = "ThisDoesNotExist", ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "NULL")
+
   expect_error(dbGetVariablesIntoDf(fields = "ThisDoesNotExist", ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "For variable: ThisDoesNotExist no data could be extracted")
 
 })

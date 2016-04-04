@@ -162,7 +162,7 @@ dbFindVariable <- function(namepart = "",
   # check program availability
   if (.Platform$OS.type == "windows") {
     installMongoFindBinaries()
-    if (is.na(get("mongoBinaryLocation", envir = .privateEnv))) stop("Not starting findCTRkey because mongo binary was not found.")
+    if (is.na(get("mongoBinaryLocation", envir = .privateEnv))) stop("Not running dbFindVariable because mongo binary was not found.")
   }
 
   # check if database with variety results exists or should be forced to be updated
@@ -366,7 +366,7 @@ dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(hos
         names(dfi) <- c("_id", part1)
         #
       }, silent = FALSE)
-      warning(paste0("For variable: ", item, " only the first slice of the array is returned."))
+      warning(paste0("For variable: ", item, " only the first slice of the array is returned."), immediate. = TRUE)
     } else {
       tmp <- try({
         if (debug) message("DEBUG: variable ", item, " handled as string")
@@ -382,7 +382,7 @@ dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(hos
       }, silent = FALSE)
     }
     #
-    if (class(tmp) != "try-error" && !is.null(dfi)) {
+    if ((class(tmp) != "try-error") && (nrow(dfi) > 0)) {
 
       if (is.null(result)) {
         result <- dfi
@@ -391,7 +391,7 @@ dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(hos
       }
 
     } else {# try-error occured
-      warning(paste0("For variable: ", item, " no data could be extracted, please check the contents of the database."))
+      stop(paste0("For variable: ", item, " no data could be extracted, please check the contents of the database."))
     }
   } # end for item in fields
 

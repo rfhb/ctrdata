@@ -103,8 +103,7 @@ result$startdate <- strptime(result$n_date_of_competent_authority_decision, "%Y-
 hist(result$startdate, breaks = "years", freq = TRUE, las = 1); box()
 #
 ```
-![Histogram][1]
-
+![Histogram](Rplot01.png)
 
 ## Download from another register, check for duplicates, merge variables and re-organise values 
 
@@ -375,7 +374,5 @@ hist
 plot (hist, type = "h", las = 1)
 #
 ```
-
-[1]: ./Rplot01.png "Number of trials authorised to start, by year"
-[2]: ./Rplot02.png "Trials with specific primary endpoint"
+![Histogram2](Rplot02.png)
 

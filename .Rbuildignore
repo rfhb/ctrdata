@@ -3,10 +3,9 @@
 \.RData
 \.Rhistory
 \.travis.yml
-private.*
 \.Rproj*
-EXAMPLES\.md
-.*\.JPG
-.*\.png
 ^.*\.Rproj$
 ^\.Rproj\.user$
+ctrdata_json.jpg
+ctrdata_sequence_diagram.png
+private.*
