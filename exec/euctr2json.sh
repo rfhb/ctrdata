@@ -27,6 +27,8 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   next if /F\. Population of Trial Subjects/;
   next if /N\. Review by the/;
   next if /P\. End of Trial.$/;
+  next if /G. Investigator Networks/;
+  next if /H.4 Third Country/;
 
   # remove explanatory information from key F.3.3.1
   next if /^\(For clinical trials recorded/;
@@ -70,7 +72,7 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   s/^X.7 Link.*search\/trial\/([0-9-]*)\/([A-Z][A-Z]|3rd)\/$/xxxxxxxxxx"_id": "$1-\U$2\E"/g;
 
   # crude attack on newlines within variable fields
-  s/^([ABDEFGNPX][.][1-9 I].+)$/\nxxxxxxxxxx$1/g;
+  s/^([ABDEFGHNPX][.][1-9 I].+)$/\nxxxxxxxxxx$1/g;
   s/\n/ /g;
   s/xxxxxxxxxx/\n/g;
 
