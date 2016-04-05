@@ -66,6 +66,13 @@ ctrQueryHistoryInDb()
 #
 ctrLoadQueryIntoDb(querytoupdate = 1)
 #
+ctrQueryHistoryInDb()
+# 
+# Note: after such an update, the column "query-records" refers 
+# to the number of records that were added or updated, only, 
+# when the update was run as per the "query-timestamp", and
+# not the total number of records. 
+#
 ```
 
 
