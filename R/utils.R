@@ -341,8 +341,9 @@ dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(hos
     tmp <- names(tmp)
     tmp <- sub('value\\.types\\.(.+)', '\\1', tmp)
     if (debug) message("DEBUG: variable info according to varietyKeys: ", tmp)
-    if("String" %in% tmp) return(FALSE)
+    #
     if("Array"  %in% tmp) return(TRUE)
+    if("String" %in% tmp) return(FALSE)
     # default return
     return(FALSE)
   }
@@ -362,7 +363,8 @@ dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(hos
         if (debug) message("DEBUG: variable ", item, " has length ", length(dfi))
         # attempt custom function to condense into a data frame instead of using data.frame = TRUE
         dfi <- as.data.frame(cbind(sapply(dfi, function(x) as.vector(x[[1]])),
-                                   sapply(dfi, function(x) as.vector(unlist (x[[2]])))))
+                                   sapply(dfi, function(x) as.vector(unlist (x[[2]])))),
+                             stringsAsFactors = FALSE)
         names(dfi) <- c("_id", part1)
         #
       }, silent = FALSE)
@@ -375,8 +377,9 @@ dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(hos
                                         fields = rmongodb::mongo.bson.from.JSON(paste0('{"_id": 1, "', item, '": 1}')))
         if (debug) message("DEBUG: variable ", item, " has length ", length(dfi))
         # attempt custom function to condense into a data frame instead of using data.frame = TRUE
-        dfi <- as.data.frame(cbind(sapply(dfi, function(x) as.vector(x[[1]])),
-                                   sapply(dfi, function(x) as.vector(unlist (x[[2]])))))
+        dfi <- as.data.frame(cbind(sapply(dfi, function(x) as.vector(unlist(x[1]))),
+                                   sapply(dfi, function(x) paste0(as.vector(unlist(x[2])), collapse = " / "))),
+                             stringsAsFactors = FALSE)
         names(dfi) <- c("_id", item)
         #
       }, silent = FALSE)
