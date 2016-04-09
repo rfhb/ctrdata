@@ -194,7 +194,7 @@ dbFindVariable <- function(namepart = "",
               "is different per database, such as with a free mongolab plan).", immediate. = TRUE)
     #
     # check if extension is available (system.file under MS Windows does not end with slash) ...
-    varietylocalurl <- paste0(system.file("", package = "ctrdata"), "/exec/variety.js")
+    varietylocalurl <- paste0(system.file("exec", package = "ctrdata"), "/variety.js")
     # if variety.js is not found, download it
     if (!file.exists(varietylocalurl)) {
       message("Downloading variety.js and installing into package exec folder ...")
