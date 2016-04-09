@@ -9,35 +9,42 @@ dbFindVariable(namepart = "", mongo = rmongodb::mongo.create(host =
   debug = FALSE, forceupdate = FALSE)
 }
 \arguments{
-\item{namepart}{A plain string (not a regular expression) to be searched for among all field names (keys) in the database.}
+\item{namepart}{A plain string (not a regular expression) to be searched for
+among all field names (keys) in the database.}
 
-\item{mongo}{(\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on localhost port 27017.}
+\item{mongo}{(\link{mongo}) A mongo connection object. If not provided,
+defaults to database "users" on 127.0.0.1 port 27017.}
 
-\item{ns}{Name of the collection in mongo database ("namespace"), defaults to "ctrdata".}
+\item{ns}{Name of the collection in mongo database ("namespace"), defaults to
+"ctrdata"}
 
-\item{allmatches}{If \code{TRUE}, returns all keys if more than one is found (default is \code{FALSE}).}
+\item{allmatches}{If \code{TRUE}, returns all keys if more than one is found
+(default is \code{FALSE}).}
 
-\item{debug}{If \code{TRUE}, prints additional information (default is \code{FALSE}).}
+\item{debug}{Printing additional information if set to \code{TRUE}; default
+is \code{FALSE}.}
 
-\item{forceupdate}{If \code{TRUE}, refreshes collection of keys (default is \code{FALSE}).}
+\item{forceupdate}{If \code{TRUE}, refreshes collection of keys (default is
+\code{FALSE}).}
 }
 \value{
 Vector of first keys (fields) found (or of all keys, see above)
 }
 \description{
-Given part of the name of a field of interest to the user, this function returns the full field names
-as found in the database. It is not necessary to add wild cards to the name of the field of interest.
+Given part of the name of a field of interest to the user, this function
+returns the full field names as found in the database. It is not necessary to
+add wild cards to the name of the field of interest.
 }
 \details{
-For fields in EUCTR (protocol-related information), see also the register's documentation:
-\url{https://eudract.ema.europa.eu/protocol.html}.
+For fields in EUCTR (protocol-related information), see also the register's
+documentation: \url{https://eudract.ema.europa.eu/protocol.html}.
 
-For fields in CTGOV (protocol-related information), see also the register's definitions:
-\url{https://prsinfo.clinicaltrials.gov/definitions.html}
+For fields in CTGOV (protocol-related information), see also the register's
+definitions: \url{https://prsinfo.clinicaltrials.gov/definitions.html}
 
-Note that generating a list of keys with variety.js as used in this function may not work with certain
-mongo databases, for example when the host or port is different per database, such as found with a
-free mongolab plan.
+Note that generating a list of keys with variety.js as used in this function
+may not work with certain mongo databases, for example when the host or port
+is different per database, such as found with a free mongolab plan.
 }
 \examples{
 \dontrun{

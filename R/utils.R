@@ -13,14 +13,24 @@ countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", 
                     "LV", "LI", "LT", "LU", "MT", "NL", "NO", "PL", "PT", "RO", "SK", "SE", "SI", "ES", "GB")
 
 
-#' Open advanced search pages of register(s) or execute search in default web browser.
+
+#' Open advanced search pages of register(s) or execute search in default web
+#' browser.
 #'
-#' @param register Register(s) to open. Either "EUCTR" or "CTGOV" or a vector of both. Default is to open both registers' advanced search pages.
-#' To open the browser with a previous search, register (or queryterm) can be the output of ctrGetQueryUrlFromBrowser() or can be one row from ctrQueryHistoryInDb().
-#' @param copyright (Optional) If set to \code{TRUE}, opens copyright pages of register(s).
-#' @param queryterm (Optional) Show results of search for \code{queryterm} in browser.
-#' To open the browser with a previous search, (register or) queryterm can be the output of ctrGetQueryUrlFromBrowser() or can be one row from ctrQueryHistoryInDb().
-#' @param ... Any additional parameter to use with browseURL, which is called by this function.
+#' @param register Register(s) to open. Either "EUCTR" or "CTGOV" or a vector of
+#'   both. Default is to open both registers' advanced search pages. To open the
+#'   browser with a previous search, register (or queryterm) can be the output
+#'   of ctrGetQueryUrlFromBrowser() or can be one row from
+#'   ctrQueryHistoryInDb().
+#' @param copyright (Optional) If set to \code{TRUE}, opens copyright pages of
+#'   register(s).
+#' @param queryterm (Optional) Show results of search for \code{queryterm} in
+#'   browser. To open the browser with a previous search, (register or)
+#'   queryterm can be the output of ctrGetQueryUrlFromBrowser() or can be one
+#'   row from ctrQueryHistoryInDb().
+#' @param ... Any additional parameter to use with browseURL, which is called by
+#'   this function.
+#'
 #' @export ctrOpenSearchPagesInBrowser
 #' @return Is always true, invisibly.
 #'
@@ -83,10 +93,16 @@ ctrOpenSearchPagesInBrowser <- function(register = c("EUCTR", "CTGOV"), copyrigh
 #' Import from clipboard the URL of a search in one of the registers
 #'
 #' @param content URL from browser address bar. Defaults to clipboard contents.
-#' @return A string of query parameters that can be used to retrieve data from the register.
+#' @return A string of query parameters that can be used to retrieve data from
+#'   the register.
+#'
 #' @import clipr
+#'
 #' @export ctrGetQueryUrlFromBrowser
-#' @return A list with a query term and the register name that can directly be used in \link{ctrLoadQueryIntoDb}
+#'
+#' @return A list with a query term and the register name that can directly be
+#'   used in \link{ctrLoadQueryIntoDb}
+#'
 #' @examples
 #' \dontrun{
 #' ctrLoadQueryIntoDb (ctrGetQueryUrlFromBrowser())
@@ -123,25 +139,29 @@ ctrGetQueryUrlFromBrowser <- function(content = clipr::read_clip()) {
 
 #' Find names of keys (fields) in the database
 #'
-#' Given part of the name of a field of interest to the user, this function returns the full field names
-#' as found in the database. It is not necessary to add wild cards to the name of the field of interest.
+#' Given part of the name of a field of interest to the user, this function
+#' returns the full field names as found in the database. It is not necessary to
+#' add wild cards to the name of the field of interest.
 #'
-#' For fields in EUCTR (protocol-related information), see also the register's documentation:
-#' \url{https://eudract.ema.europa.eu/protocol.html}.
+#' For fields in EUCTR (protocol-related information), see also the register's
+#' documentation: \url{https://eudract.ema.europa.eu/protocol.html}.
 #'
-#' For fields in CTGOV (protocol-related information), see also the register's definitions:
-#' \url{https://prsinfo.clinicaltrials.gov/definitions.html}
+#' For fields in CTGOV (protocol-related information), see also the register's
+#' definitions: \url{https://prsinfo.clinicaltrials.gov/definitions.html}
 #'
-#' Note that generating a list of keys with variety.js as used in this function may not work with certain
-#' mongo databases, for example when the host or port is different per database, such as found with a
-#' free mongolab plan.
+#' Note that generating a list of keys with variety.js as used in this function
+#' may not work with certain mongo databases, for example when the host or port
+#' is different per database, such as found with a free mongolab plan.
 #'
-#' @param namepart A plain string (not a regular expression) to be searched for among all field names (keys) in the database.
-#' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on localhost port 27017.
-#' @param ns Name of the collection in mongo database ("namespace"), defaults to "ctrdata".
-#' @param allmatches If \code{TRUE}, returns all keys if more than one is found (default is \code{FALSE}).
-#' @param forceupdate If \code{TRUE}, refreshes collection of keys (default is \code{FALSE}).
-#' @param debug If \code{TRUE}, prints additional information (default is \code{FALSE}).
+#' @param namepart A plain string (not a regular expression) to be searched for
+#'   among all field names (keys) in the database.
+#' @param allmatches If \code{TRUE}, returns all keys if more than one is found
+#'   (default is \code{FALSE}).
+#' @param forceupdate If \code{TRUE}, refreshes collection of keys (default is
+#'   \code{FALSE}).
+#'
+#' @inheritParams ctrdata::ctrLoadQueryIntoDb
+#'
 #' @return Vector of first keys (fields) found (or of all keys, see above)
 #' @import rmongodb curl
 #' @export dbFindVariable
@@ -245,15 +265,20 @@ dbFindVariable <- function(namepart = "",
 
 
 
-#' This function checks for duplicate records of clinical trialss in the database based on the clinical trial identifier,
-#' and it returns a list of ids of unique trials.
+#' This function checks for duplicate records of clinical trialss in the
+#' database based on the clinical trial identifier, and it returns a list of ids
+#' of unique trials.
 #'
-#' If records for a clinical trial are found from more than one register, the record from EUCTR is returned. The function currently
-#' relies on CTGOV recording other identifiers such as the EudraCT number in the field "Other IDs".
+#' If records for a clinical trial are found from more than one register, the
+#' record from EUCTR is returned. The function currently relies on CTGOV
+#' recording other identifiers such as the EudraCT number in the field "Other
+#' IDs".
 #'
-#' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on 127.0.0.1 port 27017.
-#' @param ns Name of the collection in mongo database ("namespace"), defaults to "ctrdata"
-#' @return A vector with strings of keys (_id in the database) that are non-duplicate trials.
+#' @inheritParams ctrdata::ctrLoadQueryIntoDb
+#'
+#' @return A vector with strings of keys (_id in the database) that are
+#'   non-duplicate trials.
+#'
 #' @export dbFindIdsUniqueTrials
 #' @import rmongodb
 #' @examples
@@ -262,6 +287,9 @@ dbFindVariable <- function(namepart = "",
 #' }
 #'
 dbFindIdsUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"), ns = "ctrdata") {
+  #
+  #
+  # TODO: "a52_us_nct_clinicaltrialsgov_registry_number" found in euctr from 2016
   #
   # CTGOV: "Other IDs" has been split into the indexed array "otherids"
   listofCTGOVids <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns),
@@ -304,20 +332,29 @@ dbFindIdsUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "127.0.0
 }
 
 
-#' Create a data frame from records in the database that have specified fields in the database
+#' Create a data frame from records in the database that have specified fields
 #'
-#' @param fields Vector of strings, with names of the sought fields. (Do not use a list.)
-#' @return A data frame with columns corresponding to the sought fields. Note that a column for the record _id will always be included.
-#' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on 127.0.0.1 port 27017.
-#' @param ns Name of the collection in mongo database ("namespace"), defaults to "ctrdata"
-#' useful if the database includes records from different registers.
-#' @param debug Printing additional information if set to \code{TRUE}; default is \code{FALSE}.
+#' With this convenience function, fields in the mongo database are retrieved
+#' into an R dataframe. As mongo fields can be hierarchical and structured, the
+#' function includes provisions for arrays (only the first slice is returned at
+#' this time) and for multiple entries in a field (which are contatenated in the
+#' returned results using ' / ').
+#'
+#' For more sophisticated retrieval from the database, see vignette examples and
+#' packages such as mongolite.
+#'
+#' @param fields Vector of strings, with names of the sought fields.
+#' @inheritParams ctrdata::ctrLoadQueryIntoDb
+#'
+#' @return A data frame with columns corresponding to the sought fields. Note
+#'   that a column for the record _id will always be included.
+#'
 #' @export dbGetVariablesIntoDf
 #'
 dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"),
                                  ns = "ctrdata", debug = FALSE) {
   #
-  if (!is.vector(fields) | class(fields) != "character") stop("Input should just be a vector of strings of field names.")
+  if (!is.vector(fields) | class(fields) != "character") stop("Input should be a vector of strings of field names.")
   #
   # total number of records in collection. for information of user at end of function.
   countall <- rmongodb::mongo.count(mongo, paste0(attr(mongo, "db"), ".", ns),
@@ -365,7 +402,7 @@ dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(hos
         dfi <- as.data.frame(cbind(sapply(dfi, function(x) as.vector(x[[1]])),
                                    sapply(dfi, function(x) as.vector(unlist (x[[2]])))),
                              stringsAsFactors = FALSE)
-        names(dfi) <- c("_id", part1)
+        names(dfi) <- c("_id", item)
         #
       }, silent = FALSE)
       warning(paste0("For variable: ", item, " only the first slice of the array is returned."), immediate. = TRUE)
@@ -408,24 +445,29 @@ dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(hos
 }
 
 
-#' Select a single trial record when there are records for different EU Member States for this trial.
+#' Select a single trial record when there are records for different EU Member
+#' States for this trial.
 #'
-#' The EUCTR provides one record per trial per EU Member State in which the trial is conducted.
-#' For all trials conducted in more than one Member State, this function returns only one record
-#' per trial. A preferred Member State can be specified by the user, and a record of the trial in the
-#' preferred Member State will be returned if available. If not, an english record ("GB") or lacking this,
-#' any other available record will be returned.
+#' The EUCTR provides one record per trial per EU Member State in which the
+#' trial is conducted. For all trials conducted in more than one Member State,
+#' this function returns only one record per trial. A preferred Member State can
+#' be specified by the user, and a record of the trial in the preferred Member
+#' State will be returned if available. If not, an english record ("GB") or
+#' lacking this, any other available record will be returned.
 #'
-#' Note: To depuplicate trials from different registers (EUCTR and CTGOV), please first use function
-#' \code{\link{dbFindIdsUniqueTrials}}.
+#' Note: To depuplicate trials from different registers (EUCTR and CTGOV),
+#' please first use function \code{\link{dbFindIdsUniqueTrials}}.
 #'
-#' @return A data frame as subset of \code{df} corresponding to the sought records.
+#' @param df A data frame created from the database that includes the columns
+#'   "_id" and "a2_eudract_number", for example created with function
+#'   dbGetVariablesIntoDf(c("_id", "a2_eudract_number")).
+#' @param prefer Code of single EU Member State for which records should
+#'   returned if available. (If not available, a record for GB or lacking this
+#'   any other record for the trial will be returned.) For a list of codes of EU
+#'   Member States, please see vector \code{countriesEUCTR}.
 #'
-#' @param df A data frame created from the database that includes the keys (variables) "_id" and "a2_eudract_number",
-#' for example created with function dbGetVariablesIntoDf(c("_id", "a2_eudract_number")).
-#' @param prefer Code of single EU Member State for which records should returned if available. (If not available,
-#' a record for GB or lacking this any other record for the trial will be returned.) For a list of codes of EU
-#' Member States, please see vector \code{countriesEUCTR}.
+#' @return A data frame as subset of \code{df} corresponding to the sought
+#'   records.
 #'
 #' @export dfFindUniqueEuctrRecord
 #'
@@ -490,16 +532,21 @@ dfFindUniqueEuctrRecord <- function(df = NULL, prefer = "GB") {
 
 
 
-#' Convenience function to install a cygwin environment under MS Windows, including perl and php
+#' Convenience function to install a cygwin environment under MS Windows,
+#' including perl and php
 #'
 #' @export installCygwinWindowsDoInstall
-#' @param overwrite Set to true to force updating and overwriting an existing installation in \code{c:\\cygwin}
-#' @param proxy Specify any proxy to be used for downloading via http, e.g. "host_or_ip:port".
-#' \code{installCygwinWindowsDoInstall} may detect and use the proxy configuration uset in MS Windows
-#' to use an automatic proxy configuration script. Authenticated proxies are not supported at this time.
-#' Alternatively and in case of difficulties, download and run the cygwin setup yourself as follows:
-#' cygwinsetup.exe --no-admin --quiet-mode --verbose --root c:/cygwin
-#' --site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages perl,php-jsonc,php-simplexml
+#' @param overwrite Set to true to force updating and overwriting an existing
+#'   installation in \code{c:\\cygwin}
+#' @param proxy Specify any proxy to be used for downloading via http, e.g.
+#'   "host_or_ip:port". \code{installCygwinWindowsDoInstall} may detect and use
+#'   the proxy configuration uset in MS Windows to use an automatic proxy
+#'   configuration script. Authenticated proxies are not supported at this time.
+#'   Alternatively and in case of difficulties, download and run the cygwin
+#'   setup yourself as follows: cygwinsetup.exe --no-admin --quiet-mode
+#'   --verbose --root c:/cygwin --site
+#'   http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages
+#'   perl,php-jsonc,php-simplexml
 #'
 installCygwinWindowsDoInstall <- function(overwrite = FALSE, proxy = ""){
   #
@@ -562,6 +609,7 @@ installCygwinWindowsDoInstall <- function(overwrite = FALSE, proxy = ""){
 #' Convenience function to test for working cygwin installation
 #'
 #' @return Information if cygwin can be used, \code{TRUE} or \code{FALSE}
+#'
 #' @export installCygwinWindowsTest
 #'
 installCygwinWindowsTest <- function() {
@@ -581,12 +629,17 @@ installCygwinWindowsTest <- function() {
 }
 
 
-#' Convenience function to find location of mongo database binaries (mongo, mongoimport)
+#' Convenience function to find location of mongo database binaries (mongo,
+#' mongoimport)
 #'
-#' @param mongoDirWin Only used under MS Windows: folder that contains mongo binaries, defaults to "c:\\mongo\\bin\\"
-#' as used on \url{http://docs.mongodb.org/manual/tutorial/install-mongodb-on-windows#interactive-installation}
-#' @return Either an empty string if \code{mongoimport} was found on the path or, under MS Windows,
-#' a string representing the path to the folder of the mongo binaries
+#' @param mongoDirWin Only used under MS Windows: folder that contains mongo
+#'   binaries, defaults to "c:\\mongo\\bin\\" as used on
+#'   \url{http://docs.mongodb.org/manual/tutorial/install-mongodb-on-windows#interactive-installation}
+#'
+#' @return Either an empty string if \code{mongoimport} was found on the path
+#'   or, under MS Windows, a string representing the path to the folder of the
+#'   mongo binaries
+#'
 #' @export installMongoFindBinaries
 #'
 installMongoFindBinaries <- function(mongoDirWin = "c:\\mongo\\bin\\") {
@@ -659,11 +712,14 @@ installMongoFindBinaries <- function(mongoDirWin = "c:\\mongo\\bin\\") {
 
 #' Check the version of the build of the mongo server to be used
 #'
-#' In addition to the returned value, the function will generate a warning message if applicable.
+#' In addition to the returned value, the function will generate a warning
+#' message if applicable.
 #'
-#' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on 127.0.0.1 port 27017.
+#' @inheritParams ctrdata::ctrLoadQueryIntoDb
 #'
-#' @return A logical value indicating if the mongodb version is acceptable for use with this package.
+#' @return A logical value indicating if the mongodb version is acceptable for
+#'   use with this package.
+#'
 #' @export installMongoCheckVersion
 #'
 installMongoCheckVersion <- function(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users")) {
@@ -688,11 +744,14 @@ installMongoCheckVersion <- function(mongo = rmongodb::mongo.create(host = "127.
 
 
 
-#' Merge related variables into a single variable, and optionally map values to a new set of values.
+#' Merge related variables into a single variable, and optionally map values to
+#' a new set of values.
 #'
-#' @param df A data frame in which there are two variables (columns) to be merged into one.
+#' @param df A data frame in which there are two variables (columns) to be
+#'   merged into one.
 #' @param varnames A vector with names of the two variables to be merged.
-#' @param levelslist A list with one slice each for a new value to be used for a vector of old values.
+#' @param levelslist A list with one slice each for a new value to be used for a
+#'   vector of old values.
 #'
 #' @return A vector of strings
 #' @export dfMergeTwoVariablesRelevel
@@ -743,7 +802,7 @@ dfMergeTwoVariablesRelevel <- function(df = NULL, varnames = "", levelslist = NU
   }
 
   # inform user on levels found
-  message("Unique values found in the new variable: ", paste(unique(tmp), collapse = ", "))
+  message("Unique values returned: ", paste(unique(tmp), collapse = ", "))
 
   return(tmp)
 }
@@ -753,10 +812,11 @@ dfMergeTwoVariablesRelevel <- function(df = NULL, varnames = "", levelslist = NU
 
 #' Show the history of queries that were loaded into a database
 #'
-#' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on 127.0.0.1 port 27017.
-#' @param ns Name of the collection in mongo database ("namespace"), defaults to "ctrdata"
+#' @inheritParams ctrdata::ctrLoadQueryIntoDb
 #'
-#' @return A data frame with variables: timestamp, register, number of records loaded, query term
+#' @return A data frame with variables: timestamp, register, number of records
+#'   loaded, query term
+#'
 #' @export ctrQueryHistoryInDb
 #'
 #' @examples

@@ -2,25 +2,32 @@
 % Please edit documentation in R/utils.R
 \name{dbGetVariablesIntoDf}
 \alias{dbGetVariablesIntoDf}
-\title{Create a data frame from records in the database that have specified fields in the database}
+\title{Create a data frame from records in the database that have specified fields}
 \usage{
 dbGetVariablesIntoDf(fields = "", mongo = rmongodb::mongo.create(host =
   "127.0.0.1:27017", db = "users"), ns = "ctrdata", debug = FALSE)
 }
 \arguments{
-\item{fields}{Vector of strings, with names of the sought fields. (Do not use a list.)}
+\item{fields}{Vector of strings, with names of the sought fields.}
 
-\item{mongo}{(\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on 127.0.0.1 port 27017.}
+\item{mongo}{(\link{mongo}) A mongo connection object. If not provided,
+defaults to database "users" on 127.0.0.1 port 27017.}
 
-\item{ns}{Name of the collection in mongo database ("namespace"), defaults to "ctrdata"
-useful if the database includes records from different registers.}
+\item{ns}{Name of the collection in mongo database ("namespace"), defaults to
+"ctrdata"}
 
-\item{debug}{Printing additional information if set to \code{TRUE}; default is \code{FALSE}.}
+\item{debug}{Printing additional information if set to \code{TRUE}; default
+is \code{FALSE}.}
 }
 \value{
-A data frame with columns corresponding to the sought fields. Note that a column for the record _id will always be included.
+A data frame with columns corresponding to the sought fields. Note
+  that a column for the record _id will always be included.
 }
 \description{
-Create a data frame from records in the database that have specified fields in the database
+With this convenience function, fields in the mongo database are retrieved
+into an R dataframe. As mongo fields can be hierarchical and structured, the
+function includes provisions for arrays (only the first slice is returned at
+this time) and for multiple entries in a field (which are contatenated in the
+returned results using ' / ').
 }
 

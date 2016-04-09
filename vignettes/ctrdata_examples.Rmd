@@ -92,7 +92,7 @@ plot(f41_in_the_member_state ~ f422_in_the_whole_clinical_trial, result)
 #
 result <- dbGetVariablesIntoDf(c("a1_member_state_concerned", "x5_trial_status"))
 #
-table(result$a1_member_state_concerned, result$x5_trial_status)
+with (result, table(a1_member_state_concerned, x5_trial_status))
 #
 # How many clinical trials where started in which year?
 #
@@ -139,11 +139,15 @@ ids_of_unique_trials <- dbFindIdsUniqueTrials()
 # Subset the result set to these unique trials
 #
 result <- subset (result, subset = `_id` %in% ids_of_unique_trials)
+#
+# Select one Member State's version for a trial in the EUCTR
+#
 result <- dfFindUniqueEuctrRecord(result)
 #
 # Now merge two variables into a new one for analysis
 #
-tmp <- dfMergeTwoVariablesRelevel(result, c("overall_status", "x5_trial_status"))
+tmp <- dfMergeTwoVariablesRelevel(result, 
+                                  varnames = c("overall_status", "x5_trial_status"))
 #
 table(tmp)
 #
@@ -156,7 +160,9 @@ statusvalues <- list("ongoing" = c("Recruiting", "Active", "Ongoing",
                     "other"     = c("Withdrawn", "Suspended", "No longer available", 
                                     "Not yet recruiting", "Temporarily Halted"))
 #
-tmp <- dfMergeTwoVariablesRelevel(result, c("overall_status", "x5_trial_status"), statusvalues)
+tmp <- dfMergeTwoVariablesRelevel(result, 
+                                  varnames = c("overall_status", "x5_trial_status"), 
+                                  levelslist = statusvalues)
 #
 table(tmp)
 #
@@ -251,17 +257,20 @@ result$pe_is_efs <- grepl("((progression|event|relapse|recurrence|disease)[- ]fr
                           result$e51_primary_end_points, ignore.case = TRUE)
 #
 # prepare for summarising
-result$trial_start_year <- as.numeric(substr(result$n_date_of_competent_authority_decision, 1, 4))
+result$trial_start_year <- as.Date(substr(result$n_date_of_competent_authority_decision, 1, 4), format = "%Y")
 #
 #
 # plot
 library(ggplot2)
 ggplot(data = result, aes(x = trial_start_year, fill = pe_is_efs)) + 
-  geom_histogram()  + 
+  geom_histogram(binwidth = 365.25)  + 
   labs(title = "Completed breast cancer phase 3\nclinical trials primary endpoint", 
        x = "Year of clinical trial authorisation in EU", 
        y = "Number of clinical trials", 
-       fill = "PFS / EFS / DFS?")
+       fill = "PFS / EFS / DFS?") + 
+  theme(axis.text.x  = element_text(angle = 90, vjust = 0.5)) + 
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y")
+
 #
 #
 # plausibility check - what is the primary endpoint
@@ -270,7 +279,7 @@ ggplot(data = result, aes(x = trial_start_year, fill = pe_is_efs)) +
 substr(result$e51_primary_end_points[result$pe_is_efs == FALSE], 1, 80)[1:10]
 #
 ```
-![Histogram2][2]
+![Histogram2](Rplot02.png)
 
 
 ## Use aggregation functions of the data base to find specific trial endpoints
@@ -378,8 +387,8 @@ hist <- m$mapreduce(
 #
 hist
 #
-plot (hist, type = "h", las = 1)
+plot (hist[rev(order(hist["value"])), "value"], type = "h", las = 1, ylim = c(0, 100))
 #
 ```
-![Histogram2](Rplot02.png)
+![Histogram2](Rplot03.png)
 

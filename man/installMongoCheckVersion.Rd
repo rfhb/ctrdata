@@ -8,12 +8,15 @@ installMongoCheckVersion(mongo = rmongodb::mongo.create(host =
   "127.0.0.1:27017", db = "users"))
 }
 \arguments{
-\item{mongo}{(\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on 127.0.0.1 port 27017.}
+\item{mongo}{(\link{mongo}) A mongo connection object. If not provided,
+defaults to database "users" on 127.0.0.1 port 27017.}
 }
 \value{
-A logical value indicating if the mongodb version is acceptable for use with this package.
+A logical value indicating if the mongodb version is acceptable for
+  use with this package.
 }
 \description{
-In addition to the returned value, the function will generate a warning message if applicable.
+In addition to the returned value, the function will generate a warning
+message if applicable.
 }
 

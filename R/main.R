@@ -1,21 +1,36 @@
 ### ctrdata package
 ### main functions
 
-#' Retrieve or update information on clinical trials from register and store in database
+#' Retrieve or update information on clinical trials from register and store in
+#' database
 #'
-#' Note that upsert is used to store in database, which means that records may be accumulated. If you want to insert into an empty database,
-#' you have to include a mongo connection object to such an empty database.
-#' @param queryterm Part of the URL of a search in a register. The queryterms is recorded in the collection for later use to update records.
-#' @param register Vector of abbreviations of registers to query, defaults to "EUCTR"
-#' @param details If \code{TRUE} (default), retrieve full protocol-related information from EUCTR or XML data from CTGOV, depending on the
-#' register selected. This gives all of the available details for the trials. Alternatively, set to \code{FALSE} to retrieve only summary
-#' information from EUCTR or CSV data from CTGOV. The full EUCTR information includes separate records for every country in which the trial
-#' is opened; use function \code{dbFindUniqueEuctrRecord} in a subsequent step to limit to one record from EUCTR per trial.
-#' @param mongo (\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on 127.0.0.1 port 27017.
-#' @param ns Name of the collection in mongo database ("namespace"), defaults to "ctrdata"
-#' @param querytoupdate Number of query to be updated (re-downloaded). This parameter takes precedence over \code{queryterm}.
-#' @param parallelretrievals Number of parallel downloads of information from the register
-#' @param debug Printing additional information if set to \code{TRUE}; default is \code{FALSE}.
+#' Note that upsert is used to store in database, which means that records may
+#' be accumulated. If you want to insert into an empty database, you have to
+#' include a mongo connection object to such an empty database.
+#'
+#' @param queryterm Part of the URL of a search in a register. The queryterms is
+#'   recorded in the collection for later use to update records.
+#' @param register Vector of abbreviations of registers to query, defaults to
+#'   "EUCTR"
+#' @param details If \code{TRUE} (default), retrieve full protocol-related
+#'   information from EUCTR or XML data from CTGOV, depending on the register
+#'   selected. This gives all of the available details for the trials.
+#'   Alternatively, set to \code{FALSE} to retrieve only summary information
+#'   from EUCTR or CSV data from CTGOV. The full EUCTR information includes
+#'   separate records for every country in which the trial is opened; use
+#'   function \code{dbFindUniqueEuctrRecord} in a subsequent step to limit to
+#'   one record from EUCTR per trial.
+#' @param mongo (\link{mongo}) A mongo connection object. If not provided,
+#'   defaults to database "users" on 127.0.0.1 port 27017.
+#' @param ns Name of the collection in mongo database ("namespace"), defaults to
+#'   "ctrdata"
+#' @param querytoupdate Number of query to be updated (re-downloaded). This
+#'   parameter takes precedence over \code{queryterm}.
+#' @param parallelretrievals Number of parallel downloads of information from
+#'   the register
+#' @param debug Printing additional information if set to \code{TRUE}; default
+#'   is \code{FALSE}.
+#'
 #' @return Number of trials imported or updated in the database
 #' @examples
 #' # Retrieve protocol-related information on a single trial identified by EudraCT number

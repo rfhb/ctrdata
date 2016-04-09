@@ -2,19 +2,23 @@
 % Please edit documentation in R/utils.R
 \name{installMongoFindBinaries}
 \alias{installMongoFindBinaries}
-\title{Convenience function to find location of mongo database binaries (mongo, mongoimport)}
+\title{Convenience function to find location of mongo database binaries (mongo,
+mongoimport)}
 \usage{
 installMongoFindBinaries(mongoDirWin = "c:\\\\mongo\\\\bin\\\\")
 }
 \arguments{
-\item{mongoDirWin}{Only used under MS Windows: folder that contains mongo binaries, defaults to "c:\\mongo\\bin\\"
-as used on \url{http://docs.mongodb.org/manual/tutorial/install-mongodb-on-windows#interactive-installation}}
+\item{mongoDirWin}{Only used under MS Windows: folder that contains mongo
+binaries, defaults to "c:\\mongo\\bin\\" as used on
+\url{http://docs.mongodb.org/manual/tutorial/install-mongodb-on-windows#interactive-installation}}
 }
 \value{
-Either an empty string if \code{mongoimport} was found on the path or, under MS Windows,
-a string representing the path to the folder of the mongo binaries
+Either an empty string if \code{mongoimport} was found on the path
+  or, under MS Windows, a string representing the path to the folder of the
+  mongo binaries
 }
 \description{
-Convenience function to find location of mongo database binaries (mongo, mongoimport)
+Convenience function to find location of mongo database binaries (mongo,
+mongoimport)
 }
 

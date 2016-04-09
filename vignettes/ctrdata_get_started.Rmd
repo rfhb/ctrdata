@@ -90,11 +90,11 @@ dbFindVariable("date")
 # Get all records that have values in all specified fields.
 # Note that b31_... is an element within the array b1_...
 #
-result <- dbGetVariablesIntoDf(c("b1_sponsor.b31_and_b32_status_of_the_sponsor", "x5_trial_status"))
+result <- dbGetVariablesIntoDf(c("b1_sponsor.b31_and_b32_status_of_the_sponsor", "x5_trial_status"), debug = TRUE)
 #
 # Tabulate the status of the clinical trial on the date of information retrieval
 #
-with (result, table (x5_trial_status, b31_and_b32_status_of_the_sponsor))
+with (result, table ("Status" = x5_trial_status, "Sponsor type" = b1_sponsor.b31_and_b32_status_of_the_sponsor))
 #
 #                     b31_and_b32_status_of_the_sponsor
 # x5_trial_status      Commercial Non-Commercial

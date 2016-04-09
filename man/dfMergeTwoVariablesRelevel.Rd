@@ -2,22 +2,26 @@
 % Please edit documentation in R/utils.R
 \name{dfMergeTwoVariablesRelevel}
 \alias{dfMergeTwoVariablesRelevel}
-\title{Merge related variables into a single variable, and optionally map values to a new set of values.}
+\title{Merge related variables into a single variable, and optionally map values to
+a new set of values.}
 \usage{
 dfMergeTwoVariablesRelevel(df = NULL, varnames = "", levelslist = NULL)
 }
 \arguments{
-\item{df}{A data frame in which there are two variables (columns) to be merged into one.}
+\item{df}{A data frame in which there are two variables (columns) to be
+merged into one.}
 
 \item{varnames}{A vector with names of the two variables to be merged.}
 
-\item{levelslist}{A list with one slice each for a new value to be used for a vector of old values.}
+\item{levelslist}{A list with one slice each for a new value to be used for a
+vector of old values.}
 }
 \value{
 A vector of strings
 }
 \description{
-Merge related variables into a single variable, and optionally map values to a new set of values.
+Merge related variables into a single variable, and optionally map values to
+a new set of values.
 }
 \examples{
 \dontrun{

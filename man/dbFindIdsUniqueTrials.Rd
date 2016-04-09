@@ -2,23 +2,29 @@
 % Please edit documentation in R/utils.R
 \name{dbFindIdsUniqueTrials}
 \alias{dbFindIdsUniqueTrials}
-\title{This function checks for duplicate records of clinical trialss in the database based on the clinical trial identifier,
-and it returns a list of ids of unique trials.}
+\title{This function checks for duplicate records of clinical trialss in the
+database based on the clinical trial identifier, and it returns a list of ids
+of unique trials.}
 \usage{
 dbFindIdsUniqueTrials(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017",
   db = "users"), ns = "ctrdata")
 }
 \arguments{
-\item{mongo}{(\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on 127.0.0.1 port 27017.}
+\item{mongo}{(\link{mongo}) A mongo connection object. If not provided,
+defaults to database "users" on 127.0.0.1 port 27017.}
 
-\item{ns}{Name of the collection in mongo database ("namespace"), defaults to "ctrdata"}
+\item{ns}{Name of the collection in mongo database ("namespace"), defaults to
+"ctrdata"}
 }
 \value{
-A vector with strings of keys (_id in the database) that are non-duplicate trials.
+A vector with strings of keys (_id in the database) that are
+  non-duplicate trials.
 }
 \description{
-If records for a clinical trial are found from more than one register, the record from EUCTR is returned. The function currently
-relies on CTGOV recording other identifiers such as the EudraCT number in the field "Other IDs".
+If records for a clinical trial are found from more than one register, the
+record from EUCTR is returned. The function currently relies on CTGOV
+recording other identifiers such as the EudraCT number in the field "Other
+IDs".
 }
 \examples{
 \dontrun{

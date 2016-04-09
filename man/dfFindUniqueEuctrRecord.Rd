@@ -2,30 +2,35 @@
 % Please edit documentation in R/utils.R
 \name{dfFindUniqueEuctrRecord}
 \alias{dfFindUniqueEuctrRecord}
-\title{Select a single trial record when there are records for different EU Member States for this trial.}
+\title{Select a single trial record when there are records for different EU Member
+States for this trial.}
 \usage{
 dfFindUniqueEuctrRecord(df = NULL, prefer = "GB")
 }
 \arguments{
-\item{df}{A data frame created from the database that includes the keys (variables) "_id" and "a2_eudract_number",
-for example created with function dbGetVariablesIntoDf(c("_id", "a2_eudract_number")).}
+\item{df}{A data frame created from the database that includes the columns
+"_id" and "a2_eudract_number", for example created with function
+dbGetVariablesIntoDf(c("_id", "a2_eudract_number")).}
 
-\item{prefer}{Code of single EU Member State for which records should returned if available. (If not available,
-a record for GB or lacking this any other record for the trial will be returned.) For a list of codes of EU
+\item{prefer}{Code of single EU Member State for which records should
+returned if available. (If not available, a record for GB or lacking this
+any other record for the trial will be returned.) For a list of codes of EU
 Member States, please see vector \code{countriesEUCTR}.}
 }
 \value{
-A data frame as subset of \code{df} corresponding to the sought records.
+A data frame as subset of \code{df} corresponding to the sought
+  records.
 }
 \description{
-The EUCTR provides one record per trial per EU Member State in which the trial is conducted.
-For all trials conducted in more than one Member State, this function returns only one record
-per trial. A preferred Member State can be specified by the user, and a record of the trial in the
-preferred Member State will be returned if available. If not, an english record ("GB") or lacking this,
-any other available record will be returned.
+The EUCTR provides one record per trial per EU Member State in which the
+trial is conducted. For all trials conducted in more than one Member State,
+this function returns only one record per trial. A preferred Member State can
+be specified by the user, and a record of the trial in the preferred Member
+State will be returned if available. If not, an english record ("GB") or
+lacking this, any other available record will be returned.
 }
 \details{
-Note: To depuplicate trials from different registers (EUCTR and CTGOV), please first use function
-\code{\link{dbFindIdsUniqueTrials}}.
+Note: To depuplicate trials from different registers (EUCTR and CTGOV),
+please first use function \code{\link{dbFindIdsUniqueTrials}}.
 }
 

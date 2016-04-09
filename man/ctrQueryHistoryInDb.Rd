@@ -8,12 +8,15 @@ ctrQueryHistoryInDb(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017",
   db = "users"), ns = "ctrdata")
 }
 \arguments{
-\item{mongo}{(\link{mongo}) A mongo connection object. If not provided, defaults to database "users" on 127.0.0.1 port 27017.}
+\item{mongo}{(\link{mongo}) A mongo connection object. If not provided,
+defaults to database "users" on 127.0.0.1 port 27017.}
 
-\item{ns}{Name of the collection in mongo database ("namespace"), defaults to "ctrdata"}
+\item{ns}{Name of the collection in mongo database ("namespace"), defaults to
+"ctrdata"}
 }
 \value{
-A data frame with variables: timestamp, register, number of records loaded, query term
+A data frame with variables: timestamp, register, number of records
+  loaded, query term
 }
 \description{
 Show the history of queries that were loaded into a database
