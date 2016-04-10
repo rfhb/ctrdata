@@ -34,14 +34,36 @@ has_internet <- function(){
 }
 
 has_mongo <- function(){
-  tmp <- try({
+  mongo_ok <- try({
     #library(rmongodb)
     rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users")
-  })
-  if (class(tmp) == "try-error") {
+  }, silent = TRUE)
+  # use test result
+  if (class(mongo_ok) == "try-error") {
     skip("No password-free localhost mongodb connection available. ")
   }
 }
+
+has_proxy <- function(){
+  # get initial options
+  old_options <- options()$RCurlOptions
+  # this is a local proxy using jap
+  opts <- list(proxy = "127.0.0.1", proxyport = 4001)
+  # set proxy
+  options(RCurlOptions = opts)
+  # test for working proxy connection
+  proxy_ok <- try({
+    is.character(RCurl::getURL("http://www.google.com/"))
+  }, silent = TRUE)
+  #
+  # reset to initial options
+  options(RCurlOptions = old_options)
+  #
+  if(class(proxy_ok) == "try-error") {
+    skip("No proxied internet connection available. ")
+  }
+}
+
 
 # testing local password free access to a standard
 # mongodb installation which may fail if this is
@@ -88,16 +110,56 @@ test_that("retrieve data from registers", {
 
 # testing downloading from both registers
 # a query retrieving a small number of trials
-test_that("retrieve data from registers", {
+test_that("retrieve data from register ctgov", {
+
+  has_internet()
+  has_mongo()
+
+  #queryeuctr <- list(queryterm = "2010-024264-18",      register = "EUCTR")
+  queryctgov <- list(queryterm = "term=2010-024264-18", register = "CTGOV")
+
+  #expect_message(ctrLoadQueryIntoDb(queryeuctr, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Updated history")
+  expect_message(ctrLoadQueryIntoDb(queryctgov, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Imported or updated 1 trial")
+
+})
+
+# testing downloading from both registers
+# a query retrieving a small number of trials
+test_that("retrieve data from register euctr", {
 
   has_internet()
   has_mongo()
 
   queryeuctr <- list(queryterm = "2010-024264-18",      register = "EUCTR")
-  queryctgov <- list(queryterm = "term=2010-024264-18", register = "CTGOV")
+  #queryctgov <- list(queryterm = "term=2010-024264-18", register = "CTGOV")
 
   expect_message(ctrLoadQueryIntoDb(queryeuctr, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Updated history")
-  expect_message(ctrLoadQueryIntoDb(queryctgov, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Imported or updated 1 trial")
+  #expect_message(ctrLoadQueryIntoDb(queryctgov, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Imported or updated 1 trial")
+
+})
+
+# testing downloading from both registers using a proxy
+# a query retrieving a small number of trials
+test_that("retrieve via proxy data from register euctr", {
+
+  has_proxy()
+  has_mongo()
+
+  # get initial options
+  old_options <- options()$RCurlOptions
+  # this is a local proxy using jap
+  opts <- list(proxy = "127.0.0.1", proxyport = 4001)
+  # set proxy
+  options(RCurlOptions = opts)
+
+  queryeuctr <- list(queryterm = "2010-024264-18",      register = "EUCTR")
+  #queryctgov <- list(queryterm = "term=2010-024264-18", register = "CTGOV")
+
+  expect_message(ctrLoadQueryIntoDb(queryeuctr, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Updated history")
+  #expect_message(ctrLoadQueryIntoDb(queryctgov, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Imported or updated 1 trial")
+
+  # reset to initial options
+  options(RCurlOptions = old_options)
 
 })
 

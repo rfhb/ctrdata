@@ -210,10 +210,10 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
                                                                      " register provides information on changes only for the last 7 days.")
       #
       # obtain rss feed with list of recently updated trials
-      h = RCurl::getCurlHandle()
+      h = RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE))
       rssquery <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/rest/feed/bydates?query=", queryterm)
       if (debug) message("DEBUG: ", rssquery)
-      resultsRss <- RCurl::getURL(rssquery, curl = h, ssl.verifypeer = FALSE)
+      resultsRss <- RCurl::getURL(rssquery, curl = h)
       #
       # extract euctr number(s)
       resultsRssTrials <- gregexpr("[0-9]{4}-[0-9]{6}-[0-9]{2}</link>", resultsRss)[[1]]
@@ -447,8 +447,8 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     queryEuPost  <- "&mode=current_page&format=text&dContent=summary&number=current_page&submit-download=Download"
 
     # get first result page
-    h = RCurl::getCurlHandle() # does not work: , httpheader = c(Accept = "Accept-Encoding: gzip,deflate")
-    resultsEuPages <- RCurl::getURL(paste0(queryEuRoot, queryEuType1, queryterm), curl = h, ssl.verifypeer = FALSE)
+    h = RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE)) # avoiding server certificate failure when queried from outside EU
+    resultsEuPages <- RCurl::getURL(paste0(queryEuRoot, queryEuType1, queryterm), curl = h)
     resultsEuNumTrials <- sub(".*Trials with a EudraCT protocol \\(([0-9,.]*)\\).*", "\\1", resultsEuPages)
     resultsEuNumTrials <- as.numeric(gsub("[,.]", "", resultsEuNumTrials))
     resultsEuNumPages  <- ceiling(resultsEuNumTrials / 20) # this is simpler than parsing "next" or "last" links ...
@@ -468,7 +468,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
       message(paste0("(", i, ") ", startpage, "-", stoppage, ". "))
       #
       tmp <- RCurl::getURL(paste0(queryEuRoot, ifelse(details, queryEuType3, queryEuType2), queryterm, "&page=", startpage:stoppage,
-                                  queryEuPost), curl = h, async = TRUE, binary = FALSE, ssl.verifypeer = FALSE)
+                                  queryEuPost), curl = h, async = TRUE, binary = FALSE)
       #
       for (i in startpage:stoppage)
         write(tmp[[1 + i - startpage]],
