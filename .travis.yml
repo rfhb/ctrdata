@@ -24,4 +24,5 @@ addons:
     packages:
     - mongodb-org-server
     - mongodb-org-shell
+    - mongodb-org-tools
     - php5-cli
