@@ -12,16 +12,13 @@ sudo: required
 cache: packages
 
 r_binary_packages:
- - clipr
  - curl
  - devtools
  - ggplot2
  - httr
  - knitr
- - mongolite
  - RCurl
  - rmarkdown
- - rmongodb
  - testthat
 
 # https://docs.travis-ci.com/user/database-setup/#MongoDB
