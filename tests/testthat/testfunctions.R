@@ -25,59 +25,121 @@ context("ctrdata functions")
 # installCygwinWindowsTest       | not planned
 
 
+# help function to check if there
+# is a useful internect connection
+has_internet <- function(){
+  if(is.null(curl::nslookup("r-project.org", error = FALSE))) {
+    skip("No internet connection available. ")
+  }
+}
+
+has_mongo <- function(){
+  tmp <- try({
+    #library(rmongodb)
+    rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users")
+  })
+  if (class(tmp) == "try-error") {
+    skip("No password-free localhost mongodb connection available. ")
+  }
+}
+
+# testing local password free access to a standard
+# mongodb installation which may fail if this is
+# configured otherwise
 test_that("access to mongo db", {
 
   expect_message(ctrQueryHistoryInDb(), "Total number of records")
   expect_message(ctrQueryHistoryInDb(ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Total number of records")
-  expect_equal(ctrQueryHistoryInDb(ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), NULL)
 
 })
 
-
+# testing options for user to
+# search in desktop browser
 test_that("browser interaction", {
 
-  expect_error(ctrGetQueryUrlFromBrowser(content = "ThisDoesNotExist"), "Content is not a clinical trial register search URL.")
   expect_is(ctrGetQueryUrlFromBrowser(content = "https://clinicaltrials.gov/ct2/results?type=Intr&cond=cancer&age=0"), "list")
+
+  has_internet()
+
+  expect_error(ctrGetQueryUrlFromBrowser(content = "ThisDoesNotExist"), "Content is not a clinical trial register search URL.")
 
   expect_equal(ctrOpenSearchPagesInBrowser(register = "EUCTR", queryterm = "cancer&age=under-18"), TRUE)
 
 })
 
-
+# testing downloading from both registers
+# a query with a no trials as result
 test_that("retrieve data from registers", {
+
+  has_internet()
+  has_mongo()
 
   queryeuctr <- list(queryterm = "query=NonExistingConditionGoesInHere", register = "EUCTR")
   queryctgov <- list(queryterm =  "cond=NonExistingConditionGoesInHere", register = "CTGOV")
 
-  expect_error(ctrLoadQueryIntoDb(queryeuctr, ns = "ns_for_test_that"), "First result page empty - no trials found?")
-  expect_error(ctrLoadQueryIntoDb(queryctgov, ns = "ns_for_test_that"), "No studies downloaded.")
+  expect_error(ctrLoadQueryIntoDb(queryeuctr, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "First result page empty - no trials found")
+  expect_error(ctrLoadQueryIntoDb(queryctgov, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "No studies downloaded")
+
+  # clean / drop / remove collection from mongodb
+  rmongodb::mongo.drop(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"),
+             ns = "user.ThisNameSpaceShouldNotExistAnywhereInAMongoDB")
 
 })
 
+# testing downloading from both registers
+# a query retrieving a small number of trials
+test_that("retrieve data from registers", {
 
+  has_internet()
+  has_mongo()
+
+  queryeuctr <- list(queryterm = "2010-024264-18",      register = "EUCTR")
+  queryctgov <- list(queryterm = "term=2010-024264-18", register = "CTGOV")
+
+  expect_message(ctrLoadQueryIntoDb(queryeuctr, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Updated history")
+  expect_message(ctrLoadQueryIntoDb(queryctgov, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Imported or updated 1 trial")
+
+})
+
+# testing functions seeking
+# record contents in database
 test_that("operations on database", {
 
+  has_mongo()
+
   expect_message(dbFindIdsUniqueTrials(ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Searched for EUCTR identifiers")
-  expect_is(dbFindIdsUniqueTrials(ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "list")
+  expect_is     (dbFindIdsUniqueTrials(ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "character") # note if empty this is a list
 
   # assumes that varietyResults namespace exists - but this can only be assumed if variety had been installed
   # expect_is(dbFindVariable(namepart = "ThisDoesNotExist", ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "NULL")
 
-  expect_error(dbGetVariablesIntoDf(fields = "ThisDoesNotExist", ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "For variable: ThisDoesNotExist no data could be extracted")
+  expect_error(dbGetVariablesIntoDf(fields = "ThisDoesNotExist",
+                                    ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
+               "For variable: ThisDoesNotExist no data could be extracted")
+
+  # clean up
+  rmongodb::mongo.drop(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"),
+                       ns= "user.ThisNameSpaceShouldNotExistAnywhereInAMongoDB")
+  rmongodb::mongo.drop(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "varietyResults"),
+                       ns= "varietyResults.ThisNameSpaceShouldNotExistAnywhereInAMongoDB")
 
 })
 
-
+# testing operations on minimalistic
+# dataframes to simulate deduplication
+# function use
 test_that("operations on data frame", {
 
-  expect_message(dfMergeTwoVariablesRelevel(df = data.frame("var1" = 1, "var2" = 1), varnames = c("var1", "var2")), "Unique values found")
-  expect_is(dfMergeTwoVariablesRelevel(df = data.frame("var1" = 1, "var2" = 1), varnames = c("var1", "var2")), "character")
+  df <- data.frame("var1" = 1, "var2" = 1)
 
-  expect_error(dfFindUniqueEuctrRecord(df = data.frame("var1" = 1)), "Data frame does not include")
+  expect_message(dfMergeTwoVariablesRelevel(df = df, varnames = c("var1", "var2")), "Unique values returned:")
+  expect_is     (dfMergeTwoVariablesRelevel(df = df, varnames = c("var1", "var2")), "character")
+
+  expect_error(dfFindUniqueEuctrRecord(df = df), "Data frame does not include")
 
   df <- data.frame(1, 2); names (df) <- c("_id", "a2_eudract_number")
 
-  expect_message(dfFindUniqueEuctrRecord(df = df), "0 EUCTR records dropped")
+  expect_message  (dfFindUniqueEuctrRecord(df = df), "0 EUCTR records dropped")
   expect_identical(dfFindUniqueEuctrRecord(df = df), df)
 
 })

@@ -324,6 +324,8 @@ dbFindIdsUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "127.0.0
                               listofCTGOVids[dupes])
 
   # prepare output
+  # avoid returning list() if none found
+  if(length(uniques) == 0) uniques <- NA
   countall <- length(listofCTGOVids) + length(listofEUCTRids)
   message(paste0("Total ", countall - length(uniques), " duplicate(s) found, returning keys (_id) of ", length(uniques), " records."))
   #
