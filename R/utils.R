@@ -686,7 +686,7 @@ installMongoFindBinaries <- function(mongoDirWin = "c:\\mongo\\bin\\") {
       tmp <- try(if (.Platform$OS.type != "windows") {
         system('mongoimport --version', intern = TRUE)
       } else {
-        system('mongoimport --version', intern = TRUE)
+        system('mongoimport.exe --version', intern = TRUE)
       }, silent = TRUE)
       #
       if (class(tmp) != "try-error") {
@@ -698,7 +698,7 @@ installMongoFindBinaries <- function(mongoDirWin = "c:\\mongo\\bin\\") {
         #
       } else {
         #
-        warning("mongoimport / mongo was not found in the path (%PATH%).", immediate. = TRUE)
+        warning("mongoimport / mongo was not found in the path.", immediate. = TRUE)
         #
         if (.Platform$OS.type != "windows") stop("Cannot continue. Search function is only for MS Windows operating systems.")
         #
@@ -710,7 +710,7 @@ installMongoFindBinaries <- function(mongoDirWin = "c:\\mongo\\bin\\") {
         #
         tmp <- file.exists(paste0(location, 'mongoimport.exe'))
         #
-        if (!tmp) stop("Cannot continue. mongoimport not found in folder recorded in the registry, ", location, ".")
+        if (!tmp) stop("Cannot continue. mongoimport not found recorded in the registry, ", location, ".")
         #
         # found it, save in package environment
         assign("mongoBinaryLocation", location, envir = .privateEnv)
