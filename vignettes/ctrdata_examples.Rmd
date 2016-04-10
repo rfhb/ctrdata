@@ -26,11 +26,12 @@ General information on the library is available here: [https://github.com/rfhb/c
 # also to execute a previous search. This can be used to check if user searches are 
 # properly handled by this package, for example by comparing the number of search results.
 # 
-# Example 1: a search is done in the browser and the address has been placed onto the clipboard
+# Example 1: a search is done in the browser and a list of trials found is shown. 
+# Mark all of the browser address field has copy it onto the system clipboard. Then:
 q <- ctrGetQueryUrlFromBrowser()  # read search from clipboard
 ctrOpenSearchPagesInBrowser(q)    # open search newly in broweser
 #
-# Example 2: records have already been downloaded
+# Example 2: After records have already been downloaded: 
 q <- ctrQueryHistoryInDb()        # list the searches in the database (returns a data frame)
 q <- q [2,]                       # select exactly one of the searches (by subsetting q)
 ctrOpenSearchPagesInBrowser(q)    # open selected search newly in broweser
@@ -42,13 +43,21 @@ ctrOpenSearchPagesInBrowser(q)    # open selected search newly in broweser
 
 ```{r}
 # 
-dbFindVariable("number_of_subjects", allmatches = TRUE)
+dbFindVariable("date", allmatches = TRUE)
 #
-# [1] "f1151_number_of_subjects_for_this_age_range" "f1161_number_of_subjects_for_this_age_range" 
-# [3] "f11_number_of_subjects_for_this_age_range" "f1141_number_of_subjects_for_this_age_range" 
-# [5] "f121_number_of_subjects_for_this_age_range"  "f1111_number_of_subjects_for_this_age_range"
-# [7] "f1121_number_of_subjects_for_this_age_range" "f1131_number_of_subjects_for_this_age_range" 
-# [9] "f131_number_of_subjects_for_this_age_range" 
+#  [1] "firstreceived_date"                                                               
+#  [2] "lastchanged_date"                                                                 
+#  [3] "required_header.download_date"                                                    
+#  [4] "verification_date"                                                                
+#  [5] "start_date"                                                                       
+#  [6] "primary_completion_date"                                                          
+#  [7] "completion_date"                                                                  
+#  [8] "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database"           
+#  [9] "n_date_of_competent_authority_decision"                                           
+# [10] "n_date_of_ethics_committee_opinion"                                               
+# [11] "firstreceived_results_date"                                                       
+# [12] "p_date_of_the_global_end_of_the_trial"                                            
+# [...]
 #
 ```
 
@@ -88,11 +97,15 @@ result <- dbGetVariablesIntoDf(c("f41_in_the_member_state", "f422_in_the_whole_c
 #
 plot(f41_in_the_member_state ~ f422_in_the_whole_clinical_trial, result)
 #
+# [result not shown]
+# 
 # How many clinical trials are ongoing or completed, per country?
 #
 result <- dbGetVariablesIntoDf(c("a1_member_state_concerned", "x5_trial_status"))
 #
 with (result, table(a1_member_state_concerned, x5_trial_status))
+#
+# [result not shown]
 #
 # How many clinical trials where started in which year?
 #
@@ -150,6 +163,11 @@ tmp <- dfMergeTwoVariablesRelevel(result,
                                   varnames = c("overall_status", "x5_trial_status"))
 #
 table(tmp)
+# 
+# Active, not recruiting    Completed   Enrolling by invitation  [...] 
+#                     812        2572                        29  [...]
+#              Recruiting   Suspended        Temporarily Halted  [...]
+#                    1148          38                         2  [...]
 #
 # Merge two variables and in addition, condense their values into a new value
 #
@@ -293,10 +311,12 @@ m <- mongo(db = "users", collection = "ctrdata")
 # Number of all records
 #
 m$count()
+# [...]
 #
 # Number of ctgov records using json for query
 #
 m$count('{"_id": {"$regex": "NCT[0-9]{8}"}}')
+# [...]
 #
 # The following uses the aggregation pipeline in mongo.
 #
@@ -308,13 +328,7 @@ m$count('{"_id": {"$regex": "NCT[0-9]{8}"}}')
 # inspect the field primary_outcome.measure in data base, or print:
 #
 m$distinct("primary_outcome.measure", query = '{"_id": {"$regex": "NCT[0-9]{8}"}}')
-#
-# OS
-#
-m$aggregate('[{"$match": {"primary_outcome.measure": 
-                         {"$regex": "overall survival", 
-                          "$options": "i"}}}, 
-              {"$group": {"_id": "null", "count": {"$sum": 1}}}]')
+# [...]
 #
 # PFS, EFS, RFS or DFS
 #
@@ -322,6 +336,10 @@ m$aggregate('[{"$match": {"primary_outcome.measure":
                          {"$regex": "(progression|event|relapse|recurrence|disease)[- ]free", 
                           "$options": "i"}}}, 
               {"$group": {"_id": "null", "count": {"$sum": 1}}}]')
+#
+#  Imported 1 records. Simplifying into dataframe...
+#    _id count
+# 1 null   601
 #
 #
 # Now by year (see details on [mongo's aggregation pipleline](https://docs.mongodb.org/manual/core/aggregation-pipeline/) )
@@ -332,24 +350,17 @@ out <- m$aggregate('[{"$match": {"primary_outcome.measure":
                                 {"$regex": "overall survival", 
                                  "$options": "i"}}}, 
                      {"$project": {"_id": 1, "firstreceived_date": 1}}]')
-#                     
-# Extraction of year from firstreceived_date such as "August 29, 2009"
 #
-out$year <- substr (out$firstreceived_date, 
-                    tmp <- nchar(out$firstreceived_date) - 4, 
-                    tmp + 4)
+#  Imported 267 records. Simplifying into dataframe...
 #
-table (out$year)
+out
 #
-# 2005  2006  2007  2008  2009  2010  2011  2012  2013  2014  2015 
-#    8     5     4    13     3     8     3     8     4     6     6 
-#
-# PFS, EFS, RFS, DFS by year (firstreceived_date)
-#
-out <- m$aggregate('[{"$match": {"primary_outcome.measure": 
-                                {"$regex": "(progression|event|relapse|recurrence|disease)[- ]free", 
-                                 "$options": "i"}}}, 
-                     {"$project": {"_id": 1, "firstreceived_date": 1}}]')
+#             _id firstreceived_date
+# 1   NCT00001941   January 18, 2000
+# 2   NCT00002474   November 1, 1999
+# 3   NCT00002495   November 1, 1999
+# 4   NCT00002514   November 1, 1999
+# [...]
 #
 # Extraction of year from firstreceived_date such as "August 29, 2009"
 #
@@ -359,8 +370,8 @@ out$year <- substr (out$firstreceived_date,
 #
 table (out$year)
 #
-# 2005  2006  2007  2008  2009  2010  2011  2012  2013  2014  2015 
-#   13     6     7    11    16    17    17    19    25    26    17
+# [...]  2006  2007  2008  2009  2010  2011  2012  2013  2014  2015 
+#           5     4    13     3     8     3     8     4     6     6 
 #
 ```
 
@@ -387,7 +398,19 @@ hist <- m$mapreduce(
 #
 hist
 #
-plot (hist[rev(order(hist["value"])), "value"], type = "h", las = 1, ylim = c(0, 100))
+#      _id value
+# 1    NaN  5364
+# 2      0   344
+# 3    100   183
+# 4    200    79
+# 5    300   102
+# 6    400    78
+#
+# note: _id is the bin of hundreds of study participants, 
+# value is the number of studies in respective bin
+# 
+plot (hist, type = "h", las = 1, xlim = c(0, 2000), ylim = c(0, 100), 
+      xlab = "Number stubjects", y = "Number trials")
 #
 ```
 ![Histogram2](Rplot03.png)

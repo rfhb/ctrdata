@@ -15,8 +15,9 @@ vignette: >
 knitr::opts_chunk$set(eval=FALSE)
 ```
 
-* Install package `ctrdata` from a vanilla system: 
+## Install package `ctrdata` on a vanilla system
 ```{r}
+#
 install.packages(c("devtools", "httr"))
 #
 # set proxy if needed
@@ -31,12 +32,14 @@ devtools::install_github("rfhb/ctrdata")
 ```
 
 
-* Attach package `ctrdata`: 
+## Attach package `ctrdata`
 ```{r}
+#
 library(ctrdata)
+#
 ```
 
-* Open register's advanced search page in browser: 
+## Open register's advanced search page in browser
 ```{r}
 #
 ctrOpenSearchPagesInBrowser()
@@ -47,11 +50,11 @@ ctrOpenSearchPagesInBrowser(copyright = TRUE)
 #
 ```
 
-* Click search parameters and execute search in browser 
+## Click search parameters and execute search in browser 
 
-* Copy address from browser address bar to clipboard
+## Copy address from browser address bar to clipboard
 
-* Get address from clipboard: 
+## Get address from clipboard
 ```{r}
 #
 q <- ctrGetQueryUrlFromBrowser()
@@ -61,7 +64,7 @@ q <- ctrGetQueryUrlFromBrowser()
 #
 ```
 
-* Retrieve protocol-related information, transform, save to database and analyse:
+## Retrieve protocol-related information, transform, save to database and analyse:
 ```{r}
 #
 ctrLoadQueryIntoDb(q)
@@ -82,19 +85,21 @@ ctrQueryHistoryInDb()
 #
 # find names of fields of interest in database:
 #
-dbFindVariable("date")
+dbFindVariable("status", allmatches = TRUE)
 #
-# Returning first of 20 keys found.
-# [1] "firstreceived_date"
+# [1] "overall_status"  "b1_sponsor.XX.b31_and_b32_status_of_the_sponsor" "p_end_of_trial_status"                          
+# [4] "x5_trial_status" "location.status"                                 "location.XX.status"
 #
 # Get all records that have values in all specified fields.
 # Note that b31_... is an element within the array b1_...
 #
-result <- dbGetVariablesIntoDf(c("b1_sponsor.b31_and_b32_status_of_the_sponsor", "x5_trial_status"), debug = TRUE)
+result <- dbGetVariablesIntoDf(c("b1_sponsor.b31_and_b32_status_of_the_sponsor", 
+                                 "x5_trial_status"), debug = TRUE)
 #
 # Tabulate the status of the clinical trial on the date of information retrieval
 #
-with (result, table ("Status" = x5_trial_status, "Sponsor type" = b1_sponsor.b31_and_b32_status_of_the_sponsor))
+with (result, table ("Status" = x5_trial_status, 
+                     "Sponsor type" = b1_sponsor.b31_and_b32_status_of_the_sponsor))
 #
 #                     b31_and_b32_status_of_the_sponsor
 # x5_trial_status      Commercial Non-Commercial

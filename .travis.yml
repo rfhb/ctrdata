@@ -34,5 +34,7 @@ addons:
 # Disallowing packages: mongodb-org-tools
 # If you require these packages, please review the package approval process at:
 # https://github.com/travis-ci/apt-package-whitelist#package-approval-process
-# comment to existing pull request
+# comment to existing issue
 # https://github.com/travis-ci/apt-package-whitelist/issues/2287
+# new issue
+# https://github.com/travis-ci/apt-package-whitelist/issues/2825
