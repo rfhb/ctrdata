@@ -434,6 +434,8 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
 
   if ("EUCTR" %in% register) {
 
+    message("Downloading trials from EUCTR ...")
+
     # create empty temporary directory on localhost for
     # download from register into temporary directy
     tempDir <- tempfile(pattern = "ctrDATA")
