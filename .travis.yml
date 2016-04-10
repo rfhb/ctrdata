@@ -23,4 +23,5 @@ addons:
     - mongodb-3.0-precise
     packages:
     - mongodb-org-server
+    - mongodb-org-clients
     - php5-cli
