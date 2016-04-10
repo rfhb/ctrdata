@@ -21,7 +21,9 @@ is \code{FALSE}.}
 }
 \value{
 A data frame with columns corresponding to the sought fields. Note
-  that a column for the record _id will always be included.
+  that a column for the record _id will always be included. The maximum
+  number of rows of the returned data frame is equal to or less than the
+  number of records in the data base.
 }
 \description{
 With this convenience function, fields in the mongo database are retrieved
@@ -29,5 +31,9 @@ into an R dataframe. As mongo fields can be hierarchical and structured, the
 function includes provisions for arrays (only the first slice is returned at
 this time) and for multiple entries in a field (which are contatenated in the
 returned results using ' / ').
+}
+\details{
+For more sophisticated retrieval from the database, see vignette examples and
+packages such as mongolite.
 }
 

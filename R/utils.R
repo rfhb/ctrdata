@@ -349,7 +349,9 @@ dbFindIdsUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "127.0.0
 #' @inheritParams ctrdata::ctrLoadQueryIntoDb
 #'
 #' @return A data frame with columns corresponding to the sought fields. Note
-#'   that a column for the record _id will always be included.
+#'   that a column for the record _id will always be included. The maximum
+#'   number of rows of the returned data frame is equal to or less than the
+#'   number of records in the data base.
 #'
 #' @export dbGetVariablesIntoDf
 #'
