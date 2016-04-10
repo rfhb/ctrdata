@@ -133,7 +133,7 @@ test_that("retrieve data from register euctr", {
   queryeuctr <- list(queryterm = "2010-024264-18",      register = "EUCTR")
   #queryctgov <- list(queryterm = "term=2010-024264-18", register = "CTGOV")
 
-  expect_message(ctrLoadQueryIntoDb(queryeuctr, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Updated history")
+  expect_message(ctrLoadQueryIntoDb(queryeuctr, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB", debug = TRUE), "Updated history")
   #expect_message(ctrLoadQueryIntoDb(queryctgov, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Imported or updated 1 trial")
 
 })
@@ -155,7 +155,7 @@ test_that("retrieve via proxy data from register euctr", {
   queryeuctr <- list(queryterm = "2010-024264-18",      register = "EUCTR")
   #queryctgov <- list(queryterm = "term=2010-024264-18", register = "CTGOV")
 
-  expect_message(ctrLoadQueryIntoDb(queryeuctr, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Updated history")
+  expect_message(ctrLoadQueryIntoDb(queryeuctr, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB", debug = TRUE), "Updated history")
   #expect_message(ctrLoadQueryIntoDb(queryctgov, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Imported or updated 1 trial")
 
   # reset to initial options
