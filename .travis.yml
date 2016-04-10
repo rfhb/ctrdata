@@ -17,6 +17,8 @@ cache: packages
 services:
   - mongodb
 
+# https://github.com/travis-ci/apt-source-whitelist/blob/master/ubuntu.json
+# http://repo.mongodb.org/apt/ubuntu/dists/precise/mongodb-org/3.2/multiverse/binary-amd64/
 addons:
   apt:
     sources:
@@ -24,5 +26,13 @@ addons:
     packages:
     - mongodb-org-server
     - mongodb-org-shell
-    - mongodb-org-tools
     - php5-cli
+
+# to be added to use mongoimport for further travis testing:
+#     - mongodb-org-tools
+# as of 2016-04-10: travis build fails as follows:
+# Disallowing packages: mongodb-org-tools
+# If you require these packages, please review the package approval process at:
+# https://github.com/travis-ci/apt-package-whitelist#package-approval-process
+# comment to existing pull request
+# https://github.com/travis-ci/apt-package-whitelist/issues/2287

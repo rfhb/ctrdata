@@ -79,6 +79,9 @@ test_that("access to mongo db from R package", {
 test_that("access to mongo db from command line", {
 
   skip_on_os("windows")
+
+  skip_on_travis()
+
   expect_message(installMongoFindBinaries(), "mongoimport / mongo found in the path")
 
 })
@@ -104,6 +107,8 @@ test_that("retrieve data from registers", {
   has_internet()
   has_mongo()
 
+  skip_on_travis()
+
   queryeuctr <- list(queryterm = "query=NonExistingConditionGoesInHere", register = "EUCTR")
   queryctgov <- list(queryterm =  "cond=NonExistingConditionGoesInHere", register = "CTGOV")
 
@@ -123,6 +128,8 @@ test_that("retrieve data from register ctgov", {
   has_internet()
   has_mongo()
 
+  skip_on_travis()
+
   #queryeuctr <- list(queryterm = "2010-024264-18",      register = "EUCTR")
   queryctgov <- list(queryterm = "term=2010-024264-18", register = "CTGOV")
 
@@ -138,6 +145,8 @@ test_that("retrieve data from register euctr", {
   has_internet()
   has_mongo()
 
+  skip_on_travis()
+
   queryeuctr <- list(queryterm = "2010-024264-18",      register = "EUCTR")
   #queryctgov <- list(queryterm = "term=2010-024264-18", register = "CTGOV")
 
@@ -152,6 +161,8 @@ test_that("retrieve via proxy data from register euctr", {
 
   has_proxy()
   has_mongo()
+
+  skip_on_travis()
 
   # get initial options
   old_options <- options()$RCurlOptions
