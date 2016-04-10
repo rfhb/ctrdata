@@ -24,5 +24,5 @@ Description: Provides functions for querying and retrieving
 License: GPL-2
 RoxygenNote: 5.0.1
 LazyData: true
-Suggests: testthat, ggplot2, httr, mongolite, devtools, knitr, rmarkdown
+Suggests: testthat, ggplot2, mongolite, devtools, knitr, rmarkdown
 VignetteBuilder: knitr
