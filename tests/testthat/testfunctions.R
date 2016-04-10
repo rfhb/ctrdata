@@ -25,7 +25,7 @@ context("ctrdata functions")
 # installCygwinWindowsTest       | not planned
 
 
-# help function to check if there
+# helper function to check if there
 # is a useful internect connection
 has_internet <- function(){
   if(is.null(curl::nslookup("r-project.org", error = FALSE))) {
@@ -33,6 +33,7 @@ has_internet <- function(){
   }
 }
 
+# helper function to check mongodb
 has_mongo <- function(){
   mongo_ok <- try({
     #library(rmongodb)
@@ -44,6 +45,7 @@ has_mongo <- function(){
   }
 }
 
+# helper function to check proxy access
 has_proxy <- function(){
   # get initial options
   old_options <- options()$RCurlOptions
@@ -64,14 +66,20 @@ has_proxy <- function(){
   }
 }
 
-
 # testing local password free access to a standard
 # mongodb installation which may fail if this is
 # configured otherwise
-test_that("access to mongo db", {
+test_that("access to mongo db from R package", {
 
   expect_message(ctrQueryHistoryInDb(), "Total number of records")
   expect_message(ctrQueryHistoryInDb(ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Total number of records")
+
+})
+# test access to mongo db from command line
+test_that("access to mongo db from command line", {
+
+  skip_on_os("windows")
+  expect_message(installMongoFindBinaries(), "mongoimport / mongo found in the path")
 
 })
 
@@ -118,8 +126,6 @@ test_that("retrieve data from register ctgov", {
   #queryeuctr <- list(queryterm = "2010-024264-18",      register = "EUCTR")
   queryctgov <- list(queryterm = "term=2010-024264-18", register = "CTGOV")
 
-  ctrLoadQueryIntoDb(queryctgov, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB", debug = TRUE)
-
   #expect_message(ctrLoadQueryIntoDb(queryeuctr, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Updated history")
   expect_message(ctrLoadQueryIntoDb(queryctgov, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Imported or updated 1 trial")
 
@@ -134,8 +140,6 @@ test_that("retrieve data from register euctr", {
 
   queryeuctr <- list(queryterm = "2010-024264-18",      register = "EUCTR")
   #queryctgov <- list(queryterm = "term=2010-024264-18", register = "CTGOV")
-
-  ctrLoadQueryIntoDb(queryeuctr, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB", debug = TRUE)
 
   expect_message(ctrLoadQueryIntoDb(queryeuctr, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB", debug = TRUE), "Updated history")
   #expect_message(ctrLoadQueryIntoDb(queryctgov, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Imported or updated 1 trial")
