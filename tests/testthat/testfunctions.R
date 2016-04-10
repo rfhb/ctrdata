@@ -108,10 +108,7 @@ test_that("operations on database", {
   has_mongo()
 
   expect_message(dbFindIdsUniqueTrials(ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Searched for EUCTR identifiers")
-  expect_is     (dbFindIdsUniqueTrials(ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "character") # note if empty this is a list
-
-  # assumes that varietyResults namespace exists - but this can only be assumed if variety had been installed
-  # expect_is(dbFindVariable(namepart = "ThisDoesNotExist", ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "NULL")
+  expect_is     (dbFindIdsUniqueTrials(ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "character")
 
   expect_error(dbGetVariablesIntoDf(fields = "ThisDoesNotExist",
                                     ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),

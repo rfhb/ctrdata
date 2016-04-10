@@ -11,6 +11,15 @@ variablesEUCTR <- c("EudraCT Number", "Sponsor Protocol Number", "Sponsor Name",
                     "Medical condition", "Disease", "Population Age", "Gender", "Trial protocol", "Link")
 countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IS", "IE", "IT",
                     "LV", "LI", "LT", "LU", "MT", "NL", "NO", "PL", "PT", "RO", "SK", "SE", "SI", "ES", "GB")
+#
+# non-exported function(s)
+# is.queryterm <- function(x) {
+#   # check for valid characters. to avoid problems with the range in the grepl
+#   # test, replace square brackets in the string to be checked
+#   if (grepl('[^a-zA-Z0-9=+&%_-]', gsub('\\[', '', gsub('\\]', '', x))))
+#     stop('Unexpected characters in "', x, '", expected are: a-zA-Z0-9=+&%_-[].')
+#   return(NULL)
+# }
 
 
 
@@ -325,7 +334,7 @@ dbFindIdsUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "127.0.0
 
   # prepare output
   # avoid returning list() if none found
-  if(length(uniques) == 0) uniques <- NA
+  if(length(uniques) == 0) uniques <- character()
   countall <- length(listofCTGOVids) + length(listofEUCTRids)
   message(paste0("Total ", countall - length(uniques), " duplicate(s) found, returning keys (_id) of ", length(uniques), " records."))
   #
