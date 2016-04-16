@@ -24,8 +24,7 @@ addons:
     sources:
     - mongodb-3.2-precise
     packages:
-    - mongodb-org-server
-    - mongodb-org-shell
+    - mongodb-org
     - php5-cli
 
 # to be added to use mongoimport for further travis testing:
