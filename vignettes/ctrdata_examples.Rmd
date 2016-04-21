@@ -17,6 +17,21 @@ knitr::opts_chunk$set(eval=FALSE)
 
 General information on the library is available here: [https://github.com/rfhb/ctrdata](https://github.com/rfhb/ctrdata). 
 
+## Execute a search query
+
+```{r}
+# 
+# Load library which has previously been installed
+library(ctrdata)
+#
+# In the browser, this is a search query used as example: 
+# all phase 3 adult breast cancer trials
+q <- "https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer+AND+breast&age=adult&phase=phase-three"
+# 
+# Load details on all clinical trials into local data base:
+ctrLoadQueryIntoDb(q)
+#
+```
 
 ## Execute in browser a search query that was previously stored
 
@@ -129,12 +144,17 @@ hist(result$startdate, breaks = "years", freq = TRUE, las = 1); box()
 
 ```{r}
 #
-# Get data from another register
+# Get data from another register: 
 #
-ctrLoadQueryIntoDb(queryterm = "ependymoma&recr=Open&type=Intr&age=0", register = "CTGOV")
+# Ongoing phase 3 interventional trials in breast carcinoma
+q <- "https://clinicaltrials.gov/ct2/results?term=&recr=Open&type=Intr&cond=breast+carcinoma&intr=Drug&state1=&age=1&phase=2"
+# Show in browser 
+ctrOpenSearchPagesInBrowser(q)
+# Load data 
+ctrLoadQueryIntoDb(q)
+# ctrLoadQueryIntoDb(queryterm = "ependymoma&recr=Open&type=Intr&age=0", register = "CTGOV")
 #
-# Data from which queries were downloaded into the database? 
-#
+# Data from which queries have now been downloaded into the database? 
 ctrQueryHistoryInDb()
 # 
 # Get columns from the database from different registers.
@@ -226,7 +246,7 @@ out$number_of_sites <- count.elements (out$location)
 #
 # For many trials, no locations seem to be specified
 #
-out <- out [out$number_of_sites >= 1 & out$number_of_sites <150, ]
+out <- out [out$number_of_sites >= 1 & out$number_of_sites <50, ]
 #
 # Draw histogram
 #
@@ -282,13 +302,14 @@ result$trial_start_year <- as.Date(substr(result$n_date_of_competent_authority_d
 library(ggplot2)
 ggplot(data = result, aes(x = trial_start_year, fill = pe_is_efs)) + 
   geom_histogram(binwidth = 365.25)  + 
-  labs(title = "Completed breast cancer phase 3\nclinical trials primary endpoint", 
+  labs(title = "Breast cancer phase 3 clinical trials", 
        x = "Year of clinical trial authorisation in EU", 
-       y = "Number of clinical trials", 
-       fill = "PFS / EFS / DFS?") + 
+       y = "Number of clinical trials") +
+  scale_fill_manual(name = "Primary endpoint", 
+                    values = c("red", "green"), 
+                    labels = c("FALSE" = "Other", "TRUE" = "PFS/EFS/DFS")) +
   theme(axis.text.x  = element_text(angle = 90, vjust = 0.5)) + 
   scale_x_date(date_breaks = "1 year", date_labels = "%Y")
-
 #
 #
 # plausibility check - what is the primary endpoint
@@ -328,7 +349,7 @@ m$count('{"_id": {"$regex": "NCT[0-9]{8}"}}')
 # inspect the field primary_outcome.measure in data base, or print:
 #
 m$distinct("primary_outcome.measure", query = '{"_id": {"$regex": "NCT[0-9]{8}"}}')
-# [...]
+#
 #
 # PFS, EFS, RFS or DFS
 #
@@ -339,11 +360,13 @@ m$aggregate('[{"$match": {"primary_outcome.measure":
 #
 #  Imported 1 records. Simplifying into dataframe...
 #    _id count
-# 1 null   601
+# 1 null    67
 #
 #
-# Now by year (see details on [mongo's aggregation pipleline](https://docs.mongodb.org/manual/core/aggregation-pipeline/) )
-# 
+# See here for details on mongo's aggregation pipleline: 
+# https://docs.mongodb.org/manual/core/aggregation-pipeline/
+#
+#
 # OS by year
 #
 out <- m$aggregate('[{"$match": {"primary_outcome.measure": 
