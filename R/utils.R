@@ -45,6 +45,9 @@ countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", 
 #'
 ctrOpenSearchPagesInBrowser <- function(register = c("EUCTR", "CTGOV"), copyright = FALSE, queryterm = "", ...) {
   #
+  # check arguments
+  if (!is.atomic(register) || (register == '' & queryterm == '')) stop("No usable argument found.")
+  #
   if(queryterm == '') {
     if (copyright == TRUE) {
       if ("CTGOV" %in% register) utils::browseURL("https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use", ...)
