@@ -1,7 +1,11 @@
 #!/bin/sh
 
-## ralf.herold@gmx.net - 2015-08-15 last edited: 2015-09-15
-# 2.4 s for 221 documents: ~ 11 ms per trial (time euctr2json.sh)
+## ralf.herold@gmx.net - 2015-08-15
+## part of https://github.com/rfhb/ctrdata
+# last edited: 2016-04-20
+# time euctr2json.sh:
+# 2015-08-15: 2.4 s for 221 documents: ~ 11 ms per trial
+# 2016-04-20: 1.2 s for 151 documents: ~  8 ms per trial
 
 cat "$1/euctr-trials-page_"* > "$1/allfiles.txt"
 
@@ -15,6 +19,13 @@ cat "$1/euctr-trials-page_"* > "$1/allfiles.txt"
 
 LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   # this section is faster with perl compared to sed
+
+  # get UTC date, time in format correspondsing to the
+  # R default for format methods: "%Y-%m-%d %H:%M:%S"
+  use POSIX;
+  my $dt = POSIX::strftime("%Y-%m-%d %H:%M:%S", gmtime());
+
+  while (<>) {
 
   # delete non-informative lines
   next if /^$/;
@@ -58,7 +69,7 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   s/\"|\{|\}//g;
 
   # todo
-  # - eliminate this extra lines that duplicate other fields
+  # - eliminate these extra lines that duplicate other fields
   #   "x1_eudract_number"
   #   "x2_sponsor_protocol_code_number"
   #   "x3_national_competent_authority"
@@ -78,13 +89,17 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
 
   print $_;
 
+  print "\nrecord last import: " . $dt if /X.1/;
+
+  }
   ' | \
 perl -pe '
-   # split key and value, delete special characters, transform, trim, construct quoted key value pair
-   s/^(.+?): (.*)$/ my ($tmp1, $tmp2) = ( lc ($1), $2);
+   # split key and value, delete special characters,
+   # transform, trim, construct quoted key value pair
+   s/^(.+?): (.*)$/ my ($tmp1, $tmp2) = (lc ($1), $2);
       $tmp1 =~ s! !_!g;
       $tmp1 =~ s![^a-z0-9_]!!g ;
-      $tmp2 =~ s![^a-zA-Z0-9- ]*!!g ;
+      $tmp2 =~ s![^a-zA-Z0-9-: ]*!!g ;
       $tmp2 =~ s!^\s+|\s+$!!g ;
    "\"".$tmp1."\": \"".$tmp2."\",\n" /exgs;
    ' | \
@@ -114,17 +129,4 @@ perl -pe 'BEGIN{undef $/;}
 
   ' \
 > "$1/allfiles.json"
-
-# the following could be added to limit field width:
-#   $tmp1 =~ s!([a-z0-9]+?_){3}.*!$1!g ;
-#   $F[0] =  substr $F[0], 0, 25;
-
-# no more needed - could be adapted to create an array:
-# perl -pe '
-#   # special handling by concatenating multi-line values in D.3.7.
-#   #BEGIN{undef $/;}
-#   #s/(D\.3\.7.+?)\nD\./ ( my $tmp = $1 ) =~ s! \n ! !xg; $tmp."\nD" /exgs;
-
-# adapt delimiters for last entry in document, see
-# http://stackoverflow.com/questions/1030787/multiline-search-replace-with-perl
 

@@ -83,6 +83,7 @@ dbFindVariable("date", allmatches = TRUE)
 #
 ctrQueryHistoryInDb()
 # 
+# 
 # Update query number 1 in the history
 #  - EUCTR information can be incrementally downloaded or updated only
 #    for the last 7 days, after which a full new download is necessary. 
@@ -96,6 +97,16 @@ ctrQueryHistoryInDb()
 # to the number of records that were added or updated, only, 
 # when the update was run as per the "query-timestamp", and
 # not the total number of records. 
+#
+#
+# The date and time of the last download of individual records
+# is stored in the variable "record_last_import" as follows: 
+when_updated <- dbGetVariablesIntoDf("record_last_import")
+when_updated <- strptime(when_updated$record_last_import, format = "%Y-%m-%d %H:%M:%S")
+summary(when_updated)
+#
+#                  Min.               1st Qu.                Median  [...]
+# "2016-04-21 19:49:54" "2016-04-21 19:49:54" "2016-04-21 19:49:54"  [...] 
 #
 ```
 

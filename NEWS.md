@@ -1,3 +1,6 @@
+# ctrdata 0.6.2
+ - 2016-04-20
+ - add / update field "record_last_import" for every imported / updated record
 # ctrdata 0.6.1
  - 2016-04-02
  - changed to provide vignettes
