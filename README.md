@@ -1,10 +1,12 @@
-[![Build Status](https://travis-ci.org/rfhb/ctrdata.svg?branch=master)](https://travis-ci.org/rfhb/ctrdata)
+[![Build Status](https://travis-ci.org/rfhb/ctrdata.png?branch=master)](https://travis-ci.org/rfhb/ctrdata)
 
 # README.md for R package ctrdata on github.com
 
+Online version of this document: [https://github.com/rfhb/ctrdata/](https://github.com/rfhb/ctrdata/)
+
 ## Background
 
-The package `ctrdata` provides functions for retrieving information from public registers of clinical trials, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started mid 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package can only be used within the [R](https://www.r-project.org/) computing system. Last edit 2016-04-02 for version 0.6.1 (see NEWS.md). 
+The package `ctrdata` provides functions for retrieving information from public registers of clinical trials, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started mid 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package can only be used within the [R](https://www.r-project.org/) computing system. Last edit 2016-04-27 for version 0.6.2 (see NEWS.md). 
 
 Main features:
 
@@ -17,6 +19,7 @@ Main features:
 Remember to respect the registers' copyrights and terms and conditions. 
 
 Overview of functions used in sequence:
+
 ![Overview workflow][1]
 
 ## Installation
@@ -51,7 +54,7 @@ In Linux and Mac OS X systems, these are usually already installed. For MS Windo
 
 
 Name  | Function
-------------- | ----------------------------------------------------
+---------------------------- | --------------------------------------------
 ctrOpenSearchPagesInBrowser	| Open advanced search pages of register(s) or execute search in default web browser
 ctrQueryHistoryInDb	| Show the history of queries that were loaded into a database
 ctrGetQueryUrlFromBrowser	| Import from clipboard the URL of a search in one of the registers
@@ -152,7 +155,8 @@ ctrLoadQueryIntoDb(q)
 # Get all records that have values in all specified fields.
 # Note that b31_... is an element within the array b1_...
 #
-result <- dbGetVariablesIntoDf(c("b1_sponsor.b31_and_b32_status_of_the_sponsor", "x5_trial_status"))
+result <- dbGetVariablesIntoDf(c("b1_sponsor.b31_and_b32_status_of_the_sponsor", 
+                                 "x5_trial_status"))
 #
 # Tabulate the status of the clinical trial on the date of information retrieval
 #
@@ -172,6 +176,7 @@ with (result, table (x5_trial_status, b31_and_b32_status_of_the_sponsor))
 ### Representation in mongodb, as JSON
 
 ![Example JSON representation][2]
+
 
 
 ## In the works - next steps
