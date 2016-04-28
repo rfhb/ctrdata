@@ -120,7 +120,7 @@ summary(when_updated)
 
 Note EUCTR provides country-specific records for trials, see README.md. 
 
-```{r deduplicate_visualise_euctr, eval=TRUE}
+```{r deduplicate_visualise_euctr}
 #
 # Example 1: Relation between number of study participants in one country and in whole trial? 
 #
@@ -266,7 +266,7 @@ hist (out$number_of_sites)
 
 ## Plot frequency of certain end points
 
-```{r plot_endpoint_frequencies, eval=TRUE}
+```{r plot_endpoint_frequencies}
 #
 # search for interesting variables 
 # note the spelling in euctr
@@ -405,7 +405,7 @@ table (out$year)
 
 Note that the mongodb documentation includes that a mapreduce operation might not be as fast and efficient as using the aggregation pipeline, which was used in the preceding example. 
 
-```{r mongodb_mapreduce, eval=TRUE}
+```{r mongodb_mapreduce}
 #
 library(mongolite)
 #
