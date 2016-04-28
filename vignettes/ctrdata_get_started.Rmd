@@ -11,36 +11,53 @@ vignette: >
 
 # Getting started with R package `ctrdata` for clinical trial protocol-related information
 
-```{r, include=FALSE}
+```{r setup, include=FALSE}
+#
 knitr::opts_chunk$set(eval=FALSE)
+#
 ```
 
-## Install package `ctrdata` on a vanilla system
-```{r}
-#
+## Install package `ctrdata` on a R system
+
+The R Project website ([https://www.r-project.org/](https://www.r-project.org/)) provides installers for the R system. 
+
+Alternatively, the R system can be used from software products such as R Studio ([https://www.rstudio.com/products/RStudio/](https://www.rstudio.com/products/RStudio/)), which includes an open source integrated development environment (IDE), or Microsoft R Open ([https://mran.microsoft.com/open/](https://mran.microsoft.com/open/)). 
+
+General information on the `ctrdata` package is available here: [https://github.com/rfhb/ctrdata](https://github.com/rfhb/ctrdata). 
+
+```{r install_ctrdata}
+# 
+# install preparatory package
 install.packages(c("devtools", "httr"))
 #
-# set proxy if needed
+# set proxy, if needed
 library(httr)
 set_config(use_proxy("proxy.server.domain", 8080))
 #
-# on windows change library path to not use an UNC notation (\\server\directory)
+# on windows: change library path to *not* use an 
+# UNC notation (\\server\directory) for the library
 .libPaths("D:/my/directory/")
 #
+# now install this package 
 devtools::install_github("rfhb/ctrdata")
+#
+# note: on Windows, cygwin has to be installed
+# to provide php, bash, perl, cat and sed programs.
+# this can be done like this: 
+installCygwinWindowsDoInstall(proxy = "proxy.server.domain:8080") 
 #
 ```
 
 
 ## Attach package `ctrdata`
-```{r}
+```{r attach_ctrdata}
 #
 library(ctrdata)
 #
 ```
 
 ## Open register's advanced search page in browser
-```{r}
+```{r show_brower_search_pages}
 #
 ctrOpenSearchPagesInBrowser()
 #
@@ -55,7 +72,7 @@ ctrOpenSearchPagesInBrowser(copyright = TRUE)
 ## Copy address from browser address bar to clipboard
 
 ## Get address from clipboard
-```{r}
+```{r get_query_from_browser}
 #
 q <- ctrGetQueryUrlFromBrowser()
 #
@@ -64,8 +81,8 @@ q <- ctrGetQueryUrlFromBrowser()
 #
 ```
 
-## Retrieve protocol-related information, transform, save to database and analyse:
-```{r}
+## Retrieve protocol-related information, transform, save to database, check
+```{r execute_load_query}
 #
 ctrLoadQueryIntoDb(q)
 #
@@ -82,6 +99,11 @@ ctrQueryHistoryInDb()
 #       query-timestamp query-register query-records                  query-term
 # 1 2016-01-13-10-51-56          CTGOV          5233 type=Intr&cond=cancer&age=0
 # 2 2016-01-13-10-40-16          EUCTR           910         cancer&age=under-18
+#
+```
+
+## Analyse database contents
+```{r analyse_query_database}
 #
 # find names of fields of interest in database:
 #
@@ -111,4 +133,3 @@ with (result, table ("Status" = x5_trial_status,
 #   Temporarily Halted         14              4
 #
 ```
-
