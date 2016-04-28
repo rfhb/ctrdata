@@ -388,16 +388,22 @@ dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(hos
     # no relevant result retrieved
     if(is.null(tmp) || length(tmp) == 0) return(FALSE)
     # result is not empty
-    if (debug) message("DEBUG: variable info according to varietyKeys: ", tmp)
-    # example content of tmp: list(value = list(types = list(Array = 951)))
+    if (debug) message("DEBUG: variable nesting according to varietyKeys: ", tmp)
+    # example:
+    # list(value = list(types = list(Array = 951)))
+    # list(value = list(types = list(Array = 1618, String = 1)))
     tmp <- unlist(tmp)
     tmp <- names(tmp)
+    # example:
+    # value.types.Array value.types.String
+    # use right-most element
+    tmp <- tmp [length(tmp)]
     tmp <- sub('value\\.types\\.(.+)', '\\1', tmp)
     if (debug) message("DEBUG: variable info according to varietyKeys: ", tmp)
     #
-    if("Array"  %in% tmp) return(TRUE)
-    if("String" %in% tmp) return(FALSE)
-    # default return
+    if(tmp == "String") return(FALSE)
+    if(tmp == "Array")  return(TRUE)
+    # default
     return(FALSE)
   }
   #
