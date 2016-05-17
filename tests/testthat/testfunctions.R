@@ -5,6 +5,9 @@
 # run tests manually with:
 # devtools::test()
 
+# Mac OS X:
+# brew services {start|stop} mongodb
+
 library(ctrdata)
 context("ctrdata functions")
 
@@ -113,7 +116,7 @@ test_that("retrieve data from registers", {
   skip_on_travis()
 
   queryeuctr <- list(queryterm = "query=NonExistingConditionGoesInHere", register = "EUCTR")
-  queryctgov <- list(queryterm =  "cond=NonExistingConditionGoesInHere", register = "CTGOV")
+  queryctgov <- list(queryterm = "cond=NonExistingConditionGoesInHere",  register = "CTGOV")
 
   expect_error(ctrLoadQueryIntoDb(queryeuctr, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "First result page empty - no trials found")
   expect_error(ctrLoadQueryIntoDb(queryctgov, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "No studies downloaded")
@@ -191,6 +194,8 @@ test_that("operations on database", {
   expect_error(dbGetVariablesIntoDf(fields = "ThisDoesNotExist",
                                     ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
                "For variable: ThisDoesNotExist no data could be extracted")
+
+  skip_on_travis()
 
   # clean up = drop collections from mongodb
   expect_equivalent (rmongodb::mongo.drop(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"),
