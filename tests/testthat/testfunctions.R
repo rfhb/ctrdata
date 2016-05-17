@@ -37,11 +37,11 @@ has_internet <- function(){
 has_mongo <- function(){
   mongo_ok <- try({
     #library(rmongodb)
-    rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users")
+    capture.output(rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"))
   }, silent = TRUE)
   # use test result
-  if (class(mongo_ok) == "try-error") {
-    skip("No password-free localhost mongodb connection available. ")
+  if (class(mongo_ok) == "try-error" || mongo_ok [1] == "Unable to connect to 127.0.0.1:27017, error code = 2") {
+    skip("No password-free localhost mongodb connection available.")
   }
 }
 
@@ -62,7 +62,7 @@ has_proxy <- function(){
   options(RCurlOptions = old_options)
   #
   if(class(proxy_ok) == "try-error") {
-    skip("No proxied internet connection available. ")
+    skip("No proxied internet connection available.")
   }
 }
 
@@ -71,10 +71,13 @@ has_proxy <- function(){
 # configured otherwise
 test_that("access to mongo db from R package", {
 
+  has_mongo()
+
   expect_message(ctrQueryHistoryInDb(), "Total number of records")
   expect_message(ctrQueryHistoryInDb(ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Total number of records")
 
 })
+
 # test access to mongo db from command line
 test_that("access to mongo db from command line", {
 
@@ -115,9 +118,7 @@ test_that("retrieve data from registers", {
   expect_error(ctrLoadQueryIntoDb(queryeuctr, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "First result page empty - no trials found")
   expect_error(ctrLoadQueryIntoDb(queryctgov, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "No studies downloaded")
 
-  # clean / drop / remove collection from mongodb
-  rmongodb::mongo.drop(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"),
-             ns = "user.ThisNameSpaceShouldNotExistAnywhereInAMongoDB")
+  # at the end of srcipt, clean up occurs = drop collection from mongodb
 
 })
 
@@ -130,10 +131,8 @@ test_that("retrieve data from register ctgov", {
 
   skip_on_travis()
 
-  #queryeuctr <- list(queryterm = "2010-024264-18",      register = "EUCTR")
   queryctgov <- list(queryterm = "term=2010-024264-18", register = "CTGOV")
 
-  #expect_message(ctrLoadQueryIntoDb(queryeuctr, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Updated history")
   expect_message(ctrLoadQueryIntoDb(queryctgov, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Imported or updated 1 trial")
 
 })
@@ -148,10 +147,8 @@ test_that("retrieve data from register euctr", {
   skip_on_travis()
 
   queryeuctr <- list(queryterm = "2010-024264-18",      register = "EUCTR")
-  #queryctgov <- list(queryterm = "term=2010-024264-18", register = "CTGOV")
 
   expect_message(ctrLoadQueryIntoDb(queryeuctr, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB", debug = TRUE), "Updated history")
-  #expect_message(ctrLoadQueryIntoDb(queryctgov, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Imported or updated 1 trial")
 
 })
 
@@ -166,16 +163,16 @@ test_that("retrieve via proxy data from register euctr", {
 
   # get initial options
   old_options <- options()$RCurlOptions
+
   # this is a local proxy using jap
   opts <- list(proxy = "127.0.0.1", proxyport = 4001)
+
   # set proxy
   options(RCurlOptions = opts)
 
   queryeuctr <- list(queryterm = "2010-024264-18",      register = "EUCTR")
-  #queryctgov <- list(queryterm = "term=2010-024264-18", register = "CTGOV")
 
   expect_message(ctrLoadQueryIntoDb(queryeuctr, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB", debug = TRUE), "Updated history")
-  #expect_message(ctrLoadQueryIntoDb(queryctgov, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Imported or updated 1 trial")
 
   # reset to initial options
   options(RCurlOptions = old_options)
@@ -195,11 +192,12 @@ test_that("operations on database", {
                                     ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
                "For variable: ThisDoesNotExist no data could be extracted")
 
-  # clean up
-  rmongodb::mongo.drop(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"),
-                       ns= "user.ThisNameSpaceShouldNotExistAnywhereInAMongoDB")
-  rmongodb::mongo.drop(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "varietyResults"),
-                       ns= "varietyResults.ThisNameSpaceShouldNotExistAnywhereInAMongoDB")
+  # clean up = drop collections from mongodb
+  expect_equivalent (rmongodb::mongo.drop(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"),
+                     ns= "users.ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), TRUE)
+
+  expect_equivalent (rmongodb::mongo.drop(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "varietyResults"),
+                     ns= "varietyResults.ThisNameSpaceShouldNotExistAnywhereInAMongoDBKeys"), TRUE)
 
 })
 
