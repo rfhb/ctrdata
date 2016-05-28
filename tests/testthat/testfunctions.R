@@ -112,7 +112,7 @@ test_that("retrieve data from registers", {
   has_internet()
   has_mongo()
 
-  skip_on_travis()
+  #skip_on_travis()
 
   queryeuctr <- list(queryterm = "query=NonExistingConditionGoesInHere", register = "EUCTR")
   queryctgov <- list(queryterm = "cond=NonExistingConditionGoesInHere",  register = "CTGOV")
