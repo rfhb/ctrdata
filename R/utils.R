@@ -876,4 +876,28 @@ ctrQueryHistoryInDb <- function(mongo = rmongodb::mongo.create(host = "127.0.0.1
 # end ctrQueryHistoryInDb
 
 
+#' Check availability of binaries installed in operating system
+#'
+#' @param commandtest Command to be used for testing the availability of the binary, e.g. "php -v"
+#'
+#' @return A logical if executing commandtest returned an error or not
+#'
+#' @export findBinary
+#'
+findBinary <- function(commandtest = NULL) {
+  #
+  if (is.null(commandtest)) stop ("Empty argument: commandtest")
+  #
+  commandresult <- try(
+    system(commandtest, intern = TRUE, ignore.stdout = TRUE, ignore.stderr = TRUE),
+    silent = TRUE
+  )
+  #
+  commandreturn <- ifelse (class(commandresult) == "try-error", FALSE, TRUE)
+  #
+  if(!commandreturn) warning(commandtest, " not found.")
+  #
+  return(commandreturn)
+  #
+}
 
