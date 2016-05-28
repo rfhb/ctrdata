@@ -76,7 +76,6 @@ test_that("access to mongo db from R package", {
 
   has_mongo()
 
-  expect_message(ctrQueryHistoryInDb(), "Total number of records")
   expect_message(ctrQueryHistoryInDb(ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Total number of records")
 
 })
@@ -157,30 +156,30 @@ test_that("retrieve data from register euctr", {
 
 # testing downloading from both registers using a proxy
 # a query retrieving a small number of trials
-test_that("retrieve via proxy data from register euctr", {
-
-  has_proxy()
-  has_mongo()
-
-  skip_on_travis()
-
-  # get initial options
-  old_options <- options()$RCurlOptions
-
-  # this is a local proxy using jap
-  opts <- list(proxy = "127.0.0.1", proxyport = 4001)
-
-  # set proxy
-  options(RCurlOptions = opts)
-
-  queryeuctr <- list(queryterm = "2010-024264-18",      register = "EUCTR")
-
-  expect_message(ctrLoadQueryIntoDb(queryeuctr, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB", debug = TRUE), "Updated history")
-
-  # reset to initial options
-  options(RCurlOptions = old_options)
-
-})
+# test_that("retrieve via proxy data from register euctr", {
+#
+#   has_proxy()
+#   has_mongo()
+#
+#   skip_on_travis()
+#
+#   # get initial options
+#   old_options <- options()$RCurlOptions
+#
+#   # this is a local proxy using jap
+#   opts <- list(proxy = "127.0.0.1", proxyport = 4001)
+#
+#   # set proxy
+#   options(RCurlOptions = opts)
+#
+#   queryeuctr <- list(queryterm = "2010-024264-18",      register = "EUCTR")
+#
+#   expect_message(ctrLoadQueryIntoDb(queryeuctr, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB", debug = TRUE), "Updated history")
+#
+#   # reset to initial options
+#   options(RCurlOptions = old_options)
+#
+# })
 
 # testing functions seeking
 # record contents in database
