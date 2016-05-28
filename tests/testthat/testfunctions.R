@@ -85,8 +85,6 @@ test_that("access to mongo db from command line", {
 
   skip_on_os("windows")
 
-  #skip_on_travis()
-
   expect_message(installMongoFindBinaries(), "mongoimport / mongo found in the path")
 
 })
@@ -112,8 +110,6 @@ test_that("retrieve data from registers", {
   has_internet()
   has_mongo()
 
-  #skip_on_travis()
-
   queryeuctr <- list(queryterm = "query=NonExistingConditionGoesInHere", register = "EUCTR")
   queryctgov <- list(queryterm = "cond=NonExistingConditionGoesInHere",  register = "CTGOV")
 
@@ -131,8 +127,6 @@ test_that("retrieve data from register ctgov", {
   has_internet()
   has_mongo()
 
-  #skip_on_travis()
-
   queryctgov <- list(queryterm = "term=2010-024264-18", register = "CTGOV")
 
   expect_message(ctrLoadQueryIntoDb(queryctgov, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Imported or updated 1 trial")
@@ -145,8 +139,6 @@ test_that("retrieve data from register euctr", {
 
   has_internet()
   has_mongo()
-
-  #skip_on_travis()
 
   queryeuctr <- list(queryterm = "2010-024264-18",      register = "EUCTR")
 
@@ -193,8 +185,6 @@ test_that("operations on database", {
   expect_error(dbGetVariablesIntoDf(fields = "ThisDoesNotExist",
                                     ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
                "For variable: ThisDoesNotExist no data could be extracted")
-
-  #skip_on_travis()
 
   # clean up = drop collections from mongodb
   expect_equivalent (rmongodb::mongo.drop(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"),
