@@ -95,11 +95,6 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   # check program version as acceptable json format changed from 2.x to 3.x
   installMongoCheckVersion()
 
-  # check availability of helper programs
-  if(!suppressWarnings(findBinary("php --version")))       stop("php not found.")
-  if(!suppressWarnings(findBinary("echo x | sed s/x/y/"))) stop("sed not found.")
-  if(!suppressWarnings(findBinary("perl -V:osname")))      stop("perl not found.")
-
   # remove trailing or leading whitespace
   queryterm <- gsub("^\\s+|\\s+$", "", queryterm)
 
@@ -239,6 +234,10 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   ############################
 
   if ("CTGOV" %in% register) {
+
+    # check availability of relevant helper programs
+    if(!suppressWarnings(findBinary("php --version")))       stop("php not found.")
+    if(!suppressWarnings(findBinary("php -r 'simplexml_load_string(\"\");'")))  stop("php xml not found.")
 
     # create empty temporary directory on localhost for
     # download from register into temporary directy
@@ -438,6 +437,10 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   ############################
 
   if ("EUCTR" %in% register) {
+
+    # check availability of relevant helper programs
+    if(!suppressWarnings(findBinary("echo x | sed s/x/y/"))) stop("sed not found.")
+    if(!suppressWarnings(findBinary("perl -V:osname")))      stop("perl not found.")
 
     message("Downloading trials from EUCTR ...")
 
