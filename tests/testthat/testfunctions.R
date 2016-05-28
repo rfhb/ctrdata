@@ -131,7 +131,7 @@ test_that("retrieve data from register ctgov", {
   has_internet()
   has_mongo()
 
-  skip_on_travis()
+  #skip_on_travis()
 
   queryctgov <- list(queryterm = "term=2010-024264-18", register = "CTGOV")
 
@@ -146,7 +146,7 @@ test_that("retrieve data from register euctr", {
   has_internet()
   has_mongo()
 
-  skip_on_travis()
+  #skip_on_travis()
 
   queryeuctr <- list(queryterm = "2010-024264-18",      register = "EUCTR")
 
