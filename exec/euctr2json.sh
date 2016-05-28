@@ -116,16 +116,16 @@ sed \
   | \
 perl -pe 'BEGIN{undef $/;}
   # delete comma from last line in record
-  s/,\n}{/}\n\n{/g ;
+  s/,\n\}\{/\}\n\n\{/g ;
 
   # create array with imp(s)
-  s/("d[0-9]+_.*"),\n"dimp": "([2-9])",/$1}, \n{ "_dimp": "$2",/g ;
-  s/("d[0-9]+_.*"),\n"e1(.*)/$1}\n],\n"e1$2/g ;
+  s/("d[0-9]+_.*"),\n"dimp": "([2-9])",/$1\}, \n\{ "_dimp": "$2",/g ;
+  s/("d[0-9]+_.*"),\n"e1(.*)/$1\}\n],\n"e1$2/g ;
 
   # create array with sponsor(s), closed before dimp or e11_ elements
-  s/("b[0-9]+_.*"),\n"b1_sponsor": "([2-9])",/$1}, \n{ "_b1_sponsor": "$2",/g ;
-  s/("b[0-9]+_.*"),\n"dimp(.*)/$1}\n],\n"dimp$2/g ;
-  s/("b[0-9]+_.*"),\n"e11_medical(.*)/$1}\n],\n"e11_medical$2/g ;
+  s/("b[0-9]+_.*"),\n"b1_sponsor": "([2-9])",/$1\}, \n\{ "_b1_sponsor": "$2",/g ;
+  s/("b[0-9]+_.*"),\n"dimp(.*)/$1\}\n],\n"dimp$2/g ;
+  s/("b[0-9]+_.*"),\n"e11_medical(.*)/$1\}\n],\n"e11_medical$2/g ;
 
   ' \
 > "$1/allfiles.json"
