@@ -57,7 +57,7 @@ countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", 
 ctrOpenSearchPagesInBrowser <- function(register = c("EUCTR", "CTGOV"), copyright = FALSE, queryterm = "", ...) {
   #
   # check arguments
-  if (!is.atomic(register) || (register == '' & queryterm == '')) stop("No usable argument found.")
+  if (!exists("register") || (register == '' & queryterm == '')) stop("No usable argument found.")
   #
   if(queryterm == '') {
     if (copyright == TRUE) {
