@@ -43,6 +43,17 @@ countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", 
 #' @export ctrOpenSearchPagesInBrowser
 #' @return Is always true, invisibly.
 #'
+#' @examples
+#' \dontrun{
+#'
+#' ctrOpenSearchPagesInBrowser(register = "EUCTR", queryterm = "cancer&age=under-18")
+#'
+#' ctrOpenSearchPagesInBrowser(queryterm = ctrQueryHistoryInDb() [1,])
+#'
+#' ctrOpenSearchPagesInBrowser(copyright = TRUE)
+#'
+#' }
+#'
 ctrOpenSearchPagesInBrowser <- function(register = c("EUCTR", "CTGOV"), copyright = FALSE, queryterm = "", ...) {
   #
   # check arguments
@@ -88,8 +99,6 @@ ctrOpenSearchPagesInBrowser <- function(register = c("EUCTR", "CTGOV"), copyrigh
       rm("query")
     }, silent = TRUE)
     #
-    if (class(tmp) == "try-error") stop("ctrOpenSearchPagesInBrowser(): Could not use parameters, please check.")
-    #
   }
   #
   if (queryterm != "") {
@@ -100,6 +109,7 @@ ctrOpenSearchPagesInBrowser <- function(register = c("EUCTR", "CTGOV"), copyrigh
   #
   invisible(TRUE)
 }
+
 
 
 #' Import from clipboard the URL of a search in one of the registers
@@ -147,6 +157,52 @@ ctrGetQueryUrlFromBrowser <- function(content = clipr::read_clip()) {
   stop(paste("Content is not a clinical trial register search URL. Returning NULL."))
   return(NULL)
 }
+
+
+
+#' Show the history of queries that were loaded into a database
+#'
+#' @inheritParams ctrdata::ctrLoadQueryIntoDb
+#'
+#' @return A data frame with variables: timestamp, register, number of records
+#'   loaded, query term
+#'
+#' @export ctrQueryHistoryInDb
+#'
+#' @examples
+#' \dontrun{
+#' ctrQueryHistoryInDb()
+#' }
+#'
+ctrQueryHistoryInDb <- function(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"), ns = "ctrdata") {
+  #
+  message("Total number of records: ",
+          rmongodb::mongo.count(mongo, paste0(attr(mongo, "db"), ".", ns),
+                                query  = rmongodb::mongo.bson.from.JSON('{"_id":{"$ne":"meta-info"}}')))
+  #
+  tmp <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns),
+                                  query = list("_id" = "meta-info"), fields = list("query" = 1L, "_id" = 0L))
+  if (length(tmp) == 0) {
+    # no history found
+    tmp <- NULL
+    message("No query history found in database in expected format.")
+    #
+  } else {
+    #
+    tmp <- tmp[[1]]
+    tmp <- sapply(tmp, function(x) do.call(rbind, x))
+    tmp <- t(tmp)
+    tmp <- data.frame(tmp, row.names = NULL, check.names = FALSE, stringsAsFactors = FALSE)
+    names(tmp) <- c("query-timestamp", "query-register", "query-records", "query-term")
+    message("Number of queries in history: ", nrow(tmp))
+    # TODO: type timestampt, number of records
+  }
+  #
+  return(tmp)
+  #
+}
+# end ctrQueryHistoryInDb
+
 
 
 #' Find names of keys (fields) in the database
@@ -250,32 +306,6 @@ dbFindVariable <- function(namepart = "",
 }
 
 
-# Convert a mongo query result object into a data frame
-#
-# @param x A result of object of a mongo query
-# @return A data frame with the data that was stored in the input object
-# @import rmongodb
-# @export mongo2df
-#
-# mongo2df <- function(x) {
-#   xclass <- class(x)
-#   #
-#   if (xclass == "mongo.bson") {
-#     tmp <- rmongodb::mongo.bson.to.list(x)
-#     df <- data.frame(do.call(rbind, tmp))
-#     df <- df[2:nrow(df), ]
-#     return(df)
-#   }
-#   if (xclass == "mongo.cursor") {
-#     df <- rmongodb::mongo.cursor.to.data.frame(x)
-#     return(df)
-#   }
-#   # other type of object
-#   warning("Could not use input, not a bson or mongo cursor.")
-#   return(NULL)
-# }
-
-
 
 #' This function checks for duplicate records of clinical trialss in the
 #' database based on the clinical trial identifier, and it returns a list of ids
@@ -354,8 +384,8 @@ dbFindIdsUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "127.0.0
 #' this time) and for multiple entries in a field (which are contatenated in the
 #' returned results using ' / ').
 #'
-#' For more sophisticated retrieval from the database, see vignette examples and
-#' packages such as mongolite.
+#' For more sophisticated data retrieval from the database, see vignette examples
+#' and other packages to query mongodb such as mongolite.
 #'
 #' @param fields Vector of strings, with names of the sought fields.
 #' @inheritParams ctrdata::ctrLoadQueryIntoDb
@@ -380,32 +410,32 @@ dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(hos
   result <- NULL
   #
   # helper function
-  fieldIsArray <- function(fieldsearched) {
-    # retrieve from varietyKeys what type of variable the searched field is
-    tmp <- mongo.find.all(mongo, paste0("varietyResults.", ns, "Keys"),
-                          query  = rmongodb::mongo.bson.from.JSON(paste0('{"_id.key": "', fieldsearched, '"}')),
-                          fields = rmongodb::mongo.bson.from.JSON('{"_id": 0, "value.types": 1, "value.types": {"$slice": 1}}'))
-    # no relevant result retrieved
-    if(is.null(tmp) || length(tmp) == 0) return(FALSE)
-    # result is not empty
-    if (debug) message("DEBUG: variable nesting according to varietyKeys: ", tmp)
-    # example:
-    # list(value = list(types = list(Array = 951)))
-    # list(value = list(types = list(Array = 1618, String = 1)))
-    tmp <- unlist(tmp)
-    tmp <- names(tmp)
-    # example:
-    # value.types.Array value.types.String
-    # use right-most element
-    tmp <- tmp [length(tmp)]
-    tmp <- sub('value\\.types\\.(.+)', '\\1', tmp)
-    if (debug) message("DEBUG: variable info according to varietyKeys: ", tmp)
-    #
-    if(tmp == "String") return(FALSE)
-    if(tmp == "Array")  return(TRUE)
-    # default
-    return(FALSE)
-  }
+  # fieldIsArray <- function(fieldsearched) {
+  #   # retrieve from varietyKeys what type of variable the searched field is
+  #   tmp <- rmongodb::mongo.find.all(mongo, paste0("varietyResults.", ns, "Keys"),
+  #                                   query  = rmongodb::mongo.bson.from.JSON(paste0('{"_id.key": "', fieldsearched, '"}')),
+  #                                   fields = rmongodb::mongo.bson.from.JSON('{"_id": 0, "value.types": 1, "value.types": {"$slice": 1}}'))
+  #   # no relevant result retrieved
+  #   if(is.null(tmp) || length(tmp) == 0) return(FALSE)
+  #   # result is not empty
+  #   if (debug) message("DEBUG: variable nesting according to varietyKeys: ", tmp)
+  #   # example:
+  #   # list(value = list(types = list(Array = 951)))
+  #   # list(value = list(types = list(Array = 1618, String = 1)))
+  #   tmp <- unlist(tmp)
+  #   tmp <- names(tmp)
+  #   # example:
+  #   # value.types.Array value.types.String
+  #   # use right-most element
+  #   tmp <- tmp [length(tmp)]
+  #   tmp <- sub('value\\.types\\.(.+)', '\\1', tmp)
+  #   if (debug) message("DEBUG: variable info according to varietyKeys: ", tmp)
+  #   #
+  #   if(tmp == "String") return(FALSE) # e.g. strings in objects in arrays
+  #   if(tmp == "Array")  return(TRUE) # arrays of strings
+  #   # default
+  #   return(FALSE)
+  # }
   #
   for (item in fields) {
     #
@@ -413,22 +443,23 @@ dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(hos
     part1 <- sub("(.*)[.].*", "\\1", item)
     if (debug) message("DEBUG: variable corresponding to first part of field, before dot: ", part1)
     #
-    if (fieldIsArray(part1)) {
-      tmp <- try({
-        if (debug) message("DEBUG: variable ", item, " handled as array")
-        dfi <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), '.', ns), data.frame = FALSE,
-                                        query  = rmongodb::mongo.bson.from.JSON(query),
-                                        fields = rmongodb::mongo.bson.from.JSON(paste0('{"_id": 1, "', part1, '": {"$slice": 1}, "', item, '": 1}')))
-        if (debug) message("DEBUG: variable ", item, " has length ", length(dfi))
-        # attempt custom function to condense into a data frame instead of using data.frame = TRUE
-        dfi <- as.data.frame(cbind(sapply(dfi, function(x) as.vector(x[[1]])),
-                                   sapply(dfi, function(x) as.vector(unlist (x[[2]])))),
-                             stringsAsFactors = FALSE)
-        names(dfi) <- c("_id", item)
-        #
-      }, silent = FALSE)
-      warning(paste0("For variable: ", item, " only the first slice of the array is returned."), immediate. = TRUE)
-    } else {
+    # if (fieldIsArray(part1)) { # array of strings
+    #   tmp <- try({
+    #     if (debug) message("DEBUG: variable ", item, " handled as array")
+    #     dfi <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), '.', ns), data.frame = FALSE,
+    #                                     query  = rmongodb::mongo.bson.from.JSON(query),
+    #                                     fields = rmongodb::mongo.bson.from.JSON(paste0('{"_id": 1, "', part1, '": {"$slice": 1}, "', item, '": 1}')))
+    #     if (debug) message("DEBUG: variable ", item, " has length ", length(dfi))
+    #     # attempt custom function to condense into a data frame instead of using data.frame = TRUE
+    #     dfi <- as.data.frame(cbind(sapply(dfi, function(x) as.vector(x[[1]])),
+    #                                sapply(dfi, function(x) as.vector(unlist (x[[2]])))),
+    #                          stringsAsFactors = FALSE)
+    #     names(dfi) <- c("_id", item)
+    #     #
+    #   }, silent = FALSE)
+    #   warning(paste0("For variable: ", item, " only the first slice of the array is returned."), immediate. = TRUE)
+    #   #
+    # } else { # other than array
       tmp <- try({
         if (debug) message("DEBUG: variable ", item, " handled as string")
         dfi <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), '.', ns), data.frame = FALSE,
@@ -442,7 +473,7 @@ dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(hos
         names(dfi) <- c("_id", item)
         #
       }, silent = FALSE)
-    }
+    # }
     #
     if ((class(tmp) != "try-error") && (nrow(dfi) > 0)) {
 
@@ -832,49 +863,6 @@ dfMergeTwoVariablesRelevel <- function(df = NULL, varnames = "", levelslist = NU
 
 
 
-#' Show the history of queries that were loaded into a database
-#'
-#' @inheritParams ctrdata::ctrLoadQueryIntoDb
-#'
-#' @return A data frame with variables: timestamp, register, number of records
-#'   loaded, query term
-#'
-#' @export ctrQueryHistoryInDb
-#'
-#' @examples
-#' \dontrun{
-#' ctrQueryHistoryInDb()
-#' }
-#'
-ctrQueryHistoryInDb <- function(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"), ns = "ctrdata") {
-  #
-  message("Total number of records: ",
-          rmongodb::mongo.count(mongo, paste0(attr(mongo, "db"), ".", ns),
-                                query  = rmongodb::mongo.bson.from.JSON('{"_id":{"$ne":"meta-info"}}')))
-  #
-  tmp <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns),
-                                  query = list("_id" = "meta-info"), fields = list("query" = 1L, "_id" = 0L))
-  if (length(tmp) == 0) {
-    # no history found
-    tmp <- NULL
-    message("No query history found in database in expected format.")
-    #
-  } else {
-    #
-    tmp <- tmp[[1]]
-    tmp <- sapply(tmp, function(x) do.call(rbind, x))
-    tmp <- t(tmp)
-    tmp <- data.frame(tmp, row.names = NULL, check.names = FALSE, stringsAsFactors = FALSE)
-    names(tmp) <- c("query-timestamp", "query-register", "query-records", "query-term")
-    message("Number of queries in history: ", nrow(tmp))
-    # TODO: type timestampt, number of records
-  }
-  #
-  return(tmp)
-  #
-}
-# end ctrQueryHistoryInDb
-
 
 #' Check availability of binaries installed in operating system
 #'
@@ -900,4 +888,31 @@ findBinary <- function(commandtest = NULL) {
   return(commandreturn)
   #
 }
+
+
+
+# Convert a mongo query result object into a data frame
+#
+# @param x A result of object of a mongo query
+# @return A data frame with the data that was stored in the input object
+# @import rmongodb
+# @export mongo2df
+#
+# mongo2df <- function(x) {
+#   xclass <- class(x)
+#   #
+#   if (xclass == "mongo.bson") {
+#     tmp <- rmongodb::mongo.bson.to.list(x)
+#     df <- data.frame(do.call(rbind, tmp))
+#     df <- df[2:nrow(df), ]
+#     return(df)
+#   }
+#   if (xclass == "mongo.cursor") {
+#     df <- rmongodb::mongo.cursor.to.data.frame(x)
+#     return(df)
+#   }
+#   # other type of object
+#   warning("Could not use input, not a bson or mongo cursor.")
+#   return(NULL)
+# }
 

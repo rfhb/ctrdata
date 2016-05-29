@@ -33,4 +33,16 @@ Is always true, invisibly.
 Open advanced search pages of register(s) or execute search in default web
 browser.
 }
+\examples{
+\dontrun{
+
+ctrOpenSearchPagesInBrowser(register = "EUCTR", queryterm = "cancer&age=under-18")
+
+ctrOpenSearchPagesInBrowser(queryterm = ctrQueryHistoryInDb() [1,])
+
+ctrOpenSearchPagesInBrowser(copyright = TRUE)
+
+}
+
+}
 
