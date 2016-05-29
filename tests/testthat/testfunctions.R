@@ -184,7 +184,7 @@ test_that("operations on database", {
 
   expect_error(dbGetVariablesIntoDf(fields = "ThisDoesNotExist",
                                     ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
-               "For variable: ThisDoesNotExist no data could be extracted")
+               "For variable / field: ThisDoesNotExist no data could be extracted")
 
   # clean up = drop collections from mongodb
   expect_equivalent (rmongodb::mongo.drop(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"),

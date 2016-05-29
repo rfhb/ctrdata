@@ -379,10 +379,10 @@ dbFindIdsUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "127.0.0
 #' Create a data frame from records in the database that have specified fields
 #'
 #' With this convenience function, fields in the mongo database are retrieved
-#' into an R dataframe. As mongo fields can be hierarchical and structured, the
-#' function includes provisions for arrays (only the first slice is returned at
-#' this time) and for multiple entries in a field (which are contatenated in the
-#' returned results using ' / ').
+#' into an R dataframe. As mongo json fields within the record of a trial
+#' can be hierarchical and structured, the function returns a concatenation
+#' of values if there is more than one value or if the field is (in) an array,
+#' such as follows: value 1 / value 2 / ... (see example)
 #'
 #' For more sophisticated data retrieval from the database, see vignette examples
 #' and other packages to query mongodb such as mongolite.
@@ -397,6 +397,19 @@ dbFindIdsUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "127.0.0
 #'
 #' @export dbGetVariablesIntoDf
 #'
+#' @examples
+#' \dontrun{
+#'
+#' dbGetVariablesIntoDf("b1_sponsor.b31_and_b32_status_of_the_sponsor")[1,]
+#' #                   _id  b1_sponsor.b31_and_b32_status_of_the_sponsor
+#' #  1  2004-000015-25-GB                   Non-commercial / Commercial
+#'
+#' dbGetVariablesIntoDf("keyword")[1:2,]
+#' #            _id                                           keyword
+#' #  1 NCT00129259  T1D / type 1 diabetes / type 1 diabetes mellitus
+#'
+#' }
+#'
 dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"),
                                  ns = "ctrdata", debug = FALSE) {
   #
@@ -409,70 +422,24 @@ dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(hos
   # initialise output
   result <- NULL
   #
-  # helper function
-  # fieldIsArray <- function(fieldsearched) {
-  #   # retrieve from varietyKeys what type of variable the searched field is
-  #   tmp <- rmongodb::mongo.find.all(mongo, paste0("varietyResults.", ns, "Keys"),
-  #                                   query  = rmongodb::mongo.bson.from.JSON(paste0('{"_id.key": "', fieldsearched, '"}')),
-  #                                   fields = rmongodb::mongo.bson.from.JSON('{"_id": 0, "value.types": 1, "value.types": {"$slice": 1}}'))
-  #   # no relevant result retrieved
-  #   if(is.null(tmp) || length(tmp) == 0) return(FALSE)
-  #   # result is not empty
-  #   if (debug) message("DEBUG: variable nesting according to varietyKeys: ", tmp)
-  #   # example:
-  #   # list(value = list(types = list(Array = 951)))
-  #   # list(value = list(types = list(Array = 1618, String = 1)))
-  #   tmp <- unlist(tmp)
-  #   tmp <- names(tmp)
-  #   # example:
-  #   # value.types.Array value.types.String
-  #   # use right-most element
-  #   tmp <- tmp [length(tmp)]
-  #   tmp <- sub('value\\.types\\.(.+)', '\\1', tmp)
-  #   if (debug) message("DEBUG: variable info according to varietyKeys: ", tmp)
-  #   #
-  #   if(tmp == "String") return(FALSE) # e.g. strings in objects in arrays
-  #   if(tmp == "Array")  return(TRUE) # arrays of strings
-  #   # default
-  #   return(FALSE)
-  # }
-  #
   for (item in fields) {
     #
     query <- paste0('{"_id": {"$ne": "meta-info"}, "', item, '": {"$gt": ""}}')
-    part1 <- sub("(.*)[.].*", "\\1", item)
-    if (debug) message("DEBUG: variable corresponding to first part of field, before dot: ", part1)
+    if (debug) message("DEBUG: variable / field: ", item)
     #
-    # if (fieldIsArray(part1)) { # array of strings
-    #   tmp <- try({
-    #     if (debug) message("DEBUG: variable ", item, " handled as array")
-    #     dfi <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), '.', ns), data.frame = FALSE,
-    #                                     query  = rmongodb::mongo.bson.from.JSON(query),
-    #                                     fields = rmongodb::mongo.bson.from.JSON(paste0('{"_id": 1, "', part1, '": {"$slice": 1}, "', item, '": 1}')))
-    #     if (debug) message("DEBUG: variable ", item, " has length ", length(dfi))
-    #     # attempt custom function to condense into a data frame instead of using data.frame = TRUE
-    #     dfi <- as.data.frame(cbind(sapply(dfi, function(x) as.vector(x[[1]])),
-    #                                sapply(dfi, function(x) as.vector(unlist (x[[2]])))),
-    #                          stringsAsFactors = FALSE)
-    #     names(dfi) <- c("_id", item)
-    #     #
-    #   }, silent = FALSE)
-    #   warning(paste0("For variable: ", item, " only the first slice of the array is returned."), immediate. = TRUE)
-    #   #
-    # } else { # other than array
-      tmp <- try({
-        if (debug) message("DEBUG: variable ", item, " handled as string")
-        dfi <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), '.', ns), data.frame = FALSE,
-                                        query  = rmongodb::mongo.bson.from.JSON(query),
-                                        fields = rmongodb::mongo.bson.from.JSON(paste0('{"_id": 1, "', item, '": 1}')))
-        if (debug) message("DEBUG: variable ", item, " has length ", length(dfi))
-        # attempt custom function to condense into a data frame instead of using data.frame = TRUE
-        dfi <- as.data.frame(cbind(sapply(dfi, function(x) as.vector(unlist(x[1]))),
-                                   sapply(dfi, function(x) paste0(as.vector(unlist(x[2])), collapse = " / "))),
-                             stringsAsFactors = FALSE)
-        names(dfi) <- c("_id", item)
-        #
-      }, silent = FALSE)
+    tmp <- try({
+      dfi <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), '.', ns), data.frame = FALSE,
+                                      query  = rmongodb::mongo.bson.from.JSON(query),
+                                      fields = rmongodb::mongo.bson.from.JSON(paste0('{"_id": 1, "', item, '": 1}')))
+      if (debug) message("DEBUG: variable / field ", item, " has length ", length(dfi))
+      #
+      # attempt custom function to condense into a data frame instead of using data.frame = TRUE
+      dfi <- as.data.frame(cbind(sapply(dfi, function(x) as.vector(unlist(x[1]))),
+                                 sapply(dfi, function(x) paste0(as.vector(unlist(x[2])), collapse = " / "))),
+                           stringsAsFactors = FALSE)
+      names(dfi) <- c("_id", item)
+      #
+    }, silent = FALSE)
     # }
     #
     if ((class(tmp) != "try-error") && (nrow(dfi) > 0)) {
@@ -484,7 +451,7 @@ dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(hos
       }
 
     } else {# try-error occured
-      stop(paste0("For variable: ", item, " no data could be extracted, please check the contents of the database."))
+      stop(paste0("For variable / field: ", item, " no data could be extracted, please check the contents of the database."))
     }
   } # end for item in fields
 

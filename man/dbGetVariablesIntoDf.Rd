@@ -27,13 +27,27 @@ A data frame with columns corresponding to the sought fields. Note
 }
 \description{
 With this convenience function, fields in the mongo database are retrieved
-into an R dataframe. As mongo fields can be hierarchical and structured, the
-function includes provisions for arrays (only the first slice is returned at
-this time) and for multiple entries in a field (which are contatenated in the
-returned results using ' / ').
+into an R dataframe. As mongo json fields within the record of a trial
+can be hierarchical and structured, the function returns a concatenation
+of values if there is more than one value or if the field is (in) an array,
+such as follows: value 1 / value 2 / ... (see example)
 }
 \details{
-For more sophisticated retrieval from the database, see vignette examples and
-packages such as mongolite.
+For more sophisticated data retrieval from the database, see vignette examples
+and other packages to query mongodb such as mongolite.
+}
+\examples{
+\dontrun{
+
+dbGetVariablesIntoDf("b1_sponsor.b31_and_b32_status_of_the_sponsor")[1,]
+#                   _id  b1_sponsor.b31_and_b32_status_of_the_sponsor
+#  1  2004-000015-25-GB                   Non-commercial / Commercial
+
+dbGetVariablesIntoDf("keyword")[1:2,]
+#            _id                                           keyword
+#  1 NCT00129259  T1D / type 1 diabetes / type 1 diabetes mellitus
+
+}
+
 }
 
