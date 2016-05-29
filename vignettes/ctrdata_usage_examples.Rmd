@@ -30,7 +30,7 @@ General information on the `ctrdata` package is available here: [https://github.
 
 ```{r execute_load_query}
 # 
-# Load library which has previously been installed
+# Load library which has previously been installed:
 library(ctrdata)
 #
 # In the browser, this is a search query used as example: 
@@ -60,6 +60,9 @@ q <- ctrQueryHistoryInDb()        # list the searches in the database (returns a
 q <- q [2,]                       # select exactly one of the searches (by subsetting q)
 ctrOpenSearchPagesInBrowser(q)    # open selected search newly in broweser
 #
+# This opens a browser already executing an example search:
+ctrOpenSearchPagesInBrowser(register = "EUCTR", queryterm = "cancer&age=under-18")
+#
 ```
 
 
@@ -88,11 +91,11 @@ dbFindVariable("date", allmatches = TRUE)
 
 ```{r execute_update_query}
 #
-# List queries
+# List queries:
 ctrQueryHistoryInDb()
 # 
 # 
-# Update query number 1 in the history
+# Update query number 1 in the history:
 #  - EUCTR information can be incrementally downloaded or updated only
 #    for the last 7 days, after which a full new download is necessary. 
 #  - CTGOV intformation can always be incrementally downloaded or updated. 
@@ -107,9 +110,9 @@ ctrQueryHistoryInDb()
 #
 # The date and time of the last download of individual records
 # is stored in the variable "record_last_import" as follows: 
-when_updated <- dbGetVariablesIntoDf("record_last_import")
-when_updated <- strptime(when_updated$record_last_import, format = "%Y-%m-%d %H:%M:%S")
-summary(when_updated)
+resultDate <- dbGetVariablesIntoDf("record_last_import")
+lastUpdate <- strptime(resultDate$record_last_import, format = "%Y-%m-%d %H:%M:%S")
+summary(lastUpdate)
 #                  Min.               1st Qu.                Median  [...]
 # "2016-04-21 19:49:54" "2016-04-21 19:49:54" "2016-04-21 19:49:54"  [...] 
 #
@@ -145,13 +148,13 @@ result <- dbGetVariablesIntoDf(c("a1_member_state_concerned",
                                  "a2_eudract_number"))
 #
 # Eliminate trials records duplicated by member state: 
-#
 result <- dfFindUniqueEuctrRecord(result)
+# 1781 EUCTR records dropped that were not the preferred of multiple records for the trial.
 #
-# Visualise
-#
+# Visualise:
 result$startdate <- strptime(result$n_date_of_competent_authority_decision, "%Y-%m-%d")
 hist(result$startdate, breaks = "years", freq = TRUE, las = 1); box()
+#
 ```
 ![Histogram](Rplot01.png)
 
@@ -165,10 +168,10 @@ hist(result$startdate, breaks = "years", freq = TRUE, las = 1); box()
 # Ongoing phase 3 interventional trials in breast carcinoma
 q <- "https://clinicaltrials.gov/ct2/results?term=&recr=Open&type=Intr&cond=breast+carcinoma&intr=Drug&state1=&age=1&phase=2"
 #
-# Show in browser 
+# Show and check search in browser: 
 ctrOpenSearchPagesInBrowser(q)
 #
-# Load data 
+# Load data: 
 ctrLoadQueryIntoDb(q)
 # ctrLoadQueryIntoDb(queryterm = "ependymoma&recr=Open&type=Intr&age=0", register = "CTGOV")
 #
@@ -176,24 +179,30 @@ ctrLoadQueryIntoDb(q)
 ctrQueryHistoryInDb()
 # 
 # Get columns from the database from different registers
-# (takes some time as variables are merged one after the other) 
+# (takes some time as variables are merged one after the other): 
 dbFindVariable("status", allmatches = TRUE)
 result <- dbGetVariablesIntoDf(c("overall_status", 
                                  "x5_trial_status", 
                                  "a2_eudract_number"))
 #
-# Find ids of unique trials and subset the result set to these unique trials
+# Find ids of unique trials and subset the result set to these unique trials:
 ids_of_unique_trials <- dbFindIdsUniqueTrials()
+# Searched for EUCTR identifiers in second id fields of CTGOV records.
+# Searched for CTGOV identifiers in second id fields of CTGOV records.
+# Total 24 duplicate(s) found, returning keys (_id) of 2513 records.
 #
-# Subset the result set to these unique trials
+# Subset the result set to these unique trials:
 result <- subset (result, subset = `_id` %in% ids_of_unique_trials)
 #
-# Select one Member State's version of an internactional trial
+# Select one Member State's version of an internactional trial:
 result <- dfFindUniqueEuctrRecord(result)
+# 1766 EUCTR records dropped that were not the preferred of multiple records for the trial.
 #
-# Now merge two variables into a new variable for analysis
+# Now merge two variables into a new variable for analysis:
 tmp <- dfMergeTwoVariablesRelevel(result, 
                                   varnames = c("overall_status", "x5_trial_status"))
+# Unique values returned: Ongoing, Completed, Prematurely Ended, Temporarily Halted, 
+#  Restarted, Recruiting, Not yet recruiting
 #
 table(tmp)
 # Active, not recruiting    Completed   Enrolling by invitation  [...] 
@@ -201,7 +210,8 @@ table(tmp)
 #              Recruiting   Suspended        Temporarily Halted  [...]
 #                    1148          38                         2  [...]
 #
-# Merge two variables as above and in addition, condense their values into a new value
+# Merge two variables as above and in addition, 
+# condense their values into a new value:
 statusvalues <- list("ongoing" = c("Recruiting", "Active", "Ongoing", 
                                    "Active, not recruiting", 
                                    "Enrolling by invitation", "Restarted"),
@@ -212,10 +222,11 @@ statusvalues <- list("ongoing" = c("Recruiting", "Active", "Ongoing",
 tmp <- dfMergeTwoVariablesRelevel(result, 
                                   varnames = c("overall_status", "x5_trial_status"), 
                                   levelslist = statusvalues)
+# Unique values returned: ongoing, completed, other
 #
 table(tmp)
 # completed   ongoing     other 
-#      1059       671       115
+#       159       671       115
 #
 ```
 
@@ -229,37 +240,40 @@ library(mongolite)
 #
 m <- mongo(db = "users", collection = "ctrdata")
 # 
-# Check if there are any duplicates
+# Check if there are any duplicates:
 ids_of_unique_trials <- dbFindIdsUniqueTrials()
+# Searched for EUCTR identifiers in second id fields of CTGOV records.
+# Searched for CTGOV identifiers in second id fields of CTGOV records.
+# Total 24 duplicate(s) found, returning keys (_id) of 2513 records.
 #
-# Find the database elements that represent a site
+# Find the database elements that represent a site:
 out <- m$find('{}', '{"location.facility.name": 1}')
 #
-# If there were duplicates, the unique trials could be retained like this
+# If there were duplicates, the unique trials could be retained like this:
 out <- subset (out, subset = `_id` %in% ids_of_unique_trials)
 #
 # Define a helper function to count elements, irrespective of whether
-# the elements are in an array or are a set of subdocuments in the database
+# the elements are in an array or are a set of subdocuments in the database:
 count.elements <- function (dataframecolumn) {
    return(sapply(dataframecolumn, 
                  function(x) ifelse (is.data.frame(tmp <- unlist (x[[1]])), 
                                      nrow(tmp), length(tmp))))
 }
 #
-# Sum up number of sites per trial
+# Sum up number of sites per trial:
 out$number_of_sites <- count.elements (out$location)
 #
-# Inspect first rows
-# out[1:5,]
+# Inspect first rows:
+out[1:5,]
 #                 _id                                      location  number_of_sites
 # 1       NCT00097292  Children's Hospital LA, UCSF, Stanford [...]               21
 # 2       NCT00129259                   The Diabetes Center at UCSF                1
 # 3 2006-001238-41-IT                                          NULL                0
 #
-# For many trials, no locations seem to be specified
+# For many trials, no locations seem to be specified:
 out <- out [out$number_of_sites >= 1 & out$number_of_sites <50, ]
 #
-# Draw histogram
+# Draw histogram:
 hist (out$number_of_sites)
 #
 ```
@@ -268,42 +282,41 @@ hist (out$number_of_sites)
 
 ```{r plot_endpoint_frequencies}
 #
-# search for interesting variables 
-# note the spelling in euctr
+# Search for interesting variables,  
+# note the spelling in EUCTR:
 dbFindVariable("end_point", allmatches = TRUE)
-
 #
-# get interesting variables from database 
-# for further analysis within R
+# Get interesting variables from database 
+# for further analysis within R:
 result <- dbGetVariablesIntoDf(c("a2_eudract_number", 
                                  "a41_sponsors_protocol_code_number", 
                                  "n_date_of_competent_authority_decision", 
                                  "e73_therapeutic_confirmatory_phase_iii", 
                                  "e51_primary_end_points"))
 #
-# eliminate trials records duplicated by member state
-# keep a single record and if available use preference
+# Eliminate trials records duplicated by member state
+# keep a single record and if available use preference:
 result <- dfFindUniqueEuctrRecord(result)
 #
-# checking expected number of trials
+# Checking expected number of trials:
 nrow(result)
 length(unique(result$a2_eudract_number))
 #
-# only use phase 3 trials
+# Only use phase 3 trials:
 table(result$e73_therapeutic_confirmatory_phase_iii, exclude = "")
 result <- result[!is.na(result$e73_therapeutic_confirmatory_phase_iii) &
                         result$e73_therapeutic_confirmatory_phase_iii == "Yes", ]
 #
-# is primary endpoint of interest? this uses regular expressions.
+# Is the a primary endpoint of interest? This uses regular expressions:
 #
 # PFS / EFS / RFS / DFS
 result$pe_is_efs <- grepl("((progression|event|relapse|recurrence|disease)[- ]free)|pfs|dfs|efs)", 
                           result$e51_primary_end_points, ignore.case = TRUE)
 #
-# prepare for summarising
+# Prepare for summarising:
 result$trial_start_year <- as.Date(substr(result$n_date_of_competent_authority_decision, 1, 4), format = "%Y")
 #
-# plot
+# Plot:
 library(ggplot2)
 ggplot(data = result, aes(x = trial_start_year, fill = pe_is_efs)) + 
   geom_histogram(binwidth = 365.25)  + 
@@ -316,11 +329,12 @@ ggplot(data = result, aes(x = trial_start_year, fill = pe_is_efs)) +
   theme(axis.text.x  = element_text(angle = 90, vjust = 0.5)) + 
   scale_x_date(date_breaks = "1 year", date_labels = "%Y")
 #
-# plausibility check - what is the primary endpoint
+# Plausibility check - what is the primary endpoint
 # if not one of the endpoints of interest? 
-# look into first ten examples found
+# Look into first ten examples foundL
 substr(result$e51_primary_end_points[result$pe_is_efs == FALSE], 1, 80)[1:10]
 # [results not shown]
+#
 ```
 ![Histogram2](Rplot02.png)
 
@@ -339,17 +353,17 @@ substr(result$e51_primary_end_points[result$pe_is_efs == FALSE], 1, 80)[1:10]
 #
 library(mongolite)
 #
-# Link R object m to the specified database collection
+# Link R object m to the specified database collection:
 m <- mongo(db = "users", collection = "ctrdata")
 #
-# Number of all records
+# Number of all records:
 m$count()
 #
-# Number of ctgov records using json for query
+# Number of CTGOV records, using json for query:
 m$count('{"_id": {"$regex": "NCT[0-9]{8}"}}')
 # 
 #
-# The following uses the aggregation pipeline in mongo.
+# The following uses the aggregation pipeline in mongo:
 #
 # Count number of records in which certain terms occur,
 # in any of the elements of the array in primary_outcome. 
@@ -412,7 +426,7 @@ library(mongolite)
 m <- mongo(db = "users", collection = "ctrdata")
 #
 # Count number of trials (trial records) with number of study participants 
-# in bins of hundreds of participants
+# in bins of hundreds of participants:
 #
 hist <- m$mapreduce(
 #
@@ -434,8 +448,9 @@ hist
 # note: _id is the bin of hundreds of study participants, 
 # value is the number of studies in respective bin
 # 
-plot (hist, type = "h", las = 1, xlim = c(0, 2000), ylim = c(0, 100), 
+plot (hist, type = "h", las = 1, xlim = c(0, 2000), ylim = c(0, 500), 
       xlab = "Number stubjects", y = "Number trials")
+#
 ```
 ![Histogram2](Rplot03.png)
 

@@ -6,7 +6,7 @@ Online version of this document: [https://github.com/rfhb/ctrdata/](https://gith
 
 ## Background
 
-The package `ctrdata` provides functions for retrieving information from public registers of clinical trials, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started mid 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package can only be used within the [R](https://www.r-project.org/) computing system. Last edit 2016-04-27 for version 0.6.2 (see NEWS.md). 
+The package `ctrdata` provides functions for retrieving information from public registers of clinical trials, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started mid 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package can only be used within the [R](https://www.r-project.org/) computing system. Last edit 2016-05-29 for version 0.7 (see NEWS.md). 
 
 Main features:
 
@@ -47,7 +47,7 @@ From this installation, binaries `mongoimport` and `mongo` need to be accessed. 
 
 * Command line tools `perl`, `sed`, `cat` and `php` (5.2 or higher): 
 
-In Linux and Mac OS X systems, these are usually already installed. For MS Windows, the recommendation is to install [cygwin](https://cygwin.com/install.html): In `R`, run `ctrdata::installCygwinWindowsDoInstall()` for an automated installation into `c:\cygwin`. Manual cygwin installation: In the graphical interface of the cygwin installer, type `perl` in the `Select packages` field and click on `Perl () Default` so that this changes to `Perl () Install`, repeat with `php-jsonc` and `php-simplexml` (shown [here](http://slu.livejournal.com/17395.html)). An installation does not require administrator credentials, see [here](https://cygwin.com/faq/faq.html#faq.setup.noroot). `Rtools` is *not* required for `ctrdata` on MS Windows. 
+In Linux and Mac OS X systems, these are usually already installed. For MS Windows, the recommendation is to install [cygwin](https://cygwin.com/install.html): In `R`, run `ctrdata::installCygwinWindowsDoInstall()` for an automated installation into `c:\cygwin`. Manual cygwin installation: In the graphical interface of the cygwin installer, type `perl` in the `Select packages` field and click on `Perl () Default` so that this changes to `Perl () Install`, repeat with `php-jsonc` and `php-simplexml` (shown [here](http://slu.livejournal.com/17395.html)). An installation does not require administrator credentials, see [here](https://cygwin.com/faq/faq.html#faq.setup.noroot). `Rtools` is *not* required for `ctrdata` on MS Windows. Package php7.0-xml has to be installed if PHP 7 is used (php5 includes this). 
 
 
 ## Overview of functions in `ctrdata`
@@ -146,7 +146,11 @@ q <- ctrGetQueryUrlFromBrowser()
 * Retrieve protocol-related information, transform, save to database and analyse:
 ```R
 #
-ctrLoadQueryIntoDb(q)
+# Retrieve from public register
+#
+ctrLoadQueryIntoDb(register = "EUCTR", queryterm = "cancer&age=under-18")
+#
+# Same if q was defined as per above: ctrLoadQueryIntoDb(q)
 #
 # If no parameters are given for a database connection: uses mongodb
 # on localhost, port 27017, database "users", collection "ctrdata"
@@ -156,20 +160,24 @@ ctrLoadQueryIntoDb(q)
 # Note that b31_... is an element within the array b1_...
 #
 result <- dbGetVariablesIntoDf(c("b1_sponsor.b31_and_b32_status_of_the_sponsor", 
-                                 "x5_trial_status"))
+                                 "x5_trial_status", "a2_eudract_number"))
+#
+# Eliminate trials records duplicated by EU member state: 
+#
+result <- dfFindUniqueEuctrRecord(result)
 #
 # Tabulate the status of the clinical trial on the date of information retrieval
+# Note some trials have more than one sponsor and values are concatenated with /.
 #
-with (result, table (x5_trial_status, b31_and_b32_status_of_the_sponsor))
+with (result, table (x5_trial_status, b1_sponsor.b31_and_b32_status_of_the_sponsor))
 #
-#                     b31_and_b32_status_of_the_sponsor
-# x5_trial_status      Commercial Non-Commercial
-#   Completed                 138             30
-#   Not Authorised              3              0
-#   Ongoing                   339            290
-#   Prematurely Ended          35              4
-#   Restarted                   8              0
-#   Temporarily Halted         14              4
+#                     b1_sponsor.b31_and_b32_status_of_the_sponsor
+# x5_trial_status      Commercial  Non-Commercial  Non-Commercial / Non-Commercial
+#   Completed                  81              32                                0
+#   Ongoing                   205             239                               12
+#   Prematurely Ended          15              12                                0
+#   Restarted                   0               1                                0
+#   Temporarily Halted          4               1                                0
 #
 ```
 
@@ -202,7 +210,11 @@ with (result, table (x5_trial_status, b31_and_b32_status_of_the_sponsor))
 
 * Package `ctrdata` should work on Linux, Mac OS X and MS Windows systems, but these could not all be tested, please file an issue in case of problems. 
 
-* In case `devtool::install_github("rfhb/ctrdata")` fails, you may have to: 
+* Plans include to map register fields to a single global definition, e.g. based on CDISC. Hence, the data format may change. 
+
+* Results-related information will also be covered in the near future. 
+
+* In case `devtool::install_github("rfhb/ctrdata")` fails, a proxy may need to be specified: 
 ```R
 # set a proxy
 library(httr)

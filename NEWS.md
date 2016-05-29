@@ -1,3 +1,9 @@
+# ctrdata 0.7
+ - 2016-05-29
+ - dbGetVariablesIntoDf changed to concatenate values in array and objects 
+ - completed test adaptation for travis
+ - improving perl regex
+ - checking helper applications
 # ctrdata 0.6.2
  - 2016-04-20
  - add / update field "record_last_import" for every imported / updated record

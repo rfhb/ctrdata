@@ -65,6 +65,10 @@ ctrOpenSearchPagesInBrowser()
 #
 ctrOpenSearchPagesInBrowser(copyright = TRUE)
 #
+# Open browser with example search:
+#
+ctrOpenSearchPagesInBrowser(register = "EUCTR", queryterm = "cancer&age=under-18")
+#
 ```
 
 ## Click search parameters and execute search in browser 
@@ -83,6 +87,8 @@ q <- ctrGetQueryUrlFromBrowser()
 
 ## Retrieve protocol-related information, transform, save to database, check
 ```{r execute_load_query}
+#
+# Use search q that was defined in previous step: 
 #
 ctrLoadQueryIntoDb(q)
 #
@@ -113,7 +119,7 @@ dbFindVariable("status", allmatches = TRUE)
 # [4] "x5_trial_status" "location.status"                                 "location.XX.status"
 #
 # Get all records that have values in all specified fields.
-# Note that b31_... is an element within the array b1_...
+# Note that b31_... is a field within the array b1_...
 #
 result <- dbGetVariablesIntoDf(c("b1_sponsor.b31_and_b32_status_of_the_sponsor", 
                                  "x5_trial_status"), debug = TRUE)
