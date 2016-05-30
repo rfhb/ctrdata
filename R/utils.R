@@ -340,7 +340,7 @@ dbFindIdsUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "127.0.0
 
   # EUCTR / EudraCT number is "_id" for EUCTR records
   listofEUCTRids <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns),
-                                             query  = list('_id' = list('$regex' = '[0-9]{4}-[0-9]{6}-[0-9]{2}-[A-Z]{2}')),
+                                             query  = list('_id' = list('$regex' = '[0-9]{4}-[0-9]{6}-[0-9]{2}-[3A-Z]{2,3}')),
                                              fields = list('_id' = 1L))
 
   # 1. search for eudract numbers among otherids, by ctgov _ids
