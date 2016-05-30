@@ -463,7 +463,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     resultsEuNumTrials <- as.numeric(gsub("[,.]", "", resultsEuNumTrials))
     resultsEuNumPages  <- ceiling(resultsEuNumTrials / 20) # this is simpler than parsing "next" or "last" links ...
     if (is.na(resultsEuNumPages) || is.na(resultsEuNumTrials) || resultsEuNumTrials == 0) stop("First result page empty - no trials found?")
-    message(paste0("Retrieved overview, ", resultsEuNumTrials, " trial(s) from ", resultsEuNumPages, " page(s) are to be downloaded."))
+    message("Retrieved overview, ", resultsEuNumTrials, " trial(s) from ", resultsEuNumPages, " page(s) are to be downloaded.")
 
     # get data
     resultsNumBatches <- resultsEuNumPages %/% parallelretrievals
@@ -479,6 +479,8 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
       #
       tmp <- RCurl::getURL(paste0(queryEuRoot, ifelse(details, queryEuType3, queryEuType2), queryterm, "&page=", startpage:stoppage,
                                   queryEuPost), curl = h, async = TRUE, binary = FALSE)
+      #
+      if (debug) message("DEBUG: ", class(tmp))
       #
       for (i in startpage:stoppage)
         write(tmp[[1 + i - startpage]],
@@ -512,7 +514,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     }
     #
     # run conversion
-    message(paste0("Converting to JSON ..."))
+    message("Converting to JSON ...")
     if (debug) message("DEBUG: ", euctr2json)
     imported <- system(euctr2json, intern = TRUE)
     #
@@ -524,7 +526,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     # find out number of trials imported into database
     imported <- as.integer(gsub(".*imported ([0-9]+) document.*", "\\1", imported[length(imported)]))
     if (!is.numeric(imported) || imported == 0) stop("Import has apparently failed, returned ", imported)
-    message(paste0("Imported or updated ", imported, " records on ", resultsEuNumTrials, " trial(s)."))
+    message("Imported or updated ", imported, " records on ", resultsEuNumTrials, " trial(s).")
 
     # clean up temporary directory
     if (!debug) unlink(tempDir, recursive = TRUE)
