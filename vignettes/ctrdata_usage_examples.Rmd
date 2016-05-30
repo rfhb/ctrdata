@@ -347,9 +347,9 @@ substr(result$e51_primary_end_points[result$pe_is_efs == FALSE], 1, 80)[1:10]
 #
 ```
 
-## Histogram of trial sponsors
+## Histogram of status of investigational medicinal product
 
-```{r hist_trial_sponsors}
+```{r hist_medicine_status}
 #
 ctrLoadQueryIntoDb(register = "EUCTR", 
                    queryterm = "&age=under-18&phase=phase-one&phase=phase-two", 
@@ -420,8 +420,8 @@ result <- dfFindUniqueEuctrRecord (result)
 #
 # any of the investigational medicinal product(s) authorised or not?
 table(result$dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation)
-tmp <- grepl("Yes", result$dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation) 
-table(tmp)
+library(stringi)
+tmp <- stri_count(result$dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation, fixed = "Yes") > 0
 #
 # draw plot
 library(ggplot2)
@@ -433,7 +433,7 @@ ggplot(data = result,
        y = "Number of clinical trials", 
        fill = "IMP authorised?")
 # save plot
-ggsave("phase1_paed_oncol.png", width = 5, height = 4)
+ggsave("phase1_paed_oncol.png", width = 3, height = 2)
 #
 ```
 ![Histogram3](phase1_paed_oncol.png)
