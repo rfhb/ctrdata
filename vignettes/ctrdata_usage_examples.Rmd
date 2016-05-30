@@ -347,6 +347,97 @@ substr(result$e51_primary_end_points[result$pe_is_efs == FALSE], 1, 80)[1:10]
 #
 ```
 
+## Histogram of trial sponsors
+
+```{r hist_trial_sponsors}
+#
+ctrLoadQueryIntoDb(register = "EUCTR", 
+                   queryterm = "&age=under-18&phase=phase-one&phase=phase-two", 
+                   ns = "paediatric_phase12_trials")
+#
+ctrQueryHistoryInDb(ns = "paediatric_phase12_trials")
+#
+ctrLoadQueryIntoDb(querytoupdate = 1, ns = "paediatric_phase12_trials")
+#
+dbFindVariable("phase", allmatches = TRUE, ns = "paediatric_phase12_trials")
+# [1] "e72_therapeutic_exploratory_phase_ii"   "e71_human_pharmacology_phase_i"
+# [3] "e73_therapeutic_confirmatory_phase_iii" "e74_therapeutic_use_phase_iv"  
+#
+result <- dbGetVariablesIntoDf(c("a1_member_state_concerned", "n_date_of_competent_authority_decision",
+                                 "dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation", 
+                                 "e11_medical_conditions_being_investigated", "e112_therapeutic_area", 
+                                 "e71_human_pharmacology_phase_i", "e72_therapeutic_exploratory_phase_ii",
+                                 "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database",
+                                 "a3_full_title_of_the_trial", "a2_eudract_number"), 
+                               ns = "paediatric_phase12_trials")
+#
+searchfor <- "cancer, leukaem, leukem, tumour, tumor, sarcoma, blastom, gliom, germ, lymphom, malign, hodgkin, ewing, rhabdo, terato, tumeur, leucemi"
+searchfor <- strsplit(searchfor, ", ")[[1]]
+#
+# helper function to extend grepl to check for several patterns
+grepl_multi <- function (patterns, x, simplify = TRUE) {
+  if(!is.vector(patterns)) stop("patterns should be a vector.")
+  ret <- apply(as.matrix(patterns), 1, function(pattern) grepl(pattern, x, ignore.case = TRUE))
+  ret <- as.data.frame(ret)
+  if (simplify) 
+    ret <- rowSums(ret) >= 1
+  else
+    names(ret) <- patterns
+  return(ret)
+}
+#
+relevant <- grepl_multi(searchfor, result$a3_full_title_of_the_trial) | 
+            grepl_multi(searchfor, result$e11_medical_conditions_being_investigated) |
+            grepl_multi("C04",     result$e112_therapeutic_area)
+#
+# check
+table(relevant)
+nrow(result) 
+length(unique(result[["_id"]]))
+length(dbFindIdsUniqueTrials(ns = "paediatric_phase12_trials"))
+#
+# get relevant trials
+result <- result[relevant & result$e71_human_pharmacology_phase_i == "Yes",]
+#
+# adjust date format
+result$startdate <- ifelse(!is.na(tmp <- result$n_date_of_competent_authority_decision), tmp, 
+                          result$x6_date_on_which_this_record_was_first_entered_in_the_eudract_database)
+result$startdate <- strptime(result$startdate, "%Y-%m-%d")
+#
+# find first member state to authorise trial
+tmp <- aggregate(result$startdate, 
+                 by = list (result$a2_eudract_number),
+                 FUN = function (x) min (x))
+result <- merge (x = result, y = tmp, 
+                 by.x = "a2_eudract_number", by.y = "Group.1", 
+                 all.x = TRUE)
+# label date and calculate year
+names(result)[ncol(result)] <- "startdatefirst"
+result$startyearfirst <- as.numeric(format(result$startdatefirst, "%Y"))
+#
+# create eu single-trial record dataset
+result <- dfFindUniqueEuctrRecord (result)
+#
+# any of the investigational medicinal product(s) authorised or not?
+table(result$dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation)
+tmp <- grepl("Yes", result$dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation) 
+table(tmp)
+#
+# draw plot
+library(ggplot2)
+ggplot(data = result, 
+       aes(x = startyearfirst, fill = tmp)) + 
+  geom_histogram(binwidth = 1) + 
+  labs(title = "Paediatric phase 1 oncology trials", 
+       x = "Year of clinical trial authorisation in EU", 
+       y = "Number of clinical trials", 
+       fill = "IMP authorised?")
+# save plot
+ggsave("phase1_paed_oncol.png", width = 5, height = 4)
+#
+```
+![Histogram3](phase1_paed_oncol.png)
+
 ## Use aggregation functions of the data base to find specific trial endpoints
 
 ```{r mongodb_aggregation_pipeline}
