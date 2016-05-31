@@ -5,7 +5,8 @@
 \title{Select a single trial record when there are records for different EU Member
 States for this trial.}
 \usage{
-dfFindUniqueEuctrRecord(df = NULL, prefer = "GB")
+dfFindUniqueEuctrRecord(df = NULL, prefer = "GB",
+  include3rdcountrytrials = TRUE)
 }
 \arguments{
 \item{df}{A data frame created from the database that includes the columns
@@ -16,6 +17,11 @@ dbGetVariablesIntoDf(c("_id", "a2_eudract_number")).}
 returned if available. (If not available, a record for GB or lacking this
 any other record for the trial will be returned.) For a list of codes of EU
 Member States, please see vector \code{countriesEUCTR}.}
+
+\item{include3rdcountrytrials}{A logical value if trials should be retained
+ that are conducted in third countries, that is outside the European Union.
+ These can be recognised by EUCTR identifiers ending in -3RD, such as
+\href{https://www.clinicaltrialsregister.eu/ctr-search/trial/2010-022945-52/3rd}{2010-022945-52-3RD}.}
 }
 \value{
 A data frame as subset of \code{df} corresponding to the sought

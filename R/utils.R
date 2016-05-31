@@ -485,13 +485,17 @@ dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(hos
 #'   returned if available. (If not available, a record for GB or lacking this
 #'   any other record for the trial will be returned.) For a list of codes of EU
 #'   Member States, please see vector \code{countriesEUCTR}.
+#' @param include3rdcountrytrials A logical value if trials should be retained
+#'   that are conducted in third countries, that is outside the European Union.
+#'   These can be recognised by EUCTR identifiers ending in -3RD, such as
+#'  \href{https://www.clinicaltrialsregister.eu/ctr-search/trial/2010-022945-52/3rd}{2010-022945-52-3RD}.
 #'
 #' @return A data frame as subset of \code{df} corresponding to the sought
 #'   records.
 #'
 #' @export dfFindUniqueEuctrRecord
 #'
-dfFindUniqueEuctrRecord <- function(df = NULL, prefer = "GB") {
+dfFindUniqueEuctrRecord <- function(df = NULL, prefer = "GB", include3rdcountrytrials = TRUE) {
   #
   if (class(df) != "data.frame") stop("Parameter df is not a data frame.")
   if (is.null(df [['_id']]) || is.null(df$a2_eudract_number)) stop('Data frame does not include "_id" and "a2_eudract_number" columns.')
@@ -527,10 +531,12 @@ dfFindUniqueEuctrRecord <- function(df = NULL, prefer = "GB") {
       result <- recordnames[!fnd]
       return(result)
     }
+    #
     if (sum(fnd <- grepl("GB", recordnames)) != 0) {
       result <- recordnames[!fnd]
       return(result)
     }
+    #
     return(recordnames[-1])
   }
 
@@ -542,6 +548,9 @@ dfFindUniqueEuctrRecord <- function(df = NULL, prefer = "GB") {
   df <- df [!(df [['_id']] %in% result), ]
   # also eliminate the meta-info record
   df <- df [!(df [['_id']] == "meta-info"), ]
+
+  # as a last step, handle 3rd country trials e.g. 2010-022945-52-3RD
+  if (!include3rdcountrytrials) df <- df [!grepl("-3RD", df[["_id"]]), ]
 
   # inform user about changes to data frame
   if (length(nms) > (tmp <- length(result))) message(tmp, ' EUCTR records dropped that were not the preferred of multiple records for the trial.')
