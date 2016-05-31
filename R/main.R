@@ -460,7 +460,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     h = RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE)) # avoiding server certificate failure when queried from outside EU
     resultsEuPages <- RCurl::getURL(paste0(queryEuRoot, queryEuType1, queryterm), curl = h)
     resultsEuNumTrials <- sub(".*Trials with a EudraCT protocol \\(([0-9,.]*)\\).*", "\\1", resultsEuPages)
-    resultsEuNumTrials <- as.numeric(gsub("[,.]", "", resultsEuNumTrials))
+    resultsEuNumTrials <- suppressWarnings(as.numeric(gsub("[,.]", "", resultsEuNumTrials)))
     resultsEuNumPages  <- ceiling(resultsEuNumTrials / 20) # this is simpler than parsing "next" or "last" links ...
     if (is.na(resultsEuNumPages) || is.na(resultsEuNumTrials) || resultsEuNumTrials == 0) stop("First result page empty - no trials found?")
     message("Retrieved overview, ", resultsEuNumTrials, " trial(s) from ", resultsEuNumPages, " page(s) are to be downloaded.")
@@ -481,6 +481,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
                                   queryEuPost), curl = h, async = TRUE, binary = FALSE)
       #
       if (debug) message("DEBUG: ", class(tmp))
+      if (class(tmp) != "character") stop("Download of records from EUCTR failed; last data received led to the error ", class(tmp))
       #
       for (i in startpage:stoppage)
         write(tmp[[1 + i - startpage]],
