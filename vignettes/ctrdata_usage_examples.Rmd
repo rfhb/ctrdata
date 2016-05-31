@@ -351,9 +351,9 @@ substr(result$e51_primary_end_points[result$pe_is_efs == FALSE], 1, 80)[1:10]
 
 ```{r hist_medicine_status}
 #
-ctrLoadQueryIntoDb(register = "EUCTR", 
-                   queryterm = "&age=under-18&phase=phase-one&phase=phase-two", 
-                   ns = "paediatric_phase12_trials")
+if (FALSE) ctrLoadQueryIntoDb(register = "EUCTR", 
+                              queryterm = "&age=under-18&phase=phase-one&phase=phase-two", 
+                              ns = "paediatric_phase12_trialsxx")
 #
 ctrQueryHistoryInDb(ns = "paediatric_phase12_trials")
 #
@@ -416,7 +416,8 @@ names(result)[ncol(result)] <- "startdatefirst"
 result$startyearfirst <- as.numeric(format(result$startdatefirst, "%Y"))
 #
 # create eu single-trial record dataset
-result <- dfFindUniqueEuctrRecord (result)
+table(grepl("-3RD", result[["_id"]]), exclude = "")
+result <- dfFindUniqueEuctrRecord (result, include3rdcountrytrials = FALSE)
 #
 # any of the investigational medicinal product(s) authorised or not?
 table(result$dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation)
@@ -428,12 +429,13 @@ library(ggplot2)
 ggplot(data = result, 
        aes(x = startyearfirst, fill = tmp)) + 
   geom_histogram(binwidth = 1) + 
-  labs(title = "Paediatric phase 1 oncology trials", 
-       x = "Year of clinical trial authorisation in EU", 
-       y = "Number of clinical trials", 
-       fill = "IMP authorised?")
-# save plot
-ggsave("phase1_paed_oncol.png", width = 3, height = 2)
+  labs(title = "Paediatric phase 1 oncology trials in EU", 
+       x = "Year of trial authorisation (or EUCTR upload)", 
+       y = "Number of trials", 
+       fill = "Medicine\nauthorised?")
+#
+# possibly save plot
+# ggsave("phase1_paed_oncol.png", width = 3, height = 2)
 #
 ```
 ![Histogram3](phase1_paed_oncol.png)
