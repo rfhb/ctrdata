@@ -162,7 +162,7 @@ ctrGetQueryUrlFromBrowser <- function(content = clipr::read_clip()) {
 
 #' Show the history of queries that were loaded into a database
 #'
-#' @inheritParams ctrdata::ctrLoadQueryIntoDb
+#' @inheritParams ctrdata:::ctrLoadQueryIntoDb
 #'
 #' @return A data frame with variables: timestamp, register, number of records
 #'   loaded, query term
@@ -228,7 +228,7 @@ ctrQueryHistoryInDb <- function(mongo = rmongodb::mongo.create(host = "127.0.0.1
 #' @param forceupdate If \code{TRUE}, refreshes collection of keys (default is
 #'   \code{FALSE}).
 #'
-#' @inheritParams ctrdata::ctrLoadQueryIntoDb
+#' @inheritParams ctrdata:::ctrLoadQueryIntoDb
 #'
 #' @return Vector of first keys (fields) found (or of all keys, see above)
 #' @import rmongodb curl
@@ -316,7 +316,7 @@ dbFindVariable <- function(namepart = "",
 #' recording other identifiers such as the EudraCT number in the field "Other
 #' IDs".
 #'
-#' @inheritParams ctrdata::ctrLoadQueryIntoDb
+#' @inheritParams ctrdata:::ctrLoadQueryIntoDb
 #'
 #' @return A vector with strings of keys (_id in the database) that are
 #'   non-duplicate trials.
@@ -388,7 +388,7 @@ dbFindIdsUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "127.0.0
 #' and other packages to query mongodb such as mongolite.
 #'
 #' @param fields Vector of strings, with names of the sought fields.
-#' @inheritParams ctrdata::ctrLoadQueryIntoDb
+#' @inheritParams ctrdata:::ctrLoadQueryIntoDb
 #'
 #' @return A data frame with columns corresponding to the sought fields. Note
 #'   that a column for the record _id will always be included. The maximum
@@ -629,7 +629,7 @@ installCygwinWindowsDoInstall <- function(overwrite = FALSE, proxy = ""){
   system(paste0(dstfile, " ", installcmd, " --local-package-dir ", tmpfile, ' ', proxy))
   #
   # test cygwin installation
-  installCygwinWindowsTest()
+  ctrdata:::installCygwinWindowsTest()
   #
 }
 
@@ -639,8 +639,8 @@ installCygwinWindowsDoInstall <- function(overwrite = FALSE, proxy = ""){
 #'
 #' @return Information if cygwin can be used, \code{TRUE} or \code{FALSE}
 #'
-#' @export installCygwinWindowsTest
-#'
+#' @keywords internal
+#
 installCygwinWindowsTest <- function() {
   #
   if (.Platform$OS.type != "windows") stop("This function is only for MS Windows operating systems.")
@@ -669,8 +669,8 @@ installCygwinWindowsTest <- function() {
 #'   or, under MS Windows, a string representing the path to the folder of the
 #'   mongo binaries
 #'
-#' @export installMongoFindBinaries
-#'
+#' @keywords internal
+#
 installMongoFindBinaries <- function(mongoDirWin = "c:\\mongo\\bin\\") {
   #
   # debug: mongoBinaryLocation <- "/usr/bin/"
@@ -744,13 +744,13 @@ installMongoFindBinaries <- function(mongoDirWin = "c:\\mongo\\bin\\") {
 #' In addition to the returned value, the function will generate a warning
 #' message if applicable.
 #'
-#' @inheritParams ctrdata::ctrLoadQueryIntoDb
+#' @inheritParams ctrdata:::ctrLoadQueryIntoDb
 #'
 #' @return A logical value indicating if the mongodb version is acceptable for
 #'   use with this package.
 #'
-#' @export installMongoCheckVersion
-#'
+#' @keywords internal
+#
 installMongoCheckVersion <- function(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users")) {
   #
   result <- rmongodb::mongo.command(mongo, attr(mongo, "db"), list("buildInfo" = 1L))
@@ -846,8 +846,8 @@ dfMergeTwoVariablesRelevel <- function(df = NULL, varnames = "", levelslist = NU
 #'
 #' @return A logical if executing commandtest returned an error or not
 #'
-#' @export findBinary
-#'
+#' @keywords internal
+#
 findBinary <- function(commandtest = NULL) {
   #
   if (is.null(commandtest)) stop ("Empty argument: commandtest")
@@ -865,30 +865,4 @@ findBinary <- function(commandtest = NULL) {
   #
 }
 
-
-
-# Convert a mongo query result object into a data frame
-#
-# @param x A result of object of a mongo query
-# @return A data frame with the data that was stored in the input object
-# @import rmongodb
-# @export mongo2df
-#
-# mongo2df <- function(x) {
-#   xclass <- class(x)
-#   #
-#   if (xclass == "mongo.bson") {
-#     tmp <- rmongodb::mongo.bson.to.list(x)
-#     df <- data.frame(do.call(rbind, tmp))
-#     df <- df[2:nrow(df), ]
-#     return(df)
-#   }
-#   if (xclass == "mongo.cursor") {
-#     df <- rmongodb::mongo.cursor.to.data.frame(x)
-#     return(df)
-#   }
-#   # other type of object
-#   warning("Could not use input, not a bson or mongo cursor.")
-#   return(NULL)
-# }
 

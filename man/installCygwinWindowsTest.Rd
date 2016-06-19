@@ -12,4 +12,5 @@ Information if cygwin can be used, \code{TRUE} or \code{FALSE}
 \description{
 Convenience function to test for working cygwin installation
 }
+\keyword{internal}
 

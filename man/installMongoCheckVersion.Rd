@@ -19,4 +19,5 @@ A logical value indicating if the mongodb version is acceptable for
 In addition to the returned value, the function will generate a warning
 message if applicable.
 }
+\keyword{internal}
 

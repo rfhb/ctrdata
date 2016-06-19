@@ -21,4 +21,5 @@ Either an empty string if \code{mongoimport} was found on the path
 Convenience function to find location of mongo database binaries (mongo,
 mongoimport)
 }
+\keyword{internal}
 

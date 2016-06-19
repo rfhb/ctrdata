@@ -63,6 +63,8 @@
 ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate = 0, details = TRUE, parallelretrievals = 10,
                        mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"), ns = "ctrdata", debug = FALSE) {
 
+  ##### parameter checks #####
+
   # graciously deduce queryterm and register if a full url is unexpectedly provided as queryterm
   if(is.character(queryterm) && grepl ("^https.+clinicaltrials.+", queryterm)) queryterm <- ctrdata::ctrGetQueryUrlFromBrowser(content = queryterm)
 
@@ -87,19 +89,19 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
 
   # check program availability
   if (.Platform$OS.type == "windows") {
-    installMongoFindBinaries()
+    ctrdata:::installMongoFindBinaries()
     if (is.na(get("mongoBinaryLocation", envir = .privateEnv)))
       stop("Not starting ctrLoadQueryIntoDb because mongoimport was not found.")
-    installCygwinWindowsTest()
+    ctrdata:::installCygwinWindowsTest()
   }
 
   # check program version as acceptable json format changed from 2.x to 3.x
-  installMongoCheckVersion()
+  ctrdata:::installMongoCheckVersion()
 
   # remove trailing or leading whitespace
   queryterm <- gsub("^\\s+|\\s+$", "", queryterm)
 
-  ############################
+  ##### helper functions #####
 
   # helper function for adding query parameters and results to database
   # query-timestamp is a fixed string format (character variable)
@@ -146,7 +148,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   }
   # end dbCTRUpdateQueryHistory
 
-  ############################
+  ##### rerun previous query #####
 
   # updating previously run queries - try to re-use previous query as recorded in the collection
   #
@@ -361,7 +363,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
                            ifelse(attr(mongo, "username") != "", paste0(' --username="', attr(mongo, "username"), '"'), ''),
                            ifelse(attr(mongo, "password") != "", paste0(' --password="', attr(mongo, "password"), '"'), ''),
                            ' --upsert --type=json --file="', tempDir, '/allfiles.json"',
-                           ifelse(installMongoCheckVersion(), '', ' --jsonArray'))
+                           ifelse(ctrdata:::installMongoCheckVersion(), '', ' --jsonArray'))
 
       # prepare for alternative method to split large file and import split files one by one
       # #!/bin/bash
