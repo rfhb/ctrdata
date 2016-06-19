@@ -354,6 +354,7 @@ substr(result$e51_primary_end_points[result$pe_is_efs == FALSE], 1, 80)[1:10]
 if (FALSE) ctrLoadQueryIntoDb(register = "EUCTR", 
                               queryterm = "&age=under-18&phase=phase-one&phase=phase-two", 
                               ns = "paediatric_phase12_trialsxx")
+                              ns = "paediatric_phase12_trials")
 #
 ctrQueryHistoryInDb(ns = "paediatric_phase12_trials")
 #
@@ -368,6 +369,7 @@ result <- dbGetVariablesIntoDf(c("a1_member_state_concerned", "n_date_of_compete
                                  "e11_medical_conditions_being_investigated", "e112_therapeutic_area", 
                                  "e71_human_pharmacology_phase_i", "e72_therapeutic_exploratory_phase_ii",
                                  "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database",
+                                 "f422_in_the_whole_clinical_trial", 
                                  "a3_full_title_of_the_trial", "a2_eudract_number"), 
                                ns = "paediatric_phase12_trials")
 #
@@ -397,7 +399,20 @@ length(unique(result[["_id"]]))
 length(dbFindIdsUniqueTrials(ns = "paediatric_phase12_trials"))
 #
 # get relevant trials
-result <- result[relevant & result$e71_human_pharmacology_phase_i == "Yes",]
+result <- result[relevant,]
+#
+# which phases are included? 
+tmp <- dfFindUniqueEuctrRecord (result, include3rdcountrytrials = FALSE)
+tmp <- tmp[tmp$e71_human_pharmacology_phase_i == "Yes",]
+with(tmp,   plot(f422_in_the_whole_clinical_trial ~ as.numeric(substr(n_date_of_competent_authority_decision, 1, 4))))
+with(tmp, tapply(f422_in_the_whole_clinical_trial,  
+                 as.numeric(substr(n_date_of_competent_authority_decision, 1, 4)), 
+                 function (x) median (as.numeric (x), na.rm = TRUE)))
+4tmp <- tmp[grepl ("^201[1-9]-.+", tmp$n_date_of_competent_authority_decision), ]
+with(tmp, table(e71_human_pharmacology_phase_i, e72_therapeutic_exploratory_phase_ii))
+#
+# for further steps only look at phase 1 trials
+result <- result[result$e71_human_pharmacology_phase_i == "Yes",]
 #
 # adjust date format
 result$startdate <- ifelse(!is.na(tmp <- result$n_date_of_competent_authority_decision), tmp, 
@@ -422,7 +437,9 @@ result <- dfFindUniqueEuctrRecord (result, include3rdcountrytrials = FALSE)
 # any of the investigational medicinal product(s) authorised or not?
 table(result$dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation)
 library(stringi)
-tmp <- stri_count(result$dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation, fixed = "Yes") > 0
+tmp <- stri_count(result$dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation, fixed = "Yes")
+table(tmp, exclude = "")
+tmp <- tmp > 0
 #
 # draw plot
 library(ggplot2)
