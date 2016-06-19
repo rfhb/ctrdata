@@ -4,17 +4,42 @@
 \name{ctrdata}
 \alias{ctrdata}
 \alias{ctrdata-package}
-\title{ctrdata: A package to retrieve and to prepare for analysis, information on
-clinical trials from public registers.}
+\title{ctrdata: Overview on functions.}
 \description{
-The ctrdata package provides three categories of important functions:
-operations on a clinical trial register (ctrOpenSearchPagesInBrowser,
-ctrGetQueryUrlFromBrowser, ctrQueryHistoryInDb, ctrLoadQueryIntoDb), on the
-database that holds downloaded information (dbGetVariablesIntoDf,
-dbFindVariable, dbFindIdsUniqueTrials) and on R dataframes with clinical
-trial information (dfMergeTwoVariablesRelevel, dfMergeTwoVariablesRelevel).
+The ctrdata package provides three categories of important functions,
+in sequence of their use in a workflow:
 }
-\section{ctrdata functions}{
- The foo functions ...
+\section{Operations on a clinical trial register}{
+
+
+\link{ctrOpenSearchPagesInBrowser},
+\link{ctrGetQueryUrlFromBrowser},
+\link{ctrLoadQueryIntoDb}
+}
+
+\section{Using the database that holds downloaded information}{
+
+
+\link{dbFindVariable},
+\link{ctrQueryHistoryInDb}
+}
+
+\section{Getting R dataframes from clinical trial information in the database}{
+
+
+\link{dbGetVariablesIntoDf},
+\link{dfMergeTwoVariablesRelevel}.
+}
+
+\section{Deduplication}{
+
+
+In the database, a list of de-duplicated identifiers of
+clinical trial records can be obtained with
+\link{dbFindIdsUniqueTrials}.
+
+In a dataframe, the preferred of duplicate records of
+a trial from EUCTR can be obtained with
+\link{dfFindUniqueEuctrRecord}.
 }
 
