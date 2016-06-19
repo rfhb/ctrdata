@@ -11,8 +11,9 @@ ctrLoadQueryIntoDb(queryterm = "", register = "EUCTR", querytoupdate = 0,
   ns = "ctrdata", debug = FALSE)
 }
 \arguments{
-\item{queryterm}{Part of the URL of a search in a register. The queryterms is
-recorded in the collection for later use to update records.}
+\item{queryterm}{Either a string with the URL of a search in a register
+or the list returned by the \link{ctrGetQueryUrlFromBrowser} function.
+The queryterm is recorded in the collection \code{ns} for later use to update records.}
 
 \item{register}{Vector of abbreviations of registers to query, defaults to
 "EUCTR"}

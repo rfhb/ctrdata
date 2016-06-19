@@ -8,8 +8,9 @@
 #' be accumulated. If you want to insert into an empty database, you have to
 #' include a mongo connection object to such an empty database.
 #'
-#' @param queryterm Part of the URL of a search in a register. The queryterms is
-#'   recorded in the collection for later use to update records.
+#' @param queryterm Either a string with the URL of a search in a register
+#'   or the list returned by the \link{ctrGetQueryUrlFromBrowser} function.
+#'   The queryterm is recorded in the collection \code{ns} for later use to update records.
 #' @param register Vector of abbreviations of registers to query, defaults to
 #'   "EUCTR"
 #' @param details If \code{TRUE} (default), retrieve full protocol-related
@@ -231,13 +232,13 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     }
   }
 
-  ############################
+  ##### ctgov core functions #####
 
   if ("CTGOV" %in% register) {
 
     # check availability of relevant helper programs
-    if(!suppressWarnings(findBinary("php --version")))       stop("php not found.")
-    if(!suppressWarnings(findBinary("php -r 'simplexml_load_string(\"\");'")))  stop("php xml not found.")
+    if(!suppressWarnings(ctrdata:::findBinary("php --version")))                          stop("php not found.")
+    if(!suppressWarnings(ctrdata:::findBinary("php -r 'simplexml_load_string(\"\");'")))  stop("php xml not found.")
 
     # create empty temporary directory on localhost for
     # download from register into temporary directy
@@ -249,6 +250,8 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     queryUSType1  <- "ct2/results/download?"
     queryUSPreCSV <- "&down_stds=all&down_typ=fields&down_flds=all&down_fmt=csv"
     queryUSPreXML <- "&down_stds=all&down_typ=study&down_flds=all&down_fmt=xml"
+    # next line to include any available result-related information within the XML
+    # queryUSPreXML <- "down_stds=all&down_typ=results&down_flds=all&down_fmt=plain"
     queryUSPost   <- "&show_down=Y"
 
     # example: condition ependymoma, children, interventional study, added or modified from 1 Dec 2014 onwards:
@@ -434,13 +437,13 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
 
   }
 
-  ############################
+  ##### euctr core functions #####
 
   if ("EUCTR" %in% register) {
 
     # check availability of relevant helper programs
-    if(!suppressWarnings(findBinary("echo x | sed s/x/y/"))) stop("sed not found.")
-    if(!suppressWarnings(findBinary("perl -V:osname")))      stop("perl not found.")
+    if(!suppressWarnings(ctrdata:::findBinary("echo x | sed s/x/y/"))) stop("sed not found.")
+    if(!suppressWarnings(ctrdata:::findBinary("perl -V:osname")))      stop("perl not found.")
 
     message("Downloading trials from EUCTR ...")
 
@@ -542,7 +545,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
 
   }
 
-  ############################
+  ##### end ctrLoadQueryIntoDb#####
 
   # return some useful information
   invisible(imported)
