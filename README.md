@@ -52,23 +52,18 @@ In Linux and Mac OS X systems, these are usually already installed. For MS Windo
 
 ## Overview of functions in `ctrdata`
 
-
 Name  | Function
 ---------------------------- | --------------------------------------------
 ctrOpenSearchPagesInBrowser	| Open advanced search pages of register(s) or execute search in default web browser
 ctrQueryHistoryInDb	| Show the history of queries that were loaded into a database
 ctrGetQueryUrlFromBrowser	| Import from clipboard the URL of a search in one of the registers
 ctrLoadQueryIntoDb	| Retrieve or update information on clinical trials from register and store in database
-dbFindIdsUniqueTrials	| This function checks for duplicates in the database based on the clinical trial identifier and returns a list of ids of unique trials
+dbFindIdsUniqueTrials	| Produce a vector of de-duplicated identifiers of clinical trial record in the database
 dbFindVariable	| Find names of keys (fields) in the database
 dbGetVariablesIntoDf	| Create a data frame from records in the database that have specified fields in the database
 dfFindUniqueEuctrRecord	| Select a single trial record when there are records for different EU Member States for this trial
 dfMergeTwoVariablesRelevel	| Merge related variables into a single variable, and optionally map values to a new set of values
-installMongoCheckVersion	| Check the version of the build of the mongo server to be used
-installMongoFindBinaries	| Convenience function to find location of mongo database binaries (mongo, mongoimport)
 installCygwinWindowsDoInstall	| Convenience function to install a cygwin environment under MS Windows, including perl and php
-installCygwinWindowsTest	| Convenience function to test for working cygwin installation
-
 
 <!--
 

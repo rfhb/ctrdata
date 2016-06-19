@@ -21,7 +21,7 @@
 #'
 #' @section Deduplication:
 #'
-#' In the database, a list of de-duplicated identifiers of
+#' From the database, a vector of de-duplicated identifiers of
 #' clinical trial records can be obtained with
 #' \link{dbFindIdsUniqueTrials}.
 #'
