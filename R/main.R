@@ -84,8 +84,8 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   # other sanity checks
   if ((queryterm == "") & querytoupdate == 0) stop("'query term' is empty.")
   if (querytoupdate != trunc(querytoupdate))  stop("'querytoupdate' does not have an integer value.")
-  if (class(mongo) != "mongo") stop("'mongo' is not a mongo connection object.")
-  if (register  == "")         stop("'register' is empty.")
+  if (class(mongo)  != "mongo")               stop("'mongo' is not a mongo connection object.")
+  if(!grepl(register, "CTGOVEUCTR"))          stop("Register not known: ", register)
 
   # check program availability
   if (.Platform$OS.type == "windows") {
@@ -550,5 +550,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   ##### end ctrLoadQueryIntoDb#####
 
   # return some useful information
+  if (!exists("imported")) stop("Function did not result in any trial information imports.")
   invisible(imported)
+
 }
