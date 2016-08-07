@@ -5,7 +5,7 @@
 \title{Select a single trial record when there are records for different EU Member
 States for this trial.}
 \usage{
-dfFindUniqueEuctrRecord(df = NULL, prefer = "GB",
+dfFindUniqueEuctrRecord(df = NULL, prefermemberstate = "GB",
   include3rdcountrytrials = TRUE)
 }
 \arguments{
@@ -13,7 +13,7 @@ dfFindUniqueEuctrRecord(df = NULL, prefer = "GB",
 "_id" and "a2_eudract_number", for example created with function
 dbGetVariablesIntoDf(c("_id", "a2_eudract_number")).}
 
-\item{prefer}{Code of single EU Member State for which records should
+\item{prefermemberstate}{Code of single EU Member State for which records should
 returned if available. (If not available, a record for GB or lacking this
 any other record for the trial will be returned.) For a list of codes of EU
 Member States, please see vector \code{countriesEUCTR}.}
@@ -39,4 +39,5 @@ lacking this, any other available record will be returned.
 Note: To depuplicate trials from different registers (EUCTR and CTGOV),
 please first use function \code{\link{dbFindIdsUniqueTrials}}.
 }
+\keyword{internal}
 

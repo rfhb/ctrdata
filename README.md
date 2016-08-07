@@ -58,10 +58,9 @@ ctrOpenSearchPagesInBrowser	| Open advanced search pages of register(s) or execu
 ctrQueryHistoryInDb	| Show the history of queries that were loaded into a database
 ctrGetQueryUrlFromBrowser	| Import from clipboard the URL of a search in one of the registers
 ctrLoadQueryIntoDb	| Retrieve or update information on clinical trials from register and store in database
-dbFindIdsUniqueTrials	| Produce a vector of de-duplicated identifiers of clinical trial records in the database
 dbFindVariable	| Find names of keys (fields) in the database
+dbFindIdsUniqueTrials	| Produce a vector of de-duplicated identifiers of clinical trial records in the database
 dbGetVariablesIntoDf	| Create a data frame from records in the database that have specified fields in the database
-dfFindUniqueEuctrRecord	| Select a single trial record when there are records for different EU Member States for this trial
 dfMergeTwoVariablesRelevel	| Merge related variables into a single variable, and optionally map values to a new set of values
 installCygwinWindowsDoInstall	| Convenience function to install a cygwin environment under MS Windows, including perl and php
 
