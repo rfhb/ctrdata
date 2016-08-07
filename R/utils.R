@@ -317,6 +317,12 @@ dbFindVariable <- function(namepart = "",
 #' IDs".
 #'
 #' @inheritParams ctrdata:::ctrLoadQueryIntoDb
+#' @inheritParams ctrdata:::dfFindUniqueEuctrRecord
+#'
+#' @param preferregister The abbreviation of the preferred register, in case
+#' a trial is in more than one register (string, either "EUCTR" or "CTGOV").
+#' If set to an empty string (""), keeps the keys for the same trial in both
+#' registers in the returned vector.
 #'
 #' @return A vector with strings of keys (_id in the database) that are
 #'   non-duplicate trials.
@@ -325,13 +331,12 @@ dbFindVariable <- function(namepart = "",
 #' @import rmongodb
 #' @examples
 #' \dontrun{
-#' uniqueCTRdata (mongo, "ctrdata")
+#' dbFindIdsUniqueTrials()
 #' }
 #'
-dbFindIdsUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"), ns = "ctrdata") {
-  #
-  #
-  # TODO: "a52_us_nct_clinicaltrialsgov_registry_number" found in euctr from 2016
+dbFindIdsUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"), ns = "ctrdata",
+                                  prefermemberstate = "GB", include3rdcountrytrials = TRUE, preferregister = "EUCTR") {
+
   #
   # CTGOV: "Other IDs" has been split into the indexed array "otherids"
   listofCTGOVids <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns),
@@ -341,38 +346,78 @@ dbFindIdsUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "127.0.0
   # EUCTR / EudraCT number is "_id" for EUCTR records
   listofEUCTRids <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns),
                                              query  = list('_id' = list('$regex' = '[0-9]{4}-[0-9]{6}-[0-9]{2}-[3A-Z]{2,3}')),
-                                             fields = list('_id' = 1L))
+                                             fields = list('a2_eudract_number' = 1L, '_id' = 1L),
+                                             data.frame = TRUE)
+
+  # TODO
+  # TODO
+  # - speed up
+  # - simplify
 
   # 1. search for eudract numbers among otherids, by ctgov _ids
   # for this search, write eudract numbers as stored in ctgov =
   # sometimes with prefix EUDRACT-, sometimes without such prefix
-  listofEUCTRids <- sapply(listofEUCTRids, "[[", "_id")
-  listofEUCTRidsForSearch <- c(substr(listofEUCTRids, 1, 14), paste0("EUDRACT-", substr(listofEUCTRids, 1, 14)))
-  #test: listofEUCTRidsForSearch <- c("2014-004697-41","2015-002154-12", "EUDRACT-2006-000205-34")
+  # thus create a search list with both versions
+  listofEUCTRidsForSearch <- c(tmp <- substr(listofEUCTRids[['_id']], 1, 14),
+                               paste0("EUDRACT-", tmp))
+  # find CTGOV _ids in which none of its otherids is in the EUCTR numbers in database
+  # also strip otherids from any trailing "-[3A-Z]{2,3}" in the otherids field
+  ctgovineuctr <- sapply(sapply(listofCTGOVids, "[[", "otherids"),
+                         function(x) sum(listofEUCTRidsForSearch %in% gsub("(.+)-[3A-Z]{2,3}$", "\\1", unlist(x))))
+  message("Searched for EUCTR identifiers in otherids field of CTGOV records.")
 
-  # find CTGOV _ids with respective otherids NOT being one of the EUCTR numbers in database
-  uniques <- sapply(listofCTGOVids, "[[", "_id")[!sapply(sapply(listofCTGOVids, "[[", "otherids"),
-                                                         function(x) sum(listofEUCTRidsForSearch %in% unlist(x)))]
-  # add found records to vector of unique _ids
-  uniques <- c(listofEUCTRids, uniques)
-  message("Searched for EUCTR identifiers in second id fields of CTGOV records.")
-
-  # 2. search for ctgov numbers among otherids, by ctgov _ids
+  # 2. search for ctgov numbers among otherids in ctgov, by ctgov _ids
   dupes <- sapply(listofCTGOVids, "[[", "_id") %in% unlist(sapply(listofCTGOVids, "[[", "otherids"))
-  message("Searched for CTGOV identifiers in second id fields of CTGOV records.")
+  message("Searched for CTGOV identifiers in otherids field of CTGOV records.")
+  # TODO
   # there may be circular references for records _id1 -> otherid2, _id2 -> otherid1
   # these are currently unresolved and require more work to be found. for now just flag:
-  if (sum(dupes) > 0) warning('Please manually check "_id" and "otherids", because more than one record found for CTGOV trial(s): \n',
+  if (sum(dupes) > 0) warning('Please manually check "_id" and "otherids", because more than one record was found for CTGOV trial(s): \n',
                               listofCTGOVids[dupes])
 
+  # 3. search for ctgov in euctr
+  # using "a52_us_nct_clinicaltrialsgov_registry_number" as found in euctr from 2016 onwards
+  # TODO
+  # euctrinctov <- sapply("a52_us_nct_clinicaltrialsgov_registry_number",
+  #                       function(x) sum(x %in% unlist(sapply(listofCTGOVids, "[[", "otherids"))))
+  #message("Searched for xxx identifiers in second id fields of CTGOV records.")
+
+  # 4. use only a preferred country version from euctr
+  prefeuctr <- ctrdata:::dfFindUniqueEuctrRecord(df = listofEUCTRids,
+                                                 prefermemberstate = prefermemberstate,
+                                                 include3rdcountrytrials = include3rdcountrytrials)
+  prefeuctr <- prefeuctr[["_id"]]
+  # message to user is provided by dfFindUniqueEuctrRecord
+
+
+  # 5. select one of ctgov or euctr version of trial
+  # TODO
+  # collect found records to vector of unique _ids
+  # uniques <- c(listofEUCTRids[['_id']], uniques)
+  if(preferregister == "EUCTR") {
+    retids <- c(prefeuctr,
+                sapply(listofCTGOVids, "[[", "_id")[ctgovineuctr == 0])
+    message("Returning ", length(prefeuctr), " identifiers from EUCTR records (preferred) and ", length(retids) - length(prefeuctr), " from CTGOV records.")
+  }
+  if(preferregister == "CTGOV") {
+    retids <- c(sapply(listofCTGOVids, "[[", "_id"),
+                prefeuctr[sapply(gsub("(.+)-[3A-Z]{2,3}$", "\\1", prefeuctr),
+                                 function(x) sum(grepl(x, unlist(sapply(listofCTGOVids, "[[", "otherids"))))) == 0])
+    message("Returning ", length(retids) - length(listofCTGOVids), " identifiers from EUCTR records and ", length(listofCTGOVids), " from CTGOV records (preferred).")
+  }
+
   # prepare output
+
   # avoid returning list() if none found
-  if(length(uniques) == 0) uniques <- character()
-  countall <- length(listofCTGOVids) + length(listofEUCTRids)
-  message(paste0("Total ", countall - length(uniques), " duplicate(s) found, returning keys (_id) of ", length(uniques), " records."))
+  if(length(retids) == 0) retids <- character()
+
+  # inform user
+  countall <- length(listofCTGOVids) + nrow(listofEUCTRids)
+  message(paste0("Returning keys (_id) of ", length(retids), " records (out of ", countall, " in the database)."))
   #
-  return(uniques)
+  return(retids)
   #
+
 }
 
 
@@ -414,6 +459,8 @@ dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(hos
                                  ns = "ctrdata", debug = FALSE) {
   #
   if (!is.vector(fields) | class(fields) != "character") stop("Input should be a vector of strings of field names.")
+  if (any(fields == "", na.rm = TRUE)) stop(paste("'fields' contains empty elements; please provide a vector of strings of field names.",
+                                                  "Function dbFindVariable() can be used to find field names."))
   #
   # total number of records in collection. for information of user at end of function.
   countall <- rmongodb::mongo.count(mongo, paste0(attr(mongo, "db"), ".", ns),
@@ -481,7 +528,7 @@ dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(hos
 #' @param df A data frame created from the database that includes the columns
 #'   "_id" and "a2_eudract_number", for example created with function
 #'   dbGetVariablesIntoDf(c("_id", "a2_eudract_number")).
-#' @param prefer Code of single EU Member State for which records should
+#' @param prefermemberstate Code of single EU Member State for which records should
 #'   returned if available. (If not available, a record for GB or lacking this
 #'   any other record for the trial will be returned.) For a list of codes of EU
 #'   Member States, please see vector \code{countriesEUCTR}.
@@ -493,14 +540,14 @@ dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(hos
 #' @return A data frame as subset of \code{df} corresponding to the sought
 #'   records.
 #'
-#' @export dfFindUniqueEuctrRecord
-#'
-dfFindUniqueEuctrRecord <- function(df = NULL, prefer = "GB", include3rdcountrytrials = TRUE) {
+#' @keywords internal
+#
+dfFindUniqueEuctrRecord <- function(df = NULL, prefermemberstate = "GB", include3rdcountrytrials = TRUE) {
   #
   if (class(df) != "data.frame") stop("Parameter df is not a data frame.")
   if (is.null(df [['_id']]) || is.null(df$a2_eudract_number)) stop('Data frame does not include "_id" and "a2_eudract_number" columns.')
   if (nrow(df) == 0) stop("Data frame does not contain records (0 rows).")
-  if (!(prefer %in% countriesEUCTR)) stop("Value specified for prefer does not match recognised codes, see countriesEUCTR.")
+  if (!(prefermemberstate %in% countriesEUCTR)) stop("Value specified for prefermemberstate does not match recognised codes, see countriesEUCTR.")
 
   # count number of records by eudract number
   tbl <- table(df [['_id']], df$a2_eudract_number)
@@ -522,12 +569,12 @@ dfFindUniqueEuctrRecord <- function(df = NULL, prefer = "GB", include3rdcountryt
     # given a vector of records (nnnn-nnnnnnn-nn-MS) of a single trial, this
     # returns all those _ids of records that do not correspond to the preferred
     # Member State record, based on the user's choices and defaults.
-    # Function uses prefer, nms from the caller environment
+    # Function uses prefermemberstate, nms from the caller environment
     #
     recordnames <- nms[indexofrecords]
     #
     # fnd should be only a single string, may need to be checked
-    if (sum(fnd <- grepl(prefer, recordnames)) != 0) {
+    if (sum(fnd <- grepl(prefermemberstate, recordnames)) != 0) {
       result <- recordnames[!fnd]
       return(result)
     }
@@ -540,7 +587,7 @@ dfFindUniqueEuctrRecord <- function(df = NULL, prefer = "GB", include3rdcountryt
     return(recordnames[-1])
   }
 
-  # finds per trial the desired record; uses prefer and nms
+  # finds per trial the desired record; uses prefermemberstate and nms
   result <- lapply(nst, function(x) removeMSversions(x))
   result <- unlist(result)
 
