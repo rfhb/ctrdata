@@ -25,7 +25,7 @@ Alternatively, the R system can be used from software products such as R Studio 
 
 General information on the `ctrdata` package is available here: [https://github.com/rfhb/ctrdata](https://github.com/rfhb/ctrdata). 
 
-```{r install_ctrdata}
+```{r install_ctrdata, eval=FALSE}
 # 
 # install preparatory package
 install.packages(c("devtools", "httr"))
@@ -38,7 +38,10 @@ set_config(use_proxy("proxy.server.domain", 8080))
 # UNC notation (\\server\directory) for the library
 .libPaths("D:/my/directory/")
 #
-# now install this package 
+# first install rmongodb (see README.md)
+devtools::install_github("mongosoup/rmongodb")
+#
+# now install this package
 devtools::install_github("rfhb/ctrdata")
 #
 # note: on Windows, cygwin has to be installed
