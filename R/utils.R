@@ -349,9 +349,9 @@ dbFindIdsUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "127.0.0
                                              fields = list('a2_eudract_number' = 1L, '_id' = 1L),
                                              data.frame = TRUE)
 
-  # TODO
-  # TODO
+  # TODO:
   # - speed up
+  # - euctr lookup first?
   # - simplify
 
   # 1. search for eudract numbers among otherids, by ctgov _ids
@@ -397,7 +397,7 @@ dbFindIdsUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "127.0.0
   if(preferregister == "EUCTR") {
     retids <- c(prefeuctr,
                 sapply(listofCTGOVids, "[[", "_id")[ctgovineuctr == 0])
-    message("Returning ", length(prefeuctr), " identifiers from EUCTR records (preferred) and ", length(retids) - length(prefeuctr), " from CTGOV records.")
+    message("Returning identifiers: ", length(prefeuctr), " from EUCTR records (preferred) and ", length(retids) - length(prefeuctr), " from CTGOV records.")
   }
   if(preferregister == "CTGOV") {
     retids <- c(sapply(listofCTGOVids, "[[", "_id"),
@@ -534,8 +534,7 @@ dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(hos
 #'   Member States, please see vector \code{countriesEUCTR}.
 #' @param include3rdcountrytrials A logical value if trials should be retained
 #'   that are conducted in third countries, that is outside the European Union.
-#'   These can be recognised by EUCTR identifiers ending in -3RD, such as
-#'  \href{https://www.clinicaltrialsregister.eu/ctr-search/trial/2010-022945-52/3rd}{2010-022945-52-3RD}.
+#'   These can be recognised by EUCTR identifiers ending in -3RD, such as 2010-022945-52-3RD.
 #'
 #' @return A data frame as subset of \code{df} corresponding to the sought
 #'   records.
@@ -547,7 +546,7 @@ dfFindUniqueEuctrRecord <- function(df = NULL, prefermemberstate = "GB", include
   if (class(df) != "data.frame") stop("Parameter df is not a data frame.")
   if (is.null(df [['_id']]) || is.null(df$a2_eudract_number)) stop('Data frame does not include "_id" and "a2_eudract_number" columns.')
   if (nrow(df) == 0) stop("Data frame does not contain records (0 rows).")
-  if (!(prefermemberstate %in% countriesEUCTR)) stop("Value specified for prefermemberstate does not match recognised codes, see countriesEUCTR.")
+  if (!(prefermemberstate %in% countriesEUCTR)) stop("Value specified for prefermemberstate does not match one of the recognised codes: ", paste (sort (countriesEUCTR), collapse = ", "))
 
   # count number of records by eudract number
   tbl <- table(df [['_id']], df$a2_eudract_number)
