@@ -29,6 +29,13 @@ Within [R](https://www.r-project.org/), use the following commands to get and in
 ```R
 #
 install.packages("devtools")
+#
+# Unfortunately, package rmongodb was removed from CRAN on 2016-08-25, 
+# see https://cran.r-project.org/web/packages/rmongodb/index.html. 
+# Work is ongoing for package ctrdata to use a different mongodb connector. 
+# Until this is ready, rmongodb can be installed as follows: 
+devtools::install_github("mongosoup/rmongodb")
+#
 devtools::install_github("rfhb/ctrdata")
 #
 # If this fails, see 'Issues and Notes' below.
