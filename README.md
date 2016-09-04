@@ -98,7 +98,6 @@ installCygwinWindowsDoInstall	| Convenience function to install a cygwin environ
 #   database->>user_R: dbGetVariablesIntoDf()
 #   database->>user_R: dbFindIdsUniqueTrials()
 # 
-#   user_R->>user_R: dfFindUniqueEuctrRecord()
 #   user_R->>user_R: dfMergeTwoVariablesRelevel()
 # 
 #   user_R->>user_R: any R functions such as summary()

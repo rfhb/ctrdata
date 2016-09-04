@@ -21,7 +21,6 @@ context("ctrdata functions")
 # dbFindVariable                 | some
 # dbGetVariablesIntoDf           | some
 # dfMergeTwoVariablesRelevel     | some
-# dfFindUniqueEuctrRecord        | some
 # installMongoCheckVersion       | (implicit)
 # installMongoFindBinaries       | (implicit)
 # installCygwinWindowsDoInstall  | not planned
@@ -195,22 +194,22 @@ test_that("operations on database", {
 
 })
 
-# testing operations on minimalistic
-# dataframes to simulate deduplication
-# function use
-test_that("operations on data frame", {
-
-  df <- data.frame("var1" = 1, "var2" = 1)
-
-  expect_message(dfMergeTwoVariablesRelevel(df = df, varnames = c("var1", "var2")), "Unique values returned:")
-  expect_is     (dfMergeTwoVariablesRelevel(df = df, varnames = c("var1", "var2")), "character")
-
-  expect_error(dfFindUniqueEuctrRecord(df = df), "Data frame does not include")
-
-  df <- data.frame(1, 2); names (df) <- c("_id", "a2_eudract_number")
-
-  expect_message  (dfFindUniqueEuctrRecord(df = df), "0 EUCTR records dropped")
-  expect_identical(dfFindUniqueEuctrRecord(df = df), df)
-
-})
+# # testing operations on minimalistic
+# # dataframes to simulate deduplication
+# # function use
+# test_that("operations on data frame", {
+#
+#   df <- data.frame("var1" = 1, "var2" = 1)
+#
+#   expect_message(dfMergeTwoVariablesRelevel(df = df, varnames = c("var1", "var2")), "Unique values returned:")
+#   expect_is     (dfMergeTwoVariablesRelevel(df = df, varnames = c("var1", "var2")), "character")
+#
+#   expect_error(dfFindUniqueEuctrRecord(df = df), "Data frame does not include")
+#
+#   df <- data.frame(1, 2); names (df) <- c("_id", "a2_eudract_number")
+#
+#   expect_message  (dfFindUniqueEuctrRecord(df = df), "0 EUCTR records dropped")
+#   expect_identical(dfFindUniqueEuctrRecord(df = df), df)
+#
+# })
 
