@@ -148,8 +148,13 @@ result <- dbGetVariablesIntoDf(c("a1_member_state_concerned",
                                  "a2_eudract_number"))
 #
 # Eliminate trials records duplicated by member state: 
-result <- dfFindUniqueEuctrRecord(result)
+#
+result <- result[ result[["_id"]] %in% dbFindIdsUniqueTrials(), ]
+# Searched for EUCTR identifiers in otherids field of CTGOV records.
+# Searched for CTGOV identifiers in otherids field of CTGOV records.
 # 1781 EUCTR records dropped that were not the preferred of multiple records for the trial.
+# Returning identifiers: 640 from EUCTR records (preferred) and 1489 from CTGOV records.
+# Returning keys (_id) of 2129 records (out of 3969 in the database).
 #
 # Visualise:
 result$startdate <- strptime(result$n_date_of_competent_authority_decision, "%Y-%m-%d")
@@ -185,18 +190,13 @@ result <- dbGetVariablesIntoDf(c("overall_status",
                                  "x5_trial_status", 
                                  "a2_eudract_number"))
 #
-# Find ids of unique trials and subset the result set to these unique trials:
-ids_of_unique_trials <- dbFindIdsUniqueTrials()
-# Searched for EUCTR identifiers in second id fields of CTGOV records.
-# Searched for CTGOV identifiers in second id fields of CTGOV records.
-# Total 24 duplicate(s) found, returning keys (_id) of 2513 records.
+# Find ids of unique trials if recorded by alternative countries or registers:
+ids_of_unique_trials <- dbFindIdsUniqueTrials(prefermemberstate = "FR")
+ids_of_unique_trials <- dbFindIdsUniqueTrials(preferregister = "EUCTR")
+ids_of_unique_trials <- dbFindIdsUniqueTrials(preferregister = "CTGOV")
 #
 # Subset the result set to these unique trials:
-result <- subset (result, subset = `_id` %in% ids_of_unique_trials)
-#
-# Select one Member State's version of an internactional trial:
-result <- dfFindUniqueEuctrRecord(result)
-# 1766 EUCTR records dropped that were not the preferred of multiple records for the trial.
+result <- result[ result[["_id"]] %in% ids_of_unique_trials, ]
 #
 # Now merge two variables into a new variable for analysis:
 tmp <- dfMergeTwoVariablesRelevel(result, 
@@ -242,15 +242,12 @@ m <- mongo(db = "users", collection = "ctrdata")
 # 
 # Check if there are any duplicates:
 ids_of_unique_trials <- dbFindIdsUniqueTrials()
-# Searched for EUCTR identifiers in second id fields of CTGOV records.
-# Searched for CTGOV identifiers in second id fields of CTGOV records.
-# Total 24 duplicate(s) found, returning keys (_id) of 2513 records.
 #
 # Find the database elements that represent a site:
-out <- m$find('{}', '{"location.facility.name": 1}')
+result <- m$find('{}', '{"location.facility.name": 1}')
 #
 # If there were duplicates, the unique trials could be retained like this:
-out <- subset (out, subset = `_id` %in% ids_of_unique_trials)
+result <- result[ result[["_id"]] %in% ids_of_unique_trials, ]
 #
 # Define a helper function to count elements, irrespective of whether
 # the elements are in an array or are a set of subdocuments in the database:
@@ -261,20 +258,20 @@ count.elements <- function (dataframecolumn) {
 }
 #
 # Sum up number of sites per trial:
-out$number_of_sites <- count.elements (out$location)
+result$number_of_sites <- count.elements (result$location)
 #
 # Inspect first rows:
-out[1:5,]
+result[1:5,]
 #                 _id                                      location  number_of_sites
 # 1       NCT00097292  Children's Hospital LA, UCSF, Stanford [...]               21
 # 2       NCT00129259                   The Diabetes Center at UCSF                1
 # 3 2006-001238-41-IT                                          NULL                0
 #
 # For many trials, no locations seem to be specified:
-out <- out [out$number_of_sites >= 1 & out$number_of_sites <50, ]
+result <- result [result$number_of_sites >= 1 & result$number_of_sites <20, ]
 #
 # Draw histogram:
-hist (out$number_of_sites)
+hist (result$number_of_sites)
 #
 ```
 
@@ -296,7 +293,7 @@ result <- dbGetVariablesIntoDf(c("a2_eudract_number",
 #
 # Eliminate trials records duplicated by member state
 # keep a single record and if available use preference:
-result <- dfFindUniqueEuctrRecord(result)
+result <- result[ result[["_id"]] %in% dbFindIdsUniqueTrials(), ]
 #
 # Checking expected number of trials:
 nrow(result)
@@ -353,12 +350,11 @@ substr(result$e51_primary_end_points[result$pe_is_efs == FALSE], 1, 80)[1:10]
 #
 if (FALSE) ctrLoadQueryIntoDb(register = "EUCTR", 
                               queryterm = "&age=under-18&phase=phase-one&phase=phase-two", 
-                              ns = "paediatric_phase12_trialsxx")
                               ns = "paediatric_phase12_trials")
 #
 ctrQueryHistoryInDb(ns = "paediatric_phase12_trials")
 #
-ctrLoadQueryIntoDb(querytoupdate = 1, ns = "paediatric_phase12_trials")
+if (FALSE) ctrLoadQueryIntoDb(querytoupdate = 1, ns = "paediatric_phase12_trials")
 #
 dbFindVariable("phase", allmatches = TRUE, ns = "paediatric_phase12_trials")
 # [1] "e72_therapeutic_exploratory_phase_ii"   "e71_human_pharmacology_phase_i"
@@ -392,26 +388,9 @@ relevant <- grepl_multi(searchfor, result$a3_full_title_of_the_trial) |
             grepl_multi(searchfor, result$e11_medical_conditions_being_investigated) |
             grepl_multi("C04",     result$e112_therapeutic_area)
 #
-# check
-table(relevant)
-nrow(result) 
-length(unique(result[["_id"]]))
-length(dbFindIdsUniqueTrials(ns = "paediatric_phase12_trials"))
-#
 # get relevant trials
 result <- result[relevant,]
-#
-# which phases are included? 
-tmp <- dfFindUniqueEuctrRecord (result, include3rdcountrytrials = FALSE)
-tmp <- tmp[tmp$e71_human_pharmacology_phase_i == "Yes",]
-with(tmp,   plot(f422_in_the_whole_clinical_trial ~ as.numeric(substr(n_date_of_competent_authority_decision, 1, 4))))
-with(tmp, tapply(f422_in_the_whole_clinical_trial,  
-                 as.numeric(substr(n_date_of_competent_authority_decision, 1, 4)), 
-                 function (x) median (as.numeric (x), na.rm = TRUE)))
-4tmp <- tmp[grepl ("^201[1-9]-.+", tmp$n_date_of_competent_authority_decision), ]
-with(tmp, table(e71_human_pharmacology_phase_i, e72_therapeutic_exploratory_phase_ii))
-#
-# for further steps only look at phase 1 trials
+result <- result[ result[["_id"]] %in% dbFindIdsUniqueTrials(ns = "paediatric_phase12_trials", include3rdcountrytrials = FALSE), ]
 result <- result[result$e71_human_pharmacology_phase_i == "Yes",]
 #
 # adjust date format
@@ -426,13 +405,10 @@ tmp <- aggregate(result$startdate,
 result <- merge (x = result, y = tmp, 
                  by.x = "a2_eudract_number", by.y = "Group.1", 
                  all.x = TRUE)
+#
 # label date and calculate year
 names(result)[ncol(result)] <- "startdatefirst"
 result$startyearfirst <- as.numeric(format(result$startdatefirst, "%Y"))
-#
-# create eu single-trial record dataset
-table(grepl("-3RD", result[["_id"]]), exclude = "")
-result <- dfFindUniqueEuctrRecord (result, include3rdcountrytrials = FALSE)
 #
 # any of the investigational medicinal product(s) authorised or not?
 table(result$dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation)
@@ -452,7 +428,7 @@ ggplot(data = result,
        fill = "Medicine\nauthorised?")
 #
 # possibly save plot
-# ggsave("phase1_paed_oncol.png", width = 3, height = 2)
+# ggsave("phase1_paed_oncol.png", width = 6, height = 4)
 #
 ```
 ![Histogram3](phase1_paed_oncol.png)
