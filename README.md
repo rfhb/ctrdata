@@ -6,7 +6,7 @@ Online version of this document: [https://github.com/rfhb/ctrdata/](https://gith
 
 ## Background
 
-The package `ctrdata` provides functions for retrieving information from public registers of clinical trials, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started mid 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package can only be used within the [R](https://www.r-project.org/) computing system. Last edit 2016-05-29 for version 0.7 (see NEWS.md). 
+The package `ctrdata` provides functions for retrieving information from public registers of clinical trials, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started mid 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package can only be used within the [R](https://www.r-project.org/) computing system. Last edit 2016-09-04 for version 0.8 (see NEWS.md). 
 
 Main features:
 

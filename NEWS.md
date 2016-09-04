@@ -1,3 +1,8 @@
+# ctrdata 0.8
+ - 2016-09-04
+ - dbFindIdsUniqueTrials now encapsulates dfFindIdsUniqueEuctrRecord
+ - dfFindIdsUniqueEuctrRecords removed
+ - installation instructions updated after recently rmongodb was removed from CRAN
 # ctrdata 0.7
  - 2016-05-29
  - dbGetVariablesIntoDf changed to concatenate values in array and objects 
