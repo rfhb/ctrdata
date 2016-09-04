@@ -208,29 +208,38 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     if (register == "EUCTR") {
       #
       # check if update request is within time windows offered by the register (7 days)
-      if (difftime(Sys.Date(), initialday, units = "days") > 7) stop("'querytoupdate=", querytoupdate,
-                                                                     "' not possible because it was last run more than 7 days ago and",
-                                                                     " register provides information on changes only for the last 7 days.")
+      if (difftime(Sys.Date(), initialday, units = "days") > 7) {
+        #
+        warning("'querytoupdate=", querytoupdate, "' not possible because it was last run more than 7 days ago",
+                " and register provides information on changes only for the last 7 days. Reverting to normal download.",
+                immediate. = TRUE)
+        #
+        message(paste0("Rerunning query: ", queryterm, "\nLast run: ", initialday))
+        #
+      } else {
+        #
+        # obtain rss feed with list of recently updated trials
+        h = RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE))
+        rssquery <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/rest/feed/bydates?query=", queryterm)
+        if (debug) message("DEBUG: ", rssquery)
+        resultsRss <- RCurl::getURL(rssquery, curl = h)
+        #
+        # extract euctr number(s)
+        resultsRssTrials <- gregexpr("[0-9]{4}-[0-9]{6}-[0-9]{2}</link>", resultsRss)[[1]]
+        resultsRssTrials <- sapply(resultsRssTrials, FUN = function (x) substr(resultsRss, x, x + 13))
+        resultsRssTrials <- paste(resultsRssTrials, collapse = " OR ")
+        #
+        # run query for extracted euctr number(s)
+        # store original query in update term
+        queryupdateterm <- queryterm
+        queryterm <- resultsRssTrials
+        #
+        if (debug) message("DEBUG: Updating using this query term: ", queryupdateterm)
+        #
+        message(paste0("Rerunning query: ", queryupdateterm, "\nLast run: ", initialday))
+        #
+      }
       #
-      # obtain rss feed with list of recently updated trials
-      h = RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE))
-      rssquery <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/rest/feed/bydates?query=", queryterm)
-      if (debug) message("DEBUG: ", rssquery)
-      resultsRss <- RCurl::getURL(rssquery, curl = h)
-      #
-      # extract euctr number(s)
-      resultsRssTrials <- gregexpr("[0-9]{4}-[0-9]{6}-[0-9]{2}</link>", resultsRss)[[1]]
-      resultsRssTrials <- sapply(resultsRssTrials, FUN = function (x) substr(resultsRss, x, x + 13))
-      resultsRssTrials <- paste(resultsRssTrials, collapse = " OR ")
-      #
-      # run query for extracted euctr number(s)
-      # store original query in update term
-      queryupdateterm <- queryterm
-      queryterm <- resultsRssTrials
-      #
-      if (debug) message("DEBUG: Updating using this query term: ", queryupdateterm)
-      #
-      message(paste0("Rerunning query: ", queryupdateterm, "\nLast run: ", initialday))
     }
   }
 
