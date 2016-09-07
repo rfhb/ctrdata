@@ -66,10 +66,10 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   s/^(Date on.*)$/X.6 $1/;
   s/^(Link.*)$/X.7 $1/;
 
-  # add identifiers for summary documents
+  # add identifiers for summary documents (terminating - needed for later step)
   s/^Sponsor Protocol Number: (.*)$/A.4.1 Sponsors protocol code number: $1/;
   s/^Sponsor Name: (.*)$/B.1 Sponsor: 1xxxxxxxxxxB.1.1 Name of sponsor: $1/;
-  s/^Full Title: (.*)$/A.3 Full Title of the Trial: $1/;
+  s/^Full Title: (.*)$/A.3 Full Title of the Trial: $1-/;
   s/^(Start Date:.*)$/X.7 $1/;
   s/^Medical condition: (.*)$/E.1.1 Medical conditions being investigated: $1/;
   s/^Disease: (.*)$/E.1.1.2 Therapeutic area: $1/;
