@@ -431,7 +431,7 @@ ggplot(data = result,
 
 ## Plot map of ongoing trials
 
-```{r plot_map_trials}
+```{r plot_map_trials, eval=FALSE}
 # 
 # this is to create a map of EU ongoing phase 1 trials with children with cancer on an anti-cancer medicine
 library(rworldmap)
