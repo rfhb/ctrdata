@@ -27,6 +27,9 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
 
   while (<>) {
 
+  # elimination of non-printing characters such as control M
+  tr/\015//d;
+
   # delete non-informative lines
   next if /^$/;
   next if /^Summary/;
