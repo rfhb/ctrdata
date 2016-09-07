@@ -56,14 +56,16 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   s/^(B\.1\.1 Name of Sponsor:)\s+$/$1 empty/g;
 
   # add identifiers for special cases
-  s/^(EudraCT Number.*)$/X.1 $1/g;
-  s/^.*(Protocol Code Number.*)$/X.2 Sponsor $1/g;
-  s/^(Sponsor) (.*)$/B.1 $1: $2/g;
-  s/^(National Competent.*)$/X.3 $1/g;
-  s/^(Clinical Trial.*)$/X.4 $1/g;
-  s/^(Trial Status.*)$/X.5 $1/g;
-  s/^(Date on.*)$/X.6 $1/g;
-  s/^(Link.*)$/X.7 $1/g;
+  s/^(EudraCT Number.*)$/X.1 $1/;
+  s/^.*(Protocol Code Number.*)$/X.2 Sponsor $1/;
+  #s/^(Sponsor) (.*)$/B.1 $1: $2/;
+  s/^(Sponsor) ([0-9]+)$/B.1 $1: $2/;
+  s/^(National Competent.*)$/X.3 $1/;
+  s/^(Clinical Trial.*)$/X.4 $1/;
+  s/^(Trial Status.*)$/X.5 $1/;
+  s/^(Date on.*)$/X.6 $1/;
+  s/^(Link.*)$/X.7 $1/;
+
   # add identifiers for summary documents
   s/^Sponsor Protocol Number: (.*)$/A.4.1 Sponsors protocol code number: $1/;
   s/^Sponsor Name: (.*)$/B.1 Sponsor: 1xxxxxxxxxxB.1.1 Name of sponsor: $1/;
