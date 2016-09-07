@@ -1,3 +1,8 @@
+# ctrdata 0.8.1
+ - 2016-09-07
+ - added field to indicate source register
+ - improved handling of euctr with details = FALSE
+ - added example for map plotting
 # ctrdata 0.8
  - 2016-09-04
  - dbFindIdsUniqueTrials now encapsulates dfFindIdsUniqueEuctrRecord
