@@ -14,6 +14,9 @@ vignette: >
 ```{r setup, include=FALSE}
 #
 library(ctrdata)
+library(ggplot2)
+library(stringi)
+library(rworldmap)
 #
 knitr::opts_chunk$set(eval=FALSE, warning=FALSE, message=FALSE, results="hide")
 #
@@ -335,15 +338,6 @@ substr(result$e51_primary_end_points[result$pe_is_efs == FALSE], 1, 80)[1:10]
 ```
 ![Histogram2](Rplot02.png)
 
-
-## Plot map of ongoing trials
-
-```{r plot_map_trials}
-#
-# TODO
-#
-```
-
 ## Histogram of status of investigational medicinal product
 
 ```{r hist_medicine_status}
@@ -354,7 +348,7 @@ if (FALSE) ctrLoadQueryIntoDb(register = "EUCTR",
 #
 ctrQueryHistoryInDb(ns = "paediatric_phase12_trials")
 #
-if (FALSE) ctrLoadQueryIntoDb(querytoupdate = 1, ns = "paediatric_phase12_trials")
+if (FALSE) ctrLoadQueryIntoDb(querytoupdate = 1, ns = "paediatric_phase12_trials", debug = TRUE)
 #
 dbFindVariable("phase", allmatches = TRUE, ns = "paediatric_phase12_trials")
 # [1] "e72_therapeutic_exploratory_phase_ii"   "e71_human_pharmacology_phase_i"
@@ -428,10 +422,83 @@ ggplot(data = result,
        fill = "Medicine\nauthorised?")
 #
 # possibly save plot
-# ggsave("phase1_paed_oncol.png", width = 6, height = 4)
+# ggsave("vignettes/phase1_paed_oncol.png", width = 6, height = 4)
 #
 ```
 ![Histogram3](phase1_paed_oncol.png)
+
+
+
+## Plot map of ongoing trials
+
+```{r plot_map_trials}
+# 
+# this is to create a map of EU ongoing phase 1 trials with children with cancer on an anti-cancer medicine
+library(rworldmap)
+library(plyr)
+
+# get relevant variables from relevant collection
+result <- dbGetVariablesIntoDf(c("a1_member_state_concerned", "n_date_of_competent_authority_decision",
+                                 "e11_medical_conditions_being_investigated", "e112_therapeutic_area", 
+                                 "e71_human_pharmacology_phase_i", "e72_therapeutic_exploratory_phase_ii",
+                                 "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database",
+                                 "a3_full_title_of_the_trial", "a2_eudract_number", "p_end_of_trial_status", 
+                                 "ctrname"), 
+                               ns = "paediatric_phase12_trials")
+
+# calculate country variable
+result$country <- sub("^.+-([3A-Z]+)$", "\\1", result$`_id`)
+
+# select trials of interest
+searchfor <- "cancer, leukaem, leukem, tumour, tumor, sarcoma, blastom, gliom, germ, lymphom, malign, hodgkin, ewing, rhabdo, terato, tumeur, leucemi"
+searchfor <- strsplit(searchfor, ", ")[[1]]
+#
+# helper function to extend grepl to check for several patterns
+grepl_multi <- function (patterns, x, simplify = TRUE) {
+  if(!is.vector(patterns)) stop("patterns should be a vector.")
+  ret <- apply(as.matrix(patterns), 1, function(pattern) grepl(pattern, x, ignore.case = TRUE))
+  ret <- as.data.frame(ret)
+  if (simplify) 
+    ret <- rowSums(ret) >= 1
+  else
+    names(ret) <- patterns
+  return(ret)
+}
+#
+relevant <- grepl_multi(searchfor, result$a3_full_title_of_the_trial) | 
+            grepl_multi(searchfor, result$e11_medical_conditions_being_investigated) |
+            grepl_multi("C04",     result$e112_therapeutic_area)
+#
+# apply selection criteria
+result <- result[relevant,]
+result <- result[result$e71_human_pharmacology_phase_i == "Yes",]
+result <- result[result$ctrname == "EUCTR",]
+result <- result[result$country != "3RD",]
+
+# get an overview
+counts <- as.data.frame.matrix(with (result, table (country, p_end_of_trial_status)))
+counts$total <- rowSums(counts)
+counts$country <- rownames(counts)
+counts$text <- with(counts, paste(Ongoing, total, sep = "/"))
+counts
+#
+
+# plot
+png("vignettes/ph1paedoncopen.png", width = 6, height = 5, units = "in", res = 300)
+sPDF <- joinCountryData2Map (counts, joinCode="ISO2", nameJoinColumn="country")
+mapParams <- mapCountryData (sPDF, nameColumnToPlot="Ongoing", mapTitle="",
+                             xlim=c(-10,30), ylim=c(36, 65), addLegend=FALSE,
+                             colourPalette="terrain")
+# do.call (addMapLegend, c (mapParams, legendLabels="all", legendWidth=0.5, digits=0, labelFontSize=0.8))
+title (main="Number of ongoing / total phase 1\nanti-cancer medicine trials with children")
+labelCountries (sPDF, nameCountryColumn="text", xlim=c(-15,32), ylim=c(36, 65), cex=1.0, col="blue")
+dev.off()
+
+#
+```
+![Histogram3](ph1paedoncopen.png)
+
+
 
 ## Use aggregation functions of the data base to find specific trial endpoints
 
