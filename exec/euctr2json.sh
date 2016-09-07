@@ -90,6 +90,7 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   print $_;
 
   print "\nrecord last import: " . $dt if /X.1/;
+  print "\nctrname: EUCTR" if /X.1/;
 
   }
   ' | \
