@@ -13,11 +13,6 @@ vignette: >
 
 ```{r setup, include=FALSE}
 #
-library(ctrdata)
-library(ggplot2)
-library(stringi)
-library(rworldmap)
-#
 knitr::opts_chunk$set(eval=FALSE, warning=FALSE, message=FALSE, results="hide")
 #
 # render this document to PDF with this command executed in the vignettes/ folder: 
