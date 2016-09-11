@@ -2,10 +2,12 @@
 
 ## ralf.herold@gmx.net - 2015-08-15
 ## part of https://github.com/rfhb/ctrdata
-# last edited: 2016-04-20
+# last edited: 2016-09-07
+#
 # time euctr2json.sh:
-# 2015-08-15: 2.4 s for 221 documents: ~ 11 ms per trial
-# 2016-04-20: 1.2 s for 151 documents: ~  8 ms per trial
+# 2015-08-15: 2.4 s for 221 documents: ~ 11 ms per trial (MacBookPro2011)
+# 2016-04-20: 1.2 s for 151 documents: ~  8 ms per trial (MacBookPro2011)
+# 2016-09-11: 1.2 s for 151 documents: ~  8 ms per trial (MacBookPro2015)
 
 cat "$1/euctr-trials-page_"* > "$1/allfiles.txt"
 
