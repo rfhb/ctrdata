@@ -644,6 +644,7 @@ installCygwinWindowsDoInstall <- function(overwrite = FALSE, proxy = ""){
   if (proxy != "") {
     # manual setting overrides all
     proxy <- paste0('--proxy ', proxy)
+    message("Setting cygwin proxy install argument to: ", proxy, ", based on provided parameter.")
   } else {
     # detect proxy to be used, automatically or manually configured?
     # find and use proxy settings for actually running the cygwin setup
@@ -666,12 +667,18 @@ installCygwinWindowsDoInstall <- function(overwrite = FALSE, proxy = ""){
         if (proxy == '') stop('A proxy could not be identified from the automatic configuration script used by the system.',
                               ' Please set manually: installCygwinWindowsDoInstall (proxy = "host_or_ip:port"')
         proxy <- paste0('--proxy ', proxy)
+        message("Automatically setting cygwin proxy install argument to: ", proxy, ", based on AutoConfigProxy in registry.")
+        #
       } else {
-        if (is.null(tmp$ProxyServer)) stop('A proxy could not be identified by this function.',
-                                           ' Please set manually: installCygwinWindowsDoInstall (proxy = "host_or_ip:port"')
-        proxy <- paste0('--proxy ', tmp$ProxyServer)
+        if (!is.null(tmp$ProxyServer)) {
+          proxy <- paste0('--proxy ', tmp$ProxyServer)
+          message("Automatically setting cygwin proxy install argument to: ", proxy, ", based on ProxyServer in registry.")
+          #
+        } else {
+          message("Proxy not set, could not use ProxyServer or AutoConfigProxy in registry.")
+          #
+        }
       }
-      message("Automatically setting cygwin proxy install argument to: ", proxy)
     }
     message("Proxy not set.")
   }
