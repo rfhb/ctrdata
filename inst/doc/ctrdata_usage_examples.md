@@ -1,7 +1,7 @@
 ---
 title: "ctrdata usage examples"
 author: "Ralf Herold"
-date: "`r Sys.Date()`"
+date: "2016-10-16"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{ctrdata usage examples}
@@ -11,17 +11,14 @@ vignette: >
 
 # Examples for using R package `ctrdata` for clinical trial protocol-related information
 
-```{r setup, include=FALSE}
-#
-knitr::opts_chunk$set(eval=FALSE, warning=FALSE, message=FALSE, results="hide")
-#
-```
+
 
 General information on the `ctrdata` package is available here: [https://github.com/rfhb/ctrdata](https://github.com/rfhb/ctrdata). 
 
 ## Execute a search query and load into database
 
-```{r execute_load_query}
+
+```r
 # 
 # Load library which has previously been installed:
 library(ctrdata)
@@ -37,7 +34,8 @@ ctrLoadQueryIntoDb(q)
 
 ## Execute in browser a search query that was previously stored
 
-```{r execute_browser_query}
+
+```r
 # 
 # The function ctrOpenSearchPagesInBrowser() can be used to open blank search pages, but 
 # also to execute a previous search. This can be used to check if user searches are 
@@ -61,7 +59,8 @@ ctrOpenSearchPagesInBrowser(register = "EUCTR", queryterm = "cancer&age=under-18
 
 ## Find fields / variables of interest
 
-```{r find_variables}
+
+```r
 # 
 dbFindVariable("date", allmatches = TRUE)
 #  [1] "firstreceived_date"                                                               
@@ -82,7 +81,8 @@ dbFindVariable("date", allmatches = TRUE)
 
 ## Update data base from query in specified register
 
-```{r execute_update_query}
+
+```r
 #
 # List queries:
 ctrQueryHistoryInDb()
@@ -116,7 +116,8 @@ summary(lastUpdate)
 
 Note EUCTR provides country-specific records for trials, see README.md. 
 
-```{r deduplicate_visualise_euctr}
+
+```r
 #
 # Example 1: Relation between number of study participants in one country and in whole trial? 
 #
@@ -159,7 +160,8 @@ hist(result$startdate, breaks = "years", freq = TRUE, las = 1); box()
 
 ## Download from another register, check for duplicates, merge variables and re-organise values 
 
-```{r execute_ctgov_query}
+
+```r
 #
 # Get data from another register: 
 #
@@ -227,7 +229,8 @@ table(tmp)
 
 Note: Packages to access mango such as `mongolite` or `RMongo` may work to access data that are already in the dababase. However, package `rmongodb` is still necessary to retrieve data from registers and to store these data into the database. 
 
-```{r mongolite_count_details}
+
+```r
 #
 library(mongolite)
 #
@@ -270,7 +273,8 @@ hist (result$number_of_sites)
 
 ## Plot frequency of certain end points
 
-```{r plot_endpoint_frequencies}
+
+```r
 #
 # Search for interesting variables,  
 # note the spelling in EUCTR:
@@ -330,7 +334,8 @@ substr(result$e51_primary_end_points[result$pe_is_efs == FALSE], 1, 80)[1:10]
 
 ## Histogram of status of investigational medicinal product
 
-```{r hist_medicine_status}
+
+```r
 #
 if (FALSE) ctrLoadQueryIntoDb(register = "EUCTR", 
                               queryterm = "&age=under-18&phase=phase-one&phase=phase-two", 
@@ -421,7 +426,8 @@ ggplot(data = result,
 
 ## Plot map of ongoing trials
 
-```{r plot_map_trials, eval=FALSE}
+
+```r
 # 
 # this is to create a map of EU ongoing phase 1 trials with children with cancer on an anti-cancer medicine
 library(rworldmap)
@@ -492,7 +498,8 @@ dev.off()
 
 ## Use aggregation functions of the data base to find specific trial endpoints
 
-```{r mongodb_aggregation_pipeline}
+
+```r
 #
 library(mongolite)
 #
@@ -562,7 +569,8 @@ table (out$year)
 
 Note that the mongodb documentation includes that a mapreduce operation might not be as fast and efficient as using the aggregation pipeline, which was used in the preceding example. 
 
-```{r mongodb_mapreduce}
+
+```r
 #
 library(mongolite)
 #
