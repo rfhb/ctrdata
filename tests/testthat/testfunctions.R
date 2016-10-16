@@ -88,20 +88,6 @@ test_that("access to mongo db from command line", {
 
 })
 
-# testing options for user to
-# search in desktop browser
-test_that("browser interaction", {
-
-  expect_is(ctrGetQueryUrlFromBrowser(content = "https://clinicaltrials.gov/ct2/results?type=Intr&cond=cancer&age=0"), "list")
-
-  has_internet()
-
-  expect_error(ctrGetQueryUrlFromBrowser(content = "ThisDoesNotExist"), "Content is not a clinical trial register search URL.")
-
-  expect_equal(ctrOpenSearchPagesInBrowser(register = "EUCTR", queryterm = "cancer&age=under-18"), TRUE)
-
-})
-
 # testing downloading from both registers
 # a query with a no trials as result
 test_that("retrieve data from registers", {
@@ -142,6 +128,32 @@ test_that("retrieve data from register euctr", {
   queryeuctr <- list(queryterm = "2010-024264-18",      register = "EUCTR")
 
   expect_message(ctrLoadQueryIntoDb(queryeuctr, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB", debug = TRUE), "Updated history")
+
+})
+
+# testing options for user to
+# search in desktop browser
+test_that("browser interaction", {
+
+  tmp <- ctrGetQueryUrlFromBrowser(content = "https://clinicaltrials.gov/ct2/results?type=Intr&cond=cancer&age=0")
+
+  expect_is(tmp, "list")
+
+  has_internet()
+
+  expect_error(ctrGetQueryUrlFromBrowser(content = "ThisDoesNotExist"),
+               "Content is not a clinical trial register search URL.")
+
+  expect_message(ctrOpenSearchPagesInBrowser(register = "EUCTR", queryterm = "cancer&age=under-18"),
+                 "Opening in browser previous search: cancer&age=under-18, in register: EUCTR")
+
+  expect_message(ctrOpenSearchPagesInBrowser(tmp),
+                 "Opening in browser previous search: type=Intr&cond=cancer&age=0, in register: CTGOV")
+
+  has_mongo()
+
+  expect_message(ctrOpenSearchPagesInBrowser(ctrQueryHistoryInDb(ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")),
+                 "Opening in browser previous search: 2010-024264-18")
 
 })
 
