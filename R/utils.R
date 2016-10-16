@@ -903,13 +903,13 @@ dfMergeTwoVariablesRelevel <- function(df = NULL, varnames = "", levelslist = NU
 #'
 #' @param commandtest Command to be used for testing the availability of the binary, e.g. "php -v"
 #'
-#' @debug debug Set to \code{TRUE} to see printed return value of \code{commandtest}
+#' @param debug Set to \code{TRUE} to see printed return value of \code{commandtest}
 #'
 #' @return A logical if executing commandtest returned an error or not
 #'
 #' @keywords internal
 #
-findBinary <- function(commandtest = NULL, debug = TRUE) {
+findBinary <- function(commandtest = NULL, debug = FALSE) {
   #
   if (is.null(commandtest)) stop ("Empty argument: commandtest")
   #
@@ -920,7 +920,8 @@ findBinary <- function(commandtest = NULL, debug = TRUE) {
     silent = TRUE
   )
   #
-  commandreturn <- ifelse (class(commandresult) == "try-error", FALSE, TRUE)
+  commandreturn <- ifelse (class(commandresult) == "try-error" ||
+                             grepl("error", tolower(paste(commandresult, collapse = " "))), FALSE, TRUE)
   #
   if(!commandreturn) warning(commandtest, " not found.")
   #
