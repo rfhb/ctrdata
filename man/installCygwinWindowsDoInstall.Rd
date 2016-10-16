@@ -5,10 +5,10 @@
 \title{Convenience function to install a cygwin environment under MS Windows,
 including perl and php}
 \usage{
-installCygwinWindowsDoInstall(overwrite = FALSE, proxy = "")
+installCygwinWindowsDoInstall(force = FALSE, proxy = "")
 }
 \arguments{
-\item{overwrite}{Set to true to force updating and overwriting an existing
+\item{force}{Set to true to force updating and overwriting an existing
 installation in \code{c:\\cygwin}}
 
 \item{proxy}{Specify any proxy to be used for downloading via http, e.g.

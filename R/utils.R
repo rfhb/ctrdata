@@ -611,7 +611,7 @@ dfFindUniqueEuctrRecord <- function(df = NULL, prefermemberstate = "GB", include
 #' including perl and php
 #'
 #' @export installCygwinWindowsDoInstall
-#' @param overwrite Set to true to force updating and overwriting an existing
+#' @param force Set to true to force updating and overwriting an existing
 #'   installation in \code{c:\\cygwin}
 #' @param proxy Specify any proxy to be used for downloading via http, e.g.
 #'   "host_or_ip:port". \code{installCygwinWindowsDoInstall} may detect and use
@@ -623,10 +623,10 @@ dfFindUniqueEuctrRecord <- function(df = NULL, prefermemberstate = "GB", include
 #'   http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages
 #'   perl,php-jsonc,php-simplexml
 #'
-installCygwinWindowsDoInstall <- function(overwrite = FALSE, proxy = ""){
+installCygwinWindowsDoInstall <- function(force = FALSE, proxy = ""){
   #
-  if (.Platform$OS.type != "windows")        stop("This function is only for MS Windows operating systems.")
-  if (!overwrite & dir.exists("c:\\cygwin")) stop("cygwin is already installed. To overwrite, call this function with overwrite = TRUE.")
+  if (.Platform$OS.type != "windows")    stop("This function is only for MS Windows operating systems.")
+  if (!force & dir.exists("c:\\cygwin")) stop("cygwin is already installed. To overwrite, call this function with force = TRUE.")
   #
   # create directory within R sessions temporary directory
   tmpfile <- paste0(tempdir(), '/cygwin_inst')
@@ -680,11 +680,10 @@ installCygwinWindowsDoInstall <- function(overwrite = FALSE, proxy = ""){
         }
       }
     }
-    message("Proxy not set.")
   }
   #
   # compose installation command
-  installcmd <- "--no-admin --quiet-mode --verbose  --root c:/cygwin --site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages perl,php-jsonc,php-simplexml"
+  installcmd <- "--no-admin --quiet-mode --verbose --upgrade-also --root c:/cygwin --site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages perl,php-jsonc,php-simplexml"
   #
   # execute cygwin setup command
   system(paste0(dstfile, " ", installcmd, " --local-package-dir ", tmpfile, ' ', proxy))
