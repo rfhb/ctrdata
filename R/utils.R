@@ -706,10 +706,9 @@ installCygwinWindowsTest <- function() {
   if (.Platform$OS.type != "windows") stop("This function is only for MS Windows operating systems.")
   #
   tmpcygwin <- system("cmd.exe /c c:\\cygwin\\bin\\env", intern = TRUE)
-  # TODO check for packages perl and php installed?
   #
   if (length(tmpcygwin) > 5) {
-    message("cygwin seems to be working correctly.")
+    message("cygwin base install seems to be working correctly.")
     invisible(TRUE)
   } else {
     warning("cygwin does not seem to be installed correctly.")
@@ -904,22 +903,28 @@ dfMergeTwoVariablesRelevel <- function(df = NULL, varnames = "", levelslist = NU
 #'
 #' @param commandtest Command to be used for testing the availability of the binary, e.g. "php -v"
 #'
+#' @debug debug Set to \code{TRUE} to see printed return value of \code{commandtest}
+#'
 #' @return A logical if executing commandtest returned an error or not
 #'
 #' @keywords internal
 #
-findBinary <- function(commandtest = NULL) {
+findBinary <- function(commandtest = NULL, debug = TRUE) {
   #
   if (is.null(commandtest)) stop ("Empty argument: commandtest")
   #
+  if (.Platform$OS.type == "windows") commandtest <- paste0("cmd.exe /c c:\\cygwin\\bin\\bash.exe --login -c '", commandtest, "'")
+  #
   commandresult <- try(
-    system(commandtest, intern = TRUE, ignore.stdout = TRUE, ignore.stderr = TRUE),
+    system(commandtest, intern = TRUE),
     silent = TRUE
   )
   #
   commandreturn <- ifelse (class(commandresult) == "try-error", FALSE, TRUE)
   #
   if(!commandreturn) warning(commandtest, " not found.")
+  #
+  if(debug) print(commandresult)
   #
   return(commandreturn)
   #

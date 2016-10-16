@@ -4,10 +4,12 @@
 \alias{findBinary}
 \title{Check availability of binaries installed in operating system}
 \usage{
-findBinary(commandtest = NULL)
+findBinary(commandtest = NULL, debug = TRUE)
 }
 \arguments{
 \item{commandtest}{Command to be used for testing the availability of the binary, e.g. "php -v"}
+
+\item{debug}{Set to \code{TRUE} to see printed return value of \code{commandtest}}
 }
 \value{
 A logical if executing commandtest returned an error or not
