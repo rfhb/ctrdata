@@ -901,7 +901,8 @@ dfMergeTwoVariablesRelevel <- function(df = NULL, varnames = "", levelslist = NU
 
 #' Check availability of binaries installed in operating system
 #'
-#' @param commandtest Command to be used for testing the availability of the binary, e.g. "php -v"
+#' @param commandtest Command to be used for testing the availability of the binary, e.g. "php -v". Note
+#' internal quotes need to be escaped, e.g. \code{findBinary('php -r \"simplexml_load_string(\'\');\"')}
 #'
 #' @param debug Set to \code{TRUE} to see printed return value of \code{commandtest}
 #'
@@ -913,7 +914,7 @@ findBinary <- function(commandtest = NULL, debug = FALSE) {
   #
   if (is.null(commandtest)) stop ("Empty argument: commandtest")
   #
-  if (.Platform$OS.type == "windows") commandtest <- paste0("cmd.exe /c c:\\cygwin\\bin\\bash.exe --login -c '", commandtest, "'")
+  if (.Platform$OS.type == "windows") commandtest <- paste0("cmd.exe /c c:\\cygwin\\bin\\bash.exe --login -c \'", commandtest, "\'")
   #
   commandresult <- try(
     system(commandtest, intern = TRUE),

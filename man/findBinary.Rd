@@ -4,10 +4,11 @@
 \alias{findBinary}
 \title{Check availability of binaries installed in operating system}
 \usage{
-findBinary(commandtest = NULL, debug = TRUE)
+findBinary(commandtest = NULL, debug = FALSE)
 }
 \arguments{
-\item{commandtest}{Command to be used for testing the availability of the binary, e.g. "php -v"}
+\item{commandtest}{Command to be used for testing the availability of the binary, e.g. "php -v". Note
+internal quotes need to be escaped, e.g. \code{findBinary('php -r \"simplexml_load_string(\'\');\"')}}
 
 \item{debug}{Set to \code{TRUE} to see printed return value of \code{commandtest}}
 }
