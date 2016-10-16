@@ -26,3 +26,4 @@ RoxygenNote: 5.0.1
 LazyData: true
 Suggests: testthat, ggplot2, mongolite, devtools, knitr, rmarkdown
 VignetteBuilder: knitr
+NeedsCompilation: no
