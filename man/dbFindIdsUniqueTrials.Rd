@@ -8,7 +8,8 @@ of unique trials.}
 \usage{
 dbFindIdsUniqueTrials(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017",
   db = "users"), ns = "ctrdata", prefermemberstate = "GB",
-  include3rdcountrytrials = TRUE, preferregister = "EUCTR")
+  include3rdcountrytrials = TRUE, preferregister = "EUCTR",
+  verbose = TRUE)
 }
 \arguments{
 \item{mongo}{(\link{mongo}) A mongo connection object. If not provided,
@@ -30,6 +31,9 @@ These can be recognised by EUCTR identifiers ending in -3RD, such as 2010-022945
 a trial is in more than one register (string, either "EUCTR" or "CTGOV").
 If set to an empty string (""), keeps the keys for the same trial in both
 registers in the returned vector.}
+
+\item{verbose}{If set to \code{TRUE}, prints out information about numbers
+of records found at subsequent steps when searching for duplicates}
 }
 \value{
 A vector with strings of keys (_id in the database) that are
