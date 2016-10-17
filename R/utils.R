@@ -59,24 +59,7 @@ ctrOpenSearchPagesInBrowser <- function(register = c("EUCTR", "CTGOV"), copyrigh
   # check arguments
   if (!exists("register") || (register == '' & queryterm == '')) stop("No usable argument found.")
   #
-  if(queryterm == '') {
-    if (copyright == TRUE) {
-      if ("CTGOV" %in% register) utils::browseURL("https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use", ...)
-      if ("EUCTR" %in% register) utils::browseURL("http://www.ema.europa.eu/ema/index.jsp?curl=pages/regulation/general/general_content_000178.jsp&mid=", ...)
-    } else {
-      if ("CTGOV" %in% register) utils::browseURL("https://clinicaltrials.gov/ct2/search/advanced", ...)
-      if ("EUCTR" %in% register) utils::browseURL("https://www.clinicaltrialsregister.eu/ctr-search/search", ...)
-    }
-  }
-  # try to deduce queryterm and register from a url that is provided as anonymous first parameter
-  if(queryterm == '' && grepl ("^https.+clinicaltrials.+", register)) queryterm <- ctrdata::ctrGetQueryUrlFromBrowser(content = register)
-  #
-  # graciously deduce queryterm and register if a url is unexpectedly provided as queryterm
-  if(is.character(queryterm) && grepl ("^https.+clinicaltrials.+", queryterm)) queryterm <- ctrdata::ctrGetQueryUrlFromBrowser(content = queryterm)
-  #
-  # deal with register or queryterm being
-  # - a list as returned from ctrGetQueryUrlFromBrowser() or
-  # - a data frame as returned from ctrQueryHistoryInDb()
+  # deal with data frame as returned from ctrQueryHistoryInDb()
   if (is.data.frame(queryterm)) query <- queryterm
   if (is.data.frame(register))  query <- register
   #
@@ -89,6 +72,7 @@ ctrOpenSearchPagesInBrowser <- function(register = c("EUCTR", "CTGOV"), copyrigh
     }, silent = TRUE)
   }
   #
+  # deal with values returned from ctrGetQueryUrlFromBrowser()
   if (is.list(queryterm)) query <- queryterm
   if (is.list(register))  query <- register
   #
@@ -100,6 +84,22 @@ ctrOpenSearchPagesInBrowser <- function(register = c("EUCTR", "CTGOV"), copyrigh
     }, silent = TRUE)
     #
   }
+  #
+  if(queryterm == '') {
+    if (copyright == TRUE) {
+      if ("CTGOV" %in% register) utils::browseURL("https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use", ...)
+      if ("EUCTR" %in% register) utils::browseURL("http://www.ema.europa.eu/ema/index.jsp?curl=pages/regulation/general/general_content_000178.jsp&mid=", ...)
+    } else {
+      if ("CTGOV" %in% register) utils::browseURL("https://clinicaltrials.gov/ct2/search/advanced", ...)
+      if ("EUCTR" %in% register) utils::browseURL("https://www.clinicaltrialsregister.eu/ctr-search/search", ...)
+    }
+  }
+  #
+  # try to deduce queryterm and register from a url that is provided as anonymous first parameter
+  if(queryterm == '' && grepl ("^https.+clinicaltrials.+", register)) queryterm <- ctrdata::ctrGetQueryUrlFromBrowser(content = register)
+  #
+  # graciously deduce queryterm and register if a url is unexpectedly provided as queryterm
+  if(is.character(queryterm) && grepl ("^https.+clinicaltrials.+", queryterm)) queryterm <- ctrdata::ctrGetQueryUrlFromBrowser(content = queryterm)
   #
   if (queryterm != "") {
     message("Opening in browser previous search: ", queryterm, ", in register: ", register)
