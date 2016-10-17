@@ -186,11 +186,12 @@ test_that("browser interaction", {
 
 # testing functions seeking
 # record contents in database
-test_that("operations on database", {
+test_that("operations on database after download from register", {
 
   has_mongo()
+  has_internet()
 
-  expect_message(dbFindIdsUniqueTrials(ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Searched for EUCTR identifiers")
+  expect_message(dbFindIdsUniqueTrials(ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Searching duplicates")
   expect_is     (dbFindIdsUniqueTrials(ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "character")
 
   expect_error(dbGetVariablesIntoDf(fields = "ThisDoesNotExist",
