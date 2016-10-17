@@ -21,7 +21,7 @@ assign("mongoBinaryLocation", NA, envir = .privateEnv)
   if(!suppressWarnings(findBinary("php -r 'simplexml_load_string(\'\');'"))) warning("php xml not found, ctrLoadQueryIntoDb will not work.", call. = FALSE)
   if(!suppressWarnings(findBinary("echo x | sed s/x/y/")))                   warning("sed not found, ctrLoadQueryIntoDb will not work.", call. = FALSE)
   if(!suppressWarnings(findBinary("perl -V:osname")))                        warning("perl not found, ctrLoadQueryIntoDb will not work.", call. = FALSE)
-  message("Helper binaries tested.")
+  packageStartupMessage("Helper binaries tested.")
   #
   invisible()
   #
