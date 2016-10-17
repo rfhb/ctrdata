@@ -109,8 +109,16 @@ test_that("retrieve data from registers", {
 # a query retrieving a small number of trials
 test_that("retrieve data from register ctgov", {
 
-  has_internet()
   has_mongo()
+
+  # clean up = drop collections from mongodb
+  expect_equivalent (rmongodb::mongo.drop(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"),
+                                          ns= "users.ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), TRUE)
+
+  expect_equivalent (rmongodb::mongo.drop(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "varietyResults"),
+                                          ns= "varietyResults.ThisNameSpaceShouldNotExistAnywhereInAMongoDBKeys"), TRUE)
+
+  has_internet()
 
   queryctgov <- list(queryterm = "term=2010-024264-18", register = "CTGOV")
 
@@ -123,14 +131,6 @@ test_that("retrieve data from register ctgov", {
 test_that("retrieve data from register euctr", {
 
   has_mongo()
-
-  # clean up = drop collections from mongodb
-  expect_equivalent (rmongodb::mongo.drop(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"),
-                                          ns= "users.ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), TRUE)
-
-  expect_equivalent (rmongodb::mongo.drop(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "varietyResults"),
-                                          ns= "varietyResults.ThisNameSpaceShouldNotExistAnywhereInAMongoDBKeys"), TRUE)
-
   has_internet()
 
   queryeuctr <- list(queryterm = "2010-024264-18",      register = "EUCTR")
