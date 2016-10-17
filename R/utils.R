@@ -254,8 +254,8 @@ dbFindVariable <- function(namepart = "",
   }
 
   # check if database with variety results exists or should be forced to be updated
-  if (forceupdate || length(mongo.get.database.collections(mongo, db = "varietyResults")) == 0L ||
-      length(grepl(paste0(ns, "Keys"), mongo.get.database.collections(mongo, db = "varietyResults"))) == 0L) {
+  if (forceupdate || length(rmongodb::mongo.get.database.collections(mongo, db = "varietyResults")) == 0L ||
+      length(grepl(paste0(ns, "Keys"), rmongodb::mongo.get.database.collections(mongo, db = "varietyResults"))) == 0L) {
     #
     if (!grepl("127.0.0.1", attr(mongo, "host")))
       warning("variety.js may fail with certain remote servers (for example when the host or port ",
