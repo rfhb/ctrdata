@@ -345,21 +345,31 @@ dbFindIdsUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "127.0.0
   # preferences for selecting the preferred from any multiple records
 
   # 1. get euctr records
-  listofEUCTRids <- suppressWarnings(dbGetVariablesIntoDf(fields = c("a2_eudract_number", "a52_us_nct_clinicaltrialsgov_registry_number", "a3_full_title_of_the_trial"), mongo = mongo, ns = ns))
-  listofEUCTRids <- listofEUCTRids[grepl("[0-9]{4}-[0-9]{6}-[0-9]{2}-[3A-Z]{2,3}", listofEUCTRids[["_id"]]), ]
+  listofEUCTRids <- try(
+    suppressWarnings(dbGetVariablesIntoDf(fields = c("a2_eudract_number", "a52_us_nct_clinicaltrialsgov_registry_number", "a3_full_title_of_the_trial"), mongo = mongo, ns = ns)),
+    silent = TRUE
+  )
+  if(class(listofEUCTRids) == "try-error") listofEUCTRids <- NULL
+  if(!is.null(listofEUCTRids)) listofEUCTRids <- listofEUCTRids[grepl("[0-9]{4}-[0-9]{6}-[0-9]{2}-[3A-Z]{2,3}", listofEUCTRids[["_id"]]), ]
 
   # 2. find unique, preferred country version
-  listofEUCTRids <- ctrdata:::dfFindUniqueEuctrRecord(df = listofEUCTRids,
-                                                      prefermemberstate = prefermemberstate,
-                                                      include3rdcountrytrials = include3rdcountrytrials)
+  if(!is.null(listofEUCTRids)) listofEUCTRids <- ctrdata:::dfFindUniqueEuctrRecord(df = listofEUCTRids,
+                                                                                   prefermemberstate = prefermemberstate,
+                                                                                   include3rdcountrytrials = include3rdcountrytrials)
 
   # 3. get ctrgov records
-  listofCTGOVids <- suppressWarnings(dbGetVariablesIntoDf(fields = c("otherids", "official_title"), mongo = mongo, ns = ns))
-  listofCTGOVids <- listofCTGOVids[grepl("NCT[0-9]{8}", listofCTGOVids[["_id"]]), ]
+  listofCTGOVids <- try(
+    suppressWarnings(dbGetVariablesIntoDf(fields = c("otherids", "official_title"), mongo = mongo, ns = ns)),
+    silent = TRUE
+  )
+  if(class(listofCTGOVids) == "try-error") listofCTGOVids <- NULL
+  if(!is.null(listofCTGOVids)) listofCTGOVids <- listofCTGOVids[grepl("NCT[0-9]{8}", listofCTGOVids[["_id"]]), ]
 
   # 4. retain unique ctrgov records
-  dupes <- listofCTGOVids[["_id"]] %in% listofCTGOVids[["otherids"]]
-  if (sum(dupes) > 0) listofCTGOVids <- listofCTGOVids[!dupes, ]
+  if(!is.null(listofCTGOVids)) {
+    dupes <- listofCTGOVids[["_id"]] %in% listofCTGOVids[["otherids"]]
+    if (sum(dupes) > 0) listofCTGOVids <- listofCTGOVids[!dupes, ]
+  }
 
   # 5. find records (_id's) that are in both in euctr and ctgov
   # 6. select records from preferred register
