@@ -789,6 +789,7 @@ installMongoFindBinaries <- function(mongoDirWin = "c:\\mongo\\bin\\") {
         if (!tmp) stop("Cannot continue. mongoimport not found recorded in the registry, ", location, ".")
         #
         # found it, save in package environment
+        location <- shQuote(location)
         assign("mongoBinaryLocation", location, envir = .privateEnv)
         message("mongoimport / mongo found in ", location)
         invisible(location)
