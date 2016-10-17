@@ -1,7 +1,7 @@
 ---
 title: "ctrdata getting started"
 author: "Ralf Herold"
-date: "2016-10-16"
+date: "2016-10-17"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{ctrdata getting started}
@@ -95,6 +95,10 @@ q <- ctrGetQueryUrlFromBrowser()
 # Use search q that was defined in previous step: 
 #
 ctrLoadQueryIntoDb(q)
+#
+# Alternatively, use the following to retrieve a couple of trials: 
+#
+ctrLoadQueryIntoDb(queryterm = "term=2010-024264-18", register = "CTGOV")
 #
 # If no parameters are given for a database connection: uses mongodb
 # on localhost, port 27017, database "users", collection "ctrdata"

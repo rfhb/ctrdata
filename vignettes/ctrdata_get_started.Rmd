@@ -95,6 +95,10 @@ q <- ctrGetQueryUrlFromBrowser()
 #
 ctrLoadQueryIntoDb(q)
 #
+# Alternatively, use the following to retrieve a couple of trials: 
+#
+ctrLoadQueryIntoDb(queryterm = "term=2010-024264-18", register = "CTGOV")
+#
 # If no parameters are given for a database connection: uses mongodb
 # on localhost, port 27017, database "users", collection "ctrdata"
 # note: when run for first time, may download variety.js
