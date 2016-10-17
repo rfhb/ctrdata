@@ -914,7 +914,7 @@ findBinary <- function(commandtest = NULL, debug = FALSE) {
   #
   if (is.null(commandtest)) stop ("Empty argument: commandtest")
   #
-  if (.Platform$OS.type == "windows") commandtest <- paste0("cmd.exe /c c:\\cygwin\\bin\\bash.exe --login -c \"", commandtest, "\"")
+  if (.Platform$OS.type == "windows") commandtest <- paste0("cmd.exe /c c:\\cygwin\\bin\\bash.exe --login -c ", shQuote(commandtest))
   #
   if(debug) print(commandtest)
   #
