@@ -1,7 +1,7 @@
 ---
 title: "ctrdata usage examples"
 author: "Ralf Herold"
-date: "2016-10-17"
+date: "2016-10-18"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{ctrdata usage examples}
