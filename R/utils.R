@@ -676,7 +676,7 @@ installCygwinWindowsDoInstall <- function(force = FALSE, proxy = ""){
     #
     if (!is.null(tmp)) {
       #
-      if ((length (tmp$AutoConfigProxy) > 0) && (tmp$AutoConfigURL != "")) {
+      if (length (tmp$AutoConfigURL) > 0) {
         # retrieve settings
         proxypacfile <- paste0(tmpfile, '/pacfile.txt')
         utils::download.file(tmp$AutoConfigURL, proxypacfile)
