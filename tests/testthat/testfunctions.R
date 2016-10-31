@@ -151,8 +151,8 @@ test_that("browser interaction", {
 
   has_mongo()
 
-  expect_message(ctrOpenSearchPagesInBrowser(ctrQueryHistoryInDb(ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")),
-                 "Opening in browser previous search: 2010-024264-18")
+  expect_message(ctrOpenSearchPagesInBrowser(ctrQueryHistoryInDb(ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")[1,]),
+                 "Opening in browser previous search: ")
 
 })
 
