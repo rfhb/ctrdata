@@ -883,10 +883,10 @@ dfMergeTwoVariablesRelevel <- function(df = NULL, varnames = "", levelslist = NU
 
   # find variables in data frame and merge
   tmp <- match(varnames, names(df))
-  tmp <- df[, tmp]
-  tmp1 <- ifelse(is.na(tt <- tmp[ ,1]), "", tt)
-  tmp2 <- ifelse(is.na(tt <- tmp[ ,2]), "", tt)
-  tmp <- paste0(tmp1, tmp2)
+  df <- df[, tmp]
+  df[,1] <- ifelse(is.na(tt <- df[ ,1]), "", tt)
+  df[,2] <- ifelse(is.na(tt <- df[ ,2]), "", tt)
+  tmp <- paste0(df[,1], df[,2])
 
   if (!is.null(levelslist)) {
 
@@ -912,13 +912,14 @@ dfMergeTwoVariablesRelevel <- function(df = NULL, varnames = "", levelslist = NU
 
   }
 
-  # inform user on levels found
-  message("Unique values returned: ", paste(unique(tmp), collapse = ", "))
+  if(length(tt <- unique(tmp)) > 10)
+    message("Unique values returned (limited to ten): ", paste(tt[1:10], collapse = ", "))
+  else
+    message("Unique values returned: ", paste(tt, collapse = ", "))
 
   return(tmp)
 }
 # end dfMergeTwoVariablesRelevel
-
 
 
 
