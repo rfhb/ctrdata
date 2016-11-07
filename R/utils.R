@@ -174,7 +174,11 @@ ctrGetQueryUrlFromBrowser <- function(content = clipr::read_clip()) {
 #' ctrQueryHistoryInDb()
 #' }
 #'
-ctrQueryHistoryInDb <- function(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"), ns = "ctrdata") {
+
+ctrQueryHistoryInDb <- function(mongo = ctrmongo(), collection = "ctrdata") {
+
+
+#ctrQueryHistoryInDb <- function(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"), ns = "ctrdata") {
   #
   message("Total number of records: ",
           rmongodb::mongo.count(mongo, paste0(attr(mongo, "db"), ".", ns),
@@ -958,4 +962,194 @@ findBinary <- function(commandtest = NULL, debug = FALSE) {
   #
 }
 
+
+
+#' Title
+#'
+#' @param query
+#' @param fields
+#' @param value
+#' @param collection
+#' @param db
+#' @param host
+#' @param username
+#' @param password
+#'
+#' @return
+#' @export
+#'
+#' @examples
+ctrmongo <- function(query = "", fields = "{}", value = TRUE,
+                     collection = "ctrdata", db = "users",
+                     host = "127.0.0.1:27017",
+                     username = "", password = "") {
+
+  if(query == "") stop("No query to Mongo DB.")
+
+  if("mongolite" %in% rownames(installed.packages())){
+    # mongolite (preferred package)
+
+    # url: mongodb://[username:password@]host1[:port1]
+    mongourl <- paste0("mongodb://",
+                       ifelse(username != "", username, ""),
+                       ifelse(password != "", paste0(":", password), ""),
+                       ifelse(username != "", "@", ""),
+                       host)
+
+    # not used: verbose = TRUE, options = ssl_options()
+    m <- mongolite::mongo(collection = collection, db = db, url = mongourl)
+
+    # find(query = '{}', fields = '{"_id" : 0}', sort = '{}',
+    #      skip = 0, limit = 0, handler = NULL, pagesize = 1000)
+    result <- m$find(query = query, fields = fields)
+
+    # post-processing
+
+    # testing
+
+    m <- mongolite::mongo(collection = "tmp", db = db, url = mongourl)
+
+    result <- m$find(query = '{"_id":{"$eq":"meta-info"}}', fields = '{"queries": 1, "_id": 0}')
+
+    # EXAMPLE with "queries": [{query-string: ..., }, {}]
+    # works!
+    tmp <- toJSON(history.data.frame)
+    tmp <- paste0('{\"$set\": {"queries": ', tmp, '}}')
+    result <- m$update(query = '{"_id":{"$eq":"meta-info"}}',
+                       update = tmp, upsert = TRUE)
+    # works!
+    result <- m$iterate(query = '{"_id":{"$eq":"meta-info"}}', fields = '{"queries": 1, "_id": 0}')$batch()
+    result <- result[[1]]$queries
+    do.call(rbind, result)
+    # {
+    # "_id" : "meta-info",
+    # "queries" : [
+    #   {
+    #     "query-timestamp" : "2016-10-18-17-09-20",
+    #     "query-register" : "EUCTR",
+    #     "query-records" : "6",
+    #     "query-term" : "2010-024264-18"
+    #   },
+    #   {
+    #     "query-timestamp" : "2016-10-18-17-08-40",
+    #     "query-register" : "CTGOV",
+    #     "query-records" : "1",
+    #     "query-term" : "term=2010-024264-18"
+    #   }
+    #  ]
+    # }
+    # -->> to implement the above, there will be a break in the format of old histories!
+    # provide temporary workaround? migrate to new version history?
+
+
+    # EXAMPLE with {query-string: ..., }, {}
+    tmp <- toJSON(history.data.frame[1:2,1:3])
+    tmp <- substr(tmp, 2, nchar(tmp) - 1) # delete []
+    tmp <- gsub('\\{', '\"query\": \\{', tmp)
+    tmp <- paste0('{\"$set\": {', tmp, '}}')
+    result <- m$update(query = '{"_id":{"$eq":"meta-info"}}',
+                       update = tmp, upsert = TRUE)
+    # works!
+    result <- m$iterate(query = '{"_id":{"$eq":"meta-info"}}', fields = '{"queries": 1, "_id": 0}')$batch()
+    result <- result[[1]]$queries
+    do.call(rbind, result)
+
+
+
+
+
+    # closing does not seem a predefined method,
+    # therefore the object is removed using R base
+    rm("m")
+
+  } else {
+    if("rmongodb" %in% rownames(installed.packages())){
+      # rmongodb
+
+      # m <- mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"), ns = "ctrdata"
+      # result <- rmongodb::mongo.count(m, paste0(attr(m, "db"), ".", ns),
+      #                                 query  = rmongodb::mongo.bson.from.JSON('{"_id":{"$ne":"meta-info"}}')))
+
+      m <- rmongodb::mongo.create(host = host, name = "",
+                                  username = username, password = password,
+                                  db = db, timeout = 0L)
+
+      # testing
+      # note using data.frame = TRUE is not helpful
+      result <- rmongodb::mongo.find.all(m, paste0(attr(m, "db"), ".", collection),
+                                         query = '{"_id":{"$eq":"meta-info"}}', fields = '{"query": 1, "_id": 0}')
+
+
+
+
+      tmp <- result[[1]]
+      tmp <- sapply(tmp, function(x) do.call(rbind, x))
+      tmp <- t(tmp)
+      tmp <- data.frame(tmp, row.names = NULL, check.names = FALSE, stringsAsFactors = FALSE)
+      names(tmp) <- c("query-timestamp", "query-register", "query-records", "query-term")
+
+history.data.frame <- tmp
+
+
+      # count
+      result <- rmongodb::mongo.count(m, paste0(attr(m, "db"), ".", collection),
+                                      query  = rmongodb::mongo.bson.from.JSON('{"_id":{"$eq":"meta-info"}}'))
+
+
+
+
+      # {
+      #   "_id" : "meta-info",
+      #   "query" : {
+      #     "query-timestamp" : "2016-10-18-17-09-20",
+      #     "query-register" : "EUCTR",
+      #     "query-records" : "6",
+      #     "query-term" : "2010-024264-18"
+      #   },
+      #   "query" : {
+      #     "query-timestamp" : "2016-10-18-17-08-40",
+      #     "query-register" : "CTGOV",
+      #     "query-records" : "1",
+      #     "query-term" : "term=2010-024264-18"
+      #   }
+      # }
+
+      # ---->>>>>>
+
+      # {
+      #   "_id" : "meta-info",
+      #   "queries": [
+      #   {
+      #     "query-timestamp" : "2016-10-18-17-09-20",
+      #     "query-register" : "EUCTR",
+      #     "query-records" : "6",
+      #     "query-term" : "2010-024264-18"
+      #   },
+      #   {
+      #     "query-timestamp" : "2016-10-18-17-08-40",
+      #     "query-register" : "CTGOV",
+      #     "query-records" : "1",
+      #     "query-term" : "term=2010-024264-18"
+      #   }
+      #  ]
+      # }
+
+
+      # closing using specific method and removing unused object
+      rmongodb::mongo.destroy(m)
+      rm("m")
+
+    } else {
+     stop("No mongodb driver package found. Please install mongolite or RMongoDB.")
+    }
+  }
+
+
+  if(value) {
+    # return query data frame
+  } else {
+    # return query records count
+  }
+
+}
 
