@@ -1,4 +1,0 @@
-### ctrdata package
-### analysis functions
-
-
