@@ -22,69 +22,74 @@ countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", 
 # }
 
 
-#' This is a function to select and use
-#' a connection to a Mongo DB server.
+#' This is a function to set up connections to a Mongo DB server, one for
+#' the actual trial records and a second for the keys as discovered by
+#' variety in the trial records.
 #'
-#' @param mongo A mongo data base object, currently using mongolite. Default
-#' is an empty string, which would make this function to result in a default
-#' Mongo DB connection, currently using mongolite with collection ctrdata in
-#' database users on server localhost, unless there is a monoglite data base
-#' object name "mongo" defined in the global environment.
+#' @inheritParams mongolite::mongo
+#'
+#' @param username In case access requires credentials.
+#' @param password In case access requires credentials.
 #'
 #' @return A mongo data base object, currently using mongolite
 #'
 #' @keywords internal
 #'
-ctrMongo <- function(mongo = "") {
+ctrMongo <- function(collection = "ctrdata", db = "users", url = "mongodb://localhost",
+                     username = "", password = "", verbose = FALSE) {
 
-  # if parameter is empty, test and use global environment
-  if(class(mongo) == "character" && mongo == "" && ("mongo" %in% objects(envir = .GlobalEnv))) {
+  # # if parameter is empty, test and use global environment
+  # if(class(mongo) == "character" && mongo == "" && ("mongo" %in% objects(envir = .GlobalEnv))) {
+  #
+  #   # inform user
+  #   message("Using object \"mongo\" defined in global environment!")
+  #
+  #   mongo <- get("mongo", envir = .GlobalEnv)
+  #
+  # }
+  #
+  # # check parameter
+  # if(class(mongo) == "character" && mongo != "") stop("Cannot use \"", mongo, "\", check parameter mongo.")
+  #
+  # # use acceptable parameter
+  # if(identical(class(mongo), c("mongo", "jeroen", "environment"))) {
+  #
+  #   # We already have a database connection
+  #
+  #   # inform user
+  #   message("Using Mongo DB database.collection: \"", mongo$info()$stats$ns, "\".")
+  #
+  #   # mongolite will automatically reconnect
+  #   return(mongo)
+  #
+  # } else {
+  #
+  #   # set up default database connection
+  #   host <- "127.0.0.1:27017"
+  #   username <- ""
+  #   password <- ""
+  #   collection <- "ctrdata"
+  #   db <- "users"
+  #   # not used: options = ssl_options()
 
-    # inform user
-    message("Using object \"mongo\" defined in global environment!")
+  # url: mongodb://[username:password@]host1[:port1]
+  host     <- sub("mongodb://(.+)", "\\1", url)
+  mongourl <- paste0("mongodb://",
+                     ifelse(username != "", username, ""),
+                     ifelse(password != "", paste0(":", password), ""),
+                     ifelse(username != "", "@", ""),
+                     host)
 
-    mongo <- get("mongo", envir = .GlobalEnv)
+  # for variety, create / access related collection
+  collectionKeys <- paste0(collection, "Keys")
 
-  }
+  valueCtrDb     <- mongolite::mongo(collection = collection,     db = db, url = mongourl, verbose = verbose)
+  valueCtrKeysDb <- mongolite::mongo(collection = collectionKeys, db = db, url = mongourl, verbose = verbose)
 
-  # check parameter
-  if(class(mongo) == "character" && mongo != "") stop("Cannot use \"", mongo, "\", check parameter mongo.")
+  # inform user
+  message("Using Mongo DB (collections \"", collection, "\" and \"", collectionKeys, "\" in database \"", db, "\" on \"", host, "\").")
 
-  # use acceptable parameter
-  if(identical(class(mongo), c("mongo", "jeroen", "environment"))) {
-
-    # We already have a database connection
-
-    # inform user
-    message("Using Mongo DB database.collection: \"", mongo$info()$stats$ns, "\".")
-
-    # mongolite will automatically reconnect
-    return(mongo)
-
-  } else {
-
-    # set up default database connection
-    host <- "127.0.0.1:27017"
-    username <- ""
-    password <- ""
-    collection <- "ctrdata"
-    db <- "users"
-    # not used: options = ssl_options()
-
-    # url: mongodb://[username:password@]host1[:port1]
-    mongourl <- paste0("mongodb://",
-                       ifelse(username != "", username, ""),
-                       ifelse(password != "", paste0(":", password), ""),
-                       ifelse(username != "", "@", ""),
-                       host)
-
-    value <- mongolite::mongo(collection = collection, db = db, url = mongourl, verbose = FALSE)
-
-    # inform user
-    message("Using default Mongo DB (collection \"", collection, "\" in database \"", db, "\" on \"", host, "\").")
-
-    return(value)
-  }
+  return(list(valueCtrDb, valueCtrKeysDb))
 }
 # end ctrMongo
 
@@ -243,10 +248,12 @@ ctrGetQueryUrlFromBrowser <- function(content = clipr::read_clip()) {
 #' dbQueryHistory()
 #' }
 #'
-dbQueryHistory <- function(mongo = "") {
+dbQueryHistory <- function(collection = "ctrdata", db = "users", url = "mongodb://localhost",
+                           username = "", password = "", verbose = FALSE) {
 
-  # get a working mongo connection
-  mongo <- ctrMongo(mongo = mongo)
+  # get a working mongo connection, select trial record collection
+  mongo <- ctrMongo(collection = collection, db = db, url = url,
+                    username = username, password = password, verbose = verbose)[[1]]
 
   # Example history:
   # {

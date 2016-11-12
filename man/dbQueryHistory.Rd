@@ -4,14 +4,23 @@
 \alias{dbQueryHistory}
 \title{Show the history of queries that were loaded into a database}
 \usage{
-dbQueryHistory(mongo = "")
+dbQueryHistory(collection = "ctrdata", db = "users",
+  url = "mongodb://localhost", username = "", password = "",
+  verbose = FALSE)
 }
 \arguments{
-\item{mongo}{A mongo data base object, currently using mongolite. Default
-is an empty string, which would make this function to result in a default
-Mongo DB connection, currently using mongolite with collection ctrdata in
-database users on server localhost, unless there is a monoglite data base
-object name "mongo" defined in the global environment.}
+\item{collection}{name of collection}
+
+\item{db}{name of database}
+
+\item{url}{address of the mongodb server in mongo connection string
+\href{{http://docs.mongodb.org/manual/reference/connection-string/}{URI format}}.}
+
+\item{username}{In case access requires credentials.}
+
+\item{password}{In case access requires credentials.}
+
+\item{verbose}{emit some more output}
 }
 \value{
 A data frame with variables: query-timestamp, query-egister,
@@ -22,6 +31,7 @@ A data frame with variables: query-timestamp, query-egister,
 Show the history of queries that were loaded into a database
 }
 \examples{
+
 \dontrun{
 dbQueryHistory()
 }
