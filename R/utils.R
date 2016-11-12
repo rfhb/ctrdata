@@ -305,8 +305,9 @@ dbQueryHistory <- function(collection = "ctrdata", db = "users", url = "mongodb:
 #'  dbFindVariable ("date")
 #' }
 #'
-dbFindVariable <- function(namepart = "", allmatches = FALSE, forceupdate = FALSE,
-                           mongo = "", debug = FALSE) {
+dbFindVariable <- function(namepart = "", allmatches = FALSE, forceupdate = FALSE, debug = FALSE,
+                           collection = "ctrdata", db = "users", url = "mongodb://localhost",
+                           username = "", password = "", verbose = FALSE) {
 
   # sanity checks
   if (!is.atomic(namepart)) stop("Name part should be atomic.")
@@ -320,15 +321,15 @@ dbFindVariable <- function(namepart = "", allmatches = FALSE, forceupdate = FALS
   }
 
   # get a working mongo connection
-  mongo <- ctrMongo(mongo = mongo)
+  mongo <- ctrMongo(collection = collection, db = db, url = url,
+                    username = username, password = password, verbose = verbose)
 
   # check if database with variety results exists or should be forced to be updated
-  if (forceupdate || length(rmongodb::mongo.get.database.collections(mongo, db = "varietyResults")) == 0L ||
-      length(grepl(paste0(ns, "Keys"), rmongodb::mongo.get.database.collections(mongo, db = "varietyResults"))) == 0L) {
-    #
-    if (!grepl("127.0.0.1", attr(mongo, "host")))
-      warning("variety.js may fail with certain remote servers (for example when the host or port ",
-              "is different per database, such as with a free mongolab plan).", immediate. = TRUE)
+  if (forceupdate || mongo[["keys"]]$count() == 0L) {
+      #
+    # if (!grepl("127.0.0.1", attr(mongo, "host")))
+    #   warning("variety.js may fail with certain remote servers (for example when the host or port ",
+    #           "is different per database, such as with a free mongolab plan).", immediate. = TRUE)
     #
     # check if extension is available (system.file under MS Windows does not end with slash) ...
     varietylocalurl <- paste0(system.file("exec", package = "ctrdata"), "/variety.js")
@@ -339,10 +340,14 @@ dbFindVariable <- function(namepart = "", allmatches = FALSE, forceupdate = FALS
       curl::curl_download(varietysourceurl, varietylocalurl)
     }
     # compose actual command to call mongo with variety.js
-    varietymongo <- paste0('mongo "', attr(mongo, "host"), '/', attr(mongo, "db"), '"',
-                           ifelse(attr(mongo, "username") != "", paste0(" --username ", attr(mongo, "username")), ""),
-                           ifelse(attr(mongo, "password") != "", paste0(" --password ", attr(mongo, "password")), ""),
-                           " --eval \"var collection = '", ns, "', persistResults=true\" ", varietylocalurl)
+    # mongo collection_to_analyse --quiet --eval "var collection = 'users', persistResults=true, resultsDatabase='db.example.com/variety' variety.js
+    varietymongo <- paste0('mongo "',
+                           sub("mongodb://(.+)", "\\1", url), '/', db, '"',
+                           ifelse(username != "", paste0(" --username ", username), ""),
+                           ifelse(password != "", paste0(" --password ", password), ""),
+                           " --eval \"var collection = '", collection, "', persistResults=true, ",
+                           "resultsDatabase='", paste0(sub("mongodb://(.+)", "\\1", url), '/', db, "'\" "),
+                           varietylocalurl)
     #
     if (.Platform$OS.type == "windows") {
       varietymongo <- paste0(get("mongoBinaryLocation", envir = .privateEnv), varietymongo)
@@ -354,12 +359,13 @@ dbFindVariable <- function(namepart = "", allmatches = FALSE, forceupdate = FALS
     #
   }
 
+  # now do the actual search and find for key name parts
   if (namepart != "") {
     #
-    # mongo get fieldnames
-    # TODO avoid data.frame = TRUE
-    tmp <- rmongodb::mongo.find.all(mongo, paste0("varietyResults", ".", ns, "Keys"), fields = list("key" = 1L), data.frame = TRUE)
-    fieldnames <- tmp[,1]
+    # mongo get fieldnames into vector (no other solution found)
+    fieldnames <- mongo[["keys"]]$find(fields = '{"key": 1}')
+    fieldnames <- fieldnames[1:nrow(fieldnames),]
+    fieldnames <- as.vector(fieldnames[["key"]])
     #
     # actually now find fieldnames
     fieldname <- fieldnames[grepl(tolower(namepart), tolower(fieldnames))]
@@ -371,7 +377,6 @@ dbFindVariable <- function(namepart = "", allmatches = FALSE, forceupdate = FALS
     return(fieldname)
     #
   }
-
 }
 # end dbFindVariable
 
