@@ -23,11 +23,8 @@
 #'
 #' From the database, a vector of de-duplicated identifiers of
 #' clinical trial records can be obtained with
-#' \link{dbFindIdsUniqueTrials}.
-#'
-#' In a dataframe, the preferred of duplicate records of
-#' a trial from EUCTR can be obtained with
-#' \link{dfFindUniqueEuctrRecord}.
+#' \link{dbFindIdsUniqueTrials} and this can be used to select
+#' subsets of interest from R dataframes.
 #'
 #' @docType package
 #' @name ctrdata
