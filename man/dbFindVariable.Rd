@@ -47,6 +47,7 @@ may not work with certain mongo databases, for example when the host or port
 is different per database, such as found with a free mongolab plan.
 }
 \examples{
+
 \dontrun{
  dbFindVariable ("date")
 }

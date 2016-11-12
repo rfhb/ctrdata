@@ -37,6 +37,7 @@ For more sophisticated data retrieval from the database, see vignette examples
 and other packages to query mongodb such as mongolite.
 }
 \examples{
+
 \dontrun{
 
 dbGetVariablesIntoDf("b1_sponsor.b31_and_b32_status_of_the_sponsor")[1,]

@@ -46,6 +46,7 @@ recording other identifiers such as the EudraCT number in the field "Other
 IDs".
 }
 \examples{
+
 \dontrun{
 dbFindIdsUniqueTrials()
 }

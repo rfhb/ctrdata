@@ -24,6 +24,7 @@ Merge related variables into a single variable, and optionally map values to
 a new set of values.
 }
 \examples{
+
 \dontrun{
 statusvalues <- list("ongoing" = c("Recruiting", "Active", "Ongoing",
                                    "Active, not recruiting", "Enrolling by invitation"),
