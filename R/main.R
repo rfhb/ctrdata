@@ -107,6 +107,14 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   # query-timestamp is a fixed string format (character variable)
   dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber, mongo, ns){
     #
+
+    # NEW WRITE HISTORY
+    #tmp <- toJSON(history.data.frame)
+    #tmp <- paste0('{\"$set\": {"queries": ', tmp, '}}')
+    #result <- m$update(query = '{"_id":{"$eq":"meta-info"}}',
+    #                   update = tmp, upsert = TRUE)
+
+
     json <- paste0('{"_id": "meta-info", ',
                    '"query": {',
                    '"query-timestamp": "', format(Sys.time(), "%Y-%m-%d-%H-%M-%S"), '", ',
@@ -116,7 +124,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
                    '}')
     #
     # retrieve existing history data
-    hist <- ctrQueryHistoryInDb(mongo = mongo, ns = ns)
+    hist <- dbQueryHistory(mongo = mongo, ns = ns)
     # rewrite hist dataframe into json object
     if (!is.null(hist)) {
       tmp <- ', '
@@ -169,12 +177,12 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   if ((querytoupdate > 0) && (queryterm != "")) warning("'query term' and 'querytoupdate' specified, continuing only with new query", immediate. = TRUE)
   if ((querytoupdate > 0) && (queryterm == "")) {
     #
-    rerunquery <- ctrQueryHistoryInDb(mongo = mongo, ns = ns)
+    rerunquery <- dbQueryHistory(mongo = mongo, ns = ns)
     #
     if (is.null(rerunquery)) stop("'querytoupdate': no previous queries found in collection, aborting query update.")
     #
     # try to select the query to be updated
-    if (querytoupdate > nrow(rerunquery)) stop("'querytoupdate': specified number of query not found, check 'ctrQueryHistoryInDb()', aborting.")
+    if (querytoupdate > nrow(rerunquery)) stop("'querytoupdate': specified number of query not found, check 'dbQueryHistory()', aborting.")
     #
     rerunquery <- rerunquery[querytoupdate,]
     queryterm  <- rerunquery$`query-term`

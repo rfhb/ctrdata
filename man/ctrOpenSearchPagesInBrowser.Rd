@@ -13,7 +13,7 @@ ctrOpenSearchPagesInBrowser(register = c("EUCTR", "CTGOV"),
 both. Default is to open both registers' advanced search pages. To open the
 browser with a previous search, register (or queryterm) can be the output
 of ctrGetQueryUrlFromBrowser() or can be one row from
-ctrQueryHistoryInDb().}
+dbQueryHistory().}
 
 \item{copyright}{(Optional) If set to \code{TRUE}, opens copyright pages of
 register(s).}
@@ -34,12 +34,11 @@ Open advanced search pages of register(s) or execute search in default web
 browser.
 }
 \examples{
+
 \dontrun{
 
 ctrOpenSearchPagesInBrowser(register = "EUCTR", queryterm = "cancer&age=under-18")
-
 ctrOpenSearchPagesInBrowser(queryterm = ctrQueryHistoryInDb() [1,])
-
 ctrOpenSearchPagesInBrowser(copyright = TRUE)
 
 }

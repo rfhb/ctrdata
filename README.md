@@ -62,14 +62,14 @@ In Linux and Mac OS X systems, these are usually already installed. For MS Windo
 Name  | Function
 ---------------------------- | --------------------------------------------
 ctrOpenSearchPagesInBrowser	| Open advanced search pages of register(s) or execute search in default web browser
-ctrQueryHistoryInDb	| Show the history of queries that were loaded into a database
 ctrGetQueryUrlFromBrowser	| Import from clipboard the URL of a search in one of the registers
 ctrLoadQueryIntoDb	| Retrieve or update information on clinical trials from register and store in database
+dbQueryHistory	| Show the history of queries that were loaded into a database
 dbFindVariable	| Find names of keys (fields) in the database
 dbFindIdsUniqueTrials	| Produce a vector of de-duplicated identifiers of clinical trial records in the database
 dbGetVariablesIntoDf	| Create a data frame from records in the database that have specified fields in the database
 dfMergeTwoVariablesRelevel	| Merge related variables into a single variable, and optionally map values to a new set of values
-installCygwinWindowsDoInstall	| Convenience function to install a cygwin environment under MS Windows, including perl and php
+installCygwinWindowsDoInstall	| Convenience function to install a cygwin environment under MS Windows, including perl, php, sed
 
 <!--
 

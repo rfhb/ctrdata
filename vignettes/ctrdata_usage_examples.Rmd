@@ -49,9 +49,9 @@ q <- ctrGetQueryUrlFromBrowser()  # read search from clipboard
 ctrOpenSearchPagesInBrowser(q)    # open search newly in broweser
 #
 # Example 2: After records have already been downloaded: 
-q <- ctrQueryHistoryInDb()        # list the searches in the database (returns a data frame)
-q <- q [2,]                       # select exactly one of the searches (by subsetting q)
-ctrOpenSearchPagesInBrowser(q)    # open selected search newly in broweser
+q <- dbQueryHistory()           # list the searches in the database (returns a data frame)
+q <- q [2,]                     # select exactly one of the searches (by subsetting q)
+ctrOpenSearchPagesInBrowser(q)  # open selected search newly in broweser
 #
 # This opens a browser already executing an example search:
 ctrOpenSearchPagesInBrowser(register = "EUCTR", queryterm = "cancer&age=under-18")
@@ -85,7 +85,7 @@ dbFindVariable("date", allmatches = TRUE)
 ```{r execute_update_query}
 #
 # List queries:
-ctrQueryHistoryInDb()
+dbQueryHistory()
 # 
 # 
 # Update query number 1 in the history:
@@ -94,7 +94,7 @@ ctrQueryHistoryInDb()
 #  - CTGOV intformation can always be incrementally downloaded or updated. 
 ctrLoadQueryIntoDb(querytoupdate = 1)
 #
-ctrQueryHistoryInDb()
+dbQueryHistory()
 # Note: after such an update, the column "query-records" refers 
 # to the number of records that were added or updated, only, 
 # when the update was run as per the "query-timestamp", 
@@ -173,7 +173,7 @@ ctrLoadQueryIntoDb(q)
 # ctrLoadQueryIntoDb(queryterm = "ependymoma&recr=Open&type=Intr&age=0", register = "CTGOV")
 #
 # Data from which queries have now been downloaded into the database? 
-ctrQueryHistoryInDb()
+dbQueryHistory()
 # 
 # Get columns from the database from different registers
 # (takes some time as variables are merged one after the other): 
@@ -335,7 +335,8 @@ if (FALSE) ctrLoadQueryIntoDb(register = "EUCTR",
                               queryterm = "&age=under-18&phase=phase-one&phase=phase-two", 
                               ns = "paediatric_phase12_trials")
 #
-ctrQueryHistoryInDb(ns = "paediatric_phase12_trials")
+dbQueryHistory(ns = "paediatric_phase12_trials")
+ctrOpenSearchPagesInBrowser(dbQueryHistory(ns = "paediatric_phase12_trials"))
 #
 if (FALSE) ctrLoadQueryIntoDb(querytoupdate = 1, ns = "paediatric_phase12_trials", debug = TRUE)
 #
@@ -478,7 +479,7 @@ sPDF <- joinCountryData2Map (counts, joinCode="ISO2", nameJoinColumn="country")
 mapParams <- mapCountryData (sPDF, nameColumnToPlot="Ongoing", mapTitle="",
                              xlim=c(-10,30), ylim=c(36, 65), addLegend=FALSE,
                              colourPalette="terrain")
-# do.call (addMapLegend, c (mapParams, legendLabels="all", legendWidth=0.5, digits=0, labelFontSize=0.8))
+#do.call (addMapLegend, c (mapParams, legendLabels="all", legendWidth=0.5, digits=0, labelFontSize=0.8))
 title (main="Number of ongoing / total phase 1\nanti-cancer medicine trials with children")
 labelCountries (sPDF, nameCountryColumn="text", xlim=c(-15,32), ylim=c(36, 65), cex=1.0, col="blue")
 dev.off()
@@ -602,4 +603,54 @@ plot (hist, type = "h", las = 1, xlim = c(0, 2000), ylim = c(0, 500),
 #
 ```
 ![Histogram2](Rplot03.png)
+
+## Analyse inclusion criteria
+
+```{r analyse_inclusion_criteria}
+#
+# Search for interesting variables,  
+# note the spelling in EUCTR:
+dbFindVariable("crit", allmatches = TRUE)
+#
+# Get interesting variables from database 
+# for further analysis within R:
+result <- dbGetVariablesIntoDf(c("e3_principal_inclusion_criteria", 
+                                 "eligibility.criteria.textblock"))
+#
+# Eliminate trials records duplicated by member state
+# keep a single record and if available use preference:
+result <- result[ result[["_id"]] %in% dbFindIdsUniqueTrials(), ]
+#
+result <- dfMergeTwoVariablesRelevel(df = result,
+                                     varnames = c("e3_principal_inclusion_criteria", 
+                                                  "eligibility.criteria.textblock"))
+#
+# utility function to extend grepl to check for several patterns
+grepl_multi <- function (patterns, x, simplify = TRUE) {
+  if(!is.vector(patterns)) stop("patterns should be a vector.")
+  ret <- apply(as.matrix(patterns), 1, function(pattern) grepl(pattern, x, ignore.case = TRUE))
+  ret <- as.data.frame(ret)
+  if (simplify) 
+    ret <- rowSums(ret) >= 1
+  else
+    names(ret) <- patterns
+  return(ret)
+}
+#
+# search for interesting terms
+terms <- c("positive", "marker", "select")
+#
+table(grepl_multi(terms, result))
+#
+# utility function to generate a regular expression for a given number of words
+words <- function (x) paste0(paste0(rep("\\s+\\w+", x), collapse = ""), "\\s+")
+# 
+terms <- paste0(".*(", words(2), terms, "\\w*", words(3), ").*")
+# 
+# find and print found matches for review
+for(i in 1:length(terms))
+  print(gsub(terms[i], "\\1", result, ignore.case = TRUE)[grepl(terms[i], result)])
+#
+```
+
 
