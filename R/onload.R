@@ -2,8 +2,8 @@
 ### initialising
 
 # create environment private to this package
-.privateEnv <- new.env()
 # for caching the location of mongo binaries
+.privateEnv <- new.env()
 assign("mongoBinaryLocation", NA, envir = .privateEnv)
 
 .onAttach <- function(libname, pkgname) {
@@ -17,10 +17,10 @@ assign("mongoBinaryLocation", NA, envir = .privateEnv)
   # check availabilities
   if (.Platform$OS.type == "windows") installCygwinWindowsTest()
   #
-  if(!suppressWarnings(findBinary("php --version")))                         warning("php not found, ctrLoadQueryIntoDb will not work.", call. = FALSE)
-  if(!suppressWarnings(findBinary("php -r 'simplexml_load_string(\"\");'"))) warning("php xml not found, ctrLoadQueryIntoDb will not work.", call. = FALSE)
-  if(!suppressWarnings(findBinary("echo x | sed s/x/y/")))                   warning("sed not found, ctrLoadQueryIntoDb will not work.", call. = FALSE)
-  if(!suppressWarnings(findBinary("perl -V:osname")))                        warning("perl not found, ctrLoadQueryIntoDb will not work.", call. = FALSE)
+  if(!suppressWarnings(installFindBinary("php --version")))                         warning("php not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
+  if(!suppressWarnings(installFindBinary("php -r 'simplexml_load_string(\"\");'"))) warning("php xml not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
+  if(!suppressWarnings(installFindBinary("echo x | sed s/x/y/")))                   warning("sed not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
+  if(!suppressWarnings(installFindBinary("perl -V:osname")))                        warning("perl not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
   packageStartupMessage("Helper binaries tested.")
   #
   invisible()
