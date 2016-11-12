@@ -38,39 +38,7 @@ countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", 
 ctrMongo <- function(collection = "ctrdata", db = "users", url = "mongodb://localhost",
                      username = "", password = "", verbose = FALSE) {
 
-  # # if parameter is empty, test and use global environment
-  # if(class(mongo) == "character" && mongo == "" && ("mongo" %in% objects(envir = .GlobalEnv))) {
-  #
-  #   # inform user
-  #   message("Using object \"mongo\" defined in global environment!")
-  #
-  #   mongo <- get("mongo", envir = .GlobalEnv)
-  #
-  # }
-  #
-  # # check parameter
-  # if(class(mongo) == "character" && mongo != "") stop("Cannot use \"", mongo, "\", check parameter mongo.")
-  #
-  # # use acceptable parameter
-  # if(identical(class(mongo), c("mongo", "jeroen", "environment"))) {
-  #
-  #   # We already have a database connection
-  #
-  #   # inform user
-  #   message("Using Mongo DB database.collection: \"", mongo$info()$stats$ns, "\".")
-  #
-  #   # mongolite will automatically reconnect
-  #   return(mongo)
-  #
-  # } else {
-  #
-  #   # set up default database connection
-  #   host <- "127.0.0.1:27017"
-  #   username <- ""
-  #   password <- ""
-  #   collection <- "ctrdata"
-  #   db <- "users"
-  #   # not used: options = ssl_options()
+  # not used so far: options = ssl_options()
 
   # url: mongodb://[username:password@]host1[:port1]
   host     <- sub("mongodb://(.+)", "\\1", url)
@@ -89,7 +57,7 @@ ctrMongo <- function(collection = "ctrdata", db = "users", url = "mongodb://loca
   # inform user
   message("Using Mongo DB (collections \"", collection, "\" and \"", collectionKeys, "\" in database \"", db, "\" on \"", host, "\").")
 
-  return(list(valueCtrDb, valueCtrKeysDb))
+  return(list("ctr" = valueCtrDb, "keys" = valueCtrKeysDb))
 }
 # end ctrMongo
 
@@ -253,7 +221,7 @@ dbQueryHistory <- function(collection = "ctrdata", db = "users", url = "mongodb:
 
   # get a working mongo connection, select trial record collection
   mongo <- ctrMongo(collection = collection, db = db, url = url,
-                    username = username, password = password, verbose = verbose)[[1]]
+                    username = username, password = password, verbose = verbose)[["ctr"]]
 
   # Example history:
   # {
