@@ -36,7 +36,7 @@ in sequence of their use in a workflow:
 
 From the database, a vector of de-duplicated identifiers of
 clinical trial records can be obtained with
-\link{dbFindIdsUniqueTrials}.
-#'
+\link{dbFindIdsUniqueTrials} and this can be used to select
+subsets of interest from R dataframes.
 }
 
