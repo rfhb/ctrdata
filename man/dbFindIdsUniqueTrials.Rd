@@ -6,17 +6,16 @@
 database based on the clinical trial identifier, and it returns a list of ids
 of unique trials.}
 \usage{
-dbFindIdsUniqueTrials(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017",
-  db = "users"), ns = "ctrdata", prefermemberstate = "GB",
-  include3rdcountrytrials = TRUE, preferregister = "EUCTR",
+dbFindIdsUniqueTrials(preferregister = "EUCTR", prefermemberstate = "GB",
+  include3rdcountrytrials = TRUE, collection = "ctrdata", db = "users",
+  url = "mongodb://localhost", username = "", password = "",
   verbose = TRUE)
 }
 \arguments{
-\item{mongo}{(\link{mongo}) A mongo connection object. If not provided,
-defaults to database "users" on 127.0.0.1 port 27017.}
-
-\item{ns}{Name of the collection in mongo database ("namespace"), defaults to
-"ctrdata"}
+\item{preferregister}{The abbreviation of the preferred register, in case
+a trial is in more than one register (string, either "EUCTR" or "CTGOV").
+If set to an empty string (""), keeps the keys for the same trial in both
+registers in the returned vector.}
 
 \item{prefermemberstate}{Code of single EU Member State for which records should
 returned if available. (If not available, a record for GB or lacking this
@@ -27,17 +26,24 @@ Member States, please see vector \code{countriesEUCTR}.}
 that are conducted in third countries, that is outside the European Union.
 These can be recognised by EUCTR identifiers ending in -3RD, such as 2010-022945-52-3RD.}
 
-\item{preferregister}{The abbreviation of the preferred register, in case
-a trial is in more than one register (string, either "EUCTR" or "CTGOV").
-If set to an empty string (""), keeps the keys for the same trial in both
-registers in the returned vector.}
+\item{collection}{Name of collection (default is "ctrdata")}
+
+\item{db}{Name of database (default is "users")}
+
+\item{url}{Address of the mongodb server in mongo connection string URI format
+\url{http://docs.mongodb.org/manual/reference/connection-string/} (default is
+mongodb://localhost)}
+
+\item{username}{In case access requires credentials.}
+
+\item{password}{In case access requires credentials.}
 
 \item{verbose}{If set to \code{TRUE}, prints out information about numbers
 of records found at subsequent steps when searching for duplicates}
 }
 \value{
-A vector with strings of keys (_id in the database) that are
-  non-duplicate trials.
+A vector with strings of keys ("_id" in the database) that
+  represent non-duplicate trials.
 }
 \description{
 If records for a clinical trial are found from more than one register, the

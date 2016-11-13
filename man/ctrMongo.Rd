@@ -11,18 +11,19 @@ ctrMongo(collection = "ctrdata", db = "users",
   verbose = FALSE)
 }
 \arguments{
-\item{collection}{name of collection}
+\item{collection}{Name of collection (default is "ctrdata")}
 
-\item{db}{name of database}
+\item{db}{Name of database (default is "users")}
 
-\item{url}{address of the mongodb server in mongo connection string
-\href{{http://docs.mongodb.org/manual/reference/connection-string/}{URI format}}.}
+\item{url}{Address of the mongodb server in mongo connection string URI format
+\url{http://docs.mongodb.org/manual/reference/connection-string/} (default is
+mongodb://localhost)}
 
 \item{username}{In case access requires credentials.}
 
 \item{password}{In case access requires credentials.}
 
-\item{verbose}{emit some more output}
+\item{verbose}{Print information.}
 }
 \value{
 A mongo data base object, currently using mongolite

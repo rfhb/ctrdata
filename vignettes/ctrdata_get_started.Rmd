@@ -107,7 +107,7 @@ ctrLoadQueryIntoDb(queryterm = "2010-024264-18", register = "EUCTR")
 #
 dbQueryHistory()
 #
-# Using default Mongo DB (collection "ctrdata" in database "users" on "127.0.0.1:27017").
+# Using Mongo DB (collections "ctrdata" and "ctrdataKeys" in database "users" on "localhost").
 # Number of queries in history of "users.tmp": 2
 #       query-timestamp query-register query-records                  query-term
 # 1 2016-01-13-10-51-56          CTGOV          5233 type=Intr&cond=cancer&age=0

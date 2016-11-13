@@ -4,20 +4,29 @@
 \alias{dbGetVariablesIntoDf}
 \title{Create a data frame from records in the database that have specified fields}
 \usage{
-dbGetVariablesIntoDf(fields = "", mongo = rmongodb::mongo.create(host =
-  "127.0.0.1:27017", db = "users"), ns = "ctrdata", debug = FALSE)
+dbGetVariablesIntoDf(fields = "", debug = FALSE, collection = "ctrdata",
+  db = "users", url = "mongodb://localhost", username = "",
+  password = "", verbose = FALSE)
 }
 \arguments{
 \item{fields}{Vector of strings, with names of the sought fields.}
 
-\item{mongo}{(\link{mongo}) A mongo connection object. If not provided,
-defaults to database "users" on 127.0.0.1 port 27017.}
-
-\item{ns}{Name of the collection in mongo database ("namespace"), defaults to
-"ctrdata"}
-
 \item{debug}{Printing additional information if set to \code{TRUE}; default
 is \code{FALSE}.}
+
+\item{collection}{Name of collection (default is "ctrdata")}
+
+\item{db}{Name of database (default is "users")}
+
+\item{url}{Address of the mongodb server in mongo connection string URI format
+\url{http://docs.mongodb.org/manual/reference/connection-string/} (default is
+mongodb://localhost)}
+
+\item{username}{In case access requires credentials.}
+
+\item{password}{In case access requires credentials.}
+
+\item{verbose}{Print information.}
 }
 \value{
 A data frame with columns corresponding to the sought fields. Note

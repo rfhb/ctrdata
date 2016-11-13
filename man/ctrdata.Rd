@@ -21,7 +21,7 @@ in sequence of their use in a workflow:
 
 
 \link{dbFindVariable},
-\link{ctrQueryHistoryInDb}
+\link{dbQueryHistory}
 }
 
 \section{Getting R dataframes from clinical trial information in the database}{
@@ -37,9 +37,6 @@ in sequence of their use in a workflow:
 From the database, a vector of de-duplicated identifiers of
 clinical trial records can be obtained with
 \link{dbFindIdsUniqueTrials}.
-
-In a dataframe, the preferred of duplicate records of
-a trial from EUCTR can be obtained with
-\link{dfFindUniqueEuctrRecord}.
+#'
 }
 

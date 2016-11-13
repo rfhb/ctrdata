@@ -1,6 +1,7 @@
 ### ctrdata package
 ### main functions
 
+
 #' Retrieve or update information on clinical trials from register and store in
 #' database
 #'
@@ -13,6 +14,8 @@
 #'   The queryterm is recorded in the collection \code{ns} for later use to update records.
 #' @param register Vector of abbreviations of registers to query, defaults to
 #'   "EUCTR"
+#' @param querytoupdate Number of query to be updated (re-downloaded). This
+#'   parameter takes precedence over \code{queryterm}.
 #' @param details If \code{TRUE} (default), retrieve full protocol-related
 #'   information from EUCTR or XML data from CTGOV, depending on the register
 #'   selected. This gives all of the available details for the trials.
@@ -20,23 +23,20 @@
 #'   from EUCTR or CSV data from CTGOV. The full EUCTR information includes
 #'   separate records for every country in which the trial is opened; use
 #'   function \code{dbFindUniqueEuctrRecord} in a subsequent step to limit to
-#'   one record from EUCTR per trial.
-#' @param mongo (\link{mongo}) A mongo connection object. If not provided,
-#'   defaults to database "users" on 127.0.0.1 port 27017.
-#' @param ns Name of the collection in mongo database ("namespace"), defaults to
-#'   "ctrdata"
-#' @param querytoupdate Number of query to be updated (re-downloaded). This
-#'   parameter takes precedence over \code{queryterm}.
+#'   one record from EUCTR per trial
 #' @param parallelretrievals Number of parallel downloads of information from
 #'   the register
 #' @param debug Printing additional information if set to \code{TRUE}; default
 #'   is \code{FALSE}.
 #'
+#' @inheritParams ctrdata::ctrMongo
+#'
+#'
 #' @return Number of trials imported or updated in the database
 #' @examples
 #' # Retrieve protocol-related information on a single trial identified by EudraCT number
 #' \dontrun{
-#' ctrLoadQueryIntoDb (queryterm = "2013-001291-38 ")
+#' ctrLoadQueryIntoDb (queryterm = "2013-001291-38")
 #' }
 #'
 #' # For use with EudraCT: define paediatric population and cancer terms
@@ -57,11 +57,14 @@
 #' ctrLoadQueryIntoDb (queryterm = "NCT02239861", register = "CTGOV")
 #' }
 #'
-#' @import RCurl rmongodb curl
-#' @export ctrLoadQueryIntoDb
+#' @import RCurl curl jsonlite
 #'
-ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate = 0, details = TRUE, parallelretrievals = 10,
-                       mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"), ns = "ctrdata", debug = FALSE) {
+#' @export
+#'
+ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate = 0,
+                               details = TRUE, parallelretrievals = 10, debug = FALSE,
+                               collection = "ctrdata", db = "users", url = "mongodb://localhost",
+                               username = "", password = "", verbose = FALSE) {
 
   ##### parameter checks #####
 
@@ -84,73 +87,52 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   # other sanity checks
   if ((queryterm == "") & querytoupdate == 0) stop("'query term' is empty.")
   if (querytoupdate != trunc(querytoupdate))  stop("'querytoupdate' does not have an integer value.")
-  if (class(mongo)  != "mongo")               stop("'mongo' is not a mongo connection object.")
   if(!grepl(register, "CTGOVEUCTR"))          stop("Register not known: ", register)
 
   # check program availability
   if (.Platform$OS.type == "windows") {
-    ctrdata:::installMongoFindBinaries()
+    installMongoFindBinaries()
     if (is.na(get("mongoBinaryLocation", envir = .privateEnv)))
       stop("Not starting ctrLoadQueryIntoDb because mongoimport was not found.")
-    ctrdata:::installCygwinWindowsTest()
+    installCygwinWindowsTest()
   }
 
   # check program version as acceptable json format changed from 2.x to 3.x
-  ctrdata:::installMongoCheckVersion()
+  installMongoCheckVersion()
 
   # remove trailing or leading whitespace
   queryterm <- gsub("^\\s+|\\s+$", "", queryterm)
 
+  # get a working mongo connection, select trial record collection
+  mongo <- ctrMongo(collection = collection, db = db, url = url,
+                    username = username, password = password, verbose = verbose)[["ctr"]]
+
   ##### helper functions #####
 
-  # helper function for adding query parameters and results to database
-  # query-timestamp is a fixed string format (character variable)
-  dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber, mongo, ns){
-    #
+  # helper function for adding query parameters and results to meta-info in database
+  dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber,
+                                      collection = collection, db = db, url = url,
+                                      username = username, password = password, verbose = verbose){
 
-    # NEW WRITE HISTORY
-    #tmp <- toJSON(history.data.frame)
-    #tmp <- paste0('{\"$set\": {"queries": ', tmp, '}}')
-    #result <- m$update(query = '{"_id":{"$eq":"meta-info"}}',
-    #                   update = tmp, upsert = TRUE)
-
-
-    json <- paste0('{"_id": "meta-info", ',
-                   '"query": {',
-                   '"query-timestamp": "', format(Sys.time(), "%Y-%m-%d-%H-%M-%S"), '", ',
-                   '"query-register": "', register, '", ',
-                   '"query-records": "', recordnumber, '", ',
-                   '"query-term": "', queryterm, '" ',
-                   '}')
-    #
     # retrieve existing history data
-    hist <- dbQueryHistory(mongo = mongo, ns = ns)
-    # rewrite hist dataframe into json object
-    if (!is.null(hist)) {
-      tmp <- ', '
-      for (i in 1:nrow(hist)) {
-        if (queryterm != hist[i,]$`query-term` | register != hist[i,]$`query-register`) {
-          # if query has been run before, do not include its history
-          tmp <- paste0(tmp, '"query": {')
-          tmprow <- paste0(apply(hist[i,], 1, function(x) paste0('"', names(x), '": "', x, '",')), collapse = '')
-          tmp <- paste0(tmp, tmprow, '},', collapse = '')
-        }
-      }
-      # only if tmp has relevant content
-      if (nchar(tmp) > 2) {
-        tmp <- gsub(',}', '}', tmp)
-        tmp <- gsub(',$',  '', tmp)
-        json <- paste0(json, tmp)
-      }
-    }
-    # close json object
-    json <- paste0(json, '}')
-    # convert to bson
-    bson <- rmongodb::mongo.bson.from.JSON(json)
-    # insert into database
-    rmongodb::mongo.update(mongo, paste0(attr(mongo, "db"), ".", ns), criteria = list("_id" = "meta-info"),
-                           objNew = bson, flags = rmongodb::mongo.update.upsert)
-    #
+    hist <- dbQueryHistory(collection = collection, db = db, url = url,
+                           username = username, password = password, verbose = verbose)
+
+    # append current search
+    hist <- rbind(hist, cbind ("query-timestamp" = format(Sys.time(), "%Y-%m-%d-%H-%M-%S"),
+                               "query-register" = register,
+                               "query-records" = recordnumber,
+                               "query-term"= queryterm))
+
+    # collate information about current query into json object
+    json <- jsonlite::toJSON(list("queries" = hist))
+
+    # update(query, update = '{"$set":{}}', upsert = FALSE, multiple = FALSE)
+    mongo$update(query = '{"_id":{"$eq":"meta-info"}}',
+                 update = paste0('{ "$set" :', json, '}'),
+                 upsert = TRUE)
+
+    # inform user
     message("Updated history.")
     #
   }
@@ -177,7 +159,8 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   if ((querytoupdate > 0) && (queryterm != "")) warning("'query term' and 'querytoupdate' specified, continuing only with new query", immediate. = TRUE)
   if ((querytoupdate > 0) && (queryterm == "")) {
     #
-    rerunquery <- dbQueryHistory(mongo = mongo, ns = ns)
+    rerunquery <- dbQueryHistory(collection = collection, db = db, url = url,
+                                 username = username, password = password, verbose = verbose)
     #
     if (is.null(rerunquery)) stop("'querytoupdate': no previous queries found in collection, aborting query update.")
     #
@@ -256,8 +239,8 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   if ("CTGOV" %in% register) {
 
     # check availability of relevant helper programs
-    if(!suppressWarnings(ctrdata:::findBinary("php --version")))                          stop("php not found.")
-    if(!suppressWarnings(ctrdata:::findBinary("php -r 'simplexml_load_string(\"\");'")))  stop("php xml not found.")
+    if(!suppressWarnings(installFindBinary("php --version")))                          stop("php not found.")
+    if(!suppressWarnings(installFindBinary("php -r 'simplexml_load_string(\"\");'")))  stop("php xml not found.")
 
     # create empty temporary directory on localhost for
     # download from register into temporary directy
@@ -297,63 +280,77 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     fieldsCTGOV <- sub("NCT Number", "_id", fieldsCTGOV)
     write(fieldsCTGOV, paste0(tempDir, "/field_names.txt"))
 
-    #### START csv
-    if (!details) {
-
-      # get result file and unzip into folder, identify import file
-      message("Downloading trials from CTGOV as csv ...")
-      ctgovdownloadcsvurl <- paste0(queryUSRoot, queryUSType1, queryUSPreCSV, "&", queryterm, queryupdateterm, queryUSPost)
-      if (debug) message ("DEBUG: ", ctgovdownloadcsvurl)
-      #
-      f <- paste0(tempDir, "/ctgov.zip")
-      h <- curl::new_handle()
-      #
-      curl::handle_setopt(h, ssl_verifypeer = FALSE)
-      curl::curl_download(ctgovdownloadcsvurl, destfile = f, mode = "wb", handle = h, quiet = (getOption("internet.info") >= 2))
-      #
-      if (file.size(f) == 0) stop("No studies downloaded. Please check query term or run again with debug = TRUE.")
-      utils::unzip(f, exdir = tempDir)
-      resultsCTGOV <- paste0(tempDir, "/study_fields.csv")
-
-      # call to import in csv format (not possible from within R)
-      ctgov2mongo <- paste0('mongoimport --host="', attr(mongo, "host"), '" --db="', attr(mongo, "db"), '" --collection="', ns, '"',
-                            ifelse(attr(mongo, "username") != "", paste0(' --username="', attr(mongo, "username"), '"'), ''),
-                            ifelse(attr(mongo, "password") != "", paste0(' --password="', attr(mongo, "password"), '"'), ''),
-                            ' --fieldFile="', paste0(tempDir, '/field_names.txt"'),
-                            ' --upsert --type=csv --file="', resultsCTGOV, '"')
-      #
-      if (.Platform$OS.type == "windows") {
-        #
-        ctgov2mongo <- paste0(get("mongoBinaryLocation", envir = .privateEnv), ctgov2mongo)
-        #
-      } else {
-        #
-        # mongoimport does not return exit value, hence redirect stderr to stdout
-        ctgov2mongo <- paste(ctgov2mongo, '2>&1')
-        #
-      }
-      #
-      message(paste0("Importing CTGOV CSV into mongoDB ..."))
-      if (debug) message("DEBUG: ", ctgov2mongo)
-      imported <- system(ctgov2mongo, intern = TRUE)
-
-      # remove document that was the headerline in the imported file
-      rmongodb::mongo.remove(mongo, paste0(attr(mongo, "db"), ".", ns), list("_id" = "NCT Number"))
-
-      # split otherids into new array for later perusal
-      cursor <- rmongodb::mongo.find(mongo, paste0(attr(mongo, "db"), ".", ns),
-                                     query  = list('_id' = list('$regex' = 'NCT[0-9]{8}'), 'Other IDs' = 1L),
-                                     fields = list("Other IDs" = 1L))
-      while (rmongodb::mongo.cursor.next(cursor)) {
-        # get other ids
-        oids <- unlist(strsplit(rmongodb::mongo.bson.to.list(rmongodb::mongo.cursor.value(cursor))[[2]], "[|]"))
-        # update record with additional field
-        rmongodb::mongo.update(mongo, paste0(attr(mongo, "db"), ".", ns), criteria = rmongodb::mongo.cursor.value(cursor),
-                               objNew = list('$set' = list("otherids" = oids)))
-      } # cleanup
-      rmongodb::mongo.cursor.destroy(cursor)
-
-    } #### END csv
+    # THIS FOLLOWING SECTION csv will be removed as the functionality is no more needed
+    # #### START csv
+    # if (!details) {
+    #
+    #   # get result file and unzip into folder, identify import file
+    #   message("Downloading trials from CTGOV as csv ...")
+    #   ctgovdownloadcsvurl <- paste0(queryUSRoot, queryUSType1, queryUSPreCSV, "&", queryterm, queryupdateterm, queryUSPost)
+    #   if (debug) message ("DEBUG: ", ctgovdownloadcsvurl)
+    #   #
+    #   f <- paste0(tempDir, "/ctgov.zip")
+    #   h <- curl::new_handle()
+    #   #
+    #   curl::handle_setopt(h, ssl_verifypeer = FALSE)
+    #   curl::curl_download(ctgovdownloadcsvurl, destfile = f, mode = "wb", handle = h, quiet = (getOption("internet.info") >= 2))
+    #   #
+    #   if (file.size(f) == 0) stop("No studies downloaded. Please check query term or run again with debug = TRUE.")
+    #   utils::unzip(f, exdir = tempDir)
+    #   resultsCTGOV <- paste0(tempDir, "/study_fields.csv")
+    #
+    #   # call to import in csv format (not possible from within R)
+    #   ctgov2mongo <- paste0('mongoimport --host="', attr(mongo, "host"), '" --db="', attr(mongo, "db"), '" --collection="', ns, '"',
+    #                         ifelse(attr(mongo, "username") != "", paste0(' --username="', attr(mongo, "username"), '"'), ''),
+    #                         ifelse(attr(mongo, "password") != "", paste0(' --password="', attr(mongo, "password"), '"'), ''),
+    #                         ' --fieldFile="', paste0(tempDir, '/field_names.txt"'),
+    #                         ' --upsert --type=csv --file="', resultsCTGOV, '"')
+    #   #
+    #   if (.Platform$OS.type == "windows") {
+    #     #
+    #     ctgov2mongo <- paste0(get("mongoBinaryLocation", envir = .privateEnv), ctgov2mongo)
+    #     #
+    #   } else {
+    #     #
+    #     # mongoimport does not return exit value, hence redirect stderr to stdout
+    #     ctgov2mongo <- paste(ctgov2mongo, '2>&1')
+    #     #
+    #   }
+    #   #
+    #   message(paste0("Importing CTGOV CSV into mongoDB ..."))
+    #   if (debug) message("DEBUG: ", ctgov2mongo)
+    #   imported <- system(ctgov2mongo, intern = TRUE)
+    #
+    #   # remove document that was the headerline in the imported file
+    #   mongo$remove(query = '{"_id": "NCT Number"}')
+    #
+    #   # # split otherids into new array for later perusal
+    #   # cursor <- rmongodb::mongo.find(mongo, paste0(attr(mongo, "db"), ".", ns),
+    #   #                                query  = list('_id' = list('$regex' = 'NCT[0-9]{8}'), 'Other IDs' = 1L),
+    #   #                                fields = list("Other IDs" = 1L))
+    #   # while (rmongodb::mongo.cursor.next(cursor)) {
+    #   #   # get other ids
+    #   #   oids <- unlist(strsplit(rmongodb::mongo.bson.to.list(rmongodb::mongo.cursor.value(cursor))[[2]], "[|]"))
+    #   #   # update record with additional field
+    #   #   rmongodb::mongo.update(mongo, paste0(attr(mongo, "db"), ".", ns), criteria = rmongodb::mongo.cursor.value(cursor),
+    #   #                          objNew = list('$set' = list("otherids" = oids)))
+    #   # } # cleanup
+    #   # rmongodb::mongo.cursor.destroy(cursor)
+    #
+    #   # new implementation
+    #   cursor <- mongo$iterate(query = '{"_id": {"$regex": "NCT[0-9]{8}"}, "otherids": {"$ne": ""}}', fields = '{"otherids": 1}', limit = mongo$count())
+    #   cursor$one()
+    #   cursor$batch()
+    #   while (tmp <- cursor$one()) {
+    #     # get other ids
+    #     oids <- unlist(strsplit(rmongodb::mongo.bson.to.list(rmongodb::mongo.cursor.value(cursor))[[2]], "[|]"))
+    #     # update record with additional field
+    #     rmongodb::mongo.update(mongo, paste0(attr(mongo, "db"), ".", ns), criteria = rmongodb::mongo.cursor.value(cursor),
+    #                            objNew = list('$set' = list("otherids" = oids)))
+    #   } # cleanup
+    #
+    #
+    # } #### END csv
 
 
     #### START xml
@@ -376,11 +373,11 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
       # compose commands - transform xml into json, a single allfiles.json in the temporaray directory
       xml2json <- system.file("exec/xml2json.php", package = "ctrdata", mustWork = TRUE)
       xml2json <- paste0('php -f ', xml2json, ' ', tempDir)
-      json2mongo <- paste0('mongoimport --host="', attr(mongo, "host"), '" --db="', attr(mongo, "db"), '" --collection="', ns, '"',
-                           ifelse(attr(mongo, "username") != "", paste0(' --username="', attr(mongo, "username"), '"'), ''),
-                           ifelse(attr(mongo, "password") != "", paste0(' --password="', attr(mongo, "password"), '"'), ''),
+      json2mongo <- paste0('mongoimport --host="', sub("mongodb://(.+)", "\\1", url), '" --db="', db, '" --collection="', collection, '"',
+                           ifelse(username != "", paste0(' --username="', username, '"'), ''),
+                           ifelse(password != "", paste0(' --password="', password, '"'), ''),
                            ' --upsert --type=json --file="', tempDir, '/allfiles.json"',
-                           ifelse(ctrdata:::installMongoCheckVersion(), '', ' --jsonArray'))
+                           ifelse(installMongoCheckVersion(), '', ' --jsonArray'))
 
       # prepare for alternative method to split large file and import split files one by one
       # #!/bin/bash
@@ -418,26 +415,70 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
       if (debug) message("DEBUG: ", json2mongo)
       imported <- system(json2mongo, intern = TRUE)
 
-      # TODO: "secondary_id" in CTGOV example not yet covered
-      # split otherids into new array for later perusal
-      cursor <- rmongodb::mongo.find(mongo, paste0(attr(mongo, "db"), ".", ns),
-                                     query  = list('_id' = list('$regex' = 'NCT[0-9]{8}')),
-                                     fields = list('id_info' = 1L, '_id' = 0L))
-      while (rmongodb::mongo.cursor.next(cursor)) {
-        # get all other ids into vector except id_info$nct_id
-        oids <- rmongodb::mongo.bson.to.list(rmongodb::mongo.cursor.value(cursor))
-        oids <- as.character(c(oids$id_info$org_study_id, oids$id_info$secondary_id))
-        # update record with additional field
-        rmongodb::mongo.update(mongo, paste0(attr(mongo, "db"), ".", ns), criteria = rmongodb::mongo.cursor.value(cursor),
-                               objNew = list('$set' = list("otherids" = oids)))
-      } # cleanup
-      rmongodb::mongo.cursor.destroy(cursor)
+      # # TODO: "secondary_id" in CTGOV example not yet covered
+      # # split otherids into new array for later perusal
+      # cursor <- rmongodb::mongo.find(mongo, paste0(attr(mongo, "db"), ".", ns),
+      #                                query  = list('_id' = list('$regex' = 'NCT[0-9]{8}')),
+      #                                fields = list('id_info' = 1L, '_id' = 0L))
+      # while (rmongodb::mongo.cursor.next(cursor)) {
+      #   # get all other ids into vector except id_info$nct_id
+      #   oids <- rmongodb::mongo.bson.to.list(rmongodb::mongo.cursor.value(cursor))
+      #   oids <- as.character(c(oids$id_info$org_study_id, oids$id_info$secondary_id))
+      #   # update record with additional field
+      #   rmongodb::mongo.update(mongo, paste0(attr(mongo, "db"), ".", ns), criteria = rmongodb::mongo.cursor.value(cursor),
+      #                          objNew = list('$set' = list("otherids" = oids)))
+      # } # cleanup
+      # rmongodb::mongo.cursor.destroy(cursor)
+      # message('Added index field "otherids".')
+
+
+      # NEW IMPLEMENTATION: "secondary_id" in CTGOV example not yet covered
+
+
+      # absorb id_info array into new array otherids for later perusal
+      #
+      # "id_info" : {
+      #   "org_study_id" : "P9971",
+      #   "secondary_id" : [
+      #     "COG-P9971",
+      #     "CCG-P9971",
+      #     "POG-9971",
+      #     "CDR0000068102"
+      #     ],
+      #   "nct_id" : "NCT00006095"
+      #
+      # to
+      #
+      # "otherids" : [
+      #   "ADVL0011",
+      #   "COG-ADVL0011",
+      #   "CCG-ADVL0011",
+      #   "CCG-A0993",
+      #   "CDR0000068036"
+      #   ]
+      #
+      #
+      # obtain full data set on _id and other ids
+      cursor <- mongo$iterate(query = '{"_id": {"$regex": "NCT[0-9]{8}"}}', fields = '{"id_info": 1}')$batch(size = 10) # mongo$count())
+      # transform every second element in a list item into a vector
+      otherids <- sapply(cursor, function(x) paste0(as.vector(unlist(x[2]))))
+      # retain _id's for updating
+      cursor <- sapply(cursor, function(x) as.vector(unlist(x[1])))
+      # iterate over list items
+      for(i in 1:length(cursor)) {
+        # replace double square brackets around array
+        tmp <- sub("\\[\\[", "[", sub("\\]\\]", "]", jsonlite::toJSON(list("otherids" = otherids[1]))))
+        # upsert
+        mongo$update(query  = paste0('{"_id":{"$eq":"', cursor[i], '"}}'),
+                     update = paste0('{ "$set" :', tmp, '}'),
+                     upsert = TRUE)
+
+      }
+      # add index for newly created fired
+      mongo$index(add = "otherids")
       message('Added index field "otherids".')
 
     } #### END xml
-
-    # add index on otherids for later queries
-    rmongodb::mongo.index.create(mongo, paste0(attr(mongo, "db"), ".", ns), key = list("otherids" = 1L))
 
     # find out number of trials imported into database
     if (debug) message("DEBUG: ", imported)
@@ -449,10 +490,14 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     if (!debug) unlink(tempDir, recursive = TRUE)
 
     # add query parameters to database
-    dbCTRUpdateQueryHistory(register = register, queryterm = queryterm, recordnumber = imported, mongo = mongo, ns = ns)
+    dbCTRUpdateQueryHistory(register = register, queryterm = queryterm, recordnumber = imported,
+                            collection = collection, db = db, url = url,
+                            username = username, password = password, verbose = verbose)
 
     # update keys database
-    dbFindVariable(forceupdate = TRUE, mongo = mongo, ns = ns)
+    dbFindVariable(forceupdate = TRUE,
+                   collection = collection, db = db, url = url,
+                   username = username, password = password, verbose = verbose)
 
   }
 
@@ -461,8 +506,8 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   if ("EUCTR" %in% register) {
 
     # check availability of relevant helper programs
-    if(!suppressWarnings(ctrdata:::findBinary("echo x | sed s/x/y/"))) stop("sed not found.")
-    if(!suppressWarnings(ctrdata:::findBinary("perl -V:osname")))      stop("perl not found.")
+    if(!suppressWarnings(installFindBinary("echo x | sed s/x/y/"))) stop("sed not found.")
+    if(!suppressWarnings(installFindBinary("perl -V:osname")))      stop("perl not found.")
 
     message("Downloading trials from EUCTR ...")
 
@@ -513,9 +558,9 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     # compose commands: for external script on all files in temporary directory and for import
     euctr2json <- system.file("exec/euctr2json.sh", package = "ctrdata", mustWork = TRUE)
     euctr2json <- paste(euctr2json, tempDir)
-    json2mongo <- paste0('mongoimport --host="', attr(mongo, "host"), '" --db="', attr(mongo, "db"), '" --collection="', ns, '"',
-                         ifelse(attr(mongo, "username") != "", paste0(' --username="', attr(mongo, "username"), '"'), ''),
-                         ifelse(attr(mongo, "password") != "", paste0(' --password="', attr(mongo, "password"), '"'), ''),
+    json2mongo <- paste0('mongoimport --host="', sub("mongodb://(.+)", "\\1", url), '" --db="', db, '" --collection="', collection, '"',
+                         ifelse(username != "", paste0(' --username="', username, '"'), ''),
+                         ifelse(password != "", paste0(' --password="', password, '"'), ''),
                          ' --upsert --type=json --file="', tempDir, '/allfiles.json"',
                          ifelse(installMongoCheckVersion(), '', ' --jsonArray'))
     #
@@ -556,11 +601,16 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
 
     # add query parameters to database
     if (debug) message("DEBUG: 'queryterm'=", queryterm, ", 'queryupdateterm'=", queryupdateterm)
-    dbCTRUpdateQueryHistory(register = register, queryterm = ifelse(queryupdateterm == '', queryterm, queryupdateterm),
-                            recordnumber = imported, mongo = mongo, ns = ns)
+    dbCTRUpdateQueryHistory(register = register,
+                            queryterm = ifelse(queryupdateterm == '', queryterm, queryupdateterm),
+                            recordnumber = imported,
+                            collection = collection, db = db, url = url,
+                            username = username, password = password, verbose = verbose)
 
     # update keys database
-    dbFindVariable(forceupdate = TRUE, mongo = mongo, ns = ns)
+    dbFindVariable(forceupdate = TRUE,
+                   collection = collection, db = db, url = url,
+                   username = username, password = password, verbose = verbose)
 
   }
 

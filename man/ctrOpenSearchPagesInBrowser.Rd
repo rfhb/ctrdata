@@ -20,8 +20,8 @@ register(s).}
 
 \item{queryterm}{(Optional) Show results of search for \code{queryterm} in
 browser. To open the browser with a previous search, (register or)
-queryterm can be the output of ctrGetQueryUrlFromBrowser() or can be one
-row from ctrQueryHistoryInDb().}
+queryterm can be the output of \link{ctrGetQueryUrlFromBrowser} or can be one
+row from \link{dbQueryHistory}.}
 
 \item{...}{Any additional parameter to use with browseURL, which is called by
 this function.}

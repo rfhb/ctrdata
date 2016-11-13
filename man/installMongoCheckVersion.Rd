@@ -4,12 +4,24 @@
 \alias{installMongoCheckVersion}
 \title{Check the version of the build of the mongo server to be used}
 \usage{
-installMongoCheckVersion(mongo = rmongodb::mongo.create(host =
-  "127.0.0.1:27017", db = "users"))
+installMongoCheckVersion(collection = "ctrdata", db = "users",
+  url = "mongodb://localhost", username = "", password = "",
+  verbose = FALSE)
 }
 \arguments{
-\item{mongo}{(\link{mongo}) A mongo connection object. If not provided,
-defaults to database "users" on 127.0.0.1 port 27017.}
+\item{collection}{Name of collection (default is "ctrdata")}
+
+\item{db}{Name of database (default is "users")}
+
+\item{url}{Address of the mongodb server in mongo connection string URI format
+\url{http://docs.mongodb.org/manual/reference/connection-string/} (default is
+mongodb://localhost)}
+
+\item{username}{In case access requires credentials.}
+
+\item{password}{In case access requires credentials.}
+
+\item{verbose}{Print information.}
 }
 \value{
 A logical value indicating if the mongodb version is acceptable for
