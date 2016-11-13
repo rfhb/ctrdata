@@ -4,28 +4,37 @@
 \alias{dbFindVariable}
 \title{Find names of keys (fields) in the database}
 \usage{
-dbFindVariable(namepart = "", mongo = rmongodb::mongo.create(host =
-  "127.0.0.1:27017", db = "users"), ns = "ctrdata", allmatches = FALSE,
-  debug = FALSE, forceupdate = FALSE)
+dbFindVariable(namepart = "", allmatches = FALSE, forceupdate = FALSE,
+  debug = FALSE, collection = "ctrdata", db = "users",
+  url = "mongodb://localhost", username = "", password = "",
+  verbose = FALSE)
 }
 \arguments{
 \item{namepart}{A plain string (not a regular expression) to be searched for
 among all field names (keys) in the database.}
 
-\item{mongo}{(\link{mongo}) A mongo connection object. If not provided,
-defaults to database "users" on 127.0.0.1 port 27017.}
-
-\item{ns}{Name of the collection in mongo database ("namespace"), defaults to
-"ctrdata"}
-
 \item{allmatches}{If \code{TRUE}, returns all keys if more than one is found
 (default is \code{FALSE}).}
 
-\item{debug}{Printing additional information if set to \code{TRUE}; default
-is \code{FALSE}.}
-
 \item{forceupdate}{If \code{TRUE}, refreshes collection of keys (default is
 \code{FALSE}).}
+
+\item{debug}{If \code{TRUE}, prints additional information (default is
+\code{FALSE}).}
+
+\item{collection}{Name of collection (default is "ctrdata")}
+
+\item{db}{Name of database (default is "users")}
+
+\item{url}{Address of the mongodb server in mongo connection string URI format
+\url{http://docs.mongodb.org/manual/reference/connection-string/} (default is
+mongodb://localhost)}
+
+\item{username}{In case access requires credentials.}
+
+\item{password}{In case access requires credentials.}
+
+\item{verbose}{Print information.}
 }
 \value{
 Vector of first keys (fields) found (or of all keys, see above)
@@ -47,6 +56,7 @@ may not work with certain mongo databases, for example when the host or port
 is different per database, such as found with a free mongolab plan.
 }
 \examples{
+
 \dontrun{
  dbFindVariable ("date")
 }

@@ -6,9 +6,9 @@
 database}
 \usage{
 ctrLoadQueryIntoDb(queryterm = "", register = "EUCTR", querytoupdate = 0,
-  details = TRUE, parallelretrievals = 10,
-  mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"),
-  ns = "ctrdata", debug = FALSE)
+  details = TRUE, parallelretrievals = 10, debug = FALSE,
+  collection = "ctrdata", db = "users", url = "mongodb://localhost",
+  username = "", password = "", verbose = FALSE)
 }
 \arguments{
 \item{queryterm}{Either a string with the URL of a search in a register
@@ -28,19 +28,27 @@ Alternatively, set to \code{FALSE} to retrieve only summary information
 from EUCTR or CSV data from CTGOV. The full EUCTR information includes
 separate records for every country in which the trial is opened; use
 function \code{dbFindUniqueEuctrRecord} in a subsequent step to limit to
-one record from EUCTR per trial.}
+one record from EUCTR per trial}
 
 \item{parallelretrievals}{Number of parallel downloads of information from
 the register}
 
-\item{mongo}{(\link{mongo}) A mongo connection object. If not provided,
-defaults to database "users" on 127.0.0.1 port 27017.}
-
-\item{ns}{Name of the collection in mongo database ("namespace"), defaults to
-"ctrdata"}
-
 \item{debug}{Printing additional information if set to \code{TRUE}; default
 is \code{FALSE}.}
+
+\item{collection}{Name of collection (default is "ctrdata")}
+
+\item{db}{Name of database (default is "users")}
+
+\item{url}{Address of the mongodb server in mongo connection string URI format
+\url{http://docs.mongodb.org/manual/reference/connection-string/} (default is
+mongodb://localhost)}
+
+\item{username}{In case access requires credentials.}
+
+\item{password}{In case access requires credentials.}
+
+\item{verbose}{Print information.}
 }
 \value{
 Number of trials imported or updated in the database
@@ -53,7 +61,7 @@ include a mongo connection object to such an empty database.
 \examples{
 # Retrieve protocol-related information on a single trial identified by EudraCT number
 \dontrun{
-ctrLoadQueryIntoDb (queryterm = "2013-001291-38 ")
+ctrLoadQueryIntoDb (queryterm = "2013-001291-38")
 }
 
 # For use with EudraCT: define paediatric population and cancer terms

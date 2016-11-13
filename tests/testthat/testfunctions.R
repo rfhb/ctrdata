@@ -14,9 +14,9 @@ context("ctrdata functions")
 # Name                           | Testing?
 # ------------------------------ | -------------
 # ctrOpenSearchPagesInBrowser	   | some
-# ctrQueryHistoryInDb            | some
 # ctrGetQueryUrlFromBrowser      | some
 # ctrLoadQueryIntoDb             | some
+# dbQueryHistory                 | some
 # dbFindIdsUniqueTrials          | some
 # dbFindVariable                 | some
 # dbGetVariablesIntoDf           | some
@@ -38,7 +38,7 @@ has_internet <- function(){
 # helper function to check mongodb
 has_mongo <- function(){
   mongo_ok <- try({
-    capture.output(rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"))
+    capture.output(ctrMongo())
   }, silent = TRUE)
   # use test result
   if (class(mongo_ok) == "try-error" || mongo_ok [1] == "Unable to connect to 127.0.0.1:27017, error code = 2") {
@@ -74,7 +74,7 @@ test_that("access to mongo db from R package", {
 
   has_mongo()
 
-  expect_message(ctrQueryHistoryInDb(ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Total number of records")
+  expect_warning(dbQueryHistory(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "No history found in expected format.")
 
 })
 
@@ -97,8 +97,8 @@ test_that("retrieve data from registers", {
   queryeuctr <- list(queryterm = "query=NonExistingConditionGoesInHere", register = "EUCTR")
   queryctgov <- list(queryterm = "cond=NonExistingConditionGoesInHere",  register = "CTGOV")
 
-  expect_error(ctrLoadQueryIntoDb(queryeuctr, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "First result page empty - no trials found")
-  expect_error(ctrLoadQueryIntoDb(queryctgov, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "No studies downloaded")
+  expect_error(suppressWarnings(ctrLoadQueryIntoDb(queryeuctr, collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")), "First result page empty - no trials found")
+  expect_error(suppressWarnings(ctrLoadQueryIntoDb(queryctgov, collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")), "No studies downloaded")
 
   # at the end of srcipt, clean up occurs = drop collection from mongodb
 
@@ -113,7 +113,7 @@ test_that("retrieve data from register ctgov", {
 
   queryctgov <- list(queryterm = "term=2010-024264-18", register = "CTGOV")
 
-  expect_message(ctrLoadQueryIntoDb(queryctgov, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Imported or updated 1 trial")
+  expect_message(suppressWarnings(ctrLoadQueryIntoDb(queryctgov, collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")), "Imported or updated 1 trial")
 
 })
 
@@ -126,7 +126,7 @@ test_that("retrieve data from register euctr", {
 
   queryeuctr <- list(queryterm = "2010-024264-18",      register = "EUCTR")
 
-  expect_message(ctrLoadQueryIntoDb(queryeuctr, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB", debug = TRUE), "Updated history")
+  expect_message(ctrLoadQueryIntoDb(queryeuctr, collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB", debug = TRUE), "Updated history")
 
 })
 
@@ -140,8 +140,7 @@ test_that("browser interaction", {
 
   has_internet()
 
-  expect_error(ctrGetQueryUrlFromBrowser(content = "ThisDoesNotExist"),
-               "Content is not a clinical trial register search URL.")
+  expect_error(ctrGetQueryUrlFromBrowser(content = "ThisDoesNotExist"), "Content is not a clinical trial register search URL.")
 
   expect_message(ctrOpenSearchPagesInBrowser(register = "EUCTR", queryterm = "cancer&age=under-18"),
                  "Opening in browser previous search: cancer&age=under-18, in register: EUCTR")
@@ -151,7 +150,7 @@ test_that("browser interaction", {
 
   has_mongo()
 
-  expect_message(ctrOpenSearchPagesInBrowser(ctrQueryHistoryInDb(ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")[1,]),
+  expect_message(ctrOpenSearchPagesInBrowser(dbQueryHistory(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")[1,]),
                  "Opening in browser previous search: ")
 
 })
@@ -176,7 +175,7 @@ test_that("browser interaction", {
 #
 #   queryeuctr <- list(queryterm = "2010-024264-18",      register = "EUCTR")
 #
-#   expect_message(ctrLoadQueryIntoDb(queryeuctr, ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB", debug = TRUE), "Updated history")
+#   expect_message(ctrLoadQueryIntoDb(queryeuctr, collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB", debug = TRUE), "Updated history")
 #
 #   # reset to initial options
 #   options(RCurlOptions = old_options)
@@ -190,19 +189,15 @@ test_that("operations on database after download from register", {
   has_mongo()
   has_internet()
 
-  expect_message(dbFindIdsUniqueTrials(ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Searching duplicates")
-  expect_is     (dbFindIdsUniqueTrials(ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "character")
+  expect_message(dbFindIdsUniqueTrials(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Searching duplicates")
+  expect_is     (dbFindIdsUniqueTrials(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "character")
 
   expect_error(dbGetVariablesIntoDf(fields = "ThisDoesNotExist",
-                                    ns = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
+                                    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
                "For variable / field: ThisDoesNotExist no data could be extracted")
 
-  # clean up = drop collections from mongodb
-  expect_equivalent (rmongodb::mongo.drop(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"),
-                     ns= "users.ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), TRUE)
-
-  expect_equivalent (rmongodb::mongo.drop(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "varietyResults"),
-                     ns= "varietyResults.ThisNameSpaceShouldNotExistAnywhereInAMongoDBKeys"), TRUE)
+  # # clean up = drop collections from mongodb
+  expect_equivalent (mongolite::mongo(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB", db = "users")$drop(), TRUE)
 
 })
 

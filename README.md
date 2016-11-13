@@ -6,7 +6,7 @@ Online version of this document: [https://github.com/rfhb/ctrdata/](https://gith
 
 ## Background
 
-The package `ctrdata` provides functions for retrieving information from public registers of clinical trials, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started mid 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package can only be used within the [R](https://www.r-project.org/) computing system. Last edit 2016-10-31 for version 0.9 (see NEWS.md). 
+The package `ctrdata` provides functions for retrieving information from public registers of clinical trials, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started mid 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package can only be used within the [R](https://www.r-project.org/) computing system. Last edit 2016-11-13 for version 0.9.9.1 (see NEWS.md). The main recent change was to switch to mongolite for connecting to a Mongo database server. 
 
 Main features:
 
@@ -30,19 +30,13 @@ Within [R](https://www.r-project.org/), use the following commands to get and in
 #
 install.packages("devtools")
 #
-# Unfortunately, package rmongodb was removed from CRAN on 2016-08-25, 
-# see https://cran.r-project.org/web/packages/rmongodb/index.html. 
-# Work is ongoing for package ctrdata to use a different mongodb connector. 
-# Until this is ready, rmongodb can be installed as follows: 
-devtools::install_github("mongosoup/rmongodb")
-#
 devtools::install_github("rfhb/ctrdata")
 #
 # If this fails, see 'Issues and Notes' below.
 #
 # Note the packages that will be installed 
 # automatically as dependencies of ctrdata: 
-# rmongodb, RCurl, curl, clipr
+# monoglite, RCurl, curl, clipr
 #
 ```
 
@@ -62,14 +56,14 @@ In Linux and Mac OS X systems, these are usually already installed. For MS Windo
 Name  | Function
 ---------------------------- | --------------------------------------------
 ctrOpenSearchPagesInBrowser	| Open advanced search pages of register(s) or execute search in default web browser
-ctrQueryHistoryInDb	| Show the history of queries that were loaded into a database
 ctrGetQueryUrlFromBrowser	| Import from clipboard the URL of a search in one of the registers
 ctrLoadQueryIntoDb	| Retrieve or update information on clinical trials from register and store in database
+dbQueryHistory	| Show the history of queries that were loaded into a database
 dbFindVariable	| Find names of keys (fields) in the database
 dbFindIdsUniqueTrials	| Produce a vector of de-duplicated identifiers of clinical trial records in the database
 dbGetVariablesIntoDf	| Create a data frame from records in the database that have specified fields in the database
 dfMergeTwoVariablesRelevel	| Merge related variables into a single variable, and optionally map values to a new set of values
-installCygwinWindowsDoInstall	| Convenience function to install a cygwin environment under MS Windows, including perl and php
+installCygwinWindowsDoInstall	| Convenience function to install a cygwin environment under MS Windows, including perl, php, sed
 
 <!--
 
@@ -82,18 +76,18 @@ installCygwinWindowsDoInstall	| Convenience function to install a cygwin environ
 #   user_R->>database: define collection and namespace
 # 
 #   note left of user_R: query and download
-#     
+# 
 #   user_R->>euctr: ctrOpenSearchPagesInBrowser()
 #   euctr->>euctr: user defines query
 #   euctr->>user_R: ctrGetQueryUrlFromBrowser()
 # 
 #   euctr->>database: ctrLoadQueryIntoDb()
-#     
+# 
 #   ctgov->>ctgov: user defines query
 #   ctgov->>database: ctrLoadQueryIntoDb()
-#   
+# 
 #   note left of user_R: prepare and analyse
-#     
+# 
 #   database->>user_R: dbFindVariable()
 #   database->>user_R: dbGetVariablesIntoDf()
 #   database->>user_R: dbFindIdsUniqueTrials()
@@ -106,7 +100,6 @@ installCygwinWindowsDoInstall	| Convenience function to install a cygwin environ
 #
 ```
 -->
-
 
 
 ## Example workflow

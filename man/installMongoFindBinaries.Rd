@@ -2,8 +2,10 @@
 % Please edit documentation in R/utils.R
 \name{installMongoFindBinaries}
 \alias{installMongoFindBinaries}
-\title{Convenience function to find location of mongo database binaries (mongo,
-mongoimport)}
+\title{Function to detect the location of mongo database binaries (mongo,
+mongoimport) and to save the location into a private environment.
+Call this function with a correct parameter if the automatic
+detection fails.}
 \usage{
 installMongoFindBinaries(mongoDirWin = "c:\\\\mongo\\\\bin\\\\")
 }
@@ -18,8 +20,10 @@ Either an empty string if \code{mongoimport} was found on the path
   mongo binaries
 }
 \description{
-Convenience function to find location of mongo database binaries (mongo,
-mongoimport)
+Function to detect the location of mongo database binaries (mongo,
+mongoimport) and to save the location into a private environment.
+Call this function with a correct parameter if the automatic
+detection fails.
 }
 \keyword{internal}
 

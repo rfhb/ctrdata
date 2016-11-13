@@ -22,6 +22,54 @@ countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", 
 # }
 
 
+#' This is a function to set up connections to a Mongo DB server, one for
+#' the actual trial records and a second for the keys as discovered by
+#' variety in the trial records.
+#'
+#' @param collection Name of collection (default is "ctrdata")
+#'
+#' @param db Name of database (default is "users")
+#'
+#' @param url Address of the mongodb server in mongo connection string URI format
+#'  \url{http://docs.mongodb.org/manual/reference/connection-string/} (default is
+#'  mongodb://localhost)
+#'
+#' @param username In case access requires credentials.
+#' @param password In case access requires credentials.
+#' @param verbose Print information.
+#'
+#' @return A mongo data base object, currently using mongolite
+#'
+#' @import mongolite
+#'
+#' @keywords internal
+#'
+ctrMongo <- function(collection = "ctrdata", db = "users", url = "mongodb://localhost",
+                     username = "", password = "", verbose = FALSE) {
+
+  # not used so far: options = ssl_options()
+
+  # url: mongodb://[username:password@]host1[:port1]
+  host     <- sub("mongodb://(.+)", "\\1", url)
+  mongourl <- paste0("mongodb://",
+                     ifelse(username != "", username, ""),
+                     ifelse(password != "", paste0(":", password), ""),
+                     ifelse(username != "", "@", ""),
+                     host)
+
+  # for variety, create / access related collection
+  collectionKeys <- paste0(collection, "Keys")
+
+  valueCtrDb     <- mongolite::mongo(collection = collection,     db = db, url = mongourl, verbose = verbose)
+  valueCtrKeysDb <- mongolite::mongo(collection = collectionKeys, db = db, url = mongourl, verbose = verbose)
+
+  # inform user
+  message("Using Mongo DB (collections \"", collection, "\" and \"", collectionKeys, "\" in database \"", db, "\" on \"", host, "\").")
+
+  return(list("ctr" = valueCtrDb, "keys" = valueCtrKeysDb))
+}
+# end ctrMongo
+
 
 #' Open advanced search pages of register(s) or execute search in default web
 #' browser.
@@ -30,26 +78,26 @@ countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", 
 #'   both. Default is to open both registers' advanced search pages. To open the
 #'   browser with a previous search, register (or queryterm) can be the output
 #'   of ctrGetQueryUrlFromBrowser() or can be one row from
-#'   ctrQueryHistoryInDb().
+#'   dbQueryHistory().
 #' @param copyright (Optional) If set to \code{TRUE}, opens copyright pages of
 #'   register(s).
 #' @param queryterm (Optional) Show results of search for \code{queryterm} in
 #'   browser. To open the browser with a previous search, (register or)
-#'   queryterm can be the output of ctrGetQueryUrlFromBrowser() or can be one
-#'   row from ctrQueryHistoryInDb().
+#'   queryterm can be the output of \link{ctrGetQueryUrlFromBrowser} or can be one
+#'   row from \link{dbQueryHistory}.
 #' @param ... Any additional parameter to use with browseURL, which is called by
 #'   this function.
 #'
-#' @export ctrOpenSearchPagesInBrowser
+#' @export
+#'
 #' @return Is always true, invisibly.
 #'
 #' @examples
+#'
 #' \dontrun{
 #'
 #' ctrOpenSearchPagesInBrowser(register = "EUCTR", queryterm = "cancer&age=under-18")
-#'
 #' ctrOpenSearchPagesInBrowser(queryterm = ctrQueryHistoryInDb() [1,])
-#'
 #' ctrOpenSearchPagesInBrowser(copyright = TRUE)
 #'
 #' }
@@ -109,7 +157,7 @@ ctrOpenSearchPagesInBrowser <- function(register = c("EUCTR", "CTGOV"), copyrigh
   #
   invisible(TRUE)
 }
-
+# end ctrOpenSearchPagesInBrowser
 
 
 #' Import from clipboard the URL of a search in one of the registers
@@ -120,12 +168,13 @@ ctrOpenSearchPagesInBrowser <- function(register = c("EUCTR", "CTGOV"), copyrigh
 #'
 #' @import clipr
 #'
-#' @export ctrGetQueryUrlFromBrowser
+#' @export
 #'
 #' @return A list with a query term and the register name that can directly be
 #'   used in \link{ctrLoadQueryIntoDb}
 #'
 #' @examples
+#'
 #' \dontrun{
 #' ctrLoadQueryIntoDb (ctrGetQueryUrlFromBrowser())
 #' }
@@ -157,52 +206,77 @@ ctrGetQueryUrlFromBrowser <- function(content = clipr::read_clip()) {
   stop(paste("Content is not a clinical trial register search URL. Returning NULL."))
   return(NULL)
 }
-
+# end ctrGetQueryUrlFromBrowser
 
 
 #' Show the history of queries that were loaded into a database
 #'
-#' @inheritParams ctrdata:::ctrLoadQueryIntoDb
+#' @inheritParams ctrMongo
 #'
-#' @return A data frame with variables: timestamp, register, number of records
-#'   loaded, query term
+#' @return A data frame with variables: query-timestamp, query-egister,
+#'  query-records (note: this is the number of records loaded when last executing
+#'  ctrLoadQueryIntoDb(), not the total record number) and query-term
 #'
-#' @export ctrQueryHistoryInDb
+#' @export
 #'
 #' @examples
+#'
 #' \dontrun{
-#' ctrQueryHistoryInDb()
+#' dbQueryHistory()
 #' }
 #'
-ctrQueryHistoryInDb <- function(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"), ns = "ctrdata") {
-  #
-  message("Total number of records: ",
-          rmongodb::mongo.count(mongo, paste0(attr(mongo, "db"), ".", ns),
-                                query  = rmongodb::mongo.bson.from.JSON('{"_id":{"$ne":"meta-info"}}')))
-  #
-  tmp <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), ".", ns),
-                                  query = list("_id" = "meta-info"), fields = list("query" = 1L, "_id" = 0L))
-  if (length(tmp) == 0) {
-    # no history found
-    tmp <- NULL
-    message("No query history found in database in expected format.")
+dbQueryHistory <- function(collection = "ctrdata", db = "users", url = "mongodb://localhost",
+                           username = "", password = "", verbose = FALSE) {
+
+  # get a working mongo connection, select trial record collection
+  mongo <- ctrMongo(collection = collection, db = db, url = url,
+                    username = username, password = password, verbose = verbose)[["ctr"]]
+
+  # Example history:
+  # {
+  #   "_id" : "meta-info",
+  #   "queries": [
+  #   {
+  #     "query-timestamp" : "2016-10-18-17-09-20",
+  #     "query-register" : "EUCTR",
+  #     "query-records" : "6",
+  #     "query-term" : "2010-024264-18"
+  #   },
+  #   {
+  #     "query-timestamp" : "2016-10-18-17-08-40",
+  #     "query-register" : "CTGOV",
+  #     "query-records" : "1",
+  #     "query-term" : "term=2010-024264-18"
+  #   }
+  #  ]
+  # }
+
+  # Get record from mongo db using batch because find would
+  # try to return a dataframe and this would ignore the array
+  tmp <- mongo$iterate(query = '{"_id":{"$eq":"meta-info"}}', fields = '{"queries": 1, "_id": 0}')$batch()
+
+  # Select only relevant element from record
+  tmp <- tmp[[1]]$queries
+
+  # Check if meeting expectations
+  if(!is.list(tmp) || (length(tmp) < 1)) {
+    #
+    warning("No history found in expected format.")
+    return(data.frame(NULL))
     #
   } else {
-    #
-    tmp <- tmp[[1]]
+    # Change into data frame with appropriate column names
     tmp <- sapply(tmp, function(x) do.call(rbind, x))
     tmp <- t(tmp)
     tmp <- data.frame(tmp, row.names = NULL, check.names = FALSE, stringsAsFactors = FALSE)
     names(tmp) <- c("query-timestamp", "query-register", "query-records", "query-term")
-    message("Number of queries in history: ", nrow(tmp))
-    # TODO: type timestampt, number of records
+    # Inform user
+    message("Number of queries in history of \"", mongo$info()$stats$ns, "\": ", nrow(tmp))
+    #
+    return(tmp)
   }
-  #
-  return(tmp)
-  #
 }
 # end ctrQueryHistoryInDb
-
 
 
 #' Find names of keys (fields) in the database
@@ -227,20 +301,24 @@ ctrQueryHistoryInDb <- function(mongo = rmongodb::mongo.create(host = "127.0.0.1
 #'   (default is \code{FALSE}).
 #' @param forceupdate If \code{TRUE}, refreshes collection of keys (default is
 #'   \code{FALSE}).
+#' @param debug If \code{TRUE}, prints additional information (default is
+#'   \code{FALSE}).
 #'
-#' @inheritParams ctrdata:::ctrLoadQueryIntoDb
+#' @inheritParams ctrMongo
 #'
 #' @return Vector of first keys (fields) found (or of all keys, see above)
-#' @import rmongodb curl
-#' @export dbFindVariable
+#'
+#' @export
+#'
 #' @examples
+#'
 #' \dontrun{
 #'  dbFindVariable ("date")
 #' }
 #'
-dbFindVariable <- function(namepart = "",
-                           mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"), ns = "ctrdata",
-                           allmatches = FALSE, debug = FALSE, forceupdate = FALSE) {
+dbFindVariable <- function(namepart = "", allmatches = FALSE, forceupdate = FALSE, debug = FALSE,
+                           collection = "ctrdata", db = "users", url = "mongodb://localhost",
+                           username = "", password = "", verbose = FALSE) {
 
   # sanity checks
   if (!is.atomic(namepart)) stop("Name part should be atomic.")
@@ -253,13 +331,16 @@ dbFindVariable <- function(namepart = "",
     if (is.na(get("mongoBinaryLocation", envir = .privateEnv))) stop("Not running dbFindVariable because mongo binary was not found.")
   }
 
+  # get a working mongo connection
+  mongo <- ctrMongo(collection = collection, db = db, url = url,
+                    username = username, password = password, verbose = verbose)
+
   # check if database with variety results exists or should be forced to be updated
-  if (forceupdate || length(rmongodb::mongo.get.database.collections(mongo, db = "varietyResults")) == 0L ||
-      length(grepl(paste0(ns, "Keys"), rmongodb::mongo.get.database.collections(mongo, db = "varietyResults"))) == 0L) {
+  if (forceupdate || mongo[["keys"]]$count() == 0L) {
     #
-    if (!grepl("127.0.0.1", attr(mongo, "host")))
-      warning("variety.js may fail with certain remote servers (for example when the host or port ",
-              "is different per database, such as with a free mongolab plan).", immediate. = TRUE)
+    # if (!grepl("127.0.0.1", attr(mongo, "host")))
+    #   warning("variety.js may fail with certain remote servers (for example when the host or port ",
+    #           "is different per database, such as with a free mongolab plan).", immediate. = TRUE)
     #
     # check if extension is available (system.file under MS Windows does not end with slash) ...
     varietylocalurl <- paste0(system.file("exec", package = "ctrdata"), "/variety.js")
@@ -270,10 +351,14 @@ dbFindVariable <- function(namepart = "",
       curl::curl_download(varietysourceurl, varietylocalurl)
     }
     # compose actual command to call mongo with variety.js
-    varietymongo <- paste0('mongo "', attr(mongo, "host"), '/', attr(mongo, "db"), '"',
-                           ifelse(attr(mongo, "username") != "", paste0(" --username ", attr(mongo, "username")), ""),
-                           ifelse(attr(mongo, "password") != "", paste0(" --password ", attr(mongo, "password")), ""),
-                           " --eval \"var collection = '", ns, "', persistResults=true\" ", varietylocalurl)
+    # mongo collection_to_analyse --quiet --eval "var collection = 'users', persistResults=true, resultsDatabase='db.example.com/variety' variety.js
+    varietymongo <- paste0('mongo "',
+                           sub("mongodb://(.+)", "\\1", url), '/', db, '"',
+                           ifelse(username != "", paste0(" --username ", username), ""),
+                           ifelse(password != "", paste0(" --password ", password), ""),
+                           " --eval \"var collection = '", collection, "', persistResults=true, ",
+                           "resultsDatabase='", paste0(sub("mongodb://(.+)", "\\1", url), '/', db, "'\" "),
+                           varietylocalurl)
     #
     if (.Platform$OS.type == "windows") {
       varietymongo <- paste0(get("mongoBinaryLocation", envir = .privateEnv), varietymongo)
@@ -285,12 +370,13 @@ dbFindVariable <- function(namepart = "",
     #
   }
 
+  # now do the actual search and find for key name parts
   if (namepart != "") {
     #
-    # mongo get fieldnames
-    # TODO avoid data.frame = TRUE
-    tmp <- rmongodb::mongo.find.all(mongo, paste0("varietyResults", ".", ns, "Keys"), fields = list("key" = 1L), data.frame = TRUE)
-    fieldnames <- tmp[,1]
+    # mongo get fieldnames into vector (no other solution found)
+    fieldnames <- mongo[["keys"]]$find(fields = '{"key": 1}')
+    fieldnames <- fieldnames[1:nrow(fieldnames),]
+    fieldnames <- as.vector(fieldnames[["key"]])
     #
     # actually now find fieldnames
     fieldname <- fieldnames[grepl(tolower(namepart), tolower(fieldnames))]
@@ -302,9 +388,8 @@ dbFindVariable <- function(namepart = "",
     return(fieldname)
     #
   }
-
 }
-
+# end dbFindVariable
 
 
 #' This function checks for duplicate records of clinical trialss in the
@@ -316,50 +401,72 @@ dbFindVariable <- function(namepart = "",
 #' recording other identifiers such as the EudraCT number in the field "Other
 #' IDs".
 #'
-#' @inheritParams ctrdata:::ctrLoadQueryIntoDb
-#' @inheritParams ctrdata:::dfFindUniqueEuctrRecord
-#'
 #' @param preferregister The abbreviation of the preferred register, in case
 #' a trial is in more than one register (string, either "EUCTR" or "CTGOV").
 #' If set to an empty string (""), keeps the keys for the same trial in both
 #' registers in the returned vector.
 #'
+#' @inheritParams dfFindUniqueEuctrRecord
+#'
 #' @param verbose If set to \code{TRUE}, prints out information about numbers
 #' of records found at subsequent steps when searching for duplicates
 #'
-#' @return A vector with strings of keys (_id in the database) that are
-#'   non-duplicate trials.
+#' @inheritParams ctrMongo
 #'
-#' @export dbFindIdsUniqueTrials
-#' @import rmongodb
+#' @return A vector with strings of keys ("_id" in the database) that
+#'   represent non-duplicate trials.
+#'
+#' @export
+#'
 #' @examples
+#'
 #' \dontrun{
 #' dbFindIdsUniqueTrials()
 #' }
 #'
-dbFindIdsUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"), ns = "ctrdata",
-                                  prefermemberstate = "GB", include3rdcountrytrials = TRUE, preferregister = "EUCTR", verbose = TRUE) {
+dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = "GB", include3rdcountrytrials = TRUE,
+                                  collection = "ctrdata", db = "users", url = "mongodb://localhost",
+                                  username = "", password = "", verbose = TRUE) {
+
+  # parameter checks
+  if(!grepl(preferregister, "CTGOVEUCTR")) stop("Register not known: ", preferregister)
 
   # objective: create a list of mongo database record identifiers (_id)
   # that represent unique records of clinical trials, based on user's
   # preferences for selecting the preferred from any multiple records
 
+  # get a working mongo connection, select trial record collection
+  mongo <- ctrMongo(collection = collection, db = db, url = url,
+                    username = username, password = password, verbose = verbose)[["ctr"]]
+  #
+  # total number of records in collection to inform user
+  countall <- mongo$count(query = '{"_id":{"$ne":"meta-info"}}')
+  if(verbose)message("Total of ", countall, " records in database.")
+
   # 1. get euctr records
-  listofEUCTRids <- try(
-    suppressWarnings(dbGetVariablesIntoDf(fields = c("a2_eudract_number", "a52_us_nct_clinicaltrialsgov_registry_number", "a3_full_title_of_the_trial"), mongo = mongo, ns = ns)),
+  listofEUCTRids <- try(suppressMessages(suppressWarnings(
+    dbGetVariablesIntoDf(fields = c("a2_eudract_number",
+                                    "a52_us_nct_clinicaltrialsgov_registry_number",
+                                    "a3_full_title_of_the_trial"),
+                         debug = FALSE,
+                         collection = collection, db = db, url = url,
+                         username = username, password = password, verbose = FALSE))),
     silent = TRUE
   )
   if(class(listofEUCTRids) == "try-error") listofEUCTRids <- NULL
   if(!is.null(listofEUCTRids)) listofEUCTRids <- listofEUCTRids[grepl("[0-9]{4}-[0-9]{6}-[0-9]{2}-[3A-Z]{2,3}", listofEUCTRids[["_id"]]), ]
 
   # 2. find unique, preferred country version
-  if(!is.null(listofEUCTRids)) listofEUCTRids <- ctrdata:::dfFindUniqueEuctrRecord(df = listofEUCTRids,
-                                                                                   prefermemberstate = prefermemberstate,
-                                                                                   include3rdcountrytrials = include3rdcountrytrials)
+  if(!is.null(listofEUCTRids)) listofEUCTRids <- dfFindUniqueEuctrRecord(df = listofEUCTRids,
+                                                                         prefermemberstate = prefermemberstate,
+                                                                         include3rdcountrytrials = include3rdcountrytrials)
 
   # 3. get ctrgov records
-  listofCTGOVids <- try(
-    suppressWarnings(dbGetVariablesIntoDf(fields = c("otherids", "official_title"), mongo = mongo, ns = ns)),
+  listofCTGOVids <- try(suppressMessages(suppressWarnings(
+    dbGetVariablesIntoDf(fields = c("otherids", "official_title"),
+                         debug = FALSE,
+                         collection = collection, db = db, url = url,
+                         username = username, password = password, verbose = FALSE))),
     silent = TRUE
   )
   if(class(listofCTGOVids) == "try-error") listofCTGOVids <- NULL
@@ -369,6 +476,7 @@ dbFindIdsUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "127.0.0
   if(!is.null(listofCTGOVids)) {
     dupes <- listofCTGOVids[["_id"]] %in% listofCTGOVids[["otherids"]]
     if (sum(dupes) > 0) listofCTGOVids <- listofCTGOVids[!dupes, ]
+    if(verbose) message("Searching duplicates: Found ", sum(dupes), " CTGOV _id's in CTGOV otherids (nct_id, secondary_id, nct_alias)")
   }
 
   # 5. find records (_id's) that are in both in euctr and ctgov
@@ -377,13 +485,17 @@ dbFindIdsUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "127.0.0
     #
     # a.2 - ctgov in euctr
     dupes.a.2 <- listofCTGOVids[["otherids"]] %in% listofEUCTRids[["_id"]]
-    if(verbose) message("Searching duplicates: Found ", sum(dupes.a.2), " CTGOV otherids in EUCTR _id's")
+    if(verbose) message("Searching duplicates: Found ", sum(dupes.a.2), " CTGOV otherids (nct_id, secondary_id, nct_alias) in EUCTR _id's")
     #
     # b.2 - ctgov in euctr
     dupes.b.2 <- listofCTGOVids[["_id"]] %in% listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]
     if(verbose) message("Searching duplicates: Found ", sum(dupes.b.2), " CTGOV _id's in EUCTR a52_us_nct_clinicaltrialsgov_registry_number")
-
-    retids <- c(listofEUCTRids[["_id"]], listofCTGOVids[["_id"]] [!dupes.a.2 & !dupes.b.2])
+    #
+    # c.2 - ctgov in euctr
+    dupes.c.2 <- listofCTGOVids[["otherids"]] %in% listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]
+    if(verbose) message("Searching duplicates: Found ", sum(dupes.c.2), " CTGOV otherids (nct_id, secondary_id, nct_alias) in EUCTR a52_us_nct_clinicaltrialsgov_registry_number")
+    #
+    retids <- c(listofEUCTRids[["_id"]], listofCTGOVids[["_id"]] [!dupes.a.2 & !dupes.b.2 & !dupes.c.2])
     #
   }
   if(preferregister == "CTGOV") {
@@ -440,6 +552,7 @@ dbFindIdsUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "127.0.0
   return(retids)
 
 }
+# end dbFindIdsUniqueTrials
 
 
 #' Create a data frame from records in the database that have specified fields
@@ -454,16 +567,21 @@ dbFindIdsUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "127.0.0
 #' and other packages to query mongodb such as mongolite.
 #'
 #' @param fields Vector of strings, with names of the sought fields.
-#' @inheritParams ctrdata:::ctrLoadQueryIntoDb
+#'
+#' @param debug Printing additional information if set to \code{TRUE}; default
+#'   is \code{FALSE}.
+#'
+#' @inheritParams ctrMongo
 #'
 #' @return A data frame with columns corresponding to the sought fields. Note
 #'   that a column for the record _id will always be included. The maximum
 #'   number of rows of the returned data frame is equal to or less than the
 #'   number of records in the data base.
 #'
-#' @export dbGetVariablesIntoDf
+#' @export
 #'
 #' @examples
+#'
 #' \dontrun{
 #'
 #' dbGetVariablesIntoDf("b1_sponsor.b31_and_b32_status_of_the_sponsor")[1,]
@@ -476,48 +594,54 @@ dbFindIdsUniqueTrials <- function(mongo = rmongodb::mongo.create(host = "127.0.0
 #'
 #' }
 #'
-dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users"),
-                                 ns = "ctrdata", debug = FALSE) {
+dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
+                                 collection = "ctrdata", db = "users", url = "mongodb://localhost",
+                                 username = "", password = "", verbose = FALSE) {
   #
   if (!is.vector(fields) | class(fields) != "character") stop("Input should be a vector of strings of field names.")
   if (any(fields == "", na.rm = TRUE)) stop(paste("'fields' contains empty elements; please provide a vector of strings of field names.",
                                                   "Function dbFindVariable() can be used to find field names."))
-  #
-  # total number of records in collection. for information of user at end of function.
-  countall <- rmongodb::mongo.count(mongo, paste0(attr(mongo, "db"), ".", ns),
-                                    query  = rmongodb::mongo.bson.from.JSON('{"_id":{"$ne":"meta-info"}}'))
-  #
+
+  # get a working mongo connection, select trial record collection
+  mongo <- ctrMongo(collection = collection, db = db, url = url,
+                    username = username, password = password, verbose = verbose)[["ctr"]]
+
+  # total number of records in collection, used for max batch size and at function end
+  countall <- mongo$count(query = '{"_id":{"$ne":"meta-info"}}')
+
   # initialise output
   result <- NULL
-  #
+
+  # iterate over fields so that we can use a custom function to merge results,
+  # given that mongodb clients have different approaches and complex returnn
   for (item in fields) {
     #
     query <- paste0('{"_id": {"$ne": "meta-info"}, "', item, '": {"$gt": ""}}')
     if (debug) message("DEBUG: variable / field: ", item)
     #
     tmp <- try({
-      dfi <- rmongodb::mongo.find.all(mongo, paste0(attr(mongo, "db"), '.', ns), data.frame = FALSE,
-                                      query  = rmongodb::mongo.bson.from.JSON(query),
-                                      fields = rmongodb::mongo.bson.from.JSON(paste0('{"_id": 1, "', item, '": 1}')))
+      #
+      dfi <- mongo$iterate(query = query, fields = paste0('{"_id": 1, "', item, '": 1}'))$batch(size = countall)
+      #
       if (debug) message("DEBUG: variable / field ", item, " has length ", length(dfi))
       #
       # attempt custom function to condense into a data frame instead of using data.frame = TRUE
       dfi <- as.data.frame(cbind(sapply(dfi, function(x) as.vector(unlist(x[1]))),
-                                 sapply(dfi, function(x) paste0(as.vector(unlist(x[2])), collapse = " / "))),
-                           stringsAsFactors = FALSE)
+                                 sapply(dfi, function(x) paste0(as.vector(unlist(x[2])), collapse = " / "))
+      ), stringsAsFactors = FALSE)
+      # name result set
       names(dfi) <- c("_id", item)
       #
     }, silent = FALSE)
-    # }
     #
     if ((class(tmp) != "try-error") && (nrow(dfi) > 0)) {
-
+      #
       if (is.null(result)) {
         result <- dfi
       } else {
         result <- merge(result, dfi, by = '_id', all = TRUE)
       }
-
+      #
     } else {# try-error occured
       stop(paste0("For variable / field: ", item, " no data could be extracted, please check the contents of the database."))
     }
@@ -531,6 +655,77 @@ dbGetVariablesIntoDf <- function(fields = "", mongo = rmongodb::mongo.create(hos
   #
   return(result)
 }
+# dbGetVariablesIntoDf
+
+
+#' Merge related variables into a single variable, and optionally map values to
+#' a new set of values.
+#'
+#' @param df A data frame in which there are two variables (columns) to be
+#'   merged into one.
+#' @param varnames A vector with names of the two variables to be merged.
+#' @param levelslist A list with one slice each for a new value to be used for a
+#'   vector of old values.
+#'
+#' @return A vector of strings
+#'
+#' @export
+#'
+#' @examples
+#'
+#' \dontrun{
+#' statusvalues <- list("ongoing" = c("Recruiting", "Active", "Ongoing",
+#'                                    "Active, not recruiting", "Enrolling by invitation"),
+#'                      "completed" = c("Completed", "Prematurely Ended", "Terminated"),
+#'                      "other" = c("Withdrawn", "Suspended",
+#'                                  "No longer available", "Not yet recruiting"))
+#' dfMergeTwoVariablesRelevel(result, c("Recruitment", "x5_trial_status"), statusvalues)
+#' }
+#'
+dfMergeTwoVariablesRelevel <- function(df = NULL, varnames = "", levelslist = NULL) {
+  #
+  if (class(df) != "data.frame")   stop("Need a data frame as input.")
+  if (length(varnames)  != 2)      stop("Please provide exactly two variable names.")
+
+  # find variables in data frame and merge
+  tmp <- match(varnames, names(df))
+  df <- df[, tmp]
+  df[,1] <- ifelse(is.na(tt <- df[ ,1]), "", tt)
+  df[,2] <- ifelse(is.na(tt <- df[ ,2]), "", tt)
+  tmp <- paste0(df[,1], df[,2])
+
+  if (!is.null(levelslist)) {
+
+    # check
+    if (class(levelslist) != "list") stop("Need lists for parameter levelslist.")
+
+    # helper function to collapse factor levels into the first mentioned level
+    refactor <- function(x, collapselevels, levelgroupname){
+      levels(x) [match(collapselevels, levels(x))] <- levelgroupname
+      return(x)
+    }
+
+    # convert result to factor as this is needed for helper function
+    tmp <- as.factor(tmp)
+
+    # apply helperfunction to elements of the list
+    for (i in 1:length(levelslist)) {
+      tmp <- refactor(tmp, unlist(levelslist[i]), attr(levelslist[i], "names"))
+    }
+
+    # convert factor back into string vector
+    tmp <- as.character(tmp)
+
+  }
+
+  if(length(tt <- unique(tmp)) > 10)
+    message("Unique values returned (limited to ten): ", paste(tt[1:10], collapse = ", "))
+  else
+    message("Unique values returned: ", paste(tt, collapse = ", "))
+
+  return(tmp)
+}
+# end dfMergeTwoVariablesRelevel
 
 
 #' Select a single trial record when there are records for different EU Member
@@ -625,7 +820,7 @@ dfFindUniqueEuctrRecord <- function(df = NULL, prefermemberstate = "GB", include
   return(df)
   #
 }
-
+# end dfFindUniqueEuctrRecord
 
 
 #' Convenience function to install a cygwin environment under MS Windows,
@@ -637,7 +832,8 @@ dfFindUniqueEuctrRecord <- function(df = NULL, prefermemberstate = "GB", include
 #' http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages
 #' perl,php-jsonc,php-simplexml}
 #'
-#' @export installCygwinWindowsDoInstall
+#' @export
+#'
 #' @param force Set to \code{TRUE} to force updating and overwriting an existing
 #'   installation in \code{c:\\cygwin}
 #' @param proxy Specify any proxy to be used for downloading via http, e.g.
@@ -661,7 +857,7 @@ installCygwinWindowsDoInstall <- function(force = FALSE, proxy = ""){
   #
   # check
   if (!file.exists(dstfile))         stop("Download failed. Please install manually.")
-  if (file.size(dstfile) < 5*10 ^ 5) stop("Download seem to have failed - file too small. Please install manually.")
+  if (file.size(dstfile) < 5*10 ^ 5) stop("Download seems to have failed (file too small). Please install manually.")
   #
   if (proxy != "") {
     # manual setting overrides all
@@ -711,10 +907,10 @@ installCygwinWindowsDoInstall <- function(force = FALSE, proxy = ""){
   system(paste0(dstfile, " ", installcmd, " --local-package-dir ", tmpfile, ' ', proxy))
   #
   # test cygwin installation
-  ctrdata:::installCygwinWindowsTest()
+  installCygwinWindowsTest()
   #
 }
-
+# end installCygwinWindowsDoInstall
 
 
 #' Convenience function to test for working cygwin installation
@@ -737,10 +933,13 @@ installCygwinWindowsTest <- function() {
     invisible(FALSE)
   }
 }
+# installCygwinWindowsTest
 
 
-#' Convenience function to find location of mongo database binaries (mongo,
-#' mongoimport)
+#' Function to detect the location of mongo database binaries (mongo,
+#' mongoimport) and to save the location into a private environment.
+#' Call this function with a correct parameter if the automatic
+#' detection fails.
 #'
 #' @param mongoDirWin Only used under MS Windows: folder that contains mongo
 #'   binaries, defaults to "c:\\mongo\\bin\\" as used on
@@ -819,6 +1018,7 @@ installMongoFindBinaries <- function(mongoDirWin = "c:\\mongo\\bin\\") {
     }
   }
 }
+# end installMongoFindBinaries
 
 
 #' Check the version of the build of the mongo server to be used
@@ -826,20 +1026,21 @@ installMongoFindBinaries <- function(mongoDirWin = "c:\\mongo\\bin\\") {
 #' In addition to the returned value, the function will generate a warning
 #' message if applicable.
 #'
-#' @inheritParams ctrdata:::ctrLoadQueryIntoDb
+#' @inheritParams ctrMongo
 #'
 #' @return A logical value indicating if the mongodb version is acceptable for
 #'   use with this package.
 #'
 #' @keywords internal
 #
-installMongoCheckVersion <- function(mongo = rmongodb::mongo.create(host = "127.0.0.1:27017", db = "users")) {
+installMongoCheckVersion <- function(collection = "ctrdata", db = "users", url = "mongodb://localhost",
+                                     username = "", password = "", verbose = FALSE) {
   #
-  result <- rmongodb::mongo.command(mongo, attr(mongo, "db"), list("buildInfo" = 1L))
-  result <- rmongodb::mongo.bson.to.Robject(result)
-  #
-  # for testing
-  #result$version <- "2.6.3"
+  # get a working mongo connection, select trial record collection
+  mongo <- suppressMessages(ctrMongo(collection = collection, db = db, url = url,
+                                     username = username, password = password, verbose = verbose))[["ctr"]]
+  # get mongo server infos
+  result <- mongo$info()$server
   #
   if (grepl("^3", result$version)) {
     #
@@ -847,86 +1048,21 @@ installMongoCheckVersion <- function(mongo = rmongodb::mongo.create(host = "127.
     #
   } else {
     #
-    warning("mongodb not version 3. Earlier versions have limitations that may break function ctrLoadQueryIntoDb() in package ctrdata.\n Please upgrade, see http://docs.mongodb.org/manual/installation/. \n Trying to continue. Support for versions other than 3 may be discontinued.", immediate. = TRUE)
+    warning("mongodb not version 3. Earlier versions have limitations that may break function ctrLoadQueryIntoDb() in package ctrdata.\n",
+            "Please upgrade, see http://docs.mongodb.org/manual/installation/. \n Trying to continue.",
+            "Support for versions other than 3 may be discontinued.", immediate. = TRUE)
     return(FALSE)
   }
   #
 }
-
-
-
-#' Merge related variables into a single variable, and optionally map values to
-#' a new set of values.
-#'
-#' @param df A data frame in which there are two variables (columns) to be
-#'   merged into one.
-#' @param varnames A vector with names of the two variables to be merged.
-#' @param levelslist A list with one slice each for a new value to be used for a
-#'   vector of old values.
-#'
-#' @return A vector of strings
-#' @export dfMergeTwoVariablesRelevel
-#' @examples
-#' \dontrun{
-#' statusvalues <- list("ongoing" = c("Recruiting", "Active", "Ongoing",
-#'                                    "Active, not recruiting", "Enrolling by invitation"),
-#'                      "completed" = c("Completed", "Prematurely Ended", "Terminated"),
-#'                      "other" = c("Withdrawn", "Suspended",
-#'                                  "No longer available", "Not yet recruiting"))
-#' dfMergeTwoVariablesRelevel(result, c("Recruitment", "x5_trial_status"), statusvalues)
-#' }
-#'
-dfMergeTwoVariablesRelevel <- function(df = NULL, varnames = "", levelslist = NULL) {
-  #
-  if (class(df) != "data.frame")   stop("Need a data frame as input.")
-  if (length(varnames)  != 2)      stop("Please provide exactly two variable names.")
-
-  # find variables in data frame and merge
-  tmp <- match(varnames, names(df))
-  df <- df[, tmp]
-  df[,1] <- ifelse(is.na(tt <- df[ ,1]), "", tt)
-  df[,2] <- ifelse(is.na(tt <- df[ ,2]), "", tt)
-  tmp <- paste0(df[,1], df[,2])
-
-  if (!is.null(levelslist)) {
-
-    # check
-    if (class(levelslist) != "list") stop("Need lists for parameter levelslist.")
-
-    # helper function to collapse factor levels into the first mentioned level
-    refactor <- function(x, collapselevels, levelgroupname){
-      levels(x) [match(collapselevels, levels(x))] <- levelgroupname
-      return(x)
-    }
-
-    # convert result to factor as this is needed for helper function
-    tmp <- as.factor(tmp)
-
-    # apply helperfunction to elements of the list
-    for (i in 1:length(levelslist)) {
-      tmp <- refactor(tmp, unlist(levelslist[i]), attr(levelslist[i], "names"))
-    }
-
-    # convert factor back into string vector
-    tmp <- as.character(tmp)
-
-  }
-
-  if(length(tt <- unique(tmp)) > 10)
-    message("Unique values returned (limited to ten): ", paste(tt[1:10], collapse = ", "))
-  else
-    message("Unique values returned: ", paste(tt, collapse = ", "))
-
-  return(tmp)
-}
-# end dfMergeTwoVariablesRelevel
-
+# end installMongoCheckVersion
 
 
 #' Check availability of binaries installed in operating system
 #'
 #' @param commandtest Command to be used for testing the availability of the binary, e.g. "php -v". Note
-#' internal quotes need to be escaped, e.g. \code{findBinary('php -r \"simplexml_load_string(\'\');\"')}
+#' internal quotes need to be escaped, e.g. \code{installFindBinary('php -r \"simplexml_load_string(\'\');\"')}.
+#' See R/onload.R for tested binaries.
 #'
 #' @param debug Set to \code{TRUE} to see printed return value of \code{commandtest}
 #'
@@ -934,7 +1070,7 @@ dfMergeTwoVariablesRelevel <- function(df = NULL, varnames = "", levelslist = NU
 #'
 #' @keywords internal
 #
-findBinary <- function(commandtest = NULL, debug = FALSE) {
+installFindBinary <- function(commandtest = NULL, debug = FALSE) {
   #
   if (is.null(commandtest)) stop ("Empty argument: commandtest")
   #
@@ -957,5 +1093,5 @@ findBinary <- function(commandtest = NULL, debug = FALSE) {
   return(commandreturn)
   #
 }
-
+# end installFindBinary
 

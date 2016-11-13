@@ -1,3 +1,9 @@
+# ctrdata 0.9.9.1
+ - 2016-11-12
+ - renamed ctrQueryHistoryInDb() to dbQueryHistory()
+ - note: change in json format of query history, breaking compatibility
+ - refactored all concerned functions to use mongolite
+ - rmongodb is no more supported
 # ctrdata 0.9
  - 2016-10-17
  - changed implementation of dbFindIdsUniqueTrials()

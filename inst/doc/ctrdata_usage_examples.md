@@ -1,7 +1,7 @@
 ---
 title: "ctrdata usage examples"
 author: "Ralf Herold"
-date: "2016-10-18"
+date: "2016-11-13"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{ctrdata usage examples}
@@ -47,9 +47,9 @@ q <- ctrGetQueryUrlFromBrowser()  # read search from clipboard
 ctrOpenSearchPagesInBrowser(q)    # open search newly in broweser
 #
 # Example 2: After records have already been downloaded: 
-q <- ctrQueryHistoryInDb()        # list the searches in the database (returns a data frame)
-q <- q [2,]                       # select exactly one of the searches (by subsetting q)
-ctrOpenSearchPagesInBrowser(q)    # open selected search newly in broweser
+q <- dbQueryHistory()           # list the searches in the database (returns a data frame)
+q <- q [2,]                     # select exactly one of the searches (by subsetting q)
+ctrOpenSearchPagesInBrowser(q)  # open selected search newly in broweser
 #
 # This opens a browser already executing an example search:
 ctrOpenSearchPagesInBrowser(register = "EUCTR", queryterm = "cancer&age=under-18")
@@ -85,7 +85,7 @@ dbFindVariable("date", allmatches = TRUE)
 ```r
 #
 # List queries:
-ctrQueryHistoryInDb()
+dbQueryHistory()
 # 
 # 
 # Update query number 1 in the history:
@@ -94,7 +94,7 @@ ctrQueryHistoryInDb()
 #  - CTGOV intformation can always be incrementally downloaded or updated. 
 ctrLoadQueryIntoDb(querytoupdate = 1)
 #
-ctrQueryHistoryInDb()
+dbQueryHistory()
 # Note: after such an update, the column "query-records" refers 
 # to the number of records that were added or updated, only, 
 # when the update was run as per the "query-timestamp", 
@@ -144,11 +144,10 @@ result <- dbGetVariablesIntoDf(c("a1_member_state_concerned",
 # Eliminate trials records duplicated by member state: 
 #
 result <- result[ result[["_id"]] %in% dbFindIdsUniqueTrials(), ]
-# Searched for EUCTR identifiers in otherids field of CTGOV records.
-# Searched for CTGOV identifiers in otherids field of CTGOV records.
 # 1781 EUCTR records dropped that were not the preferred of multiple records for the trial.
-# Returning identifiers: 640 from EUCTR records (preferred) and 1489 from CTGOV records.
-# Returning keys (_id) of 2129 records (out of 3969 in the database).
+# Searching duplicates: Found 0 CTGOV otherids in EUCTR _id's
+# Searching duplicates: Found 26 CTGOV _id's in EUCTR a52_us_nct_clinicaltrialsgov_registry_number
+# Returning keys (_id's) of 2162 records in the database.
 #
 # Visualise:
 result$startdate <- strptime(result$n_date_of_competent_authority_decision, "%Y-%m-%d")
@@ -176,7 +175,7 @@ ctrLoadQueryIntoDb(q)
 # ctrLoadQueryIntoDb(queryterm = "ependymoma&recr=Open&type=Intr&age=0", register = "CTGOV")
 #
 # Data from which queries have now been downloaded into the database? 
-ctrQueryHistoryInDb()
+dbQueryHistory()
 # 
 # Get columns from the database from different registers
 # (takes some time as variables are merged one after the other): 
@@ -341,7 +340,8 @@ if (FALSE) ctrLoadQueryIntoDb(register = "EUCTR",
                               queryterm = "&age=under-18&phase=phase-one&phase=phase-two", 
                               ns = "paediatric_phase12_trials")
 #
-ctrQueryHistoryInDb(ns = "paediatric_phase12_trials")
+dbQueryHistory(ns = "paediatric_phase12_trials")
+ctrOpenSearchPagesInBrowser(dbQueryHistory(ns = "paediatric_phase12_trials"))
 #
 if (FALSE) ctrLoadQueryIntoDb(querytoupdate = 1, ns = "paediatric_phase12_trials", debug = TRUE)
 #
@@ -485,7 +485,7 @@ sPDF <- joinCountryData2Map (counts, joinCode="ISO2", nameJoinColumn="country")
 mapParams <- mapCountryData (sPDF, nameColumnToPlot="Ongoing", mapTitle="",
                              xlim=c(-10,30), ylim=c(36, 65), addLegend=FALSE,
                              colourPalette="terrain")
-# do.call (addMapLegend, c (mapParams, legendLabels="all", legendWidth=0.5, digits=0, labelFontSize=0.8))
+#do.call (addMapLegend, c (mapParams, legendLabels="all", legendWidth=0.5, digits=0, labelFontSize=0.8))
 title (main="Number of ongoing / total phase 1\nanti-cancer medicine trials with children")
 labelCountries (sPDF, nameCountryColumn="text", xlim=c(-15,32), ylim=c(36, 65), cex=1.0, col="blue")
 dev.off()
@@ -509,8 +509,15 @@ m <- mongo(db = "users", collection = "ctrdata")
 # Number of all records:
 m$count()
 #
+# Number of EUCTR records, using json for query:
+m$count('{"_id": {"$regex": "[0-9]{4}-[0-9]{6}-[0-9]{2}"}}')
+# alternatively (since version 0.8.1)
+m$count('{"ctrname": "EUCTR"}')
+# 
 # Number of CTGOV records, using json for query:
 m$count('{"_id": {"$regex": "NCT[0-9]{8}"}}')
+# alternatively (since version 0.8.1)
+m$count('{"ctrname": "CTGOV"}')
 # 
 #
 # The following uses the aggregation pipeline in mongo:
@@ -604,4 +611,55 @@ plot (hist, type = "h", las = 1, xlim = c(0, 2000), ylim = c(0, 500),
 #
 ```
 ![Histogram2](Rplot03.png)
+
+## Analyse inclusion criteria
+
+
+```r
+#
+# Search for interesting variables,  
+# note the spelling in EUCTR:
+dbFindVariable("crit", allmatches = TRUE)
+#
+# Get interesting variables from database 
+# for further analysis within R:
+result <- dbGetVariablesIntoDf(c("e3_principal_inclusion_criteria", 
+                                 "eligibility.criteria.textblock"))
+#
+# Eliminate trials records duplicated by member state
+# keep a single record and if available use preference:
+result <- result[ result[["_id"]] %in% dbFindIdsUniqueTrials(), ]
+#
+result <- dfMergeTwoVariablesRelevel(df = result,
+                                     varnames = c("e3_principal_inclusion_criteria", 
+                                                  "eligibility.criteria.textblock"))
+#
+# utility function to extend grepl to check for several patterns
+grepl_multi <- function (patterns, x, simplify = TRUE) {
+  if(!is.vector(patterns)) stop("patterns should be a vector.")
+  ret <- apply(as.matrix(patterns), 1, function(pattern) grepl(pattern, x, ignore.case = TRUE))
+  ret <- as.data.frame(ret)
+  if (simplify) 
+    ret <- rowSums(ret) >= 1
+  else
+    names(ret) <- patterns
+  return(ret)
+}
+#
+# search for interesting terms
+terms <- c("positive", "marker", "select")
+#
+table(grepl_multi(terms, result))
+#
+# utility function to generate a regular expression for a given number of words
+words <- function (x) paste0(paste0(rep("\\s+\\w+", x), collapse = ""), "\\s+")
+# 
+terms <- paste0(".*(", words(2), terms, "\\w*", words(3), ").*")
+# 
+# find and print found matches for review
+for(i in 1:length(terms))
+  print(gsub(terms[i], "\\1", result, ignore.case = TRUE)[grepl(terms[i], result)])
+#
+```
+
 

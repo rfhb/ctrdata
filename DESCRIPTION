@@ -1,10 +1,11 @@
 Package: ctrdata
 Type: Package
 Title: Retrieve and Prepare for Analysis Information on Clinical Trials from Public Registers
-Version: 0.9
+Version: 0.9.9.1
 Date: 2016-10-31
 Depends:
-    rmongodb,
+    mongolite, 
+    jsonlite,
     RCurl,
     curl,
     clipr
@@ -24,6 +25,6 @@ Description: Provides functions for querying and retrieving
 License: GPL-2
 RoxygenNote: 5.0.1
 LazyData: true
-Suggests: testthat, ggplot2, mongolite, devtools, knitr, rmarkdown
+Suggests: testthat, ggplot2, devtools, knitr, rmarkdown
 VignetteBuilder: knitr
 NeedsCompilation: no

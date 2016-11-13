@@ -12,7 +12,7 @@
 #' @section Using the database that holds downloaded information:
 #'
 #' \link{dbFindVariable},
-#' \link{ctrQueryHistoryInDb}
+#' \link{dbQueryHistory}
 #'
 #' @section Getting R dataframes from clinical trial information in the database:
 #'

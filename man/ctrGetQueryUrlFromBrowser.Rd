@@ -20,6 +20,7 @@ A list with a query term and the register name that can directly be
 Import from clipboard the URL of a search in one of the registers
 }
 \examples{
+
 \dontrun{
 ctrLoadQueryIntoDb (ctrGetQueryUrlFromBrowser())
 }

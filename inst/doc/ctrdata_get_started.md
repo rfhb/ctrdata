@@ -1,7 +1,7 @@
 ---
 title: "ctrdata getting started"
 author: "Ralf Herold"
-date: "2016-10-18"
+date: "2016-11-13"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{ctrdata getting started}
@@ -106,10 +106,10 @@ ctrLoadQueryIntoDb(queryterm = "2010-024264-18", register = "EUCTR")
 #
 # Show which queries have been downloaded into the database so far
 #
-ctrQueryHistoryInDb()
+dbQueryHistory()
 #
-# Total number of records: 6143
-# Number of queries in history: 2
+# Using Mongo DB (collections "ctrdata" and "ctrdataKeys" in database "users" on "localhost").
+# Number of queries in history of "users.tmp": 2
 #       query-timestamp query-register query-records                  query-term
 # 1 2016-01-13-10-51-56          CTGOV          5233 type=Intr&cond=cancer&age=0
 # 2 2016-01-13-10-40-16          EUCTR           910         cancer&age=under-18
