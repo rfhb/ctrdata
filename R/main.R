@@ -250,7 +250,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     # CTGOV standard identifiers
     queryUSRoot   <- "https://clinicaltrials.gov/"
     queryUSType1  <- "ct2/results/download?"
-    queryUSPreCSV <- "&down_stds=all&down_typ=fields&down_flds=all&down_fmt=csv"
+    #queryUSPreCSV <- "&down_stds=all&down_typ=fields&down_flds=all&down_fmt=csv"
     queryUSPreXML <- "&down_stds=all&down_typ=study&down_flds=all&down_fmt=xml"
     # next line to include any available result-related information within the XML
     # queryUSPreXML <- "down_stds=all&down_typ=results&down_flds=all&down_fmt=plain"
@@ -280,81 +280,8 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     fieldsCTGOV <- sub("NCT Number", "_id", fieldsCTGOV)
     write(fieldsCTGOV, paste0(tempDir, "/field_names.txt"))
 
-    # THIS FOLLOWING SECTION csv will be removed as the functionality is no more needed
-    # #### START csv
-    # if (!details) {
-    #
-    #   # get result file and unzip into folder, identify import file
-    #   message("Downloading trials from CTGOV as csv ...")
-    #   ctgovdownloadcsvurl <- paste0(queryUSRoot, queryUSType1, queryUSPreCSV, "&", queryterm, queryupdateterm, queryUSPost)
-    #   if (debug) message ("DEBUG: ", ctgovdownloadcsvurl)
-    #   #
-    #   f <- paste0(tempDir, "/ctgov.zip")
-    #   h <- curl::new_handle()
-    #   #
-    #   curl::handle_setopt(h, ssl_verifypeer = FALSE)
-    #   curl::curl_download(ctgovdownloadcsvurl, destfile = f, mode = "wb", handle = h, quiet = (getOption("internet.info") >= 2))
-    #   #
-    #   if (file.size(f) == 0) stop("No studies downloaded. Please check query term or run again with debug = TRUE.")
-    #   utils::unzip(f, exdir = tempDir)
-    #   resultsCTGOV <- paste0(tempDir, "/study_fields.csv")
-    #
-    #   # call to import in csv format (not possible from within R)
-    #   ctgov2mongo <- paste0('mongoimport --host="', attr(mongo, "host"), '" --db="', attr(mongo, "db"), '" --collection="', ns, '"',
-    #                         ifelse(attr(mongo, "username") != "", paste0(' --username="', attr(mongo, "username"), '"'), ''),
-    #                         ifelse(attr(mongo, "password") != "", paste0(' --password="', attr(mongo, "password"), '"'), ''),
-    #                         ' --fieldFile="', paste0(tempDir, '/field_names.txt"'),
-    #                         ' --upsert --type=csv --file="', resultsCTGOV, '"')
-    #   #
-    #   if (.Platform$OS.type == "windows") {
-    #     #
-    #     ctgov2mongo <- paste0(get("mongoBinaryLocation", envir = .privateEnv), ctgov2mongo)
-    #     #
-    #   } else {
-    #     #
-    #     # mongoimport does not return exit value, hence redirect stderr to stdout
-    #     ctgov2mongo <- paste(ctgov2mongo, '2>&1')
-    #     #
-    #   }
-    #   #
-    #   message(paste0("Importing CTGOV CSV into mongoDB ..."))
-    #   if (debug) message("DEBUG: ", ctgov2mongo)
-    #   imported <- system(ctgov2mongo, intern = TRUE)
-    #
-    #   # remove document that was the headerline in the imported file
-    #   mongo$remove(query = '{"_id": "NCT Number"}')
-    #
-    #   # # split otherids into new array for later perusal
-    #   # cursor <- rmongodb::mongo.find(mongo, paste0(attr(mongo, "db"), ".", ns),
-    #   #                                query  = list('_id' = list('$regex' = 'NCT[0-9]{8}'), 'Other IDs' = 1L),
-    #   #                                fields = list("Other IDs" = 1L))
-    #   # while (rmongodb::mongo.cursor.next(cursor)) {
-    #   #   # get other ids
-    #   #   oids <- unlist(strsplit(rmongodb::mongo.bson.to.list(rmongodb::mongo.cursor.value(cursor))[[2]], "[|]"))
-    #   #   # update record with additional field
-    #   #   rmongodb::mongo.update(mongo, paste0(attr(mongo, "db"), ".", ns), criteria = rmongodb::mongo.cursor.value(cursor),
-    #   #                          objNew = list('$set' = list("otherids" = oids)))
-    #   # } # cleanup
-    #   # rmongodb::mongo.cursor.destroy(cursor)
-    #
-    #   # new implementation
-    #   cursor <- mongo$iterate(query = '{"_id": {"$regex": "NCT[0-9]{8}"}, "otherids": {"$ne": ""}}', fields = '{"otherids": 1}', limit = mongo$count())
-    #   cursor$one()
-    #   cursor$batch()
-    #   while (tmp <- cursor$one()) {
-    #     # get other ids
-    #     oids <- unlist(strsplit(rmongodb::mongo.bson.to.list(rmongodb::mongo.cursor.value(cursor))[[2]], "[|]"))
-    #     # update record with additional field
-    #     rmongodb::mongo.update(mongo, paste0(attr(mongo, "db"), ".", ns), criteria = rmongodb::mongo.cursor.value(cursor),
-    #                            objNew = list('$set' = list("otherids" = oids)))
-    #   } # cleanup
-    #
-    #
-    # } #### END csv
-
-
     #### START xml
-    if (details) {
+    if (TRUE) {
 
       # get result file and unzip into folder
       message("Downloading trials from CTGOV as xml ...")
@@ -378,6 +305,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
                            ifelse(password != "", paste0(' --password="', password, '"'), ''),
                            ' --upsert --type=json --file="', tempDir, '/allfiles.json"',
                            ifelse(installMongoCheckVersion(), '', ' --jsonArray'))
+      # minimum example: mongoimport --db=users --collection=idstest --upsert --type=json testset.json
 
       # prepare for alternative method to split large file and import split files one by one
       # #!/bin/bash
@@ -415,34 +343,12 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
       if (debug) message("DEBUG: ", json2mongo)
       imported <- system(json2mongo, intern = TRUE)
 
-      # # TODO: "secondary_id" in CTGOV example not yet covered
-      # # split otherids into new array for later perusal
-      # cursor <- rmongodb::mongo.find(mongo, paste0(attr(mongo, "db"), ".", ns),
-      #                                query  = list('_id' = list('$regex' = 'NCT[0-9]{8}')),
-      #                                fields = list('id_info' = 1L, '_id' = 0L))
-      # while (rmongodb::mongo.cursor.next(cursor)) {
-      #   # get all other ids into vector except id_info$nct_id
-      #   oids <- rmongodb::mongo.bson.to.list(rmongodb::mongo.cursor.value(cursor))
-      #   oids <- as.character(c(oids$id_info$org_study_id, oids$id_info$secondary_id))
-      #   # update record with additional field
-      #   rmongodb::mongo.update(mongo, paste0(attr(mongo, "db"), ".", ns), criteria = rmongodb::mongo.cursor.value(cursor),
-      #                          objNew = list('$set' = list("otherids" = oids)))
-      # } # cleanup
-      # rmongodb::mongo.cursor.destroy(cursor)
-      # message('Added index field "otherids".')
-
-
-      # NEW IMPLEMENTATION: "secondary_id" in CTGOV example not yet covered
-
-
       # absorb id_info array into new array otherids for later perusal
       #
       # "id_info" : {
       #   "org_study_id" : "P9971",
       #   "secondary_id" : [
       #     "COG-P9971",
-      #     "CCG-P9971",
-      #     "POG-9971",
       #     "CDR0000068102"
       #     ],
       #   "nct_id" : "NCT00006095"
@@ -452,8 +358,6 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
       # "otherids" : [
       #   "ADVL0011",
       #   "COG-ADVL0011",
-      #   "CCG-ADVL0011",
-      #   "CCG-A0993",
       #   "CDR0000068036"
       #   ]
       #
