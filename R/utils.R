@@ -446,8 +446,9 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
   # 1. get euctr records
   listofEUCTRids <- try(suppressMessages(suppressWarnings(
     dbGetVariablesIntoDf(fields = c("a2_eudract_number",
-                                    "a52_us_nct_clinicaltrialsgov_registry_number",
-                                    "a3_full_title_of_the_trial"),
+                                    "a41_sponsors_protocol_code_number",
+                                    "a51_isrctn_international_standard_randomised_controlled_trial_number",
+                                    "a52_us_nct_clinicaltrialsgov_registry_number"),
                          debug = FALSE,
                          collection = collection, db = db, url = url,
                          username = username, password = password, verbose = FALSE))),
@@ -457,13 +458,13 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
   if(!is.null(listofEUCTRids)) listofEUCTRids <- listofEUCTRids[grepl("[0-9]{4}-[0-9]{6}-[0-9]{2}-[3A-Z]{2,3}", listofEUCTRids[["_id"]]), ]
 
   # 2. find unique, preferred country version
-  if(!is.null(listofEUCTRids)) listofEUCTRids <- dfFindUniqueEuctrRecord(df = listofEUCTRids,
+  if(!is.null(listofEUCTRids)) listofEUCTRids <- ctrdata:::dfFindUniqueEuctrRecord(df = listofEUCTRids,
                                                                          prefermemberstate = prefermemberstate,
                                                                          include3rdcountrytrials = include3rdcountrytrials)
 
   # 3. get ctrgov records
   listofCTGOVids <- try(suppressMessages(suppressWarnings(
-    dbGetVariablesIntoDf(fields = c("otherids", "official_title"),
+    dbGetVariablesIntoDf(fields = c("otherids"),
                          debug = FALSE,
                          collection = collection, db = db, url = url,
                          username = username, password = password, verbose = FALSE))),
@@ -474,9 +475,11 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
 
   # 4. retain unique ctrgov records
   if(!is.null(listofCTGOVids)) {
-    dupes <- listofCTGOVids[["_id"]] %in% listofCTGOVids[["otherids"]]
+    # search for dupes for each entry of _id, eliminate enty's own _id for grepl
+    dupes <- sapply(listofCTGOVids[["_id"]], function(x) any(grepl(x, gsub(x, "", listofCTGOVids[["otherids"]]))))
     if (sum(dupes) > 0) listofCTGOVids <- listofCTGOVids[!dupes, ]
-    if(verbose) message("Searching duplicates: Found ", sum(dupes), " CTGOV _id's in CTGOV otherids (nct_id, secondary_id, nct_alias)")
+    if(verbose) message("Searching duplicates: Found ", sum(dupes),
+                        " CTGOV _id in CTGOV otherids (nct_id, secondary_id, nct_alias, org_study_id)")
   }
 
   # 5. find records (_id's) that are in both in euctr and ctgov
@@ -484,16 +487,21 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
   if(preferregister == "EUCTR") {
     #
     # a.2 - ctgov in euctr
-    dupes.a.2 <- listofCTGOVids[["otherids"]] %in% listofEUCTRids[["_id"]]
-    if(verbose) message("Searching duplicates: Found ", sum(dupes.a.2), " CTGOV otherids (nct_id, secondary_id, nct_alias) in EUCTR _id's")
+    dupes.a.2 <- sapply(lapply(strsplit(gsub("EUDRACT-", "", listofCTGOVids[["otherids"]]), split = "/"), trimws),
+                        function(x) any(x %in% listofEUCTRids[["a2_eudract_number"]]))
+    if(verbose) message("Searching duplicates: Found ", sum(dupes.a.2),
+                        " CTGOV otherids (nct_id, secondary_id, nct_alias, org_study_id) in EUCTR a2_eudract_number")
     #
     # b.2 - ctgov in euctr
     dupes.b.2 <- listofCTGOVids[["_id"]] %in% listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]
-    if(verbose) message("Searching duplicates: Found ", sum(dupes.b.2), " CTGOV _id's in EUCTR a52_us_nct_clinicaltrialsgov_registry_number")
+    if(verbose) message("Searching duplicates: Found ", sum(dupes.b.2),
+                        " CTGOV _id in EUCTR a52_us_nct_clinicaltrialsgov_registry_number")
     #
     # c.2 - ctgov in euctr
-    dupes.c.2 <- listofCTGOVids[["otherids"]] %in% listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]
-    if(verbose) message("Searching duplicates: Found ", sum(dupes.c.2), " CTGOV otherids (nct_id, secondary_id, nct_alias) in EUCTR a52_us_nct_clinicaltrialsgov_registry_number")
+    dupes.c.2 <- sapply(lapply(strsplit(listofCTGOVids[["otherids"]], split = "/"), trimws),
+                        function(x) any(x %in% listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]))
+    if(verbose) message("Searching duplicates: Found ", sum(dupes.c.2),
+                        " CTGOV otherids (nct_id, secondary_id, nct_alias, org_study_id) in EUCTR a52_us_nct_clinicaltrialsgov_registry_number")
     #
     retids <- c(listofEUCTRids[["_id"]], listofCTGOVids[["_id"]] [!dupes.a.2 & !dupes.b.2 & !dupes.c.2])
     #
@@ -501,45 +509,16 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
   if(preferregister == "CTGOV") {
     #
     # a.1 - euctr in ctgov
-    dupes.a.1 <- listofEUCTRids[["_id"]] %in% listofCTGOVids[["otherids"]]
+    dupes.a.1 <- sapply(substr(listofEUCTRids[["_id"]], 1, 14), function(x) any(grepl(x, listofCTGOVids[["otherids"]])), USE.NAMES = FALSE)
     if(verbose) message("Searching duplicates: Found ", sum(dupes.a.1), " EUCTR _id's in CTGOV otherids")
 
     # b.1 - euctr in ctgov
     dupes.b.1 <- listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]] %in% listofCTGOVids[["_id"]]
-    if(verbose) message("Searching duplicates: Found ", sum(dupes.b.1), " EUCTR a52_us_nct_clinicaltrialsgov_registry_number in CTOGV _id's")
+    if(verbose) message("Searching duplicates: Found ", sum(dupes.b.1), " EUCTR a52_us_nct_clinicaltrialsgov_registry_number in CTOGV _id")
 
     retids <- c(listofCTGOVids[["_id"]], listofEUCTRids[["_id"]] [!dupes.a.1 & !dupes.b.1])
     #
   }
-
-  # # search for duplicates using study titles
-  # # first experiments showed that titles of the same study
-  # # may be very different between the registers, hence this
-  # # approach does not seem sufficiently sensitive and specific
-  # if(FALSE) {
-  #   #
-  #   if ("stringdist" %in% installed.packages()[,"Package"] &&
-  #       "tm" %in% installed.packages()[,"Package"]) {
-  #     #
-  #     # library(tm)
-  #     # myCorpus <- Corpus(VectorSource(df$text))
-  #     # myCorpus <- tm_map(myCorpus, tolower)
-  #     # myCorpus <- tm_map(myCorpus, removePunctuation)
-  #     # myCorpus <- tm_map(myCorpus, removeNumbers)
-  #
-  #     # first argument goes into the rows of the result value
-  #     tmp <- stringdist::stringdistmatrix(tolower(listofEUCTRids[["a3_full_title_of_the_trial"]]),
-  #                                         tolower(listofCTGOVids[["official_title"]]))
-  #     #
-  #     # retrieve well matching titles
-  #     tmp <- which(tmp < 45, arr.ind = TRUE)
-  #     #
-  #     # list well matching titles
-  #     cbind(listofEUCTRids[["a3_full_title_of_the_trial"]][tmp[,1]],
-  #           listofCTGOVids[["official_title"]][tmp[,2]])
-  #     #
-  #   }
-  # }
 
   # prepare output
   #
@@ -547,7 +526,7 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
   if(length(retids) == 0) retids <- character()
   #
   # inform user
-  message(paste0("Returning keys (_id's) of ", length(retids), " records in the database."))
+  message(paste0("Returning keys (_id) of ", length(retids), " records in the database."))
   #
   return(retids)
 
