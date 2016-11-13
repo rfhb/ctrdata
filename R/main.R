@@ -371,7 +371,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
       # iterate over list items
       for(i in 1:length(cursor)) {
         # replace double square brackets around array
-        tmp <- sub("\\[\\[", "[", sub("\\]\\]", "]", jsonlite::toJSON(list("otherids" = otherids[1]))))
+        tmp <- sub("\\[\\[", "[", sub("\\]\\]", "]", jsonlite::toJSON(list("otherids" = otherids[[i]]))))
         # upsert
         mongo$update(query  = paste0('{"_id":{"$eq":"', cursor[i], '"}}'),
                      update = paste0('{ "$set" :', tmp, '}'),
