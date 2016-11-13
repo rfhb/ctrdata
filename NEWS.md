@@ -1,3 +1,6 @@
+# ctrdata 0.9.9.2
+ - 2016-11-13
+ - corrected deduplication in dbFindIdsUniqueTrials()
 # ctrdata 0.9.9.1
  - 2016-11-12
  - renamed ctrQueryHistoryInDb() to dbQueryHistory()
