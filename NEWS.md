@@ -1,3 +1,6 @@
+# ctrdata 0.9.9.3
+ - 2016-11-17
+ - deduplication in dbFindIdsUniqueTrials() optimised for speed and memory, added check by ISRCTN
 # ctrdata 0.9.9.2
  - 2016-11-13
  - corrected deduplication in dbFindIdsUniqueTrials()

@@ -441,7 +441,7 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
   #
   # total number of records in collection to inform user
   countall <- mongo$count(query = '{"_id":{"$ne":"meta-info"}}')
-  if(verbose)message("Total of ", countall, " records in database.")
+  if(verbose)message("Total of ", countall, " records in collection.")
 
   # 1. get euctr records
   listofEUCTRids <- try(suppressMessages(suppressWarnings(
@@ -484,7 +484,7 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
     #
     # a.2 - ctgov in euctr a2_...
     if(!is.null(listofEUCTRids)) {
-
+      #
       dupes.a.2 <- sapply(lapply(listofCTGOVids, function(x) gsub("EUDRACT-", "", unlist(x[["id_info"]]))),
                           function(x) any(x %in% listofEUCTRids[["a2_eudract_number"]]))
       if(verbose) message("Searching duplicates: Found ", sum(dupes.a.2),
@@ -497,11 +497,17 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
       #
       # c.2 - ctgov in euctr a52_... (id_info corresponds to index 2)
       dupes.c.2 <- sapply(lapply(listofCTGOVids, "[[", 2),
-                          function(x) any(x %in% listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]))
+                          function(x) any(unlist(x) %in% listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]))
       if(verbose) message("Searching duplicates: Found ", sum(dupes.c.2),
                           " CTGOV otherids (secondary_id, nct_alias, org_study_id) in EUCTR a52_us_nct_clinicaltrialsgov_registry_number")
       #
-      retids <- c(listofEUCTRids[["_id"]],  sapply(listofCTGOVids, "[[", 1) [!dupes.a.2 & !dupes.b.2 & !dupes.c.2])
+      # d.2 - ctgov in euctr a51_... (id_info corresponds to index 2)
+      dupes.d.2 <- sapply(lapply(listofCTGOVids, "[[", 2),
+                          function(x) any(unlist(x) %in% listofEUCTRids[["a51_isrctn_international_standard_randomised_controlled_trial_number"]]))
+      if(verbose) message("Searching duplicates: Found ", sum(dupes.d.2),
+                          " CTGOV otherids (secondary_id, nct_alias, org_study_id) in EUCTR a51_isrctn_international_standard_randomised_controlled_trial_number")
+      #
+      retids <- c(listofEUCTRids[["_id"]],  sapply(listofCTGOVids, "[[", 1) [!dupes.a.2 & !dupes.b.2 & !dupes.c.2 & !dupes.d.2])
       #
     } else {
       #
@@ -513,13 +519,21 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
     #
     # a.1 - euctr in ctgov (id_info corresponds to index 2)
     dupes.a.1 <- substr(listofEUCTRids[["_id"]], 1, 14) %in% sapply(listofCTGOVids, "[[", 2)
-    if(verbose) message("Searching duplicates: Found ", sum(dupes.a.1), " EUCTR _id's in CTGOV otherids")
-
+    if(verbose) message("Searching duplicates: Found ", sum(dupes.a.1), " EUCTR _id in CTGOV otherids (secondary_id, nct_alias, org_study_id)")
+    #
     # b.1 - euctr in ctgov (_id corresponds to index 1)
     dupes.b.1 <- listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]] %in% sapply(listofCTGOVids, "[[", 1)
     if(verbose) message("Searching duplicates: Found ", sum(dupes.b.1), " EUCTR a52_us_nct_clinicaltrialsgov_registry_number in CTOGV _id")
-
-    retids <- c(sapply(listofCTGOVids, "[[", 1), listofEUCTRids[["_id"]] [!dupes.a.1 & !dupes.b.1])
+    #
+    # c.1 - euctr in ctgov (id_info corresponds to index 2)
+    dupes.c.1 <- listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]] %in% unlist(sapply(listofCTGOVids, "[[", 2))
+    if(verbose) message("Searching duplicates: Found ", sum(dupes.c.1), " EUCTR a52_us_nct_clinicaltrialsgov_registry_number in CTOGV otherids (secondary_id, nct_alias, org_study_id)")
+    #
+    # d.1 - euctr in ctgov (id_info corresponds to index 2)
+    dupes.d.1 <- listofEUCTRids[["a51_isrctn_international_standard_randomised_controlled_trial_number"]] %in% unlist(sapply(listofCTGOVids, "[[", 2))
+    if(verbose) message("Searching duplicates: Found ", sum(dupes.c.1), " EUCTR a51_isrctn_international_standard_randomised_controlled_trial_number in CTOGV otherids (secondary_id, nct_alias, org_study_id)")
+    #
+    retids <- c(sapply(listofCTGOVids, "[[", 1), listofEUCTRids[["_id"]] [!dupes.a.1 & !dupes.b.1 & !dupes.c.1 & !dupes.d.1])
     #
   }
 
@@ -529,7 +543,7 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
   if(length(retids) == 0) retids <- character()
   #
   # inform user
-  message(paste0("Returning keys (_id) of ", length(retids), " records in the database."))
+  message(paste0("Returning keys (_id) of ", length(retids), " records out of total of ", countall, " records in collection \"", collection, "\"."))
   #
   return(retids)
 
@@ -744,7 +758,8 @@ dfFindUniqueEuctrRecord <- function(df = NULL, prefermemberstate = "GB", include
   if (class(df) != "data.frame") stop("Parameter df is not a data frame.")
   if (is.null(df [['_id']]) || is.null(df$a2_eudract_number)) stop('Data frame does not include "_id" and "a2_eudract_number" columns.')
   if (nrow(df) == 0) stop("Data frame does not contain records (0 rows).")
-  if (!(prefermemberstate %in% countriesEUCTR)) stop("Value specified for prefermemberstate does not match one of the recognised codes: ", paste (sort (countriesEUCTR), collapse = ", "))
+  if (!(prefermemberstate %in% countriesEUCTR)) stop("Value specified for prefermemberstate does not match one of the recognised codes: ",
+                                                     paste (sort (countriesEUCTR), collapse = ", "))
 
   # count number of records by eudract number
   tbl <- table(df [['_id']], df$a2_eudract_number)
@@ -797,7 +812,7 @@ dfFindUniqueEuctrRecord <- function(df = NULL, prefermemberstate = "GB", include
   if (!include3rdcountrytrials) df <- df [!grepl("-3RD", df[["_id"]]), ]
 
   # inform user about changes to data frame
-  if (length(nms) > (tmp <- length(result))) message('Searching multiple country records: Found ', tmp, ' EUCTR _id that were not the preferred records for the trial.')
+  if (length(nms) > (tmp <- length(result))) message('Searching multiple country records: Found ', tmp, ' EUCTR _id that were not the preferred member state record(s) for the trial.')
 
   return(df)
   #
