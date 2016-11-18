@@ -157,7 +157,8 @@ result <- dbGetVariablesIntoDf(c("b1_sponsor.b31_and_b32_status_of_the_sponsor",
 #
 # Eliminate trials records duplicated by EU member state: 
 #
-result <- dbFindIdsUniqueTrials(result)
+uniqueids <- dbFindIdsUniqueTrials()
+result    <- result[ result[["_id"]] %in% uniqueids, ]
 #
 # Tabulate the status of the clinical trial on the date of information retrieval
 # Note some trials have more than one sponsor and values are concatenated with /.
