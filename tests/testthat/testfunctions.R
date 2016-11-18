@@ -189,8 +189,7 @@ test_that("operations on database after download from register", {
   has_mongo()
   has_internet()
 
-  expect_message(dbFindIdsUniqueTrials(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Searching duplicates")
-  expect_is     (dbFindIdsUniqueTrials(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "character")
+  expect_warning(dbFindIdsUniqueTrials(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "No EUCTR records found")
 
   expect_error(dbGetVariablesIntoDf(fields = "ThisDoesNotExist",
                                     collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
