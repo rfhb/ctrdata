@@ -1,3 +1,6 @@
+# ctrdata 0.9.9.4
+ - 2016-11-18
+ - Added progress indicator to ctrLoadQueryIntoDb() to indicate network download traffic
 # ctrdata 0.9.9.3
  - 2016-11-17
  - deduplication in dbFindIdsUniqueTrials() optimised for speed and memory, added check by ISRCTN

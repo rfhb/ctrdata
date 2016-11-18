@@ -107,7 +107,20 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   mongo <- ctrMongo(collection = collection, db = db, url = url,
                     username = username, password = password, verbose = verbose)[["ctr"]]
 
+  # adapt warning length for . out in progressOut
+  outputlength <- getOption("max.print")
+  options("max.print" = 99999)
+
   ##### helper functions #####
+
+  # helper function to show progress while downloading
+  progressOut <- function(down, up) {
+    if(runif(1) < 0.02) cat(".")
+    #cat(".")
+    #cat("             \b\b\b\b\b\b\b\b\b\b", paste0(formatC(down, digits = 0, format = "d", width = 10)))
+    # cat(formatC(down, digits = 0, format = "d", width = 10))
+    # cat("\033[2K")
+  }
 
   # helper function for adding query parameters and results to meta-info in database
   dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber,
@@ -284,15 +297,20 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     if (TRUE) {
 
       # get result file and unzip into folder
-      message("Downloading trials from CTGOV as xml ...")
+      message("Downloading trials from CTGOV as xml ", appendLF = FALSE)
       ctgovdownloadcsvurl <- paste0(queryUSRoot, queryUSType1, queryUSPreXML, "&", queryterm, queryupdateterm, queryUSPost)
       if (debug) message ("DEBUG: ", ctgovdownloadcsvurl)
       #
       f <- paste0(tempDir, "/ctgov.zip")
-      h <- curl::new_handle()
       #
-      curl::handle_setopt(h, ssl_verifypeer = FALSE)
-      curl::curl_download(ctgovdownloadcsvurl, destfile = f, mode = "wb", handle = h, quiet = (getOption("internet.info") >= 2))
+      # h <- curl::new_handle()
+      # curl::handle_setopt(h, ssl_verifypeer = FALSE)
+      # curl::curl_download(ctgovdownloadcsvurl, destfile = f, mode = "wb", handle = h, quiet = (getOption("internet.info") >= 2))
+      #
+      h <- RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE)) # avoiding server certificate failure when queried from outside EU
+      fref <- RCurl::CFILE(f, mode="wb")
+      tmp <- RCurl::curlPerform(url = ctgovdownloadcsvurl, writedata = fref@ref, noprogress=FALSE, progressfunction = progressOut)
+      RCurl::close(fref)
       #
       if (file.size(f) == 0) stop("No studies downloaded. Please check query term or run again with debug = TRUE.")
       utils::unzip(f, exdir = tempDir)
@@ -414,7 +432,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     if(!suppressWarnings(installFindBinary("echo x | sed s/x/y/"))) stop("sed not found.")
     if(!suppressWarnings(installFindBinary("perl -V:osname")))      stop("perl not found.")
 
-    message("Downloading trials from EUCTR ...")
+    message("Downloading trials from EUCTR:", appendLF = TRUE)
 
     # create empty temporary directory on localhost for
     # download from register into temporary directy
@@ -429,11 +447,11 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     queryEuPost  <- "&mode=current_page&format=text&dContent=summary&number=current_page&submit-download=Download"
 
     # get first result page
-    h = RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE)) # avoiding server certificate failure when queried from outside EU
+    h <- RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE)) # avoiding server certificate failure when queried from outside EU
     resultsEuPages <- RCurl::getURL(paste0(queryEuRoot, queryEuType1, queryterm), curl = h)
     resultsEuNumTrials <- sub(".*Trials with a EudraCT protocol \\(([0-9,.]*)\\).*", "\\1", resultsEuPages)
     resultsEuNumTrials <- suppressWarnings(as.numeric(gsub("[,.]", "", resultsEuNumTrials)))
-    resultsEuNumPages  <- ceiling(resultsEuNumTrials / 20) # this is simpler than parsing "next" or "last" links ...
+    resultsEuNumPages  <- ceiling(resultsEuNumTrials / 20) # this is simpler than parsing "next" or "last" links
     if (is.na(resultsEuNumPages) || is.na(resultsEuNumTrials) || resultsEuNumTrials == 0) stop("First result page empty - no trials found?")
     message("Retrieved overview, ", resultsEuNumTrials, " trial(s) from ", resultsEuNumPages, " page(s) are to be downloaded.")
 
@@ -447,10 +465,10 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
       # TODO use queue and re-queueing
       startpage <- (i - 1) * parallelretrievals + 1
       stoppage  <- ifelse(i > resultsNumBatches, startpage + resultsNumModulo, startpage + parallelretrievals) - 1
-      message(paste0("(", i, ") ", startpage, "-", stoppage, ". "))
+      message("(", i, ") ", startpage, "-", stoppage, " ", appendLF = FALSE)
       #
       tmp <- RCurl::getURL(paste0(queryEuRoot, ifelse(details, queryEuType3, queryEuType2), queryterm, "&page=", startpage:stoppage,
-                                  queryEuPost), curl = h, async = TRUE, binary = FALSE)
+                                  queryEuPost), curl = h, async = TRUE, binary = FALSE, noprogress = FALSE, progressfunction = progressOut)
       #
       if (debug) message("DEBUG: ", class(tmp))
       if (class(tmp) != "character") stop("Download of records from EUCTR failed; last data received led to the error ", class(tmp))
@@ -519,10 +537,12 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
 
   }
 
-  ##### end ctrLoadQueryIntoDb#####
+  # reset warning length
+  options("max.print" = outputlength)
 
   # return some useful information
   if (!exists("imported")) stop("Function did not result in any trial information imports.")
   invisible(imported)
 
 }
+##### end ctrLoadQueryIntoDb#####
