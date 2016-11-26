@@ -7,6 +7,11 @@
 // time xml2json.php:
 // 2016-04-20: 0.05 s for 2 trials ~ 25 ms per trial
 
+// note line endings are to be kep by using in
+// .gitattributes for compatibility with cygwin:
+// *.sh  text eol=lf
+// *.php text eol=lf
+
 if ($argc <= 1) {
 	die("Usage: php -n -f xml2json.php <directory_path_with_xml_files>\n");
 } else {
