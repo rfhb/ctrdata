@@ -479,21 +479,21 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
   }
 
   # 5. find records (_id's) that are in both in euctr and ctgov
-  # 6. select records from preferred register
-  if(preferregister == "EUCTR") {
+  if(!is.null(listofEUCTRids) & !is.null(listofCTGOVids)) {
     #
-    # a.2 - ctgov in euctr a2_...
-    if(!is.null(listofEUCTRids)) {
-      #
-      dupes.a.2 <- sapply(lapply(listofCTGOVids, function(x) gsub("EUDRACT-", "", unlist(x[["id_info"]]))),
-                          function(x) any(x %in% listofEUCTRids[["a2_eudract_number"]]))
-      if(verbose) message("Searching duplicates: Found ", sum(dupes.a.2),
-                          " CTGOV otherids (secondary_id, nct_alias, org_study_id) in EUCTR a2_eudract_number")
+    # 6. select records from preferred register
+    if(preferregister == "EUCTR") {
       #
       # b.2 - ctgov in euctr (_id corresponds to index 1)
       dupes.b.2 <- sapply(listofCTGOVids, "[[", 1) %in% listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]
       if(verbose) message("Searching duplicates: Found ", sum(dupes.b.2),
                           " CTGOV _id in EUCTR a52_us_nct_clinicaltrialsgov_registry_number")
+      #
+      # a.2 - ctgov in euctr a2_...
+      dupes.a.2 <- sapply(lapply(listofCTGOVids, function(x) sub(".*([0-9]{4}-[0-9]{6}-[0-9]{2}).*", "\\1", unlist(x[["id_info"]]))),
+                          function(x) any(x %in% listofEUCTRids[["a2_eudract_number"]]))
+      if(verbose) message("Searching duplicates: Found ", sum(dupes.a.2),
+                          " CTGOV otherids (secondary_id, nct_alias, org_study_id) in EUCTR a2_eudract_number")
       #
       # c.2 - ctgov in euctr a52_... (id_info corresponds to index 2)
       dupes.c.2 <- sapply(lapply(listofCTGOVids, "[[", 2),
