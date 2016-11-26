@@ -345,6 +345,9 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
         xml2json <- paste0('cmd.exe /c c:\\cygwin\\bin\\bash.exe --login -c "', xml2json, '"')
         #
         json2mongo <- paste0(get("mongoBinaryLocation", envir = .privateEnv), json2mongo)
+        json2mongo <- gsub(" --", " /", json2mongo)
+        json2mongo <- gsub("=", ":", json2mongo)
+        json2mongo <- shQuote(json2mongo)
         #
       } else {
         #
@@ -501,6 +504,9 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
       euctr2json <- paste0('cmd.exe /c c:\\cygwin\\bin\\bash.exe --login -c "', euctr2json, '"')
       #
       json2mongo <- paste0(get("mongoBinaryLocation", envir = .privateEnv), json2mongo)
+      json2mongo <- gsub(" --", " /", json2mongo)
+      json2mongo <- gsub("=", ":", json2mongo)
+      json2mongo <- shQuote(json2mongo)
       #
     } else {
       #

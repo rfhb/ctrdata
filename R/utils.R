@@ -356,14 +356,17 @@ dbFindVariable <- function(namepart = "", allmatches = FALSE, forceupdate = FALS
     # mongo collection_to_analyse --quiet --eval "var collection = 'users', persistResults=true, resultsDatabase='db.example.com/variety' variety.js
     varietymongo <- paste0(ifelse(.Platform$OS.type != "windows", "mongo", "mongo.exe"), ' "',
                            sub("mongodb://(.+)", "\\1", url), '/', db, '"',
-                           ifelse(username != "", paste0(" --username ", username), ""),
-                           ifelse(password != "", paste0(" --password ", password), ""),
-                           " --eval \"var collection = '", collection, "', persistResults=true, ",
+                           ifelse(username != "", paste0(' --username ="', username, '"'), ''),
+                           ifelse(password != "", paste0(' --password ="', password, '"'), ''),
+                           " --eval \"var collection='", collection, "', persistResults=true, ",
                            "resultsDatabase='", paste0(sub("mongodb://(.+)", "\\1", url), '/', db, "'\" "),
                            varietylocalurl)
     #
     if (.Platform$OS.type == "windows") {
       varietymongo <- paste0(get("mongoBinaryLocation", envir = .privateEnv), varietymongo)
+      varietymongo <- gsub(" --", " /", varietymongo)
+      varietymongo <- gsub(" =", ":", varietymongo)
+      varietymongo <- shQuote(varietymongo)
     }
     #
     message("Calling mongo with variety.js and adding keys to database ...")
