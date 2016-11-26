@@ -327,18 +327,18 @@ dbFindVariable <- function(namepart = "", allmatches = FALSE, forceupdate = FALS
   if (length(namepart) > 1) stop("Name part should have only one element.")
   if (namepart == "" & !forceupdate) stop("Empty name part string.")
 
-  # check program availability
-  if (.Platform$OS.type == "windows") {
-    installMongoFindBinaries()
-    if (is.na(get("mongoBinaryLocation", envir = .privateEnv))) stop("Not running dbFindVariable because mongo binary was not found.")
-  }
-
   # get a working mongo connection
   mongo <- ctrMongo(collection = collection, db = db, url = url,
                     username = username, password = password, verbose = verbose)
 
   # check if database with variety results exists or should be forced to be updated
   if (forceupdate || mongo[["keys"]]$count() == 0L) {
+    #
+    # check program availability
+    if (.Platform$OS.type == "windows") {
+      installMongoFindBinaries()
+      if (is.na(get("mongoBinaryLocation", envir = .privateEnv))) stop("Not running dbFindVariable because mongo binary was not found.")
+    }
     #
     # if (!grepl("127.0.0.1", attr(mongo, "host")))
     #   warning("variety.js may fail with certain remote servers (for example when the host or port ",
