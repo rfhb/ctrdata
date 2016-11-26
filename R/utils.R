@@ -354,7 +354,7 @@ dbFindVariable <- function(namepart = "", allmatches = FALSE, forceupdate = FALS
     }
     # compose actual command to call mongo with variety.js
     # mongo collection_to_analyse --quiet --eval "var collection = 'users', persistResults=true, resultsDatabase='db.example.com/variety' variety.js
-    varietymongo <- paste0('mongo "',
+    varietymongo <- paste0(ifelse(.Platform$OS.type != "windows", "mongo", "mongo.exe"), ' "',
                            sub("mongodb://(.+)", "\\1", url), '/', db, '"',
                            ifelse(username != "", paste0(" --username ", username), ""),
                            ifelse(password != "", paste0(" --password ", password), ""),

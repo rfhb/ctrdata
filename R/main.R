@@ -319,7 +319,8 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
       # compose commands - transform xml into json, a single allfiles.json in the temporaray directory
       xml2json <- system.file("exec/xml2json.php", package = "ctrdata", mustWork = TRUE)
       xml2json <- paste0('php -f ', xml2json, ' ', tempDir)
-      json2mongo <- paste0('mongoimport --host="', sub("mongodb://(.+)", "\\1", url), '" --db="', db, '" --collection="', collection, '"',
+      json2mongo <- paste0(ifelse(.Platform$OS.type != "windows", "mongoimport", "mongoimport.exe"),
+                           ' --host="', sub("mongodb://(.+)", "\\1", url), '" --db="', db, '" --collection="', collection, '"',
                            ifelse(username != "", paste0(' --username="', username, '"'), ''),
                            ifelse(password != "", paste0(' --password="', password, '"'), ''),
                            ' --upsert --type=json --file="', tempDir, '/allfiles.json"',
@@ -484,7 +485,8 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     # compose commands: for external script on all files in temporary directory and for import
     euctr2json <- system.file("exec/euctr2json.sh", package = "ctrdata", mustWork = TRUE)
     euctr2json <- paste(euctr2json, tempDir)
-    json2mongo <- paste0('mongoimport --host="', sub("mongodb://(.+)", "\\1", url), '" --db="', db, '" --collection="', collection, '"',
+    json2mongo <- paste0(ifelse(.Platform$OS.type != "windows", "mongoimport", "mongoimport.exe"),
+                         ' --host="', sub("mongodb://(.+)", "\\1", url), '" --db="', db, '" --collection="', collection, '"',
                          ifelse(username != "", paste0(' --username="', username, '"'), ''),
                          ifelse(password != "", paste0(' --password="', password, '"'), ''),
                          ' --upsert --type=json --file="', tempDir, '/allfiles.json"',
