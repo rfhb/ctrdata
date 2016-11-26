@@ -962,7 +962,7 @@ installCygwinWindowsTest <- function() {
 #'
 #' @keywords internal
 #
-installMongoFindBinaries <- function(mongoDirWin = "c:\\mongo\\bin\\") {
+installMongoFindBinaries <- function(mongoDirWin = "c:\\mongo\\bin\\", debug = FALSE) {
   #
   # for debugging
   # mongoBinaryLocation <- "/usr/local/bin/"
@@ -974,7 +974,7 @@ installMongoFindBinaries <- function(mongoDirWin = "c:\\mongo\\bin\\") {
       && !is.na(get("mongoBinaryLocation", envir = environ))
       && file.exists(paste0(get("mongoBinaryLocation", envir = environ), binaries[1]))) {
     #
-    message("mongoimport / mongo is in ", get("mongoBinaryLocation", envir = environ))
+    if(debug) message("mongoimport / mongo is in ", get("mongoBinaryLocation", envir = environ))
     #
   } else {
     #
@@ -985,7 +985,7 @@ installMongoFindBinaries <- function(mongoDirWin = "c:\\mongo\\bin\\") {
         && file.exists(paste0(mongoDirWin, binaries[1]))) {
       #
       assign("mongoBinaryLocation", mongoDirWin, envir = environ)
-      message("mongoimport / mongo is in ", mongoDirWin)
+      if(debug) message("mongoimport / mongo is in ", mongoDirWin)
       #
     } else {
       #
@@ -1002,12 +1002,12 @@ installMongoFindBinaries <- function(mongoDirWin = "c:\\mongo\\bin\\") {
       if (class(tmp) != "try-error") {
         #
         # found it in the path, save empty location string in package environment
-        message("mongoimport / mongo found in the path.")
+        if(debug) message("mongoimport / mongo found in the path.")
         assign("mongoBinaryLocation", "", envir = environ)
         #
       } else {
         #
-        message("mongoimport / mongo not found in path.")
+        if(debug) message("mongoimport / mongo not found in path.")
         #
         if (.Platform$OS.type != "windows") stop("Cannot continue. Search function is only for MS Windows operating systems.")
         #
@@ -1023,7 +1023,7 @@ installMongoFindBinaries <- function(mongoDirWin = "c:\\mongo\\bin\\") {
         #
         # found it, save in package environment
         assign("mongoBinaryLocation", location, envir = environ)
-        message("mongoimport / mongo found in ", location)
+        if(debug) message("mongoimport / mongo found in ", location)
         #
       }
     }

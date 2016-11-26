@@ -90,7 +90,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   if(!grepl(register, "CTGOVEUCTR"))          stop("Register not known: ", register)
 
   # check program availability
-  installMongoFindBinaries()
+  installMongoFindBinaries(debug = debug)
   if (.Platform$OS.type == "windows") installCygwinWindowsTest()
 
   # check program version as acceptable json format changed from 2.x to 3.x
@@ -339,14 +339,14 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
         xml2json <- gsub("([A-Z]):/", "/cygdrive/\\1/", xml2json)
         xml2json <- paste0('cmd.exe /c c:\\cygwin\\bin\\bash.exe --login -c "', xml2json, '"')
         #
-        json2mongo <- paste0(shQuote(installMongoFindBinaries()[2]), json2mongo)
+        json2mongo <- paste0(shQuote(installMongoFindBinaries(debug = debug)[2]), json2mongo)
         json2mongo <- gsub(" --", " /", json2mongo)
         json2mongo <- gsub("=", ":", json2mongo)
         #
       } else {
         #
         # mongoimport does not return exit value, hence redirect stderr to stdout
-        json2mongo <- paste0(shQuote(installMongoFindBinaries()[2]), json2mongo, ' 2>&1')
+        json2mongo <- paste0(shQuote(installMongoFindBinaries(debug = debug)[2]), json2mongo, ' 2>&1')
         #
       }
       #
@@ -496,14 +496,14 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
       euctr2json <- gsub("([A-Z]):/", "/cygdrive/\\1/", euctr2json)
       euctr2json <- paste0('cmd.exe /c c:\\cygwin\\bin\\bash.exe --login -c "', euctr2json, '"')
       #
-      json2mongo <- paste0(shQuote(installMongoFindBinaries()[2]), json2mongo)
+      json2mongo <- paste0(shQuote(installMongoFindBinaries(debug = debug)[2]), json2mongo)
       json2mongo <- gsub(" --", " /", json2mongo)
       json2mongo <- gsub("=", ":", json2mongo)
       #
     } else {
       #
       # mongoimport does not return exit value, hence redirect stderr to stdout
-      json2mongo <- paste0(shQuote(installMongoFindBinaries()[2]), json2mongo, ' 2>&1')
+      json2mongo <- paste0(shQuote(installMongoFindBinaries(debug = debug)[2]), json2mongo, ' 2>&1')
       #
     }
 
