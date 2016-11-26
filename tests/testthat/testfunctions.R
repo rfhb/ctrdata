@@ -81,9 +81,7 @@ test_that("access to mongo db from R package", {
 # test access to mongo db from command line
 test_that("access to mongo db from command line", {
 
-  skip_on_os("windows")
-
-  expect_message(installMongoFindBinaries(), "mongoimport / mongo found in the path")
+  expect_message(installMongoFindBinaries(), "mongoimport / mongo found in")
 
 })
 
@@ -196,7 +194,8 @@ test_that("operations on database after download from register", {
                "For variable / field: ThisDoesNotExist no data could be extracted")
 
   # # clean up = drop collections from mongodb
-  expect_equivalent (mongolite::mongo(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB", db = "users")$drop(), TRUE)
+  expect_equivalent (mongolite::mongo(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB",     db = "users")$drop(), TRUE)
+  expect_equivalent (mongolite::mongo(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDBKeys", db = "users")$drop(), TRUE)
 
 })
 
