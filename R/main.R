@@ -418,7 +418,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
                             username = username, password = password, verbose = verbose)
 
     # update keys database
-    dbFindVariable(forceupdate = TRUE,
+    dbFindVariable(forceupdate = TRUE, debug = debug,
                    collection = collection, db = db, url = url,
                    username = username, password = password, verbose = verbose)
 
@@ -531,7 +531,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
                             username = username, password = password, verbose = verbose)
 
     # update keys database
-    dbFindVariable(forceupdate = TRUE,
+    dbFindVariable(forceupdate = TRUE, debug = debug,
                    collection = collection, db = db, url = url,
                    username = username, password = password, verbose = verbose)
 

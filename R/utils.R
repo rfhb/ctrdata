@@ -366,6 +366,7 @@ dbFindVariable <- function(namepart = "", allmatches = FALSE, forceupdate = FALS
     message("Calling mongo with variety.js and adding keys to database ...")
     if (debug) message(varietymongo)
     tmp <- system(varietymongo, intern = TRUE)
+    if (debug) message(tmp)
     #
   }
 
@@ -992,7 +993,7 @@ installMongoFindBinaries <- function(mongoDirWin = "c:\\mongo\\bin\\") {
         #
       } else {
         #
-        warning("mongoimport / mongo was not found in the path.", immediate. = TRUE)
+        message("mongoimport / mongo was not found in the path.")
         #
         if (.Platform$OS.type != "windows") stop("Cannot continue. Search function is only for MS Windows operating systems.")
         #
