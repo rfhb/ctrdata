@@ -90,12 +90,8 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   if(!grepl(register, "CTGOVEUCTR"))          stop("Register not known: ", register)
 
   # check program availability
-  if (.Platform$OS.type == "windows") {
-    installMongoFindBinaries()
-    if (is.na(get("mongoBinaryLocation", envir = .privateEnv)))
-      stop("Not starting ctrLoadQueryIntoDb because mongoimport was not found.")
-    installCygwinWindowsTest()
-  }
+  installMongoFindBinaries()
+  if (.Platform$OS.type == "windows") installCygwinWindowsTest()
 
   # check program version as acceptable json format changed from 2.x to 3.x
   installMongoCheckVersion()
@@ -319,8 +315,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
       # compose commands - transform xml into json, a single allfiles.json in the temporaray directory
       xml2json <- system.file("exec/xml2json.php", package = "ctrdata", mustWork = TRUE)
       xml2json <- paste0('php -f ', xml2json, ' ', tempDir)
-      json2mongo <- paste0(ifelse(.Platform$OS.type != "windows", "mongoimport", "mongoimport.exe"),
-                           ' --host="', sub("mongodb://(.+)", "\\1", url), '" --db="', db, '" --collection="', collection, '"',
+      json2mongo <- paste0(' --host="', sub("mongodb://(.+)", "\\1", url), '" --db="', db, '" --collection="', collection, '"',
                            ifelse(username != "", paste0(' --username="', username, '"'), ''),
                            ifelse(password != "", paste0(' --password="', password, '"'), ''),
                            ' --upsert --type=json --file="', tempDir, '/allfiles.json"',
@@ -344,15 +339,14 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
         xml2json <- gsub("([A-Z]):/", "/cygdrive/\\1/", xml2json)
         xml2json <- paste0('cmd.exe /c c:\\cygwin\\bin\\bash.exe --login -c "', xml2json, '"')
         #
-        json2mongo <- paste0(get("mongoBinaryLocation", envir = .privateEnv), json2mongo)
+        json2mongo <- paste0(shQuote(installMongoFindBinaries()[2]), json2mongo)
         json2mongo <- gsub(" --", " /", json2mongo)
         json2mongo <- gsub("=", ":", json2mongo)
-        json2mongo <- shQuote(json2mongo)
         #
       } else {
         #
         # mongoimport does not return exit value, hence redirect stderr to stdout
-        json2mongo <- paste(json2mongo, '2>&1')
+        json2mongo <- paste0(shQuote(installMongoFindBinaries()[2]), json2mongo, ' 2>&1')
         #
       }
       #
@@ -488,8 +482,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     # compose commands: for external script on all files in temporary directory and for import
     euctr2json <- system.file("exec/euctr2json.sh", package = "ctrdata", mustWork = TRUE)
     euctr2json <- paste(euctr2json, tempDir)
-    json2mongo <- paste0(ifelse(.Platform$OS.type != "windows", "mongoimport", "mongoimport.exe"),
-                         ' --host="', sub("mongodb://(.+)", "\\1", url), '" --db="', db, '" --collection="', collection, '"',
+    json2mongo <- paste0(' --host="', sub("mongodb://(.+)", "\\1", url), '" --db="', db, '" --collection="', collection, '"',
                          ifelse(username != "", paste0(' --username="', username, '"'), ''),
                          ifelse(password != "", paste0(' --password="', password, '"'), ''),
                          ' --upsert --type=json --file="', tempDir, '/allfiles.json"',
@@ -503,17 +496,17 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
       euctr2json <- gsub("([A-Z]):/", "/cygdrive/\\1/", euctr2json)
       euctr2json <- paste0('cmd.exe /c c:\\cygwin\\bin\\bash.exe --login -c "', euctr2json, '"')
       #
-      json2mongo <- paste0(get("mongoBinaryLocation", envir = .privateEnv), json2mongo)
+      json2mongo <- paste0(shQuote(installMongoFindBinaries()[2]), json2mongo)
       json2mongo <- gsub(" --", " /", json2mongo)
       json2mongo <- gsub("=", ":", json2mongo)
-      json2mongo <- shQuote(json2mongo)
       #
     } else {
       #
       # mongoimport does not return exit value, hence redirect stderr to stdout
-      json2mongo <- paste(json2mongo, '2>&1')
+      json2mongo <- paste0(shQuote(installMongoFindBinaries()[2]), json2mongo, ' 2>&1')
       #
     }
+
     #
     # run conversion
     message("Converting to JSON ...")

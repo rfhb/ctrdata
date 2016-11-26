@@ -81,7 +81,9 @@ test_that("access to mongo db from R package", {
 # test access to mongo db from command line
 test_that("access to mongo db from command line", {
 
-  expect_message(installMongoFindBinaries(), "mongoimport / mongo found in")
+  has_mongo()
+
+  expect_message(installMongoFindBinaries(), "mongoimport / mongo ")
 
 })
 
@@ -106,8 +108,8 @@ test_that("retrieve data from registers", {
 # a query retrieving a small number of trials
 test_that("retrieve data from register ctgov", {
 
-  has_mongo()
   has_internet()
+  has_mongo()
 
   queryctgov <- list(queryterm = "term=2010-024264-18", register = "CTGOV")
 
@@ -119,8 +121,8 @@ test_that("retrieve data from register ctgov", {
 # a query retrieving a small number of trials
 test_that("retrieve data from register euctr", {
 
-  has_mongo()
   has_internet()
+  has_mongo()
 
   queryeuctr <- list(queryterm = "2010-024264-18",      register = "EUCTR")
 
@@ -199,22 +201,13 @@ test_that("operations on database after download from register", {
 
 })
 
-# # testing operations on minimalistic
-# # dataframes to simulate deduplication
-# # function use
-# test_that("operations on data frame", {
-#
-#   df <- data.frame("var1" = 1, "var2" = 1)
-#
-#   expect_message(dfMergeTwoVariablesRelevel(df = df, varnames = c("var1", "var2")), "Unique values returned:")
-#   expect_is     (dfMergeTwoVariablesRelevel(df = df, varnames = c("var1", "var2")), "character")
-#
-#   expect_error(dfFindUniqueEuctrRecord(df = df), "Data frame does not include")
-#
-#   df <- data.frame(1, 2); names (df) <- c("_id", "a2_eudract_number")
-#
-#   expect_message  (dfFindUniqueEuctrRecord(df = df), "0 EUCTR records dropped")
-#   expect_identical(dfFindUniqueEuctrRecord(df = df), df)
-#
-# })
+# testing operations on minimalistic dataframes
+test_that("operations on data frame", {
+
+  df <- data.frame("var1" = 1, "var2" = 1)
+
+  expect_message(dfMergeTwoVariablesRelevel(df = df, varnames = c("var1", "var2")), "Unique values returned:")
+  expect_is     (dfMergeTwoVariablesRelevel(df = df, varnames = c("var1", "var2")), "character")
+
+})
 

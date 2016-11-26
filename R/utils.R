@@ -335,10 +335,7 @@ dbFindVariable <- function(namepart = "", allmatches = FALSE, forceupdate = FALS
   if (forceupdate || mongo[["keys"]]$count() == 0L) {
     #
     # check program availability
-    if (.Platform$OS.type == "windows") {
-      installMongoFindBinaries()
-      if (is.na(get("mongoBinaryLocation", envir = .privateEnv))) stop("Not running dbFindVariable because mongo binary was not found.")
-    }
+    installMongoFindBinaries()
     #
     # if (!grepl("127.0.0.1", attr(mongo, "host")))
     #   warning("variety.js may fail with certain remote servers (for example when the host or port ",
@@ -354,8 +351,7 @@ dbFindVariable <- function(namepart = "", allmatches = FALSE, forceupdate = FALS
     }
     # compose actual command to call mongo with variety.js
     # mongo collection_to_analyse --quiet --eval "var collection = 'users', persistResults=true, resultsDatabase='db.example.com/variety' variety.js
-    varietymongo <- paste0(ifelse(.Platform$OS.type != "windows", "mongo", "mongo.exe"), ' "',
-                           sub("mongodb://(.+)", "\\1", url), '/', db, '"',
+    varietymongo <- paste0(' "', sub("mongodb://(.+)", "\\1", url), '/', db, '"',
                            ifelse(username != "", paste0(' --username ="', username, '"'), ''),
                            ifelse(password != "", paste0(' --password ="', password, '"'), ''),
                            " --eval \"var collection='", collection, "', persistResults=true, ",
@@ -363,10 +359,15 @@ dbFindVariable <- function(namepart = "", allmatches = FALSE, forceupdate = FALS
                            varietylocalurl)
     #
     if (.Platform$OS.type == "windows") {
-      varietymongo <- paste0(get("mongoBinaryLocation", envir = .privateEnv), varietymongo)
-      varietymongo <- gsub(" --", " /", varietymongo)
+      #
+      varietymongo <- paste0(shQuote(installMongoFindBinaries()[1]), varietymongo)
+      varietymongo <- gsub(" --([up])", " /\1", varietymongo)
       varietymongo <- gsub(" =", ":", varietymongo)
-      varietymongo <- shQuote(varietymongo)
+      #
+    } else {
+      #
+      varietymongo <- paste0(shQuote(installMongoFindBinaries()[1]), varietymongo)
+      #
     }
     #
     message("Calling mongo with variety.js and adding keys to database ...")
@@ -939,7 +940,7 @@ installCygwinWindowsTest <- function() {
     message("cygwin base install seems to be working correctly.")
     invisible(TRUE)
   } else {
-    warning("cygwin does not seem to be installed correctly.")
+    stop("cygwin does not seem to be installed correctly.")
     invisible(FALSE)
   }
 }
@@ -963,30 +964,33 @@ installCygwinWindowsTest <- function() {
 #
 installMongoFindBinaries <- function(mongoDirWin = "c:\\mongo\\bin\\") {
   #
-  # debug: mongoBinaryLocation <- "/usr/bin/"
-  tmp <- ifelse(.Platform$OS.type != "windows", "mongoimport", "mongoimport.exe")
+  # for debugging
+  # mongoBinaryLocation <- "/usr/local/bin/"
+  environ <- .GlobalEnv # .privateEnv
   #
-  if (exists("mongoBinaryLocation", envir = .privateEnv) && !is.na(get("mongoBinaryLocation", envir = .privateEnv))
-      && file.exists(paste0(get("mongoBinaryLocation", envir = .privateEnv), tmp))) {
+  binaries <- paste0(c("mongo", "mongoimport"), ifelse(.Platform$OS.type != "windows", "", ".exe"))
+  #
+  if (exists("mongoBinaryLocation", envir = environ)
+      && !is.na(get("mongoBinaryLocation", envir = environ))
+      && file.exists(paste0(get("mongoBinaryLocation", envir = environ), binaries[1]))) {
     #
-    message("mongoimport / mongo is in ", get("mongoBinaryLocation", envir = .privateEnv))
-    invisible(get("mongoBinaryLocation", envir = .privateEnv))
+    message("mongoimport / mongo is in ", get("mongoBinaryLocation", envir = environ))
     #
   } else {
     #
     # check folder specified in parameter
     mongoDirWin <- gsub("[\\]*$", "\\\\", mongoDirWin)
     #
-    if ((.Platform$OS.type == "windows") && (file.exists(paste0(mongoDirWin, 'mongoimport.exe')))) {
+    if (.Platform$OS.type == "windows"
+        && file.exists(paste0(mongoDirWin, binaries[1]))) {
       #
-      assign("mongoBinaryLocation", mongoDirWin, envir = .privateEnv)
+      assign("mongoBinaryLocation", mongoDirWin, envir = environ)
       message("mongoimport / mongo is in ", mongoDirWin)
-      invisible(get("mongoBinaryLocation", envir = .privateEnv))
       #
     } else {
       #
       # not found: reset any information and start searching
-      assign("mongoBinaryLocation", NA, envir = .privateEnv)
+      assign("mongoBinaryLocation", NA, envir = environ)
       #
       # first test for binary in the path
       tmp <- try(if (.Platform$OS.type != "windows") {
@@ -999,12 +1003,11 @@ installMongoFindBinaries <- function(mongoDirWin = "c:\\mongo\\bin\\") {
         #
         # found it in the path, save empty location string in package environment
         message("mongoimport / mongo found in the path.")
-        assign("mongoBinaryLocation", "", envir = .privateEnv)
-        invisible("")
+        assign("mongoBinaryLocation", "", envir = environ)
         #
       } else {
         #
-        message("mongoimport / mongo was not found in the path.")
+        message("mongoimport / mongo not found in path.")
         #
         if (.Platform$OS.type != "windows") stop("Cannot continue. Search function is only for MS Windows operating systems.")
         #
@@ -1019,14 +1022,15 @@ installMongoFindBinaries <- function(mongoDirWin = "c:\\mongo\\bin\\") {
         if (!tmp) stop("Cannot continue. mongoimport not found recorded in the registry, ", location, ".")
         #
         # found it, save in package environment
-        location <- shQuote(location)
-        assign("mongoBinaryLocation", location, envir = .privateEnv)
+        assign("mongoBinaryLocation", location, envir = environ)
         message("mongoimport / mongo found in ", location)
-        invisible(location)
         #
       }
     }
   }
+  #
+  return(paste0(get("mongoBinaryLocation", envir = environ), binaries))
+  #
 }
 # end installMongoFindBinaries
 
