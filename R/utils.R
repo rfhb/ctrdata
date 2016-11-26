@@ -966,7 +966,7 @@ installMongoFindBinaries <- function(mongoDirWin = "c:\\mongo\\bin\\") {
   #
   # for debugging
   # mongoBinaryLocation <- "/usr/local/bin/"
-  environ <- .GlobalEnv # .privateEnv
+  environ <- .privateEnv #.GlobalEnv # .privateEnv
   #
   binaries <- paste0(c("mongo", "mongoimport"), ifelse(.Platform$OS.type != "windows", "", ".exe"))
   #
