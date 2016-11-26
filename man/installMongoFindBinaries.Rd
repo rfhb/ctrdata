@@ -7,17 +7,20 @@ mongoimport) and to save the location into a private environment.
 Call this function with a correct parameter if the automatic
 detection fails.}
 \usage{
-installMongoFindBinaries(mongoDirWin = "c:\\\\mongo\\\\bin\\\\")
+installMongoFindBinaries(mongoDirWin = "c:\\\\mongo\\\\bin\\\\",
+  debug = FALSE)
 }
 \arguments{
 \item{mongoDirWin}{Only used under MS Windows: folder that contains mongo
 binaries, defaults to "c:\\mongo\\bin\\" as used on
 \url{http://docs.mongodb.org/manual/tutorial/install-mongodb-on-windows#interactive-installation}}
+
+\item{debug}{Printing additional information if set to \code{TRUE}; default
+is \code{FALSE}.}
 }
 \value{
-Either an empty string if \code{mongoimport} was found on the path
-  or, under MS Windows, a string representing the path to the folder of the
-  mongo binaries
+A vector of length 2 with the paths for the \code{mongo} and
+  \code{mongoimport} binaries on the user's system
 }
 \description{
 Function to detect the location of mongo database binaries (mongo,

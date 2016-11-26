@@ -955,10 +955,11 @@ installCygwinWindowsTest <- function() {
 #' @param mongoDirWin Only used under MS Windows: folder that contains mongo
 #'   binaries, defaults to "c:\\mongo\\bin\\" as used on
 #'   \url{http://docs.mongodb.org/manual/tutorial/install-mongodb-on-windows#interactive-installation}
+#' @param debug Printing additional information if set to \code{TRUE}; default
+#'   is \code{FALSE}.
 #'
-#' @return Either an empty string if \code{mongoimport} was found on the path
-#'   or, under MS Windows, a string representing the path to the folder of the
-#'   mongo binaries
+#' @return A vector of length 2 with the paths for the \code{mongo} and
+#'   \code{mongoimport} binaries on the user's system
 #'
 #' @keywords internal
 #
