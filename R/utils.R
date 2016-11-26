@@ -274,6 +274,9 @@ dbQueryHistory <- function(collection = "ctrdata", db = "users", url = "mongodb:
     #
     return(tmp)
   }
+
+  # close database connection
+  rm(mongo); gc()
 }
 # end ctrQueryHistoryInDb
 
@@ -468,6 +471,8 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
   listofCTGOVids <- mongo$iterate(query = '{"_id": {"$regex": "NCT[0-9]{8}"}}',
                                   fields = '{"id_info.org_study_id": 1, "id_info.secondary_id": 1, "id_info.nct_alias": 1}')$batch(size = mongo$count())
   if(is.null(listofCTGOVids)) message("No CTGOV records found.")
+  # close database connection
+  rm(mongo); gc()
 
   # 4. retain unique ctrgov records
   if(!is.null(listofCTGOVids)) {
@@ -644,6 +649,9 @@ dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
       stop(paste0("For variable / field: ", item, " no data could be extracted, please check the contents of the database."))
     }
   } # end for item in fields
+
+  # close database connection
+  rm(mongo); gc()
 
   # finalise output
   if (is.null(result)) stop('No records found which had values for the specified fields.')
@@ -1053,6 +1061,8 @@ installMongoCheckVersion <- function(collection = "ctrdata", db = "users", url =
     return(FALSE)
   }
   #
+  # close database connection
+  rm(mongo); gc()
 }
 # end installMongoCheckVersion
 

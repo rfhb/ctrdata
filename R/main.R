@@ -140,6 +140,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     # collate information about current query into json object
     json <- jsonlite::toJSON(list("queries" = hist))
 
+    # using mongo object from parent environment
     # update(query, update = '{"$set":{}}', upsert = FALSE, multiple = FALSE)
     mongo$update(query = '{"_id":{"$eq":"meta-info"}}',
                  update = paste0('{ "$set" :', json, '}'),
@@ -379,9 +380,8 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
       #   "CDR0000068036"
       #   ]
       #
-      #
+
       # obtain full data set on _id and other ids
-      #cursor <- mongo$iterate(query = '{"_id": {"$regex": "NCT[0-9]{8}"}}', fields = '{"id_info": 1}')$batch(size = mongo$count())
       cursor <- mongo$iterate(query = '{"_id": {"$regex": "NCT[0-9]{8}"}}', fields = '{"id_info.org_study_id": 1, "id_info.secondary_id": 1}')$batch(size = mongo$count())
       # transform every second element in a list item into a vector
       otherids <- sapply(cursor, function(x) paste0(as.vector(unlist(x[2]))))
@@ -421,6 +421,9 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     dbFindVariable(forceupdate = TRUE, debug = debug,
                    collection = collection, db = db, url = url,
                    username = username, password = password, verbose = verbose)
+
+    # close database connection
+    rm(mongo); gc()
 
   }
 
