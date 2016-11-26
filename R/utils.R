@@ -509,34 +509,35 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
       #
       retids <- c(listofEUCTRids[["_id"]],  sapply(listofCTGOVids, "[[", 1) [!dupes.a.2 & !dupes.b.2 & !dupes.c.2 & !dupes.d.2])
       #
-    } else {
+    }
+    #
+    if(preferregister == "CTGOV") {
       #
-      retids <- c(sapply(listofCTGOVids, "[[", 1))
+      # a.1 - euctr in ctgov (id_info corresponds to index 2)
+      dupes.a.1 <- listofEUCTRids[["a2_eudract_number"]] %in% sub(".*([0-9]{4}-[0-9]{6}-[0-9]{2}).*", "\\1", unlist(sapply(listofCTGOVids, "[[", 2)))
+      if(verbose) message("Searching duplicates: Found ", sum(dupes.a.1), " EUCTR _id in CTGOV otherids (secondary_id, nct_alias, org_study_id)")
+      #
+      # b.1 - euctr in ctgov (_id corresponds to index 1)
+      dupes.b.1 <- listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]] %in% sapply(listofCTGOVids, "[[", 1)
+      if(verbose) message("Searching duplicates: Found ", sum(dupes.b.1), " EUCTR a52_us_nct_clinicaltrialsgov_registry_number in CTOGV _id")
+      #
+      # c.1 - euctr in ctgov (id_info corresponds to index 2)
+      dupes.c.1 <- listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]] %in% unlist(sapply(listofCTGOVids, "[[", 2))
+      if(verbose) message("Searching duplicates: Found ", sum(dupes.c.1), " EUCTR a52_us_nct_clinicaltrialsgov_registry_number in CTOGV otherids (secondary_id, nct_alias, org_study_id)")
+      #
+      # d.1 - euctr in ctgov (id_info corresponds to index 2)
+      dupes.d.1 <- listofEUCTRids[["a51_isrctn_international_standard_randomised_controlled_trial_number"]] %in% unlist(sapply(listofCTGOVids, "[[", 2))
+      if(verbose) message("Searching duplicates: Found ", sum(dupes.c.1), " EUCTR a51_isrctn_international_standard_randomised_controlled_trial_number in CTOGV otherids (secondary_id, nct_alias, org_study_id)")
+      #
+      retids <- c(sapply(listofCTGOVids, "[[", 1), listofEUCTRids[["_id"]] [!dupes.a.1 & !dupes.b.1 & !dupes.c.1 & !dupes.d.1])
       #
     }
-  }
-  if(preferregister == "CTGOV") {
+  } else {
     #
-    # a.1 - euctr in ctgov (id_info corresponds to index 2)
-    dupes.a.1 <- substr(listofEUCTRids[["_id"]], 1, 14) %in% sapply(listofCTGOVids, "[[", 2)
-    if(verbose) message("Searching duplicates: Found ", sum(dupes.a.1), " EUCTR _id in CTGOV otherids (secondary_id, nct_alias, org_study_id)")
-    #
-    # b.1 - euctr in ctgov (_id corresponds to index 1)
-    dupes.b.1 <- listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]] %in% sapply(listofCTGOVids, "[[", 1)
-    if(verbose) message("Searching duplicates: Found ", sum(dupes.b.1), " EUCTR a52_us_nct_clinicaltrialsgov_registry_number in CTOGV _id")
-    #
-    # c.1 - euctr in ctgov (id_info corresponds to index 2)
-    dupes.c.1 <- listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]] %in% unlist(sapply(listofCTGOVids, "[[", 2))
-    if(verbose) message("Searching duplicates: Found ", sum(dupes.c.1), " EUCTR a52_us_nct_clinicaltrialsgov_registry_number in CTOGV otherids (secondary_id, nct_alias, org_study_id)")
-    #
-    # d.1 - euctr in ctgov (id_info corresponds to index 2)
-    dupes.d.1 <- listofEUCTRids[["a51_isrctn_international_standard_randomised_controlled_trial_number"]] %in% unlist(sapply(listofCTGOVids, "[[", 2))
-    if(verbose) message("Searching duplicates: Found ", sum(dupes.c.1), " EUCTR a51_isrctn_international_standard_randomised_controlled_trial_number in CTOGV otherids (secondary_id, nct_alias, org_study_id)")
-    #
-    retids <- c(sapply(listofCTGOVids, "[[", 1), listofEUCTRids[["_id"]] [!dupes.a.1 & !dupes.b.1 & !dupes.c.1 & !dupes.d.1])
+    retids <- c(listofEUCTRids[["_id"]], unlist(sapply(listofCTGOVids, "[[", 1)))
     #
   }
-
+  #
   # prepare output
   #
   # avoid returning list() if none found
