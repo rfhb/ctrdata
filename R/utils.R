@@ -1,7 +1,6 @@
 ### ctrdata package
 ### utility functions
 
-
 ## variable definitions
 #
 # EUCTR definitions
@@ -456,10 +455,10 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
     silent = TRUE
   )
   if(class(listofEUCTRids) == "try-error") listofEUCTRids <- NULL
-  if( is.null(listofEUCTRids)) warning("No EUCTR records found.")
+  if( is.null(listofEUCTRids)) message("No EUCTR records found.")
   if(!is.null(listofEUCTRids)) listofEUCTRids <- listofEUCTRids[grepl("[0-9]{4}-[0-9]{6}-[0-9]{2}-[3A-Z]{2,3}", listofEUCTRids[["_id"]]), ]
 
-  # 2. find unique, preferred country version
+  # 2. find unique, preferred country version of euctr
   if(!is.null(listofEUCTRids)) listofEUCTRids <- dfFindUniqueEuctrRecord(df = listofEUCTRids,
                                                                          prefermemberstate = prefermemberstate,
                                                                          include3rdcountrytrials = include3rdcountrytrials)
@@ -467,6 +466,7 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
   # 3. get ctrgov records
   listofCTGOVids <- mongo$iterate(query = '{"_id": {"$regex": "NCT[0-9]{8}"}}',
                                   fields = '{"id_info.org_study_id": 1, "id_info.secondary_id": 1, "id_info.nct_alias": 1}')$batch(size = mongo$count())
+  if(is.null(listofCTGOVids)) message("No CTGOV records found.")
 
   # 4. retain unique ctrgov records
   if(!is.null(listofCTGOVids)) {
