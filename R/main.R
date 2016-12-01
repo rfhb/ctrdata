@@ -118,7 +118,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
 
   # helper function to show progress while downloading
   progressOut <- function(down, up) {
-    if(runif(1) < 0.02) cat(".")
+    if(runif(1) < 0.01) cat(".")
     #cat(".")
     #cat("             \b\b\b\b\b\b\b\b\b\b", paste0(formatC(down, digits = 0, format = "d", width = 10)))
     # cat(formatC(down, digits = 0, format = "d", width = 10))
@@ -134,6 +134,9 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     hist <- dbQueryHistory(collection = collection, db = db, url = url,
                            username = username, password = password, verbose = verbose)
 
+    # debug
+    if(verbose) print(hist)
+
     # append current search
     hist <- rbind(hist, cbind ("query-timestamp" = format(Sys.time(), "%Y-%m-%d-%H-%M-%S"),
                                "query-register" = register,
@@ -142,6 +145,9 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
 
     # collate information about current query into json object
     json <- jsonlite::toJSON(list("queries" = hist))
+
+    # debug
+    if(verbose) cat(json)
 
     # using mongo object from parent environment
     # update(query, update = '{"$set":{}}', upsert = FALSE, multiple = FALSE)
