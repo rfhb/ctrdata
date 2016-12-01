@@ -235,13 +235,16 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
         # obtain rss feed with list of recently updated trials
         h = RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE))
         rssquery <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/rest/feed/bydates?query=", queryterm)
-        if (debug) message("DEBUG: ", rssquery)
+        if (debug) message("DEBUG (rss url): ", rssquery)
+        #
         resultsRss <- RCurl::getURL(rssquery, curl = h)
+        if (debug) message("DEBUG (rss content): ", resultsRss)
         #
         # extract euctr number(s)
-        resultsRssTrials <- gregexpr("[0-9]{4}-[0-9]{6}-[0-9]{2}</link>", resultsRss)[[1]]
-        resultsRssTrials <- sapply(resultsRssTrials, FUN = function (x) substr(resultsRss, x, x + 13))
+        resultsRssTrials <- gregexpr("eudract_number:[0-9]{4}-[0-9]{6}-[0-9]{2}</link>", resultsRss)[[1]]
+        resultsRssTrials <- sapply(resultsRssTrials, FUN = function (x) substr(resultsRss, x + 15, x + 28))
         resultsRssTrials <- paste(resultsRssTrials, collapse = " OR ")
+        if (debug) message("DEBUG (rss trials): ", resultsRssTrials)
         #
         # run query for extracted euctr number(s)
         # store original query in update term

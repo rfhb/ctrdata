@@ -130,7 +130,7 @@ test_that("retrieve data from register euctr", {
                                     collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB", debug = TRUE), "Updated history")
 
   expect_error(suppressWarnings(ctrLoadQueryIntoDb(querytoupdate = 2,
-                                                   collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")), "No studies downloaded.")
+                                                   collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")), "First result page empty")
 
 })
 
