@@ -54,7 +54,7 @@ q <- q [2,]                     # select exactly one of the searches (by subsett
 ctrOpenSearchPagesInBrowser(q)  # open selected search newly in broweser
 #
 # This opens a browser already executing an example search:
-ctrOpenSearchPagesInBrowser(register = "EUCTR", queryterm = "cancer&age=under-18")
+ctrOpenSearchPagesInBrowser("https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer")
 #
 ```
 

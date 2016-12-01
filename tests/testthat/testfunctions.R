@@ -94,11 +94,11 @@ test_that("retrieve data from registers", {
   has_internet()
   has_mongo()
 
-  queryeuctr <- list(queryterm = "query=NonExistingConditionGoesInHere", register = "EUCTR")
-  queryctgov <- list(queryterm = "cond=NonExistingConditionGoesInHere",  register = "CTGOV")
+  expect_error(suppressWarnings(ctrLoadQueryIntoDb(queryterm = "query=NonExistingConditionGoesInHere", register = "EUCTR",
+                                                   collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")), "First result page empty - no trials found")
 
-  expect_error(suppressWarnings(ctrLoadQueryIntoDb(queryeuctr, collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")), "First result page empty - no trials found")
-  expect_error(suppressWarnings(ctrLoadQueryIntoDb(queryctgov, collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")), "No studies downloaded")
+  expect_error(suppressWarnings(ctrLoadQueryIntoDb(queryterm = "cond=NonExistingConditionGoesInHere",  register = "CTGOV",
+                                                   collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")), "No studies downloaded")
 
   # at the end of srcipt, clean up occurs = drop collection from mongodb
 
@@ -111,9 +111,11 @@ test_that("retrieve data from register ctgov", {
   has_internet()
   has_mongo()
 
-  queryctgov <- list(queryterm = "term=2010-024264-18", register = "CTGOV")
+  expect_message(suppressWarnings(ctrLoadQueryIntoDb(queryterm = "term=2010-024264-18", register = "CTGOV",
+                                                     collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")), "Imported or updated 1 trial")
 
-  expect_message(suppressWarnings(ctrLoadQueryIntoDb(queryctgov, collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")), "Imported or updated 1 trial")
+  expect_error(suppressWarnings(ctrLoadQueryIntoDb(querytoupdate = 1,
+                                                   collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")), "No studies downloaded.")
 
 })
 
@@ -124,9 +126,11 @@ test_that("retrieve data from register euctr", {
   has_internet()
   has_mongo()
 
-  queryeuctr <- list(queryterm = "2010-024264-18",      register = "EUCTR")
+  expect_message(ctrLoadQueryIntoDb(queryterm = "2010-024264-18", register = "EUCTR",
+                                    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB", debug = TRUE), "Updated history")
 
-  expect_message(ctrLoadQueryIntoDb(queryeuctr, collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB", debug = TRUE), "Updated history")
+  expect_error(suppressWarnings(ctrLoadQueryIntoDb(querytoupdate = 2,
+                                                   collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")), "No studies downloaded.")
 
 })
 
@@ -136,14 +140,11 @@ test_that("browser interaction", {
 
   tmp <- ctrGetQueryUrlFromBrowser(content = "https://clinicaltrials.gov/ct2/results?type=Intr&cond=cancer&age=0")
 
-  expect_is(tmp, "list")
+  expect_is(tmp, "data.frame")
 
   has_internet()
 
   expect_error(ctrGetQueryUrlFromBrowser(content = "ThisDoesNotExist"), "Content is not a clinical trial register search URL.")
-
-  expect_message(ctrOpenSearchPagesInBrowser(register = "EUCTR", queryterm = "cancer&age=under-18"),
-                 "Opening in browser previous search: cancer&age=under-18, in register: EUCTR")
 
   expect_message(ctrOpenSearchPagesInBrowser(tmp),
                  "Opening in browser previous search: type=Intr&cond=cancer&age=0, in register: CTGOV")
