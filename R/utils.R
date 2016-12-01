@@ -95,9 +95,9 @@ ctrMongo <- function(collection = "ctrdata", db = "users", url = "mongodb://loca
 #'
 #' \dontrun{
 #'
-#' ctrOpenSearchPagesInBrowser("https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&age=children")
+#' ctrOpenSearchPagesInBrowser("https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer")
 #'
-#' ctrOpenSearchPagesInBrowser(ctrGetQueryUrlFromBrowser("https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer"))
+#' ctrOpenSearchPagesInBrowser(ctrGetQueryUrlFromBrowser())
 #'
 #' ctrOpenSearchPagesInBrowser(dbQueryHistory())
 #'

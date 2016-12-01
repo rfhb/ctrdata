@@ -31,7 +31,7 @@
 #' @param debug Printing additional information if set to \code{TRUE}; default
 #'   is \code{FALSE}.
 #'
-#' @inheritParams ctrdata::ctrMongo
+#' @inheritParams ctrMongo
 #'
 #'
 #' @return Number of trials imported or updated in the database
@@ -118,7 +118,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
 
   # helper function to show progress while downloading
   progressOut <- function(down, up) {
-    if(runif(1) < 0.01) cat(".")
+    if(stats::runif(1) < 0.01) cat(".")
     #cat(".")
     #cat("             \b\b\b\b\b\b\b\b\b\b", paste0(formatC(down, digits = 0, format = "d", width = 10)))
     # cat(formatC(down, digits = 0, format = "d", width = 10))
