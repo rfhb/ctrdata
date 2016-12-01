@@ -11,9 +11,11 @@ ctrLoadQueryIntoDb(queryterm = "", register = "EUCTR", querytoupdate = 0,
   username = "", password = "", verbose = FALSE)
 }
 \arguments{
-\item{queryterm}{Either a string with the URL of a search in a register
-or the list returned by the \link{ctrGetQueryUrlFromBrowser} function.
-The queryterm is recorded in the collection \code{ns} for later use to update records.}
+\item{queryterm}{Either a string with the full URL of a search in a register
+or the data frame returned by the \link{ctrGetQueryUrlFromBrowser} or the
+\link{dbQueryHistory} functions.
+The queryterm is recorded in the collection \code{ns} for later use to
+update records.}
 
 \item{register}{Vector of abbreviations of registers to query, defaults to
 "EUCTR"}
@@ -77,8 +79,6 @@ ctrLoadQueryIntoDb (queryterm = queryEuDef01paedOncTrials, parallelretrivals = 5
 # Retrieve protocol-related information on ongoing interventional cancer trials in children
 \dontrun{
 ctrLoadQueryIntoDb (queryterm = "cancer&recr=Open&type=Intr&age=0", register = "CTGOV")
-}
-\dontrun{
 ctrLoadQueryIntoDb (queryterm = "NCT02239861", register = "CTGOV")
 }
 

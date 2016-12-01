@@ -9,9 +9,11 @@
 #' be accumulated. If you want to insert into an empty database, you have to
 #' include a mongo connection object to such an empty database.
 #'
-#' @param queryterm Either a string with the URL of a search in a register
-#'   or the list returned by the \link{ctrGetQueryUrlFromBrowser} function.
-#'   The queryterm is recorded in the collection \code{ns} for later use to update records.
+#' @param queryterm Either a string with the full URL of a search in a register
+#'   or the data frame returned by the \link{ctrGetQueryUrlFromBrowser} or the
+#'   \link{dbQueryHistory} functions.
+#'   The queryterm is recorded in the collection \code{ns} for later use to
+#'   update records.
 #' @param register Vector of abbreviations of registers to query, defaults to
 #'   "EUCTR"
 #' @param querytoupdate Number of query to be updated (re-downloaded). This
@@ -52,8 +54,6 @@
 #' # Retrieve protocol-related information on ongoing interventional cancer trials in children
 #' \dontrun{
 #' ctrLoadQueryIntoDb (queryterm = "cancer&recr=Open&type=Intr&age=0", register = "CTGOV")
-#' }
-#' \dontrun{
 #' ctrLoadQueryIntoDb (queryterm = "NCT02239861", register = "CTGOV")
 #' }
 #'
@@ -68,18 +68,25 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
 
   ##### parameter checks #####
 
-  # graciously deduce queryterm and register if a full url is unexpectedly provided as queryterm
-  if(is.character(queryterm) && grepl ("^https.+clinicaltrials.+", queryterm)) queryterm <- ctrdata::ctrGetQueryUrlFromBrowser(content = queryterm)
-
-  # deal with queryterm such as returned from ctrGetQueryUrlFromBrowser()
-  if (is.list(queryterm)) {
+  # deduce queryterm and register if a full url is provided
+  if(class(queryterm) == "character" && is.atomic(queryterm) && length(queryterm) == 1 && grepl ("^https.+clinicaltrials.+", queryterm)) {
     #
-    tmp <- queryterm
-    #
-    queryterm <- tmp$queryterm
-    register  <- tmp$register
+    queryterm <- ctrdata::ctrGetQueryUrlFromBrowser(queryterm)
     #
   }
+  # deal with data frame as returned from ctrQueryHistoryInDb() and ctrGetQueryUrlFromBrowser()
+  if (is.data.frame(queryterm) && all(substr(names(queryterm), 1, 6) == "query-")) {
+    #
+    nr <- nrow(queryterm)
+    #
+    if(nr > 1) warning("Using last row of queryterm parameter.", immediate. = TRUE)
+    #
+    register  <- queryterm [nr, "query-register"]
+    queryterm <- queryterm [nr, "query-term"]
+    #
+  }
+  #
+
   # basic sanity check if query term should be considered valid
   if (grepl('[^a-zA-Z0-9=+&%_-]', gsub('\\[', '', gsub('\\]', '', queryterm))))
     stop('Queryterm has unexpected characters: "', queryterm, '", expected are: a-zA-Z0-9=+&%_-[].')
