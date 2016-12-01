@@ -5,10 +5,15 @@
 \title{Open advanced search pages of register(s) or execute search in default web
 browser.}
 \usage{
-ctrOpenSearchPagesInBrowser(register = c("EUCTR", "CTGOV"),
-  copyright = FALSE, queryterm = "", ...)
+ctrOpenSearchPagesInBrowser(input = "", register = c("EUCTR", "CTGOV"),
+  copyright = FALSE, ...)
 }
 \arguments{
+\item{input}{Show results of search for \code{queryterm} in
+browser. To open the browser with a previous search, (register or)
+queryterm can be the output of \link{ctrGetQueryUrlFromBrowser} or can be one
+row from \link{dbQueryHistory}.}
+
 \item{register}{Register(s) to open. Either "EUCTR" or "CTGOV" or a vector of
 both. Default is to open both registers' advanced search pages. To open the
 browser with a previous search, register (or queryterm) can be the output
@@ -17,11 +22,6 @@ dbQueryHistory().}
 
 \item{copyright}{(Optional) If set to \code{TRUE}, opens copyright pages of
 register(s).}
-
-\item{queryterm}{(Optional) Show results of search for \code{queryterm} in
-browser. To open the browser with a previous search, (register or)
-queryterm can be the output of \link{ctrGetQueryUrlFromBrowser} or can be one
-row from \link{dbQueryHistory}.}
 
 \item{...}{Any additional parameter to use with browseURL, which is called by
 this function.}
@@ -37,9 +37,11 @@ browser.
 
 \dontrun{
 
-ctrOpenSearchPagesInBrowser(register = "EUCTR", queryterm = "cancer&age=under-18")
-ctrOpenSearchPagesInBrowser(queryterm = ctrQueryHistoryInDb() [1,])
-ctrOpenSearchPagesInBrowser(copyright = TRUE)
+ctrOpenSearchPagesInBrowser("https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&age=children")
+
+ctrOpenSearchPagesInBrowser(ctrGetQueryUrlFromBrowser("https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer"))
+
+ctrOpenSearchPagesInBrowser(dbQueryHistory())
 
 }
 

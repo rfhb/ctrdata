@@ -73,6 +73,10 @@ ctrMongo <- function(collection = "ctrdata", db = "users", url = "mongodb://loca
 #' Open advanced search pages of register(s) or execute search in default web
 #' browser.
 #'
+#' @param input Show results of search for \code{queryterm} in
+#'   browser. To open the browser with a previous search, (register or)
+#'   queryterm can be the output of \link{ctrGetQueryUrlFromBrowser} or can be one
+#'   row from \link{dbQueryHistory}.
 #' @param register Register(s) to open. Either "EUCTR" or "CTGOV" or a vector of
 #'   both. Default is to open both registers' advanced search pages. To open the
 #'   browser with a previous search, register (or queryterm) can be the output
@@ -80,10 +84,6 @@ ctrMongo <- function(collection = "ctrdata", db = "users", url = "mongodb://loca
 #'   dbQueryHistory().
 #' @param copyright (Optional) If set to \code{TRUE}, opens copyright pages of
 #'   register(s).
-#' @param queryterm (Optional) Show results of search for \code{queryterm} in
-#'   browser. To open the browser with a previous search, (register or)
-#'   queryterm can be the output of \link{ctrGetQueryUrlFromBrowser} or can be one
-#'   row from \link{dbQueryHistory}.
 #' @param ... Any additional parameter to use with browseURL, which is called by
 #'   this function.
 #'
@@ -95,66 +95,60 @@ ctrMongo <- function(collection = "ctrdata", db = "users", url = "mongodb://loca
 #'
 #' \dontrun{
 #'
-#' ctrOpenSearchPagesInBrowser(register = "EUCTR", queryterm = "cancer&age=under-18")
-#' ctrOpenSearchPagesInBrowser(queryterm = ctrQueryHistoryInDb() [1,])
-#' ctrOpenSearchPagesInBrowser(copyright = TRUE)
+#' ctrOpenSearchPagesInBrowser("https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&age=children")
+#'
+#' ctrOpenSearchPagesInBrowser(ctrGetQueryUrlFromBrowser("https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer"))
+#'
+#' ctrOpenSearchPagesInBrowser(dbQueryHistory())
 #'
 #' }
 #'
-ctrOpenSearchPagesInBrowser <- function(register = c("EUCTR", "CTGOV"), copyright = FALSE, queryterm = "", ...) {
+ctrOpenSearchPagesInBrowser <- function(input = "", register = c("EUCTR", "CTGOV"), copyright = FALSE, ...) {
   #
-  # check arguments
-  if (!exists("register") || (register == '' & queryterm == '')) stop("No usable argument found.")
+  # check combination of arguments to select action
   #
-  # deal with data frame as returned from ctrQueryHistoryInDb()
-  if (is.data.frame(queryterm)) query <- queryterm
-  if (is.data.frame(register))  query <- register
-  #
-  if (exists("query")) {
-    tmp <- try ({
-      if(nrow(query) > 1) warning("Parameter included data frame with more than one row, only using first row.", immediate. = TRUE)
-      queryterm <- query [1, "query-term"]
-      register  <- query [1, "query-register"]
-      rm("query")
-    }, silent = TRUE)
-  }
-  #
-  # deal with values returned from ctrGetQueryUrlFromBrowser()
-  if (is.list(queryterm)) query <- queryterm
-  if (is.list(register))  query <- register
-  #
-  if (exists("query")) {
-    tmp <- try ({
-      queryterm <- query$queryterm
-      register  <- query$register
-      rm("query")
-    }, silent = TRUE)
-    #
-  }
-  #
-  if(queryterm == '') {
-    if (copyright == TRUE) {
-      if ("CTGOV" %in% register) utils::browseURL("https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use", ...)
+  if(class(input) == "character" && is.atomic(input) && input == "") {
+    # open empty search pages
+    if ("EUCTR" %in% register) utils::browseURL("https://www.clinicaltrialsregister.eu/ctr-search/search", ...)
+    if ("CTGOV" %in% register) utils::browseURL("https://clinicaltrials.gov/ct2/search/advanced", ...)
+    # if requested also show copyright pages
+    if (copyright) {
       if ("EUCTR" %in% register) utils::browseURL("http://www.ema.europa.eu/ema/index.jsp?curl=pages/regulation/general/general_content_000178.jsp&mid=", ...)
-    } else {
-      if ("CTGOV" %in% register) utils::browseURL("https://clinicaltrials.gov/ct2/search/advanced", ...)
-      if ("EUCTR" %in% register) utils::browseURL("https://www.clinicaltrialsregister.eu/ctr-search/search", ...)
+      if ("CTGOV" %in% register) utils::browseURL("https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use", ...)
     }
+  } else {
+    #
+    # check input argument and determine action
+    #
+    # - is a url
+    if(class(input) == "character" && is.atomic(input) && length(input) == 1 && grepl ("^https.+clinicaltrials.+", input)) {
+      #
+      input <- ctrdata::ctrGetQueryUrlFromBrowser(input)
+      #
+    }
+    #
+    # - data frame as returned from ctrQueryHistoryInDb() and ctrGetQueryUrlFromBrowser()
+    if (is.data.frame(input) && all(substr(names(input), 1, 6) == "query-")) {
+      #
+      nr <- nrow(input)
+      #
+      if(nr > 1) warning("Using last row of input.", immediate. = TRUE)
+      #
+      register  <- input [nr, "query-register"]
+      queryterm <- input [nr, "query-term"]
+      #
+    }
+    #
+    if (queryterm != "" && register != "") {
+      #
+      message("Opening in browser previous search: ", queryterm, ", in register: ", register)
+      if ("CTGOV" %in% register) utils::browseURL(paste0("https://clinicaltrials.gov/ct2/results?", queryterm), ...)
+      if ("EUCTR" %in% register) utils::browseURL(paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=", queryterm), ...)
+      #
+    }
+    #
+    invisible(TRUE)
   }
-  #
-  # try to deduce queryterm and register from a url that is provided as anonymous first parameter
-  if(queryterm == '' && grepl ("^https.+clinicaltrials.+", register)) queryterm <- ctrdata::ctrGetQueryUrlFromBrowser(content = register)
-  #
-  # graciously deduce queryterm and register if a url is unexpectedly provided as queryterm
-  if(is.character(queryterm) && grepl ("^https.+clinicaltrials.+", queryterm)) queryterm <- ctrdata::ctrGetQueryUrlFromBrowser(content = queryterm)
-  #
-  if (queryterm != "") {
-    message("Opening in browser previous search: ", queryterm, ", in register: ", register)
-    if ("CTGOV" %in% register) utils::browseURL(paste0("https://clinicaltrials.gov/ct2/results?", queryterm), ...)
-    if ("EUCTR" %in% register) utils::browseURL(paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=", queryterm), ...)
-  }
-  #
-  invisible(TRUE)
 }
 # end ctrOpenSearchPagesInBrowser
 
