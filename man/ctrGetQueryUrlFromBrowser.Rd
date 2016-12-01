@@ -13,8 +13,8 @@ ctrGetQueryUrlFromBrowser(content = clipr::read_clip())
 A string of query parameters that can be used to retrieve data from
   the register.
 
-A list with a query term and the register name that can directly be
-  used in \link{ctrLoadQueryIntoDb}
+A data frame with a query term and the register name that can directly be
+  used in \link{ctrLoadQueryIntoDb} and in \link{ctrOpenSearchPagesInBrowser}
 }
 \description{
 Import from clipboard the URL of a search in one of the registers

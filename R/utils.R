@@ -169,8 +169,8 @@ ctrOpenSearchPagesInBrowser <- function(register = c("EUCTR", "CTGOV"), copyrigh
 #'
 #' @export
 #'
-#' @return A list with a query term and the register name that can directly be
-#'   used in \link{ctrLoadQueryIntoDb}
+#' @return A data frame with a query term and the register name that can directly be
+#'   used in \link{ctrLoadQueryIntoDb} and in \link{ctrOpenSearchPagesInBrowser}
 #'
 #' @examples
 #'
@@ -189,7 +189,11 @@ ctrGetQueryUrlFromBrowser <- function(content = clipr::read_clip()) {
     #
     queryterm <- sub("https://www.clinicaltrialsregister.eu/ctr-search/search[?]query=(.*)", "\\1", content)
     message("Found search query from EUCTR.")
-    return(list(queryterm = queryterm, register = "EUCTR"))
+    #
+    df <- data.frame(c(queryterm, "EUCTR"), stringsAsFactors = FALSE)
+    names(df) <- c("query-term", "query-register")
+    #
+    return(df)
   }
   #
   if (grepl("https://clinicaltrials.gov/ct2/results", content)) {
@@ -199,7 +203,11 @@ ctrGetQueryUrlFromBrowser <- function(content = clipr::read_clip()) {
     queryterm <- gsub("[a-z_0-9]+=&", "", queryterm)
     queryterm <- sub("&[a-z_0-9]+=$", "", queryterm)
     message("Found search query from CTGOV.")
-    return(list(queryterm = queryterm, register = "CTGOV"))
+    #
+    df <- data.frame(queryterm, "CTGOV", stringsAsFactors = FALSE)
+    names(df) <- c("query-term", "query-register")
+    #
+    return(df)
   }
   #
   stop(paste("Content is not a clinical trial register search URL. Returning NULL."))
