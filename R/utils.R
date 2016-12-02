@@ -184,7 +184,7 @@ ctrGetQueryUrlFromBrowser <- function(content = clipr::read_clip()) {
     queryterm <- sub("https://www.clinicaltrialsregister.eu/ctr-search/search[?]query=(.*)", "\\1", content)
     message("Found search query from EUCTR.")
     #
-    df <- data.frame(c(queryterm, "EUCTR"), stringsAsFactors = FALSE)
+    df <- data.frame(cbind(queryterm, "EUCTR"), stringsAsFactors = FALSE)
     names(df) <- c("query-term", "query-register")
     #
     return(df)
@@ -198,7 +198,7 @@ ctrGetQueryUrlFromBrowser <- function(content = clipr::read_clip()) {
     queryterm <- sub("&[a-z_0-9]+=$", "", queryterm)
     message("Found search query from CTGOV.")
     #
-    df <- data.frame(queryterm, "CTGOV", stringsAsFactors = FALSE)
+    df <- data.frame(cbdind(queryterm, "CTGOV"), stringsAsFactors = FALSE)
     names(df) <- c("query-term", "query-register")
     #
     return(df)
