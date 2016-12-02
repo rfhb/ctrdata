@@ -212,8 +212,6 @@ with (result, table (x5_trial_status, b1_sponsor.b31_and_b32_status_of_the_spons
 * No attempts were made to harmonise field names between registers, but `dfMergeTwoVariablesRelevel()` can be used to merge and map two variables / fields into one. So far, there is no typing of database fields; they are all strings (except for indices). 
 
 
-```
-
 [1]: ./ctrdata_sequence_diagram.jpeg "Sequence diagram"
 [2]: ./ctrdata_json.jpg "JSON representation"
 
