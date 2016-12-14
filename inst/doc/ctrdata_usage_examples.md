@@ -1,7 +1,7 @@
 ---
 title: "ctrdata usage examples"
 author: "Ralf Herold"
-date: "2016-11-13"
+date: "2016-12-14"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{ctrdata usage examples}
@@ -52,7 +52,7 @@ q <- q [2,]                     # select exactly one of the searches (by subsett
 ctrOpenSearchPagesInBrowser(q)  # open selected search newly in broweser
 #
 # This opens a browser already executing an example search:
-ctrOpenSearchPagesInBrowser(register = "EUCTR", queryterm = "cancer&age=under-18")
+ctrOpenSearchPagesInBrowser("https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer")
 #
 ```
 
@@ -88,11 +88,13 @@ dbFindVariable("date", allmatches = TRUE)
 dbQueryHistory()
 # 
 # 
-# Update query number 1 in the history:
+# Update last query in the history:
 #  - EUCTR information can be incrementally downloaded or updated only
 #    for the last 7 days, after which a full new download is necessary. 
 #  - CTGOV intformation can always be incrementally downloaded or updated. 
-ctrLoadQueryIntoDb(querytoupdate = 1)
+#  - Alternatively, querytoupdate can have an integer number, 
+#    corresponding to the desired row of dbQueryHistory(). 
+ctrLoadQueryIntoDb(querytoupdate = "last")
 #
 dbQueryHistory()
 # Note: after such an update, the column "query-records" refers 
@@ -338,14 +340,14 @@ substr(result$e51_primary_end_points[result$pe_is_efs == FALSE], 1, 80)[1:10]
 #
 if (FALSE) ctrLoadQueryIntoDb(register = "EUCTR", 
                               queryterm = "&age=under-18&phase=phase-one&phase=phase-two", 
-                              ns = "paediatric_phase12_trials")
+                              collection = "paediatric_phase12_trials")
 #
-dbQueryHistory(ns = "paediatric_phase12_trials")
-ctrOpenSearchPagesInBrowser(dbQueryHistory(ns = "paediatric_phase12_trials"))
+dbQueryHistory(collection = "paediatric_phase12_trials")
+ctrOpenSearchPagesInBrowser(dbQueryHistory(collection = "paediatric_phase12_trials"))
 #
-if (FALSE) ctrLoadQueryIntoDb(querytoupdate = 1, ns = "paediatric_phase12_trials", debug = TRUE)
+if (FALSE) ctrLoadQueryIntoDb(querytoupdate = 1, collection = "paediatric_phase12_trials", debug = TRUE)
 #
-dbFindVariable("phase", allmatches = TRUE, ns = "paediatric_phase12_trials")
+dbFindVariable("phase", allmatches = TRUE, collection = "paediatric_phase12_trials")
 # [1] "e72_therapeutic_exploratory_phase_ii"   "e71_human_pharmacology_phase_i"
 # [3] "e73_therapeutic_confirmatory_phase_iii" "e74_therapeutic_use_phase_iv"  
 #
@@ -356,7 +358,7 @@ result <- dbGetVariablesIntoDf(c("a1_member_state_concerned", "n_date_of_compete
                                  "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database",
                                  "f422_in_the_whole_clinical_trial", 
                                  "a3_full_title_of_the_trial", "a2_eudract_number"), 
-                               ns = "paediatric_phase12_trials")
+                               collection = "paediatric_phase12_trials")
 #
 searchfor <- "cancer, leukaem, leukem, tumour, tumor, sarcoma, blastom, gliom, germ, lymphom, malign, hodgkin, ewing, rhabdo, terato, tumeur, leucemi"
 searchfor <- strsplit(searchfor, ", ")[[1]]
@@ -379,7 +381,7 @@ relevant <- grepl_multi(searchfor, result$a3_full_title_of_the_trial) |
 #
 # get relevant trials
 result <- result[relevant,]
-result <- result[ result[["_id"]] %in% dbFindIdsUniqueTrials(ns = "paediatric_phase12_trials", include3rdcountrytrials = FALSE), ]
+result <- result[ result[["_id"]] %in% dbFindIdsUniqueTrials(collection = "paediatric_phase12_trials", include3rdcountrytrials = FALSE), ]
 result <- result[result$e71_human_pharmacology_phase_i == "Yes",]
 #
 # adjust date format
@@ -440,7 +442,7 @@ result <- dbGetVariablesIntoDf(c("a1_member_state_concerned", "n_date_of_compete
                                  "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database",
                                  "a3_full_title_of_the_trial", "a2_eudract_number", "p_end_of_trial_status", 
                                  "ctrname"), 
-                               ns = "paediatric_phase12_trials")
+                               collection = "paediatric_phase12_trials")
 
 # calculate country variable
 result$country <- sub("^.+-([3A-Z]+)$", "\\1", result$`_id`)

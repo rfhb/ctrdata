@@ -1,3 +1,6 @@
+# ctrdata 0.9.9.5
+ - 2016-12-14
+ - Added option ctrLoadQueryIntoDb(querytoupdate = "last") to re-download last query in collection
 # ctrdata 0.9.9.4
  - 2016-11-18
  - Added progress indicator to ctrLoadQueryIntoDb() to indicate network download traffic

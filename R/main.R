@@ -16,8 +16,10 @@
 #'   update records.
 #' @param register Vector of abbreviations of registers to query, defaults to
 #'   "EUCTR"
-#' @param querytoupdate Number of query to be updated (re-downloaded). This
-#'   parameter takes precedence over \code{queryterm}.
+#' @param querytoupdate Either the word "last" to re-run the last query that
+#'   was loaded into the collection, or the integer number of query to be run
+#'   again; see \link{dbQueryHistory}. This parameter takes precedence over
+#'   \code{queryterm}.
 #' @param details If \code{TRUE} (default), retrieve full protocol-related
 #'   information from EUCTR or XML data from CTGOV, depending on the register
 #'   selected. This gives all of the available details for the trials.
@@ -93,8 +95,11 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
 
   # other sanity checks
   if ((queryterm == "") & querytoupdate == 0) stop("'query term' is empty.")
-  if (querytoupdate != trunc(querytoupdate))  stop("'querytoupdate' does not have an integer value.")
   if(!grepl(register, "CTGOVEUCTR"))          stop("Register not known: ", register)
+  if (class(querytoupdate) != "character" &&
+      querytoupdate != trunc(querytoupdate))  stop("'querytoupdate' does not have an integer value.")
+  if (class(querytoupdate) == "character" &&
+      querytoupdate != "last")                stop("'querytoupdate' does not have an acceptable string value.")
 
   # check program availability
   installMongoFindBinaries(debug = debug)
@@ -186,6 +191,9 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
                                  username = username, password = password, verbose = verbose)
     #
     if (is.null(rerunquery)) stop("'querytoupdate': no previous queries found in collection, aborting query update.")
+    #
+    # select last query if specified
+    if (querytoupdate == "last") querytoupdate <- nrow(rerunquery)
     #
     # try to select the query to be updated
     if (querytoupdate > nrow(rerunquery)) stop("'querytoupdate': specified number of query not found, check 'dbQueryHistory()', aborting.")

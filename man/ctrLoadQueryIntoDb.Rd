@@ -20,8 +20,10 @@ update records.}
 \item{register}{Vector of abbreviations of registers to query, defaults to
 "EUCTR"}
 
-\item{querytoupdate}{Number of query to be updated (re-downloaded). This
-parameter takes precedence over \code{queryterm}.}
+\item{querytoupdate}{Either the word "last" to re-run the last query that
+was loaded into the collection, or the integer number of query to be run
+again; see \link{dbQueryHistory}. This parameter takes precedence over
+\code{queryterm}.}
 
 \item{details}{If \code{TRUE} (default), retrieve full protocol-related
 information from EUCTR or XML data from CTGOV, depending on the register

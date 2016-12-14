@@ -238,7 +238,7 @@ q &lt;- q [2,]                     # select exactly one of the searches (by subs
 ctrOpenSearchPagesInBrowser(q)  # open selected search newly in broweser
 #
 # This opens a browser already executing an example search:
-ctrOpenSearchPagesInBrowser(register = &quot;EUCTR&quot;, queryterm = &quot;cancer&amp;age=under-18&quot;)
+ctrOpenSearchPagesInBrowser(&quot;https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&quot;)
 #
 </code></pre>
 
@@ -269,11 +269,13 @@ dbFindVariable(&quot;date&quot;, allmatches = TRUE)
 dbQueryHistory()
 # 
 # 
-# Update query number 1 in the history:
+# Update last query in the history:
 #  - EUCTR information can be incrementally downloaded or updated only
 #    for the last 7 days, after which a full new download is necessary. 
 #  - CTGOV intformation can always be incrementally downloaded or updated. 
-ctrLoadQueryIntoDb(querytoupdate = 1)
+#  - Alternatively, querytoupdate can have an integer number, 
+#    corresponding to the desired row of dbQueryHistory(). 
+ctrLoadQueryIntoDb(querytoupdate = &quot;last&quot;)
 #
 dbQueryHistory()
 # Note: after such an update, the column &quot;query-records&quot; refers 
@@ -509,14 +511,14 @@ substr(result$e51_primary_end_points[result$pe_is_efs == FALSE], 1, 80)[1:10]
 <pre><code class="r">#
 if (FALSE) ctrLoadQueryIntoDb(register = &quot;EUCTR&quot;, 
                               queryterm = &quot;&amp;age=under-18&amp;phase=phase-one&amp;phase=phase-two&quot;, 
-                              ns = &quot;paediatric_phase12_trials&quot;)
+                              collection = &quot;paediatric_phase12_trials&quot;)
 #
-dbQueryHistory(ns = &quot;paediatric_phase12_trials&quot;)
-ctrOpenSearchPagesInBrowser(dbQueryHistory(ns = &quot;paediatric_phase12_trials&quot;))
+dbQueryHistory(collection = &quot;paediatric_phase12_trials&quot;)
+ctrOpenSearchPagesInBrowser(dbQueryHistory(collection = &quot;paediatric_phase12_trials&quot;))
 #
-if (FALSE) ctrLoadQueryIntoDb(querytoupdate = 1, ns = &quot;paediatric_phase12_trials&quot;, debug = TRUE)
+if (FALSE) ctrLoadQueryIntoDb(querytoupdate = 1, collection = &quot;paediatric_phase12_trials&quot;, debug = TRUE)
 #
-dbFindVariable(&quot;phase&quot;, allmatches = TRUE, ns = &quot;paediatric_phase12_trials&quot;)
+dbFindVariable(&quot;phase&quot;, allmatches = TRUE, collection = &quot;paediatric_phase12_trials&quot;)
 # [1] &quot;e72_therapeutic_exploratory_phase_ii&quot;   &quot;e71_human_pharmacology_phase_i&quot;
 # [3] &quot;e73_therapeutic_confirmatory_phase_iii&quot; &quot;e74_therapeutic_use_phase_iv&quot;  
 #
@@ -527,7 +529,7 @@ result &lt;- dbGetVariablesIntoDf(c(&quot;a1_member_state_concerned&quot;, &quot
                                  &quot;x6_date_on_which_this_record_was_first_entered_in_the_eudract_database&quot;,
                                  &quot;f422_in_the_whole_clinical_trial&quot;, 
                                  &quot;a3_full_title_of_the_trial&quot;, &quot;a2_eudract_number&quot;), 
-                               ns = &quot;paediatric_phase12_trials&quot;)
+                               collection = &quot;paediatric_phase12_trials&quot;)
 #
 searchfor &lt;- &quot;cancer, leukaem, leukem, tumour, tumor, sarcoma, blastom, gliom, germ, lymphom, malign, hodgkin, ewing, rhabdo, terato, tumeur, leucemi&quot;
 searchfor &lt;- strsplit(searchfor, &quot;, &quot;)[[1]]
@@ -550,7 +552,7 @@ relevant &lt;- grepl_multi(searchfor, result$a3_full_title_of_the_trial) |
 #
 # get relevant trials
 result &lt;- result[relevant,]
-result &lt;- result[ result[[&quot;_id&quot;]] %in% dbFindIdsUniqueTrials(ns = &quot;paediatric_phase12_trials&quot;, include3rdcountrytrials = FALSE), ]
+result &lt;- result[ result[[&quot;_id&quot;]] %in% dbFindIdsUniqueTrials(collection = &quot;paediatric_phase12_trials&quot;, include3rdcountrytrials = FALSE), ]
 result &lt;- result[result$e71_human_pharmacology_phase_i == &quot;Yes&quot;,]
 #
 # adjust date format
@@ -608,7 +610,7 @@ result &lt;- dbGetVariablesIntoDf(c(&quot;a1_member_state_concerned&quot;, &quot
                                  &quot;x6_date_on_which_this_record_was_first_entered_in_the_eudract_database&quot;,
                                  &quot;a3_full_title_of_the_trial&quot;, &quot;a2_eudract_number&quot;, &quot;p_end_of_trial_status&quot;, 
                                  &quot;ctrname&quot;), 
-                               ns = &quot;paediatric_phase12_trials&quot;)
+                               collection = &quot;paediatric_phase12_trials&quot;)
 
 # calculate country variable
 result$country &lt;- sub(&quot;^.+-([3A-Z]+)$&quot;, &quot;\\1&quot;, result$`_id`)

@@ -88,11 +88,13 @@ dbFindVariable("date", allmatches = TRUE)
 dbQueryHistory()
 # 
 # 
-# Update query number 1 in the history:
+# Update last query in the history:
 #  - EUCTR information can be incrementally downloaded or updated only
 #    for the last 7 days, after which a full new download is necessary. 
 #  - CTGOV intformation can always be incrementally downloaded or updated. 
-ctrLoadQueryIntoDb(querytoupdate = 1)
+#  - Alternatively, querytoupdate can have an integer number, 
+#    corresponding to the desired row of dbQueryHistory(). 
+ctrLoadQueryIntoDb(querytoupdate = "last")
 #
 dbQueryHistory()
 # Note: after such an update, the column "query-records" refers 
