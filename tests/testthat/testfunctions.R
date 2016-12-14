@@ -95,7 +95,7 @@ test_that("retrieve data from registers", {
   has_mongo()
 
   expect_error(suppressWarnings(ctrLoadQueryIntoDb(queryterm = "query=NonExistingConditionGoesInHere", register = "EUCTR",
-                                                   collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")), "First result page empty - no trials found")
+                                                   collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")), "First result page empty")
 
   expect_error(suppressWarnings(ctrLoadQueryIntoDb(queryterm = "cond=NonExistingConditionGoesInHere",  register = "CTGOV",
                                                    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")), "No studies downloaded")
