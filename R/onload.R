@@ -14,10 +14,8 @@ assign("mongoBinaryLocation", NA, envir = .privateEnv)
                         "More on this package and how to use it: https://github.com/rfhb/ctrdata/\n"
   )
   #
-  # check availabilities if already installed
-  #
+  # check availabilities
   if (.Platform$OS.type == "windows") installCygwinWindowsTest()
-  #
   if(!suppressWarnings(installFindBinary("php --version")))                         warning("php not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
   if(!suppressWarnings(installFindBinary("php -r 'simplexml_load_string(\"\");'"))) warning("php xml not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
   if(!suppressWarnings(installFindBinary("echo x | sed s/x/y/")))                   warning("sed not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
