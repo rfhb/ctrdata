@@ -942,7 +942,7 @@ installCygwinWindowsTest <- function() {
     message("cygwin base install seems to be working correctly.")
     invisible(TRUE)
   } else {
-    stop("cygwin does not seem to be installed correctly.")
+    message("cygwin does not seem to be installed correctly.")
     invisible(FALSE)
   }
 }
