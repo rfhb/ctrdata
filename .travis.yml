@@ -7,8 +7,6 @@
 
 language: r
 
-r_github_packages: mongosoup/rmongodb
-
 sudo: required
 
 cache: packages
