@@ -6,7 +6,7 @@ Online version of this document: [https://github.com/rfhb/ctrdata/](https://gith
 
 ## Background
 
-The package `ctrdata` provides functions for retrieving (downloading) information clinical trials from public registers, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started mid 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package is to be used within the [R](https://www.r-project.org/) system. Last edit 2016-12-02 for version 0.9.9.3 (see NEWS.md).  
+The package `ctrdata` provides functions for retrieving (downloading) information clinical trials from public registers, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started mid 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package is to be used within the [R](https://www.r-project.org/) system. Last edit 2016-12-28 for version 0.9.10.0 (metadata added; see NEWS.md).  
 
 Main features:
 
@@ -150,9 +150,9 @@ ctrLoadQueryIntoDb("https://www.clinicaltrialsregister.eu/ctr-search/search?quer
 #
 # Alternatively: ctrLoadQueryIntoDb(q)
 #
-# If no parameters are given for a database connection: uses mongodb
-# on localhost, port 27017, database "users", collection "ctrdata"
-# note: when run for first time, may download variety.js
+# If no parameters are given for a database connection: mongodb is used
+# on localhost, port 27017, database "users", collection "ctrdata". 
+# Note: when run for first time, may download variety.js
 #
 # Under the hood, scripts `euctr2json.sh` and `xml2json.php` (in `ctrdata/exec`) 
 # transform EUCTR plain text files and CTGOV xml files to json format.

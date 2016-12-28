@@ -26,7 +26,7 @@ mongodb://localhost)}
 \value{
 A data frame with variables: query-timestamp, query-egister,
  query-records (note: this is the number of records loaded when last executing
- ctrLoadQueryIntoDb(), not the total record number) and query-term
+ ctrLoadQueryIntoDb(), not the total record number) and query-term.
 }
 \description{
 Show the history of queries that were loaded into a database

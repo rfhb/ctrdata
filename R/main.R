@@ -563,13 +563,25 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
                    collection = collection, db = db, url = url,
                    username = username, password = password, verbose = verbose)
 
-  }
+  } # end euctr core functions
+
+  # finalise
 
   # reset warning length
   options("max.print" = outputlength)
 
   # return some useful information
   if (!exists("imported")) stop("Function did not result in any trial information imports.")
+
+  # add metadata
+  attr(imported, "ctrdata-using-mongodb-url")        <- url
+  attr(imported, "ctrdata-using-mongodb-db")         <- db
+  attr(imported, "ctrdata-using-mongodb-collection") <- collection
+  attr(imported, "ctrdata-using-mongodb-username")   <- username
+  attr(imported, "ctrdata-created-timestamp")        <- as.POSIXct(Sys.time(), tz="UTC")
+  attr(imported, "ctrdata-from-dbqueryhistory")      <- dbQueryHistory(collection = collection, db = db, url = url,
+                                                                  username = username, password = password, verbose = FALSE)
+  # return
   invisible(imported)
 
 }

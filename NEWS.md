@@ -1,3 +1,6 @@
+# ctrdata 0.9.10.0
+ - 2016-12-28
+ - Added metadata attributes to returned objects to indicate database, query, timestamp etc.
 # ctrdata 0.9.9.5
  - 2016-12-14
  - Added option ctrLoadQueryIntoDb(querytoupdate = "last") to re-download last query in collection

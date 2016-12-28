@@ -216,7 +216,7 @@ ctrGetQueryUrlFromBrowser <- function(content = clipr::read_clip()) {
 #'
 #' @return A data frame with variables: query-timestamp, query-egister,
 #'  query-records (note: this is the number of records loaded when last executing
-#'  ctrLoadQueryIntoDb(), not the total record number) and query-term
+#'  ctrLoadQueryIntoDb(), not the total record number) and query-term.
 #'
 #' @export
 #'
@@ -263,7 +263,7 @@ dbQueryHistory <- function(collection = "ctrdata", db = "users", url = "mongodb:
   if(!is.list(tmp) || (length(tmp) < 1)) {
     #
     warning("No history found in expected format.")
-    return(data.frame(NULL))
+    tmp <- data.frame(NULL)
     #
   } else {
     # Change into data frame with appropriate column names
@@ -273,12 +273,21 @@ dbQueryHistory <- function(collection = "ctrdata", db = "users", url = "mongodb:
     names(tmp) <- c("query-timestamp", "query-register", "query-records", "query-term")
     # Inform user
     message("Number of queries in history of \"", mongo$info()$stats$ns, "\": ", nrow(tmp))
-    #
-    return(tmp)
   }
 
   # close database connection
   rm(mongo); gc()
+
+  # add metadata
+  attr(tmp, "ctrdata-using-mongodb-url")        <- url
+  attr(tmp, "ctrdata-using-mongodb-db")         <- db
+  attr(tmp, "ctrdata-using-mongodb-collection") <- collection
+  attr(tmp, "ctrdata-using-mongodb-username")   <- username
+  attr(tmp, "ctrdata-created-timestamp")        <- as.POSIXct(Sys.time(), tz="UTC")
+
+  # return
+  return(tmp)
+
 }
 # end ctrQueryHistoryInDb
 
@@ -393,6 +402,15 @@ dbFindVariable <- function(namepart = "", allmatches = FALSE, forceupdate = FALS
       if ((tmp <- length(fieldname)) > 1) message(paste0("Returning first of ", tmp, " keys found."))
       fieldname <- fieldname[1]
     }
+    #
+    # add metadata
+    attr(fieldname, "ctrdata-using-mongodb-url")        <- url
+    attr(fieldname, "ctrdata-using-mongodb-db")         <- db
+    attr(fieldname, "ctrdata-using-mongodb-collection") <- collection
+    attr(fieldname, "ctrdata-using-mongodb-username")   <- username
+    attr(fieldname, "ctrdata-created-timestamp")        <- as.POSIXct(Sys.time(), tz="UTC")
+    attr(fieldname, "ctrdata-from-dbqueryhistory")      <- dbQueryHistory(collection = collection, db = db, url = url,
+                                                                          username = username, password = password, verbose = FALSE)
     # return the first match / all matches
     return(fieldname)
     #
@@ -555,6 +573,16 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
   # avoid returning list() if none found
   if(length(retids) == 0) retids <- character()
   #
+
+  # add metadata
+  attr(retids, "ctrdata-using-mongodb-url")        <- url
+  attr(retids, "ctrdata-using-mongodb-db")         <- db
+  attr(retids, "ctrdata-using-mongodb-collection") <- collection
+  attr(retids, "ctrdata-using-mongodb-username")   <- username
+  attr(retids, "ctrdata-created-timestamp")        <- as.POSIXct(Sys.time(), tz="UTC")
+  attr(retids, "ctrdata-from-dbqueryhistory")      <- dbQueryHistory(collection = collection, db = db, url = url,
+                                                                     username = username, password = password, verbose = FALSE)
+
   # inform user
   message(paste0("Returning keys (_id) of ", length(retids), " records out of total of ", countall, " records in collection \"", collection, "\"."))
   #
@@ -661,10 +689,22 @@ dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
 
   # finalise output
   if (is.null(result)) stop('No records found which had values for the specified fields.')
+
   # some results were obtained
+
+  # add metadata
+  attr(result, "ctrdata-using-mongodb-url")        <- url
+  attr(result, "ctrdata-using-mongodb-db")         <- db
+  attr(result, "ctrdata-using-mongodb-collection") <- collection
+  attr(result, "ctrdata-using-mongodb-username")   <- username
+  attr(result, "ctrdata-created-timestamp")        <- as.POSIXct(Sys.time(), tz="UTC")
+  attr(result, "ctrdata-from-dbqueryhistory")      <- dbQueryHistory(collection = collection, db = db, url = url,
+                                                                     username = username, password = password, verbose = FALSE)
+  # notify user
   diff <- countall - nrow(result)
   if (diff > 0) warning(paste0(diff, " of ", countall, " records dropped which did not have values for any of the specified fields."))
-  #
+
+  # return
   return(result)
 }
 # dbGetVariablesIntoDf
@@ -830,6 +870,7 @@ dfFindUniqueEuctrRecord <- function(df = NULL, prefermemberstate = "GB", include
   # inform user about changes to data frame
   if (length(nms) > (tmp <- length(result))) message('Searching multiple country records: Found ', tmp, ' EUCTR _id that were not the preferred member state record(s) for the trial.')
 
+  # return
   return(df)
   #
 }
