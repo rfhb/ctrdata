@@ -1,7 +1,7 @@
 ---
 title: "ctrdata getting started"
 author: "Ralf Herold"
-date: "2016-12-14"
+date: "2017-01-07"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{ctrdata getting started}

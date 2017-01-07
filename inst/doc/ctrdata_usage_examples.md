@@ -1,7 +1,7 @@
 ---
 title: "ctrdata usage examples"
 author: "Ralf Herold"
-date: "2016-12-14"
+date: "2017-01-07"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{ctrdata usage examples}
@@ -78,6 +78,48 @@ dbFindVariable("date", allmatches = TRUE)
 # [...]
 #
 ```
+
+
+## ctrdata returns include metadata
+
+The objects returned by functions of this package include attributes with metadata to indicate from which query, database, collection etc. and when the object was created. Metadata can subsequently be reused. 
+
+
+```r
+# 
+attributes(dbFindVariable("otherids"))
+# Using Mongo DB (collections "ctrdata" and "ctrdataKeys" in database "users" on "localhost").
+# Using Mongo DB (collections "ctrdata" and "ctrdataKeys" in database "users" on "localhost").
+# Number of queries in history of "users.ctrdata": 5
+# $`ctrdata-using-mongodb-url`
+# [1] "mongodb://localhost"
+# 
+# $`ctrdata-using-mongodb-db`
+# [1] "users"
+# 
+# $`ctrdata-using-mongodb-collection`
+# [1] "ctrdata"
+# 
+# $`ctrdata-using-mongodb-username`
+# [1] ""
+# 
+# $`ctrdata-created-timestamp`
+# [1] "2016-12-28 13:31:25 CET"
+# 
+# $`ctrdata-from-dbqueryhistory`
+#       query-timestamp query-register query-records                                                        query-term
+# 1 2016-12-14-12-15-51          EUCTR          1056                                               cancer&age=under-18
+# 2 2016-12-23-20-33-13          EUCTR             6                                                    2010-024264-18
+# 3 2016-12-24-14-39-42          CTGOV           145 recr=Open&type=Intr&cond=breast+carcinoma&intr=Drug&age=1&phase=2
+# 4 2016-12-28-13-15-32          EUCTR             7                                                    2010-019224-31
+# 5 2016-12-28-13-16-11          EUCTR             7                                                    2010-019224-31
+#
+#
+attr(dbQueryHistory(), "ctrdata-created-timestamp")
+# [1] "2016-12-28 13:31:25 CET"
+#
+```
+
 
 ## Update data base from query in specified register
 
@@ -345,7 +387,7 @@ if (FALSE) ctrLoadQueryIntoDb(register = "EUCTR",
 dbQueryHistory(collection = "paediatric_phase12_trials")
 ctrOpenSearchPagesInBrowser(dbQueryHistory(collection = "paediatric_phase12_trials"))
 #
-if (FALSE) ctrLoadQueryIntoDb(querytoupdate = 1, collection = "paediatric_phase12_trials", debug = TRUE)
+if (FALSE) ctrLoadQueryIntoDb(querytoupdate = "last", collection = "paediatric_phase12_trials")
 #
 dbFindVariable("phase", allmatches = TRUE, collection = "paediatric_phase12_trials")
 # [1] "e72_therapeutic_exploratory_phase_ii"   "e71_human_pharmacology_phase_i"
@@ -381,7 +423,6 @@ relevant <- grepl_multi(searchfor, result$a3_full_title_of_the_trial) |
 #
 # get relevant trials
 result <- result[relevant,]
-result <- result[ result[["_id"]] %in% dbFindIdsUniqueTrials(collection = "paediatric_phase12_trials", include3rdcountrytrials = FALSE), ]
 result <- result[result$e71_human_pharmacology_phase_i == "Yes",]
 #
 # adjust date format
@@ -400,6 +441,9 @@ result <- merge (x = result, y = tmp,
 # label date and calculate year
 names(result)[ncol(result)] <- "startdatefirst"
 result$startyearfirst <- as.numeric(format(result$startdatefirst, "%Y"))
+#
+# eliminate country duplicates
+result <- result[ result[["_id"]] %in% dbFindIdsUniqueTrials(collection = "paediatric_phase12_trials", include3rdcountrytrials = FALSE), ]
 #
 # any of the investigational medicinal product(s) authorised or not?
 table(result$dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation)
@@ -423,7 +467,6 @@ ggplot(data = result,
 #
 ```
 ![Histogram3](phase1_paed_oncol.png)
-
 
 
 ## Plot map of ongoing trials
@@ -491,7 +534,6 @@ mapParams <- mapCountryData (sPDF, nameColumnToPlot="Ongoing", mapTitle="",
 title (main="Number of ongoing / total phase 1\nanti-cancer medicine trials with children")
 labelCountries (sPDF, nameCountryColumn="text", xlim=c(-15,32), ylim=c(36, 65), cex=1.0, col="blue")
 dev.off()
-
 #
 ```
 ![Histogram3](ph1paedoncopen.png)
@@ -609,7 +651,7 @@ hist
 # value is the number of studies in respective bin
 # 
 plot (hist, type = "h", las = 1, xlim = c(0, 2000), ylim = c(0, 500), 
-      xlab = "Number stubjects", y = "Number trials")
+      xlab = "Number stubjects", y = "Number of trials")
 #
 ```
 ![Histogram2](Rplot03.png)

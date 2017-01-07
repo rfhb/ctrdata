@@ -262,6 +262,44 @@ dbFindVariable(&quot;date&quot;, allmatches = TRUE)
 #
 </code></pre>
 
+<h2>ctrdata returns include metadata</h2>
+
+<p>The objects returned by functions of this package include attributes with metadata to indicate from which query, database, collection etc. and when the object was created. Metadata can subsequently be reused. </p>
+
+<pre><code class="r"># 
+attributes(dbFindVariable(&quot;otherids&quot;))
+# Using Mongo DB (collections &quot;ctrdata&quot; and &quot;ctrdataKeys&quot; in database &quot;users&quot; on &quot;localhost&quot;).
+# Using Mongo DB (collections &quot;ctrdata&quot; and &quot;ctrdataKeys&quot; in database &quot;users&quot; on &quot;localhost&quot;).
+# Number of queries in history of &quot;users.ctrdata&quot;: 5
+# $`ctrdata-using-mongodb-url`
+# [1] &quot;mongodb://localhost&quot;
+# 
+# $`ctrdata-using-mongodb-db`
+# [1] &quot;users&quot;
+# 
+# $`ctrdata-using-mongodb-collection`
+# [1] &quot;ctrdata&quot;
+# 
+# $`ctrdata-using-mongodb-username`
+# [1] &quot;&quot;
+# 
+# $`ctrdata-created-timestamp`
+# [1] &quot;2016-12-28 13:31:25 CET&quot;
+# 
+# $`ctrdata-from-dbqueryhistory`
+#       query-timestamp query-register query-records                                                        query-term
+# 1 2016-12-14-12-15-51          EUCTR          1056                                               cancer&amp;age=under-18
+# 2 2016-12-23-20-33-13          EUCTR             6                                                    2010-024264-18
+# 3 2016-12-24-14-39-42          CTGOV           145 recr=Open&amp;type=Intr&amp;cond=breast+carcinoma&amp;intr=Drug&amp;age=1&amp;phase=2
+# 4 2016-12-28-13-15-32          EUCTR             7                                                    2010-019224-31
+# 5 2016-12-28-13-16-11          EUCTR             7                                                    2010-019224-31
+#
+#
+attr(dbQueryHistory(), &quot;ctrdata-created-timestamp&quot;)
+# [1] &quot;2016-12-28 13:31:25 CET&quot;
+#
+</code></pre>
+
 <h2>Update data base from query in specified register</h2>
 
 <pre><code class="r">#
@@ -516,7 +554,7 @@ if (FALSE) ctrLoadQueryIntoDb(register = &quot;EUCTR&quot;,
 dbQueryHistory(collection = &quot;paediatric_phase12_trials&quot;)
 ctrOpenSearchPagesInBrowser(dbQueryHistory(collection = &quot;paediatric_phase12_trials&quot;))
 #
-if (FALSE) ctrLoadQueryIntoDb(querytoupdate = 1, collection = &quot;paediatric_phase12_trials&quot;, debug = TRUE)
+if (FALSE) ctrLoadQueryIntoDb(querytoupdate = &quot;last&quot;, collection = &quot;paediatric_phase12_trials&quot;)
 #
 dbFindVariable(&quot;phase&quot;, allmatches = TRUE, collection = &quot;paediatric_phase12_trials&quot;)
 # [1] &quot;e72_therapeutic_exploratory_phase_ii&quot;   &quot;e71_human_pharmacology_phase_i&quot;
@@ -552,7 +590,6 @@ relevant &lt;- grepl_multi(searchfor, result$a3_full_title_of_the_trial) |
 #
 # get relevant trials
 result &lt;- result[relevant,]
-result &lt;- result[ result[[&quot;_id&quot;]] %in% dbFindIdsUniqueTrials(collection = &quot;paediatric_phase12_trials&quot;, include3rdcountrytrials = FALSE), ]
 result &lt;- result[result$e71_human_pharmacology_phase_i == &quot;Yes&quot;,]
 #
 # adjust date format
@@ -571,6 +608,9 @@ result &lt;- merge (x = result, y = tmp,
 # label date and calculate year
 names(result)[ncol(result)] &lt;- &quot;startdatefirst&quot;
 result$startyearfirst &lt;- as.numeric(format(result$startdatefirst, &quot;%Y&quot;))
+#
+# eliminate country duplicates
+result &lt;- result[ result[[&quot;_id&quot;]] %in% dbFindIdsUniqueTrials(collection = &quot;paediatric_phase12_trials&quot;, include3rdcountrytrials = FALSE), ]
 #
 # any of the investigational medicinal product(s) authorised or not?
 table(result$dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation)
@@ -659,7 +699,6 @@ mapParams &lt;- mapCountryData (sPDF, nameColumnToPlot=&quot;Ongoing&quot;, mapT
 title (main=&quot;Number of ongoing / total phase 1\nanti-cancer medicine trials with children&quot;)
 labelCountries (sPDF, nameCountryColumn=&quot;text&quot;, xlim=c(-15,32), ylim=c(36, 65), cex=1.0, col=&quot;blue&quot;)
 dev.off()
-
 #
 </code></pre>
 
@@ -772,7 +811,7 @@ hist
 # value is the number of studies in respective bin
 # 
 plot (hist, type = &quot;h&quot;, las = 1, xlim = c(0, 2000), ylim = c(0, 500), 
-      xlab = &quot;Number stubjects&quot;, y = &quot;Number trials&quot;)
+      xlab = &quot;Number stubjects&quot;, y = &quot;Number of trials&quot;)
 #
 </code></pre>
 
