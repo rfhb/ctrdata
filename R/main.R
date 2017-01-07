@@ -113,7 +113,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
 
   # get a working mongo connection, select trial record collection
   mongo <- ctrMongo(collection = collection, db = db, url = url,
-                    username = username, password = password, verbose = verbose)[["ctr"]]
+                    username = username, password = password, verbose = TRUE)[["ctr"]]
 
   # adapt warning length for . out in progressOut
   outputlength <- getOption("max.print")
@@ -123,7 +123,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
 
   # helper function to show progress while downloading
   progressOut <- function(down, up) {
-    if(stats::runif(1) < 0.01) cat(".")
+    if(stats::runif(1) < 0.001) cat(".")
     #cat(".")
     #cat("             \b\b\b\b\b\b\b\b\b\b", paste0(formatC(down, digits = 0, format = "d", width = 10)))
     # cat(formatC(down, digits = 0, format = "d", width = 10))
@@ -136,8 +136,10 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
                                       username = username, password = password, verbose = verbose){
 
     # retrieve existing history data
-    hist <- dbQueryHistory(collection = collection, db = db, url = url,
-                           username = username, password = password, verbose = verbose)
+    hist <- suppressMessages(
+      dbQueryHistory(collection = collection, db = db, url = url,
+                     username = username, password = password, verbose = FALSE)
+    )
 
     # debug
     if(verbose) print(hist)
@@ -344,7 +346,6 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
                            ifelse(password != "", paste0(' --password="', password, '"'), ''),
                            ' --upsert --type=json --file="', tempDir, '/allfiles.json"',
                            ifelse(installMongoCheckVersion(), '', ' --jsonArray'))
-      # minimum example: mongoimport --db=users --collection=idstest --upsert --type=json testset.json
 
       # prepare for alternative method to split large file and import split files one by one
       # #!/bin/bash
@@ -444,9 +445,6 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
                    collection = collection, db = db, url = url,
                    username = username, password = password, verbose = verbose)
 
-    # close database connection
-    rm(mongo); gc()
-
   }
 
   ##### euctr core functions #####
@@ -498,9 +496,9 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
       if (debug) message("DEBUG: ", class(tmp))
       if (class(tmp) != "character") stop("Download of records from EUCTR failed; last data received led to the error ", class(tmp))
       #
-      for (i in startpage:stoppage)
-        write(tmp[[1 + i - startpage]],
-              paste0(tempDir, "/euctr-trials-page_", formatC(i, digits = 0, width = nchar(resultsEuNumPages), flag = 0), ".txt"))
+      for (ii in startpage:stoppage)
+        write(tmp[[1 + ii - startpage]],
+              paste0(tempDir, "/euctr-trials-page_", formatC(ii, digits = 0, width = nchar(resultsEuNumPages), flag = 0), ".txt"))
     }
 
     # compose commands: for external script on all files in temporary directory and for import
@@ -566,6 +564,9 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   } # end euctr core functions
 
   # finalise
+
+  # close database connection
+  rm(mongo); gc()
 
   # reset warning length
   options("max.print" = outputlength)

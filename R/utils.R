@@ -63,7 +63,7 @@ ctrMongo <- function(collection = "ctrdata", db = "users", url = "mongodb://loca
   valueCtrKeysDb <- mongolite::mongo(collection = collectionKeys, db = db, url = mongourl, verbose = verbose)
 
   # inform user
-  message("Using Mongo DB (collections \"", collection, "\" and \"", collectionKeys, "\" in database \"", db, "\" on \"", host, "\").")
+  if(verbose) message("Using Mongo DB (collections \"", collection, "\" and \"", collectionKeys, "\" in database \"", db, "\" on \"", host, "\").")
 
   return(list("ctr" = valueCtrDb, "keys" = valueCtrKeysDb))
 }
@@ -274,6 +274,10 @@ dbQueryHistory <- function(collection = "ctrdata", db = "users", url = "mongodb:
     # Inform user
     message("Number of queries in history of \"", mongo$info()$stats$ns, "\": ", nrow(tmp))
   }
+
+  # total number of records in collection to inform user
+  countall <- mongo$count(query = '{"_id":{"$ne":"meta-info"}}')
+  message("Total of ", countall, " records in collection.")
 
   # close database connection
   rm(mongo); gc()

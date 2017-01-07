@@ -74,7 +74,12 @@ test_that("access to mongo db from R package", {
 
   has_mongo()
 
-  expect_warning(dbQueryHistory(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "No history found in expected format.")
+  # initialise = drop collections from mongodb
+  expect_equivalent (mongolite::mongo(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB",     db = "users")$drop(), TRUE)
+  expect_equivalent (mongolite::mongo(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDBKeys", db = "users")$drop(), TRUE)
+
+  expect_warning(suppressMessages(dbQueryHistory(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")),
+                 "No history found in expected format.")
 
 })
 
@@ -196,7 +201,7 @@ test_that("operations on database after download from register", {
                                     collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
                "For variable / field: ThisDoesNotExist no data could be extracted")
 
-  # # clean up = drop collections from mongodb
+  # clean up = drop collections from mongodb
   expect_equivalent (mongolite::mongo(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB",     db = "users")$drop(), TRUE)
   expect_equivalent (mongolite::mongo(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDBKeys", db = "users")$drop(), TRUE)
 
