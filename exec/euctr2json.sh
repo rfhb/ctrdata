@@ -43,7 +43,6 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   next if /^This file contains/;
   next if /A\. Protocol Information/;
   next if /B\. Sponsor Information/;
-  next if /D\. IMP Identification/;
   next if /E\. General Information on the Trial/;
   next if /F\. Population of Trial Subjects/;
   next if /N\. Review by the/;
@@ -74,6 +73,10 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   s/^(Trial Status.*)$/X.5 $1/;
   s/^(Date on.*)$/X.6 $1/;
   s/^(Link.*)$/X.7 $1/;
+
+  # add identifier for end of arrays
+  s/^D\.8 Information on Placebo$/X.9 ENDDMP: TRUE/;
+  s/^D\. IMP Identification$/X.9 ENDSPONSOR: TRUE/;
 
   # add identifiers for summary documents (terminating - needed for later step)
   s/^Sponsor Protocol Number: (.*)$/A.4.1 Sponsors protocol code number: $1/;
@@ -148,13 +151,11 @@ perl -pe 'BEGIN{undef $/;}
 
   # create array with imp(s)
   s/("d[0-9]+_.*"),\n"dimp": "([2-9])",/$1\}, \n\{ "_dimp": "$2",/g ;
-  s/("d[0-9]+_.*"),\n"e1(.*)/$1\}\n],\n"e1$2/g ;
+  s/("d[0-9]+_.*"),\n"x9_enddmp.*/$1\}\n],/g ;
 
   # create array with sponsor(s), closed before dimp or e11_ or a3_full_ elements
   s/("b[0-9]+_.*"),\n"b1_sponsor": "([2-9])",/$1\}, \n\{ "_b1_sponsor": "$2",/g ;
-  s/("b[0-9]+_.*"),\n"dimp(.*)/$1\}\n],\n"dimp$2/g ;
-  s/("b[0-9]+_.*"),\n"e11_medical(.*)/$1\}\n],\n"e11_medical$2/g ;
-  s/("b[0-9]+_.*"),\n"a3_full(.*)/$1\}\n],\n"a3_full$2/g ;
+  s/("b[0-9]+_.*"),\n"x9_endsponsor.*/$1\}\n],/g ;
 
   ' \
 > "$1/allfiles.json"
