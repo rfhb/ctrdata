@@ -13,6 +13,7 @@
 # 2015-08-15: 2.4 s for 221 documents: ~ 11 ms per trial (MacBookPro2011)
 # 2016-04-20: 1.2 s for 151 documents: ~  8 ms per trial (MacBookPro2011)
 # 2016-09-11: 1.2 s for 151 documents: ~  8 ms per trial (MacBookPro2015)
+# 2017-01-12: real 1m23.021s for 10978 documents ~ 8 ms per trial (MacBookPro2015)
 
 cat "$1/euctr-trials-page_"* > "$1/allfiles.txt"
 
@@ -55,9 +56,6 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   next if /^did not include the words /;
   next if /^or not they would be using contraception/;
   next if /^database on [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]/;
-
-  # remove empty entries
-  next if /Information not present in EudraCT/;
 
   # workarounds
   # - sponsor records were added but left empty -> create placeholder

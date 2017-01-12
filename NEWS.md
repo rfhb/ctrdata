@@ -1,3 +1,7 @@
+# ctrdata 0.9.10.1
+ - 2017-01-12
+ - Fixes issues with conversion of EUCTR records that did not have details.
+ - Fixes issue that placebo information was converted into IMP fields. 
 # ctrdata 0.9.10.0
  - 2016-12-28
  - Added metadata attributes to returned objects to indicate database, query, timestamp etc.
