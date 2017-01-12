@@ -56,6 +56,8 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   next if /^did not include the words /;
   next if /^or not they would be using contraception/;
   next if /^database on [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]/;
+
+  # remove empty entries
   next if /Information not present in EudraCT/;
 
   # workarounds
