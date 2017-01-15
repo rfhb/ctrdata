@@ -119,15 +119,14 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   outputlength <- getOption("max.print")
   options("max.print" = 99999)
 
+  # initialise variable
+  failedtrials <- NULL
+
   ##### helper functions #####
 
   # helper function to show progress while downloading
   progressOut <- function(down, up) {
     if(stats::runif(1) < 0.001) cat(".")
-    #cat(".")
-    #cat("             \b\b\b\b\b\b\b\b\b\b", paste0(formatC(down, digits = 0, format = "d", width = 10)))
-    # cat(formatC(down, digits = 0, format = "d", width = 10))
-    # cat("\033[2K")
   }
 
   # helper function for adding query parameters and results to meta-info in database
@@ -518,7 +517,6 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
       #
     }
 
-    #
     # run conversion
     message("Converting to JSON ...")
     if (debug) message("DEBUG: ", euctr2json)
@@ -530,8 +528,61 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     imported <- system(json2mongo, intern = TRUE)
 
     # find out number of trials imported into database
-    imported <- as.integer(gsub(".*imported ([0-9]+) document.*", "\\1", imported[length(imported)]))
-    if (!is.numeric(imported) || imported == 0) stop("Import has apparently failed, returned ", imported)
+    imported <- as.integer(gsub("^.*imported ([0-9]+) document[s]{0,1}$", "\\1", imported[length(imported)]))
+
+    # find out if fast import successful
+    if ((!is.numeric(imported)) || (imported == 0) || (imported < resultsEuNumTrials)) {
+      # if not successful, switch to SLOW IMPORT
+      warning("Switching to slow import because mongoimport as single JSON file failed.", immediate. = TRUE)
+
+      # json2split
+      json2split <- system.file("exec/json2split.sh", package = "ctrdata", mustWork = TRUE)
+      json2split <- paste(json2split, tempDir)
+      #
+      if (.Platform$OS.type == "windows") {
+        #
+        json2split <- gsub("\\\\", "/", json2split)
+        json2split <- gsub("([A-Z]):/", "/cygdrive/\\1/", json2split)
+        json2split <- paste0('cmd.exe /c c:\\cygwin\\bin\\bash.exe --login -c "', json2split, '"')
+        #
+      }
+      #
+      message("Splitting into JSON files ...")
+      if (debug) message("DEBUG: ", json2split)
+      imported  <- system(json2split, intern = TRUE)
+      splitjson <- try(as.numeric(imported))
+      if (class(splitjson) == "try-error") stop("Splitting single JSON files failed. Aborting ctrLoadQueryIntoDb.")
+
+      # mongoimport: loop / parallelise? record and print failed trial ids
+      message("Importing ", max(splitjson), " individual JSON files ...")
+      allimported <- 0
+      for (i in 1:splitjson) {
+        json2split2mongo <- sub("allfiles.json", paste0("allfiles-", i, ".json"), json2mongo)
+        #
+        if (debug & i == 1) message("DEBUG: ", json2split2mongo)
+        if (debug)          message("DEBUG: ", i)
+        #
+        imported <- system(json2split2mongo, intern = TRUE)
+        imported <- as.integer(gsub("^.*imported ([0-9]+) document[s]{0,1}$", "\\1", imported[length(imported)]))
+        #
+        if (!is.numeric(imported) || imported == 0) {
+          # get failed trial
+          trialfirstline <- readLines(gsub("^.+\"(.+?\\.json).+$", "\\1", json2split2mongo), n = 1, warn = FALSE)
+          trialfirstline <- gsub("^.+([0-9]{4}-[0-9]{6}-[0-9]{2}).+$", "\\1", trialfirstline)
+          failedtrials <- c(failedtrials, trialfirstline)
+          # inform user
+          warning(paste0("Import into mongoDB failed for trial ", trialfirstline), immediate. = TRUE)
+          cat()
+        } else {
+          if (debug) message("DEBUG: ", paste0("allfiles-", i, ".json"), " successfully imported.")
+          allimported <- allimported + imported
+        }
+        if (!debug) cat(".")
+      }
+      imported <- allimported
+    }
+
+    # inform user on final import outcome
     message("Imported or updated ", imported, " records on ", resultsEuNumTrials, " trial(s).")
 
     # clean up temporary directory
@@ -568,11 +619,11 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   attr(imported, "ctrdata-using-mongodb-db")         <- db
   attr(imported, "ctrdata-using-mongodb-collection") <- collection
   attr(imported, "ctrdata-using-mongodb-username")   <- username
-  attr(imported, "ctrdata-created-timestamp")        <- as.POSIXct(Sys.time(), tz="UTC")
+  attr(imported, "ctrdata-created-timestamp")        <- as.POSIXct(Sys.time(), tz = "UTC")
   attr(imported, "ctrdata-from-dbqueryhistory")      <- dbQueryHistory(collection = collection, db = db, url = url,
                                                                   username = username, password = password, verbose = FALSE)
   # return
-  invisible(imported)
+  invisible(list("importedupdated" = imported, "euctrfailedimports" = failedtrials))
 
 }
 ##### end ctrLoadQueryIntoDb#####

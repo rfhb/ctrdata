@@ -18,7 +18,7 @@ COUNT=1
 cat "$1/$FILE" | (
   I=0;
   while read line; do
-    if [[ $line == *x1* ]];
+    if [[ $line == *x1_eudract_number* ]];
       then I=$[I+1];
     fi;
     echo $line >> "$1/allfiles-$I.json";
