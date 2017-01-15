@@ -275,8 +275,8 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   if ("CTGOV" %in% register) {
 
     # check availability of relevant helper programs
-    if(!suppressWarnings(installFindBinary("php --version")))                          stop("php not found.")
-    if(!suppressWarnings(installFindBinary("php -r 'simplexml_load_string(\"\");'")))  stop("php xml not found.")
+    if (!suppressWarnings(installFindBinary("php --version")))                          stop("php not found.")
+    if (!suppressWarnings(installFindBinary("php -r 'simplexml_load_string(\"\");'")))  stop("php xml not found.")
 
     # create empty temporary directory on localhost for
     # download from register into temporary directy
@@ -346,17 +346,6 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
                            ifelse(password != "", paste0(' --password="', password, '"'), ''),
                            ' --upsert --type=json --file="', tempDir, '/allfiles.json"',
                            ifelse(installMongoCheckVersion(), '', ' --jsonArray'))
-
-      # prepare for alternative method to split large file and import split files one by one
-      # #!/bin/bash
-      # FILE=allfiles.json
-      # COUNT=1
-      # sed 's/EudraCT/\n/g' "$FILE" | while read LINE ; do
-      #   if [ "$LINE" ] ; then
-      #     echo "$LINE" >"${FILE%.*}-${COUNT}.${FILE##*.}"
-      #     COUNT=$((COUNT+1))
-      #   fi
-      # done
 
       if (.Platform$OS.type == "windows") {
         # xml2json requires cygwin's php. transform paths for cygwin use:
