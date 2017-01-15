@@ -2,7 +2,7 @@
 
 ## ralf.herold@gmx.net - 2015-08-15
 ## part of https://github.com/rfhb/ctrdata
-# last edited: 2016-09-07
+# last edited: 2017-01-12
 #
 # note line endings are to be kep by using in
 # .gitattributes for compatibility with cygwin:
