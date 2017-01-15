@@ -15,7 +15,6 @@
 FILE=allfiles.json
 COUNT=1
 
-
 cat "$1/$FILE" | (
   I=0;
   while read line; do
@@ -24,27 +23,5 @@ cat "$1/$FILE" | (
     fi;
     echo $line >> "$1/allfiles-$I.json";
   done;
+  echo "$I"
 )
-
-exit
-
-cat "$1/$FILE" | (
-  I=0;
-  echo -n "" > file0;
-  while read line; do
-    echo $line >> "$1/file$I";
-    if [[ $line == *x1* ]];
-      then I=$[I+1];
-      echo -n "" > file$I;
-    fi;
-done;
-)
-
-
-sed 's/x1_eudract_number/\n/g' "$1/$FILE" | while read LINE ; do
-  if [ "$LINE" ] ; then
-    echo "$LINE" >"$1/${FILE%.*}-${COUNT}.${FILE##*.}"
-    COUNT=$((COUNT+1))
-  fi
-  echo "$COUNT"
-done
