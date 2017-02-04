@@ -13,7 +13,7 @@ vignette: >
 
 ```{r setup, include=FALSE}
 #
-knitr::opts_chunk$set(eval=FALSE)
+knitr::opts_chunk$set(eval = FALSE)
 #
 ```
 
@@ -38,16 +38,14 @@ set_config(use_proxy("proxy.server.domain", 8080))
 # UNC notation (\\server\directory) for the library
 .libPaths("D:/my/directory/")
 #
-# first install rmongodb (see README.md)
-devtools::install_github("mongosoup/rmongodb")
-#
-# now install this package
-devtools::install_github("rfhb/ctrdata")
+# now install this package and the packages it depends on
+# (mongolite, jsonlite, RCurl, curl, clipr)
+devtools::install_github("rfhb/ctrdata", dependencies = "Depends")
 #
 # note: on Windows, cygwin has to be installed
 # to provide php, bash, perl, cat and sed programs.
-# this can be done like this: 
-installCygwinWindowsDoInstall(proxy = "proxy.server.domain:8080") 
+# this can be done like this (remove proxy if not needed): 
+ctrdata::installCygwinWindowsDoInstall(proxy = "proxy.server.domain:8080") 
 #
 ```
 
@@ -95,7 +93,7 @@ q <- ctrGetQueryUrlFromBrowser()
 #
 ctrLoadQueryIntoDb(q)
 #
-# Alternatively, use the following to retrieve a couple of trials: 
+# Alternatively, use the following to retrieve a couple of trial records: 
 #
 ctrLoadQueryIntoDb(queryterm = "2010-024264-18", register = "EUCTR")
 #
