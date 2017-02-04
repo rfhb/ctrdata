@@ -113,6 +113,12 @@ installCygwinWindowsDoInstall	| Convenience function to install a cygwin environ
 * Attach package `ctrdata`: 
 ```R
 library(ctrdata)
+# Loading required package: mongolite
+# Loading required package: jsonlite
+# Loading required package: RCurl
+# Loading required package: bitops
+# Loading required package: curl
+# Loading required package: clipr
 ```
 
 * Open register's advanced search page in browser: 
