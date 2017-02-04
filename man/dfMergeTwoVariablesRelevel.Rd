@@ -35,4 +35,3 @@ dfMergeTwoVariablesRelevel(result, c("Recruitment", "x5_trial_status"), statusva
 }
 
 }
-

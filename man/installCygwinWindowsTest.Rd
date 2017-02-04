@@ -13,4 +13,3 @@ Information if cygwin can be used, \code{TRUE} or \code{FALSE}
 Convenience function to test for working cygwin installation
 }
 \keyword{internal}
-

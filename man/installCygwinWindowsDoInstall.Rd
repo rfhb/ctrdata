@@ -23,4 +23,3 @@ setup yourself as follows: \code{cygwinsetup.exe --no-admin --quiet-mode
 http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages
 perl,php-jsonc,php-simplexml}
 }
-

@@ -4,9 +4,12 @@
 \name{ctrdata}
 \alias{ctrdata}
 \alias{ctrdata-package}
-\title{ctrdata: Overview on functions.}
+\title{ctrdata: Overview on functions}
 \description{
-The ctrdata package provides three categories of important functions,
+The ctrdata package provides functions to retrieve,
+and to prepare for analysis, information on clinical
+trials from public registers (EUCTR and CTGOV).
+There are three categories of functions,
 in sequence of their use in a workflow:
 }
 \section{Operations on a clinical trial register}{
@@ -40,3 +43,4 @@ clinical trial records can be obtained with
 subsets of interest from R dataframes.
 }
 
+\keyword{internal}

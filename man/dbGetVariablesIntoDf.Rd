@@ -60,4 +60,3 @@ dbGetVariablesIntoDf("keyword")[1:2,]
 }
 
 }
-

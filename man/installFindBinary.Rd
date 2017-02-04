@@ -20,4 +20,3 @@ A logical if executing commandtest returned an error or not
 Check availability of binaries installed in operating system
 }
 \keyword{internal}
-

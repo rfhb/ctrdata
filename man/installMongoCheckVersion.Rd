@@ -32,4 +32,3 @@ In addition to the returned value, the function will generate a warning
 message if applicable.
 }
 \keyword{internal}
-

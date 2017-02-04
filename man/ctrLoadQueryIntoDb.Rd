@@ -85,4 +85,3 @@ ctrLoadQueryIntoDb (queryterm = "NCT02239861", register = "CTGOV")
 }
 
 }
-

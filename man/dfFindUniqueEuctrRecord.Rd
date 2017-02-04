@@ -39,4 +39,3 @@ Note: To depuplicate trials from different registers (EUCTR and CTGOV),
 please first use function \code{\link{dbFindIdsUniqueTrials}}.
 }
 \keyword{internal}
-

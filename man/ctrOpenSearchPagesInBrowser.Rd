@@ -46,4 +46,3 @@ ctrOpenSearchPagesInBrowser(dbQueryHistory())
 }
 
 }
-

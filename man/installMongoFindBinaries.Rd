@@ -29,4 +29,3 @@ Call this function with a correct parameter if the automatic
 detection fails.
 }
 \keyword{internal}
-
