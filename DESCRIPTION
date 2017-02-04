@@ -1,8 +1,8 @@
 Package: ctrdata
 Type: Package
 Title: Retrieve and Prepare for Analysis Information on Clinical Trials from Public Registers
-Version: 0.9.10.1
-Date: 2016-12-28
+Version: 0.9.11.1
+Date: 2017-02-04
 Depends: mongolite, jsonlite, RCurl, curl, clipr
 SystemRequirements: mongo database, sed, php, cat, perl
 Author: Ralf Herold

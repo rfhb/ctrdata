@@ -1,3 +1,11 @@
+# ctrdata 0.9.11.1
+ - 2017-02-04
+ - Improved documentation
+
+# ctrdata 0.9.11
+ - 2017-01-15
+ - Added functionality: EUCTR fallback import mechanism if large JSON file fails to import into mongoDB (by splitting and importing one JSON file for each trial, tested with several thousand trials)
+
 # ctrdata 0.9.10.1
  - 2017-01-12
  - Fixes issues with conversion of EUCTR records that did not have details.
