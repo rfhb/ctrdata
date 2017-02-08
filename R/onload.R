@@ -8,10 +8,12 @@ assign("mongoBinaryLocation", NA, envir = .privateEnv)
 
 .onAttach <- function(libname, pkgname) {
   #
-  packageStartupMessage("\nPlease respect the requirements of the copyrights of \n",
-                        "the clinical trial registers when using their information, \n",
-                        "see ctrOpenSearchPagesInBrowser(copyright = TRUE).\n\n",
-                        "More on this package and how to use it: https://github.com/rfhb/ctrdata/\n"
+  packageStartupMessage("\nInformation on this package and how to use it: \nhttps://github.com/rfhb/ctrdata/\n\n",
+                        "Please respect the requirements and the copyrights of the\n",
+                        "clinical trial registers when using their information. Call\n",
+                        "ctrOpenSearchPagesInBrowser(copyright = TRUE) and visit\n\n",
+                        "https://www.clinicaltrialsregister.eu/disclaimer.html\n",
+                        "https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use\n\n"
   )
   #
   # check availabilities

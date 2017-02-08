@@ -113,7 +113,7 @@ ctrOpenSearchPagesInBrowser <- function(input = "", register = c("EUCTR", "CTGOV
     if ("CTGOV" %in% register) utils::browseURL("https://clinicaltrials.gov/ct2/search/advanced", ...)
     # if requested also show copyright pages
     if (copyright) {
-      if ("EUCTR" %in% register) utils::browseURL("http://www.ema.europa.eu/ema/index.jsp?curl=pages/regulation/general/general_content_000178.jsp&mid=", ...)
+      if ("EUCTR" %in% register) utils::browseURL("https://www.clinicaltrialsregister.eu/disclaimer.html", ...)
       if ("CTGOV" %in% register) utils::browseURL("https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use", ...)
     }
   } else {
