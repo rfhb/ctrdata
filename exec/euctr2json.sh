@@ -50,6 +50,7 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   next if /P\. End of Trial.$/;
   next if /G. Investigator Networks/;
   next if /H.4 Third Country/;
+  next if /MedDRA Classification/;
 
   # remove explanatory information from key F.3.3.1
   next if /^\(For clinical trials recorded/;
