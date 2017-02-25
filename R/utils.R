@@ -482,7 +482,8 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
                                     "a52_us_nct_clinicaltrialsgov_registry_number"),
                          debug = FALSE,
                          collection = collection, db = db, url = url,
-                         username = username, password = password, verbose = FALSE)
+                         username = username, password = password, verbose = FALSE,
+                         stopifnodata = FALSE)
     )),
     silent = TRUE
   )
@@ -609,6 +610,10 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
 #'
 #' @param fields Vector of strings, with names of the sought fields.
 #'
+#' @param stopifnodata Stops with an error (\code{TRUE}, default) or with a warning
+#'    (\code{TRUE}) if sought variable is not available in any of the records
+#'    in the database.
+#'
 #' @param debug Printing additional information if set to \code{TRUE}; default
 #'   is \code{FALSE}.
 #'
@@ -637,7 +642,8 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
 #'
 dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
                                  collection = "ctrdata", db = "users", url = "mongodb://localhost",
-                                 username = "", password = "", verbose = FALSE) {
+                                 username = "", password = "", verbose = FALSE,
+                                 stopifnodata = TRUE) {
   #
   if (!is.vector(fields) | class(fields) != "character") stop("Input should be a vector of strings of field names.")
   if (any(fields == "", na.rm = TRUE)) stop(paste("'fields' contains empty elements; please provide a vector of strings of field names.",
@@ -684,7 +690,10 @@ dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
       }
       #
     } else {# try-error occured
-      stop(paste0("For variable / field: ", item, " no data could be extracted, please check the contents of the database."))
+      if(stopifnodata)
+        stop(paste0("For variable / field: ", item, " no data could be extracted, please check the contents of the database."))
+      else
+        warning(paste0("For variable / field: ", item, " no data could be extracted, please check the contents of the database."))
     }
   } # end for item in fields
 

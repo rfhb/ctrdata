@@ -6,7 +6,7 @@
 \usage{
 dbGetVariablesIntoDf(fields = "", debug = FALSE, collection = "ctrdata",
   db = "users", url = "mongodb://localhost", username = "",
-  password = "", verbose = FALSE)
+  password = "", verbose = FALSE, stopifnodata = TRUE)
 }
 \arguments{
 \item{fields}{Vector of strings, with names of the sought fields.}
@@ -27,6 +27,10 @@ mongodb://localhost)}
 \item{password}{In case access requires credentials.}
 
 \item{verbose}{Print information.}
+
+\item{stopifnodata}{Stops with an error (\code{TRUE}, default) or with a warning
+(\code{TRUE}) if sought variable is not available in any of the records
+in the database.}
 }
 \value{
 A data frame with columns corresponding to the sought fields. Note
