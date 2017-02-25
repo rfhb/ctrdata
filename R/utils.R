@@ -831,8 +831,18 @@ dfFindUniqueEuctrRecord <- function(df = NULL, prefermemberstate = "GB", include
   if (!(prefermemberstate %in% countriesEUCTR)) stop("Value specified for prefermemberstate does not match one of the recognised codes: ",
                                                      paste (sort (countriesEUCTR), collapse = ", "))
 
+  # notify it mismatching parameters
+  if(prefermemberstate == "3RD" & !include3rdcountrytrials) {
+    warning("Preferred EUCTR version set to 3RD country trials, but include3rdcountrytrials was FALSE, setting to TRUE.", call. = FALSE, noBreaks. = FALSE)
+    include3rdcountrytrials <- TRUE
+  }
+
+  # as a first step, handle 3rd country trials e.g. 2010-022945-52-3RD
+  # if retained, these trials would count as record for a trial
+  if (!include3rdcountrytrials) df <- df[!grepl("-3RD", df[["_id"]]), ]
+
   # count number of records by eudract number
-  tbl <- table(df [['_id']], df$a2_eudract_number)
+  tbl <- table(df[['_id']], df$a2_eudract_number)
   tbl <- as.matrix(tbl)
   # nms has names of all records
   nms <- dimnames(tbl)[[1]]
@@ -853,6 +863,7 @@ dfFindUniqueEuctrRecord <- function(df = NULL, prefermemberstate = "GB", include
     # Member State record, based on the user's choices and defaults.
     # Function uses prefermemberstate, nms from the caller environment
     #
+    # debug: recordnames <- nms[nst[[1]]]
     recordnames <- nms[indexofrecords]
     #
     # fnd should be only a single string, may need to be checked
@@ -882,9 +893,6 @@ dfFindUniqueEuctrRecord <- function(df = NULL, prefermemberstate = "GB", include
   df <- df [!(df [['_id']] %in% result), ]
   # also eliminate the meta-info record
   df <- df [!(df [['_id']] == "meta-info"), ]
-
-  # as a last step, handle 3rd country trials e.g. 2010-022945-52-3RD
-  if (!include3rdcountrytrials) df <- df [!grepl("-3RD", df[["_id"]]), ]
 
   # inform user about changes to data frame
   if (length(nms) > (tmp <- length(result))) message('Searching multiple country records: Found ', tmp, ' EUCTR _id that were not the preferred member state record(s) for the trial.')
