@@ -9,7 +9,8 @@ agegroupsEUCTR <- c("Preterm newborn infants", "Newborns", "Infants and toddlers
 variablesEUCTR <- c("EudraCT Number", "Sponsor Protocol Number", "Sponsor Name", "Full Title", "Start Date",
                     "Medical condition", "Disease", "Population Age", "Gender", "Trial protocol", "Link")
 countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IS", "IE", "IT",
-                    "LV", "LI", "LT", "LU", "MT", "NL", "NO", "PL", "PT", "RO", "SK", "SE", "SI", "ES", "GB")
+                    "LV", "LI", "LT", "LU", "MT", "NL", "NO", "PL", "PT", "RO", "SK", "SE", "SI", "ES", "GB",
+                    "3RD")
 #
 # non-exported function(s)
 # is.queryterm <- function(x) {
@@ -865,7 +866,12 @@ dfFindUniqueEuctrRecord <- function(df = NULL, prefermemberstate = "GB", include
       return(result)
     }
     #
-    return(recordnames[-1])
+    # default is to list all but first record
+    # the listed records are the duplicates
+    # 3RD country trials would be listed first
+    # hence selected, which is not desirable
+    # unless chosen as prefermemberstate
+    return(rev(sort(recordnames))[-1])
   }
 
   # finds per trial the desired record; uses prefermemberstate and nms
