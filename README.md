@@ -34,13 +34,13 @@ install.packages("devtools")
 #
 devtools::install_github("rfhb/ctrdata")
 #
-# - If problem with the SSL CA cert:
-install.packages("devtools")
+# - In case of a problem with the SSL CA cert:
+install.packages("httr")
 httr::set_config(httr::config(ssl_verifypeer = 0L))
 devtools::install_github("rfhb/ctrdata")
 # 
-# - If no connection, a proxy may need to be set:
-install.packages("devtools")
+# - If no connecting, a proxy may need to be set:
+install.packages("httr")
 httr::set_config(httr::use_proxy("proxy.server.domain", 8080))
 devtools::install_github("rfhb/ctrdata")
 #
@@ -48,7 +48,7 @@ devtools::install_github("rfhb/ctrdata")
 
 ### 2. Local [mongodb](https://www.mongodb.org/) (version 3) installation
 
-From this installation, binaries `mongoimport` and `mongo` are needed. Follow instructions for various operating systems [here](https://docs.mongodb.com/manual/administration/install-community/). For macOS alternatively use [homebrew](http://brew.sh/): `brew install mongodb`. 
+Follow instructions for various operating systems [here](https://docs.mongodb.com/manual/administration/install-community/). For macOS alternatively use [homebrew](http://brew.sh/): `brew install mongodb`. From this installation, binaries `mongoimport{.exe}` and `mongo{.exe}` are needed.
 
 ### 3. Command line tools `perl`, `sed`, `cat` and `php` (5.2 or higher)
 
@@ -72,6 +72,7 @@ installCygwinWindowsDoInstall	| Convenience function to install a cygwin environ
 <!--
 
 ```R
+# save as 798 * 698
 # 
 # library(DiagrammeR)
 # mermaid("
@@ -92,9 +93,9 @@ installCygwinWindowsDoInstall	| Convenience function to install a cygwin environ
 #   note left of user_R: prepare and analyse
 # 
 #   database->>database: dbFindVariable()
-#   
+# 
 #   database->>user_R: dbGetVariablesIntoDf()
-#   database->database: dbFindIdsUniqueTrials()
+#   database->>database: dbFindIdsUniqueTrials()
 # 
 #   user_R->>user_R: dfMergeTwoVariablesRelevel()
 # 
