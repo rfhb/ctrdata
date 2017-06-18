@@ -91,15 +91,15 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
 
   # basic sanity check if query term should be considered valid
   if (grepl('[^a-zA-Z0-9=+&%_-]', gsub('\\[', '', gsub('\\]', '', queryterm))))
-    stop('Queryterm has unexpected characters: "', queryterm, '", expected are: a-zA-Z0-9=+&%_-[].')
+    stop("Parameter 'queryterm' is not an URL showing results of a query or has unexpected characters: ", queryterm, ", expected are: a-zA-Z0-9=+&%_-[].")
 
   # other sanity checks
-  if ((queryterm == "") & querytoupdate == 0) stop("'query term' is empty.")
-  if(!grepl(register, "CTGOVEUCTR"))          stop("Register not known: ", register)
+  if ((queryterm == "") & querytoupdate == 0) stop("Parameter 'queryterm' is empty.")
+  if(!grepl(register, "CTGOVEUCTR"))          stop("Parameter 'register' not known: ", register)
   if (class(querytoupdate) != "character" &&
-      querytoupdate != trunc(querytoupdate))  stop("'querytoupdate' does not have an integer value.")
+      querytoupdate != trunc(querytoupdate))  stop("Parameter 'querytoupdate' does not have an integer value.")
   if (class(querytoupdate) == "character" &&
-      querytoupdate != "last")                stop("'querytoupdate' does not have an acceptable string value.")
+      querytoupdate != "last")                stop("Parameter 'querytoupdate' does not have an acceptable string value.")
 
   # check program availability
   installMongoFindBinaries(debug = debug)
@@ -204,8 +204,8 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     register   <- rerunquery$`query-register`
     initialday <- substr(rerunquery$`query-timestamp`, start = 1, stop = 10)
     #
-    if(queryterm == '')                stop("Query term empty - cannot update query ",   querytoupdate)
-    if(!grepl(register, "CTGOVEUCTR")) stop("Register not known - cannot update query ", querytoupdate)
+    if(queryterm == '')                stop("Parameter 'queryterm' is empty - cannot update query ", querytoupdate)
+    if(!grepl(register, "CTGOVEUCTR")) stop("Parameter 'register' not known - cannot update query ", querytoupdate)
     #
     # adapt updating procedure to respective register
     if (register == "CTGOV") {
@@ -334,7 +334,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
       tmp <- RCurl::curlPerform(url = ctgovdownloadcsvurl, writedata = fref@ref, noprogress=FALSE, progressfunction = progressOut)
       RCurl::close(fref)
       #
-      if (file.size(f) == 0) stop("No studies downloaded. Please check query term or run again with debug = TRUE.")
+      if (file.size(f) == 0) stop("No studies downloaded. Please check parameter 'queryterm' or run again with debug = TRUE.")
       utils::unzip(f, exdir = tempDir)
 
       # compose commands - transform xml into json, a single allfiles.json in the temporaray directory
