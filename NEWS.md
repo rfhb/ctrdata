@@ -1,3 +1,9 @@
+# ctrdata 0.9.12
+ - 2017-06-18
+ - Preparing for new CTGOV interface
+ - Improved documentation
+ - Corrected ctrGetQueryUrlFromBrowser return value
+
 # ctrdata 0.9.11.1
  - 2017-02-04
  - Improved documentation

@@ -208,7 +208,7 @@ ctrGetQueryUrlFromBrowser <- function(content = clipr::read_clip()) {
     return(df)
   }
   #
-  stop(paste("Content is not a clinical trial register search URL. Returning NULL."))
+  # CTGOV beta 2017, e.g.
   # https://clinicaltrials.gov/beta/results?cond=&term=2010-024264-18&cntry1=&state1=&SearchAll=Search+all+studies&recrs=
   # https://clinicaltrials.gov/beta/results?cond=&term=2010-024264-18&cntry1=&state1=&SearchRecruiting=Find+a+study+to+participate+in&recrs=a
   # advanced
@@ -227,6 +227,8 @@ ctrGetQueryUrlFromBrowser <- function(content = clipr::read_clip()) {
     #
     return(df)
   }
+  #
+  warning("Content is not a clinical trial register search URL. Returning NULL.", immediate. = TRUE)
   return(NULL)
 }
 # end ctrGetQueryUrlFromBrowser

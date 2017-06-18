@@ -10,3 +10,4 @@ ctrdata_json.jpg
 ctrdata_sequence_diagram.png
 private.*
 ^_gh-pages$
+^docs$
