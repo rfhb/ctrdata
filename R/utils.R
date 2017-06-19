@@ -197,7 +197,7 @@ ctrGetQueryUrlFromBrowser <- function(content = clipr::read_clip()) {
   if (grepl("https://clinicaltrials.gov/ct2/results", content)) {
     #
     queryterm <- sub("https://clinicaltrials.gov/ct2/results[?](.*)", "\\1", content)
-    queryterm <- sub("(.*)&Search=Search", "\\1", queryterm)
+    queryterm <- sub("(.*)&Search[a-zA-Z]*=(Search|Find)[a-zA-Z+]*",  "\\1", queryterm)
     queryterm <- gsub("[a-z_0-9]+=&", "", queryterm)
     queryterm <- sub("&[a-z_0-9]+=$", "", queryterm)
     message("Found search query from CTGOV.")
@@ -208,25 +208,25 @@ ctrGetQueryUrlFromBrowser <- function(content = clipr::read_clip()) {
     return(df)
   }
   #
-  # CTGOV beta 2017, e.g.
-  # https://clinicaltrials.gov/beta/results?cond=&term=2010-024264-18&cntry1=&state1=&SearchAll=Search+all+studies&recrs=
-  # https://clinicaltrials.gov/beta/results?cond=&term=2010-024264-18&cntry1=&state1=&SearchRecruiting=Find+a+study+to+participate+in&recrs=a
-  # advanced
-  # https://clinicaltrials.gov/beta/results?term=2010-024264-18&type=&rslt=&age_v=&gndr=&cond=&intr=&titles=&outc=&spons=&lead=&id=&cntry1=
-  # &state1=&cntry2=&state2=&cntry3=&state3=&locn=&rcv_s=&rcv_e=&lup_s=&lup_e=
-  if (grepl("https://clinicaltrials.gov/beta/results", content)) {
-    #
-    queryterm <- sub("https://clinicaltrials.gov/beta/results[?](.*)", "\\1", content)
-    queryterm <- sub("(.*)&Search[a-zA-Z]*=(Search|Find)[a-zA-Z+]*", "\\1", queryterm)
-    queryterm <- gsub("[a-z_0-9]+=&", "", queryterm)
-    queryterm <- sub("&[a-z_0-9]+=$", "", queryterm)
-    message("Found search query from CTGOV.")
-    #
-    df <- data.frame(cbind(queryterm, "CTGOV"), stringsAsFactors = FALSE)
-    names(df) <- c("query-term", "query-register")
-    #
-    return(df)
-  }
+  # # CTGOV beta 2017, e.g.
+  # # https://clinicaltrials.gov/beta/results?cond=&term=2010-024264-18&cntry1=&state1=&SearchAll=Search+all+studies&recrs=
+  # # https://clinicaltrials.gov/beta/results?cond=&term=2010-024264-18&cntry1=&state1=&SearchRecruiting=Find+a+study+to+participate+in&recrs=a
+  # # advanced
+  # # https://clinicaltrials.gov/beta/results?term=2010-024264-18&type=&rslt=&age_v=&gndr=&cond=&intr=&titles=&outc=&spons=&lead=&id=&cntry1=
+  # # &state1=&cntry2=&state2=&cntry3=&state3=&locn=&rcv_s=&rcv_e=&lup_s=&lup_e=
+  # if (grepl("https://clinicaltrials.gov/beta/results", content)) {
+  #   #
+  #   queryterm <- sub("https://clinicaltrials.gov/beta/results[?](.*)", "\\1", content)
+  #   queryterm <- sub("(.*)&Search[a-zA-Z]*=(Search|Find)[a-zA-Z+]*", "\\1", queryterm)
+  #   queryterm <- gsub("[a-z_0-9]+=&", "", queryterm)
+  #   queryterm <- sub("&[a-z_0-9]+=$", "", queryterm)
+  #   message("Found search query from CTGOV.")
+  #   #
+  #   df <- data.frame(cbind(queryterm, "CTGOV"), stringsAsFactors = FALSE)
+  #   names(df) <- c("query-term", "query-register")
+  #   #
+  #   return(df)
+  # }
   #
   warning("Content is not a clinical trial register search URL. Returning NULL.", immediate. = TRUE)
   return(NULL)
