@@ -242,7 +242,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
       } else {
         #
         # obtain rss feed with list of recently updated trials
-        h = RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE))
+        h <- RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE))
         rssquery <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/rest/feed/bydates?query=", queryterm)
         if (debug) message("DEBUG (rss url): ", rssquery)
         #
@@ -393,7 +393,9 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
       #
 
       # obtain full data set on _id and other ids
-      cursor <- mongo$iterate(query = '{"_id": {"$regex": "NCT[0-9]{8}"}}', fields = '{"id_info.org_study_id": 1, "id_info.secondary_id": 1}')$batch(size = mongo$count())
+      cursor <- mongo$iterate(query = '{"_id": {"$regex": "NCT[0-9]{8}"}}',
+                              fields = '{"id_info.org_study_id": 1, "id_info.secondary_id": 1}'
+                              )$batch(size = mongo$count())
       # transform every second element in a list item into a vector
       otherids <- sapply(cursor, function(x) paste0(as.vector(unlist(x[2]))))
       # retain _id's for updating
