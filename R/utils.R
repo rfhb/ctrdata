@@ -40,8 +40,6 @@ countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", 
 #'
 #' @return A mongo data base object, currently using mongolite
 #'
-#' @import mongolite
-#'
 #' @keywords internal
 #'
 ctrMongo <- function(collection = "ctrdata", db = "users", url = "mongodb://localhost",
@@ -124,7 +122,7 @@ ctrOpenSearchPagesInBrowser <- function(input = "", register = c("EUCTR", "CTGOV
     # - is a url
     if(class(input) == "character" && is.atomic(input) && length(input) == 1 && grepl ("^https.+clinicaltrials.+", input)) {
       #
-      input <- ctrdata::ctrGetQueryUrlFromBrowser(input)
+      input <- ctrGetQueryUrlFromBrowser(input)
       #
     }
     #
@@ -159,8 +157,6 @@ ctrOpenSearchPagesInBrowser <- function(input = "", register = c("EUCTR", "CTGOV
 #' @param content URL from browser address bar. Defaults to clipboard contents.
 #' @return A string of query parameters that can be used to retrieve data from
 #'   the register.
-#'
-#' @import clipr
 #'
 #' @export
 #'
@@ -286,7 +282,7 @@ dbQueryHistory <- function(collection = "ctrdata", db = "users", url = "mongodb:
   # Check if meeting expectations
   if(!is.list(tmp) || (length(tmp) < 1)) {
     #
-    warning("No history found in expected format.")
+    warning("No history found in expected format.", immediate. = TRUE)
     tmp <- data.frame(NULL)
     #
   } else {

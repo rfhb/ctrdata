@@ -1,3 +1,7 @@
+# ctrdata 0.9.13
+ - 2017-06-23
+ - refactored ctrLoadQueryIntoDb
+ 
 # ctrdata 0.9.12
  - 2017-06-18
  - Preparing for new CTGOV interface
