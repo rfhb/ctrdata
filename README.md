@@ -6,7 +6,7 @@ Online version of this document: [https://github.com/rfhb/ctrdata/](https://gith
 
 ## Background
 
-The package `ctrdata` provides functions for retrieving (downloading) information clinical trials from public registers, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started mid 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package is to be used within the [R](https://www.r-project.org/) system. Last edit 2016-12-28 for version 0.9.10.0 (metadata added; see NEWS.md).  
+The package `ctrdata` provides functions for retrieving (downloading) information clinical trials from public registers, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started mid 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package is to be used within the [R](https://www.r-project.org/) system. Last edit 2017-06-24 for version 0.9.13 (see NEWS.md).  
 
 Main features:
 
@@ -24,7 +24,15 @@ Overview of functions used in sequence:
 
 ## Installation
 
-### 1. Within R
+### 1. Local [mongodb](https://www.mongodb.org/) (version 3) installation
+
+Follow instructions for various operating systems [here](https://docs.mongodb.com/manual/administration/install-community/). For macOS alternatively use [homebrew](http://brew.sh/): `brew install mongodb`. From this installation, binaries `mongoimport{.exe}` and `mongo{.exe}` are needed.
+
+### 2. Command line tools `perl`, `sed`, `cat` and `php` (5.2 or higher)
+
+In Linux and Mac OS X systems, these are usually already installed. For MS Windows, install [cygwin](https://cygwin.com/install.html): In `R`, run `ctrdata::installCygwinWindowsDoInstall()` for an automated installation into `c:\cygwin`; alternatively manually install cygwin with packages `perl`, `php-jsonc` and `php-simplexml` (administrator credentials not needed). 
+
+### 3. Within R
 
 Within [R](https://www.r-project.org/), use the following commands to get and install the current development version of package `ctrdata` from github.com:
 
@@ -39,20 +47,12 @@ install.packages("httr")
 httr::set_config(httr::config(ssl_verifypeer = 0L))
 devtools::install_github("rfhb/ctrdata")
 # 
-# - If no connecting, a proxy may need to be set:
+# - If not connecting, a proxy may need to be set:
 install.packages("httr")
 httr::set_config(httr::use_proxy("proxy.server.domain", 8080))
 devtools::install_github("rfhb/ctrdata")
 #
 ```
-
-### 2. Local [mongodb](https://www.mongodb.org/) (version 3) installation
-
-Follow instructions for various operating systems [here](https://docs.mongodb.com/manual/administration/install-community/). For macOS alternatively use [homebrew](http://brew.sh/): `brew install mongodb`. From this installation, binaries `mongoimport{.exe}` and `mongo{.exe}` are needed.
-
-### 3. Command line tools `perl`, `sed`, `cat` and `php` (5.2 or higher)
-
-In Linux and Mac OS X systems, these are usually already installed. For MS Windows, install [cygwin](https://cygwin.com/install.html): In `R`, run `ctrdata::installCygwinWindowsDoInstall()` for an automated installation into `c:\cygwin`; alternatively manually install cygwin with packages `perl`, `php-jsonc` and `php-simplexml` (administrator credentials not needed). 
 
 
 ## Overview of functions in `ctrdata`
@@ -67,42 +67,42 @@ dbFindVariable	| Find names of keys (fields) in the database
 dbFindIdsUniqueTrials	| Produce a vector of de-duplicated identifiers of clinical trial records in the database
 dbGetVariablesIntoDf	| Create a data frame from records in the database with specified fields 
 dfMergeTwoVariablesRelevel	| Merge two variables into a single variable, optionally map values to a new set of values
-installCygwinWindowsDoInstall	| Convenience function to install a cygwin environment under MS Windows, including perl, php, sed
+installCygwinWindowsDoInstall	| Convenience function to install a cygwin environment under MS Windows, including perl, sed, cat and php
 
 <!--
 
 ```R
 # save as 798 * 698
-# 
-# library(DiagrammeR)
-# mermaid("
-# sequenceDiagram
-# 
-#   user_R->>database: define collection and namespace
-# 
-#   note left of user_R: query and download
-# 
-#   user_R->>euctr: ctrOpenSearchPagesInBrowser()
-#   euctr->>euctr: user defines query
-#   ctgov->>ctgov: user defines query
-# 
-#   euctr->>database: ctrLoadQueryIntoDb()
-# 
-#   ctgov->>database: ctrLoadQueryIntoDb()
-# 
-#   note left of user_R: prepare and analyse
-# 
-#   database->>database: dbFindVariable()
-# 
-#   database->>user_R: dbGetVariablesIntoDf()
-#   database->>database: dbFindIdsUniqueTrials()
-# 
-#   user_R->>user_R: dfMergeTwoVariablesRelevel()
-# 
-#   user_R->>user_R: any R functions such as summary()
-# 
-# ")
-#
+
+library(DiagrammeR)
+mermaid("
+sequenceDiagram
+
+  user_R->>database: define collection and namespace
+
+  note left of user_R: query and download
+
+  user_R->>euctr: ctrOpenSearchPagesInBrowser()
+  euctr->>euctr: user defines query
+  ctgov->>ctgov: user defines query
+
+  euctr->>database: ctrLoadQueryIntoDb()
+
+  ctgov->>database: ctrLoadQueryIntoDb()
+
+  note left of user_R: prepare and analyse
+
+  database->>database: dbFindVariable()
+
+  database->>user_R: dbGetVariablesIntoDf()
+  database->>database: dbFindIdsUniqueTrials()
+
+  user_R->>user_R: dfMergeTwoVariablesRelevel()
+
+  user_R->>user_R: any R functions such as summary()
+
+")
+
 ```
 -->
 
@@ -113,13 +113,22 @@ installCygwinWindowsDoInstall	| Convenience function to install a cygwin environ
 
 * Attach package `ctrdata`: 
 ```R
+#
 library(ctrdata)
-# Loading required package: mongolite
-# Loading required package: jsonlite
-# Loading required package: RCurl
-# Loading required package: bitops
-# Loading required package: curl
-# Loading required package: clipr
+# 
+# Information on this package and how to use it: 
+# https://github.com/rfhb/ctrdata/
+# 
+# Please respect the requirements and the copyrights of the
+# clinical trial registers when using their information. Call
+# ctrOpenSearchPagesInBrowser(copyright = TRUE) and visit
+# 
+# https://www.clinicaltrialsregister.eu/disclaimer.html
+# https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use
+# 
+# 
+# Helper binaries tested.
+#
 ```
 
 * Open register's advanced search page in browser: 
@@ -144,7 +153,7 @@ q <- ctrGetQueryUrlFromBrowser()
 #
 # Found search query from EUCTR.
 #          query-term   query-register
-# 1 "cancer&age=adult"           EUCTR
+# 1  cancer&age=adult            EUCTR
 #
 ```
 
