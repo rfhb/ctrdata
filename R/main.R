@@ -140,6 +140,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     # set main parameters
     queryupdateterm <- rerunparameters$queryupdateterm
     queryterm       <- rerunparameters$queryterm
+    register        <- rerunparameters$register
   }
 
 
@@ -302,7 +303,8 @@ ctrRerunQuery <- function (querytoupdate = querytoupdate,
   ## return main parameters needed
   return(data.frame("queryupdateterm" = queryupdateterm,
                     "queryterm"       = queryterm,
-                    "register"        = register))
+                    "register"        = register,
+                    stringsAsFactors = FALSE))
 
 }
 
