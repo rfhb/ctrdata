@@ -4,6 +4,7 @@
 
 # run tests manually with:
 # devtools::test()
+# library(testthat)
 
 # Mac OS X:
 # brew services {start|stop} mongodb
@@ -78,10 +79,6 @@ test_that("access to mongo db from R package", {
   try(mongolite::mongo(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB",     db = "users")$drop(), silent = TRUE)
   try(mongolite::mongo(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDBKeys", db = "users")$drop(), silent = TRUE)
 
-
-  #mongolite::mongo(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB",     db = "users")$info()
-
-
   expect_warning(suppressMessages(dbQueryHistory(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")),
                  "No history found in expected format.")
 
@@ -124,7 +121,7 @@ test_that("retrieve data from register ctgov", {
                                                      collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")), "Imported or updated 1 trial")
 
   expect_error(suppressWarnings(ctrLoadQueryIntoDb(querytoupdate = 1,
-                                                   collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")), "First result page empty")
+                                                   collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")), "No studies downloaded")
 
 })
 
@@ -138,7 +135,7 @@ test_that("retrieve data from register euctr", {
   expect_message(ctrLoadQueryIntoDb(queryterm = "2010-024264-18", register = "EUCTR",
                                     collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"), "Updated history")
 
-  expect_error(suppressWarnings(ctrLoadQueryIntoDb(querytoupdate = 2,
+  expect_error(suppressWarnings(ctrLoadQueryIntoDb(querytoupdate = "last",
                                                    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")), "First result page empty")
 
 })
