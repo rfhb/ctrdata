@@ -150,14 +150,24 @@ test_that("browser interaction", {
 
   has_internet()
 
-  expect_warning(ctrGetQueryUrlFromBrowser(content = "ThisDoesNotExist"), "Content is not a clinical trial register search URL.")
+  expect_warning(ctrGetQueryUrlFromBrowser(content = "ThisDoesNotExist"),
+                 "Content is not a clinical trial register search URL.")
 
   expect_message(ctrOpenSearchPagesInBrowser(tmp),
-                 "Opening in browser previous search: type=Intr&cond=cancer&age=0, in register: CTGOV")
+                 "Opening in browser previous search:")
 
   has_mongo()
 
-  expect_message(ctrOpenSearchPagesInBrowser(dbQueryHistory(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")[1,]),
+  expect_message(ctrOpenSearchPagesInBrowser(dbQueryHistory(
+    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")[1,]),
+    "Opening in browser previous search: ")
+
+  tmp <-  data.frame(lapply(dbQueryHistory(
+    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
+    tail, 1))
+  names(tmp) <- sub("[.]", "-", names(tmp))
+
+  expect_message(ctrOpenSearchPagesInBrowser(tmp),
                  "Opening in browser previous search: ")
 
 })
