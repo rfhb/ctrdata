@@ -302,13 +302,6 @@ dbQueryHistory <- function(collection = "ctrdata", db = "users", url = "mongodb:
   # close database connection
   rm(mongo); gc()
 
-  # add metadata
-  attr(tmp, "ctrdata-using-mongodb-url")        <- url
-  attr(tmp, "ctrdata-using-mongodb-db")         <- db
-  attr(tmp, "ctrdata-using-mongodb-collection") <- collection
-  attr(tmp, "ctrdata-using-mongodb-username")   <- username
-  attr(tmp, "ctrdata-created-timestamp")        <- as.POSIXct(Sys.time(), tz="UTC")
-
   # return
   return(tmp)
 
@@ -417,7 +410,7 @@ dbFindVariable <- function(namepart = "", allmatches = FALSE, forceupdate = FALS
     #
     # mongo get fieldnames into vector (no other solution found)
     fieldnames <- mongo[["keys"]]$find(fields = '{"key": 1}')
-    fieldnames <- fieldnames[1:nrow(fieldnames),]
+    fieldnames <- fieldnames[1:nrow(fieldnames), ]
     fieldnames <- as.vector(fieldnames[["key"]])
     #
     # actually now find fieldnames
@@ -428,13 +421,10 @@ dbFindVariable <- function(namepart = "", allmatches = FALSE, forceupdate = FALS
     }
     #
     # add metadata
-    attr(fieldname, "ctrdata-using-mongodb-url")        <- url
-    attr(fieldname, "ctrdata-using-mongodb-db")         <- db
-    attr(fieldname, "ctrdata-using-mongodb-collection") <- collection
-    attr(fieldname, "ctrdata-using-mongodb-username")   <- username
-    attr(fieldname, "ctrdata-created-timestamp")        <- as.POSIXct(Sys.time(), tz="UTC")
-    attr(fieldname, "ctrdata-from-dbqueryhistory")      <- dbQueryHistory(collection = collection, db = db, url = url,
-                                                                          username = username, password = password, verbose = FALSE)
+    fieldname <- addMetaData(fieldname,
+                             collection = collection, db = db, url = url,
+                             username = username, password = password)
+    #
     # return the first match / all matches
     return(fieldname)
     #
@@ -596,17 +586,13 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
   # prepare output
   #
   # avoid returning list() if none found
-  if(length(retids) == 0) retids <- character()
+  if (length(retids) == 0) retids <- character()
   #
 
   # add metadata
-  attr(retids, "ctrdata-using-mongodb-url")        <- url
-  attr(retids, "ctrdata-using-mongodb-db")         <- db
-  attr(retids, "ctrdata-using-mongodb-collection") <- collection
-  attr(retids, "ctrdata-using-mongodb-username")   <- username
-  attr(retids, "ctrdata-created-timestamp")        <- as.POSIXct(Sys.time(), tz="UTC")
-  attr(retids, "ctrdata-from-dbqueryhistory")      <- dbQueryHistory(collection = collection, db = db, url = url,
-                                                                     username = username, password = password, verbose = FALSE)
+  retids <- addMetaData(retids,
+                        collection = collection, db = db, url = url,
+                        username = username, password = password)
 
   # inform user
   message(paste0("Returning keys (_id) of ", length(retids), " records out of total of ", countall, " records in collection \"", collection, "\"."))
@@ -702,18 +688,21 @@ dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
     }, silent = FALSE)
     #
     if ((class(tmp) != "try-error") && (nrow(dfi) > 0)) {
-      #
+      # no error
       if (is.null(result)) {
         result <- dfi
       } else {
-        result <- merge(result, dfi, by = '_id', all = TRUE)
+        result <- merge(result, dfi, by = "_id", all = TRUE)
       }
       #
-    } else {# try-error occured
-      if(stopifnodata)
-        stop(paste0("For variable / field: ", item, " no data could be extracted, please check the contents of the database."))
+    } else {
+      # try-error occured
+      if (stopifnodata)
+        stop("For variable / field: ", item,
+             " no data could be extracted, please check the contents of the database.")
       else
-        warning(paste0("For variable / field: ", item, " no data could be extracted, please check the contents of the database."))
+        warning("For variable / field: ", item,
+                " no data could be extracted, please check the contents of the database.")
     }
   } # end for item in fields
 
@@ -721,18 +710,15 @@ dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
   rm(mongo); gc()
 
   # finalise output
-  if (is.null(result)) stop('No records found which had values for the specified fields.')
+  if (is.null(result)) stop("No records found which had values for the specified fields.")
 
   # some results were obtained
 
   # add metadata
-  attr(result, "ctrdata-using-mongodb-url")        <- url
-  attr(result, "ctrdata-using-mongodb-db")         <- db
-  attr(result, "ctrdata-using-mongodb-collection") <- collection
-  attr(result, "ctrdata-using-mongodb-username")   <- username
-  attr(result, "ctrdata-created-timestamp")        <- as.POSIXct(Sys.time(), tz="UTC")
-  attr(result, "ctrdata-from-dbqueryhistory")      <- dbQueryHistory(collection = collection, db = db, url = url,
-                                                                     username = username, password = password, verbose = FALSE)
+  result <- addMetaData(result,
+                        collection = collection, db = db, url = url,
+                        username = username, password = password)
+
   # notify user
   diff <- countall - nrow(result)
   if (diff > 0) warning(paste0(diff, " of ", countall, " records dropped which did not have values for any of the specified fields."))
@@ -775,9 +761,9 @@ dfMergeTwoVariablesRelevel <- function(df = NULL, varnames = "", levelslist = NU
   # find variables in data frame and merge
   tmp <- match(varnames, names(df))
   df <- df[, tmp]
-  df[,1] <- ifelse(is.na(tt <- df[ ,1]), "", tt)
-  df[,2] <- ifelse(is.na(tt <- df[ ,2]), "", tt)
-  tmp <- paste0(df[,1], df[,2])
+  df[ , 1] <- ifelse(is.na(tt <- df[ , 1]), "", tt)
+  df[ , 2] <- ifelse(is.na(tt <- df[ , 2]), "", tt)
+  tmp <- paste0(df[ , 1], df[ , 2])
 
   if (!is.null(levelslist)) {
 
@@ -909,18 +895,45 @@ dfFindUniqueEuctrRecord <- function(df = NULL, prefermemberstate = "GB", include
   result <- unlist(result)
 
   # eleminate the unwanted EUCTR records
-  df <- df [!(df [['_id']] %in% result), ]
+  df <- df [!(df [["_id"]] %in% result), ]
   # also eliminate the meta-info record
-  df <- df [!(df [['_id']] == "meta-info"), ]
+  df <- df [!(df [["_id"]] == "meta-info"), ]
 
   # inform user about changes to data frame
-  if (length(nms) > (tmp <- length(result))) message('Searching multiple country records: Found ', tmp, ' EUCTR _id that were not the preferred member state record(s) for the trial.')
+  if (length(nms) > (tmp <- length(result)))
+    message('Searching multiple country records: Found ', tmp,
+            ' EUCTR _id that were not the preferred member state record(s) for the trial.')
 
   # return
   return(df)
   #
 }
 # end dfFindUniqueEuctrRecord
+
+
+#' Title
+#'
+#' @param  x object to be annotated
+#' @inheritParams ctrMongo
+#'
+#' @keywords internal
+#'
+addMetaData <- function(x, url, db, collection, username, password) {
+
+  # add metadata
+  attr(x, "ctrdata-using-mongodb-url")        <- url
+  attr(x, "ctrdata-using-mongodb-db")         <- db
+  attr(x, "ctrdata-using-mongodb-collection") <- collection
+  attr(x, "ctrdata-using-mongodb-username")   <- username
+  attr(x, "ctrdata-created-timestamp")        <- as.POSIXct(Sys.time(), tz = "UTC")
+  attr(x, "ctrdata-from-dbqueryhistory")      <- dbQueryHistory(collection = collection, db = db, url = url,
+                                                                username = username, password = password,
+                                                                verbose = FALSE)
+
+  # return annotated object
+  return(x)
+}
+
 
 
 #' Convenience function to install a cygwin environment under MS Windows,
