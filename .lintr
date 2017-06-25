@@ -1,0 +1,5 @@
+with_defaults(
+ camel_case_linter = NULL, # prefer camel case
+ snake_case_linter,        # flag snake case
+ line_length_linter(120)   # long lines
+)
