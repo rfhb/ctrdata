@@ -37,3 +37,10 @@ addons:
 # https://github.com/travis-ci/apt-package-whitelist/issues/2287
 # new issue
 # https://github.com/travis-ci/apt-package-whitelist/issues/2825
+
+r_packages:
+  - covr
+
+after_success:
+  - Rscript -e 'library(covr); codecov()'
+
