@@ -120,18 +120,11 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   # remove trailing or leading whitespace
   queryterm <- gsub("^\\s+|\\s+$", "", queryterm)
 
-  # adapt warning length for . out in progressOut
-  outputlength <- getOption("max.print")
-  options("max.print" = 99999)
-
-  # initialise variable
-  failedtrials <- NULL
+  # initialise variable that is filled only if an update is to be made
+  queryupdateterm <- ""
 
 
   ## check if we need to rerun previous query
-
-  # initialise variable that is filled only if an update is to be made
-  queryupdateterm <- ""
 
   # check if parameters are consistent
   if ( (querytoupdate > 0) && (queryterm != "") ) warning("'query term' and 'querytoupdate' specified,",
@@ -728,7 +721,6 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
         # get failed trial
         trialfirstline <- readLines(gsub("^.+\"(.+?\\.json).+$", "\\1", json2split2mongo), n = 1, warn = FALSE)
         trialfirstline <- gsub("^.+([0-9]{4}-[0-9]{6}-[0-9]{2}).+$", "\\1", trialfirstline)
-        failedtrials <- c(failedtrials, trialfirstline)
         # inform user
         warning(paste0("Import into mongoDB failed for trial ", trialfirstline), immediate. = TRUE)
         cat()
