@@ -287,8 +287,21 @@ test_that("operations on database after download from register", {
   has_mongo()
   has_internet()
 
-  expect_message(dbFindIdsUniqueTrials(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
+  expect_message(dbFindVariable(namepart = "date",
+                                collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
+                 "Returning first of ")
+
+  expect_equal(is.na(dbFindVariable(namepart = "ThisNameShouldNotExistAnywhere",
+                                    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")),
+               TRUE)
+
+  expect_message(dbFindIdsUniqueTrials(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB",
+                                       preferregister = "EUCTR"),
                  "Searching multiple country records")
+
+  expect_message(dbFindIdsUniqueTrials(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB",
+                                       preferregister = "CTGOV"),
+                 "Returning keys")
 
   expect_error(dbGetVariablesIntoDf(fields = "ThisDoesNotExist",
                                     collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
@@ -306,9 +319,19 @@ test_that("operations on database after download from register", {
 # testing operations on minimalistic dataframes
 test_that("operations on data frame", {
 
-  df <- data.frame("var1" = 1, "var2" = 1)
+  df <- data.frame("var1" = 1:3, "var2" = 2:4, stringsAsFactors = FALSE)
 
-  expect_message(dfMergeTwoVariablesRelevel(df = df, varnames = c("var1", "var2")), "Unique values returned:")
-  expect_is     (dfMergeTwoVariablesRelevel(df = df, varnames = c("var1", "var2")), "character")
+  statusvalues <- list("Firstvalues" = c("12", "23"),
+                       "Lastvalue"   = c("34"))
+
+  expect_message(dfMergeTwoVariablesRelevel(df = df, varnames = c("var1", "var2")),
+                 "Unique values returned: 12, 23, 34")
+
+  expect_is     (dfMergeTwoVariablesRelevel(df = df, varnames = c("var1", "var2")),
+                 "character")
+
+  expect_message(dfMergeTwoVariablesRelevel(df = df, varnames = c("var1", "var2"),
+                                            levelslist = statusvalues),
+                 "Unique values returned: Firstvalues, Lastvalue")
 
 })
