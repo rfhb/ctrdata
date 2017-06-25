@@ -11,15 +11,7 @@ variablesEUCTR <- c("EudraCT Number", "Sponsor Protocol Number", "Sponsor Name",
 countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IS", "IE", "IT",
                     "LV", "LI", "LT", "LU", "MT", "NL", "NO", "PL", "PT", "RO", "SK", "SE", "SI", "ES", "GB",
                     "3RD")
-#
-# non-exported function(s)
-# is.queryterm <- function(x) {
-#   # check for valid characters. to avoid problems with the range in the grepl
-#   # test, replace square brackets in the string to be checked
-#   if (grepl('[^a-zA-Z0-9=+&%_-]', gsub('\\[', '', gsub('\\]', '', x))))
-#     stop('Unexpected characters in "', x, '", expected are: a-zA-Z0-9=+&%_-[].')
-#   return(NULL)
-# }
+
 
 
 #' This is a function to set up connections to a Mongo DB server, one for
@@ -62,7 +54,10 @@ ctrMongo <- function(collection = "ctrdata", db = "users", url = "mongodb://loca
   valueCtrKeysDb <- mongolite::mongo(collection = collectionKeys, db = db, url = mongourl, verbose = verbose)
 
   # inform user
-  if (verbose) message("Using Mongo DB (collections \"", collection, "\" and \"", collectionKeys, "\" in database \"", db, "\" on \"", host, "\").")
+  if (verbose) message("Using Mongo DB (collections \"", collection,
+                       "\" and \"", collectionKeys,
+                       "\" in database \"", db,
+                       "\" on \"", host, "\").")
 
   return(list("ctr" = valueCtrDb, "keys" = valueCtrKeysDb))
 }
@@ -210,26 +205,6 @@ ctrGetQueryUrlFromBrowser <- function(content = clipr::read_clip()) {
     #
     return(df)
   }
-  #
-  # # CTGOV beta 2017, e.g.
-  # # https://clinicaltrials.gov/beta/results?cond=&term=2010-024264-18&cntry1=&state1=&SearchAll=Search+all+studies&recrs=
-  # # https://clinicaltrials.gov/beta/results?cond=&term=2010-024264-18&cntry1=&state1=&SearchRecruiting=Find+a+study+to+participate+in&recrs=a
-  # # advanced
-  # # https://clinicaltrials.gov/beta/results?term=2010-024264-18&type=&rslt=&age_v=&gndr=&cond=&intr=&titles=&outc=&spons=&lead=&id=&cntry1=
-  # # &state1=&cntry2=&state2=&cntry3=&state3=&locn=&rcv_s=&rcv_e=&lup_s=&lup_e=
-  # if (grepl("https://clinicaltrials.gov/beta/results", content)) {
-  #   #
-  #   queryterm <- sub("https://clinicaltrials.gov/beta/results[?](.*)", "\\1", content)
-  #   queryterm <- sub("(.*)&Search[a-zA-Z]*=(Search|Find)[a-zA-Z+]*", "\\1", queryterm)
-  #   queryterm <- gsub("[a-z_0-9]+=&", "", queryterm)
-  #   queryterm <- sub("&[a-z_0-9]+=$", "", queryterm)
-  #   message("Found search query from CTGOV.")
-  #   #
-  #   df <- data.frame(cbind(queryterm, "CTGOV"), stringsAsFactors = FALSE)
-  #   names(df) <- c("query-term", "query-register")
-  #   #
-  #   return(df)
-  # }
   #
   warning("Content is not a clinical trial register search URL. Returning NULL.", immediate. = TRUE)
   return(NULL)
@@ -385,7 +360,8 @@ dbFindVariable <- function(namepart = "", allmatches = FALSE, forceupdate = FALS
       curl::curl_download(varietysourceurl, varietylocalurl)
     }
     # compose actual command to call mongo with variety.js
-    # mongo collection_to_analyse --quiet --eval "var collection = 'users', persistResults=true, resultsDatabase='db.example.com/variety' variety.js
+    # mongo collection_to_analyse --quiet --eval "var collection = 'users',
+    #  persistResults=true, resultsDatabase='db.example.com/variety' variety.js
     varietymongo <- paste0(' "', sub("mongodb://(.+)", "\\1", url), "/", db, '"',
                            ifelse(username != "", paste0(' --username ="', username, '"'), ""),
                            ifelse(password != "", paste0(' --password ="', password, '"'), ""),
@@ -417,13 +393,13 @@ dbFindVariable <- function(namepart = "", allmatches = FALSE, forceupdate = FALS
     #
     # mongo get fieldnames into vector (no other solution found)
     fieldnames <- mongo[["keys"]]$find(fields = '{"key": 1}')
-    fieldnames <- fieldnames[1:nrow(fieldnames), ]
+    fieldnames <- fieldnames[seq_len(nrow(fieldnames)), ]
     fieldnames <- as.vector(fieldnames[["key"]])
     #
     # actually now find fieldnames
     fieldname <- fieldnames[grepl(tolower(namepart), tolower(fieldnames))]
     if (!allmatches) {
-      if ((tmp <- length(fieldname)) > 1) message(paste0("Returning first of ", tmp, " keys found."))
+      if ( (tmp <- length(fieldname)) > 1) message(paste0("Returning first of ", tmp, " keys found."))
       fieldname <- fieldname[1]
     }
     #
@@ -506,16 +482,21 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
   )
   if (class(listofEUCTRids) == "try-error") listofEUCTRids <- NULL
   if ( is.null(listofEUCTRids)) message("No EUCTR records found.")
-  if (!is.null(listofEUCTRids)) listofEUCTRids <- listofEUCTRids[grepl("[0-9]{4}-[0-9]{6}-[0-9]{2}-[3A-Z]{2,3}", listofEUCTRids[["_id"]]), ]
+  if (!is.null(listofEUCTRids)) listofEUCTRids <-
+    listofEUCTRids[grepl("[0-9]{4}-[0-9]{6}-[0-9]{2}-[3A-Z]{2,3}", listofEUCTRids[["_id"]]), ]
 
   # 2. find unique, preferred country version of euctr
-  if (!is.null(listofEUCTRids)) listofEUCTRids <- dfFindUniqueEuctrRecord(df = listofEUCTRids,
-                                                                         prefermemberstate = prefermemberstate,
-                                                                         include3rdcountrytrials = include3rdcountrytrials)
+  if (!is.null(listofEUCTRids)) listofEUCTRids <-
+    dfFindUniqueEuctrRecord(df = listofEUCTRids,
+                            prefermemberstate = prefermemberstate,
+                            include3rdcountrytrials = include3rdcountrytrials)
 
   # 3. get ctrgov records
-  listofCTGOVids <- mongo$iterate(query = '{"_id": {"$regex": "NCT[0-9]{8}"}}',
-                                  fields = '{"id_info.org_study_id": 1, "id_info.secondary_id": 1, "id_info.nct_alias": 1}')$batch(size = mongo$count())
+  listofCTGOVids <- mongo$iterate(
+    query = '{"_id": {"$regex": "NCT[0-9]{8}"}}',
+    fields = '{"id_info.org_study_id": 1, "id_info.secondary_id": 1, "id_info.nct_alias": 1}'
+    )$batch(size = mongo$count())
+
   if (is.null(listofCTGOVids)) message("No CTGOV records found.")
   # close database connection
   rm(mongo); gc()
@@ -536,56 +517,77 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
     # 6. select records from preferred register
     if (preferregister == "EUCTR") {
       #
-      # b.2 - ctgov in euctr (_id corresponds to index 1)
-      dupes.b.2 <- sapply(listofCTGOVids, "[[", 1) %in% listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]
-      if (verbose) message("Searching duplicates: Found ", sum(dupes.b.2),
-                          " CTGOV _id in EUCTR a52_us_nct_clinicaltrialsgov_registry_number")
+      # b2 - ctgov in euctr (_id corresponds to index 1)
+      dupes_b2 <- sapply(listofCTGOVids, "[[", 1) %in% listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]
       #
-      # a.2 - ctgov in euctr a2_...
-      dupes.a.2 <- sapply(lapply(listofCTGOVids, function(x) sub(".*([0-9]{4}-[0-9]{6}-[0-9]{2}).*", "\\1", unlist(x[["id_info"]]))),
-                          function(x) any(x %in% listofEUCTRids[["a2_eudract_number"]]))
-      if (verbose) message("Searching duplicates: Found ", sum(dupes.a.2),
-                          " CTGOV otherids (secondary_id, nct_alias, org_study_id) in EUCTR a2_eudract_number")
+      if (verbose) message("Searching duplicates: Found ", sum(dupes_b2),
+                           " CTGOV _id in EUCTR a52_us_nct_clinicaltrialsgov_registry_number")
+      #
+      # a2 - ctgov in euctr a2_...
+      dupes_a2 <- sapply(lapply(listofCTGOVids, function(x) sub(".*([0-9]{4}-[0-9]{6}-[0-9]{2}).*",
+                                                                "\\1", unlist(x[["id_info"]]))),
+                         function(x) any(x %in% listofEUCTRids[["a2_eudract_number"]]))
+      #
+      if (verbose) message("Searching duplicates: Found ", sum(dupes_a2),
+                           " CTGOV otherids (secondary_id, nct_alias, org_study_id) in EUCTR a2_eudract_number")
       #
       # c.2 - ctgov in euctr a52_... (id_info corresponds to index 2)
-      dupes.c.2 <- sapply(lapply(listofCTGOVids, "[[", 2),
-                          function(x) any(unlist(x) %in% listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]))
-      if (verbose) message("Searching duplicates: Found ", sum(dupes.c.2),
-                          " CTGOV otherids (secondary_id, nct_alias, org_study_id) in EUCTR a52_us_nct_clinicaltrialsgov_registry_number")
+      dupes_c2 <- sapply(lapply(listofCTGOVids, "[[", 2),
+                         function(x) any(unlist(x) %in%
+                         listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]))
+      #
+      if (verbose) message("Searching duplicates: Found ", sum(dupes_c2),
+                           " CTGOV otherids (secondary_id, nct_alias, org_study_id) in",
+                           " EUCTR a52_us_nct_clinicaltrialsgov_registry_number")
       #
       # d.2 - ctgov in euctr a51_... (id_info corresponds to index 2)
-      dupes.d.2 <- sapply(lapply(listofCTGOVids, "[[", 2),
-                          function(x) any(unlist(x) %in% listofEUCTRids[["a51_isrctn_international_standard_randomised_controlled_trial_number"]]))
-      if (verbose) message("Searching duplicates: Found ", sum(dupes.d.2),
-                          " CTGOV otherids (secondary_id, nct_alias, org_study_id) in EUCTR a51_isrctn_international_standard_randomised_controlled_trial_number")
+      dupes_d2 <- sapply(lapply(listofCTGOVids, "[[", 2),
+                         function(x) any(unlist(x) %in%
+                         listofEUCTRids[["a51_isrctn_international_standard_randomised_controlled_trial_number"]]))
       #
-      retids <- c(listofEUCTRids[["_id"]],  sapply(listofCTGOVids, "[[", 1) [!dupes.a.2 & !dupes.b.2 & !dupes.c.2 & !dupes.d.2])
+      if (verbose) message("Searching duplicates: Found ", sum(dupes_d2),
+                           " CTGOV otherids (secondary_id, nct_alias, org_study_id) in ",
+                           " EUCTR a51_isrctn_international_standard_randomised_controlled_trial_number")
+      #
+      retids <- c(listofEUCTRids[["_id"]], sapply(listofCTGOVids, "[[", 1) [
+        !dupes_a2 & !dupes_b2 & !dupes_c2 & !dupes_d2])
       #
     }
     #
     if (preferregister == "CTGOV") {
       #
       # a.1 - euctr in ctgov (id_info corresponds to index 2)
-      dupes.a.1 <- listofEUCTRids[["a2_eudract_number"]] %in% sub(".*([0-9]{4}-[0-9]{6}-[0-9]{2}).*", "\\1", unlist(sapply(listofCTGOVids, "[[", 2)))
-      if (verbose) message("Searching duplicates: Found ", sum(dupes.a.1),
+      dupes_a1 <- listofEUCTRids[["a2_eudract_number"]] %in% sub(".*([0-9]{4}-[0-9]{6}-[0-9]{2}).*",
+                                                                "\\1", unlist(sapply(listofCTGOVids, "[[", 2)))
+      #
+      if (verbose) message("Searching duplicates: Found ", sum(dupes_a1),
                            " EUCTR _id in CTGOV otherids (secondary_id, nct_alias, org_study_id)")
       #
       # b.1 - euctr in ctgov (_id corresponds to index 1)
-      dupes.b.1 <- listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]] %in% sapply(listofCTGOVids, "[[", 1)
-      if (verbose) message("Searching duplicates: Found ", sum(dupes.b.1),
+      dupes_b1 <- listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]] %in%
+                  sapply(listofCTGOVids, "[[", 1)
+      #
+      if (verbose) message("Searching duplicates: Found ", sum(dupes_b1),
                            " EUCTR a52_us_nct_clinicaltrialsgov_registry_number in CTOGV _id")
       #
       # c.1 - euctr in ctgov (id_info corresponds to index 2)
-      dupes.c.1 <- listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]] %in% unlist(sapply(listofCTGOVids, "[[", 2))
-      if (verbose) message("Searching duplicates: Found ", sum(dupes.c.1),
-                           " EUCTR a52_us_nct_clinicaltrialsgov_registry_number in CTOGV otherids (secondary_id, nct_alias, org_study_id)")
+      dupes_c1 <- listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]] %in%
+                  unlist(sapply(listofCTGOVids, "[[", 2))
+      #
+      if (verbose) message("Searching duplicates: Found ", sum(dupes_c1),
+                           " EUCTR a52_us_nct_clinicaltrialsgov_registry_number in",
+                           " CTOGV otherids (secondary_id, nct_alias, org_study_id)")
       #
       # d.1 - euctr in ctgov (id_info corresponds to index 2)
-      dupes.d.1 <- listofEUCTRids[["a51_isrctn_international_standard_randomised_controlled_trial_number"]] %in% unlist(sapply(listofCTGOVids, "[[", 2))
-      if (verbose) message("Searching duplicates: Found ", sum(dupes.c.1),
-                           " EUCTR a51_isrctn_international_standard_randomised_controlled_trial_number in CTOGV otherids (secondary_id, nct_alias, org_study_id)")
+      dupes_d1 <- listofEUCTRids[["a51_isrctn_international_standard_randomised_controlled_trial_number"]] %in%
+                  unlist(sapply(listofCTGOVids, "[[", 2))
       #
-      retids <- c(sapply(listofCTGOVids, "[[", 1), listofEUCTRids[["_id"]] [!dupes.a.1 & !dupes.b.1 & !dupes.c.1 & !dupes.d.1])
+      if (verbose) message("Searching duplicates: Found ", sum(dupes_d1),
+                           " EUCTR a51_isrctn_international_standard_randomised_controlled_trial_number ",
+                           " in CTOGV otherids (secondary_id, nct_alias, org_study_id)")
+      #
+      retids <- c(sapply(listofCTGOVids, "[[", 1), listofEUCTRids[["_id"]] [
+        !dupes_a1 & !dupes_b1 & !dupes_c1 & !dupes_d1])
       #
     }
   } else {
@@ -606,7 +608,9 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
                         username = username, password = password)
 
   # inform user
-  message(paste0("Returning keys (_id) of ", length(retids), " records out of total of ", countall, " records in collection \"", collection, "\"."))
+  message(paste0("Returning keys (_id) of ", length(retids),
+                 " records out of total of ", countall,
+                 " records in collection \"", collection, "\"."))
   #
   return(retids)
 
@@ -661,10 +665,13 @@ dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
                                  collection = "ctrdata", db = "users", url = "mongodb://localhost",
                                  username = "", password = "", verbose = FALSE,
                                  stopifnodata = TRUE) {
-  #
+
+  # check parameters
   if (!is.vector(fields) | class(fields) != "character") stop("Input should be a vector of strings of field names.")
-  if (any(fields == "", na.rm = TRUE)) stop(paste("'fields' contains empty elements; please provide a vector of strings of field names.",
-                                                  "Function dbFindVariable() can be used to find field names."))
+  #
+  if (any(fields == "", na.rm = TRUE)) stop("'fields' contains empty elements; ",
+                                            " please provide a vector of strings of field names.",
+                                            " Function dbFindVariable() can be used to find field names.")
 
   # get a working mongo connection, select trial record collection
   mongo <- ctrMongo(collection = collection, db = db, url = url,
@@ -698,7 +705,7 @@ dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
       #
     }, silent = FALSE)
     #
-    if ((class(tmp) != "try-error") && (nrow(dfi) > 0)) {
+    if ( (class(tmp) != "try-error") && (nrow(dfi) > 0) ) {
       # no error
       if (is.null(result)) {
         result <- dfi
@@ -732,7 +739,8 @@ dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
 
   # notify user
   diff <- countall - nrow(result)
-  if (diff > 0) warning(paste0(diff, " of ", countall, " records dropped which did not have values for any of the specified fields."))
+  if (diff > 0) warning(diff, " of ", countall,
+                        " records dropped which did not have values for any of the specified fields.")
 
   # return
   return(result)
@@ -791,7 +799,7 @@ dfMergeTwoVariablesRelevel <- function(df = NULL, varnames = "", levelslist = NU
     tmp <- as.factor(tmp)
 
     # apply helperfunction to elements of the list
-    for (i in 1:length(levelslist)) {
+    for (i in seq_len(length(levelslist))) {
       tmp <- refactor(tmp, unlist(levelslist[i]), attr(levelslist[i], "names"))
     }
 
@@ -800,7 +808,7 @@ dfMergeTwoVariablesRelevel <- function(df = NULL, varnames = "", levelslist = NU
 
   }
 
-  if(length(tt <- unique(tmp)) > 10)
+  if (length(tt <- unique(tmp)) > 10)
     message("Unique values returned (limited to ten): ", paste(tt[1:10], collapse = ", "))
   else
     message("Unique values returned: ", paste(tt, collapse = ", "))
@@ -840,16 +848,23 @@ dfMergeTwoVariablesRelevel <- function(df = NULL, varnames = "", levelslist = NU
 #' @keywords internal
 #
 dfFindUniqueEuctrRecord <- function(df = NULL, prefermemberstate = "GB", include3rdcountrytrials = TRUE) {
-  #
+
+  # check parameters
   if (class(df) != "data.frame") stop("Parameter df is not a data frame.")
-  if (is.null(df [["_id"]]) || is.null(df$a2_eudract_number)) stop('Data frame does not include "_id" and "a2_eudract_number" columns.')
+  #
+  if (is.null(df [["_id"]]) || is.null(df$a2_eudract_number)) stop('Data frame does not include "_id"',
+                                                                   ' and "a2_eudract_number" columns.')
+  #
   if (nrow(df) == 0) stop("Data frame does not contain records (0 rows).")
-  if (!(prefermemberstate %in% countriesEUCTR)) stop("Value specified for prefermemberstate does not match one of the recognised codes: ",
+  #
+  if (!(prefermemberstate %in% countriesEUCTR)) stop("Value specified for prefermemberstate does not match",
+                                                     " one of the recognised codes: ",
                                                      paste (sort (countriesEUCTR), collapse = ", "))
 
   # notify it mismatching parameters
-  if(prefermemberstate == "3RD" & !include3rdcountrytrials) {
-    warning("Preferred EUCTR version set to 3RD country trials, but include3rdcountrytrials was FALSE, setting to TRUE.", call. = FALSE, noBreaks. = FALSE)
+  if (prefermemberstate == "3RD" & !include3rdcountrytrials) {
+    warning("Preferred EUCTR version set to 3RD country trials, but include3rdcountrytrials was FALSE,",
+            " setting to TRUE.", call. = FALSE, noBreaks. = FALSE)
     include3rdcountrytrials <- TRUE
   }
 
@@ -912,8 +927,8 @@ dfFindUniqueEuctrRecord <- function(df = NULL, prefermemberstate = "GB", include
 
   # inform user about changes to data frame
   if (length(nms) > (tmp <- length(result)))
-    message('Searching multiple country records: Found ', tmp,
-            ' EUCTR _id that were not the preferred member state record(s) for the trial.')
+    message("Searching multiple country records: Found ", tmp,
+            " EUCTR _id that were not the preferred member state record(s) for the trial.")
 
   # return
   return(df)
@@ -968,53 +983,55 @@ addMetaData <- function(x, url, db, collection, username, password) {
 installCygwinWindowsDoInstall <- function(force = FALSE, proxy = ""){
   #
   if (.Platform$OS.type != "windows")    stop("This function is only for MS Windows operating systems.")
-  if (!force & dir.exists("c:\\cygwin")) stop("cygwin is already installed. To overwrite, call this function with force = TRUE.")
+  if (!force & dir.exists("c:\\cygwin")) stop("cygwin is already installed. To overwrite, use force = TRUE.")
   #
   # create directory within R sessions temporary directory
-  tmpfile <- paste0(tempdir(), '/cygwin_inst')
+  tmpfile <- paste0(tempdir(), "/cygwin_inst")
   dir.create(tmpfile)
   dstfile <- paste0(tmpfile, "/cygwinsetup.exe")
   #
   # download.file uses the proxy configured in the system
-  if (grepl("64-bit", utils::sessionInfo()$platform)) utils::download.file(url = "http://cygwin.org/setup-x86_64.exe", destfile = dstfile, quiet = TRUE, mode = "wb")
-  if (grepl("32-bit", utils::sessionInfo()$platform)) utils::download.file(url = "http://cygwin.org/setup-x86.exe",    destfile = dstfile, quiet = TRUE, mode = "wb")
+  if (grepl("64-bit", utils::sessionInfo()$platform))
+    utils::download.file(url = "http://cygwin.org/setup-x86_64.exe", destfile = dstfile, quiet = TRUE, mode = "wb")
+  if (grepl("32-bit", utils::sessionInfo()$platform))
+    utils::download.file(url = "http://cygwin.org/setup-x86.exe",    destfile = dstfile, quiet = TRUE, mode = "wb")
   #
   # check
-  if (!file.exists(dstfile))         stop("Download failed. Please install manually.")
-  if (file.size(dstfile) < 5*10 ^ 5) stop("Download seems to have failed (file too small). Please install manually.")
+  if (!file.exists(dstfile))             stop("Download failed. Please install manually.")
+  if (file.size(dstfile) < (5 * 10 ^ 5)) stop("Download failed (file too small). Please install manually.")
   #
   if (proxy != "") {
     # manual setting overrides all
-    proxy <- paste0('--proxy ', proxy)
+    proxy <- paste0(" --proxy ", proxy)
     message("Setting cygwin proxy install argument to: ", proxy, ", based on provided parameter.")
   } else {
     # detect proxy to be used, automatically or manually configured?
     # find and use proxy settings for actually running the cygwin setup
     # - Windows 7 see https://msdn.microsoft.com/en-us/library/cc980059.aspx
     # - Windows 10 see
-    tmp <- utils::readRegistry('Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings', hive = "HCU")
+    tmp <- utils::readRegistry("Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", hive = "HCU")
     #
     if (!is.null(tmp)) {
       #
       if (length (tmp$AutoConfigURL) > 0) {
         # retrieve settings
-        proxypacfile <- paste0(tmpfile, '/pacfile.txt')
+        proxypacfile <- paste0(tmpfile, "/pacfile.txt")
         utils::download.file(tmp$AutoConfigURL, proxypacfile)
         # for testing: proxypacfile <- "private/proxypacfile"
         # find out and select last mentioned proxy line
         proxypac <- readLines(proxypacfile)
-        proxypac <- proxypac[grepl('PROXY', proxypac)]
+        proxypac <- proxypac[grepl("PROXY", proxypac)]
         proxypac <- proxypac[length(proxypac)]
-        proxy <- sub('.*PROXY ([0-9]+.[0-9]+.[0-9]+.[0-9]+:[0-9]+).*', '\\1', proxypac)
-        if (proxy == '') stop('A proxy could not be identified from the automatic configuration script used by the system.',
+        proxy <- sub(".*PROXY ([0-9]+.[0-9]+.[0-9]+.[0-9]+:[0-9]+).*", "\\1", proxypac)
+        if (proxy == "") stop("A proxy could not be identified using the system\'s automatic configuration script.",
                               ' Please set manually: installCygwinWindowsDoInstall (proxy = "host_or_ip:port"')
-        proxy <- paste0('--proxy ', proxy)
-        message("Automatically setting cygwin proxy install argument to: ", proxy, ", based on AutoConfigProxy in registry.")
+        proxy <- paste0(" --proxy ", proxy)
+        message("Automatically setting cygwin proxy to: ", proxy, ", based on AutoConfigProxy in registry.")
         #
       } else {
         if (!is.null(tmp$ProxyServer)) {
-          proxy <- paste0('--proxy ', tmp$ProxyServer)
-          message("Automatically setting cygwin proxy install argument to: ", proxy, ", based on ProxyServer in registry.")
+          proxy <- paste0(" --proxy ", tmp$ProxyServer)
+          message("Automatically setting cygwin proxy to: ", proxy, ", based on ProxyServer in registry.")
           #
         } else {
           message("Proxy not set, could not use ProxyServer or AutoConfigProxy in registry.")
@@ -1025,10 +1042,12 @@ installCygwinWindowsDoInstall <- function(force = FALSE, proxy = ""){
   }
   #
   # compose installation command
-  installcmd <- "--no-admin --quiet-mode --verbose --upgrade-also --root c:/cygwin --site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages perl,php-jsonc,php-simplexml"
+  installcmd <- paste0("--no-admin --quiet-mode --verbose --upgrade-also --root c:/cygwin ",
+                       "--site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ ",
+                       "--packages perl,php-jsonc,php-simplexml")
   #
   # execute cygwin setup command
-  system(paste0(dstfile, " ", installcmd, " --local-package-dir ", tmpfile, ' ', proxy))
+  system(paste0(dstfile, " ", installcmd, " --local-package-dir ", tmpfile, " ", proxy))
   #
   # test cygwin installation
   installCygwinWindowsTest()
@@ -1078,9 +1097,7 @@ installCygwinWindowsTest <- function() {
 #
 installMongoFindBinaries <- function(mongoDirWin = "c:\\mongo\\bin\\", debug = FALSE) {
   #
-  # for debugging
-  # mongoBinaryLocation <- "/usr/local/bin/"
-  environ <- .privateEnv #.GlobalEnv # .privateEnv
+  environ <- .privateEnv
   #
   binaries <- paste0(c("mongo", "mongoimport"), ifelse(.Platform$OS.type != "windows", "", ".exe"))
   #
@@ -1088,7 +1105,7 @@ installMongoFindBinaries <- function(mongoDirWin = "c:\\mongo\\bin\\", debug = F
       && !is.na(get("mongoBinaryLocation", envir = environ))
       && file.exists(paste0(get("mongoBinaryLocation", envir = environ), binaries[1]))) {
     #
-    if(debug) message("mongoimport / mongo is in ", get("mongoBinaryLocation", envir = environ))
+    if (debug) message("mongoimport / mongo is in ", get("mongoBinaryLocation", envir = environ))
     #
   } else {
     #
@@ -1099,7 +1116,7 @@ installMongoFindBinaries <- function(mongoDirWin = "c:\\mongo\\bin\\", debug = F
         && file.exists(paste0(mongoDirWin, binaries[1]))) {
       #
       assign("mongoBinaryLocation", mongoDirWin, envir = environ)
-      if(debug) message("mongoimport / mongo is in ", mongoDirWin)
+      if (debug) message("mongoimport / mongo is in ", mongoDirWin)
       #
     } else {
       #
@@ -1108,36 +1125,37 @@ installMongoFindBinaries <- function(mongoDirWin = "c:\\mongo\\bin\\", debug = F
       #
       # first test for binary in the path
       tmp <- try(if (.Platform$OS.type != "windows") {
-        system('mongoimport --version', intern = TRUE)
+        system("mongoimport --version", intern = TRUE)
       } else {
-        system('mongoimport.exe --version', intern = TRUE)
+        system("mongoimport.exe --version", intern = TRUE)
       }, silent = TRUE)
       #
       if (class(tmp) != "try-error") {
         #
         # found it in the path, save empty location string in package environment
-        if(debug) message("mongoimport / mongo found in the path.")
+        if (debug) message("mongoimport / mongo found in the path.")
         assign("mongoBinaryLocation", "", envir = environ)
         #
       } else {
         #
-        if(debug) message("mongoimport / mongo not found in path.")
+        if (debug) message("mongoimport / mongo not found in path.")
         #
-        if (.Platform$OS.type != "windows") stop("Cannot continue. Search function is only for MS Windows operating systems.")
+        if (.Platform$OS.type != "windows") stop("Cannot continue. Search function is only for MS Windows.")
         #
         # second search for folder into which mongo was installed
-        location <- utils::readRegistry('SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Installer\\Folders', hive = "HLM")
+        location <-
+          utils::readRegistry("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Installer\\Folders", hive = "HLM")
         location <- names(location)
         location <- location[grepl("Mongo", location)]
         location <- location[grepl("bin", location)]
         #
-        tmp <- file.exists(paste0(location, 'mongoimport.exe'))
+        tmp <- file.exists(paste0(location, "mongoimport.exe"))
         #
         if (!tmp) stop("Cannot continue. mongoimport not found recorded in the registry, ", location, ".")
         #
         # found it, save in package environment
         assign("mongoBinaryLocation", location, envir = environ)
-        if(debug) message("mongoimport / mongo found in ", location)
+        if (debug) message("mongoimport / mongo found in ", location)
         #
       }
     }
@@ -1176,9 +1194,9 @@ installMongoCheckVersion <- function(collection = "ctrdata", db = "users", url =
     #
   } else {
     #
-    warning("mongodb not version 3. Earlier versions have limitations that may break function ctrLoadQueryIntoDb() in package ctrdata.\n",
-            "Please upgrade, see http://docs.mongodb.org/manual/installation/. \n Trying to continue.",
-            "Support for versions other than 3 may be discontinued.", immediate. = TRUE)
+    warning("mongodb not version 3. Earlier versions have limitations that may break function ctrLoadQueryIntoDb()",
+            " in package ctrdata.\nPlease upgrade, see http://docs.mongodb.org/manual/installation/. \n",
+            "Trying to continue. Support for versions other than 3 may be discontinued.", immediate. = TRUE)
     return(FALSE)
   }
   #
@@ -1204,9 +1222,10 @@ installFindBinary <- function(commandtest = NULL, debug = FALSE) {
   #
   if (is.null(commandtest)) stop ("Empty argument: commandtest")
   #
-  if (.Platform$OS.type == "windows") commandtest <- paste0("cmd.exe /c c:\\cygwin\\bin\\bash.exe --login -c ", shQuote(commandtest))
+  if (.Platform$OS.type == "windows") commandtest <-
+      paste0("cmd.exe /c c:\\cygwin\\bin\\bash.exe --login -c ", shQuote(commandtest))
   #
-  if(debug) print(commandtest)
+  if (debug) print(commandtest)
   #
   commandresult <- try(
     system(commandtest, intern = TRUE),
@@ -1216,12 +1235,11 @@ installFindBinary <- function(commandtest = NULL, debug = FALSE) {
   commandreturn <- ifelse (class(commandresult) == "try-error" ||
                              grepl("error", tolower(paste(commandresult, collapse = " "))), FALSE, TRUE)
   #
-  if(!commandreturn) warning(commandtest, " not found.")
+  if (!commandreturn) warning(commandtest, " not found.")
   #
-  if(debug) print(commandresult)
+  if (debug) print(commandresult)
   #
   return(commandreturn)
   #
 }
 # end installFindBinary
-

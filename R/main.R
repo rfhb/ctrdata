@@ -312,7 +312,7 @@ progressOut <- function(down, up) {
   #
   # helper function to show progress while downloading
   #
-  if(stats::runif(1) < 0.001) cat(".")
+  if (stats::runif(1) < 0.001) cat(".")
   #
 }
 
@@ -333,7 +333,7 @@ dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber,
                                     mongo = mongo){
 
   # debug
-  if(verbose) message("Running dbCTRUpdateQueryHistory ...")
+  if (verbose) message("Running dbCTRUpdateQueryHistory ...")
 
   # retrieve existing history data
   hist <- suppressMessages(
@@ -342,7 +342,7 @@ dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber,
   )
 
   # debug
-  if(verbose) print(hist)
+  if (verbose) print(hist)
 
   # append current search
   hist <- rbind(hist, cbind ("query-timestamp" = format(Sys.time(), "%Y-%m-%d-%H-%M-%S"),
@@ -354,13 +354,13 @@ dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber,
   json <- jsonlite::toJSON(list("queries" = hist))
 
   # debug
-  if(verbose) cat(json)
+  if (verbose) cat(json)
 
   # get a working mongo connection, select trial record collection
   mongo <- ctrMongo(collection = collection, db = db, url = url,
                     username = username, password = password, verbose = TRUE)[["ctr"]]
 
-  # update(query, update = '{"$set":{}}', upsert = FALSE, multiple = FALSE)
+  # update database
   mongo$update(query = '{"_id":{"$eq":"meta-info"}}',
                update = paste0('{ "$set" :', json, "}"),
                upsert = TRUE)
@@ -397,7 +397,6 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   # CTGOV standard identifiers
   queryUSRoot   <- "https://clinicaltrials.gov/"
   queryUSType1  <- "ct2/results/download?"
-  #queryUSPreCSV <- "&down_stds=all&down_typ=fields&down_flds=all&down_fmt=csv"
   queryUSPreXML <- "&down_stds=all&down_typ=study&down_flds=all&down_fmt=xml"
   # next line to include any available result-related information within the XML
   # queryUSPreXML <- "down_stds=all&down_typ=results&down_flds=all&down_fmt=plain"
@@ -420,10 +419,11 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   # &type=Intr&cond=ependymoma&age=0&lup_s=12%2F01%2F2014& || show_down=Y
 
   # CTGOV field names - use NCT for mongodb index
-  fieldsCTGOV  <- c("Rank","NCT Number","Title","Recruitment","Study Results","Conditions","Interventions","Sponsor/Collaborators",
-                    "Gender","Age Groups","Phases","Enrollment","Funded Bys","Study Types","Study Designs","Other IDs","First Received",
-                    "Start Date","Completion Date","Last Updated","Last Verified","Results First Received","Acronym",
-                    "Primary Completion Date","Outcome Measures","URL")
+  fieldsCTGOV  <- c("Rank", "NCT Number", "Title", "Recruitment", "Study Results", "Conditions", "Interventions",
+                    "Sponsor/Collaborators", "Gender", "Age Groups", "Phases", "Enrollment", "Funded Bys",
+                    "Study Types", "Study Designs", "Other IDs", "First Received", "Start Date", "Completion Date",
+                    "Last Updated", "Last Verified", "Results First Received", "Acronym", "Primary Completion Date",
+                    "Outcome Measures", "URL")
   fieldsCTGOV <- sub("NCT Number", "_id", fieldsCTGOV)
   write(fieldsCTGOV, paste0(tempDir, "/field_names.txt"))
 
@@ -432,29 +432,31 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
 
     # get result file and unzip into folder
     message("Downloading trials from CTGOV as xml ", appendLF = FALSE)
-    ctgovdownloadcsvurl <- paste0(queryUSRoot, queryUSType1, queryUSPreXML, "&", queryterm, queryupdateterm, queryUSPost)
+    ctgovdownloadcsvurl <- paste0(queryUSRoot, queryUSType1, queryUSPreXML, "&",
+                                  queryterm, queryupdateterm, queryUSPost)
     if (debug) message ("DEBUG: ", ctgovdownloadcsvurl)
     #
     f <- paste0(tempDir, "/ctgov.zip")
     #
-    # h <- curl::new_handle()
-    # curl::handle_setopt(h, ssl_verifypeer = FALSE)
-    # curl::curl_download(ctgovdownloadcsvurl, destfile = f, mode = "wb", handle = h, quiet = (getOption("internet.info") >= 2))
-    #
-    h    <- RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE)) # avoiding server certificate failure when queried from outside EU
-    fref <- RCurl::CFILE(f, mode="wb")
-    tmp  <- RCurl::curlPerform(url = ctgovdownloadcsvurl, writedata = fref@ref, noprogress=FALSE, progressfunction = progressOut, curl = h)
+    h    <- RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE)) # avoid certificate failure from outside EU
+    fref <- RCurl::CFILE(f, mode = "wb")
+    tmp  <- RCurl::curlPerform(url = ctgovdownloadcsvurl,
+                               writedata = fref@ref,
+                               noprogress = FALSE,
+                               progressfunction = progressOut,
+                               curl = h)
     RCurl::close(fref)
     #
-    if (file.size(f) == 0) stop("No studies downloaded. Please check parameter 'queryterm' or run again with debug = TRUE.")
+    if (file.size(f) == 0) stop("No studies downloaded. Please check 'queryterm' or run again with debug = TRUE.")
     utils::unzip(f, exdir = tempDir)
 
     # compose commands - transform xml into json, a single allfiles.json in the temporaray directory
     xml2json <- system.file("exec/xml2json.php", package = "ctrdata", mustWork = TRUE)
     xml2json <- paste0("php -f ", xml2json, " ", tempDir)
-    json2mongo <- paste0(' --host="', sub("mongodb://(.+)", "\\1", url), '" --db="', db, '" --collection="', collection, '"',
-                         ifelse(username != "", paste0(' --username="', username, '"'), ''),
-                         ifelse(password != "", paste0(' --password="', password, '"'), ''),
+    json2mongo <- paste0(' --host="', sub("mongodb://(.+)", "\\1", url),
+                         '" --db="', db, '" --collection="', collection, '"',
+                         ifelse(username != "", paste0(' --username="', username, '"'), ""),
+                         ifelse(password != "", paste0(' --password="', password, '"'), ""),
                          ' --upsert --type=json --file="', tempDir, '/allfiles.json"',
                          ifelse(installMongoCheckVersion(), "", " --jsonArray"))
 
@@ -517,7 +519,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
     # retain _id's for updating
     cursor <- sapply(cursor, function(x) as.vector(unlist(x[1])))
     # iterate over list items
-    for(i in 1:length(cursor)) {
+    for (i in seq_len(length(cursor))) {
       # replace double square brackets around array
       tmp <- sub("\\[\\[", "[", sub("\\]\\]", "]", jsonlite::toJSON(list("otherids" = otherids[[i]]))))
       # upsert
@@ -598,13 +600,17 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   queryEuPost  <- "&mode=current_page&format=text&dContent=summary&number=current_page&submit-download=Download"
 
   # get first result page
-  h <- RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE)) # avoiding server certificate failure when queried from outside EU
+  h <- RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE)) # avoid certificate failure from outside EU
   resultsEuPages <- RCurl::getURL(paste0(queryEuRoot, queryEuType1, queryterm), curl = h)
   resultsEuNumTrials <- sub(".*Trials with a EudraCT protocol \\(([0-9,.]*)\\).*", "\\1", resultsEuPages)
   resultsEuNumTrials <- suppressWarnings(as.numeric(gsub("[,.]", "", resultsEuNumTrials)))
-  resultsEuNumPages  <- ceiling(resultsEuNumTrials / 20) # this is simpler than parsing "next" or "last" links
-  if (is.na(resultsEuNumPages) || is.na(resultsEuNumTrials) || resultsEuNumTrials == 0) stop("First result page empty - no (new) trials found?")
-  message("Retrieved overview, ", resultsEuNumTrials, " trial(s) from ", resultsEuNumPages, " page(s) are to be downloaded.")
+  resultsEuNumPages  <- ceiling(resultsEuNumTrials / 20) # alternative: parsing "next" and "last" links
+  #
+  if (is.na(resultsEuNumPages) || is.na(resultsEuNumTrials) || resultsEuNumTrials == 0)
+    stop("First result page empty - no (new) trials found?")
+  #
+  message("Retrieved overview, ", resultsEuNumTrials, " trial(s) from ",
+          resultsEuNumPages, " page(s) are to be downloaded.")
 
   # get data
   resultsNumBatches <- resultsEuNumPages %/% parallelretrievals
@@ -618,21 +624,24 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     stoppage  <- ifelse(i > resultsNumBatches, startpage + resultsNumModulo, startpage + parallelretrievals) - 1
     message("(", i, ") ", startpage, "-", stoppage, " ", appendLF = FALSE)
     #
-    tmp <- RCurl::getURL(paste0(queryEuRoot, ifelse(details, queryEuType3, queryEuType2), queryterm, "&page=", startpage:stoppage,
-                                queryEuPost), curl = h, async = TRUE, binary = FALSE, noprogress = FALSE, progressfunction = progressOut)
+    tmp <- RCurl::getURL(paste0(queryEuRoot, ifelse(details, queryEuType3, queryEuType2), queryterm,
+                                "&page=", startpage:stoppage, queryEuPost),
+                         curl = h, async = TRUE, binary = FALSE, noprogress = FALSE, progressfunction = progressOut)
     #
     if (debug) message("DEBUG: ", class(tmp))
-    if (class(tmp) != "character") stop("Download of records from EUCTR failed; last data received led to the error ", class(tmp))
+    if (class(tmp) != "character") stop("Download of records from EUCTR failed; last error: ", class(tmp))
     #
     for (ii in startpage:stoppage)
       write(tmp[[1 + ii - startpage]],
-            paste0(tempDir, "/euctr-trials-page_", formatC(ii, digits = 0, width = nchar(resultsEuNumPages), flag = 0), ".txt"))
+            paste0(tempDir, "/euctr-trials-page_",
+                   formatC(ii, digits = 0, width = nchar(resultsEuNumPages), flag = 0), ".txt"))
   }
 
   # compose commands: for external script on all files in temporary directory and for import
   euctr2json <- system.file("exec/euctr2json.sh", package = "ctrdata", mustWork = TRUE)
   euctr2json <- paste(euctr2json, tempDir)
-  json2mongo <- paste0(' --host="', sub("mongodb://(.+)", "\\1", url), '" --db="', db, '" --collection="', collection, '"',
+  json2mongo <- paste0(' --host="', sub("mongodb://(.+)", "\\1", url),
+                       '" --db="', db, '" --collection="', collection, '"',
                        ifelse(username != "", paste0(' --username="', username, '"'), ""),
                        ifelse(password != "", paste0(' --password="', password, '"'), ""),
                        ' --upsert --type=json --file="', tempDir, '/allfiles.json"',
@@ -640,8 +649,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   #
   if (.Platform$OS.type == "windows") {
     #
-    # euctr2json requires cygwin's perl, sed. transform paths for cygwin use, for testing:
-    # euctr2json <- 'C:/Programme/R/R-3.2.2/library/ctrdata/exec/euctr2json.sh C:\\Temp\\RtmpUpg0Dt\\ctrDATAb83435686'
+    # euctr2json requires cygwin's perl, sed. transform paths for cygwin use
     euctr2json <- gsub("\\\\", "/", euctr2json)
     euctr2json <- gsub("([A-Z]):/", "/cygdrive/\\1/", euctr2json)
     euctr2json <- paste0('cmd.exe /c c:\\cygwin\\bin\\bash.exe --login -c "', euctr2json, '"')
@@ -653,7 +661,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   } else {
     #
     # mongoimport does not return exit value, hence redirect stderr to stdout
-    json2mongo <- paste0(shQuote(installMongoFindBinaries(debug = debug)[2]), json2mongo, ' 2>&1')
+    json2mongo <- paste0(shQuote(installMongoFindBinaries(debug = debug)[2]), json2mongo, " 2>&1")
     #
   }
 
@@ -671,7 +679,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   imported <- as.integer(gsub("^.*imported ([0-9]+) document[s]{0,1}$", "\\1", imported[length(imported)]))
 
   # find out if fast import successful
-  if ((!is.numeric(imported)) || (imported == 0) || (imported < resultsEuNumTrials)) {
+  if ( (!is.numeric(imported)) || (imported == 0) || (imported < resultsEuNumTrials) ) {
     # if not successful, switch to SLOW IMPORT
     warning("Switching to slow import because mongoimport as single JSON file failed.", immediate. = TRUE)
 
