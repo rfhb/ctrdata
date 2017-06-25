@@ -69,10 +69,10 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   ## parameter checks
 
   # deduce queryterm and register if a full url is provided
-  if(class(queryterm) == "character" &&
-     is.atomic(queryterm) &&
-     length(queryterm) == 1 &&
-     grepl ("^https.+clinicaltrials.+", queryterm)) {
+  if (class(queryterm) == "character" &&
+      is.atomic(queryterm) &&
+      length(queryterm) == 1 &&
+      grepl ("^https.+clinicaltrials.+", queryterm)) {
     #
     queryterm <- ctrGetQueryUrlFromBrowser(queryterm)
     #
@@ -84,24 +84,31 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     #
     nr <- nrow(queryterm)
     #
-    if(nr > 1) warning("Using last row of queryterm parameter.", immediate. = TRUE)
+    if (nr > 1) warning("Using last row of queryterm parameter.", immediate. = TRUE)
     #
     register  <- queryterm [nr, "query-register"]
     queryterm <- queryterm [nr, "query-term"]
     #
   }
 
-  # basic sanity check if query term should be considered valid
-  if (grepl('[^a-zA-Z0-9=+&%_-]', gsub('\\[', '', gsub('\\]', '', queryterm))))
-    stop("Parameter 'queryterm' is not an URL showing results of a query or has unexpected characters: ", queryterm, ", expected are: a-zA-Z0-9=+&%_-[].")
-
-  # other sanity checks
-  if ((queryterm == "") & querytoupdate == 0) stop("Parameter 'queryterm' is empty.")
-  if(!grepl(register, "CTGOVEUCTR"))          stop("Parameter 'register' not known: ", register)
+  # sanity checks
+  if (grepl("[^a-zA-Z0-9=+&%_-]", gsub("\\[", "", gsub("\\]", "", queryterm))))
+    stop("Parameter 'queryterm' is not an URL showing results of a query or has unexpected characters: ",
+         queryterm, ", expected are: a-zA-Z0-9=+&%_-[].")
+  #
+  if ( (queryterm == "") & querytoupdate == 0)
+    stop("Parameter 'queryterm' is empty.")
+  #
+  if (!grepl(register, "CTGOVEUCTR"))
+    stop("Parameter 'register' not known: ", register)
+  #
   if (class(querytoupdate) != "character" &&
-      querytoupdate != trunc(querytoupdate))  stop("Parameter 'querytoupdate' does not have an integer value.")
+      querytoupdate != trunc(querytoupdate))
+    stop("Parameter 'querytoupdate' is not an integer value or 'last'.")
+  #
   if (class(querytoupdate) == "character" &&
-      querytoupdate != "last")                stop("Parameter 'querytoupdate' does not have an acceptable string value.")
+      querytoupdate != "last")
+    stop("Parameter 'querytoupdate' is not an integer value or 'last'.")
 
   # check program availability
   installMongoFindBinaries(debug = debug)
@@ -127,10 +134,11 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   queryupdateterm <- ""
 
   # check if parameters are consistent
-  if ((querytoupdate > 0) && (queryterm != "")) warning("'query term' and 'querytoupdate' specified, continuing only with new query", immediate. = TRUE)
+  if ( (querytoupdate > 0) && (queryterm != "") ) warning("'query term' and 'querytoupdate' specified,",
+                                                          " continuing only with new query", immediate. = TRUE)
 
   # get parameters for running as update
-  if ((querytoupdate > 0) && (queryterm == "")) {
+  if ( (querytoupdate > 0) && (queryterm == "") ) {
     #
     rerunparameters <- ctrRerunQuery(querytoupdate = querytoupdate,
                                      debug = debug,
@@ -145,6 +153,10 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
 
 
   ## main function
+
+  # note for consideration:
+  # params <- list(queryterm = queryterm, register = register, ...)
+  # do.call (ctrLoadQueryIntoDbCtgov, c (list(querytoupdate = querytoupdate), params))
 
   # ctgov core functions
   if (register == "CTGOV") imported <- ctrLoadQueryIntoDbCtgov(queryterm = queryterm, register = register, querytoupdate = querytoupdate,
@@ -213,16 +225,16 @@ ctrRerunQuery <- function (querytoupdate = querytoupdate,
   if (querytoupdate == "last") querytoupdate <- nrow(rerunquery)
 
   # try to select the query to be updated
-  if (querytoupdate > nrow(rerunquery)) stop("'querytoupdate': specified number of query not found, check 'dbQueryHistory()', aborting.")
+  if (querytoupdate > nrow(rerunquery)) stop("'querytoupdate': specified number not found, check 'dbQueryHistory()'.")
 
   # set values retrieved
-  rerunquery <- rerunquery[querytoupdate,]
+  rerunquery <- rerunquery[querytoupdate, ]
   queryterm  <- rerunquery$`query-term`
   register   <- rerunquery$`query-register`
   initialday <- substr(rerunquery$`query-timestamp`, start = 1, stop = 10)
 
   # secondary check parameters
-  if (queryterm == '')                stop("Parameter 'queryterm' is empty - cannot update query ", querytoupdate)
+  if (queryterm == "")                stop("Parameter 'queryterm' is empty - cannot update query ", querytoupdate)
   if (!grepl(register, "CTGOVEUCTR")) stop("Parameter 'register' not known - cannot update query ", querytoupdate)
 
 
@@ -353,9 +365,9 @@ dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber,
 
   # append current search
   hist <- rbind(hist, cbind ("query-timestamp" = format(Sys.time(), "%Y-%m-%d-%H-%M-%S"),
-                             "query-register" = register,
-                             "query-records" = recordnumber,
-                             "query-term"= queryterm))
+                             "query-register"  = register,
+                             "query-records"   = recordnumber,
+                             "query-term"      = queryterm))
 
   # collate information about current query into json object
   json <- jsonlite::toJSON(list("queries" = hist))
@@ -369,7 +381,7 @@ dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber,
 
   # update(query, update = '{"$set":{}}', upsert = FALSE, multiple = FALSE)
   mongo$update(query = '{"_id":{"$eq":"meta-info"}}',
-               update = paste0('{ "$set" :', json, '}'),
+               update = paste0('{ "$set" :', json, "}"),
                upsert = TRUE)
 
   # inform user
@@ -458,12 +470,12 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
 
     # compose commands - transform xml into json, a single allfiles.json in the temporaray directory
     xml2json <- system.file("exec/xml2json.php", package = "ctrdata", mustWork = TRUE)
-    xml2json <- paste0('php -f ', xml2json, ' ', tempDir)
+    xml2json <- paste0("php -f ", xml2json, " ", tempDir)
     json2mongo <- paste0(' --host="', sub("mongodb://(.+)", "\\1", url), '" --db="', db, '" --collection="', collection, '"',
                          ifelse(username != "", paste0(' --username="', username, '"'), ''),
                          ifelse(password != "", paste0(' --password="', password, '"'), ''),
                          ' --upsert --type=json --file="', tempDir, '/allfiles.json"',
-                         ifelse(installMongoCheckVersion(), '', ' --jsonArray'))
+                         ifelse(installMongoCheckVersion(), "", " --jsonArray"))
 
     if (.Platform$OS.type == "windows") {
       # xml2json requires cygwin's php. transform paths for cygwin use:
@@ -478,7 +490,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
     } else {
       #
       # mongoimport does not return exit value, hence redirect stderr to stdout
-      json2mongo <- paste0(shQuote(installMongoFindBinaries(debug = debug)[2]), json2mongo, ' 2>&1')
+      json2mongo <- paste0(shQuote(installMongoFindBinaries(debug = debug)[2]), json2mongo, " 2>&1")
       #
     }
     #
@@ -529,7 +541,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
       tmp <- sub("\\[\\[", "[", sub("\\]\\]", "]", jsonlite::toJSON(list("otherids" = otherids[[i]]))))
       # upsert
       mongo$update(query  = paste0('{"_id":{"$eq":"', cursor[i], '"}}'),
-                   update = paste0('{ "$set" :', tmp, '}'),
+                   update = paste0('{ "$set" :', tmp, "}"),
                    upsert = TRUE)
 
     }
@@ -587,8 +599,8 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                                     queryupdateterm) {
 
   # check availability of relevant helper programs
-  if(!suppressWarnings(installFindBinary("echo x | sed s/x/y/"))) stop("sed not found.")
-  if(!suppressWarnings(installFindBinary("perl -V:osname")))      stop("perl not found.")
+  if (!suppressWarnings(installFindBinary("echo x | sed s/x/y/"))) stop("sed not found.")
+  if (!suppressWarnings(installFindBinary("perl -V:osname")))      stop("perl not found.")
 
   message("Downloading trials from EUCTR:", appendLF = TRUE)
 
@@ -640,10 +652,10 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   euctr2json <- system.file("exec/euctr2json.sh", package = "ctrdata", mustWork = TRUE)
   euctr2json <- paste(euctr2json, tempDir)
   json2mongo <- paste0(' --host="', sub("mongodb://(.+)", "\\1", url), '" --db="', db, '" --collection="', collection, '"',
-                       ifelse(username != "", paste0(' --username="', username, '"'), ''),
-                       ifelse(password != "", paste0(' --password="', password, '"'), ''),
+                       ifelse(username != "", paste0(' --username="', username, '"'), ""),
+                       ifelse(password != "", paste0(' --password="', password, '"'), ""),
                        ' --upsert --type=json --file="', tempDir, '/allfiles.json"',
-                       ifelse(installMongoCheckVersion(), '', ' --jsonArray'))
+                       ifelse(installMongoCheckVersion(), "", " --jsonArray"))
   #
   if (.Platform$OS.type == "windows") {
     #
@@ -738,7 +750,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   # add query parameters to database
   if (debug) message("DEBUG: 'queryterm'=", queryterm, ", 'queryupdateterm'=", queryupdateterm)
   dbCTRUpdateQueryHistory(register = register,
-                          queryterm = ifelse(queryupdateterm == '', queryterm, queryupdateterm),
+                          queryterm = ifelse(queryupdateterm == "", queryterm, queryupdateterm),
                           recordnumber = imported,
                           collection = collection, db = db, url = url,
                           username = username, password = password, verbose = verbose)
@@ -752,13 +764,3 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   return(imported)
 }
 # end ctrLoadQueryIntoDbEuctr
-
-
-
-
-
-
-
-
-
-

@@ -217,4 +217,3 @@ test_that("operations on data frame", {
   expect_is     (dfMergeTwoVariablesRelevel(df = df, varnames = c("var1", "var2")), "character")
 
 })
-

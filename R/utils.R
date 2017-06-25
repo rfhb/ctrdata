@@ -62,7 +62,7 @@ ctrMongo <- function(collection = "ctrdata", db = "users", url = "mongodb://loca
   valueCtrKeysDb <- mongolite::mongo(collection = collectionKeys, db = db, url = mongourl, verbose = verbose)
 
   # inform user
-  if(verbose) message("Using Mongo DB (collections \"", collection, "\" and \"", collectionKeys, "\" in database \"", db, "\" on \"", host, "\").")
+  if (verbose) message("Using Mongo DB (collections \"", collection, "\" and \"", collectionKeys, "\" in database \"", db, "\" on \"", host, "\").")
 
   return(list("ctr" = valueCtrDb, "keys" = valueCtrKeysDb))
 }
@@ -106,7 +106,7 @@ ctrOpenSearchPagesInBrowser <- function(input = "", register = c("EUCTR", "CTGOV
   #
   # check combination of arguments to select action
   #
-  if(class(input) == "character" && is.atomic(input) && input == "") {
+  if (class(input) == "character" && is.atomic(input) && input == "") {
     # open empty search pages
     if ("EUCTR" %in% register) utils::browseURL("https://www.clinicaltrialsregister.eu/ctr-search/search", ...)
     if ("CTGOV" %in% register) utils::browseURL("https://clinicaltrials.gov/ct2/search/advanced", ...)
@@ -120,7 +120,7 @@ ctrOpenSearchPagesInBrowser <- function(input = "", register = c("EUCTR", "CTGOV
     # check input argument and determine action
     #
     # - is a url
-    if(class(input) == "character" && is.atomic(input) && length(input) == 1 && grepl ("^https.+clinicaltrials.+", input)) {
+    if (class(input) == "character" && is.atomic(input) && length(input) == 1 && grepl ("^https.+clinicaltrials.+", input)) {
       #
       input <- ctrGetQueryUrlFromBrowser(input)
       #
@@ -131,7 +131,7 @@ ctrOpenSearchPagesInBrowser <- function(input = "", register = c("EUCTR", "CTGOV
       #
       nr <- nrow(input)
       #
-      if(nr > 1) warning("Using last row of input.", immediate. = TRUE)
+      if (nr > 1) warning("Using last row of input.", immediate. = TRUE)
       #
       register  <- input [nr, "query-register"]
       queryterm <- input [nr, "query-term"]
@@ -280,7 +280,7 @@ dbQueryHistory <- function(collection = "ctrdata", db = "users", url = "mongodb:
   tmp <- tmp[[1]]$queries
 
   # Check if meeting expectations
-  if(!is.list(tmp) || (length(tmp) < 1)) {
+  if (!is.list(tmp) || (length(tmp) < 1)) {
     #
     warning("No history found in expected format.", immediate. = TRUE)
     tmp <- data.frame(NULL)
@@ -379,11 +379,11 @@ dbFindVariable <- function(namepart = "", allmatches = FALSE, forceupdate = FALS
     }
     # compose actual command to call mongo with variety.js
     # mongo collection_to_analyse --quiet --eval "var collection = 'users', persistResults=true, resultsDatabase='db.example.com/variety' variety.js
-    varietymongo <- paste0(' "', sub("mongodb://(.+)", "\\1", url), '/', db, '"',
-                           ifelse(username != "", paste0(' --username ="', username, '"'), ''),
-                           ifelse(password != "", paste0(' --password ="', password, '"'), ''),
+    varietymongo <- paste0(' "', sub("mongodb://(.+)", "\\1", url), "/", db, '"',
+                           ifelse(username != "", paste0(' --username ="', username, '"'), ""),
+                           ifelse(password != "", paste0(' --password ="', password, '"'), ""),
                            " --eval \"var collection='", collection, "', persistResults=true, ",
-                           "resultsDatabase='", paste0(sub("mongodb://(.+)", "\\1", url), '/', db, "'\" "),
+                           "resultsDatabase='", paste0(sub("mongodb://(.+)", "\\1", url), "/", db, "'\" "),
                            varietylocalurl)
     #
     if (.Platform$OS.type == "windows") {
@@ -470,7 +470,7 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
                                   username = "", password = "", verbose = TRUE) {
 
   # parameter checks
-  if(!grepl(preferregister, "CTGOVEUCTR")) stop("Register not known: ", preferregister)
+  if (!grepl(preferregister, "CTGOVEUCTR")) stop("Register not known: ", preferregister)
 
   # objective: create a list of mongo database record identifiers (_id)
   # that represent unique records of clinical trials, based on user's
@@ -482,7 +482,7 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
   #
   # total number of records in collection to inform user
   countall <- mongo$count(query = '{"_id":{"$ne":"meta-info"}}')
-  if(verbose)message("Total of ", countall, " records in collection.")
+  if (verbose)message("Total of ", countall, " records in collection.")
 
   # 1. get euctr records
   listofEUCTRids <- try(suppressMessages(suppressWarnings(
@@ -497,82 +497,86 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
     )),
     silent = TRUE
   )
-  if(class(listofEUCTRids) == "try-error") listofEUCTRids <- NULL
-  if( is.null(listofEUCTRids)) message("No EUCTR records found.")
-  if(!is.null(listofEUCTRids)) listofEUCTRids <- listofEUCTRids[grepl("[0-9]{4}-[0-9]{6}-[0-9]{2}-[3A-Z]{2,3}", listofEUCTRids[["_id"]]), ]
+  if (class(listofEUCTRids) == "try-error") listofEUCTRids <- NULL
+  if ( is.null(listofEUCTRids)) message("No EUCTR records found.")
+  if (!is.null(listofEUCTRids)) listofEUCTRids <- listofEUCTRids[grepl("[0-9]{4}-[0-9]{6}-[0-9]{2}-[3A-Z]{2,3}", listofEUCTRids[["_id"]]), ]
 
   # 2. find unique, preferred country version of euctr
-  if(!is.null(listofEUCTRids)) listofEUCTRids <- dfFindUniqueEuctrRecord(df = listofEUCTRids,
+  if (!is.null(listofEUCTRids)) listofEUCTRids <- dfFindUniqueEuctrRecord(df = listofEUCTRids,
                                                                          prefermemberstate = prefermemberstate,
                                                                          include3rdcountrytrials = include3rdcountrytrials)
 
   # 3. get ctrgov records
   listofCTGOVids <- mongo$iterate(query = '{"_id": {"$regex": "NCT[0-9]{8}"}}',
                                   fields = '{"id_info.org_study_id": 1, "id_info.secondary_id": 1, "id_info.nct_alias": 1}')$batch(size = mongo$count())
-  if(is.null(listofCTGOVids)) message("No CTGOV records found.")
+  if (is.null(listofCTGOVids)) message("No CTGOV records found.")
   # close database connection
   rm(mongo); gc()
 
   # 4. retain unique ctrgov records
-  if(!is.null(listofCTGOVids)) {
+  if (!is.null(listofCTGOVids)) {
     #
     # search for dupes for each entry of _id, eliminate enty's own _id (nct_id) by grepl
     dupes <- sapply(listofCTGOVids, function(x) x[["_id"]] %in% unlist(x[["id_info"]]))
     if (sum(dupes) > 0) listofCTGOVids <- listofCTGOVids[!dupes, ]
-    if(verbose) message("Searching duplicates: Found ", sum(dupes),
+    if (verbose) message("Searching duplicates: Found ", sum(dupes),
                         " CTGOV _id in CTGOV otherids (secondary_id, nct_alias, org_study_id)")
   }
 
   # 5. find records (_id's) that are in both in euctr and ctgov
-  if(!is.null(listofEUCTRids) & !is.null(listofCTGOVids)) {
+  if (!is.null(listofEUCTRids) & !is.null(listofCTGOVids)) {
     #
     # 6. select records from preferred register
-    if(preferregister == "EUCTR") {
+    if (preferregister == "EUCTR") {
       #
       # b.2 - ctgov in euctr (_id corresponds to index 1)
       dupes.b.2 <- sapply(listofCTGOVids, "[[", 1) %in% listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]
-      if(verbose) message("Searching duplicates: Found ", sum(dupes.b.2),
+      if (verbose) message("Searching duplicates: Found ", sum(dupes.b.2),
                           " CTGOV _id in EUCTR a52_us_nct_clinicaltrialsgov_registry_number")
       #
       # a.2 - ctgov in euctr a2_...
       dupes.a.2 <- sapply(lapply(listofCTGOVids, function(x) sub(".*([0-9]{4}-[0-9]{6}-[0-9]{2}).*", "\\1", unlist(x[["id_info"]]))),
                           function(x) any(x %in% listofEUCTRids[["a2_eudract_number"]]))
-      if(verbose) message("Searching duplicates: Found ", sum(dupes.a.2),
+      if (verbose) message("Searching duplicates: Found ", sum(dupes.a.2),
                           " CTGOV otherids (secondary_id, nct_alias, org_study_id) in EUCTR a2_eudract_number")
       #
       # c.2 - ctgov in euctr a52_... (id_info corresponds to index 2)
       dupes.c.2 <- sapply(lapply(listofCTGOVids, "[[", 2),
                           function(x) any(unlist(x) %in% listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]))
-      if(verbose) message("Searching duplicates: Found ", sum(dupes.c.2),
+      if (verbose) message("Searching duplicates: Found ", sum(dupes.c.2),
                           " CTGOV otherids (secondary_id, nct_alias, org_study_id) in EUCTR a52_us_nct_clinicaltrialsgov_registry_number")
       #
       # d.2 - ctgov in euctr a51_... (id_info corresponds to index 2)
       dupes.d.2 <- sapply(lapply(listofCTGOVids, "[[", 2),
                           function(x) any(unlist(x) %in% listofEUCTRids[["a51_isrctn_international_standard_randomised_controlled_trial_number"]]))
-      if(verbose) message("Searching duplicates: Found ", sum(dupes.d.2),
+      if (verbose) message("Searching duplicates: Found ", sum(dupes.d.2),
                           " CTGOV otherids (secondary_id, nct_alias, org_study_id) in EUCTR a51_isrctn_international_standard_randomised_controlled_trial_number")
       #
       retids <- c(listofEUCTRids[["_id"]],  sapply(listofCTGOVids, "[[", 1) [!dupes.a.2 & !dupes.b.2 & !dupes.c.2 & !dupes.d.2])
       #
     }
     #
-    if(preferregister == "CTGOV") {
+    if (preferregister == "CTGOV") {
       #
       # a.1 - euctr in ctgov (id_info corresponds to index 2)
       dupes.a.1 <- listofEUCTRids[["a2_eudract_number"]] %in% sub(".*([0-9]{4}-[0-9]{6}-[0-9]{2}).*", "\\1", unlist(sapply(listofCTGOVids, "[[", 2)))
-      if(verbose) message("Searching duplicates: Found ", sum(dupes.a.1), " EUCTR _id in CTGOV otherids (secondary_id, nct_alias, org_study_id)")
+      if (verbose) message("Searching duplicates: Found ", sum(dupes.a.1),
+                           " EUCTR _id in CTGOV otherids (secondary_id, nct_alias, org_study_id)")
       #
       # b.1 - euctr in ctgov (_id corresponds to index 1)
       dupes.b.1 <- listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]] %in% sapply(listofCTGOVids, "[[", 1)
-      if(verbose) message("Searching duplicates: Found ", sum(dupes.b.1), " EUCTR a52_us_nct_clinicaltrialsgov_registry_number in CTOGV _id")
+      if (verbose) message("Searching duplicates: Found ", sum(dupes.b.1),
+                           " EUCTR a52_us_nct_clinicaltrialsgov_registry_number in CTOGV _id")
       #
       # c.1 - euctr in ctgov (id_info corresponds to index 2)
       dupes.c.1 <- listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]] %in% unlist(sapply(listofCTGOVids, "[[", 2))
-      if(verbose) message("Searching duplicates: Found ", sum(dupes.c.1), " EUCTR a52_us_nct_clinicaltrialsgov_registry_number in CTOGV otherids (secondary_id, nct_alias, org_study_id)")
+      if (verbose) message("Searching duplicates: Found ", sum(dupes.c.1),
+                           " EUCTR a52_us_nct_clinicaltrialsgov_registry_number in CTOGV otherids (secondary_id, nct_alias, org_study_id)")
       #
       # d.1 - euctr in ctgov (id_info corresponds to index 2)
       dupes.d.1 <- listofEUCTRids[["a51_isrctn_international_standard_randomised_controlled_trial_number"]] %in% unlist(sapply(listofCTGOVids, "[[", 2))
-      if(verbose) message("Searching duplicates: Found ", sum(dupes.c.1), " EUCTR a51_isrctn_international_standard_randomised_controlled_trial_number in CTOGV otherids (secondary_id, nct_alias, org_study_id)")
+      if (verbose) message("Searching duplicates: Found ", sum(dupes.c.1),
+                           " EUCTR a51_isrctn_international_standard_randomised_controlled_trial_number in CTOGV otherids (secondary_id, nct_alias, org_study_id)")
       #
       retids <- c(sapply(listofCTGOVids, "[[", 1), listofEUCTRids[["_id"]] [!dupes.a.1 & !dupes.b.1 & !dupes.c.1 & !dupes.d.1])
       #
@@ -831,7 +835,7 @@ dfMergeTwoVariablesRelevel <- function(df = NULL, varnames = "", levelslist = NU
 dfFindUniqueEuctrRecord <- function(df = NULL, prefermemberstate = "GB", include3rdcountrytrials = TRUE) {
   #
   if (class(df) != "data.frame") stop("Parameter df is not a data frame.")
-  if (is.null(df [['_id']]) || is.null(df$a2_eudract_number)) stop('Data frame does not include "_id" and "a2_eudract_number" columns.')
+  if (is.null(df [["_id"]]) || is.null(df$a2_eudract_number)) stop('Data frame does not include "_id" and "a2_eudract_number" columns.')
   if (nrow(df) == 0) stop("Data frame does not contain records (0 rows).")
   if (!(prefermemberstate %in% countriesEUCTR)) stop("Value specified for prefermemberstate does not match one of the recognised codes: ",
                                                      paste (sort (countriesEUCTR), collapse = ", "))
@@ -847,7 +851,7 @@ dfFindUniqueEuctrRecord <- function(df = NULL, prefermemberstate = "GB", include
   if (!include3rdcountrytrials) df <- df[!grepl("-3RD", df[["_id"]]), ]
 
   # count number of records by eudract number
-  tbl <- table(df[['_id']], df$a2_eudract_number)
+  tbl <- table(df[["_id"]], df$a2_eudract_number)
   tbl <- as.matrix(tbl)
   # nms has names of all records
   nms <- dimnames(tbl)[[1]]
