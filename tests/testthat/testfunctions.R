@@ -6,27 +6,14 @@
 # devtools::test()
 # library(testthat)
 
+# check code coverage:
+# https://codecov.io/gh/rfhb/ctrdata/
+
 # Mac OS X:
 # brew services {start|stop} mongodb
 
 library(ctrdata)
 context("ctrdata functions")
-
-# Name                           | Testing?
-# ------------------------------ | -------------
-# ctrOpenSearchPagesInBrowser	   | some
-# ctrGetQueryUrlFromBrowser      | some
-# ctrLoadQueryIntoDb             | some
-# dbQueryHistory                 | some
-# dbFindIdsUniqueTrials          | some
-# dbFindVariable                 | some
-# dbGetVariablesIntoDf           | some
-# dfMergeTwoVariablesRelevel     | some
-# installMongoCheckVersion       | (implicit)
-# installMongoFindBinaries       | (implicit)
-# installCygwinWindowsDoInstall  | not planned
-# installCygwinWindowsTest       | not planned
-
 
 # helper function to check if there
 # is a useful internect connection
@@ -136,10 +123,34 @@ test_that("retrieve data from register ctgov", {
     collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")),
     "Imported or updated 1 trial")
 
-  expect_error(suppressWarnings(ctrLoadQueryIntoDb(
-    querytoupdate = 1,
+  ## create and test updatable query
+
+  q <- paste0("https://clinicaltrials.gov/ct2/results?term=osteosarcoma&type=Intr&phase=0&age=0&lup_e=12%2F31%2F2014")
+
+  expect_message(suppressWarnings(ctrLoadQueryIntoDb(q,
     collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")),
-    "No studies downloaded")
+    "Imported or updated 3")
+
+  # manipulate history to force testing updating
+  # based on code in dbCTRUpdateQueryHistory
+  hist <- dbQueryHistory(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")
+  # manipulate query
+  hist[nrow(hist), "query-term"]      <- sub(".*(term=.*)&lup_e=.*", "\\1", q)
+  hist[nrow(hist), "query-timestamp"] <- "2014-12-31-23-59-59"
+  # convert into json object
+  json <- jsonlite::toJSON(list("queries" = hist))
+  # update database
+  mongolite::mongo(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB",
+                   db = "users")$update(query = '{"_id":{"$eq":"meta-info"}}',
+                                        update = paste0('{ "$set" :', json, "}"),
+                                        upsert = TRUE)
+
+  expect_message(ctrLoadQueryIntoDb(
+    querytoupdate = "last",
+    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
+    "Imported or updated")
+
+  remove("hist", "json", "q")
 
 })
 
@@ -158,8 +169,52 @@ test_that("retrieve data from register euctr", {
 
   expect_error(suppressWarnings(ctrLoadQueryIntoDb(
     querytoupdate = "last",
-    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")),
+    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB", debug = TRUE)),
     "First result page empty")
+
+
+  ## slow import
+  q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
+              "neuroblastoma&status=completed&phase=phase-one")
+  expect_message(ctrLoadQueryIntoDb(q,
+                                    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB",
+                                    debug = TRUE, verbose = FALSE),
+                 "Imported or updated")
+
+
+  ## create and test updatable query
+
+  date.today <- format(Sys.time(),                "%Y-%m-%d")
+  date.temp  <- format(Sys.time() - 60*60*24*6,   "%Y-%m-%d")
+  date.old   <- format(Sys.time() - 60*60*24*6*2, "%Y-%m-%d")
+
+  q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
+              "&dateFrom=", date.old, "&dateTo=", date.temp)
+
+  expect_message(suppressWarnings(ctrLoadQueryIntoDb(q,
+                 collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")),
+                 "Imported or updated ")
+
+  # manipulate history to force testing updating
+  # based on code in dbCTRUpdateQueryHistory
+  hist <- dbQueryHistory(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")
+  # manipulate query
+  hist[nrow(hist), "query-term"]      <- sub(".*(&dateFrom=.*)&dateTo=.*", "\\1", q)
+  hist[nrow(hist), "query-timestamp"] <- paste0(date.temp, "-23-59-59")
+  # convert into json object
+  json <- jsonlite::toJSON(list("queries" = hist))
+  # update database
+  mongolite::mongo(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB",
+                   db = "users")$update(query = '{"_id":{"$eq":"meta-info"}}',
+                                        update = paste0('{ "$set" :', json, "}"),
+                                        upsert = TRUE)
+
+  expect_message(ctrLoadQueryIntoDb(
+    querytoupdate = "last",
+    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
+    "Imported or updated")
+
+  remove("hist", "json", "q", "date.old", "date.today", "date.temp")
 
 })
 

@@ -225,18 +225,19 @@ ctrRerunQuery <- function (querytoupdate = querytoupdate,
   if (register == "CTGOV") {
 
     # ctgov:
-    # speficy any date - "lup_" last updated since:
+    # speficy any date - "lup_s/e" last update start / end:
     # https://clinicaltrials.gov/ct2/results?term=&recr=&rslt=&type=Intr&cond=Cancer&intr=&titles=&outc=&spons=&lead=
     # &id=&state1=&cntry1=&state2=&cntry2=&state3=&cntry3=&locn=&gndr=&age=0&rcv_s=&rcv_e=&
     # lup_s=01%2F01%2F2015&lup_e=12%2F31%2F2016
 
     # if "lup_s" is already in query term, just re-run full query to avoid
     # multiple queries in history that only differ in the timestamp:
-    if (grepl("&lup_s=[0-9]{2}", queryterm)) {
+    if (grepl("&lup_[se]=[0-9]{2}", queryterm)) {
       #
       # remove queryupdateterm, thus running full again
       queryupdateterm <- ""
-      warning("Query term already included date of last update; therefore, full query run again.")
+      warning("Query has date(s) for start or end of last update ('&lup_'); running again with these limits.",
+              immediate. = TRUE)
       #
     } else {
       #
@@ -278,7 +279,7 @@ ctrRerunQuery <- function (querytoupdate = querytoupdate,
       # extract euctr number(s)
       resultsRssTrials <- gregexpr("eudract_number:[0-9]{4}-[0-9]{6}-[0-9]{2}</link>", resultsRss)[[1]]
       resultsRssTrials <- sapply(resultsRssTrials, FUN = function (x) substr(resultsRss, x + 15, x + 28))
-      resultsRssTrials <- paste(resultsRssTrials, collapse = " OR ")
+      resultsRssTrials <- paste(resultsRssTrials, collapse = "+OR+")
       if (debug) message("DEBUG (rss trials): ", resultsRssTrials)
       #
       # run query for extracted euctr number(s)
@@ -601,7 +602,9 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
 
   # get first result page
   h <- RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE)) # avoid certificate failure from outside EU
-  resultsEuPages <- RCurl::getURL(paste0(queryEuRoot, queryEuType1, queryterm), curl = h)
+  q <- paste0(queryEuRoot, queryEuType1, queryterm)
+  if (debug) message("DEBUG: queryterm is ", q)
+  resultsEuPages <- RCurl::getURL(q, curl = h)
   resultsEuNumTrials <- sub(".*Trials with a EudraCT protocol \\(([0-9,.]*)\\).*", "\\1", resultsEuPages)
   resultsEuNumTrials <- suppressWarnings(as.numeric(gsub("[,.]", "", resultsEuNumTrials)))
   resultsEuNumPages  <- ceiling(resultsEuNumTrials / 20) # alternative: parsing "next" and "last" links
@@ -679,10 +682,12 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   imported <- as.integer(gsub("^.*imported ([0-9]+) document[s]{0,1}$", "\\1", imported[length(imported)]))
 
   # find out if fast import successful
-  if ( (!is.numeric(imported)) || (imported == 0) || (imported < resultsEuNumTrials) ) {
+  if ( (!is.numeric(imported)) || (imported == 0) || (imported < resultsEuNumTrials) ||
+       (debug & !verbose) ) {
+    #
     # if not successful, switch to SLOW IMPORT
     warning("Switching to slow import because mongoimport as single JSON file failed.", immediate. = TRUE)
-
+    #
     # json2split
     json2split <- system.file("exec/json2split.sh", package = "ctrdata", mustWork = TRUE)
     json2split <- paste(json2split, tempDir)
