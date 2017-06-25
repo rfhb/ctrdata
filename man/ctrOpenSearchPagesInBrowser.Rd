@@ -5,8 +5,8 @@
 \title{Open advanced search pages of register(s) or execute search in default web
 browser.}
 \usage{
-ctrOpenSearchPagesInBrowser(input = "", register = c("EUCTR", "CTGOV"),
-  copyright = FALSE, ...)
+ctrOpenSearchPagesInBrowser(input = "", register = "", copyright = FALSE,
+  ...)
 }
 \arguments{
 \item{input}{Show results of search for \code{queryterm} in
@@ -16,9 +16,8 @@ row from \link{dbQueryHistory}.}
 
 \item{register}{Register(s) to open. Either "EUCTR" or "CTGOV" or a vector of
 both. Default is to open both registers' advanced search pages. To open the
-browser with a previous search, register (or queryterm) can be the output
-of ctrGetQueryUrlFromBrowser() or can be one row from
-dbQueryHistory().}
+browser with a previous search, the output of ctrGetQueryUrlFromBrowser()
+or one row from dbQueryHistory() can be used.}
 
 \item{copyright}{(Optional) If set to \code{TRUE}, opens copyright pages of
 register(s).}

@@ -78,9 +78,8 @@ ctrMongo <- function(collection = "ctrdata", db = "users", url = "mongodb://loca
 #'   row from \link{dbQueryHistory}.
 #' @param register Register(s) to open. Either "EUCTR" or "CTGOV" or a vector of
 #'   both. Default is to open both registers' advanced search pages. To open the
-#'   browser with a previous search, register (or queryterm) can be the output
-#'   of ctrGetQueryUrlFromBrowser() or can be one row from
-#'   dbQueryHistory().
+#'   browser with a previous search, the output of ctrGetQueryUrlFromBrowser()
+#'   or one row from dbQueryHistory() can be used.
 #' @param copyright (Optional) If set to \code{TRUE}, opens copyright pages of
 #'   register(s).
 #' @param ... Any additional parameter to use with browseURL, which is called by
@@ -102,25 +101,30 @@ ctrMongo <- function(collection = "ctrdata", db = "users", url = "mongodb://loca
 #'
 #' }
 #'
-ctrOpenSearchPagesInBrowser <- function(input = "", register = c("EUCTR", "CTGOV"), copyright = FALSE, ...) {
+ctrOpenSearchPagesInBrowser <- function(input = "", register = "", copyright = FALSE, ...) {
   #
   # check combination of arguments to select action
   #
   if (class(input) == "character" && is.atomic(input) && input == "") {
+    #
     # open empty search pages
-    if ("EUCTR" %in% register) utils::browseURL("https://www.clinicaltrialsregister.eu/ctr-search/search", ...)
-    if ("CTGOV" %in% register) utils::browseURL("https://clinicaltrials.gov/ct2/search/advanced", ...)
+    if ("EUCTR" == register) utils::browseURL("https://www.clinicaltrialsregister.eu/ctr-search/search", ...)
+    if ("CTGOV" == register) utils::browseURL("https://clinicaltrials.gov/ct2/search/advanced", ...)
+    #
     # if requested also show copyright pages
     if (copyright) {
-      if ("EUCTR" %in% register) utils::browseURL("https://www.clinicaltrialsregister.eu/disclaimer.html", ...)
-      if ("CTGOV" %in% register) utils::browseURL("https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use", ...)
+      if ("EUCTR" == register) utils::browseURL("https://www.clinicaltrialsregister.eu/disclaimer.html", ...)
+      if ("CTGOV" == register) utils::browseURL("https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use", ...)
     }
   } else {
     #
     # check input argument and determine action
     #
     # - is a url
-    if (class(input) == "character" && is.atomic(input) && length(input) == 1 && grepl ("^https.+clinicaltrials.+", input)) {
+    if (class(input) == "character" &&
+        is.atomic(input) &&
+        length(input) == 1 &&
+        grepl ("^https.+clinicaltrials.+", input)) {
       #
       input <- ctrGetQueryUrlFromBrowser(input)
       #
@@ -141,8 +145,11 @@ ctrOpenSearchPagesInBrowser <- function(input = "", register = c("EUCTR", "CTGOV
     if (queryterm != "" && register != "") {
       #
       message("Opening in browser previous search: ", queryterm, ", in register: ", register)
-      if ("CTGOV" %in% register) utils::browseURL(paste0("https://clinicaltrials.gov/ct2/results?", queryterm), ...)
-      if ("EUCTR" %in% register) utils::browseURL(paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=", queryterm), ...)
+      #
+      utils::browseURL(paste0(switch(as.character(register),
+                                     "CTGOV" = "https://clinicaltrials.gov/ct2/results?",
+                                     "EUCTR" = "https://www.clinicaltrialsregister.eu/ctr-search/search?query="),
+                              queryterm), ...)
       #
     }
     #
