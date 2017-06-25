@@ -154,7 +154,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
                  username = username, password = password, verbose = verbose,
                  queryupdateterm = queryupdateterm)
   # ctgov core functions
-  imported <- switch(register,
+  imported <- switch(as.character(register),
                      "CTGOV" = do.call (ctrLoadQueryIntoDbCtgov, params),
                      "EUCTR" = do.call (ctrLoadQueryIntoDbEuctr, params)
   )
