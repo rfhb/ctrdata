@@ -147,44 +147,32 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
 
   ## main function
 
-  # note for consideration:
-  # params <- list(queryterm = queryterm, register = register, ...)
-  # do.call (ctrLoadQueryIntoDbCtgov, c (list(querytoupdate = querytoupdate), params))
-
+  # ctgov core parameters
+  params <- list(queryterm = queryterm, register = register, querytoupdate = querytoupdate,
+                 details = details, parallelretrievals = parallelretrievals, debug = debug,
+                 collection = collection, db = db, url = url,
+                 username = username, password = password, verbose = verbose,
+                 queryupdateterm = queryupdateterm)
   # ctgov core functions
-  if (register == "CTGOV") imported <- ctrLoadQueryIntoDbCtgov(queryterm = queryterm, register = register, querytoupdate = querytoupdate,
-                                                               details = details, parallelretrievals = parallelretrievals, debug = debug,
-                                                               collection = collection, db = db, url = url,
-                                                               username = username, password = password, verbose = verbose,
-                                                               queryupdateterm = queryupdateterm)
+  imported <- switch(register,
+                     "CTGOV" = do.call (ctrLoadQueryIntoDbCtgov, params),
+                     "EUCTR" = do.call (ctrLoadQueryIntoDbEuctr, params)
+  )
 
-  # euctr core functions
-  if (register == "EUCTR") imported <- ctrLoadQueryIntoDbEuctr(queryterm = queryterm, register = register, querytoupdate = querytoupdate,
-                                                               details = details, parallelretrievals = parallelretrievals, debug = debug,
-                                                               collection = collection, db = db, url = url,
-                                                               username = username, password = password, verbose = verbose,
-                                                               queryupdateterm = queryupdateterm)
 
   ## finalise
-
-  # reset warning length
-  options("max.print" = outputlength)
 
   # return some useful information
   if (!exists("imported")) stop("Function did not result in any trial information imports.")
 
   # add metadata
-  attr(imported, "ctrdata-using-mongodb-url")        <- url
-  attr(imported, "ctrdata-using-mongodb-db")         <- db
-  attr(imported, "ctrdata-using-mongodb-collection") <- collection
-  attr(imported, "ctrdata-using-mongodb-username")   <- username
-  attr(imported, "ctrdata-created-timestamp")        <- as.POSIXct(Sys.time(), tz = "UTC")
-  attr(imported, "ctrdata-from-dbqueryhistory")      <- dbQueryHistory(collection = collection, db = db, url = url,
-                                                                       username = username, password = password, verbose = FALSE)
+  imported <- addMetaData(imported,
+                          collection = collection, db = db, url = url,
+                          username = username, password = password)
 
 
   ## return
-  invisible(list("importedupdated" = imported, "euctrfailedimports" = failedtrials))
+  invisible(list("importedupdated" = imported))
 
 }
 # end ctrLoadQueryIntoDb
