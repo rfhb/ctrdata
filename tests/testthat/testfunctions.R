@@ -117,10 +117,10 @@ test_that("retrieve data from register ctgov", {
   has_internet()
   has_mongo()
 
-  expect_message(ctrLoadQueryIntoDb(
+  expect_message(suppressWarnings(ctrLoadQueryIntoDb(
     queryterm = "term=2010-024264-18",
     register = "CTGOV",
-    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
+    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")),
     "Imported or updated 1 trial")
 
   ## create and test updatable query
@@ -176,9 +176,9 @@ test_that("retrieve data from register euctr", {
   ## slow import
   q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
               "neuroblastoma&status=completed&phase=phase-one")
-  expect_message(ctrLoadQueryIntoDb(q,
-                                    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB",
-                                    debug = TRUE, verbose = FALSE),
+  expect_message(suppressWarnings(ctrLoadQueryIntoDb(q,
+                                                     collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB",
+                                                     debug = TRUE, verbose = FALSE)),
                  "Imported or updated")
 
 
