@@ -10,7 +10,7 @@ init:
 install:
   - cinst mongodb
   - ps: (new-object net.webclient).DownloadFile('http://cygwin.org/setup-x86.exe', 'setup-x86.exe')
-  - ps: setup-x86.exe --no-admin --quiet-mode --verbose --upgrade-also --root c:/cygwin --site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages perl,php-jsonc,php-simplexml
+  - cmd: setup-x86.exe --no-admin --quiet-mode --verbose --upgrade-also --root c:/cygwin --site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages perl,php-jsonc,php-simplexml
   - ps: Bootstrap
 
 #  - ps: Rscript -e "sessionInfo()"
