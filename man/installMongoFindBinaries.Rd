@@ -7,7 +7,7 @@ mongoimport) and to save the location into a private environment.
 Call this function with a correct parameter if the automatic
 detection fails.}
 \usage{
-installMongoFindBinaries(mongoDirWin = "c:\\\\mongo\\\\bin\\\\",
+installMongoFindBinaries(mongoDirWin = "c:\\\\mongodb\\\\bin\\\\",
   debug = FALSE)
 }
 \arguments{

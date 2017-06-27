@@ -26,7 +26,7 @@ has_internet <- function(){
 # helper function to check mongodb
 has_mongo <- function(){
   mongo_ok <- try({
-    capture.output(ctrMongo())
+    capture.output(ctrdata:::ctrMongo())
   }, silent = TRUE)
   # use test result
   if (class(mongo_ok) == "try-error" ||
@@ -117,10 +117,10 @@ test_that("retrieve data from register ctgov", {
   has_internet()
   has_mongo()
 
-  expect_message(suppressWarnings(ctrLoadQueryIntoDb(
+  expect_message(ctrLoadQueryIntoDb(
     queryterm = "term=2010-024264-18",
     register = "CTGOV",
-    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")),
+    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
     "Imported or updated 1 trial")
 
   ## create and test updatable query
