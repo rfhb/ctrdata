@@ -11,4 +11,5 @@ ctrdata_sequence_diagram.png
 private.*
 ^_gh-pages$
 ^docs$
-.lintr
+^.lintr$
+^appveyor\.yml$
