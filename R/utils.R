@@ -1009,9 +1009,10 @@ installCygwinWindowsDoInstall <- function(force = FALSE, proxy = ""){
     # find and use proxy settings for actually running the cygwin setup
     # - Windows 7 see https://msdn.microsoft.com/en-us/library/cc980059.aspx
     # - Windows 10 see
-    tmp <- utils::readRegistry("Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", hive = "HCU")
+    tmp <- try(utils::readRegistry("Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings",
+                                   hive = "HCU"), silent = TRUE)
     #
-    if (!is.null(tmp)) {
+    if (class(tmp) != "try-error" && !is.null(tmp)) {
       #
       if (length (tmp$AutoConfigURL) > 0) {
         # retrieve settings
@@ -1143,8 +1144,11 @@ installMongoFindBinaries <- function(mongoDirWin = "c:\\mongo\\bin\\", debug = F
         if (.Platform$OS.type != "windows") stop("Cannot continue. Search function is only for MS Windows.")
         #
         # second search for folder into which mongo was installed
-        location <-
-          utils::readRegistry("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Installer\\Folders", hive = "HLM")
+        location <- try(utils::readRegistry("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Installer\\Folders",
+                                            hive = "HLM"), silent = TRUE)
+        #
+        if (class(location) == "try-error") stop("Cannot continue. mongo not found recorded in the registry.")
+        #
         location <- names(location)
         location <- location[grepl("Mongo", location)]
         location <- location[grepl("bin", location)]
