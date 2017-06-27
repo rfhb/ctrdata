@@ -399,7 +399,7 @@ dbFindVariable <- function(namepart = "", allmatches = FALSE, forceupdate = FALS
     # actually now find fieldnames
     fieldname <- fieldnames[grepl(tolower(namepart), tolower(fieldnames))]
     if (!allmatches) {
-      if ( (tmp <- length(fieldname)) > 1) message(paste0("Returning first of ", tmp, " keys found."))
+      if ( (tmp <- length(fieldname)) > 1) message("Returning first of ", tmp, " keys found.")
       fieldname <- fieldname[1]
     }
     #
@@ -608,9 +608,9 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
                         username = username, password = password)
 
   # inform user
-  message(paste0("Returning keys (_id) of ", length(retids),
-                 " records out of total of ", countall,
-                 " records in collection \"", collection, "\"."))
+  message("Returning keys (_id) of ", length(retids),
+          " records out of total of ", countall,
+          " records in collection \"", collection, "\".")
   #
   return(retids)
 

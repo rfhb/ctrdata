@@ -247,7 +247,7 @@ ctrRerunQuery <- function (querytoupdate = querytoupdate,
       #
     }
     #
-    message(paste0("Rerunning query: ", queryterm, "\nLast run: ", initialday))
+    message("Rerunning query: ", queryterm, "\nLast run: ", initialday)
   }
 
   # euctr
@@ -264,7 +264,7 @@ ctrRerunQuery <- function (querytoupdate = querytoupdate,
               " and register provides information on changes only for the last 7 days. Reverting to normal download.",
               immediate. = TRUE)
       #
-      message(paste0("Rerunning query: ", queryterm, "\nLast run: ", initialday))
+      message("Rerunning query: ", queryterm, "\nLast run: ", initialday)
       #
     } else {
       #
@@ -289,7 +289,7 @@ ctrRerunQuery <- function (querytoupdate = querytoupdate,
       #
       if (debug) message("DEBUG: Updating using this query term: ", queryupdateterm)
       #
-      message(paste0("Rerunning query: ", queryupdateterm, "\nLast run: ", initialday))
+      message("Rerunning query: ", queryupdateterm, "\nLast run: ", initialday)
       #
     }
   }
@@ -479,12 +479,12 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
     }
     #
     # run transformation
-    message(paste0("Converting to JSON ..."))
+    message("Converting to JSON ...")
     if (debug) message("DEBUG: ", xml2json)
     imported <- system(xml2json, intern = TRUE)
 
     # run import
-    message(paste0("Importing JSON into mongoDB ..."))
+    message("Importing JSON into mongoDB ...")
     if (debug) message("DEBUG: ", json2mongo)
     imported <- system(json2mongo, intern = TRUE)
 
@@ -542,7 +542,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   if (debug) message("DEBUG: ", imported)
   imported <- as.integer(gsub(".*imported ([0-9]+) document.*", "\\1", imported[length(imported)]))
   if (!is.numeric(imported) || imported == 0) stop("Import has apparently failed, returned ", imported)
-  message(paste0("Imported or updated ", imported, " trial(s)."))
+  message("Imported or updated ", imported, " trial(s).")
 
   # clean up temporary directory
   if (!debug) unlink(tempDir, recursive = TRUE)
@@ -618,7 +618,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   # get data
   resultsNumBatches <- resultsEuNumPages %/% parallelretrievals
   resultsNumModulo  <- resultsEuNumPages %%  parallelretrievals
-  message(paste0("Downloading trials (from a maximum of ", parallelretrievals, " page(s) in parallel):"))
+  message("Downloading trials (from a maximum of ", parallelretrievals, " page(s) in parallel):")
   #
   for (i in 1:(resultsNumBatches + ifelse(resultsNumModulo > 0, 1, 0))) {
     # parallel requests by using startpage:stoppage
@@ -674,7 +674,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   imported <- system(euctr2json, intern = TRUE)
   #
   # run import
-  message(paste0("Importing JSON into mongoDB ..."))
+  message("Importing JSON into mongoDB ...")
   if (debug) message("DEBUG: ", json2mongo)
   imported <- system(json2mongo, intern = TRUE)
 
