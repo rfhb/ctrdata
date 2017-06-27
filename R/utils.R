@@ -1096,7 +1096,7 @@ installCygwinWindowsTest <- function() {
 #'
 #' @keywords internal
 #
-installMongoFindBinaries <- function(mongoDirWin = "c:\\mongo\\bin\\", debug = FALSE) {
+installMongoFindBinaries <- function(mongoDirWin = "c:\\mongodb\\bin\\", debug = FALSE) {
   #
   environ <- .privateEnv
   #
