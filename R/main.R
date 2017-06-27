@@ -481,12 +481,12 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
     # run transformation
     message("Converting to JSON ...")
     if (debug) message("DEBUG: ", xml2json)
-    imported <- system(xml2json, intern = TRUE)
+    imported <- system(xml2json, intern = TRUE, show.output.on.console = FALSE)
 
     # run import
     message("Importing JSON into mongoDB ...")
     if (debug) message("DEBUG: ", json2mongo)
-    imported <- system(json2mongo, intern = TRUE)
+    imported <- system(json2mongo, intern = TRUE, show.output.on.console = FALSE)
 
     # absorb id_info array into new array otherids for later perusal
     #
@@ -671,12 +671,12 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   # run conversion
   message("Converting to JSON ...")
   if (debug) message("DEBUG: ", euctr2json)
-  imported <- system(euctr2json, intern = TRUE)
+  imported <- system(euctr2json, intern = TRUE, show.output.on.console = FALSE)
   #
   # run import
   message("Importing JSON into mongoDB ...")
   if (debug) message("DEBUG: ", json2mongo)
-  imported <- system(json2mongo, intern = TRUE)
+  imported <- system(json2mongo, intern = TRUE, show.output.on.console = FALSE)
 
   # find out number of trials imported into database
   imported <- as.integer(gsub("^.*imported ([0-9]+) document[s]{0,1}$", "\\1", imported[length(imported)]))
@@ -702,7 +702,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     #
     message("Splitting into JSON files ...")
     if (debug) message("DEBUG: ", json2split)
-    imported  <- system(json2split, intern = TRUE)
+    imported  <- system(json2split, intern = TRUE, show.output.on.console = FALSE)
     splitjson <- try(as.numeric(imported))
     if (class(splitjson) == "try-error") stop("Splitting single JSON files failed. Aborting ctrLoadQueryIntoDb.")
 
@@ -715,7 +715,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
       if (debug & i == 1) message("DEBUG: ", json2split2mongo)
       if (debug)          message("DEBUG: ", i)
       #
-      imported <- system(json2split2mongo, intern = TRUE)
+      imported <- system(json2split2mongo, intern = TRUE, show.output.on.console = FALSE)
       imported <- as.integer(gsub("^.*imported ([0-9]+) document[s]{0,1}$", "\\1", imported[length(imported)]))
       #
       if (!is.numeric(imported) || imported == 0) {
