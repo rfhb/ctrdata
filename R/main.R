@@ -428,120 +428,115 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   fieldsCTGOV <- sub("NCT Number", "_id", fieldsCTGOV)
   write(fieldsCTGOV, paste0(tempDir, "/field_names.txt"))
 
-  #### START xml
-  if (TRUE) {
+  # get result file and unzip into folder
+  message("Downloading trials from CTGOV as xml ", appendLF = FALSE)
+  ctgovdownloadcsvurl <- paste0(queryUSRoot, queryUSType1, queryUSPreXML, "&",
+                                queryterm, queryupdateterm, queryUSPost)
+  if (debug) message ("DEBUG: ", ctgovdownloadcsvurl)
+  #
+  f <- paste0(tempDir, "/ctgov.zip")
+  #
+  h    <- RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE)) # avoid certificate failure from outside EU
+  fref <- RCurl::CFILE(f, mode = "wb")
+  tmp  <- RCurl::curlPerform(url = ctgovdownloadcsvurl,
+                             writedata = fref@ref,
+                             noprogress = FALSE,
+                             progressfunction = progressOut,
+                             curl = h)
+  RCurl::close(fref)
+  #
+  if (file.size(f) == 0) stop("No studies downloaded. Please check 'queryterm' or run again with debug = TRUE.")
+  utils::unzip(f, exdir = tempDir)
 
-    # get result file and unzip into folder
-    message("Downloading trials from CTGOV as xml ", appendLF = FALSE)
-    ctgovdownloadcsvurl <- paste0(queryUSRoot, queryUSType1, queryUSPreXML, "&",
-                                  queryterm, queryupdateterm, queryUSPost)
-    if (debug) message ("DEBUG: ", ctgovdownloadcsvurl)
+  # compose commands - transform xml into json, a single allfiles.json in the temporaray directory
+  xml2json <- system.file("exec/xml2json.php", package = "ctrdata", mustWork = TRUE)
+  xml2json <- paste0("php -f ", xml2json, " ", tempDir)
+  json2mongo <- paste0(' --host="', sub("mongodb://(.+)", "\\1", url),
+                       '" --db="', db, '" --collection="', collection, '"',
+                       ifelse(username != "", paste0(' --username="', username, '"'), ""),
+                       ifelse(password != "", paste0(' --password="', password, '"'), ""),
+                       ' --upsert --type=json --file="', tempDir, '/allfiles.json"',
+                       ifelse(installMongoCheckVersion(), "", " --jsonArray"))
+
+  if (.Platform$OS.type == "windows") {
+    # xml2json requires cygwin's php. transform paths for cygwin use:
+    xml2json <- gsub("\\\\", "/", xml2json)
+    xml2json <- gsub("([A-Z]):/", "/cygdrive/\\1/", xml2json)
+    xml2json <- paste0('cmd.exe /c c:\\cygwin\\bin\\bash.exe --login -c "', xml2json, '"')
     #
-    f <- paste0(tempDir, "/ctgov.zip")
+    json2mongo <- paste0(shQuote(installMongoFindBinaries(debug = debug)[2]), json2mongo)
+    json2mongo <- gsub(" --", " /", json2mongo)
+    json2mongo <- gsub("=", ":", json2mongo)
     #
-    h    <- RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE)) # avoid certificate failure from outside EU
-    fref <- RCurl::CFILE(f, mode = "wb")
-    tmp  <- RCurl::curlPerform(url = ctgovdownloadcsvurl,
-                               writedata = fref@ref,
-                               noprogress = FALSE,
-                               progressfunction = progressOut,
-                               curl = h)
-    RCurl::close(fref)
+  } else {
     #
-    if (file.size(f) == 0) stop("No studies downloaded. Please check 'queryterm' or run again with debug = TRUE.")
-    utils::unzip(f, exdir = tempDir)
-
-    # compose commands - transform xml into json, a single allfiles.json in the temporaray directory
-    xml2json <- system.file("exec/xml2json.php", package = "ctrdata", mustWork = TRUE)
-    xml2json <- paste0("php -f ", xml2json, " ", tempDir)
-    json2mongo <- paste0(' --host="', sub("mongodb://(.+)", "\\1", url),
-                         '" --db="', db, '" --collection="', collection, '"',
-                         ifelse(username != "", paste0(' --username="', username, '"'), ""),
-                         ifelse(password != "", paste0(' --password="', password, '"'), ""),
-                         ' --upsert --type=json --file="', tempDir, '/allfiles.json"',
-                         ifelse(installMongoCheckVersion(), "", " --jsonArray"))
-
-    if (.Platform$OS.type == "windows") {
-      # xml2json requires cygwin's php. transform paths for cygwin use:
-      xml2json <- gsub("\\\\", "/", xml2json)
-      xml2json <- gsub("([A-Z]):/", "/cygdrive/\\1/", xml2json)
-      xml2json <- paste0('cmd.exe /c c:\\cygwin\\bin\\bash.exe --login -c "', xml2json, '"')
-      #
-      json2mongo <- paste0(shQuote(installMongoFindBinaries(debug = debug)[2]), json2mongo)
-      json2mongo <- gsub(" --", " /", json2mongo)
-      json2mongo <- gsub("=", ":", json2mongo)
-      #
-    } else {
-      #
-      # mongoimport does not return exit value, hence redirect stderr to stdout
-      json2mongo <- paste0(shQuote(installMongoFindBinaries(debug = debug)[2]), json2mongo, " 2>&1")
-      #
-    }
+    # mongoimport does not return exit value, hence redirect stderr to stdout
+    json2mongo <- paste0(shQuote(installMongoFindBinaries(debug = debug)[2]), json2mongo, " 2>&1")
     #
-    # run transformation
-    message("Converting to JSON ...")
-    if (debug) message("DEBUG: ", xml2json)
-    imported <- system(xml2json, intern = TRUE, show.output.on.console = FALSE)
+  }
+  #
+  # run transformation
+  message("Converting to JSON ...")
+  if (debug) message("DEBUG: ", xml2json)
+  imported <- system(xml2json, intern = TRUE, show.output.on.console = FALSE)
 
-    # run import
-    message("Importing JSON into mongoDB ...")
-    if (debug) message("DEBUG: ", json2mongo)
-    imported <- system(json2mongo, intern = TRUE, show.output.on.console = FALSE)
+  # run import
+  message("Importing JSON into mongoDB ...")
+  if (debug) message("DEBUG: ", json2mongo)
+  imported <- system(json2mongo, intern = TRUE, show.output.on.console = FALSE)
 
-    # absorb id_info array into new array otherids for later perusal
-    #
-    # "id_info" : {
-    #   "org_study_id" : "P9971",
-    #   "secondary_id" : [
-    #     "COG-P9971",
-    #     "CDR0000068102"
-    #     ],
-    #   "nct_id" : "NCT00006095"
-    #
-    # to
-    #
-    # "otherids" : [
-    #   "ADVL0011",
-    #   "COG-ADVL0011",
-    #   "CDR0000068036"
-    #   ]
-    #
+  # absorb id_info array into new array otherids for later perusal
+  #
+  # "id_info" : {
+  #   "org_study_id" : "P9971",
+  #   "secondary_id" : [
+  #     "COG-P9971",
+  #     "CDR0000068102"
+  #     ],
+  #   "nct_id" : "NCT00006095"
+  #
+  # to
+  #
+  # "otherids" : [
+  #   "ADVL0011",
+  #   "COG-ADVL0011",
+  #   "CDR0000068036"
+  #   ]
+  #
 
-    # get a working mongo connection, select trial record collection
-    mongo <- ctrMongo(collection = collection, db = db, url = url,
-                      username = username, password = password, verbose = TRUE)[["ctr"]]
+  # get a working mongo connection, select trial record collection
+  mongo <- ctrMongo(collection = collection, db = db, url = url,
+                    username = username, password = password, verbose = TRUE)[["ctr"]]
 
-    # obtain full data set on _id and other ids
-    cursor <- mongo$iterate(query = '{"_id": {"$regex": "NCT[0-9]{8}"}}',
-                            fields = '{"id_info.org_study_id": 1, "id_info.secondary_id": 1}'
-    )$batch(size = mongo$count())
-    # transform every second element in a list item into a vector
-    otherids <- sapply(cursor, function(x) paste0(as.vector(unlist(x[2]))))
-    # retain _id's for updating
-    cursor <- sapply(cursor, function(x) as.vector(unlist(x[1])))
-    # iterate over list items
-    for (i in seq_len(length(cursor))) {
-      # replace double square brackets around array
-      tmp <- sub("\\[\\[", "[", sub("\\]\\]", "]", jsonlite::toJSON(list("otherids" = otherids[[i]]))))
-      # upsert
-      mongo$update(query  = paste0('{"_id":{"$eq":"', cursor[i], '"}}'),
-                   update = paste0('{ "$set" :', tmp, "}"),
-                   upsert = TRUE)
+  # obtain full data set on _id and other ids
+  cursor <- mongo$iterate(query = '{"_id": {"$regex": "NCT[0-9]{8}"}}',
+                          fields = '{"id_info.org_study_id": 1, "id_info.secondary_id": 1}'
+  )$batch(size = mongo$count())
+  # transform every second element in a list item into a vector
+  otherids <- sapply(cursor, function(x) paste0(as.vector(unlist(x[2]))))
+  # retain _id's for updating
+  cursor <- sapply(cursor, function(x) as.vector(unlist(x[1])))
+  # iterate over list items
+  for (i in seq_len(length(cursor))) {
+    # replace double square brackets around array
+    tmp <- sub("\\[\\[", "[", sub("\\]\\]", "]", jsonlite::toJSON(list("otherids" = otherids[[i]]))))
+    # upsert
+    mongo$update(query  = paste0('{"_id":{"$eq":"', cursor[i], '"}}'),
+                 update = paste0('{ "$set" :', tmp, "}"),
+                 upsert = TRUE)
 
-    }
-    # add index for newly created fired
-    mongo$index(add = "otherids")
-    message('Added index field "otherids".')
+  }
+  # add index for newly created fired
+  mongo$index(add = "otherids")
+  message('Added index field "otherids".')
 
-    # close database connection
-    rm(mongo); gc()
-
-  } #### END xml
+  # close database connection
+  rm(mongo); gc()
 
   # find out number of trials imported into database
   if (debug) message("DEBUG: ", imported)
   imported <- as.integer(gsub(".*imported ([0-9]+) document.*", "\\1", imported[length(imported)]))
-  if (!is.numeric(imported) || imported == 0) stop("Import has apparently failed, returned ", imported)
+  if (!is.numeric(imported)) stop("Import has apparently failed, returned ", imported)
   message("Imported or updated ", imported, " trial(s).")
 
   # clean up temporary directory
