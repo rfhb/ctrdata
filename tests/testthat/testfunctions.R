@@ -123,6 +123,7 @@ test_that("retrieve data from register ctgov", {
     collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
     "Imported or updated 1 trial")
 
+
   ## create and test updatable query
 
   q <- paste0("https://clinicaltrials.gov/ct2/results?term=osteosarcoma&type=Intr&phase=0&age=0&lup_e=12%2F31%2F2014")
@@ -176,6 +177,7 @@ test_that("retrieve data from register euctr", {
   ## slow import
   q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
               "neuroblastoma&status=completed&phase=phase-one")
+
   expect_message(suppressWarnings(ctrLoadQueryIntoDb(q,
                                   collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB",
                                   debug = TRUE, verbose = FALSE)),
@@ -221,7 +223,7 @@ test_that("retrieve data from register euctr", {
 #### browser open show get query ####
 test_that("browser interaction", {
 
-  expect_equal(ctrGetQueryUrlFromBrowser("something_insensible"), NULL)
+  expect_equal(suppressWarnings(ctrGetQueryUrlFromBrowser("something_insensible")), NULL)
 
   q <- "https://clinicaltrials.gov/ct2/results?type=Intr&cond=cancer&age=0"
 

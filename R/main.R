@@ -464,14 +464,17 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
     xml2json <- gsub("([A-Z]):/", "/cygdrive/\\1/", xml2json)
     xml2json <- paste0('cmd.exe /c c:\\cygwin\\bin\\bash.exe --login -c "', xml2json, '"')
     #
-    json2mongo <- paste0(shQuote(installMongoFindBinaries(debug = debug)[2]), json2mongo)
+    #json2mongo <- paste0(shQuote(installMongoFindBinaries(debug = debug)[2]), json2mongo)
+    #json2mongo <- shQuote(json2mongo)
     json2mongo <- gsub(" --", " /", json2mongo)
     json2mongo <- gsub("=", ":", json2mongo)
     #
   } else {
     #
     # mongoimport does not return exit value, hence redirect stderr to stdout
-    json2mongo <- paste0(shQuote(installMongoFindBinaries(debug = debug)[2]), json2mongo, " 2>&1")
+    #json2mongo <- paste0(shQuote(installMongoFindBinaries(debug = debug)[2]), json2mongo, " 2>&1")
+    #json2mongo <- paste0(shQuote(json2mongo, " 2>&1"))
+    #json2mongo <- shQuote(json2mongo)
     #
   }
   #
@@ -483,7 +486,11 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   # run import
   message("Importing JSON into mongoDB ...")
   if (debug) message("DEBUG: ", json2mongo)
-  imported <- system(json2mongo, intern = TRUE, show.output.on.console = FALSE)
+  #imported <- system(json2mongo, intern = TRUE, show.output.on.console = FALSE)
+
+  imported <- system2(command = installMongoFindBinaries(debug = debug)[2],
+                      args = json2mongo,
+                      stdout = TRUE, stderr = TRUE)
 
   # absorb id_info array into new array otherids for later perusal
   #
@@ -652,14 +659,15 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     euctr2json <- gsub("([A-Z]):/", "/cygdrive/\\1/", euctr2json)
     euctr2json <- paste0('cmd.exe /c c:\\cygwin\\bin\\bash.exe --login -c "', euctr2json, '"')
     #
-    json2mongo <- paste0(shQuote(installMongoFindBinaries(debug = debug)[2]), json2mongo)
+    #json2mongo <- paste0(shQuote(installMongoFindBinaries(debug = debug)[2]), json2mongo)
+    #json2mongo <- paste0(shQuote(installMongoFindBinaries(debug = debug)[2]), json2mongo)
     json2mongo <- gsub(" --", " /", json2mongo)
     json2mongo <- gsub("=", ":", json2mongo)
     #
   } else {
     #
     # mongoimport does not return exit value, hence redirect stderr to stdout
-    json2mongo <- paste0(shQuote(installMongoFindBinaries(debug = debug)[2]), json2mongo, " 2>&1")
+    #json2mongo <- paste0(shQuote(installMongoFindBinaries(debug = debug)[2]), json2mongo, " 2>&1")
     #
   }
 
@@ -667,14 +675,17 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   message("Converting to JSON ...")
   if (debug) message("DEBUG: ", euctr2json)
   imported <- system(euctr2json, intern = TRUE, show.output.on.console = FALSE)
-  #
+
   # run import
   message("Importing JSON into mongoDB ...")
   if (debug) message("DEBUG: ", json2mongo)
-  imported <- system(json2mongo, intern = TRUE, show.output.on.console = FALSE)
+  #imported <- system(json2mongo, intern = TRUE, show.output.on.console = FALSE)
+
+  imported <- system2(command = ctrdata:::installMongoFindBinaries(debug = TRUE)[2],
+                      args = json2mongo, stdout = TRUE, stderr = TRUE)
 
   # find out number of trials imported into database
-  imported <- as.integer(gsub("^.*imported ([0-9]+) document[s]{0,1}$", "\\1", imported[length(imported)]))
+  imported <- as.integer(gsub(".*imported ([0-9]+) document.*", "\\1", imported[length(imported)]))
 
   # find out if fast import was successful
   if ( (!is.numeric(imported)) || (imported < resultsEuNumTrials) || (debug & !verbose) ) {
@@ -709,7 +720,11 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
       if (debug & i == 1) message("DEBUG: ", json2split2mongo)
       if (debug)          message("DEBUG: ", i)
       #
-      imported <- system(json2split2mongo, intern = TRUE, show.output.on.console = FALSE)
+      #imported <- system(json2split2mongo, intern = TRUE, show.output.on.console = FALSE)
+
+      imported <- system2(command = ctrdata:::installMongoFindBinaries(debug = TRUE)[2],
+                          args = json2split2mongo, stdout = TRUE, stderr = TRUE)
+
       imported <- as.integer(gsub("^.*imported ([0-9]+) document[s]{0,1}$", "\\1", imported[length(imported)]))
       #
       if (!is.numeric(imported) || imported == 0) {
