@@ -1,3 +1,8 @@
+# ctrdata 0.9.14
+ - 2017-06-28
+ - refactored system calls
+ - windows now part of continuous integration
+ 
 # ctrdata 0.9.13
  - 2017-06-23
  - refactored ctrLoadQueryIntoDb

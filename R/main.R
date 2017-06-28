@@ -505,7 +505,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
                     username = username, password = password, verbose = TRUE)[["ctr"]]
 
   # obtain full data set on _id and other ids
-  cursor <- mongo$iterate(query = '{"_id": {"$regex": "NCT[0-9]{8}"}}',
+  cursor <- mongo$iterate(query  = '{"_id": {"$regex": "NCT[0-9]{8}"}}',
                           fields = '{"id_info.org_study_id": 1, "id_info.secondary_id": 1}'
   )$batch(size = mongo$count())
   # transform every second element in a list item into a vector
