@@ -56,9 +56,8 @@ has_proxy <- function(){
   }
 }
 
-# testing local password free access to a standard
-# mongodb installation which may fail if this is
-# configured otherwise
+
+#### mongodb local password free access to a standard ####
 test_that("access to mongo db from R package", {
 
   has_mongo()
@@ -78,7 +77,8 @@ test_that("access to mongo db from R package", {
 
 })
 
-# test access to mongo db from command line
+
+#### mongodb access from command line ####
 test_that("access to mongo db from command line", {
 
   has_mongo()
@@ -87,8 +87,8 @@ test_that("access to mongo db from command line", {
 
 })
 
-# testing downloading from both registers
-# a query with a no trials as result
+
+#### empty download from both registers ####
 test_that("retrieve data from registers", {
 
   has_internet()
@@ -110,8 +110,8 @@ test_that("retrieve data from registers", {
 
 })
 
-# testing downloading from both registers
-# a query retrieving a small number of trials
+
+#### ctgov download new and update ####
 test_that("retrieve data from register ctgov", {
 
   has_internet()
@@ -154,8 +154,8 @@ test_that("retrieve data from register ctgov", {
 
 })
 
-# testing downloading from both registers
-# a query retrieving a small number of trials
+
+#### euctr download new fast slow, update ####
 test_that("retrieve data from register euctr", {
 
   has_internet()
@@ -218,11 +218,14 @@ test_that("retrieve data from register euctr", {
 
 })
 
-# testing options for user to
-# search in desktop browser
+#### browser open show get query ####
 test_that("browser interaction", {
 
-  tmp <- ctrGetQueryUrlFromBrowser(content = "https://clinicaltrials.gov/ct2/results?type=Intr&cond=cancer&age=0")
+  expect_equal(ctrGetQueryUrlFromBrowser("something_insensible"), NULL)
+
+  q <- "https://clinicaltrials.gov/ct2/results?type=Intr&cond=cancer&age=0"
+
+  tmp <- ctrGetQueryUrlFromBrowser(content = q)
 
   expect_is(tmp, "data.frame")
 
@@ -231,8 +234,13 @@ test_that("browser interaction", {
   expect_warning(ctrGetQueryUrlFromBrowser(content = "ThisDoesNotExist"),
                  "Content is not a clinical trial register search URL.")
 
+  expect_message(ctrOpenSearchPagesInBrowser(q),
+                 "Opening in browser previous search:")
+
   expect_message(ctrOpenSearchPagesInBrowser(tmp),
                  "Opening in browser previous search:")
+
+  expect_equal(ctrOpenSearchPagesInBrowser(register = c("EUCTR", "CTGOV"), copyright = TRUE), TRUE)
 
   has_mongo()
 
@@ -280,12 +288,25 @@ test_that("browser interaction", {
 #
 # })
 
-# testing functions seeking
-# record contents in database
+
+#### functions for database records ####
 test_that("operations on database after download from register", {
 
   has_mongo()
   has_internet()
+
+  # dbFindVariable
+  expect_error(dbFindVariable(namepart = c("onestring", "twostring"),
+                              collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
+               "Name part should have only one element.")
+
+  expect_error(dbFindVariable(namepart = list("onestring", "twostring"),
+                              collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
+               "Name part should be atomic.")
+
+  expect_error(dbFindVariable(namepart = "",
+                              collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
+               "Empty name part string.")
 
   expect_message(dbFindVariable(namepart = "date",
                                 collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
@@ -295,6 +316,8 @@ test_that("operations on database after download from register", {
                                     collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")),
                TRUE)
 
+
+  # dbFindIdsUniqueTrials
   expect_message(dbFindIdsUniqueTrials(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB",
                                        preferregister = "EUCTR"),
                  "Searching multiple country records")
@@ -303,9 +326,30 @@ test_that("operations on database after download from register", {
                                        preferregister = "CTGOV"),
                  "Returning keys")
 
+
+  dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = "GB", include3rdcountrytrials = TRUE,
+                                    collection = "ctrdata", db = "users", url = "mongodb://localhost",
+                                    username = "", password = "", verbose = TRUE)
+
+  expect_warning(dbFindIdsUniqueTrials(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB",
+                                       prefermemberstate = "3RD", include3rdcountrytrials = FALSE),
+                 "Preferred EUCTR version set to 3RD country trials, but include3rdcountrytrials was FALSE")
+
+
+  # dbGetVariablesIntoDf
   expect_error(dbGetVariablesIntoDf(fields = "ThisDoesNotExist",
                                     collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
                "For variable / field: ThisDoesNotExist no data could be extracted")
+
+  expect_error(dbGetVariablesIntoDf(fields = "",
+                                    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
+               "'fields' contains empty elements")
+
+  expect_error(dbGetVariablesIntoDf(fields = list("ThisDoesNotExist"),
+                                    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
+               "Input should be a vector of strings of field names.")
+
+
 
   # clean up = drop collections from mongodb
   expect_equivalent (mongolite::mongo(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB",
@@ -316,13 +360,18 @@ test_that("operations on database after download from register", {
 
 })
 
-# testing operations on minimalistic dataframes
+
+#### functions for dataframes ####
 test_that("operations on data frame", {
 
   df <- data.frame("var1" = 1:3, "var2" = 2:4, stringsAsFactors = FALSE)
 
   statusvalues <- list("Firstvalues" = c("12", "23"),
                        "Lastvalue"   = c("34"))
+
+  # dfMergeTwoVariablesRelevel
+  expect_error(dfMergeTwoVariablesRelevel(list("var1", "var2")),
+               "Need a data frame as input.")
 
   expect_message(dfMergeTwoVariablesRelevel(df = df, varnames = c("var1", "var2")),
                  "Unique values returned: 12, 23, 34")
@@ -333,5 +382,9 @@ test_that("operations on data frame", {
   expect_message(dfMergeTwoVariablesRelevel(df = df, varnames = c("var1", "var2"),
                                             levelslist = statusvalues),
                  "Unique values returned: Firstvalues, Lastvalue")
+
+  expect_error(dfMergeTwoVariablesRelevel(df = df, varnames = 1:3),
+                 "Please provide exactly two variable names.")
+
 
 })

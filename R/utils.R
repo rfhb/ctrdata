@@ -103,13 +103,13 @@ ctrOpenSearchPagesInBrowser <- function(input = "", register = "", copyright = F
   if (class(input) == "character" && is.atomic(input) && input == "") {
     #
     # open empty search pages
-    if ("EUCTR" == register) utils::browseURL("https://www.clinicaltrialsregister.eu/ctr-search/search", ...)
-    if ("CTGOV" == register) utils::browseURL("https://clinicaltrials.gov/ct2/search/advanced", ...)
+    if ("EUCTR" %in% register) utils::browseURL("https://www.clinicaltrialsregister.eu/ctr-search/search", ...)
+    if ("CTGOV" %in% register) utils::browseURL("https://clinicaltrials.gov/ct2/search/advanced", ...)
     #
     # if requested also show copyright pages
     if (copyright) {
-      if ("EUCTR" == register) utils::browseURL("https://www.clinicaltrialsregister.eu/disclaimer.html", ...)
-      if ("CTGOV" == register) utils::browseURL("https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use", ...)
+      if ("EUCTR" %in% register) utils::browseURL("https://www.clinicaltrialsregister.eu/disclaimer.html", ...)
+      if ("CTGOV" %in% register) utils::browseURL("https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use", ...)
     }
   } else {
     #
@@ -147,9 +147,9 @@ ctrOpenSearchPagesInBrowser <- function(input = "", register = "", copyright = F
                               queryterm), ...)
       #
     }
-    #
-    invisible(TRUE)
   }
+  #
+  invisible(TRUE)
 }
 # end ctrOpenSearchPagesInBrowser
 
@@ -174,7 +174,7 @@ ctrOpenSearchPagesInBrowser <- function(input = "", register = "", copyright = F
 ctrGetQueryUrlFromBrowser <- function(content = clipr::read_clip()) {
   #
   if (length(content) != 1L) {
-    stop(paste("Clipboard content is not a clinical trial register search URL. Returning NULL."))
+    stop("Clipboard content is not a clinical trial register search URL. Returning NULL.")
     return(NULL)
   }
   #
@@ -264,7 +264,7 @@ dbQueryHistory <- function(collection = "ctrdata", db = "users", url = "mongodb:
   # Check if meeting expectations
   if (!is.list(tmp) || (length(tmp) < 1)) {
     #
-    message("No history found in expected format.", immediate. = TRUE)
+    message("No history found in expected format.")
     tmp <- data.frame(NULL)
     #
   } else {
