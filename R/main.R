@@ -676,9 +676,8 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   # find out number of trials imported into database
   imported <- as.integer(gsub("^.*imported ([0-9]+) document[s]{0,1}$", "\\1", imported[length(imported)]))
 
-  # find out if fast import successful
-  if ( (!is.numeric(imported)) || (imported == 0) || (imported < resultsEuNumTrials) ||
-       (debug & !verbose) ) {
+  # find out if fast import was successful
+  if ( (!is.numeric(imported)) || (imported < resultsEuNumTrials) || (debug & !verbose) ) {
     #
     # if not successful, switch to SLOW IMPORT
     warning("Switching to slow import because mongoimport as single JSON file failed.", immediate. = TRUE)
