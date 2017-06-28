@@ -72,8 +72,8 @@ test_that("access to mongo db from R package", {
                        db = "users")$drop(),
       silent = TRUE)
 
-  expect_warning(suppressMessages(dbQueryHistory(
-    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")),
+  expect_message(dbQueryHistory(
+    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
                  "No history found in expected format.")
 
 })
@@ -117,18 +117,18 @@ test_that("retrieve data from register ctgov", {
   has_internet()
   has_mongo()
 
-  expect_message(suppressWarnings(ctrLoadQueryIntoDb(
+  expect_message(ctrLoadQueryIntoDb(
     queryterm = "term=2010-024264-18",
     register = "CTGOV",
-    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")),
+    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
     "Imported or updated 1 trial")
 
   ## create and test updatable query
 
   q <- paste0("https://clinicaltrials.gov/ct2/results?term=osteosarcoma&type=Intr&phase=0&age=0&lup_e=12%2F31%2F2014")
 
-  expect_message(suppressWarnings(ctrLoadQueryIntoDb(q,
-    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")),
+  expect_message(ctrLoadQueryIntoDb(q,
+    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
     "Imported or updated 3")
 
   # manipulate history to force testing updating
@@ -169,7 +169,7 @@ test_that("retrieve data from register euctr", {
 
   expect_error(suppressWarnings(ctrLoadQueryIntoDb(
     querytoupdate = "last",
-    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB", debug = TRUE)),
+    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")),
     "First result page empty")
 
 
@@ -177,8 +177,8 @@ test_that("retrieve data from register euctr", {
   q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
               "neuroblastoma&status=completed&phase=phase-one")
   expect_message(suppressWarnings(ctrLoadQueryIntoDb(q,
-                                                     collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB",
-                                                     debug = TRUE, verbose = FALSE)),
+                                  collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB",
+                                  debug = TRUE, verbose = FALSE)),
                  "Imported or updated")
 
 
