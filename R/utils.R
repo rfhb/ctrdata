@@ -264,7 +264,7 @@ dbQueryHistory <- function(collection = "ctrdata", db = "users", url = "mongodb:
   # Check if meeting expectations
   if (!is.list(tmp) || (length(tmp) < 1)) {
     #
-    warning("No history found in expected format.", immediate. = TRUE)
+    message("No history found in expected format.", immediate. = TRUE)
     tmp <- data.frame(NULL)
     #
   } else {
