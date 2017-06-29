@@ -6,9 +6,9 @@
 \.Rproj*
 ^.*\.Rproj$
 ^\.Rproj\.user$
-ctrdata_json.jpg
-ctrdata_sequence_diagram.png
-private.*
+^ctrdata_json.jpg$
+^ctrdata_sequence_diagram.jpeg$
+^private.*
 ^_gh-pages$
 ^docs$
 ^.lintr$

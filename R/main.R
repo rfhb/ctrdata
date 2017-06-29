@@ -186,7 +186,9 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
 #' @inheritParams ctrLoadQueryIntoDb
 #'
 #' @keywords internal
-#
+#'
+#' @importFrom RCurl getCurlHandle getURL
+#'
 ctrRerunQuery <- function (querytoupdate = querytoupdate,
                            debug = debug,
                            collection = collection, db = db, url = url,
@@ -327,7 +329,9 @@ progressOut <- function(down, up) {
 #' @inheritParams ctrLoadQueryIntoDb
 #'
 #' @keywords internal
-#
+#'
+#' @importFrom jsonlite toJSON
+#'
 dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber,
                                     collection = collection, db = db, url = url,
                                     username = username, password = password, verbose = verbose,
@@ -379,7 +383,9 @@ dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber,
 #' @inheritParams ctrLoadQueryIntoDb
 #'
 #' @keywords internal
-#
+#'
+#' @importFrom RCurl getCurlHandle close curlPerform CFILE
+#'
 ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
                                     details, parallelretrievals, debug,
                                     collection, db, url,
@@ -566,7 +572,9 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
 #' @inheritParams ctrLoadQueryIntoDb
 #'
 #' @keywords internal
-#
+#'
+#' @importFrom RCurl getCurlHandle getURL
+#'
 ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                                     details, parallelretrievals, debug,
                                     collection, db, url,
@@ -661,7 +669,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   # run import
   message("Importing JSON into mongoDB ...")
   if (debug) message("DEBUG: ", json2mongo)
-  imported <- system2(command = ctrdata:::installMongoFindBinaries(debug = TRUE)[2],
+  imported <- system2(command = installMongoFindBinaries(debug = TRUE)[2],
                       args = json2mongo, stdout = TRUE, stderr = TRUE)
 
   # find out number of trials imported into database
@@ -700,7 +708,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
       if (debug & i == 1) message("DEBUG: ", json2split2mongo)
       if (debug)          message("DEBUG: ", i)
       #
-      imported <- system2(command = ctrdata:::installMongoFindBinaries(debug = TRUE)[2],
+      imported <- system2(command = installMongoFindBinaries(debug = TRUE)[2],
                           args = json2split2mongo, stdout = TRUE, stderr = TRUE)
       #
       imported <- as.integer(gsub("^.*imported ([0-9]+) document[s]{0,1}$", "\\1", imported[length(imported)]))

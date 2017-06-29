@@ -34,6 +34,8 @@ countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", 
 #'
 #' @keywords internal
 #'
+#' @importFrom mongolite mongo
+#'
 ctrMongo <- function(collection = "ctrdata", db = "users", url = "mongodb://localhost",
                      username = "", password = "", verbose = FALSE) {
 
@@ -170,6 +172,8 @@ ctrOpenSearchPagesInBrowser <- function(input = "", register = "", copyright = F
 #' \dontrun{
 #' ctrLoadQueryIntoDb (ctrGetQueryUrlFromBrowser())
 #' }
+#'
+#' @importFrom clipr read_clip
 #'
 ctrGetQueryUrlFromBrowser <- function(content = clipr::read_clip()) {
   #
