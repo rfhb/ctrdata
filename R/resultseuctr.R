@@ -45,12 +45,14 @@ results.tablenames <- c("#trialInformationSection",
 
 #' strnorm
 #'
-#' @param s
+#' This function normalises a single string
+#' according to some rules developed from
+#' processing EUCTR result field names
 #'
-#' @return
-#' @export
+#' @param s A string to be normalised
 #'
-#' @examples
+#' @return Normalised string
+#'
 strnorm <- function (s) {
   s <- tolower(s)
   s <- gsub(" +", "_", s)
@@ -64,13 +66,18 @@ strnorm <- function (s) {
 
 #' format_euctr_results
 #'
-#' @param df
-#' @param tabletype
+#' Function cleans tables from EUCTR results,
+#' in particular by removing extraneous cells
+#' and interpreting the visual / positional
+#' markup used by EUCTR
 #'
-#' @return
-#' @export
+#' @param df A data frame from a table node by rvest
 #'
-#' @examples
+#' @param tabletype Indicator if simple table (0)
+#' or if it includes a subtable (higher than 0)
+#'
+#' @return A clean data frame
+#'
 format_euctr_results <- function (df, tabletype) {
 
   # check if df is data.frame
@@ -222,10 +229,7 @@ getEuctrResultsTrial <- function(fullurleuctrtrialresults = "", eudract_number =
       }
 
       # extract from webpage
-      webpage %>%
-        html_nodes(isub) %>%
-        html_table(fill = TRUE) ->
-        table.list
+      table.list <- html_table(html_nodes(webpage, isub), fill = TRUE)
 
       # for debugging:
       # df <- table.list[[1]]
