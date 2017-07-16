@@ -40,6 +40,7 @@ addons:
 
 r_packages:
   - covr
+  - rvest
 
 after_success:
   - Rscript -e 'library(covr); codecov()'

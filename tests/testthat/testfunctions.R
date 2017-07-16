@@ -220,6 +220,16 @@ test_that("retrieve data from register euctr", {
 
 })
 
+
+#### euctr download results ####
+test_that("retrieve results from register euctr", {
+
+  has_internet()
+
+  expect_equal(length(getEuctrResultsTrial(eudract_number = "2014-001076-58")), 20)
+
+})
+
 #### browser open show get query ####
 test_that("browser interaction", {
 

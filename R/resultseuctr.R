@@ -14,6 +14,9 @@ if(FALSE) {
 
   tmp <- getEuctrResultsTrial(eudract_number = eudract_number)
 
+  str(tmp)
+  length(tmp)
+
   # css path: html body div#content.container_12 div.detail div#resultContent table#trialInformationSection.sectionTable
   # css selector: #trialInformationSection
   # embedded table:
@@ -195,6 +198,7 @@ ctrLoadQueryIntoDbEuctrResults <- function(queryterm, register = "EUCTR", queryt
 #'
 #' @importFrom xml2  read_html
 #' @importFrom rvest html_nodes html_table
+#' @importFrom stats setNames
 #'
 getEuctrResultsTrial <- function(fullurleuctrtrialresults = "", eudract_number = ""){
 
@@ -229,7 +233,7 @@ getEuctrResultsTrial <- function(fullurleuctrtrialresults = "", eudract_number =
       }
 
       # extract from webpage
-      table.list <- html_table(html_nodes(webpage, isub), fill = TRUE)
+      table.list <- rvest::html_table(rvest::html_nodes(webpage, isub), fill = TRUE)
 
       # for debugging:
       # df <- table.list[[1]]
@@ -258,7 +262,7 @@ getEuctrResultsTrial <- function(fullurleuctrtrialresults = "", eudract_number =
         tmpname <- strnorm(tmpname)
 
         # append named table as list element to output
-        tables.results <- append(tables.results, setNames(list(iiii), tmpname))
+        tables.results <- append(tables.results, stats::setNames(list(iiii), tmpname))
 
       }
 
