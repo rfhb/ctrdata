@@ -14,8 +14,18 @@ if(FALSE) {
 
   tmp <- getEuctrResultsTrial(eudract_number = eudract_number)
 
+  jsonlite::toJSON(tmp[[1]], dataframe = "values", pretty = TRUE)
+
+  jsonlite::serializeJSON(tmp[[1]], pretty = TRUE)
+
+  # compare to ctgov
+  q <- "https://clinicaltrials.gov/ct2/results?rslt=With&cond=Neuroblastoma&age=0&draw=3&pg=1#tableTop"
+  ctrLoadQueryIntoDb(q, collection = "resultsTest")
+
+
   str(tmp)
   length(tmp)
+  head(tmp)
 
   # css path: html body div#content.container_12 div.detail div#resultContent table#trialInformationSection.sectionTable
   # css selector: #trialInformationSection
@@ -168,11 +178,16 @@ format_euctr_results <- function (df, tabletype) {
 #'
 #' @keywords internal
 #'
-ctrLoadQueryIntoDbEuctrResults <- function(queryterm, register = "EUCTR", querytoupdate,
+ctrLoadQueryIntoDbEuctrResults <- function(queryterm, register, querytoupdate,
+                                           include.euctr.results,
                                            details, parallelretrievals, debug,
                                            collection, db, url,
                                            username, password, verbose,
-                                           queryupdateterm) {
+                                           queryupdateterm,
+                                           eudractnumbers) {
+
+  # change query so that only
+
 
   # call for each trial getEuctrResultsTrial
 

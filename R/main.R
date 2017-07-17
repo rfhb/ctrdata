@@ -20,6 +20,10 @@
 #'   was loaded into the collection, or the integer number of query to be run
 #'   again; see \link{dbQueryHistory}. This parameter takes precedence over
 #'   \code{queryterm}.
+#' @param include.euctr.results If \code{TRUE}, also include results when
+#'   retrieving and loading trials from EUCTR.
+#'   This will notably slow down executing this function.
+#'   (For CTGOV, results are always included.)
 #' @param details If \code{TRUE} (default), retrieve full protocol-related
 #'   information from EUCTR or XML data from CTGOV, depending on the register
 #'   selected. This gives all of the available details for the trials.
@@ -62,6 +66,7 @@
 #' @export
 #'
 ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate = 0,
+                               include.euctr.results = FALSE,
                                details = TRUE, parallelretrievals = 10, debug = FALSE,
                                collection = "ctrdata", db = "users", url = "mongodb://localhost",
                                username = "", password = "", verbose = FALSE) {
@@ -147,13 +152,14 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
 
   ## main function
 
-  # ctgov core parameters
+  # parameters for core functions
   params <- list(queryterm = queryterm, register = register, querytoupdate = querytoupdate,
+                 include.euctr.results = include.euctr.results,
                  details = details, parallelretrievals = parallelretrievals, debug = debug,
                  collection = collection, db = db, url = url,
                  username = username, password = password, verbose = verbose,
                  queryupdateterm = queryupdateterm)
-  # ctgov core functions
+  # call core functions
   imported <- switch(as.character(register),
                      "CTGOV" = do.call (ctrLoadQueryIntoDbCtgov, params),
                      "EUCTR" = do.call (ctrLoadQueryIntoDbEuctr, params)
@@ -387,6 +393,7 @@ dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber,
 #' @importFrom RCurl getCurlHandle close curlPerform CFILE
 #'
 ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
+                                    include.euctr.results,
                                     details, parallelretrievals, debug,
                                     collection, db, url,
                                     username, password, verbose,
@@ -576,6 +583,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
 #' @importFrom RCurl getCurlHandle getURL
 #'
 ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
+                                    include.euctr.results,
                                     details, parallelretrievals, debug,
                                     collection, db, url,
                                     username, password, verbose,
@@ -747,6 +755,25 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   dbFindVariable(forceupdate = TRUE, debug = debug,
                  collection = collection, db = db, url = url,
                  username = username, password = password, verbose = verbose)
+
+
+  ## results: load also euctr trials results if requested
+  if(include.euctr.results) {
+
+    # results are available only one-by-one for each trial
+    # we need the eudract numbers of the trials that were
+    # just retrieved and imported
+    # tempDir <- "~/Daten/mak/r/emea/ctrdata/private/test"
+    eudractnumbersimported <- readLines(paste0(tempDir, '/alleudract.txt'))
+    eudractnumbersimported <- sort(unique(eudractnumbersimported))
+
+    imported.results <- do.call (ctrLoadQueryIntoDbEuctrResults,
+                                 list(params, list(eudractnumbers = eudractnumbersimported[1:2])))
+
+  }
+
+  # inform user on results
+
 
   # return
   return(imported)

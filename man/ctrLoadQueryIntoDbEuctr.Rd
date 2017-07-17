@@ -4,9 +4,9 @@
 \alias{ctrLoadQueryIntoDbEuctr}
 \title{ctrLoadQueryIntoDbEuctr}
 \usage{
-ctrLoadQueryIntoDbEuctr(queryterm, register, querytoupdate, details,
-  parallelretrievals, debug, collection, db, url, username, password, verbose,
-  queryupdateterm)
+ctrLoadQueryIntoDbEuctr(queryterm, register, querytoupdate,
+  include.euctr.results, details, parallelretrievals, debug, collection, db,
+  url, username, password, verbose, queryupdateterm)
 }
 \arguments{
 \item{queryterm}{Either a string with the full URL of a search in a register
@@ -22,6 +22,11 @@ update records.}
 was loaded into the collection, or the integer number of query to be run
 again; see \link{dbQueryHistory}. This parameter takes precedence over
 \code{queryterm}.}
+
+\item{include.euctr.results}{If \code{TRUE}, also include results when
+retrieving and loading trials from EUCTR.
+This will notably slow down executing this function.
+(For CTGOV, results are always included.)}
 
 \item{details}{If \code{TRUE} (default), retrieve full protocol-related
 information from EUCTR or XML data from CTGOV, depending on the register
