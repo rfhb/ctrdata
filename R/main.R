@@ -761,25 +761,6 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                  collection = collection, db = db, url = url,
                  username = username, password = password, verbose = verbose)
 
-
-  ## results: load also euctr trials results if requested
-  if(include.euctr.results) {
-
-    # results are available only one-by-one for each trial
-    # we need the eudract numbers of the trials that were
-    # just retrieved and imported
-    # tempDir <- "~/Daten/mak/r/emea/ctrdata/private/test"
-    eudractnumbersimported <- readLines(paste0(tempDir, '/alleudract.txt'))
-    eudractnumbersimported <- sort(unique(eudractnumbersimported))
-
-    imported.results <- do.call (ctrLoadQueryIntoDbEuctrResults,
-                                 list(params, list(eudractnumbers = eudractnumbersimported[1:2])))
-
-  }
-
-  # inform user on results
-
-
   # return
   return(imported)
 }
