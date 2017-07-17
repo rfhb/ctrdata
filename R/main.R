@@ -79,11 +79,12 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
       length(queryterm) == 1 &&
       grepl ("^https.+clinicaltrials.+", queryterm)) {
     #
+    # remove any appended intrapage anchor from url, e.g. #tableTop
+    queryterm <- sub("#.+$", "", queryterm)
+    #
     queryterm <- ctrGetQueryUrlFromBrowser(queryterm)
     #
   }
-  # remove any appended intrapage anchor from url, e.g. #tableTop
-  queryterm <- sub("#.+$", "", queryterm)
 
   # deal with data frame as returned from ctrQueryHistoryInDb() and ctrGetQueryUrlFromBrowser()
   if (is.data.frame(queryterm) &&
