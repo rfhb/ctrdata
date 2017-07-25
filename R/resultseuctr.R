@@ -244,40 +244,25 @@ format_euctr_results <- function (df, tabletype) {
   attr(df, "tablename") <- tablename
   df <- df[ -1, ]
 
-  # return cleaned and formatted data frame
-  return (df)
-}
+  # turn df into named list to
+  # facilitate toJSON conversion
+  #
+  outdf <- lapply(df[ ,2], c)
+  #
+  # for name, search for ctgov from euctr key
+  names(outdf) <- unlist(lapply(df[ ,1], euctr2ctgov))
 
+  # there will be duplicate keys, hence it is necessary
+  # to concatenate elements by key
+  keys  <- unique(names(outdf))
+  outdf <- lapply(keys, FUN = function (x) paste0(outdf[ names(outdf) == x ]))
+  names(outdf) <- keys
 
-
-
-#' ctrLoadQueryIntoDbEuctrResults
-#'
-#' Takes query and database parameters to find
-#' all trials with results, for each of which
-#' then the results are retrieved and loaded
-#' into the data base
-#'
-#' @inheritParams ctrLoadQueryIntoDb
-#'
-#' @keywords internal
-#'
-ctrLoadQueryIntoDbEuctrResults <- function(queryterm, register, querytoupdate,
-                                           include.euctr.results,
-                                           details, parallelretrievals, debug,
-                                           collection, db, url,
-                                           username, password, verbose,
-                                           queryupdateterm,
-                                           eudractnumbers) {
-
-  # change query so that only
-
-
-  # call for each trial getEuctrResultsTrial
-
-  # load results into data base
+  # return cleaned and formatted list
+  return (outdf)
 
 }
+
 
 
 
