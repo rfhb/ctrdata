@@ -354,7 +354,7 @@ getEuctrResultsTrial <- function(fullurleuctrtrialresults = "", eudract_number =
         break
       }
 
-      # convert each element in list into table
+      # convert each element in list into formatted data frame
       tables.tmp <- lapply(table.list, format_euctr_results, tabletype = ii)
 
       # for debugging:
@@ -379,12 +379,12 @@ getEuctrResultsTrial <- function(fullurleuctrtrialresults = "", eudract_number =
       # to next i in results.tablenames
       if (ii == 0) {
         # inform user on successful last table
-        message(isub)
+        #message(isub)
         break
       }
 
       # inform user on successful last table
-      message(isub)
+      #message(isub)
 
     } # while(TRUE)
 
@@ -448,4 +448,5 @@ ctrLoadQueryIntoDbEuctrResults <- function(queryterm, register, querytoupdate,
 
 
 } # ctrLoadQueryIntoDbEuctrResults
+
 
