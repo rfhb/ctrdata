@@ -228,7 +228,7 @@ test_that("retrieve results from register euctr", {
 
   has_internet()
 
-  expect_equal(length(getEuctrResultsTrial(eudract_number = "2014-001076-58")), 20)
+  expect_equal(length(getEuctrResultsTrial(eudract_number = "2014-001076-58")), 22)
 
 })
 
