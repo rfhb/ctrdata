@@ -150,6 +150,9 @@ euctr2ctgov <- function (x) {
 strnorm <- function (s) {
   s <- tolower(s)
   s <- gsub(" +", "_", s)
+  s <- gsub("_$", "", s)
+  s <- gsub("/", "_", s)
+  s <- gsub(":", "", s) # TODO
   s <- gsub("[#.]", "",  s)
   s <- gsub("section", "", s)
   s <- gsub("embeddedtable", "details", s)
@@ -160,7 +163,7 @@ strnorm <- function (s) {
 
 #' format_euctr_results
 #'
-#' Function cleans tables from EUCTR results,
+#' Function cleans a table from EUCTR results,
 #' in particular by removing extraneous cells
 #' and interpreting the visual / positional
 #' markup used by EUCTR
