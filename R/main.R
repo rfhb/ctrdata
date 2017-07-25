@@ -759,7 +759,6 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                  collection = collection, db = db, url = url,
                  username = username, password = password, verbose = verbose)
 
-
   ## results: load also euctr trials results if requested
   if(include.euctr.results) {
 
@@ -771,7 +770,13 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     eudractnumbersimported <- sort(unique(eudractnumbersimported))
 
     imported.results <- do.call (ctrLoadQueryIntoDbEuctrResults,
-                                 list(params, list(eudractnumbers = eudractnumbersimported[1:2])))
+                                 list(queryterm = queryterm, register = register, querytoupdate = querytoupdate,
+                                      include.euctr.results = include.euctr.results,
+                                      details = details, parallelretrievals = parallelretrievals, debug = debug,
+                                      collection = collection, db = db, url = url,
+                                      username = username, password = password, verbose = verbose,
+                                      queryupdateterm = queryupdateterm,
+                                      eudractnumbers = eudractnumbersimported))
 
   }
 
