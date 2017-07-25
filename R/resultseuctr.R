@@ -389,3 +389,54 @@ getEuctrResultsTrial <- function(fullurleuctrtrialresults = "", eudract_number =
 
 
 
+
+
+#' ctrLoadQueryIntoDbEuctrResults
+#'
+#' Takes query and database parameters to find
+#' all trials with results, for each of which
+#' then the results are retrieved and loaded
+#' into the data base
+#'
+#' @inheritParams ctrLoadQueryIntoDb
+#'
+#' @keywords internal
+#'
+ctrLoadQueryIntoDbEuctrResults <- function(queryterm, register, querytoupdate,
+                                           include.euctr.results,
+                                           details, parallelretrievals, debug,
+                                           collection, db, url,
+                                           username, password, verbose,
+                                           queryupdateterm,
+                                           eudractnumbers) {
+
+  ## adjust query
+
+  # change query so that only
+
+
+  ## get results
+
+  # call for each trial getEuctrResultsTrial
+  tmp <- getEuctrResultsTrial(eudract_number = eudract_number)
+
+  # transform into json
+  tmp <- jsonlite::toJSON(tmp, auto_unbox = TRUE) # , pretty = TRUE
+
+
+  ## load results into data base
+
+  # get a working mongo connection, select trial record collection
+  mongo <- ctrMongo(collection = collection, db = db, url = url,
+                    username = username, password = password, verbose = TRUE)[["ctr"]]
+
+  # update database
+  mongo$update(query  = paste0('{"x1_eudract_number":{"$eq":"', eudract_number, '"}}'),
+               update = paste0('{ "$set" :', tmp, "}"),
+               upsert = TRUE)
+
+
+
+
+} # ctrLoadQueryIntoDbEuctrResults
+
