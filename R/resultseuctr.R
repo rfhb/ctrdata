@@ -293,17 +293,41 @@ getEuctrResultsTrial <- function(fullurleuctrtrialresults = "", eudract_number =
   if (!grepl("[0-9]{4}-[0-9]{6}-[0-9]{2}", eudract_number))
     stop("Invalid 'eudract_number': ", eudract_number, ".")
 
-  # from eudract_number construct fullurleuctrtrialresults
+  # from eudract_number construct full url of euctr trial's results
   fullurleuctrtrialresults <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/trial/",
                                      eudract_number, "/results")
 
   # download single web page with results for one trial
   webpage <- xml2::read_html(fullurleuctrtrialresults)
 
-  # initialise variables needed for processing
-  ii <- 0
-  tables.results <- list()
+  # extract special information prepended to table
 
+  # <td class="header labelColumn">
+  #   <div>    Results information</div>
+  #   </td>
+  #   <tr>
+  #   <td class="labelColumn"><div>    This version publication date</div></td>
+  #   <td class="valueColumn"><div>
+  #   01 Apr 2017
+  # </div>
+  #   </td>
+  #   </tr>
+  #   <tr>
+  #   <td class="labelColumn"><div>    First version publication date</div></td>
+  #   <td class="valueColumn"><div>
+  #   01 Apr 2017
+  # </div>
+  tables.results <- list(
+    sub( ".*This version publication date.*?([0-9]{2} [A-Z][a-z]{2} [0-9]{4}).*", "\\1", webpage),
+    sub(".*First version publication date.*?([0-9]{2} [A-Z][a-z]{2} [0-9]{4}).*", "\\1", webpage)
+    )
+  names(tables.results) <- c(euctr2ctgov( "This version publication date"),
+                             euctr2ctgov("First version publication date"))
+
+  # initialise variables needed for further processing
+  ii <- 0
+
+  # iterate over pre-defined tables to extract tabled information
   for (i in results.tablenames) {
 
     while(TRUE) {
