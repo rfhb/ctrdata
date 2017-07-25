@@ -224,6 +224,8 @@ test_that("retrieve data from register euctr", {
 #### euctr download results ####
 test_that("retrieve results from register euctr", {
 
+  expect_equal(euctr2ctgov("doesnotexist"), "doesnotexist")
+
   has_internet()
 
   expect_equal(length(getEuctrResultsTrial(eudract_number = "2014-001076-58")), 20)
