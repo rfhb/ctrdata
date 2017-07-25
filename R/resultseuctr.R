@@ -4,6 +4,7 @@
 ## 2017-04-02 started exploration
 ## 2017-07-15 first working functions
 
+
 # for manual debugging
 if(FALSE) {
 
@@ -12,36 +13,46 @@ if(FALSE) {
   eudract_number <- "2007-000371-42"
   eudract_number <- "2014-001076-58"
 
+  collection <- "resultsTest"
+
+  ctrLoadQueryIntoDb(eudract_number, register = "EUCTR", collection = collection)
+
   tmp <- getEuctrResultsTrial(eudract_number = eudract_number)
+  tmp <- jsonlite::toJSON(tmp, auto_unbox = TRUE, pretty = TRUE)
 
-  jsonlite::toJSON(tmp[[1]], dataframe = "values", pretty = TRUE)
+  cat(tmp, file = paste0("./private/results/", eudract_number, ".json"))
 
-  jsonlite::serializeJSON(tmp[[1]], pretty = TRUE)
+  # -1- to do:
+  # "id_info.secondary_id": ["-", "-"],
+  # "id_info.nct_id": "NCT00106353",
 
-  # compare to ctgov
-  q <- "https://clinicaltrials.gov/ct2/results?rslt=With&cond=Neuroblastoma&age=0&draw=3&pg=1#tableTop"
-  ctrLoadQueryIntoDb(q, collection = "resultsTest")
+  # -2- do not make named sublists
 
 
-  str(tmp)
-  length(tmp)
-  head(tmp)
-
-  # css path: html body div#content.container_12 div.detail div#resultContent table#trialInformationSection.sectionTable
-  # css selector: #trialInformationSection
-  # embedded table:
-  # #subjectDispositionSection > tbody:nth-child(1) > tr:nth-child(52) > td:nth-child(1) > div:nth-child(1) > table:nth-child(1)
-  # div#resultContent table#subjectDispositionSection.sectionTable tbody tr td.embeddedTableContainer div table.embeddedTable
-
-  i <- "#trialInformationSection"
-  i <- "#endPointsSection"
-  i <- "#endPoint999Section"
-  i <- "#moreInformationSection"
+  # get a working mongo connection, select trial record collection
+  mongo <- ctrMongo(collection = collection)[["ctr"]]
+  # update database
+  mongo$update(query  = paste0('{"x1_eudract_number":{"$eq":"', eudract_number, '"}}'),
+               update = paste0('{ "$set" :', tmp, "}"),
+               upsert = TRUE)
 
 }
 
 
-# general definitions
+
+
+
+
+
+
+
+
+## general definitions
+
+# names of tables in euctr html results page, see following examples:
+# css path: div#content.container_12 div.detail div#resultContent table#trialInformationSection.sectionTable
+# css selector: #trialInformationSection
+# embedded: table#subjectDispositionSection.sectionTable tbody tr td.embeddedTableContainer div table.embeddedTable
 results.tablenames <- c("#trialInformationSection",
                         "#subjectDispositionSection",
                         "#subjectDispositionSection .embeddedTable",
