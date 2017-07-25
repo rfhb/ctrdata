@@ -54,6 +54,76 @@ results.tablenames <- c("#trialInformationSection",
                         "#adverseEventsSection .embeddedTable",
                         "#moreInformationSection")
 
+# mapping of euctr and ctgov variable / key names
+euctrctgovdict <- c(
+
+  "Additional study identifiers: US NCT number", "id_info.nct_id",
+  "Additional study identifiers: ISRCTN number", "id_info.secondary_id",
+  "Additional study identifiers: WHO universal trial number (UTN)", "id_info.secondary_id",
+
+  "results_analysis_stage_global_end_of_trial_date", "last_follow_up_date", # ctgov deprecated end_date
+
+  "First version publication date", "firstreceived_results_date",
+  "This version publication date", "lastchanged_date",
+
+  "number_of_subjects_enrolled_per_country_worldwide_total_number_of_subjects", "enrollment",
+
+  # no correspondence found in ctgov
+  "number_of_subjects_enrolled_per_country_eea_total_number_of_subjects", NA,
+  "number_of_subjects_enrolled_per_age_group_in_utero", NA,
+  "number_of_subjects_enrolled_per_age_group_preterm_newborn_-_gestational_age_<_37_wk", NA,
+  "number_of_subjects_enrolled_per_age_group_newborns_(0-27_days)", NA,
+  "number_of_subjects_enrolled_per_age_group_infants_and_toddlers_(28_days-23_months)", NA,
+  "number_of_subjects_enrolled_per_age_group_children_(2-11_years)", NA,
+  "number_of_subjects_enrolled_per_age_group_adolescents_(12-17_years)", NA,
+  "number_of_subjects_enrolled_per_age_group_adults_(18-64_years)", NA,
+  "number_of_subjects_enrolled_per_age_group_from_65_to_84_years", NA,
+  "number_of_subjects_enrolled_per_age_group_85_years_and_over", NA
+
+)
+# convert into data frame for looking up
+euctrctgovdict.select <- seq.int(1L, length(euctrctgovdict), 2L)
+euctrctgovdict <- data.frame("euctr" = euctrctgovdict[euctrctgovdict.select    ],
+                             "ctgov" = euctrctgovdict[euctrctgovdict.select + 1],
+                             stringsAsFactors = FALSE)
+
+
+
+
+#' euctr2ctgov
+#'
+#' This function looks up the name of the result variable
+#' as retrieved from EUCTR and attempts to find and return
+#' the corresponding CTGOV variable name.
+#'
+#' @param x A single string
+#'
+#' @return A CTGOV variable name
+#'
+euctr2ctgov <- function (x) {
+
+  # for debugging
+  #message(x, " -> ", appendLF = FALSE)
+
+  # check paramater
+  if(class(x)  != "character") stop("x is not a string.")
+  if(length(x) != 1)           stop("x has to be of length 1.")
+  if(!is.atomic(x))            stop("x has to be single string.")
+
+  # attempt look up in dictionary
+  s <- euctrctgovdict$ctgov[euctrctgovdict$euctr == x]
+
+  # for debugging
+  #message(s, appendLF = TRUE)
+
+  # fallback to normalised input string
+  if(!length(s) || is.na(s)) s <- strnorm(x)
+
+  # return converted string
+  return (s)
+}
+
+
 
 
 #' strnorm
