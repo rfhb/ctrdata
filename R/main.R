@@ -412,28 +412,10 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   dir.create(tempDir)
 
   # CTGOV standard identifiers
+  # updated 2017-07 with revised ctgov website links, e.g.
+  # https://clinicaltrials.gov/ct2/results/download_studies?rslt=With&cond=Neuroblastoma&age=0&draw=3
   queryUSRoot   <- "https://clinicaltrials.gov/"
-  queryUSType1  <- "ct2/results/download?"
-  queryUSPreXML <- "&down_stds=all&down_typ=study&down_flds=all&down_fmt=xml"
-  # next line to include any available result-related information within the XML
-  # queryUSPreXML <- "down_stds=all&down_typ=results&down_flds=all&down_fmt=plain"
-  queryUSPost   <- "&show_down=Y"
-
-  # example: condition ependymoma, children, interventional study, added or modified from 1 Dec 2014 onwards:
-  #
-  # https://clinicaltrials.gov/ct2/results?term=&recr=&rslt=&type=Intr&cond=ependymoma&intr=&titles=&
-  # outc=&spons=&lead=&id=&state1=&cntry1=&state2=&cntry2=&state3=&cntry3=&locn=&gndr=&age=0&rcv_s=&rcv_e=&
-  # lup_s=12%2F01%2F2014&lup_e=
-  #
-  # "Download Selected Fields", all fields, all studies, comma separated format:
-  #
-  # https://clinicaltrials.gov/ct2/results/download?down_stds=all&down_typ=fields&down_flds=all&down_fmt=csv ||
-  # &type=Intr&cond=ependymoma&age=0&lup_s=12%2F01%2F2014& || show_down=Y
-  #
-  # "Download All Study Fields as XML", all studies:
-  #
-  # https://clinicaltrials.gov/ct2/results/download?down_stds=all&down_typ=study&down_flds=all&down_fmt=xml ||
-  # &type=Intr&cond=ependymoma&age=0&lup_s=12%2F01%2F2014& || show_down=Y
+  queryUSType1  <- "ct2/results/download_studies?"
 
   # CTGOV field names - use NCT for mongodb index
   fieldsCTGOV  <- c("Rank", "NCT Number", "Title", "Recruitment", "Study Results", "Conditions", "Interventions",
@@ -446,8 +428,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
 
   # get result file and unzip into folder
   message("Downloading trials from CTGOV as xml ", appendLF = FALSE)
-  ctgovdownloadcsvurl <- paste0(queryUSRoot, queryUSType1, queryUSPreXML, "&",
-                                queryterm, queryupdateterm, queryUSPost)
+  ctgovdownloadcsvurl <- paste0(queryUSRoot, queryUSType1, "&", queryterm, queryupdateterm)
   if (debug) message ("DEBUG: ", ctgovdownloadcsvurl)
   #
   f <- paste0(tempDir, "/ctgov.zip")

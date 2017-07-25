@@ -1,3 +1,8 @@
+# ctrdata 0.10.0
+ - 2017-07-25
+ - fully load results from ctgov
+ - prepare loading results from euctr
+ 
 # ctrdata 0.9.14
  - 2017-06-28
  - refactored system calls
