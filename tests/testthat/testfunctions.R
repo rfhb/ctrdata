@@ -174,7 +174,7 @@ test_that("retrieve data from register euctr", {
     "First result page empty")
 
 
-  ## slow import
+  ## forced slow import
   q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
               "neuroblastoma&status=completed&phase=phase-one")
 
@@ -222,13 +222,11 @@ test_that("retrieve data from register euctr", {
 
 
 #### euctr download results ####
-test_that("retrieve results from register euctr", {
-
-  has_internet()
-
-  expect_equal(length(getEuctrResultsTrial(eudract_number = "2014-001076-58")), 20)
-
-})
+# test_that("retrieve results from register euctr", {
+#
+#   has_internet()
+#
+# })
 
 #### browser open show get query ####
 test_that("browser interaction", {

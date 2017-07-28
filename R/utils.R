@@ -4,12 +4,10 @@
 ## variable definitions
 #
 # EUCTR definitions
-agegroupsEUCTR <- c("Preterm newborn infants", "Newborns", "Infants and toddlers", "Children", "Adolescents",
-                    "Under 18", "Adults", "Elderly")
-variablesEUCTR <- c("EudraCT Number", "Sponsor Protocol Number", "Sponsor Name", "Full Title", "Start Date",
-                    "Medical condition", "Disease", "Population Age", "Gender", "Trial protocol", "Link")
-countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IS", "IE", "IT",
-                    "LV", "LI", "LT", "LU", "MT", "NL", "NO", "PL", "PT", "RO", "SK", "SE", "SI", "ES", "GB",
+countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR",
+                    "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL",
+                    "PL", "PT", "RO", "SK", "SE", "SI", "ES", "GB",
+                    "IS", "LI", "NO",
                     "3RD")
 
 
