@@ -168,7 +168,10 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
                      "EUCTR" = do.call (ctrLoadQueryIntoDbEuctr, params)
   )
 
-  ## record import and update keys
+  ## finalise
+
+  # return some useful information or break if not successful
+  if (!exists("imported")) stop("Function did not result in any trial information imports.")
 
   # add query parameters to database
   if (debug) message("DEBUG: 'queryterm'=", queryterm, ", 'queryupdateterm'=", queryupdateterm)
@@ -183,17 +186,10 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
                  collection = collection, db = db, url = url,
                  username = username, password = password, verbose = verbose)
 
-
-  ## finalise
-
-  # return some useful information
-  if (!exists("imported")) stop("Function did not result in any trial information imports.")
-
   # add metadata
   imported <- addMetaData(imported,
                           collection = collection, db = db, url = url,
                           username = username, password = password)
-
 
   ## return
   invisible(list("importedupdated" = imported))
