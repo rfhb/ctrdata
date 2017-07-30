@@ -1,3 +1,7 @@
+# ctrdata 0.10.1
+ - 2017-07-30
+ - now loading results from euctr where available as xml
+ 
 # ctrdata 0.10.0
  - 2017-07-25
  - fully load results from ctgov

@@ -4,7 +4,7 @@
 \alias{ctrLoadQueryIntoDbCtgov}
 \title{ctrLoadQueryIntoDbCtgov}
 \usage{
-ctrLoadQueryIntoDbCtgov(queryterm, register, querytoupdate, euctrincluderesults,
+ctrLoadQueryIntoDbCtgov(queryterm, register, querytoupdate, euctrresults,
   details, parallelretrievals, debug, collection, db, url, username, password,
   verbose, queryupdateterm)
 }
@@ -22,6 +22,11 @@ update records.}
 was loaded into the collection, or the integer number of query to be run
 again; see \link{dbQueryHistory}. This parameter takes precedence over
 \code{queryterm}.}
+
+\item{euctrresults}{If \code{TRUE}, also download available results when
+retrieving and loading trials from EUCTR. This slows down this function.
+(For CTGOV, all available results are retrieved and loaded from
+ctrdata version 0.9.10 onwards.)}
 
 \item{details}{If \code{TRUE} (default), retrieve full protocol-related
 information from EUCTR or XML data from CTGOV, depending on the register

@@ -222,11 +222,23 @@ test_that("retrieve data from register euctr", {
 
 
 #### euctr download results ####
-# test_that("retrieve results from register euctr", {
-#
-#   has_internet()
-#
-# })
+test_that("retrieve results from register euctr", {
+
+  has_internet()
+
+  q <- "https://www.clinicaltrialsregister.eu/ctr-search/search?query=2004-000518-37+OR+2004-004386-15+OR+2007-000371-42"
+
+  expect_message(suppressWarnings(ctrLoadQueryIntoDb(q, euctrresults = TRUE,
+                                                     collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")),
+                 "Imported or updated results for 3 out of 3 trial")
+
+    # # TODO: this should be moved up and made to work
+    # ctrLoadQueryIntoDb(queryterm = "2004-000518-37 OR 2004-004386-15 OR 2007-000371-42",
+    #                    register = "EUCTR",
+    #                    euctrresults = TRUE,
+    #                    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")
+
+})
 
 #### browser open show get query ####
 test_that("browser interaction", {

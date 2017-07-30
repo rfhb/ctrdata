@@ -6,7 +6,7 @@
 database}
 \usage{
 ctrLoadQueryIntoDb(queryterm = "", register = "EUCTR", querytoupdate = 0,
-  include.euctr.results = FALSE, details = TRUE, parallelretrievals = 10,
+  euctrresults = FALSE, details = TRUE, parallelretrievals = 10,
   debug = FALSE, collection = "ctrdata", db = "users",
   url = "mongodb://localhost", username = "", password = "",
   verbose = FALSE)

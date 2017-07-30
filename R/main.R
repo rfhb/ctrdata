@@ -66,7 +66,7 @@
 #' @export
 #'
 ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate = 0,
-                               include.euctr.results = FALSE,
+                               euctrresults = FALSE,
                                details = TRUE, parallelretrievals = 10, debug = FALSE,
                                collection = "ctrdata", db = "users", url = "mongodb://localhost",
                                username = "", password = "", verbose = FALSE) {
@@ -157,7 +157,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
 
   # parameters for core functions
   params <- list(queryterm = queryterm, register = register, querytoupdate = querytoupdate,
-                 include.euctr.results = include.euctr.results,
+                 euctrresults = euctrresults,
                  details = details, parallelretrievals = parallelretrievals, debug = debug,
                  collection = collection, db = db, url = url,
                  username = username, password = password, verbose = verbose,
@@ -407,7 +407,7 @@ dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber,
 #' @importFrom RCurl getCurlHandle close curlPerform CFILE
 #'
 ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
-                                    include.euctr.results,
+                                    euctrresults,
                                     details, parallelretrievals, debug,
                                     collection, db, url,
                                     username, password, verbose,
@@ -568,7 +568,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
 #' @importFrom RCurl getCurlHandle getURL
 #'
 ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
-                                    include.euctr.results,
+                                    euctrresults,
                                     details, parallelretrievals, debug,
                                     collection, db, url,
                                     username, password, verbose,
@@ -591,6 +591,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   queryEuType1 <- "ctr-search/search?query="
   queryEuType2 <- "ctr-search/rest/download/summary?query="
   queryEuType3 <- "ctr-search/rest/download/full?query="
+  queryEuType4 <- "/ctr-search/rest/download/result/zip/xml/"
   queryEuPost  <- "&mode=current_page&format=text&dContent=summary&number=current_page&submit-download=Download"
 
   # get first result page
@@ -743,9 +744,175 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     imported <- allimported
   } # if fast import not successful
 
-
-  # inform user on final import outcome
+  ## inform user on final import outcome
   message("Imported or updated ", imported, " records on ", resultsEuNumTrials, " trial(s).")
+
+
+
+  ## results: load also euctr trials results if requested
+  if(euctrresults) {
+
+    ## results are available only one-by-one for each trial
+    #  we need the eudract numbers of the trials that were
+    #  just retrieved and imported
+    # for debugging:
+    # tempDir <- "/Users/ralfherold/Daten/mak/r/emea/ctrdata/private/test"
+    eudractnumbersimported <- readLines(paste0(tempDir, '/alleudract.txt'))
+    eudractnumbersimported <- rev(sort(unique(eudractnumbersimported)))
+
+    # for debugging:
+    # eudractnumbersimported <- c("2004-000518-37", "2007-000371-42", "2004-004386-15", "2007-000371-42")
+
+    # inform user
+    message("\nDownloading EUCTR results for ", length(eudractnumbersimported), " trials: ")
+
+
+    ## parallel download and unzipping into temporary directory
+
+    # conventions
+    # prefix: "https://www.clinicaltrialsregister.eu/ctr-search/rest/download/result/zip/xml/"
+    # first version:  "2007-000371-42/1"
+    # second version: "2007-000371-42/2"
+    # last version:   "2007-000371-42"
+
+    # calculate batches to get data from all results pages
+    resultsNumBatches <- length(eudractnumbersimported) %/% parallelretrievals
+    resultsNumModulo  <- length(eudractnumbersimported) %%  parallelretrievals
+
+    # inform user
+    message("Downloading trial results (at a maximum of ", parallelretrievals, " files in parallel):")
+
+    # initialise
+    h    <- RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE)) # avoid certificate failure from outside EU
+
+    # iterate over batches of results
+    for (i in 1:(resultsNumBatches + ifelse(resultsNumModulo > 0, 1, 0))) {
+
+      # calculated indices for eudractnumbersimported vector
+      startindex <- (i - 1) * parallelretrievals + 1
+      stopindex  <- ifelse(i > resultsNumBatches,
+                           startindex + resultsNumModulo,
+                           startindex + parallelretrievals) - 1
+
+      tmp <- sapply(eudractnumbersimported[startindex : stopindex],
+                    function(x) {
+
+                      # prepare a file handle for saving in temporary directory
+                      f <- paste0(tempDir, "/", x , ".zip")
+                      fref <- RCurl::CFILE(f, mode = "wb")
+
+                      # get (download) trial results' zip files
+                      tmp  <- RCurl::curlPerform(url = paste0(queryEuRoot, queryEuType4, x),
+                                                 writedata = fref@ref,
+                                                 noprogress = FALSE,
+                                                 progressfunction = progressOut,
+                                                 curl = h)
+
+                      # close file handle
+                      RCurl::close(fref)
+
+                      # unzip downloaded file and rename
+                      if (file.size(f) != 0) {
+
+                        tmp <- utils::unzip(f, exdir = tempDir)
+
+                        if(any(grepl("pdf$", tmp)))
+                          warning("PDF results ", x,
+                                  call. = FALSE, immediate. = TRUE, noBreaks. = FALSE)
+
+                        if(any(tmp2 <- grepl("xml$", tmp)))
+                          file.rename(tmp[tmp2][1], paste0(tempDir, "/", x , ".xml"))
+
+                      }
+
+                      # inform user
+                      if (file.size(f) == 0) warning("No results found for ", x,
+                                                     call. = FALSE, immediate. = TRUE, noBreaks. = FALSE)
+
+                      # clean up
+                      if (!debug) unlink(f)
+
+                    }) # download, unzip, save
+
+      # inform user
+      message("Batch: ", i, ", ", startindex, " - ", stopindex)
+
+    } # for batch
+
+
+    ## use system commands to convert
+    ## xml to json and to import json
+
+    # compose command
+    xml2json <- system.file("exec/xml2json_euctrresults.php", package = "ctrdata", mustWork = TRUE)
+    xml2json <- paste0("php -n -f ", shQuote(xml2json), " ", shQuote(tempDir)) # TODO: use shQuote in all places
+
+    # special command handling on windows
+    if (.Platform$OS.type == "windows") {
+      # xml2json_euctrresults requires cygwin's php. transform paths for cygwin use:
+      xml2json <- gsub("\\\\", "/", xml2json)
+      xml2json <- gsub("([A-Z]):/", "/cygdrive/\\1/", xml2json)
+      xml2json <- paste0('cmd.exe /c c:\\cygwin\\bin\\bash.exe --login -c "', xml2json, '"')
+      #
+    } # if windows
+
+    # run conversion of downloaded xml to json
+    message("Converting to JSON ...")
+    if (debug) message("DEBUG: ", xml2json)
+    imported <- system(xml2json, intern = TRUE)
+
+
+    # get a working mongo connection, select trial record collection
+    mongo <- ctrMongo(collection = collection, db = db, url = url,
+                      username = username, password = password, verbose = TRUE)[["ctr"]]
+
+    # iterate over batches of results
+    imported <- NULL
+    for (i in 1:(resultsNumBatches + ifelse(resultsNumModulo > 0, 1, 0))) {
+
+      # calculated indices for eudractnumbersimported vector
+      startindex <- (i - 1) * parallelretrievals + 1
+      stopindex  <- ifelse(i > resultsNumBatches,
+                           startindex + resultsNumModulo,
+                           startindex + parallelretrievals) - 1
+
+      tmp <- sapply(eudractnumbersimported[startindex : stopindex],
+                    function(x) {
+
+                      # read in file
+                      # for debugging:
+                      # x <- "2004-000518-37"
+                      fileName <- paste0(tempDir, "/", x, ".json")
+                      tmp <- readChar(fileName, file.info(fileName)$size)
+
+                      # transform into json
+                      # tmp <- jsonlite::toJSON(tmp, auto_unbox = TRUE, pretty = TRUE)
+
+                      # update database with results
+                      tmp <- mongo$update(query  = paste0('{"x1_eudract_number":{"$eq":"', x, '"}}'),
+                                          update = paste0('{ "$set" :', tmp, "}"),
+                                          upsert = TRUE, multiple = TRUE)
+
+                      # inform user on failed trial
+                      if (!tmp) warning(paste0("Import into mongo failed for trial ", x), immediate. = TRUE)
+
+                      # return for accumulating information
+                      return(tmp)
+
+                    }) # import
+
+      # accumulate
+      imported <- c(imported, tmp)
+
+    } # for batch
+
+    imported <- sum(unlist(imported))
+
+  } # if euctrresults
+
+
+  ## inform user on final import outcome
+  message("Imported or updated results for ", imported, " out of ", resultsEuNumTrials, " trial(s).\n")
 
   # clean up temporary directory
   if (!debug) unlink(tempDir, recursive = TRUE)
