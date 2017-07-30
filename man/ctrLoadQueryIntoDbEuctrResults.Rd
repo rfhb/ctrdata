@@ -23,11 +23,6 @@ was loaded into the collection, or the integer number of query to be run
 again; see \link{dbQueryHistory}. This parameter takes precedence over
 \code{queryterm}.}
 
-\item{include.euctr.results}{If \code{TRUE}, also include results when
-retrieving and loading trials from EUCTR.
-This will notably slow down executing this function.
-(For CTGOV, results are always included.)}
-
 \item{details}{If \code{TRUE} (default), retrieve full protocol-related
 information from EUCTR or XML data from CTGOV, depending on the register
 selected. This gives all of the available details for the trials.

@@ -5,9 +5,9 @@
 #' Retrieve or update information on clinical trials from register and store in
 #' database
 #'
-#' Note that upsert is used to store in database, which means that records may
-#' be accumulated. If you want to insert into an empty database, you have to
-#' include a mongo connection object to such an empty database.
+#' Note that upsert is used to store data in database, which means that records
+#' may accumulate in a data base from different queries. If you want to insert
+#' into an empty database, include a mongo connection object to an empty database.
 #'
 #' @param queryterm Either a string with the full URL of a search in a register
 #'   or the data frame returned by the \link{ctrGetQueryUrlFromBrowser} or the
@@ -20,10 +20,10 @@
 #'   was loaded into the collection, or the integer number of query to be run
 #'   again; see \link{dbQueryHistory}. This parameter takes precedence over
 #'   \code{queryterm}.
-#' @param include.euctr.results If \code{TRUE}, also include results when
-#'   retrieving and loading trials from EUCTR.
-#'   This will notably slow down executing this function.
-#'   (For CTGOV, results are always included.)
+#' @param euctrresults If \code{TRUE}, also download available results when
+#'   retrieving and loading trials from EUCTR. This slows down this function.
+#'   (For CTGOV, all available results are retrieved and loaded from
+#'   ctrdata version 0.9.10 onwards.)
 #' @param details If \code{TRUE} (default), retrieve full protocol-related
 #'   information from EUCTR or XML data from CTGOV, depending on the register
 #'   selected. This gives all of the available details for the trials.
@@ -100,9 +100,9 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   }
 
   ## sanity checks
-  if (grepl("[^a-zA-Z0-9=+&%_-]", gsub("\\[", "", gsub("\\]", "", queryterm))))
+  if ((grepl("[^a-zA-Z0-9=+&%_-]", gsub("\\[", "", gsub("\\]", "", queryterm)))) & (register == ""))
     stop("Parameter 'queryterm' is not an URL showing results of a query or has unexpected characters: ",
-         queryterm, ", expected are: a-zA-Z0-9=+&%_-[].")
+         queryterm, ", expected are: a-zA-Z0-9=+&%_-[]. Perhaps additionally specify 'register = '?")
   #
   if ( (queryterm == "") & querytoupdate == 0)
     stop("Parameter 'queryterm' is empty.")

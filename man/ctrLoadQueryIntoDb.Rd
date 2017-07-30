@@ -26,10 +26,10 @@ was loaded into the collection, or the integer number of query to be run
 again; see \link{dbQueryHistory}. This parameter takes precedence over
 \code{queryterm}.}
 
-\item{include.euctr.results}{If \code{TRUE}, also include results when
-retrieving and loading trials from EUCTR.
-This will notably slow down executing this function.
-(For CTGOV, results are always included.)}
+\item{euctrresults}{If \code{TRUE}, also download available results when
+retrieving and loading trials from EUCTR. This slows down this function.
+(For CTGOV, all available results are retrieved and loaded from
+ctrdata version 0.9.10 onwards.)}
 
 \item{details}{If \code{TRUE} (default), retrieve full protocol-related
 information from EUCTR or XML data from CTGOV, depending on the register
@@ -64,9 +64,9 @@ mongodb://localhost)}
 Number of trials imported or updated in the database
 }
 \description{
-Note that upsert is used to store in database, which means that records may
-be accumulated. If you want to insert into an empty database, you have to
-include a mongo connection object to such an empty database.
+Note that upsert is used to store data in database, which means that records
+may accumulate in a data base from different queries. If you want to insert
+into an empty database, include a mongo connection object to an empty database.
 }
 \examples{
 # Retrieve protocol-related information on a single trial identified by EudraCT number
