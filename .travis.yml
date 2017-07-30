@@ -21,11 +21,13 @@ services:
 # http://repo.mongodb.org/apt/ubuntu/dists/precise/mongodb-org/3.2/multiverse/binary-amd64/
 addons:
   apt:
-    sources:
-    - mongodb-3.2-precise
     packages:
     - mongodb-org
     - php5-cli
+
+#    sources:
+#    - mongodb-3.2-precise
+
 
 # to be added to use mongoimport for further travis testing:
 #     - mongodb-org-tools
