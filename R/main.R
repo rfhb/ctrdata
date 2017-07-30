@@ -335,7 +335,7 @@ progressOut <- function(down, up) {
   #
   # helper function to show progress while downloading
   #
-  if (stats::runif(1) < 0.001) cat(".")
+  if (stats::runif(1) < 0.001) message(".", appendLF = FALSE)
   #
 }
 
@@ -447,6 +447,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
 
   # close file handle
   RCurl::close(fref)
+  message("")
 
   # inform user
   if (file.size(f) == 0) stop("No studies downloaded. Please check 'queryterm' or run again with debug = TRUE.")
@@ -457,12 +458,12 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   ## compose commands to transform xml into json, into
   # a single allfiles.json in the temporaray directory
   xml2json <- system.file("exec/xml2json.php", package = "ctrdata", mustWork = TRUE)
-  xml2json <- paste0("php -f ", xml2json, " ", tempDir)
+  xml2json <- paste0("php -n -f ", xml2json, " ", tempDir)
   json2mongo <- paste0(' --host="', sub("mongodb://(.+)", "\\1", url),
                        '" --db="', db, '" --collection="', collection, '"',
                        ifelse(username != "", paste0(' --username="', username, '"'), ""),
                        ifelse(password != "", paste0(' --password="', password, '"'), ""),
-                       ' --upsert --type=json --file="', tempDir, '/allfiles.json"',
+                       ' --mode upsert --type=json --file="', tempDir, '/allfiles.json"',
                        ifelse(installMongoCheckVersion(), "", " --jsonArray"))
 
   # special command handling on windows
@@ -480,7 +481,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   # run conversion of downloaded xml to json
   message("Converting to JSON ...")
   if (debug) message("DEBUG: ", xml2json)
-  imported <- system(xml2json, intern = TRUE, show.output.on.console = FALSE)
+  imported <- system(xml2json, intern = TRUE)
 
   ## run import
   message("Importing JSON into mongoDB ...")
@@ -624,13 +625,16 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     # parallel requests by using startpage:stoppage
     # TODO use queue and re-queueing
     startpage <- (i - 1) * parallelretrievals + 1
-    stoppage  <- ifelse(i > resultsNumBatches, startpage + resultsNumModulo, startpage + parallelretrievals) - 1
+    stoppage  <- ifelse(i > resultsNumBatches,
+                        startpage + resultsNumModulo,
+                        startpage + parallelretrievals) - 1
     message("(", i, ") ", startpage, "-", stoppage, " ", appendLF = FALSE)
 
     # download data for current batch into variable
     tmp <- RCurl::getURL(paste0(queryEuRoot, ifelse(details, queryEuType3, queryEuType2), queryterm,
                                 "&page=", startpage:stoppage, queryEuPost),
                          curl = h, async = TRUE, binary = FALSE, noprogress = FALSE, progressfunction = progressOut)
+    message("")
 
     # check plausibility
     if (debug) message("DEBUG: ", class(tmp))
@@ -650,7 +654,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                        '" --db="', db, '" --collection="', collection, '"',
                        ifelse(username != "", paste0(' --username="', username, '"'), ""),
                        ifelse(password != "", paste0(' --password="', password, '"'), ""),
-                       ' --upsert --type=json --file="', tempDir, '/allfiles.json"',
+                       ' --mode upsert --type=json --file="', tempDir, '/allfiles.json"',
                        ifelse(installMongoCheckVersion(), "", " --jsonArray"))
 
   # special handling in case of windows
@@ -669,7 +673,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   # run conversion of text files saved into file system to json file
   message("Converting to JSON ...")
   if (debug) message("DEBUG: ", euctr2json)
-  imported <- system(euctr2json, intern = TRUE, show.output.on.console = FALSE)
+  imported <- system(euctr2json, intern = TRUE)
 
   # run fast import into mongo from single json file
   message("Importing JSON into mongoDB ...")
@@ -704,7 +708,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     # into one json file for each trial record
     message("Splitting into JSON files ...")
     if (debug) message("DEBUG: ", json2split)
-    imported  <- system(json2split, intern = TRUE, show.output.on.console = FALSE)
+    imported  <- system(json2split, intern = TRUE)
     splitjson <- try(as.numeric(imported))
     if (class(splitjson) == "try-error") stop("Splitting single JSON files failed. Aborting ctrLoadQueryIntoDb.")
 
