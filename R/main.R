@@ -463,7 +463,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
                        '" --db="', db, '" --collection="', collection, '"',
                        ifelse(username != "", paste0(' --username="', username, '"'), ""),
                        ifelse(password != "", paste0(' --password="', password, '"'), ""),
-                       ' --mode upsert --type=json --file="', tempDir, '/allfiles.json"',
+                       ' --upsert --type=json --file="', tempDir, '/allfiles.json"',
                        ifelse(installMongoCheckVersion(), "", " --jsonArray"))
 
   # special command handling on windows
@@ -655,7 +655,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                        '" --db="', db, '" --collection="', collection, '"',
                        ifelse(username != "", paste0(' --username="', username, '"'), ""),
                        ifelse(password != "", paste0(' --password="', password, '"'), ""),
-                       ' --mode upsert --type=json --file="', tempDir, '/allfiles.json"',
+                       ' --upsert --type=json --file="', tempDir, '/allfiles.json"',
                        ifelse(installMongoCheckVersion(), "", " --jsonArray"))
 
   # special handling in case of windows
