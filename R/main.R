@@ -181,7 +181,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   # add query parameters to database
   dbCTRUpdateQueryHistory(register = register,
                           queryterm = ifelse(queryupdateterm == "", queryterm, queryupdateterm),
-                          recordnumber = imported,
+                          recordnumber = as.integer(imported),
                           collection = collection, db = db, url = url,
                           username = username, password = password, verbose = verbose)
 
@@ -911,6 +911,10 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
 
     } # for batch
 
+    # close database connection
+    rm(mongo); gc()
+
+    # sum up successful downloads
     importedresults <- sum(unlist(importedresults))
 
     ## inform user on final import outcome
