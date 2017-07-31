@@ -463,7 +463,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   ## compose commands to transform xml into json, into
   # a single allfiles.json in the temporaray directory
   xml2json <- system.file("exec/xml2json.php", package = "ctrdata", mustWork = TRUE)
-  xml2json <- paste0("php -n -f ", xml2json, " ", tempDir)
+  xml2json <- paste0("php -f ", xml2json, " ", tempDir)
   json2mongo <- paste0(' --host="', sub("mongodb://(.+)", "\\1", url),
                        '" --db="', db, '" --collection="', collection, '"',
                        ifelse(username != "", paste0(' --username="', username, '"'), ""),
@@ -596,7 +596,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   queryEuType1 <- "ctr-search/search?query="
   queryEuType2 <- "ctr-search/rest/download/summary?query="
   queryEuType3 <- "ctr-search/rest/download/full?query="
-  queryEuType4 <- "/ctr-search/rest/download/result/zip/xml/"
+  queryEuType4 <- "ctr-search/rest/download/result/zip/xml/"
   queryEuPost  <- "&mode=current_page&format=text&dContent=summary&number=current_page&submit-download=Download"
 
   # get first result page
@@ -850,7 +850,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
 
     # compose command
     xml2json <- system.file("exec/xml2json_euctrresults.php", package = "ctrdata", mustWork = TRUE)
-    xml2json <- paste0("php -n -f ", shQuote(xml2json), " ", shQuote(tempDir)) # TODO: use shQuote in all places
+    xml2json <- paste0("php -f ", shQuote(xml2json), " ", shQuote(tempDir)) # TODO: use shQuote in all places
 
     # special command handling on windows
     if (.Platform$OS.type == "windows") {

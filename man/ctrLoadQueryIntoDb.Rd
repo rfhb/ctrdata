@@ -5,7 +5,7 @@
 \title{Retrieve or update information on clinical trials from register and store in
 database}
 \usage{
-ctrLoadQueryIntoDb(queryterm = "", register = "EUCTR", querytoupdate = 0,
+ctrLoadQueryIntoDb(queryterm = "", register = "EUCTR", querytoupdate = 0L,
   euctrresults = FALSE, details = TRUE, parallelretrievals = 10,
   debug = FALSE, collection = "ctrdata", db = "users",
   url = "mongodb://localhost", username = "", password = "",
