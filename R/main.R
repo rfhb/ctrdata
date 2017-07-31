@@ -65,7 +65,7 @@
 #'
 #' @export
 #'
-ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate = 0,
+ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate = 0L,
                                euctrresults = FALSE,
                                details = TRUE, parallelretrievals = 10, debug = FALSE,
                                collection = "ctrdata", db = "users", url = "mongodb://localhost",
@@ -514,7 +514,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
 
   # get a working mongo connection, select trial record collection
   mongo <- ctrMongo(collection = collection, db = db, url = url,
-                    username = username, password = password, verbose = TRUE)[["ctr"]]
+                    username = username, password = password, verbose = FALSE)[["ctr"]]
 
   # obtain full data set on _id and other ids
   cursor <- mongo$iterate(query  = '{"_id": {"$regex": "NCT[0-9]{8}"}}',

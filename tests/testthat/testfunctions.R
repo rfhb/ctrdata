@@ -232,13 +232,6 @@ test_that("retrieve results from register euctr", {
                                                      collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")),
                  "Imported or updated results for 3 out of 3 trial")
 
-    # # TODO: this should be moved up and made to work
-  q <- "2004-000518-37 OR 2004-004386-15 OR 2007-000371-42"
-  ctrLoadQueryIntoDb(queryterm = q,
-                     register = "EUCTR",
-                     euctrresults = TRUE,
-                     collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")
-
 })
 
 #### browser open show get query ####
@@ -273,7 +266,7 @@ test_that("browser interaction", {
 
   tmp <-  data.frame(lapply(dbQueryHistory(
     collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
-    tail, 1))
+    tail, 1L), stringsAsFactors = FALSE)
   names(tmp) <- sub("[.]", "-", names(tmp))
 
   expect_message(ctrOpenSearchPagesInBrowser(tmp),
