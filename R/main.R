@@ -486,7 +486,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   # run conversion of downloaded xml to json
   message("Converting to JSON ...")
   if (debug) message("DEBUG: ", xml2json)
-  imported <- system(xml2json, intern = TRUE)
+  imported <- system(xml2json, intern = TRUE, show.output.on.console = FALSE)
 
   ## run import
   message("Importing JSON into mongoDB ...")
@@ -679,7 +679,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   # run conversion of text files saved into file system to json file
   message("Converting to JSON ...")
   if (debug) message("DEBUG: ", euctr2json)
-  imported <- system(euctr2json, intern = TRUE)
+  imported <- system(euctr2json, intern = TRUE, show.output.on.console = FALSE)
 
   # run fast import into mongo from single json file
   message("Importing JSON into mongoDB ...")
@@ -714,7 +714,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     # into one json file for each trial record
     message("Splitting into JSON files ...")
     if (debug) message("DEBUG: ", json2split)
-    imported  <- system(json2split, intern = TRUE)
+    imported  <- system(json2split, intern = TRUE, show.output.on.console = FALSE)
     splitjson <- try(as.numeric(imported))
     if (class(splitjson) == "try-error") stop("Splitting single JSON files failed. Aborting ctrLoadQueryIntoDb.")
 
