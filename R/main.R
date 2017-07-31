@@ -172,9 +172,13 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
 
   # return some useful information or break if not successful
   if (!exists("imported")) stop("Function did not result in any trial information imports.")
+  if (debug) message("DEBUG: 'queryterm'=", queryterm,
+                     "\n'queryupdateterm'=", queryupdateterm,
+                     "\n'imported'=", imported,
+                     "\n'register'=", register,
+                     "\n'collection'=", collection)
 
   # add query parameters to database
-  if (debug) message("DEBUG: 'queryterm'=", queryterm, ", 'queryupdateterm'=", queryupdateterm)
   dbCTRUpdateQueryHistory(register = register,
                           queryterm = ifelse(queryupdateterm == "", queryterm, queryupdateterm),
                           recordnumber = imported,
@@ -859,7 +863,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     # run conversion of downloaded xml to json
     message("Converting to JSON ...")
     if (debug) message("DEBUG: ", xml2json)
-    imported <- system(xml2json, intern = TRUE)
+    importedresults <- system(xml2json, intern = TRUE)
 
 
     # get a working mongo connection, select trial record collection
@@ -867,7 +871,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                       username = username, password = password, verbose = TRUE)[["ctr"]]
 
     # iterate over batches of results
-    imported <- NULL
+    importedresults <- NULL
     for (i in 1:(resultsNumBatches + ifelse(resultsNumModulo > 0, 1, 0))) {
 
       # calculated indices for eudractnumbersimported vector
@@ -902,17 +906,17 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                     }) # import
 
       # accumulate
-      imported <- c(imported, tmp)
+      importedresults <- c(importedresults, tmp)
 
     } # for batch
 
-    imported <- sum(unlist(imported))
+    importedresults <- sum(unlist(importedresults))
+
+    ## inform user on final import outcome
+    message("Imported or updated results for ", importedresults, " out of ", resultsEuNumTrials, " trial(s).\n")
 
   } # if euctrresults
 
-
-  ## inform user on final import outcome
-  message("Imported or updated results for ", imported, " out of ", resultsEuNumTrials, " trial(s).\n")
 
   # clean up temporary directory
   if (!debug) unlink(tempDir, recursive = TRUE)
