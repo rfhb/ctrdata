@@ -296,7 +296,8 @@ ctrRerunQuery <- function (querytoupdate = querytoupdate,
       #
       # obtain rss feed with list of recently updated trials
       h <- RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE))
-      rssquery <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/rest/feed/bydates?query=", queryterm)
+      rssquery <- utils::URLencode(paste0("https://www.clinicaltrialsregister.eu/ctr-search/rest/feed/bydates?query=",
+                                          queryterm))
       if (debug) message("DEBUG (rss url): ", rssquery)
       #
       resultsRss <- RCurl::getURL(rssquery, curl = h)
@@ -443,7 +444,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   # get (download) trials in single zip file
   h    <- RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE)) # avoid certificate failure from outside EU
   fref <- RCurl::CFILE(f, mode = "wb")
-  tmp  <- RCurl::curlPerform(url = ctgovdownloadcsvurl,
+  tmp  <- RCurl::curlPerform(url = utils::URLencode(ctgovdownloadcsvurl),
                              writedata = fref@ref,
                              noprogress = FALSE,
                              progressfunction = progressOut,
@@ -600,7 +601,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
 
   # get first result page
   h <- RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE)) # avoid certificate failure from outside EU
-  q <- paste0(queryEuRoot, queryEuType1, queryterm)
+  q <- utils::URLencode(paste0(queryEuRoot, queryEuType1, queryterm))
   if (debug) message("DEBUG: queryterm is ", q)
   resultsEuPages <- RCurl::getURL(q, curl = h)
 
@@ -636,8 +637,8 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     message("(", i, ") ", startpage, "-", stoppage, " ", appendLF = FALSE)
 
     # download data for current batch into variable
-    tmp <- RCurl::getURL(paste0(queryEuRoot, ifelse(details, queryEuType3, queryEuType2), queryterm,
-                                "&page=", startpage:stoppage, queryEuPost),
+    tmp <- RCurl::getURL(utils::URLencode(paste0(queryEuRoot, ifelse(details, queryEuType3, queryEuType2),
+                                                 queryterm, "&page=", startpage:stoppage, queryEuPost)),
                          curl = h, async = TRUE, binary = FALSE, noprogress = FALSE, progressfunction = progressOut)
     message("")
 
@@ -806,7 +807,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                       fref <- RCurl::CFILE(f, mode = "wb")
 
                       # get (download) trial results' zip files
-                      tmp  <- RCurl::curlPerform(url = paste0(queryEuRoot, queryEuType4, x),
+                      tmp  <- RCurl::curlPerform(url = utils::URLencode(paste0(queryEuRoot, queryEuType4, x)),
                                                  writedata = fref@ref,
                                                  noprogress = FALSE,
                                                  progressfunction = progressOut,
@@ -868,7 +869,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
 
     # get a working mongo connection, select trial record collection
     mongo <- ctrMongo(collection = collection, db = db, url = url,
-                      username = username, password = password, verbose = TRUE)[["ctr"]]
+                      username = username, password = password, verbose = FALSE)[["ctr"]]
 
     # iterate over batches of results
     importedresults <- NULL

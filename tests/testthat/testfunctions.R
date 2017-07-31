@@ -233,10 +233,11 @@ test_that("retrieve results from register euctr", {
                  "Imported or updated results for 3 out of 3 trial")
 
     # # TODO: this should be moved up and made to work
-    # ctrLoadQueryIntoDb(queryterm = "2004-000518-37 OR 2004-004386-15 OR 2007-000371-42",
-    #                    register = "EUCTR",
-    #                    euctrresults = TRUE,
-    #                    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")
+  q <- "2004-000518-37 OR 2004-004386-15 OR 2007-000371-42"
+  ctrLoadQueryIntoDb(queryterm = q,
+                     register = "EUCTR",
+                     euctrresults = TRUE,
+                     collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")
 
 })
 
