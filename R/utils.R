@@ -1103,13 +1103,15 @@ installMongoFindBinaries <- function(mongoDirWin = "c:\\mongodb\\bin\\", debug =
   #
   environ <- .privateEnv
   #
-  binaries <- paste0(c("mongo", "mongoimport"), ifelse(.Platform$OS.type != "windows", "", ".exe"))
+  binaries <- paste0(c("mongo", "mongoimport"),
+                     ifelse(.Platform$OS.type != "windows", "", ".exe"))
   #
-  if (exists("mongoBinaryLocation", envir = environ)
-      && !is.na(get("mongoBinaryLocation", envir = environ))
-      && file.exists(paste0(get("mongoBinaryLocation", envir = environ), binaries[1]))) {
+  if (exists("mongoBinaryLocation", envir = environ) &&
+      !is.na(get("mongoBinaryLocation", envir = environ)) &&
+      file.exists(paste0(get("mongoBinaryLocation", envir = environ), binaries[1])) &&
+      file.exists(paste0(get("mongoBinaryLocation", envir = environ), binaries[2]))) {
     #
-    if (debug) message("mongoimport / mongo is in ", get("mongoBinaryLocation", envir = environ))
+    if (debug) message("mongo / mongoimport is in ", get("mongoBinaryLocation", envir = environ))
     #
   } else {
     #
@@ -1120,7 +1122,7 @@ installMongoFindBinaries <- function(mongoDirWin = "c:\\mongodb\\bin\\", debug =
         && file.exists(paste0(mongoDirWin, binaries[1]))) {
       #
       assign("mongoBinaryLocation", mongoDirWin, envir = environ)
-      if (debug) message("mongoimport / mongo is in ", mongoDirWin)
+      if (debug) message("mongo / mongoimport is in ", mongoDirWin)
       #
     } else {
       #
@@ -1128,29 +1130,32 @@ installMongoFindBinaries <- function(mongoDirWin = "c:\\mongodb\\bin\\", debug =
       assign("mongoBinaryLocation", NA, envir = environ)
       #
       # first test for binary in the path
-      tmp <- try(if (.Platform$OS.type != "windows") {
-        system("mongoimport --version", intern = TRUE)
-      } else {
-        system("mongoimport.exe --version", intern = TRUE)
-      }, silent = TRUE)
+      tmp <- try({
+        system2(command = binaries[1], args = " --version", stdout = TRUE, stderr = TRUE)
+        system2(command = binaries[2], args = " --version", stdout = TRUE, stderr = TRUE)
+      },
+        silent = TRUE
+        )
       #
       if (class(tmp) != "try-error") {
         #
         # found it in the path, save empty location string in package environment
-        if (debug) message("mongoimport / mongo found in the path.")
+        if (debug) message("mongo / mongoimport found in the path.")
         assign("mongoBinaryLocation", "", envir = environ)
         #
       } else {
         #
         if (debug) message("mongoimport / mongo not found in path.")
         #
-        if (.Platform$OS.type != "windows") stop("Cannot continue. Search function is only for MS Windows.")
+        if (.Platform$OS.type != "windows")
+          stop("Cannot continue: mongo / mongoimport could not be found.")
         #
         # second search for folder into which mongo was installed
         location <- try(utils::readRegistry("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Installer\\Folders",
                                             hive = "HLM"), silent = TRUE)
         #
-        if (class(location) == "try-error") stop("Cannot continue. mongo not found recorded in the registry.")
+        if (class(location) == "try-error")
+          stop("Cannot continue. mongo path not found recorded in the registry.")
         #
         location <- names(location)
         location <- location[grepl("Mongo", location)]
@@ -1158,7 +1163,8 @@ installMongoFindBinaries <- function(mongoDirWin = "c:\\mongodb\\bin\\", debug =
         #
         tmp <- file.exists(paste0(location, "mongoimport.exe"))
         #
-        if (!tmp) stop("Cannot continue. mongoimport not found recorded in the registry, ", location, ".")
+        if (!tmp)
+          stop("Cannot continue. mongoimport path not found recorded in the registry, ", location, ".")
         #
         # found it, save in package environment
         assign("mongoBinaryLocation", location, envir = environ)
@@ -1240,7 +1246,7 @@ installFindBinary <- function(commandtest = NULL, debug = FALSE) {
   )
   #
   commandreturn <- ifelse (class(commandresult) == "try-error" ||
-                             grepl("error", tolower(paste(commandresult, collapse = " "))), FALSE, TRUE)
+                           grepl("error", tolower(paste(commandresult, collapse = " "))), FALSE, TRUE)
   #
   if (!commandreturn) warning(commandtest, " not found.")
   #

@@ -20,18 +20,21 @@ assign("mongoBinaryLocation", NA, envir = .privateEnv)
   if (.Platform$OS.type == "windows") installCygwinWindowsTest()
   #
   if (!suppressWarnings(installFindBinary("php --version")))
-    warning("php not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
+    warning("php not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE, immediate. = TRUE)
   #
   if (!suppressWarnings(installFindBinary("php -r 'simplexml_load_string(\"\");'")))
-    warning("php xml not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
+    warning("php xml not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE, immediate. = TRUE)
   #
   if (!suppressWarnings(installFindBinary("echo x | sed s/x/y/")))
-    warning("sed not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
+    warning("sed not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE, immediate. = TRUE)
   #
   if (!suppressWarnings(installFindBinary("perl -V:osname")))
-    warning("perl not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
+    warning("perl not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE, immediate. = TRUE)
   #
-  packageStartupMessage("Helper binaries tested.")
+  if (class(try(installMongoFindBinaries(), silent = TRUE)) == "try-error")
+    warning("mongo / mongoimport not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE, immediate. = TRUE)
+  #
+  packageStartupMessage("Completed testing helper binaries.")
   #
   invisible()
   #

@@ -83,7 +83,7 @@ test_that("access to mongo db from command line", {
 
   has_mongo()
 
-  expect_message(installMongoFindBinaries(debug = TRUE), "mongoimport / mongo ")
+  expect_message(installMongoFindBinaries(debug = TRUE), "mongo / mongoimport ")
 
 })
 
