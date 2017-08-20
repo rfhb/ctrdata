@@ -676,6 +676,9 @@ dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
                                             " please provide a vector of strings of field names.",
                                             " Function dbFindVariable() can be used to find field names.")
 
+  # remove _id if inadventertently mentioned in fields
+  fields <- fields["_id" != fields]
+
   # get a working mongo connection, select trial record collection
   mongo <- ctrMongo(collection = collection, db = db, url = url,
                     username = username, password = password, verbose = verbose)[["ctr"]]
