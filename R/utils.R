@@ -344,8 +344,11 @@ dbFindVariable <- function(namepart = "", allmatches = FALSE, forceupdate = FALS
   mongo <- ctrMongo(collection = collection, db = db, url = url,
                     username = username, password = password, verbose = verbose)
 
+  # check if data base has any contents
+  if (mongo[["ctr"]]$count() == 0L) stop("No records in data base.")
+
   # check if database with variety results exists or should be forced to be updated
-  if (forceupdate || mongo[["keys"]]$count() == 0L) {
+  if (forceupdate || (mongo[["keys"]]$count() == 0L)) {
     #
     # check program availability
     installMongoFindBinaries()
@@ -389,7 +392,7 @@ dbFindVariable <- function(namepart = "", allmatches = FALSE, forceupdate = FALS
     tmp <- system(varietymongo, intern = TRUE)
     if (debug) message(tmp)
     #
-  }
+  } # if mongo ctr count
 
   # now do the actual search and find for key name parts
   if (namepart != "") {
@@ -468,7 +471,7 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
   #
   # total number of records in collection to inform user
   countall <- mongo$count(query = '{"_id":{"$ne":"meta-info"}}')
-  if (verbose)message("Total of ", countall, " records in collection.")
+  if (verbose) message("Total of ", countall, " records in collection.")
 
   # 1. get euctr records
   listofEUCTRids <- try(suppressMessages(suppressWarnings(
