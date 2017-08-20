@@ -26,7 +26,7 @@ has_internet <- function(){
 # helper function to check mongodb
 has_mongo <- function(){
   mongo_ok <- try({
-    capture.output(ctrdata:::ctrMongo())
+    capture.output(ctrMongo())
   }, silent = TRUE)
   # use test result
   if (class(mongo_ok) == "try-error" ||
