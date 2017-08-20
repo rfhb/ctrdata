@@ -693,7 +693,7 @@ dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
   # given that mongodb clients have different approaches and complex returnn
   for (item in fields) {
     #
-    query <- paste0('{"_id": {"$ne": "meta-info"}, "', item, '": {"$gt": ""}}')
+    query <- paste0('{"_id": {"$ne": "meta-info"}}')
     if (debug) message("DEBUG: variable / field: ", item)
     #
     tmp <- try({
