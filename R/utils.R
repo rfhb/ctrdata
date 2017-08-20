@@ -714,8 +714,8 @@ dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
       #
     }, silent = FALSE)
     #
-    if ( (class(tmp) != "try-error") && !all(nchar(dfi[ ,2]) == 0) ) { # (nrow(dfi) > 0)
-      # no error
+    if ( (class(tmp) != "try-error") & !all(nchar(dfi[ ,2]) == 0) ) {
+      # no error, so append to result
       if (is.null(result)) {
         result <- dfi
       } else {
@@ -723,7 +723,7 @@ dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
       }
       #
     } else {
-      # try-error occured
+      # try-error occured or no data retrieved
       if (stopifnodata)
         stop("For variable / field: ", item,
              " no data could be extracted, please check the contents of the database.")
