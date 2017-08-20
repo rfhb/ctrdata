@@ -714,7 +714,7 @@ dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
       #
     }, silent = FALSE)
     #
-    if ( (class(tmp) != "try-error") && (nrow(dfi) > 0) ) {
+    if ( (class(tmp) != "try-error") && !all(nchar(dfi[ ,2]) == 0) ) { # (nrow(dfi) > 0)
       # no error
       if (is.null(result)) {
         result <- dfi
