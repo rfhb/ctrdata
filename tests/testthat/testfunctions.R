@@ -342,11 +342,6 @@ test_that("operations on database after download from register", {
                                        preferregister = "CTGOV"),
                  "Returning keys")
 
-
-  dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = "GB", include3rdcountrytrials = TRUE,
-                                    collection = "ctrdata", db = "users", url = "mongodb://localhost",
-                                    username = "", password = "", verbose = TRUE)
-
   expect_warning(dbFindIdsUniqueTrials(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB",
                                        prefermemberstate = "3RD", include3rdcountrytrials = FALSE),
                  "Preferred EUCTR version set to 3RD country trials, but include3rdcountrytrials was FALSE")
@@ -364,7 +359,6 @@ test_that("operations on database after download from register", {
   expect_error(dbGetVariablesIntoDf(fields = list("ThisDoesNotExist"),
                                     collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
                "Input should be a vector of strings of field names.")
-
 
 
   # clean up = drop collections from mongodb
