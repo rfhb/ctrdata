@@ -273,16 +273,35 @@ Note: Packages to access mango such as `mongolite` or `RMongo` may work to acces
 #
 library(mongolite)
 #
-m <- mongo(db = "users", collection = "ctrdata")
+m <- mongo(db = "users", collection = "resultsTest")
 # 
 # Check if there are any duplicates:
-ids_of_unique_trials <- dbFindIdsUniqueTrials()
+ids_of_unique_trials <- dbFindIdsUniqueTrials(collection = "resultsTest")
 #
 # Find the database elements that represent a site:
 result <- m$find('{}', '{"location.facility.name": 1}')
 #
 # If there were duplicates, the unique trials could be retained like this:
 result <- result[ result[["_id"]] %in% ids_of_unique_trials, ]
+#
+# Table by frequency
+tbl <- table(sort(unname(rapply(result, function(x) x, how = "unlist"))))
+tbl <- tbl[rev(order(tbl))]
+head(tbl)
+#
+#                        Children's Hospital of Philadelphia 
+#                                                          17 
+#               Cincinnati Children's Hospital Medical Center 
+#                                                          14 
+#                                  Hospital for Sick Children 
+#                                                          13 
+#                          Children's National Medical Center 
+#                                                          13 
+# Children's Hospitals and Clinics of Minnesota - Minneapolis 
+#                                                          13 
+#                              Nationwide Children's Hospital 
+#                                                          11 
+#
 #
 # Define a helper function to count elements, irrespective of whether
 # the elements are in an array or are a set of subdocuments in the database:
@@ -296,7 +315,7 @@ count.elements <- function (dataframecolumn) {
 result$number_of_sites <- count.elements (result$location)
 #
 # Inspect first rows:
-result[1:5,]
+head(result)
 #                 _id                                      location  number_of_sites
 # 1       NCT00097292  Children's Hospital LA, UCSF, Stanford [...]               21
 # 2       NCT00129259                   The Diabetes Center at UCSF                1
@@ -608,7 +627,7 @@ table (out$year)
 #
 ```
 
-## Using mapreduce operations to analyse participant numbers
+## Use mapreduce operations to analyse participant numbers
 
 Note that the mongodb documentation includes that a mapreduce operation might not be as fast and efficient as using the aggregation pipeline, which was used in the preceding example. 
 
@@ -695,5 +714,64 @@ for(i in 1:length(terms))
   print(gsub(terms[i], "\\1", result, ignore.case = TRUE)[grepl(terms[i], result)])
 #
 ```
+
+## Analyse results-related information (INCOMPLETE)
+
+```{r analyse_results_1}
+#
+library(mongolite)
+#
+m <- mongo(db = "users", collection = "resultsTest")
+# 
+# show full set of results
+result <- m$find('{"_id": "NCT00089141"}')
+str(result)
+#
+# extract some elements for illustration of further work needed
+result$clinical_results$baseline$analyzed_list$analyzed$count_list$count
+#
+tbl <- result$clinical_results$outcome_list$outcome[[1]]
+unlist(tbl[1,])
+#
+# EXCERPT
+#
+# type 
+#  "Primary" 
+# title 
+#  "Cure of Chronic GVHD Without Resorting to Secondary Systemic Therapy" 
+# description 
+#  "Withdrawal of all systemic immunosuppressive treatment after resolution 
+#   of chronic GVHD, before death or onset of recurrent malignancy" 
+# time_frame 
+#  "2 years" 
+# group_list.group.title1 
+#  "Mycophenolate Mofetil" 
+# group_list.group.title2 
+#  "Placebo" 
+# measure.units 
+#  "participants" 
+# measure.param 
+#  "Number" 
+# measure.analyzed_list.analyzed.units 
+#  "Participants" 
+# measure.analyzed_list.analyzed.count_list.count.@attributes.value1 
+#  "74" 
+# measure.analyzed_list.analyzed.count_list.count.@attributes.value2 
+#  "77" 
+# analysis_list.analysis.non_inferiority_type 
+#  "Superiority or Other" 
+# analysis_list.analysis.p_value 
+#  ".22" 
+# analysis_list.analysis.p_value_desc 
+#  "P values are 2 sided and are based on likelihood ratio statistics." 
+# analysis_list.analysis.estimate_desc 
+# "For all analyses, MMF arm in numerator, and placebo arm in denominator. 
+#  Hazard ratio estimate includes 3 efficacy success events that occurred after 
+#  two years in the placebo arm." 
+#
+```
+
+
+
 
 
