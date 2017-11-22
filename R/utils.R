@@ -709,13 +709,14 @@ dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
       dfi <- as.data.frame(cbind(sapply(dfi, function(x) as.vector(unlist(x[1]))),
                                  sapply(dfi, function(x) paste0(as.vector(unlist(x[2])), collapse = " / "))
       ), stringsAsFactors = FALSE)
+      #
       # name result set
       names(dfi) <- c("_id", item)
       #
     }, silent = FALSE)
     #
-    if ( (class(tmp) != "try-error") & !all(nchar(dfi[ ,2]) == 0) ) {
-      # no error, so append to result
+    if ( (class(tmp) != "try-error") & any(nchar(dfi[ ,2]) != 0) ) {
+      # no error and some content, thus append to result
       if (is.null(result)) {
         result <- dfi
       } else {
