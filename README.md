@@ -9,15 +9,23 @@ Online version of this document: [https://github.com/rfhb/ctrdata/](https://gith
 
 ## Background
 
-The package `ctrdata` provides functions for retrieving (downloading) information on clinical trials from public registers, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started mid 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package is to be used within the [R](https://www.r-project.org/) system. Last edit 2017-06-28 for version 0.9.14 (see NEWS.md, continuous integration now working on MS Windows in addition to Linux).  
+The package `ctrdata` provides functions for retrieving (downloading) information on clinical trials from public registers, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started mid 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package is to be used within the [R](https://www.r-project.org/) system. Last edit 2017-11-22 for version 0.10.2 (see NEWS.md, adding a note on upcoming features). 
 
 Main features:
 
 * Protocol-related information on clinical trials is easily retrieved (downloaded) from public online sources: Users define a query using the registers' web pages interfaces and then use `ctrdata` for retrieving all trials resulting from the query. 
 
+* Results-related information on these clinical trials is now included (since August 2017) when information is retrieved (downloaded). 
+
 * Retrieved (downloaded) trial information is transformed and stored in a document-centric database (MongoDB), for fast and offline access. This can then be analysed with `R` (or others systems). Easily re-run a previous query to update the database.  
 
-* Unique (de-duplicated) clinical trial records are identified (as a database may hold information from more than one register, and trials may have more than one record in a register). `ctrdata` has also functions to merge information from different registers and to recode it. Vignettes are provided to get started and with detailed examples such as analyses of time trends of details of clinical trial protocols. 
+* Unique (de-duplicated) clinical trial records are identified (a database may hold information from more than one register, and trials may have more than one record in a register). `ctrdata` has also functions to merge protocol-related information from different registers and to recode it. Vignettes are provided to get started and with detailed examples such as analyses of time trends of details of clinical trial protocols. 
+
+Features in the works: 
+
+* Merge results-related information retrieved from different registers (e.g. corresponding endpoints) and prepare for analysis across trials. 
+
+* Explore relevance to retrieve previous versions of protocol- and results-related information
 
 Remember to respect the registers' copyrights and terms and conditions. 
 
@@ -206,12 +214,6 @@ with (result, table (x5_trial_status, b1_sponsor.b31_and_b32_status_of_the_spons
 ### Representation in mongodb, as JSON
 
 ![Example JSON representation][2]
-
-
-
-## In the works - next steps
- 
-* Cover results-related information. 
 
 
 ## Acknowledgements 

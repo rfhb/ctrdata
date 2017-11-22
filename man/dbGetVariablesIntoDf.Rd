@@ -41,7 +41,8 @@ A data frame with columns corresponding to the sought fields. Note
 \description{
 With this convenience function, fields in the mongo database are retrieved
 into an R dataframe. As mongo json fields within the record of a trial
-can be hierarchical and structured, the function returns a concatenation
+can be hierarchical and structured, the function flattens the data and
+returns a concatenation
 of values if there is more than one value or if the field is (in) an array,
 such as follows: value 1 / value 2 / ... (see example)
 }

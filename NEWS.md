@@ -1,3 +1,7 @@
+# ctrdata 0.10.2
+ - 2017-11-22
+ - editorial project updates
+ 
 # ctrdata 0.10.1
  - 2017-07-30
  - now loading results from euctr where available as xml
