@@ -27,6 +27,10 @@ Features in the works:
 
 * Explore relevance to retrieve previous versions of protocol- and results-related information
 
+* Use loading into mongodb from stream instead of command line 
+
+* Abstract database access
+
 Remember to respect the registers' copyrights and terms and conditions. 
 
 Overview of functions used in sequence:
@@ -35,18 +39,17 @@ Overview of functions used in sequence:
 
 ## Installation
 
-### 1. Within R
-
-Within [R](https://www.r-project.org/), use the following commands to get and install the current development version of package `ctrdata` from github.com:
-
-### 2. Local [mongodb](https://www.mongodb.org/) (version 3) installation
+### 1. Local [mongodb](https://www.mongodb.org/) (version 3) installation
 
 Follow instructions for various operating systems [here](https://docs.mongodb.com/manual/administration/install-community/). For macOS alternatively use [homebrew](http://brew.sh/): `brew install mongodb`. From this installation, binaries `mongoimport{.exe}` and `mongo{.exe}` are needed.
 
-### 3. Command line tools `perl`, `sed`, `cat` and `php` (5.2 or higher)
+### 2. Command line tools `perl`, `sed`, `cat` and `php` (5.2 or higher)
 
 In Linux and macOS, these are usually already installed. For MS Windows, install [cygwin](https://cygwin.com/install.html): In `R`, run `ctrdata::installCygwinWindowsDoInstall()` for an automated installation into `c:\cygwin`; alternatively manually install cygwin with packages `perl`, `php-jsonc` and `php-simplexml` (administrator credentials not needed). 
 
+### 3. Within R
+
+Within [R](https://www.r-project.org/), use the following commands to get and install the current development version of package `ctrdata` from github.com:
 
 ```R
 #
