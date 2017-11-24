@@ -192,7 +192,7 @@ ctrLoadQueryIntoDb("https://www.clinicaltrialsregister.eu/ctr-search/search?quer
 # Note that b31_... is an element within the array b1_...
 #
 result <- dbGetVariablesIntoDf(c("b1_sponsor.b31_and_b32_status_of_the_sponsor", 
-                                 "x5_trial_status", "a2_eudract_number"))
+                                 "p_end_of_trial_status", "a2_eudract_number"))
 #
 # Eliminate trials records duplicated by EU member state: 
 #
@@ -202,15 +202,15 @@ result    <- result[ result[["_id"]] %in% uniqueids, ]
 # Tabulate the status of the clinical trial on the date of information retrieval
 # Note some trials have more than one sponsor and values are concatenated with /.
 #
-with (result, table (x5_trial_status, b1_sponsor.b31_and_b32_status_of_the_sponsor))
+with (result, table (p_end_of_trial_status, b1_sponsor.b31_and_b32_status_of_the_sponsor))
 #
 #                     b1_sponsor.b31_and_b32_status_of_the_sponsor
-# x5_trial_status      Commercial  Non-Commercial  Non-Commercial / Non-Commercial
-#   Completed                  81              32                                0
-#   Ongoing                   205             239                               12
-#   Prematurely Ended          15              12                                0
-#   Restarted                   0               1                                0
-#   Temporarily Halted          4               1                                0
+# p_end_of_trial_status    Commercial  Non-Commercial  Non-Commercial / Non-Commercial
+#   Completed                      81              32                                0
+#   Ongoing                       205             239                               12
+#   Prematurely Ended              15              12                                0
+#   Restarted                       0               1                                0
+#   Temporarily Halted              4               1                                0
 #
 ```
 
