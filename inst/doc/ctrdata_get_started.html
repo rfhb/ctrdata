@@ -223,16 +223,14 @@ set_config(use_proxy(&quot;proxy.server.domain&quot;, 8080))
 # UNC notation (\\server\directory) for the library
 .libPaths(&quot;D:/my/directory/&quot;)
 #
-# first install rmongodb (see README.md)
-devtools::install_github(&quot;mongosoup/rmongodb&quot;)
-#
-# now install this package
-devtools::install_github(&quot;rfhb/ctrdata&quot;)
+# now install this package and the packages it depends on
+# (mongolite, jsonlite, RCurl, curl, clipr)
+devtools::install_github(&quot;rfhb/ctrdata&quot;, dependencies = &quot;Depends&quot;)
 #
 # note: on Windows, cygwin has to be installed
 # to provide php, bash, perl, cat and sed programs.
-# this can be done like this: 
-installCygwinWindowsDoInstall(proxy = &quot;proxy.server.domain:8080&quot;) 
+# this can be done like this (remove proxy if not needed): 
+ctrdata::installCygwinWindowsDoInstall(proxy = &quot;proxy.server.domain:8080&quot;) 
 #
 </code></pre>
 
@@ -279,7 +277,7 @@ q &lt;- ctrGetQueryUrlFromBrowser()
 #
 ctrLoadQueryIntoDb(q)
 #
-# Alternatively, use the following to retrieve a couple of trials: 
+# Alternatively, use the following to retrieve a couple of trial records: 
 #
 ctrLoadQueryIntoDb(queryterm = &quot;2010-024264-18&quot;, register = &quot;EUCTR&quot;)
 #
@@ -307,27 +305,27 @@ dbQueryHistory()
 dbFindVariable(&quot;status&quot;, allmatches = TRUE)
 #
 # [1] &quot;overall_status&quot;  &quot;b1_sponsor.XX.b31_and_b32_status_of_the_sponsor&quot; &quot;p_end_of_trial_status&quot;                          
-# [4] &quot;x5_trial_status&quot; &quot;location.status&quot;                                 &quot;location.XX.status&quot;
+# [4] &quot;location.status&quot; &quot;location.XX.status&quot;
 #
 # Get all records that have values in all specified fields.
 # Note that b31_... is a field within the array b1_...
 #
 result &lt;- dbGetVariablesIntoDf(c(&quot;b1_sponsor.b31_and_b32_status_of_the_sponsor&quot;, 
-                                 &quot;x5_trial_status&quot;), debug = TRUE)
+                                 &quot;p_end_of_trial_status&quot;))
 #
 # Tabulate the status of the clinical trial on the date of information retrieval
 #
-with (result, table (&quot;Status&quot; = x5_trial_status, 
+with (result, table (&quot;Status&quot;       = p_end_of_trial_status, 
                      &quot;Sponsor type&quot; = b1_sponsor.b31_and_b32_status_of_the_sponsor))
 #
 #                     b31_and_b32_status_of_the_sponsor
-# x5_trial_status      Commercial Non-Commercial
-#   Completed                 138             30
-#   Not Authorised              3              0
-#   Ongoing                   339            290
-#   Prematurely Ended          35              4
-#   Restarted                   8              0
-#   Temporarily Halted         14              4
+# p_end_of_trial_status   Commercial Non-Commercial
+#   Completed                    138             30
+#   Not Authorised                 3              0
+#   Ongoing                      339            290
+#   Prematurely Ended             35              4
+#   Restarted                      8              0
+#   Temporarily Halted            14              4
 #
 </code></pre>
 

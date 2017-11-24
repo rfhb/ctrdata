@@ -347,9 +347,9 @@ if(interactive()) plot(f41_in_the_member_state ~ f422_in_the_whole_clinical_tria
 #
 # Example 2: How many clinical trials are ongoing or completed, per country?
 #
-result &lt;- dbGetVariablesIntoDf(c(&quot;a1_member_state_concerned&quot;, &quot;x5_trial_status&quot;))
+result &lt;- dbGetVariablesIntoDf(c(&quot;a1_member_state_concerned&quot;, &quot;p_end_of_trial_status&quot;))
 #
-if(interactive()) with (result, table(a1_member_state_concerned, x5_trial_status))
+if(interactive()) with (result, table(a1_member_state_concerned, p_end_of_trial_status))
 # [result not shown]
 #
 # 
@@ -397,7 +397,7 @@ dbQueryHistory()
 # (takes some time as variables are merged one after the other): 
 dbFindVariable(&quot;status&quot;, allmatches = TRUE)
 result &lt;- dbGetVariablesIntoDf(c(&quot;overall_status&quot;, 
-                                 &quot;x5_trial_status&quot;, 
+                                 &quot;p_end_of_trial_status&quot;, 
                                  &quot;a2_eudract_number&quot;))
 #
 # Find ids of unique trials if recorded by alternative countries or registers:
@@ -410,7 +410,7 @@ result &lt;- result[ result[[&quot;_id&quot;]] %in% ids_of_unique_trials, ]
 #
 # Now merge two variables into a new variable for analysis:
 tmp &lt;- dfMergeTwoVariablesRelevel(result, 
-                                  varnames = c(&quot;overall_status&quot;, &quot;x5_trial_status&quot;))
+                                  varnames = c(&quot;overall_status&quot;, &quot;p_end_of_trial_status&quot;))
 # Unique values returned: Ongoing, Completed, Prematurely Ended, Temporarily Halted, 
 #  Restarted, Recruiting, Not yet recruiting
 #
@@ -430,7 +430,7 @@ statusvalues &lt;- list(&quot;ongoing&quot; = c(&quot;Recruiting&quot;, &quot;Ac
                                     &quot;Not yet recruiting&quot;, &quot;Temporarily Halted&quot;))
 #
 tmp &lt;- dfMergeTwoVariablesRelevel(result, 
-                                  varnames = c(&quot;overall_status&quot;, &quot;x5_trial_status&quot;), 
+                                  varnames = c(&quot;overall_status&quot;, &quot;p_end_of_trial_status&quot;), 
                                   levelslist = statusvalues)
 # Unique values returned: ongoing, completed, other
 #
@@ -447,16 +447,35 @@ table(tmp)
 <pre><code class="r">#
 library(mongolite)
 #
-m &lt;- mongo(db = &quot;users&quot;, collection = &quot;ctrdata&quot;)
+m &lt;- mongo(db = &quot;users&quot;, collection = &quot;resultsTest&quot;)
 # 
 # Check if there are any duplicates:
-ids_of_unique_trials &lt;- dbFindIdsUniqueTrials()
+ids_of_unique_trials &lt;- dbFindIdsUniqueTrials(collection = &quot;resultsTest&quot;)
 #
 # Find the database elements that represent a site:
 result &lt;- m$find(&#39;{}&#39;, &#39;{&quot;location.facility.name&quot;: 1}&#39;)
 #
 # If there were duplicates, the unique trials could be retained like this:
 result &lt;- result[ result[[&quot;_id&quot;]] %in% ids_of_unique_trials, ]
+#
+# Table by frequency
+tbl &lt;- table(sort(unname(rapply(result, function(x) x, how = &quot;unlist&quot;))))
+tbl &lt;- tbl[rev(order(tbl))]
+head(tbl)
+#
+#                        Children&#39;s Hospital of Philadelphia 
+#                                                          17 
+#               Cincinnati Children&#39;s Hospital Medical Center 
+#                                                          14 
+#                                  Hospital for Sick Children 
+#                                                          13 
+#                          Children&#39;s National Medical Center 
+#                                                          13 
+# Children&#39;s Hospitals and Clinics of Minnesota - Minneapolis 
+#                                                          13 
+#                              Nationwide Children&#39;s Hospital 
+#                                                          11 
+#
 #
 # Define a helper function to count elements, irrespective of whether
 # the elements are in an array or are a set of subdocuments in the database:
@@ -470,7 +489,7 @@ count.elements &lt;- function (dataframecolumn) {
 result$number_of_sites &lt;- count.elements (result$location)
 #
 # Inspect first rows:
-result[1:5,]
+head(result)
 #                 _id                                      location  number_of_sites
 # 1       NCT00097292  Children&#39;s Hospital LA, UCSF, Stanford [...]               21
 # 2       NCT00129259                   The Diabetes Center at UCSF                1
@@ -778,7 +797,7 @@ table (out$year)
 #
 </code></pre>
 
-<h2>Using mapreduce operations to analyse participant numbers</h2>
+<h2>Use mapreduce operations to analyse participant numbers</h2>
 
 <p>Note that the mongodb documentation includes that a mapreduce operation might not be as fast and efficient as using the aggregation pipeline, which was used in the preceding example. </p>
 
@@ -862,6 +881,61 @@ terms &lt;- paste0(&quot;.*(&quot;, words(2), terms, &quot;\\w*&quot;, words(3),
 # find and print found matches for review
 for(i in 1:length(terms))
   print(gsub(terms[i], &quot;\\1&quot;, result, ignore.case = TRUE)[grepl(terms[i], result)])
+#
+</code></pre>
+
+<h2>Analyse results-related information (INCOMPLETE)</h2>
+
+<pre><code class="r">#
+library(mongolite)
+#
+m &lt;- mongo(db = &quot;users&quot;, collection = &quot;resultsTest&quot;)
+# 
+# show full set of results
+result &lt;- m$find(&#39;{&quot;_id&quot;: &quot;NCT00089141&quot;}&#39;)
+str(result)
+#
+# extract some elements for illustration of further work needed
+result$clinical_results$baseline$analyzed_list$analyzed$count_list$count
+#
+tbl &lt;- result$clinical_results$outcome_list$outcome[[1]]
+unlist(tbl[1,])
+#
+# EXCERPT
+#
+# type 
+#  &quot;Primary&quot; 
+# title 
+#  &quot;Cure of Chronic GVHD Without Resorting to Secondary Systemic Therapy&quot; 
+# description 
+#  &quot;Withdrawal of all systemic immunosuppressive treatment after resolution 
+#   of chronic GVHD, before death or onset of recurrent malignancy&quot; 
+# time_frame 
+#  &quot;2 years&quot; 
+# group_list.group.title1 
+#  &quot;Mycophenolate Mofetil&quot; 
+# group_list.group.title2 
+#  &quot;Placebo&quot; 
+# measure.units 
+#  &quot;participants&quot; 
+# measure.param 
+#  &quot;Number&quot; 
+# measure.analyzed_list.analyzed.units 
+#  &quot;Participants&quot; 
+# measure.analyzed_list.analyzed.count_list.count.@attributes.value1 
+#  &quot;74&quot; 
+# measure.analyzed_list.analyzed.count_list.count.@attributes.value2 
+#  &quot;77&quot; 
+# analysis_list.analysis.non_inferiority_type 
+#  &quot;Superiority or Other&quot; 
+# analysis_list.analysis.p_value 
+#  &quot;.22&quot; 
+# analysis_list.analysis.p_value_desc 
+#  &quot;P values are 2 sided and are based on likelihood ratio statistics.&quot; 
+# analysis_list.analysis.estimate_desc 
+# &quot;For all analyses, MMF arm in numerator, and placebo arm in denominator. 
+#  Hazard ratio estimate includes 3 efficacy success events that occurred after 
+#  two years in the placebo arm.&quot; 
 #
 </code></pre>
 
