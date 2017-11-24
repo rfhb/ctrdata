@@ -1,3 +1,7 @@
+# ctrdata 0.10.3
+ - 2017-11-24
+ - changed custom-built "x5_trial_status" to "p_end_of_trial_status" provided by EUCTR
+ 
 # ctrdata 0.10.2
  - 2017-11-22
  - editorial project updates

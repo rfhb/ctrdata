@@ -121,26 +121,26 @@ dbQueryHistory()
 dbFindVariable("status", allmatches = TRUE)
 #
 # [1] "overall_status"  "b1_sponsor.XX.b31_and_b32_status_of_the_sponsor" "p_end_of_trial_status"                          
-# [4] "x5_trial_status" "location.status"                                 "location.XX.status"
+# [4] "location.status" "location.XX.status"
 #
 # Get all records that have values in all specified fields.
 # Note that b31_... is a field within the array b1_...
 #
 result <- dbGetVariablesIntoDf(c("b1_sponsor.b31_and_b32_status_of_the_sponsor", 
-                                 "x5_trial_status"), debug = TRUE)
+                                 "p_end_of_trial_status"))
 #
 # Tabulate the status of the clinical trial on the date of information retrieval
 #
-with (result, table ("Status" = x5_trial_status, 
+with (result, table ("Status"       = p_end_of_trial_status, 
                      "Sponsor type" = b1_sponsor.b31_and_b32_status_of_the_sponsor))
 #
 #                     b31_and_b32_status_of_the_sponsor
-# x5_trial_status      Commercial Non-Commercial
-#   Completed                 138             30
-#   Not Authorised              3              0
-#   Ongoing                   339            290
-#   Prematurely Ended          35              4
-#   Restarted                   8              0
-#   Temporarily Halted         14              4
+# p_end_of_trial_status   Commercial Non-Commercial
+#   Completed                    138             30
+#   Not Authorised                 3              0
+#   Ongoing                      339            290
+#   Prematurely Ended             35              4
+#   Restarted                      8              0
+#   Temporarily Halted            14              4
 #
 ```

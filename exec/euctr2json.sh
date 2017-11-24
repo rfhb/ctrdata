@@ -166,10 +166,10 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.json" perl -ne '
 
   while (<>) {
 
-    # {\n"x1_eudract_number": "2006-001238-41",
-    # print $_ if /"x1_eudract_number"/;
+    # {\n"a2_eudract_number": "2006-001238-41",
+    # print $_ if /"a2_eudract_number"/;
 
-    if (/"x1_eudract_number"/)
+    if (/"a2_eudract_number"/)
     {
     s/^.*([0-9]{4}-[0-9]{6}-[0-9]{2}).*$/$1/g;
     print $_;

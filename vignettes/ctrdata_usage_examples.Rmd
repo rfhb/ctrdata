@@ -171,9 +171,9 @@ if(interactive()) plot(f41_in_the_member_state ~ f422_in_the_whole_clinical_tria
 #
 # Example 2: How many clinical trials are ongoing or completed, per country?
 #
-result <- dbGetVariablesIntoDf(c("a1_member_state_concerned", "x5_trial_status"))
+result <- dbGetVariablesIntoDf(c("a1_member_state_concerned", "p_end_of_trial_status"))
 #
-if(interactive()) with (result, table(a1_member_state_concerned, x5_trial_status))
+if(interactive()) with (result, table(a1_member_state_concerned, p_end_of_trial_status))
 # [result not shown]
 #
 # 
@@ -222,7 +222,7 @@ dbQueryHistory()
 # (takes some time as variables are merged one after the other): 
 dbFindVariable("status", allmatches = TRUE)
 result <- dbGetVariablesIntoDf(c("overall_status", 
-                                 "x5_trial_status", 
+                                 "p_end_of_trial_status", 
                                  "a2_eudract_number"))
 #
 # Find ids of unique trials if recorded by alternative countries or registers:
@@ -235,7 +235,7 @@ result <- result[ result[["_id"]] %in% ids_of_unique_trials, ]
 #
 # Now merge two variables into a new variable for analysis:
 tmp <- dfMergeTwoVariablesRelevel(result, 
-                                  varnames = c("overall_status", "x5_trial_status"))
+                                  varnames = c("overall_status", "p_end_of_trial_status"))
 # Unique values returned: Ongoing, Completed, Prematurely Ended, Temporarily Halted, 
 #  Restarted, Recruiting, Not yet recruiting
 #
@@ -255,7 +255,7 @@ statusvalues <- list("ongoing" = c("Recruiting", "Active", "Ongoing",
                                     "Not yet recruiting", "Temporarily Halted"))
 #
 tmp <- dfMergeTwoVariablesRelevel(result, 
-                                  varnames = c("overall_status", "x5_trial_status"), 
+                                  varnames = c("overall_status", "p_end_of_trial_status"), 
                                   levelslist = statusvalues)
 # Unique values returned: ongoing, completed, other
 #
