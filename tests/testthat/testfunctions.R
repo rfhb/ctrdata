@@ -130,7 +130,7 @@ test_that("retrieve data from register ctgov", {
 
   expect_message(ctrLoadQueryIntoDb(q,
     collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
-    "Imported or updated 3")
+    "Imported or updated ")
 
   # manipulate history to force testing updating
   # based on code in dbCTRUpdateQueryHistory
