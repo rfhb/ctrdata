@@ -636,21 +636,24 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                         startpage + parallelretrievals) - 1
     message("(", i, ") ", startpage, "-", stoppage, " ", appendLF = FALSE)
 
-    # download data for current batch into variable
-    tmp <- RCurl::getURL(utils::URLencode(paste0(queryEuRoot, ifelse(details, queryEuType3, queryEuType2),
-                                                 queryterm, "&page=", startpage:stoppage, queryEuPost)),
+    # download all text files from pages in current batch into variable
+    tmp <- RCurl::getURL(unlist(lapply(paste0(queryEuRoot, ifelse(details, queryEuType3, queryEuType2),
+                                              queryterm, "&page=", startpage:stoppage, queryEuPost),
+                                       utils::URLencode)),
                          curl = h, async = TRUE, binary = FALSE, noprogress = FALSE, progressfunction = progressOut)
     message("")
 
     # check plausibility
     if (debug) message("DEBUG: ", class(tmp))
-    if (class(tmp) != "character") stop("Download of records from EUCTR failed; last error: ", class(tmp))
+    if (class(tmp)  != "character") stop("Download from EUCTR failed; last error: ", class(tmp))
+    if (length(tmp) != (stoppage - startpage + 1)) stop("Download from EUCTR failed; incorrect number of records.")
 
     # save downloaded data from variable into file system
     for (ii in startpage:stoppage)
       write(tmp[[1 + ii - startpage]],
             paste0(tempDir, "/euctr-trials-page_",
                    formatC(ii, digits = 0, width = nchar(resultsEuNumPages), flag = 0), ".txt"))
+
   } # for batch
 
   # compose commands: for external script on all files in temporary directory and for import

@@ -156,7 +156,7 @@ test_that("retrieve data from register ctgov", {
 })
 
 
-#### euctr download new fast slow, update ####
+#### euctr download new, fast, slow, update ####
 test_that("retrieve data from register euctr", {
 
   has_internet()
@@ -173,6 +173,14 @@ test_that("retrieve data from register euctr", {
     collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")),
     "First result page empty")
 
+  ## github issue 8 bug
+  q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?",
+              "query=&dateFrom=2017-09-15&dateTo=2017-09-17")
+
+  expect_message(ctrLoadQueryIntoDb(queryterm = q,
+                                    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB",
+                                    euctrresults = TRUE),
+                 "Updated history")
 
   ## forced slow import
   q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
