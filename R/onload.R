@@ -32,7 +32,7 @@ assign("mongoBinaryLocation", NA, envir = .privateEnv)
     warning("perl not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE, immediate. = TRUE)
   #
   if (class(try(installMongoFindBinaries(), silent = TRUE)) == "try-error")
-    warning("mongo / mongoimport not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE, immediate. = TRUE)
+    warning("mongo / mongoimport not found, ctrLoadQueryIntoDb() will not work.\n", call. = FALSE, immediate. = TRUE)
   #
   packageStartupMessage("Completed testing helper binaries.")
   #

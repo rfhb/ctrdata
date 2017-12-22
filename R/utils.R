@@ -1099,6 +1099,8 @@ installCygwinWindowsTest <- function() {
 #' @param mongoDirWin Only used under MS Windows: folder that contains mongo
 #'   binaries, defaults to "c:\\mongodb\\bin\\". See
 #'   \url{http://docs.mongodb.org/manual/tutorial/install-mongodb-on-windows#interactive-installation}
+#' @param mongoDirUnix Only used under macOS and Linux: folder that contains mongo
+#'   binaries, defaults to "/usr/local/opt/mongodb/".
 #' @param debug Printing additional information if set to \code{TRUE}; default
 #'   is \code{FALSE}.
 #'
@@ -1107,82 +1109,87 @@ installCygwinWindowsTest <- function() {
 #'
 #' @keywords internal
 #
-installMongoFindBinaries <- function(mongoDirWin = "c:\\mongodb\\bin\\", debug = FALSE) {
+installMongoFindBinaries <- function(mongoDirWin  = "c:\\mongodb\\bin\\",
+                                     mongoDirUnix = "/usr/local/opt/mongodb/",
+                                     debug = FALSE) {
   #
+  # access private environment
   environ <- .privateEnv
   #
+  # define names of binaries needed
   binaries <- paste0(c("mongo", "mongoimport"),
                      ifelse(.Platform$OS.type != "windows", "", ".exe"))
   #
+  # 1 - check previously saved locations
   if (exists("mongoBinaryLocation", envir = environ) &&
       !is.na(get("mongoBinaryLocation", envir = environ)) &&
       file.exists(paste0(get("mongoBinaryLocation", envir = environ), binaries[1])) &&
       file.exists(paste0(get("mongoBinaryLocation", envir = environ), binaries[2]))) {
     #
-    if (debug) message("mongo / mongoimport is in ", get("mongoBinaryLocation", envir = environ))
+    message("mongo / mongoimport is in ", get("mongoBinaryLocation", envir = environ))
+    return(invisible(paste0(get("mongoBinaryLocation", envir = environ), binaries)))
     #
-  } else {
-    #
-    # check folder specified in parameter
-    mongoDirWin <- gsub("[\\]*$", "\\\\", mongoDirWin)
-    #
-    if (.Platform$OS.type == "windows"
-        && file.exists(paste0(mongoDirWin, binaries[1]))) {
-      #
-      assign("mongoBinaryLocation", mongoDirWin, envir = environ)
-      if (debug) message("mongo / mongoimport is in ", mongoDirWin)
-      #
-    } else {
-      #
-      # not found: reset any information and start searching
-      assign("mongoBinaryLocation", NA, envir = environ)
-      #
-      # first test for binary in the path
-      tmp <- try({
-        system2(command = binaries[1], args = " --version", stdout = TRUE, stderr = TRUE)
-        system2(command = binaries[2], args = " --version", stdout = TRUE, stderr = TRUE)
-      },
-        silent = TRUE
-        )
-      #
-      if (class(tmp) != "try-error") {
-        #
-        # found it in the path, save empty location string in package environment
-        if (debug) message("mongo / mongoimport found in the path.")
-        assign("mongoBinaryLocation", "", envir = environ)
-        #
-      } else {
-        #
-        if (debug) message("mongoimport / mongo not found in path.")
-        #
-        if (.Platform$OS.type != "windows")
-          stop("Cannot continue: mongo / mongoimport could not be found.")
-        #
-        # second search for folder into which mongo was installed
-        location <- try(utils::readRegistry("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Installer\\Folders",
-                                            hive = "HLM"), silent = TRUE)
-        #
-        if (class(location) == "try-error")
-          stop("Cannot continue. mongo path not found recorded in the registry.")
-        #
-        location <- names(location)
-        location <- location[grepl("Mongo", location)]
-        location <- location[grepl("bin", location)]
-        #
-        tmp <- file.exists(paste0(location, "mongoimport.exe"))
-        #
-        if (!tmp)
-          stop("Cannot continue. mongoimport path not found recorded in the registry, ", location, ".")
-        #
-        # found it, save in package environment
-        assign("mongoBinaryLocation", location, envir = environ)
-        if (debug) message("mongoimport / mongo found in ", location)
-        #
-      }
-    }
   }
   #
-  return(paste0(get("mongoBinaryLocation", envir = environ), binaries))
+  # 2 - check folder specified in parameter
+  mongoDirWin <- gsub("[\\]*$", "\\\\", mongoDirWin)
+  if (.Platform$OS.type == "windows" &&
+      file.exists(paste0(mongoDirWin, binaries[1]))) {
+    #
+    assign("mongoBinaryLocation", mongoDirWin, envir = environ)
+    if (debug) message("mongo / mongoimport is in ", mongoDirWin)
+    return(paste0(get("mongoBinaryLocation", envir = environ), binaries))
+    #
+  }
+  if (.Platform$OS.type != "windows" &&
+      file.exists(paste0(mongoDirUnix, binaries[1]))) {
+    #
+    assign("mongoBinaryLocation", mongoDirUnix, envir = environ)
+    message("mongo / mongoimport is in ", mongoDirUnix)
+    return(invisible(paste0(get("mongoBinaryLocation", envir = environ), binaries)))
+    #
+  }
+  #
+  # 3 - not found so far: reset any information and start searching
+  assign("mongoBinaryLocation", NA, envir = environ)
+  #
+  # first test for binary in the system path
+  tmp <- try({
+    system2(command = binaries[1], args = " --version", stdout = TRUE, stderr = TRUE)
+    system2(command = binaries[2], args = " --version", stdout = TRUE, stderr = TRUE)
+  }, silent = TRUE)
+  if (class(tmp) != "try-error") {
+    #
+    # found in the path, save empty location string in package environment
+    assign("mongoBinaryLocation", "", envir = environ)
+    message("mongo / mongoimport found in the path.")
+    return(invisible(paste0(get("mongoBinaryLocation", envir = environ), binaries)))
+    #
+  }
+  #
+  # 4 - only windows continues
+  if (debug) message("mongoimport / mongo not found in path.")
+  if (.Platform$OS.type != "windows")
+    stop("Cannot continue: mongo / mongoimport could not be found.")
+  #
+  # search for folder into which mongo was recorded to be installed
+  location <- try(utils::readRegistry("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Installer\\Folders",
+                                      hive = "HLM"), silent = TRUE)
+  if (class(location) == "try-error")
+    stop("Cannot continue. mongo path not found recorded in the registry.")
+  #
+  location <- names(location)
+  location <- location[grepl("Mongo", location)]
+  location <- location[grepl("bin", location)]
+  #
+  tmp <- file.exists(paste0(location, "mongoimport.exe"))
+  if (!tmp)
+    stop("Cannot continue. mongoimport path not found recorded in the registry, ", location, ".")
+  #
+  # found it, save in package environment
+  assign("mongoBinaryLocation", location, envir = environ)
+  message("mongoimport / mongo found in ", location)
+  return(invisible(paste0(get("mongoBinaryLocation", envir = environ), binaries)))
   #
 }
 # end installMongoFindBinaries

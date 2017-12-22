@@ -8,12 +8,15 @@ Call this function with a correct parameter if the automatic
 detection fails.}
 \usage{
 installMongoFindBinaries(mongoDirWin = "c:\\\\mongodb\\\\bin\\\\",
-  debug = FALSE)
+  mongoDirUnix = "/usr/local/opt/mongodb/", debug = FALSE)
 }
 \arguments{
 \item{mongoDirWin}{Only used under MS Windows: folder that contains mongo
 binaries, defaults to "c:\\mongodb\\bin\\". See
 \url{http://docs.mongodb.org/manual/tutorial/install-mongodb-on-windows#interactive-installation}}
+
+\item{mongoDirUnix}{Only used under macOS and Linux: folder that contains mongo
+binaries, defaults to "/usr/local/opt/mongodb/".}
 
 \item{debug}{Printing additional information if set to \code{TRUE}; default
 is \code{FALSE}.}

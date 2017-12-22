@@ -41,7 +41,7 @@ Overview of functions used in sequence:
 
 ### 1. Local [mongodb](https://www.mongodb.org/) (version 3) installation
 
-Follow instructions for various operating systems [here](https://docs.mongodb.com/manual/administration/install-community/). For macOS alternatively use [homebrew](http://brew.sh/): `brew install mongodb`. From this installation, binaries `mongoimport{.exe}` and `mongo{.exe}` are needed.
+Follow instructions for various operating systems [here](https://docs.mongodb.com/manual/administration/install-community/). For macOS alternatively use [homebrew](http://brew.sh/): `brew install mongodb`. From this installation, binaries `mongoimport{.exe}` and `mongo{.exe}` are needed. If the binaries are not on the system path under Unix, specify their folder as `ctrdata:::installMongoFindBinaries(mongoDirUnix = "<folder>")`.
 
 ### 2. Command line tools `perl`, `sed`, `cat` and `php` (5.2 or higher)
 
