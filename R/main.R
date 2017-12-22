@@ -806,7 +806,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                       f <- paste0(tempDir, "/", x , ".zip")
                       fref <- RCurl::CFILE(f, mode = "wb")
 
-                      # get (download) trial results' zip files
+                      # get (download) trial results' zip file
                       tmp  <- RCurl::curlPerform(url = utils::URLencode(paste0(queryEuRoot, queryEuType4, x)),
                                                  writedata = fref@ref,
                                                  noprogress = FALSE,
@@ -884,19 +884,29 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
       tmp <- sapply(eudractnumbersimported[startindex : stopindex],
                     function(x) {
 
-                      # read in file
+                      # compose file name and check
                       # for debugging:
                       # x <- "2004-000518-37"
                       fileName <- paste0(tempDir, "/", x, ".json")
-                      tmp <- readChar(fileName, file.info(fileName)$size)
+                      if(file.exists(fileName) && file.size(fileName) > 0){
 
-                      # update database with results
-                      tmp <- mongo$update(query  = paste0('{"a2_eudract_number":{"$eq":"', x, '"}}'),
-                                          update = paste0('{ "$set" :', tmp, "}"),
-                                          upsert = TRUE, multiple = TRUE)
+                        # read contents
+                        tmp <- readChar(fileName, file.info(fileName)$size)
 
-                      # inform user on failed trial
-                      if (!tmp) warning(paste0("Import into mongo failed for trial ", x), immediate. = TRUE)
+                        # update database with results
+                        tmp <- mongo$update(query  = paste0('{"a2_eudract_number":{"$eq":"', x, '"}}'),
+                                            update = paste0('{ "$set" :', tmp, "}"),
+                                            upsert = TRUE, multiple = TRUE)
+
+                        # inform user on failed trial
+                        if (!tmp) warning(paste0("Import into mongo failed for trial ", x), immediate. = TRUE)
+
+                      } else {
+
+                        # file did not exist
+                        tmp <- FALSE
+
+                      }
 
                       # return for accumulating information
                       return(tmp)
