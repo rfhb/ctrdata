@@ -499,7 +499,7 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
 
   # 3. get ctrgov records
   listofCTGOVids <- mongo$iterate(
-    query = '{"_id": {"$regex": "NCT[0-9]{8}"}}',
+    query = '{"_id": "\\/^NCT[0-9]{8}\\/"}',
     fields = '{"id_info.org_study_id": 1, "id_info.secondary_id": 1, "id_info.nct_alias": 1}'
     )$batch(size = mongo$count())
 
