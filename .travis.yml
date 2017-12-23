@@ -25,7 +25,7 @@ addons:
     - mongodb-org
     - php5-cli
     sources:
-    - mongodb-3.2-precise
+    - mongodb-3.4-trusty
 
 
 # to be added to use mongoimport for further travis testing:
