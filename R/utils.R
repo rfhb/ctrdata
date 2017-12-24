@@ -184,7 +184,7 @@ ctrGetQueryUrlFromBrowser <- function(content = clipr::read_clip()) {
   if (grepl("https://www.clinicaltrialsregister.eu/ctr-search/", content)) {
     #
     queryterm <- sub("https://www.clinicaltrialsregister.eu/ctr-search/search[?]query=(.*)", "\\1", content)
-    message("Found search query from EUCTR.")
+    message("Found search query from EUCTR.\n")
     #
     df <- data.frame(cbind(queryterm, "EUCTR"), stringsAsFactors = FALSE)
     names(df) <- c("query-term", "query-register")
@@ -200,7 +200,7 @@ ctrGetQueryUrlFromBrowser <- function(content = clipr::read_clip()) {
     queryterm <- sub("(.*)&Search[a-zA-Z]*=(Search|Find)[a-zA-Z+]*",  "\\1", queryterm)
     queryterm <- gsub("[a-z_0-9]+=&", "", queryterm)
     queryterm <- sub("&[a-z_0-9]+=$", "", queryterm)
-    message("Found search query from CTGOV.")
+    message("Found search query from CTGOV.\n")
     #
     df <- data.frame(cbind(queryterm, "CTGOV"), stringsAsFactors = FALSE)
     names(df) <- c("query-term", "query-register")
@@ -1126,7 +1126,7 @@ installMongoFindBinaries <- function(mongoDirWin  = "c:\\mongodb\\bin\\",
       file.exists(paste0(get("mongoBinaryLocation", envir = environ), binaries[1])) &&
       file.exists(paste0(get("mongoBinaryLocation", envir = environ), binaries[2]))) {
     #
-    message("mongo / mongoimport is in ", get("mongoBinaryLocation", envir = environ))
+    if (debug) message("mongo / mongoimport is in ", get("mongoBinaryLocation", envir = environ))
     return(invisible(paste0(get("mongoBinaryLocation", envir = environ), binaries)))
     #
   }
@@ -1145,7 +1145,7 @@ installMongoFindBinaries <- function(mongoDirWin  = "c:\\mongodb\\bin\\",
       file.exists(paste0(mongoDirUnix, binaries[1]))) {
     #
     assign("mongoBinaryLocation", mongoDirUnix, envir = environ)
-    message("mongo / mongoimport is in ", mongoDirUnix)
+    if (debug) message("mongo / mongoimport is in ", mongoDirUnix)
     return(invisible(paste0(get("mongoBinaryLocation", envir = environ), binaries)))
     #
   }
@@ -1162,7 +1162,7 @@ installMongoFindBinaries <- function(mongoDirWin  = "c:\\mongodb\\bin\\",
     #
     # found in the path, save empty location string in package environment
     assign("mongoBinaryLocation", "", envir = environ)
-    message("mongo / mongoimport found in the path.")
+    if (debug) message("mongo / mongoimport found in the path.")
     return(invisible(paste0(get("mongoBinaryLocation", envir = environ), binaries)))
     #
   }
@@ -1188,7 +1188,7 @@ installMongoFindBinaries <- function(mongoDirWin  = "c:\\mongodb\\bin\\",
   #
   # found it, save in package environment
   assign("mongoBinaryLocation", location, envir = environ)
-  message("mongoimport / mongo found in ", location)
+  if (debug) message("mongoimport / mongo found in ", location)
   return(invisible(paste0(get("mongoBinaryLocation", envir = environ), binaries)))
   #
 }

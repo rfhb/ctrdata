@@ -368,7 +368,7 @@ dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber,
   # retrieve existing history data
   hist <- suppressMessages(
     dbQueryHistory(collection = collection, db = db, url = url,
-                   username = username, password = password, verbose = FALSE)
+                   username = username, password = password, verbose = verbose)
   )
 
   # debug
@@ -388,10 +388,10 @@ dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber,
 
   # get a working mongo connection, select trial record collection
   mongo <- ctrMongo(collection = collection, db = db, url = url,
-                    username = username, password = password, verbose = TRUE)[["ctr"]]
+                    username = username, password = password, verbose = verbose)[["ctr"]]
 
   # update database
-  mongo$update(query = '{"_id":{"$eq":"meta-info"}}',
+  mongo$update(query = '{"_id": {"$eq": "meta-info"}}',
                update = paste0('{ "$set" :', json, "}"),
                upsert = TRUE)
 
@@ -826,7 +826,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
 
                         if(any(grepl("pdf$", tmp)))
                           warning("PDF results ", x,
-                                  call. = FALSE, immediate. = TRUE, noBreaks. = FALSE)
+                                  call. = FALSE, immediate. = TRUE, noBreaks. = TRUE)
 
                         if(any(tmp2 <- grepl("xml$", tmp)))
                           file.rename(tmp[tmp2][1], paste0(tempDir, "/", x , ".xml"))
@@ -875,6 +875,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                       username = username, password = password, verbose = FALSE)[["ctr"]]
 
     # iterate over batches of results
+    message("Importing JSON into mongoDB ...")
     importedresults <- NULL
     for (i in 1:(resultsNumBatches + ifelse(resultsNumModulo > 0, 1, 0))) {
 
@@ -897,17 +898,26 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                         tmp <- readChar(fileName, file.info(fileName)$size)
 
                         # update database with results
+                        # str(tmp)
+                        # List of 2
+                        # $ modifiedCount: int 3
+                        # $ matchedCount : int 3
+                        # - attr(*, "class")= chr "miniprint"
                         tmp <- mongo$update(query  = paste0('{"a2_eudract_number":{"$eq":"', x, '"}}'),
                                             update = paste0('{ "$set" :', tmp, "}"),
                                             upsert = TRUE, multiple = TRUE)
+                        tmp <- try(as.numeric(tmp$modifiedCount), silent = TRUE)
 
                         # inform user on failed trial
-                        if (!tmp) warning(paste0("Import into mongo failed for trial ", x), immediate. = TRUE)
+                        if (class(tmp) == "try-error") {
+                          warning(paste0("Import into mongo failed for trial ", x), immediate. = TRUE)
+                          tmp <- 0
+                        }
 
                       } else {
 
                         # file did not exist
-                        tmp <- FALSE
+                        tmp <- 0
 
                       }
 
@@ -928,7 +938,8 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     importedresults <- sum(unlist(importedresults))
 
     ## inform user on final import outcome
-    message("Imported or updated results for ", importedresults, " out of ", resultsEuNumTrials, " trial(s).\n")
+    message("Imported or updated results for ", importedresults,
+            " records concerning ", resultsEuNumTrials, " trial(s).\n")
 
   } # if euctrresults
 

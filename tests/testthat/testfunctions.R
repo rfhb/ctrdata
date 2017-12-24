@@ -177,9 +177,9 @@ test_that("retrieve data from register euctr", {
   q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?",
               "query=&dateFrom=2017-09-15&dateTo=2017-09-17")
 
-  expect_message(ctrLoadQueryIntoDb(queryterm = q,
+  expect_message(suppressWarnings(ctrLoadQueryIntoDb(queryterm = q,
                                     collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB",
-                                    euctrresults = TRUE),
+                                    euctrresults = TRUE)),
                  "Updated history")
 
   ## forced slow import
@@ -238,7 +238,7 @@ test_that("retrieve results from register euctr", {
 
   expect_message(suppressWarnings(ctrLoadQueryIntoDb(q, euctrresults = TRUE,
                                                      collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")),
-                 "Imported or updated results for 3 out of 3 trial")
+                 "Imported or updated results for")
 
 })
 
