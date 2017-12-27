@@ -100,7 +100,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   }
 
   ## sanity checks
-  if ((grepl("[^a-zA-Z0-9=+&%_-]", gsub("\\[", "", gsub("\\]", "", queryterm)))) & (register == ""))
+  if ( (grepl("[^a-zA-Z0-9=+&%_-]", gsub("\\[", "", gsub("\\]", "", queryterm)))) & (register == ""))
     stop("Parameter 'queryterm' is not an URL showing results of a query or has unexpected characters: ",
          queryterm, ", expected are: a-zA-Z0-9=+&%_-[]. Perhaps additionally specify 'register = '?")
   #
@@ -122,7 +122,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   installMongoFindBinaries(debug = debug)
   if (.Platform$OS.type == "windows") installCygwinWindowsTest()
 
-  # check program version as acceptable json format changed from 2.x to 3.x
+  # check program version (reason: json format changed from 2.x to 3.x, new arguments to functions in 3.6)
   installMongoCheckVersion()
 
   # remove trailing or leading whitespace
@@ -758,14 +758,14 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
 
 
   ## results: load also euctr trials results if requested
-  if(euctrresults) {
+  if (euctrresults) {
 
     ## results are available only one-by-one for each trial
     #  we need the eudract numbers of the trials that were
     #  just retrieved and imported
     # for debugging:
     # tempDir <- "/Users/ralfherold/Daten/mak/r/emea/ctrdata/private/test"
-    eudractnumbersimported <- readLines(paste0(tempDir, '/alleudract.txt'))
+    eudractnumbersimported <- readLines(paste0(tempDir, "/alleudract.txt"))
     eudractnumbersimported <- rev(sort(unique(eudractnumbersimported)))
 
     # for debugging:
@@ -806,7 +806,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                     function(x) {
 
                       # prepare a file handle for saving in temporary directory
-                      f <- paste0(tempDir, "/", x , ".zip")
+                      f <- paste0(tempDir, "/", x, ".zip")
                       fref <- RCurl::CFILE(f, mode = "wb")
 
                       # get (download) trial results' zip file
@@ -824,12 +824,12 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
 
                         tmp <- utils::unzip(f, exdir = tempDir)
 
-                        if(any(grepl("pdf$", tmp)))
+                        if (any(grepl("pdf$", tmp)))
                           warning("PDF results ", x,
                                   call. = FALSE, immediate. = TRUE, noBreaks. = TRUE)
 
-                        if(any(tmp2 <- grepl("xml$", tmp)))
-                          file.rename(tmp[tmp2][1], paste0(tempDir, "/", x , ".xml"))
+                        if (any(tmp2 <- grepl("xml$", tmp)))
+                          file.rename(tmp[tmp2][1], paste0(tempDir, "/", x, ".xml"))
 
                       }
 
@@ -892,7 +892,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                       # for debugging:
                       # x <- "2004-000518-37"
                       fileName <- paste0(tempDir, "/", x, ".json")
-                      if(file.exists(fileName) && file.size(fileName) > 0){
+                      if (file.exists(fileName) && file.size(fileName) > 0){
 
                         # read contents
                         tmp <- readChar(fileName, file.info(fileName)$size)

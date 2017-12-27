@@ -274,7 +274,7 @@ dbQueryHistory <- function(collection = "ctrdata", db = "users", url = "mongodb:
     tmp <- sapply(tmp, function(x) do.call(rbind, x))
     tmp <- t(tmp)
     tmp <- data.frame(tmp, row.names = NULL, check.names = FALSE, stringsAsFactors = FALSE)
-    if(ncol(tmp) != 4) warning(tmp, immediate. = TRUE)
+    if (ncol(tmp) != 4) warning(tmp, immediate. = TRUE)
     names(tmp) <- c("query-timestamp", "query-register", "query-records", "query-term")
     # Inform user
     message("Number of queries in history of \"", mongo$info()$stats$ns, "\": ", nrow(tmp))
@@ -716,7 +716,7 @@ dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
       #
     }, silent = FALSE)
     #
-    if ( (class(tmp) != "try-error") & any(nchar(dfi[ ,2]) != 0) ) {
+    if ( (class(tmp) != "try-error") & any(nchar(dfi[ , 2]) != 0) ) {
       # no error and some content, thus append to result
       if (is.null(result)) {
         result <- dfi

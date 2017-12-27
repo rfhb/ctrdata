@@ -234,7 +234,7 @@ test_that("retrieve results from register euctr", {
 
   has_internet()
 
-  q <- "https://www.clinicaltrialsregister.eu/ctr-search/search?query=2004-000518-37+OR+2004-004386-15+OR+2007-000371-42"
+  q <- "https://www.clinicaltrialsregister.eu/ctr-search/search?query=2004-000518-37+OR+2004-004386-15"
 
   expect_message(suppressWarnings(ctrLoadQueryIntoDb(q, euctrresults = TRUE,
                                                      collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")),
