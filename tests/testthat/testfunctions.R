@@ -127,39 +127,37 @@ test_that("retrieve data from register ctgov", {
   has_internet()
   has_mongo()
 
+  # initialise
+  coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
+
   expect_message(ctrLoadQueryIntoDb(
-    queryterm = "term=2010-024264-18",
+    queryterm = "2010-024264-18",
     register = "CTGOV",
-    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
+    collection = coll),
     "Imported or updated 1 trial")
 
 
   ## create and test updatable query
 
-  q <- paste0("https://clinicaltrials.gov/ct2/results?term=osteosarcoma&type=Intr&phase=0&age=0&lup_e=12%2F31%2F2014")
+  q <- paste0("https://clinicaltrials.gov/ct2/results?term=osteosarcoma&type=Intr&phase=0&age=0&lup_e=")
 
-  expect_message(ctrLoadQueryIntoDb(q,
-    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
-    "Imported or updated ")
+  expect_message(ctrLoadQueryIntoDb(paste0(q, "12%2F31%2F2008"), collection = coll),
+                 "Imported or updated ")
 
   # manipulate history to force testing updating
   # based on code in dbCTRUpdateQueryHistory
-  hist <- dbQueryHistory(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")
+  hist <- dbQueryHistory(collection = coll)
   # manipulate query
-  hist[nrow(hist), "query-term"]      <- sub(".*(term=.*)&lup_e=.*", "\\1", q)
-  hist[nrow(hist), "query-timestamp"] <- "2014-12-31-23-59-59"
+  hist[nrow(hist), "query-term"] <- sub("(.*&lup_e=).*", "\\112%2F31%2F2009", hist[nrow(hist), "query-term"])
   # convert into json object
   json <- jsonlite::toJSON(list("queries" = hist))
   # update database
-  mongolite::mongo(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB",
-                   db = "users")$update(query = '{"_id":{"$eq":"meta-info"}}',
-                                        update = paste0('{ "$set" :', json, "}"),
-                                        upsert = TRUE)
+  mongolite::mongo(collection = coll, db = "users")$update(query = '{"_id":{"$eq":"meta-info"}}',
+                                                           update = paste0('{ "$set" :', json, "}"),
+                                                           upsert = TRUE)
 
-  expect_message(ctrLoadQueryIntoDb(
-    querytoupdate = "last",
-    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
-    "Imported or updated")
+  expect_message(suppressWarnings(ctrLoadQueryIntoDb(querytoupdate = "last", collection = coll)),
+                 "Imported or updated")
 
   remove("hist", "json", "q")
 
@@ -333,62 +331,90 @@ test_that("operations on database after download from register", {
   has_mongo()
   has_internet()
 
+  # initialise
+  coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
+
   # dbFindVariable
-  expect_error(dbFindVariable(namepart = c("onestring", "twostring"),
-                              collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
+  expect_error(dbFindVariable(namepart = c("onestring", "twostring"), collection = coll),
                "Name part should have only one element.")
 
-  expect_error(dbFindVariable(namepart = list("onestring", "twostring"),
-                              collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
+  expect_error(dbFindVariable(namepart = list("onestring", "twostring"), collection = coll),
                "Name part should be atomic.")
 
-  expect_error(dbFindVariable(namepart = "",
-                              collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
+  expect_error(dbFindVariable(namepart = "", collection = coll),
                "Empty name part string.")
 
-  expect_message(dbFindVariable(namepart = "date",
-                                collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
+  expect_message(dbFindVariable(namepart = "date", collection = coll),
                  "Returning first of ")
 
-  expect_equal(is.na(dbFindVariable(namepart = "ThisNameShouldNotExistAnywhere",
-                                    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")),
+  expect_equal(is.na(dbFindVariable(namepart = "ThisNameShouldNotExistAnywhere", collection = coll)),
                TRUE)
 
 
   # dbFindIdsUniqueTrials
-  expect_message(dbFindIdsUniqueTrials(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB",
-                                       preferregister = "EUCTR"),
+  expect_message(dbFindIdsUniqueTrials(collection = coll, preferregister = "EUCTR"),
                  "Searching multiple country records")
 
-  expect_message(dbFindIdsUniqueTrials(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB",
-                                       preferregister = "CTGOV"),
+  expect_message(dbFindIdsUniqueTrials(collection = coll, preferregister = "CTGOV"),
                  "Returning keys")
 
-  expect_warning(dbFindIdsUniqueTrials(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB",
-                                       prefermemberstate = "3RD", include3rdcountrytrials = FALSE),
+  expect_warning(dbFindIdsUniqueTrials(collection = coll, prefermemberstate = "3RD", include3rdcountrytrials = FALSE),
                  "Preferred EUCTR version set to 3RD country trials, but include3rdcountrytrials was FALSE")
 
 
   # dbGetVariablesIntoDf
-  expect_error(dbGetVariablesIntoDf(fields = "ThisDoesNotExist",
-                                    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
+  expect_error(dbGetVariablesIntoDf(fields = "ThisDoesNotExist", collection = coll),
                "For variable / field: ThisDoesNotExist no data could be extracted")
 
-  expect_error(dbGetVariablesIntoDf(fields = "",
-                                    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
+  expect_error(dbGetVariablesIntoDf(fields = "", collection = coll),
                "'fields' contains empty elements")
 
-  expect_error(dbGetVariablesIntoDf(fields = list("ThisDoesNotExist"),
-                                    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
+  expect_error(dbGetVariablesIntoDf(fields = list("ThisDoesNotExist"), collection = coll),
                "Input should be a vector of strings of field names.")
 
 
   # clean up = drop collections from mongodb
-  expect_equivalent (mongolite::mongo(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB",
-                                      db = "users")$drop(), TRUE)
+  expect_equivalent (mongolite::mongo(collection = coll,                 db = "users")$drop(), TRUE)
+  expect_equivalent (mongolite::mongo(collection = paste0(coll, "Keys"), db = "users")$drop(), TRUE)
 
-  expect_equivalent (mongolite::mongo(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDBKeys",
-                                      db = "users")$drop(), TRUE)
+})
+
+
+#### functions for deduplication ####
+test_that("operations on database for deduplication", {
+
+  has_mongo()
+  has_internet()
+
+  # initialise
+  coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
+
+  # get some trials with corresponding numbers
+  ctrLoadQueryIntoDb(queryterm = "NCT00134030", register = "CTGOV", collection = coll) # EUDRACT-2004-000242-20
+  ctrLoadQueryIntoDb(queryterm = "NCT01516580", register = "CTGOV", collection = coll) # 2010-019224-31
+  ctrLoadQueryIntoDb(queryterm = "NCT00025597", register = "CTGOV", collection = coll) # this is not in euctr
+  ctrLoadQueryIntoDb(queryterm = "2010-019224-31", register = "EUCTR", collection = coll)
+  ctrLoadQueryIntoDb(queryterm = "2004-000242-20", register = "EUCTR", collection = coll)
+  ctrLoadQueryIntoDb(queryterm = "2005-000915-80", register = "EUCTR", collection = coll) # this is not in ctgov
+
+  # test combinations of parameters
+
+  tmp <- dbFindIdsUniqueTrials(collection = coll)
+  expect_equal(sum(tmp %in% c("2004-000242-20-GB", "2005-000915-80-GB", "2010-019224-31-GB","NCT00025597")), 4)
+
+  tmp <- dbFindIdsUniqueTrials(collection = coll, prefermemberstate = "IT")
+  expect_equal(sum(tmp %in% c("2004-000242-20-GB", "2005-000915-80-IT", "2010-019224-31-IT", "NCT00025597")), 4)
+
+  tmp <- dbFindIdsUniqueTrials(collection = coll, preferregister = "CTGOV")
+  expect_equal(sum(tmp %in% c("NCT00025597", "NCT00134030", "NCT01516580", "2005-000915-80-GB")), 4)
+
+  tmp <- dbFindIdsUniqueTrials(collection = coll, preferregister = "CTGOV", prefermemberstate = "IT")
+  expect_equal(sum(tmp %in% c("NCT00025597", "NCT00134030", "NCT01516580", "2005-000915-80-IT")), 4)
+
+
+  # clean up = drop collections from mongodb
+  expect_equivalent (mongolite::mongo(collection = coll,                 db = "users")$drop(), TRUE)
+  expect_equivalent (mongolite::mongo(collection = paste0(coll, "Keys"), db = "users")$drop(), TRUE)
 
 })
 
