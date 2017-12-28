@@ -1,4 +1,10 @@
-# ctrdata 0.10.3
+# ctrdata 0.10.4
+ - 2017-12-28
+ - note on compatibility with mongoDB versions
+ - fixing issue #8
+ - simplified license
+ 
+## ctrdata 0.10.3
  - 2017-11-24
  - changed custom-built "x5_trial_status" to "p_end_of_trial_status" provided by EUCTR
  
