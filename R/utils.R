@@ -1237,6 +1237,8 @@ installMongoCheckVersion <- function(collection = "ctrdata", db = "users", url =
          result$version, ").")
   }
   #
+  return(TRUE)
+  #
   # close database connection
   rm(mongo); gc()
 }
