@@ -39,6 +39,10 @@ addons:
 # new issue
 # https://github.com/travis-ci/apt-package-whitelist/issues/2825
 
+# https://cran.r-project.org/web/packages/devtools/vignettes/dependencies.html
+r_github_packages:
+  - jeroen/mongolite
+
 r_packages:
   - covr
   - rvest
