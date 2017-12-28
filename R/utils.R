@@ -691,11 +691,14 @@ dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
   # total number of records in collection, used for max batch size and at function end
   countall <- mongo$count(query = '{"_id":{"$ne":"meta-info"}}')
 
+  # provide list of ids
+  idsall <- mongo$find(query = '{"_id":{"$ne":"meta-info"}}', fields = '{"_id" : 1}')
+
   # initialise output
   result <- NULL
 
   # iterate over fields so that we can use a custom function to merge results,
-  # given that mongodb clients have different approaches and complex returnn
+  # given that mongodb clients have different approaches and complex returns
   for (item in fields) {
     #
     query <- paste0('{"_id": {"$ne": "meta-info"}}')
@@ -717,23 +720,26 @@ dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
       #
     }, silent = FALSE)
     #
-    if ( (class(tmp) != "try-error") & any(nchar(dfi[ , 2]) != 0) ) {
-      # no error and some content, thus append to result
-      if (is.null(result)) {
-        result <- dfi
-      } else {
-        result <- merge(result, dfi, by = "_id", all = TRUE)
-      }
-      #
-    } else {
+    if ( !( (class(tmp) != "try-error") & any(nchar(dfi[ , 2]) != 0) ) ) {
       # try-error occured or no data retrieved
-      if (stopifnodata)
-        stop("For variable / field: ", item,
-             " no data could be extracted, please check the contents of the database.")
-      else
-        warning("For variable / field: ", item,
-                " no data could be extracted, please check the contents of the database.")
+      msg <- paste0("For variable / field: ", item, " no data could be extracted from the collection.")
+      if (stopifnodata){
+        stop(msg)
+      } else {
+        warning(msg)
+        # create empty data set
+        dfi <- as.data.frame(cbind(idsall, rep(NA, times = nrow (idsall))), stringsAsFactors = FALSE)
+        # name result set
+        names(dfi) <- c("_id", item)
+      }
     }
+    # not stopped, no error and some content, thus append to result
+    if (is.null(result)) {
+      result <- dfi
+    } else {
+      result <- merge(result, dfi, by = "_id", all = TRUE)
+    }
+    #
   } # end for item in fields
 
   # close database connection
