@@ -25,6 +25,7 @@ has_internet <- function(){
 
 # helper function to check mongodb
 has_mongo <- function(){
+  # check if reachable reachable
   mongo_ok <- try({
     capture.output(ctrMongo())
   }, silent = TRUE)
@@ -32,6 +33,14 @@ has_mongo <- function(){
   if (class(mongo_ok) == "try-error" ||
       mongo_ok [1] == "Unable to connect to 127.0.0.1:27017, error code = 2") {
     skip("No password-free localhost mongodb connection available.")
+  }
+  # check if version ok
+  mongo_ok <- try({
+    capture.output(installMongoCheckVersion())
+  }, silent = TRUE)
+  # use test result
+  if (class(mongo_ok) == "try-error") {
+    skip("No suitable version of mongodb available.")
   }
 }
 
@@ -57,7 +66,7 @@ has_proxy <- function(){
 }
 
 
-#### mongodb local password free access to a standard ####
+#### mongodb local password free access ####
 test_that("access to mongo db from R package", {
 
   has_mongo()
@@ -233,6 +242,7 @@ test_that("retrieve data from register euctr", {
 test_that("retrieve results from register euctr", {
 
   has_internet()
+  has_mongo()
 
   q <- "https://www.clinicaltrialsregister.eu/ctr-search/search?query=2004-000518-37+OR+2004-004386-15"
 
