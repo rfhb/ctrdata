@@ -556,8 +556,15 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
                            " CTGOV otherids (secondary_id, nct_alias, org_study_id) in ",
                            " EUCTR a51_isrctn_international_standard_randomised_controlled_trial_number")
       #
-      retids <- c(listofEUCTRids[["_id"]], sapply(listofCTGOVids, "[[", 1) [
-        !dupes_a2 & !dupes_b2 & !dupes_c2 & !dupes_d2])
+      # finalise results set
+      listofEUCTRids <- listofEUCTRids[["_id"]]
+      listofCTGOVids <- sapply(listofCTGOVids, "[[", 1) [ !dupes_a2 & !dupes_b2 & !dupes_c2 & !dupes_d2 ]
+      #
+      message("Concatenating ",
+              length(listofEUCTRids), " records from EUCTR and",
+              length(listofCTGOVids), " records from CTGOV and ")
+      #
+      retids <- c(listofEUCTRids, listofCTGOVids)
       #
     }
     #
@@ -593,8 +600,15 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
                            " EUCTR a51_isrctn_international_standard_randomised_controlled_trial_number ",
                            " in CTOGV otherids (secondary_id, nct_alias, org_study_id)")
       #
-      retids <- c(sapply(listofCTGOVids, "[[", 1), listofEUCTRids[["_id"]] [
-        !dupes_a1 & !dupes_b1 & !dupes_c1 & !dupes_d1])
+      # finalise results set
+      listofCTGOVids <- sapply(listofCTGOVids, "[[", 1)
+      listofEUCTRids <- listofEUCTRids[["_id"]] [ !dupes_a1 & !dupes_b1 & !dupes_c1 & !dupes_d1 ]
+      #
+      message("Concatenating ",
+              length(listofCTGOVids), " records from CTGOV and ",
+              length(listofEUCTRids), " records from EUCTR.")
+      #
+      retids <- c(listofCTGOVids, listofEUCTRids)
       #
     }
   } else {
