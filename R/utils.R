@@ -524,7 +524,8 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
     if (preferregister == "EUCTR") {
       #
       # b2 - ctgov in euctr (_id corresponds to index 1)
-      dupes_b2 <- sapply(listofCTGOVids, "[[", 1) %in% listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]
+      dupes_b2 <- sapply(listofCTGOVids, "[[", 1) %in%
+                  listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]
       #
       if (verbose) message("Searching duplicates: Found ", sum(dupes_b2),
                            " CTGOV _id in EUCTR a52_us_nct_clinicaltrialsgov_registry_number")

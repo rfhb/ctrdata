@@ -71,17 +71,14 @@ test_that("access to mongo db from R package", {
 
   has_mongo()
 
+  # initialise
+  coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
+
   # initialise = drop collections from mongodb
-  try(mongolite::mongo(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB",
-                       db = "users")$drop(),
-      silent = TRUE)
+  try(mongolite::mongo(collection = coll,                 db = "users")$drop(), silent = TRUE)
+  try(mongolite::mongo(collection = paste0(coll, "Keys"), db = "users")$drop(), silent = TRUE)
 
-  try(mongolite::mongo(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDBKeys",
-                       db = "users")$drop(),
-      silent = TRUE)
-
-  expect_message(dbQueryHistory(
-    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
+  expect_message(dbQueryHistory(collection = coll),
                  "No history found in expected format.")
 
 })
@@ -92,7 +89,8 @@ test_that("access to mongo db from command line", {
 
   has_mongo()
 
-  expect_message(installMongoFindBinaries(debug = TRUE), "mongo / mongoimport ")
+  expect_message(installMongoFindBinaries(debug = TRUE),
+                 "mongo / mongoimport ")
 
 })
 
@@ -103,16 +101,19 @@ test_that("retrieve data from registers", {
   has_internet()
   has_mongo()
 
+  # initialise
+  coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
+
   expect_error(suppressWarnings(ctrLoadQueryIntoDb(
     queryterm = "query=NonExistingConditionGoesInHere",
     register = "EUCTR",
-    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")),
+    collection = coll)),
     "First result page empty")
 
   expect_error(suppressWarnings(ctrLoadQueryIntoDb(
     queryterm = "cond=NonExistingConditionGoesInHere",
     register = "CTGOV",
-    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")),
+    collection = coll)),
     "No studies downloaded")
 
   # at the end of srcipt, clean up occurs = drop collection from mongodb
@@ -171,15 +172,18 @@ test_that("retrieve data from register euctr", {
   has_internet()
   has_mongo()
 
+  # initialise
+  coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
+
   expect_message(ctrLoadQueryIntoDb(
     queryterm = "2010-024264-18",
     register = "EUCTR",
-    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
+    collection = coll),
     "Updated history")
 
   expect_error(suppressWarnings(ctrLoadQueryIntoDb(
     querytoupdate = "last",
-    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")),
+    collection = coll)),
     "First result page empty")
 
   ## github issue 8 bug
@@ -187,8 +191,8 @@ test_that("retrieve data from register euctr", {
               "query=&dateFrom=2017-09-15&dateTo=2017-09-17")
 
   expect_message(suppressWarnings(ctrLoadQueryIntoDb(queryterm = q,
-                                    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB",
-                                    euctrresults = TRUE)),
+                                                     collection = coll,
+                                                     euctrresults = TRUE)),
                  "Updated history")
 
   ## forced slow import
@@ -196,8 +200,8 @@ test_that("retrieve data from register euctr", {
               "neuroblastoma&status=completed&phase=phase-one")
 
   expect_message(suppressWarnings(ctrLoadQueryIntoDb(q,
-                                  collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB",
-                                  debug = TRUE, verbose = FALSE)),
+                                                     collection = coll,
+                                                     debug = TRUE, verbose = FALSE)),
                  "Imported or updated")
 
 
@@ -210,8 +214,7 @@ test_that("retrieve data from register euctr", {
   q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
               "&dateFrom=", date.old, "&dateTo=", date.temp)
 
-  expect_message(suppressWarnings(ctrLoadQueryIntoDb(q,
-                 collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")),
+  expect_message(suppressWarnings(ctrLoadQueryIntoDb(q, collection = coll)),
                  "Imported or updated ")
 
   # manipulate history to force testing updating
@@ -228,10 +231,8 @@ test_that("retrieve data from register euctr", {
                                         update = paste0('{ "$set" :', json, "}"),
                                         upsert = TRUE)
 
-  expect_message(ctrLoadQueryIntoDb(
-    querytoupdate = "last",
-    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
-    "Imported or updated")
+  expect_message(ctrLoadQueryIntoDb(querytoupdate = "last", collection = coll),
+                 "Imported or updated")
 
   remove("hist", "json", "q", "date.old", "date.today", "date.temp")
 
@@ -244,10 +245,12 @@ test_that("retrieve results from register euctr", {
   has_internet()
   has_mongo()
 
+  # initialise
+  coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
+
   q <- "https://www.clinicaltrialsregister.eu/ctr-search/search?query=2004-000518-37+OR+2004-004386-15"
 
-  expect_message(suppressWarnings(ctrLoadQueryIntoDb(q, euctrresults = TRUE,
-                                                     collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")),
+  expect_message(suppressWarnings(ctrLoadQueryIntoDb(q, euctrresults = TRUE, collection = coll)),
                  "Imported or updated results for")
 
 })
@@ -256,6 +259,9 @@ test_that("retrieve results from register euctr", {
 test_that("browser interaction", {
 
   expect_equal(suppressWarnings(ctrGetQueryUrlFromBrowser("something_insensible")), NULL)
+
+  # initialise
+  coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
 
   q <- "https://clinicaltrials.gov/ct2/results?type=Intr&cond=cancer&age=0"
 
@@ -278,13 +284,11 @@ test_that("browser interaction", {
 
   has_mongo()
 
-  expect_message(ctrOpenSearchPagesInBrowser(dbQueryHistory(
-    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")[1, ]),
-    "Opening in browser previous search: ")
+  expect_message(ctrOpenSearchPagesInBrowser(dbQueryHistory(collection = coll)[1, ]),
+                 "Opening in browser previous search: ")
 
-  tmp <-  data.frame(lapply(dbQueryHistory(
-    collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"),
-    tail, 1L), stringsAsFactors = FALSE)
+  tmp <-  data.frame(lapply(dbQueryHistory(collection = coll),
+                            tail, 1L), stringsAsFactors = FALSE)
   names(tmp) <- sub("[.]", "-", names(tmp))
 
   expect_message(ctrOpenSearchPagesInBrowser(tmp),

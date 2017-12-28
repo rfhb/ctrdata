@@ -104,7 +104,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     stop("Parameter 'queryterm' is not an URL showing results of a query or has unexpected characters: ",
          queryterm, ", expected are: a-zA-Z0-9=+&%_-[]. Perhaps additionally specify 'register = '?")
   #
-  if ( (queryterm == "") & querytoupdate == 0)
+  if ( (queryterm == "") & querytoupdate == 0L)
     stop("Parameter 'queryterm' is empty.")
   #
   if (!grepl(register, "CTGOVEUCTR"))
