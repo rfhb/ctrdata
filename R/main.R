@@ -433,6 +433,12 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   queryUSRoot   <- "https://clinicaltrials.gov/"
   queryUSType1  <- "ct2/results/download_studies?"
 
+  ## deal with special cases
+  # ctgov queryterm is just NCT number, prefix with variable name
+  if (grepl("^NCT[0-9]{8}$", queryterm)) queryterm <- paste0("term=", queryterm)
+  # ctgov queryterm is just text, prefix with variable name
+  if (!grepl("=", queryterm)) queryterm <- paste0("term=", queryterm)
+
   ## inform user and prepare url for downloading
   message("Downloading trials from CTGOV as xml ", appendLF = FALSE)
   ctgovdownloadcsvurl <- paste0(queryUSRoot, queryUSType1, "&", queryterm, queryupdateterm)
