@@ -1236,6 +1236,8 @@ installMongoCheckVersion <- function(collection = "ctrdata", db = "users", url =
                                      username = username, password = password, verbose = verbose))[["ctr"]]
   # get mongo server infos
   result <- mongo$info()$server
+  # close database connection
+  rm(mongo); gc()
   #
   if (!grepl("^3", result$version)) {
     warning("mongodb not version 3. Earlier versions have limitations that may break function ctrLoadQueryIntoDb()",
@@ -1257,10 +1259,9 @@ installMongoCheckVersion <- function(collection = "ctrdata", db = "users", url =
          result$version, ").")
   }
   #
+  # all checks good
   return(TRUE)
   #
-  # close database connection
-  rm(mongo); gc()
 }
 # end installMongoCheckVersion
 
