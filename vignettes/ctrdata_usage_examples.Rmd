@@ -715,6 +715,34 @@ for(i in 1:length(terms))
 #
 ```
 
+## Find trial start date
+
+```{r trialstart}
+#
+# Get interesting variables from database 
+# for further analysis within R:
+result <- dbGetVariablesIntoDf(c("a2_eudract_number", 
+                                 "n_date_of_competent_authority_decision"))
+
+# Prepare for summarising
+result$trial_start_date <- strptime(result$n_date_of_competent_authority_decision, format = "%Y-%m-%d")
+
+# Calculate first date of trial start
+first_trial_start <- aggregate(x = result$trial_start_date, 
+                               by = list(result$a2_eudract_number),
+                               FUN = function(x) min(x, na.rm = TRUE), 
+                               simplify = TRUE, drop = TRUE)
+
+# Give data frame appropriate names:
+names(first_trial_start) <- c("a2_eudract_number", 
+                              "first_trial_start_date")
+
+# Merge back into result set: 
+result <- merge(result, first_trial_start, all.x = TRUE)
+
+#
+```
+
 ## Analyse results-related information (INCOMPLETE)
 
 ```{r analyse_results_1}
