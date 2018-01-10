@@ -918,7 +918,8 @@ dfFindUniqueEuctrRecord <- function(df = NULL, prefermemberstate = "GB", include
 
   # nst is a list of nrs trials of a logical vector along nms
   # that indicates if the indexed record belongs to the trial
-  nst <- lapply(nrs, function(x) substr(nms, 1, 14) %in% x)
+  nms2 <- substr(nms, 1, 14)
+  nst <- lapply(nrs, function(x) nms2 %in% x)
 
   # helper function to find the Member State version
   removeMSversions <- function(indexofrecords){
