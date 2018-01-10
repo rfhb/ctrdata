@@ -400,16 +400,20 @@ test_that("operations on database for deduplication", {
   # test combinations of parameters
 
   tmp <- dbFindIdsUniqueTrials(collection = coll)
-  expect_equal(sum(tmp %in% c("2004-000242-20-GB", "2005-000915-80-GB", "2010-019224-31-GB","NCT00025597")), 4)
+  expect_true(all.equal(tmp, c("2004-000242-20-GB", "2005-000915-80-GB", "2010-019224-31-GB","NCT00025597"),
+                        check.attributes = FALSE))
 
   tmp <- dbFindIdsUniqueTrials(collection = coll, prefermemberstate = "IT")
-  expect_equal(sum(tmp %in% c("2004-000242-20-GB", "2005-000915-80-IT", "2010-019224-31-IT", "NCT00025597")), 4)
+  expect_true(all.equal(tmp, c("2004-000242-20-GB", "2005-000915-80-IT", "2010-019224-31-IT", "NCT00025597"),
+                        check.attributes = FALSE))
 
   tmp <- dbFindIdsUniqueTrials(collection = coll, preferregister = "CTGOV")
-  expect_equal(sum(tmp %in% c("NCT00025597", "NCT00134030", "NCT01516580", "2005-000915-80-GB")), 4)
+  expect_true(all.equal(tmp, c("NCT00025597", "NCT00134030", "NCT01516580", "2005-000915-80-GB"),
+                        check.attributes = FALSE))
 
   tmp <- dbFindIdsUniqueTrials(collection = coll, preferregister = "CTGOV", prefermemberstate = "IT")
-  expect_equal(sum(tmp %in% c("NCT00025597", "NCT00134030", "NCT01516580", "2005-000915-80-IT")), 4)
+  expect_true(all.equal(tmp, c("NCT00025597", "NCT00134030", "NCT01516580", "2005-000915-80-IT"),
+                        check.attributes = FALSE))
 
 
   # clean up = drop collections from mongodb
