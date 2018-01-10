@@ -545,7 +545,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   message('Added index field "otherids".')
 
   # close database connection
-  rm(mongo); gc()
+  rm(mongo)
 
 
   ## find out number of trials imported into database
@@ -659,6 +659,9 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
       write(tmp[[1 + ii - startpage]],
             paste0(tempDir, "/euctr-trials-page_",
                    formatC(ii, digits = 0, width = nchar(resultsEuNumPages), flag = 0), ".txt"))
+
+    # clean up large object
+    rm(tmp); gc(verbose = FALSE)
 
   } # for batch
 
@@ -808,45 +811,52 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                            startindex + resultsNumModulo,
                            startindex + parallelretrievals) - 1
 
-      tmp <- sapply(eudractnumbersimported[startindex : stopindex],
-                    function(x) {
+      batchresults <- sapply(eudractnumbersimported[startindex : stopindex],
+                             function(x) {
 
-                      # prepare a file handle for saving in temporary directory
-                      f <- paste0(tempDir, "/", x, ".zip")
-                      fref <- RCurl::CFILE(f, mode = "wb")
+                               # prepare a file handle for saving in temporary directory
+                               f <- paste0(tempDir, "/", x, ".zip")
+                               fref <- RCurl::CFILE(f, mode = "wb")
 
-                      # get (download) trial results' zip file
-                      tmp  <- RCurl::curlPerform(url = utils::URLencode(paste0(queryEuRoot, queryEuType4, x)),
-                                                 writedata = fref@ref,
-                                                 noprogress = FALSE,
-                                                 progressfunction = progressOut,
-                                                 curl = h)
+                               # get (download) trial results' zip file
+                               tmp  <- RCurl::curlPerform(url = utils::URLencode(paste0(queryEuRoot, queryEuType4, x)),
+                                                          writedata = fref@ref,
+                                                          noprogress = FALSE,
+                                                          progressfunction = progressOut,
+                                                          curl = h)
 
-                      # close file handle
-                      RCurl::close(fref)
+                               # close file handle
+                               RCurl::close(fref)
 
-                      # unzip downloaded file and rename
-                      if (file.size(f) != 0) {
+                               # unzip downloaded file and rename
+                               if (file.size(f) != 0) {
 
-                        tmp <- utils::unzip(f, exdir = tempDir)
+                                 tmp <- utils::unzip(f, exdir = tempDir)
 
-                        if (any(grepl("pdf$", tmp)))
-                          warning("PDF results ", x,
-                                  call. = FALSE, immediate. = TRUE, noBreaks. = TRUE)
+                                 if (any(grepl("pdf$", tmp)))
+                                   warning("PDF results ", x,
+                                           call. = FALSE, immediate. = TRUE, noBreaks. = TRUE)
 
-                        if (any(tmp2 <- grepl("xml$", tmp)))
-                          file.rename(tmp[tmp2][1], paste0(tempDir, "/", x, ".xml"))
+                                 if (any(tmp2 <- grepl("xml$", tmp)))
+                                   file.rename(tmp[tmp2][1], paste0(tempDir, "/", x, ".xml"))
 
-                      }
+                               }
 
-                      # inform user
-                      if (file.size(f) == 0) warning("No results found for ", x,
-                                                     call. = FALSE, immediate. = TRUE, noBreaks. = FALSE)
+                               # clean up large object
+                               rm(tmp)
 
-                      # clean up
-                      if (!debug) unlink(f)
+                               # inform user
+                               if (file.size(f) == 0) warning("No results found for ", x,
+                                                              call. = FALSE, immediate. = TRUE, noBreaks. = FALSE)
 
-                    }) # download, unzip, save
+                               # clean up
+                               if (!debug) unlink(f)
+
+                             }
+      ) # download, unzip, save
+
+      # clean up large object
+      rm(batchresults)
 
       # inform user
       message("Batch: ", i, ", ", startindex, " - ", stopindex)
@@ -891,54 +901,54 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                            startindex + resultsNumModulo,
                            startindex + parallelretrievals) - 1
 
-      tmp <- sapply(eudractnumbersimported[startindex : stopindex],
-                    function(x) {
+      batchresults <- sapply(eudractnumbersimported[startindex : stopindex],
+                             function(x) {
 
-                      # compose file name and check
-                      # for debugging:
-                      # x <- "2004-000518-37"
-                      fileName <- paste0(tempDir, "/", x, ".json")
-                      if (file.exists(fileName) && file.size(fileName) > 0){
+                               # compose file name and check
+                               # for debugging:
+                               # x <- "2004-000518-37"
+                               fileName <- paste0(tempDir, "/", x, ".json")
+                               if (file.exists(fileName) && file.size(fileName) > 0){
 
-                        # read contents
-                        tmp <- readChar(fileName, file.info(fileName)$size)
+                                 # read contents
+                                 tmp <- readChar(fileName, file.info(fileName)$size)
 
-                        # update database with results
-                        # str(tmp)
-                        # List of 2
-                        # $ modifiedCount: int 3
-                        # $ matchedCount : int 3
-                        # - attr(*, "class")= chr "miniprint"
-                        tmp <- mongo$update(query  = paste0('{"a2_eudract_number":{"$eq":"', x, '"}}'),
-                                            update = paste0('{ "$set" :', tmp, "}"),
-                                            upsert = TRUE, multiple = TRUE)
-                        tmp <- try(as.numeric(tmp$modifiedCount), silent = TRUE)
+                                 # update database with results
+                                 # str(tmp)
+                                 # List of 2
+                                 # $ modifiedCount: int 3
+                                 # $ matchedCount : int 3
+                                 # - attr(*, "class")= chr "miniprint"
+                                 tmp <- mongo$update(query  = paste0('{"a2_eudract_number":{"$eq":"', x, '"}}'),
+                                                     update = paste0('{ "$set" :', tmp, "}"),
+                                                     upsert = TRUE, multiple = TRUE)
+                                 tmp <- try(as.numeric(tmp$modifiedCount), silent = TRUE)
 
-                        # inform user on failed trial
-                        if (class(tmp) == "try-error") {
-                          warning(paste0("Import into mongo failed for trial ", x), immediate. = TRUE)
-                          tmp <- 0
-                        }
+                                 # inform user on failed trial
+                                 if (class(tmp) == "try-error") {
+                                   warning(paste0("Import into mongo failed for trial ", x), immediate. = TRUE)
+                                   tmp <- 0
+                                 }
 
-                      } else {
+                               } else {
 
-                        # file did not exist
-                        tmp <- 0
+                                 # file did not exist
+                                 tmp <- 0
 
-                      }
+                               }
 
-                      # return for accumulating information
-                      return(tmp)
+                               # return for accumulating information
+                               return(tmp)
 
-                    }) # import
+                             }) # import
 
       # accumulate
-      importedresults <- c(importedresults, tmp)
+      importedresults <- c(importedresults, batchresults)
 
     } # for batch
 
     # close database connection
-    rm(mongo); gc()
+    rm(mongo)
 
     # sum up successful downloads
     importedresults <- sum(unlist(importedresults))

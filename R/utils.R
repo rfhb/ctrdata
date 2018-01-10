@@ -285,7 +285,7 @@ dbQueryHistory <- function(collection = "ctrdata", db = "users", url = "mongodb:
   message("Total of ", countall, " records in collection.")
 
   # close database connection
-  rm(mongo); gc()
+  rm(mongo)
 
   # return
   return(tmp)
@@ -505,7 +505,7 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
 
   if (is.null(listofCTGOVids)) message("No CTGOV records found.")
   # close database connection
-  rm(mongo); gc()
+  rm(mongo)
 
   # 4. retain unique ctrgov records
   if (!is.null(listofCTGOVids)) {
@@ -758,7 +758,7 @@ dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
   } # end for item in fields
 
   # close database connection
-  rm(mongo); gc()
+  rm(mongo)
 
   # finalise output
   if (is.null(result)) stop("No records found which had values for the specified fields.")
@@ -1238,7 +1238,7 @@ installMongoCheckVersion <- function(collection = "ctrdata", db = "users", url =
   # get mongo server infos
   result <- mongo$info()$server
   # close database connection
-  rm(mongo); gc()
+  rm(mongo)
   #
   if (!grepl("^3", result$version)) {
     warning("mongodb not version 3. Earlier versions have limitations that may break function ctrLoadQueryIntoDb()",
