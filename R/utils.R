@@ -807,8 +807,8 @@ dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
 #'
 dfMergeTwoVariablesRelevel <- function(df = NULL, varnames = "", levelslist = NULL) {
   #
-  if (class(df) != "data.frame")   stop("Need a data frame as input.")
-  if (length(varnames)  != 2)      stop("Please provide exactly two variable names.")
+  if (class(df) != "data.frame") stop("Need a data frame as input.")
+  if (length(varnames)  != 2)    stop("Please provide exactly two variable names.")
 
   # find variables in data frame and merge
   tmp <- match(varnames, names(df))
@@ -906,7 +906,7 @@ dfFindUniqueEuctrRecord <- function(df = NULL, prefermemberstate = "GB", include
   if (!include3rdcountrytrials) df <- df[!grepl("-3RD", df[["_id"]]), ]
 
   # count number of records by eudract number
-  tbl <- table(df[["_id"]], df$a2_eudract_number)
+  tbl <- table(df[["_id"]], df[["a2_eudract_number"]])
   tbl <- as.matrix(tbl)
   # nms has names of all records
   nms <- dimnames(tbl)[[1]]
