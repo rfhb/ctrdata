@@ -25,22 +25,16 @@ has_internet <- function(){
 
 # helper function to check mongodb
 has_mongo <- function(){
-  # check if reachable reachable
+  # check server
+  tmp <- getOption("warn")
+  options("warn" = 2)
   mongo_ok <- try({
     capture.output(ctrMongo())
   }, silent = TRUE)
   # use test result
-  if (class(mongo_ok) == "try-error" ||
-      mongo_ok [1] == "Unable to connect to 127.0.0.1:27017, error code = 2") {
-    skip("No password-free localhost mongodb connection available.")
-  }
-  # check if version ok
-  mongo_ok <- try({
-    capture.output(installMongoCheckVersion())
-  }, silent = TRUE)
-  # use test result
+  options("warn" = tmp)
   if (class(mongo_ok) == "try-error") {
-    skip("No suitable version of mongodb available.")
+    skip("No suitable version password-free localhost mongodb accessible.")
   }
 }
 

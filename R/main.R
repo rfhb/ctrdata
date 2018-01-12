@@ -123,7 +123,12 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   if (.Platform$OS.type == "windows") installCygwinWindowsTest()
 
   # check program version (reason: json format changed from 2.x to 3.x, new arguments to functions in 3.6)
-  installMongoCheckVersion()
+  tmp <- getOption("warn")
+  options("warn" = 2)
+  mongo <- ctrMongo(collection = collection, db = db, url = url,
+                    username = username, password = password, verbose = FALSE)
+  options("warn" = tmp)
+  try(remove(mongo), silent = TRUE)
 
   # remove trailing or leading whitespace
   queryterm <- gsub("^\\s+|\\s+$", "", queryterm)
@@ -474,8 +479,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
                        '" --db="', db, '" --collection="', collection, '"',
                        ifelse(username != "", paste0(' --username="', username, '"'), ""),
                        ifelse(password != "", paste0(' --password="', password, '"'), ""),
-                       ' --upsert --type=json --file="', tempDir, '/allfiles.json"',
-                       ifelse(installMongoCheckVersion(), "", " --jsonArray"))
+                       ' --upsert --type=json --file="', tempDir, '/allfiles.json"')
 
   # special command handling on windows
   if (.Platform$OS.type == "windows") {
@@ -672,8 +676,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                        '" --db="', db, '" --collection="', collection, '"',
                        ifelse(username != "", paste0(' --username="', username, '"'), ""),
                        ifelse(password != "", paste0(' --password="', password, '"'), ""),
-                       ' --upsert --type=json --file="', tempDir, '/allfiles.json"',
-                       ifelse(installMongoCheckVersion(), "", " --jsonArray"))
+                       ' --upsert --type=json --file="', tempDir, '/allfiles.json"')
 
   # special handling in case of windows
   if (.Platform$OS.type == "windows") {

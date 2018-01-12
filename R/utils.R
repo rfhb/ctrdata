@@ -50,8 +50,15 @@ ctrMongo <- function(collection = "ctrdata", db = "users", url = "mongodb://loca
   # for variety, create / access related collection
   collectionKeys <- paste0(collection, "Keys")
 
+  # connect to mongo server
   valueCtrDb     <- mongolite::mongo(collection = collection,     db = db, url = mongourl, verbose = verbose)
   valueCtrKeysDb <- mongolite::mongo(collection = collectionKeys, db = db, url = mongourl, verbose = verbose)
+
+  # check compatibility
+  serverversion <- valueCtrDb$info()$server$version
+  if (numeric_version(serverversion) < numeric_version("3"))
+    warning("mongodb is version ", serverversion, ", but 3 or higher needed for function ctrLoadQueryIntoDb(). ",
+            "Other functions in package ctrdata may work, but please consider upgrading the mongodb server.")
 
   # inform user
   if (verbose) message("Using Mongo DB (collections \"", collection,
@@ -59,7 +66,7 @@ ctrMongo <- function(collection = "ctrdata", db = "users", url = "mongodb://loca
                        "\" in database \"", db,
                        "\" on \"", host, "\").")
 
-  return(list("ctr" = valueCtrDb, "keys" = valueCtrKeysDb))
+  return(invisible(list("ctr" = valueCtrDb, "keys" = valueCtrKeysDb)))
 }
 # end ctrMongo
 
@@ -1218,54 +1225,6 @@ installMongoFindBinaries <- function(mongoDirWin  = "c:\\mongodb\\bin\\",
 # end installMongoFindBinaries
 
 
-#' Check the version of the build of the mongo server to be used
-#'
-#' In addition to the returned value, the function will generate a warning
-#' message if applicable.
-#'
-#' @inheritParams ctrMongo
-#'
-#' @return A logical value indicating if the mongodb version is acceptable for
-#'   use with this package.
-#'
-#' @keywords internal
-#
-installMongoCheckVersion <- function(collection = "ctrdata", db = "users", url = "mongodb://localhost",
-                                     username = "", password = "", verbose = FALSE) {
-  #
-  # get a working mongo connection, select trial record collection
-  mongo <- suppressMessages(ctrMongo(collection = collection, db = db, url = url,
-                                     username = username, password = password, verbose = verbose))[["ctr"]]
-  # get mongo server infos
-  result <- mongo$info()$server
-  # close database connection
-  rm(mongo)
-  #
-  if (!grepl("^3", result$version)) {
-    warning("mongodb not version 3. Earlier versions have limitations that may break function ctrLoadQueryIntoDb()",
-            " in package ctrdata.\nPlease upgrade, see http://docs.mongodb.org/manual/installation/. \n",
-            "Trying to continue. Support for versions other than 3 may be discontinued.", immediate. = TRUE)
-    return(FALSE)
-  }
-  #
-  # # 2017-12-27 check mongolite
-  # mlargs <- formals(fun = mongolite:::mongo_collection_update)
-  # if ( (numeric_version(result$version) < numeric_version("3.6")) &&
-  #      ("filters" %in% names(mlargs)) &&
-  #      !is.null(mlargs$filters)) {
-  #   stop("mongolite version does not support mongoDB < 3.6 \n",
-  #        "  for database update operations such as used by ctrdata. \n",
-  #        "  Consider installing the mongolite development version: \n",
-  #        "  devtools::install_github('jeroen/mongolite') \n",
-  #        "  or using a newer mongoDB server (this version: ",
-  #        result$version, ").")
-  # }
-  #
-  # all checks good
-  return(TRUE)
-  #
-}
-# end installMongoCheckVersion
 
 
 #' Check availability of binaries installed in operating system
