@@ -228,9 +228,6 @@ with (result, table (p_end_of_trial_status, b1_sponsor.b31_and_b32_status_of_the
 
 ## Issues and notes
 
-* For compatibility with mongoDB servers < 3.6, please install the mongolite development version: 
-  `devtools::install_github('jeroen/mongolite')` [2017-12-28]
-
 * Please file issues and bugs here: [https://github.com/rfhb/ctrdata/issues](https://github.com/rfhb/ctrdata/issues). 
 
 * Package `ctrdata` should work and was tested on Linux, Mac OS X and MS Windows systems. Linux and MS Windows are tested using continuous integration, see badges at the beginning of this document. Please file an issue for any problems. 

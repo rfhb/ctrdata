@@ -1248,18 +1248,18 @@ installMongoCheckVersion <- function(collection = "ctrdata", db = "users", url =
     return(FALSE)
   }
   #
-  # 2017-12-27 check mongolite
-  mlargs <- formals(fun = mongolite:::mongo_collection_update)
-  if ( (numeric_version(result$version) < numeric_version("3.6")) &&
-       ("filters" %in% names(mlargs)) &&
-       !is.null(mlargs$filters)) {
-    stop("mongolite version does not support mongoDB < 3.6 \n",
-         "  for database update operations such as used by ctrdata. \n",
-         "  Consider installing the mongolite development version: \n",
-         "  devtools::install_github('jeroen/mongolite') \n",
-         "  or using a newer mongoDB server (this version: ",
-         result$version, ").")
-  }
+  # # 2017-12-27 check mongolite
+  # mlargs <- formals(fun = mongolite:::mongo_collection_update)
+  # if ( (numeric_version(result$version) < numeric_version("3.6")) &&
+  #      ("filters" %in% names(mlargs)) &&
+  #      !is.null(mlargs$filters)) {
+  #   stop("mongolite version does not support mongoDB < 3.6 \n",
+  #        "  for database update operations such as used by ctrdata. \n",
+  #        "  Consider installing the mongolite development version: \n",
+  #        "  devtools::install_github('jeroen/mongolite') \n",
+  #        "  or using a newer mongoDB server (this version: ",
+  #        result$version, ").")
+  # }
   #
   # all checks good
   return(TRUE)

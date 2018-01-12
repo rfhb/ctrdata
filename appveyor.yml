@@ -5,7 +5,7 @@ services:
 
 environment:
   WARNINGS_ARE_ERRORS: 1
-  USE_RTOOLS: true
+  USE_RTOOLS: false
 
 # Download script file from GitHub
 init:
