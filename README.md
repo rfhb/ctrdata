@@ -9,7 +9,7 @@ Online version of this document: [https://github.com/rfhb/ctrdata/](https://gith
 
 ## Background
 
-The package `ctrdata` provides functions for retrieving (downloading) information on clinical trials from public registers, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started mid 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package is to be used within the [R](https://www.r-project.org/) system. Last edit 2017-12-28 for version 0.10.4 (see NEWS.md, adding a note on upcoming features). 
+The package `ctrdata` provides functions for retrieving (downloading) information on clinical trials from public registers, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started mid 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package is to be used within the [R](https://www.r-project.org/) system. Last edit 2018-01-28 for version 0.11. 
 
 Main features:
 
@@ -120,6 +120,22 @@ sequenceDiagram
 
 ```
 -->
+
+## Citation
+
+Please cite this package in any publication as follows: 
+
+`Ralf Herold (2018). ctrdata: Retrieve and Prepare for Analysis Information on Clinical Trials from Public Registers. R package version 0.11. https://github.com/rfhb/ctrdata`
+
+The citation for the installed version is obtained as follows:
+
+```R
+citation("ctrdata")
+
+# Ralf Herold (2018). ctrdata: Retrieve and Prepare for Analysis Information on Clinical Trials 
+# from Public Registers. R package version 0.11. https://github.com/rfhb/ctrdata
+
+```
 
 
 ## Example workflow
