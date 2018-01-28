@@ -1,3 +1,9 @@
+# ctrdata 0.11
+ - 2018-01-28
+ - newly retrieved: EUCTR results history, into new fields 
+   "firstreceived_results_date" and "version_results_history"
+ - adding feature as per issue #8
+
 # ctrdata 0.10.4
  - 2017-12-28
  - note on compatibility with mongoDB versions

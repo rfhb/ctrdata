@@ -240,10 +240,19 @@ test_that("retrieve results from register euctr", {
   # initialise
   coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
 
-  q <- "https://www.clinicaltrialsregister.eu/ctr-search/search?query=2004-000518-37+OR+2004-004386-15"
+  q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
+              "2004-000015-25+OR+2004-000518-37+OR+2004-004386-15+OR+2007-000371-42+OR+XYZ")
 
   expect_message(suppressWarnings(ctrLoadQueryIntoDb(q, euctrresults = TRUE, collection = coll)),
                  "Imported or updated results for")
+
+  tmp <- dbGetVariablesIntoDf(c("a2_eudract_number",
+                                "endPoints.endPoint.title",
+                                "firstreceived_results_date",
+                                "version_results_history"),
+                       collection = coll)
+
+  expect_true(!any(tmp[tmp$a2_eudract_number == "2007-000371-42", ] == ""))
 
 })
 

@@ -965,6 +965,65 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
 
     } # for batch
 
+    # iterate over batches of result history from webpage
+    message("(4/4) Retrieving results history and importing into mongoDB ...")
+    for (i in 1:(resultsNumBatches + ifelse(resultsNumModulo > 0, 1, 0))) {
+
+      # calculated indices for eudractnumbersimported vector
+      startindex <- (i - 1) * parallelretrievals + 1
+      stopindex  <- ifelse(i > resultsNumBatches,
+                           startindex + resultsNumModulo,
+                           startindex + parallelretrievals) - 1
+
+      batchresults <- lapply(eudractnumbersimported[startindex : stopindex],
+                             function(x)
+                               RCurl::getURL(unlist(lapply(paste0("https://www.clinicaltrialsregister.eu/",
+                                                                  "ctr-search/trial/", x, "/results"),
+                                                           utils::URLencode)),
+                                             curl = h, async = TRUE, binary = FALSE, header = FALSE,
+                                             noprogress = FALSE, progressfunction = progressOut))
+
+      # extract information about results
+      tmpFirstDate <- as.Date(sapply(batchresults, function(x)
+        trimws(sub(".+First version publication date</div>.*?<div>(.+?)</div>.*", "\\1",
+                   ifelse(grepl("First version publication date", x), x, "")))),
+        format = "%d %b %Y")
+
+      # global end date is variably represented in euctr:
+      # 'Global completion date' or 'Global end of trial date'
+      # tmpEndDate <- as.Date(sapply(batchresults, function(x)
+      #   trimws(sub(".*Global .+? date</div>.*?<div>(.*?)</div>.*", "\\1",
+      #      ifelse(grepl("Global .+? date", x), x, "")))),
+      #           format = "%d %b %Y")
+
+      tmpChanges <- sapply(batchresults, function(x)
+        trimws(gsub("[ ]+", " ",
+               gsub("[\n\r]", "",
+               gsub("<[a-z/]+>", "",
+                    sub(".+Version creation reason.*?<td class=\"valueColumn\">(.+?)</td>.+", "\\1",
+                        ifelse(grepl("Version creation reason", x), x, ""))
+               ))))
+      )
+
+      tmp <- lapply(seq_along(along.with = startindex : stopindex), function(x) {
+        mongo$update(query = paste0('{"a2_eudract_number": {"$eq": "',
+                                    eudractnumbersimported[startindex : stopindex][x], '"}}'),
+                     update = paste0('{ "$set" : {',
+                                     '"firstreceived_results_date" : "',  tmpFirstDate[x], '", ',
+                                     '"version_results_history"    : "',  tmpChanges[x],   '"',
+                                     '}}'),
+                     upsert = TRUE,
+                     multiple = TRUE)
+      })
+
+      # clean up large object
+      rm(batchresults)
+
+      # inform user
+      message("Batch: ", i, ", ", startindex, " - ", stopindex)
+
+    } # for batch
+
     # close database connection
     rm(mongo)
 
@@ -972,8 +1031,8 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     importedresults <- sum(unlist(importedresults))
 
     ## inform user on final import outcome
-    message("Imported or updated results for ", importedresults,
-            " records concerning ", resultsEuNumTrials, " trial(s).\n")
+    message("= Imported or updated results for ", importedresults, " ",
+            "records concerning ", resultsEuNumTrials, " trial(s).\n")
 
   } # if euctrresults
 
