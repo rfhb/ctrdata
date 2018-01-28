@@ -697,14 +697,18 @@ dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
                                  stopifnodata = TRUE) {
 
   # check parameters
-  if (!is.vector(fields) | class(fields) != "character") stop("Input should be a vector of strings of field names.")
+  if (!is.vector(fields) | class(fields) != "character")
+    stop("Input should be a vector of strings of field names.", call. = FALSE)
   #
-  if (any(fields == "", na.rm = TRUE)) stop("'fields' contains empty elements; ",
-                                            " please provide a vector of strings of field names.",
-                                            " Function dbFindVariable() can be used to find field names.")
-
   # remove _id if inadventertently mentioned in fields
   fields <- fields["_id" != fields]
+  #
+  # check if valid fields
+  if (any(fields == "", na.rm = TRUE) | (length(fields) == 0))
+    stop("'fields' contains empty elements; ",
+         " please provide a vector of strings of field names.",
+         " Function dbFindVariable() can be used to find field names.",
+         call. = FALSE)
 
   # get a working mongo connection, select trial record collection
   mongo <- ctrMongo(collection = collection, db = db, url = url,
