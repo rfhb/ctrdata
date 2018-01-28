@@ -58,7 +58,8 @@ ctrMongo <- function(collection = "ctrdata", db = "users", url = "mongodb://loca
   serverversion <- valueCtrDb$info()$server$version
   if (numeric_version(serverversion) < numeric_version("3"))
     warning("mongodb is version ", serverversion, ", but 3 or higher needed for function ctrLoadQueryIntoDb(). ",
-            "Other functions in package ctrdata may work, but please consider upgrading the mongodb server.")
+            "Other functions in package ctrdata may work, but please consider upgrading the mongodb server.",
+            call. = FALSE, immediate. = FALSE)
 
   # inform user
   if (verbose) message("Using Mongo DB (collections \"", collection,
@@ -137,7 +138,7 @@ ctrOpenSearchPagesInBrowser <- function(input = "", register = "", copyright = F
       #
       nr <- nrow(input)
       #
-      if (nr > 1) warning("Using last row of input.", immediate. = TRUE)
+      if (nr > 1) warning("Using last row of input.", call. = FALSE, immediate. = TRUE)
       #
       register  <- input [nr, "query-register"]
       queryterm <- input [nr, "query-term"]
@@ -183,7 +184,7 @@ ctrOpenSearchPagesInBrowser <- function(input = "", register = "", copyright = F
 ctrGetQueryUrlFromBrowser <- function(content = clipr::read_clip()) {
   #
   if (length(content) != 1L) {
-    stop("Clipboard content is not a clinical trial register search URL. Returning NULL.")
+    stop("Clipboard content is not a clinical trial register search URL. Returning NULL.", call. = FALSE)
     return(NULL)
   }
   #
@@ -191,7 +192,7 @@ ctrGetQueryUrlFromBrowser <- function(content = clipr::read_clip()) {
   if (grepl("https://www.clinicaltrialsregister.eu/ctr-search/", content)) {
     #
     queryterm <- sub("https://www.clinicaltrialsregister.eu/ctr-search/search[?]query=(.*)", "\\1", content)
-    message("Found search query from EUCTR.\n")
+    message("* Found search query from EUCTR.\n")
     #
     df <- data.frame(cbind(queryterm, "EUCTR"), stringsAsFactors = FALSE)
     names(df) <- c("query-term", "query-register")
@@ -207,7 +208,7 @@ ctrGetQueryUrlFromBrowser <- function(content = clipr::read_clip()) {
     queryterm <- sub("(.*)&Search[a-zA-Z]*=(Search|Find)[a-zA-Z+]*",  "\\1", queryterm)
     queryterm <- gsub("[a-z_0-9]+=&", "", queryterm)
     queryterm <- sub("&[a-z_0-9]+=$", "", queryterm)
-    message("Found search query from CTGOV.\n")
+    message("* Found search query from CTGOV.\n")
     #
     df <- data.frame(cbind(queryterm, "CTGOV"), stringsAsFactors = FALSE)
     names(df) <- c("query-term", "query-register")
@@ -215,7 +216,7 @@ ctrGetQueryUrlFromBrowser <- function(content = clipr::read_clip()) {
     return(df)
   }
   #
-  warning("Content is not a clinical trial register search URL. Returning NULL.", immediate. = TRUE)
+  warning("Content is not a clinical trial register search URL. Returning NULL.", call. = FALSE, immediate. = TRUE)
   return(NULL)
 }
 # end ctrGetQueryUrlFromBrowser
@@ -281,7 +282,7 @@ dbQueryHistory <- function(collection = "ctrdata", db = "users", url = "mongodb:
     tmp <- sapply(tmp, function(x) do.call(rbind, x))
     tmp <- t(tmp)
     tmp <- data.frame(tmp, row.names = NULL, check.names = FALSE, stringsAsFactors = FALSE)
-    if (ncol(tmp) != 4) warning(tmp, immediate. = TRUE)
+    if (ncol(tmp) != 4) warning(tmp, call. = FALSE, immediate. = TRUE)
     names(tmp) <- c("query-timestamp", "query-register", "query-records", "query-term")
     # Inform user
     message("Number of queries in history of \"", mongo$info()$stats$ns, "\": ", nrow(tmp))
@@ -343,16 +344,16 @@ dbFindVariable <- function(namepart = "", allmatches = FALSE, forceupdate = FALS
                            username = "", password = "", verbose = FALSE) {
 
   # sanity checks
-  if (!is.atomic(namepart)) stop("Name part should be atomic.")
-  if (length(namepart) > 1) stop("Name part should have only one element.")
-  if (namepart == "" & !forceupdate) stop("Empty name part string.")
+  if (!is.atomic(namepart)) stop("Name part should be atomic.", call. = FALSE)
+  if (length(namepart) > 1) stop("Name part should have only one element.", call. = FALSE)
+  if (namepart == "" & !forceupdate) stop("Empty name part string.", call. = FALSE)
 
   # get a working mongo connection
   mongo <- ctrMongo(collection = collection, db = db, url = url,
                     username = username, password = password, verbose = verbose)
 
   # check if data base has any contents
-  if (mongo[["ctr"]]$count() == 0L) stop("No records in data base.")
+  if (mongo[["ctr"]]$count() == 0L) stop("No records in data base.", call. = FALSE)
 
   # check if database with variety results exists or should be forced to be updated
   if (forceupdate || (mongo[["keys"]]$count() == 0L)) {
@@ -466,7 +467,7 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
                                   username = "", password = "", verbose = TRUE) {
 
   # parameter checks
-  if (!grepl(preferregister, "CTGOVEUCTR")) stop("Register not known: ", preferregister)
+  if (!grepl(preferregister, "CTGOVEUCTR")) stop("Register not known: ", preferregister, call. = FALSE)
 
   # objective: create a list of mongo database record identifiers (_id)
   # that represent unique records of clinical trials, based on user's
@@ -746,9 +747,9 @@ dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
       msg <- paste0("For variable / field: ", item, " no data could be extracted from the collection.\n",
                     "Use dbGetVariablesIntoDf(..., stopifnodata = FALSE) to continue extracting data.")
       if (stopifnodata){
-        stop(msg)
+        stop(msg, call. = FALSE)
       } else {
-        warning(msg)
+        warning(msg, call. = FALSE, immediate. = FALSE)
         # create empty data set
         dfi <- as.data.frame(cbind(idsall, rep(NA, times = nrow (idsall))), stringsAsFactors = FALSE)
         # name result set
@@ -768,7 +769,7 @@ dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
   rm(mongo)
 
   # finalise output
-  if (is.null(result)) stop("No records found which had values for the specified fields.")
+  if (is.null(result)) stop("No records found which had values for the specified fields.", call. = FALSE)
 
   # some results were obtained
 
@@ -780,7 +781,8 @@ dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
   # notify user
   diff <- countall - nrow(result)
   if (diff > 0) warning(diff, " of ", countall,
-                        " records dropped which did not have values for any of the specified fields.")
+                        " records dropped which did not have values for any of the specified fields.",
+                        call. = FALSE, immediate. = FALSE)
 
   # return
   return(result)
@@ -814,8 +816,8 @@ dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
 #'
 dfMergeTwoVariablesRelevel <- function(df = NULL, varnames = "", levelslist = NULL) {
   #
-  if (class(df) != "data.frame") stop("Need a data frame as input.")
-  if (length(varnames)  != 2)    stop("Please provide exactly two variable names.")
+  if (class(df) != "data.frame") stop("Need a data frame as input.", call. = FALSE)
+  if (length(varnames)  != 2)    stop("Please provide exactly two variable names.", call. = FALSE)
 
   # find variables in data frame and merge
   tmp <- match(varnames, names(df))
@@ -827,7 +829,7 @@ dfMergeTwoVariablesRelevel <- function(df = NULL, varnames = "", levelslist = NU
   if (!is.null(levelslist)) {
 
     # check
-    if (class(levelslist) != "list") stop("Need lists for parameter levelslist.")
+    if (class(levelslist) != "list") stop("Need lists for parameter levelslist.", call. = FALSE)
 
     # helper function to collapse factor levels into the first mentioned level
     refactor <- function(x, collapselevels, levelgroupname){
@@ -890,21 +892,23 @@ dfMergeTwoVariablesRelevel <- function(df = NULL, varnames = "", levelslist = NU
 dfFindUniqueEuctrRecord <- function(df = NULL, prefermemberstate = "GB", include3rdcountrytrials = TRUE) {
 
   # check parameters
-  if (class(df) != "data.frame") stop("Parameter df is not a data frame.")
+  if (class(df) != "data.frame") stop("Parameter df is not a data frame.", call. = FALSE)
   #
   if (is.null(df [["_id"]]) || is.null(df$a2_eudract_number)) stop('Data frame does not include "_id"',
-                                                                   ' and "a2_eudract_number" columns.')
+                                                                   ' and "a2_eudract_number" columns.',
+                                                                   call. = FALSE)
   #
-  if (nrow(df) == 0) stop("Data frame does not contain records (0 rows).")
+  if (nrow(df) == 0) stop("Data frame does not contain records (0 rows).", call. = FALSE)
   #
   if (!(prefermemberstate %in% countriesEUCTR)) stop("Value specified for prefermemberstate does not match",
                                                      " one of the recognised codes: ",
-                                                     paste (sort (countriesEUCTR), collapse = ", "))
+                                                     paste (sort (countriesEUCTR), collapse = ", "),
+                                                     call. = FALSE)
 
   # notify it mismatching parameters
   if (prefermemberstate == "3RD" & !include3rdcountrytrials) {
     warning("Preferred EUCTR version set to 3RD country trials, but include3rdcountrytrials was FALSE,",
-            " setting to TRUE.", call. = FALSE, noBreaks. = FALSE)
+            " setting to TRUE.", call. = FALSE, noBreaks. = FALSE, immediate. = FALSE)
     include3rdcountrytrials <- TRUE
   }
 
@@ -1023,8 +1027,11 @@ addMetaData <- function(x, url, db, collection, username, password) {
 #'
 installCygwinWindowsDoInstall <- function(force = FALSE, proxy = ""){
   #
-  if (.Platform$OS.type != "windows")    stop("This function is only for MS Windows operating systems.")
-  if (!force & dir.exists("c:\\cygwin")) stop("cygwin is already installed. To overwrite, use force = TRUE.")
+  if (.Platform$OS.type != "windows")
+    stop("This function is only for MS Windows operating systems.", call. = FALSE)
+  #
+  if (!force & dir.exists("c:\\cygwin"))
+    stop("cygwin is already installed. To overwrite, use force = TRUE.", call. = FALSE)
   #
   # create directory within R sessions temporary directory
   tmpfile <- paste0(tempdir(), "/cygwin_inst")
@@ -1038,8 +1045,11 @@ installCygwinWindowsDoInstall <- function(force = FALSE, proxy = ""){
     utils::download.file(url = "http://cygwin.org/setup-x86.exe",    destfile = dstfile, quiet = TRUE, mode = "wb")
   #
   # check
-  if (!file.exists(dstfile))             stop("Download failed. Please install manually.")
-  if (file.size(dstfile) < (5 * 10 ^ 5)) stop("Download failed (file too small). Please install manually.")
+  if (!file.exists(dstfile))
+    stop("Download failed. Please install manually.", call. = FALSE)
+  #
+  if (file.size(dstfile) < (5 * 10 ^ 5))
+    stop("Download failed (file too small). Please install manually.", call. = FALSE)
   #
   if (proxy != "") {
     # manual setting overrides all
@@ -1066,7 +1076,8 @@ installCygwinWindowsDoInstall <- function(force = FALSE, proxy = ""){
         proxypac <- proxypac[length(proxypac)]
         proxy <- sub(".*PROXY ([0-9]+.[0-9]+.[0-9]+.[0-9]+:[0-9]+).*", "\\1", proxypac)
         if (proxy == "") stop("A proxy could not be identified using the system\'s automatic configuration script.",
-                              ' Please set manually: installCygwinWindowsDoInstall (proxy = "host_or_ip:port"')
+                              ' Please set manually: installCygwinWindowsDoInstall (proxy = "host_or_ip:port"',
+                              call. = FALSE)
         proxy <- paste0(" --proxy ", proxy)
         message("Automatically setting cygwin proxy to: ", proxy, ", based on AutoConfigProxy in registry.")
         #
@@ -1106,7 +1117,7 @@ installCygwinWindowsDoInstall <- function(force = FALSE, proxy = ""){
 #
 installCygwinWindowsTest <- function() {
   #
-  if (.Platform$OS.type != "windows") stop("This function is only for MS Windows operating systems.")
+  if (.Platform$OS.type != "windows") stop("This function is only for MS Windows operating systems.", call. = FALSE)
   #
   tmpcygwin <- system("cmd.exe /c c:\\cygwin\\bin\\env", intern = TRUE)
   #
@@ -1200,13 +1211,13 @@ installMongoFindBinaries <- function(mongoDirWin  = "c:\\mongodb\\bin\\",
   # 4 - only windows continues
   if (debug) message("mongoimport / mongo not found in path.")
   if (.Platform$OS.type != "windows")
-    stop("Cannot continue: mongo / mongoimport could not be found.")
+    stop("Cannot continue: mongo / mongoimport could not be found.", call. = FALSE)
   #
   # search for folder into which mongo was recorded to be installed
   location <- try(utils::readRegistry("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Installer\\Folders",
                                       hive = "HLM"), silent = TRUE)
   if (class(location) == "try-error")
-    stop("Cannot continue. mongo path not found recorded in the registry.")
+    stop("Cannot continue. mongo path not found recorded in the registry.", call. = FALSE)
   #
   location <- names(location)
   location <- location[grepl("Mongo", location)]
@@ -1214,7 +1225,7 @@ installMongoFindBinaries <- function(mongoDirWin  = "c:\\mongodb\\bin\\",
   #
   tmp <- file.exists(paste0(location, "mongoimport.exe"))
   if (!tmp)
-    stop("Cannot continue. mongoimport path not found recorded in the registry, ", location, ".")
+    stop("Cannot continue. mongoimport path not found recorded in the registry, ", location, ".", call. = FALSE)
   #
   # found it, save in package environment
   assign("mongoBinaryLocation", location, envir = environ)
@@ -1241,7 +1252,7 @@ installMongoFindBinaries <- function(mongoDirWin  = "c:\\mongodb\\bin\\",
 #
 installFindBinary <- function(commandtest = NULL, debug = FALSE) {
   #
-  if (is.null(commandtest)) stop ("Empty argument: commandtest")
+  if (is.null(commandtest)) stop ("Empty argument: commandtest", call. = FALSE)
   #
   if (.Platform$OS.type == "windows") commandtest <-
       paste0("cmd.exe /c c:\\cygwin\\bin\\bash.exe --login -c ", shQuote(commandtest))
@@ -1256,7 +1267,7 @@ installFindBinary <- function(commandtest = NULL, debug = FALSE) {
   commandreturn <- ifelse (class(commandresult) == "try-error" ||
                            grepl("error", tolower(paste(commandresult, collapse = " "))), FALSE, TRUE)
   #
-  if (!commandreturn) warning(commandtest, " not found.")
+  if (!commandreturn) warning(commandtest, " not found.", call. = FALSE, immediate. = FALSE)
   #
   if (debug) print(commandresult)
   #

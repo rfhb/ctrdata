@@ -92,7 +92,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     #
     nr <- nrow(queryterm)
     #
-    if (nr > 1) warning("Using last row of queryterm parameter.", immediate. = TRUE)
+    if (nr > 1) warning("Using last row of queryterm parameter.", call. = FALSE, immediate. = TRUE)
     #
     register  <- queryterm [nr, "query-register"]
     queryterm <- queryterm [nr, "query-term"]
@@ -102,21 +102,21 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   ## sanity checks
   if ( (grepl("[^a-zA-Z0-9=+&%_-]", gsub("\\[", "", gsub("\\]", "", queryterm)))) & (register == ""))
     stop("Parameter 'queryterm' is not an URL showing results of a query or has unexpected characters: ",
-         queryterm, ", expected are: a-zA-Z0-9=+&%_-[]. Perhaps additionally specify 'register = '?")
+         queryterm, ", expected are: a-zA-Z0-9=+&%_-[]. Perhaps additionally specify 'register = '?", call. = FALSE)
   #
   if ( (queryterm == "") & querytoupdate == 0L)
-    stop("Parameter 'queryterm' is empty.")
+    stop("Parameter 'queryterm' is empty.", call. = FALSE)
   #
   if (!grepl(register, "CTGOVEUCTR"))
-    stop("Parameter 'register' not known: ", register)
+    stop("Parameter 'register' not known: ", register, call. = FALSE)
   #
   if (class(querytoupdate) != "character" &&
       querytoupdate != trunc(querytoupdate))
-    stop("Parameter 'querytoupdate' is not an integer value or 'last'.")
+    stop("Parameter 'querytoupdate' is not an integer value or 'last'.", call. = FALSE)
   #
   if (class(querytoupdate) == "character" &&
       querytoupdate != "last")
-    stop("Parameter 'querytoupdate' is not an integer value or 'last'.")
+    stop("Parameter 'querytoupdate' is not an integer value or 'last'.", call. = FALSE)
 
   # check program availability
   installMongoFindBinaries(debug = debug)
@@ -176,7 +176,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   ## finalise
 
   # return some useful information or break if not successful
-  if (!exists("imported")) stop("Function did not result in any trial information imports.")
+  if (!exists("imported")) stop("Function did not result in any trial information imports.", call. = FALSE)
   if (debug) message("DEBUG: 'queryterm'=", queryterm,
                      "\n'queryupdateterm'=", queryupdateterm,
                      "\n'imported'=", imported,
@@ -231,13 +231,16 @@ ctrRerunQuery <- function (querytoupdate = querytoupdate,
                                username = username, password = password, verbose = verbose)
 
   # check parameters
-  if (is.null(rerunquery)) stop("'querytoupdate': no previous queries found in collection, aborting query update.")
+  if (is.null(rerunquery))
+    stop("'querytoupdate': no previous queries found in collection, aborting query update.", call. = FALSE)
 
   # select last query if specified
-  if (querytoupdate == "last") querytoupdate <- nrow(rerunquery)
+  if (querytoupdate == "last")
+    querytoupdate <- nrow(rerunquery)
 
   # try to select the query to be updated
-  if (querytoupdate > nrow(rerunquery)) stop("'querytoupdate': specified number not found, check 'dbQueryHistory()'.")
+  if (querytoupdate > nrow(rerunquery))
+    stop("'querytoupdate': specified number not found, check 'dbQueryHistory()'.", call. = FALSE)
 
   # set values retrieved
   rerunquery <- rerunquery[querytoupdate, ]
@@ -246,8 +249,11 @@ ctrRerunQuery <- function (querytoupdate = querytoupdate,
   initialday <- substr(rerunquery$`query-timestamp`, start = 1, stop = 10)
 
   # secondary check parameters
-  if (queryterm == "")                stop("Parameter 'queryterm' is empty - cannot update query ", querytoupdate)
-  if (!grepl(register, "CTGOVEUCTR")) stop("Parameter 'register' not known - cannot update query ", querytoupdate)
+  if (queryterm == "")
+    stop("Parameter 'queryterm' is empty - cannot update query ", querytoupdate, call. = FALSE)
+  #
+  if (!grepl(register, "CTGOVEUCTR"))
+    stop("Parameter 'register' not known - cannot update query ", querytoupdate, call. = FALSE)
 
 
   ## adapt updating procedure to respective register
@@ -305,7 +311,7 @@ ctrRerunQuery <- function (querytoupdate = querytoupdate,
                                           queryterm))
       if (debug) message("DEBUG (rss url): ", rssquery)
       #
-      resultsRss <- RCurl::getURL(rssquery, curl = h)
+      resultsRss <- RCurl::getURL(rssquery, curl = h, header = FALSE)
       if (debug) message("DEBUG (rss content): ", resultsRss)
       #
       # extract euctr number(s)
@@ -401,7 +407,7 @@ dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber,
                upsert = TRUE)
 
   # inform user
-  message("Updated history.")
+  message('* Updated history in meta-info of "', collection, '"')
   #
 }
 # end dbCTRUpdateQueryHistory
@@ -424,8 +430,11 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
                                     queryupdateterm) {
 
   ## check availability of relevant helper programs
-  if (!suppressWarnings(installFindBinary("php --version")))                          stop("php not found.")
-  if (!suppressWarnings(installFindBinary("php -r 'simplexml_load_string(\"\");'")))  stop("php xml not found.")
+  if (!suppressWarnings(installFindBinary("php --version")))
+    stop("php not found.", call. = FALSE)
+  #
+  if (!suppressWarnings(installFindBinary("php -r 'simplexml_load_string(\"\");'")))
+    stop("php xml not found.", call. = FALSE)
 
   ## create empty temporary directory on localhost for
   # downloading from register into temporary directy
@@ -445,12 +454,12 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   if (!grepl("=", queryterm)) queryterm <- paste0("term=", queryterm)
 
   ## inform user and prepare url for downloading
-  message("Downloading trials from CTGOV as xml ", appendLF = FALSE)
+  message("* Downloading trials from CTGOV as xml ", appendLF = FALSE)
   ctgovdownloadcsvurl <- paste0(queryUSRoot, queryUSType1, "&", queryterm, queryupdateterm)
   if (debug) message ("DEBUG: ", ctgovdownloadcsvurl)
 
   # prepare a file handle for saving in temporary directory
-  f <- paste0(tempDir, "/ctgov.zip")
+  f <- paste0(tempDir, "/", "ctgov.zip")
 
   # get (download) trials in single zip file
   h    <- RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE)) # avoid certificate failure from outside EU
@@ -466,7 +475,8 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   message("")
 
   # inform user
-  if (file.size(f) == 0) stop("No studies downloaded. Please check 'queryterm' or run again with debug = TRUE.")
+  if (file.size(f) == 0)
+    stop("No studies downloaded. Please check 'queryterm' or run again with debug = TRUE.", call. = FALSE)
 
   ## extract all from downloaded zip file
   utils::unzip(f, exdir = tempDir)
@@ -555,8 +565,8 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   ## find out number of trials imported into database
   if (debug) message("DEBUG: ", imported)
   imported <- as.integer(gsub(".*imported ([0-9]+) document.*", "\\1", imported[length(imported)]))
-  if (!is.numeric(imported)) stop("Import has apparently failed, returned ", imported)
-  message("Imported or updated ", imported, " trial(s).")
+  if (!is.numeric(imported)) stop("Import has apparently failed, returned ", imported, call. = FALSE)
+  message("= Imported or updated ", imported, " trial(s).")
 
   # clean up temporary directory
   if (!debug) unlink(tempDir, recursive = TRUE)
@@ -590,11 +600,11 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                                     queryupdateterm) {
 
   # check availability of relevant helper programs
-  if (!suppressWarnings(installFindBinary("echo x | sed s/x/y/"))) stop("sed not found.")
-  if (!suppressWarnings(installFindBinary("perl -V:osname")))      stop("perl not found.")
+  if (!suppressWarnings(installFindBinary("echo x | sed s/x/y/"))) stop("sed not found.",  call. = FALSE)
+  if (!suppressWarnings(installFindBinary("perl -V:osname")))      stop("perl not found.", call. = FALSE)
 
   # inform user
-  message("Downloading trials from EUCTR:", appendLF = TRUE)
+  message("* Downloading trials from EUCTR:", appendLF = TRUE)
 
   # create empty temporary directory on localhost for
   # download from register into temporary directy
@@ -613,7 +623,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   h <- RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE)) # avoid certificate failure from outside EU
   q <- utils::URLencode(paste0(queryEuRoot, queryEuType1, queryterm))
   if (debug) message("DEBUG: queryterm is ", q)
-  resultsEuPages <- RCurl::getURL(q, curl = h)
+  resultsEuPages <- RCurl::getURL(q, curl = h, header = FALSE)
 
   # get number of trials identified by query
   resultsEuNumTrials <- sub(".*Trials with a EudraCT protocol \\(([0-9,.]*)\\).*", "\\1", resultsEuPages)
@@ -624,7 +634,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
 
   # check for plausbility
   if (is.na(resultsEuNumPages) || is.na(resultsEuNumTrials) || resultsEuNumTrials == 0)
-    stop("First result page empty - no (new) trials found?")
+    stop("First result page empty - no (new) trials found?", call. = FALSE)
 
   # inform user
   message("Retrieved overview, ", resultsEuNumTrials, " trial(s) from ",
@@ -650,13 +660,18 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     tmp <- RCurl::getURL(unlist(lapply(paste0(queryEuRoot, ifelse(details, queryEuType3, queryEuType2),
                                               queryterm, "&page=", startpage:stoppage, queryEuPost),
                                        utils::URLencode)),
-                         curl = h, async = TRUE, binary = FALSE, noprogress = FALSE, progressfunction = progressOut)
+                         curl = h, async = TRUE, binary = FALSE, header = FALSE,
+                         noprogress = FALSE, progressfunction = progressOut)
     message("")
 
     # check plausibility
     if (debug) message("DEBUG: ", class(tmp))
-    if (class(tmp)  != "character") stop("Download from EUCTR failed; last error: ", class(tmp))
-    if (length(tmp) != (stoppage - startpage + 1)) stop("Download from EUCTR failed; incorrect number of records.")
+    #
+    if (class(tmp)  != "character")
+      stop("Download from EUCTR failed; last error: ", class(tmp), call. = FALSE)
+    #
+    if (length(tmp) != (stoppage - startpage + 1))
+      stop("Download from EUCTR failed; incorrect number of records.", call. = FALSE)
 
     # save downloaded data from variable into file system
     for (ii in startpage:stoppage)
@@ -765,7 +780,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   } # if fast import not successful
 
   ## inform user on final import outcome
-  message("Imported or updated ", imported, " records on ", resultsEuNumTrials, " trial(s).")
+  message("= Imported or updated ", imported, " records on ", resultsEuNumTrials, " trial(s).")
 
 
 
@@ -784,7 +799,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     # eudractnumbersimported <- c("2004-000518-37", "2007-000371-42", "2004-004386-15", "2007-000371-42")
 
     # inform user
-    message("\nDownloading EUCTR results for ", length(eudractnumbersimported), " trials: ")
+    message("\n* Downloading results from EUCTR for ", length(eudractnumbersimported), " trials: ")
 
 
     ## parallel download and unzipping into temporary directory
@@ -800,7 +815,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     resultsNumModulo  <- length(eudractnumbersimported) %%  parallelretrievals
 
     # inform user
-    message("Downloading trial results (at a maximum of ", parallelretrievals, " files in parallel):")
+    message("(1/4) Downloading trial results (at a maximum of ", parallelretrievals, " files in parallel):")
 
     # initialise
     h    <- RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE)) # avoid certificate failure from outside EU
@@ -884,7 +899,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     } # if windows
 
     # run conversion of downloaded xml to json
-    message("Converting to JSON ...")
+    message("(2/4) Converting to JSON ...")
     if (debug) message("DEBUG: ", xml2json)
     importedresults <- system(xml2json, intern = TRUE)
 
@@ -893,8 +908,8 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     mongo <- ctrMongo(collection = collection, db = db, url = url,
                       username = username, password = password, verbose = FALSE)[["ctr"]]
 
-    # iterate over batches of results
-    message("Importing JSON into mongoDB ...")
+    # iterate over batches of results files
+    message("(3/4) Importing JSON into mongoDB ...")
     importedresults <- NULL
     for (i in 1:(resultsNumBatches + ifelse(resultsNumModulo > 0, 1, 0))) {
 
@@ -914,7 +929,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                                if (file.exists(fileName) && file.size(fileName) > 0){
 
                                  # read contents
-                                 tmp <- readChar(fileName, file.info(fileName)$size)
+                                 tmp <- readChar(con = fileName, nchars = file.info(fileName)$size)
 
                                  # update database with results
                                  # str(tmp)
