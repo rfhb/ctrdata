@@ -64,12 +64,8 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
 
   # add identifiers for special cases
   s/^(EudraCT Number.*)$/X.1 $1/;
-  # s/^.*(Protocol Code Number.*)$/X.2 Sponsor $1/;
-  #s/^(Sponsor) (.*)$/B.1 $1: $2/;
   s/^(Sponsor) ([0-9]+)$/B.1 $1: $2/;
-  # s/^(National Competent.*)$/X.3 $1/;
   s/^(Clinical Trial.*)$/X.4 $1/;
-  # s/^(Trial Status.*)$/X.5 $1/;
   s/^(Date on.*)$/X.6 $1/;
   s/^(Link.*)$/X.7 $1/;
 
@@ -86,20 +82,12 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   s/^Disease: (.*)$/E.1.1.2 Therapeutic area: $1/;
   s/^(Population Age.*)$/X.8 $1/;
   s/^(Gender.*)$/X.9 $1/;
-  # s/^Trial protocol: (.*)$/X.5 Trial status: $1/;
 
   # sanitise file
   s/\t/ /g;
   s/\r/\n/g;
   s/\n+/\n/g;
   s/\"|\{|\}//g;
-
-  # todo
-  # - eliminate these extra lines that duplicate other fields
-  #   "x1_eudract_number"               ok
-  #   "x2_sponsor_protocol_code_number" ok
-  #   "x3_national_competent_authority" ok
-  #   "x5_trial_status"                 ok
 
   # handle single case where colon is in key
   s/^(.+)Opinion: Reason(.+)$/$1Opinion Reason$2/g;
