@@ -2,8 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{ctrOpenSearchPagesInBrowser}
 \alias{ctrOpenSearchPagesInBrowser}
-\title{Open advanced search pages of register(s) or execute search in default web
-browser.}
+\title{Open advanced search pages of register(s) or execute search in browser}
 \usage{
 ctrOpenSearchPagesInBrowser(input = "", register = "", copyright = FALSE,
   ...)
@@ -29,8 +28,7 @@ this function.}
 Is always true, invisibly.
 }
 \description{
-Open advanced search pages of register(s) or execute search in default web
-browser.
+Open advanced search pages of register(s) or execute search in browser
 }
 \examples{
 

@@ -2,8 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{dfFindUniqueEuctrRecord}
 \alias{dfFindUniqueEuctrRecord}
-\title{Select a single trial record when there are records for different EU Member
-States for this trial.}
+\title{Select single trial record from records of different EU Member States}
 \usage{
 dfFindUniqueEuctrRecord(df = NULL, prefermemberstate = "GB",
   include3rdcountrytrials = TRUE)

@@ -12,9 +12,8 @@ countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR",
 
 
 
-#' This is a function to set up connections to a Mongo DB server, one for
-#' the actual trial records and a second for the keys as discovered by
-#' variety in the trial records.
+#' Set up connections to a Mongo DB server, one for
+#' the actual trial records and a second for the keys
 #'
 #' @param collection Name of collection (default is "ctrdata")
 #'
@@ -72,8 +71,7 @@ ctrMongo <- function(collection = "ctrdata", db = "users", url = "mongodb://loca
 # end ctrMongo
 
 
-#' Open advanced search pages of register(s) or execute search in default web
-#' browser.
+#' Open advanced search pages of register(s) or execute search in browser
 #'
 #' @param input Show results of search for \code{queryterm} in
 #'   browser. To open the browser with a previous search, (register or)
@@ -430,9 +428,7 @@ dbFindVariable <- function(namepart = "", allmatches = FALSE, forceupdate = FALS
 # end dbFindVariable
 
 
-#' This function checks for duplicate records of clinical trialss in the
-#' database based on the clinical trial identifier, and it returns a list of ids
-#' of unique trials.
+#' Deduplicate records to provide unique clinical trial identifiers
 #'
 #' If records for a clinical trial are found from more than one register, the
 #' record from EUCTR is returned. The function currently relies on CTGOV
@@ -647,7 +643,7 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
 # end dbFindIdsUniqueTrials
 
 
-#' Create a data frame from records in the database that have specified fields
+#' Create data frame by extracting specified fields from database
 #'
 #' With this convenience function, fields in the mongo database are retrieved
 #' into an R dataframe. As mongo json fields within the record of a trial
@@ -794,8 +790,7 @@ dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
 # dbGetVariablesIntoDf
 
 
-#' Merge related variables into a single variable, and optionally map values to
-#' a new set of values.
+#' Merge two variables into one, optionally map values
 #'
 #' @param df A data frame in which there are two variables (columns) to be
 #'   merged into one.
@@ -864,8 +859,7 @@ dfMergeTwoVariablesRelevel <- function(df = NULL, varnames = "", levelslist = NU
 # end dfMergeTwoVariablesRelevel
 
 
-#' Select a single trial record when there are records for different EU Member
-#' States for this trial.
+#' Select single trial record from records of different EU Member States
 #'
 #' The EUCTR provides one record per trial per EU Member State in which the
 #' trial is conducted. For all trials conducted in more than one Member State,
@@ -986,7 +980,7 @@ dfFindUniqueEuctrRecord <- function(df = NULL, prefermemberstate = "GB", include
 # end dfFindUniqueEuctrRecord
 
 
-#' Title
+#' Annotate ctrdata function return values
 #'
 #' @param  x object to be annotated
 #' @inheritParams ctrMongo
@@ -1012,7 +1006,7 @@ addMetaData <- function(x, url, db, collection, username, password) {
 
 
 #' Convenience function to install a cygwin environment under MS Windows,
-#' including perl and php.
+#' including perl and php
 #'
 #' Alternatively and in case of difficulties, download and run the cygwin
 #' setup yourself as follows: \code{cygwinsetup.exe --no-admin --quiet-mode
@@ -1136,8 +1130,9 @@ installCygwinWindowsTest <- function() {
 # installCygwinWindowsTest
 
 
-#' Function to detect the location of mongo database binaries (mongo,
-#' mongoimport) and to save the location into a private environment.
+#' Detect location of local mongo database binaries (mongo,
+#' mongoimport) and save into private environment
+#'
 #' Call this function with a correct parameter if the automatic
 #' detection fails.
 #'
@@ -1242,7 +1237,7 @@ installMongoFindBinaries <- function(mongoDirWin  = "c:\\mongodb\\bin\\",
 
 
 
-#' Check availability of binaries installed in operating system
+#' Check availability of binaries installed locally
 #'
 #' @param commandtest Command to be used for testing the availability of the binary, e.g. "php -v". Note
 #' internal quotes need to be escaped, e.g. \code{installFindBinary('php -r \"simplexml_load_string(\'\');\"')}.

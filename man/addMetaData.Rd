@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{addMetaData}
 \alias{addMetaData}
-\title{Title}
+\title{Annotate ctrdata function return values}
 \usage{
 addMetaData(x, url, db, collection, username, password)
 }
@@ -22,6 +22,6 @@ mongodb://localhost)}
 \item{password}{In case access requires credentials.}
 }
 \description{
-Title
+Annotate ctrdata function return values
 }
 \keyword{internal}

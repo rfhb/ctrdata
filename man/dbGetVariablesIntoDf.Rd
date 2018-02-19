@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{dbGetVariablesIntoDf}
 \alias{dbGetVariablesIntoDf}
-\title{Create a data frame from records in the database that have specified fields}
+\title{Create data frame by extracting specified fields from database}
 \usage{
 dbGetVariablesIntoDf(fields = "", debug = FALSE, collection = "ctrdata",
   db = "users", url = "mongodb://localhost", username = "",

@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{installFindBinary}
 \alias{installFindBinary}
-\title{Check availability of binaries installed in operating system}
+\title{Check availability of binaries installed locally}
 \usage{
 installFindBinary(commandtest = NULL, debug = FALSE)
 }
@@ -17,6 +17,6 @@ See R/onload.R for tested binaries.}
 A logical if executing commandtest returned an error or not
 }
 \description{
-Check availability of binaries installed in operating system
+Check availability of binaries installed locally
 }
 \keyword{internal}

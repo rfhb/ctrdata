@@ -2,10 +2,8 @@
 % Please edit documentation in R/utils.R
 \name{installMongoFindBinaries}
 \alias{installMongoFindBinaries}
-\title{Function to detect the location of mongo database binaries (mongo,
-mongoimport) and to save the location into a private environment.
-Call this function with a correct parameter if the automatic
-detection fails.}
+\title{Detect location of local mongo database binaries (mongo,
+mongoimport) and save into private environment}
 \usage{
 installMongoFindBinaries(mongoDirWin = "c:\\\\mongodb\\\\bin\\\\",
   mongoDirUnix = "/usr/local/opt/mongodb/", debug = FALSE)
@@ -26,8 +24,6 @@ A vector of length 2 with the paths for the \code{mongo} and
   \code{mongoimport} binaries on the user's system
 }
 \description{
-Function to detect the location of mongo database binaries (mongo,
-mongoimport) and to save the location into a private environment.
 Call this function with a correct parameter if the automatic
 detection fails.
 }

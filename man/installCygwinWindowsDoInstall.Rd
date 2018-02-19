@@ -3,7 +3,7 @@
 \name{installCygwinWindowsDoInstall}
 \alias{installCygwinWindowsDoInstall}
 \title{Convenience function to install a cygwin environment under MS Windows,
-including perl and php.}
+including perl and php}
 \usage{
 installCygwinWindowsDoInstall(force = FALSE, proxy = "")
 }

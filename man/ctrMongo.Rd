@@ -2,9 +2,8 @@
 % Please edit documentation in R/utils.R
 \name{ctrMongo}
 \alias{ctrMongo}
-\title{This is a function to set up connections to a Mongo DB server, one for
-the actual trial records and a second for the keys as discovered by
-variety in the trial records.}
+\title{Set up connections to a Mongo DB server, one for
+the actual trial records and a second for the keys}
 \usage{
 ctrMongo(collection = "ctrdata", db = "users",
   url = "mongodb://localhost", username = "", password = "",
@@ -29,8 +28,7 @@ mongodb://localhost)}
 A mongo data base object, currently using mongolite
 }
 \description{
-This is a function to set up connections to a Mongo DB server, one for
-the actual trial records and a second for the keys as discovered by
-variety in the trial records.
+Set up connections to a Mongo DB server, one for
+the actual trial records and a second for the keys
 }
 \keyword{internal}

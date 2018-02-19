@@ -2,9 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{dbFindIdsUniqueTrials}
 \alias{dbFindIdsUniqueTrials}
-\title{This function checks for duplicate records of clinical trialss in the
-database based on the clinical trial identifier, and it returns a list of ids
-of unique trials.}
+\title{Deduplicate records to provide unique clinical trial identifiers}
 \usage{
 dbFindIdsUniqueTrials(preferregister = "EUCTR", prefermemberstate = "GB",
   include3rdcountrytrials = TRUE, collection = "ctrdata", db = "users",
