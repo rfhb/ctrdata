@@ -16,13 +16,13 @@ If set to an empty string (""), keeps the keys for the same trial in both
 registers in the returned vector.}
 
 \item{prefermemberstate}{Code of single EU Member State for which records should
-returned if available. (If not available, a record for GB or lacking this
-any other record for the trial will be returned.) For a list of codes of EU
-Member States, please see vector \code{countriesEUCTR}.}
+returned. If not available, a record for GB or lacking this, any other record
+for the trial will be returned. For a list of codes of EU
+Member States, please see vector \code{countriesEUCTR}. Alternatively, "3RD"
+will lead to return the Third Country record of a trial, if available.}
 
 \item{include3rdcountrytrials}{A logical value if trials should be retained
-that are conducted in third countries, that is outside the European Union.
-These can be recognised by EUCTR identifiers ending in -3RD, such as 2010-022945-52-3RD.}
+that are conducted *exclusively* in third countries, that is outside the European Union.}
 
 \item{collection}{Name of collection (default is "ctrdata")}
 

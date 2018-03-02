@@ -399,23 +399,39 @@ test_that("operations on database for deduplication", {
   ctrLoadQueryIntoDb(queryterm = "2010-019224-31", register = "EUCTR", collection = coll)
   ctrLoadQueryIntoDb(queryterm = "2004-000242-20", register = "EUCTR", collection = coll)
   ctrLoadQueryIntoDb(queryterm = "2005-000915-80", register = "EUCTR", collection = coll) # this is not in ctgov
+  ctrLoadQueryIntoDb(queryterm = "2014-005674-11", register = "EUCTR", collection = coll) # this is 3rd country only
+  ctrLoadQueryIntoDb(queryterm = "2016-002347-41", register = "EUCTR", collection = coll) # in eu and 3rd country
 
   # test combinations of parameters
 
   tmp <- dbFindIdsUniqueTrials(collection = coll)
-  expect_true(all.equal(tmp, c("2004-000242-20-GB", "2005-000915-80-GB", "2010-019224-31-GB","NCT00025597"),
+  expect_true(all.equal(tmp, c("2004-000242-20-GB", "2005-000915-80-GB", "2010-019224-31-GB", "2014-005674-11-3RD",
+                               "2016-002347-41-GB", "NCT00025597"),
+                        check.attributes = FALSE))
+
+  tmp <- dbFindIdsUniqueTrials(collection = coll, include3rdcountrytrials = FALSE) # removes 2014-005674-11
+  expect_true(all.equal(tmp, c("2004-000242-20-GB", "2005-000915-80-GB", "2010-019224-31-GB",
+                               "2016-002347-41-GB", "NCT00025597"),
+                        check.attributes = FALSE))
+
+  tmp <- dbFindIdsUniqueTrials(collection = coll, prefermemberstate = "3RD") # changes 2016-002347-41
+  expect_true(all.equal(tmp, c("2004-000242-20-GB", "2005-000915-80-GB", "2010-019224-31-GB", "2014-005674-11-3RD",
+                               "2016-002347-41-3RD", "NCT00025597"),
                         check.attributes = FALSE))
 
   tmp <- dbFindIdsUniqueTrials(collection = coll, prefermemberstate = "IT")
-  expect_true(all.equal(tmp, c("2004-000242-20-GB", "2005-000915-80-IT", "2010-019224-31-IT", "NCT00025597"),
+  expect_true(all.equal(tmp, c("2004-000242-20-GB", "2005-000915-80-IT", "2010-019224-31-IT", "2014-005674-11-3RD",
+                               "2016-002347-41-GB", "NCT00025597"),
                         check.attributes = FALSE))
 
   tmp <- dbFindIdsUniqueTrials(collection = coll, preferregister = "CTGOV")
-  expect_true(all.equal(tmp, c("NCT00025597", "NCT00134030", "NCT01516580", "2005-000915-80-GB"),
+  expect_true(all.equal(tmp, c("NCT00025597", "NCT00134030", "NCT01516580", "2005-000915-80-GB",
+                              "2014-005674-11-3RD", "2016-002347-41-GB"),
                         check.attributes = FALSE))
 
   tmp <- dbFindIdsUniqueTrials(collection = coll, preferregister = "CTGOV", prefermemberstate = "IT")
-  expect_true(all.equal(tmp, c("NCT00025597", "NCT00134030", "NCT01516580", "2005-000915-80-IT"),
+  expect_true(all.equal(tmp, c("NCT00025597", "NCT00134030", "NCT01516580", "2005-000915-80-IT",
+                               "2014-005674-11-3RD", "2016-002347-41-GB"),
                         check.attributes = FALSE))
 
 

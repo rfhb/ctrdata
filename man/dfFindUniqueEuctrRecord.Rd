@@ -13,13 +13,13 @@ dfFindUniqueEuctrRecord(df = NULL, prefermemberstate = "GB",
 dbGetVariablesIntoDf(c("_id", "a2_eudract_number")).}
 
 \item{prefermemberstate}{Code of single EU Member State for which records should
-returned if available. (If not available, a record for GB or lacking this
-any other record for the trial will be returned.) For a list of codes of EU
-Member States, please see vector \code{countriesEUCTR}.}
+returned. If not available, a record for GB or lacking this, any other record
+for the trial will be returned. For a list of codes of EU
+Member States, please see vector \code{countriesEUCTR}. Alternatively, "3RD"
+will lead to return the Third Country record of a trial, if available.}
 
 \item{include3rdcountrytrials}{A logical value if trials should be retained
-that are conducted in third countries, that is outside the European Union.
-These can be recognised by EUCTR identifiers ending in -3RD, such as 2010-022945-52-3RD.}
+that are conducted *exclusively* in third countries, that is outside the European Union.}
 }
 \value{
 A data frame as subset of \code{df} corresponding to the sought
@@ -28,10 +28,7 @@ A data frame as subset of \code{df} corresponding to the sought
 \description{
 The EUCTR provides one record per trial per EU Member State in which the
 trial is conducted. For all trials conducted in more than one Member State,
-this function returns only one record per trial. A preferred Member State can
-be specified by the user, and a record of the trial in the preferred Member
-State will be returned if available. If not, an english record ("GB") or
-lacking this, any other available record will be returned.
+this function returns only one record per trial.
 }
 \details{
 Note: To depuplicate trials from different registers (EUCTR and CTGOV),
