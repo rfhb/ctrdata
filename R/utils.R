@@ -745,7 +745,7 @@ dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
     if ( !( (class(tmp) != "try-error") & any(nchar(dfi[ , 2]) != 0) ) ) {
       # try-error occured or no data retrieved
       msg <- paste0("For variable / field: ", item, " no data could be extracted from the collection.\n",
-                    "Use dbGetVariablesIntoDf(..., stopifnodata = FALSE) to continue extracting data.")
+                    "Use dbGetVariablesIntoDf(..., stopifnodata = FALSE) to continue extracting other variables.")
       if (stopifnodata){
         stop(msg, call. = FALSE)
       } else {

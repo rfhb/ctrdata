@@ -1035,7 +1035,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
 
     ## inform user on final import outcome
     message("= Imported or updated results for ", importedresults, " ",
-            "records concerning ", resultsEuNumTrials, " trial(s).\n")
+            "records among ", resultsEuNumTrials, " trial(s).\n")
 
   } # if euctrresults
 
