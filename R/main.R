@@ -143,7 +143,8 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   if ( (querytoupdate > 0) && (queryterm != "") ) warning("'query term' and 'querytoupdate' specified,",
                                                           " continuing only with new query", immediate. = TRUE)
 
-  # get parameters for running as update
+  # rewrite parameters for running as update
+  querytermoriginal <- queryterm
   if ( (querytoupdate > 0) && (queryterm == "") ) {
     #
     rerunparameters <- ctrRerunQuery(querytoupdate = querytoupdate,
@@ -152,11 +153,11 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
                                      username = username, password = password, verbose = verbose,
                                      queryupdateterm = queryupdateterm)
     # set main parameters
-    queryupdateterm <- rerunparameters$queryupdateterm
-    queryterm       <- rerunparameters$queryterm
-    register        <- rerunparameters$register
+    querytermoriginal <- rerunparameters$querytermoriginal
+    queryupdateterm   <- rerunparameters$queryupdateterm
+    queryterm         <- rerunparameters$queryterm
+    register          <- rerunparameters$register
   }
-
 
   ## main function
 
@@ -185,7 +186,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
 
   # add query parameters to database
   dbCTRUpdateQueryHistory(register = register,
-                          queryterm = ifelse(queryupdateterm == "", queryterm, queryupdateterm),
+                          queryterm = querytermoriginal,
                           recordnumber = as.integer(imported),
                           collection = collection, db = db, url = url,
                           username = username, password = password, verbose = verbose)
@@ -257,6 +258,7 @@ ctrRerunQuery <- function (querytoupdate = querytoupdate,
 
 
   ## adapt updating procedure to respective register
+  querytermoriginal <- queryterm
 
   # ctgov
   if (register == "CTGOV") {
@@ -333,9 +335,10 @@ ctrRerunQuery <- function (querytoupdate = querytoupdate,
   }
 
   ## return main parameters needed
-  return(data.frame("queryupdateterm" = queryupdateterm,
-                    "queryterm"       = queryterm,
-                    "register"        = register,
+  return(data.frame("querytermoriginal" = querytermoriginal,
+                    "queryupdateterm"   = queryupdateterm,
+                    "queryterm"         = queryterm,
+                    "register"          = register,
                     stringsAsFactors = FALSE))
 
 }
