@@ -143,6 +143,16 @@ ctrOpenSearchPagesInBrowser <- function(input = "", register = "", copyright = F
       #
     }
     #
+    # - if input is not a complete url, but register is specified
+    if (class(input) == "character" &&
+        is.atomic(input) &&
+        length(input) == 1 &&
+        register != "") {
+      #
+      queryterm <- input
+      #
+    }
+    #
     if (queryterm != "" && register != "") {
       #
       message("Opening in browser previous search: ", queryterm, ", in register: ", register)
