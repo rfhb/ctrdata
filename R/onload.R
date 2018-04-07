@@ -4,8 +4,8 @@
 # create environment private to this package
 # for caching the location of mongo binaries
 .privateEnv <- new.env()
-assign("mongoBinaryLocation", NA, envir = .privateEnv)
 
+# check helper functions
 .onAttach <- function(libname, pkgname) {
   #
   packageStartupMessage("\nInformation on this package and how to use it: \nhttps://github.com/rfhb/ctrdata/\n\n",
