@@ -485,7 +485,7 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
   #
   # total number of records in collection to inform user
   countall <- mongo$count(query = '{"_id":{"$ne":"meta-info"}}')
-  if (verbose) message("Total of ", countall, " records in collection.")
+  if (verbose) message("* Total of ", countall, " records in collection.")
 
   # 1. get euctr records
   listofEUCTRids <- try(suppressMessages(suppressWarnings(
@@ -514,7 +514,9 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
   # 3. get ctrgov records
   listofCTGOVids <- mongo$iterate(
     query =  '{"_id": { "$regex": "^NCT[0-9]{8}", "$options": ""} }',
-    fields = '{"id_info.org_study_id": 1, "id_info.secondary_id": 1, "id_info.nct_alias": 1}'
+    fields = '{"id_info.org_study_id": 1,
+               "id_info.secondary_id": 1,
+               "id_info.nct_alias": 1}'
     )$batch(size = mongo$count())
 
   if (is.null(listofCTGOVids)) message("No CTGOV records found.")
@@ -643,7 +645,7 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
                         username = username, password = password)
 
   # inform user
-  message("Returning keys (_id) of ", length(retids),
+  message("= Returning keys (_id) of ", length(retids),
           " records out of total of ", countall,
           " records in collection \"", collection, "\".")
   #
