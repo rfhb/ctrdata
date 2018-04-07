@@ -9,7 +9,7 @@ Online version of this document: [https://github.com/rfhb/ctrdata/](https://gith
 
 ## Background
 
-The package `ctrdata` provides functions for retrieving (downloading) information on clinical trials from public registers, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started mid 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package is to be used within the [R](https://www.r-project.org/) system. Last edit 2018-01-28 for version 0.11. 
+The package `ctrdata` provides functions for retrieving (downloading) information on clinical trials from public registers, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started mid 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package is to be used within the [R](https://www.r-project.org/) system. Last edit 2018-04-07 for version 0.11.1. 
 
 Main features:
 
@@ -21,17 +21,30 @@ Main features:
 
 * Unique (de-duplicated) clinical trial records are identified (a database may hold information from more than one register, and trials may have more than one record in a register). `ctrdata` has also functions to merge protocol-related information from different registers and to recode it. Vignettes are provided to get started and with detailed examples such as analyses of time trends of details of clinical trial protocols. 
 
-Features in the works: 
-
-* Merge results-related information retrieved from different registers (e.g. corresponding endpoints) and prepare for analysis across trials. 
-
-* Explore relevance to retrieve previous versions of protocol- and results-related information
-
-* Use loading into mongodb from stream instead of command line 
-
-* Abstract database access
-
 Remember to respect the registers' copyrights and terms and conditions. 
+
+Please cite this package in any publication as follows: 
+
+`Ralf Herold (2018). ctrdata: Retrieve and Prepare for Analysis Information on Clinical Trials from Public Registers. R package version 0.11. https://github.com/rfhb/ctrdata`
+
+<!--
+Within R, the latest citation information can obtained as follows:
+
+```R
+#
+citation("ctrdata")
+#
+# Ralf Herold (2018). ctrdata: Retrieve and Prepare for Analysis Information on Clinical Trials 
+# from Public Registers. R package version 0.11. https://github.com/rfhb/ctrdata
+
+```
+-->
+
+The package `ctrdata` has been used for example for: 
+
+- Webpage reporting on [Innovation coming to paediatric research](https://paediatricdata.eu/2018/01/14/innovation-coming-to-paediatric-research/)
+
+- Report on [The impact of collaboration: The value of UK medical research to EU science and health](http://www.cancerresearchuk.org/about-us/we-develop-policy/we-work-with-government/exiting-the-eu/uk-and-eu-research#downloads)
 
 Overview of functions used in sequence:
 
@@ -120,23 +133,6 @@ sequenceDiagram
 
 ```
 -->
-
-## Citation
-
-Please cite this package in any publication as follows: 
-
-`Ralf Herold (2018). ctrdata: Retrieve and Prepare for Analysis Information on Clinical Trials from Public Registers. R package version 0.11. https://github.com/rfhb/ctrdata`
-
-The citation for the installed version is obtained as follows:
-
-```R
-citation("ctrdata")
-
-# Ralf Herold (2018). ctrdata: Retrieve and Prepare for Analysis Information on Clinical Trials 
-# from Public Registers. R package version 0.11. https://github.com/rfhb/ctrdata
-
-```
-
 
 ## Example workflow
 
@@ -233,6 +229,17 @@ with (result, table (p_end_of_trial_status, b1_sponsor.b31_and_b32_status_of_the
 ### Representation in mongodb, as JSON
 
 ![Example JSON representation][2]
+
+
+## Features in the works 
+
+* Merge results-related information retrieved from different registers (e.g. corresponding endpoints) and prepare for analysis across trials. 
+
+* Explore relevance to retrieve previous versions of protocol- and results-related information
+
+* Use loading into mongodb from stream instead of command line 
+
+* Abstract database access
 
 
 ## Acknowledgements 

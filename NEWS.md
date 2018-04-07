@@ -1,3 +1,10 @@
+# ctrdata 0.11.1
+ - 2018-04-07
+ - improved installFindMongoBinaries(), 
+   should now better detect mongo binary locations and use 
+   for example in cron scripts, which may not have access 
+   to a user's path information
+
 # ctrdata 0.11
  - 2018-01-28
  - newly retrieved: EUCTR results history, into new fields 
