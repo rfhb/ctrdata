@@ -5,16 +5,11 @@
 \title{Detect location of local mongo database binaries (mongo,
 mongoimport) and save into private environment}
 \usage{
-installMongoFindBinaries(mongoDirWin = "c:\\\\mongodb\\\\bin\\\\",
-  mongoDirUnix = "/usr/local/opt/mongodb/", debug = FALSE)
+installMongoFindBinaries(mongoDir = NULL, debug = FALSE)
 }
 \arguments{
-\item{mongoDirWin}{Only used under MS Windows: folder that contains mongo
-binaries, defaults to "c:\\mongodb\\bin\\". See
-\url{http://docs.mongodb.org/manual/tutorial/install-mongodb-on-windows#interactive-installation}}
-
-\item{mongoDirUnix}{Only used under macOS and Linux: folder that contains mongo
-binaries, defaults to "/usr/local/opt/mongodb/".}
+\item{mongoDir}{Vector of folders to search for mongo binaries, appended to defaults that include
+"C:/Program Files/MongoDB/Server/3.6/binW, "c:/mongodb/bin", "/usr/local/opt/mongodb/bin" and "/usr/bin".}
 
 \item{debug}{Printing additional information if set to \code{TRUE}; default
 is \code{FALSE}.}
