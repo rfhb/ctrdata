@@ -110,7 +110,7 @@ test_that("retrieve data from registers", {
     collection = coll)),
     "No studies downloaded")
 
-  # at the end of srcipt, clean up occurs = drop collection from mongodb
+  # clean up is the end of script = drop collection from mongodb
 
 })
 

@@ -76,7 +76,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   # deduce queryterm and register if a full url is provided
   if (class(queryterm) == "character" &&
       is.atomic(queryterm) &&
-      length(queryterm) == 1 &&
+      length(queryterm) == 1L &&
       grepl ("^https.+clinicaltrials.+", queryterm)) {
     #
     # remove any appended intrapage anchor from url, e.g. #tableTop
@@ -140,7 +140,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   ## check if we need to rerun previous query
 
   # check if parameters are consistent
-  if ( (querytoupdate > 0) && (queryterm != "") ) warning("'query term' and 'querytoupdate' specified,",
+  if ( (querytoupdate > 0) && (queryterm != "") ) warning("'queryterm' and 'querytoupdate' specified,",
                                                           " continuing only with new query", immediate. = TRUE)
 
   # rewrite parameters for running as update

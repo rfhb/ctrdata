@@ -127,7 +127,7 @@ ctrOpenSearchPagesInBrowser <- function(input = "", register = "", copyright = F
         length(input) == 1 &&
         grepl ("^https.+clinicaltrials.+", input)) {
       #
-      input <- ctrGetQueryUrlFromBrowser(input)
+      input <- ctrGetQueryUrlFromBrowser(content = input)
       #
     }
     #
@@ -155,12 +155,12 @@ ctrOpenSearchPagesInBrowser <- function(input = "", register = "", copyright = F
     #
     if (queryterm != "" && register != "") {
       #
-      message("Opening in browser previous search: ", queryterm, ", in register: ", register)
+      message("Opening browser for search: \n\n", queryterm, "\n\nin register: ", register)
       #
       utils::browseURL(paste0(switch(as.character(register),
                                      "CTGOV" = "https://clinicaltrials.gov/ct2/results?",
-                                     "EUCTR" = "https://www.clinicaltrialsregister.eu/ctr-search/search?query="),
-                              queryterm), ...)
+                                     "EUCTR" = "https://www.clinicaltrialsregister.eu/ctr-search/search?"),
+                              queryterm), encodeIfNeeded = TRUE, ...)
       #
     }
   }
@@ -224,8 +224,10 @@ ctrGetQueryUrlFromBrowser <- function(content = clipr::read_clip()) {
     return(df)
   }
   #
-  warning("Content is not a clinical trial register search URL. Returning NULL.", call. = FALSE, immediate. = TRUE)
-  return(NULL)
+  warning("ctrGetQueryUrlFromBrowser(): no clinical trial register search URL found ",
+          "in parameter 'content' or in clipboard.", call. = FALSE, immediate. = TRUE)
+  #
+  return(invisible(NULL))
 }
 # end ctrGetQueryUrlFromBrowser
 
@@ -570,7 +572,7 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
                          listofEUCTRids[["a51_isrctn_international_standard_randomised_controlled_trial_number"]]))
       #
       if (verbose) message("Searching duplicates: Found ", sum(dupes_d2),
-                           " CTGOV otherids (secondary_id, nct_alias, org_study_id) in ",
+                           " CTGOV otherids (secondary_id, nct_alias, org_study_id) in",
                            " EUCTR a51_isrctn_international_standard_randomised_controlled_trial_number")
       #
       # finalise results set
@@ -578,8 +580,8 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
       listofCTGOVids <- sapply(listofCTGOVids, "[[", 1) [ !dupes_a2 & !dupes_b2 & !dupes_c2 & !dupes_d2 ]
       #
       message("Concatenating ",
-              length(listofEUCTRids), " records from EUCTR and",
-              length(listofCTGOVids), " records from CTGOV and ")
+              length(listofEUCTRids), " records from EUCTR and ",
+              length(listofCTGOVids), " records from CTGOV.")
       #
       retids <- c(listofEUCTRids, listofCTGOVids)
       #
@@ -599,7 +601,7 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
                   sapply(listofCTGOVids, "[[", 1)
       #
       if (verbose) message("Searching duplicates: Found ", sum(dupes_b1),
-                           " EUCTR a52_us_nct_clinicaltrialsgov_registry_number in CTOGV _id")
+                           " EUCTR a52_us_nct_clinicaltrialsgov_registry_number in CTGOV _id")
       #
       # c.1 - euctr in ctgov (id_info corresponds to index 2)
       dupes_c1 <- listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]] %in%
@@ -614,7 +616,7 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
                   unlist(sapply(listofCTGOVids, "[[", 2))
       #
       if (verbose) message("Searching duplicates: Found ", sum(dupes_d1),
-                           " EUCTR a51_isrctn_international_standard_randomised_controlled_trial_number ",
+                           " EUCTR a51_isrctn_international_standard_randomised_controlled_trial_number",
                            " in CTOGV otherids (secondary_id, nct_alias, org_study_id)")
       #
       # finalise results set
