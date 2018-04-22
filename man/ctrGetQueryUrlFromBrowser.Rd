@@ -4,7 +4,7 @@
 \alias{ctrGetQueryUrlFromBrowser}
 \title{Import from clipboard the URL of a search in one of the registers}
 \usage{
-ctrGetQueryUrlFromBrowser(content = clipr::read_clip())
+ctrGetQueryUrlFromBrowser(content = "")
 }
 \arguments{
 \item{content}{URL from browser address bar. Defaults to clipboard contents.}
