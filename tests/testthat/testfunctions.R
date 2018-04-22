@@ -261,8 +261,7 @@ test_that("browser interaction", {
 
   expect_equal(suppressWarnings(ctrGetQueryUrlFromBrowser("something_insensible")), NULL)
 
-  # initialise
-  coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
+  # ctgov
 
   q <- "https://clinicaltrials.gov/ct2/results?type=Intr&cond=cancer&age=0"
 
@@ -273,27 +272,47 @@ test_that("browser interaction", {
   has_internet()
 
   expect_warning(ctrGetQueryUrlFromBrowser(content = "ThisDoesNotExist"),
-                 "Content is not a clinical trial register search URL.")
+                 "no clinical trial register search URL found")
 
   expect_message(ctrOpenSearchPagesInBrowser(q),
-                 "Opening in browser previous search:")
+                 "Opening browser for search:")
 
   expect_message(ctrOpenSearchPagesInBrowser(tmp),
-                 "Opening in browser previous search:")
+                 "Opening browser for search:")
+
+  # euctr
+
+  q <- "https://www.clinicaltrialsregister.eu/ctr-search/search?query=&age=under-18&status=completed"
+
+  tmp <- ctrGetQueryUrlFromBrowser(content = q)
+
+  expect_is(tmp, "data.frame")
+
+  expect_message(ctrOpenSearchPagesInBrowser(q),
+                 "Opening browser for search:")
+
+  expect_message(ctrOpenSearchPagesInBrowser(tmp),
+                 "Opening browser for search:")
+
+  # both registers
 
   expect_equal(ctrOpenSearchPagesInBrowser(register = c("EUCTR", "CTGOV"), copyright = TRUE), TRUE)
 
+  # test with database
+
   has_mongo()
 
+  coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
+
   expect_message(ctrOpenSearchPagesInBrowser(dbQueryHistory(collection = coll)[1, ]),
-                 "Opening in browser previous search: ")
+                 "Opening browser for search:")
 
   tmp <-  data.frame(lapply(dbQueryHistory(collection = coll),
                             tail, 1L), stringsAsFactors = FALSE)
   names(tmp) <- sub("[.]", "-", names(tmp))
 
   expect_message(ctrOpenSearchPagesInBrowser(tmp),
-                 "Opening in browser previous search: ")
+                 "Opening browser for search:")
 
 })
 

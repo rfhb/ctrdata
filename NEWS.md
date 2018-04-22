@@ -1,3 +1,7 @@
+# ctrdata 0.11.2
+ - 2018-04-22
+ - changed queryterm processing
+   
 # ctrdata 0.11.1
  - 2018-04-07
  - improved installFindMongoBinaries(), 

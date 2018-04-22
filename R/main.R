@@ -432,6 +432,9 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
                                     username, password, verbose,
                                     queryupdateterm) {
 
+  ## sanity correction for naked terms
+  if(!grepl("&\\w+=\\w+|term=\\w", queryterm)) queryterm <- paste0("term=", queryterm)
+
   ## check availability of relevant helper programs
   if (!suppressWarnings(installFindBinary("php --version")))
     stop("php not found.", call. = FALSE)
@@ -602,6 +605,9 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                                     username, password, verbose,
                                     queryupdateterm) {
 
+  ## sanity correction for naked terms
+  if(!grepl("&\\w+=\\w+|query=\\w", queryterm)) queryterm <- paste0("query=", queryterm)
+
   # check availability of relevant helper programs
   if (!suppressWarnings(installFindBinary("echo x | sed s/x/y/"))) stop("sed not found.",  call. = FALSE)
   if (!suppressWarnings(installFindBinary("perl -V:osname")))      stop("perl not found.", call. = FALSE)
@@ -616,9 +622,9 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
 
   # EUCTR standard identifiers
   queryEuRoot  <- "https://www.clinicaltrialsregister.eu/"
-  queryEuType1 <- "ctr-search/search?query="
-  queryEuType2 <- "ctr-search/rest/download/summary?query="
-  queryEuType3 <- "ctr-search/rest/download/full?query="
+  queryEuType1 <- "ctr-search/search?"
+  queryEuType2 <- "ctr-search/rest/download/summary?"
+  queryEuType3 <- "ctr-search/rest/download/full?"
   queryEuType4 <- "ctr-search/rest/download/result/zip/xml/"
   queryEuPost  <- "&mode=current_page&format=text&dContent=summary&number=current_page&submit-download=Download"
 

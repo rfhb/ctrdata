@@ -189,17 +189,25 @@ ctrOpenSearchPagesInBrowser <- function(input = "", register = "", copyright = F
 #'
 #' @importFrom clipr read_clip
 #'
-ctrGetQueryUrlFromBrowser <- function(content = clipr::read_clip()) {
+ctrGetQueryUrlFromBrowser <- function(content = "") {
+  #
+  # if content parameter not specified, get and check clipboard contents
+  if(length(content) == 1L & nchar(content) == 0L) content <- clipr::read_clip()
   #
   if (length(content) != 1L) {
-    stop("Clipboard content is not a clinical trial register search URL. Returning NULL.", call. = FALSE)
+    stop("ctrGetQueryUrlFromBrowser(): no clinical trial register search URL found ",
+         "in parameter 'content' or in clipboard.", call. = FALSE)
     return(NULL)
   }
   #
   # EUCTR
   if (grepl("https://www.clinicaltrialsregister.eu/ctr-search/", content)) {
     #
-    queryterm <- sub("https://www.clinicaltrialsregister.eu/ctr-search/search[?]query=(.*)", "\\1", content)
+    queryterm <- sub("https://www.clinicaltrialsregister.eu/ctr-search/search[?](.*)", "\\1", content)
+    #
+    # sanity correction for naked terms
+    if(!grepl("&\\w+=\\w+|query=\\w", queryterm)) queryterm <- paste0("query=", queryterm)
+    #
     message("* Found search query from EUCTR.\n")
     #
     df <- data.frame(cbind(queryterm, "EUCTR"), stringsAsFactors = FALSE)
