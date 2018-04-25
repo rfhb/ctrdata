@@ -754,7 +754,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     message("Splitting into JSON files ...")
     if (debug) message("DEBUG: ", json2split)
     imported  <- system(json2split, intern = TRUE)
-    splitjson <- try(as.numeric(imported))
+    splitjson <- try(as.numeric(imported), silent = TRUE)
     if (class(splitjson) == "try-error") stop("Splitting single JSON files failed. Aborting ctrLoadQueryIntoDb.")
 
     # now import single-trial json files one by one, record and print failed trial ids
