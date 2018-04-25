@@ -689,7 +689,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                    formatC(ii, digits = 0, width = nchar(resultsEuNumPages), flag = 0), ".txt"))
 
     # clean up large object
-    rm(tmp); gc(verbose = FALSE)
+    rm(tmp)
 
   } # for batch
 
