@@ -7,6 +7,11 @@
 
 language: r
 
+r:
+  - oldrel
+  - release
+  - devel
+
 sudo: required
 
 cache: packages
