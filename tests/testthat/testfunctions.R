@@ -72,6 +72,7 @@ test_that("access to mongo db from R package", {
   try(mongolite::mongo(collection = coll,                 db = "users")$drop(), silent = TRUE)
   try(mongolite::mongo(collection = paste0(coll, "Keys"), db = "users")$drop(), silent = TRUE)
 
+  # test 1
   expect_message(dbQueryHistory(collection = coll),
                  "No history found in expected format.")
 
@@ -83,6 +84,7 @@ test_that("access to mongo db from command line", {
 
   has_mongo()
 
+  # test 2
   expect_message(installMongoFindBinaries(debug = TRUE),
                  "mongo / mongoimport ")
 
@@ -98,12 +100,14 @@ test_that("retrieve data from registers", {
   # initialise
   coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
 
+  # test 3
   expect_error(suppressWarnings(ctrLoadQueryIntoDb(
     queryterm = "query=NonExistingConditionGoesInHere",
     register = "EUCTR",
     collection = coll)),
     "First result page empty")
 
+  # test 4
   expect_error(suppressWarnings(ctrLoadQueryIntoDb(
     queryterm = "cond=NonExistingConditionGoesInHere",
     register = "CTGOV",
@@ -124,6 +128,7 @@ test_that("retrieve data from register ctgov", {
   # initialise
   coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
 
+  # test 5
   expect_message(ctrLoadQueryIntoDb(
     queryterm = "2010-024264-18",
     register = "CTGOV",
@@ -135,6 +140,7 @@ test_that("retrieve data from register ctgov", {
 
   q <- paste0("https://clinicaltrials.gov/ct2/results?term=osteosarcoma&type=Intr&phase=0&age=0&lup_e=")
 
+  # test 6
   expect_message(ctrLoadQueryIntoDb(paste0(q, "12%2F31%2F2008"), collection = coll),
                  "Imported or updated ")
 
@@ -150,6 +156,7 @@ test_that("retrieve data from register ctgov", {
                                                            update = paste0('{ "$set" :', json, "}"),
                                                            upsert = TRUE)
 
+  # test 7
   expect_message(suppressWarnings(ctrLoadQueryIntoDb(querytoupdate = "last", collection = coll)),
                  "Imported or updated")
 
@@ -167,12 +174,14 @@ test_that("retrieve data from register euctr", {
   # initialise
   coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
 
+  # test 8
   expect_message(ctrLoadQueryIntoDb(
     queryterm = "2010-024264-18",
     register = "EUCTR",
     collection = coll),
     "Updated history")
 
+  # test 9
   expect_error(suppressWarnings(ctrLoadQueryIntoDb(
     querytoupdate = "last",
     collection = coll)),
@@ -180,8 +189,9 @@ test_that("retrieve data from register euctr", {
 
   ## github issue 8 bug
   q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?",
-              "query=&dateFrom=2017-09-15&dateTo=2017-09-17")
+              "query=&dateFrom=2017-09-15&dateTo=2017-09-15")
 
+  # test 10
   expect_message(suppressWarnings(ctrLoadQueryIntoDb(queryterm = q,
                                                      collection = coll,
                                                      euctrresults = TRUE)),
@@ -189,8 +199,9 @@ test_that("retrieve data from register euctr", {
 
   ## forced slow import
   q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
-              "neuroblastoma&status=completed&phase=phase-one")
+              "neuroblastoma&status=completed&phase=phase-one&country=pl")
 
+  # test 11
   expect_message(suppressWarnings(ctrLoadQueryIntoDb(q,
                                                      collection = coll,
                                                      debug = TRUE, verbose = FALSE)),
@@ -201,11 +212,12 @@ test_that("retrieve data from register euctr", {
 
   date.today <- format(Sys.time(),                "%Y-%m-%d")
   date.temp  <- format(Sys.time() - 60*60*24*6,   "%Y-%m-%d")
-  date.old   <- format(Sys.time() - 60*60*24*6*2, "%Y-%m-%d")
+  date.old   <- format(Sys.time() - 60*60*24*6*1, "%Y-%m-%d")
 
   q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
               "&dateFrom=", date.old, "&dateTo=", date.temp)
 
+  # test 12
   expect_message(suppressWarnings(ctrLoadQueryIntoDb(q, collection = coll)),
                  "Imported or updated ")
 
@@ -223,6 +235,7 @@ test_that("retrieve data from register euctr", {
                                         update = paste0('{ "$set" :', json, "}"),
                                         upsert = TRUE)
 
+  # test 13
   expect_message(ctrLoadQueryIntoDb(querytoupdate = "last", collection = coll),
                  "Imported or updated")
 
@@ -241,8 +254,9 @@ test_that("retrieve results from register euctr", {
   coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
 
   q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
-              "2004-000015-25+OR+2004-000518-37+OR+2004-004386-15+OR+2007-000371-42+OR+XYZ")
+              "2004-000015-25+OR+2007-000371-42+OR+XYZ")
 
+  # test 14
   expect_message(suppressWarnings(ctrLoadQueryIntoDb(q, euctrresults = TRUE, collection = coll)),
                  "Imported or updated results for")
 
@@ -252,6 +266,7 @@ test_that("retrieve results from register euctr", {
                                 "version_results_history"),
                        collection = coll)
 
+  # test 15
   expect_true(!any(tmp[tmp$a2_eudract_number == "2007-000371-42", ] == ""))
 
 })
@@ -259,6 +274,7 @@ test_that("retrieve results from register euctr", {
 #### browser open show get query ####
 test_that("browser interaction", {
 
+  # test 16
   expect_equal(suppressWarnings(ctrGetQueryUrlFromBrowser("something_insensible")), NULL)
 
   # ctgov
@@ -267,16 +283,20 @@ test_that("browser interaction", {
 
   tmp <- ctrGetQueryUrlFromBrowser(content = q)
 
+  # test 17
   expect_is(tmp, "data.frame")
 
   has_internet()
 
+  # test 18
   expect_warning(ctrGetQueryUrlFromBrowser(content = "ThisDoesNotExist"),
                  "no clinical trial register search URL found")
 
+  # test 19
   expect_message(ctrOpenSearchPagesInBrowser(q),
                  "Opening browser for search:")
 
+  # test 20
   expect_message(ctrOpenSearchPagesInBrowser(tmp),
                  "Opening browser for search:")
 
@@ -286,16 +306,20 @@ test_that("browser interaction", {
 
   tmp <- ctrGetQueryUrlFromBrowser(content = q)
 
+  # test 21
   expect_is(tmp, "data.frame")
 
+  # test 22
   expect_message(ctrOpenSearchPagesInBrowser(q),
                  "Opening browser for search:")
 
+  # test 23
   expect_message(ctrOpenSearchPagesInBrowser(tmp),
                  "Opening browser for search:")
 
   # both registers
 
+  # test 24
   expect_equal(ctrOpenSearchPagesInBrowser(register = c("EUCTR", "CTGOV"), copyright = TRUE), TRUE)
 
   # test with database
@@ -304,6 +328,7 @@ test_that("browser interaction", {
 
   coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
 
+  # test 25
   expect_message(ctrOpenSearchPagesInBrowser(dbQueryHistory(collection = coll)[1, ]),
                  "Opening browser for search:")
 
@@ -311,6 +336,7 @@ test_that("browser interaction", {
                             tail, 1L), stringsAsFactors = FALSE)
   names(tmp) <- sub("[.]", "-", names(tmp))
 
+  # test 26
   expect_message(ctrOpenSearchPagesInBrowser(tmp),
                  "Opening browser for search:")
 
@@ -357,46 +383,63 @@ test_that("operations on database after download from register", {
   coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
 
   # dbFindVariable
+
+  # test 27
   expect_error(dbFindVariable(namepart = c("onestring", "twostring"), collection = coll),
                "Name part should have only one element.")
 
+  # test 28
   expect_error(dbFindVariable(namepart = list("onestring", "twostring"), collection = coll),
                "Name part should be atomic.")
 
+  # test 29
   expect_error(dbFindVariable(namepart = "", collection = coll),
                "Empty name part string.")
 
+  # test 30
   expect_message(dbFindVariable(namepart = "date", collection = coll),
                  "Returning first of ")
 
+  # test 31
   expect_equal(is.na(dbFindVariable(namepart = "ThisNameShouldNotExistAnywhere", collection = coll)),
                TRUE)
 
-
   # dbFindIdsUniqueTrials
+
+  # test 32
   expect_message(dbFindIdsUniqueTrials(collection = coll, preferregister = "EUCTR"),
                  "Searching multiple country records")
 
+  # test 33
   expect_message(dbFindIdsUniqueTrials(collection = coll, preferregister = "CTGOV"),
                  "Returning keys")
 
+  # test 34
   expect_warning(dbFindIdsUniqueTrials(collection = coll, prefermemberstate = "3RD", include3rdcountrytrials = FALSE),
                  "Preferred EUCTR version set to 3RD country trials, but include3rdcountrytrials was FALSE")
 
 
   # dbGetVariablesIntoDf
+
+  # test 35
   expect_error(dbGetVariablesIntoDf(fields = "ThisDoesNotExist", collection = coll),
                "For variable / field: ThisDoesNotExist no data could be extracted")
 
+  # test 36
   expect_error(dbGetVariablesIntoDf(fields = "", collection = coll),
                "'fields' contains empty elements")
 
+  # test 37
   expect_error(dbGetVariablesIntoDf(fields = list("ThisDoesNotExist"), collection = coll),
                "Input should be a vector of strings of field names.")
 
 
   # clean up = drop collections from mongodb
+
+  # test 38
   expect_equivalent (mongolite::mongo(collection = coll,                 db = "users")$drop(), TRUE)
+
+  # test 39
   expect_equivalent (mongolite::mongo(collection = paste0(coll, "Keys"), db = "users")$drop(), TRUE)
 
 })
@@ -423,31 +466,37 @@ test_that("operations on database for deduplication", {
 
   # test combinations of parameters
 
+  # test 40
   tmp <- dbFindIdsUniqueTrials(collection = coll)
   expect_true(all.equal(tmp, c("2004-000242-20-GB", "2005-000915-80-GB", "2010-019224-31-GB", "2014-005674-11-3RD",
                                "2016-002347-41-GB", "NCT00025597"),
                         check.attributes = FALSE))
 
+  # test 41
   tmp <- dbFindIdsUniqueTrials(collection = coll, include3rdcountrytrials = FALSE) # removes 2014-005674-11
   expect_true(all.equal(tmp, c("2004-000242-20-GB", "2005-000915-80-GB", "2010-019224-31-GB",
                                "2016-002347-41-GB", "NCT00025597"),
                         check.attributes = FALSE))
 
+  # test 42
   tmp <- dbFindIdsUniqueTrials(collection = coll, prefermemberstate = "3RD") # changes 2016-002347-41
   expect_true(all.equal(tmp, c("2004-000242-20-GB", "2005-000915-80-GB", "2010-019224-31-GB", "2014-005674-11-3RD",
                                "2016-002347-41-3RD", "NCT00025597"),
                         check.attributes = FALSE))
 
+  # test 43
   tmp <- dbFindIdsUniqueTrials(collection = coll, prefermemberstate = "IT")
   expect_true(all.equal(tmp, c("2004-000242-20-GB", "2005-000915-80-IT", "2010-019224-31-IT", "2014-005674-11-3RD",
                                "2016-002347-41-GB", "NCT00025597"),
                         check.attributes = FALSE))
 
+  # test 44
   tmp <- dbFindIdsUniqueTrials(collection = coll, preferregister = "CTGOV")
   expect_true(all.equal(tmp, c("NCT00025597", "NCT00134030", "NCT01516580", "2005-000915-80-GB",
                               "2014-005674-11-3RD", "2016-002347-41-GB"),
                         check.attributes = FALSE))
 
+  # test 45
   tmp <- dbFindIdsUniqueTrials(collection = coll, preferregister = "CTGOV", prefermemberstate = "IT")
   expect_true(all.equal(tmp, c("NCT00025597", "NCT00134030", "NCT01516580", "2005-000915-80-IT",
                                "2014-005674-11-3RD", "2016-002347-41-GB"),
@@ -455,7 +504,11 @@ test_that("operations on database for deduplication", {
 
 
   # clean up = drop collections from mongodb
+
+  # test 46
   expect_equivalent (mongolite::mongo(collection = coll,                 db = "users")$drop(), TRUE)
+
+  # test 47
   expect_equivalent (mongolite::mongo(collection = paste0(coll, "Keys"), db = "users")$drop(), TRUE)
 
 })
@@ -470,19 +523,25 @@ test_that("operations on data frame", {
                        "Lastvalue"   = c("34"))
 
   # dfMergeTwoVariablesRelevel
+
+  # test 48
   expect_error(dfMergeTwoVariablesRelevel(list("var1", "var2")),
                "Need a data frame as input.")
 
+  # test 49
   expect_message(dfMergeTwoVariablesRelevel(df = df, varnames = c("var1", "var2")),
                  "Unique values returned: 12, 23, 34")
 
+  # test 50
   expect_is     (dfMergeTwoVariablesRelevel(df = df, varnames = c("var1", "var2")),
                  "character")
 
+  # test 51
   expect_message(dfMergeTwoVariablesRelevel(df = df, varnames = c("var1", "var2"),
                                             levelslist = statusvalues),
                  "Unique values returned: Firstvalues, Lastvalue")
 
+  # test 52
   expect_error(dfMergeTwoVariablesRelevel(df = df, varnames = 1:3),
                  "Please provide exactly two variable names.")
 
