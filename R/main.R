@@ -433,9 +433,20 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
                                     queryupdateterm) {
 
   ## sanity correction for naked terms
-  if(!grepl("&\\w+=\\w+|term=\\w", queryterm)) queryterm <- paste0("term=", queryterm)
+  # test cases
+  # queryterm = c("cancer&age=adult",                      # correct
+  #               "cancer",                                # correct
+  #               "cancer&age=adult&phase=0",              # correct
+  #               "cancer&age=adult&phase=1&results=true", # correct
+  #               "&age=adult&phase=1&abc=xyz&cancer&results=true", # correct
+  #               "age=adult&cancer",                      # correct
+  #               "2010-024264-18",                        # correct
+  #               "NCT1234567890",                         # correct
+  #               "term=cancer&age=adult",                 # keep
+  #               "age=adult&term=cancer")                 # keep
+  queryterm <- sub("(^|&|[&]?\\w+=\\w+&)(\\w+|[NCT0-9-]+)($|&\\w+=\\w+)", "\\1term=\\2\\3", queryterm)
 
-  ## check availability of relevant helper programs
+    ## check availability of relevant helper programs
   if (!suppressWarnings(installFindBinary("php --version")))
     stop("php not found.", call. = FALSE)
   #
@@ -606,7 +617,18 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                                     queryupdateterm) {
 
   ## sanity correction for naked terms
-  if(!grepl("&\\w+=\\w+|query=\\w", queryterm)) queryterm <- paste0("query=", queryterm)
+  # test cases
+  # queryterm = c("cancer&age=adult",                      # correct
+  #               "cancer",                                # correct
+  #               "cancer&age=adult&phase=0",              # correct
+  #               "cancer&age=adult&phase=1&results=true", # correct
+  #               "&age=adult&phase=1&abc=xyz&cancer&results=true", # correct
+  #               "age=adult&cancer",                      # correct
+  #               "2010-024264-18 2010-024264-19",         # correct
+  #               "NCT1234567890",                         # correct
+  #               "term=cancer&age=adult",                 # keep
+  #               "age=adult&term=cancer")                 # keep
+  queryterm <- sub("(^|&|[&]?\\w+=\\w+&)(\\w+|[ +ORNCT0-9-]+)($|&\\w+=\\w+)", "\\1query=\\2\\3", queryterm)
 
   # check availability of relevant helper programs
   if (!suppressWarnings(installFindBinary("echo x | sed s/x/y/"))) stop("sed not found.",  call. = FALSE)
