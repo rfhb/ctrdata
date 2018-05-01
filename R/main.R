@@ -316,8 +316,13 @@ ctrRerunQuery <- function (querytoupdate = querytoupdate,
       resultsRss <- RCurl::getURL(rssquery, curl = h, header = FALSE)
       if (debug) message("DEBUG (rss content): ", resultsRss)
       #
-      # extract euctr number(s)
+      # attempt to extract euctr number(s)
       resultsRssTrials <- gregexpr("eudract_number:[0-9]{4}-[0-9]{6}-[0-9]{2}</link>", resultsRss)[[1]]
+      #
+      if(length(resultsRssTrials) == 1L && resultsRssTrials == -1L)
+        stop("First result page empty - no (new) trials found?", call. = FALSE)
+      #
+      # if new trials found, download
       resultsRssTrials <- sapply(resultsRssTrials, FUN = function (x) substr(resultsRss, x + 15, x + 28))
       resultsRssTrials <- paste(resultsRssTrials, collapse = "+OR+")
       if (debug) message("DEBUG (rss trials): ", resultsRssTrials)
