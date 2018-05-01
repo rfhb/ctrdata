@@ -189,7 +189,7 @@ test_that("retrieve data from register euctr", {
 
   ## github issue 8 bug
   q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?",
-              "query=&dateFrom=2017-09-15&dateTo=2017-09-15")
+              "query=&dateFrom=2017-09-15&dateTo=2017-09-15&age=under-18")
 
   # test 10
   expect_message(suppressWarnings(ctrLoadQueryIntoDb(queryterm = q,
@@ -223,14 +223,14 @@ test_that("retrieve data from register euctr", {
 
   # manipulate history to force testing updating
   # based on code in dbCTRUpdateQueryHistory
-  hist <- dbQueryHistory(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB")
+  hist <- dbQueryHistory(collection = coll)
   # manipulate query
   hist[nrow(hist), "query-term"]      <- sub(".*(&dateFrom=.*)&dateTo=.*", "\\1", q)
   hist[nrow(hist), "query-timestamp"] <- paste0(date.temp, "-23-59-59")
   # convert into json object
   json <- jsonlite::toJSON(list("queries" = hist))
   # update database
-  mongolite::mongo(collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB",
+  mongolite::mongo(collection = coll,
                    db = "users")$update(query = '{"_id":{"$eq":"meta-info"}}',
                                         update = paste0('{ "$set" :', json, "}"),
                                         upsert = TRUE)
