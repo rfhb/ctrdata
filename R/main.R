@@ -854,7 +854,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     message("(1/4) Downloading trial results (at a maximum of ", parallelretrievals, " files in parallel):")
 
     # initialise
-    h    <- RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE)) # avoid certificate failure from outside EU
+    h <- RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE)) # avoid certificate failure outside EU
 
     # iterate over batches of results
     for (i in 1:(resultsNumBatches + ifelse(resultsNumModulo > 0, 1, 0))) {
@@ -873,7 +873,9 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                                fref <- RCurl::CFILE(f, mode = "wb")
 
                                # get (download) trial results' zip file
-                               tmp  <- RCurl::curlPerform(url = utils::URLencode(paste0(queryEuRoot, queryEuType4, x)),
+                               tmp  <- RCurl::curlPerform(url = utils::URLencode(paste0(queryEuRoot,
+                                                                                        queryEuType4,
+                                                                                        x)),
                                                           writedata = fref@ref,
                                                           noprogress = FALSE,
                                                           progressfunction = progressOut,
@@ -901,7 +903,9 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
 
                                # inform user
                                if (file.size(f) == 0) warning("No results found for ", x,
-                                                              call. = FALSE, immediate. = TRUE, noBreaks. = FALSE)
+                                                              call. = FALSE,
+                                                              immediate. = TRUE,
+                                                              noBreaks. = FALSE)
 
                                # clean up
                                if (!debug) unlink(f)
