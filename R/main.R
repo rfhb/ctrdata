@@ -24,6 +24,10 @@
 #'   retrieving and loading trials from EUCTR. This slows down this function.
 #'   (For CTGOV, all available results are retrieved and loaded from
 #'   ctrdata version 0.9.10 onwards.)
+#' @param annotate.text Text to be including in the records retrieved
+ #'   with the current query.
+#' @param annotate.mode One of "append" (default), "prepend" or "overwrite"
+#'   for new annotation.text with respect to any existing annotation.text.
 #' @param details If \code{TRUE} (default), retrieve full protocol-related
 #'   information from EUCTR or XML data from CTGOV, depending on the register
 #'   selected. This gives all of the available details for the trials.
@@ -66,7 +70,7 @@
 #' @export
 #'
 ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate = 0L,
-                               euctrresults = FALSE,
+                               euctrresults = FALSE, annotate.text = "", annotation.mode = "append",
                                details = TRUE, parallelretrievals = 10, debug = FALSE,
                                collection = "ctrdata", db = "users", url = "mongodb://localhost",
                                username = "", password = "", verbose = FALSE) {
@@ -163,7 +167,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
 
   # parameters for core functions
   params <- list(queryterm = queryterm, register = register, querytoupdate = querytoupdate,
-                 euctrresults = euctrresults,
+                 euctrresults = euctrresults, annotate.text = annotate.text, annotation.mode = annotation.mode,
                  details = details, parallelretrievals = parallelretrievals, debug = debug,
                  collection = collection, db = db, url = url,
                  username = username, password = password, verbose = verbose,
@@ -362,6 +366,80 @@ progressOut <- function(down, up) {
 
 
 
+#' dbQueryAnnotateRecords
+#'
+#' @inheritParams ctrLoadQueryIntoDb
+#'
+#' @keywords internal
+#'
+#' @importFrom jsonlite toJSON
+#'
+dbCTRAnnotateQueryRecords <- function(recordnumbers, annotate.text, annotation.mode,
+                                      collection = collection, db = db, url = url,
+                                      username = username, password = password, verbose = verbose,
+                                      mongo = mongo){
+
+  # debug
+  if (verbose) message("Running dbCTRAnnotateQueryRecords ...")
+
+  # get a working mongo connection, select trial record collection
+  # mongo <- ctrdata:::ctrMongo()[["ctr"]]
+  mongo <- ctrMongo(collection = collection, db = db, url = url,
+                    username = username, password = password, verbose = verbose)[["ctr"]]
+
+  # batch over recordnumbers
+  batchLen <- 10
+  numRecs <- length(recordnumbers)
+
+  # calculate batches to get data from all results pages
+  numBatches <- numRecs %/% batchLen
+  numModulo  <- numRecs %%  batchLen
+
+  # iterate over batches of results pages
+  for (i in 1:(numBatches + ifelse(numModulo > 0, 1, 0))) {
+
+    # calculate indices
+    startRec <- (i - 1) * batchLen + 1
+    stopRec  <- ifelse(i > numBatches,
+                       startRec + numModulo,
+                       startRec + batchLen) - 1
+
+    # inform user
+    if (verbose) message("Batch ", i, ": ", startRec, " - ", stopRec)
+
+    # create the aggregation pipeline
+    # recordnumbers <- mongo$find(fields = '{"_id": 1}')[,1]
+    pipeline <- paste0('[',
+                       '{"$match": {"_id": {"$in": ', jsonlite::toJSON(recordnumbers), '}}}, ',
+                       '{"$project": {"ctrname": {"$concat": ["$ctrname", "XX"]}}}',
+                       ']')
+
+    jsonlite::validate(pipeline)
+    jsonlite::prettify(pipeline)
+    if(!validate(pipeline)) return(NULL)
+
+    # get the data
+    tmpannos <- mongo$aggregate(pipeline = pipeline)
+    tmpannos[,2] <- paste0('{ "$set": {"', names(tmpannos)[2], '": "', tmpannos[,2], '"}}')
+
+    # update the database
+    for(i in tmpannos[["_id"]]) {
+      mongo$update(query = paste0('{"_id": {"$eq": "', i ,'"}}'),
+                   update = tmpannos[ tmpannos[["_id"]] == i, 2],
+                   upsert = TRUE)
+    }
+
+
+  # inform user
+  message('* Updated history in meta-info of "', collection, '"')
+  # debug
+  message(recordnumbers)
+
+}
+
+
+
+
 
 #' dbCTRUpdateQueryHistory
 #'
@@ -411,7 +489,7 @@ dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber,
 
   # inform user
   message('* Updated history in meta-info of "', collection, '"')
-  #
+
 }
 # end dbCTRUpdateQueryHistory
 
@@ -426,7 +504,7 @@ dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber,
 #' @importFrom RCurl getCurlHandle close curlPerform CFILE
 #'
 ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
-                                    euctrresults,
+                                    euctrresults, annotate.text, annotation.mode,
                                     details, parallelretrievals, debug,
                                     collection, db, url,
                                     username, password, verbose,
@@ -535,9 +613,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   #   "COG-ADVL0011",
   #   "CDR0000068036"
   #   ]
-  # TODO: should this be undone in order
-  # to fully maintain ctgov schema?
-
+  #
   # get a working mongo connection, select trial record collection
   mongo <- ctrMongo(collection = collection, db = db, url = url,
                     username = username, password = password, verbose = FALSE)[["ctr"]]
@@ -563,6 +639,23 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   # add index for newly created fired
   mongo$index(add = "otherids")
   message('Added index field "otherids".')
+
+  ## read in the ctgov ids of the trials that were just retrieved and imported
+  ctgovidsimported <- readLines(paste0(tempDir, "/allctgov.txt"))
+  ctgovidsimported <- rev(sort(unique(ctgovidsimported)))
+
+  ## add annotations
+  if((annotate.text != "") &
+     (length(ctgovidsimported) > 0)){
+
+    # dispatch
+    dbCTRAnnotateQueryRecords(recordnumbers = ctgovidsimported,
+                              annotate.text, annotation.mode,
+                              collection = collection, db = db, url = url,
+                              username = username, password = password, verbose = verbose,
+                              mongo = mongo)
+
+  }
 
   # close database connection
   rm(mongo)
@@ -599,7 +692,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
 #' @importFrom RCurl getCurlHandle getURL
 #'
 ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
-                                    euctrresults,
+                                    euctrresults, annotate.text, annotation.mode,
                                     details, parallelretrievals, debug,
                                     collection, db, url,
                                     username, password, verbose,
@@ -754,7 +847,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     message("Splitting into JSON files ...")
     if (debug) message("DEBUG: ", json2split)
     imported  <- system(json2split, intern = TRUE)
-    splitjson <- try(as.numeric(imported))
+    splitjson <- try(as.numeric(imported), silent = TRUE)
     if (class(splitjson) == "try-error") stop("Splitting single JSON files failed. Aborting ctrLoadQueryIntoDb.")
 
     # now import single-trial json files one by one, record and print failed trial ids
@@ -788,6 +881,23 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     imported <- allimported
   } # if fast import not successful
 
+  ## read in the eudract numbers of the trials that were just retrieved and imported
+  eudractnumbersimported <- readLines(paste0(tempDir, "/alleudract.txt"))
+  eudractnumbersimported <- rev(sort(unique(eudractnumbersimported)))
+
+  ## add annotations
+  if((annotate.text != "") &
+     (length(eudractnumbersimported) > 0)){
+
+    # dispatch
+    dbCTRAnnotateQueryRecords(recordnumbers = eudractnumbersimported,
+                              annotate.text, annotation.mode,
+                              collection = collection, db = db, url = url,
+                              username = username, password = password, verbose = verbose,
+                              mongo = mongo)
+
+  }
+
   ## inform user on final import outcome
   message("= Imported or updated ", imported, " records on ", resultsEuNumTrials, " trial(s).")
 
@@ -796,13 +906,10 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   ## results: load also euctr trials results if requested
   if (euctrresults) {
 
-    ## results are available only one-by-one for each trial
-    #  we need the eudract numbers of the trials that were
-    #  just retrieved and imported
+    ## results are available only one-by-one for each trial as just retrieved and imported
+
     # for debugging:
     # tempDir <- "/Users/ralfherold/Daten/mak/r/emea/ctrdata/private/test"
-    eudractnumbersimported <- readLines(paste0(tempDir, "/alleudract.txt"))
-    eudractnumbersimported <- rev(sort(unique(eudractnumbersimported)))
 
     # for debugging:
     # eudractnumbersimported <- c("2004-000518-37", "2007-000371-42", "2004-004386-15", "2007-000371-42")
@@ -1009,8 +1116,8 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
         trimws(gsub("[ ]+", " ",
                gsub("[\n\r]", "",
                gsub("<[a-z/]+>", "",
-                    sub(".+Version creation reason.*?<td class=\"valueColumn\">(.+?)</td>.+", "\\1",
-                        ifelse(grepl("Version creation reason", x), x, ""))
+               sub(".+Version creation reason.*?<td class=\"valueColumn\">(.+?)</td>.+", "\\1",
+                   ifelse(grepl("Version creation reason", x), x, ""))
                ))))
       )
 
