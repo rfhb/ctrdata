@@ -212,7 +212,7 @@ test_that("retrieve data from register euctr", {
 
   date.today <- format(Sys.time(),                "%Y-%m-%d")
   date.temp  <- format(Sys.time() - 60*60*24*6,   "%Y-%m-%d")
-  date.old   <- format(Sys.time() - 60*60*24*6*1, "%Y-%m-%d")
+  date.old   <- format(Sys.time() - 60*60*24*6*2, "%Y-%m-%d")
 
   q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
               "&dateFrom=", date.old, "&dateTo=", date.temp)
@@ -256,15 +256,17 @@ test_that("retrieve results from register euctr", {
   q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
               "2004-000015-25+OR+2007-000371-42+OR+XYZ")
 
-  # test 14
-  expect_message(suppressWarnings(ctrLoadQueryIntoDb(q, euctrresults = TRUE, collection = coll)),
+  expect_message(suppressWarnings(ctrLoadQueryIntoDb(q,
+                                                     euctrresults = TRUE,
+                                                     collection = coll,
+                                                     debug = TRUE)),
                  "Imported or updated results for")
 
   tmp <- dbGetVariablesIntoDf(c("a2_eudract_number",
                                 "endPoints.endPoint.title",
                                 "firstreceived_results_date",
                                 "version_results_history"),
-                       collection = coll)
+                              collection = coll)
 
   # test 15
   expect_true(!any(tmp[tmp$a2_eudract_number == "2007-000371-42", ] == ""))
@@ -341,6 +343,8 @@ test_that("browser interaction", {
                  "Opening browser for search:")
 
 })
+
+
 
 # testing downloading from both registers using a proxy
 # a query retrieving a small number of trials
@@ -510,6 +514,47 @@ test_that("operations on database for deduplication", {
 
   # test 47
   expect_equivalent (mongolite::mongo(collection = paste0(coll, "Keys"), db = "users")$drop(), TRUE)
+
+})
+
+
+
+#### annotations of records ####
+test_that("annotate queries", {
+
+  has_internet()
+  has_mongo()
+
+  # initialise
+  coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
+
+  expect_message(ctrLoadQueryIntoDb(
+    queryterm = "2010-024264-18 OR NCT01516567",
+    register = "CTGOV",
+    collection = coll,
+    annotation.text = "ANNO",
+    annotation.mode = "replace"),
+    "Imported or updated 2 trial")
+
+  expect_message(ctrLoadQueryIntoDb(
+    queryterm = "NCT01516567",
+    register = "CTGOV",
+    collection = coll,
+    annotation.text = "TEST",
+    annotation.mode = "prepend"),
+    "Imported or updated 1 trial")
+
+  expect_message(ctrLoadQueryIntoDb(
+    queryterm = "2010-024264-18",
+    register = "EUCTR",
+    collection = coll,
+    annotation.text = "TEST",
+    annotation.mode = "prepend"),
+    "Imported or updated 6 records on 1 trial")
+
+  expect_equal(sort(suppressMessages(dbGetVariablesIntoDf(fields = "annotation",
+                                                          collection = coll))[, "annotation"]),
+               sort(c("ANNO", "TEST", "TEST", "TEST", "TEST", "TEST", "TEST", "TEST ANNO")))
 
 })
 

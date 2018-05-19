@@ -5,8 +5,8 @@
 \title{ctrLoadQueryIntoDbCtgov}
 \usage{
 ctrLoadQueryIntoDbCtgov(queryterm, register, querytoupdate, euctrresults,
-  details, parallelretrievals, debug, collection, db, url, username, password,
-  verbose, queryupdateterm)
+  annotation.text, annotation.mode, details, parallelretrievals, debug,
+  collection, db, url, username, password, verbose, queryupdateterm)
 }
 \arguments{
 \item{queryterm}{Either a string with the full URL of a search in a register
@@ -27,6 +27,9 @@ again; see \link{dbQueryHistory}. This parameter takes precedence over
 retrieving and loading trials from EUCTR. This slows down this function.
 (For CTGOV, all available results are retrieved and loaded from
 ctrdata version 0.9.10 onwards.)}
+
+\item{annotation.text}{Text to be including in the records retrieved
+with the current query, in the field "annotation".}
 
 \item{details}{If \code{TRUE} (default), retrieve full protocol-related
 information from EUCTR or XML data from CTGOV, depending on the register

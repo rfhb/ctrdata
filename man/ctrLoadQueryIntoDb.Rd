@@ -6,10 +6,10 @@
 database}
 \usage{
 ctrLoadQueryIntoDb(queryterm = "", register = "EUCTR", querytoupdate = 0L,
-  euctrresults = FALSE, details = TRUE, parallelretrievals = 10,
-  debug = FALSE, collection = "ctrdata", db = "users",
-  url = "mongodb://localhost", username = "", password = "",
-  verbose = FALSE)
+  euctrresults = FALSE, annotation.text = "", annotation.mode = "append",
+  details = TRUE, parallelretrievals = 10, debug = FALSE,
+  collection = "ctrdata", db = "users", url = "mongodb://localhost",
+  username = "", password = "", verbose = FALSE)
 }
 \arguments{
 \item{queryterm}{Either a string with the full URL of a search in a register
@@ -30,6 +30,9 @@ again; see \link{dbQueryHistory}. This parameter takes precedence over
 retrieving and loading trials from EUCTR. This slows down this function.
 (For CTGOV, all available results are retrieved and loaded from
 ctrdata version 0.9.10 onwards.)}
+
+\item{annotation.text}{Text to be including in the records retrieved
+with the current query, in the field "annotation".}
 
 \item{details}{If \code{TRUE} (default), retrieve full protocol-related
 information from EUCTR or XML data from CTGOV, depending on the register
@@ -59,6 +62,10 @@ mongodb://localhost)}
 \item{password}{In case access requires credentials.}
 
 \item{verbose}{Print information.}
+
+\item{annotate.mode}{One of "append" (default), "prepend" or "replace"
+for new annotation.text with respect to any existing annotation for
+the records retreived with the current query.}
 }
 \value{
 Number of trials imported or updated in the database
