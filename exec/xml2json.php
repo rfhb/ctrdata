@@ -22,6 +22,7 @@ file_exists($testXmlFile) or die('Directory or file does not exist: ' . $testXml
 
 // determine outfile and make sure it does not exist
 $outFileName = $testXmlFile . '/allfiles.json';
+$outIdsName  = $testXmlFile . '/allctgov.txt';
 file_exists($outFileName) and unlink($outFileName);
 
 // get UTC date, time in format correspondsing to the
@@ -61,6 +62,9 @@ foreach (glob("$testXmlFile/NCT*.xml") as $inFileName) {
 
   // save all in one concatenated file
   file_put_contents($outFileName, json_encode($simpleXml), FILE_APPEND | LOCK_EX);
+
+  // save NCT number into one file
+  file_put_contents($outIdsName, basename($inFileName, '.xml') . "\n", FILE_APPEND | LOCK_EX);
 
 }
 

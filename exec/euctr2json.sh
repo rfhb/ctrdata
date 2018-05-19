@@ -157,9 +157,11 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.json" perl -ne '
     # {\n"a2_eudract_number": "2006-001238-41",
     # print $_ if /"a2_eudract_number"/;
 
-    if (/"a2_eudract_number"/)
+    #if (/"a2_eudract_number"/)
+    if (/^"_id"/)
     {
-    s/^.*([0-9]{4}-[0-9]{6}-[0-9]{2}).*$/$1/g;
+    #s/^.*([0-9]{4}-[0-9]{6}-[0-9]{2}).*$/$1/g;
+    s/^.*([0-9]{4}-[0-9]{6}-[0-9]{2}-[A-Z3]{2,3}).*$/$1/g;
     print $_;
 
     }
