@@ -24,10 +24,11 @@
 #'   retrieving and loading trials from EUCTR. This slows down this function.
 #'   (For CTGOV, all available results are retrieved and loaded from
 #'   ctrdata version 0.9.10 onwards.)
-#' @param annotate.text Text to be including in the records retrieved
- #'   with the current query.
-#' @param annotate.mode One of "append" (default), "prepend" or "overwrite"
-#'   for new annotation.text with respect to any existing annotation.text.
+#' @param annotation.text Text to be including in the records retrieved
+ #'   with the current query, in the field "annotation".
+#' @param annotate.mode One of "append" (default), "prepend" or "replace"
+#'   for new annotation.text with respect to any existing annotation for
+#'   the records retreived with the current query.
 #' @param details If \code{TRUE} (default), retrieve full protocol-related
 #'   information from EUCTR or XML data from CTGOV, depending on the register
 #'   selected. This gives all of the available details for the trials.
@@ -70,7 +71,7 @@
 #' @export
 #'
 ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate = 0L,
-                               euctrresults = FALSE, annotate.text = "", annotation.mode = "append",
+                               euctrresults = FALSE, annotation.text = "", annotation.mode = "append",
                                details = TRUE, parallelretrievals = 10, debug = FALSE,
                                collection = "ctrdata", db = "users", url = "mongodb://localhost",
                                username = "", password = "", verbose = FALSE) {
@@ -137,6 +138,10 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   # remove trailing or leading whitespace
   queryterm <- gsub("^\\s+|\\s+$", "", queryterm)
 
+  # check annotation parameters
+  if(annotation.text != "" & annotation.mode == "") stop(" annotation.mode empty", call. = FALSE)
+  if(!(annotation.mode %in% c("append", "prepend", "replace"))) stop(" annotation.mode incorrect", call. = FALSE)
+
   # initialise variable that is filled only if an update is to be made
   queryupdateterm <- ""
 
@@ -167,7 +172,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
 
   # parameters for core functions
   params <- list(queryterm = queryterm, register = register, querytoupdate = querytoupdate,
-                 euctrresults = euctrresults, annotate.text = annotate.text, annotation.mode = annotation.mode,
+                 euctrresults = euctrresults, annotation.text = annotation.text, annotation.mode = annotation.mode,
                  details = details, parallelretrievals = parallelretrievals, debug = debug,
                  collection = collection, db = db, url = url,
                  username = username, password = password, verbose = verbose,
@@ -374,66 +379,71 @@ progressOut <- function(down, up) {
 #'
 #' @importFrom jsonlite toJSON
 #'
-dbCTRAnnotateQueryRecords <- function(recordnumbers, annotate.text, annotation.mode,
+dbCTRAnnotateQueryRecords <- function(recordnumbers, annotations, annotation.text, annotation.mode,
                                       collection = collection, db = db, url = url,
-                                      username = username, password = password, verbose = verbose,
-                                      mongo = mongo){
+                                      username = username, password = password, verbose = verbose){
 
   # debug
-  if (verbose) message("Running dbCTRAnnotateQueryRecords ...")
+  if(verbose) message("* Running dbCTRAnnotateQueryRecords ...")
+  if(verbose) message(recordnumbers)
+  if(verbose) message(annotations)
+  if(verbose) message(annotation.mode)
+
+  # check if dataframe is as expected: columns _id and annotation
+  if(nrow(annotations) == 0){
+    annotations <- data.frame("_id" = recordnumbers,
+                              "annotation" = "",
+                              stringsAsFactors = FALSE)
+    names(annotations) <- c("_id", "annotation")
+  }
+  if(!("annotation" %in% names(annotations))) {
+    annotations <- data.frame(annotations,
+                              "annotation" = "",
+                              stringsAsFactors = FALSE)
+    names(annotations) <- c("_id", "annotation")
+  }
+
+  # keep only those annotations that are to be modified
+  annotations <- annotations[annotations[["_id"]] %in% recordnumbers, ]
+
+  # check if dataframe is as expected: columns _id and annotation
+  if(nrow(annotations) == 0){
+    annotations <- data.frame("_id" = recordnumbers,
+                              "annotation" = "",
+                              stringsAsFactors = FALSE)
+    names(annotations) <- c("_id", "annotation")
+  }
+
+  # modify the annotations
+  annotations$annotation <- switch(annotation.mode,
+                                   "replace" = paste0(annotation.text),
+                                   "prepend" = paste0(annotation.text, ' ', annotations$annotation),
+                                              paste0(annotations$annotation, ' ', annotation.text)
+  )
+  annotations$annotation <- paste0('{"$set": {"annotation": "',
+                                   trimws(annotations$annotation),
+                                   '"}}')
+
+  # debug
+  if(verbose) message(annotations)
 
   # get a working mongo connection, select trial record collection
-  # mongo <- ctrdata:::ctrMongo()[["ctr"]]
+  # mongo <- ctrdata:::ctrMongo(collection = coll)[["ctr"]]
   mongo <- ctrMongo(collection = collection, db = db, url = url,
                     username = username, password = password, verbose = verbose)[["ctr"]]
 
-  # batch over recordnumbers
-  batchLen <- 10
-  numRecs <- length(recordnumbers)
+  # update the database
+  for(i in annotations[["_id"]]) {
+    mongo$update(query = paste0('{"_id": {"$eq": "', i ,'"}}'),
+                 update = annotations[ annotations[["_id"]] == i, 2],
+                 upsert = TRUE)
+  }
 
-  # calculate batches to get data from all results pages
-  numBatches <- numRecs %/% batchLen
-  numModulo  <- numRecs %%  batchLen
-
-  # iterate over batches of results pages
-  for (i in 1:(numBatches + ifelse(numModulo > 0, 1, 0))) {
-
-    # calculate indices
-    startRec <- (i - 1) * batchLen + 1
-    stopRec  <- ifelse(i > numBatches,
-                       startRec + numModulo,
-                       startRec + batchLen) - 1
-
-    # inform user
-    if (verbose) message("Batch ", i, ": ", startRec, " - ", stopRec)
-
-    # create the aggregation pipeline
-    # recordnumbers <- mongo$find(fields = '{"_id": 1}')[,1]
-    pipeline <- paste0('[',
-                       '{"$match": {"_id": {"$in": ', jsonlite::toJSON(recordnumbers), '}}}, ',
-                       '{"$project": {"ctrname": {"$concat": ["$ctrname", "XX"]}}}',
-                       ']')
-
-    jsonlite::validate(pipeline)
-    jsonlite::prettify(pipeline)
-    if(!validate(pipeline)) return(NULL)
-
-    # get the data
-    tmpannos <- mongo$aggregate(pipeline = pipeline)
-    tmpannos[,2] <- paste0('{ "$set": {"', names(tmpannos)[2], '": "', tmpannos[,2], '"}}')
-
-    # update the database
-    for(i in tmpannos[["_id"]]) {
-      mongo$update(query = paste0('{"_id": {"$eq": "', i ,'"}}'),
-                   update = tmpannos[ tmpannos[["_id"]] == i, 2],
-                   upsert = TRUE)
-    }
-
+  # close database connection
+  rm(mongo)
 
   # inform user
-  message('* Updated history in meta-info of "', collection, '"')
-  # debug
-  message(recordnumbers)
+  message('= Annotated retrieved records')
 
 }
 
@@ -487,6 +497,9 @@ dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber,
                update = paste0('{ "$set" :', json, "}"),
                upsert = TRUE)
 
+  # close database connection
+  rm(mongo)
+
   # inform user
   message('* Updated history in meta-info of "', collection, '"')
 
@@ -504,7 +517,7 @@ dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber,
 #' @importFrom RCurl getCurlHandle close curlPerform CFILE
 #'
 ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
-                                    euctrresults, annotate.text, annotation.mode,
+                                    euctrresults, annotation.text, annotation.mode,
                                     details, parallelretrievals, debug,
                                     collection, db, url,
                                     username, password, verbose,
@@ -592,6 +605,17 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   if (debug) message("DEBUG: ", xml2json)
   imported <- system(xml2json, intern = TRUE)
 
+  # get a working mongo connection, select trial record collection
+  mongo <- ctrMongo(collection = collection, db = db, url = url,
+                    username = username, password = password, verbose = FALSE)[["ctr"]]
+
+  # get any annotations for any later update
+  if((annotation.text != "")){
+
+    annotations <- mongo$find(query = paste0('{"_id": {"$ne": "meta-info"}}'),
+                              fields = '{"_id": 1, "annotation": 1}')
+  }
+
   ## run import
   message("Importing JSON into mongoDB ...")
   if (debug) message("DEBUG: ", json2mongo)
@@ -614,9 +638,6 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   #   "CDR0000068036"
   #   ]
   #
-  # get a working mongo connection, select trial record collection
-  mongo <- ctrMongo(collection = collection, db = db, url = url,
-                    username = username, password = password, verbose = FALSE)[["ctr"]]
 
   # obtain full data set on _id and other ids
   cursor <- mongo$iterate(query  = '{"_id": { "$regex": "^NCT[0-9]{8}", "$options": ""} }',
@@ -634,32 +655,30 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
     mongo$update(query  = paste0('{"_id":{"$eq":"', cursor[i], '"}}'),
                  update = paste0('{ "$set" :', tmp, "}"),
                  upsert = TRUE)
-
   }
+
   # add index for newly created fired
   mongo$index(add = "otherids")
   message('Added index field "otherids".')
+
+  # close database connection
+  rm(mongo)
 
   ## read in the ctgov ids of the trials that were just retrieved and imported
   ctgovidsimported <- readLines(paste0(tempDir, "/allctgov.txt"))
   ctgovidsimported <- rev(sort(unique(ctgovidsimported)))
 
   ## add annotations
-  if((annotate.text != "") &
+  if((annotation.text != "") &
      (length(ctgovidsimported) > 0)){
 
     # dispatch
-    dbCTRAnnotateQueryRecords(recordnumbers = ctgovidsimported,
-                              annotate.text, annotation.mode,
+    dbCTRAnnotateQueryRecords(recordnumbers = ctgovidsimported, annotations = annotations,
+                              annotation.text = annotation.text, annotation.mode = annotation.mode,
                               collection = collection, db = db, url = url,
-                              username = username, password = password, verbose = verbose,
-                              mongo = mongo)
+                              username = username, password = password, verbose = verbose)
 
   }
-
-  # close database connection
-  rm(mongo)
-
 
   ## find out number of trials imported into database
   if (debug) message("DEBUG: ", imported)
@@ -692,7 +711,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
 #' @importFrom RCurl getCurlHandle getURL
 #'
 ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
-                                    euctrresults, annotate.text, annotation.mode,
+                                    euctrresults, annotation.text, annotation.mode,
                                     details, parallelretrievals, debug,
                                     collection, db, url,
                                     username, password, verbose,
@@ -808,6 +827,17 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     #
   }
 
+  # get a working mongo connection, select trial record collection
+  mongo <- ctrMongo(collection = collection, db = db, url = url,
+                    username = username, password = password, verbose = FALSE)[["ctr"]]
+
+  # get any annotations for any later update
+  if((annotation.text != "")){
+
+    annotations <- mongo$find(query = paste0('{"_id": {"$ne": "meta-info"}}'),
+                              fields = '{"_id": 1, "annotation": 1}')
+  }
+
   # run conversion of text files saved into file system to json file
   message("Converting to JSON ...")
   if (debug) message("DEBUG: ", euctr2json)
@@ -824,7 +854,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
 
 
   # find out if fast import was successful
-  if ( (!is.numeric(imported)) || (imported < resultsEuNumTrials) || (debug & !verbose) ) {
+  if ( (!is.numeric(imported)) || (imported < resultsEuNumTrials)) { #  || (debug & !verbose)
 
     # if not successful, switch to SLOW IMPORT
     warning("Switching to slow import because mongoimport as single JSON file failed.", immediate. = TRUE)
@@ -882,25 +912,26 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   } # if fast import not successful
 
   ## read in the eudract numbers of the trials that were just retrieved and imported
+  # tempDir <- "/var/folders/pl/w9q56zk56x1c7xykmtq7b5_00000gn/T//RtmpUokXgv/ctrDATA182db4afeaaa6"
   eudractnumbersimported <- readLines(paste0(tempDir, "/alleudract.txt"))
   eudractnumbersimported <- rev(sort(unique(eudractnumbersimported)))
 
   ## add annotations
-  if((annotate.text != "") &
+  if((annotation.text != "") &
      (length(eudractnumbersimported) > 0)){
 
     # dispatch
-    dbCTRAnnotateQueryRecords(recordnumbers = eudractnumbersimported,
-                              annotate.text, annotation.mode,
+    dbCTRAnnotateQueryRecords(recordnumbers = eudractnumbersimported, annotations = annotations,
+                              annotation.text = annotation.text, annotation.mode = annotation.mode,
                               collection = collection, db = db, url = url,
-                              username = username, password = password, verbose = verbose,
-                              mongo = mongo)
-
+                              username = username, password = password, verbose = verbose)
   }
 
   ## inform user on final import outcome
   message("= Imported or updated ", imported, " records on ", resultsEuNumTrials, " trial(s).")
 
+  # debug
+  if (debug) message(eudractnumbersimported)
 
 
   ## results: load also euctr trials results if requested
@@ -910,9 +941,10 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
 
     # for debugging:
     # tempDir <- "/Users/ralfherold/Daten/mak/r/emea/ctrdata/private/test"
+    # eudractnumbersimported <- c("2004-000518-37-AT", "2007-000371-42-DE", "2004-004386-15-3RD")
 
-    # for debugging:
-    # eudractnumbersimported <- c("2004-000518-37", "2007-000371-42", "2004-004386-15", "2007-000371-42")
+    # transform eudract numbers with country info ("2010-024264-18-3RD") into eudract numbers ("2010-024264-18")
+    eudractnumbersimported <- unique(substring(text = eudractnumbersimported, first = 1, last = 14))
 
     # inform user
     message("\n* Downloading results from EUCTR for ", length(eudractnumbersimported), " trials: ")
@@ -968,8 +1000,10 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                                  tmp <- utils::unzip(f, exdir = tempDir)
 
                                  if (any(grepl("pdf$", tmp)))
-                                   warning("PDF results ", x,
-                                           call. = FALSE, immediate. = TRUE, noBreaks. = TRUE)
+                                   message("PDF results ", x,
+                                           call. = FALSE,
+                                           immediate. = TRUE,
+                                           noBreaks. = TRUE)
 
                                  if (any(tmp2 <- grepl("xml$", tmp)))
                                    file.rename(tmp[tmp2][1], paste0(tempDir, "/", x, ".xml"))

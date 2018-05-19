@@ -1,3 +1,7 @@
+# ctrdata 0.12
+ - 2018-05-19
+ - added possibility to annotate records retrieved with a query
+   
 # ctrdata 0.11.2
  - 2018-04-22
  - changed queryterm processing
