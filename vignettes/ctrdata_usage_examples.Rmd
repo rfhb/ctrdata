@@ -5,8 +5,10 @@ date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{ctrdata usage examples}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
 ---
 
 # Examples for using R package `ctrdata` for clinical trial protocol-related information
@@ -853,7 +855,20 @@ knitr::kable(tmp[1:10,])
 #
 ```
 
+![ECDFpvalues](ctrdatapvaluesphase23.png)
 
+|Primary analysis method              | Freq|
+|:------------------------------------|----:|
+|Ancova                               |   40|
+|Cochran Mantel Haenszel              |   13|
+|Mixed Models Analysis                |   11|
+|Anova                                |   11|
+|Fisher Exact                         |    9|
+|Chi Squared                          |    6|
+|t Test 2 Sided                       |    5|
+|Mixed Model Repeated Measures (Mmrm) |    4|
+|Wilcoxon (Mann Whitney)              |    3|
+|Regression Cox                       |    3|
 
 
 
