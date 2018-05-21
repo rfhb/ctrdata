@@ -17,6 +17,36 @@ editor_options:
 #
 knitr::opts_chunk$set(eval=FALSE, warning=FALSE, message=FALSE, results="hide")
 #
+# helper functions
+normalise_number <- function(x) {
+  
+  x <- gsub("<=|<|≤|=|>", "",  x)
+  x <- gsub("(^| )[.]", "0.", x)
+  x <- trimws(x)
+  x <- sapply(x, FUN = function(y) {
+    z <- try(as.numeric(y), silent = TRUE)
+    if(class(z) == "try-error") {
+      NA
+      message(z)
+    } else {
+      z
+    }
+  })
+  unname(x)
+}
+#
+normalise_string <- function(x) {
+  
+  x <- gsub(",", "",  x)
+  x <- gsub("-", " ", x)
+  x <- tolower(x)
+  x <- tools::toTitleCase(x)
+  x <- gsub("[ ]+", " ", x)
+  x <- trimws(x)
+  x
+  
+}
+#
 ```
 
 General information on the `ctrdata` package is available here: [https://github.com/rfhb/ctrdata](https://github.com/rfhb/ctrdata). 
@@ -751,17 +781,13 @@ Distribution of p values.
 
 ```{r analyse_results_1}
 
-ctrLoadQueryIntoDb(queryterm = paste0("https://clinicaltrials.gov/ct2/results?rslt=With&age=0&intr=Drug&", 
-                                      "phase=1&phase=2&strd_s=01%2F01%2F2010&strd_e=12%2F31%2F2012"), 
-                                      collection = "resultsTest")
+if(FALSE) ctrLoadQueryIntoDb(queryterm = paste0("https://clinicaltrials.gov/ct2/results?rslt=With&age=0&intr=Drug&", 
+                                                "phase=1&phase=2&strd_s=01%2F01%2F2010&strd_e=12%2F31%2F2012"), 
+                             collection = "resultsTest")
 
 # get result set
-result <- dbGetVariablesIntoDf(c("start_date", "condition", "detailed_description.textblock", "official_title",
-                                 "study_design_info.allocation", "primary_outcome.measure", "oversight_info.has_dmc",
-                                 "has_expanded_access", "completion_date", "primary_completion_date", 
-                                 "results_first_submitted", "arm_group.arm_group_type", "phase",
-                                 "clinical_results.outcome_list.outcome.measure.param",
-                                 "clinical_results.outcome_list.outcome.measure.units", 
+result <- dbGetVariablesIntoDf(c("start_date", "detailed_description.textblock", "official_title",
+                                 "study_design_info.allocation", "primary_outcome.measure", "arm_group.arm_group_type", 
                                  "clinical_results.outcome_list.outcome.analysis_list.analysis.method",
                                  "clinical_results.outcome_list.outcome.analysis_list.analysis.p_value",
                                  "clinical_results.outcome_list.outcome.analysis_list.analysis.param_type",
@@ -780,53 +806,25 @@ tmp <- unlist(tmp)
 result$totalparticipants <- tmp
 
 # value of reported p value for primary endpoint analysis
-normalise_number <- function(x) {
-  
-  x <- gsub("<=|<|≤|=|>", "",  x)
-  x <- gsub("(^| )[.]", "0.", x)
-  x <- trimws(x)
-  x <- sapply(x, FUN = function(y) {
-    z <- try(as.numeric(y), silent = TRUE)
-    if(class(z) == "try-error") {
-      NA
-      message(z)
-    } else {
-      z
-    }
-  })
-  unname(x)
-}
 tmp <- lapply(result$clinical_results.outcome_list.outcome.analysis_list.analysis.p_value, 
              FUN = function(x) strsplit(x, " / ")[[1]][1])
 tmp <- normalise_number(tmp)
 result$pvalueprimaryanalysis <- tmp
 
 # statistical method used for primary endpoint analysis
-normalise_string <- function(x) {
-  
-  x <- gsub(",", "",  x)
-  x <- gsub("-", " ", x)
-  x <- tolower(x)
-  x <- tools::toTitleCase(x)
-  x <- gsub("[ ]+", " ", x)
-  x <- trimws(x)
-  x
-  
-}
 tmp <- lapply(result$clinical_results.outcome_list.outcome.analysis_list.analysis.method, 
              FUN = function(x) strsplit(x, " / ")[[1]][1])
 tmp <- do.call(rbind, tmp)
 tmp <- normalise_string(tmp)
 result$methodprimaryanalysis <- tmp
 
-# only certain trials, those that are likely to investigate safety and efficacy
+# based on allocation arms, keep trials that are likely to investigate safety and efficacy
 result$control <- grepl("(Placebo|No Intervention)", result$arm_group.arm_group_type, ignore.case = TRUE)
 result <- subset(result, control == TRUE)
 
 # http://varianceexplained.org/statistics/interpreting-pvalue-histogram/
 # http://www.pnas.org/content/100/16/9440.full
-
-# empirical distribution function 
+# plot p values
 library(ggplot2)
 ggplot(result, aes(pvalueprimaryanalysis)) + 
   geom_vline(aes(xintercept = 0.05, colour = "0.05")) +
