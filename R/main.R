@@ -571,6 +571,10 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   ctgovdownloadcsvurl <- paste0(queryUSRoot, queryUSType1, "&", queryterm, queryupdateterm)
   if (debug) message ("DEBUG: ", ctgovdownloadcsvurl)
 
+  # check if host is available
+  if(!RCurl::url.exists(url = queryUSRoot, .opts = list(connecttimeout = 2, ssl.verifypeer = FALSE)))
+    stop("Host ", queryEuRoot, " does not respond, cannot continue.", call. = FALSE)
+
   # prepare a file handle for saving in temporary directory
   f <- paste0(tempDir, "/", "ctgov.zip")
 
@@ -766,6 +770,10 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   queryEuType3 <- "ctr-search/rest/download/full?"
   queryEuType4 <- "ctr-search/rest/download/result/zip/xml/"
   queryEuPost  <- "&mode=current_page&format=text&dContent=summary&number=current_page&submit-download=Download"
+
+  # check if host is available
+  if(!RCurl::url.exists(url = queryEuRoot, .opts = list(connecttimeout = 2, ssl.verifypeer = FALSE)))
+    stop("Host ", queryEuRoot, " does not respond, cannot continue.", call. = FALSE)
 
   # get first result page
   h <- RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE)) # avoid certificate failure from outside EU
