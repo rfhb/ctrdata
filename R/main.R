@@ -573,7 +573,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
 
   # check if host is available
   if(!RCurl::url.exists(url = queryUSRoot, .opts = list(connecttimeout = 2, ssl.verifypeer = FALSE)))
-    stop("Host ", queryEuRoot, " does not respond, cannot continue.", call. = FALSE)
+    stop("Host ", queryUSRoot, " does not respond, cannot continue.", call. = FALSE)
 
   # prepare a file handle for saving in temporary directory
   f <- paste0(tempDir, "/", "ctgov.zip")

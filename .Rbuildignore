@@ -13,3 +13,4 @@
 ^docs$
 ^.lintr$
 ^appveyor\.yml$
+^LICENSE.md$

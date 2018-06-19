@@ -21,8 +21,8 @@ has_internet <- function(){
   if (is.null(curl::nslookup("r-project.org", error = FALSE))) {
     skip("No internet connection available. ")
   }
-  if (!RCurl::url.exists(url = "https://clinicaltrialsregister.eu/", .opts = list(connecttimeout = 2, ssl.verifypeer = FALSE)) ||
-      !RCurl::url.exists(url = "https://clinicaltrials.gov/",        .opts = list(connecttimeout = 2, ssl.verifypeer = FALSE))) {
+  if (!RCurl::url.exists(url = "https://www.clinicaltrialsregister.eu/", .opts = list(connecttimeout = 2, ssl.verifypeer = FALSE)) ||
+      !RCurl::url.exists(url = "https://clinicaltrials.gov/",            .opts = list(connecttimeout = 2, ssl.verifypeer = FALSE))) {
     skip("One or more registers not available. ")
   }
 }
