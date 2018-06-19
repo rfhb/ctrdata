@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/rfhb/ctrdata.png?branch=master)](https://travis-ci.org/rfhb/ctrdata)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/rfhb/ctrdata?branch=master&svg=true)](https://ci.appveyor.com/project/rfhb/ctrdata)
 [![codecov](https://codecov.io/gh/rfhb/ctrdata/branch/master/graph/badge.svg)](https://codecov.io/gh/rfhb/ctrdata)
-Codecov does not check MS Windows-only code. 
+[Note: codecov checks do not cover MS Windows-only code and require registers to be online.] 
 
 # README.md for R package ctrdata on github.com
 
@@ -11,7 +11,7 @@ Online version of this document: [https://github.com/rfhb/ctrdata/](https://gith
 
 The package `ctrdata` provides functions for retrieving (downloading) information on clinical trials from public registers, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started mid 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package is to be used within the [R](https://www.r-project.org/) system. 
 
-Last edit 2018-05-19 for version 0.12, which newly provides to annotate records when they retrieved with a query. 
+Last edit 2018-05-19 for version 0.12, which newly provides to add personal annotations to records retrieved from a register, for later use in analysis. 
 
 Main features:
 
