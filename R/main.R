@@ -567,7 +567,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   if (!grepl("=", queryterm)) queryterm <- paste0("term=", queryterm)
 
   ## inform user and prepare url for downloading
-  message("* Downloading trials from CTGOV as xml ", appendLF = FALSE)
+  message("(1/3) Downloading trials from CTGOV as xml ", appendLF = FALSE)
   ctgovdownloadcsvurl <- paste0(queryUSRoot, queryUSType1, "&", queryterm, queryupdateterm)
   if (debug) message ("DEBUG: ", ctgovdownloadcsvurl)
 
@@ -621,7 +621,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   } # if windows
 
   # run conversion of downloaded xml to json
-  message("Converting to JSON ...")
+  message("(2/3) Converting to JSON ...")
   if (debug) message("DEBUG: ", xml2json)
   imported <- system(xml2json, intern = TRUE)
 
@@ -637,9 +637,9 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   }
 
   ## run import
-  message("Importing JSON into mongoDB ...")
+  message("(3/3) Importing JSON into mongoDB ...")
   if (debug) message("DEBUG: ", json2mongo)
-  imported <- system2(command = installMongoFindBinaries(debug = debug)[2],
+  imported <- system2(command = installMongoFindBinaries(debug = FALSE)[2],
                       args = json2mongo,
                       stdout = TRUE, stderr = TRUE)
 
@@ -799,7 +799,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   # calculate batches to get data from all results pages
   resultsNumBatches <- resultsEuNumPages %/% parallelretrievals
   resultsNumModulo  <- resultsEuNumPages %%  parallelretrievals
-  message("Downloading trials (from a maximum of ", parallelretrievals, " page(s) in parallel):")
+  message("(1/3) Downloading trials (from a maximum of ", parallelretrievals, " page(s) in parallel):")
 
   # iterate over batches of results pages
   for (i in 1:(resultsNumBatches + ifelse(resultsNumModulo > 0, 1, 0))) {
@@ -810,7 +810,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     stoppage  <- ifelse(i > resultsNumBatches,
                         startpage + resultsNumModulo,
                         startpage + parallelretrievals) - 1
-    message("(", i, ") ", startpage, "-", stoppage, " ", appendLF = FALSE)
+    message(" p ", startpage, "-", stoppage, " ", appendLF = FALSE)
 
     # download all text files from pages in current batch into variable
     tmp <- RCurl::getURL(unlist(lapply(paste0(queryEuRoot, ifelse(details, queryEuType3, queryEuType2),
@@ -874,14 +874,14 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   }
 
   # run conversion of text files saved into file system to json file
-  message("Converting to JSON ...")
+  message("(2/3) Converting to JSON ...")
   if (debug) message("DEBUG: ", euctr2json)
   imported <- system(euctr2json, intern = TRUE)
 
   # run fast import into mongo from single json file
-  message("Importing JSON into mongoDB ...")
+  message("(3/3) Importing JSON into mongoDB ...")
   if (debug) message("DEBUG: ", json2mongo)
-  imported <- system2(command = installMongoFindBinaries(debug = TRUE)[2],
+  imported <- system2(command = installMongoFindBinaries(debug = FALSE)[2],
                       args = json2mongo, stdout = TRUE, stderr = TRUE)
 
   # identify number of trials imported into database
@@ -909,21 +909,21 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
 
     # run json2split, to split single json file
     # into one json file for each trial record
-    message("Splitting into JSON files ...")
+    message("(3a/3) Splitting into JSON files ...")
     if (debug) message("DEBUG: ", json2split)
     imported  <- system(json2split, intern = TRUE)
     splitjson <- try(as.numeric(imported), silent = TRUE)
     if (class(splitjson) == "try-error") stop("Splitting single JSON files failed. Aborting ctrLoadQueryIntoDb.")
 
     # now import single-trial json files one by one, record and print failed trial ids
-    message("Importing ", max(splitjson), " individual JSON files ...")
+    message("(3b/3) Importing ", max(splitjson), " individual JSON files ...")
     allimported <- 0
     for (i in 1:splitjson) {
       # TODO: loop / parallelise
       # compose command
       json2split2mongo <- sub("allfiles.json", paste0("allfiles-", i, ".json"), json2mongo)
       # run import command
-      imported <- system2(command = installMongoFindBinaries(debug = TRUE)[2],
+      imported <- system2(command = installMongoFindBinaries(debug = FALSE)[2],
                           args = json2split2mongo, stdout = TRUE, stderr = TRUE)
       # identify if successful result or not
       imported <- as.integer(gsub("^.*imported ([0-9]+) document[s]{0,1}$", "\\1", imported[length(imported)]))

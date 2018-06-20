@@ -308,7 +308,7 @@ dbQueryHistory <- function(collection = "ctrdata", db = "users", url = "mongodb:
 
   # total number of records in collection to inform user
   countall <- mongo$count(query = '{"_id":{"$ne":"meta-info"}}')
-  message("Total of ", countall, " records in collection.")
+  message("Number of records in collection \"", mongo$info()$stats$ns, "\": ", countall)
 
   # close database connection
   rm(mongo)
@@ -413,7 +413,7 @@ dbFindVariable <- function(namepart = "", allmatches = FALSE, forceupdate = FALS
       #
     }
     #
-    message("Calling mongo with variety.js and adding keys to database ...")
+    message("* Calling mongo with variety.js and adding keys to database ...")
     if (debug) message(varietymongo)
     tmp <- system(varietymongo, intern = TRUE)
     if (debug) message(tmp)
