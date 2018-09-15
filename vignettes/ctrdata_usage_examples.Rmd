@@ -47,6 +47,17 @@ normalise_string <- function(x) {
   
 }
 #
+grepl_multi <- function (patterns, x, simplify = TRUE) {
+  if(!is.vector(patterns)) stop("patterns should be a vector.")
+  ret <- apply(as.matrix(patterns), 1, function(pattern) grepl(pattern, x, ignore.case = TRUE))
+  ret <- as.data.frame(ret)
+  if (simplify) 
+    ret <- rowSums(ret) >= 1
+  else
+    names(ret) <- patterns
+  return(ret)
+}
+#
 ```
 
 General information on the `ctrdata` package is available here: [https://github.com/rfhb/ctrdata](https://github.com/rfhb/ctrdata). 
@@ -284,7 +295,7 @@ statusvalues <- list("ongoing" = c("Recruiting", "Active", "Ongoing",
                                    "Enrolling by invitation", "Restarted"),
                     "completed" = c("Completed", "Prematurely Ended", "Terminated"),
                     "other"     = c("Withdrawn", "Suspended", "No longer available", 
-                                    "Not yet recruiting", "Temporarily Halted"))
+                                    "Not yet recruiting", "Temporarily Halted", "Unknown status"))
 #
 tmp <- dfMergeTwoVariablesRelevel(result, 
                                   varnames = c("overall_status", "p_end_of_trial_status"), 
@@ -538,18 +549,6 @@ result$country <- sub("^.+-([3A-Z]+)$", "\\1", result$`_id`)
 searchfor <- "cancer, leukaem, leukem, tumour, tumor, sarcoma, blastom, gliom, germ, lymphom, malign, hodgkin, ewing, rhabdo, terato, tumeur, leucemi"
 searchfor <- strsplit(searchfor, ", ")[[1]]
 #
-# helper function to extend grepl to check for several patterns
-grepl_multi <- function (patterns, x, simplify = TRUE) {
-  if(!is.vector(patterns)) stop("patterns should be a vector.")
-  ret <- apply(as.matrix(patterns), 1, function(pattern) grepl(pattern, x, ignore.case = TRUE))
-  ret <- as.data.frame(ret)
-  if (simplify) 
-    ret <- rowSums(ret) >= 1
-  else
-    names(ret) <- patterns
-  return(ret)
-}
-#
 relevant <- grepl_multi(searchfor, result$a3_full_title_of_the_trial) | 
             grepl_multi(searchfor, result$e11_medical_conditions_being_investigated) |
             grepl_multi("C04",     result$e112_therapeutic_area)
@@ -597,12 +596,12 @@ m <- mongo(db = "users", collection = "ctrdata")
 m$count()
 #
 # Number of EUCTR records, using json for query:
-m$count('{"_id": {"$regex": "[0-9]{4}-[0-9]{6}-[0-9]{2}"}}')
+m$count('{"_id": {"$regex": "[0-9]{4}-[0-9]{6}-[0-9]{2}", "$options": "i"}}')
 # alternatively (since version 0.8.1)
 m$count('{"ctrname": "EUCTR"}')
 # 
 # Number of CTGOV records, using json for query:
-m$count('{"_id": {"$regex": "NCT[0-9]{8}"}}')
+m$count('{"_id": {"$regex": "NCT[0-9]{8}", "$options": "i"}}')
 # alternatively (since version 0.8.1)
 m$count('{"ctrname": "CTGOV"}')
 # 
@@ -615,7 +614,7 @@ m$count('{"ctrname": "CTGOV"}')
 #
 # Recommendation: to best define regular expressions for analyses, 
 # inspect the field primary_outcome.measure in data base, or print:
-m$distinct("primary_outcome.measure", query = '{"_id": {"$regex": "NCT[0-9]{8}"}}')
+m$distinct("primary_outcome.measure", query = '{"_id": {"$regex": "NCT[0-9]{8}", "$options": "i"}}')
 #
 # PFS, EFS, RFS or DFS
 m$aggregate('[{"$match": {"primary_outcome.measure": 
