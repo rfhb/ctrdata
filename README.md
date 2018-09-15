@@ -11,7 +11,7 @@ Online version of this document: [https://github.com/rfhb/ctrdata/](https://gith
 
 The package `ctrdata` provides functions for retrieving (downloading) information on clinical trials from public registers, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started mid 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package is to be used within the [R](https://www.r-project.org/) system. 
 
-Last edit 2018-05-19 for version 0.12, which newly provides to add personal annotations to records retrieved from a register, for later use in analysis. 
+Last edit 2018-09-15 for version 0.12, which newly provides to add personal annotations to records retrieved from a register, for later use in analysis. 
 
 Main features:
 
@@ -44,7 +44,7 @@ citation("ctrdata")
 
 The package `ctrdata` has been used for example for: 
 
-- Webpage reporting on [Innovation coming to paediatric research](https://paediatricdata.eu/2018/01/14/innovation-coming-to-paediatric-research/)
+- Blog post on [Innovation coming to paediatric research](https://paediatricdata.eu/2018/01/14/innovation-coming-to-paediatric-research/)
 
 - Report on [The impact of collaboration: The value of UK medical research to EU science and health](http://www.cancerresearchuk.org/about-us/we-develop-policy/we-work-with-government/exiting-the-eu/uk-and-eu-research#downloads)
 
@@ -257,7 +257,7 @@ with (result, table (p_end_of_trial_status, b1_sponsor.b31_and_b32_status_of_the
 
 * Package `ctrdata` should work and was tested on Linux, Mac OS X and MS Windows systems. Linux and MS Windows are tested using continuous integration, see badges at the beginning of this document. Please file an issue for any problems. 
 
-* The information in the registers may not be fully correct; see [this publication on CTGOV](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3066456/#S7). 
+* The information in the registers may not be fully correct; see [this publication on CTGOV](https://www.bmj.com/content/361/bmj.k1452). 
 
 * No attempts were made to harmonise field names between registers, but `dfMergeTwoVariablesRelevel()` can be used to merge and map two variables / fields into one. So far, there is no typing of database fields; they are all strings (except for indices). 
 
