@@ -165,17 +165,6 @@ ctrOpenSearchPagesInBrowser <- function(input = "", register = "", copyright = F
     }
   }
   #
-  if (input != "" && register != "") {
-    #
-    message("Opening browser for input: \n\n", input, "\n\nin register: ", register)
-    #
-    utils::browseURL(paste0(switch(as.character(register),
-                                   "CTGOV" = "https://clinicaltrials.gov/ct2/results?",
-                                   "EUCTR" = "https://www.clinicaltrialsregister.eu/ctr-search/search?"),
-                            input), encodeIfNeeded = TRUE, ...)
-    #
-  }
-  #
   invisible(TRUE)
 }
 # end ctrOpenSearchPagesInBrowser
@@ -203,7 +192,7 @@ ctrOpenSearchPagesInBrowser <- function(input = "", register = "", copyright = F
 ctrGetQueryUrlFromBrowser <- function(content = "") {
   #
   # if content parameter not specified, get and check clipboard contents
-  if(length(content) == 1L & nchar(content) == 0L) content <- clipr::read_clip()
+  if(length(content) == 1L && nchar(content) == 0L) content <- clipr::read_clip()
   #
   if (length(content) != 1L) {
     stop("ctrGetQueryUrlFromBrowser(): no clinical trial register search URL found ",
