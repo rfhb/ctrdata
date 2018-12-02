@@ -5,11 +5,12 @@
 \title{Retrieve or update information on clinical trials from register and store in
 database}
 \usage{
-ctrLoadQueryIntoDb(queryterm = "", register = "EUCTR", querytoupdate = 0L,
-  euctrresults = FALSE, annotation.text = "", annotation.mode = "append",
-  details = TRUE, parallelretrievals = 10, debug = FALSE,
-  collection = "ctrdata", db = "users", url = "mongodb://localhost",
-  username = "", password = "", verbose = FALSE)
+ctrLoadQueryIntoDb(queryterm = "", register = "EUCTR",
+  querytoupdate = 0L, euctrresults = FALSE, annotation.text = "",
+  annotation.mode = "append", details = TRUE,
+  parallelretrievals = 10, debug = FALSE, collection = "ctrdata",
+  db = "users", url = "mongodb://localhost", username = "",
+  password = "", verbose = FALSE)
 }
 \arguments{
 \item{queryterm}{Either a string with the full URL of a search in a register

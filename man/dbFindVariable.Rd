@@ -4,10 +4,10 @@
 \alias{dbFindVariable}
 \title{Find names of keys (fields) in the database}
 \usage{
-dbFindVariable(namepart = "", allmatches = FALSE, forceupdate = FALSE,
-  debug = FALSE, collection = "ctrdata", db = "users",
-  url = "mongodb://localhost", username = "", password = "",
-  verbose = FALSE)
+dbFindVariable(namepart = "", allmatches = FALSE,
+  forceupdate = FALSE, debug = FALSE, collection = "ctrdata",
+  db = "users", url = "mongodb://localhost", username = "",
+  password = "", verbose = FALSE)
 }
 \arguments{
 \item{namepart}{A plain string (not a regular expression) to be searched for

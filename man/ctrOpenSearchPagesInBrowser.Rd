@@ -4,8 +4,8 @@
 \alias{ctrOpenSearchPagesInBrowser}
 \title{Open advanced search pages of register(s) or execute search in browser}
 \usage{
-ctrOpenSearchPagesInBrowser(input = "", register = "", copyright = FALSE,
-  ...)
+ctrOpenSearchPagesInBrowser(input = "", register = "",
+  copyright = FALSE, ...)
 }
 \arguments{
 \item{input}{Show results of search for \code{queryterm} in

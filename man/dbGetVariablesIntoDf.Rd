@@ -4,9 +4,10 @@
 \alias{dbGetVariablesIntoDf}
 \title{Create data frame by extracting specified fields from database}
 \usage{
-dbGetVariablesIntoDf(fields = "", debug = FALSE, collection = "ctrdata",
-  db = "users", url = "mongodb://localhost", username = "",
-  password = "", verbose = FALSE, stopifnodata = TRUE)
+dbGetVariablesIntoDf(fields = "", debug = FALSE,
+  collection = "ctrdata", db = "users", url = "mongodb://localhost",
+  username = "", password = "", verbose = FALSE,
+  stopifnodata = TRUE)
 }
 \arguments{
 \item{fields}{Vector of strings, with names of the sought fields.}

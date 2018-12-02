@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/rfhb/ctrdata.png?branch=master)](https://travis-ci.org/rfhb/ctrdata)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/rfhb/ctrdata?branch=master&svg=true)](https://ci.appveyor.com/project/rfhb/ctrdata)
 [![codecov](https://codecov.io/gh/rfhb/ctrdata/branch/master/graph/badge.svg)](https://codecov.io/gh/rfhb/ctrdata)
-[Note: codecov checks do not cover MS Windows-only code and require registers to be online.] 
+[Note: codecov checks do not cover MS Windows-only code and do not work if a register is offline.] 
 
 # README.md for R package ctrdata on github.com
 

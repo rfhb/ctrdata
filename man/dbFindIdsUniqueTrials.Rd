@@ -4,10 +4,10 @@
 \alias{dbFindIdsUniqueTrials}
 \title{Deduplicate records to provide unique clinical trial identifiers}
 \usage{
-dbFindIdsUniqueTrials(preferregister = "EUCTR", prefermemberstate = "GB",
-  include3rdcountrytrials = TRUE, collection = "ctrdata", db = "users",
-  url = "mongodb://localhost", username = "", password = "",
-  verbose = TRUE)
+dbFindIdsUniqueTrials(preferregister = "EUCTR",
+  prefermemberstate = "GB", include3rdcountrytrials = TRUE,
+  collection = "ctrdata", db = "users", url = "mongodb://localhost",
+  username = "", password = "", verbose = TRUE)
 }
 \arguments{
 \item{preferregister}{The abbreviation of the preferred register, in case
