@@ -153,7 +153,7 @@ ctrOpenSearchPagesInBrowser <- function(input = "", register = "", copyright = F
       #
     }
     #
-    if (queryterm != "" && register != "") {
+    if (exists("queryterm") && queryterm != "" && register != "") {
       #
       message("Opening browser for search: \n\n", queryterm, "\n\nin register: ", register)
       #
@@ -163,6 +163,17 @@ ctrOpenSearchPagesInBrowser <- function(input = "", register = "", copyright = F
                               queryterm), encodeIfNeeded = TRUE, ...)
       #
     }
+  }
+  #
+  if (input != "" && register != "") {
+    #
+    message("Opening browser for input: \n\n", input, "\n\nin register: ", register)
+    #
+    utils::browseURL(paste0(switch(as.character(register),
+                                   "CTGOV" = "https://clinicaltrials.gov/ct2/results?",
+                                   "EUCTR" = "https://www.clinicaltrialsregister.eu/ctr-search/search?"),
+                            input), encodeIfNeeded = TRUE, ...)
+    #
   }
   #
   invisible(TRUE)
