@@ -240,6 +240,82 @@ ctrGetQueryUrlFromBrowser <- function(content = "") {
 # end ctrGetQueryUrlFromBrowser
 
 
+
+#' Find synonyms of an active substance
+#'
+#' An active substance can be identified by a recommended international
+#' nonproprietary name, a trade or product name, or one or more company codes.
+#'
+#' At this time, this function uses the register ClinicalTrials.Gov to
+#' detect which substances were also searched for.
+#'
+#' @param activesubstance An active substance, in an atomic character vector
+#'
+#' @return A character vector of the active substance (input parameter) and
+#'  synonyms, if any were found
+#'
+#' @export
+#'
+#' @examples
+#'
+#' \dontrun{
+#' ctrFindActiveSubstanceSynonyms(activesubstance = "imatinib")
+#' }
+#'
+ctrFindActiveSubstanceSynonyms <- function(activesubstance = ""){
+
+  # check parameters
+  if((length(activesubstance) != 1) ||
+     !is.character(activesubstance) ||
+     (nchar(activesubstance) == 0))
+    stop("ctrFindActiveSubstanceSynonyms(): activesubstance should be a single string.", call. = FALSE)
+
+  # initialise output variable
+  as <- activesubstance
+
+  # getting synonyms
+
+  # - from clinicaltrials.gov
+  ctgovdfirstpageurl <- paste0("https://clinicaltrials.gov/ct2/results?&intr=", activesubstance)
+
+  h    <- RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE)) # avoid certificate failure from outside EU
+  tmp  <- RCurl::getURI(url = utils::URLencode(ctgovdfirstpageurl), curl = h)
+  tmp <- gsub("\n|\t|\r", " ", tmp)
+  tmp <- gsub("<.*?>", " ", tmp)
+  tmp <- gsub("  +", " ", tmp)
+
+  # tmp <- "Also searched for Gleevec, Sti 571, and Glivec."
+  asx <- sub(".*Also searched for (.*?)[.].*", "\\1", tmp)
+
+  if(asx == tmp) {
+    warning("ctrFindActiveSubstanceSynonyms(): no synonyms found in ClinicalTrials.Gov for ",
+            activesubstance, ", which may be unexpected.",
+            call. = FALSE, immediate. = TRUE)
+  } else {
+
+    # split into mentioned active substances
+    asx <- trimws(asx)
+
+    # "Gleevec, Sti 571, and Glivec"
+    asx <- unlist(strsplit(x = asx, split = " and "))
+    asx <- unlist(strsplit(x = asx, split = ","))
+    asx <- trimws(asx)
+
+    # concatenate with output variable
+    as <- c(as, asx)
+
+  }
+
+  # - add other methods here
+
+  # prepare and return output
+  as <- unique(as)
+  return(as)
+}
+# end ctrFindActiveSubstanceSynonyms
+
+
+
 #' Show the history of queries that were loaded into a database
 #'
 #' @inheritParams ctrMongo
