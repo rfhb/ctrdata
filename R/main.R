@@ -433,9 +433,9 @@ dbCTRAnnotateQueryRecords <- function(recordnumbers, annotations, annotation.tex
   if(verbose) message(annotations)
 
   # get a working mongo connection, select trial record collection
-  # mongo <- ctrdata:::ctrMongo(collection = coll)[["ctr"]]
+  # mongo <- ctrdata:::ctrMongo(collection = coll)
   mongo <- ctrMongo(collection = collection, db = db, url = url,
-                    username = username, password = password, verbose = verbose)[["ctr"]]
+                    username = username, password = password, verbose = verbose)
 
   # update the database
   for(i in annotations[["_id"]]) {
@@ -496,7 +496,7 @@ dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber,
 
   # get a working mongo connection, select trial record collection
   mongo <- ctrMongo(collection = collection, db = db, url = url,
-                    username = username, password = password, verbose = verbose)[["ctr"]]
+                    username = username, password = password, verbose = verbose)
 
   # update database
   mongo$update(query = '{"_id": {"$eq": "meta-info"}}',
@@ -648,7 +648,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
 
   # get a working mongo connection, select trial record collection
   mongo <- ctrMongo(collection = collection, db = db, url = url,
-                    username = username, password = password, verbose = FALSE)[["ctr"]]
+                    username = username, password = password, verbose = FALSE)
 
   # get any annotations for any later update
   if((annotation.text != "")){
@@ -885,7 +885,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
 
   # get a working mongo connection, select trial record collection
   mongo <- ctrMongo(collection = collection, db = db, url = url,
-                    username = username, password = password, verbose = FALSE)[["ctr"]]
+                    username = username, password = password, verbose = FALSE)
 
   # get any annotations for any later update
   if((annotation.text != "")){
@@ -893,6 +893,9 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     annotations <- mongo$find(query = paste0('{"_id": {"$ne": "meta-info"}}'),
                               fields = '{"_id": 1, "annotation": 1}')
   }
+
+  # close database connection
+  rm(mongo)
 
   # run conversion of text files saved into file system to json file
   message("(2/3) Converting to JSON ...")
@@ -1116,7 +1119,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
 
     # get a working mongo connection, select trial record collection
     mongo <- ctrMongo(collection = collection, db = db, url = url,
-                      username = username, password = password, verbose = FALSE)[["ctr"]]
+                      username = username, password = password, verbose = FALSE)
 
     # iterate over batches of results files
     message("(3/4) Importing JSON into mongoDB ...")

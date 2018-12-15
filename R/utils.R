@@ -12,8 +12,7 @@ countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR",
 
 
 
-#' Set up connections to a Mongo DB server, one for
-#' the actual trial records and a second for the keys
+#' Set up connections to a Mongo DB server
 #'
 #' @param collection Name of collection (default is "ctrdata")
 #'
@@ -46,12 +45,8 @@ ctrMongo <- function(collection = "ctrdata", db = "users", url = "mongodb://loca
                      ifelse(username != "", "@", ""),
                      host)
 
-  # for variety, create / access related collection
-  collectionKeys <- paste0(collection, "Keys")
-
   # connect to mongo server
-  valueCtrDb     <- mongolite::mongo(collection = collection,     db = db, url = mongourl, verbose = verbose)
-  valueCtrKeysDb <- mongolite::mongo(collection = collectionKeys, db = db, url = mongourl, verbose = verbose)
+  valueCtrDb <- mongolite::mongo(collection = collection, db = db, url = mongourl, verbose = verbose)
 
   # check compatibility
   serverversion <- valueCtrDb$info()$server$version
@@ -62,11 +57,10 @@ ctrMongo <- function(collection = "ctrdata", db = "users", url = "mongodb://loca
 
   # inform user
   if (verbose) message("Using Mongo DB (collections \"", collection,
-                       "\" and \"", collectionKeys,
                        "\" in database \"", db,
                        "\" on \"", host, "\").")
 
-  return(invisible(list("ctr" = valueCtrDb, "keys" = valueCtrKeysDb)))
+  return(invisible(valueCtrDb))
 }
 # end ctrMongo
 
@@ -337,7 +331,7 @@ dbQueryHistory <- function(collection = "ctrdata", db = "users", url = "mongodb:
 
   # get a working mongo connection, select trial record collection
   mongo <- ctrMongo(collection = collection, db = db, url = url,
-                    username = username, password = password, verbose = verbose)[["ctr"]]
+                    username = username, password = password, verbose = verbose)
 
   # Example history:
   # {
@@ -446,11 +440,15 @@ dbFindVariable <- function(namepart = "", allmatches = FALSE, forceupdate = FALS
   mongo <- ctrMongo(collection = collection, db = db, url = url,
                     username = username, password = password, verbose = verbose)
 
+  # get a working mongo connection
+  mongoKeys <- ctrMongo(collection = paste0(collection, "Keys"), db = db, url = url,
+                        username = username, password = password, verbose = verbose)
+
   # check if data base has any contents
-  if (mongo[["ctr"]]$count() == 0L) stop("No records in data base.", call. = FALSE)
+  if (mongo$count() == 0L) stop("No records in data base.", call. = FALSE)
 
   # check if database with variety results exists or should be forced to be updated
-  if (forceupdate || (mongo[["keys"]]$count() == 0L)) {
+  if (forceupdate || (mongoKeys$count() == 0L)) {
     #
     # check program availability
     installMongoFindBinaries()
@@ -500,7 +498,7 @@ dbFindVariable <- function(namepart = "", allmatches = FALSE, forceupdate = FALS
   if (namepart != "") {
     #
     # mongo get fieldnames into vector (no other solution found)
-    fieldnames <- mongo[["keys"]]$find(fields = '{"key": 1}')
+    fieldnames <- mongoKeys$find(fields = '{"key": 1}')
     fieldnames <- fieldnames[seq_len(nrow(fieldnames)), ]
     fieldnames <- as.vector(fieldnames[["key"]])
     #
@@ -520,6 +518,9 @@ dbFindVariable <- function(namepart = "", allmatches = FALSE, forceupdate = FALS
     return(fieldname)
     #
   }
+  # close database connection
+  rm(mongo)
+  rm(mongoKeys)
 }
 # end dbFindVariable
 
@@ -567,7 +568,7 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
 
   # get a working mongo connection, select trial record collection
   mongo <- ctrMongo(collection = collection, db = db, url = url,
-                    username = username, password = password, verbose = verbose)[["ctr"]]
+                    username = username, password = password, verbose = verbose)
   #
   # total number of records in collection to inform user
   countall <- mongo$count(query = '{"_id":{"$ne":"meta-info"}}')
@@ -606,7 +607,9 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
                "id_info.nct_alias": 1}'
     )$batch(size = mongo$count())
 
+  # inform user
   if (is.null(listofCTGOVids)) message("No CTGOV records found.")
+
   # close database connection
   rm(mongo)
 
@@ -807,7 +810,7 @@ dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
 
   # get a working mongo connection, select trial record collection
   mongo <- ctrMongo(collection = collection, db = db, url = url,
-                    username = username, password = password, verbose = verbose)[["ctr"]]
+                    username = username, password = password, verbose = verbose)
 
   # total number of records in collection, used for max batch size and at function end
   countall <- mongo$count(query = '{"_id":{"$ne":"meta-info"}}')

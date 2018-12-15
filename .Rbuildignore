@@ -8,6 +8,7 @@
 ^\.Rproj\.user$
 ^ctrdata_json.jpg$
 ^ctrdata_sequence_diagram.jpeg$
+^ctrdata_results_json_euctr.png$
 ^private.*
 ^_gh-pages$
 ^docs$
