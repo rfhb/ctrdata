@@ -586,7 +586,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   tmp <- sub(".* (.*?) Stud(y|ies) found for.*", "\\1", tmp)
 
   # safeguard against no or unintended large numbers
-  tmp <- as.integer(tmp)
+  tmp <- suppressWarnings(as.integer(tmp))
   if(is.na(tmp) || !length(tmp)) stop("No trials or number of trials could not be determined: ", tmp, call. = FALSE)
   if(as.integer(tmp) > 5000L) stop("These are ", tmp, " (more than 5000) trials, this may be unintended. ",
                                    "Please split into separate queries.", call. = FALSE)
