@@ -212,17 +212,27 @@ test_that("retrieve data from register euctr", {
                  "Imported or updated")
 
 
+  ## download without details
+  # test 12
+  expect_message(suppressWarnings(ctrLoadQueryIntoDb(q,
+                                                     collection = coll,
+                                                     details = FALSE)),
+                 "Imported or updated")
+
+
   ## create and test updatable query
 
   date.today <- format(Sys.time(),                "%Y-%m-%d")
   date.temp  <- format(Sys.time() - 60*60*24*6,   "%Y-%m-%d")
-  date.old   <- format(Sys.time() - 60*60*24*6*2, "%Y-%m-%d")
+  date.old   <- format(Sys.time() - 60*60*24*6*9, "%Y-%m-%d")
 
   q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
               "&dateFrom=", date.old, "&dateTo=", date.temp)
 
   # test 12
-  expect_message(suppressWarnings(ctrLoadQueryIntoDb(q, collection = coll)),
+  expect_message(suppressWarnings(ctrLoadQueryIntoDb(q,
+                                                     collection = coll,
+                                                     details = FALSE)),
                  "Imported or updated ")
 
   # manipulate history to force testing updating
@@ -230,7 +240,7 @@ test_that("retrieve data from register euctr", {
   hist <- dbQueryHistory(collection = coll)
   # manipulate query
   hist[nrow(hist), "query-term"]      <- sub(".*(&dateFrom=.*)&dateTo=.*", "\\1", q)
-  hist[nrow(hist), "query-timestamp"] <- paste0(date.temp, "-23-59-59")
+  hist[nrow(hist), "query-timestamp"] <- paste0(date.temp, " 23:59:59")
   # convert into json object
   json <- jsonlite::toJSON(list("queries" = hist))
   # update database
@@ -240,7 +250,9 @@ test_that("retrieve data from register euctr", {
                                         upsert = TRUE)
 
   # test 13
-  expect_message(ctrLoadQueryIntoDb(querytoupdate = "last", collection = coll),
+  expect_message(ctrLoadQueryIntoDb(querytoupdate = "last",
+                                    collection = coll,
+                                    details = FALSE),
                  "Imported or updated")
 
   remove("hist", "json", "q", "date.old", "date.today", "date.temp")
