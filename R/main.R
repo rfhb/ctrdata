@@ -482,7 +482,8 @@ dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber,
   if (verbose) print(hist)
 
   # append current search
-  hist <- rbind(hist, cbind ("query-timestamp" = format(Sys.time(), "%Y-%m-%d-%H-%M-%S"),
+  # default for format methods is "%Y-%m-%d %H:%M:%S"
+  hist <- rbind(hist, cbind ("query-timestamp" = format(Sys.time(), "%Y-%m-%d %H:%M:%S"),
                              "query-register"  = register,
                              "query-records"   = recordnumber,
                              "query-term"      = queryterm))
