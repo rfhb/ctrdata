@@ -560,6 +560,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   # https://clinicaltrials.gov/ct2/results/download_studies?rslt=With&cond=Neuroblastoma&age=0&draw=3
   queryUSRoot   <- "https://clinicaltrials.gov/"
   queryUSType1  <- "ct2/results/download_studies?"
+  queryUSType2  <- "ct2/results?"
 
   ## deal with special cases
   # ctgov queryterm is just NCT number, prefix with variable name
@@ -568,19 +569,36 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   if (!grepl("=", queryterm)) queryterm <- paste0("term=", queryterm)
 
   ## inform user and prepare url for downloading
-  message("(1/3) Downloading trials from CTGOV as xml ", appendLF = FALSE)
+  message("(1/3) Downloading trials from CTGOV as xml.")
   ctgovdownloadcsvurl <- paste0(queryUSRoot, queryUSType1, "&", queryterm, queryupdateterm)
   if (debug) message ("DEBUG: ", ctgovdownloadcsvurl)
 
   # check if host is available
-  if(!RCurl::url.exists(url = queryUSRoot, .opts = list(connecttimeout = 2, ssl.verifypeer = FALSE)))
+  if(!RCurl::url.exists(url = queryUSRoot, .opts = list(connecttimeout = 5, ssl.verifypeer = FALSE)))
     stop("Host ", queryUSRoot, " does not respond, cannot continue.", call. = FALSE)
+
+  # check number of trials to be downloaded
+  ctgovdfirstpageurl <- paste0(queryUSRoot, queryUSType2, "&", queryterm, queryupdateterm)
+  tmp <- RCurl::getURI(url = utils::URLencode(ctgovdfirstpageurl), .opts = list(ssl.verifypeer = FALSE))
+  tmp <- gsub("\n|\t|\r", " ", tmp)
+  tmp <- gsub("<.*?>", " ", tmp)
+  tmp <- gsub("  +", " ", tmp)
+  tmp <- sub(".* (.*?) Studies found for.*", "\\1", tmp)
+
+  # inform user
+  message("Retrieved overview, ", tmp, " trial(s) are to be downloaded.")
+
+  # safeguard against unintended large numbers
+  if(tmp > 5000) stop("These are many (more than 5000) trials, this may be unintended. ",
+                      "Please split into separate queries.", call. = FALSE)
 
   # prepare a file handle for saving in temporary directory
   f <- paste0(tempDir, "/", "ctgov.zip")
 
+  # initialise handle and avoid certificate failure from outside EU
+  h <- RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE))
+
   # get (download) trials in single zip file
-  h    <- RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE)) # avoid certificate failure from outside EU
   fref <- RCurl::CFILE(f, mode = "wb")
   tmp  <- RCurl::curlPerform(url = utils::URLencode(ctgovdownloadcsvurl),
                              writedata = fref@ref,
