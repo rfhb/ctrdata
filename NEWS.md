@@ -1,6 +1,12 @@
+# ctrdata 0.12.1
+ - 2018-12-15
+ - added function ctrFindActiveSubstanceSynonyms() to obtain synonyms for an active substance
+ - added user information on number of trials in CTGOV to be downloaded, and limit this to 5000 per query
+ - corrected import from EUCTR for details = FALSE
+   
 # ctrdata 0.12
  - 2018-05-19
- - added possibility to annotate records retrieved with a query
+ - added possibility to add user's annotations to records retrieved with a query (new option annotate.text)
    
 # ctrdata 0.11.2
  - 2018-04-22

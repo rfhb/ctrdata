@@ -11,7 +11,10 @@ Online version of this document: [https://github.com/rfhb/ctrdata/](https://gith
 
 The package `ctrdata` provides functions for retrieving (downloading) information on clinical trials from public registers, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started mid 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package is to be used within the [R](https://www.r-project.org/) system. 
 
-Last edit 2018-09-15 for version 0.12, which newly provides to add personal annotations to records retrieved from a register, for later use in analysis. 
+Last edit 2018-12-15 for version 0.12.1, with bug fixes and new features: 
+
+* to add personal annotations to records when being retrieved from a register (new options `annotate.text` and `annotate.mode` for function `ctrLoadQueryIntoDb()`), for later use in analysis, and 
+* to retrieve synonyms of active substances to better find trials (function `ctrFindActiveSubstanceSynonyms()`). 
 
 Main features:
 
@@ -27,7 +30,7 @@ Remember to respect the registers' copyrights and terms and conditions.
 
 Please cite this package in any publication as follows: 
 
-`Ralf Herold (2018). ctrdata: Retrieve and Analyze Information on Clinical Trials from Public Registers. R package version 0.12. https://github.com/rfhb/ctrdata`
+`Ralf Herold (2018). ctrdata: Retrieve and Analyze Information on Clinical Trials from Public Registers. R package version 0.12.1. https://github.com/rfhb/ctrdata`
 
 <!--
 Within R, the latest citation information can obtained as follows:
@@ -90,8 +93,9 @@ devtools::install_github("rfhb/ctrdata")
 Name  | Function
 ---------------------------- | --------------------------------------------
 ctrOpenSearchPagesInBrowser	| Open search pages of registers or execute search in web browser
+ctrFindActiveSubstanceSynonyms | Find synonyms and alternative names for an active substance
 ctrGetQueryUrlFromBrowser	| Import from clipboard the URL of a search in one of the registers
-ctrLoadQueryIntoDb	| Retrieve (download) or update information on clinical trials from register and store in database
+ctrLoadQueryIntoDb	| Retrieve (download) or update, and annotate, information on clinical trials from register and store in database
 dbQueryHistory	| Show the history of queries that were downloaded into the database
 dbFindVariable	| Find names of keys (fields) in the database
 dbFindIdsUniqueTrials	| Produce a vector of de-duplicated identifiers of clinical trial records in the database
