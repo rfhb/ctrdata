@@ -107,7 +107,7 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   s/xxxxxxxxxx/\n/g;
 
   # bring back newlines around identifier for end of arrays
-  s/X.9 ENDSPONSOR: TRUE/\nX.9 ENDSPONSOR: TRUE\n/;
+  s/X.9 ENDSPONSOR: TRUE/\nX.9 ENDSPONSOR: TRUE/;
   s/\n+/\n/g;
 
   print $_;
