@@ -116,7 +116,7 @@ test_that("retrieve data from registers", {
     queryterm = "cond=NonExistingConditionGoesInHere",
     register = "CTGOV",
     collection = coll)),
-    "No studies downloaded")
+    "No trials or number of trials could not be determined")
 
   # clean up is the end of script = drop collection from mongodb
 
