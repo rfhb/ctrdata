@@ -73,7 +73,7 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   s/^D\.8 Information on Placebo$/X.9 ENDDMP: TRUE/;
   s/^D\. IMP Identification$/X.9 ENDSPONSOR: TRUE/;
   # for details = FALSE it is:
-  s/^Full Title:/\nX.9 ENDSPONSOR: TRUE\nFull Title:/;
+  s/^Full Title:/\nX.9 ENDSPONSOR: TRUE\nxxxxxxxxxxA.3 Full Title:/;
 
   # add identifiers for summary documents (terminating - needed for later step)
   s/^Sponsor Protocol Number: (.*)$/A.4.1 Sponsors protocol code number: $1/;
