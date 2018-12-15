@@ -590,8 +590,10 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
   if (class(listofEUCTRids) == "try-error") listofEUCTRids <- NULL
   if (all(is.na(listofEUCTRids[, -1])))     listofEUCTRids <- NULL
   if ( is.null(listofEUCTRids)) message("No EUCTR records found.")
+
+  # extract eudract number
   if (!is.null(listofEUCTRids)) listofEUCTRids <-
-    listofEUCTRids[grepl("[0-9]{4}-[0-9]{6}-[0-9]{2}-[3A-Z]{2,3}", listofEUCTRids[["_id"]]), ]
+    listofEUCTRids[grepl("[0-9]{4}-[0-9]{6}-[0-9]{2}-?[3A-Z]{0,3}", listofEUCTRids[["_id"]]), ]
 
   # 2. find unique, preferred country version of euctr
   if (!is.null(listofEUCTRids)) listofEUCTRids <-
