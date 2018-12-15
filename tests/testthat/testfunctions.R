@@ -21,8 +21,12 @@ has_internet <- function(){
   if (is.null(curl::nslookup("r-project.org", error = FALSE))) {
     skip("No internet connection available. ")
   }
-  if (!RCurl::url.exists(url = "https://www.clinicaltrialsregister.eu/", .opts = list(connecttimeout = 2, ssl.verifypeer = FALSE)) ||
-      !RCurl::url.exists(url = "https://clinicaltrials.gov/",            .opts = list(connecttimeout = 2, ssl.verifypeer = FALSE))) {
+  if (!RCurl::url.exists(url = "https://www.clinicaltrialsregister.eu/",
+                         .opts = list(connecttimeout = 3, ssl.verifypeer = FALSE))
+      ||
+      !RCurl::url.exists(url = "https://clinicaltrials.gov/",
+                         .opts = list(connecttimeout = 3, ssl.verifypeer = FALSE))
+      ) {
     skip("One or more registers not available. ")
   }
 }
@@ -34,7 +38,8 @@ has_mongo <- function(){
   options("warn" = 2)
   mongo_ok <- try({
     capture.output(ctrMongo())
-  }, silent = TRUE)
+  },
+  silent = TRUE)
   # use test result
   options("warn" = tmp)
   if (class(mongo_ok) == "try-error") {
@@ -53,7 +58,8 @@ has_proxy <- function(){
   # test for working proxy connection
   proxy_ok <- try({
     is.character(RCurl::getURL("http://www.google.com/"))
-  }, silent = TRUE)
+  },
+  silent = TRUE)
   #
   # reset to initial options
   options(RCurlOptions = old_options)
@@ -222,9 +228,9 @@ test_that("retrieve data from register euctr", {
 
   ## create and test updatable query
 
-  date.today <- format(Sys.time(),                "%Y-%m-%d")
-  date.temp  <- format(Sys.time() - 60*60*24*6,   "%Y-%m-%d")
-  date.old   <- format(Sys.time() - 60*60*24*6*9, "%Y-%m-%d")
+  date.today <- format(Sys.time(),                  "%Y-%m-%d")
+  date.temp  <- format(Sys.time() - (60*60*24*6),   "%Y-%m-%d")
+  date.old   <- format(Sys.time() - (60*60*24*6*9), "%Y-%m-%d")
 
   q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
               "&dateFrom=", date.old, "&dateTo=", date.temp)
@@ -617,6 +623,8 @@ test_that("operations on data frame", {
 
 #### active substance ####
 test_that("operations on data frame", {
+
+  has_internet()
 
   # test 57
   expect_equal(sort(ctrFindActiveSubstanceSynonyms(activesubstance = "imatinib")[1:4]),

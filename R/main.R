@@ -91,7 +91,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     #
   }
 
-  ## deal with data frame as returned from ctrQueryHistoryInDb() and ctrGetQueryUrlFromBrowser()
+  ## deal with data frame as returned from ctrQueryHistoryInDb and ctrGetQueryUrlFromBrowser
   if (is.data.frame(queryterm) &&
       all(substr(names(queryterm), 1, 6) == "query-")) {
     #
@@ -106,22 +106,22 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
 
   ## sanity checks
   if ( (grepl("[^a-zA-Z0-9=+&%_-]", gsub("\\[", "", gsub("\\]", "", queryterm)))) & (register == ""))
-    stop("Parameter 'queryterm' is not an URL showing results of a query or has unexpected characters: ",
+    stop ("Parameter 'queryterm' is not an URL showing results of a query or has unexpected characters: ",
          queryterm, ", expected are: a-zA-Z0-9=+&%_-[]. Perhaps additionally specify 'register = '?", call. = FALSE)
   #
   if ( (queryterm == "") & querytoupdate == 0L)
-    stop("Parameter 'queryterm' is empty.", call. = FALSE)
+    stop ("Parameter 'queryterm' is empty.", call. = FALSE)
   #
   if (!grepl(register, "CTGOVEUCTR"))
-    stop("Parameter 'register' not known: ", register, call. = FALSE)
+    stop ("Parameter 'register' not known: ", register, call. = FALSE)
   #
   if (class(querytoupdate) != "character" &&
       querytoupdate != trunc(querytoupdate))
-    stop("Parameter 'querytoupdate' is not an integer value or 'last'.", call. = FALSE)
+    stop ("Parameter 'querytoupdate' is not an integer value or 'last'.", call. = FALSE)
   #
   if (class(querytoupdate) == "character" &&
       querytoupdate != "last")
-    stop("Parameter 'querytoupdate' is not an integer value or 'last'.", call. = FALSE)
+    stop ("Parameter 'querytoupdate' is not an integer value or 'last'.", call. = FALSE)
 
   # check program availability
   installMongoFindBinaries(debug = debug)
@@ -139,8 +139,8 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   queryterm <- gsub("^\\s+|\\s+$", "", queryterm)
 
   # check annotation parameters
-  if(annotation.text != "" & annotation.mode == "") stop(" annotation.mode empty", call. = FALSE)
-  if(!(annotation.mode %in% c("append", "prepend", "replace"))) stop(" annotation.mode incorrect", call. = FALSE)
+  if (annotation.text != "" & annotation.mode == "") stop (" annotation.mode empty", call. = FALSE)
+  if (!(annotation.mode %in% c("append", "prepend", "replace"))) stop (" annotation.mode incorrect", call. = FALSE)
 
   # initialise variable that is filled only if an update is to be made
   queryupdateterm <- ""
@@ -186,7 +186,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   ## finalise
 
   # return some useful information or break if not successful
-  if (!exists("imported")) stop("Function did not result in any trial information imports.", call. = FALSE)
+  if (!exists("imported")) stop ("Function did not result in any trial information imports.", call. = FALSE)
   if (debug) message("DEBUG: 'queryterm'=", queryterm,
                      "\n'queryupdateterm'=", queryupdateterm,
                      "\n'imported'=", imported,
@@ -242,7 +242,7 @@ ctrRerunQuery <- function (querytoupdate = querytoupdate,
 
   # check parameters
   if (is.null(rerunquery))
-    stop("'querytoupdate': no previous queries found in collection, aborting query update.", call. = FALSE)
+    stop ("'querytoupdate': no previous queries found in collection, aborting query update.", call. = FALSE)
 
   # select last query if specified
   if (querytoupdate == "last")
@@ -250,7 +250,7 @@ ctrRerunQuery <- function (querytoupdate = querytoupdate,
 
   # try to select the query to be updated
   if (querytoupdate > nrow(rerunquery))
-    stop("'querytoupdate': specified number not found, check 'dbQueryHistory()'.", call. = FALSE)
+    stop ("'querytoupdate': specified number not found, check 'dbQueryHistory()'.", call. = FALSE)
 
   # set values retrieved
   rerunquery <- rerunquery[querytoupdate, ]
@@ -260,10 +260,10 @@ ctrRerunQuery <- function (querytoupdate = querytoupdate,
 
   # secondary check parameters
   if (queryterm == "")
-    stop("Parameter 'queryterm' is empty - cannot update query ", querytoupdate, call. = FALSE)
+    stop ("Parameter 'queryterm' is empty - cannot update query ", querytoupdate, call. = FALSE)
   #
   if (!grepl(register, "CTGOVEUCTR"))
-    stop("Parameter 'register' not known - cannot update query ", querytoupdate, call. = FALSE)
+    stop ("Parameter 'register' not known - cannot update query ", querytoupdate, call. = FALSE)
 
 
   ## adapt updating procedure to respective register
@@ -328,8 +328,8 @@ ctrRerunQuery <- function (querytoupdate = querytoupdate,
       # attempt to extract euctr number(s)
       resultsRssTrials <- gregexpr("eudract_number:[0-9]{4}-[0-9]{6}-[0-9]{2}</link>", resultsRss)[[1]]
       #
-      if(length(resultsRssTrials) == 1L && resultsRssTrials == -1L)
-        stop("First result page empty - no (new) trials found?", call. = FALSE)
+      if (length(resultsRssTrials) == 1L && resultsRssTrials == -1L)
+        stop ("First result page empty - no (new) trials found?", call. = FALSE)
       #
       # if new trials found, download
       resultsRssTrials <- sapply(resultsRssTrials, FUN = function (x) substr(resultsRss, x + 15, x + 28))
@@ -370,7 +370,7 @@ progressOut <- function(down, up) {
   #
   # helper function to show progress while downloading
   #
-  if (stats::runif(1) < 0.001) message(".", appendLF = FALSE)
+  if (stats::runif (1) < 0.001) message(".", appendLF = FALSE)
   #
 }
 
@@ -391,19 +391,19 @@ dbCTRAnnotateQueryRecords <- function(recordnumbers, annotations, annotation.tex
                                       username = username, password = password, verbose = verbose){
 
   # debug
-  if(verbose) message("* Running dbCTRAnnotateQueryRecords ...")
-  if(verbose) message(recordnumbers)
-  if(verbose) message(annotations)
-  if(verbose) message(annotation.mode)
+  if (verbose) message("* Running dbCTRAnnotateQueryRecords ...")
+  if (verbose) message(recordnumbers)
+  if (verbose) message(annotations)
+  if (verbose) message(annotation.mode)
 
   # check if dataframe is as expected: columns _id and annotation
-  if(nrow(annotations) == 0){
+  if (nrow(annotations) == 0){
     annotations <- data.frame("_id" = recordnumbers,
                               "annotation" = "",
                               stringsAsFactors = FALSE)
     names(annotations) <- c("_id", "annotation")
   }
-  if(!("annotation" %in% names(annotations))) {
+  if (!("annotation" %in% names(annotations))) {
     annotations <- data.frame(annotations,
                               "annotation" = "",
                               stringsAsFactors = FALSE)
@@ -414,7 +414,7 @@ dbCTRAnnotateQueryRecords <- function(recordnumbers, annotations, annotation.tex
   annotations <- annotations[annotations[["_id"]] %in% recordnumbers, ]
 
   # check if dataframe is as expected: columns _id and annotation
-  if(nrow(annotations) == 0){
+  if (nrow(annotations) == 0){
     annotations <- data.frame("_id" = recordnumbers,
                               "annotation" = "",
                               stringsAsFactors = FALSE)
@@ -424,24 +424,23 @@ dbCTRAnnotateQueryRecords <- function(recordnumbers, annotations, annotation.tex
   # modify the annotations
   annotations$annotation <- switch(annotation.mode,
                                    "replace" = paste0(annotation.text),
-                                   "prepend" = paste0(annotation.text, ' ', annotations$annotation),
-                                              paste0(annotations$annotation, ' ', annotation.text)
+                                   "prepend" = paste0(annotation.text, " ", annotations$annotation),
+                                               paste0(annotations$annotation, " ", annotation.text)
   )
   annotations$annotation <- paste0('{"$set": {"annotation": "',
                                    trimws(annotations$annotation),
                                    '"}}')
 
   # debug
-  if(verbose) message(annotations)
+  if (verbose) message(annotations)
 
   # get a working mongo connection, select trial record collection
-  # mongo <- ctrdata:::ctrMongo(collection = coll)
   mongo <- ctrMongo(collection = collection, db = db, url = url,
                     username = username, password = password, verbose = verbose)
 
   # update the database
-  for(i in annotations[["_id"]]) {
-    mongo$update(query = paste0('{"_id": {"$eq": "', i ,'"}}'),
+  for (i in annotations[["_id"]]) {
+    mongo$update(query = paste0('{"_id": {"$eq": "', i, '"}}'),
                  update = annotations[ annotations[["_id"]] == i, 2],
                  upsert = TRUE)
   }
@@ -450,7 +449,7 @@ dbCTRAnnotateQueryRecords <- function(recordnumbers, annotations, annotation.tex
   rm(mongo)
 
   # inform user
-  message('= Annotated retrieved records')
+  message("= Annotated retrieved records")
 
 }
 
@@ -548,10 +547,10 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
 
     ## check availability of relevant helper programs
   if (!suppressWarnings(installFindBinary("php --version")))
-    stop("php not found.", call. = FALSE)
+    stop ("php not found.", call. = FALSE)
   #
   if (!suppressWarnings(installFindBinary("php -r 'simplexml_load_string(\"\");'")))
-    stop("php xml not found.", call. = FALSE)
+    stop ("php xml not found.", call. = FALSE)
 
   ## create empty temporary directory on localhost for
   # downloading from register into temporary directy
@@ -577,8 +576,8 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   if (debug) message ("DEBUG: ", ctgovdownloadcsvurl)
 
   # check if host is available
-  if(!RCurl::url.exists(url = queryUSRoot, .opts = list(connecttimeout = 5, ssl.verifypeer = FALSE)))
-    stop("Host ", queryUSRoot, " does not respond, cannot continue.", call. = FALSE)
+  if (!RCurl::url.exists(url = queryUSRoot, .opts = list(connecttimeout = 5, ssl.verifypeer = FALSE)))
+    stop ("Host ", queryUSRoot, " does not respond, cannot continue.", call. = FALSE)
 
   # check number of trials to be downloaded
   ctgovdfirstpageurl <- paste0(queryUSRoot, queryUSType2, "&", queryterm, queryupdateterm)
@@ -590,8 +589,8 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
 
   # safeguard against no or unintended large numbers
   tmp <- suppressWarnings(as.integer(tmp))
-  if(is.na(tmp) || !length(tmp)) stop("No trials or number of trials could not be determined: ", tmp, call. = FALSE)
-  if(as.integer(tmp) > 5000L) stop("These are ", tmp, " (more than 5000) trials, this may be unintended. ",
+  if (is.na(tmp) || !length(tmp)) stop ("No trials or number of trials could not be determined: ", tmp, call. = FALSE)
+  if (as.integer(tmp) > 5000L) stop ("These are ", tmp, " (more than 5000) trials, this may be unintended. ",
                                    "Please split into separate queries.", call. = FALSE)
 
   # inform user
@@ -616,7 +615,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
 
   # inform user
   if (file.size(f) == 0)
-    stop("No studies downloaded. Please check 'queryterm' or run again with debug = TRUE.", call. = FALSE)
+    stop ("No studies downloaded. Please check 'queryterm' or run again with debug = TRUE.", call. = FALSE)
 
   ## extract all from downloaded zip file
   utils::unzip(f, exdir = tempDir)
@@ -653,7 +652,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
                     username = username, password = password, verbose = FALSE)
 
   # get any annotations for any later update
-  if((annotation.text != "")){
+  if (annotation.text != ""){
 
     annotations <- mongo$find(query = paste0('{"_id": {"$ne": "meta-info"}}'),
                               fields = '{"_id": 1, "annotation": 1}')
@@ -712,8 +711,8 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   ctgovidsimported <- rev(sort(unique(ctgovidsimported)))
 
   ## add annotations
-  if((annotation.text != "") &
-     (length(ctgovidsimported) > 0)){
+  if ( (annotation.text != "") &
+       (length(ctgovidsimported) > 0) ){
 
     # dispatch
     dbCTRAnnotateQueryRecords(recordnumbers = ctgovidsimported, annotations = annotations,
@@ -726,7 +725,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   ## find out number of trials imported into database
   if (debug) message("DEBUG: ", imported)
   imported <- as.integer(gsub(".*imported ([0-9]+) document.*", "\\1", imported[length(imported)]))
-  if (!is.numeric(imported)) stop("Import has apparently failed, returned ", imported, call. = FALSE)
+  if (!is.numeric(imported)) stop ("Import has apparently failed, returned ", imported, call. = FALSE)
   message("= Imported or updated ", imported, " trial(s).")
 
   # clean up temporary directory
@@ -775,8 +774,8 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   queryterm <- sub("(^|&|[&]?\\w+=\\w+&)(\\w+|[ +ORNCT0-9-]+)($|&\\w+=\\w+)", "\\1query=\\2\\3", queryterm)
 
   # check availability of relevant helper programs
-  if (!suppressWarnings(installFindBinary("echo x | sed s/x/y/"))) stop("sed not found.",  call. = FALSE)
-  if (!suppressWarnings(installFindBinary("perl -V:osname")))      stop("perl not found.", call. = FALSE)
+  if (!suppressWarnings(installFindBinary("echo x | sed s/x/y/"))) stop ("sed not found.",  call. = FALSE)
+  if (!suppressWarnings(installFindBinary("perl -V:osname")))      stop ("perl not found.", call. = FALSE)
 
   # inform user
   message("* Downloading trials from EUCTR:", appendLF = TRUE)
@@ -795,8 +794,8 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   queryEuPost  <- "&mode=current_page&format=text&dContent=summary&number=current_page&submit-download=Download"
 
   # check if host is available
-  if(!RCurl::url.exists(url = queryEuRoot, .opts = list(connecttimeout = 2, ssl.verifypeer = FALSE)))
-    stop("Host ", queryEuRoot, " does not respond, cannot continue.", call. = FALSE)
+  if (!RCurl::url.exists(url = queryEuRoot, .opts = list(connecttimeout = 2, ssl.verifypeer = FALSE)))
+    stop ("Host ", queryEuRoot, " does not respond, cannot continue.", call. = FALSE)
 
   # get first result page
   h <- RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE)) # avoid certificate failure from outside EU
@@ -813,7 +812,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
 
   # check for plausbility
   if (is.na(resultsEuNumPages) || is.na(resultsEuNumTrials) || resultsEuNumTrials == 0)
-    stop("First result page empty - no (new) trials found?", call. = FALSE)
+    stop ("First result page empty - no (new) trials found?", call. = FALSE)
 
   # inform user
   message("Retrieved overview, ", resultsEuNumTrials, " trial(s) from ",
@@ -847,10 +846,10 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     if (debug) message("DEBUG: ", class(tmp))
     #
     if (class(tmp)  != "character")
-      stop("Download from EUCTR failed; last error: ", class(tmp), call. = FALSE)
+      stop ("Download from EUCTR failed; last error: ", class(tmp), call. = FALSE)
     #
     if (length(tmp) != (stoppage - startpage + 1))
-      stop("Download from EUCTR failed; incorrect number of records.", call. = FALSE)
+      stop ("Download from EUCTR failed; incorrect number of records.", call. = FALSE)
 
     # save downloaded data from variable into file system
     for (ii in startpage:stoppage)
@@ -890,7 +889,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                     username = username, password = password, verbose = FALSE)
 
   # get any annotations for any later update
-  if((annotation.text != "")){
+  if (annotation.text != ""){
 
     annotations <- mongo$find(query = paste0('{"_id": {"$ne": "meta-info"}}'),
                               fields = '{"_id": 1, "annotation": 1}')
@@ -939,13 +938,12 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     if (debug) message("DEBUG: ", json2split)
     imported  <- system(json2split, intern = TRUE)
     splitjson <- try(as.numeric(imported), silent = TRUE)
-    if (class(splitjson) == "try-error") stop("Splitting single JSON files failed. Aborting ctrLoadQueryIntoDb.")
+    if (class(splitjson) == "try-error") stop ("Splitting single JSON files failed. Aborting ctrLoadQueryIntoDb.")
 
     # now import single-trial json files one by one, record and print failed trial ids
     message("(3b/3) Importing ", max(splitjson), " individual JSON files ...")
     allimported <- 0
     for (i in 1:splitjson) {
-      # TODO: loop / parallelise
       # compose command
       json2split2mongo <- sub("allfiles.json", paste0("allfiles-", i, ".json"), json2mongo)
       # run import command
@@ -973,13 +971,12 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   } # if fast import not successful
 
   ## read in the eudract numbers of the trials that were just retrieved and imported
-  # tempDir <- "/var/folders/pl/w9q56zk56x1c7xykmtq7b5_00000gn/T//RtmpUokXgv/ctrDATA182db4afeaaa6"
   eudractnumbersimported <- readLines(paste0(tempDir, "/alleudract.txt"))
   eudractnumbersimported <- rev(sort(unique(eudractnumbersimported)))
 
   ## add annotations
-  if((annotation.text != "") &
-     (length(eudractnumbersimported) > 0)){
+  if ( (annotation.text != "") &
+       (length(eudractnumbersimported) > 0) ){
 
     # dispatch
     dbCTRAnnotateQueryRecords(recordnumbers = eudractnumbersimported, annotations = annotations,
@@ -998,11 +995,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   ## results: load also euctr trials results if requested
   if (euctrresults) {
 
-    ## results are available only one-by-one for each trial as just retrieved and imported
-
-    # for debugging:
-    # tempDir <- "/Users/ralfherold/Daten/mak/r/emea/ctrdata/private/test"
-    # eudractnumbersimported <- c("2004-000518-37-AT", "2007-000371-42-DE", "2004-004386-15-3RD")
+    # results are available only one-by-one for each trial as just retrieved and imported
 
     # transform eudract numbers with country info ("2010-024264-18-3RD") into eudract numbers ("2010-024264-18")
     eudractnumbersimported <- unique(substring(text = eudractnumbersimported, first = 1, last = 14))
@@ -1013,8 +1006,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
 
     ## parallel download and unzipping into temporary directory
 
-    # conventions
-    # prefix: "https://www.clinicaltrialsregister.eu/ctr-search/rest/download/result/zip/xml/"
+    # "https://www.clinicaltrialsregister.eu/ctr-search/rest/download/result/zip/xml/..."
     # first version:  "2007-000371-42/1"
     # second version: "2007-000371-42/2"
     # last version:   "2007-000371-42"
@@ -1138,8 +1130,6 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                              function(x) {
 
                                # compose file name and check
-                               # for debugging:
-                               # x <- "2004-000518-37"
                                fileName <- paste0(tempDir, "/", x, ".json")
                                if (file.exists(fileName) && file.size(fileName) > 0){
 
@@ -1147,11 +1137,6 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                                  tmp <- readChar(con = fileName, nchars = file.info(fileName)$size)
 
                                  # update database with results
-                                 # str(tmp)
-                                 # List of 2
-                                 # $ modifiedCount: int 3
-                                 # $ matchedCount : int 3
-                                 # - attr(*, "class")= chr "miniprint"
                                  tmp <- mongo$update(query  = paste0('{"a2_eudract_number":{"$eq":"', x, '"}}'),
                                                      update = paste0('{ "$set" :', tmp, "}"),
                                                      upsert = TRUE, multiple = TRUE)
@@ -1226,7 +1211,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                      update = paste0('{ "$set" : {',
                                      '"firstreceived_results_date" : "',  tmpFirstDate[x], '", ',
                                      '"version_results_history"    : "',  tmpChanges[x],   '"',
-                                     '}}'),
+                                     "}}"),
                      upsert = TRUE,
                      multiple = TRUE)
       })
