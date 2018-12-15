@@ -274,6 +274,7 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = ""){
 
   h    <- RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE)) # avoid certificate failure from outside EU
   tmp  <- RCurl::getURI(url = utils::URLencode(ctgovdfirstpageurl), curl = h)
+
   tmp <- gsub("\n|\t|\r", " ", tmp)
   tmp <- gsub("<.*?>", " ", tmp)
   tmp <- gsub("  +", " ", tmp)
@@ -281,6 +282,19 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = ""){
   # tmp <- "Also searched for Gleevec, Sti 571, and Glivec."
   asx <- sub(".*Also searched for (.*?)[.].*", "\\1", tmp)
 
+
+  # # refactoring to use more comprehensive list
+  # ctgovdfirstpageurl <- paste0("https://clinicaltrials.gov/ct2/results/details?term=", activesubstance)
+  # tmp <- xml2::read_html(x = utils::URLencode(ctgovdfirstpageurl))
+  # tmp <- rvest::html_node(tmp, xpath = '//*[@id="searchdetail"]//table[1]')
+  # tmp <- rvest::html_table(tmp, fill = TRUE)
+  # asx <- tmp[, 1]
+  # asx <- asx[!grepl(paste0("(more|synonyms|terms|", as, "|",
+  #                          paste0(unlist(strsplit(as, " ")), collapse = "|"),
+  #                          ")"), asx, ignore.case = TRUE)]
+
+
+  # inform user
   if(asx == tmp) {
     warning("ctrFindActiveSubstanceSynonyms(): no synonyms found in ClinicalTrials.Gov for ",
             activesubstance, ", which may be unexpected.",
@@ -293,6 +307,7 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = ""){
     # "Gleevec, Sti 571, and Glivec"
     asx <- unlist(strsplit(x = asx, split = " and "))
     asx <- unlist(strsplit(x = asx, split = ","))
+    asx <- asx[!grepl("more", asx)]
     asx <- trimws(asx)
 
     # concatenate with output variable
