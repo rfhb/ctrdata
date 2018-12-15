@@ -610,7 +610,6 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
 
   # close file handle
   RCurl::close(fref)
-  message("")
 
   # inform user
   if (file.size(f) == 0)
