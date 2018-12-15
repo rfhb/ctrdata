@@ -589,8 +589,8 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   message("Retrieved overview, ", tmp, " trial(s) are to be downloaded.")
 
   # safeguard against unintended large numbers
-  if(tmp > 5000) stop("These are many (more than 5000) trials, this may be unintended. ",
-                      "Please split into separate queries.", call. = FALSE)
+  if(as.integer(tmp) > 5000L) stop("These are many (more than 5000) trials, this may be unintended. ",
+                                   "Please split into separate queries.", call. = FALSE)
 
   # prepare a file handle for saving in temporary directory
   f <- paste0(tempDir, "/", "ctgov.zip")
