@@ -363,7 +363,9 @@ ctrRerunQuery <- function (querytoupdate = querytoupdate,
 #' progressOut
 #'
 #' @keywords internal
-#
+#'
+#' @importFrom stats runif
+#'
 progressOut <- function(down, up) {
   #
   # helper function to show progress while downloading
@@ -521,6 +523,7 @@ dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber,
 #' @keywords internal
 #'
 #' @importFrom RCurl getCurlHandle close curlPerform CFILE
+#' @importFrom jsonlite toJSON
 #'
 ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
                                     euctrresults, annotation.text, annotation.mode,

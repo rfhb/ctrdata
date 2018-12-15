@@ -3,7 +3,7 @@ Type: Package
 Title: Retrieve and Analyze Information on Clinical Trials from Public Registers
 Date: 2018-12-15
 Version: 0.12.1
-Imports: mongolite (>= 1.4.9000), jsonlite, RCurl, curl, clipr
+Imports: mongolite (>= 1.4.9000), jsonlite, RCurl, curl, clipr, xml2, rvest
 SystemRequirements: mongo database, sed, php, cat, perl
 Authors@R: person("Ralf", "Herold", email = "ralf.herold@gmx.net",
                   role = c("aut", "cre"))
