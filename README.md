@@ -1,11 +1,13 @@
 [![Build Status](https://travis-ci.org/rfhb/ctrdata.png?branch=master)](https://travis-ci.org/rfhb/ctrdata)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/rfhb/ctrdata?branch=master&svg=true)](https://ci.appveyor.com/project/rfhb/ctrdata)
 [![codecov](https://codecov.io/gh/rfhb/ctrdata/branch/master/graph/badge.svg)](https://codecov.io/gh/rfhb/ctrdata)
-[Note: codecov checks do not cover MS Windows-only code and do not work if a register is offline.] 
+[Note: codecov does not check MS Windows-only code] 
 
 # README.md for R package ctrdata on github.com
 
 Online version of this document: [https://github.com/rfhb/ctrdata/](https://github.com/rfhb/ctrdata/)
+
+[![Slack](https://img.shields.io/badge/Slack-Join-green.svg)](https://rfhb.slack.com/messages/C6N1Y75B6) Join the Slack channel and discuss
 
 ## Background
 
