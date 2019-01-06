@@ -924,18 +924,17 @@ dfMergeTwoVariablesRelevel <- function(df = NULL, colnames = "", levelslist = NU
   # check parameters
 
   # 2019-01-06 migrate from previously used parameter "varnames"
-  tmp <- as.list(match.call())
+  tmp <- match.call()
   tmp <- tmp["varnames"]
-  tmp <- unlist(tmp)
-  tmp <- unname(tmp)
-  if(!is.null(tmp) && colnames == "") {
-    colnames <- tmp
+  tmp <- as.list(tmp)[[1]]
+  if(length(tmp) == 3 && colnames == "") {
+    colnames <- unlist(as.list(tmp[-1]))
     warning("Parameter varnames is deprecated, use colnames instead.", call. = FALSE)
   }
 
   # other checks
   if (class(df) != "data.frame") stop ("Need a data frame as input.", call. = FALSE)
-  if (length(colnames)  != 2)    stop ("Please provide exactly two variable names.", call. = FALSE)
+  if (length(colnames)  != 2)    stop ("Please provide exactly two column names.", call. = FALSE)
 
   # find variables in data frame and merge
   tmp <- match(colnames, names(df))
