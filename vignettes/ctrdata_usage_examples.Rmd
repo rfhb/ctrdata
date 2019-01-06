@@ -58,6 +58,19 @@ grepl_multi <- function (patterns, x, simplify = TRUE) {
   return(ret)
 }
 #
+age_ctgov <- function(x) {
+
+  tmp.years  <- suppressWarnings(as.numeric(gsub("([0-9]+) Year.?",  "\\1", x, ignore.case = TRUE))) / 1
+  tmp.months <- suppressWarnings(as.numeric(gsub("([0-9]+) Month.?", "\\1", x, ignore.case = TRUE))) / 12
+  tmp.days   <- suppressWarnings(as.numeric(gsub("([0-9]+) Day.?",   "\\1", x, ignore.case = TRUE))) / 365.25
+  
+  tmp.age <- ifelse(!is.na(tmp.years),  tmp.years, 
+             ifelse(!is.na(tmp.months), tmp.months, 
+             ifelse(!is.na(tmp.days),   tmp.days, NA)))
+  
+  return(tmp.age)
+}
+#
 ```
 
 General information on the `ctrdata` package is available here: [https://github.com/rfhb/ctrdata](https://github.com/rfhb/ctrdata). 
@@ -106,7 +119,7 @@ ctrOpenSearchPagesInBrowser("https://www.clinicaltrialsregister.eu/ctr-search/se
 
 ```{r find_variables}
 # 
-dbFindVariable("date", allmatches = TRUE)
+dbFindFields("date", allmatches = TRUE)
 #  [1] "firstreceived_date"                                                               
 #  [2] "lastchanged_date"                                                                 
 #  [3] "required_header.download_date"                                                    
@@ -130,7 +143,7 @@ The objects returned by functions of this package include attributes with metada
 
 ```{r find_variables_attributes}
 # 
-attributes(dbFindVariable("otherids"))
+attributes(dbFindFields("otherids"))
 # Using Mongo DB (collections "ctrdata" and "ctrdataKeys" in database "users" on "localhost").
 # Using Mongo DB (collections "ctrdata" and "ctrdataKeys" in database "users" on "localhost").
 # Number of queries in history of "users.ctrdata": 5
@@ -189,7 +202,7 @@ dbQueryHistory()
 #
 # The date and time of the last download of individual records
 # is stored in the variable "record_last_import" as follows: 
-resultDate <- dbGetVariablesIntoDf("record_last_import")
+resultDate <- dbGetFieldsIntoDf("record_last_import")
 lastUpdate <- strptime(resultDate$record_last_import, format = "%Y-%m-%d %H:%M:%S")
 summary(lastUpdate)
 #                  Min.               1st Qu.                Median  [...]
@@ -206,7 +219,7 @@ Note EUCTR provides country-specific records for trials, see README.md.
 #
 # Example 1: Relation between number of study participants in one country and in whole trial? 
 #
-result <- dbGetVariablesIntoDf(c("f41_in_the_member_state", "f422_in_the_whole_clinical_trial"))
+result <- dbGetFieldsIntoDf(c("f41_in_the_member_state", "f422_in_the_whole_clinical_trial"))
 #
 if(interactive()) plot(f41_in_the_member_state ~ f422_in_the_whole_clinical_trial, result)
 # [result not shown]
@@ -214,7 +227,7 @@ if(interactive()) plot(f41_in_the_member_state ~ f422_in_the_whole_clinical_tria
 #
 # Example 2: How many clinical trials are ongoing or completed, per country?
 #
-result <- dbGetVariablesIntoDf(c("a1_member_state_concerned", "p_end_of_trial_status"))
+result <- dbGetFieldsIntoDf(c("a1_member_state_concerned", "p_end_of_trial_status"))
 #
 if(interactive()) with (result, table(a1_member_state_concerned, p_end_of_trial_status))
 # [result not shown]
@@ -222,7 +235,7 @@ if(interactive()) with (result, table(a1_member_state_concerned, p_end_of_trial_
 # 
 # Example 3: How many clinical trials where started in which year?
 #
-result <- dbGetVariablesIntoDf(c("a1_member_state_concerned", 
+result <- dbGetFieldsIntoDf(c("a1_member_state_concerned", 
                                  "n_date_of_competent_authority_decision", 
                                  "a2_eudract_number"))
 #
@@ -263,10 +276,10 @@ dbQueryHistory()
 # 
 # Get columns from the database from different registers
 # (takes some time as variables are merged one after the other): 
-dbFindVariable("status", allmatches = TRUE)
-result <- dbGetVariablesIntoDf(c("overall_status", 
-                                 "p_end_of_trial_status", 
-                                 "a2_eudract_number"))
+dbFindFields("status", allmatches = TRUE)
+result <- dbGetFieldsIntoDf(c("overall_status", 
+                              "p_end_of_trial_status", 
+                              "a2_eudract_number"))
 #
 # Find ids of unique trials if recorded by alternative countries or registers:
 ids_of_unique_trials <- dbFindIdsUniqueTrials(prefermemberstate = "FR")
@@ -378,15 +391,15 @@ hist (result$number_of_sites)
 #
 # Search for interesting variables,  
 # note the spelling in EUCTR:
-dbFindVariable("end_point", allmatches = TRUE)
+dbFindFields("end_point", allmatches = TRUE)
 #
 # Get interesting variables from database 
 # for further analysis within R:
-result <- dbGetVariablesIntoDf(c("a2_eudract_number", 
-                                 "a41_sponsors_protocol_code_number", 
-                                 "n_date_of_competent_authority_decision", 
-                                 "e73_therapeutic_confirmatory_phase_iii", 
-                                 "e51_primary_end_points"))
+result <- dbGetFieldsIntoDf(c("a2_eudract_number", 
+                              "a41_sponsors_protocol_code_number", 
+                              "n_date_of_competent_authority_decision", 
+                              "e73_therapeutic_confirmatory_phase_iii", 
+                              "e51_primary_end_points"))
 #
 # Eliminate trials records duplicated by member state
 # keep a single record and if available use preference:
@@ -445,18 +458,18 @@ ctrOpenSearchPagesInBrowser(dbQueryHistory(collection = "paediatric_phase12_tria
 #
 if (FALSE) ctrLoadQueryIntoDb(querytoupdate = "last", collection = "paediatric_phase12_trials")
 #
-dbFindVariable("phase", allmatches = TRUE, collection = "paediatric_phase12_trials")
+dbFindFields("phase", allmatches = TRUE, collection = "paediatric_phase12_trials")
 # [1] "e72_therapeutic_exploratory_phase_ii"   "e71_human_pharmacology_phase_i"
 # [3] "e73_therapeutic_confirmatory_phase_iii" "e74_therapeutic_use_phase_iv"  
 #
-result <- dbGetVariablesIntoDf(c("a1_member_state_concerned", "n_date_of_competent_authority_decision",
-                                 "dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation", 
-                                 "e11_medical_conditions_being_investigated", "e112_therapeutic_area", 
-                                 "e71_human_pharmacology_phase_i", "e72_therapeutic_exploratory_phase_ii",
-                                 "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database",
-                                 "f422_in_the_whole_clinical_trial", 
-                                 "a3_full_title_of_the_trial", "a2_eudract_number"), 
-                               collection = "paediatric_phase12_trials")
+result <- dbGetFieldsIntoDf(c("a1_member_state_concerned", "n_date_of_competent_authority_decision",
+                              "dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation", 
+                              "e11_medical_conditions_being_investigated", "e112_therapeutic_area", 
+                              "e71_human_pharmacology_phase_i", "e72_therapeutic_exploratory_phase_ii",
+                              "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database",
+                              "f422_in_the_whole_clinical_trial", 
+                              "a3_full_title_of_the_trial", "a2_eudract_number"), 
+                            collection = "paediatric_phase12_trials")
 #
 searchfor <- "cancer, leukaem, leukem, tumour, tumor, sarcoma, blastom, gliom, germ, lymphom, malign, hodgkin, ewing, rhabdo, terato, tumeur, leucemi"
 searchfor <- strsplit(searchfor, ", ")[[1]]
@@ -534,13 +547,13 @@ library(rworldmap)
 library(plyr)
 
 # get relevant variables from relevant collection
-result <- dbGetVariablesIntoDf(c("a1_member_state_concerned", "n_date_of_competent_authority_decision",
-                                 "e11_medical_conditions_being_investigated", "e112_therapeutic_area", 
-                                 "e71_human_pharmacology_phase_i", "e72_therapeutic_exploratory_phase_ii",
-                                 "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database",
-                                 "a3_full_title_of_the_trial", "a2_eudract_number", "p_end_of_trial_status", 
-                                 "ctrname"), 
-                               collection = "paediatric_phase12_trials")
+result <- dbGetFieldsIntoDf(c("a1_member_state_concerned", "n_date_of_competent_authority_decision",
+                              "e11_medical_conditions_being_investigated", "e112_therapeutic_area", 
+                              "e71_human_pharmacology_phase_i", "e72_therapeutic_exploratory_phase_ii",
+                              "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database",
+                              "a3_full_title_of_the_trial", "a2_eudract_number", "p_end_of_trial_status", 
+                              "ctrname"), 
+                            collection = "paediatric_phase12_trials")
 
 # calculate country variable
 result$country <- sub("^.+-([3A-Z]+)$", "\\1", result$`_id`)
@@ -703,12 +716,12 @@ plot (hist, type = "h", las = 1, xlim = c(0, 2000), ylim = c(0, 500),
 #
 # Search for interesting variables,  
 # note the spelling in EUCTR:
-dbFindVariable("crit", allmatches = TRUE)
+dbFindFields("crit", allmatches = TRUE)
 #
 # Get interesting variables from database 
 # for further analysis within R:
-result <- dbGetVariablesIntoDf(c("e3_principal_inclusion_criteria", 
-                                 "eligibility.criteria.textblock"))
+result <- dbGetFieldsIntoDf(c("e3_principal_inclusion_criteria", 
+                              "eligibility.criteria.textblock"))
 #
 # Eliminate trials records duplicated by member state
 # keep a single record and if available use preference:
@@ -752,8 +765,8 @@ for(i in 1:length(terms))
 #
 # Get interesting variables from database 
 # for further analysis within R:
-result <- dbGetVariablesIntoDf(c("a2_eudract_number", 
-                                 "n_date_of_competent_authority_decision"))
+result <- dbGetFieldsIntoDf(c("a2_eudract_number", 
+                              "n_date_of_competent_authority_decision"))
 
 # Prepare for summarising
 result$trial_start_date <- strptime(result$n_date_of_competent_authority_decision, format = "%Y-%m-%d")
@@ -774,26 +787,62 @@ result <- merge(result, first_trial_start, all.x = TRUE)
 #
 ```
 
+## Annotate records when using ctrLoadIntoDb() with user text
+
+```{r annotations}
+
+if(FALSE) ctrLoadQueryIntoDb(queryterm = paste0("https://clinicaltrials.gov/ct2/results?age=0&intr=dasatinib&phase=1"), 
+                             annotation.text = paste0("|AS:", "dasatinib", "|"), 
+                             annotation.mode = "prepend", 
+                             collection = "annotationTest")
+
+# helper function
+getannotationelement <- function(x, element = "AS") {
+  
+  # example from annotation.text: 
+  # x <- "|AS:tisagenlecleucel| |AS:dasatinib|"
+  
+  x <- strsplit(x = x, split = "\\|")
+  x <- unlist(x)
+  x <- x[grepl(paste0("^", element, ":"), x)]
+  x <- strsplit(x = x, split = ":")
+  x <- unlist(x)
+  x <- x[!grepl("AS", x)]
+  x <- sort(unique(x))
+  
+  return(x)
+}
+
+result <- dbGetFieldsIntoDf(fields = "annotation", collection = "annotationTest")
+getannotationelement(result$annotation, element = "AS")
+# [1] "dasatinib"
+
+```
+
+
+
 ## Analyse results-related information
 
 Distribution of p values. 
 
 ```{r analyse_results_1}
 
+# get trials into database
 if(FALSE) ctrLoadQueryIntoDb(queryterm = paste0("https://clinicaltrials.gov/ct2/results?rslt=With&age=0&intr=Drug&", 
                                                 "phase=1&phase=2&strd_s=01%2F01%2F2010&strd_e=12%2F31%2F2012"), 
                              collection = "resultsTest")
 
 # get result set
-result <- dbGetVariablesIntoDf(c("start_date", "detailed_description.textblock", "official_title",
-                                 "study_design_info.allocation", "primary_outcome.measure", "arm_group.arm_group_type", 
-                                 "clinical_results.outcome_list.outcome.analysis_list.analysis.method",
-                                 "clinical_results.outcome_list.outcome.analysis_list.analysis.p_value",
-                                 "clinical_results.outcome_list.outcome.analysis_list.analysis.param_type",
-                                 "clinical_results.outcome_list.outcome.analysis_list.analysis.non_inferiority_type",
-                                 "clinical_results.baseline.analyzed_list.analyzed.units", 
-                                 "clinical_results.baseline.analyzed_list.analyzed.count_list.count.@attributes.value"
-                                 ), collection = "resultsTest", stopifnodata = FALSE)
+# dbFindFields(namepart = "age", allmatches = TRUE, collection = "resultsTest")
+result <- dbGetFieldsIntoDf(c("start_date", "detailed_description.textblock", "official_title", "eligibility.maximum_age",
+                              "study_design_info.allocation", "primary_outcome.measure", "arm_group.arm_group_type", 
+                              "clinical_results.outcome_list.outcome.analysis_list.analysis.method",
+                              "clinical_results.outcome_list.outcome.analysis_list.analysis.p_value",
+                              "clinical_results.outcome_list.outcome.analysis_list.analysis.param_type",
+                              "clinical_results.outcome_list.outcome.analysis_list.analysis.non_inferiority_type",
+                              "clinical_results.baseline.analyzed_list.analyzed.units", 
+                              "clinical_results.baseline.analyzed_list.analyzed.count_list.count.@attributes.value"
+                              ), collection = "resultsTest", stopifnodata = FALSE)
 
 # table(result$clinical_results.baseline.analyzed_list.analyzed.units)
 tmp <- lapply(result$`clinical_results.baseline.analyzed_list.analyzed.count_list.count.@attributes.value`, 

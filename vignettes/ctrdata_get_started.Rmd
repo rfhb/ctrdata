@@ -118,7 +118,7 @@ dbQueryHistory()
 #
 # find names of fields of interest in database:
 #
-dbFindVariable("status", allmatches = TRUE)
+dbFindFields("status", allmatches = TRUE)
 #
 # [1] "overall_status"  "b1_sponsor.XX.b31_and_b32_status_of_the_sponsor" "p_end_of_trial_status"                          
 # [4] "location.status" "location.XX.status"
@@ -126,8 +126,8 @@ dbFindVariable("status", allmatches = TRUE)
 # Get all records that have values in all specified fields.
 # Note that b31_... is a field within the array b1_...
 #
-result <- dbGetVariablesIntoDf(c("b1_sponsor.b31_and_b32_status_of_the_sponsor", 
-                                 "p_end_of_trial_status"))
+result <- dbGetFieldsIntoDb(c("b1_sponsor.b31_and_b32_status_of_the_sponsor", 
+                              "p_end_of_trial_status"))
 #
 # Tabulate the status of the clinical trial on the date of information retrieval
 #

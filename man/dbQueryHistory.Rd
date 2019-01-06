@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{dbQueryHistory}
 \alias{dbQueryHistory}
-\title{Show the history of queries that were loaded into a database}
+\title{Show the history of queries that were loaded into a database collection}
 \usage{
 dbQueryHistory(collection = "ctrdata", db = "users",
   url = "mongodb://localhost", username = "", password = "",
@@ -24,12 +24,14 @@ mongodb://localhost)}
 \item{verbose}{Print information.}
 }
 \value{
-A data frame with variables: query-timestamp, query-egister,
+A data frame with columns: query-timestamp, query-egister,
  query-records (note: this is the number of records loaded when last executing
- ctrLoadQueryIntoDb(), not the total record number) and query-term.
+ ctrLoadQueryIntoDb(), not the total record number) and query-term,
+ and with one row for each ctrLoadQueryIntoDb() loading trial records
+ in this collection.
 }
 \description{
-Show the history of queries that were loaded into a database
+Show the history of queries that were loaded into a database collection
 }
 \examples{
 

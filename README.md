@@ -24,9 +24,9 @@ Main features:
 
 * Results-related information on these clinical trials is now included (since August 2017) when information is retrieved (downloaded). 
 
-* Retrieved (downloaded) trial information is transformed and stored in a document-centric database (MongoDB), for fast and offline access. This can then be analysed with `R` (or others systems). Easily re-run a previous query to update the database.  
+* Retrieved (downloaded) trial information is transformed and stored in a document-centric database (MongoDB), for fast and offline access. This can then be analysed with `R` (or others systems). Easily re-run a previous query to update a database collection.  
 
-* Unique (de-duplicated) clinical trial records are identified (a database may hold information from more than one register, and trials may have more than one record in a register). `ctrdata` has also functions to merge protocol-related information from different registers and to recode it. Vignettes are provided to get started and with detailed examples such as analyses of time trends of details of clinical trial protocols. 
+* Unique (de-duplicated) clinical trial records are identified (a database collection may hold information from more than one register, and trials may have more than one record in a register). `ctrdata` has also functions to merge protocol-related information from different registers and to recode it. Vignettes are provided to get started and with detailed examples such as analyses of time trends of details of clinical trial protocols. 
 
 Remember to respect the registers' copyrights and terms and conditions. 
 
@@ -97,11 +97,11 @@ Name  | Function
 ctrOpenSearchPagesInBrowser	| Open search pages of registers or execute search in web browser
 ctrFindActiveSubstanceSynonyms | Find synonyms and alternative names for an active substance
 ctrGetQueryUrlFromBrowser	| Import from clipboard the URL of a search in one of the registers
-ctrLoadQueryIntoDb	| Retrieve (download) or update, and annotate, information on clinical trials from register and store in database
-dbQueryHistory	| Show the history of queries that were downloaded into the database
-dbFindVariable	| Find names of keys (fields) in the database
-dbFindIdsUniqueTrials	| Produce a vector of de-duplicated identifiers of clinical trial records in the database
-dbGetVariablesIntoDf	| Create a data frame from records in the database with specified fields 
+ctrLoadQueryIntoDb	| Retrieve (download) or update, and annotate, information on clinical trials from register and store in database collection
+dbQueryHistory	| Show the history of queries that were downloaded into the database collection
+dbFindFields	| Find names of fields in the database collection
+dbFindIdsUniqueTrials	| Produce a vector of de-duplicated identifiers of clinical trial records in the database collection
+dbGetFieldsIntoDf	| Create a data.frame from records in the database collection with the specified fields 
 dfMergeTwoVariablesRelevel	| Merge two variables into a single variable, optionally map values to a new set of values
 installCygwinWindowsDoInstall	| Convenience function to install a cygwin environment under MS Windows, including perl, sed, cat and php
 
@@ -128,9 +128,9 @@ sequenceDiagram
 
   note left of user_R: prepare and analyse
 
-  database->>database: dbFindVariable()
+  database->>database: dbFindFields()
 
-  database->>user_R: dbGetVariablesIntoDf()
+  database->>user_R: dbGetFieldsIntoDf()
   database->>database: dbFindIdsUniqueTrials()
 
   user_R->>user_R: dfMergeTwoVariablesRelevel()
@@ -211,8 +211,8 @@ ctrLoadQueryIntoDb("https://www.clinicaltrialsregister.eu/ctr-search/search?quer
 # Get all records that have values in all specified fields.
 # Note that b31_... is an element within the array b1_...
 #
-result <- dbGetVariablesIntoDf(c("b1_sponsor.b31_and_b32_status_of_the_sponsor", 
-                                 "p_end_of_trial_status", "a2_eudract_number"))
+result <- dbGetFieldsIntoDf(c("b1_sponsor.b31_and_b32_status_of_the_sponsor", 
+                              "p_end_of_trial_status", "a2_eudract_number"))
 #
 # Eliminate trials records duplicated by EU member state: 
 #

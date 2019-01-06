@@ -1,3 +1,10 @@
+# ctrdata 0.13
+ - 2019-01-06
+ - changes : 
+   - dbGetVariablesIntoDf() is deprecated, use dbGetFieldsIntoDf() instead
+   - dbFindVariable() is deprecated, use dbFindFields() instead
+   - in dbMergeTwoVariablesRelevel() parameter varnames is deprecated, use colnames instead
+ 
 # ctrdata 0.12.1
  - 2018-12-15
  - added function ctrFindActiveSubstanceSynonyms() to obtain synonyms for an active substance
