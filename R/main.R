@@ -201,9 +201,9 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
                           username = username, password = password, verbose = verbose)
 
   # update keys database
-  dbFindVariable(forceupdate = TRUE, debug = debug,
-                 collection = collection, db = db, url = url,
-                 username = username, password = password, verbose = verbose)
+  dbFindFields(forceupdate = TRUE, debug = debug,
+               collection = collection, db = db, url = url,
+               username = username, password = password, verbose = verbose)
 
   # add metadata
   imported <- addMetaData(imported,

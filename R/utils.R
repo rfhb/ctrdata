@@ -350,7 +350,7 @@ dbQueryHistory <- function(collection = "ctrdata", db = "users", url = "mongodb:
 # end ctrQueryHistoryInDb
 
 
-#' Find names of keys (fields) in the database
+#' Find names of fields in the database collection
 #'
 #' Given part of the name of a field of interest to the user, this function
 #' returns the full field names as found in the database. It is not necessary to
@@ -362,7 +362,7 @@ dbQueryHistory <- function(collection = "ctrdata", db = "users", url = "mongodb:
 #' For fields in CTGOV (protocol-related information), see also the register's
 #' definitions: \url{https://prsinfo.clinicaltrials.gov/definitions.html}
 #'
-#' Note that generating a list of keys with variety.js as used in this function
+#' Note that generating a list of fields with variety.js as used in this function
 #' may not work with certain mongo databases, for example when the host or port
 #' is different per database, such as found with a free mongolab plan.
 #'
@@ -379,19 +379,19 @@ dbQueryHistory <- function(collection = "ctrdata", db = "users", url = "mongodb:
 #'
 #' @importFrom curl curl_download
 #'
-#' @return Vector of first keys (fields) found (or of all keys, see above)
+#' @return Vector of first field found (or all fields found, see above)
 #'
 #' @export
 #'
 #' @examples
 #'
 #' \dontrun{
-#'  dbFindVariable ("date")
+#'  dbFindFields("date")
 #' }
 #'
-dbFindVariable <- function(namepart = "", allmatches = FALSE, forceupdate = FALSE, debug = FALSE,
-                           collection = "ctrdata", db = "users", url = "mongodb://localhost",
-                           username = "", password = "", verbose = FALSE) {
+dbFindFields <- function(namepart = "", allmatches = FALSE, forceupdate = FALSE, debug = FALSE,
+                         collection = "ctrdata", db = "users", url = "mongodb://localhost",
+                         username = "", password = "", verbose = FALSE) {
 
   # sanity checks
   if (!is.atomic(namepart)) stop ("Name part should be atomic.", call. = FALSE)
@@ -484,7 +484,21 @@ dbFindVariable <- function(namepart = "", allmatches = FALSE, forceupdate = FALS
   rm(mongo)
   rm(mongoKeys)
 }
-# end dbFindVariable
+# end dbFindFields
+
+# 2019-01-06 migration
+dbFindVariable <- function(namepart = "", allmatches = FALSE, forceupdate = FALSE, debug = FALSE,
+                           collection = "ctrdata", db = "users", url = "mongodb://localhost",
+                           username = "", password = "", verbose = FALSE) {
+
+  # inform user
+  .Deprecated(new = "dbFindFields")
+
+  dbFindFields(namepart = namepart, allmatches = allmatches, forceupdate = forceupdate, debug = debug,
+               collection = collection, db = db, url = url,
+               username = username, password = password, verbose = verbose)
+
+}
 
 
 #' Deduplicate records to provide unique clinical trial identifiers
@@ -769,7 +783,7 @@ dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
   if (any(fields == "", na.rm = TRUE) | (length(fields) == 0))
     stop ("'fields' contains empty elements; ",
          " please provide a vector of strings of field names.",
-         " Function dbFindVariable() can be used to find field names.",
+         " Function dbFindFields() can be used to find field names.",
          call. = FALSE)
 
   # get a working mongo connection, select trial record collection
@@ -790,13 +804,13 @@ dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
   for (item in fields) {
     #
     query <- paste0('{"_id": {"$ne": "meta-info"}}')
-    if (debug) message("DEBUG: variable / field: ", item)
+    if (debug) message("DEBUG: field: ", item)
     #
     tmp <- try({
       #
       dfi <- mongo$iterate(query = query, fields = paste0('{"_id": 1, "', item, '": 1}'))$batch(size = countall)
       #
-      if (debug) message("DEBUG: variable / field ", item, " has length ", length(dfi))
+      if (debug) message("DEBUG: field ", item, " has length ", length(dfi))
       #
       # attempt custom function to condense into a data frame instead of using data.frame = TRUE
       dfi <- as.data.frame(cbind(sapply(dfi, function(x) as.vector(unlist(x[1]))),
@@ -811,8 +825,8 @@ dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
     #
     if ( !( (class(tmp) != "try-error") & any(nchar(dfi[, 2]) != 0) ) ) {
       # try-error occured or no data retrieved
-      msg <- paste0("For variable / field: ", item, " no data could be extracted from the collection.\n",
-                    "Use dbGetVariablesIntoDf(..., stopifnodata = FALSE) to continue extracting other variables.")
+      msg <- paste0("For field: ", item, " no data could be extracted from the database collection.\n",
+                    "Use dbGetFieldsIntoDf(stopifnodata = FALSE) to continue extracting other fields.")
       if (stopifnodata){
         stop (msg, call. = FALSE)
       } else {
