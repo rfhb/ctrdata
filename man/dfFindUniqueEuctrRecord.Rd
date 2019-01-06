@@ -10,7 +10,7 @@ dfFindUniqueEuctrRecord(df = NULL, prefermemberstate = "GB",
 \arguments{
 \item{df}{A data frame created from the database that includes the columns
 "_id" and "a2_eudract_number", for example created with function
-dbGetVariablesIntoDf(c("_id", "a2_eudract_number")).}
+dbGetFieldsIntoDf(c("_id", "a2_eudract_number")).}
 
 \item{prefermemberstate}{Code of single EU Member State for which records should
 returned. If not available, a record for GB or lacking this, any other record

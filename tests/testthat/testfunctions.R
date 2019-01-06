@@ -285,7 +285,7 @@ test_that("retrieve results from register euctr", {
                                                      debug = TRUE)),
                  "Imported or updated results for")
 
-  tmp <- dbGetVariablesIntoDf(c("a2_eudract_number",
+  tmp <- dbGetFieldsIntoDf(c("a2_eudract_number",
                                 "endPoints.endPoint.title",
                                 "firstreceived_results_date",
                                 "version_results_history"),
@@ -409,26 +409,30 @@ test_that("operations on database after download from register", {
   # initialise
   coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
 
-  # dbFindVariable
+  # dbFindFields
+
+  # test 28a (temporary)
+  expect_warning(dbFindVariable(namepart = "date", collection = coll),
+                 "'dbFindVariable' is deprecated.")
 
   # test 28
-  expect_error(dbFindVariable(namepart = c("onestring", "twostring"), collection = coll),
+  expect_error(dbFindFields(namepart = c("onestring", "twostring"), collection = coll),
                "Name part should have only one element.")
 
   # test 29
-  expect_error(dbFindVariable(namepart = list("onestring", "twostring"), collection = coll),
+  expect_error(dbFindFields(namepart = list("onestring", "twostring"), collection = coll),
                "Name part should be atomic.")
 
   # test 30
-  expect_error(dbFindVariable(namepart = "", collection = coll),
+  expect_error(dbFindFields(namepart = "", collection = coll),
                "Empty name part string.")
 
   # test 31
-  expect_message(dbFindVariable(namepart = "date", collection = coll),
+  expect_message(dbFindFields(namepart = "date", collection = coll),
                  "Returning first of ")
 
   # test 32
-  expect_equal(is.na(dbFindVariable(namepart = "ThisNameShouldNotExistAnywhere", collection = coll)),
+  expect_equal(is.na(dbFindFields(namepart = "ThisNameShouldNotExistAnywhere", collection = coll)),
                TRUE)
 
   # dbFindIdsUniqueTrials
@@ -446,18 +450,23 @@ test_that("operations on database after download from register", {
                  "Preferred EUCTR version set to 3RD country trials, but include3rdcountrytrials was FALSE")
 
 
-  # dbGetVariablesIntoDf
+  # dbGetFieldsIntoDf
+
+  # test 36a (temporary)
+  expect_warning(dbGetVariablesIntoDb(fields = "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database",
+                                      collection = coll)[1,],
+                 "'dbGetVariablesIntoDb' is deprecated.")
 
   # test 36
-  expect_error(dbGetVariablesIntoDf(fields = "ThisDoesNotExist", collection = coll),
-               "For variable / field: ThisDoesNotExist no data could be extracted")
+  expect_error(dbGetFieldsIntoDf(fields = "ThisDoesNotExist", collection = coll),
+               "For field: ThisDoesNotExist no data could be extracted")
 
   # test 37
-  expect_error(dbGetVariablesIntoDf(fields = "", collection = coll),
+  expect_error(dbGetFieldsIntoDf(fields = "", collection = coll),
                "'fields' contains empty elements")
 
   # test 38
-  expect_error(dbGetVariablesIntoDf(fields = list("ThisDoesNotExist"), collection = coll),
+  expect_error(dbGetFieldsIntoDf(fields = list("ThisDoesNotExist"), collection = coll),
                "Input should be a vector of strings of field names.")
 
 
@@ -579,7 +588,7 @@ test_that("annotate queries", {
     "Imported or updated 6 records on 1 trial")
 
   # test 52
-  expect_equal(sort(suppressMessages(dbGetVariablesIntoDf(fields = "annotation",
+  expect_equal(sort(suppressMessages(dbGetFieldsIntoDf(fields = "annotation",
                                                           collection = coll))[, "annotation"]),
                sort(c("ANNO", "TEST", "TEST", "TEST", "TEST", "TEST", "TEST", "TEST ANNO")))
 
@@ -601,20 +610,20 @@ test_that("operations on data frame", {
                "Need a data frame as input.")
 
   # test 54
-  expect_message(dfMergeTwoVariablesRelevel(df = df, varnames = c("var1", "var2")),
+  expect_message(dfMergeTwoVariablesRelevel(df = df, colnames = c("var1", "var2")),
                  "Unique values returned: 12, 23, 34")
 
   # test 55
-  expect_is     (dfMergeTwoVariablesRelevel(df = df, varnames = c("var1", "var2")),
+  expect_is     (dfMergeTwoVariablesRelevel(df = df, colnames = c("var1", "var2")),
                  "character")
 
   # test 56
-  expect_message(dfMergeTwoVariablesRelevel(df = df, varnames = c("var1", "var2"),
+  expect_message(dfMergeTwoVariablesRelevel(df = df, colnames = c("var1", "var2"),
                                             levelslist = statusvalues),
                  "Unique values returned: Firstvalues, Lastvalue")
 
   # test 57
-  expect_error(dfMergeTwoVariablesRelevel(df = df, varnames = 1:3),
+  expect_error(dfMergeTwoVariablesRelevel(df = df, colnames = 1:3),
                  "Please provide exactly two variable names.")
 
 

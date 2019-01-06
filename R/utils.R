@@ -289,13 +289,15 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = ""){
 
 
 
-#' Show the history of queries that were loaded into a database
+#' Show the history of queries that were loaded into a database collection
 #'
 #' @inheritParams ctrMongo
 #'
-#' @return A data frame with variables: query-timestamp, query-egister,
+#' @return A data frame with columns: query-timestamp, query-egister,
 #'  query-records (note: this is the number of records loaded when last executing
-#'  ctrLoadQueryIntoDb(), not the total record number) and query-term.
+#'  ctrLoadQueryIntoDb(), not the total record number) and query-term,
+#'  and with one row for each ctrLoadQueryIntoDb() loading trial records
+#'  in this collection.
 #'
 #' @export
 #'
@@ -552,14 +554,14 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
 
   # 1. get euctr records
   listofEUCTRids <- try(suppressMessages(suppressWarnings(
-    dbGetVariablesIntoDf(fields = c("a2_eudract_number",
-                                    "a41_sponsors_protocol_code_number",
-                                    "a51_isrctn_international_standard_randomised_controlled_trial_number",
-                                    "a52_us_nct_clinicaltrialsgov_registry_number"),
-                         debug = FALSE,
-                         collection = collection, db = db, url = url,
-                         username = username, password = password, verbose = FALSE,
-                         stopifnodata = FALSE)
+    dbGetFieldsIntoDf(fields = c("a2_eudract_number",
+                                 "a41_sponsors_protocol_code_number",
+                                 "a51_isrctn_international_standard_randomised_controlled_trial_number",
+                                 "a52_us_nct_clinicaltrialsgov_registry_number"),
+                      debug = FALSE,
+                      collection = collection, db = db, url = url,
+                      username = username, password = password, verbose = FALSE,
+                      stopifnodata = FALSE)
     )),
     silent = TRUE
   )
@@ -723,7 +725,7 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
 # end dbFindIdsUniqueTrials
 
 
-#' Create data frame by extracting specified fields from database
+#' Create data frame by extracting specified fields from database collection
 #'
 #' With this convenience function, fields in the mongo database are retrieved
 #' into an R dataframe. As mongo json fields within the record of a trial
@@ -735,11 +737,12 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
 #' For more sophisticated data retrieval from the database, see vignette examples
 #' and other packages to query mongodb such as mongolite.
 #'
-#' @param fields Vector of strings, with names of the sought fields.
+#' @param fields Vector of one or more strings, with names of the sought fields.
+#'    See function \link{dbFindFields} for how to find names of fields.
 #'
 #' @param stopifnodata Stops with an error (\code{TRUE}, default) or with a warning
-#'    (\code{TRUE}) if sought variable is not available in any of the records
-#'    in the database.
+#'    (\code{TRUE}) if sought field is empty or not available in any of the records
+#'    in the database collection.
 #'
 #' @param debug Printing additional information if set to \code{TRUE}; default
 #'   is \code{FALSE}.
@@ -757,20 +760,20 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
 #'
 #' \dontrun{
 #'
-#' dbGetVariablesIntoDf("b1_sponsor.b31_and_b32_status_of_the_sponsor")[1,]
+#' dbGetFieldsIntoDf("b1_sponsor.b31_and_b32_status_of_the_sponsor")[1,]
 #' #                   _id  b1_sponsor.b31_and_b32_status_of_the_sponsor
 #' #  1  2004-000015-25-GB                   Non-commercial / Commercial
 #'
-#' dbGetVariablesIntoDf("keyword")[1:2,]
+#' dbGetFieldsIntoDf("keyword")[1,]
 #' #            _id                                           keyword
 #' #  1 NCT00129259  T1D / type 1 diabetes / type 1 diabetes mellitus
 #'
 #' }
 #'
-dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
-                                 collection = "ctrdata", db = "users", url = "mongodb://localhost",
-                                 username = "", password = "", verbose = FALSE,
-                                 stopifnodata = TRUE) {
+dbGetFieldsIntoDf <- function(fields = "", debug = FALSE,
+                              collection = "ctrdata", db = "users", url = "mongodb://localhost",
+                              username = "", password = "", verbose = FALSE,
+                              stopifnodata = TRUE) {
 
   # check parameters
   if (!is.vector(fields) | class(fields) != "character")
@@ -868,16 +871,37 @@ dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
   # return
   return(result)
 }
-# dbGetVariablesIntoDf
+# dbGetFieldsIntoDf
+
+# 2019-01-06 migration
+dbGetVariablesIntoDb <- function(fields = "", debug = FALSE,
+                                 collection = "ctrdata", db = "users", url = "mongodb://localhost",
+                                 username = "", password = "", verbose = FALSE,
+                                 stopifnodata = TRUE) {
+
+  # inform user
+  .Deprecated(new = "dbGetFieldsIntoDf")
+
+  dbGetFieldsIntoDf(fields = fields, debug = debug,
+                    collection = collection, db = db, url = url,
+                    username = username, password = password, verbose = verbose,
+                    stopifnodata = stopifnodata)
+
+}
 
 
-#' Merge two variables into one, optionally map values
+
+
+#' Merge two variables into one, optionally map values to new levels
 #'
-#' @param df A data frame in which there are two variables (columns) to be
+#' @param df A \link{data.frame} in which there are two variables (columns) to be
 #'   merged into one.
-#' @param varnames A vector with names of the two variables to be merged.
+#' @param colnames A vector of length two with names of the two columns that hold
+#'   the variables to be merged. See \link{colnames} for how to obtain the names
+#'   of columns of a data frame.
 #' @param levelslist A list with one slice each for a new value to be used for a
-#'   vector of old values.
+#'   vector of old values (optional).
+#' @param ... for deprecated varnames parameter (will be removed)
 #'
 #' @return A vector of strings
 #'
@@ -891,16 +915,30 @@ dbGetVariablesIntoDf <- function(fields = "", debug = FALSE,
 #'                      "completed" = c("Completed", "Prematurely Ended", "Terminated"),
 #'                      "other" = c("Withdrawn", "Suspended",
 #'                                  "No longer available", "Not yet recruiting"))
+#'
 #' dfMergeTwoVariablesRelevel(result, c("Recruitment", "x5_trial_status"), statusvalues)
 #' }
 #'
-dfMergeTwoVariablesRelevel <- function(df = NULL, varnames = "", levelslist = NULL) {
-  #
+dfMergeTwoVariablesRelevel <- function(df = NULL, colnames = "", levelslist = NULL, ...) {
+
+  # check parameters
+
+  # 2019-01-06 migrate from previously used parameter "varnames"
+  tmp <- as.list(match.call())
+  tmp <- tmp["varnames"]
+  tmp <- unlist(tmp)
+  tmp <- unname(tmp)
+  if(!is.null(tmp) && colnames == "") {
+    colnames <- tmp
+    warning("Parameter varnames is deprecated, use colnames instead.", call. = FALSE)
+  }
+
+  # other checks
   if (class(df) != "data.frame") stop ("Need a data frame as input.", call. = FALSE)
-  if (length(varnames)  != 2)    stop ("Please provide exactly two variable names.", call. = FALSE)
+  if (length(colnames)  != 2)    stop ("Please provide exactly two variable names.", call. = FALSE)
 
   # find variables in data frame and merge
-  tmp <- match(varnames, names(df))
+  tmp <- match(colnames, names(df))
   df <- df[, tmp]
   df[, 1] <- ifelse(is.na(tt <- df[, 1]), "", tt)
   df[, 2] <- ifelse(is.na(tt <- df[, 2]), "", tt)
@@ -951,7 +989,7 @@ dfMergeTwoVariablesRelevel <- function(df = NULL, varnames = "", levelslist = NU
 #'
 #' @param df A data frame created from the database that includes the columns
 #'   "_id" and "a2_eudract_number", for example created with function
-#'   dbGetVariablesIntoDf(c("_id", "a2_eudract_number")).
+#'   dbGetFieldsIntoDf(c("_id", "a2_eudract_number")).
 #' @param prefermemberstate Code of single EU Member State for which records should
 #'   returned. If not available, a record for GB or lacking this, any other record
 #'   for the trial will be returned. For a list of codes of EU
