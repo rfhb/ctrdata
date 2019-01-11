@@ -624,7 +624,7 @@ test_that("operations on data frame", {
 
   # test 57
   expect_error(dfMergeTwoVariablesRelevel(df = df, colnames = 1:3),
-                 "Please provide exactly two variable names.")
+                 "Please provide exactly two column names.")
 
 
 })
