@@ -1009,7 +1009,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     # "https://www.clinicaltrialsregister.eu/ctr-search/rest/download/result/zip/xml/..."
     # first version:  "2007-000371-42/1"
     # second version: "2007-000371-42/2"
-    # last version:   "2007-000371-42"
+    # latest version: "2007-000371-42"
 
     # calculate batches to get data from all results pages
     resultsNumBatches <- length(eudractnumbersimported) %/% parallelretrievals

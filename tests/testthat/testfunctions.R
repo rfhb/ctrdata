@@ -228,9 +228,9 @@ test_that("retrieve data from register euctr", {
 
   ## create and test updatable query
 
-  date.today <- format(Sys.time(),                  "%Y-%m-%d")
-  date.temp  <- format(Sys.time() - (60*60*24*6),   "%Y-%m-%d")
-  date.old   <- format(Sys.time() - (60*60*24*6*9), "%Y-%m-%d")
+  date.today <- format(Sys.time(),                          "%Y-%m-%d")
+  date.temp  <- format(Sys.time() - (60 * 60 * 24 * 6),     "%Y-%m-%d")
+  date.old   <- format(Sys.time() - (60 * 60 * 24 * 6 * 9), "%Y-%m-%d")
 
   q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
               "&dateFrom=", date.old, "&dateTo=", date.temp)
@@ -368,38 +368,6 @@ test_that("browser interaction", {
 })
 
 
-
-# testing downloading from both registers using a proxy
-# a query retrieving a small number of trials
-# test_that("retrieve via proxy data from register euctr", {
-#
-#   has_proxy()
-#   has_mongo()
-#
-#   skip_on_travis()
-#
-#   # get initial options
-#   old_options <- options()$RCurlOptions
-#
-#   # this is a local proxy using jap
-#   opts <- list(proxy = "127.0.0.1", proxyport = 4001)
-#
-#   # set proxy
-#   options(RCurlOptions = opts)
-#
-#   queryeuctr <- list(queryterm = "2010-024264-18",      register = "EUCTR")
-#
-#   expect_message(ctrLoadQueryIntoDb(queryeuctr,
-#                                     collection = "ThisNameSpaceShouldNotExistAnywhereInAMongoDB",
-#                                     debug = TRUE),
-#                  "Updated history")
-#
-#   # reset to initial options
-#   options(RCurlOptions = old_options)
-#
-# })
-
-
 #### db fields and records ####
 test_that("operations on database after download from register", {
 
@@ -454,7 +422,7 @@ test_that("operations on database after download from register", {
 
   # test 36a (temporary)
   expect_warning(dbGetVariablesIntoDb(fields = "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database",
-                                      collection = coll)[1,],
+                                      collection = coll)[1, ],
                  "'dbGetVariablesIntoDb' is deprecated.")
 
   # test 36

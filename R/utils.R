@@ -927,7 +927,7 @@ dfMergeTwoVariablesRelevel <- function(df = NULL, colnames = "", levelslist = NU
   tmp <- match.call()
   tmp <- tmp["varnames"]
   tmp <- as.list(tmp)[[1]]
-  if(length(tmp) == 3 && colnames == "") {
+  if (length(tmp) == 3 && colnames == "") {
     colnames <- unlist(as.list(tmp[-1]))
     warning("Parameter varnames is deprecated, use colnames instead.", call. = FALSE)
   }
