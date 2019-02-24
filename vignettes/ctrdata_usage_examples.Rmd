@@ -291,7 +291,7 @@ result <- result[ result[["_id"]] %in% ids_of_unique_trials, ]
 #
 # Now merge two variables into a new variable for analysis:
 tmp <- dfMergeTwoVariablesRelevel(result, 
-                                  varnames = c("overall_status", "p_end_of_trial_status"))
+                                  colnames = c("overall_status", "p_end_of_trial_status"))
 # Unique values returned: Ongoing, Completed, Prematurely Ended, Temporarily Halted, 
 #  Restarted, Recruiting, Not yet recruiting
 #
@@ -311,7 +311,7 @@ statusvalues <- list("ongoing" = c("Recruiting", "Active", "Ongoing",
                                     "Not yet recruiting", "Temporarily Halted", "Unknown status"))
 #
 tmp <- dfMergeTwoVariablesRelevel(result, 
-                                  varnames = c("overall_status", "p_end_of_trial_status"), 
+                                  colnames = c("overall_status", "p_end_of_trial_status"), 
                                   levelslist = statusvalues)
 # Unique values returned: ongoing, completed, other
 #

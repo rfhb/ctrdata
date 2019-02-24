@@ -56,7 +56,7 @@ ctrMongo <- function(collection = "ctrdata", db = "users", url = "mongodb://loca
             call. = FALSE, immediate. = FALSE)
 
   # inform user
-  if (verbose) message("Using Mongo DB (collections \"", collection,
+  if (verbose) message("Using MongoDB (collections \"", collection,
                        "\" in database \"", db,
                        "\" on \"", host, "\").")
 
@@ -202,7 +202,7 @@ ctrGetQueryUrlFromBrowser <- function(content = "") {
     # sanity correction for naked terms
     if (!grepl("&\\w+=\\w+|query=\\w", queryterm)) queryterm <- paste0("query=", queryterm)
     #
-    message("* Found search query from EUCTR.\n")
+    message("* Found search query from EUCTR.")
     #
     df <- data.frame(cbind(queryterm, "EUCTR"), stringsAsFactors = FALSE)
     names(df) <- c("query-term", "query-register")

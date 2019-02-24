@@ -217,9 +217,6 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
 # end ctrLoadQueryIntoDb
 
 
-
-
-
 #' ctrRerunQuery
 #'
 #' @inheritParams ctrLoadQueryIntoDb
@@ -358,8 +355,6 @@ ctrRerunQuery <- function (querytoupdate = querytoupdate,
 }
 
 
-
-
 #' progressOut
 #'
 #' @keywords internal
@@ -373,9 +368,6 @@ progressOut <- function(down, up) {
   if (stats::runif (1) < 0.001) message(".", appendLF = FALSE)
   #
 }
-
-
-
 
 
 #' dbQueryAnnotateRecords
@@ -454,9 +446,6 @@ dbCTRAnnotateQueryRecords <- function(recordnumbers, annotations, annotation.tex
 }
 
 
-
-
-
 #' dbCTRUpdateQueryHistory
 #'
 #' @inheritParams ctrLoadQueryIntoDb
@@ -493,7 +482,7 @@ dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber,
   json <- jsonlite::toJSON(list("queries" = hist))
 
   # debug
-  if (verbose) cat(json)
+  if (verbose) message(json)
 
   # get a working mongo connection, select trial record collection
   mongo <- ctrMongo(collection = collection, db = db, url = url,
@@ -737,13 +726,6 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
 # end ctrLoadQueryIntoDbCtgov
 
 
-
-
-
-
-
-
-
 #' ctrLoadQueryIntoDbEuctr
 #'
 #' @inheritParams ctrLoadQueryIntoDb
@@ -964,7 +946,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
         allimported <- allimported + imported
       }
       # progress indicator
-      if (!debug) cat(".")
+      if (!debug) message(".", append = TRUE)
     }
     # updated main indicator of number of imported trials
     imported <- allimported
