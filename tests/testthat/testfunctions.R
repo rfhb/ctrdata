@@ -286,13 +286,18 @@ test_that("retrieve results from register euctr", {
                  "Imported or updated results for")
 
   tmp <- dbGetFieldsIntoDf(c("a2_eudract_number",
-                                "endPoints.endPoint.title",
-                                "firstreceived_results_date",
-                                "version_results_history"),
-                              collection = coll)
+                             "endPoints.endPoint.title",
+                             "firstreceived_results_date",
+                             "e71_human_pharmacology_phase_i",
+                             "version_results_history"),
+                           collection = coll)
 
   # test 16
-  expect_true(!any(tmp[tmp$a2_eudract_number == "2007-000371-42", ] == ""))
+  expect_true(!any(tmp[tmp$a2_eudract_number == "2007-000371-42", c(1, 2, 3)] == ""))
+
+  # test 16a
+  expect_true(class(tmp$firstreceived_results_date)     == "Date")
+  expect_true(class(tmp$e71_human_pharmacology_phase_i) == "logical")
 
 })
 

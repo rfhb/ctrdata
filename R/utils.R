@@ -828,12 +828,14 @@ dbGetFieldsIntoDf <- function(fields = "", debug = FALSE,
     #
     if ( !( (class(tmp) != "try-error") & any(nchar(dfi[, 2]) != 0) ) ) {
       # try-error occured or no data retrieved
-      msg <- paste0("For field: ", item, " no data could be extracted from the database collection.\n",
-                    "Use dbGetFieldsIntoDf(stopifnodata = FALSE) to continue extracting other fields.")
       if (stopifnodata){
-        stop (msg, call. = FALSE)
+        stop (paste0("For field: ", item, " no data could be extracted from the database collection.",
+                     "Use dbGetFieldsIntoDf(stopifnodata = FALSE) to continue extracting other fields."),
+              call. = FALSE)
       } else {
-        warning(msg, call. = FALSE, immediate. = FALSE)
+        warning(paste0("For field: ", item, " no data could be extracted from the database collection."),
+                call. = FALSE,
+                immediate. = FALSE)
         # create empty data set
         dfi <- as.data.frame(cbind(idsall, rep(NA, times = nrow (idsall))), stringsAsFactors = FALSE)
         # name result set
@@ -842,9 +844,12 @@ dbGetFieldsIntoDf <- function(fields = "", debug = FALSE,
     }
     # not stopped, no error and some content, thus append to result
     if (is.null(result)) {
-      result <- dfi
+      result <- typeField(dfi)
     } else {
-      result <- merge(result, dfi, by = "_id", all = TRUE)
+      # type fields where defined and possible, then
+      # merge the new dfi (a data frame of _id, name of item)
+      # with data frame of previously retrieved results
+      result <- merge(result, typeField(dfi), by = "_id", all = TRUE)
     }
     #
   } # end for item in fields
@@ -1091,6 +1096,127 @@ dfFindUniqueEuctrRecord <- function(df = NULL, prefermemberstate = "GB", include
   #
 }
 # end dfFindUniqueEuctrRecord
+
+
+#' Change type of field based on name of field
+#'
+#' @param dfi a data frame of columns _id, fieldname
+#'
+#' @keywords internal
+#'
+typeField <- function(dfi){
+
+  # check
+  if (ncol(dfi) != 2) stop("Expect data frame with two columns, _id and a field.", call. = FALSE)
+
+  # clean up anyway in input
+  # - if NA as string, change to empty string
+  if (all(class(dfi[, 2]) == "character")) dfi[ dfi[, 2] == "NA", 2] <- ""
+  # - if empty string, change to NA
+  # if (all(class(dfi[, 2]) == "character")) dfi[ dfi[, 2] == "", 2] <- NA
+
+  # selective typing
+  tmp <- try({switch(
+    EXPR = names(dfi)[2],
+    #
+    # dates
+    # - intern
+    "record_last_import" = strptime(dfi[, 2], format = "%Y-%m-%d %H:%M:%s"),
+    # - EUCTR
+    "n_date_of_ethics_committee_opinion"                                     = as.Date(dfi[, 2], format = "%Y-%m-%d"),
+    "n_date_of_competent_authority_decision"                                 = as.Date(dfi[, 2], format = "%Y-%m-%d"),
+    "p_date_of_the_global_end_of_the_trial"                                  = as.Date(dfi[, 2], format = "%Y-%m-%d"),
+    "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database" = as.Date(dfi[, 2], format = "%Y-%m-%d"),
+    "firstreceived_results_date"                                             = as.Date(dfi[, 2], format = "%Y-%m-%d"),
+    # - CTGOV
+    "start_date"                 = as.Date(dfi[, 2], tryFormats = c("%b %Y")),
+    "primary_completion_date"    = as.Date(dfi[, 2], tryFormats = c("%b %Y")),
+    "completion_date"            = as.Date(dfi[, 2], tryFormats = c("%b %Y")),
+    "firstreceived_date"         = as.Date(dfi[, 2], tryFormats = c("%b %d, %Y", "%b %Y")),
+    "resultsfirst_posted"        = as.Date(dfi[, 2], tryFormats = c("%b %d, %Y", "%b %Y")),
+    "lastupdate_posted"          = as.Date(dfi[, 2], tryFormats = c("%b %d, %Y", "%b %Y")),
+    "lastchanged_date"           = as.Date(dfi[, 2], tryFormats = c("%b %d, %Y", "%b %Y")),
+    #
+    # factors
+    # - EUCTR Yes / No / Information not present in EudraCT
+    "e13_condition_being_studied_is_a_rare_disease" = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    #
+    "e61_diagnosis"         = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e62_prophylaxis"       = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e63_therapy"           = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e64_safety"            = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e65_efficacy"          = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e66_pharmacokinetic"   = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e67_pharmacodynamic"   = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e68_bioequivalence"    = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e69_dose_response"     = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e610_pharmacogenetic"  = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e611_pharmacogenomic"  = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e612_pharmacoeconomic" = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e613_others"           = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    #
+    "e71_human_pharmacology_phase_i"         = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e711_first_administration_to_humans"    = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e712_bioequivalence_study"              = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e713_other"                             = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e72_therapeutic_exploratory_phase_ii"   = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e73_therapeutic_confirmatory_phase_iii" = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e74_therapeutic_use_phase_iv"           = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    #
+    "e81_controlled"      = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e811_randomised"     = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e812_open"           = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e813_single_blind"   = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e814_double_blind"   = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e815_parallel_group" = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e816_cross_over"     = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e817_other"          = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    #
+    "e83_the_trial_involves_single_site_in_the_member_state_concerned"    = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e84_the_trial_involves_multiple_sites_in_the_member_state_concerned" = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e85_the_trial_involves_multiple_member_states"                       = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e861_trial_being_conducted_both_within_and_outside_the_eea"          = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e862_trial_being_conducted_completely_outside_of_the_eea"            = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e87_trial_has_a_data_monitoring_committee"                           = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    #
+    "f11_trial_has_subjects_under_18"            = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f111_in_utero"                              = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f112_preterm_newborn_infants_up_to_gestational_age__37_weeks" = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f113_newborns_027_days"                     = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f114_infants_and_toddlers_28_days23_months" = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f115_children_211years"                     = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f116_adolescents_1217_years"                = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f12_adults_1864_years"                      = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f13_elderly_65_years"                       = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f21_female"                                 = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f22_male"                                   = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f31_healthy_volunteers"                     = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f32_patients"                               = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f33_specific_vulnerable_populations"        = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f331_women_of_childbearing_potential_not_using_contraception_" = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f332_women_of_childbearing_potential_using_contraception"      = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f333_pregnant_women"      = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f334_nursing_women"       = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f335_emergency_situation" = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f336_subjects_incapable_of_giving_consent_personally" = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    #
+    # - CTGOV
+    "has_expanded_access"            = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "oversight_info.has_dmc"         = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "eligibility.healthy_volunteers" = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA))
+    #
+    )
+  },
+  silent = TRUE)
+
+  # change column of input
+  if (class(tmp) != "try-error" && !is.null(unlist(tmp))) {
+    dfi[, 2] <- tmp
+  }
+
+  # return
+  return(dfi)
+}
 
 
 #' Annotate ctrdata function return values

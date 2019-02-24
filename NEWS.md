@@ -1,3 +1,7 @@
+# ctrdata 0.13.1
+ - 2019-02-24
+ - added typing of dates and some logical fields when using dbGetFieldsIntoDf()
+
 # ctrdata 0.13
  - 2019-01-06
  - changes : 

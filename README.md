@@ -13,10 +13,11 @@ Online version of this document: [https://github.com/rfhb/ctrdata/](https://gith
 
 The package `ctrdata` provides functions for retrieving (downloading) information on clinical trials from public registers, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started mid 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package is to be used within the [R](https://www.r-project.org/) system. 
 
-Last edit 2018-12-15 for version 0.12.1, with bug fixes and new features: 
+Last edit 2019-02-24 for version 0.13.1, with bug fixes and new features: 
 
-* to add personal annotations to records when being retrieved from a register (new options `annotate.text` and `annotate.mode` for function `ctrLoadQueryIntoDb()`), for later use in analysis, and 
-* to retrieve synonyms of active substances to better find trials (function `ctrFindActiveSubstanceSynonyms()`). 
+* dates are now returned as Date types, and some Yes / No fields are returned as logical, by function `dbGetFieldsIntoDf()`,  
+* personal annotations can be added when records are retrieved from a register (new options `annotate.text` and `annotate.mode` for function `ctrLoadQueryIntoDb()`), for later use in analysis, and 
+* synonyms of active substances to better find trials can be retrieved with function `ctrFindActiveSubstanceSynonyms()`. 
 
 Main features:
 
