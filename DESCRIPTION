@@ -13,6 +13,7 @@ LazyData: true
 Suggests: testthat, devtools, knitr, rmarkdown
 VignetteBuilder: knitr
 NeedsCompilation: no
+Encoding: UTF-8
 Authors@R: 
     person(given = "Ralf",
            family = "Herold",

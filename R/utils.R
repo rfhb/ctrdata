@@ -11,7 +11,6 @@ countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR",
                     "3RD")
 
 
-
 #' Set up connections to a Mongo DB server
 #'
 #' @param collection Name of collection (default is "ctrdata")
@@ -218,7 +217,7 @@ ctrGetQueryUrlFromBrowser <- function(content = "") {
     queryterm <- sub("(.*)&Search[a-zA-Z]*=(Search|Find)[a-zA-Z+]*",  "\\1", queryterm)
     queryterm <- gsub("[a-z_0-9]+=&", "", queryterm)
     queryterm <- sub("&[a-z_0-9]+=$", "", queryterm)
-    message("* Found search query from CTGOV.\n")
+    message("* Found search query from CTGOV.")
     #
     df <- data.frame(cbind(queryterm, "CTGOV"), stringsAsFactors = FALSE)
     names(df) <- c("query-term", "query-register")

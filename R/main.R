@@ -591,6 +591,9 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   # initialise handle and avoid certificate failure from outside EU
   h <- RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE))
 
+  # inform user
+  message("Downloading trials ", appendLF = FALSE)
+
   # get (download) trials in single zip file
   fref <- RCurl::CFILE(f, mode = "wb")
   tmp  <- RCurl::curlPerform(url = utils::URLencode(ctgovdownloadcsvurl),
@@ -632,7 +635,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   } # if windows
 
   # run conversion of downloaded xml to json
-  message("(2/3) Converting to JSON ...")
+  message("\n(2/3) Converting to JSON ...")
   if (debug) message("DEBUG: ", xml2json)
   imported <- system(xml2json, intern = TRUE)
 
