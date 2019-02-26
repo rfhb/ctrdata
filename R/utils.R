@@ -1425,17 +1425,24 @@ installMongoFindBinaries <- function(mongoDir = NULL,
   #
   # iterate over possible locations
   for (i in mongoDir) {
-    if (file.exists(Sys.glob(file.path(i)))) {
-      #
-      mongoBinaryLocation <- dirname(i)
-      assign("mongoBinaryLocation", mongoBinaryLocation, envir = environ)
-      #
-      if (debug) message("mongo / mongoimport is in ",
-                         mongoBinaryLocation,
-                         " (searched mongoDir folders)")
-      #
-      return(invisible(paste0(get("mongoBinaryLocation", envir = environ), "/", binaries)))
-      #
+    # expand paths that have wildcards
+    pths <- Sys.glob(file.path(i))
+    # iterate over expanded paths if any
+    if(length(pths) > 0) {
+      for (ii in pths) {
+        if (file.exists(ii)) {
+          #
+          mongoBinaryLocation <- dirname(ii)
+          assign("mongoBinaryLocation", mongoBinaryLocation, envir = environ)
+          #
+          if (debug) message("mongo / mongoimport is in ",
+                             mongoBinaryLocation,
+                             " (searched mongoDir folders)")
+          #
+          return(invisible(paste0(get("mongoBinaryLocation", envir = environ), "/", binaries)))
+          #
+        }
+      }
     }
   }
 
