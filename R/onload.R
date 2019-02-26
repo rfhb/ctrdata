@@ -13,11 +13,13 @@
                         "clinical trial registers when using their information. Call\n",
                         "ctrOpenSearchPagesInBrowser(copyright = TRUE) and visit\n\n",
                         "https://www.clinicaltrialsregister.eu/disclaimer.html\n",
-                        "https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use\n\n"
+                        "https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use\n"
   )
   #
   # check availabilities
   if (.Platform$OS.type == "windows") installCygwinWindowsTest()
+  #
+  packageStartupMessage("Testing helper binaries ... ", appendLF = FALSE)
   #
   if (!suppressWarnings(installFindBinary("php --version")))
     warning("php not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE, immediate. = TRUE)
@@ -34,7 +36,7 @@
   if (class(try(installMongoFindBinaries(), silent = TRUE)) == "try-error")
     warning("mongo / mongoimport not found, ctrLoadQueryIntoDb() will not work.\n", call. = FALSE, immediate. = TRUE)
   #
-  packageStartupMessage("Completed testing helper binaries.")
+  packageStartupMessage("completed.")
   #
   invisible()
   #

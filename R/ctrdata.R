@@ -9,6 +9,7 @@
 #' @section Operations on a clinical trial register:
 #'
 #' \link{ctrOpenSearchPagesInBrowser},
+#' \link{ctrFindActiveSubstanceSynonyms},
 #' \link{ctrGetQueryUrlFromBrowser},
 #' \link{ctrLoadQueryIntoDb}
 #'
