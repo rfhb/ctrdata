@@ -468,6 +468,7 @@ dbFindFields <- function(namepart = "", allmatches = FALSE, forceupdate = FALSE,
     #
     # actually now find fieldnames
     fieldname <- fieldnames[grepl(tolower(namepart), tolower(fieldnames))]
+    fieldname <- sort(fieldname)
     if (!allmatches) {
       if ( (tmp <- length(fieldname)) > 1) message("Returning first of ", tmp, " keys found.")
       fieldname <- fieldname[1]
