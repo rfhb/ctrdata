@@ -2,7 +2,7 @@ Package: ctrdata
 Type: Package
 Title: Retrieve and Analyze Information on Clinical Trials from Public Registers
 Version: 0.13.1
-Imports: mongolite (>= 1.4.9000), jsonlite, RCurl, curl, clipr, xml2, rvest
+Imports: mongolite (>= 2.0), jsonlite, RCurl, curl, clipr, xml2, rvest
 SystemRequirements: mongo database, sed, php, cat, perl
 Authors@R: person("Ralf", "Herold", email = "ralf.herold@gmx.net",
                   role = c("aut", "cre"))

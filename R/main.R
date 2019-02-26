@@ -438,7 +438,7 @@ dbCTRAnnotateQueryRecords <- function(recordnumbers, annotations, annotation.tex
   }
 
   # close database connection
-  rm(mongo)
+  mongo$disconnect()
 
   # inform user
   message("= Annotated retrieved records")
@@ -494,7 +494,7 @@ dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber,
                upsert = TRUE)
 
   # close database connection
-  rm(mongo)
+  mongo$disconnect()
 
   # inform user
   message('* Updated history in meta-info of "', collection, '"')
@@ -693,7 +693,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   message('Added index field "otherids".')
 
   # close database connection
-  rm(mongo)
+  mongo$disconnect()
 
   ## read in the ctgov ids of the trials that were just retrieved and imported
   ctgovidsimported <- readLines(paste0(tempDir, "/allctgov.txt"))
@@ -878,7 +878,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   }
 
   # close database connection
-  rm(mongo)
+  mongo$disconnect()
 
   # run conversion of text files saved into file system to json file
   message("(2/3) Converting to JSON ...")
@@ -1207,7 +1207,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     } # for batch
 
     # close database connection
-    rm(mongo)
+    mongo$disconnect()
 
     # sum up successful downloads
     importedresults <- sum(unlist(importedresults))

@@ -343,7 +343,7 @@ dbQueryHistory <- function(collection = "ctrdata", db = "users", url = "mongodb:
   message("Number of records in collection \"", mongo$info()$stats$ns, "\": ", countall)
 
   # close database connection
-  rm(mongo)
+  mongo$disconnect()
 
   # return
   return(tmp)
@@ -483,8 +483,8 @@ dbFindFields <- function(namepart = "", allmatches = FALSE, forceupdate = FALSE,
     #
   }
   # close database connection
-  rm(mongo)
-  rm(mongoKeys)
+  mongo$disconnect()
+  mongoKeys$disconnect()
 }
 # end dbFindFields
 
@@ -591,7 +591,7 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
   if (is.null(listofCTGOVids)) message("No CTGOV records found.")
 
   # close database connection
-  rm(mongo)
+  mongo$disconnect()
 
   # 4. retain unique ctrgov records
   if (!is.null(listofCTGOVids)) {
@@ -855,7 +855,7 @@ dbGetFieldsIntoDf <- function(fields = "", debug = FALSE,
   } # end for item in fields
 
   # close database connection
-  rm(mongo)
+  mongo$disconnect()
 
   # finalise output
   if (is.null(result)) stop ("No records found which had values for the specified fields.", call. = FALSE)
