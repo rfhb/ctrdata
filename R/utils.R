@@ -1417,15 +1417,15 @@ installMongoFindBinaries <- function(mongoDir = NULL,
   #
   # concatenate with default search folders
   mongoDir <- c(mongoDir,
-                "C:/Program Files/MongoDB/Server/3.6/bin", "C:/Program Files/MongoDB/Server/3.4/bin", "c:/mongodb/bin",
-                "/usr/local/opt/mongodb/bin", "/usr/bin")
+                "C:/Program Files/MongoDB/Server/*/bin", "c:/mongodb/bin",
+                "/usr/local/opt/mongodb/bin", "/usr/local/opt/*/bin", "/usr/bin")
   #
   # replicate with appended binary names
   mongoDir <- paste0(rep(mongoDir, times = length(binaries)), "/", binaries)
   #
   # iterate over possible locations
   for (i in mongoDir) {
-    if (file.exists(i)) {
+    if (file.exists(Sys.glob(file.path(i)))) {
       #
       mongoBinaryLocation <- dirname(i)
       assign("mongoBinaryLocation", mongoBinaryLocation, envir = environ)
