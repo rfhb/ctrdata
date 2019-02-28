@@ -779,7 +779,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   queryEuPost  <- "&mode=current_page&format=text&dContent=summary&number=current_page&submit-download=Download"
 
   # check if host is available
-  if (!RCurl::url.exists(url = queryEuRoot, .opts = list(connecttimeout = 2, ssl.verifypeer = FALSE)))
+  if (!RCurl::url.exists(url = queryEuRoot, .opts = list(connecttimeout = 5, ssl.verifypeer = FALSE)))
     stop ("Host ", queryEuRoot, " does not respond, cannot continue.", call. = FALSE)
 
   # get first result page
