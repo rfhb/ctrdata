@@ -1207,7 +1207,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
       rm(batchresults)
 
       # inform user
-      message("Batch: ", i, ", ", startindex, " - ", stopindex)
+      message("\nBatch: ", i, ", ", startindex, " - ", stopindex, appendLF = FALSE)
 
     } # for batch
 
