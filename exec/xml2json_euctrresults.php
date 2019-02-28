@@ -29,6 +29,10 @@ foreach (glob("$testXmlFile/[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9][0-9][0-9]-
   // normalise contents and remove whitespace
   $fileContents = str_replace(array("\n", "\r", "\t"), '', $fileContents);
   $fileContents = preg_replace('/ +/', ' ', $fileContents);
+  // escape where needed
+  // "   &quot;
+  $fileContents = trim(str_replace("'", " &apos;", $fileContents));
+  $fileContents = trim(str_replace("&", " &amp;", $fileContents));
   $fileContents = trim(str_replace('"', "'", $fileContents));
 
   // turn repeat elements

@@ -1121,10 +1121,13 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                                  tmp <- readChar(con = fileName, nchars = file.info(fileName)$size)
 
                                  # update database with results
-                                 tmp <- mongo$update(query  = paste0('{"a2_eudract_number":{"$eq":"', x, '"}}'),
-                                                     update = paste0('{ "$set" :', tmp, "}"),
-                                                     upsert = TRUE, multiple = TRUE)
-                                 tmp <- try(as.numeric(tmp$modifiedCount), silent = TRUE)
+                                 tmp <- try({tmp <- mongo$update(query  = paste0('{"a2_eudract_number":{"$eq":"', x, '"}}'),
+                                                          update = paste0('{ "$set" :', tmp, "}"),
+                                                          upsert = TRUE, multiple = TRUE)
+                                             as.numeric(max(tmp$modifiedCount,
+                                                            tmp$matchedCount,
+                                                            na.rm = TRUE))
+                                             }, silent = TRUE)
 
                                  # inform user on failed trial
                                  if (class(tmp) == "try-error") {

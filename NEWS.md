@@ -1,3 +1,9 @@
+# ctrdata 0.13.2
+ - 2019-02-28
+ - made EUCTR retrieval more robust
+ - added marginal case for url of single trial in EUCTR
+ - extended timeout for checking online status of EUCTR
+ 
 # ctrdata 0.13.1
  - 2019-02-24
  - added typing of dates and some logical fields when using dbGetFieldsIntoDf()
