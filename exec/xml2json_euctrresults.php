@@ -28,11 +28,16 @@ foreach (glob("$testXmlFile/[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9][0-9][0-9]-
 
   // normalise contents and remove whitespace
   $fileContents = str_replace(array("\n", "\r", "\t"), '', $fileContents);
+
+  // https://stackoverflow.com/questions/44765194/how-to-parse-invalid-bad-not-well-formed-xml
+  $fileContents = preg_replace('/[^\x{0009}\x{000a}\x{000d}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}]+/u', ' ', $fileContents);
+
+  // escapes
   $fileContents = preg_replace('/ +/', ' ', $fileContents);
-  // escape where needed
-  // "   &quot;
   $fileContents = trim(str_replace("'", " &apos;", $fileContents));
   $fileContents = trim(str_replace("&", " &amp;", $fileContents));
+
+  // use single escapes for xml
   $fileContents = trim(str_replace('"', "'", $fileContents));
 
   // turn repeat elements

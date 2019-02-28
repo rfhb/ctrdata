@@ -33,9 +33,21 @@ foreach (glob("$testXmlFile/NCT*.xml") as $inFileName) {
 
   $fileContents = file_get_contents($inFileName);
 
-  // normalise contents and remove whitespace
+  // normalise contents
   $fileContents = str_replace(array("\n", "\r", "\t"), '', $fileContents);
+
+  // https://stackoverflow.com/questions/44765194/how-to-parse-invalid-bad-not-well-formed-xml
+  $fileContents = preg_replace('/[^\x{0009}\x{000a}\x{000d}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}]+/u', ' ', $fileContents);
+
+  // escapes
   $fileContents = preg_replace('/ +/', ' ', $fileContents);
+  $fileContents = trim(str_replace("'", " &apos;", $fileContents));
+  $fileContents = trim(str_replace("&", " &amp;", $fileContents));
+
+  // remove white space
+  $fileContents = preg_replace('/ +/', ' ', $fileContents);
+
+  // use single quotes for xml
   $fileContents = trim(str_replace('"', "'", $fileContents));
 
   // First write NCT number into _id for respective study:
