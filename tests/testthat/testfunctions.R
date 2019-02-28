@@ -15,6 +15,9 @@
 library(ctrdata)
 context("ctrdata functions")
 
+# ensure warnings are not turned into errors
+options(warn=1)
+
 # helper function to check if there
 # is a useful internect connection
 has_internet <- function(){
@@ -192,39 +195,44 @@ test_that("retrieve data from register euctr", {
     "Updated history")
 
   # test 9
-  expect_error(suppressWarnings(ctrLoadQueryIntoDb(
-    querytoupdate = "last",
-    collection = coll)),
+  expect_error(suppressWarnings(
+    ctrLoadQueryIntoDb(
+      querytoupdate = "last",
+      collection = coll)),
     "First result page empty")
 
   ## github issue 8 bug
   q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?",
               "query=&dateFrom=2017-09-15&dateTo=2017-09-15&age=under-18")
+  # ctrGetQueryUrlFromBrowser(content = q)
 
   # test 10
-  expect_message(suppressWarnings(ctrLoadQueryIntoDb(queryterm = q,
-                                                     collection = coll,
-                                                     euctrresults = TRUE)),
-                 "Updated history")
+  expect_message(suppressWarnings(
+    ctrLoadQueryIntoDb(queryterm = q,
+                       collection = coll,
+                       euctrresults = TRUE)),
+    "Updated history")
 
   ## forced slow import
   q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
               "neuroblastoma&status=completed&phase=phase-one&country=pl")
+  # ctrGetQueryUrlFromBrowser(content = q)
 
   # test 11
-  expect_message(suppressWarnings(ctrLoadQueryIntoDb(q,
-                                                     collection = coll,
-                                                     debug = TRUE, verbose = FALSE)),
-                 "Imported or updated")
-
+  expect_message(suppressWarnings(
+    ctrLoadQueryIntoDb(q,
+                       collection = coll,
+                       debug = TRUE,
+                       verbose = FALSE)),
+    "Imported or updated")
 
   ## download without details
   # test 12
-  expect_message(suppressWarnings(ctrLoadQueryIntoDb(q,
-                                                     collection = coll,
-                                                     details = FALSE)),
-                 "Imported or updated")
-
+  expect_message(suppressWarnings(
+    ctrLoadQueryIntoDb(q,
+                       collection = coll,
+                       details = FALSE)),
+    "Imported or updated")
 
   ## create and test updatable query
 
@@ -236,10 +244,11 @@ test_that("retrieve data from register euctr", {
               "&dateFrom=", date.old, "&dateTo=", date.temp)
 
   # test 13
-  expect_message(suppressWarnings(ctrLoadQueryIntoDb(q,
-                                                     collection = coll,
-                                                     details = FALSE)),
-                 "Imported or updated ")
+  expect_message(suppressWarnings(
+    ctrLoadQueryIntoDb(q,
+                       collection = coll,
+                       details = FALSE)),
+    "Imported or updated ")
 
   # manipulate history to force testing updating
   # based on code in dbCTRUpdateQueryHistory
@@ -256,10 +265,11 @@ test_that("retrieve data from register euctr", {
                                         upsert = TRUE)
 
   # test 14
-  expect_message(ctrLoadQueryIntoDb(querytoupdate = "last",
-                                    collection = coll,
-                                    details = FALSE),
-                 "Imported or updated")
+  expect_message(
+    ctrLoadQueryIntoDb(querytoupdate = "last",
+                       collection = coll,
+                       details = FALSE),
+    "Imported or updated")
 
   remove("hist", "json", "q", "date.old", "date.today", "date.temp")
 
@@ -277,13 +287,16 @@ test_that("retrieve results from register euctr", {
 
   q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
               "2004-000015-25+OR+2007-000371-42+OR+XYZ")
+  # ctrGetQueryUrlFromBrowser(content = q)
+  # ctrOpenSearchPagesInBrowser(input = q)
 
   # test 15
-  expect_message(suppressWarnings(ctrLoadQueryIntoDb(q,
-                                                     euctrresults = TRUE,
-                                                     collection = coll,
-                                                     debug = TRUE)),
-                 "Imported or updated results for")
+  expect_message(suppressWarnings(
+    ctrLoadQueryIntoDb(q,
+                       euctrresults = TRUE,
+                       collection = coll,
+                       debug = TRUE)),
+    "Imported or updated results for")
 
   tmp <- dbGetFieldsIntoDf(c("a2_eudract_number",
                              "endPoints.endPoint.title",
