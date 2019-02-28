@@ -869,19 +869,21 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     #
   }
 
-  # get a working mongo connection, select trial record collection
-  mongo <- ctrMongo(collection = collection, db = db, url = url,
-                    username = username, password = password, verbose = FALSE)
-
   # get any annotations for any later update
   if (annotation.text != ""){
 
+    # get a working mongo connection, select trial record collection
+    mongo <- ctrMongo(collection = collection, db = db, url = url,
+                      username = username, password = password, verbose = FALSE)
+
+    # retrieve annotations
     annotations <- mongo$find(query = paste0('{"_id": {"$ne": "meta-info"}}'),
                               fields = '{"_id": 1, "annotation": 1}')
-  }
 
-  # close database connection
-  mongo$disconnect()
+    # close database connection
+    mongo$disconnect()
+
+  }
 
   # run conversion of text files saved into file system to json file
   message("(2/3) Converting to JSON ...")
