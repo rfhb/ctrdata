@@ -986,7 +986,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     eudractnumbersimported <- unique(substring(text = eudractnumbersimported, first = 1, last = 14))
 
     # inform user
-    message("\n* Downloading results from EUCTR for ", length(eudractnumbersimported), " trials: ")
+    message("* Downloading results from EUCTR for ", length(eudractnumbersimported), " trials: ")
 
 
     ## parallel download and unzipping into temporary directory
@@ -1039,11 +1039,8 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
 
                                  tmp <- utils::unzip(f, exdir = tempDir)
 
-                                 if (any(grepl("pdf$", tmp)))
-                                   message("PDF results ", x,
-                                           call. = FALSE,
-                                           immediate. = TRUE,
-                                           noBreaks. = TRUE)
+                                 if (any(grepl("pdf$", tmp))) message("PDF results for ", x, " ",
+                                                                      appendLF = FALSE)
 
                                  if (any(tmp2 <- grepl("xml$", tmp)))
                                    file.rename(tmp[tmp2][1], paste0(tempDir, "/", x, ".xml"))
@@ -1217,7 +1214,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
 
     ## inform user on final import outcome
     message("= Imported or updated results for ", importedresults, " ",
-            "records among ", resultsEuNumTrials, " trial(s).\n")
+            "records among ", resultsEuNumTrials, " trial(s).")
 
   } # if euctrresults
 
