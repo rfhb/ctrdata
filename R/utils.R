@@ -196,10 +196,14 @@ ctrGetQueryUrlFromBrowser <- function(content = "") {
   # EUCTR
   if (grepl("https://www.clinicaltrialsregister.eu/ctr-search/", content)) {
     #
-    queryterm <- sub("https://www.clinicaltrialsregister.eu/ctr-search/search[?](.*)", "\\1", content)
+    queryterm <- sub("https://www.clinicaltrialsregister.eu/ctr-search/search[?](.*)",      "\\1", content)
+    queryterm <- sub("https://www.clinicaltrialsregister.eu/ctr-search/trial/([-0-9]+)/.*", "\\1", queryterm)
     #
     # sanity correction for naked terms
     if (!grepl("&\\w+=\\w+|query=\\w", queryterm)) queryterm <- paste0("query=", queryterm)
+    #
+    # check if url was for results of single trial
+    if (grepl(".*/results$", content)) queryterm <- paste0(queryterm, "&resultsstatus=trials-with-results")
     #
     message("* Found search query from EUCTR.")
     #
