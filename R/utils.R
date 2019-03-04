@@ -471,7 +471,12 @@ dbFindFields <- function(namepart = "", allmatches = FALSE, forceupdate = FALSE,
     #
     # actually now find fieldnames
     fieldname <- fieldnames[grepl(tolower(namepart), tolower(fieldnames))]
-    fieldname <- sort(fieldname)
+    # if debug = FALSE, remove XX from field names, e.g.
+    # "clinical_results.outcome_list.outcome.XX.group_list.group.XX.title"
+    if (!debug) fieldname <- gsub(pattern = "XX[.]", replacement = "", fieldname)
+    #
+    # format output
+    fieldname <- sort(unique(fieldname))
     if (!allmatches) {
       if ( (tmp <- length(fieldname)) > 1) message("Returning first of ", tmp, " keys found.")
       fieldname <- fieldname[1]
@@ -483,6 +488,7 @@ dbFindFields <- function(namepart = "", allmatches = FALSE, forceupdate = FALSE,
                              username = username, password = password)
     #
     # return the first match / all matches
+    if (debug) message("Showing paths where any sets of objects are indicated as XX.")
     return(fieldname)
     #
   }
