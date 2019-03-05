@@ -28,6 +28,13 @@ cache:
 
 # Adapt as necessary starting from here
 
+matrix:
+  - R_VERSION: devel
+
+  - R_VERSION: release
+
+  - R_VERSION: oldrel
+
 build_script:
   - travis-tool.sh install_deps
 
