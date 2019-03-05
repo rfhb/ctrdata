@@ -1,3 +1,8 @@
+# ctrdata 0.13.3
+ - 2019-03-03
+ - prettified dbFindFields() by removing count symbols (XX.) from paths
+ - improve converting of invalid XML from EUCTR result files to JSON
+ 
 # ctrdata 0.13.2
  - 2019-02-28
  - made EUCTR retrieval more robust
