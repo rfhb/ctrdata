@@ -8,6 +8,11 @@ environment:
   USE_RTOOLS: false
   PKGTYPE: win.binary
 
+  matrix:
+   - R_VERSION: devel
+   - R_VERSION: release
+   - R_VERSION: oldrel
+
 # Download script file from GitHub
 init:
   ps: |
@@ -27,13 +32,6 @@ cache:
   - C:\RLibrary
 
 # Adapt as necessary starting from here
-
-matrix:
-  - R_VERSION: devel
-
-  - R_VERSION: release
-
-  - R_VERSION: oldrel
 
 build_script:
   - travis-tool.sh install_deps
