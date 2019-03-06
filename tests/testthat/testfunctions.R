@@ -268,7 +268,7 @@ test_that("retrieve data from register euctr", {
 
   date.today <- format(Sys.time(),                          "%Y-%m-%d")
   date.temp  <- format(Sys.time() - (60 * 60 * 24 * 6),     "%Y-%m-%d")
-  date.old   <- format(Sys.time() - (60 * 60 * 24 * 6 * 9), "%Y-%m-%d")
+  date.old   <- format(Sys.time() - (60 * 60 * 24 * 6 * 3), "%Y-%m-%d")
 
   q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
               "&dateFrom=", date.old, "&dateTo=", date.temp)
@@ -594,7 +594,15 @@ test_that("annotate queries", {
     queryterm = "NCT01516567",
     register = "CTGOV",
     collection = coll,
-    annotation.text = "TEST",
+    annotation.text = "APPEND",
+    annotation.mode = "append"),
+    "Imported or updated 1 trial")
+
+  expect_message(ctrLoadQueryIntoDb(
+    queryterm = "NCT01516567",
+    register = "CTGOV",
+    collection = coll,
+    annotation.text = "PREPEND",
     annotation.mode = "prepend"),
     "Imported or updated 1 trial")
 
@@ -603,14 +611,22 @@ test_that("annotate queries", {
     queryterm = "2010-024264-18",
     register = "EUCTR",
     collection = coll,
-    annotation.text = "TEST",
-    annotation.mode = "prepend"),
-    "Imported or updated 6 records on 1 trial")
+    annotation.text = "EUANNO",
+    annotation.mode = "replace"),
+    "Imported or updated")
 
   # test 52
-  expect_equal(sort(suppressMessages(dbGetFieldsIntoDf(fields = "annotation",
-                                                          collection = coll))[, "annotation"]),
-               sort(c("ANNO", "TEST", "TEST", "TEST", "TEST", "TEST", "TEST", "TEST ANNO")))
+
+  tmp <- dbGetFieldsIntoDf(
+    fields = "annotation",
+    collection = coll)
+
+  tmp <- tmp[tmp[["_id"]] %in%
+               dbFindIdsUniqueTrials(
+                 collection = coll) , ]
+
+  expect_equal(sort(tmp[["annotation"]]),
+               sort(c("EUANNO", "PREPEND ANNO APPEND")))
 
 })
 
