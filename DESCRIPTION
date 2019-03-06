@@ -7,7 +7,7 @@ Imports: mongolite (>= 2.0), jsonlite, RCurl, curl, clipr, xml2, rvest
 SystemRequirements: mongo database, sed, php, cat, perl
 URL: https://github.com/rfhb/ctrdata
 BugReports: https://github.com/rfhb/ctrdata/issues
-Description: Provides functions for querying, retrieving and analysing protocol- and results-related information on clinical trials from two public registers, the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). The information is transformed and then stored in a database (mongo). Functions are provided for accessing and analysing the locally stored information on the clinical trials, as well as for identifying duplicate records. The package is motivated by the need for aggregating and trend-analysing the design, conduct and outcomes across clinical trials.
+Description: Provides functions for querying, retrieving and analysing protocol- and results-related information on clinical trials from two public registers, the European Union Clinical Trials Register (EUCTR, <https://www.clinicaltrialsregister.eu/>) and ClinicalTrials.gov (CTGOV, <https://clinicaltrials.gov/>). The information is transformed and then stored in a database (mongo). Functions are provided for accessing and analysing the locally stored information on the clinical trials, as well as for identifying duplicate records. The package is motivated by the need for aggregating and trend-analysing the design, conduct and outcomes across clinical trials.
 License: MIT + file LICENSE
 RoxygenNote: 6.1.1
 LazyData: true
