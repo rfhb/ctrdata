@@ -86,16 +86,16 @@ has_toolchain <- function(){
       !suppressWarnings(installFindBinary("perl -V:osname")),
       !suppressMessages({
         tmp <- installCygwinWindowsTest()
-        ifelse(is.null(tmp), FALSE, tmp)
+        ifelse(is.null(tmp), TRUE, tmp)
       }),
 
       # this test for class is only needed to obtain a logical value
-      class(installMongoFindBinaries()) == "character",
+      !(class(installMongoFindBinaries()) == "character"),
 
       na.rm = TRUE)
   }, silent = TRUE)
 
-  if ((class(tc_ok) == "try-error") || (tc_ok == FALSE)) {
+  if ((class(tc_ok) == "try-error") || (tc_ok == TRUE)) {
     skip("One or more tool chain applications are not available.")
   }
 }
