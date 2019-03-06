@@ -361,8 +361,8 @@ dbQueryHistory <- function(collection = "ctrdata", db = "users", url = "mongodb:
 #' returns the full field names as found in the database. It is not necessary to
 #' add wild cards to the name of the field of interest.
 #'
-#' For fields in EUCTR (protocol-related information), see also the register's
-#' documentation: \url{https://eudract.ema.europa.eu/protocol.html}.
+#' For fields in EUCTR (protocol- and results-related information), see also the
+#' register's documentation: \url{https://eudract.ema.europa.eu/}.
 #'
 #' For fields in CTGOV (protocol-related information), see also the register's
 #' definitions: \url{https://prsinfo.clinicaltrials.gov/definitions.html}

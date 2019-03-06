@@ -125,7 +125,8 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
 
   # check program availability
   installMongoFindBinaries(debug = debug)
-  if (.Platform$OS.type == "windows") installCygwinWindowsTest()
+  if (.Platform$OS.type == "windows")
+    if (!installCygwinWindowsTest()) stop(call. = FALSE) # message is emitted by installCygwinWindowsTest()
 
   # check program version (reason: json format changed from 2.x to 3.x, new arguments to functions in 3.6)
   tmp <- getOption("warn")
