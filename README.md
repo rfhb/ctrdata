@@ -1,15 +1,21 @@
+---
+title: "README.md for R package ctrdata"
+output:
+  html_document:
+    toc: yes
+pagetitle: README
+---
+
 [![Build Status](https://travis-ci.org/rfhb/ctrdata.png?branch=master)](https://travis-ci.org/rfhb/ctrdata)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/rfhb/ctrdata?branch=master&svg=true)](https://ci.appveyor.com/project/rfhb/ctrdata)
 [![codecov](https://codecov.io/gh/rfhb/ctrdata/branch/master/graph/badge.svg)](https://codecov.io/gh/rfhb/ctrdata)
 [Note: codecov does not check MS Windows-only code] 
 
-# README.md for R package ctrdata on github.com
-
 Online version of this document: [https://github.com/rfhb/ctrdata/](https://github.com/rfhb/ctrdata/)
 
 [![Slack](https://img.shields.io/badge/Slack-Join-green.svg)](https://rfhb.slack.com/messages/C6N1Y75B6) Join the Slack channel and discuss
 
-## Background
+# Background
 
 The package `ctrdata` provides functions for retrieving (downloading) information on clinical trials from public registers, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started mid 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package is to be used within the [R](https://www.r-project.org/) system. 
 
@@ -91,7 +97,7 @@ devtools::install_github("rfhb/ctrdata")
 ```
 
 
-## Overview of functions in `ctrdata`
+# Overview of functions in `ctrdata`
 
 Name  | Function
 ---------------------------- | --------------------------------------------
@@ -143,9 +149,9 @@ sequenceDiagram
 ```
 -->
 
-## Example workflow
+# Example workflow
 
-### Download protocol-related trial information and tabulate trial status
+## Download protocol-related trial information and tabulate trial status
 
 * Attach package `ctrdata`: 
 ```R
@@ -235,12 +241,12 @@ with (result, table (p_end_of_trial_status, b1_sponsor.b31_and_b32_status_of_the
 #
 ```
 
-### Representation in mongodb, as JSON
+## Representation in mongodb, as JSON
 
 ![Example JSON representation][2]
 
 
-## Features in the works 
+# Features in the works 
 
 * Merge results-related information retrieved from different registers (e.g. corresponding endpoints) and prepare for analysis across trials. 
 
@@ -251,7 +257,7 @@ with (result, table (p_end_of_trial_status, b1_sponsor.b31_and_b32_status_of_the
 * Abstract database access
 
 
-## Acknowledgements 
+# Acknowledgements 
 
 * Data providers and curators of the clinical trial registers. Please review and respect their copyrights and terms and conditions (`ctrOpenSearchPagesInBrowser(copyright = TRUE)`). 
 
