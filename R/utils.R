@@ -1364,16 +1364,27 @@ installCygwinWindowsDoInstall <- function(force = FALSE, proxy = ""){
 #
 installCygwinWindowsTest <- function() {
   #
-  if (.Platform$OS.type != "windows") stop ("This function is only for MS Windows operating systems.", call. = FALSE)
+  if (.Platform$OS.type != "windows") {
+    message("Function installCygwinWindowsTest() is only for MS Windows operating systems.")
+    return(invisible(NULL))
+  }
   #
-  tmpcygwin <- system("cmd.exe /c c:\\cygwin\\bin\\env", intern = TRUE)
+  tmpcygwin <- try({
+    suppressWarnings(
+      system("cmd.exe /c c:\\cygwin\\bin\\env",
+             intern = TRUE,
+             ignore.stderr = TRUE
+      ))},
+    silent = TRUE)
   #
-  if (length(tmpcygwin) > 5) {
+  if ((class(tmpcygwin) != "try-error") &
+      (length(tmpcygwin) > 5)) {
     message("cygwin base install seems to be working correctly.")
-    invisible(TRUE)
+    return(invisible(TRUE))
   } else {
-    message("cygwin does not seem to be installed correctly.")
-    invisible(FALSE)
+    message("cygwin is not available for this package, ctrLoadQueryIntoDb() will not work.\n",
+            "Consider calling ctrdata::installCygwinWindowsDoInstall() from within R.")
+    return(invisible(FALSE))
   }
 }
 # installCygwinWindowsTest
@@ -1546,7 +1557,10 @@ installFindBinary <- function(commandtest = NULL, debug = FALSE) {
   if (debug) print(commandtest)
   #
   commandresult <- try(
-    system(commandtest, intern = TRUE),
+    system(commandtest,
+           intern = TRUE,
+           ignore.stdout = TRUE,
+           ignore.stderr = TRUE),
     silent = TRUE
   )
   #

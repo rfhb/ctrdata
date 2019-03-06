@@ -72,6 +72,33 @@ has_proxy <- function(){
   }
 }
 
+# helper function to check tool chain
+has_toolchain <- function(){
+
+  tc_ok <- try({
+    any(
+
+      # the tests are similar to those in onload.R
+      !suppressWarnings(installFindBinary("php --version")),
+      !suppressWarnings(installFindBinary("php -r 'simplexml_load_string(\"\");'")),
+      !suppressWarnings(installFindBinary("echo x | sed s/x/y/")),
+      !suppressWarnings(installFindBinary("perl -V:osname")),
+      !suppressMessages({
+        tmp <- installCygwinWindowsTest()
+        ifelse(is.null(tmp), FALSE, tmp)
+      }),
+
+      # this test for class is only needed to obtain a logical value
+      class(installMongoFindBinaries()) == "character",
+
+      na.rm = TRUE)
+  }, silent = TRUE)
+
+  if ((class(tc_ok) == "try-error") || (tc_ok == FALSE)) {
+    skip("One or more tool chain applications are not available.")
+  }
+}
+
 
 #### mongodb local password free access ####
 test_that("access to mongo db from R package", {
@@ -109,6 +136,7 @@ test_that("retrieve data from registers", {
 
   has_internet()
   has_mongo()
+  has_toolchain()
 
   # initialise
   coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
@@ -137,6 +165,7 @@ test_that("retrieve data from register ctgov", {
 
   has_internet()
   has_mongo()
+  has_toolchain()
 
   # initialise
   coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
@@ -183,6 +212,7 @@ test_that("retrieve data from register euctr", {
 
   has_internet()
   has_mongo()
+  has_toolchain()
 
   # initialise
   coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
@@ -281,12 +311,13 @@ test_that("retrieve results from register euctr", {
 
   has_internet()
   has_mongo()
+  has_toolchain()
 
   # initialise
   coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
 
   q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
-              "2004-000015-25+OR+2007-000371-42+OR+XYZ")
+              "2007-000371-42+OR+XYZ")
   # ctrGetQueryUrlFromBrowser(content = q)
   # ctrOpenSearchPagesInBrowser(input = q)
 
@@ -368,6 +399,7 @@ test_that("browser interaction", {
   # test with database
 
   has_mongo()
+  has_toolchain()
 
   coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
 
@@ -390,7 +422,7 @@ test_that("browser interaction", {
 test_that("operations on database after download from register", {
 
   has_mongo()
-  has_internet()
+  has_toolchain()
 
   # initialise
   coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
@@ -472,6 +504,7 @@ test_that("operations on database for deduplication", {
 
   has_mongo()
   has_internet()
+  has_toolchain()
 
   # initialise
   coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
@@ -542,6 +575,7 @@ test_that("annotate queries", {
 
   has_internet()
   has_mongo()
+  has_toolchain()
 
   # initialise
   coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
