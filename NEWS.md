@@ -1,3 +1,7 @@
+# ctrdata 0.14
+ - 2019-03-06
+ - intention to submit to CRAN, therefore changing several warnings to messages, improve testing of tool chain applications
+ 
 # ctrdata 0.13.3
  - 2019-03-03
  - prettified dbFindFields() by removing count symbols (XX.) from paths
