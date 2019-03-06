@@ -16,7 +16,8 @@ library(ctrdata)
 context("ctrdata functions")
 
 # ensure warnings are not turned into errors
-options(warn=1)
+# getOption("warn")
+options(warn = 0)
 
 # helper function to check if there
 # is a useful internect connection
@@ -426,12 +427,6 @@ test_that("operations on database after download from register", {
 
   # initialise
   coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
-
-  # dbFindFields
-
-  # test 28a (temporary)
-  expect_warning(dbFindVariable(namepart = "date", collection = coll),
-                 "'dbFindVariable' is deprecated.")
 
   # test 28
   expect_error(dbFindFields(namepart = c("onestring", "twostring"), collection = coll),

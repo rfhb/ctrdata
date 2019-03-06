@@ -498,20 +498,6 @@ dbFindFields <- function(namepart = "", allmatches = FALSE, forceupdate = FALSE,
 }
 # end dbFindFields
 
-# 2019-01-06 migration
-dbFindVariable <- function(namepart = "", allmatches = FALSE, forceupdate = FALSE, debug = FALSE,
-                           collection = "ctrdata", db = "users", url = "mongodb://localhost",
-                           username = "", password = "", verbose = FALSE) {
-
-  # inform user
-  .Deprecated(new = "dbFindFields")
-
-  dbFindFields(namepart = namepart, allmatches = allmatches, forceupdate = forceupdate, debug = debug,
-               collection = collection, db = db, url = url,
-               username = username, password = password, verbose = verbose)
-
-}
-
 
 #' Deduplicate records to provide unique clinical trial identifiers
 #'
