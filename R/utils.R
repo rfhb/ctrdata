@@ -1494,14 +1494,14 @@ installMongoFindBinaries <- function(mongoDir = NULL,
   # only windows continues
   if (.Platform$OS.type != "windows")
     stop ("Cannot continue: mongo / mongoimport could not be found (all search methods failed)\n",
-         "Specify valid mongoDir folder and call ctrdata:::installMongoFindBinaries(mongoDir = ...)", call. = FALSE)
+          "Specify valid mongoDir folder and call ctrdata:::installMongoFindBinaries(mongoDir = ...)", call. = FALSE)
   #
   # search for folder into which mongo was recorded to be installed
   location <- try(utils::readRegistry("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Installer\\Folders",
                                       hive = "HLM"), silent = TRUE)
   if (class(location) == "try-error")
     stop ("Cannot continue: mongo path not found recorded in Windows registry (all other search methods failed)\n",
-         "Specify valid mongoDir folder and call ctrdata:::installMongoFindBinaries(mongoDir = ...)", call. = FALSE)
+          "Specify valid mongoDir folder and call ctrdata:::installMongoFindBinaries(mongoDir = ...)", call. = FALSE)
   #
   location <- names(location)
   location <- location[grepl("Mongo", location)]
@@ -1517,8 +1517,8 @@ installMongoFindBinaries <- function(mongoDir = NULL,
   #
   if (!any(tmp))
     stop ("Cannot continue: mongoimport path not found in Windows registry and all other searches failed)\n",
-         "Specify valid mongoDir folder and call ctrdata:::installMongoFindBinaries(mongoDir = ...)",
-         call. = FALSE)
+          "Specify valid mongoDir folder and call ctrdata:::installMongoFindBinaries(mongoDir = ...)",
+          call. = FALSE)
   #
   # found it, save in package environment
   assign("mongoBinaryLocation", location, envir = environ)
