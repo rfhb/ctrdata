@@ -219,7 +219,7 @@ q
 ``` r
 # Retrieve trials from public register
 ctrLoadQueryIntoDb(paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?", 
-                          "query=cancer&age=under-18&phase=phase-one")
+                          "query=cancer&age=under-18&phase=phase-one"))
 #
 # Alternative: ctrLoadQueryIntoDb(q)
 #
