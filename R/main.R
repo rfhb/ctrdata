@@ -795,12 +795,12 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
 
   # inform user
   message("Retrieved overview, ", resultsEuNumTrials, " trial(s) from ",
-          resultsEuNumPages, " page(s) are to be downloaded.")
+          resultsEuNumPages, " page(s) to be downloaded.")
 
   # calculate batches to get data from all results pages
   resultsNumBatches <- resultsEuNumPages %/% parallelretrievals
   resultsNumModulo  <- resultsEuNumPages %%  parallelretrievals
-  message("(1/3) Downloading trials (from a maximum of ", parallelretrievals, " page(s) in parallel):")
+  message("(1/3) Downloading trials (max. ", parallelretrievals, " page[s] in parallel):")
 
   # iterate over batches of results pages
   for (i in 1:(resultsNumBatches + ifelse(resultsNumModulo > 0, 1, 0))) {
@@ -817,7 +817,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
 
     # prepare download and saving
     pool <- curl::new_pool()
-    cb <- function(req){cat(".")}
+    cb <- function(req){message(". ", appendLF = FALSE)}
     urls <- unlist(lapply(paste0(queryEuRoot, ifelse(details, queryEuType3, queryEuType2),
                                  queryterm, "&page=", startpage:stoppage, queryEuPost),
                           utils::URLencode))
@@ -884,7 +884,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   }
 
   # run conversion of text files saved into file system to json file
-  message("(2/3) Converting to JSON ...")
+  message("\n(2/3) Converting to JSON ...")
   if (debug) message("DEBUG: ", euctr2json)
   imported <- system(euctr2json, intern = TRUE)
 
@@ -986,8 +986,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     eudractnumbersimported <- unique(substring(text = eudractnumbersimported, first = 1, last = 14))
 
     # inform user
-    message("* Downloading results from EUCTR for ", length(eudractnumbersimported), " trials: ")
-
+    message("* Retrieve results if available from EUCTR for ", length(eudractnumbersimported), " trials: ")
 
     ## parallel download and unzipping into temporary directory
 
@@ -1001,7 +1000,8 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     resultsNumModulo  <- length(eudractnumbersimported) %%  parallelretrievals
 
     # inform user
-    message("(1/4) Downloading trial results (at a maximum of ", parallelretrievals, " files in parallel):")
+    message("(1/4) Downloading results (max. ", parallelretrievals,
+            " trials in parallel):", appendLF = FALSE)
 
     # iterate over batches of results
     for (i in 1:(resultsNumBatches + ifelse(resultsNumModulo > 0, 1, 0))) {
@@ -1012,9 +1012,12 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                            startindex + resultsNumModulo,
                            startindex + parallelretrievals) - 1
 
+      # inform user
+      message("\n t ", startindex, "-", stopindex, " ", appendLF = FALSE)
+
       # prepare download and save
       pool <- curl::new_pool()
-      cb <- function(req){cat(".")}
+      cb <- function(req){message(". ", appendLF = FALSE)}
       urls <- unlist(lapply(paste0(queryEuRoot, queryEuType4,
                                    eudractnumbersimported[startindex : stopindex]),
                             utils::URLencode))
@@ -1036,17 +1039,19 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
           tmp <- utils::unzip(zipfile = fp[x], exdir = tempDir)
 
           if (any(grepl("pdf$", tmp)))
-            message("PDF for ", eudractnumbersimported[startindex : stopindex][x], " ", appendLF = FALSE)
+            message("PDF ", appendLF = FALSE)
 
           # TODO could there be more than one XML file?
           if (any(tmp2 <- grepl("xml$", tmp)))
-            file.rename(tmp[tmp2][1], paste0(tempDir, "/", eudractnumbersimported[startindex : stopindex][x], ".xml"))
+            file.rename(tmp[tmp2][1], paste0(tempDir, "/",
+                                             eudractnumbersimported[startindex : stopindex][x], ".xml"))
 
+          message(". ", appendLF = FALSE)
         } else {
-          warning("No results found for ", x,
-                  call. = FALSE,
-                  immediate. = TRUE,
-                  noBreaks. = FALSE)
+          message("x ", appendLF = FALSE)
+          # message(" no results for ",
+          #         eudractnumbersimported[startindex : stopindex][x],
+          #         appendLF = FALSE)
         }
 
         # clean up
@@ -1054,18 +1059,14 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
 
       }))
 
-      # inform user
-      message("Batch: ", i, ", ", startindex, " - ", stopindex)
-
     } # for batch
-
 
     ## use system commands to convert
     ## xml to json and to import json
 
     # compose command
     xml2json <- system.file("exec/xml2json_euctrresults.php", package = "ctrdata", mustWork = TRUE)
-    xml2json <- paste0("php -f ", shQuote(xml2json), " ", shQuote(tempDir)) # TODO: use shQuote in all places
+    xml2json <- paste0("php -f ", shQuote(xml2json), " ", shQuote(tempDir))
 
     # special command handling on windows
     if (.Platform$OS.type == "windows") {
@@ -1077,7 +1078,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     } # if windows
 
     # run conversion of downloaded xml to json
-    message("(2/4) Converting to JSON ...")
+    message("\n(2/4) Converting to JSON ...")
     if (debug) message("DEBUG: ", xml2json)
     importedresults <- system(xml2json, intern = TRUE)
 
@@ -1140,7 +1141,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     } # for batch
 
     # iterate over batches of result history from webpage
-    message("(4/4) Retrieving results history and importing into mongoDB ...")
+    message("(4/4) Retrieving any results history and importing into mongoDB ...", appendLF = FALSE)
     for (i in 1:(resultsNumBatches + ifelse(resultsNumModulo > 0, 1, 0))) {
 
       # calculated indices for eudractnumbersimported vector
@@ -1149,10 +1150,13 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                            startindex + resultsNumModulo,
                            startindex + parallelretrievals) - 1
 
+      # inform user
+      message("\n h ", startindex, "-", stopindex, " ", appendLF = FALSE)
+
       # prepare download and save
       pool <- curl::new_pool()
-      cb <- function(req){cat(".")}
-      done <- function(res){cat(". "); retdat <<- c(retdat, list(res))}
+      cb <- function(req){message(". ", appendLF = FALSE)}
+      done <- function(res){retdat <<- c(retdat, list(res))}
       urls <- unlist(lapply(paste0("https://www.clinicaltrialsregister.eu/ctr-search/trial/",
                                    eudractnumbersimported[startindex : stopindex], "/results"),
                             utils::URLencode))
@@ -1202,9 +1206,6 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
       # clean up large object
       rm(batchresults)
 
-      # inform user
-      message("\nBatch: ", i, ", ", startindex, " - ", stopindex, appendLF = FALSE)
-
     } # for batch
 
     # close database connection
@@ -1214,8 +1215,8 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     importedresults <- sum(unlist(importedresults))
 
     ## inform user on final import outcome
-    message("= Imported or updated results for ", importedresults, " ",
-            "records among ", resultsEuNumTrials, " trial(s).")
+    message("\n= Imported or updated results for ", importedresults,
+            " records for ", resultsEuNumTrials, " trial(s).")
 
   } # if euctrresults
 
