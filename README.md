@@ -61,7 +61,7 @@ citation("ctrdata")
 #> To cite package 'ctrdata' in publications use:
 #> 
 #>   Ralf Herold (2019). ctrdata: Retrieve and Analyze Information on
-#>   Clinical Trials from Public Registers. R package version 0.14.
+#>   Clinical Trials from Public Registers. R package version 0.14.1.
 #>   https://github.com/rfhb/ctrdata
 #> 
 #> A BibTeX entry for LaTeX users is
@@ -70,7 +70,7 @@ citation("ctrdata")
 #>     title = {ctrdata: Retrieve and Analyze Information on Clinical Trials from Public Registers},
 #>     author = {Ralf Herold},
 #>     year = {2019},
-#>     note = {R package version 0.14},
+#>     note = {R package version 0.14.1},
 #>     url = {https://github.com/rfhb/ctrdata},
 #>   }
 ```
