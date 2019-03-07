@@ -102,7 +102,7 @@ ctrOpenSearchPagesInBrowser <- function(input = "", register = "", copyright = F
   if (class(input) == "character" && is.atomic(input) && input == "") {
     #
     # if no register is specified, open both
-    if (register == "") register <- c("EUCTR", "CTGOV")
+    if (all(register == "", na.rm = TRUE)) register <- c("EUCTR", "CTGOV")
     #
     # open empty search pages
     if ("EUCTR" %in% register) utils::browseURL("https://www.clinicaltrialsregister.eu/ctr-search/search", ...)

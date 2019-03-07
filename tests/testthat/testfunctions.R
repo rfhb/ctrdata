@@ -340,11 +340,11 @@ test_that("browser interaction", {
   # test 18
   expect_is(tmp, "data.frame")
 
-  has_internet()
-
   # test 19
   expect_warning(ctrGetQueryUrlFromBrowser(content = "ThisDoesNotExist"),
                  "no clinical trial register search URL found")
+
+  has_internet()
 
   # test 20
   expect_message(ctrOpenSearchPagesInBrowser(q),
