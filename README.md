@@ -1,6 +1,17 @@
 
 <!-- README.md is generated from README.Rmd. -->
 
+[![Build
+Status](https://travis-ci.org/rfhb/ctrdata.png?branch=master)](https://travis-ci.org/rfhb/ctrdata)
+[![AppVeyor Build
+Status](https://ci.appveyor.com/api/projects/status/github/rfhb/ctrdata?branch=master&svg=true)](https://ci.appveyor.com/project/rfhb/ctrdata)
+[![codecov](https://codecov.io/gh/rfhb/ctrdata/branch/master/graph/badge.svg)](https://codecov.io/gh/rfhb/ctrdata)
+\[Note codecov does not check MS Windows-only
+code\]
+
+[![Slack](https://img.shields.io/badge/Slack-Join-green.svg)](https://rfhb.slack.com/messages/C6N1Y75B6)
+Join Slack channel and discuss
+
 # ctrdata for aggregating and analysing clinical trials
 
 The package `ctrdata` provides functions for retrieving (downloading)
