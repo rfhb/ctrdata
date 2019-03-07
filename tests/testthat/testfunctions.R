@@ -51,27 +51,6 @@ has_mongo <- function(){
   }
 }
 
-# helper function to check proxy access
-has_proxy <- function(){
-  # get initial options
-  old_options <- options()$RCurlOptions
-  # this is a local proxy using jap
-  opts <- list(proxy = "127.0.0.1", proxyport = 4001)
-  # set proxy
-  options(RCurlOptions = opts)
-  # test for working proxy connection
-  proxy_ok <- try({
-    is.character(RCurl::getURL("http://www.google.com/"))
-  },
-  silent = TRUE)
-  #
-  # reset to initial options
-  options(RCurlOptions = old_options)
-  #
-  if (class(proxy_ok) == "try-error") {
-    skip("No proxied internet connection available.")
-  }
-}
 
 # helper function to check tool chain
 has_toolchain <- function(){
@@ -422,6 +401,7 @@ test_that("browser interaction", {
 #### db fields and records ####
 test_that("operations on database after download from register", {
 
+  has_internet()
   has_mongo()
   has_toolchain()
 
