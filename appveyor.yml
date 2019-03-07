@@ -9,9 +9,9 @@ environment:
   PKGTYPE: win.binary
 
   matrix:
-   - R_VERSION: devel
    - R_VERSION: release
    - R_VERSION: oldrel
+#   - R_VERSION: devel
 
 # Download script file from GitHub
 init:
