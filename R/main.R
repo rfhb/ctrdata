@@ -224,7 +224,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
 #'
 #' @keywords internal
 #'
-#' @importFrom RCurl getCurlHandle getURL
+#' @importFrom httr content GET
 #'
 ctrRerunQuery <- function (querytoupdate = querytoupdate,
                            debug = debug,
@@ -315,12 +315,12 @@ ctrRerunQuery <- function (querytoupdate = querytoupdate,
     } else {
       #
       # obtain rss feed with list of recently updated trials
-      h <- RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE))
       rssquery <- utils::URLencode(paste0("https://www.clinicaltrialsregister.eu/ctr-search/rest/feed/bydates?query=",
                                           queryterm))
       if (debug) message("DEBUG (rss url): ", rssquery)
       #
-      resultsRss <- RCurl::getURL(rssquery, curl = h, header = FALSE)
+      resultsRss <- httr::content(httr::GET(url = rssquery), as = "text")
+
       if (debug) message("DEBUG (rss content): ", resultsRss)
       #
       # attempt to extract euctr number(s)
@@ -511,8 +511,8 @@ dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber,
 #'
 #' @keywords internal
 #'
-#' @importFrom RCurl getCurlHandle close curlPerform CFILE
 #' @importFrom jsonlite toJSON
+#' @importFrom httr content headers progress write_disk GET HEAD
 #'
 ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
                                     euctrresults, annotation.text, annotation.mode,
@@ -566,12 +566,12 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   if (debug) message ("DEBUG: ", ctgovdownloadcsvurl)
 
   # check if host is available
-  if (!RCurl::url.exists(url = queryUSRoot, .opts = list(connecttimeout = 5, ssl.verifypeer = FALSE)))
+  if ("try-error" %in% class(try(httr::headers(httr::HEAD(url = utils::URLencode(queryUSRoot))), silent = TRUE)))
     stop ("Host ", queryUSRoot, " does not respond, cannot continue.", call. = FALSE)
 
   # check number of trials to be downloaded
   ctgovdfirstpageurl <- paste0(queryUSRoot, queryUSType2, "&", queryterm, queryupdateterm)
-  tmp <- RCurl::getURI(url = utils::URLencode(ctgovdfirstpageurl), .opts = list(ssl.verifypeer = FALSE))
+  tmp <- httr::content(httr::GET(url = utils::URLencode(ctgovdfirstpageurl)), as = "text")
   tmp <- gsub("\n|\t|\r", " ", tmp)
   tmp <- gsub("<.*?>", " ", tmp)
   tmp <- gsub("  +", " ", tmp)
@@ -589,22 +589,14 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
   # prepare a file handle for saving in temporary directory
   f <- paste0(tempDir, "/", "ctgov.zip")
 
-  # initialise handle and avoid certificate failure from outside EU
-  h <- RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE))
-
   # inform user
   message("Downloading trials ", appendLF = FALSE)
 
-  # get (download) trials in single zip file
-  fref <- RCurl::CFILE(f, mode = "wb")
-  tmp  <- RCurl::curlPerform(url = utils::URLencode(ctgovdownloadcsvurl),
-                             writedata = fref@ref,
-                             noprogress = FALSE,
-                             progressfunction = progressOut,
-                             curl = h)
-
-  # close file handle
-  RCurl::close(fref)
+  # get (download) trials in single zip file f
+  tmp <- httr::GET(url = utils::URLencode(ctgovdownloadcsvurl),
+                   httr::progress(),
+                   httr::write_disk(path = f,
+                                    overwrite = TRUE))
 
   # inform user
   if (file.size(f) == 0)
@@ -736,7 +728,8 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
 #'
 #' @keywords internal
 #'
-#' @importFrom RCurl getCurlHandle getURL
+#' @importFrom httr content headers progress write_disk GET HEAD
+#' @importFrom curl curl_fetch_multi multi_run new_pool
 #'
 ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                                     euctrresults, annotation.text, annotation.mode,
@@ -753,8 +746,9 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   #               "cancer&age=adult&phase=1&results=true", # correct
   #               "&age=adult&phase=1&abc=xyz&cancer&results=true", # correct
   #               "age=adult&cancer",                      # correct
-  #               "2010-024264-18 2010-024264-19",         # correct
+  #               "2010-024264-18",                        # correct
   #               "NCT1234567890",                         # correct
+  #               "teratoid&country=dk"                    # correct
   #               "term=cancer&age=adult",                 # keep
   #               "age=adult&term=cancer")                 # keep
   queryterm <- sub("(^|&|[&]?\\w+=\\w+&)(\\w+|[ +ORNCT0-9-]+)($|&\\w+=\\w+)", "\\1query=\\2\\3", queryterm)
@@ -780,14 +774,13 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   queryEuPost  <- "&mode=current_page&format=text&dContent=summary&number=current_page&submit-download=Download"
 
   # check if host is available
-  if (!RCurl::url.exists(url = queryEuRoot, .opts = list(connecttimeout = 5, ssl.verifypeer = FALSE)))
+  if ("try-error" %in% class(try(httr::headers(httr::HEAD(url = utils::URLencode(queryEuRoot))), silent = TRUE)))
     stop ("Host ", queryEuRoot, " does not respond, cannot continue.", call. = FALSE)
 
   # get first result page
-  h <- RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE)) # avoid certificate failure from outside EU
   q <- utils::URLencode(paste0(queryEuRoot, queryEuType1, queryterm))
   if (debug) message("DEBUG: queryterm is ", q)
-  resultsEuPages <- RCurl::getURL(q, curl = h, header = FALSE)
+  resultsEuPages <- httr::content(httr::GET(url = q), as = "text")
 
   # get number of trials identified by query
   resultsEuNumTrials <- sub(".*Trials with a EudraCT protocol \\(([0-9,.]*)\\).*", "\\1", resultsEuPages)
@@ -821,27 +814,31 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     message(" p ", startpage, "-", stoppage, " ", appendLF = FALSE)
 
     # download all text files from pages in current batch into variable
-    tmp <- RCurl::getURL(unlist(lapply(paste0(queryEuRoot, ifelse(details, queryEuType3, queryEuType2),
-                                              queryterm, "&page=", startpage:stoppage, queryEuPost),
-                                       utils::URLencode)),
-                         curl = h, async = TRUE, binary = FALSE, header = FALSE,
-                         noprogress = FALSE, progressfunction = progressOut)
-    message("")
+
+    # prepare download and saving
+    pool <- curl::new_pool()
+    cb <- function(req){cat(".")}
+    urls <- unlist(lapply(paste0(queryEuRoot, ifelse(details, queryEuType3, queryEuType2),
+                                 queryterm, "&page=", startpage:stoppage, queryEuPost),
+                          utils::URLencode))
+    fp <- paste0(tempDir, "/euctr-trials-page_",
+                 formatC(startpage:stoppage, digits = 0, width = nchar(resultsEuNumPages), flag = 0), ".txt")
+    tmp <- lapply(seq_along(urls),
+                  function(x) curl::curl_fetch_multi(url = urls[x],
+                                                     done = cb,
+                                                     pool = pool,
+                                                     data = fp[x]))
+
+    # do download and saving
+    tmp <- curl::multi_run(pool = pool)
 
     # check plausibility
-    if (debug) message("DEBUG: ", class(tmp))
-    #
-    if (class(tmp)  != "character")
+    if (class(tmp) == "try-error")
       stop ("Download from EUCTR failed; last error: ", class(tmp), call. = FALSE)
     #
-    if (length(tmp) != (stoppage - startpage + 1))
+    # if (length(tmp) != (stoppage - startpage + 1))
+    if (tmp[["success"]] != (stoppage - startpage + 1))
       stop ("Download from EUCTR failed; incorrect number of records.", call. = FALSE)
-
-    # save downloaded data from variable into file system
-    for (ii in startpage:stoppage)
-      write(tmp[[1 + ii - startpage]],
-            paste0(tempDir, "/euctr-trials-page_",
-                   formatC(ii, digits = 0, width = nchar(resultsEuNumPages), flag = 0), ".txt"))
 
     # clean up large object
     rm(tmp)
@@ -1006,9 +1003,6 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     # inform user
     message("(1/4) Downloading trial results (at a maximum of ", parallelretrievals, " files in parallel):")
 
-    # initialise
-    h <- RCurl::getCurlHandle(.opts = list(ssl.verifypeer = FALSE)) # avoid certificate failure outside EU
-
     # iterate over batches of results
     for (i in 1:(resultsNumBatches + ifelse(resultsNumModulo > 0, 1, 0))) {
 
@@ -1018,55 +1012,47 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                            startindex + resultsNumModulo,
                            startindex + parallelretrievals) - 1
 
-      batchresults <- sapply(eudractnumbersimported[startindex : stopindex],
-                             function(x) {
+      # prepare download and save
+      pool <- curl::new_pool()
+      cb <- function(req){cat(".")}
+      urls <- unlist(lapply(paste0(queryEuRoot, queryEuType4,
+                                   eudractnumbersimported[startindex : stopindex]),
+                            utils::URLencode))
+      fp <- paste0(tempDir, "/", eudractnumbersimported[startindex : stopindex], ".zip")
+      tmp <- lapply(seq_along(urls),
+                    function(x) curl::curl_fetch_multi(url = urls[x],
+                                                       done = cb,
+                                                       pool = pool,
+                                                       data = fp[x]))
 
-                               # prepare a file handle for saving in temporary directory
-                               f <- paste0(tempDir, "/", x, ".zip")
-                               fref <- RCurl::CFILE(f, mode = "wb")
+      # do download and save
+      tmp <- curl::multi_run(pool = pool)
 
-                               # get (download) trial results' zip file
-                               tmp  <- RCurl::curlPerform(url = utils::URLencode(paste0(queryEuRoot,
-                                                                                        queryEuType4,
-                                                                                        x)),
-                                                          writedata = fref@ref,
-                                                          noprogress = FALSE,
-                                                          progressfunction = progressOut,
-                                                          curl = h)
+      # unzip downloaded file and rename
+      tmp <- unlist(lapply(seq_along(urls), function(x) {
 
-                               # close file handle
-                               RCurl::close(fref)
+        if (file.size(fp[x]) != 0) {
 
-                               # unzip downloaded file and rename
-                               if (file.size(f) != 0) {
+          tmp <- utils::unzip(zipfile = fp[x], exdir = tempDir)
 
-                                 tmp <- utils::unzip(f, exdir = tempDir)
+          if (any(grepl("pdf$", tmp)))
+            message("PDF for ", eudractnumbersimported[startindex : stopindex][x], " ", appendLF = FALSE)
 
-                                 if (any(grepl("pdf$", tmp))) message("PDF results for ", x, " ",
-                                                                      appendLF = FALSE)
+          # TODO could there be more than one XML file?
+          if (any(tmp2 <- grepl("xml$", tmp)))
+            file.rename(tmp[tmp2][1], paste0(tempDir, "/", eudractnumbersimported[startindex : stopindex][x], ".xml"))
 
-                                 if (any(tmp2 <- grepl("xml$", tmp)))
-                                   file.rename(tmp[tmp2][1], paste0(tempDir, "/", x, ".xml"))
+        } else {
+          warning("No results found for ", x,
+                  call. = FALSE,
+                  immediate. = TRUE,
+                  noBreaks. = FALSE)
+        }
 
-                               }
+        # clean up
+        if (!debug) unlink(fp[x])
 
-                               # clean up large object
-                               rm(tmp)
-
-                               # inform user
-                               if (file.size(f) == 0) warning("No results found for ", x,
-                                                              call. = FALSE,
-                                                              immediate. = TRUE,
-                                                              noBreaks. = FALSE)
-
-                               # clean up
-                               if (!debug) unlink(f)
-
-                             }
-      ) # download, unzip, save
-
-      # clean up large object
-      rm(batchresults)
+      }))
 
       # inform user
       message("Batch: ", i, ", ", startindex, " - ", stopindex)
@@ -1163,13 +1149,22 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                            startindex + resultsNumModulo,
                            startindex + parallelretrievals) - 1
 
-      batchresults <- lapply(eudractnumbersimported[startindex : stopindex],
-                             function(x)
-                               RCurl::getURL(unlist(lapply(paste0("https://www.clinicaltrialsregister.eu/",
-                                                                  "ctr-search/trial/", x, "/results"),
-                                                           utils::URLencode)),
-                                             curl = h, async = TRUE, binary = FALSE, header = FALSE,
-                                             noprogress = FALSE, progressfunction = progressOut))
+      # prepare download and save
+      pool <- curl::new_pool()
+      cb <- function(req){cat(".")}
+      done <- function(res){cat(". "); retdat <<- c(retdat, list(res))}
+      urls <- unlist(lapply(paste0("https://www.clinicaltrialsregister.eu/ctr-search/trial/",
+                                   eudractnumbersimported[startindex : stopindex], "/results"),
+                            utils::URLencode))
+      tmp <- lapply(seq_along(urls),
+                    function(x) curl::curl_fetch_multi(url = urls[x],
+                                                       done = done,
+                                                       pool = pool))
+
+      # do download and save into batchresults
+      retdat <- NULL
+      tmp <- curl::multi_run(pool = pool)
+      batchresults <- lapply(retdat, function(x) rawToChar(x[["content"]]))
 
       # extract information about results
       tmpFirstDate <- as.Date(sapply(batchresults, function(x)
