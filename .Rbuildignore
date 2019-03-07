@@ -1,3 +1,4 @@
+^README\.Rmd$
 \.DS_Store
 \.git.*
 \.RData
