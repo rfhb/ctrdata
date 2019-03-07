@@ -1,3 +1,7 @@
+# ctrdata 0.14.2
+ - 2019-03-07
+ - harmonise user information
+ 
 # ctrdata 0.14.1
  - 2019-03-07
  - replaced RCurl (which failed for some register servers) by httr
