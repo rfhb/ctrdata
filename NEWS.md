@@ -1,3 +1,8 @@
+# ctrdata 0.14.1
+ - 2019-03-07
+ - replaced RCurl (which failed for some register servers) by httr
+ - create README.md from README.Rmd
+
 # ctrdata 0.14
  - 2019-03-06
  - intention to submit to CRAN, therefore changing several warnings to messages, improve testing of tool chain applications
