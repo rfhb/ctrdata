@@ -4,10 +4,14 @@
 \alias{installCygwinWindowsTest}
 \title{Convenience function to test for working cygwin installation}
 \usage{
-installCygwinWindowsTest()
+installCygwinWindowsTest(verbose = FALSE)
+}
+\arguments{
+\item{verbose}{If \code{TRUE}, prints confirmatory message (default \code{FALSE})}
 }
 \value{
-Information if cygwin can be used, \code{TRUE} or \code{FALSE}
+Information if cygwin can be used, \code{TRUE} or \code{FALSE},
+ or NULL is not under MS Windows
 }
 \description{
 Convenience function to test for working cygwin installation

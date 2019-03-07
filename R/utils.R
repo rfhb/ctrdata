@@ -1344,11 +1344,14 @@ installCygwinWindowsDoInstall <- function(force = FALSE, proxy = ""){
 
 #' Convenience function to test for working cygwin installation
 #'
-#' @return Information if cygwin can be used, \code{TRUE} or \code{FALSE}
+#' @param verbose If \code{TRUE}, prints confirmatory message (default \code{FALSE})
+#'
+#' @return Information if cygwin can be used, \code{TRUE} or \code{FALSE},
+#'  or NULL is not under MS Windows
 #'
 #' @keywords internal
 #
-installCygwinWindowsTest <- function() {
+installCygwinWindowsTest <- function(verbose = FALSE) {
   #
   if (.Platform$OS.type != "windows") {
     message("Function installCygwinWindowsTest() is only for MS Windows operating systems.")
@@ -1365,7 +1368,7 @@ installCygwinWindowsTest <- function() {
   #
   if ((class(tmpcygwin) != "try-error") &
       (length(tmpcygwin) > 5)) {
-    message("cygwin base install seems to be working correctly.")
+    if (verbose) message("cygwin base install seems to be working correctly.")
     return(invisible(TRUE))
   } else {
     message("cygwin is not available for this package, ctrLoadQueryIntoDb() will not work.\n",

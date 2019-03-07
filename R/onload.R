@@ -17,9 +17,9 @@
   )
   #
   # check availabilities
-  if (.Platform$OS.type == "windows") installCygwinWindowsTest()
-  #
   packageStartupMessage("Testing helper binaries: ")
+  #
+  if (.Platform$OS.type == "windows") installCygwinWindowsTest()
   #
   if (!suppressWarnings(installFindBinary("php --version")))
     packageStartupMessage("php not found, ctrLoadQueryIntoDb() will not work.")
