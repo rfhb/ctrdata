@@ -1170,6 +1170,11 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
       tmp <- curl::multi_run(pool = pool)
       batchresults <- lapply(retdat, function(x) rawToChar(x[["content"]]))
 
+      # curl return sequence is not predictable
+      # therefore recalculate the eudract numbers
+      eudractnumberscurled <- sapply(retdat, function(x) x[["url"]])
+      eudractnumberscurled <- sub(".*([0-9]{4}-[0-9]{6}-[0-9]{2}).*", "\\1", eudractnumberscurled)
+
       # extract information about results
       tmpFirstDate <- as.Date(sapply(batchresults, function(x)
         trimws(sub(".+First version publication date</div>.*?<div>(.+?)</div>.*", "\\1",
@@ -1177,6 +1182,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
         format = "%d %b %Y")
 
       # global end date is variably represented in euctr:
+      # 'p_date_of_the_global_end_of_the_trial',
       # 'Global completion date' or 'Global end of trial date'
       # tmpEndDate <- as.Date(sapply(batchresults, function(x)
       #   trimws(sub(".*Global .+? date</div>.*?<div>(.*?)</div>.*", "\\1",
@@ -1194,13 +1200,14 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
 
       tmp <- lapply(seq_along(along.with = startindex : stopindex), function(x) {
         mongo$update(query = paste0('{"a2_eudract_number": {"$eq": "',
-                                    eudractnumbersimported[startindex : stopindex][x], '"}}'),
+                                    eudractnumberscurled[x], '"}}'),
                      update = paste0('{ "$set" : {',
                                      '"firstreceived_results_date" : "',  tmpFirstDate[x], '", ',
                                      '"version_results_history"    : "',  tmpChanges[x],   '"',
                                      "}}"),
                      upsert = TRUE,
                      multiple = TRUE)
+
       })
 
       # clean up large object

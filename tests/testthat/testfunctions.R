@@ -297,7 +297,7 @@ test_that("retrieve results from register euctr", {
   coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
 
   q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
-              "2007-000371-42+OR+XYZ")
+              "2007-000371-42+OR+2011-004742-18")
   # ctrGetQueryUrlFromBrowser(content = q)
   # ctrOpenSearchPagesInBrowser(input = q)
 
@@ -314,10 +314,13 @@ test_that("retrieve results from register euctr", {
                              "firstreceived_results_date",
                              "e71_human_pharmacology_phase_i",
                              "version_results_history"),
-                           collection = coll)
+                           collection = coll,
+                           stopifnodata = FALSE)
 
   # test 16
   expect_true(!any(tmp[tmp$a2_eudract_number == "2007-000371-42", c(1, 2, 3)] == ""))
+  expect_true(all(c(tmp$firstreceived_results_date [tmp$a2_eudract_number == "2007-000371-42"] == as.Date("2015-07-29"),
+                    tmp$firstreceived_results_date [tmp$a2_eudract_number == "2011-004742-18"] == as.Date("2016-07-28"))))
 
   # test 16a
   expect_true(class(tmp$firstreceived_results_date)     == "Date")
