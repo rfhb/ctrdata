@@ -309,11 +309,11 @@ test_that("retrieve results from register euctr", {
                        debug = TRUE)),
     "Imported or updated results for")
 
-  tmp <- dbGetFieldsIntoDf(c("a2_eudract_number",
-                             "endPoints.endPoint.title",
-                             "firstreceived_results_date",
-                             "e71_human_pharmacology_phase_i",
-                             "version_results_history"),
+  tmp <- dbGetFieldsIntoDf(fields = c("a2_eudract_number",
+                                      "endPoints.endPoint.title",
+                                      "firstreceived_results_date",
+                                      "e71_human_pharmacology_phase_i",
+                                      "version_results_history"),
                            collection = coll,
                            stopifnodata = FALSE)
 

@@ -564,6 +564,7 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
     )),
     silent = TRUE
   )
+  attribsids <- attributes(listofEUCTRids)
   if (class(listofEUCTRids) == "try-error") listofEUCTRids <- NULL
   if (all(is.na(listofEUCTRids[, -1])))     listofEUCTRids <- NULL
   if (is.null(listofEUCTRids)) message("No EUCTR records found.")
@@ -701,17 +702,12 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
     retids <- c(listofEUCTRids[["_id"]], unlist(sapply(listofCTGOVids, "[[", 1)))
     #
   }
-  #
+
   # prepare output
-  #
+  attributes(retids) <- attribsids[grepl("^ctrdata-", names(attribsids))]
+
   # avoid returning list() if none found
   if (length(retids) == 0) retids <- character()
-  #
-
-  # add metadata
-  retids <- addMetaData(retids,
-                        collection = collection, db = db, url = url,
-                        username = username, password = password)
 
   # inform user
   message("= Returning keys (_id) of ", length(retids),
