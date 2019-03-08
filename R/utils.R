@@ -566,7 +566,7 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
   )
   if (class(listofEUCTRids) == "try-error") listofEUCTRids <- NULL
   if (all(is.na(listofEUCTRids[, -1])))     listofEUCTRids <- NULL
-  if ( is.null(listofEUCTRids)) message("No EUCTR records found.")
+  if (is.null(listofEUCTRids)) message("No EUCTR records found.")
 
   # extract eudract number
   if (!is.null(listofEUCTRids)) listofEUCTRids <-
