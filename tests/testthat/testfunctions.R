@@ -211,18 +211,6 @@ test_that("retrieve data from register euctr", {
       collection = coll)),
     "First result page empty")
 
-  ## github issue 8 bug
-  q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?",
-              "query=&dateFrom=2017-09-15&dateTo=2017-09-15&age=under-18")
-  # ctrGetQueryUrlFromBrowser(content = q)
-
-  # test 10
-  expect_message(suppressWarnings(
-    ctrLoadQueryIntoDb(queryterm = q,
-                       collection = coll,
-                       euctrresults = TRUE)),
-    "Updated history")
-
   ## forced slow import
   q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
               "neuroblastoma&status=completed&phase=phase-one&country=pl")
@@ -488,16 +476,22 @@ test_that("operations on database for deduplication", {
   coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
 
   # get some trials with corresponding numbers
-  ctrLoadQueryIntoDb(queryterm = "NCT00134030", register = "CTGOV", collection = coll) # EUDRACT-2004-000242-20
-  ctrLoadQueryIntoDb(queryterm = "NCT01516580", register = "CTGOV", collection = coll) # 2010-019224-31
-  ctrLoadQueryIntoDb(queryterm = "NCT00025597", register = "CTGOV", collection = coll) # this is not in euctr
-  ctrLoadQueryIntoDb(queryterm = "2010-019224-31", register = "EUCTR", collection = coll)
-  ctrLoadQueryIntoDb(queryterm = "2004-000242-20", register = "EUCTR", collection = coll)
-  ctrLoadQueryIntoDb(queryterm = "2005-000915-80", register = "EUCTR", collection = coll) # this is not in ctgov
-  ctrLoadQueryIntoDb(queryterm = "2014-005674-11", register = "EUCTR", collection = coll) # this is 3rd country only
-  ctrLoadQueryIntoDb(queryterm = "2016-002347-41", register = "EUCTR", collection = coll) # in eu and 3rd country
+  # ctrLoadQueryIntoDb(queryterm = "NCT00134030", register = "CTGOV", collection = coll) # EUDRACT-2004-000242-20
+  # ctrLoadQueryIntoDb(queryterm = "NCT01516580", register = "CTGOV", collection = coll) # 2010-019224-31
+  # ctrLoadQueryIntoDb(queryterm = "NCT00025597", register = "CTGOV", collection = coll) # this is not in euctr
+  # ctrLoadQueryIntoDb(queryterm = "2010-019224-31", register = "EUCTR", collection = coll)
+  # ctrLoadQueryIntoDb(queryterm = "2004-000242-20", register = "EUCTR", collection = coll)
+  # ctrLoadQueryIntoDb(queryterm = "2005-000915-80", register = "EUCTR", collection = coll) # this is not in ctgov
+  # ctrLoadQueryIntoDb(queryterm = "2014-005674-11", register = "EUCTR", collection = coll) # this is 3rd country only
+  # ctrLoadQueryIntoDb(queryterm = "2016-002347-41", register = "EUCTR", collection = coll) # in eu and 3rd country
 
-  # test combinations of parameters
+  ctrLoadQueryIntoDb(queryterm = "NCT00134030 OR NCT01516580 OR NCT00025597",
+                     register = "CTGOV", collection = coll)
+
+  ctrLoadQueryIntoDb(queryterm = "2010-019224-31 OR 2004-000242-20 OR 2005-000915-80 OR 2014-005674-11 OR 2016-002347-41",
+                     register = "EUCTR", collection = coll)
+
+    # test combinations of parameters
 
   # test 41
   tmp <- dbFindIdsUniqueTrials(collection = coll)
@@ -560,12 +554,12 @@ test_that("annotate queries", {
 
   # test 49
   expect_message(ctrLoadQueryIntoDb(
-    queryterm = "2010-024264-18 OR NCT01516567",
+    queryterm = "NCT01516567",
     register = "CTGOV",
     collection = coll,
     annotation.text = "ANNO",
     annotation.mode = "replace"),
-    "Imported or updated 2 trial")
+    "Imported or updated 1 trial")
 
   # test 50
   expect_message(ctrLoadQueryIntoDb(
