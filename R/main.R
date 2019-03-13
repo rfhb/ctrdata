@@ -362,21 +362,6 @@ ctrRerunQuery <- function (querytoupdate = querytoupdate,
 }
 
 
-#' progressOut
-#'
-#' @keywords internal
-#'
-#' @importFrom stats runif
-#'
-progressOut <- function(down, up) {
-  #
-  # helper function to show progress while downloading
-  #
-  if (stats::runif (1) < 0.001) message(".", appendLF = FALSE)
-  #
-}
-
-
 #' dbQueryAnnotateRecords
 #'
 #' @inheritParams ctrLoadQueryIntoDb
