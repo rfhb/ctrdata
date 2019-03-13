@@ -815,6 +815,8 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     # download all text files from pages in current batch into variable
 
     # prepare download and saving
+    ch <- curl::new_handle()
+    curl::handle_setopt(ch, ssl_verifypeer = FALSE)
     pool <- curl::new_pool()
     cb <- function(req){message(". ", appendLF = FALSE)}
     urls <- unlist(lapply(paste0(queryEuRoot, ifelse(details, queryEuType3, queryEuType2),
@@ -826,7 +828,8 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                   function(x) curl::curl_fetch_multi(url = urls[x],
                                                      done = cb,
                                                      pool = pool,
-                                                     data = fp[x]))
+                                                     data = fp[x],
+                                                     handle = ch))
 
     # do download and saving
     tmp <- curl::multi_run(pool = pool)
@@ -1015,6 +1018,8 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
       message("\n t ", startindex, "-", stopindex, " ", appendLF = FALSE)
 
       # prepare download and save
+      ch <- curl::new_handle()
+      curl::handle_setopt(ch, ssl_verifypeer = FALSE)
       pool <- curl::new_pool()
       cb <- function(req){message(". ", appendLF = FALSE)}
       urls <- unlist(lapply(paste0(queryEuRoot, queryEuType4,
@@ -1025,7 +1030,8 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                     function(x) curl::curl_fetch_multi(url = urls[x],
                                                        done = cb,
                                                        pool = pool,
-                                                       data = fp[x]))
+                                                       data = fp[x],
+                                                       handle = ch))
 
       # do download and save
       tmp <- curl::multi_run(pool = pool)
@@ -1153,6 +1159,8 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
       message("\n h ", startindex, "-", stopindex, " ", appendLF = FALSE)
 
       # prepare download and save
+      ch <- curl::new_handle()
+      curl::handle_setopt(ch, ssl_verifypeer = FALSE)
       pool <- curl::new_pool()
       cb <- function(req){message(". ", appendLF = FALSE)}
       done <- function(res){retdat <<- c(retdat, list(res))}
@@ -1162,7 +1170,8 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
       tmp <- lapply(seq_along(urls),
                     function(x) curl::curl_fetch_multi(url = urls[x],
                                                        done = done,
-                                                       pool = pool))
+                                                       pool = pool,
+                                                       handle = ch))
 
       # do download and save into batchresults
       retdat <- NULL
