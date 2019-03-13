@@ -162,6 +162,10 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
                                      collection = collection, db = db, url = url,
                                      username = username, password = password, verbose = verbose,
                                      queryupdateterm = queryupdateterm)
+    #
+    # check rerunparameters and possibly stop function without error
+    if (!is.data.frame(rerunparameters)) return(invisible(rerunparameters))
+    #
     # set main parameters
     querytermoriginal <- rerunparameters$querytermoriginal
     queryupdateterm   <- rerunparameters$queryupdateterm
@@ -326,8 +330,10 @@ ctrRerunQuery <- function (querytoupdate = querytoupdate,
       # attempt to extract euctr number(s)
       resultsRssTrials <- gregexpr("eudract_number:[0-9]{4}-[0-9]{6}-[0-9]{2}</link>", resultsRss)[[1]]
       #
-      if (length(resultsRssTrials) == 1L && resultsRssTrials == -1L)
-        stop ("First result page empty - no (new) trials found?", call. = FALSE)
+      if (length(resultsRssTrials) == 1L && resultsRssTrials == -1L) {
+        message("First result page empty - no (new) trials found?")
+        return(invisible(0))
+      }
       #
       # if new trials found, download
       resultsRssTrials <- sapply(resultsRssTrials, FUN = function (x) substr(resultsRss, x + 15, x + 28))
@@ -789,9 +795,11 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   # calculate number of results pages
   resultsEuNumPages  <- ceiling(resultsEuNumTrials / 20)
 
-  # check for plausbility
-  if (is.na(resultsEuNumPages) || is.na(resultsEuNumTrials) || resultsEuNumTrials == 0)
-    stop ("First result page empty - no (new) trials found?", call. = FALSE)
+  # check for plausbility and stop function without erro
+  if (is.na(resultsEuNumPages) || is.na(resultsEuNumTrials) || resultsEuNumTrials == 0) {
+    message("First result page empty - no (new) trials found?")
+    return(invisible(0))
+  }
 
   # inform user
   message("Retrieved overview, ", resultsEuNumTrials, " trial(s) from ",

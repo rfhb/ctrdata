@@ -122,7 +122,7 @@ test_that("retrieve data from registers", {
   coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
 
   # test 3
-  expect_error(suppressWarnings(ctrLoadQueryIntoDb(
+  expect_message(suppressWarnings(ctrLoadQueryIntoDb(
     queryterm = "query=NonExistingConditionGoesInHere",
     register = "EUCTR",
     collection = coll)),
@@ -205,7 +205,7 @@ test_that("retrieve data from register euctr", {
     "Updated history")
 
   # test 9
-  expect_error(suppressWarnings(
+  expect_message(suppressWarnings(
     ctrLoadQueryIntoDb(
       querytoupdate = "last",
       collection = coll)),
@@ -234,12 +234,16 @@ test_that("retrieve data from register euctr", {
 
   ## create and test updatable query
 
-  date.today <- format(Sys.time(),                          "%Y-%m-%d")
-  date.temp  <- format(Sys.time() - (60 * 60 * 24 * 6),     "%Y-%m-%d")
-  date.old   <- format(Sys.time() - (60 * 60 * 24 * 6 * 3), "%Y-%m-%d")
+  # only works for last 7 days with rss mechanism
+  # query based on date is used since this avoids no trials are found
+
+  date.today <- Sys.time()
+  date.from  <- format(date.today - (60 * 60 * 24 * 12), "%Y-%m-%d")
+  date.to    <- format(date.today - (60 * 60 * 24 *  6), "%Y-%m-%d")
 
   q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
-              "&dateFrom=", date.old, "&dateTo=", date.temp)
+              "&dateFrom=", date.from, "&dateTo=", date.to)
+  # ctrOpenSearchPagesInBrowser(q)
 
   # test 13
   expect_message(suppressWarnings(
@@ -253,7 +257,7 @@ test_that("retrieve data from register euctr", {
   hist <- dbQueryHistory(collection = coll)
   # manipulate query
   hist[nrow(hist), "query-term"]      <- sub(".*(&dateFrom=.*)&dateTo=.*", "\\1", q)
-  hist[nrow(hist), "query-timestamp"] <- paste0(date.temp, " 23:59:59")
+  hist[nrow(hist), "query-timestamp"] <- paste0(date.to, " 23:59:59")
   # convert into json object
   json <- jsonlite::toJSON(list("queries" = hist))
   # update database
@@ -267,9 +271,9 @@ test_that("retrieve data from register euctr", {
     ctrLoadQueryIntoDb(querytoupdate = "last",
                        collection = coll,
                        details = FALSE),
-    "Imported or updated")
+    "(Imported or updated|First result page empty)")
 
-  remove("hist", "json", "q", "date.old", "date.today", "date.temp")
+  remove("hist", "json", "q", "date.from", "date.today", "date.to")
 
 })
 
