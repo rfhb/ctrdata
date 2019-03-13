@@ -323,7 +323,9 @@ ctrRerunQuery <- function (querytoupdate = querytoupdate,
                                           queryterm))
       if (debug) message("DEBUG (rss url): ", rssquery)
       #
-      resultsRss <- httr::content(httr::GET(url = rssquery), as = "text")
+      resultsRss <- httr::content(httr::GET(url = rssquery,
+                                            config = httr::config(ssl_verifypeer = FALSE)),
+                                  as = "text")
 
       if (debug) message("DEBUG (rss content): ", resultsRss)
       #
@@ -765,13 +767,17 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   queryEuPost  <- "&mode=current_page&format=text&dContent=summary&number=current_page&submit-download=Download"
 
   # check if host is available
-  if ("try-error" %in% class(try(httr::headers(httr::HEAD(url = utils::URLencode(queryEuRoot))), silent = TRUE)))
+  if ("try-error" %in% class(try(httr::headers(httr::HEAD(url = utils::URLencode(queryEuRoot),
+                                                          config = httr::config(ssl_verifypeer = FALSE))),
+                                 silent = TRUE)))
     stop ("Host ", queryEuRoot, " does not respond, cannot continue.", call. = FALSE)
 
   # get first result page
   q <- utils::URLencode(paste0(queryEuRoot, queryEuType1, queryterm))
   if (debug) message("DEBUG: queryterm is ", q)
-  resultsEuPages <- httr::content(httr::GET(url = q), as = "text")
+  resultsEuPages <- httr::content(httr::GET(url = q,
+                                            config = httr::config(ssl_verifypeer = FALSE)),
+                                  as = "text")
 
   # get number of trials identified by query
   resultsEuNumTrials <- sub(".*Trials with a EudraCT protocol \\(([0-9,.]*)\\).*", "\\1", resultsEuPages)
