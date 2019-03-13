@@ -1110,7 +1110,11 @@ typeField <- function(dfi){
   # - if empty string, change to NA
   # if (all(class(dfi[, 2]) == "character")) dfi[ dfi[, 2] == "", 2] <- NA
 
-  # selective typing
+  # for date time conversion
+  lct <- Sys.getlocale("LC_TIME")
+  Sys.setlocale("LC_TIME", "C")
+
+    # selective typing
   tmp <- try({switch(
     EXPR = names(dfi)[2],
     #
@@ -1203,6 +1207,9 @@ typeField <- function(dfi){
     )
   },
   silent = TRUE)
+
+  # reset date time
+  Sys.setlocale("LC_TIME", lct)
 
   # change column of input
   if (class(tmp) != "try-error" && !is.null(unlist(tmp))) {

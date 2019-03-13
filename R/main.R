@@ -1168,6 +1168,10 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
       eudractnumberscurled <- sapply(retdat, function(x) x[["url"]])
       eudractnumberscurled <- sub(".*([0-9]{4}-[0-9]{6}-[0-9]{2}).*", "\\1", eudractnumberscurled)
 
+      # for date time conversion
+      lct <- Sys.getlocale("LC_TIME")
+      Sys.setlocale("LC_TIME", "C")
+
       # extract information about results
       tmpFirstDate <- as.Date(sapply(batchresults, function(x)
         trimws(sub(".+First version publication date</div>.*?<div>(.+?)</div>.*", "\\1",
@@ -1182,6 +1186,9 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
       #      ifelse(grepl("Global .+? date", x), x, "")))),
       #           format = "%d %b %Y")
 
+      # reset date time
+      Sys.setlocale("LC_TIME", lct)
+
       tmpChanges <- sapply(batchresults, function(x)
         trimws(gsub("[ ]+", " ",
                gsub("[\n\r]", "",
@@ -1192,15 +1199,15 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
       )
 
       tmp <- lapply(seq_along(along.with = startindex : stopindex), function(x) {
-        mongo$update(query = paste0('{"a2_eudract_number": {"$eq": "',
-                                    eudractnumberscurled[x], '"}}'),
-                     update = paste0('{ "$set" : {',
-                                     '"firstreceived_results_date" : "',  tmpFirstDate[x], '", ',
-                                     '"version_results_history"    : "',  tmpChanges[x],   '"',
-                                     "}}"),
-                     upsert = TRUE,
-                     multiple = TRUE)
-
+        upd <- mongo$update(query = paste0('{"a2_eudract_number": {"$eq": "',
+                                           eudractnumberscurled[x], '"}}'),
+                            update = paste0('{ "$set" : {',
+                                            '"firstreceived_results_date" : "',  tmpFirstDate[x], '", ',
+                                            '"version_results_history"    : "',  tmpChanges[x],   '"',
+                                            "}}"),
+                            upsert = TRUE,
+                            multiple = TRUE)
+        if(debug) message(upd)
       })
 
       # clean up large object
