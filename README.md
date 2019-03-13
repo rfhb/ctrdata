@@ -24,7 +24,7 @@ started mid 2015 and was motivated by the wish to understand trends in
 designs and conduct of trials and their availability for patients. The
 package is to be used within the [R](https://www.r-project.org/) system.
 
-Last edit 2019-03-06 for version 0.14.1, with bug fixes and new
+Last edit 2019-03-12 for version 0.15.0, with bug fixes and new
 features:
 
   - dates are now returned as Date types, and some Yes / No fields are
@@ -72,7 +72,7 @@ citation("ctrdata")
 #> To cite package 'ctrdata' in publications use:
 #> 
 #>   Ralf Herold (2019). ctrdata: Retrieve and Analyze Information on
-#>   Clinical Trials from Public Registers. R package version 0.14.1.
+#>   Clinical Trials from Public Registers. R package version 0.15.
 #>   https://github.com/rfhb/ctrdata
 #> 
 #> A BibTeX entry for LaTeX users is
@@ -81,7 +81,7 @@ citation("ctrdata")
 #>     title = {ctrdata: Retrieve and Analyze Information on Clinical Trials from Public Registers},
 #>     author = {Ralf Herold},
 #>     year = {2019},
-#>     note = {R package version 0.14.1},
+#>     note = {R package version 0.15},
 #>     url = {https://github.com/rfhb/ctrdata},
 #>   }
 ```
@@ -258,6 +258,9 @@ with (result, table (p_end_of_trial_status, b1_sponsor.b31_and_b32_status_of_the
 ![Example JSON representation](inst/image/README-ctrdata_json.jpg)
 
 # Features in the works
+
+  - Explore using the Windows Subsystem for Linux (WSL) instead of
+    cygwin
 
   - Merge results-related information retrieved from different registers
     (e.g. corresponding endpoints) and prepare for analysis across

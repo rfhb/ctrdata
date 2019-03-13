@@ -31,7 +31,7 @@ trial is conducted. For all trials conducted in more than one Member State,
 this function returns only one record per trial.
 }
 \details{
-Note: To depuplicate trials from different registers (EUCTR and CTGOV),
+Note: To deduplicate trials from different registers (EUCTR and CTGOV),
 please first use function \code{\link{dbFindIdsUniqueTrials}}.
 }
 \keyword{internal}

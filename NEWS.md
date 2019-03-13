@@ -1,3 +1,9 @@
+# ctrdata 0.15.0
+ - 2019-03-13
+ - fixed EUCTR results retrieval (curl return value order not predictable)
+ - removed second time adding metadata in one function
+ - streamlined user information and progress feedback
+
 # ctrdata 0.14.3
  - 2019-03-12
  - turned error into message when no new trials are found

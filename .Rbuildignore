@@ -1,3 +1,4 @@
+^CRAN-RELEASE$
 ^README\.Rmd$
 \.DS_Store
 \.git.*
@@ -14,3 +15,4 @@
 ^.lintr$
 ^appveyor\.yml$
 ^LICENSE.md$
+cran-comments.md

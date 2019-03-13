@@ -983,7 +983,7 @@ dfMergeTwoVariablesRelevel <- function(df = NULL, colnames = "", levelslist = NU
 #' trial is conducted. For all trials conducted in more than one Member State,
 #' this function returns only one record per trial.
 #'
-#' Note: To depuplicate trials from different registers (EUCTR and CTGOV),
+#' Note: To deduplicate trials from different registers (EUCTR and CTGOV),
 #' please first use function \code{\link{dbFindIdsUniqueTrials}}.
 #'
 #' @param df A data frame created from the database that includes the columns
