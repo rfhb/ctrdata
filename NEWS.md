@@ -1,10 +1,15 @@
+# ctrdata 0.14.3
+ - 2019-03-12
+ - turned error into message when no new trials are found
+ - prevent failing tests if no new trials found in rss feed
+ 
 # ctrdata 0.14.2
  - 2019-03-07
  - harmonise user information
  
 # ctrdata 0.14.1
  - 2019-03-07
- - replaced RCurl (which failed for some register servers) by httr
+ - replaced RCurl (which failed for some register servers) by httr and curl
  - create README.md from README.Rmd
 
 # ctrdata 0.14
