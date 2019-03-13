@@ -1099,7 +1099,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                                if (file.exists(fileName) && file.size(fileName) > 0){
 
                                  # read contents
-                                 tmp <- readChar(con = fileName, nchars = file.info(fileName)$size)
+                                 tmp <- readChar(con = fileName, nchars = file.info(fileName)$size, useBytes = TRUE)
 
                                  # update database with results
                                  tmp <- try({tmp <- mongo$update(query  = paste0('{"a2_eudract_number":{"$eq":"', x, '"}}'),
