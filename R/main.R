@@ -78,11 +78,6 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
 
   ## parameter checks
 
-  # some certificate (euctr) cannot be verified and this
-  # cannot be specified in curl handles as it interferes
-  # with multi_run
-  httr::set_config(httr::config(ssl_verifypeer = 0L))
-
   # deduce queryterm and register if a full url is provided
   if (class(queryterm) == "character" &&
       is.atomic(queryterm) &&
