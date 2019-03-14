@@ -78,6 +78,11 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
 
   ## parameter checks
 
+  # some certificate (euctr) cannot be verified and this
+  # cannot be specified in curl handles as it interferes
+  # with multi_run
+  httr::set_config(httr::config(ssl_verifypeer = 0L))
+
   # deduce queryterm and register if a full url is provided
   if (class(queryterm) == "character" &&
       is.atomic(queryterm) &&
@@ -323,9 +328,7 @@ ctrRerunQuery <- function (querytoupdate = querytoupdate,
                                           queryterm))
       if (debug) message("DEBUG (rss url): ", rssquery)
       #
-      resultsRss <- httr::content(httr::GET(url = rssquery,
-                                            config = httr::config(ssl_verifypeer = FALSE)),
-                                  as = "text")
+      resultsRss <- httr::content(httr::GET(url = rssquery), as = "text")
 
       if (debug) message("DEBUG (rss content): ", resultsRss)
       #
@@ -767,17 +770,13 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   queryEuPost  <- "&mode=current_page&format=text&dContent=summary&number=current_page&submit-download=Download"
 
   # check if host is available
-  if ("try-error" %in% class(try(httr::headers(httr::HEAD(url = utils::URLencode(queryEuRoot),
-                                                          config = httr::config(ssl_verifypeer = FALSE))),
-                                 silent = TRUE)))
+  if ("try-error" %in% class(try(httr::headers(httr::HEAD(url = utils::URLencode(queryEuRoot))), silent = TRUE)))
     stop ("Host ", queryEuRoot, " does not respond, cannot continue.", call. = FALSE)
 
   # get first result page
   q <- utils::URLencode(paste0(queryEuRoot, queryEuType1, queryterm))
   if (debug) message("DEBUG: queryterm is ", q)
-  resultsEuPages <- httr::content(httr::GET(url = q,
-                                            config = httr::config(ssl_verifypeer = FALSE)),
-                                  as = "text")
+  resultsEuPages <- httr::content(httr::GET(url = q), as = "text")
 
   # get number of trials identified by query
   resultsEuNumTrials <- sub(".*Trials with a EudraCT protocol \\(([0-9,.]*)\\).*", "\\1", resultsEuPages)
@@ -802,8 +801,6 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   message("(1/3) Downloading trials (max. ", parallelretrievals, " page[s] in parallel):")
 
   # prepare handle (used several times) and curl progress
-  #ch1 <- curl::new_handle()
-  #curl::handle_setopt(ch1, ssl_verifypeer = FALSE)
   cb <- function(req){message(". ", appendLF = FALSE)}
 
   # iterate over batches of results pages
@@ -1160,8 +1157,6 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
       message("\n h ", startindex, "-", stopindex, " ", appendLF = FALSE)
 
       # prepare download and save
-      #ch <- curl::new_handle()
-      #curl::handle_setopt(ch, ssl_verifypeer = FALSE)
       pool <- curl::new_pool()
       done <- function(res){retdat <<- c(retdat, list(res))}
       urls <- unlist(lapply(paste0("https://www.clinicaltrialsregister.eu/ctr-search/trial/",
