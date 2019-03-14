@@ -801,6 +801,11 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   resultsNumModulo  <- resultsEuNumPages %%  parallelretrievals
   message("(1/3) Downloading trials (max. ", parallelretrievals, " page[s] in parallel):")
 
+  # prepare handle (used several times) and curl progress
+  #ch1 <- curl::new_handle()
+  #curl::handle_setopt(ch1, ssl_verifypeer = FALSE)
+  cb <- function(req){message(". ", appendLF = FALSE)}
+
   # iterate over batches of results pages
   for (i in 1:(resultsNumBatches + ifelse(resultsNumModulo > 0, 1, 0))) {
 
@@ -815,10 +820,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
     # download all text files from pages in current batch into variable
 
     # prepare download and saving
-    ch <- curl::new_handle()
-    curl::handle_setopt(ch, ssl_verifypeer = FALSE)
     pool <- curl::new_pool()
-    cb <- function(req){message(". ", appendLF = FALSE)}
     urls <- unlist(lapply(paste0(queryEuRoot, ifelse(details, queryEuType3, queryEuType2),
                                  queryterm, "&page=", startpage:stoppage, queryEuPost),
                           utils::URLencode))
@@ -828,11 +830,12 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                   function(x) curl::curl_fetch_multi(url = urls[x],
                                                      done = cb,
                                                      pool = pool,
-                                                     data = fp[x],
-                                                     handle = ch))
+                                                     data = fp[x]#,
+                                                     #handle = ch1
+                                                     ))
 
     # do download and saving
-    tmp <- curl::multi_run(pool = pool)
+    tmp <- curl::multi_run(pool = pool, poll = length(urls))
 
     # check plausibility
     if (class(tmp) == "try-error")
@@ -1018,10 +1021,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
       message("\n t ", startindex, "-", stopindex, " ", appendLF = FALSE)
 
       # prepare download and save
-      ch <- curl::new_handle()
-      curl::handle_setopt(ch, ssl_verifypeer = FALSE)
       pool <- curl::new_pool()
-      cb <- function(req){message(". ", appendLF = FALSE)}
       urls <- unlist(lapply(paste0(queryEuRoot, queryEuType4,
                                    eudractnumbersimported[startindex : stopindex]),
                             utils::URLencode))
@@ -1030,11 +1030,12 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
                     function(x) curl::curl_fetch_multi(url = urls[x],
                                                        done = cb,
                                                        pool = pool,
-                                                       data = fp[x],
-                                                       handle = ch))
+                                                       data = fp[x]#,
+                                                       #handle = ch2
+                                                       ))
 
       # do download and save
-      tmp <- curl::multi_run(pool = pool)
+      tmp <- curl::multi_run(pool = pool, poll = length(urls))
 
       # unzip downloaded file and rename
       tmp <- unlist(lapply(seq_along(urls), function(x) {
@@ -1159,10 +1160,9 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
       message("\n h ", startindex, "-", stopindex, " ", appendLF = FALSE)
 
       # prepare download and save
-      ch <- curl::new_handle()
-      curl::handle_setopt(ch, ssl_verifypeer = FALSE)
+      #ch <- curl::new_handle()
+      #curl::handle_setopt(ch, ssl_verifypeer = FALSE)
       pool <- curl::new_pool()
-      cb <- function(req){message(". ", appendLF = FALSE)}
       done <- function(res){retdat <<- c(retdat, list(res))}
       urls <- unlist(lapply(paste0("https://www.clinicaltrialsregister.eu/ctr-search/trial/",
                                    eudractnumbersimported[startindex : stopindex], "/results"),
@@ -1170,12 +1170,13 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
       tmp <- lapply(seq_along(urls),
                     function(x) curl::curl_fetch_multi(url = urls[x],
                                                        done = done,
-                                                       pool = pool,
-                                                       handle = ch))
+                                                       pool = pool#,
+                                                       #handle = ch
+                                                       ))
 
       # do download and save into batchresults
       retdat <- NULL
-      tmp <- curl::multi_run(pool = pool)
+      tmp <- curl::multi_run(pool = pool, poll = length(urls))
       batchresults <- lapply(retdat, function(x) rawToChar(x[["content"]]))
 
       # curl return sequence is not predictable
