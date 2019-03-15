@@ -1,3 +1,9 @@
+# ctrdata 0.15.9007
+ - 2019-03-15
+ - Important: Added no checking of SSL certificates for EUCTR because the EUCTR server is
+   not sneding the required intermediate and root certificates, thus failing curl and httr, see
+   https://www.digicert.com/help/?host=www.clinicaltrialsregister.eu
+
 # ctrdata 0.15.0
  - 2019-03-13
  - fixed EUCTR results retrieval (curl return value order not predictable)

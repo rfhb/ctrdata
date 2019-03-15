@@ -27,7 +27,7 @@ knitr::opts_chunk$set(
 
 The package `ctrdata` provides functions for retrieving (downloading) information on clinical trials from public registers, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started mid 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package is to be used within the [R](https://www.r-project.org/) system. 
 
-Last edit 2019-03-12 for version 0.15.0, with bug fixes and new features: 
+Last edit 2019-03-15 for version 0.15.9007, with bug fixes and new features: 
 
 * dates are now returned as Date types, and some Yes / No fields are returned as logical, by function `dbGetFieldsIntoDf()`,  
 * personal annotations can be added when records are retrieved from a register (new options `annotate.text` and `annotate.mode` for function `ctrLoadQueryIntoDb()`), for later use in analysis, and 
