@@ -17,13 +17,15 @@ countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR",
 #'
 #' @param db Name of database (default is "users")
 #'
-#' @param uri Address of the mongodb server in mongo connection string URI format
-#'  \url{http://docs.mongodb.org/manual/reference/connection-string/} (default is
-#'  mongodb://localhost). However, do NOT include username or password;
-#'  these will only be used from the separately specified parameters:
-#'
-#' @param username In case access requires credentials.
+#' @param uri Address of the mongodb server database based on mongo connection string
+#'  format, see \url{http://docs.mongodb.org/manual/reference/connection-string/}
+#'  (default is mongodb://localhost):
+#'  mongodb://[username@]host1[:port1][,...hostN[:portN]]]/database
+#'  Do NOT include password, this will only be used from the parameter:
 #' @param password In case access requires credentials.
+#'  Note this defaults to the environment variable "ctrdatamongopassword".
+#'  (by means of \code{Sys.getenv("ctrdatamongopassword")}), to
+#'  support scripting without revealing secrets.
 #' @param verbose Print information.
 #'
 #' @return A mongo data base object, currently using mongolite
@@ -32,78 +34,85 @@ countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR",
 #'
 #' @importFrom mongolite mongo
 #'
-ctrMongo <- function(collection = "ctrdata", db = "users", uri = "mongodb://localhost",
-                     username = "", password = "", verbose = FALSE) {
+ctrMongo <- function(collection = "ctrdata", uri = "mongodb://localhost/users",
+                     password = Sys.getenv("ctrdatamongopassword"), verbose = FALSE) {
 
-  # mongo versions
-  # - local 3.4.18 (macOS)
-  # - travis 3.4.20
-  # - appveyor ? (https://www.appveyor.com/docs/services-databases/#mongodb)
+  if (FALSE) {
 
-  # references
-  # https://docs.mongodb.com/manual/reference/connection-string/
-  # https://docs.mongodb.com/manual/reference/program/mongoimport/
+    # mongo versions
+    # - local 3.4.18 (macOS)
+    # - travis 3.4.20
+    # - appveyor ? (https://www.appveyor.com/docs/services-databases/#mongodb)
 
-  # The +srv indicates to the client that the hostname that follows corresponds to a DNS SRV record.
-  # Use of the +srv connection string modifier automatically sets the ssl option to true for the connection.
-  # Override this behavior by explicitly setting the ssl option to false with ssl=false in the query string.
+    # references
+    # https://docs.mongodb.com/manual/reference/connection-string/
+    # https://docs.mongodb.com/manual/reference/program/mongoimport/
 
-  # working
-  ml <- mongolite::mongo(url = "mongodb+srv://admin:admin@cluster0-b9wpw.mongodb.net/",
-                         db = "dbtemp",
-                         collection = "dbcoll")
+    # The +srv indicates to the client that the hostname that follows corresponds to a DNS SRV record.
+    # Use of the +srv connection string modifier automatically sets the ssl option to true for the connection.
+    # Override this behavior by explicitly setting the ssl option to false with ssl=false in the query string.
 
-  ml <- mongolite::mongo(url = "mongodb://localhost/",
-                         db = "dbtemp",
-                         collection = "dbcoll")
+    # working
+    ml <- mongolite::mongo(url = "mongodb+srv://admin:admin@cluster0-b9wpw.mongodb.net/",
+                           db = "dbtemp",
+                           collection = "dbcoll")
 
-  # get host names in case the uri uses a DNS seedlist connection format
-  unlist (ml$info()$server$repl$hosts)
+    # get host names in case the uri uses a DNS seedlist connection format
+    unlist(ml$info()$server$repl$hosts)
 
 
-  # For a standalone that enforces access control:
-  # mongodb://myDBReader:D1fficultP%40ssw0rd@mongodb0.example.com:27017/admin
+    # For a standalone that enforces access control:
+    # mongodb://myDBReader:D1fficultP%40ssw0rd@mongodb0.example.com:27017/admin
 
-  # For a sharded cluster that enforces access control, include user credentials:
-  # mongodb://myDBReader:D1fficultP%40ssw0rd@mongos0.example.com:27017,mongos1.example.com:27017,mongos2.example.com:27017/admin
+    # For a sharded cluster that enforces access control, include user credentials:
+    # mongodb://myDBReader:D1fficultP%40ssw0rd@mongos0.example.com:27017,mongos1.example.com:27017,mongos2.example.com:27017/admin
 
-  # For a replica set, specify the hostname(s) of the mongod instance(s) as listed in the replica set configuration.
-  # For a replica set, include the replicaSet option.
-  # mongodb://myDBReader:D1fficultP%40ssw0rd@mongodb0.example.com:27017,mongodb1.example.com:27017,mongodb2.example.com:27017/admin?replicaSet=myRepl
+    # For a replica set, specify the hostname(s) of the mongod instance(s) as listed in the replica set configuration.
+    # For a replica set, include the replicaSet option.
+    # mongodb://myDBReader:D1fficultP%40ssw0rd@mongodb0.example.com:27017,mongodb1.example.com:27017,mongodb2.example.com:27017/admin?replicaSet=myRepl
 
-  # --uri <connectionString>
-  #   New in version 3.4.6.
-  # Specify a resolvable URI connection string for the mongod to which to connect.
+    # --uri <connectionString>
+    #   New in version 3.4.6.
+    # Specify a resolvable URI connection string for the mongod to which to connect.
 
-  # /usr/local/opt/mongodb/bin/mongoimport
-  # --host "Cluster0-shard-0/cluster0-shard-00-00-b9wpw.mongodb.net:27017,cluster0-shard-00-01-b9wpw.mongodb.net:27017,cluster0-shard-00-02-b9wpw.mongodb.net:27017"
-  # --ssl --username "admin" --password "admin" --authenticationDatabase admin --db "dbtemp" --collection "dbcoll"
-  # --type "json" --file "private/2007-001012-23.json"
+    # /usr/local/opt/mongodb/bin/mongoimport
+    # --host "Cluster0-shard-0/cluster0-shard-00-00-b9wpw.mongodb.net:27017,cluster0-shard-00-01-b9wpw.mongodb.net:27017,cluster0-shard-00-02-b9wpw.mongodb.net:27017"
+    # --ssl --username "admin" --password "admin" --authenticationDatabase admin --db "dbtemp" --collection "dbcoll"
+    # --type "json" --file "private/2007-001012-23.json"
 
-  # /usr/local/opt/mongodb/bin/mongoimport --host "cluster0-shard-00-00-b9wpw.mongodb.net:27017"
-  # --ssl --username "admin" --password "admin" --authenticationDatabase admin --db "dbtemp" --collection "dbcoll"
-  # --type "json" --file "private/2007-001012-23.json"
+    # /usr/local/opt/mongodb/bin/mongoimport --host "cluster0-shard-00-00-b9wpw.mongodb.net:27017"
+    # --ssl --username "admin" --password "admin" --authenticationDatabase admin --db "dbtemp" --collection "dbcoll"
+    # --type "json" --file "private/2007-001012-23.json"
 
-  # Example NDJSON
-  # {"some":"thing"}
-  # {"foo":17,"bar":false,"quux":true}
-  # {"may":{"include":"nested","objects":["and","arrays"]}}
+    # Example NDJSON
+    # {"some":"thing"}
+    # {"foo":17,"bar":false,"quux":true}
+    # {"may":{"include":"nested","objects":["and","arrays"]}}
 
-  # 2019-03: continuing reason for using mongoimport:
-  # mongolite::mongo()$import() does not do upsert
-  # cp ../2007-001012-23.json .
-  # perl -i -pe 's/\r?\n//g' 2007-001012-23.json
-  # perl -i -pe 's/  +/ /g' 2007-001012-23.json
-  # perl -i -pe 's/(.)(\{"x1)/\1\n\2/g' 2007-001012-23.json
-  # perl -i -pe 's/(.)$/$1\n/g' 2007-001012-23.json
+    # 2019-03: continuing reason for using mongoimport:
+    # mongolite::mongo()$import() does not do upsert
+    # cp ../2007-001012-23.json .
+    # perl -i -pe 's/\r?\n//g' 2007-001012-23.json
+    # perl -i -pe 's/  +/ /g' 2007-001012-23.json
+    # perl -i -pe 's/(.)(\{"x1)/\1\n\2/g' 2007-001012-23.json
+    # perl -i -pe 's/(.)$/$1\n/g' 2007-001012-23.json
 
-  tmplines <- readLines(file(description = "private/ndjson/tmp.json"))
-  # readLines produces: "... \"_id\": \"20kjhk\" ..."
-  ids <- gsub(".*_id\":[ ]*\"(.*?)\"}.*", "\\1", tmplines)
-  ml$remove(query = paste0('{ "_id": {"$in": ["', paste0(ids, collapse = '", "'), '"]}}'))
-  tmpinsert <- lapply(tmplines, ml$insert)
+    ml <- mongolite::mongo(url = "mongodb://localhost/",
+                           db = "dbtemp", collection = "dbcoll")
 
+    Sys.getenv("ctrdatamongopassword")
 
+    ml <- mongolite::mongo(url = paste0()"mongodb+srv://7RBnH3BF:YHopYQer@cluster0-b9wpw.mongodb.net/dbtemp",
+                           collection = "dbcoll")
+
+    tmplines <- readLines(file(description = "private/ndjson/timingtests/allfiles.json"))
+    # readLines produces: \"_id\": \"2007-000371-42-FR\"
+    ids <- sub(".*_id\":[ ]*\"(.*?)\".*", "\\1", tmplines)
+    ml$remove(query = paste0('{ "_id": {"$in": ["', paste0(ids, collapse = '", "'), '"]}}'))
+    tmpinsert <- lapply(tmplines, ml$insert)
+    sum(sapply(tmpinsert, "[[", "nInserted"))
+
+  }
 
   # url: mongodb://[username:password@]host1[:port1]
   host     <- sub("mongodb://(.+)", "\\1", url)
