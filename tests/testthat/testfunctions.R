@@ -440,11 +440,6 @@ test_that("operations on database after download from register", {
 
   # dbGetFieldsIntoDf
 
-  # test 36a (temporary)
-  expect_warning(dbGetVariablesIntoDb(fields = "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database",
-                                      collection = coll)[1, ],
-                 "'dbGetVariablesIntoDb' is deprecated.")
-
   # test 36
   expect_error(dbGetFieldsIntoDf(fields = "ThisDoesNotExist", collection = coll),
                "For field: ThisDoesNotExist no data could be extracted")
