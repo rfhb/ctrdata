@@ -111,6 +111,53 @@ test_that("access to mongo db from command line", {
 })
 
 
+#### remote mongodb ####
+test_that("retrieve data from registers", {
+
+  has_internet()
+  has_toolchain()
+
+  # initialise
+  coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
+
+  # brief testing of main functions
+
+  # test 3a
+  expect_message(suppressWarnings(
+    ctrLoadQueryIntoDb(
+      queryterm = "2012-004228-40",
+      register = "EUCTR",
+      url = "mongodb+srv://cluster0-b9wpw.mongodb.net/",
+      db = "dbtemp",
+      collection = "dbcoll",
+      username = "admin",
+      password = "admin")
+  ),
+  "First result page empty")
+
+  # test 3b
+  dbQueryHistory(url = "mongodb+srv://cluster0-b9wpw.mongodb.net/",
+                 db = "dbtemp",
+                 collection = "dbcoll",
+                 username = "admin",
+                 password = "admin")
+
+  # test 3c
+  expect_warning(
+    dbFindFields(
+      namepart = "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database",
+      url = "mongodb+srv://cluster0-b9wpw.mongodb.net/",
+      db = "dbtemp",
+      collection = "dbcoll",
+      username = "admin",
+      password = "admin"),
+    "")
+
+  # clean up is the end of script = drop collection from mongodb
+
+})
+
+
 #### empty downloads ####
 test_that("retrieve data from registers", {
 

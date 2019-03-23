@@ -17,9 +17,10 @@ countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR",
 #'
 #' @param db Name of database (default is "users")
 #'
-#' @param url Address of the mongodb server in mongo connection string URI format
+#' @param uri Address of the mongodb server in mongo connection string URI format
 #'  \url{http://docs.mongodb.org/manual/reference/connection-string/} (default is
-#'  mongodb://localhost)
+#'  mongodb://localhost). However, do NOT include username or password;
+#'  these will only be used from the separately specified parameters:
 #'
 #' @param username In case access requires credentials.
 #' @param password In case access requires credentials.
@@ -31,10 +32,78 @@ countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR",
 #'
 #' @importFrom mongolite mongo
 #'
-ctrMongo <- function(collection = "ctrdata", db = "users", url = "mongodb://localhost",
+ctrMongo <- function(collection = "ctrdata", db = "users", uri = "mongodb://localhost",
                      username = "", password = "", verbose = FALSE) {
 
-  # not used so far: options = ssl_options()
+  # mongo versions
+  # - local 3.4.18 (macOS)
+  # - travis 3.4.20
+  # - appveyor ? (https://www.appveyor.com/docs/services-databases/#mongodb)
+
+  # references
+  # https://docs.mongodb.com/manual/reference/connection-string/
+  # https://docs.mongodb.com/manual/reference/program/mongoimport/
+
+  # The +srv indicates to the client that the hostname that follows corresponds to a DNS SRV record.
+  # Use of the +srv connection string modifier automatically sets the ssl option to true for the connection.
+  # Override this behavior by explicitly setting the ssl option to false with ssl=false in the query string.
+
+  # working
+  ml <- mongolite::mongo(url = "mongodb+srv://admin:admin@cluster0-b9wpw.mongodb.net/",
+                         db = "dbtemp",
+                         collection = "dbcoll")
+
+  ml <- mongolite::mongo(url = "mongodb://localhost/",
+                         db = "dbtemp",
+                         collection = "dbcoll")
+
+  # get host names in case the uri uses a DNS seedlist connection format
+  unlist (ml$info()$server$repl$hosts)
+
+
+  # For a standalone that enforces access control:
+  # mongodb://myDBReader:D1fficultP%40ssw0rd@mongodb0.example.com:27017/admin
+
+  # For a sharded cluster that enforces access control, include user credentials:
+  # mongodb://myDBReader:D1fficultP%40ssw0rd@mongos0.example.com:27017,mongos1.example.com:27017,mongos2.example.com:27017/admin
+
+  # For a replica set, specify the hostname(s) of the mongod instance(s) as listed in the replica set configuration.
+  # For a replica set, include the replicaSet option.
+  # mongodb://myDBReader:D1fficultP%40ssw0rd@mongodb0.example.com:27017,mongodb1.example.com:27017,mongodb2.example.com:27017/admin?replicaSet=myRepl
+
+  # --uri <connectionString>
+  #   New in version 3.4.6.
+  # Specify a resolvable URI connection string for the mongod to which to connect.
+
+  # /usr/local/opt/mongodb/bin/mongoimport
+  # --host "Cluster0-shard-0/cluster0-shard-00-00-b9wpw.mongodb.net:27017,cluster0-shard-00-01-b9wpw.mongodb.net:27017,cluster0-shard-00-02-b9wpw.mongodb.net:27017"
+  # --ssl --username "admin" --password "admin" --authenticationDatabase admin --db "dbtemp" --collection "dbcoll"
+  # --type "json" --file "private/2007-001012-23.json"
+
+  # /usr/local/opt/mongodb/bin/mongoimport --host "cluster0-shard-00-00-b9wpw.mongodb.net:27017"
+  # --ssl --username "admin" --password "admin" --authenticationDatabase admin --db "dbtemp" --collection "dbcoll"
+  # --type "json" --file "private/2007-001012-23.json"
+
+  # Example NDJSON
+  # {"some":"thing"}
+  # {"foo":17,"bar":false,"quux":true}
+  # {"may":{"include":"nested","objects":["and","arrays"]}}
+
+  # 2019-03: continuing reason for using mongoimport:
+  # mongolite::mongo()$import() does not do upsert
+  # cp ../2007-001012-23.json .
+  # perl -i -pe 's/\r?\n//g' 2007-001012-23.json
+  # perl -i -pe 's/  +/ /g' 2007-001012-23.json
+  # perl -i -pe 's/(.)(\{"x1)/\1\n\2/g' 2007-001012-23.json
+  # perl -i -pe 's/(.)$/$1\n/g' 2007-001012-23.json
+
+  tmplines <- readLines(file(description = "private/ndjson/tmp.json"))
+  # readLines produces: "... \"_id\": \"20kjhk\" ..."
+  ids <- gsub(".*_id\":[ ]*\"(.*?)\"}.*", "\\1", tmplines)
+  ml$remove(query = paste0('{ "_id": {"$in": ["', paste0(ids, collapse = '", "'), '"]}}'))
+  tmpinsert <- lapply(tmplines, ml$insert)
+
+
 
   # url: mongodb://[username:password@]host1[:port1]
   host     <- sub("mongodb://(.+)", "\\1", url)
@@ -43,6 +112,7 @@ ctrMongo <- function(collection = "ctrdata", db = "users", url = "mongodb://loca
                      ifelse(password != "", paste0(":", password), ""),
                      ifelse(username != "", "@", ""),
                      host)
+  mongourl <- url
 
   # connect to mongo server
   valueCtrDb <- mongolite::mongo(collection = collection, db = db, url = mongourl, verbose = verbose)
