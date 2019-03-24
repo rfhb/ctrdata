@@ -5,9 +5,8 @@
 \title{ctrRerunQuery}
 \usage{
 ctrRerunQuery(querytoupdate = querytoupdate, debug = debug,
-  collection = collection, db = db, url = url, username = username,
-  password = password, verbose = verbose,
-  queryupdateterm = queryupdateterm)
+  collection = collection, uri = uri, password = password,
+  verbose = verbose, queryupdateterm = queryupdateterm)
 }
 \arguments{
 \item{querytoupdate}{Either the word "last" to re-run the last query that
@@ -20,15 +19,16 @@ is \code{FALSE}.}
 
 \item{collection}{Name of collection (default is "ctrdata")}
 
-\item{db}{Name of database (default is "users")}
+\item{uri}{Default is mongodb://localhost/users/.
+Address of database in mongodb server, based on mongo connection string
+format: mongodb://[username@]host1[:port1][,...hostN[:portN]]]/database/
+Do NOT include password, this will only be used from the parameter.
+See \url{http://docs.mongodb.org/manual/reference/connection-string/}}
 
-\item{url}{Address of the mongodb server in mongo connection string URI format
-\url{http://docs.mongodb.org/manual/reference/connection-string/} (default is
-mongodb://localhost)}
-
-\item{username}{In case access requires credentials.}
-
-\item{password}{In case access requires credentials.}
+\item{password}{In case access requires credentials.
+Note this defaults to the environment variable "ctrdatamongopassword".
+(by means of \code{Sys.getenv("ctrdatamongopassword")}), to
+support scripting without revealing secrets.}
 
 \item{verbose}{Print information.}
 }

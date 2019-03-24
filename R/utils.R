@@ -11,21 +11,21 @@ countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR",
                     "3RD")
 
 
-#' Set up connections to a Mongo DB server
+#' Set up connections to a Mongo DB server database
 #'
 #' @param collection Name of collection (default is "ctrdata")
 #'
-#' @param db Name of database (default is "users")
+#' @param uri Default is mongodb://localhost/users/.
+#'  Address of database in mongodb server, based on mongo connection string
+#'  format: mongodb://[username@]host1[:port1][,...hostN[:portN]]]/database/
+#'  Do NOT include password, this will only be used from the parameter.
+#'  See \url{http://docs.mongodb.org/manual/reference/connection-string/}
 #'
-#' @param uri Address of the mongodb server database based on mongo connection string
-#'  format, see \url{http://docs.mongodb.org/manual/reference/connection-string/}
-#'  (default is mongodb://localhost):
-#'  mongodb://[username@]host1[:port1][,...hostN[:portN]]]/database
-#'  Do NOT include password, this will only be used from the parameter:
 #' @param password In case access requires credentials.
 #'  Note this defaults to the environment variable "ctrdatamongopassword".
 #'  (by means of \code{Sys.getenv("ctrdatamongopassword")}), to
 #'  support scripting without revealing secrets.
+#'
 #' @param verbose Print information.
 #'
 #' @return A mongo data base object, currently using mongolite
@@ -34,109 +34,72 @@ countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR",
 #'
 #' @importFrom mongolite mongo
 #'
-ctrMongo <- function(collection = "ctrdata", uri = "mongodb://localhost/users",
-                     password = Sys.getenv("ctrdatamongopassword"), verbose = FALSE) {
+ctrMongo <- function(collection,
+                     uri,
+                     password,
+                     verbose = FALSE) {
 
-  if (FALSE) {
+  # mongo versions tested
+  # - local 3.4.18 (macOS)
+  # - travis 3.4.20
+  # - appveyor ? (https://www.appveyor.com/docs/services-databases/#mongodb)
 
-    # mongo versions
-    # - local 3.4.18 (macOS)
-    # - travis 3.4.20
-    # - appveyor ? (https://www.appveyor.com/docs/services-databases/#mongodb)
+  # references
+  # https://docs.mongodb.com/manual/reference/connection-string/
+  # https://docs.mongodb.com/manual/reference/program/mongoimport/
 
-    # references
-    # https://docs.mongodb.com/manual/reference/connection-string/
-    # https://docs.mongodb.com/manual/reference/program/mongoimport/
+  # The +srv indicates to the client that the hostname that follows corresponds to a DNS SRV record.
+  # Use of the +srv connection string modifier automatically sets the ssl option to true for the connection.
+  # Override this behavior by explicitly setting the ssl option to false with ssl=false in the query string.
 
-    # The +srv indicates to the client that the hostname that follows corresponds to a DNS SRV record.
-    # Use of the +srv connection string modifier automatically sets the ssl option to true for the connection.
-    # Override this behavior by explicitly setting the ssl option to false with ssl=false in the query string.
+  # For a standalone that enforces access control:
+  # mongodb://myDBReader:D1fficultP%40ssw0rd@mongodb0.example.com:27017/admin
 
-    # working
-    ml <- mongolite::mongo(url = "mongodb+srv://admin:admin@cluster0-b9wpw.mongodb.net/",
-                           db = "dbtemp",
-                           collection = "dbcoll")
+  # For a sharded cluster that enforces access control, include user credentials:
+  # mongodb://myDBReader:D1fficultP%40ssw0rd@mongos0.example.com:27017,mongos1.example.com:27017,mongos2.example.com:27017/admin
 
-    # get host names in case the uri uses a DNS seedlist connection format
-    unlist(ml$info()$server$repl$hosts)
+  # For a replica set, specify the hostname(s) of the mongod instance(s) as listed in the replica set configuration.
+  # For a replica set, include the replicaSet option.
+  # mongodb://myDBReader:D1fficultP%40ssw0rd@mongodb0.example.com:27017,mongodb1.example.com:27017,mongodb2.example.com:27017/admin?replicaSet=myRepl
 
+  # --uri <connectionString>
+  #   New in version 3.4.6.
+  # Specify a resolvable URI connection string for the mongod to which to connect.
 
-    # For a standalone that enforces access control:
-    # mongodb://myDBReader:D1fficultP%40ssw0rd@mongodb0.example.com:27017/admin
+  # /usr/local/opt/mongodb/bin/mongoimport
+  # --host "Cluster0-shard-0/cluster0-shard-00-00-b9wpw.mongodb.net:27017,cluster0-shard-00-01-b9wpw.mongodb.net:27017,cluster0-shard-00-02-b9wpw.mongodb.net:27017"
+  # --ssl --username "admin" --password "admin" --authenticationDatabase admin --db "dbtemp" --collection "dbcoll"
+  # --type "json" --file "private/2007-001012-23.json"
 
-    # For a sharded cluster that enforces access control, include user credentials:
-    # mongodb://myDBReader:D1fficultP%40ssw0rd@mongos0.example.com:27017,mongos1.example.com:27017,mongos2.example.com:27017/admin
+  # /usr/local/opt/mongodb/bin/mongoimport --host "cluster0-shard-00-00-b9wpw.mongodb.net:27017"
+  # --ssl --username "admin" --password "admin" --authenticationDatabase admin --db "dbtemp" --collection "dbcoll"
+  # --type "json" --file "private/2007-001012-23.json"
 
-    # For a replica set, specify the hostname(s) of the mongod instance(s) as listed in the replica set configuration.
-    # For a replica set, include the replicaSet option.
-    # mongodb://myDBReader:D1fficultP%40ssw0rd@mongodb0.example.com:27017,mongodb1.example.com:27017,mongodb2.example.com:27017/admin?replicaSet=myRepl
+  # Example NDJSON
+  # {"some":"thing"}
+  # {"foo":17,"bar":false,"quux":true}
+  # {"may":{"include":"nested","objects":["and","arrays"]}}
 
-    # --uri <connectionString>
-    #   New in version 3.4.6.
-    # Specify a resolvable URI connection string for the mongod to which to connect.
+  ## check parameters
+  # remove unwanted characters
+  uri <- gsub("[^a-zA-Z0-9%?=@/:+_.-]", "", uri)
+  uri <- gsub(":@", "@", uri)
 
-    # /usr/local/opt/mongodb/bin/mongoimport
-    # --host "Cluster0-shard-0/cluster0-shard-00-00-b9wpw.mongodb.net:27017,cluster0-shard-00-01-b9wpw.mongodb.net:27017,cluster0-shard-00-02-b9wpw.mongodb.net:27017"
-    # --ssl --username "admin" --password "admin" --authenticationDatabase admin --db "dbtemp" --collection "dbcoll"
-    # --type "json" --file "private/2007-001012-23.json"
-
-    # /usr/local/opt/mongodb/bin/mongoimport --host "cluster0-shard-00-00-b9wpw.mongodb.net:27017"
-    # --ssl --username "admin" --password "admin" --authenticationDatabase admin --db "dbtemp" --collection "dbcoll"
-    # --type "json" --file "private/2007-001012-23.json"
-
-    # Example NDJSON
-    # {"some":"thing"}
-    # {"foo":17,"bar":false,"quux":true}
-    # {"may":{"include":"nested","objects":["and","arrays"]}}
-
-    # 2019-03: continuing reason for using mongoimport:
-    # mongolite::mongo()$import() does not do upsert
-    # cp ../2007-001012-23.json .
-    # perl -i -pe 's/\r?\n//g' 2007-001012-23.json
-    # perl -i -pe 's/  +/ /g' 2007-001012-23.json
-    # perl -i -pe 's/(.)(\{"x1)/\1\n\2/g' 2007-001012-23.json
-    # perl -i -pe 's/(.)$/$1\n/g' 2007-001012-23.json
-
-    ml <- mongolite::mongo(url = "mongodb://localhost/",
-                           db = "dbtemp", collection = "dbcoll")
-
-    Sys.getenv("ctrdatamongopassword")
-
-    ml <- mongolite::mongo(url = paste0()"mongodb+srv://7RBnH3BF:YHopYQer@cluster0-b9wpw.mongodb.net/dbtemp",
-                           collection = "dbcoll")
-
-    tmplines <- readLines(file(description = "private/ndjson/timingtests/allfiles.json"))
-    # readLines produces: \"_id\": \"2007-000371-42-FR\"
-    ids <- sub(".*_id\":[ ]*\"(.*?)\".*", "\\1", tmplines)
-    ml$remove(query = paste0('{ "_id": {"$in": ["', paste0(ids, collapse = '", "'), '"]}}'))
-    tmpinsert <- lapply(tmplines, ml$insert)
-    sum(sapply(tmpinsert, "[[", "nInserted"))
-
-  }
-
-  # url: mongodb://[username:password@]host1[:port1]
-  host     <- sub("mongodb://(.+)", "\\1", url)
-  mongourl <- paste0("mongodb://",
-                     ifelse(username != "", username, ""),
-                     ifelse(password != "", paste0(":", password), ""),
-                     ifelse(username != "", "@", ""),
-                     host)
-  mongourl <- url
+  ## password if any to uri
+  # encode password
+  password <- utils::URLencode(password)
+  # insert into uri if uri has a username
+  if ((password != "") && grepl("//.+@", uri))
+    uri <- sub("(.+)@(.+)", paste0("\\1", ":", password, "@\\2"), uri)
 
   # connect to mongo server
-  valueCtrDb <- mongolite::mongo(collection = collection, db = db, url = mongourl, verbose = verbose)
-
-  # check compatibility
-  serverversion <- valueCtrDb$info()$server$version
-  if (numeric_version(serverversion) < numeric_version("3"))
-    warning("mongodb is version ", serverversion, ", but 3 or higher needed for function ctrLoadQueryIntoDb(). ",
-            "Other functions in package ctrdata may work, but please consider upgrading the mongodb server.",
-            call. = FALSE, immediate. = FALSE)
+  valueCtrDb <- mongolite::mongo(collection = collection,
+                                 url = uri,
+                                 verbose = verbose)
 
   # inform user
   if (verbose) message("Using MongoDB (collections \"", collection,
-                       "\" in database \"", db,
-                       "\" on \"", host, "\").")
+                       "\" in database \"", uri, "\").")
 
   return(invisible(valueCtrDb))
 }
@@ -350,7 +313,7 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = ""){
   if ( (length(activesubstance) != 1) ||
        !is.character(activesubstance) ||
        (nchar(activesubstance) == 0) )
-    stop ("ctrFindActiveSubstanceSynonyms(): activesubstance should be a single string.", call. = FALSE)
+    stop("ctrFindActiveSubstanceSynonyms(): activesubstance should be a single string.", call. = FALSE)
 
   # initialise output variable
   as <- activesubstance
@@ -392,12 +355,12 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = ""){
 #' dbQueryHistory()
 #' }
 #'
-dbQueryHistory <- function(collection = "ctrdata", db = "users", url = "mongodb://localhost",
-                           username = "", password = "", verbose = FALSE) {
+dbQueryHistory <- function(collection = "ctrdata", uri = "mongodb://localhost/users",
+                           password = Sys.getenv("ctrdatamongopassword"), verbose = FALSE) {
 
   # get a working mongo connection, select trial record collection
-  mongo <- ctrMongo(collection = collection, db = db, url = url,
-                    username = username, password = password, verbose = verbose)
+  mongo <- ctrMongo(collection = collection, uri = uri,
+                    password = password, verbose = verbose)
 
   # Get record from mongo db using batch because find would
   # try to return a dataframe and this would ignore the array
@@ -420,12 +383,12 @@ dbQueryHistory <- function(collection = "ctrdata", db = "users", url = "mongodb:
     if (ncol(tmp) != 4) warning(tmp, call. = FALSE, immediate. = TRUE)
     names(tmp) <- c("query-timestamp", "query-register", "query-records", "query-term")
     # Inform user
-    message("Number of queries in history of \"", mongo$info()$stats$ns, "\": ", nrow(tmp))
+    message("Number of queries in history of \"", collection, "\": ", nrow(tmp))
   }
 
   # total number of records in collection to inform user
   countall <- mongo$count(query = '{"_id":{"$ne":"meta-info"}}')
-  message("Number of records in collection \"", mongo$info()$stats$ns, "\": ", countall)
+  message("Number of records in collection \"", collection, "\": ", countall)
 
   # close database connection
   mongo$disconnect()
@@ -477,30 +440,27 @@ dbQueryHistory <- function(collection = "ctrdata", db = "users", url = "mongodb:
 #' }
 #'
 dbFindFields <- function(namepart = "", allmatches = FALSE, forceupdate = FALSE, debug = FALSE,
-                         collection = "ctrdata", db = "users", url = "mongodb://localhost",
-                         username = "", password = "", verbose = FALSE) {
+                         collection = "ctrdata", uri = "mongodb://localhost/users",
+                         password = Sys.getenv("ctrdatamongopassword"), verbose = FALSE) {
 
   # sanity checks
-  if (!is.atomic(namepart)) stop ("Name part should be atomic.", call. = FALSE)
-  if (length(namepart) > 1) stop ("Name part should have only one element.", call. = FALSE)
-  if (namepart == "" & !forceupdate) stop ("Empty name part string.", call. = FALSE)
+  if (!is.atomic(namepart)) stop("Name part should be atomic.", call. = FALSE)
+  if (length(namepart) > 1) stop("Name part should have only one element.", call. = FALSE)
+  if (namepart == "" & !forceupdate) stop("Empty name part string.", call. = FALSE)
 
   # get a working mongo connection
-  mongo <- ctrMongo(collection = collection, db = db, url = url,
-                    username = username, password = password, verbose = verbose)
+  mongo <- ctrMongo(collection = collection, uri = uri,
+                    password = password, verbose = verbose)
 
   # get a working mongo connection
-  mongoKeys <- ctrMongo(collection = paste0(collection, "Keys"), db = db, url = url,
-                        username = username, password = password, verbose = verbose)
+  mongoKeys <- ctrMongo(collection = paste0(collection, "Keys"), uri = uri,
+                        password = password, verbose = verbose)
 
   # check if data base has any contents
-  if (mongo$count() == 0L) stop ("No records in data base.", call. = FALSE)
+  if (mongo$count() == 0L) stop("No records in data base.", call. = FALSE)
 
   # check if database with variety results exists or should be forced to be updated
   if (forceupdate || (mongoKeys$count() == 0L)) {
-    #
-    # check program availability
-    installMongoFindBinaries()
     #
     # if (!grepl("127.0.0.1", attr(mongo, "host")))
     #   warning("variety.js may fail with certain remote servers (for example when the host or port ",
@@ -566,8 +526,8 @@ dbFindFields <- function(namepart = "", allmatches = FALSE, forceupdate = FALSE,
     #
     # add metadata
     fieldname <- addMetaData(fieldname,
-                             collection = collection, db = db, url = url,
-                             username = username, password = password)
+                             collection = collection, uri = uri,
+                             password = password)
     #
     # return the first match / all matches
     if (debug) message("Showing paths where any sets of objects are indicated as XX.")
@@ -612,19 +572,19 @@ dbFindFields <- function(namepart = "", allmatches = FALSE, forceupdate = FALSE,
 #' }
 #'
 dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = "GB", include3rdcountrytrials = TRUE,
-                                  collection = "ctrdata", db = "users", url = "mongodb://localhost",
-                                  username = "", password = "", verbose = TRUE) {
+                                  collection = "ctrdata", uri = "mongodb://localhost/users",
+                                  password = Sys.getenv("ctrdatamongopassword"), verbose = TRUE) {
 
   # parameter checks
-  if (!grepl(preferregister, "CTGOVEUCTR")) stop ("Register not known: ", preferregister, call. = FALSE)
+  if (!grepl(preferregister, "CTGOVEUCTR")) stop("Register not known: ", preferregister, call. = FALSE)
 
   # objective: create a list of mongo database record identifiers (_id)
   # that represent unique records of clinical trials, based on user's
   # preferences for selecting the preferred from any multiple records
 
   # get a working mongo connection, select trial record collection
-  mongo <- ctrMongo(collection = collection, db = db, url = url,
-                    username = username, password = password, verbose = verbose)
+  mongo <- ctrMongo(collection = collection, uri = uri,
+                    password = password, verbose = verbose)
   #
   # total number of records in collection to inform user
   countall <- mongo$count(query = '{"_id":{"$ne":"meta-info"}}')
@@ -637,8 +597,8 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
                                  "a51_isrctn_international_standard_randomised_controlled_trial_number",
                                  "a52_us_nct_clinicaltrialsgov_registry_number"),
                       debug = FALSE,
-                      collection = collection, db = db, url = url,
-                      username = username, password = password, verbose = FALSE,
+                      collection = collection, uri = uri,
+                      password = password, verbose = FALSE,
                       stopifnodata = FALSE)
     )),
     silent = TRUE
@@ -845,27 +805,27 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
 #' }
 #'
 dbGetFieldsIntoDf <- function(fields = "", debug = FALSE,
-                              collection = "ctrdata", db = "users", url = "mongodb://localhost",
-                              username = "", password = "", verbose = FALSE,
+                              collection = "ctrdata", uri = "mongodb://localhost/users",
+                              password = Sys.getenv("ctrdatamongopassword"), verbose = FALSE,
                               stopifnodata = TRUE) {
 
   # check parameters
   if (!is.vector(fields) | class(fields) != "character")
-    stop ("Input should be a vector of strings of field names.", call. = FALSE)
+    stop("Input should be a vector of strings of field names.", call. = FALSE)
   #
   # remove _id if inadventertently mentioned in fields
   fields <- fields["_id" != fields]
   #
   # check if valid fields
   if (any(fields == "", na.rm = TRUE) | (length(fields) == 0))
-    stop ("'fields' contains empty elements; ",
+    stop("'fields' contains empty elements; ",
          " please provide a vector of strings of field names.",
          " Function dbFindFields() can be used to find field names.",
          call. = FALSE)
 
   # get a working mongo connection, select trial record collection
-  mongo <- ctrMongo(collection = collection, db = db, url = url,
-                    username = username, password = password, verbose = verbose)
+  mongo <- ctrMongo(collection = collection, uri = uri,
+                    password = password, verbose = verbose)
 
   # total number of records in collection, used for max batch size and at function end
   countall <- mongo$count(query = '{"_id":{"$ne":"meta-info"}}')
@@ -900,18 +860,18 @@ dbGetFieldsIntoDf <- function(fields = "", debug = FALSE,
     },
     silent = FALSE)
     #
-    if ( !( (class(tmp) != "try-error") & any(nchar(dfi[, 2]) != 0) ) ) {
+    if ( !((class(tmp) != "try-error") & any(nchar(dfi[, 2]) != 0) ) ) {
       # try-error occured or no data retrieved
-      if (stopifnodata){
-        stop (paste0("For field: ", item, " no data could be extracted from the database collection.",
-                     "Use dbGetFieldsIntoDf(stopifnodata = FALSE) to continue extracting other fields."),
-              call. = FALSE)
+      if (stopifnodata) {
+        stop(paste0("For field: ", item, " no data could be extracted from the database collection.",
+                    "Use dbGetFieldsIntoDf(stopifnodata = FALSE) to continue extracting other fields."),
+             call. = FALSE)
       } else {
         warning(paste0("For field: ", item, " no data could be extracted from the database collection."),
                 call. = FALSE,
                 immediate. = FALSE)
         # create empty data set
-        dfi <- as.data.frame(cbind(idsall, rep(NA, times = nrow (idsall))), stringsAsFactors = FALSE)
+        dfi <- as.data.frame(cbind(idsall, rep(NA, times = nrow(idsall))), stringsAsFactors = FALSE)
         # name result set
         names(dfi) <- c("_id", item)
       }
@@ -932,14 +892,14 @@ dbGetFieldsIntoDf <- function(fields = "", debug = FALSE,
   mongo$disconnect()
 
   # finalise output
-  if (is.null(result)) stop ("No records found which had values for the specified fields.", call. = FALSE)
+  if (is.null(result)) stop("No records found which had values for the specified fields.", call. = FALSE)
 
   # some results were obtained
 
   # add metadata
   result <- addMetaData(result,
-                        collection = collection, db = db, url = url,
-                        username = username, password = password)
+                        collection = collection, uri = uri,
+                        password = password)
 
   # notify user
   diff <- countall - nrow(result)
@@ -951,24 +911,6 @@ dbGetFieldsIntoDf <- function(fields = "", debug = FALSE,
   return(result)
 }
 # dbGetFieldsIntoDf
-
-# 2019-01-06 migration
-dbGetVariablesIntoDb <- function(fields = "", debug = FALSE,
-                                 collection = "ctrdata", db = "users", url = "mongodb://localhost",
-                                 username = "", password = "", verbose = FALSE,
-                                 stopifnodata = TRUE) {
-
-  # inform user
-  .Deprecated(new = "dbGetFieldsIntoDf")
-
-  dbGetFieldsIntoDf(fields = fields, debug = debug,
-                    collection = collection, db = db, url = url,
-                    username = username, password = password, verbose = verbose,
-                    stopifnodata = stopifnodata)
-
-}
-
-
 
 
 #' Merge two variables into one, optionally map values to new levels
@@ -1012,8 +954,8 @@ dfMergeTwoVariablesRelevel <- function(df = NULL, colnames = "", levelslist = NU
   }
 
   # other checks
-  if (class(df) != "data.frame") stop ("Need a data frame as input.", call. = FALSE)
-  if (length(colnames)  != 2)    stop ("Please provide exactly two column names.", call. = FALSE)
+  if (class(df) != "data.frame") stop("Need a data frame as input.", call. = FALSE)
+  if (length(colnames)  != 2)    stop("Please provide exactly two column names.", call. = FALSE)
 
   # find variables in data frame and merge
   tmp <- match(colnames, names(df))
@@ -1025,7 +967,7 @@ dfMergeTwoVariablesRelevel <- function(df = NULL, colnames = "", levelslist = NU
   if (!is.null(levelslist)) {
 
     # check
-    if (class(levelslist) != "list") stop ("Need lists for parameter levelslist.", call. = FALSE)
+    if (class(levelslist) != "list") stop("Need lists for parameter levelslist.", call. = FALSE)
 
     # helper function to collapse factor levels into the first mentioned level
     refactor <- function(x, collapselevels, levelgroupname){
@@ -1084,17 +1026,17 @@ dfMergeTwoVariablesRelevel <- function(df = NULL, colnames = "", levelslist = NU
 dfFindUniqueEuctrRecord <- function(df = NULL, prefermemberstate = "GB", include3rdcountrytrials = TRUE) {
 
   # check parameters
-  if (class(df) != "data.frame") stop ("Parameter df is not a data frame.", call. = FALSE)
+  if (class(df) != "data.frame") stop("Parameter df is not a data frame.", call. = FALSE)
   #
-  if (is.null(df [["_id"]]) || is.null(df["a2_eudract_number"])) stop ('Data frame does not include "_id"',
-                                                                       ' and "a2_eudract_number" columns.',
-                                                                       call. = FALSE)
+  if (is.null(df[["_id"]]) || is.null(df["a2_eudract_number"])) stop('Data frame does not include "_id"',
+                                                                     ' and "a2_eudract_number" columns.',
+                                                                     call. = FALSE)
   #
-  if (nrow(df) == 0) stop ("Data frame does not contain records (0 rows).", call. = FALSE)
+  if (nrow(df) == 0) stop("Data frame does not contain records (0 rows).", call. = FALSE)
   #
-  if (!(prefermemberstate %in% countriesEUCTR)) stop ("Value specified for prefermemberstate does not match",
+  if (!(prefermemberstate %in% countriesEUCTR)) stop("Value specified for prefermemberstate does not match",
                                                      " one of the recognised codes: ",
-                                                     paste (sort (countriesEUCTR), collapse = ", "),
+                                                     paste(sort(countriesEUCTR), collapse = ", "),
                                                      call. = FALSE)
 
   # notify it mismatching parameters
@@ -1156,9 +1098,9 @@ dfFindUniqueEuctrRecord <- function(df = NULL, prefermemberstate = "GB", include
   result <- unlist(result)
 
   # eleminate the unwanted EUCTR records
-  df <- df [!(df [["_id"]] %in% result), ]
+  df <- df[!(df [["_id"]] %in% result), ]
   # also eliminate the meta-info record
-  df <- df [!(df [["_id"]] == "meta-info"), ]
+  df <- df[!(df [["_id"]] == "meta-info"), ]
 
   # inform user about changes to data frame
   if (length(nms) > (tmp <- length(result)))
@@ -1217,71 +1159,71 @@ typeField <- function(dfi){
     #
     # factors
     # - EUCTR Yes / No / Information not present in EudraCT
-    "e13_condition_being_studied_is_a_rare_disease" = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e13_condition_being_studied_is_a_rare_disease" = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
     #
-    "e61_diagnosis"         = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "e62_prophylaxis"       = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "e63_therapy"           = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "e64_safety"            = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "e65_efficacy"          = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "e66_pharmacokinetic"   = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "e67_pharmacodynamic"   = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "e68_bioequivalence"    = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "e69_dose_response"     = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "e610_pharmacogenetic"  = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "e611_pharmacogenomic"  = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "e612_pharmacoeconomic" = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "e613_others"           = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e61_diagnosis"         = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e62_prophylaxis"       = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e63_therapy"           = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e64_safety"            = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e65_efficacy"          = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e66_pharmacokinetic"   = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e67_pharmacodynamic"   = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e68_bioequivalence"    = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e69_dose_response"     = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e610_pharmacogenetic"  = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e611_pharmacogenomic"  = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e612_pharmacoeconomic" = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e613_others"           = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
     #
-    "e71_human_pharmacology_phase_i"         = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "e711_first_administration_to_humans"    = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "e712_bioequivalence_study"              = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "e713_other"                             = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "e72_therapeutic_exploratory_phase_ii"   = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "e73_therapeutic_confirmatory_phase_iii" = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "e74_therapeutic_use_phase_iv"           = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e71_human_pharmacology_phase_i"         = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e711_first_administration_to_humans"    = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e712_bioequivalence_study"              = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e713_other"                             = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e72_therapeutic_exploratory_phase_ii"   = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e73_therapeutic_confirmatory_phase_iii" = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e74_therapeutic_use_phase_iv"           = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
     #
-    "e81_controlled"      = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "e811_randomised"     = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "e812_open"           = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "e813_single_blind"   = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "e814_double_blind"   = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "e815_parallel_group" = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "e816_cross_over"     = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "e817_other"          = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e81_controlled"      = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e811_randomised"     = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e812_open"           = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e813_single_blind"   = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e814_double_blind"   = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e815_parallel_group" = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e816_cross_over"     = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e817_other"          = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
     #
-    "e83_the_trial_involves_single_site_in_the_member_state_concerned"    = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "e84_the_trial_involves_multiple_sites_in_the_member_state_concerned" = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "e85_the_trial_involves_multiple_member_states"                       = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "e861_trial_being_conducted_both_within_and_outside_the_eea"          = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "e862_trial_being_conducted_completely_outside_of_the_eea"            = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "e87_trial_has_a_data_monitoring_committee"                           = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e83_the_trial_involves_single_site_in_the_member_state_concerned"    = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e84_the_trial_involves_multiple_sites_in_the_member_state_concerned" = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e85_the_trial_involves_multiple_member_states"                       = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e861_trial_being_conducted_both_within_and_outside_the_eea"          = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e862_trial_being_conducted_completely_outside_of_the_eea"            = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "e87_trial_has_a_data_monitoring_committee"                           = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
     #
-    "f11_trial_has_subjects_under_18"            = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "f111_in_utero"                              = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "f112_preterm_newborn_infants_up_to_gestational_age__37_weeks" = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "f113_newborns_027_days"                     = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "f114_infants_and_toddlers_28_days23_months" = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "f115_children_211years"                     = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "f116_adolescents_1217_years"                = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "f12_adults_1864_years"                      = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "f13_elderly_65_years"                       = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "f21_female"                                 = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "f22_male"                                   = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "f31_healthy_volunteers"                     = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "f32_patients"                               = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "f33_specific_vulnerable_populations"        = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "f331_women_of_childbearing_potential_not_using_contraception_" = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "f332_women_of_childbearing_potential_using_contraception"      = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "f333_pregnant_women"      = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "f334_nursing_women"       = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "f335_emergency_situation" = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "f336_subjects_incapable_of_giving_consent_personally" = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f11_trial_has_subjects_under_18"            = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f111_in_utero"                              = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f112_preterm_newborn_infants_up_to_gestational_age__37_weeks" = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f113_newborns_027_days"                     = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f114_infants_and_toddlers_28_days23_months" = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f115_children_211years"                     = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f116_adolescents_1217_years"                = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f12_adults_1864_years"                      = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f13_elderly_65_years"                       = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f21_female"                                 = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f22_male"                                   = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f31_healthy_volunteers"                     = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f32_patients"                               = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f33_specific_vulnerable_populations"        = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f331_women_of_childbearing_potential_not_using_contraception_" = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f332_women_of_childbearing_potential_using_contraception"      = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f333_pregnant_women"      = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f334_nursing_women"       = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f335_emergency_situation" = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "f336_subjects_incapable_of_giving_consent_personally" = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
     #
     # - CTGOV
-    "has_expanded_access"            = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "oversight_info.has_dmc"         = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "eligibility.healthy_volunteers" = sapply(dfi[, 2], FUN = function (x) switch (x, "Yes" = TRUE, "No" = FALSE, NA))
+    "has_expanded_access"            = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "oversight_info.has_dmc"         = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
+    "eligibility.healthy_volunteers" = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA))
     #
     )
   },
@@ -1297,31 +1239,32 @@ typeField <- function(dfi){
 
   # return
   return(dfi)
-}
+
+} # end typeField
 
 
 #' Annotate ctrdata function return values
 #'
 #' @param  x object to be annotated
+#'
 #' @inheritParams ctrMongo
 #'
 #' @keywords internal
 #'
-addMetaData <- function(x, url, db, collection, username, password) {
+addMetaData <- function(x, uri, collection, password) {
 
   # add metadata
-  attr(x, "ctrdata-using-mongodb-url")        <- url
-  attr(x, "ctrdata-using-mongodb-db")         <- db
+  attr(x, "ctrdata-using-mongodb-uri")        <- uri
   attr(x, "ctrdata-using-mongodb-collection") <- collection
-  attr(x, "ctrdata-using-mongodb-username")   <- username
   attr(x, "ctrdata-created-timestamp")        <- as.POSIXct(Sys.time(), tz = "UTC")
-  attr(x, "ctrdata-from-dbqueryhistory")      <- dbQueryHistory(collection = collection, db = db, url = url,
-                                                                username = username, password = password,
+  attr(x, "ctrdata-from-dbqueryhistory")      <- dbQueryHistory(collection = collection, uri = uri,
+                                                                password = password,
                                                                 verbose = FALSE)
 
   # return annotated object
   return(x)
-}
+
+} # end addMetaData
 
 
 
@@ -1346,10 +1289,10 @@ addMetaData <- function(x, url, db, collection, username, password) {
 installCygwinWindowsDoInstall <- function(force = FALSE, proxy = ""){
   #
   if (.Platform$OS.type != "windows")
-    stop ("This function is only for MS Windows operating systems.", call. = FALSE)
+    stop("This function is only for MS Windows operating systems.", call. = FALSE)
   #
   if (!force & dir.exists("c:\\cygwin"))
-    stop ("cygwin is already installed. To overwrite, use force = TRUE.", call. = FALSE)
+    stop("cygwin is already installed. To overwrite, use force = TRUE.", call. = FALSE)
   #
   # create directory within R sessions temporary directory
   tmpfile <- paste0(tempdir(), "/cygwin_inst")
@@ -1364,10 +1307,10 @@ installCygwinWindowsDoInstall <- function(force = FALSE, proxy = ""){
   #
   # check
   if (!file.exists(dstfile))
-    stop ("Download failed. Please install manually.", call. = FALSE)
+    stop("Download failed. Please install manually.", call. = FALSE)
   #
   if (file.size(dstfile) < (5 * 10 ^ 5))
-    stop ("Download failed (file too small). Please install manually.", call. = FALSE)
+    stop("Download failed (file too small). Please install manually.", call. = FALSE)
   #
   if (proxy != "") {
     # manual setting overrides all
@@ -1383,7 +1326,7 @@ installCygwinWindowsDoInstall <- function(force = FALSE, proxy = ""){
     #
     if (class(tmp) != "try-error" && !is.null(tmp)) {
       #
-      if (length (tmp$AutoConfigURL) > 0) {
+      if (length(tmp$AutoConfigURL) > 0) {
         # retrieve settings
         proxypacfile <- paste0(tmpfile, "/pacfile.txt")
         utils::download.file(tmp$AutoConfigURL, proxypacfile)
@@ -1393,7 +1336,7 @@ installCygwinWindowsDoInstall <- function(force = FALSE, proxy = ""){
         proxypac <- proxypac[grepl("PROXY", proxypac)]
         proxypac <- proxypac[length(proxypac)]
         proxy <- sub(".*PROXY ([0-9]+.[0-9]+.[0-9]+.[0-9]+:[0-9]+).*", "\\1", proxypac)
-        if (proxy == "") stop ("A proxy could not be identified using the system\'s automatic configuration script.",
+        if (proxy == "") stop("A proxy could not be identified using the system\'s automatic configuration script.",
                               ' Please set manually: installCygwinWindowsDoInstall (proxy = "host_or_ip:port"',
                               call. = FALSE)
         proxy <- paste0(" --proxy ", proxy)
@@ -1464,151 +1407,6 @@ installCygwinWindowsTest <- function(verbose = FALSE) {
 # installCygwinWindowsTest
 
 
-#' Detect location of local mongo database binaries (mongo,
-#' mongoimport) and save into private environment
-#'
-#' Call this function with a correct parameter if the automatic
-#' detection fails.
-#'
-#' @param mongoDir Vector of folders to search for mongo binaries, appended to defaults that include
-#' "C:/Program Files/MongoDB/Server/3.6/binW, "c:/mongodb/bin", "/usr/local/opt/mongodb/bin" and "/usr/bin".
-#' @param debug Printing additional information if set to \code{TRUE}; default
-#'   is \code{FALSE}.
-#'
-#' @return A vector of length 2 with the paths for the \code{mongo} and
-#'   \code{mongoimport} binaries on the user's system
-#'
-#' @keywords internal
-#
-installMongoFindBinaries <- function(mongoDir = NULL,
-                                     debug = FALSE) {
-
-  # access private environment if created in onload.R, or create new
-  if (exists(".privateEnv")){
-    environ <- .privateEnv
-  } else {
-    environ <- .GlobalEnv
-  }
-
-  # define names of binaries needed for some functions in ctrdata
-  binaries <- paste0(c("mongo", "mongoimport"), ifelse(.Platform$OS.type == "windows", ".exe", ""))
-
-  # 1 - check previously saved locations
-  if (exists("mongoBinaryLocation", envir = environ) &&
-      !is.na(get("mongoBinaryLocation", envir = environ)) &&
-      file.exists(paste0(get("mongoBinaryLocation", envir = environ), "/", binaries[1])) &&
-      file.exists(paste0(get("mongoBinaryLocation", envir = environ), "/", binaries[2]))) {
-    #
-    if (debug) message("mongo / mongoimport is in ",
-                       get("mongoBinaryLocation", envir = environ),
-                       " (from private environment, verified)")
-    #
-    return(invisible(paste0(get("mongoBinaryLocation", envir = environ), "/", binaries)))
-    #
-  }
-
-  # 2 - check folder(s) specified in parameter
-  #
-  # concatenate with default search folders
-  mongoDir <- c(mongoDir,
-                "C:/Program Files/MongoDB/Server/*/bin", "c:/mongodb/bin",
-                "/usr/local/opt/mongodb/bin", "/usr/local/opt/*/bin", "/usr/bin")
-  #
-  # replicate with appended binary names
-  mongoDir <- paste0(rep(mongoDir, times = length(binaries)), "/", binaries)
-  #
-  # iterate over possible locations
-  for (i in mongoDir) {
-    # expand paths that have wildcards
-    pths <- Sys.glob(file.path(i))
-    # iterate over expanded paths if any
-    if(length(pths) > 0) {
-      for (ii in pths) {
-        if (file.exists(ii)) {
-          #
-          mongoBinaryLocation <- dirname(ii)
-          assign("mongoBinaryLocation", mongoBinaryLocation, envir = environ)
-          #
-          if (debug) message("mongo / mongoimport is in ",
-                             mongoBinaryLocation,
-                             " (searched mongoDir folders)")
-          #
-          return(invisible(paste0(get("mongoBinaryLocation", envir = environ), "/", binaries)))
-          #
-        }
-      }
-    }
-  }
-
-  # 3 - check alternatives because not found so far
-  #
-  # reset any information and start searching
-  assign("mongoBinaryLocation", NA, envir = environ)
-  #
-  # first, test for binary in the system path
-  tmp <- try({
-    system2(command = binaries[1], args = " --version", stdout = TRUE, stderr = TRUE)
-    system2(command = binaries[2], args = " --version", stdout = TRUE, stderr = TRUE)
-  },
-  silent = TRUE)
-  if (class(tmp) != "try-error") {
-    #
-    # found in the path, save empty location string in package environment
-    assign("mongoBinaryLocation", "", envir = environ)
-    #
-    if (debug) message("mongo / mongoimport found in path",
-                       " (searched system path)")
-    #
-    return(invisible(paste0(get("mongoBinaryLocation", envir = environ), "/", binaries)))
-    #
-  }
-
-  # 4 - check remaining alternatives, e.g. registry
-  #
-  # only windows continues
-  if (.Platform$OS.type != "windows")
-    stop ("Cannot continue: mongo / mongoimport could not be found (all search methods failed)\n",
-          "Specify valid mongoDir folder and call ctrdata:::installMongoFindBinaries(mongoDir = ...)", call. = FALSE)
-  #
-  # search for folder into which mongo was recorded to be installed
-  location <- try(utils::readRegistry("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Installer\\Folders",
-                                      hive = "HLM"), silent = TRUE)
-  if (class(location) == "try-error")
-    stop ("Cannot continue: mongo path not found recorded in Windows registry (all other search methods failed)\n",
-          "Specify valid mongoDir folder and call ctrdata:::installMongoFindBinaries(mongoDir = ...)", call. = FALSE)
-  #
-  location <- names(location)
-  location <- location[grepl("Mongo", location)]
-  location <- location[grepl("bin", location)]
-  #
-  # if several installations:
-  # have highest version first
-  location <- location[rev(order(location))]
-  # check installation
-  tmp <- file.exists(paste0(location, "mongoimport.exe"))
-  # select first existing version
-  location <- location[tmp][1]
-  #
-  if (!any(tmp))
-    stop ("Cannot continue: mongoimport path not found in Windows registry and all other searches failed)\n",
-          "Specify valid mongoDir folder and call ctrdata:::installMongoFindBinaries(mongoDir = ...)",
-          call. = FALSE)
-  #
-  # found it, save in package environment
-  assign("mongoBinaryLocation", location, envir = environ)
-  #
-  if (debug) message("mongoimport / mongo found in ",
-                     location,
-                     " (searched Windows registry)")
-  #
-  return(invisible(paste0(get("mongoBinaryLocation", envir = environ), "\\", binaries)))
-  #
-}
-# end installMongoFindBinaries
-
-
-
-
 #' Check availability of binaries installed locally
 #'
 #' @param commandtest Command to be used for testing the availability of the binary, e.g. "php -v". Note
@@ -1623,7 +1421,7 @@ installMongoFindBinaries <- function(mongoDir = NULL,
 #
 installFindBinary <- function(commandtest = NULL, debug = FALSE) {
   #
-  if (is.null(commandtest)) stop ("Empty argument: commandtest", call. = FALSE)
+  if (is.null(commandtest)) stop("Empty argument: commandtest", call. = FALSE)
   #
   if (.Platform$OS.type == "windows") commandtest <-
       paste0("cmd.exe /c c:\\cygwin\\bin\\bash.exe --login -c ", shQuote(commandtest))
@@ -1638,7 +1436,7 @@ installFindBinary <- function(commandtest = NULL, debug = FALSE) {
     silent = TRUE
   )
   #
-  commandreturn <- ifelse (class(commandresult) == "try-error" ||
+  commandreturn <- ifelse(class(commandresult) == "try-error" ||
                            grepl("error", tolower(paste(commandresult, collapse = " "))), FALSE, TRUE)
   #
   if (!commandreturn) warning(commandtest, " not found.", call. = FALSE, immediate. = FALSE)

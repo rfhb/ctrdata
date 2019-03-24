@@ -5,8 +5,8 @@
 \title{dbQueryAnnotateRecords}
 \usage{
 dbCTRAnnotateQueryRecords(recordnumbers, annotations, annotation.text,
-  annotation.mode, collection = collection, db = db, url = url,
-  username = username, password = password, verbose = verbose)
+  annotation.mode, collection = collection, uri = uri,
+  password = password, verbose = verbose)
 }
 \arguments{
 \item{annotation.text}{Text to be including in the records retrieved
@@ -18,15 +18,16 @@ the records retreived with the current query.}
 
 \item{collection}{Name of collection (default is "ctrdata")}
 
-\item{db}{Name of database (default is "users")}
+\item{uri}{Default is mongodb://localhost/users/.
+Address of database in mongodb server, based on mongo connection string
+format: mongodb://[username@]host1[:port1][,...hostN[:portN]]]/database/
+Do NOT include password, this will only be used from the parameter.
+See \url{http://docs.mongodb.org/manual/reference/connection-string/}}
 
-\item{url}{Address of the mongodb server in mongo connection string URI format
-\url{http://docs.mongodb.org/manual/reference/connection-string/} (default is
-mongodb://localhost)}
-
-\item{username}{In case access requires credentials.}
-
-\item{password}{In case access requires credentials.}
+\item{password}{In case access requires credentials.
+Note this defaults to the environment variable "ctrdatamongopassword".
+(by means of \code{Sys.getenv("ctrdatamongopassword")}), to
+support scripting without revealing secrets.}
 
 \item{verbose}{Print information.}
 }

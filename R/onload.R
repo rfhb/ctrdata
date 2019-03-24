@@ -33,9 +33,6 @@
   if (!suppressWarnings(installFindBinary("perl -V:osname")))
     packageStartupMessage("perl not found, ctrLoadQueryIntoDb() will not work.")
   #
-  if (class(try(installMongoFindBinaries(), silent = TRUE)) == "try-error")
-    packageStartupMessage("mongo / mongoimport not found, ctrLoadQueryIntoDb() will not work.")
-  #
   packageStartupMessage("completed.")
   #
   invisible()
