@@ -178,7 +178,12 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   ## finalise
 
   # return some useful information or break if not successful
-  if (!exists("imported")) stop("Function did not result in any trial information imports.", call. = FALSE)
+  if (!exists("imported") || (imported$n == 0)) {
+    message("Function did not result in any trial information imports.")
+    return(invisible(list(n = 0, ids = "")))
+  }
+
+  # inform user
   if (debug) message("DEBUG: 'queryterm'=", queryterm,
                      "\n'queryupdateterm'=", queryupdateterm,
                      "\n'imported'=", imported,
@@ -193,11 +198,8 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
                           collection = collection, uri = uri,
                           password = password, verbose = verbose)
 
-  # update keys database
-  # TODO
-  # dbFindFields(forceupdate = TRUE, debug = debug,
-  #              collection = collection, uri = uri,
-  #              password = password, verbose = verbose)
+  # invalidate any cached list of keys in collection
+  if (exists(".dbffenv")) suppressWarnings({remove(list = paste0(uri, "/", collection), envir = .dbffenv)})
 
   # add metadata
   imported <- addMetaData(x = imported,
@@ -205,7 +207,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
                           password = password)
 
   ## return
-  invisible(imported)
+  return(invisible(imported))
 
 }
 # end ctrLoadQueryIntoDb
@@ -614,9 +616,15 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
 
   # safeguard against no or unintended large numbers
   tmp <- suppressWarnings(as.integer(tmp))
-  if (is.na(tmp) || !length(tmp)) stop("No trials or number of trials could not be determined: ", tmp, call. = FALSE)
-  if (as.integer(tmp) > 5000L) stop("These are ", tmp, " (more than 5000) trials, this may be unintended. ",
-                                   "Please split into separate queries.", call. = FALSE)
+  if (is.na(tmp) || !length(tmp)) {
+    message("No trials or number of trials could not be determined: ", tmp)
+    return(invisible(list(n = 0L, ids = "")))
+  }
+  if (as.integer(tmp) > 5000L) {
+    message("These are ", tmp, " (more than 5000) trials, this may be unintended. ",
+            "Please split into separate queries.")
+    return(invisible(list(n = 0L, ids = "")))
+  }
 
   # inform user
   message("Retrieved overview, ", tmp, " trial(s) are to be downloaded.")
@@ -794,9 +802,9 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
   resultsEuNumPages  <- ceiling(resultsEuNumTrials / 20)
 
   # check for plausbility and stop function without erro
-  if (is.na(resultsEuNumPages) || is.na(resultsEuNumTrials) || resultsEuNumTrials == 0) {
+  if (is.na(resultsEuNumPages) || is.na(resultsEuNumTrials) || (resultsEuNumTrials == 0)) {
     message("First result page empty - no (new) trials found?")
-    return(invisible(0))
+    return(invisible(list(n = 0, ids = "")))
   }
 
   # inform user

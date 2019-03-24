@@ -4,7 +4,8 @@
 \alias{ctrMongo}
 \title{Set up connections to a Mongo DB server database}
 \usage{
-ctrMongo(collection, uri, password, verbose = FALSE)
+ctrMongo(collection = "ctrdata", uri = "mongodb://localhost/users",
+  password = Sys.getenv("ctrdatamongopassword"), verbose = FALSE)
 }
 \arguments{
 \item{collection}{Name of collection (default is "ctrdata")}

@@ -3,7 +3,7 @@
 
 # create environment private to this package
 # for caching the location of mongo binaries
-.privateEnv <- new.env()
+.dbffenv <- new.env(parent = emptyenv())
 
 # check helper functions
 .onAttach <- function(libname, pkgname) {

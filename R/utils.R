@@ -34,9 +34,9 @@ countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR",
 #'
 #' @importFrom mongolite mongo
 #'
-ctrMongo <- function(collection,
-                     uri,
-                     password,
+ctrMongo <- function(collection = "ctrdata",
+                     uri = "mongodb://localhost/users",
+                     password = Sys.getenv("ctrdatamongopassword"),
                      verbose = FALSE) {
 
   # mongo versions tested
@@ -383,12 +383,12 @@ dbQueryHistory <- function(collection = "ctrdata", uri = "mongodb://localhost/us
     if (ncol(tmp) != 4) warning(tmp, call. = FALSE, immediate. = TRUE)
     names(tmp) <- c("query-timestamp", "query-register", "query-records", "query-term")
     # Inform user
-    message("Number of queries in history of \"", collection, "\": ", nrow(tmp))
+    if (verbose) message("Number of queries in history of \"", collection, "\": ", nrow(tmp))
   }
 
   # total number of records in collection to inform user
   countall <- mongo$count(query = '{"_id":{"$ne":"meta-info"}}')
-  message("Number of records in collection \"", collection, "\": ", countall)
+  if (verbose) message("Number of records in collection \"", collection, "\": ", countall)
 
   # close database connection
   mongo$disconnect()
@@ -418,18 +418,15 @@ dbQueryHistory <- function(collection = "ctrdata", uri = "mongodb://localhost/us
 #'
 #' @param namepart A plain string (not a regular expression) to be searched for
 #'   among all field names (keys) in the database.
-#' @param allmatches If \code{TRUE}, returns all keys if more than one is found
-#'   (default is \code{FALSE}).
-#' @param forceupdate If \code{TRUE}, refreshes collection of keys (default is
-#'   \code{FALSE}).
-#' @param debug If \code{TRUE}, prints additional information (default is
-#'   \code{FALSE}).
+#'
+#' @param allmatches If \code{TRUE} (default), returns all keys if more than one is found,
+#'   returns only fist of \code{FALSE}.
+#'
+#' @param debug If \code{TRUE}, prints additional information (default \code{FALSE}).
 #'
 #' @inheritParams ctrMongo
 #'
-#' @importFrom curl curl_download
-#'
-#' @return Vector of first field found (or all fields found, see above)
+#' @return Vector of field(s) found
 #'
 #' @export
 #'
@@ -439,104 +436,121 @@ dbQueryHistory <- function(collection = "ctrdata", uri = "mongodb://localhost/us
 #'  dbFindFields("date")
 #' }
 #'
-dbFindFields <- function(namepart = "", allmatches = FALSE, forceupdate = FALSE, debug = FALSE,
+dbFindFields <- function(namepart = "", allmatches = TRUE, debug = FALSE,
                          collection = "ctrdata", uri = "mongodb://localhost/users",
                          password = Sys.getenv("ctrdatamongopassword"), verbose = FALSE) {
 
-  # sanity checks
+  ## sanity checks
   if (!is.atomic(namepart)) stop("Name part should be atomic.", call. = FALSE)
   if (length(namepart) > 1) stop("Name part should have only one element.", call. = FALSE)
-  if (namepart == "" & !forceupdate) stop("Empty name part string.", call. = FALSE)
+  if (namepart == "") stop("Empty name part string.", call. = FALSE)
 
-  # get a working mongo connection
-  mongo <- ctrMongo(collection = collection, uri = uri,
-                    password = password, verbose = verbose)
-
-  # get a working mongo connection
-  mongoKeys <- ctrMongo(collection = paste0(collection, "Keys"), uri = uri,
-                        password = password, verbose = verbose)
-
-  # check if data base has any contents
-  if (mongo$count() == 0L) stop("No records in data base.", call. = FALSE)
-
-  # check if database with variety results exists or should be forced to be updated
-  if (forceupdate || (mongoKeys$count() == 0L)) {
-    #
-    # if (!grepl("127.0.0.1", attr(mongo, "host")))
-    #   warning("variety.js may fail with certain remote servers (for example when the host or port ",
-    #           "is different per database, such as with a free mongolab plan).", immediate. = TRUE)
-    #
-    # check if extension is available (system.file under MS Windows does not end with slash) ...
-    varietylocalurl <- paste0(system.file("exec", package = "ctrdata"), "/variety.js")
-    # if variety.js is not found, download it
-    if (!file.exists(varietylocalurl)) {
-      message("Downloading variety.js and installing into package exec folder ...")
-      varietysourceurl <- "https://raw.githubusercontent.com/variety/variety/master/variety.js"
-      curl::curl_download(varietysourceurl, varietylocalurl)
-    }
-    # compose actual command to call mongo with variety.js
-    # mongo collection_to_analyse --quiet --eval "var collection = 'users',
-    #  persistResults=true, resultsDatabase='db.example.com/variety' variety.js
-    varietymongo <- paste0(' "', sub("mongodb://(.+)", "\\1", url), "/", db, '"',
-                           ifelse(username != "", paste0(' --username ="', username, '"'), ""),
-                           ifelse(password != "", paste0(' --password ="', password, '"'), ""),
-                           " --eval \"var collection='", collection, "', persistResults=true, ",
-                           "resultsDatabase='", paste0(sub("mongodb://(.+)", "\\1", url), "/", db, "'\" "),
-                           varietylocalurl)
-    #
-    if (.Platform$OS.type == "windows") {
-      #
-      varietymongo <- paste0(shQuote(installMongoFindBinaries()[1]), varietymongo)
-      varietymongo <- gsub(" --([up])", " /\1", varietymongo)
-      varietymongo <- gsub(" =", ":", varietymongo)
-      #
-    } else {
-      #
-      varietymongo <- paste0(shQuote(installMongoFindBinaries()[1]), varietymongo)
-      #
-    }
-    #
-    message("* Calling mongo with variety.js and adding keys to database ...")
-    if (debug) message(varietymongo)
-    tmp <- system(varietymongo, intern = TRUE)
-    if (debug) message(tmp)
-    #
-  } # if mongo ctr count
-
-  # now do the actual search and find for key name parts
-  if (namepart != "") {
-    #
-    # mongo get fieldnames into vector (no other solution found)
-    fieldnames <- mongoKeys$find(fields = '{"key": 1}')
-    fieldnames <- fieldnames[seq_len(nrow(fieldnames)), ]
-    fieldnames <- as.vector(fieldnames[["key"]])
-    #
-    # actually now find fieldnames
-    fieldname <- fieldnames[grepl(tolower(namepart), tolower(fieldnames))]
-    # if debug = FALSE, remove XX from field names, e.g.
-    # "clinical_results.outcome_list.outcome.XX.group_list.group.XX.title"
-    if (!debug) fieldname <- gsub(pattern = "XX[.]", replacement = "", fieldname)
-    #
-    # format output
-    fieldname <- sort(unique(fieldname))
-    if (!allmatches) {
-      if ( (tmp <- length(fieldname)) > 1) message("Returning first of ", tmp, " keys found.")
-      fieldname <- fieldname[1]
-    }
-    #
-    # add metadata
-    fieldname <- addMetaData(fieldname,
-                             collection = collection, uri = uri,
-                             password = password)
-    #
-    # return the first match / all matches
-    if (debug) message("Showing paths where any sets of objects are indicated as XX.")
-    return(fieldname)
-    #
+  # ## check if cache for list of keys in collection exists,
+  # # otherwise create new environment as session cache
+  if (!exists(".dbffenv")) {
+    .dbffenv <- new.env(parent = emptyenv())
   }
-  # close database connection
-  mongo$disconnect()
-  mongoKeys$disconnect()
+
+  ## check if cache environment has entry for this collection,
+  if (exists(x = paste0(uri, "/", collection),
+             envir = .dbffenv)) {
+
+    # if true, get keys list from cache
+    keyslist <- get(x = paste0(uri, "/", collection),
+                    envir = .dbffenv)
+
+    # informing user
+    message("Using cache of fields.")
+
+  } else {
+
+    # get keys list from database
+
+    # get a working mongo connection
+    mongo <- ctrMongo(collection = collection, uri = uri,
+                      password = password, verbose = verbose)
+
+    # try mapreduce to get all keys
+    keyslist <- try({mongo$mapreduce(
+      map = "function() {
+        obj = this;
+        return searchInObj(obj, '');
+        function searchInObj(obj, pth){
+           for(var key in obj){
+              if(typeof obj[key] == 'object' && obj[key] !== null){
+                 if(pth != '') {pth = pth + '.'}
+                 searchInObj(obj[key], pth + key)
+              }else{
+                 key = pth + '.' + key
+                 key = key.replace(/[.][0-9]+[.]/, '.')
+                 key = key.replace(/^[.]/, '')
+                 emit(key, 1);
+        }}}}",
+      reduce = "function(id, counts) {return Array.sum(counts)}"
+      # extract and keep only "_id" = first column, with keys
+    )[["_id"]]}, silent = TRUE)
+
+    # mapreduce may not work or not be permitted such
+    # as on some free mongo servers, thus revert to guessing
+    if (class(keyslist) == "try-error") {
+
+      warning("Mongo server returned: ", as.character(keyslist),
+              "Using alternative method (extracting keys from sample documents, may be incomplete).",
+              call. = FALSE)
+
+      # get 2 random documents, one for each register EUCTR and CTGOV,
+      # if in collection, and retrieve keys from documents
+
+      keyslist <- c("",
+                    names(mongo$find(query = '{"_id": { "$regex": "^NCT[0-9]{8}", "$options": ""} }',
+                                     limit = 1L)),
+                    names(mongo$find(
+                      query = '{"_id": { "$regex": "^[0-9]{4}-[0-9]{6}", "$options": ""} }',
+                      limit = 1L))
+                    )
+
+      keyslist <- unique(keyslist)
+      if (length(keyslist) > 1) keyslist <- keyslist[keyslist != ""]
+
+      # inform user if unexpected result
+      if (all(keyslist == "")) warning("No keys could be extracted, please check collection ",
+                                       collection, call. = FALSE)
+
+    }
+
+    # close database connection
+    mongo$disconnect()
+
+    ## store keyslist to environment (cache)
+    assign(x = paste0(uri, "/", collection),
+           value = keyslist,
+           envir = .dbffenv)
+
+  } # end get cached list or generate new list
+
+  # inform user if unexpected situation
+  if ((length(keyslist) == 0) || all(keyslist == "")) {
+    warning("No keys could be extracted, please check collection ",
+            collection, call. = FALSE)
+  }
+
+  ## now do the actual search and find for key name parts
+  if (namepart != "") {
+
+    # actually now find keys / field names
+    fields <- keyslist[grepl(tolower(namepart), tolower(keyslist))]
+
+    # all or only first field name?
+    if (!allmatches) {
+      if ( (tmp <- length(fields)) > 1) message("Returning first of ", tmp, " fields found.")
+      fields <- fields[1]
+    }
+
+    # return the first match / all matches
+    return(fields)
+
+  }
+
 }
 # end dbFindFields
 

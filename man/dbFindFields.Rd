@@ -4,23 +4,18 @@
 \alias{dbFindFields}
 \title{Find names of fields in the database collection}
 \usage{
-dbFindFields(namepart = "", allmatches = FALSE, forceupdate = FALSE,
-  debug = FALSE, collection = "ctrdata",
-  uri = "mongodb://localhost/users",
+dbFindFields(namepart = "", allmatches = TRUE, debug = FALSE,
+  collection = "ctrdata", uri = "mongodb://localhost/users",
   password = Sys.getenv("ctrdatamongopassword"), verbose = FALSE)
 }
 \arguments{
 \item{namepart}{A plain string (not a regular expression) to be searched for
 among all field names (keys) in the database.}
 
-\item{allmatches}{If \code{TRUE}, returns all keys if more than one is found
-(default is \code{FALSE}).}
+\item{allmatches}{If \code{TRUE} (default), returns all keys if more than one is found,
+returns only fist of \code{FALSE}.}
 
-\item{forceupdate}{If \code{TRUE}, refreshes collection of keys (default is
-\code{FALSE}).}
-
-\item{debug}{If \code{TRUE}, prints additional information (default is
-\code{FALSE}).}
+\item{debug}{If \code{TRUE}, prints additional information (default \code{FALSE}).}
 
 \item{collection}{Name of collection (default is "ctrdata")}
 
@@ -38,7 +33,7 @@ support scripting without revealing secrets.}
 \item{verbose}{Print information.}
 }
 \value{
-Vector of first field found (or all fields found, see above)
+Vector of field(s) found
 }
 \description{
 Given part of the name of a field of interest to the user, this function

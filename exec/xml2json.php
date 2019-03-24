@@ -73,10 +73,10 @@ foreach (glob("$testXmlFile/NCT*.xml") as $inFileName) {
   //$simpleXml = json_decode($json, TRUE);
 
   // save all in one concatenated file
-  file_put_contents($outFileName, json_encode($simpleXml), FILE_APPEND | LOCK_EX);
+  file_put_contents($outFileName, json_encode($simpleXml) . "\n", FILE_APPEND | LOCK_EX);
 
   // save NCT number into one file
-  file_put_contents($outIdsName, basename($inFileName, '.xml') . "\n", FILE_APPEND | LOCK_EX);
+  // file_put_contents($outIdsName, basename($inFileName, '.xml') . "\n", FILE_APPEND | LOCK_EX);
 
 }
 

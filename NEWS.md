@@ -1,3 +1,8 @@
+# ctrdata 0.16.9000
+ - 2019-03-24
+ - removed dependency on local mongodb installation (major rewrite)
+ - improved support for remote mongodb servers (note changes in host / db / uri parameters)
+   
 # ctrdata 0.15.9007
  - 2019-03-15
  - Important: Added no checking of SSL certificates for EUCTR because the EUCTR server is
