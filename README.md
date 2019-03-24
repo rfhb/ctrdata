@@ -6,8 +6,7 @@ Status](https://travis-ci.org/rfhb/ctrdata.png?branch=master)](https://travis-ci
 [![AppVeyor Build
 Status](https://ci.appveyor.com/api/projects/status/github/rfhb/ctrdata?branch=master&svg=true)](https://ci.appveyor.com/project/rfhb/ctrdata)
 [![codecov](https://codecov.io/gh/rfhb/ctrdata/branch/master/graph/badge.svg)](https://codecov.io/gh/rfhb/ctrdata)
-\[Note codecov does not check MS Windows-only
-code\]
+\[Note codecov does not check MS Windows-only code\]
 
 [![Slack](https://img.shields.io/badge/Slack-Join-green.svg)](https://rfhb.slack.com/messages/C6N1Y75B6)
 Join Slack channel and discuss
@@ -24,7 +23,7 @@ started mid 2015 and was motivated by the wish to understand trends in
 designs and conduct of trials and their availability for patients. The
 package is to be used within the [R](https://www.r-project.org/) system.
 
-Last edit 2019-03-15 for version 0.15.9007, with bug fixes and new
+Last edit 2019-03-24 for version 0.16.9000, with bug fixes and new
 features:
 
   - dates are now returned as Date types, and some Yes / No fields are
@@ -33,7 +32,9 @@ features:
     register (new options `annotate.text` and `annotate.mode` for
     function `ctrLoadQueryIntoDb()`), for later use in analysis, and
   - synonyms of active substances to better find trials can be retrieved
-    with function `ctrFindActiveSubstanceSynonyms()`.
+    with function `ctrFindActiveSubstanceSynonyms()`,
+  - improved functioning with remote Mongo databases, and removed need
+    for local installation of MongoDB.
 
 Main features:
 
@@ -77,14 +78,14 @@ citation("ctrdata")
 #> 
 #>   Ralf Herold (NA). ctrdata: Retrieve and Analyze Information on
 #>   Clinical Trials from Public Registers. R package version
-#>   0.15.9006. https://github.com/rfhb/ctrdata
+#>   0.15.9007. https://github.com/rfhb/ctrdata
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
 #>   @Manual{,
 #>     title = {ctrdata: Retrieve and Analyze Information on Clinical Trials from Public Registers},
 #>     author = {Ralf Herold},
-#>     note = {R package version 0.15.9006},
+#>     note = {R package version 0.15.9007},
 #>     url = {https://github.com/rfhb/ctrdata},
 #>   }
 ```
@@ -101,22 +102,11 @@ Package `ctrdata` has been used for example for:
 
 Overview of functions used in sequence:
 
-![Overview
-workflow](inst/image/README-ctrdata_sequence_diagram.jpeg)
+![Overview workflow](inst/image/README-ctrdata_sequence_diagram.jpeg)
 
 # Installation
 
-## 1\. Local [mongodb](https://www.mongodb.org/) (version 3) installation
-
-Follow instructions for various operating systems
-[here](https://docs.mongodb.com/manual/administration/install-community/).
-For macOS alternatively use [homebrew](http://brew.sh/): `brew install
-mongodb`. From this installation, binaries `mongoimport{.exe}` and
-`mongo{.exe}` are needed. If the binaries are not on the system path
-under Unix, specify their folder as
-`ctrdata:::installMongoFindBinaries(mongoDirUnix = "<folder>")`.
-
-## 2\. Command line tools `perl`, `sed`, `cat` and `php` (5.2 or higher)
+## 1\. Command line tools `perl`, `sed`, `cat` and `php` (5.2 or higher)
 
 In Linux and macOS, these are usually already installed. For MS Windows,
 install [cygwin](https://cygwin.com/install.html): In `R`, run
@@ -125,7 +115,7 @@ into `c:\cygwin`; alternatively manually install cygwin with packages
 `perl`, `php-jsonc` and `php-simplexml` (administrator credentials not
 needed).
 
-## 3\. Within R
+## 2\. Within R
 
 Within [R](https://www.r-project.org/), use the following commands to
 get and install the current development version of package `ctrdata`
