@@ -27,11 +27,12 @@ knitr::opts_chunk$set(
 
 The package `ctrdata` provides functions for retrieving (downloading) information on clinical trials from public registers, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started mid 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package is to be used within the [R](https://www.r-project.org/) system. 
 
-Last edit 2019-03-15 for version 0.15.9007, with bug fixes and new features: 
+Last edit 2019-03-24 for version 0.16.9000, with bug fixes and new features: 
 
 * dates are now returned as Date types, and some Yes / No fields are returned as logical, by function `dbGetFieldsIntoDf()`,  
 * personal annotations can be added when records are retrieved from a register (new options `annotate.text` and `annotate.mode` for function `ctrLoadQueryIntoDb()`), for later use in analysis, and 
-* synonyms of active substances to better find trials can be retrieved with function `ctrFindActiveSubstanceSynonyms()`. 
+* synonyms of active substances to better find trials can be retrieved with function `ctrFindActiveSubstanceSynonyms()`,
+* improved functioning with remote Mongo databases, and removed need for local installation of MongoDB. 
 
 Main features:
 
@@ -63,15 +64,11 @@ Overview of functions used in sequence:
 
 # Installation
 
-## 1. Local [mongodb](https://www.mongodb.org/) (version 3) installation
-
-Follow instructions for various operating systems [here](https://docs.mongodb.com/manual/administration/install-community/). For macOS alternatively use [homebrew](http://brew.sh/): `brew install mongodb`. From this installation, binaries `mongoimport{.exe}` and `mongo{.exe}` are needed. If the binaries are not on the system path under Unix, specify their folder as `ctrdata:::installMongoFindBinaries(mongoDirUnix = "<folder>")`.
-
-## 2. Command line tools `perl`, `sed`, `cat` and `php` (5.2 or higher)
+## 1. Command line tools `perl`, `sed`, `cat` and `php` (5.2 or higher)
 
 In Linux and macOS, these are usually already installed. For MS Windows, install [cygwin](https://cygwin.com/install.html): In `R`, run `ctrdata::installCygwinWindowsDoInstall()` for an automated installation into `c:\cygwin`; alternatively manually install cygwin with packages `perl`, `php-jsonc` and `php-simplexml` (administrator credentials not needed). 
 
-## 3. Within R
+## 2. Within R
 
 Within [R](https://www.r-project.org/), use the following commands to get and install the current development version of package `ctrdata` from github.com:
 

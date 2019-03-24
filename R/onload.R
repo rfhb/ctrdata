@@ -3,7 +3,7 @@
 
 # create environment private to this package
 # for caching the location of mongo binaries
-.privateEnv <- new.env()
+.dbffenv <- new.env(parent = emptyenv())
 
 # check helper functions
 .onAttach <- function(libname, pkgname) {
@@ -32,9 +32,6 @@
   #
   if (!suppressWarnings(installFindBinary("perl -V:osname")))
     packageStartupMessage("perl not found, ctrLoadQueryIntoDb() will not work.")
-  #
-  if (class(try(installMongoFindBinaries(), silent = TRUE)) == "try-error")
-    packageStartupMessage("mongo / mongoimport not found, ctrLoadQueryIntoDb() will not work.")
   #
   packageStartupMessage("completed.")
   #

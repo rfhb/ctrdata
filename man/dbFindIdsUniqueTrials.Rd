@@ -6,8 +6,8 @@
 \usage{
 dbFindIdsUniqueTrials(preferregister = "EUCTR",
   prefermemberstate = "GB", include3rdcountrytrials = TRUE,
-  collection = "ctrdata", db = "users", url = "mongodb://localhost",
-  username = "", password = "", verbose = TRUE)
+  collection = "ctrdata", uri = "mongodb://localhost/users",
+  password = Sys.getenv("ctrdatamongopassword"), verbose = TRUE)
 }
 \arguments{
 \item{preferregister}{The abbreviation of the preferred register, in case
@@ -26,15 +26,16 @@ that are conducted *exclusively* in third countries, that is outside the Europea
 
 \item{collection}{Name of collection (default is "ctrdata")}
 
-\item{db}{Name of database (default is "users")}
+\item{uri}{Default is mongodb://localhost/users/.
+Address of database in mongodb server, based on mongo connection string
+format: mongodb://[username@]host1[:port1][,...hostN[:portN]]]/database/
+Do NOT include password, this will only be used from the parameter.
+See \url{http://docs.mongodb.org/manual/reference/connection-string/}}
 
-\item{url}{Address of the mongodb server in mongo connection string URI format
-\url{http://docs.mongodb.org/manual/reference/connection-string/} (default is
-mongodb://localhost)}
-
-\item{username}{In case access requires credentials.}
-
-\item{password}{In case access requires credentials.}
+\item{password}{In case access requires credentials.
+Note this defaults to the environment variable "ctrdatamongopassword".
+(by means of \code{Sys.getenv("ctrdatamongopassword")}), to
+support scripting without revealing secrets.}
 
 \item{verbose}{If set to \code{TRUE}, prints out information about numbers
 of records found at subsequent steps when searching for duplicates}

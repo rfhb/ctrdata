@@ -329,7 +329,7 @@ Note: Packages to access mango such as `mongolite` or `RMongo` may work to acces
 #
 library(mongolite)
 #
-m <- mongo(db = "users", collection = "resultsTest")
+m <- mongo(url = "mongodb://localhost/users", collection = "resultsTest")
 # 
 # Check if there are any duplicates:
 ids_of_unique_trials <- dbFindIdsUniqueTrials(collection = "resultsTest")
@@ -591,7 +591,7 @@ dev.off()
 library(mongolite)
 #
 # Link R object m to the specified database collection:
-m <- mongo(db = "users", collection = "ctrdata")
+m <- mongo(url = "mongodb://localhost/users", collection = "ctrdata")
 #
 # Number of all records:
 m$count()
@@ -667,7 +667,7 @@ Note that the mongodb documentation includes that a mapreduce operation might no
 #
 library(mongolite)
 #
-m <- mongo(db = "users", collection = "ctrdata")
+m <- mongo(url = "mongodb://localhost/users", collection = "ctrdata")
 #
 # Count number of trials (trial records) with number of study participants 
 # in bins of hundreds of participants:
@@ -692,8 +692,8 @@ hist
 # note: _id is the bin of hundreds of study participants, 
 # value is the number of studies in respective bin
 # 
-plot (hist, type = "h", las = 1, xlim = c(0, 2000), ylim = c(0, 500), 
-      xlab = "Number stubjects", y = "Number of trials")
+plot(hist, type = "h", las = 1, xlim = c(0, 2000), ylim = c(0, 500), 
+     xlab = "Number stubjects", y = "Number of trials")
 #
 ```
 ![Histogram2](Rplot03.png)
@@ -725,12 +725,12 @@ terms <- c("positive", "marker", "select")
 table(grepl_multi(terms, result))
 #
 # utility function to generate a regular expression for a given number of words
-words <- function (x) paste0(paste0(rep("\\s+\\w+", x), collapse = ""), "\\s+")
+words <- function(x) paste0(paste0(rep("\\s+\\w+", x), collapse = ""), "\\s+")
 # 
 terms <- paste0(".*(", words(2), terms, "\\w*", words(3), ").*")
 # 
 # find and print found matches for review
-for(i in 1:length(terms))
+for (i in 1:length(terms))
   print(gsub(terms[i], "\\1", result, ignore.case = TRUE)[grepl(terms[i], result)])
 #
 ```
@@ -767,10 +767,10 @@ result <- merge(result, first_trial_start, all.x = TRUE)
 
 ```{r annotations}
 
-if(FALSE) ctrLoadQueryIntoDb(queryterm = paste0("https://clinicaltrials.gov/ct2/results?age=0&intr=dasatinib&phase=1"), 
-                             annotation.text = paste0("|AS:", "dasatinib", "|"), 
-                             annotation.mode = "prepend", 
-                             collection = "annotationTest")
+if (FALSE) ctrLoadQueryIntoDb(queryterm = paste0("https://clinicaltrials.gov/ct2/results?age=0&intr=dasatinib&phase=1"), 
+                              annotation.text = paste0("|AS:", "dasatinib", "|"), 
+                              annotation.mode = "prepend", 
+                              collection = "annotationTest")
 
 # helper function
 getannotationelement <- function(x, element = "AS") {
@@ -804,9 +804,9 @@ Distribution of p values.
 ```{r analyse_results_1}
 
 # get trials into database
-if(FALSE) ctrLoadQueryIntoDb(queryterm = paste0("https://clinicaltrials.gov/ct2/results?rslt=With&age=0&intr=Drug&", 
-                                                "phase=1&phase=2&strd_s=01%2F01%2F2010&strd_e=12%2F31%2F2012"), 
-                             collection = "resultsTest")
+if (FALSE) ctrLoadQueryIntoDb(queryterm = paste0("https://clinicaltrials.gov/ct2/results?rslt=With&age=0&intr=Drug&", 
+                                                 "phase=1&phase=2&strd_s=01%2F01%2F2010&strd_e=12%2F31%2F2012"), 
+                              collection = "resultsTest")
 
 # get result set
 # dbFindFields(namepart = "age", allmatches = TRUE, collection = "resultsTest")
@@ -857,8 +857,9 @@ ggplot(result, aes(pvalueprimaryanalysis)) +
   labs(title = "Paediatric phase 2 or 3 interventional trials\nwith randomisation to placebo or to no intervention", 
        x = "Range of p values", 
        y = "Empirical cumulative density of p values\nof primary endpoint results") +
-  scale_colour_manual(name="Lines", values = c('About two-thirds of trials\nreported p < 0.05' = "red", 
-                                               '0.05' = "green"))
+  scale_colour_manual(name = "Lines", 
+                      values = c('About two-thirds of trials\nreported p < 0.05' = "red", 
+                                 '0.05' = "green"))
 
 # plot sample size v p value
 library(scales)
@@ -873,7 +874,6 @@ tmp <- table(result$methodprimaryanalysis)
 tmp <- tmp[rev(order(tmp))]
 tmp <- data.frame(tmp)
 knitr::kable(tmp[1:10,])
-
 #
 ```
 
