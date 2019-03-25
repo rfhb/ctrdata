@@ -427,13 +427,11 @@ test_that("operations on database after download from register", {
     collection = coll),
     "Name part should have only one element.")
 
-  # test 29
   expect_error(dbFindFields(
     namepart = list("onestring", "twostring"),
     collection = coll),
     "Name part should be atomic.")
 
-  # test 30
   expect_error(dbFindFields(namepart = "",
                             collection = coll),
                "Empty name part string.")
@@ -444,10 +442,19 @@ test_that("operations on database after download from register", {
     collection = coll),
     "character")
 
-  # test 32
-  expect_equal(length(dbFindFields(
+  expect_message(dbFindFields(
     namepart = "ThisNameShouldNotExistAnywhere",
-    collection = coll)), 0L)
+    collection = coll), "Using cache of fields.")
+
+  expect_equivalent(ctrLoadQueryIntoDb(
+    queryterm = "2010-024264-18",
+    register = "CTGOV",
+    collection = coll)$n,
+    1L)
+
+  expect_silent(dbFindFields(
+    namepart = "ThisNameShouldNotExistAnywhere",
+    collection = coll))
 
   # dbFindIdsUniqueTrials
 
