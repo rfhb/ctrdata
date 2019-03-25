@@ -1117,8 +1117,10 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
 
       # do download and save into batchresults
       retdat <- NULL
-      tmp <- curl::multi_run(pool = pool, poll = length(urls))
-      batchresults <- lapply(retdat, function(x) rawToChar(x[["content"]]))
+      tmp <- curl::multi_run(pool = pool,
+                             poll = length(urls))
+      batchresults <- lapply(retdat,
+                             function(x) rawToChar(x[["content"]]))
 
       # curl return sequence is not predictable
       # therefore recalculate the eudract numbers

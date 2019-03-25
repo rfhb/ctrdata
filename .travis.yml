@@ -29,10 +29,10 @@ services:
 addons:
   apt:
     packages:
-    - mongodb-org
     - php5-cli
-    sources:
-    - mongodb-3.4-trusty
+#    - mongodb-org
+#    sources:
+#    - mongodb-3.4-trusty
 
 
 # to be added to use mongoimport for further travis testing:
