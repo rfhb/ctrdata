@@ -4,15 +4,22 @@
 \alias{ctrRerunQuery}
 \title{ctrRerunQuery}
 \usage{
-ctrRerunQuery(querytoupdate = querytoupdate, debug = debug,
+ctrRerunQuery(querytoupdate = querytoupdate,
+  forcetoupdate = forcetoupdate, debug = debug,
   collection = collection, uri = uri, password = password,
   verbose = verbose, queryupdateterm = queryupdateterm)
 }
 \arguments{
-\item{querytoupdate}{Either the word "last" to re-run the last query that
-was loaded into the collection, or the integer number of query to be run
-again; see \link{dbQueryHistory}. This parameter takes precedence over
-\code{queryterm}.}
+\item{querytoupdate}{Either the word "last" or the number of query (based
+on \link{dbQueryHistory}) that should be run to retrieve any trial records
+that are new or have been updated since this query was run the last time.
+This parameter takes precedence over \code{queryterm}.
+For EUCTR, updates are available only for the last seven days;
+the query is run again if more time has passed since it was run last.}
+
+\item{forcetoupdate}{If \code{TRUE}, run again the query given in
+\code{querytoupdate}, irrespective of when it was run last
+(default is \code{FALSE}).}
 
 \item{debug}{Printing additional information if set to \code{TRUE}; default
 is \code{FALSE}.}

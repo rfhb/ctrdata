@@ -1,3 +1,8 @@
+# ctrdata 0.16.9002
+ - 2019-03-26
+ - improve dbFindFields() formatting
+ - added parameter to force running a query again
+   
 # ctrdata 0.16.9001
  - 2019-03-26
  - added futher typing (some of the numeric fields)

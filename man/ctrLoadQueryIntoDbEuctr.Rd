@@ -4,9 +4,9 @@
 \alias{ctrLoadQueryIntoDbEuctr}
 \title{ctrLoadQueryIntoDbEuctr}
 \usage{
-ctrLoadQueryIntoDbEuctr(queryterm, register, querytoupdate, euctrresults,
-  annotation.text, annotation.mode, details, parallelretrievals, debug,
-  collection, uri, password, verbose, queryupdateterm)
+ctrLoadQueryIntoDbEuctr(queryterm, register, euctrresults, annotation.text,
+  annotation.mode, details, parallelretrievals, debug, collection, uri,
+  password, verbose, queryupdateterm)
 }
 \arguments{
 \item{queryterm}{Either a string with the full URL of a search in a register
@@ -17,11 +17,6 @@ update records.}
 
 \item{register}{Vector of abbreviations of registers to query, defaults to
 "EUCTR"}
-
-\item{querytoupdate}{Either the word "last" to re-run the last query that
-was loaded into the collection, or the integer number of query to be run
-again; see \link{dbQueryHistory}. This parameter takes precedence over
-\code{queryterm}.}
 
 \item{euctrresults}{If \code{TRUE}, also download available results when
 retrieving and loading trials from EUCTR. This slows down this function.

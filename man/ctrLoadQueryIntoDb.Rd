@@ -6,8 +6,8 @@
 database}
 \usage{
 ctrLoadQueryIntoDb(queryterm = "", register = "EUCTR",
-  querytoupdate = 0L, euctrresults = FALSE, annotation.text = "",
-  annotation.mode = "append", details = TRUE,
+  querytoupdate = 0L, forcetoupdate = FALSE, euctrresults = FALSE,
+  annotation.text = "", annotation.mode = "append", details = TRUE,
   parallelretrievals = 10, debug = FALSE, collection = "ctrdata",
   uri = "mongodb://localhost/users",
   password = Sys.getenv("ctrdatamongopassword"), verbose = FALSE)
@@ -22,10 +22,16 @@ update records.}
 \item{register}{Vector of abbreviations of registers to query, defaults to
 "EUCTR"}
 
-\item{querytoupdate}{Either the word "last" to re-run the last query that
-was loaded into the collection, or the integer number of query to be run
-again; see \link{dbQueryHistory}. This parameter takes precedence over
-\code{queryterm}.}
+\item{querytoupdate}{Either the word "last" or the number of query (based
+on \link{dbQueryHistory}) that should be run to retrieve any trial records
+that are new or have been updated since this query was run the last time.
+This parameter takes precedence over \code{queryterm}.
+For EUCTR, updates are available only for the last seven days;
+the query is run again if more time has passed since it was run last.}
+
+\item{forcetoupdate}{If \code{TRUE}, run again the query given in
+\code{querytoupdate}, irrespective of when it was run last
+(default is \code{FALSE}).}
 
 \item{euctrresults}{If \code{TRUE}, also download available results when
 retrieving and loading trials from EUCTR. This slows down this function.

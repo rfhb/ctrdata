@@ -16,10 +16,15 @@
 #'   update records.
 #' @param register Vector of abbreviations of registers to query, defaults to
 #'   "EUCTR"
-#' @param querytoupdate Either the word "last" to re-run the last query that
-#'   was loaded into the collection, or the integer number of query to be run
-#'   again; see \link{dbQueryHistory}. This parameter takes precedence over
-#'   \code{queryterm}.
+#' @param querytoupdate Either the word "last" or the number of query (based
+#'   on \link{dbQueryHistory}) that should be run to retrieve any trial records
+#'   that are new or have been updated since this query was run the last time.
+#'   This parameter takes precedence over \code{queryterm}.
+#'   For EUCTR, updates are available only for the last seven days;
+#'   the query is run again if more time has passed since it was run last.
+#' @param forcetoupdate If \code{TRUE}, run again the query given in
+#'   \code{querytoupdate}, irrespective of when it was run last
+#'   (default is \code{FALSE}).
 #' @param euctrresults If \code{TRUE}, also download available results when
 #'   retrieving and loading trials from EUCTR. This slows down this function.
 #'   (For CTGOV, all available results are retrieved and loaded from
@@ -70,7 +75,7 @@
 #'
 #' @export
 #'
-ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate = 0L,
+ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate = 0L, forcetoupdate = FALSE,
                                euctrresults = FALSE, annotation.text = "", annotation.mode = "append",
                                details = TRUE, parallelretrievals = 10, debug = FALSE,
                                collection = "ctrdata", uri = "mongodb://localhost/users",
@@ -144,7 +149,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   querytermoriginal <- queryterm
   if ( (querytoupdate > 0) && (queryterm == "") ) {
     #
-    rerunparameters <- ctrRerunQuery(querytoupdate = querytoupdate,
+    rerunparameters <- ctrRerunQuery(querytoupdate = querytoupdate, forcetoupdate = forcetoupdate,
                                      debug = debug,
                                      collection = collection, uri = uri,
                                      password = password, verbose = verbose,
@@ -163,7 +168,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   ## main function
 
   # parameters for core functions
-  params <- list(queryterm = queryterm, register = register, querytoupdate = querytoupdate,
+  params <- list(queryterm = queryterm, register = register,
                  euctrresults = euctrresults, annotation.text = annotation.text, annotation.mode = annotation.mode,
                  details = details, parallelretrievals = parallelretrievals, debug = debug,
                  collection = collection, uri = uri,
@@ -221,7 +226,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
 #'
 #' @importFrom httr content GET
 #'
-ctrRerunQuery <- function(querytoupdate = querytoupdate,
+ctrRerunQuery <- function(querytoupdate = querytoupdate, forcetoupdate = forcetoupdate,
                           debug = debug,
                           collection = collection, uri = uri,
                           password = password, verbose = verbose,
@@ -258,91 +263,95 @@ ctrRerunQuery <- function(querytoupdate = querytoupdate,
   if (!grepl(register, "CTGOVEUCTR"))
     stop("Parameter 'register' not known - cannot update query ", querytoupdate, call. = FALSE)
 
-
   ## adapt updating procedure to respective register
   querytermoriginal <- queryterm
 
-  # ctgov
-  if (register == "CTGOV") {
+  ## mangle parameter only if not forcetoupdate,
+  # which stipulates to just rerun original query
+  if (!forcetoupdate) {
 
-    # ctgov:
-    # speficy any date - "lup_s/e" last update start / end:
-    # https://clinicaltrials.gov/ct2/results?term=&recr=&rslt=&type=Intr&cond=Cancer&intr=&titles=&outc=&spons=&lead=
-    # &id=&state1=&cntry1=&state2=&cntry2=&state3=&cntry3=&locn=&gndr=&age=0&rcv_s=&rcv_e=&
-    # lup_s=01%2F01%2F2015&lup_e=12%2F31%2F2016
+    # ctgov
+    if (register == "CTGOV") {
 
-    # if "lup_s" is already in query term, just re-run full query to avoid
-    # multiple queries in history that only differ in the timestamp:
-    if (grepl("&lup_[se]=[0-9]{2}", queryterm)) {
-      #
-      # remove queryupdateterm, thus running full again
-      queryupdateterm <- ""
-      warning("Query has date(s) for start or end of last update ('&lup_'); running again with these limits.",
-              immediate. = TRUE)
-      #
-    } else {
-      #
-      queryupdateterm <- strftime(strptime(initialday, format = "%Y-%m-%d"), format = "%m/%d/%Y")
-      queryupdateterm <- paste0("&lup_s=", queryupdateterm)
-      if (debug) message("DEBUG: Updating using this additional query term: ", queryupdateterm)
-      #
-    }
-    #
-    message("Rerunning query: ", queryterm, "\nLast run: ", initialday)
-  }
+      # ctgov:
+      # speficy any date - "lup_s/e" last update start / end:
+      # https://clinicaltrials.gov/ct2/results?term=&recr=&rslt=&type=Intr&cond=Cancer&intr=&titles=&outc=&spons=&lead=
+      # &id=&state1=&cntry1=&state2=&cntry2=&state3=&cntry3=&locn=&gndr=&age=0&rcv_s=&rcv_e=&
+      # lup_s=01%2F01%2F2015&lup_e=12%2F31%2F2016
 
-  # euctr
-  if (register == "EUCTR") {
-
-    # euctr:
-    # studies added or updated in the last 7 days:
-    # https://www.clinicaltrialsregister.eu/ctr-search/rest/feed/bydates?query=cancer&age=children
-
-    # check if update request is within time windows offered by the register (7 days)
-    if (difftime(Sys.Date(), initialday, units = "days") > 7) {
-      #
-      warning("'querytoupdate=", querytoupdate, "' not possible because it was last run more than 7 days ago",
-              " and register provides information on changes only for the last 7 days. Reverting to normal download.",
-              immediate. = TRUE)
-      #
-      message("Rerunning query: ", queryterm, "\nLast run: ", initialday)
-      #
-    } else {
-      #
-      # obtain rss feed with list of recently updated trials
-      rssquery <- utils::URLencode(paste0("https://www.clinicaltrialsregister.eu/ctr-search/rest/feed/bydates?query=",
-                                          queryterm))
-      if (debug) message("DEBUG (rss url): ", rssquery)
-      #
-      resultsRss <- httr::content(httr::GET(url = rssquery,
-                                            config = httr::config(ssl_verifypeer = FALSE)), as = "text")
-
-      if (debug) message("DEBUG (rss content): ", resultsRss)
-      #
-      # attempt to extract euctr number(s)
-      resultsRssTrials <- gregexpr("eudract_number:[0-9]{4}-[0-9]{6}-[0-9]{2}</link>", resultsRss)[[1]]
-      #
-      if (length(resultsRssTrials) == 1L && resultsRssTrials == -1L) {
-        message("First result page empty - no (new) trials found?")
-        return(invisible(0))
+      # if "lup_s" is already in query term, just re-run full query to avoid
+      # multiple queries in history that only differ in the timestamp:
+      if (grepl("&lup_[se]=[0-9]{2}", queryterm)) {
+        #
+        # remove queryupdateterm, thus running full again
+        queryupdateterm <- ""
+        warning("Query has date(s) for start or end of last update ('&lup_'); running again with these limits.",
+                immediate. = TRUE)
+        #
+      } else {
+        #
+        queryupdateterm <- strftime(strptime(initialday, format = "%Y-%m-%d"), format = "%m/%d/%Y")
+        queryupdateterm <- paste0("&lup_s=", queryupdateterm)
+        if (debug) message("DEBUG: Updating using this additional query term: ", queryupdateterm)
+        #
       }
       #
-      # if new trials found, download
-      resultsRssTrials <- sapply(resultsRssTrials, FUN = function(x) substr(resultsRss, x + 15, x + 28))
-      resultsRssTrials <- paste(resultsRssTrials, collapse = "+OR+")
-      if (debug) message("DEBUG (rss trials): ", resultsRssTrials)
-      #
-      # run query for extracted euctr number(s)
-      # store original query in update term
-      queryupdateterm <- queryterm
-      queryterm <- resultsRssTrials
-      #
-      if (debug) message("DEBUG: Updating using this query term: ", queryupdateterm)
-      #
-      message("Rerunning query: ", queryupdateterm, "\nLast run: ", initialday)
-      #
+      message("Rerunning query: ", queryterm, "\nLast run: ", initialday)
     }
-  }
+
+    # euctr
+    if (register == "EUCTR") {
+
+      # euctr:
+      # studies added or updated in the last 7 days:
+      # https://www.clinicaltrialsregister.eu/ctr-search/rest/feed/bydates?query=cancer&age=children
+
+      # check if update request is within time windows offered by the register (7 days)
+      if (difftime(Sys.Date(), initialday, units = "days") > 7) {
+        #
+        warning("'querytoupdate=", querytoupdate, "' not possible because it was last run more than 7 days ago",
+                " and register provides information on changes only for the last 7 days. Reverting to normal download.",
+                immediate. = TRUE)
+        #
+        message("Rerunning query: ", queryterm, "\nLast run: ", initialday)
+        #
+      } else {
+        #
+        # obtain rss feed with list of recently updated trials
+        rssquery <- utils::URLencode(paste0("https://www.clinicaltrialsregister.eu/ctr-search/rest/feed/bydates?query=",
+                                            queryterm))
+        if (debug) message("DEBUG (rss url): ", rssquery)
+        #
+        resultsRss <- httr::content(httr::GET(url = rssquery,
+                                              config = httr::config(ssl_verifypeer = FALSE)), as = "text")
+
+        if (debug) message("DEBUG (rss content): ", resultsRss)
+        #
+        # attempt to extract euctr number(s)
+        resultsRssTrials <- gregexpr("eudract_number:[0-9]{4}-[0-9]{6}-[0-9]{2}</link>", resultsRss)[[1]]
+        #
+        if (length(resultsRssTrials) == 1L && resultsRssTrials == -1L) {
+          message("First result page empty - no (new) trials found?")
+          return(invisible(0))
+        }
+        #
+        # if new trials found, download
+        resultsRssTrials <- sapply(resultsRssTrials, FUN = function(x) substr(resultsRss, x + 15, x + 28))
+        resultsRssTrials <- paste(resultsRssTrials, collapse = "+OR+")
+        if (debug) message("DEBUG (rss trials): ", resultsRssTrials)
+        #
+        # run query for extracted euctr number(s)
+        # store original query in update term
+        queryupdateterm <- queryterm
+        queryterm <- resultsRssTrials
+        #
+        if (debug) message("DEBUG: Updating using this query term: ", queryupdateterm)
+        #
+        message("Rerunning query: ", queryupdateterm, "\nLast run: ", initialday)
+        #
+      }
+    } # register euctr
+  } # !forcetoupdate
 
   ## return main parameters needed
   return(data.frame("querytermoriginal" = querytermoriginal,
@@ -551,7 +560,7 @@ dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber,
 #' @importFrom jsonlite toJSON
 #' @importFrom httr content headers progress write_disk GET HEAD
 #'
-ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
+ctrLoadQueryIntoDbCtgov <- function(queryterm, register,
                                     euctrresults, annotation.text, annotation.mode,
                                     details, parallelretrievals, debug,
                                     collection, uri,
@@ -741,7 +750,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register, querytoupdate,
 #' @importFrom httr content headers progress write_disk GET HEAD
 #' @importFrom curl curl_fetch_multi multi_run new_pool
 #'
-ctrLoadQueryIntoDbEuctr <- function(queryterm, register, querytoupdate,
+ctrLoadQueryIntoDbEuctr <- function(queryterm, register,
                                     euctrresults, annotation.text, annotation.mode,
                                     details, parallelretrievals, debug,
                                     collection, uri,
