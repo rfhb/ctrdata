@@ -1155,7 +1155,9 @@ typeField <- function(dfi){
   tmp <- try({switch(
     EXPR = names(dfi)[2],
     #
+    #
     # dates
+    #
     # - intern
     "record_last_import" = strptime(dfi[, 2], format = "%Y-%m-%d %H:%M:%s"),
     # - EUCTR
@@ -1173,7 +1175,9 @@ typeField <- function(dfi){
     "lastupdate_posted"          = as.Date(dfi[, 2], tryFormats = c("%b %d, %Y", "%b %Y")),
     "lastchanged_date"           = as.Date(dfi[, 2], tryFormats = c("%b %d, %Y", "%b %Y")),
     #
+    #
     # factors
+    #
     # - EUCTR Yes / No / Information not present in EudraCT
     "e13_condition_being_studied_is_a_rare_disease" = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
     #
@@ -1239,9 +1243,40 @@ typeField <- function(dfi){
     # - CTGOV
     "has_expanded_access"            = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
     "oversight_info.has_dmc"         = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
-    "eligibility.healthy_volunteers" = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA))
+    "eligibility.healthy_volunteers" = sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA)),
     #
-    )
+    #
+    # numbers
+    #
+    # - EUCTR
+    "e824_number_of_treatment_arms_in_the_trial" = sapply(dfi[, 2], FUN = function(x) as.integer(x = x)),
+    "e891_in_the_member_state_concerned_years"   = sapply(dfi[, 2], FUN = function(x) as.integer(x = x)),
+    "e891_in_the_member_state_concerned_months"  = sapply(dfi[, 2], FUN = function(x) as.integer(x = x)),
+    "e891_in_the_member_state_concerned_days"    = sapply(dfi[, 2], FUN = function(x) as.integer(x = x)),
+    "e892_in_all_countries_concerned_by_the_trial_years"  = sapply(dfi[, 2], FUN = function(x) as.integer(x = x)),
+    "e892_in_all_countries_concerned_by_the_trial_months" = sapply(dfi[, 2], FUN = function(x) as.integer(x = x)),
+    "e892_in_all_countries_concerned_by_the_trial_days"   = sapply(dfi[, 2], FUN = function(x) as.integer(x = x)),
+    "e841_number_of_sites_anticipated_in_member_state_concerned" = sapply(dfi[, 2], FUN = function(x) as.integer(x = x)),
+    "f11_number_of_subjects_for_this_age_range"   = sapply(dfi[, 2], FUN = function(x) as.integer(x = x)),
+    "f1111_number_of_subjects_for_this_age_range" = sapply(dfi[, 2], FUN = function(x) as.integer(x = x)),
+    "f1121_number_of_subjects_for_this_age_range" = sapply(dfi[, 2], FUN = function(x) as.integer(x = x)),
+    "f1131_number_of_subjects_for_this_age_range" = sapply(dfi[, 2], FUN = function(x) as.integer(x = x)),
+    "f1141_number_of_subjects_for_this_age_range" = sapply(dfi[, 2], FUN = function(x) as.integer(x = x)),
+    "f1151_number_of_subjects_for_this_age_range" = sapply(dfi[, 2], FUN = function(x) as.integer(x = x)),
+    "f1161_number_of_subjects_for_this_age_range" = sapply(dfi[, 2], FUN = function(x) as.integer(x = x)),
+    "f121_number_of_subjects_for_this_age_range"  = sapply(dfi[, 2], FUN = function(x) as.integer(x = x)),
+    "f131_number_of_subjects_for_this_age_range"  = sapply(dfi[, 2], FUN = function(x) as.integer(x = x)),
+    "f41_in_the_member_state"          = sapply(dfi[, 2], FUN = function(x) as.integer(x = x)),
+    "f421_in_the_eea"                  = sapply(dfi[, 2], FUN = function(x) as.integer(x = x)),
+    "f422_in_the_whole_clinical_trial" = sapply(dfi[, 2], FUN = function(x) as.integer(x = x)),
+    #
+    # - CTGOV
+    "number_of_arms" = sapply(dfi[, 2], FUN = function(x) as.integer(x = x)),
+    "enrollment"     = sapply(dfi[, 2], FUN = function(x) as.integer(x = x))
+    #
+    # TODO: results-related variables
+    #
+  )
   },
   silent = TRUE)
 
