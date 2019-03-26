@@ -66,6 +66,7 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   s/^(EudraCT Number.*)$/X.1 $1/;
   s/^(Sponsor) ([0-9]+)$/B.1 $1: $2/;
   s/^(Clinical Trial.*)$/X.4 $1/;
+  s/^(Trial Status.*)$/X.5 $1/;
   s/^(Date on.*)$/X.6 $1/;
   s/^(Link.*)$/X.7 $1/;
 
