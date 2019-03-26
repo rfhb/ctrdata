@@ -192,11 +192,12 @@ test_that("retrieve data from register ctgov", {
   q <- paste0("https://clinicaltrials.gov/ct2/results?term=osteosarcoma&type=Intr&phase=0&age=0&lup_e=")
 
   # test 6
-  expect_message(ctrLoadQueryIntoDb(
-    paste0(q, "12%2F31%2F2008"),
-    collection = coll,
-    debug = TRUE,
-    verbose = TRUE),
+  expect_message(capture_output(
+    ctrLoadQueryIntoDb(
+      paste0(q, "12%2F31%2F2008"),
+      collection = coll,
+      debug = TRUE,
+      verbose = TRUE)),
     "Imported or updated ")
 
   # manipulate history to force testing updating
@@ -329,8 +330,8 @@ test_that("retrieve results from register euctr", {
 
   # test 16
   expect_true(!any(tmp[tmp$a2_eudract_number == "2007-000371-42", c(1, 2, 3)] == ""))
-  expect_true(all(c(tmp$firstreceived_results_date [tmp$a2_eudract_number == "2007-000371-42"] == as.Date("2015-07-29"),
-                    tmp$firstreceived_results_date [tmp$a2_eudract_number == "2011-004742-18"] == as.Date("2016-07-28"))))
+  expect_true(all(c(tmp$firstreceived_results_date[tmp$a2_eudract_number == "2007-000371-42"] == as.Date("2015-07-29"),
+                    tmp$firstreceived_results_date[tmp$a2_eudract_number == "2011-004742-18"] == as.Date("2016-07-28"))))
 
   # test 16a
   expect_true(class(tmp$firstreceived_results_date)     == "Date")
@@ -360,11 +361,11 @@ test_that("browser interaction", {
   has_internet()
 
   # test 20
-  expect_message(ctrOpenSearchPagesInBrowser(q),
+  expect_message(ctrOpenSearchPagesInBrowser(input = q),
                  "Opening browser for search:")
 
   # test 21
-  expect_message(ctrOpenSearchPagesInBrowser(tmp),
+  expect_message(ctrOpenSearchPagesInBrowser(input = tmp),
                  "Opening browser for search:")
 
   # euctr
