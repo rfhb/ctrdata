@@ -1345,23 +1345,35 @@ installCygwinWindowsDoInstall <- function(force = FALSE, proxy = ""){
   if (!force & dir.exists("c:\\cygwin"))
     stop("cygwin is already installed. To overwrite, use force = TRUE.", call. = FALSE)
   #
+  # define installation command
+  installcmd <- paste0("--no-admin --quiet-mode --verbose --upgrade-also --root c:/cygwin ",
+                       "--site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ ",
+                       "--packages perl,php-jsonc,php-simplexml")
+  #
+  # inform user
+  message("Attempting download of cygwin ...")
+  #
   # create directory within R sessions temporary directory
   tmpfile <- paste0(tempdir(), "/cygwin_inst")
   dir.create(tmpfile)
   dstfile <- paste0(tmpfile, "/cygwinsetup.exe")
   #
   # download.file uses the proxy configured in the system
-  if (grepl("64-bit", utils::sessionInfo()$platform))
-    utils::download.file(url = "http://cygwin.org/setup-x86_64.exe", destfile = dstfile, quiet = TRUE, mode = "wb")
-  if (grepl("32-bit", utils::sessionInfo()$platform))
-    utils::download.file(url = "http://cygwin.org/setup-x86.exe",    destfile = dstfile, quiet = TRUE, mode = "wb")
+  tmpurl <- switch(utils::sessionInfo()$platform,
+                   "64-bit" = "setup-x86_64.exe",
+                   "32-bit" = "setup-x86.exe")
+  #
+  tmpdl <- try({utils::download.file(url = paste0("http://cygwin.org/", tmpurl),
+                                     destfile = dstfile,
+                                     quiet = TRUE,
+                                     mode = "wb")
+    }, silent = TRUE)
   #
   # check
-  if (!file.exists(dstfile))
-    stop("Download failed. Please install manually.", call. = FALSE)
-  #
-  if (file.size(dstfile) < (5 * 10 ^ 5))
-    stop("Download failed (file too small). Please install manually.", call. = FALSE)
+  if (!file.exists(dstfile) || file.size(dstfile) < (5 * 10 ^ 5))
+    stop("Failed, please download manually and install with this command:\n",
+         tmpurl, " ", installcmd,
+         call. = FALSE)
   #
   if (proxy != "") {
     # manual setting overrides all
@@ -1405,11 +1417,6 @@ installCygwinWindowsDoInstall <- function(force = FALSE, proxy = ""){
       }
     }
   }
-  #
-  # compose installation command
-  installcmd <- paste0("--no-admin --quiet-mode --verbose --upgrade-also --root c:/cygwin ",
-                       "--site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ ",
-                       "--packages perl,php-jsonc,php-simplexml")
   #
   # execute cygwin setup command
   system(paste0(dstfile, " ", installcmd, " --local-package-dir ", tmpfile, " ", proxy))

@@ -1,3 +1,8 @@
+# ctrdata 0.16.9001
+ - 2019-03-26
+ - added futher typing (some of the numeric fields)
+ - improve cygwin install attempts and information
+   
 # ctrdata 0.16.9000
  - 2019-03-24
  - removed dependency on local mongodb installation (major rewrite)
