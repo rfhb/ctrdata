@@ -481,11 +481,13 @@ dbFindFields <- function(namepart = "", allmatches = TRUE, debug = FALSE,
            for(var key in obj){
               if(typeof obj[key] == 'object' && obj[key] !== null){
                  if(pth != '') {pth = pth + '.'}
-                 searchInObj(obj[key], pth + key)
+                    searchInObj(obj[key], pth + key);
               }else{
-                 key = pth + '.' + key
-                 key = key.replace(/[.][0-9]+[.]/, '.')
-                 key = key.replace(/^[.]/, '')
+                 key = pth + '.' + key;
+                 key = key.replace(/[.][0-9]+[.]/g, '.');
+                 key = key.replace(/[.][0-9]+$/, '');
+                 key = key.replace(/[.][.]+/g, '.');
+                 key = key.replace(/^[.]/, '');
                  emit(key, 1);
         }}}}",
       reduce = "function(id, counts) {return Array.sum(counts)}"
