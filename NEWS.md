@@ -1,3 +1,7 @@
+# ctrdata 0.17
+ - 2019-03-27
+ - release version
+ 
 # ctrdata 0.16.9002
  - 2019-03-26
  - improve dbFindFields() formatting

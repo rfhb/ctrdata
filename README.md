@@ -23,11 +23,11 @@ started mid 2015 and was motivated by the wish to understand trends in
 designs and conduct of trials and their availability for patients. The
 package is to be used within the [R](https://www.r-project.org/) system.
 
-Last edit 2019-03-24 for version 0.16.9000, with bug fixes and new
+Last edit 2019-03-27 for version 0.17.0, with bug fixes and new
 features:
 
   - dates are now returned as Date types, and some Yes / No fields are
-    returned as logical, by function `dbGetFieldsIntoDf()`,  
+    returned as logical, by function `dbGetFieldsIntoDf()`,
   - personal annotations can be added when records are retrieved from a
     register (new options `annotate.text` and `annotate.mode` for
     function `ctrLoadQueryIntoDb()`), for later use in analysis, and
@@ -78,14 +78,14 @@ citation("ctrdata")
 #> 
 #>   Ralf Herold (NA). ctrdata: Retrieve and Analyze Information on
 #>   Clinical Trials from Public Registers. R package version
-#>   0.15.9007. https://github.com/rfhb/ctrdata
+#>   0.16.9002. https://github.com/rfhb/ctrdata
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
 #>   @Manual{,
 #>     title = {ctrdata: Retrieve and Analyze Information on Clinical Trials from Public Registers},
 #>     author = {Ralf Herold},
-#>     note = {R package version 0.15.9007},
+#>     note = {R package version 0.16.9002},
 #>     url = {https://github.com/rfhb/ctrdata},
 #>   }
 ```
@@ -123,19 +123,12 @@ from github.com:
 
 ``` r
 install.packages("devtools")
-#
-devtools::install_github("rfhb/ctrdata")
-#
-# - In case of a problem with the SSL CA cert:
-install.packages("httr")
-httr::set_config(httr::config(ssl_verifypeer = 0L))
-devtools::install_github("rfhb/ctrdata")
-# 
-# - If not connecting, a proxy may need to be set:
-install.packages("httr")
-httr::set_config(httr::use_proxy("proxy.server.domain", 8080))
 devtools::install_github("rfhb/ctrdata")
 ```
+
+In case of problems, a release version of package `ctrdata` can be
+downloaded [here](https://github.com/rfhb/ctrdata/releases) and
+installed from the downloaded archive.
 
 # Overview of functions in `ctrdata`
 
@@ -271,12 +264,13 @@ with (result, table (p_end_of_trial_status, b1_sponsor.b31_and_b32_status_of_the
     (`ctrOpenSearchPagesInBrowser(copyright = TRUE)`).
 
   - This package `ctrdata` has been made possible based on the work done
-    for [Variety](https://github.com/variety/variety),
-    [RCurl](http://www.omegahat.org/RCurl/),
-    [curl](https://github.com/jeroenooms/curl),
+    for [curl](https://github.com/jeroenooms/curl),
     [clipr](https://github.com/mdlincoln/clipr),
-    [mongolite](https://cran.r-project.org/web/packages/mongolite/) and
-    for [R](http://www.r-project.org/).
+    [mongolite](https://cran.r-project.org/package=mongolite) and
+    [R](http://www.r-project.org/),
+    [httr](https://cran.r-project.org/package=httr),
+    [xml2](https://cran.r-project.org/package=xml2) and
+    [rvest](https://cran.r-project.org/package=rvest).
 
 # Issues and notes
 
