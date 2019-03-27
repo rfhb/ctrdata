@@ -11,4 +11,4 @@
 There are currently no downstream dependencies for this package.
 
 ## Submission reason
-* fixes minor bugs
+* new versionwith reduced depencies and faster operation on remote servers
