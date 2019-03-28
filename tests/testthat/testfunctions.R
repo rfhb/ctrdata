@@ -78,6 +78,24 @@ has_toolchain <- function(){
   }
 }
 
+
+# helper function to check mongodb
+has_mongo_remote <- function(){
+
+  # password = Sys.getenv("ctrdatamongopassword")
+  # for local testing tests:
+  # Sys.unsetenv("ctrdatamongopassword")
+  mongo_ok <- try(ctrdata:::ctrMongo(
+    uri = "mongodb+srv://7RBnH3BF@cluster0-b9wpw.mongodb.net/dbtemp"),
+    silent = TRUE)
+  #
+  # use test result
+  if ("try-error" %in% class(mongo_ok)) {
+    skip("Remote mongodb not accessible.")
+  }
+}
+
+
 #### mongodb local password free access ####
 test_that("access to mongo db from R package", {
 
@@ -87,7 +105,9 @@ test_that("access to mongo db from R package", {
   coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
 
   # initialise = drop collections from mongodb
-  try(mongolite::mongo(collection = coll, url = "mongodb://localhost/users")$drop(), silent = TRUE)
+  try(mongolite::mongo(collection = coll,
+                       url = "mongodb://localhost/users")$drop(),
+      silent = TRUE)
 
   # test 1
   expect_message(dbQueryHistory(collection = coll),
@@ -99,8 +119,9 @@ test_that("access to mongo db from R package", {
 #### remote mongodb ####
 test_that("remote mongo access", {
 
-  has_internet()
   has_toolchain()
+  has_internet()
+  has_mongo_remote()
 
   # initialise
   uri <- "mongodb+srv://7RBnH3BF@cluster0-b9wpw.mongodb.net/dbtemp"
