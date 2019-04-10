@@ -77,15 +77,15 @@ citation("ctrdata")
 #> To cite package 'ctrdata' in publications use:
 #> 
 #>   Ralf Herold (NA). ctrdata: Retrieve and Analyze Information on
-#>   Clinical Trials from Public Registers. R package version
-#>   0.16.9002. https://github.com/rfhb/ctrdata
+#>   Clinical Trials from Public Registers. R package version 0.17.0.
+#>   https://github.com/rfhb/ctrdata
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
 #>   @Manual{,
 #>     title = {ctrdata: Retrieve and Analyze Information on Clinical Trials from Public Registers},
 #>     author = {Ralf Herold},
-#>     note = {R package version 0.16.9002},
+#>     note = {R package version 0.17.0},
 #>     url = {https://github.com/rfhb/ctrdata},
 #>   }
 ```
@@ -129,6 +129,11 @@ devtools::install_github("rfhb/ctrdata")
 In case of problems, a release version of package `ctrdata` can be
 downloaded [here](https://github.com/rfhb/ctrdata/releases) and
 installed from the downloaded archive.
+
+## 3\. Mongo data base
+
+Remote and local mongo servers can be used with the package, see
+included tests and examples.
 
 # Overview of functions in `ctrdata`
 
