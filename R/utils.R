@@ -1161,7 +1161,7 @@ typeField <- function(dfi){
     # dates
     #
     # - intern
-    "record_last_import" = strptime(dfi[, 2], format = "%Y-%m-%d %H:%M:%s"),
+    "record_last_import" = strptime(dfi[, 2], format = "%Y-%m-%d %H:%M:%S"),
     # - EUCTR
     "n_date_of_ethics_committee_opinion"                                     = as.Date(dfi[, 2], format = "%Y-%m-%d"),
     "n_date_of_competent_authority_decision"                                 = as.Date(dfi[, 2], format = "%Y-%m-%d"),
@@ -1285,9 +1285,16 @@ typeField <- function(dfi){
   # reset date time
   Sys.setlocale("LC_TIME", lct)
 
-  # change column of input
+  # prepare output
   if (class(tmp) != "try-error" && !is.null(unlist(tmp))) {
-    dfi[, 2] <- tmp
+    # need to construct new data frame,
+    # since replacing columns with
+    # posixct did not work
+    dfn <- names(dfi)
+    dfi <- data.frame(dfi[["_id"]],
+                      tmp,
+                      stringsAsFactors = FALSE)
+    dfn -> names(dfi)
   }
 
   # return
