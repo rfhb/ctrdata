@@ -23,7 +23,7 @@ started mid 2015 and was motivated by the wish to understand trends in
 designs and conduct of trials and their availability for patients. The
 package is to be used within the [R](https://www.r-project.org/) system.
 
-Last edit 2019-03-27 for version 0.17.0, with bug fixes and new
+Last edit 2019-03-27 for version 0.17.9000, with bug fixes and new
 features:
 
   - dates are now returned as Date types, and some Yes / No fields are
@@ -63,7 +63,7 @@ Remember to respect the registers’ copyrights and terms and conditions
 (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
 package in any publication as follows: `Ralf Herold (2019). ctrdata:
 Retrieve and Analyze Information on Clinical Trials from Public
-Registers. R package version 0.14. https://github.com/rfhb/ctrdata`
+Registers. R package version 0.17. https://github.com/rfhb/ctrdata`
 
 <!--
 
@@ -77,15 +77,15 @@ citation("ctrdata")
 #> To cite package 'ctrdata' in publications use:
 #> 
 #>   Ralf Herold (NA). ctrdata: Retrieve and Analyze Information on
-#>   Clinical Trials from Public Registers. R package version 0.17.0.
-#>   https://github.com/rfhb/ctrdata
+#>   Clinical Trials from Public Registers. R package version
+#>   0.17.9000. https://github.com/rfhb/ctrdata
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
 #>   @Manual{,
 #>     title = {ctrdata: Retrieve and Analyze Information on Clinical Trials from Public Registers},
 #>     author = {Ralf Herold},
-#>     note = {R package version 0.17.0},
+#>     note = {R package version 0.17.9000},
 #>     url = {https://github.com/rfhb/ctrdata},
 #>   }
 ```
@@ -118,22 +118,25 @@ needed).
 ## 2\. Within R
 
 Within [R](https://www.r-project.org/), use the following commands to
-get and install the current development version of package `ctrdata`
-from github.com:
+get and install package `ctrdata`:
 
 ``` r
+# Release version:
+install.packages("ctrdata")
+
+# Development version from github.com:
 install.packages("devtools")
 devtools::install_github("rfhb/ctrdata")
 ```
 
-In case of problems, a release version of package `ctrdata` can be
-downloaded [here](https://github.com/rfhb/ctrdata/releases) and
-installed from the downloaded archive.
+Package `ctrdata` can be found [here on
+CRAN](https://cran.r-project.org/package=ctrdata).
 
-## 3\. Mongo data base
+## 3\. Mongo database
 
-Remote and local mongo servers can be used with the package, see
-included tests and examples.
+A remote or a local mongo database server can be used with the package,
+see included tests and examples. Suggested installation instructions are
+[here](https://docs.mongodb.com/manual/administration/install-community/).
 
 # Overview of functions in `ctrdata`
 
@@ -148,7 +151,7 @@ included tests and examples.
 | dbFindIdsUniqueTrials          | Produce a vector of de-duplicated identifiers of clinical trial records in the database collection                         |
 | dbGetFieldsIntoDf              | Create a data.frame from records in the database collection with the specified fields                                      |
 | dfMergeTwoVariablesRelevel     | Merge two variables into a single variable, optionally map values to a new set of values                                   |
-| installCygwinWindowsDoInstall  | Convenience function to install a cygwin environment under MS Windows, including perl, sed, cat and php                    |
+| installCygwinWindowsDoInstall  | Convenience function to install a cygwin environment under MS Windows                                                      |
 
 # Example workflow
 
@@ -161,14 +164,12 @@ the trials’ status.
 
 ``` r
 library(ctrdata)
-#> 
-#> Information on this package and how to use it: 
-#> https://github.com/rfhb/ctrdata/
+#> Information on this package and how to use it:
+#> https://cran.r-project.org/package=ctrdata
 #> 
 #> Please respect the requirements and the copyrights of the
 #> clinical trial registers when using their information. Call
 #> ctrOpenSearchPagesInBrowser(copyright = TRUE) and visit
-#> 
 #> https://www.clinicaltrialsregister.eu/disclaimer.html
 #> https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use
 #> Testing helper binaries:
@@ -250,6 +251,8 @@ with (result, table (p_end_of_trial_status, b1_sponsor.b31_and_b32_status_of_the
 
 # Features in the works
 
+  - Explore NoSQL databases other than Mongo
+
   - Explore using the Windows Subsystem for Linux (WSL) instead of
     cygwin
 
@@ -279,13 +282,13 @@ with (result, table (p_end_of_trial_status, b1_sponsor.b31_and_b32_status_of_the
 
 # Issues and notes
 
-  - Please file issues and bugs here:
-    <https://github.com/rfhb/ctrdata/issues>.
+  - Please file issues and bugs
+    [here](https://github.com/rfhb/ctrdata/issues).
 
-  - Package `ctrdata` should work and was tested on Linux, Mac OS X and
-    MS Windows systems. Linux and MS Windows are tested using continuous
-    integration, see badges at the beginning of this document. Please
-    file an issue for any problems.
+  - Package `ctrdata` should work and is continually tested on Linux,
+    Mac OS X and MS Windows systems. Linux and MS Windows are tested
+    using continuous integration, see badges at the beginning of this
+    document. Please file an issue for any problems.
 
   - The information in the registers may not be fully correct; see [this
     publication on CTGOV](https://www.bmj.com/content/361/bmj.k1452).
