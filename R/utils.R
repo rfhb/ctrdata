@@ -1169,13 +1169,13 @@ typeField <- function(dfi){
     "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database" = as.Date(dfi[, 2], format = "%Y-%m-%d"),
     "firstreceived_results_date"                                             = as.Date(dfi[, 2], format = "%Y-%m-%d"),
     # - CTGOV
-    "start_date"                 = as.Date(dfi[, 2], tryFormats = c("%b %Y")),
-    "primary_completion_date"    = as.Date(dfi[, 2], tryFormats = c("%b %Y")),
-    "completion_date"            = as.Date(dfi[, 2], tryFormats = c("%b %Y")),
-    "firstreceived_date"         = as.Date(dfi[, 2], tryFormats = c("%b %d, %Y", "%b %Y")),
-    "resultsfirst_posted"        = as.Date(dfi[, 2], tryFormats = c("%b %d, %Y", "%b %Y")),
-    "lastupdate_posted"          = as.Date(dfi[, 2], tryFormats = c("%b %d, %Y", "%b %Y")),
-    "lastchanged_date"           = as.Date(dfi[, 2], tryFormats = c("%b %d, %Y", "%b %Y")),
+    "start_date"              = as.Date(dfi[, 2], tryFormats = c("%b %Y")),
+    "primary_completion_date" = as.Date(dfi[, 2], tryFormats = c("%b %Y")),
+    "completion_date"         = as.Date(dfi[, 2], tryFormats = c("%b %Y")),
+    "firstreceived_date"      = as.Date(dfi[, 2], tryFormats = c("%b %d, %Y", "%b %Y")),
+    "resultsfirst_posted"     = as.Date(dfi[, 2], tryFormats = c("%b %d, %Y", "%b %Y")),
+    "lastupdate_posted"       = as.Date(dfi[, 2], tryFormats = c("%b %d, %Y", "%b %Y")),
+    "lastchanged_date"        = as.Date(dfi[, 2], tryFormats = c("%b %d, %Y", "%b %Y")),
     #
     #
     # factors
@@ -1288,6 +1288,7 @@ typeField <- function(dfi){
   # prepare output
   if (!("try-error" %in% class(tmp)) &&
       !is.null(unlist(tmp))) {
+
     # need to construct new data frame,
     # since replacing columns with
     # posixct did not work
@@ -1296,6 +1297,7 @@ typeField <- function(dfi){
                       tmp,
                       stringsAsFactors = FALSE)
     names(dfi) <- dfn
+
   }
 
   # return
@@ -1306,7 +1308,7 @@ typeField <- function(dfi){
 
 #' Annotate ctrdata function return values
 #'
-#' @param  x object to be annotated
+#' @param x object to be annotated
 #'
 #' @inheritParams ctrMongo
 #'
