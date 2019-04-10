@@ -1294,7 +1294,7 @@ typeField <- function(dfi){
     dfi <- data.frame(dfi[["_id"]],
                       tmp,
                       stringsAsFactors = FALSE)
-    dfn -> names(dfi)
+    names(dfi) <- dfn
   }
 
   # return
