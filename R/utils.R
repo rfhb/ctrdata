@@ -1286,7 +1286,8 @@ typeField <- function(dfi){
   Sys.setlocale("LC_TIME", lct)
 
   # prepare output
-  if (class(tmp) != "try-error" && !is.null(unlist(tmp))) {
+  if (!("try-error" %in% class(tmp)) &&
+      !is.null(unlist(tmp))) {
     # need to construct new data frame,
     # since replacing columns with
     # posixct did not work
