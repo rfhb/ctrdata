@@ -1,3 +1,10 @@
+# ctrdata 0.18
+ - 2019-04-11
+ - release version
+ - bug fixes in field typing
+ - move to use remote mongodb server
+ - updated vignettes
+ 
 # ctrdata 0.17
  - 2019-03-27
  - release version
