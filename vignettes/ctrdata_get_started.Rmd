@@ -26,121 +26,135 @@ Alternatively, the R system can be used from software products such as R Studio 
 General information on the `ctrdata` package is available here: [https://github.com/rfhb/ctrdata](https://github.com/rfhb/ctrdata). 
 
 ```{r install_ctrdata, eval=FALSE}
-# 
-# install preparatory package
-install.packages(c("devtools", "httr"))
-#
-# set proxy, if needed
-library(httr)
-set_config(use_proxy("proxy.server.domain", 8080))
-#
-# on windows: change library path to *not* use an 
-# UNC notation (\\server\directory) for the library
-.libPaths("D:/my/directory/")
-#
-# now install this package and the packages it depends on
-# (mongolite, jsonlite, RCurl, curl, clipr)
-devtools::install_github("rfhb/ctrdata", dependencies = "Depends")
-#
-# note: on Windows, cygwin has to be installed
-# to provide php, bash, perl, cat and sed programs.
-# this can be done like this (remove proxy if not needed): 
-ctrdata::installCygwinWindowsDoInstall(proxy = "proxy.server.domain:8080") 
-#
+install.packages("ctrdata")
 ```
 
+The above should install package `ctrdata` into the user's library. If this installation does not succeed, the following sections offer potential solutions. 
+
+A proxy server may be need to be specified, such as follows: 
+
+```{r, eval=FALSE}
+library(httr)
+set_config(use_proxy("your_proxy.server.domain", port = 8080))
+```
+
+On MS Windows, it seems recommended to not use UNC notation (such as `\\server\directory`) for specifying the user's library location: 
+
+```{r, eval=FALSE}
+.libPaths("D:/my/directory/")
+```
+
+For using the development version of package `ctrdata`, install from GitHub: 
+
+```{r, eval=FALSE}
+# install preparatory package
+install.packages(c("devtools", "httr"))
+# now install this package and the packages it depends on
+devtools::install_github("rfhb/ctrdata", dependencies = "Depends")
+```
+
+## Install cygwin on MS Windows
+
+As noted in the README for package `ctrdata`, on MS Windows the cygwin environment has to be installed, into the local directory `c:\cygwin`. The applications php, bash, perl, cat and sed in the cygwin environment are required for function `ctrLoadQueryIntoDb()` of package `ctrdata` (other functions in the package do not have this requirement). The installation of a minimal cygwin environment on MS Windows can be effected from package `ctrdata` as follows: 
+
+```{r, eval=FALSE}
+ctrdata::installCygwinWindowsDoInstall() 
+```
+
+If need be, a proxy can be specified: 
+
+```{r, eval=FALSE}
+ctrdata::installCygwinWindowsDoInstall(proxy = "proxy.server.domain:8080") 
+```
+
+Users who want or need to install cygwin manually can download the setup executable from [here](https://cygwin.com/). In MS Windows command window or Powershell window, use the following command line. The parameters are explained [here](https://cygwin.com/faq/faq.html#faq.setup.cli).
+
+```{bash, eval=FALSE}
+setup-x86_64.exe --no-admin --quiet-mode --verbose --upgrade-also --root c:/cygwin --site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages perl,php-jsonc,php-simplexml
+```
 
 ## Attach package `ctrdata`
+
 ```{r attach_ctrdata}
-#
 library(ctrdata)
-#
 ```
 
 ## Open register's advanced search page in browser
+
+These functions open the browser, where the user can start searching for trials of interest. 
+
 ```{r show_brower_search_pages}
-#
 ctrOpenSearchPagesInBrowser()
-#
+
 # Please review and respect register copyrights:
-#
 ctrOpenSearchPagesInBrowser(copyright = TRUE)
-#
+
 # Open browser with example search:
-#
-ctrOpenSearchPagesInBrowser(register = "EUCTR", queryterm = "cancer&age=under-18")
-#
+ctrOpenSearchPagesInBrowser(input = "cancer&age=under-18",
+                            register = "EUCTR")
 ```
 
 ## Click search parameters and execute search in browser 
 
+Refine the search until the trials of interest are listed in the browser. Currently, the total number of trials that can be retrieved with package `ctrdata` is intentionally set to 5000 (CTGOV). 
+
 ## Copy address from browser address bar to clipboard
 
+Using operating system functions. 
+
 ## Get address from clipboard
+
+The next steps are executed in the R environment: 
+
 ```{r get_query_from_browser}
-#
 q <- ctrGetQueryUrlFromBrowser()
-#
 # Found search query from EUCTR.
 # [1] "cancer&age=under-18"
-#
 ```
 
 ## Retrieve protocol-related information, transform, save to database, check
-```{r execute_load_query}
-#
+
+```{r execute_load_query, eval=FALSE}
 # Use search q that was defined in previous step: 
-#
-ctrLoadQueryIntoDb(q)
-#
+ctrLoadQueryIntoDb(queryterm = q)
+
 # Alternatively, use the following to retrieve a couple of trial records: 
-#
-ctrLoadQueryIntoDb(queryterm = "2010-024264-18", register = "EUCTR")
-#
+ctrLoadQueryIntoDb(queryterm = "2010-024264-18", 
+                   register = "EUCTR")
 # If no parameters are given for a database connection: uses mongodb
 # on localhost, port 27017, database "users", collection "ctrdata"
-# note: when run for first time, may download variety.js
-#
+
 # Show which queries have been downloaded into the database so far
-#
 dbQueryHistory()
-#
-# Using Mongo DB (collections "ctrdata" and "ctrdataKeys" in database "users" on "localhost").
-# Number of queries in history of "users.tmp": 2
 #       query-timestamp query-register query-records                  query-term
 # 1 2016-01-13-10-51-56          CTGOV          5233 type=Intr&cond=cancer&age=0
 # 2 2016-01-13-10-40-16          EUCTR           910         cancer&age=under-18
-#
 ```
 
 ## Analyse database contents
+
 ```{r analyse_query_database}
-#
 # find names of fields of interest in database:
-#
-dbFindFields("status", allmatches = TRUE)
-#
-# [1] "overall_status"  "b1_sponsor.XX.b31_and_b32_status_of_the_sponsor" "p_end_of_trial_status"                          
-# [4] "location.status" "location.XX.status"
-#
+dbFindFields(namepart = "status", 
+             allmatches = TRUE)
+# [1] "overall_status"  "b1_sponsor.b31_and_b32_status_of_the_sponsor" 
+# [3] "p_end_of_trial_status" "location.status"
+
 # Get all records that have values in all specified fields.
 # Note that b31_... is a field within the array b1_...
-#
-result <- dbGetFieldsIntoDf(c("b1_sponsor.b31_and_b32_status_of_the_sponsor", 
-                              "p_end_of_trial_status"))
-#
+result <- dbGetFieldsIntoDf(fields = c("b1_sponsor.b31_and_b32_status_of_the_sponsor", 
+                                       "p_end_of_trial_status"))
+
 # Tabulate the status of the clinical trial on the date of information retrieval
-#
-with (result, table ("Status"       = p_end_of_trial_status, 
-                     "Sponsor type" = b1_sponsor.b31_and_b32_status_of_the_sponsor))
-#
-#                     b31_and_b32_status_of_the_sponsor
-# p_end_of_trial_status   Commercial Non-Commercial
+with (result, 
+      table("Status"       = p_end_of_trial_status, 
+            "Sponsor type" = b1_sponsor.b31_and_b32_status_of_the_sponsor))
+#                 Sponsor type
+# Status                  Commercial Non-Commercial
 #   Completed                    138             30
 #   Not Authorised                 3              0
 #   Ongoing                      339            290
 #   Prematurely Ended             35              4
 #   Restarted                      8              0
 #   Temporarily Halted            14              4
-#
 ```
