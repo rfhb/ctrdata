@@ -371,7 +371,7 @@ ctrRerunQuery <- function(querytoupdate = querytoupdate, forcetoupdate = forceto
 #'
 #' @return List with elements n (number of imported trials) and ids (_ids of imported trials)
 #'
-#' @keywords interal
+#' @keywords internal
 #'
 dbCTRLoadJSONFiles <- function(dir, mongo) {
 

@@ -17,4 +17,4 @@ List with elements n (number of imported trials) and ids (_ids of imported trial
 \description{
 dbCTRLoadJSONFiles
 }
-\keyword{interal}
+\keyword{internal}
