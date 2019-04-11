@@ -1,8 +1,10 @@
 ---
-title: "ctrdata usage examples"
+title: "Examples for using R package `ctrdata` for clinical trial information"
 author: "Ralf Herold"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette: 
+      toc: true
 vignette: >
   %\VignetteIndexEntry{ctrdata usage examples}
   %\VignetteEncoding{UTF-8}
@@ -11,14 +13,12 @@ editor_options:
   chunk_output_type: console
 ---
 
-# Examples for using R package `ctrdata` for clinical trial protocol-related information
-
 ```{r setup, include=FALSE}
 #
-knitr::opts_chunk$set(eval=FALSE, 
-                      warning=FALSE, 
-                      message=FALSE, 
-                      results="hide")
+knitr::opts_chunk$set(eval = FALSE, 
+                      warning = FALSE, 
+                      message = FALSE, 
+                      results = "hide")
 #
 # helper functions
 normalise_number <- function(x) {
@@ -28,7 +28,7 @@ normalise_number <- function(x) {
   x <- trimws(x)
   x <- sapply(x, FUN = function(y) {
     z <- try(as.numeric(y), silent = TRUE)
-    if(class(z) == "try-error") {
+    if (class(z) == "try-error") {
       NA
       message(z)
     } else {
@@ -50,8 +50,8 @@ normalise_string <- function(x) {
   
 }
 #
-grepl_multi <- function (patterns, x, simplify = TRUE) {
-  if(!is.vector(patterns)) stop("patterns should be a vector.")
+grepl_multi <- function(patterns, x, simplify = TRUE) {
+  if (!is.vector(patterns)) stop("patterns should be a vector.")
   ret <- apply(as.matrix(patterns), 1, function(pattern) grepl(pattern, x, ignore.case = TRUE))
   ret <- as.data.frame(ret)
   if (simplify) 
@@ -73,7 +73,6 @@ age_ctgov <- function(x) {
   
   return(tmp.age)
 }
-#
 ```
 
 General information on the `ctrdata` package is available here: [https://github.com/rfhb/ctrdata](https://github.com/rfhb/ctrdata). 
@@ -295,6 +294,52 @@ table(tmp)
 #     completed   ongoing     other 
 #           159       671       115
 ```
+
+## Use a remote mongo database
+
+This example works with a free service [here](https://www.mongodb.com/cloud/atlas). Note that the user name and password need to be encoded. The format of the connection string is documented [here](https://docs.mongodb.com/manual/reference/connection-string/). 
+
+```{r, eval=FALSE}
+
+# Specify base uri for remote mongodb server as part of the encoded connection string
+db <- utils::URLencode("mongodb+srv://user_name@cluster0-b9wpw.mongodb.net/database_name")
+
+# For this mongo database, a password has to be provided. 
+
+# Execute search with explicit password
+ctrdata::ctrLoadQueryIntoDb(
+    queryterm = "2010-024264-18",
+    register = "CTGOV",
+    uri = db,
+    password = "user_name_s_password",
+    collection = "your_collection_name")
+
+# Package ctrdata can use the password to a mongo database from
+# the environment variable named "ctrdatamongopassword", as follows:
+
+# Alternatively, ctrdatamongopassword can be set
+# - by this call:
+Sys.setenv(ctrdatamongopassword = utils::URLencode"user_name_s_password"))
+# - or by adding 
+#   to ~/.Renviron
+#   a line such as
+ctrdatamongopassword = "user_name_s_password"
+
+# With the environment variable ctrdatamongopassword set
+# to the password needed for accessing the collection, 
+# the parameter "password" can be omitted as follows:
+result <- dbGetFieldsIntoDf(fields = c("a2_eudract_number",
+                                       "overall_status",
+                                       "record_last_import",
+                                       "primary_completion_date",
+                                       "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database",
+                                       "study_design_info",
+                                       "e71_human_pharmacology_phase_i"),
+                            uri = db,
+                            collection = "your_collection_name")
+```
+
+
 
 ## Use another mongo package for analysis, for example to count sites per trial
 

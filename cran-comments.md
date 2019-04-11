@@ -11,4 +11,4 @@
 There are currently no downstream dependencies for this package.
 
 ## Submission reason
-* new versionwith reduced depencies and faster operation on remote servers
+* new version moving from local to remote mongodb server

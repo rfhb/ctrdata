@@ -135,8 +135,14 @@ CRAN](https://cran.r-project.org/package=ctrdata).
 ## 3\. Mongo database
 
 A remote or a local mongo database server can be used with the package,
-see included tests and examples. Suggested installation instructions are
+see included tests and examples.
+
+Suggested installation instructions for a local database server are
 [here](https://docs.mongodb.com/manual/administration/install-community/).
+
+A remote mongo database server such as
+[here](https://www.mongodb.com/cloud/atlas) could be used; this is shown
+in the examples vignette.
 
 # Overview of functions in `ctrdata`
 
