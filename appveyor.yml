@@ -4,9 +4,9 @@ services:
   - mongodb
 
 environment:
-  WARNINGS_ARE_ERRORS: 1
   USE_RTOOLS: false
   PKGTYPE: win.binary
+#  WARNINGS_ARE_ERRORS: 1
 
   matrix:
    - R_VERSION: release
