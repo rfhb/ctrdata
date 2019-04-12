@@ -89,7 +89,6 @@ q <- "https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer+AND+b
 
 # Load details on all clinical trials into local data base:
 ctrLoadQueryIntoDb(q)
-
 ```
 
 ## Execute in browser a search query that was previously stored

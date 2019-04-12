@@ -146,9 +146,9 @@ result <- dbGetFieldsIntoDf(fields = c("b1_sponsor.b31_and_b32_status_of_the_spo
                                        "p_end_of_trial_status"))
 
 # Tabulate the status of the clinical trial on the date of information retrieval
-with (result, 
-      table("Status"       = p_end_of_trial_status, 
-            "Sponsor type" = b1_sponsor.b31_and_b32_status_of_the_sponsor))
+with(result, 
+     table("Status"       = p_end_of_trial_status, 
+           "Sponsor type" = b1_sponsor.b31_and_b32_status_of_the_sponsor))
 #                 Sponsor type
 # Status                  Commercial Non-Commercial
 #   Completed                    138             30

@@ -825,7 +825,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register,
   resultsNumModulo  <- resultsEuNumPages %%  parallelretrievals
   message("(1/3) Downloading trials (max. ", parallelretrievals, " page[s] in parallel):")
 
-  # prepare handle (used several times) and curl progress
+  # progress indicator function
   cb <- function(req){message(". ", appendLF = FALSE)}
 
   # iterate over batches of results pages
