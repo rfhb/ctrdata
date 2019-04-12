@@ -1355,7 +1355,7 @@ addMetaData <- function(x, uri, collection, password) {
 
 # Function to set proxy
 #'
-#' @keyword internal
+#' @keywords internal
 #'
 setProxy <- function() {
 
