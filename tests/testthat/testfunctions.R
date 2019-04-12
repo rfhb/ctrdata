@@ -532,9 +532,10 @@ test_that("operations on database after download from register", {
     collection = coll)$n,
     1L)
 
-  expect_silent(dbFindFields(
+  expect_message(dbFindFields(
     namepart = "ThisNameShouldNotExistAnywhere",
-    collection = coll))
+    collection = coll),
+    "Finding fields on server")
 
   # dbFindIdsUniqueTrials
 
