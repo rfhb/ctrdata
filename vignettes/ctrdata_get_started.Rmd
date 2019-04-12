@@ -31,19 +31,6 @@ install.packages("ctrdata")
 
 The above should install package `ctrdata` into the user's library. If this installation does not succeed, the following sections offer potential solutions. 
 
-A proxy server may be need to be specified, such as follows: 
-
-```{r, eval=FALSE}
-library(httr)
-set_config(use_proxy("your_proxy.server.domain", port = 8080))
-```
-
-On MS Windows, it seems recommended to not use UNC notation (such as `\\server\directory`) for specifying the user's library location: 
-
-```{r, eval=FALSE}
-.libPaths("D:/my/directory/")
-```
-
 For using the development version of package `ctrdata`, install from GitHub: 
 
 ```{r, eval=FALSE}
@@ -53,7 +40,24 @@ install.packages(c("devtools", "httr"))
 devtools::install_github("rfhb/ctrdata", dependencies = "Depends")
 ```
 
-## Install cygwin on MS Windows
+## Internet access via proxy? 
+
+Functions in package `ctrdata` that start with `ctr...` require access to internet resources via `https`. Package `ctrdata` checks and automatically use the proxy that is set under MS Windows in system settings. 
+
+However, proxy settings need to be set by the user for other operating systems and for authenticating proxies, such as follows: 
+
+```{r, eval=FALSE}
+Sys.setenv(https_proxy = "your_proxy.server.domain:8080")
+Sys.setenv(https_proxy_user = "userid:password")
+```
+
+## Install on MS Windows
+
+On MS Windows, it seems recommended to not use UNC notation (such as `\\server\directory`) for specifying the user's library location: 
+
+```{r, eval=FALSE}
+.libPaths("D:/my/directory/")
+```
 
 As noted in the README for package `ctrdata`, on MS Windows the cygwin environment has to be installed, into the local directory `c:\cygwin`. The applications php, bash, perl, cat and sed in the cygwin environment are required for function `ctrLoadQueryIntoDb()` of package `ctrdata` (other functions in the package do not have this requirement). The installation of a minimal cygwin environment on MS Windows can be effected from package `ctrdata` as follows: 
 

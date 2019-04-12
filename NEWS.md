@@ -1,3 +1,7 @@
+# ctrdata 0.18.9001
+ - 2019-04-12
+ - added automated proxy handling
+
 # ctrdata 0.18
  - 2019-04-11
  - release version

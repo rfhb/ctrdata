@@ -77,6 +77,17 @@ age_ctgov <- function(x) {
 
 General information on the `ctrdata` package is available here: [https://github.com/rfhb/ctrdata](https://github.com/rfhb/ctrdata). 
 
+## Internet access via proxy? 
+
+Functions in package `ctrdata` that start with `ctr...` require access to internet resources via `https`. Package `ctrdata` checks and automatically use the proxy that is set under MS Windows in system settings. 
+
+However, proxy settings need to be set by the user for other operating systems and for authenticating proxies, such as follows: 
+
+```{r, eval=FALSE}
+Sys.setenv(https_proxy = "your_proxy.server.domain:8080")
+Sys.setenv(https_proxy_user = "userid:password")
+```
+
 ## Execute a search query and load into database
 
 ```{r execute_load_query}

@@ -138,6 +138,8 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   # initialise variable that is filled only if an update is to be made
   queryupdateterm <- ""
 
+  # check and set proxy if needed to access internet
+  setProxy()
 
   ## check if we need to rerun previous query
 

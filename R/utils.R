@@ -92,6 +92,10 @@ ctrMongo <- function(collection = "ctrdata",
   if ((password != "") && grepl("//.+@", uri))
     uri <- sub("(.+)@(.+)", paste0("\\1", ":", password, "@\\2"), uri)
 
+  # check and set proxy if needed to access internet
+  # TODO
+  # setProxy()
+
   # connect to mongo server
   valueCtrDb <- mongolite::mongo(collection = collection,
                                  url = uri,
@@ -332,6 +336,9 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = ""){
   # initialise output variable
   as <- activesubstance
 
+  # check and set proxy if needed to access internet
+  setProxy()
+
   # getting synonyms
   ctgovdfirstpageurl <- paste0("https://clinicaltrials.gov/ct2/results/details?term=", activesubstance)
   tmp <- xml2::read_html(x = utils::URLencode(ctgovdfirstpageurl))
@@ -483,6 +490,9 @@ dbFindFields <- function(namepart = "", allmatches = TRUE, debug = FALSE,
     # get a working mongo connection
     mongo <- ctrMongo(collection = collection, uri = uri,
                       password = password, verbose = verbose)
+
+    # informing user
+    message("Finding fields on server (this may take some time)")
 
     # try mapreduce to get all keys
     keyslist <- try({mongo$mapreduce(
@@ -1343,6 +1353,30 @@ addMetaData <- function(x, uri, collection, password) {
 
 
 
+# Function to set proxy
+#'
+#' @keyword internal
+#'
+setProxy <- function() {
+
+  # only act if environment
+  # variable is not already set
+  if (Sys.getenv("https_proxy") == "") {
+
+    # works under windows only
+    p <- curl::ie_proxy_info()$Proxy
+
+    if (!is.null(p)) {
+
+      # used by httr and curl
+      Sys.setenv(https_proxy = p)
+
+    }
+  }
+} # end setproxy
+
+
+
 #' Convenience function to install a cygwin environment under MS Windows,
 #' including perl and php
 #'
@@ -1382,64 +1416,76 @@ installCygwinWindowsDoInstall <- function(force = FALSE, proxy = ""){
   dir.create(tmpfile)
   dstfile <- paste0(tmpfile, "/cygwinsetup.exe")
   #
-  # download.file uses the proxy configured in the system
+  # generate filename
   tmpurl <- switch(utils::sessionInfo()$platform,
                    "64-bit" = "setup-x86_64.exe",
                    "32-bit" = "setup-x86.exe")
   #
-  tmpdl <- try({utils::download.file(url = paste0("http://cygwin.org/", tmpurl),
+  # check and set proxy if needed to access internet
+  setProxy()
+  #
+  # download.file uses the proxy configured in the system
+  tmpdl <- try({utils::download.file(url = paste0("https://cygwin.org/", tmpurl),
                                      destfile = dstfile,
-                                     quiet = TRUE,
+                                     quiet = FALSE,
                                      mode = "wb")
     }, silent = TRUE)
   #
   # check
-  if (!file.exists(dstfile) || file.size(dstfile) < (5 * 10 ^ 5))
+  if (!file.exists(dstfile) ||
+      file.size(dstfile) < (5 * 10 ^ 5) ||
+      ("try-error" %in% class(tmpdl)))
     stop("Failed, please download manually and install with this command:\n",
          tmpurl, " ", installcmd,
          call. = FALSE)
   #
   if (proxy != "") {
-    # manual setting overrides all
+    # manual setting overriding
     proxy <- paste0(" --proxy ", proxy)
     message("Setting cygwin proxy install argument to: ", proxy, ", based on provided parameter.")
   } else {
-    # detect proxy to be used, automatically or manually configured?
-    # find and use proxy settings for actually running the cygwin setup
-    # - Windows 7 see https://msdn.microsoft.com/en-us/library/cc980059.aspx
-    # - Windows 10 see
-    tmp <- try(utils::readRegistry("Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings",
-                                   hive = "HCU"), silent = TRUE)
-    #
-    if (class(tmp) != "try-error" && !is.null(tmp)) {
-      #
-      if (length(tmp$AutoConfigURL) > 0) {
-        # retrieve settings
-        proxypacfile <- paste0(tmpfile, "/pacfile.txt")
-        utils::download.file(tmp$AutoConfigURL, proxypacfile)
-        # for testing: proxypacfile <- "private/proxypacfile"
-        # find out and select last mentioned proxy line
-        proxypac <- readLines(proxypacfile)
-        proxypac <- proxypac[grepl("PROXY", proxypac)]
-        proxypac <- proxypac[length(proxypac)]
-        proxy <- sub(".*PROXY ([0-9]+.[0-9]+.[0-9]+.[0-9]+:[0-9]+).*", "\\1", proxypac)
-        if (proxy == "") stop("A proxy could not be identified using the system\'s automatic configuration script.",
-                              ' Please set manually: installCygwinWindowsDoInstall (proxy = "host_or_ip:port"',
-                              call. = FALSE)
-        proxy <- paste0(" --proxy ", proxy)
-        message("Automatically setting cygwin proxy to: ", proxy, ", based on AutoConfigProxy in registry.")
-        #
-      } else {
-        if (!is.null(tmp$ProxyServer)) {
-          proxy <- paste0(" --proxy ", tmp$ProxyServer)
-          message("Automatically setting cygwin proxy to: ", proxy, ", based on ProxyServer in registry.")
-          #
-        } else {
-          message("Proxy not set, could not use ProxyServer or AutoConfigProxy in registry.")
-          #
-        }
-      }
+    # detect proxy
+    proxy <- curl::ie_proxy_info()$Proxy
+    if (!is.null(proxy)) {
+      message("Setting cygwin proxy install argument to: ", proxy, ", based on system settings.")
+      proxy <- paste0(" --proxy ", proxy)
     }
+    # # detect proxy to be used, automatically or manually configured?
+    # # find and use proxy settings for actually running the cygwin setup
+    # # - Windows 7 see https://msdn.microsoft.com/en-us/library/cc980059.aspx
+    # # - Windows 10 see
+    # tmp <- try(utils::readRegistry("Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings",
+    #                                hive = "HCU"), silent = TRUE)
+    # #
+    # if (class(tmp) != "try-error" && !is.null(tmp)) {
+    #   #
+    #   if (length(tmp$AutoConfigURL) > 0) {
+    #     # retrieve settings
+    #     proxypacfile <- paste0(tmpfile, "/pacfile.txt")
+    #     utils::download.file(tmp$AutoConfigURL, proxypacfile)
+    #     # for testing: proxypacfile <- "private/proxypacfile"
+    #     # find out and select last mentioned proxy line
+    #     proxypac <- readLines(proxypacfile)
+    #     proxypac <- proxypac[grepl("PROXY", proxypac)]
+    #     proxypac <- proxypac[length(proxypac)]
+    #     proxy <- sub(".*PROXY ([0-9]+.[0-9]+.[0-9]+.[0-9]+:[0-9]+).*", "\\1", proxypac)
+    #     if (proxy == "") stop("A proxy could not be identified using the system\'s automatic configuration script.",
+    #                           ' Please set manually: installCygwinWindowsDoInstall (proxy = "host_or_ip:port"',
+    #                           call. = FALSE)
+    #     proxy <- paste0(" --proxy ", proxy)
+    #     message("Automatically setting cygwin proxy to: ", proxy, ", based on AutoConfigProxy in registry.")
+    #     #
+    #   } else {
+    #     if (!is.null(tmp$ProxyServer)) {
+    #       proxy <- paste0(" --proxy ", tmp$ProxyServer)
+    #       message("Automatically setting cygwin proxy to: ", proxy, ", based on ProxyServer in registry.")
+    #       #
+    #     } else {
+    #       message("Proxy not set, could not use ProxyServer or AutoConfigProxy in registry.")
+    #       #
+    #     }
+    #   }
+    # }
   }
   #
   # execute cygwin setup command
