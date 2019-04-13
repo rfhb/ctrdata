@@ -1408,24 +1408,26 @@ installCygwinWindowsDoInstall <- function(force = FALSE, proxy = ""){
                        "--site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ ",
                        "--packages perl,php-jsonc,php-simplexml")
   #
-  # inform user
-  message("Attempting download of cygwin ...")
-  #
   # create directory within R sessions temporary directory
   tmpfile <- paste0(tempdir(), "/cygwin_inst")
   dir.create(tmpfile)
   dstfile <- paste0(tmpfile, "/cygwinsetup.exe")
   #
-  # generate filename
-  tmpurl <- switch(utils::sessionInfo()$platform,
-                   "64-bit" = "setup-x86_64.exe",
-                   "32-bit" = "setup-x86.exe")
+  # generate download url
+  tmpurl <- ifelse(grepl("x64", utils::win.version()),
+                   "setup-x86_64.exe",
+                   "setup-x86.exe")
+  #
+  tmpurl <- paste0("https://cygwin.org/", tmpurl)
+  #
+  # inform user
+  message("Attempting cygwin download using ", tmpurl, " ...")
   #
   # check and set proxy if needed to access internet
   setProxy()
   #
   # download.file uses the proxy configured in the system
-  tmpdl <- try({utils::download.file(url = paste0("https://cygwin.org/", tmpurl),
+  tmpdl <- try({utils::download.file(url = tmpurl,
                                      destfile = dstfile,
                                      quiet = FALSE,
                                      mode = "wb")
