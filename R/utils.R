@@ -207,15 +207,25 @@ ctrOpenSearchPagesInBrowser <- function(input = "", register = "", copyright = F
       #
       message("Opening browser for search: \n\n", queryterm, "\n\nin register: ", register)
       #
+      # sanity correction for naked terms
+      if (register == "EUCTR") queryterm <-
+          sub("(^|&|[&]?\\w+=\\w+&)(\\w+|[ +ORNCT0-9-]+)($|&\\w+=\\w+)",
+              "\\1query=\\2\\3",
+              queryterm)
+      if (register == "CTGOV") queryterm <-
+          sub("(^|&|[&]?\\w+=\\w+&)(\\w+|[NCT0-9-]+)($|&\\w+=\\w+)",
+              "\\1term=\\2\\3",
+              queryterm)
+      #
       # protect against os where this does not work
       try({utils::browseURL(url = paste0(
         #
-        switch(as.character(register)[1],
+        switch(as.character(register),
                "CTGOV" = ifelse(grepl("^xprt=", queryterm),
                                 "https://clinicaltrials.gov/ct2/results/refine?show_xprt=Y&",
                                 "https://clinicaltrials.gov/ct2/results?"),
                "EUCTR" = "https://www.clinicaltrialsregister.eu/ctr-search/search?"),
-        queryterm[1]),
+        queryterm),
         encodeIfNeeded = TRUE, ...)
       }, silent = TRUE)
     }

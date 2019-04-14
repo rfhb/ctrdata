@@ -114,6 +114,12 @@ The next steps are executed in the R environment:
 q <- ctrGetQueryUrlFromBrowser()
 # Found search query from EUCTR.
 # [1] "cancer&age=under-18"
+
+# Open browser with this query
+# Note the register needs to be specified
+# when it cannot be deduced from the query
+ctrOpenSearchPagesInBrowser(input = q, 
+                            register = "EUCTR")
 ```
 
 ## Retrieve protocol-related information, transform, save to database, check
@@ -123,7 +129,7 @@ q <- ctrGetQueryUrlFromBrowser()
 ctrLoadQueryIntoDb(queryterm = q)
 
 # Alternatively, use the following to retrieve a couple of trial records: 
-ctrLoadQueryIntoDb(queryterm = "2010-024264-18", 
+ctrLoadQueryIntoDb(queryterm = "cancer&age=under-18", 
                    register = "EUCTR")
 # If no parameters are given for a database connection: uses mongodb
 # on localhost, port 27017, database "users", collection "ctrdata"
