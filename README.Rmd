@@ -27,7 +27,7 @@ knitr::opts_chunk$set(
 
 The package `ctrdata` provides functions for retrieving (downloading) information on clinical trials from public registers, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started mid 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package is to be used within the [R](https://www.r-project.org/) system. 
 
-Last edit 2019-04-11 for version 0.18, with bug fixes and new features: 
+Last edit 2019-04-14 for version 0.18.1, with bug fixes and new features: 
 
 * dates are now returned as Date types, and some Yes / No fields are returned as logical, by function `dbGetFieldsIntoDf()`, 
 * personal annotations can be added when records are retrieved from a register (new options `annotate.text` and `annotate.mode` for function `ctrLoadQueryIntoDb()`), for later use in analysis, and 
@@ -232,7 +232,7 @@ with (result, table (p_end_of_trial_status, b1_sponsor.b31_and_b32_status_of_the
 
 * Data providers and curators of the clinical trial registers. Please review and respect their copyrights and terms and conditions (`ctrOpenSearchPagesInBrowser(copyright = TRUE)`). 
 
-* This package `ctrdata` has been made possible based on the work done for [curl](https://github.com/jeroenooms/curl), [clipr](https://github.com/mdlincoln/clipr), [mongolite](https://cran.r-project.org/package=mongolite) and [R](http://www.r-project.org/), [httr](https://cran.r-project.org/package=httr), [xml2](https://cran.r-project.org/package=xml2) and [rvest](https://cran.r-project.org/package=rvest).
+* This package `ctrdata` has been made possible based on the work done for [R](http://www.r-project.org/), [curl](https://github.com/jeroenooms/curl), [clipr](https://github.com/mdlincoln/clipr), [mongolite](https://cran.r-project.org/package=mongolite), [httr](https://cran.r-project.org/package=httr), [xml2](https://cran.r-project.org/package=xml2) and [rvest](https://cran.r-project.org/package=rvest).
 
 # Issues and notes
 

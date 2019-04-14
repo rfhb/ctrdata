@@ -325,7 +325,8 @@ ctrRerunQuery <- function(querytoupdate = querytoupdate, forcetoupdate = forceto
         if (debug) message("DEBUG (rss url): ", rssquery)
         #
         resultsRss <- httr::content(httr::GET(url = rssquery,
-                                              config = httr::config(ssl_verifypeer = FALSE)), as = "text")
+                                              config = httr::config(ssl_verifypeer = FALSE)),
+                                    as = "text")
 
         if (debug) message("DEBUG (rss content): ", resultsRss)
         #

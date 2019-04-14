@@ -1,3 +1,9 @@
+# ctrdata 0.18.1
+ - 2019-04-14
+ - simplified cygwin install
+ - updated documentation
+ - corrected inconsistent handling of query terms
+
 # ctrdata 0.18.9001
  - 2019-04-12
  - added automated proxy handling

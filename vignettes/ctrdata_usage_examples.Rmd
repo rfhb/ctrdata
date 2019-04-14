@@ -79,7 +79,7 @@ General information on the `ctrdata` package is available here: [https://github.
 
 ## Internet access via proxy? 
 
-Functions in package `ctrdata` that start with `ctr...` require access to internet resources via `https`. Package `ctrdata` checks and automatically use the proxy that is set under MS Windows in system settings. 
+Functions in package `ctrdata` that start with `ctr...` require access to internet resources via `https`. Package `ctrdata` checks and automatically uses the proxy that is set under MS Windows in system settings. 
 
 However, proxy settings need to be set by the user for other operating systems and for authenticating proxies, such as follows: 
 
@@ -748,11 +748,8 @@ for (i in 1:length(terms))
 result <- dbGetFieldsIntoDf(c("a2_eudract_number", 
                               "n_date_of_competent_authority_decision"))
 
-# Prepare for summarising
-result$trial_start_date <- strptime(result$n_date_of_competent_authority_decision, format = "%Y-%m-%d")
-
 # Calculate first date of trial start
-first_trial_start <- aggregate(x = result$trial_start_date, 
+first_trial_start <- aggregate(x = result$n_date_of_competent_authority_decision, 
                                by = list(result$a2_eudract_number),
                                FUN = function(x) min(x, na.rm = TRUE), 
                                simplify = TRUE, drop = TRUE)

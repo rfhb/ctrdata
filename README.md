@@ -23,7 +23,8 @@ started mid 2015 and was motivated by the wish to understand trends in
 designs and conduct of trials and their availability for patients. The
 package is to be used within the [R](https://www.r-project.org/) system.
 
-Last edit 2019-04-11 for version 0.18, with bug fixes and new features:
+Last edit 2019-04-14 for version 0.18.1, with bug fixes and new
+features:
 
   - dates are now returned as Date types, and some Yes / No fields are
     returned as logical, by function `dbGetFieldsIntoDf()`,
@@ -76,15 +77,15 @@ citation("ctrdata")
 #> To cite package 'ctrdata' in publications use:
 #> 
 #>   Ralf Herold (NA). ctrdata: Retrieve and Analyze Information on
-#>   Clinical Trials from Public Registers. R package version 0.18.
-#>   https://github.com/rfhb/ctrdata
+#>   Clinical Trials from Public Registers. R package version
+#>   0.18.9001. https://github.com/rfhb/ctrdata
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
 #>   @Manual{,
 #>     title = {ctrdata: Retrieve and Analyze Information on Clinical Trials from Public Registers},
 #>     author = {Ralf Herold},
-#>     note = {R package version 0.18},
+#>     note = {R package version 0.18.9001},
 #>     url = {https://github.com/rfhb/ctrdata},
 #>   }
 ```
@@ -283,10 +284,10 @@ with (result, table (p_end_of_trial_status, b1_sponsor.b31_and_b32_status_of_the
     (`ctrOpenSearchPagesInBrowser(copyright = TRUE)`).
 
   - This package `ctrdata` has been made possible based on the work done
-    for [curl](https://github.com/jeroenooms/curl),
+    for [R](http://www.r-project.org/),
+    [curl](https://github.com/jeroenooms/curl),
     [clipr](https://github.com/mdlincoln/clipr),
-    [mongolite](https://cran.r-project.org/package=mongolite) and
-    [R](http://www.r-project.org/),
+    [mongolite](https://cran.r-project.org/package=mongolite),
     [httr](https://cran.r-project.org/package=httr),
     [xml2](https://cran.r-project.org/package=xml2) and
     [rvest](https://cran.r-project.org/package=rvest).
