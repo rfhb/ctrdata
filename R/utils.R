@@ -1462,49 +1462,13 @@ installCygwinWindowsDoInstall <- function(force = FALSE, proxy = ""){
       message("Setting cygwin proxy install argument to: ", proxy, ", based on system settings.")
       proxy <- paste0(" --proxy ", proxy)
     }
-    # # detect proxy to be used, automatically or manually configured?
-    # # find and use proxy settings for actually running the cygwin setup
-    # # - Windows 7 see https://msdn.microsoft.com/en-us/library/cc980059.aspx
-    # # - Windows 10 see
-    # tmp <- try(utils::readRegistry("Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings",
-    #                                hive = "HCU"), silent = TRUE)
-    # #
-    # if (class(tmp) != "try-error" && !is.null(tmp)) {
-    #   #
-    #   if (length(tmp$AutoConfigURL) > 0) {
-    #     # retrieve settings
-    #     proxypacfile <- paste0(tmpfile, "/pacfile.txt")
-    #     utils::download.file(tmp$AutoConfigURL, proxypacfile)
-    #     # for testing: proxypacfile <- "private/proxypacfile"
-    #     # find out and select last mentioned proxy line
-    #     proxypac <- readLines(proxypacfile)
-    #     proxypac <- proxypac[grepl("PROXY", proxypac)]
-    #     proxypac <- proxypac[length(proxypac)]
-    #     proxy <- sub(".*PROXY ([0-9]+.[0-9]+.[0-9]+.[0-9]+:[0-9]+).*", "\\1", proxypac)
-    #     if (proxy == "") stop("A proxy could not be identified using the system\'s automatic configuration script.",
-    #                           ' Please set manually: installCygwinWindowsDoInstall (proxy = "host_or_ip:port"',
-    #                           call. = FALSE)
-    #     proxy <- paste0(" --proxy ", proxy)
-    #     message("Automatically setting cygwin proxy to: ", proxy, ", based on AutoConfigProxy in registry.")
-    #     #
-    #   } else {
-    #     if (!is.null(tmp$ProxyServer)) {
-    #       proxy <- paste0(" --proxy ", tmp$ProxyServer)
-    #       message("Automatically setting cygwin proxy to: ", proxy, ", based on ProxyServer in registry.")
-    #       #
-    #     } else {
-    #       message("Proxy not set, could not use ProxyServer or AutoConfigProxy in registry.")
-    #       #
-    #     }
-    #   }
-    # }
-  }
+ }
   #
   # execute cygwin setup command
   system(paste0(dstfile, " ", installcmd, " --local-package-dir ", tmpfile, " ", proxy))
   #
   # test cygwin installation
-  installCygwinWindowsTest()
+  installCygwinWindowsTest(verbose = TRUE)
   #
 }
 # end installCygwinWindowsDoInstall
@@ -1536,7 +1500,7 @@ installCygwinWindowsTest <- function(verbose = FALSE) {
   #
   if ((class(tmpcygwin) != "try-error") &
       (length(tmpcygwin) > 5)) {
-    if (verbose) message("cygwin base install seems to be working correctly.")
+    if (verbose) message("cygwin seems to work correctly.")
     return(invisible(TRUE))
   } else {
     message("cygwin is not available for this package, ctrLoadQueryIntoDb() will not work.\n",

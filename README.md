@@ -105,16 +105,7 @@ Overview of functions used in sequence:
 
 # Installation
 
-## 1\. Command line tools `perl`, `sed`, `cat` and `php` (5.2 or higher)
-
-In Linux and macOS, these are usually already installed. For MS Windows,
-install [cygwin](https://cygwin.com/install.html): In `R`, run
-`ctrdata::installCygwinWindowsDoInstall()` for an automated installation
-into `c:\cygwin`; alternatively manually install cygwin with packages
-`perl`, `php-jsonc` and `php-simplexml` (administrator credentials not
-needed).
-
-## 2\. Within R
+## 1\. Install package in R
 
 Within [R](https://www.r-project.org/), use the following commands to
 get and install package `ctrdata`:
@@ -131,12 +122,23 @@ devtools::install_github("rfhb/ctrdata")
 Package `ctrdata` can be found [here on
 CRAN](https://cran.r-project.org/package=ctrdata).
 
+## 2\. Command line tools `perl`, `sed`, `cat` and `php` (5.2 or higher)
+
+These command line tools are only required for
+`ctrGetQueryUrlFromBrowser()`, a main function of package `ctrdata`. In
+Linux and macOS, these are usually already installed.
+
+For MS Windows, install [cygwin](https://cygwin.org/install.html): In
+`R`, run `ctrdata::installCygwinWindowsDoInstall()` for an automated
+minimal installation into `c:\cygwin`. Alternatively, install manually
+cygwin with packages `perl`, `php-jsonc` and `php-simplexml` (consumes
+about 160 MB disk space; administrator credentials not needed).
+
 ## 3\. Mongo database
 
-A remote or a local mongo database server can be used with the package,
-see included tests and examples.
-
-Suggested installation instructions for a local database server are
+A remote or a local mongo database server can be used with the package
+`ctrdata`. Suggested installation instructions for a local database
+server are
 [here](https://docs.mongodb.com/manual/administration/install-community/).
 
 A remote mongo database server such as
@@ -156,7 +158,7 @@ in the examples vignette.
 | dbFindIdsUniqueTrials          | Produce a vector of de-duplicated identifiers of clinical trial records in the database collection                         |
 | dbGetFieldsIntoDf              | Create a data.frame from records in the database collection with the specified fields                                      |
 | dfMergeTwoVariablesRelevel     | Merge two variables into a single variable, optionally map values to a new set of values                                   |
-| installCygwinWindowsDoInstall  | Convenience function to install a cygwin environment under MS Windows                                                      |
+| installCygwinWindowsDoInstall  | Convenience function to install a cygwin environment (MS Windows only)                                                     |
 
 # Example workflow
 
