@@ -7,3 +7,6 @@ variety.js
 ctrdata.Rproj
 _gh-pages
 CRAN-RELEASE
+doc
+Meta
+inst/doc

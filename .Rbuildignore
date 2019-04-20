@@ -16,3 +16,5 @@
 ^appveyor\.yml$
 ^LICENSE.md$
 cran-comments.md
+^doc$
+^Meta$
