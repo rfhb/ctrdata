@@ -443,15 +443,16 @@ dbQueryHistory <- function(collection = "ctrdata", uri = "mongodb://localhost/us
 #' For fields in CTGOV (protocol-related information), see also the register's
 #' definitions: \url{https://prsinfo.clinicaltrials.gov/definitions.html}
 #'
-#' Note that generating a list of fields with variety.js as used in this function
-#' may not work with certain mongo databases, for example when the host or port
-#' is different per database, such as found with a free mongolab plan.
+#' Note that generating a list of fields with this function may take some time,
+#' since a mapreduce function is run on the server. If the user is not
+#' not authorised to run such a function on the (local or remote) server,
+#' random documents are samples to generate a list of fields.
 #'
 #' @param namepart A plain string (not a regular expression) to be searched for
 #'   among all field names (keys) in the database.
 #'
 #' @param allmatches If \code{TRUE} (default), returns all keys if more than one is found,
-#'   returns only fist of \code{FALSE}.
+#'   returns only first if \code{FALSE}.
 #'
 #' @param debug If \code{TRUE}, prints additional information (default \code{FALSE}).
 #'

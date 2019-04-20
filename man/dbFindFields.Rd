@@ -47,9 +47,10 @@ register's documentation: \url{https://eudract.ema.europa.eu/}.
 For fields in CTGOV (protocol-related information), see also the register's
 definitions: \url{https://prsinfo.clinicaltrials.gov/definitions.html}
 
-Note that generating a list of fields with variety.js as used in this function
-may not work with certain mongo databases, for example when the host or port
-is different per database, such as found with a free mongolab plan.
+Note that generating a list of fields with this function may take some time,
+since a mapreduce function is run on the server. If the user is not
+not authorised to run such a function on the (local or remote) server,
+random documents are samples to generate a list of fields.
 }
 \examples{
 
