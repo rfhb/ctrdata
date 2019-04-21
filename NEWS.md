@@ -1,3 +1,7 @@
+# ctrdata 0.18.9002
+ - 2019-04-21
+ - corrected typing date fields
+
 # ctrdata 0.18.1
  - 2019-04-14
  - simplified cygwin install

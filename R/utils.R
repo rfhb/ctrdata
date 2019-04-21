@@ -1512,7 +1512,7 @@ installCygwinWindowsTest <- function(verbose = FALSE) {
     return(invisible(FALSE))
   }
 }
-# installCygwinWindowsTest
+# end installCygwinWindowsTest
 
 
 #' Check availability of binaries installed locally

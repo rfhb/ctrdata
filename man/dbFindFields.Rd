@@ -13,7 +13,7 @@ dbFindFields(namepart = "", allmatches = TRUE, debug = FALSE,
 among all field names (keys) in the database.}
 
 \item{allmatches}{If \code{TRUE} (default), returns all keys if more than one is found,
-returns only fist of \code{FALSE}.}
+returns only first if \code{FALSE}.}
 
 \item{debug}{If \code{TRUE}, prints additional information (default \code{FALSE}).}
 
