@@ -209,9 +209,9 @@ ctrOpenSearchPagesInBrowser <- function(input = "", register = "", copyright = F
       #
       # sanity correction for naked terms
       if (register == "EUCTR") queryterm <-
-          sub("(^|&|[&]?\\w+=\\w+&)(\\w+|[ +ORNCT0-9-]+)($|&\\w+=\\w+)",
-              "\\1query=\\2\\3",
-              queryterm)
+          queryterm <- sub("(^|&|[&]?\\w+=\\w+&)([ a-zA-Z0-9+-]+)($|&\\w+=\\w+)",
+                           "\\1query=\\2\\3",
+                           queryterm)
       if (register == "CTGOV") queryterm <-
           sub("(^|&|[&]?\\w+=\\w+&)(\\w+|[NCT0-9-]+)($|&\\w+=\\w+)",
               "\\1term=\\2\\3",
@@ -1392,7 +1392,7 @@ setProxy <- function() {
 
 
 #' Convenience function to install a cygwin environment under MS Windows,
-#' including perl and php
+#' including perl, sed and php
 #'
 #' Alternatively and in case of difficulties, download and run the cygwin
 #' setup yourself as follows: \code{cygwinsetup.exe --no-admin --quiet-mode

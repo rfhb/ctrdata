@@ -762,18 +762,22 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register,
 
   ## sanity correction for naked terms
   # test cases
-  # queryterm = c("cancer&age=adult",                      # correct
-  #               "cancer",                                # correct
-  #               "cancer&age=adult&phase=0",              # correct
-  #               "cancer&age=adult&phase=1&results=true", # correct
-  #               "&age=adult&phase=1&abc=xyz&cancer&results=true", # correct
-  #               "age=adult&cancer",                      # correct
-  #               "2010-024264-18",                        # correct
-  #               "NCT1234567890",                         # correct
-  #               "teratoid&country=dk"                    # correct
+  # queryterm = c("cancer&age=adult",                      # add query=
+  #               "cancer",                                # add query=
+  #               "cancer+AND breast&age=adult&phase=0",   # add query=
+  #               "cancer&age=adult&phase=0",              # add query=
+  #               "cancer&age=adult&phase=1&results=true", # add query=
+  #               "&age=adult&phase=1&abc=xyz&cancer&results=true", # insert query=
+  #               "age=adult&cancer",                      # insert query=
+  #               "2010-024264-18",                        # add query=
+  #               "NCT1234567890",                         # add query=
+  #               "teratoid&country=dk",                   # add query=
   #               "term=cancer&age=adult",                 # keep
   #               "age=adult&term=cancer")                 # keep
-  queryterm <- sub("(^|&|[&]?\\w+=\\w+&)(\\w+|[ +ORNCT0-9-]+)($|&\\w+=\\w+)", "\\1query=\\2\\3", queryterm)
+
+  queryterm <- sub("(^|&|[&]?\\w+=\\w+&)([ a-zA-Z0-9+-]+)($|&\\w+=\\w+)",
+                   "\\1query=\\2\\3",
+                   queryterm)
 
   # check availability of relevant helper programs
   if (!suppressWarnings(installFindBinary("echo x | sed s/x/y/"))) stop("sed not found.",  call. = FALSE)
