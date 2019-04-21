@@ -163,8 +163,8 @@ test_that("remote mongodb read only", {
 
   # output tests
   expect_equal(dim(tmp)[2], 8)
-  expect_true("POSIXct" %in% class(tmp[["record_last_import"]]))
-  expect_true("POSIXct" %in% class(tmp[["primary_completion_date"]]))
+  expect_true("POSIXct"   %in% class(tmp[["record_last_import"]]))
+  expect_true("character" %in% class(tmp[["study_design_info"]]))
 
 })
 
