@@ -4,13 +4,13 @@ author: "Ralf Herold"
 date: "`r Sys.Date()`"
 output: 
   rmarkdown::html_vignette: 
-      toc: true
+    toc: true
 vignette: >
-  %\VignetteIndexEntry{ctrdata usage examples}
+  %\VignetteIndexEntry{Various usage examples}
+  %\VignetteKeywords{ctrdata,vignette}
+  %\VignettePackage{ctrdata}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
-editor_options: 
-  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -79,9 +79,12 @@ General information on the `ctrdata` package is available here: [https://github.
 
 ## Internet access via proxy? 
 
-Functions in package `ctrdata` that start with `ctr...` require access to internet resources via `https`. Package `ctrdata` checks and automatically uses the proxy that is set under MS Windows in system settings. 
+Functions in package `ctrdata` that start with `ctr...` require access to internet resources 
+via `https`. Package `ctrdata` checks and automatically uses the proxy that is set under 
+MS Windows in system settings. 
 
-However, proxy settings need to be set by the user for other operating systems and for authenticating proxies, such as follows: 
+However, proxy settings need to be set by the user for other operating systems and for a
+uthenticating proxies, such as follows: 
 
 ```{r, eval=FALSE}
 Sys.setenv(https_proxy = "your_proxy.server.domain:8080")
@@ -104,7 +107,9 @@ ctrLoadQueryIntoDb(q)
 
 ## Execute in browser a search query that was previously stored
 
-The function `ctrOpenSearchPagesInBrowser()` can be used to open blank search pages, but also to execute a previous search. This can be used to check if user searches are properly handled by this package, for example by comparing the number of search results.
+The function `ctrOpenSearchPagesInBrowser()` can be used to open blank search pages, 
+but also to execute a previous search. This can be used to check if user searches are 
+properly handled by this package, for example by comparing the number of search results.
 
 ```{r execute_browser_query}
 # Example 1: a search is done in the browser and a list of trials found is shown. 
@@ -142,7 +147,9 @@ dbFindFields(namepart = "date")
 
 ## ctrdata returns include metadata
 
-The objects returned by functions of this package include attributes with metadata to indicate from which query, database, collection etc. and when the object was created. Metadata can subsequently be reused. 
+The objects returned by functions of this package include attributes with metadata to 
+indicate from which query, database, collection etc. and when the object was created. 
+Metadata can subsequently be reused. 
 
 ```{r find_variables_attributes}
 attributes(dbGetFieldsIntoDf("otherids"))
@@ -166,9 +173,6 @@ attributes(dbGetFieldsIntoDf("otherids"))
 # 1 2016-12-14-12-15-51          EUCTR          1056                                               cancer&age=under-18
 # 2 2016-12-23-20-33-13          EUCTR             6                                                    2010-024264-18
 # 3 2016-12-24-14-39-42          CTGOV           145 recr=Open&type=Intr&cond=breast+carcinoma&intr=Drug&age=1&phase=2
-
-attr(dbQueryHistory(), "ctrdata-created-timestamp")
-# [1] "2016-12-28 13:31:25 CET"
 ```
 
 
@@ -245,7 +249,8 @@ hist(result[["n_date_of_competent_authority_decision"]],
 
 ```{r execute_ctgov_query}
 # Ongoing phase 3 interventional trials in breast carcinoma
-q <- "https://clinicaltrials.gov/ct2/results?term=&recr=Open&type=Intr&cond=breast+carcinoma&intr=Drug&state1=&age=1&phase=2"
+q <- paste0("https://clinicaltrials.gov/ct2/results?term=&recr=Open&",
+            "type=Intr&cond=breast+carcinoma&intr=Drug&state1=&age=1&phase=2")
 
 # Show and check search in browser: 
 ctrOpenSearchPagesInBrowser(q)
@@ -291,7 +296,8 @@ statusvalues <- list("ongoing" = c("Recruiting", "Active", "Ongoing",
                                    "Enrolling by invitation", "Restarted"),
                     "completed" = c("Completed", "Prematurely Ended", "Terminated"),
                     "other"     = c("Withdrawn", "Suspended", "No longer available", 
-                                    "Not yet recruiting", "Temporarily Halted", "Unknown status"))
+                                    "Not yet recruiting", "Temporarily Halted", 
+                                    "Unknown status"))
 #
 tmp <- dfMergeTwoVariablesRelevel(result, 
                                   colnames = c("overall_status", 
@@ -307,14 +313,17 @@ table(tmp)
 
 ## Use a remote mongo database
 
-This example works with a free service [here](https://www.mongodb.com/cloud/atlas). Note that the user name and password need to be encoded. The format of the connection string is documented [here](https://docs.mongodb.com/manual/reference/connection-string/). 
+This example works with a free service [here](https://www.mongodb.com/cloud/atlas). 
+Note that the user name and password need to be encoded. 
+The format of the connection string is documented 
+[here](https://docs.mongodb.com/manual/reference/connection-string/). 
 
 ```{r, eval=FALSE}
 
-# Specify base uri for remote mongodb server as part of the encoded connection string
+## Specify base uri for remote mongodb server as part of the encoded connection string
 db <- utils::URLencode("mongodb+srv://user_name@cluster0-b9wpw.mongodb.net/database_name")
 
-# For this mongo database, a password has to be provided. 
+## For this mongo database server, a password has to be provided:
 
 # Execute search with explicit password
 ctrdata::ctrLoadQueryIntoDb(
@@ -338,22 +347,24 @@ ctrdatamongopassword = "user_name_s_password"
 # With the environment variable ctrdatamongopassword set
 # to the password needed for accessing the collection, 
 # the parameter "password" can be omitted as follows:
-result <- dbGetFieldsIntoDf(fields = c("a2_eudract_number",
-                                       "overall_status",
-                                       "record_last_import",
-                                       "primary_completion_date",
-                                       "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database",
-                                       "study_design_info",
-                                       "e71_human_pharmacology_phase_i"),
-                            uri = db,
-                            collection = "your_collection_name")
+result <- dbGetFieldsIntoDf(
+  fields = c("a2_eudract_number",
+             "overall_status",
+             "record_last_import",
+             "primary_completion_date",
+             "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database",
+             "study_design_info",
+             "e71_human_pharmacology_phase_i"),
+  uri = db,
+  collection = "your_collection_name")
 ```
-
 
 
 ## Use another mongo package for analysis, for example to count sites per trial
 
-Note: Packages to access mango such as `mongolite` or `RMongo` may work to access data that are already in the dababase. However, package `rmongodb` is still necessary to retrieve data from registers and to store these data into the database. 
+Note: Packages to access mango such as `mongolite` or `RMongo` may work to access data 
+that are already in the mongo dababase. However, package `mongolite` is still necessary 
+to retrieve data from registers and to store these data into the database. 
 
 ```{r mongolite_count_details}
 library(mongolite)
@@ -417,7 +428,7 @@ hist (result$number_of_sites)
 ```{r plot_endpoint_frequencies}
 # Search for interesting variables,  
 # note the spelling in EUCTR:
-dbFindFields("end_point", allmatches = TRUE)
+dbFindFields("end_point")
 
 # Get interesting variables from database 
 # for further analysis within R:
@@ -437,8 +448,7 @@ length(unique(result$a2_eudract_number))
 
 # Only use phase 3 trials:
 table(result$e73_therapeutic_confirmatory_phase_iii, exclude = "")
-result <- result[!is.na(result$e73_therapeutic_confirmatory_phase_iii) &
-                        result$e73_therapeutic_confirmatory_phase_iii == "Yes", ]
+result <- result[result$e73_therapeutic_confirmatory_phase_iii, ]
 
 # Is the a primary endpoint of interest? This uses regular expressions:
 
@@ -446,12 +456,11 @@ result <- result[!is.na(result$e73_therapeutic_confirmatory_phase_iii) &
 result$pe_is_efs <- grepl("((progression|event|relapse|recurrence|disease)[- ]free)|pfs|dfs|efs)", 
                           result$e51_primary_end_points, ignore.case = TRUE)
 
-# Prepare for summarising:
-result$trial_start_year <- as.Date(substr(result$n_date_of_competent_authority_decision, 1, 4), format = "%Y")
-
 # Plot:
 library(ggplot2)
-ggplot(data = result, aes(x = trial_start_year, fill = pe_is_efs)) + 
+ggplot(data = result, 
+       aes(x = n_date_of_competent_authority_decision, 
+           fill = pe_is_efs)) + 
   geom_histogram(binwidth = 365.25)  + 
   labs(title = "Breast cancer phase 3 clinical trials", 
        x = "Year of clinical trial authorisation in EU", 
@@ -672,7 +681,8 @@ table(out$year)
 
 ## Use mapreduce operations to analyse participant numbers
 
-Note that the mongodb documentation includes that a mapreduce operation might not be as fast and efficient as using the aggregation pipeline, which was used in the preceding example. 
+Note that the mongodb documentation includes that a mapreduce operation might not be as 
+fast and efficient as using the aggregation pipeline, which was used in the preceding example. 
 
 ```{r mongodb_mapreduce}
 library(mongolite)
@@ -720,7 +730,7 @@ result <- dbGetFieldsIntoDf(c("e3_principal_inclusion_criteria",
 result <- result[ result[["_id"]] %in% dbFindIdsUniqueTrials(), ]
 
 result <- dfMergeTwoVariablesRelevel(df = result,
-                                     varnames = c("e3_principal_inclusion_criteria", 
+                                     colnames = c("e3_principal_inclusion_criteria", 
                                                   "eligibility.criteria.textblock"))
 
 # search for interesting terms
@@ -851,7 +861,8 @@ result <- subset(result, control == TRUE)
 library(ggplot2)
 ggplot(result, aes(pvalueprimaryanalysis)) + 
   stat_ecdf(geom = "step") +
-  labs(title = "Paediatric phase 2 or 3 interventional trials\nwith randomisation to placebo or to no intervention", 
+  labs(title = paste0("Paediatric phase 2 or 3 interventional trials\n", 
+                      "with randomisation to placebo or to no intervention"), 
        x = "Range of p values", 
        y = "Empirical cumulative density of p values\nof primary endpoint results") 
 

@@ -2,11 +2,13 @@
 title: "Getting started with R package `ctrdata` for clinical trial information"
 author: "Ralf Herold"
 date: "`r Sys.Date()`"
-output: 
+output:
   rmarkdown::html_vignette:
     toc: true
 vignette: >
-  %\VignetteIndexEntry{ctrdata getting started}
+  %\VignetteIndexEntry{Getting started}
+  %\VignetteKeywords{ctrdata,vignette}
+  %\VignettePackage{ctrdata}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -19,9 +21,13 @@ knitr::opts_chunk$set(eval = FALSE)
 
 ## Install package `ctrdata` on a R system
 
-The R Project website ([https://www.r-project.org/](https://www.r-project.org/)) provides installers for the R system. 
+The R Project website ([https://www.r-project.org/](https://www.r-project.org/)) 
+provides installers for the R system. 
 
-Alternatively, the R system can be used from software products such as R Studio ([https://www.rstudio.com/products/RStudio/](https://www.rstudio.com/products/RStudio/)), which includes an open source integrated development environment (IDE), or Microsoft R Open ([https://mran.microsoft.com/open/](https://mran.microsoft.com/open/)). 
+Alternatively, the R system can be used from software products such as R Studio 
+([https://www.rstudio.com/products/RStudio/](https://www.rstudio.com/products/RStudio/)), 
+which includes an open source integrated development environment (IDE), or Microsoft R Open 
+([https://mran.microsoft.com/open/](https://mran.microsoft.com/open/)). 
 
 General information on the `ctrdata` package is available here: [https://github.com/rfhb/ctrdata](https://github.com/rfhb/ctrdata). 
 
@@ -29,26 +35,33 @@ General information on the `ctrdata` package is available here: [https://github.
 install.packages("ctrdata")
 ```
 
-The above should install package `ctrdata` into the user's library. If this installation does not succeed, the following sections offer potential solutions. 
+The above should install package `ctrdata` into the user's library. 
+If this installation does not succeed, the following sections offer potential solutions. 
 
 For using the development version of package `ctrdata`, install from GitHub: 
 
 ```{r, eval=FALSE}
 # install preparatory package
 install.packages(c("devtools", "httr"))
-# now install this package and the packages it depends on
-devtools::install_github("rfhb/ctrdata", dependencies = "Depends")
+# note: unset build_opts so that vignettes are built
+devtools::install_github("rfhb/ctrdata", build_opts = "")
 ```
 
 ## Mongo database
 
-A remote or a local mongo database server can be used with the package `ctrdata`. Suggested installation instructions for a local database server are [here](https://docs.mongodb.com/manual/administration/install-community/). An example of a remote mongo database server is [here](https://www.mongodb.com/cloud/atlas). 
+A remote or a local mongo database server can be used with the package `ctrdata`. 
+Suggested installation instructions for a local database server are 
+[here](https://docs.mongodb.com/manual/administration/install-community/). 
+An example of a remote mongo database server is [here](https://www.mongodb.com/cloud/atlas). 
 
 ## Internet access via proxy? 
 
-Functions in package `ctrdata` that start with `ctr...` require access to internet resources via `https`. Package `ctrdata` checks and _automatically uses_ the proxy that is set under MS Windows in system settings. 
+Functions in package `ctrdata` that start with `ctr...` require access to internet 
+resources via `https`. Package `ctrdata` checks and _automatically uses_ the proxy 
+that is set under MS Windows in system settings. 
 
-However, proxy settings need to be set by the user for other operating systems and for authenticating proxies, such as follows: 
+However, proxy settings need to be set by the user for other operating systems 
+and for authenticating proxies, such as follows: 
 
 ```{r, eval=FALSE}
 Sys.setenv(https_proxy = "your_proxy.server.domain:8080")
@@ -57,13 +70,19 @@ Sys.setenv(https_proxy_user = "userid:password")
 
 ## Additional installation aspects for MS Windows
 
-On MS Windows, it seems recommended to not use UNC notation (such as `\\server\directory`) for specifying the user's library location: 
+On MS Windows, it seems recommended to not use UNC notation (such as `\\server\directory`) 
+for specifying the user's library location: 
 
 ```{r, eval=FALSE}
 .libPaths("D:/my/directory/")
 ```
 
-As noted in the README for package `ctrdata`, on MS Windows the cygwin environment has to be installed, into the local directory `c:\cygwin`. The applications php, bash, perl, cat and sed in the cygwin environment are required for function `ctrLoadQueryIntoDb()` of package `ctrdata` (other functions in the package do not have this requirement). The installation of a minimal cygwin environment on MS Windows can be effected from package `ctrdata` as follows: 
+As noted in the README for package `ctrdata`, on MS Windows the cygwin environment has 
+to be installed, into the local directory `c:\cygwin`. The applications php, bash, perl, 
+cat and sed in the cygwin environment are required for function `ctrLoadQueryIntoDb()` 
+of package `ctrdata` (other functions in the package do not have this requirement). 
+The installation of a minimal cygwin environment on MS Windows can be done 
+from package `ctrdata` as follows: 
 
 ```{r, eval=FALSE}
 ctrdata::installCygwinWindowsDoInstall() 
@@ -75,10 +94,15 @@ If need be, a proxy can be specified:
 ctrdata::installCygwinWindowsDoInstall(proxy = "proxy.server.domain:8080") 
 ```
 
-Users who want or need to install cygwin manually can download the setup executable from [here](https://cygwin.com/). In MS Windows command window or Powershell window, use the following command line. The parameters are explained [here](https://cygwin.com/faq/faq.html#faq.setup.cli).
+Users who want or need to install cygwin manually can download the setup executable 
+from [here](https://cygwin.com/). In MS Windows command window or Powershell window, 
+use the following command line. The parameters are explained 
+[here](https://cygwin.com/faq/faq.html#faq.setup.cli).
 
 ```{bash, eval=FALSE}
-setup-x86_64.exe --no-admin --quiet-mode --verbose --upgrade-also --root c:/cygwin --site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages perl,php-jsonc,php-simplexml
+setup-x86_64.exe --no-admin --quiet-mode --verbose --upgrade-also --root c:/cygwin 
+--site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ 
+--packages perl,php-jsonc,php-simplexml
 ```
 
 ## Attach package `ctrdata`
@@ -104,7 +128,9 @@ ctrOpenSearchPagesInBrowser(input = "cancer&age=under-18",
 
 ## Click search parameters and execute search in browser 
 
-Refine the search until the trials of interest are listed in the browser. Currently, the total number of trials that can be retrieved with package `ctrdata` is intentionally set to 5000 (CTGOV). 
+Refine the search until the trials of interest are listed in the browser. 
+Currently, the total number of trials that can be retrieved with package 
+`ctrdata` is intentionally set to 5000 (CTGOV). 
 
 ## Copy address from browser address bar to clipboard
 
