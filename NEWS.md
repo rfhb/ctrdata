@@ -1,3 +1,7 @@
+# ctrdata 0.18.9003
+ - 2019-04-28
+ - find and use any cygw* under windows
+
 # ctrdata 0.18.9002
  - 2019-04-21
  - corrected typing date fields
