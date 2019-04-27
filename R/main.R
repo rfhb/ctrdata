@@ -81,6 +81,23 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
                                collection = "ctrdata", uri = "mongodb://localhost/users",
                                password = Sys.getenv("ctrdatamongopassword"), verbose = FALSE) {
 
+  ## system check, in analogy to onload.R
+  if (.Platform$OS.type == "windows")
+    if (!installCygwinWindowsTest())
+      stop(call. = FALSE)
+  #
+  if (!suppressWarnings(installFindBinary("php --version")))
+    stop("php not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
+  #
+  if (!suppressWarnings(installFindBinary("php -r 'simplexml_load_string(\"\");'")))
+    stop("php xml not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
+  #
+  if (!suppressWarnings(installFindBinary("echo x | sed s/x/y/")))
+    stop("sed not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
+  #
+  if (!suppressWarnings(installFindBinary("perl -V:osname")))
+    stop("perl not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
+
   ## parameter checks
 
   # deduce queryterm and register if a full url is provided
