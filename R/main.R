@@ -915,10 +915,9 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register,
     euctr2json <- paste(euctr2json, shortPathName(path = tempDir))
     #
     # euctr2json requires cygwin's perl, sed. transform paths for cygwin use
-    euctr2json <- shortPathName(path = euctr2json)
     euctr2json <- gsub("\\\\", "/", euctr2json)
-    #
     euctr2json <- gsub("([A-Z]):/", "/cygdrive/\\1/", euctr2json)
+    #
     euctr2json <- paste0('cmd.exe /c ',
                          rev(Sys.glob("c:\\cygw*\\bin\\bash.exe"))[1],
                          ' --login -c "', euctr2json, '"')
