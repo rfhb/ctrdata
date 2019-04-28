@@ -5,7 +5,7 @@ services:
 
 environment:
   USE_RTOOLS: false
-  WARNINGS_ARE_ERRORS: 0
+  #WARNINGS_ARE_ERRORS: 0
   #PKGTYPE: win.binary
 
   matrix:
