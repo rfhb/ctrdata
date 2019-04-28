@@ -1496,7 +1496,7 @@ installCygwinWindowsTest <- function(verbose = FALSE) {
   #
   tmpcygwin <- try({
     suppressWarnings(
-      system(paste0("cmd.exe /c ", Sys.glob("c:\\cygw*\\bin\\bash.exe"), " --version"),
+      system(paste0("cmd.exe /c ", rev(Sys.glob("c:\\cygw*\\bin\\bash.exe"))[1], " --version"),
              intern = TRUE,
              ignore.stderr = TRUE
       ))},

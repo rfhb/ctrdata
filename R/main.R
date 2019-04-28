@@ -687,7 +687,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register,
     # xml2json requires cygwin's php. transform paths for cygwin use:
     xml2json <- gsub("\\\\", "/", xml2json)
     xml2json <- gsub("([A-Z]):/", "/cygdrive/\\1/", xml2json)
-    xml2json <- paste0('cmd.exe /c ', Sys.glob("c:\\cygw*\\bin\\bash.exe"), ' --login -c "', xml2json, '"')
+    xml2json <- paste0('cmd.exe /c ', rev(Sys.glob("c:\\cygw*\\bin\\bash.exe"))[1], ' --login -c "', xml2json, '"')
   } # if windows
 
   # run conversion of downloaded xml to json
@@ -906,7 +906,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register,
     # euctr2json requires cygwin's perl, sed. transform paths for cygwin use
     euctr2json <- gsub("\\\\", "/", euctr2json)
     euctr2json <- gsub("([A-Z]):/", "/cygdrive/\\1/", euctr2json)
-    euctr2json <- paste0('cmd.exe /c ', Sys.glob("c:\\cygw*\\bin\\bash.exe"), ' --login -c "', euctr2json, '"')
+    euctr2json <- paste0('cmd.exe /c ', rev(Sys.glob("c:\\cygw*\\bin\\bash.exe"))[1], ' --login -c "', euctr2json, '"')
     #
   }
 
@@ -1055,7 +1055,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register,
       # xml2json_euctrresults requires cygwin's php. transform paths for cygwin use:
       xml2json <- gsub("\\\\", "/", xml2json)
       xml2json <- gsub("([A-Z]):/", "/cygdrive/\\1/", xml2json)
-      xml2json <- paste0('cmd.exe /c ', Sys.glob("c:\\cygw*\\bin\\bash.exe"), ' --login -c "', xml2json, '"')
+      xml2json <- paste0('cmd.exe /c ', rev(Sys.glob("c:\\cygw*\\bin\\bash.exe"))[1], ' --login -c "', xml2json, '"')
       #
     } # if windows
 
