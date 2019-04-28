@@ -688,8 +688,8 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register,
     xml2json <- gsub("\\\\", "/", xml2json)
     xml2json <- gsub("([A-Z]):/", "/cygdrive/\\1/", xml2json)
     xml2json <- paste0('cmd.exe /c ',
-                       shQuote(rev(Sys.glob("c:\\cygw*\\bin\\bash.exe"))[1], type = "cmd"),
-                       ' --login -c "', xml2json, '"')
+                       rev(Sys.glob("c:\\cygw*\\bin\\bash.exe"))[1],
+                       ' --login -c "', shQuote(xml2json, type = "cmd"), '"')
   } # if windows
 
   # run conversion of downloaded xml to json
@@ -909,8 +909,8 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register,
     euctr2json <- gsub("\\\\", "/", euctr2json)
     euctr2json <- gsub("([A-Z]):/", "/cygdrive/\\1/", euctr2json)
     euctr2json <- paste0('cmd.exe /c ',
-                         shQuote(rev(Sys.glob("c:\\cygw*\\bin\\bash.exe"))[1], type = "cmd"),
-                         ' --login -c "', euctr2json, '"')
+                         rev(Sys.glob("c:\\cygw*\\bin\\bash.exe"))[1],
+                         ' --login -c "', shQuote(euctr2json, type = "cmd"), '"')
     #
   }
 
@@ -1052,7 +1052,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register,
 
     # compose command
     xml2json <- system.file("exec/xml2json_euctrresults.php", package = "ctrdata", mustWork = TRUE)
-    xml2json <- paste0("php -f ", shQuote(xml2json), " ", shQuote(tempDir))
+    xml2json <- paste0("php -f ", xml2json, " ", tempDir)
 
     # special command handling on windows
     if (.Platform$OS.type == "windows") {
@@ -1060,8 +1060,8 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register,
       xml2json <- gsub("\\\\", "/", xml2json)
       xml2json <- gsub("([A-Z]):/", "/cygdrive/\\1/", xml2json)
       xml2json <- paste0('cmd.exe /c ',
-                         shQuote(rev(Sys.glob("c:\\cygw*\\bin\\bash.exe"))[1], type = "cmd"),
-                         ' --login -c "', xml2json, '"')
+                         rev(Sys.glob("c:\\cygw*\\bin\\bash.exe"))[1],
+                         ' --login -c "', shQuote(xml2json, type = "cmd"), '"')
       #
     } # if windows
 
