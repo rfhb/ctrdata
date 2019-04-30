@@ -95,7 +95,7 @@ Package `ctrdata` has been used for example for:
 
   - Report on [The impact of collaboration: The value of UK medical
     research to EU science and
-    health](http://www.cancerresearchuk.org/about-us/we-develop-policy/we-work-with-government/exiting-the-eu/uk-and-eu-research#downloads)
+    health](https://www.cancerresearchuk.org/about-us/we-develop-policy/we-work-with-government/exiting-the-eu/uk-and-eu-research#downloads)
 
 Overview of functions used in sequence:
 
@@ -285,7 +285,7 @@ with (result, table (p_end_of_trial_status, b1_sponsor.b31_and_b32_status_of_the
     (`ctrOpenSearchPagesInBrowser(copyright = TRUE)`).
 
   - This package `ctrdata` has been made possible based on the work done
-    for [R](http://www.r-project.org/),
+    for [R](https://www.r-project.org/),
     [curl](https://github.com/jeroenooms/curl),
     [clipr](https://github.com/mdlincoln/clipr),
     [mongolite](https://cran.r-project.org/package=mongolite),
