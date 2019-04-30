@@ -682,8 +682,8 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register,
   # special command handling on windows
   if (.Platform$OS.type == "windows") {
     #
-    xml2json <- shortPathName(path = system.file("exec/xml2json.php", package = "ctrdata", mustWork = TRUE))
-    xml2json <- paste0("php -f ", xml2json, " ", shortPathName(path = tempDir))
+    xml2json <- utils::shortPathName(path = system.file("exec/xml2json.php", package = "ctrdata", mustWork = TRUE))
+    xml2json <- paste0("php -f ", xml2json, " ", utils::shortPathName(path = tempDir))
     #
     # xml2json requires cygwin's php. transform paths for cygwin use:
     xml2json <- gsub("\\\\", "/", xml2json)
@@ -911,8 +911,8 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register,
   # special handling in case of windows
   if (.Platform$OS.type == "windows") {
     #
-    euctr2json <- shortPathName(path = system.file("exec/euctr2json.sh", package = "ctrdata", mustWork = TRUE))
-    euctr2json <- paste(euctr2json, shortPathName(path = tempDir))
+    euctr2json <- utils::shortPathName(path = system.file("exec/euctr2json.sh", package = "ctrdata", mustWork = TRUE))
+    euctr2json <- paste(euctr2json, utils::shortPathName(path = tempDir))
     #
     # euctr2json requires cygwin's perl, sed. transform paths for cygwin use
     euctr2json <- gsub("\\\\", "/", euctr2json)
@@ -1070,8 +1070,8 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register,
     # special command handling on windows
     if (.Platform$OS.type == "windows") {
       #
-      xml2json <- shortPathName(path = system.file("exec/xml2json_euctrresults.php", package = "ctrdata", mustWork = TRUE))
-      xml2json <- paste0("php -f ", xml2json, " ", shortPathName(path = tempDir))
+      xml2json <- utils::shortPathName(path = system.file("exec/xml2json_euctrresults.php", package = "ctrdata", mustWork = TRUE))
+      xml2json <- paste0("php -f ", xml2json, " ", utils::shortPathName(path = tempDir))
       #
       # xml2json requires cygwin's php. transform paths for cygwin use:
       xml2json <- gsub("\\\\", "/", xml2json)

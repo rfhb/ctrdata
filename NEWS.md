@@ -1,3 +1,8 @@
+# ctrdata 0.18.2
+ - 2019-04-30
+ - new release
+ - extended compatibility with cygwin and Windows
+ 
 # ctrdata 0.18.9004
  - 2019-04-28
  - find and use any cygw* under windows

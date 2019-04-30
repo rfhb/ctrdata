@@ -23,7 +23,7 @@ started mid 2015 and was motivated by the wish to understand trends in
 designs and conduct of trials and their availability for patients. The
 package is to be used within the [R](https://www.r-project.org/) system.
 
-Last edit 2019-04-21 for version 0.18.9002, with bug fixes and new
+Last edit 2019-04-29 for version 0.18.2, with bug fixes and new
 features:
 
   - dates are now returned as Date types, and some Yes / No fields are
@@ -33,8 +33,8 @@ features:
     function `ctrLoadQueryIntoDb()`), for later use in analysis, and
   - synonyms of active substances to better find trials can be retrieved
     with function `ctrFindActiveSubstanceSynonyms()`,
-  - improved functioning with remote Mongo databases, and removed need
-    for local installation of MongoDB.
+  - works with remote Mongo databases; removed need for local
+    installation of MongoDB.
 
 Main features:
 
@@ -73,8 +73,8 @@ citation("ctrdata")
 #> To cite package 'ctrdata' in publications use:
 #> 
 #>   Ralf Herold (2019). ctrdata: Retrieve and Analyze Information on
-#>   Clinical Trials from Public Registers. R package version
-#>   0.18.9002. https://github.com/rfhb/ctrdata
+#>   Clinical Trials from Public Registers. R package version 0.18.2.
+#>   https://github.com/rfhb/ctrdata
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
@@ -82,7 +82,7 @@ citation("ctrdata")
 #>     title = {ctrdata: Retrieve and Analyze Information on Clinical Trials from Public Registers},
 #>     author = {Ralf Herold},
 #>     year = {2019},
-#>     note = {R package version 0.18.9002},
+#>     note = {R package version 0.18.2},
 #>     url = {https://github.com/rfhb/ctrdata},
 #>   }
 ```
@@ -114,6 +114,7 @@ install.packages("ctrdata")
 
 # Development version from github.com:
 install.packages("devtools")
+devtools::install_github("rfhb/ctrdata")
 # Note build_opts is emptied so that vignettes are built:
 devtools::install_github("rfhb/ctrdata", build_opts = "")
 ```
@@ -129,9 +130,11 @@ Linux and macOS, these are usually already installed.
 
 For MS Windows, install [cygwin](https://cygwin.org/install.html): In
 `R`, run `ctrdata::installCygwinWindowsDoInstall()` for an automated
-minimal installation into `c:\cygwin`. Alternatively, install manually
-cygwin with packages `perl`, `php-jsonc` and `php-simplexml` (consumes
-about 160 MB disk space; administrator credentials not needed).
+minimal installation into `c:\cygwin` (installations in folders
+corresponding to `c:\cygw*` will also be recognised and used).
+Alternatively, install manually cygwin with packages `perl`, `php-jsonc`
+and `php-simplexml`. This installation will consume about 160 MB disk
+space; administrator credentials not needed.
 
 ## 3\. Mongo database
 
@@ -261,7 +264,7 @@ with (result, table (p_end_of_trial_status, b1_sponsor.b31_and_b32_status_of_the
 
 # Features in the works
 
-  - Explore NoSQL databases other than Mongo
+  - Explore NoSQL databases other than MongoDB
 
   - Explore using the Windows Subsystem for Linux (WSL) instead of
     cygwin

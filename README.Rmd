@@ -27,12 +27,12 @@ knitr::opts_chunk$set(
 
 The package `ctrdata` provides functions for retrieving (downloading) information on clinical trials from public registers, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started mid 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package is to be used within the [R](https://www.r-project.org/) system. 
 
-Last edit 2019-04-21 for version 0.18.9002, with bug fixes and new features: 
+Last edit 2019-04-29 for version 0.18.2, with bug fixes and new features: 
 
 * dates are now returned as Date types, and some Yes / No fields are returned as logical, by function `dbGetFieldsIntoDf()`, 
 * personal annotations can be added when records are retrieved from a register (new options `annotate.text` and `annotate.mode` for function `ctrLoadQueryIntoDb()`), for later use in analysis, and 
 * synonyms of active substances to better find trials can be retrieved with function `ctrFindActiveSubstanceSynonyms()`,
-* improved functioning with remote Mongo databases, and removed need for local installation of MongoDB. 
+* works with remote Mongo databases; removed need for local installation of MongoDB. 
 
 Main features:
 
@@ -40,7 +40,7 @@ Main features:
 
 * Results-related information on these clinical trials is now included (since August 2017) when information is retrieved (downloaded). 
 
-* Retrieved (downloaded) trial information is transformed and stored in a document-centric database (MongoDB), for fast and offline access. This can then be analysed with `R` (or others systems). Easily re-run a previous query to update a database collection.  
+* Retrieved (downloaded) trial information is transformed and stored in a document-centric database (MongoDB), for fast and offline access. This can then be analysed with `R` (or others systems). Easily re-run a previous query to update a database collection. 
 
 * Unique (de-duplicated) clinical trial records are identified (a database collection may hold information from more than one register, and trials may have more than one record in a register). `ctrdata` has also functions to merge protocol-related information from different registers and to recode it. Vignettes are provided to get started and with detailed examples such as analyses of time trends of details of clinical trial protocols. 
 
@@ -74,6 +74,7 @@ install.packages("ctrdata")
 
 # Development version from github.com:
 install.packages("devtools")
+devtools::install_github("rfhb/ctrdata")
 # Note build_opts is emptied so that vignettes are built:
 devtools::install_github("rfhb/ctrdata", build_opts = "")
 ```
@@ -85,7 +86,7 @@ Package `ctrdata` can be found [here on CRAN](https://cran.r-project.org/package
 These command line tools are only required for `ctrGetQueryUrlFromBrowser()`, a main function of package `ctrdata`. 
 In Linux and macOS, these are usually already installed. 
 
-For MS Windows, install [cygwin](https://cygwin.org/install.html): In `R`, run `ctrdata::installCygwinWindowsDoInstall()` for an automated minimal installation into `c:\cygwin`. Alternatively, install manually cygwin with packages `perl`, `php-jsonc` and `php-simplexml` (consumes about 160 MB disk space; administrator credentials not needed). 
+For MS Windows, install [cygwin](https://cygwin.org/install.html): In `R`, run `ctrdata::installCygwinWindowsDoInstall()` for an automated minimal installation into `c:\cygwin` (installations in folders corresponding to `c:\cygw*` will also be recognised and used). Alternatively, install manually cygwin with packages `perl`, `php-jsonc` and `php-simplexml`. This installation will consume about 160 MB disk space; administrator credentials not needed.
 
 ## 3. Mongo database
 
@@ -218,7 +219,7 @@ with (result, table (p_end_of_trial_status, b1_sponsor.b31_and_b32_status_of_the
 
 # Features in the works
 
-* Explore NoSQL databases other than Mongo
+* Explore NoSQL databases other than MongoDB
 
 * Explore using the Windows Subsystem for Linux (WSL) instead of cygwin
 
