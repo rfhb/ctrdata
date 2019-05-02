@@ -1534,22 +1534,29 @@ installFindBinary <- function(commandtest = NULL, debug = FALSE) {
   if (is.null(commandtest)) stop("Empty argument: commandtest", call. = FALSE)
   #
   if (.Platform$OS.type == "windows") commandtest <-
-      paste0("cmd.exe /c c:\\cygwin\\bin\\bash.exe --login -c ", shQuote(commandtest))
+      paste0("c:\\cygwin\\bin\\bash.exe --login -c ", shQuote(commandtest))
   #
   if (debug) print(commandtest)
   #
   commandresult <- try(
-    system(commandtest,
-           intern = TRUE,
-           ignore.stdout = TRUE,
-           ignore.stderr = TRUE),
+      suppressWarnings(
+        system(commandtest,
+               intern = TRUE,
+               ignore.stderr = ifelse(.Platform$OS.type == "windows", FALSE, TRUE))),
     silent = TRUE
   )
   #
   commandreturn <- ifelse(class(commandresult) == "try-error" ||
-                           grepl("error", tolower(paste(commandresult, collapse = " "))), FALSE, TRUE)
+                          grepl("error|not found", tolower(paste(commandresult, collapse = " "))) ||
+                          (!is.null(attr(commandresult, "status")) &&
+                           (attr(commandresult, "status") != 0)),
+                          FALSE, TRUE)
   #
-  if (!commandreturn) warning(commandtest, " not found.", call. = FALSE, immediate. = FALSE)
+  if (!commandreturn) {
+    warning(commandtest, " not found.", call. = FALSE, immediate. = FALSE)
+  } else {
+    if (interactive()) message(". ", appendLF = FALSE)
+  }
   #
   if (debug) print(commandresult)
   #
