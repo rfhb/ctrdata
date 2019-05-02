@@ -18,23 +18,23 @@
   )
   #
   # check availabilities
-  packageStartupMessage("Testing helper binaries:")
+  packageStartupMessage("Testing helper binaries: ", appendLF = FALSE)
   #
   if (.Platform$OS.type == "windows") installCygwinWindowsTest()
   #
-  if (!suppressWarnings(installFindBinary("php --version")))
-    packageStartupMessage("php not found, ctrLoadQueryIntoDb() will not work.")
+  if (!suppressWarnings(installFindBinary(commandtest = "php --version")))
+    packageStartupMessage("\nphp not found, ctrLoadQueryIntoDb() will not work ", appendLF = FALSE)
   #
-  if (!suppressWarnings(installFindBinary("php -r 'simplexml_load_string(\"\");'")))
-    packageStartupMessage("php xml not found, ctrLoadQueryIntoDb() will not work.")
+  if (!suppressWarnings(installFindBinary(commandtest = "php -r 'simplexml_load_string(\"\");'")))
+    packageStartupMessage("\nphp xml not found, ctrLoadQueryIntoDb() will not work ", appendLF = FALSE)
   #
-  if (!suppressWarnings(installFindBinary("echo x | sed s/x/y/")))
-    packageStartupMessage("sed not found, ctrLoadQueryIntoDb() will not work.")
+  if (!suppressWarnings(installFindBinary(commandtest = "echo x | sed s/x/y/")))
+    packageStartupMessage("\nsed not found, ctrLoadQueryIntoDb() will not work ", appendLF = FALSE)
   #
-  if (!suppressWarnings(installFindBinary("perl -V:osname")))
-    packageStartupMessage("perl not found, ctrLoadQueryIntoDb() will not work.")
+  if (!suppressWarnings(installFindBinary(commandtest = "perl -V:osname")))
+    packageStartupMessage("\nperl not found, ctrLoadQueryIntoDb() will not work ", appendLF = FALSE)
   #
-  packageStartupMessage("completed.")
+  packageStartupMessage("\nTesting completed.")
   #
   invisible()
   #

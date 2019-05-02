@@ -1,3 +1,7 @@
+# ctrdata 0.18.9005
+ - 2019-05-02
+ - speed up testing bash commands under windows
+
 # ctrdata 0.18.2
  - 2019-04-30
  - new release

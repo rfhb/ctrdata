@@ -86,16 +86,16 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     if (!installCygwinWindowsTest())
       stop(call. = FALSE)
   #
-  if (!suppressWarnings(installFindBinary("php --version")))
+  if (!suppressWarnings(installFindBinary(commandtest = "php --version")))
     stop("php not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
   #
-  if (!suppressWarnings(installFindBinary("php -r 'simplexml_load_string(\"\");'")))
+  if (!suppressWarnings(installFindBinary(commandtest = "php -r 'simplexml_load_string(\"\");'")))
     stop("php xml not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
   #
-  if (!suppressWarnings(installFindBinary("echo x | sed s/x/y/")))
+  if (!suppressWarnings(installFindBinary(commandtest = "echo x | sed s/x/y/")))
     stop("sed not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
   #
-  if (!suppressWarnings(installFindBinary("perl -V:osname")))
+  if (!suppressWarnings(installFindBinary(commandtest = "perl -V:osname")))
     stop("perl not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
 
   ## parameter checks
