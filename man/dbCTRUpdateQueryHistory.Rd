@@ -8,14 +8,14 @@ dbCTRUpdateQueryHistory(register, queryterm, recordnumber, collection, uri,
   password, verbose)
 }
 \arguments{
-\item{register}{Vector of abbreviations of registers to query, defaults to
+\item{register}{Vector of abbreviations of the register to query, defaults to
 "EUCTR"}
 
 \item{queryterm}{Either a string with the full URL of a search in a register
 or the data frame returned by the \link{ctrGetQueryUrlFromBrowser} or the
 \link{dbQueryHistory} functions.
-The queryterm is recorded in the collection \code{ns} for later use to
-update records.}
+The queryterm is recorded in the \code{collection} for later
+use to update records.}
 
 \item{collection}{Name of collection (default is "ctrdata")}
 

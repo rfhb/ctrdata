@@ -10,7 +10,7 @@ ctrRerunQuery(querytoupdate = querytoupdate,
   verbose = verbose, queryupdateterm = queryupdateterm)
 }
 \arguments{
-\item{querytoupdate}{Either the word "last" or the number of query (based
+\item{querytoupdate}{Either the word "last" or the number of the query (based
 on \link{dbQueryHistory}) that should be run to retrieve any trial records
 that are new or have been updated since this query was run the last time.
 This parameter takes precedence over \code{queryterm}.

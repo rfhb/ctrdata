@@ -31,15 +31,15 @@ Is always true, invisibly.
 Open advanced search pages of register(s) or execute search in browser
 }
 \examples{
-
 \dontrun{
+ctrOpenSearchPagesInBrowser(
+ "https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer")
 
-ctrOpenSearchPagesInBrowser("https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer")
+ctrOpenSearchPagesInBrowser(
+ ctrGetQueryUrlFromBrowser())
 
-ctrOpenSearchPagesInBrowser(ctrGetQueryUrlFromBrowser())
-
-ctrOpenSearchPagesInBrowser(dbQueryHistory())
-
+ctrOpenSearchPagesInBrowser(
+ dbQueryHistory())
 }
 
 }

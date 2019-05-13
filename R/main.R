@@ -12,11 +12,11 @@
 #' @param queryterm Either a string with the full URL of a search in a register
 #'   or the data frame returned by the \link{ctrGetQueryUrlFromBrowser} or the
 #'   \link{dbQueryHistory} functions.
-#'   The queryterm is recorded in the collection \code{ns} for later use to
-#'   update records.
-#' @param register Vector of abbreviations of registers to query, defaults to
+#'   The queryterm is recorded in the \code{collection} for later
+#'   use to update records.
+#' @param register Vector of abbreviations of the register to query, defaults to
 #'   "EUCTR"
-#' @param querytoupdate Either the word "last" or the number of query (based
+#' @param querytoupdate Either the word "last" or the number of the query (based
 #'   on \link{dbQueryHistory}) that should be run to retrieve any trial records
 #'   that are new or have been updated since this query was run the last time.
 #'   This parameter takes precedence over \code{queryterm}.
@@ -27,8 +27,7 @@
 #'   (default is \code{FALSE}).
 #' @param euctrresults If \code{TRUE}, also download available results when
 #'   retrieving and loading trials from EUCTR. This slows down this function.
-#'   (For CTGOV, all available results are retrieved and loaded from
-#'   ctrdata version 0.9.10 onwards.)
+#'   (For CTGOV, all available results are always retrieved and loaded.)
 #' @param annotation.text Text to be including in the records retrieved
  #'   with the current query, in the field "annotation".
 #' @param annotation.mode One of "append" (default), "prepend" or "replace"
@@ -43,41 +42,36 @@
 #'   function \code{dbFindUniqueEuctrRecord} in a subsequent step to limit to
 #'   one record from EUCTR per trial
 #' @param parallelretrievals Number of parallel downloads of information from
-#'   the register
+#'   the register, defaults to 10.
 #' @param debug Printing additional information if set to \code{TRUE}; default
 #'   is \code{FALSE}.
 #'
 #' @inheritParams ctrMongo
 #'
 #'
-#' @return Number of trials imported or updated in the database
+#' @return Number of trials imported or updated from register
 #' @examples
-#' # Retrieve protocol-related information on a single trial identified by EudraCT number
+#' # Retrieve protocol-related information on a
+#' # single trial identified by EudraCT number
 #' \dontrun{
 #' ctrLoadQueryIntoDb (queryterm = "2013-001291-38")
 #' }
-#'
-#' # For use with EudraCT: define paediatric population and cancer terms
+#' # Retrieve protocol-related information on
+#' # ongoing interventional cancer trials in children
 #' \dontrun{
-#' queryEuDefPaedPopulation  <- "age=under-18"
-#' queryEuDef01paedOncTrials <- "cancer leukaem leukem sarcoma tumour tumor blastom gliom lymphom
-#' malign hodgkin ewing rhabdo teratom tumeur leucemi"
-#' queryEuDef01paedOncTrials <- gsub (" ", "%20OR%20", queryEuDef01paedOncTrials)
-#' queryEuDef01paedOncTrials <- paste (queryEuDef01paedOncTrials, queryEuDefPaedPopulation, sep="&")
-#' ctrLoadQueryIntoDb (queryterm = queryEuDef01paedOncTrials, parallelretrivals = 5)
-#' }
-#'
-#' # Retrieve protocol-related information on ongoing interventional cancer trials in children
-#' \dontrun{
-#' ctrLoadQueryIntoDb (queryterm = "cancer&recr=Open&type=Intr&age=0", register = "CTGOV")
-#' ctrLoadQueryIntoDb (queryterm = "NCT02239861", register = "CTGOV")
+#' ctrLoadQueryIntoDb (
+#'      queryterm = "cancer&recr=Open&type=Intr&age=0",
+#'      register = "CTGOV")
+#' ctrLoadQueryIntoDb (
+#'      queryterm = "NCT02239861",
+#'      register = "CTGOV")
 #' }
 #'
 #' @export
 #'
 ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate = 0L, forcetoupdate = FALSE,
                                euctrresults = FALSE, annotation.text = "", annotation.mode = "append",
-                               details = TRUE, parallelretrievals = 10, debug = FALSE,
+                               details = TRUE, parallelretrievals = 10L, debug = FALSE,
                                collection = "ctrdata", uri = "mongodb://localhost/users",
                                password = Sys.getenv("ctrdatamongopassword"), verbose = FALSE) {
 

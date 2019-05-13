@@ -6,9 +6,8 @@
 # EUCTR definitions
 countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR",
                     "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL",
-                    "PL", "PT", "RO", "SK", "SE", "SI", "ES", "GB",
-                    "IS", "LI", "NO",
-                    "3RD")
+                    "PL", "PT", "RO", "SK", "SE", "SI", "ES", "GB", "IS", "LI",
+                    "NO", "3RD")
 
 
 #' Set up connections to a Mongo DB server database
@@ -130,15 +129,15 @@ ctrMongo <- function(collection = "ctrdata",
 #' @return Is always true, invisibly.
 #'
 #' @examples
-#'
 #' \dontrun{
+#' ctrOpenSearchPagesInBrowser(
+#'  "https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer")
 #'
-#' ctrOpenSearchPagesInBrowser("https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer")
+#' ctrOpenSearchPagesInBrowser(
+#'  ctrGetQueryUrlFromBrowser())
 #'
-#' ctrOpenSearchPagesInBrowser(ctrGetQueryUrlFromBrowser())
-#'
-#' ctrOpenSearchPagesInBrowser(dbQueryHistory())
-#'
+#' ctrOpenSearchPagesInBrowser(
+#'  dbQueryHistory())
 #' }
 #'
 ctrOpenSearchPagesInBrowser <- function(input = "", register = "", copyright = FALSE, ...) {
@@ -1149,9 +1148,9 @@ dfFindUniqueEuctrRecord <- function(df = NULL, prefermemberstate = "GB", include
   result <- unlist(result)
 
   # eleminate the unwanted EUCTR records
-  df <- df[!(df [["_id"]] %in% result), ]
+  df <- df[!(df[["_id"]] %in% result), ]
   # also eliminate the meta-info record
-  df <- df[!(df [["_id"]] == "meta-info"), ]
+  df <- df[!(df[["_id"]] == "meta-info"), ]
 
   # inform user about changes to data frame
   if (length(nms) > (tmp <- length(result)))
@@ -1369,6 +1368,8 @@ addMetaData <- function(x, uri, collection, password) {
 
 #' Function to set proxy
 #'
+#' @importFrom curl ie_proxy_info
+#'
 #' @keywords internal
 #'
 setProxy <- function() {
@@ -1391,7 +1392,7 @@ setProxy <- function() {
 
 
 
-#' Convenience function to install a cygwin environment under MS Windows,
+#' Convenience function to install a minimal cygwin environment under MS Windows,
 #' including perl, sed and php
 #'
 #' Alternatively and in case of difficulties, download and run the cygwin
@@ -1405,7 +1406,7 @@ setProxy <- function() {
 #' @param force Set to \code{TRUE} to force updating and overwriting an existing
 #'   installation in \code{c:\\cygwin}
 #' @param proxy Specify any proxy to be used for downloading via http, e.g.
-#'   "host_or_ip:port". \code{installCygwinWindowsDoInstall()} may detect and use
+#'   "host_or_ip:port". \code{installCygwinWindowsDoInstall} may detect and use
 #'   the proxy configuration uset in MS Windows to use an automatic proxy
 #'   configuration script. Authenticated proxies are not supported at this time.
 #'

@@ -12,16 +12,15 @@ ctrLoadQueryIntoDbCtgov(queryterm, register, euctrresults, annotation.text,
 \item{queryterm}{Either a string with the full URL of a search in a register
 or the data frame returned by the \link{ctrGetQueryUrlFromBrowser} or the
 \link{dbQueryHistory} functions.
-The queryterm is recorded in the collection \code{ns} for later use to
-update records.}
+The queryterm is recorded in the \code{collection} for later
+use to update records.}
 
-\item{register}{Vector of abbreviations of registers to query, defaults to
+\item{register}{Vector of abbreviations of the register to query, defaults to
 "EUCTR"}
 
 \item{euctrresults}{If \code{TRUE}, also download available results when
 retrieving and loading trials from EUCTR. This slows down this function.
-(For CTGOV, all available results are retrieved and loaded from
-ctrdata version 0.9.10 onwards.)}
+(For CTGOV, all available results are always retrieved and loaded.)}
 
 \item{annotation.text}{Text to be including in the records retrieved
 with the current query, in the field "annotation".}
@@ -40,7 +39,7 @@ function \code{dbFindUniqueEuctrRecord} in a subsequent step to limit to
 one record from EUCTR per trial}
 
 \item{parallelretrievals}{Number of parallel downloads of information from
-the register}
+the register, defaults to 10.}
 
 \item{debug}{Printing additional information if set to \code{TRUE}; default
 is \code{FALSE}.}
