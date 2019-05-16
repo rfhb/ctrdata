@@ -7,7 +7,7 @@
 // time xml2json.php:
 // 2016-04-20: 0.05 s for 2 trials ~ 25 ms per trial
 
-// note line endings are to be kep by using in
+// note line endings are to be kept by using in
 // .gitattributes for compatibility with cygwin:
 // *.sh  text eol=lf
 // *.php text eol=lf
