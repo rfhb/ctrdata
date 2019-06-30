@@ -4,25 +4,11 @@
 \alias{dbQueryHistory}
 \title{Show the history of queries that were loaded into a database collection}
 \usage{
-dbQueryHistory(collection = "ctrdata",
-  uri = "mongodb://localhost/users",
-  password = Sys.getenv("ctrdatamongopassword"), verbose = FALSE)
+dbQueryHistory(con, verbose = FALSE)
 }
 \arguments{
-\item{collection}{Name of collection (default is "ctrdata")}
-
-\item{uri}{Default is mongodb://localhost/users/.
-Address of database in mongodb server, based on mongo connection string
-format: mongodb://[username@]host1[:port1][,...hostN[:portN]]]/database/
-Do NOT include password, this will only be used from the parameter.
-See \url{http://docs.mongodb.org/manual/reference/connection-string/}}
-
-\item{password}{In case access requires credentials.
-Note this defaults to the environment variable "ctrdatamongopassword".
-(by means of \code{Sys.getenv("ctrdatamongopassword")}), to
-support scripting without revealing secrets.}
-
-\item{verbose}{Print information.}
+\item{con}{A \link[nodbi]{src} connection object, as obtained with
+nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()}
 }
 \value{
 A data frame with columns: query-timestamp, query-egister,

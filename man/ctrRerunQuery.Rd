@@ -5,9 +5,8 @@
 \title{ctrRerunQuery}
 \usage{
 ctrRerunQuery(querytoupdate = querytoupdate,
-  forcetoupdate = forcetoupdate, debug = debug,
-  collection = collection, uri = uri, password = password,
-  verbose = verbose, queryupdateterm = queryupdateterm)
+  forcetoupdate = forcetoupdate, con = con, verbose = verbose,
+  queryupdateterm = queryupdateterm)
 }
 \arguments{
 \item{querytoupdate}{Either the word "last" or the number of the query (based
@@ -21,23 +20,11 @@ the query is run again if more time has passed since it was run last.}
 \code{querytoupdate}, irrespective of when it was run last
 (default is \code{FALSE}).}
 
-\item{debug}{Printing additional information if set to \code{TRUE}; default
+\item{con}{A \link[nodbi]{src} connection object, as obtained with
+nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()}
+
+\item{verbose}{Printing additional information if set to \code{TRUE}; default
 is \code{FALSE}.}
-
-\item{collection}{Name of collection (default is "ctrdata")}
-
-\item{uri}{Default is mongodb://localhost/users/.
-Address of database in mongodb server, based on mongo connection string
-format: mongodb://[username@]host1[:port1][,...hostN[:portN]]]/database/
-Do NOT include password, this will only be used from the parameter.
-See \url{http://docs.mongodb.org/manual/reference/connection-string/}}
-
-\item{password}{In case access requires credentials.
-Note this defaults to the environment variable "ctrdatamongopassword".
-(by means of \code{Sys.getenv("ctrdatamongopassword")}), to
-support scripting without revealing secrets.}
-
-\item{verbose}{Print information.}
 }
 \description{
 ctrRerunQuery

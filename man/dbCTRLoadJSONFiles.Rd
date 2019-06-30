@@ -4,12 +4,13 @@
 \alias{dbCTRLoadJSONFiles}
 \title{dbCTRLoadJSONFiles}
 \usage{
-dbCTRLoadJSONFiles(dir, mongo)
+dbCTRLoadJSONFiles(dir, con)
 }
 \arguments{
 \item{dir}{Path to local directory with JSON files from downloading and converting}
 
-\item{mongo}{ctrmongo Mongo DB database connection object}
+\item{con}{A \link[nodbi]{src} connection object, as obtained with
+nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()}
 }
 \value{
 List with elements n (number of imported trials) and ids (_ids of imported trials)

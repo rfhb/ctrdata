@@ -18,7 +18,7 @@
   )
   #
   # check availabilities
-  packageStartupMessage("Testing helper binaries: ", appendLF = FALSE)
+  packageStartupMessage("Checking helper binaries: ", appendLF = FALSE)
   #
   if (.Platform$OS.type == "windows") installCygwinWindowsTest()
   #
@@ -34,7 +34,7 @@
   if (!suppressWarnings(installFindBinary(commandtest = "perl -V:osname")))
     packageStartupMessage("\nperl not found, ctrLoadQueryIntoDb() will not work ", appendLF = FALSE)
   #
-  packageStartupMessage("\nTesting completed.")
+  packageStartupMessage("\nChecking completed.")
   #
   invisible()
   #

@@ -4,9 +4,7 @@
 \alias{dbFindFields}
 \title{Find names of fields in the database collection}
 \usage{
-dbFindFields(namepart = "", allmatches = TRUE, debug = FALSE,
-  collection = "ctrdata", uri = "mongodb://localhost/users",
-  password = Sys.getenv("ctrdatamongopassword"), verbose = FALSE)
+dbFindFields(namepart = "", allmatches = TRUE, con, verbose = FALSE)
 }
 \arguments{
 \item{namepart}{A plain string (not a regular expression) to be searched for
@@ -15,22 +13,10 @@ among all field names (keys) in the database.}
 \item{allmatches}{If \code{TRUE} (default), returns all keys if more than one is found,
 returns only first if \code{FALSE}.}
 
+\item{con}{A \link[nodbi]{src} connection object, as obtained with
+nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()}
+
 \item{debug}{If \code{TRUE}, prints additional information (default \code{FALSE}).}
-
-\item{collection}{Name of collection (default is "ctrdata")}
-
-\item{uri}{Default is mongodb://localhost/users/.
-Address of database in mongodb server, based on mongo connection string
-format: mongodb://[username@]host1[:port1][,...hostN[:portN]]]/database/
-Do NOT include password, this will only be used from the parameter.
-See \url{http://docs.mongodb.org/manual/reference/connection-string/}}
-
-\item{password}{In case access requires credentials.
-Note this defaults to the environment variable "ctrdatamongopassword".
-(by means of \code{Sys.getenv("ctrdatamongopassword")}), to
-support scripting without revealing secrets.}
-
-\item{verbose}{Print information.}
 }
 \value{
 Vector of field(s) found

@@ -1,6 +1,7 @@
 
-<!-- README.md is generated from README.Rmd. -->
+<!-- README.md is generated from README.Rmd -->
 
+[![](https://cranlogs.r-pkg.org/badges/ctrdata)](https://cran.r-project.org/package=ctrdata)
 [![Build
 Status](https://travis-ci.org/rfhb/ctrdata.png?branch=master)](https://travis-ci.org/rfhb/ctrdata)
 [![AppVeyor Build
@@ -23,7 +24,7 @@ started mid 2015 and was motivated by the wish to understand trends in
 designs and conduct of trials and their availability for patients. The
 package is to be used within the [R](https://www.r-project.org/) system.
 
-Last edit 2019-04-29 for version 0.18.2, with bug fixes and new
+Last edit 2019-05-19 for version 0.18.9005, with bug fixes and new
 features:
 
   - dates are now returned as Date types, and some Yes / No fields are
@@ -73,8 +74,8 @@ citation("ctrdata")
 #> To cite package 'ctrdata' in publications use:
 #> 
 #>   Ralf Herold (2019). ctrdata: Retrieve and Analyze Information on
-#>   Clinical Trials from Public Registers. R package version 0.18.2.
-#>   https://github.com/rfhb/ctrdata
+#>   Clinical Trials from Public Registers. R package version
+#>   0.18.9005. https://github.com/rfhb/ctrdata
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
@@ -82,7 +83,7 @@ citation("ctrdata")
 #>     title = {ctrdata: Retrieve and Analyze Information on Clinical Trials from Public Registers},
 #>     author = {Ralf Herold},
 #>     year = {2019},
-#>     note = {R package version 0.18.2},
+#>     note = {R package version 0.18.9005},
 #>     url = {https://github.com/rfhb/ctrdata},
 #>   }
 ```
@@ -173,9 +174,6 @@ the trials’ status.
 
 ``` r
 library(ctrdata)
-#> Registered S3 method overwritten by 'rvest':
-#>   method            from
-#>   read_xml.response xml2
 #> Information on this package and how to use it:
 #> https://cran.r-project.org/package=ctrdata
 #> 
@@ -184,8 +182,8 @@ library(ctrdata)
 #> ctrOpenSearchPagesInBrowser(copyright = TRUE) and visit
 #> https://www.clinicaltrialsregister.eu/disclaimer.html
 #> https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use
-#> Testing helper binaries:
-#> completed.
+#> Testing helper binaries: 
+#> Testing completed.
 ```
 
   - Open registers’ advanced search pages in browser:

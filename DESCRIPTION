@@ -3,7 +3,7 @@ Type: Package
 Title: Retrieve and Analyze Information on Clinical Trials from Public Registers
 Version: 0.18.9005
 Date: 2019-05-02
-Imports: mongolite (>= 2.0), jsonlite, httr, curl, clipr, xml2, rvest
+Imports: jsonlite, httr, curl, clipr, xml2, rvest
 SystemRequirements: mongo database, sed, php, cat, perl
 URL: https://github.com/rfhb/ctrdata
 BugReports: https://github.com/rfhb/ctrdata/issues
@@ -11,7 +11,7 @@ Description: Provides functions for querying, retrieving and analysing protocol-
 License: MIT + file LICENSE
 RoxygenNote: 6.1.1
 LazyData: true
-Suggests: testthat, devtools, knitr, rmarkdown
+Suggests: testthat, devtools, knitr, rmarkdown, nodbi (>= 0.2.0.9102)
 VignetteBuilder: knitr
 NeedsCompilation: no
 Encoding: UTF-8

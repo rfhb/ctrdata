@@ -5,51 +5,54 @@
 #' Retrieve or update information on clinical trials from register and store in
 #' database
 #'
-#' Note that upsert is used to store data in database, which means that records
-#' may accumulate in a data base from different queries. If you want to insert
-#' into an empty database, include a mongo connection object to an empty database.
+#' This is the main function of package \link{ctrdata} for accessing registers.
+#' Note that re-rerunning this function adds or updates trial records
+#'   in a database, even if from different queries or different registers.
 #'
 #' @param queryterm Either a string with the full URL of a search in a register
 #'   or the data frame returned by the \link{ctrGetQueryUrlFromBrowser} or the
 #'   \link{dbQueryHistory} functions.
 #'   The queryterm is recorded in the \code{collection} for later
 #'   use to update records.
+#'
 #' @param register Vector of abbreviations of the register to query, defaults to
 #'   "EUCTR"
+#'
 #' @param querytoupdate Either the word "last" or the number of the query (based
 #'   on \link{dbQueryHistory}) that should be run to retrieve any trial records
 #'   that are new or have been updated since this query was run the last time.
 #'   This parameter takes precedence over \code{queryterm}.
 #'   For EUCTR, updates are available only for the last seven days;
 #'   the query is run again if more time has passed since it was run last.
+#'
 #' @param forcetoupdate If \code{TRUE}, run again the query given in
 #'   \code{querytoupdate}, irrespective of when it was run last
 #'   (default is \code{FALSE}).
+#'
 #' @param euctrresults If \code{TRUE}, also download available results when
 #'   retrieving and loading trials from EUCTR. This slows down this function.
 #'   (For CTGOV, all available results are always retrieved and loaded.)
+#'
 #' @param annotation.text Text to be including in the records retrieved
  #'   with the current query, in the field "annotation".
+ #'
 #' @param annotation.mode One of "append" (default), "prepend" or "replace"
 #'   for new annotation.text with respect to any existing annotation for
 #'   the records retreived with the current query.
-#' @param details If \code{TRUE} (default), retrieve full protocol-related
-#'   information from EUCTR or XML data from CTGOV, depending on the register
-#'   selected. This gives all of the available details for the trials.
-#'   Alternatively, set to \code{FALSE} to retrieve only summary information
-#'   from EUCTR or CSV data from CTGOV. The full EUCTR information includes
-#'   separate records for every country in which the trial is opened; use
-#'   function \code{dbFindUniqueEuctrRecord} in a subsequent step to limit to
-#'   one record from EUCTR per trial
+#'
 #' @param parallelretrievals Number of parallel downloads of information from
 #'   the register, defaults to 10.
-#' @param debug Printing additional information if set to \code{TRUE}; default
+#'
+#' @inheritParams ctrDb
+#'
+#' @param verbose Printing additional information if set to \code{TRUE}; default
 #'   is \code{FALSE}.
 #'
-#' @inheritParams ctrMongo
+#' @return A list with elements "n" (the number of trials that were newly imported
+#'  or updated with this function call) and "ids" (a vector of the _id[s] of these
+#'  trials), with attributes (database connection details and a data frame of the
+#'  query history in this database).
 #'
-#'
-#' @return Number of trials imported or updated from register
 #' @examples
 #' # Retrieve protocol-related information on a
 #' # single trial identified by EudraCT number
@@ -71,14 +74,18 @@
 #'
 ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate = 0L, forcetoupdate = FALSE,
                                euctrresults = FALSE, annotation.text = "", annotation.mode = "append",
-                               details = TRUE, parallelretrievals = 10L, debug = FALSE,
-                               collection = "ctrdata", uri = "mongodb://localhost/users",
-                               password = Sys.getenv("ctrdatamongopassword"), verbose = FALSE) {
+                               parallelretrievals = 10L, debug = FALSE,
+                               con = NULL, verbose = FALSE) {
+
+  ## check database connection
+  con <- ctrDb(con = con)
 
   ## system check, in analogy to onload.R
   if (.Platform$OS.type == "windows")
     if (!installCygwinWindowsTest())
       stop(call. = FALSE)
+  #
+  message("Checking helper binaries: ", appendLF = FALSE)
   #
   if (!suppressWarnings(installFindBinary(commandtest = "php --version")))
     stop("php not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
@@ -91,6 +98,8 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   #
   if (!suppressWarnings(installFindBinary(commandtest = "perl -V:osname")))
     stop("perl not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
+  #
+  message("done.")
 
   ## parameter checks
 
@@ -163,9 +172,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   if ( (querytoupdate > 0) && (queryterm == "") ) {
     #
     rerunparameters <- ctrRerunQuery(querytoupdate = querytoupdate, forcetoupdate = forcetoupdate,
-                                     debug = debug,
-                                     collection = collection, uri = uri,
-                                     password = password, verbose = verbose,
+                                     con = con, verbose = verbose,
                                      queryupdateterm = queryupdateterm)
     #
     # check rerunparameters and possibly stop function without error
@@ -183,9 +190,8 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   # parameters for core functions
   params <- list(queryterm = queryterm, register = register,
                  euctrresults = euctrresults, annotation.text = annotation.text, annotation.mode = annotation.mode,
-                 details = details, parallelretrievals = parallelretrievals, debug = debug,
-                 collection = collection, uri = uri,
-                 password = password, verbose = verbose,
+                 parallelretrievals = parallelretrievals,
+                 con = con, verbose = verbose,
                  queryupdateterm = queryupdateterm)
   # call core functions
   imported <- switch(as.character(register),
@@ -202,27 +208,26 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   }
 
   # inform user
-  if (debug) message("DEBUG: 'queryterm'=", queryterm,
+  if (verbose) message("DEBUG: 'queryterm'=", queryterm,
                      "\n'queryupdateterm'=", queryupdateterm,
                      "\n'imported'=", imported,
                      "\n'register'=", register,
-                     "\n'collection'=", collection,
+                     "\n'collection'=", con$collection,
                      "\nImported trials:", imported$ids)
 
   # add query parameters to database
   dbCTRUpdateQueryHistory(register = register,
                           queryterm = querytermoriginal,
                           recordnumber = imported$n,
-                          collection = collection, uri = uri,
-                          password = password, verbose = verbose)
+                          con = con,
+                          verbose = verbose)
 
   # invalidate any cached list of keys in collection
-  if (exists(".dbffenv")) suppressWarnings({remove(list = paste0(uri, "/", collection), envir = .dbffenv)})
+  if (exists(".dbffenv")) suppressWarnings({remove(list = paste0(con$db, "/", con$collection), envir = .dbffenv)})
 
   # add metadata
   imported <- addMetaData(x = imported,
-                          collection = collection, uri = uri,
-                          password = password)
+                          con = con)
 
   ## return
   return(invisible(imported))
@@ -240,16 +245,13 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
 #' @importFrom httr content GET
 #'
 ctrRerunQuery <- function(querytoupdate = querytoupdate, forcetoupdate = forcetoupdate,
-                          debug = debug,
-                          collection = collection, uri = uri,
-                          password = password, verbose = verbose,
+                          con = con, verbose = verbose,
                           queryupdateterm = queryupdateterm) {
 
   ## prepare
 
   # get history
-  rerunquery <- dbQueryHistory(collection = collection, uri = uri,
-                               password = password, verbose = verbose)
+  rerunquery <- dbQueryHistory(con = con, verbose = verbose)
 
   # check parameters
   if (is.null(rerunquery))
@@ -305,7 +307,7 @@ ctrRerunQuery <- function(querytoupdate = querytoupdate, forcetoupdate = forceto
         #
         queryupdateterm <- strftime(strptime(initialday, format = "%Y-%m-%d"), format = "%m/%d/%Y")
         queryupdateterm <- paste0("&lup_s=", queryupdateterm)
-        if (debug) message("DEBUG: Updating using this additional query term: ", queryupdateterm)
+        if (verbose) message("DEBUG: Updating using this additional query term: ", queryupdateterm)
         #
       }
       #
@@ -333,13 +335,13 @@ ctrRerunQuery <- function(querytoupdate = querytoupdate, forcetoupdate = forceto
         # obtain rss feed with list of recently updated trials
         rssquery <- utils::URLencode(paste0("https://www.clinicaltrialsregister.eu/ctr-search/rest/feed/bydates?query=",
                                             queryterm))
-        if (debug) message("DEBUG (rss url): ", rssquery)
+        if (verbose) message("DEBUG (rss url): ", rssquery)
         #
         resultsRss <- httr::content(httr::GET(url = rssquery,
                                               config = httr::config(ssl_verifypeer = FALSE)),
                                     as = "text")
 
-        if (debug) message("DEBUG (rss content): ", resultsRss)
+        if (verbose) message("DEBUG (rss content): ", resultsRss)
         #
         # attempt to extract euctr number(s)
         resultsRssTrials <- gregexpr("eudract_number:[0-9]{4}-[0-9]{6}-[0-9]{2}</link>", resultsRss)[[1]]
@@ -352,14 +354,14 @@ ctrRerunQuery <- function(querytoupdate = querytoupdate, forcetoupdate = forceto
         # if new trials found, download
         resultsRssTrials <- sapply(resultsRssTrials, FUN = function(x) substr(resultsRss, x + 15, x + 28))
         resultsRssTrials <- paste(resultsRssTrials, collapse = "+OR+")
-        if (debug) message("DEBUG (rss trials): ", resultsRssTrials)
+        if (verbose) message("DEBUG (rss trials): ", resultsRssTrials)
         #
         # run query for extracted euctr number(s)
         # store original query in update term
         queryupdateterm <- queryterm
         queryterm <- resultsRssTrials
         #
-        if (debug) message("DEBUG: Updating using this query term: ", queryupdateterm)
+        if (verbose) message("DEBUG: Updating using this query term: ", queryupdateterm)
         #
         message("Rerunning query: ", queryupdateterm, "\nLast run: ", initialday)
         #
@@ -381,13 +383,13 @@ ctrRerunQuery <- function(querytoupdate = querytoupdate, forcetoupdate = forceto
 #'
 #' @param dir Path to local directory with JSON files from downloading and converting
 #'
-#' @param mongo ctrmongo Mongo DB database connection object
+#' @inheritParams ctrDb
 #'
 #' @return List with elements n (number of imported trials) and ids (_ids of imported trials)
 #'
 #' @keywords internal
 #'
-dbCTRLoadJSONFiles <- function(dir, mongo) {
+dbCTRLoadJSONFiles <- function(dir, con) {
 
   # find files
   tempFiles <- dir(path = dir,
@@ -406,22 +408,39 @@ dbCTRLoadJSONFiles <- function(dir, mongo) {
     tmplines <- readLines(con = fd, warn = FALSE)
     close(fd)
 
+    # check validity
+    if (!all(sapply(tmplines, jsonlite::validate)))
+      stop("Invalid json in file ", tempFile)
+
     # readLines produces: \"_id\": \"2007-000371-42-FR\"
     ids <- sub(".*_id\":[ ]*\"(.*?)\".*", "\\1", tmplines)
 
     # ids should always be found
     if (all(ids == "")) stop("No _id(s) detected in converted JSON, cannot continue.")
 
-    # replace documents since keys within documents cannot be updated
-    tmpjson <- paste0('{ "_id": {"$in": ["', paste0(ids, collapse = '", "'), '"]}}')
-    jsonlite::validate(tmpjson)
-    #
-    mongo$remove(query = tmpjson, just_one = FALSE)
-    tmpinsert <- lapply(tmplines, mongo$insert)
+    # check if in database, create or update
+    tmpinsert <- sapply(seq_along(ids), function(i) {
+
+      # slice data to be processed
+      value <- data.frame("_id" = ids[i],
+                          "json" = tmplines[i],
+                          stringsAsFactors = FALSE,
+                          check.names = FALSE)
+
+      # check if document exists, then create or update
+      ifelse(!checkDoc(con, ids[i]),
+             nodbi::docdb_create(src = con,
+                                 key = con$collection,
+                                 value = value),
+             nodbi::docdb_update(src = con,
+                                 key = con$collection,
+                                 value = value)
+      )
+    })
 
     # increment counters
     tmpids <- c(tmpids, ids)
-    tmpinsertall <- tmpinsertall + sum(sapply(tmpinsert, "[[", "nInserted"), na.rm = TRUE)
+    tmpinsertall <- tmpinsertall + sum(unlist(tmpinsert), na.rm = TRUE)
   }
 
   # prepare return value
@@ -439,9 +458,9 @@ dbCTRLoadJSONFiles <- function(dir, mongo) {
 #'
 #' @importFrom jsonlite toJSON
 #'
-dbCTRAnnotateQueryRecords <- function(recordnumbers, annotations, annotation.text, annotation.mode,
-                                      collection = collection, uri = uri,
-                                      password = password, verbose = verbose){
+dbCTRAnnotateQueryRecords <- function(recordnumbers, annotations,
+                                      annotation.text, annotation.mode,
+                                      con, verbose){
 
   # debug
   if (verbose) message("* Running dbCTRAnnotateQueryRecords ...")
@@ -453,25 +472,30 @@ dbCTRAnnotateQueryRecords <- function(recordnumbers, annotations, annotation.tex
   if (nrow(annotations) == 0) {
     annotations <- data.frame("_id" = recordnumbers,
                               "annotation" = "",
-                              stringsAsFactors = FALSE)
-    names(annotations) <- c("_id", "annotation")
+                              stringsAsFactors = FALSE,
+                              check.names = FALSE)
   }
-  if (!("annotation" %in% names(annotations))) {
-    annotations <- data.frame(annotations,
-                              "annotation" = "",
-                              stringsAsFactors = FALSE)
-    names(annotations) <- c("_id", "annotation")
-  }
+
+  # FIXME the following is already ensured in calling function
+  # if (!("annotation" %in% names(annotations))) {
+  #   annotations <- data.frame(annotations,
+  #                             "annotation" = "",
+  #                             stringsAsFactors = FALSE,
+  #                             check.names = FALSE)
+  # }
 
   # keep only those annotations that are to be modified
-  annotations <- annotations[annotations[["_id"]] %in% recordnumbers, ]
+  annotations <- annotations[annotations[["_id"]] %in% recordnumbers, , drop = FALSE]
 
+  # FIXME delete is already ensured
+  #
   # check if dataframe is as expected: columns _id and annotation
+  # dataframe could be empty if _ids not yet imported
   if (nrow(annotations) == 0) {
     annotations <- data.frame("_id" = recordnumbers,
                               "annotation" = "",
-                              stringsAsFactors = FALSE)
-    names(annotations) <- c("_id", "annotation")
+                              stringsAsFactors = FALSE,
+                              check.names = FALSE)
   }
 
   # modify the annotations
@@ -480,26 +504,33 @@ dbCTRAnnotateQueryRecords <- function(recordnumbers, annotations, annotation.tex
                                    "prepend" = paste0(annotation.text, " ", annotations$annotation),
                                                paste0(annotations$annotation, " ", annotation.text)
   )
-  annotations$annotation <- paste0('{"$set": {"annotation": "',
-                                   trimws(annotations$annotation),
-                                   '"}}')
+  # FIXME delete
+  # annotations$annotation <- paste0('{"$set": {"annotation": "',
+  #                                  trimws(annotations$annotation),
+  #                                  '"}}')
 
   # debug
   if (verbose) message(annotations)
 
-  # get a working mongo connection, select trial record collection
-  mongo <- ctrMongo(collection = collection, uri = uri,
-                    password = password, verbose = verbose)
+  # FIXME delete
+  # # get a working mongo connection, select trial record collection
+  # mongo <- ctrMongo(collection = collection, uri = uri,
+  #                   password = password, verbose = verbose)
 
   # update the database
   for (i in annotations[["_id"]]) {
-    mongo$update(query = paste0('{"_id": {"$eq": "', i, '"}}'),
-                 update = annotations[ annotations[["_id"]] == i, 2],
-                 upsert = TRUE)
+    # FIXME delete
+    # mongo$update(query = paste0('{"_id": {"$eq": "', i, '"}}'),
+    #              update = annotations[ annotations[["_id"]] == i, 2],
+    #              upsert = TRUE)
+    nodbi::docdb_update(src = con,
+                        key = con$collection,
+                        value = annotations[ annotations[["_id"]] == i, ])
   }
 
-  # close database connection
-  mongo$disconnect()
+  # FIXME delete
+  # # close database connection
+  # mongo$disconnect()
 
   # inform user
   message("= Annotated retrieved records")
@@ -516,16 +547,14 @@ dbCTRAnnotateQueryRecords <- function(recordnumbers, annotations, annotation.tex
 #' @importFrom jsonlite toJSON
 #'
 dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber,
-                                    collection, uri,
-                                    password, verbose){
+                                    con, verbose){
 
   # debug
   if (verbose) message("Running dbCTRUpdateQueryHistory ...")
 
   # retrieve existing history data
   hist <- suppressMessages(
-    dbQueryHistory(collection, uri,
-                   password, verbose)
+    dbQueryHistory(con, verbose)
   )
 
   # debug
@@ -533,32 +562,52 @@ dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber,
 
   # append current search
   # default for format methods is "%Y-%m-%d %H:%M:%S"
-  hist <- rbind(hist, cbind("query-timestamp" = format(Sys.time(), "%Y-%m-%d %H:%M:%S"),
-                            "query-register"  = register,
-                            "query-records"   = recordnumber,
-                            "query-term"      = queryterm),
+  hist <- rbind(hist,
+                cbind("query-timestamp" = format(Sys.time(), "%Y-%m-%d %H:%M:%S"),
+                      "query-register"  = register,
+                      "query-records"   = recordnumber,
+                      "query-term"      = queryterm),
                 stringsAsFactors = FALSE)
 
-  # collate information about current query into json object
-  json <- jsonlite::toJSON(list("queries" = hist))
+  # FIXME delete
+  # # collate information about current query into json object
+  # json <- jsonlite::toJSON(list("queries" = hist))
 
   # debug
-  if (verbose) message(json)
+  if (verbose) message(hist)
 
-  # get a working mongo connection, select trial record collection
-  mongo <- ctrMongo(collection = collection, uri = uri,
-                    password = password, verbose = verbose)
+  # FIXME delete
+  # # get a working mongo connection, select trial record collection
+  # mongo <- ctrMongo(collection = collection, uri = uri,
+  #                   password = password, verbose = verbose)
 
   # update database
-  mongo$update(query = '{"_id": {"$eq": "meta-info"}}',
-               update = paste0('{ "$set" :', json, "}"),
-               upsert = TRUE)
+  # FIXME delete
+  # mongo$update(query = '{"_id": {"$eq": "meta-info"}}',
+  #              update = paste0('{ "$set" :', json, "}"),
+  #              upsert = TRUE)
+  tmp <- nodbi::docdb_delete(src = con,
+                             key = con$collection,
+                             query = '{"_id": {"$eq": "meta-info"}}')
 
-  # close database connection
-  mongo$disconnect()
+  # transform into array and encapsulate in element meta-info
+  tmp <- jsonlite::toJSON(hist)
+  tmp <- paste0('{"queries": ',  as.character(tmp), '}')
+
+  # create history
+  tmp <- nodbi::docdb_create(src = con,
+                             key = con$collection,
+                             value = data.frame("_id" = "meta-info",
+                                                "json" = tmp,
+                                                stringsAsFactors = FALSE,
+                                                check.names = FALSE))
+
+  # FIXME delete
+  # # close database connection
+  # mongo$disconnect()
 
   # inform user
-  message('* Updated history in meta-info of "', collection, '"')
+  message('* Updated history in meta-info of "', con$collection, '"')
 
 }
 # end dbCTRUpdateQueryHistory
@@ -572,13 +621,13 @@ dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber,
 #' @keywords internal
 #'
 #' @importFrom jsonlite toJSON
+#'
 #' @importFrom httr content headers progress write_disk GET HEAD
 #'
-ctrLoadQueryIntoDbCtgov <- function(queryterm, register,
-                                    euctrresults, annotation.text, annotation.mode,
-                                    details, parallelretrievals, debug,
-                                    collection, uri,
-                                    password, verbose,
+ctrLoadQueryIntoDbCtgov <- function(queryterm = queryterm, register,
+                                    euctrresults , annotation.text, annotation.mode,
+                                    parallelretrievals,
+                                    con, verbose,
                                     queryupdateterm) {
 
   ## sanity correction for naked terms
@@ -595,12 +644,12 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register,
   #               "age=adult&term=cancer")                 # keep
   queryterm <- sub("(^|&|[&]?\\w+=\\w+&)(\\w+|[NCT0-9-]+)($|&\\w+=\\w+)", "\\1term=\\2\\3", queryterm)
 
-    ## check availability of relevant helper programs
-  if (!suppressWarnings(installFindBinary("php --version")))
-    stop("php not found.", call. = FALSE)
-  #
-  if (!suppressWarnings(installFindBinary("php -r 'simplexml_load_string(\"\");'")))
-    stop("php xml not found.", call. = FALSE)
+  #   ## check availability of relevant helper programs
+  # if (!suppressWarnings(installFindBinary("php --version")))
+  #   stop("php not found.", call. = FALSE)
+  # #
+  # if (!suppressWarnings(installFindBinary("php -r 'simplexml_load_string(\"\");'")))
+  #   stop("php xml not found.", call. = FALSE)
 
   ## create empty temporary directory on localhost for
   # downloading from register into temporary directy
@@ -623,7 +672,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register,
   ## inform user and prepare url for downloading
   message("(1/3) Downloading trials from CTGOV as xml.")
   ctgovdownloadcsvurl <- paste0(queryUSRoot, queryUSType1, "&", queryterm, queryupdateterm)
-  if (debug) message("DEBUG: ", ctgovdownloadcsvurl)
+  if (verbose) message("DEBUG: ", ctgovdownloadcsvurl)
 
   # check if host is available
   if ("try-error" %in% class(try(httr::headers(httr::HEAD(url = utils::URLencode(queryUSRoot))), silent = TRUE)))
@@ -696,60 +745,80 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register,
 
   # run conversion of downloaded xml to json
   message("\n(2/3) Converting to JSON ...")
-  if (debug) message("DEBUG: ", xml2json)
+  if (verbose) message("DEBUG: ", xml2json)
   imported <- system(xml2json, intern = TRUE)
 
+  # FIXME delete
   # get a working mongo connection, select trial record collection
-  mongo <- ctrMongo(collection = collection, uri = uri,
-                    password = password, verbose = FALSE)
+  # mongo <- ctrMongo(collection = collection, uri = uri,
+  #                   password = password, verbose = FALSE)
 
   # get any annotations for any later update
   if (annotation.text != "") {
-    annotations <- mongo$find(query = paste0('{"_id": {"$ne": "meta-info"}}'),
-                              fields = '{"_id": 1, "annotation": 1}')
-  }
+
+    # retrieve annotations
+
+    # FIXME delete
+    # annotations <- mongo$find(query = paste0('{"_id": {"$ne": "meta-info"}}'),
+    #                           fields = '{"_id": 1, "annotation": 1}')
+    annotations <- nodbi::docdb_query(src = con,
+                                      key = con$collection,
+                                      query = paste0('{"_id": {"$ne": "meta-info"}}'),
+                                      fields = '{"_id": 1, "annotation": 1}')
+
+    # FIXME null data frame has no columns
+    # if no column annotations, add it
+    # if (!("annotation" %in% names(annotations))) {
+    #   annotations <- data.frame("_id" = annotations[["_id"]],
+    #                             "annotation" = NA,
+    #                             stringsAsFactors = FALSE,
+    #                             check.names = FALSE)
+    # }
+  } # if annotation.text
 
   ## run import
-  message("(3/3) Importing JSON into mongoDB ...")
-  if (debug) message("DEBUG: ", tempDir)
+  message("(3/3) Importing JSON into database ...")
+  if (verbose) message("DEBUG: ", tempDir)
   imported <- dbCTRLoadJSONFiles(dir = tempDir,
-                                 mongo = mongo)
+                                 con = con)
 
-  ## absorb nested id_info object into new array otherids of strings
-  # obtain full data set on _id and other ids
-  cursor <- mongo$iterate(query  = '{"_id": { "$regex": "^NCT[0-9]{8}", "$options": ""} }',
-                          fields = '{"id_info.org_study_id": 1, "id_info.secondary_id": 1}'
-  )$batch(size = mongo$count())
-  # transform every second element in a list item into a vector
-  otherids <- sapply(cursor, function(x) paste0(as.vector(unlist(x[2]))))
-  # retain _id's for updating
-  cursor <- sapply(cursor, function(x) as.vector(unlist(x[1])))
-  # iterate over list items
-  for (i in seq_len(length(cursor))) {
-    # replace double square brackets around array
-    tmp <- sub("\\[\\[", "[", sub("\\]\\]", "]", jsonlite::toJSON(list("otherids" = otherids[[i]]))))
-    # upsert
-    mongo$update(query  = paste0('{"_id":{"$eq":"', cursor[i], '"}}'),
-                 update = paste0('{ "$set" :', tmp, "}"),
-                 upsert = TRUE)
-  }
+  # TODO
+  # ## absorb nested id_info object into new array otherids of strings
+  # # obtain full data set on _id and other ids
+  # cursor <- mongo$iterate(query  = '{"_id": { "$regex": "^NCT[0-9]{8}", "$options": ""} }',
+  #                         fields = '{"id_info.org_study_id": 1, "id_info.secondary_id": 1}'
+  # )$batch(size = mongo$count())
+  # # transform every second element in a list item into a vector
+  # otherids <- sapply(cursor, function(x) paste0(as.vector(unlist(x[2]))))
+  # # retain _id's for updating
+  # cursor <- sapply(cursor, function(x) as.vector(unlist(x[1])))
+  # # iterate over list items
+  # for (i in seq_len(length(cursor))) {
+  #   # replace double square brackets around array
+  #   tmp <- sub("\\[\\[", "[", sub("\\]\\]", "]", jsonlite::toJSON(list("otherids" = otherids[[i]]))))
+  #   # upsert
+  #   mongo$update(query  = paste0('{"_id":{"$eq":"', cursor[i], '"}}'),
+  #                update = paste0('{ "$set" :', tmp, "}"),
+  #                upsert = TRUE)
+  # }
 
-  ## add index for newly created fired
-  mongo$index(add = "otherids")
-  message('Added index field "otherids".')
+  # TODO
+  # ## add index for newly created fired
+  # mongo$index(add = "otherids")
+  # message('Added index field "otherids".')
 
-  ## close database connection
-  mongo$disconnect()
+  # FIXME delete
+  # ## close database connection
+  # mongo$disconnect()
 
   ## add annotations
   if ( (annotation.text != "") &
-       (length(imported$ids) > 0) ) {
+       (length(imported$ids) > 0L) ) {
 
     # dispatch
     dbCTRAnnotateQueryRecords(recordnumbers = imported$ids, annotations = annotations,
                               annotation.text = annotation.text, annotation.mode = annotation.mode,
-                              collection = collection, uri = uri,
-                              password = password, verbose = verbose)
+                              con = con, verbose = verbose)
 
   }
 
@@ -757,12 +826,13 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register,
   message("= Imported or updated ", imported$n, " trial(s).")
 
   # clean up temporary directory
-  if (!debug) unlink(tempDir, recursive = TRUE)
+  if (!verbose) unlink(tempDir, recursive = TRUE)
 
   # return
   return(imported)
 }
 # end ctrLoadQueryIntoDbCtgov
+
 
 
 #' ctrLoadQueryIntoDbEuctr
@@ -772,13 +842,13 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm, register,
 #' @keywords internal
 #'
 #' @importFrom httr content headers progress write_disk GET HEAD
+#'
 #' @importFrom curl curl_fetch_multi multi_run new_pool
 #'
-ctrLoadQueryIntoDbEuctr <- function(queryterm, register,
-                                    euctrresults, annotation.text, annotation.mode,
-                                    details, parallelretrievals, debug,
-                                    collection, uri,
-                                    password, verbose,
+ctrLoadQueryIntoDbEuctr <- function(queryterm = queryterm, register,
+                                    euctrresults , annotation.text, annotation.mode,
+                                    parallelretrievals,
+                                    con, verbose,
                                     queryupdateterm) {
 
   ## sanity correction for naked terms
@@ -800,9 +870,9 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register,
                    "\\1query=\\2\\3",
                    queryterm)
 
-  # check availability of relevant helper programs
-  if (!suppressWarnings(installFindBinary("echo x | sed s/x/y/"))) stop("sed not found.",  call. = FALSE)
-  if (!suppressWarnings(installFindBinary("perl -V:osname")))      stop("perl not found.", call. = FALSE)
+  # # check availability of relevant helper programs
+  # if (!suppressWarnings(installFindBinary("echo x | sed s/x/y/"))) stop("sed not found.",  call. = FALSE)
+  # if (!suppressWarnings(installFindBinary("perl -V:osname")))      stop("perl not found.", call. = FALSE)
 
   # inform user
   message("* Downloading trials from EUCTR:", appendLF = TRUE)
@@ -815,7 +885,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register,
   # EUCTR standard identifiers
   queryEuRoot  <- "https://www.clinicaltrialsregister.eu/"
   queryEuType1 <- "ctr-search/search?"
-  queryEuType2 <- "ctr-search/rest/download/summary?"
+  #queryEuType2 <- "ctr-search/rest/download/summary?"
   queryEuType3 <- "ctr-search/rest/download/full?"
   queryEuType4 <- "ctr-search/rest/download/result/zip/xml/"
   queryEuPost  <- "&mode=current_page&format=text&dContent=summary&number=current_page&submit-download=Download"
@@ -827,7 +897,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register,
 
   # get first result page
   q <- utils::URLencode(paste0(queryEuRoot, queryEuType1, queryterm))
-  if (debug) message("DEBUG: queryterm is ", q)
+  if (verbose) message("DEBUG: queryterm is ", q)
   resultsEuPages <- httr::content(httr::GET(url = q,
                                             config = httr::config(ssl_verifypeer = FALSE)), as = "text")
 
@@ -871,7 +941,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register,
 
     # prepare download and saving
     pool <- curl::new_pool()
-    urls <- unlist(lapply(paste0(queryEuRoot, ifelse(details, queryEuType3, queryEuType2),
+    urls <- unlist(lapply(paste0(queryEuRoot, queryEuType3,
                                  queryterm, "&page=", startpage:stoppage, queryEuPost),
                           utils::URLencode))
     fp <- paste0(tempDir, "/euctr-trials-page_",
@@ -923,32 +993,47 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register,
     #
   } # if windows
 
+  # FIXME delete
   # get a working mongo connection, select trial record collection
-  mongo <- ctrMongo(collection = collection, uri = uri,
-                    password = password, verbose = FALSE)
+  # mongo <- ctrMongo(collection = collection, uri = uri,
+  #                   password = password, verbose = FALSE)
 
   # get any annotations for any later update
   if (annotation.text != "") {
 
     # retrieve annotations
-    annotations <- mongo$find(query = paste0('{"_id": {"$ne": "meta-info"}}'),
-                              fields = '{"_id": 1, "annotation": 1}')
 
-  }
+    # FIXME delete
+    # annotations <- mongo$find(query = paste0('{"_id": {"$ne": "meta-info"}}'),
+    #                           fields = '{"_id": 1, "annotation": 1}')
+    annotations <- nodbi::docdb_query(src = con,
+                                      key = con$collection,
+                                      query = paste0('{"_id": {"$ne": "meta-info"}}'),
+                                      fields = '{"_id": 1, "annotation": 1}')
+
+    # # if no column annotations, add it
+    # if (!("annotation" %in% names(annotations))) {
+    #   annotations <- data.frame("_id" = annotations[["_id"]],
+    #                             "annotation" = NA,
+    #                             stringsAsFactors = FALSE,
+    #                             check.names = FALSE)
+    # }
+  } # if annotation.text
 
   # run conversion of text files saved into file system to json file
   message("\n(2/3) Converting to JSON ...")
-  if (debug) message("DEBUG: ", euctr2json)
+  if (verbose) message("DEBUG: ", euctr2json)
   imported <- system(euctr2json, intern = TRUE)
 
   # run import into mongo from json files
-  message("(3/3) Importing JSON into mongoDB ...")
-  if (debug) message("DEBUG: ", tempDir)
+  message("(3/3) Importing JSON into database ...")
+  if (verbose) message("DEBUG: ", tempDir)
   imported <- dbCTRLoadJSONFiles(dir = tempDir,
-                                 mongo = mongo)
+                                 con = con)
 
-  # close database connection
-  mongo$disconnect()
+  # FIXME delete
+  # # close database connection
+  # mongo$disconnect()
 
   ## read in the eudract numbers of the trials just retrieved and imported
   eudractnumbersimported <- imported$ids
@@ -960,15 +1045,14 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register,
     # dispatch
     dbCTRAnnotateQueryRecords(recordnumbers = eudractnumbersimported, annotations = annotations,
                               annotation.text = annotation.text, annotation.mode = annotation.mode,
-                              collection = collection, uri = uri,
-                              password = password, verbose = verbose)
+                              con = con, verbose = verbose)
   }
 
   ## inform user on final import outcome
   message("= Imported or updated ", imported$n, " records on ", resultsEuNumTrials, " trial(s).")
 
   # debug
-  if (debug) message(eudractnumbersimported)
+  if (verbose) message(eudractnumbersimported)
 
 
   ## results: load also euctr trials results if requested
@@ -1050,7 +1134,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register,
         }
 
         # clean up
-        if (!debug) unlink(fp[x])
+        if (!verbose) unlink(fp[x])
 
       }))
 
@@ -1084,16 +1168,17 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register,
 
     # run conversion of downloaded xml to json
     message("\n(2/4) Converting to JSON ...")
-    if (debug) message("DEBUG: ", xml2json)
+    if (verbose) message("DEBUG: ", xml2json)
     importedresults <- system(xml2json, intern = TRUE)
 
 
-    # get a working mongo connection, select trial record collection
-    mongo <- ctrMongo(collection = collection, uri = uri,
-                      password = password, verbose = FALSE)
+    # FIXME delete
+    # # get a working mongo connection, select trial record collection
+    # mongo <- ctrMongo(collection = collection, uri = uri,
+    #                   password = password, verbose = FALSE)
 
     # iterate over batches of results files
-    message("(3/4) Importing JSON into mongoDB ...")
+    message("(3/4) Importing JSON into database ...")
     importedresults <- NULL
     for (i in 1:(resultsNumBatches + ifelse(resultsNumModulo > 0, 1, 0))) {
 
@@ -1114,13 +1199,30 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register,
                                  tmp <- readChar(con = fileName, nchars = file.info(fileName)$size, useBytes = TRUE)
 
                                  # update database with results
-                                 tmp <- try({tmp <- mongo$update(query  = paste0('{"a2_eudract_number":{"$eq":"', x, '"}}'),
-                                                          update = paste0('{ "$set" :', tmp, "}"),
-                                                          upsert = TRUE, multiple = TRUE)
-                                             as.numeric(max(tmp$modifiedCount,
-                                                            tmp$matchedCount,
-                                                            na.rm = TRUE))
-                                             }, silent = TRUE)
+                                 # FIXME delete
+                                 # tmp <- try({tmp <- mongo$update(query  = paste0('{"a2_eudract_number":{"$eq":"', x, '"}}'),
+                                 #                          update = paste0('{ "$set" :', tmp, "}"),
+                                 #                          upsert = TRUE, multiple = TRUE)
+                                 #             as.numeric(max(tmp$modifiedCount,
+                                 #                            tmp$matchedCount,
+                                 #                            na.rm = TRUE))
+                                 #             }, silent = TRUE)
+
+                                 tmp <- try({tmp <-
+                                   nodbi::docdb_update(src = con,
+                                                       key = con$collection,
+                                                       # query  = paste0('{"a2_eudract_number":{"$eq":"', x, '"}}'),
+                                                       # TODO change into dataframe
+                                                       value = data.frame("a2_eudract_number" = x,
+                                                                          "json" = tmp,
+                                                                          stringsAsFactors = FALSE))
+                                 # nodbi::docdb_update(src = con,
+                                 #                     key = con$collection,
+                                 #                     query  = paste0('{"a2_eudract_number":{"$eq":"', x, '"}}'),
+                                 #                     # TODO change into dataframe
+                                 #                     value = data.frame(tmp, stringsAsFactors = FALSE))
+                                 max(tmp, na.rm = TRUE)},
+                                 silent = TRUE)
 
                                  # inform user on failed trial
                                  if (class(tmp) == "try-error") {
@@ -1146,7 +1248,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register,
     } # for batch
 
     # iterate over batches of result history from webpage
-    message("(4/4) Retrieving any results history and importing into mongoDB ...", appendLF = FALSE)
+    message("(4/4) Retrieving any results history and importing into database ...", appendLF = FALSE)
     for (i in 1:(resultsNumBatches + ifelse(resultsNumModulo > 0, 1, 0))) {
 
       # calculated indices for eudractnumbersimported vector
@@ -1214,15 +1316,32 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register,
       )
 
       tmp <- lapply(seq_along(along.with = startindex : stopindex), function(x) {
-        upd <- mongo$update(query = paste0('{"a2_eudract_number": {"$eq": "',
-                                           eudractnumberscurled[x], '"}}'),
-                            update = paste0('{ "$set" : {',
-                                            '"firstreceived_results_date" : "',  tmpFirstDate[x], '", ',
-                                            '"version_results_history"    : "',  tmpChanges[x],   '"',
-                                            "}}"),
-                            upsert = TRUE,
-                            multiple = TRUE)
-        if(debug) message(upd)
+        # FIXME delete
+        # upd <- mongo$update(query = paste0('{"a2_eudract_number": {"$eq": "',
+        #                                    eudractnumberscurled[x], '"}}'),
+        #                     update = paste0('{ "$set" : {',
+        #                                     '"firstreceived_results_date" : "',  tmpFirstDate[x], '", ',
+        #                                     '"version_results_history"    : "',  tmpChanges[x],   '"',
+        #                                     "}}"),
+        #                     upsert = TRUE,
+        #                     multiple = TRUE)
+        # upd <- nodbi::docdb_update(src = con,
+        #                            key = con$collection,
+        #                            query = paste0('{"a2_eudract_number": {"$eq": "',
+        #                                           eudractnumberscurled[x], '"}}'),
+        #                            # TODO change into dataframe
+        #                            value = data.frame("firstreceived_results_date" = as.character(tmpFirstDate[x]),
+        #                                                "version_results_history" = tmpChanges[x],
+        #                                                stringsAsFactors = FALSE))
+
+        upd <- nodbi::docdb_update(src = con,
+                                   key = con$collection,
+                                   value = data.frame("a2_eudract_number" = eudractnumberscurled[x],
+                                                      "firstreceived_results_date" = as.character(tmpFirstDate[x]),
+                                                      "version_results_history" = tmpChanges[x],
+                                                      stringsAsFactors = FALSE))
+
+        if(verbose) message(upd)
       })
 
       # clean up large object
@@ -1230,8 +1349,9 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register,
 
     } # for batch
 
-    # close database connection
-    mongo$disconnect()
+    # FIXME delete
+    # # close database connection
+    # mongo$disconnect()
 
     # sum up successful downloads
     importedresults <- sum(unlist(importedresults))
@@ -1244,7 +1364,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm, register,
 
 
   # clean up temporary directory
-  if (!debug) unlink(tempDir, recursive = TRUE)
+  if (!verbose) unlink(tempDir, recursive = TRUE)
 
   # return
   return(imported)

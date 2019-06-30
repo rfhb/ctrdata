@@ -46,11 +46,11 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   next if /B\. Sponsor Information/;
   next if /E\. General Information on the Trial/;
   next if /F\. Population of Trial Subjects/;
-  next if /N\. Review by the/;
   next if /P\. End of Trial.$/;
-  next if /G. Investigator Networks/;
-  next if /H.4 Third Country/;
-  next if /MedDRA Classification/;
+  # no more deleted, to form arrays
+  #next if /N\. Review by the/;
+  #next if /G. Investigator Networks/;
+  #next if /H.4 Third Country/;
 
   # remove explanatory information from key F.3.3.1
   next if /^\(For clinical trials recorded/;
@@ -61,6 +61,15 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   # workarounds
   # - sponsor records were added but left empty -> create placeholder
   s/^(B\.1\.1 Name of Sponsor:)\s+$/$1 empty/g;
+
+  # - prepare array for meddra
+  s/MedDRA Classification/E.1.2 MedDRA Classification: Yes/g;
+
+  # - prepare array for sponsor supports
+  s/^B.4 Source\(s\) of Monetary or Material Support.*$/B.4 Sources of Monetary or Material Support: Yes/g;
+
+  # - prepare array for networks
+  s/^G. Investigator Networks.*$/G.4 Investigator Networks: Yes/g;
 
   # add identifiers for special cases
   s/^(EudraCT Number.*)$/X.1 $1/;
@@ -73,18 +82,22 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   # add identifier for end of arrays
   s/^D\.8 Information on Placebo$/X.9 ENDDMP: TRUE/;
   s/^D\. IMP Identification$/X.9 ENDSPONSOR: TRUE/;
+  print "\nX.9 ENDMEDDRA: TRUE\nE.1.3 Condition" if /^E\.1\.3 Condition/;
+  print "\nX.9 ENDSUPPORT: TRUE\nB.5 Contact" if /^B\.5 Contact/;
+  print "\nX.9 ENDNETWORK: TRUE\nN. Review" if /^N\. Review|^H\.4 Third Country/;
+
   # for details = FALSE it is:
   s/^Full Title:/\nX.9 ENDSPONSOR: TRUE\nxxxxxxxxxxA.3 Full Title of the Trial:/;
 
   # add identifiers for summary documents (terminating - needed for later step)
-  s/^Sponsor Protocol Number: (.*)$/A.4.1 Sponsors protocol code number: $1/;
-  s/^Sponsor Name: (.*)$/B.1 Sponsor: 1xxxxxxxxxxB.1.1 Name of sponsor: $1/;
-  s/^Full Title: (.*)$/A.3 Full Title of the Trial: $1-/;
-  s/^(Start Date:.*)$/X.7 $1/;
-  s/^Medical condition: (.*)$/E.1.1 Medical conditions being investigated: $1/;
-  s/^Disease: (.*)$/E.1.1.2 Therapeutic area: $1/;
-  s/^(Population Age.*)$/X.8 $1/;
-  s/^(Gender.*)$/X.9 $1/;
+  # s/^Sponsor Protocol Number: (.*)$/A.4.1 Sponsors protocol code number: $1/;
+  # s/^Sponsor Name: (.*)$/B.1 Sponsor: 1xxxxxxxxxxB.1.1 Name of sponsor: $1/;
+  # s/^Full Title: (.*)$/A.3 Full Title of the Trial: $1-/;
+  # s/^(Start Date:.*)$/X.7 $1/;
+  # s/^Medical condition: (.*)$/E.1.1 Medical conditions being investigated: $1/;
+  # s/^Disease: (.*)$/E.1.1.2 Therapeutic area: $1/;
+  # s/^(Population Age.*)$/X.8 $1/;
+  # s/^(Gender.*)$/X.9 $1/;
 
   # sanitise file
   s/\t/ /g;
@@ -100,7 +113,7 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   # - for details document
   s/^X.7 Link.*search\/trial\/([0-9-]*)\/([A-Z][A-Z]|3rd)\/$/xxxxxxxxxx"_id": "$1-\U$2\E"/;
   # - for summary document
-  s/^X.7 Link.*search\/.*:([0-9-]{14})$/xxxxxxxxxx"_id": "$1"/;
+  # s/^X.7 Link.*search\/.*:([0-9-]{14})$/xxxxxxxxxx"_id": "$1"/;
 
   # crude attack on newlines within variable fields
   s/^([ABDEFGHNPX][.][1-9 I].+)$/\nxxxxxxxxxx$1/g;
@@ -132,6 +145,9 @@ sed \
   -e 's/\("x1_eudract_number.*$\)/}{/g' \
   -e 's/^"dimp": "1",$/"dimp": [ { "_dimp": "1",/g' \
   -e 's/^"b1_sponsor": "1",$/"b1_sponsor": [ { "_b1_sponsor": "1",/g' \
+  -e 's/^"e12_meddra_classification": "Yes",$/"e12_meddra_classification": [/g' \
+  -e 's/^"b4_sources_of_monetary_or_material_support": "Yes",$/"b4_sources_of_monetary_or_material_support": [/g' \
+  -e 's/^"g4_investigator_networks": "Yes",$/"g4_investigator_networks": [/g' \
   -e '/^["{}]/!d' \
   -e '/""/d' \
   | \
@@ -147,10 +163,33 @@ perl -pe 'BEGIN{undef $/;}
   s/("d[0-9]+_.*"),\n"dimp": "([2-9])",/$1\}, \n\{ "_dimp": "$2",/g ;
   s/("d[0-9]+_.*"),\n"x9_enddmp.*/$1\}\n],/g ;
 
-  # create array with sponsor(s), closed before:
+  # create array with sponsor(s), close array before elements:
   # dimp or e11_ or a3_full_ elements
-  s/("b[0-9]+_.*"),\n"b1_sponsor": "([2-9])",/$1\}, \n\{ "_b1_sponsor": "$2",/g ;
+  #s/("b[0-9]+_.*"),\n"b1_sponsor": "([2-9])",/$1\}, \n\{ "_b1_sponsor": "$2",/g ;
+  s/,\n"b1_sponsor": "([2-9])",/}, \n\{ "_b1_sponsor": "$1",/g ;
   s/("b[0-9]+_.*"),\n"x9_endsponsor.*/$1\}\n],/g ;
+
+  # create array of investigator network from first element
+  s/("g4_investigator_network_to_be_involved_in_the_trial": ".*?"),/},{$1,/g ;
+  s/"x9_endnetwork": "TRUE"/} ]/g ;
+
+  # create array of meddra terms, close array before elements:
+  # e13_condition_being_studied_is_a_rare_disease or e21_main_objective_of_the_trial
+  s/("e12_version": ".*?"),/},{$1,/g ;
+  s/"x9_endmeddra": "TRUE"/} ]/g ;
+
+  # create array of b4_source_of_monetary_or_material_support terms, close array before elements:
+  # b51_name_of_organisation
+  s/("b41_name_of_organisation_providing_support": ".*?"),/},{$1,/g ;
+  s/"x9_endsupport": "TRUE"/} ]/g ;
+  # repeat if x9_endsupport not found
+  s/"x9_endsponsor": "TRUE"/} ]/g ;
+
+  # correct formatting artefacts
+  s/\[\n?},/[/g ;
+  s/,\n?}/}\n/g ;
+  # empty array
+  s/\[\n?} ?\]/[]/g ;
 
   ' | \
 perl -pe '

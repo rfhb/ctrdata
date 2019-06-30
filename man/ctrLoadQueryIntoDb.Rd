@@ -7,10 +7,9 @@ database}
 \usage{
 ctrLoadQueryIntoDb(queryterm = "", register = "EUCTR",
   querytoupdate = 0L, forcetoupdate = FALSE, euctrresults = FALSE,
-  annotation.text = "", annotation.mode = "append", details = TRUE,
-  parallelretrievals = 10L, debug = FALSE, collection = "ctrdata",
-  uri = "mongodb://localhost/users",
-  password = Sys.getenv("ctrdatamongopassword"), verbose = FALSE)
+  annotation.text = "", annotation.mode = "append",
+  parallelretrievals = 10L, debug = FALSE, con = NULL,
+  verbose = FALSE)
 }
 \arguments{
 \item{queryterm}{Either a string with the full URL of a search in a register
@@ -44,43 +43,25 @@ with the current query, in the field "annotation".}
 for new annotation.text with respect to any existing annotation for
 the records retreived with the current query.}
 
-\item{details}{If \code{TRUE} (default), retrieve full protocol-related
-information from EUCTR or XML data from CTGOV, depending on the register
-selected. This gives all of the available details for the trials.
-Alternatively, set to \code{FALSE} to retrieve only summary information
-from EUCTR or CSV data from CTGOV. The full EUCTR information includes
-separate records for every country in which the trial is opened; use
-function \code{dbFindUniqueEuctrRecord} in a subsequent step to limit to
-one record from EUCTR per trial}
-
 \item{parallelretrievals}{Number of parallel downloads of information from
 the register, defaults to 10.}
 
-\item{debug}{Printing additional information if set to \code{TRUE}; default
+\item{con}{A \link[nodbi]{src} connection object, as obtained with
+nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()}
+
+\item{verbose}{Printing additional information if set to \code{TRUE}; default
 is \code{FALSE}.}
-
-\item{collection}{Name of collection (default is "ctrdata")}
-
-\item{uri}{Default is mongodb://localhost/users/.
-Address of database in mongodb server, based on mongo connection string
-format: mongodb://[username@]host1[:port1][,...hostN[:portN]]]/database/
-Do NOT include password, this will only be used from the parameter.
-See \url{http://docs.mongodb.org/manual/reference/connection-string/}}
-
-\item{password}{In case access requires credentials.
-Note this defaults to the environment variable "ctrdatamongopassword".
-(by means of \code{Sys.getenv("ctrdatamongopassword")}), to
-support scripting without revealing secrets.}
-
-\item{verbose}{Print information.}
 }
 \value{
-Number of trials imported or updated from register
+A list with elements "n" (the number of trials that were newly imported
+ or updated with this function call) and "ids" (a vector of the _id[s] of these
+ trials), with attributes (database connection details and a data frame of the
+ query history in this database).
 }
 \description{
-Note that upsert is used to store data in database, which means that records
-may accumulate in a data base from different queries. If you want to insert
-into an empty database, include a mongo connection object to an empty database.
+This is the main function of package \link{ctrdata} for accessing registers.
+Note that re-rerunning this function adds or updates trial records
+  in a database, even if from different queries or different registers.
 }
 \examples{
 # Retrieve protocol-related information on a

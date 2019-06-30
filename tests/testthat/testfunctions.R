@@ -19,6 +19,14 @@ context("ctrdata functions")
 # getOption("warn")
 # options(warn = 0)
 
+#### initialisation ####
+
+# specify base uri for remote mongodb server, trailing slash
+mdburi <- "mongodb+srv://DWbJ7Wh:bdTHh5cS@cluster0-b9wpw.mongodb.net"
+# permissions are restricted to "find" in "dbperm" in "dbperm"
+# no other functions can be executed, no login possible
+
+
 # helper function to check if there
 # is a useful internect connection
 has_internet <- function(){
@@ -42,15 +50,31 @@ has_internet <- function(){
 
 # helper function to check mongodb
 has_mongo <- function(){
-  # check server
-  tmp <- getOption("warn")
-  options("warn" = 2)
+  # # check server
+  # tmp <- getOption("warn")
+  # options("warn" = 2)
   # test
-  mongo_ok <- try(ctrdata:::ctrMongo(), silent = TRUE)
+  # mongo_ok <- try(ctrdata:::ctrMongo(), silent = TRUE)
+  mongo_ok <- try(nodbi::src_mongo(), silent = TRUE)
   # use test result
-  options("warn" = tmp)
+  # options("warn" = tmp)
   if ("try-error" %in% class(mongo_ok)) {
-    skip("No password-free localhost mongodb accessible.")
+    #skip("No password-free localhost mongodb accessible.")
+    skip("No access using nodbi::src_mongo()")
+  }
+}
+
+# helper function to check sqlite
+has_sqlite <- function(){
+  # # check server
+  # tmp <- getOption("warn")
+  # options("warn" = 2)
+  # test
+  sqlite_ok <- try(nodbi::src_sqlite(), silent = TRUE)
+  # use test result
+  # options("warn" = tmp)
+  if ("try-error" %in% class(sqlite_ok)) {
+    skip("No access using nodbi::src_sqlite()")
   }
 }
 
@@ -80,19 +104,18 @@ has_toolchain <- function(){
 
 
 # helper function to check mongodb
-has_mongo_remote <- function(mdburi = "", ...) {
+has_mongo_remote <- function(mdburi, db, collection) {
 
-  # for maintainer's local testing uncomment
-  #Sys.unsetenv("ctrdatamongopassword")
-
-  mongo_ok <- try(ctrdata:::ctrMongo(
-    uri = mdburi,
-    collection = "", ...),
+  # test
+  mongo_ok <- try(
+    nodbi::src_mongo(con = dbc,
+                     db = db,
+                     url = mdburi),
     silent = TRUE)
-  #
+
   # use test result
   if ("try-error" %in% class(mongo_ok)) {
-    skip("Remote mongodb not accessible.")
+    skip("No access using nodbi::src_mongo() with remote read-only database.")
   }
 }
 
@@ -104,14 +127,16 @@ test_that("local mongodb", {
 
   # initialise
   coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
+  dbc <- nodbi::src_mongo(collection = coll)
 
   # initialise = drop collections from mongodb
-  try(mongolite::mongo(collection = coll,
-                       url = "mongodb://localhost/users")$drop(),
-      silent = TRUE)
+  try(nodbi::docdb_delete(dbc, key = dbc$collection), silent = TRUE)
+  # try(mongolite::mongo(con = dbc,
+  #                      url = "mongodb://localhost/users")$drop(),
+  #     silent = TRUE)
 
   # test 1
-  expect_message(dbQueryHistory(collection = coll),
+  expect_message(dbQueryHistory(con = dbc),
                  "No history found in expected format.")
 
 })
@@ -125,97 +150,90 @@ test_that("remote mongodb read only", {
   has_toolchain()
   has_internet()
 
-  # specify base uri for remote mongodb server, trailing slash
-  mdburi <- "mongodb+srv://DWbJ7Wh@cluster0-b9wpw.mongodb.net/"
-
-  # permissions are restricted to "find" in "dbperm" in "dbperm"
-  # no other functions can be executed, no login possible
-
-  # skip if no access despite internet
-  has_mongo_remote(mdburi = mdburi, "bdTHh5cS")
+  # # specify base uri for remote mongodb server, trailing slash
+  # mdburi <- "mongodb+srv://DWbJ7Wh@cluster0-b9wpw.mongodb.net/"
+  #
+  # # permissions are restricted to "find" in "dbperm" in "dbperm"
+  # # no other functions can be executed, no login possible
+  #
+  # # skip if no access despite internet
+  # has_mongo_remote(mdburi = mdburi, "bdTHh5cS")
+  has_mongo_remote()
 
   ## read-only tests
 
   # initialise - this collection has been filled with
   # documents from test "remote mongodb read write"
-  coll <- "dbperm"
+  dbc <- nodbi::src_mongo(collection = "dbperm",
+                          db = "dbperm",
+                          url = mdburi)
 
   # field get test
-  expect_warning(tmp <- dbFindFields(namepart = "date",
-                                     uri = paste0(mdburi, "dbperm"),
-                                     password = "bdTHh5cS",
-                                     collection = coll),
-                 "Using alternative method")
+  expect_message(dbFindFields(namepart = "date", con = dbc),
+                 "Finding fields")
 
   # read test
-  expect_silent(
-    tmp <- dbGetFieldsIntoDf(fields = c("a2_eudract_number",
-                                        "overall_status",
-                                        "record_last_import",
-                                        "primary_completion_date",
-                                        "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database",
-                                        "study_design_info",
-                                        "e71_human_pharmacology_phase_i"),
-                             uri = paste0(mdburi, "dbperm"),
-                             password = "bdTHh5cS",
-                             collection = coll)
-  )
+  tmp <- dbGetFieldsIntoDf(fields = c("a2_eudract_number",
+                                      "overall_status",
+                                      "record_last_import",
+                                      "primary_completion_date",
+                                      "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database",
+                                      "study_design_info.intervention_model",
+                                      "e71_human_pharmacology_phase_i"),
+                           con = dbc)
 
   # output tests
   expect_equal(dim(tmp)[2], 8)
   expect_true("POSIXct"   %in% class(tmp[["record_last_import"]]))
-  expect_true("character" %in% class(tmp[["study_design_info"]]))
+  expect_true("character" %in% class(tmp[["study_design_info.intervention_model"]]))
 
 })
 
 
-#### remote mongodb read write ####
-test_that("remote mongodb read write", {
+#### remote mongodb write read ####
+test_that("remote mongodb write read", {
 
   ## brief testing of main functions
-  # expected to work only on CI Travis
-  # password is set as environment variable,
-  # which is read by ctrdata main functions
 
   has_toolchain()
   has_internet()
 
-  # specify base uri for remote mongodb server, trailing slash
-  mdburi <- "mongodb+srv://7RBnH3BF@cluster0-b9wpw.mongodb.net/"
-
-  has_mongo_remote(mdburi = mdburi)
-
   # initialise
   coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
 
+  # test remote mongodb server
+  # expected to only work locally and on CI Travis,
+  # where ctrdatamongouri is set as environment variable
+  has_mongo_remote(Sys.getenv(x = "ctrdatamongouri"), "dbtemp", coll)
+
+  # continue
+  dbc <- nodbi::src_mongo(con = dbc,
+                          db = "dbtemp",
+                          url = Sys.getenv(x = "ctrdatamongouri"))
 
   # test 2a
   expect_equivalent(ctrLoadQueryIntoDb(
     queryterm = "2010-024264-18",
     register = "CTGOV",
-    uri = paste0(mdburi, "dbtemp"),
-    collection = coll)$n,
+    con = dbc)$n,
     1L)
 
   # test 2b
   expect_equivalent(ctrLoadQueryIntoDb(
     queryterm = "2010-024264-18",
     register = "EUCTR",
-    uri = paste0(mdburi, "dbtemp"),
-    collection = coll)$n,
+    con = dbc)$n,
     6L)
 
   # test 2c
   expect_true(
     length(
-      suppressWarnings(
-        dbFindFields(namepart = "date",
-                     uri = paste0(mdburi, "dbtemp"),
-                     collection = coll))) > 5)
+      dbFindFields(namepart = "date",
+                   con = dbc)) > 7L)
 
   # clean up
-  ctrdata:::ctrMongo(uri = paste0(mdburi, "dbtemp"),
-                     collection = coll)$drop()
+  nodbi::docdb_delete(src = dbc,
+                      key = dbc$collection)
 
 })
 
@@ -229,19 +247,20 @@ test_that("retrieve data from registers", {
 
   # initialise
   coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
+  dbc <- nodbi::src_mongo(collection = coll)
 
   # test 3
-  expect_equal(suppressWarnings(ctrLoadQueryIntoDb(
+  expect_equal(suppressMessages(ctrLoadQueryIntoDb(
     queryterm = "query=NonExistingConditionGoesInHere",
     register = "EUCTR",
-    collection = coll)$n),
+    con = dbc)$n),
     0L)
 
   # test 4
-  expect_equal(suppressWarnings(ctrLoadQueryIntoDb(
+  expect_equal(suppressMessages(ctrLoadQueryIntoDb(
     queryterm = "cond=NonExistingConditionGoesInHere",
     register = "CTGOV",
-    collection = coll)$n),
+    con = dbc)$n),
     0L)
 
   # clean up is the end of script = drop collection from mongodb
@@ -249,7 +268,7 @@ test_that("retrieve data from registers", {
 })
 
 
-#### ctgov new, update ####
+#### ctgov mongo new, update ####
 test_that("retrieve data from register ctgov", {
 
   has_internet()
@@ -258,12 +277,13 @@ test_that("retrieve data from register ctgov", {
 
   # initialise
   coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
+  dbc <- nodbi::src_mongo(collection = coll)
 
   # test 5
   expect_message(ctrLoadQueryIntoDb(
     queryterm = "2010-024264-18",
     register = "CTGOV",
-    collection = coll),
+    con = dbc),
     "Imported or updated 1 trial")
 
   ## create and test updatable query
@@ -271,30 +291,36 @@ test_that("retrieve data from register ctgov", {
   q <- paste0("https://clinicaltrials.gov/ct2/results?term=osteosarcoma&type=Intr&phase=0&age=0&lup_e=")
 
   # test 6
-  expect_message(capture_output(
+  expect_message(
     ctrLoadQueryIntoDb(
       paste0(q, "12%2F31%2F2008"),
-      collection = coll,
-      debug = TRUE,
-      verbose = TRUE)),
+      con = dbc),
     "Imported or updated ")
 
   # manipulate history to force testing updating
   # based on code in dbCTRUpdateQueryHistory
-  hist <- dbQueryHistory(collection = coll)
+  hist <- dbQueryHistory(con = dbc)
   # manipulate query
   hist[nrow(hist), "query-term"] <- sub("(.*&lup_e=).*", "\\112%2F31%2F2009", hist[nrow(hist), "query-term"])
   # convert into json object
   json <- jsonlite::toJSON(list("queries" = hist))
   # update database
-  mongolite::mongo(collection = coll,
-                   url = "mongodb://localhost/users")$update(query = '{"_id":{"$eq":"meta-info"}}',
-                                                             update = paste0('{ "$set" :', json, "}"),
-                                                             upsert = TRUE)
+  nodbi::docdb_update(src = dbc,
+                      key = dbc$collection,
+                      value = data.frame("_id" = "meta-info",
+                                         "content" = as.character(json),
+                                         stringsAsFactors = FALSE,
+                                         check.names = FALSE)
+  )
+
+  # mongolite::mongo(con = dbc,
+  #                  url = "mongodb://localhost/users")$update(query = '{"_id":{"$eq":"meta-info"}}',
+  #                                                            update = paste0('{ "$set" :', json, "}"),
+  #                                                            upsert = TRUE)
 
   # test 7
   expect_message(suppressWarnings(ctrLoadQueryIntoDb(
-    querytoupdate = "last", collection = coll)),
+    querytoupdate = "last", con = dbc)),
     "Imported or updated")
 
   remove("hist", "json", "q")
@@ -302,7 +328,68 @@ test_that("retrieve data from register ctgov", {
 })
 
 
-#### euctr new, fast, slow, update ####
+
+#### ctgov sqlite new, update ####
+test_that("retrieve data from register ctgov into sqlite", {
+
+  has_internet()
+  has_mongo()
+  has_toolchain()
+
+  # initialise
+  coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
+  dbc <- nodbi::src_sqlite(collection = coll)
+
+  # test 5
+  expect_message(ctrLoadQueryIntoDb(
+    queryterm = "2010-024264-18",
+    register = "CTGOV",
+    con = dbc),
+    "Imported or updated 1 trial")
+
+  ## create and test updatable query
+
+  q <- paste0("https://clinicaltrials.gov/ct2/results?term=osteosarcoma&type=Intr&phase=0&age=0&lup_e=")
+
+  # test 6
+  expect_message(
+    ctrLoadQueryIntoDb(
+      paste0(q, "12%2F31%2F2008"),
+      con = dbc),
+    "Imported or updated ")
+
+  # manipulate history to force testing updating
+  # based on code in dbCTRUpdateQueryHistory
+  hist <- dbQueryHistory(con = dbc)
+  # manipulate query
+  hist[nrow(hist), "query-term"] <- sub("(.*&lup_e=).*", "\\112%2F31%2F2009", hist[nrow(hist), "query-term"])
+  # convert into json object
+  json <- jsonlite::toJSON(list("queries" = hist))
+  # update database
+  nodbi::docdb_update(src = dbc,
+                      key = dbc$collection,
+                      value = data.frame("_id" = "meta-info",
+                                         "content" = as.character(json),
+                                         stringsAsFactors = FALSE,
+                                         check.names = FALSE)
+  )
+
+  # mongolite::mongo(con = dbc,
+  #                  url = "mongodb://localhost/users")$update(query = '{"_id":{"$eq":"meta-info"}}',
+  #                                                            update = paste0('{ "$set" :', json, "}"),
+  #                                                            upsert = TRUE)
+
+  # test 7
+  expect_message(suppressWarnings(ctrLoadQueryIntoDb(
+    querytoupdate = "last", con = dbc)),
+    "Imported or updated")
+
+  remove("hist", "json", "q")
+
+})
+
+
+#### euctr mongo new, update ####
 test_that("retrieve data from register euctr", {
 
   has_internet()
@@ -311,23 +398,17 @@ test_that("retrieve data from register euctr", {
 
   # initialise
   coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
+  dbc <- nodbi::src_mongo(collection = coll)
 
   q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
               "neuroblastoma&status=completed&phase=phase-one&country=pl")
   # ctrGetQueryUrlFromBrowser(content = q)
+  # ctrOpenSearchPagesInBrowser(q)
 
   # test 11
-  expect_message(suppressWarnings(
+  expect_message(
     ctrLoadQueryIntoDb(q,
-                       collection = coll)),
-    "Imported or updated")
-
-  ## download without details
-  # test 12
-  expect_message(suppressWarnings(
-    ctrLoadQueryIntoDb(q,
-                       collection = coll,
-                       details = FALSE)),
+                       con = dbc),
     "Imported or updated")
 
   ## create and test updatable query
@@ -344,31 +425,113 @@ test_that("retrieve data from register euctr", {
   # ctrOpenSearchPagesInBrowser(q)
 
   # test 13
-  expect_message(suppressWarnings(
+  expect_message(
     ctrLoadQueryIntoDb(q,
-                       collection = coll,
-                       details = FALSE)),
+                       con = dbc,
+                       verbose = TRUE),
     "Imported or updated ")
 
   # manipulate history to force testing updating
   # based on code in dbCTRUpdateQueryHistory
-  hist <- dbQueryHistory(collection = coll)
+  hist <- dbQueryHistory(con = dbc)
   # manipulate query
   hist[nrow(hist), "query-term"]      <- sub(".*(&dateFrom=.*)&dateTo=.*", "\\1", q)
   hist[nrow(hist), "query-timestamp"] <- paste0(date.to, " 23:59:59")
   # convert into json object
   json <- jsonlite::toJSON(list("queries" = hist))
   # update database
-  mongolite::mongo(collection = coll,
-                   url = "mongodb://localhost/users")$update(query = '{"_id":{"$eq":"meta-info"}}',
-                                                             update = paste0('{ "$set" :', json, "}"),
-                                                             upsert = TRUE)
+  nodbi::docdb_update(src = dbc,
+                      key = dbc$collection,
+                      value = data.frame("_id" = "meta-info",
+                                         "content" = as.character(json),
+                                         stringsAsFactors = FALSE,
+                                         check.names = FALSE)
+  )
+
+  # mongolite::mongo(con = dbc,
+  #                  url = "mongodb://localhost/users")$update(query = '{"_id":{"$eq":"meta-info"}}',
+  #                                                            update = paste0('{ "$set" :', json, "}"),
+  #                                                            upsert = TRUE)
 
   # test 14
   expect_message(
     ctrLoadQueryIntoDb(querytoupdate = "last",
-                       collection = coll,
-                       details = FALSE),
+                       con = dbc),
+    "(Imported or updated|First result page empty)")
+
+  remove("hist", "json", "q", "date.from", "date.today", "date.to")
+
+})
+
+
+#### euctr sqlite new, update ####
+test_that("retrieve data from register euctr into sqlite", {
+
+  has_internet()
+  has_mongo()
+  has_toolchain()
+
+  # initialise
+  coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
+  dbc <- nodbi::src_sqlite(collection = coll)
+
+  q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
+              "neuroblastoma&status=completed&phase=phase-one&country=pl")
+  # ctrGetQueryUrlFromBrowser(content = q)
+  # ctrOpenSearchPagesInBrowser(q)
+
+  # test 11
+  expect_message(
+    ctrLoadQueryIntoDb(q,
+                       con = dbc),
+    "Imported or updated")
+
+  ## create and test updatable query
+
+  # only works for last 7 days with rss mechanism
+  # query based on date is used since this avoids no trials are found
+
+  date.today <- Sys.time()
+  date.from  <- format(date.today - (60 * 60 * 24 * 12), "%Y-%m-%d")
+  date.to    <- format(date.today - (60 * 60 * 24 *  6), "%Y-%m-%d")
+
+  q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
+              "&dateFrom=", date.from, "&dateTo=", date.to)
+  # ctrOpenSearchPagesInBrowser(q)
+
+  # test 13
+  expect_message(
+    ctrLoadQueryIntoDb(q,
+                       con = dbc,
+                       verbose = TRUE),
+    "Imported or updated ")
+
+  # manipulate history to force testing updating
+  # based on code in dbCTRUpdateQueryHistory
+  hist <- dbQueryHistory(con = dbc)
+  # manipulate query
+  hist[nrow(hist), "query-term"]      <- sub(".*(&dateFrom=.*)&dateTo=.*", "\\1", q)
+  hist[nrow(hist), "query-timestamp"] <- paste0(date.to, " 23:59:59")
+  # convert into json object
+  json <- jsonlite::toJSON(list("queries" = hist))
+  # update database
+  nodbi::docdb_update(src = dbc,
+                      key = dbc$collection,
+                      value = data.frame("_id" = "meta-info",
+                                         "content" = as.character(json),
+                                         stringsAsFactors = FALSE,
+                                         check.names = FALSE)
+  )
+
+  # mongolite::mongo(con = dbc,
+  #                  url = "mongodb://localhost/users")$update(query = '{"_id":{"$eq":"meta-info"}}',
+  #                                                            update = paste0('{ "$set" :', json, "}"),
+  #                                                            upsert = TRUE)
+
+  # test 14
+  expect_message(
+    ctrLoadQueryIntoDb(querytoupdate = "last",
+                       con = dbc),
     "(Imported or updated|First result page empty)")
 
   remove("hist", "json", "q", "date.from", "date.today", "date.to")
@@ -385,18 +548,17 @@ test_that("retrieve results from register euctr", {
 
   # initialise
   coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
+  dbc <- nodbi::src_mongo(collection = coll)
 
   q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
               "2007-000371-42+OR+2011-004742-18")
   # ctrGetQueryUrlFromBrowser(content = q)
   # ctrOpenSearchPagesInBrowser(input = q)
 
-  # test 15
-  expect_message(suppressWarnings(
+  expect_message(
     ctrLoadQueryIntoDb(q,
                        euctrresults = TRUE,
-                       collection = coll,
-                       debug = TRUE)),
+                       con = dbc),
     "Imported or updated results for")
 
   tmp <- dbGetFieldsIntoDf(fields = c("a2_eudract_number",
@@ -404,13 +566,13 @@ test_that("retrieve results from register euctr", {
                                       "firstreceived_results_date",
                                       "e71_human_pharmacology_phase_i",
                                       "version_results_history"),
-                           collection = coll,
+                           con = dbc,
                            stopifnodata = FALSE)
 
   # test 16
-  expect_true(!any(tmp[tmp$a2_eudract_number == "2007-000371-42", c(1, 2, 3)] == ""))
-  expect_true(all(c(tmp$firstreceived_results_date[tmp$a2_eudract_number == "2007-000371-42"] == as.Date("2015-07-29"),
-                    tmp$firstreceived_results_date[tmp$a2_eudract_number == "2011-004742-18"] == as.Date("2016-07-28"))))
+  expect_true(!any(is.na(tmp[tmp$a2_eudract_number == "2007-000371-42", c(4,5,6)])))
+  expect_true(all(c(tmp$firstreceived_results_date[tmp$a2_eudract_number == "2007-000371-42"][1] == as.Date("2015-07-29"),
+                    tmp$firstreceived_results_date[tmp$a2_eudract_number == "2011-004742-18"][1] == as.Date("2016-07-28"))))
 
   # test 16a
   expect_true(class(tmp$firstreceived_results_date)     == "Date")
@@ -474,15 +636,18 @@ test_that("browser interaction", {
   has_mongo()
   has_toolchain()
 
+  # initialise
   coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
+  dbc <- nodbi::src_mongo(collection = coll)
 
   # test 26
-  expect_message(ctrOpenSearchPagesInBrowser(dbQueryHistory(collection = coll)[1, ]),
+  expect_message(ctrOpenSearchPagesInBrowser(dbQueryHistory(con = dbc)[1, ]),
                  "Opening browser for search:")
 
-  tmp <-  data.frame(lapply(dbQueryHistory(collection = coll),
-                            tail, 1L), stringsAsFactors = FALSE)
-  names(tmp) <- sub("[.]", "-", names(tmp))
+  tmp <-  data.frame(lapply(dbQueryHistory(con = dbc),
+                            tail, 1L),
+                     stringsAsFactors = FALSE,
+                     check.names = FALSE)
 
   # test 27
   expect_message(ctrOpenSearchPagesInBrowser(tmp),
@@ -500,60 +665,48 @@ test_that("operations on database after download from register", {
 
   # initialise
   coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
+  dbc <- nodbi::src_mongo(collection = coll)
 
   # test 28
   expect_error(dbFindFields(
     namepart = c("onestring", "twostring"),
-    collection = coll),
+    con = dbc),
     "Name part should have only one element.")
-
+  #
   expect_error(dbFindFields(
     namepart = list("onestring", "twostring"),
-    collection = coll),
+    con = dbc),
     "Name part should be atomic.")
-
+  #
   expect_error(dbFindFields(namepart = "",
-                            collection = coll),
+                            con = dbc),
                "Empty name part string.")
 
   # test 31
-  expect_type(dbFindFields(
+  tmp <- dbFindFields(
     namepart = "date",
-    collection = coll),
-    "character")
-
-  expect_message(dbFindFields(
-    namepart = "ThisNameShouldNotExistAnywhere",
-    collection = coll), "Using cache of fields.")
-
-  expect_equivalent(ctrLoadQueryIntoDb(
-    queryterm = "2010-024264-18",
-    register = "CTGOV",
-    collection = coll)$n,
-    1L)
-
-  expect_message(dbFindFields(
-    namepart = "ThisNameShouldNotExistAnywhere",
-    collection = coll),
-    "Finding fields on server")
+    con = dbc)
+  expect_type(tmp, "character")
+  expect_true(length(tmp) > 5L)
+  #
 
   # dbFindIdsUniqueTrials
 
   # test 33
   expect_message(dbFindIdsUniqueTrials(
-    collection = coll,
+    con = dbc,
     preferregister = "EUCTR"),
     "Searching multiple country records")
 
   # test 34
   expect_message(dbFindIdsUniqueTrials(
-    collection = coll,
+    con = dbc,
     preferregister = "CTGOV"),
     "Returning keys")
 
   # test 35
   expect_warning(dbFindIdsUniqueTrials(
-    collection = coll,
+    con = dbc,
     prefermemberstate = "3RD",
     include3rdcountrytrials = FALSE),
     "Preferred EUCTR version set to 3RD country trials, but include3rdcountrytrials was FALSE")
@@ -564,26 +717,26 @@ test_that("operations on database after download from register", {
   # test 36
   expect_error(dbGetFieldsIntoDf(
     fields = "ThisDoesNotExist",
-    collection = coll),
+    con = dbc),
     "For field: ThisDoesNotExist no data could be extracted")
 
   # test 37
   expect_error(dbGetFieldsIntoDf(
     fields = "",
-    collection = coll),
+    con = dbc),
     "'fields' contains empty elements")
 
   # test 38
   expect_error(dbGetFieldsIntoDf(
     fields = list("ThisDoesNotExist"),
-    collection = coll),
+    con = dbc),
     "Input should be a vector of strings of field names.")
 
 
   # clean up = drop collections from mongodb
 
   # test 38
-  expect_equivalent(mongolite::mongo(collection = coll, url = "mongodb://localhost/users")$drop(), TRUE)
+  expect_equivalent(nodbi::docdb_delete(src = dbc, key = dbc$collection), TRUE)
 
 })
 
@@ -597,61 +750,64 @@ test_that("operations on database for deduplication", {
 
   # initialise
   coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
+  dbc <- nodbi::src_mongo(collection = coll)
 
   # get some trials with corresponding numbers
-  # ctrLoadQueryIntoDb(queryterm = "NCT00134030", register = "CTGOV", collection = coll) # EUDRACT-2004-000242-20
-  # ctrLoadQueryIntoDb(queryterm = "NCT01516580", register = "CTGOV", collection = coll) # 2010-019224-31
-  # ctrLoadQueryIntoDb(queryterm = "NCT00025597", register = "CTGOV", collection = coll) # this is not in euctr
-  # ctrLoadQueryIntoDb(queryterm = "2010-019224-31", register = "EUCTR", collection = coll)
-  # ctrLoadQueryIntoDb(queryterm = "2004-000242-20", register = "EUCTR", collection = coll)
-  # ctrLoadQueryIntoDb(queryterm = "2005-000915-80", register = "EUCTR", collection = coll) # this is not in ctgov
-  # ctrLoadQueryIntoDb(queryterm = "2014-005674-11", register = "EUCTR", collection = coll) # this is 3rd country only
-  # ctrLoadQueryIntoDb(queryterm = "2016-002347-41", register = "EUCTR", collection = coll) # in eu and 3rd country
+  # ctrLoadQueryIntoDb(queryterm = "NCT00134030", register = "CTGOV", con = dbc) # EUDRACT-2004-000242-20
+  # ctrLoadQueryIntoDb(queryterm = "NCT01516580", register = "CTGOV", con = dbc) # 2010-019224-31
+  # ctrLoadQueryIntoDb(queryterm = "NCT00025597", register = "CTGOV", con = dbc) # this is not in euctr
+  # ctrLoadQueryIntoDb(queryterm = "2010-019224-31", register = "EUCTR", con = dbc)
+  # ctrLoadQueryIntoDb(queryterm = "2004-000242-20", register = "EUCTR", con = dbc)
+  # ctrLoadQueryIntoDb(queryterm = "2005-000915-80", register = "EUCTR", con = dbc) # this is not in ctgov
+  # ctrLoadQueryIntoDb(queryterm = "2014-005674-11", register = "EUCTR", con = dbc) # this is 3rd country only
+  # ctrLoadQueryIntoDb(queryterm = "2016-002347-41", register = "EUCTR", con = dbc) # in eu and 3rd country
+
+  # loading into empty database / collection
 
   ctrLoadQueryIntoDb(
     queryterm = "NCT00134030 OR NCT01516580 OR NCT00025597",
     register = "CTGOV",
-    collection = coll)
+    con = dbc)
 
   ctrLoadQueryIntoDb(
     queryterm = "2010-019224-31 OR 2004-000242-20 OR 2005-000915-80 OR 2014-005674-11 OR 2016-002347-41",
     register = "EUCTR",
-    collection = coll)
+    con = dbc)
 
   # test combinations of parameters
 
   # test 41
-  tmp <- dbFindIdsUniqueTrials(collection = coll)
+  tmp <- dbFindIdsUniqueTrials(con = dbc)
   expect_true(all.equal(tmp, c("2004-000242-20-GB", "2005-000915-80-GB", "2010-019224-31-GB",
                                "2014-005674-11-3RD", "2016-002347-41-GB", "NCT00025597"),
                         check.attributes = FALSE))
 
   # test 42
-  tmp <- dbFindIdsUniqueTrials(collection = coll, include3rdcountrytrials = FALSE) # removes 2014-005674-11
+  tmp <- dbFindIdsUniqueTrials(con = dbc, include3rdcountrytrials = FALSE) # removes 2014-005674-11
   expect_true(all.equal(tmp, c("2004-000242-20-GB", "2005-000915-80-GB", "2010-019224-31-GB",
                                "2016-002347-41-GB", "NCT00025597"),
                         check.attributes = FALSE))
 
   # test 43
-  tmp <- dbFindIdsUniqueTrials(collection = coll, prefermemberstate = "3RD") # changes 2016-002347-41
+  tmp <- dbFindIdsUniqueTrials(con = dbc, prefermemberstate = "3RD") # changes 2016-002347-41
   expect_true(all.equal(tmp, c("2004-000242-20-GB", "2005-000915-80-GB", "2010-019224-31-GB", "2014-005674-11-3RD",
                                "2016-002347-41-3RD", "NCT00025597"),
                         check.attributes = FALSE))
 
   # test 44
-  tmp <- dbFindIdsUniqueTrials(collection = coll, prefermemberstate = "IT")
+  tmp <- dbFindIdsUniqueTrials(con = dbc, prefermemberstate = "IT")
   expect_true(all.equal(tmp, c("2004-000242-20-GB", "2005-000915-80-IT", "2010-019224-31-IT", "2014-005674-11-3RD",
                                "2016-002347-41-GB", "NCT00025597"),
                         check.attributes = FALSE))
 
   # test 45
-  tmp <- dbFindIdsUniqueTrials(collection = coll, preferregister = "CTGOV")
+  tmp <- dbFindIdsUniqueTrials(con = dbc, preferregister = "CTGOV")
   expect_true(all.equal(tmp, c("NCT00025597", "NCT00134030", "NCT01516580", "2005-000915-80-GB",
                               "2014-005674-11-3RD", "2016-002347-41-GB"),
                         check.attributes = FALSE))
 
   # test 46
-  tmp <- dbFindIdsUniqueTrials(collection = coll, preferregister = "CTGOV", prefermemberstate = "IT")
+  tmp <- dbFindIdsUniqueTrials(con = dbc, preferregister = "CTGOV", prefermemberstate = "IT")
   expect_true(all.equal(tmp, c("NCT00025597", "NCT00134030", "NCT01516580", "2005-000915-80-IT",
                                "2014-005674-11-3RD", "2016-002347-41-GB"),
                         check.attributes = FALSE))
@@ -660,7 +816,7 @@ test_that("operations on database for deduplication", {
   # clean up = drop collections from mongodb
 
   # test 47
-  expect_equivalent(mongolite::mongo(collection = coll, url = "mongodb://localhost/users")$drop(), TRUE)
+  expect_equivalent(nodbi::docdb_delete(src = dbc, key = dbc$collection), TRUE)
 
 })
 
@@ -675,12 +831,13 @@ test_that("annotate queries", {
 
   # initialise
   coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
+  dbc <- nodbi::src_mongo(collection = coll)
 
   # test 49
   expect_message(ctrLoadQueryIntoDb(
     queryterm = "NCT01516567",
     register = "CTGOV",
-    collection = coll,
+    con = dbc,
     annotation.text = "ANNO",
     annotation.mode = "replace"),
     "Imported or updated 1 trial")
@@ -689,7 +846,7 @@ test_that("annotate queries", {
   expect_message(ctrLoadQueryIntoDb(
     queryterm = "NCT01516567",
     register = "CTGOV",
-    collection = coll,
+    con = dbc,
     annotation.text = "APPEND",
     annotation.mode = "append"),
     "Imported or updated 1 trial")
@@ -697,7 +854,7 @@ test_that("annotate queries", {
   expect_message(ctrLoadQueryIntoDb(
     queryterm = "NCT01516567",
     register = "CTGOV",
-    collection = coll,
+    con = dbc,
     annotation.text = "PREPEND",
     annotation.mode = "prepend"),
     "Imported or updated 1 trial")
@@ -706,21 +863,18 @@ test_that("annotate queries", {
   expect_message(ctrLoadQueryIntoDb(
     queryterm = "2010-024264-18",
     register = "EUCTR",
-    collection = coll,
+    con = dbc,
     annotation.text = "EUANNO",
     annotation.mode = "replace"),
     "Imported or updated")
 
   # test 52
-
   tmp <- dbGetFieldsIntoDf(
     fields = "annotation",
-    collection = coll)
-
+    con = dbc)
   tmp <- tmp[tmp[["_id"]] %in%
                dbFindIdsUniqueTrials(
-                 collection = coll) , ]
-
+                 con = dbc) , ]
   expect_equal(sort(tmp[["annotation"]]),
                sort(c("EUANNO", "PREPEND ANNO APPEND")))
 
