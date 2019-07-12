@@ -213,7 +213,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
                      "\n'imported'=", imported,
                      "\n'register'=", register,
                      "\n'collection'=", con$collection,
-                     "\nImported trials:", imported$ids)
+                     "\nImported trials:", imported$success)
 
   # add query parameters to database
   dbCTRUpdateQueryHistory(register = register,
@@ -230,7 +230,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
                           con = con)
 
   ## return
-  return(invisible(imported))
+  return(imported)
 
 }
 # end ctrLoadQueryIntoDb
@@ -397,8 +397,7 @@ dbCTRLoadJSONFiles <- function(dir, con) {
                    full.names = TRUE)
 
   # initialise counters
-  tmpids <- NULL
-  tmpinsertall <- 0
+  retimp <- NULL
 
   # iterate over files
   for (tempFile in tempFiles) {
@@ -408,7 +407,8 @@ dbCTRLoadJSONFiles <- function(dir, con) {
     tmplines <- readLines(con = fd, warn = FALSE)
     close(fd)
 
-    # check validity
+    # check validity - note json may validate here
+    # but still not be valid e.g., end in dot something
     if (!all(sapply(tmplines, jsonlite::validate)))
       stop("Invalid json in file ", tempFile)
 
@@ -416,10 +416,10 @@ dbCTRLoadJSONFiles <- function(dir, con) {
     ids <- sub(".*_id\":[ ]*\"(.*?)\".*", "\\1", tmplines)
 
     # ids should always be found
-    if (all(ids == "")) stop("No _id(s) detected in converted JSON, cannot continue.")
+    if (all(ids == "")) stop("No _id(s) detected in converted JSON: ", tempFile)
 
     # check if in database, create or update
-    tmpinsert <- sapply(seq_along(ids), function(i) {
+    tmpinsert <- lapply(seq_along(ids), function(i) {
 
       # slice data to be processed
       value <- data.frame("_id" = ids[i],
@@ -428,23 +428,51 @@ dbCTRLoadJSONFiles <- function(dir, con) {
                           check.names = FALSE)
 
       # check if document exists, then create or update
-      ifelse(!checkDoc(con, ids[i]),
-             nodbi::docdb_create(src = con,
-                                 key = con$collection,
-                                 value = value),
-             nodbi::docdb_update(src = con,
-                                 key = con$collection,
-                                 value = value)
-      )
-    })
+      tmp <- try({
+        # use try construct in case json
+        # could not be imported
+        ifelse(!checkDoc(con, ids[i]),
+               nodbi::docdb_create(src = con,
+                                   key = con$collection,
+                                   value = value),
+               nodbi::docdb_update(src = con,
+                                   key = con$collection,
+                                   value = value)
+        )},
+        silent = TRUE)
+
+      # return to sapply
+      if ("try-error" %in% class(tmp)) {
+        list(success = NA,
+             failed = ids[i],
+             n = 0L)
+      } else {
+        list(success = ids[i],
+             failed = NA,
+             n = tmp)
+      }
+
+    }) # sapply
 
     # increment counters
-    tmpids <- c(tmpids, ids)
-    tmpinsertall <- tmpinsertall + sum(unlist(tmpinsert), na.rm = TRUE)
+    retimp <- c(retimp, tmpinsert)
+
+    # clean up
+    rm("tmplines")
+
   }
 
-  # prepare return value
-  return(list(n = tmpinsertall, ids = ids))
+  # prepare return value, n is successful only
+  n <- sum(sapply(retimp, "[[", "n"), na.rm = TRUE)
+  success <- sapply(retimp, "[[", "success")
+  success <- as.character(na.omit(success))
+  failed <- sapply(retimp, "[[", "failed")
+  failed <- as.character(na.omit(failed))
+
+  # return
+  return(list(n = n,
+              success = success,
+              failed = failed))
 
 } # end dbCTRLoadJSONFiles
 
@@ -558,7 +586,7 @@ dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber,
   )
 
   # debug
-  if (verbose) print(hist)
+  if (verbose) message(hist)
 
   # append current search
   # default for format methods is "%Y-%m-%d %H:%M:%S"
@@ -813,10 +841,10 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm = queryterm, register,
 
   ## add annotations
   if ( (annotation.text != "") &
-       (length(imported$ids) > 0L) ) {
+       (length(imported$success) > 0L) ) {
 
     # dispatch
-    dbCTRAnnotateQueryRecords(recordnumbers = imported$ids, annotations = annotations,
+    dbCTRAnnotateQueryRecords(recordnumbers = imported$success, annotations = annotations,
                               annotation.text = annotation.text, annotation.mode = annotation.mode,
                               con = con, verbose = verbose)
 
@@ -1036,7 +1064,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm = queryterm, register,
   # mongo$disconnect()
 
   ## read in the eudract numbers of the trials just retrieved and imported
-  eudractnumbersimported <- imported$ids
+  eudractnumbersimported <- imported$success
 
   ## add annotations
   if ( (annotation.text != "") &

@@ -44,10 +44,10 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   next if /^This file contains/;
   next if /A\. Protocol Information/;
   next if /B\. Sponsor Information/;
-  next if /E\. General Information on the Trial/;
   next if /F\. Population of Trial Subjects/;
   next if /P\. End of Trial.$/;
   # no more deleted, to form arrays
+  #next if /E\. General Information on the Trial/;
   #next if /N\. Review by the/;
   #next if /G. Investigator Networks/;
   #next if /H.4 Third Country/;
@@ -71,6 +71,12 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   # - prepare array for networks
   s/^G. Investigator Networks.*$/G.4 Investigator Networks: Yes/g;
 
+  # - prepare array for inn proposed names
+  s/^D.3.8 to D.3.10 IMP Identification Details.*$/D.3.8 IMP Identification details: Yes/g;
+
+  # - prepare array for placebos
+  print "\nD.8 Information on Placebo: Yes" if/^D.8 Placebo: 1$/;
+
   # add identifiers for special cases
   s/^(EudraCT Number.*)$/X.1 $1/;
   s/^(Sponsor) ([0-9]+)$/B.1 $1: $2/;
@@ -80,11 +86,13 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   s/^(Link.*)$/X.7 $1/;
 
   # add identifier for end of arrays
-  s/^D\.8 Information on Placebo$/X.9 ENDDMP: TRUE/;
   s/^D\. IMP Identification$/X.9 ENDSPONSOR: TRUE/;
-  print "\nX.9 ENDMEDDRA: TRUE\nE.1.3 Condition" if /^E\.1\.3 Condition/;
-  print "\nX.9 ENDSUPPORT: TRUE\nB.5 Contact" if /^B\.5 Contact/;
-  print "\nX.9 ENDNETWORK: TRUE\nN. Review" if /^N\. Review|^H\.4 Third Country/;
+
+  print "\nX.9 ENDDMP: TRUE"      if /^D\.8 Information on Placebo$/;
+  print "\nX.9 ENDMEDDRA: TRUE"   if /^E\.1\.3 Condition/;
+  print "\nX.9 ENDSUPPORT: TRUE"  if /^B\.5 Contact/;
+  print "\nX.9 ENDNETWORK: TRUE"  if /^N\. Review|^H\.4 Third Country/;
+  print "\nX.9 ENDIMPIDENT: TRUE" if /^D\.3\.11 The IMP contains an/;
 
   # for details = FALSE it is:
   s/^Full Title:/\nX.9 ENDSPONSOR: TRUE\nxxxxxxxxxxA.3 Full Title of the Trial:/;
@@ -148,6 +156,8 @@ sed \
   -e 's/^"e12_meddra_classification": "Yes",$/"e12_meddra_classification": [/g' \
   -e 's/^"b4_sources_of_monetary_or_material_support": "Yes",$/"b4_sources_of_monetary_or_material_support": [/g' \
   -e 's/^"g4_investigator_networks": "Yes",$/"g4_investigator_networks": [/g' \
+  -e 's/^"d38_imp_identification_details": "Yes",$/"d38_imp_identification_details": [/g' \
+  -e 's/^"d8_information_on_placebo": "Yes",$/"d8_information_on_placebo": [/g' \
   -e '/^["{}]/!d' \
   -e '/""/d' \
   | \
@@ -156,16 +166,18 @@ sed \
   -e '$ s/\(.*\),/\1}/' \
   | \
 perl -pe 'BEGIN{undef $/;}
+
   # delete comma from last line in record
   s/,\n\}\{/\}\nNEWRECORDIDENTIFIER\n\{/g ;
+
+  # remove empty elements
+  #s/D.8 Information on Placebo X.9 ENDPLACEBO: TRUE //g ;
 
   # create array with imp(s)
   s/("d[0-9]+_.*"),\n"dimp": "([2-9])",/$1\}, \n\{ "_dimp": "$2",/g ;
   s/("d[0-9]+_.*"),\n"x9_enddmp.*/$1\}\n],/g ;
 
-  # create array with sponsor(s), close array before elements:
-  # dimp or e11_ or a3_full_ elements
-  #s/("b[0-9]+_.*"),\n"b1_sponsor": "([2-9])",/$1\}, \n\{ "_b1_sponsor": "$2",/g ;
+  # create array with sponsor(s)
   s/,\n"b1_sponsor": "([2-9])",/}, \n\{ "_b1_sponsor": "$1",/g ;
   s/("b[0-9]+_.*"),\n"x9_endsponsor.*/$1\}\n],/g ;
 
@@ -173,17 +185,22 @@ perl -pe 'BEGIN{undef $/;}
   s/("g4_investigator_network_to_be_involved_in_the_trial": ".*?"),/},{$1,/g ;
   s/"x9_endnetwork": "TRUE"/} ]/g ;
 
-  # create array of meddra terms, close array before elements:
-  # e13_condition_being_studied_is_a_rare_disease or e21_main_objective_of_the_trial
+  # create array of meddra terms
   s/("e12_version": ".*?"),/},{$1,/g ;
   s/"x9_endmeddra": "TRUE"/} ]/g ;
 
-  # create array of b4_source_of_monetary_or_material_support terms, close array before elements:
-  # b51_name_of_organisation
+  # create array of b4_source_of_monetary_or_material_support terms
   s/("b41_name_of_organisation_providing_support": ".*?"),/},{$1,/g ;
   s/"x9_endsupport": "TRUE"/} ]/g ;
-  # repeat if x9_endsupport not found
   s/"x9_endsponsor": "TRUE"/} ]/g ;
+
+  # create array of imp identification details
+  s/("d38_inn__proposed_inn": ".*?"),/},{$1,/g ;
+  s/"x9_endimpident": "TRUE"/} ]/g ;
+
+  # create array of placebos
+  s/("d8_placebo": ".*?"),/},{$1,/g ;
+  s/(d84.*\n)("e11_)/$1} ], $2/g ;
 
   # correct formatting artefacts
   s/\[\n?},/[/g ;
