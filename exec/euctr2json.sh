@@ -46,11 +46,6 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   next if /B\. Sponsor Information/;
   next if /F\. Population of Trial Subjects/;
   next if /P\. End of Trial.$/;
-  # no more deleted, to form arrays
-  #next if /E\. General Information on the Trial/;
-  #next if /N\. Review by the/;
-  #next if /G. Investigator Networks/;
-  #next if /H.4 Third Country/;
 
   # remove explanatory information from key F.3.3.1
   next if /^\(For clinical trials recorded/;
@@ -94,19 +89,6 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   print "\nX.9 ENDNETWORK: TRUE"  if /^N\. Review|^H\.4 Third Country/;
   print "\nX.9 ENDIMPIDENT: TRUE" if /^D\.3\.11 The IMP contains an/;
 
-  # for details = FALSE it is:
-  s/^Full Title:/\nX.9 ENDSPONSOR: TRUE\nxxxxxxxxxxA.3 Full Title of the Trial:/;
-
-  # add identifiers for summary documents (terminating - needed for later step)
-  # s/^Sponsor Protocol Number: (.*)$/A.4.1 Sponsors protocol code number: $1/;
-  # s/^Sponsor Name: (.*)$/B.1 Sponsor: 1xxxxxxxxxxB.1.1 Name of sponsor: $1/;
-  # s/^Full Title: (.*)$/A.3 Full Title of the Trial: $1-/;
-  # s/^(Start Date:.*)$/X.7 $1/;
-  # s/^Medical condition: (.*)$/E.1.1 Medical conditions being investigated: $1/;
-  # s/^Disease: (.*)$/E.1.1.2 Therapeutic area: $1/;
-  # s/^(Population Age.*)$/X.8 $1/;
-  # s/^(Gender.*)$/X.9 $1/;
-
   # sanitise file
   s/\t/ /g;
   s/\r/\n/g;
@@ -118,10 +100,7 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
 
   # create id per record from eudract number followed by
   # country 2 character id or by "3rd" for non-EU countries
-  # - for details document
   s/^X.7 Link.*search\/trial\/([0-9-]*)\/([A-Z][A-Z]|3rd)\/$/xxxxxxxxxx"_id": "$1-\U$2\E"/;
-  # - for summary document
-  # s/^X.7 Link.*search\/.*:([0-9-]{14})$/xxxxxxxxxx"_id": "$1"/;
 
   # crude attack on newlines within variable fields
   s/^([ABDEFGHNPX][.][1-9 I].+)$/\nxxxxxxxxxx$1/g;
@@ -170,9 +149,6 @@ perl -pe 'BEGIN{undef $/;}
   # delete comma from last line in record
   s/,\n\}\{/\}\nNEWRECORDIDENTIFIER\n\{/g ;
 
-  # remove empty elements
-  #s/D.8 Information on Placebo X.9 ENDPLACEBO: TRUE //g ;
-
   # create array with imp(s)
   s/("d[0-9]+_.*"),\n"dimp": "([2-9])",/$1\}, \n\{ "_dimp": "$2",/g ;
   s/("d[0-9]+_.*"),\n"x9_enddmp.*/$1\}\n],/g ;
@@ -210,6 +186,7 @@ perl -pe 'BEGIN{undef $/;}
 
   ' | \
 perl -pe '
+
   # write NDJSON
   s/\n//g ;
   s/NEWRECORDIDENTIFIER/\n/g ;
