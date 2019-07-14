@@ -680,7 +680,7 @@ dbFindFields <- function(namepart = "", allmatches = TRUE,
                 nodbi::docdb_query(
                   src = con,
                   key = con$collection,
-                  query = '{"_id": { "$regex": "^[0-9]{4}-[0-9]{6}", "$options": ""} }',
+                  query = '{"_id": { "$regex": "^[0-9]{4}-[0-9]{6}-[0-9]{2}-?[3A-Z]?[A-Z]?[A-Z]?$", "$options": ""} }',
                   limit = 1L)
   )
 
