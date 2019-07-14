@@ -40,8 +40,8 @@ has_internet <- function(){
     class(try(httr::headers(httr::HEAD(
       url = utils::URLencode("https://www.clinicaltrialsregister.eu/"),
       config = httr::config(ssl_verifypeer = FALSE)
-      )),
-      silent = TRUE))
+    )),
+    silent = TRUE))
   )
   ) {
     skip("One or more registers not available. ")
@@ -108,14 +108,14 @@ has_mongo_remote <- function(mdburi, db, collection) {
 
   # test
   mongo_ok <- try(
-    nodbi::src_mongo(con = dbc,
+    nodbi::src_mongo(collection = collection,
                      db = db,
                      url = mdburi),
     silent = TRUE)
 
   # use test result
   if ("try-error" %in% class(mongo_ok)) {
-    skip("No access using nodbi::src_mongo() with remote read-only database.")
+    skip("No access using nodbi::src_mongo() to remote database.")
   }
 }
 
@@ -151,14 +151,12 @@ test_that("remote mongodb read only", {
   has_internet()
 
   # # specify base uri for remote mongodb server, trailing slash
-  # mdburi <- "mongodb+srv://DWbJ7Wh@cluster0-b9wpw.mongodb.net/"
+  mdburi <- "mongodb+srv://DWbJ7Wh:bdTHh5cS@cluster0-b9wpw.mongodb.net/"
+  # permissions are restricted to "find" in "dbperm" in "dbperm"
+  # no other functions can be executed, no login possible
   #
-  # # permissions are restricted to "find" in "dbperm" in "dbperm"
-  # # no other functions can be executed, no login possible
-  #
-  # # skip if no access despite internet
-  # has_mongo_remote(mdburi = mdburi, "bdTHh5cS")
-  has_mongo_remote()
+  # skip if no access despite internet
+  has_mongo_remote(mdburi, "dbperm", "dbperm")
 
   ## read-only tests
 
@@ -207,7 +205,7 @@ test_that("remote mongodb write read", {
   has_mongo_remote(Sys.getenv(x = "ctrdatamongouri"), "dbtemp", coll)
 
   # continue
-  dbc <- nodbi::src_mongo(con = dbc,
+  dbc <- nodbi::src_mongo(collection = coll,
                           db = "dbtemp",
                           url = Sys.getenv(x = "ctrdatamongouri"))
 
@@ -263,7 +261,7 @@ test_that("retrieve data from registers", {
     con = dbc)$n),
     0L)
 
-  # clean up is the end of script = drop collection from mongodb
+  # clean up is the end of script
 
 })
 
@@ -341,10 +339,12 @@ test_that("retrieve data from register ctgov into sqlite", {
   dbc <- nodbi::src_sqlite(collection = coll)
 
   # test 5
-  expect_message(ctrLoadQueryIntoDb(
-    queryterm = "2010-024264-18",
-    register = "CTGOV",
-    con = dbc),
+  expect_message(
+    suppressWarnings(
+      ctrLoadQueryIntoDb(
+        queryterm = "2010-024264-18",
+        register = "CTGOV",
+        con = dbc)),
     "Imported or updated 1 trial")
 
   ## create and test updatable query
@@ -353,14 +353,15 @@ test_that("retrieve data from register ctgov into sqlite", {
 
   # test 6
   expect_message(
-    ctrLoadQueryIntoDb(
-      paste0(q, "12%2F31%2F2008"),
-      con = dbc),
+    suppressWarnings(
+      ctrLoadQueryIntoDb(
+        paste0(q, "12%2F31%2F2008"),
+        con = dbc)),
     "Imported or updated ")
 
   # manipulate history to force testing updating
   # based on code in dbCTRUpdateQueryHistory
-  hist <- dbQueryHistory(con = dbc)
+  hist <- suppressWarnings(dbQueryHistory(con = dbc))
   # manipulate query
   hist[nrow(hist), "query-term"] <- sub("(.*&lup_e=).*", "\\112%2F31%2F2009", hist[nrow(hist), "query-term"])
   # convert into json object
@@ -380,8 +381,10 @@ test_that("retrieve data from register ctgov into sqlite", {
   #                                                            upsert = TRUE)
 
   # test 7
-  expect_message(suppressWarnings(ctrLoadQueryIntoDb(
-    querytoupdate = "last", con = dbc)),
+  expect_message(
+    suppressWarnings(
+      ctrLoadQueryIntoDb(
+        querytoupdate = "last", con = dbc)),
     "Imported or updated")
 
   remove("hist", "json", "q")
@@ -530,8 +533,9 @@ test_that("retrieve data from register euctr into sqlite", {
 
   # test 14
   expect_message(
-    ctrLoadQueryIntoDb(querytoupdate = "last",
-                       con = dbc),
+    suppressWarnings(
+      ctrLoadQueryIntoDb(querytoupdate = "last",
+                         con = dbc)),
     "(Imported or updated|First result page empty)")
 
   remove("hist", "json", "q", "date.from", "date.today", "date.to")
@@ -549,6 +553,10 @@ test_that("retrieve results from register euctr", {
   # initialise
   coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
   dbc <- nodbi::src_mongo(collection = coll)
+
+  # clean up
+  nodbi::docdb_delete(src = dbc,
+                      key = dbc$collection)
 
   q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
               "2007-000371-42+OR+2011-004742-18")
@@ -803,7 +811,7 @@ test_that("operations on database for deduplication", {
   # test 45
   tmp <- dbFindIdsUniqueTrials(con = dbc, preferregister = "CTGOV")
   expect_true(all.equal(tmp, c("NCT00025597", "NCT00134030", "NCT01516580", "2005-000915-80-GB",
-                              "2014-005674-11-3RD", "2016-002347-41-GB"),
+                               "2014-005674-11-3RD", "2016-002347-41-GB"),
                         check.attributes = FALSE))
 
   # test 46
