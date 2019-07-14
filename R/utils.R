@@ -32,19 +32,13 @@ ctrDb <- function(con = nodbi::src_sqlite(collection = "ctrdatagenerated")) {
            call. = FALSE)
     }
 
-    if (grepl(":memory:", con$dbname)) {
-      warning("Database is only in memory, will not persist after R ends! Copy it with \n\n",
-              "RSQLite::sqliteCopyDatabase(\n",
-              "  from = <your nodbi::src_sqlite() object>$con, \n",
-              "  to = <e.g. RSQLite::SQLite(dbname = 'local_file.db')> \n",
-              "  )",
-              call. = FALSE)
-    }
-
     # add database as element under root
     con <- c(con,
              "db" = con$dbname,
              "ctrDb" = TRUE)
+
+    # print warning from nodbi::src_sqlite()
+    if (grepl(":memory:", con$dbname)) print(con)
 
     ## return
     return(structure(con,
