@@ -17,13 +17,16 @@ countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR",
 #'
 #' @keywords internal
 #'
+#' @importFrom nodbi src_sqlite
+#' @importFrom utils capture.output
+#'
 #' @return Connection object as list, with collection
 #'  element under root
 #'
 ctrDb <- function(con = nodbi::src_sqlite(collection = "ctrdatagenerated")) {
 
   ## sqlite
-  if ("SQLiteConnection" == class(con$con)[1]) {
+  if ("src_sqlite" %in% class(con)) {
 
     if (is.null(con$collection)) {
       stop("For src_sqlite(), a collection (table name) needs to be ",
@@ -32,13 +35,25 @@ ctrDb <- function(con = nodbi::src_sqlite(collection = "ctrdatagenerated")) {
            call. = FALSE)
     }
 
+    # check if disconnected
+    if (!RSQLite::dbIsValid(con$con)) {
+      # try to reconnect
+      warning("Database connection was closed, trying to reopen...",
+              call. = FALSE, immediate. = TRUE)
+      con <- nodbi::src_sqlite(dbname = con$dbname,
+                               collection = con$collection)
+    }
+
     # add database as element under root
     con <- c(con,
              "db" = con$dbname,
              "ctrDb" = TRUE)
 
     # print warning from nodbi::src_sqlite()
-    if (grepl(":memory:", con$dbname)) print(con)
+    if (grepl(":memory:", con$dbname)) {
+      warning("Database not persisting, see print(<your database connection object>) ",
+              call. = FALSE, immediate. = TRUE)
+    }
 
     ## return
     return(structure(con,
@@ -46,13 +61,13 @@ ctrDb <- function(con = nodbi::src_sqlite(collection = "ctrdatagenerated")) {
   }
 
   ## mongo
-  if ("mongo" == class(con$con)[1]) {
+  if ("src_mongo" %in% class(con)) {
 
     # rights may be insufficient to call info(),
     # hence this workaround that should always
     # work and be stable to retrieve name of
     # collection in the mongo connection
-    coll <- capture.output(con$con)[1]
+    coll <- utils::capture.output(con$con)[1]
     coll <- sub("^.*'(.*)'.*$", "\\1", coll)
 
     # add collection as element under root
@@ -327,8 +342,8 @@ ctrGetQueryUrlFromBrowser <- function(content = "") {
   if (length(content) == 1L && nchar(content) == 0L) content <- clipr::read_clip()
   #
   if (length(content) != 1L) {
-    stop ("ctrGetQueryUrlFromBrowser(): no clinical trial register search URL found ",
-          "in parameter 'content' or in clipboard.", call. = FALSE)
+    stop("ctrGetQueryUrlFromBrowser(): no clinical trial register search URL found ",
+         "in parameter 'content' or in clipboard.", call. = FALSE)
     return(NULL)
   }
   #
@@ -444,6 +459,10 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = ""){
 #'  and with one row for each ctrLoadQueryIntoDb() loading trial records
 #'  in this collection.
 #'
+#' @param verbose If \code{TRUE}, prints additional information (default \code{FALSE}).
+#'
+#' @importFrom nodbi docdb_query
+#'
 #' @export
 #'
 #' @examples
@@ -478,7 +497,7 @@ dbQueryHistory <- function(con, verbose = FALSE) {
                             query = '{"_id": {"$eq": "meta-info"}}',
                             fields = '{"queries": 1}')
 
- # tmp <- con$con$find(query = query, fields = fields)
+  # tmp <- con$con$find(query = query, fields = fields)
 
 
 
@@ -569,7 +588,9 @@ dbQueryHistory <- function(con, verbose = FALSE) {
 #' @param allmatches If \code{TRUE} (default), returns all keys if more than one is found,
 #'   returns only first if \code{FALSE}.
 #'
-#' @param debug If \code{TRUE}, prints additional information (default \code{FALSE}).
+#' @param verbose If \code{TRUE}, prints additional information (default \code{FALSE}).
+#'
+#' @importFrom nodbi docdb_query
 #'
 #' @inheritParams ctrDb
 #'
@@ -589,156 +610,135 @@ dbFindFields <- function(namepart = "", allmatches = TRUE,
   ## sanity checks
   if (!is.atomic(namepart)) stop("Name part should be atomic.", call. = FALSE)
   if (length(namepart) > 1) stop("Name part should have only one element.", call. = FALSE)
-  if (namepart == "") stop("Empty name part string.", call. = FALSE)
+  if (namepart == "")       stop("Empty name part string.", call. = FALSE)
 
   ## check database connection
   if (is.null(con$ctrDb)) con <- ctrDb(con = con)
 
-  # # TODO deleteme
-  # ## check if cache for list of keys in collection exists,
-  # # otherwise create new environment as session cache
-  # if (!exists(".dbffenv")) {
-  #   .dbffenv <- new.env(parent = emptyenv())
-  # }
-  #
-  # ## check if cache environment has entry for this collection,
-  # if (exists(x = paste0(con$db, "/", con$collection),
-  #            envir = .dbffenv)) {
-  #
-  #   # if true, get keys list from cache
-  #   keyslist <- get(x = paste0(con$db, "/", con$collection),
-  #                   envir = .dbffenv)
-  #
-  #   # informing user
-  #   message("Using cache of fields.")
-  #
-  # } else {
+  ## this is the only function in package ctrdata
+  ## which uses backend- specific methods, since
+  ## no canonical way was found yet to retrieve
+  ## field / key names.
 
-  # get keys list from database
-
-  # # get a working mongo connection
-  # mongo <- ctrMongo(collection = collection, uri = uri,
-  #                   password = password, verbose = verbose)
-
-
-
-
-  # informing user
-  message("Finding fields (from sample documents, may be incomplete)")
-
-  # TODO deleteme
-  # message("Finding fields on server (this may take some time)")
-  #
-  # # try mapreduce to get all keys
-  # keyslist <- try({mongo$mapreduce(
-  #   map = "function() {
-  #     obj = this;
-  #     return searchInObj(obj, '');
-  #     function searchInObj(obj, pth){
-  #        for(var key in obj){
-  #           if(typeof obj[key] == 'object' && obj[key] !== null){
-  #              if(pth != '') {pth = pth + '.'}
-  #                 searchInObj(obj[key], pth + key);
-  #           }else{
-  #              key = pth + '.' + key;
-  #              key = key.replace(/[.][0-9]+[.]/g, '.');
-  #              key = key.replace(/[.][0-9]+$/, '');
-  #              key = key.replace(/[.][.]+/g, '.');
-  #              key = key.replace(/^[.]/, '');
-  #              emit(key, 1);
-  #     }}}}",
-  #   reduce = "function(id, counts) {return Array.sum(counts)}"
-  #   # extract and keep only "_id" = first column, with keys
-  # )[["_id"]]}, silent = TRUE)
-  #
-  # # mapreduce may not work or not be permitted such
-  # # as on some free mongo servers, thus revert to guessing
-  # if (class(keyslist) == "try-error") {
-  #
-  #   warning("Mongo server returned: ", as.character(keyslist),
-  #           "Using alternative method (extracting keys from sample documents, may be incomplete).",
-  #           call. = FALSE)
-
-  # get 2 random documents, one for each register EUCTR and CTGOV,
-  # if in collection, and retrieve keys from documents
-
-  # TODO deleteme
-  # keyslist <- c("",
-  #               names(mongo$find(query = '{"_id": { "$regex": "^NCT[0-9]{8}", "$options": ""} }',
-  #                                limit = 1L)),
-  #               names(mongo$find(
-  #                 query = '{"_id": { "$regex": "^[0-9]{4}-[0-9]{6}", "$options": ""} }',
-  #                 limit = 1L))
-  #               )
-
-  keyslist <- c("", # avoid empty list
-                nodbi::docdb_query(
-                  src = con,
-                  key = con$collection,
-                  query = '{"_id": { "$regex": "^NCT[0-9]{8}", "$options": ""} }',
-                  limit = 1L),
-                nodbi::docdb_query(
-                  src = con,
-                  key = con$collection,
-                  query = '{"_id": { "$regex": "^[0-9]{4}-[0-9]{6}-[0-9]{2}-?[3A-Z]?[A-Z]?[A-Z]?$", "$options": ""} }',
-                  limit = 1L)
-  )
-
-  # keyslist <- nodbi::docdb_query(
-  #   src = con,
-  #   key = con$collection,
-  #   query = '{"_id": { "$regex": "^NCT[0-9]{8}", "$options": ""} }',
-  #   limit = 1L)
-
-  keyslist <- names(rapply(keyslist, function(x) head(x, 1)))
-  keyslist <- keyslist[keyslist != ""]
-  keyslist <- unique(keyslist)
-
-  # TODO deleteme
-  #
-  # inform user if unexpected result
-  # if (all(keyslist == "")) warning("No keys could be extracted, please check collection ",
-  #                                  con$collection, call. = FALSE)
-
-  #  }
-
-  # # close database connection
-  # mongo$disconnect()
-
-  # ## store keyslist to environment (cache)
-  # assign(x = paste0(con$db, "/", con$collection),
-  #        value = keyslist,
-  #        envir = .dbffenv)
-
-  # } # end get cached list or generate new list
-
-  # inform user if unexpected situation
-  if ((length(keyslist) == 0) || all(keyslist == "")) {
-    warning("No keys could be extracted, please check collection ",
-            con$collection, call. = FALSE)
+  ## check if cache for list of keys in collection exists,
+  # otherwise create new environment as session cache
+  if (!exists(".dbffenv")) {
+    .dbffenv <- new.env(parent = emptyenv())
   }
 
-  ## now do the actual search and find for key name parts
-  if (namepart != "") {
+  ## check if cache environment has entry for the database
+  if (exists(x = paste0(con$db, "/", con$collection),
+             envir = .dbffenv)) {
 
-    # actually now find keys / field names
-    fields <- keyslist[grepl(tolower(namepart), tolower(keyslist))]
+    # if true, get keys list from cache
+    keyslist <- get(x = paste0(con$db, "/", con$collection),
+                    envir = .dbffenv)
 
-    # all or only first field name?
-    if (!allmatches) {
-      if ( (tmp <- length(fields)) > 1) message("Returning first of ", tmp, " fields found.")
-      fields <- fields[1]
-    }
-
-    # return the first match / all matches
-    return(fields)
+    # informing user
+    message("Using cache of fields.")
 
   } else {
 
-    # return
-    return(NULL)
+    ## get keys list from database
+    ## warn if no method yet for backend
+    if (!any(c("src_mongo", "src_sqlite")
+             %in% class(con))) stop("Function dbFindFields() cannot yet handle nodbi database ",
+                                    "backend ", class(con)[1], call. = FALSE)
 
+    ## TODO to be extended for additional backends
+
+    # inform user
+    message("Finding fields on server (may take some time)")
+
+    ## - method for mongodb
+    if ("src_mongo" %in% class(con)) {
+
+      # try mapreduce to get all keys
+      keyslist <- try({con$con$mapreduce(
+        map = "function() {
+      obj = this;
+      return searchInObj(obj, '');
+      function searchInObj(obj, pth){
+         for(var key in obj){
+            if(typeof obj[key] == 'object' && obj[key] !== null){
+               if(pth != '') {pth = pth + '.'}
+                  searchInObj(obj[key], pth + key);
+            }else{
+               key = pth + '.' + key;
+               key = key.replace(/[.][0-9]+[.]/g, '.');
+               key = key.replace(/[.][0-9]+$/, '');
+               key = key.replace(/[.][.]+/g, '.');
+               key = key.replace(/^[.]/, '');
+               emit(key, 1);
+      }}}}",
+        reduce = "function(id, counts) {return Array.sum(counts)}"
+        # extract and keep only "_id" = first column, with keys
+      )[["_id"]]}, silent = TRUE)
+
+      # mapreduce may not work or not be permitted such
+      # as on some free mongo servers, thus revert to guessing
+      if ("try-error" %in% class(keyslist)) {
+
+        warning("Mongo server returned: ", as.character(keyslist),
+                "Using alternative method (extracting keys from sample documents, may be incomplete).",
+                call. = FALSE, immediate. = TRUE)
+
+        # get 2 random documents, one for each register EUCTR and CTGOV,
+        # if in collection, and retrieve keys from documents
+        keyslist <- c("", # avoid empty vector
+                      names(con$con$find(
+                        query = '{"_id": { "$regex": "^NCT[0-9]{8}", "$options": ""} }',
+                        limit = 1L)),
+                      names(con$con$find(
+                        query = '{"_id": { "$regex": "^[0-9]{4}-[0-9]{6}", "$options": ""} }',
+                        limit = 1L)))
+
+      } # end if error with mapreduce
+
+    } # end if src_mongo
+
+    ## - method for sqlite
+    if ("src_sqlite" %in% class(con)) {
+
+      # uses special function parameter for
+      # src_sqlite query method: listfields
+      keyslist <- c("", # avoid empty vector
+                    nodbi::docdb_query(
+                      src = con,
+                      key = con$collection,
+                      query = '',
+                      listfields = TRUE))
+
+    }
+
+    ## store keyslist to environment (cache)
+    if (length(keyslist) > 1) {
+      assign(x = paste0(con$db, "/", con$collection),
+             value = keyslist,
+             envir = .dbffenv)
+      message("Field names cached for this session.")
+    }
+
+  } # end get cached list or generate new list
+
+  ## inform user if unexpected situation
+  if ((length(keyslist) == 0) || all(keyslist == "")) {
+    warning("No keys could be extracted, please check database and contents: ",
+            con$db, "/", con$collection, call. = FALSE)
   }
+
+  ## now do the actual search and find for key name parts
+  fields <- keyslist[grepl(namepart, keyslist, ignore.case = FALSE)]
+
+  # all or only first field name?
+  if (!allmatches) {
+    if ( (tmp <- length(fields)) > 1) message("Returning first of ", tmp, " fields found.")
+    fields <- fields[1]
+  }
+
+  # return the match(es)
+  return(fields)
+
 }  # end dbFindFields
 
 
@@ -758,6 +758,8 @@ dbFindFields <- function(namepart = "", allmatches = TRUE,
 #'
 #' @param verbose If set to \code{TRUE}, prints out information about numbers
 #' of records found at subsequent steps when searching for duplicates
+#'
+#' @importFrom nodbi docdb_query
 #'
 #' @inheritParams ctrDb
 #'
@@ -806,7 +808,6 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
                                  "a51_isrctn_international_standard_randomised_controlled_trial_number",
                                  "a52_us_nct_clinicaltrialsgov_registry_number",
                                  "a53_who_universal_trial_reference_number_utrn"), # a53_ not yet used
-                      debug = FALSE,
                       con = con,
                       verbose = FALSE,
                       stopifnodata = FALSE)
@@ -817,6 +818,9 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
   if (class(listofEUCTRids) == "try-error") listofEUCTRids <- NULL
   if (all(is.na(listofEUCTRids[, -1])))     listofEUCTRids <- NULL
   if (is.null(listofEUCTRids)) message("No EUCTR records found.")
+
+  # inform user
+  message("Searching for duplicates, found ")
 
   # extract eudract number
   # if (!is.null(listofEUCTRids)) listofEUCTRids <-
@@ -866,7 +870,7 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
     # make id_info sub-fields into one field
     listofCTGOVids[["id_info"]] <- sapply(
       seq_len(nrow(listofCTGOVids)), # do not simplify, since it returns df for 1-row listofCTGOVids
-      function(i) unname(unlist(listofCTGOVids[i, -match("_id", names(listofCTGOVids))])), simplify = FALSE)
+      function(i) as.character(na.omit(unlist(listofCTGOVids[i, -match("_id", names(listofCTGOVids))]))), simplify = FALSE)
     #
     # retain only relevant fields
     listofCTGOVids <- listofCTGOVids[, c("_id", "id_info")]
@@ -902,10 +906,10 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
       # dupes.b2 <- sapply(listofCTGOVids, "[[", 1) %in%
       #        listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]
       dupes.b2 <- listofCTGOVids[["_id"]] %in%
-                  listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]
+        listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]
       #
-      if (verbose) message("Searching duplicates: Found ", sum(dupes.b2),
-                           " CTGOV _id in EUCTR a52_us_nct_clinicaltrialsgov_registry_number")
+      if (verbose) message(" - ", sum(dupes.b2),
+                           " CTGOV _id (nct) in EUCTR a52_us_nct_...")
       #
       # a2 - ctgov in euctr a2_...
       # dupes.a2 <- sapply(lapply(listofCTGOVids, function(x) sub(".*([0-9]{4}-[0-9]{6}-[0-9]{2}).*",
@@ -915,8 +919,8 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
                          function(x) any(sub(".*([0-9]{4}-[0-9]{6}-[0-9]{2}).*", "\\1", x) %in%
                                            listofEUCTRids[["a2_eudract_number"]]))
       #
-      if (verbose) message("Searching duplicates: Found ", sum(dupes.a2),
-                           " CTGOV otherids (secondary_id, nct_alias, org_study_id) in EUCTR a2_eudract_number")
+      if (verbose) message(" - ", sum(dupes.a2),
+                           " CTGOV secondary_id / nct_alias / org_study_id in EUCTR a2_eudract_number")
       #
       # c.2 - ctgov in euctr a52_... (id_info corresponds to index 2)
       # dupes.c2 <- sapply(lapply(listofCTGOVids, "[[", 2),
@@ -925,25 +929,25 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
       dupes.c2 <- sapply(listofCTGOVids[["id_info"]],
                          function(x) any(x %in% listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]))
       #
-      if (verbose) message("Searching duplicates: Found ", sum(dupes.c2),
-                           " CTGOV otherids (secondary_id, nct_alias, org_study_id) in",
-                           " EUCTR a52_us_nct_clinicaltrialsgov_registry_number")
+      if (verbose) message(" - ", sum(dupes.c2),
+                           " CTGOV secondary_id / nct_alias / org_study_id in",
+                           " EUCTR a52_us_nct_...")
       #
       # d.2 - ctgov in euctr a51_... (id_info corresponds to index 2)
       dupes.d2 <- sapply(listofCTGOVids[["id_info"]],
                          function(x) any(x %in% listofEUCTRids[["a51_isrctn_international_standard_randomised_controlled_trial_number"]]))
       #
-      if (verbose) message("Searching duplicates: Found ", sum(dupes.d2),
-                           " CTGOV otherids (secondary_id, nct_alias, org_study_id) in",
-                           " EUCTR a51_isrctn_international_standard_randomised_controlled_trial_number")
+      if (verbose) message(" - ", sum(dupes.d2),
+                           " CTGOV secondary_id / nct_alias / org_study_id in",
+                           " EUCTR a51_isrctn_...")
       #
       # e.2 - ctgov in euctr a41_... (id_info corresponds to index 2)
       dupes.e2 <- sapply(listofCTGOVids[["id_info"]],
                          function(x) any(x %in% listofEUCTRids[["a41_sponsors_protocol_code_number"]]))
       #
-      if (verbose) message("Searching duplicates: Found ", sum(dupes.d2),
-                           " CTGOV otherids (secondary_id, nct_alias, org_study_id) in",
-                           " EUCTR a41_sponsors_protocol_code_number")
+      if (verbose) message(" - ", sum(dupes.d2),
+                           " CTGOV secondary_id / nct_alias / org_study_id in",
+                           " EUCTR a41_sponsors_protocol_...")
       #
       # finalise results set
       listofEUCTRids <- listofEUCTRids[["_id"]]
@@ -952,7 +956,7 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
       #
       message("Concatenating ",
               length(listofEUCTRids), " records from EUCTR and ",
-              length(listofCTGOVids), " records from CTGOV.")
+              length(listofCTGOVids), " from CTGOV:")
       #
       retids <- c(listofEUCTRids, listofCTGOVids)
       #
@@ -967,43 +971,43 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
         ".*([0-9]{4}-[0-9]{6}-[0-9]{2}).*", # extract from e.g. "EUDRACT-2004-000242-20"
         "\\1", unlist(listofCTGOVids[["id_info"]]))
       #
-      if (verbose) message("Searching duplicates: Found ", sum(dupes.a1),
-                           " EUCTR _id in CTGOV otherids (secondary_id, nct_alias, org_study_id)")
+      if (verbose) message(" - ", sum(dupes.a1),
+                           " EUCTR _id in CTGOV secondary_id / nct_alias / org_study_id")
       #
       # b.1 - euctr in ctgov (_id corresponds to index 1)
       # dupes.b1 <- listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]] %in%
       #   sapply(listofCTGOVids, "[[", 1)
       dupes.b1 <- listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]] %in% listofCTGOVids[["_id"]]
       #
-      if (verbose) message("Searching duplicates: Found ", sum(dupes.b1),
-                           " EUCTR a52_us_nct_clinicaltrialsgov_registry_number in CTGOV _id")
+      if (verbose) message(" - ", sum(dupes.b1),
+                           " EUCTR a52_us_nct_... in CTGOV _id (nct)")
       #
       # c.1 - euctr in ctgov (id_info corresponds to index 2)
       # dupes.c1 <- listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]] %in%
       #   unlist(sapply(listofCTGOVids, "[[", 2))
       dupes.c1 <- listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]] %in% unlist(listofCTGOVids[["id_info"]])
       #
-      if (verbose) message("Searching duplicates: Found ", sum(dupes.c1),
-                           " EUCTR a52_us_nct_clinicaltrialsgov_registry_number in",
-                           " CTOGV otherids (secondary_id, nct_alias, org_study_id)")
+      if (verbose) message(" - ", sum(dupes.c1),
+                           " EUCTR a52_us_nct_... in",
+                           " CTOGV secondary_id / nct_alias / org_study_id")
       #
       # d.1 - euctr in ctgov (id_info corresponds to index 2)
       # dupes.d1 <- listofEUCTRids[["a51_isrctn_international_standard_randomised_controlled_trial_number"]] %in%
       #   unlist(sapply(listofCTGOVids, "[[", 2))
       dupes.d1 <- listofEUCTRids[["a51_isrctn_international_standard_randomised_controlled_trial_number"]] %in%
-                  unlist(listofCTGOVids[["id_info"]])
+        unlist(listofCTGOVids[["id_info"]])
       #
-      if (verbose) message("Searching duplicates: Found ", sum(dupes.d1),
-                           " EUCTR a51_isrctn_international_standard_randomised_controlled_trial_number",
-                           " in CTOGV otherids (secondary_id, nct_alias, org_study_id)")
+      if (verbose) message(" - ", sum(dupes.d1),
+                           " EUCTR a51_isrctn_...",
+                           " in CTOGV secondary_id / nct_alias / org_study_id")
       #
       # e.1 - euctr in ctgov (id_info corresponds to index 2)
       dupes.e1 <- listofEUCTRids[["a41_sponsors_protocol_code_number"]] %in%
         unlist(listofCTGOVids[["id_info"]])
       #
-      if (verbose) message("Searching duplicates: Found ", sum(dupes.d1),
-                           " EUCTR a41_sponsors_protocol_code_number",
-                           " in CTOGV otherids (secondary_id, nct_alias, org_study_id)")
+      if (verbose) message(" - ", sum(dupes.d1),
+                           " EUCTR a41_sponsors_protocol_...",
+                           " in CTOGV secondary_id / nct_alias / org_study_id")
       #
       # finalise results set
       listofCTGOVids <- listofCTGOVids[["_id"]]
@@ -1011,7 +1015,7 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
       #
       message("Concatenating ",
               length(listofCTGOVids), " records from CTGOV and ",
-              length(listofEUCTRids), " records from EUCTR.")
+              length(listofEUCTRids), " from EUCTR:")
       #
       retids <- c(listofCTGOVids, listofEUCTRids)
       #
@@ -1031,7 +1035,7 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
 
   # inform user
   message("= Returning keys (_id) of ", length(retids),
-          " records out of total of ", countall,
+          " out of total ", countall,
           " records in collection \"", con$collection, "\".")
   #
   return(retids)
@@ -1059,7 +1063,7 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
 #'    (\code{TRUE}) if sought field is empty or not available in any of the records
 #'    in the database collection.
 #'
-#' @param debug Printing additional information if set to \code{TRUE}; default
+#' @param verbose Printing additional information if set to \code{TRUE}; default
 #'   is \code{FALSE}.
 #'
 #' @inheritParams ctrDb
@@ -1068,6 +1072,9 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
 #'   that a column for the record _id will always be included. The maximum
 #'   number of rows of the returned data frame is equal to or less than the
 #'   number of records in the data base.
+#'
+#' @importFrom nodbi docdb_query
+#' @importFrom stats na.omit
 #'
 #' @export
 #'
@@ -1085,7 +1092,7 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
 #'
 #' }
 #'
-dbGetFieldsIntoDf <- function(fields = "", debug = FALSE,
+dbGetFieldsIntoDf <- function(fields = "",
                               con, verbose = FALSE,
                               stopifnodata = TRUE) {
 
@@ -1129,7 +1136,7 @@ dbGetFieldsIntoDf <- function(fields = "", debug = FALSE,
   for (item in fields) {
     #
     query <- paste0('{"_id": {"$ne": "meta-info"}}')
-    if (debug) message("DEBUG: field: ", item)
+    if (verbose) message("DEBUG: field: ", item)
     #
     tmp <- try({
       #
@@ -1143,7 +1150,19 @@ dbGetFieldsIntoDf <- function(fields = "", debug = FALSE,
       # other only non-NA values when query matches
       dfi <- na.omit(dfi)
       #
-      if (debug) message("DEBUG: field ", item, " has length ", nrow(dfi))
+      # ensure intended column order
+      if (names(dfi)[1] != "_id") dfi <- dfi[, 2:1]
+      #
+      # simplify if robust
+      # - is [,2] is NULL, remove from dfi data frame
+      dfi <- dfi[ !sapply(dfi[, 2], length) == 0, ]
+      # - if each [,2] is a list with one element, concatenate
+      if (all(sapply(dfi[, 2], function(x) is.data.frame(x) && ncol(x) == 1))) {
+        dfi[, 2] <- sapply(sapply(dfi[, 2], "[", 1),
+                           function(x) paste0(x, collapse = " / "))
+      }
+      #
+      if (verbose) message("DEBUG: field ", item, " has length ", nrow(dfi))
       #
       # # attempt custom function to condense into a data frame instead of using data.frame = TRUE
       # dfi <- as.data.frame(cbind(sapply(dfi, function(x) as.vector(unlist(x[1]))),
@@ -1154,7 +1173,7 @@ dbGetFieldsIntoDf <- function(fields = "", debug = FALSE,
       # names(dfi) <- c("_id", item)
       #
     },
-    silent = FALSE)
+    silent = TRUE)
     #
     if ( !((class(tmp) != "try-error") &&
            ncol(dfi) == 2L &&
@@ -1171,14 +1190,14 @@ dbGetFieldsIntoDf <- function(fields = "", debug = FALSE,
         # create empty data set
         dfi <- data.frame(cbind(idsall, rep(NA, times = length(idsall))),
                           stringsAsFactors = FALSE)
-        # name result set
-        names(dfi) <- c("_id", item)
       }
     }
 
     #else {
     # not stopped, no error and some content
     #
+    # name result set
+    names(dfi) <- c("_id", item)
     # type item field
     if (!all(is.na(dfi[, 2]))) dfi <- typeField(dfi)
     # add to result
@@ -1409,8 +1428,8 @@ dfFindUniqueEuctrRecord <- function(df = NULL, prefermemberstate = "GB", include
 
   # inform user about changes to data frame
   if (length(nms) > (tmp <- length(result)))
-    message("Searching multiple country records: Found ", tmp,
-            " EUCTR _id that were not the preferred member state record(s) for the trial.")
+    message(" - ", tmp,
+            " EUCTR _id were not preferred EU Member State record of trial")
 
   # return
   return(df)
@@ -1424,6 +1443,8 @@ dfFindUniqueEuctrRecord <- function(df = NULL, prefermemberstate = "GB", include
 #' @return logical, FALSE (document or database does not
 #'  exist) or TRUE
 #'
+#' @importFrom nodbi docdb_exists docdb_query
+#'
 #' @inheritParams ctrDb
 #'
 #' @keywords internal
@@ -1431,7 +1452,8 @@ dfFindUniqueEuctrRecord <- function(df = NULL, prefermemberstate = "GB", include
 checkDoc <- function(con, id) {
 
   # check if table exists
-  restbl <- nodbi::docdb_exists(src = con, key = con$collection)
+  restbl <- nodbi::docdb_exists(src = con,
+                                key = con$collection)
 
   # table exists, check for document
   if (restbl) {
@@ -1439,7 +1461,7 @@ checkDoc <- function(con, id) {
       nodbi::docdb_query(src = con,
                          key = con$collection,
                          query = paste0('{"_id": "', id, '"}'),
-                         fields = '{"ctrname": 1}'),
+                         fields = '{"_id": 1}'),
       silent = TRUE)
   } else {
     resdoc <- NULL
@@ -1643,18 +1665,17 @@ typeField <- function(dfi){
 #'
 #' @param x object to be annotated
 #'
-#' @inheritParams ctrMongo
+#' @inheritParams ctrDb
 #'
 #' @keywords internal
 #'
 addMetaData <- function(x, con) {
 
   # add metadata
-  attr(x, "ctrdata-using-mongodb-uri")        <- con$db
-  attr(x, "ctrdata-using-mongodb-collection") <- con$collection
-  attr(x, "ctrdata-created-timestamp")        <- as.POSIXct(Sys.time(), tz = "UTC")
-  attr(x, "ctrdata-from-dbqueryhistory")      <- dbQueryHistory(con = con,
-                                                                verbose = FALSE)
+  attr(x, "ctrdata-dbname")         <- con$db
+  attr(x, "ctrdata-table")          <- con$collection
+  attr(x, "ctrdata-dbqueryhistory") <- dbQueryHistory(con = con,
+                                                      verbose = FALSE)
 
   # return annotated object
   return(x)
@@ -1821,20 +1842,20 @@ installCygwinWindowsTest <- function(verbose = FALSE) {
 #' internal quotes need to be escaped, e.g. \code{installFindBinary('php -r \"simplexml_load_string(\'\');\"')}.
 #' See R/onload.R for tested binaries.
 #'
-#' @param debug Set to \code{TRUE} to see printed return value of \code{commandtest}
+#' @param verbose Set to \code{TRUE} to see printed return value of \code{commandtest}
 #'
 #' @return A logical if executing commandtest returned an error or not
 #'
 #' @keywords internal
 #
-installFindBinary <- function(commandtest = NULL, debug = FALSE) {
+installFindBinary <- function(commandtest = NULL, verbose = FALSE) {
   #
   if (is.null(commandtest)) stop("Empty argument: commandtest", call. = FALSE)
   #
   if (.Platform$OS.type == "windows") commandtest <-
       paste0("c:\\cygwin\\bin\\bash.exe --login -c ", shQuote(commandtest))
   #
-  if (debug) print(commandtest)
+  if (verbose) print(commandtest)
   #
   commandresult <- try(
     suppressWarnings(
@@ -1856,7 +1877,7 @@ installFindBinary <- function(commandtest = NULL, debug = FALSE) {
     if (interactive()) message(". ", appendLF = FALSE)
   }
   #
-  if (debug) print(commandresult)
+  if (verbose) print(commandresult)
   #
   return(commandreturn)
   #

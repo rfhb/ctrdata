@@ -14,19 +14,21 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
-#
 knitr::opts_chunk$set(eval = FALSE, 
                       warning = FALSE, 
                       message = FALSE, 
                       results = "hide")
-#
+```
+
+```{r helper_functions}
 # helper functions
+#
 normalise_number <- function(x) {
   
   x <- gsub("<=|<|≤|=|>", "",  x)
   x <- gsub("(^| )[.]", "0.", x)
   x <- trimws(x)
-  x <- sapply(x, FUN = function(y) {
+  x <- sapply(x, function(y) {
     z <- try(as.numeric(y), silent = TRUE)
     if (class(z) == "try-error") {
       NA
@@ -73,22 +75,65 @@ age_ctgov <- function(x) {
   
   return(tmp.age)
 }
+#
+getKeyNestedList <- function(thelist, thekey) {
+  
+  # perhaps the list is still a character string
+  if (inherits(x = thelist, what = "character") && 
+      all(sapply(thelist, function(x) substr(x, 1, 4) == "list"))) {
+    thelist <- lapply(thelist, function(x) eval(parse(text = x)))
+  }
+  
+  # recursive find
+  rmatch <- function(x, name) {
+    
+    pos <- match(name, names(x))
+    if (!is.na(pos)) return(x[[pos]])
+    
+    for (element in x) {
+      if (class(element) == "list") {
+        out <- Recall(element, name)
+        if (!is.null(out)) return(out)
+      }
+    }
+  }
+
+  # get key from any level, deduplicate, remove NA,
+  # collapse if more than one value per list item
+  sapply(thelist, function(x) {
+    out <- rmatch(x = x, name = thekey)
+    out <- na.omit(out)
+    out <- unique(out)
+    out <- paste0(out, collapse = " / ")
+    out
+  })
+}
+#
 ```
 
 General information on the `ctrdata` package is available here: [https://github.com/rfhb/ctrdata](https://github.com/rfhb/ctrdata). 
 
-## Internet access via proxy? 
+## Internet access via proxy
 
-Functions in package `ctrdata` that start with `ctr...` require access to internet resources 
-via `https`. Package `ctrdata` checks and automatically uses the proxy that is set under 
-MS Windows in system settings. 
+Functions in package `ctrdata` that start with `ctr...` require access to internet resources via `https`. Package `ctrdata` checks and automatically uses the proxy that is set under MS Windows in system settings. However, proxy settings need to be set by the user for other operating systems and for authenticating proxies, such as follows: 
 
-However, proxy settings need to be set by the user for other operating systems and for a
-uthenticating proxies, such as follows: 
-
-```{r, eval=FALSE}
+```{r proxy_setting, eval=FALSE}
 Sys.setenv(https_proxy = "your_proxy.server.domain:8080")
 Sys.setenv(https_proxy_user = "userid:password")
+```
+
+## Connect to a database
+
+Here using MongoDB, which is faster than SQLite, can handle credentials, provides access to remote servers and can directly retrieve nested elements from paths. See [README.md](../README.md) and [Get started with ctrdata](ctrdata_get_started.Rmd) for examples using SQLite. 
+
+```{r connect_mongodb}
+db <- nodbi::src_mongo(url = "mongodb://localhost",
+                       db = "some_database_name",
+                       collection = "some_collection_name")
+db
+# MongoDB 3.6.8 (uptime: 244492s)
+# URL: laptop.home/some_database_name 
+# Collection: some_collection_name
 ```
 
 ## Execute a search query and load into database
@@ -101,8 +146,11 @@ library(ctrdata)
 # all phase 3 adult breast cancer trials
 q <- "https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer+AND+breast&age=adult&phase=phase-three"
 
-# Load details on all clinical trials into local data base:
-ctrLoadQueryIntoDb(q)
+# Load details on all clinical trials into database:
+ctrLoadQueryIntoDb(queryterm = q, 
+                   con = db)
+# = Imported or updated 1896 records on 398 trial(s).
+# * Updated history in meta-info of "some_collection_name"
 ```
 
 ## Execute in browser a search query that was previously stored
@@ -112,25 +160,22 @@ but also to execute a previous search. This can be used to check if user searche
 properly handled by this package, for example by comparing the number of search results.
 
 ```{r execute_browser_query}
-# Example 1: a search is done in the browser and a list of trials found is shown. 
-# Mark all of the browser address field has copy it onto the system clipboard. Then:
-q <- ctrGetQueryUrlFromBrowser()  # read search from clipboard
-ctrOpenSearchPagesInBrowser(q)    # open search newly in broweser
-
-# Example 2: After records have already been downloaded: 
-q <- dbQueryHistory()           # list the searches in the database (returns a data frame)
+# After records have already been downloaded: 
+q <- dbQueryHistory(con = db)   # list the searches in the database (a data frame)
 q <- q[2,]                      # select exactly one of the searches (by subsetting q)
 ctrOpenSearchPagesInBrowser(q)  # open selected search newly in broweser
 
-# This opens a browser already executing an example search:
+# This opens a browser and executes a search:
 ctrOpenSearchPagesInBrowser("https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer")
 ```
 
-
 ## Find fields / variables of interest
 
+The search for fields is cached and thus accelerated during the R session and as long as no new ctrLoadQueryIntoDb() is executed. 
+
 ```{r find_variables}
-dbFindFields(namepart = "date")
+dbFindFields(namepart = "date",
+             con = db)
 #  [1] "firstreceived_date"                                                               
 #  [2] "lastchanged_date"                                                                 
 #  [3] "required_header.download_date"                                                    
@@ -152,35 +197,33 @@ indicate from which query, database, collection etc. and when the object was cre
 Metadata can subsequently be reused. 
 
 ```{r find_variables_attributes}
-attributes(dbGetFieldsIntoDf("otherids"))
-# $`ctrdata-using-mongodb-url`
-# [1] "mongodb://localhost"
+attributes(dbGetFieldsIntoDf("e52_secondary_end_points", 
+                             con = db))
+# $class
+# [1] "data.frame"
 # 
-# $`ctrdata-using-mongodb-db`
-# [1] "users"
+# $`ctrdata-dbname`
+# [1] "some_database_name"
 # 
-# $`ctrdata-using-mongodb-collection`
-# [1] "ctrdata"
+# $`ctrdata-table`
+# [1] "some_collection_name"
 # 
-# $`ctrdata-using-mongodb-username`
-# [1] ""
-# 
-# $`ctrdata-created-timestamp`
-# [1] "2016-12-28 13:31:25 CET"
-# 
-# $`ctrdata-from-dbqueryhistory`
-#       query-timestamp query-register query-records                                                        query-term
-# 1 2016-12-14-12-15-51          EUCTR          1056                                               cancer&age=under-18
-# 2 2016-12-23-20-33-13          EUCTR             6                                                    2010-024264-18
-# 3 2016-12-24-14-39-42          CTGOV           145 recr=Open&type=Intr&cond=breast+carcinoma&intr=Drug&age=1&phase=2
+# $`ctrdata-dbqueryhistory`
+#       query-timestamp query-register query-records
+# 1 2019-08-11 16:54:47          EUCTR           444
+# 2 2019-08-11 17:16:56          EUCTR           444
+# 3 2019-08-12 20:05:27          EUCTR          1896
+#                                            query-term
+# 1           query=cancer&age=under-18&phase=phase-one
+# 2           query=cancer&age=under-18&phase=phase-one
+# 3 query=cancer+AND+breast&age=adult&phase=phase-three
 ```
-
 
 ## Update data base from query in specified register
 
 ```{r execute_update_query}
 # List queries:
-dbQueryHistory()
+dbQueryHistory(con = db)
  
 # Update last query in the history:
 #  - EUCTR information can be incrementally downloaded or updated only
@@ -188,8 +231,10 @@ dbQueryHistory()
 #  - CTGOV intformation can always be incrementally downloaded or updated. 
 #  - Alternatively, querytoupdate can have an integer number, 
 #    corresponding to the desired row of dbQueryHistory(). 
-ctrLoadQueryIntoDb(querytoupdate = "last")
-dbQueryHistory()
+ctrLoadQueryIntoDb(querytoupdate = "last", 
+                             con = db)
+
+dbQueryHistory(con = db)
 # Note: after such an update, the column "query-records" refers 
 # to the number of records that were added or updated, only, 
 # when the update was run as per the "query-timestamp", 
@@ -197,7 +242,9 @@ dbQueryHistory()
 
 # The date and time of the last download of individual records
 # is stored in the variable "record_last_import" as follows: 
-resultDate <- dbGetFieldsIntoDf("record_last_import")
+resultDate <- dbGetFieldsIntoDf("record_last_import", 
+                                con = db)
+
 summary(resultDate[["record_last_import"]])
 #                  Min.               1st Qu.                Median  [...]
 # "2016-04-21 19:49:54" "2016-04-21 19:49:54" "2016-04-21 19:49:54"  [...] 
@@ -210,30 +257,31 @@ Note EUCTR provides country-specific records for trials, see README.md.
 ```{r deduplicate_visualise_euctr}
 # Example 1: Relation between number of study participants in one country and in whole trial? 
 result <- dbGetFieldsIntoDf(c("f41_in_the_member_state", 
-                              "f422_in_the_whole_clinical_trial"))
-#
-if(interactive()) plot(f41_in_the_member_state ~ f422_in_the_whole_clinical_trial, result)
+                              "f422_in_the_whole_clinical_trial"), 
+                             con = db)
+
+plot(f41_in_the_member_state ~ f422_in_the_whole_clinical_trial, result)
 # [result not shown]
 
 # Example 2: How many clinical trials are ongoing or completed, per country?
 result <- dbGetFieldsIntoDf(c("a1_member_state_concerned", 
-                              "p_end_of_trial_status"))
-if(interactive()) with(result, 
-                       table(a1_member_state_concerned, 
-                             p_end_of_trial_status))
+                              "p_end_of_trial_status"), 
+                             con = db)
+
+with(result, 
+     table(a1_member_state_concerned, 
+           p_end_of_trial_status))
 # [result not shown]
 
 # Example 3: How many clinical trials where started in which year?
 result <- dbGetFieldsIntoDf(c("a1_member_state_concerned", 
                               "n_date_of_competent_authority_decision", 
-                              "a2_eudract_number"))
+                              "a2_eudract_number"), 
+                             con = db)
 
 # Eliminate trials records duplicated by member state: 
-result <- result[ result[["_id"]] %in% dbFindIdsUniqueTrials(), ]
-# 1781 EUCTR records dropped that were not the preferred of multiple records for the trial.
-# Searching duplicates: Found 0 CTGOV otherids in EUCTR _id's
-# Searching duplicates: Found 26 CTGOV _id's in EUCTR a52_us_nct_clinicaltrialsgov_registry_number
-# Returning keys (_id's) of 2162 records in the database.
+result <- result[ result[["_id"]] %in% 
+                    dbFindIdsUniqueTrials(con = db), ]
 
 # Visualise:
 hist(result[["n_date_of_competent_authority_decision"]], 
@@ -256,22 +304,35 @@ q <- paste0("https://clinicaltrials.gov/ct2/results?term=&recr=Open&",
 ctrOpenSearchPagesInBrowser(q)
 
 # Load data: 
-ctrLoadQueryIntoDb(q)
+ctrLoadQueryIntoDb(q, 
+                   con = db)
 
 # Data from which queries have now been downloaded into the database? 
-dbQueryHistory()
+dbQueryHistory(con = db)
 
 # Get columns from the database from different registers
-# (takes some time as variables are merged one after the other): 
-dbFindFields("status", allmatches = TRUE)
+dbFindFields("status", 
+             con = db)
+
 result <- dbGetFieldsIntoDf(c("overall_status", 
                               "p_end_of_trial_status", 
-                              "a2_eudract_number"))
+                              "a2_eudract_number"), 
+                             con = db)
 
 # Find ids of unique trials if recorded by alternative countries or registers:
-ids_of_unique_trials <- dbFindIdsUniqueTrials(prefermemberstate = "FR")
-ids_of_unique_trials <- dbFindIdsUniqueTrials(preferregister = "EUCTR")
-ids_of_unique_trials <- dbFindIdsUniqueTrials(preferregister = "CTGOV")
+ids_of_unique_trials <- dbFindIdsUniqueTrials(prefermemberstate = "FR", con = db)
+ids_of_unique_trials <- dbFindIdsUniqueTrials(preferregister = "EUCTR", con = db)
+ids_of_unique_trials <- dbFindIdsUniqueTrials(preferregister = "CTGOV", con = db)
+# * Total of 2488 records in collection.
+# Searching for duplicates, found 
+#  - 1788 EUCTR _id were not preferred EU Member State record of trial
+#  - 22 EUCTR _id in CTGOV secondary_id / nct_alias / org_study_id
+#  - 12 EUCTR a52_us_nct_... in CTGOV _id (nct)
+#  - 0 EUCTR a52_us_nct_... in CTOGV secondary_id / nct_alias / org_study_id
+#  - 0 EUCTR a51_isrctn_... in CTOGV secondary_id / nct_alias / org_study_id
+#  - 0 EUCTR a41_sponsors_protocol_... in CTOGV secondary_id / nct_alias / org_study_id
+# Concatenating 146 records from CTGOV and 512 from EUCTR:
+# = Returning keys (_id) of 658 out of total 2488 records in collection "some_collection_name".
 
 # Subset the result set to these unique trials:
 result <- result[ result[["_id"]] %in% ids_of_unique_trials, ]
@@ -284,11 +345,11 @@ tmp <- dfMergeTwoVariablesRelevel(result,
 #  Restarted, Recruiting, Not yet recruiting
 
 table(tmp)
-# Active, not recruiting    Completed   Enrolling by invitation  [...] 
-#                     812        2572                        29  [...]
-#              Recruiting   Suspended        Temporarily Halted  [...]
-#                    1148          38                         2  [...]
-
+#                            Completed Not yet recruiting            Ongoing 
+#                43                154                 26                265 
+# Prematurely Ended         Recruiting          Restarted Temporarily Halted 
+#                48                120                  1                  1 
+                
 # Merge two variables as above and in addition, 
 # condense their values into a new value:
 statusvalues <- list("ongoing" = c("Recruiting", "Active", "Ongoing", 
@@ -298,7 +359,7 @@ statusvalues <- list("ongoing" = c("Recruiting", "Active", "Ongoing",
                     "other"     = c("Withdrawn", "Suspended", "No longer available", 
                                     "Not yet recruiting", "Temporarily Halted", 
                                     "Unknown status"))
-#
+
 tmp <- dfMergeTwoVariablesRelevel(result, 
                                   colnames = c("overall_status", 
                                                "p_end_of_trial_status"), 
@@ -313,73 +374,39 @@ table(tmp)
 
 ## Use a remote mongo database
 
-This example works with a free service [here](https://www.mongodb.com/cloud/atlas). 
-Note that the user name and password need to be encoded. 
-The format of the connection string is documented 
-[here](https://docs.mongodb.com/manual/reference/connection-string/). 
+This example works with a free service [here](https://www.mongodb.com/cloud/atlas). Note that the user name and password need to be encoded. The format of the connection string is documented [here](https://docs.mongodb.com/manual/reference/connection-string/). 
 
 ```{r, eval=FALSE}
 
 ## Specify base uri for remote mongodb server as part of the encoded connection string
-db <- utils::URLencode("mongodb+srv://user_name@cluster0-b9wpw.mongodb.net/database_name")
+db <- nodbi::src_mongo(
+  url = "mongodb+srv://DWbJ7Wh:bdTHh5cS@cluster0-b9wpw.mongodb.net",
+  db = "dbperm",
+  collection = "dbperm")
 
-## For this mongo database server, a password has to be provided:
-
-# Execute search with explicit password
-ctrdata::ctrLoadQueryIntoDb(
-    queryterm = "2010-024264-18",
-    register = "CTGOV",
-    uri = db,
-    password = "user_name_s_password",
-    collection = "your_collection_name")
-
-# Package ctrdata can use the password to a mongo database from
-# the environment variable named "ctrdatamongopassword", as follows:
-
-# Alternatively, ctrdatamongopassword can be set
-# - by this call:
-Sys.setenv(ctrdatamongopassword = utils::URLencode"user_name_s_password"))
-# - or by adding 
-#   to ~/.Renviron
-#   a line such as
-ctrdatamongopassword = "user_name_s_password"
-
-# With the environment variable ctrdatamongopassword set
-# to the password needed for accessing the collection, 
-# the parameter "password" can be omitted as follows:
+# Database connection can just be used
 result <- dbGetFieldsIntoDf(
   fields = c("a2_eudract_number",
              "overall_status",
              "record_last_import",
              "primary_completion_date",
              "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database",
-             "study_design_info",
-             "e71_human_pharmacology_phase_i"),
-  uri = db,
-  collection = "your_collection_name")
+             "e71_human_pharmacology_phase_i"), 
+  con = db)
 ```
-
 
 ## Use another mongo package for analysis, for example to count sites per trial
 
-Note: Packages to access mango such as `mongolite` or `RMongo` may work to access data 
-that are already in the mongo dababase. However, package `mongolite` is still necessary 
-to retrieve data from registers and to store these data into the database. 
+Note: Packages to access mango such as `mongolite` or `RMongo` may work to access data that are already in the mongo dababase. However, package `mongolite` is still necessary to retrieve data from registers and to store these data into the database. 
 
 ```{r mongolite_count_details}
 library(mongolite)
 
-m <- mongo(url = "mongodb://localhost/users", 
-           collection = "resultsTest")
-
-# Check if there are any duplicates:
-ids_of_unique_trials <- dbFindIdsUniqueTrials(collection = "resultsTest")
+m <- mongo(url = "mongodb+srv://DWbJ7Wh:bdTHh5cS@cluster0-b9wpw.mongodb.net/dbperm", 
+           collection = "dbperm")
 
 # Find the database elements that represent a site:
 result <- m$find('{}', '{"location.facility.name": 1}')
-
-# If there were duplicates, the unique trials could be retained like this:
-result <- result[ result[["_id"]] %in% ids_of_unique_trials, ]
 
 # Table by frequency
 tbl <- table(sort(unname(rapply(result, function(x) x, how = "unlist"))))
@@ -400,35 +427,132 @@ head(tbl)
 
 # Define a helper function to count elements, irrespective of whether
 # the elements are in an array or are a set of subdocuments in the database:
-count.elements <- function (dataframecolumn) {
+count.elements <- function(dataframecolumn) {
    return(sapply(dataframecolumn, 
                  function(x) ifelse (is.data.frame(tmp <- unlist (x[[1]])), 
                                      nrow(tmp), length(tmp))))
 }
 
 # Sum up number of sites per trial:
-result$number_of_sites <- count.elements (result$location)
+result$number_of_sites <- count.elements(result$location)
 
 # Inspect first rows:
-head(result)
-#                 _id                                      location  number_of_sites
-# 1       NCT00097292  Children's Hospital LA, UCSF, Stanford [...]               21
-# 2       NCT00129259                   The Diabetes Center at UCSF                1
-# 3 2006-001238-41-IT                                          NULL                0
+head(result[, c("_id", "number_of_sites")])
+#                 _id number_of_sites
+# 1       NCT01471782              30
+# 2         meta-info               0
+# 3 2010-024264-18-DE               0
+# 4 2010-024264-18-AT               0
+# 5 2010-024264-18-NL               0
+# 6 2010-024264-18-IT               0
 
 # For many trials, no locations seem to be specified:
-result <- result [result$number_of_sites >= 1 & result$number_of_sites <20, ]
+result <- result[result$number_of_sites >= 1 & 
+                 result$number_of_sites < 20, ]
 
 # Draw histogram:
-hist (result$number_of_sites)
+hist(result$number_of_sites)
 ```
+
+## Work with nested data
+
+Compare the way that fields (keys) may have to be specified differently for elements that are nested within other elements. 
+
+```{r nested_data, eval=FALSE}
+
+# with MongoDB: finds all elements b31_and_b32_...
+result <- dbGetFieldsIntoDf(
+  fields = c("b1_sponsor.b31_and_b32_status_of_the_sponsor", # Note dot path
+             "p_end_of_trial_status", 
+             "a2_eudract_number"),
+  con = db)
+
+# with SQLite: finds the first, to retrieve 
+# the second, increment to [1] and so on
+result <- dbGetFieldsIntoDf(
+  fields = c("b1_sponsor[0].b31_and_b32_status_of_the_sponsor", # Note [0]
+             "p_end_of_trial_status", 
+             "a2_eudract_number"),
+  con = db)
+
+# with SQLite (and MongoDB): retrieve element at root
+# and extract its nested sub-elements later, using 
+# the helper function that follows below. 
+result <- dbGetFieldsIntoDf(
+  fields = c("b1_sponsor", 
+             "p_end_of_trial_status", 
+             "a2_eudract_number"),
+  con = db)
+
+# Nested element is a list as a character string,
+# which requires eval(parse()) to be accessed 
+# and this is exemplified in the helper function. 
+result[1, "b1_sponsor"]
+
+
+# Helper function
+getKeyNestedList <- function(thelist, thekey) {
+  
+  # perhaps the list is still a character string
+  if (inherits(x = thelist, what = "character") && 
+      all(sapply(thelist, function(x) substr(x, 1, 4) == "list"))) {
+    thelist <- lapply(thelist, function(x) eval(parse(text = x)))
+  }
+  
+  # recursive find
+  rmatch <- function(x, name) {
+    
+    pos <- match(name, names(x))
+    if (!is.na(pos)) return(x[[pos]])
+    
+    for (element in x) {
+      if (class(element) == "list") {
+        out <- Recall(element, name)
+        if (!is.null(out)) return(out)
+      }
+    }
+  }
+
+  # get key from any level, deduplicate, remove NA,
+  # collapse if more than one value per list item
+  sapply(thelist, function(x) {
+    out <- rmatch(x = x, name = thekey)
+    out <- na.omit(out)
+    out <- unique(out)
+    out <- paste0(out, collapse = " / ")
+    out
+  })
+}
+
+# Example
+getKeyNestedList(thelist = result$b1_sponsor[1:2], 
+                 thekey = "b11_name_of_sponsor")
+
+# Eliminate trials records duplicated by EU Member State: 
+uniqueids <- dbFindIdsUniqueTrials(con = db)
+result    <- result[ result[["_id"]] %in% uniqueids, ]
+
+# Tabulate the status of the clinical trial on the date of information retrieval
+# Note some trials have more than one sponsor and values are concatenated with /.
+with (result, table (p_end_of_trial_status, 
+                     b1_sponsor.b31_and_b32_status_of_the_sponsor))
+#                   b1_sponsor.b31_and_b32_status_of_the_sponsor
+# p_end_of_trial_status    Commercial  Non-Commercial  Non-Commercial / Non-Commercial
+#   Completed                      81              32                                0
+#   Ongoing                       205             239                               12
+#   Prematurely Ended              15              12                                0
+#   Restarted                       0               1                                0
+#   Temporarily Halted              4               1                                0
+```
+
 
 ## Plot frequency of certain end points
 
 ```{r plot_endpoint_frequencies}
 # Search for interesting variables,  
 # note the spelling in EUCTR:
-dbFindFields("end_point")
+dbFindFields("end_point", 
+             con = db)
 
 # Get interesting variables from database 
 # for further analysis within R:
@@ -436,11 +560,13 @@ result <- dbGetFieldsIntoDf(c("a2_eudract_number",
                               "a41_sponsors_protocol_code_number", 
                               "n_date_of_competent_authority_decision", 
                               "e73_therapeutic_confirmatory_phase_iii", 
-                              "e51_primary_end_points"))
+                              "e51_primary_end_points"), 
+                            con = db)
 
 # Eliminate trials records duplicated by member state
 # keep a single record and if available use preference:
-result <- result[ result[["_id"]] %in% dbFindIdsUniqueTrials(), ]
+result <- result[ result[["_id"]] %in% 
+                    dbFindIdsUniqueTrials(con = db), ]
 
 # Checking expected number of trials:
 nrow(result)
@@ -453,8 +579,10 @@ result <- result[result$e73_therapeutic_confirmatory_phase_iii, ]
 # Is the a primary endpoint of interest? This uses regular expressions:
 
 # PFS / EFS / RFS / DFS
-result$pe_is_efs <- grepl("((progression|event|relapse|recurrence|disease)[- ]free)|pfs|dfs|efs)", 
-                          result$e51_primary_end_points, ignore.case = TRUE)
+result$pe_is_efs <- grepl(
+  pattern = "((progression|event|relapse|recurrence|disease)[- ]free)|pfs|dfs|efs)", 
+  x = result$e51_primary_end_points, 
+  ignore.case = TRUE)
 
 # Plot:
 library(ggplot2)
@@ -474,7 +602,7 @@ ggplot(data = result,
 # Plausibility check - what is the primary endpoint
 # if not one of the endpoints of interest? 
 # Look into first ten examples foundL
-substr(result$e51_primary_end_points[result$pe_is_efs == FALSE], 1, 80)[1:10]
+substr(result$e51_primary_end_points[result$pe_is_efs == FALSE], 1, 60)[1:8]
 # [results not shown]
 ```
 ![Histogram2](Rplot02.png)

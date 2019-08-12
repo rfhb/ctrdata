@@ -4,18 +4,18 @@
 \alias{dbGetFieldsIntoDf}
 \title{Create data frame by extracting specified fields from database collection}
 \usage{
-dbGetFieldsIntoDf(fields = "", debug = FALSE, con, verbose = FALSE,
+dbGetFieldsIntoDf(fields = "", con, verbose = FALSE,
   stopifnodata = TRUE)
 }
 \arguments{
 \item{fields}{Vector of one or more strings, with names of the sought fields.
 See function \link{dbFindFields} for how to find names of fields.}
 
-\item{debug}{Printing additional information if set to \code{TRUE}; default
-is \code{FALSE}.}
-
 \item{con}{A \link[nodbi]{src} connection object, as obtained with
 nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()}
+
+\item{verbose}{Printing additional information if set to \code{TRUE}; default
+is \code{FALSE}.}
 
 \item{stopifnodata}{Stops with an error (\code{TRUE}, default) or with a warning
 (\code{TRUE}) if sought field is empty or not available in any of the records

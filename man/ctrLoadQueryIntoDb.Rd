@@ -8,8 +8,7 @@ database}
 ctrLoadQueryIntoDb(queryterm = "", register = "EUCTR",
   querytoupdate = 0L, forcetoupdate = FALSE, euctrresults = FALSE,
   annotation.text = "", annotation.mode = "append",
-  parallelretrievals = 10L, debug = FALSE, con = NULL,
-  verbose = FALSE)
+  parallelretrievals = 10L, con = NULL, verbose = FALSE)
 }
 \arguments{
 \item{queryterm}{Either a string with the full URL of a search in a register

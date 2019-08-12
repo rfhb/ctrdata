@@ -16,7 +16,7 @@ returns only first if \code{FALSE}.}
 \item{con}{A \link[nodbi]{src} connection object, as obtained with
 nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()}
 
-\item{debug}{If \code{TRUE}, prints additional information (default \code{FALSE}).}
+\item{verbose}{If \code{TRUE}, prints additional information (default \code{FALSE}).}
 }
 \value{
 Vector of field(s) found

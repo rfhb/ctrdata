@@ -13,7 +13,8 @@ dbCTRLoadJSONFiles(dir, con)
 nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()}
 }
 \value{
-List with elements n (number of imported trials) and ids (_ids of imported trials)
+List with elements n (number of imported trials) and _id's successfully
+ imported trials and of trials that failed to import
 }
 \description{
 dbCTRLoadJSONFiles

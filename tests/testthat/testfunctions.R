@@ -31,7 +31,7 @@ mdburi <- "mongodb+srv://DWbJ7Wh:bdTHh5cS@cluster0-b9wpw.mongodb.net"
 # is a useful internect connection
 has_internet <- function(){
   if (is.null(curl::nslookup("r-project.org", error = FALSE))) {
-    skip("No internet connection available. ")
+    skip("No internet connection to register available. ")
   }
   if ("try-error" %in% c(
     class(try(httr::headers(httr::HEAD(
@@ -85,12 +85,12 @@ has_toolchain <- function(){
     any(
 
       # the tests are similar to those in onload.R
-      !suppressWarnings(installFindBinary("php --version")),
-      !suppressWarnings(installFindBinary("php -r 'simplexml_load_string(\"\");'")),
-      !suppressWarnings(installFindBinary("echo x | sed s/x/y/")),
-      !suppressWarnings(installFindBinary("perl -V:osname")),
+      !suppressWarnings(ctrdata:::installFindBinary("php --version")),
+      !suppressWarnings(ctrdata:::installFindBinary("php -r 'simplexml_load_string(\"\");'")),
+      !suppressWarnings(ctrdata:::installFindBinary("echo x | sed s/x/y/")),
+      !suppressWarnings(ctrdata:::installFindBinary("perl -V:osname")),
       !suppressMessages({
-        tmp <- installCygwinWindowsTest()
+        tmp <- ctrdata:::installCygwinWindowsTest()
         ifelse(is.null(tmp), TRUE, tmp)
       }),
 
@@ -126,7 +126,7 @@ test_that("local mongodb", {
   has_mongo()
 
   # initialise
-  coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
+  coll <- "ThisNameSpaceShouldNotExistAnywhere"
   dbc <- nodbi::src_mongo(collection = coll)
 
   # initialise = drop collections from mongodb
@@ -167,7 +167,7 @@ test_that("remote mongodb read only", {
                           url = mdburi)
 
   # field get test
-  expect_message(dbFindFields(namepart = "date", con = dbc),
+  expect_message(suppressWarnings(dbFindFields(namepart = "date", con = dbc)),
                  "Finding fields")
 
   # read test
@@ -197,7 +197,7 @@ test_that("remote mongodb write read", {
   has_internet()
 
   # initialise
-  coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
+  coll <- "ThisNameSpaceShouldNotExistAnywhere"
 
   # test remote mongodb server
   # expected to only work locally and on CI Travis,
@@ -225,9 +225,9 @@ test_that("remote mongodb write read", {
 
   # test 2c
   expect_true(
-    length(
+    length(suppressWarnings(
       dbFindFields(namepart = "date",
-                   con = dbc)) > 7L)
+                   con = dbc))) > 7L)
 
   # clean up
   nodbi::docdb_delete(src = dbc,
@@ -244,7 +244,7 @@ test_that("retrieve data from registers", {
   has_toolchain()
 
   # initialise
-  coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
+  coll <- "ThisNameSpaceShouldNotExistAnywhere"
   dbc <- nodbi::src_mongo(collection = coll)
 
   # test 3
@@ -274,7 +274,7 @@ test_that("retrieve data from register ctgov", {
   has_toolchain()
 
   # initialise
-  coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
+  coll <- "ThisNameSpaceShouldNotExistAnywhere"
   dbc <- nodbi::src_mongo(collection = coll)
 
   # test 5
@@ -321,6 +321,7 @@ test_that("retrieve data from register ctgov", {
     querytoupdate = "last", con = dbc)),
     "Imported or updated")
 
+  # clean up
   remove("hist", "json", "q")
 
 })
@@ -331,11 +332,10 @@ test_that("retrieve data from register ctgov", {
 test_that("retrieve data from register ctgov into sqlite", {
 
   has_internet()
-  has_mongo()
   has_toolchain()
 
   # initialise
-  coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
+  coll <- "ThisNameSpaceShouldNotExistAnywhere"
   dbc <- nodbi::src_sqlite(collection = coll)
 
   # test 5
@@ -387,6 +387,7 @@ test_that("retrieve data from register ctgov into sqlite", {
         querytoupdate = "last", con = dbc)),
     "Imported or updated")
 
+  # clean up
   remove("hist", "json", "q")
 
 })
@@ -400,7 +401,7 @@ test_that("retrieve data from register euctr", {
   has_toolchain()
 
   # initialise
-  coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
+  coll <- "ThisNameSpaceShouldNotExistAnywhere"
   dbc <- nodbi::src_mongo(collection = coll)
 
   q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
@@ -430,8 +431,7 @@ test_that("retrieve data from register euctr", {
   # test 13
   expect_message(
     ctrLoadQueryIntoDb(q,
-                       con = dbc,
-                       verbose = TRUE),
+                       con = dbc),
     "Imported or updated ")
 
   # manipulate history to force testing updating
@@ -462,20 +462,20 @@ test_that("retrieve data from register euctr", {
                        con = dbc),
     "(Imported or updated|First result page empty)")
 
+  # clean up
   remove("hist", "json", "q", "date.from", "date.today", "date.to")
 
 })
 
 
-#### euctr sqlite new, update ####
+#### euctr sqlite new, update, results ####
 test_that("retrieve data from register euctr into sqlite", {
 
   has_internet()
-  has_mongo()
   has_toolchain()
 
   # initialise
-  coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
+  coll <- "ThisNameSpaceShouldNotExistAnywhere"
   dbc <- nodbi::src_sqlite(collection = coll)
 
   q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
@@ -485,8 +485,9 @@ test_that("retrieve data from register euctr into sqlite", {
 
   # test 11
   expect_message(
-    ctrLoadQueryIntoDb(q,
-                       con = dbc),
+    suppressWarnings(
+      ctrLoadQueryIntoDb(q,
+                         con = dbc)),
     "Imported or updated")
 
   ## create and test updatable query
@@ -496,7 +497,7 @@ test_that("retrieve data from register euctr into sqlite", {
 
   date.today <- Sys.time()
   date.from  <- format(date.today - (60 * 60 * 24 * 12), "%Y-%m-%d")
-  date.to    <- format(date.today - (60 * 60 * 24 *  6), "%Y-%m-%d")
+  date.to    <- format(date.today - (60 * 60 * 24 *  9), "%Y-%m-%d")
 
   q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
               "&dateFrom=", date.from, "&dateTo=", date.to)
@@ -504,14 +505,14 @@ test_that("retrieve data from register euctr into sqlite", {
 
   # test 13
   expect_message(
-    ctrLoadQueryIntoDb(q,
-                       con = dbc,
-                       verbose = TRUE),
+    suppressWarnings(
+      ctrLoadQueryIntoDb(q,
+                         con = dbc)),
     "Imported or updated ")
 
   # manipulate history to force testing updating
   # based on code in dbCTRUpdateQueryHistory
-  hist <- dbQueryHistory(con = dbc)
+  hist <- suppressWarnings(dbQueryHistory(con = dbc))
   # manipulate query
   hist[nrow(hist), "query-term"]      <- sub(".*(&dateFrom=.*)&dateTo=.*", "\\1", q)
   hist[nrow(hist), "query-timestamp"] <- paste0(date.to, " 23:59:59")
@@ -538,6 +539,7 @@ test_that("retrieve data from register euctr into sqlite", {
                          con = dbc)),
     "(Imported or updated|First result page empty)")
 
+  # clean up
   remove("hist", "json", "q", "date.from", "date.today", "date.to")
 
 })
@@ -550,8 +552,10 @@ test_that("retrieve results from register euctr", {
   has_mongo()
   has_toolchain()
 
+  ## MONGO
+
   # initialise
-  coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
+  coll <- "ThisNameSpaceShouldNotExistAnywhere"
   dbc <- nodbi::src_mongo(collection = coll)
 
   # clean up
@@ -586,9 +590,25 @@ test_that("retrieve results from register euctr", {
   expect_true(class(tmp$firstreceived_results_date)     == "Date")
   expect_true(class(tmp$e71_human_pharmacology_phase_i) == "logical")
 
+
+  ## SQLITE
+
+  coll <- "ThisNameSpaceShouldNotExistAnywhere"
+  dbc <- nodbi::src_sqlite(collection = coll)
+
+  q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
+              "2007-000371-42+OR+2011-004742-18")
+
+  expect_message(
+    suppressWarnings(
+      ctrLoadQueryIntoDb(queryterm = q,
+                         euctrresults = TRUE,
+                         con = dbc)),
+    "Imported or updated results for")
+
 })
 
-#### browser show query ####
+#### browser interaction ####
 test_that("browser interaction", {
 
   # test 17
@@ -645,7 +665,7 @@ test_that("browser interaction", {
   has_toolchain()
 
   # initialise
-  coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
+  coll <- "ThisNameSpaceShouldNotExistAnywhere"
   dbc <- nodbi::src_mongo(collection = coll)
 
   # test 26
@@ -667,12 +687,14 @@ test_that("browser interaction", {
 #### db fields and records ####
 test_that("operations on database after download from register", {
 
+  ## MONGO
+
   has_internet()
   has_mongo()
   has_toolchain()
 
   # initialise
-  coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
+  coll <- "ThisNameSpaceShouldNotExistAnywhere"
   dbc <- nodbi::src_mongo(collection = coll)
 
   # test 28
@@ -696,7 +718,6 @@ test_that("operations on database after download from register", {
     con = dbc)
   expect_type(tmp, "character")
   expect_true(length(tmp) > 5L)
-  #
 
   # dbFindIdsUniqueTrials
 
@@ -704,7 +725,7 @@ test_that("operations on database after download from register", {
   expect_message(dbFindIdsUniqueTrials(
     con = dbc,
     preferregister = "EUCTR"),
-    "Searching multiple country records")
+    "Searching for duplicates")
 
   # test 34
   expect_message(dbFindIdsUniqueTrials(
@@ -740,11 +761,26 @@ test_that("operations on database after download from register", {
     con = dbc),
     "Input should be a vector of strings of field names.")
 
-
   # clean up = drop collections from mongodb
-
-  # test 38
   expect_equivalent(nodbi::docdb_delete(src = dbc, key = dbc$collection), TRUE)
+
+  ## SQLITE
+
+  # initialise
+  coll <- "ThisNameSpaceShouldNotExistAnywhere"
+  dbc <- nodbi::src_sqlite(collection = coll)
+
+  suppressWarnings(ctrLoadQueryIntoDb(
+    queryterm = "2010-019224-31",
+    register = "EUCTR",
+    con = dbc))
+
+  # test
+  tmp <- suppressWarnings(dbFindFields(
+    namepart = "date",
+    con = dbc))
+  expect_type(tmp, "character")
+  expect_true(length(tmp) >= 5L)
 
 })
 
@@ -757,7 +793,7 @@ test_that("operations on database for deduplication", {
   has_toolchain()
 
   # initialise
-  coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
+  coll <- "ThisNameSpaceShouldNotExistAnywhere"
   dbc <- nodbi::src_mongo(collection = coll)
 
   # get some trials with corresponding numbers
@@ -822,8 +858,6 @@ test_that("operations on database for deduplication", {
 
 
   # clean up = drop collections from mongodb
-
-  # test 47
   expect_equivalent(nodbi::docdb_delete(src = dbc, key = dbc$collection), TRUE)
 
 })
@@ -838,7 +872,7 @@ test_that("annotate queries", {
   has_toolchain()
 
   # initialise
-  coll <- "ThisNameSpaceShouldNotExistAnywhereInAMongoDB"
+  coll <- "ThisNameSpaceShouldNotExistAnywhere"
   dbc <- nodbi::src_mongo(collection = coll)
 
   # test 49

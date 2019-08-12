@@ -1,7 +1,6 @@
 ### ctrdata package
 ### main functions
 
-
 #' Retrieve or update information on clinical trials from register and store in
 #' database
 #'
@@ -34,8 +33,8 @@
 #'   (For CTGOV, all available results are always retrieved and loaded.)
 #'
 #' @param annotation.text Text to be including in the records retrieved
- #'   with the current query, in the field "annotation".
- #'
+#'   with the current query, in the field "annotation".
+#'
 #' @param annotation.mode One of "append" (default), "prepend" or "replace"
 #'   for new annotation.text with respect to any existing annotation for
 #'   the records retreived with the current query.
@@ -74,7 +73,7 @@
 #'
 ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate = 0L, forcetoupdate = FALSE,
                                euctrresults = FALSE, annotation.text = "", annotation.mode = "append",
-                               parallelretrievals = 10L, debug = FALSE,
+                               parallelretrievals = 10L,
                                con = NULL, verbose = FALSE) {
 
   ## check database connection
@@ -209,11 +208,11 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
 
   # inform user
   if (verbose) message("DEBUG: 'queryterm'=", queryterm,
-                     "\n'queryupdateterm'=", queryupdateterm,
-                     "\n'imported'=", imported,
-                     "\n'register'=", register,
-                     "\n'collection'=", con$collection,
-                     "\nImported trials:", imported$success)
+                       "\n'queryupdateterm'=", queryupdateterm,
+                       "\n'imported'=", imported$n,
+                       "\n'register'=", register,
+                       "\n'collection'=", con$collection,
+                       "\nImported trials:", imported$success)
 
   # add query parameters to database
   dbCTRUpdateQueryHistory(register = register,
@@ -383,9 +382,14 @@ ctrRerunQuery <- function(querytoupdate = querytoupdate, forcetoupdate = forceto
 #'
 #' @param dir Path to local directory with JSON files from downloading and converting
 #'
+#' @importFrom jsonlite validate
+#' @importFrom nodbi docdb_create docdb_update
+#' @importFrom stats na.omit
+#'
 #' @inheritParams ctrDb
 #'
-#' @return List with elements n (number of imported trials) and ids (_ids of imported trials)
+#' @return List with elements n (number of imported trials) and _id's successfully
+#'  imported trials and of trials that failed to import
 #'
 #' @keywords internal
 #'
@@ -409,17 +413,28 @@ dbCTRLoadJSONFiles <- function(dir, con) {
 
     # check validity - note json may validate here
     # but still not be valid e.g., end in dot something
-    if (!all(sapply(tmplines, jsonlite::validate)))
-      stop("Invalid json in file ", tempFile)
+    # if (!all(sapply(tmplines, jsonlite::validate)))
+    #   stop("Invalid json in file ", tempFile)
 
     # readLines produces: \"_id\": \"2007-000371-42-FR\"
     ids <- sub(".*_id\":[ ]*\"(.*?)\".*", "\\1", tmplines)
 
     # ids should always be found
-    if (all(ids == "")) stop("No _id(s) detected in converted JSON: ", tempFile)
+    if (all(ids == "")) {
+      stop("No _id(s) detected in JSON file ",
+           tempFile, call. = FALSE)
+    }
 
     # check if in database, create or update
     tmpinsert <- lapply(seq_along(ids), function(i) {
+
+      # check validity
+      tmpvalidate <- jsonlite::validate(tmplines[i])
+      if (!tmpvalidate) {
+        warning("Invalid json for trial ", ids[i], "\n",
+                attr(x = tmpvalidate, which = "err"),
+                noBreaks. = TRUE, call. = FALSE, immediate. = TRUE)
+      }
 
       # slice data to be processed
       value <- data.frame("_id" = ids[i],
@@ -443,6 +458,8 @@ dbCTRLoadJSONFiles <- function(dir, con) {
 
       # return to sapply
       if ("try-error" %in% class(tmp)) {
+        # inform user
+        message(ids[i], ": ", tmp)
         list(success = NA,
              failed = ids[i],
              n = 0L)
@@ -469,6 +486,10 @@ dbCTRLoadJSONFiles <- function(dir, con) {
   failed <- sapply(retimp, "[[", "failed")
   failed <- as.character(na.omit(failed))
 
+  # message("\nn: ", n,
+  #         "\nsuccess: ", length(success),
+  #         "\nfailed: ", length(failed))
+
   # return
   return(list(n = n,
               success = success,
@@ -485,6 +506,7 @@ dbCTRLoadJSONFiles <- function(dir, con) {
 #' @keywords internal
 #'
 #' @importFrom jsonlite toJSON
+#' @importFrom nodbi docdb_update
 #'
 dbCTRAnnotateQueryRecords <- function(recordnumbers, annotations,
                                       annotation.text, annotation.mode,
@@ -530,7 +552,7 @@ dbCTRAnnotateQueryRecords <- function(recordnumbers, annotations,
   annotations$annotation <- switch(annotation.mode,
                                    "replace" = paste0(annotation.text),
                                    "prepend" = paste0(annotation.text, " ", annotations$annotation),
-                                               paste0(annotations$annotation, " ", annotation.text)
+                                   paste0(annotations$annotation, " ", annotation.text)
   )
   # FIXME delete
   # annotations$annotation <- paste0('{"$set": {"annotation": "',
@@ -573,6 +595,7 @@ dbCTRAnnotateQueryRecords <- function(recordnumbers, annotations,
 #' @keywords internal
 #'
 #' @importFrom jsonlite toJSON
+#' @importFrom nodbi docdb_delete docdb_create
 #'
 dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber,
                                     con, verbose){
@@ -649,8 +672,8 @@ dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber,
 #' @keywords internal
 #'
 #' @importFrom jsonlite toJSON
-#'
 #' @importFrom httr content headers progress write_disk GET HEAD
+#' @importFrom nodbi docdb_query
 #'
 ctrLoadQueryIntoDbCtgov <- function(queryterm = queryterm, register,
                                     euctrresults , annotation.text, annotation.mode,
@@ -743,7 +766,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm = queryterm, register,
 
   # inform user
   if (file.size(f) == 0)
-    stop("No studies downloaded. Please check 'queryterm' or run again with debug = TRUE.", call. = FALSE)
+    stop("No studies downloaded. Please check 'queryterm' or run again with verbose = TRUE.", call. = FALSE)
 
   ## extract all from downloaded zip file
   utils::unzip(f, exdir = tempDir)
@@ -870,8 +893,8 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm = queryterm, register,
 #' @keywords internal
 #'
 #' @importFrom httr content headers progress write_disk GET HEAD
-#'
 #' @importFrom curl curl_fetch_multi multi_run new_pool
+#' @importFrom nodbi docdb_query docdb_update
 #'
 ctrLoadQueryIntoDbEuctr <- function(queryterm = queryterm, register,
                                     euctrresults , annotation.text, annotation.mode,
@@ -980,7 +1003,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm = queryterm, register,
                                                      pool = pool,
                                                      data = fp[x],
                                                      handle = curl::new_handle(ssl_verifypeer = FALSE)
-                                                     ))
+                  ))
 
     # do download and saving
     tmp <- curl::multi_run(pool = pool, poll = length(urls))
@@ -1079,9 +1102,6 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm = queryterm, register,
   ## inform user on final import outcome
   message("= Imported or updated ", imported$n, " records on ", resultsEuNumTrials, " trial(s).")
 
-  # debug
-  if (verbose) message(eudractnumbersimported)
-
 
   ## results: load also euctr trials results if requested
   if (euctrresults) {
@@ -1124,16 +1144,16 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm = queryterm, register,
       # prepare download and save
       pool <- curl::new_pool()
       urls <- unlist(lapply(paste0(queryEuRoot, queryEuType4,
-                                   eudractnumbersimported[startindex : stopindex]),
+                                   eudractnumbersimported[startindex:stopindex]),
                             utils::URLencode))
-      fp <- paste0(tempDir, "/", eudractnumbersimported[startindex : stopindex], ".zip")
+      fp <- paste0(tempDir, "/", eudractnumbersimported[startindex:stopindex], ".zip")
       tmp <- lapply(seq_along(urls),
                     function(x) curl::curl_fetch_multi(url = urls[x],
                                                        done = cb,
                                                        pool = pool,
                                                        data = fp[x],
                                                        handle = curl::new_handle(ssl_verifypeer = FALSE)
-                                                       ))
+                    ))
 
       # do download and save
       tmp <- curl::multi_run(pool = pool, poll = length(urls))
@@ -1151,7 +1171,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm = queryterm, register,
           # TODO could there be more than one XML file?
           if (any(tmp2 <- grepl("xml$", tmp)))
             file.rename(tmp[tmp2][1], paste0(tempDir, "/",
-                                             eudractnumbersimported[startindex : stopindex][x], ".xml"))
+                                             eudractnumbersimported[startindex:stopindex][x], ".xml"))
 
           message(". ", appendLF = FALSE)
         } else {
@@ -1216,59 +1236,59 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm = queryterm, register,
                            startindex + resultsNumModulo,
                            startindex + parallelretrievals) - 1
 
-      batchresults <- sapply(eudractnumbersimported[startindex : stopindex],
-                             function(x) {
+      batchresults <- sapply(
+        eudractnumbersimported[startindex:stopindex],
+        function(x) {
 
-                               # compose file name and check
-                               fileName <- paste0(tempDir, "/", x, ".json")
-                               if (file.exists(fileName) && file.size(fileName) > 0){
+          # compose file name and check
+          fileName <- paste0(tempDir, "/", x, ".json")
+          if (file.exists(fileName) && file.size(fileName) > 0) {
 
-                                 # read contents
-                                 tmp <- readChar(con = fileName, nchars = file.info(fileName)$size, useBytes = TRUE)
+            # read contents
+            tmp <- readChar(con = fileName, nchars = file.info(fileName)$size, useBytes = TRUE)
 
-                                 # update database with results
-                                 # FIXME delete
-                                 # tmp <- try({tmp <- mongo$update(query  = paste0('{"a2_eudract_number":{"$eq":"', x, '"}}'),
-                                 #                          update = paste0('{ "$set" :', tmp, "}"),
-                                 #                          upsert = TRUE, multiple = TRUE)
-                                 #             as.numeric(max(tmp$modifiedCount,
-                                 #                            tmp$matchedCount,
-                                 #                            na.rm = TRUE))
-                                 #             }, silent = TRUE)
+            # update database with results
+            # FIXME delete
+            # tmp <- try({tmp <- mongo$update(query  = paste0('{"a2_eudract_number":{"$eq":"', x, '"}}'),
+            #                          update = paste0('{ "$set" :', tmp, "}"),
+            #                          upsert = TRUE, multiple = TRUE)
+            #             as.numeric(max(tmp$modifiedCount,
+            #                            tmp$matchedCount,
+            #                            na.rm = TRUE))
+            #             }, silent = TRUE)
 
-                                 tmp <- try({tmp <-
-                                   nodbi::docdb_update(src = con,
-                                                       key = con$collection,
-                                                       # query  = paste0('{"a2_eudract_number":{"$eq":"', x, '"}}'),
-                                                       # TODO change into dataframe
-                                                       value = data.frame("a2_eudract_number" = x,
-                                                                          "json" = tmp,
-                                                                          stringsAsFactors = FALSE))
-                                 # nodbi::docdb_update(src = con,
-                                 #                     key = con$collection,
-                                 #                     query  = paste0('{"a2_eudract_number":{"$eq":"', x, '"}}'),
-                                 #                     # TODO change into dataframe
-                                 #                     value = data.frame(tmp, stringsAsFactors = FALSE))
-                                 max(tmp, na.rm = TRUE)},
-                                 silent = TRUE)
+            tmp <- try({tmp <-
+              nodbi::docdb_update(src = con,
+                                  key = con$collection,
+                                  # FIXME should quoting be done in nodbi::dbodb_update()?
+                                  value = data.frame("a2_eudract_number" = x,
+                                                     "json" = tmp,
+                                                     stringsAsFactors = FALSE))
+            # nodbi::docdb_update(src = con,
+            #                     key = con$collection,
+            #                     query  = paste0('{"a2_eudract_number":{"$eq":"', x, '"}}'),
+            #                     # TODO change into dataframe
+            #                     value = data.frame(tmp, stringsAsFactors = FALSE))
+            max(tmp, na.rm = TRUE)},
+            silent = TRUE)
 
-                                 # inform user on failed trial
-                                 if (class(tmp) == "try-error") {
-                                   warning(paste0("Import into mongo failed for trial ", x), immediate. = TRUE)
-                                   tmp <- 0
-                                 }
+            # inform user on failed trial
+            if (class(tmp) == "try-error") {
+              warning(paste0("Import into mongo failed for trial ", x), immediate. = TRUE)
+              tmp <- 0
+            }
 
-                               } else {
+          } else {
 
-                                 # file did not exist
-                                 tmp <- 0
+            # file did not exist
+            tmp <- 0
 
-                               }
+          }
 
-                               # return for accumulating information
-                               return(tmp)
+          # return for accumulating information
+          return(tmp)
 
-                             }) # import
+        }) # import
 
       # accumulate
       importedresults <- c(importedresults, batchresults)
@@ -1292,14 +1312,14 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm = queryterm, register,
       pool <- curl::new_pool()
       done <- function(res){retdat <<- c(retdat, list(res))}
       urls <- unlist(lapply(paste0("https://www.clinicaltrialsregister.eu/ctr-search/trial/",
-                                   eudractnumbersimported[startindex : stopindex], "/results"),
+                                   eudractnumbersimported[startindex:stopindex], "/results"),
                             utils::URLencode))
       tmp <- lapply(seq_along(urls),
                     function(x) curl::curl_fetch_multi(url = urls[x],
                                                        done = done,
                                                        pool = pool,
                                                        handle = curl::new_handle(ssl_verifypeer = FALSE)
-                                                       ))
+                    ))
 
       # do download and save into batchresults
       retdat <- NULL
@@ -1336,14 +1356,14 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm = queryterm, register,
 
       tmpChanges <- sapply(batchresults, function(x)
         trimws(gsub("[ ]+", " ",
-               gsub("[\n\r]", "",
-               gsub("<[a-z/]+>", "",
-               sub(".+Version creation reason.*?<td class=\"valueColumn\">(.+?)</td>.+", "\\1",
-                   ifelse(grepl("Version creation reason", x), x, ""))
-               ))))
+                    gsub("[\n\r]", "",
+                         gsub("<[a-z/]+>", "",
+                              sub(".+Version creation reason.*?<td class=\"valueColumn\">(.+?)</td>.+", "\\1",
+                                  ifelse(grepl("Version creation reason", x), x, ""))
+                         ))))
       )
 
-      tmp <- lapply(seq_along(along.with = startindex : stopindex), function(x) {
+      tmp <- lapply(seq_along(along.with = startindex:stopindex), function(x) {
         # FIXME delete
         # upd <- mongo$update(query = paste0('{"a2_eudract_number": {"$eq": "',
         #                                    eudractnumberscurled[x], '"}}'),
@@ -1364,12 +1384,13 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm = queryterm, register,
 
         upd <- nodbi::docdb_update(src = con,
                                    key = con$collection,
+                                   # FIXME should quoting be done in nodbi::dbodb_update()?
                                    value = data.frame("a2_eudract_number" = eudractnumberscurled[x],
                                                       "firstreceived_results_date" = as.character(tmpFirstDate[x]),
                                                       "version_results_history" = tmpChanges[x],
                                                       stringsAsFactors = FALSE))
 
-        if(verbose) message(upd)
+        if (verbose) message(upd)
       })
 
       # clean up large object

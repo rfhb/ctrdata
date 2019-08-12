@@ -4,14 +4,14 @@
 \alias{installFindBinary}
 \title{Check availability of binaries installed locally}
 \usage{
-installFindBinary(commandtest = NULL, debug = FALSE)
+installFindBinary(commandtest = NULL, verbose = FALSE)
 }
 \arguments{
 \item{commandtest}{Command to be used for testing the availability of the binary, e.g. "php -v". Note
 internal quotes need to be escaped, e.g. \code{installFindBinary('php -r \"simplexml_load_string(\'\');\"')}.
 See R/onload.R for tested binaries.}
 
-\item{debug}{Set to \code{TRUE} to see printed return value of \code{commandtest}}
+\item{verbose}{Set to \code{TRUE} to see printed return value of \code{commandtest}}
 }
 \value{
 A logical if executing commandtest returned an error or not
