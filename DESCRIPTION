@@ -1,23 +1,32 @@
 Package: ctrdata
 Type: Package
-Title: Retrieve and Analyze Information on Clinical Trials from Public Registers
+Title: Retrieve and Analyze Information on Clinical Trials from Public
+        Registers
 Version: 0.19.9001
 Date: 2019-08-12
 Imports: jsonlite, httr, curl, clipr, xml2, rvest, nodbi (>= 0.2.8.9100)
 SystemRequirements: mongo database, sed, php, cat, perl
 URL: https://github.com/rfhb/ctrdata
 BugReports: https://github.com/rfhb/ctrdata/issues
-Description: Provides functions for querying, retrieving and analysing protocol- and results-related information on clinical trials from two public registers, the European Union Clinical Trials Register (EUCTR, <https://www.clinicaltrialsregister.eu/>) and ClinicalTrials.gov (CTGOV, <https://clinicaltrials.gov/>). The information is transformed and then stored in a database (mongo). Functions are provided for accessing and analysing the locally stored information on the clinical trials, as well as for identifying duplicate records. The package is motivated by the need for aggregating and trend-analysing the design, conduct and outcomes across clinical trials.
+Description: Provides functions for querying, retrieving and analysing
+        protocol- and results-related information on clinical trials from
+        two public registers, the European Union Clinical Trials Register
+        (EUCTR, <https://www.clinicaltrialsregister.eu/>) and
+        ClinicalTrials.gov (CTGOV, <https://clinicaltrials.gov/>). The
+        information is transformed and then stored in a database (mongo).
+        Functions are provided for accessing and analysing the locally
+        stored information on the clinical trials, as well as for
+        identifying duplicate records. The package is motivated by the need
+        for aggregating and trend-analysing the design, conduct and outcomes
+        across clinical trials.
 License: MIT + file LICENSE
 RoxygenNote: 6.1.1
 LazyData: true
-Suggests: testthat, devtools, knitr, rmarkdown, RSQLite (>= 2.1.2), mongolite
+Suggests: testthat, devtools, knitr, rmarkdown, RSQLite (>= 2.1.2),
+        mongolite
 VignetteBuilder: knitr
 NeedsCompilation: no
 Encoding: UTF-8
-Authors@R: 
-    person(given = "Ralf",
-           family = "Herold",
-           role = c("aut", "cre"),
-           email = "ralf.herold@mailbox.org",
-           comment = c(ORCID = "0000-0002-8148-6748"))
+Authors@R: person(given = "Ralf", family = "Herold", role = c("aut", "cre"),
+        email = "ralf.herold@mailbox.org", comment = c(ORCID =
+        "0000-0002-8148-6748"))
