@@ -25,6 +25,7 @@ knitr::opts_chunk$set(eval = FALSE,
 #
 normalise_number <- function(x) {
   
+  x <- gsub("&lt;|&gt;", "",  x)
   x <- gsub("<=|<|≤|=|>", "",  x)
   x <- gsub("(^| )[.]", "0.", x)
   x <- trimws(x)
@@ -117,7 +118,7 @@ General information on the `ctrdata` package is available here: [https://github.
 
 Functions in package `ctrdata` that start with `ctr...` require access to internet resources via `https`. Package `ctrdata` checks and automatically uses the proxy that is set under MS Windows in system settings. However, proxy settings need to be set by the user for other operating systems and for authenticating proxies, such as follows: 
 
-```{r proxy_setting, eval=FALSE}
+```{r proxy_setting}
 Sys.setenv(https_proxy = "your_proxy.server.domain:8080")
 Sys.setenv(https_proxy_user = "userid:password")
 ```
@@ -376,7 +377,7 @@ table(tmp)
 
 This example works with a free service [here](https://www.mongodb.com/cloud/atlas). Note that the user name and password need to be encoded. The format of the connection string is documented [here](https://docs.mongodb.com/manual/reference/connection-string/). 
 
-```{r, eval=FALSE}
+```{r remote_mongo}
 
 ## Specify base uri for remote mongodb server as part of the encoded connection string
 db <- nodbi::src_mongo(
@@ -458,7 +459,7 @@ hist(result$number_of_sites)
 
 Compare the way that fields (keys) may have to be specified differently for elements that are nested within other elements. 
 
-```{r nested_data, eval=FALSE}
+```{r nested_data}
 
 # with MongoDB: finds all elements b31_and_b32_...
 result <- dbGetFieldsIntoDf(
@@ -599,6 +600,8 @@ ggplot(data = result,
   theme(axis.text.x  = element_text(angle = 90, vjust = 0.5)) + 
   scale_x_date(date_breaks = "1 year", date_labels = "%Y")
 
+# ggsave("vignettes/Rplot02.png", width = 6, height = 4)
+
 # Plausibility check - what is the primary endpoint
 # if not one of the endpoints of interest? 
 # Look into first ten examples foundL
@@ -610,27 +613,33 @@ substr(result$e51_primary_end_points[result$pe_is_efs == FALSE], 1, 60)[1:8]
 ## Histogram of status of investigational medicinal product
 
 ```{r hist_medicine_status}
-if (FALSE) ctrLoadQueryIntoDb(register = "EUCTR", 
-                              queryterm = "&age=under-18&phase=phase-one&phase=phase-two", 
-                              collection = "paediatric_phase12_trials")
+if (FALSE) ctrLoadQueryIntoDb(
+  register = "EUCTR", 
+  queryterm = "&age=under-18&phase=phase-one&phase=phase-two", 
+  con = db)
 
-dbQueryHistory(collection = "paediatric_phase12_trials")
-ctrOpenSearchPagesInBrowser(dbQueryHistory(collection = "paediatric_phase12_trials"))
+dbQueryHistory(con = db)
 
-if (FALSE) ctrLoadQueryIntoDb(querytoupdate = "last", collection = "paediatric_phase12_trials")
+ctrOpenSearchPagesInBrowser(dbQueryHistory(con = db))
 
-dbFindFields("phase", allmatches = TRUE, collection = "paediatric_phase12_trials")
+if (FALSE) ctrLoadQueryIntoDb(
+  querytoupdate = "last", 
+  con = db)
+
+dbFindFields(namepart = "phase", 
+             con = db)
 # [1] "e72_therapeutic_exploratory_phase_ii"   "e71_human_pharmacology_phase_i"
 # [3] "e73_therapeutic_confirmatory_phase_iii" "e74_therapeutic_use_phase_iv"  
 
-result <- dbGetFieldsIntoDf(c("a1_member_state_concerned", "n_date_of_competent_authority_decision",
-                              "dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation", 
-                              "e11_medical_conditions_being_investigated", "e112_therapeutic_area", 
-                              "e71_human_pharmacology_phase_i", "e72_therapeutic_exploratory_phase_ii",
-                              "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database",
-                              "f422_in_the_whole_clinical_trial", 
-                              "a3_full_title_of_the_trial", "a2_eudract_number"), 
-                            collection = "paediatric_phase12_trials")
+result <- dbGetFieldsIntoDf(
+  c("a1_member_state_concerned", "n_date_of_competent_authority_decision",
+    "dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation", 
+    "e11_medical_conditions_being_investigated", "e112_therapeutic_area", 
+    "e71_human_pharmacology_phase_i", "e72_therapeutic_exploratory_phase_ii",
+    "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database",
+    "f422_in_the_whole_clinical_trial", 
+    "a3_full_title_of_the_trial", "a2_eudract_number"), 
+  con = db)
 
 searchfor <- paste0("cancer, leukaem, leukem, tumour, tumor, sarcoma, blastom, gliom, germ, ",
                     "lymphom, malign, hodgkin, ewing, rhabdo, terato, tumeur, leucemi")
@@ -639,13 +648,14 @@ searchfor <- strsplit(searchfor, ", ")[[1]]
 relevant <- grepl_multi(searchfor, result$a3_full_title_of_the_trial) | 
             grepl_multi(searchfor, result$e11_medical_conditions_being_investigated) |
             grepl_multi("C04",     result$e112_therapeutic_area)
+table(relevant)
 
 # get relevant trials
 result <- result[relevant,]
-result <- result[result$e71_human_pharmacology_phase_i == "Yes",]
+result <- result[result$e71_human_pharmacology_phase_i,]
 
 # find first member state to authorise trial
-tmp <- aggregate(result$startdate, 
+tmp <- aggregate(result$n_date_of_competent_authority_decision, 
                  by = list(result$a2_eudract_number),
                  FUN = function(x) min(x))
 result <- merge(x = result, y = tmp, 
@@ -658,12 +668,15 @@ names(result)[ncol(result)] <- "startdatefirst"
 result$startyearfirst <- as.numeric(format(result$startdatefirst, "%Y"))
 
 # eliminate country duplicates
-result <- result[ result[["_id"]] %in% dbFindIdsUniqueTrials(collection = "paediatric_phase12_trials", include3rdcountrytrials = FALSE), ]
+result <- result[ result[["_id"]] %in% 
+                    dbFindIdsUniqueTrials(
+                      include3rdcountrytrials = FALSE, 
+                      con = db), ]
 
 # any of the investigational medicinal product(s) authorised or not?
-table(result$dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation)
-library(stringi)
-tmp <- stri_count(result$dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation, fixed = "Yes")
+tmp <- stringi::stri_count(
+  result$dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation, 
+  fixed = "Yes")
 table(tmp, exclude = "")
 tmp <- tmp > 0
 
@@ -685,20 +698,21 @@ ggplot(data = result,
 
 ## Plot map of ongoing trials
 
-```{r plot_map_trials, eval=FALSE}
+```{r plot_map_trials}
  
 # this is to create a map of EU ongoing phase 1 trials with children with cancer on an anti-cancer medicine
 library(rworldmap)
 library(plyr)
 
 # get relevant variables from relevant collection
-result <- dbGetFieldsIntoDf(c("a1_member_state_concerned", "n_date_of_competent_authority_decision",
-                              "e11_medical_conditions_being_investigated", "e112_therapeutic_area", 
-                              "e71_human_pharmacology_phase_i", "e72_therapeutic_exploratory_phase_ii",
-                              "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database",
-                              "a3_full_title_of_the_trial", "a2_eudract_number", "p_end_of_trial_status", 
-                              "ctrname"), 
-                            collection = "paediatric_phase12_trials")
+result <- dbGetFieldsIntoDf(
+  c("a1_member_state_concerned", "n_date_of_competent_authority_decision",
+    "e11_medical_conditions_being_investigated", "e112_therapeutic_area", 
+    "e71_human_pharmacology_phase_i", "e72_therapeutic_exploratory_phase_ii",
+    "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database",
+    "a3_full_title_of_the_trial", "a2_eudract_number", "p_end_of_trial_status", 
+    "ctrname"), 
+  con = db)
 
 # calculate country variable
 result$country <- sub("^.+-([3A-Z]+)$", "\\1", result$`_id`)
@@ -712,14 +726,19 @@ relevant <- grepl_multi(searchfor, result$a3_full_title_of_the_trial) |
             grepl_multi(searchfor, result$e11_medical_conditions_being_investigated) |
             grepl_multi("C04",     result$e112_therapeutic_area)
 
+table(relevant)
+
 # apply selection criteria
 result <- result[relevant,]
-result <- result[result$e71_human_pharmacology_phase_i == "Yes",]
+result <- result[result$e71_human_pharmacology_phase_i,]
 result <- result[result$ctrname == "EUCTR",]
 result <- result[result$country != "3RD",]
 
 # get an overview
-counts <- as.data.frame.matrix(with (result, table (country, p_end_of_trial_status)))
+counts <- as.data.frame.matrix(
+  with(result, 
+       table(country, p_end_of_trial_status)))
+
 counts$total <- rowSums(counts)
 counts$country <- rownames(counts)
 counts$text <- with(counts, paste(Ongoing, total, sep = "/"))
@@ -748,7 +767,10 @@ library(mongolite)
 m <- mongo(url = "mongodb://localhost/users", 
            collection = "ctrdata")
 
-# Number of all records:
+# List all collections:
+m$run('{"listCollections": 1}')
+
+# Number of all records in this collection:
 m$count()
 
 # Number of EUCTR records, using json for query:
@@ -773,7 +795,7 @@ m$count(query = '{"ctrname": "CTGOV"}')
 # Recommendation: to best define regular expressions for analyses, 
 # inspect the field primary_outcome.measure in database, or print:
 m$distinct(key = "primary_outcome.measure", 
-           query = '{"_id": {"$regex": "NCT[0-9]{8}", "$options": "i"}}')
+           query = '{"_id": {"$regex": "NCT[0-9]{8}", "$options": "i"}}')[1:8]
 
 # PFS, EFS, RFS or DFS
 out <- m$aggregate(pipeline = '[{"$match": {"primary_outcome.measure": 
@@ -786,7 +808,7 @@ out
 out <- m$aggregate(pipeline = '[{"$match": {"primary_outcome.measure": 
                                 {"$regex": "overall survival", 
                                            "$options": "i"}}}, 
-                                {"$project": {"_id": 1, "firstreceived_date": 1}}]')
+                                {"$project": {"_id": 1, "start_date": 1}}]')
 
 out
 #             _id firstreceived_date
@@ -797,8 +819,8 @@ out
 # [...]
 
 # Extraction of year from firstreceived_date such as "August 29, 2009"
-out$year <- substr(out$firstreceived_date, 
-                   tmp <- nchar(out$firstreceived_date) - 4, 
+out$year <- substr(out$start_date, 
+                   tmp <- nchar(out$start_date) - 4, 
                    tmp + 4)
 #
 table(out$year)
@@ -846,20 +868,24 @@ plot(hist, type = "h", las = 1, xlim = c(0, 2000), ylim = c(0, 500),
 ```{r analyse_inclusion_criteria}
 # Search for interesting variables,  
 # note the spelling in EUCTR:
-dbFindFields("crit")
+dbFindFields(namepart = "crit", 
+             con = db)
 
 # Get interesting variables from database 
 # for further analysis within R:
-result <- dbGetFieldsIntoDf(c("e3_principal_inclusion_criteria", 
-                              "eligibility.criteria.textblock"))
+result <- dbGetFieldsIntoDf(
+  c("e3_principal_inclusion_criteria", 
+    "eligibility.criteria.textblock"), 
+  con = db)
 
 # Eliminate trials records duplicated by member state
 # keep a single record and if available use preference:
-result <- result[ result[["_id"]] %in% dbFindIdsUniqueTrials(), ]
+result <- result[ result[["_id"]] %in% dbFindIdsUniqueTrials(con = db), ]
 
-result <- dfMergeTwoVariablesRelevel(df = result,
-                                     colnames = c("e3_principal_inclusion_criteria", 
-                                                  "eligibility.criteria.textblock"))
+result <- dfMergeTwoVariablesRelevel(
+  df = result,
+  colnames = c("e3_principal_inclusion_criteria", 
+               "eligibility.criteria.textblock"))
 
 # search for interesting terms
 terms <- c("positive", "marker", "select")
@@ -883,8 +909,10 @@ for (i in 1:length(terms))
 ```{r trialstart}
 # Get interesting variables from database 
 # for further analysis within R:
-result <- dbGetFieldsIntoDf(c("a2_eudract_number", 
-                              "n_date_of_competent_authority_decision"))
+result <- dbGetFieldsIntoDf(
+  c("a2_eudract_number", 
+    "n_date_of_competent_authority_decision"), 
+  con = db)
 
 # Calculate first date of trial start
 first_trial_start <- aggregate(x = result$n_date_of_competent_authority_decision, 
@@ -907,7 +935,7 @@ if (FALSE) ctrLoadQueryIntoDb(
   queryterm = paste0("https://clinicaltrials.gov/ct2/results?age=0&intr=dasatinib&phase=1"), 
   annotation.text = paste0("|AS:", "dasatinib", "|"), 
   annotation.mode = "prepend", 
-  collection = "annotationTest")
+  con = db)
 
 # helper function
 getannotationelement <- function(x, element = "AS") {
@@ -926,8 +954,14 @@ getannotationelement <- function(x, element = "AS") {
   return(x)
 }
 
-result <- dbGetFieldsIntoDf(fields = "annotation", collection = "annotationTest")
-getannotationelement(result$annotation, element = "AS")
+result <- dbGetFieldsIntoDf(
+  fields = "annotation", 
+  con = db)
+
+getannotationelement(
+  result$annotation, 
+  element = "AS")
+
 # [1] "dasatinib"
 ```
 
@@ -938,13 +972,13 @@ Distribution of p values
 
 ```{r analyse_results_1}
 
-# get trials into database
+## get trials into database
 if (FALSE) ctrLoadQueryIntoDb(
   queryterm = paste0("https://clinicaltrials.gov/ct2/results?rslt=With&age=0&intr=Drug&", 
                      "phase=1&phase=2&strd_s=01%2F01%2F2010&strd_e=12%2F31%2F2012"), 
-  collection = "resultsTest")
+  con = db)
 
-# get result set
+## get result set
 # dbFindFields(namepart = "age", allmatches = TRUE, collection = "resultsTest")
 result <- dbGetFieldsIntoDf(
   c("start_date", "detailed_description.textblock", "official_title", "eligibility.maximum_age",
@@ -955,53 +989,106 @@ result <- dbGetFieldsIntoDf(
     "clinical_results.outcome_list.outcome.analysis_list.analysis.non_inferiority_type",
     "clinical_results.baseline.analyzed_list.analyzed.units", 
     "clinical_results.baseline.analyzed_list.analyzed.count_list.count.@attributes.value"
-  ), collection = "resultsTest", stopifnodata = FALSE)
+  ), 
+  con = db, 
+  stopifnodata = FALSE)
 
-# table(result$clinical_results.baseline.analyzed_list.analyzed.units)
+
+## count number of participants per trial
 tmp <- lapply(result$`clinical_results.baseline.analyzed_list.analyzed.count_list.count.@attributes.value`, 
               function(x) strsplit(x, " / "))
-tmp <- lapply(tmp, 
-              function(x) sum(as.numeric(unlist(x)), na.rm = TRUE))
-tmp[result$clinical_results.baseline.analyzed_list.analyzed.units != "Participants"] <- NA
-tmp <- unlist(tmp)
+
+# turn string into list
+tmp <- lapply(tmp, function(x) eval(parse(text = x)))
+
+# change into number
+tmp <- lapply(tmp, function(x) sum(as.numeric(unlist(x)), na.rm = TRUE))
+
+# remove empty list elements
+tmp <- sapply(tmp, function(x) ifelse(length(x), x, NA))
+
+# check that unit is participants, not e.g. wounds or eyes
+tmpparticipants <- sapply(result$clinical_results.baseline.analyzed_list.analyzed.units, 
+              function(x) all(eval(parse(text = x))$units == "Participants"))
+
+tmp[!tmpparticipants] <- NA
+
 result$totalparticipants <- tmp
 
-# value of reported p value for primary endpoint analysis
+summary(result$totalparticipants)
+
+
+## value of first reported p value for primary endpoint analysis
 tmp <- lapply(result$clinical_results.outcome_list.outcome.analysis_list.analysis.p_value, 
-             FUN = function(x) strsplit(x, " / ")[[1]][1])
-tmp <- normalise_number(tmp)
+             FUN = function(x) eval(parse(text = x)))
+
+# get first p value
+tmp <- lapply(tmp, FUN = function(x) unlist(x)[1])
+
+# turn strings into numbers, see helper function
+tmp <- lapply(tmp, FUN = function(x) normalise_number(x))
+
+# remove empty list elements
+tmp <- sapply(tmp, function(x) ifelse(length(x), x, NA))
+
+summary(tmp)
+
 result$pvalueprimaryanalysis <- tmp
 
-# statistical method used for primary endpoint analysis
+
+## statistical method used for primary endpoint analysis
 tmp <- lapply(result$clinical_results.outcome_list.outcome.analysis_list.analysis.method, 
-             FUN = function(x) strsplit(x, " / ")[[1]][1])
-tmp <- do.call(rbind, tmp)
-tmp <- normalise_string(tmp)
+             FUN = function(x) eval(parse(text = x)))
+
+# get first method
+tmp <- lapply(tmp, FUN = function(x) unlist(x)[1])
+
+# remove empty list elements
+tmp <- sapply(tmp, function(x) ifelse(length(x), x, NA))
+
+table(tmp)
+
 result$methodprimaryanalysis <- tmp
 
-# based on allocation arms, keep trials that are likely to investigate safety and efficacy
-result$control <- grepl("(Placebo|No Intervention)", result$arm_group.arm_group_type, ignore.case = TRUE)
-result <- subset(result, control == TRUE)
 
+## Based on allocation arms, keep trials that are likely to investigate safety and efficacy
+## considering that active comparators may not be designed to show superiority. 
+## Note this checks the string with a regular expression and does not convert to a list: 
+## "list(arm_group_type = c(\"Active Comparator\", \"Placebo Comparator\", \"Experimental\"))"
+# controlled?
+result$control <- grepl("(Placebo|No Intervention)", 
+                        result$arm_group.arm_group_type, 
+                        ignore.case = TRUE)
+table(result$control)
+# randomised?
+result$randomised <- grepl("^Randomi.*", 
+                           result$study_design_info.allocation,
+                           ignore.case = TRUE)
+table(result$randomised)
+# two or more arms?
+tmp <- lapply(result$arm_group.arm_group_type, 
+              FUN = function(x) eval(parse(text = x)))
+tmp <- sapply(tmp, function(x) length(unlist(x)) >= 2)
+result$twoormoregroups <- tmp
+result <- subset(result, control & randomised & twoormoregroups)
+
+
+## plot p values
 # http://varianceexplained.org/statistics/interpreting-pvalue-histogram/
 # http://www.pnas.org/content/100/16/9440.full
-# plot p values
 library(ggplot2)
 ggplot(result, aes(pvalueprimaryanalysis)) + 
-  stat_ecdf(geom = "step") +
   labs(title = paste0("Paediatric phase 2 or 3 interventional trials\n", 
                       "with randomisation to placebo or to no intervention"), 
-       x = "Range of p values", 
-       y = "Empirical cumulative density of p values\nof primary endpoint results") 
+       x = "p value in primary endpoint primary analysis", 
+       y = "Empirical cumulative density of trials") +
+  geom_vline(aes(xintercept = 0.05, 
+                 colour = "red"), 
+             show.legend = FALSE) +
+  stat_ecdf(geom = "step")
+# ggsave("vignettes/ctrdatapvaluesphase23.png", width = 6, height = 4)
 
-# plot sample size v p value
-ggplot(result, aes(x = totalparticipants, y = pvalueprimaryanalysis)) +
-  geom_point() + 
-  ylim(0, 1) + 
-  xlim(0, 1000) + 
-  scale_x_log10()
-
-# statistical method used for primary endpoint analysis
+## statistical method used for primary endpoint analysis
 tmp <- table(result$methodprimaryanalysis)
 tmp <- tmp[rev(order(tmp))]
 tmp <- data.frame(tmp)
@@ -1010,19 +1097,15 @@ knitr::kable(tmp[1:10,])
 
 ![ECDFpvalues](ctrdatapvaluesphase23.png)
 
-|Primary analysis method              | Freq|
-|:------------------------------------|----:|
-|Ancova                               |   40|
-|Cochran Mantel Haenszel              |   13|
-|Mixed Models Analysis                |   11|
-|Anova                                |   11|
-|Fisher Exact                         |    9|
-|Chi Squared                          |    6|
-|t Test 2 Sided                       |    5|
-|Mixed Model Repeated Measures (Mmrm) |    4|
-|Wilcoxon (Mann Whitney)              |    3|
-|Regression Cox                       |    3|
-
-
-![pandn](pvaluetotalparticipants.png)
-
+|Var1                    | Freq|
+|:-----------------------|----:|
+|ANCOVA                  |   41|
+|Cochran-Mantel-Haenszel |   14|
+|Mixed Models Analysis   |   12|
+|ANOVA                   |   11|
+|Fisher Exact            |    7|
+|t-test, 2 sided         |    6|
+|Chi-squared             |    6|
+|Regression, Cox         |    3|
+|Wilcoxon (Mann-Whitney) |    2|
+|Regression, Logistic    |    2|
