@@ -6,18 +6,18 @@ output:
   rmarkdown::html_vignette: 
     toc: true
 vignette: >
-%\VignetteIndexEntry{Various usage examples}
+  %\VignetteIndexEntry{Various usage examples}
   %\VignetteKeywords{ctrdata,vignette}
   %\VignettePackage{ctrdata}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
-  ---
+---
   
-  ```{r setup, include=FALSE}
+```{r setup, include=FALSE}
 knitr::opts_chunk$set(eval = FALSE, 
-warning = FALSE, 
-message = FALSE, 
-results = "hide")
+                      warning = FALSE, 
+                      message = FALSE, 
+                      results = "hide")
 ```
 
 ```{r helper_functions}
@@ -411,9 +411,9 @@ result <- dbGetFieldsIntoDf(
   con = db)
 ```
 
-## Use another mongo package for analysis, for example to count sites per trial
+## Use another package for analysis, for example count sites per trial with mongolite
 
-Note: Packages to access mango such as `mongolite` or `RMongo` may work to access data that are already in the mongo dababase. However, package `mongolite` is still necessary to retrieve data from registers and to store these data into the database. 
+Note: Packages to access mango such as `mongolite` or `RMongo` may work to access data that are already in the mongo dababase. However, package `ctrdata` is still necessary to initially retrieve data from registers and to store these data into the database. 
 
 ```{r mongolite_count_details}
 library(mongolite)
@@ -473,9 +473,9 @@ result <- result[result$number_of_sites >= 1 &
 hist(result$number_of_sites)
 ```
 
-## Work with nested data
+## Working with nested data
 
-Compare the way that fields (keys) may have to be specified differently for elements that are nested within other elements. See also "Analyse results-related information" below. 
+Compare the way that fields (keys) may have to be specified differently for elements that are nested within other elements. See also [Analyse results-related information](#analyse-results-related-information) below. 
 
 ```{r nested_data}
 

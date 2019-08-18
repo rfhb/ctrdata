@@ -73,22 +73,17 @@ Overview of functions used in sequence:
 Within [R](https://www.r-project.org/), use the following commands to get and install package `ctrdata`:
 
 ```{r, eval = FALSE}
-# Development version from github.com:
+# Prepare to install development version:
 install.packages("devtools")
+
+# Install development version of nodbi:
 devtools::install_github("ropensci/nodbi")
 
-# Release version:
-install.packages("ctrdata")
-
-# Development version from github.com:
-install.packages("devtools")
+# Install development version of ctrdata:
 devtools::install_github("rfhb/ctrdata")
-
-# Set build_opts like this to build vignettes:
-devtools::install_github("rfhb/ctrdata", build_opts = "")
 ```
 
-Package `ctrdata` can be found [here on CRAN](https://cran.r-project.org/package=ctrdata). 
+Package `ctrdata` can be found [here on CRAN](https://cran.r-project.org/package=ctrdata) and  [here on github](https://github.com/rfhb/ctrdata). 
 
 ## 2. Command line tools `perl`, `sed`, `cat` and `php` (5.2 or higher)
 

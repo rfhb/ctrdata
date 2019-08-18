@@ -86,15 +86,16 @@ citation("ctrdata")
 #> 
 #>   Ralf Herold (2019). ctrdata: Retrieve and Analyze Information on
 #>   Clinical Trials from Public Registers. R package version
-#>   0.18.9005. https://github.com/rfhb/ctrdata
+#>   0.19.9001. https://github.com/rfhb/ctrdata
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
 #>   @Manual{,
-#>     title = {ctrdata: Retrieve and Analyze Information on Clinical Trials from Public Registers},
+#>     title = {ctrdata: Retrieve and Analyze Information on Clinical Trials from Public
+#> Registers},
 #>     author = {Ralf Herold},
 #>     year = {2019},
-#>     note = {R package version 0.18.9005},
+#>     note = {R package version 0.19.9001},
 #>     url = {https://github.com/rfhb/ctrdata},
 #>   }
 ```
@@ -121,23 +122,19 @@ Within [R](https://www.r-project.org/), use the following commands to
 get and install package `ctrdata`:
 
 ``` r
-# Development version from github.com:
+# Prepare to install development version:
 install.packages("devtools")
+
+# Install development version of nodbi:
 devtools::install_github("ropensci/nodbi")
 
-# Release version:
-install.packages("ctrdata")
-
-# Development version from github.com:
-install.packages("devtools")
+# Install development version of ctrdata:
 devtools::install_github("rfhb/ctrdata")
-
-# Set build_opts like this to build vignettes:
-devtools::install_github("rfhb/ctrdata", build_opts = "")
 ```
 
 Package `ctrdata` can be found [here on
-CRAN](https://cran.r-project.org/package=ctrdata).
+CRAN](https://cran.r-project.org/package=ctrdata) and [here on
+github](https://github.com/rfhb/ctrdata).
 
 ## 2\. Command line tools `perl`, `sed`, `cat` and `php` (5.2 or higher)
 
