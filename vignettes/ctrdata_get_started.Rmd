@@ -178,11 +178,13 @@ result <- dbGetFieldsIntoDf(fields = c("b1_sponsor",
                             con = db)
 
 # Show nested list in the element
-result[1, "b1_sponsor"]
-# [1] "list(`_b1_sponsor` = \"1\", b11_name_of_sponsor = 
-# \"Medical Research Council\", b134_country = \"United Kingdom\", 
-# b31_and_b32_status_of_the_sponsor = \"Non-Commercial\", 
-# b4_sources_of_monetary_or_material_support = list(list()))"
+str(result[1, "b1_sponsor"])
+# List of 1
+#  $ :'data.frame':	1 obs. of  4 variables:
+#   ..$ _b1_sponsor                      : chr "1"
+#   ..$ b11_name_of_sponsor              : chr "Wyeth Research 
+#   ..$ b134_country                     : chr "United States"
+#   ..$ b31_and_b32_status_of_the_sponsor: chr "Commercial"
 
 # Helper function
 getKeyNestedList <- function(thelist, thekey) {
