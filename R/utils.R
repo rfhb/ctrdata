@@ -1154,14 +1154,26 @@ dbGetFieldsIntoDf <- function(fields = "",
       if (names(dfi)[1] != "_id") dfi <- dfi[, 2:1]
       #
       # simplify if robust
-      # - is [,2] is NULL, remove from dfi data frame
+      #
+      # - is dfi[,2] is NULL, remove from dfi data frame
       dfi <- dfi[ !sapply(dfi[, 2], length) == 0, ]
+      #
       # - if each [,2] is a list with one element, concatenate
       if (all(sapply(dfi[, 2], function(x) is.data.frame(x) && ncol(x) == 1))) {
         dfi[, 2] <- sapply(sapply(dfi[, 2], "[", 1),
                            function(x) paste0(x, collapse = " / "))
       }
       #
+      # # - if each [,2] is a list of one dataframe with one or more rows,
+      # #   turn data frame into list
+      # if (all(sapply(dfi[, 2], function(x) is.data.frame(x)))) {
+      #   dfi[, 2] <- tt <- lapply(seq_len(nrow(dfi)),
+      #                      function(i) {
+      #                        tmp <- dfi[i, 2][[1]] # get dataframe
+      #                        lapply(seq_len(nrow(tmp)),
+      #                               function(ii) unclass(tmp[ii, ]))})
+      # }
+      # #
       if (verbose) message("DEBUG: field ", item, " has length ", nrow(dfi))
       #
       # # attempt custom function to condense into a data frame instead of using data.frame = TRUE
