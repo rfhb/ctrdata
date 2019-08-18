@@ -724,14 +724,29 @@ counts$text <- with(counts, paste(Ongoing, total, sep = "/"))
 counts
 
 # plot
-png("vignettes/ph1paedoncopen.png", width = 6, height = 5, units = "in", res = 300)
-sPDF <- joinCountryData2Map (counts, joinCode="ISO2", nameJoinColumn="country")
-mapParams <- mapCountryData (sPDF, nameColumnToPlot="Ongoing", mapTitle="",
-                             xlim=c(-10,30), ylim=c(36, 65), addLegend=FALSE,
-                             colourPalette="terrain")
-#do.call (addMapLegend, c (mapParams, legendLabels="all", legendWidth=0.5, digits=0, labelFontSize=0.8))
-title (main="Number of ongoing / total phase 1\nanti-cancer medicine trials with children")
-labelCountries (sPDF, nameCountryColumn="text", xlim=c(-15,32), ylim=c(36, 65), cex=1.0, col="blue")
+png(filename = "vignettes/ph1paedoncopen.png", 
+    width = 6, 
+    height = 5, 
+    units = "in", 
+    res = 300)
+sPDF <- joinCountryData2Map(dF = counts, 
+                            joinCode = "ISO2", 
+                            nameJoinColumn = "country")
+mapParams <- mapCountryData(mapToPlot = sPDF, 
+                            nameColumnToPlot = "Ongoing", 
+                            mapTitle = "",
+                            xlim = c(-10,30), 
+                            ylim = c(36, 65), 
+                            addLegend = FALSE,
+                            colourPalette = "terrain")
+# do.call(addMapLegend, c(mapParams, legendLabels="all", legendWidth=0.5, digits=0, labelFontSize=0.8))
+title(main = "Number of ongoing / total phase 1\nanti-cancer medicine trials with children")
+labelCountries(dF = sPDF, 
+               nameCountryColumn = "text", 
+               xlim = c(-15,32), 
+               ylim = c(36, 65), 
+               cex = 0.9, 
+               col = "blue")
 dev.off()
 ```
 ![Histogram3](ph1paedoncopen.png)
