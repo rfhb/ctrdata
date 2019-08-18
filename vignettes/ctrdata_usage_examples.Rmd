@@ -6,18 +6,18 @@ output:
   rmarkdown::html_vignette: 
     toc: true
 vignette: >
-  %\VignetteIndexEntry{Various usage examples}
+%\VignetteIndexEntry{Various usage examples}
   %\VignetteKeywords{ctrdata,vignette}
   %\VignettePackage{ctrdata}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
----
-
-```{r setup, include=FALSE}
+  ---
+  
+  ```{r setup, include=FALSE}
 knitr::opts_chunk$set(eval = FALSE, 
-                      warning = FALSE, 
-                      message = FALSE, 
-                      results = "hide")
+warning = FALSE, 
+message = FALSE, 
+results = "hide")
 ```
 
 ```{r helper_functions}
@@ -65,25 +65,19 @@ grepl_multi <- function(patterns, x, simplify = TRUE) {
 }
 #
 age_ctgov <- function(x) {
-
+  
   tmp.years  <- suppressWarnings(as.numeric(gsub("([0-9]+) Year.?",  "\\1", x, ignore.case = TRUE))) / 1
   tmp.months <- suppressWarnings(as.numeric(gsub("([0-9]+) Month.?", "\\1", x, ignore.case = TRUE))) / 12
   tmp.days   <- suppressWarnings(as.numeric(gsub("([0-9]+) Day.?",   "\\1", x, ignore.case = TRUE))) / 365.25
   
   tmp.age <- ifelse(!is.na(tmp.years),  tmp.years, 
-             ifelse(!is.na(tmp.months), tmp.months, 
-             ifelse(!is.na(tmp.days),   tmp.days, NA)))
+                    ifelse(!is.na(tmp.months), tmp.months, 
+                           ifelse(!is.na(tmp.days),   tmp.days, NA)))
   
   return(tmp.age)
 }
 #
 getKeyNestedList <- function(thelist, thekey) {
-  
-  # perhaps the list is still a character string
-  if (inherits(x = thelist, what = "character") && 
-      all(sapply(thelist, function(x) substr(x, 1, 4) == "list"))) {
-    thelist <- lapply(thelist, function(x) eval(parse(text = x)))
-  }
   
   # recursive find
   rmatch <- function(x, name) {
@@ -98,7 +92,7 @@ getKeyNestedList <- function(thelist, thekey) {
       }
     }
   }
-
+  
   # get key from any level, deduplicate, remove NA,
   # collapse if more than one value per list item
   sapply(thelist, function(x) {
@@ -110,6 +104,27 @@ getKeyNestedList <- function(thelist, thekey) {
   })
 }
 #
+simplifyList <- function(l) {
+  
+  # helper function to avoid
+  # that NULL is ignored / removed
+  rapply2 <- function(x, fn) {
+    if (is.list(x)) {
+      sapply(x, rapply2, fn)
+    } else {
+      fn(x)
+    }
+  }
+  
+  # apply function replacing
+  # NULL with e.g. NA
+  tmp <- rapply2(l, 
+                 function(x) if (is.null(x)) NA else x)
+  
+  # recursively unlist and change to vector
+  sapply(tmp, function(x) as.vector(unlist(x)))
+
+}
 ```
 
 General information on the `ctrdata` package is available here: [https://github.com/rfhb/ctrdata](https://github.com/rfhb/ctrdata). 
@@ -225,7 +240,7 @@ attributes(dbGetFieldsIntoDf("e52_secondary_end_points",
 ```{r execute_update_query}
 # List queries:
 dbQueryHistory(con = db)
- 
+
 # Update last query in the history:
 #  - EUCTR information can be incrementally downloaded or updated only
 #    for the last 7 days, after which a full new download is necessary. 
@@ -233,7 +248,7 @@ dbQueryHistory(con = db)
 #  - Alternatively, querytoupdate can have an integer number, 
 #    corresponding to the desired row of dbQueryHistory(). 
 ctrLoadQueryIntoDb(querytoupdate = "last", 
-                             con = db)
+                   con = db)
 
 dbQueryHistory(con = db)
 # Note: after such an update, the column "query-records" refers 
@@ -259,7 +274,7 @@ Note EUCTR provides country-specific records for trials, see README.md.
 # Example 1: Relation between number of study participants in one country and in whole trial? 
 result <- dbGetFieldsIntoDf(c("f41_in_the_member_state", 
                               "f422_in_the_whole_clinical_trial"), 
-                             con = db)
+                            con = db)
 
 plot(f41_in_the_member_state ~ f422_in_the_whole_clinical_trial, result)
 # [result not shown]
@@ -267,7 +282,7 @@ plot(f41_in_the_member_state ~ f422_in_the_whole_clinical_trial, result)
 # Example 2: How many clinical trials are ongoing or completed, per country?
 result <- dbGetFieldsIntoDf(c("a1_member_state_concerned", 
                               "p_end_of_trial_status"), 
-                             con = db)
+                            con = db)
 
 with(result, 
      table(a1_member_state_concerned, 
@@ -278,7 +293,7 @@ with(result,
 result <- dbGetFieldsIntoDf(c("a1_member_state_concerned", 
                               "n_date_of_competent_authority_decision", 
                               "a2_eudract_number"), 
-                             con = db)
+                            con = db)
 
 # Eliminate trials records duplicated by member state: 
 result <- result[ result[["_id"]] %in% 
@@ -318,7 +333,7 @@ dbFindFields("status",
 result <- dbGetFieldsIntoDf(c("overall_status", 
                               "p_end_of_trial_status", 
                               "a2_eudract_number"), 
-                             con = db)
+                            con = db)
 
 # Find ids of unique trials if recorded by alternative countries or registers:
 ids_of_unique_trials <- dbFindIdsUniqueTrials(prefermemberstate = "FR", con = db)
@@ -350,16 +365,16 @@ table(tmp)
 #                43                154                 26                265 
 # Prematurely Ended         Recruiting          Restarted Temporarily Halted 
 #                48                120                  1                  1 
-                
+
 # Merge two variables as above and in addition, 
 # condense their values into a new value:
 statusvalues <- list("ongoing" = c("Recruiting", "Active", "Ongoing", 
                                    "Active, not recruiting", 
                                    "Enrolling by invitation", "Restarted"),
-                    "completed" = c("Completed", "Prematurely Ended", "Terminated"),
-                    "other"     = c("Withdrawn", "Suspended", "No longer available", 
-                                    "Not yet recruiting", "Temporarily Halted", 
-                                    "Unknown status"))
+                     "completed" = c("Completed", "Prematurely Ended", "Terminated"),
+                     "other"     = c("Withdrawn", "Suspended", "No longer available", 
+                                     "Not yet recruiting", "Temporarily Halted", 
+                                     "Unknown status"))
 
 tmp <- dfMergeTwoVariablesRelevel(result, 
                                   colnames = c("overall_status", 
@@ -429,9 +444,9 @@ head(tbl)
 # Define a helper function to count elements, irrespective of whether
 # the elements are in an array or are a set of subdocuments in the database:
 count.elements <- function(dataframecolumn) {
-   return(sapply(dataframecolumn, 
-                 function(x) ifelse (is.data.frame(tmp <- unlist (x[[1]])), 
-                                     nrow(tmp), length(tmp))))
+  return(sapply(dataframecolumn, 
+                function(x) ifelse (is.data.frame(tmp <- unlist (x[[1]])), 
+                                    nrow(tmp), length(tmp))))
 }
 
 # Sum up number of sites per trial:
@@ -449,7 +464,7 @@ head(result[, c("_id", "number_of_sites")])
 
 # For many trials, no locations seem to be specified:
 result <- result[result$number_of_sites >= 1 & 
-                 result$number_of_sites < 20, ]
+                   result$number_of_sites < 20, ]
 
 # Draw histogram:
 hist(result$number_of_sites)
@@ -485,45 +500,9 @@ result <- dbGetFieldsIntoDf(
              "a2_eudract_number"),
   con = db)
 
-# Nested element is a list as a character string,
-# which requires eval(parse()) to be accessed 
-# and this is exemplified in the helper function. 
+# Nested lists: its elements can be accessed 
+# using the helper function getKeyNestedList()
 result[1, "b1_sponsor"]
-
-
-# Helper function
-getKeyNestedList <- function(thelist, thekey) {
-  
-  # perhaps the list is still a character string
-  if (inherits(x = thelist, what = "character") && 
-      all(sapply(thelist, function(x) substr(x, 1, 4) == "list"))) {
-    thelist <- lapply(thelist, function(x) eval(parse(text = x)))
-  }
-  
-  # recursive find
-  rmatch <- function(x, name) {
-    
-    pos <- match(name, names(x))
-    if (!is.na(pos)) return(x[[pos]])
-    
-    for (element in x) {
-      if (class(element) == "list") {
-        out <- Recall(element, name)
-        if (!is.null(out)) return(out)
-      }
-    }
-  }
-
-  # get key from any level, deduplicate, remove NA,
-  # collapse if more than one value per list item
-  sapply(thelist, function(x) {
-    out <- rmatch(x = x, name = thekey)
-    out <- na.omit(out)
-    out <- unique(out)
-    out <- paste0(out, collapse = " / ")
-    out
-  })
-}
 
 # Example
 getKeyNestedList(thelist = result$b1_sponsor[1:2], 
@@ -535,9 +514,9 @@ result    <- result[ result[["_id"]] %in% uniqueids, ]
 
 # Tabulate the status of the clinical trial on the date of information retrieval
 # Note some trials have more than one sponsor and values are concatenated with /.
-with (result, table (p_end_of_trial_status, 
-                     b1_sponsor.b31_and_b32_status_of_the_sponsor))
-#                   b1_sponsor.b31_and_b32_status_of_the_sponsor
+with(result, table(p_end_of_trial_status, 
+                   b1_sponsor.b31_and_b32_status_of_the_sponsor))
+#                  b1_sponsor.b31_and_b32_status_of_the_sponsor
 # p_end_of_trial_status    Commercial  Non-Commercial  Non-Commercial / Non-Commercial
 #   Completed                      81              32                                0
 #   Ongoing                       205             239                               12
@@ -646,8 +625,8 @@ searchfor <- paste0("cancer, leukaem, leukem, tumour, tumor, sarcoma, blastom, g
 searchfor <- strsplit(searchfor, ", ")[[1]]
 
 relevant <- grepl_multi(searchfor, result$a3_full_title_of_the_trial) | 
-            grepl_multi(searchfor, result$e11_medical_conditions_being_investigated) |
-            grepl_multi("C04",     result$e112_therapeutic_area)
+  grepl_multi(searchfor, result$e11_medical_conditions_being_investigated) |
+  grepl_multi("C04",     result$e112_therapeutic_area)
 table(relevant)
 
 # get relevant trials
@@ -699,7 +678,7 @@ ggplot(data = result,
 ## Plot map of ongoing trials
 
 ```{r plot_map_trials}
- 
+
 # this is to create a map of EU ongoing phase 1 trials with children with cancer on an anti-cancer medicine
 library(rworldmap)
 library(plyr)
@@ -723,8 +702,8 @@ searchfor <- paste0("cancer, leukaem, leukem, tumour, tumor, sarcoma, blastom, g
 searchfor <- strsplit(searchfor, ", ")[[1]]
 
 relevant <- grepl_multi(searchfor, result$a3_full_title_of_the_trial) | 
-            grepl_multi(searchfor, result$e11_medical_conditions_being_investigated) |
-            grepl_multi("C04",     result$e112_therapeutic_area)
+  grepl_multi(searchfor, result$e11_medical_conditions_being_investigated) |
+  grepl_multi("C04",     result$e112_therapeutic_area)
 
 table(relevant)
 
@@ -777,7 +756,7 @@ m$count()
 m$count(query = '{"_id": {"$regex": "[0-9]{4}-[0-9]{6}-[0-9]{2}", "$options": "i"}}')
 # alternatively: 
 m$count(query = '{"ctrname": "EUCTR"}')
- 
+
 # Number of CTGOV records, using json for query:
 m$count(query = '{"_id": {"$regex": "NCT[0-9]{8}", "$options": "i"}}')
 # alternatively:
@@ -894,9 +873,9 @@ table(grepl_multi(terms, result))
 
 # utility function to generate a regular expression for a given number of words
 words <- function(x) paste0(paste0(rep("\\s+\\w+", x), collapse = ""), "\\s+")
- 
+
 terms <- paste0(".*(", words(2), terms, "\\w*", words(3), ").*")
- 
+
 # find and print found matches for review
 for (i in 1:length(terms))
   print(gsub(terms[i], "\\1", 
@@ -981,10 +960,15 @@ if (FALSE) ctrLoadQueryIntoDb(
 ## get result set
 # dbFindFields(namepart = "age", allmatches = TRUE, collection = "resultsTest")
 result <- dbGetFieldsIntoDf(
-  c("start_date", "detailed_description.textblock", "official_title", "eligibility.maximum_age",
-    "study_design_info.allocation", "primary_outcome.measure", "arm_group.arm_group_type", 
+  c("start_date", 
+    "detailed_description.textblock", 
+    "official_title", 
+    "eligibility.maximum_age",
+    "study_design_info.allocation", 
+    "primary_outcome.measure", 
+    "arm_group.arm_group_type", 
     "clinical_results.outcome_list.outcome.analysis_list.analysis.method",
-    "clinical_results.outcome_list.outcome.analysis_list.analysis.p_value",
+    "clinical_results.outcome_list.outcome.analysis_list.analysis.p_value", # column 10
     "clinical_results.outcome_list.outcome.analysis_list.analysis.param_type",
     "clinical_results.outcome_list.outcome.analysis_list.analysis.non_inferiority_type",
     "clinical_results.baseline.analyzed_list.analyzed.units", 
@@ -995,21 +979,14 @@ result <- dbGetFieldsIntoDf(
 
 
 ## count number of participants per trial
-tmp <- lapply(result$`clinical_results.baseline.analyzed_list.analyzed.count_list.count.@attributes.value`, 
-              function(x) strsplit(x, " / "))
+tmp <- simplifyList(result[, "clinical_results.baseline.analyzed_list.analyzed.count_list.count.@attributes.value"])
 
-# turn string into list
-tmp <- lapply(tmp, function(x) eval(parse(text = x)))
+# change into number and sum up per trial
+tmp <- sapply(tmp, function(x) sum(as.numeric(x), na.rm = TRUE))
 
-# change into number
-tmp <- lapply(tmp, function(x) sum(as.numeric(unlist(x)), na.rm = TRUE))
-
-# remove empty list elements
-tmp <- sapply(tmp, function(x) ifelse(length(x), x, NA))
-
-# check that unit is participants, not e.g. wounds or eyes
+# check that unit of first analysis is participants, not e.g. wounds or eyes
 tmpparticipants <- sapply(result$clinical_results.baseline.analyzed_list.analyzed.units, 
-              function(x) all(eval(parse(text = x))$units == "Participants"))
+                          function(x) (x[[1]] == "Participants")[1])
 
 tmp[!tmpparticipants] <- NA
 
@@ -1018,18 +995,17 @@ result$totalparticipants <- tmp
 summary(result$totalparticipants)
 
 
-## value of first reported p value for primary endpoint analysis
-tmp <- lapply(result$clinical_results.outcome_list.outcome.analysis_list.analysis.p_value, 
-             FUN = function(x) eval(parse(text = x)))
+## p value for endpoint analysis
+tmp <- simplifyList(result[, "clinical_results.outcome_list.outcome.analysis_list.analysis.p_value"])
 
-# get first p value
-tmp <- lapply(tmp, FUN = function(x) unlist(x)[1])
+# get first p-value (first analysis primary endpoint)
+tmp <- sapply(tmp, "[[", 1)
+
+# replace empty list elements with NA
+tmp <- sapply(tmp, function(x) ifelse(length(x), x, NA))
 
 # turn strings into numbers, see helper function
-tmp <- lapply(tmp, FUN = function(x) normalise_number(x))
-
-# remove empty list elements
-tmp <- sapply(tmp, function(x) ifelse(length(x), x, NA))
+tmp <- sapply(tmp, FUN = function(x) normalise_number(x))
 
 summary(tmp)
 
@@ -1037,13 +1013,12 @@ result$pvalueprimaryanalysis <- tmp
 
 
 ## statistical method used for primary endpoint analysis
-tmp <- lapply(result$clinical_results.outcome_list.outcome.analysis_list.analysis.method, 
-             FUN = function(x) eval(parse(text = x)))
+tmp <- simplifyList(result["clinical_results.outcome_list.outcome.analysis_list.analysis.method"])
 
-# get first method
-tmp <- lapply(tmp, FUN = function(x) unlist(x)[1])
+# get first method (first analysis primary endpoint)
+tmp <- sapply(tmp, "[[", 1)
 
-# remove empty list elements
+# replace empty list elements with NA
 tmp <- sapply(tmp, function(x) ifelse(length(x), x, NA))
 
 table(tmp)
@@ -1066,8 +1041,7 @@ result$randomised <- grepl("^Randomi.*",
                            ignore.case = TRUE)
 table(result$randomised)
 # two or more arms?
-tmp <- lapply(result$arm_group.arm_group_type, 
-              FUN = function(x) eval(parse(text = x)))
+tmp <- simplifyList(result["arm_group.arm_group_type"])
 tmp <- sapply(tmp, function(x) length(unlist(x)) >= 2)
 result$twoormoregroups <- tmp
 result <- subset(result, control & randomised & twoormoregroups)

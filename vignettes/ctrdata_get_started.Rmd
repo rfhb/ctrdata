@@ -187,12 +187,6 @@ result[1, "b1_sponsor"]
 # Helper function
 getKeyNestedList <- function(thelist, thekey) {
   
-  # perhaps the list is still a character string
-  if (inherits(x = thelist, what = "character") && 
-      all(sapply(thelist, function(x) substr(x, 1, 4) == "list"))) {
-    thelist <- lapply(thelist, function(x) eval(parse(text = x)))
-  }
-  
   # recursive find
   rmatch <- function(x, name) {
     

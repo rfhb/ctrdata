@@ -1175,9 +1175,8 @@ dbGetFieldsIntoDf <- function(fields = "",
     },
     silent = TRUE)
     #
-    if ( !((class(tmp) != "try-error") &&
-           ncol(dfi) == 2L &&
-           any(nchar(dfi[, 2]) != 0) ) ) {
+    if (inherits(tmp, "try-error") ||
+        !nrow(dfi)) {
       # try-error occured or no data retrieved
       if (stopifnodata) {
         stop(paste0("For field: ", item, " no data could be extracted from the database collection. ",
@@ -1199,7 +1198,7 @@ dbGetFieldsIntoDf <- function(fields = "",
     # name result set
     names(dfi) <- c("_id", item)
     # type item field
-    if (!all(is.na(dfi[, 2]))) dfi <- typeField(dfi)
+    if (all(!is.na(dfi[, 2]))) dfi <- typeField(dfi)
     # add to result
     if (is.null(result)) {
       result <- dfi
@@ -1495,6 +1494,8 @@ typeField <- function(dfi){
   if (ncol(dfi) != 2) stop("Expect data frame with two columns, _id and a field.", call. = FALSE)
 
   # clean up anyway in input
+  # - just return if all is a list, such as with parent elements
+  if (inherits(dfi[,2], "list")) return(dfi)
   # - if NA as string, change to empty string
   if (all(class(dfi[, 2]) == "character")) dfi[ dfi[, 2] == "NA", 2] <- ""
   # - if empty string, change to NA
