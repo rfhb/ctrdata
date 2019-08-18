@@ -421,6 +421,9 @@ library(mongolite)
 m <- mongo(url = "mongodb+srv://DWbJ7Wh:bdTHh5cS@cluster0-b9wpw.mongodb.net/dbperm", 
            collection = "dbperm")
 
+# List all collections:
+m$run('{"listCollections": 1}')
+
 # Find the database elements that represent a site:
 result <- m$find('{}', '{"location.facility.name": 1}')
 
@@ -472,7 +475,7 @@ hist(result$number_of_sites)
 
 ## Work with nested data
 
-Compare the way that fields (keys) may have to be specified differently for elements that are nested within other elements. 
+Compare the way that fields (keys) may have to be specified differently for elements that are nested within other elements. See also "Analyse results-related information" below. 
 
 ```{r nested_data}
 
