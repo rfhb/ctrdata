@@ -83,7 +83,7 @@ Package `ctrdata` can be found [here on CRAN](https://cran.r-project.org/package
 
 ## 2. Command line tools `perl`, `sed`, `cat` and `php` (5.2 or higher)
 
-These command line tools are only required for `ctrGetQueryUrlFromBrowser()`, a main function of package `ctrdata`. 
+These command line tools are only required for `ctrLoadQueryIntoDb()`, a main function of package `ctrdata`. 
 In Linux and macOS, these are usually already installed. 
 
 For MS Windows, install [cygwin](https://cygwin.org/install.html): In `R`, run `ctrdata::installCygwinWindowsDoInstall()` for an automated minimal installation into `c:\cygwin` (installations in folders corresponding to `c:\cygw*` will also be recognised and used). Alternatively, install manually cygwin with packages `perl`, `php-jsonc` and `php-simplexml`. This installation will consume about 160 MB disk space; administrator credentials not needed.

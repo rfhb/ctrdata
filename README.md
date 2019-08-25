@@ -6,7 +6,8 @@ Status](https://travis-ci.org/rfhb/ctrdata.png?branch=master)](https://travis-ci
 [![AppVeyor Build
 Status](https://ci.appveyor.com/api/projects/status/github/rfhb/ctrdata?branch=master&svg=true)](https://ci.appveyor.com/project/rfhb/ctrdata)
 [![codecov](https://codecov.io/gh/rfhb/ctrdata/branch/master/graph/badge.svg)](https://codecov.io/gh/rfhb/ctrdata)
-\[Note codecov does not check MS Windows-only code\]
+\[Note codecov does not check MS Windows-only
+code\]
 
 [![Slack](https://img.shields.io/badge/Slack-Join-green.svg)](https://rfhb.slack.com/messages/C6N1Y75B6)
 Join Slack channel and discuss
@@ -73,16 +74,17 @@ citation("ctrdata")
 #> To cite package 'ctrdata' in publications use:
 #> 
 #>   Ralf Herold (2019). ctrdata: Retrieve and Analyze Information on
-#>   Clinical Trials from Public Registers. R package version 0.18.2.
-#>   https://github.com/rfhb/ctrdata
+#>   Clinical Trials from Public Registers. R package version
+#>   0.19.9001. https://github.com/rfhb/ctrdata
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
 #>   @Manual{,
-#>     title = {ctrdata: Retrieve and Analyze Information on Clinical Trials from Public Registers},
+#>     title = {ctrdata: Retrieve and Analyze Information on Clinical Trials from Public
+#> Registers},
 #>     author = {Ralf Herold},
 #>     year = {2019},
-#>     note = {R package version 0.18.2},
+#>     note = {R package version 0.19.9001},
 #>     url = {https://github.com/rfhb/ctrdata},
 #>   }
 ```
@@ -124,9 +126,9 @@ CRAN](https://cran.r-project.org/package=ctrdata).
 
 ## 2\. Command line tools `perl`, `sed`, `cat` and `php` (5.2 or higher)
 
-These command line tools are only required for
-`ctrGetQueryUrlFromBrowser()`, a main function of package `ctrdata`. In
-Linux and macOS, these are usually already installed.
+These command line tools are only required for `ctrLoadQueryIntoDb()`, a
+main function of package `ctrdata`. In Linux and macOS, these are
+usually already installed.
 
 For MS Windows, install [cygwin](https://cygwin.org/install.html): In
 `R`, run `ctrdata::installCygwinWindowsDoInstall()` for an automated
@@ -145,7 +147,8 @@ server are
 
 A remote mongo database server such as
 [here](https://www.mongodb.com/cloud/atlas) could be used; this is shown
-in the examples vignette.
+in the examples
+vignette.
 
 # Overview of functions in `ctrdata`
 
@@ -173,9 +176,6 @@ the trials’ status.
 
 ``` r
 library(ctrdata)
-#> Registered S3 method overwritten by 'rvest':
-#>   method            from
-#>   read_xml.response xml2
 #> Information on this package and how to use it:
 #> https://cran.r-project.org/package=ctrdata
 #> 
@@ -184,8 +184,8 @@ library(ctrdata)
 #> ctrOpenSearchPagesInBrowser(copyright = TRUE) and visit
 #> https://www.clinicaltrialsregister.eu/disclaimer.html
 #> https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use
-#> Testing helper binaries:
-#> completed.
+#> Checking helper binaries: 
+#> Checking completed.
 ```
 
   - Open registers’ advanced search pages in browser:
