@@ -129,7 +129,7 @@ install.packages("devtools")
 devtools::install_github("ropensci/nodbi")
 
 # Install development version of ctrdata:
-devtools::install_github("rfhb/ctrdata")
+devtools::install_github("rfhb/ctrdata", ref = "nosql-nodbi")
 ```
 
 Package `ctrdata` can be found [here on
@@ -138,8 +138,8 @@ github](https://github.com/rfhb/ctrdata).
 
 ## 2\. Command line tools `perl`, `sed`, `cat` and `php` (5.2 or higher)
 
-These command line tools are only required for
-`ctrGetQueryUrlFromBrowser()`, a main function of package `ctrdata`.
+These command line tools are only required for `ctrLoadQueryIntoDb()`, a
+main function of package `ctrdata`.
 
 In Linux and macOS, these are usually already installed.
 
