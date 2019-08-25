@@ -236,6 +236,76 @@ with (result, table (p_end_of_trial_status,
 #    Temporarily Halted                                  1   0   0
 ```
 
+Another register
+
+```{r, eval = FALSE}
+# Retrieve trials from public register:
+ctrLoadQueryIntoDb(
+  queryterm = "cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug", 
+  register = "CTGOV",
+  con = db)
+```
+
+Get some details on results and note how these are extracted from their representation in the `src_sqlite()` database with slightly different approaches. 
+
+```{r, eval = FALSE}
+# Get all records that have values in all specified fields:
+result <- dbGetFieldsIntoDf(
+  fields = c("clinical_results.baseline.analyzed_list.analyzed.count_list.count",
+             "clinical_results.baseline.group_list.group",
+             "clinical_results.baseline.analyzed_list.analyzed.units", 
+             "study_design_info.allocation", 
+             "location"),
+  con = db)
+
+# Count sites - location is a list of lists, 
+# hence the hierarchical extraction by
+# facility and then name of facility
+result$number_sites <- sapply(result$location, function(x) length(x[["facility"]][["name"]]))
+
+# Count total participant numbers, by summing those reporting groups
+# for which their description does not contain the word "total" 
+# (such as in "Total participants")
+result$number_participants <- sapply(
+  seq_len(nrow(result)), function(i) {
+    
+    # Participant counts are in a list of elements with attributes, 
+    # where attribute value has a vector of numbers per reporting group
+    tmp <- result$clinical_results.baseline.analyzed_list.analyzed.count_list.count[[i]]
+    
+    # Information on reporting groups is in a list with a subelement description
+    tot <- result$clinical_results.baseline.group_list.group[[i]]
+    
+    # see for example https://clinicaltrials.gov/ct2/show/results/NCT00253435#base
+    tmp <- tmp[["@attributes"]][["value"]]
+    tmp <- tmp[ !grepl("(^| )[tT]otal( |$)", tot[["description"]])]
+    
+    # to sum up, change string into integer value.
+    # note that e.g. sum(..., na.rm = TRUE) is not used
+    # since there are no empty entries in these trials
+    tmp <- sum(as.integer(tmp))
+    tmp
+    
+  })
+
+# Allocation is part of study design information and available
+# as a simple character string, suitable for routine manipulation
+result$is_controlled <- grepl("^Random", result$study_design_info.allocation)
+
+library(ggplot2)
+ggplot(data = result) + 
+  labs(title = "Neuroblastoma trials with results",
+       subtitle = "clinicaltrials.gov") +
+  geom_point(mapping = aes(x = number_sites,
+                           y = number_participants,
+                           colour = is_controlled)) + 
+  scale_x_log10() + 
+  scale_y_log10() 
+ggsave(filename = "inst/image/README-ctrdata_results_neuroblastoma.png",
+       width = 4, height = 3, units = "in")
+```
+![Neuroblastoma trials](inst/image/README-ctrdata_results_neuroblastoma.png)
+
 # Representation of JSON in databases
 
 ## MongoDB
