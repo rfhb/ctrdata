@@ -2,9 +2,9 @@ Package: ctrdata
 Type: Package
 Title: Retrieve and Analyze Information on Clinical Trials from Public
         Registers
-Version: 0.19.9001
-Date: 2019-08-12
-Imports: jsonlite, httr, curl, clipr, xml2, rvest, nodbi (>= 0.2.8.9100)
+Version: 0.20.0
+Date: 2019-10-01
+Imports: jsonlite, httr, curl, clipr, xml2, rvest, nodbi (>= 0.3)
 SystemRequirements: mongo database, sed, php, cat, perl
 URL: https://github.com/rfhb/ctrdata
 BugReports: https://github.com/rfhb/ctrdata/issues

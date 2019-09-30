@@ -23,14 +23,14 @@ countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR",
 #' @return Connection object as list, with collection
 #'  element under root
 #'
-ctrDb <- function(con = nodbi::src_sqlite(collection = "ctrdatagenerated")) {
+ctrDb <- function(con = nodbi::src_sqlite(collection = "ctrdata_auto_generated")) {
 
   ## sqlite
   if ("src_sqlite" %in% class(con)) {
 
     if (is.null(con$collection)) {
-      stop("For src_sqlite(), a collection (table name) needs to be ",
-           "specified, such as src_sqlite(collection = 'test'), ",
+      stop("In src_sqlite(), a parameter 'collection' needs to specify ",
+           "the name of a table, such as src_sqlite(collection = 'test'), ",
            "for package ctrdata to work with other nosql databases.",
            call. = FALSE)
     }
@@ -41,7 +41,8 @@ ctrDb <- function(con = nodbi::src_sqlite(collection = "ctrdatagenerated")) {
       warning("Database connection was closed, trying to reopen...",
               call. = FALSE, immediate. = TRUE)
       con <- nodbi::src_sqlite(dbname = con$dbname,
-                               collection = con$collection)
+                               key = con$collection)
+                               # collection = con$collection)
     }
 
     # add database as element under root
@@ -51,8 +52,14 @@ ctrDb <- function(con = nodbi::src_sqlite(collection = "ctrdatagenerated")) {
 
     # print warning from nodbi::src_sqlite()
     if (grepl(":memory:", con$dbname)) {
-      warning("Database not persisting, see print(<your database connection object>) ",
-              call. = FALSE, immediate. = TRUE)
+      warning("Database not persisting,\ncopy to persistant database like this:\n",
+              "\nRSQLite::sqliteCopyDatabase(",
+              "\n  from = <your in-memory-database-object>$con,",
+              "\n  to = RSQLite::dbConnect(RSQLite::SQLite(),",
+              "\n                          dbname = 'local_file.db'))\n",
+              call. = FALSE,
+              noBreaks. = FALSE,
+              immediate. = TRUE)
     }
 
     ## return
@@ -728,7 +735,7 @@ dbFindFields <- function(namepart = "", allmatches = TRUE,
   }
 
   ## now do the actual search and find for key name parts
-  fields <- keyslist[grepl(namepart, keyslist, ignore.case = FALSE)]
+  fields <- keyslist[grepl(namepart, keyslist, ignore.case = TRUE)]
 
   # all or only first field name?
   if (!allmatches) {
@@ -1535,6 +1542,7 @@ typeField <- function(dfi){
     "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database" = as.Date(dfi[, 2], format = "%Y-%m-%d"),
     "x7_start_date"                                                          = as.Date(dfi[, 2], format = "%Y-%m-%d"),
     "firstreceived_results_date"                                             = as.Date(dfi[, 2], format = "%Y-%m-%d"),
+    "trialInformation.primaryCompletionDate"                                 = as.Date(dfi[, 2], format = "%Y-%m-%d"),
     # - CTGOV
     "start_date"              = as.Date(dfi[, 2], format = "%b %d, %Y"),
     "primary_completion_date" = as.Date(dfi[, 2], format = "%b %d, %Y"),

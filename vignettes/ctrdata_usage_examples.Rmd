@@ -86,7 +86,7 @@ getKeyNestedList <- function(thelist, thekey) {
     if (!is.na(pos)) return(x[[pos]])
     
     for (element in x) {
-      if (class(element) == "list") {
+      if (any(c("data.frame", "list") %in% class(element))) {
         out <- Recall(element, name)
         if (!is.null(out)) return(out)
       }
@@ -318,6 +318,11 @@ q <- paste0("https://clinicaltrials.gov/ct2/results?term=&recr=Open&",
 
 # Show and check search in browser: 
 ctrOpenSearchPagesInBrowser(q)
+
+# Count number of trials: 
+ctrLoadQueryIntoDb(q, 
+                   only.count = TRUE,
+                   con = db)
 
 # Load data: 
 ctrLoadQueryIntoDb(q, 
@@ -1005,12 +1010,6 @@ tmp <- sapply(tmp, function(x) sum(as.numeric(x), na.rm = TRUE))
 # check that unit of first analysis is participants, not e.g. wounds or eyes
 tmpparticipants <- sapply(result$clinical_results.baseline.analyzed_list.analyzed.units, 
                           function(x) (x[[1]] == "Participants")[1])
-
-tmp[!tmpparticipants] <- NA
-
-result$totalparticipants <- tmp
-
-summary(result$totalparticipants)
 
 
 ## p value for endpoint analysis

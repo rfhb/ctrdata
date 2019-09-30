@@ -4,7 +4,7 @@
 \alias{ctrDb}
 \title{Check and prepare nodbi connection object for ctrdata}
 \usage{
-ctrDb(con = nodbi::src_sqlite(collection = "ctrdatagenerated"))
+ctrDb(con = nodbi::src_sqlite(collection = "ctrdata_auto_generated"))
 }
 \arguments{
 \item{con}{A \link[nodbi]{src} connection object, as obtained with

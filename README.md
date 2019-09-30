@@ -4,11 +4,12 @@
 [![](https://cranlogs.r-pkg.org/badges/ctrdata)](https://cran.r-project.org/package=ctrdata)
 [![Build
 Status](https://travis-ci.org/rfhb/ctrdata.png?branch=master)](https://travis-ci.org/rfhb/ctrdata)
-[![AppVeyor Build
-Status](https://ci.appveyor.com/api/projects/status/github/rfhb/ctrdata?branch=master&svg=true)](https://ci.appveyor.com/project/rfhb/ctrdata)
+
+<!--
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/rfhb/ctrdata?branch=master&svg=true)](https://ci.appveyor.com/project/rfhb/ctrdata)
 [![codecov](https://codecov.io/gh/rfhb/ctrdata/branch/master/graph/badge.svg)](https://codecov.io/gh/rfhb/ctrdata)
-\[Note codecov does not check MS Windows-only
-code\]
+[Note codecov does not check MS Windows-only code] 
+-->
 
 [![Slack](https://img.shields.io/badge/Slack-Join-green.svg)](https://rfhb.slack.com/messages/C6N1Y75B6)
 Join Slack channel and discuss
@@ -25,14 +26,14 @@ started mid 2015 and was motivated by the wish to understand trends in
 designs and conduct of trials and their availability for patients. The
 package is to be used within the [R](https://www.r-project.org/) system.
 
-Last edit 2019-08-10 for version 0.19.9001, with breaking changes, bug
+Last edit 2019-10-01 for version 0.20, with *breaking changes*, bug
 fixes and new features:
 
   - minimised dependencies: works now with `RSQLite` (\>= 2.1.2), as
     well as with local and remote MongoDB servers, via R package `nodbi`
-    (\>= 0.2.9.9100). This is a breaking change that could not be
-    avoided when generalising the database access, which was made
-    possible by introducing a REGEXP operator into
+    (\>= 0.3). This is a breaking change that could not be avoided in
+    order to generalise the database access, and it was made possible by
+    introducing a REGEXP operator into
     [RSQLite](https://github.com/r-dbi/RSQLite/pull/296) and adding a
     set of methods to `nodbi` based on the Json1 extension of
     [SQLite](https://github.com/ropensci/nodbi/pull/25).
@@ -85,8 +86,8 @@ citation("ctrdata")
 #> To cite package 'ctrdata' in publications use:
 #> 
 #>   Ralf Herold (2019). ctrdata: Retrieve and Analyze Information on
-#>   Clinical Trials from Public Registers. R package version
-#>   0.19.9001. https://github.com/rfhb/ctrdata
+#>   Clinical Trials from Public Registers. R package version 0.20.0.
+#>   https://github.com/rfhb/ctrdata
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
@@ -95,7 +96,7 @@ citation("ctrdata")
 #> Registers},
 #>     author = {Ralf Herold},
 #>     year = {2019},
-#>     note = {R package version 0.19.9001},
+#>     note = {R package version 0.20.0},
 #>     url = {https://github.com/rfhb/ctrdata},
 #>   }
 ```
@@ -154,18 +155,18 @@ needed.
 
 # Overview of functions in `ctrdata`
 
-| Name                           | Function                                                                                                                   |
-| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
-| ctrOpenSearchPagesInBrowser    | Open search pages of registers or execute search in web browser                                                            |
-| ctrFindActiveSubstanceSynonyms | Find synonyms and alternative names for an active substance                                                                |
-| ctrGetQueryUrlFromBrowser      | Import from clipboard the URL of a search in one of the registers                                                          |
-| ctrLoadQueryIntoDb             | Retrieve (download) or update, and annotate, information on clinical trials from register and store in database collection |
-| dbQueryHistory                 | Show the history of queries that were downloaded into the database collection                                              |
-| dbFindFields                   | Find names of fields in the database collection                                                                            |
-| dbFindIdsUniqueTrials          | Produce a vector of de-duplicated identifiers of clinical trial records in the database collection                         |
-| dbGetFieldsIntoDf              | Create a data.frame from records in the database collection with the specified fields                                      |
-| dfMergeTwoVariablesRelevel     | Merge two variables into a single variable, optionally map values to a new set of values                                   |
-| installCygwinWindowsDoInstall  | Convenience function to install a cygwin environment (MS Windows only)                                                     |
+| Function name                      | Function purpose                                                                                                           |
+| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `ctrOpenSearchPagesInBrowser()`    | Open search pages of registers or execute search in web browser                                                            |
+| `ctrFindActiveSubstanceSynonyms()` | Find synonyms and alternative names for an active substance                                                                |
+| `ctrGetQueryUrlFromBrowser()`      | Import from clipboard the URL of a search in one of the registers                                                          |
+| `ctrLoadQueryIntoDb()`             | Retrieve (download) or update, and annotate, information on clinical trials from register and store in database collection |
+| `dbQueryHistory()`                 | Show the history of queries that were downloaded into the database collection                                              |
+| `dbFindFields()`                   | Find names of fields in the database collection                                                                            |
+| `dbFindIdsUniqueTrials()`          | Produce a vector of de-duplicated identifiers of clinical trial records in the database collection                         |
+| `dbGetFieldsIntoDf()`              | Create a data.frame from records in the database collection with the specified fields                                      |
+| `dfMergeTwoVariablesRelevel()`     | Merge two variables into a single variable, optionally map values to a new set of values                                   |
+| `installCygwinWindowsDoInstall()`  | Convenience function to install a cygwin environment (MS Windows only)                                                     |
 
 # Example workflow
 
@@ -374,6 +375,20 @@ MongoDB](inst/image/README-ctrdata_json_mongodb.jpg)
 ![Example JSON representation in
 SQLite](inst/image/README-ctrdata_json_sqlite.jpg)
 
+# Database usage
+
+The database connection object is created with parameters that are
+specific to the database (e.g., `url`) and the parameter `collection`.
+Any such connection object can then be used by `ctrdata` and generic
+functions such as in `nodbi` in a consistent ways, as shown in the
+table.
+
+| Purpose                                  | SQLite                                                                                | MongoDB                                                                                                                  |
+| ---------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Create database connection               | `dbc <- nodbi::src_sqlite(dbname = ":memory:", collection = "name_of_my_collection")` | `dbc <- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection", url = "mongodb://localhost")` |
+| Use connection with any ctrdata function | `ctrdata::{ctr,db}*(con = dbc)`                                                       | `ctrdata::{ctr,db}*(con = dbc)`                                                                                          |
+| Use connection with any nodbi function   | `nodbi::docdb_*(src = dbc, key = dbc$collection)`                                     | `nodbi::docdb_*(src = dbc, key = dbc$collection)`                                                                        |
+
 # Features in the works
 
   - Explore using the Windows Subsystem for Linux (WSL) instead of
@@ -397,9 +412,9 @@ SQLite](inst/image/README-ctrdata_json_sqlite.jpg)
     [curl](https://cran.r-project.org/package=curl),
     [httr](https://cran.r-project.org/package=httr),
     [xml2](https://cran.r-project.org/package=xml2),
-    [rvest](https://cran.r-project.org/package=rvest).
+    [rvest](https://cran.r-project.org/package=rvest),
     [mongolite](https://cran.r-project.org/package=mongolite),
-    [nodbi](https://github.com/ropensci/nodbi),
+    [nodbi](https://cran.r-project.org/package=nodbi),
     [RSQLite](https://CRAN.R-project.org/package=RSQLite) and
     [clipr](https://cran.r-project.org/packages=clipr),
 

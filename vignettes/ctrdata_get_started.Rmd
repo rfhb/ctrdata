@@ -119,6 +119,8 @@ Using operating system functions.
 The next steps are executed in the R environment: 
 
 ```{r get_query_from_browser}
+# q <- "https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&age=under-18&status=completed&phase=phase-one"
+
 q <- ctrGetQueryUrlFromBrowser()
 # Found search query from EUCTR.
 
@@ -138,6 +140,11 @@ ctrOpenSearchPagesInBrowser(input = q)
 # Connect to a database and chose a table / collection
 db <- nodbi::src_sqlite(dbname = "sqlite_file.sql",
                         collection = "test")
+
+# Count number of records
+ctrLoadQueryIntoDb(queryterm = q,
+                   only.count = TRUE,
+                   con = db)
 
 # Use search q that was defined in previous step: 
 ctrLoadQueryIntoDb(queryterm = q,
@@ -196,7 +203,7 @@ getKeyNestedList <- function(thelist, thekey) {
     if (!is.na(pos)) return(x[[pos]])
     
     for (element in x) {
-      if (class(element) == "list") {
+      if (any(c("data.frame", "list") %in% class(element))) {
         out <- Recall(element, name)
         if (!is.null(out)) return(out)
       }

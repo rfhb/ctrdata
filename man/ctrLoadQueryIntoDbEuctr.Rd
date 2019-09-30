@@ -5,8 +5,8 @@
 \title{ctrLoadQueryIntoDbEuctr}
 \usage{
 ctrLoadQueryIntoDbEuctr(queryterm = queryterm, register, euctrresults,
-  annotation.text, annotation.mode, parallelretrievals, con, verbose,
-  queryupdateterm)
+  annotation.text, annotation.mode, parallelretrievals, only.count, con,
+  verbose, queryupdateterm)
 }
 \arguments{
 \item{queryterm}{Either a string with the full URL of a search in a register
@@ -31,6 +31,10 @@ the records retreived with the current query.}
 
 \item{parallelretrievals}{Number of parallel downloads of information from
 the register, defaults to 10.}
+
+\item{only.count}{Set to \code{TRUE} to return only the number of trial
+records found in the register for the query. Does not load trial information
+into the database. Default is \code{FALSE}.}
 
 \item{con}{A \link[nodbi]{src} connection object, as obtained with
 nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()}

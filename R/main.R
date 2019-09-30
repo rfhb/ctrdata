@@ -42,6 +42,10 @@
 #' @param parallelretrievals Number of parallel downloads of information from
 #'   the register, defaults to 10.
 #'
+#' @param only.count Set to \code{TRUE} to return only the number of trial
+#'   records found in the register for the query. Does not load trial information
+#'   into the database. Default is \code{FALSE}.
+#'
 #' @inheritParams ctrDb
 #'
 #' @param verbose Printing additional information if set to \code{TRUE}; default
@@ -73,7 +77,7 @@
 #'
 ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate = 0L, forcetoupdate = FALSE,
                                euctrresults = FALSE, annotation.text = "", annotation.mode = "append",
-                               parallelretrievals = 10L,
+                               parallelretrievals = 10L, only.count = FALSE,
                                con = NULL, verbose = FALSE) {
 
   ## check database connection
@@ -84,23 +88,29 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
     if (!installCygwinWindowsTest())
       stop(call. = FALSE)
   #
-  message("Checking helper binaries: ", appendLF = FALSE)
-  #
-  if (!suppressWarnings(installFindBinary(commandtest = "php --version")))
-    stop("php not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
-  #
-  if (!suppressWarnings(installFindBinary(commandtest = "php -r 'simplexml_load_string(\"\");'")))
-    stop("php xml not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
-  #
-  if (!suppressWarnings(installFindBinary(commandtest = "echo x | sed s/x/y/")))
-    stop("sed not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
-  #
-  if (!suppressWarnings(installFindBinary(commandtest = "perl -V:osname")))
-    stop("perl not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
-  #
-  message("done.")
+  # message("Checking helper binaries: ", appendLF = FALSE)
+  # #
+  # if (!suppressWarnings(installFindBinary(commandtest = "php --version")))
+  #   stop("php not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
+  # #
+  # if (!suppressWarnings(installFindBinary(commandtest = "php -r 'simplexml_load_string(\"\");'")))
+  #   stop("php xml not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
+  # #
+  # if (!suppressWarnings(installFindBinary(commandtest = "echo x | sed s/x/y/")))
+  #   stop("sed not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
+  # #
+  # if (!suppressWarnings(installFindBinary(commandtest = "perl -V:osname")))
+  #   stop("perl not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
+  # #
+  # message("done.")
 
   ## parameter checks
+
+  # check queryterm
+  if (class(queryterm) != "character") {
+    # not acceptable
+    stop("queryterm has to be a character string.", call. = FALSE)
+  }
 
   # deduce queryterm and register if a full url is provided
   if (class(queryterm) == "character" &&
@@ -189,7 +199,7 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   # parameters for core functions
   params <- list(queryterm = queryterm, register = register,
                  euctrresults = euctrresults, annotation.text = annotation.text, annotation.mode = annotation.mode,
-                 parallelretrievals = parallelretrievals,
+                 parallelretrievals = parallelretrievals, only.count = only.count,
                  con = con, verbose = verbose,
                  queryupdateterm = queryupdateterm)
   # call core functions
@@ -199,6 +209,12 @@ ctrLoadQueryIntoDb <- function(queryterm = "", register = "EUCTR", querytoupdate
   )
 
   ## finalise
+
+  # only count?
+  if (only.count) {
+    # return
+    return(imported)
+  }
 
   # return some useful information or break if not successful
   if (!exists("imported") || (imported$n == 0)) {
@@ -541,19 +557,24 @@ dbCTRAnnotateQueryRecords <- function(recordnumbers, annotations,
   #
   # check if dataframe is as expected: columns _id and annotation
   # dataframe could be empty if _ids not yet imported
-  if (nrow(annotations) == 0) {
-    annotations <- data.frame("_id" = recordnumbers,
-                              "annotation" = "",
-                              stringsAsFactors = FALSE,
-                              check.names = FALSE)
-  }
+  # if (nrow(annotations) == 0) {
+  #   annotations <- data.frame("_id" = recordnumbers,
+  #                             "annotation" = "",
+  #                             stringsAsFactors = FALSE,
+  #                             check.names = FALSE)
+  # }
 
   # modify the annotations
-  annotations$annotation <- switch(annotation.mode,
-                                   "replace" = paste0(annotation.text),
-                                   "prepend" = paste0(annotation.text, " ", annotations$annotation),
-                                   paste0(annotations$annotation, " ", annotation.text)
+  annotations[["annotation"]] <- switch(annotation.mode,
+                                        "replace" = paste0(annotation.text),
+                                        "prepend" = paste0(annotation.text, " ", annotations$annotation),
+                                        paste0(annotations$annotation, " ", annotation.text)
   )
+
+  # FIXME why is this needed?
+  # ensure column order
+  annotations <- annotations[, c("_id", "annotation")]
+
   # FIXME delete
   # annotations$annotation <- paste0('{"$set": {"annotation": "',
   #                                  trimws(annotations$annotation),
@@ -573,9 +594,12 @@ dbCTRAnnotateQueryRecords <- function(recordnumbers, annotations,
     # mongo$update(query = paste0('{"_id": {"$eq": "', i, '"}}'),
     #              update = annotations[ annotations[["_id"]] == i, 2],
     #              upsert = TRUE)
-    nodbi::docdb_update(src = con,
-                        key = con$collection,
-                        value = annotations[ annotations[["_id"]] == i, ])
+    # nodbi::docdb_update(src = con,
+    #                     key = con$collection,
+    #                     value = annotations[ annotations[["_id"]] == i, ])
+    tmp <- nodbi::docdb_update(src = con,
+                               key = con$collection,
+                               value = annotations[ annotations[["_id"]] == i, ])
   }
 
   # FIXME delete
@@ -677,7 +701,7 @@ dbCTRUpdateQueryHistory <- function(register, queryterm, recordnumber,
 #'
 ctrLoadQueryIntoDbCtgov <- function(queryterm = queryterm, register,
                                     euctrresults , annotation.text, annotation.mode,
-                                    parallelretrievals,
+                                    parallelretrievals, only.count,
                                     con, verbose,
                                     queryupdateterm) {
 
@@ -721,7 +745,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm = queryterm, register,
   if (!grepl("=", queryterm)) queryterm <- paste0("term=", queryterm)
 
   ## inform user and prepare url for downloading
-  message("(1/3) Downloading trials from CTGOV as xml.")
+  message("(1/3) Checking trials in CTGOV:")
   ctgovdownloadcsvurl <- paste0(queryUSRoot, queryUSType1, "&", queryterm, queryupdateterm)
   if (verbose) message("DEBUG: ", ctgovdownloadcsvurl)
 
@@ -751,6 +775,30 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm = queryterm, register,
 
   # inform user
   message("Retrieved overview, ", tmp, " trial(s) are to be downloaded.")
+
+  # only count?
+  if (only.count) {
+
+    # return
+    return(list(n = tmp,
+                success = NULL,
+                failed = NULL))
+  }
+
+  # message("\nn: ", n,
+  #         "\nsuccess: ", length(success),
+  #         "\nfailed: ", length(failed))
+
+  ## system check, in analogy to onload.R
+  message("Checking helper binaries: ", appendLF = FALSE)
+  #
+  if (!suppressWarnings(installFindBinary(commandtest = "php --version")))
+    stop("php not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
+  #
+  if (!suppressWarnings(installFindBinary(commandtest = "php -r 'simplexml_load_string(\"\");'")))
+    stop("php xml not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
+  #
+  message("done.")
 
   # prepare a file handle for saving in temporary directory
   f <- paste0(tempDir, "/", "ctgov.zip")
@@ -807,24 +855,31 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm = queryterm, register,
   # get any annotations for any later update
   if (annotation.text != "") {
 
-    # retrieve annotations
+    if (!nodbi::docdb_exists(src = con,
+                             key = con$collection)) {
 
-    # FIXME delete
-    # annotations <- mongo$find(query = paste0('{"_id": {"$ne": "meta-info"}}'),
-    #                           fields = '{"_id": 1, "annotation": 1}')
-    annotations <- nodbi::docdb_query(src = con,
-                                      key = con$collection,
-                                      query = paste0('{"_id": {"$ne": "meta-info"}}'),
-                                      fields = '{"_id": 1, "annotation": 1}')
+      annotations <- data.frame()
 
-    # FIXME null data frame has no columns
-    # if no column annotations, add it
-    # if (!("annotation" %in% names(annotations))) {
-    #   annotations <- data.frame("_id" = annotations[["_id"]],
-    #                             "annotation" = NA,
-    #                             stringsAsFactors = FALSE,
-    #                             check.names = FALSE)
-    # }
+    } else {
+
+      # retrieve annotations
+
+      # FIXME delete
+      # annotations <- mongo$find(query = paste0('{"_id": {"$ne": "meta-info"}}'),
+      #                           fields = '{"_id": 1, "annotation": 1}')
+      annotations <- nodbi::docdb_query(src = con,
+                                        key = con$collection,
+                                        query = paste0('{"_id": {"$ne": "meta-info"}}'),
+                                        fields = '{"_id": 1, "annotation": 1}')
+
+      # # if no column annotations, add it
+      # if (!("annotation" %in% names(annotations))) {
+      #   annotations <- data.frame("_id" = annotations[["_id"]],
+      #                             "annotation" = NA,
+      #                             stringsAsFactors = FALSE,
+      #                             check.names = FALSE)
+      # }
+    } # if data base exists
   } # if annotation.text
 
   ## run import
@@ -898,7 +953,7 @@ ctrLoadQueryIntoDbCtgov <- function(queryterm = queryterm, register,
 #'
 ctrLoadQueryIntoDbEuctr <- function(queryterm = queryterm, register,
                                     euctrresults , annotation.text, annotation.mode,
-                                    parallelretrievals,
+                                    parallelretrievals, only.count,
                                     con, verbose,
                                     queryupdateterm) {
 
@@ -926,7 +981,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm = queryterm, register,
   # if (!suppressWarnings(installFindBinary("perl -V:osname")))      stop("perl not found.", call. = FALSE)
 
   # inform user
-  message("* Downloading trials from EUCTR:", appendLF = TRUE)
+  message("* Checking trials in EUCTR:", appendLF = TRUE)
 
   # create empty temporary directory on localhost for
   # download from register into temporary directy
@@ -943,7 +998,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm = queryterm, register,
 
   # check if host is available
   if ("try-error" %in% class(try(httr::headers(httr::HEAD(url = utils::URLencode(queryEuRoot),
-                                                          config = httr::config(ssl_verifypeer = FALSE))), silent = TRUE)))
+                                                          config = httr::config(ssl_verifypeer = TRUE))), silent = TRUE)))
     stop("Host ", queryEuRoot, " does not respond, cannot continue.", call. = FALSE)
 
   # get first result page
@@ -968,6 +1023,32 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm = queryterm, register,
   # inform user
   message("Retrieved overview, ", resultsEuNumTrials, " trial(s) from ",
           resultsEuNumPages, " page(s) to be downloaded.")
+
+  # only count?
+  if (only.count) {
+
+    # return
+    return(list(n = resultsEuNumTrials,
+                success = NULL,
+                failed = NULL))
+  }
+
+  ## system check, in analogy to onload.R
+  message("Checking helper binaries: ", appendLF = FALSE)
+  #
+  if (euctrresults && !suppressWarnings(installFindBinary(commandtest = "php --version")))
+    stop("php not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
+  #
+  if (euctrresults && !suppressWarnings(installFindBinary(commandtest = "php -r 'simplexml_load_string(\"\");'")))
+    stop("php xml not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
+  #
+  if (!suppressWarnings(installFindBinary(commandtest = "echo x | sed s/x/y/")))
+    stop("sed not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
+  #
+  if (!suppressWarnings(installFindBinary(commandtest = "perl -V:osname")))
+    stop("perl not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
+  #
+  message("done.")
 
   # calculate batches to get data from all results pages
   resultsNumBatches <- resultsEuNumPages %/% parallelretrievals
@@ -1052,23 +1133,31 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm = queryterm, register,
   # get any annotations for any later update
   if (annotation.text != "") {
 
-    # retrieve annotations
+    if (!nodbi::docdb_exists(src = con,
+                             key = con$collection)) {
 
-    # FIXME delete
-    # annotations <- mongo$find(query = paste0('{"_id": {"$ne": "meta-info"}}'),
-    #                           fields = '{"_id": 1, "annotation": 1}')
-    annotations <- nodbi::docdb_query(src = con,
-                                      key = con$collection,
-                                      query = paste0('{"_id": {"$ne": "meta-info"}}'),
-                                      fields = '{"_id": 1, "annotation": 1}')
+      annotations <- data.frame()
 
-    # # if no column annotations, add it
-    # if (!("annotation" %in% names(annotations))) {
-    #   annotations <- data.frame("_id" = annotations[["_id"]],
-    #                             "annotation" = NA,
-    #                             stringsAsFactors = FALSE,
-    #                             check.names = FALSE)
-    # }
+    } else {
+
+      # retrieve annotations
+
+      # FIXME delete
+      # annotations <- mongo$find(query = paste0('{"_id": {"$ne": "meta-info"}}'),
+      #                           fields = '{"_id": 1, "annotation": 1}')
+      annotations <- nodbi::docdb_query(src = con,
+                                        key = con$collection,
+                                        query = paste0('{"_id": {"$ne": "meta-info"}}'),
+                                        fields = '{"_id": 1, "annotation": 1}')
+
+      # # if no column annotations, add it
+      # if (!("annotation" %in% names(annotations))) {
+      #   annotations <- data.frame("_id" = annotations[["_id"]],
+      #                             "annotation" = NA,
+      #                             stringsAsFactors = FALSE,
+      #                             check.names = FALSE)
+      # }
+    } # if data base exists
   } # if annotation.text
 
   # run conversion of text files saved into file system to json file
@@ -1262,7 +1351,27 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm = queryterm, register,
                                   key = con$collection,
                                   # FIXME should quoting be done in nodbi::dbodb_update()?
                                   value = data.frame("a2_eudract_number" = x,
+
+                                                     # this replaces all the protocol info
+                                                     # XXXXXXXXXX
                                                      "json" = tmp,
+                                                     # XXXXXXXXXX
+                                                     # ????
+                                                     # https://www.sqlite.org/json1.html#jpatch
+
+# However, MergePatch treats JSON Array objects as atomic.
+# MergePatch cannot append to an Array nor modify individual elements of an Array.
+# It can only insert, replace, or delete the whole Array as a single unit.
+# Hence, json_patch() is not as useful when dealing with JSON that includes Arrays,
+# especially Arrays with lots of substructure.
+#
+# json_patch('{"a":1,"b":2}','{"c":3,"d":4}') → '{"a":1,"b":2,"c":3,"d":4}'
+# json_patch('{"a":[1,2],"b":2}','{"a":9}') → '{"a":9,"b":2}'
+# json_patch('{"a":[1,2],"b":2}','{"a":null}') → '{"b":2}'
+# json_patch('{"a":1,"b":2}','{"a":9,"b":null,"c":8}') → '{"a":9,"c":8}'
+# json_patch('{"a":{"x":1,"y":2},"b":3}','{"a":{"y":9},"c":8}') → '{"a":{"x":1,"y":9},"b":3,"c":8}'
+#
+
                                                      stringsAsFactors = FALSE))
             # nodbi::docdb_update(src = con,
             #                     key = con$collection,
@@ -1381,6 +1490,8 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm = queryterm, register,
         #                            value = data.frame("firstreceived_results_date" = as.character(tmpFirstDate[x]),
         #                                                "version_results_history" = tmpChanges[x],
         #                                                stringsAsFactors = FALSE))
+
+        if (tmpChanges[x] == "") tmpChanges[x] <- "(not specified)"
 
         upd <- nodbi::docdb_update(src = con,
                                    key = con$collection,
