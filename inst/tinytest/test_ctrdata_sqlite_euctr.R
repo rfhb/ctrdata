@@ -11,8 +11,8 @@ dbc <- nodbi::src_sqlite(
   dbname = ":memory:",
   collection = mongo_local_rw_collection)
 
-#### CTGOV ####
-source("ctrdata_ctgov.R", local = TRUE)
+#### EUCTR ####
+source("ctrdata_euctr.R", local = TRUE)
 
 #### close ####
 RSQLite::dbDisconnect(conn = dbc$con)

@@ -12,6 +12,11 @@
 # there is no testing done in this file,
 # only helper functions and global variables
 
+#### setup ####
+library(tinytest)
+
+suppressMessages(library(ctrdata))
+
 #### helper functions for data ####
 
 getSublistKey <- function(fulllist,
@@ -45,33 +50,6 @@ getSublistKey <- function(fulllist,
   out
 }
 
-# getKeyNestedList <- function(thelist, thekey) {
-#
-#   # recursive find
-#   rmatch <- function(x, name) {
-#
-#     pos <- match(name, names(x))
-#     if (!is.na(pos)) return(x[[pos]])
-#
-#     for (element in x) {
-#       if (any(c("data.frame", "list") %in% class(element))) {
-#         out <- Recall(element, name)
-#         if (!is.null(out)) return(out)
-#       }
-#     }
-#   }
-#
-#   # get key from any level, deduplicate, remove NA,
-#   # collapse if more than one value per list item
-#   sapply(thelist, function(x) {
-#     out <- rmatch(x = x, name = thekey)
-#     out <- na.omit(out)
-#     out <- unique(out)
-#     out <- paste0(out, collapse = " / ")
-#     out
-#   })
-# }
-
 extractKey <- function(flattenedList, key) {
 
   # extract value for key
@@ -86,35 +64,11 @@ extractKey <- function(flattenedList, key) {
   return(extracted)
 }
 
-
 getNames <- function(thevector) {
 
   sort(unique(sub("[0-9]+$", "", names(thevector))))
 
 }
-
-
-# simplifyList <- function(thelist) {
-#
-#   # helper function to avoid
-#   # that NULL is ignored or removed
-#   rapply2 <- function(x, fn) {
-#     if (is.list(x)) {
-#       sapply(x, rapply2, fn)
-#     } else {
-#       fn(x)
-#     }
-#   }
-#
-#   # apply function replacing
-#   # NULL with e.g. NA
-#   tmp <- rapply2(thelist,
-#                  function(x) if (is.null(x)) NA else x)
-#
-#   # recursively unlist and change to vector
-#   sapply(tmp, function(x) as.vector(unlist(x)))
-#
-# }
 
 
 #### global variables for data bases ####

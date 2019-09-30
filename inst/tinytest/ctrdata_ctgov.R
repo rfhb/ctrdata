@@ -1,15 +1,9 @@
 ## RH 2019-09-28
 
 #### SETUP ####
+# this file is called from various files
 
-# this file is called from various
-# database files, e.g. from
-#
-# test_ctrdata_mongo_local_ctgov.R
-# test_ctrdata_mongo_remote_ctgov.R
-# test_ctrdata_sqlite.R
-
-#### CTGOV ####
+#### ctrLoadQueryIntoDb ####
 
 # test
 expect_message(
@@ -29,7 +23,7 @@ expect_equal(tmp_test$success, "NCT01471782")
 # test
 expect_true(length(tmp_test$failed) == 0L)
 
-#### update ####
+#### ctrLoadQueryIntoDb update ####
 
 # new query
 q <- paste0("https://clinicaltrials.gov/ct2/results?",
@@ -78,7 +72,7 @@ expect_true(length(tmp_test$success) > 2L)
 # test
 expect_true(length(tmp_test$failed) == 0L)
 
-#### results ####
+#### ctrLoadQueryIntoDb results ####
 
 # get results
 result <- suppressWarnings(

@@ -13,10 +13,9 @@ dbc <- nodbi::src_mongo(
   url = "mongodb://localhost")
 
 #### CTGOV ####
-source("ctrdata_ctgov.R", local = TRUE)
+source("ctrdata_euctr.R", local = TRUE)
 
 #### close ####
 dbc$con$drop()
 dbc$con$disconnect()
-
 

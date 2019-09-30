@@ -1,15 +1,9 @@
 ## RH 2019-09-28
 
 #### SETUP ####
+# this file is called from various files
 
-# this file is called from various
-# database files, e.g. from
-#
-# test_ctrdata_mongo_local_euctr.R
-# test_ctrdata_mongo_remote_euctr.R
-# test_ctrdata_sqlite_euctr.R
-
-#### EUCTR ####
+#### ctrLoadQueryIntoDb ####
 
 q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
             "neuroblastoma&status=completed&phase=phase-one&country=pl")
@@ -32,7 +26,7 @@ expect_true(all(c("2007-000371-42-FR", "2010-019340-40-GB", "2010-019340-40-3RD"
 # test
 expect_true(length(tmp_test$failed) == 0L)
 
-#### update ####
+#### ctrLoadQueryIntoDb update ####
 
 # only works for last 7 days with rss mechanism
 # query based on date is used since this avoids no trials are found
@@ -79,18 +73,17 @@ expect_message(
   "(Imported or updated|First result page empty)")
 
 # test
-expect_true(tmp_test$n > 20L)
+expect_true(tmp_test$n > 10L)
 
 # test
-expect_true(length(tmp_test$success) > 20L)
+expect_true(length(tmp_test$success) > 10L)
 
 # test
 expect_true(length(tmp_test$failed) == 0L)
 
-#### results ####
+#### ctrLoadQueryIntoDb results ####
 
 # get trials with results
-
 q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
             "2007-000371-42+OR+2011-004742-18")
 
@@ -99,13 +92,12 @@ expect_message(
     ctrLoadQueryIntoDb(
       queryterm = q,
       euctrresults = TRUE,
-      verbose = TRUE,
       con = dbc)),
   "Imported or updated results for")
 
 # tmp <- nodbi::docdb_get(src = dbc, key = dbc$collection)
-tmp <- nodbi::docdb_query(src = dbc, key = dbc$collection,
-                          query = '{}', listfields = 1L)
+# tmp <- nodbi::docdb_query(src = dbc, key = dbc$collection,
+#                           query = '{}', listfields = 1L)
 
 # get results
 result <- suppressWarnings(
@@ -126,8 +118,10 @@ result <- suppressWarnings(
     stopifnodata = FALSE))
 
 # keep only one record for trial
-result <- result[ result[["_id"]]
-                  %in% dbFindIdsUniqueTrials(con = dbc), ]
+result <- suppressWarnings(suppressMessages(
+  result[ result[["_id"]]
+          %in% dbFindIdsUniqueTrials(con = dbc), ]
+))
 
 # test
 expect_true(all(as.Date(c("2015-07-29", "2016-07-28"))
@@ -158,7 +152,7 @@ expect_true(
     result,
     list(
       c("endPoints.endPoint", "title"))
-    )),
+  )),
   na.rm = TRUE)
   > 2000L)
 
@@ -176,7 +170,7 @@ tmp_test <- getSublistKey(
     )
 )
 expect_true(all(tmp_test$endPoints.endPoint.type.value %in%
-                  c("ENDPOINT_TYPE.primary", "ENDPOINT_TYPE.secondary")))
+                  c("ENDPOINT_TYPE.primary", "ENDPOINT_TYPE.secondary", NA)))
 
 # extractKey(tmp2, "^armReportingGroups.armReportingGroup.tendencyValues.tendencyValue.value")
 # extractKey(tmp2, "armReportingGroups.armReportingGroup.subjects")
@@ -199,4 +193,127 @@ expect_true(
       tmp_test[["endPoints.endPoint.armReportingGroups.armReportingGroup.subjects"]]),
     na.rm = TRUE) > 1250L)
 
+#### dbFindFields #####
 
+# test
+expect_error(
+  dbFindFields(
+    namepart = c("onestring", "twostring"),
+    con = dbc),
+  "Name part should have only one element.")
+
+# test
+expect_error(
+  dbFindFields(
+    namepart = list("onestring", "twostring"),
+    con = dbc),
+  "Name part should be atomic.")
+
+# test
+expect_error(
+  dbFindFields(namepart = "",
+               con = dbc),
+  "Empty name part string.")
+
+# test
+tmp_test <- suppressWarnings(
+  dbFindFields(
+    namepart = "date",
+    con = dbc))
+expect_true("character" %in% class(tmp_test))
+expect_true(length(tmp_test) >= 5L)
+
+#### dbFindIdsUniqueTrials #####
+
+# test
+expect_message(
+  suppressWarnings(
+    dbFindIdsUniqueTrials(
+      con = dbc,
+      preferregister = "EUCTR")),
+  "Searching for duplicates")
+
+# test
+expect_message(
+  suppressWarnings(
+    dbFindIdsUniqueTrials(
+      con = dbc,
+      preferregister = "CTGOV")),
+  "Returning keys")
+
+# test
+expect_warning(
+  suppressMessages(
+    tmp_test <- dbFindIdsUniqueTrials(
+      con = dbc,
+      prefermemberstate = "3RD",
+      include3rdcountrytrials = FALSE)),
+  "Preferred EUCTR version set to 3RD country trials")
+
+# test
+expect_true(all(
+  c("2007-000371-42-PL",  "2010-019340-40-3RD", "2011-004742-18-PL",
+    "2015-001653-32-3RD", "2018-003180-54-SE",  "2018-003986-33-SK")
+  %in% tmp_test))
+
+#### annotations #####
+
+# test
+expect_message(
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
+      queryterm = "NCT01516567",
+      register = "CTGOV",
+      con = dbc,
+      annotation.text = "ANNO",
+      annotation.mode = "replace")),
+  "Imported or updated 1 trial")
+
+# test
+expect_message(
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
+      queryterm = "2010-024264-18",
+      register = "EUCTR",
+      con = dbc,
+      annotation.text = "ANNO",
+      annotation.mode = "replace")),
+  "Imported or updated")
+
+# test
+expect_message(
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
+      queryterm = "2010-024264-18",
+      register = "EUCTR",
+      con = dbc,
+      annotation.text = "EU",
+      annotation.mode = "prepend")),
+  "Imported or updated")
+
+tmp_test <- suppressWarnings(
+  dbGetFieldsIntoDf(
+    fields = "annotation",
+    con = dbc))
+
+tmp_test <-
+  tmp_test[
+    tmp_test[["_id"]] %in%
+      suppressMessages(
+        suppressWarnings(
+          dbFindIdsUniqueTrials(
+            con = dbc))) , ]
+
+# test
+expect_equal(sort(tmp_test[["annotation"]]),
+             sort(c("EU ANNO", "ANNO")))
+
+
+#### ctrOpenSearchPagesInBrowser #####
+
+# test
+expect_message(
+  suppressWarnings(
+    ctrOpenSearchPagesInBrowser(
+      dbQueryHistory(con = dbc)[1, ])),
+  "Opening browser for search:")

@@ -1,8 +1,7 @@
 ## RH 2019-09-28
 
 #### SETUP ####
-
-source("test_ctrdata.R")
+source("setup_ctrdata.R")
 
 if (!check_internet()) exit_file("Not available: internet connectivity")
 
