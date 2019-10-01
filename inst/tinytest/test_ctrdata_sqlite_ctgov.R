@@ -15,4 +15,5 @@ dbc <- nodbi::src_sqlite(
 source("ctrdata_ctgov.R", local = TRUE)
 
 #### close ####
+RSQLite::dbRemoveTable(conn = dbc$con, name = dbc$collection)
 RSQLite::dbDisconnect(conn = dbc$con)

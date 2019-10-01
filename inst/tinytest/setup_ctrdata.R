@@ -6,6 +6,8 @@
 # testing of built and installed package:
 # tinytest::test_package("ctrdata")
 
+# options(tt.pr.passes = TRUE)
+
 # functions for testing
 # to be sourced by test_*.R
 
@@ -72,14 +74,15 @@ getNames <- function(thevector) {
 
 
 #### global variables for data bases ####
-tmpname <- paste0("ctrdata_tinytest_",
+tmpname <- paste0("ctrdata_test_",
                   format(Sys.time(),
                          "%Y%m%d%H%M%S",
-                         tz = "UTC"))
+                         tz = "UTC"), "_",
+                  paste0(sample(letters, 6), collapse = ""))
 
 # local mongodb
 mongo_local_rw_collection <- tmpname
-mongo_local_rw_db         <- tmpname
+mongo_local_rw_db         <- "users"
 
 # remote mongodb read only
 mongo_remote_ro_collection <- "dbperm"
@@ -87,7 +90,7 @@ mongo_remote_ro_db         <- "dbperm"
 
 # remote mongodb read write
 mongo_remote_rw_collection <- tmpname
-mongo_remote_rw_db         <- tmpname
+mongo_remote_rw_db         <- "users"
 
 # credentials
 
