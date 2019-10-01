@@ -535,12 +535,12 @@ dbCTRAnnotateQueryRecords <- function(recordnumbers, annotations,
   if (verbose) message(annotation.mode)
 
   # check if dataframe is as expected: columns _id and annotation
-  if (nrow(annotations) == 0) {
-    annotations <- data.frame("_id" = recordnumbers,
-                              "annotation" = "",
-                              stringsAsFactors = FALSE,
-                              check.names = FALSE)
-  }
+  # if (nrow(annotations) == 0) {
+  #   annotations <- data.frame("_id" = recordnumbers,
+  #                             "annotation" = "",
+  #                             stringsAsFactors = FALSE,
+  #                             check.names = FALSE)
+  # }
 
   # FIXME the following is already ensured in calling function
   # if (!("annotation" %in% names(annotations))) {
@@ -557,12 +557,12 @@ dbCTRAnnotateQueryRecords <- function(recordnumbers, annotations,
   #
   # check if dataframe is as expected: columns _id and annotation
   # dataframe could be empty if _ids not yet imported
-  # if (nrow(annotations) == 0) {
-  #   annotations <- data.frame("_id" = recordnumbers,
-  #                             "annotation" = "",
-  #                             stringsAsFactors = FALSE,
-  #                             check.names = FALSE)
-  # }
+  if (nrow(annotations) == 0) {
+    annotations <- data.frame("_id" = recordnumbers,
+                              "annotation" = "",
+                              stringsAsFactors = FALSE,
+                              check.names = FALSE)
+  }
 
   # modify the annotations
   annotations[["annotation"]] <- switch(annotation.mode,
