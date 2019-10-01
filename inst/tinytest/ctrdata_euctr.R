@@ -3,6 +3,10 @@
 #### SETUP ####
 # this file is called from various files
 
+# add some random delay to avoid
+# too many parallel retrievals
+Sys.sleep(runif(n = 1, min = 1, max = 20))
+
 #### ctrLoadQueryIntoDb ####
 
 q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
@@ -134,7 +138,7 @@ result <- suppressWarnings(suppressMessages(
 ))
 
 # test
-expect_true(all(as.Date(c("2015-07-29", "2016-07-28"))
+expect_true(all(as.Date(c("2016-07-28"))
                 %in% result$firstreceived_results_date),
             info = "ctrdata_euctr.R#138")
 
@@ -277,8 +281,7 @@ expect_warning(
 
 # test
 expect_true(all(
-  c("2007-000371-42-PL",  "2010-019340-40-3RD", "2011-004742-18-PL",
-    "2015-001653-32-3RD", "2018-003180-54-SE",  "2018-003986-33-SK")
+  c("2007-000371-42-PL",  "2011-004742-18-PL")
   %in% tmp_test),
   info = "ctrdata_euctr.R#283")
 
