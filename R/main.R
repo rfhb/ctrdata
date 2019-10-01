@@ -1334,7 +1334,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm = queryterm, register,
           if (file.exists(fileName) && file.size(fileName) > 0) {
 
             # read contents
-            tmp <- readChar(con = fileName, nchars = file.info(fileName)$size, useBytes = TRUE)
+            tmpjson <- readChar(con = fileName, nchars = file.info(fileName)$size, useBytes = TRUE)
 
             # update database with results
             # FIXME delete
@@ -1346,7 +1346,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm = queryterm, register,
             #                            na.rm = TRUE))
             #             }, silent = TRUE)
 
-            tmp <- try({tmp <-
+            tmp <- try({tmpnodbi <-
               nodbi::docdb_update(src = con,
                                   key = con$collection,
                                   # FIXME should quoting be done in nodbi::dbodb_update()?
@@ -1354,7 +1354,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm = queryterm, register,
 
                                                      # this replaces all the protocol info
                                                      # XXXXXXXXXX
-                                                     "json" = tmp,
+                                                     "json" = tmpjson,
                                                      # XXXXXXXXXX
                                                      # ????
                                                      # https://www.sqlite.org/json1.html#jpatch
@@ -1378,7 +1378,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm = queryterm, register,
             #                     query  = paste0('{"a2_eudract_number":{"$eq":"', x, '"}}'),
             #                     # TODO change into dataframe
             #                     value = data.frame(tmp, stringsAsFactors = FALSE))
-            max(tmp, na.rm = TRUE)},
+            max(tmpnodbi, na.rm = TRUE)},
             silent = TRUE)
 
             # inform user on failed trial
@@ -1514,7 +1514,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm = queryterm, register,
     # mongo$disconnect()
 
     # sum up successful downloads
-    importedresults <- sum(unlist(importedresults))
+    importedresults <- sum(unlist(importedresults), na.rm = TRUE)
 
     ## inform user on final import outcome
     message("\n= Imported or updated results for ", importedresults,
