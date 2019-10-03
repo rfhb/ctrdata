@@ -1241,7 +1241,7 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm = queryterm, register,
                                                        done = cb,
                                                        pool = pool,
                                                        data = fp[x],
-                                                       handle = curl::new_handle(ssl_verifypeer = FALSE)
+                                                       handle = curl::new_handle(ssl_verifypeer = TRUE)
                     ))
 
       # do download and save
@@ -1405,6 +1405,9 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm = queryterm, register,
     } # for batch
 
     # iterate over batches of result history from webpage
+    # TODO this does not include the retrieval of information
+    # about amendment to the study, as presented at the bottom
+    # of the webpage for the respective trial results
     message("(4/4) Retrieving any results history and importing into database ...", appendLF = FALSE)
     for (i in 1:(resultsNumBatches + ifelse(resultsNumModulo > 0, 1, 0))) {
 
@@ -1423,12 +1426,25 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm = queryterm, register,
       urls <- unlist(lapply(paste0("https://www.clinicaltrialsregister.eu/ctr-search/trial/",
                                    eudractnumbersimported[startindex:stopindex], "/results"),
                             utils::URLencode))
-      tmp <- lapply(seq_along(urls),
-                    function(x) curl::curl_fetch_multi(url = urls[x],
-                                                       done = done,
-                                                       pool = pool,
-                                                       handle = curl::new_handle(ssl_verifypeer = FALSE)
-                    ))
+      # tmp <- lapply(seq_along(urls),
+      #               function(x) curl::curl_fetch_multi(url = urls[x],
+      #                                                  done = done,
+      #                                                  pool = pool,
+      #                                                  handle = curl::new_handle(ssl_verifypeer = TRUE)
+      #               ))
+      tmp <- lapply(
+        seq_along(urls),
+        function(x)
+          curl::curl_fetch_multi(
+            url = urls[x],
+            done = done,
+            pool = pool,
+            handle = curl::new_handle(
+              ssl_verifypeer = TRUE,
+              range = "0-22999", # NOTE only top part of page
+              accept_encoding = "identity"
+              )
+          ))
 
       # do download and save into batchresults
       retdat <- NULL
@@ -1465,11 +1481,11 @@ ctrLoadQueryIntoDbEuctr <- function(queryterm = queryterm, register,
 
       tmpChanges <- sapply(batchresults, function(x)
         trimws(gsub("[ ]+", " ",
-                    gsub("[\n\r]", "",
-                         gsub("<[a-z/]+>", "",
-                              sub(".+Version creation reason.*?<td class=\"valueColumn\">(.+?)</td>.+", "\\1",
-                                  ifelse(grepl("Version creation reason", x), x, ""))
-                         ))))
+               gsub("[\n\r]", "",
+               gsub("<[a-z/]+>", "",
+               sub(".+Version creation reason.*?<td class=\"valueColumn\">(.+?)</td>.+", "\\1",
+               ifelse(grepl("Version creation reason", x), x, ""))
+               ))))
       )
 
       tmp <- lapply(seq_along(along.with = startindex:stopindex), function(x) {
