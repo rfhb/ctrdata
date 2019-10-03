@@ -5,42 +5,50 @@
 \title{ctrLoadQueryIntoDbEuctr}
 \usage{
 ctrLoadQueryIntoDbEuctr(queryterm = queryterm, register, euctrresults,
-  annotation.text, annotation.mode, parallelretrievals, only.count, con,
-  verbose, queryupdateterm)
+  euctrresultshistory, annotation.text, annotation.mode,
+  parallelretrievals, only.count, con, verbose, queryupdateterm)
 }
 \arguments{
-\item{queryterm}{Either a string with the full URL of a search in a register
-or the data frame returned by the \link{ctrGetQueryUrlFromBrowser} or the
+\item{queryterm}{Either a string with the full URL of a search in
+a register or the data frame returned by the
+\link{ctrGetQueryUrlFromBrowser} or the
 \link{dbQueryHistory} functions.
 The queryterm is recorded in the \code{collection} for later
 use to update records.}
 
-\item{register}{Vector of abbreviations of the register to query, defaults to
-"EUCTR"}
+\item{register}{Vector of abbreviations of the register to query,
+defaults to "EUCTR".}
 
-\item{euctrresults}{If \code{TRUE}, also download available results when
-retrieving and loading trials from EUCTR. This slows down this function.
-(For CTGOV, all available results are always retrieved and loaded.)}
+\item{euctrresults}{If \code{TRUE}, also download available
+results when retrieving and loading trials from EUCTR. This
+slows down this function. (For CTGOV, all available results
+are always retrieved and loaded.)}
 
-\item{annotation.text}{Text to be including in the records retrieved
-with the current query, in the field "annotation".}
+\item{euctrresultshistory}{If \code{TRUE}, also download
+available history of results publication in EUCTR.
+This is quite time-consuming (default is \code{FALSE}).}
 
-\item{annotation.mode}{One of "append" (default), "prepend" or "replace"
-for new annotation.text with respect to any existing annotation for
-the records retreived with the current query.}
+\item{annotation.text}{Text to be including in the records
+retrieved with the current query, in the field "annotation".}
 
-\item{parallelretrievals}{Number of parallel downloads of information from
-the register, defaults to 10.}
+\item{annotation.mode}{One of "append" (default), "prepend"
+or "replace" for new annotation.text with respect to any
+existing annotation for the records retreived with the
+current query.}
 
-\item{only.count}{Set to \code{TRUE} to return only the number of trial
-records found in the register for the query. Does not load trial information
-into the database. Default is \code{FALSE}.}
+\item{parallelretrievals}{Number of parallel downloads of
+information from the register, defaults to 10.}
+
+\item{only.count}{Set to \code{TRUE} to return only the
+number of trial records found in the register for the query.
+Does not load trial information into the database.
+Default is \code{FALSE}.}
 
 \item{con}{A \link[nodbi]{src} connection object, as obtained with
 nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()}
 
-\item{verbose}{Printing additional information if set to \code{TRUE}; default
-is \code{FALSE}.}
+\item{verbose}{Printing additional information if set to
+\code{TRUE}; default is \code{FALSE}.}
 }
 \description{
 ctrLoadQueryIntoDbEuctr

@@ -2,70 +2,82 @@
 % Please edit documentation in R/main.R
 \name{ctrLoadQueryIntoDb}
 \alias{ctrLoadQueryIntoDb}
-\title{Retrieve or update information on clinical trials from register and store in
-database}
+\title{Retrieve or update information on clinical trials from register
+and store in database}
 \usage{
 ctrLoadQueryIntoDb(queryterm = "", register = "EUCTR",
   querytoupdate = 0L, forcetoupdate = FALSE, euctrresults = FALSE,
-  annotation.text = "", annotation.mode = "append",
-  parallelretrievals = 10L, only.count = FALSE, con = NULL,
-  verbose = FALSE)
+  euctrresultshistory = FALSE, annotation.text = "",
+  annotation.mode = "append", parallelretrievals = 10L,
+  only.count = FALSE, con = NULL, verbose = FALSE)
 }
 \arguments{
-\item{queryterm}{Either a string with the full URL of a search in a register
-or the data frame returned by the \link{ctrGetQueryUrlFromBrowser} or the
+\item{queryterm}{Either a string with the full URL of a search in
+a register or the data frame returned by the
+\link{ctrGetQueryUrlFromBrowser} or the
 \link{dbQueryHistory} functions.
 The queryterm is recorded in the \code{collection} for later
 use to update records.}
 
-\item{register}{Vector of abbreviations of the register to query, defaults to
-"EUCTR"}
+\item{register}{Vector of abbreviations of the register to query,
+defaults to "EUCTR".}
 
-\item{querytoupdate}{Either the word "last" or the number of the query (based
-on \link{dbQueryHistory}) that should be run to retrieve any trial records
-that are new or have been updated since this query was run the last time.
+\item{querytoupdate}{Either the word "last" or the number of the
+query (based on \link{dbQueryHistory}) that should be run to
+retrieve any trial records that are new or have been updated
+since this query was run the last time.
 This parameter takes precedence over \code{queryterm}.
 For EUCTR, updates are available only for the last seven days;
-the query is run again if more time has passed since it was run last.}
+the query is run again if more time has passed since it was
+run last.}
 
-\item{forcetoupdate}{If \code{TRUE}, run again the query given in
-\code{querytoupdate}, irrespective of when it was run last
-(default is \code{FALSE}).}
+\item{forcetoupdate}{If \code{TRUE}, run again the query
+given in \code{querytoupdate}, irrespective of when it was
+run last (default is \code{FALSE}).}
 
-\item{euctrresults}{If \code{TRUE}, also download available results when
-retrieving and loading trials from EUCTR. This slows down this function.
-(For CTGOV, all available results are always retrieved and loaded.)}
+\item{euctrresults}{If \code{TRUE}, also download available
+results when retrieving and loading trials from EUCTR. This
+slows down this function. (For CTGOV, all available results
+are always retrieved and loaded.)}
 
-\item{annotation.text}{Text to be including in the records retrieved
-with the current query, in the field "annotation".}
+\item{euctrresultshistory}{If \code{TRUE}, also download
+available history of results publication in EUCTR.
+This is quite time-consuming (default is \code{FALSE}).}
 
-\item{annotation.mode}{One of "append" (default), "prepend" or "replace"
-for new annotation.text with respect to any existing annotation for
-the records retreived with the current query.}
+\item{annotation.text}{Text to be including in the records
+retrieved with the current query, in the field "annotation".}
 
-\item{parallelretrievals}{Number of parallel downloads of information from
-the register, defaults to 10.}
+\item{annotation.mode}{One of "append" (default), "prepend"
+or "replace" for new annotation.text with respect to any
+existing annotation for the records retreived with the
+current query.}
 
-\item{only.count}{Set to \code{TRUE} to return only the number of trial
-records found in the register for the query. Does not load trial information
-into the database. Default is \code{FALSE}.}
+\item{parallelretrievals}{Number of parallel downloads of
+information from the register, defaults to 10.}
+
+\item{only.count}{Set to \code{TRUE} to return only the
+number of trial records found in the register for the query.
+Does not load trial information into the database.
+Default is \code{FALSE}.}
 
 \item{con}{A \link[nodbi]{src} connection object, as obtained with
 nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()}
 
-\item{verbose}{Printing additional information if set to \code{TRUE}; default
-is \code{FALSE}.}
+\item{verbose}{Printing additional information if set to
+\code{TRUE}; default is \code{FALSE}.}
 }
 \value{
-A list with elements "n" (the number of trials that were newly imported
- or updated with this function call) and "ids" (a vector of the _id[s] of these
- trials), with attributes (database connection details and a data frame of the
- query history in this database).
+A list with elements "n" (the number of trials that
+were newly imported or updated with this function call) and
+"ids" (a vector of the _id[s] of these trials), with
+attributes (database connection details and a data frame of
+the query history in this database).
 }
 \description{
-This is the main function of package \link{ctrdata} for accessing registers.
-Note that re-rerunning this function adds or updates trial records
-  in a database, even if from different queries or different registers.
+This is the main function of package \link{ctrdata} for accessing
+registers. Note that re-rerunning this function adds or updates
+trial records in a database, even if from different queries or
+different registers.
 }
 \examples{
 # Retrieve protocol-related information on a

@@ -7,14 +7,16 @@
 dbCTRLoadJSONFiles(dir, con)
 }
 \arguments{
-\item{dir}{Path to local directory with JSON files from downloading and converting}
+\item{dir}{Path to local directory with JSON files
+from downloading and converting}
 
 \item{con}{A \link[nodbi]{src} connection object, as obtained with
 nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()}
 }
 \value{
-List with elements n (number of imported trials) and _id's successfully
- imported trials and of trials that failed to import
+List with elements n (number of imported trials),
+_id's of successfully imported trials and
+_id's of trials that failed to import
 }
 \description{
 dbCTRLoadJSONFiles

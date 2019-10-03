@@ -14,18 +14,18 @@ See function \link{dbFindFields} for how to find names of fields.}
 \item{con}{A \link[nodbi]{src} connection object, as obtained with
 nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()}
 
-\item{verbose}{Printing additional information if set to \code{TRUE}; default
-is \code{FALSE}.}
+\item{verbose}{Printing additional information if set to \code{TRUE};
+default is \code{FALSE}.}
 
-\item{stopifnodata}{Stops with an error (\code{TRUE}, default) or with a warning
-(\code{TRUE}) if sought field is empty or not available in any of the records
-in the database collection.}
+\item{stopifnodata}{Stops with an error (\code{TRUE}, default) or with
+a warning (\code{FALSE}) if the sought field is empty in all,
+or not available in any of the records in the database collection.}
 }
 \value{
-A data frame with columns corresponding to the sought fields. Note
-  that a column for the record _id will always be included. The maximum
-  number of rows of the returned data frame is equal to or less than the
-  number of records in the data base.
+A data frame with columns corresponding to the sought fields.
+Note: a column for the record _id will always be included.
+The maximum number of rows of the returned data frame is equal to,
+or less than the number of records in the data base.
 }
 \description{
 With this convenience function, fields in the mongo database are retrieved

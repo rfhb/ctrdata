@@ -12,14 +12,15 @@ dfFindUniqueEuctrRecord(df = NULL, prefermemberstate = "GB",
 "_id" and "a2_eudract_number", for example created with function
 dbGetFieldsIntoDf(c("_id", "a2_eudract_number")).}
 
-\item{prefermemberstate}{Code of single EU Member State for which records should
-returned. If not available, a record for GB or lacking this, any other record
-for the trial will be returned. For a list of codes of EU
-Member States, please see vector \code{countriesEUCTR}. Alternatively, "3RD"
-will lead to return the Third Country record of a trial, if available.}
+\item{prefermemberstate}{Code of single EU Member State for which records
+should returned. If not available, a record for GB or lacking this, any
+other record for the trial will be returned. For a list of codes of EU
+  Member States, please see vector \code{countriesEUCTR}. Alternatively,
+  "3RD" will lead to return a Third Country record of a trial, if available.}
 
 \item{include3rdcountrytrials}{A logical value if trials should be retained
-that are conducted *exclusively* in third countries, that is outside the European Union.}
+that are conducted exclusively in third countries, that is, outside
+the European Union.}
 }
 \value{
 A data frame as subset of \code{df} corresponding to the sought

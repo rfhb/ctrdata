@@ -7,11 +7,12 @@
 dbCTRUpdateQueryHistory(register, queryterm, recordnumber, con, verbose)
 }
 \arguments{
-\item{register}{Vector of abbreviations of the register to query, defaults to
-"EUCTR"}
+\item{register}{Vector of abbreviations of the register to query,
+defaults to "EUCTR".}
 
-\item{queryterm}{Either a string with the full URL of a search in a register
-or the data frame returned by the \link{ctrGetQueryUrlFromBrowser} or the
+\item{queryterm}{Either a string with the full URL of a search in
+a register or the data frame returned by the
+\link{ctrGetQueryUrlFromBrowser} or the
 \link{dbQueryHistory} functions.
 The queryterm is recorded in the \code{collection} for later
 use to update records.}
@@ -19,8 +20,8 @@ use to update records.}
 \item{con}{A \link[nodbi]{src} connection object, as obtained with
 nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()}
 
-\item{verbose}{Printing additional information if set to \code{TRUE}; default
-is \code{FALSE}.}
+\item{verbose}{Printing additional information if set to
+\code{TRUE}; default is \code{FALSE}.}
 }
 \description{
 dbCTRUpdateQueryHistory

@@ -7,11 +7,12 @@
 installCygwinWindowsTest(verbose = FALSE)
 }
 \arguments{
-\item{verbose}{If \code{TRUE}, prints confirmatory message (default \code{FALSE})}
+\item{verbose}{If \code{TRUE}, prints confirmatory
+message (default \code{FALSE})}
 }
 \value{
-Information if cygwin can be used, \code{TRUE} or \code{FALSE},
- or NULL is not under MS Windows
+Information if cygwin can be used, \code{TRUE}
+ or \code{FALSE}, or NULL if not under MS Windows
 }
 \description{
 Convenience function to test for working cygwin installation

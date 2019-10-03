@@ -4,10 +4,11 @@
 ## variable definitions
 #
 # EUCTR definitions
-countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR",
-                    "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL",
-                    "PL", "PT", "RO", "SK", "SE", "SI", "ES", "GB", "IS", "LI",
-                    "NO", "3RD")
+countriesEUCTR <- c(
+  "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR",
+  "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL",
+  "PL", "PT", "RO", "SK", "SE", "SI", "ES", "GB", "IS", "LI",
+  "NO", "3RD")
 
 
 #' Check and prepare nodbi connection object for ctrdata
@@ -23,7 +24,9 @@ countriesEUCTR <- c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR",
 #' @return Connection object as list, with collection
 #'  element under root
 #'
-ctrDb <- function(con = nodbi::src_sqlite(collection = "ctrdata_auto_generated")) {
+ctrDb <- function(
+  con = nodbi::src_sqlite(
+    collection = "ctrdata_auto_generated")) {
 
   ## sqlite
   if ("src_sqlite" %in% class(con)) {
@@ -42,7 +45,6 @@ ctrDb <- function(con = nodbi::src_sqlite(collection = "ctrdata_auto_generated")
               call. = FALSE, immediate. = TRUE)
       con <- nodbi::src_sqlite(dbname = con$dbname,
                                key = con$collection)
-                               # collection = con$collection)
     }
 
     # add database as element under root
@@ -52,8 +54,8 @@ ctrDb <- function(con = nodbi::src_sqlite(collection = "ctrdata_auto_generated")
 
     # print warning from nodbi::src_sqlite()
     if (grepl(":memory:", con$dbname)) {
-      warning("Database not persisting,\ncopy to persistant database like this:\n",
-              "\nRSQLite::sqliteCopyDatabase(",
+      warning("Database not persisting,\ncopy to persistant database like ",
+              "this:\n\nRSQLite::sqliteCopyDatabase(",
               "\n  from = <your in-memory-database-object>$con,",
               "\n  to = RSQLite::dbConnect(RSQLite::SQLite(),",
               "\n                          dbname = 'local_file.db'))\n",
@@ -228,9 +230,13 @@ ctrDb <- function(con = nodbi::src_sqlite(collection = "ctrdata_auto_generated")
 #'  dbQueryHistory())
 #' }
 #'
-ctrOpenSearchPagesInBrowser <- function(input = "", register = "", copyright = FALSE, ...) {
-  #
-  # check combination of arguments to select action
+ctrOpenSearchPagesInBrowser <- function(
+  input = "",
+  register = "",
+  copyright = FALSE,
+  ...) {
+
+    # check combination of arguments to select action
   #
   if (class(input) == "character" && is.atomic(input) && input == "") {
     #
@@ -239,19 +245,27 @@ ctrOpenSearchPagesInBrowser <- function(input = "", register = "", copyright = F
     #
     # open empty search pages
     if ("EUCTR" %in% register)
-      try({utils::browseURL("https://www.clinicaltrialsregister.eu/ctr-search/search", ...)}, silent = TRUE)
+      try({
+        utils::browseURL("https://www.clinicaltrialsregister.eu/ctr-search/search",
+                         ...)}, silent = TRUE)
     #
     if ("CTGOV" %in% register)
-      try({utils::browseURL("https://clinicaltrials.gov/ct2/search/advanced", ...)}, silent = TRUE)
+      try({
+        utils::browseURL("https://clinicaltrials.gov/ct2/search/advanced",
+                         ...)}, silent = TRUE)
     #
     # if requested also show copyright pages
     if (copyright) {
       #
       if ("EUCTR" %in% register)
-        try({utils::browseURL("https://www.clinicaltrialsregister.eu/disclaimer.html", ...)}, silent = TRUE)
+        try({
+          utils::browseURL("https://www.clinicaltrialsregister.eu/disclaimer.html",
+                           ...)}, silent = TRUE)
       #
       if ("CTGOV" %in% register)
-        try({utils::browseURL("https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use", ...)}, silent = TRUE)
+        try({
+          utils::browseURL("https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use",
+                           ...)}, silent = TRUE)
       #
     }
   } else {
@@ -268,12 +282,15 @@ ctrOpenSearchPagesInBrowser <- function(input = "", register = "", copyright = F
       #
     }
     #
-    # - data frame as returned from ctrQueryHistoryInDb() and ctrGetQueryUrlFromBrowser()
-    if (is.data.frame(input) && all(substr(names(input), 1, 6) == "query-")) {
+    # - data frame as returned from ctrQueryHistoryInDb()
+    #   and ctrGetQueryUrlFromBrowser()
+    if (is.data.frame(input) &&
+        all(substr(names(input), 1, 6) == "query-")) {
       #
       nr <- nrow(input)
       #
-      if (nr > 1) warning("Using last row of input.", call. = FALSE, immediate. = TRUE)
+      if (nr > 1) warning("Using last row of input.",
+                          call. = FALSE, immediate. = TRUE)
       #
       register  <- input[nr, "query-register"]
       queryterm <- input[nr, "query-term"]
@@ -290,28 +307,37 @@ ctrOpenSearchPagesInBrowser <- function(input = "", register = "", copyright = F
       #
     }
     #
-    if (exists("queryterm") && queryterm != "" && register != "") {
+    if (exists("queryterm") &&
+        queryterm != "" &&
+        register != "") {
       #
-      message("Opening browser for search: \n\n", queryterm, "\n\nin register: ", register)
+      message("Opening browser for search: \n\n", queryterm,
+              "\n\nin register: ", register)
       #
       # sanity correction for naked terms
-      if (register == "EUCTR") queryterm <-
-          queryterm <- sub("(^|&|[&]?\\w+=\\w+&)([ a-zA-Z0-9+-]+)($|&\\w+=\\w+)",
-                           "\\1query=\\2\\3",
-                           queryterm)
-      if (register == "CTGOV") queryterm <-
+      if (register == "EUCTR") {
+        queryterm <-
+          sub("(^|&|[&]?\\w+=\\w+&)([ a-zA-Z0-9+-]+)($|&\\w+=\\w+)",
+              "\\1query=\\2\\3",
+              queryterm)
+      }
+      if (register == "CTGOV") {
+        queryterm <-
           sub("(^|&|[&]?\\w+=\\w+&)(\\w+|[NCT0-9-]+)($|&\\w+=\\w+)",
               "\\1term=\\2\\3",
               queryterm)
+      }
       #
       # protect against os where this does not work
       try({utils::browseURL(url = paste0(
         #
         switch(as.character(register),
-               "CTGOV" = ifelse(grepl("^xprt=", queryterm),
-                                "https://clinicaltrials.gov/ct2/results/refine?show_xprt=Y&",
-                                "https://clinicaltrials.gov/ct2/results?"),
-               "EUCTR" = "https://www.clinicaltrialsregister.eu/ctr-search/search?"),
+               "CTGOV" = ifelse(
+                 grepl("^xprt=", queryterm),
+                 "https://clinicaltrials.gov/ct2/results/refine?show_xprt=Y&",
+                 "https://clinicaltrials.gov/ct2/results?"),
+               "EUCTR" =
+                 "https://www.clinicaltrialsregister.eu/ctr-search/search?"),
         queryterm),
         encodeIfNeeded = TRUE, ...)
       }, silent = TRUE)
@@ -346,25 +372,38 @@ ctrOpenSearchPagesInBrowser <- function(input = "", register = "", copyright = F
 ctrGetQueryUrlFromBrowser <- function(content = "") {
   #
   # if content parameter not specified, get and check clipboard contents
-  if (length(content) == 1L && nchar(content) == 0L) content <- clipr::read_clip()
+  if (length(content) == 1L &&
+      nchar(content) == 0L) {
+    content <- clipr::read_clip()
+  }
   #
   if (length(content) != 1L) {
-    stop("ctrGetQueryUrlFromBrowser(): no clinical trial register search URL found ",
-         "in parameter 'content' or in clipboard.", call. = FALSE)
+    warning("ctrGetQueryUrlFromBrowser(): no clinical trial register ",
+            "search URL found in parameter 'content' or in clipboard.",
+            call. = FALSE, immediate. = TRUE)
     return(NULL)
   }
   #
   # EUCTR
   if (grepl("https://www.clinicaltrialsregister.eu/ctr-search/", content)) {
     #
-    queryterm <- sub("https://www.clinicaltrialsregister.eu/ctr-search/search[?](.*)",      "\\1", content)
-    queryterm <- sub("https://www.clinicaltrialsregister.eu/ctr-search/trial/([-0-9]+)/.*", "\\1", queryterm)
+    queryterm <-
+      sub("https://www.clinicaltrialsregister.eu/ctr-search/search[?](.*)",
+          "\\1", content)
+    #
+    queryterm <-
+      sub("https://www.clinicaltrialsregister.eu/ctr-search/trial/([-0-9]+)/.*",
+          "\\1", queryterm)
     #
     # sanity correction for naked terms
-    if (!grepl("&\\w+=\\w+|query=\\w", queryterm)) queryterm <- paste0("query=", queryterm)
+    if (!grepl("&\\w+=\\w+|query=\\w", queryterm)) {
+      queryterm <- paste0("query=", queryterm)
+    }
     #
     # check if url was for results of single trial
-    if (grepl(".*/results$", content)) queryterm <- paste0(queryterm, "&resultsstatus=trials-with-results")
+    if (grepl(".*/results$", content)) {
+      queryterm <- paste0(queryterm, "&resultsstatus=trials-with-results")
+    }
     #
     message("* Found search query from EUCTR.")
     #
@@ -378,20 +417,29 @@ ctrGetQueryUrlFromBrowser <- function(content = "") {
   # https://clinicaltrials.gov/ct2/results?term=2010-024264-18&Search=Search
   if (grepl("https://clinicaltrials.gov/ct2/results", content)) {
     #
-    queryterm <- sub("https://clinicaltrials.gov/ct2/results[?](.*)", "\\1", content)
-    queryterm <- sub("(.*)&Search[a-zA-Z]*=(Search|Find)[a-zA-Z+]*",  "\\1", queryterm)
+    queryterm <-
+      sub("https://clinicaltrials.gov/ct2/results[?](.*)",
+          "\\1", content)
+    #
+    queryterm <-
+      sub("(.*)&Search[a-zA-Z]*=(Search|Find)[a-zA-Z+]*",
+          "\\1", queryterm)
+    #
     queryterm <- gsub("[a-z_0-9]+=&", "", queryterm)
     queryterm <- sub("&[a-z_0-9]+=$", "", queryterm)
+    #
     message("* Found search query from CTGOV.")
     #
-    df <- data.frame(cbind(queryterm, "CTGOV"), stringsAsFactors = FALSE)
+    df <- data.frame(cbind(queryterm, "CTGOV"),
+                     stringsAsFactors = FALSE)
     names(df) <- c("query-term", "query-register")
     #
     return(df)
   }
   #
-  warning("ctrGetQueryUrlFromBrowser(): no clinical trial register search URL found ",
-          "in parameter 'content' or in clipboard.", call. = FALSE, immediate. = TRUE)
+  warning("ctrGetQueryUrlFromBrowser(): no clinical trial register ",
+          "search URL found in parameter 'content' or in clipboard.",
+          call. = FALSE, immediate. = TRUE)
   #
   return(invisible(NULL))
 }
@@ -428,8 +476,11 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = ""){
   # check parameters
   if ( (length(activesubstance) != 1) ||
        !is.character(activesubstance) ||
-       (nchar(activesubstance) == 0) )
-    stop("ctrFindActiveSubstanceSynonyms(): activesubstance should be a single string.", call. = FALSE)
+       (nchar(activesubstance) == 0) ) {
+    stop("ctrFindActiveSubstanceSynonyms(): ",
+         "activesubstance should be a single string.",
+         call. = FALSE)
+  }
 
   # initialise output variable
   as <- activesubstance
@@ -438,14 +489,19 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = ""){
   setProxy()
 
   # getting synonyms
-  ctgovdfirstpageurl <- paste0("https://clinicaltrials.gov/ct2/results/details?term=", activesubstance)
+  ctgovdfirstpageurl <-
+    paste0("https://clinicaltrials.gov/ct2/results/details?term=",
+           activesubstance)
+
   tmp <- xml2::read_html(x = utils::URLencode(ctgovdfirstpageurl))
-  tmp <- rvest::html_node(tmp, xpath = '//*[@id="searchdetail"]//table[1]')
+  tmp <- rvest::html_node(tmp, xpath =
+                            '//*[@id="searchdetail"]//table[1]')
   tmp <- rvest::html_table(tmp, fill = TRUE)
   asx <- tmp[, 1]
-  asx <- asx[!grepl(paste0("(more|synonyms|terms|", as, "|",
-                           paste0(unlist(strsplit(as, " ")), collapse = "|"),
-                           ")"), asx, ignore.case = TRUE)]
+  asx <- asx[!grepl(
+    paste0("(more|synonyms|terms|", as, "|",
+           paste0(unlist(strsplit(as, " ")), collapse = "|"),
+           ")"), asx, ignore.case = TRUE)]
 
   # prepare and return output
   as <- c(as, asx)
@@ -478,7 +534,8 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = ""){
 #' dbQueryHistory()
 #' }
 #'
-dbQueryHistory <- function(con, verbose = FALSE) {
+dbQueryHistory <- function(con,
+                           verbose = FALSE) {
 
   ## check database connection
   if (is.null(con$ctrDb)) con <- ctrDb(con = con)
@@ -499,10 +556,11 @@ dbQueryHistory <- function(con, verbose = FALSE) {
   #                           query = '{"_id": {"$eq": "meta-info"}}',
   #                           fields = '{"meta-info": 1}')
   #
-  tmp <- nodbi::docdb_query(src = con,
-                            key = con$collection,
-                            query = '{"_id": {"$eq": "meta-info"}}',
-                            fields = '{"queries": 1}')
+  tmp <- nodbi::docdb_query(
+    src = con,
+    key = con$collection,
+    query = '{"_id": {"$eq": "meta-info"}}',
+    fields = '{"queries": 1}')
 
   # tmp <- con$con$find(query = query, fields = fields)
 
@@ -525,7 +583,8 @@ dbQueryHistory <- function(con, verbose = FALSE) {
   # tmp <- tmp[["queries"]]
 
   # Check if meeting expectations
-  if (is.null(tmp) || nrow(tmp) == 0L) {
+  if (is.null(tmp) ||
+      nrow(tmp) == 0L) {
     #
     message("No history found in expected format.")
     #
@@ -544,7 +603,8 @@ dbQueryHistory <- function(con, verbose = FALSE) {
   # Inform user
   if (verbose) {
 
-    message("Number of queries in history of \"", con$collection, "\": ", nrow(tmp))
+    message("Number of queries in history of \"",
+            con$collection, "\": ", nrow(tmp))
     # }
 
     # total number of records in collection to inform user
@@ -552,13 +612,15 @@ dbQueryHistory <- function(con, verbose = FALSE) {
     # TODO find method / way to count elements
     # countall <- mongo$count(query = '{"_id":{"$ne":"meta-info"}}')
     # if (verbose) message("Number of records in collection \"", collection, "\": ", countall)
-    countall <- nodbi::docdb_query(src = con,
-                                   key = con$collection,
-                                   query =  '{"_id": {"$ne": "meta-info"}}',
-                                   fields = '{"_id": 1}')[["_id"]]
+    countall <- nodbi::docdb_query(
+      src = con,
+      key = con$collection,
+      query =  '{"_id": {"$ne": "meta-info"}}',
+      fields = '{"_id": 1}')[["_id"]]
 
     # if (verbose)
-    message("Number of records in collection \"", con$collection, "\": ", length(countall))
+    message("Number of records in collection \"",
+            con$collection, "\": ", length(countall))
   }
 
   # FIXME delete
@@ -574,26 +636,25 @@ dbQueryHistory <- function(con, verbose = FALSE) {
 
 #' Find names of fields in the database collection
 #'
-#' Given part of the name of a field of interest to the user, this function
-#' returns the full field names as found in the database. It is not necessary to
-#' add wild cards to the name of the field of interest.
+#' Given part of the name of a field of interest to the user, this
+#' function returns the full field names as found in the database.
 #'
-#' For fields in EUCTR (protocol- and results-related information), see also the
-#' register's documentation: \url{https://eudract.ema.europa.eu/}.
+#' For fields in EUCTR (protocol- and results-related information),
+#' see also the register's documentation at
+#' \url{https://eudract.ema.europa.eu/}.
 #'
-#' For fields in CTGOV (protocol-related information), see also the register's
-#' definitions: \url{https://prsinfo.clinicaltrials.gov/definitions.html}
+#' For fields in CTGOV (protocol-related information), see also
+#' the register's definitions at
+#' \url{https://prsinfo.clinicaltrials.gov/definitions.html}.
 #'
-#' Note that generating a list of fields with this function may take some time,
-#' since a mapreduce function is run on the server. If the user is not
-#' not authorised to run such a function on the (local or remote) server,
-#' random documents are samples to generate a list of fields.
+#' Note: Generating a list of fields with this function may take
+#' some time, and may involve running a mapreduce function is
+#' run on the server. If the user is not not authorised to run
+#' such a function on the (local or remote) server,
+#' random documents are sampled to generate a list of fields.
 #'
-#' @param namepart A plain string (not a regular expression) to be searched for
-#'   among all field names (keys) in the database.
-#'
-#' @param allmatches If \code{TRUE} (default), returns all keys if more than one is found,
-#'   returns only first if \code{FALSE}.
+#' @param namepart A plain string (not a regular expression) to
+#' be searched for among all field names (keys) in the database.
 #'
 #' @param verbose If \code{TRUE}, prints additional information (default \code{FALSE}).
 #'
@@ -611,8 +672,9 @@ dbQueryHistory <- function(con, verbose = FALSE) {
 #'  dbFindFields("date")
 #' }
 #'
-dbFindFields <- function(namepart = "", allmatches = TRUE,
-                         con, verbose = FALSE) {
+dbFindFields <- function(namepart = "",
+                         con,
+                         verbose = FALSE) {
 
   ## sanity checks
   if (!is.atomic(namepart)) stop("Name part should be atomic.", call. = FALSE)
@@ -648,11 +710,13 @@ dbFindFields <- function(namepart = "", allmatches = TRUE,
 
     ## get keys list from database
     ## warn if no method yet for backend
-    if (!any(c("src_mongo", "src_sqlite")
-             %in% class(con))) stop("Function dbFindFields() cannot yet handle nodbi database ",
-                                    "backend ", class(con)[1], call. = FALSE)
-
-    ## TODO to be extended for additional backends
+    if (!any(c("src_mongo",
+               "src_sqlite") %in%
+             class(con))) {
+      stop("Function dbFindFields() cannot yet handle nodbi ",
+           "database backend ", class(con)[1], call. = FALSE)
+      ## TODO extended function to additional backends
+    }
 
     # inform user
     message("Finding fields on server (may take some time)")
@@ -661,8 +725,9 @@ dbFindFields <- function(namepart = "", allmatches = TRUE,
     if ("src_mongo" %in% class(con)) {
 
       # try mapreduce to get all keys
-      keyslist <- try({con$con$mapreduce(
-        map = "function() {
+      keyslist <- try({
+        con$con$mapreduce(
+          map = "function() {
       obj = this;
       return searchInObj(obj, '');
       function searchInObj(obj, pth){
@@ -678,30 +743,31 @@ dbFindFields <- function(namepart = "", allmatches = TRUE,
                key = key.replace(/^[.]/, '');
                emit(key, 1);
       }}}}",
-        reduce = "function(id, counts) {return Array.sum(counts)}"
-        # extract and keep only "_id" = first column, with keys
-      )[["_id"]]}, silent = TRUE)
+          reduce = "function(id, counts) {return Array.sum(counts)}"
+          # extract and keep only "_id" = first column, with keys
+        )[["_id"]]},
+        silent = TRUE)
 
-      # mapreduce may not work or not be permitted such
-      # as on some free mongo servers, thus revert to guessing
+      # if mapreduce does not work or is not permitted, revert to guessing
       if ("try-error" %in% class(keyslist)) {
 
         warning("Mongo server returned: ", as.character(keyslist),
-                "Using alternative method (extracting keys from sample documents, may be incomplete).",
+                "Using alternative method (extracting keys from ",
+                "sample documents, may be incomplete).",
                 call. = FALSE, immediate. = TRUE)
 
         # get 2 random documents, one for each register EUCTR and CTGOV,
         # if in collection, and retrieve keys from documents
-        keyslist <- c("", # avoid empty vector
-                      names(con$con$find(
-                        query = '{"_id": { "$regex": "^NCT[0-9]{8}", "$options": ""} }',
-                        limit = 1L)),
-                      names(con$con$find(
-                        query = '{"_id": { "$regex": "^[0-9]{4}-[0-9]{6}", "$options": ""} }',
-                        limit = 1L)))
+        keyslist <- c(
+          "", # avoid empty vector
+          names(con$con$find(
+            query = '{"_id": { "$regex": "^NCT[0-9]{8}", "$options": ""} }',
+            limit = 1L)),
+          names(con$con$find(
+            query = '{"_id": { "$regex": "^[0-9]{4}-[0-9]{6}", "$options": ""} }',
+            limit = 1L)))
 
       } # end if error with mapreduce
-
     } # end if src_mongo
 
     ## - method for sqlite
@@ -728,20 +794,14 @@ dbFindFields <- function(namepart = "", allmatches = TRUE,
 
   } # end get cached list or generate new list
 
-  ## inform user if unexpected situation
+  ## inform user of unexpected situation
   if ((length(keyslist) == 0) || all(keyslist == "")) {
-    warning("No keys could be extracted, please check database and contents: ",
-            con$db, "/", con$collection, call. = FALSE)
+    warning("No keys could be extracted, please check database ",
+            "and contents: ", con$db, "/", con$collection, call. = FALSE)
   }
 
   ## now do the actual search and find for key name parts
   fields <- keyslist[grepl(namepart, keyslist, ignore.case = TRUE)]
-
-  # all or only first field name?
-  if (!allmatches) {
-    if ( (tmp <- length(fields)) > 1) message("Returning first of ", tmp, " fields found.")
-    fields <- fields[1]
-  }
 
   # return the match(es)
   return(fields)
@@ -781,11 +841,17 @@ dbFindFields <- function(namepart = "", allmatches = TRUE,
 #' dbFindIdsUniqueTrials()
 #' }
 #'
-dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = "GB", include3rdcountrytrials = TRUE,
-                                  con, verbose = TRUE) {
+dbFindIdsUniqueTrials <- function(
+  preferregister = "EUCTR",
+  prefermemberstate = "GB",
+  include3rdcountrytrials = TRUE,
+  con,
+  verbose = TRUE) {
 
   # parameter checks
-  if (!grepl(preferregister, "CTGOVEUCTR")) stop("Register not known: ", preferregister, call. = FALSE)
+  if (!grepl(preferregister, "CTGOVEUCTR")) {
+    stop("Register not known: ", preferregister, call. = FALSE)
+  }
 
   # objective: create a list of mongo database record identifiers (_id)
   # that represent unique records of clinical trials, based on user's
@@ -800,24 +866,29 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
   if (is.null(con$ctrDb)) con <- ctrDb(con = con)
 
   # total number of records in collection to inform user
-  countall <- nrow(nodbi::docdb_query(src = con,
-                                      key = con$collection,
-                                      query = '{"_id":{"$ne":"meta-info"}}',
-                                      fields = '{"_id": 1}'))
+  countall <- nrow(nodbi::docdb_query(
+    src = con,
+    key = con$collection,
+    query = '{"_id":{"$ne":"meta-info"}}',
+    fields = '{"_id": 1}'))
 
-  if (verbose) message("* Total of ", countall, " records in collection.")
+  # inform user
+  if (verbose) {
+    message("* Total of ", countall, " records in collection.")
+  }
 
   # 1. get euctr records (note only records with at least on
   # value for at least one variable are retrieved here)
   listofEUCTRids <- try(suppressMessages(suppressWarnings(
-    dbGetFieldsIntoDf(fields = c("a2_eudract_number",
-                                 "a41_sponsors_protocol_code_number",
-                                 "a51_isrctn_international_standard_randomised_controlled_trial_number",
-                                 "a52_us_nct_clinicaltrialsgov_registry_number",
-                                 "a53_who_universal_trial_reference_number_utrn"), # a53_ not yet used
-                      con = con,
-                      verbose = FALSE,
-                      stopifnodata = FALSE)
+    dbGetFieldsIntoDf(fields = c(
+      "a2_eudract_number",
+      "a41_sponsors_protocol_code_number",
+      "a51_isrctn_international_standard_randomised_controlled_trial_number",
+      "a52_us_nct_clinicaltrialsgov_registry_number",
+      "a53_who_universal_trial_reference_number_utrn"), # a53_ not yet used
+      con = con,
+      verbose = FALSE,
+      stopifnodata = FALSE)
   )),
   silent = TRUE
   )
@@ -829,24 +900,29 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
   # inform user
   message("Searching for duplicates, found ")
 
+  # TODO delete
   # extract eudract number
   # if (!is.null(listofEUCTRids)) listofEUCTRids <-
   #   listofEUCTRids[grepl("[0-9]{4}-[0-9]{6}-[0-9]{2}-?[3A-Z]{0,3}", listofEUCTRids[["_id"]]), ]
 
   # 2. find unique, preferred country version of euctr
-  if (!is.null(listofEUCTRids)) listofEUCTRids <-
-    dfFindUniqueEuctrRecord(df = listofEUCTRids,
-                            prefermemberstate = prefermemberstate,
-                            include3rdcountrytrials = include3rdcountrytrials)
+  if (!is.null(listofEUCTRids)) {
+    listofEUCTRids <- dfFindUniqueEuctrRecord(
+      df = listofEUCTRids,
+      prefermemberstate = prefermemberstate,
+      include3rdcountrytrials = include3rdcountrytrials)
+  }
 
   # 3. get ctrgov records
-  listofCTGOVids <- nodbi::docdb_query(src = con,
-                                       key = con$collection,
-                                       query =  '{"_id": { "$regex": "^NCT[0-9]{8}", "$options": ""} }',
-                                       fields = paste0('{"id_info.org_study_id": 1,',
-                                                       ' "id_info.secondary_id": 1,',
-                                                       ' "id_info.nct_alias": 1}'))
+  listofCTGOVids <- nodbi::docdb_query(
+    src = con,
+    key = con$collection,
+    query =  '{"_id": { "$regex": "^NCT[0-9]{8}", "$options": ""} }',
+    fields = paste0('{"id_info.org_study_id": 1,',
+                    ' "id_info.secondary_id": 1,',
+                    ' "id_info.nct_alias": 1}'))
 
+  # TODO delete
   # listofCTGOVids <- dbGetFieldsIntoDf(fields = c("id_info.org_study_id",
   #                                                "id_info.secondary_id",
   #                                                "id_info.nct_alias"),
@@ -855,8 +931,9 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
   #                   verbose = FALSE,
   #                   stopifnodata = FALSE)
 
-  if (!nrow(listofCTGOVids)) listofCTGOVids <- NULL
+  if (!nrow(listofCTGOVids)) {listofCTGOVids <- NULL}
 
+  # TODO delete
   # listofCTGOVids <- mongo$iterate(
   #   query =  '{"_id": { "$regex": "^NCT[0-9]{8}", "$options": ""} }',
   #   fields = '{"id_info.org_study_id": 1,
@@ -865,7 +942,7 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
   # )$batch(size = mongo$count())
 
   # inform user
-  if (is.null(listofCTGOVids)) message("No CTGOV records found.")
+  if (is.null(listofCTGOVids)) {message("No CTGOV records found.")}
 
   # TODO deleteme
   # # close database connection
@@ -876,17 +953,21 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
     #
     # make id_info sub-fields into one field
     listofCTGOVids[["id_info"]] <- sapply(
-      seq_len(nrow(listofCTGOVids)), # do not simplify, since it returns df for 1-row listofCTGOVids
-      function(i) as.character(na.omit(unlist(listofCTGOVids[i, -match("_id", names(listofCTGOVids))]))), simplify = FALSE)
+      seq_len(nrow(listofCTGOVids)),
+      function(i)
+        as.character(
+          na.omit(
+            unlist(
+              listofCTGOVids[i, -match("_id", names(listofCTGOVids))]))),
+      simplify = FALSE)
+    # do not simplify, so that it returns df for any 1-row listofCTGOVids
     #
     # retain only relevant fields
     listofCTGOVids <- listofCTGOVids[, c("_id", "id_info")]
 
-    #listofCTGOVids <- as.list.data.frame(listofCTGOVids)
-
-    #
     # TODO deleteme
-    # search for dupes for each entry of _id, eliminate enty's own _id (nct_id) by grepl
+    #listofCTGOVids <- as.list.data.frame(listofCTGOVids)
+   # search for dupes for each entry of _id, eliminate enty's own _id (nct_id) by grepl
     # dupes <- sapply(listofCTGOVids, function(x) x[["_id"]] %in% unlist(x[["id_info"]]))
     # if (sum(dupes) > 0) listofCTGOVids <- listofCTGOVids[!dupes, ]
     # if (verbose) message("Searching duplicates: Found ", sum(dupes),
@@ -910,6 +991,7 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
       # [1]  TRUE FALSE FALSE
       #
       # b2 - ctgov in euctr (_id corresponds to index 1)
+      # TODO deleteme
       # dupes.b2 <- sapply(listofCTGOVids, "[[", 1) %in%
       #        listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]
       dupes.b2 <- listofCTGOVids[["_id"]] %in%
@@ -919,51 +1001,72 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
                            " CTGOV _id (nct) in EUCTR a52_us_nct_...")
       #
       # a2 - ctgov in euctr a2_...
+      # TODO deleteme
       # dupes.a2 <- sapply(lapply(listofCTGOVids, function(x) sub(".*([0-9]{4}-[0-9]{6}-[0-9]{2}).*",
       #                                                                        "\\1", unlist(x[["id_info"]]))),
       #                    function(x) any(x %in% listofEUCTRids[["a2_eudract_number"]]))
-      dupes.a2 <- sapply(listofCTGOVids[["id_info"]], # extract from e.g. "EUDRACT-2004-000242-20"
-                         function(x) any(sub(".*([0-9]{4}-[0-9]{6}-[0-9]{2}).*", "\\1", x) %in%
-                                           listofEUCTRids[["a2_eudract_number"]]))
+      dupes.a2 <- sapply(
+        listofCTGOVids[["id_info"]], # e.g. "EUDRACT-2004-000242-20"
+        function(x) any(sub(".*([0-9]{4}-[0-9]{6}-[0-9]{2}).*", "\\1", x) %in%
+                          listofEUCTRids[["a2_eudract_number"]]))
       #
-      if (verbose) message(" - ", sum(dupes.a2),
-                           " CTGOV secondary_id / nct_alias / org_study_id in EUCTR a2_eudract_number")
+      if (verbose) {
+        message(
+          " - ", sum(dupes.a2),
+          " CTGOV secondary_id / nct_alias / org_study_id in EUCTR a2_eudract_number")
+      }
       #
       # c.2 - ctgov in euctr a52_... (id_info corresponds to index 2)
+      # TODO deleteme
       # dupes.c2 <- sapply(lapply(listofCTGOVids, "[[", 2),
       #                    function(x) any(unlist(x) %in%
       #                                      listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]))
-      dupes.c2 <- sapply(listofCTGOVids[["id_info"]],
-                         function(x) any(x %in% listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]))
+      dupes.c2 <- sapply(
+        listofCTGOVids[["id_info"]],
+        function(x) any(
+          x %in%
+            listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]))
       #
-      if (verbose) message(" - ", sum(dupes.c2),
-                           " CTGOV secondary_id / nct_alias / org_study_id in",
-                           " EUCTR a52_us_nct_...")
+      if (verbose) {
+        message(
+          " - ", sum(dupes.c2),
+          " CTGOV secondary_id / nct_alias / org_study_id in",
+          " EUCTR a52_us_nct_...")}
       #
       # d.2 - ctgov in euctr a51_... (id_info corresponds to index 2)
-      dupes.d2 <- sapply(listofCTGOVids[["id_info"]],
-                         function(x) any(x %in% listofEUCTRids[["a51_isrctn_international_standard_randomised_controlled_trial_number"]]))
+      dupes.d2 <- sapply(
+        listofCTGOVids[["id_info"]],
+        function(x) any(
+          x %in%
+            listofEUCTRids[["a51_isrctn_international_standard_randomised_controlled_trial_number"]]))
       #
       if (verbose) message(" - ", sum(dupes.d2),
                            " CTGOV secondary_id / nct_alias / org_study_id in",
                            " EUCTR a51_isrctn_...")
       #
       # e.2 - ctgov in euctr a41_... (id_info corresponds to index 2)
-      dupes.e2 <- sapply(listofCTGOVids[["id_info"]],
-                         function(x) any(x %in% listofEUCTRids[["a41_sponsors_protocol_code_number"]]))
+      dupes.e2 <- sapply(
+        listofCTGOVids[["id_info"]],
+        function(x) any(
+          x %in%
+            listofEUCTRids[["a41_sponsors_protocol_code_number"]]))
       #
-      if (verbose) message(" - ", sum(dupes.d2),
-                           " CTGOV secondary_id / nct_alias / org_study_id in",
-                           " EUCTR a41_sponsors_protocol_...")
+      if (verbose) {
+        message(" - ", sum(dupes.d2),
+                " CTGOV secondary_id / nct_alias / org_study_id in",
+                " EUCTR a41_sponsors_protocol_...")}
       #
       # finalise results set
       listofEUCTRids <- listofEUCTRids[["_id"]]
+      # TODO deleteme
       #listofCTGOVids <- sapply(listofCTGOVids, "[[", 1) [ !dupes.a2 & !dupes.b2 & !dupes.c2 & !dupes.d2 ]
-      listofCTGOVids <- listofCTGOVids[["_id"]] [ !dupes.a2 & !dupes.b2 & !dupes.c2 & !dupes.d2 & !dupes.e2 ]
+      listofCTGOVids <- listofCTGOVids[[
+        "_id"]] [ !dupes.a2 & !dupes.b2 & !dupes.c2 & !dupes.d2 & !dupes.e2 ]
       #
-      message("Concatenating ",
-              length(listofEUCTRids), " records from EUCTR and ",
-              length(listofCTGOVids), " from CTGOV:")
+      message(
+        "Concatenating ",
+        length(listofEUCTRids), " records from EUCTR and ",
+        length(listofCTGOVids), " from CTGOV:")
       #
       retids <- c(listofEUCTRids, listofCTGOVids)
       #
@@ -972,57 +1075,80 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
     if (preferregister == "CTGOV") {
       #
       # a.1 - euctr in ctgov (id_info corresponds to index 2)
+      # TODO deleteme
       # dupes.a1 <- listofEUCTRids[["a2_eudract_number"]] %in% sub(".*([0-9]{4}-[0-9]{6}-[0-9]{2}).*",
       #                                                            "\\1", unlist(sapply(listofCTGOVids, "[[", 2)))
       dupes.a1 <- listofEUCTRids[["a2_eudract_number"]] %in% sub(
-        ".*([0-9]{4}-[0-9]{6}-[0-9]{2}).*", # extract from e.g. "EUDRACT-2004-000242-20"
+        ".*([0-9]{4}-[0-9]{6}-[0-9]{2}).*", # e.g. "EUDRACT-2004-000242-20"
         "\\1", unlist(listofCTGOVids[["id_info"]]))
       #
-      if (verbose) message(" - ", sum(dupes.a1),
-                           " EUCTR _id in CTGOV secondary_id / nct_alias / org_study_id")
+      if (verbose) {
+        message(" - ", sum(dupes.a1),
+                " EUCTR _id in CTGOV secondary_id / nct_alias / org_study_id")
+      }
       #
       # b.1 - euctr in ctgov (_id corresponds to index 1)
+      # TODO deleteme
       # dupes.b1 <- listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]] %in%
       #   sapply(listofCTGOVids, "[[", 1)
-      dupes.b1 <- listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]] %in% listofCTGOVids[["_id"]]
+      dupes.b1 <- listofEUCTRids[[
+        "a52_us_nct_clinicaltrialsgov_registry_number"]] %in% listofCTGOVids[["_id"]]
       #
-      if (verbose) message(" - ", sum(dupes.b1),
+      if (verbose) {
+        message(" - ", sum(dupes.b1),
                            " EUCTR a52_us_nct_... in CTGOV _id (nct)")
+      }
       #
       # c.1 - euctr in ctgov (id_info corresponds to index 2)
+      # TODO deleteme
       # dupes.c1 <- listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]] %in%
       #   unlist(sapply(listofCTGOVids, "[[", 2))
-      dupes.c1 <- listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]] %in% unlist(listofCTGOVids[["id_info"]])
-      #
-      if (verbose) message(" - ", sum(dupes.c1),
-                           " EUCTR a52_us_nct_... in",
-                           " CTOGV secondary_id / nct_alias / org_study_id")
-      #
-      # d.1 - euctr in ctgov (id_info corresponds to index 2)
-      # dupes.d1 <- listofEUCTRids[["a51_isrctn_international_standard_randomised_controlled_trial_number"]] %in%
-      #   unlist(sapply(listofCTGOVids, "[[", 2))
-      dupes.d1 <- listofEUCTRids[["a51_isrctn_international_standard_randomised_controlled_trial_number"]] %in%
+      dupes.c1 <- listofEUCTRids[[
+        "a52_us_nct_clinicaltrialsgov_registry_number"]] %in%
         unlist(listofCTGOVids[["id_info"]])
       #
-      if (verbose) message(" - ", sum(dupes.d1),
-                           " EUCTR a51_isrctn_...",
-                           " in CTOGV secondary_id / nct_alias / org_study_id")
+      if (verbose) {
+        message(
+          " - ", sum(dupes.c1),
+          " EUCTR a52_us_nct_... in",
+          " CTOGV secondary_id / nct_alias / org_study_id")
+      }
+      #
+      # d.1 - euctr in ctgov (id_info corresponds to index 2)
+      # TODO deleteme
+      # dupes.d1 <- listofEUCTRids[["a51_isrctn_international_standard_randomised_controlled_trial_number"]] %in%
+      #   unlist(sapply(listofCTGOVids, "[[", 2))
+      dupes.d1 <- listofEUCTRids[[
+        "a51_isrctn_international_standard_randomised_controlled_trial_number"]] %in%
+        unlist(listofCTGOVids[["id_info"]])
+      #
+      if (verbose) {
+        message(
+          " - ", sum(dupes.d1),
+          " EUCTR a51_isrctn_...",
+          " in CTOGV secondary_id / nct_alias / org_study_id")
+      }
       #
       # e.1 - euctr in ctgov (id_info corresponds to index 2)
       dupes.e1 <- listofEUCTRids[["a41_sponsors_protocol_code_number"]] %in%
         unlist(listofCTGOVids[["id_info"]])
       #
-      if (verbose) message(" - ", sum(dupes.d1),
-                           " EUCTR a41_sponsors_protocol_...",
-                           " in CTOGV secondary_id / nct_alias / org_study_id")
+      if (verbose) {
+        message(
+          " - ", sum(dupes.d1),
+          " EUCTR a41_sponsors_protocol_...",
+          " in CTOGV secondary_id / nct_alias / org_study_id")
+      }
       #
       # finalise results set
       listofCTGOVids <- listofCTGOVids[["_id"]]
-      listofEUCTRids <- listofEUCTRids[["_id"]] [ !dupes.a1 & !dupes.b1 & !dupes.c1 & !dupes.d1  & !dupes.e1 ]
+      listofEUCTRids <- listofEUCTRids[[
+        "_id"]] [ !dupes.a1 & !dupes.b1 & !dupes.c1 & !dupes.d1  & !dupes.e1 ]
       #
-      message("Concatenating ",
-              length(listofCTGOVids), " records from CTGOV and ",
-              length(listofEUCTRids), " from EUCTR:")
+      message(
+        "Concatenating ",
+        length(listofCTGOVids), " records from CTGOV and ",
+        length(listofEUCTRids), " from EUCTR:")
       #
       retids <- c(listofCTGOVids, listofEUCTRids)
       #
@@ -1038,13 +1164,17 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
   attributes(retids) <- attribsids[grepl("^ctrdata-", names(attribsids))]
 
   # avoid returning list() if none found
-  if (length(retids) == 0) retids <- character()
+  if (length(retids) == 0) {
+    retids <- character()
+  }
 
   # inform user
-  message("= Returning keys (_id) of ", length(retids),
-          " out of total ", countall,
-          " records in collection \"", con$collection, "\".")
-  #
+  message(
+    "= Returning keys (_id) of ", length(retids),
+    " out of total ", countall,
+    " records in collection \"", con$collection, "\".")
+
+  # return
   return(retids)
 
 }
@@ -1066,19 +1196,19 @@ dbFindIdsUniqueTrials <- function(preferregister = "EUCTR", prefermemberstate = 
 #' @param fields Vector of one or more strings, with names of the sought fields.
 #'    See function \link{dbFindFields} for how to find names of fields.
 #'
-#' @param stopifnodata Stops with an error (\code{TRUE}, default) or with a warning
-#'    (\code{TRUE}) if sought field is empty or not available in any of the records
-#'    in the database collection.
+#' @param stopifnodata Stops with an error (\code{TRUE}, default) or with
+#' a warning (\code{FALSE}) if the sought field is empty in all,
+#' or not available in any of the records in the database collection.
 #'
-#' @param verbose Printing additional information if set to \code{TRUE}; default
-#'   is \code{FALSE}.
+#' @param verbose Printing additional information if set to \code{TRUE};
+#' default is \code{FALSE}.
 #'
 #' @inheritParams ctrDb
 #'
-#' @return A data frame with columns corresponding to the sought fields. Note
-#'   that a column for the record _id will always be included. The maximum
-#'   number of rows of the returned data frame is equal to or less than the
-#'   number of records in the data base.
+#' @return A data frame with columns corresponding to the sought fields.
+#' Note: a column for the record _id will always be included.
+#' The maximum number of rows of the returned data frame is equal to,
+#' or less than the number of records in the data base.
 #'
 #' @importFrom nodbi docdb_query
 #' @importFrom stats na.omit
@@ -1104,21 +1234,27 @@ dbGetFieldsIntoDf <- function(fields = "",
                               stopifnodata = TRUE) {
 
   # check parameters
-  if (!is.vector(fields) | class(fields) != "character")
+  if (!is.vector(fields) |
+      class(fields) != "character") {
     stop("Input should be a vector of strings of field names.", call. = FALSE)
+  }
 
   # remove _id if inadventertently mentioned in fields
   fields <- fields["_id" != fields]
 
   # check if valid fields
-  if (any(fields == "", na.rm = TRUE) | (length(fields) == 0))
+  if (any(fields == "", na.rm = TRUE) |
+      (length(fields) == 0)) {
     stop("'fields' contains empty elements; ",
          "please provide a vector of strings of field names. ",
          "Function dbFindFields() can be used to find field names. ",
          call. = FALSE)
+  }
 
   ## check database connection
-  if (is.null(con$ctrDb)) con <- ctrDb(con = con)
+  if (is.null(con$ctrDb)) {
+    con <- ctrDb(con = con)
+  }
 
   # TODO delete
   # # get a working mongo connection, select trial record collection
@@ -1130,10 +1266,11 @@ dbGetFieldsIntoDf <- function(fields = "",
 
   # provide list of ids
   # idsall <- mongo$find(query = '{"_id":{"$ne":"meta-info"}}', fields = '{"_id" : 1}')
-  idsall <- nodbi::docdb_query(src = con,
-                               key = con$collection,
-                               query = '{"_id":{"$ne":"meta-info"}}',
-                               fields = '{"_id" : 1}')[["_id"]]
+  idsall <- nodbi::docdb_query(
+    src = con,
+    key = con$collection,
+    query = '{"_id":{"$ne":"meta-info"}}',
+    fields = '{"_id" : 1}')[["_id"]]
 
   # initialise output
   result <- NULL
@@ -1143,22 +1280,26 @@ dbGetFieldsIntoDf <- function(fields = "",
   for (item in fields) {
     #
     query <- paste0('{"_id": {"$ne": "meta-info"}}')
-    if (verbose) message("DEBUG: field: ", item)
+    if (verbose) {message("DEBUG: field: ", item)}
     #
     tmp <- try({
       #
+      # TODO deleteme
       # dfi <- mongo$iterate(query = query, fields = paste0('{"_id": 1, "', item, '": 1}'))$batch(size = countall)
-      dfi <- nodbi::docdb_query(src = con,
-                                key = con$collection,
-                                query = query,
-                                fields = paste0('{"_id": 1, "', item, '": 1}'))
+      dfi <- nodbi::docdb_query(
+        src = con,
+        key = con$collection,
+        query = query,
+        fields = paste0('{"_id": 1, "', item, '": 1}'))
       #
       # some backends return NA if query matches,
       # other only non-NA values when query matches
       dfi <- na.omit(dfi)
       #
       # ensure intended column order
-      if (names(dfi)[1] != "_id") dfi <- dfi[, 2:1]
+      if (names(dfi)[1] != "_id") {
+        dfi <- dfi[, 2:1]
+      }
       #
       # simplify if robust
       #
@@ -1166,23 +1307,31 @@ dbGetFieldsIntoDf <- function(fields = "",
       dfi <- dfi[ !sapply(dfi[, 2], length) == 0, ]
       #
       # - if each [,2] is a list with one element, concatenate
-      if (all(sapply(dfi[, 2], function(x) is.data.frame(x) && ncol(x) == 1))) {
+      if (all(sapply(dfi[, 2],
+                     function(x)
+                       is.data.frame(x) && ncol(x) == 1))) {
+
         dfi[, 2] <- sapply(sapply(dfi[, 2], "[", 1),
                            function(x) paste0(x, collapse = " / "))
       }
       #
       # # - if each [,2] is a list of one dataframe with one or more rows,
       # #   turn data frame into list
-      # if (all(sapply(dfi[, 2], function(x) is.data.frame(x)))) {
-      #   dfi[, 2] <- tt <- lapply(seq_len(nrow(dfi)),
-      #                      function(i) {
-      #                        tmp <- dfi[i, 2][[1]] # get dataframe
-      #                        lapply(seq_len(nrow(tmp)),
-      #                               function(ii) unclass(tmp[ii, ]))})
+      # if (all(sapply(dfi[, 2],
+      #                function(x) is.data.frame(x)))) {
+      #
+      #   dfi[, 2] <- tt <- lapply(
+      #     seq_len(nrow(dfi)),
+      #     function(i) {
+      #       tmp <- dfi[i, 2][[1]] # get dataframe
+      #       lapply(seq_len(nrow(tmp)),
+      #              function(ii) unclass(tmp[ii, ]))})
       # }
       # #
-      if (verbose) message("DEBUG: field ", item, " has length ", nrow(dfi))
+      if (verbose) {
+        message("DEBUG: field ", item, " has length ", nrow(dfi))}
       #
+      # TODO deleteme
       # # attempt custom function to condense into a data frame instead of using data.frame = TRUE
       # dfi <- as.data.frame(cbind(sapply(dfi, function(x) as.vector(unlist(x[1]))),
       #                            sapply(dfi, function(x) paste0(as.vector(unlist(x[2])), collapse = " / "))
@@ -1196,21 +1345,26 @@ dbGetFieldsIntoDf <- function(fields = "",
     #
     if (inherits(tmp, "try-error") ||
         !nrow(dfi)) {
+
       # try-error occured or no data retrieved
       if (stopifnodata) {
-        stop(paste0("For field: ", item, " no data could be extracted from the database collection. ",
-                    "Use dbGetFieldsIntoDf(stopifnodata = FALSE) to continue extracting other fields. "),
+        stop("For field '", item, "' no data could be extracted from the ",
+             "database collection. Use dbGetFieldsIntoDf(stopifnodata = ",
+             "FALSE) to continue extracting other fields. ",
              call. = FALSE)
       } else {
-        warning(paste0("For field: ", item, " no data could be extracted from the database collection. "),
+        warning("For field: ", item, " no data could be extracted ",
+                "from the database collection. ",
                 call. = FALSE,
                 immediate. = FALSE)
         # create empty data set
-        dfi <- data.frame(cbind(idsall, rep(NA, times = length(idsall))),
+        dfi <- data.frame(cbind(idsall,
+                                rep(NA, times = length(idsall))),
                           stringsAsFactors = FALSE)
       }
     }
 
+    # TODO deleteme
     #else {
     # not stopped, no error and some content
     #
@@ -1235,7 +1389,10 @@ dbGetFieldsIntoDf <- function(fields = "",
   # mongo$disconnect()
 
   # finalise output
-  if (is.null(result)) stop("No records found which had values for the specified fields. ", call. = FALSE)
+  if (is.null(result)) {
+    stop("No records found which had values for the specified fields. ",
+         call. = FALSE)
+  }
 
   # some results were obtained
 
@@ -1245,9 +1402,10 @@ dbGetFieldsIntoDf <- function(fields = "",
 
   # notify user
   diff <- length(idsall) - nrow(result)
-  if (diff > 0) warning(diff, " of ", nrow(result),
-                        " records dropped which did not have values for any of the specified fields. ",
-                        call. = FALSE, immediate. = FALSE)
+  if (diff > 0) {
+    warning(diff, " of ", nrow(result), " records dropped which did not ",
+            "have values for any of the specified fields. ",
+            call. = FALSE, immediate. = FALSE)}
 
   # return
   return(result)
@@ -1257,13 +1415,13 @@ dbGetFieldsIntoDf <- function(fields = "",
 
 #' Merge two variables into one, optionally map values to new levels
 #'
-#' @param df A \link{data.frame} in which there are two variables (columns) to be
-#'   merged into one.
-#' @param colnames A vector of length two with names of the two columns that hold
-#'   the variables to be merged. See \link{colnames} for how to obtain the names
-#'   of columns of a data frame.
-#' @param levelslist A list with one slice each for a new value to be used for a
-#'   vector of old values (optional).
+#' @param df A \link{data.frame} in which there are two variables (columns)
+#' to be merged into one.
+#' @param colnames A vector of length two with names of the two columns
+#' that hold the variables to be merged. See \link{colnames} for how to
+#' obtain the names of columns of a data frame.
+#' @param levelslist A list with one slice each for a new value to be
+#' used for a vector of old values (optional).
 #' @param ... for deprecated varnames parameter (will be removed)
 #'
 #' @return A vector of strings
@@ -1273,31 +1431,42 @@ dbGetFieldsIntoDf <- function(fields = "",
 #' @examples
 #'
 #' \dontrun{
-#' statusvalues <- list("ongoing" = c("Recruiting", "Active", "Ongoing",
-#'                                    "Active, not recruiting", "Enrolling by invitation"),
-#'                      "completed" = c("Completed", "Prematurely Ended", "Terminated"),
-#'                      "other" = c("Withdrawn", "Suspended",
-#'                                  "No longer available", "Not yet recruiting"))
+#' statusvalues <- list(
+#'   "ongoing" = c("Recruiting", "Active", "Ongoing",
+#'                 "Active, not recruiting", "Enrolling by invitation"),
+#'   "completed" = c("Completed", "Prematurely Ended", "Terminated"),
+#'   "other" = c("Withdrawn", "Suspended",
+#'               "No longer available", "Not yet recruiting"))
 #'
 #' dfMergeTwoVariablesRelevel(result, c("Recruitment", "x5_trial_status"), statusvalues)
 #' }
 #'
-dfMergeTwoVariablesRelevel <- function(df = NULL, colnames = "", levelslist = NULL, ...) {
+dfMergeTwoVariablesRelevel <- function(
+  df = NULL,
+  colnames = "",
+  levelslist = NULL,
+  ...) {
 
   # check parameters
 
-  # 2019-01-06 migrate from previously used parameter "varnames"
+  # FIXME migrate from previously
+  # used parameter "varnames"
   tmp <- match.call()
   tmp <- tmp["varnames"]
   tmp <- as.list(tmp)[[1]]
   if (length(tmp) == 3 && colnames == "") {
     colnames <- unlist(as.list(tmp[-1]))
-    warning("Parameter varnames is deprecated, use colnames instead.", call. = FALSE)
+    warning("Parameter varnames is deprecated, use colnames instead.",
+            call. = FALSE)
   }
 
   # other checks
-  if (class(df) != "data.frame") stop("Need a data frame as input.", call. = FALSE)
-  if (length(colnames)  != 2)    stop("Please provide exactly two column names.", call. = FALSE)
+  if (class(df) != "data.frame") {
+    stop("Need a data frame as input.", call. = FALSE)
+  }
+  if (length(colnames) != 2) {
+    stop("Please provide exactly two column names.", call. = FALSE)
+  }
 
   # find variables in data frame and merge
   tmp <- match(colnames, names(df))
@@ -1309,9 +1478,11 @@ dfMergeTwoVariablesRelevel <- function(df = NULL, colnames = "", levelslist = NU
   if (!is.null(levelslist)) {
 
     # check
-    if (class(levelslist) != "list") stop("Need lists for parameter levelslist.", call. = FALSE)
+    if (class(levelslist) != "list") {
+      stop("Need lists for parameter levelslist.", call. = FALSE)
+    }
 
-    # helper function to collapse factor levels into the first mentioned level
+    # helper function to collapse factor levels into the first
     refactor <- function(x, collapselevels, levelgroupname){
       levels(x) [match(collapselevels, levels(x))] <- levelgroupname
       return(x)
@@ -1322,7 +1493,8 @@ dfMergeTwoVariablesRelevel <- function(df = NULL, colnames = "", levelslist = NU
 
     # apply helperfunction to elements of the list
     for (i in seq_len(length(levelslist))) {
-      tmp <- refactor(tmp, unlist(levelslist[i]), attr(levelslist[i], "names"))
+      tmp <- refactor(tmp, unlist(levelslist[i]),
+                      attr(levelslist[i], "names"))
     }
 
     # convert factor back into string vector
@@ -1330,11 +1502,16 @@ dfMergeTwoVariablesRelevel <- function(df = NULL, colnames = "", levelslist = NU
 
   }
 
-  if (length(tt <- unique(tmp)) > 10)
-    message("Unique values returned (limited to ten): ", paste(tt[1:10], collapse = ", "))
-  else
-    message("Unique values returned: ", paste(tt, collapse = ", "))
+  # check and inform user
+  if (length(tt <- unique(tmp)) > 10) {
+    message("Unique values returned (limited to ten): ",
+            paste(tt[1:10], collapse = ", "))
+  } else {
+    message("Unique values returned: ",
+            paste(tt, collapse = ", "))
+  }
 
+  # return
   return(tmp)
 }
 # end dfMergeTwoVariablesRelevel
@@ -1352,45 +1529,64 @@ dfMergeTwoVariablesRelevel <- function(df = NULL, colnames = "", levelslist = NU
 #' @param df A data frame created from the database that includes the columns
 #'   "_id" and "a2_eudract_number", for example created with function
 #'   dbGetFieldsIntoDf(c("_id", "a2_eudract_number")).
-#' @param prefermemberstate Code of single EU Member State for which records should
-#'   returned. If not available, a record for GB or lacking this, any other record
-#'   for the trial will be returned. For a list of codes of EU
-#'   Member States, please see vector \code{countriesEUCTR}. Alternatively, "3RD"
-#'   will lead to return the Third Country record of a trial, if available.
+#' @param prefermemberstate Code of single EU Member State for which records
+#' should returned. If not available, a record for GB or lacking this, any
+#' other record for the trial will be returned. For a list of codes of EU
+#'   Member States, please see vector \code{countriesEUCTR}. Alternatively,
+#'   "3RD" will lead to return a Third Country record of a trial, if available.
 #' @param include3rdcountrytrials A logical value if trials should be retained
-#'   that are conducted *exclusively* in third countries, that is outside the European Union.
+#'   that are conducted exclusively in third countries, that is, outside
+#'   the European Union.
 #'
 #' @return A data frame as subset of \code{df} corresponding to the sought
 #'   records.
 #'
 #' @keywords internal
 #
-dfFindUniqueEuctrRecord <- function(df = NULL, prefermemberstate = "GB", include3rdcountrytrials = TRUE) {
+dfFindUniqueEuctrRecord <- function(
+  df = NULL,
+  prefermemberstate = "GB",
+  include3rdcountrytrials = TRUE) {
 
   # check parameters
-  if (class(df) != "data.frame") stop("Parameter df is not a data frame.", call. = FALSE)
+  if (class(df) != "data.frame") {
+    stop("Parameter df is not a data frame.", call. = FALSE)
+  }
   #
-  if (is.null(df[["_id"]]) || is.null(df["a2_eudract_number"])) stop('Data frame does not include "_id"',
-                                                                     ' and "a2_eudract_number" columns.',
-                                                                     call. = FALSE)
+  if (is.null(df[["_id"]]) ||
+      is.null(df["a2_eudract_number"])) {
+    stop('Data frame does not include "_id"',
+         ' and "a2_eudract_number" columns.',
+         call. = FALSE)
+  }
   #
-  if (nrow(df) == 0) stop("Data frame does not contain records (0 rows).", call. = FALSE)
+  if (nrow(df) == 0) {
+    stop("Data frame does not contain records (0 rows).",
+         call. = FALSE)
+  }
   #
-  if (!(prefermemberstate %in% countriesEUCTR)) stop("Value specified for prefermemberstate does not match",
-                                                     " one of the recognised codes: ",
-                                                     paste(sort(countriesEUCTR), collapse = ", "),
-                                                     call. = FALSE)
+  if (!(prefermemberstate %in% countriesEUCTR)) {
+    stop("Value specified for prefermemberstate does not match",
+         " one of the recognised codes: ",
+         paste(sort(countriesEUCTR), collapse = ", "),
+         call. = FALSE)
+  }
 
   # notify it mismatching parameters
   if (prefermemberstate == "3RD" & !include3rdcountrytrials) {
-    warning("Preferred EUCTR version set to 3RD country trials, but include3rdcountrytrials was FALSE,",
-            " setting to TRUE.", call. = FALSE, noBreaks. = FALSE, immediate. = FALSE)
+    warning("Preferred EUCTR version set to 3RD country trials, but ",
+            "'include3rdcountrytrials' was FALSE, setting it to TRUE.",
+            call. = FALSE,
+            noBreaks. = FALSE,
+            immediate. = FALSE)
     include3rdcountrytrials <- TRUE
   }
 
   # as a first step, handle 3rd country trials e.g. 2010-022945-52-3RD
   # if retained, these trials would count as record for a trial
-  if (!include3rdcountrytrials) df <- df[!grepl("-3RD", df[["_id"]]), ]
+  if (!include3rdcountrytrials) {
+    df <- df[!grepl("-3RD", df[["_id"]]), ]
+  }
 
   # count number of records by eudract number
   tbl <- table(df[["_id"]], df[["a2_eudract_number"]])
@@ -1435,23 +1631,28 @@ dfFindUniqueEuctrRecord <- function(df = NULL, prefermemberstate = "GB", include
     return(rev(sort(recordnames))[-1])
   }
 
-  # finds per trial the desired record; uses prefermemberstate and nms
-  result <- lapply(nst, function(x) removeMSversions(x))
+  # finds per trial the desired record;
+  # uses prefermemberstate and nms
+  result <- lapply(nst,
+                   function(x) removeMSversions(x))
   result <- unlist(result)
 
   # eleminate the unwanted EUCTR records
   df <- df[!(df[["_id"]] %in% result), ]
+
   # also eliminate the meta-info record
   df <- df[!(df[["_id"]] == "meta-info"), ]
 
   # inform user about changes to data frame
-  if (length(nms) > (tmp <- length(result)))
-    message(" - ", tmp,
-            " EUCTR _id were not preferred EU Member State record of trial")
+  if (length(nms) > (tmp <- length(result))) {
+    message(
+      " - ", tmp,
+      " EUCTR _id were not preferred EU Member State record of trial")
+  }
 
   # return
   return(df)
-  #
+
 }
 # end dfFindUniqueEuctrRecord
 
@@ -1470,16 +1671,18 @@ dfFindUniqueEuctrRecord <- function(df = NULL, prefermemberstate = "GB", include
 checkDoc <- function(con, id) {
 
   # check if table exists
-  restbl <- nodbi::docdb_exists(src = con,
-                                key = con$collection)
+  restbl <- nodbi::docdb_exists(
+    src = con,
+    key = con$collection)
 
   # table exists, check for document
   if (restbl) {
     resdoc <- try(
-      nodbi::docdb_query(src = con,
-                         key = con$collection,
-                         query = paste0('{"_id": "', id, '"}'),
-                         fields = '{"_id": 1}'),
+      nodbi::docdb_query(
+        src = con,
+        key = con$collection,
+        query = paste0('{"_id": "', id, '"}'),
+        fields = '{"_id": 1}'),
       silent = TRUE)
   } else {
     resdoc <- NULL
@@ -1510,15 +1713,22 @@ checkDoc <- function(con, id) {
 typeField <- function(dfi){
 
   # check
-  if (ncol(dfi) != 2) stop("Expect data frame with two columns, _id and a field.", call. = FALSE)
+  if (ncol(dfi) != 2) {
+    stop("Expect data frame with two columns, _id and a field.",
+         call. = FALSE)
+  }
 
   # clean up anyway in input
+  #
   # - just return if all is a list, such as with parent elements
   if (inherits(dfi[,2], "list")) return(dfi)
+  #
   # - if NA as string, change to empty string
   if (all(class(dfi[, 2]) == "character")) dfi[ dfi[, 2] == "NA", 2] <- ""
+  #
   # - if empty string, change to NA
   # if (all(class(dfi[, 2]) == "character")) dfi[ dfi[, 2] == "", 2] <- NA
+  #
   # - give Month Year also a Day to work with as.Date
   dfi[, 2] <- sub("^([a-zA-Z]+) ([0-9]{4})$", "\\1 15, \\2", dfi[, 2])
 
@@ -1543,6 +1753,8 @@ typeField <- function(dfi){
     "x7_start_date"                                                          = as.Date(dfi[, 2], format = "%Y-%m-%d"),
     "firstreceived_results_date"                                             = as.Date(dfi[, 2], format = "%Y-%m-%d"),
     "trialInformation.primaryCompletionDate"                                 = as.Date(dfi[, 2], format = "%Y-%m-%d"),
+    "trialInformation.globalEndOfTrialDate"                                  = as.Date(dfi[, 2], format = "%Y-%m-%dT%H:%M:%S"),
+    "trialInformation.recruitmentStartDate"                                  = as.Date(dfi[, 2], format = "%Y-%m-%dT%H:%M:%S"),
     # - CTGOV
     "start_date"              = as.Date(dfi[, 2], format = "%b %d, %Y"),
     "primary_completion_date" = as.Date(dfi[, 2], format = "%b %d, %Y"),
@@ -1695,8 +1907,9 @@ addMetaData <- function(x, con) {
   # add metadata
   attr(x, "ctrdata-dbname")         <- con$db
   attr(x, "ctrdata-table")          <- con$collection
-  attr(x, "ctrdata-dbqueryhistory") <- dbQueryHistory(con = con,
-                                                      verbose = FALSE)
+  attr(x, "ctrdata-dbqueryhistory") <- dbQueryHistory(
+    con = con,
+    verbose = FALSE)
 
   # return annotated object
   return(x)
@@ -1749,98 +1962,119 @@ setProxy <- function() {
 #'   the proxy configuration uset in MS Windows to use an automatic proxy
 #'   configuration script. Authenticated proxies are not supported at this time.
 #'
-installCygwinWindowsDoInstall <- function(force = FALSE, proxy = ""){
+installCygwinWindowsDoInstall <- function(
+  force = FALSE,
+  proxy = ""){
+
+  # checks
+  if (.Platform$OS.type != "windows") {
+    stop(
+      "This function is only for MS Windows operating systems.",
+      call. = FALSE)
+  }
   #
-  if (.Platform$OS.type != "windows")
-    stop("This function is only for MS Windows operating systems.", call. = FALSE)
-  #
-  if (!force & dir.exists("c:\\cygwin"))
-    stop("cygwin is already installed. To overwrite, use force = TRUE.", call. = FALSE)
-  #
+  if (!force & dir.exists("c:\\cygwin")) {
+    stop(
+      "cygwin is already installed. To overwrite, use force = TRUE.",
+      call. = FALSE)
+  }
+
   # define installation command
-  installcmd <- paste0("--no-admin --quiet-mode --verbose --upgrade-also --root c:/cygwin ",
-                       "--site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ ",
-                       "--packages perl,php-jsonc,php-simplexml")
-  #
-  # create directory within R sessions temporary directory
+  installcmd <- paste0(
+    "--no-admin --quiet-mode --verbose --upgrade-also --root c:/cygwin ",
+    "--site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ ",
+    "--packages perl,php-jsonc,php-simplexml")
+
+  # create R session temporary directory
   tmpfile <- paste0(tempdir(), "/cygwin_inst")
   dir.create(tmpfile)
   dstfile <- paste0(tmpfile, "/cygwinsetup.exe")
-  #
+
   # generate download url
-  tmpurl <- ifelse(grepl("x64", utils::win.version()),
-                   "setup-x86_64.exe",
-                   "setup-x86.exe")
-  #
+  tmpurl <- ifelse(
+    grepl("x64", utils::win.version()),
+    "setup-x86_64.exe",
+    "setup-x86.exe")
   tmpurl <- paste0("https://cygwin.org/", tmpurl)
-  #
+
   # inform user
-  message("Attempting cygwin download using ", tmpurl, " ...")
-  #
+  message("Attempting cygwin download using ",
+          tmpurl, " ...")
+
   # check and set proxy if needed to access internet
   setProxy()
-  #
+
   # download.file uses the proxy configured in the system
-  tmpdl <- try({utils::download.file(url = tmpurl,
-                                     destfile = dstfile,
-                                     quiet = FALSE,
-                                     mode = "wb")
+  tmpdl <- try({
+    utils::download.file(
+      url = tmpurl,
+      destfile = dstfile,
+      quiet = FALSE,
+      mode = "wb")
   }, silent = TRUE)
-  #
+
   # check
   if (!file.exists(dstfile) ||
       file.size(dstfile) < (5 * 10 ^ 5) ||
-      ("try-error" %in% class(tmpdl)))
-    stop("Failed, please download manually and install with this command:\n",
+      ("try-error" %in% class(tmpdl))) {
+    stop("Failed, please download manually and install with:\n",
          tmpurl, " ", installcmd,
          call. = FALSE)
-  #
+  }
+
+  # proxy handling
   if (proxy != "") {
     # manual setting overriding
     proxy <- paste0(" --proxy ", proxy)
-    message("Setting cygwin proxy install argument to: ", proxy, ", based on provided parameter.")
+    message("Setting cygwin proxy install argument to: ",
+            proxy, ", based on provided parameter.")
   } else {
     # detect proxy
     proxy <- curl::ie_proxy_info()$Proxy
     if (!is.null(proxy)) {
-      message("Setting cygwin proxy install argument to: ", proxy, ", based on system settings.")
+      message("Setting cygwin proxy install argument to: ",
+              proxy, ", based on system settings.")
       proxy <- paste0(" --proxy ", proxy)
     }
   }
-  #
+
   # execute cygwin setup command
-  system(paste0(dstfile, " ", installcmd, " --local-package-dir ", tmpfile, " ", proxy))
-  #
-  # test cygwin installation
-  installCygwinWindowsTest(verbose = TRUE)
-  #
+  system(paste0(dstfile, " ", installcmd,
+                " --local-package-dir ", tmpfile, " ", proxy))
+
+  # return cygwin installation test
+  return(installCygwinWindowsTest(verbose = TRUE))
+
 }
 # end installCygwinWindowsDoInstall
 
 
 #' Convenience function to test for working cygwin installation
 #'
-#' @param verbose If \code{TRUE}, prints confirmatory message (default \code{FALSE})
+#' @param verbose If \code{TRUE}, prints confirmatory
+#'  message (default \code{FALSE})
 #'
-#' @return Information if cygwin can be used, \code{TRUE} or \code{FALSE},
-#'  or NULL is not under MS Windows
+#' @return Information if cygwin can be used, \code{TRUE}
+#'  or \code{FALSE}, or NULL if not under MS Windows
 #'
 #' @keywords internal
 #
 installCygwinWindowsTest <- function(verbose = FALSE) {
   #
   if (.Platform$OS.type != "windows") {
-    message("Function installCygwinWindowsTest() is only for MS Windows operating systems.")
+    message("Function installCygwinWindowsTest() is ",
+            "only for MS Windows operating systems.")
     return(invisible(NULL))
   }
   #
   tmpcygwin <- try({
     suppressWarnings(
-      system(paste0("cmd.exe /c ",
-                    rev(Sys.glob("c:\\cygw*\\bin\\bash.exe"))[1],
-                    " --version"),
-             intern = TRUE,
-             ignore.stderr = TRUE
+      system(
+        paste0("cmd.exe /c ",
+               rev(Sys.glob("c:\\cygw*\\bin\\bash.exe"))[1],
+               " --version"),
+        intern = TRUE,
+        ignore.stderr = TRUE
       ))},
     silent = TRUE)
   #
@@ -1849,8 +2083,11 @@ installCygwinWindowsTest <- function(verbose = FALSE) {
     if (verbose) message("cygwin seems to work correctly.")
     return(invisible(TRUE))
   } else {
-    message("cygwin is not available for this package, ctrLoadQueryIntoDb() will not work.\n",
-            "Consider calling ctrdata::installCygwinWindowsDoInstall() from within R.")
+    message("cygwin is not available for this package, ",
+            "ctrLoadQueryIntoDb() will not work.\n",
+            "Consider calling ",
+            "ctrdata::installCygwinWindowsDoInstall() ",
+            "from within R.")
     return(invisible(FALSE))
   }
 }
@@ -1859,46 +2096,65 @@ installCygwinWindowsTest <- function(verbose = FALSE) {
 
 #' Check availability of binaries installed locally
 #'
-#' @param commandtest Command to be used for testing the availability of the binary, e.g. "php -v". Note
-#' internal quotes need to be escaped, e.g. \code{installFindBinary('php -r \"simplexml_load_string(\'\');\"')}.
+#' @param commandtest Command to be used for testing
+#' the availability of the binary, e.g. "php -v".
+#' Note internal quotes need to be escaped, e.g.
+#' \code{installFindBinary('php -r
+#' \"simplexml_load_string(\'\');\"')}.
 #' See R/onload.R for tested binaries.
 #'
-#' @param verbose Set to \code{TRUE} to see printed return value of \code{commandtest}
+#' @param verbose Set to \code{TRUE} to see printed
+#' return value of \code{commandtest}
 #'
-#' @return A logical if executing commandtest returned an error or not
+#' @return A logical if executing commandtest
+#' returned an error or not
 #'
 #' @keywords internal
 #
 installFindBinary <- function(commandtest = NULL, verbose = FALSE) {
   #
-  if (is.null(commandtest)) stop("Empty argument: commandtest", call. = FALSE)
+  if (is.null(commandtest)) {
+    stop("Empty argument: commandtest",
+         call. = FALSE)
+  }
   #
-  if (.Platform$OS.type == "windows") commandtest <-
-      paste0("c:\\cygwin\\bin\\bash.exe --login -c ", shQuote(commandtest))
+  if (.Platform$OS.type == "windows") {
+    commandtest <-
+      paste0("c:\\cygwin\\bin\\bash.exe --login -c ",
+             shQuote(commandtest))}
   #
-  if (verbose) print(commandtest)
+  if (verbose) {print(commandtest)}
   #
   commandresult <- try(
     suppressWarnings(
       system(commandtest,
              intern = TRUE,
-             ignore.stderr = ifelse(.Platform$OS.type == "windows", FALSE, TRUE))),
+             ignore.stderr =
+               ifelse(.Platform$OS.type == "windows",
+                      FALSE, TRUE))),
     silent = TRUE
   )
   #
-  commandreturn <- ifelse(class(commandresult) == "try-error" ||
-                            grepl("error|not found", tolower(paste(commandresult, collapse = " "))) ||
-                            (!is.null(attr(commandresult, "status")) &&
-                               (attr(commandresult, "status") != 0)),
-                          FALSE, TRUE)
+  commandreturn <- ifelse(
+    class(commandresult) == "try-error" ||
+      grepl("error|not found", tolower(paste(commandresult, collapse = " "))) ||
+      (!is.null(attr(commandresult, "status")) &&
+         (attr(commandresult, "status") != 0)),
+    FALSE, TRUE)
   #
   if (!commandreturn) {
-    warning(commandtest, " not found.", call. = FALSE, immediate. = FALSE)
+    warning(commandtest, " not found.",
+            call. = FALSE,
+            immediate. = FALSE)
   } else {
-    if (interactive()) message(". ", appendLF = FALSE)
+    if (interactive()) {
+      message(". ", appendLF = FALSE)
+    }
   }
   #
-  if (verbose) print(commandresult)
+  if (verbose) {
+    print(commandresult)
+  }
   #
   return(commandreturn)
   #

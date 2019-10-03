@@ -55,7 +55,11 @@ getSublistKey <- function(fulllist,
 extractKey <- function(flattenedList, key) {
 
   # extract value for key
-  extracted <- flattenedList[ grepl(key, names(flattenedList), ignore.case = TRUE) ]
+  selected <- grepl(key,
+                    names(flattenedList),
+                    ignore.case = TRUE)
+
+  extracted <- flattenedList[selected]
 
   # if key is not found, return a value
   # e.g. missing value (NA) or empty string ("")
@@ -66,11 +70,11 @@ extractKey <- function(flattenedList, key) {
   return(extracted)
 }
 
-getNames <- function(thevector) {
-
-  sort(unique(sub("[0-9]+$", "", names(thevector))))
-
-}
+# getNames <- function(thevector) {
+#
+#   sort(unique(sub("[0-9]+$", "", names(thevector))))
+#
+# }
 
 
 #### global variables for data bases ####

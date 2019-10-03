@@ -4,14 +4,11 @@
 \alias{dbFindFields}
 \title{Find names of fields in the database collection}
 \usage{
-dbFindFields(namepart = "", allmatches = TRUE, con, verbose = FALSE)
+dbFindFields(namepart = "", con, verbose = FALSE)
 }
 \arguments{
-\item{namepart}{A plain string (not a regular expression) to be searched for
-among all field names (keys) in the database.}
-
-\item{allmatches}{If \code{TRUE} (default), returns all keys if more than one is found,
-returns only first if \code{FALSE}.}
+\item{namepart}{A plain string (not a regular expression) to
+be searched for among all field names (keys) in the database.}
 
 \item{con}{A \link[nodbi]{src} connection object, as obtained with
 nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()}
@@ -22,21 +19,23 @@ nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()}
 Vector of field(s) found
 }
 \description{
-Given part of the name of a field of interest to the user, this function
-returns the full field names as found in the database. It is not necessary to
-add wild cards to the name of the field of interest.
+Given part of the name of a field of interest to the user, this
+function returns the full field names as found in the database.
 }
 \details{
-For fields in EUCTR (protocol- and results-related information), see also the
-register's documentation: \url{https://eudract.ema.europa.eu/}.
+For fields in EUCTR (protocol- and results-related information),
+see also the register's documentation at
+\url{https://eudract.ema.europa.eu/}.
 
-For fields in CTGOV (protocol-related information), see also the register's
-definitions: \url{https://prsinfo.clinicaltrials.gov/definitions.html}
+For fields in CTGOV (protocol-related information), see also
+the register's definitions at
+\url{https://prsinfo.clinicaltrials.gov/definitions.html}.
 
-Note that generating a list of fields with this function may take some time,
-since a mapreduce function is run on the server. If the user is not
-not authorised to run such a function on the (local or remote) server,
-random documents are samples to generate a list of fields.
+Note: Generating a list of fields with this function may take
+some time, and may involve running a mapreduce function is
+run on the server. If the user is not not authorised to run
+such a function on the (local or remote) server,
+random documents are sampled to generate a list of fields.
 }
 \examples{
 

@@ -8,18 +8,19 @@ dbCTRAnnotateQueryRecords(recordnumbers, annotations, annotation.text,
   annotation.mode, con, verbose)
 }
 \arguments{
-\item{annotation.text}{Text to be including in the records retrieved
-with the current query, in the field "annotation".}
+\item{annotation.text}{Text to be including in the records
+retrieved with the current query, in the field "annotation".}
 
-\item{annotation.mode}{One of "append" (default), "prepend" or "replace"
-for new annotation.text with respect to any existing annotation for
-the records retreived with the current query.}
+\item{annotation.mode}{One of "append" (default), "prepend"
+or "replace" for new annotation.text with respect to any
+existing annotation for the records retreived with the
+current query.}
 
 \item{con}{A \link[nodbi]{src} connection object, as obtained with
 nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()}
 
-\item{verbose}{Printing additional information if set to \code{TRUE}; default
-is \code{FALSE}.}
+\item{verbose}{Printing additional information if set to
+\code{TRUE}; default is \code{FALSE}.}
 }
 \description{
 dbQueryAnnotateRecords
