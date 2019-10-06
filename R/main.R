@@ -1755,142 +1755,224 @@ ctrLoadQueryIntoDbEuctr <- function(
     } # for batch
 
     # iterate over batches of result history from webpage
-    # TODO this does not include the retrieval of information
-    # about amendment to the study, as presented at the bottom
-    # of the webpage for the respective trial results
-    message("(4/4) Retrieving any results history and importing into database ...", appendLF = FALSE)
-    for (i in 1:(resultsNumBatches + ifelse(resultsNumModulo > 0, 1, 0))) {
+    if (euctrresultshistory) {
 
-      # calculated indices for eudractnumbersimported vector
-      startindex <- (i - 1) * parallelretrievals + 1
-      stopindex  <- ifelse(i > resultsNumBatches,
-                           startindex + resultsNumModulo,
-                           startindex + parallelretrievals) - 1
+      # TODO this does not include the retrieval of information
+      # about amendment to the study, as presented at the bottom
+      # of the webpage for the respective trial results
+      message("(4/4) Retrieving results history and importing ",
+              "into database ...", appendLF = FALSE)
+      for (i in 1:(resultsNumBatches +
+                   ifelse(resultsNumModulo > 0, 1, 0))) {
 
-      # inform user
-      message("\n h ", startindex, "-", stopindex, " ", appendLF = FALSE)
+        # calculated indices for eudractnumbersimported vector
+        startindex <- (i - 1) * parallelretrievals + 1
+        stopindex  <- ifelse(
+          i > resultsNumBatches,
+          startindex + resultsNumModulo,
+          startindex + parallelretrievals) - 1
 
-      # prepare download and save
-      pool <- curl::new_pool()
-      done <- function(res){retdat <<- c(retdat, list(res))}
-      urls <- unlist(lapply(paste0("https://www.clinicaltrialsregister.eu/ctr-search/trial/",
-                                   eudractnumbersimported[startindex:stopindex], "/results"),
-                            utils::URLencode))
-      # tmp <- lapply(seq_along(urls),
-      #               function(x) curl::curl_fetch_multi(url = urls[x],
-      #                                                  done = done,
-      #                                                  pool = pool,
-      #                                                  handle = curl::new_handle(ssl_verifypeer = TRUE)
-      #               ))
-      tmp <- lapply(
-        seq_along(urls),
-        function(x)
-          curl::curl_fetch_multi(
-            url = urls[x],
-            done = done,
-            pool = pool,
-            handle = curl::new_handle(
-              ssl_verifypeer = TRUE,
-              range = "0-22999", # NOTE only top part of page
-              accept_encoding = "identity"
-              )
-          ))
+        # inform user
+        message("\n h ", startindex, "-", stopindex,
+                " ", appendLF = FALSE)
 
-      # do download and save into batchresults
-      retdat <- NULL
-      tmp <- curl::multi_run(pool = pool,
-                             poll = length(urls))
-      batchresults <- lapply(retdat,
-                             function(x) rawToChar(x[["content"]]))
+        # prepare download and save
+        pool <- curl::new_pool(
+          total_con = parallelretrievals,
+          host_con = parallelretrievals)
+        #
+        done <- function(res){retdat <<- c(retdat, list(res))}
+        #
+        urls <- unlist(lapply(paste0(
+          "https://www.clinicaltrialsregister.eu/ctr-search/trial/",
+          eudractnumbersimported[startindex:stopindex], "/results"),
+          utils::URLencode))
 
-      # curl return sequence is not predictable
-      # therefore recalculate the eudract numbers
-      eudractnumberscurled <- sapply(retdat, function(x) x[["url"]])
-      eudractnumberscurled <- sub(".*([0-9]{4}-[0-9]{6}-[0-9]{2}).*", "\\1", eudractnumberscurled)
+        # tmp <- lapply(seq_along(urls),
+        #               function(x) curl::curl_fetch_multi(url = urls[x],
+        #                                                  done = done,
+        #                                                  pool = pool,
+        #                                                  handle = curl::new_handle(ssl_verifypeer = TRUE)
+        #               ))
 
-      # for date time conversion
-      lct <- Sys.getlocale("LC_TIME")
-      Sys.setlocale("LC_TIME", "C")
+        # tmp <- lapply(
+        #   seq_along(urls),
+        #   function(x)
+        #     curl::curl_fetch_multi(
+        #       url = urls[x],
+        #       done = done,
+        #       pool = pool,
+        #       handle = curl::new_handle(
+        #         ssl_verifypeer = TRUE, # NOTE keep to speed up
+        #         range = "0-22999",     # NOTE only top part of page
+        #         accept_encoding = "identity"
+        #       )
+        #     ))
 
-      # extract information about results
-      tmpFirstDate <- as.Date(sapply(batchresults, function(x)
-        trimws(sub(".+First version publication date</div>.*?<div>(.+?)</div>.*", "\\1",
-                   ifelse(grepl("First version publication date", x), x, "")))),
-        format = "%d %b %Y")
+        tmp <- lapply(
+          seq_along(urls),
+          function(x)
+            curl::multi_add(
+              handle = curl::new_handle(
+                url = urls[x],
+                ssl_verifypeer = TRUE, # NOTE keep to speed up?!
+                range = "0-22999",     # NOTE only top part of page
+                accept_encoding = "identity"
+              ),
+              done = done,
+              pool = pool
+            ))
 
-      # global end date is variably represented in euctr:
-      # 'p_date_of_the_global_end_of_the_trial',
-      # 'Global completion date' or 'Global end of trial date'
-      # tmpEndDate <- as.Date(sapply(batchresults, function(x)
-      #   trimws(sub(".*Global .+? date</div>.*?<div>(.*?)</div>.*", "\\1",
-      #      ifelse(grepl("Global .+? date", x), x, "")))),
-      #           format = "%d %b %Y")
+        # NOTE Testing of partial downloading webpage
+        # to retrieve information from its top part
+        # curl::curl_fetch_memory(
+        #   url = "https://www.clinicaltrialsregister.eu/ctr-search/trial/2007-000371-42/results",
+        #   handle = curl::new_handle(
+        #     ssl_verifypeer = TRUE,
+        #     range = "0-25000",
+        #     accept_encoding = "identity"
+        #   )) -> tmp
+        # nchar(rawToChar(tmp[["content"]]))
+        # rawToChar(tmp[["headers"]])
+        # # [1] "HTTP/1.1 206 Partial Content\r\n
+        # # Date: Thu, 03 Oct 2019 07:57:56 GMT\r\n
+        # # Content-Range: bytes 0-25000/1321640\r\n
+        # # Content-Length: 25001\r\n\r\n"
 
-      # reset date time
-      Sys.setlocale("LC_TIME", lct)
+        # do download and save into batchresults
+        retdat <- NULL
+        tmp <- curl::multi_run(
+          pool = pool,
+          poll = length(urls))
 
-      tmpChanges <- sapply(batchresults, function(x)
-        trimws(gsub("[ ]+", " ",
-               gsub("[\n\r]", "",
-               gsub("<[a-z/]+>", "",
-               sub(".+Version creation reason.*?<td class=\"valueColumn\">(.+?)</td>.+", "\\1",
-               ifelse(grepl("Version creation reason", x), x, ""))
-               ))))
-      )
+        batchresults <- lapply(
+          retdat,
+          function(x) rawToChar(x[["content"]]))
 
-      tmp <- lapply(seq_along(along.with = startindex:stopindex), function(x) {
+        if (verbose) {
+          message("\n", paste0(sapply(batchresults, nchar),
+                               collapse = " "))}
+
         # FIXME delete
-        # upd <- mongo$update(query = paste0('{"a2_eudract_number": {"$eq": "',
-        #                                    eudractnumberscurled[x], '"}}'),
-        #                     update = paste0('{ "$set" : {',
-        #                                     '"firstreceived_results_date" : "',  tmpFirstDate[x], '", ',
-        #                                     '"version_results_history"    : "',  tmpChanges[x],   '"',
-        #                                     "}}"),
-        #                     upsert = TRUE,
-        #                     multiple = TRUE)
-        # upd <- nodbi::docdb_update(src = con,
-        #                            key = con$collection,
-        #                            query = paste0('{"a2_eudract_number": {"$eq": "',
-        #                                           eudractnumberscurled[x], '"}}'),
-        #                            # TODO change into dataframe
-        #                            value = data.frame("firstreceived_results_date" = as.character(tmpFirstDate[x]),
-        #                                                "version_results_history" = tmpChanges[x],
-        #                                                stringsAsFactors = FALSE))
+        # saveRDS(batchresults, paste0("batchresults_", i, ".rds"))
 
-        if (tmpChanges[x] == "") tmpChanges[x] <- "(not specified)"
+        # curl return sequence is not predictable
+        # therefore recalculate the eudract numbers
+        eudractnumberscurled <- sapply(
+          retdat, function(x) x[["url"]])
+        #
+        eudractnumberscurled <- sub(
+          ".*([0-9]{4}-[0-9]{6}-[0-9]{2}).*",
+          "\\1", eudractnumberscurled)
 
-        upd <- nodbi::docdb_update(src = con,
-                                   key = con$collection,
-                                   # FIXME should quoting be done in nodbi::dbodb_update()?
-                                   value = data.frame("a2_eudract_number" = eudractnumberscurled[x],
-                                                      "firstreceived_results_date" = as.character(tmpFirstDate[x]),
-                                                      "version_results_history" = tmpChanges[x],
-                                                      stringsAsFactors = FALSE))
+        # for date time conversion
+        lct <- Sys.getlocale("LC_TIME")
+        Sys.setlocale("LC_TIME", "C")
 
-        if (verbose) message(upd)
-      })
+        # extract information about results
+        tmpFirstDate <- as.Date(
+          sapply(batchresults, function(x)
+            trimws(sub(
+              ".+First version publication date</div>.*?<div>(.+?)</div>.*",
+              "\\1",
+              ifelse(grepl(
+                "First version publication date", x),
+                x, "")))),
+          format = "%d %b %Y")
 
-      # clean up large object
-      rm(batchresults)
+        # global end date is variably represented in euctr:
+        # 'p_date_of_the_global_end_of_the_trial',
+        # 'Global completion date' or 'Global end of trial date'
+        # tmpEndDate <- as.Date(sapply(batchresults, function(x)
+        #   trimws(sub(".*Global .+? date</div>.*?<div>(.*?)</div>.*", "\\1",
+        #      ifelse(grepl("Global .+? date", x), x, "")))),
+        #           format = "%d %b %Y")
 
-    } # for batch
+        # reset date time
+        Sys.setlocale("LC_TIME", lct)
+
+        tmpChanges <- sapply(batchresults, function(x)
+          trimws(
+            gsub("[ ]+", " ",
+            gsub("[\n\r]", "",
+            gsub("<[a-z/]+>", "",
+             sub(".+Version creation reason.*?<td class=\"valueColumn\">(.+?)</td>.+", "\\1",
+                 ifelse(grepl("Version creation reason", x), x, ""))
+            ))))
+        )
+
+        tmp <- lapply(
+          seq_along(
+            along.with = startindex:stopindex),
+          function(x) {
+            # FIXME delete
+            # upd <- mongo$update(query = paste0('{"a2_eudract_number": {"$eq": "',
+            #                                    eudractnumberscurled[x], '"}}'),
+            #                     update = paste0('{ "$set" : {',
+            #                                     '"firstreceived_results_date" : "',  tmpFirstDate[x], '", ',
+            #                                     '"version_results_history"    : "',  tmpChanges[x],   '"',
+            #                                     "}}"),
+            #                     upsert = TRUE,
+            #                     multiple = TRUE)
+            # upd <- nodbi::docdb_update(src = con,
+            #                            key = con$collection,
+            #                            query = paste0('{"a2_eudract_number": {"$eq": "',
+            #                                           eudractnumberscurled[x], '"}}'),
+            #                            # TODO change into dataframe
+            #                            value = data.frame("firstreceived_results_date" = as.character(tmpFirstDate[x]),
+            #                                                "version_results_history" = tmpChanges[x],
+            #                                                stringsAsFactors = FALSE))
+
+          if (tmpChanges[x] == "") {
+            tmpChanges[x] <- "(not specified)"}
+
+          upd <- nodbi::docdb_update(
+            src = con,
+            key = con$collection,
+            # FIXME should quoting be done in nodbi::dbodb_update()?
+            value = data.frame(
+              "a2_eudract_number" = eudractnumberscurled[x],
+              "firstreceived_results_date" = as.character(tmpFirstDate[x]),
+              "version_results_history" = tmpChanges[x],
+              stringsAsFactors = FALSE))
+
+          if (verbose) {
+            message(upd)}
+          })
+
+        # clean up large object
+        rm(batchresults)
+
+      } # for batch
+    } else {
+
+      message("(4/4) Retrieving results history: not done ",
+              "(euctrresultshistory = FALSE).",
+              appendLF = FALSE)
+
+    } # if euctrresultshistory
 
     # FIXME delete
     # # close database connection
     # mongo$disconnect()
 
     # sum up successful downloads
-    importedresults <- sum(unlist(importedresults), na.rm = TRUE)
+    importedresults <- sum(unlist(
+      importedresults), na.rm = TRUE)
 
     ## inform user on final import outcome
-    message("\n= Imported or updated results for ", importedresults,
-            " records for ", resultsEuNumTrials, " trial(s).")
+    message("\n= Imported or updated results for ",
+            importedresults, " records for ",
+            resultsEuNumTrials, " trial(s).")
 
   } # if euctrresults
 
 
   # clean up temporary directory
-  if (!verbose) unlink(tempDir, recursive = TRUE)
+  if (!verbose) {
+    unlink(tempDir,
+           recursive = TRUE)
+    }
 
   # return
   return(imported)
