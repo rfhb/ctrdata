@@ -917,7 +917,12 @@ dbFindIdsUniqueTrials <- function(
   listofCTGOVids <- nodbi::docdb_query(
     src = con,
     key = con$collection,
-    query =  '{"_id": { "$regex": "^NCT[0-9]{8}", "$options": ""} }',
+    query =  paste0(
+      '{"_id": { "$regex": "^NCT[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]$"',
+      ifelse(test = "src_mongo" %in% class(con),
+             yes  = ', "$options": ""',
+             no   = ''), # TODO sqlite options handling
+      '}}'),
     fields = paste0('{"id_info.org_study_id": 1,',
                     ' "id_info.secondary_id": 1,',
                     ' "id_info.nct_alias": 1}'))
