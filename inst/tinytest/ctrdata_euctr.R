@@ -311,13 +311,14 @@ expect_true(all(
 
 # test
 expect_message(
-  suppressWarnings(
-    ctrLoadQueryIntoDb(
-      queryterm = "NCT01516567",
-      register = "CTGOV",
-      con = dbc,
-      annotation.text = "ANNO",
-      annotation.mode = "replace")),
+  suppressMessages(
+    suppressWarnings(
+      ctrLoadQueryIntoDb(
+        queryterm = "NCT01516567",
+        register = "CTGOV",
+        con = dbc,
+        annotation.text = "ANNO",
+        annotation.mode = "replace"))),
   "Imported or updated 1 trial",
   info = "ctrdata_euctr.R#297")
 

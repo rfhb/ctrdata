@@ -888,7 +888,7 @@ dbFindIdsUniqueTrials <- function(
       "a53_who_universal_trial_reference_number_utrn"), # a53_ not yet used
       con = con,
       verbose = FALSE,
-      stopifnodata = FALSE)
+      stopifnodata = FALSE) # if only ctgov records, an error is triggered
   )),
   silent = TRUE
   )
