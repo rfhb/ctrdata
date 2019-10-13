@@ -15,69 +15,13 @@
 # only helper functions and global variables
 
 #### setup ####
+
 library(tinytest)
-
 suppressMessages(library(ctrdata))
-
-#### helper functions for data ####
-
-getSublistKey <- function(fulllist,
-                          keyssublists =
-                            list(c("endPoints.endPoint", "^title"))) {
-
-  # dots needs to be defined because passing it in .Internal(mapply()) is not enough
-  dots <- lapply(
-    keyssublists,
-    function(k) lapply(fulllist[[k[1]]], # k[1] = "endPoints.endPoint" identifies the sublist
-                       function(l) extractKey(unlist(l, recursive = TRUE),
-                                              k[2]) # k[2] = "^title" identifies the key in the sublist
-    ))
-
-  # add trial identifer if available
-  if ("_id" %in% names(fulllist)) dots <- c("_id" = list(fulllist[["_id"]]), dots)
-
-  # do the magic, which is expanding the data.frame
-  # by recycling shorter vectors to align with data
-  out <- .Internal(mapply(cbind, dots, NULL))
-  out <- do.call(rbind, out)
-  out <- as.data.frame(out, stringsAsFactors = FALSE)
-  row.names(out) <- NULL
-
-  # make names from names of keys and of sublists
-  no <- sapply(keyssublists, paste0, collapse = ".")
-  no <- gsub("[^a-zA-Z.]", "", no)
-  names(out)[-1] <- no
-
-  # return
-  out
-}
-
-extractKey <- function(flattenedList, key) {
-
-  # extract value for key
-  selected <- grepl(key,
-                    names(flattenedList),
-                    ignore.case = TRUE)
-
-  extracted <- flattenedList[selected]
-
-  # if key is not found, return a value
-  # e.g. missing value (NA) or empty string ("")
-  # please change as wanted for later processing
-  if (length(extracted) == 0) extracted <- NA
-
-  # return
-  return(extracted)
-}
-
-# getNames <- function(thevector) {
-#
-#   sort(unique(sub("[0-9]+$", "", names(thevector))))
-#
-# }
 
 
 #### global variables for data bases ####
+
 tmpname <- paste0("ctrdata_test_",
                   format(Sys.time(),
                          "%Y%m%d%H%M%S",
@@ -105,7 +49,6 @@ mongo_remote_ro_url <- "mongodb+srv://DWbJ7Wh:bdTHh5cS@cluster0-b9wpw.mongodb.ne
 mongo_remote_rw_url <- Sys.getenv(x = "ctrdatamongouri")
 # this environment variable is set on development
 # and continuous integration systems
-
 
 
 #### helper functions system detection ####

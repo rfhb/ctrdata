@@ -975,13 +975,15 @@ ctrLoadQueryIntoDbCtgov <- function(
   if (!suppressWarnings(
     installFindBinary(
       commandtest = "php --version"))) {
-    stop("php not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
+    stop("php not found, ctrLoadQueryIntoDb() will not work.",
+         call. = FALSE)
   }
   #
   if (!suppressWarnings(
     installFindBinary(
       commandtest = "php -r 'simplexml_load_string(\"\");'"))) {
-    stop("php xml not found, ctrLoadQueryIntoDb() will not work.", call. = FALSE)
+    stop("php xml not found, ctrLoadQueryIntoDb() will not work.",
+         call. = FALSE)
   }
   #
   message("done.")
