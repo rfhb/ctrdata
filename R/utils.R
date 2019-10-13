@@ -96,106 +96,6 @@ ctrDb <- function(
 }
 
 
-# FIXME delete
-# #' Set up connections to a Mongo DB server database
-# #'
-# #' @param collection Name of collection (default is "ctrdata")
-# #'
-# #' @param uri Default is mongodb://localhost/users/.
-# #'  Address of database in mongodb server, based on mongo connection string
-# #'  format: mongodb://[username@]host1[:port1][,...hostN[:portN]]]/database/
-# #'  Do NOT include password, this will only be used from the parameter.
-# #'  See \url{http://docs.mongodb.org/manual/reference/connection-string/}
-# #'
-# #' @param password In case access requires credentials.
-# #'  Note this defaults to the environment variable "ctrdatamongopassword".
-# #'  (by means of \code{Sys.getenv("ctrdatamongopassword")}), to
-# #'  support scripting without revealing secrets.
-# #'
-# #' @param verbose Print information.
-# #'
-# #' @return A mongo data base object, currently using mongolite
-# #'
-# #' @keywords internal
-# #'
-# #' @importFrom mongolite mongo
-# #'
-# ctrMongo <- function(collection = "ctrdata",
-#                      uri = "mongodb://localhost/users",
-#                      password = Sys.getenv("ctrdatamongopassword"),
-#                      verbose = FALSE) {
-#
-#   # mongo versions tested
-#   # - local 3.4.18 (macOS)
-#   # - travis 3.4.20
-#   # - appveyor ? (https://www.appveyor.com/docs/services-databases/#mongodb)
-#
-#   # references
-#   # https://docs.mongodb.com/manual/reference/connection-string/
-#   # https://docs.mongodb.com/manual/reference/program/mongoimport/
-#
-#   # The +srv indicates to the client that the hostname that follows corresponds to a DNS SRV record.
-#   # Use of the +srv connection string modifier automatically sets the ssl option to true for the connection.
-#   # Override this behavior by explicitly setting the ssl option to false with ssl=false in the query string.
-#
-#   # For a standalone that enforces access control:
-#   # mongodb://myDBReader:D1fficultP%40ssw0rd@mongodb0.example.com:27017/admin
-#
-#   # For a sharded cluster that enforces access control, include user credentials:
-#   # mongodb://myDBReader:D1fficultP%40ssw0rd@mongos0.example.com:27017,mongos1.example.com:27017,mongos2.example.com:27017/admin
-#
-#   # For a replica set, specify the hostname(s) of the mongod instance(s) as listed in the replica set configuration.
-#   # For a replica set, include the replicaSet option.
-#   # mongodb://myDBReader:D1fficultP%40ssw0rd@mongodb0.example.com:27017,mongodb1.example.com:27017,mongodb2.example.com:27017/admin?replicaSet=myRepl
-#
-#   # --uri <connectionString>
-#   #   New in version 3.4.6.
-#   # Specify a resolvable URI connection string for the mongod to which to connect.
-#
-#   # /usr/local/opt/mongodb/bin/mongoimport
-#   # --host "Cluster0-shard-0/cluster0-shard-00-00-b9wpw.mongodb.net:27017,cluster0-shard-00-01-b9wpw.mongodb.net:27017,cluster0-shard-00-02-b9wpw.mongodb.net:27017"
-#   # --ssl --username "admin" --password "admin" --authenticationDatabase admin --db "dbtemp" --collection "dbcoll"
-#   # --type "json" --file "private/2007-001012-23.json"
-#
-#   # /usr/local/opt/mongodb/bin/mongoimport --host "cluster0-shard-00-00-b9wpw.mongodb.net:27017"
-#   # --ssl --username "admin" --password "admin" --authenticationDatabase admin --db "dbtemp" --collection "dbcoll"
-#   # --type "json" --file "private/2007-001012-23.json"
-#
-#   # Example NDJSON
-#   # {"some":"thing"}
-#   # {"foo":17,"bar":false,"quux":true}
-#   # {"may":{"include":"nested","objects":["and","arrays"]}}
-#
-#   ## check parameters
-#   # remove unwanted characters
-#   uri <- gsub("[^a-zA-Z0-9%?=@/:+_.-]", "", uri)
-#   uri <- gsub(":@", "@", uri)
-#
-#   ## password if any to uri
-#   # encode password
-#   password <- utils::URLencode(password)
-#   # insert into uri if uri has a username
-#   if ((password != "") && grepl("//.+@", uri))
-#     uri <- sub("(.+)@(.+)", paste0("\\1", ":", password, "@\\2"), uri)
-#
-#   # check and set proxy if needed to access internet
-#   # TODO
-#   # setProxy()
-#
-#   # connect to mongo server
-#   valueCtrDb <- mongolite::mongo(collection = collection,
-#                                  url = uri,
-#                                  verbose = verbose)
-#
-#   # inform user
-#   if (verbose) message("Using MongoDB (collections \"", collection,
-#                        "\" in database \"", uri, "\").")
-#
-#   return(invisible(valueCtrDb))
-# }
-# end ctrMongo
-
-
 #' Open advanced search pages of register(s) or execute search in browser
 #'
 #' @param input Show results of search for \code{queryterm} in
@@ -355,15 +255,17 @@ ctrOpenSearchPagesInBrowser <- function(
 
 #' Import from clipboard the URL of a search in one of the registers
 #'
-#' @param content URL from browser address bar. Defaults to clipboard contents.
+#' @param content URL from browser address bar.
+#' Defaults to clipboard contents.
 #'
-#' @return A string of query parameters that can be used to retrieve data from
-#'   the register.
+#' @return A string of query parameters that can be used to retrieve data
+#' from the register.
 #'
 #' @export
 #'
-#' @return A data frame with a query term and the register name that can directly be
-#'   used in \link{ctrLoadQueryIntoDb} and in \link{ctrOpenSearchPagesInBrowser}
+#' @return A data frame with a query term and the register name that can
+#' directly be used in \link{ctrLoadQueryIntoDb} and in
+#' \link{ctrOpenSearchPagesInBrowser}
 #'
 #' @examples
 #'
@@ -454,7 +356,7 @@ ctrGetQueryUrlFromBrowser <- function(content = "") {
 #' Find synonyms of an active substance
 #'
 #' An active substance can be identified by a recommended international
-#' nonproprietary name, a trade or product name, or one or more company codes.
+#' nonproprietary name, a trade or product name, or a company code(s).
 #'
 #' At this time, this function uses the register ClinicalTrials.Gov to
 #' detect which substances were also searched for.
@@ -548,44 +450,14 @@ dbQueryHistory <- function(con,
   # debug
   if (verbose) message("Running dbQueryHistory ...")
 
-  # FIXME delete
-  # # get a working mongo connection, select trial record collection
-  # mongo <- ctrMongo(collection = collection, uri = uri,
-  #                   password = password, verbose = verbose)
-
-  # Get record from mongo db using batch because find would
-  # try to return a dataframe and this would ignore the array
-  #  tmp <- mongo$iterate(query = '{"_id":{"$eq":"meta-info"}}', fields = '{"queries": 1, "_id": 0}')$batch()
-  # tmp <- nodbi::docdb_query(src = con,
-  #                           key = con$collection,
-  #                           query = '{"_id": {"$eq": "meta-info"}}',
-  #                           fields = '{"meta-info": 1}')
-  #
   tmp <- nodbi::docdb_query(
     src = con,
     key = con$collection,
     query = '{"_id": {"$eq": "meta-info"}}',
     fields = '{"queries": 1}')
 
-  # tmp <- con$con$find(query = query, fields = fields)
-
-
-
   # access array of meta-info
-  # tmp <- data.frame(tmp[["meta-info"]],
-  #                   check.names = FALSE)
-  #
   tmp <- tmp[["queries"]][[1]]
-
-  # handle if nothing is returned
-  #if (is.null(tmp)) tmp <- data.frame(NULL)
-
-  #if (nrow(tmp)) tmp <- tmp[, -match("_id", names(tmp))] # remove "_id" column
-
-  # Select only relevant element from record
-  # FIXME delete
-  # nrow(tmp)
-  # tmp <- tmp[["queries"]]
 
   # Check if meeting expectations
   if (is.null(tmp) ||
@@ -598,12 +470,6 @@ dbQueryHistory <- function(con,
     #
   }
   # else {
-  #   # Change into data frame with appropriate column names
-  #   tmp <- sapply(tmp, function(x) do.call(rbind, x))
-  #   tmp <- t(tmp)
-  #   tmp <- data.frame(tmp, row.names = NULL, check.names = FALSE, stringsAsFactors = FALSE)
-  #   if (ncol(tmp) != 4) warning(tmp, call. = FALSE, immediate. = TRUE)
-  #   names(tmp) <- c("query-timestamp", "query-register", "query-records", "query-term")
 
   # Inform user
   if (verbose) {
@@ -613,10 +479,6 @@ dbQueryHistory <- function(con,
     # }
 
     # total number of records in collection to inform user
-    # FIXME delete - is this information needed here? perhaps after load function?
-    # TODO find method / way to count elements
-    # countall <- mongo$count(query = '{"_id":{"$ne":"meta-info"}}')
-    # if (verbose) message("Number of records in collection \"", collection, "\": ", countall)
     countall <- nodbi::docdb_query(
       src = con,
       key = con$collection,
@@ -627,10 +489,6 @@ dbQueryHistory <- function(con,
     message("Number of records in collection \"",
             con$collection, "\": ", length(countall))
   }
-
-  # FIXME delete
-  # close database connection
-  # mongo$disconnect()
 
   # return
   return(tmp)
@@ -862,11 +720,6 @@ dbFindIdsUniqueTrials <- function(
   # that represent unique records of clinical trials, based on user's
   # preferences for selecting the preferred from any multiple records
 
-  # TODO deleteme
-  # # get a working mongo connection, select trial record collection
-  # mongo <- ctrMongo(collection = collection, uri = uri,
-  #                   password = password, verbose = verbose)
-
   ## check database connection
   if (is.null(con$ctrDb)) con <- ctrDb(con = con)
 
@@ -905,11 +758,6 @@ dbFindIdsUniqueTrials <- function(
   # inform user
   message("Searching for duplicates, found ")
 
-  # TODO delete
-  # extract eudract number
-  # if (!is.null(listofEUCTRids)) listofEUCTRids <-
-  #   listofEUCTRids[grepl("[0-9]{4}-[0-9]{6}-[0-9]{2}-?[3A-Z]{0,3}", listofEUCTRids[["_id"]]), ]
-
   # 2. find unique, preferred country version of euctr
   if (!is.null(listofEUCTRids)) {
     listofEUCTRids <- dfFindUniqueEuctrRecord(
@@ -932,31 +780,10 @@ dbFindIdsUniqueTrials <- function(
                     ' "id_info.secondary_id": 1,',
                     ' "id_info.nct_alias": 1}'))
 
-  # TODO delete
-  # listofCTGOVids <- dbGetFieldsIntoDf(fields = c("id_info.org_study_id",
-  #                                                "id_info.secondary_id",
-  #                                                "id_info.nct_alias"),
-  #                   debug = FALSE,
-  #                   con = con,
-  #                   verbose = FALSE,
-  #                   stopifnodata = FALSE)
-
   if (!nrow(listofCTGOVids)) {listofCTGOVids <- NULL}
-
-  # TODO delete
-  # listofCTGOVids <- mongo$iterate(
-  #   query =  '{"_id": { "$regex": "^NCT[0-9]{8}", "$options": ""} }',
-  #   fields = '{"id_info.org_study_id": 1,
-  #              "id_info.secondary_id": 1,
-  #              "id_info.nct_alias": 1}'
-  # )$batch(size = mongo$count())
 
   # inform user
   if (is.null(listofCTGOVids)) {message("No CTGOV records found.")}
-
-  # TODO deleteme
-  # # close database connection
-  # mongo$disconnect()
 
   # 4. retain unique ctrgov records
   if (!is.null(listofCTGOVids)) {
@@ -975,18 +802,7 @@ dbFindIdsUniqueTrials <- function(
     # retain only relevant fields
     listofCTGOVids <- listofCTGOVids[, c("_id", "id_info")]
 
-    # TODO deleteme
-    #listofCTGOVids <- as.list.data.frame(listofCTGOVids)
-   # search for dupes for each entry of _id, eliminate enty's own _id (nct_id) by grepl
-    # dupes <- sapply(listofCTGOVids, function(x) x[["_id"]] %in% unlist(x[["id_info"]]))
-    # if (sum(dupes) > 0) listofCTGOVids <- listofCTGOVids[!dupes, ]
-    # if (verbose) message("Searching duplicates: Found ", sum(dupes),
-    #                      " CTGOV _id in CTGOV otherids (secondary_id, nct_alias, org_study_id)")
   }
-
-  # TODO delete reminder
-  # > c(5,4,3) %in% c(1,5)
-  # [1]  TRUE FALSE FALSE
 
   # 5. find records (_id's) that are in both in euctr and ctgov
   if (!is.null(listofEUCTRids) & !is.null(listofCTGOVids)) {
@@ -1001,9 +817,6 @@ dbFindIdsUniqueTrials <- function(
       # [1]  TRUE FALSE FALSE
       #
       # b2 - ctgov in euctr (_id corresponds to index 1)
-      # TODO deleteme
-      # dupes.b2 <- sapply(listofCTGOVids, "[[", 1) %in%
-      #        listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]
       dupes.b2 <- listofCTGOVids[["_id"]] %in%
         listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]
       #
@@ -1011,10 +824,6 @@ dbFindIdsUniqueTrials <- function(
                            " CTGOV _id (nct) in EUCTR a52_us_nct_...")
       #
       # a2 - ctgov in euctr a2_...
-      # TODO deleteme
-      # dupes.a2 <- sapply(lapply(listofCTGOVids, function(x) sub(".*([0-9]{4}-[0-9]{6}-[0-9]{2}).*",
-      #                                                                        "\\1", unlist(x[["id_info"]]))),
-      #                    function(x) any(x %in% listofEUCTRids[["a2_eudract_number"]]))
       dupes.a2 <- sapply(
         listofCTGOVids[["id_info"]], # e.g. "EUDRACT-2004-000242-20"
         function(x) any(sub(".*([0-9]{4}-[0-9]{6}-[0-9]{2}).*", "\\1", x) %in%
@@ -1028,9 +837,6 @@ dbFindIdsUniqueTrials <- function(
       #
       # c.2 - ctgov in euctr a52_... (id_info corresponds to index 2)
       # TODO deleteme
-      # dupes.c2 <- sapply(lapply(listofCTGOVids, "[[", 2),
-      #                    function(x) any(unlist(x) %in%
-      #                                      listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]))
       dupes.c2 <- sapply(
         listofCTGOVids[["id_info"]],
         function(x) any(
@@ -1048,7 +854,8 @@ dbFindIdsUniqueTrials <- function(
         listofCTGOVids[["id_info"]],
         function(x) any(
           x %in%
-            listofEUCTRids[["a51_isrctn_international_standard_randomised_controlled_trial_number"]]))
+            listofEUCTRids[[
+              "a51_isrctn_international_standard_randomised_controlled_trial_number"]]))
       #
       if (verbose) message(" - ", sum(dupes.d2),
                            " CTGOV secondary_id / nct_alias / org_study_id in",
@@ -1068,8 +875,6 @@ dbFindIdsUniqueTrials <- function(
       #
       # finalise results set
       listofEUCTRids <- listofEUCTRids[["_id"]]
-      # TODO deleteme
-      #listofCTGOVids <- sapply(listofCTGOVids, "[[", 1) [ !dupes.a2 & !dupes.b2 & !dupes.c2 & !dupes.d2 ]
       listofCTGOVids <- listofCTGOVids[[
         "_id"]] [ !dupes.a2 & !dupes.b2 & !dupes.c2 & !dupes.d2 & !dupes.e2 ]
       #
@@ -1085,9 +890,6 @@ dbFindIdsUniqueTrials <- function(
     if (preferregister == "CTGOV") {
       #
       # a.1 - euctr in ctgov (id_info corresponds to index 2)
-      # TODO deleteme
-      # dupes.a1 <- listofEUCTRids[["a2_eudract_number"]] %in% sub(".*([0-9]{4}-[0-9]{6}-[0-9]{2}).*",
-      #                                                            "\\1", unlist(sapply(listofCTGOVids, "[[", 2)))
       dupes.a1 <- listofEUCTRids[["a2_eudract_number"]] %in% sub(
         ".*([0-9]{4}-[0-9]{6}-[0-9]{2}).*", # e.g. "EUDRACT-2004-000242-20"
         "\\1", unlist(listofCTGOVids[["id_info"]]))
@@ -1098,9 +900,6 @@ dbFindIdsUniqueTrials <- function(
       }
       #
       # b.1 - euctr in ctgov (_id corresponds to index 1)
-      # TODO deleteme
-      # dupes.b1 <- listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]] %in%
-      #   sapply(listofCTGOVids, "[[", 1)
       dupes.b1 <- listofEUCTRids[[
         "a52_us_nct_clinicaltrialsgov_registry_number"]] %in% listofCTGOVids[["_id"]]
       #
@@ -1110,9 +909,6 @@ dbFindIdsUniqueTrials <- function(
       }
       #
       # c.1 - euctr in ctgov (id_info corresponds to index 2)
-      # TODO deleteme
-      # dupes.c1 <- listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]] %in%
-      #   unlist(sapply(listofCTGOVids, "[[", 2))
       dupes.c1 <- listofEUCTRids[[
         "a52_us_nct_clinicaltrialsgov_registry_number"]] %in%
         unlist(listofCTGOVids[["id_info"]])
@@ -1125,9 +921,6 @@ dbFindIdsUniqueTrials <- function(
       }
       #
       # d.1 - euctr in ctgov (id_info corresponds to index 2)
-      # TODO deleteme
-      # dupes.d1 <- listofEUCTRids[["a51_isrctn_international_standard_randomised_controlled_trial_number"]] %in%
-      #   unlist(sapply(listofCTGOVids, "[[", 2))
       dupes.d1 <- listofEUCTRids[[
         "a51_isrctn_international_standard_randomised_controlled_trial_number"]] %in%
         unlist(listofCTGOVids[["id_info"]])
@@ -1266,16 +1059,9 @@ dbGetFieldsIntoDf <- function(fields = "",
     con <- ctrDb(con = con)
   }
 
-  # TODO delete
-  # # get a working mongo connection, select trial record collection
-  # mongo <- ctrMongo(collection = collection, uri = uri,
-  #                   password = password, verbose = verbose)
-  #
-  # # total number of records in collection, used for max batch size and at function end
-  # countall <- mongo$count(query = '{"_id":{"$ne":"meta-info"}}')
-
   # provide list of ids
-  # idsall <- mongo$find(query = '{"_id":{"$ne":"meta-info"}}', fields = '{"_id" : 1}')
+  # idsall <- mongo$find(
+  #  query = '{"_id":{"$ne":"meta-info"}}', fields = '{"_id" : 1}')
   idsall <- nodbi::docdb_query(
     src = con,
     key = con$collection,
@@ -1294,8 +1080,6 @@ dbGetFieldsIntoDf <- function(fields = "",
     #
     tmp <- try({
       #
-      # TODO deleteme
-      # dfi <- mongo$iterate(query = query, fields = paste0('{"_id": 1, "', item, '": 1}'))$batch(size = countall)
       dfi <- nodbi::docdb_query(
         src = con,
         key = con$collection,
@@ -1341,15 +1125,6 @@ dbGetFieldsIntoDf <- function(fields = "",
       if (verbose) {
         message("DEBUG: field ", item, " has length ", nrow(dfi))}
       #
-      # TODO deleteme
-      # # attempt custom function to condense into a data frame instead of using data.frame = TRUE
-      # dfi <- as.data.frame(cbind(sapply(dfi, function(x) as.vector(unlist(x[1]))),
-      #                            sapply(dfi, function(x) paste0(as.vector(unlist(x[2])), collapse = " / "))
-      # ), stringsAsFactors = FALSE)
-      # #
-      # # name result set
-      # names(dfi) <- c("_id", item)
-      #
     },
     silent = TRUE)
     #
@@ -1374,10 +1149,6 @@ dbGetFieldsIntoDf <- function(fields = "",
       }
     }
 
-    # TODO deleteme
-    #else {
-    # not stopped, no error and some content
-    #
     # name result set
     names(dfi) <- c("_id", item)
     # type item field
@@ -1393,10 +1164,6 @@ dbGetFieldsIntoDf <- function(fields = "",
     }
     #} # not stopped
   } # end for item in fields
-
-  # TODO deleteme
-  # # close database connection
-  # mongo$disconnect()
 
   # finalise output
   if (is.null(result)) {
