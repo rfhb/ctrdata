@@ -1,8 +1,12 @@
 ---
 title: "Examples for using R package `ctrdata` for clinical trial information"
 author: "Ralf Herold"
-date: "`r Sys.Date()`"
+date: 2019-09-29
 output: 
+  rmarkdown::pdf_document:
+    toc: true
+    number_sections: true
+    latex_engine: xelatex
   rmarkdown::html_vignette: 
     toc: true
 vignette: >
@@ -11,6 +15,8 @@ vignette: >
   %\VignettePackage{ctrdata}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
 ---
   
 ```{r setup, include=FALSE}
@@ -77,35 +83,8 @@ age_ctgov <- function(x) {
   return(tmp.age)
 }
 #
-getKeyNestedList <- function(thelist, thekey) {
-  
-  # recursive find
-  rmatch <- function(x, name) {
-    
-    pos <- match(name, names(x))
-    if (!is.na(pos)) return(x[[pos]])
-    
-    for (element in x) {
-      if (any(c("data.frame", "list") %in% class(element))) {
-        out <- Recall(element, name)
-        if (!is.null(out)) return(out)
-      }
-    }
-  }
-  
-  # get key from any level, deduplicate, remove NA,
-  # collapse if more than one value per list item
-  sapply(thelist, function(x) {
-    out <- rmatch(x = x, name = thekey)
-    out <- na.omit(out)
-    out <- unique(out)
-    out <- paste0(out, collapse = " / ")
-    out
-  })
-}
-#
 simplifyList <- function(l) {
-  
+
   # helper function to avoid
   # that NULL is ignored / removed
   rapply2 <- function(x, fn) {
@@ -115,12 +94,12 @@ simplifyList <- function(l) {
       fn(x)
     }
   }
-  
+
   # apply function replacing
   # NULL with e.g. NA
-  tmp <- rapply2(l, 
+  tmp <- rapply2(l,
                  function(x) if (is.null(x)) NA else x)
-  
+
   # recursively unlist and change to vector
   sapply(tmp, function(x) as.vector(unlist(x)))
 
@@ -160,29 +139,37 @@ library(ctrdata)
 
 # In the browser, this is a search query used as example: 
 # all phase 3 adult breast cancer trials
-q <- "https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer+AND+breast&age=adult&phase=phase-three"
+q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?",
+            "query=cancer+AND+breast&age=adult&phase=phase-three")
 
 # Load details on all clinical trials into database:
-ctrLoadQueryIntoDb(queryterm = q, 
-                   con = db)
-# = Imported or updated 1896 records on 398 trial(s).
-# * Updated history in meta-info of "some_collection_name"
+ctrLoadQueryIntoDb(queryterm = q, con = db)
+# * Found search query from EUCTR.
+# * Checking trials in EUCTR:
+# Retrieved overview, 403 trial(s) from 21 page(s) to be downloaded.
+# Checking helper binaries: . . done.
+# (1/3) Downloading trials (max. 10 page[s] in parallel):
+#  p 1-10 . . . . . . . . . .  p 11-20 . . . . . . . . . .  p 21-21 . 
+# (2/3) Converting to JSON ...
+# (3/3) Importing JSON into database ...
+# Warnung: [WARNING] invalid document for insert: keys cannot contain 
+# ".": "d391_cas_number.1" 2012-000174-37-ES: Error : invalid document
 ```
 
 ## Execute in browser a search query that was previously stored
 
-The function `ctrOpenSearchPagesInBrowser()` can be used to open blank search pages, 
-but also to execute a previous search. This can be used to check if user searches are 
-properly handled by this package, for example by comparing the number of search results.
+The function `ctrOpenSearchPagesInBrowser()` can be used to open blank search pages, but also to execute a previous search. This can be used to check if user searches are properly handled by this package, for example by comparing the number of search results.
 
 ```{r execute_browser_query}
 # After records have already been downloaded: 
-q <- dbQueryHistory(con = db)   # list the searches in the database (a data frame)
-q <- q[2,]                      # select exactly one of the searches (by subsetting q)
-ctrOpenSearchPagesInBrowser(q)  # open selected search newly in broweser
+q <- dbQueryHistory(con = db)   # list the searches in database
+q <- q[1,]                      # select one of the searches
+ctrOpenSearchPagesInBrowser(q)  # open this search in broweser
 
 # This opens a browser and executes a search:
-ctrOpenSearchPagesInBrowser("https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer")
+ctrOpenSearchPagesInBrowser(paste0(
+  "https://www.clinicaltrialsregister.eu/", 
+  "ctr-search/search?query=cancer"))
 ```
 
 ## Find fields / variables of interest
@@ -190,8 +177,7 @@ ctrOpenSearchPagesInBrowser("https://www.clinicaltrialsregister.eu/ctr-search/se
 The search for fields is cached and thus accelerated during the R session and as long as no new ctrLoadQueryIntoDb() is executed. 
 
 ```{r find_variables}
-dbFindFields(namepart = "date",
-             con = db)
+dbFindFields(namepart = "date", con = db)
 #  [1] "firstreceived_date"                                                               
 #  [2] "lastchanged_date"                                                                 
 #  [3] "required_header.download_date"                                                    
@@ -213,8 +199,10 @@ indicate from which query, database, collection etc. and when the object was cre
 Metadata can subsequently be reused. 
 
 ```{r find_variables_attributes}
-attributes(dbGetFieldsIntoDf("e52_secondary_end_points", 
-                             con = db))
+attributes(
+  dbGetFieldsIntoDf(
+    "e52_secondary_end_points", 
+    con = db))
 # $class
 # [1] "data.frame"
 # 
@@ -226,13 +214,9 @@ attributes(dbGetFieldsIntoDf("e52_secondary_end_points",
 # 
 # $`ctrdata-dbqueryhistory`
 #       query-timestamp query-register query-records
-# 1 2019-08-11 16:54:47          EUCTR           444
-# 2 2019-08-11 17:16:56          EUCTR           444
-# 3 2019-08-12 20:05:27          EUCTR          1896
+# 1 2019-10-13 21:18:50          EUCTR          1917
 #                                            query-term
-# 1           query=cancer&age=under-18&phase=phase-one
-# 2           query=cancer&age=under-18&phase=phase-one
-# 3 query=cancer+AND+breast&age=adult&phase=phase-three
+# 1 query=cancer+AND+breast&age=adult&phase=phase-three
 ```
 
 ## Update data base from query in specified register
@@ -247,8 +231,7 @@ dbQueryHistory(con = db)
 #  - CTGOV intformation can always be incrementally downloaded or updated. 
 #  - Alternatively, querytoupdate can have an integer number, 
 #    corresponding to the desired row of dbQueryHistory(). 
-ctrLoadQueryIntoDb(querytoupdate = "last", 
-                   con = db)
+ctrLoadQueryIntoDb(querytoupdate = "last", con = db)
 
 dbQueryHistory(con = db)
 # Note: after such an update, the column "query-records" refers 
@@ -258,12 +241,12 @@ dbQueryHistory(con = db)
 
 # The date and time of the last download of individual records
 # is stored in the variable "record_last_import" as follows: 
-resultDate <- dbGetFieldsIntoDf("record_last_import", 
-                                con = db)
+resultDate <- dbGetFieldsIntoDf(
+  "record_last_import", con = db)
 
 summary(resultDate[["record_last_import"]])
-#                  Min.               1st Qu.                Median  [...]
-# "2016-04-21 19:49:54" "2016-04-21 19:49:54" "2016-04-21 19:49:54"  [...] 
+#                  Min.               1st Qu.                Median
+# "2016-04-21 19:49:54" "2016-04-21 19:49:54" "2016-04-21 19:49:54"
 ```
 
 ## Deduplicate country-specific records of a trial, visualise trial information
@@ -271,18 +254,23 @@ summary(resultDate[["record_last_import"]])
 Note EUCTR provides country-specific records for trials, see README.md. 
 
 ```{r deduplicate_visualise_euctr}
-# Example 1: Relation between number of study participants in one country and in whole trial? 
-result <- dbGetFieldsIntoDf(c("f41_in_the_member_state", 
-                              "f422_in_the_whole_clinical_trial"), 
-                            con = db)
+# Example 1: Relation between number of study 
+# participants in one country and in whole trial? 
+result <- dbGetFieldsIntoDf(
+  c("f41_in_the_member_state", 
+    "f422_in_the_whole_clinical_trial"), 
+  con = db)
 
-plot(f41_in_the_member_state ~ f422_in_the_whole_clinical_trial, result)
+plot(f41_in_the_member_state ~ 
+       f422_in_the_whole_clinical_trial, result)
 # [result not shown]
 
-# Example 2: How many clinical trials are ongoing or completed, per country?
-result <- dbGetFieldsIntoDf(c("a1_member_state_concerned", 
-                              "p_end_of_trial_status"), 
-                            con = db)
+# Example 2: How many clinical trials are 
+# ongoing or completed, per country?
+result <- dbGetFieldsIntoDf(c(
+  "a1_member_state_concerned", 
+  "p_end_of_trial_status"), 
+  con = db)
 
 with(result, 
      table(a1_member_state_concerned, 
@@ -290,10 +278,11 @@ with(result,
 # [result not shown]
 
 # Example 3: How many clinical trials where started in which year?
-result <- dbGetFieldsIntoDf(c("a1_member_state_concerned", 
-                              "n_date_of_competent_authority_decision", 
-                              "a2_eudract_number"), 
-                            con = db)
+result <- dbGetFieldsIntoDf(c(
+  "a1_member_state_concerned", 
+  "n_date_of_competent_authority_decision", 
+  "a2_eudract_number"), 
+  con = db)
 
 # Eliminate trials records duplicated by member state: 
 result <- result[ result[["_id"]] %in% 
@@ -313,84 +302,89 @@ hist(result[["n_date_of_competent_authority_decision"]],
 
 ```{r execute_ctgov_query}
 # Ongoing phase 3 interventional trials in breast carcinoma
-q <- paste0("https://clinicaltrials.gov/ct2/results?term=&recr=Open&",
-            "type=Intr&cond=breast+carcinoma&intr=Drug&state1=&age=1&phase=2")
+q <- paste0(
+  "https://clinicaltrials.gov/ct2/results?term=&recr=Open&",
+  "type=Intr&cond=breast+carcinoma&intr=Drug&state1=&age=1&phase=2")
 
 # Show and check search in browser: 
 ctrOpenSearchPagesInBrowser(q)
 
 # Count number of trials: 
-ctrLoadQueryIntoDb(q, 
-                   only.count = TRUE,
-                   con = db)
+ctrLoadQueryIntoDb(
+  q, 
+  only.count = TRUE,
+  con = db)
 
 # Load data: 
-ctrLoadQueryIntoDb(q, 
-                   con = db)
+ctrLoadQueryIntoDb(
+  q, 
+  con = db)
 
-# Data from which queries have now been downloaded into the database? 
+# Data from which queries have been downloaded into the database? 
 dbQueryHistory(con = db)
 
 # Get columns from the database from different registers
-dbFindFields("status", 
-             con = db)
+dbFindFields("status", con = db)
 
-result <- dbGetFieldsIntoDf(c("overall_status", 
-                              "p_end_of_trial_status", 
-                              "a2_eudract_number"), 
-                            con = db)
+result <- dbGetFieldsIntoDf(c(
+  "overall_status", 
+  "p_end_of_trial_status", 
+  "a2_eudract_number"), 
+  con = db)
 
 # Find ids of unique trials if recorded by alternative countries or registers:
 ids_of_unique_trials <- dbFindIdsUniqueTrials(prefermemberstate = "FR", con = db)
 ids_of_unique_trials <- dbFindIdsUniqueTrials(preferregister = "EUCTR", con = db)
 ids_of_unique_trials <- dbFindIdsUniqueTrials(preferregister = "CTGOV", con = db)
-# * Total of 2488 records in collection.
+# * Total of 2065 records in collection.
 # Searching for duplicates, found 
-#  - 1788 EUCTR _id were not preferred EU Member State record of trial
+#  - 1516 EUCTR _id were not preferred EU Member State record of trial
 #  - 22 EUCTR _id in CTGOV secondary_id / nct_alias / org_study_id
-#  - 12 EUCTR a52_us_nct_... in CTGOV _id (nct)
+#  - 14 EUCTR a52_us_nct_... in CTGOV _id (nct)
 #  - 0 EUCTR a52_us_nct_... in CTOGV secondary_id / nct_alias / org_study_id
 #  - 0 EUCTR a51_isrctn_... in CTOGV secondary_id / nct_alias / org_study_id
 #  - 0 EUCTR a41_sponsors_protocol_... in CTOGV secondary_id / nct_alias / org_study_id
-# Concatenating 146 records from CTGOV and 512 from EUCTR:
-# = Returning keys (_id) of 658 out of total 2488 records in collection "some_collection_name".
+# Concatenating 148 records from CTGOV and 359 from EUCTR:
+# = Returning keys (_id) of 507 out of total 2065 records in collection "some_collection_name"
 
 # Subset the result set to these unique trials:
 result <- result[ result[["_id"]] %in% ids_of_unique_trials, ]
 
 # Now merge two variables into a new variable for analysis:
-tmp <- dfMergeTwoVariablesRelevel(result, 
-                                  colnames = c("overall_status", 
-                                               "p_end_of_trial_status"))
-# Unique values returned: Ongoing, Completed, Prematurely Ended, Temporarily Halted, 
-#  Restarted, Recruiting, Not yet recruiting
+tmp <- dfMergeTwoVariablesRelevel(
+  result, 
+  colnames = c("overall_status", 
+               "p_end_of_trial_status"))
+# Unique values returned: Ongoing, Completed, Prematurely Ended, 
+# Restarted, , Recruiting, Not yet recruiting
 
 table(tmp)
-#                            Completed Not yet recruiting            Ongoing 
-#                43                154                 26                265 
-# Prematurely Ended         Recruiting          Restarted Temporarily Halted 
-#                48                120                  1                  1 
+        #                     Completed Not yet recruiting            Ongoing
+        #          1                131                 27                184 
+        # Recruiting          Restarted     Prematurely Ended 
+        #        121                  1                    42
 
 # Merge two variables as above and in addition, 
 # condense their values into a new value:
-statusvalues <- list("ongoing" = c("Recruiting", "Active", "Ongoing", 
-                                   "Active, not recruiting", 
-                                   "Enrolling by invitation", "Restarted"),
-                     "completed" = c("Completed", "Prematurely Ended", "Terminated"),
-                     "other"     = c("Withdrawn", "Suspended", "No longer available", 
-                                     "Not yet recruiting", "Temporarily Halted", 
-                                     "Unknown status"))
+statusvalues <- list(
+  "ongoing" = c("Recruiting", "Active", "Ongoing", 
+                "Active, not recruiting", 
+                "Enrolling by invitation", "Restarted"),
+  "completed" = c("Completed", "Prematurely Ended", "Terminated"),
+  "other"     = c("Withdrawn", "Suspended", "No longer available", 
+                  "Not yet recruiting", "Temporarily Halted", 
+                  "Unknown status"))
 
-tmp <- dfMergeTwoVariablesRelevel(result, 
-                                  colnames = c("overall_status", 
-                                               "p_end_of_trial_status"), 
-                                  levelslist = statusvalues)
-# Unique values returned: ongoing, completed, other
+tmp <- dfMergeTwoVariablesRelevel(
+  result, 
+  colnames = c("overall_status", 
+               "p_end_of_trial_status"), 
+  levelslist = statusvalues)
 
 table(tmp)
 # tmp
-#     completed   ongoing     other 
-#           159       671       115
+        #   completed   ongoing     other 
+        # 1       173       306        27 
 ```
 
 ## Use a remote mongo database
@@ -423,8 +417,9 @@ Note: Packages to access mango such as `mongolite` or `RMongo` may work to acces
 ```{r mongolite_count_details}
 library(mongolite)
 
-m <- mongo(url = "mongodb+srv://DWbJ7Wh:bdTHh5cS@cluster0-b9wpw.mongodb.net/dbperm", 
-           collection = "dbperm")
+m <- mongo(
+  url = "mongodb+srv://DWbJ7Wh:bdTHh5cS@cluster0-b9wpw.mongodb.net/dbperm", 
+  collection = "dbperm")
 
 # List all collections:
 m$run('{"listCollections": 1}')
@@ -449,12 +444,14 @@ head(tbl)
 #                              Nationwide Children's Hospital 
 #                                                          11 
 
-# Define a helper function to count elements, irrespective of whether
-# the elements are in an array or are a set of subdocuments in the database:
+# Define a helper function to count elements, irrespective of 
+# whether the elements are in an array or are a set of 
+# subdocuments in the database:
 count.elements <- function(dataframecolumn) {
   return(sapply(dataframecolumn, 
-                function(x) ifelse (is.data.frame(tmp <- unlist (x[[1]])), 
-                                    nrow(tmp), length(tmp))))
+                function(x) 
+                  ifelse(is.data.frame(tmp <- unlist (x[[1]])), 
+                         nrow(tmp), length(tmp))))
 }
 
 # Sum up number of sites per trial:
@@ -470,10 +467,6 @@ head(result[, c("_id", "number_of_sites")])
 # 5 2010-024264-18-NL               0
 # 6 2010-024264-18-IT               0
 
-# For many trials, no locations seem to be specified:
-result <- result[result$number_of_sites >= 1 & 
-                   result$number_of_sites < 20, ]
-
 # Draw histogram:
 hist(result$number_of_sites)
 ```
@@ -484,37 +477,13 @@ Compare the way that fields (keys) may have to be specified differently for elem
 
 ```{r nested_data}
 
-# with MongoDB: finds all elements b31_and_b32_...
+# - with MongoDB: finds all elements b31_and_b32_...
 result <- dbGetFieldsIntoDf(
-  fields = c("b1_sponsor.b31_and_b32_status_of_the_sponsor", # Note dot path
-             "p_end_of_trial_status", 
-             "a2_eudract_number"),
+  fields = c(
+    "b1_sponsor.b31_and_b32_status_of_the_sponsor", # Note dot path
+    "p_end_of_trial_status", 
+    "a2_eudract_number"),
   con = db)
-
-# with SQLite: finds the first, to retrieve 
-# the second, increment to [1] and so on
-result <- dbGetFieldsIntoDf(
-  fields = c("b1_sponsor[0].b31_and_b32_status_of_the_sponsor", # Note [0]
-             "p_end_of_trial_status", 
-             "a2_eudract_number"),
-  con = db)
-
-# with SQLite (and MongoDB): retrieve element at root
-# and extract its nested sub-elements later, using 
-# the helper function that follows below. 
-result <- dbGetFieldsIntoDf(
-  fields = c("b1_sponsor", 
-             "p_end_of_trial_status", 
-             "a2_eudract_number"),
-  con = db)
-
-# Nested lists: its elements can be accessed 
-# using the helper function getKeyNestedList()
-result[1, "b1_sponsor"]
-
-# Example
-getKeyNestedList(thelist = result$b1_sponsor[1:2], 
-                 thekey = "b11_name_of_sponsor")
 
 # Eliminate trials records duplicated by EU Member State: 
 uniqueids <- dbFindIdsUniqueTrials(con = db)
@@ -531,6 +500,34 @@ with(result, table(p_end_of_trial_status,
 #   Prematurely Ended              15              12                                0
 #   Restarted                       0               1                                0
 #   Temporarily Halted              4               1                                0
+
+# - with SQLite: finds the first, to retrieve 
+# the second, increment to [1] and so on
+result <- dbGetFieldsIntoDf(
+  fields = c(
+    "b1_sponsor[0].b31_and_b32_status_of_the_sponsor", # Note [0]
+    "p_end_of_trial_status", 
+    "a2_eudract_number"),
+  con = db)
+
+# - with SQLite (and MongoDB): retrieve element at root
+# and extract its nested sub-elements later, using 
+# the helper function that follows below. 
+result <- dbGetFieldsIntoDf(
+  fields = c("b1_sponsor", 
+             "p_end_of_trial_status", 
+             "a2_eudract_number"),
+  con = db)
+
+# Nested lists: its elements can be accessed 
+# using the helper function getKeyNestedList()
+result[[1, "b1_sponsor"]]
+
+# Example
+dfListExtractKey(
+  result, 
+  list(c("b1_sponsor", 
+         "b31_and_b32_status_of_the_sponsor")))
 ```
 
 
@@ -539,22 +536,22 @@ with(result, table(p_end_of_trial_status,
 ```{r plot_endpoint_frequencies}
 # Search for interesting variables,  
 # note the spelling in EUCTR:
-dbFindFields("end_point", 
-             con = db)
+dbFindFields("end_point", con = db)
 
 # Get interesting variables from database 
 # for further analysis within R:
-result <- dbGetFieldsIntoDf(c("a2_eudract_number", 
-                              "a41_sponsors_protocol_code_number", 
-                              "n_date_of_competent_authority_decision", 
-                              "e73_therapeutic_confirmatory_phase_iii", 
-                              "e51_primary_end_points"), 
-                            con = db)
+result <- dbGetFieldsIntoDf(c(
+  "a2_eudract_number", 
+  "a41_sponsors_protocol_code_number", 
+  "n_date_of_competent_authority_decision", 
+  "e73_therapeutic_confirmatory_phase_iii", 
+  "e51_primary_end_points"), 
+  con = db)
 
 # Eliminate trials records duplicated by member state
 # keep a single record and if available use preference:
 result <- result[ result[["_id"]] %in% 
-                    dbFindIdsUniqueTrials(con = db), ]
+                  dbFindIdsUniqueTrials(con = db), ]
 
 # Checking expected number of trials:
 nrow(result)
@@ -593,28 +590,31 @@ ggplot(data = result,
 # if not one of the endpoints of interest? 
 # Look into first ten examples foundL
 substr(result$e51_primary_end_points[result$pe_is_efs == FALSE], 1, 60)[1:8]
-# [results not shown]
+# [1] "Primary End point Overall survival: the interval between the"
+# [2] "To determine whether the combination of DPPE, epirubicin and"
+# [3] "Efficacy:  Duration of severe neutropenia DSN in cycle 1, de"
+# [4] NA                                                            
+# [5] "Hay dos variables principales de eficacia en este estudio: 1"
+# [6] "Time to progression TTP, defined as the interval between the"
+# [7] "Rate of pathological complete remissions in Arm A Epirubicin"
+# [8] "Survival, measured from the date of randomisation" 
 ```
 ![Histogram2](Rplot02.png)
 
 ## Histogram of status of investigational medicinal product
 
 ```{r hist_medicine_status}
-if (FALSE) ctrLoadQueryIntoDb(
+ctrLoadQueryIntoDb(
   register = "EUCTR", 
   queryterm = "&age=under-18&phase=phase-one&phase=phase-two", 
   con = db)
 
 dbQueryHistory(con = db)
 
-ctrOpenSearchPagesInBrowser(dbQueryHistory(con = db))
+ctrOpenSearchPagesInBrowser(
+  dbQueryHistory(con = db))
 
-if (FALSE) ctrLoadQueryIntoDb(
-  querytoupdate = "last", 
-  con = db)
-
-dbFindFields(namepart = "phase", 
-             con = db)
+dbFindFields(namepart = "phase", con = db)
 # [1] "e72_therapeutic_exploratory_phase_ii"   "e71_human_pharmacology_phase_i"
 # [3] "e73_therapeutic_confirmatory_phase_iii" "e74_therapeutic_use_phase_iv"  
 
@@ -628,8 +628,9 @@ result <- dbGetFieldsIntoDf(
     "a3_full_title_of_the_trial", "a2_eudract_number"), 
   con = db)
 
-searchfor <- paste0("cancer, leukaem, leukem, tumour, tumor, sarcoma, blastom, gliom, germ, ",
-                    "lymphom, malign, hodgkin, ewing, rhabdo, terato, tumeur, leucemi")
+searchfor <- paste0(
+  "cancer, leukaem, leukem, tumour, tumor, sarcoma, blastom, gliom, germ, ",
+  "lymphom, malign, hodgkin, ewing, rhabdo, terato, tumeur, leucemi")
 searchfor <- strsplit(searchfor, ", ")[[1]]
 
 relevant <- grepl_multi(searchfor, result$a3_full_title_of_the_trial) | 
@@ -705,8 +706,9 @@ result <- dbGetFieldsIntoDf(
 result$country <- sub("^.+-([3A-Z]+)$", "\\1", result$`_id`)
 
 # select trials of interest
-searchfor <- paste0("cancer, leukaem, leukem, tumour, tumor, sarcoma, blastom, gliom, germ, lymphom, ", 
-                    "malign, hodgkin, ewing, rhabdo, terato, tumeur, leucemi")
+searchfor <- paste0(
+  "cancer, leukaem, leukem, tumour, tumor, sarcoma, blastom, gliom, germ, lymphom, ", 
+  "malign, hodgkin, ewing, rhabdo, terato, tumeur, leucemi")
 searchfor <- strsplit(searchfor, ", ")[[1]]
 
 relevant <- grepl_multi(searchfor, result$a3_full_title_of_the_trial) | 
@@ -737,24 +739,28 @@ png(filename = "vignettes/ph1paedoncopen.png",
     height = 5, 
     units = "in", 
     res = 300)
-sPDF <- joinCountryData2Map(dF = counts, 
-                            joinCode = "ISO2", 
-                            nameJoinColumn = "country")
-mapParams <- mapCountryData(mapToPlot = sPDF, 
-                            nameColumnToPlot = "Ongoing", 
-                            mapTitle = "",
-                            xlim = c(-10,30), 
-                            ylim = c(36, 65), 
-                            addLegend = FALSE,
-                            colourPalette = "terrain")
-# do.call(addMapLegend, c(mapParams, legendLabels="all", legendWidth=0.5, digits=0, labelFontSize=0.8))
+sPDF <- joinCountryData2Map(
+  dF = counts, 
+  joinCode = "ISO2", 
+  nameJoinColumn = "country")
+mapParams <- mapCountryData(
+  mapToPlot = sPDF, 
+  nameColumnToPlot = "Ongoing", 
+  mapTitle = "",
+  xlim = c(-10,30), 
+  ylim = c(36, 65), 
+  addLegend = FALSE,
+  colourPalette = "terrain")
+# do.call(addMapLegend, c(mapParams, legendLabels="all", 
+# legendWidth=0.5, digits=0, labelFontSize=0.8))
 title(main = "Number of ongoing / total phase 1\nanti-cancer medicine trials with children")
-labelCountries(dF = sPDF, 
-               nameCountryColumn = "text", 
-               xlim = c(-15,32), 
-               ylim = c(36, 65), 
-               cex = 0.9, 
-               col = "blue")
+labelCountries(
+  dF = sPDF, 
+  nameCountryColumn = "text", 
+  xlim = c(-15,32), 
+  ylim = c(36, 65), 
+  cex = 0.9, 
+  col = "blue")
 dev.off()
 ```
 ![Histogram3](ph1paedoncopen.png)
@@ -776,7 +782,8 @@ m$run('{"listCollections": 1}')
 m$count()
 
 # Number of EUCTR records, using json for query:
-m$count(query = '{"_id": {"$regex": "[0-9]{4}-[0-9]{6}-[0-9]{2}", "$options": "i"}}')
+m$count(query = '{"_id": {"$regex": "[0-9]{4}-[0-9]{6}-[0-9]{2}", 
+        "$options": "i"}}')
 # alternatively: 
 m$count(query = '{"ctrname": "EUCTR"}')
 
@@ -800,35 +807,42 @@ m$distinct(key = "primary_outcome.measure",
            query = '{"_id": {"$regex": "NCT[0-9]{8}", "$options": "i"}}')[1:8]
 
 # PFS, EFS, RFS or DFS
-out <- m$aggregate(pipeline = '[{"$match": {"primary_outcome.measure": 
-                                {"$regex": "(progression|event|relapse|recurrence|disease)[- ]free", 
-                                           "$options": "i"}}}, 
-                                {"$group": {"_id": "null", "count": {"$sum": 1}}}]')
+out <- m$aggregate(
+  pipeline = 
+    '[{"$match": {"primary_outcome.measure": 
+      {"$regex": "(progression|event|relapse|recurrence|disease)[- ]free", 
+                 "$options": "i"}}}, 
+      {"$group": {"_id": "null", "count": {"$sum": 1}}}]')
 out
 
 # OS by year
-out <- m$aggregate(pipeline = '[{"$match": {"primary_outcome.measure": 
-                                {"$regex": "overall survival", 
-                                           "$options": "i"}}}, 
-                                {"$project": {"_id": 1, "start_date": 1}}]')
+out <- m$aggregate(
+  pipeline = 
+    '[{"$match": {"primary_outcome.measure": 
+      {"$regex": "overall survival", "$options": "i"}}}, 
+      {"$project": {"_id": 1, "start_date": 1}}]')
 
 out
-#             _id firstreceived_date
-# 1   NCT00001941   January 18, 2000
-# 2   NCT00002474   November 1, 1999
-# 3   NCT00002495   November 1, 1999
-# 4   NCT00002514   November 1, 1999
-# [...]
+#           _id        start_date
+# 1 NCT00796510         July 2010
+# 2 NCT01083706        April 2010
+# 3 NCT01141712        April 2010
+# 4 NCT01343277         June 2011
+# 5 NCT01696045 November 12, 2012
+# 6 NCT00553202      January 2008
+# 7 NCT00653068     December 2008
+# 8 NCT00684996         June 2008
 
-# Extraction of year from firstreceived_date such as "August 29, 2009"
-out$year <- substr(out$start_date, 
-                   tmp <- nchar(out$start_date) - 4, 
-                   tmp + 4)
+# Extraction of year from firstreceived_date 
+# such as "August 29, 2009"
+out$year <- substr(
+  out$start_date, 
+  tmp <- nchar(out$start_date) - 4, 
+  tmp + 4)
 #
 table(out$year)
 # [...]  2006  2007  2008  2009  2010  2011  2012  2013  2014  2015 
 #           5     4    13     3     8     3     8     4     6     6 
-#
 ```
 
 ## Use mapreduce operations to analyse participant numbers
@@ -851,12 +865,17 @@ hist <- m$mapreduce(
 
 hist
 #      _id value
-# 1    NaN  5364
-# 2      0   344
-# 3    100   183
-# 4    200    79
-# 5    300   102
-# 6    400    78
+# 1    NaN  1431
+# 2      0   140
+# 3    100   128
+# 4    200   157
+# 5    300   141
+# 6    400   183
+# 7    500   176
+# 8    600   249
+# 9    700   169
+# 10   800    60
+# 11   900    61
 
 # Note: _id is the bin of hundreds of study participants, 
 # value is the number of studies in respective bin
@@ -870,8 +889,7 @@ plot(hist, type = "h", las = 1, xlim = c(0, 2000), ylim = c(0, 500),
 ```{r analyse_inclusion_criteria}
 # Search for interesting variables,  
 # note the spelling in EUCTR:
-dbFindFields(namepart = "crit", 
-             con = db)
+dbFindFields(namepart = "crit", con = db)
 
 # Get interesting variables from database 
 # for further analysis within R:
@@ -882,7 +900,8 @@ result <- dbGetFieldsIntoDf(
 
 # Eliminate trials records duplicated by member state
 # keep a single record and if available use preference:
-result <- result[ result[["_id"]] %in% dbFindIdsUniqueTrials(con = db), ]
+result <- result[ result[["_id"]] %in% 
+                    dbFindIdsUniqueTrials(con = db), ]
 
 result <- dfMergeTwoVariablesRelevel(
   df = result,
@@ -894,8 +913,10 @@ terms <- c("positive", "marker", "select")
 
 table(grepl_multi(terms, result))
 
-# utility function to generate a regular expression for a given number of words
-words <- function(x) paste0(paste0(rep("\\s+\\w+", x), collapse = ""), "\\s+")
+# utility function to generate a regular expression 
+# for a given number of words
+words <- function(x) 
+  paste0(paste0(rep("\\s+\\w+", x), collapse = ""), "\\s+")
 
 terms <- paste0(".*(", words(2), terms, "\\w*", words(3), ").*")
 
@@ -904,6 +925,16 @@ for (i in 1:length(terms))
   print(gsub(terms[i], "\\1", 
              result, 
              ignore.case = TRUE)[grepl(terms[i], result)])
+ #  [1] " Those with positive sentinel nodes must "                     
+ #  [2] " Those with positive sentinel nodes must "                     
+ #  [3] " 10 receptor positive cells or 10fmol "                        
+ #  [4] " have a positive PPD skin test "                               
+ #  [5] " tumor cells positive by immunohistochemical evaluation  "     
+ #  [6] " Hormone receptor positive defined as ER "                     
+ #  [7] " or PgR positive 5 Women with "                                
+ #  [8] " Hormone receptor positive defined as ER "                     
+ #  [9] " Has a positive skin prick test "                              
+ # [10] " inhibitors a positive inhibitor status defined " 
 ```
 
 ## Find trial start date
@@ -917,10 +948,11 @@ result <- dbGetFieldsIntoDf(
   con = db)
 
 # Calculate first date of trial start
-first_trial_start <- aggregate(x = result$n_date_of_competent_authority_decision, 
-                               by = list(result$a2_eudract_number),
-                               FUN = function(x) min(x, na.rm = TRUE), 
-                               simplify = TRUE, drop = TRUE)
+first_trial_start <- aggregate(
+  x = result$n_date_of_competent_authority_decision, 
+  by = list(result$a2_eudract_number),
+  FUN = function(x) min(x, na.rm = TRUE), 
+  simplify = TRUE, drop = TRUE)
 
 # Give data frame appropriate names:
 names(first_trial_start) <- c("a2_eudract_number", 
@@ -933,8 +965,9 @@ result <- merge(result, first_trial_start, all.x = TRUE)
 ## Annotate records when using ctrLoadIntoDb() with user text
 
 ```{r annotations}
-if (FALSE) ctrLoadQueryIntoDb(
-  queryterm = paste0("https://clinicaltrials.gov/ct2/results?age=0&intr=dasatinib&phase=1"), 
+ctrLoadQueryIntoDb(
+  queryterm = paste0("https://clinicaltrials.gov/ct2/results?", 
+                     "age=0&intr=dasatinib&phase=1"), 
   annotation.text = paste0("|AS:", "dasatinib", "|"), 
   annotation.mode = "prepend", 
   con = db)
@@ -963,7 +996,6 @@ result <- dbGetFieldsIntoDf(
 getannotationelement(
   result$annotation, 
   element = "AS")
-
 # [1] "dasatinib"
 ```
 
@@ -973,15 +1005,14 @@ getannotationelement(
 Distribution of p values
 
 ```{r analyse_results_1}
-
 ## get trials into database
-if (FALSE) ctrLoadQueryIntoDb(
-  queryterm = paste0("https://clinicaltrials.gov/ct2/results?rslt=With&age=0&intr=Drug&", 
-                     "phase=1&phase=2&strd_s=01%2F01%2F2010&strd_e=12%2F31%2F2012"), 
+ctrLoadQueryIntoDb(
+  queryterm = paste0(
+    "https://clinicaltrials.gov/ct2/results?rslt=With&age=0&intr=Drug&", 
+    "phase=1&phase=2&strd_s=01%2F01%2F2010&strd_e=12%2F31%2F2012"), 
   con = db)
 
 ## get result set
-# dbFindFields(namepart = "age", allmatches = TRUE, collection = "resultsTest")
 result <- dbGetFieldsIntoDf(
   c("start_date", 
     "detailed_description.textblock", 
@@ -991,7 +1022,7 @@ result <- dbGetFieldsIntoDf(
     "primary_outcome.measure", 
     "arm_group.arm_group_type", 
     "clinical_results.outcome_list.outcome.analysis_list.analysis.method",
-    "clinical_results.outcome_list.outcome.analysis_list.analysis.p_value", # column 10
+    "clinical_results.outcome_list.outcome.analysis_list.analysis.p_value",
     "clinical_results.outcome_list.outcome.analysis_list.analysis.param_type",
     "clinical_results.outcome_list.outcome.analysis_list.analysis.non_inferiority_type",
     "clinical_results.baseline.analyzed_list.analyzed.units", 
@@ -1002,7 +1033,9 @@ result <- dbGetFieldsIntoDf(
 
 
 ## count number of participants per trial
-tmp <- simplifyList(result[, "clinical_results.baseline.analyzed_list.analyzed.count_list.count.@attributes.value"])
+tmp <- simplifyList(
+  result[, 
+    "clinical_results.baseline.analyzed_list.analyzed.count_list.count.@attributes.value"])
 
 # change into number and sum up per trial
 tmp <- sapply(tmp, function(x) sum(as.numeric(x), na.rm = TRUE))
@@ -1013,7 +1046,8 @@ tmpparticipants <- sapply(result$clinical_results.baseline.analyzed_list.analyze
 
 
 ## p value for endpoint analysis
-tmp <- simplifyList(result[, "clinical_results.outcome_list.outcome.analysis_list.analysis.p_value"])
+tmp <- simplifyList(
+  result[, "clinical_results.outcome_list.outcome.analysis_list.analysis.p_value"])
 
 # get first p-value (first analysis primary endpoint)
 tmp <- sapply(tmp, "[[", 1)
@@ -1030,7 +1064,8 @@ result$pvalueprimaryanalysis <- tmp
 
 
 ## statistical method used for primary endpoint analysis
-tmp <- simplifyList(result["clinical_results.outcome_list.outcome.analysis_list.analysis.method"])
+tmp <- simplifyList(
+  result["clinical_results.outcome_list.outcome.analysis_list.analysis.method"])
 
 # get first method (first analysis primary endpoint)
 tmp <- sapply(tmp, "[[", 1)
@@ -1043,10 +1078,9 @@ table(tmp)
 result$methodprimaryanalysis <- tmp
 
 
-## Based on allocation arms, keep trials that are likely to investigate safety and efficacy
-## considering that active comparators may not be designed to show superiority. 
-## Note this checks the string with a regular expression and does not convert to a list: 
-## "list(arm_group_type = c(\"Active Comparator\", \"Placebo Comparator\", \"Experimental\"))"
+## Based on allocation arms, keep trials that are likely to investigate 
+## safety and efficacy considering that active comparators may not be 
+## designed to show superiority. 
 # controlled?
 result$control <- grepl("(Placebo|No Intervention)", 
                         result$arm_group.arm_group_type, 
@@ -1090,13 +1124,13 @@ knitr::kable(tmp[1:10,])
 
 |Var1                    | Freq|
 |:-----------------------|----:|
-|ANCOVA                  |   41|
-|Cochran-Mantel-Haenszel |   14|
-|Mixed Models Analysis   |   12|
+|ANCOVA                  |   40|
+|Cochran-Mantel-Haenszel |   17|
+|Mixed Models Analysis   |   13|
 |ANOVA                   |   11|
-|Fisher Exact            |    7|
 |t-test, 2 sided         |    6|
+|Fisher Exact            |    6|
 |Chi-squared             |    6|
-|Regression, Cox         |    3|
+|Regression, Logistic    |    3|
+|Log Rank                |    3|
 |Wilcoxon (Mann-Whitney) |    2|
-|Regression, Logistic    |    2|

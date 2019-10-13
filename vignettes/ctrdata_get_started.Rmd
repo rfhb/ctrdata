@@ -1,21 +1,27 @@
 ---
 title: "Getting started with R package `ctrdata` for clinical trial information"
 author: "Ralf Herold"
-date: "`r Sys.Date()`"
+date: 2019-10-09
 output:
+  rmarkdown::pdf_document:
+    toc: true
   rmarkdown::html_vignette:
     toc: true
 vignette: >
   %\VignetteIndexEntry{Getting started}
   %\VignetteKeywords{ctrdata,vignette}
   %\VignettePackage{ctrdata}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
 #
-knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(
+  eval = FALSE
+  )
 #
 ```
 
@@ -34,40 +40,34 @@ General information on the `ctrdata` package is available here: [https://github.
 install.packages("ctrdata")
 ```
 
-The above should install package `ctrdata` into the user's library. 
-If this installation does not succeed, the following sections offer potential solutions. 
-
 For using the development version of package `ctrdata`, install from GitHub: 
 
 ```{r, eval=FALSE}
 # install preparatory package
 install.packages(c("devtools", "httr"))
-# note: unset build_opts so that vignettes are built
-devtools::install_github("rfhb/ctrdata", build_opts = "")
+devtools::install_github("rfhb/ctrdata")
 ```
 
-## Database
-
-At this time, a RSQLite or a remote or a local MongoDB database can be used with the package `ctrdata`. Suggested installation instructions for a local MongoDB server are [here](https://docs.mongodb.com/manual/administration/install-community/); a remote MongoDB database server is accessible [here](https://www.mongodb.com/cloud/atlas). 
+Either of the above should install package `ctrdata` into the user's library. 
 
 ## Internet access via proxy
 
-Functions in package `ctrdata` that start with `ctr...` require access to trial registers over the internet via `https`. Package `ctrdata` checks and _automatically uses_ the proxy that is set under MS Windows in system settings. However, proxy settings need to be set by the user for other operating systems and for authenticating proxies, such as follows: 
+Functions in package `ctrdata` that start with `ctr...` require access to trial registers over the internet via the `https` protocol. Package `ctrdata` checks and _automatically uses_ the proxy that is set under MS Windows in system settings. However, proxy settings need to be set by the user for other operating systems and for authenticating proxies, such as follows: 
 
 ```{r, eval=FALSE}
 Sys.setenv(https_proxy = "your_proxy.server.domain:8080")
-Sys.setenv(https_proxy_user = "userid:password")
+Sys.setenv(https_proxy_user = "userid:password") # if needed
 ```
 
 ## Additional installation aspects for MS Windows
 
-On MS Windows, it seems recommended to not use UNC notation (such as `\\server\directory`) for specifying the user's library location: 
+On MS Windows, it seems recommended to not use UNC notation (such as `\\server\directory`) for specifying the user's library location, but the following notation using a local disk or mapped network share: 
 
 ```{r, eval=FALSE}
 .libPaths("D:/my/directory/")
 ```
 
-As noted in the README for package `ctrdata`, on MS Windows the cygwin environment has to be installed, into the local directory `c:\cygwin`. The applications php, bash, perl, cat and sed in the cygwin environment are required for function `ctrLoadQueryIntoDb()` of package `ctrdata` (other functions in the package do not have this requirement). The installation of a minimal cygwin environment on MS Windows can be done from package `ctrdata` as follows: 
+Package `ctrdata` requires on MS Windows the cygwin environment to be installed, into the local directory `c:\cygwin` (or any folder corresponding to `c:\cygw*`). The applications php, bash, perl, cat and sed in the cygwin environment are required for function `ctrLoadQueryIntoDb()` of package `ctrdata`. No other function in the package has this requirement. The installation of a minimal cygwin environment on MS Windows can be done from package `ctrdata` as follows: 
 
 ```{r, eval=FALSE}
 ctrdata::installCygwinWindowsDoInstall() 
@@ -79,13 +79,17 @@ If internet accces has to be via a proxy and this was not correctly detected aut
 ctrdata::installCygwinWindowsDoInstall(proxy = "proxy.server.domain:8080") 
 ```
 
-Users who want or need to install cygwin manually can download the setup executable from [here](https://cygwin.com/). In MS Windows command window or Powershell window, use the following command line. The parameters are explained [here](https://cygwin.com/faq/faq.html#faq.setup.cli).
+Users who want or need to install cygwin manually can download the setup executable from [here](https://cygwin.com/). In a MS Windows command window or Powershell window, use the following command line. The parameters are explained [here](https://cygwin.com/faq/faq.html#faq.setup.cli). 
 
 ```{bash, eval=FALSE}
 setup-x86_64.exe --no-admin --quiet-mode --verbose --upgrade-also --root c:/cygwin 
 --site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ 
 --packages perl,php-jsonc,php-simplexml
 ```
+
+## Database
+
+So far, a RSQLite or a remote or a local MongoDB database can be used with the package `ctrdata`. Suggested installation instructions for a local MongoDB server are [here](https://docs.mongodb.com/manual/administration/install-community/); a remote MongoDB database server is accessible [here](https://www.mongodb.com/cloud/atlas). 
 
 ## Attach package `ctrdata`
 
@@ -99,72 +103,89 @@ These functions open the browser, where the user can start searching for trials 
 
 ```{r show_brower_search_pages}
 # Please review and respect register copyrights:
-ctrOpenSearchPagesInBrowser(copyright = TRUE)
+ctrOpenSearchPagesInBrowser(
+  copyright = TRUE
+)
 
 # Open browser with example search:
-ctrOpenSearchPagesInBrowser(input = "cancer&age=under-18",
-                            register = "EUCTR")
+ctrOpenSearchPagesInBrowser(
+  input = "cancer&age=under-18",
+  register = "EUCTR"
+)
 ```
 
 ## Click search parameters and execute search in browser 
 
-Refine the search until the trials of interest are listed in the browser. Currently, the total number of trials that can be retrieved with package `ctrdata` is intentionally set to 5000 (CTGOV). 
+Refine the search until the trials of interest are listed in the browser. Currently, the total number of trials that can be retrieved with package `ctrdata` is intentionally limited to 5000.  
 
 ## Copy address from browser address bar to clipboard
 
-Using operating system functions. 
+Use functions or keyboard shortcuts according to the operating system. 
 
 ## Get address from clipboard
 
 The next steps are executed in the R environment: 
 
 ```{r get_query_from_browser}
-# q <- "https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&age=under-18&status=completed&phase=phase-one"
+# q <- "https://www.clinicaltrialsregister.eu/ctr-search/search?
+# query=cancer&age=under-18&status=completed&phase=phase-one"
 
 q <- ctrGetQueryUrlFromBrowser()
 # Found search query from EUCTR.
 
 q
-#                  query-term query-register
-# 1 query=cancer&age=under-18          EUCTR
+#                                                   query-term  query-register
+# 1 query=cancer&age=under-18&status=completed&phase=phase-one           EUCTR
 
 # Open browser with this query
 # Note the register needs to be specified
 # when it cannot be deduced from the query
-ctrOpenSearchPagesInBrowser(input = q)
+ctrOpenSearchPagesInBrowser(
+  input = q
+)
 ```
 
 ## Retrieve protocol-related information, transform, save to database, check
 
 ```{r execute_load_query, eval=FALSE}
 # Connect to a database and chose a table / collection
-db <- nodbi::src_sqlite(dbname = "sqlite_file.sql",
-                        collection = "test")
+db <- nodbi::src_sqlite(
+  dbname = "sqlite_file.sql",
+  collection = "test"
+)
 
 # Count number of records
-ctrLoadQueryIntoDb(queryterm = q,
-                   only.count = TRUE,
-                   con = db)
+ctrLoadQueryIntoDb(
+  queryterm = q,
+  only.count = TRUE,
+  con = db
+)
 
 # Use search q that was defined in previous step: 
-ctrLoadQueryIntoDb(queryterm = q,
-                   con = db)
+ctrLoadQueryIntoDb(
+  queryterm = q,
+  con = db
+)
+
 # With file-base SQLite, takes 5 minutes for 1000 records.
 # Speed is higher when using MongoDB (or memory-based SQLite). 
 
-# Show which queries have been downloaded into the database so far
+# Show which queries have been downloaded into database so far
 dbQueryHistory(con = db)
-#       query-timestamp query-register query-records                  query-term
-# 1 2016-01-13 10:51:56          CTGOV          5233 type=Intr&cond=cancer&age=0
-# 2 2019-08-12 18:54:40          EUCTR          1838         cancer&age=under-18
+#       query-timestamp query-register query-records
+# 1 2019-10-13 20:23:11          EUCTR           173
+#                                                   query-term
+# 1 query=cancer&age=under-18&status=completed&phase=phase-one
 ```
 
 ## Analyse information on clinical trials
 
 ```{r analyse_query_database}
 # find names of fields of interest in database:
-dbFindFields(namepart = "status", 
-             con = db)
+dbFindFields(
+  namepart = "status", 
+  con = db
+)
 # Finding fields on server (may take some time)
 # Field names cached for this session.
 # [1] "x5_trial_status"                             
@@ -174,15 +195,16 @@ dbFindFields(namepart = "status",
 # Get all records that have values in all specified fields.
 # Note that b31_... is a field within the array b1_...
 
-# NOTE FOR SQLite
-
+# NOTE for SQLite: 
 # For SQLite, but NOT for MongoDB, the element b1_... at the 
 # root has to be retrieved and only from the nested list in
 # this element, the sub-element b31_and_b32_status... can 
 # then be extracted, using the helpfer function below. 
-result <- dbGetFieldsIntoDf(fields = c("b1_sponsor", 
-                                       "p_end_of_trial_status"),
-                            con = db)
+result <- dbGetFieldsIntoDf(
+  fields = c("b1_sponsor", 
+             "p_end_of_trial_status"),
+  con = db
+)
 
 # Show nested list in the element
 str(result[1, "b1_sponsor"])
@@ -193,50 +215,33 @@ str(result[1, "b1_sponsor"])
 #   ..$ b134_country                     : chr "United States"
 #   ..$ b31_and_b32_status_of_the_sponsor: chr "Commercial"
 
-# Helper function
-getKeyNestedList <- function(thelist, thekey) {
-  
-  # recursive find
-  rmatch <- function(x, name) {
-    
-    pos <- match(name, names(x))
-    if (!is.na(pos)) return(x[[pos]])
-    
-    for (element in x) {
-      if (any(c("data.frame", "list") %in% class(element))) {
-        out <- Recall(element, name)
-        if (!is.null(out)) return(out)
-      }
-    }
-  }
-
-  # get key from any level, deduplicate, remove NA,
-  # collapse if more than one value per list item
-  sapply(thelist, function(x) {
-    out <- rmatch(x = x, name = thekey)
-    out <- na.omit(out)
-    out <- unique(out)
-    out <- paste0(out, collapse = " / ")
-    out
-  })
-}
-
 # Extract sought element from root element
-result$b31_and_b32_status_of_the_sponsor <-
-  getKeyNestedList(thelist = result$b1_sponsor,  
-                   thekey = "b31_and_b32_status_of_the_sponsor")
+tmp <- dfListExtractKey(
+  result, 
+  list(c(
+    "b1_sponsor", "b31_and_b32_status_of_the_sponsor")
+))
+result <- merge(result, tmp)
 
 # Tabulate the status of the clinical trial
 with(result, 
-     table("Status"       = p_end_of_trial_status, 
-           "Sponsor type" = b31_and_b32_status_of_the_sponsor))
+     table(
+       "Status"       = p_end_of_trial_status, 
+       "Sponsor type" = value)
+)
+#
 #                     Sponsor type
-# Status                   Commercial Non-Commercial
-#   Completed            1        397             86
-#   Not Authorised       1          5              1
-#   Ongoing              1        508            431
-#   Prematurely Ended    0         82             21
-#   Restarted            0          7              3
-#   Suspended by CA      0          1              0
-#   Temporarily Halted   0          9              7
+# Status               Commercial Non-Commercial
+#   Completed                 114             10
+#   Not Authorised              1              0
+#   Ongoing                    31              2
+#   Prematurely Ended           6              0
+#   Temporarily Halted          1              0
+```
+
+
+
+```{r, include=FALSE}
+# cleanup
+unlink("sqlite_file.sql")
 ```
