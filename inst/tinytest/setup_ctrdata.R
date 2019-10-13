@@ -64,9 +64,9 @@ check_sqlite <- function(){
 
   tmp <- try(nodbi::src_sqlite(), silent = TRUE)
 
-  on.exit(RSQLite::dbDisconnect(conn = tmp$con))
-
-  all(c("src_sqlite", "docdb_src") %in% class(tmp))
+  out <- all(c("src_sqlite", "docdb_src") %in% class(tmp))
+  if (out) on.exit(RSQLite::dbDisconnect(conn = tmp$con))
+  out
 
 }
 
@@ -80,9 +80,9 @@ check_mongo_local <- function(){
       url = "mongodb://localhost"),
     silent = TRUE)
 
-  on.exit(tmp$con$disconnect())
-
-  all(c("src_mongo", "docdb_src") %in% class(tmp))
+  out <- all(c("src_mongo", "docdb_src") %in% class(tmp))
+  if (out) on.exit(tmp$con$disconnect())
+  out
 
 }
 
@@ -96,9 +96,9 @@ check_mongo_remote_ro <- function(){
       url = mongo_remote_ro_url),
     silent = TRUE)
 
-  on.exit(tmp$con$disconnect())
-
-  all(c("src_mongo", "docdb_src") %in% class(tmp))
+  out <- all(c("src_mongo", "docdb_src") %in% class(tmp))
+  if (out) on.exit(tmp$con$disconnect())
+  out
 
 }
 
@@ -111,9 +111,8 @@ check_mongo_remote_rw <- function(){
       url = mongo_remote_rw_url),
     silent = TRUE)
 
-  on.exit(tmp$con$disconnect())
-
-  all(c("src_mongo", "docdb_src") %in% class(tmp))
-
+  out <- all(c("src_mongo", "docdb_src") %in% class(tmp))
+  if (out) on.exit(tmp$con$disconnect())
+  out
 }
 
