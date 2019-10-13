@@ -22,8 +22,9 @@ Description: Provides functions for querying, retrieving and analysing
 License: MIT + file LICENSE
 RoxygenNote: 6.1.1
 LazyData: true
-Suggests: devtools, knitr, rmarkdown, RSQLite (>= 2.1.2), mongolite, tinytest
-VignetteBuilder: knitr
+Suggests: devtools, knitr, rmarkdown, RSQLite (>= 2.1.2), mongolite, 
+        tinytest, R.rsp 
+VignetteBuilder: R.rsp
 NeedsCompilation: no
 Encoding: UTF-8
 Authors@R: person(given = "Ralf", family = "Herold", role = c("aut", "cre"),
