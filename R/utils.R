@@ -1525,7 +1525,7 @@ dfListExtractKey <- function(
       function(ii) {
 
         data.frame(
-          name = gsub("[^a-zA-Z.]", "",
+          name = gsub("[^a-zA-Z0-9_.-]", "",
                       paste0(list.key[[li]],
                              collapse = ".")),
           "_id" = df[["_id"]][[ii]],
