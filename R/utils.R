@@ -2249,7 +2249,8 @@ installFindBinary <- function(commandtest = NULL, verbose = FALSE) {
   #
   if (.Platform$OS.type == "windows") {
     commandtest <-
-      paste0("c:\\cygwin\\bin\\bash.exe --login -c ",
+      paste0(rev(Sys.glob("c:\\cygw*\\bin\\bash.exe"))[1],
+             " --login -c ",
              shQuote(commandtest))}
   #
   if (verbose) {print(commandtest)}
