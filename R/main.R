@@ -105,9 +105,11 @@ ctrLoadQueryIntoDb <- function(
   con <- ctrDb(con = con)
 
   ## system check, in analogy to onload.R
-  if (.Platform$OS.type == "windows")
-    if (!installCygwinWindowsTest())
+  if (.Platform$OS.type == "windows") {
+    if (!installCygwinWindowsTest()) {
       stop(call. = FALSE)
+    }
+  }
 
   # TODO deleteme
   #

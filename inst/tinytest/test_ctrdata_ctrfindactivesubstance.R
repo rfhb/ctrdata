@@ -11,7 +11,8 @@ if (!check_internet()) exit_file("Not available: internet connectivity")
 tmp_test <- ctrFindActiveSubstanceSynonyms(activesubstance = "imatinib")
 
 # test
-expect_true(all(c("imatinib", "gleevec", "sti 571", "glivec", "CGP 57148", "st1571")
-            %in% tmp_test),
-            info = "ctrdata_euctr.R#16")
+expect_true(all(c(
+  "imatinib", "gleevec", "sti 571", "glivec", "CGP 57148", "st1571")
+  %in% tmp_test),
+  info = "ctrdata_euctr.R#16")
 

@@ -42,11 +42,13 @@ mongo_remote_rw_db         <- "users"
 
 # credentials
 
-mongo_remote_ro_url <- "mongodb+srv://DWbJ7Wh:bdTHh5cS@cluster0-b9wpw.mongodb.net/"
+mongo_remote_ro_url <-
+  "mongodb+srv://DWbJ7Wh:bdTHh5cS@cluster0-b9wpw.mongodb.net/"
 # permissions are restricted to "find" in "dbperm" in "dbperm"
 # no other functions can be executed, no login possible
 
-mongo_remote_rw_url <- Sys.getenv(x = "ctrdatamongouri")
+mongo_remote_rw_url <-
+  Sys.getenv(x = "ctrdatamongouri")
 # this environment variable is set on development
 # and continuous integration systems
 

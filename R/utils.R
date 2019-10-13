@@ -246,26 +246,30 @@ ctrOpenSearchPagesInBrowser <- function(
     # open empty search pages
     if ("EUCTR" %in% register)
       try({
-        utils::browseURL("https://www.clinicaltrialsregister.eu/ctr-search/search",
-                         ...)}, silent = TRUE)
+        utils::browseURL(
+          "https://www.clinicaltrialsregister.eu/ctr-search/search",
+          ...)}, silent = TRUE)
     #
     if ("CTGOV" %in% register)
       try({
-        utils::browseURL("https://clinicaltrials.gov/ct2/search/advanced",
-                         ...)}, silent = TRUE)
+        utils::browseURL(
+          "https://clinicaltrials.gov/ct2/search/advanced",
+          ...)}, silent = TRUE)
     #
     # if requested also show copyright pages
     if (copyright) {
       #
       if ("EUCTR" %in% register)
         try({
-          utils::browseURL("https://www.clinicaltrialsregister.eu/disclaimer.html",
-                           ...)}, silent = TRUE)
+          utils::browseURL(
+            "https://www.clinicaltrialsregister.eu/disclaimer.html",
+            ...)}, silent = TRUE)
       #
       if ("CTGOV" %in% register)
         try({
-          utils::browseURL("https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use",
-                           ...)}, silent = TRUE)
+          utils::browseURL(
+            "https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use",
+            ...)}, silent = TRUE)
       #
     }
   } else {
@@ -512,17 +516,18 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = ""){
 
 
 
-#' Show the history of queries that were loaded into a database collection
+#' Show the history of queries that were loaded into a database
 #'
 #' @inheritParams ctrDb
 #'
 #' @return A data frame with columns: query-timestamp, query-egister,
-#'  query-records (note: this is the number of records loaded when last executing
-#'  ctrLoadQueryIntoDb(), not the total record number) and query-term,
-#'  and with one row for each ctrLoadQueryIntoDb() loading trial records
-#'  in this collection.
+#'  query-records (note: this is the number of records loaded when last
+#'  executing \link{ctrLoadQueryIntoDb}, not the total record number) and
+#'  query-term, and with one row for each \link{ctrLoadQueryIntoDb}
+#'  loading trial records in this collection.
 #'
-#' @param verbose If \code{TRUE}, prints additional information (default \code{FALSE}).
+#' @param verbose If \code{TRUE}, prints additional information
+#' (default \code{FALSE}).
 #'
 #' @importFrom nodbi docdb_query
 #'
@@ -719,7 +724,7 @@ dbFindFields <- function(namepart = "",
     }
 
     # inform user
-    message("Finding fields on server (may take some time)")
+    message("Finding fields in database (may take some time)")
 
     ## - method for mongodb
     if ("src_mongo" %in% class(con)) {

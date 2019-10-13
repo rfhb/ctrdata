@@ -95,7 +95,8 @@ expect_message(
   "Opening browser for search:",
   info = "ctrdata_euctr.R#96")
 
-q <- "https://www.clinicaltrialsregister.eu/ctr-search/search?query=&age=under-18&status=completed"
+q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/",
+            "search?query=&age=under-18&status=completed")
 
 tmp <- suppressMessages(
   ctrGetQueryUrlFromBrowser(

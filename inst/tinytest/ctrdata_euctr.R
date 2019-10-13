@@ -60,8 +60,12 @@ expect_message(
 # manipulate history to test updating
 # implemented in dbCTRUpdateQueryHistory
 hist <- suppressWarnings(dbQueryHistory(con = dbc))
-hist[nrow(hist), "query-term"]      <- sub(".*(&dateFrom=.*)&dateTo=.*", "\\1", q)
-hist[nrow(hist), "query-timestamp"] <- paste0(date.to, " 23:59:59")
+#
+hist[nrow(hist), "query-term"] <-
+  sub(".*(&dateFrom=.*)&dateTo=.*", "\\1", q)
+#
+hist[nrow(hist), "query-timestamp"] <-
+  paste0(date.to, " 23:59:59")
 
 # convert into json object
 json <- jsonlite::toJSON(list("queries" = hist))
@@ -98,7 +102,8 @@ expect_true(length(tmp_test$failed) == 0L,
 
 #### ctrLoadQueryIntoDb results ####
 
-# https://www.clinicaltrialsregister.eu/ctr-search/search?query=&age=under-18&phase=phase-three&resultsstatus=trials-with-results
+# https://www.clinicaltrialsregister.eu/ctr-search/search?query=&
+# age=under-18&phase=phase-three&resultsstatus=trials-with-results
 
 # get trials with results
 q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
@@ -119,15 +124,16 @@ expect_message(
 #              con = dbc)
 result <- suppressWarnings(
   dbGetFieldsIntoDf(
-    fields = c("a2_eudract_number",
-               "trialInformation.globalEndOfTrialDate",
-               "p_date_of_the_global_end_of_the_trial",
-               "trialInformation.recruitmentStartDate",
-               "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database",
-               "subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm", # this is a list
-               "endPoints.endPoint", # this is a list
-               "trialInformation.analysisForPrimaryCompletion",
-               "e71_human_pharmacology_phase_i"
+    fields = c(
+      "a2_eudract_number",
+      "trialInformation.globalEndOfTrialDate",
+      "p_date_of_the_global_end_of_the_trial",
+      "trialInformation.recruitmentStartDate",
+      "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database",
+      "subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm",
+      "endPoints.endPoint", # this is a also list
+      "trialInformation.analysisForPrimaryCompletion",
+      "e71_human_pharmacology_phase_i"
     ),
     con = dbc,
     stopifnodata = FALSE)
