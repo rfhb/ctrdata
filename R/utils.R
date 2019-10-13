@@ -1292,9 +1292,10 @@ dfListExtractKey <- function(
       function(ii) {
 
         data.frame(
-          name = gsub("[^a-zA-Z0-9_.-]", "",
+          name = gsub("[-0-9]*$", "", # trialing number
+                      gsub("[^a-zA-Z0-9_.-]", "",
                       paste0(list.key[[li]],
-                             collapse = ".")),
+                             collapse = "."))),
           "_id" = df[["_id"]][[ii]],
           value = tmp[[ii]],
           item = seq_along(tmp[[ii]]),

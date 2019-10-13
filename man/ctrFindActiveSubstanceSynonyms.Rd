@@ -15,7 +15,7 @@ A character vector of the active substance (input parameter) and
 }
 \description{
 An active substance can be identified by a recommended international
-nonproprietary name, a trade or product name, or one or more company codes.
+nonproprietary name, a trade or product name, or a company code(s).
 }
 \details{
 At this time, this function uses the register ClinicalTrials.Gov to
