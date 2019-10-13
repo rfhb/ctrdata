@@ -114,7 +114,7 @@ expect_true("list" == class(result[[
 
 # test
 expect_true(
-  sum(nchar(getSublistKey(
+  sum(nchar(dfListExtractKey(
     result,
     list(c("location", "name"))
   )),

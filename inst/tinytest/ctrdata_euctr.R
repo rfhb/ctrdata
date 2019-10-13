@@ -114,10 +114,9 @@ expect_message(
   "Imported or updated results for",
   info = "ctrdata_euctr.R#106")
 
-dbFindFields(namepart = c("statistic"),
-             con = dbc)
-
 # get results
+# dbFindFields(namepart = c("statistic"),
+#              con = dbc)
 result <- suppressWarnings(
   dbGetFieldsIntoDf(
     fields = c("a2_eudract_number",
@@ -125,8 +124,7 @@ result <- suppressWarnings(
                "p_date_of_the_global_end_of_the_trial",
                "trialInformation.recruitmentStartDate",
                "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database",
-               "subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm",
-               "subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm.type.value",
+               "subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm", # this is a list
                "endPoints.endPoint", # this is a list
                "trialInformation.analysisForPrimaryCompletion",
                "e71_human_pharmacology_phase_i"
@@ -159,33 +157,34 @@ expect_true("Date" == class(result[[
 # test
 expect_true(
   sum(nchar(
-    getSublistKey(
-      result,
-      list(
+    dfListExtractKey(
+      df = result,
+       list.key = list(
         c("subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm",
-          "title"))
-  )
+          "title"),
+      c("subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm",
+        "type.value"))
+  )[["value"]]
   ), na.rm = TRUE)
-  > 300L,
+  > 250L,
   info = "ctrdata_euctr.R#161")
 
 # test
 expect_true(
   sum(nchar(
-    getSublistKey(
-    result,
-    list(
+    dfListExtractKey(
+    df = result,
+    list.key = list(
       c("endPoints.endPoint", "title"))
-  )
+    )[["value"]]
   ), na.rm = TRUE)
-  > 4000L,
+  > 3000L,
   info = "ctrdata_euctr.R#172")
 
 # test
-tmp_test <- getSublistKey(
-  fulllist = result,
-  keyssublists =
-    list(
+tmp_test <- dfListExtractKey(
+  result,
+  list(
       c("endPoints.endPoint", "^title"),
       c("endPoints.endPoint", "^type.value")
     )
@@ -197,10 +196,9 @@ expect_true(all(
   info = "ctrdata_euctr.R#189")
 
 # test
-tmp_test <- getSublistKey(
-  fulllist = result,
-  keyssublists =
-    list(
+tmp_test <- dfListExtractKey(
+  result,
+  list(
       c("endPoints.endPoint", "armReportingGroups.armReportingGroup.subjects[0-9]*$"),
       c("endPoints.endPoint", "armReportingGroups.armReportingGroup.@attributes.id"),
       c("endPoints.endPoint", "armReportingGroups.armReportingGroup.@attributes.armId")
@@ -209,30 +207,35 @@ tmp_test <- getSublistKey(
 expect_true(
   sum(
     as.numeric(
-      tmp_test[["endPoints.endPoint.armReportingGroups.armReportingGroup.subjects"]]),
+      tmp_test[["value"]][
+        tmp_test[["name"]] ==
+          "endPoints.endPoint.armReportingGroups.armReportingGroup.subjects"
+      ]),
     na.rm = TRUE) > 2000L,
   info = "ctrdata_euctr.R#211")
 
 # test
-tmp_test <- getSublistKey(
-  fulllist = result,
-  keyssublists =
-    list(
+tmp_test <- dfListExtractKey(
+  result,
+  list(
       c("endPoints.endPoint", "statisticalAnalyses.statisticalAnalysis.title"),
       c("endPoints.endPoint", "statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.method.value"),
       c("endPoints.endPoint", "statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.value[0-9]*$")
     )
 )
 expect_true(
-  all(na.omit(
-    as.numeric(
-      tmp_test[["endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.value"]]
-    )) < 1L),
+  all(na.omit(as.numeric(
+    tmp_test[["value"]][
+      tmp_test[["name"]] ==
+        "endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.value"
+      ])) < 1L),
   info = "ctrdata_euctr.R#211")
 expect_true(all(
     c("HYPOTHESIS_METHOD.cochranMantelHaenszel", "HYPOTHESIS_METHOD.ancova",
       "HYPOTHESIS_METHOD.regressionLogistic") %in%
-      tmp_test$endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.method.value),
+      tmp_test[["value"]][
+        tmp_test[["name"]] ==
+          "endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.method.value"]),
   info = "ctrdata_euctr.R#241")
 
 
@@ -311,14 +314,13 @@ expect_true(all(
 
 # test
 expect_message(
-  suppressMessages(
     suppressWarnings(
       ctrLoadQueryIntoDb(
         queryterm = "NCT01516567",
         register = "CTGOV",
         con = dbc,
         annotation.text = "ANNO",
-        annotation.mode = "replace"))),
+        annotation.mode = "replace")),
   "Imported or updated 1 trial",
   info = "ctrdata_euctr.R#297")
 

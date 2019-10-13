@@ -1418,6 +1418,130 @@ dbGetFieldsIntoDf <- function(fields = "",
 # dbGetFieldsIntoDf
 
 
+#' Extract named element(s) from list(s) into long-format
+#' data frame
+#'
+#' The function uses a name (key) to extract an element
+#' from a list in a data.frame such as obtained with
+#' \link{dbGetFieldsIntoDf}. This helps to simplify
+#' working with nested lists and with complex structures.
+#'
+#' @param df A data frame
+#' @param list.key A list of pairs of list names and
+#'  key names, where the list name corresponds to the
+#'  name of a column in \code{df} that holds a list and
+#'  the name of the key identifies the element to be
+#'  extracted. See example.
+#'
+#' @return A data frame in long format with columns
+#'  name (identifying the full path in the data frame,
+#'  "<list>.<key>"), _id (of the trial record), value
+#'  (of name per _id), item (number of value of name
+#'  per _id).
+#'
+#' @export
+#'
+#' @examples
+#'
+#' \dontrun{
+#'
+#' df <- dbGetFieldsIntoDf(
+#'   fields = c("endPoints.endPoint",
+#'              "subjectDisposition.postAssignmentPeriods"),
+#'   con = con
+#' )
+#' dfListExtractKey <- function(
+#'   df,
+#'   list.key =
+#'     list(
+#'       c("endPoints.endPoint",
+#'         "^title"),
+#'       c("subjectDisposition.postAssignmentPeriods",
+#'         "arms.arm.type.value")
+#'     )
+#' )
+#'
+#' }
+#'
+dfListExtractKey <- function(
+  df,
+  list.key =
+    list(c("endPoints.endPoint", "^title")
+    )) {
+
+  # check
+  if (!("_id" %in% names(df))) {
+    stop("Data frame 'df' lacks '_id' column.",
+         call. = FALSE)
+    }
+
+  # helper function to extract from
+  # a named vector elements by name
+  extractKey <- function(flattenedList, key) {
+
+    # find element by key
+    selected <- grepl(key,
+                      names(flattenedList),
+                      ignore.case = TRUE)
+
+
+    # extract value for key
+    extracted <- flattenedList[selected]
+
+    # if key is not found, return a value
+    # e.g. missing value (NA) or empty string ("")
+    # please change as wanted for later processing
+    if (length(extracted) == 0) extracted <- NA
+
+    # return
+    return(extracted)
+  }
+
+  # dots needs to be defined because passing
+  # it in .Internal(mapply()) is not enough
+  out <- lapply(
+    list.key,
+    function(k)
+      lapply(df[[k[1]]], # k[1] = "endPoints.endPoint" identifies
+             # the column in data frame with the list
+             function(l)
+               extractKey(unlist(l, recursive = TRUE),
+                          k[2]) # k[2] = "^title" identifies
+                                # the key in the sublist
+      ))
+
+  out <- sapply(seq_along(list.key), function(li) {
+
+    tmp <- out[[li]]
+
+    tmp <- sapply(
+
+      seq_along(tmp),
+      function(ii) {
+
+        data.frame(
+          name = gsub("[^a-zA-Z.]", "",
+                      paste0(list.key[[li]],
+                             collapse = ".")),
+          "_id" = df[["_id"]][[ii]],
+          value = tmp[[ii]],
+          item = seq_along(tmp[[ii]]),
+          row.names = NULL,
+          stringsAsFactors = FALSE,
+          check.names = FALSE)
+      }, simplify = FALSE)
+
+    do.call(rbind, tmp)
+
+  }, simplify = FALSE)
+
+  out <- do.call(rbind, out)
+
+  # return
+  out
+}
+
+
 #' Merge two variables into one, optionally map values to new levels
 #'
 #' @param df A \link{data.frame} in which there are two variables (columns)
