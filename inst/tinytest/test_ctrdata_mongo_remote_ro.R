@@ -3,6 +3,7 @@
 #### SETUP ####
 source("setup_ctrdata.R")
 
+if (!check_internet())        exit_file("Not available: internet connectivity")
 if (!check_mongo_remote_ro()) exit_file("Not available: remote ro MongoDB")
 
 # create database object

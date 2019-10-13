@@ -53,9 +53,42 @@ mongo_remote_rw_url <- Sys.getenv(x = "ctrdatamongouri")
 
 #### helper functions system detection ####
 
+check_binaries <- function(){
+
+  out <- TRUE
+
+  if (.Platform$OS.type == "windows") {
+    if (!suppressMessages(ctrdata:::installCygwinWindowsTest())) {
+      out <- FALSE
+    }
+  }
+
+  out &&
+
+    suppressWarnings(ctrdata:::installFindBinary(
+      commandtest = "php --version")) &&
+
+    suppressWarnings(ctrdata:::installFindBinary(
+      commandtest = "php -r 'simplexml_load_string(\"\");'")) &&
+
+    suppressWarnings(ctrdata:::installFindBinary(
+      commandtest = "echo x | sed s/x/y/")) &&
+
+    suppressWarnings(ctrdata:::installFindBinary(
+      commandtest = "perl -V:osname"))
+
+}
+
+
 check_internet <- function(){
 
-  curl::has_internet()
+  tmp <- try({
+    httr::HEAD("www.clinicaltrials.gov")
+    httr::HEAD("www.clinicaltrialsregister.eu")
+  }, silent = TRUE)
+
+  out <- !("try-error" %in% class(tmp))
+  out
 
 }
 
