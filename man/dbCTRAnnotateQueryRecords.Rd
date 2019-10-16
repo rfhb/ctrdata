@@ -5,31 +5,22 @@
 \title{dbQueryAnnotateRecords}
 \usage{
 dbCTRAnnotateQueryRecords(recordnumbers, annotations, annotation.text,
-  annotation.mode, collection = collection, uri = uri,
-  password = password, verbose = verbose)
+  annotation.mode, con, verbose)
 }
 \arguments{
-\item{annotation.text}{Text to be including in the records retrieved
-with the current query, in the field "annotation".}
+\item{annotation.text}{Text to be including in the records
+retrieved with the current query, in the field "annotation".}
 
-\item{annotation.mode}{One of "append" (default), "prepend" or "replace"
-for new annotation.text with respect to any existing annotation for
-the records retreived with the current query.}
+\item{annotation.mode}{One of "append" (default), "prepend"
+or "replace" for new annotation.text with respect to any
+existing annotation for the records retreived with the
+current query.}
 
-\item{collection}{Name of collection (default is "ctrdata")}
+\item{con}{A \link[nodbi]{src} connection object, as obtained with
+nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()}
 
-\item{uri}{Default is mongodb://localhost/users/.
-Address of database in mongodb server, based on mongo connection string
-format: mongodb://[username@]host1[:port1][,...hostN[:portN]]]/database/
-Do NOT include password, this will only be used from the parameter.
-See \url{http://docs.mongodb.org/manual/reference/connection-string/}}
-
-\item{password}{In case access requires credentials.
-Note this defaults to the environment variable "ctrdatamongopassword".
-(by means of \code{Sys.getenv("ctrdatamongopassword")}), to
-support scripting without revealing secrets.}
-
-\item{verbose}{Print information.}
+\item{verbose}{Printing additional information if set to
+\code{TRUE}; default is \code{FALSE}.}
 }
 \description{
 dbQueryAnnotateRecords

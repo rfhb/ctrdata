@@ -7,14 +7,16 @@
 ctrGetQueryUrlFromBrowser(content = "")
 }
 \arguments{
-\item{content}{URL from browser address bar. Defaults to clipboard contents.}
+\item{content}{URL from browser address bar.
+Defaults to clipboard contents.}
 }
 \value{
-A string of query parameters that can be used to retrieve data from
-  the register.
+A string of query parameters that can be used to retrieve data
+from the register.
 
-A data frame with a query term and the register name that can directly be
-  used in \link{ctrLoadQueryIntoDb} and in \link{ctrOpenSearchPagesInBrowser}
+A data frame with a query term and the register name that can
+directly be used in \link{ctrLoadQueryIntoDb} and in
+\link{ctrOpenSearchPagesInBrowser}
 }
 \description{
 Import from clipboard the URL of a search in one of the registers

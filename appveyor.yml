@@ -10,7 +10,7 @@ environment:
 
   matrix:
    - R_VERSION: release
-   - R_VERSION: oldrel
+#   - R_VERSION: oldrel
 #   - R_VERSION: devel
 
 # Download script file from GitHub

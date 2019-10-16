@@ -2,85 +2,82 @@
 % Please edit documentation in R/main.R
 \name{ctrLoadQueryIntoDb}
 \alias{ctrLoadQueryIntoDb}
-\title{Retrieve or update information on clinical trials from register and store in
-database}
+\title{Retrieve or update information on clinical trials from register
+and store in database}
 \usage{
 ctrLoadQueryIntoDb(queryterm = "", register = "EUCTR",
   querytoupdate = 0L, forcetoupdate = FALSE, euctrresults = FALSE,
-  annotation.text = "", annotation.mode = "append", details = TRUE,
-  parallelretrievals = 10L, debug = FALSE, collection = "ctrdata",
-  uri = "mongodb://localhost/users",
-  password = Sys.getenv("ctrdatamongopassword"), verbose = FALSE)
+  euctrresultshistory = FALSE, annotation.text = "",
+  annotation.mode = "append", parallelretrievals = 10L,
+  only.count = FALSE, con = NULL, verbose = FALSE)
 }
 \arguments{
-\item{queryterm}{Either a string with the full URL of a search in a register
-or the data frame returned by the \link{ctrGetQueryUrlFromBrowser} or the
+\item{queryterm}{Either a string with the full URL of a search in
+a register or the data frame returned by the
+\link{ctrGetQueryUrlFromBrowser} or the
 \link{dbQueryHistory} functions.
 The queryterm is recorded in the \code{collection} for later
 use to update records.}
 
-\item{register}{Vector of abbreviations of the register to query, defaults to
-"EUCTR"}
+\item{register}{Vector of abbreviations of the register to query,
+defaults to "EUCTR".}
 
-\item{querytoupdate}{Either the word "last" or the number of the query (based
-on \link{dbQueryHistory}) that should be run to retrieve any trial records
-that are new or have been updated since this query was run the last time.
+\item{querytoupdate}{Either the word "last" or the number of the
+query (based on \link{dbQueryHistory}) that should be run to
+retrieve any trial records that are new or have been updated
+since this query was run the last time.
 This parameter takes precedence over \code{queryterm}.
 For EUCTR, updates are available only for the last seven days;
-the query is run again if more time has passed since it was run last.}
+the query is run again if more time has passed since it was
+run last.}
 
-\item{forcetoupdate}{If \code{TRUE}, run again the query given in
-\code{querytoupdate}, irrespective of when it was run last
-(default is \code{FALSE}).}
+\item{forcetoupdate}{If \code{TRUE}, run again the query
+given in \code{querytoupdate}, irrespective of when it was
+run last (default is \code{FALSE}).}
 
-\item{euctrresults}{If \code{TRUE}, also download available results when
-retrieving and loading trials from EUCTR. This slows down this function.
-(For CTGOV, all available results are always retrieved and loaded.)}
+\item{euctrresults}{If \code{TRUE}, also download available
+results when retrieving and loading trials from EUCTR. This
+slows down this function. (For CTGOV, all available results
+are always retrieved and loaded.)}
 
-\item{annotation.text}{Text to be including in the records retrieved
-with the current query, in the field "annotation".}
+\item{euctrresultshistory}{If \code{TRUE}, also download
+available history of results publication in EUCTR.
+This is quite time-consuming (default is \code{FALSE}).}
 
-\item{annotation.mode}{One of "append" (default), "prepend" or "replace"
-for new annotation.text with respect to any existing annotation for
-the records retreived with the current query.}
+\item{annotation.text}{Text to be including in the records
+retrieved with the current query, in the field "annotation".}
 
-\item{details}{If \code{TRUE} (default), retrieve full protocol-related
-information from EUCTR or XML data from CTGOV, depending on the register
-selected. This gives all of the available details for the trials.
-Alternatively, set to \code{FALSE} to retrieve only summary information
-from EUCTR or CSV data from CTGOV. The full EUCTR information includes
-separate records for every country in which the trial is opened; use
-function \code{dbFindUniqueEuctrRecord} in a subsequent step to limit to
-one record from EUCTR per trial}
+\item{annotation.mode}{One of "append" (default), "prepend"
+or "replace" for new annotation.text with respect to any
+existing annotation for the records retreived with the
+current query.}
 
-\item{parallelretrievals}{Number of parallel downloads of information from
-the register, defaults to 10.}
+\item{parallelretrievals}{Number of parallel downloads of
+information from the register, defaults to 10.}
 
-\item{debug}{Printing additional information if set to \code{TRUE}; default
-is \code{FALSE}.}
+\item{only.count}{Set to \code{TRUE} to return only the
+number of trial records found in the register for the query.
+Does not load trial information into the database.
+Default is \code{FALSE}.}
 
-\item{collection}{Name of collection (default is "ctrdata")}
+\item{con}{A \link[nodbi]{src} connection object, as obtained with
+nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()}
 
-\item{uri}{Default is mongodb://localhost/users/.
-Address of database in mongodb server, based on mongo connection string
-format: mongodb://[username@]host1[:port1][,...hostN[:portN]]]/database/
-Do NOT include password, this will only be used from the parameter.
-See \url{http://docs.mongodb.org/manual/reference/connection-string/}}
-
-\item{password}{In case access requires credentials.
-Note this defaults to the environment variable "ctrdatamongopassword".
-(by means of \code{Sys.getenv("ctrdatamongopassword")}), to
-support scripting without revealing secrets.}
-
-\item{verbose}{Print information.}
+\item{verbose}{Printing additional information if set to
+\code{TRUE}; default is \code{FALSE}.}
 }
 \value{
-Number of trials imported or updated from register
+A list with elements "n" (the number of trials that
+were newly imported or updated with this function call) and
+"ids" (a vector of the _id[s] of these trials), with
+attributes (database connection details and a data frame of
+the query history in this database).
 }
 \description{
-Note that upsert is used to store data in database, which means that records
-may accumulate in a data base from different queries. If you want to insert
-into an empty database, include a mongo connection object to an empty database.
+This is the main function of package \link{ctrdata} for accessing
+registers. Note that re-rerunning this function adds or updates
+trial records in a database, even if from different queries or
+different registers.
 }
 \examples{
 # Retrieve protocol-related information on a

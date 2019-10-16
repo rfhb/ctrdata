@@ -4,42 +4,28 @@
 \alias{dbGetFieldsIntoDf}
 \title{Create data frame by extracting specified fields from database collection}
 \usage{
-dbGetFieldsIntoDf(fields = "", debug = FALSE, collection = "ctrdata",
-  uri = "mongodb://localhost/users",
-  password = Sys.getenv("ctrdatamongopassword"), verbose = FALSE,
+dbGetFieldsIntoDf(fields = "", con, verbose = FALSE,
   stopifnodata = TRUE)
 }
 \arguments{
 \item{fields}{Vector of one or more strings, with names of the sought fields.
 See function \link{dbFindFields} for how to find names of fields.}
 
-\item{debug}{Printing additional information if set to \code{TRUE}; default
-is \code{FALSE}.}
+\item{con}{A \link[nodbi]{src} connection object, as obtained with
+nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()}
 
-\item{collection}{Name of collection (default is "ctrdata")}
+\item{verbose}{Printing additional information if set to \code{TRUE};
+default is \code{FALSE}.}
 
-\item{uri}{Default is mongodb://localhost/users/.
-Address of database in mongodb server, based on mongo connection string
-format: mongodb://[username@]host1[:port1][,...hostN[:portN]]]/database/
-Do NOT include password, this will only be used from the parameter.
-See \url{http://docs.mongodb.org/manual/reference/connection-string/}}
-
-\item{password}{In case access requires credentials.
-Note this defaults to the environment variable "ctrdatamongopassword".
-(by means of \code{Sys.getenv("ctrdatamongopassword")}), to
-support scripting without revealing secrets.}
-
-\item{verbose}{Print information.}
-
-\item{stopifnodata}{Stops with an error (\code{TRUE}, default) or with a warning
-(\code{TRUE}) if sought field is empty or not available in any of the records
-in the database collection.}
+\item{stopifnodata}{Stops with an error (\code{TRUE}, default) or with
+a warning (\code{FALSE}) if the sought field is empty in all,
+or not available in any of the records in the database collection.}
 }
 \value{
-A data frame with columns corresponding to the sought fields. Note
-  that a column for the record _id will always be included. The maximum
-  number of rows of the returned data frame is equal to or less than the
-  number of records in the data base.
+A data frame with columns corresponding to the sought fields.
+Note: a column for the record _id will always be included.
+The maximum number of rows of the returned data frame is equal to,
+or less than the number of records in the data base.
 }
 \description{
 With this convenience function, fields in the mongo database are retrieved

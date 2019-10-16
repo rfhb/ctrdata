@@ -5,9 +5,8 @@
 \title{Deduplicate records to provide unique clinical trial identifiers}
 \usage{
 dbFindIdsUniqueTrials(preferregister = "EUCTR",
-  prefermemberstate = "GB", include3rdcountrytrials = TRUE,
-  collection = "ctrdata", uri = "mongodb://localhost/users",
-  password = Sys.getenv("ctrdatamongopassword"), verbose = TRUE)
+  prefermemberstate = "GB", include3rdcountrytrials = TRUE, con,
+  verbose = TRUE)
 }
 \arguments{
 \item{preferregister}{The abbreviation of the preferred register, in case
@@ -15,27 +14,18 @@ a trial is in more than one register (string, either "EUCTR" or "CTGOV").
 If set to an empty string (""), keeps the keys for the same trial in both
 registers in the returned vector.}
 
-\item{prefermemberstate}{Code of single EU Member State for which records should
-returned. If not available, a record for GB or lacking this, any other record
-for the trial will be returned. For a list of codes of EU
-Member States, please see vector \code{countriesEUCTR}. Alternatively, "3RD"
-will lead to return the Third Country record of a trial, if available.}
+\item{prefermemberstate}{Code of single EU Member State for which records
+should returned. If not available, a record for GB or lacking this, any
+other record for the trial will be returned. For a list of codes of EU
+  Member States, please see vector \code{countriesEUCTR}. Alternatively,
+  "3RD" will lead to return a Third Country record of a trial, if available.}
 
 \item{include3rdcountrytrials}{A logical value if trials should be retained
-that are conducted *exclusively* in third countries, that is outside the European Union.}
+that are conducted exclusively in third countries, that is, outside
+the European Union.}
 
-\item{collection}{Name of collection (default is "ctrdata")}
-
-\item{uri}{Default is mongodb://localhost/users/.
-Address of database in mongodb server, based on mongo connection string
-format: mongodb://[username@]host1[:port1][,...hostN[:portN]]]/database/
-Do NOT include password, this will only be used from the parameter.
-See \url{http://docs.mongodb.org/manual/reference/connection-string/}}
-
-\item{password}{In case access requires credentials.
-Note this defaults to the environment variable "ctrdatamongopassword".
-(by means of \code{Sys.getenv("ctrdatamongopassword")}), to
-support scripting without revealing secrets.}
+\item{con}{A \link[nodbi]{src} connection object, as obtained with
+nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()}
 
 \item{verbose}{If set to \code{TRUE}, prints out information about numbers
 of records found at subsequent steps when searching for duplicates}

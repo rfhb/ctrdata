@@ -1,3 +1,12 @@
+# ctrdata 1.0
+ - 2019-10-16
+ - switch to nodbi::scr_{mongo,sqlite}() with 
+   re-implementation of most functions
+ - switch from testthat to tinytest, so that users 
+   can check with tinytest::test_package("ctrdata")
+ - improvements to euctr trial import  
+ - new function dfListExtractKey
+
 # ctrdata 0.18.9005
  - 2019-05-02
  - speed up testing bash commands under windows

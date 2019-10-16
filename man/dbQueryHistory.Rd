@@ -2,37 +2,26 @@
 % Please edit documentation in R/utils.R
 \name{dbQueryHistory}
 \alias{dbQueryHistory}
-\title{Show the history of queries that were loaded into a database collection}
+\title{Show the history of queries that were loaded into a database}
 \usage{
-dbQueryHistory(collection = "ctrdata",
-  uri = "mongodb://localhost/users",
-  password = Sys.getenv("ctrdatamongopassword"), verbose = FALSE)
+dbQueryHistory(con, verbose = FALSE)
 }
 \arguments{
-\item{collection}{Name of collection (default is "ctrdata")}
+\item{con}{A \link[nodbi]{src} connection object, as obtained with
+nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()}
 
-\item{uri}{Default is mongodb://localhost/users/.
-Address of database in mongodb server, based on mongo connection string
-format: mongodb://[username@]host1[:port1][,...hostN[:portN]]]/database/
-Do NOT include password, this will only be used from the parameter.
-See \url{http://docs.mongodb.org/manual/reference/connection-string/}}
-
-\item{password}{In case access requires credentials.
-Note this defaults to the environment variable "ctrdatamongopassword".
-(by means of \code{Sys.getenv("ctrdatamongopassword")}), to
-support scripting without revealing secrets.}
-
-\item{verbose}{Print information.}
+\item{verbose}{If \code{TRUE}, prints additional information
+(default \code{FALSE}).}
 }
 \value{
 A data frame with columns: query-timestamp, query-egister,
- query-records (note: this is the number of records loaded when last executing
- ctrLoadQueryIntoDb(), not the total record number) and query-term,
- and with one row for each ctrLoadQueryIntoDb() loading trial records
- in this collection.
+ query-records (note: this is the number of records loaded when last
+ executing \link{ctrLoadQueryIntoDb}, not the total record number) and
+ query-term, and with one row for each \link{ctrLoadQueryIntoDb}
+ loading trial records in this collection.
 }
 \description{
-Show the history of queries that were loaded into a database collection
+Show the history of queries that were loaded into a database
 }
 \examples{
 

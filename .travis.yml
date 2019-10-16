@@ -1,4 +1,3 @@
-
 # to install command line client:
 #
 # gem install travis --no-rdoc --no-ri
@@ -49,15 +48,17 @@ services:
 
 # https://cran.r-project.org/web/packages/devtools/vignettes/dependencies.html
 # r_github_packages:
-#  - jeroen/mongolite
+#  - ropensci/nodbi
 
 r_packages:
   - covr
   - rvest
+  - RSQLite
+  - tinytest
+  - mongolite
 
 after_success:
   - Rscript -e 'library(covr); codecov()'
-
 
 # slack integration added for channel #ctrdata_development
 notifications:

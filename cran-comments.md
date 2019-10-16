@@ -11,4 +11,6 @@
 There are currently no downstream dependencies for this package.
 
 ## Submission reason
-* extended compatibility with cygwin under Windows
+* largely refactored to use nodbi as backend
+* new function for handling nested data
+* extended parsing of EUCTR data

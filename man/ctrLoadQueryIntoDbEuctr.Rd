@@ -4,60 +4,51 @@
 \alias{ctrLoadQueryIntoDbEuctr}
 \title{ctrLoadQueryIntoDbEuctr}
 \usage{
-ctrLoadQueryIntoDbEuctr(queryterm, register, euctrresults, annotation.text,
-  annotation.mode, details, parallelretrievals, debug, collection, uri,
-  password, verbose, queryupdateterm)
+ctrLoadQueryIntoDbEuctr(queryterm = queryterm, register, euctrresults,
+  euctrresultshistory, annotation.text, annotation.mode,
+  parallelretrievals, only.count, con, verbose, queryupdateterm)
 }
 \arguments{
-\item{queryterm}{Either a string with the full URL of a search in a register
-or the data frame returned by the \link{ctrGetQueryUrlFromBrowser} or the
+\item{queryterm}{Either a string with the full URL of a search in
+a register or the data frame returned by the
+\link{ctrGetQueryUrlFromBrowser} or the
 \link{dbQueryHistory} functions.
 The queryterm is recorded in the \code{collection} for later
 use to update records.}
 
-\item{register}{Vector of abbreviations of the register to query, defaults to
-"EUCTR"}
+\item{register}{Vector of abbreviations of the register to query,
+defaults to "EUCTR".}
 
-\item{euctrresults}{If \code{TRUE}, also download available results when
-retrieving and loading trials from EUCTR. This slows down this function.
-(For CTGOV, all available results are always retrieved and loaded.)}
+\item{euctrresults}{If \code{TRUE}, also download available
+results when retrieving and loading trials from EUCTR. This
+slows down this function. (For CTGOV, all available results
+are always retrieved and loaded.)}
 
-\item{annotation.text}{Text to be including in the records retrieved
-with the current query, in the field "annotation".}
+\item{euctrresultshistory}{If \code{TRUE}, also download
+available history of results publication in EUCTR.
+This is quite time-consuming (default is \code{FALSE}).}
 
-\item{annotation.mode}{One of "append" (default), "prepend" or "replace"
-for new annotation.text with respect to any existing annotation for
-the records retreived with the current query.}
+\item{annotation.text}{Text to be including in the records
+retrieved with the current query, in the field "annotation".}
 
-\item{details}{If \code{TRUE} (default), retrieve full protocol-related
-information from EUCTR or XML data from CTGOV, depending on the register
-selected. This gives all of the available details for the trials.
-Alternatively, set to \code{FALSE} to retrieve only summary information
-from EUCTR or CSV data from CTGOV. The full EUCTR information includes
-separate records for every country in which the trial is opened; use
-function \code{dbFindUniqueEuctrRecord} in a subsequent step to limit to
-one record from EUCTR per trial}
+\item{annotation.mode}{One of "append" (default), "prepend"
+or "replace" for new annotation.text with respect to any
+existing annotation for the records retreived with the
+current query.}
 
-\item{parallelretrievals}{Number of parallel downloads of information from
-the register, defaults to 10.}
+\item{parallelretrievals}{Number of parallel downloads of
+information from the register, defaults to 10.}
 
-\item{debug}{Printing additional information if set to \code{TRUE}; default
-is \code{FALSE}.}
+\item{only.count}{Set to \code{TRUE} to return only the
+number of trial records found in the register for the query.
+Does not load trial information into the database.
+Default is \code{FALSE}.}
 
-\item{collection}{Name of collection (default is "ctrdata")}
+\item{con}{A \link[nodbi]{src} connection object, as obtained with
+nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()}
 
-\item{uri}{Default is mongodb://localhost/users/.
-Address of database in mongodb server, based on mongo connection string
-format: mongodb://[username@]host1[:port1][,...hostN[:portN]]]/database/
-Do NOT include password, this will only be used from the parameter.
-See \url{http://docs.mongodb.org/manual/reference/connection-string/}}
-
-\item{password}{In case access requires credentials.
-Note this defaults to the environment variable "ctrdatamongopassword".
-(by means of \code{Sys.getenv("ctrdatamongopassword")}), to
-support scripting without revealing secrets.}
-
-\item{verbose}{Print information.}
+\item{verbose}{Printing additional information if set to
+\code{TRUE}; default is \code{FALSE}.}
 }
 \description{
 ctrLoadQueryIntoDbEuctr

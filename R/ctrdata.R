@@ -18,10 +18,11 @@
 #' \link{dbFindFields},
 #' \link{dbQueryHistory}
 #'
-#' @section Getting R dataframes from clinical trial information in the database:
+#' @section Get an R data frame from database, and operate on it:
 #'
 #' \link{dbGetFieldsIntoDf},
-#' \link{dfMergeTwoVariablesRelevel}.
+#' \link{dfMergeTwoVariablesRelevel},
+#' \link{dfListExtractKey}.
 #'
 #' @section Deduplication:
 #'
