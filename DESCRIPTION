@@ -1,7 +1,7 @@
 Package: ctrdata
 Type: Package
 Title: Retrieve and Analyze Clinical Trials in Public Registers
-Version: 1.0.9000
+Version: 1.0.9001
 Date: 2019-10-16
 Imports: jsonlite, httr, curl, clipr, xml2, rvest, nodbi (>= 0.3)
 SystemRequirements: mongo database, sed, php, cat, perl
@@ -12,7 +12,7 @@ Description: Provides functions for querying, retrieving and analysing
         two public registers, the European Union Clinical Trials Register
         (EUCTR, <https://www.clinicaltrialsregister.eu/>) and
         ClinicalTrials.gov (CTGOV, <https://clinicaltrials.gov/>). The
-        information is transformed and then stored in a database (mongo).
+        information is transformed and then stored in a database (nodbi).
         Functions are provided for accessing and analysing the locally
         stored information on the clinical trials, as well as for
         identifying duplicate records. The package is motivated by the need
