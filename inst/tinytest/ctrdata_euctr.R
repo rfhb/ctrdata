@@ -310,10 +310,12 @@ expect_warning(
   "Preferred EUCTR version set to 3RD country trials",
   info = "ctrdata_euctr.R#276")
 
-# test
+# test, reusing the query string
+tmp_q <- strsplit(q, "+OR+", fixed = TRUE)[[1]]
+tmp_q <- gsub(".+=(.?)", "\\1", tmp_q)
 expect_true(all(
-  c("2007-000371-42-PL", "2017-003455-35-3RD") %in%
-    tmp_test),
+  tmp_q %in%
+    gsub("([0-9]{4}-[0-9]{6}-[0-9]{2})-.*", "\\1", tmp_test)),
   info = "ctrdata_euctr.R#283")
 
 #### annotations #####
