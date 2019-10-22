@@ -1,3 +1,7 @@
+# ctrdata 1.0.1
+ - 2019-10-22
+ - correction of testing
+
 # ctrdata 1.0
  - 2019-10-16
  - switch to nodbi::scr_{mongo,sqlite}() with 

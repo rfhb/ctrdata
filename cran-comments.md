@@ -1,6 +1,6 @@
 ## Test environments
 * local: 86_64-apple-darwin15.6.0
-* travis: R 3.4, 3.5, 3.6, oldrel, release, devel
+* travis: R oldrel, release, devel
 * win-builder: windows-x86_64-devel
 * appveyor: r-release and r-oldrel
 
@@ -11,6 +11,5 @@
 There are currently no downstream dependencies for this package.
 
 ## Submission reason
-* largely refactored to use nodbi as backend
-* new function for handling nested data
-* extended parsing of EUCTR data
+* correcting one of the continuous tests
+* attempt to ensure failing gracefully when lacking internet resources
