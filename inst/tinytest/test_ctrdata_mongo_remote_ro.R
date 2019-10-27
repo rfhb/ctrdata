@@ -24,7 +24,7 @@ expect_message(
     dbFindFields(
       namepart = "date",
       con = dbc)),
-  "Finding fields")
+  "Finding fields|Using cache")
 
 # test
 tmp <- dbGetFieldsIntoDf(
