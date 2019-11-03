@@ -67,7 +67,7 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   s/^G. Investigator Networks.*$/G.4 Investigator Networks: Yes/g;
 
   # - prepare array for inn proposed names
-#  s/^D.3.8 to D.3.10 IMP Identification Details.*$/D.3.8 IMP Identification details: Yes/g;
+  # s/^D.3.8 to D.3.10 IMP Identification Details.*$/D.3.8 IMP Identification details: Yes/g;
 
   # - prepare array for placebos
   print "\nD.8 Information on Placebo: Yes" if/^D.8 Placebo: 1$/;
@@ -87,7 +87,7 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   print "\nX.9 ENDMEDDRA: TRUE"   if /^E\.1\.3 Condition/;
   print "\nX.9 ENDSUPPORT: TRUE"  if /^B\.5 Contact/;
   print "\nX.9 ENDNETWORK: TRUE"  if /^N\. Review|^H\.4 Third Country/;
-#  print "\nX.9 ENDIMPIDENT: TRUE" if /^D\.3\.11 The IMP contains an/;
+  # print "\nX.9 ENDIMPIDENT: TRUE" if /^D\.3\.11 The IMP contains an/;
 
   # sanitise file
   s/\t/ /g;
@@ -145,6 +145,8 @@ sed \
   -e '$ s/\(.*\),/\1}/' \
   | \
 perl -pe 'BEGIN{undef $/;}
+
+  # here we can do multi-line edits
 
   # delete comma from last line in record
   s/,\n\}\{/\}\nNEWRECORDIDENTIFIER\n\{/g ;
