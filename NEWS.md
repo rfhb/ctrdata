@@ -1,3 +1,8 @@
+# ctrdata 1.0.1.9002
+ - 2019-11-03
+ - improved parsing of euctr trial records
+ - correct re-opening of sqlite connection
+ 
 # ctrdata 1.0.1
  - 2019-10-22
  - correction of testing
