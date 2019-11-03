@@ -44,7 +44,7 @@ ctrDb <- function(
       warning("Database connection was closed, trying to reopen...",
               call. = FALSE, immediate. = TRUE)
       con <- nodbi::src_sqlite(dbname = con$dbname,
-                               key = con$collection)
+                               collection = con$collection)
     }
 
     # add database as element under root
