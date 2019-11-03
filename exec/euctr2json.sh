@@ -43,9 +43,9 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   next if /^Summary/;
   next if /^This file contains/;
   next if /A\. Protocol Information/;
-  next if /B\. Sponsor Information/;
+  #next if /B\. Sponsor Information/;
   next if /F\. Population of Trial Subjects/;
-  next if /P\. End of Trial.$/;
+  next if /P\. End of Trial$/;
 
   # remove explanatory information from key F.3.3.1
   next if /^\(For clinical trials recorded/;
@@ -56,6 +56,8 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   # workarounds
   # - sponsor records were added but left empty -> create placeholder
   s/^(B\.1\.1 Name of Sponsor:)\s+$/$1 empty/g;
+#  # - some third country records do not have a sponsor -> placeholder
+#  s/^(B\. Sponsor Information)[\n ]+(D.\ IMP)/B.1.1 Name of Sponsor: empty\n\n$2/g;
 
   # - prepare array for meddra
   s/MedDRA Classification/E.1.2 MedDRA Classification: Yes/g;
@@ -170,7 +172,11 @@ perl -pe 'BEGIN{undef $/;}
   # create array of b4_source_of_monetary_or_material_support terms
   s/("b41_name_of_organisation_providing_support": ".*?"),/},{$1,/g ;
   s/"x9_endsupport": "TRUE"/} ]/g ;
-  s/"x9_endsponsor": "TRUE"/} ]/g ;
+  # s/"x9_endsponsor": "TRUE"/} ]/g ;
+  # if any sponsor element
+  s/("b[0-9]+_.*"),\n"x9_endsponsor.*/$1 } ]/g ;
+  # otherwise remove
+  s/"x9_endsponsor": "TRUE",\n//g ;
 
   # create array of imp identification details
   s/("d38_inn__proposed_inn": ".*?"|"d393_other_descriptive_name": ".*?"),/},{$1,/g ;
