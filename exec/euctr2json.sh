@@ -36,6 +36,8 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   while (<>) {
 
   # elimination of non-printing characters such as control M
+  # \000-\011\013\014\016-\037
+  # NUL  TAB  VT FF  SO   US
   tr/\015//d;
 
   # delete non-informative lines
@@ -126,7 +128,7 @@ perl -pe '
    s/^(.+?): (.*)$/ my ($tmp1, $tmp2) = (lc ($1), $2);
       $tmp1 =~ s! !_!g;
       $tmp1 =~ s![^a-z0-9_]!!g ;
-      $tmp2 =~ s![^a-zA-Z0-9+-:\/ ]*!!g ;
+      $tmp2 =~ s![^a-zA-Z0-9+-:\/_@ ]*!!g ;
       $tmp2 =~ s!^\s+|\s+$!!g ;
    "\"".$tmp1."\": \"".$tmp2."\",\n" /exgs;
    ' | \
