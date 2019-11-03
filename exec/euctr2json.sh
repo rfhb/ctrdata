@@ -156,7 +156,7 @@ perl -pe 'BEGIN{undef $/;}
   s/,\n\}\{/\}\nNEWRECORDIDENTIFIER\n\{/g ;
 
   # create array with imp(s)
-  s/("d[0-9]+_.*"),\n"dimp": "([2-9])",/$1\}, \n\{ "_dimp": "$2",/g ;
+  s/("d[0-9]+_.*"),\n"dimp": "([2-9]|[1-9][0-9])",/$1\}, \n\{ "_dimp": "$2",/g ;
   s/("d[0-9]+_.*"),\n"x9_enddmp.*/$1\}\n],/g ;
 
   # create array with sponsor(s)
