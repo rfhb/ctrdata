@@ -63,13 +63,13 @@ LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
   s/MedDRA Classification/E.1.2 MedDRA Classification: Yes/g;
 
   # - prepare array for sponsor supports
-  s/^B.4 Source\(s\) of Monetary or Material Support.*$/B.4 Sources of Monetary or Material Support: Yes/g;
+  s/^B\.4 Source\(s\) of Monetary or Material Support.*$/B.4 Sources of Monetary or Material Support: Yes/g;
 
   # - prepare array for networks
-  s/^G. Investigator Networks.*$/G.4 Investigator Networks: Yes/g;
+  s/^G\. Investigator Networks.*$/G.4 Investigator Networks: Yes/g;
 
   # - prepare array for inn proposed names
-  # s/^D.3.8 to D.3.10 IMP Identification Details.*$/D.3.8 IMP Identification details: Yes/g;
+  s/^D\.3\.8 to D\.3\.10 IMP Identification Details.*$/D.3.8 IMP Identification details: Yes/g;
 
   # - prepare array for placebos
   print "\nD.8 Information on Placebo: Yes" if/^D.8 Placebo: 1$/;
@@ -179,15 +179,19 @@ perl -pe 'BEGIN{undef $/;}
   s/"x9_endsponsor": "TRUE",\n//g ;
 
   # create array of imp identification details
-  s/("d38_inn__proposed_inn": ".*?"|"d393_other_descriptive_name": ".*?"),/},{$1,/g ;
+  # s/("d38_inn__proposed_inn": ".*?"|"d393_other_descriptive_name": ".*?"),/},{$1,/g ;
+
+  # close array with identification details
+  s/("d38|"d39|"d310)(.*?),\n("d311)/$1$2} ],\n$3/g ;
+
   # details may be missing in some records,
-#  s/"d3[189][^,]+": "[^\"]+",\n"x9_endimpident": "TRUE"/} ] /g ;
+  s/"d3[189][^,]+": "[^\"]+",\n"x9_endimpident": "TRUE"/} ] /g ;
   # thus delete end identifier if there was no array
-#  s/"x9_endimpident": "TRUE",//g ;
+  s/"x9_endimpident": "TRUE",//g ;
 
   # create array of placebos
   s/("d8_placebo": ".*?"),/},{$1,/g ;
-  s/(d8.*\n)("e11_)/$1} ], $2/g ;
+  s/(d8.*\n)("e11)/$1} ], $2/g ;
 
   # correct formatting artefacts
   s/{\n?},//g ;
@@ -203,7 +207,7 @@ perl -pe '
   s/\n//g ;
   s/NEWRECORDIDENTIFIER/\n/g ;
 
-  # add a final EOL
+  # add a final EOL with sed
   ' | \
 sed \
   -e '$a\' \
