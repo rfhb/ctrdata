@@ -47,8 +47,8 @@ services:
 # https://github.com/travis-ci/apt-package-whitelist/issues/2825
 
 # https://cran.r-project.org/web/packages/devtools/vignettes/dependencies.html
-# r_github_packages:
-#  - ropensci/nodbi
+r_github_packages:
+  - ropensci/nodbi
 
 r_packages:
   - covr
