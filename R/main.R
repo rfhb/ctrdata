@@ -278,7 +278,7 @@ ctrLoadQueryIntoDb <- function(
             "\n'imported'=", imported$n,
             "\n'register'=", register,
             "\n'collection'=", con$collection,
-            "\nImported trials:", imported$success)
+            "\nImported trials: ", paste0(imported$success, collapse = " "))
   }
 
   # add query parameters to database
@@ -553,6 +553,7 @@ dbCTRLoadJSONFiles <- function(dir, con) {
       tmpvalidate <- jsonlite::validate(tmplines[i])
       if (!tmpvalidate) {
         warning("Invalid json for trial ", ids[i], "\n",
+                "Line ", i, " in file ", tempFile, "\n",
                 attr(x = tmpvalidate, which = "err"),
                 noBreaks. = TRUE,
                 call. = FALSE,
