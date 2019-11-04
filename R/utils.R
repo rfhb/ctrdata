@@ -766,7 +766,7 @@ dbFindIdsUniqueTrials <- function(
       include3rdcountrytrials = include3rdcountrytrials)
   }
 
-  # 3. get ctrgov records
+  # 3. get ctgov records
   listofCTGOVids <- try(suppressMessages(suppressWarnings(
     dbGetFieldsIntoDf(fields = c(
       "id_info.org_study_id",
@@ -778,6 +778,12 @@ dbFindIdsUniqueTrials <- function(
   )),
   silent = TRUE
   )
+  # keep only ctgov
+  if (nrow(listofCTGOVids)) {
+    listofCTGOVids <- listofCTGOVids[
+      grepl("^NCT[0-9]{8}", listofCTGOVids[["_id"]]), ]
+  }
+  #
   if (!nrow(listofCTGOVids)) {
     listofCTGOVids <- NULL
     # inform user
@@ -786,9 +792,6 @@ dbFindIdsUniqueTrials <- function(
 
   # 4. retain unique ctgov records
   if (!is.null(listofCTGOVids)) {
-    #
-    listofCTGOVids <- listofCTGOVids[
-      grepl("^NCT[0-9]{8}", listofCTGOVids[["_id"]]), ]
     #
     # make id_info sub-fields into one field
     listofCTGOVids[["id_info"]] <- sapply(
