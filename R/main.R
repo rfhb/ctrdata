@@ -555,7 +555,8 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
     tmpinsert <- lapply(seq_along(ids), function(i) {
 
       # inform user
-      if (verbose) message(i, " ", appendLF = FALSE)
+      if (!(i %% 100)) message(i, " ", appendLF = FALSE)
+      if (verbose)     message(i, " ", appendLF = FALSE)
 
       # check validity
       tmpvalidate <- jsonlite::validate(tmplines[i])
@@ -874,7 +875,7 @@ ctrLoadQueryIntoDbCtgov <- function(
   }
 
   # inform user
-  message("Retrieved overview, ", tmp, " ",
+  message("Retrieved overview, records of ", tmp, " ",
           "trial(s) are to be downloaded.")
 
   # only count?
@@ -990,7 +991,7 @@ ctrLoadQueryIntoDbCtgov <- function(
   } # if annotation.text
 
   ## run import
-  message("(3/3) Importing JSON into database ...")
+  message("(3/3) Importing JSON records into database ...")
   if (verbose) message("DEBUG: ", tempDir)
   imported <- dbCTRLoadJSONFiles(dir = tempDir,
                                  con = con,
@@ -1118,7 +1119,7 @@ ctrLoadQueryIntoDbEuctr <- function(
   }
 
   # inform user
-  message("Retrieved overview, ",
+  message("Retrieved overview, multiple records of ",
           resultsEuNumTrials, " trial(s) from ",
           resultsEuNumPages, " page(s) to be downloaded.")
 
@@ -1301,7 +1302,7 @@ ctrLoadQueryIntoDbEuctr <- function(
   imported <- system(euctr2json, intern = TRUE)
 
   # run import into mongo from json files
-  message("(3/3) Importing JSON into database ...")
+  message("(3/3) Importing JSON records into database ...")
   if (verbose) message("DEBUG: ", tempDir)
   imported <- dbCTRLoadJSONFiles(dir = tempDir,
                                  con = con,
