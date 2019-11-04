@@ -136,8 +136,8 @@ sed \
   -e 's/\("x1_eudract_number.*$\)/}{/g' \
   -e 's/^"dimp": "1",$/"dimp": [ { "_dimp": "1",/g' \
   -e 's/^"b1_sponsor": "1",$/"b1_sponsor": [ { "_b1_sponsor": "1",/g' \
-  -e 's/^"e12_meddra_classification": "Yes",$/"e12_meddra_classification": [/g' \
-  -e 's/^"b4_sources_of_monetary_or_material_support": "Yes",$/"b4_sources_of_monetary_or_material_support": [/g' \
+  -e 's/^"e12_meddra_classification": "Yes",$/"e12_meddra_classification": [ {/g' \
+  -e 's/^"b4_sources_of_monetary_or_material_support": "Yes",$/"b4_sources_of_monetary_or_material_support": [ {/g' \
   -e 's/^"g4_investigator_networks": "Yes",$/"g4_investigator_networks": [/g' \
   -e 's/^"d38_imp_identification_details": "Yes",$/"d38_imp_identification_details": [ {/g' \
   -e 's/^"d8_information_on_placebo": "Yes",$/"d8_information_on_placebo": [/g' \
