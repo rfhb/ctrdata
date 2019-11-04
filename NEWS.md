@@ -1,3 +1,8 @@
+# ctrdata 1.0.1.9003
+ - 2019-11-04
+ - further nesting added for euctr trial records
+ - user verbose information extended for record importing
+ 
 # ctrdata 1.0.1.9002
  - 2019-11-03
  - improved parsing of euctr trial records
