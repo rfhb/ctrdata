@@ -139,7 +139,7 @@ sed \
   -e 's/^"e12_meddra_classification": "Yes",$/"e12_meddra_classification": [/g' \
   -e 's/^"b4_sources_of_monetary_or_material_support": "Yes",$/"b4_sources_of_monetary_or_material_support": [/g' \
   -e 's/^"g4_investigator_networks": "Yes",$/"g4_investigator_networks": [/g' \
-  -e 's/^"d38_imp_identification_details": "Yes",$/"d38_imp_identification_details": [{/g' \
+  -e 's/^"d38_imp_identification_details": "Yes",$/"d38_imp_identification_details": [ {/g' \
   -e 's/^"d8_information_on_placebo": "Yes",$/"d8_information_on_placebo": [/g' \
   -e '/^["{}]/!d' \
   -e '/""/d' \
@@ -192,7 +192,7 @@ perl -pe 'BEGIN{undef $/;}
 
   # create array of placebos
   s/("d8_placebo": ".*?"),/},{$1,/g ;
-  s/(d8.*\n)("e11)/$1} ], $2/g ;
+  s/(d8.*?\n)("e11|"e12)/$1} ],\n$2/g ;
 
   # correct formatting artefacts
   s/{\n?},//g ;
