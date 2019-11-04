@@ -111,15 +111,6 @@ ctrLoadQueryIntoDb <- function(
     }
   }
 
-
-  ## parameter checks
-
-  # check queryterm
-  if (class(queryterm) != "character") {
-    stop("queryterm has to be a character string.",
-         call. = FALSE)
-  }
-
   # deduce queryterm and register if a full url is provided
   if (class(queryterm) == "character" &&
       is.atomic(queryterm) &&
@@ -149,6 +140,14 @@ ctrLoadQueryIntoDb <- function(
     register  <- queryterm[nr, "query-register"]
     queryterm <- queryterm[nr, "query-term"]
     #
+  }
+
+  ## parameter checks
+
+  # check queryterm
+  if (class(queryterm) != "character") {
+    stop("queryterm has to be a character string.",
+         call. = FALSE)
   }
 
   ## sanity checks
