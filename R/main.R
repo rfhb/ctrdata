@@ -512,13 +512,15 @@ ctrRerunQuery <- function(
 #'
 #' @inheritParams ctrDb
 #'
+#' @inheritParams ctrLoadQueryIntoDb
+#'
 #' @return List with elements n (number of imported trials),
 #' _id's of successfully imported trials and
 #' _id's of trials that failed to import
 #'
 #' @keywords internal
 #'
-dbCTRLoadJSONFiles <- function(dir, con) {
+dbCTRLoadJSONFiles <- function(dir, con, verbose) {
 
   # find files
   tempFiles <- dir(path = dir,
@@ -537,6 +539,10 @@ dbCTRLoadJSONFiles <- function(dir, con) {
     tmplines <- readLines(con = fd, warn = FALSE)
     close(fd)
 
+    # inform user
+    if (verbose) message("DEBUG: read file ", tempFile,
+                         "\nImporting line: ", appendLF = FALSE)
+
     # readLines produces: \"_id\": \"2007-000371-42-FR\"
     ids <- sub(".*_id\":[ ]*\"(.*?)\".*", "\\1", tmplines)
 
@@ -548,6 +554,9 @@ dbCTRLoadJSONFiles <- function(dir, con) {
 
     # check if in database, create or update
     tmpinsert <- lapply(seq_along(ids), function(i) {
+
+      # inform user
+      if (verbose) message(i, " ", appendLF = FALSE)
 
       # check validity
       tmpvalidate <- jsonlite::validate(tmplines[i])
@@ -601,6 +610,7 @@ dbCTRLoadJSONFiles <- function(dir, con) {
 
     # clean up
     rm("tmplines")
+    if (verbose) message(" ")
 
   }
 
@@ -984,7 +994,8 @@ ctrLoadQueryIntoDbCtgov <- function(
   message("(3/3) Importing JSON into database ...")
   if (verbose) message("DEBUG: ", tempDir)
   imported <- dbCTRLoadJSONFiles(dir = tempDir,
-                                 con = con)
+                                 con = con,
+                                 verbose = verbose)
 
   ## add annotations
   if ((annotation.text != "") &
@@ -1294,7 +1305,8 @@ ctrLoadQueryIntoDbEuctr <- function(
   message("(3/3) Importing JSON into database ...")
   if (verbose) message("DEBUG: ", tempDir)
   imported <- dbCTRLoadJSONFiles(dir = tempDir,
-                                 con = con)
+                                 con = con,
+                                 verbose = verbose)
 
   ## read in the eudract numbers of the
   ## trials just retrieved and imported

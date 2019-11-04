@@ -4,7 +4,7 @@
 \alias{dbCTRLoadJSONFiles}
 \title{dbCTRLoadJSONFiles}
 \usage{
-dbCTRLoadJSONFiles(dir, con)
+dbCTRLoadJSONFiles(dir, con, verbose)
 }
 \arguments{
 \item{dir}{Path to local directory with JSON files
@@ -12,6 +12,9 @@ from downloading and converting}
 
 \item{con}{A \link[nodbi]{src} connection object, as obtained with
 nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()}
+
+\item{verbose}{Printing additional information if set to
+\code{TRUE}; default is \code{FALSE}.}
 }
 \value{
 List with elements n (number of imported trials),
