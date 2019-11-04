@@ -174,7 +174,6 @@ perl -pe 'BEGIN{undef $/;}
   # create array of b4_source_of_monetary_or_material_support terms
   s/("b41_name_of_organisation_providing_support": ".*?"),/},{$1,/g ;
   s/"x9_endsupport": "TRUE"/} ]/g ;
-  s/"x9_endsponsor": "TRUE"/} ]/g ;
   # if any sponsor element
   s/("b[0-9]+_.*"),\n"x9_endsponsor.*/$1 } ]/g ;
   # otherwise remove
