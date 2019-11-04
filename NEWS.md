@@ -1,3 +1,8 @@
+# ctrdata 1.0.1.9004
+ - 2019-11-04
+ - handled mixed arrays and text values in same key of ctgov trial records
+ - more user information during importing
+ 
 # ctrdata 1.0.1.9003
  - 2019-11-04
  - further nesting added for euctr trial records
