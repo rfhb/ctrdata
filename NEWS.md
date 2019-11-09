@@ -1,3 +1,7 @@
+# ctrdata 1.0.1.9005
+ - 2019-11-09
+ - update description for installation from github
+ 
 # ctrdata 1.0.1.9004
  - 2019-11-04
  - handled mixed arrays and text values in same key of ctgov trial records
