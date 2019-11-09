@@ -1013,7 +1013,7 @@ ctrLoadQueryIntoDbCtgov <- function(
   }
 
   ## find out number of trials imported into database
-  message("= Imported or updated ", imported$n, " trial(s).")
+  message("\n= Imported or updated ", imported$n, " trial(s).")
 
   # clean up temporary directory
   if (!verbose) unlink(tempDir, recursive = TRUE)
