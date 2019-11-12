@@ -4,8 +4,7 @@
 \alias{dfMergeTwoVariablesRelevel}
 \title{Merge two variables into one, optionally map values to new levels}
 \usage{
-dfMergeTwoVariablesRelevel(df = NULL, colnames = "",
-  levelslist = NULL, ...)
+dfMergeTwoVariablesRelevel(df = NULL, colnames = "", levelslist = NULL, ...)
 }
 \arguments{
 \item{df}{A \link{data.frame} in which there are two variables (columns)

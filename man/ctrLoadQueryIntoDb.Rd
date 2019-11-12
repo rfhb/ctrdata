@@ -5,11 +5,20 @@
 \title{Retrieve or update information on clinical trials from register
 and store in database}
 \usage{
-ctrLoadQueryIntoDb(queryterm = "", register = "EUCTR",
-  querytoupdate = 0L, forcetoupdate = FALSE, euctrresults = FALSE,
-  euctrresultshistory = FALSE, annotation.text = "",
-  annotation.mode = "append", parallelretrievals = 10L,
-  only.count = FALSE, con = NULL, verbose = FALSE)
+ctrLoadQueryIntoDb(
+  queryterm = "",
+  register = "EUCTR",
+  querytoupdate = 0L,
+  forcetoupdate = FALSE,
+  euctrresults = FALSE,
+  euctrresultshistory = FALSE,
+  annotation.text = "",
+  annotation.mode = "append",
+  parallelretrievals = 10L,
+  only.count = FALSE,
+  con = NULL,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{queryterm}{Either a string with the full URL of a search in

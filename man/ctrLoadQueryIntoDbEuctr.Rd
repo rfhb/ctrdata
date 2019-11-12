@@ -4,9 +4,19 @@
 \alias{ctrLoadQueryIntoDbEuctr}
 \title{ctrLoadQueryIntoDbEuctr}
 \usage{
-ctrLoadQueryIntoDbEuctr(queryterm = queryterm, register, euctrresults,
-  euctrresultshistory, annotation.text, annotation.mode,
-  parallelretrievals, only.count, con, verbose, queryupdateterm)
+ctrLoadQueryIntoDbEuctr(
+  queryterm = queryterm,
+  register,
+  euctrresults,
+  euctrresultshistory,
+  annotation.text,
+  annotation.mode,
+  parallelretrievals,
+  only.count,
+  con,
+  verbose,
+  queryupdateterm
+)
 }
 \arguments{
 \item{queryterm}{Either a string with the full URL of a search in

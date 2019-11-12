@@ -4,8 +4,11 @@
 \alias{dfFindUniqueEuctrRecord}
 \title{Select single trial record from records of different EU Member States}
 \usage{
-dfFindUniqueEuctrRecord(df = NULL, prefermemberstate = "GB",
-  include3rdcountrytrials = TRUE)
+dfFindUniqueEuctrRecord(
+  df = NULL,
+  prefermemberstate = "GB",
+  include3rdcountrytrials = TRUE
+)
 }
 \arguments{
 \item{df}{A data frame created from the database that includes the columns

@@ -4,9 +4,13 @@
 \alias{ctrRerunQuery}
 \title{ctrRerunQuery}
 \usage{
-ctrRerunQuery(querytoupdate = querytoupdate,
-  forcetoupdate = forcetoupdate, con = con, verbose = verbose,
-  queryupdateterm = queryupdateterm)
+ctrRerunQuery(
+  querytoupdate = querytoupdate,
+  forcetoupdate = forcetoupdate,
+  con = con,
+  verbose = verbose,
+  queryupdateterm = queryupdateterm
+)
 }
 \arguments{
 \item{querytoupdate}{Either the word "last" or the number of the

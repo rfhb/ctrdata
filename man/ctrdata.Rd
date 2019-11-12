@@ -3,7 +3,6 @@
 \docType{package}
 \name{ctrdata}
 \alias{ctrdata}
-\alias{ctrdata-package}
 \title{ctrdata: Overview on functions}
 \description{
 The ctrdata package provides functions to retrieve,

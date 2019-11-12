@@ -4,8 +4,7 @@
 \alias{dbGetFieldsIntoDf}
 \title{Create data frame by extracting specified fields from database collection}
 \usage{
-dbGetFieldsIntoDf(fields = "", con, verbose = FALSE,
-  stopifnodata = TRUE)
+dbGetFieldsIntoDf(fields = "", con, verbose = FALSE, stopifnodata = TRUE)
 }
 \arguments{
 \item{fields}{Vector of one or more strings, with names of the sought fields.

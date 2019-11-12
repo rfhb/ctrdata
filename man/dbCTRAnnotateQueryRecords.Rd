@@ -4,8 +4,14 @@
 \alias{dbCTRAnnotateQueryRecords}
 \title{dbQueryAnnotateRecords}
 \usage{
-dbCTRAnnotateQueryRecords(recordnumbers, annotations, annotation.text,
-  annotation.mode, con, verbose)
+dbCTRAnnotateQueryRecords(
+  recordnumbers,
+  annotations,
+  annotation.text,
+  annotation.mode,
+  con,
+  verbose
+)
 }
 \arguments{
 \item{annotation.text}{Text to be including in the records
