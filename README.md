@@ -26,11 +26,11 @@ started in 2015 and was motivated by the wish to understand trends in
 designs and conduct of trials and their availability for patients. The
 package is to be used within the [R](https://www.r-project.org/) system.
 
-Last checked and updated on 2019-10-16 for version 1.0, with *breaking
+Last checked and updated on 2019-11-12 for version 1.1, with *breaking
 changes*, bug fixes and new features:
 
   - minimised dependencies: works now with `RSQLite` (\>= 2.1.2), local
-    and remote MongoDB servers, via R package `nodbi` (\>= 0.3). This is
+    and remote MongoDB servers, via R package `nodbi` (\>= 0.4). This is
     a breaking change that could not be avoided in order to generalise
     the database access, and it was made possible by introducing a
     REGEXP operator into

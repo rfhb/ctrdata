@@ -1,3 +1,7 @@
+# ctrdata 1.1
+ - 2019-11-12
+ - release after nodbi 0.4 is available
+
 # ctrdata 1.0.1.9005
  - 2019-11-09
  - update description for installation from github
