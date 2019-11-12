@@ -11,5 +11,8 @@
 There are currently no downstream dependencies for this package.
 
 ## Submission reason
-* correcting one of the continuous tests
-* attempt to ensure failing gracefully when lacking internet resources
+* release after nodbi 0.4 is available, 
+  to handle mix of arrays and text values in same json key
+* parsing extended for trial records from EUCTR
+* correction of tests and of re-opening sqlite connection
+
