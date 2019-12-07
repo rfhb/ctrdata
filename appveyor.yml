@@ -1,18 +1,5 @@
 # DO NOT CHANGE the "init" and "install" sections below
 
-services:
-  - mongodb
-
-environment:
-  USE_RTOOLS: false
-  #WARNINGS_ARE_ERRORS: 0
-  #PKGTYPE: win.binary
-
-  matrix:
-   - R_VERSION: release
-#   - R_VERSION: oldrel
-#   - R_VERSION: devel
-
 # Download script file from GitHub
 init:
   ps: |
@@ -26,10 +13,25 @@ install:
   - cmd: setup-x86.exe --no-admin --quiet-mode --upgrade-also --root c:/cygwin --site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages perl,php-jsonc,php-simplexml
   - ps: Bootstrap
 
-#  - ps: Rscript -e "sessionInfo()"
-
 cache:
   - C:\RLibrary
+
+services:
+  - mongodb
+
+environment:
+  # env vars that may need to be set, at least temporarily, from time to time
+  # see https://github.com/krlmlr/r-appveyor#readme for details
+  # USE_RTOOLS: true
+  # R_REMOTES_STANDALONE: true
+  NOT_CRAN: true
+  USE_RTOOLS: false
+  #WARNINGS_ARE_ERRORS: 0
+  #PKGTYPE: win.binary
+  matrix:
+   - R_VERSION: release
+   #- R_VERSION: oldrel
+   #- R_VERSION: devel
 
 # Adapt as necessary starting from here
 
