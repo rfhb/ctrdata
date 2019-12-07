@@ -74,6 +74,9 @@ check_binaries <- function(){
       commandtest = "php -r 'simplexml_load_string(\"\");'")) &&
 
     suppressWarnings(ctrdata:::installFindBinary(
+      commandtest = "php -r 'json_encode(\"<foo>\");'")) &&
+
+    suppressWarnings(ctrdata:::installFindBinary(
       commandtest = "echo x | sed s/x/y/")) &&
 
     suppressWarnings(ctrdata:::installFindBinary(

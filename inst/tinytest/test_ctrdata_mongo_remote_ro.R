@@ -1,6 +1,7 @@
 ## RH 2019-09-28
 
 #### SETUP ####
+if(!at_home()) exit_file("skipping")
 source("setup_ctrdata.R")
 
 if (!check_internet())        exit_file("Not available: internet connectivity")
@@ -51,4 +52,7 @@ expect_true("character" %in%
 
 
 #### close ####
-dbc$con$disconnect()
+try({
+  dbc$con$disconnect()
+},
+silent = TRUE)

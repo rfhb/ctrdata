@@ -1,6 +1,7 @@
 ## RH 2019-09-28
 
 #### SETUP ####
+if(!at_home()) exit_file("skipping")
 source("setup_ctrdata.R")
 
 if (!check_sqlite())   exit_file("Not available: SQLite")
@@ -16,5 +17,8 @@ dbc <- nodbi::src_sqlite(
 source("ctrdata_euctr.R", local = TRUE)
 
 #### close ####
-RSQLite::dbRemoveTable(conn = dbc$con, name = dbc$collection)
-RSQLite::dbDisconnect(conn = dbc$con)
+try({
+  RSQLite::dbRemoveTable(conn = dbc$con, name = dbc$collection)
+  RSQLite::dbDisconnect(conn = dbc$con)
+},
+silent = TRUE)
