@@ -11,6 +11,6 @@
 There are currently no downstream dependencies for this package.
 
 ## Submission reason
+* change of tests to avoid internet-related errors
 * correction of automated cygwin installation
 * addition of tests for php json functions
-
