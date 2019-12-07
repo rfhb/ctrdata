@@ -904,6 +904,13 @@ ctrLoadQueryIntoDbCtgov <- function(
          call. = FALSE)
   }
   #
+  if (!suppressWarnings(
+    installFindBinary(
+      commandtest = "php -r 'json_encode(\"<foo>\");'"))) {
+    stop("php json not found, ctrLoadQueryIntoDb() will not work.",
+         call. = FALSE)
+  }
+  #
   message("done.")
 
   # prepare a file handle for temporary directory
@@ -1146,6 +1153,14 @@ ctrLoadQueryIntoDbEuctr <- function(
       !suppressWarnings(installFindBinary(
         commandtest = "php -r 'simplexml_load_string(\"\");'"))) {
     stop("php xml not found, ctrLoadQueryIntoDb() will not work.",
+         call. = FALSE)
+  }
+  #
+  if (euctrresults &&
+      !suppressWarnings(
+        installFindBinary(
+          commandtest = "php -r 'json_encode(\"<foo>\");'"))) {
+    stop("php json not found, ctrLoadQueryIntoDb() will not work.",
          call. = FALSE)
   }
   #

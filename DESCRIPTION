@@ -2,7 +2,7 @@ Package: ctrdata
 Type: Package
 Title: Retrieve and Analyze Clinical Trials in Public Registers
 Version: 1.1.9001
-Date: 2019-11-12
+Date: 2019-12-07
 Imports: jsonlite, httr, curl, clipr, xml2, rvest, nodbi (>= 0.4)
 SystemRequirements: sed, php, cat, perl
 URL: https://github.com/rfhb/ctrdata
@@ -19,7 +19,7 @@ Description: Provides functions for querying, retrieving and analysing
         for aggregating and trend-analysing the design, conduct and outcomes
         across clinical trials.
 License: MIT + file LICENSE
-RoxygenNote: 7.0.0
+RoxygenNote: 7.0.2
 LazyData: true
 Suggests: devtools, knitr, rmarkdown, RSQLite (>= 2.1.2), mongolite, 
         tinytest, R.rsp 

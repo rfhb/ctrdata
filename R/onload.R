@@ -42,6 +42,13 @@
   }
   #
   if (!suppressWarnings(
+    installFindBinary(commandtest = "php -r 'json_encode(\"<foo>\");'"))) {
+    packageStartupMessage(
+      "\nphp json not found, ctrLoadQueryIntoDb() will not work ",
+      appendLF = FALSE)
+  }
+  #
+  if (!suppressWarnings(
     installFindBinary(commandtest = "echo x | sed s/x/y/"))) {
     packageStartupMessage(
       "\nsed not found, ctrLoadQueryIntoDb() will not work ",
