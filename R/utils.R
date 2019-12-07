@@ -1892,7 +1892,7 @@ installCygwinWindowsDoInstall <- function(
     "--no-admin --quiet-mode --upgrade-also --no-shortcuts --prune-install ",
     "--root c:/cygwin ",
     "--site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ ",
-    "--packages perl,php-json,php-simplexml")
+    "--packages perl,php-simplexml,php-json")
 
   # create R session temporary directory
   tmpfile <- paste0(tempdir(), "/cygwin_inst")
