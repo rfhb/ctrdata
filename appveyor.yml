@@ -11,7 +11,7 @@ install:
   - cinst: mongodb
   - ps: Remove-Item -Recurse -Force "c:\\cygwin"
   - ps: (new-object net.webclient).DownloadFile('http://cygwin.org/setup-x86_64.exe', 'setup-x86_64.exe')
-  - cmd: setup-x86_64.exe --no-admin --verbose --quiet-mode --upgrade-also --root c:/cygwin --site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages perl,php-jsonc,php-simplexml
+  - cmd: setup-x86_64.exe --no-shortcuts --prune-install --no-admin --quiet-mode --upgrade-also --root c:/cygwin --site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages perl,php-simplexml,php-json
   - ps: Bootstrap
 
 cache:
