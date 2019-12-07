@@ -1,3 +1,7 @@
+# ctrdata 1.2
+ - 2019-12-07
+ - correct cygwin install
+
 # ctrdata 1.1
  - 2019-11-12
  - release after nodbi 0.4 is available
