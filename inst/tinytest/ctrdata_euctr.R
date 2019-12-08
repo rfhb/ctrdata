@@ -376,7 +376,6 @@ expect_equal(sort(tmp_test[["annotation"]]),
 
 
 #### ctrOpenSearchPagesInBrowser #####
-if (Sys.getenv("ON_APPVEYOR") != "") exit_file("skipping")
 
 # test
 expect_message(
