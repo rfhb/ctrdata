@@ -8,7 +8,7 @@ init:
         Import-Module '..\appveyor-tool.ps1'
 
 install:
-  - cinst: mongodb
+  # - cinst: mongodb
   - ps: Remove-Item -Recurse -Force "c:\\cygwin"
   - ps: (new-object net.webclient).DownloadFile('http://cygwin.org/setup-x86_64.exe', 'setup-x86_64.exe')
   - cmd: setup-x86_64.exe --no-shortcuts --prune-install --no-admin --quiet-mode --upgrade-also --root c:/cygwin --site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages perl,php-simplexml,php-json
@@ -17,22 +17,25 @@ install:
 cache:
   - C:\RLibrary
 
-services:
-  - mongodb
+# services:
+#  - mongodb
+
+platform: x64
 
 environment:
+  R_ARCH: x64
   # env vars that may need to be set, at least temporarily, from time to time
   # see https://github.com/krlmlr/r-appveyor#readme for details
   # USE_RTOOLS: true
   # R_REMOTES_STANDALONE: true
-  NOT_CRAN: true
+  # NOT_CRAN: true
   USE_RTOOLS: false
-  #WARNINGS_ARE_ERRORS: 0
-  #PKGTYPE: win.binary
+  # WARNINGS_ARE_ERRORS: 0
+  PKGTYPE: win.binary
   matrix:
-   - R_VERSION: release
-   #- R_VERSION: oldrel
-   #- R_VERSION: devel
+     - R_VERSION: release
+     #- R_VERSION: oldrel
+     #- R_VERSION: devel
 
 # Adapt as necessary starting from here
 
