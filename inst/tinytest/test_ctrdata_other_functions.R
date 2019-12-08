@@ -57,7 +57,7 @@ expect_error(
 
 
 #### ctrOpenSearchPagesInBrowser ####
-if (!at_home) exit_file("skipping")
+if (!at_home()) exit_file("skipping")
 if (!check_internet()) exit_file("Not available: internet connectivity")
 
 expect_equal(
