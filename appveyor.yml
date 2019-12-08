@@ -24,14 +24,12 @@ platform: x64
 
 environment:
   R_ARCH: x64
+  AT_HOME: true
   ON_APPVEYOR: true
+  # ctrdatamongopassword is set in appveyor interface
   # env vars that may need to be set, at least temporarily, from time to time
   # see https://github.com/krlmlr/r-appveyor#readme for details
-  # USE_RTOOLS: true
-  # R_REMOTES_STANDALONE: true
-  # NOT_CRAN: true
   USE_RTOOLS: false
-  # WARNINGS_ARE_ERRORS: 0
   PKGTYPE: win.binary
   matrix:
      - R_VERSION: release
