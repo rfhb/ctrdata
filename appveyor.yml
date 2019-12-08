@@ -24,7 +24,6 @@ platform: x64
 
 environment:
   R_ARCH: x64
-  AT_HOME: true
   ON_APPVEYOR: true
   # ctrdatamongopassword is set in appveyor interface
   # env vars that may need to be set, at least temporarily, from time to time
