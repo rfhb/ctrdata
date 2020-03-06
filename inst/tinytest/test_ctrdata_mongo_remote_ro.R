@@ -1,11 +1,12 @@
 ## RH 2019-09-28
 
 #### SETUP ####
-if(!at_home()) exit_file("skipping")
+if(!at_home()) exit_file("Reason: not at_home")
 source("setup_ctrdata.R")
 
-if (!check_internet())        exit_file("Not available: internet connectivity")
-if (!check_mongo_remote_ro()) exit_file("Not available: remote ro MongoDB")
+if (!check_internet())        exit_file("Reason: no internet connectivity")
+if (!check_mongo_remote_ro()) exit_file("Reason: no remote ro MongoDB")
+
 
 # create database object
 dbc <- nodbi::src_mongo(

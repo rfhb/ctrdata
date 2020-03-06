@@ -92,17 +92,21 @@ different registers.
 # Retrieve protocol-related information on a
 # single trial identified by EudraCT number
 \dontrun{
-ctrLoadQueryIntoDb (queryterm = "2013-001291-38")
+db <- nodbi::src_sqlite(collection = "test")
+ctrLoadQueryIntoDb(queryterm = "2013-001291-38", cond = db)
 }
 # Retrieve protocol-related information on
 # ongoing interventional cancer trials in children
 \dontrun{
-ctrLoadQueryIntoDb (
+db <- nodbi::src_sqlite(collection = "test")
+ctrLoadQueryIntoDb(
      queryterm = "cancer&recr=Open&type=Intr&age=0",
-     register = "CTGOV")
-ctrLoadQueryIntoDb (
+     register = "CTGOV",
+     con = db)
+ctrLoadQueryIntoDb(
      queryterm = "NCT02239861",
-     register = "CTGOV")
+     register = "CTGOV",
+     cond = db)
 }
 
 }

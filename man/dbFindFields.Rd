@@ -40,7 +40,8 @@ random documents are sampled to generate a list of fields.
 \examples{
 
 \dontrun{
- dbFindFields("date")
+db <- nodbi::src_sqlite(collection = "test")
+dbFindFields("date", con = db)
 }
 
 }

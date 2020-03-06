@@ -41,8 +41,8 @@ and other packages to query mongodb such as mongolite.
 \examples{
 
 \dontrun{
-
-dbGetFieldsIntoDf("b1_sponsor.b31_and_b32_status_of_the_sponsor")[1,]
+db <- nodbi::src_sqlite(collection = "test")
+dbGetFieldsIntoDf("b1_sponsor.b31_and_b32_status_of_the_sponsor", con = db)[1,]
 #                   _id  b1_sponsor.b31_and_b32_status_of_the_sponsor
 #  1  2004-000015-25-GB                   Non-commercial / Commercial
 

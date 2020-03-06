@@ -47,7 +47,8 @@ IDs".
 \examples{
 
 \dontrun{
-dbFindIdsUniqueTrials()
+db <- nodbi::src_sqlite(collection = "test")
+dbFindIdsUniqueTrials(con = db)
 }
 
 }

@@ -77,8 +77,8 @@ age_ctgov <- function(x) {
   tmp.days   <- suppressWarnings(as.numeric(gsub("([0-9]+) Day.?",   "\\1", x, ignore.case = TRUE))) / 365.25
   
   tmp.age <- ifelse(!is.na(tmp.years),  tmp.years, 
-                    ifelse(!is.na(tmp.months), tmp.months, 
-                           ifelse(!is.na(tmp.days),   tmp.days, NA)))
+             ifelse(!is.na(tmp.months), tmp.months, 
+             ifelse(!is.na(tmp.days),   tmp.days, NA)))
   
   return(tmp.age)
 }
@@ -399,7 +399,7 @@ db <- nodbi::src_mongo(
   db = "dbperm",
   collection = "dbperm")
 
-# Database connection can just be used
+# Database connection can just be used to retrieve data
 result <- dbGetFieldsIntoDf(
   fields = c("a2_eudract_number",
              "overall_status",
@@ -450,7 +450,7 @@ head(tbl)
 count.elements <- function(dataframecolumn) {
   return(sapply(dataframecolumn, 
                 function(x) 
-                  ifelse(is.data.frame(tmp <- unlist (x[[1]])), 
+                  ifelse(is.data.frame(tmp <- unlist(x[[1]])), 
                          nrow(tmp), length(tmp))))
 }
 
@@ -783,7 +783,7 @@ m$count()
 
 # Number of EUCTR records, using json for query:
 m$count(query = '{"_id": {"$regex": "[0-9]{4}-[0-9]{6}-[0-9]{2}", 
-        "$options": "i"}}')
+                 "$options": "i"}}')
 # alternatively: 
 m$count(query = '{"ctrname": "EUCTR"}')
 

@@ -24,7 +24,8 @@ Import from clipboard the URL of a search in one of the registers
 \examples{
 
 \dontrun{
-ctrLoadQueryIntoDb (ctrGetQueryUrlFromBrowser())
+db <- nodbi::src_sqlite(collection = "test")
+ctrLoadQueryIntoDb(ctrGetQueryUrlFromBrowser(), con = db)
 }
 
 }
