@@ -77,7 +77,7 @@ working with nested lists and with complex structures." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ctrdata</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9002</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9003</span>
       </span>
     </div>
 
@@ -172,7 +172,23 @@ extracted. See example.</p></td>
  per _id).</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"></pre>
+    <pre class="examples"><div class='input'>
+<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='no'>db</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>nodbi</span><span class='kw ns'>::</span><span class='fu'><a href='https://docs.ropensci.org/nodbi/reference/src_sqlite.html'>src_sqlite</a></span>(<span class='kw'>collection</span> <span class='kw'>=</span> <span class='st'>"test"</span>)
+<span class='no'>df</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='dbGetFieldsIntoDf.html'>dbGetFieldsIntoDf</a></span>(
+  <span class='kw'>fields</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"endPoints.endPoint"</span>,
+             <span class='st'>"subjectDisposition.postAssignmentPeriods"</span>),
+  <span class='kw'>con</span> <span class='kw'>=</span> <span class='no'>db</span>
+)
+<span class='fu'>dfListExtractKey</span>(
+  <span class='kw'>df</span> <span class='kw'>=</span> <span class='no'>df</span>,
+  <span class='kw'>list.key</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
+      <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"endPoints.endPoint"</span>,
+        <span class='st'>"^title"</span>),
+      <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"subjectDisposition.postAssignmentPeriods"</span>,
+        <span class='st'>"arms.arm.type.value"</span>)
+))
+}</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

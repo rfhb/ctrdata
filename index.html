@@ -41,7 +41,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">ctrdata</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9002</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9003</span>
       </span>
     </div>
 
@@ -100,7 +100,7 @@
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#ctrdata-for-aggregating-and-analysing-clinical-trials" class="anchor"></a>ctrdata for aggregating and analysing clinical trials</h1></div>
 <p>The package <code>ctrdata</code> provides functions for retrieving (downloading) information on clinical trials from public registers, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register (“EUCTR”, <a href="https://www.clinicaltrialsregister.eu/" class="uri">https://www.clinicaltrialsregister.eu/</a>) and for ClinicalTrials.gov (“CTGOV”, <a href="https://clinicaltrials.gov/" class="uri">https://clinicaltrials.gov/</a>). Development of <code>ctrdata</code> started in 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package is to be used within the <a href="https://www.r-project.org/">R</a> system.</p>
-<p>Last checked and updated on 2019-11-12 for version 1.1, with <em>breaking changes</em>, bug fixes and new features:</p>
+<p>Last checked and updated on 2020-05-01 for version 1.2, with <em>breaking changes</em> compared to 1.0, bug fixes and new features:</p>
 <ul>
 <li><p>minimised dependencies: works now with <code>RSQLite</code> (&gt;= 2.1.2), local and remote MongoDB servers, via R package <code>nodbi</code> (&gt;= 0.4). This is a breaking change that could not be avoided in order to generalise the database access, and it was made possible by introducing a REGEXP operator into <a href="https://github.com/r-dbi/RSQLite/pull/296">RSQLite</a> and adding a set of methods to <code>nodbi</code> based on the Json1 extension of <a href="https://github.com/ropensci/nodbi/pull/25">SQLite</a>.</p></li>
 <li><p>synonyms of active substances for better finding trials can be retrieved with function <code><a href="reference/ctrFindActiveSubstanceSynonyms.html">ctrFindActiveSubstanceSynonyms()</a></code></p></li>
@@ -114,7 +114,7 @@
 <li><p>Retrieved (downloaded) trial information is transformed and stored in a document-centric database (since the registers provide nested data), for fast and offline access. This can then be analysed with <code>R</code> (or others systems). Easily re-run a previous query to update a database.</p></li>
 <li><p>Unique (de-duplicated) clinical trial records are identified, across registers and when a trial has several records in one register. <code>ctrdata</code> also has functions to merge and recode protocol-related information from different registers. Vignettes are provided to get started and with detailed examples, such as analyses of time trends of details of clinical trial protocols and for analysing results.</p></li>
 </ul>
-<p>Remember to respect the registers’ copyrights and terms and conditions (see <code><a href="reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser(copyright = TRUE)</a></code>). Please cite this package in any publication as follows: <code>Ralf Herold (2019). ctrdata: Retrieve and Analyze Clinical Trials from Public Registers. R package version 0.20, https://github.com/rfhb/ctrdata</code></p>
+<p>Remember to respect the registers’ copyrights and terms and conditions (see <code><a href="reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser(copyright = TRUE)</a></code>). Please cite this package in any publication as follows: <code>Ralf Herold (2020). ctrdata: Retrieve and Analyze Clinical Trials from Public Registers. R package version 1.2, https://github.com/rfhb/ctrdata</code></p>
 <!--
 
 ```r
