@@ -526,7 +526,7 @@ dbQueryHistory <- function(con,
 #'
 #' @inheritParams ctrDb
 #'
-#' @return Vector of field(s) found
+#' @return Vector of names of found field(s)
 #'
 #' @export
 #'

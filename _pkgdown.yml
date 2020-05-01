@@ -1,0 +1,13 @@
+reference:
+- title: "Operations on a clinical trial register"
+- contents:
+  - starts_with("ctr")
+- title: "Using the database that holds downloaded trial information"
+- contents:
+  - starts_with("db")
+- title: "Get an R data frame from database and operate on it"
+- contents:
+  - starts_with("df")
+- title: "Utility functions"
+- contents:
+  - starts_with("install")
