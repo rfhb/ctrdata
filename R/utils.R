@@ -1231,16 +1231,14 @@ dbGetFieldsIntoDf <- function(fields = "",
 #'              "subjectDisposition.postAssignmentPeriods"),
 #'   con = db
 #' )
-#' dfListExtractKey <- function(
-#'   df,
-#'   list.key =
-#'     list(
+#' dfListExtractKey(
+#'   df = df,
+#'   list.key = list(
 #'       c("endPoints.endPoint",
 #'         "^title"),
 #'       c("subjectDisposition.postAssignmentPeriods",
 #'         "arms.arm.type.value")
-#'     )
-#' )
+#' ))
 #' }
 dfListExtractKey <- function(
   df,

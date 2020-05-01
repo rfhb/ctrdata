@@ -16,7 +16,7 @@ nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()}
 \item{verbose}{If \code{TRUE}, prints additional information (default \code{FALSE}).}
 }
 \value{
-Vector of field(s) found
+Vector of names of found field(s)
 }
 \description{
 Given part of the name of a field of interest to the user, this
