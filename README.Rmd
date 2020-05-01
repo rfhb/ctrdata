@@ -31,7 +31,7 @@ knitr::opts_chunk$set(
 
 The package `ctrdata` provides functions for retrieving (downloading) information on clinical trials from public registers, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started in 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package is to be used within the [R](https://www.r-project.org/) system. 
 
-Last checked and updated on 2019-11-12 for version 1.1, with *breaking changes*, bug fixes and new features: 
+Last checked and updated on 2020-05-01 for version 1.2, with *breaking changes* compared to 1.0, bug fixes and new features: 
 
 * minimised dependencies: works now with `RSQLite` (>= 2.1.2), local and remote MongoDB servers, via R package `nodbi` (>= 0.4). This is a breaking change that could not be avoided in order to generalise the database access, and it was made possible by introducing a REGEXP operator into [RSQLite](https://github.com/r-dbi/RSQLite/pull/296) and adding a set of methods to `nodbi` based on the Json1 extension of [SQLite](https://github.com/ropensci/nodbi/pull/25). 
 
@@ -51,7 +51,7 @@ Main features:
 
 * Unique (de-duplicated) clinical trial records are identified, across registers and when a trial has several records in one register. `ctrdata` also has functions to merge and recode protocol-related information from different registers. Vignettes are provided to get started and with detailed examples, such as analyses of time trends of details of clinical trial protocols and for analysing results. 
 
-Remember to respect the registers' copyrights and terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: `Ralf Herold (2019). ctrdata: Retrieve and Analyze Clinical Trials from Public Registers. R package version 0.20, https://github.com/rfhb/ctrdata`
+Remember to respect the registers' copyrights and terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: `Ralf Herold (2020). ctrdata: Retrieve and Analyze Clinical Trials from Public Registers. R package version 1.2, https://github.com/rfhb/ctrdata`
 
 <!--
 ```{r}

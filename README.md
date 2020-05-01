@@ -23,8 +23,8 @@ started in 2015 and was motivated by the wish to understand trends in
 designs and conduct of trials and their availability for patients. The
 package is to be used within the [R](https://www.r-project.org/) system.
 
-Last checked and updated on 2019-11-12 for version 1.1, with *breaking
-changes*, bug fixes and new features:
+Last checked and updated on 2020-05-01 for version 1.2, with *breaking
+changes* compared to 1.0, bug fixes and new features:
 
   - minimised dependencies: works now with `RSQLite` (\>= 2.1.2), local
     and remote MongoDB servers, via R package `nodbi` (\>= 0.4). This is
@@ -71,9 +71,9 @@ Main features:
 
 Remember to respect the registers’ copyrights and terms and conditions
 (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
-package in any publication as follows: `Ralf Herold (2019). ctrdata:
+package in any publication as follows: `Ralf Herold (2020). ctrdata:
 Retrieve and Analyze Clinical Trials from Public Registers. R package
-version 0.20, https://github.com/rfhb/ctrdata`
+version 1.2, https://github.com/rfhb/ctrdata`
 
 <!--
 
