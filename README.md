@@ -23,51 +23,34 @@ started in 2015 and was motivated by the wish to understand trends in
 designs and conduct of trials and their availability for patients. The
 package is to be used within the [R](https://www.r-project.org/) system.
 
-Last checked and updated on 2020-05-01 for version 1.2, with *breaking
-changes* compared to 1.0, bug fixes and new features:
-
-  - minimised dependencies: works now with `RSQLite` (\>= 2.1.2), local
-    and remote MongoDB servers, via R package `nodbi` (\>= 0.4). This is
-    a breaking change that could not be avoided in order to generalise
-    the database access, and it was made possible by introducing a
-    REGEXP operator into
-    [RSQLite](https://github.com/r-dbi/RSQLite/pull/296) and adding a
-    set of methods to `nodbi` based on the Json1 extension of
-    [SQLite](https://github.com/ropensci/nodbi/pull/25).
-
-  - synonyms of active substances for better finding trials can be
-    retrieved with function `ctrFindActiveSubstanceSynonyms()`
-
-  - dates are now returned as Date types, and some Yes / No fields are
-    returned as logical, by function `dbGetFieldsIntoDf()`
-
-  - personal annotations can be added when records are retrieved from a
-    register (new parameters `annotate.text` and `annotate.mode` for
-    function `ctrLoadQueryIntoDb()`), for later use in analysis
+Last reviewed on 2020-05-17 for version 1.2.1.
 
 Main features:
 
   - Protocol-related information on clinical trials is easily retrieved
     (downloaded) from public online sources: Users define a query using
-    the registers’ web pages interfaces and then use `ctrdata` for
-    retrieving all trials resulting from the query.
+    a register’s web interfaces and then use `ctrdata` for retrieving
+    all trials resulting from the query. Personal annotations can be
+    added when retrieving trial information. Synonyms of an active
+    substance can also be found.
 
-  - Results-related information on these clinical trials can be included
-    when information is retrieved (downloaded). Retrieval is done with
-    multiple parallel webstreams, to speed up operations.
+  - Results-related information on trials can be included when
+    information is retrieved (downloaded). All information is retrieved
+    with multiple parallel webstreams, to speed up operations.
 
   - Retrieved (downloaded) trial information is transformed and stored
-    in a document-centric database (since the registers provide nested
+    in a document-centric database (since registers provide nested
     data), for fast and offline access. This can then be analysed with
     `R` (or others systems). Easily re-run a previous query to update a
-    database.
+    database. Uses `RSQLite`, local or remote MongoDB servers, via R
+    package `nodbi`.
 
-  - Unique (de-duplicated) clinical trial records are identified, across
-    registers and when a trial has several records in one register.
-    `ctrdata` also has functions to merge and recode protocol-related
-    information from different registers. Vignettes are provided to get
-    started and with detailed examples, such as analyses of time trends
-    of details of clinical trial protocols and for analysing results.
+  - Unique (de-duplicated) trial records are identified, across
+    registers and when there are several records in any register.
+    `ctrdata` also can merge and recode information (fields) from
+    different registers. Vignettes are provided to get started and with
+    detailed examples, such as analyses of time trends of details of
+    clinical trial protocols and for analysing results.
 
 Remember to respect the registers’ copyrights and terms and conditions
 (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
@@ -98,8 +81,8 @@ Package `ctrdata` has been used for example for:
 Package `ctrdata` can be found [here on
 CRAN](https://cran.r-project.org/package=ctrdata) and [here on
 github](https://github.com/rfhb/ctrdata). Within
-[R](https://www.r-project.org/), use the following commands to get and
-install package `ctrdata`:
+[R](https://www.r-project.org/), use the following commands to install
+package `ctrdata`:
 
 ``` r
 # Install CRAN version:
@@ -112,9 +95,12 @@ install.packages("devtools")
 devtools::install_github("rfhb/ctrdata")
 ```
 
+These commands also install the package dependencies, which are `nodbi`,
+`jsonlite`, `httr`, `curl`, `clipr`, `xml2`, `rvest`.
+
 ## 2\. Command line tools `perl`, `sed`, `cat` and `php` (5.2 or higher)
 
-These command line tools are only required for `ctrLoadQueryIntoDb()`, a
+These command line tools are required for `ctrLoadQueryIntoDb()`, the
 main function of package `ctrdata`.
 
 In Linux and macOS (including version 10.15 Catalina), these are usually
@@ -173,8 +159,8 @@ ctrOpenSearchPagesInBrowser(copyright = TRUE)
 
   - Adjust search parameters and execute search in browser
 
-  - When found trial are listed in browser, copy address from browser
-    address bar to clipboard
+  - When trials of interest are listed in browser, copy the address from
+    the browser’s address bar to the clipboard
 
   - Get address from clipboard:
 
@@ -194,16 +180,19 @@ q
 
 Under the hood, scripts `euctr2json.sh` and `xml2json.php` (in
 `ctrdata/exec`) transform EUCTR plain text files and CTGOV `XML` files
-to `ndjson` format, which is imported into the database. If no database
-connection is specified in parameter `con`, an in-memory SQLite database
-is created.
+to `ndjson` format, which is imported into the database. As a first
+step, the database is specified using `nodbi` (using RSQlite or MongoDB
+as backend). Second, trial information is retrieved and loaded into the
+database.
 
 ``` r
-# Connect to (or create) a SQLite database:
-db <- nodbi::src_sqlite(dbname = "some_database_name.sqlite_file", 
-                        collection = "some_collection_name")
+# Connect to (or newly create) a SQLite database 
+# that is stored in a file on the local system:
+db <- nodbi::src_sqlite(
+  dbname = "some_database_name.sqlite_file", 
+  collection = "some_collection_name")
 
-# Alternative, if a MongoDB is available to user:
+# Alternative, for a MongoDB database:
 # db <- nodbi::src_mongo(url = "mongodb://localhost", 
 #                        db = "some_database_name",
 #                        collection = "some_collection_name")
@@ -213,15 +202,14 @@ ctrLoadQueryIntoDb(
   queryterm = 
     paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?", 
            "query=cancer&age=under-18&phase=phase-one"),
-  con = db)
-
-# Minimalistic, with in-memory SQLite:  
-# ctrLoadQueryIntoDb(q)
+  con = d)
 ```
 
-Analyse and tabulate the status of trials that are recorded to be part
-of an agreed paediatric development program (paediatric investigation
-plan, PIP):
+  - Analyse
+
+Tabulate the status of those trials that are recorded to be part of an
+agreed paediatric development program (paediatric investigation plan,
+PIP):
 
 ``` r
 # Get all records that have values in the fields of interest:
@@ -256,7 +244,9 @@ with(result, table(p_end_of_trial_status,
 #    Temporarily Halted                                    0  1   1
 ```
 
-Add records from another register into database:
+  - Add records from another register into database
+
+<!-- end list -->
 
 ``` r
 # Retrieve trials from public register:
@@ -266,8 +256,10 @@ ctrLoadQueryIntoDb(
   con = db)
 ```
 
-Get some details on results - note how fields are used with slightly
-different approaches:
+  - Result-related trial information
+
+Analyse some result details; note how information fields are used with
+slightly different approaches:
 
 ``` r
 # Get all records that have values in all specified fields. 
@@ -289,8 +281,8 @@ result <- dbGetFieldsIntoDf(
 result$number_sites <- sapply(
   result$location, function(x) length(x[["facility"]][["name"]]))
 
-#   an alternative approach uses a function
-#   to extract keys from a list in a data frame:
+#   an alternative approach uses a function provided by
+#   ctrdata to extract keys from a list in a data frame:
 with(
   dfListExtractKey(
     df = result, 
@@ -325,8 +317,9 @@ result$number_participants <- sapply(
 
 # Allocation is part of study design information and available
 # as a simple character string, suitable for routine manipulation
-result$is_controlled <- grepl("^Random", 
-                              result$study_design_info.allocation)
+result$is_controlled <- grepl(
+  pattern = "^Random", 
+  x = result$study_design_info.allocation)
 
 # Example plot
 library(ggplot2)
@@ -345,13 +338,14 @@ ggsave(filename = "inst/image/README-ctrdata_results_neuroblastoma.png",
 ![Neuroblastoma
 trials](inst/image/README-ctrdata_results_neuroblastoma.png)
 
-# Database usage
+# Databases
 
-The database connection object `con` has parameters that are specific to
-the database (e.g., `url`) and the parameter `collection` that is used
-by `ctrdata` to identify which table or collection in the database to
-use. Any such connection object can then be used by `ctrdata` and
-generic functions in `nodbi` in a consistent way, as shown in the
+The database connection object `con` is created by calling
+`nodbi::src_*()`, with parameters that are specific to the database
+(e.g., `url`) and with a special parameter `collection` that is used by
+`ctrdata` to identify which table or collection in the database to use.
+Any such connection object can then be used by `ctrdata` and generic
+functions of `nodbi` in a consistent way, as shown in the
 table:
 
 | Purpose                                  | SQLite                                                                                | MongoDB                                                                                                                  |
