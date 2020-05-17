@@ -18,23 +18,19 @@ expect_message(
     ctrLoadQueryIntoDb(
       queryterm = q,
       con = dbc)),
-  "Imported or updated",
-  info = "ctrdata_euctr.R#18")
+  "Imported or updated")
 
 # test
-expect_true(tmp_test$n > 10L,
-            info = "ctrdata_euctr.R#22")
+expect_true(tmp_test$n > 10L)
 
 # test
 expect_true(all(
   c("2007-000371-42-FR", "2010-019340-40-GB",
     "2010-019340-40-3RD") %in%
-    tmp_test$success),
-  info = "ctrdata_euctr.R#27")
+    tmp_test$success))
 
 # test
-expect_true(length(tmp_test$failed) == 0L,
-            info = "ctrdata_euctr.R#31")
+expect_true(length(tmp_test$failed) == 0L)
 
 #### ctrLoadQueryIntoDb update ####
 
@@ -54,8 +50,7 @@ expect_message(
     ctrLoadQueryIntoDb(
       paste0(q),
       con = dbc)),
-  "Imported or updated ",
-  info = "ctrdata_euctr.R#52")
+  "Imported or updated ")
 
 # manipulate history to test updating
 # implemented in dbCTRUpdateQueryHistory
@@ -85,20 +80,16 @@ expect_message(
     ctrLoadQueryIntoDb(
       querytoupdate = "last",
       con = dbc)),
-  "(Imported or updated|First result page empty)",
-  info = "ctrdata_euctr.R#79")
+  "(Imported or updated|First result page empty)")
 
 # test
-expect_true(tmp_test$n > 10L,
-            info = "ctrdata_euctr.R#83")
+expect_true(tmp_test$n > 10L)
 
 # test
-expect_true(length(tmp_test$success) > 10L,
-            info = "ctrdata_euctr.R#87")
+expect_true(length(tmp_test$success) > 10L)
 
 # test
-expect_true(length(tmp_test$failed) == 0L,
-            info = "ctrdata_euctr.R#91")
+expect_true(length(tmp_test$failed) == 0L)
 
 #### ctrLoadQueryIntoDb results ####
 
@@ -116,8 +107,7 @@ expect_message(
       euctrresults = TRUE,
       verbose = TRUE,
       con = dbc)),
-  "Imported or updated results for",
-  info = "ctrdata_euctr.R#106")
+  "Imported or updated results for")
 
 # get results
 # dbFindFields(namepart = c("statistic"),
@@ -131,7 +121,7 @@ result <- suppressWarnings(
       "trialInformation.recruitmentStartDate",
       "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database",
       "subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm",
-      "endPoints.endPoint", # this is a also list
+      "endPoints.endPoint", # this is also a list
       "trialInformation.analysisForPrimaryCompletion",
       "e71_human_pharmacology_phase_i"
     ),
@@ -147,18 +137,15 @@ result <- suppressWarnings(suppressMessages(
 
 # test
 expect_true(all(as.Date(c("2013-10-28", "2018-03-13")) %in%
-                  result$trialInformation.globalEndOfTrialDate),
-            info = "ctrdata_euctr.R#138")
+                  result$trialInformation.globalEndOfTrialDate))
 
 # test
 expect_true("logical" == class(result[[
-  "e71_human_pharmacology_phase_i"]]),
-  info = "ctrdata_euctr.R#144")
+  "e71_human_pharmacology_phase_i"]]))
 
 # test
 expect_true("Date" == class(result[[
-  "trialInformation.globalEndOfTrialDate"]]),
-  info = "ctrdata_euctr.R#149")
+  "trialInformation.globalEndOfTrialDate"]]))
 
 # test
 expect_true(
@@ -172,8 +159,7 @@ expect_true(
         "type.value"))
   )[["value"]]
   ), na.rm = TRUE)
-  > 250L,
-  info = "ctrdata_euctr.R#161")
+  > 250L)
 
 # test
 expect_true(
@@ -184,8 +170,7 @@ expect_true(
       c("endPoints.endPoint", "title"))
     )[["value"]]
   ), na.rm = TRUE)
-  > 3000L,
-  info = "ctrdata_euctr.R#172")
+  > 3000L)
 
 # test
 tmp_test <- dfListExtractKey(
@@ -198,8 +183,7 @@ tmp_test <- dfListExtractKey(
 expect_true(all(
   tmp_test$endPoints.endPoint.type.value %in%
     c("ENDPOINT_TYPE.primary", "ENDPOINT_TYPE.secondary",
-      "ENDPOINT_TYPE.other", NA)),
-  info = "ctrdata_euctr.R#189")
+      "ENDPOINT_TYPE.other", NA)))
 
 # test
 tmp_test <- dfListExtractKey(
@@ -217,8 +201,7 @@ expect_true(
         tmp_test[["name"]] ==
           "endPoints.endPoint.armReportingGroups.armReportingGroup.subjects"
       ]),
-    na.rm = TRUE) > 2000L,
-  info = "ctrdata_euctr.R#211")
+    na.rm = TRUE) > 2000L)
 
 # test
 tmp_test <- dfListExtractKey(
@@ -234,15 +217,13 @@ expect_true(
     tmp_test[["value"]][
       tmp_test[["name"]] ==
         "endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.value"
-      ])) < 1L),
-  info = "ctrdata_euctr.R#211")
+      ])) < 1L))
 expect_true(all(
     c("HYPOTHESIS_METHOD.cochranMantelHaenszel", "HYPOTHESIS_METHOD.ancova",
       "HYPOTHESIS_METHOD.regressionLogistic") %in%
       tmp_test[["value"]][
         tmp_test[["name"]] ==
-          "endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.method.value"]),
-  info = "ctrdata_euctr.R#241")
+          "endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.method.value"]))
 
 
 #### dbFindFields #####
@@ -252,33 +233,28 @@ expect_error(
   dbFindFields(
     namepart = c("onestring", "twostring"),
     con = dbc),
-  "Name part should have only one element.",
-  info = "ctrdata_euctr.R#221")
+  "Name part should have only one element.")
 
 # test
 expect_error(
   dbFindFields(
     namepart = list("onestring", "twostring"),
     con = dbc),
-  "Name part should be atomic.",
-  info = "ctrdata_euctr.R#229")
+  "Name part should be atomic.")
 
 # test
 expect_error(
   dbFindFields(namepart = "",
                con = dbc),
-  "Empty name part string.",
-  info = "ctrdata_euctr.R#236")
+  "Empty name part string.")
 
 # test
 tmp_test <- suppressMessages(suppressWarnings(
   dbFindFields(
     namepart = "date",
     con = dbc)))
-expect_true("character" %in% class(tmp_test),
-            info = "ctrdata_euctr.R#243")
-expect_true(length(tmp_test) >= 4L,
-            info = "ctrdata_euctr.R#246")
+expect_true("character" %in% class(tmp_test))
+expect_true(length(tmp_test) >= 4L)
 
 #### dbFindIdsUniqueTrials #####
 
@@ -288,8 +264,7 @@ expect_message(
     dbFindIdsUniqueTrials(
       con = dbc,
       preferregister = "EUCTR")),
-  "Searching for duplicates",
-  info = "ctrdata_euctr.R#257")
+  "Searching for duplicates")
 
 # test
 expect_message(
@@ -297,8 +272,7 @@ expect_message(
     dbFindIdsUniqueTrials(
       con = dbc,
       preferregister = "CTGOV")),
-  "Returning keys",
-  info = "ctrdata_euctr.R#266")
+  "Returning keys")
 
 # test
 expect_warning(
@@ -307,16 +281,14 @@ expect_warning(
       con = dbc,
       prefermemberstate = "3RD",
       include3rdcountrytrials = FALSE)),
-  "Preferred EUCTR version set to 3RD country trials",
-  info = "ctrdata_euctr.R#276")
+  "Preferred EUCTR version set to 3RD country trials")
 
 # test, reusing the query string
 tmp_q <- strsplit(q, "+OR+", fixed = TRUE)[[1]]
 tmp_q <- gsub(".+=(.?)", "\\1", tmp_q)
 expect_true(all(
   tmp_q %in%
-    gsub("([0-9]{4}-[0-9]{6}-[0-9]{2})-.*", "\\1", tmp_test)),
-  info = "ctrdata_euctr.R#283")
+    gsub("([0-9]{4}-[0-9]{6}-[0-9]{2})-.*", "\\1", tmp_test)))
 
 #### annotations #####
 
@@ -329,8 +301,7 @@ expect_message(
         con = dbc,
         annotation.text = "ANNO",
         annotation.mode = "replace")),
-  "Imported or updated 1 trial",
-  info = "ctrdata_euctr.R#297")
+  "Imported or updated 1 trial")
 
 # test
 expect_message(
@@ -341,8 +312,7 @@ expect_message(
       con = dbc,
       annotation.text = "ANNO",
       annotation.mode = "replace")),
-  "Imported or updated",
-  info = "ctrdata_euctr.R#308")
+  "Imported or updated")
 
 # test
 expect_message(
@@ -353,8 +323,7 @@ expect_message(
       con = dbc,
       annotation.text = "EU",
       annotation.mode = "prepend")),
-  "Imported or updated",
-  info = "ctrdata_euctr.R#320")
+  "Imported or updated")
 
 tmp_test <- suppressWarnings(
   dbGetFieldsIntoDf(
@@ -371,8 +340,7 @@ tmp_test <-
 
 # test
 expect_equal(sort(tmp_test[["annotation"]]),
-             sort(c("EU ANNO", "ANNO")),
-             info = "ctrdata_euctr.R#339")
+             sort(c("EU ANNO", "ANNO")))
 
 
 #### ctrOpenSearchPagesInBrowser #####
@@ -382,5 +350,4 @@ expect_message(
   suppressWarnings(
     ctrOpenSearchPagesInBrowser(
       dbQueryHistory(con = dbc)[1, ])),
-  "Opening browser for search:",
-  info = "ctrdata_euctr.R#350")
+  "Opening browser for search:")

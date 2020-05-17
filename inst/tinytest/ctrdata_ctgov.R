@@ -12,20 +12,16 @@ expect_message(
       queryterm = "2010-024264-18",
       register = "CTGOV",
       con = dbc)),
-  "Imported or updated 1 trial",
-  info = "ctrdata_euctr.R#16")
+  "Imported or updated 1 trial")
 
 # test
-expect_equal(tmp_test$n, 1L,
-             info = "ctrdata_euctr.R#20")
+expect_equal(tmp_test$n, 1L)
 
 # test
-expect_equal(tmp_test$success, "NCT01471782",
-             info = "ctrdata_euctr.R#24")
+expect_equal(tmp_test$success, "NCT01471782")
 
 # test
-expect_true(length(tmp_test$failed) == 0L,
-            info = "ctrdata_euctr.R#28")
+expect_true(length(tmp_test$failed) == 0L)
 
 #### ctrLoadQueryIntoDb update ####
 
@@ -39,8 +35,7 @@ expect_message(
     ctrLoadQueryIntoDb(
       queryterm = paste0(q, "12%2F31%2F2008"),
       con = dbc)),
-  "Imported or updated ",
-  info = "ctrdata_euctr.R#43")
+  "Imported or updated ")
 
 # manipulate history to test updating
 # implemented in dbCTRUpdateQueryHistory
@@ -66,20 +61,16 @@ expect_message(
     ctrLoadQueryIntoDb(
       querytoupdate = "last",
       con = dbc)),
-  "Imported or updated",
-  info = "ctrdata_euctr.R#70")
+  "Imported or updated")
 
 # test
-expect_true(tmp_test$n > 2L,
-            info = "ctrdata_euctr.R#74")
+expect_true(tmp_test$n > 2L)
 
 # test
-expect_true(length(tmp_test$success) > 2L,
-            info = "ctrdata_euctr.R#78")
+expect_true(length(tmp_test$success) > 2L)
 
 # test
-expect_true(length(tmp_test$failed) == 0L,
-            info = "ctrdata_euctr.R#82")
+expect_true(length(tmp_test$failed) == 0L)
 
 #### ctrLoadQueryIntoDb results ####
 
@@ -99,18 +90,15 @@ result$number_sites <- sapply(
   function(x) length(x[["facility"]][["name"]]))
 
 # test
-expect_true(sum(result$number_sites, na.rm = TRUE) > 30L,
-            info = "ctrdata_euctr.R#102")
+expect_true(sum(result$number_sites, na.rm = TRUE) > 30L)
 
 # test
 expect_true("character" == class(result[[
-  "clinical_results.baseline.analyzed_list.analyzed.count_list.count"]]),
-  info = "ctrdata_euctr.R#108")
+  "clinical_results.baseline.analyzed_list.analyzed.count_list.count"]]))
 
 # test
 expect_true("list" == class(result[[
-  "clinical_results.baseline.group_list.group"]]),
-  info = "ctrdata_euctr.R#113")
+  "clinical_results.baseline.group_list.group"]]))
 
 # test
 expect_true(
@@ -118,7 +106,6 @@ expect_true(
     result,
     list(c("location", "name"))
   )),
-  na.rm = TRUE) > 1000L,
-  info = "ctrdata_euctr.R#122")
+  na.rm = TRUE) > 1000L)
 
 

@@ -18,16 +18,14 @@ statusvalues <- list(
 # test
 expect_error(
   dfMergeTwoVariablesRelevel(list("var1", "var2")),
-  "Need a data frame as input.",
-  info = "ctrdata_euctr.R#22")
+  "Need a data frame as input.")
 
 # test
 expect_message(
   dfMergeTwoVariablesRelevel(
     df = df,
     colnames = c("var1", "var2")),
-  "Unique values returned: 12, 23, 34",
-  info = "ctrdata_euctr.R#30")
+  "Unique values returned: 12, 23, 34")
 
 # test
 expect_true(
@@ -35,8 +33,7 @@ expect_true(
     suppressMessages(
       dfMergeTwoVariablesRelevel(
         df = df,
-        colnames = c("var1", "var2")))),
-  info = "ctrdata_euctr.R#39")
+        colnames = c("var1", "var2")))))
 
 # test
 expect_message(
@@ -44,16 +41,14 @@ expect_message(
     df = df,
     colnames = c("var1", "var2"),
     levelslist = statusvalues),
-  "Unique values returned: Firstvalues, Lastvalue",
-  info = "ctrdata_euctr.R#48")
+  "Unique values returned: Firstvalues, Lastvalue")
 
 # test
 expect_error(
   dfMergeTwoVariablesRelevel(
     df = df,
     colnames = 1:3),
-  "Please provide exactly two column names.",
-  info = "ctrdata_euctr.R#56")
+  "Please provide exactly two column names.")
 
 
 #### ctrOpenSearchPagesInBrowser ####
@@ -64,8 +59,7 @@ if (!check_internet()) exit_file("Reason: no internet connectivity")
 expect_equal(
   suppressWarnings(ctrGetQueryUrlFromBrowser(
     "something_insensible")),
-  NULL,
-  info = "ctrdata_euctr.R#67")
+  NULL)
 
 q <- "https://clinicaltrials.gov/ct2/results?type=Intr&cond=cancer&age=0"
 
@@ -74,55 +68,52 @@ tmp_test <- suppressMessages(
     content = q))
 
 # test
-expect_true("data.frame" %in% class(tmp_test),
-            info = "ctrdata_euctr.R#77")
+expect_true("data.frame" %in% class(tmp_test))
 
 # test
 expect_warning(
   ctrGetQueryUrlFromBrowser(
     content = "ThisDoesNotExist"),
-  "no clinical trial register search URL found",
-  info = "ctrdata_euctr.R#84")
+  "no clinical trial register search URL found")
 
 # test
 expect_message(
   ctrOpenSearchPagesInBrowser(input = q),
-  "Opening browser for search:",
-  info = "ctrdata_euctr.R#90")
+  "Found search query")
 
 # test
 expect_message(
   ctrOpenSearchPagesInBrowser(input = tmp_test),
-  "Opening browser for search:",
-  info = "ctrdata_euctr.R#96")
+  "Opening browser for search:")
 
 q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/",
             "search?query=&age=under-18&status=completed")
 
-tmp <- suppressMessages(
+tmp_test <- suppressMessages(
   ctrGetQueryUrlFromBrowser(
     content = q))
 
 # test
-expect_true("data.frame" %in% class(tmp_test),
-            info = "ctrdata_euctr.R#106")
+expect_true("data.frame" %in% class(tmp_test))
 
 # test
 expect_message(
   ctrOpenSearchPagesInBrowser(q),
-  "Opening browser for search:",
-  info = "ctrdata_euctr.R#112")
+  "Found search query")
+
+# test
+expect_message(
+  ctrOpenSearchPagesInBrowser(q),
+  "Opening browser for search:")
 
 # test
 expect_message(
   ctrOpenSearchPagesInBrowser(tmp_test),
-  "Opening browser for search:",
-  info = "ctrdata_euctr.R#118")
+  "Opening browser for search:")
 
 # test
 expect_equal(
   ctrOpenSearchPagesInBrowser(
     register = c("EUCTR", "CTGOV"),
     copyright = TRUE),
-  TRUE,
-  info = "ctrdata_euctr.R#126")
+  TRUE)

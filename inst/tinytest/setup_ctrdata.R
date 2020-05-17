@@ -17,7 +17,7 @@
 #### setup ####
 
 library(tinytest)
-suppressMessages(library(ctrdata))
+suppressPackageStartupMessages(library(ctrdata))
 
 
 #### global variables for data bases ####
