@@ -1,6 +1,11 @@
+# ctrdata 1.2.1
+ - 2020-05-18
+ - tinytest >= 1.2.1 to avoid regression error
+ - correct testing detail
+
 # ctrdata 1.2
  - 2019-12-07
- - correct cygwin install
+ - correct cygwin install detail
 
 # ctrdata 1.1
  - 2019-11-12

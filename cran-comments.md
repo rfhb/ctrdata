@@ -1,8 +1,8 @@
 ## Test environments
-* local: 86_64-apple-darwin15.6.0
-* travis: R oldrel, release, devel
-* win-builder: windows-x86_64-devel
-* appveyor: r-release and r-oldrel
+* local: x86_64-apple-darwin19.4.0
+* travis: R oldrel, R release, R devel
+* win-builder: x86_64-w64-mingw32
+* appveyor: r-release
 
 ## R CMD check results
 0 errors | 0 warnings | 0 notes
@@ -11,6 +11,6 @@
 There are currently no downstream dependencies for this package.
 
 ## Submission reason
-* change of tests to avoid internet-related errors
-* correction of automated cygwin installation
-* addition of tests for php json functions
+* tinytest 1.2.1 or higher needed to avoid regression error in tinytest 1.2.0
+* updated documentation
+* minor changes to package tests

@@ -1,8 +1,8 @@
 Package: ctrdata
 Type: Package
 Title: Retrieve and Analyze Clinical Trials in Public Registers
-Version: 1.2.9003
-Date: 2020-05-01
+Version: 1.2.1
+Date: 2020-05-18
 Imports: jsonlite, httr, curl, clipr, xml2, rvest, nodbi (>= 0.4)
 SystemRequirements: sed, php, cat, perl
 URL: https://github.com/rfhb/ctrdata
@@ -22,7 +22,7 @@ License: MIT + file LICENSE
 RoxygenNote: 7.1.0
 LazyData: true
 Suggests: devtools, knitr, rmarkdown, RSQLite (>= 2.1.2), mongolite, 
-        tinytest, R.rsp 
+        tinytest (>= 1.2.1), R.rsp 
 VignetteBuilder: R.rsp
 NeedsCompilation: no
 Encoding: UTF-8

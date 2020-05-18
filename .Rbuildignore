@@ -21,3 +21,4 @@
 ^private.*
 ^README\.Rmd$
 cran-comments.md
+^revdep$
