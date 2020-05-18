@@ -4,7 +4,7 @@ pkgdown_sha: 3b74d8860686ed6d63e536d7ec4971fbbde5faff
 articles:
   ctrdata_get_started: ctrdata_get_started.html
   ctrdata_usage_examples: ctrdata_usage_examples.html
-last_built: 2020-05-18T08:27Z
+last_built: 2020-05-18T18:09Z
 urls:
   reference: https://rfhb.github.io/ctrdata//reference
   article: https://rfhb.github.io/ctrdata//articles
