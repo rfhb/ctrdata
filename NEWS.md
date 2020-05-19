@@ -1,3 +1,6 @@
+# ctrdata 1.2.1.9000
+ - new development version
+ 
 # ctrdata 1.2.1
  - 2020-05-18
  - tinytest >= 1.2.1 to avoid regression error
