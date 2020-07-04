@@ -276,23 +276,41 @@ ctrOpenSearchPagesInBrowser <- function(
 #'
 #' @importFrom clipr read_clip
 #'
-ctrGetQueryUrlFromBrowser <- function(content = "") {
+ctrGetQueryUrlFromBrowser <- function(content = "", ...) {
+  #
+  # include overloaded parameter
+  params <- list(...)
+  if (length(params)) {
+    params <- params[[1]]
+  } else {
+    params <- NULL
+  }
   #
   # if content parameter not specified, get and check clipboard contents
-  if (length(content) == 1L &&
-      nchar(content) == 0L) {
+  if (is.na(content) ||
+      (length(content) == 1L &&
+       nchar(content) == 0L &&
+       is.null(params))) {
     content <- clipr::read_clip()
   }
   #
-  if (length(content) != 1L) {
-    warning("ctrGetQueryUrlFromBrowser(): no clinical trial register ",
-            "search URL found in parameter 'content' or in clipboard.",
+  if (is.na(content) || (length(content) != 1L && is.null(params))) {
+    warning("ctrGetQueryUrlFromBrowser(): 'content' is not a single string.",
             call. = FALSE, immediate. = TRUE)
-    return(NULL)
+    return(invisible(NULL))
   }
   #
   # EUCTR
-  if (grepl("https://www.clinicaltrialsregister.eu/ctr-search/", content)) {
+  if (grepl("https://www.clinicaltrialsregister.eu/ctr-search/", content) ||
+      (!grepl("https://", content) && !is.null(params) && params == "EUCTR")) {
+    #
+    # check
+    if (grepl("https://", content) &
+        !grepl("www.clinicaltrialsregister.eu/", content)) {
+      warning("ctrGetQueryUrlFromBrowser(): 'content' inconsistent with EUCTR.",
+              call. = FALSE, immediate. = TRUE)
+      return(invisible(NULL))
+    }
     #
     queryterm <-
       sub("https://www.clinicaltrialsregister.eu/ctr-search/search[?](.*)",
@@ -302,14 +320,14 @@ ctrGetQueryUrlFromBrowser <- function(content = "") {
       sub("https://www.clinicaltrialsregister.eu/ctr-search/trial/([-0-9]+)/.*",
           "\\1", queryterm)
     #
+    # remove any intrapage anchor, e.g. #tableTop
+    queryterm <- sub("#.+$", "", queryterm)
+    #
     # sanity correction for naked terms
     queryterm <- sub(
       "(^|&|[&]?\\w+=\\w+&)([ a-zA-Z0-9+-]+)($|&\\w+=\\w+)",
       "\\1query=\\2\\3",
       queryterm)
-    # if (!grepl("&\\w+=\\w+|query=\\w", queryterm)) {
-    #   queryterm <- paste0("query=", queryterm)
-    # }
     #
     # check if url was for results of single trial
     if (grepl(".*/results$", content)) {
@@ -326,7 +344,17 @@ ctrGetQueryUrlFromBrowser <- function(content = "") {
   #
   # CTGOV, e.g.
   # https://clinicaltrials.gov/ct2/results?term=2010-024264-18&Search=Search
-  if (grepl("https://clinicaltrials.gov/ct2/results", content)) {
+  if (grepl("https://clinicaltrials.gov/ct2/results", content) ||
+      (!grepl("https://", content) && !is.null(params) && params == "CTGOV")) {
+    #
+    # check
+    if (grepl("https://", content) &
+        !grepl("clinicaltrials.gov/", content)) {
+      warning("ctrGetQueryUrlFromBrowser(): 'content' inconsistent with CTGOV.",
+              call. = FALSE, immediate. = TRUE)
+      return(invisible(NULL))
+
+    }
     #
     queryterm <-
       sub("https://clinicaltrials.gov/ct2/results[?](.*)",

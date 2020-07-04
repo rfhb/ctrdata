@@ -115,21 +115,11 @@ ctrLoadQueryIntoDb <- function(
     }
   }
 
-  # deduce queryterm and register if a full url is provided
-  if (class(queryterm) == "character" &&
-      is.atomic(queryterm) &&
-      length(queryterm) == 1L &&
-      grepl("^https.+clinicaltrials.+", queryterm)) {
-    #
-    # remove any intrapage anchor from url, e.g. #tableTop
-    queryterm <- sub("#.+$", "", queryterm)
-    #
-    queryterm <- ctrGetQueryUrlFromBrowser(queryterm)
-    #
-  }
+  ## deduce queryterm and register
+  queryterm <- ctrGetQueryUrlFromBrowser(queryterm, register)
 
-  ## deal with data frame as returned from
-  ## ctrQueryHistoryInDb and ctrGetQueryUrlFromBrowser
+  # deal with data frame as returned from
+  # ctrQueryHistoryInDb and ctrGetQueryUrlFromBrowser
   if (is.data.frame(queryterm) &&
       all(substr(names(queryterm), 1, 6) == "query-")) {
     #
