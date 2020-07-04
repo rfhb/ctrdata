@@ -445,7 +445,8 @@ ctrRerunQuery <- function(
         }
         #
         resultsRss <- httr::content(
-          httr::GET(url = rssquery),
+          httr::GET(url = rssquery,
+                    httr::config(ssl_verifypeer = FALSE)),
           as = "text")
 
         if (verbose) {
@@ -1072,7 +1073,6 @@ ctrLoadQueryIntoDbEuctr <- function(
   #               "teratoid&country=dk",                   # add query=
   #               "term=cancer&age=adult",                 # keep
   #               "age=adult&term=cancer")                 # keep
-
   queryterm <- sub(
     "(^|&|[&]?\\w+=\\w+&)([ a-zA-Z0-9+-]+)($|&\\w+=\\w+)",
     "\\1query=\\2\\3",
@@ -1097,9 +1097,14 @@ ctrLoadQueryIntoDbEuctr <- function(
     "&mode=current_page&format=text&dContent=",
     "summary&number=current_page&submit-download=Download")
 
+  # as workaround certificate problems of EUCTR
+  # httr and curl code is made to not verify peers
+
   # check if host is available
   if ("try-error" %in% class(try(httr::headers(
-    httr::HEAD(url = utils::URLencode(queryEuRoot))), silent = TRUE))) {
+    httr::HEAD(
+      url = utils::URLencode(queryEuRoot),
+      httr::config(ssl_verifypeer = FALSE))), silent = TRUE))) {
     stop("Host ", queryEuRoot, " does not respond, cannot continue.",
          call. = FALSE)
   }
@@ -1107,7 +1112,9 @@ ctrLoadQueryIntoDbEuctr <- function(
   # get first result page
   q <- utils::URLencode(paste0(queryEuRoot, queryEuType1, queryterm))
   if (verbose) message("DEBUG: queryterm is ", q)
-  resultsEuPages <- httr::content(httr::GET(url = q), as = "text")
+  resultsEuPages <- httr::content(
+    httr::GET(url = q,
+              httr::config(ssl_verifypeer = FALSE)), as = "text")
 
   # get number of trials identified by query
   resultsEuNumTrials <- sub(
@@ -1233,7 +1240,7 @@ ctrLoadQueryIntoDbEuctr <- function(
           pool = pool,
           data = fp[x],
           handle = curl::new_handle(
-            ssl_verifypeer = TRUE # NOTE this speeds up?!
+            ssl_verifypeer = FALSE
           )
         ))
 
@@ -1427,7 +1434,7 @@ ctrLoadQueryIntoDbEuctr <- function(
             pool = pool,
             data = fp[x],
             handle = curl::new_handle(
-              ssl_verifypeer = TRUE # NOTE this speeds up?!
+              ssl_verifypeer = FALSE
             )
           ))
 
@@ -1618,8 +1625,8 @@ ctrLoadQueryIntoDbEuctr <- function(
             curl::multi_add(
               handle = curl::new_handle(
                 url = urls[x],
-                ssl_verifypeer = TRUE, # NOTE keep to speed up?!
-                range = "0-22999",     # NOTE only top part of page
+                ssl_verifypeer = FALSE,
+                range = "0-22999", # NOTE only top part of page
                 accept_encoding = "identity"
               ),
               done = done,

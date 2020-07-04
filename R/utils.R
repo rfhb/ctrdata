@@ -303,9 +303,13 @@ ctrGetQueryUrlFromBrowser <- function(content = "") {
           "\\1", queryterm)
     #
     # sanity correction for naked terms
-    if (!grepl("&\\w+=\\w+|query=\\w", queryterm)) {
-      queryterm <- paste0("query=", queryterm)
-    }
+    queryterm <- sub(
+      "(^|&|[&]?\\w+=\\w+&)([ a-zA-Z0-9+-]+)($|&\\w+=\\w+)",
+      "\\1query=\\2\\3",
+      queryterm)
+    # if (!grepl("&\\w+=\\w+|query=\\w", queryterm)) {
+    #   queryterm <- paste0("query=", queryterm)
+    # }
     #
     # check if url was for results of single trial
     if (grepl(".*/results$", content)) {
