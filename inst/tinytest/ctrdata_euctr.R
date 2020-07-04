@@ -7,6 +7,7 @@
 # too many parallel retrievals
 Sys.sleep(runif(n = 1, min = 1, max = 20))
 
+
 #### ctrLoadQueryIntoDb ####
 
 q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
@@ -88,8 +89,6 @@ expect_true(tmp_test$n > 10L)
 # test
 expect_true(length(tmp_test$success) > 10L)
 
-# test
-expect_true(length(tmp_test$failed) == 0L)
 
 #### ctrLoadQueryIntoDb results ####
 

@@ -58,8 +58,17 @@ if (!check_internet()) exit_file("Reason: no internet connectivity")
 
 expect_equal(
   suppressWarnings(ctrGetQueryUrlFromBrowser(
-    "something_insensible")),
+    content = "something_insensible")),
   NULL)
+
+# ctrGetQueryUrlFromBrowser(content = "type=Intr&age=0&intr=Drug&phase=0&phase=1&strd_e=12%2F31%2F2010")
+# ctrGetQueryUrlFromBrowser(content = "type=Intr&age=0&intr=Drug&phase=0&phase=1&strd_e=12%2F31%2F2010", "CTGOV")
+# ctrGetQueryUrlFromBrowser(content = "https://clinicaltrials.gov/ct2/results?type=Intr&cond=cancer&age=0")
+# ctrGetQueryUrlFromBrowser(content = "https://clinicaltrials.gov/ct2/results?type=Intr&cond=cancer&age=0", "CTGOV")
+# ctrGetQueryUrlFromBrowser(content = "https://clinicaltrials.gov/ct2/results?type=Intr&cond=cancer&age=0", "EUCTR")
+# ctrGetQueryUrlFromBrowser(content = "")
+# ctrGetQueryUrlFromBrowser(content = NA)
+# ctrGetQueryUrlFromBrowser(content = list())
 
 q <- "https://clinicaltrials.gov/ct2/results?type=Intr&cond=cancer&age=0"
 
