@@ -93,7 +93,7 @@
 
       
 
-      </header><div class="row">
+      </header><script src="ctrdata_get_started_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Getting started with R package <code>ctrdata</code> for clinical trial information</h1>
@@ -114,29 +114,41 @@
 <p>The R Project website (<a href="https://www.r-project.org/">https://www.r-project.org/</a>) provides installers for the R system.</p>
 <p>Alternatively, the R system can be used from software products such as R Studio (<a href="https://www.rstudio.com/products/RStudio/">https://www.rstudio.com/products/RStudio/</a>), which includes an open source integrated development environment (IDE), or Microsoft R Open (<a href="https://mran.microsoft.com/open/">https://mran.microsoft.com/open/</a>).</p>
 <p>General information on the <code>ctrdata</code> package is available here: <a href="https://github.com/rfhb/ctrdata">https://github.com/rfhb/ctrdata</a>.</p>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"ctrdata"</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"ctrdata"</span>)
+</pre></div>
 <p>For using the development version of package <code>ctrdata</code>, install from GitHub:</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="co"># install preparatory package</span>
+<div class="sourceCode" id="cb2"><pre class="downlit">
+<span class="co"># install preparatory package</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"devtools"</span>, <span class="st">"httr"</span>))
-<span class="kw pkg">devtools</span><span class="kw ns">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span>(<span class="st">"rfhb/ctrdata"</span>)</pre></body></html></div>
+<span class="kw">devtools</span>::<span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span>(<span class="st">"rfhb/ctrdata"</span>)
+</pre></div>
 <p>Either of the above should install package <code>ctrdata</code> into the user’s library.</p>
 </div>
 <div id="internet-access-via-proxy" class="section level2">
 <h2 class="hasAnchor">
 <a href="#internet-access-via-proxy" class="anchor"></a>Internet access via proxy</h2>
 <p>Functions in package <code>ctrdata</code> that start with <code>ctr...</code> require access to trial registers over the internet via the <code>https</code> protocol. Package <code>ctrdata</code> checks and <em>automatically uses</em> the proxy that is set under MS Windows in system settings. However, proxy settings need to be set by the user for other operating systems and for authenticating proxies, such as follows:</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html">Sys.setenv</a></span>(<span class="kw">https_proxy</span> <span class="kw">=</span> <span class="st">"your_proxy.server.domain:8080"</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html">Sys.setenv</a></span>(<span class="kw">https_proxy_user</span> <span class="kw">=</span> <span class="st">"userid:password"</span>) <span class="co"># if needed</span></pre></body></html></div>
+<div class="sourceCode" id="cb3"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html">Sys.setenv</a></span>(https_proxy = <span class="st">"your_proxy.server.domain:8080"</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html">Sys.setenv</a></span>(https_proxy_user = <span class="st">"userid:password"</span>) <span class="co"># if needed</span>
+</pre></div>
 </div>
 <div id="additional-installation-aspects-for-ms-windows" class="section level2">
 <h2 class="hasAnchor">
 <a href="#additional-installation-aspects-for-ms-windows" class="anchor"></a>Additional installation aspects for MS Windows</h2>
 <p>On MS Windows, it seems recommended to not use UNC notation (such as <code>\\server\directory</code>) for specifying the user’s library location, but the following notation using a local disk or mapped network share:</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/libPaths.html">.libPaths</a></span>(<span class="st">"D:/my/directory/"</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb4"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/libPaths.html">.libPaths</a></span>(<span class="st">"D:/my/directory/"</span>)
+</pre></div>
 <p>Package <code>ctrdata</code> requires on MS Windows the cygwin environment to be installed, into the local directory <code>c:\cygwin</code> (or any folder corresponding to <code>c:\cygw*</code>). The applications php, bash, perl, cat and sed in the cygwin environment are required for function <code><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code> of package <code>ctrdata</code>. No other function in the package has this requirement. The installation of a minimal cygwin environment on MS Windows can be done from package <code>ctrdata</code> as follows:</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="kw pkg">ctrdata</span><span class="kw ns">::</span><span class="fu"><a href="../reference/installCygwinWindowsDoInstall.html">installCygwinWindowsDoInstall</a></span>()</pre></body></html></div>
+<div class="sourceCode" id="cb5"><pre class="downlit">
+<span class="kw">ctrdata</span>::<span class="fu"><a href="../reference/installCygwinWindowsDoInstall.html">installCygwinWindowsDoInstall</a></span>() 
+</pre></div>
 <p>If internet accces has to be via a proxy and this was not correctly detected automatically, it can be specified:</p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="kw pkg">ctrdata</span><span class="kw ns">::</span><span class="fu"><a href="../reference/installCygwinWindowsDoInstall.html">installCygwinWindowsDoInstall</a></span>(<span class="kw">proxy</span> <span class="kw">=</span> <span class="st">"proxy.server.domain:8080"</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb6"><pre class="downlit">
+<span class="kw">ctrdata</span>::<span class="fu"><a href="../reference/installCygwinWindowsDoInstall.html">installCygwinWindowsDoInstall</a></span>(proxy = <span class="st">"proxy.server.domain:8080"</span>) 
+</pre></div>
 <p>Users who want or need to install cygwin manually can download the setup executable from <a href="https://cygwin.com/">here</a>. In a MS Windows command window or Powershell window, use the following command line. The parameters are explained <a href="https://cygwin.com/faq/faq.html#faq.setup.cli">here</a>.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1"></a><span class="ex">setup-x86_64.exe</span> --no-admin --quiet-mode --verbose --upgrade-also --root c:/cygwin </span>
 <span id="cb7-2"><a href="#cb7-2"></a><span class="ex">--site</span> http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ </span>
@@ -151,22 +163,26 @@
 <h2 class="hasAnchor">
 <a href="#attach-package-ctrdata" class="anchor"></a>Attach package <code>ctrdata</code>
 </h2>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ctrdata</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb8"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/rfhb/ctrdata">ctrdata</a></span>)
+</pre></div>
 </div>
 <div id="open-registers-advanced-search-page-in-browser" class="section level2">
 <h2 class="hasAnchor">
 <a href="#open-registers-advanced-search-page-in-browser" class="anchor"></a>Open register’s advanced search page in browser</h2>
 <p>These functions open the browser, where the user can start searching for trials of interest.</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="co"># Please review and respect register copyrights:</span>
+<div class="sourceCode" id="cb9"><pre class="downlit">
+<span class="co"># Please review and respect register copyrights:</span>
 <span class="fu"><a href="../reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser</a></span>(
-  <span class="kw">copyright</span> <span class="kw">=</span> <span class="fl">TRUE</span>
+  copyright = <span class="fl">TRUE</span>
 )
 
 <span class="co"># Open browser with example search:</span>
 <span class="fu"><a href="../reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser</a></span>(
-  <span class="kw">input</span> <span class="kw">=</span> <span class="st">"cancer&amp;age=under-18"</span>,
-  <span class="kw">register</span> <span class="kw">=</span> <span class="st">"EUCTR"</span>
-)</pre></body></html></div>
+  input = <span class="st">"cancer&amp;age=under-18"</span>,
+  register = <span class="st">"EUCTR"</span>
+)
+</pre></div>
 </div>
 <div id="click-search-parameters-and-execute-search-in-browser" class="section level2">
 <h2 class="hasAnchor">
@@ -182,13 +198,14 @@
 <h2 class="hasAnchor">
 <a href="#get-address-from-clipboard" class="anchor"></a>Get address from clipboard</h2>
 <p>The next steps are executed in the R environment:</p>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="co"># q &lt;- "https://www.clinicaltrialsregister.eu/ctr-search/search?</span>
+<div class="sourceCode" id="cb10"><pre class="downlit">
+<span class="co"># q &lt;- "https://www.clinicaltrialsregister.eu/ctr-search/search?</span>
 <span class="co"># query=cancer&amp;age=under-18&amp;status=completed&amp;phase=phase-one"</span>
 
-<span class="no">q</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/ctrGetQueryUrlFromBrowser.html">ctrGetQueryUrlFromBrowser</a></span>()
+<span class="kw">q</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ctrGetQueryUrlFromBrowser.html">ctrGetQueryUrlFromBrowser</a></span>()
 <span class="co"># Found search query from EUCTR.</span>
 
-<span class="no">q</span>
+<span class="kw">q</span>
 <span class="co">#                                                   query-term  query-register</span>
 <span class="co"># 1 query=cancer&amp;age=under-18&amp;status=completed&amp;phase=phase-one           EUCTR</span>
 
@@ -196,48 +213,52 @@
 <span class="co"># Note the register needs to be specified</span>
 <span class="co"># when it cannot be deduced from the query</span>
 <span class="fu"><a href="../reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser</a></span>(
-  <span class="kw">input</span> <span class="kw">=</span> <span class="no">q</span>
-)</pre></body></html></div>
+  input = <span class="kw">q</span>
+)
+</pre></div>
 </div>
 <div id="retrieve-protocol-related-information-transform-save-to-database-check" class="section level2">
 <h2 class="hasAnchor">
 <a href="#retrieve-protocol-related-information-transform-save-to-database-check" class="anchor"></a>Retrieve protocol-related information, transform, save to database, check</h2>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="co"># Connect to a database and chose a table / collection</span>
-<span class="no">db</span> <span class="kw">&lt;-</span> <span class="kw pkg">nodbi</span><span class="kw ns">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html">src_sqlite</a></span>(
-  <span class="kw">dbname</span> <span class="kw">=</span> <span class="st">"sqlite_file.sql"</span>,
-  <span class="kw">collection</span> <span class="kw">=</span> <span class="st">"test"</span>
+<div class="sourceCode" id="cb11"><pre class="downlit">
+<span class="co"># Connect to a database and chose a table / collection</span>
+<span class="kw">db</span> <span class="op">&lt;-</span> <span class="kw">nodbi</span>::<span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html">src_sqlite</a></span>(
+  dbname = <span class="st">"sqlite_file.sql"</span>,
+  collection = <span class="st">"test"</span>
 )
 
 <span class="co"># Count number of records</span>
 <span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span>(
-  <span class="kw">queryterm</span> <span class="kw">=</span> <span class="no">q</span>,
-  <span class="kw">only.count</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
-  <span class="kw">con</span> <span class="kw">=</span> <span class="no">db</span>
+  queryterm = <span class="kw">q</span>,
+  only.count = <span class="fl">TRUE</span>,
+  con = <span class="kw">db</span>
 )
 
 <span class="co"># Use search q that was defined in previous step: </span>
 <span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span>(
-  <span class="kw">queryterm</span> <span class="kw">=</span> <span class="no">q</span>,
-  <span class="kw">con</span> <span class="kw">=</span> <span class="no">db</span>
+  queryterm = <span class="kw">q</span>,
+  con = <span class="kw">db</span>
 )
 
 <span class="co"># With file-base SQLite, takes 5 minutes for 1000 records.</span>
 <span class="co"># Speed is higher when using MongoDB (or memory-based SQLite). </span>
 
 <span class="co"># Show which queries have been downloaded into database so far</span>
-<span class="fu"><a href="../reference/dbQueryHistory.html">dbQueryHistory</a></span>(<span class="kw">con</span> <span class="kw">=</span> <span class="no">db</span>)
+<span class="fu"><a href="../reference/dbQueryHistory.html">dbQueryHistory</a></span>(con = <span class="kw">db</span>)
 <span class="co">#       query-timestamp query-register query-records</span>
 <span class="co"># 1 2019-10-13 20:23:11          EUCTR           173</span>
 <span class="co">#                                                   query-term</span>
-<span class="co"># 1 query=cancer&amp;age=under-18&amp;status=completed&amp;phase=phase-one</span></pre></body></html></div>
+<span class="co"># 1 query=cancer&amp;age=under-18&amp;status=completed&amp;phase=phase-one</span>
+</pre></div>
 </div>
 <div id="analyse-information-on-clinical-trials" class="section level2">
 <h2 class="hasAnchor">
 <a href="#analyse-information-on-clinical-trials" class="anchor"></a>Analyse information on clinical trials</h2>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="co"># find names of fields of interest in database:</span>
+<div class="sourceCode" id="cb12"><pre class="downlit">
+<span class="co"># find names of fields of interest in database:</span>
 <span class="fu"><a href="../reference/dbFindFields.html">dbFindFields</a></span>(
-  <span class="kw">namepart</span> <span class="kw">=</span> <span class="st">"status"</span>,
-  <span class="kw">con</span> <span class="kw">=</span> <span class="no">db</span>
+  namepart = <span class="st">"status"</span>, 
+  con = <span class="kw">db</span>
 )
 <span class="co"># Finding fields on server (may take some time)</span>
 <span class="co"># Field names cached for this session.</span>
@@ -253,14 +274,14 @@
 <span class="co"># root has to be retrieved and only from the nested list in</span>
 <span class="co"># this element, the sub-element b31_and_b32_status... can </span>
 <span class="co"># then be extracted, using the helpfer function below. </span>
-<span class="no">result</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span>(
-  <span class="kw">fields</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"b1_sponsor"</span>,
+<span class="kw">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span>(
+  fields = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"b1_sponsor"</span>, 
              <span class="st">"p_end_of_trial_status"</span>),
-  <span class="kw">con</span> <span class="kw">=</span> <span class="no">db</span>
+  con = <span class="kw">db</span>
 )
 
 <span class="co"># Show nested list in the element</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">result</span>[<span class="fl">1</span>, <span class="st">"b1_sponsor"</span>])
+<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="kw">result</span>[<span class="fl">1</span>, <span class="st">"b1_sponsor"</span>])
 <span class="co"># List of 1</span>
 <span class="co">#  $ :'data.frame': 1 obs. of  4 variables:</span>
 <span class="co">#   ..$ _b1_sponsor                      : chr "1"</span>
@@ -269,18 +290,18 @@
 <span class="co">#   ..$ b31_and_b32_status_of_the_sponsor: chr "Commercial"</span>
 
 <span class="co"># Extract sought element from root element</span>
-<span class="no">tmp</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/dfListExtractKey.html">dfListExtractKey</a></span>(
-  <span class="no">result</span>,
+<span class="kw">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfListExtractKey.html">dfListExtractKey</a></span>(
+  <span class="kw">result</span>, 
   <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(
     <span class="st">"b1_sponsor"</span>, <span class="st">"b31_and_b32_status_of_the_sponsor"</span>)
 ))
-<span class="no">result</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">result</span>, <span class="no">tmp</span>)
+<span class="kw">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="kw">result</span>, <span class="kw">tmp</span>)
 
 <span class="co"># Tabulate the status of the clinical trial</span>
-<span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span>(<span class="no">result</span>,
+<span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span>(<span class="kw">result</span>, 
      <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span>(
-       <span class="st">"Status"</span>       <span class="kw">=</span> <span class="no">p_end_of_trial_status</span>,
-       <span class="st">"Sponsor type"</span> <span class="kw">=</span> <span class="no">value</span>)
+       <span class="st">"Status"</span>       = <span class="kw">p_end_of_trial_status</span>, 
+       <span class="st">"Sponsor type"</span> = <span class="kw">value</span>)
 )
 <span class="co">#</span>
 <span class="co">#                     Sponsor type</span>
@@ -289,7 +310,8 @@
 <span class="co">#   Not Authorised              1              0</span>
 <span class="co">#   Ongoing                    31              2</span>
 <span class="co">#   Prematurely Ended           6              0</span>
-<span class="co">#   Temporarily Halted          1              0</span></pre></body></html></div>
+<span class="co">#   Temporarily Halted          1              0</span>
+</pre></div>
 </div>
   </div>
 

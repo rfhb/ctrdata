@@ -139,14 +139,16 @@ citation("ctrdata")
 <h2 class="hasAnchor">
 <a href="#1-install-package-in-r" class="anchor"></a>1. Install package in R</h2>
 <p>Package <code>ctrdata</code> can be found <a href="https://cran.r-project.org/package=ctrdata">here on CRAN</a> and <a href="https://github.com/rfhb/ctrdata">here on github</a>. Within <a href="https://www.r-project.org/">R</a>, use the following commands to install package <code>ctrdata</code>:</p>
-<div class="sourceCode" id="cb1"><pre class="r"><span class="co"># Install CRAN version:</span>
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="co"># Install CRAN version:</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"ctrdata"</span>)
 
 <span class="co"># Alternatively, install development version: </span>
 <span class="co"># - Preparation:</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"devtools"</span>)
 <span class="co"># - Install ctrdata:</span>
-<span class="kw pkg">devtools</span><span class="kw ns">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span>(<span class="st">"rfhb/ctrdata"</span>)</pre></div>
+<span class="kw">devtools</span>::<span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span>(<span class="st">"rfhb/ctrdata"</span>)
+</pre></div>
 <p>These commands also install the package dependencies, which are <code>nodbi</code>, <code>jsonlite</code>, <code>httr</code>, <code>curl</code>, <code>clipr</code>, <code>xml2</code>, <code>rvest</code>.</p>
 </div>
 <div id="2-command-line-tools-perl-sed-cat-and-php-52-or-higher" class="section level2">
@@ -226,34 +228,41 @@ citation("ctrdata")
 <ul>
 <li>Attach package <code>ctrdata</code>:</li>
 </ul>
-<!-- end list --><div class="sourceCode" id="cb2"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ctrdata</span>)</pre></div>
+<!-- end list --><div class="sourceCode" id="cb2"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/rfhb/ctrdata">ctrdata</a></span>)
+</pre></div>
 <ul>
 <li>Open registers’ advanced search pages in browser:</li>
 </ul>
-<!-- end list --><div class="sourceCode" id="cb3"><pre class="r"><span class="fu"><a href="reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser</a></span>()
+<!-- end list --><div class="sourceCode" id="cb3"><pre class="downlit">
+<span class="fu"><a href="reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser</a></span>()
 
 <span class="co"># Please review and respect register copyrights:</span>
-<span class="fu"><a href="reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser</a></span>(<span class="kw">copyright</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></div>
+<span class="fu"><a href="reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser</a></span>(copyright = <span class="fl">TRUE</span>)
+</pre></div>
 <ul>
 <li><p>Adjust search parameters and execute search in browser</p></li>
 <li><p>When trials of interest are listed in browser, copy the address from the browser’s address bar to the clipboard</p></li>
 <li><p>Get address from clipboard:</p></li>
 </ul>
-<!-- end list --><div class="sourceCode" id="cb4"><pre class="r"><span class="no">q</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/ctrGetQueryUrlFromBrowser.html">ctrGetQueryUrlFromBrowser</a></span>()
+<!-- end list --><div class="sourceCode" id="cb4"><pre class="downlit">
+<span class="kw">q</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ctrGetQueryUrlFromBrowser.html">ctrGetQueryUrlFromBrowser</a></span>()
 <span class="co"># * Found search query from EUCTR.</span>
 
-<span class="no">q</span>
+<span class="kw">q</span>
 <span class="co">#                                  query-term query-register</span>
-<span class="co"># 1 query=cancer&amp;age=under-18&amp;phase=phase-one          EUCTR</span></pre></div>
+<span class="co"># 1 query=cancer&amp;age=under-18&amp;phase=phase-one          EUCTR</span>
+</pre></div>
 <ul>
 <li>Retrieve protocol-related information, transform and save to database:</li>
 </ul>
 <p>Under the hood, scripts <code>euctr2json.sh</code> and <code>xml2json.php</code> (in <code>ctrdata/exec</code>) transform EUCTR plain text files and CTGOV <code>XML</code> files to <code>ndjson</code> format, which is imported into the database. As a first step, the database is specified using <code>nodbi</code> (using RSQlite or MongoDB as backend). Second, trial information is retrieved and loaded into the database.</p>
-<div class="sourceCode" id="cb5"><pre class="r"><span class="co"># Connect to (or newly create) a SQLite database </span>
+<div class="sourceCode" id="cb5"><pre class="downlit">
+<span class="co"># Connect to (or newly create) a SQLite database </span>
 <span class="co"># that is stored in a file on the local system:</span>
-<span class="no">db</span> <span class="kw">&lt;-</span> <span class="kw pkg">nodbi</span><span class="kw ns">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html">src_sqlite</a></span>(
-  <span class="kw">dbname</span> <span class="kw">=</span> <span class="st">"some_database_name.sqlite_file"</span>,
-  <span class="kw">collection</span> <span class="kw">=</span> <span class="st">"some_collection_name"</span>)
+<span class="kw">db</span> <span class="op">&lt;-</span> <span class="kw">nodbi</span>::<span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html">src_sqlite</a></span>(
+  dbname = <span class="st">"some_database_name.sqlite_file"</span>, 
+  collection = <span class="st">"some_collection_name"</span>)
 
 <span class="co"># Alternative, for a MongoDB database:</span>
 <span class="co"># db &lt;- nodbi::src_mongo(url = "mongodb://localhost", </span>
@@ -262,25 +271,27 @@ citation("ctrdata")
 
 <span class="co"># Retrieve trials from public register:</span>
 <span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span>(
-  <span class="kw">queryterm</span> <span class="kw">=</span>
-    <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"https://www.clinicaltrialsregister.eu/ctr-search/search?"</span>,
+  queryterm = 
+    <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"https://www.clinicaltrialsregister.eu/ctr-search/search?"</span>, 
            <span class="st">"query=cancer&amp;age=under-18&amp;phase=phase-one"</span>),
-  <span class="kw">con</span> <span class="kw">=</span> <span class="no">d</span>)</pre></div>
+  con = <span class="kw">d</span>)
+</pre></div>
 <ul>
 <li>Analyse</li>
 </ul>
 <p>Tabulate the status of those trials that are recorded to be part of an agreed paediatric development program (paediatric investigation plan, PIP):</p>
-<div class="sourceCode" id="cb6"><pre class="r"><span class="co"># Get all records that have values in the fields of interest:</span>
-<span class="no">result</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span>(
-  <span class="kw">fields</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(
-    <span class="st">"a7_trial_is_part_of_a_paediatric_investigation_plan"</span>,
-    <span class="st">"p_end_of_trial_status"</span>,
+<div class="sourceCode" id="cb6"><pre class="downlit">
+<span class="co"># Get all records that have values in the fields of interest:</span>
+<span class="kw">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span>(
+  fields = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(
+    <span class="st">"a7_trial_is_part_of_a_paediatric_investigation_plan"</span>, 
+    <span class="st">"p_end_of_trial_status"</span>, 
     <span class="st">"a2_eudract_number"</span>),
-  <span class="kw">con</span> <span class="kw">=</span> <span class="no">db</span>)
+  con = <span class="kw">db</span>)
 
 <span class="co"># Find unique trial identifiers for trials that have nore than one record, </span>
 <span class="co"># for example for several EU Member States: </span>
-<span class="no">uniqueids</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span>(<span class="kw">con</span> <span class="kw">=</span> <span class="no">db</span>)
+<span class="kw">uniqueids</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span>(con = <span class="kw">db</span>)
 <span class="co"># * Total of 454 records in collection.</span>
 <span class="co"># Searching for duplicates, found </span>
 <span class="co">#  - 292 EUCTR _id were not preferred EU Member State record of trial</span>
@@ -288,101 +299,106 @@ citation("ctrdata")
 <span class="co"># = Returning keys (_id) of 162 out of total 454 records in collection "some_collection_name".</span>
 
 <span class="co"># Keep only unique / deduplicated records:</span>
-<span class="no">result</span> <span class="kw">&lt;-</span> <span class="no">result</span>[ <span class="no">result</span><span class="kw">[[</span><span class="st">"_id"</span>]] <span class="kw">%in%</span> <span class="no">uniqueids</span>, ]
+<span class="kw">result</span> <span class="op">&lt;-</span> <span class="kw">result</span>[ <span class="kw">result</span>[[<span class="st">"_id"</span>]] <span class="op">%in%</span> <span class="kw">uniqueids</span>, ]
 
 <span class="co"># Tabulate the clinical trial information:</span>
-<span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span>(<span class="no">result</span>, <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span>(<span class="no">p_end_of_trial_status</span>,
-                   <span class="no">a7_trial_is_part_of_a_paediatric_investigation_plan</span>))
+<span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span>(<span class="kw">result</span>, <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span>(<span class="kw">p_end_of_trial_status</span>, 
+                   <span class="kw">a7_trial_is_part_of_a_paediatric_investigation_plan</span>))
 <span class="co">#</span>
 <span class="co">#                      a7_trial_is_part_of_a_paediatric_investigation_plan</span>
 <span class="co"># p_end_of_trial_status   Information not present in EudraCT No Yes</span>
 <span class="co">#    Completed                                             6 14   8</span>
 <span class="co">#    Ongoing                                               3 62  22</span>
 <span class="co">#    Prematurely Ended                                     1  4   2</span>
-<span class="co">#    Temporarily Halted                                    0  1   1</span></pre></div>
+<span class="co">#    Temporarily Halted                                    0  1   1</span>
+</pre></div>
 <ul>
 <li>Add records from another register into database</li>
 </ul>
-<!-- end list --><div class="sourceCode" id="cb7"><pre class="r"><span class="co"># Retrieve trials from public register:</span>
+<!-- end list --><div class="sourceCode" id="cb7"><pre class="downlit">
+<span class="co"># Retrieve trials from public register:</span>
 <span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span>(
-  <span class="kw">queryterm</span> <span class="kw">=</span> <span class="st">"cond=neuroblastoma&amp;rslt=With&amp;recrs=e&amp;age=0&amp;intr=Drug"</span>,
-  <span class="kw">register</span> <span class="kw">=</span> <span class="st">"CTGOV"</span>,
-  <span class="kw">con</span> <span class="kw">=</span> <span class="no">db</span>)</pre></div>
+  queryterm = <span class="st">"cond=neuroblastoma&amp;rslt=With&amp;recrs=e&amp;age=0&amp;intr=Drug"</span>, 
+  register = <span class="st">"CTGOV"</span>,
+  con = <span class="kw">db</span>)
+</pre></div>
 <ul>
 <li>Result-related trial information</li>
 </ul>
 <p>Analyse some result details; note how information fields are used with slightly different approaches:</p>
-<div class="sourceCode" id="cb8"><pre class="r"><span class="co"># Get all records that have values in all specified fields. </span>
+<div class="sourceCode" id="cb8"><pre class="downlit">
+<span class="co"># Get all records that have values in all specified fields. </span>
 <span class="co"># Note the fields are specific to CTGOV, thus not in EUCTR,</span>
 <span class="co"># which results in a warning that not all reacords in the </span>
 <span class="co"># database have information on the specified fields:  </span>
-<span class="no">result</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span>(
-  <span class="kw">fields</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(
+<span class="kw">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span>(
+  fields = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(
     <span class="st">"clinical_results.baseline.analyzed_list.analyzed.count_list.count"</span>,
     <span class="st">"clinical_results.baseline.group_list.group"</span>,
-    <span class="st">"clinical_results.baseline.analyzed_list.analyzed.units"</span>,
-    <span class="st">"study_design_info.allocation"</span>,
+    <span class="st">"clinical_results.baseline.analyzed_list.analyzed.units"</span>, 
+    <span class="st">"study_design_info.allocation"</span>, 
     <span class="st">"location"</span>),
-  <span class="kw">con</span> <span class="kw">=</span> <span class="no">db</span>)
+  con = <span class="kw">db</span>)
 
 <span class="co"># - Count sites: location is a list of lists, </span>
 <span class="co">#   hence the hierarchical extraction by</span>
 <span class="co">#   facility and then name of facility</span>
-<span class="no">result</span>$<span class="no">number_sites</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(
-  <span class="no">result</span>$<span class="no">location</span>, <span class="kw">function</span>(<span class="no">x</span>) <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">x</span><span class="kw">[[</span><span class="st">"facility"</span>]]<span class="kw">[[</span><span class="st">"name"</span>]]))
+<span class="kw">result</span><span class="op">$</span><span class="kw">number_sites</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(
+  <span class="kw">result</span><span class="op">$</span><span class="kw">location</span>, <span class="fu">function</span>(<span class="kw">x</span>) <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="kw">x</span>[[<span class="st">"facility"</span>]][[<span class="st">"name"</span>]]))
 
 <span class="co">#   an alternative approach uses a function provided by</span>
 <span class="co">#   ctrdata to extract keys from a list in a data frame:</span>
 <span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span>(
   <span class="fu"><a href="reference/dfListExtractKey.html">dfListExtractKey</a></span>(
-    <span class="kw">df</span> <span class="kw">=</span> <span class="no">result</span>,
-    <span class="kw">list.key</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"location"</span>, <span class="st">"facility.name"</span>))),
-  <span class="fu"><a href="https://rdrr.io/r/base/by.html">by</a></span>(<span class="no">item</span>, <span class="no">`_id`</span>, <span class="no">max</span>)
+    df = <span class="kw">result</span>, 
+    list.key = <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"location"</span>, <span class="st">"facility.name"</span>))), 
+  <span class="fu"><a href="https://rdrr.io/r/base/by.html">by</a></span>(<span class="kw">item</span>, <span class="kw">`_id`</span>, <span class="kw">max</span>)
 )
 
 <span class="co"># - Count total participant numbers, by summing the reporting groups</span>
 <span class="co">#   for which their description does not contain the word "total" </span>
 <span class="co">#   (such as in "Total participants")</span>
-<span class="no">result</span>$<span class="no">number_participants</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(
-  <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_len</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(<span class="no">result</span>)), <span class="kw">function</span>(<span class="no">i</span>) {
-
+<span class="kw">result</span><span class="op">$</span><span class="kw">number_participants</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(
+  <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_len</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(<span class="kw">result</span>)), <span class="fu">function</span>(<span class="kw">i</span>) {
+    
     <span class="co"># Participant counts are in a list of elements with attributes, </span>
     <span class="co"># where attribute value has a vector of numbers per reporting group</span>
-    <span class="no">tmp</span> <span class="kw">&lt;-</span> <span class="no">result</span>$<span class="no">clinical_results.baseline.analyzed_list.analyzed.count_list.count</span><span class="kw">[[</span><span class="no">i</span>]]
-
+    <span class="kw">tmp</span> <span class="op">&lt;-</span> <span class="kw">result</span><span class="op">$</span><span class="kw">clinical_results.baseline.analyzed_list.analyzed.count_list.count</span>[[<span class="kw">i</span>]]
+    
     <span class="co"># Information on reporting groups is in a list with a subelement description</span>
-    <span class="no">tot</span> <span class="kw">&lt;-</span> <span class="no">result</span>$<span class="no">clinical_results.baseline.group_list.group</span><span class="kw">[[</span><span class="no">i</span>]]
-
+    <span class="kw">tot</span> <span class="op">&lt;-</span> <span class="kw">result</span><span class="op">$</span><span class="kw">clinical_results.baseline.group_list.group</span>[[<span class="kw">i</span>]]
+    
     <span class="co"># see for example https://clinicaltrials.gov/ct2/show/results/NCT00253435#base</span>
-    <span class="no">tmp</span> <span class="kw">&lt;-</span> <span class="no">tmp</span><span class="kw">[[</span><span class="st">"@attributes"</span>]]<span class="kw">[[</span><span class="st">"value"</span>]]
-    <span class="no">tmp</span> <span class="kw">&lt;-</span> <span class="no">tmp</span>[ !<span class="fu"><a href="https://rdrr.io/r/base/grep.html">grepl</a></span>(<span class="st">"(^| )[tT]otal( |$)"</span>, <span class="no">tot</span><span class="kw">[[</span><span class="st">"description"</span>]])]
-
+    <span class="kw">tmp</span> <span class="op">&lt;-</span> <span class="kw">tmp</span>[[<span class="st">"@attributes"</span>]][[<span class="st">"value"</span>]]
+    <span class="kw">tmp</span> <span class="op">&lt;-</span> <span class="kw">tmp</span>[ <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">grepl</a></span>(<span class="st">"(^| )[tT]otal( |$)"</span>, <span class="kw">tot</span>[[<span class="st">"description"</span>]])]
+    
     <span class="co"># to sum up, change string into integer value.</span>
     <span class="co"># note that e.g. sum(..., na.rm = TRUE) is not used</span>
     <span class="co"># since there are no empty entries in these trials</span>
-    <span class="no">tmp</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(<span class="no">tmp</span>))
-    <span class="no">tmp</span>
-
+    <span class="kw">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(<span class="kw">tmp</span>))
+    <span class="kw">tmp</span>
+    
   })
 
 <span class="co"># Allocation is part of study design information and available</span>
 <span class="co"># as a simple character string, suitable for routine manipulation</span>
-<span class="no">result</span>$<span class="no">is_controlled</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">grepl</a></span>(
-  <span class="kw">pattern</span> <span class="kw">=</span> <span class="st">"^Random"</span>,
-  <span class="kw">x</span> <span class="kw">=</span> <span class="no">result</span>$<span class="no">study_design_info.allocation</span>)
+<span class="kw">result</span><span class="op">$</span><span class="kw">is_controlled</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">grepl</a></span>(
+  pattern = <span class="st">"^Random"</span>, 
+  x = <span class="kw">result</span><span class="op">$</span><span class="kw">study_design_info.allocation</span>)
 
 <span class="co"># Example plot</span>
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ggplot2</span>)
-<span class="fu">ggplot</span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">result</span>) +
-  <span class="fu">labs</span>(<span class="kw">title</span> <span class="kw">=</span> <span class="st">"Neuroblastoma trials with results"</span>,
-       <span class="kw">subtitle</span> <span class="kw">=</span> <span class="st">"clinicaltrials.gov"</span>) +
-  <span class="fu">geom_point</span>(<span class="kw">mapping</span> <span class="kw">=</span> <span class="fu">aes</span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">number_sites</span>,
-                           <span class="kw">y</span> <span class="kw">=</span> <span class="no">number_participants</span>,
-                           <span class="kw">colour</span> <span class="kw">=</span> <span class="no">is_controlled</span>)) +
-  <span class="fu">scale_x_log10</span>() +
-  <span class="fu">scale_y_log10</span>()
-<span class="fu">ggsave</span>(<span class="kw">filename</span> <span class="kw">=</span> <span class="st">"inst/image/README-ctrdata_results_neuroblastoma.png"</span>,
-       <span class="kw">width</span> <span class="kw">=</span> <span class="fl">4</span>, <span class="kw">height</span> <span class="kw">=</span> <span class="fl">3</span>, <span class="kw">units</span> <span class="kw">=</span> <span class="st">"in"</span>)</pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw">ggplot2</span>)
+<span class="fu">ggplot</span>(data = <span class="kw">result</span>) <span class="op">+</span> 
+  <span class="fu">labs</span>(title = <span class="st">"Neuroblastoma trials with results"</span>,
+       subtitle = <span class="st">"clinicaltrials.gov"</span>) <span class="op">+</span>
+  <span class="fu">geom_point</span>(mapping = <span class="fu">aes</span>(x = <span class="kw">number_sites</span>,
+                           y = <span class="kw">number_participants</span>,
+                           colour = <span class="kw">is_controlled</span>)) <span class="op">+</span> 
+  <span class="fu">scale_x_log10</span>() <span class="op">+</span> 
+  <span class="fu">scale_y_log10</span>() 
+<span class="fu">ggsave</span>(filename = <span class="st">"inst/image/README-ctrdata_results_neuroblastoma.png"</span>,
+       width = <span class="fl">4</span>, height = <span class="fl">3</span>, units = <span class="st">"in"</span>)
+</pre></div>
 <p><img src="inst/image/README-ctrdata_results_neuroblastoma.png" alt="Neuroblastoma trials"></p>
 </div>
 <div id="databases" class="section level1">

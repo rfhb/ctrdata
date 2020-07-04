@@ -150,7 +150,7 @@
     <p>Show the history of queries that were loaded into a database</p>
     </div>
 
-    <pre class="usage"><span class='fu'>dbQueryHistory</span>(<span class='no'>con</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/ctrdata/man/dbQueryHistory.html'>dbQueryHistory</a></span>(<span class='kw'>con</span>, verbose = <span class='fl'>FALSE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -171,15 +171,16 @@ nodbi::<a href='https://docs.ropensci.org/nodbi/reference/src_mongo.html'>src_mo
 
     <p>A data frame with columns: query-timestamp, query-egister,
  query-records (note: this is the number of records loaded when last
- executing <a href='ctrLoadQueryIntoDb.html'>ctrLoadQueryIntoDb</a>, not the total record number) and
- query-term, and with one row for each <a href='ctrLoadQueryIntoDb.html'>ctrLoadQueryIntoDb</a>
+ executing <a href='https://rdrr.io/pkg/ctrdata/man/ctrLoadQueryIntoDb.html'>ctrLoadQueryIntoDb</a>, not the total record number) and
+ query-term, and with one row for each <a href='https://rdrr.io/pkg/ctrdata/man/ctrLoadQueryIntoDb.html'>ctrLoadQueryIntoDb</a>
  loading trial records in this collection.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='fu'>dbQueryHistory</span>()
-}</div></pre>
+<span class='co'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='fu'><a href='https://rdrr.io/pkg/ctrdata/man/dbQueryHistory.html'>dbQueryHistory</a></span>()
+}
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

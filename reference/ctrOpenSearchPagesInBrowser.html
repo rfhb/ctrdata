@@ -150,7 +150,7 @@
     <p>Open advanced search pages of register(s) or execute search in browser</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ctrOpenSearchPagesInBrowser</span>(<span class='kw'>input</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>register</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>copyright</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/ctrdata/man/ctrOpenSearchPagesInBrowser.html'>ctrOpenSearchPagesInBrowser</a></span>(input = <span class='st'>""</span>, register = <span class='st'>""</span>, copyright = <span class='fl'>FALSE</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -159,8 +159,8 @@
       <th>input</th>
       <td><p>Show results of search for <code>queryterm</code> in
 browser. To open the browser with a previous search, (register or)
-queryterm can be the output of <a href='ctrGetQueryUrlFromBrowser.html'>ctrGetQueryUrlFromBrowser</a> or can be one
-row from <a href='dbQueryHistory.html'>dbQueryHistory</a>.</p></td>
+queryterm can be the output of <a href='https://rdrr.io/pkg/ctrdata/man/ctrGetQueryUrlFromBrowser.html'>ctrGetQueryUrlFromBrowser</a> or can be one
+row from <a href='https://rdrr.io/pkg/ctrdata/man/dbQueryHistory.html'>dbQueryHistory</a>.</p></td>
     </tr>
     <tr>
       <th>register</th>
@@ -186,16 +186,17 @@ this function.</p></td>
     <p>Is always true, invisibly.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='fu'>ctrOpenSearchPagesInBrowser</span>(
+    <pre class="examples"><div class='input'><span class='co'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='fu'><a href='https://rdrr.io/pkg/ctrdata/man/ctrOpenSearchPagesInBrowser.html'>ctrOpenSearchPagesInBrowser</a></span>(
  <span class='st'>"https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer"</span>)
 
-<span class='fu'>ctrOpenSearchPagesInBrowser</span>(
- <span class='fu'><a href='ctrGetQueryUrlFromBrowser.html'>ctrGetQueryUrlFromBrowser</a></span>())
+<span class='fu'><a href='https://rdrr.io/pkg/ctrdata/man/ctrOpenSearchPagesInBrowser.html'>ctrOpenSearchPagesInBrowser</a></span>(
+ <span class='fu'><a href='https://rdrr.io/pkg/ctrdata/man/ctrGetQueryUrlFromBrowser.html'>ctrGetQueryUrlFromBrowser</a></span>())
 
-<span class='fu'>ctrOpenSearchPagesInBrowser</span>(
- <span class='fu'><a href='dbQueryHistory.html'>dbQueryHistory</a></span>())
-}</div></pre>
+<span class='fu'><a href='https://rdrr.io/pkg/ctrdata/man/ctrOpenSearchPagesInBrowser.html'>ctrOpenSearchPagesInBrowser</a></span>(
+ <span class='fu'><a href='https://rdrr.io/pkg/ctrdata/man/dbQueryHistory.html'>dbQueryHistory</a></span>())
+}
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
