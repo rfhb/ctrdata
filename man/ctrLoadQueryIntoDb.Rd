@@ -16,7 +16,7 @@ ctrLoadQueryIntoDb(
   annotation.mode = "append",
   parallelretrievals = 10L,
   only.count = FALSE,
-  con = NULL,
+  con,
   verbose = FALSE
 )
 }
