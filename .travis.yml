@@ -1,10 +1,5 @@
-# to install command line client:
-#
-# gem install travis --no-rdoc --no-ri
 # brew install travis
-
-# to validate (note r raises a misleading error):
-# travis lint [path to your .travis.yml]
+# travis lint .travis.yml
 
 language: r
 
@@ -13,42 +8,15 @@ r:
   - release
   - devel
 
-sudo: required
-
 cache: packages
 
-# https://docs.travis-ci.com/user/database-setup/#MongoDB
-# MongoDB binds to 127.0.0.1 and requires no authentication
-# and not upfront database creation
 services:
   - mongodb
 
-# https://github.com/travis-ci/apt-source-whitelist/blob/master/ubuntu.json
-# http://repo.mongodb.org/apt/ubuntu/dists/precise/mongodb-org/3.2/multiverse/binary-amd64/
-# https://docs.travis-ci.com/user/reference/xenial/#php-support
-# addons:
-#  apt:
-#    packages:
-#    - php5-cli
-#    - mongodb-org
-#    sources:
-#    - mongodb-3.4-trusty
-
-
-# to be added to use mongoimport for further travis testing:
-#     - mongodb-org-tools
-# as of 2016-04-10: travis build fails as follows:
-# Disallowing packages: mongodb-org-tools
-# If you require these packages, please review the package approval process at:
-# https://github.com/travis-ci/apt-package-whitelist#package-approval-process
-# comment to existing issue
-# https://github.com/travis-ci/apt-package-whitelist/issues/2287
-# new issue
-# https://github.com/travis-ci/apt-package-whitelist/issues/2825
-
-# https://cran.r-project.org/web/packages/devtools/vignettes/dependencies.html
-# r_github_packages:
-#  - ropensci/nodbi
+env:
+  global:
+    - _R_CHECK_TIMINGS_="0"
+    - ATHOME="1"
 
 r_packages:
   - nodbi
@@ -61,7 +29,6 @@ r_packages:
 after_success:
   - Rscript -e 'library(covr); codecov()'
 
-# slack integration added for channel #ctrdata_development
 notifications:
   slack:
     secure: PslVekYsj6PI7S15LAVlunmMUW5+8JDPaF5MqdQTl4Iz7V3ejQ8Dc6cTRA3y5HmmaNPgum8QyfgmM9a5a3EwrCvG8REIBow9gnb8lfzTde6jIVFGmxhXnTak8jj3YOvq5PjAaL3Vc1UALzhbA7l77EqoEBEIt4GD5l8c1WI6bz+b/2+BUDuI+BQmeWO/+weWsnQPitOOOIUT42+dakppkzfTl80gPa9bHO13ZcUT+biTCCUc55y7HVFdTc2F2KREBGA5gvmBl3KwJQz01U2lCen0xgxhrUVW/bqTFJso0/CEEFaZ0pm/ithymNMY3cyKjDFDb/WWSMPXf0TB02K4FjPzI1x/gb7FWgpevPVMNI6dh8aFLZY1DdMY/0rG/B4SQ/PKn9o1KwmYYGD4EIislgZOI9OJmI7eqw48vQfWXegyJGYWyuRwOQ53F9pj04emR5jvpo9bkEkPDPQW1f9kAfgZa+BBUDc2thZFrLpVSQfADsm/0ow9pFYTkXlhPJDENNhvYDkCSCsGg8IXOnJ+CGVJcv3g0O4IEx0WKMQNNz3zhZB6IzgaXP6vCmt7DZ2k/tomwcWnjPjVw9979jRHubc5iJAQglvU42Lv4dXPGwgEZqkJOJ+d5VObjWbgDPqXhxpm0VPeJ9LF+fSsg1Z4yE79hDwu2LREgtoS2Cnea3M=
