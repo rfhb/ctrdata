@@ -13,7 +13,8 @@ be searched for among all field names (keys) in the database.}
 \item{con}{A \link[nodbi]{src} connection object, as obtained with
 nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()}
 
-\item{verbose}{If \code{TRUE}, prints additional information (default \code{FALSE}).}
+\item{verbose}{If \code{TRUE}, prints additional information
+(default \code{FALSE}).}
 }
 \value{
 Vector of names of found field(s)

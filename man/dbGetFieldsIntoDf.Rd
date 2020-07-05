@@ -35,14 +35,14 @@ of values if there is more than one value or if the field is (in) an array,
 such as follows: value 1 / value 2 / ... (see example)
 }
 \details{
-For more sophisticated data retrieval from the database, see vignette examples
-and other packages to query mongodb such as mongolite.
+For more sophisticated data retrieval from the database, see vignette
+examples and other packages to query mongodb such as mongolite.
 }
 \examples{
 
 \dontrun{
 db <- nodbi::src_sqlite(collection = "test")
-dbGetFieldsIntoDf("b1_sponsor.b31_and_b32_status_of_the_sponsor", con = db)[1,]
+dbGetFieldsIntoDf("b1_sponsor.b31_and_b32_status_of_the_sponsor", con = db)
 #                   _id  b1_sponsor.b31_and_b32_status_of_the_sponsor
 #  1  2004-000015-25-GB                   Non-commercial / Commercial
 

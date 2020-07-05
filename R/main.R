@@ -1056,18 +1056,19 @@ ctrLoadQueryIntoDbEuctr <- function(
 
   ## sanity correction for naked terms
   # test cases:
-  # queryterm = c("cancer&age=adult",                      # add query=
-  #               "cancer",                                # add query=
-  #               "cancer+AND breast&age=adult&phase=0",   # add query=
-  #               "cancer&age=adult&phase=0",              # add query=
-  #               "cancer&age=adult&phase=1&results=true", # add query=
-  #               "&age=adult&phase=1&abc=xyz&cancer&results=true", # insert query=
-  #               "age=adult&cancer",                      # insert query=
-  #               "2010-024264-18",                        # add query=
-  #               "NCT1234567890",                         # add query=
-  #               "teratoid&country=dk",                   # add query=
-  #               "term=cancer&age=adult",                 # keep
-  #               "age=adult&term=cancer")                 # keep
+  # queryterm = c(
+  #   "cancer&age=adult",                      # add query=
+  #   "cancer",                                # add query=
+  #   "cancer+AND breast&age=adult&phase=0",   # add query=
+  #   "cancer&age=adult&phase=0",              # add query=
+  #   "cancer&age=adult&phase=1&results=true", # add query=
+  #   "&age=adult&phase=1&abc=xyz&cancer&results=true", # insert query=
+  #   "age=adult&cancer",                      # insert query=
+  #   "2010-024264-18",                        # add query=
+  #   "NCT1234567890",                         # add query=
+  #   "teratoid&country=dk",                   # add query=
+  #   "term=cancer&age=adult",                 # keep
+  #   "age=adult&term=cancer")                 # keep
   queryterm <- sub(
     "(^|&|[&]?\\w+=\\w+&)([ a-zA-Z0-9+-]+)($|&\\w+=\\w+)",
     "\\1query=\\2\\3",
@@ -1372,7 +1373,8 @@ ctrLoadQueryIntoDbEuctr <- function(
 
     ## parallel download and unzipping into temporary directory
 
-    # "https://www.clinicaltrialsregister.eu/ctr-search/rest/download/result/zip/xml/..."
+    # "https://www.clinicaltrialsregister.eu/ctr-search/rest/
+    # download/result/zip/xml/..."
     # first version:  "2007-000371-42/1"
     # second version: "2007-000371-42/2"
     # latest version: "2007-000371-42"
@@ -1682,8 +1684,8 @@ ctrLoadQueryIntoDbEuctr <- function(
             gsub("[ ]+", " ",
             gsub("[\n\r]", "",
             gsub("<[a-z/]+>", "",
-             sub(".+Version creation reason.*?<td class=\"valueColumn\">(.+?)</td>.+", "\\1",
-                 ifelse(grepl("Version creation reason", x), x, ""))
+             sub(".+Version creation reason.*?<td class=\"valueColumn\">(.+?)</td>.+",
+                 "\\1", ifelse(grepl("Version creation reason", x), x, ""))
             ))))
         )
 

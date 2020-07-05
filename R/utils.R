@@ -552,7 +552,8 @@ dbQueryHistory <- function(con,
 #' @param namepart A plain string (not a regular expression) to
 #' be searched for among all field names (keys) in the database.
 #'
-#' @param verbose If \code{TRUE}, prints additional information (default \code{FALSE}).
+#' @param verbose If \code{TRUE}, prints additional information
+#' (default \code{FALSE}).
 #'
 #' @importFrom nodbi docdb_query
 #'
@@ -574,9 +575,9 @@ dbFindFields <- function(namepart = "",
                          verbose = FALSE) {
 
   ## sanity checks
-  if (!is.atomic(namepart)) stop("Name part should be atomic.", call. = FALSE)
-  if (length(namepart) > 1) stop("Name part should have only one element.", call. = FALSE)
-  if (namepart == "")       stop("Empty name part string.", call. = FALSE)
+  if (!is.atomic(namepart)) stop("'namepart' should be atomic.", call. = FALSE)
+  if (length(namepart) > 1) stop("'namepart' should have one element.", call. = FALSE)
+  if (namepart == "")       stop("Empty 'namepart' parameter.", call. = FALSE)
 
   ## check database connection
   if (is.null(con$ctrDb)) con <- ctrDb(con = con)
@@ -1034,8 +1035,8 @@ dbFindIdsUniqueTrials <- function(
 #' of values if there is more than one value or if the field is (in) an array,
 #' such as follows: value 1 / value 2 / ... (see example)
 #'
-#' For more sophisticated data retrieval from the database, see vignette examples
-#' and other packages to query mongodb such as mongolite.
+#' For more sophisticated data retrieval from the database, see vignette
+#' examples and other packages to query mongodb such as mongolite.
 #'
 #' @param fields Vector of one or more strings, with names of the sought fields.
 #'    See function \link{dbFindFields} for how to find names of fields.
@@ -1063,7 +1064,7 @@ dbFindIdsUniqueTrials <- function(
 #'
 #' \dontrun{
 #' db <- nodbi::src_sqlite(collection = "test")
-#' dbGetFieldsIntoDf("b1_sponsor.b31_and_b32_status_of_the_sponsor", con = db)[1,]
+#' dbGetFieldsIntoDf("b1_sponsor.b31_and_b32_status_of_the_sponsor", con = db)
 #' #                   _id  b1_sponsor.b31_and_b32_status_of_the_sponsor
 #' #  1  2004-000015-25-GB                   Non-commercial / Commercial
 #'
@@ -1883,8 +1884,8 @@ setProxy <- function() {
 
 
 
-#' Convenience function to install a minimal cygwin environment under MS Windows,
-#' including perl, sed and php
+#' Convenience function to install a minimal cygwin environment under MS
+#' Windows, including perl, sed and php
 #'
 #' Alternatively and in case of difficulties, download and run the cygwin
 #' setup yourself as follows: \code{cygwinsetup.exe --no-admin --quiet-mode

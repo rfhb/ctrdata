@@ -2,8 +2,8 @@
 % Please edit documentation in R/utils.R
 \name{installCygwinWindowsDoInstall}
 \alias{installCygwinWindowsDoInstall}
-\title{Convenience function to install a minimal cygwin environment under MS Windows,
-including perl, sed and php}
+\title{Convenience function to install a minimal cygwin environment under MS
+Windows, including perl, sed and php}
 \usage{
 installCygwinWindowsDoInstall(force = FALSE, proxy = "")
 }
