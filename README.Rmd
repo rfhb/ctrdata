@@ -1,7 +1,7 @@
 ---
 output:
   github_document:
-    toc: true
+    toc: false
     toc_depth: 1
 editor_options: 
   chunk_output_type: console
@@ -31,7 +31,7 @@ knitr::opts_chunk$set(
 
 The package `ctrdata` provides functions for retrieving (downloading) information on clinical trials from public registers, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and for ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). Development of `ctrdata` started in 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package is to be used within the [R](https://www.r-project.org/) system. 
 
-Last reviewed on 2020-05-17 for version 1.2.1. 
+Last reviewed on 2020-07-05 for version 1.2.1.9001
 
 Main features:
 

@@ -11,6 +11,8 @@ reference:
 - title: "Utility functions"
 - contents:
   - starts_with("install")
+development:
+  mode: auto
 template:
   params:
     docsearch:

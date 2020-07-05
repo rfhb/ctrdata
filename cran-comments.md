@@ -11,6 +11,4 @@
 There are currently no downstream dependencies for this package.
 
 ## Submission reason
-* tinytest 1.2.1 or higher needed to avoid regression error in tinytest 1.2.0
-* updated documentation
-* minor changes to package tests
+* workaround certificate issue with a trial register

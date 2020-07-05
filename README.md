@@ -23,7 +23,7 @@ started in 2015 and was motivated by the wish to understand trends in
 designs and conduct of trials and their availability for patients. The
 package is to be used within the [R](https://www.r-project.org/) system.
 
-Last reviewed on 2020-05-17 for version 1.2.1.
+Last reviewed on 2020-07-05 for version 1.2.1.9001
 
 Main features:
 
@@ -116,8 +116,7 @@ about 160 MB disk space; administrator credentials not needed.
 
 # Overview of functions in `ctrdata`
 
-The functions are listed in the approximate order of
-use.
+The functions are listed in the approximate order of use.
 
 | Function name                      | Function purpose                                                                                                                                    |
 | ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -345,8 +344,7 @@ The database connection object `con` is created by calling
 (e.g., `url`) and with a special parameter `collection` that is used by
 `ctrdata` to identify which table or collection in the database to use.
 Any such connection object can then be used by `ctrdata` and generic
-functions of `nodbi` in a consistent way, as shown in the
-table:
+functions of `nodbi` in a consistent way, as shown in the table:
 
 | Purpose                                  | SQLite                                                                                | MongoDB                                                                                                                  |
 | ---------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
