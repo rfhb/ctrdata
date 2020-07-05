@@ -869,9 +869,8 @@ ctrLoadQueryIntoDbCtgov <- function(
   }
   #
   if (as.integer(tmp) > 10000L) {
-    message("These are ", tmp, " (more than 10000) trials, this may be ",
-            "unintended. Alternatively, split into separate queries.")
-    return(invisible(list(n = tmp, ids = "")))
+    stop("These are ", tmp, " (more than 10000) trials, this may be ",
+         "unintended. Alternatively, split into separate queries.")
   }
 
   # inform user
