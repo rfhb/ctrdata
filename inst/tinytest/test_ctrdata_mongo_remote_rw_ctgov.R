@@ -15,12 +15,16 @@ dbc <- nodbi::src_mongo(
   url = mongo_remote_rw_url)
 
 #### CTGOV ####
-source("ctrdata_ctgov.R", local = TRUE)
-
-#### close ####
-try({
-  dbc$con$drop()
-  dbc$con$disconnect()
-},
-silent = TRUE)
-
+tf <- function() {
+  # register clean-up
+  on.exit(expr = {
+    try({
+      dbc$con$drop()
+      dbc$con$disconnect()
+    },
+    silent = TRUE)
+  })
+  # do tests
+  source("ctrdata_ctgov.R", local = TRUE)
+}
+tf()

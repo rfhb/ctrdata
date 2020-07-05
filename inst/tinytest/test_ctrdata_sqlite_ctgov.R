@@ -14,11 +14,16 @@ dbc <- nodbi::src_sqlite(
   collection = mongo_local_rw_collection)
 
 #### CTGOV ####
-source("ctrdata_ctgov.R", local = TRUE)
-
-#### close ####
-try({
-  RSQLite::dbRemoveTable(conn = dbc$con, name = dbc$collection)
-  RSQLite::dbDisconnect(conn = dbc$con)
-},
-silent = TRUE)
+tf <- function() {
+  # register clean-up
+  on.exit(expr = {
+    try({
+      RSQLite::dbRemoveTable(conn = dbc$con, name = dbc$collection)
+      RSQLite::dbDisconnect(conn = dbc$con)
+    },
+    silent = TRUE)
+  })
+  # do tests
+  source("ctrdata_ctgov.R", local = TRUE)
+}
+tf()

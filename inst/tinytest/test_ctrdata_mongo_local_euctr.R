@@ -15,12 +15,16 @@ dbc <- nodbi::src_mongo(
   url = "mongodb://localhost")
 
 #### EUCTR ####
-source("ctrdata_euctr.R", local = TRUE)
-
-#### close ####
-try({
-  dbc$con$drop()
-  dbc$con$disconnect()
-},
-silent = TRUE)
-
+tf <- function() {
+  # register clean-up
+  on.exit(expr = {
+    try({
+      dbc$con$drop()
+      dbc$con$disconnect()
+    },
+    silent = TRUE)
+  })
+  # do tests
+  source("ctrdata_euctr.R", local = TRUE)
+}
+tf()

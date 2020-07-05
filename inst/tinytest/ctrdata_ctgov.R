@@ -1,8 +1,5 @@
 ## RH 2019-09-28
 
-#### SETUP ####
-# this file is called from various files
-
 #### ctrLoadQueryIntoDb ####
 
 # test

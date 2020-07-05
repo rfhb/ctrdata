@@ -58,23 +58,23 @@ if (!check_internet()) exit_file("Reason: no internet connectivity")
 
 expect_equal(
   suppressWarnings(ctrGetQueryUrlFromBrowser(
-    content = "something_insensible")),
+    "something_insensible")),
   NULL)
 
-# ctrGetQueryUrlFromBrowser(content = "type=Intr&age=0&intr=Drug&phase=0&phase=1&strd_e=12%2F31%2F2010")
-# ctrGetQueryUrlFromBrowser(content = "type=Intr&age=0&intr=Drug&phase=0&phase=1&strd_e=12%2F31%2F2010", "CTGOV")
-# ctrGetQueryUrlFromBrowser(content = "https://clinicaltrials.gov/ct2/results?type=Intr&cond=cancer&age=0")
-# ctrGetQueryUrlFromBrowser(content = "https://clinicaltrials.gov/ct2/results?type=Intr&cond=cancer&age=0", "CTGOV")
-# ctrGetQueryUrlFromBrowser(content = "https://clinicaltrials.gov/ct2/results?type=Intr&cond=cancer&age=0", "EUCTR")
-# ctrGetQueryUrlFromBrowser(content = "")
-# ctrGetQueryUrlFromBrowser(content = NA)
-# ctrGetQueryUrlFromBrowser(content = list())
+# ctrGetQueryUrlFromBrowser(url = "type=Intr&age=0&intr=Drug&phase=0&phase=1&strd_e=12%2F31%2F2010")
+# ctrGetQueryUrlFromBrowser(url = "type=Intr&age=0&intr=Drug&phase=0&phase=1&strd_e=12%2F31%2F2010", "CTGOV")
+# ctrGetQueryUrlFromBrowser(url = "https://clinicaltrials.gov/ct2/results?type=Intr&cond=cancer&age=0")
+# ctrGetQueryUrlFromBrowser(url = "https://clinicaltrials.gov/ct2/results?type=Intr&cond=cancer&age=0", "CTGOV")
+# ctrGetQueryUrlFromBrowser(url = "https://clinicaltrials.gov/ct2/results?type=Intr&cond=cancer&age=0", "EUCTR")
+# ctrGetQueryUrlFromBrowser(url = "")
+# ctrGetQueryUrlFromBrowser(url = NA)
+# ctrGetQueryUrlFromBrowser(url = list())
 
 q <- "https://clinicaltrials.gov/ct2/results?type=Intr&cond=cancer&age=0"
 
 tmp_test <- suppressMessages(
   ctrGetQueryUrlFromBrowser(
-    content = q))
+    url = q))
 
 # test
 expect_true("data.frame" %in% class(tmp_test))
@@ -82,7 +82,7 @@ expect_true("data.frame" %in% class(tmp_test))
 # test
 expect_warning(
   ctrGetQueryUrlFromBrowser(
-    content = "ThisDoesNotExist"),
+    url = "ThisDoesNotExist"),
   "no clinical trial register search URL found")
 
 # test
@@ -100,7 +100,7 @@ q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/",
 
 tmp_test <- suppressMessages(
   ctrGetQueryUrlFromBrowser(
-    content = q))
+    url = q))
 
 # test
 expect_true("data.frame" %in% class(tmp_test))

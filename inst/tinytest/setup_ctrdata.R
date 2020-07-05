@@ -1,13 +1,5 @@
 ## RH 2019-09-28
 
-# testing in local development directory:
-# tinytest::test_all()
-
-# testing of built and installed package:
-# tinytest::test_package("ctrdata")
-
-# options(tt.pr.passes = TRUE)
-
 # functions for testing
 # to be sourced by test_*.R
 

@@ -232,20 +232,20 @@ expect_error(
   dbFindFields(
     namepart = c("onestring", "twostring"),
     con = dbc),
-  "Name part should have only one element.")
+  "'namepart' should have one element.")
 
 # test
 expect_error(
   dbFindFields(
     namepart = list("onestring", "twostring"),
     con = dbc),
-  "Name part should be atomic.")
+  "'namepart' should be atomic.")
 
 # test
 expect_error(
   dbFindFields(namepart = "",
                con = dbc),
-  "Empty name part string.")
+  "Empty 'namepart' parameter.")
 
 # test
 tmp_test <- suppressMessages(suppressWarnings(
