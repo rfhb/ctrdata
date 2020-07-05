@@ -4,11 +4,16 @@
 \alias{ctrGetQueryUrlFromBrowser}
 \title{Import from clipboard the URL of a search in one of the registers}
 \usage{
-ctrGetQueryUrlFromBrowser(content = "", ...)
+ctrGetQueryUrlFromBrowser(url = "", register = "")
 }
 \arguments{
-\item{content}{URL from browser address bar.
-Defaults to clipboard contents.}
+\item{url}{URL such as from the browser address bar.
+If not specified, clipboard contents will be checked for
+a suitable URL. Can also contain a query term such as from
+\link{dbQueryHistory}()["query-term"]}
+
+\item{register}{Optional name of register (i.e., "EUCTR" or
+"CTGOV") in case url is a query term}
 }
 \value{
 A string of query parameters that can be used to retrieve data

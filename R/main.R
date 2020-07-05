@@ -116,7 +116,12 @@ ctrLoadQueryIntoDb <- function(
   }
 
   ## deduce queryterm and register
-  queryterm <- ctrGetQueryUrlFromBrowser(queryterm, register)
+  if (!((is.integer(querytoupdate) & querytoupdate > 0L) |
+        querytoupdate == "last")) {
+    queryterm <- ctrGetQueryUrlFromBrowser(
+      url = queryterm,
+      register = register)
+  }
 
   # deal with data frame as returned from
   # ctrQueryHistoryInDb and ctrGetQueryUrlFromBrowser

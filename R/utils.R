@@ -100,8 +100,8 @@ ctrDb <- function(
 #'
 #' @param input Show results of search for \code{queryterm} in
 #'   browser. To open the browser with a previous search, (register or)
-#'   queryterm can be the output of \link{ctrGetQueryUrlFromBrowser} or can be one
-#'   row from \link{dbQueryHistory}.
+#'   queryterm can be the output of \link{ctrGetQueryUrlFromBrowser} or can
+#'   be one row from \link{dbQueryHistory}.
 #'
 #' @param register Register(s) to open. Either "EUCTR" or "CTGOV" or a vector of
 #'   both. Default is to open both registers' advanced search pages. To open the
@@ -182,7 +182,7 @@ ctrOpenSearchPagesInBrowser <- function(
         length(input) == 1 &&
         grepl("^https.+clinicaltrials.+", input)) {
       #
-      input <- ctrGetQueryUrlFromBrowser(content = input)
+      input <- ctrGetQueryUrlFromBrowser(url = input)
       #
     }
     #
@@ -255,8 +255,13 @@ ctrOpenSearchPagesInBrowser <- function(
 
 #' Import from clipboard the URL of a search in one of the registers
 #'
-#' @param content URL from browser address bar.
-#' Defaults to clipboard contents.
+#' @param url URL such as from the browser address bar.
+#' If not specified, clipboard contents will be checked for
+#' a suitable URL. Can also contain a query term such as from
+#' \link{dbQueryHistory}()["query-term"]
+#'
+#' @param register Optional name of register (i.e., "EUCTR" or
+#' "CTGOV") in case url is a query term
 #'
 #' @return A string of query parameters that can be used to retrieve data
 #' from the register.
@@ -276,45 +281,40 @@ ctrOpenSearchPagesInBrowser <- function(
 #'
 #' @importFrom clipr read_clip
 #'
-ctrGetQueryUrlFromBrowser <- function(content = "", ...) {
+ctrGetQueryUrlFromBrowser <- function(
+  url = "",
+  register = "") {
   #
-  # include overloaded parameter
-  params <- list(...)
-  if (length(params)) {
-    params <- params[[1]]
-  } else {
-    params <- NULL
+  # check parameters expectations
+  if (is.null(url) || is.null(register) ||
+      is.na(url) || is.na(register) ||
+      !inherits(url, "character") || !inherits(register, "character") ||
+      length(url) != 1L || length(register) != 1L) {
+    stop("ctrGetQueryUrlFromBrowser(): 'url' and / or 'register' ",
+         "is not a single character string.")
   }
   #
-  # if content parameter not specified, get and check clipboard contents
-  if (is.na(content) ||
-      (length(content) == 1L &&
-       nchar(content) == 0L &&
-       is.null(params))) {
-    content <- clipr::read_clip()
-  }
-  #
-  if (is.na(content) || (length(content) != 1L && is.null(params))) {
-    warning("ctrGetQueryUrlFromBrowser(): 'content' is not a single string.",
-            call. = FALSE, immediate. = TRUE)
-    return(invisible(NULL))
+  # if no parameter specified,
+  # check clipboard contents
+  if (nchar(url) == 0L) {
+    url <- clipr::read_clip()
   }
   #
   # EUCTR
-  if (grepl("https://www.clinicaltrialsregister.eu/ctr-search/", content) ||
-      (!grepl("https://", content) && !is.null(params) && params == "EUCTR")) {
+  if (grepl("https://www.clinicaltrialsregister.eu/ctr-search/", url) ||
+      (!grepl("https://", url) && register == "EUCTR")) {
     #
     # check
-    if (grepl("https://", content) &
-        !grepl("www.clinicaltrialsregister.eu/", content)) {
-      warning("ctrGetQueryUrlFromBrowser(): 'content' inconsistent with EUCTR.",
+    if (grepl("https://", url) &
+        !grepl("www.clinicaltrialsregister.eu/", url)) {
+      warning("ctrGetQueryUrlFromBrowser(): 'url' inconsistent with EUCTR.",
               call. = FALSE, immediate. = TRUE)
       return(invisible(NULL))
     }
     #
     queryterm <-
       sub("https://www.clinicaltrialsregister.eu/ctr-search/search[?](.*)",
-          "\\1", content)
+          "\\1", url)
     #
     queryterm <-
       sub("https://www.clinicaltrialsregister.eu/ctr-search/trial/([-0-9]+)/.*",
@@ -330,7 +330,7 @@ ctrGetQueryUrlFromBrowser <- function(content = "", ...) {
       queryterm)
     #
     # check if url was for results of single trial
-    if (grepl(".*/results$", content)) {
+    if (grepl(".*/results$", url)) {
       queryterm <- paste0(queryterm, "&resultsstatus=trials-with-results")
     }
     #
@@ -344,13 +344,13 @@ ctrGetQueryUrlFromBrowser <- function(content = "", ...) {
   #
   # CTGOV, e.g.
   # https://clinicaltrials.gov/ct2/results?term=2010-024264-18&Search=Search
-  if (grepl("https://clinicaltrials.gov/ct2/results", content) ||
-      (!grepl("https://", content) && !is.null(params) && params == "CTGOV")) {
+  if (grepl("https://clinicaltrials.gov/ct2/results", url) ||
+      (!grepl("https://", url) && register == "CTGOV")) {
     #
     # check
-    if (grepl("https://", content) &
-        !grepl("clinicaltrials.gov/", content)) {
-      warning("ctrGetQueryUrlFromBrowser(): 'content' inconsistent with CTGOV.",
+    if (grepl("https://", url) &
+        !grepl("clinicaltrials.gov/", url)) {
+      warning("ctrGetQueryUrlFromBrowser(): 'url' inconsistent with CTGOV.",
               call. = FALSE, immediate. = TRUE)
       return(invisible(NULL))
 
@@ -358,7 +358,7 @@ ctrGetQueryUrlFromBrowser <- function(content = "", ...) {
     #
     queryterm <-
       sub("https://clinicaltrials.gov/ct2/results[?](.*)",
-          "\\1", content)
+          "\\1", url)
     #
     queryterm <-
       sub("(.*)&Search[a-zA-Z]*=(Search|Find)[a-zA-Z+]*",
@@ -377,7 +377,7 @@ ctrGetQueryUrlFromBrowser <- function(content = "", ...) {
   }
   #
   warning("ctrGetQueryUrlFromBrowser(): no clinical trial register ",
-          "search URL found in parameter 'content' or in clipboard.",
+          "search URL found in parameter 'url' or in clipboard.",
           call. = FALSE, immediate. = TRUE)
   #
   return(invisible(NULL))
