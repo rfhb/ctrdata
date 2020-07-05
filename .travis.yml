@@ -16,7 +16,6 @@ services:
 env:
   global:
     - _R_CHECK_TIMINGS_="0"
-    - ATHOME="1"
 
 r_packages:
   - nodbi
