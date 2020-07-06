@@ -80,8 +80,8 @@ check_binaries <- function(){
 check_internet <- function(){
 
   tmp <- try({
-    httr::HEAD("www.clinicaltrials.gov")
-    httr::HEAD("www.clinicaltrialsregister.eu")
+    httr::HEAD("www.clinicaltrials.gov", httr::timeout(5))
+    httr::HEAD("www.clinicaltrialsregister.eu", httr::timeout(5))
   }, silent = TRUE)
 
   out <- !("try-error" %in% class(tmp))

@@ -11,4 +11,4 @@
 There are currently no downstream dependencies for this package.
 
 ## Submission reason
-* workaround certificate issue with a trial register
+* workaround certificate issue of a trial register
