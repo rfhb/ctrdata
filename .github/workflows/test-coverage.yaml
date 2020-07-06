@@ -13,7 +13,7 @@ name: test-coverage
 jobs:
   test-coverage:
 
-    runs-on: macOS-latest
+    runs-on: ubuntu-16.04
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -25,10 +25,6 @@ jobs:
           - 27017:27017
 
     steps:
-
-      - name: Install mongo
-        run: |
-          docker run -d -p 27017:27017 mongo:latest mongod --setParameter ttlMonitorSleepSecs=2
 
       - uses: actions/checkout@v2
 
