@@ -32,9 +32,9 @@ jobs:
 
     services:
       mongodb:
-      image: mongo
-      ports:
-        - 27017:27017
+        image: mongo
+        ports:
+          - 27017:27017
 
     steps:
       - uses: actions/checkout@v2
