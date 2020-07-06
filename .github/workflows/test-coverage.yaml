@@ -12,9 +12,18 @@ name: test-coverage
 
 jobs:
   test-coverage:
+
     runs-on: macOS-latest
+
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    services:
+      mongodb:
+      image: mongo
+      ports:
+        - 27017:27017
+
     steps:
       - uses: actions/checkout@v2
 
