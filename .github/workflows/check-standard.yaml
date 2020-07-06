@@ -30,6 +30,12 @@ jobs:
       RSPM: ${{ matrix.config.rspm }}
       ATHOME: 1
 
+    services:
+      mongodb:
+        image: mongo:4.2
+        ports:
+          - 27017:27017
+
     steps:
       - uses: actions/checkout@v2
 
@@ -38,10 +44,6 @@ jobs:
           r-version: ${{ matrix.config.r }}
 
       - uses: r-lib/actions/setup-pandoc@master
-
-      - name: Install mongo
-        run: |
-          docker run -d -p 27017:27017 mongo:latest mongod --setParameter ttlMonitorSleepSecs=2
 
       - name: Query dependencies
         run: |
