@@ -433,7 +433,7 @@ ctrRerunQuery <- function(
         # obtain rss feed with list of recently updated trials
         rssquery <- utils::URLencode(
           paste0("https://www.clinicaltrialsregister.eu/ctr-search/",
-                 "rest/feed/bydates?query=", queryterm))
+                 "rest/feed/bydates?", queryterm))
         #
         if (verbose) {
           message("DEBUG (rss url): ", rssquery)
@@ -465,8 +465,11 @@ ctrRerunQuery <- function(
           resultsRssTrials, FUN = function(x)
             substr(resultsRss, x + 15, x + 28))
         #
-        resultsRssTrials <- paste(
-          resultsRssTrials, collapse = "+OR+")
+        resultsRssTrials <- paste0(
+          "query=",
+          paste(
+            resultsRssTrials,
+            collapse = "+OR+"))
         #
         if (verbose) {
           message("DEBUG (rss trials): ", resultsRssTrials)

@@ -33,9 +33,37 @@ expect_true(all(
 # test
 expect_true(length(tmp_test$failed) == 0L)
 
+
 #### ctrLoadQueryIntoDb update ####
 
-# only works for last 7 days with rss mechanism
+# manipulate history to test updating
+# and query string handling
+hist <- suppressWarnings(dbQueryHistory(con = dbc))
+#
+hist[nrow(hist), "query-term"] <-
+  sub("query=", "", hist[nrow(hist), "query-term"])
+#
+# convert into json object
+json <- jsonlite::toJSON(list("queries" = hist))
+#
+# update database
+nodbi::docdb_update(
+  src = dbc,
+  key = dbc$collection,
+  value = data.frame("_id" = "meta-info",
+                     "content" = as.character(json),
+                     stringsAsFactors = FALSE,
+                     check.names = FALSE))
+# test
+expect_message(
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
+      querytoupdate = "last",
+      con = dbc,
+      verbose = TRUE)),
+  "DEBUG: queryterm is .*?search\\?query=2")
+
+# checking as only works for last 7 days with rss mechanism
 # query based on date is used since this avoids no trials are found
 
 date.today <- Sys.time()
