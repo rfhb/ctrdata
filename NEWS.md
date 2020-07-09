@@ -1,7 +1,8 @@
 # ctrdata 1.2.1.9001
- - 2020-07-05
+ - 2020-07-09
  - workaround EUCTR certificate issue
  - streamline ctrGetQueryUrlFromBrowser()
+ - include further test for query string handling 
  - better clean-up after testing
  
 # ctrdata 1.2.1

@@ -51,14 +51,11 @@ expect_error(
   "Please provide exactly two column names.")
 
 
-#### ctrOpenSearchPagesInBrowser ####
-if (!at_home()) exit_file("Reason: not at_home")
-if (Sys.getenv("ON_APPVEYOR") != "") exit_file("Reason: on Appveyor")
-if (!check_internet()) exit_file("Reason: no internet connectivity")
+#### ctrGetQueryUrlFromBrowser ####
 
 expect_equal(
   suppressWarnings(ctrGetQueryUrlFromBrowser(
-    "something_insensible")),
+    "ThisDoesNotExist")),
   NULL)
 
 # ctrGetQueryUrlFromBrowser(url = "type=Intr&age=0&intr=Drug&phase=0&phase=1&strd_e=12%2F31%2F2010")
@@ -84,6 +81,24 @@ expect_warning(
   ctrGetQueryUrlFromBrowser(
     url = "ThisDoesNotExist"),
   "no clinical trial register search URL found")
+
+# test if query= is added
+expect_equal(
+  suppressMessages(
+    ctrGetQueryUrlFromBrowser(
+      url = "query=cancer&status=completed",
+      register = "EUCTR")),
+  suppressMessages(
+    ctrGetQueryUrlFromBrowser(
+      url = "cancer&status=completed",
+      register = "EUCTR"))
+)
+
+#### ctrOpenSearchPagesInBrowser ####
+
+if (!at_home()) exit_file("Reason: not at_home")
+if (Sys.getenv("ON_APPVEYOR") != "") exit_file("Reason: on Appveyor")
+if (!check_internet()) exit_file("Reason: no internet connectivity")
 
 # test
 expect_message(

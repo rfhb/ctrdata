@@ -324,6 +324,20 @@ ctrGetQueryUrlFromBrowser <- function(
     queryterm <- sub("#.+$", "", queryterm)
     #
     # sanity correction for naked terms
+    # test cases:
+    # queryterm = c(
+    #   "cancer&age=adult",                      # add query=
+    #   "cancer",                                # add query=
+    #   "cancer+AND breast&age=adult&phase=0",   # add query=
+    #   "cancer&age=adult&phase=0",              # add query=
+    #   "cancer&age=adult&phase=1&results=true", # add query=
+    #   "&age=adult&phase=1&abc=xyz&cancer&results=true", # insert query=
+    #   "age=adult&cancer",                      # insert query=
+    #   "2010-024264-18",                        # add query=
+    #   "NCT1234567890",                         # add query=
+    #   "teratoid&country=dk",                   # add query=
+    #   "term=cancer&age=adult",                 # keep
+    #   "age=adult&term=cancer")                 # keep
     queryterm <- sub(
       "(^|&|[&]?\\w+=\\w+&)([ a-zA-Z0-9+-]+)($|&\\w+=\\w+)",
       "\\1query=\\2\\3",
