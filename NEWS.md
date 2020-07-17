@@ -1,9 +1,12 @@
 # ctrdata 1.2.1.9001
- - 2020-07-09
+ - 2020-07-17
  - workaround EUCTR certificate issue
  - streamline ctrGetQueryUrlFromBrowser()
  - include further test for query string handling 
  - better clean-up after testing
+ - ctrLoadQueryIntoDb(querytorerun = ...) now looks
+   for the date when the querytorerun was last run, 
+   to more often use euctr update options
  
 # ctrdata 1.2.1
  - 2020-05-18

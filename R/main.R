@@ -341,14 +341,37 @@ ctrRerunQuery <- function(
          "'dbQueryHistory()'.", call. = FALSE)
   }
 
-  # set values retrieved
-  rerunquery <- rerunquery[querytoupdate, ]
-  queryterm  <- rerunquery$`query-term`
-  register   <- rerunquery$`query-register`
+  # set query values as retrieved
+  queryterm  <- rerunquery[querytoupdate, "query-term"]
+  register   <- rerunquery[querytoupdate, "query-register"]
+
+  # when was this query last run?
+  #
+  # - dates of all the same queries
+  initialday <- rerunquery[["query-timestamp"]][
+    rerunquery[querytoupdate, "query-term"] ==
+      rerunquery[["query-term"]] ]
+  #
+  # - remove time, keep date
   initialday <- substr(
-    rerunquery$`query-timestamp`,
+    initialday,
     start = 1,
     stop = 10)
+  #
+  # - change to Date class and get
+  #   index of latest (max) date,
+  initialdayindex <- try(
+    which.max(
+      as.Date(initialday,
+              format = "%Y-%m-%d")))
+  if (!inherits(initialdayindex, "try-error")) {
+    # - keep initial (reference) date of this query
+    initialday <- initialday[initialdayindex]
+  } else {
+    # - fallback to number (querytoupdate)
+    #   as specified by user
+    initialday <- rerunquery[querytoupdate, "query-timestamp"]
+  }
 
   # secondary check parameters
   if (queryterm == "") {
