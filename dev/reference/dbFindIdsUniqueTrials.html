@@ -156,7 +156,7 @@ recording other identifiers such as the EudraCT number in the field "Other
 IDs".</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/ctrdata/man/dbFindIdsUniqueTrials.html'>dbFindIdsUniqueTrials</a></span>(
+    <pre class="usage"><span class='fu'>dbFindIdsUniqueTrials</span>(
   preferregister = <span class='st'>"EUCTR"</span>,
   prefermemberstate = <span class='st'>"GB"</span>,
   include3rdcountrytrials = <span class='fl'>TRUE</span>,
@@ -209,7 +209,7 @@ of records found at subsequent steps when searching for duplicates</p></td>
     <pre class="examples"><div class='input'>
 <span class='co'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='kw'>db</span> <span class='op'>&lt;-</span> <span class='kw'>nodbi</span>::<span class='fu'><a href='https://docs.ropensci.org/nodbi/reference/src_sqlite.html'>src_sqlite</a></span>(collection = <span class='st'>"test"</span>)
-<span class='fu'><a href='https://rdrr.io/pkg/ctrdata/man/dbFindIdsUniqueTrials.html'>dbFindIdsUniqueTrials</a></span>(con = <span class='kw'>db</span>)
+<span class='fu'>dbFindIdsUniqueTrials</span>(con = <span class='kw'>db</span>)
 }
 </div></pre>
   </div>

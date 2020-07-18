@@ -155,11 +155,11 @@ data frame</h1>
     <div class="ref-description">
     <p>The function uses a name (key) to extract an element
 from a list in a data.frame such as obtained with
-<a href='https://rdrr.io/pkg/ctrdata/man/dbGetFieldsIntoDf.html'>dbGetFieldsIntoDf</a>. This helps to simplify
+<a href='dbGetFieldsIntoDf.html'>dbGetFieldsIntoDf</a>. This helps to simplify
 working with nested lists and with complex structures.</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/ctrdata/man/dfListExtractKey.html'>dfListExtractKey</a></span>(<span class='kw'>df</span>, list.key = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"endPoints.endPoint"</span>, <span class='st'>"^title"</span>)))</pre>
+    <pre class="usage"><span class='fu'>dfListExtractKey</span>(<span class='kw'>df</span>, list.key = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"endPoints.endPoint"</span>, <span class='st'>"^title"</span>)))</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -190,12 +190,12 @@ extracted. See example.</p></td>
     <pre class="examples"><div class='input'>
 <span class='co'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='kw'>db</span> <span class='op'>&lt;-</span> <span class='kw'>nodbi</span>::<span class='fu'><a href='https://docs.ropensci.org/nodbi/reference/src_sqlite.html'>src_sqlite</a></span>(collection = <span class='st'>"test"</span>)
-<span class='kw'>df</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/ctrdata/man/dbGetFieldsIntoDf.html'>dbGetFieldsIntoDf</a></span>(
+<span class='kw'>df</span> <span class='op'>&lt;-</span> <span class='fu'><a href='dbGetFieldsIntoDf.html'>dbGetFieldsIntoDf</a></span>(
   fields = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"endPoints.endPoint"</span>,
              <span class='st'>"subjectDisposition.postAssignmentPeriods"</span>),
   con = <span class='kw'>db</span>
 )
-<span class='fu'><a href='https://rdrr.io/pkg/ctrdata/man/dfListExtractKey.html'>dfListExtractKey</a></span>(
+<span class='fu'>dfListExtractKey</span>(
   df = <span class='kw'>df</span>,
   list.key = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
       <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"endPoints.endPoint"</span>,

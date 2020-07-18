@@ -153,13 +153,13 @@ and store in database</h1>
     </div>
 
     <div class="ref-description">
-    <p>This is the main function of package <a href='https://rdrr.io/pkg/ctrdata/man/ctrdata.html'>ctrdata</a> for accessing
+    <p>This is the main function of package <a href='ctrdata.html'>ctrdata</a> for accessing
 registers. Note that re-rerunning this function adds or updates
 trial records in a database, even if from different queries or
 different registers.</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/ctrdata/man/ctrLoadQueryIntoDb.html'>ctrLoadQueryIntoDb</a></span>(
+    <pre class="usage"><span class='fu'>ctrLoadQueryIntoDb</span>(
   queryterm = <span class='st'>""</span>,
   register = <span class='st'>"EUCTR"</span>,
   querytoupdate = <span class='fl'>0L</span>,
@@ -181,8 +181,8 @@ different registers.</p>
       <th>queryterm</th>
       <td><p>Either a string with the full URL of a search in
 a register or the data frame returned by the
-<a href='https://rdrr.io/pkg/ctrdata/man/ctrGetQueryUrlFromBrowser.html'>ctrGetQueryUrlFromBrowser</a> or the
-<a href='https://rdrr.io/pkg/ctrdata/man/dbQueryHistory.html'>dbQueryHistory</a> functions.
+<a href='ctrGetQueryUrlFromBrowser.html'>ctrGetQueryUrlFromBrowser</a> or the
+<a href='dbQueryHistory.html'>dbQueryHistory</a> functions.
 The queryterm is recorded in the <code>collection</code> for later
 use to update records.</p></td>
     </tr>
@@ -194,7 +194,7 @@ defaults to "EUCTR".</p></td>
     <tr>
       <th>querytoupdate</th>
       <td><p>Either the word "last" or the number of the
-query (based on <a href='https://rdrr.io/pkg/ctrdata/man/dbQueryHistory.html'>dbQueryHistory</a>) that should be run to
+query (based on <a href='dbQueryHistory.html'>dbQueryHistory</a>) that should be run to
 retrieve any trial records that are new or have been updated
 since this query was run the last time.
 This parameter takes precedence over <code>queryterm</code>.
@@ -270,17 +270,17 @@ the query history in this database).</p>
 <span class='co'># single trial identified by EudraCT number</span>
 <span class='co'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='kw'>db</span> <span class='op'>&lt;-</span> <span class='kw'>nodbi</span>::<span class='fu'><a href='https://docs.ropensci.org/nodbi/reference/src_sqlite.html'>src_sqlite</a></span>(collection = <span class='st'>"test"</span>)
-<span class='fu'><a href='https://rdrr.io/pkg/ctrdata/man/ctrLoadQueryIntoDb.html'>ctrLoadQueryIntoDb</a></span>(queryterm = <span class='st'>"2013-001291-38"</span>, cond = <span class='kw'>db</span>)
+<span class='fu'>ctrLoadQueryIntoDb</span>(queryterm = <span class='st'>"2013-001291-38"</span>, cond = <span class='kw'>db</span>)
 }
 <span class='co'># Retrieve protocol-related information on</span>
 <span class='co'># ongoing interventional cancer trials in children</span>
 <span class='co'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='kw'>db</span> <span class='op'>&lt;-</span> <span class='kw'>nodbi</span>::<span class='fu'><a href='https://docs.ropensci.org/nodbi/reference/src_sqlite.html'>src_sqlite</a></span>(collection = <span class='st'>"test"</span>)
-<span class='fu'><a href='https://rdrr.io/pkg/ctrdata/man/ctrLoadQueryIntoDb.html'>ctrLoadQueryIntoDb</a></span>(
+<span class='fu'>ctrLoadQueryIntoDb</span>(
      queryterm = <span class='st'>"cancer&amp;recr=Open&amp;type=Intr&amp;age=0"</span>,
      register = <span class='st'>"CTGOV"</span>,
      con = <span class='kw'>db</span>)
-<span class='fu'><a href='https://rdrr.io/pkg/ctrdata/man/ctrLoadQueryIntoDb.html'>ctrLoadQueryIntoDb</a></span>(
+<span class='fu'>ctrLoadQueryIntoDb</span>(
      queryterm = <span class='st'>"NCT02239861"</span>,
      register = <span class='st'>"CTGOV"</span>,
      cond = <span class='kw'>db</span>)

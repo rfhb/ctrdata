@@ -150,7 +150,7 @@
     <p>Import from clipboard the URL of a search in one of the registers</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/ctrdata/man/ctrGetQueryUrlFromBrowser.html'>ctrGetQueryUrlFromBrowser</a></span>(url = <span class='st'>""</span>, register = <span class='st'>""</span>)</pre>
+    <pre class="usage"><span class='fu'>ctrGetQueryUrlFromBrowser</span>(url = <span class='st'>""</span>, register = <span class='st'>""</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -160,7 +160,7 @@
       <td><p>URL such as from the browser address bar.
 If not specified, clipboard contents will be checked for
 a suitable URL. Can also contain a query term such as from
-<a href='https://rdrr.io/pkg/ctrdata/man/dbQueryHistory.html'>dbQueryHistory</a>()["query-term"]</p></td>
+<a href='dbQueryHistory.html'>dbQueryHistory</a>()["query-term"]</p></td>
     </tr>
     <tr>
       <th>register</th>
@@ -174,14 +174,14 @@ a suitable URL. Can also contain a query term such as from
     <p>A string of query parameters that can be used to retrieve data
 from the register.</p>
 <p>A data frame with a query term and the register name that can
-directly be used in <a href='https://rdrr.io/pkg/ctrdata/man/ctrLoadQueryIntoDb.html'>ctrLoadQueryIntoDb</a> and in
-<a href='https://rdrr.io/pkg/ctrdata/man/ctrOpenSearchPagesInBrowser.html'>ctrOpenSearchPagesInBrowser</a></p>
+directly be used in <a href='ctrLoadQueryIntoDb.html'>ctrLoadQueryIntoDb</a> and in
+<a href='ctrOpenSearchPagesInBrowser.html'>ctrOpenSearchPagesInBrowser</a></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='kw'>db</span> <span class='op'>&lt;-</span> <span class='kw'>nodbi</span>::<span class='fu'><a href='https://docs.ropensci.org/nodbi/reference/src_sqlite.html'>src_sqlite</a></span>(collection = <span class='st'>"test"</span>)
-<span class='fu'><a href='https://rdrr.io/pkg/ctrdata/man/ctrLoadQueryIntoDb.html'>ctrLoadQueryIntoDb</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/ctrdata/man/ctrGetQueryUrlFromBrowser.html'>ctrGetQueryUrlFromBrowser</a></span>(), con = <span class='kw'>db</span>)
+<span class='fu'><a href='ctrLoadQueryIntoDb.html'>ctrLoadQueryIntoDb</a></span>(<span class='fu'>ctrGetQueryUrlFromBrowser</span>(), con = <span class='kw'>db</span>)
 }
 </div></pre>
   </div>
