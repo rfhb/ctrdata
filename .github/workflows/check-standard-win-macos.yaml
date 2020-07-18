@@ -68,7 +68,7 @@ jobs:
         uses: actions/upload-artifact@master
         with:
           name: ${{ runner.os }}-r${{ matrix.config.r }}-tinytest
-          path: check
+          path: check/ctrdata.Rcheck/tests/tinytest*
 
       - name: Upload failed check results
         if: failure()

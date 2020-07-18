@@ -78,7 +78,13 @@ jobs:
         run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
         shell: Rscript {0}
 
-      - name: Upload check results
+      - name: Upload all check results
+        uses: actions/upload-artifact@master
+        with:
+          name: ${{ runner.os }}-r${{ matrix.config.r }}-tinytest
+          path: check/ctrdata.Rcheck/tests/tinytest*
+
+      - name: Upload failed check results
         if: failure()
         uses: actions/upload-artifact@master
         with:
