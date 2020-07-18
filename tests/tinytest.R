@@ -14,7 +14,7 @@ if (requireNamespace("tinytest", quietly = TRUE) &&
   tt <- tinytest::test_package(
     pkgname = "ctrdata",
     color = FALSE,
-    at_home = cran)
+    at_home = !cran)
 
   # unless on CRAN
   if (!cran) {

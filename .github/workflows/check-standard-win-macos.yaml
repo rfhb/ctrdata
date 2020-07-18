@@ -8,7 +8,7 @@ on:
     branches:
       - master
 
-name: R-CMD-check
+name: R-CMD-check-win-macos
 
 jobs:
   R-CMD-check:

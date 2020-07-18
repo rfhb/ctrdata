@@ -2,7 +2,7 @@ on:
   push:
     branches: master
 
-name: pkgdown
+name: Create-pkgdown-site
 
 jobs:
   pkgdown:
@@ -17,7 +17,7 @@ jobs:
       - run: |
           git config --global user.email "ralf.herold@gmx.net"
           git config --global user.name "Ralf Herold"
-       
+
       - name: Query dependencies
         run: |
           install.packages('remotes')
