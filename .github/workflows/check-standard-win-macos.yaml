@@ -78,7 +78,7 @@ jobs:
         uses: actions/upload-artifact@master
         with:
           name: tinytest
-          path: tinytest_value.rds
+          path: check/tinytest_value.rds
 
       - name: Upload check results
         if: failure()
