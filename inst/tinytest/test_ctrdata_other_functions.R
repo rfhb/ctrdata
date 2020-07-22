@@ -13,6 +13,20 @@ statusvalues <- list(
   "Lastvalue"   = c("34"))
 
 
+#### environment ####
+
+if (.Platform$OS.type != "windows") {
+  expect_error(
+    installCygwinWindowsDoInstall(),
+    "only for MS Windows")
+}
+if (.Platform$OS.type == "windows") {
+  expect_error(
+    installCygwinWindowsDoInstall(),
+  "cygwin is already installed")
+}
+
+
 #### dfMergeTwoVariablesRelevel ####
 
 # test
@@ -49,6 +63,21 @@ expect_error(
     df = df,
     colnames = 1:3),
   "Please provide exactly two column names.")
+
+# test
+expect_warning(
+  dfMergeTwoVariablesRelevel(
+    df = df,
+    varnames = c("var1", "var2")),
+  "Parameter varnames is deprecated, use colnames instead")
+
+# test
+expect_error(
+  dfMergeTwoVariablesRelevel(
+    df = df,
+    colnames = c("var1", "var2"),
+    levelslist = 1:2),
+  "Need list for parameter 'levelslist'")
 
 
 #### ctrGetQueryUrlFromBrowser ####

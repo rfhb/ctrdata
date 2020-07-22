@@ -1,13 +1,5 @@
 ## RH 2019-09-28
 
-#### SETUP ####
-# this file is called from various files
-
-# add some random delay to avoid
-# too many parallel retrievals
-Sys.sleep(runif(n = 1, min = 1, max = 20))
-
-
 #### ctrLoadQueryIntoDb ####
 
 q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
@@ -132,6 +124,7 @@ expect_message(
     ctrLoadQueryIntoDb(
       queryterm = q,
       euctrresults = TRUE,
+      euctrresultshistory = TRUE,
       verbose = TRUE,
       con = dbc)),
   "Imported or updated results for")
@@ -199,7 +192,7 @@ expect_true(
   ), na.rm = TRUE)
   > 3000L)
 
-# test
+# prepare
 tmp_test <- dfListExtractKey(
   result,
   list(
@@ -207,6 +200,7 @@ tmp_test <- dfListExtractKey(
       c("endPoints.endPoint", "^type.value")
     )
 )
+# test
 expect_true(all(
   tmp_test$endPoints.endPoint.type.value %in%
     c("ENDPOINT_TYPE.primary", "ENDPOINT_TYPE.secondary",
@@ -221,6 +215,8 @@ tmp_test <- dfListExtractKey(
       c("endPoints.endPoint", "armReportingGroups.armReportingGroup.@attributes.armId")
     )
 )
+
+# test
 expect_true(
   sum(
     as.numeric(
@@ -239,18 +235,32 @@ tmp_test <- dfListExtractKey(
       c("endPoints.endPoint", "statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.value[0-9]*$")
     )
 )
+
+# test
 expect_true(
   all(na.omit(as.numeric(
     tmp_test[["value"]][
       tmp_test[["name"]] ==
         "endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.value"
       ])) < 1L))
+
+# test
 expect_true(all(
     c("HYPOTHESIS_METHOD.cochranMantelHaenszel", "HYPOTHESIS_METHOD.ancova",
       "HYPOTHESIS_METHOD.regressionLogistic") %in%
       tmp_test[["value"]][
         tmp_test[["name"]] ==
           "endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.method.value"]))
+
+# test
+expect_error(
+  dfListExtractKey(
+    result[, -1],
+    list(
+      c("endPoints.endPoint", "^type.value")
+    )
+  ),
+  "Data frame 'df' lacks '_id' column")
 
 
 #### dbFindFields #####
@@ -299,7 +309,7 @@ expect_message(
     dbFindIdsUniqueTrials(
       con = dbc,
       preferregister = "CTGOV")),
-  "Returning keys")
+  "Returning keys \\(_id\\) of [4-9][0-9]")
 
 # test
 expect_warning(
@@ -326,6 +336,7 @@ expect_message(
         queryterm = "NCT01516567",
         register = "CTGOV",
         con = dbc,
+        verbose = TRUE,
         annotation.text = "ANNO",
         annotation.mode = "replace")),
   "Imported or updated 1 trial")
@@ -368,6 +379,63 @@ tmp_test <-
 # test
 expect_equal(sort(tmp_test[["annotation"]]),
              sort(c("EU ANNO", "ANNO")))
+
+# test
+expect_message(
+  suppressWarnings(
+    dbFindIdsUniqueTrials(
+      con = dbc,
+      preferregister = "CTGOV")),
+  "Concatenating 1 records from CTGOV and [4-9][0-9] from EUCTR")
+
+
+#### dbGetFieldsIntoDf ####
+
+# test
+expect_error(
+  dbGetFieldsIntoDf(
+    fields = c(NA, "willNeverBeFound"),
+    con = dbc),
+  "For field 'willNeverBeFound' no data could be extracted")
+
+# test
+expect_error(
+  dbGetFieldsIntoDf(
+    fields = c(NA, "willNeverBeFound", ""),
+    con = dbc),
+  "'fields' contains empty elements")
+
+# test as many fields as possible for typing
+
+# get all field names
+tmpf <- dbFindFields(
+  namepart = "*",
+  con = dbc)
+tmpf <- tmpf[tmpf != ""]
+# get all data (takes long with sqlite)
+result <- suppressWarnings(
+  dbGetFieldsIntoDf(
+    fields = tmpf,
+    con = dbc,
+    stopifnodata = FALSE)
+)
+# determine all classes
+tmpc <- sapply(result, class,
+               USE.NAMES = FALSE)
+tmpc <- unlist(tmpc)
+tmpc <- table(tmpc)
+
+# test
+expect_equal(
+  sort(names(tmpc))[1:5],
+  c("character", "Date", "integer", "list", "logical", "POSIXct", "POSIXt")[1:5]
+)
+# tests
+expect_true(tmpc[1] > 400)
+expect_true(tmpc[2] >   5)
+expect_true(tmpc[3] >  20)
+expect_true(tmpc[4] >  15)
+expect_true(tmpc[5] >  50)
 
 
 #### ctrOpenSearchPagesInBrowser #####

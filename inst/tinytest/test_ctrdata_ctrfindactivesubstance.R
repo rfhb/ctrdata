@@ -17,3 +17,14 @@ expect_true(all(c(
   "imatinib", "gleevec", "sti 571", "glivec", "CGP 57148", "st1571")
   %in% tmp_test))
 
+# test
+expect_error(
+  ctrFindActiveSubstanceSynonyms(
+    activesubstance = c("imatinib", "another"))
+)
+
+# test
+expect_error(
+  ctrFindActiveSubstanceSynonyms(
+    activesubstance = iris)
+)

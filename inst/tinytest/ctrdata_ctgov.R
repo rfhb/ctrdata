@@ -69,6 +69,18 @@ expect_true(length(tmp_test$success) > 2L)
 # test
 expect_true(length(tmp_test$failed) == 0L)
 
+# test
+expect_message(
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
+      queryterm = "someQueryForErrorTriggering",
+      register = "CTGOV",
+      verbose = TRUE,
+      only.count = TRUE,
+      con = dbc)),
+  "term=someQueryForErrorTriggering")
+
+
 #### ctrLoadQueryIntoDb results ####
 
 # get results
