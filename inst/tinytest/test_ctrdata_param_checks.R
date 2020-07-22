@@ -91,4 +91,6 @@ expect_warning(
     "Database connection was closed, trying to reopen"))
 
 ## restore
-clipr::write_clip(tmp)
+try(
+  clipr::write_clip(tmp),
+  silent = TRUE)

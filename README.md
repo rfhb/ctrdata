@@ -7,6 +7,7 @@
 [![R build
 status](https://github.com/rfhb/ctrdata/workflows/R-CMD-check/badge.svg)](https://github.com/rfhb/ctrdata/actions)
 [![test-coverage](https://github.com/rfhb/ctrdata/workflows/test-coverage/badge.svg)](https://codecov.io/gh/rfhb/ctrdata)
+[![codecov](https://codecov.io/gh/rfhb/ctrdata/branch/master/graph/badge.svg)](https://codecov.io/gh/rfhb/ctrdata)
 [![Slack](https://img.shields.io/badge/Slack-Join-green.svg)](https://rfhb.slack.com/messages/C6N1Y75B6)
 <!-- badges: end -->
 
