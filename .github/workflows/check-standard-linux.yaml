@@ -79,14 +79,14 @@ jobs:
         shell: Rscript {0}
 
       - name: Upload all check results
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v2
         with:
           name: ${{ runner.os }}-r${{ matrix.config.r }}-tinytest
           path: check/ctrdata.Rcheck/tests/tinytest*
 
       - name: Upload failed check results
         if: failure()
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v2
         with:
           name: ${{ runner.os }}-r${{ matrix.config.r }}-results
           path: check
