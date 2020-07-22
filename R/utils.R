@@ -298,6 +298,12 @@ ctrGetQueryUrlFromBrowser <- function(
   # check clipboard contents
   if (nchar(url) == 0L) {
     url <- clipr::read_clip()
+    if ((length(url) != 1L) || (nchar(url) == 0L)) {
+      stop("ctrGetQueryUrlFromBrowser(): no clinical trial register ",
+           "search URL found in parameter 'url' or in clipboard.",
+           call. = FALSE)
+    }
+    message("* Using clipboard content as register query URL: ", url)
   }
   #
   # EUCTR
@@ -348,7 +354,7 @@ ctrGetQueryUrlFromBrowser <- function(
       queryterm <- paste0(queryterm, "&resultsstatus=trials-with-results")
     }
     #
-    message("* Found search query from EUCTR.")
+    message("* Found search query from EUCTR: ", queryterm)
     #
     df <- data.frame(cbind(queryterm, "EUCTR"), stringsAsFactors = FALSE)
     names(df) <- c("query-term", "query-register")
@@ -381,7 +387,7 @@ ctrGetQueryUrlFromBrowser <- function(
     queryterm <- gsub("[a-z_0-9]+=&", "", queryterm)
     queryterm <- sub("&[a-z_0-9]+=$", "", queryterm)
     #
-    message("* Found search query from CTGOV.")
+    message("* Found search query from CTGOV: ", queryterm)
     #
     df <- data.frame(cbind(queryterm, "CTGOV"),
                      stringsAsFactors = FALSE)
@@ -1014,7 +1020,7 @@ dbFindIdsUniqueTrials <- function(
     }
   } else {
     #
-    # fallsback
+    # fallback
     retids <- c(listofEUCTRids[["_id"]], listofCTGOVids[["_id"]])
     #
   }
@@ -1098,12 +1104,14 @@ dbGetFieldsIntoDf <- function(fields = "",
     stop("Input should be a vector of strings of field names.", call. = FALSE)
   }
 
-  # remove _id if inadventertently mentioned in fields
+  # remove NA, NULL if included in fields
+  fields <- fields[!is.null(fields) & !is.na(fields)]
+
+  # remove _id if included in fields
   fields <- fields["_id" != fields]
 
   # check if valid fields
-  if (any(fields == "", na.rm = TRUE) |
-      (length(fields) == 0)) {
+  if (any(fields == "") | (length(fields) == 0)) {
     stop("'fields' contains empty elements; ",
          "please provide a vector of strings of field names. ",
          "Function dbFindFields() can be used to find field names. ",
@@ -1433,7 +1441,7 @@ dfMergeTwoVariablesRelevel <- function(
 
     # check
     if (class(levelslist) != "list") {
-      stop("Need lists for parameter levelslist.", call. = FALSE)
+      stop("Need list for parameter 'levelslist'.", call. = FALSE)
     }
 
     # helper function to collapse factor levels into the first

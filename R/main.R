@@ -115,63 +115,7 @@ ctrLoadQueryIntoDb <- function(
     }
   }
 
-  ## deduce queryterm and register
-  if (!((is.integer(querytoupdate) & querytoupdate > 0L) |
-        querytoupdate == "last")) {
-    queryterm <- ctrGetQueryUrlFromBrowser(
-      url = queryterm,
-      register = register)
-  }
-
-  # deal with data frame as returned from
-  # ctrQueryHistoryInDb and ctrGetQueryUrlFromBrowser
-  if (is.data.frame(queryterm) &&
-      all(substr(names(queryterm), 1, 6) == "query-")) {
-    #
-    nr <- nrow(queryterm)
-    #
-    if (nr > 1) {
-      warning(
-        "Using last row of queryterm parameter.",
-        call. = FALSE, immediate. = TRUE)
-    }
-    #
-    register  <- queryterm[nr, "query-register"]
-    queryterm <- queryterm[nr, "query-term"]
-    #
-  }
-
-  ## parameter checks
-
-  # check queryterm
-  if (class(queryterm) != "character") {
-    stop("queryterm has to be a character string.",
-         call. = FALSE)
-  }
-
-  ## sanity checks
-  if ((grepl("[^a-zA-Z0-9=+&%_-]",
-             gsub("\\[", "",
-                  gsub("\\]", "",
-                       queryterm)))) &
-      (register == "")) {
-    stop("Parameter 'queryterm' is not an URL showing results ",
-         "of a query or has unexpected characters: ", queryterm,
-         ", expected are: a-zA-Z0-9=+&%_-[].",
-         call. = FALSE)
-  }
-  #
-  if ((queryterm == "") &
-      querytoupdate == 0L) {
-    stop("Parameter 'queryterm' is empty.",
-         call. = FALSE)
-  }
-  #
-  if (!grepl(register, "CTGOVEUCTR")) {
-    stop("Parameter 'register' not known: ",
-         register, call. = FALSE)
-  }
-  #
+  ## check params for update request
   if (class(querytoupdate) != "character" &&
       querytoupdate != trunc(querytoupdate)) {
     stop("Parameter 'querytoupdate' is not an integer value or 'last'.",
@@ -184,8 +128,75 @@ ctrLoadQueryIntoDb <- function(
          call. = FALSE)
   }
 
-  # remove trailing or leading whitespace, line breaks
-  queryterm <- gsub("^\\s+|\\s+$|\n|\r", "", queryterm)
+  ## deduce queryterm and register
+  ## if not querytoupdate
+  if (querytoupdate == 0L) {
+
+    queryterm <- ctrGetQueryUrlFromBrowser(
+      url = queryterm,
+      register = register)
+
+    # deal with data frame as returned from
+    # ctrQueryHistoryInDb and ctrGetQueryUrlFromBrowser
+    if (is.data.frame(queryterm) &&
+        all(substr(names(queryterm), 1, 6) == "query-")) {
+      #
+      nr <- nrow(queryterm)
+      #
+      if (nr > 1) {
+        warning(
+          "Using last row of queryterm parameter.",
+          call. = FALSE, immediate. = TRUE)
+      }
+      #
+      register  <- queryterm[nr, "query-register"]
+      queryterm <- queryterm[nr, "query-term"]
+      #
+    }
+
+    # check queryterm
+    if (length(queryterm) != 1L ||
+        class(queryterm) != "character" ||
+        is.na(queryterm) ||
+        nchar(queryterm) == 0L) {
+      stop("'queryterm' has to be a character string:",
+           queryterm, call. = FALSE)
+    }
+
+    # check register
+    if (length(register) != 1L ||
+        class(register) != "character" ||
+        is.na(register)) {
+      stop("'register' has to be a character string: ",
+           register, call. = FALSE)
+    }
+
+    ## sanity checks
+    if (grepl("[^a-zA-Z0-9=+&%_-]",
+              gsub("\\[", "",
+                   gsub("\\]", "",
+                        queryterm)))) {
+      stop("Parameter 'queryterm' is not an URL showing results ",
+           "of a query or has unexpected characters: ", queryterm,
+           ", expected are: a-zA-Z0-9=+&%_-[].",
+           call. = FALSE)
+    }
+    #
+    if ((queryterm == "") &
+        querytoupdate == 0L) {
+      stop("Parameter 'queryterm' is empty.",
+           call. = FALSE)
+    }
+    #
+    if (!grepl(register, "CTGOVEUCTR")) {
+      stop("Parameter 'register' not known: ",
+           register, call. = FALSE)
+    }
+
+    # remove trailing or leading whitespace, line breaks
+    queryterm <- gsub("^\\s+|\\s+$|\n|\r", "", queryterm)
+
+  } # if not querytoupdate
 
   # check annotation parameters
   if (annotation.text != "" &
@@ -220,11 +231,6 @@ ctrLoadQueryIntoDb <- function(
       querytoupdate = querytoupdate, forcetoupdate = forcetoupdate,
       con = con, verbose = verbose,
       queryupdateterm = queryupdateterm)
-    #
-    # check rerunparameters and possibly stop function without error
-    if (!is.data.frame(rerunparameters)) {
-      return(invisible(rerunparameters))
-    }
     #
     # set main parameters
     querytermoriginal <- rerunparameters$querytermoriginal
@@ -1133,6 +1139,14 @@ ctrLoadQueryIntoDbEuctr <- function(
   #
   resultsEuNumTrials <- suppressWarnings(
     as.numeric(gsub("[,.]", "", resultsEuNumTrials)))
+  #
+  # register contains 35000+ trials, which would all
+  # be identified if queryterm is just anything
+  if (resultsEuNumTrials > 30000) {
+    stop("ctrLoadQueryIntoDb()): unexpectedly found more than ",
+         "30000 trials; revise your 'queryterm': ", queryterm,
+         call. = FALSE)
+  }
 
   # calculate number of results pages
   resultsEuNumPages  <- ceiling(resultsEuNumTrials / 20)
