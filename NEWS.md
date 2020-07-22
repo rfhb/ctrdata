@@ -2,7 +2,8 @@
  - 2020-07-17
  - workaround EUCTR certificate issue
  - streamline ctrGetQueryUrlFromBrowser()
- - include further test for query string handling 
+ - include further tests for query string handling,
+   checking more parameters and return values
  - better clean-up after testing
  - ctrLoadQueryIntoDb(querytorerun = ...) now looks
    for the date when the querytorerun was last run, 

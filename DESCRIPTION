@@ -19,7 +19,7 @@ Description: Provides functions for querying, retrieving and analysing
         for aggregating and trend-analysing the design, conduct and outcomes
         across clinical trials.
 License: MIT + file LICENSE
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 LazyData: true
 Suggests: devtools, knitr, rmarkdown, RSQLite (>= 2.1.2), mongolite, 
         tinytest (>= 1.2.1), R.rsp 
