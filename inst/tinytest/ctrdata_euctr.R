@@ -74,7 +74,6 @@ expect_message(
   "Imported or updated ")
 
 # manipulate history to test updating
-# implemented in dbCTRUpdateQueryHistory
 hist <- suppressWarnings(dbQueryHistory(con = dbc))
 #
 hist[nrow(hist), "query-term"] <-
@@ -172,12 +171,12 @@ expect_true(
   sum(nchar(
     dfListExtractKey(
       df = result,
-       list.key = list(
+      list.key = list(
         c("subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm",
           "title"),
-      c("subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm",
-        "type.value"))
-  )[["value"]]
+        c("subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm",
+          "type.value"))
+    )[["value"]]
   ), na.rm = TRUE)
   > 250L)
 
@@ -185,9 +184,9 @@ expect_true(
 expect_true(
   sum(nchar(
     dfListExtractKey(
-    df = result,
-    list.key = list(
-      c("endPoints.endPoint", "title"))
+      df = result,
+      list.key = list(
+        c("endPoints.endPoint", "title"))
     )[["value"]]
   ), na.rm = TRUE)
   > 3000L)
@@ -196,9 +195,9 @@ expect_true(
 tmp_test <- dfListExtractKey(
   result,
   list(
-      c("endPoints.endPoint", "^title"),
-      c("endPoints.endPoint", "^type.value")
-    )
+    c("endPoints.endPoint", "^title"),
+    c("endPoints.endPoint", "^type.value")
+  )
 )
 # test
 expect_true(all(
@@ -210,10 +209,10 @@ expect_true(all(
 tmp_test <- dfListExtractKey(
   result,
   list(
-      c("endPoints.endPoint", "armReportingGroups.armReportingGroup.subjects[0-9]*$"),
-      c("endPoints.endPoint", "armReportingGroups.armReportingGroup.@attributes.id"),
-      c("endPoints.endPoint", "armReportingGroups.armReportingGroup.@attributes.armId")
-    )
+    c("endPoints.endPoint", "armReportingGroups.armReportingGroup.subjects[0-9]*$"),
+    c("endPoints.endPoint", "armReportingGroups.armReportingGroup.@attributes.id"),
+    c("endPoints.endPoint", "armReportingGroups.armReportingGroup.@attributes.armId")
+  )
 )
 
 # test
@@ -230,10 +229,10 @@ expect_true(
 tmp_test <- dfListExtractKey(
   result,
   list(
-      c("endPoints.endPoint", "statisticalAnalyses.statisticalAnalysis.title"),
-      c("endPoints.endPoint", "statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.method.value"),
-      c("endPoints.endPoint", "statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.value[0-9]*$")
-    )
+    c("endPoints.endPoint", "statisticalAnalyses.statisticalAnalysis.title"),
+    c("endPoints.endPoint", "statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.method.value"),
+    c("endPoints.endPoint", "statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.value[0-9]*$")
+  )
 )
 
 # test
@@ -242,15 +241,15 @@ expect_true(
     tmp_test[["value"]][
       tmp_test[["name"]] ==
         "endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.value"
-      ])) < 1L))
+    ])) < 1L))
 
 # test
 expect_true(all(
-    c("HYPOTHESIS_METHOD.cochranMantelHaenszel", "HYPOTHESIS_METHOD.ancova",
-      "HYPOTHESIS_METHOD.regressionLogistic") %in%
-      tmp_test[["value"]][
-        tmp_test[["name"]] ==
-          "endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.method.value"]))
+  c("HYPOTHESIS_METHOD.cochranMantelHaenszel", "HYPOTHESIS_METHOD.ancova",
+    "HYPOTHESIS_METHOD.regressionLogistic") %in%
+    tmp_test[["value"]][
+      tmp_test[["name"]] ==
+        "endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.method.value"]))
 
 # test
 expect_error(
@@ -331,14 +330,14 @@ expect_true(all(
 
 # test
 expect_message(
-    suppressWarnings(
-      ctrLoadQueryIntoDb(
-        queryterm = "NCT01516567",
-        register = "CTGOV",
-        con = dbc,
-        verbose = TRUE,
-        annotation.text = "ANNO",
-        annotation.mode = "replace")),
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
+      queryterm = "NCT01516567",
+      register = "CTGOV",
+      con = dbc,
+      verbose = TRUE,
+      annotation.text = "ANNO",
+      annotation.mode = "replace")),
   "Imported or updated 1 trial")
 
 # test
@@ -393,32 +392,37 @@ expect_message(
 
 # test
 expect_error(
-  dbGetFieldsIntoDf(
-    fields = c(NA, "willNeverBeFound"),
-    con = dbc),
+  suppressWarnings(
+    dbGetFieldsIntoDf(
+      fields = c(NA, "willNeverBeFound"),
+      con = dbc)),
   "For field 'willNeverBeFound' no data could be extracted")
 
 # test
 expect_error(
-  dbGetFieldsIntoDf(
-    fields = c(NA, "willNeverBeFound", ""),
-    con = dbc),
+  suppressWarnings(
+    dbGetFieldsIntoDf(
+      fields = c(NA, "willNeverBeFound", ""),
+      con = dbc)),
   "'fields' contains empty elements")
 
 # test as many fields as possible for typing
 
 # get all field names
-tmpf <- dbFindFields(
-  namepart = "*",
-  con = dbc)
+tmpf <- suppressMessages(
+  suppressWarnings(
+    dbFindFields(
+      namepart = "*",
+      con = dbc)))
 tmpf <- tmpf[tmpf != ""]
 # get all data (takes long with sqlite)
-result <- suppressWarnings(
-  dbGetFieldsIntoDf(
-    fields = tmpf,
-    con = dbc,
-    stopifnodata = FALSE)
-)
+result <- suppressMessages(
+  suppressWarnings(
+    dbGetFieldsIntoDf(
+      fields = tmpf,
+      con = dbc,
+      stopifnodata = FALSE)
+  ))
 # determine all classes
 tmpc <- sapply(result, class,
                USE.NAMES = FALSE)

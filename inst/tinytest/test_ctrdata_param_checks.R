@@ -2,6 +2,9 @@
 
 #### SETUP ####
 source("setup_ctrdata.R")
+tmp <- clipr::read_clip()
+clipr::write_clip("")
+
 
 ## database in memory
 dbc <- nodbi::src_sqlite(
@@ -20,23 +23,26 @@ expect_error(
       con = dbc)))
 expect_error(
   suppressWarnings(
+    suppressMessages(
     ctrLoadQueryIntoDb(
       queryterm = tmpdf,
       querytoupdate = 1L,
-      con = dbc)))
+      con = dbc))))
 tmpdf["query-term"] <- as.character(tmpdf[["query-Species"]])
 expect_error(
   suppressWarnings(
+    suppressMessages(
     ctrLoadQueryIntoDb(
       queryterm = tmpdf,
       querytoupdate = 1L,
-      con = dbc)))
+      con = dbc))))
 
 expect_error(
   suppressWarnings(
+    suppressMessages(
     ctrLoadQueryIntoDb(
       queryterm = "",
-      con = dbc)))
+      con = dbc))))
 
 expect_error(
   suppressWarnings(
@@ -84,3 +90,5 @@ expect_warning(
       con = dbc),
     "Database connection was closed, trying to reopen"))
 
+## restore
+clipr::write_clip(tmp)
