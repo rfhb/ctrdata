@@ -3,7 +3,11 @@
 #### SETUP ####
 source("setup_ctrdata.R")
 tmp <- clipr::read_clip()
-clipr::write_clip("")
+try(
+  clipr::write_clip(
+    content = "",
+    allow_non_interactive = TRUE),
+  silent = TRUE)
 
 
 ## database in memory
@@ -24,25 +28,25 @@ expect_error(
 expect_error(
   suppressWarnings(
     suppressMessages(
-    ctrLoadQueryIntoDb(
-      queryterm = tmpdf,
-      querytoupdate = 1L,
-      con = dbc))))
+      ctrLoadQueryIntoDb(
+        queryterm = tmpdf,
+        querytoupdate = 1L,
+        con = dbc))))
 tmpdf["query-term"] <- as.character(tmpdf[["query-Species"]])
 expect_error(
   suppressWarnings(
     suppressMessages(
-    ctrLoadQueryIntoDb(
-      queryterm = tmpdf,
-      querytoupdate = 1L,
-      con = dbc))))
+      ctrLoadQueryIntoDb(
+        queryterm = tmpdf,
+        querytoupdate = 1L,
+        con = dbc))))
 
 expect_error(
   suppressWarnings(
     suppressMessages(
-    ctrLoadQueryIntoDb(
-      queryterm = "",
-      con = dbc))))
+      ctrLoadQueryIntoDb(
+        queryterm = "",
+        con = dbc))))
 
 expect_error(
   suppressWarnings(
@@ -92,5 +96,7 @@ expect_warning(
 
 ## restore
 try(
-  clipr::write_clip(tmp),
+  clipr::write_clip(
+    content = tmp,
+    allow_non_interactive = TRUE),
   silent = TRUE)
