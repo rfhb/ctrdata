@@ -126,7 +126,6 @@ expect_equal(
 #### ctrOpenSearchPagesInBrowser ####
 
 if (!at_home()) exit_file("Reason: not at_home")
-if (Sys.getenv("ON_APPVEYOR") != "") exit_file("Reason: on Appveyor")
 if (!check_internet()) exit_file("Reason: no internet connectivity")
 
 # test

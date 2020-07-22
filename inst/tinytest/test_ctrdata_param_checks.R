@@ -9,7 +9,10 @@ tmp <-
 if (interactive()) {
   try(
     clipr::write_clip(
-      content = ""),
+      content = "",
+      # clipr::write_clip
+      # allow_non_interactive != "TRUE"
+      allow_non_interactive = "TRUE"),
     silent = TRUE)
 }
 
@@ -102,6 +105,9 @@ expect_warning(
 if (interactive()) {
   try(
     clipr::write_clip(
-      content = tmp),
+      content = tmp,
+      # clipr::write_clip
+      # allow_non_interactive != "TRUE"
+      allow_non_interactive = "TRUE"),
     silent = TRUE)
 }
