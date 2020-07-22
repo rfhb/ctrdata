@@ -1,14 +1,17 @@
 ## RH 2020-07-01
 
 #### SETUP ####
-source("setup_ctrdata.R")
-tmp <- clipr::read_clip()
-try(
-  clipr::write_clip(
-    content = "",
-    allow_non_interactive = TRUE),
-  silent = TRUE)
-
+#source("setup_ctrdata.R")
+tmp <-
+  suppressWarnings(
+    clipr::read_clip()
+  )
+if (interactive()) {
+  try(
+    clipr::write_clip(
+      content = ""),
+    silent = TRUE)
+}
 
 ## database in memory
 dbc <- nodbi::src_sqlite(
@@ -83,6 +86,7 @@ expect_error(
       con = dbc),
     "parameter 'collection' needs"))
 
+RSQLite::dbDisconnect(conn = dbc$con)
 dbc <- nodbi::src_sqlite(
   collection = "inmemory")
 RSQLite::dbDisconnect(conn = dbc$con)
@@ -95,8 +99,9 @@ expect_warning(
     "Database connection was closed, trying to reopen"))
 
 ## restore
-try(
-  clipr::write_clip(
-    content = tmp,
-    allow_non_interactive = TRUE),
-  silent = TRUE)
+if (interactive()) {
+  try(
+    clipr::write_clip(
+      content = tmp),
+    silent = TRUE)
+}
