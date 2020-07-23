@@ -286,12 +286,14 @@ ctrGetQueryUrlFromBrowser <- function(
   register = "") {
   #
   # check parameters expectations
-  if (is.null(url) || is.null(register) ||
+  if (!is.atomic(url) || !is.atomic(register) ||
+      is.null(url) || is.null(register) ||
       is.na(url) || is.na(register) ||
       !inherits(url, "character") || !inherits(register, "character") ||
       length(url) != 1L || length(register) != 1L) {
     stop("ctrGetQueryUrlFromBrowser(): 'url' and / or 'register' ",
-         "is not a single character string.")
+         "is not a single character string.",
+         call. = FALSE)
   }
   #
   # if no parameter specified,
