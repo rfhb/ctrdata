@@ -39,20 +39,27 @@ expect_error(
 
 # test
 # clipr::clear_clip()
-tmpcb <- suppressWarnings(
-  clipr::read_clip(
-    allow_non_interactive = TRUE)
-)
-# no testing if some content is
-# found in the system clipboard
-if (is.null(tmpcb) || tmpcb == "") {
-  expect_error(
-    suppressWarnings(
-      suppressMessages(
-        ctrLoadQueryIntoDb(
-          queryterm = "",
-          con = dbc))),
-    "no clinical trial register search URL found")
+# was not able to get testing to work
+# on linux containers
+if (.Platform$OS.type == "windows" ||
+    grepl("darwin", sessionInfo()$platform,
+          ignore.case = TRUE)) {
+
+  tmpcb <- suppressWarnings(
+    clipr::read_clip(
+      allow_non_interactive = TRUE)
+  )
+  # no testing if some content is
+  # found in the system clipboard
+  if (is.null(tmpcb) || tmpcb == "") {
+    expect_error(
+      suppressWarnings(
+        suppressMessages(
+          ctrLoadQueryIntoDb(
+            queryterm = "",
+            con = dbc))),
+      "no clinical trial register search URL found")
+  }
 }
 
 # test
