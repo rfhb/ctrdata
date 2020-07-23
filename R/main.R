@@ -216,7 +216,8 @@ ctrLoadQueryIntoDb <- function(
   ## handle if we need to rerun previous query
 
   # check if parameters are consistent
-  if ((querytoupdate > 0) && (queryterm != "")) {
+  if ((querytoupdate > 0) &&
+      (!is.atomic(queryterm) || queryterm != "")) {
     stop("'queryterm' and 'querytoupdate' specified,",
          " which is inconsistent, cannot continue.",
          call. = FALSE)
