@@ -1,20 +1,7 @@
 ## RH 2020-07-01
 
 #### SETUP ####
-#source("setup_ctrdata.R")
-tmp <-
-  suppressWarnings(
-    clipr::read_clip()
-  )
-if (interactive()) {
-  try(
-    clipr::write_clip(
-      content = "",
-      # clipr::write_clip
-      # allow_non_interactive != "TRUE"
-      allow_non_interactive = "TRUE"),
-    silent = TRUE)
-}
+source("setup_ctrdata.R")
 
 ## database in memory
 dbc <- nodbi::src_sqlite(
@@ -26,11 +13,13 @@ dbc <- nodbi::src_sqlite(
 
 tmpdf <- iris[1:5,]
 names(tmpdf) <- paste0("query-", names(tmpdf))
+# test
 expect_error(
   suppressWarnings(
     ctrLoadQueryIntoDb(
       queryterm = tmpdf,
       con = dbc)))
+# test
 expect_error(
   suppressWarnings(
     suppressMessages(
@@ -39,6 +28,7 @@ expect_error(
         querytoupdate = 1L,
         con = dbc))))
 tmpdf["query-term"] <- as.character(tmpdf[["query-Species"]])
+# test
 expect_error(
   suppressWarnings(
     suppressMessages(
@@ -47,19 +37,25 @@ expect_error(
         querytoupdate = 1L,
         con = dbc))))
 
-expect_error(
-  suppressWarnings(
-    suppressMessages(
-      ctrLoadQueryIntoDb(
-        queryterm = "",
-        con = dbc))))
+# test
+if (clipr::read_clip() == "") {
+  expect_error(
+    suppressWarnings(
+      suppressMessages(
+        ctrLoadQueryIntoDb(
+          queryterm = "",
+          con = dbc))),
+    "no clinical trial register search URL found")
+}
 
+# test
 expect_error(
   suppressWarnings(
     ctrLoadQueryIntoDb(
       querytoupdate = pi,
       con = dbc)))
 
+# test
 expect_error(
   suppressWarnings(
     ctrLoadQueryIntoDb(
@@ -101,13 +97,3 @@ expect_warning(
       con = dbc),
     "Database connection was closed, trying to reopen"))
 
-## restore
-if (interactive()) {
-  try(
-    clipr::write_clip(
-      content = tmp,
-      # clipr::write_clip
-      # allow_non_interactive != "TRUE"
-      allow_non_interactive = "TRUE"),
-    silent = TRUE)
-}
