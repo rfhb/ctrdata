@@ -56,6 +56,9 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
           restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
 
+      - name: Install xclip to complete checks
+        run: sudo apt-get install xclip
+
       - name: Install system dependencies
         if: runner.os == 'Linux'
         env:
