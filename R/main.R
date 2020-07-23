@@ -217,9 +217,9 @@ ctrLoadQueryIntoDb <- function(
 
   # check if parameters are consistent
   if ((querytoupdate > 0) && (queryterm != "")) {
-    warning("'queryterm' and 'querytoupdate' specified,",
-            " continuing only with new query",
-            immediate. = TRUE)
+    stop("'queryterm' and 'querytoupdate' specified,",
+         " which is inconsistent, cannot continue.",
+         call. = FALSE)
   }
 
   # rewrite parameters for running as update

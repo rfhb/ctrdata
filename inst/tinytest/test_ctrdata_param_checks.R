@@ -18,7 +18,8 @@ expect_error(
   suppressWarnings(
     ctrLoadQueryIntoDb(
       queryterm = tmpdf,
-      con = dbc)))
+      con = dbc)),
+  "'url' and / or 'register' is not")
 # test
 expect_error(
   suppressWarnings(
@@ -26,7 +27,8 @@ expect_error(
       ctrLoadQueryIntoDb(
         queryterm = tmpdf,
         querytoupdate = 1L,
-        con = dbc))))
+        con = dbc))),
+  "and 'querytoupdate' specified, which is inconsistent")
 tmpdf["query-term"] <- as.character(tmpdf[["query-Species"]])
 # test
 expect_error(
@@ -34,6 +36,15 @@ expect_error(
     suppressMessages(
       ctrLoadQueryIntoDb(
         queryterm = tmpdf,
+        con = dbc))),
+  "'url' and / or 'register' is not")
+
+# test no history or no table with
+# the name specified in dbc
+expect_error(
+  suppressWarnings(
+    suppressMessages(
+      ctrLoadQueryIntoDb(
         querytoupdate = 1L,
         con = dbc))))
 
