@@ -228,9 +228,18 @@ ctrLoadQueryIntoDb <- function(
        (queryterm == "")) {
     #
     rerunparameters <- ctrRerunQuery(
-      querytoupdate = querytoupdate, forcetoupdate = forcetoupdate,
-      con = con, verbose = verbose,
+      querytoupdate = querytoupdate,
+      forcetoupdate = forcetoupdate,
+      con = con,
+      verbose = verbose,
       queryupdateterm = queryupdateterm)
+    #
+    # check rerunparameters and stop ctrLoadQueryIntoDb
+    # without error if rerunparameters cannot be used for
+    # running and loading a query
+    if (!is.data.frame(rerunparameters)) {
+      return(invisible(rerunparameters))
+    }
     #
     # set main parameters
     querytermoriginal <- rerunparameters$querytermoriginal

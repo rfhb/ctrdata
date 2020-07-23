@@ -34,7 +34,8 @@ hist <- suppressWarnings(dbQueryHistory(con = dbc))
 #
 hist[nrow(hist), "query-term"] <-
   sub("query=", "", hist[nrow(hist), "query-term"])
-#
+hist[nrow(hist), "query-timestamp"] <- "2000-01-01 00:00:00"
+  #
 # convert into json object
 json <- jsonlite::toJSON(list("queries" = hist))
 #
@@ -53,7 +54,7 @@ expect_message(
       querytoupdate = "last",
       con = dbc,
       verbose = TRUE)),
-  "DEBUG: queryterm is .*?search\\?query=2")
+  "DEBUG: queryterm is .*?search\\?query=neuro")
 
 # checking as only works for last 7 days with rss mechanism
 # query based on date is used since this avoids no trials are found
