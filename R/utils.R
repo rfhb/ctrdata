@@ -297,8 +297,11 @@ ctrGetQueryUrlFromBrowser <- function(
   # if no parameter specified,
   # check clipboard contents
   if (nchar(url) == 0L) {
-    url <- clipr::read_clip()
-    if ((length(url) != 1L) || (nchar(url) == 0L)) {
+    url <- suppressWarnings(
+      clipr::read_clip(
+        allow_non_interactive = TRUE)
+    )
+    if (is.null(url) || (length(url) != 1L) || (nchar(url) == 0L)) {
       stop("ctrGetQueryUrlFromBrowser(): no clinical trial register ",
            "search URL found in parameter 'url' or in clipboard.",
            call. = FALSE)

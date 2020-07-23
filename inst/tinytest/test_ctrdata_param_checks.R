@@ -38,7 +38,14 @@ expect_error(
         con = dbc))))
 
 # test
-if (clipr::read_clip() == "") {
+# clipr::clear_clip()
+tmpcb <- suppressWarnings(
+  clipr::read_clip(
+    allow_non_interactive = TRUE)
+)
+# no testing if some content is
+# found in the system clipboard
+if (is.null(tmpcb) || tmpcb == "") {
   expect_error(
     suppressWarnings(
       suppressMessages(
