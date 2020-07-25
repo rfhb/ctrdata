@@ -122,3 +122,5 @@ expect_warning(
       con = dbc),
     "Database connection was closed, trying to reopen"))
 
+# clean up
+RSQLite::dbDisconnect(conn = dbc$con)
