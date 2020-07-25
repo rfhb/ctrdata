@@ -191,7 +191,10 @@ used for a vector of old values (optional).</p></td>
   <span class='st'>"other"</span> = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Withdrawn"</span>, <span class='st'>"Suspended"</span>,
               <span class='st'>"No longer available"</span>, <span class='st'>"Not yet recruiting"</span>))
 
-<span class='fu'>dfMergeTwoVariablesRelevel</span>(<span class='kw'>result</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Recruitment"</span>, <span class='st'>"x5_trial_status"</span>), <span class='kw'>statusvalues</span>)
+<span class='fu'>dfMergeTwoVariablesRelevel</span>(
+  df = <span class='kw'>result</span>,
+  colnames = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Recruitment"</span>, <span class='st'>"x5_trial_status"</span>),
+  levelslist = <span class='kw'>statusvalues</span>)
 }
 </div></pre>
   </div>

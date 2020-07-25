@@ -270,7 +270,8 @@ the query history in this database).</p>
 <span class='co'># single trial identified by EudraCT number</span>
 <span class='co'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='kw'>db</span> <span class='op'>&lt;-</span> <span class='kw'>nodbi</span>::<span class='fu'><a href='https://docs.ropensci.org/nodbi/reference/src_sqlite.html'>src_sqlite</a></span>(collection = <span class='st'>"test"</span>)
-<span class='fu'>ctrLoadQueryIntoDb</span>(queryterm = <span class='st'>"2013-001291-38"</span>, cond = <span class='kw'>db</span>)
+<span class='fu'>ctrLoadQueryIntoDb</span>(
+      queryterm = <span class='st'>"2013-001291-38"</span>, con = <span class='kw'>db</span>)
 }
 <span class='co'># Retrieve protocol-related information on</span>
 <span class='co'># ongoing interventional cancer trials in children</span>
@@ -283,7 +284,7 @@ the query history in this database).</p>
 <span class='fu'>ctrLoadQueryIntoDb</span>(
      queryterm = <span class='st'>"NCT02239861"</span>,
      register = <span class='st'>"CTGOV"</span>,
-     cond = <span class='kw'>db</span>)
+     con = <span class='kw'>db</span>)
 }
 </div></pre>
   </div>

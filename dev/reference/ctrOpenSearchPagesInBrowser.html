@@ -193,8 +193,13 @@ this function.</p></td>
 <span class='fu'>ctrOpenSearchPagesInBrowser</span>(
  <span class='fu'><a href='ctrGetQueryUrlFromBrowser.html'>ctrGetQueryUrlFromBrowser</a></span>())
 
+<span class='co'># open the last query that was</span>
+<span class='co'># loaded into the database</span>
+<span class='kw'>db</span> <span class='op'>&lt;-</span> <span class='kw'>nodbi</span>::<span class='fu'><a href='https://docs.ropensci.org/nodbi/reference/src_sqlite.html'>src_sqlite</a></span>(
+  collection = <span class='st'>"previously_created"</span>
+)
 <span class='fu'>ctrOpenSearchPagesInBrowser</span>(
- <span class='fu'><a href='dbQueryHistory.html'>dbQueryHistory</a></span>())
+  <span class='fu'><a href='dbQueryHistory.html'>dbQueryHistory</a></span>(con = <span class='kw'>db</span>))
 }
 </div></pre>
   </div>
