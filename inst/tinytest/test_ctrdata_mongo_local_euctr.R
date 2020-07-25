@@ -24,7 +24,7 @@ tf <- function() {
     },
     silent = TRUE)
   })
-do tests
+  # do tests
   source("ctrdata_euctr.R", local = TRUE)
 }
 tf()

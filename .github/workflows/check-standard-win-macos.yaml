@@ -76,11 +76,10 @@ jobs:
         if: runner.os == 'Windows'
         uses: actions/cache@v2
         with:
-          path: |
-            c:\cygwin
+          path: c:\cygwin
           key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
 
-    - name: Check
+      - name: Check
         env:
           _R_CHECK_CRAN_INCOMING_REMOTE_: false
           CTRDATAMONGOPASSWORD: ${{ secrets.CTRDATAMONGOPASSWORD }}
