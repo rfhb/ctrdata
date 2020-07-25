@@ -8,6 +8,7 @@
  - ctrLoadQueryIntoDb(querytorerun = ...) now looks
    for the date when the querytorerun was last run, 
    to more often use euctr update options
+ - switching from travis to github action
  
 # ctrdata 1.2.1
  - 2020-05-18

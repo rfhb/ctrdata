@@ -4,9 +4,7 @@
 <!-- badges: start -->
 
 [![](https://cranlogs.r-pkg.org/badges/ctrdata)](https://cran.r-project.org/package=ctrdata)
-[![R build
-status](https://github.com/rfhb/ctrdata/workflows/R-CMD-check/badge.svg)](https://github.com/rfhb/ctrdata/actions)
-[![test-coverage](https://github.com/rfhb/ctrdata/workflows/test-coverage/badge.svg)](https://codecov.io/gh/rfhb/ctrdata)
+![R-CMD-check-win-macos](https://github.com/rfhb/ctrdata/workflows/R-CMD-check-win-macos/badge.svg)
 [![codecov](https://codecov.io/gh/rfhb/ctrdata/branch/master/graph/badge.svg)](https://codecov.io/gh/rfhb/ctrdata)
 [![Slack](https://img.shields.io/badge/Slack-Join-green.svg)](https://rfhb.slack.com/messages/C6N1Y75B6)
 <!-- badges: end -->
@@ -23,7 +21,7 @@ started in 2015 and was motivated by the wish to understand trends in
 designs and conduct of trials and their availability for patients. The
 package is to be used within the [R](https://www.r-project.org/) system.
 
-Last reviewed on 2020-07-05 for version 1.2.1.9001
+Last reviewed on 2020-07-25 for version 1.2.1.9001
 
 Main features:
 
@@ -201,7 +199,7 @@ ctrLoadQueryIntoDb(
   queryterm = 
     paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?", 
            "query=cancer&age=under-18&phase=phase-one"),
-  con = d)
+  con = db)
 ```
 
   - Analyse
