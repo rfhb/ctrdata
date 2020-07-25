@@ -135,5 +135,5 @@ tf <- function() {
         con = dbc),
       "Database connection was closed, trying to reopen"))
 
-}) # tf test function
+} # tf test function
 tf()

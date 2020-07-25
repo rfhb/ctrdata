@@ -109,8 +109,6 @@ expect_true(tmp_test$n > 10L)
 # test
 expect_true(length(tmp_test$success) > 10L)
 
-
-
 #### DEBUG ####
 # temp exit
 exit_file("Reason: DEBUGGING TESTS")
