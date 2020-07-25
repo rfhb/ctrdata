@@ -41,14 +41,34 @@ examples and other packages to query mongodb such as mongolite.
 \examples{
 
 \dontrun{
-db <- nodbi::src_sqlite(collection = "test")
-dbGetFieldsIntoDf("b1_sponsor.b31_and_b32_status_of_the_sponsor", con = db)
-#                   _id  b1_sponsor.b31_and_b32_status_of_the_sponsor
-#  1  2004-000015-25-GB                   Non-commercial / Commercial
+db <- nodbi::src_sqlite(
+  collection = "my_collection"
+)
 
-dbGetFieldsIntoDf("keyword")[1,]
-#            _id                                           keyword
-#  1 NCT00129259  T1D / type 1 diabetes / type 1 diabetes mellitus
+# access fields that are nested within another field
+# and can have multiple values with the other field
+dbGetFieldsIntoDf(
+  "b1_sponsor.b31_and_b32_status_of_the_sponsor",
+  con = db
+)[1,]
+#                 _id b1_sponsor.b31_and_b32_status_of_the_sponsor
+# 1 2004-000015-25-GB                  Non-commercial / Commercial
+
+# access fields that include a list of values
+# which are printed as comma separated values
+dbGetFieldsIntoDf(
+  "keyword",
+  con = db
+)[1,]
+
+#           _id                                 keyword
+# 1 NCT00129259 T1D, type 1 diabetes, juvenile diabetes
+#
+str(.Last.value)
+'data.frame':	1 obs. of  2 variables:
+$ _id    : chr "NCT00129259"
+$ keyword:List of 1
+..$ : chr  "T1D" "type 1 diabetes" "juvenile diabetes" ...
 
 }
 

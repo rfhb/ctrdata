@@ -7,8 +7,9 @@
 dbFindFields(namepart = "", con, verbose = FALSE)
 }
 \arguments{
-\item{namepart}{A plain string (not a regular expression) to
-be searched for among all field names (keys) in the database.}
+\item{namepart}{A plain string (can include a regular expression,
+including Perl-style) to be searched for among all field names
+(keys) in the database.}
 
 \item{con}{A \link[nodbi]{src} connection object, as obtained with
 nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()}
@@ -41,8 +42,13 @@ random documents are sampled to generate a list of fields.
 \examples{
 
 \dontrun{
-db <- nodbi::src_sqlite(collection = "test")
-dbFindFields("date", con = db)
+db <- nodbi::src_sqlite(
+  collection = "my_collection"
+)
+dbFindFields(
+  nampepart = "date",
+  con = db
+)
 }
 
 }

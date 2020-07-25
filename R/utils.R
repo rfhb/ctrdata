@@ -126,8 +126,13 @@ ctrDb <- function(
 #' ctrOpenSearchPagesInBrowser(
 #'  ctrGetQueryUrlFromBrowser())
 #'
+#' # open the last query that was
+#' # loaded into the database
+#' db <- nodbi::src_sqlite(
+#'   collection = "previously_created"
+#' )
 #' ctrOpenSearchPagesInBrowser(
-#'  dbQueryHistory())
+#'   dbQueryHistory(con = db))
 #' }
 #'
 ctrOpenSearchPagesInBrowser <- function(
@@ -275,8 +280,13 @@ ctrOpenSearchPagesInBrowser <- function(
 #' @examples
 #'
 #' \dontrun{
-#' db <- nodbi::src_sqlite(collection = "test")
-#' ctrLoadQueryIntoDb(ctrGetQueryUrlFromBrowser(), con = db)
+#' db <- nodbi::src_sqlite(
+#'   collection = "my_collection"
+#' )
+#' ctrLoadQueryIntoDb(
+#'   ctrGetQueryUrlFromBrowser(),
+#'   con = db
+#' )
 #' }
 #'
 #' @importFrom clipr read_clip
@@ -432,7 +442,9 @@ ctrGetQueryUrlFromBrowser <- function(
 #' @examples
 #'
 #' \dontrun{
-#' ctrFindActiveSubstanceSynonyms(activesubstance = "imatinib")
+#' ctrFindActiveSubstanceSynonyms(
+#'   activesubstance = "imatinib"
+#' )
 #' }
 #'
 ctrFindActiveSubstanceSynonyms <- function(activesubstance = ""){
@@ -496,7 +508,12 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = ""){
 #' @examples
 #'
 #' \dontrun{
-#' dbQueryHistory()
+#' db <- nodbi::src_sqlite(
+#'   collection = "my_collection"
+#' )
+#' dbQueryHistory(
+#'   con = db
+#' )
 #' }
 #'
 dbQueryHistory <- function(con,
@@ -574,8 +591,9 @@ dbQueryHistory <- function(con,
 #' such a function on the (local or remote) server,
 #' random documents are sampled to generate a list of fields.
 #'
-#' @param namepart A plain string (not a regular expression) to
-#' be searched for among all field names (keys) in the database.
+#' @param namepart A plain string (can include a regular expression,
+#' including Perl-style) to be searched for among all field names
+#' (keys) in the database.
 #'
 #' @param verbose If \code{TRUE}, prints additional information
 #' (default \code{FALSE}).
@@ -591,8 +609,13 @@ dbQueryHistory <- function(con,
 #' @examples
 #'
 #' \dontrun{
-#' db <- nodbi::src_sqlite(collection = "test")
-#' dbFindFields("date", con = db)
+#' db <- nodbi::src_sqlite(
+#'   collection = "my_collection"
+#' )
+#' dbFindFields(
+#'   nampepart = "date",
+#'   con = db
+#' )
 #' }
 #'
 dbFindFields <- function(namepart = "",
@@ -724,7 +747,8 @@ dbFindFields <- function(namepart = "",
   }
 
   ## now do the actual search and find for key name parts
-  fields <- keyslist[grepl(namepart, keyslist, ignore.case = TRUE)]
+  fields <- keyslist[grepl(pattern = namepart, x = keyslist,
+                           ignore.case = TRUE, perl = TRUE)]
 
   # return the match(es)
   return(fields)
@@ -761,8 +785,12 @@ dbFindFields <- function(namepart = "",
 #' @examples
 #'
 #' \dontrun{
-#' db <- nodbi::src_sqlite(collection = "test")
-#' dbFindIdsUniqueTrials(con = db)
+#' db <- nodbi::src_sqlite(
+#'   collection = "my_collection"
+#' )
+#' dbFindIdsUniqueTrials(
+#'   con = db
+#' )
 #' }
 #'
 dbFindIdsUniqueTrials <- function(
@@ -1088,14 +1116,34 @@ dbFindIdsUniqueTrials <- function(
 #' @examples
 #'
 #' \dontrun{
-#' db <- nodbi::src_sqlite(collection = "test")
-#' dbGetFieldsIntoDf("b1_sponsor.b31_and_b32_status_of_the_sponsor", con = db)
-#' #                   _id  b1_sponsor.b31_and_b32_status_of_the_sponsor
-#' #  1  2004-000015-25-GB                   Non-commercial / Commercial
+#' db <- nodbi::src_sqlite(
+#'   collection = "my_collection"
+#' )
 #'
-#' dbGetFieldsIntoDf("keyword")[1,]
-#' #            _id                                           keyword
-#' #  1 NCT00129259  T1D / type 1 diabetes / type 1 diabetes mellitus
+#' # access fields that are nested within another field
+#' # and can have multiple values with the other field
+#' dbGetFieldsIntoDf(
+#'   "b1_sponsor.b31_and_b32_status_of_the_sponsor",
+#'   con = db
+#' )[1,]
+#' #                 _id b1_sponsor.b31_and_b32_status_of_the_sponsor
+#' # 1 2004-000015-25-GB                  Non-commercial / Commercial
+#'
+#' # access fields that include a list of values
+#' # which are printed as comma separated values
+#' dbGetFieldsIntoDf(
+#'   "keyword",
+#'   con = db
+#' )[1,]
+#'
+#' #           _id                                 keyword
+#' # 1 NCT00129259 T1D, type 1 diabetes, juvenile diabetes
+#' #
+#' str(.Last.value)
+#' 'data.frame':	1 obs. of  2 variables:
+#' $ _id    : chr "NCT00129259"
+#' $ keyword:List of 1
+#' ..$ : chr  "T1D" "type 1 diabetes" "juvenile diabetes" ...
 #'
 #' }
 #'
@@ -1285,10 +1333,13 @@ dbGetFieldsIntoDf <- function(fields = "",
 #' @examples
 #'
 #' \dontrun{
-#' db <- nodbi::src_sqlite(collection = "test")
+#' db <- nodbi::src_sqlite(
+#'   collection = "my_collection"
+#' )
 #' df <- dbGetFieldsIntoDf(
-#'   fields = c("endPoints.endPoint",
-#'              "subjectDisposition.postAssignmentPeriods"),
+#'   fields = c(
+#'     "endPoints.endPoint",
+#'     "subjectDisposition.postAssignmentPeriods"),
 #'   con = db
 #' )
 #' dfListExtractKey(
@@ -1405,7 +1456,10 @@ dfListExtractKey <- function(
 #'   "other" = c("Withdrawn", "Suspended",
 #'               "No longer available", "Not yet recruiting"))
 #'
-#' dfMergeTwoVariablesRelevel(result, c("Recruitment", "x5_trial_status"), statusvalues)
+#' dfMergeTwoVariablesRelevel(
+#'   df = result,
+#'   colnames = c("Recruitment", "x5_trial_status"),
+#'   levelslist = statusvalues)
 #' }
 #'
 dfMergeTwoVariablesRelevel <- function(

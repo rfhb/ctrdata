@@ -37,8 +37,13 @@ ctrOpenSearchPagesInBrowser(
 ctrOpenSearchPagesInBrowser(
  ctrGetQueryUrlFromBrowser())
 
+# open the last query that was
+# loaded into the database
+db <- nodbi::src_sqlite(
+  collection = "previously_created"
+)
 ctrOpenSearchPagesInBrowser(
- dbQueryHistory())
+  dbQueryHistory(con = db))
 }
 
 }

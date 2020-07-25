@@ -35,7 +35,10 @@ statusvalues <- list(
   "other" = c("Withdrawn", "Suspended",
               "No longer available", "Not yet recruiting"))
 
-dfMergeTwoVariablesRelevel(result, c("Recruitment", "x5_trial_status"), statusvalues)
+dfMergeTwoVariablesRelevel(
+  df = result,
+  colnames = c("Recruitment", "x5_trial_status"),
+  levelslist = statusvalues)
 }
 
 }

@@ -93,7 +93,8 @@ different registers.
 # single trial identified by EudraCT number
 \dontrun{
 db <- nodbi::src_sqlite(collection = "test")
-ctrLoadQueryIntoDb(queryterm = "2013-001291-38", cond = db)
+ctrLoadQueryIntoDb(
+      queryterm = "2013-001291-38", con = db)
 }
 # Retrieve protocol-related information on
 # ongoing interventional cancer trials in children
@@ -106,7 +107,7 @@ ctrLoadQueryIntoDb(
 ctrLoadQueryIntoDb(
      queryterm = "NCT02239861",
      register = "CTGOV",
-     cond = db)
+     con = db)
 }
 
 }

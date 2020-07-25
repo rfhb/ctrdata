@@ -24,7 +24,9 @@ detect which substances were also searched for.
 \examples{
 
 \dontrun{
-ctrFindActiveSubstanceSynonyms(activesubstance = "imatinib")
+ctrFindActiveSubstanceSynonyms(
+  activesubstance = "imatinib"
+)
 }
 
 }

@@ -26,7 +26,12 @@ Show the history of queries that were loaded into a database
 \examples{
 
 \dontrun{
-dbQueryHistory()
+db <- nodbi::src_sqlite(
+  collection = "my_collection"
+)
+dbQueryHistory(
+  con = db
+)
 }
 
 }
