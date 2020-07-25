@@ -467,6 +467,8 @@ tmpc <- sapply(result, class,
 tmpc <- unlist(tmpc)
 tmpc <- table(tmpc)
 
+print(tmpc)
+
 # test
 expect_equal(
   sort(names(tmpc))[1:5],
