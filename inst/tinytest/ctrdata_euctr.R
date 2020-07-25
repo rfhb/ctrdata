@@ -432,17 +432,12 @@ tmpc <- sapply(result, class,
 tmpc <- unlist(tmpc)
 tmpc <- table(tmpc)
 
-# test
-expect_equal(
-  sort(names(tmpc))[1:5],
-  c("character", "Date", "integer", "list", "logical", "POSIXct", "POSIXt")[1:5]
-)
 # tests
-expect_true(tmpc[1] > 400)
-expect_true(tmpc[2] >   5)
-expect_true(tmpc[3] >  20)
-expect_true(tmpc[4] >  15)
-expect_true(tmpc[5] >  50)
+expect_true(tmpc[["character"]] > 400)
+expect_true(tmpc[["Date"]]      >   5)
+expect_true(tmpc[["integer"]]   >  20)
+expect_true(tmpc[["list"]]      >  15)
+expect_true(tmpc[["logical"]]   >  50)
 
 
 #### ctrOpenSearchPagesInBrowser #####
