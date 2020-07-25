@@ -54,7 +54,7 @@ expect_message(
       querytoupdate = "last",
       con = dbc,
       verbose = TRUE)),
-  "DEBUG: queryterm is .*?search\\?query=neuro")
+  "search\\?query=neuro")
 
 # checking as only works for last 7 days with rss mechanism
 # query based on date is used since this avoids no trials are found
@@ -108,6 +108,13 @@ expect_true(tmp_test$n > 10L)
 
 # test
 expect_true(length(tmp_test$success) > 10L)
+
+
+
+#### DEBUG ####
+# temp exit
+exit_file("Reason: DEBUGGING TESTS")
+
 
 
 #### ctrLoadQueryIntoDb results ####
@@ -263,6 +270,7 @@ expect_error(
   "Data frame 'df' lacks '_id' column")
 
 
+
 #### dbFindFields #####
 
 # test
@@ -292,6 +300,7 @@ tmp_test <- suppressMessages(suppressWarnings(
     con = dbc)))
 expect_true("character" %in% class(tmp_test))
 expect_true(length(tmp_test) >= 4L)
+
 
 #### dbFindIdsUniqueTrials #####
 
