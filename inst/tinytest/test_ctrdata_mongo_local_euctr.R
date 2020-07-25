@@ -454,7 +454,7 @@ tf <- function() {
   tmpf <- suppressMessages(
     suppressWarnings(
       dbFindFields(
-        namepart = "*",
+        namepart = ".*",
         con = dbc)))
   tmpf <- tmpf[tmpf != ""]
   # get all data (takes long with sqlite)
