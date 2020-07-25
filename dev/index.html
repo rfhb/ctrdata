@@ -112,7 +112,7 @@
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#ctrdata-for-aggregating-and-analysing-clinical-trials" class="anchor"></a>ctrdata for aggregating and analysing clinical trials</h1></div>
 <p>The package <code>ctrdata</code> provides functions for retrieving (downloading) information on clinical trials from public registers, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register (“EUCTR”, <a href="https://www.clinicaltrialsregister.eu/" class="uri">https://www.clinicaltrialsregister.eu/</a>) and for ClinicalTrials.gov (“CTGOV”, <a href="https://clinicaltrials.gov/" class="uri">https://clinicaltrials.gov/</a>). Development of <code>ctrdata</code> started in 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package is to be used within the <a href="https://www.r-project.org/">R</a> system.</p>
-<p>Last reviewed on 2020-07-05 for version 1.2.1.9001</p>
+<p>Last reviewed on 2020-07-25 for version 1.2.1.9001</p>
 <p>Main features:</p>
 <ul>
 <li><p>Protocol-related information on clinical trials is easily retrieved (downloaded) from public online sources: Users define a query using a register’s web interfaces and then use <code>ctrdata</code> for retrieving all trials resulting from the query. Personal annotations can be added when retrieving trial information. Synonyms of an active substance can also be found.</p></li>
@@ -275,7 +275,7 @@ citation("ctrdata")
   queryterm = 
     <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"https://www.clinicaltrialsregister.eu/ctr-search/search?"</span>, 
            <span class="st">"query=cancer&amp;age=under-18&amp;phase=phase-one"</span>),
-  con = <span class="kw">d</span>)
+  con = <span class="kw">db</span>)
 </pre></div>
 <ul>
 <li>Analyse</li>
@@ -510,8 +510,6 @@ citation("ctrdata")
 <h2>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://cran.r-project.org/package=ctrdata"><img src="https://cranlogs.r-pkg.org/badges/ctrdata"></a></li>
-<li><a href="https://github.com/rfhb/ctrdata/actions"><img src="https://github.com/rfhb/ctrdata/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
-<li><a href="https://codecov.io/gh/rfhb/ctrdata"><img src="https://github.com/rfhb/ctrdata/workflows/test-coverage/badge.svg" alt="test-coverage"></a></li>
 <li><a href="https://codecov.io/gh/rfhb/ctrdata"><img src="https://codecov.io/gh/rfhb/ctrdata/branch/master/graph/badge.svg" alt="codecov"></a></li>
 <li><a href="https://rfhb.slack.com/messages/C6N1Y75B6"><img src="https://img.shields.io/badge/Slack-Join-green.svg" alt="Slack"></a></li>
 </ul>
