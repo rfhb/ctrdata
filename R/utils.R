@@ -1205,7 +1205,10 @@ dbGetFieldsIntoDf <- function(fields = "",
       #
       # some backends return NA if query matches,
       # other only non-NA values when query matches
-      dfi <- na.omit(dfi)
+      # dfi <- na.omit(dfi)
+      dfi <- dfi[!is.na(dfi["_id"]) &
+                 !sapply(seq_len(nrow(dfi)),
+                         function(r) all(is.na(dfi[r, -1]))), ]
       #
       # ensure intended column order
       if (names(dfi)[1] != "_id") {
@@ -1218,12 +1221,39 @@ dbGetFieldsIntoDf <- function(fields = "",
       dfi <- dfi[ !sapply(dfi[, 2], length) == 0, ]
       #
       # - if each [,2] is a list with one element, concatenate
-      if (all(sapply(dfi[, 2],
+      if ((ncol(dfi) == 2) &&
+          all(sapply(dfi[, 2],
                      function(x)
                        is.data.frame(x) && ncol(x) == 1))) {
-
+        # concatenate
         dfi[, 2] <- sapply(sapply(dfi[, 2], "[", 1),
                            function(x) paste0(x, collapse = " / "))
+        # inform user
+        message("Note: requested field ", item, " has subitems ",
+                paste0(names(dfi)[-1], collapse = ", "),
+                ", collapsed using ' / '")
+        # remove extraneous columns
+        dfi <- dfi[, 1:2]
+      }
+      #
+      # - if dfi[, 2:ncol(dfi)] is from the same field e.g.
+      #   required_header.{download_date,link_text,url}, concatenate
+      if ((ncol(dfi) > 2) &&
+          all(grepl(paste0(item, "[.].+$"),
+                    names(dfi)[-1]))) {
+        # concatenate
+        dfi[, 2] <- unlist(
+          apply(
+            X = dfi[, 2:ncol(dfi)],
+            MARGIN = 1,
+            FUN = function(r)
+              paste0(na.omit(unlist(r)), collapse = " / ")))
+        # inform user
+        message("Note: requested field ", item, " has subitems ",
+                paste0(names(dfi)[-1], collapse = ", "),
+                ", collapsed using ' / '")
+        # remove extraneous columns
+        dfi <- dfi[, 1:2]
       }
       #
       # # - if each [,2] is a list of one dataframe with one or more rows,
