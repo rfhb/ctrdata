@@ -417,6 +417,7 @@ tmpf <- suppressMessages(
     dbFindFields(
       namepart = ".*",
       con = dbc)))
+# remove empty field names
 tmpf <- tmpf[tmpf != ""]
 # get all data (takes long with sqlite)
 result <- suppressMessages(
@@ -424,6 +425,7 @@ result <- suppressMessages(
     dbGetFieldsIntoDf(
       fields = tmpf,
       con = dbc,
+      verbose = TRUE,
       stopifnodata = FALSE)
   ))
 # determine all classes
@@ -433,11 +435,11 @@ tmpc <- unlist(tmpc)
 tmpc <- table(tmpc)
 
 # tests
-expect_true(tmpc[["character"]] > 400)
-expect_true(tmpc[["Date"]]      >   5)
-expect_true(tmpc[["integer"]]   >  20)
-expect_true(tmpc[["list"]]      >  15)
-expect_true(tmpc[["logical"]]   >  50)
+expect_true(tmpc[["character"]] > 60)
+expect_true(tmpc[["Date"]]      >  5)
+expect_true(tmpc[["integer"]]   > 10)
+expect_true(tmpc[["list"]]      > 10)
+expect_true(tmpc[["logical"]]   > 50)
 
 
 #### ctrOpenSearchPagesInBrowser #####

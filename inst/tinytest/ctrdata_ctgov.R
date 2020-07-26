@@ -84,15 +84,16 @@ expect_message(
 #### ctrLoadQueryIntoDb results ####
 
 # get results
-result <- suppressWarnings(
-  dbGetFieldsIntoDf(
-    fields = c(
-      "clinical_results.baseline.analyzed_list.analyzed.count_list.count",
-      "clinical_results.baseline.group_list.group",
-      "clinical_results.baseline.analyzed_list.analyzed.units",
-      "study_design_info.allocation",
-      "location"),
-    con = dbc))
+result <- suppressMessages(
+  suppressWarnings(
+    dbGetFieldsIntoDf(
+      fields = c(
+        "clinical_results.baseline.analyzed_list.analyzed.count_list.count",
+        "clinical_results.baseline.group_list.group",
+        "clinical_results.baseline.analyzed_list.analyzed.units",
+        "study_design_info.allocation",
+        "location"),
+      con = dbc)))
 
 result$number_sites <- sapply(
   result$location,
