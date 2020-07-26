@@ -9,6 +9,7 @@
    for the date when the querytorerun was last run, 
    to more often use euctr update options
  - switching from travis to github action
+ - upped coverage of code tested
  
 # ctrdata 1.2.1
  - 2020-05-18

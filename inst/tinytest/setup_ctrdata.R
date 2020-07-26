@@ -95,7 +95,7 @@ check_sqlite <- function(){
   tmp <- try(nodbi::src_sqlite(), silent = TRUE)
 
   out <- all(c("src_sqlite", "docdb_src") %in% class(tmp))
-  if (out) on.exit(RSQLite::dbDisconnect(conn = tmp$con))
+  if (out) RSQLite::dbDisconnect(conn = tmp$con)
   out
 
 }
@@ -111,7 +111,7 @@ check_mongo_local <- function(){
     silent = TRUE)
 
   out <- all(c("src_mongo", "docdb_src") %in% class(tmp))
-  if (out) on.exit(tmp$con$disconnect())
+  if (out) tmp$con$disconnect()
   out
 
 }
@@ -127,7 +127,7 @@ check_mongo_remote_ro <- function(){
     silent = TRUE)
 
   out <- all(c("src_mongo", "docdb_src") %in% class(tmp))
-  if (out) on.exit(tmp$con$disconnect())
+  if (out) tmp$con$disconnect()
   out
 
 }
@@ -142,7 +142,7 @@ check_mongo_remote_rw <- function(){
     silent = TRUE)
 
   out <- all(c("src_mongo", "docdb_src") %in% class(tmp))
-  if (out) on.exit(tmp$con$disconnect())
+  if (out) tmp$con$disconnect()
   out
 }
 
