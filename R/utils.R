@@ -750,6 +750,10 @@ dbFindFields <- function(namepart = "",
   fields <- keyslist[grepl(pattern = namepart, x = keyslist,
                            ignore.case = TRUE, perl = TRUE)]
 
+  # clean
+  fields <- fields[fields != ""]
+  if (!length(fields)) fields <- ""
+
   # return the match(es)
   return(fields)
 
