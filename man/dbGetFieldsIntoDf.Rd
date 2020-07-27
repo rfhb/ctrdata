@@ -63,12 +63,12 @@ dbGetFieldsIntoDf(
 
 #           _id                                 keyword
 # 1 NCT00129259 T1D, type 1 diabetes, juvenile diabetes
-#
+
 str(.Last.value)
-'data.frame':	1 obs. of  2 variables:
-$ _id    : chr "NCT00129259"
-$ keyword:List of 1
-..$ : chr  "T1D" "type 1 diabetes" "juvenile diabetes" ...
+# 'data.frame':	1 obs. of  2 variables:
+# $ _id    : chr "NCT00129259"
+# $ keyword:List of 1
+# ..$ : chr  "T1D" "type 1 diabetes" "juvenile diabetes"
 
 }
 

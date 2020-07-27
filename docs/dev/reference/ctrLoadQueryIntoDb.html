@@ -86,7 +86,7 @@ different registers." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ctrdata</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9001</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.3.0.9001</span>
       </span>
     </div>
 
@@ -270,7 +270,8 @@ the query history in this database).</p>
 <span class='co'># single trial identified by EudraCT number</span>
 <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='no'>db</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>nodbi</span><span class='kw ns'>::</span><span class='fu'><a href='https://docs.ropensci.org/nodbi/reference/src_sqlite.html'>src_sqlite</a></span>(<span class='kw'>collection</span> <span class='kw'>=</span> <span class='st'>"test"</span>)
-<span class='fu'>ctrLoadQueryIntoDb</span>(<span class='kw'>queryterm</span> <span class='kw'>=</span> <span class='st'>"2013-001291-38"</span>, <span class='kw'>cond</span> <span class='kw'>=</span> <span class='no'>db</span>)
+<span class='fu'>ctrLoadQueryIntoDb</span>(
+      <span class='kw'>queryterm</span> <span class='kw'>=</span> <span class='st'>"2013-001291-38"</span>, <span class='kw'>con</span> <span class='kw'>=</span> <span class='no'>db</span>)
 }
 <span class='co'># Retrieve protocol-related information on</span>
 <span class='co'># ongoing interventional cancer trials in children</span>
@@ -283,7 +284,7 @@ the query history in this database).</p>
 <span class='fu'>ctrLoadQueryIntoDb</span>(
      <span class='kw'>queryterm</span> <span class='kw'>=</span> <span class='st'>"NCT02239861"</span>,
      <span class='kw'>register</span> <span class='kw'>=</span> <span class='st'>"CTGOV"</span>,
-     <span class='kw'>cond</span> <span class='kw'>=</span> <span class='no'>db</span>)
+     <span class='kw'>con</span> <span class='kw'>=</span> <span class='no'>db</span>)
 }</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

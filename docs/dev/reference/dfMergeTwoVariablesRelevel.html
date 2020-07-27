@@ -81,7 +81,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ctrdata</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9001</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.3.0.9001</span>
       </span>
     </div>
 
@@ -191,7 +191,10 @@ used for a vector of old values (optional).</p></td>
   <span class='st'>"other"</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Withdrawn"</span>, <span class='st'>"Suspended"</span>,
               <span class='st'>"No longer available"</span>, <span class='st'>"Not yet recruiting"</span>))
 
-<span class='fu'>dfMergeTwoVariablesRelevel</span>(<span class='no'>result</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Recruitment"</span>, <span class='st'>"x5_trial_status"</span>), <span class='no'>statusvalues</span>)
+<span class='fu'>dfMergeTwoVariablesRelevel</span>(
+  <span class='kw'>df</span> <span class='kw'>=</span> <span class='no'>result</span>,
+  <span class='kw'>colnames</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Recruitment"</span>, <span class='st'>"x5_trial_status"</span>),
+  <span class='kw'>levelslist</span> <span class='kw'>=</span> <span class='no'>statusvalues</span>)
 }</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
