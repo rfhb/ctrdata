@@ -47,7 +47,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">ctrdata</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9001</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.3.0.9001</span>
       </span>
     </div>
 
@@ -112,7 +112,7 @@
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#ctrdata-for-aggregating-and-analysing-clinical-trials" class="anchor"></a>ctrdata for aggregating and analysing clinical trials</h1></div>
 <p>The package <code>ctrdata</code> provides functions for retrieving (downloading) information on clinical trials from public registers, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register (“EUCTR”, <a href="https://www.clinicaltrialsregister.eu/" class="uri">https://www.clinicaltrialsregister.eu/</a>) and for ClinicalTrials.gov (“CTGOV”, <a href="https://clinicaltrials.gov/" class="uri">https://clinicaltrials.gov/</a>). Development of <code>ctrdata</code> started in 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package is to be used within the <a href="https://www.r-project.org/">R</a> system.</p>
-<p>Last reviewed on 2020-07-25 for version 1.2.1.9001</p>
+<p>Last reviewed on 2020-07-27 for version 1.3.0</p>
 <p>Main features:</p>
 <ul>
 <li><p>Protocol-related information on clinical trials is easily retrieved (downloaded) from public online sources: Users define a query using a register’s web interfaces and then use <code>ctrdata</code> for retrieving all trials resulting from the query. Personal annotations can be added when retrieving trial information. Synonyms of an active substance can also be found.</p></li>
@@ -120,7 +120,7 @@
 <li><p>Retrieved (downloaded) trial information is transformed and stored in a document-centric database (since registers provide nested data), for fast and offline access. This can then be analysed with <code>R</code> (or others systems). Easily re-run a previous query to update a database. Uses <code>RSQLite</code>, local or remote MongoDB servers, via R package <code>nodbi</code>.</p></li>
 <li><p>Unique (de-duplicated) trial records are identified, across registers and when there are several records in any register. <code>ctrdata</code> also can merge and recode information (fields) from different registers. Vignettes are provided to get started and with detailed examples, such as analyses of time trends of details of clinical trial protocols and for analysing results.</p></li>
 </ul>
-<p>Remember to respect the registers’ copyrights and terms and conditions (see <code><a href="reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser(copyright = TRUE)</a></code>). Please cite this package in any publication as follows: <code>Ralf Herold (2020). ctrdata: Retrieve and Analyze Clinical Trials from Public Registers. R package version 1.2, https://github.com/rfhb/ctrdata</code></p>
+<p>Remember to respect the registers’ copyrights and terms and conditions (see <code><a href="reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser(copyright = TRUE)</a></code>). Please cite this package in any publication as follows: <code>Ralf Herold (2020). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.3, https://github.com/rfhb/ctrdata</code></p>
 <!--
 
 ```r
@@ -158,6 +158,14 @@ citation("ctrdata")
 <p>These command line tools are required for <code><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code>, the main function of package <code>ctrdata</code>.</p>
 <p>In Linux and macOS (including version 10.15 Catalina), these are usually already installed.</p>
 <p>For MS Windows, install <a href="https://cygwin.org/install.html">cygwin</a>: In <code>R</code>, run <code><a href="reference/installCygwinWindowsDoInstall.html">ctrdata::installCygwinWindowsDoInstall()</a></code> for an automated minimal installation into <code>c:\cygwin</code> (installations in folders corresponding to <code>c:\cygw*</code> will also be recognised and used). Alternatively, install manually cygwin with packages <code>perl</code>, <code>php-jsonc</code> and <code>php-simplexml</code> into <code>c:\cygwin</code>. This installation will consume about 160 MB disk space; administrator credentials not needed.</p>
+</div>
+<div id="testing" class="section level2">
+<h2 class="hasAnchor">
+<a href="#testing" class="anchor"></a>Testing</h2>
+<p>Once installed, a comprehensive testing can be executed as follows (note this will take several minutes):</p>
+<div class="sourceCode" id="cb2"><pre class="downlit">
+<span class="kw">tinytest</span>::<span class="fu"><a href="https://rdrr.io/pkg/tinytest/man/test_package.html">test_package</a></span>(<span class="st">"ctrdata"</span>, at_home = <span class="fl">TRUE</span>)
+</pre></div>
 </div>
 </div>
 <div id="overview-of-functions-in-ctrdata" class="section level1">
@@ -229,13 +237,13 @@ citation("ctrdata")
 <ul>
 <li>Attach package <code>ctrdata</code>:</li>
 </ul>
-<!-- end list --><div class="sourceCode" id="cb2"><pre class="downlit">
+<!-- end list --><div class="sourceCode" id="cb3"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/rfhb/ctrdata">ctrdata</a></span>)
 </pre></div>
 <ul>
 <li>Open registers’ advanced search pages in browser:</li>
 </ul>
-<!-- end list --><div class="sourceCode" id="cb3"><pre class="downlit">
+<!-- end list --><div class="sourceCode" id="cb4"><pre class="downlit">
 <span class="fu"><a href="reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser</a></span>()
 
 <span class="co"># Please review and respect register copyrights:</span>
@@ -246,7 +254,7 @@ citation("ctrdata")
 <li><p>When trials of interest are listed in browser, copy the address from the browser’s address bar to the clipboard</p></li>
 <li><p>Get address from clipboard:</p></li>
 </ul>
-<!-- end list --><div class="sourceCode" id="cb4"><pre class="downlit">
+<!-- end list --><div class="sourceCode" id="cb5"><pre class="downlit">
 <span class="kw">q</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ctrGetQueryUrlFromBrowser.html">ctrGetQueryUrlFromBrowser</a></span>()
 <span class="co"># * Found search query from EUCTR.</span>
 
@@ -258,7 +266,7 @@ citation("ctrdata")
 <li>Retrieve protocol-related information, transform and save to database:</li>
 </ul>
 <p>Under the hood, scripts <code>euctr2json.sh</code> and <code>xml2json.php</code> (in <code>ctrdata/exec</code>) transform EUCTR plain text files and CTGOV <code>XML</code> files to <code>ndjson</code> format, which is imported into the database. As a first step, the database is specified using <code>nodbi</code> (using RSQlite or MongoDB as backend). Second, trial information is retrieved and loaded into the database.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit">
+<div class="sourceCode" id="cb6"><pre class="downlit">
 <span class="co"># Connect to (or newly create) a SQLite database </span>
 <span class="co"># that is stored in a file on the local system:</span>
 <span class="kw">db</span> <span class="op">&lt;-</span> <span class="kw">nodbi</span>::<span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html">src_sqlite</a></span>(
@@ -281,7 +289,7 @@ citation("ctrdata")
 <li>Analyse</li>
 </ul>
 <p>Tabulate the status of those trials that are recorded to be part of an agreed paediatric development program (paediatric investigation plan, PIP):</p>
-<div class="sourceCode" id="cb6"><pre class="downlit">
+<div class="sourceCode" id="cb7"><pre class="downlit">
 <span class="co"># Get all records that have values in the fields of interest:</span>
 <span class="kw">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span>(
   fields = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(
@@ -293,11 +301,11 @@ citation("ctrdata")
 <span class="co"># Find unique trial identifiers for trials that have nore than one record, </span>
 <span class="co"># for example for several EU Member States: </span>
 <span class="kw">uniqueids</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span>(con = <span class="kw">db</span>)
-<span class="co"># * Total of 454 records in collection.</span>
+<span class="co"># * Total of 522 records in collection.</span>
 <span class="co"># Searching for duplicates, found </span>
-<span class="co">#  - 292 EUCTR _id were not preferred EU Member State record of trial</span>
+<span class="co">#  - 340 EUCTR _id were not preferred EU Member State record of trial</span>
 <span class="co"># No CTGOV records found.</span>
-<span class="co"># = Returning keys (_id) of 162 out of total 454 records in collection "some_collection_name".</span>
+<span class="co"># = Returning keys (_id) of 182 out of total 522 records in collection</span>
 
 <span class="co"># Keep only unique / deduplicated records:</span>
 <span class="kw">result</span> <span class="op">&lt;-</span> <span class="kw">result</span>[ <span class="kw">result</span>[[<span class="st">"_id"</span>]] <span class="op">%in%</span> <span class="kw">uniqueids</span>, ]
@@ -306,17 +314,18 @@ citation("ctrdata")
 <span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span>(<span class="kw">result</span>, <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span>(<span class="kw">p_end_of_trial_status</span>, 
                    <span class="kw">a7_trial_is_part_of_a_paediatric_investigation_plan</span>))
 <span class="co">#</span>
-<span class="co">#                      a7_trial_is_part_of_a_paediatric_investigation_plan</span>
-<span class="co"># p_end_of_trial_status   Information not present in EudraCT No Yes</span>
-<span class="co">#    Completed                                             6 14   8</span>
-<span class="co">#    Ongoing                                               3 62  22</span>
-<span class="co">#    Prematurely Ended                                     1  4   2</span>
-<span class="co">#    Temporarily Halted                                    0  1   1</span>
+<span class="co">#                     a7_trial_is_part_of_a_paediatric_investigation_plan</span>
+<span class="co"># p_end_of_trial_status Information not present in EudraCT No Yes</span>
+<span class="co">#   Completed                                            6 25  14</span>
+<span class="co">#   Ongoing                                              5 60  19</span>
+<span class="co">#   Prematurely Ended                                    1  6   3</span>
+<span class="co">#   Restarted                                            0  1   0</span>
+<span class="co">#   Temporarily Halted                                   0  0   1</span>
 </pre></div>
 <ul>
-<li>Add records from another register into database</li>
+<li>Add records from another register into the same database</li>
 </ul>
-<!-- end list --><div class="sourceCode" id="cb7"><pre class="downlit">
+<!-- end list --><div class="sourceCode" id="cb8"><pre class="downlit">
 <span class="co"># Retrieve trials from public register:</span>
 <span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span>(
   queryterm = <span class="st">"cond=neuroblastoma&amp;rslt=With&amp;recrs=e&amp;age=0&amp;intr=Drug"</span>, 
@@ -327,7 +336,7 @@ citation("ctrdata")
 <li>Result-related trial information</li>
 </ul>
 <p>Analyse some result details; note how information fields are used with slightly different approaches:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit">
+<div class="sourceCode" id="cb9"><pre class="downlit">
 <span class="co"># Get all records that have values in all specified fields. </span>
 <span class="co"># Note the fields are specific to CTGOV, thus not in EUCTR,</span>
 <span class="co"># which results in a warning that not all reacords in the </span>
@@ -510,8 +519,9 @@ citation("ctrdata")
 <h2>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://cran.r-project.org/package=ctrdata"><img src="https://cranlogs.r-pkg.org/badges/ctrdata"></a></li>
-<li><a href="https://github.com/rfhb/ctrdata/actions?query=workflow%3AR-CMD-check-win-macos"><img src="https://github.com/rfhb/ctrdata/workflows/R-CMD-check-win-macos/badge.svg" alt="R-CMD-check-win-macos"></a></li>
 <li><a href="https://codecov.io/gh/rfhb/ctrdata"><img src="https://codecov.io/gh/rfhb/ctrdata/branch/master/graph/badge.svg" alt="codecov"></a></li>
+<li><a href="https://github.com/rfhb/ctrdata/actions?query=workflow%3AR-CMD-check-win-macos"><img src="https://github.com/rfhb/ctrdata/workflows/R-CMD-check-win-macos/badge.svg" alt="R-CMD-check-win-macos"></a></li>
+<li><a href="https://github.com/rfhb/ctrdata/actions?query=workflow%3AR-CMD-check-linux"><img src="https://github.com/rfhb/ctrdata/workflows/R-CMD-check-linux/badge.svg" alt="R-CMD-check-linux"></a></li>
 <li><a href="https://rfhb.slack.com/messages/C6N1Y75B6"><img src="https://img.shields.io/badge/Slack-Join-green.svg" alt="Slack"></a></li>
 </ul>
 </div>
