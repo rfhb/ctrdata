@@ -2029,9 +2029,10 @@ installCygwinWindowsDoInstall <- function(
   }
   #
   if (!force & dir.exists("c:\\cygwin")) {
-    stop(
-      "cygwin is already installed. To overwrite, use force = TRUE.",
-      call. = FALSE)
+    message("cygwin is already installed in c:\\cygwin. ",
+            "To re-install, use force = TRUE.")
+    # exit function after testing
+    return(installCygwinWindowsTest(verbose = TRUE))
   }
 
   # define installation command

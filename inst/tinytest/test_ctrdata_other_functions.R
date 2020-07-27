@@ -21,7 +21,7 @@ if (.Platform$OS.type != "windows") {
     "only for MS Windows")
 }
 if (.Platform$OS.type == "windows") {
-  expect_error(
+  expect_message(
     installCygwinWindowsDoInstall(),
   "cygwin is already installed")
 }
