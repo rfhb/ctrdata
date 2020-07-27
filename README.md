@@ -22,7 +22,7 @@ started in 2015 and was motivated by the wish to understand trends in
 designs and conduct of trials and their availability for patients. The
 package is to be used within the [R](https://www.r-project.org/) system.
 
-Last reviewed on 2020-07-27 for version 1.2.2
+Last reviewed on 2020-07-27 for version 1.3.0
 
 Main features:
 
@@ -54,8 +54,8 @@ Main features:
 Remember to respect the registers’ copyrights and terms and conditions
 (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
 package in any publication as follows: `Ralf Herold (2020). ctrdata:
-Retrieve and Analyze Clinical Trials from Public Registers. R package
-version 1.2, https://github.com/rfhb/ctrdata`
+Retrieve and Analyze Clinical Trials in Public Registers. R package
+version 1.3, https://github.com/rfhb/ctrdata`
 
 <!--
 
@@ -112,6 +112,15 @@ corresponding to `c:\cygw*` will also be recognised and used).
 Alternatively, install manually cygwin with packages `perl`, `php-jsonc`
 and `php-simplexml` into `c:\cygwin`. This installation will consume
 about 160 MB disk space; administrator credentials not needed.
+
+## Testing
+
+Once installed, a comprehensive testing can be executed as follows (note
+this will take several minutes):
+
+``` r
+tinytest::test_package("ctrdata", at_home = TRUE)
+```
 
 # Overview of functions in `ctrdata`
 
