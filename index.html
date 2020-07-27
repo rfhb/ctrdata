@@ -46,7 +46,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">ctrdata</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.2</span>
       </span>
     </div>
 
@@ -106,12 +106,12 @@
       </header><div class="row">
   <div class="contents col-md-9">
 
-<p><a href="https://cran.r-project.org/package=ctrdata"><img src="https://cranlogs.r-pkg.org/badges/ctrdata"></a> <a href="https://travis-ci.org/rfhb/ctrdata"><img src="https://travis-ci.org/rfhb/ctrdata.png?branch=master" alt="Build Status"></a> <a href="https://ci.appveyor.com/project/rfhb/ctrdata"><img src="https://ci.appveyor.com/api/projects/status/github/rfhb/ctrdata?branch=master&amp;svg=true" alt="AppVeyor build status"></a> <a href="https://codecov.io/gh/rfhb/ctrdata"><img src="https://codecov.io/gh/rfhb/ctrdata/branch/master/graph/badge.svg" alt="codecov"></a> <br><span class="math display"><em>N</em><em>o</em><em>t</em><em>e</em><em>c</em><em>o</em><em>d</em><em>e</em><em>c</em><em>o</em><em>v</em><em>d</em><em>o</em><em>e</em><em>s</em><em>n</em><em>o</em><em>t</em><em>c</em><em>h</em><em>e</em><em>c</em><em>k</em><em>M</em><em>S</em><em>W</em><em>i</em><em>n</em><em>d</em><em>o</em><em>w</em><em>s</em> − <em>o</em><em>n</em><em>l</em><em>y</em><em>c</em><em>o</em><em>d</em><em>e</em></span><br><a href="https://rfhb.slack.com/messages/C6N1Y75B6"><img src="https://img.shields.io/badge/Slack-Join-green.svg" alt="Slack"></a> Join Slack channel and discuss</p>
+
 <div id="ctrdata-for-aggregating-and-analysing-clinical-trials" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#ctrdata-for-aggregating-and-analysing-clinical-trials" class="anchor"></a>ctrdata for aggregating and analysing clinical trials</h1></div>
 <p>The package <code>ctrdata</code> provides functions for retrieving (downloading) information on clinical trials from public registers, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register (“EUCTR”, <a href="https://www.clinicaltrialsregister.eu/" class="uri">https://www.clinicaltrialsregister.eu/</a>) and for ClinicalTrials.gov (“CTGOV”, <a href="https://clinicaltrials.gov/" class="uri">https://clinicaltrials.gov/</a>). Development of <code>ctrdata</code> started in 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package is to be used within the <a href="https://www.r-project.org/">R</a> system.</p>
-<p>Last reviewed on 2020-05-17 for version 1.2.1.</p>
+<p>Last reviewed on 2020-07-27 for version 1.2.2</p>
 <p>Main features:</p>
 <ul>
 <li><p>Protocol-related information on clinical trials is easily retrieved (downloaded) from public online sources: Users define a query using a register’s web interfaces and then use <code>ctrdata</code> for retrieving all trials resulting from the query. Personal annotations can be added when retrieving trial information. Synonyms of an active substance can also be found.</p></li>
@@ -274,7 +274,7 @@ citation("ctrdata")
   queryterm = 
     <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"https://www.clinicaltrialsregister.eu/ctr-search/search?"</span>, 
            <span class="st">"query=cancer&amp;age=under-18&amp;phase=phase-one"</span>),
-  con = <span class="kw">d</span>)
+  con = <span class="kw">db</span>)
 </pre></div>
 <ul>
 <li>Analyse</li>
@@ -292,11 +292,11 @@ citation("ctrdata")
 <span class="co"># Find unique trial identifiers for trials that have nore than one record, </span>
 <span class="co"># for example for several EU Member States: </span>
 <span class="kw">uniqueids</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span>(con = <span class="kw">db</span>)
-<span class="co"># * Total of 454 records in collection.</span>
+<span class="co"># * Total of 522 records in collection.</span>
 <span class="co"># Searching for duplicates, found </span>
-<span class="co">#  - 292 EUCTR _id were not preferred EU Member State record of trial</span>
+<span class="co">#  - 340 EUCTR _id were not preferred EU Member State record of trial</span>
 <span class="co"># No CTGOV records found.</span>
-<span class="co"># = Returning keys (_id) of 162 out of total 454 records in collection "some_collection_name".</span>
+<span class="co"># = Returning keys (_id) of 182 out of total 522 records in collection</span>
 
 <span class="co"># Keep only unique / deduplicated records:</span>
 <span class="kw">result</span> <span class="op">&lt;-</span> <span class="kw">result</span>[ <span class="kw">result</span>[[<span class="st">"_id"</span>]] <span class="op">%in%</span> <span class="kw">uniqueids</span>, ]
@@ -305,15 +305,16 @@ citation("ctrdata")
 <span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span>(<span class="kw">result</span>, <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span>(<span class="kw">p_end_of_trial_status</span>, 
                    <span class="kw">a7_trial_is_part_of_a_paediatric_investigation_plan</span>))
 <span class="co">#</span>
-<span class="co">#                      a7_trial_is_part_of_a_paediatric_investigation_plan</span>
-<span class="co"># p_end_of_trial_status   Information not present in EudraCT No Yes</span>
-<span class="co">#    Completed                                             6 14   8</span>
-<span class="co">#    Ongoing                                               3 62  22</span>
-<span class="co">#    Prematurely Ended                                     1  4   2</span>
-<span class="co">#    Temporarily Halted                                    0  1   1</span>
+<span class="co">#                     a7_trial_is_part_of_a_paediatric_investigation_plan</span>
+<span class="co"># p_end_of_trial_status Information not present in EudraCT No Yes</span>
+<span class="co">#   Completed                                            6 25  14</span>
+<span class="co">#   Ongoing                                              5 60  19</span>
+<span class="co">#   Prematurely Ended                                    1  6   3</span>
+<span class="co">#   Restarted                                            0  1   0</span>
+<span class="co">#   Temporarily Halted                                   0  0   1</span>
 </pre></div>
 <ul>
-<li>Add records from another register into database</li>
+<li>Add records from another register into the same database</li>
 </ul>
 <!-- end list --><div class="sourceCode" id="cb7"><pre class="downlit">
 <span class="co"># Retrieve trials from public register:</span>
@@ -505,7 +506,17 @@ citation("ctrdata")
 </ul>
 </div>
 
-  </div>
+  <div class="dev-status">
+<h2>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://cran.r-project.org/package=ctrdata"><img src="https://cranlogs.r-pkg.org/badges/ctrdata"></a></li>
+<li><a href="https://codecov.io/gh/rfhb/ctrdata"><img src="https://codecov.io/gh/rfhb/ctrdata/branch/master/graph/badge.svg" alt="codecov"></a></li>
+<li><a href="https://github.com/rfhb/ctrdata/actions?query=workflow%3AR-CMD-check-win-macos"><img src="https://github.com/rfhb/ctrdata/workflows/R-CMD-check-win-macos/badge.svg" alt="R-CMD-check-win-macos"></a></li>
+<li><a href="https://github.com/rfhb/ctrdata/actions?query=workflow%3AR-CMD-check-linux"><img src="https://github.com/rfhb/ctrdata/workflows/R-CMD-check-linux/badge.svg" alt="R-CMD-check-linux"></a></li>
+<li><a href="https://rfhb.slack.com/messages/C6N1Y75B6"><img src="https://img.shields.io/badge/Slack-Join-green.svg" alt="Slack"></a></li>
+</ul>
+</div>
+</div>
 </div>
 
 

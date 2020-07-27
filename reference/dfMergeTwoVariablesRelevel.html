@@ -81,7 +81,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ctrdata</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.2</span>
       </span>
     </div>
 
@@ -150,7 +150,7 @@
     <p>Merge two variables into one, optionally map values to new levels</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/ctrdata/man/dfMergeTwoVariablesRelevel.html'>dfMergeTwoVariablesRelevel</a></span>(df = <span class='kw'>NULL</span>, colnames = <span class='st'>""</span>, levelslist = <span class='kw'>NULL</span>, <span class='kw'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>dfMergeTwoVariablesRelevel</span>(df = <span class='kw'>NULL</span>, colnames = <span class='st'>""</span>, levelslist = <span class='kw'>NULL</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -191,7 +191,10 @@ used for a vector of old values (optional).</p></td>
   <span class='st'>"other"</span> = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Withdrawn"</span>, <span class='st'>"Suspended"</span>,
               <span class='st'>"No longer available"</span>, <span class='st'>"Not yet recruiting"</span>))
 
-<span class='fu'><a href='https://rdrr.io/pkg/ctrdata/man/dfMergeTwoVariablesRelevel.html'>dfMergeTwoVariablesRelevel</a></span>(<span class='kw'>result</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Recruitment"</span>, <span class='st'>"x5_trial_status"</span>), <span class='kw'>statusvalues</span>)
+<span class='fu'>dfMergeTwoVariablesRelevel</span>(
+  df = <span class='kw'>result</span>,
+  colnames = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Recruitment"</span>, <span class='st'>"x5_trial_status"</span>),
+  levelslist = <span class='kw'>statusvalues</span>)
 }
 </div></pre>
   </div>

@@ -86,7 +86,7 @@ such as follows: value 1 / value 2 / ... (see example)" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ctrdata</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.2</span>
       </span>
     </div>
 
@@ -160,7 +160,7 @@ of values if there is more than one value or if the field is (in) an array,
 such as follows: value 1 / value 2 / ... (see example)</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/ctrdata/man/dbGetFieldsIntoDf.html'>dbGetFieldsIntoDf</a></span>(fields = <span class='st'>""</span>, <span class='kw'>con</span>, verbose = <span class='fl'>FALSE</span>, stopifnodata = <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>dbGetFieldsIntoDf</span>(fields = <span class='st'>""</span>, <span class='kw'>con</span>, verbose = <span class='fl'>FALSE</span>, stopifnodata = <span class='fl'>TRUE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -168,7 +168,7 @@ such as follows: value 1 / value 2 / ... (see example)</p>
     <tr>
       <th>fields</th>
       <td><p>Vector of one or more strings, with names of the sought fields.
-See function <a href='https://rdrr.io/pkg/ctrdata/man/dbFindFields.html'>dbFindFields</a> for how to find names of fields.</p></td>
+See function <a href='dbFindFields.html'>dbFindFields</a> for how to find names of fields.</p></td>
     </tr>
     <tr>
       <th>con</th>
@@ -196,23 +196,11 @@ The maximum number of rows of the returned data frame is equal to,
 or less than the number of records in the data base.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>For more sophisticated data retrieval from the database, see vignette examples
-and other packages to query mongodb such as mongolite.</p>
+    <p>For more sophisticated data retrieval from the database, see vignette
+examples and other packages to query mongodb such as mongolite.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='co'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='kw'>db</span> <span class='op'>&lt;-</span> <span class='kw'>nodbi</span>::<span class='fu'><a href='https://docs.ropensci.org/nodbi/reference/src_sqlite.html'>src_sqlite</a></span>(collection = <span class='st'>"test"</span>)
-<span class='fu'><a href='https://rdrr.io/pkg/ctrdata/man/dbGetFieldsIntoDf.html'>dbGetFieldsIntoDf</a></span>(<span class='st'>"b1_sponsor.b31_and_b32_status_of_the_sponsor"</span>, con = <span class='kw'>db</span>)[<span class='fl'>1</span>,]
-<span class='co'>#                   _id  b1_sponsor.b31_and_b32_status_of_the_sponsor</span>
-<span class='co'>#  1  2004-000015-25-GB                   Non-commercial / Commercial</span>
-
-<span class='fu'><a href='https://rdrr.io/pkg/ctrdata/man/dbGetFieldsIntoDf.html'>dbGetFieldsIntoDf</a></span>(<span class='st'>"keyword"</span>)[<span class='fl'>1</span>,]
-<span class='co'>#            _id                                           keyword</span>
-<span class='co'>#  1 NCT00129259  T1D / type 1 diabetes / type 1 diabetes mellitus</span>
-
-}
-</div></pre>
+    <pre class="examples"></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
