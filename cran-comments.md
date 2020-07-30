@@ -8,12 +8,7 @@
 0 errors | 0 warnings | 0 notes
 
 ## Downstream dependencies
-There are currently no downstream dependencies for this package.
+There are currently no downstream dependencies for this package
 
 ## Submission reason
-* workaround certificate issue of a trial register
-* streamlined several functions, including better
-  handling of complex fields, parameter checking, 
-  options for updating trial data from euctr
-* increased coverage of automatic code testing
-
+* correct misaligned bracketing in tests
