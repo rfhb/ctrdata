@@ -22,7 +22,7 @@ started in 2015 and was motivated by the wish to understand trends in
 designs and conduct of trials and their availability for patients. The
 package is to be used within the [R](https://www.r-project.org/) system.
 
-Last reviewed on 2020-07-27 for version 1.3.0
+Last reviewed on 2020-08-01 for version 1.3.1
 
 Main features:
 

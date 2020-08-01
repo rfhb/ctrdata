@@ -14,7 +14,7 @@ nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()}
 (default \code{FALSE}).}
 }
 \value{
-A data frame with columns: query-timestamp, query-egister,
+A data frame with columns: query-timestamp, query-register,
  query-records (note: this is the number of records loaded when last
  executing \link{ctrLoadQueryIntoDb}, not the total record number) and
  query-term, and with one row for each \link{ctrLoadQueryIntoDb}

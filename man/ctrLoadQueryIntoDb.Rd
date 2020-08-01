@@ -58,7 +58,7 @@ retrieved with the current query, in the field "annotation".}
 
 \item{annotation.mode}{One of "append" (default), "prepend"
 or "replace" for new annotation.text with respect to any
-existing annotation for the records retreived with the
+existing annotation for the records retrieved with the
 current query.}
 
 \item{parallelretrievals}{Number of parallel downloads of

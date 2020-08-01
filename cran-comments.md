@@ -12,3 +12,4 @@ There are currently no downstream dependencies for this package
 
 ## Submission reason
 * correct misaligned bracketing in tests
+* address error in tests seen on CRAN

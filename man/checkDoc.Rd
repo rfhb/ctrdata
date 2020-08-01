@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{checkDoc}
 \alias{checkDoc}
-\title{Check if a document exists based on its unique identier}
+\title{Check if a document exists based on its unique identifier}
 \usage{
 checkDoc(con, id)
 }
@@ -15,6 +15,6 @@ logical, FALSE (document or database does not
  exist) or TRUE
 }
 \description{
-Check if a document exists based on its unique identier
+Check if a document exists based on its unique identifier
 }
 \keyword{internal}

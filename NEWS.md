@@ -1,5 +1,9 @@
-# ctrdata 1.3.0.9001
- - 2020-07-27
+# ctrdata 1.3.1.9001
+ - 2020-08-01
+ 
+# ctrdata 1.3.1
+ - 2020-08-01
+ - fix error in CI tests
  
 # ctrdata 1.3.0
  - 2020-07-27
@@ -106,7 +110,7 @@
    
 # ctrdata 0.16.9001
  - 2019-03-26
- - added futher typing (some of the numeric fields)
+ - added further typing (some of the numeric fields)
  - improve cygwin install attempts and information
    
 # ctrdata 0.16.9000
@@ -117,7 +121,7 @@
 # ctrdata 0.15.9007
  - 2019-03-15
  - Important: Added no checking of SSL certificates for EUCTR because the EUCTR server is
-   not sneding the required intermediate and root certificates, thus failing curl and httr, see
+   not sending the required intermediate and root certificates, thus failing curl and httr, see
    https://www.digicert.com/help/?host=www.clinicaltrialsregister.eu
 
 # ctrdata 0.15.0

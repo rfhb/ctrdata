@@ -492,7 +492,7 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = ""){
 #'
 #' @inheritParams ctrDb
 #'
-#' @return A data frame with columns: query-timestamp, query-egister,
+#' @return A data frame with columns: query-timestamp, query-register,
 #'  query-records (note: this is the number of records loaded when last
 #'  executing \link{ctrLoadQueryIntoDb}, not the total record number) and
 #'  query-term, and with one row for each \link{ctrLoadQueryIntoDb}
@@ -1712,7 +1712,7 @@ dfFindUniqueEuctrRecord <- function(
 # end dfFindUniqueEuctrRecord
 
 
-#' Check if a document exists based on its unique identier
+#' Check if a document exists based on its unique identifier
 #'
 #' @return logical, FALSE (document or database does not
 #'  exist) or TRUE
