@@ -295,40 +295,6 @@ expect_true("character" %in% class(tmp_test))
 expect_true(length(tmp_test) >= 4L)
 
 
-#### dbFindIdsUniqueTrials #####
-
-# test
-expect_message(
-  suppressWarnings(
-    dbFindIdsUniqueTrials(
-      con = dbc,
-      preferregister = "EUCTR")),
-  "Searching for duplicates")
-
-# test
-expect_message(
-  suppressWarnings(
-    dbFindIdsUniqueTrials(
-      con = dbc,
-      preferregister = "CTGOV")),
-  "Returning keys \\(_id\\) of [4-9][0-9]")
-
-# test
-expect_warning(
-  suppressMessages(
-    tmp_test <- dbFindIdsUniqueTrials(
-      con = dbc,
-      prefermemberstate = "3RD",
-      include3rdcountrytrials = FALSE)),
-  "Preferred EUCTR version set to 3RD country trials")
-
-# test, reusing the query string
-tmp_q <- strsplit(q, "+OR+", fixed = TRUE)[[1]]
-tmp_q <- gsub(".+=(.?)", "\\1", tmp_q)
-expect_true(all(
-  tmp_q %in%
-    gsub("([0-9]{4}-[0-9]{6}-[0-9]{2})-.*", "\\1", tmp_test)))
-
 #### annotations #####
 
 # test
@@ -388,7 +354,42 @@ expect_message(
     dbFindIdsUniqueTrials(
       con = dbc,
       preferregister = "CTGOV")),
-  "Concatenating 1 records from CTGOV and [4-9][0-9] from EUCTR")
+  "Concatenating 1 records from CTGOV and [2-9][0-9] from EUCTR")
+
+
+#### dbFindIdsUniqueTrials #####
+
+# test
+expect_message(
+  suppressWarnings(
+    dbFindIdsUniqueTrials(
+      con = dbc,
+      preferregister = "EUCTR")),
+  "Searching for duplicates")
+
+# test
+expect_message(
+  suppressWarnings(
+    dbFindIdsUniqueTrials(
+      con = dbc,
+      preferregister = "CTGOV")),
+  "Returning keys \\(_id\\) of [2-9][0-9]")
+
+# test
+expect_warning(
+  suppressMessages(
+    tmp_test <- dbFindIdsUniqueTrials(
+      con = dbc,
+      prefermemberstate = "3RD",
+      include3rdcountrytrials = FALSE)),
+  "Preferred EUCTR version set to 3RD country trials")
+
+# test, reusing the query string
+tmp_q <- strsplit(q, "+OR+", fixed = TRUE)[[1]]
+tmp_q <- gsub(".+=(.?)", "\\1", tmp_q)
+expect_true(all(
+  tmp_q %in%
+    gsub("([0-9]{4}-[0-9]{6}-[0-9]{2})-.*", "\\1", tmp_test)))
 
 
 #### dbGetFieldsIntoDf ####
@@ -450,3 +451,4 @@ expect_message(
     ctrOpenSearchPagesInBrowser(
       dbQueryHistory(con = dbc)[1, ])),
   "Opening browser for search:")
+
