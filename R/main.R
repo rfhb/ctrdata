@@ -987,8 +987,10 @@ ctrLoadQueryIntoDbCtgov <- function(
                          package = "ctrdata",
                          mustWork = TRUE))
     #
-    xml2json <- paste0("php -f ", xml2json, " ",
-                       utils::shortPathName(path = tempDir))
+    xml2json <- paste0(
+      "php -f ",
+      shQuote(xml2json), " ",
+      utils::shortPathName(path = tempDir))
     #
     # xml2json requires cygwin's php. transform paths for cygwin use:
     xml2json <- gsub("\\\\", "/", xml2json)
@@ -1007,7 +1009,7 @@ ctrLoadQueryIntoDbCtgov <- function(
     #
     xml2json <- paste0(
       "php -f ",
-      xml2json, " ",
+      shQuote(xml2json), " ",
       tempDir)
     #
   } # if windows
@@ -1309,8 +1311,9 @@ ctrLoadQueryIntoDbEuctr <- function(
       path = system.file("exec/euctr2json.sh",
                          package = "ctrdata",
                          mustWork = TRUE))
-    euctr2json <- paste(
-      euctr2json,
+    #
+    euctr2json <- paste0(
+      shQuote(euctr2json), " ",
       utils::shortPathName(path = tempDir))
     #
     # euctr2json requires cygwin's perl, sed
@@ -1329,8 +1332,8 @@ ctrLoadQueryIntoDbEuctr <- function(
       package = "ctrdata",
       mustWork = TRUE)
     #
-    euctr2json <- paste(
-      euctr2json,
+    euctr2json <- paste0(
+      shQuote(euctr2json), " ",
       tempDir)
     #
   } # if windows
@@ -1526,7 +1529,8 @@ ctrLoadQueryIntoDbEuctr <- function(
           mustWork = TRUE))
       #
       xml2json <- paste0(
-        "php -f ", xml2json, " ",
+        "php -f ",
+        shQuote(xml2json), " ",
         utils::shortPathName(path = tempDir))
       #
       # xml2json requires cygwin's php. transform paths for cygwin use:
@@ -1545,7 +1549,8 @@ ctrLoadQueryIntoDbEuctr <- function(
         mustWork = TRUE)
       #
       xml2json <- paste0(
-        "php -f ", xml2json,
+        "php -f ",
+        shQuote(xml2json),
         " ", tempDir)
       #
     } # if windows

@@ -1,5 +1,6 @@
-# ctrdata 1.3.1.9001
- - 2020-08-01
+# ctrdata 1.3.2
+ - 2020-10-03
+ - quote system file paths
  
 # ctrdata 1.3.1
  - 2020-08-01
