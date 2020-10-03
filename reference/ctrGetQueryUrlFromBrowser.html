@@ -81,19 +81,13 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ctrdata</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.2</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -150,7 +144,7 @@
     <p>Import from clipboard the URL of a search in one of the registers</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ctrGetQueryUrlFromBrowser</span>(url = <span class='st'>""</span>, register = <span class='st'>""</span>)</pre>
+    <pre class="usage"><span class='fu'>ctrGetQueryUrlFromBrowser</span><span class='op'>(</span>url <span class='op'>=</span> <span class='st'>""</span>, register <span class='op'>=</span> <span class='st'>""</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -179,15 +173,16 @@ directly be used in <a href='ctrLoadQueryIntoDb.html'>ctrLoadQueryIntoDb</a> and
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='co'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='kw'>db</span> <span class='op'>&lt;-</span> <span class='kw'>nodbi</span>::<span class='fu'><a href='https://docs.ropensci.org/nodbi/reference/src_sqlite.html'>src_sqlite</a></span>(
-  collection = <span class='st'>"my_collection"</span>
-)
-<span class='fu'><a href='ctrLoadQueryIntoDb.html'>ctrLoadQueryIntoDb</a></span>(
-  <span class='fu'>ctrGetQueryUrlFromBrowser</span>(),
-  con = <span class='kw'>db</span>
-)
-}
+<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='va'>db</span> <span class='op'>&lt;-</span> <span class='fu'>nodbi</span><span class='fu'>::</span><span class='fu'><a href='https://docs.ropensci.org/nodbi/reference/src_sqlite.html'>src_sqlite</a></span><span class='op'>(</span>
+  collection <span class='op'>=</span> <span class='st'>"my_collection"</span>
+<span class='op'>)</span>
+<span class='fu'><a href='ctrLoadQueryIntoDb.html'>ctrLoadQueryIntoDb</a></span><span class='op'>(</span>
+  <span class='fu'>ctrGetQueryUrlFromBrowser</span><span class='op'>(</span><span class='op'>)</span>,
+  con <span class='op'>=</span> <span class='va'>db</span>
+<span class='op'>)</span>
+<span class='op'>}</span>
+
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -204,7 +199,7 @@ directly be used in <a href='ctrLoadQueryIntoDb.html'>ctrLoadQueryIntoDb</a> and
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>
