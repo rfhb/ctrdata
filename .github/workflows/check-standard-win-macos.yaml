@@ -28,6 +28,7 @@ jobs:
 
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+      AT_HOME: true
       RSPM: ${{ matrix.config.rspm }}
 
     # https://docs.github.com/en/actions/reference/software-installed-on-github-hosted-runners
