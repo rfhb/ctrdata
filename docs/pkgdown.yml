@@ -1,0 +1,11 @@
+pandoc: 2.7.3
+pkgdown: 1.6.1
+pkgdown_sha: ~
+articles:
+  ctrdata_get_started: ctrdata_get_started.html
+  ctrdata_usage_examples: ctrdata_usage_examples.html
+last_built: 2020-10-04T10:48Z
+urls:
+  reference: https://rfhb.github.io/ctrdata//reference
+  article: https://rfhb.github.io/ctrdata//articles
+
