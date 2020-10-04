@@ -22,7 +22,7 @@ started in 2015 and was motivated by the wish to understand trends in
 designs and conduct of trials and their availability for patients. The
 package is to be used within the [R](https://www.r-project.org/) system.
 
-Last reviewed on 2020-08-01 for version 1.3.1
+Last reviewed on 2020-10-04 for version 1.3.2
 
 Main features:
 
@@ -67,7 +67,7 @@ citation("ctrdata")
 Package `ctrdata` has been used for example for:
 
   - Blogging on [Innovation coming to paediatric
-    research](https://paediatricdata.eu/2018/01/14/innovation-coming-to-paediatric-research/)
+    research](https://paediatricdata.eu/innovation-coming-to-paediatric-research/)
 
   - Report on [The impact of collaboration: The value of UK medical
     research to EU science and
