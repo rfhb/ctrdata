@@ -859,6 +859,10 @@ dbFindIdsUniqueTrials <- function(
       include3rdcountrytrials = include3rdcountrytrials)
   }
 
+  # keep only euctr
+  listofEUCTRids <- listofEUCTRids[
+    !is.na(listofEUCTRids["a2_eudract_number"]), ]
+
   # 3. get ctgov records
   listofCTGOVids <- try(suppressMessages(suppressWarnings(
     dbGetFieldsIntoDf(fields = c(
