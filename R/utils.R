@@ -935,7 +935,6 @@ dbFindIdsUniqueTrials <- function(
       }
       #
       # c.2 - ctgov in euctr a52_... (id_info corresponds to index 2)
-      # TODO deleteme
       dupes.c2 <- sapply(
         listofCTGOVids[["id_info"]],
         function(x) any(
@@ -988,7 +987,7 @@ dbFindIdsUniqueTrials <- function(
     #
     if (preferregister == "CTGOV") {
       #
-      # a.1 - euctr in ctgov (id_info corresponds to index 2)
+      # a.1 - euctr in ctgov
       dupes.a1 <- listofEUCTRids[["a2_eudract_number"]] %in% sub(
         ".*([0-9]{4}-[0-9]{6}-[0-9]{2}).*", # e.g. "EUDRACT-2004-000242-20"
         "\\1", unlist(listofCTGOVids[["id_info"]]))
@@ -998,16 +997,16 @@ dbFindIdsUniqueTrials <- function(
                 " EUCTR _id in CTGOV secondary_id / nct_alias / org_study_id")
       }
       #
-      # b.1 - euctr in ctgov (_id corresponds to index 1)
+      # b.1 - euctr in ctgov
       dupes.b1 <- listofEUCTRids[[
         "a52_us_nct_clinicaltrialsgov_registry_number"]] %in% listofCTGOVids[["_id"]]
       #
       if (verbose) {
         message(" - ", sum(dupes.b1),
-                           " EUCTR a52_us_nct_... in CTGOV _id (nct)")
+                " EUCTR a52_us_nct_... in CTGOV _id (nct)")
       }
       #
-      # c.1 - euctr in ctgov (id_info corresponds to index 2)
+      # c.1 - euctr in ctgov
       dupes.c1 <- listofEUCTRids[[
         "a52_us_nct_clinicaltrialsgov_registry_number"]] %in%
         unlist(listofCTGOVids[["id_info"]])
@@ -1019,7 +1018,7 @@ dbFindIdsUniqueTrials <- function(
           " CTOGV secondary_id / nct_alias / org_study_id")
       }
       #
-      # d.1 - euctr in ctgov (id_info corresponds to index 2)
+      # d.1 - euctr in ctgov
       dupes.d1 <- listofEUCTRids[[
         "a51_isrctn_international_standard_randomised_controlled_trial_number"]] %in%
         unlist(listofCTGOVids[["id_info"]])
@@ -1031,7 +1030,7 @@ dbFindIdsUniqueTrials <- function(
           " in CTOGV secondary_id / nct_alias / org_study_id")
       }
       #
-      # e.1 - euctr in ctgov (id_info corresponds to index 2)
+      # e.1 - euctr in ctgov
       dupes.e1 <- listofEUCTRids[["a41_sponsors_protocol_code_number"]] %in%
         unlist(listofCTGOVids[["id_info"]])
       #
