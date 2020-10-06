@@ -967,7 +967,7 @@ dbFindIdsUniqueTrials <- function(
             listofEUCTRids[["a41_sponsors_protocol_code_number"]]))
       #
       if (verbose) {
-        message(" - ", sum(dupes.d2),
+        message(" - ", sum(dupes.e2),
                 " CTGOV secondary_id / nct_alias / org_study_id in",
                 " EUCTR a41_sponsors_protocol_...")}
       #
