@@ -1,3 +1,7 @@
+# ctrdata 1.3.2.9000
+ - 2020-10-08
+ - fixed identifying unique ids
+ 
 # ctrdata 1.3.2
  - 2020-10-03
  - quote system file paths
