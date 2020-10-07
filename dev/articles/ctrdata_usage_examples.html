@@ -37,18 +37,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ctrdata</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.3.1.9001</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.3.2.9001</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
@@ -112,120 +106,117 @@
 <div class="sourceCode" id="cb1"><pre class="downlit">
 <span class="co"># helper functions</span>
 <span class="co">#</span>
-<span class="kw">normalise_number</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>) {
+<span class="va">normalise_number</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
   
-  <span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span>(<span class="st">"&amp;lt;|&amp;gt;"</span>, <span class="st">""</span>,  <span class="kw">x</span>)
-  <span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span>(<span class="st">"&lt;=|&lt;|≤|=|&gt;"</span>, <span class="st">""</span>,  <span class="kw">x</span>)
-  <span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span>(<span class="st">"(^| )[.]"</span>, <span class="st">"0."</span>, <span class="kw">x</span>)
-  <span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/trimws.html">trimws</a></span>(<span class="kw">x</span>)
-  <span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(<span class="kw">x</span>, <span class="fu">function</span>(<span class="kw">y</span>) {
-    <span class="kw">z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/try.html">try</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(<span class="kw">y</span>), silent = <span class="fl">TRUE</span>)
-    <span class="co">if</span> (<span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span>(<span class="kw">z</span>) <span class="op">==</span> <span class="st">"try-error"</span>) {
-      <span class="fl">NA</span>
-      <span class="fu"><a href="https://rdrr.io/r/base/message.html">message</a></span>(<span class="kw">z</span>)
-    } <span class="co">else</span> {
-      <span class="kw">z</span>
-    }
-  })
-  <span class="fu"><a href="https://rdrr.io/r/base/unname.html">unname</a></span>(<span class="kw">x</span>)
-}
+  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="st">"&amp;lt;|&amp;gt;"</span>, <span class="st">""</span>,  <span class="va">x</span><span class="op">)</span>
+  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="st">"&lt;=|&lt;|≤|=|&gt;"</span>, <span class="st">""</span>,  <span class="va">x</span><span class="op">)</span>
+  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="st">"(^| )[.]"</span>, <span class="st">"0."</span>, <span class="va">x</span><span class="op">)</span>
+  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/trimws.html">trimws</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
+  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">x</span>, <span class="kw">function</span><span class="op">(</span><span class="va">y</span><span class="op">)</span> <span class="op">{</span>
+    <span class="va">z</span> <span class="op">&lt;-</span> <span class="kw"><a href="https://rdrr.io/r/base/try.html">try</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>, silent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">z</span><span class="op">)</span> <span class="op">==</span> <span class="st">"try-error"</span><span class="op">)</span> <span class="op">{</span>
+      <span class="cn">NA</span>
+      <span class="fu"><a href="https://rdrr.io/r/base/message.html">message</a></span><span class="op">(</span><span class="va">z</span><span class="op">)</span>
+    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+      <span class="va">z</span>
+    <span class="op">}</span>
+  <span class="op">}</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/unname.html">unname</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
+<span class="op">}</span>
 <span class="co">#</span>
-<span class="kw">normalise_string</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>) {
+<span class="va">normalise_string</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
   
-  <span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span>(<span class="st">","</span>, <span class="st">""</span>,  <span class="kw">x</span>)
-  <span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span>(<span class="st">"-"</span>, <span class="st">" "</span>, <span class="kw">x</span>)
-  <span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/chartr.html">tolower</a></span>(<span class="kw">x</span>)
-  <span class="kw">x</span> <span class="op">&lt;-</span> <span class="kw">tools</span>::<span class="fu"><a href="https://rdrr.io/r/tools/toTitleCase.html">toTitleCase</a></span>(<span class="kw">x</span>)
-  <span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span>(<span class="st">"[ ]+"</span>, <span class="st">" "</span>, <span class="kw">x</span>)
-  <span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/trimws.html">trimws</a></span>(<span class="kw">x</span>)
-  <span class="kw">x</span>
+  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="st">","</span>, <span class="st">""</span>,  <span class="va">x</span><span class="op">)</span>
+  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="st">"-"</span>, <span class="st">" "</span>, <span class="va">x</span><span class="op">)</span>
+  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/chartr.html">tolower</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
+  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">tools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/tools/toTitleCase.html">toTitleCase</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
+  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="st">"[ ]+"</span>, <span class="st">" "</span>, <span class="va">x</span><span class="op">)</span>
+  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/trimws.html">trimws</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
+  <span class="va">x</span>
   
-}
+<span class="op">}</span>
 <span class="co">#</span>
-<span class="kw">grepl_multi</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">patterns</span>, <span class="kw">x</span>, <span class="kw">simplify</span> = <span class="fl">TRUE</span>) {
-  <span class="co">if</span> (<span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/vector.html">is.vector</a></span>(<span class="kw">patterns</span>)) <span class="fu"><a href="https://rdrr.io/r/base/stop.html">stop</a></span>(<span class="st">"patterns should be a vector."</span>)
-  <span class="kw">ret</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span>(<span class="kw">patterns</span>), <span class="fl">1</span>, <span class="fu">function</span>(<span class="kw">pattern</span>) <span class="fu"><a href="https://rdrr.io/r/base/grep.html">grepl</a></span>(<span class="kw">pattern</span>, <span class="kw">x</span>, ignore.case = <span class="fl">TRUE</span>))
-  <span class="kw">ret</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span>(<span class="kw">ret</span>)
-  <span class="co">if</span> (<span class="kw">simplify</span>) 
-    <span class="kw">ret</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html">rowSums</a></span>(<span class="kw">ret</span>) <span class="op">&gt;=</span> <span class="fl">1</span>
-  <span class="co">else</span>
-    <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="kw">ret</span>) <span class="op">&lt;-</span> <span class="kw">patterns</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/function.html">return</a></span>(<span class="kw">ret</span>)
-}
+<span class="va">grepl_multi</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">patterns</span>, <span class="va">x</span>, <span class="va">simplify</span> <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">{</span>
+  <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/vector.html">is.vector</a></span><span class="op">(</span><span class="va">patterns</span><span class="op">)</span><span class="op">)</span> <span class="kw"><a href="https://rdrr.io/r/base/stop.html">stop</a></span><span class="op">(</span><span class="st">"patterns should be a vector."</span><span class="op">)</span>
+  <span class="va">ret</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="va">patterns</span><span class="op">)</span>, <span class="fl">1</span>, <span class="kw">function</span><span class="op">(</span><span class="va">pattern</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">grepl</a></span><span class="op">(</span><span class="va">pattern</span>, <span class="va">x</span>, ignore.case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
+  <span class="va">ret</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">ret</span><span class="op">)</span>
+  <span class="kw">if</span> <span class="op">(</span><span class="va">simplify</span><span class="op">)</span> 
+    <span class="va">ret</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html">rowSums</a></span><span class="op">(</span><span class="va">ret</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fl">1</span>
+  <span class="kw">else</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">ret</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">patterns</span>
+  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">ret</span><span class="op">)</span>
+<span class="op">}</span>
 <span class="co">#</span>
-<span class="kw">age_ctgov</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>) {
+<span class="va">age_ctgov</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
   
-  <span class="kw">tmp.years</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html">suppressWarnings</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span>(<span class="st">"([0-9]+) Year.?"</span>,  <span class="st">"\\1"</span>, <span class="kw">x</span>, ignore.case = <span class="fl">TRUE</span>))) <span class="op">/</span> <span class="fl">1</span>
-  <span class="kw">tmp.months</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html">suppressWarnings</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span>(<span class="st">"([0-9]+) Month.?"</span>, <span class="st">"\\1"</span>, <span class="kw">x</span>, ignore.case = <span class="fl">TRUE</span>))) <span class="op">/</span> <span class="fl">12</span>
-  <span class="kw">tmp.days</span>   <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html">suppressWarnings</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span>(<span class="st">"([0-9]+) Day.?"</span>,   <span class="st">"\\1"</span>, <span class="kw">x</span>, ignore.case = <span class="fl">TRUE</span>))) <span class="op">/</span> <span class="fl">365.25</span>
+  <span class="va">tmp.years</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html">suppressWarnings</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="st">"([0-9]+) Year.?"</span>,  <span class="st">"\\1"</span>, <span class="va">x</span>, ignore.case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span> <span class="fl">1</span>
+  <span class="va">tmp.months</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html">suppressWarnings</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="st">"([0-9]+) Month.?"</span>, <span class="st">"\\1"</span>, <span class="va">x</span>, ignore.case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span> <span class="fl">12</span>
+  <span class="va">tmp.days</span>   <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html">suppressWarnings</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="st">"([0-9]+) Day.?"</span>,   <span class="st">"\\1"</span>, <span class="va">x</span>, ignore.case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span> <span class="fl">365.25</span>
   
-  <span class="kw">tmp.age</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="kw">tmp.years</span>),  <span class="kw">tmp.years</span>, 
-             <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="kw">tmp.months</span>), <span class="kw">tmp.months</span>, 
-             <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="kw">tmp.days</span>),   <span class="kw">tmp.days</span>, <span class="fl">NA</span>)))
+  <span class="va">tmp.age</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">tmp.years</span><span class="op">)</span>,  <span class="va">tmp.years</span>, 
+             <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">tmp.months</span><span class="op">)</span>, <span class="va">tmp.months</span>, 
+             <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">tmp.days</span><span class="op">)</span>,   <span class="va">tmp.days</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
   
-  <span class="fu"><a href="https://rdrr.io/r/base/function.html">return</a></span>(<span class="kw">tmp.age</span>)
-}
+  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">tmp.age</span><span class="op">)</span>
+<span class="op">}</span>
 <span class="co">#</span>
-<span class="kw">simplifyList</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">l</span>) {
+<span class="va">simplifyList</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">l</span><span class="op">)</span> <span class="op">{</span>
 
   <span class="co"># helper function to avoid</span>
   <span class="co"># that NULL is ignored / removed</span>
-  <span class="kw">rapply2</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">fn</span>) {
-    <span class="co">if</span> (<span class="fu"><a href="https://rdrr.io/r/base/list.html">is.list</a></span>(<span class="kw">x</span>)) {
-      <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(<span class="kw">x</span>, <span class="kw">rapply2</span>, <span class="kw">fn</span>)
-    } <span class="co">else</span> {
-      <span class="fu">fn</span>(<span class="kw">x</span>)
-    }
-  }
+  <span class="va">rapply2</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">fn</span><span class="op">)</span> <span class="op">{</span>
+    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">is.list</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
+      <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">rapply2</span>, <span class="va">fn</span><span class="op">)</span>
+    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+      <span class="fu">fn</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
+    <span class="op">}</span>
+  <span class="op">}</span>
 
   <span class="co"># apply function replacing</span>
   <span class="co"># NULL with e.g. NA</span>
-  <span class="kw">tmp</span> <span class="op">&lt;-</span> <span class="fu">rapply2</span>(<span class="kw">l</span>,
-                 <span class="fu">function</span>(<span class="kw">x</span>) <span class="co">if</span> (<span class="fu"><a href="https://rdrr.io/r/base/NULL.html">is.null</a></span>(<span class="kw">x</span>)) <span class="fl">NA</span> <span class="co">else</span> <span class="kw">x</span>)
+  <span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu">rapply2</span><span class="op">(</span><span class="va">l</span>,
+                 <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html">is.null</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="cn">NA</span> <span class="kw">else</span> <span class="va">x</span><span class="op">)</span>
 
   <span class="co"># recursively unlist and change to vector</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(<span class="kw">tmp</span>, <span class="fu">function</span>(<span class="kw">x</span>) <span class="fu"><a href="https://rdrr.io/r/base/vector.html">as.vector</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span>(<span class="kw">x</span>)))
+  <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">tmp</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/vector.html">as.vector</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 
-}
-</pre></div>
+<span class="op">}</span></pre></div>
 <p>General information on the <code>ctrdata</code> package is available here: <a href="https://github.com/rfhb/ctrdata">https://github.com/rfhb/ctrdata</a>.</p>
 <div id="internet-access-via-proxy" class="section level2">
 <h2 class="hasAnchor">
 <a href="#internet-access-via-proxy" class="anchor"></a>Internet access via proxy</h2>
 <p>Functions in package <code>ctrdata</code> that start with <code>ctr...</code> require access to internet resources via <code>https</code>. Package <code>ctrdata</code> checks and automatically uses the proxy that is set under MS Windows in system settings. However, proxy settings need to be set by the user for other operating systems and for authenticating proxies, such as follows:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html">Sys.setenv</a></span>(https_proxy = <span class="st">"your_proxy.server.domain:8080"</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html">Sys.setenv</a></span>(https_proxy_user = <span class="st">"userid:password"</span>)
-</pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html">Sys.setenv</a></span><span class="op">(</span>https_proxy <span class="op">=</span> <span class="st">"your_proxy.server.domain:8080"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html">Sys.setenv</a></span><span class="op">(</span>https_proxy_user <span class="op">=</span> <span class="st">"userid:password"</span><span class="op">)</span></pre></div>
 </div>
 <div id="connect-to-a-database" class="section level2">
 <h2 class="hasAnchor">
 <a href="#connect-to-a-database" class="anchor"></a>Connect to a database</h2>
 <p>Here using MongoDB, which is faster than SQLite, can handle credentials, provides access to remote servers and can directly retrieve nested elements from paths. See <a href="../README.html">README.md</a> and <a href="ctrdata_get_started.Rmd">Get started with ctrdata</a> for examples using SQLite.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="kw">db</span> <span class="op">&lt;-</span> <span class="kw">nodbi</span>::<span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_mongo.html">src_mongo</a></span>(url = <span class="st">"mongodb://localhost"</span>,
-                       db = <span class="st">"some_database_name"</span>,
-                       collection = <span class="st">"some_collection_name"</span>)
-<span class="kw">db</span>
+<span class="va">db</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_mongo.html">src_mongo</a></span><span class="op">(</span>url <span class="op">=</span> <span class="st">"mongodb://localhost"</span>,
+                       db <span class="op">=</span> <span class="st">"some_database_name"</span>,
+                       collection <span class="op">=</span> <span class="st">"some_collection_name"</span><span class="op">)</span>
+<span class="va">db</span>
 <span class="co"># MongoDB 3.6.8 (uptime: 244492s)</span>
 <span class="co"># URL: laptop.home/some_database_name </span>
-<span class="co"># Collection: some_collection_name</span>
-</pre></div>
+<span class="co"># Collection: some_collection_name</span></pre></div>
 </div>
 <div id="execute-a-search-query-and-load-into-database" class="section level2">
 <h2 class="hasAnchor">
 <a href="#execute-a-search-query-and-load-into-database" class="anchor"></a>Execute a search query and load into database</h2>
 <div class="sourceCode" id="cb4"><pre class="downlit">
 <span class="co"># Load library which has previously been installed:</span>
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/rfhb/ctrdata">ctrdata</a></span>)
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rfhb/ctrdata">ctrdata</a></span><span class="op">)</span>
 
 <span class="co"># In the browser, this is a search query used as example: </span>
 <span class="co"># all phase 3 adult breast cancer trials</span>
-<span class="kw">q</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"https://www.clinicaltrialsregister.eu/ctr-search/search?"</span>,
-            <span class="st">"query=cancer+AND+breast&amp;age=adult&amp;phase=phase-three"</span>)
+<span class="va">q</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"https://www.clinicaltrialsregister.eu/ctr-search/search?"</span>,
+            <span class="st">"query=cancer+AND+breast&amp;age=adult&amp;phase=phase-three"</span><span class="op">)</span>
 
 <span class="co"># Load details on all clinical trials into database:</span>
-<span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span>(queryterm = <span class="kw">q</span>, con = <span class="kw">db</span>)
+<span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span>queryterm <span class="op">=</span> <span class="va">q</span>, con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 <span class="co"># * Found search query from EUCTR.</span>
 <span class="co"># * Checking trials in EUCTR:</span>
 <span class="co"># Retrieved overview, 403 trial(s) from 21 page(s) to be downloaded.</span>
@@ -235,8 +226,7 @@
 <span class="co"># (2/3) Converting to JSON ...</span>
 <span class="co"># (3/3) Importing JSON into database ...</span>
 <span class="co"># Warnung: [WARNING] invalid document for insert: keys cannot contain </span>
-<span class="co"># ".": "d391_cas_number.1" 2012-000174-37-ES: Error : invalid document</span>
-</pre></div>
+<span class="co"># ".": "d391_cas_number.1" 2012-000174-37-ES: Error : invalid document</span></pre></div>
 </div>
 <div id="execute-in-browser-a-search-query-that-was-previously-stored" class="section level2">
 <h2 class="hasAnchor">
@@ -244,22 +234,21 @@
 <p>The function <code><a href="../reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser()</a></code> can be used to open blank search pages, but also to execute a previous search. This can be used to check if user searches are properly handled by this package, for example by comparing the number of search results.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit">
 <span class="co"># After records have already been downloaded: </span>
-<span class="kw">q</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbQueryHistory.html">dbQueryHistory</a></span>(con = <span class="kw">db</span>)   <span class="co"># list the searches in database</span>
-<span class="kw">q</span> <span class="op">&lt;-</span> <span class="kw">q</span>[<span class="fl">1</span>,]                      <span class="co"># select one of the searches</span>
-<span class="fu"><a href="../reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser</a></span>(<span class="kw">q</span>)  <span class="co"># open this search in broweser</span>
+<span class="va">q</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbQueryHistory.html">dbQueryHistory</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>   <span class="co"># list the searches in database</span>
+<span class="va">q</span> <span class="op">&lt;-</span> <span class="va">q</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span>                      <span class="co"># select one of the searches</span>
+<span class="fu"><a href="../reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser</a></span><span class="op">(</span><span class="va">q</span><span class="op">)</span>  <span class="co"># open this search in broweser</span>
 
 <span class="co"># This opens a browser and executes a search:</span>
-<span class="fu"><a href="../reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(
+<span class="fu"><a href="../reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span>
   <span class="st">"https://www.clinicaltrialsregister.eu/"</span>, 
-  <span class="st">"ctr-search/search?query=cancer"</span>))
-</pre></div>
+  <span class="st">"ctr-search/search?query=cancer"</span><span class="op">)</span><span class="op">)</span></pre></div>
 </div>
 <div id="find-fields-variables-of-interest" class="section level2">
 <h2 class="hasAnchor">
 <a href="#find-fields-variables-of-interest" class="anchor"></a>Find fields / variables of interest</h2>
 <p>The search for fields is cached and thus accelerated during the R session and as long as no new ctrLoadQueryIntoDb() is executed.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="fu"><a href="../reference/dbFindFields.html">dbFindFields</a></span>(namepart = <span class="st">"date"</span>, con = <span class="kw">db</span>)
+<span class="fu"><a href="../reference/dbFindFields.html">dbFindFields</a></span><span class="op">(</span>namepart <span class="op">=</span> <span class="st">"date"</span>, con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 <span class="co">#  [1] "firstreceived_date"                                                               </span>
 <span class="co">#  [2] "lastchanged_date"                                                                 </span>
 <span class="co">#  [3] "required_header.download_date"                                                    </span>
@@ -271,18 +260,17 @@
 <span class="co">#  [9] "n_date_of_competent_authority_decision"                                           </span>
 <span class="co"># [10] "n_date_of_ethics_committee_opinion"                                               </span>
 <span class="co"># [11] "firstreceived_results_date"                                                       </span>
-<span class="co"># [12] "p_date_of_the_global_end_of_the_trial"                                            </span>
-</pre></div>
+<span class="co"># [12] "p_date_of_the_global_end_of_the_trial"                                            </span></pre></div>
 </div>
 <div id="ctrdata-returns-include-metadata" class="section level2">
 <h2 class="hasAnchor">
 <a href="#ctrdata-returns-include-metadata" class="anchor"></a>ctrdata returns include metadata</h2>
 <p>The objects returned by functions of this package include attributes with metadata to indicate from which query, database, collection etc. and when the object was created. Metadata can subsequently be reused.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/attributes.html">attributes</a></span>(
-  <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span>(
+<span class="fu"><a href="https://rdrr.io/r/base/attributes.html">attributes</a></span><span class="op">(</span>
+  <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span>
     <span class="st">"e52_secondary_end_points"</span>, 
-    con = <span class="kw">db</span>))
+    con <span class="op">=</span> <span class="va">db</span><span class="op">)</span><span class="op">)</span>
 <span class="co"># $class</span>
 <span class="co"># [1] "data.frame"</span>
 <span class="co"># </span>
@@ -296,15 +284,14 @@
 <span class="co">#       query-timestamp query-register query-records</span>
 <span class="co"># 1 2019-10-13 21:18:50          EUCTR          1917</span>
 <span class="co">#                                            query-term</span>
-<span class="co"># 1 query=cancer+AND+breast&amp;age=adult&amp;phase=phase-three</span>
-</pre></div>
+<span class="co"># 1 query=cancer+AND+breast&amp;age=adult&amp;phase=phase-three</span></pre></div>
 </div>
 <div id="update-data-base-from-query-in-specified-register" class="section level2">
 <h2 class="hasAnchor">
 <a href="#update-data-base-from-query-in-specified-register" class="anchor"></a>Update data base from query in specified register</h2>
 <div class="sourceCode" id="cb8"><pre class="downlit">
 <span class="co"># List queries:</span>
-<span class="fu"><a href="../reference/dbQueryHistory.html">dbQueryHistory</a></span>(con = <span class="kw">db</span>)
+<span class="fu"><a href="../reference/dbQueryHistory.html">dbQueryHistory</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 
 <span class="co"># Update last query in the history:</span>
 <span class="co">#  - EUCTR information can be incrementally downloaded or updated only</span>
@@ -312,9 +299,9 @@
 <span class="co">#  - CTGOV intformation can always be incrementally downloaded or updated. </span>
 <span class="co">#  - Alternatively, querytoupdate can have an integer number, </span>
 <span class="co">#    corresponding to the desired row of dbQueryHistory(). </span>
-<span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span>(querytoupdate = <span class="st">"last"</span>, con = <span class="kw">db</span>)
+<span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span>querytoupdate <span class="op">=</span> <span class="st">"last"</span>, con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 
-<span class="fu"><a href="../reference/dbQueryHistory.html">dbQueryHistory</a></span>(con = <span class="kw">db</span>)
+<span class="fu"><a href="../reference/dbQueryHistory.html">dbQueryHistory</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 <span class="co"># Note: after such an update, the column "query-records" refers </span>
 <span class="co"># to the number of records that were added or updated, only, </span>
 <span class="co"># when the update was run as per the "query-timestamp", </span>
@@ -322,13 +309,12 @@
 
 <span class="co"># The date and time of the last download of individual records</span>
 <span class="co"># is stored in the variable "record_last_import" as follows: </span>
-<span class="kw">resultDate</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span>(
-  <span class="st">"record_last_import"</span>, con = <span class="kw">db</span>)
+<span class="va">resultDate</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span>
+  <span class="st">"record_last_import"</span>, con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">resultDate</span>[[<span class="st">"record_last_import"</span>]])
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">resultDate</span><span class="op">[[</span><span class="st">"record_last_import"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
 <span class="co">#                  Min.               1st Qu.                Median</span>
-<span class="co"># "2016-04-21 19:49:54" "2016-04-21 19:49:54" "2016-04-21 19:49:54"</span>
-</pre></div>
+<span class="co"># "2016-04-21 19:49:54" "2016-04-21 19:49:54" "2016-04-21 19:49:54"</span></pre></div>
 </div>
 <div id="deduplicate-country-specific-records-of-a-trial-visualise-trial-information" class="section level2">
 <h2 class="hasAnchor">
@@ -337,45 +323,44 @@
 <div class="sourceCode" id="cb9"><pre class="downlit">
 <span class="co"># Example 1: Relation between number of study </span>
 <span class="co"># participants in one country and in whole trial? </span>
-<span class="kw">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span>(
-  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"f41_in_the_member_state"</span>, 
-    <span class="st">"f422_in_the_whole_clinical_trial"</span>), 
-  con = <span class="kw">db</span>)
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"f41_in_the_member_state"</span>, 
+    <span class="st">"f422_in_the_whole_clinical_trial"</span><span class="op">)</span>, 
+  con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span>(<span class="kw">f41_in_the_member_state</span> <span class="op">~</span> 
-       <span class="kw">f422_in_the_whole_clinical_trial</span>, <span class="kw">result</span>)
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">f41_in_the_member_state</span> <span class="op">~</span> 
+       <span class="va">f422_in_the_whole_clinical_trial</span>, <span class="va">result</span><span class="op">)</span>
 <span class="co"># [result not shown]</span>
 
 <span class="co"># Example 2: How many clinical trials are </span>
 <span class="co"># ongoing or completed, per country?</span>
-<span class="kw">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>
   <span class="st">"a1_member_state_concerned"</span>, 
-  <span class="st">"p_end_of_trial_status"</span>), 
-  con = <span class="kw">db</span>)
+  <span class="st">"p_end_of_trial_status"</span><span class="op">)</span>, 
+  con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span>(<span class="kw">result</span>, 
-     <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span>(<span class="kw">a1_member_state_concerned</span>, 
-           <span class="kw">p_end_of_trial_status</span>))
+<span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span><span class="op">(</span><span class="va">result</span>, 
+     <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">a1_member_state_concerned</span>, 
+           <span class="va">p_end_of_trial_status</span><span class="op">)</span><span class="op">)</span>
 <span class="co"># [result not shown]</span>
 
 <span class="co"># Example 3: How many clinical trials where started in which year?</span>
-<span class="kw">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>
   <span class="st">"a1_member_state_concerned"</span>, 
   <span class="st">"n_date_of_competent_authority_decision"</span>, 
-  <span class="st">"a2_eudract_number"</span>), 
-  con = <span class="kw">db</span>)
+  <span class="st">"a2_eudract_number"</span><span class="op">)</span>, 
+  con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 
 <span class="co"># Eliminate trials records duplicated by member state: </span>
-<span class="kw">result</span> <span class="op">&lt;-</span> <span class="kw">result</span>[ <span class="kw">result</span>[[<span class="st">"_id"</span>]] <span class="op">%in%</span> 
-                    <span class="fu"><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span>(con = <span class="kw">db</span>), ]
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">[</span> <span class="va">result</span><span class="op">[[</span><span class="st">"_id"</span><span class="op">]</span><span class="op">]</span> <span class="op">%in%</span> 
+                    <span class="fu"><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>, <span class="op">]</span>
 
 <span class="co"># Visualise:</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/hist.html">hist</a></span>(<span class="kw">result</span>[[<span class="st">"n_date_of_competent_authority_decision"</span>]], 
-     breaks = <span class="st">"years"</span>, 
-     freq = <span class="fl">TRUE</span>, 
-     las = <span class="fl">1</span>); <span class="fu"><a href="https://rdrr.io/r/graphics/box.html">box</a></span>()
-<span class="co">#</span>
-</pre></div>
+<span class="fu"><a href="https://rdrr.io/r/graphics/hist.html">hist</a></span><span class="op">(</span><span class="va">result</span><span class="op">[[</span><span class="st">"n_date_of_competent_authority_decision"</span><span class="op">]</span><span class="op">]</span>, 
+     breaks <span class="op">=</span> <span class="st">"years"</span>, 
+     freq <span class="op">=</span> <span class="cn">TRUE</span>, 
+     las <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/box.html">box</a></span><span class="op">(</span><span class="op">)</span>
+<span class="co">#</span></pre></div>
 <div class="figure">
 <img src="Rplot01.png" alt=""><p class="caption">Histogram</p>
 </div>
@@ -385,40 +370,40 @@
 <a href="#download-from-another-register-check-for-duplicates-merge-variables-and-re-organise-values" class="anchor"></a>Download from another register, check for duplicates, merge variables and re-organise values</h2>
 <div class="sourceCode" id="cb10"><pre class="downlit">
 <span class="co"># Ongoing phase 3 interventional trials in breast carcinoma</span>
-<span class="kw">q</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(
+<span class="va">q</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span>
   <span class="st">"https://clinicaltrials.gov/ct2/results?term=&amp;recr=Open&amp;"</span>,
-  <span class="st">"type=Intr&amp;cond=breast+carcinoma&amp;intr=Drug&amp;state1=&amp;age=1&amp;phase=2"</span>)
+  <span class="st">"type=Intr&amp;cond=breast+carcinoma&amp;intr=Drug&amp;state1=&amp;age=1&amp;phase=2"</span><span class="op">)</span>
 
 <span class="co"># Show and check search in browser: </span>
-<span class="fu"><a href="../reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser</a></span>(<span class="kw">q</span>)
+<span class="fu"><a href="../reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser</a></span><span class="op">(</span><span class="va">q</span><span class="op">)</span>
 
 <span class="co"># Count number of trials: </span>
-<span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span>(
-  <span class="kw">q</span>, 
-  only.count = <span class="fl">TRUE</span>,
-  con = <span class="kw">db</span>)
+<span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span>
+  <span class="va">q</span>, 
+  only.count <span class="op">=</span> <span class="cn">TRUE</span>,
+  con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 
 <span class="co"># Load data: </span>
-<span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span>(
-  <span class="kw">q</span>, 
-  con = <span class="kw">db</span>)
+<span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span>
+  <span class="va">q</span>, 
+  con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 
 <span class="co"># Data from which queries have been downloaded into the database? </span>
-<span class="fu"><a href="../reference/dbQueryHistory.html">dbQueryHistory</a></span>(con = <span class="kw">db</span>)
+<span class="fu"><a href="../reference/dbQueryHistory.html">dbQueryHistory</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 
 <span class="co"># Get columns from the database from different registers</span>
-<span class="fu"><a href="../reference/dbFindFields.html">dbFindFields</a></span>(<span class="st">"status"</span>, con = <span class="kw">db</span>)
+<span class="fu"><a href="../reference/dbFindFields.html">dbFindFields</a></span><span class="op">(</span><span class="st">"status"</span>, con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 
-<span class="kw">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>
   <span class="st">"overall_status"</span>, 
   <span class="st">"p_end_of_trial_status"</span>, 
-  <span class="st">"a2_eudract_number"</span>), 
-  con = <span class="kw">db</span>)
+  <span class="st">"a2_eudract_number"</span><span class="op">)</span>, 
+  con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 
 <span class="co"># Find ids of unique trials if recorded by alternative countries or registers:</span>
-<span class="kw">ids_of_unique_trials</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span>(prefermemberstate = <span class="st">"FR"</span>, con = <span class="kw">db</span>)
-<span class="kw">ids_of_unique_trials</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span>(preferregister = <span class="st">"EUCTR"</span>, con = <span class="kw">db</span>)
-<span class="kw">ids_of_unique_trials</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span>(preferregister = <span class="st">"CTGOV"</span>, con = <span class="kw">db</span>)
+<span class="va">ids_of_unique_trials</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span><span class="op">(</span>prefermemberstate <span class="op">=</span> <span class="st">"FR"</span>, con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
+<span class="va">ids_of_unique_trials</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span><span class="op">(</span>preferregister <span class="op">=</span> <span class="st">"EUCTR"</span>, con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
+<span class="va">ids_of_unique_trials</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span><span class="op">(</span>preferregister <span class="op">=</span> <span class="st">"CTGOV"</span>, con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 <span class="co"># * Total of 2065 records in collection.</span>
 <span class="co"># Searching for duplicates, found </span>
 <span class="co">#  - 1516 EUCTR _id were not preferred EU Member State record of trial</span>
@@ -431,17 +416,17 @@
 <span class="co"># = Returning keys (_id) of 507 out of total 2065 records in collection "some_collection_name"</span>
 
 <span class="co"># Subset the result set to these unique trials:</span>
-<span class="kw">result</span> <span class="op">&lt;-</span> <span class="kw">result</span>[ <span class="kw">result</span>[[<span class="st">"_id"</span>]] <span class="op">%in%</span> <span class="kw">ids_of_unique_trials</span>, ]
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">[</span> <span class="va">result</span><span class="op">[[</span><span class="st">"_id"</span><span class="op">]</span><span class="op">]</span> <span class="op">%in%</span> <span class="va">ids_of_unique_trials</span>, <span class="op">]</span>
 
 <span class="co"># Now merge two variables into a new variable for analysis:</span>
-<span class="kw">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfMergeTwoVariablesRelevel.html">dfMergeTwoVariablesRelevel</a></span>(
-  <span class="kw">result</span>, 
-  colnames = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"overall_status"</span>, 
-               <span class="st">"p_end_of_trial_status"</span>))
+<span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfMergeTwoVariablesRelevel.html">dfMergeTwoVariablesRelevel</a></span><span class="op">(</span>
+  <span class="va">result</span>, 
+  colnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"overall_status"</span>, 
+               <span class="st">"p_end_of_trial_status"</span><span class="op">)</span><span class="op">)</span>
 <span class="co"># Unique values returned: Ongoing, Completed, Prematurely Ended, </span>
 <span class="co"># Restarted, , Recruiting, Not yet recruiting</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span>(<span class="kw">tmp</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">)</span>
         <span class="co">#                     Completed Not yet recruiting            Ongoing</span>
         <span class="co">#          1                131                 27                184 </span>
         <span class="co"># Recruiting          Restarted     Prematurely Ended </span>
@@ -449,26 +434,25 @@
 
 <span class="co"># Merge two variables as above and in addition, </span>
 <span class="co"># condense their values into a new value:</span>
-<span class="kw">statusvalues</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(
-  <span class="st">"ongoing"</span> = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Recruiting"</span>, <span class="st">"Active"</span>, <span class="st">"Ongoing"</span>, 
+<span class="va">statusvalues</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>
+  <span class="st">"ongoing"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Recruiting"</span>, <span class="st">"Active"</span>, <span class="st">"Ongoing"</span>, 
                 <span class="st">"Active, not recruiting"</span>, 
-                <span class="st">"Enrolling by invitation"</span>, <span class="st">"Restarted"</span>),
-  <span class="st">"completed"</span> = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Completed"</span>, <span class="st">"Prematurely Ended"</span>, <span class="st">"Terminated"</span>),
-  <span class="st">"other"</span>     = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Withdrawn"</span>, <span class="st">"Suspended"</span>, <span class="st">"No longer available"</span>, 
+                <span class="st">"Enrolling by invitation"</span>, <span class="st">"Restarted"</span><span class="op">)</span>,
+  <span class="st">"completed"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Completed"</span>, <span class="st">"Prematurely Ended"</span>, <span class="st">"Terminated"</span><span class="op">)</span>,
+  <span class="st">"other"</span>     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Withdrawn"</span>, <span class="st">"Suspended"</span>, <span class="st">"No longer available"</span>, 
                   <span class="st">"Not yet recruiting"</span>, <span class="st">"Temporarily Halted"</span>, 
-                  <span class="st">"Unknown status"</span>))
+                  <span class="st">"Unknown status"</span><span class="op">)</span><span class="op">)</span>
 
-<span class="kw">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfMergeTwoVariablesRelevel.html">dfMergeTwoVariablesRelevel</a></span>(
-  <span class="kw">result</span>, 
-  colnames = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"overall_status"</span>, 
-               <span class="st">"p_end_of_trial_status"</span>), 
-  levelslist = <span class="kw">statusvalues</span>)
+<span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfMergeTwoVariablesRelevel.html">dfMergeTwoVariablesRelevel</a></span><span class="op">(</span>
+  <span class="va">result</span>, 
+  colnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"overall_status"</span>, 
+               <span class="st">"p_end_of_trial_status"</span><span class="op">)</span>, 
+  levelslist <span class="op">=</span> <span class="va">statusvalues</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span>(<span class="kw">tmp</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">)</span>
 <span class="co"># tmp</span>
         <span class="co">#   completed   ongoing     other </span>
-        <span class="co"># 1       173       306        27 </span>
-</pre></div>
+        <span class="co"># 1       173       306        27 </span></pre></div>
 </div>
 <div id="use-a-remote-mongo-database" class="section level2">
 <h2 class="hasAnchor">
@@ -476,43 +460,42 @@
 <p>This example works with a free service <a href="https://www.mongodb.com/cloud/atlas">here</a>. Note that the user name and password need to be encoded. The format of the connection string is documented <a href="https://docs.mongodb.com/manual/reference/connection-string/">here</a>.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit">
 <span class="co">## Specify base uri for remote mongodb server as part of the encoded connection string</span>
-<span class="kw">db</span> <span class="op">&lt;-</span> <span class="kw">nodbi</span>::<span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_mongo.html">src_mongo</a></span>(
-  url = <span class="st">"mongodb+srv://DWbJ7Wh:bdTHh5cS@cluster0-b9wpw.mongodb.net"</span>,
-  db = <span class="st">"dbperm"</span>,
-  collection = <span class="st">"dbperm"</span>)
+<span class="va">db</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_mongo.html">src_mongo</a></span><span class="op">(</span>
+  url <span class="op">=</span> <span class="st">"mongodb+srv://DWbJ7Wh:bdTHh5cS@cluster0-b9wpw.mongodb.net"</span>,
+  db <span class="op">=</span> <span class="st">"dbperm"</span>,
+  collection <span class="op">=</span> <span class="st">"dbperm"</span><span class="op">)</span>
 
 <span class="co"># Database connection can just be used to retrieve data</span>
-<span class="kw">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span>(
-  fields = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"a2_eudract_number"</span>,
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span>
+  fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"a2_eudract_number"</span>,
              <span class="st">"overall_status"</span>,
              <span class="st">"record_last_import"</span>,
              <span class="st">"primary_completion_date"</span>,
              <span class="st">"x6_date_on_which_this_record_was_first_entered_in_the_eudract_database"</span>,
-             <span class="st">"e71_human_pharmacology_phase_i"</span>), 
-  con = <span class="kw">db</span>)
-</pre></div>
+             <span class="st">"e71_human_pharmacology_phase_i"</span><span class="op">)</span>, 
+  con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></pre></div>
 </div>
 <div id="use-another-package-for-analysis-for-example-count-sites-per-trial-with-mongolite" class="section level2">
 <h2 class="hasAnchor">
 <a href="#use-another-package-for-analysis-for-example-count-sites-per-trial-with-mongolite" class="anchor"></a>Use another package for analysis, for example count sites per trial with mongolite</h2>
 <p>Note: Packages to access mango such as <code>mongolite</code> or <code>RMongo</code> may work to access data that are already in the mongo dababase. However, package <code>ctrdata</code> is still necessary to initially retrieve data from registers and to store these data into the database.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/jeroen/mongolite">mongolite</a></span>)
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jeroen/mongolite/">mongolite</a></span><span class="op">)</span>
 
-<span class="kw">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mongolite/man/mongo.html">mongo</a></span>(
-  url = <span class="st">"mongodb+srv://DWbJ7Wh:bdTHh5cS@cluster0-b9wpw.mongodb.net/dbperm"</span>, 
-  collection = <span class="st">"dbperm"</span>)
+<span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mongolite/man/mongo.html">mongo</a></span><span class="op">(</span>
+  url <span class="op">=</span> <span class="st">"mongodb+srv://DWbJ7Wh:bdTHh5cS@cluster0-b9wpw.mongodb.net/dbperm"</span>, 
+  collection <span class="op">=</span> <span class="st">"dbperm"</span><span class="op">)</span>
 
 <span class="co"># List all collections:</span>
-<span class="kw">m</span><span class="op">$</span><span class="fu">run</span>(<span class="st">'{"listCollections": 1}'</span>)
+<span class="va">m</span><span class="op">$</span><span class="fu">run</span><span class="op">(</span><span class="st">'{"listCollections": 1}'</span><span class="op">)</span>
 
 <span class="co"># Find the database elements that represent a site:</span>
-<span class="kw">result</span> <span class="op">&lt;-</span> <span class="kw">m</span><span class="op">$</span><span class="fu"><a href="https://rdrr.io/r/utils/apropos.html">find</a></span>(<span class="st">'{}'</span>, <span class="st">'{"location.facility.name": 1}'</span>)
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="va">m</span><span class="op">$</span><span class="fu">find</span><span class="op">(</span><span class="st">'{}'</span>, <span class="st">'{"location.facility.name": 1}'</span><span class="op">)</span>
 
 <span class="co"># Table by frequency</span>
-<span class="kw">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/unname.html">unname</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/rapply.html">rapply</a></span>(<span class="kw">result</span>, <span class="fu">function</span>(<span class="kw">x</span>) <span class="kw">x</span>, how = <span class="st">"unlist"</span>))))
-<span class="kw">tbl</span> <span class="op">&lt;-</span> <span class="kw">tbl</span>[<span class="fu"><a href="https://rdrr.io/r/base/rev.html">rev</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/order.html">order</a></span>(<span class="kw">tbl</span>))]
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">tbl</span>)
+<span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unname.html">unname</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rapply.html">rapply</a></span><span class="op">(</span><span class="va">result</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span>, how <span class="op">=</span> <span class="st">"unlist"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+<span class="va">tbl</span> <span class="op">&lt;-</span> <span class="va">tbl</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/rev.html">rev</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/order.html">order</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">)</span>
 <span class="co">#                        Children's Hospital of Philadelphia </span>
 <span class="co">#                                                          17 </span>
 <span class="co">#               Cincinnati Children's Hospital Medical Center </span>
@@ -529,18 +512,18 @@
 <span class="co"># Define a helper function to count elements, irrespective of </span>
 <span class="co"># whether the elements are in an array or are a set of </span>
 <span class="co"># subdocuments in the database:</span>
-<span class="kw">count.elements</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">dataframecolumn</span>) {
-  <span class="fu"><a href="https://rdrr.io/r/base/function.html">return</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(<span class="kw">dataframecolumn</span>, 
-                <span class="fu">function</span>(<span class="kw">x</span>) 
-                  <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">is.data.frame</a></span>(<span class="kw">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span>(<span class="kw">x</span>[[<span class="fl">1</span>]])), 
-                         <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(<span class="kw">tmp</span>), <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="kw">tmp</span>))))
-}
+<span class="va">count.elements</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">dataframecolumn</span><span class="op">)</span> <span class="op">{</span>
+  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">dataframecolumn</span>, 
+                <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> 
+                  <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">is.data.frame</a></span><span class="op">(</span><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">x</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>, 
+                         <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+<span class="op">}</span>
 
 <span class="co"># Sum up number of sites per trial:</span>
-<span class="kw">result</span><span class="op">$</span><span class="kw">number_of_sites</span> <span class="op">&lt;-</span> <span class="fu">count.elements</span>(<span class="kw">result</span><span class="op">$</span><span class="kw">location</span>)
+<span class="va">result</span><span class="op">$</span><span class="va">number_of_sites</span> <span class="op">&lt;-</span> <span class="fu">count.elements</span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">location</span><span class="op">)</span>
 
 <span class="co"># Inspect first rows:</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">result</span>[, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"_id"</span>, <span class="st">"number_of_sites"</span>)])
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">result</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"_id"</span>, <span class="st">"number_of_sites"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>
 <span class="co">#                 _id number_of_sites</span>
 <span class="co"># 1       NCT01471782              30</span>
 <span class="co"># 2         meta-info               0</span>
@@ -550,8 +533,7 @@
 <span class="co"># 6 2010-024264-18-IT               0</span>
 
 <span class="co"># Draw histogram:</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/hist.html">hist</a></span>(<span class="kw">result</span><span class="op">$</span><span class="kw">number_of_sites</span>)
-</pre></div>
+<span class="fu"><a href="https://rdrr.io/r/graphics/hist.html">hist</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">number_of_sites</span><span class="op">)</span></pre></div>
 </div>
 <div id="working-with-nested-data" class="section level2">
 <h2 class="hasAnchor">
@@ -559,21 +541,21 @@
 <p>Compare the way that fields (keys) may have to be specified differently for elements that are nested within other elements. See also <a href="#analyse-results-related-information">Analyse results-related information</a> below.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit">
 <span class="co"># - with MongoDB: finds all elements b31_and_b32_...</span>
-<span class="kw">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span>(
-  fields = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span>
+  fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>
     <span class="st">"b1_sponsor.b31_and_b32_status_of_the_sponsor"</span>, <span class="co"># Note dot path</span>
     <span class="st">"p_end_of_trial_status"</span>, 
-    <span class="st">"a2_eudract_number"</span>),
-  con = <span class="kw">db</span>)
+    <span class="st">"a2_eudract_number"</span><span class="op">)</span>,
+  con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 
 <span class="co"># Eliminate trials records duplicated by EU Member State: </span>
-<span class="kw">uniqueids</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span>(con = <span class="kw">db</span>)
-<span class="kw">result</span>    <span class="op">&lt;-</span> <span class="kw">result</span>[ <span class="kw">result</span>[[<span class="st">"_id"</span>]] <span class="op">%in%</span> <span class="kw">uniqueids</span>, ]
+<span class="va">uniqueids</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
+<span class="va">result</span>    <span class="op">&lt;-</span> <span class="va">result</span><span class="op">[</span> <span class="va">result</span><span class="op">[[</span><span class="st">"_id"</span><span class="op">]</span><span class="op">]</span> <span class="op">%in%</span> <span class="va">uniqueids</span>, <span class="op">]</span>
 
 <span class="co"># Tabulate the status of the clinical trial on the date of information retrieval</span>
 <span class="co"># Note some trials have more than one sponsor and values are concatenated with /.</span>
-<span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span>(<span class="kw">result</span>, <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span>(<span class="kw">p_end_of_trial_status</span>, 
-                   <span class="kw">b1_sponsor.b31_and_b32_status_of_the_sponsor</span>))
+<span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span><span class="op">(</span><span class="va">result</span>, <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">p_end_of_trial_status</span>, 
+                   <span class="va">b1_sponsor.b31_and_b32_status_of_the_sponsor</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#                  b1_sponsor.b31_and_b32_status_of_the_sponsor</span>
 <span class="co"># p_end_of_trial_status    Commercial  Non-Commercial  Non-Commercial / Non-Commercial</span>
 <span class="co">#   Completed                      81              32                                0</span>
@@ -584,32 +566,31 @@
 
 <span class="co"># - with SQLite: finds the first, to retrieve </span>
 <span class="co"># the second, increment to [1] and so on</span>
-<span class="kw">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span>(
-  fields = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span>
+  fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>
     <span class="st">"b1_sponsor[0].b31_and_b32_status_of_the_sponsor"</span>, <span class="co"># Note [0]</span>
     <span class="st">"p_end_of_trial_status"</span>, 
-    <span class="st">"a2_eudract_number"</span>),
-  con = <span class="kw">db</span>)
+    <span class="st">"a2_eudract_number"</span><span class="op">)</span>,
+  con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 
 <span class="co"># - with SQLite (and MongoDB): retrieve element at root</span>
 <span class="co"># and extract its nested sub-elements later, using </span>
 <span class="co"># the helper function that follows below. </span>
-<span class="kw">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span>(
-  fields = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"b1_sponsor"</span>, 
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span>
+  fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"b1_sponsor"</span>, 
              <span class="st">"p_end_of_trial_status"</span>, 
-             <span class="st">"a2_eudract_number"</span>),
-  con = <span class="kw">db</span>)
+             <span class="st">"a2_eudract_number"</span><span class="op">)</span>,
+  con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 
 <span class="co"># Nested lists: its elements can be accessed </span>
 <span class="co"># using the helper function getKeyNestedList()</span>
-<span class="kw">result</span>[[<span class="fl">1</span>, <span class="st">"b1_sponsor"</span>]]
+<span class="va">result</span><span class="op">[[</span><span class="fl">1</span>, <span class="st">"b1_sponsor"</span><span class="op">]</span><span class="op">]</span>
 
 <span class="co"># Example</span>
-<span class="fu"><a href="../reference/dfListExtractKey.html">dfListExtractKey</a></span>(
-  <span class="kw">result</span>, 
-  <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"b1_sponsor"</span>, 
-         <span class="st">"b31_and_b32_status_of_the_sponsor"</span>)))
-</pre></div>
+<span class="fu"><a href="../reference/dfListExtractKey.html">dfListExtractKey</a></span><span class="op">(</span>
+  <span class="va">result</span>, 
+  <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"b1_sponsor"</span>, 
+         <span class="st">"b31_and_b32_status_of_the_sponsor"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></pre></div>
 </div>
 <div id="plot-frequency-of-certain-end-points" class="section level2">
 <h2 class="hasAnchor">
@@ -617,60 +598,60 @@
 <div class="sourceCode" id="cb14"><pre class="downlit">
 <span class="co"># Search for interesting variables,  </span>
 <span class="co"># note the spelling in EUCTR:</span>
-<span class="fu"><a href="../reference/dbFindFields.html">dbFindFields</a></span>(<span class="st">"end_point"</span>, con = <span class="kw">db</span>)
+<span class="fu"><a href="../reference/dbFindFields.html">dbFindFields</a></span><span class="op">(</span><span class="st">"end_point"</span>, con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 
 <span class="co"># Get interesting variables from database </span>
 <span class="co"># for further analysis within R:</span>
-<span class="kw">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>
   <span class="st">"a2_eudract_number"</span>, 
   <span class="st">"a41_sponsors_protocol_code_number"</span>, 
   <span class="st">"n_date_of_competent_authority_decision"</span>, 
   <span class="st">"e73_therapeutic_confirmatory_phase_iii"</span>, 
-  <span class="st">"e51_primary_end_points"</span>), 
-  con = <span class="kw">db</span>)
+  <span class="st">"e51_primary_end_points"</span><span class="op">)</span>, 
+  con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 
 <span class="co"># Eliminate trials records duplicated by member state</span>
 <span class="co"># keep a single record and if available use preference:</span>
-<span class="kw">result</span> <span class="op">&lt;-</span> <span class="kw">result</span>[ <span class="kw">result</span>[[<span class="st">"_id"</span>]] <span class="op">%in%</span> 
-                  <span class="fu"><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span>(con = <span class="kw">db</span>), ]
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">[</span> <span class="va">result</span><span class="op">[[</span><span class="st">"_id"</span><span class="op">]</span><span class="op">]</span> <span class="op">%in%</span> 
+                  <span class="fu"><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>, <span class="op">]</span>
 
 <span class="co"># Checking expected number of trials:</span>
-<span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(<span class="kw">result</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="kw">result</span><span class="op">$</span><span class="kw">a2_eudract_number</span>))
+<span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">a2_eudract_number</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co"># Only use phase 3 trials:</span>
-<span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span>(<span class="kw">result</span><span class="op">$</span><span class="kw">e73_therapeutic_confirmatory_phase_iii</span>, exclude = <span class="st">""</span>)
-<span class="kw">result</span> <span class="op">&lt;-</span> <span class="kw">result</span>[<span class="kw">result</span><span class="op">$</span><span class="kw">e73_therapeutic_confirmatory_phase_iii</span>, ]
+<span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">e73_therapeutic_confirmatory_phase_iii</span>, exclude <span class="op">=</span> <span class="st">""</span><span class="op">)</span>
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">[</span><span class="va">result</span><span class="op">$</span><span class="va">e73_therapeutic_confirmatory_phase_iii</span>, <span class="op">]</span>
 
 <span class="co"># Is the a primary endpoint of interest? This uses regular expressions:</span>
 
 <span class="co"># PFS / EFS / RFS / DFS</span>
-<span class="kw">result</span><span class="op">$</span><span class="kw">pe_is_efs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">grepl</a></span>(
-  pattern = <span class="st">"((progression|event|relapse|recurrence|disease)[- ]free)|pfs|dfs|efs)"</span>, 
-  x = <span class="kw">result</span><span class="op">$</span><span class="kw">e51_primary_end_points</span>, 
-  ignore.case = <span class="fl">TRUE</span>)
+<span class="va">result</span><span class="op">$</span><span class="va">pe_is_efs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">grepl</a></span><span class="op">(</span>
+  pattern <span class="op">=</span> <span class="st">"((progression|event|relapse|recurrence|disease)[- ]free)|pfs|dfs|efs)"</span>, 
+  x <span class="op">=</span> <span class="va">result</span><span class="op">$</span><span class="va">e51_primary_end_points</span>, 
+  ignore.case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 
 <span class="co"># Plot:</span>
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw">ggplot2</span>)
-<span class="fu">ggplot</span>(data = <span class="kw">result</span>, 
-       <span class="fu">aes</span>(x = <span class="kw">n_date_of_competent_authority_decision</span>, 
-           fill = <span class="kw">pe_is_efs</span>)) <span class="op">+</span> 
-  <span class="fu">geom_histogram</span>(binwidth = <span class="fl">365.25</span>)  <span class="op">+</span> 
-  <span class="fu">labs</span>(title = <span class="st">"Breast cancer phase 3 clinical trials"</span>, 
-       x = <span class="st">"Year of clinical trial authorisation in EU"</span>, 
-       y = <span class="st">"Number of clinical trials"</span>) <span class="op">+</span>
-  <span class="fu">scale_fill_manual</span>(name = <span class="st">"Primary endpoint"</span>, 
-                    values = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"red"</span>, <span class="st">"green"</span>), 
-                    labels = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"FALSE"</span> = <span class="st">"Other"</span>, <span class="st">"TRUE"</span> = <span class="st">"PFS/EFS/DFS"</span>)) <span class="op">+</span>
-  <span class="fu">theme</span>(axis.text.x  = <span class="fu">element_text</span>(angle = <span class="fl">90</span>, vjust = <span class="fl">0.5</span>)) <span class="op">+</span> 
-  <span class="fu">scale_x_date</span>(date_breaks = <span class="st">"1 year"</span>, date_labels = <span class="st">"%Y"</span>)
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">ggplot2</span><span class="op">)</span>
+<span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">result</span>, 
+       <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">n_date_of_competent_authority_decision</span>, 
+           fill <span class="op">=</span> <span class="va">pe_is_efs</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu">geom_histogram</span><span class="op">(</span>binwidth <span class="op">=</span> <span class="fl">365.25</span><span class="op">)</span>  <span class="op">+</span> 
+  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Breast cancer phase 3 clinical trials"</span>, 
+       x <span class="op">=</span> <span class="st">"Year of clinical trial authorisation in EU"</span>, 
+       y <span class="op">=</span> <span class="st">"Number of clinical trials"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">scale_fill_manual</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Primary endpoint"</span>, 
+                    values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"red"</span>, <span class="st">"green"</span><span class="op">)</span>, 
+                    labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"FALSE"</span> <span class="op">=</span> <span class="st">"Other"</span>, <span class="st">"TRUE"</span> <span class="op">=</span> <span class="st">"PFS/EFS/DFS"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">theme</span><span class="op">(</span>axis.text.x  <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">90</span>, vjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu">scale_x_date</span><span class="op">(</span>date_breaks <span class="op">=</span> <span class="st">"1 year"</span>, date_labels <span class="op">=</span> <span class="st">"%Y"</span><span class="op">)</span>
 
 <span class="co"># ggsave("vignettes/Rplot02.png", width = 6, height = 4)</span>
 
 <span class="co"># Plausibility check - what is the primary endpoint</span>
 <span class="co"># if not one of the endpoints of interest? </span>
 <span class="co"># Look into first ten examples foundL</span>
-<span class="fu"><a href="https://rdrr.io/r/base/substr.html">substr</a></span>(<span class="kw">result</span><span class="op">$</span><span class="kw">e51_primary_end_points</span>[<span class="kw">result</span><span class="op">$</span><span class="kw">pe_is_efs</span> <span class="op">==</span> <span class="fl">FALSE</span>], <span class="fl">1</span>, <span class="fl">60</span>)[<span class="fl">1</span><span class="op">:</span><span class="fl">8</span>]
+<span class="fu"><a href="https://rdrr.io/r/base/substr.html">substr</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">e51_primary_end_points</span><span class="op">[</span><span class="va">result</span><span class="op">$</span><span class="va">pe_is_efs</span> <span class="op">==</span> <span class="cn">FALSE</span><span class="op">]</span>, <span class="fl">1</span>, <span class="fl">60</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">8</span><span class="op">]</span>
 <span class="co"># [1] "Primary End point Overall survival: the interval between the"</span>
 <span class="co"># [2] "To determine whether the combination of DPPE, epirubicin and"</span>
 <span class="co"># [3] "Efficacy:  Duration of severe neutropenia DSN in cycle 1, de"</span>
@@ -678,8 +659,7 @@
 <span class="co"># [5] "Hay dos variables principales de eficacia en este estudio: 1"</span>
 <span class="co"># [6] "Time to progression TTP, defined as the interval between the"</span>
 <span class="co"># [7] "Rate of pathological complete remissions in Arm A Epirubicin"</span>
-<span class="co"># [8] "Survival, measured from the date of randomisation" </span>
-</pre></div>
+<span class="co"># [8] "Survival, measured from the date of randomisation" </span></pre></div>
 <div class="figure">
 <img src="Rplot02.png" alt=""><p class="caption">Histogram2</p>
 </div>
@@ -688,83 +668,82 @@
 <h2 class="hasAnchor">
 <a href="#histogram-of-status-of-investigational-medicinal-product" class="anchor"></a>Histogram of status of investigational medicinal product</h2>
 <div class="sourceCode" id="cb15"><pre class="downlit">
-<span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span>(
-  register = <span class="st">"EUCTR"</span>, 
-  queryterm = <span class="st">"&amp;age=under-18&amp;phase=phase-one&amp;phase=phase-two"</span>, 
-  con = <span class="kw">db</span>)
+<span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span>
+  register <span class="op">=</span> <span class="st">"EUCTR"</span>, 
+  queryterm <span class="op">=</span> <span class="st">"&amp;age=under-18&amp;phase=phase-one&amp;phase=phase-two"</span>, 
+  con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 
-<span class="fu"><a href="../reference/dbQueryHistory.html">dbQueryHistory</a></span>(con = <span class="kw">db</span>)
+<span class="fu"><a href="../reference/dbQueryHistory.html">dbQueryHistory</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 
-<span class="fu"><a href="../reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser</a></span>(
-  <span class="fu"><a href="../reference/dbQueryHistory.html">dbQueryHistory</a></span>(con = <span class="kw">db</span>))
+<span class="fu"><a href="../reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser</a></span><span class="op">(</span>
+  <span class="fu"><a href="../reference/dbQueryHistory.html">dbQueryHistory</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span><span class="op">)</span>
 
-<span class="fu"><a href="../reference/dbFindFields.html">dbFindFields</a></span>(namepart = <span class="st">"phase"</span>, con = <span class="kw">db</span>)
+<span class="fu"><a href="../reference/dbFindFields.html">dbFindFields</a></span><span class="op">(</span>namepart <span class="op">=</span> <span class="st">"phase"</span>, con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 <span class="co"># [1] "e72_therapeutic_exploratory_phase_ii"   "e71_human_pharmacology_phase_i"</span>
 <span class="co"># [3] "e73_therapeutic_confirmatory_phase_iii" "e74_therapeutic_use_phase_iv"  </span>
 
-<span class="kw">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span>(
-  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"a1_member_state_concerned"</span>, <span class="st">"n_date_of_competent_authority_decision"</span>,
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"a1_member_state_concerned"</span>, <span class="st">"n_date_of_competent_authority_decision"</span>,
     <span class="st">"dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation"</span>, 
     <span class="st">"e11_medical_conditions_being_investigated"</span>, <span class="st">"e112_therapeutic_area"</span>, 
     <span class="st">"e71_human_pharmacology_phase_i"</span>, <span class="st">"e72_therapeutic_exploratory_phase_ii"</span>,
     <span class="st">"x6_date_on_which_this_record_was_first_entered_in_the_eudract_database"</span>,
     <span class="st">"f422_in_the_whole_clinical_trial"</span>, 
-    <span class="st">"a3_full_title_of_the_trial"</span>, <span class="st">"a2_eudract_number"</span>), 
-  con = <span class="kw">db</span>)
+    <span class="st">"a3_full_title_of_the_trial"</span>, <span class="st">"a2_eudract_number"</span><span class="op">)</span>, 
+  con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 
-<span class="kw">searchfor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(
+<span class="va">searchfor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span>
   <span class="st">"cancer, leukaem, leukem, tumour, tumor, sarcoma, blastom, gliom, germ, "</span>,
-  <span class="st">"lymphom, malign, hodgkin, ewing, rhabdo, terato, tumeur, leucemi"</span>)
-<span class="kw">searchfor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/strsplit.html">strsplit</a></span>(<span class="kw">searchfor</span>, <span class="st">", "</span>)[[<span class="fl">1</span>]]
+  <span class="st">"lymphom, malign, hodgkin, ewing, rhabdo, terato, tumeur, leucemi"</span><span class="op">)</span>
+<span class="va">searchfor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/strsplit.html">strsplit</a></span><span class="op">(</span><span class="va">searchfor</span>, <span class="st">", "</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>
 
-<span class="kw">relevant</span> <span class="op">&lt;-</span> <span class="fu">grepl_multi</span>(<span class="kw">searchfor</span>, <span class="kw">result</span><span class="op">$</span><span class="kw">a3_full_title_of_the_trial</span>) <span class="op">|</span> 
-  <span class="fu">grepl_multi</span>(<span class="kw">searchfor</span>, <span class="kw">result</span><span class="op">$</span><span class="kw">e11_medical_conditions_being_investigated</span>) <span class="op">|</span>
-  <span class="fu">grepl_multi</span>(<span class="st">"C04"</span>,     <span class="kw">result</span><span class="op">$</span><span class="kw">e112_therapeutic_area</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span>(<span class="kw">relevant</span>)
+<span class="va">relevant</span> <span class="op">&lt;-</span> <span class="fu">grepl_multi</span><span class="op">(</span><span class="va">searchfor</span>, <span class="va">result</span><span class="op">$</span><span class="va">a3_full_title_of_the_trial</span><span class="op">)</span> <span class="op">|</span> 
+  <span class="fu">grepl_multi</span><span class="op">(</span><span class="va">searchfor</span>, <span class="va">result</span><span class="op">$</span><span class="va">e11_medical_conditions_being_investigated</span><span class="op">)</span> <span class="op">|</span>
+  <span class="fu">grepl_multi</span><span class="op">(</span><span class="st">"C04"</span>,     <span class="va">result</span><span class="op">$</span><span class="va">e112_therapeutic_area</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">relevant</span><span class="op">)</span>
 
 <span class="co"># get relevant trials</span>
-<span class="kw">result</span> <span class="op">&lt;-</span> <span class="kw">result</span>[<span class="kw">relevant</span>,]
-<span class="kw">result</span> <span class="op">&lt;-</span> <span class="kw">result</span>[<span class="kw">result</span><span class="op">$</span><span class="kw">e71_human_pharmacology_phase_i</span>,]
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">[</span><span class="va">relevant</span>,<span class="op">]</span>
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">[</span><span class="va">result</span><span class="op">$</span><span class="va">e71_human_pharmacology_phase_i</span>,<span class="op">]</span>
 
 <span class="co"># find first member state to authorise trial</span>
-<span class="kw">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html">aggregate</a></span>(<span class="kw">result</span><span class="op">$</span><span class="kw">n_date_of_competent_authority_decision</span>, 
-                 by = <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">result</span><span class="op">$</span><span class="kw">a2_eudract_number</span>),
-                 FUN = <span class="fu">function</span>(<span class="kw">x</span>) <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span>(<span class="kw">x</span>))
-<span class="kw">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(x = <span class="kw">result</span>, y = <span class="kw">tmp</span>, 
-                by.x = <span class="st">"a2_eudract_number"</span>, 
-                by.y = <span class="st">"Group.1"</span>, 
-                all.x = <span class="fl">TRUE</span>)
+<span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html">aggregate</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">n_date_of_competent_authority_decision</span>, 
+                 by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">a2_eudract_number</span><span class="op">)</span>,
+                 FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">result</span>, y <span class="op">=</span> <span class="va">tmp</span>, 
+                by.x <span class="op">=</span> <span class="st">"a2_eudract_number"</span>, 
+                by.y <span class="op">=</span> <span class="st">"Group.1"</span>, 
+                all.x <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 
 <span class="co"># label date and calculate year</span>
-<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="kw">result</span>)[<span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span>(<span class="kw">result</span>)] <span class="op">&lt;-</span> <span class="st">"startdatefirst"</span>
-<span class="kw">result</span><span class="op">$</span><span class="kw">startyearfirst</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span>(<span class="kw">result</span><span class="op">$</span><span class="kw">startdatefirst</span>, <span class="st">"%Y"</span>))
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"startdatefirst"</span>
+<span class="va">result</span><span class="op">$</span><span class="va">startyearfirst</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">startdatefirst</span>, <span class="st">"%Y"</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co"># eliminate country duplicates</span>
-<span class="kw">result</span> <span class="op">&lt;-</span> <span class="kw">result</span>[ <span class="kw">result</span>[[<span class="st">"_id"</span>]] <span class="op">%in%</span> 
-                    <span class="fu"><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span>(
-                      include3rdcountrytrials = <span class="fl">FALSE</span>, 
-                      con = <span class="kw">db</span>), ]
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">[</span> <span class="va">result</span><span class="op">[[</span><span class="st">"_id"</span><span class="op">]</span><span class="op">]</span> <span class="op">%in%</span> 
+                    <span class="fu"><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span><span class="op">(</span>
+                      include3rdcountrytrials <span class="op">=</span> <span class="cn">FALSE</span>, 
+                      con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>, <span class="op">]</span>
 
 <span class="co"># any of the investigational medicinal product(s) authorised or not?</span>
-<span class="kw">tmp</span> <span class="op">&lt;-</span> <span class="kw">stringi</span>::<span class="fu"><a href="https://rdrr.io/pkg/stringi/man/stri_count.html">stri_count</a></span>(
-  <span class="kw">result</span><span class="op">$</span><span class="kw">dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation</span>, 
-  fixed = <span class="st">"Yes"</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span>(<span class="kw">tmp</span>, exclude = <span class="st">""</span>)
-<span class="kw">tmp</span> <span class="op">&lt;-</span> <span class="kw">tmp</span> <span class="op">&gt;</span> <span class="fl">0</span>
+<span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu">stringi</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/stringi/man/stri_count.html">stri_count</a></span><span class="op">(</span>
+  <span class="va">result</span><span class="op">$</span><span class="va">dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation</span>, 
+  fixed <span class="op">=</span> <span class="st">"Yes"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">tmp</span>, exclude <span class="op">=</span> <span class="st">""</span><span class="op">)</span>
+<span class="va">tmp</span> <span class="op">&lt;-</span> <span class="va">tmp</span> <span class="op">&gt;</span> <span class="fl">0</span>
 
 <span class="co"># draw plot</span>
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw">ggplot2</span>)
-<span class="fu">ggplot</span>(data = <span class="kw">result</span>, 
-       <span class="fu">aes</span>(x = <span class="kw">startyearfirst</span>, fill = <span class="kw">tmp</span>)) <span class="op">+</span> 
-  <span class="fu">geom_histogram</span>(binwidth = <span class="fl">1</span>) <span class="op">+</span> 
-  <span class="fu">labs</span>(title = <span class="st">"Paediatric phase 1 oncology trials in EU"</span>, 
-       x = <span class="st">"Year of trial authorisation (or EUCTR upload)"</span>, 
-       y = <span class="st">"Number of trials"</span>, 
-       fill = <span class="st">"Medicine\nauthorised?"</span>)
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">ggplot2</span><span class="op">)</span>
+<span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">result</span>, 
+       <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">startyearfirst</span>, fill <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu">geom_histogram</span><span class="op">(</span>binwidth <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Paediatric phase 1 oncology trials in EU"</span>, 
+       x <span class="op">=</span> <span class="st">"Year of trial authorisation (or EUCTR upload)"</span>, 
+       y <span class="op">=</span> <span class="st">"Number of trials"</span>, 
+       fill <span class="op">=</span> <span class="st">"Medicine\nauthorised?"</span><span class="op">)</span>
 
 <span class="co"># save plot</span>
-<span class="co"># ggsave("vignettes/phase1_paed_oncol.png", width = 6, height = 4)</span>
-</pre></div>
+<span class="co"># ggsave("vignettes/phase1_paed_oncol.png", width = 6, height = 4)</span></pre></div>
 <div class="figure">
 <img src="phase1_paed_oncol.png" alt=""><p class="caption">Histogram3</p>
 </div>
@@ -774,80 +753,79 @@
 <a href="#plot-map-of-ongoing-trials" class="anchor"></a>Plot map of ongoing trials</h2>
 <div class="sourceCode" id="cb16"><pre class="downlit">
 <span class="co"># this is to create a map of EU ongoing phase 1 trials with children with cancer on an anti-cancer medicine</span>
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw">rworldmap</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw">plyr</span>)
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">rworldmap</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">plyr</span><span class="op">)</span>
 
 <span class="co"># get relevant variables from relevant collection</span>
-<span class="kw">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span>(
-  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"a1_member_state_concerned"</span>, <span class="st">"n_date_of_competent_authority_decision"</span>,
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"a1_member_state_concerned"</span>, <span class="st">"n_date_of_competent_authority_decision"</span>,
     <span class="st">"e11_medical_conditions_being_investigated"</span>, <span class="st">"e112_therapeutic_area"</span>, 
     <span class="st">"e71_human_pharmacology_phase_i"</span>, <span class="st">"e72_therapeutic_exploratory_phase_ii"</span>,
     <span class="st">"x6_date_on_which_this_record_was_first_entered_in_the_eudract_database"</span>,
     <span class="st">"a3_full_title_of_the_trial"</span>, <span class="st">"a2_eudract_number"</span>, <span class="st">"p_end_of_trial_status"</span>, 
-    <span class="st">"ctrname"</span>), 
-  con = <span class="kw">db</span>)
+    <span class="st">"ctrname"</span><span class="op">)</span>, 
+  con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 
 <span class="co"># calculate country variable</span>
-<span class="kw">result</span><span class="op">$</span><span class="kw">country</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">sub</a></span>(<span class="st">"^.+-([3A-Z]+)$"</span>, <span class="st">"\\1"</span>, <span class="kw">result</span><span class="op">$</span><span class="kw">`_id`</span>)
+<span class="va">result</span><span class="op">$</span><span class="va">country</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">sub</a></span><span class="op">(</span><span class="st">"^.+-([3A-Z]+)$"</span>, <span class="st">"\\1"</span>, <span class="va">result</span><span class="op">$</span><span class="va">`_id`</span><span class="op">)</span>
 
 <span class="co"># select trials of interest</span>
-<span class="kw">searchfor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(
+<span class="va">searchfor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span>
   <span class="st">"cancer, leukaem, leukem, tumour, tumor, sarcoma, blastom, gliom, germ, lymphom, "</span>, 
-  <span class="st">"malign, hodgkin, ewing, rhabdo, terato, tumeur, leucemi"</span>)
-<span class="kw">searchfor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/strsplit.html">strsplit</a></span>(<span class="kw">searchfor</span>, <span class="st">", "</span>)[[<span class="fl">1</span>]]
+  <span class="st">"malign, hodgkin, ewing, rhabdo, terato, tumeur, leucemi"</span><span class="op">)</span>
+<span class="va">searchfor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/strsplit.html">strsplit</a></span><span class="op">(</span><span class="va">searchfor</span>, <span class="st">", "</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>
 
-<span class="kw">relevant</span> <span class="op">&lt;-</span> <span class="fu">grepl_multi</span>(<span class="kw">searchfor</span>, <span class="kw">result</span><span class="op">$</span><span class="kw">a3_full_title_of_the_trial</span>) <span class="op">|</span> 
-  <span class="fu">grepl_multi</span>(<span class="kw">searchfor</span>, <span class="kw">result</span><span class="op">$</span><span class="kw">e11_medical_conditions_being_investigated</span>) <span class="op">|</span>
-  <span class="fu">grepl_multi</span>(<span class="st">"C04"</span>,     <span class="kw">result</span><span class="op">$</span><span class="kw">e112_therapeutic_area</span>)
+<span class="va">relevant</span> <span class="op">&lt;-</span> <span class="fu">grepl_multi</span><span class="op">(</span><span class="va">searchfor</span>, <span class="va">result</span><span class="op">$</span><span class="va">a3_full_title_of_the_trial</span><span class="op">)</span> <span class="op">|</span> 
+  <span class="fu">grepl_multi</span><span class="op">(</span><span class="va">searchfor</span>, <span class="va">result</span><span class="op">$</span><span class="va">e11_medical_conditions_being_investigated</span><span class="op">)</span> <span class="op">|</span>
+  <span class="fu">grepl_multi</span><span class="op">(</span><span class="st">"C04"</span>,     <span class="va">result</span><span class="op">$</span><span class="va">e112_therapeutic_area</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span>(<span class="kw">relevant</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">relevant</span><span class="op">)</span>
 
 <span class="co"># apply selection criteria</span>
-<span class="kw">result</span> <span class="op">&lt;-</span> <span class="kw">result</span>[<span class="kw">relevant</span>,]
-<span class="kw">result</span> <span class="op">&lt;-</span> <span class="kw">result</span>[<span class="kw">result</span><span class="op">$</span><span class="kw">e71_human_pharmacology_phase_i</span>,]
-<span class="kw">result</span> <span class="op">&lt;-</span> <span class="kw">result</span>[<span class="kw">result</span><span class="op">$</span><span class="kw">ctrname</span> <span class="op">==</span> <span class="st">"EUCTR"</span>,]
-<span class="kw">result</span> <span class="op">&lt;-</span> <span class="kw">result</span>[<span class="kw">result</span><span class="op">$</span><span class="kw">country</span> != <span class="st">"3RD"</span>,]
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">[</span><span class="va">relevant</span>,<span class="op">]</span>
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">[</span><span class="va">result</span><span class="op">$</span><span class="va">e71_human_pharmacology_phase_i</span>,<span class="op">]</span>
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">[</span><span class="va">result</span><span class="op">$</span><span class="va">ctrname</span> <span class="op">==</span> <span class="st">"EUCTR"</span>,<span class="op">]</span>
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">[</span><span class="va">result</span><span class="op">$</span><span class="va">country</span> <span class="op">!=</span> <span class="st">"3RD"</span>,<span class="op">]</span>
 
 <span class="co"># get an overview</span>
-<span class="kw">counts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame.matrix</a></span>(
-  <span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span>(<span class="kw">result</span>, 
-       <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span>(<span class="kw">country</span>, <span class="kw">p_end_of_trial_status</span>)))
+<span class="va">counts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame.matrix</a></span><span class="op">(</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span><span class="op">(</span><span class="va">result</span>, 
+       <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">country</span>, <span class="va">p_end_of_trial_status</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 
-<span class="kw">counts</span><span class="op">$</span><span class="kw">total</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html">rowSums</a></span>(<span class="kw">counts</span>)
-<span class="kw">counts</span><span class="op">$</span><span class="kw">country</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="kw">counts</span>)
-<span class="kw">counts</span><span class="op">$</span><span class="kw">text</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span>(<span class="kw">counts</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="kw">Ongoing</span>, <span class="kw">total</span>, sep = <span class="st">"/"</span>))
-<span class="kw">counts</span>
+<span class="va">counts</span><span class="op">$</span><span class="va">total</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html">rowSums</a></span><span class="op">(</span><span class="va">counts</span><span class="op">)</span>
+<span class="va">counts</span><span class="op">$</span><span class="va">country</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">counts</span><span class="op">)</span>
+<span class="va">counts</span><span class="op">$</span><span class="va">text</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span><span class="op">(</span><span class="va">counts</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">Ongoing</span>, <span class="va">total</span>, sep <span class="op">=</span> <span class="st">"/"</span><span class="op">)</span><span class="op">)</span>
+<span class="va">counts</span>
 
 <span class="co"># plot</span>
-<span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span>(filename = <span class="st">"vignettes/ph1paedoncopen.png"</span>, 
-    width = <span class="fl">6</span>, 
-    height = <span class="fl">5</span>, 
-    units = <span class="st">"in"</span>, 
-    res = <span class="fl">300</span>)
-<span class="kw">sPDF</span> <span class="op">&lt;-</span> <span class="fu">joinCountryData2Map</span>(
-  dF = <span class="kw">counts</span>, 
-  joinCode = <span class="st">"ISO2"</span>, 
-  nameJoinColumn = <span class="st">"country"</span>)
-<span class="kw">mapParams</span> <span class="op">&lt;-</span> <span class="fu">mapCountryData</span>(
-  mapToPlot = <span class="kw">sPDF</span>, 
-  nameColumnToPlot = <span class="st">"Ongoing"</span>, 
-  mapTitle = <span class="st">""</span>,
-  xlim = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="op">-</span><span class="fl">10</span>,<span class="fl">30</span>), 
-  ylim = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">36</span>, <span class="fl">65</span>), 
-  addLegend = <span class="fl">FALSE</span>,
-  colourPalette = <span class="st">"terrain"</span>)
+<span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span>filename <span class="op">=</span> <span class="st">"vignettes/ph1paedoncopen.png"</span>, 
+    width <span class="op">=</span> <span class="fl">6</span>, 
+    height <span class="op">=</span> <span class="fl">5</span>, 
+    units <span class="op">=</span> <span class="st">"in"</span>, 
+    res <span class="op">=</span> <span class="fl">300</span><span class="op">)</span>
+<span class="va">sPDF</span> <span class="op">&lt;-</span> <span class="fu">joinCountryData2Map</span><span class="op">(</span>
+  dF <span class="op">=</span> <span class="va">counts</span>, 
+  joinCode <span class="op">=</span> <span class="st">"ISO2"</span>, 
+  nameJoinColumn <span class="op">=</span> <span class="st">"country"</span><span class="op">)</span>
+<span class="va">mapParams</span> <span class="op">&lt;-</span> <span class="fu">mapCountryData</span><span class="op">(</span>
+  mapToPlot <span class="op">=</span> <span class="va">sPDF</span>, 
+  nameColumnToPlot <span class="op">=</span> <span class="st">"Ongoing"</span>, 
+  mapTitle <span class="op">=</span> <span class="st">""</span>,
+  xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>,<span class="fl">30</span><span class="op">)</span>, 
+  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">36</span>, <span class="fl">65</span><span class="op">)</span>, 
+  addLegend <span class="op">=</span> <span class="cn">FALSE</span>,
+  colourPalette <span class="op">=</span> <span class="st">"terrain"</span><span class="op">)</span>
 <span class="co"># do.call(addMapLegend, c(mapParams, legendLabels="all", </span>
 <span class="co"># legendWidth=0.5, digits=0, labelFontSize=0.8))</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/title.html">title</a></span>(main = <span class="st">"Number of ongoing / total phase 1\nanti-cancer medicine trials with children"</span>)
-<span class="fu">labelCountries</span>(
-  dF = <span class="kw">sPDF</span>, 
-  nameCountryColumn = <span class="st">"text"</span>, 
-  xlim = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="op">-</span><span class="fl">15</span>,<span class="fl">32</span>), 
-  ylim = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">36</span>, <span class="fl">65</span>), 
-  cex = <span class="fl">0.9</span>, 
-  col = <span class="st">"blue"</span>)
-<span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span>()
-</pre></div>
+<span class="fu"><a href="https://rdrr.io/r/graphics/title.html">title</a></span><span class="op">(</span>main <span class="op">=</span> <span class="st">"Number of ongoing / total phase 1\nanti-cancer medicine trials with children"</span><span class="op">)</span>
+<span class="fu">labelCountries</span><span class="op">(</span>
+  dF <span class="op">=</span> <span class="va">sPDF</span>, 
+  nameCountryColumn <span class="op">=</span> <span class="st">"text"</span>, 
+  xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">15</span>,<span class="fl">32</span><span class="op">)</span>, 
+  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">36</span>, <span class="fl">65</span><span class="op">)</span>, 
+  cex <span class="op">=</span> <span class="fl">0.9</span>, 
+  col <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span></pre></div>
 <div class="figure">
 <img src="ph1paedoncopen.png" alt=""><p class="caption">Histogram3</p>
 </div>
@@ -856,29 +834,28 @@
 <h2 class="hasAnchor">
 <a href="#use-aggregation-functions-of-the-data-base-to-find-specific-trial-endpoints" class="anchor"></a>Use aggregation functions of the data base to find specific trial endpoints</h2>
 <div class="sourceCode" id="cb17"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/jeroen/mongolite">mongolite</a></span>)
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jeroen/mongolite/">mongolite</a></span><span class="op">)</span>
 
 <span class="co"># Link R object m to the specified database collection:</span>
-<span class="kw">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mongolite/man/mongo.html">mongo</a></span>(url = <span class="st">"mongodb://localhost/users"</span>, 
-           collection = <span class="st">"ctrdata"</span>)
+<span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mongolite/man/mongo.html">mongo</a></span><span class="op">(</span>url <span class="op">=</span> <span class="st">"mongodb://localhost/users"</span>, 
+           collection <span class="op">=</span> <span class="st">"ctrdata"</span><span class="op">)</span>
 
 <span class="co"># List all collections:</span>
-<span class="kw">m</span><span class="op">$</span><span class="fu">run</span>(<span class="st">'{"listCollections": 1}'</span>)
+<span class="va">m</span><span class="op">$</span><span class="fu">run</span><span class="op">(</span><span class="st">'{"listCollections": 1}'</span><span class="op">)</span>
 
 <span class="co"># Number of all records in this collection:</span>
-<span class="kw">m</span><span class="op">$</span><span class="fu">count</span>()
+<span class="va">m</span><span class="op">$</span><span class="fu">count</span><span class="op">(</span><span class="op">)</span>
 
 <span class="co"># Number of EUCTR records, using json for query:</span>
-<span class="kw">m</span><span class="op">$</span><span class="fu">count</span>(query = <span class="st">'{"_id": {"$regex": "[0-9]{4}-[0-9]{6}-[0-9]{2}", 
-                 "$options": "i"}}'</span> "[0-9]{4}-[0-9]{6}-[0-9]{2}", 
-                 "$options": "i"}}')
+<span class="va">m</span><span class="op">$</span><span class="fu">count</span><span class="op">(</span>query <span class="op">=</span> <span class="st">'{"_id": {"$regex": "[0-9]{4}-[0-9]{6}-[0-9]{2}", 
+                 "$options": "i"}}'</span><span class="op">)</span>
 <span class="co"># alternatively: </span>
-<span class="kw">m</span><span class="op">$</span><span class="fu">count</span>(query = <span class="st">'{"ctrname": "EUCTR"}'</span>)
+<span class="va">m</span><span class="op">$</span><span class="fu">count</span><span class="op">(</span>query <span class="op">=</span> <span class="st">'{"ctrname": "EUCTR"}'</span><span class="op">)</span>
 
 <span class="co"># Number of CTGOV records, using json for query:</span>
-<span class="kw">m</span><span class="op">$</span><span class="fu">count</span>(query = <span class="st">'{"_id": {"$regex": "NCT[0-9]{8}", "$options": "i"}}'</span>)
+<span class="va">m</span><span class="op">$</span><span class="fu">count</span><span class="op">(</span>query <span class="op">=</span> <span class="st">'{"_id": {"$regex": "NCT[0-9]{8}", "$options": "i"}}'</span><span class="op">)</span>
 <span class="co"># alternatively:</span>
-<span class="kw">m</span><span class="op">$</span><span class="fu">count</span>(query = <span class="st">'{"ctrname": "CTGOV"}'</span>)
+<span class="va">m</span><span class="op">$</span><span class="fu">count</span><span class="op">(</span>query <span class="op">=</span> <span class="st">'{"ctrname": "CTGOV"}'</span><span class="op">)</span>
 
 <span class="co"># The following uses the aggregation pipeline in mongo:</span>
 <span class="co">#</span>
@@ -891,31 +868,26 @@
 
 <span class="co"># Recommendation: to best define regular expressions for analyses, </span>
 <span class="co"># inspect the field primary_outcome.measure in database, or print:</span>
-<span class="kw">m</span><span class="op">$</span><span class="fu">distinct</span>(key = <span class="st">"primary_outcome.measure"</span>, 
-           query = <span class="st">'{"_id": {"$regex": "NCT[0-9]{8}", "$options": "i"}}'</span>)[<span class="fl">1</span><span class="op">:</span><span class="fl">8</span>]
+<span class="va">m</span><span class="op">$</span><span class="fu">distinct</span><span class="op">(</span>key <span class="op">=</span> <span class="st">"primary_outcome.measure"</span>, 
+           query <span class="op">=</span> <span class="st">'{"_id": {"$regex": "NCT[0-9]{8}", "$options": "i"}}'</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">8</span><span class="op">]</span>
 
 <span class="co"># PFS, EFS, RFS or DFS</span>
-<span class="kw">out</span> <span class="op">&lt;-</span> <span class="kw">m</span><span class="op">$</span><span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html">aggregate</a></span>(
-  pipeline = 
+<span class="va">out</span> <span class="op">&lt;-</span> <span class="va">m</span><span class="op">$</span><span class="fu">aggregate</span><span class="op">(</span>
+  pipeline <span class="op">=</span> 
     <span class="st">'[{"$match": {"primary_outcome.measure": 
       {"$regex": "(progression|event|relapse|recurrence|disease)[- ]free", 
                  "$options": "i"}}}, 
-      {"$group": {"_id": "null", "count": {"$sum": 1}}}]'</span>
-      {"$regex": "(progression|event|relapse|recurrence|disease)[- ]free", 
-                 "$options": "i"}}}, 
-      {"$group": {"_id": "null", "count": {"$sum": 1}}}]')
-<span class="kw">out</span>
+      {"$group": {"_id": "null", "count": {"$sum": 1}}}]'</span><span class="op">)</span>
+<span class="va">out</span>
 
 <span class="co"># OS by year</span>
-<span class="kw">out</span> <span class="op">&lt;-</span> <span class="kw">m</span><span class="op">$</span><span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html">aggregate</a></span>(
-  pipeline = 
+<span class="va">out</span> <span class="op">&lt;-</span> <span class="va">m</span><span class="op">$</span><span class="fu">aggregate</span><span class="op">(</span>
+  pipeline <span class="op">=</span> 
     <span class="st">'[{"$match": {"primary_outcome.measure": 
       {"$regex": "overall survival", "$options": "i"}}}, 
-      {"$project": {"_id": 1, "start_date": 1}}]'</span>
-      {"$regex": "overall survival", "$options": "i"}}}, 
-      {"$project": {"_id": 1, "start_date": 1}}]')
+      {"$project": {"_id": 1, "start_date": 1}}]'</span><span class="op">)</span>
 
-<span class="kw">out</span>
+<span class="va">out</span>
 <span class="co">#           _id        start_date</span>
 <span class="co"># 1 NCT00796510         July 2010</span>
 <span class="co"># 2 NCT01083706        April 2010</span>
@@ -928,34 +900,33 @@
 
 <span class="co"># Extraction of year from firstreceived_date </span>
 <span class="co"># such as "August 29, 2009"</span>
-<span class="kw">out</span><span class="op">$</span><span class="kw">year</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/substr.html">substr</a></span>(
-  <span class="kw">out</span><span class="op">$</span><span class="kw">start_date</span>, 
-  <span class="kw">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nchar.html">nchar</a></span>(<span class="kw">out</span><span class="op">$</span><span class="kw">start_date</span>) <span class="op">-</span> <span class="fl">4</span>, 
-  <span class="kw">tmp</span> <span class="op">+</span> <span class="fl">4</span>)
+<span class="va">out</span><span class="op">$</span><span class="va">year</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/substr.html">substr</a></span><span class="op">(</span>
+  <span class="va">out</span><span class="op">$</span><span class="va">start_date</span>, 
+  <span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nchar.html">nchar</a></span><span class="op">(</span><span class="va">out</span><span class="op">$</span><span class="va">start_date</span><span class="op">)</span> <span class="op">-</span> <span class="fl">4</span>, 
+  <span class="va">tmp</span> <span class="op">+</span> <span class="fl">4</span><span class="op">)</span>
 <span class="co">#</span>
-<span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span>(<span class="kw">out</span><span class="op">$</span><span class="kw">year</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">out</span><span class="op">$</span><span class="va">year</span><span class="op">)</span>
 <span class="co"># [...]  2006  2007  2008  2009  2010  2011  2012  2013  2014  2015 </span>
-<span class="co">#           5     4    13     3     8     3     8     4     6     6 </span>
-</pre></div>
+<span class="co">#           5     4    13     3     8     3     8     4     6     6 </span></pre></div>
 </div>
 <div id="use-mapreduce-operations-to-analyse-participant-numbers" class="section level2">
 <h2 class="hasAnchor">
 <a href="#use-mapreduce-operations-to-analyse-participant-numbers" class="anchor"></a>Use mapreduce operations to analyse participant numbers</h2>
 <p>Note that the mongodb documentation includes that a mapreduce operation might not be as fast and efficient as using the aggregation pipeline, which was used in the preceding example.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/jeroen/mongolite">mongolite</a></span>)
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jeroen/mongolite/">mongolite</a></span><span class="op">)</span>
 
-<span class="kw">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mongolite/man/mongo.html">mongo</a></span>(url = <span class="st">"mongodb://localhost/users"</span>, 
-           collection = <span class="st">"ctrdata"</span>)
+<span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mongolite/man/mongo.html">mongo</a></span><span class="op">(</span>url <span class="op">=</span> <span class="st">"mongodb://localhost/users"</span>, 
+           collection <span class="op">=</span> <span class="st">"ctrdata"</span><span class="op">)</span>
 
 <span class="co"># Count number of trials (trial records) with number of</span>
 <span class="co"># study participants in bins of hundreds of participants:</span>
-<span class="kw">hist</span> <span class="op">&lt;-</span> <span class="kw">m</span><span class="op">$</span><span class="fu">mapreduce</span>(
-  map = <span class="st">"function(){emit(Math.floor(this.f422_in_the_whole_clinical_trial/100)*100, 1)}"</span>, 
-  reduce = <span class="st">"function(id, counts){return Array.sum(counts)}"</span>
-)
+<span class="va">hist</span> <span class="op">&lt;-</span> <span class="va">m</span><span class="op">$</span><span class="fu">mapreduce</span><span class="op">(</span>
+  map <span class="op">=</span> <span class="st">"function(){emit(Math.floor(this.f422_in_the_whole_clinical_trial/100)*100, 1)}"</span>, 
+  reduce <span class="op">=</span> <span class="st">"function(id, counts){return Array.sum(counts)}"</span>
+<span class="op">)</span>
 
-<span class="kw">hist</span>
+<span class="va">hist</span>
 <span class="co">#      _id value</span>
 <span class="co"># 1    NaN  1431</span>
 <span class="co"># 2      0   140</span>
@@ -971,9 +942,8 @@
 
 <span class="co"># Note: _id is the bin of hundreds of study participants, </span>
 <span class="co"># value is the number of studies in respective bin</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span>(<span class="kw">hist</span>, type = <span class="st">"h"</span>, las = <span class="fl">1</span>, xlim = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>, <span class="fl">2000</span>), ylim = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>, <span class="fl">500</span>), 
-     xlab = <span class="st">"Number stubjects"</span>, y = <span class="st">"Number of trials"</span>)
-</pre></div>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">hist</span>, type <span class="op">=</span> <span class="st">"h"</span>, las <span class="op">=</span> <span class="fl">1</span>, xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2000</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">500</span><span class="op">)</span>, 
+     xlab <span class="op">=</span> <span class="st">"Number stubjects"</span>, y <span class="op">=</span> <span class="st">"Number of trials"</span><span class="op">)</span></pre></div>
 <div class="figure">
 <img src="Rplot03.png" alt=""><p class="caption">Histogram2</p>
 </div>
@@ -984,42 +954,42 @@
 <div class="sourceCode" id="cb19"><pre class="downlit">
 <span class="co"># Search for interesting variables,  </span>
 <span class="co"># note the spelling in EUCTR:</span>
-<span class="fu"><a href="../reference/dbFindFields.html">dbFindFields</a></span>(namepart = <span class="st">"crit"</span>, con = <span class="kw">db</span>)
+<span class="fu"><a href="../reference/dbFindFields.html">dbFindFields</a></span><span class="op">(</span>namepart <span class="op">=</span> <span class="st">"crit"</span>, con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 
 <span class="co"># Get interesting variables from database </span>
 <span class="co"># for further analysis within R:</span>
-<span class="kw">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span>(
-  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"e3_principal_inclusion_criteria"</span>, 
-    <span class="st">"eligibility.criteria.textblock"</span>), 
-  con = <span class="kw">db</span>)
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"e3_principal_inclusion_criteria"</span>, 
+    <span class="st">"eligibility.criteria.textblock"</span><span class="op">)</span>, 
+  con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 
 <span class="co"># Eliminate trials records duplicated by member state</span>
 <span class="co"># keep a single record and if available use preference:</span>
-<span class="kw">result</span> <span class="op">&lt;-</span> <span class="kw">result</span>[ <span class="kw">result</span>[[<span class="st">"_id"</span>]] <span class="op">%in%</span> 
-                    <span class="fu"><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span>(con = <span class="kw">db</span>), ]
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">[</span> <span class="va">result</span><span class="op">[[</span><span class="st">"_id"</span><span class="op">]</span><span class="op">]</span> <span class="op">%in%</span> 
+                    <span class="fu"><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>, <span class="op">]</span>
 
-<span class="kw">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfMergeTwoVariablesRelevel.html">dfMergeTwoVariablesRelevel</a></span>(
-  df = <span class="kw">result</span>,
-  colnames = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"e3_principal_inclusion_criteria"</span>, 
-               <span class="st">"eligibility.criteria.textblock"</span>))
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfMergeTwoVariablesRelevel.html">dfMergeTwoVariablesRelevel</a></span><span class="op">(</span>
+  df <span class="op">=</span> <span class="va">result</span>,
+  colnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"e3_principal_inclusion_criteria"</span>, 
+               <span class="st">"eligibility.criteria.textblock"</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co"># search for interesting terms</span>
-<span class="kw">terms</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"positive"</span>, <span class="st">"marker"</span>, <span class="st">"select"</span>)
+<span class="va">terms</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"positive"</span>, <span class="st">"marker"</span>, <span class="st">"select"</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span>(<span class="fu">grepl_multi</span>(<span class="kw">terms</span>, <span class="kw">result</span>))
+<span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="fu">grepl_multi</span><span class="op">(</span><span class="va">terms</span>, <span class="va">result</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co"># utility function to generate a regular expression </span>
 <span class="co"># for a given number of words</span>
-<span class="kw">words</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>) 
-  <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="st">"\\s+\\w+"</span>, <span class="kw">x</span>), collapse = <span class="st">""</span>), <span class="st">"\\s+"</span>)
+<span class="va">words</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> 
+  <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="st">"\\s+\\w+"</span>, <span class="va">x</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">""</span><span class="op">)</span>, <span class="st">"\\s+"</span><span class="op">)</span>
 
-<span class="kw">terms</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">".*("</span>, <span class="fu">words</span>(<span class="fl">2</span>), <span class="kw">terms</span>, <span class="st">"\\w*"</span>, <span class="fu">words</span>(<span class="fl">3</span>), <span class="st">").*"</span>)
+<span class="va">terms</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">".*("</span>, <span class="fu">words</span><span class="op">(</span><span class="fl">2</span><span class="op">)</span>, <span class="va">terms</span>, <span class="st">"\\w*"</span>, <span class="fu">words</span><span class="op">(</span><span class="fl">3</span><span class="op">)</span>, <span class="st">").*"</span><span class="op">)</span>
 
 <span class="co"># find and print found matches for review</span>
-<span class="co">for</span> (<span class="kw">i</span> <span class="co">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="kw">terms</span>))
-  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span>(<span class="kw">terms</span>[<span class="kw">i</span>], <span class="st">"\\1"</span>, 
-             <span class="kw">result</span>, 
-             ignore.case = <span class="fl">TRUE</span>)[<span class="fu"><a href="https://rdrr.io/r/base/grep.html">grepl</a></span>(<span class="kw">terms</span>[<span class="kw">i</span>], <span class="kw">result</span>)])
+<span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">terms</span><span class="op">)</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="va">terms</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, <span class="st">"\\1"</span>, 
+             <span class="va">result</span>, 
+             ignore.case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">grepl</a></span><span class="op">(</span><span class="va">terms</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, <span class="va">result</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>
  <span class="co">#  [1] " Those with positive sentinel nodes must "                     </span>
  <span class="co">#  [2] " Those with positive sentinel nodes must "                     </span>
  <span class="co">#  [3] " 10 receptor positive cells or 10fmol "                        </span>
@@ -1029,8 +999,7 @@
  <span class="co">#  [7] " or PgR positive 5 Women with "                                </span>
  <span class="co">#  [8] " Hormone receptor positive defined as ER "                     </span>
  <span class="co">#  [9] " Has a positive skin prick test "                              </span>
- <span class="co"># [10] " inhibitors a positive inhibitor status defined " </span>
-</pre></div>
+ <span class="co"># [10] " inhibitors a positive inhibitor status defined " </span></pre></div>
 </div>
 <div id="find-trial-start-date" class="section level2">
 <h2 class="hasAnchor">
@@ -1038,63 +1007,61 @@
 <div class="sourceCode" id="cb20"><pre class="downlit">
 <span class="co"># Get interesting variables from database </span>
 <span class="co"># for further analysis within R:</span>
-<span class="kw">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span>(
-  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"a2_eudract_number"</span>, 
-    <span class="st">"n_date_of_competent_authority_decision"</span>), 
-  con = <span class="kw">db</span>)
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"a2_eudract_number"</span>, 
+    <span class="st">"n_date_of_competent_authority_decision"</span><span class="op">)</span>, 
+  con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 
 <span class="co"># Calculate first date of trial start</span>
-<span class="kw">first_trial_start</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html">aggregate</a></span>(
-  x = <span class="kw">result</span><span class="op">$</span><span class="kw">n_date_of_competent_authority_decision</span>, 
-  by = <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">result</span><span class="op">$</span><span class="kw">a2_eudract_number</span>),
-  FUN = <span class="fu">function</span>(<span class="kw">x</span>) <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span>(<span class="kw">x</span>, na.rm = <span class="fl">TRUE</span>), 
-  simplify = <span class="fl">TRUE</span>, drop = <span class="fl">TRUE</span>)
+<span class="va">first_trial_start</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html">aggregate</a></span><span class="op">(</span>
+  x <span class="op">=</span> <span class="va">result</span><span class="op">$</span><span class="va">n_date_of_competent_authority_decision</span>, 
+  by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">a2_eudract_number</span><span class="op">)</span>,
+  FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, 
+  simplify <span class="op">=</span> <span class="cn">TRUE</span>, drop <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 
 <span class="co"># Give data frame appropriate names:</span>
-<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="kw">first_trial_start</span>) <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"a2_eudract_number"</span>, 
-                              <span class="st">"first_trial_start_date"</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">first_trial_start</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"a2_eudract_number"</span>, 
+                              <span class="st">"first_trial_start_date"</span><span class="op">)</span>
 
 <span class="co"># Merge back into result set: </span>
-<span class="kw">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="kw">result</span>, <span class="kw">first_trial_start</span>, all.x = <span class="fl">TRUE</span>)
-</pre></div>
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span><span class="op">(</span><span class="va">result</span>, <span class="va">first_trial_start</span>, all.x <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
 </div>
 <div id="annotate-records-when-using-ctrloadintodb-with-user-text" class="section level2">
 <h2 class="hasAnchor">
 <a href="#annotate-records-when-using-ctrloadintodb-with-user-text" class="anchor"></a>Annotate records when using ctrLoadIntoDb() with user text</h2>
 <div class="sourceCode" id="cb21"><pre class="downlit">
-<span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span>(
-  queryterm = <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"https://clinicaltrials.gov/ct2/results?"</span>, 
-                     <span class="st">"age=0&amp;intr=dasatinib&amp;phase=1"</span>), 
-  annotation.text = <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"|AS:"</span>, <span class="st">"dasatinib"</span>, <span class="st">"|"</span>), 
-  annotation.mode = <span class="st">"prepend"</span>, 
-  con = <span class="kw">db</span>)
+<span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span>
+  queryterm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"https://clinicaltrials.gov/ct2/results?"</span>, 
+                     <span class="st">"age=0&amp;intr=dasatinib&amp;phase=1"</span><span class="op">)</span>, 
+  annotation.text <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"|AS:"</span>, <span class="st">"dasatinib"</span>, <span class="st">"|"</span><span class="op">)</span>, 
+  annotation.mode <span class="op">=</span> <span class="st">"prepend"</span>, 
+  con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 
 <span class="co"># helper function</span>
-<span class="kw">getannotationelement</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">element</span> = <span class="st">"AS"</span>) {
+<span class="va">getannotationelement</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">element</span> <span class="op">=</span> <span class="st">"AS"</span><span class="op">)</span> <span class="op">{</span>
   
   <span class="co"># example from annotation.text: </span>
   <span class="co"># x &lt;- "|AS:tisagenlecleucel| |AS:dasatinib|"</span>
   
-  <span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/strsplit.html">strsplit</a></span>(x = <span class="kw">x</span>, split = <span class="st">"\\|"</span>)
-  <span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span>(<span class="kw">x</span>)
-  <span class="kw">x</span> <span class="op">&lt;-</span> <span class="kw">x</span>[<span class="fu"><a href="https://rdrr.io/r/base/grep.html">grepl</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"^"</span>, <span class="kw">element</span>, <span class="st">":"</span>), <span class="kw">x</span>)]
-  <span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/strsplit.html">strsplit</a></span>(x = <span class="kw">x</span>, split = <span class="st">":"</span>)
-  <span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span>(<span class="kw">x</span>)
-  <span class="kw">x</span> <span class="op">&lt;-</span> <span class="kw">x</span>[<span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">grepl</a></span>(<span class="st">"AS"</span>, <span class="kw">x</span>)]
-  <span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="kw">x</span>))
+  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/strsplit.html">strsplit</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, split <span class="op">=</span> <span class="st">"\\|"</span><span class="op">)</span>
+  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
+  <span class="va">x</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">grepl</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"^"</span>, <span class="va">element</span>, <span class="st">":"</span><span class="op">)</span>, <span class="va">x</span><span class="op">)</span><span class="op">]</span>
+  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/strsplit.html">strsplit</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, split <span class="op">=</span> <span class="st">":"</span><span class="op">)</span>
+  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
+  <span class="va">x</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">grepl</a></span><span class="op">(</span><span class="st">"AS"</span>, <span class="va">x</span><span class="op">)</span><span class="op">]</span>
+  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>
   
-  <span class="fu"><a href="https://rdrr.io/r/base/function.html">return</a></span>(<span class="kw">x</span>)
-}
+  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
+<span class="op">}</span>
 
-<span class="kw">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span>(
-  fields = <span class="st">"annotation"</span>, 
-  con = <span class="kw">db</span>)
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span>
+  fields <span class="op">=</span> <span class="st">"annotation"</span>, 
+  con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 
-<span class="fu">getannotationelement</span>(
-  <span class="kw">result</span><span class="op">$</span><span class="kw">annotation</span>, 
-  element = <span class="st">"AS"</span>)
-<span class="co"># [1] "dasatinib"</span>
-</pre></div>
+<span class="fu">getannotationelement</span><span class="op">(</span>
+  <span class="va">result</span><span class="op">$</span><span class="va">annotation</span>, 
+  element <span class="op">=</span> <span class="st">"AS"</span><span class="op">)</span>
+<span class="co"># [1] "dasatinib"</span></pre></div>
 </div>
 <div id="analyse-results-related-information" class="section level2">
 <h2 class="hasAnchor">
@@ -1102,15 +1069,15 @@
 <p>Distribution of p values</p>
 <div class="sourceCode" id="cb22"><pre class="downlit">
 <span class="co">## get trials into database</span>
-<span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span>(
-  queryterm = <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(
+<span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span>
+  queryterm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span>
     <span class="st">"https://clinicaltrials.gov/ct2/results?rslt=With&amp;age=0&amp;intr=Drug&amp;"</span>, 
-    <span class="st">"phase=1&amp;phase=2&amp;strd_s=01%2F01%2F2010&amp;strd_e=12%2F31%2F2012"</span>), 
-  con = <span class="kw">db</span>)
+    <span class="st">"phase=1&amp;phase=2&amp;strd_s=01%2F01%2F2010&amp;strd_e=12%2F31%2F2012"</span><span class="op">)</span>, 
+  con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 
 <span class="co">## get result set</span>
-<span class="kw">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span>(
-  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"start_date"</span>, 
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"start_date"</span>, 
     <span class="st">"detailed_description.textblock"</span>, 
     <span class="st">"official_title"</span>, 
     <span class="st">"eligibility.maximum_age"</span>,
@@ -1123,98 +1090,97 @@
     <span class="st">"clinical_results.outcome_list.outcome.analysis_list.analysis.non_inferiority_type"</span>,
     <span class="st">"clinical_results.baseline.analyzed_list.analyzed.units"</span>, 
     <span class="st">"clinical_results.baseline.analyzed_list.analyzed.count_list.count.@attributes.value"</span>
-  ), 
-  con = <span class="kw">db</span>, 
-  stopifnodata = <span class="fl">FALSE</span>)
+  <span class="op">)</span>, 
+  con <span class="op">=</span> <span class="va">db</span>, 
+  stopifnodata <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 
 
 <span class="co">## count number of participants per trial</span>
-<span class="kw">tmp</span> <span class="op">&lt;-</span> <span class="fu">simplifyList</span>(
-  <span class="kw">result</span>[, 
-    <span class="st">"clinical_results.baseline.analyzed_list.analyzed.count_list.count.@attributes.value"</span>])
+<span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu">simplifyList</span><span class="op">(</span>
+  <span class="va">result</span><span class="op">[</span>, 
+    <span class="st">"clinical_results.baseline.analyzed_list.analyzed.count_list.count.@attributes.value"</span><span class="op">]</span><span class="op">)</span>
 
 <span class="co"># change into number and sum up per trial</span>
-<span class="kw">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(<span class="kw">tmp</span>, <span class="fu">function</span>(<span class="kw">x</span>) <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(<span class="kw">x</span>), na.rm = <span class="fl">TRUE</span>))
+<span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">tmp</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co"># check that unit of first analysis is participants, not e.g. wounds or eyes</span>
-<span class="kw">tmpparticipants</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(<span class="kw">result</span><span class="op">$</span><span class="kw">clinical_results.baseline.analyzed_list.analyzed.units</span>, 
-                          <span class="fu">function</span>(<span class="kw">x</span>) (<span class="kw">x</span>[[<span class="fl">1</span>]] <span class="op">==</span> <span class="st">"Participants"</span>)[<span class="fl">1</span>])
+<span class="va">tmpparticipants</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">clinical_results.baseline.analyzed_list.analyzed.units</span>, 
+                          <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">(</span><span class="va">x</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">==</span> <span class="st">"Participants"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>
 
 
 <span class="co">## p value for endpoint analysis</span>
-<span class="kw">tmp</span> <span class="op">&lt;-</span> <span class="fu">simplifyList</span>(
-  <span class="kw">result</span>[, <span class="st">"clinical_results.outcome_list.outcome.analysis_list.analysis.p_value"</span>])
+<span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu">simplifyList</span><span class="op">(</span>
+  <span class="va">result</span><span class="op">[</span>, <span class="st">"clinical_results.outcome_list.outcome.analysis_list.analysis.p_value"</span><span class="op">]</span><span class="op">)</span>
 
 <span class="co"># get first p-value (first analysis primary endpoint)</span>
-<span class="kw">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(<span class="kw">tmp</span>, <span class="st">"[["</span>, <span class="fl">1</span>)
+<span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">tmp</span>, <span class="st">"[["</span>, <span class="fl">1</span><span class="op">)</span>
 
 <span class="co"># replace empty list elements with NA</span>
-<span class="kw">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(<span class="kw">tmp</span>, <span class="fu">function</span>(<span class="kw">x</span>) <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="kw">x</span>), <span class="kw">x</span>, <span class="fl">NA</span>))
+<span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">tmp</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, <span class="va">x</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co"># turn strings into numbers, see helper function</span>
-<span class="kw">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(<span class="kw">tmp</span>, FUN = <span class="fu">function</span>(<span class="kw">x</span>) <span class="fu">normalise_number</span>(<span class="kw">x</span>))
+<span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">tmp</span>, FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu">normalise_number</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">tmp</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">)</span>
 
-<span class="kw">result</span><span class="op">$</span><span class="kw">pvalueprimaryanalysis</span> <span class="op">&lt;-</span> <span class="kw">tmp</span>
+<span class="va">result</span><span class="op">$</span><span class="va">pvalueprimaryanalysis</span> <span class="op">&lt;-</span> <span class="va">tmp</span>
 
 
 <span class="co">## statistical method used for primary endpoint analysis</span>
-<span class="kw">tmp</span> <span class="op">&lt;-</span> <span class="fu">simplifyList</span>(
-  <span class="kw">result</span>[<span class="st">"clinical_results.outcome_list.outcome.analysis_list.analysis.method"</span>])
+<span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu">simplifyList</span><span class="op">(</span>
+  <span class="va">result</span><span class="op">[</span><span class="st">"clinical_results.outcome_list.outcome.analysis_list.analysis.method"</span><span class="op">]</span><span class="op">)</span>
 
 <span class="co"># get first method (first analysis primary endpoint)</span>
-<span class="kw">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(<span class="kw">tmp</span>, <span class="st">"[["</span>, <span class="fl">1</span>)
+<span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">tmp</span>, <span class="st">"[["</span>, <span class="fl">1</span><span class="op">)</span>
 
 <span class="co"># replace empty list elements with NA</span>
-<span class="kw">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(<span class="kw">tmp</span>, <span class="fu">function</span>(<span class="kw">x</span>) <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="kw">x</span>), <span class="kw">x</span>, <span class="fl">NA</span>))
+<span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">tmp</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, <span class="va">x</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span>(<span class="kw">tmp</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">)</span>
 
-<span class="kw">result</span><span class="op">$</span><span class="kw">methodprimaryanalysis</span> <span class="op">&lt;-</span> <span class="kw">tmp</span>
+<span class="va">result</span><span class="op">$</span><span class="va">methodprimaryanalysis</span> <span class="op">&lt;-</span> <span class="va">tmp</span>
 
 
 <span class="co">## Based on allocation arms, keep trials that are likely to investigate </span>
 <span class="co">## safety and efficacy considering that active comparators may not be </span>
 <span class="co">## designed to show superiority. </span>
 <span class="co"># controlled?</span>
-<span class="kw">result</span><span class="op">$</span><span class="kw">control</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">grepl</a></span>(<span class="st">"(Placebo|No Intervention)"</span>, 
-                        <span class="kw">result</span><span class="op">$</span><span class="kw">arm_group.arm_group_type</span>, 
-                        ignore.case = <span class="fl">TRUE</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span>(<span class="kw">result</span><span class="op">$</span><span class="kw">control</span>)
+<span class="va">result</span><span class="op">$</span><span class="va">control</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">grepl</a></span><span class="op">(</span><span class="st">"(Placebo|No Intervention)"</span>, 
+                        <span class="va">result</span><span class="op">$</span><span class="va">arm_group.arm_group_type</span>, 
+                        ignore.case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">control</span><span class="op">)</span>
 <span class="co"># randomised?</span>
-<span class="kw">result</span><span class="op">$</span><span class="kw">randomised</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">grepl</a></span>(<span class="st">"^Randomi.*"</span>, 
-                           <span class="kw">result</span><span class="op">$</span><span class="kw">study_design_info.allocation</span>,
-                           ignore.case = <span class="fl">TRUE</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span>(<span class="kw">result</span><span class="op">$</span><span class="kw">randomised</span>)
+<span class="va">result</span><span class="op">$</span><span class="va">randomised</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">grepl</a></span><span class="op">(</span><span class="st">"^Randomi.*"</span>, 
+                           <span class="va">result</span><span class="op">$</span><span class="va">study_design_info.allocation</span>,
+                           ignore.case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">randomised</span><span class="op">)</span>
 <span class="co"># two or more arms?</span>
-<span class="kw">tmp</span> <span class="op">&lt;-</span> <span class="fu">simplifyList</span>(<span class="kw">result</span>[<span class="st">"arm_group.arm_group_type"</span>])
-<span class="kw">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(<span class="kw">tmp</span>, <span class="fu">function</span>(<span class="kw">x</span>) <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span>(<span class="kw">x</span>)) <span class="op">&gt;=</span> <span class="fl">2</span>)
-<span class="kw">result</span><span class="op">$</span><span class="kw">twoormoregroups</span> <span class="op">&lt;-</span> <span class="kw">tmp</span>
-<span class="kw">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span>(<span class="kw">result</span>, <span class="kw">control</span> <span class="op">&amp;</span> <span class="kw">randomised</span> <span class="op">&amp;</span> <span class="kw">twoormoregroups</span>)
+<span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu">simplifyList</span><span class="op">(</span><span class="va">result</span><span class="op">[</span><span class="st">"arm_group.arm_group_type"</span><span class="op">]</span><span class="op">)</span>
+<span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">tmp</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fl">2</span><span class="op">)</span>
+<span class="va">result</span><span class="op">$</span><span class="va">twoormoregroups</span> <span class="op">&lt;-</span> <span class="va">tmp</span>
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span><span class="op">(</span><span class="va">result</span>, <span class="va">control</span> <span class="op">&amp;</span> <span class="va">randomised</span> <span class="op">&amp;</span> <span class="va">twoormoregroups</span><span class="op">)</span>
 
 
 <span class="co">## plot p values</span>
 <span class="co"># http://varianceexplained.org/statistics/interpreting-pvalue-histogram/</span>
 <span class="co"># http://www.pnas.org/content/100/16/9440.full</span>
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw">ggplot2</span>)
-<span class="fu">ggplot</span>(<span class="kw">result</span>, <span class="fu">aes</span>(<span class="kw">pvalueprimaryanalysis</span>)) <span class="op">+</span> 
-  <span class="fu">labs</span>(title = <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"Paediatric phase 2 or 3 interventional trials\n"</span>, 
-                      <span class="st">"with randomisation to placebo or to no intervention"</span>), 
-       x = <span class="st">"p value in primary endpoint primary analysis"</span>, 
-       y = <span class="st">"Empirical cumulative density of trials"</span>) <span class="op">+</span>
-  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(xintercept = <span class="fl">0.05</span>, 
-                 colour = <span class="st">"red"</span>), 
-             show.legend = <span class="fl">FALSE</span>) <span class="op">+</span>
-  <span class="fu">stat_ecdf</span>(geom = <span class="st">"step"</span>)
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">ggplot2</span><span class="op">)</span>
+<span class="fu">ggplot</span><span class="op">(</span><span class="va">result</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">pvalueprimaryanalysis</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"Paediatric phase 2 or 3 interventional trials\n"</span>, 
+                      <span class="st">"with randomisation to placebo or to no intervention"</span><span class="op">)</span>, 
+       x <span class="op">=</span> <span class="st">"p value in primary endpoint primary analysis"</span>, 
+       y <span class="op">=</span> <span class="st">"Empirical cumulative density of trials"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_vline</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fl">0.05</span>, 
+                 colour <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span>, 
+             show.legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">stat_ecdf</span><span class="op">(</span>geom <span class="op">=</span> <span class="st">"step"</span><span class="op">)</span>
 <span class="co"># ggsave("vignettes/ctrdatapvaluesphase23.png", width = 6, height = 4)</span>
 
 <span class="co">## statistical method used for primary endpoint analysis</span>
-<span class="kw">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span>(<span class="kw">result</span><span class="op">$</span><span class="kw">methodprimaryanalysis</span>)
-<span class="kw">tmp</span> <span class="op">&lt;-</span> <span class="kw">tmp</span>[<span class="fu"><a href="https://rdrr.io/r/base/rev.html">rev</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/order.html">order</a></span>(<span class="kw">tmp</span>))]
-<span class="kw">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="kw">tmp</span>)
-<span class="kw">knitr</span>::<span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>(<span class="kw">tmp</span>[<span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,])
-</pre></div>
+<span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">methodprimaryanalysis</span><span class="op">)</span>
+<span class="va">tmp</span> <span class="op">&lt;-</span> <span class="va">tmp</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/rev.html">rev</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/order.html">order</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>
+<span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">)</span>
+<span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,<span class="op">]</span><span class="op">)</span></pre></div>
 <div class="figure">
 <img src="ctrdatapvaluesphase23.png" alt=""><p class="caption">ECDFpvalues</p>
 </div>
@@ -1284,7 +1250,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>
