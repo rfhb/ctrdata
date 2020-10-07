@@ -86,7 +86,7 @@ different registers." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ctrdata</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.3.1.9001</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.3.2.9001</span>
       </span>
     </div>
 
@@ -159,20 +159,20 @@ trial records in a database, even if from different queries or
 different registers.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ctrLoadQueryIntoDb</span>(
-  <span class='kw'>queryterm</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>register</span> <span class='kw'>=</span> <span class='st'>"EUCTR"</span>,
-  <span class='kw'>querytoupdate</span> <span class='kw'>=</span> <span class='fl'>0L</span>,
-  <span class='kw'>forcetoupdate</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>euctrresults</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>euctrresultshistory</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>annotation.text</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>annotation.mode</span> <span class='kw'>=</span> <span class='st'>"append"</span>,
-  <span class='kw'>parallelretrievals</span> <span class='kw'>=</span> <span class='fl'>10L</span>,
-  <span class='kw'>only.count</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='no'>con</span>,
-  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
-)</pre>
+    <pre class="usage"><span class='fu'>ctrLoadQueryIntoDb</span><span class='op'>(</span>
+  queryterm <span class='op'>=</span> <span class='st'>""</span>,
+  register <span class='op'>=</span> <span class='st'>"EUCTR"</span>,
+  querytoupdate <span class='op'>=</span> <span class='fl'>0L</span>,
+  forcetoupdate <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  euctrresults <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  euctrresultshistory <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  annotation.text <span class='op'>=</span> <span class='st'>""</span>,
+  annotation.mode <span class='op'>=</span> <span class='st'>"append"</span>,
+  parallelretrievals <span class='op'>=</span> <span class='fl'>10L</span>,
+  only.count <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  <span class='va'>con</span>,
+  verbose <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -268,24 +268,26 @@ the query history in this database).</p>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># Retrieve protocol-related information on a</span>
 <span class='co'># single trial identified by EudraCT number</span>
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='no'>db</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>nodbi</span><span class='kw ns'>::</span><span class='fu'><a href='https://docs.ropensci.org/nodbi/reference/src_sqlite.html'>src_sqlite</a></span>(<span class='kw'>collection</span> <span class='kw'>=</span> <span class='st'>"test"</span>)
-<span class='fu'>ctrLoadQueryIntoDb</span>(
-      <span class='kw'>queryterm</span> <span class='kw'>=</span> <span class='st'>"2013-001291-38"</span>, <span class='kw'>con</span> <span class='kw'>=</span> <span class='no'>db</span>)
-}
+<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='va'>db</span> <span class='op'>&lt;-</span> <span class='fu'>nodbi</span><span class='fu'>::</span><span class='fu'><a href='https://docs.ropensci.org/nodbi/reference/src_sqlite.html'>src_sqlite</a></span><span class='op'>(</span>collection <span class='op'>=</span> <span class='st'>"test"</span><span class='op'>)</span>
+<span class='fu'>ctrLoadQueryIntoDb</span><span class='op'>(</span>
+      queryterm <span class='op'>=</span> <span class='st'>"2013-001291-38"</span>, con <span class='op'>=</span> <span class='va'>db</span><span class='op'>)</span>
+<span class='op'>}</span>
 <span class='co'># Retrieve protocol-related information on</span>
 <span class='co'># ongoing interventional cancer trials in children</span>
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='no'>db</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>nodbi</span><span class='kw ns'>::</span><span class='fu'><a href='https://docs.ropensci.org/nodbi/reference/src_sqlite.html'>src_sqlite</a></span>(<span class='kw'>collection</span> <span class='kw'>=</span> <span class='st'>"test"</span>)
-<span class='fu'>ctrLoadQueryIntoDb</span>(
-     <span class='kw'>queryterm</span> <span class='kw'>=</span> <span class='st'>"cancer&amp;recr=Open&amp;type=Intr&amp;age=0"</span>,
-     <span class='kw'>register</span> <span class='kw'>=</span> <span class='st'>"CTGOV"</span>,
-     <span class='kw'>con</span> <span class='kw'>=</span> <span class='no'>db</span>)
-<span class='fu'>ctrLoadQueryIntoDb</span>(
-     <span class='kw'>queryterm</span> <span class='kw'>=</span> <span class='st'>"NCT02239861"</span>,
-     <span class='kw'>register</span> <span class='kw'>=</span> <span class='st'>"CTGOV"</span>,
-     <span class='kw'>con</span> <span class='kw'>=</span> <span class='no'>db</span>)
-}</div></pre>
+<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='va'>db</span> <span class='op'>&lt;-</span> <span class='fu'>nodbi</span><span class='fu'>::</span><span class='fu'><a href='https://docs.ropensci.org/nodbi/reference/src_sqlite.html'>src_sqlite</a></span><span class='op'>(</span>collection <span class='op'>=</span> <span class='st'>"test"</span><span class='op'>)</span>
+<span class='fu'>ctrLoadQueryIntoDb</span><span class='op'>(</span>
+     queryterm <span class='op'>=</span> <span class='st'>"cancer&amp;recr=Open&amp;type=Intr&amp;age=0"</span>,
+     register <span class='op'>=</span> <span class='st'>"CTGOV"</span>,
+     con <span class='op'>=</span> <span class='va'>db</span><span class='op'>)</span>
+<span class='fu'>ctrLoadQueryIntoDb</span><span class='op'>(</span>
+     queryterm <span class='op'>=</span> <span class='st'>"NCT02239861"</span>,
+     register <span class='op'>=</span> <span class='st'>"CTGOV"</span>,
+     con <span class='op'>=</span> <span class='va'>db</span><span class='op'>)</span>
+<span class='op'>}</span>
+
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -301,7 +303,7 @@ the query history in this database).</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

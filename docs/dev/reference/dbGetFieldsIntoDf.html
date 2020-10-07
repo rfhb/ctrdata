@@ -86,7 +86,7 @@ such as follows: value 1 / value 2 / ... (see example)" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ctrdata</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.3.1.9001</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.3.2.9001</span>
       </span>
     </div>
 
@@ -160,7 +160,7 @@ of values if there is more than one value or if the field is (in) an array,
 such as follows: value 1 / value 2 / ... (see example)</p>
     </div>
 
-    <pre class="usage"><span class='fu'>dbGetFieldsIntoDf</span>(<span class='kw'>fields</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='no'>con</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>stopifnodata</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>dbGetFieldsIntoDf</span><span class='op'>(</span>fields <span class='op'>=</span> <span class='st'>""</span>, <span class='va'>con</span>, verbose <span class='op'>=</span> <span class='cn'>FALSE</span>, stopifnodata <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -201,37 +201,39 @@ examples and other packages to query mongodb such as mongolite.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='no'>db</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>nodbi</span><span class='kw ns'>::</span><span class='fu'><a href='https://docs.ropensci.org/nodbi/reference/src_sqlite.html'>src_sqlite</a></span>(
-  <span class='kw'>collection</span> <span class='kw'>=</span> <span class='st'>"my_collection"</span>
-)
+<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='va'>db</span> <span class='op'>&lt;-</span> <span class='fu'>nodbi</span><span class='fu'>::</span><span class='fu'><a href='https://docs.ropensci.org/nodbi/reference/src_sqlite.html'>src_sqlite</a></span><span class='op'>(</span>
+  collection <span class='op'>=</span> <span class='st'>"my_collection"</span>
+<span class='op'>)</span>
 
 <span class='co'># access fields that are nested within another field</span>
 <span class='co'># and can have multiple values with the other field</span>
-<span class='fu'>dbGetFieldsIntoDf</span>(
+<span class='fu'>dbGetFieldsIntoDf</span><span class='op'>(</span>
   <span class='st'>"b1_sponsor.b31_and_b32_status_of_the_sponsor"</span>,
-  <span class='kw'>con</span> <span class='kw'>=</span> <span class='no'>db</span>
-)[<span class='fl'>1</span>,]
+  con <span class='op'>=</span> <span class='va'>db</span>
+<span class='op'>)</span><span class='op'>[</span><span class='fl'>1</span>,<span class='op'>]</span>
 <span class='co'>#                 _id b1_sponsor.b31_and_b32_status_of_the_sponsor</span>
 <span class='co'># 1 2004-000015-25-GB                  Non-commercial / Commercial</span>
 
 <span class='co'># access fields that include a list of values</span>
 <span class='co'># which are printed as comma separated values</span>
-<span class='fu'>dbGetFieldsIntoDf</span>(
+<span class='fu'>dbGetFieldsIntoDf</span><span class='op'>(</span>
   <span class='st'>"keyword"</span>,
-  <span class='kw'>con</span> <span class='kw'>=</span> <span class='no'>db</span>
-)[<span class='fl'>1</span>,]
+  con <span class='op'>=</span> <span class='va'>db</span>
+<span class='op'>)</span><span class='op'>[</span><span class='fl'>1</span>,<span class='op'>]</span>
 
 <span class='co'>#           _id                                 keyword</span>
 <span class='co'># 1 NCT00129259 T1D, type 1 diabetes, juvenile diabetes</span>
 
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='no'>.Last.value</span>)
-<span class='co'># 'data.frame':	1 obs. of  2 variables:</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>.Last.value</span><span class='op'>)</span>
+<span class='co'># 'data.frame':  1 obs. of  2 variables:</span>
 <span class='co'># $ _id    : chr "NCT00129259"</span>
 <span class='co'># $ keyword:List of 1</span>
 <span class='co'># ..$ : chr  "T1D" "type 1 diabetes" "juvenile diabetes"</span>
 
-}</div></pre>
+<span class='op'>}</span>
+
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -247,7 +249,7 @@ examples and other packages to query mongodb such as mongolite.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
