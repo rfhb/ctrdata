@@ -21,8 +21,9 @@
 #' @section Get an R data frame from database, and operate on it:
 #'
 #' \link{dbGetFieldsIntoDf},
+#' \link{dfTrials2Long},
+#' \link{dfName2Value}.
 #' \link{dfMergeTwoVariablesRelevel},
-#' \link{dfListExtractKey}.
 #'
 #' @section Deduplication:
 #'

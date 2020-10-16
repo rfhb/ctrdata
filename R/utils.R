@@ -1344,6 +1344,363 @@ dbGetFieldsIntoDf <- function(fields = "",
 # dbGetFieldsIntoDf
 
 
+#' Extract information of interest (e.g., endpoint)
+#' from long data frame of protocol- or result-related
+#' trial information as returned from \link{dfTrials2Long}
+#'
+#' @param df A data frame with 5 columns (trial_id,
+#'  main_id, sub_id, name, value) as returned from
+#'  \link{dfTrials2Long}
+#'
+#' @param valuename A character string for the name of the variable
+#'  from which to extract information for the variable of interest
+#'
+#' @param wherename A character string to identify the variable
+#'  of interest
+#'
+#' @param wherevalue A character string with the value of interest
+#'  for the variable of interest
+#'
+#' @return A data frame with columns trial_id, main_id, sub_id,
+#'  name, value that only includes the values of interest
+#'
+#' @export
+#' @examples
+#' \dontrun{
+#' db <- nodbi::src_sqlite(
+#'   collection = "my_collection"
+#' )
+#' df <- ctrdata::dbGetFieldsIntoDf(
+#' fields = c(
+#'   # ctgov - typical results fields
+#'   "clinical_results.baseline.analyzed_list.analyzed.count_list.count",
+#'   "clinical_results.baseline.group_list.group",
+#'   "clinical_results.baseline.analyzed_list.analyzed.units",
+#'   "clinical_results.outcome_list.outcome",
+#'   "study_design_info.allocation",
+#'   # euctr - typical results fields
+#'   "trialInformation.fullTitle",
+#'   "subjectDisposition.recruitmentDetails",
+#'   "baselineCharacteristics.baselineReportingGroups.baselineReportingGroup",
+#'   "endPoints.endPoint",
+#'   "trialChanges.hasGlobalInterruptions",
+#'   "subjectAnalysisSets",
+#'   "adverseEvents.seriousAdverseEvents.seriousAdverseEvent"
+#'   ), con = dbc
+#' )
+#' # convert to long
+#' reslong <- ctrdata::dfTrials2Long(
+#'   df = df
+#' )
+#' # get values for endpoint of interest, duration of response
+#' ctrdata::dfValue2Name(
+#'   df = df,
+#'   valuename = paste0(
+#'     "endPoints.endPoint.*armReportingGroup.tendencyValues.tendencyValue.value|",
+#'     "clinical_results.*category.measurement_list.measurement.value|",
+#'     "clinical_results.*outcome.measure.units|endPoints.endPoint.unit"
+#'   ),
+#'   wherename = "clinical_results.*outcome.measure.title|endPoints.endPoint.title",
+#'   wherevalue = "duration of response"
+#' )
+#' }
+dfName2Value <- function(df, valuename = "",
+                         wherename = "", wherevalue = "") {
+
+  # check parameters
+  if (valuename == "") {
+    stop("'valuename' must be specified.",
+         call. = FALSE)
+  }
+  if (!identical(
+    names(df),
+    c("trial_id", "main_id",
+      "sub_id", "name", "value"))) {
+    stop("'df' does not seem to come from dfTrials2Long()",
+         call. = FALSE)
+  }
+
+  # if now where... are specified, just
+  # return the rows where name corresponds
+  # to valuename
+  if (wherename == "" & wherevalue == "") {
+
+    # get relevant rows
+    df <- df[grepl(valuename, df[["name"]]), ]
+
+    # value column is character
+    # try to convert it to numeric
+    out <- suppressWarnings(
+      as.numeric(df[["value"]])
+    )
+    # use if converted ok
+    if (all(is.na(out) == is.na(df[["value"]]))) {
+      df["value"] <- out
+    }
+
+    # output
+    return(df)
+
+  } # otherwise continue
+
+  # get indices per trial
+  index.names <- which(
+    grepl(wherename, df[["name"]],
+          perl = TRUE,
+          ignore.case = TRUE) &
+      grepl(wherevalue, df[["value"]],
+            perl = TRUE,
+            ignore.case = TRUE))
+
+  # get trial ids, main_id, sub_id
+  index.cases <-
+    df[index.names, c("trial_id", "main_id", "sub_id")]
+
+  # get output
+  out <- lapply(
+    seq_len(nrow(index.cases)),
+    function(i) {
+
+      tmp <- intersect(
+        which(df["trial_id"] == index.cases[i, "trial_id"]),
+        which(df["main_id"] == index.cases[i, "main_id"])
+      )
+      if (!is.na(index.cases[i, "sub_id"])) {
+        tmp <- intersect(
+          tmp,
+          which(df["sub_id"] == index.cases[i, "sub_id"])
+        )
+      }
+      df <- df[tmp, ]
+      tmp <- which(grepl(
+        valuename, df[ , "name"],
+        perl = FALSE,
+        ignore.case = TRUE)
+      )
+      if (length(tmp)) df[tmp, ]
+    }
+  )
+
+  # bind into data frame
+  out <- do.call(
+    rbind,
+    out
+  )
+
+  # value column is character
+  # try to convert it to numeric
+  tmp <- suppressWarnings(
+    as.numeric(out[["value"]])
+  )
+  # use if converted ok
+  if (all(is.na(tmp) == is.na(out[["value"]]))) {
+    out["value"] <- tmp
+  }
+
+  # return
+  return(out)
+
+} # end dfName2Value
+
+
+#' Extract trial information into long format
+#'
+#' The function works with procotol- and results-
+#' related information. It converts lists and other
+#' values into individual rows of a long data frame.
+#' From the resulting data frame, values of interest
+#' can then be selected (e.g. select and outcome
+#' and its analysis by number of the measure which
+#' has "Hazard Ratio" in its name).
+#'
+#' @param df Data frame with colums including
+#'  the trial identifier (\code{_id}) and
+#'  one or more variables as obtained from
+#'  \link{dbGetFieldsIntoDf}
+#'
+#' @return A data frame with the five columns:
+#'  trial_id, main_id, sub_id, name, value
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' db <- nodbi::src_sqlite(
+#'   collection = "my_collection"
+#' )
+#' df <- dbGetFieldsIntoDf(
+#'   fields = c(
+#'     "clinical_results.outcome_list.outcome"),
+#'   con = db
+#' )
+#' dfTrials2Long(
+#'   df = df
+#' )
+#' }
+dfTrials2Long <- function(df) {
+
+  # check parameters
+
+  # check if _id present
+  if (!any("_id" == names(df))) stop(
+    "Missing _id column / variable in parameter 'df'.",
+    call. = FALSE
+  )
+
+  # do by endpoint
+  col2df <- function(atrialcol) {
+
+    # the full column is needed in atrialcol
+    # to extract the name of the column
+    atcname <- paste0("", names(atrialcol))
+
+    # atrialcol is a single cell of a
+    # larger data.frame and this
+    # extracts the element in this cell
+    atrialcol <- atrialcol[[1]]
+
+    # if not inheriting from data.frame,
+    # change into one so that row indexing
+    # in lapply below will work
+    if (!inherits(atrialcol, "data.frame")) {
+      atrialcol <- data.frame(
+        atrialcol,
+        check.names = FALSE,
+        stringsAsFactors = FALSE)
+    }
+
+    # for each endpoint / measure,
+    # expand the lists into long
+    # format by unlisting
+    measures <- lapply(
+
+      seq_len(nrow(atrialcol)),
+      function(r) {
+
+        # get rows of data
+        measure <- atrialcol[r, ]
+
+        # fully unlist
+        measure <- unlist(
+          measure,
+          recursive = TRUE,
+          use.names = TRUE)
+
+        # in case the column is empty
+        if (is.null(measure)) {
+          data.frame(
+            main_id = NA,
+            sub_id = NA,
+            name = atcname,
+            value = NA,
+            stringsAsFactors = FALSE
+          )
+        } else {
+          # return result
+          data.frame(
+            main_id = r,
+            sub_id = NA,
+            name = paste0(atcname, ".", names(measure)),
+            value = measure,
+            stringsAsFactors = FALSE
+          )
+        }
+
+      })
+
+    # concatenate into long format
+    measures <- do.call(
+      rbind,
+      measures
+    )
+
+    # format names
+    measures["sub_id"] <- suppressWarnings(
+      as.integer(
+        sub("^.*?([0-9]+)$", "\\1", measures$name)
+      ))
+    measures["name"] <- sub("[0-9]+$", "", measures$name)
+    measures["name"] <- sub("@attributes[.]", "", measures$name)
+
+    # output
+    row.names(measures) <- NULL
+    measures
+
+  }
+
+  # for each trial
+  trials2long <- function(severaltrials) {
+
+    # total number of trials
+    numtrials <- nrow(severaltrials)
+
+    # iterate over trials
+    trials <- lapply(
+      seq_len(nrow(severaltrials)),
+      function(r) {
+
+        # r-th trial in works
+        message("Trial ", r, " / ", numtrials, "\r", appendLF = FALSE)
+
+        # get trial
+        atrial = severaltrials[r, ]
+
+        # iterate over columns
+        cols <- lapply(
+          seq_len(ncol(severaltrials[r, ])),
+          function(c) {
+
+            # c-th column in the works
+            # message(c, " ", appendLF = FALSE)
+
+            # convert into long format
+            switch(
+              typeof(atrial[[c]]),
+              "character" = data.frame(
+                main_id = NA,
+                sub_id = NA,
+                name = names(atrial)[c],
+                value = atrial[[c]],
+                stringsAsFactors = FALSE
+              ),
+              "list" = col2df(atrialcol = atrial[c])
+            )
+          }
+        )
+
+        # concatenate
+        out <- do.call(
+          rbind,
+          cols
+        )
+
+        # format trial
+        data.frame(
+          trial_id = out[out[["name"]] == "_id", "value"],
+          out[out[["name"]] != "_id", ],
+          stringsAsFactors = FALSE
+        )
+
+      })
+
+    # concatenate into long format
+    do.call(
+      rbind,
+      trials
+    )
+
+  }
+
+  # output
+  return(
+    trials2long(
+      severaltrials = df
+    )
+  )
+
+} # end dfTrials2Long
+
+
 #' Extract named element(s) from list(s) into long-format
 #' data frame
 #'
