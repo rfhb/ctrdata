@@ -1,5 +1,5 @@
 ---
-title: "Install R package `ctrdata`"
+title: "Install R package ctrdata"
 author: "Ralf Herold"
 date: 2020-10-11
 output:
@@ -10,7 +10,7 @@ output:
   rmarkdown::html_vignette: 
     toc: true
 vignette: >
-  %\VignetteIndexEntry{1. Install}
+  %\VignetteIndexEntry{Install R package ctrdata}
   %\VignetteKeywords{ctrdata,vignette}
   %\VignettePackage{ctrdata}
   %\VignetteEncoding{UTF-8}

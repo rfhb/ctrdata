@@ -23,7 +23,7 @@ if (.Platform$OS.type != "windows") {
 if (.Platform$OS.type == "windows") {
   expect_message(
     installCygwinWindowsDoInstall(),
-  "cygwin is already installed")
+    "cygwin is already installed")
 }
 
 
@@ -31,19 +31,21 @@ if (.Platform$OS.type == "windows") {
 
 # test
 expect_error(
-  dfMergeTwoVariablesRelevel(list("var1", "var2")),
+  suppressWarnings(
+    dfMergeTwoVariablesRelevel(list("var1", "var2"))),
   "Need a data frame as input.")
 
 # test
 expect_message(
-  dfMergeTwoVariablesRelevel(
-    df = df,
-    colnames = c("var1", "var2")),
-  "Unique values returned: 12, 23, 34")
+  suppressWarnings(
+    dfMergeTwoVariablesRelevel(
+      df = df,
+      colnames = c("var1", "var2"))),
+  "Unique values returned: 1, 2, 3")
 
 # test
 expect_true(
-  "character" %in% class(
+  "integer" %in% class(
     suppressMessages(
       dfMergeTwoVariablesRelevel(
         df = df,
@@ -51,17 +53,19 @@ expect_true(
 
 # test
 expect_message(
-  dfMergeTwoVariablesRelevel(
-    df = df,
-    colnames = c("var1", "var2"),
-    levelslist = statusvalues),
-  "Unique values returned: Firstvalues, Lastvalue")
+  suppressWarnings(
+    dfMergeTwoVariablesRelevel(
+      df = df,
+      colnames = c("var1", "var2"),
+      levelslist = statusvalues)),
+  "Unique values returned: 1, 2, 3")
 
 # test
 expect_error(
-  dfMergeTwoVariablesRelevel(
-    df = df,
-    colnames = 1:3),
+  suppressWarnings(
+    dfMergeTwoVariablesRelevel(
+      df = df,
+      colnames = 1:3)),
   "Please provide exactly two column names.")
 
 # test
@@ -73,10 +77,11 @@ expect_warning(
 
 # test
 expect_error(
-  dfMergeTwoVariablesRelevel(
-    df = df,
-    colnames = c("var1", "var2"),
-    levelslist = 1:2),
+  suppressWarnings(
+    dfMergeTwoVariablesRelevel(
+      df = df,
+      colnames = c("var1", "var2"),
+      levelslist = 1:2)),
   "Need list for parameter 'levelslist'")
 
 
