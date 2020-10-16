@@ -170,20 +170,8 @@ expect_true("Date" == class(result[[
 # test
 expect_true(
   sum(nchar(
-    dfListExtractKey(
-      df = result,
-      list.key = list(
-        c("subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm",
-          "title"),
-        c("subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm",
-          "type.value"))
-    )[["value"]]
-  ), na.rm = TRUE)
-  > 250L)
-
-# test
-expect_true(
-  sum(nchar(
+    # note: function
+    # is deprecated
     dfListExtractKey(
       df = result,
       list.key = list(
@@ -192,76 +180,67 @@ expect_true(
   ), na.rm = TRUE)
   > 3000L)
 
-# prepare
-tmp_test <- dfListExtractKey(
-  result,
-  list(
-    c("endPoints.endPoint", "^title"),
-    c("endPoints.endPoint", "^type.value")
-  )
-)
-# test
-expect_true(all(
-  tmp_test$endPoints.endPoint.type.value %in%
-    c("ENDPOINT_TYPE.primary", "ENDPOINT_TYPE.secondary",
-      "ENDPOINT_TYPE.other", NA)))
+# convert to long
+df <- suppressMessages(
+  dfTrials2Long(
+    df = result
+  ))
 
 # test
-tmp_test <- dfListExtractKey(
-  result,
-  list(
-    c("endPoints.endPoint", "armReportingGroups.armReportingGroup.subjects[0-9]*$"),
-    c("endPoints.endPoint", "armReportingGroups.armReportingGroup.@attributes.id"),
-    c("endPoints.endPoint", "armReportingGroups.armReportingGroup.@attributes.armId")
-  )
+expect_identical(
+  names(df),
+  c("trial_id", "main_id",
+    "sub_id", "name", "value")
 )
 
 # test
 expect_true(
-  sum(
-    as.numeric(
-      tmp_test[["value"]][
-        tmp_test[["name"]] ==
-          "endPoints.endPoint.armReportingGroups.armReportingGroup.subjects"
-      ]),
-    na.rm = TRUE) > 2000L)
+  nrow(df) > 3000L
+)
 
-# test
-tmp_test <- dfListExtractKey(
-  result,
-  list(
-    c("endPoints.endPoint", "statisticalAnalyses.statisticalAnalysis.title"),
-    c("endPoints.endPoint", "statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.method.value"),
-    c("endPoints.endPoint", "statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.value[0-9]*$")
-  )
+# extract
+df2 <- dfName2Value(
+  df = df,
+  valuename = "subjectDisposition.*postAssignmentPeriod.arms.arm.type.value",
+  wherename = "endPoints.endPoint.title",
+  wherevalue = "percentage"
 )
 
 # test
 expect_true(
-  all(na.omit(as.numeric(
-    tmp_test[["value"]][
-      tmp_test[["name"]] ==
-        "endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.value"
-    ])) < 1L))
+  length(unique(df2[["trial_id"]])) >= 2L
+)
+
+# test
+expect_true(
+  length(unique(df2[["value"]])) >= 2L
+)
 
 # test
 expect_true(all(
-  c("HYPOTHESIS_METHOD.cochranMantelHaenszel", "HYPOTHESIS_METHOD.ancova",
-    "HYPOTHESIS_METHOD.regressionLogistic") %in%
-    tmp_test[["value"]][
-      tmp_test[["name"]] ==
-        "endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.method.value"]))
+  df2$value %in%
+    c("ARM_TYPE.placeboComp", "ARM_TYPE.experimental"))
+)
+
+# extract
+df2 <- dfName2Value(
+  df = df,
+  valuename = "^endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.value$",
+  wherename = "endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.method.value",
+  wherevalue = "HYPOTHESIS_METHOD"
+)
+
+# test
+expect_true(
+  all(df2[["value"]] < 1)
+)
 
 # test
 expect_error(
-  dfListExtractKey(
-    result[, -1],
-    list(
-      c("endPoints.endPoint", "^type.value")
-    )
+  dfTrials2Long(
+    df = result[, -1]
   ),
-  "Data frame 'df' lacks '_id' column")
-
+  "Missing _id column / variable in parameter")
 
 
 #### dbFindFields #####

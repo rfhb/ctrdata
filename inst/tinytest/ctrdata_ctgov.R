@@ -91,6 +91,7 @@ result <- suppressMessages(
         "clinical_results.baseline.analyzed_list.analyzed.count_list.count",
         "clinical_results.baseline.group_list.group",
         "clinical_results.baseline.analyzed_list.analyzed.units",
+        "clinical_results.outcome_list.outcome",
         "study_design_info.allocation",
         "location"),
       con = dbc)))
@@ -104,7 +105,7 @@ expect_true(sum(result$number_sites, na.rm = TRUE) > 30L)
 
 # test
 expect_true("character" == class(result[[
-  "clinical_results.baseline.analyzed_list.analyzed.count_list.count"]]))
+  "study_design_info.allocation"]]))
 
 # test
 expect_true("list" == class(result[[
@@ -112,10 +113,52 @@ expect_true("list" == class(result[[
 
 # test
 expect_true(
-  sum(nchar(dfListExtractKey(
+  sum(nchar(
+    # note: deprecated function
+    suppressWarnings(
+      dfListExtractKey(
     result,
     list(c("location", "name"))
-  )),
+  ))),
   na.rm = TRUE) > 1000L)
 
+# convert to long
+df <- suppressMessages(
+  dfTrials2Long(
+    df = result
+  ))
+
+# test
+expect_identical(
+    names(df),
+    c("trial_id", "main_id",
+      "sub_id", "name", "value")
+)
+
+# test
+expect_true(
+  nrow(df) > 900L
+)
+
+# select value from
+# measure in where
+df2 <- dfName2Value(
+  df = df,
+  valuename = paste0(
+    "clinical_results.*category_list.category.measurement_list.measurement.value|",
+    "clinical_results.outcome_list.outcome.measure.units"
+  ),
+  wherename = "clinical_results.outcome_list.outcome.measure.title",
+  wherevalue = "duration of response"
+)
+
+# test
+expect_true(
+  nrow(df2) > 2L
+)
+
+# test
+expect_true(
+  all(df2$main_id[df2$trial_id == "NCT01471782"] == 5L)
+)
 
