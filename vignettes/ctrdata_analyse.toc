@@ -1,0 +1,10 @@
+\contentsline {section}{\numberline {1}Preparations}{1}{section.1}%
+\contentsline {section}{\numberline {2}Find fields / variables of interest}{2}{section.2}%
+\contentsline {section}{\numberline {3}Data frame from database}{3}{section.3}%
+\contentsline {section}{\numberline {4}Metadata from data frame}{3}{section.4}%
+\contentsline {section}{\numberline {5}Simple analysis - dates}{4}{section.5}%
+\contentsline {section}{\numberline {6}Annotations made by user}{6}{section.6}%
+\contentsline {section}{\numberline {7}Analysing nested fields such as trial results}{8}{section.7}%
+\contentsline {section}{\numberline {8}Analysing primary endpoints}{11}{section.8}%
+\contentsline {section}{\numberline {9}Investigational or authorised medicinal product?}{13}{section.9}%
+\contentsline {section}{\numberline {10}Analyses using aggregation pipeline and mapreduce}{15}{section.10}%
