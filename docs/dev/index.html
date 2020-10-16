@@ -19,12 +19,13 @@
         two public registers, the European Union Clinical Trials Register
         (EUCTR, &lt;https://www.clinicaltrialsregister.eu/&gt;) and
         ClinicalTrials.gov (CTGOV, &lt;https://clinicaltrials.gov/&gt;). The
-        information is transformed and then stored in a database (nodbi).
-        Functions are provided for accessing and analysing the locally
-        stored information on the clinical trials, as well as for
-        identifying duplicate records. The package is motivated by the need
-        for aggregating and trend-analysing the design, conduct and outcomes
-        across clinical trials.">
+        trial information is transformed and stored in a database (RSQLite 
+        or MongoDB, via nodbi). Functions are provided to identify de-
+        duplicated records, to easily find and extract variables (fields)
+        of interest even from complex nesting as used by the registers, 
+        and to update previous queries that users retrieved in a database. 
+        The package can be used for meta analysis and trend-analysis of
+        the design and conduct as well as results of clinical trials.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@rfhb">
 <meta name="twitter:site" content="@rfhb">
@@ -70,10 +71,13 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="articles/ctrdata_get_started.html">Getting started with R package `ctrdata` for clinical trial information</a>
+      <a href="articles/ctrdata_analyse.html">Analysing clinical trial information</a>
     </li>
     <li>
-      <a href="articles/ctrdata_usage_examples.html">Examples for using R package `ctrdata` for clinical trial information</a>
+      <a href="articles/ctrdata_install.html">Install R package `ctrdata`</a>
+    </li>
+    <li>
+      <a href="articles/ctrdata_retrieve.html">Retrieve clinical trial information</a>
     </li>
   </ul>
 </li>
@@ -111,23 +115,22 @@
 <div id="ctrdata-for-aggregating-and-analysing-clinical-trials" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#ctrdata-for-aggregating-and-analysing-clinical-trials" class="anchor"></a>ctrdata for aggregating and analysing clinical trials</h1></div>
-<p>The package <code>ctrdata</code> provides functions for retrieving (downloading) information on clinical trials from public registers, and for aggregating and analysing such information. It can be used for the European Union Clinical Trials Register (“EUCTR”, <a href="https://www.clinicaltrialsregister.eu/" class="uri">https://www.clinicaltrialsregister.eu/</a>) and for ClinicalTrials.gov (“CTGOV”, <a href="https://clinicaltrials.gov/" class="uri">https://clinicaltrials.gov/</a>). Development of <code>ctrdata</code> started in 2015 and was motivated by the wish to understand trends in designs and conduct of trials and their availability for patients. The package is to be used within the <a href="https://www.r-project.org/">R</a> system.</p>
-<p>Last reviewed on 2020-10-04 for version 1.3.2</p>
+<p>The package <code>ctrdata</code> provides functions for retrieving (downloading) information on clinical trials from public registers, and for aggregating and analysing this information. Use with <a href="https://www.r-project.org/">R</a> for the European Union Clinical Trials Register (“EUCTR”, <a href="https://www.clinicaltrialsregister.eu/" class="uri">https://www.clinicaltrialsregister.eu/</a>) and ClinicalTrials.gov (“CTGOV”, <a href="https://clinicaltrials.gov/" class="uri">https://clinicaltrials.gov/</a>). The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. The package is to be used within the <a href="https://www.r-project.org/">R</a> system.</p>
+<p>Last reviewed on 2020-10-11 for version 1.4</p>
 <p>Main features:</p>
 <ul>
-<li><p>Protocol-related information on clinical trials is easily retrieved (downloaded) from public online sources: Users define a query using a register’s web interfaces and then use <code>ctrdata</code> for retrieving all trials resulting from the query. Personal annotations can be added when retrieving trial information. Synonyms of an active substance can also be found.</p></li>
-<li><p>Results-related information on trials can be included when information is retrieved (downloaded). All information is retrieved with multiple parallel webstreams, to speed up operations.</p></li>
-<li><p>Retrieved (downloaded) trial information is transformed and stored in a document-centric database (since registers provide nested data), for fast and offline access. This can then be analysed with <code>R</code> (or others systems). Easily re-run a previous query to update a database. Uses <code>RSQLite</code>, local or remote MongoDB servers, via R package <code>nodbi</code>.</p></li>
-<li><p>Unique (de-duplicated) trial records are identified, across registers and when there are several records in any register. <code>ctrdata</code> also can merge and recode information (fields) from different registers. Vignettes are provided to get started and with detailed examples, such as analyses of time trends of details of clinical trial protocols and for analysing results.</p></li>
+<li><p>Protocol-related trial information is easily retrieved (downloaded): Users define a query in a register’s web interface and then use <code>ctrdata</code> to retrieve in one step all trials resulting from the query. Results-related trial information and personal annotations can be including during retrieval. Synonyms of an active substance can also be found.</p></li>
+<li><p>Retrieved (downloaded) trial information is transformed and stored in a document-centric database, for fast and offline access. Uses <code>RSQLite</code>, local or remote MongoDB servers, via R package <code>nodbi</code>. Easily re-run a previous query to update a database.</p></li>
+<li><p>Analysis can be done with <code>R</code> (using <code>ctrdata</code> convenience functions) or others systems. Unique (de-duplicated) trial records are identified across registers. <code>ctrdata</code> can merge and recode information (fields) and also provides easy access even to deeply-nested fields (new in version 1.4).</p></li>
 </ul>
-<p>Remember to respect the registers’ copyrights and terms and conditions (see <code><a href="reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser(copyright = TRUE)</a></code>). Please cite this package in any publication as follows: <code>Ralf Herold (2020). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.3, https://github.com/rfhb/ctrdata</code></p>
+<p>Remember to respect the registers’ terms and conditions (see <code><a href="reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser(copyright = TRUE)</a></code>). Please cite this package in any publication as follows: Ralf Herold (2020). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.4, <a href="https://github.com/rfhb/ctrdata" class="uri">https://github.com/rfhb/ctrdata</a></p>
 <!--
 
 ```r
 citation("ctrdata")
 ```
 -->
-<p>Package <code>ctrdata</code> has been used for example for:</p>
+<p>Package <code>ctrdata</code> has been used for:</p>
 <ul>
 <li><p>Blogging on <a href="https://paediatricdata.eu/innovation-coming-to-paediatric-research/">Innovation coming to paediatric research</a></p></li>
 <li><p>Report on <a href="https://www.cancerresearchuk.org/about-us/we-develop-policy/we-work-with-government/exiting-the-eu/uk-and-eu-research#downloads">The impact of collaboration: The value of UK medical research to EU science and health</a></p></li>
@@ -139,15 +142,13 @@ citation("ctrdata")
 <div id="1-install-package-in-r" class="section level2">
 <h2 class="hasAnchor">
 <a href="#1-install-package-in-r" class="anchor"></a>1. Install package in R</h2>
-<p>Package <code>ctrdata</code> can be found <a href="https://cran.r-project.org/package=ctrdata">here on CRAN</a> and <a href="https://github.com/rfhb/ctrdata">here on github</a>. Within <a href="https://www.r-project.org/">R</a>, use the following commands to install package <code>ctrdata</code>:</p>
+<p>Package <code>ctrdata</code> is <a href="https://cran.r-project.org/package=ctrdata">on CRAN</a> and <a href="https://github.com/rfhb/ctrdata">on GitHub</a>. Within <a href="https://www.r-project.org/">R</a>, use the following commands to install package <code>ctrdata</code>:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit">
 <span class="co"># Install CRAN version:</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"ctrdata"</span><span class="op">)</span>
 
 <span class="co"># Alternatively, install development version: </span>
-<span class="co"># - Preparation:</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
-<span class="co"># - Install ctrdata:</span>
 <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"rfhb/ctrdata"</span><span class="op">)</span></pre></div>
 <p>These commands also install the package dependencies, which are <code>nodbi</code>, <code>jsonlite</code>, <code>httr</code>, <code>curl</code>, <code>clipr</code>, <code>xml2</code>, <code>rvest</code>.</p>
 </div>
@@ -156,12 +157,12 @@ citation("ctrdata")
 <a href="#2-command-line-tools-perl-sed-cat-and-php-52-or-higher" class="anchor"></a>2. Command line tools <code>perl</code>, <code>sed</code>, <code>cat</code> and <code>php</code> (5.2 or higher)</h2>
 <p>These command line tools are required for <code><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code>, the main function of package <code>ctrdata</code>.</p>
 <p>In Linux and macOS (including version 10.15 Catalina), these are usually already installed.</p>
-<p>For MS Windows, install <a href="https://cygwin.org/install.html">cygwin</a>: In <code>R</code>, run <code><a href="reference/installCygwinWindowsDoInstall.html">ctrdata::installCygwinWindowsDoInstall()</a></code> for an automated minimal installation into <code>c:\cygwin</code> (installations in folders corresponding to <code>c:\cygw*</code> will also be recognised and used). Alternatively, install manually cygwin with packages <code>perl</code>, <code>php-jsonc</code> and <code>php-simplexml</code> into <code>c:\cygwin</code>. This installation will consume about 160 MB disk space; administrator credentials not needed.</p>
+<p>For MS Windows, install <a href="https://cygwin.org/install.html">cygwin</a>: In <code>R</code>, run <code><a href="reference/installCygwinWindowsDoInstall.html">ctrdata::installCygwinWindowsDoInstall()</a></code> for an automated minimal installation into <code>c:\cygwin</code>. Alternatively, install manually cygwin with packages <code>perl</code>, <code>php-jsonc</code> and <code>php-simplexml</code> into <code>c:\cygwin</code>. The installation needs about 160 MB disk space; no administrator credentials needed.</p>
 </div>
 <div id="testing" class="section level2">
 <h2 class="hasAnchor">
 <a href="#testing" class="anchor"></a>Testing</h2>
-<p>Once installed, a comprehensive testing can be executed as follows (note this will take several minutes):</p>
+<p>Once installed, a comprehensive testing can be executed as follows (this will take several minutes):</p>
 <div class="sourceCode" id="cb2"><pre class="downlit">
 <span class="fu">tinytest</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tinytest/man/test_package.html">test_package</a></span><span class="op">(</span><span class="st">"ctrdata"</span>, at_home <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
 </div>
@@ -173,8 +174,8 @@ citation("ctrdata")
 <p>The functions are listed in the approximate order of use.</p>
 <table class="table">
 <colgroup>
-<col width="18%">
-<col width="81%">
+<col width="22%">
+<col width="77%">
 </colgroup>
 <thead><tr class="header">
 <th>Function name</th>
@@ -195,33 +196,37 @@ citation("ctrdata")
 </tr>
 <tr class="even">
 <td><code><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code></td>
-<td>Retrieve (download) or update, and annotate, information on clinical trials from a register and store in a database</td>
+<td>Retrieve (download) or update, and annotate, information on trials from a register and store in database</td>
 </tr>
 <tr class="odd">
 <td><code><a href="reference/dbQueryHistory.html">dbQueryHistory()</a></code></td>
-<td>Show the history of queries that were downloaded into the database collection</td>
+<td>Show the history of queries that were downloaded into the database</td>
 </tr>
 <tr class="even">
 <td><code><a href="reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials()</a></code></td>
-<td>Produce a vector of de-duplicated identifiers of clinical trial records in the database</td>
+<td>Get the identifiers of de-duplicated trials in the database</td>
 </tr>
 <tr class="odd">
 <td><code><a href="reference/dbFindFields.html">dbFindFields()</a></code></td>
-<td>Find names of fields in the database</td>
+<td>Find names of variables (fields) in the database</td>
 </tr>
 <tr class="even">
 <td><code><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code></td>
-<td>Create a data.frame from records in the database with the specified fields</td>
+<td>Create a data.frame from trial records in the database with the specified fields</td>
+</tr>
+<tr class="odd">
+<td><code><a href="reference/dfTrials2Long.html">dfTrials2Long()</a></code></td>
+<td>Transform a data.frame from <code><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code> into a long name-value data.frame, including deeply nested fields</td>
+</tr>
+<tr class="even">
+<td><code><a href="reference/dfName2Value.html">dfName2Value()</a></code></td>
+<td>From a long name-value data.frame, extract values for variables (fields) of interest (e.g., endpoints)</td>
 </tr>
 <tr class="odd">
 <td><code><a href="reference/dfMergeTwoVariablesRelevel.html">dfMergeTwoVariablesRelevel()</a></code></td>
-<td>Merge two variables into a single variable, optionally map values to a new set of values</td>
+<td>Merge two simple variables into a new variable, optionally map values to a new set of values</td>
 </tr>
 <tr class="even">
-<td><code><a href="reference/dfListExtractKey.html">dfListExtractKey()</a></code></td>
-<td>Extract an element based on its name (key) from a list in a complex data.frame such as obtained from <code><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code> for deeply nested fields</td>
-</tr>
-<tr class="odd">
 <td><code><a href="reference/installCygwinWindowsDoInstall.html">installCygwinWindowsDoInstall()</a></code></td>
 <td>Convenience function to install a cygwin environment (MS Windows only)</td>
 </tr>
@@ -255,34 +260,30 @@ citation("ctrdata")
 <span class="co"># * Found search query from EUCTR.</span>
 
 <span class="va">q</span>
-<span class="co">#                                  query-term query-register</span>
-<span class="co"># 1 query=cancer&amp;age=under-18&amp;phase=phase-one          EUCTR</span></pre></div>
+<span class="co">#                                                   query-term  query-register</span>
+<span class="co"># 1 query=cancer&amp;age=under-18&amp;phase=phase-one&amp;status=completed           EUCTR</span></pre></div>
 <ul>
 <li>Retrieve protocol-related information, transform and save to database:</li>
 </ul>
-<p>Under the hood, scripts <code>euctr2json.sh</code> and <code>xml2json.php</code> (in <code>ctrdata/exec</code>) transform EUCTR plain text files and CTGOV <code>XML</code> files to <code>ndjson</code> format, which is imported into the database. As a first step, the database is specified using <code>nodbi</code> (using RSQlite or MongoDB as backend). Second, trial information is retrieved and loaded into the database.</p>
+<p>Under the hood, scripts <code>euctr2json.sh</code> and <code>xml2json.php</code> (in <code>ctrdata/exec</code>) transform EUCTR plain text files and CTGOV <code>XML</code> files to <code>ndjson</code> format, which is imported into the database. The database is specified first, using <code>nodbi</code> (using <code>RSQlite</code> or <code>MongoDB</code> as backend); then, trial information is retrieved and loaded into the database:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="co"># Connect to (or newly create) a SQLite database </span>
+<span class="co"># Connect to (or newly create) an SQLite database </span>
 <span class="co"># that is stored in a file on the local system:</span>
 <span class="va">db</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html">src_sqlite</a></span><span class="op">(</span>
   dbname <span class="op">=</span> <span class="st">"some_database_name.sqlite_file"</span>, 
   collection <span class="op">=</span> <span class="st">"some_collection_name"</span><span class="op">)</span>
 
-<span class="co"># Alternative, for a MongoDB database:</span>
-<span class="co"># db &lt;- nodbi::src_mongo(url = "mongodb://localhost", </span>
-<span class="co">#                        db = "some_database_name",</span>
-<span class="co">#                        collection = "some_collection_name")</span>
+<span class="co"># See section Databases below </span>
+<span class="co"># for MongoDB as alternative</span>
 
 <span class="co"># Retrieve trials from public register:</span>
 <span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span>
-  queryterm <span class="op">=</span> 
-    <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"https://www.clinicaltrialsregister.eu/ctr-search/search?"</span>, 
-           <span class="st">"query=cancer&amp;age=under-18&amp;phase=phase-one"</span><span class="op">)</span>,
+  queryterm <span class="op">=</span> <span class="va">q</span>,
   con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></pre></div>
 <ul>
 <li>Analyse</li>
 </ul>
-<p>Tabulate the status of those trials that are recorded to be part of an agreed paediatric development program (paediatric investigation plan, PIP):</p>
+<p>Tabulate the status of trials that are part of an agreed paediatric development program (paediatric investigation plan, PIP):</p>
 <div class="sourceCode" id="cb7"><pre class="downlit">
 <span class="co"># Get all records that have values in the fields of interest:</span>
 <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span>
@@ -292,22 +293,18 @@ citation("ctrdata")
     <span class="st">"a2_eudract_number"</span><span class="op">)</span>,
   con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 
-<span class="co"># Find unique trial identifiers for trials that have nore than one record, </span>
-<span class="co"># for example for several EU Member States: </span>
+<span class="co"># Find unique trial identifiers for trials that have nore than </span>
+<span class="co"># one record, for example for several EU Member States: </span>
 <span class="va">uniqueids</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
-<span class="co"># * Total of 522 records in collection.</span>
-<span class="co"># Searching for duplicates, found </span>
-<span class="co">#  - 340 EUCTR _id were not preferred EU Member State record of trial</span>
-<span class="co"># No CTGOV records found.</span>
-<span class="co"># = Returning keys (_id) of 182 out of total 522 records in collection</span>
 
-<span class="co"># Keep only unique / deduplicated records:</span>
+<span class="co"># Keep only unique / de-duplicated records:</span>
 <span class="va">result</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">[</span> <span class="va">result</span><span class="op">[[</span><span class="st">"_id"</span><span class="op">]</span><span class="op">]</span> <span class="op">%in%</span> <span class="va">uniqueids</span>, <span class="op">]</span>
 
-<span class="co"># Tabulate the clinical trial information:</span>
-<span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span><span class="op">(</span><span class="va">result</span>, <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">p_end_of_trial_status</span>, 
-                   <span class="va">a7_trial_is_part_of_a_paediatric_investigation_plan</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#</span>
+<span class="co"># Tabulate the selected clinical trial information:</span>
+<span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span><span class="op">(</span><span class="va">result</span>, 
+     <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span>
+       <span class="va">p_end_of_trial_status</span>, 
+       <span class="va">a7_trial_is_part_of_a_paediatric_investigation_plan</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#                     a7_trial_is_part_of_a_paediatric_investigation_plan</span>
 <span class="co"># p_end_of_trial_status Information not present in EudraCT No Yes</span>
 <span class="co">#   Completed                                            6 25  14</span>
@@ -319,7 +316,7 @@ citation("ctrdata")
 <li>Add records from another register into the same database</li>
 </ul>
 <!-- end list --><div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="co"># Retrieve trials from public register:</span>
+<span class="co"># Retrieve trials from another register:</span>
 <span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span>
   queryterm <span class="op">=</span> <span class="st">"cond=neuroblastoma&amp;rslt=With&amp;recrs=e&amp;age=0&amp;intr=Drug"</span>, 
   register <span class="op">=</span> <span class="st">"CTGOV"</span>,
@@ -327,12 +324,9 @@ citation("ctrdata")
 <ul>
 <li>Result-related trial information</li>
 </ul>
-<p>Analyse some result details; note how information fields are used with slightly different approaches:</p>
+<p>Analyse some simple result details (see vignette for more examples):</p>
 <div class="sourceCode" id="cb9"><pre class="downlit">
-<span class="co"># Get all records that have values in all specified fields. </span>
-<span class="co"># Note the fields are specific to CTGOV, thus not in EUCTR,</span>
-<span class="co"># which results in a warning that not all reacords in the </span>
-<span class="co"># database have information on the specified fields:  </span>
+<span class="co"># Get all records that have values in all specified fields</span>
 <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span>
   fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>
     <span class="st">"clinical_results.baseline.analyzed_list.analyzed.count_list.count"</span>,
@@ -342,60 +336,74 @@ citation("ctrdata")
     <span class="st">"location"</span><span class="op">)</span>,
   con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 
-<span class="co"># - Count sites: location is a list of lists, </span>
-<span class="co">#   hence the hierarchical extraction by</span>
-<span class="co">#   facility and then name of facility</span>
-<span class="va">result</span><span class="op">$</span><span class="va">number_sites</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span>
-  <span class="va">result</span><span class="op">$</span><span class="va">location</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">[[</span><span class="st">"facility"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"name"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
+<span class="co"># Transform all fields into long name - value format</span>
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dfTrials2Long.html">dfTrials2Long</a></span><span class="op">(</span>df <span class="op">=</span> <span class="va">result</span><span class="op">)</span>
+<span class="co"># View(result)</span>
 
-<span class="co">#   an alternative approach uses a function provided by</span>
-<span class="co">#   ctrdata to extract keys from a list in a data frame:</span>
-<span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span><span class="op">(</span>
-  <span class="fu"><a href="reference/dfListExtractKey.html">dfListExtractKey</a></span><span class="op">(</span>
-    df <span class="op">=</span> <span class="va">result</span>, 
-    list.key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"location"</span>, <span class="st">"facility.name"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, 
-  <span class="fu"><a href="https://rdrr.io/r/base/by.html">by</a></span><span class="op">(</span><span class="va">item</span>, <span class="va">`_id`</span>, <span class="va">max</span><span class="op">)</span>
+<span class="co"># [1.] get counts for arms into data frame</span>
+<span class="va">nsubj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dfName2Value.html">dfName2Value</a></span><span class="op">(</span>
+  df <span class="op">=</span> <span class="va">result</span>, 
+  valuename <span class="op">=</span> <span class="st">"clinical_results.baseline.analyzed_list.analyzed.count_list.count.value"</span>
+<span class="op">)</span> 
+<span class="va">nsubj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tapply.html">tapply</a></span><span class="op">(</span>
+  X <span class="op">=</span> <span class="va">nsubj</span><span class="op">[[</span><span class="st">"value"</span><span class="op">]</span><span class="op">]</span>, 
+  INDEX <span class="op">=</span> <span class="va">nsubj</span><span class="op">[[</span><span class="st">"trial_id"</span><span class="op">]</span><span class="op">]</span>,
+  FUN <span class="op">=</span> <span class="va">sum</span>,
+  simplify <span class="op">=</span> <span class="cn">TRUE</span>
+<span class="op">)</span>
+<span class="va">nsubj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>
+  trial_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">nsubj</span><span class="op">)</span>,
+  <span class="va">nsubj</span>, 
+  stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span>,
+  row.names <span class="op">=</span> <span class="cn">NULL</span>
 <span class="op">)</span>
 
-<span class="co"># - Count total participant numbers, by summing the reporting groups</span>
-<span class="co">#   for which their description does not contain the word "total" </span>
-<span class="co">#   (such as in "Total participants")</span>
-<span class="va">result</span><span class="op">$</span><span class="va">number_participants</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span> <span class="op">{</span>
-    
-    <span class="co"># Participant counts are in a list of elements with attributes, </span>
-    <span class="co"># where attribute value has a vector of numbers per reporting group</span>
-    <span class="va">tmp</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">$</span><span class="va">clinical_results.baseline.analyzed_list.analyzed.count_list.count</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>
-    
-    <span class="co"># Information on reporting groups is in a list with a subelement description</span>
-    <span class="va">tot</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">$</span><span class="va">clinical_results.baseline.group_list.group</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>
-    
-    <span class="co"># see for example https://clinicaltrials.gov/ct2/show/results/NCT00253435#base</span>
-    <span class="va">tmp</span> <span class="op">&lt;-</span> <span class="va">tmp</span><span class="op">[[</span><span class="st">"@attributes"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"value"</span><span class="op">]</span><span class="op">]</span>
-    <span class="va">tmp</span> <span class="op">&lt;-</span> <span class="va">tmp</span><span class="op">[</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">grepl</a></span><span class="op">(</span><span class="st">"(^| )[tT]otal( |$)"</span>, <span class="va">tot</span><span class="op">[[</span><span class="st">"description"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">]</span>
-    
-    <span class="co"># to sum up, change string into integer value.</span>
-    <span class="co"># note that e.g. sum(..., na.rm = TRUE) is not used</span>
-    <span class="co"># since there are no empty entries in these trials</span>
-    <span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">)</span><span class="op">)</span>
-    <span class="va">tmp</span>
-    
-  <span class="op">}</span><span class="op">)</span>
+<span class="co"># [2.] count number of sites</span>
+<span class="va">nsite</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dfName2Value.html">dfName2Value</a></span><span class="op">(</span>
+  df <span class="op">=</span> <span class="va">result</span>, 
+  <span class="co"># some ctgov records use</span>
+  <span class="co"># location.name, others use</span>
+  <span class="co"># location.facility.name</span>
+  valuename <span class="op">=</span> <span class="st">"^location.*name$"</span>
+<span class="op">)</span> 
+<span class="va">nsite</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tapply.html">tapply</a></span><span class="op">(</span>
+  X <span class="op">=</span> <span class="va">nsite</span><span class="op">[[</span><span class="st">"value"</span><span class="op">]</span><span class="op">]</span>, 
+  INDEX <span class="op">=</span> <span class="va">nsite</span><span class="op">[[</span><span class="st">"trial_id"</span><span class="op">]</span><span class="op">]</span>,
+  FUN <span class="op">=</span> <span class="va">length</span>,
+  simplify <span class="op">=</span> <span class="cn">TRUE</span>
+<span class="op">)</span>
+<span class="va">nsite</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>
+  trial_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">nsite</span><span class="op">)</span>,
+  <span class="va">nsite</span>, 
+  stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span>,
+  row.names <span class="op">=</span> <span class="cn">NULL</span>
+<span class="op">)</span>
 
-<span class="co"># Allocation is part of study design information and available</span>
-<span class="co"># as a simple character string, suitable for routine manipulation</span>
-<span class="va">result</span><span class="op">$</span><span class="va">is_controlled</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">grepl</a></span><span class="op">(</span>
-  pattern <span class="op">=</span> <span class="st">"^Random"</span>, 
-  x <span class="op">=</span> <span class="va">result</span><span class="op">$</span><span class="va">study_design_info.allocation</span><span class="op">)</span>
+<span class="co"># [3.] randomised?</span>
+<span class="va">ncon</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dfName2Value.html">dfName2Value</a></span><span class="op">(</span>
+  df <span class="op">=</span> <span class="va">result</span>, 
+  valuename <span class="op">=</span> <span class="st">"study_design_info.allocation"</span>
+<span class="op">)</span> 
+<span class="va">ncon</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>
+  trial_id <span class="op">=</span> <span class="va">ncon</span><span class="op">[[</span><span class="st">"trial_id"</span><span class="op">]</span><span class="op">]</span>, 
+  randomised <span class="op">=</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">ncon</span><span class="op">[[</span><span class="st">"value"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">ncon</span><span class="op">[[</span><span class="st">"value"</span><span class="op">]</span><span class="op">]</span> <span class="op">==</span> <span class="st">"Randomized"</span>,
+  stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span>
+<span class="op">)</span>
+
+<span class="co"># merge sets</span>
+<span class="va">nset</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span><span class="op">(</span><span class="va">nsubj</span>, <span class="va">nsite</span><span class="op">)</span>
+<span class="va">nset</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span><span class="op">(</span><span class="va">nset</span>, <span class="va">ncon</span><span class="op">)</span>
 
 <span class="co"># Example plot</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">result</span><span class="op">)</span> <span class="op">+</span> 
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">nset</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Neuroblastoma trials with results"</span>,
        subtitle <span class="op">=</span> <span class="st">"clinicaltrials.gov"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">number_sites</span>,
-                           y <span class="op">=</span> <span class="va">number_participants</span>,
-                           colour <span class="op">=</span> <span class="va">is_controlled</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>
+    mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>
+      x <span class="op">=</span> <span class="va">nsite</span>,
+      y <span class="op">=</span> <span class="va">nsubj</span>,
+      colour <span class="op">=</span> <span class="va">randomised</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_log10</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_log10</a></span><span class="op">(</span><span class="op">)</span> 
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave</a></span><span class="op">(</span>filename <span class="op">=</span> <span class="st">"inst/image/README-ctrdata_results_neuroblastoma.png"</span>,
@@ -408,9 +416,9 @@ citation("ctrdata")
 <p>The database connection object <code>con</code> is created by calling <code>nodbi::src_*()</code>, with parameters that are specific to the database (e.g., <code>url</code>) and with a special parameter <code>collection</code> that is used by <code>ctrdata</code> to identify which table or collection in the database to use. Any such connection object can then be used by <code>ctrdata</code> and generic functions of <code>nodbi</code> in a consistent way, as shown in the table:</p>
 <table class="table">
 <colgroup>
-<col width="16%">
-<col width="34%">
-<col width="48%">
+<col width="15%">
+<col width="35%">
+<col width="49%">
 </colgroup>
 <thead><tr class="header">
 <th>Purpose</th>
@@ -424,12 +432,12 @@ citation("ctrdata")
 <td><code>dbc &lt;- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection", url = "mongodb://localhost")</code></td>
 </tr>
 <tr class="even">
-<td>Use connection with any ctrdata function</td>
+<td>Use connection with ctrdata functions</td>
 <td><code>ctrdata::{ctr,db}*(con = dbc)</code></td>
 <td><code>ctrdata::{ctr,db}*(con = dbc)</code></td>
 </tr>
 <tr class="odd">
-<td>Use connection with any nodbi function</td>
+<td>Use connection with nodbi functions</td>
 <td><code>nodbi::docdb_*(src = dbc, key = dbc$collection)</code></td>
 <td><code>nodbi::docdb_*(src = dbc, key = dbc$collection)</code></td>
 </tr>
@@ -440,9 +448,8 @@ citation("ctrdata")
 <h1 class="hasAnchor">
 <a href="#features-in-the-works" class="anchor"></a>Features in the works</h1>
 <ul>
-<li><p>Explore using the Windows Subsystem for Linux (WSL) instead of <code>cygwin</code></p></li>
-<li><p>Merge results-related information retrieved from different registers (e.g. corresponding endpoints) and prepare for analysis across trials.</p></li>
-<li><p>Explore relevance to retrieve previous versions of protocol- and results-related information</p></li>
+<li><p>Merge results-related information retrieved from different registers (e.g. corresponding endpoints) for analyses across trials</p></li>
+<li><p>Explore relevance to retrieve previous versions of protocol- or results-related information</p></li>
 </ul>
 </div>
 <div id="acknowledgements" class="section level1">
@@ -458,14 +465,13 @@ citation("ctrdata")
 <a href="#issues-and-notes" class="anchor"></a>Issues and notes</h1>
 <ul>
 <li><p>Please file issues and bugs <a href="https://github.com/rfhb/ctrdata/issues">here</a>.</p></li>
-<li><p>Package <code>ctrdata</code> should work and is continually tested on Linux, Mac OS X and MS Windows systems. Linux and MS Windows are tested using continuous integration, see badges at the beginning of this document. Please file an issue for any problems.</p></li>
-<li><p>The information in the registers may not be fully correct; see for example <a href="https://www.bmj.com/content/361/bmj.k1452">this publication on CTGOV</a>.</p></li>
+<li><p>Information in trial registers may not be fully correct; see for example <a href="https://www.bmj.com/content/361/bmj.k1452">this publication on CTGOV</a>.</p></li>
 <li><p>No attempts were made to harmonise field names between registers (nevertheless, <code><a href="reference/dfMergeTwoVariablesRelevel.html">dfMergeTwoVariablesRelevel()</a></code> can be used to merge and map two variables / fields into one).</p></li>
 </ul>
 </div>
-<div id="annex-representation-of-trial-records-json-in-databases" class="section level1">
+<div id="trial-records-json-in-databases" class="section level1">
 <h1 class="hasAnchor">
-<a href="#annex-representation-of-trial-records-json-in-databases" class="anchor"></a>Annex: Representation of trial records’ JSON in databases</h1>
+<a href="#trial-records-json-in-databases" class="anchor"></a>Trial records’ JSON in databases</h1>
 <div id="mongodb" class="section level2">
 <h2 class="hasAnchor">
 <a href="#mongodb" class="anchor"></a>MongoDB</h2>

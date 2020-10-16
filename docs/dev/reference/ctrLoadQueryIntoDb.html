@@ -109,10 +109,13 @@ different registers." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/ctrdata_get_started.html">Getting started with R package `ctrdata` for clinical trial information</a>
+      <a href="../articles/ctrdata_analyse.html">Analysing clinical trial information</a>
     </li>
     <li>
-      <a href="../articles/ctrdata_usage_examples.html">Examples for using R package `ctrdata` for clinical trial information</a>
+      <a href="../articles/ctrdata_install.html">Install R package `ctrdata`</a>
+    </li>
+    <li>
+      <a href="../articles/ctrdata_retrieve.html">Retrieve clinical trial information</a>
     </li>
   </ul>
 </li>
@@ -260,31 +263,29 @@ nodbi::<a href='https://docs.ropensci.org/nodbi/reference/src_mongo.html'>src_mo
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A list with elements "n" (the number of trials that
-were newly imported or updated with this function call) and
-"ids" (a vector of the _id[s] of these trials), with
-attributes (database connection details and a data frame of
+were newly imported or updated with this function call),
+"ids" (a vector of the _id[s] of these trials) and the
+"queryterm" used, with several attributes set
+(database connection details and a data frame of
 the query history in this database).</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># Retrieve protocol-related information on a</span>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='va'>db</span> <span class='op'>&lt;-</span> <span class='fu'>nodbi</span><span class='fu'>::</span><span class='fu'><a href='https://docs.ropensci.org/nodbi/reference/src_sqlite.html'>src_sqlite</a></span><span class='op'>(</span>
+  collection <span class='op'>=</span> <span class='st'>"test"</span>
+<span class='op'>)</span>
+<span class='co'># Retrieve protocol-related information on a</span>
 <span class='co'># single trial identified by EudraCT number</span>
-<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='va'>db</span> <span class='op'>&lt;-</span> <span class='fu'>nodbi</span><span class='fu'>::</span><span class='fu'><a href='https://docs.ropensci.org/nodbi/reference/src_sqlite.html'>src_sqlite</a></span><span class='op'>(</span>collection <span class='op'>=</span> <span class='st'>"test"</span><span class='op'>)</span>
 <span class='fu'>ctrLoadQueryIntoDb</span><span class='op'>(</span>
-      queryterm <span class='op'>=</span> <span class='st'>"2013-001291-38"</span>, con <span class='op'>=</span> <span class='va'>db</span><span class='op'>)</span>
-<span class='op'>}</span>
+  queryterm <span class='op'>=</span> <span class='st'>"2013-001291-38"</span>, con <span class='op'>=</span> <span class='va'>db</span>
+<span class='op'>)</span>
 <span class='co'># Retrieve protocol-related information on</span>
 <span class='co'># ongoing interventional cancer trials in children</span>
-<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='va'>db</span> <span class='op'>&lt;-</span> <span class='fu'>nodbi</span><span class='fu'>::</span><span class='fu'><a href='https://docs.ropensci.org/nodbi/reference/src_sqlite.html'>src_sqlite</a></span><span class='op'>(</span>collection <span class='op'>=</span> <span class='st'>"test"</span><span class='op'>)</span>
 <span class='fu'>ctrLoadQueryIntoDb</span><span class='op'>(</span>
-     queryterm <span class='op'>=</span> <span class='st'>"cancer&amp;recr=Open&amp;type=Intr&amp;age=0"</span>,
-     register <span class='op'>=</span> <span class='st'>"CTGOV"</span>,
-     con <span class='op'>=</span> <span class='va'>db</span><span class='op'>)</span>
-<span class='fu'>ctrLoadQueryIntoDb</span><span class='op'>(</span>
-     queryterm <span class='op'>=</span> <span class='st'>"NCT02239861"</span>,
-     register <span class='op'>=</span> <span class='st'>"CTGOV"</span>,
-     con <span class='op'>=</span> <span class='va'>db</span><span class='op'>)</span>
+  queryterm <span class='op'>=</span> <span class='st'>"cancer&amp;recr=Open&amp;type=Intr&amp;age=0"</span>,
+  register <span class='op'>=</span> <span class='st'>"CTGOV"</span>,
+  con <span class='op'>=</span> <span class='va'>db</span>
+<span class='op'>)</span>
 <span class='op'>}</span>
 
 </div></pre>
