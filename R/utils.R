@@ -1533,10 +1533,38 @@ dfMergeTwoVariablesRelevel <- function(
   # find variables in data frame and merge
   tmp <- match(colnames, names(df))
   df <- df[, tmp]
-  df[, 1] <- ifelse(is.na(tt <- df[, 1]), "", tt)
-  df[, 2] <- ifelse(is.na(tt <- df[, 2]), "", tt)
-  tmp <- paste0(df[, 1], df[, 2])
 
+  # # bind as ...
+  if (class(df[, 1]) == class(df[, 2]) &&
+      class(df[, 1]) != "character") {
+    # values, with first having
+    # priority over the second
+    tmp <- ifelse(is.na(tt <- df[, 1]), df[, 2], df[, 1])
+    if (nrow(df)) {
+      warning("Some rows had values for both columns, ",
+              "used ", colnames[1],
+              noBreaks. = TRUE, immediate. = TRUE)
+    }
+  } else {
+    # strings, concatenated
+    tmp <- paste0(
+      ifelse(is.na(tt <- as.character(df[, 1])), "", tt),
+      ifelse(is.na(tt <- as.character(df[, 2])), "", tt))
+  }
+
+  # # bind as strings, concatenated
+  # tmp <- paste0(
+  #   ifelse(is.na(tt <- as.character(df[, 1])), "", tt),
+  #   ifelse(is.na(tt <- as.character(df[, 2])), "", tt))
+
+  # and then type where possible
+  if (class(df[, 1]) == class(df[, 2]) &&
+      class(df[, 1]) != "character") {
+    mode(tmp) <- mode(df[, 1])
+    class(tmp) <- class(df[, 1])
+  }
+
+  # relevel is specified
   if (!is.null(levelslist)) {
 
     # check
