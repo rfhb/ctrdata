@@ -1394,6 +1394,9 @@ dfListExtractKey <- function(
     list(c("endPoints.endPoint", "^title")
     )) {
 
+  # deprecate
+  .Deprecated("dfName2Value")
+
   # check
   if (!("_id" %in% names(df))) {
     stop("Data frame 'df' lacks '_id' column.",
@@ -1465,7 +1468,8 @@ dfListExtractKey <- function(
 
   # return
   out
-}
+
+} # end dfListExtractKey
 
 
 #' Merge two variables into one, optionally map values to new levels
