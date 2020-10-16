@@ -2,7 +2,7 @@ Package: ctrdata
 Type: Package
 Title: Retrieve and Analyze Clinical Trials in Public Registers
 Version: 1.3.2.9001
-Date: 2020-10-08
+Date: 2020-10-16
 Imports: jsonlite, httr, curl, clipr, xml2, rvest, nodbi (>= 0.4)
 SystemRequirements: sed, php, cat, perl
 URL: https://github.com/rfhb/ctrdata
@@ -12,12 +12,13 @@ Description: Provides functions for querying, retrieving and analysing
         two public registers, the European Union Clinical Trials Register
         (EUCTR, <https://www.clinicaltrialsregister.eu/>) and
         ClinicalTrials.gov (CTGOV, <https://clinicaltrials.gov/>). The
-        information is transformed and then stored in a database (nodbi).
-        Functions are provided for accessing and analysing the locally
-        stored information on the clinical trials, as well as for
-        identifying duplicate records. The package is motivated by the need
-        for aggregating and trend-analysing the design, conduct and outcomes
-        across clinical trials.
+        trial information is transformed and stored in a database (RSQLite 
+        or MongoDB, via nodbi). Functions are provided to identify de-
+        duplicated records, to easily find and extract variables (fields)
+        of interest even from complex nesting as used by the registers, 
+        and to update previous queries that users retrieved in a database. 
+        The package can be used for meta analysis and trend-analysis of
+        the design and conduct as well as results of clinical trials.
 License: MIT + file LICENSE
 RoxygenNote: 7.1.1
 LazyData: true

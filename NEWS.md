@@ -1,15 +1,28 @@
+# ctrdata 1.3.2.9001
+ - 2020-10-11
+ - new: easy access to variables with
+   dfTrials2Long() + dfName2Value()
+ - improved dfMergeTwoVariablesRelevel() 
+   to maintain type of data
+ - revised and simplified vignettes
+ - deprecated: dfListExtractKey()
+ - refactored parts of euctr retrieval
+ - notify user when euctr register server
+   does not permit compression and how 
+   long retrieval will take
+
 # ctrdata 1.3.2.9000
  - 2020-10-08
  - fixed identifying unique ids
- 
+
 # ctrdata 1.3.2
  - 2020-10-03
  - quote system file paths
- 
+
 # ctrdata 1.3.1
  - 2020-08-01
  - fix error in CI tests
- 
+
 # ctrdata 1.3.0
  - 2020-07-27
  - workaround EUCTR certificate issue
