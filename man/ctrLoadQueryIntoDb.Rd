@@ -77,9 +77,10 @@ nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()}
 }
 \value{
 A list with elements "n" (the number of trials that
-were newly imported or updated with this function call) and
-"ids" (a vector of the _id[s] of these trials), with
-attributes (database connection details and a data frame of
+were newly imported or updated with this function call),
+"ids" (a vector of the _id[s] of these trials) and the
+"queryterm" used, with several attributes set
+(database connection details and a data frame of
 the query history in this database).
 }
 \description{
@@ -89,25 +90,22 @@ trial records in a database, even if from different queries or
 different registers.
 }
 \examples{
+\dontrun{
+db <- nodbi::src_sqlite(
+  collection = "test"
+)
 # Retrieve protocol-related information on a
 # single trial identified by EudraCT number
-\dontrun{
-db <- nodbi::src_sqlite(collection = "test")
 ctrLoadQueryIntoDb(
-      queryterm = "2013-001291-38", con = db)
-}
+  queryterm = "2013-001291-38", con = db
+)
 # Retrieve protocol-related information on
 # ongoing interventional cancer trials in children
-\dontrun{
-db <- nodbi::src_sqlite(collection = "test")
 ctrLoadQueryIntoDb(
-     queryterm = "cancer&recr=Open&type=Intr&age=0",
-     register = "CTGOV",
-     con = db)
-ctrLoadQueryIntoDb(
-     queryterm = "NCT02239861",
-     register = "CTGOV",
-     con = db)
+  queryterm = "cancer&recr=Open&type=Intr&age=0",
+  register = "CTGOV",
+  con = db
+)
 }
 
 }

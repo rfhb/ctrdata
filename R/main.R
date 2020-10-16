@@ -63,31 +63,29 @@
 #' \code{TRUE}; default is \code{FALSE}.
 #'
 #' @return A list with elements "n" (the number of trials that
-#' were newly imported or updated with this function call) and
-#' "ids" (a vector of the _id[s] of these trials), with
-#' attributes (database connection details and a data frame of
+#' were newly imported or updated with this function call),
+#' "ids" (a vector of the _id[s] of these trials) and the
+#' "queryterm" used, with several attributes set
+#' (database connection details and a data frame of
 #' the query history in this database).
 #'
 #' @examples
+#' \dontrun{
+#' db <- nodbi::src_sqlite(
+#'   collection = "test"
+#' )
 #' # Retrieve protocol-related information on a
 #' # single trial identified by EudraCT number
-#' \dontrun{
-#' db <- nodbi::src_sqlite(collection = "test")
 #' ctrLoadQueryIntoDb(
-#'       queryterm = "2013-001291-38", con = db)
-#' }
+#'   queryterm = "2013-001291-38", con = db
+#' )
 #' # Retrieve protocol-related information on
 #' # ongoing interventional cancer trials in children
-#' \dontrun{
-#' db <- nodbi::src_sqlite(collection = "test")
 #' ctrLoadQueryIntoDb(
-#'      queryterm = "cancer&recr=Open&type=Intr&age=0",
-#'      register = "CTGOV",
-#'      con = db)
-#' ctrLoadQueryIntoDb(
-#'      queryterm = "NCT02239861",
-#'      register = "CTGOV",
-#'      con = db)
+#'   queryterm = "cancer&recr=Open&type=Intr&age=0",
+#'   register = "CTGOV",
+#'   con = db
+#' )
 #' }
 #'
 #' @export
@@ -270,6 +268,9 @@ ctrLoadQueryIntoDb <- function(
     "CTGOV" = do.call(ctrLoadQueryIntoDbCtgov, params),
     "EUCTR" = do.call(ctrLoadQueryIntoDbEuctr, params)
   )
+
+  # add query used for function
+  imported <- c(imported, "queryterm" = querytermoriginal)
 
   ## finalise
 
@@ -571,6 +572,8 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
 
   # initialise counters
   retimp <- NULL
+  fc <- length(tempFiles)
+  ic <- 0
 
   # iterate over files
   for (tempFile in tempFiles) {
@@ -588,18 +591,25 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
     # readLines produces: \"_id\": \"2007-000371-42-FR\"
     ids <- sub(".*_id\":[ ]*\"(.*?)\".*", "\\1", tmplines)
 
-    # ids should always be found
+    # ids should always be found and
+    # later, one id will be assumed
+    # to be on one line each
     if (all(ids == "")) {
       stop("No _id(s) detected in JSON file ",
            tempFile, call. = FALSE)
     }
 
+    # initialise counter
+    lc <- length(ids)
+    ic <- ic + 1
+
     # check if in database, create or update
     tmpinsert <- lapply(seq_along(ids), function(i) {
 
       # inform user
-      if (!(i %% 100)) message(i, " ", appendLF = FALSE)
-      if (verbose)     message(i, " ", appendLF = FALSE)
+      message("JSON line #: ", i, " / ", lc,
+              ", file #: ", ic, " / ", fc, "\r",
+              appendLF = FALSE)
 
       # check validity
       tmpvalidate <- jsonlite::validate(tmplines[i])
@@ -630,8 +640,8 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
                nodbi::docdb_update(src = con,
                                    key = con$collection,
                                    value = value)
-        )},
-        silent = TRUE)
+        )
+      }, silent = TRUE)
 
       # return to sapply
       if ("try-error" %in% class(tmp)) {
@@ -691,7 +701,7 @@ dbCTRAnnotateQueryRecords <- function(
   verbose){
 
   # debug
-  if (verbose) message("* Running dbCTRAnnotateQueryRecords ...")
+  if (verbose) message("* Running dbCTRAnnotateQueryRecords...")
   if (verbose) message(recordnumbers)
   if (verbose) message(annotations)
   if (verbose) message(annotation.mode)
@@ -756,7 +766,7 @@ dbCTRUpdateQueryHistory <- function(
   verbose){
 
   # debug
-  if (verbose) message("Running dbCTRUpdateQueryHistory ...")
+  if (verbose) message("Running dbCTRUpdateQueryHistory...")
 
   # retrieve existing history data
   hist <- suppressMessages(
@@ -1015,7 +1025,7 @@ ctrLoadQueryIntoDbCtgov <- function(
   } # if windows
 
   # run conversion of downloaded xml to json
-  message("\n(2/3) Converting to JSON ...")
+  message("\n(2/3) Converting to JSON...")
   if (verbose) message("DEBUG: ", xml2json)
   imported <- system(xml2json, intern = TRUE)
 
@@ -1042,7 +1052,7 @@ ctrLoadQueryIntoDbCtgov <- function(
   } # if annotation.text
 
   ## run import
-  message("(3/3) Importing JSON records into database ...")
+  message("(3/3) Importing JSON records into database...")
   if (verbose) message("DEBUG: ", tempDir)
   imported <- dbCTRLoadJSONFiles(dir = tempDir,
                                  con = con,
@@ -1107,8 +1117,7 @@ ctrLoadQueryIntoDbEuctr <- function(
     queryterm)
 
   # inform user
-  message("* Checking trials in EUCTR:",
-          appendLF = TRUE)
+  message("* Checking trials in EUCTR:", appendLF = FALSE)
 
   # create empty temporary directory on localhost for
   # download from register into temporary directy
@@ -1470,12 +1479,12 @@ ctrLoadQueryIntoDbEuctr <- function(
 
   # run conversion of text files saved
   # into file system to json file
-  message("\n(2/3) Converting to JSON ...")
+  message("\n(2/3) Converting to JSON...")
   if (verbose) message("DEBUG: ", euctr2json)
   imported <- system(euctr2json, intern = TRUE)
 
   # run import into mongo from json files
-  message("(3/3) Importing JSON records into database ...")
+  message("(3/3) Importing JSON records into database...")
   if (verbose) message("DEBUG: ", tempDir)
   imported <- dbCTRLoadJSONFiles(dir = tempDir,
                                  con = con,
@@ -1666,12 +1675,12 @@ ctrLoadQueryIntoDbEuctr <- function(
     } # if windows
 
     # run conversion of downloaded xml to json
-    message("\n(2/4) Converting to JSON ...")
+    message("\n(2/4) Converting to JSON...")
     if (verbose) message("DEBUG: ", xml2json)
     importedresults <- system(xml2json, intern = TRUE)
 
     # iterate over batches of results files
-    message("(3/4) Importing JSON into database ...")
+    message("(3/4) Importing JSON into database...")
     importedresults <- NULL
     for (i in 1:(resultsNumBatches +
                  ifelse(resultsNumModulo > 0, 1, 0))) {
@@ -1742,7 +1751,7 @@ ctrLoadQueryIntoDbEuctr <- function(
       # about amendment to the study, as presented at the bottom
       # of the webpage for the respective trial results
       message("(4/4) Retrieving results history and importing ",
-              "into database ...", appendLF = FALSE)
+              "into database...", appendLF = FALSE)
       for (i in 1:(resultsNumBatches +
                    ifelse(resultsNumModulo > 0, 1, 0))) {
 

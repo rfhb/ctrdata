@@ -31,8 +31,9 @@ in sequence of their use in a workflow:
 
 
 \link{dbGetFieldsIntoDf},
+\link{dfTrials2Long},
+\link{dfName2Value}.
 \link{dfMergeTwoVariablesRelevel},
-\link{dfListExtractKey}.
 }
 
 \section{Deduplication}{
