@@ -6,8 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Retrieve or update information on clinical trials from register
-and store in database — ctrLoadQueryIntoDb • ctrdata</title>
+<title>Extract trial information into long format — dfTrials2Long • ctrdata</title>
 
 
 <!-- jquery -->
@@ -46,12 +45,14 @@ and store in database — ctrLoadQueryIntoDb • ctrdata</title>
 
 
 
-<meta property="og:title" content="Retrieve or update information on clinical trials from register
-and store in database — ctrLoadQueryIntoDb" />
-<meta property="og:description" content="This is the main function of package ctrdata for accessing
-registers. Note that re-rerunning this function adds or updates
-trial records in a database, even if from different queries or
-different registers." />
+<meta property="og:title" content="Extract trial information into long format — dfTrials2Long" />
+<meta property="og:description" content="The function works with procotol- and results-
+related information. It converts lists and other
+values into individual rows of a long data frame.
+From the resulting data frame, values of interest
+can then be selected (e.g. select and outcome
+and its analysis by number of the measure which
+has &quot;Hazard Ratio&quot; in its name)." />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:creator" content="@rfhb" />
 <meta name="twitter:site" content="@rfhb" />
@@ -143,145 +144,54 @@ different registers." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Retrieve or update information on clinical trials from register
-and store in database</h1>
-    <small class="dont-index">Source: <a href='https://github.com/rfhb/ctrdata/blob/master/R/main.R'><code>R/main.R</code></a></small>
-    <div class="hidden name"><code>ctrLoadQueryIntoDb.Rd</code></div>
+    <h1>Extract trial information into long format</h1>
+    <small class="dont-index">Source: <a href='https://github.com/rfhb/ctrdata/blob/master/R/utils.R'><code>R/utils.R</code></a></small>
+    <div class="hidden name"><code>dfTrials2Long.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This is the main function of package <a href='ctrdata.html'>ctrdata</a> for accessing
-registers. Note that re-rerunning this function adds or updates
-trial records in a database, even if from different queries or
-different registers.</p>
+    <p>The function works with procotol- and results-
+related information. It converts lists and other
+values into individual rows of a long data frame.
+From the resulting data frame, values of interest
+can then be selected (e.g. select and outcome
+and its analysis by number of the measure which
+has "Hazard Ratio" in its name).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ctrLoadQueryIntoDb</span><span class='op'>(</span>
-  queryterm <span class='op'>=</span> <span class='st'>""</span>,
-  register <span class='op'>=</span> <span class='st'>"EUCTR"</span>,
-  querytoupdate <span class='op'>=</span> <span class='fl'>0L</span>,
-  forcetoupdate <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  euctrresults <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  euctrresultshistory <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  annotation.text <span class='op'>=</span> <span class='st'>""</span>,
-  annotation.mode <span class='op'>=</span> <span class='st'>"append"</span>,
-  parallelretrievals <span class='op'>=</span> <span class='fl'>10L</span>,
-  only.count <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  <span class='va'>con</span>,
-  verbose <span class='op'>=</span> <span class='cn'>FALSE</span>
-<span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>dfTrials2Long</span><span class='op'>(</span><span class='va'>df</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>queryterm</th>
-      <td><p>Either a string with the full URL of a search in
-a register or the data frame returned by the
-<a href='ctrGetQueryUrlFromBrowser.html'>ctrGetQueryUrlFromBrowser</a> or the
-<a href='dbQueryHistory.html'>dbQueryHistory</a> functions.
-The queryterm is recorded in the <code>collection</code> for later
-use to update records.</p></td>
-    </tr>
-    <tr>
-      <th>register</th>
-      <td><p>Vector of abbreviations of the register to query,
-defaults to "EUCTR".</p></td>
-    </tr>
-    <tr>
-      <th>querytoupdate</th>
-      <td><p>Either the word "last" or the number of the
-query (based on <a href='dbQueryHistory.html'>dbQueryHistory</a>) that should be run to
-retrieve any trial records that are new or have been updated
-since this query was run the last time.
-This parameter takes precedence over <code>queryterm</code>.
-For EUCTR, updates are available only for the last seven days;
-the query is run again if more time has passed since it was
-run last.</p></td>
-    </tr>
-    <tr>
-      <th>forcetoupdate</th>
-      <td><p>If <code>TRUE</code>, run again the query
-given in <code>querytoupdate</code>, irrespective of when it was
-run last (default is <code>FALSE</code>).</p></td>
-    </tr>
-    <tr>
-      <th>euctrresults</th>
-      <td><p>If <code>TRUE</code>, also download available
-results when retrieving and loading trials from EUCTR. This
-slows down this function. (For CTGOV, all available results
-are always retrieved and loaded.)</p></td>
-    </tr>
-    <tr>
-      <th>euctrresultshistory</th>
-      <td><p>If <code>TRUE</code>, also download
-available history of results publication in EUCTR.
-This is quite time-consuming (default is <code>FALSE</code>).</p></td>
-    </tr>
-    <tr>
-      <th>annotation.text</th>
-      <td><p>Text to be including in the records
-retrieved with the current query, in the field "annotation".</p></td>
-    </tr>
-    <tr>
-      <th>annotation.mode</th>
-      <td><p>One of "append" (default), "prepend"
-or "replace" for new annotation.text with respect to any
-existing annotation for the records retrieved with the
-current query.</p></td>
-    </tr>
-    <tr>
-      <th>parallelretrievals</th>
-      <td><p>Number of parallel downloads of
-information from the register, defaults to 10.</p></td>
-    </tr>
-    <tr>
-      <th>only.count</th>
-      <td><p>Set to <code>TRUE</code> to return only the
-number of trial records found in the register for the query.
-Does not load trial information into the database.
-Default is <code>FALSE</code>.</p></td>
-    </tr>
-    <tr>
-      <th>con</th>
-      <td><p>A <a href='https://docs.ropensci.org/nodbi/reference/src.html'>src</a> connection object, as obtained with
-nodbi::<a href='https://docs.ropensci.org/nodbi/reference/src_mongo.html'>src_mongo</a>() or nodbi::<a href='https://docs.ropensci.org/nodbi/reference/src_sqlite.html'>src_sqlite</a>()</p></td>
-    </tr>
-    <tr>
-      <th>verbose</th>
-      <td><p>Printing additional information if set to
-<code>TRUE</code>; default is <code>FALSE</code>.</p></td>
+      <th>df</th>
+      <td><p>Data frame with colums including
+the trial identifier (<code>_id</code>) and
+one or more variables as obtained from
+<a href='dbGetFieldsIntoDf.html'>dbGetFieldsIntoDf</a></p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A list with elements "n" (the number of trials that
-were newly imported or updated with this function call),
-"ids" (a vector of the _id[s] of these trials) and the
-"queryterm" used, with several attributes set
-(database connection details and a data frame of
-the query history in this database).</p>
+    <p>A data frame with the five columns:
+ trial_id, main_id, sub_id, name, value</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='va'>db</span> <span class='op'>&lt;-</span> <span class='fu'>nodbi</span><span class='fu'>::</span><span class='fu'><a href='https://docs.ropensci.org/nodbi/reference/src_sqlite.html'>src_sqlite</a></span><span class='op'>(</span>
-  collection <span class='op'>=</span> <span class='st'>"test"</span>
+  collection <span class='op'>=</span> <span class='st'>"my_collection"</span>
 <span class='op'>)</span>
-<span class='co'># Retrieve protocol-related information on a</span>
-<span class='co'># single trial identified by EudraCT number</span>
-<span class='fu'>ctrLoadQueryIntoDb</span><span class='op'>(</span>
-  queryterm <span class='op'>=</span> <span class='st'>"2013-001291-38"</span>, con <span class='op'>=</span> <span class='va'>db</span>
-<span class='op'>)</span>
-<span class='co'># Retrieve protocol-related information on</span>
-<span class='co'># ongoing interventional cancer trials in children</span>
-<span class='fu'>ctrLoadQueryIntoDb</span><span class='op'>(</span>
-  queryterm <span class='op'>=</span> <span class='st'>"cancer&amp;recr=Open&amp;type=Intr&amp;age=0"</span>,
-  register <span class='op'>=</span> <span class='st'>"CTGOV"</span>,
+<span class='va'>df</span> <span class='op'>&lt;-</span> <span class='fu'><a href='dbGetFieldsIntoDf.html'>dbGetFieldsIntoDf</a></span><span class='op'>(</span>
+  fields <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>
+    <span class='st'>"clinical_results.outcome_list.outcome"</span><span class='op'>)</span>,
   con <span class='op'>=</span> <span class='va'>db</span>
 <span class='op'>)</span>
+<span class='fu'>dfTrials2Long</span><span class='op'>(</span>
+  df <span class='op'>=</span> <span class='va'>df</span>
+<span class='op'>)</span>
 <span class='op'>}</span>
-
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
