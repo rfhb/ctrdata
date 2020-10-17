@@ -22,7 +22,7 @@ motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. The package
 is to be used within the [R](https://www.r-project.org/) system.
 
-Last reviewed on 2020-10-11 for version 1.4
+Last reviewed on 2020-10-17 for version 1.4
 
 Main features:
 
@@ -126,9 +126,9 @@ The functions are listed in the approximate order of use.
 | `dbFindIdsUniqueTrials()`          | Get the identifiers of de-duplicated trials in the database                                                         |
 | `dbFindFields()`                   | Find names of variables (fields) in the database                                                                    |
 | `dbGetFieldsIntoDf()`              | Create a data.frame from trial records in the database with the specified fields                                    |
-| `dfTrials2Long()`                  | Transform a data.frame from `dbGetFieldsIntoDf()` into a long name-value data.frame, including deeply nested fields |
-| `dfName2Value()`                   | From a long name-value data.frame, extract values for variables (fields) of interest (e.g., endpoints)              |
-| `dfMergeTwoVariablesRelevel()`     | Merge two simple variables into a new variable, optionally map values to a new set of values                        |
+| `dfTrials2Long()` 🆕                | Transform a data.frame from `dbGetFieldsIntoDf()` into a long name-value data.frame, including deeply nested fields |
+| `dfName2Value()` 🆕                 | From a long name-value data.frame, extract values for variables (fields) of interest (e.g., endpoints)              |
+| `dfMergeTwoVariablesRelevel()` ⌛   | Deprecated - Merge two simple variables into a new variable, optionally map values to a new set of values           |
 | `installCygwinWindowsDoInstall()`  | Convenience function to install a cygwin environment (MS Windows only)                                              |
 
 # Example workflow

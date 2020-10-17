@@ -11,4 +11,8 @@
 None at this time
 
 ## Submission reason
-* shell quote when using system.file
+* additional functionality to handle nested data
+* deprecated earlier functions for this
+* partly refactored register retrieval
+* harmonised user information
+* simplified vignettes

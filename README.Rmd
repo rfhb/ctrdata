@@ -17,6 +17,9 @@ knitr::opts_chunk$set(
   fig.path = "inst/image/README-",
   out.width = "100%"
 )
+
+# devtools::install_github("hadley/emo")
+# devtools::install_github("ropenscilabs/icon")
 ```
 
 <!-- badges: start -->
@@ -31,7 +34,7 @@ knitr::opts_chunk$set(
 
 The package `ctrdata` provides functions for retrieving (downloading) information on clinical trials from public registers, and for aggregating and analysing this information. Use with  [R](https://www.r-project.org/) for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. The package is to be used within the [R](https://www.r-project.org/) system. 
 
-Last reviewed on 2020-10-11 for version 1.4
+Last reviewed on 2020-10-17 for version 1.4
 
 Main features:
 
@@ -103,9 +106,9 @@ Function name | Function purpose
 `dbFindIdsUniqueTrials()` | Get the identifiers of de-duplicated trials in the database
 `dbFindFields()` | Find names of variables (fields) in the database
 `dbGetFieldsIntoDf()` | Create a data.frame from trial records in the database with the specified fields
-`dfTrials2Long()` | Transform a data.frame from `dbGetFieldsIntoDf()` into a long name-value data.frame, including deeply nested fields
-`dfName2Value()` | From a long name-value data.frame, extract values for variables (fields) of interest (e.g., endpoints)
-`dfMergeTwoVariablesRelevel()` | Merge two simple variables into a new variable, optionally map values to a new set of values
+`dfTrials2Long()` `r emo::ji("new")` | Transform a data.frame from `dbGetFieldsIntoDf()` into a long name-value data.frame, including deeply nested fields
+`dfName2Value()` `r emo::ji("new")` | From a long name-value data.frame, extract values for variables (fields) of interest (e.g., endpoints)
+`dfMergeTwoVariablesRelevel()` `r emo::ji("timer")`  | Deprecated - Merge two simple variables into a new variable, optionally map values to a new set of values
 `installCygwinWindowsDoInstall()` | Convenience function to install a cygwin environment (MS Windows only)
 
 # Example workflow

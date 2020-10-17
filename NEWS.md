@@ -1,5 +1,5 @@
-# ctrdata 1.3.2.9001
- - 2020-10-11
+# ctrdata 1.4
+ - 2020-10-17
  - new: easy access to variables with
    dfTrials2Long() + dfName2Value()
  - improved dfMergeTwoVariablesRelevel() 
