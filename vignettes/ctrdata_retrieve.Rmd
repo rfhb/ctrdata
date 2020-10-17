@@ -33,7 +33,7 @@ knitr::opts_chunk$set(
 library(ctrdata)
 ```
 
-Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: Ralf Herold (2020). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.4, https://github.com/rfhb/ctrdata
+Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: Ralf Herold (2020). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.4, https://cran.r-project.org/package=ctrdata
 
 ## Open register's advanced search page in browser
 
@@ -100,7 +100,7 @@ ctrLoadQueryIntoDb(
 )$n
 # [1] 60
 
-# Use search q (defined in previous step): 
+# Retrieve records, download into database
 ctrLoadQueryIntoDb(
   queryterm = q,
   con = db
@@ -143,11 +143,11 @@ ctrLoadQueryIntoDb(
 )
 ```
 
-The download or presence of results is not recorded in `dbQueryHistory()` because the availability of results increased, also for previously retrieved trials. 
+The download or presence of results is not recorded in `dbQueryHistory()` because the availability of results increases over time. 
 
 # Add trial information from other register
 
-The same database and table / collection can be used to store (and analyse) trial information from different registers. Example: 
+The same database and table / collection can be used to store (and analyse) trial information from different registers. At the moment, `ctrdata` only supports the two registers https://ClinicalTrials.Gov/ and https://ClinicalTrialsRegister.EU/. Example: 
 
 ```{r}
 ctrLoadQueryIntoDb(
@@ -165,7 +165,7 @@ ctrLoadQueryIntoDb(
 
 # Add personal annotations when retrieving trial information
 
-(Only) When downloading trial information, the user can specify an annotation to all records that are downloaded. By default, annotations are accumulated if trial records are loaded again or updated; alternatively, annotations can be replaced. 
+When downloading trial information, the user can specify an annotation to all records that are downloaded. By default, annotations are accumulated if trial records are loaded again or updated; alternatively, annotations can be replaced. 
 
 Annotations are useful for analyses, for example to specially identify subsets of records in the database. 
 
@@ -193,6 +193,7 @@ Not all registers automatically expand search terms to include alternative terms
 ctrFindActiveSubstanceSynonyms(
   activesubstance = "imatinib"
 )
+# [1] "imatinib"  "gleevec"   "sti 571"   "glivec"    "CGP 57148" "st1571"
 ```
 
 These names can then be used in queries in any register. 
@@ -204,24 +205,25 @@ unlink("sqlite_file.sql")
 
 # Using a mongo database
 
-This example works with a free service [here](https://www.mongodb.com/cloud/atlas). Note that the user name and password need to be encoded. The format of the connection string is documented [here](https://docs.mongodb.com/manual/reference/connection-string/). 
+This example works with a free service [here](https://www.mongodb.com/cloud/atlas). Note that the user name and password need to be encoded. The format of the connection string is documented at https://docs.mongodb.com/manual/reference/connection-string/. 
 
 ```{r remote_mongo}
 
-# Specify base uri for remote mongodb server as part of the encoded connection string
+# Specify base uri for remote mongodb server,
+#  as part of the encoded connection string
 db <- nodbi::src_mongo(
-  # This provides a read-only access
+  # Note: this provides a read-only access
   url = "mongodb+srv://DWbJ7Wh:bdTHh5cS@cluster0-b9wpw.mongodb.net",
   db = "dbperm",
   collection = "dbperm")
 
-# Database connection can just be used to retrieve data
+# Since the above access is read-only,
+# just obtain fields of interest: 
 result <- dbGetFieldsIntoDf(
   fields = c("a2_eudract_number",
              "overall_status",
-             "record_last_import",
-             "primary_completion_date",
-             "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database",
              "e71_human_pharmacology_phase_i"), 
   con = db)
+nrow(result)
+# [1] 7
 ```

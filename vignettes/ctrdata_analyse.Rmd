@@ -30,7 +30,7 @@ knitr::opts_chunk$set(
 
 General information on the `ctrdata` package is available here: [https://github.com/rfhb/ctrdata](https://github.com/rfhb/ctrdata). 
 
-Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: Ralf Herold (2020). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.4, https://github.com/rfhb/ctrdata
+Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: Ralf Herold (2020). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.4, https://cran.r-project.org/package=ctrdata
 
 # Preparations 
 
@@ -211,6 +211,7 @@ box()
 dev.off()
 ```
 ![Histogram1](nb1.png)
+
 # Merge corresponding fields from registers
 
 However, the field "n_date_of_competent_authority_decision" used above exists only in EUCTR, and it corresponds to the field "start_date" in CTGOV. Thus, to provide a wider picture, the two fields can be merged for analysis, using the convenience function `dfMergeTwoVariablesRelevel()` in `ctrdata` package: 

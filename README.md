@@ -42,13 +42,13 @@ Main features:
     functions) or others systems. Unique (de-duplicated) trial records
     are identified across registers. `ctrdata` can merge and recode
     information (fields) and also provides easy access even to
-    deeply-nested fields (new in version 1.4).
+    deeply-nested fields (🆕 new in version 1.4).
 
 Remember to respect the registers’ terms and conditions (see
 `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
 package in any publication as follows: Ralf Herold (2020). ctrdata:
 Retrieve and Analyze Clinical Trials in Public Registers. R package
-version 1.4, <https://github.com/rfhb/ctrdata>
+version 1.4, <https://cran.r-project.org/package=ctrdata>
 
 <!--
 
@@ -128,7 +128,7 @@ The functions are listed in the approximate order of use.
 | `dbGetFieldsIntoDf()`              | Create a data.frame from trial records in the database with the specified fields                                    |
 | `dfTrials2Long()` 🆕                | Transform a data.frame from `dbGetFieldsIntoDf()` into a long name-value data.frame, including deeply nested fields |
 | `dfName2Value()` 🆕                 | From a long name-value data.frame, extract values for variables (fields) of interest (e.g., endpoints)              |
-| `dfMergeTwoVariablesRelevel()` ⌛   | Deprecated - Merge two simple variables into a new variable, optionally map values to a new set of values           |
+| `dfMergeTwoVariablesRelevel()` ⏳   | Deprecated - Merge two simple variables into a new variable, optionally map values to a new set of values           |
 | `installCygwinWindowsDoInstall()`  | Convenience function to install a cygwin environment (MS Windows only)                                              |
 
 # Example workflow
@@ -251,7 +251,7 @@ ctrLoadQueryIntoDb(
 Analyse some simple result details (see vignette for more examples):
 
 ``` r
-# Get all records that have values in all specified fields
+# Get all records that have values in any of the specified fields
 result <- dbGetFieldsIntoDf(
   fields = c(
     "clinical_results.baseline.analyzed_list.analyzed.count_list.count",
