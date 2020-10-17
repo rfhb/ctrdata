@@ -46,10 +46,11 @@ expect_message(
 # test
 expect_true(
   "integer" %in% class(
-    suppressMessages(
-      dfMergeTwoVariablesRelevel(
-        df = df,
-        colnames = c("var1", "var2")))))
+    suppressWarnings(
+      suppressMessages(
+        dfMergeTwoVariablesRelevel(
+          df = df,
+          colnames = c("var1", "var2"))))))
 
 # test
 expect_message(
@@ -74,6 +75,13 @@ expect_warning(
     df = df,
     varnames = c("var1", "var2")),
   "Parameter varnames is deprecated, use colnames instead")
+
+# test
+expect_warning(
+  dfMergeTwoVariablesRelevel(
+    df = df,
+    varnames = c("var1", "var2")),
+  "Some rows had values for both columns")
 
 # test
 expect_error(
