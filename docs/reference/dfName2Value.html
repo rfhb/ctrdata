@@ -6,7 +6,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • ctrdata</title>
+<title>Extract information of interest (e.g., endpoint)
+from long data frame of protocol- or result-related
+trial information as returned from dfTrials2Long — dfName2Value • ctrdata</title>
 
 
 <!-- jquery -->
@@ -45,7 +47,12 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="Extract information of interest (e.g., endpoint)
+from long data frame of protocol- or result-related
+trial information as returned from dfTrials2Long — dfName2Value" />
+<meta property="og:description" content="Extract information of interest (e.g., endpoint)
+from long data frame of protocol- or result-related
+trial information as returned from dfTrials2Long" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:creator" content="@rfhb" />
 <meta name="twitter:site" content="@rfhb" />
@@ -67,7 +74,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -141,158 +148,95 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>Extract information of interest (e.g., endpoint)
+from long data frame of protocol- or result-related
+trial information as returned from <a href='dfTrials2Long.html'>dfTrials2Long</a></h1>
+    <small class="dont-index">Source: <a href='https://github.com/rfhb/ctrdata/blob/master/R/utils.R'><code>R/utils.R</code></a></small>
+    <div class="hidden name"><code>dfName2Value.Rd</code></div>
     </div>
 
-    <table class="ref-index">
-
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
-
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-operations-on-a-clinical-trial-register" class="hasAnchor"><a href="#section-operations-on-a-clinical-trial-register" class="anchor"></a>Operations on a clinical trial register</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="ctrFindActiveSubstanceSynonyms.html">ctrFindActiveSubstanceSynonyms()</a></code> </p>
-        </td>
-        <td><p>Find synonyms of an active substance</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="ctrGetQueryUrlFromBrowser.html">ctrGetQueryUrlFromBrowser()</a></code> </p>
-        </td>
-        <td><p>Import from clipboard the URL of a search in one of the registers</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code> </p>
-        </td>
-        <td><p>Retrieve or update information on clinical trials from register
-and store in database</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser()</a></code> </p>
-        </td>
-        <td><p>Open advanced search pages of register(s) or execute search in browser</p></td>
-      </tr>
-    </tbody><tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-using-the-database-that-holds-downloaded-trial-information" class="hasAnchor"><a href="#section-using-the-database-that-holds-downloaded-trial-information" class="anchor"></a>Using the database that holds downloaded trial information</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="dbFindFields.html">dbFindFields()</a></code> </p>
-        </td>
-        <td><p>Find names of fields in the database collection</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials()</a></code> </p>
-        </td>
-        <td><p>Deduplicate records to provide unique clinical trial identifiers</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code> </p>
-        </td>
-        <td><p>Create data frame by extracting specified fields from database collection</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dbQueryHistory.html">dbQueryHistory()</a></code> </p>
-        </td>
-        <td><p>Show the history of queries that were loaded into a database</p></td>
-      </tr>
-    </tbody><tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-get-an-r-data-frame-from-database-and-operate-on-it" class="hasAnchor"><a href="#section-get-an-r-data-frame-from-database-and-operate-on-it" class="anchor"></a>Get an R data frame from database and operate on it</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="dfListExtractKey.html">dfListExtractKey()</a></code> </p>
-        </td>
-        <td><p>Extract named element(s) from list(s) into long-format
-data frame</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dfMergeTwoVariablesRelevel.html">dfMergeTwoVariablesRelevel()</a></code> </p>
-        </td>
-        <td><p>Merge two variables into one, optionally map values to new levels</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dfName2Value.html">dfName2Value()</a></code> </p>
-        </td>
-        <td><p>Extract information of interest (e.g., endpoint)
+    <div class="ref-description">
+    <p>Extract information of interest (e.g., endpoint)
 from long data frame of protocol- or result-related
-trial information as returned from dfTrials2Long</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dfTrials2Long.html">dfTrials2Long()</a></code> </p>
-        </td>
-        <td><p>Extract trial information into long format</p></td>
-      </tr>
-    </tbody><tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-utility-functions" class="hasAnchor"><a href="#section-utility-functions" class="anchor"></a>Utility functions</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="installCygwinWindowsDoInstall.html">installCygwinWindowsDoInstall()</a></code> </p>
-        </td>
-        <td><p>Convenience function to install a minimal cygwin environment under MS
-Windows, including perl, sed and php</p></td>
-      </tr>
-    </tbody>
-    </table>
-  </div>
+trial information as returned from <a href='dfTrials2Long.html'>dfTrials2Long</a></p>
+    </div>
 
+    <pre class="usage"><span class='fu'>dfName2Value</span><span class='op'>(</span><span class='va'>df</span>, valuename <span class='op'>=</span> <span class='st'>""</span>, wherename <span class='op'>=</span> <span class='st'>""</span>, wherevalue <span class='op'>=</span> <span class='st'>""</span><span class='op'>)</span></pre>
+
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>df</th>
+      <td><p>A data frame with 5 columns (trial_id,
+main_id, sub_id, name, value) as returned from
+<a href='dfTrials2Long.html'>dfTrials2Long</a></p></td>
+    </tr>
+    <tr>
+      <th>valuename</th>
+      <td><p>A character string for the name of the variable
+from which to extract information for the variable of interest</p></td>
+    </tr>
+    <tr>
+      <th>wherename</th>
+      <td><p>A character string to identify the variable
+of interest</p></td>
+    </tr>
+    <tr>
+      <th>wherevalue</th>
+      <td><p>A character string with the value of interest
+for the variable of interest</p></td>
+    </tr>
+    </table>
+
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>A data frame with columns trial_id, main_id, sub_id,
+ name, value that only includes the values of interest</p>
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='va'>db</span> <span class='op'>&lt;-</span> <span class='fu'>nodbi</span><span class='fu'>::</span><span class='fu'><a href='https://docs.ropensci.org/nodbi/reference/src_sqlite.html'>src_sqlite</a></span><span class='op'>(</span>
+  collection <span class='op'>=</span> <span class='st'>"my_collection"</span>
+<span class='op'>)</span>
+<span class='va'>df</span> <span class='op'>&lt;-</span> <span class='fu'>ctrdata</span><span class='fu'>::</span><span class='fu'><a href='dbGetFieldsIntoDf.html'>dbGetFieldsIntoDf</a></span><span class='op'>(</span>
+fields <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>
+  <span class='co'># ctgov - typical results fields</span>
+  <span class='st'>"clinical_results.baseline.analyzed_list.analyzed.count_list.count"</span>,
+  <span class='st'>"clinical_results.baseline.group_list.group"</span>,
+  <span class='st'>"clinical_results.baseline.analyzed_list.analyzed.units"</span>,
+  <span class='st'>"clinical_results.outcome_list.outcome"</span>,
+  <span class='st'>"study_design_info.allocation"</span>,
+  <span class='co'># euctr - typical results fields</span>
+  <span class='st'>"trialInformation.fullTitle"</span>,
+  <span class='st'>"subjectDisposition.recruitmentDetails"</span>,
+  <span class='st'>"baselineCharacteristics.baselineReportingGroups.baselineReportingGroup"</span>,
+  <span class='st'>"endPoints.endPoint"</span>,
+  <span class='st'>"trialChanges.hasGlobalInterruptions"</span>,
+  <span class='st'>"subjectAnalysisSets"</span>,
+  <span class='st'>"adverseEvents.seriousAdverseEvents.seriousAdverseEvent"</span>
+  <span class='op'>)</span>, con <span class='op'>=</span> <span class='va'>dbc</span>
+<span class='op'>)</span>
+<span class='co'># convert to long</span>
+<span class='va'>reslong</span> <span class='op'>&lt;-</span> <span class='fu'>ctrdata</span><span class='fu'>::</span><span class='fu'><a href='dfTrials2Long.html'>dfTrials2Long</a></span><span class='op'>(</span>
+  df <span class='op'>=</span> <span class='va'>df</span>
+<span class='op'>)</span>
+<span class='co'># get values for endpoint of interest, duration of response</span>
+<span class='fu'>ctrdata</span><span class='fu'>::</span><span class='fu'>dfValue2Name</span><span class='op'>(</span>
+  df <span class='op'>=</span> <span class='va'>df</span>,
+  valuename <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span>
+    <span class='st'>"endPoints.endPoint.*armReportingGroup.tendencyValues.tendencyValue.value|"</span>,
+    <span class='st'>"clinical_results.*category.measurement_list.measurement.value|"</span>,
+    <span class='st'>"clinical_results.*outcome.measure.units|endPoints.endPoint.unit"</span>
+  <span class='op'>)</span>,
+  wherename <span class='op'>=</span> <span class='st'>"clinical_results.*outcome.measure.title|endPoints.endPoint.title"</span>,
+  wherevalue <span class='op'>=</span> <span class='st'>"duration of response"</span>
+<span class='op'>)</span>
+<span class='op'>}</span>
+</div></pre>
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>

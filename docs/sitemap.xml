@@ -67,6 +67,12 @@
     <loc>https://rfhb.github.io/ctrdata//reference/dfMergeTwoVariablesRelevel.html</loc>
   </url>
   <url>
+    <loc>https://rfhb.github.io/ctrdata//reference/dfName2Value.html</loc>
+  </url>
+  <url>
+    <loc>https://rfhb.github.io/ctrdata//reference/dfTrials2Long.html</loc>
+  </url>
+  <url>
     <loc>https://rfhb.github.io/ctrdata//reference/installCygwinWindowsDoInstall.html</loc>
   </url>
   <url>
@@ -82,9 +88,12 @@
     <loc>https://rfhb.github.io/ctrdata//reference/typeField.html</loc>
   </url>
   <url>
-    <loc>https://rfhb.github.io/ctrdata//articles/ctrdata_get_started.html</loc>
+    <loc>https://rfhb.github.io/ctrdata//articles/ctrdata_analyse.html</loc>
   </url>
   <url>
-    <loc>https://rfhb.github.io/ctrdata//articles/ctrdata_usage_examples.html</loc>
+    <loc>https://rfhb.github.io/ctrdata//articles/ctrdata_install.html</loc>
+  </url>
+  <url>
+    <loc>https://rfhb.github.io/ctrdata//articles/ctrdata_retrieve.html</loc>
   </url>
 </urlset>
