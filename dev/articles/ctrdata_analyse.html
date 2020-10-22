@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ctrdata</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.3.2.9001</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.4.0.9000</span>
       </span>
     </div>
 
@@ -91,7 +91,8 @@
 
       
 
-      </header><script src="ctrdata_analyse_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="ctrdata_analyse_files/accessible-code-block-0.0.1/empty-anchor.js"></script><link href="ctrdata_analyse_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
+<script src="ctrdata_analyse_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Analysing clinical trial information</h1>
@@ -107,7 +108,7 @@
     
     
 <p>General information on the <code>ctrdata</code> package is available here: <a href="https://github.com/rfhb/ctrdata">https://github.com/rfhb/ctrdata</a>.</p>
-<p>Remember to respect the registers’ terms and conditions (see <code><a href="../reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser(copyright = TRUE)</a></code>). Please cite this package in any publication as follows: Ralf Herold (2020). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.4, <a href="https://github.com/rfhb/ctrdata" class="uri">https://github.com/rfhb/ctrdata</a></p>
+<p>Remember to respect the registers’ terms and conditions (see <code><a href="../reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser(copyright = TRUE)</a></code>). Please cite this package in any publication as follows: Ralf Herold (2020). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.4, <a href="https://cran.r-project.org/package=ctrdata" class="uri">https://cran.r-project.org/package=ctrdata</a></p>
 <div id="preparations" class="section level1">
 <h1 class="hasAnchor">
 <a href="#preparations" class="anchor"></a>Preparations</h1>
@@ -123,7 +124,7 @@
 <span class="co"># Collection: some_collection_name</span></pre></div>
 <p>See <a href="ctrdata_retrieve.Rmd">Retrieve clinical trial information</a> for more details.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rfhb/ctrdata">ctrdata</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://cran.r-project.org/package=ctrdata">ctrdata</a></span><span class="op">)</span>
 
 <span class="co"># These two queries are equivalent, for </span>
 <span class="co"># completed interventional (drug) trials </span>
@@ -264,7 +265,13 @@
   breaks <span class="op">=</span> <span class="st">"years"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/box.html">box</a></span><span class="op">(</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span></pre></div>
-<p><img src="nb1.png" alt="Histogram1"> # Merge corresponding fields from registers</p>
+<div class="figure">
+<img src="nb1.png" alt=""><p class="caption">Histogram1</p>
+</div>
+</div>
+<div id="merge-corresponding-fields-from-registers" class="section level1">
+<h1 class="hasAnchor">
+<a href="#merge-corresponding-fields-from-registers" class="anchor"></a>Merge corresponding fields from registers</h1>
 <p>However, the field “n_date_of_competent_authority_decision” used above exists only in EUCTR, and it corresponds to the field “start_date” in CTGOV. Thus, to provide a wider picture, the two fields can be merged for analysis, using the convenience function <code><a href="../reference/dfMergeTwoVariablesRelevel.html">dfMergeTwoVariablesRelevel()</a></code> in <code>ctrdata</code> package:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit">
 <span class="co"># Merge two variables into a new variable:</span>
