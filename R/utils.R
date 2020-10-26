@@ -1498,6 +1498,7 @@ dfName2Value <- function(df, valuename = "",
   }
 
   # return
+  rownames(out) <- NULL
   return(out)
 
 } # end dfName2Value
@@ -1692,11 +1693,9 @@ dfTrials2Long <- function(df) {
   }
 
   # output
-  return(
-    trials2long(
-      severaltrials = df
-    )
-  )
+  out <- trials2long(severaltrials = df)
+  rownames(out) <- NULL
+  return(out)
 
 } # end dfTrials2Long
 
@@ -1805,7 +1804,7 @@ dfListExtractKey <- function(
       function(ii) {
 
         data.frame(
-          name = gsub("[-0-9]*$", "", # trialing number
+          name = gsub("[-0-9]*$", "", # trailing number
                       gsub("[^a-zA-Z0-9_.-]", "",
                       paste0(list.key[[li]],
                              collapse = "."))),
@@ -1817,11 +1816,11 @@ dfListExtractKey <- function(
           check.names = FALSE)
       }, simplify = FALSE)
 
-    do.call(rbind, tmp)
+    do.call(rbind, list(tmp, rownames = NULL))
 
   }, simplify = FALSE)
 
-  out <- do.call(rbind, out)
+  out <- do.call(rbind, list(out, rownames = NULL))
 
   # return
   out

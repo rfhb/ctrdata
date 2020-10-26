@@ -1,5 +1,6 @@
 # ctrdata 1.4.9000
  - 2020-10-19
+ - reset row names on data frames returned by functions
 
 # ctrdata 1.4
  - 2020-10-17
