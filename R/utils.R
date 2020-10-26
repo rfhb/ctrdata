@@ -1816,11 +1816,12 @@ dfListExtractKey <- function(
           check.names = FALSE)
       }, simplify = FALSE)
 
-    do.call(rbind, list(tmp, rownames = NULL))
+    do.call(rbind, tmp)
 
   }, simplify = FALSE)
 
-  out <- do.call(rbind, list(out, rownames = NULL))
+  out <- do.call(rbind, out)
+  rownames(out) <- NULL
 
   # return
   out
