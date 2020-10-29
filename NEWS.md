@@ -1,6 +1,7 @@
 # ctrdata 1.4.9000
- - 2020-10-19
+ - 2020-10-29
  - reset row names on data frames returned by functions
+ - update curl parameters when accessing EUCTR
 
 # ctrdata 1.4
  - 2020-10-17

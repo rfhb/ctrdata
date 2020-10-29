@@ -481,8 +481,7 @@ ctrRerunQuery <- function(
         }
         #
         resultsRss <- httr::content(
-          httr::GET(url = rssquery,
-                    httr::config(ssl_verifypeer = FALSE)),
+          httr::GET(url = rssquery),
           as = "text")
 
         if (verbose) {
@@ -1134,14 +1133,12 @@ ctrLoadQueryIntoDbEuctr <- function(
     "&mode=current_page&format=text&dContent=",
     "summary&number=current_page&submit-download=Download")
 
-  # as workaround certificate problems of EUCTR
-  # httr and curl code is made to not verify peers
-
   # check if host is available
-  if ("try-error" %in% class(try(httr::headers(
-    httr::HEAD(
-      url = utils::URLencode(queryEuRoot),
-      httr::config(ssl_verifypeer = FALSE))), silent = TRUE))) {
+  if ("try-error" %in% class(try(
+    httr::headers(
+      httr::HEAD(
+        url = utils::URLencode(queryEuRoot))),
+    silent = TRUE))) {
     stop("Host ", queryEuRoot, " does not respond, cannot continue.",
          call. = FALSE)
   }
@@ -1150,8 +1147,7 @@ ctrLoadQueryIntoDbEuctr <- function(
   q <- utils::URLencode(paste0(queryEuRoot, queryEuType1, queryterm))
   if (verbose) message("DEBUG: queryterm is ", q)
   resultsEuPages <- httr::content(
-    httr::GET(url = q,
-              httr::config(ssl_verifypeer = FALSE)), as = "text")
+    httr::GET(url = q), as = "text")
 
   # get number of trials identified by query
   resultsEuNumTrials <- sub(
@@ -1248,14 +1244,13 @@ ctrLoadQueryIntoDbEuctr <- function(
     fileext = ".txt"
   )
   h <- curl::new_handle(
-    ssl_verifypeer = FALSE,
     useragent = "",
     accept_encoding = "gzip,deflate,zstd,br",
     cookiejar = cf,
     cookiefile = cf)
   tmp <- curl::curl_fetch_memory(
     url = paste0(queryEuRoot, queryEuType3,
-                 "2008-003606-33", "&page=1", queryEuPost),
+                 "query=2008-003606-33", "&page=1", queryEuPost),
     handle = h)
   # curl::handle_cookies(h)
   # inform user about capabilities
@@ -1265,8 +1260,8 @@ ctrLoadQueryIntoDbEuctr <- function(
   sgzip <- grepl("gzip|deflate", sgzip)
   if (length(sgzip) && !sgzip) {
     message("Note: register server cannot compress data, ",
-    "transfer takes longer, about ", round(stime),
-    "s per page")
+    "transfer takes longer, about ", signif(stime, digits = 1),
+    "s per trial")
   }
 
   # create pool for concurrent connections
@@ -1319,7 +1314,6 @@ ctrLoadQueryIntoDbEuctr <- function(
         pool = pool,
         data = fp[x],
         handle = curl::new_handle(
-          ssl_verifypeer = FALSE,
           useragent = "",
           accept_encoding = "deflate, gzip",
           cookiejar = cf,
@@ -1512,9 +1506,7 @@ ctrLoadQueryIntoDbEuctr <- function(
             done = cb,
             pool = pool,
             data = fp[x],
-            handle = curl::new_handle(
-              ssl_verifypeer = FALSE
-            )
+            handle = curl::new_handle()
           ))
 
       # do download and save
@@ -1706,7 +1698,6 @@ ctrLoadQueryIntoDbEuctr <- function(
             curl::multi_add(
               handle = curl::new_handle(
                 url = urls[x],
-                ssl_verifypeer = FALSE,
                 range = "0-22999", # NOTE only top part of page
                 accept_encoding = "identity"
               ),
