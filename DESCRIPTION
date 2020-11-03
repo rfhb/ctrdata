@@ -1,13 +1,13 @@
 Package: ctrdata
 Type: Package
 Title: Retrieve and Analyze Clinical Trials in Public Registers
-Version: 1.4.0.9000
-Date: 2020-10-17
+Version: 1.4.1
+Date: 2020-11-03
 Imports: jsonlite, httr, curl, clipr, xml2, rvest, nodbi (>= 0.4)
 SystemRequirements: sed, php, cat, perl
 URL: https://cran.r-project.org/package=ctrdata
 BugReports: https://github.com/rfhb/ctrdata/issues
-Description: Provides functions for querying, retrieving and analysing
+Description: Provides functions for querying, retrieving and analyzing
         protocol- and results-related information on clinical trials from
         two public registers, the 'European Union Clinical Trials Register'
         ('EUCTR', <https://www.clinicaltrialsregister.eu/>) and

@@ -11,8 +11,5 @@
 None at this time
 
 ## Submission reason
-* additional functionality to handle nested data
-* deprecated earlier functions for this
-* partly refactored register retrieval
-* harmonised user information
-* simplified vignettes
+* reset row names on data frames returned by functions
+* updated curl parameters when accessing EUCTR

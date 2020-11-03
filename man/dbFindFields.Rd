@@ -35,7 +35,7 @@ the register's definitions at
 
 Note: Generating a list of fields with this function may take
 some time, and may involve running a mapreduce function is
-run on the server. If the user is not not authorised to run
+run on the server. If the user is not not authorized to run
 such a function on the (local or remote) server,
 random documents are sampled to generate a list of fields.
 }

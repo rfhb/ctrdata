@@ -72,7 +72,7 @@ Package `ctrdata` requires on MS Windows that the cygwin environment be installe
 ctrdata::installCygwinWindowsDoInstall() 
 ```
 
-If internet acccess has to be via a proxy and this was not correctly detected automatically, it can be specified for the installation of cygwin as follows: 
+If internet access has to be via a proxy and this was not correctly detected automatically, it can be specified for the installation of cygwin as follows: 
 
 ```{r, eval=FALSE}
 ctrdata::installCygwinWindowsDoInstall(proxy = "proxy.server.domain:8080") 

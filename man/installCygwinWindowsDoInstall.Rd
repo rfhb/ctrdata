@@ -13,7 +13,7 @@ installation in \code{c:\\cygwin}}
 
 \item{proxy}{Specify any proxy to be used for downloading via http, e.g.
 "host_or_ip:port". \code{installCygwinWindowsDoInstall} may detect and use
-the proxy configuration uset in MS Windows to use an automatic proxy
+the proxy configuration used in MS Windows to use an automatic proxy
 configuration script. Authenticated proxies are not supported at this time.}
 }
 \description{

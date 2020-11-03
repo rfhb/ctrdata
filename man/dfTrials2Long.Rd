@@ -7,7 +7,7 @@
 dfTrials2Long(df)
 }
 \arguments{
-\item{df}{Data frame with colums including
+\item{df}{Data frame with columns including
 the trial identifier (\code{_id}) and
 one or more variables as obtained from
 \link{dbGetFieldsIntoDf}}

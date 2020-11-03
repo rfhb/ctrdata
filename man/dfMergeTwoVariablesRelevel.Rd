@@ -17,7 +17,7 @@ obtain the names of columns of a data frame.}
 \item{levelslist}{A list with one slice each for a new value to be
 used for a vector of old values (optional).}
 
-\item{...}{for deprecated varnames parameter (will be removed)}
+\item{...}{for deprecated \code{varnames} parameter (will be removed)}
 }
 \value{
 A vector of strings

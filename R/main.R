@@ -570,6 +570,9 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
                    full.names = TRUE)
 
   # initialise counters
+  # TODO preferably preallocate
+  # retimp but at this stage, its
+  # size / length is not yet known
   retimp <- NULL
   fc <- length(tempFiles)
   ic <- 0
@@ -657,7 +660,7 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
 
     }) # sapply
 
-    # increment counters
+    # append to retimp
     retimp <- c(retimp, tmpinsert)
 
     # clean up
@@ -1595,6 +1598,9 @@ ctrLoadQueryIntoDbEuctr <- function(
 
     # iterate over batches of results files
     message("(3/4) Importing JSON into database...")
+    # TODO preferably, importedresults
+    # would be pre-allocated, but its
+    # size is not known at this stage
     importedresults <- NULL
     for (i in 1:(resultsNumBatches +
                  ifelse(resultsNumModulo > 0, 1, 0))) {
@@ -1653,7 +1659,7 @@ ctrLoadQueryIntoDbEuctr <- function(
 
         }) # import
 
-      # accumulate
+      # append batch to number of results
       importedresults <- c(importedresults, batchresults)
 
     } # for batch
@@ -1706,6 +1712,7 @@ ctrLoadQueryIntoDbEuctr <- function(
             ))
 
         # do download and save into batchresults
+        # TODO preferably retdat is pre-allocated
         retdat <- NULL
         tmp <- curl::multi_run(
           pool = pool,

@@ -451,7 +451,7 @@ ggplot(data = result,
 
 # Investigational or authorised medicinal product?
 
-The information about the status of authorisation (licencing) of a medicine used in a trial is record in EUCTR; a corresponding field in CTGOV is not known. The status is in the tree starting from the `dimp` element. 
+The information about the status of authorisation (licensing) of a medicine used in a trial is record in EUCTR; a corresponding field in CTGOV is not known. The status is in the tree starting from the `dimp` element. 
 
 ```{r product_status}
 
