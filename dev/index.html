@@ -14,7 +14,7 @@
 <script src="pkgdown.js"></script><!-- docsearch --><script src="docsearch.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.3/docsearch.min.css" integrity="sha256-QOSRU/ra9ActyXkIBbiIB144aDBdtvXBcNc3OTNuX/Q=" crossorigin="anonymous">
 <link href="docsearch.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script><meta property="og:title" content="Retrieve and Analyze Clinical Trials in Public Registers">
-<meta property="og:description" content="Provides functions for querying, retrieving and analysing
+<meta property="og:description" content="Provides functions for querying, retrieving and analyzing
         protocol- and results-related information on clinical trials from
         two public registers, the European Union Clinical Trials Register
         (EUCTR, &lt;https://www.clinicaltrialsregister.eu/&gt;) and
@@ -48,7 +48,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">ctrdata</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.4.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.4.1.9000</span>
       </span>
     </div>
 
@@ -137,13 +137,13 @@ citation("ctrdata")
 <h2 class="hasAnchor">
 <a href="#1-install-package-in-r" class="anchor"></a>1. Install package in R</h2>
 <p>Package <code>ctrdata</code> is <a href="https://cran.r-project.org/package=ctrdata">on CRAN</a> and <a href="https://github.com/rfhb/ctrdata">on GitHub</a>. Within <a href="https://www.r-project.org/">R</a>, use the following commands to install package <code>ctrdata</code>:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="co"># Install CRAN version:</span>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Install CRAN version:</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"ctrdata"</span><span class="op">)</span>
 
 <span class="co"># Alternatively, install development version: </span>
 <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"rfhb/ctrdata"</span><span class="op">)</span></pre></div>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"rfhb/ctrdata"</span><span class="op">)</span></code></pre></div>
 <p>These commands also install the package dependencies, which are <code>nodbi</code>, <code>jsonlite</code>, <code>httr</code>, <code>curl</code>, <code>clipr</code>, <code>xml2</code>, <code>rvest</code>.</p>
 </div>
 <div id="2-command-line-tools-perl-sed-cat-and-php-52-or-higher" class="section level2">
@@ -157,8 +157,8 @@ citation("ctrdata")
 <h2 class="hasAnchor">
 <a href="#testing" class="anchor"></a>Testing</h2>
 <p>Once installed, a comprehensive testing can be executed as follows (this will take several minutes):</p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="fu">tinytest</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tinytest/man/test_package.html">test_package</a></span><span class="op">(</span><span class="st">"ctrdata"</span>, at_home <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">tinytest</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tinytest/man/test_package.html">test_package</a></span><span class="op">(</span><span class="st">"ctrdata"</span>, at_home <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
 <div id="overview-of-functions-in-ctrdata" class="section level1">
@@ -237,34 +237,34 @@ citation("ctrdata")
 <ul>
 <li>Attach package <code>ctrdata</code>:</li>
 </ul>
-<!-- end list --><div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://cran.r-project.org/package=ctrdata">ctrdata</a></span><span class="op">)</span></pre></div>
+<!-- end list --><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://cran.r-project.org/package=ctrdata">ctrdata</a></span><span class="op">)</span></code></pre></div>
 <ul>
 <li>Open registers’ advanced search pages in browser:</li>
 </ul>
-<!-- end list --><div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="fu"><a href="reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser</a></span><span class="op">(</span><span class="op">)</span>
+<!-- end list --><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser</a></span><span class="op">(</span><span class="op">)</span>
 
 <span class="co"># Please review and respect register copyrights:</span>
-<span class="fu"><a href="reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser</a></span><span class="op">(</span>copyright <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser</a></span><span class="op">(</span>copyright <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <ul>
 <li><p>Adjust search parameters and execute search in browser</p></li>
 <li><p>When trials of interest are listed in browser, copy the address from the browser’s address bar to the clipboard</p></li>
 <li><p>Get address from clipboard:</p></li>
 </ul>
-<!-- end list --><div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="va">q</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ctrGetQueryUrlFromBrowser.html">ctrGetQueryUrlFromBrowser</a></span><span class="op">(</span><span class="op">)</span>
+<!-- end list --><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">q</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ctrGetQueryUrlFromBrowser.html">ctrGetQueryUrlFromBrowser</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co"># * Found search query from EUCTR.</span>
 
 <span class="va">q</span>
 <span class="co">#                                                   query-term  query-register</span>
-<span class="co"># 1 query=cancer&amp;age=under-18&amp;phase=phase-one&amp;status=completed           EUCTR</span></pre></div>
+<span class="co"># 1 query=cancer&amp;age=under-18&amp;phase=phase-one&amp;status=completed           EUCTR</span></code></pre></div>
 <ul>
 <li>Retrieve protocol-related information, transform and save to database:</li>
 </ul>
 <p>Under the hood, scripts <code>euctr2json.sh</code> and <code>xml2json.php</code> (in <code>ctrdata/exec</code>) transform EUCTR plain text files and CTGOV <code>XML</code> files to <code>ndjson</code> format, which is imported into the database. The database is specified first, using <code>nodbi</code> (using <code>RSQlite</code> or <code>MongoDB</code> as backend); then, trial information is retrieved and loaded into the database:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="co"># Connect to (or newly create) an SQLite database </span>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Connect to (or newly create) an SQLite database </span>
 <span class="co"># that is stored in a file on the local system:</span>
 <span class="va">db</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html">src_sqlite</a></span><span class="op">(</span>
   dbname <span class="op">=</span> <span class="st">"some_database_name.sqlite_file"</span>, 
@@ -276,13 +276,13 @@ citation("ctrdata")
 <span class="co"># Retrieve trials from public register:</span>
 <span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span>
   queryterm <span class="op">=</span> <span class="va">q</span>,
-  con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></pre></div>
+  con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></code></pre></div>
 <ul>
 <li>Analyse</li>
 </ul>
 <p>Tabulate the status of trials that are part of an agreed paediatric development program (paediatric investigation plan, PIP):</p>
-<div class="sourceCode" id="cb7"><pre class="downlit">
-<span class="co"># Get all records that have values in the fields of interest:</span>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Get all records that have values in the fields of interest:</span>
 <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span>
   fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>
     <span class="st">"a7_trial_is_part_of_a_paediatric_investigation_plan"</span>, 
@@ -308,22 +308,22 @@ citation("ctrdata")
 <span class="co">#   Ongoing                                              5 60  19</span>
 <span class="co">#   Prematurely Ended                                    1  6   3</span>
 <span class="co">#   Restarted                                            0  1   0</span>
-<span class="co">#   Temporarily Halted                                   0  0   1</span></pre></div>
+<span class="co">#   Temporarily Halted                                   0  0   1</span></code></pre></div>
 <ul>
 <li>Add records from another register into the same database</li>
 </ul>
-<!-- end list --><div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="co"># Retrieve trials from another register:</span>
+<!-- end list --><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Retrieve trials from another register:</span>
 <span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span>
   queryterm <span class="op">=</span> <span class="st">"cond=neuroblastoma&amp;rslt=With&amp;recrs=e&amp;age=0&amp;intr=Drug"</span>, 
   register <span class="op">=</span> <span class="st">"CTGOV"</span>,
-  con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></pre></div>
+  con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></code></pre></div>
 <ul>
 <li>Result-related trial information</li>
 </ul>
 <p>Analyse some simple result details (see vignette for more examples):</p>
-<div class="sourceCode" id="cb9"><pre class="downlit">
-<span class="co"># Get all records that have values in any of the specified fields</span>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Get all records that have values in any of the specified fields</span>
 <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span>
   fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>
     <span class="st">"clinical_results.baseline.analyzed_list.analyzed.count_list.count"</span>,
@@ -404,7 +404,7 @@ citation("ctrdata")
   <span class="fu">scale_x_log10</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu">scale_y_log10</span><span class="op">(</span><span class="op">)</span> 
 <span class="fu">ggsave</span><span class="op">(</span>filename <span class="op">=</span> <span class="st">"inst/image/README-ctrdata_results_neuroblastoma.png"</span>,
-       width <span class="op">=</span> <span class="fl">4</span>, height <span class="op">=</span> <span class="fl">3</span>, units <span class="op">=</span> <span class="st">"in"</span><span class="op">)</span></pre></div>
+       width <span class="op">=</span> <span class="fl">4</span>, height <span class="op">=</span> <span class="fl">3</span>, units <span class="op">=</span> <span class="st">"in"</span><span class="op">)</span></code></pre></div>
 <p><img src="inst/image/README-ctrdata_results_neuroblastoma.png" alt="Neuroblastoma trials"></p>
 </div>
 <div id="databases" class="section level1">
