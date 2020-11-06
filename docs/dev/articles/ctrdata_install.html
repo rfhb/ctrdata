@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ctrdata</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.4.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.4.1.9000</span>
       </span>
     </div>
 
@@ -145,7 +145,7 @@
 <p>Package <code>ctrdata</code> requires on MS Windows that the cygwin environment be installed, into the local directory <code>c:\cygwin</code> (or any folder corresponding to <code>c:\cygw*</code>). The applications php, bash, perl, cat and sed in the cygwin environment are required for the function <code><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code> of package <code>ctrdata</code>. No other function in this package has this requirement. The installation of a minimal cygwin environment on MS Windows can be done with the help of package <code>ctrdata</code> in R as follows:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit">
 <span class="fu">ctrdata</span><span class="fu">::</span><span class="fu"><a href="../reference/installCygwinWindowsDoInstall.html">installCygwinWindowsDoInstall</a></span><span class="op">(</span><span class="op">)</span> </pre></div>
-<p>If internet acccess has to be via a proxy and this was not correctly detected automatically, it can be specified for the installation of cygwin as follows:</p>
+<p>If internet access has to be via a proxy and this was not correctly detected automatically, it can be specified for the installation of cygwin as follows:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit">
 <span class="fu">ctrdata</span><span class="fu">::</span><span class="fu"><a href="../reference/installCygwinWindowsDoInstall.html">installCygwinWindowsDoInstall</a></span><span class="op">(</span>proxy <span class="op">=</span> <span class="st">"proxy.server.domain:8080"</span><span class="op">)</span> </pre></div>
 <p>Users who want or need to install cygwin manually, can download the setup executable from <a href="https://cygwin.com/install.html">here</a>. In a MS Windows command window or Powershell window, use the following command line. The parameters are explained <a href="https://cygwin.com/faq/faq.html#faq.setup.cli">here</a>.</p>

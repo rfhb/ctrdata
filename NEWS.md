@@ -1,3 +1,7 @@
+# ctrdata 1.4.1.9000
+ - 2020-11-06
+ - new development version
+
 # ctrdata 1.4.1
  - 2020-11-03
  - reset row names on data frames returned by functions
