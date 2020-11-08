@@ -609,7 +609,7 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
     tmpinsert <- lapply(seq_along(ids), function(i) {
 
       # inform user
-      message("JSON line #: ", i, " / ", lc,
+      message("JSON record #: ", i, " / ", lc,
               ", file #: ", ic, " / ", fc, "\r",
               appendLF = FALSE)
 
@@ -1119,7 +1119,7 @@ ctrLoadQueryIntoDbEuctr <- function(
     queryterm)
 
   # inform user
-  message("* Checking trials in EUCTR:", appendLF = FALSE)
+  message("* Checking trials in EUCTR: ", appendLF = FALSE)
 
   # create empty temporary directory on localhost for
   # download from register into temporary directy

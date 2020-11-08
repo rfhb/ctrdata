@@ -172,12 +172,13 @@ expect_true(
   sum(nchar(
     # note: function
     # is deprecated
-    dfListExtractKey(
-      df = result,
-      list.key = list(
-        c("endPoints.endPoint", "title"))
-    )[["value"]]
-  ), na.rm = TRUE)
+    suppressWarnings(
+      dfListExtractKey(
+        df = result,
+        list.key = list(
+          c("endPoints.endPoint", "title"))
+      )[["value"]]
+    )), na.rm = TRUE)
   > 3000L)
 
 # convert to long
@@ -333,7 +334,7 @@ expect_message(
     dbFindIdsUniqueTrials(
       con = dbc,
       preferregister = "CTGOV")),
-  "Concatenating 1 records from CTGOV and [2-9][0-9] from EUCTR")
+  "Concatenating 1 records from CTGOV and [1-9][0-9]+ from EUCTR")
 
 
 #### dbFindIdsUniqueTrials #####
@@ -352,7 +353,7 @@ expect_message(
     dbFindIdsUniqueTrials(
       con = dbc,
       preferregister = "CTGOV")),
-  "Returning keys \\(_id\\) of [2-9][0-9]")
+  "Returning keys \\(_id\\) of [1-9][0-9]+")
 
 # test
 expect_warning(
