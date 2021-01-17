@@ -4,7 +4,7 @@
 
 # test
 expect_message(
-  tmp_test <- suppressWarnings(
+  tmpTest <- suppressWarnings(
     ctrLoadQueryIntoDb(
       queryterm = "2010-024264-18",
       register = "CTGOV",
@@ -12,13 +12,13 @@ expect_message(
   "Imported or updated 1 trial")
 
 # test
-expect_equal(tmp_test$n, 1L)
+expect_equal(tmpTest$n, 1L)
 
 # test
-expect_equal(tmp_test$success, "NCT01471782")
+expect_equal(tmpTest$success, "NCT01471782")
 
 # test
-expect_true(length(tmp_test$failed) == 0L)
+expect_true(length(tmpTest$failed) == 0L)
 
 #### ctrLoadQueryIntoDb update ####
 
@@ -28,7 +28,7 @@ q <- paste0("https://clinicaltrials.gov/ct2/results?",
 
 # test
 expect_message(
-  tmp_test <- suppressWarnings(
+  tmpTest <- suppressWarnings(
     ctrLoadQueryIntoDb(
       queryterm = paste0(q, "12%2F31%2F2008"),
       con = dbc)),
@@ -54,20 +54,20 @@ nodbi::docdb_update(
 
 # test
 expect_message(
-  tmp_test <- suppressWarnings(
+  tmpTest <- suppressWarnings(
     ctrLoadQueryIntoDb(
       querytoupdate = "last",
       con = dbc)),
   "Imported or updated")
 
 # test
-expect_true(tmp_test$n > 2L)
+expect_true(tmpTest$n > 2L)
 
 # test
-expect_true(length(tmp_test$success) > 2L)
+expect_true(length(tmpTest$success) > 2L)
 
 # test
-expect_true(length(tmp_test$failed) == 0L)
+expect_true(length(tmpTest$failed) == 0L)
 
 # test
 expect_message(
@@ -96,12 +96,12 @@ result <- suppressMessages(
         "location"),
       con = dbc)))
 
-result$number_sites <- sapply(
+result$numberSites <- sapply(
   result$location,
   function(x) length(x[["facility"]][["name"]]))
 
 # test
-expect_true(sum(result$number_sites, na.rm = TRUE) > 30L)
+expect_true(sum(result$numberSites, na.rm = TRUE) > 30L)
 
 # test
 expect_true("character" == class(result[[
@@ -161,4 +161,3 @@ expect_true(
 expect_true(
   all(df2$main_id[df2$trial_id == "NCT01471782"] == 5L)
 )
-

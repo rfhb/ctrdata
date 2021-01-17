@@ -368,7 +368,7 @@ ctrRerunQuery <- function(
   # - dates of all the same queries
   initialday <- rerunquery[["query-timestamp"]][
     rerunquery[querytoupdate, "query-term"] ==
-      rerunquery[["query-term"]] ]
+      rerunquery[["query-term"]]]
   #
   # - remove time, keep date
   initialday <- substr(
@@ -452,10 +452,9 @@ ctrRerunQuery <- function(
     # euctr
     if (register == "EUCTR") {
 
-      # euctr:
-      # studies added or updated in the last 7 days:
-      # https://www.clinicaltrialsregister.eu/ctr-search/rest/feed/
-      # bydates?query=cancer&age=children
+      # euctr: studies added or updated in the last 7 days:
+      # "https://www.clinicaltrialsregister.eu/ctr-search/rest/feed/
+      # bydates?query=cancer&age=children"
 
       # check if update request is in time window of the register (7 days)
       if (difftime(Sys.Date(), initialday, units = "days") > 7) {
@@ -530,7 +529,7 @@ ctrRerunQuery <- function(
         #
       }
     } # register euctr
-  } # !forcetoupdate
+  } # forcetoupdate
 
   ## return main parameters needed
   return(data.frame(
@@ -700,7 +699,7 @@ dbCTRAnnotateQueryRecords <- function(
   annotation.text,
   annotation.mode,
   con,
-  verbose){
+  verbose) {
 
   # debug
   if (verbose) message("* Running dbCTRAnnotateQueryRecords...")
@@ -741,7 +740,7 @@ dbCTRAnnotateQueryRecords <- function(
     tmp <- nodbi::docdb_update(
       src = con,
       key = con$collection,
-      value = annotations[ annotations[["_id"]] == i, ])
+      value = annotations[annotations[["_id"]] == i, ])
   }
 
 
@@ -765,7 +764,7 @@ dbCTRUpdateQueryHistory <- function(
   queryterm,
   recordnumber,
   con,
-  verbose){
+  verbose) {
 
   # debug
   if (verbose) message("Running dbCTRUpdateQueryHistory...")
@@ -801,7 +800,7 @@ dbCTRUpdateQueryHistory <- function(
 
   # transform into array and encapsulate in element meta-info
   tmp <- jsonlite::toJSON(hist)
-  tmp <- paste0('{"queries": ',  as.character(tmp), '}')
+  tmp <- paste0('{"queries": ',  as.character(tmp), "}")
 
   # create history
   tmp <- nodbi::docdb_create(
@@ -869,8 +868,8 @@ ctrLoadQueryIntoDbCtgov <- function(
 
   # CTGOV standard identifiers
   # updated 2017-07 with revised ctgov website links, e.g.
-  # https://clinicaltrials.gov/ct2/results/download_studies?
-  # rslt=With&cond=Neuroblastoma&age=0&draw=3
+  # "https://clinicaltrials.gov/ct2/results/download_studies?
+  # rslt=With&cond=Neuroblastoma&age=0&draw=3"
   queryUSRoot   <- "https://clinicaltrials.gov/"
   queryUSType1  <- "ct2/results/download_studies?"
   queryUSType2  <- "ct2/results?"
@@ -891,7 +890,7 @@ ctrLoadQueryIntoDbCtgov <- function(
   ctgovdownloadcsvurl <- paste0(
     queryUSRoot, queryUSType1, "&", queryterm, queryupdateterm)
   #
-  if (verbose) {message("DEBUG: ", ctgovdownloadcsvurl)}
+  if (verbose) message("DEBUG: ", ctgovdownloadcsvurl)
 
   # check if host is available
   if ("try-error" %in%
@@ -1009,7 +1008,7 @@ ctrLoadQueryIntoDbCtgov <- function(
     xml2json <- gsub("([A-Z]):/", "/cygdrive/\\1/", xml2json)
     #
     xml2json <- paste0(
-      'cmd.exe /c ',
+      "cmd.exe /c ",
       rev(Sys.glob("c:\\cygw*\\bin\\bash.exe"))[1],
       ' --login -c "', xml2json, '"')
     #
@@ -1129,7 +1128,6 @@ ctrLoadQueryIntoDbEuctr <- function(
   # EUCTR standard identifiers
   queryEuRoot  <- "https://www.clinicaltrialsregister.eu/"
   queryEuType1 <- "ctr-search/search?"
-  #queryEuType2 <- "ctr-search/rest/download/summary?"
   queryEuType3 <- "ctr-search/rest/download/full?"
   queryEuType4 <- "ctr-search/rest/download/result/zip/xml/"
   queryEuPost  <- paste0(
@@ -1255,7 +1253,6 @@ ctrLoadQueryIntoDbEuctr <- function(
     url = paste0(queryEuRoot, queryEuType3,
                  "query=2008-003606-33", "&page=1", queryEuPost),
     handle = h)
-  # curl::handle_cookies(h)
   # inform user about capabilities
   stime <- curl::handle_data(h)[["times"]][["total"]]
   sgzip <- curl::parse_headers(tmp$headers)
@@ -1273,18 +1270,9 @@ ctrLoadQueryIntoDbEuctr <- function(
 
   # progress indicator function
   pc <- 0
-  cb <- function(req){
+  cb <- function(req) {
     pc <<- pc + 1
     message("Pages #: ", pc, "\r", appendLF = FALSE)
-    # Note: Tranfer-Encoding does not provide gzip
-    # print(curl::parse_headers(req$headers))
-    # [1] "HTTP/1.1 200 OK"
-    # [2] "Date: Sun, 11 Oct 2020 20:09:10 GMT"
-    # [3] "Server: "
-    # [4] "Content-Disposition: attachment; filename = trials-full.txt"
-    # [5] "Transfer-Encoding: chunked"
-    # [6] "Content-Type: application/octet-stream"
-    # [7] "Content-Language: en"
   }
 
   # generate vector with URLs of all pages
@@ -1292,7 +1280,6 @@ ctrLoadQueryIntoDbEuctr <- function(
     paste0(queryEuRoot, queryEuType3,
            queryterm, "&page=", 1:resultsEuNumPages, queryEuPost),
     utils::URLencode))
-  # print(urls)
 
   # generate vector with file names for saving pages
   fp <- paste0(
@@ -1359,7 +1346,7 @@ ctrLoadQueryIntoDbEuctr <- function(
     euctr2json <- gsub("\\\\", "/", euctr2json)
     euctr2json <- gsub("([A-Z]):/", "/cygdrive/\\1/", euctr2json)
     euctr2json <- paste0(
-      'cmd.exe /c ',
+      "cmd.exe /c ",
       rev(Sys.glob("c:\\cygw*\\bin\\bash.exe"))[1],
       ' --login -c "', euctr2json, '"')
     #
@@ -1573,7 +1560,7 @@ ctrLoadQueryIntoDbEuctr <- function(
       xml2json <- gsub("\\\\", "/", xml2json)
       xml2json <- gsub("([A-Z]):/", "/cygdrive/\\1/", xml2json)
       xml2json <- paste0(
-        'cmd.exe /c ',
+        "cmd.exe /c ",
         rev(Sys.glob("c:\\cygw*\\bin\\bash.exe"))[1],
         ' --login -c "', xml2json, '"')
       #
@@ -1628,16 +1615,18 @@ ctrLoadQueryIntoDbEuctr <- function(
               useBytes = TRUE)
 
             # update database with results
-            tmp <- try({tmpnodbi <-
-              nodbi::docdb_update(
-                src = con,
-                key = con$collection,
-                value = data.frame(
-                  "a2_eudract_number" = x,
-                  "json" = tmpjson,
-                  stringsAsFactors = FALSE))
+            tmp <- try({
+              tmpnodbi <-
+                nodbi::docdb_update(
+                  src = con,
+                  key = con$collection,
+                  value = data.frame(
+                    "a2_eudract_number" = x,
+                    "json" = tmpjson,
+                    stringsAsFactors = FALSE))
 
-            max(tmpnodbi, na.rm = TRUE)},
+              max(tmpnodbi, na.rm = TRUE)
+            },
             silent = TRUE)
 
             # inform user on failed trial
@@ -1691,7 +1680,7 @@ ctrLoadQueryIntoDbEuctr <- function(
           total_con = parallelretrievals,
           host_con = parallelretrievals)
         #
-        done <- function(res){retdat <<- c(retdat, list(res))}
+        done <- function(res) retdat <<- c(retdat, list(res))
         #
         urls <- unlist(lapply(paste0(
           "https://www.clinicaltrialsregister.eu/ctr-search/trial/",
@@ -1723,8 +1712,10 @@ ctrLoadQueryIntoDbEuctr <- function(
           function(x) rawToChar(x[["content"]]))
 
         if (verbose) {
-          message("\n", paste0(sapply(batchresults, nchar),
-                               collapse = " "))}
+          message("\n", paste0(
+            sapply(batchresults, nchar),
+            collapse = " "))
+          }
 
         # curl return sequence is not predictable
         # therefore recalculate the eudract numbers
@@ -1776,8 +1767,7 @@ ctrLoadQueryIntoDbEuctr <- function(
             along.with = startindex:stopindex),
           function(x) {
 
-          if (tmpChanges[x] == "") {
-            tmpChanges[x] <- "(not specified)"}
+          if (tmpChanges[x] == "") tmpChanges[x] <- "(not specified)"
 
           upd <- nodbi::docdb_update(
             src = con,
@@ -1788,8 +1778,7 @@ ctrLoadQueryIntoDbEuctr <- function(
               "version_results_history" = tmpChanges[x],
               stringsAsFactors = FALSE))
 
-          if (verbose) {
-            message(upd)}
+          if (verbose) message(upd)
           })
 
         # clean up large object

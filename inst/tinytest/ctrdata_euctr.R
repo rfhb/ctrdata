@@ -7,23 +7,23 @@ q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
 
 # test
 expect_message(
-  tmp_test <- suppressWarnings(
+  tmpTest <- suppressWarnings(
     ctrLoadQueryIntoDb(
       queryterm = q,
       con = dbc)),
   "Imported or updated")
 
 # test
-expect_true(tmp_test$n > 10L)
+expect_true(tmpTest$n > 10L)
 
 # test
 expect_true(all(
   c("2007-000371-42-FR", "2010-019340-40-GB",
     "2010-019340-40-3RD") %in%
-    tmp_test$success))
+    tmpTest$success))
 
 # test
-expect_true(length(tmp_test$failed) == 0L)
+expect_true(length(tmpTest$failed) == 0L)
 
 
 #### ctrLoadQueryIntoDb update ####
@@ -60,15 +60,15 @@ expect_message(
 # query based on date is used since this avoids no trials are found
 
 date.today <- Sys.time()
-date.from  <- format(date.today - (60 * 60 * 24 * 15), "%Y-%m-%d")
-date.to    <- format(date.today - (60 * 60 * 24 *  9), "%Y-%m-%d")
+date.from  <- format(date.today - (60 * 60 * 24 * 9), "%Y-%m-%d")
+date.to    <- format(date.today - (60 * 60 * 24 * 4), "%Y-%m-%d")
 
-q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
+q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&phase=phase-two",
             "&dateFrom=", date.from, "&dateTo=", date.to)
 
 # test
 expect_message(
-  tmp_test <- suppressWarnings(
+  tmpTest <- suppressWarnings(
     ctrLoadQueryIntoDb(
       paste0(q),
       con = dbc)),
@@ -97,23 +97,20 @@ nodbi::docdb_update(
 
 # test
 expect_message(
-  tmp_test <- suppressWarnings(
+  tmpTest <- suppressWarnings(
     ctrLoadQueryIntoDb(
       querytoupdate = "last",
       con = dbc)),
   "(Imported or updated|First result page empty)")
 
 # test
-expect_true(tmp_test$n > 10L)
+expect_true(tmpTest$n > 10L)
 
 # test
-expect_true(length(tmp_test$success) > 10L)
+expect_true(length(tmpTest$success) > 10L)
 
 
 #### ctrLoadQueryIntoDb results ####
-
-# https://www.clinicaltrialsregister.eu/ctr-search/search?query=&
-# age=under-18&phase=phase-three&resultsstatus=trials-with-results
 
 # get trials with results
 q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
@@ -151,8 +148,8 @@ result <- suppressWarnings(
 
 # keep only one record for trial
 result <- suppressWarnings(suppressMessages(
-  result[ result[["_id"]] %in%
-            dbFindIdsUniqueTrials(con = dbc), ]
+  result[result[["_id"]] %in%
+           dbFindIdsUniqueTrials(con = dbc), ]
 ))
 
 # test
@@ -267,12 +264,12 @@ expect_error(
   "Empty 'namepart' parameter.")
 
 # test
-tmp_test <- suppressMessages(suppressWarnings(
+tmpTest <- suppressMessages(suppressWarnings(
   dbFindFields(
     namepart = "date",
     con = dbc)))
-expect_true("character" %in% class(tmp_test))
-expect_true(length(tmp_test) >= 4L)
+expect_true("character" %in% class(tmpTest))
+expect_true(length(tmpTest) >= 4L)
 
 
 #### annotations #####
@@ -311,21 +308,21 @@ expect_message(
       annotation.mode = "prepend")),
   "Imported or updated")
 
-tmp_test <- suppressWarnings(
+tmpTest <- suppressWarnings(
   dbGetFieldsIntoDf(
     fields = "annotation",
     con = dbc))
 
-tmp_test <-
-  tmp_test[
-    tmp_test[["_id"]] %in%
+tmpTest <-
+  tmpTest[
+    tmpTest[["_id"]] %in%
       suppressMessages(
         suppressWarnings(
           dbFindIdsUniqueTrials(
-            con = dbc))) , ]
+            con = dbc))), ]
 
 # test
-expect_equal(sort(tmp_test[["annotation"]]),
+expect_equal(sort(tmpTest[["annotation"]]),
              sort(c("EU ANNO", "ANNO")))
 
 # test
@@ -358,18 +355,18 @@ expect_message(
 # test
 expect_warning(
   suppressMessages(
-    tmp_test <- dbFindIdsUniqueTrials(
+    tmpTest <- dbFindIdsUniqueTrials(
       con = dbc,
       prefermemberstate = "3RD",
       include3rdcountrytrials = FALSE)),
   "Preferred EUCTR version set to 3RD country trials")
 
 # test, reusing the query string
-tmp_q <- strsplit(q, "+OR+", fixed = TRUE)[[1]]
-tmp_q <- gsub(".+=(.?)", "\\1", tmp_q)
+tmpQ <- strsplit(q, "+OR+", fixed = TRUE)[[1]]
+tmpQ <- gsub(".+=(.?)", "\\1", tmpQ)
 expect_true(all(
-  tmp_q %in%
-    gsub("([0-9]{4}-[0-9]{6}-[0-9]{2})-.*", "\\1", tmp_test)))
+  tmpQ %in%
+    gsub("([0-9]{4}-[0-9]{6}-[0-9]{2})-.*", "\\1", tmpTest)))
 
 
 #### dbGetFieldsIntoDf ####
@@ -431,4 +428,3 @@ expect_message(
     ctrOpenSearchPagesInBrowser(
       dbQueryHistory(con = dbc)[1, ])),
   "Opening browser for search:")
-

@@ -1,3 +1,5 @@
-linters: with_defaults(camel_case_linter = NULL, # prefer camel case
-                       snake_case_linter,        # flag snake case
-                       line_length_linter(120))  # long lines
+linters: with_defaults(
+    object_name_linter("camelCase"),
+    camel_case_linter = NULL, # prefer camel case
+    snake_case_linter = NULL, # dont flag snake case
+    line_length_linter(120))  # long lines

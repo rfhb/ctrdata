@@ -14,32 +14,32 @@ suppressPackageStartupMessages(library(ctrdata))
 
 #### global variables for data bases ####
 
-tmpname <- paste0("ctrdata_test_",
+tmpName <- paste0("ctrdata_test_",
                   format(Sys.time(),
                          "%Y%m%d%H%M%S",
                          tz = "UTC"), "_",
                   paste0(sample(letters, 6), collapse = ""))
 
 # local mongodb
-mongo_local_rw_collection <- tmpname
-mongo_local_rw_db         <- "users"
+mongoLocalRwCollection <- tmpName
+mongoLocalRwDb         <- "users"
 
 # remote mongodb read only
-mongo_remote_ro_collection <- "dbperm"
-mongo_remote_ro_db         <- "dbperm"
+mongoRemoteRoCollection <- "dbperm"
+mongoRemoteRoDb         <- "dbperm"
 
 # remote mongodb read write
-mongo_remote_rw_collection <- tmpname
-mongo_remote_rw_db         <- "users"
+mongoRemoteRwCollection <- tmpName
+mongoRemoteRwDb         <- "users"
 
 # credentials
 
-mongo_remote_ro_url <-
+mongoRemoteRoUrl <-
   "mongodb+srv://DWbJ7Wh:bdTHh5cS@cluster0-b9wpw.mongodb.net/"
 # permissions are restricted to "find" in "dbperm" in "dbperm"
 # no other functions can be executed, no login possible
 
-mongo_remote_rw_url <-
+mongoRemoteRwUrl <-
   Sys.getenv(x = "ctrdatamongouri")
 # this environment variable is set on development
 # and continuous integration systems
@@ -47,7 +47,7 @@ mongo_remote_rw_url <-
 
 #### helper functions system detection ####
 
-check_binaries <- function(){
+checkBinaries <- function() {
 
   out <- TRUE
 
@@ -77,7 +77,7 @@ check_binaries <- function(){
 }
 
 
-check_internet <- function(){
+checkInternet <- function() {
 
   tmp <- try({
     httr::HEAD("www.clinicaltrials.gov", httr::timeout(5))
@@ -90,7 +90,7 @@ check_internet <- function(){
 }
 
 
-check_sqlite <- function(){
+checkSqlite <- function() {
 
   tmp <- try(nodbi::src_sqlite(), silent = TRUE)
 
@@ -101,12 +101,12 @@ check_sqlite <- function(){
 }
 
 
-check_mongo_local <- function(){
+checkMongoLocal <- function() {
 
   tmp <- try(
     nodbi::src_mongo(
-      collection = tmpname,
-      db = tmpname,
+      collection = tmpName,
+      db = tmpName,
       url = "mongodb://localhost"),
     silent = TRUE)
 
@@ -117,13 +117,13 @@ check_mongo_local <- function(){
 }
 
 
-check_mongo_remote_ro <- function(){
+checkMongoRemoteRo <- function() {
 
   tmp <- try(
     nodbi::src_mongo(
-      collection = tmpname,
-      db = tmpname,
-      url = mongo_remote_ro_url),
+      collection = tmpName,
+      db = tmpName,
+      url = mongoRemoteRoUrl),
     silent = TRUE)
 
   out <- all(c("src_mongo", "docdb_src") %in% class(tmp))
@@ -132,17 +132,16 @@ check_mongo_remote_ro <- function(){
 
 }
 
-check_mongo_remote_rw <- function(){
+checkMongoRemoteRw <- function() {
 
   tmp <- try(
     nodbi::src_mongo(
-      collection = tmpname,
-      db = tmpname,
-      url = mongo_remote_rw_url),
+      collection = tmpName,
+      db = tmpName,
+      url = mongoRemoteRwUrl),
     silent = TRUE)
 
   out <- all(c("src_mongo", "docdb_src") %in% class(tmp))
   if (out) tmp$con$disconnect()
   out
 }
-

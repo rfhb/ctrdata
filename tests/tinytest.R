@@ -5,10 +5,8 @@ if (requireNamespace("tinytest", quietly = TRUE) &&
   # but not to be executed on CRAN (where
   # released versions have 3 components)
 
-  # - see section 4.4 in vignette("using_tinytest", "tinytest")
+  # see section 4.4 in vignette("using_tinytest", "tinytest")
   cran <- !length(unclass(packageVersion("ctrdata"))[[1]]) == 4
-  # - alternative criterion
-  # cran <- Sys.getenv("ATHOME") == ""
 
   # do testing
   tt <- tinytest::test_package(

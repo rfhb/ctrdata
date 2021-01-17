@@ -22,9 +22,9 @@ tf <- function() {
 
   # do tests
 
-  #### queryterm / ctrLoadQueryIntoDb ####
+  #### queryterm and ctrLoadQueryIntoDb ####
 
-  tmpdf <- iris[1:5,]
+  tmpdf <- iris[1:5, ]
   names(tmpdf) <- paste0("query-", names(tmpdf))
   # test
   expect_error(
@@ -61,10 +61,8 @@ tf <- function() {
           querytoupdate = 1L,
           con = dbc))))
 
-  # test
-  # clipr::clear_clip()
-  # was not able to get testing to work
-  # on linux containers
+  # test clipr - was not able to get
+  # testing to work on linux containers
   if (.Platform$OS.type == "windows" ||
       grepl("darwin", sessionInfo()$platform,
             ignore.case = TRUE)) {

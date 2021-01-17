@@ -100,23 +100,14 @@ expect_equal(
     "ThisDoesNotExist")),
   NULL)
 
-# ctrGetQueryUrlFromBrowser(url = "type=Intr&age=0&intr=Drug&phase=0&phase=1&strd_e=12%2F31%2F2010")
-# ctrGetQueryUrlFromBrowser(url = "type=Intr&age=0&intr=Drug&phase=0&phase=1&strd_e=12%2F31%2F2010", "CTGOV")
-# ctrGetQueryUrlFromBrowser(url = "https://clinicaltrials.gov/ct2/results?type=Intr&cond=cancer&age=0")
-# ctrGetQueryUrlFromBrowser(url = "https://clinicaltrials.gov/ct2/results?type=Intr&cond=cancer&age=0", "CTGOV")
-# ctrGetQueryUrlFromBrowser(url = "https://clinicaltrials.gov/ct2/results?type=Intr&cond=cancer&age=0", "EUCTR")
-# ctrGetQueryUrlFromBrowser(url = "")
-# ctrGetQueryUrlFromBrowser(url = NA)
-# ctrGetQueryUrlFromBrowser(url = list())
-
 q <- "https://clinicaltrials.gov/ct2/results?type=Intr&cond=cancer&age=0"
 
-tmp_test <- suppressMessages(
+tmpTest <- suppressMessages(
   ctrGetQueryUrlFromBrowser(
     url = q))
 
 # test
-expect_true("data.frame" %in% class(tmp_test))
+expect_true("data.frame" %in% class(tmpTest))
 
 # test
 expect_warning(
@@ -139,7 +130,7 @@ expect_equal(
 #### ctrOpenSearchPagesInBrowser ####
 
 if (!at_home()) exit_file("Reason: not at_home")
-if (!check_internet()) exit_file("Reason: no internet connectivity")
+if (!checkInternet()) exit_file("Reason: no internet connectivity")
 
 # test
 expect_message(
@@ -148,18 +139,18 @@ expect_message(
 
 # test
 expect_message(
-  ctrOpenSearchPagesInBrowser(input = tmp_test),
+  ctrOpenSearchPagesInBrowser(input = tmpTest),
   "Opening browser for search:")
 
 q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/",
             "search?query=&age=under-18&status=completed")
 
-tmp_test <- suppressMessages(
+tmpTest <- suppressMessages(
   ctrGetQueryUrlFromBrowser(
     url = q))
 
 # test
-expect_true("data.frame" %in% class(tmp_test))
+expect_true("data.frame" %in% class(tmpTest))
 
 # test
 expect_message(
@@ -173,7 +164,7 @@ expect_message(
 
 # test
 expect_message(
-  ctrOpenSearchPagesInBrowser(tmp_test),
+  ctrOpenSearchPagesInBrowser(tmpTest),
   "Opening browser for search:")
 
 # test

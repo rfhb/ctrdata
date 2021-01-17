@@ -1,6 +1,5 @@
 
 <!-- README.md is generated from README.Rmd -->
-
 <!-- badges: start -->
 
 [![](https://cranlogs.r-pkg.org/badges/ctrdata)](https://cran.r-project.org/package=ctrdata)
@@ -22,23 +21,23 @@ motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. The package
 is to be used within the [R](https://www.r-project.org/) system.
 
-Last reviewed on 2020-10-17 for version 1.4
+Last reviewed on 2021-01-23 for version 1.4.1.9001
 
 Main features:
 
-  - Protocol-related trial information is easily retrieved (downloaded):
+-   Protocol-related trial information is easily retrieved (downloaded):
     Users define a query in a register’s web interface and then use
     `ctrdata` to retrieve in one step all trials resulting from the
     query. Results-related trial information and personal annotations
     can be including during retrieval. Synonyms of an active substance
     can also be found.
 
-  - Retrieved (downloaded) trial information is transformed and stored
+-   Retrieved (downloaded) trial information is transformed and stored
     in a document-centric database, for fast and offline access. Uses
     `RSQLite`, local or remote MongoDB servers, via R package `nodbi`.
     Easily re-run a previous query to update a database.
 
-  - Analysis can be done with `R` (using `ctrdata` convenience
+-   Analysis can be done with `R` (using `ctrdata` convenience
     functions) or others systems. Unique (de-duplicated) trial records
     are identified across registers. `ctrdata` can merge and recode
     information (fields) and also provides easy access even to
@@ -59,16 +58,16 @@ citation("ctrdata")
 
 Package `ctrdata` has been used for:
 
-  - Blogging on [Innovation coming to paediatric
+-   Blogging on [Innovation coming to paediatric
     research](https://paediatricdata.eu/innovation-coming-to-paediatric-research/)
 
-  - Report on [The impact of collaboration: The value of UK medical
+-   Report on [The impact of collaboration: The value of UK medical
     research to EU science and
     health](https://www.cancerresearchuk.org/about-us/we-develop-policy/we-work-with-government/exiting-the-eu/uk-and-eu-research#downloads)
 
 # Installation
 
-## 1\. Install package in R
+## 1. Install package in R
 
 Package `ctrdata` is [on
 CRAN](https://cran.r-project.org/package=ctrdata) and [on
@@ -88,7 +87,7 @@ devtools::install_github("rfhb/ctrdata")
 These commands also install the package dependencies, which are `nodbi`,
 `jsonlite`, `httr`, `curl`, `clipr`, `xml2`, `rvest`.
 
-## 2\. Command line tools `perl`, `sed`, `cat` and `php` (5.2 or higher)
+## 2. Command line tools `perl`, `sed`, `cat` and `php` (5.2 or higher)
 
 These command line tools are required for `ctrLoadQueryIntoDb()`, the
 main function of package `ctrdata`.
@@ -117,7 +116,7 @@ tinytest::test_package("ctrdata", at_home = TRUE)
 The functions are listed in the approximate order of use.
 
 | Function name                      | Function purpose                                                                                                    |
-| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+|------------------------------------|---------------------------------------------------------------------------------------------------------------------|
 | `ctrOpenSearchPagesInBrowser()`    | Open search pages of registers or execute search in web browser                                                     |
 | `ctrFindActiveSubstanceSynonyms()` | Find synonyms and alternative names for an active substance                                                         |
 | `ctrGetQueryUrlFromBrowser()`      | Import from clipboard the URL of a search in one of the registers                                                   |
@@ -136,17 +135,13 @@ The functions are listed in the approximate order of use.
 The aim is to download protocol-related trial information and tabulate
 the trials’ status of conduct.
 
-  - Attach package `ctrdata`:
-
-<!-- end list -->
+-   Attach package `ctrdata`:
 
 ``` r
 library(ctrdata)
 ```
 
-  - Open registers’ advanced search pages in browser:
-
-<!-- end list -->
+-   Open registers’ advanced search pages in browser:
 
 ``` r
 ctrOpenSearchPagesInBrowser()
@@ -155,14 +150,12 @@ ctrOpenSearchPagesInBrowser()
 ctrOpenSearchPagesInBrowser(copyright = TRUE)
 ```
 
-  - Adjust search parameters and execute search in browser
+-   Adjust search parameters and execute search in browser
 
-  - When trials of interest are listed in browser, copy the address from
+-   When trials of interest are listed in browser, copy the address from
     the browser’s address bar to the clipboard
 
-  - Get address from clipboard:
-
-<!-- end list -->
+-   Get address from clipboard:
 
 ``` r
 q <- ctrGetQueryUrlFromBrowser()
@@ -173,7 +166,7 @@ q
 # 1 query=cancer&age=under-18&phase=phase-one&status=completed           EUCTR
 ```
 
-  - Retrieve protocol-related information, transform and save to
+-   Retrieve protocol-related information, transform and save to
     database:
 
 Under the hood, scripts `euctr2json.sh` and `xml2json.php` (in
@@ -199,7 +192,7 @@ ctrLoadQueryIntoDb(
   con = db)
 ```
 
-  - Analyse
+-   Analyse
 
 Tabulate the status of trials that are part of an agreed paediatric
 development program (paediatric investigation plan, PIP):
@@ -225,18 +218,15 @@ with(result,
      table(
        p_end_of_trial_status, 
        a7_trial_is_part_of_a_paediatric_investigation_plan))
-#                     a7_trial_is_part_of_a_paediatric_investigation_plan
+#                      a7_trial_is_part_of_a_paediatric_investigation_plan
 # p_end_of_trial_status Information not present in EudraCT No Yes
-#   Completed                                            6 25  14
-#   Ongoing                                              5 60  19
-#   Prematurely Ended                                    1  6   3
-#   Restarted                                            0  1   0
-#   Temporarily Halted                                   0  0   1
+#     Completed                                          6 31  15
+#     Ongoing                                            0  4   3
+#     Prematurely Ended                                  1  1   0
+#     Restarted                                          0  0   1
 ```
 
-  - Add records from another register into the same database
-
-<!-- end list -->
+-   Add records from another register into the same database
 
 ``` r
 # Retrieve trials from another register:
@@ -246,7 +236,7 @@ ctrLoadQueryIntoDb(
   con = db)
 ```
 
-  - Result-related trial information
+-   Result-related trial information
 
 Analyse some simple result details (see vignette for more examples):
 
@@ -265,7 +255,7 @@ result <- dbGetFieldsIntoDf(
 result <- dfTrials2Long(df = result)
 # View(result)
 
-# [1.] get counts for arms into data frame
+# [1.] get counts of subjects for all arms into data frame
 nsubj <- dfName2Value(
   df = result, 
   valuename = "clinical_results.baseline.analyzed_list.analyzed.count_list.count.value"
@@ -348,26 +338,26 @@ Any such connection object can then be used by `ctrdata` and generic
 functions of `nodbi` in a consistent way, as shown in the table:
 
 | Purpose                               | SQLite                                                                                | MongoDB                                                                                                                  |
-| ------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+|---------------------------------------|---------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------|
 | Create database connection            | `dbc <- nodbi::src_sqlite(dbname = ":memory:", collection = "name_of_my_collection")` | `dbc <- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection", url = "mongodb://localhost")` |
 | Use connection with ctrdata functions | `ctrdata::{ctr,db}*(con = dbc)`                                                       | `ctrdata::{ctr,db}*(con = dbc)`                                                                                          |
 | Use connection with nodbi functions   | `nodbi::docdb_*(src = dbc, key = dbc$collection)`                                     | `nodbi::docdb_*(src = dbc, key = dbc$collection)`                                                                        |
 
 # Features in the works
 
-  - Merge results-related information retrieved from different registers
+-   Merge results-related information retrieved from different registers
     (e.g. corresponding endpoints) for analyses across trials
 
-  - Explore relevance to retrieve previous versions of protocol- or
+-   Explore relevance to retrieve previous versions of protocol- or
     results-related information
 
 # Acknowledgements
 
-  - Data providers and curators of the clinical trial registers. Please
+-   Data providers and curators of the clinical trial registers. Please
     review and respect their copyrights and terms and conditions
     (`ctrOpenSearchPagesInBrowser(copyright = TRUE)`).
 
-  - This package `ctrdata` has been made possible building on the work
+-   This package `ctrdata` has been made possible building on the work
     done for [R](https://www.r-project.org/),
     [curl](https://cran.r-project.org/package=curl),
     [httr](https://cran.r-project.org/package=httr),
@@ -380,14 +370,14 @@ functions of `nodbi` in a consistent way, as shown in the table:
 
 # Issues and notes
 
-  - Please file issues and bugs
+-   Please file issues and bugs
     [here](https://github.com/rfhb/ctrdata/issues).
 
-  - Information in trial registers may not be fully correct; see for
+-   Information in trial registers may not be fully correct; see for
     example [this publication on
     CTGOV](https://www.bmj.com/content/361/bmj.k1452).
 
-  - No attempts were made to harmonise field names between registers
+-   No attempts were made to harmonise field names between registers
     (nevertheless, `dfMergeTwoVariablesRelevel()` can be used to merge
     and map two variables / fields into one).
 

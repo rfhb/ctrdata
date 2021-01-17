@@ -34,7 +34,7 @@ knitr::opts_chunk$set(
 
 The package `ctrdata` provides functions for retrieving (downloading) information on clinical trials from public registers, and for aggregating and analysing this information. Use with  [R](https://www.r-project.org/) for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. The package is to be used within the [R](https://www.r-project.org/) system. 
 
-Last reviewed on 2020-10-17 for version 1.4
+Last reviewed on 2021-01-23 for version 1.4.1.9001
 
 Main features:
 
@@ -193,13 +193,12 @@ with(result,
      table(
        p_end_of_trial_status, 
        a7_trial_is_part_of_a_paediatric_investigation_plan))
-#                     a7_trial_is_part_of_a_paediatric_investigation_plan
+#                      a7_trial_is_part_of_a_paediatric_investigation_plan
 # p_end_of_trial_status Information not present in EudraCT No Yes
-#   Completed                                            6 25  14
-#   Ongoing                                              5 60  19
-#   Prematurely Ended                                    1  6   3
-#   Restarted                                            0  1   0
-#   Temporarily Halted                                   0  0   1
+#     Completed                                          6 31  15
+#     Ongoing                                            0  4   3
+#     Prematurely Ended                                  1  1   0
+#     Restarted                                          0  0   1
 ```
 
 * Add records from another register into the same database
@@ -231,7 +230,7 @@ result <- dbGetFieldsIntoDf(
 result <- dfTrials2Long(df = result)
 # View(result)
 
-# [1.] get counts for arms into data frame
+# [1.] get counts of subjects for all arms into data frame
 nsubj <- dfName2Value(
   df = result, 
   valuename = "clinical_results.baseline.analyzed_list.analyzed.count_list.count.value"
