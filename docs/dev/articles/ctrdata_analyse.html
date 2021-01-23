@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ctrdata</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.4.1.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.4.1.9001</span>
       </span>
     </div>
 
@@ -45,7 +45,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -77,7 +77,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/rfhb/ctrdata/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -97,8 +97,7 @@
 
       
 
-      </header><script src="ctrdata_analyse_files/accessible-code-block-0.0.1/empty-anchor.js"></script><link href="ctrdata_analyse_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
-<script src="ctrdata_analyse_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
+      </header><script src="ctrdata_analyse_files/header-attrs-2.6/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Analysing clinical trial information</h1>
@@ -119,18 +118,18 @@
 <h1 class="hasAnchor">
 <a href="#preparations" class="anchor"></a>Preparations</h1>
 <p>Here using MongoDB, which is faster than SQLite, can handle credentials, provides access to remote servers and can directly retrieve nested elements from paths. See <a href="../README.html">README.md</a> and <a href="ctrdata_retrieve.Rmd">Retrieve clinical trial information</a> for examples using SQLite.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="va">db</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_mongo.html">src_mongo</a></span><span class="op">(</span>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">db</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_mongo.html">src_mongo</a></span><span class="op">(</span>
   url <span class="op">=</span> <span class="st">"mongodb://localhost"</span>,
   db <span class="op">=</span> <span class="st">"some_database_name"</span>,
   collection <span class="op">=</span> <span class="st">"some_collection_name"</span><span class="op">)</span>
 <span class="va">db</span>
 <span class="co"># MongoDB 3.6.8 (uptime: 244492s)</span>
 <span class="co"># URL: laptop.home/some_database_name </span>
-<span class="co"># Collection: some_collection_name</span></pre></div>
+<span class="co"># Collection: some_collection_name</span></code></pre></div>
 <p>See <a href="ctrdata_retrieve.Rmd">Retrieve clinical trial information</a> for more details.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://cran.r-project.org/package=ctrdata">ctrdata</a></span><span class="op">)</span>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://cran.r-project.org/package=ctrdata">ctrdata</a></span><span class="op">)</span>
 
 <span class="co"># These two queries are equivalent, for </span>
 <span class="co"># completed interventional (drug) trials </span>
@@ -152,14 +151,14 @@
 <span class="fu"><a href="../reference/dbQueryHistory.html">dbQueryHistory</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 <span class="co">#       query-timestamp query-register query-records</span>
 <span class="co"># 1 2020-10-11 22:11:49          EUCTR           128</span>
-<span class="co"># 2 2020-10-11 22:12:08          CTGOV           190</span></pre></div>
+<span class="co"># 2 2020-10-11 22:12:08          CTGOV           190</span></code></pre></div>
 </div>
 <div id="find-fields-variables-of-interest" class="section level1">
 <h1 class="hasAnchor">
 <a href="#find-fields-variables-of-interest" class="anchor"></a>Find fields / variables of interest</h1>
 <p>Specify a part of the name of a variable of interest; all variables including deeply nested variable names are searched.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="fu"><a href="../reference/dbFindFields.html">dbFindFields</a></span><span class="op">(</span>namepart <span class="op">=</span> <span class="st">"date"</span>, con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/dbFindFields.html">dbFindFields</a></span><span class="op">(</span>namepart <span class="op">=</span> <span class="st">"date"</span>, con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 <span class="co"># Finding fields in database (may take some time)</span>
 <span class="co"># Field names cached for this session.</span>
 <span class="co">#  [1] "completion_date"                                                                  </span>
@@ -176,15 +175,15 @@
 <span class="co"># [12] "required_header.download_date"                                                    </span>
 <span class="co"># [13] "start_date"                                                                       </span>
 <span class="co"># [14] "verification_date"                                                                </span>
-<span class="co"># [15] "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database"</span></pre></div>
+<span class="co"># [15] "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database"</span></code></pre></div>
 <p>The search for fields is cached and thus accelerated during the R session, as long as no new <code><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code> is executed.</p>
 </div>
 <div id="data-frame-from-database" class="section level1">
 <h1 class="hasAnchor">
 <a href="#data-frame-from-database" class="anchor"></a>Data frame from database</h1>
 <p>The fields of interest can be obtained from the database and are represented in an R data.frame:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span>
   <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"f41_in_the_member_state"</span>, 
     <span class="st">"f422_in_the_whole_clinical_trial"</span>,
     <span class="st">"a1_member_state_concerned"</span>, 
@@ -194,14 +193,14 @@
     <span class="st">"overall_status"</span>,
     <span class="st">"start_date"</span>,
     <span class="st">"primary_completion_date"</span><span class="op">)</span>, 
-  con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></pre></div>
+  con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="metadata-from-data-frame" class="section level1">
 <h1 class="hasAnchor">
 <a href="#metadata-from-data-frame" class="anchor"></a>Metadata from data frame</h1>
 <p>The objects returned by functions of this package include attributes with metadata to indicate from which database, table / collection and query details. Metadata can be reused in R.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/attributes.html">attributes</a></span><span class="op">(</span>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/attributes.html">attributes</a></span><span class="op">(</span>
   <span class="va">result</span>
 <span class="op">)</span>
 <span class="co"># $`ctrdata-dbname`</span>
@@ -216,13 +215,13 @@
 <span class="co"># 2 2020-10-12 22:12:08          CTGOV           190</span>
 <span class="co">#                                          query-term</span>
 <span class="co"># 1 query=neuroblastoma&amp;age=under-18&amp;status=completed</span>
-<span class="co"># 2        cond=neuroblastoma&amp;recrs=e&amp;age=0&amp;intr=Drug</span></pre></div>
+<span class="co"># 2        cond=neuroblastoma&amp;recrs=e&amp;age=0&amp;intr=Drug</span></code></pre></div>
 <p>In the database, the variable "_id" is the unique index for a record. This "_id" is the NCT number for CTGOV records (e.g., “NCT00002560”), and it is the EudraCT number for EUCTR records including the postfix identifying the EU Member State (e.g., “2008-001436-12-NL”).</p>
 <p>It is relevant to de-duplicate records because a trial can be registered in both CTGOV and EUCTR, and can have records by involved country in EUCTR.</p>
 <p>De-duplication is done at the analysis stage because this enables to select if a trial record should be taken from one or the other register, and from one or the other EU Member State.</p>
 <p>The basis of de-duplication is the recording of additional trial identifiers in supplementary fields (variables), which are checked and reported when using function <code><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials()</a></code>:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="co"># Obtain de-duplicate trial record ids</span>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Obtain de-duplicate trial record ids</span>
 <span class="va">ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span><span class="op">(</span>
   preferregister <span class="op">=</span> <span class="st">"EUCTR"</span>,
   con <span class="op">=</span> <span class="va">db</span>
@@ -236,21 +235,21 @@
 <span class="co">#  - 0 CTGOV secondary_id / nct_alias / org_study_id in EUCTR a51_isrctn_...</span>
 <span class="co">#  - 10 CTGOV secondary_id / nct_alias / org_study_id in EUCTR a41_sponsors_protocol_...</span>
 <span class="co"># Concatenating 35 records from EUCTR and 179 from CTGOV:</span>
-<span class="co"># = Returning keys (_id) of 214 out of total 318 records in collection "some_collection_name".</span></pre></div>
+<span class="co"># = Returning keys (_id) of 214 out of total 318 records in collection "some_collection_name".</span></code></pre></div>
 <p>The unique ids can be used like this to de-duplicate the data.frame created above:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit">
-<span class="co"># Eliminate duplicate trials records: </span>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Eliminate duplicate trials records: </span>
 <span class="va">result</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">[</span> <span class="va">result</span><span class="op">[[</span><span class="st">"_id"</span><span class="op">]</span><span class="op">]</span> <span class="op">%in%</span> <span class="va">ids</span>, <span class="op">]</span>
 <span class="co">#</span>
 <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span>
-<span class="co"># [1] 214</span></pre></div>
+<span class="co"># [1] 214</span></code></pre></div>
 </div>
 <div id="simple-analysis---dates" class="section level1">
 <h1 class="hasAnchor">
 <a href="#simple-analysis---dates" class="anchor"></a>Simple analysis - dates</h1>
 <p>In a data.frame generated with <code><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code>, fields are typed as dates, logical and numbers.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span>
 <span class="co"># $ _id                                    : "2005-001267-63-IT" "2005-002089-13-GB" ...</span>
 <span class="co"># $ f41_in_the_member_state                : int  NA 15 5 37 NA 24 100 NA 600 24 ...</span>
 <span class="co"># $ f422_in_the_whole_clinical_trial       : int  230 63 12 67 70 NA 100 156 2230 NA ...</span>
@@ -260,17 +259,17 @@
 <span class="co"># $ a2_eudract_number                      : chr  "2005-001267-63" "2005-002089-13" ...</span>
 <span class="co"># $ overall_status                         : chr  NA NA NA NA ...</span>
 <span class="co"># $ start_date                             : Date, format: NA NA ...</span>
-<span class="co"># $ primary_completion_date                : Date, format: NA NA ...</span></pre></div>
+<span class="co"># $ primary_completion_date                : Date, format: NA NA ...</span></code></pre></div>
 <p>This facilitates using the respective type of data for analysis, for example of dates with base R graphics:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit">
-<span class="co"># Open file for saving</span>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Open file for saving</span>
 <span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"vignettes/nb1.png"</span><span class="op">)</span>
 <span class="co"># Visualise trial start date</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/hist.html">hist</a></span><span class="op">(</span>
   <span class="va">result</span><span class="op">[[</span><span class="st">"n_date_of_competent_authority_decision"</span><span class="op">]</span><span class="op">]</span>, 
   breaks <span class="op">=</span> <span class="st">"years"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/box.html">box</a></span><span class="op">(</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <div class="figure">
 <img src="nb1.png" alt=""><p class="caption">Histogram1</p>
 </div>
@@ -279,8 +278,8 @@
 <h1 class="hasAnchor">
 <a href="#merge-corresponding-fields-from-registers" class="anchor"></a>Merge corresponding fields from registers</h1>
 <p>However, the field “n_date_of_competent_authority_decision” used above exists only in EUCTR, and it corresponds to the field “start_date” in CTGOV. Thus, to provide a wider picture, the two fields can be merged for analysis, using the convenience function <code><a href="../reference/dfMergeTwoVariablesRelevel.html">dfMergeTwoVariablesRelevel()</a></code> in <code>ctrdata</code> package:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit">
-<span class="co"># Merge two variables into a new variable:</span>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Merge two variables into a new variable:</span>
 <span class="va">result</span><span class="op">$</span><span class="va">trialstart</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfMergeTwoVariablesRelevel.html">dfMergeTwoVariablesRelevel</a></span><span class="op">(</span>
   <span class="va">result</span>, 
   colnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>
@@ -292,13 +291,13 @@
   <span class="va">result</span><span class="op">[[</span><span class="st">"trialstart"</span><span class="op">]</span><span class="op">]</span>, 
   breaks <span class="op">=</span> <span class="st">"years"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/box.html">box</a></span><span class="op">(</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <div class="figure">
 <img src="nb2.png" alt=""><p class="caption">Histogram2</p>
 </div>
 <p>In a more sophisticated use of <code><a href="../reference/dfMergeTwoVariablesRelevel.html">dfMergeTwoVariablesRelevel()</a></code>, values of the original variables can be mapped into new values of the merged variable, as follows:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit">
-<span class="co"># First, define how values of the new, merged variable </span>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># First, define how values of the new, merged variable </span>
 <span class="co"># (e.g., "ongoing") will result from values of the </span>
 <span class="co"># original variable (e.g, "Recruiting):</span>
 <span class="va">mapped_values</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>
@@ -320,14 +319,14 @@
 
 <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">)</span>
 <span class="co"># completed   ongoing </span>
-<span class="co">#       209         5 </span></pre></div>
+<span class="co">#       209         5 </span></code></pre></div>
 </div>
 <div id="annotations-made-by-user" class="section level1">
 <h1 class="hasAnchor">
 <a href="#annotations-made-by-user" class="anchor"></a>Annotations made by user</h1>
 <p>The fields that <code>ctrdata</code> adds to each record are <code>annotation</code> and <code>record_last_import</code>. The annotation field is a single string that is only added if a user specifies an annotations when retrieving trials (<a href="ctrdata_retrieve.Rmd">Retrieve clinical trial information</a>). The last date and time when the trial record was imported is updated automatically. Also these fields can be used for analysis. For example, string functions can be used for annotations e.g. to split it into components. Since no annotations were specified when retrieving the trials in the steps above, there are so far no annotation fields and <code>stopifnodata</code> is set to <code>FALSE</code> to avoid the function raises an error to alert users:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit">
-<span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span>
   fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"annotation"</span>, <span class="st">"record_last_import"</span><span class="op">)</span>, 
   stopifnodata <span class="op">=</span> <span class="cn">FALSE</span>,
   con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
@@ -335,16 +334,16 @@
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span>
  <span class="co"># $ _id               : chr  "2004-004386-15-DE" "2004-004386-15-ES"  ...</span>
  <span class="co"># $ annotation        : chr  "site_de" NA ...</span>
- <span class="co"># $ record_last_import: POSIXct, format: "2020-10-12 20:11:45" ...</span></pre></div>
+ <span class="co"># $ record_last_import: POSIXct, format: "2020-10-12 20:11:45" ...</span></code></pre></div>
 </div>
 <div id="analysing-nested-fields-such-as-trial-results" class="section level1">
 <h1 class="hasAnchor">
 <a href="#analysing-nested-fields-such-as-trial-results" class="anchor"></a>Analysing nested fields such as trial results</h1>
 <p>The registers represent clinical trial information by nesting fields (e.g., several reporting groups within several measures within one of several endpoints). A visualisation of this hierarchical representation for CTGOV is this:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit">
-<span class="co"># remotes::install_github("https://github.com/hrbrmstr/jsonview")</span>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># remotes::install_github("https://github.com/hrbrmstr/jsonview")</span>
 <span class="fu">jsonview</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonview/man/json_tree_view.html">json_tree_view</a></span><span class="op">(</span><span class="va">result</span><span class="op">[[</span><span class="st">"clinical_results.outcome_list.outcome"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span>
- <span class="va">result</span><span class="op">[[</span><span class="st">"_id"</span><span class="op">]</span><span class="op">]</span> <span class="op">==</span> <span class="st">"NCT00520936"</span><span class="op">]</span><span class="op">)</span></pre></div>
+ <span class="va">result</span><span class="op">[[</span><span class="st">"_id"</span><span class="op">]</span><span class="op">]</span> <span class="op">==</span> <span class="st">"NCT00520936"</span><span class="op">]</span><span class="op">)</span></code></pre></div>
 <div class="figure">
 <img src="ctgovnested.png" alt=""><p class="caption">CtgovNested</p>
 </div>
@@ -354,8 +353,8 @@
 <li><p>to identify where the measures of interest (e.g. duration of response, blue circles above) are located in the information hierarchy by specifying the name and value of fields (<code>wherename</code>, <code>wherevalue</code>) and finally</p></li>
 <li><p>to obtain the value of the item by specifying the name(s) of its value field(s) (<code>valuename</code>, red circles above).</p></li>
 </ul>
-<div class="sourceCode" id="cb14"><pre class="downlit">
-<span class="co"># 1. Create data frame from results fields. </span>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># 1. Create data frame from results fields. </span>
 <span class="co"># These are the key results fields from </span>
 <span class="co"># CTGOV and from EUCTR: </span>
 <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">ctrdata</span><span class="fu">::</span><span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span>
@@ -443,7 +442,7 @@
   xlab <span class="op">=</span> <span class="st">"Trial #"</span>,
   ylab <span class="op">=</span> <span class="st">"Duration of response [months]"</span>,
   main <span class="op">=</span> <span class="st">"Neuroblastoma trials"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <div class="figure">
 <img src="dorplot.png" alt=""><p class="caption">DoRplot</p>
 </div>
@@ -452,8 +451,8 @@
 <h1 class="hasAnchor">
 <a href="#analysing-primary-endpoints" class="anchor"></a>Analysing primary endpoints</h1>
 <p>Text analysis has to be used for many fields of trial information from the registers. Here is an example to simply categorise the type of primary endpoint. In addition, the number of subjects are extracted and compared by type of primary endpoint.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit">
-<span class="co"># Several "measure" entries are in "primary_outcome". </span>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Several "measure" entries are in "primary_outcome". </span>
 <span class="co"># They are concatenated into a list when specifying</span>
 <span class="co"># the JSON path "primary_outcome.measure"</span>
 <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>
@@ -498,13 +497,13 @@
 <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">pep_is_efs</span><span class="op">)</span>
 
 <span class="co"># Plot</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">result</span>, 
        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">nsubj</span>,
            y <span class="op">=</span> <span class="va">pep_is_response</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_log10</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co"># ggsave("vignettes/boxpep.png", width = 6, height = 4)</span></pre></div>
+<span class="co"># ggsave("vignettes/boxpep.png", width = 6, height = 4)</span></code></pre></div>
 <div class="figure">
 <img src="boxpep.png" alt=""><p class="caption">BoxPEP</p>
 </div>
@@ -513,8 +512,8 @@
 <h1 class="hasAnchor">
 <a href="#investigational-or-authorised-medicinal-product" class="anchor"></a>Investigational or authorised medicinal product?</h1>
 <p>The information about the status of authorisation (licensing) of a medicine used in a trial is record in EUCTR; a corresponding field in CTGOV is not known. The status is in the tree starting from the <code>dimp</code> element.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit">
-<span class="co"># Get results</span>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Get results</span>
 <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span>
   fields <span class="op">=</span> 
     <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"a1_member_state_concerned"</span>, 
@@ -561,7 +560,7 @@
 <span class="va">result</span><span class="op">[[</span><span class="st">"any_authorised"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">number_authorised</span> <span class="op">&gt;</span> <span class="fl">0</span>
 
 <span class="co"># Plot</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://scales.r-lib.org">scales</a></span><span class="op">)</span>
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>
   data <span class="op">=</span> <span class="va">result</span>, 
@@ -577,7 +576,7 @@
     x <span class="op">=</span> <span class="st">"Year of trial authorisation (or entered in EUCTR)"</span>, 
     y <span class="op">=</span> <span class="st">"Number of trials"</span>, 
     fill <span class="op">=</span> <span class="st">"Medicine\nauthorised?"</span><span class="op">)</span>
-<span class="co"># ggsave("vignettes/nbtrials.png", width = 6, height = 4)</span></pre></div>
+<span class="co"># ggsave("vignettes/nbtrials.png", width = 6, height = 4)</span></code></pre></div>
 <div class="figure">
 <img src="nbtrials.png" alt=""><p class="caption">HistogramNBtrials</p>
 </div>
@@ -586,8 +585,8 @@
 <h1 class="hasAnchor">
 <a href="#analyses-using-aggregation-pipeline-and-mapreduce" class="anchor"></a>Analyses using aggregation pipeline and mapreduce</h1>
 <p>Here are example of analysis functions that can be run on the MongoDB server, which are fast and do not consume R resources.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit">
-<span class="co"># Load library for database access</span>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Load library for database access</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jeroen/mongolite/">mongolite</a></span><span class="op">)</span>
 
 <span class="co"># Creat R object m to access the </span>
@@ -665,7 +664,7 @@
 <span class="co"># 5  600     1</span>
 <span class="co"># 6 2200     4</span>
 <span class="co"># 7 2700     2</span>
-<span class="co"># 8 3300     4</span></pre></div>
+<span class="co"># 8 3300     4</span></code></pre></div>
 </div>
   </div>
 
