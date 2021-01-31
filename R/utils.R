@@ -2167,10 +2167,11 @@ typeField <- function(dfi) {
   # for date time conversion
   lct <- Sys.getlocale("LC_TIME")
   Sys.setlocale("LC_TIME", "C")
+  on.exit(Sys.setlocale("LC_TIME", lct))
 
   # main typing functions
   ctrDate     <- function() as.Date(dfi[, 2], format = "%Y-%m-%d")
-  ctrDateUs   <- function() as.Date(dfi[, 2], format = "%b %d, %Y")
+  ctrDateUs   <- function() as.Date(dfi[, 2], format = "%b %e, %Y")
   ctrDateCtr  <- function() as.Date(dfi[, 2], format = "%Y-%m-%d %H:%M:%S")
   ctrDateTime <- function() as.Date(dfi[, 2], format = "%Y-%m-%dT%H:%M:%S")
   ctrYesNo    <- function() sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA))
@@ -2309,9 +2310,6 @@ typeField <- function(dfi) {
     )
   },
   silent = TRUE)
-
-  # reset date time
-  Sys.setlocale("LC_TIME", lct)
 
   # prepare output
   if (!("try-error" %in% class(tmp)) &&
