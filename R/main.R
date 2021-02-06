@@ -10,9 +10,10 @@
 #' different registers.
 #'
 #' @param queryterm Either a string with the full URL of a search in
-#' a register or the data frame returned by the
+#' a register, or the data frame returned by the
 #' \link{ctrGetQueryUrlFromBrowser} or the
-#' \link{dbQueryHistory} functions.
+#' \link{dbQueryHistory} functions, or, together with parameter
+#' \code{register}, a string with query elements of a search URL.
 #' The queryterm is recorded in the \code{collection} for later
 #' use to update records.
 #'

@@ -123,8 +123,10 @@ ctrDb <- function(
 #' ctrOpenSearchPagesInBrowser(
 #'  "https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer")
 #'
+#' # for this example, the clipboard has to
+#' # contain the URL from a search in a register
 #' ctrOpenSearchPagesInBrowser(
-#'  ctrGetQueryUrlFromBrowser())
+#'  ctrGetQueryUrl())
 #'
 #' # open the last query that was
 #' # loaded into the database
@@ -260,7 +262,8 @@ ctrOpenSearchPagesInBrowser <- function(
 # end ctrOpenSearchPagesInBrowser
 
 
-#' Import from clipboard the URL of a search in one of the registers
+#' Extract query parameters and register name from input or from
+#' clipboard into which the URL of a register search was copied
 #'
 #' @param url URL such as from the browser address bar.
 #' If not specified, clipboard contents will be checked for
@@ -275,8 +278,8 @@ ctrOpenSearchPagesInBrowser <- function(
 #'
 #' @export
 #'
-#' @return A data frame with a query term and the register name that can
-#' directly be used in \link{ctrLoadQueryIntoDb} and in
+#' @return A data frame with column names query term and register name
+#' that can directly be used in \link{ctrLoadQueryIntoDb} and in
 #' \link{ctrOpenSearchPagesInBrowser}
 #'
 #' @examples
@@ -285,8 +288,12 @@ ctrOpenSearchPagesInBrowser <- function(
 #' db <- nodbi::src_sqlite(
 #'   collection = "my_collection"
 #' )
+#'
+#' # user now copies into the clipboard the URL from
+#' # the address bar of the browser that shows results
+#' # from a query in one of the trial registers
 #' ctrLoadQueryIntoDb(
-#'   ctrGetQueryUrlFromBrowser(),
+#'   ctrGetQueryUrl(),
 #'   con = db
 #' )
 #' }
@@ -1091,18 +1098,21 @@ dbFindIdsUniqueTrials <- function(
 
 #' Create data frame by extracting specified fields from database collection
 #'
-#' With this convenience function, fields in the mongo database are retrieved
-#' into an R dataframe. As mongo json fields within the record of a trial
-#' can be hierarchical and structured, the function flattens the data and
-#' returns a concatenation
-#' of values if there is more than one value or if the field is (in) an array,
-#' such as follows: value 1 / value 2 / ... (see example)
+#' With this convenience function, fields in the database are retrieved
+#' into an R data frame. Note that fields within the record of a trial
+#' can be hierarchical and structured, that is, nested.
+#'
+#' With both src_sqlite and src_mongo, the function returns a list of data
+#' for a field that includes nested content; use function
+#' \link{dfTrials2Long} followed by \link{dfName2Value} to
+#' extract desired nested variables.
 #'
 #' For more sophisticated data retrieval from the database, see vignette
 #' examples and other packages to query mongodb such as mongolite.
 #'
 #' @param fields Vector of one or more strings, with names of the sought fields.
-#'    See function \link{dbFindFields} for how to find names of fields.
+#' See function \link{dbFindFields} for how to find names of fields.
+#' Regular expressions are possible. "item.subitem" notation is supported.
 #'
 #' @param stopifnodata Stops with an error (\code{TRUE}, default) or with
 #' a warning (\code{FALSE}) if the sought field is empty in all,
@@ -1115,8 +1125,12 @@ dbFindIdsUniqueTrials <- function(
 #'
 #' @return A data frame with columns corresponding to the sought fields.
 #' Note: a column for the record _id will always be included.
+#' Each column can be either a simple data type (numeric, character, date)
+#' or a list (see example below): For complicated lists, use function
+#' \link{dfTrials2Long} followed by function \link{dfName2Value} to
+#' extract values for nested variables.
 #' The maximum number of rows of the returned data frame is equal to,
-#' or less than the number of records in the data base.
+#' or less than the number of records of trials in the database.
 #'
 #' @importFrom nodbi docdb_query
 #' @importFrom stats na.omit

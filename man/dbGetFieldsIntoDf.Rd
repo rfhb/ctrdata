@@ -8,7 +8,8 @@ dbGetFieldsIntoDf(fields = "", con, verbose = FALSE, stopifnodata = TRUE)
 }
 \arguments{
 \item{fields}{Vector of one or more strings, with names of the sought fields.
-See function \link{dbFindFields} for how to find names of fields.}
+See function \link{dbFindFields} for how to find names of fields.
+Regular expressions are possible. "item.subitem" notation is supported.}
 
 \item{con}{A \link[nodbi]{src} connection object, as obtained with
 nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()}
@@ -23,18 +24,24 @@ or not available in any of the records in the database collection.}
 \value{
 A data frame with columns corresponding to the sought fields.
 Note: a column for the record _id will always be included.
+Each column can be either a simple data type (numeric, character, date)
+or a list (see example below): For complicated lists, use function
+\link{dfTrials2Long} followed by function \link{dfName2Value} to
+extract values for nested variables.
 The maximum number of rows of the returned data frame is equal to,
-or less than the number of records in the data base.
+or less than the number of records of trials in the database.
 }
 \description{
-With this convenience function, fields in the mongo database are retrieved
-into an R dataframe. As mongo json fields within the record of a trial
-can be hierarchical and structured, the function flattens the data and
-returns a concatenation
-of values if there is more than one value or if the field is (in) an array,
-such as follows: value 1 / value 2 / ... (see example)
+With this convenience function, fields in the database are retrieved
+into an R data frame. Note that fields within the record of a trial
+can be hierarchical and structured, that is, nested.
 }
 \details{
+With both src_sqlite and src_mongo, the function returns a list of data
+for a field that includes nested content; use function
+\link{dfTrials2Long} followed by \link{dfName2Value} to
+extract desired nested variables.
+
 For more sophisticated data retrieval from the database, see vignette
 examples and other packages to query mongodb such as mongolite.
 }
