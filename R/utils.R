@@ -300,7 +300,7 @@ ctrOpenSearchPagesInBrowser <- function(
 #'
 #' @importFrom clipr read_clip
 #'
-ctrGetQueryUrlFromBrowser <- function(
+ctrGetQueryUrl <- function(
   url = "",
   register = "") {
   #
@@ -311,7 +311,8 @@ ctrGetQueryUrlFromBrowser <- function(
       !inherits(url, "character") || !inherits(register, "character") ||
       length(url) != 1L || length(register) != 1L) {
     stop("ctrGetQueryUrlFromBrowser(): 'url' and / or 'register' ",
-         "is not a single character string.",
+         "is not a single character string, url: '",
+         deparse(url), "', register: '", deparse(register), "'",
          call. = FALSE)
   }
   #
@@ -425,6 +426,52 @@ ctrGetQueryUrlFromBrowser <- function(
           call. = FALSE, immediate. = TRUE)
   #
   return(invisible(NULL))
+}
+# end ctrGetQueryUrlFromBrowser
+
+
+
+#' Import from clipboard the URL of a search in one of the registers
+#'
+#' @inheritParams ctrLoadQueryIntoDb
+#'
+#' @return A string of query parameters that can be used to retrieve data
+#' from the register.
+#'
+#' @export
+#'
+#' @return A data frame with column names query term and register name
+#' that can directly be used in \link{ctrLoadQueryIntoDb} and in
+#' \link{ctrOpenSearchPagesInBrowser}
+#'
+#' @examples
+#'
+#' \dontrun{
+#' db <- nodbi::src_sqlite(
+#'   collection = "my_collection"
+#' )
+#'
+#' # user now copies into the clipboard the URL from
+#' # the address bar of the browser that shows results
+#' # from a query in one of the trial registers
+#' ctrLoadQueryIntoDb(
+#'   ctrGetQueryUrlFromBrowser(),
+#'   con = db
+#' )
+#' }
+#'
+#' @importFrom clipr read_clip
+#'
+ctrGetQueryUrlFromBrowser <- function(
+  url = "",
+  register = "") {
+
+  # deprecate
+  .Deprecated(new = "ctrGetQueryUrl")
+
+  # defer call
+  ctrGetQueryUrl(url = url, register = register)
+
 }
 # end ctrGetQueryUrlFromBrowser
 

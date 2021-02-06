@@ -7,20 +7,15 @@
 ctrGetQueryUrlFromBrowser(url = "", register = "")
 }
 \arguments{
-\item{url}{URL such as from the browser address bar.
-If not specified, clipboard contents will be checked for
-a suitable URL. Can also contain a query term such as from
-\link{dbQueryHistory}()["query-term"]}
-
-\item{register}{Optional name of register (i.e., "EUCTR" or
-"CTGOV") in case url is a query term}
+\item{register}{Vector of abbreviations of the register to query,
+defaults to "EUCTR".}
 }
 \value{
 A string of query parameters that can be used to retrieve data
 from the register.
 
-A data frame with a query term and the register name that can
-directly be used in \link{ctrLoadQueryIntoDb} and in
+A data frame with column names query term and register name
+that can directly be used in \link{ctrLoadQueryIntoDb} and in
 \link{ctrOpenSearchPagesInBrowser}
 }
 \description{
@@ -32,6 +27,10 @@ Import from clipboard the URL of a search in one of the registers
 db <- nodbi::src_sqlite(
   collection = "my_collection"
 )
+
+# user now copies into the clipboard the URL from
+# the address bar of the browser that shows results
+# from a query in one of the trial registers
 ctrLoadQueryIntoDb(
   ctrGetQueryUrlFromBrowser(),
   con = db
