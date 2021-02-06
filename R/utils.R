@@ -1266,14 +1266,129 @@ dbGetFieldsIntoDf <- function(fields = "",
     query <- paste0('{"_id": {"$ne": "meta-info"}}')
     if (verbose) message("DEBUG: field: ", item)
     #
-    tmp <- try({
-      #
-      dfi <- nodbi::docdb_query(
-        src = con,
-        key = con$collection,
-        query = query,
-        fields = paste0('{"_id": 1, "', item, '": 1}'))
-      #
+    tmpItem <- try({
+
+      ## handle special case: src_* is sqlite and
+      # field name has a dot notation such as
+      # "b1_sponsor.b31_and_b32_status_of_the_sponsor"
+      # json_extract() cannot be used to retrieve all
+      # items since a json path would have to include
+      # an array indicator such as [1] or [#-1], see
+      # https://www.sqlite.org/json1.html#jex ans
+      # https://www.sqlite.org/json1.html#path_arguments
+      if (grepl(".+[.].+", item) &&
+          inherits(con$con, "SQLiteConnection")) {
+
+        # ctrdata::dbFindFields("imp", con)
+        # ctrdata::dbFindFields(".*", con = con)
+        # ctrdata::ctrOpenSearchPagesInBrowser(q)
+        #
+        # con <- dbc
+        #
+        # item <- "b1_sponsor.b31_and_b32_status_of_the_sponsor"
+        # item <- "dimp.d38_imp_identification_details.d38_inn__proposed_inn"
+
+        # top element in item
+        top_element <- sub("^(.+?)\\[?[-#0-9]*\\]?[.].*$", "\\1", item)
+        # lowest element in item
+        # lowest_element <- sub("^.+[.](.+?)$", "\\1", item)
+
+        # mangle item names e.g.,
+        # "location[4].facility[#-2].name"
+        # "clinical_results.outcome_list.outcome.measure.dispersion" -> item
+        # - remove arrayIndex
+        item <- gsub("\\[[-#0-9]+\\]", "", item)
+        # - protect "." between item and subitem using lookahead for overlapping groups
+        regexp_item <- gsub("([a-zA-Z]+)[.](?=[a-zA-Z]+)", "\\1@@@\\2", item, perl = TRUE)
+        # - add in regexps to match any arrayIndex in fullkey
+        regexp_item <- paste0("[$][.]", gsub("@@@", "[-#\\\\[\\\\]0-9]*[.]", regexp_item))
+
+        # - construct statement using json_tree(json, path) as per
+        #   https://www.sqlite.org/json1.html#jtree
+        # - include cast() to string to avoid warnings when types
+        #   of columns are changed after first records are retrieved
+        statement <- paste0(
+          "SELECT CAST(_id AS text) AS '_id',
+          CAST(value AS text) AS '", item, "'
+          FROM ", con$collection, ", json_tree(", con$collection, ".json, '$.",
+          top_element, "') WHERE fullkey REGEXP '", regexp_item, "';")
+
+        # DEBUG all rows
+        # statement <- paste0(
+        #   "SELECT _id, key, fullkey, value, type
+        #   FROM ", con$collection, ", json_tree(", con$collection, ".json, '$.",
+        #   top_element, "');")
+
+        if (verbose) message("DEBUG: src_sqlite, statement:\n", statement)
+
+        # execute query, bypassing nodbi since my implementation
+        # of nodbi::doc_query.sqlite() does not use json_tree()
+        dfi <- DBI::dbGetQuery(
+          conn = con$con,
+          statement = statement,
+          n = -1L)
+
+        # dfi[, 2] could still be json strings thus convert per row
+        if (all(sapply(dfi[, 2], is.character)) &&
+            any(sapply(dfi[, 2], jsonlite::validate, USE.NAMES = FALSE))) {
+          dfi[, 2]  <- lapply(
+            dfi[, 2], function(i) {
+              tmpi <- try(jsonlite::fromJSON(i, flatten = TRUE), silent = TRUE)
+              if (!inherits(tmpi, "try-error")) {
+                list(tmpi)
+              } else {
+                list(i)
+              }
+            })
+        }
+
+        # dfi can be a long table, number of rows corresponding to
+        # number of subitems found in the collection (possibly more
+        # than one per record in the collection): aggregate by _id
+        tmpById <- tapply(
+          X = dfi[, 2],
+          INDEX = dfi[, 1],
+          function(i) {
+            tmpi <- data.frame(i, stringsAsFactors = FALSE)
+            names(tmpi) <- item
+            tmpi
+          },
+          simplify = FALSE)
+
+        # now match format for further processing
+        dfi <- data.frame(
+          "_id" = names(tmpById), tmpById,
+          row.names = NULL,
+          check.names = FALSE,
+          stringsAsFactors = FALSE
+        )
+
+      } else {
+
+        # src_mongo or (src_sqlite and no "." in item)
+
+        dfi <- nodbi::docdb_query(
+          src = con,
+          key = con$collection,
+          query = query,
+          fields = paste0('{"_id": 1, "', item, '": 1}'))
+
+        # dfi[, 2] could still be json strings thus convert per row
+        if (all(sapply(dfi[, 2], is.character)) &&
+            any(sapply(dfi[, 2], jsonlite::validate, USE.NAMES = FALSE))) {
+          dfi[, 2]  <- lapply(
+            dfi[, 2], function(i) {
+              tmpi <- try(jsonlite::fromJSON(i, flatten = TRUE), silent = TRUE)
+              if (!inherits(tmpi, "try-error")) {
+                list(tmpi)
+              } else {
+                list(i)
+              }
+            })
+        }
+
+      } # ".+[.].+" && "SQLiteConnection"
+
       # some backends return NA if query matches,
       # other only non-NA values when query matches
       dfi <- dfi[!is.na(dfi["_id"]) &
@@ -1297,20 +1412,27 @@ dbGetFieldsIntoDf <- function(fields = "",
                        is.data.frame(x) && ncol(x) == 1))) {
         # concatenate
         dfi[, 2] <- sapply(sapply(dfi[, 2], "[", 1),
-                           function(x) paste0(x, collapse = " / "))
+                           function(x)
+                             paste0(na.omit(unlist(x)),
+                                    collapse = " / "))
         # inform user
-        message("Note: requested field ", item, " has subitems ",
-                paste0(names(dfi)[-1], collapse = ", "),
-                ", collapsed using ' / '")
-        # remove extraneous columns
+        message("Note: field '", item, "' collapsed using ' / '")
+        # remove any extraneous columns
         dfi <- dfi[, 1:2]
       }
       #
       # - if dfi[, 2:ncol(dfi)] is from the same field e.g.
       #   required_header.{download_date,link_text,url}, concatenate
-      if ((ncol(dfi) > 2) &&
-          all(grepl(paste0(item, "[.].+$"),
-                    names(dfi)[-1]))) {
+      if ((length(ncol(dfi[, 2])) && ncol(dfi[, 2]) > 1L) ||
+          ((ncol(dfi) > 2L) &&
+           all(grepl(paste0(item, "[.].+$"),
+                     names(dfi)[-1])))) {
+        # store names
+        if (ncol(dfi) > 2L) {
+          tmpnam <- names(dfi)
+        } else {
+          tmpnam <- names(dfi[, 2])
+        }
         # concatenate
         dfi[, 2] <- unlist(
           apply(
@@ -1319,8 +1441,8 @@ dbGetFieldsIntoDf <- function(fields = "",
             FUN = function(r)
               paste0(na.omit(unlist(r)), collapse = " / ")))
         # inform user
-        message("Note: requested field ", item, " has subitems ",
-                paste0(names(dfi)[-1], collapse = ", "),
+        message("Note: field '", item, "' has subitems ",
+                paste0(tmpnam, collapse = ", "),
                 ", collapsed using ' / '")
         # remove extraneous columns
         dfi <- dfi[, 1:2]
@@ -1336,8 +1458,7 @@ dbGetFieldsIntoDf <- function(fields = "",
     },
     silent = TRUE)
     #
-    if (inherits(tmp, "try-error") ||
-        !nrow(dfi)) {
+    if (inherits(tmpItem, "try-error") || !nrow(dfi)) {
 
       # try-error occured or no data retrieved
       if (stopifnodata) {
@@ -1385,10 +1506,13 @@ dbGetFieldsIntoDf <- function(fields = "",
   result <- addMetaData(result,
                         con = con)
 
+  # remove rows with empty _id
+  result <- result[!is.na(result[, "_id"]), ]
+
   # notify user
   diff <- length(idsall) - nrow(result)
   if (diff > 0) {
-    warning(diff, " of ", nrow(result), " records dropped which did not ",
+    warning(diff, " records dropped which did not ",
             "have values for any of the specified fields. ",
             call. = FALSE, immediate. = FALSE)
   }
