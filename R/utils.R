@@ -747,10 +747,10 @@ dbFindFields <- function(namepart = "",
                key = key.replace(/^[.]/, '');
                emit(key, 1);
       }}}}",
-          reduce = "function(id, counts) {return Array.sum(counts)}"
-          # extract and keep only "_id" = first column, with keys
+      reduce = "function(id, counts) {return Array.sum(counts)}"
+      # extract and keep only "_id" = first column, with keys
         )[["_id"]]},
-        silent = TRUE)
+      silent = TRUE)
 
       # if mapreduce does not work or is not permitted, revert to guessing
       if ("try-error" %in% class(keyslist)) {
@@ -1005,7 +1005,7 @@ dbFindIdsUniqueTrials <- function(
           " - ", sum(dupesC2),
           " CTGOV secondary_id / nct_alias / org_study_id in",
           " EUCTR a52_us_nct_...")
-        }
+      }
       #
       # d.2 - ctgov in euctr a51_... (id_info corresponds to index 2)
       dupesD2 <- sapply(
@@ -1030,7 +1030,7 @@ dbFindIdsUniqueTrials <- function(
         message(" - ", sum(dupesE2),
                 " CTGOV secondary_id / nct_alias / org_study_id in",
                 " EUCTR a41_sponsors_protocol_...")
-        }
+      }
       #
       # finalise results set
       listofEUCTRids <- listofEUCTRids[["_id"]]
@@ -1277,8 +1277,8 @@ dbGetFieldsIntoDf <- function(fields = "",
       # some backends return NA if query matches,
       # other only non-NA values when query matches
       dfi <- dfi[!is.na(dfi["_id"]) &
-                 !sapply(seq_len(nrow(dfi)),
-                         function(r) all(is.na(dfi[r, -1]))), ]
+                   !sapply(seq_len(nrow(dfi)),
+                           function(r) all(is.na(dfi[r, -1]))), ]
       #
       # ensure intended column order
       if (names(dfi)[1] != "_id") {
@@ -1324,11 +1324,14 @@ dbGetFieldsIntoDf <- function(fields = "",
                 ", collapsed using ' / '")
         # remove extraneous columns
         dfi <- dfi[, 1:2]
+        #
       }
+      #
+      # - if each [,2] is a list of a list(s)
       #
       if (verbose) {
         message("DEBUG: field ", item, " has length ", nrow(dfi))
-        }
+      }
       #
     },
     silent = TRUE)
@@ -1388,7 +1391,7 @@ dbGetFieldsIntoDf <- function(fields = "",
     warning(diff, " of ", nrow(result), " records dropped which did not ",
             "have values for any of the specified fields. ",
             call. = FALSE, immediate. = FALSE)
-    }
+  }
 
   # return
   return(result)
@@ -1800,13 +1803,13 @@ dfListExtractKey <- function(
     )) {
 
   # deprecate
-  .Deprecated("dfName2Value")
+  .Deprecated(new = "dfName2Value")
 
   # check
   if (!("_id" %in% names(df))) {
     stop("Data frame 'df' lacks '_id' column.",
          call. = FALSE)
-    }
+  }
 
   # helper function to extract from
   # a named vector elements by name
@@ -1840,7 +1843,7 @@ dfListExtractKey <- function(
              function(l)
                extractKey(unlist(l, recursive = TRUE),
                           k[2]) # k[2] = "^title" identifies
-                                # the key in the sublist
+             # the key in the sublist
       ))
 
   out <- sapply(seq_along(list.key), function(li) {
@@ -1855,8 +1858,8 @@ dfListExtractKey <- function(
         data.frame(
           name = gsub("[-0-9]*$", "", # trailing number
                       gsub("[^a-zA-Z0-9_.-]", "",
-                      paste0(list.key[[li]],
-                             collapse = "."))),
+                           paste0(list.key[[li]],
+                                  collapse = "."))),
           "_id" = df[["_id"]][[ii]],
           value = tmp[[ii]],
           item = seq_along(tmp[[ii]]),
@@ -2625,7 +2628,7 @@ installFindBinary <- function(commandtest = NULL, verbose = FALSE) {
       paste0(rev(Sys.glob("c:\\cygw*\\bin\\bash.exe"))[1],
              " --login -c ",
              shQuote(commandtest))
-    }
+  }
   #
   if (verbose) print(commandtest)
   #
