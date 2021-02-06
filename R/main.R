@@ -116,14 +116,10 @@ ctrLoadQueryIntoDb <- function(
   }
 
   ## check params for update request
-  if (class(querytoupdate) != "character" &&
-      querytoupdate != trunc(querytoupdate)) {
-    stop("Parameter 'querytoupdate' is not an integer value or 'last'.",
-         call. = FALSE)
-  }
-  #
-  if (class(querytoupdate) == "character" &&
-      querytoupdate != "last") {
+  if ((class(querytoupdate) != "character" &&
+      querytoupdate != trunc(querytoupdate)) ||
+      (class(querytoupdate) == "character" &&
+      querytoupdate != "last")) {
     stop("Parameter 'querytoupdate' is not an integer value or 'last'.",
          call. = FALSE)
   }
@@ -132,35 +128,51 @@ ctrLoadQueryIntoDb <- function(
   ## if not querytoupdate
   if (querytoupdate == 0L) {
 
-    queryterm <- ctrGetQueryUrlFromBrowser(
-      url = queryterm,
-      register = register)
+    # check queryterm
+    if (!is.data.frame(queryterm)) {
+
+      # obtain url and register
+      tmpTest <- try(
+        ctrGetQueryUrl(
+          url = queryterm,
+          register = register),
+        silent = TRUE)
+
+      if (inherits(tmpTest, "try-error")) {
+        stop("'queryterm' is not an non-empty string: ",
+             deparse(queryterm), call. = FALSE)
+      }
+
+      queryterm <- tmpTest
+    }
 
     # deal with data frame as returned from
-    # ctrQueryHistoryInDb and ctrGetQueryUrlFromBrowser
-    if (is.data.frame(queryterm) &&
-        all(substr(names(queryterm), 1, 6) == "query-")) {
-      #
-      nr <- nrow(queryterm)
-      #
-      if (nr > 1) {
-        warning(
-          "Using last row of queryterm parameter.",
-          call. = FALSE, immediate. = TRUE)
-      }
-      #
-      register  <- queryterm[nr, "query-register"]
-      queryterm <- queryterm[nr, "query-term"]
-      #
+    # ctrQueryHistoryInDb and ctrGetQueryUrl
+    if (!all(substr(names(queryterm), 1, 6) == "query-") ||
+        !is.data.frame(queryterm)) {
+      stop("'queryterm' does not seem to result from ctrQueryHistoryInDb() ",
+           "or ctrGetQueryUrl(): ", deparse(queryterm), call. = FALSE)
     }
+
+    # process queryterm dataframe
+    nr <- nrow(queryterm)
+    #
+    if (nr > 1) {
+      warning(
+        "Using last row of queryterm parameter.",
+        call. = FALSE, immediate. = TRUE)
+    }
+    #
+    register  <- queryterm[nr, "query-register"]
+    queryterm <- queryterm[nr, "query-term"]
 
     # check queryterm
     if (length(queryterm) != 1L ||
         class(queryterm) != "character" ||
         is.na(queryterm) ||
         nchar(queryterm) == 0L) {
-      stop("'queryterm' has to be a character string:",
-           queryterm, call. = FALSE)
+      stop("'queryterm' has to be a non-empty string: ",
+           deparse(queryterm), call. = FALSE)
     }
 
     # check register

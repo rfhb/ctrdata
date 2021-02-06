@@ -34,8 +34,10 @@ Open advanced search pages of register(s) or execute search in browser
 ctrOpenSearchPagesInBrowser(
  "https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer")
 
+# for this example, the clipboard has to
+# contain the URL from a search in a register
 ctrOpenSearchPagesInBrowser(
- ctrGetQueryUrlFromBrowser())
+ ctrGetQueryUrl())
 
 # open the last query that was
 # loaded into the database

@@ -143,7 +143,7 @@ ctrOpenSearchPagesInBrowser <- function(
   copyright = FALSE,
   ...) {
 
-    # check combination of arguments to select action
+  # check combination of arguments to select action
   #
   if (class(input) == "character" && is.atomic(input) && input == "") {
     #
