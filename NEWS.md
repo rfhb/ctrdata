@@ -1,6 +1,13 @@
-# ctrdata 1.4.1.9000
+# ctrdata 1.4.1.9002
  - 2020-11-06
  - new development version
+ - permit dots in queries / URLs
+ - improved handling of queryterm
+ - renamed ctrGetQueryUrlFromBrowser to ctrGetQueryUrl
+ - soft deprecated ctrGetQueryUrlFromBrowser
+ - for nodbi::src_sqlite, return complex items and subitems
+ - improved documentation, clarified examples
+ - simplified internals for typing fields
 
 # ctrdata 1.4.1
  - 2020-11-03

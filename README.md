@@ -21,7 +21,7 @@ motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. The package
 is to be used within the [R](https://www.r-project.org/) system.
 
-Last reviewed on 2021-01-23 for version 1.4.1.9001
+Last reviewed on 2021-02-06 for version 1.4.1.9002
 
 Main features:
 
@@ -81,7 +81,7 @@ install.packages("ctrdata")
 
 # Alternatively, install development version: 
 install.packages("devtools")
-devtools::install_github("rfhb/ctrdata")
+devtools::install_github("rfhb/ctrdata", build_vignettes = TRUE)
 ```
 
 These commands also install the package dependencies, which are `nodbi`,
@@ -92,7 +92,7 @@ These commands also install the package dependencies, which are `nodbi`,
 These command line tools are required for `ctrLoadQueryIntoDb()`, the
 main function of package `ctrdata`.
 
-In Linux and macOS (including version 10.15 Catalina), these are usually
+In Linux and macOS (including version 11.0 Big Sur), these are usually
 already installed.
 
 For MS Windows, install [cygwin](https://cygwin.org/install.html): In
@@ -119,7 +119,7 @@ The functions are listed in the approximate order of use.
 |------------------------------------|---------------------------------------------------------------------------------------------------------------------|
 | `ctrOpenSearchPagesInBrowser()`    | Open search pages of registers or execute search in web browser                                                     |
 | `ctrFindActiveSubstanceSynonyms()` | Find synonyms and alternative names for an active substance                                                         |
-| `ctrGetQueryUrlFromBrowser()`      | Import from clipboard the URL of a search in one of the registers                                                   |
+| `ctrGetQueryUrl()`                 | Import from clipboard the URL of a search in one of the registers                                                   |
 | `ctrLoadQueryIntoDb()`             | Retrieve (download) or update, and annotate, information on trials from a register and store in database            |
 | `dbQueryHistory()`                 | Show the history of queries that were downloaded into the database                                                  |
 | `dbFindIdsUniqueTrials()`          | Get the identifiers of de-duplicated trials in the database                                                         |
@@ -127,7 +127,7 @@ The functions are listed in the approximate order of use.
 | `dbGetFieldsIntoDf()`              | Create a data.frame from trial records in the database with the specified fields                                    |
 | `dfTrials2Long()` 🆕                | Transform a data.frame from `dbGetFieldsIntoDf()` into a long name-value data.frame, including deeply nested fields |
 | `dfName2Value()` 🆕                 | From a long name-value data.frame, extract values for variables (fields) of interest (e.g., endpoints)              |
-| `dfMergeTwoVariablesRelevel()` ⏳   | Deprecated - Merge two simple variables into a new variable, optionally map values to a new set of values           |
+| `dfMergeTwoVariablesRelevel()`     | Merge two simple variables into a new variable, optionally map values to a new set of values                        |
 | `installCygwinWindowsDoInstall()`  | Convenience function to install a cygwin environment (MS Windows only)                                              |
 
 # Example workflow
@@ -152,8 +152,8 @@ ctrOpenSearchPagesInBrowser(copyright = TRUE)
 
 -   Adjust search parameters and execute search in browser
 
--   When trials of interest are listed in browser, copy the address from
-    the browser’s address bar to the clipboard
+-   When trials of interest are listed in browser, *copy the address
+    from the browser’s address bar to the clipboard*
 
 -   Get address from clipboard:
 
