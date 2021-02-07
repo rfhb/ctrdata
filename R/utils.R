@@ -1331,16 +1331,12 @@ dbGetFieldsIntoDf <- function(fields = "",
         # dfi[, 2] could still be json strings thus convert per row
         if (all(sapply(dfi[, 2], is.character)) &&
             any(sapply(dfi[, 2], jsonlite::validate, USE.NAMES = FALSE))) {
-          dfi[, 2]  <- lapply(
-            dfi[, 2], function(i) {
-              tmpi <- try(jsonlite::fromJSON(i, flatten = TRUE), silent = TRUE)
-              if (!inherits(tmpi, "try-error")) {
-                list(tmpi)
-              } else {
-                list(i)
-              }
-            })
-        }
+          # not possible to use *apply
+          for (i in seq_len(nrow(dfi))) {
+            tmpi <- try(jsonlite::fromJSON(dfi[i, 2][[1]], flatten = TRUE), silent = TRUE)
+            if (!inherits(tmpi, "try-error"))  dfi[i, 2][[1]] <- list(tmpi)
+          }
+        } # json
 
         # dfi can be a long table, number of rows corresponding to
         # number of subitems found in the collection (possibly more
@@ -1376,16 +1372,12 @@ dbGetFieldsIntoDf <- function(fields = "",
         # dfi[, 2] could still be json strings thus convert per row
         if (all(sapply(dfi[, 2], is.character)) &&
             any(sapply(dfi[, 2], jsonlite::validate, USE.NAMES = FALSE))) {
-          dfi[, 2]  <- lapply(
-            dfi[, 2], function(i) {
-              tmpi <- try(jsonlite::fromJSON(i, flatten = TRUE), silent = TRUE)
-              if (!inherits(tmpi, "try-error")) {
-                list(tmpi)
-              } else {
-                list(i)
-              }
-            })
-        }
+          # not possible to use *apply
+          for (i in seq_len(nrow(dfi))) {
+            tmpi <- try(jsonlite::fromJSON(dfi[i, 2][[1]], flatten = TRUE), silent = TRUE)
+            if (!inherits(tmpi, "try-error"))  dfi[i, 2][[1]] <- list(tmpi)
+          }
+        } # json
 
       } # ".+[.].+" && "SQLiteConnection"
 
