@@ -1872,8 +1872,19 @@ dfTrials2Long <- function(df) {
 
   }
 
-  # output
+  # collate
   out <- trials2long(severaltrials = df)
+
+  # keep only uniques, e.g. if df columns
+  # repeated or had overlapping content
+  out <- unique(out)
+
+  # inform
+  message("\nTotal ", nrow(out), " rows, ",
+          length(unique(out$name)),
+          " unique names of variables")
+
+  # output
   rownames(out) <- NULL
   return(out)
 
