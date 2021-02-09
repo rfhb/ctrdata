@@ -433,7 +433,7 @@ ctrGetQueryUrl <- function(
 
 #' Import from clipboard the URL of a search in one of the registers
 #'
-#' @inheritParams ctrLoadQueryIntoDb
+#' @inheritParams ctrGetQueryUrl
 #'
 #' @return A string of query parameters that can be used to retrieve data
 #' from the register.

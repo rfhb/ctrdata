@@ -93,17 +93,17 @@ expect_error(
   "Need list for parameter 'levelslist'")
 
 
-#### ctrGetQueryUrlFromBrowser ####
+#### ctrGetQueryUrl ####
 
 expect_equal(
-  suppressWarnings(ctrGetQueryUrlFromBrowser(
+  suppressWarnings(ctrGetQueryUrl(
     "ThisDoesNotExist")),
   NULL)
 
 q <- "https://clinicaltrials.gov/ct2/results?type=Intr&cond=cancer&age=0"
 
 tmpTest <- suppressMessages(
-  ctrGetQueryUrlFromBrowser(
+  ctrGetQueryUrl(
     url = q))
 
 # test
@@ -111,18 +111,18 @@ expect_true("data.frame" %in% class(tmpTest))
 
 # test
 expect_warning(
-  ctrGetQueryUrlFromBrowser(
+  ctrGetQueryUrl(
     url = "ThisDoesNotExist"),
   "no clinical trial register search URL found")
 
 # test if query= is added
 expect_equal(
   suppressMessages(
-    ctrGetQueryUrlFromBrowser(
+    ctrGetQueryUrl(
       url = "query=cancer&status=completed",
       register = "EUCTR")),
   suppressMessages(
-    ctrGetQueryUrlFromBrowser(
+    ctrGetQueryUrl(
       url = "cancer&status=completed",
       register = "EUCTR"))
 )
@@ -146,7 +146,7 @@ q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/",
             "search?query=&age=under-18&status=completed")
 
 tmpTest <- suppressMessages(
-  ctrGetQueryUrlFromBrowser(
+  ctrGetQueryUrl(
     url = q))
 
 # test

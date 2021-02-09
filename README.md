@@ -21,7 +21,7 @@ motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. The package
 is to be used within the [R](https://www.r-project.org/) system.
 
-Last reviewed on 2021-02-06 for version 1.4.1.9002
+Last reviewed on 2021-02-09 for version 1.4.1.9002
 
 Main features:
 
@@ -92,7 +92,7 @@ These commands also install the package dependencies, which are `nodbi`,
 These command line tools are required for `ctrLoadQueryIntoDb()`, the
 main function of package `ctrdata`.
 
-In Linux and macOS (including version 11.0 Big Sur), these are usually
+In Linux and macOS (including version 11.2 Big Sur), these are usually
 already installed.
 
 For MS Windows, install [cygwin](https://cygwin.org/install.html): In
@@ -158,7 +158,7 @@ ctrOpenSearchPagesInBrowser(copyright = TRUE)
 -   Get address from clipboard:
 
 ``` r
-q <- ctrGetQueryUrlFromBrowser()
+q <- ctrGetQueryUrl()
 # * Found search query from EUCTR.
 
 q
