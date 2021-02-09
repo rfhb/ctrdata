@@ -22,3 +22,4 @@
 ^README\.Rmd$
 cran-comments.md
 ^revdep$
+some_database_name.sqlite_file
