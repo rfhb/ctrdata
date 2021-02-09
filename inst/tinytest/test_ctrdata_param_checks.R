@@ -80,7 +80,7 @@ tf <- function() {
             ctrLoadQueryIntoDb(
               queryterm = "",
               con = dbc))),
-        "no clinical trial register search URL found")
+        "'queryterm' is not an non-empty string")
     }
   }
 
