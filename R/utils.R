@@ -1621,6 +1621,7 @@ dfName2Value <- function(df, valuename = "",
     }
 
     # output
+    rownames(df) <- NULL
     return(df)
 
   } # otherwise continue
