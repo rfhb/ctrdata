@@ -93,19 +93,28 @@ result <- suppressMessages(
         "clinical_results.baseline.analyzed_list.analyzed.units",
         "clinical_results.outcome_list.outcome",
         "study_design_info.allocation",
+        "location.facility.name",
         "location"),
-      con = dbc)))
-
-result$numberSites <- sapply(
-  result$location,
-  function(x) length(x[["facility"]][["name"]]))
+      con = dbc)
+  ))
 
 # test
-expect_true(sum(result$numberSites, na.rm = TRUE) > 30L)
+expect_equal(
+  sapply(
+    result[["location"]],
+    function(x) length(x[["facility"]][["name"]])),
+  c(1, 1, 1, 30))
 
 # test
 expect_true("character" == class(result[[
   "study_design_info.allocation"]]))
+
+# test
+expect_true(
+  any(grepl(" / ", result[["location.facility.name"]])))
+expect_true(
+  length(unlist(strsplit(
+    result[["location.facility.name"]], " / "))) >= 32L)
 
 # test
 expect_true("list" == class(result[[
@@ -117,10 +126,10 @@ expect_true(
     # note: deprecated function
     suppressWarnings(
       dfListExtractKey(
-    result,
-    list(c("location", "name"))
-  ))),
-  na.rm = TRUE) > 1000L)
+        result,
+        list(c("location", "name"))
+      ))[["value"]]),
+    na.rm = TRUE) > 1000L)
 
 # convert to long
 df <- suppressMessages(
@@ -130,14 +139,14 @@ df <- suppressMessages(
 
 # test
 expect_identical(
-    names(df),
-    c("trial_id", "main_id",
-      "sub_id", "name", "value")
+  names(df),
+  c("trial_id", "main_id",
+    "sub_id", "name", "value")
 )
 
 # test
 expect_true(
-  nrow(df) > 900L
+  nrow(df) > 800L
 )
 
 # select value from

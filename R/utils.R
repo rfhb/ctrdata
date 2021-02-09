@@ -688,11 +688,6 @@ dbFindFields <- function(namepart = "",
   ## check database connection
   if (is.null(con$ctrDb)) con <- ctrDb(con = con)
 
-  ## this is the only function in package ctrdata
-  ## which uses backend- specific methods, since
-  ## no canonical way was found yet to retrieve
-  ## field / key names.
-
   ## check if cache for list of keys in collection exists,
   # otherwise create new environment as session cache
   if (!exists(".dbffenv")) {
@@ -724,6 +719,10 @@ dbFindFields <- function(namepart = "",
 
     # inform user
     message("Finding fields in database (may take some time)")
+
+    ## using storage backend- specific methods, since
+    ## no canonical way was found yet to retrieve
+    ## field / key names
 
     ## - method for mongodb
     if ("src_mongo" %in% class(con)) {
@@ -815,7 +814,7 @@ dbFindFields <- function(namepart = "",
   # return the match(es)
   return(fields)
 
-}  # end dbFindFields
+} # end dbFindFields
 
 
 #' Deduplicate records to provide unique clinical trial identifiers
@@ -1181,6 +1180,7 @@ dbFindIdsUniqueTrials <- function(
 #'
 #' @importFrom nodbi docdb_query
 #' @importFrom stats na.omit
+#' @importFrom DBI dbGetQuery
 #'
 #' @export
 #'
@@ -1256,6 +1256,30 @@ dbGetFieldsIntoDf <- function(fields = "",
     query = '{"_id":{"$ne":"meta-info"}}',
     fields = '{"_id" : 1}')[["_id"]]
 
+  # helper function for managing lists
+  listDepth <- function(x) {
+    if (is.null(x)) return(0L)
+    if (is.atomic(x)) return(1L)
+    if (is.list(x)) return(1L + max(vapply(x, listDepth, c(0L)), 0L))
+  }
+
+  # helper function to transform values coming from
+  # a database query that are still json strings
+  json2list <- function(df) {
+    if (all(sapply(df[, 2], is.character)) &&
+        any(sapply(df[, 2], jsonlite::validate, USE.NAMES = FALSE))) {
+      # not possible to use *apply
+      for (i in seq_len(nrow(df))) {
+        tmpi <- df[i, 2]
+        tmpi <- unlist(tmpi)
+        if (!grepl("^\\[.+\\]$", tmpi)) tmpi <- paste0("[", tmpi, "]")
+        tmpo <- try(jsonlite::fromJSON(tmpi, flatten = FALSE), silent = TRUE)
+        if (!inherits(tmpo, "try-error"))  df[i, 2][[1]] <- list(tmpo)
+      } # for
+      } # if
+    return(df)
+  }
+
   # initialise output
   result <- NULL
 
@@ -1268,57 +1292,42 @@ dbGetFieldsIntoDf <- function(fields = "",
     #
     tmpItem <- try({
 
-      ## handle special case: src_* is sqlite and
-      # field name has a dot notation such as
-      # "b1_sponsor.b31_and_b32_status_of_the_sponsor"
+      ## handle special case: src_* is sqlite
       # json_extract() cannot be used to retrieve all
       # items since a json path would have to include
       # an array indicator such as [1] or [#-1], see
       # https://www.sqlite.org/json1.html#jex ans
       # https://www.sqlite.org/json1.html#path_arguments
-      if (grepl(".+[.].+", item) &&
-          inherits(con$con, "SQLiteConnection")) {
+      if (inherits(con$con, "SQLiteConnection")) {
 
-        # ctrdata::dbFindFields("imp", con)
-        # ctrdata::dbFindFields(".*", con = con)
-        # ctrdata::ctrOpenSearchPagesInBrowser(q)
-        #
-        # con <- dbc
-        #
-        # item <- "b1_sponsor.b31_and_b32_status_of_the_sponsor"
-        # item <- "dimp.d38_imp_identification_details.d38_inn__proposed_inn"
-
-        # top element in item
-        top_element <- sub("^(.+?)\\[?[-#0-9]*\\]?[.].*$", "\\1", item)
-        # lowest element in item
-        # lowest_element <- sub("^.+[.](.+?)$", "\\1", item)
-
-        # mangle item names e.g.,
-        # "location[4].facility[#-2].name"
-        # "clinical_results.outcome_list.outcome.measure.dispersion" -> item
+        # mangle item names into SQL e.g.,
+        # "location[4].facility[#-2].name" # two arrayIndex
+        # "location.facil[a-z0-0]+.*thing" # user regexp
+        # "location.facil.*"               # user regexp
         # - remove arrayIndex
-        item <- gsub("\\[[-#0-9]+\\]", "", item)
+        #   NOTE potential side effect: disruption of user's regexp
+        item <- gsub("\\[[-#0-9]+\\][.]", ".", item)
+        if (verbose) message("DEBUG: 'field' mangled into: ", item)
         # - protect "." between item and subitem using lookahead for overlapping groups
-        regexp_item <- gsub("([a-zA-Z]+)[.](?=[a-zA-Z]+)", "\\1@@@\\2", item, perl = TRUE)
+        regexpItem <- gsub("([a-zA-Z]+)[.](?=[a-zA-Z]+)", "\\1@@@\\2", item, perl = TRUE)
         # - add in regexps to match any arrayIndex in fullkey
-        regexp_item <- paste0("[$][.]", gsub("@@@", "[-#\\\\[\\\\]0-9]*[.]", regexp_item))
-
+        regexpItem <- paste0("^[$][.]", gsub("@@@", "[-#\\\\[\\\\]0-9]*[.]", regexpItem), "$")
+        # - top element in item
+        topElement <- sub("^(.+?)[.].*$", "\\1", item)
         # - construct statement using json_tree(json, path) as per
         #   https://www.sqlite.org/json1.html#jtree
         # - include cast() to string to avoid warnings when types
         #   of columns are changed after first records are retrieved
         statement <- paste0(
-          "SELECT CAST(_id AS text) AS '_id',
+          "SELECT
+          CAST(_id AS text) AS '_id',
           CAST(value AS text) AS '", item, "'
           FROM ", con$collection, ", json_tree(", con$collection, ".json, '$.",
-          top_element, "') WHERE fullkey REGEXP '", regexp_item, "';")
-
+          topElement, "') WHERE fullkey REGEXP '", regexpItem, "';")
         # DEBUG all rows
-        # statement <- paste0(
         #   "SELECT _id, key, fullkey, value, type
         #   FROM ", con$collection, ", json_tree(", con$collection, ".json, '$.",
-        #   top_element, "');")
-
+        #   top_element, "');"
         if (verbose) message("DEBUG: src_sqlite, statement:\n", statement)
 
         # execute query, bypassing nodbi since my implementation
@@ -1328,15 +1337,8 @@ dbGetFieldsIntoDf <- function(fields = "",
           statement = statement,
           n = -1L)
 
-        # dfi[, 2] could still be json strings thus convert per row
-        if (all(sapply(dfi[, 2], is.character)) &&
-            any(sapply(dfi[, 2], jsonlite::validate, USE.NAMES = FALSE))) {
-          # not possible to use *apply
-          for (i in seq_len(nrow(dfi))) {
-            tmpi <- try(jsonlite::fromJSON(dfi[i, 2][[1]], flatten = TRUE), silent = TRUE)
-            if (!inherits(tmpi, "try-error"))  dfi[i, 2][[1]] <- list(tmpi)
-          }
-        } # json
+        # dfi[, 2] could still be json strings
+        dfi <- json2list(dfi)
 
         # dfi can be a long table, number of rows corresponding to
         # number of subitems found in the collection (possibly more
@@ -1345,9 +1347,11 @@ dbGetFieldsIntoDf <- function(fields = "",
           X = dfi[, 2],
           INDEX = dfi[, 1],
           function(i) {
-            tmpi <- data.frame(i, stringsAsFactors = FALSE)
-            names(tmpi) <- item
-            tmpi
+            data.frame(
+              i, # i[[1]]
+              check.names = FALSE,
+              row.names = NULL,
+              stringsAsFactors = FALSE)
           },
           simplify = FALSE)
 
@@ -1361,25 +1365,19 @@ dbGetFieldsIntoDf <- function(fields = "",
 
       } else {
 
-        # src_mongo or (src_sqlite and no "." in item)
+        # src_mongo
 
+        # execute query
         dfi <- nodbi::docdb_query(
           src = con,
           key = con$collection,
           query = query,
           fields = paste0('{"_id": 1, "', item, '": 1}'))
 
-        # dfi[, 2] could still be json strings thus convert per row
-        if (all(sapply(dfi[, 2], is.character)) &&
-            any(sapply(dfi[, 2], jsonlite::validate, USE.NAMES = FALSE))) {
-          # not possible to use *apply
-          for (i in seq_len(nrow(dfi))) {
-            tmpi <- try(jsonlite::fromJSON(dfi[i, 2][[1]], flatten = TRUE), silent = TRUE)
-            if (!inherits(tmpi, "try-error"))  dfi[i, 2][[1]] <- list(tmpi)
-          }
-        } # json
+        # dfi[, 2] could still be json strings
+        dfi <- json2list(dfi)
 
-      } # ".+[.].+" && "SQLiteConnection"
+      } # if src_sqlite or src_mango
 
       # some backends return NA if query matches,
       # other only non-NA values when query matches
@@ -1391,30 +1389,30 @@ dbGetFieldsIntoDf <- function(fields = "",
       if (names(dfi)[1] != "_id") {
         dfi <- dfi[, 2:1]
       }
+
+      ## simplify if robust:
       #
-      # simplify if robust
-      #
-      # - is dfi[,2] is NULL, remove from dfi data frame
+      # 1. is dfi[,2] is NULL, remove from dfi data frame
       dfi <- dfi[!sapply(dfi[, 2], length) == 0, ]
       #
-      # - if each [,2] is a list with one element, concatenate
+      # 2. if each [,2] is a list or data frame with one level
       if ((ncol(dfi) == 2) &&
           all(sapply(dfi[, 2],
                      function(x)
-                       is.data.frame(x) && ncol(x) == 1))) {
+                       listDepth(x) == 1L))) {
         # concatenate
         dfi[, 2] <- sapply(sapply(dfi[, 2], "[", 1),
                            function(x)
                              paste0(na.omit(unlist(x)),
                                     collapse = " / "))
         # inform user
-        message("Note: field '", item, "' collapsed using ' / '")
+        message("Note: field '", item, "' collapsed using ' / ' [method 2]")
         # remove any extraneous columns
         dfi <- dfi[, 1:2]
       }
       #
-      # - if dfi[, 2:ncol(dfi)] is from the same field e.g.
-      #   required_header.{download_date,link_text,url}, concatenate
+      # 3. if dfi[, 2:ncol(dfi)] is from the same field e.g.
+      #    required_header.{download_date,link_text,url}, concatenate
       if ((length(ncol(dfi[, 2])) && ncol(dfi[, 2]) > 1L) ||
           ((ncol(dfi) > 2L) &&
            all(grepl(paste0(item, "[.].+$"),
@@ -1435,13 +1433,25 @@ dbGetFieldsIntoDf <- function(fields = "",
         # inform user
         message("Note: field '", item, "' has subitems ",
                 paste0(tmpnam, collapse = ", "),
-                ", collapsed using ' / '")
+                ", collapsed using ' / ' [method 3]")
         # remove extraneous columns
         dfi <- dfi[, 1:2]
         #
       }
       #
-      # - if each [,2] is a list of a list(s)
+      # 4. if each [,2] is a list with a single and the same element
+      if (all(sapply(dfi[, 2], is.list)) &&
+          length(unique(as.vector(sapply(dfi[, 2],
+          function(i)
+            unique(gsub("[0-9]+$", "", names(unlist(i)))))))) == 1L) {
+        #
+        dfi[, 2] <- sapply(
+          dfi[, 2],
+          function(i)
+            paste0(na.omit(unlist(i)), collapse = " / "))
+        # inform user
+        message("Note: field '", item, "' collapsed using ' / ' [method 4]")
+      }
       #
       if (verbose) {
         message("DEBUG: field ", item, " has length ", nrow(dfi))
@@ -1449,7 +1459,8 @@ dbGetFieldsIntoDf <- function(fields = "",
       #
     },
     silent = TRUE)
-    #
+
+    # inform user
     if (inherits(tmpItem, "try-error") || !nrow(dfi)) {
 
       # try-error occured or no data retrieved
@@ -1483,7 +1494,7 @@ dbGetFieldsIntoDf <- function(fields = "",
       # with data frame of previously retrieved results
       result <- merge(result, dfi, by = "_id", all = TRUE)
     }
-    #} # not stopped
+
   } # end for item in fields
 
   # finalise output
@@ -1504,8 +1515,8 @@ dbGetFieldsIntoDf <- function(fields = "",
   # notify user
   diff <- length(idsall) - nrow(result)
   if (diff > 0) {
-    warning(diff, " records dropped which did not ",
-            "have values for any of the specified fields. ",
+    warning(diff, " of ", length(idsall), " records dropped which ",
+            "did not have values for any of the specified fields. ",
             call. = FALSE, immediate. = FALSE)
   }
 

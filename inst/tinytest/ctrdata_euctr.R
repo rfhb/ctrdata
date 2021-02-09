@@ -35,7 +35,7 @@ hist <- suppressWarnings(dbQueryHistory(con = dbc))
 hist[nrow(hist), "query-term"] <-
   sub("query=", "", hist[nrow(hist), "query-term"])
 hist[nrow(hist), "query-timestamp"] <- "2000-01-01 00:00:00"
-  #
+#
 # convert into json object
 json <- jsonlite::toJSON(list("queries" = hist))
 #
@@ -127,23 +127,27 @@ expect_message(
   "Imported or updated results for")
 
 # get results
-# dbFindFields(namepart = c("statistic"),
-#              con = dbc)
-result <- suppressWarnings(
-  dbGetFieldsIntoDf(
-    fields = c(
-      "a2_eudract_number",
-      "trialInformation.globalEndOfTrialDate",
-      "p_date_of_the_global_end_of_the_trial",
-      "trialInformation.recruitmentStartDate",
-      "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database",
-      "subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm",
-      "endPoints.endPoint", # this is also a list
-      "trialInformation.analysisForPrimaryCompletion",
-      "e71_human_pharmacology_phase_i"
-    ),
-    con = dbc,
-    stopifnodata = FALSE)
+result <- suppressMessages(
+  suppressWarnings(
+    dbGetFieldsIntoDf(
+      fields = c(
+        "a2_eudract_number",
+        "trialInformation.globalEndOfTrialDate",
+        "p_date_of_the_global_end_of_the_trial",
+        "trialInformation.recruitmentStartDate",
+        "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database",
+        "subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm",
+        "endPoints.endPoint",
+        "trialInformation.analysisForPrimaryCompletion",
+        "e71_human_pharmacology_phase_i"
+      ),
+      con = dbc,
+      stopifnodata = FALSE)
+  ))
+
+# test
+expect_true(
+  nrow(result) > 400L
 )
 
 # keep only one record for trial
@@ -193,7 +197,7 @@ expect_identical(
 
 # test
 expect_true(
-  nrow(df) > 3000L
+  nrow(df) > 2500L
 )
 
 # extract
@@ -308,10 +312,11 @@ expect_message(
       annotation.mode = "prepend")),
   "Imported or updated")
 
-tmpTest <- suppressWarnings(
-  dbGetFieldsIntoDf(
-    fields = "annotation",
-    con = dbc))
+tmpTest <- suppressMessages(
+  suppressWarnings(
+    dbGetFieldsIntoDf(
+      fields = "annotation",
+      con = dbc)))
 
 tmpTest <-
   tmpTest[
@@ -415,8 +420,7 @@ tmpc <- table(tmpc)
 # tests
 expect_true(tmpc[["character"]] > 60)
 expect_true(tmpc[["Date"]]      >  5)
-expect_true(tmpc[["integer"]]   > 10)
-expect_true(tmpc[["list"]]      > 10)
+expect_true(tmpc[["list"]]      >  5)
 expect_true(tmpc[["logical"]]   > 50)
 
 
