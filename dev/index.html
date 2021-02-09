@@ -48,7 +48,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">ctrdata</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.4.1.9001</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.4.1.9002</span>
       </span>
     </div>
 
@@ -110,7 +110,7 @@
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#ctrdata-for-aggregating-and-analysing-clinical-trials" class="anchor"></a>ctrdata for aggregating and analysing clinical trials</h1></div>
 <p>The package <code>ctrdata</code> provides functions for retrieving (downloading) information on clinical trials from public registers, and for aggregating and analysing this information. Use with <a href="https://www.r-project.org/">R</a> for the European Union Clinical Trials Register (“EUCTR”, <a href="https://www.clinicaltrialsregister.eu/" class="uri">https://www.clinicaltrialsregister.eu/</a>) and ClinicalTrials.gov (“CTGOV”, <a href="https://clinicaltrials.gov/" class="uri">https://clinicaltrials.gov/</a>). The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. The package is to be used within the <a href="https://www.r-project.org/">R</a> system.</p>
-<p>Last reviewed on 2021-01-23 for version 1.4.1.9001</p>
+<p>Last reviewed on 2021-02-09 for version 1.4.1.9002</p>
 <p>Main features:</p>
 <ul>
 <li><p>Protocol-related trial information is easily retrieved (downloaded): Users define a query in a register’s web interface and then use <code>ctrdata</code> to retrieve in one step all trials resulting from the query. Results-related trial information and personal annotations can be including during retrieval. Synonyms of an active substance can also be found.</p></li>
@@ -143,14 +143,14 @@ citation("ctrdata")
 
 <span class="co"># Alternatively, install development version: </span>
 <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"rfhb/ctrdata"</span><span class="op">)</span></code></pre></div>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"rfhb/ctrdata"</span>, build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p>These commands also install the package dependencies, which are <code>nodbi</code>, <code>jsonlite</code>, <code>httr</code>, <code>curl</code>, <code>clipr</code>, <code>xml2</code>, <code>rvest</code>.</p>
 </div>
 <div id="2-command-line-tools-perl-sed-cat-and-php-52-or-higher" class="section level2">
 <h2 class="hasAnchor">
 <a href="#2-command-line-tools-perl-sed-cat-and-php-52-or-higher" class="anchor"></a>2. Command line tools <code>perl</code>, <code>sed</code>, <code>cat</code> and <code>php</code> (5.2 or higher)</h2>
 <p>These command line tools are required for <code><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code>, the main function of package <code>ctrdata</code>.</p>
-<p>In Linux and macOS (including version 10.15 Catalina), these are usually already installed.</p>
+<p>In Linux and macOS (including version 11.2 Big Sur), these are usually already installed.</p>
 <p>For MS Windows, install <a href="https://cygwin.org/install.html">cygwin</a>: In <code>R</code>, run <code><a href="reference/installCygwinWindowsDoInstall.html">ctrdata::installCygwinWindowsDoInstall()</a></code> for an automated minimal installation into <code>c:\cygwin</code>. Alternatively, install manually cygwin with packages <code>perl</code>, <code>php-jsonc</code> and <code>php-simplexml</code> into <code>c:\cygwin</code>. The installation needs about 160 MB disk space; no administrator credentials needed.</p>
 </div>
 <div id="testing" class="section level2">
@@ -185,7 +185,7 @@ citation("ctrdata")
 <td>Find synonyms and alternative names for an active substance</td>
 </tr>
 <tr class="odd">
-<td><code><a href="reference/ctrGetQueryUrlFromBrowser.html">ctrGetQueryUrlFromBrowser()</a></code></td>
+<td><code><a href="reference/ctrGetQueryUrl.html">ctrGetQueryUrl()</a></code></td>
 <td>Import from clipboard the URL of a search in one of the registers</td>
 </tr>
 <tr class="even">
@@ -219,9 +219,8 @@ citation("ctrdata")
 <td>From a long name-value data.frame, extract values for variables (fields) of interest (e.g., endpoints)</td>
 </tr>
 <tr class="odd">
-<td>
-<code><a href="reference/dfMergeTwoVariablesRelevel.html">dfMergeTwoVariablesRelevel()</a></code> ⏳</td>
-<td>Deprecated - Merge two simple variables into a new variable, optionally map values to a new set of values</td>
+<td><code><a href="reference/dfMergeTwoVariablesRelevel.html">dfMergeTwoVariablesRelevel()</a></code></td>
+<td>Merge two simple variables into a new variable, optionally map values to a new set of values</td>
 </tr>
 <tr class="even">
 <td><code><a href="reference/installCygwinWindowsDoInstall.html">installCygwinWindowsDoInstall()</a></code></td>
@@ -249,11 +248,11 @@ citation("ctrdata")
 <span class="fu"><a href="reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser</a></span><span class="op">(</span>copyright <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <ul>
 <li><p>Adjust search parameters and execute search in browser</p></li>
-<li><p>When trials of interest are listed in browser, copy the address from the browser’s address bar to the clipboard</p></li>
+<li><p>When trials of interest are listed in browser, <em>copy the address from the browser’s address bar to the clipboard</em></p></li>
 <li><p>Get address from clipboard:</p></li>
 </ul>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">q</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ctrGetQueryUrlFromBrowser.html">ctrGetQueryUrlFromBrowser</a></span><span class="op">(</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">q</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ctrGetQueryUrl.html">ctrGetQueryUrl</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co"># * Found search query from EUCTR.</span>
 
 <span class="va">q</span>
@@ -404,7 +403,9 @@ citation("ctrdata")
   <span class="fu">scale_y_log10</span><span class="op">(</span><span class="op">)</span> 
 <span class="fu">ggsave</span><span class="op">(</span>filename <span class="op">=</span> <span class="st">"inst/image/README-ctrdata_results_neuroblastoma.png"</span>,
        width <span class="op">=</span> <span class="fl">4</span>, height <span class="op">=</span> <span class="fl">3</span>, units <span class="op">=</span> <span class="st">"in"</span><span class="op">)</span></code></pre></div>
-<p><img src="inst/image/README-ctrdata_results_neuroblastoma.png" alt="Neuroblastoma trials"></p>
+<div class="figure">
+<img src="inst/image/README-ctrdata_results_neuroblastoma.png" alt=""><p class="caption">Neuroblastoma trials</p>
+</div>
 </div>
 <div id="databases" class="section level1">
 <h1 class="hasAnchor">
@@ -471,12 +472,16 @@ citation("ctrdata")
 <div id="mongodb" class="section level2">
 <h2 class="hasAnchor">
 <a href="#mongodb" class="anchor"></a>MongoDB</h2>
-<p><img src="inst/image/README-ctrdata_json_mongodb.jpg" alt="Example JSON representation in MongoDB"></p>
+<div class="figure">
+<img src="inst/image/README-ctrdata_json_mongodb.jpg" alt=""><p class="caption">Example JSON representation in MongoDB</p>
+</div>
 </div>
 <div id="sqlite" class="section level2">
 <h2 class="hasAnchor">
 <a href="#sqlite" class="anchor"></a>SQLite</h2>
-<p><img src="inst/image/README-ctrdata_json_sqlite.jpg" alt="Example JSON representation in SQLite"></p>
+<div class="figure">
+<img src="inst/image/README-ctrdata_json_sqlite.jpg" alt=""><p class="caption">Example JSON representation in SQLite</p>
+</div>
 </div>
 </div>
 
