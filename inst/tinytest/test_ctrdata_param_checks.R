@@ -32,7 +32,7 @@ tf <- function() {
       ctrLoadQueryIntoDb(
         queryterm = tmpdf,
         con = dbc)),
-    "'url' and / or 'register' is not")
+    "'queryterm' has to be a non-empty string")
   # test
   expect_error(
     suppressWarnings(
@@ -50,7 +50,7 @@ tf <- function() {
         ctrLoadQueryIntoDb(
           queryterm = tmpdf,
           con = dbc))),
-    "'url' and / or 'register' is not")
+    "'register' has to be a non-empty string")
 
   # test no history or no table with
   # the name specified in dbc

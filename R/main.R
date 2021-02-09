@@ -179,7 +179,7 @@ ctrLoadQueryIntoDb <- function(
     if (length(register) != 1L ||
         class(register) != "character" ||
         is.na(register)) {
-      stop("'register' has to be a character string: ",
+      stop("'register' has to be a non-empty string: ",
            register, call. = FALSE)
     }
 
