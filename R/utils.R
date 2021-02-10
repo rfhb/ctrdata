@@ -1272,11 +1272,15 @@ dbGetFieldsIntoDf <- function(fields = "",
       for (i in seq_len(nrow(df))) {
         tmpi <- df[i, 2]
         tmpi <- unlist(tmpi)
-        if (!grepl("^\\[.+\\]$", tmpi)) tmpi <- paste0("[", tmpi, "]")
-        tmpo <- try(jsonlite::fromJSON(tmpi, flatten = FALSE), silent = TRUE)
-        if (!inherits(tmpo, "try-error"))  df[i, 2][[1]] <- list(tmpo)
+        # check if string could be json
+        if (grepl("[{]", tmpi)) {
+          # add [ ] to produce json object in advance of conversion
+          if (!grepl("^\\[.+\\]$", tmpi)) tmpi <- paste0("[", tmpi, "]")
+          tmpo <- try(jsonlite::fromJSON(tmpi, flatten = FALSE), silent = TRUE)
+          if (!inherits(tmpo, "try-error"))  df[i, 2][[1]] <- list(tmpo)
+        }
       } # for
-      } # if
+    } # if
     return(df)
   }
 
