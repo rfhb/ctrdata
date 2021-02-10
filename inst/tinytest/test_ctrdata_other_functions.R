@@ -158,6 +158,10 @@ expect_message(
   "Found search query")
 
 # test
+expect_true(
+  ctrOpenSearchPagesInBrowser(register = ""))
+
+# test
 expect_message(
   ctrOpenSearchPagesInBrowser(q),
   "Opening browser for search:")

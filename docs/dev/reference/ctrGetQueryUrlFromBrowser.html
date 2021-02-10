@@ -81,7 +81,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ctrdata</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.4.1.9001</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.4.1.9002</span>
       </span>
     </div>
 
@@ -176,8 +176,8 @@ a suitable URL. Can also contain a query term such as from
 
     <p>A string of query parameters that can be used to retrieve data
 from the register.</p>
-<p>A data frame with a query term and the register name that can
-directly be used in <a href='ctrLoadQueryIntoDb.html'>ctrLoadQueryIntoDb</a> and in
+<p>A data frame with column names query term and register name
+that can directly be used in <a href='ctrLoadQueryIntoDb.html'>ctrLoadQueryIntoDb</a> and in
 <a href='ctrOpenSearchPagesInBrowser.html'>ctrOpenSearchPagesInBrowser</a></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -186,6 +186,10 @@ directly be used in <a href='ctrLoadQueryIntoDb.html'>ctrLoadQueryIntoDb</a> and
 <span class='va'>db</span> <span class='op'>&lt;-</span> <span class='fu'>nodbi</span><span class='fu'>::</span><span class='fu'><a href='https://docs.ropensci.org/nodbi/reference/src_sqlite.html'>src_sqlite</a></span><span class='op'>(</span>
   collection <span class='op'>=</span> <span class='st'>"my_collection"</span>
 <span class='op'>)</span>
+
+<span class='co'># user now copies into the clipboard the URL from</span>
+<span class='co'># the address bar of the browser that shows results</span>
+<span class='co'># from a query in one of the trial registers</span>
 <span class='fu'><a href='ctrLoadQueryIntoDb.html'>ctrLoadQueryIntoDb</a></span><span class='op'>(</span>
   <span class='fu'>ctrGetQueryUrlFromBrowser</span><span class='op'>(</span><span class='op'>)</span>,
   con <span class='op'>=</span> <span class='va'>db</span>

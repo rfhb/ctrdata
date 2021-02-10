@@ -112,7 +112,14 @@ tf <- function() {
 
   #### database ####
 
+  # test
+  expect_error(
+    ctrdata:::ctrDb(
+      con = NULL
+    ), "specify in parameter 'con' a database connection")
+
   dbc <- nodbi::src_sqlite()
+  # test
   expect_error(
     suppressWarnings(
       ctrLoadQueryIntoDb(
@@ -125,6 +132,7 @@ tf <- function() {
   dbc <- nodbi::src_sqlite(
     collection = "inmemory")
   RSQLite::dbDisconnect(conn = dbc$con)
+  # test
   expect_warning(
     suppressMessages(
       ctrLoadQueryIntoDb(
