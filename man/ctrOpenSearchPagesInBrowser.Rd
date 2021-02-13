@@ -9,13 +9,13 @@ ctrOpenSearchPagesInBrowser(input = "", register = "", copyright = FALSE, ...)
 \arguments{
 \item{input}{Show results of search for \code{queryterm} in
 browser. To open the browser with a previous search, (register or)
-queryterm can be the output of \link{ctrGetQueryUrlFromBrowser} or can
+queryterm can be the output of \link{ctrGetQueryUrl} or can
 be one row from \link{dbQueryHistory}.}
 
 \item{register}{Register(s) to open. Either "EUCTR" or "CTGOV" or a vector of
 both. Default is to open both registers' advanced search pages. To open the
-browser with a previous search, the output of ctrGetQueryUrlFromBrowser()
-or one row from dbQueryHistory() can be used.}
+browser with a previous search, the output of \link{ctrGetQueryUrl}
+or one row from \link{dbQueryHistory} can be used.}
 
 \item{copyright}{(Optional) If set to \code{TRUE}, opens copyright pages of
 register(s).}

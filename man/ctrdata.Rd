@@ -16,7 +16,7 @@ in sequence of their use in a workflow:
 
 \link{ctrOpenSearchPagesInBrowser},
 \link{ctrFindActiveSubstanceSynonyms},
-\link{ctrGetQueryUrlFromBrowser},
+\link{ctrGetQueryUrl},
 \link{ctrLoadQueryIntoDb}
 }
 
