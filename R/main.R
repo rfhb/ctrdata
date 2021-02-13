@@ -117,9 +117,9 @@ ctrLoadQueryIntoDb <- function(
 
   ## check params for update request
   if ((class(querytoupdate) != "character" &&
-      querytoupdate != trunc(querytoupdate)) ||
+       querytoupdate != trunc(querytoupdate)) ||
       (class(querytoupdate) == "character" &&
-      querytoupdate != "last")) {
+       querytoupdate != "last")) {
     stop("Parameter 'querytoupdate' is not an integer value or 'last'.",
          call. = FALSE)
   }
@@ -238,7 +238,7 @@ ctrLoadQueryIntoDb <- function(
   # rewrite parameters for running as update
   querytermoriginal <- queryterm
   if ((querytoupdate > 0) &&
-       (queryterm == "")) {
+      (queryterm == "")) {
     #
     rerunparameters <- ctrRerunQuery(
       querytoupdate = querytoupdate,
@@ -322,7 +322,7 @@ ctrLoadQueryIntoDb <- function(
     suppressWarnings({
       remove(list = paste0(con$db, "/", con$collection),
              envir = .dbffenv)
-      })
+    })
   }
 
   # add metadata
@@ -757,7 +757,7 @@ dbCTRAnnotateQueryRecords <- function(
   }
 
 
-    # inform user
+  # inform user
   message("= Annotated retrieved records")
 
 } # end dbQueryAnnotateRecords
@@ -802,7 +802,7 @@ dbCTRUpdateQueryHistory <- function(
     stringsAsFactors = FALSE)
 
 
-    # debug
+  # debug
   if (verbose) message(hist)
 
   # update database
@@ -1170,7 +1170,7 @@ ctrLoadQueryIntoDbEuctr <- function(
     resultsEuPages)
   #
   resultsEuNumTrials <- suppressWarnings(
-    as.numeric(gsub("[,.]", "", resultsEuNumTrials)))
+    as.integer(gsub("[,.]", "", resultsEuNumTrials)))
   #
   # no trials found even though host may have been online
   if (!is.integer(resultsEuNumTrials)) {
@@ -1281,8 +1281,8 @@ ctrLoadQueryIntoDbEuctr <- function(
   sgzip <- grepl("gzip|deflate", sgzip)
   if (length(sgzip) && !sgzip) {
     message("Note: register server cannot compress data, ",
-    "transfer takes longer, about ", signif(stime, digits = 1),
-    "s per trial")
+            "transfer takes longer, about ", signif(stime, digits = 1),
+            "s per trial")
   }
 
   # create pool for concurrent connections
@@ -1297,10 +1297,10 @@ ctrLoadQueryIntoDbEuctr <- function(
   }
 
   # generate vector with URLs of all pages
-  urls <- unlist(lapply(
+  urls <- vapply(
     paste0(queryEuRoot, queryEuType3,
            queryterm, "&page=", 1:resultsEuNumPages, queryEuPost),
-    utils::URLencode))
+    utils::URLencode, character(1L))
 
   # generate vector with file names for saving pages
   fp <- paste0(
@@ -1499,10 +1499,10 @@ ctrLoadQueryIntoDbEuctr <- function(
         total_con = parallelretrievals,
         host_con = parallelretrievals)
       #
-      urls <- unlist(lapply(
+      urls <- vapply(
         paste0(queryEuRoot, queryEuType4,
                eudractnumbersimported[startindex:stopindex]),
-        utils::URLencode))
+        utils::URLencode, character(1L))
       #
       fp <- paste0(
         tempDir, "/",
@@ -1526,7 +1526,7 @@ ctrLoadQueryIntoDbEuctr <- function(
         poll = length(urls))
 
       # unzip downloaded file and rename
-      tmp <- unlist(lapply(
+      tmp <- lapply(
         seq_along(urls), function(x) {
 
           if (file.size(fp[x]) != 0) {
@@ -1554,7 +1554,7 @@ ctrLoadQueryIntoDbEuctr <- function(
           # clean up
           if (!verbose) unlink(fp[x])
 
-        }))
+        })
 
     } # for batch
 
@@ -1703,10 +1703,10 @@ ctrLoadQueryIntoDbEuctr <- function(
         #
         done <- function(res) retdat <<- c(retdat, list(res))
         #
-        urls <- unlist(lapply(paste0(
+        urls <- vapply(paste0(
           "https://www.clinicaltrialsregister.eu/ctr-search/trial/",
           eudractnumbersimported[startindex:stopindex], "/results"),
-          utils::URLencode))
+          utils::URLencode, character(1L))
 
         tmp <- lapply(
           seq_along(urls),
@@ -1736,7 +1736,7 @@ ctrLoadQueryIntoDbEuctr <- function(
           message("\n", paste0(
             sapply(batchresults, nchar),
             collapse = " "))
-          }
+        }
 
         # curl return sequence is not predictable
         # therefore recalculate the eudract numbers
@@ -1753,13 +1753,13 @@ ctrLoadQueryIntoDbEuctr <- function(
 
         # extract information about results
         tmpFirstDate <- as.Date(
-          sapply(batchresults, function(x)
+          vapply(batchresults, function(x)
             trimws(sub(
               ".+First version publication date</div>.*?<div>(.+?)</div>.*",
               "\\1",
               ifelse(grepl(
                 "First version publication date", x),
-                x, "")))),
+                x, ""))), character(1L)),
           format = "%d %b %Y")
 
         # global end date is variably represented in euctr:
@@ -1773,33 +1773,33 @@ ctrLoadQueryIntoDbEuctr <- function(
         # reset date time
         Sys.setlocale("LC_TIME", lct)
 
-        tmpChanges <- sapply(batchresults, function(x)
+        tmpChanges <- vapply(batchresults, function(x)
           trimws(
             gsub("[ ]+", " ",
-            gsub("[\n\r]", "",
-            gsub("<[a-z/]+>", "",
-             sub(".+Version creation reason.*?<td class=\"valueColumn\">(.+?)</td>.+",
-                 "\\1", ifelse(grepl("Version creation reason", x), x, ""))
-            ))))
-        )
+                 gsub("[\n\r]", "",
+                      gsub("<[a-z/]+>", "",
+                           sub(".+Version creation reason.*?<td class=\"valueColumn\">(.+?)</td>.+",
+                               "\\1", ifelse(grepl("Version creation reason", x), x, ""))
+                      )))),
+          character(1L))
 
         tmp <- lapply(
           seq_along(
             along.with = startindex:stopindex),
           function(x) {
 
-          if (tmpChanges[x] == "") tmpChanges[x] <- "(not specified)"
+            if (tmpChanges[x] == "") tmpChanges[x] <- "(not specified)"
 
-          upd <- nodbi::docdb_update(
-            src = con,
-            key = con$collection,
-            value = data.frame(
-              "a2_eudract_number" = eudractnumberscurled[x],
-              "firstreceived_results_date" = as.character(tmpFirstDate[x]),
-              "version_results_history" = tmpChanges[x],
-              stringsAsFactors = FALSE))
+            upd <- nodbi::docdb_update(
+              src = con,
+              key = con$collection,
+              value = data.frame(
+                "a2_eudract_number" = eudractnumberscurled[x],
+                "firstreceived_results_date" = as.character(tmpFirstDate[x]),
+                "version_results_history" = tmpChanges[x],
+                stringsAsFactors = FALSE))
 
-          if (verbose) message(upd)
+            if (verbose) message(upd)
           })
 
         # clean up large object
@@ -1830,7 +1830,7 @@ ctrLoadQueryIntoDbEuctr <- function(
   if (!verbose) {
     unlink(tempDir,
            recursive = TRUE)
-    }
+  }
 
   # return
   return(imported)
