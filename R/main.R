@@ -513,9 +513,9 @@ ctrRerunQuery <- function(
         #
         # if new trials found, construct
         # differential query to run
-        resultsRssTrials <- sapply(
+        resultsRssTrials <- vapply(
           resultsRssTrials, FUN = function(x)
-            substr(resultsRss, x + 15, x + 28))
+            substr(resultsRss, x + 15, x + 28), character(1L))
         #
         resultsRssTrials <- paste0(
           "query=",
@@ -657,7 +657,7 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
         )
       }, silent = TRUE)
 
-      # return to sapply
+      # return to lapply
       if ("try-error" %in% class(tmp)) {
         # inform user
         message(ids[i], ": ", tmp)
@@ -670,7 +670,7 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
              n = tmp)
       }
 
-    }) # sapply
+    }) # lapply
 
     # append to retimp
     retimp <- c(retimp, tmpinsert)
@@ -1659,7 +1659,7 @@ ctrLoadQueryIntoDbEuctr <- function(
           # return for accumulating information
           return(tmp)
 
-        }) # import
+        }) # end batchresults
 
       # append batch to number of results
       importedresults <- c(importedresults, batchresults)

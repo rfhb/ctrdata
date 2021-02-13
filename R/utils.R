@@ -981,10 +981,10 @@ dbFindIdsUniqueTrials <- function(
                            " CTGOV _id (nct) in EUCTR a52_us_nct_...")
       #
       # a2 - ctgov in euctr a2_...
-      dupesA2 <- sapply(
+      dupesA2 <- vapply(
         listofCTGOVids[["id_info"]], # e.g. "EUDRACT-2004-000242-20"
         function(x) any(sub(".*([0-9]{4}-[0-9]{6}-[0-9]{2}).*", "\\1", x) %in%
-                          listofEUCTRids[["a2_eudract_number"]]))
+                          listofEUCTRids[["a2_eudract_number"]]), logical(1L))
       #
       if (verbose) {
         message(
@@ -993,11 +993,11 @@ dbFindIdsUniqueTrials <- function(
       }
       #
       # c.2 - ctgov in euctr a52_... (id_info corresponds to index 2)
-      dupesC2 <- sapply(
+      dupesC2 <- vapply(
         listofCTGOVids[["id_info"]],
         function(x) any(
           x %in%
-            listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]))
+            listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]), logical(1L))
       #
       if (verbose) {
         message(
@@ -1007,23 +1007,23 @@ dbFindIdsUniqueTrials <- function(
       }
       #
       # d.2 - ctgov in euctr a51_... (id_info corresponds to index 2)
-      dupesD2 <- sapply(
+      dupesD2 <- vapply(
         listofCTGOVids[["id_info"]],
         function(x) any(
           x %in%
             listofEUCTRids[[
-              "a51_isrctn_international_standard_randomised_controlled_trial_number"]]))
+              "a51_isrctn_international_standard_randomised_controlled_trial_number"]]), logical(1L))
       #
       if (verbose) message(" - ", sum(dupesD2),
                            " CTGOV secondary_id / nct_alias / org_study_id in",
                            " EUCTR a51_isrctn_...")
       #
       # e.2 - ctgov in euctr a41_... (id_info corresponds to index 2)
-      dupesE2 <- sapply(
+      dupesE2 <- vapply(
         listofCTGOVids[["id_info"]],
         function(x) any(
           x %in%
-            listofEUCTRids[["a41_sponsors_protocol_code_number"]]))
+            listofEUCTRids[["a41_sponsors_protocol_code_number"]]), logical(1L))
       #
       if (verbose) {
         message(" - ", sum(dupesE2),
@@ -1260,14 +1260,14 @@ dbGetFieldsIntoDf <- function(fields = "",
   listDepth <- function(x) {
     if (is.null(x)) return(0L)
     if (is.atomic(x)) return(1L)
-    if (is.list(x)) return(1L + max(vapply(x, listDepth, c(0L)), 0L))
+    if (is.list(x)) return(1L + max(vapply(x, listDepth, integer(1L)), 0L))
   }
 
   # helper function to transform values coming from
   # a database query that are still json strings
   json2list <- function(df) {
-    if (all(sapply(df[, 2], is.character)) &&
-        any(sapply(df[, 2], jsonlite::validate, USE.NAMES = FALSE))) {
+    if (all(vapply(df[, 2], is.character, logical(1L))) &&
+        any(vapply(df[, 2], jsonlite::validate, logical(1L)))) {
       # not possible to use *apply
       for (i in seq_len(nrow(df))) {
         tmpi <- df[i, 2]
@@ -1385,30 +1385,30 @@ dbGetFieldsIntoDf <- function(fields = "",
 
       # some backends return NA if query matches,
       # other only non-NA values when query matches
-      dfi <- dfi[!is.na(dfi["_id"]) &
-                   !sapply(seq_len(nrow(dfi)),
-                           function(r) all(is.na(dfi[r, -1]))), ]
+      dfi <- dfi[!is.na(dfi[["_id"]]) &
+                   !vapply(seq_len(nrow(dfi)),
+                           function(r) all(is.na(dfi[r, -1L])), logical(1L)), ]
       #
       # ensure intended column order
-      if (names(dfi)[1] != "_id") {
+      if (names(dfi)[1L] != "_id") {
         dfi <- dfi[, 2:1]
       }
 
       ## simplify if robust:
       #
       # 1. is dfi[,2] is NULL, remove from dfi data frame
-      dfi <- dfi[!sapply(dfi[, 2], length) == 0, ]
+      dfi <- dfi[!vapply(dfi[, 2], length, integer(1L)) == 0, ]
       #
       # 2. if each [,2] is a list or data frame with one level
       if ((ncol(dfi) == 2) &&
-          all(sapply(dfi[, 2],
+          all(vapply(dfi[, 2],
                      function(x)
-                       listDepth(x) == 1L))) {
+                       listDepth(x) == 1L, logical(1L)))) {
         # concatenate
-        dfi[, 2] <- sapply(sapply(dfi[, 2], "[", 1),
+        dfi[, 2] <- vapply(vapply(dfi[, 2], "[", 1, character(1L)),
                            function(x)
                              paste0(na.omit(unlist(x)),
-                                    collapse = " / "))
+                                    collapse = " / "), character(1L))
         # inform user
         message("Note: field '", item, "' collapsed using ' / ' [method 2]")
         # remove any extraneous columns
@@ -1444,15 +1444,15 @@ dbGetFieldsIntoDf <- function(fields = "",
       }
       #
       # 4. if each [,2] is a list with a single and the same element
-      if (all(sapply(dfi[, 2], is.list)) &&
+      if (all(vapply(dfi[, 2], is.list, logical(1L))) &&
           length(unique(as.vector(sapply(dfi[, 2],
           function(i)
             unique(gsub("[0-9]+$", "", names(unlist(i)))))))) == 1L) {
         #
-        dfi[, 2] <- sapply(
+        dfi[, 2] <- vapply(
           dfi[, 2],
           function(i)
-            paste0(na.omit(unlist(i)), collapse = " / "))
+            paste0(na.omit(unlist(i)), collapse = " / "), character(1L))
         # inform user
         message("Note: field '", item, "' collapsed using ' / ' [method 4]")
       }
@@ -2381,8 +2381,8 @@ typeField <- function(dfi) {
   ctrDateUs   <- function() as.Date(dfi[, 2], format = "%b %e, %Y")
   ctrDateCtr  <- function() as.Date(dfi[, 2], format = "%Y-%m-%d %H:%M:%S")
   ctrDateTime <- function() as.Date(dfi[, 2], format = "%Y-%m-%dT%H:%M:%S")
-  ctrYesNo    <- function() sapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA))
-  ctrInt      <- function() sapply(dfi[, 2], FUN = function(x) as.integer(x = x))
+  ctrYesNo    <- function() vapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA), logical(1L))
+  ctrInt      <- function() vapply(dfi[, 2], FUN = function(x) as.integer(x = x), integer(1L))
 
   # selective typing
   tmp <- try({
