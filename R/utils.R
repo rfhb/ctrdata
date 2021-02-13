@@ -76,13 +76,17 @@ ctrDb <- function(
     # hence this workaround that should always
     # work and be stable to retrieve name of
     # collection in the mongo connection
-    coll <- utils::capture.output(con$con)[1]
+    # suppress... for reconnect info from mongolite
+    coll <- suppressMessages(utils::capture.output(con$con)[1])
     coll <- sub("^.*'(.*)'.*$", "\\1", coll)
 
     # add collection as element under root
     con <- c(con,
              "collection" = coll,
              "ctrDb" = TRUE)
+
+    # prepare cleaning up
+    # regConnFinalizer(con$con, con$con$disconnect, parent.frame())
 
     ## return
     return(structure(con,
@@ -893,9 +897,6 @@ dbFindIdsUniqueTrials <- function(
   if (all(is.na(listofEUCTRids[, -1])))     listofEUCTRids <- NULL
   if (is.null(listofEUCTRids)) message("No EUCTR records found.")
 
-  # inform user
-  message("Searching for duplicates, found ")
-
   # 2. find unique, preferred country version of euctr
   if (!is.null(listofEUCTRids)) {
     listofEUCTRids <- dfFindUniqueEuctrRecord(
@@ -909,7 +910,7 @@ dbFindIdsUniqueTrials <- function(
     !is.na(listofEUCTRids["a2_eudract_number"]), ]
 
   # for total number of records
-  countall <- 0L + length(listofEUCTRids)
+  countall <- 0L + length(listofEUCTRids[["_id"]])
 
   # 3. get ctgov records
   listofCTGOVids <- try(suppressMessages(suppressWarnings(
@@ -956,12 +957,15 @@ dbFindIdsUniqueTrials <- function(
   }
 
   # for total number of records
-  countall <- countall + length(listofCTGOVids)
+  countall <- countall + length(listofCTGOVids[["_id"]])
 
   # inform user
   if (verbose) {
     message("* Total of ", countall, " records in collection.")
   }
+
+  # inform user
+  message("Searching for duplicates... ")
 
   # 5. find records (_id's) that are in both in euctr and ctgov
   if (!is.null(listofEUCTRids) & !is.null(listofCTGOVids)) {
