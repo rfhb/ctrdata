@@ -1172,6 +1172,14 @@ ctrLoadQueryIntoDbEuctr <- function(
   resultsEuNumTrials <- suppressWarnings(
     as.numeric(gsub("[,.]", "", resultsEuNumTrials)))
   #
+  # no trials found even though host may have been online
+  if (!is.integer(resultsEuNumTrials)) {
+    stop("ctrLoadQueryIntoDb(): register does not deliver ",
+         "search results as expected, check if working with ",
+         "'browseURL(\"", q, "\")'",
+         call. = FALSE)
+  }
+  #
   # register contains 35000+ trials, which would all
   # be identified if queryterm is just anything
   if (resultsEuNumTrials > 30000) {
