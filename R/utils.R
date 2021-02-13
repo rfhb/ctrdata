@@ -1462,13 +1462,12 @@ dbGetFieldsIntoDf <- function(fields = "",
 
       # try-error occured or no data retrieved
       if (stopifnodata) {
-        stop("For field '", item, "' no data could be extracted from the ",
-             "database collection. Use dbGetFieldsIntoDf(stopifnodata = ",
-             "FALSE) to continue extracting other fields. ",
+        stop("No data could be extracted for '", item,
+             "'. \nUse dbGetFieldsIntoDf(stopifnodata = ",
+             "FALSE) to ignore this. ",
              call. = FALSE)
       } else {
-        warning("For field: ", item, " no data could be extracted ",
-                "from the database collection. ",
+        warning("* No data: '", item, "'",
                 call. = FALSE,
                 immediate. = FALSE)
         # create empty data set
@@ -1496,7 +1495,7 @@ dbGetFieldsIntoDf <- function(fields = "",
 
   # finalise output
   if (is.null(result)) {
-    stop("No records found which had values for the specified fields. ",
+    stop("No records with values for any specified field. ",
          call. = FALSE)
   }
 

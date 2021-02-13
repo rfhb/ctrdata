@@ -382,7 +382,7 @@ expect_error(
     dbGetFieldsIntoDf(
       fields = c(NA, "willNeverBeFound"),
       con = dbc)),
-  "For field 'willNeverBeFound' no data could be extracted")
+  "No data could be extracted for 'willNeverBeFound'")
 
 # test
 expect_error(
