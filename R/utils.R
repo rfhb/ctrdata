@@ -1748,7 +1748,7 @@ dfTrials2Long <- function(df) {
       function(r) {
 
         # get rows of data
-        measure <- atrialcol[r, ]
+        measure <- atrialcol[r, , drop = TRUE]
 
         # fully unlist
         measure <- unlist(
