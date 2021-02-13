@@ -1398,13 +1398,14 @@ dbGetFieldsIntoDf <- function(fields = "",
           all(vapply(dfi[, 2],
                      function(x)
                        listDepth(x) == 1L, logical(1L)))) {
-        # concatenate
-        dfi[, 2] <- vapply(vapply(dfi[, 2], "[", 1, character(1L)),
+        # concatenate (has to remain as sapply
+        # because of different content types)
+        dfi[, 2] <- sapply(sapply(dfi[, 2], "[", 1),
                            function(x)
                              paste0(na.omit(unlist(x)),
-                                    collapse = " / "), character(1L))
+                                    collapse = " / "))
         # inform user
-        message("Note: field '", item, "' collapsed using ' / ' [method 2]")
+        message("* Collapsed with '/' [1]: '", item, "'")
         # remove any extraneous columns
         dfi <- dfi[, 1:2]
       }
@@ -1415,40 +1416,38 @@ dbGetFieldsIntoDf <- function(fields = "",
           ((ncol(dfi) > 2L) &&
            all(grepl(paste0(item, "[.].+$"),
                      names(dfi)[-1])))) {
+
         # store names
-        if (ncol(dfi) > 2L) {
-          tmpnam <- names(dfi)
-        } else {
-          tmpnam <- names(dfi[, 2])
-        }
-        # concatenate
-        dfi[, 2] <- unlist(
-          apply(
-            X = dfi[, 2:ncol(dfi)],
-            MARGIN = 1,
-            FUN = function(r)
-              paste0(na.omit(unlist(r)), collapse = " / ")))
-        # inform user
-        message("Note: field '", item, "' has subitems ",
-                paste0(tmpnam, collapse = ", "),
-                ", collapsed using ' / ' [method 3]")
+        tmpnames <- gsub(".+?[.](.+)$", "\\1", names(dfi)[-1])
+        names(dfi)[-1] <- tmpnames
+
+        # concatenate to list
+        tmpById <- split(dfi[, 2:ncol(dfi)],
+                         seq_len(nrow(dfi)))
+
         # remove extraneous columns
         dfi <- dfi[, 1:2]
-        #
+
+        # create items in column from list
+        for (i in seq_len(nrow(dfi))) dfi[i, 2][[1]] <- list(tmpById[[i]])
+
+        # inform user
+        message("* Converted to list [2]: '", item, "'")
+
       }
       #
       # 4. if each [,2] is a list with a single and the same element
       if (all(vapply(dfi[, 2], is.list, logical(1L))) &&
           length(unique(as.vector(sapply(dfi[, 2],
-          function(i)
-            unique(gsub("[0-9]+$", "", names(unlist(i)))))))) == 1L) {
+                                         function(i)
+                                           unique(gsub("[0-9]+$", "", names(unlist(i)))))))) == 1L) {
         #
         dfi[, 2] <- vapply(
           dfi[, 2],
           function(i)
             paste0(na.omit(unlist(i)), collapse = " / "), character(1L))
         # inform user
-        message("Note: field '", item, "' collapsed using ' / ' [method 4]")
+        message("* Collapsed with '/' [3]: '", item, "'")
       }
       #
       if (verbose) {
