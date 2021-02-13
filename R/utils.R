@@ -873,18 +873,6 @@ dbFindIdsUniqueTrials <- function(
   ## check database connection
   if (is.null(con$ctrDb)) con <- ctrDb(con = con)
 
-  # total number of records in collection to inform user
-  countall <- nrow(nodbi::docdb_query(
-    src = con,
-    key = con$collection,
-    query = '{"_id":{"$ne":"meta-info"}}',
-    fields = '{"_id": 1}'))
-
-  # inform user
-  if (verbose) {
-    message("* Total of ", countall, " records in collection.")
-  }
-
   # 1. get euctr records (note only records with at least on
   # value for at least one variable are retrieved here)
   listofEUCTRids <- try(suppressMessages(suppressWarnings(
@@ -919,6 +907,9 @@ dbFindIdsUniqueTrials <- function(
   # keep only euctr
   listofEUCTRids <- listofEUCTRids[
     !is.na(listofEUCTRids["a2_eudract_number"]), ]
+
+  # for total number of records
+  countall <- 0L + length(listofEUCTRids)
 
   # 3. get ctgov records
   listofCTGOVids <- try(suppressMessages(suppressWarnings(
@@ -962,6 +953,14 @@ dbFindIdsUniqueTrials <- function(
     # retain only relevant fields
     listofCTGOVids <- listofCTGOVids[, c("_id", "id_info")]
 
+  }
+
+  # for total number of records
+  countall <- countall + length(listofCTGOVids)
+
+  # inform user
+  if (verbose) {
+    message("* Total of ", countall, " records in collection.")
   }
 
   # 5. find records (_id's) that are in both in euctr and ctgov
@@ -1247,15 +1246,6 @@ dbGetFieldsIntoDf <- function(fields = "",
     con <- ctrDb(con = con)
   }
 
-  # provide list of ids
-  # idsall <- mongo$find(
-  #  query = '{"_id":{"$ne":"meta-info"}}', fields = '{"_id" : 1}')
-  idsall <- nodbi::docdb_query(
-    src = con,
-    key = con$collection,
-    query = '{"_id":{"$ne":"meta-info"}}',
-    fields = '{"_id" : 1}')[["_id"]]
-
   # helper function for managing lists
   listDepth <- function(x) {
     if (is.null(x)) return(0L)
@@ -1479,8 +1469,8 @@ dbGetFieldsIntoDf <- function(fields = "",
                 call. = FALSE,
                 immediate. = FALSE)
         # create empty data set
-        dfi <- data.frame(cbind(idsall,
-                                rep(NA, times = length(idsall))),
+        dfi <- data.frame("_id" = NA, NA,
+                          check.names = FALSE,
                           stringsAsFactors = FALSE)
       }
     }
@@ -1514,15 +1504,7 @@ dbGetFieldsIntoDf <- function(fields = "",
                         con = con)
 
   # remove rows with empty _id
-  result <- result[!is.na(result[, "_id"]), ]
-
-  # notify user
-  diff <- length(idsall) - nrow(result)
-  if (diff > 0) {
-    warning(diff, " of ", length(idsall), " records dropped which ",
-            "did not have values for any of the specified fields. ",
-            call. = FALSE, immediate. = FALSE)
-  }
+  result <- result[!is.na(result[["_id"]]), ]
 
   # return
   return(result)
@@ -1866,7 +1848,7 @@ dfTrials2Long <- function(df) {
           stringsAsFactors = FALSE
         )
 
-      })
+      }) # iterate over trials
 
     # concatenate into long format
     do.call(
