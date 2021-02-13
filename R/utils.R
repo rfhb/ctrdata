@@ -100,13 +100,13 @@ ctrDb <- function(
 #'
 #' @param input Show results of search for \code{queryterm} in
 #'   browser. To open the browser with a previous search, (register or)
-#'   queryterm can be the output of \link{ctrGetQueryUrlFromBrowser} or can
+#'   queryterm can be the output of \link{ctrGetQueryUrl} or can
 #'   be one row from \link{dbQueryHistory}.
 #'
 #' @param register Register(s) to open. Either "EUCTR" or "CTGOV" or a vector of
 #'   both. Default is to open both registers' advanced search pages. To open the
-#'   browser with a previous search, the output of ctrGetQueryUrlFromBrowser()
-#'   or one row from dbQueryHistory() can be used.
+#'   browser with a previous search, the output of \link{ctrGetQueryUrl}
+#'   or one row from \link{dbQueryHistory} can be used.
 #'
 #' @param copyright (Optional) If set to \code{TRUE}, opens copyright pages of
 #'   register(s).
@@ -189,12 +189,12 @@ ctrOpenSearchPagesInBrowser <- function(
         length(input) == 1 &&
         grepl("^https.+clinicaltrials.+", input)) {
       #
-      input <- ctrGetQueryUrlFromBrowser(url = input)
+      input <- ctrGetQueryUrl(url = input)
       #
     }
     #
     # - data frame as returned from ctrQueryHistoryInDb()
-    #   and ctrGetQueryUrlFromBrowser()
+    #   and ctrGetQueryUrl()
     if (is.data.frame(input) &&
         all(substr(names(input), 1, 6) == "query-")) {
       #
@@ -310,7 +310,7 @@ ctrGetQueryUrl <- function(
       is.na(url) || is.na(register) ||
       !inherits(url, "character") || !inherits(register, "character") ||
       length(url) != 1L || length(register) != 1L) {
-    stop("ctrGetQueryUrlFromBrowser(): 'url' and / or 'register' ",
+    stop("ctrGetQueryUrl(): 'url' and / or 'register' ",
          "is not a single character string, url: '",
          deparse(url), "', register: '", deparse(register), "'",
          call. = FALSE)
@@ -324,7 +324,7 @@ ctrGetQueryUrl <- function(
         allow_non_interactive = TRUE)
     )
     if (is.null(url) || (length(url) != 1L) || (nchar(url) == 0L)) {
-      stop("ctrGetQueryUrlFromBrowser(): no clinical trial register ",
+      stop("ctrGetQueryUrl(): no clinical trial register ",
            "search URL found in parameter 'url' or in clipboard.",
            call. = FALSE)
     }
@@ -338,7 +338,7 @@ ctrGetQueryUrl <- function(
     # check
     if (grepl("https://", url) &
         !grepl("www.clinicaltrialsregister.eu/", url)) {
-      warning("ctrGetQueryUrlFromBrowser(): 'url' inconsistent with EUCTR.",
+      warning("ctrGetQueryUrl(): 'url' inconsistent with EUCTR.",
               call. = FALSE, immediate. = TRUE)
       return(invisible(NULL))
     }
@@ -395,7 +395,7 @@ ctrGetQueryUrl <- function(
     # check
     if (grepl("https://", url) &
         !grepl("clinicaltrials.gov/", url)) {
-      warning("ctrGetQueryUrlFromBrowser(): 'url' inconsistent with CTGOV.",
+      warning("ctrGetQueryUrl(): 'url' inconsistent with CTGOV.",
               call. = FALSE, immediate. = TRUE)
       return(invisible(NULL))
 
@@ -421,13 +421,13 @@ ctrGetQueryUrl <- function(
     return(df)
   }
   #
-  warning("ctrGetQueryUrlFromBrowser(): no clinical trial register ",
+  warning("ctrGetQueryUrl(): no clinical trial register ",
           "search URL found in parameter 'url' or in clipboard.",
           call. = FALSE, immediate. = TRUE)
   #
   return(invisible(NULL))
 }
-# end ctrGetQueryUrlFromBrowser
+# end ctrGetQueryUrl
 
 
 

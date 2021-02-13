@@ -10,7 +10,7 @@
 #'
 #' \link{ctrOpenSearchPagesInBrowser},
 #' \link{ctrFindActiveSubstanceSynonyms},
-#' \link{ctrGetQueryUrlFromBrowser},
+#' \link{ctrGetQueryUrl},
 #' \link{ctrLoadQueryIntoDb}
 #'
 #' @section Using the database that holds downloaded information:

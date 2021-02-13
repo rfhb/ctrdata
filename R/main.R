@@ -11,7 +11,7 @@
 #'
 #' @param queryterm Either a string with the full URL of a search in
 #' a register, or the data frame returned by the
-#' \link{ctrGetQueryUrlFromBrowser} or the
+#' \link{ctrGetQueryUrl} or the
 #' \link{dbQueryHistory} functions, or, together with parameter
 #' \code{register}, a string with query elements of a search URL.
 #' The queryterm is recorded in the \code{collection} for later
@@ -1124,7 +1124,7 @@ ctrLoadQueryIntoDbEuctr <- function(
 
   ## sanity correction for naked terms
   # otherwise all trials would be retrieved
-  # see also ctrGetQueryUrlFromBrowser
+  # see also ctrGetQueryUrl
   queryterm <- sub(
     "(^|&|[&]?\\w+=\\w+&)([ a-zA-Z0-9+-]+)($|&\\w+=\\w+)",
     "\\1query=\\2\\3",

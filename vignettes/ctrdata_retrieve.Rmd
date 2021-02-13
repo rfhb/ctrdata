@@ -69,7 +69,7 @@ q <- "https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&age=u
 
 
 ```{r get_query_from_browser}
-q <- ctrGetQueryUrlFromBrowser()
+q <- ctrGetQueryUrl()
 # Found search query from EUCTR.
 
 q
