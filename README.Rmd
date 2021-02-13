@@ -34,7 +34,7 @@ knitr::opts_chunk$set(
 
 The package `ctrdata` provides functions for retrieving (downloading) information on clinical trials from public registers, and for aggregating and analysing this information. Use with  [R](https://www.r-project.org/) for the European Union Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/) and ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/). The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. The package is to be used within the [R](https://www.r-project.org/) system. 
 
-Last reviewed on 2021-02-09 for version 1.4.1.9002
+Last reviewed on 2021-02-13 for version 1.4.1.9003
 
 Main features:
 
@@ -64,7 +64,7 @@ Package `ctrdata` has been used for:
 
 Package `ctrdata` is [on CRAN](https://cran.r-project.org/package=ctrdata) and [on GitHub](https://github.com/rfhb/ctrdata). Within [R](https://www.r-project.org/), use the following commands to install package `ctrdata`:
 
-```{r}
+```{r, eval=FALSE}
 # Install CRAN version:
 install.packages("ctrdata")
 
@@ -87,7 +87,7 @@ For MS Windows, install [cygwin](https://cygwin.org/install.html): In `R`, run `
 
 Once installed, a comprehensive testing can be executed as follows (this will take several minutes): 
 
-```{r}
+```{r, eval=FALSE}
 tinytest::test_package("ctrdata", at_home = TRUE)
 ```
 
@@ -148,6 +148,7 @@ Under the hood, scripts `euctr2json.sh` and `xml2json.php` (in `ctrdata/exec`) t
 
 ```{r, include=FALSE}
 q <- "https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&age=under-18&phase=phase-one&status=completed"
+ctrOpenSearchPagesInBrowser(q)
 ```
 
 

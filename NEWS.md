@@ -1,6 +1,8 @@
+# ctrdata 1.4.1.9003
+ - some code optimisation
+ 
 # ctrdata 1.4.1.9002
  - 2020-11-06
- - new development version
  - permit dots in queries / URLs
  - improved handling of queryterm
  - renamed ctrGetQueryUrlFromBrowser to ctrGetQueryUrl
