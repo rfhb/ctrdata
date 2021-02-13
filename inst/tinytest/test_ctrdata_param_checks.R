@@ -107,7 +107,7 @@ tf <- function() {
         querytoupdate = 1L,
         only.count = TRUE,
         con = dbc)),
-      "'queryterm' and 'querytoupdate' specified.*cannot continue")
+    "'queryterm' and 'querytoupdate' specified.*cannot continue")
 
 
   #### database ####
@@ -126,20 +126,19 @@ tf <- function() {
         queryterm = "someQueryForErrorTriggering",
         only.count = TRUE,
         con = dbc)),
-      "parameter 'collection' needs")
+    "parameter 'collection' needs")
 
   RSQLite::dbDisconnect(conn = dbc$con)
   dbc <- nodbi::src_sqlite(
-    collection = "inmemory")
+    collection = "otherinmemory")
   RSQLite::dbDisconnect(conn = dbc$con)
+  tmp <- suppressWarnings(
+    ctrLoadQueryIntoDb(
+      queryterm = "someQueryForErrorTriggering",
+      only.count = TRUE,
+      con = dbc))
   # test
-  expect_warning(
-    suppressMessages(
-      ctrLoadQueryIntoDb(
-        queryterm = "someQueryForErrorTriggering",
-        only.count = TRUE,
-        con = dbc)),
-      "Database connection was closed, trying to reopen")
+  expect_true(dbc$collection == "otherinmemory")
 
 } # tf test function
 tf()
