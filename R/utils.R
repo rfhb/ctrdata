@@ -877,44 +877,18 @@ dbFindIdsUniqueTrials <- function(
   ## check database connection
   if (is.null(con$ctrDb)) con <- ctrDb(con = con)
 
-  # 1. get euctr records (note only records with at least on
-  # value for at least one variable are retrieved here)
-  listofEUCTRids <- try(suppressMessages(suppressWarnings(
+  # get identifiers
+  listofIds <- try(suppressMessages(suppressWarnings(
     dbGetFieldsIntoDf(fields = c(
+      # euctr
       "a2_eudract_number",
       "a41_sponsors_protocol_code_number",
       "a51_isrctn_international_standard_randomised_controlled_trial_number",
       "a52_us_nct_clinicaltrialsgov_registry_number",
-      "a53_who_universal_trial_reference_number_utrn"), # a53_ not yet used
-      con = con,
-      verbose = FALSE,
-      stopifnodata = FALSE) # if only ctgov records, an error is triggered
-  )),
-  silent = TRUE
-  )
-  attribsids <- attributes(listofEUCTRids)
-  if (class(listofEUCTRids) == "try-error") listofEUCTRids <- NULL
-  if (all(is.na(listofEUCTRids[, -1])))     listofEUCTRids <- NULL
-  if (is.null(listofEUCTRids)) message("No EUCTR records found.")
-
-  # 2. find unique, preferred country version of euctr
-  if (!is.null(listofEUCTRids)) {
-    listofEUCTRids <- dfFindUniqueEuctrRecord(
-      df = listofEUCTRids,
-      prefermemberstate = prefermemberstate,
-      include3rdcountrytrials = include3rdcountrytrials)
-  }
-
-  # keep only euctr
-  listofEUCTRids <- listofEUCTRids[
-    !is.na(listofEUCTRids["a2_eudract_number"]), ]
-
-  # for total number of records
-  countall <- 0L + length(listofEUCTRids[["_id"]])
-
-  # 3. get ctgov records
-  listofCTGOVids <- try(suppressMessages(suppressWarnings(
-    dbGetFieldsIntoDf(fields = c(
+      # not yet used: "a53_who_universal_trial_reference_number_utrn",
+      #
+      # ctgov
+      "id_info",
       "id_info.org_study_id",
       "id_info.secondary_id",
       "id_info.nct_alias"),
@@ -924,50 +898,43 @@ dbFindIdsUniqueTrials <- function(
   )),
   silent = TRUE
   )
+
+  # error check
+  if (inherits(listofIds, "try-error") ||
+      !length(listofIds) || !nrow(listofIds)) {
+    stop("No records found, check collection '", con$collection, "'",
+         call. = FALSE)
+  }
+
+  # keep trial records
+  listofIds <- listofIds[
+    # partially matching regexp
+    grepl("NCT[0-9]{8}|[0-9]{4}-[0-9]{6}-[0-9]{2}", listofIds[["_id"]]),
+  ]
+
+  # inform user
+  message("Searching for duplicate trials... ")
+  message("* Total of ", nrow(listofIds), " records in collection.")
+
+  # find unique, preferred country version of euctr
+  listofIds <- dfFindUniqueEuctrRecord(
+      df = listofIds,
+      prefermemberstate = prefermemberstate,
+      include3rdcountrytrials = include3rdcountrytrials)
+
+  # keep only euctr
+  listofEUCTRids <- listofIds[
+    !is.na(listofIds["a2_eudract_number"]),
+    c(1, (1:ncol(listofIds))[grepl("^a[0-9]+_", names(listofIds))])
+    ]
+
   # keep only ctgov
-  if (nrow(listofCTGOVids)) {
-    listofCTGOVids <- listofCTGOVids[
-      grepl("^NCT[0-9]{8}", listofCTGOVids[["_id"]]), ]
-  }
-  #
-  if (!nrow(listofCTGOVids)) {
-    listofCTGOVids <- NULL
-    # inform user
-    message("No CTGOV records found.")
-  }
+  listofCTGOVids <- listofIds[
+    grepl("^NCT[0-9]{8}$", listofIds[["_id"]]),
+    c(1, (1:ncol(listofIds))[grepl("^id_info", names(listofIds))][1]) # delete TODO
+  ]
 
-  # 4. retain unique ctgov records
-  if (!is.null(listofCTGOVids)) {
-    #
-    # make id_info sub-fields into one field
-    listofCTGOVids[["id_info"]] <- sapply(
-      seq_len(nrow(listofCTGOVids)),
-      function(i)
-        unique(
-          as.character(
-            na.omit(
-              unlist(
-                listofCTGOVids[i, -match("_id", names(listofCTGOVids))])))),
-      simplify = FALSE)
-    # do not simplify, so that it returns df for any 1-row listofCTGOVids
-    #
-    # retain only relevant fields
-    listofCTGOVids <- listofCTGOVids[, c("_id", "id_info")]
-
-  }
-
-  # for total number of records
-  countall <- countall + length(listofCTGOVids[["_id"]])
-
-  # inform user
-  if (verbose) {
-    message("* Total of ", countall, " records in collection.")
-  }
-
-  # inform user
-  message("Searching for duplicates... ")
-
-  # 5. find records (_id's) that are in both in euctr and ctgov
+  # find records (_id's) that are in both in euctr and ctgov
   if (!is.null(listofEUCTRids) & !is.null(listofCTGOVids)) {
     #
     # 6. select records from preferred register
@@ -1124,7 +1091,8 @@ dbFindIdsUniqueTrials <- function(
     #
   }
 
-  # prepare output
+  # copy attributes
+  attribsids <- attributes(listofIds)
   attributes(retids) <- attribsids[grepl("^ctrdata-", names(attribsids))]
 
   # avoid returning list() if none found
@@ -1135,7 +1103,7 @@ dbFindIdsUniqueTrials <- function(
   # inform user
   message(
     "= Returning keys (_id) of ", length(retids),
-    " out of total ", countall,
+    " out of total ", nrow(listofIds),
     " records in collection \"", con$collection, "\".")
 
   # return
