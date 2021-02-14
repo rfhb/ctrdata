@@ -1358,10 +1358,10 @@ dbGetFieldsIntoDf <- function(fields = "",
 
       ## simplify if robust:
       #
-      # 1. is dfi[,2] is NULL, remove from dfi data frame
-      dfi <- dfi[!vapply(dfi[, 2], length, integer(1L)) == 0, ]
+      # - if dfi[,2] is NULL, remove from dfi data frame
+      # dfi <- dfi[!vapply(dfi[, 2], length, integer(1L)) == 0, ]
       #
-      # 2. if each [,2] is a list or data frame with one level
+      # - if each [,2] is a list or data frame with one level
       if ((ncol(dfi) == 2) &&
           all(vapply(dfi[, 2],
                      function(x)
@@ -1378,8 +1378,8 @@ dbGetFieldsIntoDf <- function(fields = "",
         dfi <- dfi[, 1:2]
       }
       #
-      # 3. if dfi[, 2:ncol(dfi)] is from the same field e.g.
-      #    required_header.{download_date,link_text,url}, concatenate
+      # - if dfi[, 2:ncol(dfi)] is from the same field e.g.
+      #   required_header.{download_date,link_text,url}, concatenate
       if ((length(ncol(dfi[, 2])) && ncol(dfi[, 2]) > 1L) ||
           ((ncol(dfi) > 2L) &&
            all(grepl(paste0(item, "[.].+$"),
@@ -1404,11 +1404,12 @@ dbGetFieldsIntoDf <- function(fields = "",
 
       }
       #
-      # 4. if each [,2] is a list with a single and the same element
+      # - if each [,2] is a list with a single and the same element
       if (all(vapply(dfi[, 2], is.list, logical(1L))) &&
-          length(unique(as.vector(sapply(dfi[, 2],
-                                         function(i)
-                                           unique(gsub("[0-9]+$", "", names(unlist(i)))))))) == 1L) {
+          length(unique(as.vector(sapply(
+            dfi[, 2],
+            function(i)
+              unique(gsub("[0-9]+$", "", names(unlist(i)))))))) == 1L) {
         #
         dfi[, 2] <- vapply(
           dfi[, 2],

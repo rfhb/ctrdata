@@ -128,17 +128,19 @@ tf <- function() {
         con = dbc)),
     "parameter 'collection' needs")
 
-  RSQLite::dbDisconnect(conn = dbc$con)
-  dbc <- nodbi::src_sqlite(
+  # test if database connection
+  # is opened by ctrDb
+  dbx <- nodbi::src_sqlite(
     collection = "otherinmemory")
-  RSQLite::dbDisconnect(conn = dbc$con)
-  tmp <- suppressWarnings(
-    ctrLoadQueryIntoDb(
-      queryterm = "someQueryForErrorTriggering",
-      only.count = TRUE,
-      con = dbc))
+  RSQLite::dbDisconnect(conn = dbx$con)
   # test
-  expect_true(dbc$collection == "otherinmemory")
+  expect_error(
+    suppressWarnings(
+      tmp <- dbFindIdsUniqueTrials(
+        con = dbx)),
+    "No records found, check collection 'otherinmemory'")
+  # test
+  expect_true(dbx$collection == "otherinmemory")
 
 } # tf test function
 tf()

@@ -347,7 +347,7 @@ expect_message(
     dbFindIdsUniqueTrials(
       con = dbc,
       preferregister = "EUCTR")),
-  "Searching for duplicates")
+  "Searching for duplicate trials")
 
 # test
 expect_message(
@@ -418,7 +418,7 @@ tmpc <- unlist(tmpc)
 tmpc <- table(tmpc)
 
 # tests
-expect_true(tmpc[["character"]] > 60)
+expect_true(tmpc[["character"]] > 50)
 expect_true(tmpc[["Date"]]      >  5)
 expect_true(tmpc[["list"]]      >  5)
 expect_true(tmpc[["logical"]]   > 50)
