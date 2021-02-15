@@ -10,6 +10,9 @@ countriesEUCTR <- c(
   "PL", "PT", "RO", "SK", "SE", "SI", "ES", "GB", "IS", "LI",
   "NO", "3RD")
 
+global_test <- function() {
+  identical( parent.frame(n = 1) , globalenv() )
+}
 
 #' Check and prepare nodbi connection object for ctrdata
 #'
@@ -28,6 +31,33 @@ ctrDb <- function(
   con = nodbi::src_sqlite(
     collection = "ctrdata_auto_generated")) {
 
+  ## helper function
+  # regConnFinalizer <- function(conn, closeFun, envir) {
+  #
+  #   isParentGlobal <- identical(.GlobalEnv, envir)
+  #
+  #   if (isTRUE(isParentGlobal)) {
+  #
+  #     envFinaliser <- new.env(parent = emptyenv())
+  #     envFinaliser$conn <- conn
+  #     attr(conn, 'env_finalizer') <- envFinaliser
+  #
+  #     reg.finalizer(envFinaliser, function(e) {
+  #       if (getOption("verbose")) message("\nGlobal finaliser\n")
+  #       try(closeFun(e$conn))
+  #     }, onexit = TRUE)
+  #
+  #   } else {
+  #
+  #     withr::defer({
+  #       if (getOption("verbose")) message("\nLocal finaliser\n")
+  #       try(closeFun(conn))
+  #     }, envir = envir, priority = "last")
+  #   }
+  #
+  #   return(conn)
+  # }
+
   ## sqlite
   if ("src_sqlite" %in% class(con)) {
 
@@ -38,11 +68,8 @@ ctrDb <- function(
            call. = FALSE)
     }
 
-    # check if disconnected
+    # check
     if (!RSQLite::dbIsValid(con$con)) {
-      # try to reconnect
-      warning("Database connection was closed, trying to reopen...",
-              call. = FALSE, immediate. = TRUE)
       con <- nodbi::src_sqlite(dbname = con$dbname,
                                collection = con$collection)
     }
@@ -51,6 +78,13 @@ ctrDb <- function(
     con <- c(con,
              "db" = con$dbname,
              "ctrDb" = TRUE)
+             # finaliser = paste0(
+             #   "print(sys.nframe());",
+             #   "if (FALSE) {suppressWarnings(RSQLite::dbDisconnect(con$con))}"))
+    #    finaliser = "try(RSQLite::dbDisconnect(con$con), silent = TRUE)")
+
+    # prepare cleaning up
+    # regConnFinalizer(con$con, RSQLite::dbDisconnect, parent.frame())
 
     # print warning from nodbi::src_sqlite()
     if (grepl(":memory:", con$dbname)) {
@@ -583,6 +617,7 @@ dbQueryHistory <- function(con,
 
   ## check database connection
   if (is.null(con$ctrDb)) con <- ctrDb(con = con)
+  #on.exit(eval(parse(text = con$finaliser)))
 
   # debug
   if (verbose) message("Running dbQueryHistory ...")
@@ -691,6 +726,7 @@ dbFindFields <- function(namepart = "",
 
   ## check database connection
   if (is.null(con$ctrDb)) con <- ctrDb(con = con)
+  #on.exit(eval(parse(text = con$finaliser)))
 
   ## check if cache for list of keys in collection exists,
   # otherwise create new environment as session cache
@@ -876,6 +912,7 @@ dbFindIdsUniqueTrials <- function(
 
   ## check database connection
   if (is.null(con$ctrDb)) con <- ctrDb(con = con)
+  #on.exit(eval(parse(text = con$finaliser)))
 
   # get identifiers
   listofIds <- try(suppressMessages(suppressWarnings(
@@ -1214,9 +1251,9 @@ dbGetFieldsIntoDf <- function(fields = "",
   }
 
   ## check database connection
-  if (is.null(con$ctrDb)) {
-    con <- ctrDb(con = con)
-  }
+  #print(RSQLite::dbIsValid(con$con))
+  if (is.null(con$ctrDb)) con <- ctrDb(con = con)
+  #on.exit(eval(parse(text = con$finaliser)))
 
   # helper function for managing lists
   listDepth <- function(x) {
