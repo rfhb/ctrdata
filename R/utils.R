@@ -881,13 +881,14 @@ dbFindIdsUniqueTrials <- function(
       # not yet used: "a53_who_universal_trial_reference_number_utrn",
       #
       # ctgov
-      "id_info",
-      "id_info.org_study_id",
-      "id_info.secondary_id",
-      "id_info.nct_alias"),
-      con = con,
-      verbose = FALSE,
-      stopifnodata = FALSE)
+      "id_info"
+      # "id_info.org_study_id",
+      # "id_info.secondary_id",
+      # "id_info.nct_alias"
+    ),
+    con = con,
+    verbose = FALSE,
+    stopifnodata = FALSE)
   )),
   silent = TRUE
   )
@@ -901,7 +902,6 @@ dbFindIdsUniqueTrials <- function(
 
   # keep trial records
   listofIds <- listofIds[
-    # partially matching regexp
     grepl("NCT[0-9]{8}|[0-9]{4}-[0-9]{6}-[0-9]{2}", listofIds[["_id"]]),
   ]
 
@@ -911,15 +911,15 @@ dbFindIdsUniqueTrials <- function(
 
   # find unique, preferred country version of euctr
   listofIds <- dfFindUniqueEuctrRecord(
-      df = listofIds,
-      prefermemberstate = prefermemberstate,
-      include3rdcountrytrials = include3rdcountrytrials)
+    df = listofIds,
+    prefermemberstate = prefermemberstate,
+    include3rdcountrytrials = include3rdcountrytrials)
 
   # keep only euctr
   listofEUCTRids <- listofIds[
-    !is.na(listofIds["a2_eudract_number"]),
+    grepl("^[0-9]{4}-[0-9]{6}-[0-9]{2}$", listofIds[["a2_eudract_number"]]),
     c(1, (1:ncol(listofIds))[grepl("^a[0-9]+_", names(listofIds))])
-    ]
+  ]
 
   # keep only ctgov
   listofCTGOVids <- listofIds[
