@@ -1276,16 +1276,33 @@ dbGetFieldsIntoDf <- function(fields = "",
         #   https://www.sqlite.org/json1.html#jtree
         # - include cast() to string to avoid warnings when types
         #   of columns are changed after first records are retrieved
+        # statement <- paste0(
+        #   "SELECT
+        #     CAST(_id AS text) AS '_id',
+        #     CAST(value AS text) AS '", item, "'
+        #   FROM ", con$collection, ", json_tree(", con$collection, ".json, '$.",
+        #   topElement, "') WHERE fullkey REGEXP '", regexpItem, "';")
+        # NOTE since mongodb returns NULL for documents that do not have the
+        # sought item but sqlite does not return such documents at all, the
+        # statement is more complex to also include a row for such non-existing
+        # items
         statement <- paste0(
           "SELECT
-          CAST(_id AS text) AS '_id',
-          CAST(value AS text) AS '", item, "'
-          FROM ", con$collection, ", json_tree(", con$collection, ".json, '$.",
-          topElement, "') WHERE fullkey REGEXP '", regexpItem, "';")
-        # DEBUG all rows
-        #   "SELECT _id, key, fullkey, value, type
-        #   FROM ", con$collection, ", json_tree(", con$collection, ".json, '$.",
-        #   top_element, "');"
+          CAST(allRows._id AS text) AS _id,
+          CAST(jsonRows.value AS text) AS '", item, "'
+          FROM (", con$collection, ") AS allRows
+
+        LEFT JOIN
+               (SELECT
+                  CAST(_id AS text) AS id,
+                  CAST(value AS text) AS value
+               FROM ", con$collection, ",
+                    json_tree(", con$collection, ".json, '$.", topElement, "')
+               WHERE fullkey REGEXP '", regexpItem, "') AS jsonRows
+
+        ON jsonRows.id = allRows._id
+        WHERE allRows._id <> 'meta-info'
+        ;")
         if (verbose) message("DEBUG: src_sqlite, statement:\n", statement)
 
         # execute query, bypassing nodbi since my implementation
@@ -1305,11 +1322,20 @@ dbGetFieldsIntoDf <- function(fields = "",
           X = dfi[, 2],
           INDEX = dfi[, 1],
           function(i) {
-            data.frame(
-              i, # i[[1]]
-              check.names = FALSE,
-              row.names = NULL,
-              stringsAsFactors = FALSE)
+            if (all(is.na(i))) {
+              # keep NULL elements in output
+              NULL
+            } else {
+           #   if (all(is.atomic(i))) {
+            #    list(i)
+           #   } else {
+                data.frame(
+                  i,
+                  check.names = FALSE,
+                  row.names = NULL,
+                  stringsAsFactors = FALSE)
+            #  }
+            }
           },
           simplify = FALSE)
 
@@ -1335,6 +1361,15 @@ dbGetFieldsIntoDf <- function(fields = "",
         # dfi[, 2] could still be json strings
         dfi <- json2list(dfi)
 
+        # unboxing is not done in docdb_query
+        for (i in seq_len(nrow(dfi))) {
+          if (!is.null(dfi[i, 2]) && is.list(dfi[i, 2]) &&
+              !identical(dfi[i, 2], list(NULL)) &&
+              !is.data.frame(dfi[i, 2][[1]])) {
+            dfi[i, 2][[1]] <- list(jsonlite::fromJSON(
+              jsonlite::toJSON(dfi[i, 2], auto_unbox = TRUE)))
+          }}
+
       } # if src_sqlite or src_mango
 
       # some backends return NA if query matches,
@@ -1350,14 +1385,11 @@ dbGetFieldsIntoDf <- function(fields = "",
 
       ## simplify if robust:
       #
-      # - if dfi[,2] is NULL, remove from dfi data frame
-      # dfi <- dfi[!vapply(dfi[, 2], length, integer(1L)) == 0, ]
-      #
       # - if each [,2] is a list or data frame with one level
       if ((ncol(dfi) == 2) &&
           all(vapply(dfi[, 2],
                      function(x)
-                       listDepth(x) == 1L, logical(1L)))) {
+                       listDepth(x) <= 1L, logical(1L)))) {
         # concatenate (has to remain as sapply
         # because of different content types)
         dfi[, 2] <- sapply(sapply(dfi[, 2], "[", 1),
@@ -1397,11 +1429,11 @@ dbGetFieldsIntoDf <- function(fields = "",
       }
       #
       # - if each [,2] is a list with a single and the same element
-      if (all(vapply(dfi[, 2], is.list, logical(1L))) &&
-          length(unique(as.vector(sapply(
+      if (all(vapply(dfi[, 2], function(i) is.null(i) | is.list(i), logical(1L))) &&
+          length(unique(unlist(sapply(
             dfi[, 2],
             function(i)
-              unique(gsub("[0-9]+$", "", names(unlist(i)))))))) == 1L) {
+              unique(gsub("[0-9]+$", "", names(unlist(i)))))))) <= 1L) {
         #
         dfi[, 2] <- vapply(
           dfi[, 2],
@@ -1428,9 +1460,7 @@ dbGetFieldsIntoDf <- function(fields = "",
              "FALSE) to ignore this. ",
              call. = FALSE)
       } else {
-        warning("* No data: '", item, "'",
-                call. = FALSE,
-                immediate. = FALSE)
+        message("* No data: '", item, "'")
         # create empty data set
         dfi <- data.frame("_id" = NA, NA,
                           check.names = FALSE,
