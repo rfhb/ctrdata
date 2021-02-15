@@ -2302,20 +2302,20 @@ checkDoc <- function(con, id) {
         fields = '{"_id": 1}'),
       silent = TRUE)
   } else {
-    resdoc <- NULL
+    return(FALSE)
   }
 
   # if no error, check if 1 document found
   if ("try-error" %in% class(resdoc)) {
-    resdoc <- FALSE
+    return(FALSE)
   } else {
-    resdoc <- ifelse(restbl,
-                     nrow(resdoc) == 1L,
-                     FALSE)
+    if (nrow(resdoc) == 1L) {
+      return(TRUE)
+    }
   }
 
-  # return false or true
-  return(resdoc)
+  # if no return so far
+  return(FALSE)
 
 }
 
