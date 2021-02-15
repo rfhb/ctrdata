@@ -107,7 +107,6 @@ ctrLoadQueryIntoDb <- function(
 
   ## check database connection
   con <- ctrDb(con = con)
-#  on.exit(eval(parse(text = con$finaliser)))
 
   ## system check, in analogy to onload.R
   if (.Platform$OS.type == "windows") {
