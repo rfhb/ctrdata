@@ -409,8 +409,6 @@ tmpf <- suppressMessages(
     dbFindFields(
       namepart = ".*",
       con = dbc)))
-# remove empty field names
-tmpf <- tmpf[tmpf != ""]
 # get all data (takes long with sqlite)
 result <- suppressMessages(
   suppressWarnings(
