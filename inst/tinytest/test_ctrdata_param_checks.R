@@ -118,6 +118,7 @@ tf <- function() {
       con = NULL
     ), "specify in parameter 'con' a database connection")
 
+  RSQLite::dbDisconnect(conn = dbc$con)
   dbc <- nodbi::src_sqlite()
   # test
   expect_error(
