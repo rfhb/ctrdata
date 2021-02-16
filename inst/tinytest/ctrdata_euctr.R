@@ -425,12 +425,28 @@ tmpc <- sapply(result, class,
 tmpc <- unlist(tmpc)
 tmpc <- table(tmpc)
 
+# src_mongo:
+# tmpc
+# character Date integer logical
+#       549   10      22      79
+
+# src_mongo:
+# tmpc
+# character Date integer list logical
+#       384    8      22   35      78
+
 # tests
 expect_true(tmpc[["character"]] > 50)
 expect_true(tmpc[["Date"]]      >  5)
-expect_true(tmpc[["list"]]      >  5)
 expect_true(tmpc[["logical"]]   > 50)
 
+# not testing for lists, because
+# src_mongo returns only non-object
+# fields when searching for all fields
+# with dbFindFields(".*") whereas
+# src_sqlite returns names of both
+# objects and terminal / no more nested
+# fields
 
 #### ctrOpenSearchPagesInBrowser #####
 
