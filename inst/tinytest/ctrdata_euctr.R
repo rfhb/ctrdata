@@ -335,6 +335,7 @@ tmpTest <-
             con = dbc))), ]
 
 # test
+tmpTest <- tmpTest[tmpTest[["annotation"]] != "", ]
 expect_equal(sort(tmpTest[["annotation"]]),
              sort(c("EU ANNO", "ANNO")))
 
