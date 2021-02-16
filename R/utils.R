@@ -1365,10 +1365,19 @@ dbGetFieldsIntoDf <- function(fields = "",
       dfi <- dfi[!is.na(dfi[["_id"]]) &
                    !vapply(seq_len(nrow(dfi)),
                            function(r) all(is.na(dfi[r, -1L])), logical(1L)), ]
-      #
+
       # ensure intended column order
       if (names(dfi)[1L] != "_id") {
         dfi <- dfi[, 2:1]
+      }
+
+      # if all empty such as with src_sqlite for
+      # non-existing columns, handle as zero rows
+      if (all(is.na(dfi[, 2])) ||
+          all(is.null(dfi[, 2])) ||
+          all(dfi[, 2] == "") ||
+          all(sapply(dfi[, 2], is.null))) {
+        dfi <- data.frame()
       }
 
       ## simplify if robust:
