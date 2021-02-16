@@ -2346,12 +2346,13 @@ typeField <- function(dfi) {
   on.exit(Sys.setlocale("LC_TIME", lct))
 
   # main typing functions
-  ctrDate     <- function() as.Date(dfi[, 2], format = "%Y-%m-%d")
-  ctrDateUs   <- function() as.Date(dfi[, 2], format = "%b %e, %Y")
-  ctrDateCtr  <- function() as.Date(dfi[, 2], format = "%Y-%m-%d %H:%M:%S")
-  ctrDateTime <- function() as.Date(dfi[, 2], format = "%Y-%m-%dT%H:%M:%S")
-  ctrYesNo    <- function() vapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA), logical(1L))
-  ctrInt      <- function() vapply(dfi[, 2], FUN = function(x) as.integer(x = x), integer(1L))
+  ctrDate      <- function() as.Date(dfi[, 2], format = "%Y-%m-%d")
+  ctrDateUs    <- function() as.Date(dfi[, 2], format = "%b %e, %Y")
+  ctrDateCtr   <- function() as.Date(dfi[, 2], format = "%Y-%m-%d %H:%M:%S")
+  ctrDateTime  <- function() as.Date(dfi[, 2], format = "%Y-%m-%dT%H:%M:%S")
+  ctrYesNo     <- function() vapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA), logical(1L))
+  ctrFalseTrue <- function() vapply(dfi[, 2], FUN = function(x) switch(x, "true" = TRUE, "false" = FALSE, NA), logical(1L))
+  ctrInt       <- function() vapply(dfi[, 2], FUN = function(x) as.integer(x = x), integer(1L))
 
   # selective typing
   tmp <- try({
@@ -2479,9 +2480,10 @@ typeField <- function(dfi) {
       #
       # - CTGOV
       "number_of_arms" = ctrInt(),
-      "enrollment"     = ctrInt()
+      "enrollment"     = ctrInt(),
       #
       # TODO: results-related variables
+      "trialInformation.analysisForPrimaryCompletion" = ctrFalseTrue()
       #
     )
   },
