@@ -90,7 +90,7 @@ ctrDb <- function(
   stop("Please specify in parameter 'con' a database connection. ",
        "crdata supports so far only src_mongo() and src_sqlite().")
 
-}
+} # end ctrDb
 
 
 #' Open advanced search pages of register(s) or execute search in browser
@@ -427,7 +427,6 @@ ctrGetQueryUrl <- function(
 # end ctrGetQueryUrl
 
 
-
 #' Import from clipboard the URL of a search in one of the registers
 #'
 #' @inheritParams ctrGetQueryUrl
@@ -471,7 +470,6 @@ ctrGetQueryUrlFromBrowser <- function(
 
 }
 # end ctrGetQueryUrlFromBrowser
-
 
 
 #' Find synonyms of an active substance
@@ -540,7 +538,6 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "") {
   return(as)
 }
 # end ctrFindActiveSubstanceSynonyms
-
 
 
 #' Show the history of queries that were loaded into a database
@@ -882,9 +879,6 @@ dbFindIdsUniqueTrials <- function(
       #
       # ctgov
       "id_info"
-      # "id_info.org_study_id",
-      # "id_info.secondary_id",
-      # "id_info.nct_alias"
     ),
     con = con,
     verbose = FALSE,
@@ -1259,7 +1253,7 @@ dbGetFieldsIntoDf <- function(fields = "",
       if (inherits(con$con, "SQLiteConnection")) {
 
         # mangle item names into SQL e.g.,
-        # "location[4].facility[#-2].name" # two arrayIndex
+        # "location[4].facility[#-2].name" # two arrayIndex items
         # "location.facil[a-z0-0]+.*thing" # user regexp
         # "location.facil.*"               # user regexp
         # - remove arrayIndex
@@ -1276,16 +1270,10 @@ dbGetFieldsIntoDf <- function(fields = "",
         #   https://www.sqlite.org/json1.html#jtree
         # - include cast() to string to avoid warnings when types
         #   of columns are changed after first records are retrieved
-        # statement <- paste0(
-        #   "SELECT
-        #     CAST(_id AS text) AS '_id',
-        #     CAST(value AS text) AS '", item, "'
-        #   FROM ", con$collection, ", json_tree(", con$collection, ".json, '$.",
-        #   topElement, "') WHERE fullkey REGEXP '", regexpItem, "';")
-        # NOTE since mongodb returns NULL for documents that do not have the
-        # sought item but sqlite does not return such documents at all, the
-        # statement is more complex to also include a row for such non-existing
-        # items
+        # - since mongodb returns NULL for documents that do not have the
+        #   sought item but sqlite does not return such documents at all, the
+        #   statement is more complex to also include a row for such
+        #   non-existing items
         statement <- paste0(
           "SELECT
           CAST(allRows._id AS text) AS _id,
@@ -1442,13 +1430,14 @@ dbGetFieldsIntoDf <- function(fields = "",
         # inform user
         message("* Collapsed with '/' [3]: '", item, "'")
       }
-      #
+
+      # inform user
       if (verbose) {
         message("DEBUG: field ", item, " has length ", nrow(dfi))
       }
       #
     },
-    silent = TRUE)
+    silent = TRUE) # tmpItem try
 
     # inform user
     if (inherits(tmpItem, "try-error") || !nrow(dfi)) {
@@ -1502,7 +1491,7 @@ dbGetFieldsIntoDf <- function(fields = "",
   # return
   return(result)
 }
-# dbGetFieldsIntoDf
+# end dbGetFieldsIntoDf
 
 
 #' Extract information of interest (e.g., endpoint)
@@ -1565,6 +1554,7 @@ dbGetFieldsIntoDf <- function(fields = "",
 #'   wherevalue = "duration of response"
 #' )
 #' }
+#'
 dfName2Value <- function(df, valuename = "",
                          wherename = "", wherevalue = "") {
 
@@ -1914,6 +1904,7 @@ dfTrials2Long <- function(df) {
 #'         "arms.arm.type.value")
 #' ))
 #' }
+#'
 dfListExtractKey <- function(
   df,
   list.key =
@@ -2079,19 +2070,14 @@ dfMergeTwoVariablesRelevel <- function(
       ifelse(is.na(tt <- as.character(df[, 2])), "", tt))
   }
 
-  # # bind as strings, concatenated
-  # tmp <- paste0(
-  #   ifelse(is.na(tt <- as.character(df[, 1])), "", tt),
-  #   ifelse(is.na(tt <- as.character(df[, 2])), "", tt))
-
-  # and then type where possible
+  # type where possible
   if (class(df[, 1]) == class(df[, 2]) &&
       class(df[, 1]) != "character") {
     mode(tmp) <- mode(df[, 1])
     class(tmp) <- class(df[, 1])
   }
 
-  # relevel is specified
+  # relevel if specified
   if (!is.null(levelslist)) {
 
     # check
@@ -2317,8 +2303,7 @@ checkDoc <- function(con, id) {
   # if no return so far
   return(FALSE)
 
-}
-
+} # end checkDoc
 
 
 #' Change type of field based on name of field
@@ -2514,7 +2499,6 @@ typeField <- function(dfi) {
 } # end typeField
 
 
-
 #' Annotate ctrdata function return values
 #'
 #' @param x object to be annotated
@@ -2536,7 +2520,6 @@ addMetaData <- function(x, con) {
   return(x)
 
 } # end addMetaData
-
 
 
 #' Function to set proxy
@@ -2562,7 +2545,6 @@ setProxy <- function() {
     }
   }
 } # end setproxy
-
 
 
 #' Convenience function to install a minimal cygwin environment under MS

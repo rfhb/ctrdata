@@ -1,5 +1,10 @@
 # ctrdata 1.4.1.9003
  - some code optimisation
+ - start typing results fields
+ - src_mongo and src_sqlite return values of
+   dbGetFieldsIntoDf now mostly identical to
+   ensure analysis code portability (based on
+   much work in this function)
  
 # ctrdata 1.4.1.9002
  - 2020-11-06

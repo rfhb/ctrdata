@@ -696,7 +696,6 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
 } # end dbCTRLoadJSONFiles
 
 
-
 #' dbQueryAnnotateRecords
 #'
 #' @inheritParams ctrLoadQueryIntoDb
@@ -760,7 +759,7 @@ dbCTRAnnotateQueryRecords <- function(
   # inform user
   message("= Annotated retrieved records")
 
-} # end dbQueryAnnotateRecords
+} # end dbCTRAnnotateQueryRecords
 
 
 #' dbCTRUpdateQueryHistory
@@ -830,7 +829,6 @@ dbCTRUpdateQueryHistory <- function(
 
 }
 # end dbCTRUpdateQueryHistory
-
 
 
 #' ctrLoadQueryIntoDbCtgov
