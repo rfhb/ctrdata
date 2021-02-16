@@ -165,8 +165,16 @@ expect_true("logical" == class(result[[
   "e71_human_pharmacology_phase_i"]]))
 
 # test
+expect_true("logical" == class(result[[
+  "trialInformation.analysisForPrimaryCompletion"]]))
+
+# test
 expect_true("Date" == class(result[[
   "trialInformation.globalEndOfTrialDate"]]))
+
+# test
+expect_true("list" == class(result[[
+  "endPoints.endPoint"]]))
 
 # test
 expect_true(
@@ -229,7 +237,7 @@ df2 <- dfName2Value(
   df = df,
   valuename = "^endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.value$",
   wherename = "endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.method.value",
-  wherevalue = "HYPOTHESIS_METHOD"
+  wherevalue = "HYPOTHESIS_METHOD.*"
 )
 
 # test
