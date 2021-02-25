@@ -1437,7 +1437,7 @@ dbGetFieldsIntoDf <- function(fields = "",
           function(i)
             paste0(na.omit(unlist(i)), collapse = " / "), character(1L))
         # inform user
-        message("* Collapsed with '/' [3]: '", item, "'")
+        message("* Simplified [3]: '", item, "'")
       }
 
       # inform user
