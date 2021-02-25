@@ -1285,6 +1285,7 @@ ctrLoadQueryIntoDbEuctr <- function(
 
   # create pool for concurrent connections
   pool <- curl::new_pool(
+    total_con = parallelretrievals,
     host_con = parallelretrievals)
 
   # generate vector with URLs of all pages
@@ -1511,21 +1512,31 @@ ctrLoadQueryIntoDbEuctr <- function(
         eudractnumbersimported[startindex:stopindex],
         ".zip")
       #
+      # success handling: saving to file
+      # and progress indicator function
+      pc <- 0
+      curlSuccess <- function(res) {
+        pc <<- pc + 1
+        # save to file
+        writeBin(object = res$content, con = fp[pc])
+        # inform user
+        # message("Pages done: ", pc, " (",
+        #         length(curl::multi_list(pool = pool)), " open connections)",
+        #         "\r", appendLF = FALSE)
+      }
+      #
       tmp <- lapply(
         seq_along(urls),
         function(x)
           curl::curl_fetch_multi(
             url = urls[x],
-            done = cb,
-            pool = pool,
-            data = fp[x],
-            handle = curl::new_handle()
+            done = curlSuccess,
+            pool = pool
           ))
 
       # do download and save
       tmp <- curl::multi_run(
-        pool = pool,
-        poll = length(urls))
+        pool = pool)
 
       # unzip downloaded file and rename
       tmp <- lapply(
@@ -1734,12 +1745,6 @@ ctrLoadQueryIntoDbEuctr <- function(
           retdat,
           function(x) rawToChar(x[["content"]]))
 
-        if (verbose) {
-          message("\n", paste0(
-            sapply(batchresults, nchar),
-            collapse = " "))
-        }
-
         # curl return sequence is not predictable
         # therefore recalculate the eudract numbers
         eudractnumberscurled <- sapply(
@@ -1801,7 +1806,6 @@ ctrLoadQueryIntoDbEuctr <- function(
                 "version_results_history" = tmpChanges[x],
                 stringsAsFactors = FALSE))
 
-            if (verbose) message(upd)
           })
 
         # clean up large object

@@ -147,7 +147,7 @@ result <- suppressMessages(
 
 # test
 expect_true(
-  nrow(result) > 400L
+  nrow(result) > 25L
 )
 
 # keep only one record for trial
