@@ -1287,13 +1287,6 @@ ctrLoadQueryIntoDbEuctr <- function(
   pool <- curl::new_pool(
     host_con = parallelretrievals)
 
-  # progress indicator function
-  pc <- 0
-  cb <- function(req) {
-    pc <<- pc + 1
-    message("Pages #: ", pc, "\r", appendLF = FALSE)
-  }
-
   # generate vector with URLs of all pages
   urls <- vapply(
     paste0(queryEuRoot, queryEuType3,
@@ -1302,16 +1295,35 @@ ctrLoadQueryIntoDbEuctr <- function(
 
   # generate vector with file names for saving pages
   fp <- paste0(
-    tempDir, "/euctr-trials-page_",
+    tempDir,
+    # NOTE this file name pattern is used
+    # by subsequent functions including
+    # shell scripts so not to be changed
+    "/euctr-trials-page_",
     formatC(1:resultsEuNumPages,
             digits = 0,
             width = nchar(resultsEuNumPages),
             flag = 0),
     ".txt")
 
+  # success handling: saving to file
+  # and progress indicator function
+  pc <- 0
+  curlSuccess <- function(res) {
+    pc <<- pc + 1
+    # save to file - NOTE the number in page_nnn
+    # is not expected to correspond to the page
+    # number in the URL that was downloaded
+    cat(rawToChar(res$content), file = fp[pc])
+    # inform user
+    message("Pages done: ", pc, " (",
+            length(curl::multi_list(pool = pool)), " open connections)",
+            "\r", appendLF = FALSE)
+  }
+
   # add URLs and file names into pool
   tmp <- lapply(
-    # alternate sequence
+    # randomise sequence
     sample(seq_along(urls),
            size = length(urls),
            replace = FALSE,
@@ -1319,16 +1331,8 @@ ctrLoadQueryIntoDbEuctr <- function(
     function(x)
       curl::curl_fetch_multi(
         url = urls[x],
-        done = cb,
-        pool = pool,
-        data = fp[x],
-        handle = curl::new_handle(
-          useragent = "",
-          accept_encoding = "deflate, gzip",
-          cookiejar = cf,
-          cookiefile = cf
-        )
-      )
+        done = curlSuccess,
+        pool = pool)
   )
 
   # do download and saving

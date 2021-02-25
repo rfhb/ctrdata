@@ -70,4 +70,5 @@ ctrdata::dfValue2Name(
   wherevalue = "duration of response"
 )
 }
+
 }

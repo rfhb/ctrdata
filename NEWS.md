@@ -1,3 +1,6 @@
+# ctrdata 1.4.1.9004
+ - ensure parallel retrievals from euctr
+
 # ctrdata 1.4.1.9003
  - some code optimisation
  - start typing results fields
