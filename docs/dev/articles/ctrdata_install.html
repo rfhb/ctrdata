@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ctrdata</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.4.1.9002</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.4.1.9004</span>
       </span>
     </div>
 
@@ -97,7 +97,7 @@
 
       
 
-      </header><script src="ctrdata_install_files/header-attrs-2.6/header-attrs.js"></script><div class="row">
+      </header><script src="ctrdata_install_files/header-attrs-2.7/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Install R package ctrdata</h1>
@@ -148,7 +148,7 @@
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">ctrdata</span><span class="fu">::</span><span class="fu"><a href="../reference/installCygwinWindowsDoInstall.html">installCygwinWindowsDoInstall</a></span><span class="op">(</span>proxy <span class="op">=</span> <span class="st">"proxy.server.domain:8080"</span><span class="op">)</span> </code></pre></div>
 <p>Users who want or need to install cygwin manually, can download the setup executable from <a href="https://cygwin.com/install.html">here</a>. In a MS Windows command window or Powershell window, use the following command line. The parameters are explained <a href="https://cygwin.com/faq/faq.html#faq.setup.cli">here</a>.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">setup-x86_64.exe</span> --no-admin --quiet-mode --verbose --upgrade-also --root c:/cygwin </span>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">setup-x86_64.exe</span> <span class="at">--no-admin</span> <span class="at">--quiet-mode</span> <span class="at">--verbose</span> <span class="at">--upgrade-also</span> <span class="at">--root</span> c:/cygwin </span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">--site</span> http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ </span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="ex">--packages</span> perl,php-jsonc,php-simplexml</span></code></pre></div>
 <p>In typical Linux and macOS environments, the required tools php, bash, perl, cat and sed are installed and available by default.</p>
