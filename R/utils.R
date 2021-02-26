@@ -1437,7 +1437,7 @@ dbGetFieldsIntoDf <- function(fields = "",
           function(i)
             paste0(na.omit(unlist(i)), collapse = " / "), character(1L))
         # inform user
-        message("* Simplified [3]: '", item, "'")
+        message("* Simplified or collapsed with '/' [3]: '", item, "'")
       }
 
       # inform user
@@ -2387,6 +2387,7 @@ typeField <- function(dfi) {
       # factors
       #
       # - EUCTR Yes / No / Information not present in EudraCT
+      "d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation" = ctrYesNo(),
       "e13_condition_being_studied_is_a_rare_disease" = ctrYesNo(),
       #
       "e61_diagnosis"         = ctrYesNo(),

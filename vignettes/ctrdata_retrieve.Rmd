@@ -20,11 +20,8 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-#
 knitr::opts_chunk$set(
-  eval = FALSE
-  )
-#
+  eval = FALSE)
 ```
 
 # Attach package `ctrdata`
@@ -156,11 +153,15 @@ ctrLoadQueryIntoDb(
 )
 # [...]
 #       query-timestamp query-register query-records
-# 1 2020-10-11 21:27:58          EUCTR           230
-# 2 2020-10-11 21:39:37          CTGOV           190
+# 1 2021-02-26 12:05:00          EUCTR           232
+# 2 2021-02-26 12:11:36          EUCTR             2
+# 3 2021-02-26 12:12:58          EUCTR           232
+# 4 2021-02-26 12:19:11          CTGOV           194
 #                                                   query-term
 # 1 query=cancer&age=under-18&status=completed&phase=phase-one
-# 2                 cond=neuroblastoma&recrs=e&age=0&intr=Drug
+# 2 query=cancer&age=under-18&status=completed&phase=phase-one
+# 3 query=cancer&age=under-18&status=completed&phase=phase-one
+# 4                 cond=neuroblastoma&recrs=e&age=0&intr=Drug
 ```
 
 # Add personal annotations when retrieving trial information
@@ -176,13 +177,6 @@ ctrLoadQueryIntoDb(
   annotation.mode = "append",
   con = db
 )
-# [...]
-#       query-timestamp query-register query-records
-# 1 2020-10-11 21:27:58          EUCTR           230
-# 2 2020-10-11 21:39:37          CTGOV           190
-#                                                   query-term
-# 1 query=cancer&age=under-18&status=completed&phase=phase-one
-# 2                 cond=neuroblastoma&recrs=e&age=0&intr=Drug
 ```
 
 # Find synonyms of active substance names
@@ -219,11 +213,15 @@ db <- nodbi::src_mongo(
 
 # Since the above access is read-only,
 # just obtain fields of interest: 
-result <- dbGetFieldsIntoDf(
+dbGetFieldsIntoDf(
   fields = c("a2_eudract_number",
-             "overall_status",
              "e71_human_pharmacology_phase_i"), 
   con = db)
-nrow(result)
-# [1] 7
+#                  _id a2_eudract_number e71_human_pharmacology_phase_i
+# 1 2010-024264-18-3RD    2010-024264-18                           TRUE
+# 2  2010-024264-18-AT    2010-024264-18                           TRUE
+# 3  2010-024264-18-DE    2010-024264-18                           TRUE
+# 4  2010-024264-18-GB    2010-024264-18                           TRUE
+# 5  2010-024264-18-IT    2010-024264-18                           TRUE
+# 6  2010-024264-18-NL    2010-024264-18                           TRUE
 ```
