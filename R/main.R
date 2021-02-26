@@ -1317,8 +1317,8 @@ ctrLoadQueryIntoDbEuctr <- function(
     # number in the URL that was downloaded
     cat(rawToChar(res$content), file = fp[pc])
     # inform user
-    message("Pages done: ", pc, " (",
-            length(curl::multi_list(pool = pool)), " open connections)",
+    message("Pages: ", pc, " done, ",
+            length(curl::multi_fdset(pool = pool)[["reads"]]), " ongoing   ",
             "\r", appendLF = FALSE)
   }
 
