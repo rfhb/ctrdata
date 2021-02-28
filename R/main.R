@@ -934,8 +934,9 @@ ctrLoadQueryIntoDbCtgov <- function(
   }
   #
   if (as.integer(tmp) > 10000L) {
-    stop("These are ", tmp, " (more than 10000) trials, this may be ",
-         "unintended. Alternatively, split into separate queries.")
+    stop("These are ", tmp, " (more than 10,000) trials, this may be ",
+         "unintended. Downloading more than 10,000 trials is not supported ",
+         "by the register. Consider correcting or splitting into separate queries.")
   }
 
   # inform user
@@ -1180,7 +1181,7 @@ ctrLoadQueryIntoDbEuctr <- function(
   #
   # register contains 35000+ trials, which would all
   # be identified if queryterm is just anything
-  if (resultsEuNumTrials > 30000) {
+  if (resultsEuNumTrials > 30000L) {
     stop("ctrLoadQueryIntoDb()): unexpectedly found more than ",
          "30000 trials; revise your 'queryterm': ", queryterm,
          call. = FALSE)
@@ -1209,6 +1210,12 @@ ctrLoadQueryIntoDbEuctr <- function(
     return(list(n = resultsEuNumTrials,
                 success = NULL,
                 failed = NULL))
+  }
+
+  # suggest chunking if large number of trials found
+  if (as.integer(resultsEuNumTrials) > 10000L) {
+    stop("These are ", resultsEuNumTrials, " (more than 10,000) trials, this may be ",
+         "unintended. Consider correcting or splitting into separate queries.")
   }
 
   ## system check, in analogy to onload.R
