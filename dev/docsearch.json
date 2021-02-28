@@ -2,21 +2,21 @@
   "index_name": "ctrdata",
   "start_urls": [
     {
-      "url": "https://rfhb.github.io/ctrdata//index.html",
+      "url": "https://rfhb.github.io/ctrdata/index.html",
       "selectors_key": "homepage",
       "tags": [
         "homepage"
       ]
     },
     {
-      "url": "https://rfhb.github.io/ctrdata//reference",
+      "url": "https://rfhb.github.io/ctrdata/reference",
       "selectors_key": "reference",
       "tags": [
         "reference"
       ]
     },
     {
-      "url": "https://rfhb.github.io/ctrdata//articles",
+      "url": "https://rfhb.github.io/ctrdata/articles",
       "selectors_key": "articles",
       "tags": [
         "articles"
@@ -30,7 +30,7 @@
     "/articles/index.html"
   ],
   "sitemap_urls": [
-    "https://rfhb.github.io/ctrdata//sitemap.xml"
+    "https://rfhb.github.io/ctrdata/sitemap.xml"
   ],
   "selectors": {
     "homepage": {
