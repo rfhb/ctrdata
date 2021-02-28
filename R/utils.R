@@ -918,7 +918,8 @@ dbFindIdsUniqueTrials <- function(
   # keep only ctgov
   listofCTGOVids <- listofIds[
     grepl("^NCT[0-9]{8}$", listofIds[["_id"]]),
-    c(1, (1:ncol(listofIds))[grepl("^id_info", names(listofIds))][1]) # delete TODO
+    c(1, (1:ncol(listofIds))[grepl("^id_info", names(listofIds))][1]), # delete TODO
+    drop = TRUE
   ]
 
   # find records (_id's) that are in both in euctr and ctgov
@@ -953,8 +954,8 @@ dbFindIdsUniqueTrials <- function(
       dupesC2 <- vapply(
         listofCTGOVids[["id_info"]],
         function(x) any(
-          x %in%
-            listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]), logical(1L))
+          x %in% na.omit(
+            listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]])), logical(1L))
       #
       if (verbose) {
         message(
@@ -967,9 +968,9 @@ dbFindIdsUniqueTrials <- function(
       dupesD2 <- vapply(
         listofCTGOVids[["id_info"]],
         function(x) any(
-          x %in%
+          x %in% na.omit(
             listofEUCTRids[[
-              "a51_isrctn_international_standard_randomised_controlled_trial_number"]]), logical(1L))
+              "a51_isrctn_international_standard_randomised_controlled_trial_number"]])), logical(1L))
       #
       if (verbose) message(" - ", sum(dupesD2),
                            " CTGOV secondary_id / nct_alias / org_study_id in",
@@ -979,8 +980,8 @@ dbFindIdsUniqueTrials <- function(
       dupesE2 <- vapply(
         listofCTGOVids[["id_info"]],
         function(x) any(
-          x %in%
-            listofEUCTRids[["a41_sponsors_protocol_code_number"]]), logical(1L))
+          x %in% na.omit(
+            listofEUCTRids[["a41_sponsors_protocol_code_number"]])), logical(1L))
       #
       if (verbose) {
         message(" - ", sum(dupesE2),
@@ -1015,8 +1016,10 @@ dbFindIdsUniqueTrials <- function(
       }
       #
       # b.1 - euctr in ctgov
-      dupesB1 <- listofEUCTRids[[
-        "a52_us_nct_clinicaltrialsgov_registry_number"]] %in% listofCTGOVids[["_id"]]
+      dupesB1 <- !is.na(
+        listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]) &
+        listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]] %in%
+        listofCTGOVids[["_id"]]
       #
       if (verbose) {
         message(" - ", sum(dupesB1),
@@ -1024,8 +1027,9 @@ dbFindIdsUniqueTrials <- function(
       }
       #
       # c.1 - euctr in ctgov
-      dupesC1 <- listofEUCTRids[[
-        "a52_us_nct_clinicaltrialsgov_registry_number"]] %in%
+      dupesC1 <- !is.na(
+        listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]) &
+        listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]] %in%
         unlist(listofCTGOVids[["id_info"]])
       #
       if (verbose) {
@@ -1036,8 +1040,11 @@ dbFindIdsUniqueTrials <- function(
       }
       #
       # d.1 - euctr in ctgov
-      dupesD1 <- listofEUCTRids[[
-        "a51_isrctn_international_standard_randomised_controlled_trial_number"]] %in%
+      dupesD1 <- !is.na(
+        listofEUCTRids[[
+          "a51_isrctn_international_standard_randomised_controlled_trial_number"]]) &
+        listofEUCTRids[[
+            "a51_isrctn_international_standard_randomised_controlled_trial_number"]] %in%
         unlist(listofCTGOVids[["id_info"]])
       #
       if (verbose) {
@@ -1048,7 +1055,9 @@ dbFindIdsUniqueTrials <- function(
       }
       #
       # e.1 - euctr in ctgov
-      dupesE1 <- listofEUCTRids[["a41_sponsors_protocol_code_number"]] %in%
+      dupesE1 <- !is.na(
+        listofEUCTRids[["a41_sponsors_protocol_code_number"]]) &
+        listofEUCTRids[["a41_sponsors_protocol_code_number"]] %in%
         unlist(listofCTGOVids[["id_info"]])
       #
       if (verbose) {

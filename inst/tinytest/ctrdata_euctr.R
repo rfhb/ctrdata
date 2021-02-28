@@ -104,10 +104,10 @@ expect_message(
   "(Imported or updated|First result page empty)")
 
 # test
-expect_true(tmpTest$n > 10L)
+expect_true(tmpTest$n > 5L)
 
 # test
-expect_true(length(tmpTest$success) > 10L)
+expect_true(length(tmpTest$success) > 5L)
 
 
 #### ctrLoadQueryIntoDb results ####
@@ -290,13 +290,13 @@ expect_true(length(tmpTest) >= 4L)
 expect_message(
   suppressWarnings(
     ctrLoadQueryIntoDb(
-      queryterm = "NCT01516567",
+      queryterm = "NCT00001209+OR+NCT00001436+OR+NCT00187109+OR+NCT01516567+OR+NCT01471782",
       register = "CTGOV",
       con = dbc,
       verbose = TRUE,
       annotation.text = "ANNO",
       annotation.mode = "replace")),
-  "Imported or updated 1 trial")
+  "Imported or updated 5 trial")
 
 # test
 expect_message(
@@ -336,17 +336,39 @@ tmpTest <-
 
 # test
 tmpTest <- tmpTest[tmpTest[["annotation"]] != "", ]
-expect_equal(sort(tmpTest[["annotation"]]),
-             sort(c("EU ANNO", "ANNO")))
+expect_equal(sort(unique(tmpTest[["annotation"]])),
+             sort(unique(c("EU ANNO", "ANNO"))))
+
+#### deduplicate ####
+
+trialsCtgov <- suppressMessages(
+  dbFindIdsUniqueTrials(
+    con = dbc,
+    preferregister = "CTGOV"))
+
+trialsEuctr <- suppressMessages(
+  dbFindIdsUniqueTrials(
+    con = dbc,
+    preferregister = "EUCTR"))
 
 # test
-expect_message(
-  suppressWarnings(
-    dbFindIdsUniqueTrials(
-      con = dbc,
-      preferregister = "CTGOV")),
-  "Concatenating 1 records from CTGOV and [1-9][0-9]+ from EUCTR")
+expect_equal(length(trialsCtgov), length(trialsEuctr))
 
+# test
+expect_true(
+  all(c("NCT00001209", "NCT00001436", "NCT00187109", "NCT01516567") %in%
+        trialsCtgov))
+# test
+expect_false(
+  any(c("2010-024264-18-GB") %in% trialsCtgov))
+
+# test
+expect_true(
+  all(c("NCT00001209", "NCT00001436", "NCT00187109", "NCT01516567") %in%
+        trialsEuctr))
+# test
+expect_false(
+  any(c("NCT01471782") %in% trialsEuctr))
 
 #### dbFindIdsUniqueTrials #####
 
@@ -426,8 +448,8 @@ tmpc <- table(tmpc)
 
 # src_mongo:
 # tmpc
-# character Date integer logical
-#       549   10      22      79
+# character      Date   integer      list   logical
+#       558        10        19         3        79
 
 # src_mongo:
 # tmpc
