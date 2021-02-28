@@ -1032,7 +1032,7 @@ dbFindIdsUniqueTrials <- function(
         message(
           " - ", sum(dupesC1),
           " EUCTR a52_us_nct_... in",
-          " CTOGV secondary_id / nct_alias / org_study_id")
+          " CTGOV secondary_id / nct_alias / org_study_id")
       }
       #
       # d.1 - euctr in ctgov
@@ -1044,7 +1044,7 @@ dbFindIdsUniqueTrials <- function(
         message(
           " - ", sum(dupesD1),
           " EUCTR a51_isrctn_...",
-          " in CTOGV secondary_id / nct_alias / org_study_id")
+          " in CTGOV secondary_id / nct_alias / org_study_id")
       }
       #
       # e.1 - euctr in ctgov
@@ -1055,11 +1055,25 @@ dbFindIdsUniqueTrials <- function(
         message(
           " - ", sum(dupesD1),
           " EUCTR a41_sponsors_protocol_...",
-          " in CTOGV secondary_id / nct_alias / org_study_id")
+          " in CTGOV secondary_id / nct_alias / org_study_id")
+      }
+      #
+      # f.1 - ctgov other id in nct
+      dupesF1 <- vapply(
+        listofCTGOVids[["id_info"]],
+        function(x) any(
+          unlist(x[c("nct_alias", "secondary_id", "org_study_id")]) %in%
+            listofCTGOVids[["_id"]]), logical(1L))
+      #
+      if (verbose) {
+        message(
+          " - ", sum(dupesD1),
+          " CTGOV secondary_id / nct_alias / org_study_id",
+          " is CTGOV _id (nct)")
       }
       #
       # finalise results set
-      listofCTGOVids <- listofCTGOVids[["_id"]]
+      listofCTGOVids <- listofCTGOVids[["_id"]] [!dupesF1]
       listofEUCTRids <- listofEUCTRids[[
         "_id"]] [!dupesA1 & !dupesB1 & !dupesC1 & !dupesD1  & !dupesE1]
       #
