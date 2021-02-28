@@ -1061,15 +1061,14 @@ dbFindIdsUniqueTrials <- function(
       # f.1 - ctgov other id in nct
       dupesF1 <- vapply(
         listofCTGOVids[["id_info"]],
-        function(x) any(
-          unlist(x[c("nct_alias", "secondary_id", "org_study_id")]) %in%
+        function(x) !is.null(x[["nct_alias"]]) &&
+          any(unlist(x[["nct_alias"]]) %in%
             listofCTGOVids[["_id"]]), logical(1L))
       #
       if (verbose) {
         message(
-          " - ", sum(dupesD1),
-          " CTGOV secondary_id / nct_alias / org_study_id",
-          " is CTGOV _id (nct)")
+          " - ", sum(dupesF1),
+          " CTGOV nct_alias in CTGOV _id (nct)")
       }
       #
       # finalise results set
