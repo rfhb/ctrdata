@@ -72,7 +72,7 @@ expect_message(
     ctrLoadQueryIntoDb(
       paste0(q),
       con = dbc)),
-  "Imported or updated ")
+  "(Imported or updated|First result page empty)")
 
 # manipulate history to test updating
 hist <- suppressWarnings(dbQueryHistory(con = dbc))
@@ -403,7 +403,6 @@ tmpQ <- gsub(".+=(.?)", "\\1", tmpQ)
 expect_true(all(
   tmpQ %in%
     gsub("([0-9]{4}-[0-9]{6}-[0-9]{2})-.*", "\\1", tmpTest)))
-
 
 #### dbGetFieldsIntoDf ####
 
