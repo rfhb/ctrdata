@@ -1044,7 +1044,7 @@ dbFindIdsUniqueTrials <- function(
         listofEUCTRids[[
           "a51_isrctn_international_standard_randomised_controlled_trial_number"]]) &
         listofEUCTRids[[
-            "a51_isrctn_international_standard_randomised_controlled_trial_number"]] %in%
+          "a51_isrctn_international_standard_randomised_controlled_trial_number"]] %in%
         unlist(listofCTGOVids[["id_info"]])
       #
       if (verbose) {
@@ -1072,7 +1072,7 @@ dbFindIdsUniqueTrials <- function(
         listofCTGOVids[["id_info"]],
         function(x) !is.null(x[["nct_alias"]]) &&
           any(unlist(x[["nct_alias"]]) %in%
-            listofCTGOVids[["_id"]]), logical(1L))
+                listofCTGOVids[["_id"]]), logical(1L))
       #
       if (verbose) {
         message(
@@ -1236,68 +1236,105 @@ dbGetFieldsIntoDf <- function(fields = "",
   # helper function to transform values coming from
   # a database query that are still json strings
   json2list <- function(df) {
-    if (all(vapply(df[, 2], is.character, logical(1L))) &&
-        any(vapply(df[, 2], jsonlite::validate, logical(1L)))) {
-      # not possible to use *apply
-      for (i in seq_len(nrow(df))) {
-        tmpi <- df[i, 2]
-        tmpi <- unlist(tmpi)
-        # check if string could be json
-        if (grepl("[{]", tmpi)) {
-          # add [ ] to produce json object in advance of conversion
-          if (!grepl("^\\[.+\\]$", tmpi)) tmpi <- paste0("[", tmpi, "]")
-          tmpo <- try(jsonlite::fromJSON(tmpi, flatten = FALSE), silent = TRUE)
-          if (!inherits(tmpo, "try-error"))  df[i, 2][[1]] <- list(tmpo)
-        }
-      } # for
-    } # if
+
+    # prepare content
+    tmpi <- df[[2]]
+    names(tmpi) <- df[[1]]
+    dfn <- names(df)
+
+    if (all(vapply(tmpi, is.character, logical(1L))) &&
+        any(vapply(tmpi, jsonlite::validate, logical(1L)))) {
+
+      # work on row elements
+      outList <- lapply(
+        tmpi,
+        function(cell) {
+
+          # get content
+          cell <- unlist(cell)
+
+          # check if string could be json
+          if (grepl("[{]", cell)) {
+
+            # add [ ] to produce json object in advance of conversion
+            if (!grepl("^\\[.+\\]$", cell)) cell <- paste0("[", cell, "]")
+
+            # convert
+            out <- try(jsonlite::fromJSON(cell, flatten = FALSE), silent = TRUE)
+
+            # output
+            if (!inherits(out, "try-error")) cell <- list(out)
+
+          } # if json string
+
+          # value
+          cell
+
+        }) # lapply
+
+      # bind to resemble input df
+      df <- do.call(rbind, outList)
+      df <- data.frame(
+        row.names(df),
+        df,
+        row.names = NULL,
+        stringsAsFactors = FALSE)
+      names(df) <- dfn
+
+    } # if all vapply
+
     return(df)
-  }
+
+  } # json2list
 
   # initialise output
-  result <- NULL
+  nFields <- length(fields)
 
   # iterate over fields so that we can use a custom function to merge results,
   # given that mongodb clients have different approaches and complex returns
-  for (item in fields) {
-    #
-    query <- paste0('{"_id": {"$ne": "meta-info"}}')
-    if (verbose) message("DEBUG: field: ", item)
-    #
-    tmpItem <- try({
+  result <- lapply(
+    seq_len(nFields),
+    function(i) {
+      #
+      item <- fields[i]
+      #
+      query <- paste0('{"_id": {"$ne": "meta-info"}}')
+      if (verbose) message("DEBUG: field: ", item)
+      #
+      tmpItem <- try({
 
-      ## handle special case: src_* is sqlite
-      # json_extract() cannot be used to retrieve all
-      # items since a json path would have to include
-      # an array indicator such as [1] or [#-1], see
-      # https://www.sqlite.org/json1.html#jex ans
-      # https://www.sqlite.org/json1.html#path_arguments
-      if (inherits(con$con, "SQLiteConnection")) {
+        ## handle special case: src_* is sqlite
+        # json_extract() cannot be used to retrieve all
+        # items since a json path would have to include
+        # an array indicator such as [1] or [#-1], see
+        # https://www.sqlite.org/json1.html#jex ans
+        # https://www.sqlite.org/json1.html#path_arguments
+        if (inherits(con$con, "SQLiteConnection")) {
 
-        # mangle item names into SQL e.g.,
-        # "location[4].facility[#-2].name" # two arrayIndex items
-        # "location.facil[a-z0-0]+.*thing" # user regexp
-        # "location.facil.*"               # user regexp
-        # - remove arrayIndex
-        #   NOTE potential side effect: disruption of user's regexp
-        item <- gsub("\\[[-#0-9]+\\][.]", ".", item)
-        if (verbose) message("DEBUG: 'field' mangled into: ", item)
-        # - protect "." between item and subitem using lookahead for overlapping groups
-        regexpItem <- gsub("([a-zA-Z]+)[.](?=[a-zA-Z]+)", "\\1@@@\\2", item, perl = TRUE)
-        # - add in regexps to match any arrayIndex in fullkey
-        regexpItem <- paste0("^[$][.]", gsub("@@@", "[-#\\\\[\\\\]0-9]*[.]", regexpItem), "$")
-        # - top element in item
-        topElement <- sub("^(.+?)[.].*$", "\\1", item)
-        # - construct statement using json_tree(json, path) as per
-        #   https://www.sqlite.org/json1.html#jtree
-        # - include cast() to string to avoid warnings when types
-        #   of columns are changed after first records are retrieved
-        # - since mongodb returns NULL for documents that do not have the
-        #   sought item but sqlite does not return such documents at all, the
-        #   statement is more complex to also include a row for such
-        #   non-existing items
-        statement <- paste0(
-          "SELECT
+          # mangle item names into SQL e.g.,
+          # "location[4].facility[#-2].name" # two arrayIndex items
+          # "location.facil[a-z0-0]+.*thing" # user regexp
+          # "location.facil.*"               # user regexp
+          # - remove arrayIndex
+          #   NOTE potential side effect: disruption of user's regexp
+          item <- gsub("\\[[-#0-9]+\\][.]", ".", item)
+          if (verbose) message("DEBUG: 'field' mangled into: ", item)
+          # - protect "." between item and subitem using lookahead for overlapping groups
+          regexpItem <- gsub("([a-zA-Z]+)[.](?=[a-zA-Z]+)", "\\1@@@\\2", item, perl = TRUE)
+          # - add in regexps to match any arrayIndex in fullkey
+          regexpItem <- paste0("^[$][.]", gsub("@@@", "[-#\\\\[\\\\]0-9]*[.]", regexpItem), "$")
+          # - top element in item
+          topElement <- sub("^(.+?)[.].*$", "\\1", item)
+          # - construct statement using json_tree(json, path) as per
+          #   https://www.sqlite.org/json1.html#jtree
+          # - include cast() to string to avoid warnings when types
+          #   of columns are changed after first records are retrieved
+          # - since mongodb returns NULL for documents that do not have the
+          #   sought item but sqlite does not return such documents at all, the
+          #   statement is more complex to also include a row for such
+          #   non-existing items
+          statement <- paste0(
+            "SELECT
           CAST(allRows._id AS text) AS _id,
           CAST(jsonRows.value AS text) AS '", item, "'
           FROM (", con$collection, ") AS allRows
@@ -1313,196 +1350,189 @@ dbGetFieldsIntoDf <- function(fields = "",
         ON jsonRows.id = allRows._id
         WHERE allRows._id <> 'meta-info'
         ;")
-        if (verbose) message("DEBUG: src_sqlite, statement:\n", statement)
+          if (verbose) message("DEBUG: src_sqlite, statement:\n", statement)
 
-        # execute query, bypassing nodbi since my implementation
-        # of nodbi::doc_query.sqlite() does not use json_tree()
-        dfi <- DBI::dbGetQuery(
-          conn = con$con,
-          statement = statement,
-          n = -1L)
+          # execute query, bypassing nodbi since my implementation
+          # of nodbi::doc_query.sqlite() does not use json_tree()
+          dfi <- DBI::dbGetQuery(
+            conn = con$con,
+            statement = statement,
+            n = -1L)
 
-        # dfi[, 2] could still be json strings
-        dfi <- json2list(dfi)
+          # dfi[, 2] could still be json strings
+          dfi <- json2list(dfi)
 
-        # dfi can be a long table, number of rows corresponding to
-        # number of subitems found in the collection (possibly more
-        # than one per record in the collection): aggregate by _id
-        tmpById <- tapply(
-          X = dfi[, 2],
-          INDEX = dfi[, 1],
-          function(i) {
-            if (all(is.na(i))) {
-              # keep NULL elements in output
-              NULL
-            } else {
-           #   if (all(is.atomic(i))) {
-            #    list(i)
-           #   } else {
+          # dfi can be a long table, number of rows corresponding to
+          # number of subitems found in the collection (possibly more
+          # than one per record in the collection): aggregate by _id
+          tmpById <- tapply(
+            X = dfi[, 2],
+            INDEX = dfi[, 1],
+            function(i) {
+              if (all(is.na(i))) {
+                # keep NULL elements in output
+                NULL
+              } else {
+                #   if (all(is.atomic(i))) {
+                #    list(i)
+                #   } else {
                 data.frame(
-                  i,
+                  unname(i),
                   check.names = FALSE,
                   row.names = NULL,
                   stringsAsFactors = FALSE)
-            #  }
-            }
-          },
-          simplify = FALSE)
+                #  }
+              }
+            },
+            simplify = FALSE)
 
-        # now match format for further processing
-        dfi <- data.frame(
-          "_id" = names(tmpById), tmpById,
-          row.names = NULL,
-          check.names = FALSE,
-          stringsAsFactors = FALSE
-        )
+          # now match format for further processing
+          dfi <- data.frame(
+            "_id" = names(tmpById), tmpById,
+            row.names = NULL,
+            check.names = FALSE,
+            stringsAsFactors = FALSE
+          )
 
-      } else {
+        } else {
 
-        # src_mongo
+          # src_mongo
 
-        # execute query
-        dfi <- nodbi::docdb_query(
-          src = con,
-          key = con$collection,
-          query = query,
-          fields = paste0('{"_id": 1, "', item, '": 1}'))
+          # execute query
+          dfi <- nodbi::docdb_query(
+            src = con,
+            key = con$collection,
+            query = query,
+            fields = paste0('{"_id": 1, "', item, '": 1}'))
 
-        # dfi[, 2] could still be json strings
-        dfi <- json2list(dfi)
+          # dfi[, 2] could still be json strings
+          if (ncol(dfi) == 2L) dfi <- json2list(dfi)
 
-        # unboxing is not done in docdb_query
-        for (i in seq_len(nrow(dfi))) {
-          if (!is.null(dfi[i, 2]) && is.list(dfi[i, 2]) &&
-              !identical(dfi[i, 2], list(NULL)) &&
-              !is.data.frame(dfi[i, 2][[1]])) {
-            dfi[i, 2][[1]] <- list(jsonlite::fromJSON(
-              jsonlite::toJSON(dfi[i, 2], auto_unbox = TRUE)))
-          }}
+          # unboxing is not done in docdb_query
+          for (i in seq_len(nrow(dfi))) {
+            if (!is.null(dfi[i, 2]) && is.list(dfi[i, 2]) &&
+                !identical(dfi[i, 2], list(NULL)) &&
+                !is.data.frame(dfi[i, 2][[1]])) {
+              dfi[i, 2][[1]] <- list(jsonlite::fromJSON(
+                jsonlite::toJSON(dfi[i, 2], auto_unbox = TRUE)))
+            }}
 
-      } # if src_sqlite or src_mango
+        } # if src_sqlite or src_mango
 
-      # some backends return NA if query matches,
-      # other only non-NA values when query matches
-      dfi <- dfi[!is.na(dfi[["_id"]]) &
-                   !vapply(seq_len(nrow(dfi)),
-                           function(r) all(is.na(dfi[r, -1L])), logical(1L)), ]
+        # some backends return NA if query matches,
+        # other only non-NA values when query matches
+        dfi <- dfi[!is.na(dfi[["_id"]]) &
+                     !vapply(seq_len(nrow(dfi)),
+                             function(r) all(is.na(dfi[r, -1L])), logical(1L)), ]
 
-      # ensure intended column order
-      if (names(dfi)[1L] != "_id") {
-        dfi <- dfi[, 2:1]
-      }
+        # ensure intended column order
+        if (names(dfi)[1L] != "_id") {
+          dfi <- dfi[, 2:1]
+        }
 
-      # if all empty such as with src_sqlite for
-      # non-existing columns, handle as zero rows
-      if (all(is.na(dfi[, 2])) ||
-          all(is.null(dfi[, 2])) ||
-          all(dfi[, 2] == "") ||
-          all(sapply(dfi[, 2], is.null))) {
-        dfi <- data.frame()
-      }
+        ## simplify if robust:
+        #
+        # - if each [,2] is a list or data frame with one level
+        if ((ncol(dfi) == 2) &&
+            all(vapply(dfi[, 2],
+                       function(x)
+                         listDepth(x) <= 1L, logical(1L)))) {
+          # concatenate (has to remain as sapply
+          # because of different content types)
+          dfi[, 2] <- sapply(sapply(dfi[, 2], "[", 1),
+                             function(x)
+                               paste0(na.omit(unlist(x)),
+                                      collapse = " / "))
+          # inform user
+          message("* Collapsed with '/' [1]: '", item, "'")
+          # remove any extraneous columns
+          dfi <- dfi[, 1:2]
+        }
+        #
+        # - if dfi[, 2:ncol(dfi)] is from the same field e.g.
+        #   required_header.{download_date,link_text,url}, concatenate
+        if ((length(ncol(dfi[, 2])) && ncol(dfi[, 2]) > 1L) ||
+            ((ncol(dfi) > 2L) &&
+             all(grepl(paste0(item, "[.].+$"),
+                       names(dfi)[-1])))) {
 
-      ## simplify if robust:
-      #
-      # - if each [,2] is a list or data frame with one level
-      if ((ncol(dfi) == 2) &&
-          all(vapply(dfi[, 2],
-                     function(x)
-                       listDepth(x) <= 1L, logical(1L)))) {
-        # concatenate (has to remain as sapply
-        # because of different content types)
-        dfi[, 2] <- sapply(sapply(dfi[, 2], "[", 1),
-                           function(x)
-                             paste0(na.omit(unlist(x)),
-                                    collapse = " / "))
-        # inform user
-        message("* Collapsed with '/' [1]: '", item, "'")
-        # remove any extraneous columns
-        dfi <- dfi[, 1:2]
-      }
-      #
-      # - if dfi[, 2:ncol(dfi)] is from the same field e.g.
-      #   required_header.{download_date,link_text,url}, concatenate
-      if ((length(ncol(dfi[, 2])) && ncol(dfi[, 2]) > 1L) ||
-          ((ncol(dfi) > 2L) &&
-           all(grepl(paste0(item, "[.].+$"),
-                     names(dfi)[-1])))) {
+          # store names
+          tmpnames <- gsub(".+?[.](.+)$", "\\1", names(dfi)[-1])
+          names(dfi)[-1] <- tmpnames
 
-        # store names
-        tmpnames <- gsub(".+?[.](.+)$", "\\1", names(dfi)[-1])
-        names(dfi)[-1] <- tmpnames
+          # concatenate to list
+          tmpById <- split(dfi[, 2:ncol(dfi)],
+                           seq_len(nrow(dfi)))
 
-        # concatenate to list
-        tmpById <- split(dfi[, 2:ncol(dfi)],
-                         seq_len(nrow(dfi)))
+          # remove extraneous columns
+          dfi <- dfi[, 1:2]
 
-        # remove extraneous columns
-        dfi <- dfi[, 1:2]
+          # create items in column from list
+          for (i in seq_len(nrow(dfi))) dfi[i, 2][[1]] <- list(tmpById[[i]])
 
-        # create items in column from list
-        for (i in seq_len(nrow(dfi))) dfi[i, 2][[1]] <- list(tmpById[[i]])
+          # inform user
+          message("* Converted to list [2]: '", item, "'")
 
-        # inform user
-        message("* Converted to list [2]: '", item, "'")
-
-      }
-      #
-      # - if each [,2] is a list with a single and the same element
-      if (all(vapply(dfi[, 2], function(i) is.null(i) | is.list(i), logical(1L))) &&
-          length(unique(unlist(sapply(
+        }
+        #
+        # - if each [,2] is a list with a single and the same element
+        if (all(vapply(dfi[, 2], function(i) is.null(i) | is.list(i), logical(1L))) &&
+            length(unique(unlist(sapply(
+              dfi[, 2],
+              function(i)
+                unique(gsub("[0-9]+$", "", names(unlist(i)))))))) <= 1L) {
+          #
+          dfi[, 2] <- vapply(
             dfi[, 2],
             function(i)
-              unique(gsub("[0-9]+$", "", names(unlist(i)))))))) <= 1L) {
-        #
-        dfi[, 2] <- vapply(
-          dfi[, 2],
-          function(i)
-            paste0(na.omit(unlist(i)), collapse = " / "), character(1L))
+              paste0(na.omit(unlist(i)), collapse = " / "), character(1L))
+          # inform user
+          message("* Simplified or collapsed with '/' [3]: '", item, "'")
+        }
+
         # inform user
-        message("* Simplified or collapsed with '/' [3]: '", item, "'")
-      }
+        if (verbose) {
+          message("DEBUG: field ", item, " has length ", nrow(dfi))
+        }
+        #
+      },
+      silent = TRUE) # tmpItem try
 
       # inform user
-      if (verbose) {
-        message("DEBUG: field ", item, " has length ", nrow(dfi))
+      if (inherits(tmpItem, "try-error") ||
+          !nrow(dfi) ||
+          all(is.na(dfi[, 2])) ||
+          all(is.null(dfi[, 2])) ||
+          all(!nchar(dfi[, 2]))) {
+
+        # try-error occured or no data retrieved
+        if (stopifnodata) {
+          stop("No data could be extracted for '", item,
+               "'. \nUse dbGetFieldsIntoDf(stopifnodata = ",
+               "FALSE) to ignore this. ",
+               call. = FALSE)
+        } else {
+          message("* No data: '", item, "'")
+          # create empty data set
+          dfi <- data.frame("_id" = NA, NA,
+                            check.names = FALSE,
+                            stringsAsFactors = FALSE)
+        }
       }
-      #
-    },
-    silent = TRUE) # tmpItem try
 
-    # inform user
-    if (inherits(tmpItem, "try-error") || !nrow(dfi)) {
+      # name result set
+      names(dfi) <- c("_id", item)
 
-      # try-error occured or no data retrieved
-      if (stopifnodata) {
-        stop("No data could be extracted for '", item,
-             "'. \nUse dbGetFieldsIntoDf(stopifnodata = ",
-             "FALSE) to ignore this. ",
-             call. = FALSE)
-      } else {
-        message("* No data: '", item, "'")
-        # create empty data set
-        dfi <- data.frame("_id" = NA, NA,
-                          check.names = FALSE,
-                          stringsAsFactors = FALSE)
-      }
-    }
+      # type item field
+      if (all(!is.na(dfi[, 2]))) dfi <- typeField(dfi)
 
-    # name result set
-    names(dfi) <- c("_id", item)
-    # type item field
-    if (all(!is.na(dfi[, 2]))) dfi <- typeField(dfi)
-    # add to result
-    if (is.null(result)) {
-      result <- dfi
-    } else {
-      # type fields where defined and possible, then
-      # merge the new dfi (a data frame of _id, name of item)
-      # with data frame of previously retrieved results
-      result <- merge(result, dfi, by = "_id", all = TRUE)
-    }
+      # add to result
+      dfi
 
-  } # end for item in fields
+    }) # end lapply
+
+  # bring lists into data frame by trial id
+  result <- Reduce(function(...) merge(..., all = TRUE, by = "_id"), result)
 
   # finalise output
   if (is.null(result)) {

@@ -1,5 +1,6 @@
 # ctrdata 1.4.1.9004
  - ensure parallel retrievals from euctr
+ - speed up routines in dbGetFieldsIntoDf
 
 # ctrdata 1.4.1.9003
  - some code optimisation
