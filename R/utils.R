@@ -1254,7 +1254,7 @@ dbGetFieldsIntoDf <- function(fields = "",
           cell <- unlist(cell)
 
           # check if string could be json
-          if (grepl("[{]", cell)) {
+          if (grepl("[\\[{]", cell)) {
 
             # add [ ] to produce json object in advance of conversion
             if (!grepl("^\\[.+\\]$", cell)) cell <- paste0("[", cell, "]")
@@ -1369,21 +1369,20 @@ dbGetFieldsIntoDf <- function(fields = "",
             X = dfi[, 2],
             INDEX = dfi[, 1],
             function(i) {
-              if (all(is.na(i))) {
+              if (all(is.na(i))) { #
                 # keep NULL elements in output
                 NULL
               } else {
-                #   if (all(is.atomic(i))) {
-                #    list(i)
-                #   } else {
-                data.frame(
-                  unname(i),
-                  check.names = FALSE,
-                  row.names = NULL,
-                  stringsAsFactors = FALSE)
-                #  }
-              }
-            },
+                if (is.atomic(unlist(i, recursive = FALSE))) {
+                  # e.g. for location_countries.country
+                  unname(i)
+                } else {
+                  data.frame(
+                    unname(i),
+                    check.names = FALSE,
+                    row.names = NULL,
+                    stringsAsFactors = FALSE)
+                }}},
             simplify = FALSE)
 
           # now match format for further processing
@@ -1434,12 +1433,18 @@ dbGetFieldsIntoDf <- function(fields = "",
         #
         # - if each [,2] is a list or data frame with one level
         if ((ncol(dfi) == 2) &&
-            all(vapply(dfi[, 2],
-                       function(x)
-                         listDepth(x) <= 1L, logical(1L)))) {
+            (all(vapply(dfi[, 2],
+                        function(x)
+                          listDepth(x) <= 1L, logical(1L)))
+             # ||
+             # all(vapply(dfi[, 2],
+             #            function(x)
+             #              is.atomic(unlist(x, recursive = FALSE)), logical(1L)))
+            )) {
           # concatenate (has to remain as sapply
           # because of different content types)
-          dfi[, 2] <- sapply(sapply(dfi[, 2], "[", 1),
+          # dfi[, 2] <- sapply(sapply(dfi[, 2], "[", 1),
+          dfi[, 2] <- sapply(dfi[, 2],
                              function(x)
                                paste0(na.omit(unlist(x)),
                                       collapse = " / "))
