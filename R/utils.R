@@ -912,13 +912,13 @@ dbFindIdsUniqueTrials <- function(
   # keep only euctr
   listofEUCTRids <- listofIds[
     grepl("^[0-9]{4}-[0-9]{6}-[0-9]{2}$", listofIds[["a2_eudract_number"]]),
-    c(1, (1:ncol(listofIds))[grepl("^a[0-9]+_", names(listofIds))])
+    c(1, seq_len(ncol(listofIds))[grepl("^a[0-9]+_", names(listofIds))])
   ]
 
   # keep only ctgov
   listofCTGOVids <- listofIds[
     grepl("^NCT[0-9]{8}$", listofIds[["_id"]]),
-    c(1, (1:ncol(listofIds))[grepl("^id_info", names(listofIds))][1]), # delete TODO
+    c(1, seq_len(ncol(listofIds))[grepl("^id_info", names(listofIds))][1]), # delete TODO
     drop = TRUE
   ]
 
