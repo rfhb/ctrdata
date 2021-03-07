@@ -904,22 +904,29 @@ ctrLoadQueryIntoDbCtgov <- function(
   #
   if (verbose) message("DEBUG: ", ctgovdownloadcsvurl)
 
-  # check if host is available
-  if ("try-error" %in%
-      class(try(httr::headers(
-        httr::HEAD(
-          url = utils::URLencode(queryUSRoot))),
-        silent = TRUE))) {
-    stop("Host ", queryUSRoot, " does not respond, cannot continue.",
-         call. = FALSE)
-  }
+  # TODO delete
+  # # check if host is available
+  # if ("try-error" %in%
+  #     class(try(httr::headers(
+  #       httr::HEAD(
+  #         url = utils::URLencode(queryUSRoot))),
+  #       silent = TRUE))) {
+  #   stop("Host ", queryUSRoot, " does not respond, cannot continue.",
+  #        call. = FALSE)
+  # }
 
   # check number of trials to be downloaded
   ctgovdfirstpageurl <- paste0(
     queryUSRoot, queryUSType2, "&", queryterm, queryupdateterm)
   #
-  tmp <- httr::content(httr::GET(
-    url = utils::URLencode(ctgovdfirstpageurl)), as = "text")
+  tmp <- try(httr::content(httr::GET(
+    url = utils::URLencode(ctgovdfirstpageurl)), as = "text"),
+    silent = TRUE)
+  #
+  if (inherits(tmp, "try-error")) {
+    stop("Host ", queryUSRoot, " does not respond, cannot continue.",
+         call. = FALSE)
+  }
   #
   tmp <- gsub("\n|\t|\r", " ", tmp)
   tmp <- gsub("<.*?>", " ", tmp)
@@ -1147,21 +1154,28 @@ ctrLoadQueryIntoDbEuctr <- function(
     "&mode=current_page&format=text&dContent=",
     "summary&number=current_page&submit-download=Download")
 
+  # TODO delete
   # check if host is available
-  if ("try-error" %in% class(try(
-    httr::headers(
-      httr::HEAD(
-        url = utils::URLencode(queryEuRoot))),
-    silent = TRUE))) {
-    stop("Host ", queryEuRoot, " does not respond, cannot continue.",
-         call. = FALSE)
-  }
+  # if ("try-error" %in% class(try(
+  #   httr::headers(
+  #     httr::HEAD(
+  #       url = utils::URLencode(queryEuRoot))),
+  #   silent = TRUE))) {
+  #   stop("Host ", queryEuRoot, " does not respond, cannot continue.",
+  #        call. = FALSE)
+  # }
 
   # get first result page
   q <- utils::URLencode(paste0(queryEuRoot, queryEuType1, queryterm))
   if (verbose) message("DEBUG: queryterm is ", q)
-  resultsEuPages <- httr::content(
-    httr::GET(url = q), as = "text")
+  #
+  resultsEuPages <- try(httr::content(
+    httr::GET(url = q), as = "text"), silent = TRUE)
+  #
+  if (inherits("try-error", resultsEuPages)) {
+    stop("Host ", queryEuRoot, " does not respond, cannot continue.",
+         call. = FALSE)
+  }
 
   # get number of trials identified by query
   resultsEuNumTrials <- sub(
