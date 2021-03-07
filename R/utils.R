@@ -1493,11 +1493,6 @@ dbGetFieldsIntoDf <- function(fields = "",
           message("* Simplified or collapsed with '/' [3]: '", item, "'")
         }
 
-        # inform user
-        if (verbose) {
-          message("DEBUG: field ", item, " has length ", nrow(dfi))
-        }
-        #
       },
       silent = TRUE) # tmpItem try
 
@@ -1535,12 +1530,6 @@ dbGetFieldsIntoDf <- function(fields = "",
   # bring lists into data frame by trial id
   result <- Reduce(function(...) merge(..., all = TRUE, by = "_id"), result)
 
-  # finalise output
-  if (is.null(result)) {
-    stop("No records with values for any specified field. ",
-         call. = FALSE)
-  }
-
   # prune rows that do not have any results
   result <- result[
     !is.na(result[["_id"]]) &
@@ -1553,6 +1542,12 @@ dbGetFieldsIntoDf <- function(fields = "",
           r <- nchar(r)
           sum(r)
         }), ]
+
+  # finalise output
+  if (is.null(result) || !nrow(result)) {
+    stop("No records with values for any specified field. ",
+         call. = FALSE)
+  }
 
   # add metadata
   result <- addMetaData(result,
