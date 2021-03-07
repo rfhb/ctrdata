@@ -1339,7 +1339,7 @@ dbGetFieldsIntoDf <- function(fields = "",
           CAST(jsonRows.value AS text) AS '", item, "'
           FROM (", con$collection, ") AS allRows
 
-        LEFT JOIN
+          LEFT JOIN
                (SELECT
                   CAST(_id AS text) AS id,
                   CAST(value AS text) AS value
@@ -1347,9 +1347,9 @@ dbGetFieldsIntoDf <- function(fields = "",
                     json_tree(", con$collection, ".json, '$.", topElement, "')
                WHERE fullkey REGEXP '", regexpItem, "') AS jsonRows
 
-        ON jsonRows.id = allRows._id
-        WHERE allRows._id <> 'meta-info'
-        ;")
+          ON jsonRows.id = allRows._id
+          WHERE allRows._id <> 'meta-info'
+          ;")
           if (verbose) message("DEBUG: src_sqlite, statement:\n", statement)
 
           # execute query, bypassing nodbi since my implementation
