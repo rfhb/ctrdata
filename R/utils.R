@@ -1815,9 +1815,10 @@ dfTrials2Long <- function(df) {
     # in lapply below will work
     if (!inherits(atrialcol, "data.frame")) {
       atrialcol <- data.frame(
-        atrialcol,
+        unname(atrialcol),
         check.names = FALSE,
         stringsAsFactors = FALSE)
+
     }
 
     # for each endpoint / measure,
@@ -1852,12 +1853,12 @@ dfTrials2Long <- function(df) {
             main_id = r,
             sub_id = NA,
             name = paste0(atcname, ".", names(measure)),
-            value = measure,
+            value = as.character(measure),
             stringsAsFactors = FALSE
           )
         }
 
-      })
+      }) # lapply
 
     # concatenate into long format
     measures <- do.call(
@@ -1872,6 +1873,7 @@ dfTrials2Long <- function(df) {
       ))
     measures["name"] <- sub("[0-9]+$", "", measures$name)
     measures["name"] <- sub("@attributes[.]", "", measures$name)
+    measures["name"] <- sub("[.]$", "", measures$name)
 
     # output
     row.names(measures) <- NULL
@@ -1898,23 +1900,36 @@ dfTrials2Long <- function(df) {
 
         # iterate over columns
         cols <- lapply(
-          seq_len(ncol(severaltrials[r, ])),
+          seq(from = 2, to = ncol(severaltrials[r, ])),
           function(c) {
 
-            # convert into long format
-            switch(
-              typeof(atrial[[c]]),
-              "character" = data.frame(
-                main_id = NA,
-                sub_id = NA,
-                name = names(atrial)[c],
-                value = atrial[[c]],
-                stringsAsFactors = FALSE
-              ),
-              "list" = col2df(atrialcol = atrial[c])
-            )
+            if (!is.na(atrial[[c]]) &&
+                !identical(atrial[[c]], list(NULL))) {
+
+              # convert into long format
+              switch(
+                class(atrial[[c]]),
+                # "character" =
+                "data.frame" =
+                  data.frame(
+                    main_id = NA,
+                    sub_id = NA,
+                    name = names(atrial)[c],
+                    value = atrial[[c]],
+                    # class = "data.frame",
+                    stringsAsFactors = FALSE
+                  ),
+                # list types
+                # "list" = col2df(atrialcol = atrial[c]),
+                # # date
+                # "Date" = col2df(atrialcol = as.character(atrial[[c]])),
+                #"Date" = col2df(atrialcol = atrial[c]),
+                # all other / list
+                col2df(atrialcol = atrial[c])
+              )
+            } # if is.na
           }
-        )
+        ) # cols
 
         # concatenate
         out <- do.call(
@@ -1923,11 +1938,18 @@ dfTrials2Long <- function(df) {
         )
 
         # format trial
-        data.frame(
-          trial_id = out[out[["name"]] == "_id", "value"],
-          out[out[["name"]] != "_id", ],
-          stringsAsFactors = FALSE
-        )
+        # data.frame(
+        #   trial_id = out[!is.na(out[["name"]]) & out[["name"]] == "_id", "value"],
+        #   out[!is.na(out[["name"]]) & out[["name"]] != "_id", ],
+        #   stringsAsFactors = FALSE
+        # )
+
+        if (!is.null(out)) {
+          data.frame(
+            trial_id = atrial[["_id"]],
+            out,
+            stringsAsFactors = FALSE
+          )}
 
       }) # iterate over trials
 
@@ -1937,7 +1959,7 @@ dfTrials2Long <- function(df) {
       trials
     )
 
-  }
+  } # end trials2long
 
   # collate
   out <- trials2long(severaltrials = df)
