@@ -1,6 +1,7 @@
 # ctrdata 1.4.1.9004
  - ensure parallel retrievals from euctr
  - speed up routines in dbGetFieldsIntoDf
+ - make dfTrials2Long handle NA better
 
 # ctrdata 1.4.1.9003
  - some code optimisation
