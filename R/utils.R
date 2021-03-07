@@ -1430,18 +1430,28 @@ dbGetFieldsIntoDf <- function(fields = "",
 
         } # if src_sqlite or src_mango
 
-        # some backends return NA if query matches,
-        # other only non-NA values when query matches
-        dfi <- dfi[!is.na(dfi[["_id"]]) &
-                     !vapply(seq_len(nrow(dfi)),
-                             function(r) all(is.na(dfi[r, -1L])), logical(1L)), ]
 
         # ensure intended column order
         if (names(dfi)[1L] != "_id") {
           dfi <- dfi[, 2:1]
         }
 
-        ## simplify if robust:
+        # TODO check - should not be needed
+        # because merge further down just adds
+        # NAs again into result data frame
+        #
+        # some backends return NA if query matches,
+        # other only non-NA values when query matches
+        # dfi <- dfi[!is.na(dfi[["_id"]]) &
+        #            !vapply(seq_len(nrow(dfi)),
+        #                    function(r) all(is.na(dfi[r, -1L])), logical(1L)), ]
+
+        # # TODO try replacing NA with NULL which
+        # # is useful to keep in results dataframe
+        # dfi[apply(
+        #   X = dfi[ , -1, drop = FALSE],
+        #   MARGIN = 1,
+        #   function(c) all(is.na(c))), ] <- NULL
         #
         # - if each [,2] is a list or data frame with one level
         if ((ncol(dfi) == 2) &&
@@ -1517,12 +1527,9 @@ dbGetFieldsIntoDf <- function(fields = "",
 
       # inform user
       if (inherits(tmpItem, "try-error") ||
-          !nrow(dfi) ||
-          all(is.na(dfi[, 2])) ||
-          all(is.null(dfi[, 2])) ||
-          all(!nchar(dfi[, 2]))) {
+          !nrow(dfi)) {
 
-        # try-error occured or no data retrieved
+        # try-error occurred or no data retrieved
         if (stopifnodata) {
           stop("No data could be extracted for '", item,
                "'. \nUse dbGetFieldsIntoDf(stopifnodata = ",
@@ -1534,14 +1541,17 @@ dbGetFieldsIntoDf <- function(fields = "",
           dfi <- data.frame("_id" = NA, NA,
                             check.names = FALSE,
                             stringsAsFactors = FALSE)
-        }
-      }
+        } # stopifnodata
+      } # if
 
       # name result set
       names(dfi) <- c("_id", item)
 
       # type item field
       if (all(!is.na(dfi[, 2]))) dfi <- typeField(dfi)
+      # this introduces NAs for fields
+      # with no values for a trial
+      dfi <- typeField(dfi)
 
       # add to result
       dfi
@@ -1559,12 +1569,21 @@ dbGetFieldsIntoDf <- function(fields = "",
 
   # some results were obtained
 
+  # prune rows that do not have any results
+  result <- result[!is.na(result[["_id"]]) &
+                     apply(
+                       X = result[, -1, drop = FALSE],
+                       MARGIN = 1,
+                       function(r) {
+                         r <- unlist(r, use.names = FALSE)
+                         r <- na.omit(r)
+                         r <- nchar(r)
+                         sum(r)
+                       }), ]
+
   # add metadata
   result <- addMetaData(result,
                         con = con)
-
-  # remove rows with empty _id
-  result <- result[!is.na(result[["_id"]]), ]
 
   # return
   return(result)
