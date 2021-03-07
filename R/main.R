@@ -582,106 +582,107 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
                    full.names = TRUE)
 
   # initialise counters
-  # TODO preferably preallocate
-  # retimp but at this stage, its
-  # size / length is not yet known
-  retimp <- NULL
-  fc <- length(tempFiles)
-  ic <- 0
+  fc <- 0L
+  ic <- 0L
 
   # iterate over files
-  for (tempFile in tempFiles) {
+  retimp <- sapply(
+    X = tempFiles,
+    function(tempFile) {
 
-    # main function for fast reading,
-    # switching off warning about final EOL missing
-    fd <- file(description = tempFile)
-    tmplines <- readLines(con = fd, warn = FALSE)
-    close(fd)
-
-    # inform user
-    if (verbose) message("DEBUG: read file ", tempFile,
-                         "\nImporting line: ", appendLF = FALSE)
-
-    # readLines produces: \"_id\": \"2007-000371-42-FR\"
-    ids <- sub(".*_id\":[ ]*\"(.*?)\".*", "\\1", tmplines)
-
-    # ids should always be found and
-    # later, one id will be assumed
-    # to be on one line each
-    if (all(ids == "")) {
-      stop("No _id(s) detected in JSON file ",
-           tempFile, call. = FALSE)
-    }
-
-    # initialise counter
-    lc <- length(ids)
-    ic <- ic + 1
-
-    # check if in database, create or update
-    tmpinsert <- lapply(seq_along(ids), function(i) {
+      # main function for fast reading,
+      # switching off warning about final EOL missing
+      fd <- file(description = tempFile)
+      tmplines <- readLines(con = fd, warn = FALSE)
+      close(fd)
 
       # inform user
-      message("JSON record #: ", i, " / ", lc,
-              ", file #: ", ic, " / ", fc, "\r",
-              appendLF = FALSE)
+      if (verbose) message("DEBUG: read file ", tempFile,
+                           "\nImporting line: ", appendLF = FALSE)
 
-      # check validity
-      tmpvalidate <- jsonlite::validate(tmplines[i])
-      if (!tmpvalidate) {
-        warning("Invalid json for trial ", ids[i], "\n",
-                "Line ", i, " in file ", tempFile, "\n",
-                attr(x = tmpvalidate, which = "err"),
-                noBreaks. = TRUE,
-                call. = FALSE,
-                immediate. = TRUE)
+      # readLines produces: \"_id\": \"2007-000371-42-FR\"
+      ids <- sub(".*_id\":[ ]*\"(.*?)\".*", "\\1", tmplines)
+
+      # ids should always be found and later,
+      # one id will be assumed to be on one line each
+      if (all(ids == "")) {
+        stop("No _id(s) detected in JSON file ",
+             tempFile, call. = FALSE)
       }
 
-      # slice data to be processed
-      value <- data.frame("_id" = ids[i],
-                          "json" = tmplines[i],
-                          stringsAsFactors = FALSE,
-                          check.names = FALSE)
+      # update counters
+      lc <- length(ids)
+      ic <- ic + 1L
+      fc <- fc + 1L
 
-      # check if document exists,
-      # then create or update
-      tmp <- try({
-        # use try construct in case
-        # json could not be imported
-        ifelse(!checkDoc(con, ids[i]),
-               nodbi::docdb_create(src = con,
-                                   key = con$collection,
-                                   value = value),
-               nodbi::docdb_update(src = con,
-                                   key = con$collection,
-                                   value = value)
-        )
-      }, silent = TRUE)
+      # check if in database, create or update
+      tmpinsert <- lapply(
+        X = seq_along(ids),
+        function(i) {
 
-      # return to lapply
-      if ("try-error" %in% class(tmp)) {
-        # inform user
-        message(ids[i], ": ", tmp)
-        list(success = NA,
-             failed = ids[i],
-             n = 0L)
-      } else {
-        list(success = ids[i],
-             failed = NA,
-             n = tmp)
-      }
+          # inform user
+          message("JSON record #: ", i, " / ", lc,
+                  ", file #: ", ic, " / ", fc, "\r",
+                  appendLF = FALSE)
 
-    }) # lapply
+          # one row is one trial record
 
-    # append to retimp
-    retimp <- c(retimp, tmpinsert)
+          # check validity
+          tmpvalidate <- jsonlite::validate(tmplines[i])
+          if (!tmpvalidate) {
+            warning("Invalid json for trial ", ids[i], "\n",
+                    "Line ", i, " in file ", tempFile, "\n",
+                    attr(x = tmpvalidate, which = "err"),
+                    noBreaks. = TRUE,
+                    call. = FALSE,
+                    immediate. = TRUE)
+          }
 
-    # clean up
-    rm("tmplines")
-    if (verbose) message(" ")
+          # slice data to be processed
+          value <- data.frame("_id" = ids[i],
+                              "json" = tmplines[i],
+                              stringsAsFactors = FALSE,
+                              check.names = FALSE)
 
-  }
+          # load into database
+          # - first, try update
+          tmp <- try({
+            nodbi::docdb_update(src = con,
+                                key = con$collection,
+                                value = value)
+          }, silent = TRUE)
+          # - if error, try insert
+          if ("try-error" %in% class(tmp) ||
+              tmp == 0L) {
+            tmp <- try({
+              nodbi::docdb_create(src = con,
+                                  key = con$collection,
+                                  value = value)
+            }, silent = TRUE)}
 
-  # prepare return value, n is successful only
+          # return values for lapply
+          if ("try-error" %in% class(tmp) ||
+              tmp == 0L) {
+            # inform user
+            message(ids[i], ": ", tmp)
+            list(success = NA,
+                 failed = ids[i],
+                 n = 0L)
+          } else {
+            list(success = ids[i],
+                 failed = NA,
+                 n = tmp)
+          }
+
+        }) # lapply
+
+      # output
+      if (verbose) message(" ")
+      tmpinsert
+
+    }, simplify = TRUE) # sapply tempFiles
+
+  # prepare return values, n is successful only
   n <- sum(sapply(retimp, "[[", "n"), na.rm = TRUE)
   success <- sapply(retimp, "[[", "success")
   success <- as.character(na.omit(success))
