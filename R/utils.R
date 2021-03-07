@@ -1408,13 +1408,25 @@ dbGetFieldsIntoDf <- function(fields = "",
           if (ncol(dfi) == 2L) dfi <- json2list(dfi)
 
           # unboxing is not done in docdb_query
-          # for (i in seq_len(nrow(dfi))) {
-          #   if (!is.null(dfi[i, 2]) && is.list(dfi[i, 2]) &&
-          #       !identical(dfi[i, 2], list(NULL)) &&
-          #       !is.data.frame(dfi[i, 2][[1]])) {
-          #     dfi[i, 2][[1]] <- list(jsonlite::fromJSON(
-          #       jsonlite::toJSON(dfi[i, 2], auto_unbox = TRUE)))
-          #   }}
+          for (i in seq_len(nrow(dfi))) {
+            if (!is.null(dfi[i, 2]) &&
+                is.list(dfi[i, 2]) &&
+                !identical(dfi[i, 2], list(NULL)) &&
+                !is.data.frame(dfi[i, 2][[1]])) {
+
+              dfi[i, 2][[1]] <- list(jsonlite::fromJSON(
+                jsonlite::toJSON(dfi[i, 2], auto_unbox = TRUE)))
+
+            }}
+
+          # above is faster than this
+          # tmpById <- sapply(
+          #   dfi[[2]],
+          #   function(r)
+          #     jsonlite::fromJSON(
+          #       jsonlite::toJSON(
+          #         r, auto_unbox = TRUE)))
+          # dfi[[2]] <- tmpById
 
         } # if src_sqlite or src_mango
 
