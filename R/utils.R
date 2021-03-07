@@ -918,7 +918,7 @@ dbFindIdsUniqueTrials <- function(
   # keep only ctgov
   listofCTGOVids <- listofIds[
     grepl("^NCT[0-9]{8}$", listofIds[["_id"]]),
-    c(1, seq_len(ncol(listofIds))[grepl("^id_info", names(listofIds))][1]), # delete TODO
+    c(1, seq_len(ncol(listofIds))[grepl("^id_info", names(listofIds))][1]),
     drop = TRUE
   ]
 
@@ -1408,6 +1408,8 @@ dbGetFieldsIntoDf <- function(fields = "",
           if (ncol(dfi) == 2L) dfi <- json2list(dfi)
 
           # unboxing is not done in docdb_query
+          # (for loop could not be replaced by
+          # *apply and assignment to dfi[[2]])
           for (i in seq_len(nrow(dfi))) {
             if (!is.null(dfi[i, 2]) &&
                 is.list(dfi[i, 2]) &&
@@ -1419,15 +1421,6 @@ dbGetFieldsIntoDf <- function(fields = "",
 
             }}
 
-          # above is faster than this
-          # tmpById <- sapply(
-          #   dfi[[2]],
-          #   function(r)
-          #     jsonlite::fromJSON(
-          #       jsonlite::toJSON(
-          #         r, auto_unbox = TRUE)))
-          # dfi[[2]] <- tmpById
-
         } # if src_sqlite or src_mango
 
         ## mangle further
@@ -1438,24 +1431,7 @@ dbGetFieldsIntoDf <- function(fields = "",
           dfi <- dfi[, c("_id", tmp[tmp != "_id"])]
         }
 
-        # TODO check - should not be needed
-        # because merge further down just adds
-        # NAs again into result data frame
-        #
-        # some backends return NA if query matches,
-        # other only non-NA values when query matches
-        # dfi <- dfi[!is.na(dfi[["_id"]]) &
-        #            !vapply(seq_len(nrow(dfi)),
-        #                    function(r) all(is.na(dfi[r, -1L])), logical(1L)), ]
-
-        # # TODO try replacing NA with NULL which
-        # # is useful to keep in results dataframe
-        # dfi[apply(
-        #   X = dfi[ , -1, drop = FALSE],
-        #   MARGIN = 1,
-        #   function(c) all(is.na(c))), ] <- NULL
-        #
-        ## simplify if robust:
+        ## simplify if robust
 
         # - if each [,2] is a list or data frame with one level
         #   e.g., mongodb: enrollment; study_design_info.allocation
@@ -1466,7 +1442,6 @@ dbGetFieldsIntoDf <- function(fields = "",
             )) {
           # concatenate (has to remain as sapply
           # because of different content types)
-          # dfi[, 2] <- sapply(sapply(dfi[, 2], "[", 1),
           dfi[, 2] <- sapply(dfi[, 2],
                              function(x)
                                paste0(na.omit(unlist(x)),
@@ -1548,10 +1523,8 @@ dbGetFieldsIntoDf <- function(fields = "",
       # name result set
       names(dfi) <- c("_id", item)
 
-      # type item field
-      if (all(!is.na(dfi[, 2]))) dfi <- typeField(dfi)
-      # this introduces NAs for fields
-      # with no values for a trial
+      # type item field - note this introduces NAs
+      # for fields with no values for a trial
       dfi <- typeField(dfi)
 
       # add to result
@@ -1568,19 +1541,18 @@ dbGetFieldsIntoDf <- function(fields = "",
          call. = FALSE)
   }
 
-  # some results were obtained
-
   # prune rows that do not have any results
-  result <- result[!is.na(result[["_id"]]) &
-                     apply(
-                       X = result[, -1, drop = FALSE],
-                       MARGIN = 1,
-                       function(r) {
-                         r <- unlist(r, use.names = FALSE)
-                         r <- na.omit(r)
-                         r <- nchar(r)
-                         sum(r)
-                       }), ]
+  result <- result[
+    !is.na(result[["_id"]]) &
+      apply(
+        X = result[, -1, drop = FALSE],
+        MARGIN = 1,
+        function(r) {
+          r <- unlist(r, use.names = FALSE)
+          r <- na.omit(r)
+          r <- nchar(r)
+          sum(r)
+        }), ]
 
   # add metadata
   result <- addMetaData(result,
@@ -1814,7 +1786,10 @@ dfTrials2Long <- function(df) {
     # change into one so that row indexing
     # in lapply below will work
     if (!inherits(atrialcol, "data.frame")) {
+
       atrialcol <- data.frame(
+        # unname to eliminate any
+        # name of root element
         unname(atrialcol),
         check.names = FALSE,
         stringsAsFactors = FALSE)
@@ -1848,7 +1823,6 @@ dfTrials2Long <- function(df) {
             stringsAsFactors = FALSE
           )
         } else {
-          # return result
           data.frame(
             main_id = r,
             sub_id = NA,
@@ -1858,7 +1832,7 @@ dfTrials2Long <- function(df) {
           )
         }
 
-      }) # lapply
+      }) # lapply over measure
 
     # concatenate into long format
     measures <- do.call(
@@ -1900,6 +1874,7 @@ dfTrials2Long <- function(df) {
 
         # iterate over columns
         cols <- lapply(
+          # exclude "_id"
           seq(from = 2, to = ncol(severaltrials[r, ])),
           function(c) {
 
@@ -1909,22 +1884,15 @@ dfTrials2Long <- function(df) {
               # convert into long format
               switch(
                 class(atrial[[c]]),
-                # "character" =
                 "data.frame" =
                   data.frame(
                     main_id = NA,
                     sub_id = NA,
                     name = names(atrial)[c],
                     value = atrial[[c]],
-                    # class = "data.frame",
                     stringsAsFactors = FALSE
                   ),
-                # list types
-                # "list" = col2df(atrialcol = atrial[c]),
-                # # date
-                # "Date" = col2df(atrialcol = as.character(atrial[[c]])),
-                #"Date" = col2df(atrialcol = atrial[c]),
-                # all other / list
+                # all other (Date, list, ...)
                 col2df(atrialcol = atrial[c])
               )
             } # if is.na
@@ -1938,12 +1906,6 @@ dfTrials2Long <- function(df) {
         )
 
         # format trial
-        # data.frame(
-        #   trial_id = out[!is.na(out[["name"]]) & out[["name"]] == "_id", "value"],
-        #   out[!is.na(out[["name"]]) & out[["name"]] != "_id", ],
-        #   stringsAsFactors = FALSE
-        # )
-
         if (!is.null(out)) {
           data.frame(
             trial_id = atrial[["_id"]],

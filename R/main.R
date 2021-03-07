@@ -904,17 +904,6 @@ ctrLoadQueryIntoDbCtgov <- function(
   #
   if (verbose) message("DEBUG: ", ctgovdownloadcsvurl)
 
-  # TODO delete
-  # # check if host is available
-  # if ("try-error" %in%
-  #     class(try(httr::headers(
-  #       httr::HEAD(
-  #         url = utils::URLencode(queryUSRoot))),
-  #       silent = TRUE))) {
-  #   stop("Host ", queryUSRoot, " does not respond, cannot continue.",
-  #        call. = FALSE)
-  # }
-
   # check number of trials to be downloaded
   ctgovdfirstpageurl <- paste0(
     queryUSRoot, queryUSType2, "&", queryterm, queryupdateterm)
@@ -1153,17 +1142,6 @@ ctrLoadQueryIntoDbEuctr <- function(
   queryEuPost  <- paste0(
     "&mode=current_page&format=text&dContent=",
     "summary&number=current_page&submit-download=Download")
-
-  # TODO delete
-  # check if host is available
-  # if ("try-error" %in% class(try(
-  #   httr::headers(
-  #     httr::HEAD(
-  #       url = utils::URLencode(queryEuRoot))),
-  #   silent = TRUE))) {
-  #   stop("Host ", queryEuRoot, " does not respond, cannot continue.",
-  #        call. = FALSE)
-  # }
 
   # get first result page
   q <- utils::URLencode(paste0(queryEuRoot, queryEuType1, queryterm))
