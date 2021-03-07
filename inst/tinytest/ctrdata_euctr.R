@@ -409,9 +409,10 @@ expect_true(all(
 # test
 expect_error(
   suppressWarnings(
-    dbGetFieldsIntoDf(
-      fields = c(NA, "willNeverBeFound"),
-      con = dbc)),
+    suppressMessages(
+      dbGetFieldsIntoDf(
+        fields = c(NA, "willNeverBeFound"),
+        con = dbc))),
   paste0(
   "No data could be extracted for 'willNeverBeFound'",
   "|No records with values for any specified field."))
