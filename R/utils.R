@@ -1430,10 +1430,12 @@ dbGetFieldsIntoDf <- function(fields = "",
 
         } # if src_sqlite or src_mango
 
+        ## mangle further
 
         # ensure intended column order
-        if (names(dfi)[1L] != "_id") {
-          dfi <- dfi[, 2:1]
+        tmp <- names(dfi)
+        if (tmp[1L] != "_id") {
+          dfi <- dfi[, c("_id", tmp[tmp != "_id"])]
         }
 
         # TODO check - should not be needed
@@ -1453,15 +1455,14 @@ dbGetFieldsIntoDf <- function(fields = "",
         #   MARGIN = 1,
         #   function(c) all(is.na(c))), ] <- NULL
         #
+        ## simplify if robust:
+
         # - if each [,2] is a list or data frame with one level
+        #   e.g., mongodb: enrollment; study_design_info.allocation
         if ((ncol(dfi) == 2) &&
             (all(vapply(dfi[, 2],
                         function(x)
                           listDepth(x) <= 1L, logical(1L)))
-             # ||
-             # all(vapply(dfi[, 2],
-             #            function(x)
-             #              is.atomic(unlist(x, recursive = FALSE)), logical(1L)))
             )) {
           # concatenate (has to remain as sapply
           # because of different content types)
@@ -1476,8 +1477,8 @@ dbGetFieldsIntoDf <- function(fields = "",
           dfi <- dfi[, 1:2]
         }
         #
-        # - if dfi[, 2:ncol(dfi)] is from the same field e.g.
-        #   required_header.{download_date,link_text,url}, concatenate
+        # - if dfi[, 2:ncol(dfi)] is from the same field
+        #   e.g., mongodb: study_design_info
         if ((length(ncol(dfi[, 2])) && ncol(dfi[, 2]) > 1L) ||
             ((ncol(dfi) > 2L) &&
              all(grepl(paste0(item, "[.].+$"),
@@ -1495,7 +1496,7 @@ dbGetFieldsIntoDf <- function(fields = "",
           dfi <- dfi[, 1:2]
 
           # create items in column from list
-          for (i in seq_len(nrow(dfi))) dfi[i, 2][[1]] <- list(tmpById[[i]])
+          dfi[[2]] <- tmpById
 
           # inform user
           message("* Converted to list [2]: '", item, "'")
