@@ -452,8 +452,8 @@ tmpc <- table(tmpc)
 
 # src_mongo:
 # tmpc
-# character Date integer list logical
-#       384    8      22   35      78
+# character Date   integer      list   logical
+# 561         10        19         3        59
 
 # tests
 expect_true(tmpc[["character"]] > 50)
