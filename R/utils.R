@@ -1544,7 +1544,7 @@ dbGetFieldsIntoDf <- function(fields = "",
         }), ]
 
   # finalise output
-  if (is.null(result) || !nrow(result)) {
+  if (is.null(result) || !nrow(result)) {
     stop("No records with values for any specified field. ",
          call. = FALSE)
   }
