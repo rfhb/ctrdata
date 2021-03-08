@@ -105,5 +105,7 @@ jobs:
         if: matrix.config.r == 'release'
         # if: runner.os != 'Windows' && matrix.config.r == 'release'
         # covr::codecov() uses environment variable CODECOV_TOKEN
-        run: covr::codecov()
-        shell: Rscript {0}
+        # https://github.com/r-lib/covr/issues/406#issuecomment-549343132
+        run: |
+          Rscript -e 'remotes::install_github("r-lib/covr@gh-actions")'
+          Rscript -e 'covr::codecov(token = "${{secrets.CODECOV_TOKEN}}")'
