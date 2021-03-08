@@ -2337,52 +2337,6 @@ dfFindUniqueEuctrRecord <- function(
 # end dfFindUniqueEuctrRecord
 
 
-#' Check if a document exists based on its unique identifier
-#'
-#' @return logical, FALSE (document or database does not
-#'  exist) or TRUE
-#'
-#' @importFrom nodbi docdb_exists docdb_query
-#'
-#' @inheritParams ctrDb
-#'
-#' @keywords internal
-#'
-checkDoc <- function(con, id) {
-
-  # check if table exists
-  restbl <- nodbi::docdb_exists(
-    src = con,
-    key = con$collection)
-
-  # table exists, check for document
-  if (restbl) {
-    resdoc <- try(
-      nodbi::docdb_query(
-        src = con,
-        key = con$collection,
-        query = paste0('{"_id": "', id, '"}'),
-        fields = '{"_id": 1}'),
-      silent = TRUE)
-  } else {
-    return(FALSE)
-  }
-
-  # if no error, check if 1 document found
-  if ("try-error" %in% class(resdoc)) {
-    return(FALSE)
-  } else {
-    if (nrow(resdoc) == 1L) {
-      return(TRUE)
-    }
-  }
-
-  # if no return so far
-  return(FALSE)
-
-} # end checkDoc
-
-
 #' Change type of field based on name of field
 #'
 #' @param dfi a data frame of columns _id, fieldname

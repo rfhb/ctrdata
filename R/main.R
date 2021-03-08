@@ -212,11 +212,8 @@ ctrLoadQueryIntoDb <- function(
 
   # check annotation parameters
   if (annotation.text != "" &
-      annotation.mode == "") {
-    stop(" annotation.mode empty", call. = FALSE)
-  }
-  if (!(annotation.mode %in% c("append", "prepend", "replace"))) {
-    stop(" annotation.mode incorrect", call. = FALSE)
+      !any(annotation.mode == c("append", "prepend", "replace"))) {
+    stop("'annotation.mode' incorrect", call. = FALSE)
   }
 
   # initialise variable that is filled if an update is to be made
@@ -1169,14 +1166,6 @@ ctrLoadQueryIntoDbEuctr <- function(
     stop("ctrLoadQueryIntoDb(): register does not deliver ",
          "search results as expected, check if working with ",
          "'browseURL(\"", q, "\")'",
-         call. = FALSE)
-  }
-  #
-  # register contains 35000+ trials, which would all
-  # be identified if queryterm is just anything
-  if (resultsEuNumTrials > 30000L) {
-    stop("ctrLoadQueryIntoDb()): unexpectedly found more than ",
-         "30000 trials; revise your 'queryterm': ", queryterm,
          call. = FALSE)
   }
 
