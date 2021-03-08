@@ -361,15 +361,15 @@ expect_equal(sort(unique(tmpTest[["annotation"]])),
 
 trialsCtgov <- suppressMessages(
   suppressWarnings(
-  dbFindIdsUniqueTrials(
-    con = dbc,
-    preferregister = "CTGOV")))
+    dbFindIdsUniqueTrials(
+      con = dbc,
+      preferregister = "CTGOV")))
 
 trialsEuctr <- suppressMessages(
   suppressWarnings(
-  dbFindIdsUniqueTrials(
-    con = dbc,
-    preferregister = "EUCTR")))
+    dbFindIdsUniqueTrials(
+      con = dbc,
+      preferregister = "EUCTR")))
 
 # test
 expect_equal(length(trialsCtgov), length(trialsEuctr))
@@ -410,9 +410,10 @@ expect_error(
 # test
 expect_error(
   suppressMessages(
-    dbFindIdsUniqueTrials(
-      con = dbc,
-      prefermemberstate = "WRONG")),
+    suppressWarnings(
+      dbFindIdsUniqueTrials(
+        con = dbc,
+        prefermemberstate = "WRONG"))),
   "prefermemberstate does not match")
 
 # test
