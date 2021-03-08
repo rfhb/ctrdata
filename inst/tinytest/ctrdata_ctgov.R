@@ -31,12 +31,13 @@ expect_message(
 
 # test
 expect_error(
-  suppressMessages(
+  suppressWarnings(
+    suppressMessages(
     ctrLoadQueryIntoDb(
       queryterm = paste0(
         "https://clinicaltrials.gov/ct2/results?cond=Cancer&type=Intr&phase=0",
         "&strd_s=01%2F02%2F2005&strd_e=12%2F31%2F2017"),
-      con = dbc)),
+      con = dbc))),
   "more than 10,000) trials")
 
 
@@ -199,3 +200,16 @@ expect_true(
 expect_true(
   all(df2$main_id[df2$trial_id == "NCT01471782"] == 5L)
 )
+
+# test
+expect_error(
+  suppressWarnings(
+    suppressMessages(
+      ctrLoadQueryIntoDb(
+        queryterm = "term=ET743OVC3006",
+        register = "CTGOV",
+        annotation.text = "something",
+        annotation.mode = "WRONG",
+        con = dbc))),
+  "'annotation.mode' incorrect")
+

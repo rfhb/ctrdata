@@ -5,10 +5,11 @@
 # test
 expect_error(
   suppressWarnings(
-    ctrLoadQueryIntoDb(
-      queryterm = "query=",
-      register = "EUCTR",
-      con = dbc)),
+    suppressMessages(
+      ctrLoadQueryIntoDb(
+        queryterm = "query=",
+        register = "EUCTR",
+        con = dbc))),
   "more than 10,000) trials")
 
 # next
@@ -359,14 +360,16 @@ expect_equal(sort(unique(tmpTest[["annotation"]])),
 #### deduplicate ####
 
 trialsCtgov <- suppressMessages(
+  suppressWarnings(
   dbFindIdsUniqueTrials(
     con = dbc,
-    preferregister = "CTGOV"))
+    preferregister = "CTGOV")))
 
 trialsEuctr <- suppressMessages(
+  suppressWarnings(
   dbFindIdsUniqueTrials(
     con = dbc,
-    preferregister = "EUCTR"))
+    preferregister = "EUCTR")))
 
 # test
 expect_equal(length(trialsCtgov), length(trialsEuctr))
@@ -407,9 +410,9 @@ expect_error(
 # test
 expect_error(
   suppressMessages(
-  dbFindIdsUniqueTrials(
-    con = dbc,
-    prefermemberstate = "WRONG")),
+    dbFindIdsUniqueTrials(
+      con = dbc,
+      prefermemberstate = "WRONG")),
   "prefermemberstate does not match")
 
 # test

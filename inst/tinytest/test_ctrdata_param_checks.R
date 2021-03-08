@@ -70,17 +70,6 @@ tf <- function() {
           con = dbc))),
     "'queryterm'.*has unexpected characters")
 
-  # test
-  expect_error(
-    suppressWarnings(
-      suppressMessages(
-        ctrLoadQueryIntoDb(
-          queryterm = "term=ET743OVC3006",
-          register = "CTGOV",
-          annotation.mode = "WRONG",
-          con = dbc))),
-    "'annotation.mode' incorrect")
-
   # test no history or no table with
   # the name specified in dbc
   expect_error(
