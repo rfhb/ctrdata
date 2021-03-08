@@ -2,6 +2,16 @@
 
 #### ctrLoadQueryIntoDb ####
 
+# test
+expect_error(
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
+      queryterm = "query=",
+      register = "EUCTR",
+      con = dbc)),
+  "more than 10,000) trials")
+
+# next
 q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
             "neuroblastoma&status=completed&phase=phase-one&country=pl")
 
@@ -70,7 +80,7 @@ q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=cance
 expect_message(
   tmpTest <- suppressWarnings(
     ctrLoadQueryIntoDb(
-      paste0(q),
+      queryterm = paste0(q),
       con = dbc)),
   "(Imported or updated|First result page empty)")
 
@@ -100,6 +110,7 @@ expect_message(
   tmpTest <- suppressWarnings(
     ctrLoadQueryIntoDb(
       querytoupdate = "last",
+      verbose = TRUE,
       con = dbc)),
   "(Imported or updated|First result page empty)")
 
@@ -206,6 +217,12 @@ expect_identical(
 # test
 expect_true(
   nrow(df) > 2500L
+)
+
+# extract
+df2 <- dfName2Value(
+  df = df,
+  valuename = "subjectDisposition.*postAssignmentPeriod.arms.arm.type.value"
 )
 
 # extract
@@ -381,6 +398,21 @@ expect_message(
   "Searching for duplicate trials")
 
 # test
+expect_error(
+  dbFindIdsUniqueTrials(
+    con = dbc,
+    preferregister = "WRONG"),
+  "Register not known")
+
+# test
+expect_error(
+  suppressMessages(
+  dbFindIdsUniqueTrials(
+    con = dbc,
+    prefermemberstate = "WRONG")),
+  "prefermemberstate does not match")
+
+# test
 expect_message(
   suppressWarnings(
     dbFindIdsUniqueTrials(
@@ -408,14 +440,21 @@ expect_true(all(
 
 # test
 expect_error(
+  dbGetFieldsIntoDf(
+    fields = 1:3,
+    con = dbc),
+  "Input should be a vector of strings of field names")
+
+# test
+expect_error(
   suppressWarnings(
     suppressMessages(
       dbGetFieldsIntoDf(
         fields = c(NA, "willNeverBeFound"),
         con = dbc))),
   paste0(
-  "No data could be extracted for 'willNeverBeFound'",
-  "|No records with values for any specified field."))
+    "No data could be extracted for",
+    "|No records with values for any specified field"))
 
 # test
 expect_error(

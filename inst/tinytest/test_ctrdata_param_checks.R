@@ -22,7 +22,7 @@ tf <- function() {
 
   # do tests
 
-  #### queryterm and ctrLoadQueryIntoDb ####
+  #### ctrLoadQueryIntoDb ####
 
   tmpdf <- iris[1:5, ]
   names(tmpdf) <- paste0("query-", names(tmpdf))
@@ -51,6 +51,35 @@ tf <- function() {
           queryterm = tmpdf,
           con = dbc))),
     "'register' has to be a non-empty string")
+
+  # test
+  expect_error(
+    suppressWarnings(
+      suppressMessages(
+        ctrLoadQueryIntoDb(
+          queryterm = iris,
+          con = dbc))),
+    "'queryterm' does not seem to result from ctr")
+
+  # test
+  expect_error(
+    suppressWarnings(
+      suppressMessages(
+        ctrLoadQueryIntoDb(
+          queryterm = "https\\#@",
+          con = dbc))),
+    "'queryterm'.*has unexpected characters")
+
+  # test
+  expect_error(
+    suppressWarnings(
+      suppressMessages(
+        ctrLoadQueryIntoDb(
+          queryterm = "term=ET743OVC3006",
+          register = "CTGOV",
+          annotation.mode = "WRONG",
+          con = dbc))),
+    "'annotation.mode' incorrect")
 
   # test no history or no table with
   # the name specified in dbc
@@ -109,7 +138,6 @@ tf <- function() {
         con = dbc)),
     "'queryterm' and 'querytoupdate' specified.*cannot continue")
 
-
   #### database ####
 
   # test
@@ -137,7 +165,7 @@ tf <- function() {
   # test
   expect_error(
     suppressWarnings(
-      tmp <- dbFindIdsUniqueTrials(
+      dbFindIdsUniqueTrials(
         con = dbx)),
     "No records found, check collection 'otherinmemory'")
   # test

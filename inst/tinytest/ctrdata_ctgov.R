@@ -20,7 +20,36 @@ expect_equal(tmpTest$success, "NCT01471782")
 # test
 expect_true(length(tmpTest$failed) == 0L)
 
+# test
+expect_message(
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
+      queryterm = "NCT01471782",
+      register = "CTGOV",
+      con = dbc)),
+  "Imported or updated 1 trial")
+
+# test
+expect_error(
+  suppressMessages(
+    ctrLoadQueryIntoDb(
+      queryterm = paste0(
+        "https://clinicaltrials.gov/ct2/results?cond=Cancer&type=Intr&phase=0",
+        "&strd_s=01%2F02%2F2005&strd_e=12%2F31%2F2017"),
+      con = dbc)),
+  "more than 10,000) trials")
+
+
 #### ctrLoadQueryIntoDb update ####
+
+# test
+expect_message(
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
+      querytoupdate = "last",
+      verbose = TRUE,
+      con = dbc)),
+  "No trials or number of trials could not be determined")
 
 # new query
 q <- paste0("https://clinicaltrials.gov/ct2/results?",

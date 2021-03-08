@@ -127,6 +127,12 @@ expect_equal(
       register = "EUCTR"))
 )
 
+# test
+expect_warning(
+  ctrGetQueryUrlFromBrowser(
+    url = "ThisDoesNotExist"),
+  "is deprecated")
+
 #### ctrOpenSearchPagesInBrowser ####
 
 if (!at_home()) exit_file("Reason: not at_home")

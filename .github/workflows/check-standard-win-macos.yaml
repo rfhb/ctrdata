@@ -102,7 +102,8 @@ jobs:
           path: check
 
       - name: Test coverage
-        if: runner.os != 'Windows' && matrix.config.r == 'release'
+        if: matrix.config.r == 'release'
+        # if: runner.os != 'Windows' && matrix.config.r == 'release'
         # covr::codecov() uses environment variable CODECOV_TOKEN
         run: covr::codecov()
         shell: Rscript {0}
