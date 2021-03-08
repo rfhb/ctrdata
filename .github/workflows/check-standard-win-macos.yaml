@@ -62,6 +62,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          install.packages(c("remotes"))
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran(c("rcmdcheck", "covr"))
         shell: Rscript {0}
@@ -102,10 +103,12 @@ jobs:
           path: check
 
       - name: Test coverage
-        if: matrix.config.r == 'release'
-        # if: runner.os != 'Windows' && matrix.config.r == 'release'
+        if: runner.os != 'Windows' && matrix.config.r == 'release'
         # covr::codecov() uses environment variable CODECOV_TOKEN
-        # https://github.com/r-lib/covr/issues/406#issuecomment-549343132
-        run: |
-          Rscript -e 'remotes::install_github("r-lib/covr@gh-actions")'
-          Rscript -e 'covr::codecov(token = "${{secrets.CODECOV_TOKEN}}")'
+        run: covr::codecov()
+        shell: Rscript {0}
+
+      - name: Test coverage
+        if: runner.os == 'Windows' && matrix.config.r == 'release'
+        # covr::codecov() uses environment variable CODECOV_TOKEN
+        run: Rscript -e "options(covr.gcov = 'C:/Rtools/mingw_64/bin/gcov'); covr::codecov(quiet = FALSE)"
