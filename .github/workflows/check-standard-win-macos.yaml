@@ -104,11 +104,7 @@ jobs:
 
       - name: Test coverage
         if: runner.os != 'Windows' && matrix.config.r == 'release'
+        # Coverage testing on Windows done from separate machine
         # covr::codecov() uses environment variable CODECOV_TOKEN
         run: covr::codecov()
         shell: Rscript {0}
-
-      - name: Test coverage
-        if: runner.os == 'Windows' && matrix.config.r == 'release'
-        # covr::codecov() uses environment variable CODECOV_TOKEN
-        run: Rscript -e "options(covr.gcov = 'C:/Rtools/mingw_64/bin/gcov'); covr::codecov(quiet = FALSE)"
