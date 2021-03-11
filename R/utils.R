@@ -526,7 +526,7 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "") {
     tmp, xpath =
       '//*[@id="searchdetail"]//table[1]')
   tmp <- rvest::html_table(tmp, fill = TRUE)
-  asx <- tmp[, 1]
+  asx <- tmp[[1]]
   asx <- asx[!grepl(
     paste0("(more|synonyms|terms|", as, "|",
            paste0(unlist(strsplit(as, " ")), collapse = "|"),
