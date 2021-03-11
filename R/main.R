@@ -705,7 +705,6 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
 #'
 dbCTRAnnotateQueryRecords <- function(
   recordnumbers,
-  annotations,
   annotation.text,
   annotation.mode,
   con,
@@ -714,8 +713,14 @@ dbCTRAnnotateQueryRecords <- function(
   # debug
   if (verbose) message("* Running dbCTRAnnotateQueryRecords...")
   if (verbose) message(recordnumbers)
-  if (verbose) message(annotations)
   if (verbose) message(annotation.mode)
+
+  # get any existing annotations
+  annotations <- nodbi::docdb_query(
+    src = con,
+    key = con$collection,
+    query = paste0('{"_id": {"$ne": "meta-info"}}'),
+    fields = '{"_id": 1, "annotation": 1}')
 
   # keep only those annotations that are to be modified
   annotations <- annotations[annotations[["_id"]] %in%
@@ -732,14 +737,15 @@ dbCTRAnnotateQueryRecords <- function(
   }
 
   # modify the annotations
-  annotations[["annotation"]] <- switch(
-    annotation.mode,
-    "replace" = paste0(annotation.text),
-    "prepend" = paste0(annotation.text, " ", annotations$annotation),
-    paste0(annotations$annotation, " ", annotation.text)
-  )
+  annotations[["annotation"]] <- trimws(
+    switch(
+      annotation.mode,
+      "replace" = paste0(annotation.text),
+      "prepend" = paste0(annotation.text, " ", annotations$annotation),
+      paste0(annotations$annotation, " ", annotation.text)
+    ))
 
-  # FIXME ensure column order - why needed?
+  # ensure columns including order
   annotations <- annotations[, c("_id", "annotation")]
 
   # debug
@@ -747,12 +753,11 @@ dbCTRAnnotateQueryRecords <- function(
 
   # update the database
   for (i in annotations[["_id"]]) {
-    tmp <- nodbi::docdb_update(
+    nodbi::docdb_update(
       src = con,
       key = con$collection,
       value = annotations[annotations[["_id"]] == i, ])
   }
-
 
   # inform user
   message("= Annotated retrieved records")
@@ -1036,28 +1041,6 @@ ctrLoadQueryIntoDbCtgov <- function(
   if (verbose) message("DEBUG: ", xml2json)
   imported <- system(xml2json, intern = TRUE)
 
-  # get any annotations for any later update
-  if (annotation.text != "") {
-
-    # check if record exists
-    if (!nodbi::docdb_exists(
-      src = con,
-      key = con$collection)) {
-
-      annotations <- data.frame()
-
-    } else {
-
-      # retrieve annotations
-      annotations <- nodbi::docdb_query(
-        src = con,
-        key = con$collection,
-        query = paste0('{"_id": {"$ne": "meta-info"}}'),
-        fields = '{"_id": 1, "annotation": 1}')
-
-    } # if data base exists
-  } # if annotation.text
-
   ## run import
   message("(3/3) Importing JSON records into database...")
   if (verbose) message("DEBUG: ", tempDir)
@@ -1072,7 +1055,6 @@ ctrLoadQueryIntoDbCtgov <- function(
     # dispatch
     dbCTRAnnotateQueryRecords(
       recordnumbers = imported$success,
-      annotations = annotations,
       annotation.text = annotation.text,
       annotation.mode = annotation.mode,
       con = con,
@@ -1379,26 +1361,6 @@ ctrLoadQueryIntoDbEuctr <- function(
     #
   } # if windows
 
-  # get any annotations for any later update
-  if (annotation.text != "") {
-
-    if (!nodbi::docdb_exists(
-      src = con,
-      key = con$collection)) {
-
-      annotations <- data.frame()
-
-    } else {
-
-      # retrieve annotations
-      annotations <- nodbi::docdb_query(
-        src = con,
-        key = con$collection,
-        query = paste0('{"_id": {"$ne": "meta-info"}}'),
-        fields = '{"_id": 1, "annotation": 1}')
-    } # if data base exists
-  } # if annotation.text
-
   # run conversion of text files saved
   # into file system to json file
   message("\n(2/3) Converting to JSON...")
@@ -1423,7 +1385,6 @@ ctrLoadQueryIntoDbEuctr <- function(
     # dispatch
     dbCTRAnnotateQueryRecords(
       recordnumbers = eudractnumbersimported,
-      annotations = annotations,
       annotation.text = annotation.text,
       annotation.mode = annotation.mode,
       con = con,
@@ -1441,9 +1402,9 @@ ctrLoadQueryIntoDbEuctr <- function(
     # results are available only one-by-one for
     # each trial as just retrieved and imported
 
-    # transform eudract numbers with country info
-    # ("2010-024264-18-3RD") into eudract numbers
-    # ("2010-024264-18")
+    # transform eudract numbers
+    # with country info ("2010-024264-18-3RD")
+    # into eudract numbers ("2010-024264-18")
     eudractnumbersimported <- unique(
       substring(text = eudractnumbersimported,
                 first = 1,
