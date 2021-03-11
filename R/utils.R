@@ -28,7 +28,7 @@ ctrDb <- function(
     collection = "ctrdata_auto_generated")) {
 
   ## sqlite
-  if ("src_sqlite" %in% class(con)) {
+  if (inherits(con, "src_sqlite")) {
 
     if (is.null(con$collection)) {
       stop("In src_sqlite(), a parameter 'collection' needs to specify ",
@@ -66,7 +66,7 @@ ctrDb <- function(
   }
 
   ## mongo
-  if ("src_mongo" %in% class(con)) {
+  if (inherits(con, "src_mongo")) {
 
     # rights may be insufficient to call info(),
     # hence this workaround that should always
@@ -148,13 +148,13 @@ ctrOpenSearchPagesInBrowser <- function(
     if (all(register == "", na.rm = TRUE)) register <- c("EUCTR", "CTGOV")
     #
     # open empty search pages
-    if ("EUCTR" %in% register)
+    if (any(register == "EUCTR"))
       try({
         utils::browseURL(
           "https://www.clinicaltrialsregister.eu/ctr-search/search",
           ...)}, silent = TRUE)
     #
-    if ("CTGOV" %in% register)
+    if (any(register == "CTGOV"))
       try({
         utils::browseURL(
           "https://clinicaltrials.gov/ct2/search/advanced",
@@ -163,13 +163,13 @@ ctrOpenSearchPagesInBrowser <- function(
     # if requested also show copyright pages
     if (copyright) {
       #
-      if ("EUCTR" %in% register)
+      if (any(register == "EUCTR"))
         try({
           utils::browseURL(
             "https://www.clinicaltrialsregister.eu/disclaimer.html",
             ...)}, silent = TRUE)
       #
-      if ("CTGOV" %in% register)
+      if (any(register == "CTGOV"))
         try({
           utils::browseURL(
             "https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use",
@@ -719,7 +719,7 @@ dbFindFields <- function(namepart = "",
     ## field / key names
 
     ## - method for mongodb
-    if ("src_mongo" %in% class(con)) {
+    if (inherits(con, "src_mongo")) {
 
       # try mapreduce to get all keys
       keyslist <- try({
@@ -746,7 +746,7 @@ dbFindFields <- function(namepart = "",
       silent = TRUE)
 
       # if mapreduce does not work or is not permitted, revert to guessing
-      if ("try-error" %in% class(keyslist)) {
+      if (inherits(keyslist, "try-error")) {
 
         warning("Mongo server returned: ", as.character(keyslist),
                 "Using alternative method (extracting keys from ",
@@ -768,7 +768,7 @@ dbFindFields <- function(namepart = "",
     } # end if src_mongo
 
     ## - method for sqlite
-    if ("src_sqlite" %in% class(con)) {
+    if (inherits(con, "src_sqlite")) {
 
       # uses special function parameter for
       # src_sqlite query method: listfields
