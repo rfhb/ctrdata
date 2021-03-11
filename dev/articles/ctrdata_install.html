@@ -25,8 +25,6 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
-    
-
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -45,6 +43,12 @@
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
+<li>
+  <a href="../index.html">
+    <span class="fas fa-home fa-lg"></span>
+     
+  </a>
+</li>
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
@@ -72,7 +76,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/rfhb/ctrdata/" class="external-link">
+  <a href="https://github.com/rfhb/ctrdata/">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -97,11 +101,11 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Install R package ctrdata</h1>
-                        <h4 data-toc-skip class="author">Ralf Herold</h4>
+                        <h4 class="author">Ralf Herold</h4>
             
-            <h4 data-toc-skip class="date">2020-10-11</h4>
+            <h4 class="date">2020-10-11</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/rfhb/ctrdata/blob/master/vignettes/ctrdata_install.Rmd" class="external-link"><code>vignettes/ctrdata_install.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/rfhb/ctrdata/blob/master/vignettes/ctrdata_install.Rmd"><code>vignettes/ctrdata_install.Rmd</code></a></small>
       <div class="hidden name"><code>ctrdata_install.Rmd</code></div>
 
     </div>
@@ -111,16 +115,16 @@
 <div id="install-package-ctrdata-on-a-r-system" class="section level1">
 <h1 class="hasAnchor">
 <a href="#install-package-ctrdata-on-a-r-system" class="anchor"></a>Install package <code>ctrdata</code> on a R system</h1>
-<p>The R Project website (<a href="https://www.r-project.org/" class="external-link">https://www.r-project.org/</a>) provides installers for the R system. It can be used with software products and graphical user interfaces such as <a href="https://www.rstudio.com/products/RStudio/" class="external-link">R Studio</a>, or <a href="https://mran.microsoft.com/open/" class="external-link">Microsoft R Open</a>, or from <a href="https://marketplace.visualstudio.com/search?term=R&amp;target=VSCode&amp;category=All%20categories&amp;sortBy=Relevance" class="external-link">Visual Studio Code</a>.</p>
-<p>General information on the <code>ctrdata</code> package is available here: <a href="https://github.com/rfhb/ctrdata" class="external-link">https://github.com/rfhb/ctrdata</a>.</p>
+<p>The R Project website (<a href="https://www.r-project.org/">https://www.r-project.org/</a>) provides installers for the R system. It can be used with software products and graphical user interfaces such as <a href="https://www.rstudio.com/products/RStudio/">R Studio</a>, or <a href="https://mran.microsoft.com/open/">Microsoft R Open</a>, or from <a href="https://marketplace.visualstudio.com/search?term=R&amp;target=VSCode&amp;category=All%20categories&amp;sortBy=Relevance">Visual Studio Code</a>.</p>
+<p>General information on the <code>ctrdata</code> package is available here: <a href="https://github.com/rfhb/ctrdata">https://github.com/rfhb/ctrdata</a>.</p>
 <p>In R, execute:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"ctrdata"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"ctrdata"</span><span class="op">)</span></code></pre></div>
 <p>For using the development version of package <code>ctrdata</code>, install from GitHub:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install preparatory package</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"devtools"</span>, <span class="st">"httr"</span><span class="op">)</span><span class="op">)</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"rfhb/ctrdata"</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"devtools"</span>, <span class="st">"httr"</span><span class="op">)</span><span class="op">)</span>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"rfhb/ctrdata"</span><span class="op">)</span></code></pre></div>
 <p>Either of the above should install package <code>ctrdata</code> into the user’s library.</p>
 </div>
 <div id="internet-access-via-proxy" class="section level1">
@@ -128,22 +132,22 @@
 <a href="#internet-access-via-proxy" class="anchor"></a>Internet access via proxy</h1>
 <p>Functions in package <code>ctrdata</code> that start with <code>ctr...</code> require access to trial registers over the internet via the <code>https</code> protocol. Package <code>ctrdata</code> checks and <em>automatically uses</em> the proxy that is set under MS Windows in system settings. However, proxy settings need to be set by the user for other operating systems and for more complicated environments such as using authenticating proxies, as follows:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html" class="external-link">Sys.setenv</a></span><span class="op">(</span>https_proxy <span class="op">=</span> <span class="st">"your_proxy.server.domain:8080"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html" class="external-link">Sys.setenv</a></span><span class="op">(</span>https_proxy_user <span class="op">=</span> <span class="st">"userid:password"</span><span class="op">)</span> <span class="co"># if needed</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html">Sys.setenv</a></span><span class="op">(</span>https_proxy <span class="op">=</span> <span class="st">"your_proxy.server.domain:8080"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html">Sys.setenv</a></span><span class="op">(</span>https_proxy_user <span class="op">=</span> <span class="st">"userid:password"</span><span class="op">)</span> <span class="co"># if needed</span></code></pre></div>
 </div>
 <div id="additional-installation-aspects-for-ms-windows" class="section level1">
 <h1 class="hasAnchor">
 <a href="#additional-installation-aspects-for-ms-windows" class="anchor"></a>Additional installation aspects for MS Windows</h1>
 <p>On MS Windows, it seems recommended to not use UNC notation (such as <code>\\server\directory</code>) for specifying the user’s library location, but the following notation using a local disk or mapped network share. If the user’s library location needs to be set, use:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/libPaths.html" class="external-link">.libPaths</a></span><span class="op">(</span><span class="st">"D:/my/directory/"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/libPaths.html">.libPaths</a></span><span class="op">(</span><span class="st">"D:/my/directory/"</span><span class="op">)</span></code></pre></div>
 <p>Package <code>ctrdata</code> requires on MS Windows that the cygwin environment be installed, into the local directory <code>c:\cygwin</code> (or any folder corresponding to <code>c:\cygw*</code>). The applications php, bash, perl, cat and sed in the cygwin environment are required for the function <code><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code> of package <code>ctrdata</code>. No other function in this package has this requirement. The installation of a minimal cygwin environment on MS Windows can be done with the help of package <code>ctrdata</code> in R as follows:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">ctrdata</span><span class="fu">::</span><span class="fu"><a href="../reference/installCygwinWindowsDoInstall.html">installCygwinWindowsDoInstall</a></span><span class="op">(</span><span class="op">)</span> </code></pre></div>
 <p>If internet access has to be via a proxy and this was not correctly detected automatically, it can be specified for the installation of cygwin as follows:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">ctrdata</span><span class="fu">::</span><span class="fu"><a href="../reference/installCygwinWindowsDoInstall.html">installCygwinWindowsDoInstall</a></span><span class="op">(</span>proxy <span class="op">=</span> <span class="st">"proxy.server.domain:8080"</span><span class="op">)</span> </code></pre></div>
-<p>Users who want or need to install cygwin manually, can download the setup executable from <a href="https://cygwin.com/install.html" class="external-link">here</a>. In a MS Windows command window or Powershell window, use the following command line. The parameters are explained <a href="https://cygwin.com/faq/faq.html#faq.setup.cli" class="external-link">here</a>.</p>
+<p>Users who want or need to install cygwin manually, can download the setup executable from <a href="https://cygwin.com/install.html">here</a>. In a MS Windows command window or Powershell window, use the following command line. The parameters are explained <a href="https://cygwin.com/faq/faq.html#faq.setup.cli">here</a>.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1"></a><span class="ex">setup-x86_64.exe</span> --no-admin --quiet-mode --verbose --upgrade-also --root c:/cygwin </span>
 <span id="cb7-2"><a href="#cb7-2"></a><span class="ex">--site</span> http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ </span>
 <span id="cb7-3"><a href="#cb7-3"></a><span class="ex">--packages</span> perl,php-jsonc,php-simplexml</span></code></pre></div>
@@ -152,7 +156,7 @@
 <div id="database" class="section level1">
 <h1 class="hasAnchor">
 <a href="#database" class="anchor"></a>Database</h1>
-<p>At this time, an SQLite or a remote or a local MongoDB database can be used with the package <code>ctrdata</code>. SQLite is provided in the R package <a href="https://rsqlite.r-dbi.org/" class="external-link"><code>RSQLite</code></a>. Suggested installation instructions for a local MongoDB server are <a href="https://docs.mongodb.com/manual/administration/install-community/" class="external-link">here</a>; a remote MongoDB database server is accessible <a href="https://www.mongodb.com/cloud/atlas" class="external-link">here</a>.</p>
+<p>At this time, an SQLite or a remote or a local MongoDB database can be used with the package <code>ctrdata</code>. SQLite is provided in the R package <a href="https://rsqlite.r-dbi.org/"><code>RSQLite</code></a>. Suggested installation instructions for a local MongoDB server are <a href="https://docs.mongodb.com/manual/administration/install-community/">here</a>; a remote MongoDB database server is accessible <a href="https://www.mongodb.com/cloud/atlas">here</a>.</p>
 </div>
 <div id="attach-package-ctrdata" class="section level1">
 <h1 class="hasAnchor">
@@ -160,8 +164,8 @@
 </h1>
 <p>After completing the installation, attach the package from the user’s library. This will also check the availability of the additional installation requirements as mentioned above:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://cran.r-project.org/package=ctrdata" class="external-link">ctrdata</a></span><span class="op">)</span></code></pre></div>
-<p>Remember to respect the registers’ terms and conditions (see <code><a href="../reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser(copyright = TRUE)</a></code>). Please cite this package in any publication as follows: Ralf Herold (2020). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.4, <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a></p>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://cran.r-project.org/package=ctrdata">ctrdata</a></span><span class="op">)</span></code></pre></div>
+<p>Remember to respect the registers’ terms and conditions (see <code><a href="../reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser(copyright = TRUE)</a></code>). Please cite this package in any publication as follows: Ralf Herold (2020). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.4, <a href="https://cran.r-project.org/package=ctrdata" class="uri">https://cran.r-project.org/package=ctrdata</a></p>
 </div>
   </div>
 
@@ -176,13 +180,11 @@
 
 
       <footer><div class="copyright">
-  <p></p>
-<p>Developed by Ralf Herold.</p>
+  <p>Developed by Ralf Herold.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link external-link">pkgdown</a> 1.6.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
