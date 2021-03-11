@@ -6,7 +6,6 @@
 \usage{
 dbCTRAnnotateQueryRecords(
   recordnumbers,
-  annotations,
   annotation.text,
   annotation.mode,
   con,
