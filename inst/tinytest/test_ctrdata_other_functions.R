@@ -134,17 +134,17 @@ expect_warning(
   "is deprecated")
 
 # test
-expect_error(
+expect_warning(
   ctrGetQueryUrl(
-    url = LETTERS),
-  "'url' and / or 'register' is not")
+    url = "LETTERS"),
+  "no clinical trial register search URL found")
 
 # test
-expect_error(
+expect_warning(
   ctrGetQueryUrl(
     url = "LETTERS",
-    register = LETTERS),
-  "'url' and / or 'register' is not")
+    register = "LETTERS"),
+  "no clinical trial register search URL found")
 
 # test
 expect_warning(
