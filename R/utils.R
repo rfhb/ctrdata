@@ -332,14 +332,6 @@ ctrGetQueryUrl <- function(
   if (grepl("https://www.clinicaltrialsregister.eu/ctr-search/", url) ||
       (!grepl("https://", url) && register == "EUCTR")) {
     #
-    # check
-    if (grepl("https://", url) &
-        !grepl("www.clinicaltrialsregister.eu/", url)) {
-      warning("ctrGetQueryUrl(): 'url' inconsistent with EUCTR.",
-              call. = FALSE, immediate. = TRUE)
-      return(invisible(NULL))
-    }
-    #
     queryterm <-
       sub("https://www.clinicaltrialsregister.eu/ctr-search/search[?](.*)",
           "\\1", url)
@@ -388,15 +380,6 @@ ctrGetQueryUrl <- function(
   # https://clinicaltrials.gov/ct2/results?term=2010-024264-18&Search=Search
   if (grepl("https://clinicaltrials.gov/ct2/results", url) ||
       (!grepl("https://", url) && register == "CTGOV")) {
-    #
-    # check
-    if (grepl("https://", url) &
-        !grepl("clinicaltrials.gov/", url)) {
-      warning("ctrGetQueryUrl(): 'url' inconsistent with CTGOV.",
-              call. = FALSE, immediate. = TRUE)
-      return(invisible(NULL))
-
-    }
     #
     queryterm <-
       sub("https://clinicaltrials.gov/ct2/results[?](.*)",

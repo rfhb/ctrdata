@@ -1471,11 +1471,7 @@ ctrLoadQueryIntoDbEuctr <- function(
       curlSuccess <- function(res) {
         pc <<- pc + 1
         # save to file
-        writeBin(object = res$content, con = fp[pc])
-        # inform user
-        # message("Pages done: ", pc, " (",
-        #         length(curl::multi_list(pool = pool)), " open connections)",
-        #         "\r", appendLF = FALSE)
+        writeBin(object = res$content, con = fp[[pc]])
       }
       #
       tmp <- lapply(

@@ -133,6 +133,26 @@ expect_warning(
     url = "ThisDoesNotExist"),
   "is deprecated")
 
+# test
+expect_error(
+  ctrGetQueryUrl(
+    url = LETTERS),
+  "'url' and / or 'register' is not")
+
+# test
+expect_error(
+  ctrGetQueryUrl(
+    url = "LETTERS",
+    register = LETTERS),
+  "'url' and / or 'register' is not")
+
+# test
+expect_error(
+  ctrGetQueryUrl(
+    url = "https://something",
+    register = "CTGOV"),
+  "'url' and / or 'register' is not")
+
 #### ctrOpenSearchPagesInBrowser ####
 
 if (!at_home()) exit_file("Reason: not at_home")
