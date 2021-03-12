@@ -147,11 +147,11 @@ expect_error(
   "'url' and / or 'register' is not")
 
 # test
-expect_error(
+expect_warning(
   ctrGetQueryUrl(
     url = "https://something",
     register = "CTGOV"),
-  "'url' and / or 'register' is not")
+  "no clinical trial register search URL")
 
 #### ctrOpenSearchPagesInBrowser ####
 
