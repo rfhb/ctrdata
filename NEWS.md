@@ -1,25 +1,18 @@
-# ctrdata 1.4.1.9004
- - ensure parallel retrievals from euctr
- - speed up routines in dbGetFieldsIntoDf
- - make dfTrials2Long handle NA better
-
-# ctrdata 1.4.1.9003
- - some code optimisation
- - start typing results fields
- - src_mongo and src_sqlite return values of
-   dbGetFieldsIntoDf now mostly identical to
-   ensure analysis code portability (based on
-   much work in this function)
- 
-# ctrdata 1.4.1.9002
- - 2020-11-06
+# ctrdata 1.5.0
+ - 2021-03-14
+ - return values of dbGetFieldsIntoDf are now mostly 
+   identical whether using src_mongo or src_sqlite,
+   to best ensure portability of analysis code
  - permit dots in queries / URLs
  - improved handling of queryterm
  - renamed ctrGetQueryUrlFromBrowser to ctrGetQueryUrl
  - soft deprecated ctrGetQueryUrlFromBrowser
- - for nodbi::src_sqlite, return complex items and subitems
+ - ensure parallel retrievals from EUCTR
+ - speed up routines in dbGetFieldsIntoDf
+ - make dfTrials2Long handle NA better
  - improved documentation, clarified examples
- - simplified internals for typing fields
+ - simplified internals for typing fields, 
+   start typing results fields
 
 # ctrdata 1.4.1
  - 2020-11-03
