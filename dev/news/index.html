@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ctrdata</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.4.1.9004</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.5.0.9000</span>
       </span>
     </div>
 
@@ -147,39 +147,30 @@
       <small>Source: <a href='https://github.com/rfhb/ctrdata/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="ctrdata-1419004" class="section level1">
-<h1 class="page-header" data-toc-text="1.4.1.9004">
-<a href="#ctrdata-1419004" class="anchor"></a>ctrdata 1.4.1.9004<small> Unreleased </small>
+    <div id="ctrdata-1509000" class="section level1">
+<h1 class="page-header" data-toc-text="1.5.0.9000">
+<a href="#ctrdata-1509000" class="anchor"></a>ctrdata 1.5.0.9000<small> Unreleased </small>
 </h1>
 <ul>
-<li>ensure parallel retrievals from euctr</li>
-<li>speed up routines in dbGetFieldsIntoDf</li>
-<li>make dfTrials2Long handle NA better</li>
+<li>2021-03-16</li>
 </ul>
 </div>
-    <div id="ctrdata-1419003" class="section level1">
-<h1 class="page-header" data-toc-text="1.4.1.9003">
-<a href="#ctrdata-1419003" class="anchor"></a>ctrdata 1.4.1.9003<small> Unreleased </small>
+    <div id="ctrdata-150" class="section level1">
+<h1 class="page-header" data-toc-text="1.5.0">
+<a href="#ctrdata-150" class="anchor"></a>ctrdata 1.5.0<small> 2021-03-16 </small>
 </h1>
 <ul>
-<li>some code optimisation</li>
-<li>start typing results fields</li>
-<li>src_mongo and src_sqlite return values of dbGetFieldsIntoDf now mostly identical to ensure analysis code portability (based on much work in this function)</li>
-</ul>
-</div>
-    <div id="ctrdata-1419002" class="section level1">
-<h1 class="page-header" data-toc-text="1.4.1.9002">
-<a href="#ctrdata-1419002" class="anchor"></a>ctrdata 1.4.1.9002<small> Unreleased </small>
-</h1>
-<ul>
-<li>2020-11-06</li>
+<li>2021-03-14</li>
+<li>return values of dbGetFieldsIntoDf are now mostly identical whether using src_mongo or src_sqlite, to best ensure portability of analysis code</li>
 <li>permit dots in queries / URLs</li>
 <li>improved handling of queryterm</li>
 <li>renamed ctrGetQueryUrlFromBrowser to ctrGetQueryUrl</li>
 <li>soft deprecated ctrGetQueryUrlFromBrowser</li>
-<li>for nodbi::src_sqlite, return complex items and subitems</li>
+<li>ensure parallel retrievals from EUCTR</li>
+<li>speed up routines in dbGetFieldsIntoDf</li>
+<li>make dfTrials2Long handle NA better</li>
 <li>improved documentation, clarified examples</li>
-<li>simplified internals for typing fields</li>
+<li>simplified internals for typing fields, start typing results fields</li>
 </ul>
 </div>
     <div id="ctrdata-141" class="section level1">
