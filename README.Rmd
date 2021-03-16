@@ -233,19 +233,9 @@ result <- dfTrials2Long(df = result)
 # [1.] get counts of subjects for all arms into data frame
 nsubj <- dfName2Value(
   df = result, 
-  valuename = "clinical_results.baseline.analyzed_list.analyzed.count_list.count.value"
-) 
-nsubj <- tapply(
-  X = nsubj[["value"]], 
-  INDEX = nsubj[["trial_id"]],
-  FUN = sum,
-  simplify = TRUE
-)
-nsubj <- data.frame(
-  trial_id = names(nsubj),
-  nsubj, 
-  stringsAsFactors = FALSE,
-  row.names = NULL
+  valuename = "clinical_results.baseline.analyzed_list.analyzed.count_list.count.value",
+  wherename = "clinical_results.baseline.group_list.group.title",
+  wherevalue = "Total"
 )
 
 # [2.] count number of sites
@@ -274,15 +264,10 @@ ncon <- dfName2Value(
   df = result, 
   valuename = "study_design_info.allocation"
 ) 
-ncon <- data.frame(
-  trial_id = ncon[["trial_id"]], 
-  randomised = !is.na(ncon[["value"]]) & ncon[["value"]] == "Randomized",
-  stringsAsFactors = FALSE
-)
 
 # merge sets
-nset <- merge(nsubj, nsite)
-nset <- merge(nset, ncon)
+nset <- merge(nsubj, nsite, by = "trial_id")
+nset <- merge(nset, ncon, by = "trial_id")
 
 # Example plot
 library(ggplot2)
@@ -292,8 +277,8 @@ ggplot(data = nset) +
   geom_point(
     mapping = aes(
       x = nsite,
-      y = nsubj,
-      colour = randomised)) + 
+      y = value.x,
+      colour = value.y == "Randomized")) + 
   scale_x_log10() + 
   scale_y_log10() 
 ggsave(filename = "inst/image/README-ctrdata_results_neuroblastoma.png",
