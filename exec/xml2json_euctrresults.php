@@ -15,14 +15,15 @@
 if ($argc <= 1) {
 	die("Usage: php -n -f xml2json_euctrresults.php <directory_path_with_xml_files>\n");
 } else {
-	$testXmlFile = $argv[1];
+	$xmlDir = $argv[1];
 }
 
-file_exists($testXmlFile) or die('Directory or file does not exist: ' . $testXmlFile);
+file_exists($xmlDir) or die('Directory or file does not exist: ' . $xmlDir);
 
-foreach (glob("$testXmlFile/[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9][0-9][0-9]-[0-9][0-9].xml") as $inFileName) {
+// euctr format for file name is for example: "EU-CTR 2008-003606-33 v1 - Results.xml"
+foreach (glob("$xmlDir/EU*Results.xml") as $inFileName) {
 
-  $outFileName = "$testXmlFile/" . basename($inFileName, '.xml') . '.json';
+  $outFileName = "$xmlDir/" . basename($inFileName, '.xml') . '.json';
 
   $fileContents = file_get_contents($inFileName);
 

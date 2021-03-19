@@ -1460,10 +1460,16 @@ ctrLoadQueryIntoDbEuctr <- function(
                eudractnumbersimported[startindex:stopindex]),
         utils::URLencode, character(1L))
       #
-      fp <- paste0(
-        tempDir, "/",
-        eudractnumbersimported[startindex:stopindex],
-        ".zip")
+      fp <- tempfile(
+        pattern = paste0(
+          "euctr_results_",
+          startindex:stopindex, "_"),
+        tmpdir = tempDir,
+        fileext = ".zip"
+      )
+      # tempDir, "/",
+      # eudractnumbersimported[startindex:stopindex],
+      # ".zip")
       #
       # success handling: saving to file
       # and progress indicator function
@@ -1496,17 +1502,19 @@ ctrLoadQueryIntoDbEuctr <- function(
             tmp <- utils::unzip(
               zipfile = fp[x],
               exdir = tempDir)
+            # results in files such as
+            # EU-CTR 2008-003606-33 v1 - Results.xml
 
             if (any(grepl("pdf$", tmp))) {
               message("PDF ", appendLF = FALSE)
             }
 
-            # TODO could there be more than one XML file?
-            if (any(tmp2 <- grepl("xml$", tmp)))
-              file.rename(tmp[tmp2][1], paste0(
-                tempDir, "/",
-                eudractnumbersimported[startindex:stopindex][x],
-                ".xml"))
+            # # TODO could there be more than one XML file?
+            # if (any(tmp2 <- grepl("xml$", tmp)))
+            #   file.rename(tmp[tmp2][1], paste0(
+            #     tempDir, "/",
+            #     eudractnumbersimported[startindex:stopindex][x],
+            #     ".xml"))
 
             message(". ", appendLF = FALSE)
           } else {
@@ -1566,75 +1574,66 @@ ctrLoadQueryIntoDbEuctr <- function(
     if (verbose) message("DEBUG: ", xml2json)
     importedresults <- system(xml2json, intern = TRUE)
 
-    # iterate over batches of results files
+    # iterate over results files
     message("(3/4) Importing JSON into database...")
-    # TODO preferably, importedresults
-    # would be pre-allocated, but its
-    # size is not known at this stage
-    importedresults <- NULL
-    for (i in 1:(resultsNumBatches +
-                 ifelse(resultsNumModulo > 0, 1, 0))) {
+    importedresults <- batchresults <- sapply(
+      # e.g., EU-CTR 2008-003606-33 v1 - Results.json
+      dir(path = tempDir,
+          pattern = "EU.*Results[.]json",
+          full.names = TRUE),
+      function(fileName) {
 
-      # calculated indices for
-      # eudractnumbersimported vector
-      startindex <- (i - 1) * parallelretrievals + 1
-      stopindex  <- ifelse(
-        i > resultsNumBatches,
-        startindex + resultsNumModulo,
-        startindex + parallelretrievals) - 1
+        # check file
+        if (file.exists(fileName) && file.size(fileName) > 0) {
 
-      batchresults <- sapply(
-        eudractnumbersimported[startindex:stopindex],
-        function(x) {
+          # read contents
+          tmpjson <- readChar(
+            con = fileName,
+            nchars = file.info(fileName)$size,
+            useBytes = TRUE)
 
-          # compose file name and check
-          fileName <- paste0(tempDir, "/", x, ".json")
-          if (file.exists(fileName) && file.size(fileName) > 0) {
-
-            # read contents
-            tmpjson <- readChar(
-              con = fileName,
-              nchars = file.info(fileName)$size,
-              useBytes = TRUE)
-
-            # update database with results
-            tmp <- try({
-              tmpnodbi <-
-                nodbi::docdb_update(
-                  src = con,
-                  key = con$collection,
-                  value = data.frame(
-                    "a2_eudract_number" = x,
-                    "json" = tmpjson,
-                    stringsAsFactors = FALSE))
-
-              max(tmpnodbi, na.rm = TRUE)
-            },
-            silent = TRUE)
-
-            # inform user on failed trial
-            if (class(tmp) == "try-error") {
-              warning(paste0("Import into mongo failed for trial ", x),
-                      immediate. = TRUE)
-              tmp <- 0
-            }
-
-          } else {
-
-            # file did not exist
-            tmp <- 0
-
+          # get eudract number
+          # {"@attributes":{"eudractNumber":"2008-003606-33",
+          euctrnumber <- sub(
+            '^.*\\{\"eudractNumber\":\"([0-9]{4}-[0-9]{6}-[0-9]{2})\".*$',
+            "\\1", tmpjson)
+          if (!grepl("^[0-9]{4}-[0-9]{6}-[0-9]{2}$", euctrnumber)) {
+            warning("No EudraCT number recognised in file ", fileName, call. = FALSE)
           }
 
-          # return for accumulating information
-          return(tmp)
+          # update database with results
+          tmp <- try({
+            tmpnodbi <-
+              nodbi::docdb_update(
+                src = con,
+                key = con$collection,
+                value = data.frame(
+                  "a2_eudract_number" = euctrnumber,
+                  "json" = tmpjson,
+                  stringsAsFactors = FALSE))
 
-        }) # end batchresults
+            max(tmpnodbi, na.rm = TRUE)
+          },
+          silent = TRUE)
 
-      # append batch to number of results
-      importedresults <- c(importedresults, batchresults)
+          # inform user on failed trial
+          if (class(tmp) == "try-error") {
+            warning(paste0("Import into mongo failed for trial ", x),
+                    immediate. = TRUE)
+            tmp <- 0
+          }
 
-    } # for batch
+        } else {
+
+          # file did not exist
+          tmp <- 0
+
+        }
+
+        # return for accumulating information
+        return(tmp)
+
+      }) # end batchresults
 
     # iterate over batches of result history from webpage
     if (euctrresultshistory) {
