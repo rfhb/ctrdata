@@ -1954,18 +1954,19 @@ dfTrials2Long <- function(df) {
 
   # iterative unnesting, by column
   out <- apply(
-    dbx[, -match("_id", names(df))], 2,
+    df[ , -match("_id", names(df))], 2,
     function(cc) {
       message(". ", appendLF = FALSE)
       # and by element in column
       lapply(cc, function(c) {
         x <- unlist(flattenDf(c))
-        data.frame(
-          "name" = names(x),
-          "value" = x,
-          stringsAsFactors = FALSE,
-          row.names = NULL)
-      })})
+        if (!is.null(names(x))) {
+          data.frame(
+            "name" = names(x),
+            "value" = x,
+            stringsAsFactors = FALSE,
+            row.names = NULL)
+        }})})
 
   # add _id to list elements and
   # simplify into data frames
@@ -1973,11 +1974,12 @@ dfTrials2Long <- function(df) {
     out, function(e) {
       message(". ", appendLF = FALSE)
       names(e) <- df[, "_id"]
-      do.call(rbind, c(e, stringsAsFactors = FALSE, row.names = NULL))
+      # do.call(rbind, c(e, stringsAsFactors = FALSE))
+      do.call(rbind, e)
     })
 
   # combine lists into data frame
-  out <- do.call(rbind, c(out, stringsAsFactors = FALSE, row.names = NULL))
+  out <- do.call(rbind, c(out, stringsAsFactors = FALSE))
   message(". ", appendLF = FALSE)
 
   # generate new data frame with target columns and order
