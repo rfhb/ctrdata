@@ -211,8 +211,7 @@ df <- suppressMessages(
 # test
 expect_identical(
   names(df),
-  c("trial_id", "main_id",
-    "sub_id", "name", "value")
+  c("_id", "identifier", "name", "value")
 )
 
 # test
@@ -236,7 +235,7 @@ df2 <- dfName2Value(
 
 # test
 expect_true(
-  length(unique(df2[["trial_id"]])) >= 2L
+  length(unique(df2[["_id"]])) >= 2L
 )
 
 # test
@@ -268,7 +267,7 @@ expect_error(
   dfTrials2Long(
     df = result[, -1]
   ),
-  "Missing _id column / variable in parameter")
+  "Missing _id column or other variables in parameter 'df'")
 
 
 #### dbFindFields #####
