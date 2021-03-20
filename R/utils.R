@@ -1213,7 +1213,6 @@ dbGetFieldsIntoDf <- function(fields = "",
   }
 
   ## check database connection
-  #print(RSQLite::dbIsValid(con$con))
   if (is.null(con$ctrDb)) con <- ctrDb(con = con)
 
   # helper function for managing lists
@@ -1360,7 +1359,7 @@ dbGetFieldsIntoDf <- function(fields = "",
             X = dfi[, 2],
             INDEX = dfi[, 1],
             function(i) {
-              if (all(is.na(i))) { #
+              if (all(is.na(i))) {
                 # keep NULL elements in output
                 NULL
               } else {
@@ -1754,8 +1753,6 @@ dfTrials2Long <- function(df) {
   # to add a first row in the next step,
   # columns that are not compatible with
   # adding a row are converted to character
-  # sapply(df, mode)
-  # sapply(df, class)
   conv <- sapply(df, class) == "Date"
   conv <- seq_len(ncol(df))[conv]
   for (c in conv) df[, c] <- as.character(df[, c, drop = TRUE])
@@ -1768,7 +1765,7 @@ dfTrials2Long <- function(df) {
 
   # iterative unnesting, by column
   out <- lapply(
-    df[ , -match("_id", names(df)), drop = FALSE],
+    df[, -match("_id", names(df)), drop = FALSE],
     function(cc) {
       message(". ", appendLF = FALSE)
       # get item name as added in first row
@@ -1835,7 +1832,7 @@ dfTrials2Long <- function(df) {
     stringi::stri_extract_all_regex(out[["name"]], "[0-9]([.]|$)"),
     function(i) paste0(gsub("[.]", "", i), collapse = "."),
     character(1L))
-  out[["identifier"]] [ out[["identifier"]] == "NA" ] <- "0"
+  out[["identifier"]] [out[["identifier"]] == "NA"] <- "0"
   message(". ", appendLF = FALSE)
 
   # remove numbers from variable name
@@ -1907,7 +1904,7 @@ dfListExtractKey <- function(
   .Deprecated(new = "dfName2Value")
 
   # check
-  if (!("_id" %in% names(df))) {
+  if (!any("_id" == names(df))) {
     stop("Data frame 'df' lacks '_id' column.",
          call. = FALSE)
   }
@@ -2428,7 +2425,7 @@ typeField <- function(dfi) {
   silent = TRUE)
 
   # prepare output
-  if (!("try-error" %in% class(tmp)) &&
+  if (!inherits(tmp, "try-error") &&
       !is.null(unlist(tmp))) {
 
     # need to construct new data frame,
@@ -2570,7 +2567,7 @@ installCygwinWindowsDoInstall <- function(
   # check
   if (!file.exists(dstfile) ||
       file.size(dstfile) < (5 * 10 ^ 5) ||
-      ("try-error" %in% class(tmpdl))) {
+      (inherits(tmpdl, "try-error"))) {
     stop("Failed, please download manually and install with:\n",
          tmpurl, " ", installcmd,
          call. = FALSE)

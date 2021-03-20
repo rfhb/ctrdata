@@ -649,16 +649,17 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
                                 value = value)
           }, silent = TRUE)
           # - if error, try insert
-          if ("try-error" %in% class(tmp) ||
+          if (inherits(tmp, "try-error") ||
               tmp == 0L) {
             tmp <- try({
               nodbi::docdb_create(src = con,
                                   key = con$collection,
                                   value = value)
-            }, silent = TRUE)}
+            }, silent = TRUE)
+          }
 
           # return values for lapply
-          if ("try-error" %in% class(tmp) ||
+          if (inherits(tmp, "try-error") ||
               tmp == 0L) {
             # inform user
             message(ids[i], ": ", tmp)
@@ -1269,8 +1270,8 @@ ctrLoadQueryIntoDbEuctr <- function(
   fp <- tempfile(
     pattern = paste0(
       "euctr_trials_",
-      formatC(1:resultsEuNumPages,
-              digits = 0,
+      formatC(seq_len(resultsEuNumPages),
+              digits = 0L,
               width = nchar(resultsEuNumPages),
               flag = 0), "_"),
     tmpdir = tempDir,
@@ -1279,9 +1280,9 @@ ctrLoadQueryIntoDbEuctr <- function(
 
   # success handling: saving to file
   # and progress indicator function
-  pc <- 0
+  pc <- 0L
   curlSuccess <- function(res) {
-    pc <<- pc + 1
+    pc <<- pc + 1L
     # save to file
     # note that the number in euctr_trials_nnn
     # is not expected to correspond to the page
@@ -1293,19 +1294,18 @@ ctrLoadQueryIntoDbEuctr <- function(
             "\r", appendLF = FALSE)
   }
 
-  # add URLs and file names into pool
+  # add randomised URLs and file names into pool
   tmp <- lapply(
-    # randomise sequence
     sample(seq_along(urls),
            size = length(urls),
            replace = FALSE,
            prob = NULL),
-    function(x)
+    function(u) {
       curl::curl_fetch_multi(
-        url = urls[x],
+        url = urls[u],
         done = curlSuccess,
         pool = pool)
-  )
+    })
 
   # inform user on first page
   message("Pages: 0 done...\r", appendLF = FALSE)
@@ -1479,12 +1479,12 @@ ctrLoadQueryIntoDbEuctr <- function(
       #
       tmp <- lapply(
         seq_along(urls),
-        function(x)
+        function(i) {
           curl::curl_fetch_multi(
-            url = urls[x],
+            url = urls[i],
             done = curlSuccess,
             pool = pool
-          ))
+          )})
 
       # do download and save
       tmp <- curl::multi_run(
@@ -1492,12 +1492,12 @@ ctrLoadQueryIntoDbEuctr <- function(
 
       # unzip downloaded file and rename
       tmp <- lapply(
-        seq_along(urls), function(x) {
+        seq_along(urls), function(i) {
 
-          if (file.size(fp[x]) != 0) {
+          if (file.size(fp[i]) != 0) {
 
             tmp <- utils::unzip(
-              zipfile = fp[x],
+              zipfile = fp[i],
               exdir = tempDir)
             # results in files such as
             # EU-CTR 2008-003606-33 v1 - Results.xml
@@ -1514,11 +1514,11 @@ ctrLoadQueryIntoDbEuctr <- function(
           }
 
           # clean up
-          if (!verbose) unlink(fp[x])
+          if (!verbose) unlink(fp[i])
 
         })
 
-    } # for batch
+    } # iterate over batches of results
 
     ## use system commands to convert
     ## xml to json and to import json
@@ -1568,7 +1568,7 @@ ctrLoadQueryIntoDbEuctr <- function(
 
     # iterate over results files
     message("(3/4) Importing JSON into database...")
-    importedresults <- batchresults <- sapply(
+    importedresults <- sapply(
       # e.g., EU-CTR 2008-003606-33 v1 - Results.json
       dir(path = tempDir,
           pattern = "EU.*Results[.]json",
@@ -1576,7 +1576,8 @@ ctrLoadQueryIntoDbEuctr <- function(
       function(fileName) {
 
         # check file
-        if (file.exists(fileName) && file.size(fileName) > 0) {
+        if (file.exists(fileName) &&
+            file.size(fileName) > 0) {
 
           # read contents
           tmpjson <- readChar(
@@ -1610,7 +1611,7 @@ ctrLoadQueryIntoDbEuctr <- function(
 
           # inform user on failed trial
           if (class(tmp) == "try-error") {
-            warning(paste0("Import into mongo failed for trial ", x),
+            warning(paste0("Import into mongo failed for trial ", euctrnumber),
                     immediate. = TRUE)
             tmp <- 0
           }
@@ -1663,16 +1664,16 @@ ctrLoadQueryIntoDbEuctr <- function(
 
         tmp <- lapply(
           seq_along(urls),
-          function(x)
+          function(i) {
             curl::multi_add(
               handle = curl::new_handle(
-                url = urls[x],
+                url = urls[i],
                 range = "0-22999", # NOTE only top part of page
                 accept_encoding = "identity"
               ),
               done = done,
               pool = pool
-            ))
+            )})
 
         # do download and save into batchresults
         # TODO preferably retdat is pre-allocated
@@ -1683,12 +1684,12 @@ ctrLoadQueryIntoDbEuctr <- function(
 
         batchresults <- lapply(
           retdat,
-          function(x) rawToChar(x[["content"]]))
+          function(i) rawToChar(i[["content"]]))
 
         # curl return sequence is not predictable
         # therefore recalculate the eudract numbers
         eudractnumberscurled <- sapply(
-          retdat, function(x) x[["url"]])
+          retdat, function(i) i[["url"]])
         #
         eudractnumberscurled <- sub(
           ".*([0-9]{4}-[0-9]{6}-[0-9]{2}).*",
@@ -1700,13 +1701,13 @@ ctrLoadQueryIntoDbEuctr <- function(
 
         # extract information about results
         tmpFirstDate <- as.Date(
-          vapply(batchresults, function(x)
+          vapply(batchresults, function(t) {
             trimws(sub(
               ".+First version publication date</div>.*?<div>(.+?)</div>.*",
               "\\1",
               ifelse(grepl(
-                "First version publication date", x),
-                x, ""))), character(1L)),
+                "First version publication date", t),
+                t, "")))}, character(1L)),
           format = "%d %b %Y")
 
         # global end date is variably represented in euctr:
@@ -1720,30 +1721,29 @@ ctrLoadQueryIntoDbEuctr <- function(
         # reset date time
         Sys.setlocale("LC_TIME", lct)
 
-        tmpChanges <- vapply(batchresults, function(x)
+        tmpChanges <- vapply(batchresults, function(t) {
           trimws(
             gsub("[ ]+", " ",
                  gsub("[\n\r]", "",
                       gsub("<[a-z/]+>", "",
                            sub(".+Version creation reason.*?<td class=\"valueColumn\">(.+?)</td>.+",
-                               "\\1", ifelse(grepl("Version creation reason", x), x, ""))
-                      )))),
+                               "\\1", ifelse(grepl("Version creation reason", t), t, ""))
+                      ))))},
           character(1L))
 
         tmp <- lapply(
-          seq_along(
-            along.with = startindex:stopindex),
-          function(x) {
+          seq_along(along.with = startindex:stopindex),
+          function(i) {
 
-            if (tmpChanges[x] == "") tmpChanges[x] <- "(not specified)"
+            if (tmpChanges[i] == "") tmpChanges[i] <- "(not specified)"
 
             upd <- nodbi::docdb_update(
               src = con,
               key = con$collection,
               value = data.frame(
-                "a2_eudract_number" = eudractnumberscurled[x],
-                "firstreceived_results_date" = as.character(tmpFirstDate[x]),
-                "version_results_history" = tmpChanges[x],
+                "a2_eudract_number" = eudractnumberscurled[i],
+                "firstreceived_results_date" = as.character(tmpFirstDate[i]),
+                "version_results_history" = tmpChanges[i],
                 stringsAsFactors = FALSE))
 
           })

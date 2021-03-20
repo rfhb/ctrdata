@@ -1,4 +1,4 @@
-# ctrdata 1.5.1
+# ctrdata 1.5.0.9001
  - 2021-03-20
  - bugfix for non-matching euctr protocol and result ids
  - dfTrials2Long refactored and accelerated
