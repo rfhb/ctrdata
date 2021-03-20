@@ -1612,81 +1612,109 @@ dfName2Value <- function(df, valuename = "",
     stop("'valuename' must be specified.",
          call. = FALSE)
   }
-  if (!identical(
-    names(df),
-    c("trial_id", "main_id",
-      "sub_id", "name", "value"))) {
+  if (!identical(names(df),
+                 c("_id", "identifier", "name", "value"))) {
     stop("'df' does not seem to come from dfTrials2Long()",
          call. = FALSE)
   }
 
-  # if now where... are specified, just
-  # return the rows where name corresponds
+  # indices of valuename
+  indexVnames <- which(grepl(valuename, df[["name"]],
+                             perl = TRUE, ignore.case = TRUE))
+
+  # if no where... are specified, just
+  # return rows where name corresponds
   # to valuename
   if (wherename == "" & wherevalue == "") {
 
     # get relevant rows
-    df <- df[grepl(valuename, df[["name"]]), ]
+    out <- df[indexVnames, ]
 
-    # value column is character
-    # try to convert it to numeric
-    out <- suppressWarnings(
-      as.numeric(df[["value"]])
-    )
-    # use if converted ok
-    if (all(is.na(out) == is.na(df[["value"]]))) {
-      df["value"] <- out
-    }
+    # # value column is character
+    # # try to convert it to numeric
+    # out <- suppressWarnings(
+    #   as.numeric(df[["value"]])
+    # )
+    # # use if converted ok
+    # if (all(is.na(out) == is.na(df[["value"]]))) {
+    #   df["value"] <- out
+    # }
+    #
+    # # output
+    # rownames(df) <- NULL
+    # return(df)
 
-    # output
-    rownames(df) <- NULL
-    return(df)
+  } else {# if where... are specified, continue
 
-  } # otherwise continue
+    # get where... indices per trial
+    indexRows <- which(
+      grepl(wherename, df[["name"]], perl = TRUE, ignore.case = TRUE) &
+      grepl(wherevalue, df[["value"]], perl = TRUE, ignore.case = TRUE))
 
-  # get indices per trial
-  indexNames <- which(
-    grepl(wherename, df[["name"]],
-          perl = TRUE,
-          ignore.case = TRUE) &
-      grepl(wherevalue, df[["value"]],
-            perl = TRUE,
-            ignore.case = TRUE))
+    # get trial ids and identifiers for where...
+    indexCases <- df[indexRows, c("_id", "identifier")]
 
-  # get trial ids, main_id, sub_id
-  indexCases <-
-    df[indexNames, c("trial_id", "main_id", "sub_id")]
-
-  # get output
-  out <- lapply(
-    seq_len(nrow(indexCases)),
-    function(i) {
-
-      tmp <- intersect(
-        which(df["trial_id"] == indexCases[i, "trial_id"]),
-        which(df["main_id"] == indexCases[i, "main_id"])
-      )
-      if (!is.na(indexCases[i, "sub_id"])) {
-        tmp <- intersect(
-          tmp,
-          which(df["sub_id"] == indexCases[i, "sub_id"])
-        )
+    # get output iterate over trials
+    out <- apply(
+      indexCases, 1,
+      function(i) {
+        # print(i)
+        ids <- Reduce(
+          intersect, list(
+            # trial id
+            which(grepl(i[["_id"]], df[["_id"]], fixed = TRUE)),
+            # identifier to match starting from left and
+            # do not match e.g. 22 for identifier 2
+            which(grepl(paste0("^", i[["identifier"]], "([.]|$)"),
+                        df[["identifier"]])),
+            # indices of sought valuename
+            indexVnames
+          ))
+        # return value
+        if (length(ids)) df[ids, ]
       }
-      df <- df[tmp, ]
-      tmp <- which(grepl(
-        valuename, df[, "name"],
-        perl = FALSE,
-        ignore.case = TRUE)
-      )
-      if (length(tmp)) df[tmp, ]
-    }
-  )
+    )
 
-  # bind into data frame
-  out <- do.call(
-    rbind,
-    out
-  )
+
+    # # get output iterate over trials
+    # out <- lapply(
+    #   seq_len(nrow(indexCases)),
+    #   function(i) {
+    #
+    #     ids <- Reduce(
+    #       intersect, list(
+    #         # trial id
+    #         which(grepl(indexCases[i, "_id"], df[["_id"]], fixed = TRUE)),
+    #         # identifier to match starting from left and
+    #         # do not match e.g. 22 for identifier 2
+    #         which(grepl(paste0("^", indexCases[i, "identifier"], "([.]|$)"),
+    #                     df[["identifier"]])),
+    #         # valuename
+    #         which(grepl(valuename, df[["name"]],
+    #                     perl = TRUE, ignore.case = TRUE))
+    #       ))
+    #     # if (!is.na(indexCases[i, "sub_id"])) {
+    #     #   tmp <- intersect(
+    #     #     tmp,
+    #     #     which(df["sub_id"] == indexCases[i, "sub_id"])
+    #     #   )
+    #     # }
+    #     #dfids <- df[ids, ]
+    #     # ids <- which(grepl(
+    #     #   valuename, df[ids, "name"],
+    #     #   perl = TRUE,
+    #     #   ignore.case = TRUE)
+    #     # )
+    #     if (length(ids)) df[ids, ]
+    #   }
+    # )
+
+    # bind into data frame
+    out <- do.call(
+      rbind,
+      c(out, stringsAsFactors = FALSE, make.row.names = FALSE))
+
+  } # if where...
 
   # value column is character
   # try to convert it to numeric
@@ -1699,7 +1727,7 @@ dfName2Value <- function(df, valuename = "",
   }
 
   # return
-  rownames(out) <- NULL
+  # rownames(out) <- NULL
   return(out)
 
 } # end dfName2Value
