@@ -1630,20 +1630,6 @@ dfName2Value <- function(df, valuename = "",
     # get relevant rows
     out <- df[indexVnames, ]
 
-    # # value column is character
-    # # try to convert it to numeric
-    # out <- suppressWarnings(
-    #   as.numeric(df[["value"]])
-    # )
-    # # use if converted ok
-    # if (all(is.na(out) == is.na(df[["value"]]))) {
-    #   df["value"] <- out
-    # }
-    #
-    # # output
-    # rownames(df) <- NULL
-    # return(df)
-
   } else {# if where... are specified, continue
 
     # get where... indices per trial
@@ -1658,7 +1644,6 @@ dfName2Value <- function(df, valuename = "",
     out <- apply(
       indexCases, 1,
       function(i) {
-        # print(i)
         ids <- Reduce(
           intersect, list(
             # trial id
@@ -1674,40 +1659,6 @@ dfName2Value <- function(df, valuename = "",
         if (length(ids)) df[ids, ]
       }
     )
-
-
-    # # get output iterate over trials
-    # out <- lapply(
-    #   seq_len(nrow(indexCases)),
-    #   function(i) {
-    #
-    #     ids <- Reduce(
-    #       intersect, list(
-    #         # trial id
-    #         which(grepl(indexCases[i, "_id"], df[["_id"]], fixed = TRUE)),
-    #         # identifier to match starting from left and
-    #         # do not match e.g. 22 for identifier 2
-    #         which(grepl(paste0("^", indexCases[i, "identifier"], "([.]|$)"),
-    #                     df[["identifier"]])),
-    #         # valuename
-    #         which(grepl(valuename, df[["name"]],
-    #                     perl = TRUE, ignore.case = TRUE))
-    #       ))
-    #     # if (!is.na(indexCases[i, "sub_id"])) {
-    #     #   tmp <- intersect(
-    #     #     tmp,
-    #     #     which(df["sub_id"] == indexCases[i, "sub_id"])
-    #     #   )
-    #     # }
-    #     #dfids <- df[ids, ]
-    #     # ids <- which(grepl(
-    #     #   valuename, df[ids, "name"],
-    #     #   perl = TRUE,
-    #     #   ignore.case = TRUE)
-    #     # )
-    #     if (length(ids)) df[ids, ]
-    #   }
-    # )
 
     # bind into data frame
     out <- do.call(
@@ -1727,7 +1678,6 @@ dfName2Value <- function(df, valuename = "",
   }
 
   # return
-  # rownames(out) <- NULL
   return(out)
 
 } # end dfName2Value
@@ -1777,171 +1727,6 @@ dfTrials2Long <- function(df) {
         "Missing _id column or other variables in parameter 'df'",
         call. = FALSE
       )
-
-  # # check if _id present
-  # if (!any("_id" == names(df))) stop(
-  #   "Missing _id column / variable in parameter 'df'.",
-  #   call. = FALSE
-  # )
-
-  # # do by endpoint
-  # col2df <- function(atrialcol) {
-  #
-  #   # the full column is needed in atrialcol
-  #   # to extract the name of the column
-  #   atcname <- paste0("", names(atrialcol))
-  #
-  #   # atrialcol is a single cell of a
-  #   # larger data.frame and this
-  #   # extracts the element in this cell
-  #   atrialcol <- atrialcol[[1]]
-  #
-  #   # if not inheriting from data.frame,
-  #   # change into one so that row indexing
-  #   # in lapply below will work
-  #   if (!inherits(atrialcol, "data.frame")) {
-  #
-  #     atrialcol <- data.frame(
-  #       # unname to eliminate any
-  #       # name of root element
-  #       unname(atrialcol),
-  #       check.names = FALSE,
-  #       stringsAsFactors = FALSE)
-  #
-  #   }
-  #
-  #   message(nrow(atrialcol))
-  #   # TODO do we ever have more than one row?
-  #
-  #   # for each endpoint / measure,
-  #   # expand the lists into long
-  #   # format by unlisting
-  #   measures <- lapply(
-  #
-  #     seq_len(nrow(atrialcol)),
-  #     function(r) {
-  #
-  #       # get rows of data
-  #       measure <- atrialcol[r, , drop = TRUE]
-  #
-  #       # fully unlist
-  #       measure <- unlist(
-  #         measure,
-  #         recursive = TRUE,
-  #         use.names = TRUE)
-  #
-  #       # in case the column is empty
-  #       if (is.null(measure)) {
-  #         data.frame(
-  #           main_id = NA,
-  #           sub_id = NA,
-  #           name = atcname,
-  #           value = NA,
-  #           stringsAsFactors = FALSE
-  #         )
-  #       } else {
-  #         data.frame(
-  #           main_id = r,
-  #           sub_id = NA,
-  #           name = paste0(atcname, ".", names(measure)),
-  #           value = as.character(measure),
-  #           stringsAsFactors = FALSE
-  #         )
-  #       }
-  #
-  #     }) # lapply over measure
-  #
-  #   # concatenate into long format
-  #   measures <- do.call(
-  #     rbind,
-  #     measures
-  #   )
-  #
-  #   # format names
-  #   measures["sub_id"] <- suppressWarnings(
-  #     as.integer(
-  #       sub("^.*?([0-9]+)$", "\\1", measures$name)
-  #     ))
-  #   measures["name"] <- sub("[0-9]+$", "", measures$name)
-  #   measures["name"] <- sub("@attributes[.]", "", measures$name)
-  #   measures["name"] <- sub("[.]$", "", measures$name)
-  #
-  #   # output
-  #   row.names(measures) <- NULL
-  #   measures
-  #
-  # }
-  #
-  # # for each trial
-  # trials2long <- function(severaltrials) {
-  #
-  #   # total number of trials
-  #   numtrials <- nrow(severaltrials)
-  #
-  #   # iterate over trials
-  #   trials <- lapply(
-  #     seq_len(nrow(severaltrials)),
-  #     function(r) {
-  #
-  #       # r-th trial in works
-  #       message("Trial ", r, " / ", numtrials, "\r", appendLF = FALSE)
-  #
-  #       # get trial
-  #       atrial <- severaltrials[r, ]
-  #
-  #       # iterate over columns
-  #       cols <- lapply(
-  #         # exclude "_id"
-  #         seq(from = 2, to = ncol(severaltrials[r, ])),
-  #         function(c) {
-  #
-  #           if (!is.na(atrial[[c]]) &&
-  #               !identical(atrial[[c]], list(NULL))) {
-  #
-  #             # convert into long format
-  #             switch(
-  #               class(atrial[[c]]),
-  #               "data.frame" =
-  #                 data.frame(
-  #                   main_id = NA,
-  #                   sub_id = NA,
-  #                   name = names(atrial)[c],
-  #                   value = atrial[[c]],
-  #                   stringsAsFactors = FALSE
-  #                 ),
-  #               # all other (Date, list, ...)
-  #               col2df(atrialcol = atrial[c])
-  #             )
-  #           } # if is.na
-  #         }
-  #       ) # cols
-  #
-  #       # concatenate
-  #       out <- do.call(
-  #         rbind,
-  #         cols
-  #       )
-  #
-  #       # format trial
-  #       if (!is.null(out)) {
-  #         data.frame(
-  #           trial_id = atrial[["_id"]],
-  #           out,
-  #           stringsAsFactors = FALSE
-  #         )}
-  #
-  #     }) # iterate over trials
-  #
-  #   # concatenate into long format
-  #   do.call(
-  #     rbind,
-  #     trials
-  #   )
-  #
-  # } # end trials2long
-  #
-  # # collate
-  # out <- trials2long(severaltrials = df)
 
   # helper function
   flattenDf <- function(x) {
@@ -2003,26 +1788,8 @@ dfTrials2Long <- function(df) {
   out[["identifier"]] [ out[["identifier"]] == "NA" ] <- "0"
   message(". ", appendLF = FALSE)
 
-  #
-  #
-  #
-  #   # main_id is first number in the string if any
-  #   out[["main_id"]] <- as.integer(stringi::stri_extract_first_charclass(out[["name"]], "[0-9]"))
-  #   out[["main_id"]][ is.na(out[["main_id"]]) ] <- 0
-  #
-  #   # sub_id is end number if any
-  #   out[["sub_id"]] <- as.integer(ifelse(
-  #     stringi::stri_count_charclass(out[["name"]], "[0-9]") == 2L,
-  #     stringi::stri_extract_last_charclass(out[["name"]], "[0-9]"),
-  #     NA))
-  #   out[["sub_id"]][ is.na(out[["sub_id"]]) ] <- 0
-
   # remove numbers from variable name
   out[["name"]] <- gsub("[0-9]|[.]@attributes", "", out[["name"]])
-
-  # keep only uniques, e.g. if df columns
-  # repeated or had overlapping content
-  # out <- unique(out)
 
   # inform
   message("\nTotal ", nrow(out), " rows, ",
@@ -2030,7 +1797,6 @@ dfTrials2Long <- function(df) {
           " unique names of variables")
 
   # output
-  # rownames(out) <- NULL
   return(out)
 
 } # end dfTrials2Long

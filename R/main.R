@@ -1266,17 +1266,6 @@ ctrLoadQueryIntoDbEuctr <- function(
     utils::URLencode, character(1L))
 
   # generate vector with file names for saving pages
-  # fp <- paste0(
-  #   tempDir,
-  #   # NOTE this file name pattern is used
-  #   # by subsequent functions including
-  #   # shell scripts so not to be changed
-  #   "/euctr-trials-page_",
-  #   formatC(1:resultsEuNumPages,
-  #           digits = 0,
-  #           width = nchar(resultsEuNumPages),
-  #           flag = 0),
-  #   ".txt")
   fp <- tempfile(
     pattern = paste0(
       "euctr_trials_",
