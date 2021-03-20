@@ -1630,6 +1630,7 @@ dfName2Value <- function(df, valuename = "",
   # indices of valuename
   indexVnames <- which(grepl(valuename, df[["name"]],
                              perl = TRUE, ignore.case = TRUE))
+  if (!length(indexVnames)) stop("No rows found for 'valuename' = ", valuename)
 
   # if no where... are specified, just
   # return rows where name corresponds
@@ -1644,7 +1645,8 @@ dfName2Value <- function(df, valuename = "",
     # get where... indices per trial
     indexRows <- which(
       grepl(wherename, df[["name"]], perl = TRUE, ignore.case = TRUE) &
-        grepl(wherevalue, df[["value"]], perl = TRUE, ignore.case = TRUE))
+      grepl(wherevalue, df[["value"]], perl = TRUE, ignore.case = TRUE))
+    if (!length(indexRows)) stop("No rows found for 'wherename' and 'wherevalue'")
 
     # get trial ids and identifiers for where...
     indexCases <- df[indexRows, c("_id", "identifier")]
@@ -1749,6 +1751,15 @@ dfTrials2Long <- function(df) {
     x
   }
 
+  # to add a first row in the next step,
+  # columns that are not compatible with
+  # adding a row are converted to character
+  # sapply(df, mode)
+  # sapply(df, class)
+  conv <- sapply(df, class) == "Date"
+  conv <- seq_len(ncol(df))[conv]
+  for (c in conv) df[, c] <- as.character(df[, c, drop = TRUE])
+
   # add a first row to df to hold item name
   # which otherwise is not available in apply
   df <- rbind(
@@ -1821,14 +1832,14 @@ dfTrials2Long <- function(df) {
   # name can have from 0 to about 6 number groups, get all
   # and concatenate to oid like string such as "1.2.2.1.4"
   out[["identifier"]] <- vapply(
-    stringi::stri_extract_all_charclass(out[["name"]], "[0-9]"),
-    function(i) paste0(i, collapse = "."),
+    stringi::stri_extract_all_regex(out[["name"]], "[0-9]([.]|$)"),
+    function(i) paste0(gsub("[.]", "", i), collapse = "."),
     character(1L))
   out[["identifier"]] [ out[["identifier"]] == "NA" ] <- "0"
   message(". ", appendLF = FALSE)
 
   # remove numbers from variable name
-  out[["name"]] <- gsub("[0-9]|[.]@attributes", "", out[["name"]])
+  out[["name"]] <- gsub("[0-9]([.])|[0-9]$|[.]?@attributes", "\\1", out[["name"]], perl = TRUE)
 
   # inform
   message("\nTotal ", nrow(out), " rows, ",
