@@ -3,7 +3,8 @@
 // file: xml2json.php
 // ralf.herold@gmx.net
 // part of https://github.com/rfhb/ctrdata
-// last edited: 2016-04-20
+// last edited: 2021-03-20
+// used for: ctgov, euctr
 // time xml2json.php:
 // 2016-04-20: 0.05 s for 2 trials ~ 25 ms per trial
 
@@ -20,9 +21,8 @@ if ($argc <= 1) {
 
 file_exists($testXmlFile) or die('Directory or file does not exist: ' . $testXmlFile);
 
-// determine outfile and make sure it does not exist
+// determine outfile and delete if existing
 $outFileName = $testXmlFile . '/allfiles.json';
-$outIdsName  = $testXmlFile . '/allctgov.txt';
 file_exists($outFileName) and unlink($outFileName);
 
 // get UTC date, time in format correspondsing to the
@@ -74,9 +74,6 @@ foreach (glob("$testXmlFile/NCT*.xml") as $inFileName) {
 
   // save all in one concatenated file
   file_put_contents($outFileName, json_encode($simpleXml) . "\n", FILE_APPEND | LOCK_EX);
-
-  // save NCT number into one file
-  // file_put_contents($outIdsName, basename($inFileName, '.xml') . "\n", FILE_APPEND | LOCK_EX);
 
 }
 
