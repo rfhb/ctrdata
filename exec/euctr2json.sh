@@ -15,7 +15,7 @@
 # 2017-01-12: real 1m23.021s for 10978 doc: ~  8 ms per trial (MacBookPro2015)
 # 2019-08-10: real 3s    for 446 documents: ~  7 ms per trial (MacBookPro2015)
 
-cat "$1/euctr-trials-page_"* > "$1/allfiles.txt"
+cat "$1/euctr_trials_"* > "$1/euctr_trials_all.txt"
 
 # notes to myself: sed cannot use + or other
 # alternatively install gnu-sed: > brew install gnu-sed
@@ -25,7 +25,7 @@ cat "$1/euctr-trials-page_"* > "$1/allfiles.txt"
 # transform to json for import in mongodb, reference:
 # http://docs.mongodb.org/manual/reference/bios-example-collection/
 
-LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
+LC_CTYPE=C && LANG=C && < "$1/euctr_trials_all.txt" perl -ne '
   # this section is faster with perl compared to sed
 
   # get UTC date, time in format correspondsing to the

@@ -1000,7 +1000,7 @@ ctrLoadQueryIntoDbCtgov <- function(
   utils::unzip(f, exdir = tempDir)
 
   ## compose commands to transform xml into json, into
-  # a single allfiles.json in the temporaray directory
+  # a single alltrials.json in the temporaray directory
   # special command handling on windows
   if (.Platform$OS.type == "windows") {
     #
@@ -1266,24 +1266,35 @@ ctrLoadQueryIntoDbEuctr <- function(
     utils::URLencode, character(1L))
 
   # generate vector with file names for saving pages
-  fp <- paste0(
-    tempDir,
-    # NOTE this file name pattern is used
-    # by subsequent functions including
-    # shell scripts so not to be changed
-    "/euctr-trials-page_",
-    formatC(1:resultsEuNumPages,
-            digits = 0,
-            width = nchar(resultsEuNumPages),
-            flag = 0),
-    ".txt")
+  # fp <- paste0(
+  #   tempDir,
+  #   # NOTE this file name pattern is used
+  #   # by subsequent functions including
+  #   # shell scripts so not to be changed
+  #   "/euctr-trials-page_",
+  #   formatC(1:resultsEuNumPages,
+  #           digits = 0,
+  #           width = nchar(resultsEuNumPages),
+  #           flag = 0),
+  #   ".txt")
+  fp <- tempfile(
+    pattern = paste0(
+      "euctr_trials_",
+      formatC(1:resultsEuNumPages,
+              digits = 0,
+              width = nchar(resultsEuNumPages),
+              flag = 0), "_"),
+    tmpdir = tempDir,
+    fileext = ".txt"
+  )
 
   # success handling: saving to file
   # and progress indicator function
   pc <- 0
   curlSuccess <- function(res) {
     pc <<- pc + 1
-    # save to file - NOTE the number in page_nnn
+    # save to file
+    # note that the number in euctr_trials_nnn
     # is not expected to correspond to the page
     # number in the URL that was downloaded
     cat(rawToChar(res$content), file = fp[pc])
