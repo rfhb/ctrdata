@@ -9,6 +9,13 @@ countriesEUCTR <- c(
   "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL",
   "PL", "PT", "RO", "SK", "SE", "SI", "ES", "GB", "IS", "LI",
   "NO", "3RD")
+#
+# regexpr
+# - EUCTR e.g. 2010-022945-52-3RD
+regEuctr <- "[0-9]{4}-[0-9]{6}-[0-9]{2}"
+# - CTGOV
+regCtgov <- "NCT[0-9]{8}"
+
 
 #' Check and prepare nodbi connection object for ctrdata
 #'
@@ -1637,7 +1644,7 @@ dfName2Value <- function(df, valuename = "",
     # get where... indices per trial
     indexRows <- which(
       grepl(wherename, df[["name"]], perl = TRUE, ignore.case = TRUE) &
-      grepl(wherevalue, df[["value"]], perl = TRUE, ignore.case = TRUE))
+        grepl(wherevalue, df[["value"]], perl = TRUE, ignore.case = TRUE))
 
     # get trial ids and identifiers for where...
     indexCases <- df[indexRows, c("_id", "identifier")]
@@ -1740,29 +1747,38 @@ dfTrials2Long <- function(df) {
     x
   }
 
+  # add a first row to df to hold item name
+  # which otherwise is not available in apply
+  df <- rbind(
+    names(df),
+    df)
+
   # iterative unnesting, by column
-  out <- apply(
-    df[ , -match("_id", names(df))], 2,
+  out <- lapply(
+    df[ , -match("_id", names(df)), drop = FALSE],
     function(cc) {
       message(". ", appendLF = FALSE)
+      # get item name as added in first row
+      tn <- cc[[1]]
       # and by element in column
-      lapply(cc, function(c) {
+      lapply(cc[-1], function(c) {
         x <- unlist(flattenDf(c))
-        if (!is.null(names(x))) {
-          data.frame(
-            "name" = names(x),
-            "value" = x,
-            stringsAsFactors = FALSE,
-            row.names = NULL)
-        }})})
+        if (!is.null(names(x))) tn <- names(x)
+        if (is.null(x)) x <- NA
+        data.frame(
+          "name" = tn,
+          "value" = x,
+          check.names = FALSE,
+          stringsAsFactors = FALSE,
+          row.names = NULL)
+      })})
 
   # add _id to list elements and
   # simplify into data frames
   out <- lapply(
     out, function(e) {
       message(". ", appendLF = FALSE)
-      names(e) <- df[, "_id"]
-      # do.call(rbind, c(e, stringsAsFactors = FALSE))
+      names(e) <- df[-1, "_id", drop = TRUE]
       do.call(rbind, e)
     })
 
@@ -1770,17 +1786,35 @@ dfTrials2Long <- function(df) {
   out <- do.call(rbind, c(out, stringsAsFactors = FALSE))
   message(". ", appendLF = FALSE)
 
+  # remove rows where value is NA
+  out <- out[!is.na(out[["value"]]), , drop = FALSE]
+
+  # process row.names such as "clinical_results.NCT00082758.73"
+  # to to obtain "clinical_results" as part of variable name
+  names <- stringi::stri_replace_first(
+    str = row.names(out), replacement = "",
+    regex = c(paste0(".(", regCtgov, "|", regEuctr, "-[3A-Z]+)[.0-9]*")))
+
   # generate new data frame with target columns and order
   out <- data.frame(
-    # process row.names such as "clinical_results.NCT00082758.73"
-    "_id" = sub("(.*[.])([A-Z0-9-]+)[.][0-9]+", "\\2", row.names(out)),
+    # process row.names to obtain trial id
+    "_id" = stringi::stri_extract_first(
+      str = row.names(out),
+      regex = c(paste0(regCtgov, "|", regEuctr, "-[3A-Z]+"))),
     "identifier" = NA,
-    "name" = paste0(sub("(.*[.])([A-Z0-9-]+)[.][0-9]+", "\\1", row.names(out)), out[["name"]]),
+    "name" = out[["name"]],
     "value" = out[["value"]],
     check.names = FALSE,
     row.names = NULL,
     stringsAsFactors = FALSE)
   message(". ", appendLF = FALSE)
+
+  # generate variable names from processed row names
+  # and name unless the same is as already in name
+  out[["name"]] <- ifelse(
+    out[["name"]] == names,
+    out[["name"]],
+    paste0(names, ".", out[["name"]]))
 
   # name can have from 0 to about 6 number groups, get all
   # and concatenate to oid like string such as "1.2.2.1.4"
