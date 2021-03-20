@@ -192,7 +192,7 @@ df2 <- dfName2Value(
 
 # test
 expect_true(
-  nrow(df2) > 2L
+  any("NCT01471782" %in% df2[["_id"]])
 )
 
 # test
