@@ -1712,6 +1712,8 @@ dfName2Value <- function(df, valuename = "",
 #'  _id, identifier, name, value
 #'
 #' @importFrom stringi stri_extract_all_charclass
+#' @importFrom stringi stri_extract_first
+#' @importFrom stringi stri_replace_first
 #'
 #' @export
 #'
