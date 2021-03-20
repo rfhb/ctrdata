@@ -50,9 +50,10 @@
 related information. It converts lists and other
 values into individual rows of a long data frame.
 From the resulting data frame, values of interest
-can then be selected (e.g. select and outcome
-and its analysis by number of the measure which
-has &quot;Hazard Ratio&quot; in its name)." />
+can then be selected (e.g. select an outcome
+and its analysis by the identifier of the measure
+which has &quot;Hazard Ratio&quot; in its name, see
+dfName2Value)." />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:creator" content="@rfhb" />
 <meta name="twitter:site" content="@rfhb" />
@@ -87,7 +88,7 @@ has &quot;Hazard Ratio&quot; in its name)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ctrdata</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.5.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.5.0.9001</span>
       </span>
     </div>
 
@@ -160,9 +161,10 @@ has &quot;Hazard Ratio&quot; in its name)." />
 related information. It converts lists and other
 values into individual rows of a long data frame.
 From the resulting data frame, values of interest
-can then be selected (e.g. select and outcome
-and its analysis by number of the measure which
-has "Hazard Ratio" in its name).</p>
+can then be selected (e.g. select an outcome
+and its analysis by the identifier of the measure
+which has "Hazard Ratio" in its name, see
+<a href='dfName2Value.html'>dfName2Value</a>).</p>
     </div>
 
     <pre class="usage"><span class='fu'>dfTrials2Long</span><span class='op'>(</span><span class='va'>df</span><span class='op'>)</span></pre>
@@ -181,8 +183,8 @@ one or more variables as obtained from
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A data frame with the five columns:
- trial_id, main_id, sub_id, name, value</p>
+    <p>A data frame with the four columns:
+ _id, identifier, name, value</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
