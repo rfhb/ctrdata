@@ -1722,6 +1722,8 @@ dfName2Value <- function(df, valuename = "",
 #' @return A data frame with the five columns:
 #'  trial_id, main_id, sub_id, name, value
 #'
+#' @importFrom stringi stri_extract_all_charclass
+#'
 #' @export
 #'
 #' @examples
@@ -1741,180 +1743,263 @@ dfName2Value <- function(df, valuename = "",
 dfTrials2Long <- function(df) {
 
   # check parameters
+  if (!any("_id" == names(df)) ||
+      ncol(df) == 1L) stop(
+        "Missing _id column or other variables in parameter 'df'",
+        call. = FALSE
+      )
 
-  # check if _id present
-  if (!any("_id" == names(df))) stop(
-    "Missing _id column / variable in parameter 'df'.",
-    call. = FALSE
-  )
+  # # check if _id present
+  # if (!any("_id" == names(df))) stop(
+  #   "Missing _id column / variable in parameter 'df'.",
+  #   call. = FALSE
+  # )
 
-  # do by endpoint
-  col2df <- function(atrialcol) {
+  # # do by endpoint
+  # col2df <- function(atrialcol) {
+  #
+  #   # the full column is needed in atrialcol
+  #   # to extract the name of the column
+  #   atcname <- paste0("", names(atrialcol))
+  #
+  #   # atrialcol is a single cell of a
+  #   # larger data.frame and this
+  #   # extracts the element in this cell
+  #   atrialcol <- atrialcol[[1]]
+  #
+  #   # if not inheriting from data.frame,
+  #   # change into one so that row indexing
+  #   # in lapply below will work
+  #   if (!inherits(atrialcol, "data.frame")) {
+  #
+  #     atrialcol <- data.frame(
+  #       # unname to eliminate any
+  #       # name of root element
+  #       unname(atrialcol),
+  #       check.names = FALSE,
+  #       stringsAsFactors = FALSE)
+  #
+  #   }
+  #
+  #   message(nrow(atrialcol))
+  #   # TODO do we ever have more than one row?
+  #
+  #   # for each endpoint / measure,
+  #   # expand the lists into long
+  #   # format by unlisting
+  #   measures <- lapply(
+  #
+  #     seq_len(nrow(atrialcol)),
+  #     function(r) {
+  #
+  #       # get rows of data
+  #       measure <- atrialcol[r, , drop = TRUE]
+  #
+  #       # fully unlist
+  #       measure <- unlist(
+  #         measure,
+  #         recursive = TRUE,
+  #         use.names = TRUE)
+  #
+  #       # in case the column is empty
+  #       if (is.null(measure)) {
+  #         data.frame(
+  #           main_id = NA,
+  #           sub_id = NA,
+  #           name = atcname,
+  #           value = NA,
+  #           stringsAsFactors = FALSE
+  #         )
+  #       } else {
+  #         data.frame(
+  #           main_id = r,
+  #           sub_id = NA,
+  #           name = paste0(atcname, ".", names(measure)),
+  #           value = as.character(measure),
+  #           stringsAsFactors = FALSE
+  #         )
+  #       }
+  #
+  #     }) # lapply over measure
+  #
+  #   # concatenate into long format
+  #   measures <- do.call(
+  #     rbind,
+  #     measures
+  #   )
+  #
+  #   # format names
+  #   measures["sub_id"] <- suppressWarnings(
+  #     as.integer(
+  #       sub("^.*?([0-9]+)$", "\\1", measures$name)
+  #     ))
+  #   measures["name"] <- sub("[0-9]+$", "", measures$name)
+  #   measures["name"] <- sub("@attributes[.]", "", measures$name)
+  #   measures["name"] <- sub("[.]$", "", measures$name)
+  #
+  #   # output
+  #   row.names(measures) <- NULL
+  #   measures
+  #
+  # }
+  #
+  # # for each trial
+  # trials2long <- function(severaltrials) {
+  #
+  #   # total number of trials
+  #   numtrials <- nrow(severaltrials)
+  #
+  #   # iterate over trials
+  #   trials <- lapply(
+  #     seq_len(nrow(severaltrials)),
+  #     function(r) {
+  #
+  #       # r-th trial in works
+  #       message("Trial ", r, " / ", numtrials, "\r", appendLF = FALSE)
+  #
+  #       # get trial
+  #       atrial <- severaltrials[r, ]
+  #
+  #       # iterate over columns
+  #       cols <- lapply(
+  #         # exclude "_id"
+  #         seq(from = 2, to = ncol(severaltrials[r, ])),
+  #         function(c) {
+  #
+  #           if (!is.na(atrial[[c]]) &&
+  #               !identical(atrial[[c]], list(NULL))) {
+  #
+  #             # convert into long format
+  #             switch(
+  #               class(atrial[[c]]),
+  #               "data.frame" =
+  #                 data.frame(
+  #                   main_id = NA,
+  #                   sub_id = NA,
+  #                   name = names(atrial)[c],
+  #                   value = atrial[[c]],
+  #                   stringsAsFactors = FALSE
+  #                 ),
+  #               # all other (Date, list, ...)
+  #               col2df(atrialcol = atrial[c])
+  #             )
+  #           } # if is.na
+  #         }
+  #       ) # cols
+  #
+  #       # concatenate
+  #       out <- do.call(
+  #         rbind,
+  #         cols
+  #       )
+  #
+  #       # format trial
+  #       if (!is.null(out)) {
+  #         data.frame(
+  #           trial_id = atrial[["_id"]],
+  #           out,
+  #           stringsAsFactors = FALSE
+  #         )}
+  #
+  #     }) # iterate over trials
+  #
+  #   # concatenate into long format
+  #   do.call(
+  #     rbind,
+  #     trials
+  #   )
+  #
+  # } # end trials2long
+  #
+  # # collate
+  # out <- trials2long(severaltrials = df)
 
-    # the full column is needed in atrialcol
-    # to extract the name of the column
-    atcname <- paste0("", names(atrialcol))
-
-    # atrialcol is a single cell of a
-    # larger data.frame and this
-    # extracts the element in this cell
-    atrialcol <- atrialcol[[1]]
-
-    # if not inheriting from data.frame,
-    # change into one so that row indexing
-    # in lapply below will work
-    if (!inherits(atrialcol, "data.frame")) {
-
-      atrialcol <- data.frame(
-        # unname to eliminate any
-        # name of root element
-        unname(atrialcol),
-        check.names = FALSE,
-        stringsAsFactors = FALSE)
-
+  # helper function
+  flattenDf <- function(x) {
+    while (any(vapply(x, is.list, logical(1L)))) {
+      x <- lapply(x, function(x) if (is.list(x)) x else list(x))
+      x <- unlist(x, recursive = FALSE)
     }
-
-    # for each endpoint / measure,
-    # expand the lists into long
-    # format by unlisting
-    measures <- lapply(
-
-      seq_len(nrow(atrialcol)),
-      function(r) {
-
-        # get rows of data
-        measure <- atrialcol[r, , drop = TRUE]
-
-        # fully unlist
-        measure <- unlist(
-          measure,
-          recursive = TRUE,
-          use.names = TRUE)
-
-        # in case the column is empty
-        if (is.null(measure)) {
-          data.frame(
-            main_id = NA,
-            sub_id = NA,
-            name = atcname,
-            value = NA,
-            stringsAsFactors = FALSE
-          )
-        } else {
-          data.frame(
-            main_id = r,
-            sub_id = NA,
-            name = paste0(atcname, ".", names(measure)),
-            value = as.character(measure),
-            stringsAsFactors = FALSE
-          )
-        }
-
-      }) # lapply over measure
-
-    # concatenate into long format
-    measures <- do.call(
-      rbind,
-      measures
-    )
-
-    # format names
-    measures["sub_id"] <- suppressWarnings(
-      as.integer(
-        sub("^.*?([0-9]+)$", "\\1", measures$name)
-      ))
-    measures["name"] <- sub("[0-9]+$", "", measures$name)
-    measures["name"] <- sub("@attributes[.]", "", measures$name)
-    measures["name"] <- sub("[.]$", "", measures$name)
-
-    # output
-    row.names(measures) <- NULL
-    measures
-
+    x
   }
 
-  # for each trial
-  trials2long <- function(severaltrials) {
+  # iterative unnesting, by column
+  out <- apply(
+    dbx[, -match("_id", names(df))], 2,
+    function(cc) {
+      message(". ", appendLF = FALSE)
+      # and by element in column
+      lapply(cc, function(c) {
+        x <- unlist(flattenDf(c))
+        data.frame(
+          "name" = names(x),
+          "value" = x,
+          stringsAsFactors = FALSE,
+          row.names = NULL)
+      })})
 
-    # total number of trials
-    numtrials <- nrow(severaltrials)
+  # add _id to list elements and
+  # simplify into data frames
+  out <- lapply(
+    out, function(e) {
+      message(". ", appendLF = FALSE)
+      names(e) <- df[, "_id"]
+      do.call(rbind, c(e, stringsAsFactors = FALSE, row.names = NULL))
+    })
 
-    # iterate over trials
-    trials <- lapply(
-      seq_len(nrow(severaltrials)),
-      function(r) {
+  # combine lists into data frame
+  out <- do.call(rbind, c(out, stringsAsFactors = FALSE, row.names = NULL))
+  message(". ", appendLF = FALSE)
 
-        # r-th trial in works
-        message("Trial ", r, " / ", numtrials, "\r", appendLF = FALSE)
+  # generate new data frame with target columns and order
+  out <- data.frame(
+    # process row.names such as "clinical_results.NCT00082758.73"
+    "_id" = sub("(.*[.])([A-Z0-9-]+)[.][0-9]+", "\\2", row.names(out)),
+    "identifier" = NA,
+    "name" = paste0(sub("(.*[.])([A-Z0-9-]+)[.][0-9]+", "\\1", row.names(out)), out[["name"]]),
+    "value" = out[["value"]],
+    check.names = FALSE,
+    row.names = NULL,
+    stringsAsFactors = FALSE)
+  message(". ", appendLF = FALSE)
 
-        # get trial
-        atrial <- severaltrials[r, ]
+  # name can have from 0 to about 6 number groups, get all
+  # and concatenate to oid like string such as "1.2.2.1.4"
+  out[["identifier"]] <- vapply(
+    stringi::stri_extract_all_charclass(out[["name"]], "[0-9]"),
+    function(i) paste0(i, collapse = "."),
+    character(1L))
+  out[["identifier"]] [ out[["identifier"]] == "NA" ] <- "0"
+  message(". ", appendLF = FALSE)
 
-        # iterate over columns
-        cols <- lapply(
-          # exclude "_id"
-          seq(from = 2, to = ncol(severaltrials[r, ])),
-          function(c) {
+  #
+  #
+  #
+  #   # main_id is first number in the string if any
+  #   out[["main_id"]] <- as.integer(stringi::stri_extract_first_charclass(out[["name"]], "[0-9]"))
+  #   out[["main_id"]][ is.na(out[["main_id"]]) ] <- 0
+  #
+  #   # sub_id is end number if any
+  #   out[["sub_id"]] <- as.integer(ifelse(
+  #     stringi::stri_count_charclass(out[["name"]], "[0-9]") == 2L,
+  #     stringi::stri_extract_last_charclass(out[["name"]], "[0-9]"),
+  #     NA))
+  #   out[["sub_id"]][ is.na(out[["sub_id"]]) ] <- 0
 
-            if (!is.na(atrial[[c]]) &&
-                !identical(atrial[[c]], list(NULL))) {
-
-              # convert into long format
-              switch(
-                class(atrial[[c]]),
-                "data.frame" =
-                  data.frame(
-                    main_id = NA,
-                    sub_id = NA,
-                    name = names(atrial)[c],
-                    value = atrial[[c]],
-                    stringsAsFactors = FALSE
-                  ),
-                # all other (Date, list, ...)
-                col2df(atrialcol = atrial[c])
-              )
-            } # if is.na
-          }
-        ) # cols
-
-        # concatenate
-        out <- do.call(
-          rbind,
-          cols
-        )
-
-        # format trial
-        if (!is.null(out)) {
-          data.frame(
-            trial_id = atrial[["_id"]],
-            out,
-            stringsAsFactors = FALSE
-          )}
-
-      }) # iterate over trials
-
-    # concatenate into long format
-    do.call(
-      rbind,
-      trials
-    )
-
-  } # end trials2long
-
-  # collate
-  out <- trials2long(severaltrials = df)
+  # remove numbers from variable name
+  out[["name"]] <- gsub("[0-9]|[.]@attributes", "", out[["name"]])
 
   # keep only uniques, e.g. if df columns
   # repeated or had overlapping content
-  out <- unique(out)
+  # out <- unique(out)
 
   # inform
   message("\nTotal ", nrow(out), " rows, ",
-          length(unique(out$name)),
+          length(unique(out[["name"]])),
           " unique names of variables")
 
   # output
-  rownames(out) <- NULL
+  # rownames(out) <- NULL
   return(out)
 
 } # end dfTrials2Long
