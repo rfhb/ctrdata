@@ -1545,10 +1545,10 @@ dbGetFieldsIntoDf <- function(fields = "",
 
 #' Extract information of interest (e.g., endpoint)
 #' from long data frame of protocol- or result-related
-#' trial information as returned from \link{dfTrials2Long}
+#' trial information as returned by \link{dfTrials2Long}
 #'
-#' @param df A data frame with 5 columns (trial_id,
-#'  main_id, sub_id, name, value) as returned from
+#' @param df A data frame with four columns (_id,
+#'  identifier, name, value) as returned by
 #'  \link{dfTrials2Long}
 #'
 #' @param valuename A character string for the name of the variable
@@ -1560,8 +1560,10 @@ dbGetFieldsIntoDf <- function(fields = "",
 #' @param wherevalue A character string with the value of interest
 #'  for the variable of interest
 #'
-#' @return A data frame with columns trial_id, main_id, sub_id,
-#'  name, value that only includes the values of interest
+#' @return A data frame with columns _id, identifier,
+#'  name, value that only includes the values of interest,
+#'  where value are strings unless all value elements
+#'  are numbers.
 #'
 #' @export
 #' @examples
@@ -1689,17 +1691,18 @@ dfName2Value <- function(df, valuename = "",
 #' related information. It converts lists and other
 #' values into individual rows of a long data frame.
 #' From the resulting data frame, values of interest
-#' can then be selected (e.g. select and outcome
-#' and its analysis by number of the measure which
-#' has "Hazard Ratio" in its name).
+#' can then be selected (e.g. select an outcome
+#' and its analysis by the identifier of the measure
+#' which has "Hazard Ratio" in its name, see
+#' \link{dfName2Value}).
 #'
 #' @param df Data frame with columns including
 #'  the trial identifier (\code{_id}) and
 #'  one or more variables as obtained from
 #'  \link{dbGetFieldsIntoDf}
 #'
-#' @return A data frame with the five columns:
-#'  trial_id, main_id, sub_id, name, value
+#' @return A data frame with the four columns:
+#'  _id, identifier, name, value
 #'
 #' @importFrom stringi stri_extract_all_charclass
 #'

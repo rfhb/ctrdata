@@ -21,7 +21,7 @@ motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. The package
 is to be used within the [R](https://www.r-project.org/) system.
 
-Last reviewed on 2021-03-16 for version 1.5.0.9000
+Last reviewed on 2021-03-20 for version 1.5.1
 
 Main features:
 
@@ -209,6 +209,9 @@ result <- dbGetFieldsIntoDf(
 # Find unique trial identifiers for trials that have nore than 
 # one record, for example for several EU Member States: 
 uniqueids <- dbFindIdsUniqueTrials(con = db)
+# Searching for duplicate trials... 
+# * Total of 232 records in collection.
+#  - 169 EUCTR _id were not preferred EU Member State record of trial
 
 # Keep only unique / de-duplicated records:
 result <- result[ result[["_id"]] %in% uniqueids, ]
@@ -221,8 +224,8 @@ with(result,
 #                      a7_trial_is_part_of_a_paediatric_investigation_plan
 # p_end_of_trial_status Information not present in EudraCT No Yes
 #     Completed                                          6 31  15
-#     Ongoing                                            0  4   3
-#     Prematurely Ended                                  1  1   0
+#     Ongoing                                            0  4   4
+#     Prematurely Ended                                  0  1   0
 #     Restarted                                          0  0   1
 ```
 
@@ -253,9 +256,10 @@ result <- dbGetFieldsIntoDf(
 
 # Transform all fields into long name - value format
 result <- dfTrials2Long(df = result)
-# View(result)
+# Total 5896 rows, 12 unique names of variables
 
 # [1.] get counts of subjects for all arms into data frame
+# This count is in the group that has "Total" in its name
 nsubj <- dfName2Value(
   df = result, 
   valuename = "clinical_results.baseline.analyzed_list.analyzed.count_list.count.value",
@@ -271,15 +275,17 @@ nsite <- dfName2Value(
   # location.facility.name
   valuename = "^location.*name$"
 ) 
+# count
 nsite <- tapply(
   X = nsite[["value"]], 
-  INDEX = nsite[["trial_id"]],
+  INDEX = nsite[["_id"]],
   FUN = length,
   simplify = TRUE
 )
 nsite <- data.frame(
-  trial_id = names(nsite),
+  "_id" = names(nsite),
   nsite, 
+  check.names = FALSE,
   stringsAsFactors = FALSE,
   row.names = NULL
 )
@@ -291,8 +297,8 @@ ncon <- dfName2Value(
 ) 
 
 # merge sets
-nset <- merge(nsubj, nsite, by = "trial_id")
-nset <- merge(nset, ncon, by = "trial_id")
+nset <- merge(nsubj, nsite, by = "_id")
+nset <- merge(nset, ncon, by = "_id")
 
 # Example plot
 library(ggplot2)

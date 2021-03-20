@@ -4,13 +4,13 @@
 \alias{dfName2Value}
 \title{Extract information of interest (e.g., endpoint)
 from long data frame of protocol- or result-related
-trial information as returned from \link{dfTrials2Long}}
+trial information as returned by \link{dfTrials2Long}}
 \usage{
 dfName2Value(df, valuename = "", wherename = "", wherevalue = "")
 }
 \arguments{
-\item{df}{A data frame with 5 columns (trial_id,
-main_id, sub_id, name, value) as returned from
+\item{df}{A data frame with four columns (_id,
+identifier, name, value) as returned by
 \link{dfTrials2Long}}
 
 \item{valuename}{A character string for the name of the variable
@@ -23,13 +23,15 @@ of interest}
 for the variable of interest}
 }
 \value{
-A data frame with columns trial_id, main_id, sub_id,
- name, value that only includes the values of interest
+A data frame with columns _id, identifier,
+ name, value that only includes the values of interest,
+ where value are strings unless all value elements
+ are numbers.
 }
 \description{
 Extract information of interest (e.g., endpoint)
 from long data frame of protocol- or result-related
-trial information as returned from \link{dfTrials2Long}
+trial information as returned by \link{dfTrials2Long}
 }
 \examples{
 \dontrun{

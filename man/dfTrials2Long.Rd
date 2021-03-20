@@ -13,17 +13,18 @@ one or more variables as obtained from
 \link{dbGetFieldsIntoDf}}
 }
 \value{
-A data frame with the five columns:
- trial_id, main_id, sub_id, name, value
+A data frame with the four columns:
+ _id, identifier, name, value
 }
 \description{
 The function works with procotol- and results-
 related information. It converts lists and other
 values into individual rows of a long data frame.
 From the resulting data frame, values of interest
-can then be selected (e.g. select and outcome
-and its analysis by number of the measure which
-has "Hazard Ratio" in its name).
+can then be selected (e.g. select an outcome
+and its analysis by the identifier of the measure
+which has "Hazard Ratio" in its name, see
+\link{dfName2Value}).
 }
 \examples{
 \dontrun{
