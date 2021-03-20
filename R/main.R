@@ -1458,7 +1458,7 @@ ctrLoadQueryIntoDbEuctr <- function(
       urls <- vapply(
         paste0(queryEuRoot, queryEuType4,
                eudractnumbersimported[startindex:stopindex]),
-        utils::URLencode, character(1L))
+        utils::URLencode, character(1L), USE.NAMES = FALSE)
       #
       fp <- tempfile(
         pattern = paste0(
@@ -1467,9 +1467,6 @@ ctrLoadQueryIntoDbEuctr <- function(
         tmpdir = tempDir,
         fileext = ".zip"
       )
-      # tempDir, "/",
-      # eudractnumbersimported[startindex:stopindex],
-      # ".zip")
       #
       # success handling: saving to file
       # and progress indicator function
@@ -1509,15 +1506,10 @@ ctrLoadQueryIntoDbEuctr <- function(
               message("PDF ", appendLF = FALSE)
             }
 
-            # # TODO could there be more than one XML file?
-            # if (any(tmp2 <- grepl("xml$", tmp)))
-            #   file.rename(tmp[tmp2][1], paste0(
-            #     tempDir, "/",
-            #     eudractnumbersimported[startindex:stopindex][x],
-            #     ".xml"))
-
+            # inform user
             message(". ", appendLF = FALSE)
           } else {
+            # unsuccessful
             message("x ", appendLF = FALSE)
           }
 

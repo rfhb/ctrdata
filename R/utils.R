@@ -1280,6 +1280,7 @@ dbGetFieldsIntoDf <- function(fields = "",
     function(i) {
       #
       item <- fields[i]
+      message(". ", appendLF = FALSE)
       #
       query <- paste0('{"_id": {"$ne": "meta-info"}}')
       if (verbose) message("DEBUG: field: ", item)
@@ -1430,7 +1431,7 @@ dbGetFieldsIntoDf <- function(fields = "",
                                paste0(na.omit(unlist(x)),
                                       collapse = " / "))
           # inform user
-          message("* Collapsed with '/' [1]: '", item, "'")
+          message("\r* Collapsed with '/' [1]: '", item, "'")
           # remove any extraneous columns
           dfi <- dfi[, 1:2]
         }
@@ -1457,7 +1458,7 @@ dbGetFieldsIntoDf <- function(fields = "",
           dfi[[2]] <- tmpById
 
           # inform user
-          message("* Converted to list [2]: '", item, "'")
+          message("\r* Converted to list [2]: '", item, "'")
 
         }
         #
@@ -1473,7 +1474,7 @@ dbGetFieldsIntoDf <- function(fields = "",
             function(i)
               paste0(na.omit(unlist(i)), collapse = " / "), character(1L))
           # inform user
-          message("* Simplified or collapsed with '/' [3]: '", item, "'")
+          message("\r* Simplified or collapsed with '/' [3]: '", item, "'")
         }
 
       },
