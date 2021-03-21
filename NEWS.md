@@ -1,6 +1,8 @@
-# ctrdata 1.5.0.9001
- - 2021-03-20
- - bugfix for non-matching euctr protocol and result ids
+# ctrdata 1.5.1
+ - 2021-03-21
+ - bugfix for non-matching euctr protocol and result ids: 
+   any trials from EUCTR for which results were downloaded with 
+   version 1.5.0 should be downloaded again (ctrLoadQueryIntoDb)
  - dfTrials2Long refactored and accelerated
  - API change: dfTrials2Long return value (identifier replaces main_id and sub_id) 
  - new option to save EUCTR results PDF files in user-specified directory
