@@ -1740,7 +1740,7 @@ dfTrials2Long <- function(df) {
         "Missing _id column or other variables in 'df'",
         call. = FALSE
       )
-  if (any(c("identifier", "name", "value") == names(df))) stop(
+  if (any(c("identifier", "name", "value") %in% names(df))) stop(
         "Unexpected columns; 'df' should not come from dfTrials2Long",
         call. = FALSE
       )
@@ -1833,14 +1833,17 @@ dfTrials2Long <- function(df) {
   # name can have from 0 to about 6 number groups, get all
   # and concatenate to oid like string such as "1.2.2.1.4"
   out[["identifier"]] <- vapply(
-    stringi::stri_extract_all_regex(out[["name"]], "[0-9]([.]|$)"),
+    stringi::stri_extract_all_regex(out[["name"]], "[0-9]+([.]|$)"),
     function(i) paste0(gsub("[.]", "", i), collapse = "."),
     character(1L))
   out[["identifier"]] [out[["identifier"]] == "NA"] <- "0"
   message(". ", appendLF = FALSE)
 
   # remove numbers from variable name
-  out[["name"]] <- gsub("[0-9]([.])|[0-9]$|[.]?@attributes", "\\1", out[["name"]], perl = TRUE)
+  out[["name"]] <- gsub("[0-9]+([.])|[0-9]+$|[.]?@attributes", "\\1", out[["name"]], perl = TRUE)
+
+  # remove any double separators
+  out[["name"]] <- gsub("[.]+", ".", out[["name"]], perl = TRUE)
 
   # inform
   message("\nTotal ", nrow(out), " rows, ",
