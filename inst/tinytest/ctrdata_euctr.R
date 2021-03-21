@@ -293,7 +293,7 @@ expect_error(
   dfTrials2Long(
     df = result[, -1]
   ),
-  "Missing _id column or other variables in parameter 'df'")
+  "Missing _id column or other variables in 'df'")
 
 
 #### dbFindFields #####
