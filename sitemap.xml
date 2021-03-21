@@ -7,13 +7,13 @@
     <loc>https://rfhb.github.io/ctrdata//reference/addMetaData.html</loc>
   </url>
   <url>
-    <loc>https://rfhb.github.io/ctrdata//reference/checkDoc.html</loc>
-  </url>
-  <url>
     <loc>https://rfhb.github.io/ctrdata//reference/ctrDb.html</loc>
   </url>
   <url>
     <loc>https://rfhb.github.io/ctrdata//reference/ctrFindActiveSubstanceSynonyms.html</loc>
+  </url>
+  <url>
+    <loc>https://rfhb.github.io/ctrdata//reference/ctrGetQueryUrl.html</loc>
   </url>
   <url>
     <loc>https://rfhb.github.io/ctrdata//reference/ctrGetQueryUrlFromBrowser.html</loc>

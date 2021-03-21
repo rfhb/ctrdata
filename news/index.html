@@ -80,13 +80,19 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ctrdata</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.1</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
+  <a href="../index.html">
+    <span class="fas fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -97,7 +103,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/ctrdata_analyse.html">Analysing clinical trial information</a>
+      <a href="../articles/ctrdata_analyse.html">Summarise and analyse clinical trial information</a>
     </li>
     <li>
       <a href="../articles/ctrdata_install.html">Install R package ctrdata</a>
@@ -114,7 +120,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/rfhb/ctrdata/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -141,12 +147,44 @@
       <small>Source: <a href='https://github.com/rfhb/ctrdata/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="ctrdata-149000" class="section level1">
-<h1 class="page-header" data-toc-text="1.4.9000">
-<a href="#ctrdata-149000" class="anchor"></a>ctrdata 1.4.9000<small> Unreleased </small>
+    <div id="ctrdata-151" class="section level1">
+<h1 class="page-header" data-toc-text="1.5.1">
+<a href="#ctrdata-151" class="anchor"></a>ctrdata 1.5.1<small> Unreleased </small>
 </h1>
 <ul>
-<li>2020-10-19</li>
+<li>2021-03-21</li>
+<li>bugfix for non-matching euctr protocol and result ids: any trials from EUCTR for which results were downloaded with version 1.5.0 should be downloaded again (ctrLoadQueryIntoDb)</li>
+<li>dfTrials2Long refactored and accelerated</li>
+<li>API change: dfTrials2Long return value (identifier replaces main_id and sub_id)</li>
+<li>new option to save EUCTR results PDF files in user-specified directory</li>
+</ul>
+</div>
+    <div id="ctrdata-150" class="section level1">
+<h1 class="page-header" data-toc-text="1.5.0">
+<a href="#ctrdata-150" class="anchor"></a>ctrdata 1.5.0<small> 2021-03-16 </small>
+</h1>
+<ul>
+<li>2021-03-14</li>
+<li>return values of dbGetFieldsIntoDf are now mostly identical whether using src_mongo or src_sqlite, to best ensure portability of analysis code</li>
+<li>permit dots in queries / URLs</li>
+<li>improved handling of queryterm</li>
+<li>renamed ctrGetQueryUrlFromBrowser to ctrGetQueryUrl</li>
+<li>soft deprecated ctrGetQueryUrlFromBrowser</li>
+<li>ensure parallel retrievals from EUCTR</li>
+<li>speed up routines in dbGetFieldsIntoDf</li>
+<li>make dfTrials2Long handle NA better</li>
+<li>improved documentation, clarified examples</li>
+<li>simplified internals for typing fields, start typing results fields</li>
+</ul>
+</div>
+    <div id="ctrdata-141" class="section level1">
+<h1 class="page-header" data-toc-text="1.4.1">
+<a href="#ctrdata-141" class="anchor"></a>ctrdata 1.4.1<small> 2020-11-03 </small>
+</h1>
+<ul>
+<li>2020-11-03</li>
+<li>reset row names on data frames returned by functions</li>
+<li>update curl parameters when accessing EUCTR</li>
 </ul>
 </div>
     <div id="ctrdata-14" class="section level1">
@@ -901,7 +939,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

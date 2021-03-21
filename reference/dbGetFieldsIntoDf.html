@@ -46,12 +46,9 @@
 
 
 <meta property="og:title" content="Create data frame by extracting specified fields from database collection — dbGetFieldsIntoDf" />
-<meta property="og:description" content="With this convenience function, fields in the mongo database are retrieved
-into an R dataframe. As mongo json fields within the record of a trial
-can be hierarchical and structured, the function flattens the data and
-returns a concatenation
-of values if there is more than one value or if the field is (in) an array,
-such as follows: value 1 / value 2 / ... (see example)" />
+<meta property="og:description" content="With this convenience function, fields in the database are retrieved
+into an R data frame. Note that fields within the record of a trial
+can be hierarchical and structured, that is, nested." />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:creator" content="@rfhb" />
 <meta name="twitter:site" content="@rfhb" />
@@ -86,13 +83,19 @@ such as follows: value 1 / value 2 / ... (see example)" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ctrdata</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.1</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
+  <a href="../index.html">
+    <span class="fas fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -103,7 +106,7 @@ such as follows: value 1 / value 2 / ... (see example)" />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/ctrdata_analyse.html">Analysing clinical trial information</a>
+      <a href="../articles/ctrdata_analyse.html">Summarise and analyse clinical trial information</a>
     </li>
     <li>
       <a href="../articles/ctrdata_install.html">Install R package ctrdata</a>
@@ -120,7 +123,7 @@ such as follows: value 1 / value 2 / ... (see example)" />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/rfhb/ctrdata/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -149,12 +152,9 @@ such as follows: value 1 / value 2 / ... (see example)" />
     </div>
 
     <div class="ref-description">
-    <p>With this convenience function, fields in the mongo database are retrieved
-into an R dataframe. As mongo json fields within the record of a trial
-can be hierarchical and structured, the function flattens the data and
-returns a concatenation
-of values if there is more than one value or if the field is (in) an array,
-such as follows: value 1 / value 2 / ... (see example)</p>
+    <p>With this convenience function, fields in the database are retrieved
+into an R data frame. Note that fields within the record of a trial
+can be hierarchical and structured, that is, nested.</p>
     </div>
 
     <pre class="usage"><span class='fu'>dbGetFieldsIntoDf</span><span class='op'>(</span>fields <span class='op'>=</span> <span class='st'>""</span>, <span class='va'>con</span>, verbose <span class='op'>=</span> <span class='cn'>FALSE</span>, stopifnodata <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
@@ -165,7 +165,8 @@ such as follows: value 1 / value 2 / ... (see example)</p>
     <tr>
       <th>fields</th>
       <td><p>Vector of one or more strings, with names of the sought fields.
-See function <a href='dbFindFields.html'>dbFindFields</a> for how to find names of fields.</p></td>
+See function <a href='dbFindFields.html'>dbFindFields</a> for how to find names of fields.
+Regular expressions are possible. "item.subitem" notation is supported.</p></td>
     </tr>
     <tr>
       <th>con</th>
@@ -189,11 +190,19 @@ or not available in any of the records in the database collection.</p></td>
 
     <p>A data frame with columns corresponding to the sought fields.
 Note: a column for the record _id will always be included.
+Each column can be either a simple data type (numeric, character, date)
+or a list (see example below): For complicated lists, use function
+<a href='dfTrials2Long.html'>dfTrials2Long</a> followed by function <a href='dfName2Value.html'>dfName2Value</a> to
+extract values for nested variables.
 The maximum number of rows of the returned data frame is equal to,
-or less than the number of records in the data base.</p>
+or less than the number of records of trials in the database.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>For more sophisticated data retrieval from the database, see vignette
+    <p>With both src_sqlite and src_mongo, the function returns a list of data
+for a field that includes nested content; use function
+<a href='dfTrials2Long.html'>dfTrials2Long</a> followed by <a href='dfName2Value.html'>dfName2Value</a> to
+extract desired nested variables.</p>
+<p>For more sophisticated data retrieval from the database, see vignette
 examples and other packages to query mongodb such as mongolite.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -246,7 +255,7 @@ examples and other packages to query mongodb such as mongolite.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
