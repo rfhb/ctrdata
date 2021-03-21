@@ -1316,9 +1316,6 @@ ctrLoadQueryIntoDbEuctr <- function(
     # is not expected to correspond to the page
     # number in the URL that was downloaded
     # save to file
-    # if (res$status_code == 200L) {
-    #   cat(rawToChar(res$content), file = fp[pc])
-    # }
     if (res$status_code == 200L) {
       writeChar(object = rawToChar(res$content), con = fp[pc], useBytes = TRUE)
     }
@@ -1568,35 +1565,6 @@ ctrLoadQueryIntoDbEuctr <- function(
           if (!verbose) unlink(f)
 
         }) # lapply fp
-
-      # # unzip downloaded file and rename
-      # tmp <- lapply(
-      #   seq_along(fp), function(i) {
-      #
-      #     if (file.exists(fp[i]) &&
-      #         file.size(fp[i]) != 0L) {
-      #
-      #       tmp <- utils::unzip(
-      #         zipfile = fp[i],
-      #         exdir = tempDir)
-      #       # results in files such as
-      #       # EU-CTR 2008-003606-33 v1 - Results.xml
-      #
-      #       if (any(grepl("pdf$", tmp))) {
-      #         message("PDF ", appendLF = FALSE)
-      #       }
-      #
-      #       # inform user
-      #       message(". ", appendLF = FALSE)
-      #     } else {
-      #       # unsuccessful
-      #       message("x ", appendLF = FALSE)
-      #     }
-      #
-      #     # clean up
-      #     if (!verbose) unlink(fp[i])
-      #
-      #   })
 
     } # iterate over batches of results
 
