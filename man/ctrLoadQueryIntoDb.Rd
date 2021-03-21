@@ -12,6 +12,7 @@ ctrLoadQueryIntoDb(
   forcetoupdate = FALSE,
   euctrresults = FALSE,
   euctrresultshistory = FALSE,
+  euctrresultspdfpath = NULL,
   annotation.text = "",
   annotation.mode = "append",
   parallelretrievals = 10L,
@@ -29,8 +30,10 @@ a register, or the data frame returned by the
 The queryterm is recorded in the \code{collection} for later
 use to update records.}
 
-\item{register}{Vector of abbreviations of the register to query,
-defaults to "EUCTR".}
+\item{register}{String with abbreviation of register to query,
+at this time either "EUCTR" (default) or "CTGOV". Not needed
+if \code{queryterm} provide the information which register to
+query (see \code{queryterm}).}
 
 \item{querytoupdate}{Either the word "last" or the number of the
 query (based on \link{dbQueryHistory}) that should be run to
@@ -53,6 +56,10 @@ are always retrieved and loaded.)}
 \item{euctrresultshistory}{If \code{TRUE}, also download
 available history of results publication in EUCTR.
 This is quite time-consuming (default is \code{FALSE}).}
+
+\item{euctrresultspdfpath}{If a valid directory is specified,
+save PDF files of result publications from EUCTR into
+this directory (default is \code{NULL}).}
 
 \item{annotation.text}{Text to be including in the records
 retrieved with the current query, in the field "annotation".}
@@ -88,7 +95,9 @@ the query history in this database).
 This is the main function of package \link{ctrdata} for accessing
 registers. Note that re-rerunning this function adds or updates
 trial records in a database, even if from different queries or
-different registers.
+different registers. Updating means that the previously stored
+record is overwritten; see \code{annotation.text} for persisting
+user comments added to a record.
 }
 \examples{
 \dontrun{

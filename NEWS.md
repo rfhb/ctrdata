@@ -2,6 +2,8 @@
  - 2021-03-20
  - bugfix for non-matching euctr protocol and result ids
  - dfTrials2Long refactored and accelerated
+ - API change: dfTrials2Long return value (identifier replaces main_id and sub_id) 
+ - new option to save EUCTR results PDF files in user-specified directory
  
 # ctrdata 1.5.0
  - 2021-03-14

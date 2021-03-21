@@ -7,7 +7,9 @@
 #' This is the main function of package \link{ctrdata} for accessing
 #' registers. Note that re-rerunning this function adds or updates
 #' trial records in a database, even if from different queries or
-#' different registers.
+#' different registers. Updating means that the previously stored
+#' record is overwritten; see \code{annotation.text} for persisting
+#' user comments added to a record.
 #'
 #' @param queryterm Either a string with the full URL of a search in
 #' a register, or the data frame returned by the
@@ -17,8 +19,10 @@
 #' The queryterm is recorded in the \code{collection} for later
 #' use to update records.
 #'
-#' @param register Vector of abbreviations of the register to query,
-#' defaults to "EUCTR".
+#' @param register String with abbreviation of register to query,
+#' at this time either "EUCTR" (default) or "CTGOV". Not needed
+#' if \code{queryterm} provide the information which register to
+#' query (see \code{queryterm}).
 #'
 #' @param querytoupdate Either the word "last" or the number of the
 #' query (based on \link{dbQueryHistory}) that should be run to
@@ -41,6 +45,10 @@
 #' @param euctrresultshistory If \code{TRUE}, also download
 #' available history of results publication in EUCTR.
 #' This is quite time-consuming (default is \code{FALSE}).
+#'
+#' @param euctrresultspdfpath If a valid directory is specified,
+#' save PDF files of result publications from EUCTR into
+#' this directory (default is \code{NULL}).
 #'
 #' @param annotation.text Text to be including in the records
 #' retrieved with the current query, in the field "annotation".
@@ -98,6 +106,7 @@ ctrLoadQueryIntoDb <- function(
   forcetoupdate = FALSE,
   euctrresults = FALSE,
   euctrresultshistory = FALSE,
+  euctrresultspdfpath = NULL,
   annotation.text = "",
   annotation.mode = "append",
   parallelretrievals = 10L,
@@ -265,6 +274,7 @@ ctrLoadQueryIntoDb <- function(
                  register = register,
                  euctrresults = euctrresults,
                  euctrresultshistory = euctrresultshistory,
+                 euctrresultspdfpath = euctrresultspdfpath,
                  annotation.text = annotation.text,
                  annotation.mode = annotation.mode,
                  parallelretrievals = parallelretrievals,
@@ -850,6 +860,7 @@ ctrLoadQueryIntoDbCtgov <- function(
   register,
   euctrresults,
   euctrresultshistory,
+  euctrresultspdfpath,
   annotation.text,
   annotation.mode,
   parallelretrievals,
@@ -880,6 +891,7 @@ ctrLoadQueryIntoDbCtgov <- function(
   # downloading from register into temporary directy
   tempDir <- tempfile(pattern = "ctrDATA")
   dir.create(tempDir)
+  tempDir <- normalizePath(tempDir, mustWork = TRUE)
 
   # CTGOV standard identifiers
   # updated 2017-07 with revised ctgov website links, e.g.
@@ -1091,6 +1103,7 @@ ctrLoadQueryIntoDbEuctr <- function(
   register,
   euctrresults,
   euctrresultshistory,
+  euctrresultspdfpath,
   annotation.text,
   annotation.mode,
   parallelretrievals,
@@ -1106,13 +1119,28 @@ ctrLoadQueryIntoDbEuctr <- function(
     "\\1query=\\2\\3",
     queryterm)
 
-  # inform user
-  message("* Checking trials in EUCTR: ", appendLF = FALSE)
-
   # create empty temporary directory on localhost for
   # download from register into temporary directy
   tempDir <- tempfile(pattern = "ctrDATA")
   dir.create(tempDir)
+  tempDir <- normalizePath(tempDir, mustWork = TRUE)
+
+  # check results parameters
+  if (is.null(euctrresultspdfpath)) {
+    euctrresultspdfpath <- tempDir
+  }
+  if (euctrresults &&
+      (is.na(file.info(euctrresultspdfpath)[["isdir"]]) ||
+       !file.info(euctrresultspdfpath)[["isdir"]])) {
+    warning("Invalid directory specified for 'euctrresultspdfpath': ",
+            euctrresultspdfpath, call. = FALSE, immediate. = TRUE)
+    euctrresultspdfpath <- tempDir
+  }
+  # canonical directory path
+  euctrresultspdfpath <- normalizePath(euctrresultspdfpath, mustWork = TRUE)
+
+  # inform user
+  message("* Checking trials in EUCTR: ", appendLF = FALSE)
 
   # EUCTR standard identifiers
   queryEuRoot  <- "https://www.clinicaltrialsregister.eu/"
@@ -1499,20 +1527,35 @@ ctrLoadQueryIntoDbEuctr <- function(
 
       # unzip downloaded file and rename
       tmp <- lapply(
-        seq_along(fp), function(i) {
+        fp, function(f) {
 
-          if (file.exists(fp[i]) &&
-              file.size(fp[i]) != 0L) {
+          if (file.exists(f) &&
+              file.size(f) != 0L) {
 
             tmp <- utils::unzip(
-              zipfile = fp[i],
+              zipfile = f,
               exdir = tempDir)
             # results in files such as
             # EU-CTR 2008-003606-33 v1 - Results.xml
 
             if (any(grepl("pdf$", tmp))) {
               message("PDF ", appendLF = FALSE)
-            }
+              if (euctrresultspdfpath != tempDir) {
+                euctrnr <- gsub(paste0(".*(", regEuctr, ").*"), "\\1", tmp[!grepl("pdf$", tmp)])
+                # move PDF file(s) to user specified directory
+                saved <- try(file.rename(
+                  from = tmp[grepl("pdf$", tmp)],
+                  to = normalizePath(
+                    paste0(euctrresultspdfpath, "/",
+                           euctrnr, "--",
+                           basename(tmp[grepl("pdf$", tmp)])
+                    ), mustWork = FALSE)), silent = TRUE)
+                if (any(!saved)) {
+                  warning("Could not save ", tmp[!saved],
+                          call. = FALSE, immediate. = TRUE)
+                }
+              } # if paths
+            } # if any pdf
 
             # inform user
             message(". ", appendLF = FALSE)
@@ -1522,9 +1565,38 @@ ctrLoadQueryIntoDbEuctr <- function(
           }
 
           # clean up
-          if (!verbose) unlink(fp[i])
+          if (!verbose) unlink(f)
 
-        })
+        }) # lapply fp
+
+      # # unzip downloaded file and rename
+      # tmp <- lapply(
+      #   seq_along(fp), function(i) {
+      #
+      #     if (file.exists(fp[i]) &&
+      #         file.size(fp[i]) != 0L) {
+      #
+      #       tmp <- utils::unzip(
+      #         zipfile = fp[i],
+      #         exdir = tempDir)
+      #       # results in files such as
+      #       # EU-CTR 2008-003606-33 v1 - Results.xml
+      #
+      #       if (any(grepl("pdf$", tmp))) {
+      #         message("PDF ", appendLF = FALSE)
+      #       }
+      #
+      #       # inform user
+      #       message(". ", appendLF = FALSE)
+      #     } else {
+      #       # unsuccessful
+      #       message("x ", appendLF = FALSE)
+      #     }
+      #
+      #     # clean up
+      #     if (!verbose) unlink(fp[i])
+      #
+      #   })
 
     } # iterate over batches of results
 
@@ -1797,6 +1869,10 @@ ctrLoadQueryIntoDbEuctr <- function(
     message("\n= Imported or updated results for ",
             importedresults, " records for ",
             resultsEuNumTrials, " trial(s).")
+    if (euctrresultspdfpath != tempDir) {
+      message("= Results PDF files if any saved in '",
+              euctrresultspdfpath, "'")
+    }
 
   } # if euctrresults
 

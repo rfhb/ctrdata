@@ -9,6 +9,7 @@ ctrLoadQueryIntoDbEuctr(
   register,
   euctrresults,
   euctrresultshistory,
+  euctrresultspdfpath,
   annotation.text,
   annotation.mode,
   parallelretrievals,
@@ -27,8 +28,10 @@ a register, or the data frame returned by the
 The queryterm is recorded in the \code{collection} for later
 use to update records.}
 
-\item{register}{Vector of abbreviations of the register to query,
-defaults to "EUCTR".}
+\item{register}{String with abbreviation of register to query,
+at this time either "EUCTR" (default) or "CTGOV". Not needed
+if \code{queryterm} provide the information which register to
+query (see \code{queryterm}).}
 
 \item{euctrresults}{If \code{TRUE}, also download available
 results when retrieving and loading trials from EUCTR. This
@@ -38,6 +41,10 @@ are always retrieved and loaded.)}
 \item{euctrresultshistory}{If \code{TRUE}, also download
 available history of results publication in EUCTR.
 This is quite time-consuming (default is \code{FALSE}).}
+
+\item{euctrresultspdfpath}{If a valid directory is specified,
+save PDF files of result publications from EUCTR into
+this directory (default is \code{NULL}).}
 
 \item{annotation.text}{Text to be including in the records
 retrieved with the current query, in the field "annotation".}

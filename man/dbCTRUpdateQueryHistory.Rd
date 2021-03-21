@@ -7,8 +7,10 @@
 dbCTRUpdateQueryHistory(register, queryterm, recordnumber, con, verbose)
 }
 \arguments{
-\item{register}{Vector of abbreviations of the register to query,
-defaults to "EUCTR".}
+\item{register}{String with abbreviation of register to query,
+at this time either "EUCTR" (default) or "CTGOV". Not needed
+if \code{queryterm} provide the information which register to
+query (see \code{queryterm}).}
 
 \item{queryterm}{Either a string with the full URL of a search in
 a register, or the data frame returned by the
