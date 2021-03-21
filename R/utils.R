@@ -1737,7 +1737,11 @@ dfTrials2Long <- function(df) {
   # check parameters
   if (!any("_id" == names(df)) ||
       ncol(df) == 1L) stop(
-        "Missing _id column or other variables in parameter 'df'",
+        "Missing _id column or other variables in 'df'",
+        call. = FALSE
+      )
+  if (any(c("identifier", "name", "value") == names(df))) stop(
+        "Unexpected columns; 'df' should not come from dfTrials2Long",
         call. = FALSE
       )
 
