@@ -8,7 +8,7 @@
 
 <title>Extract information of interest (e.g., endpoint)
 from long data frame of protocol- or result-related
-trial information as returned from dfTrials2Long — dfName2Value • ctrdata</title>
+trial information as returned by dfTrials2Long — dfName2Value • ctrdata</title>
 
 
 <!-- jquery -->
@@ -49,10 +49,10 @@ trial information as returned from dfTrials2Long — dfName2Value • ctrdata</t
 
 <meta property="og:title" content="Extract information of interest (e.g., endpoint)
 from long data frame of protocol- or result-related
-trial information as returned from dfTrials2Long — dfName2Value" />
+trial information as returned by dfTrials2Long — dfName2Value" />
 <meta property="og:description" content="Extract information of interest (e.g., endpoint)
 from long data frame of protocol- or result-related
-trial information as returned from dfTrials2Long" />
+trial information as returned by dfTrials2Long" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:creator" content="@rfhb" />
 <meta name="twitter:site" content="@rfhb" />
@@ -87,7 +87,7 @@ trial information as returned from dfTrials2Long" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ctrdata</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.5.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.5.1.9000</span>
       </span>
     </div>
 
@@ -110,7 +110,7 @@ trial information as returned from dfTrials2Long" />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/ctrdata_analyse.html">Analysing clinical trial information</a>
+      <a href="../articles/ctrdata_analyse.html">Summarise and analyse clinical trial information</a>
     </li>
     <li>
       <a href="../articles/ctrdata_install.html">Install R package ctrdata</a>
@@ -152,7 +152,7 @@ trial information as returned from dfTrials2Long" />
     <div class="page-header">
     <h1>Extract information of interest (e.g., endpoint)
 from long data frame of protocol- or result-related
-trial information as returned from <a href='dfTrials2Long.html'>dfTrials2Long</a></h1>
+trial information as returned by <a href='dfTrials2Long.html'>dfTrials2Long</a></h1>
     <small class="dont-index">Source: <a href='https://github.com/rfhb/ctrdata/blob/master/R/utils.R'><code>R/utils.R</code></a></small>
     <div class="hidden name"><code>dfName2Value.Rd</code></div>
     </div>
@@ -160,7 +160,7 @@ trial information as returned from <a href='dfTrials2Long.html'>dfTrials2Long</a
     <div class="ref-description">
     <p>Extract information of interest (e.g., endpoint)
 from long data frame of protocol- or result-related
-trial information as returned from <a href='dfTrials2Long.html'>dfTrials2Long</a></p>
+trial information as returned by <a href='dfTrials2Long.html'>dfTrials2Long</a></p>
     </div>
 
     <pre class="usage"><span class='fu'>dfName2Value</span><span class='op'>(</span><span class='va'>df</span>, valuename <span class='op'>=</span> <span class='st'>""</span>, wherename <span class='op'>=</span> <span class='st'>""</span>, wherevalue <span class='op'>=</span> <span class='st'>""</span><span class='op'>)</span></pre>
@@ -170,8 +170,8 @@ trial information as returned from <a href='dfTrials2Long.html'>dfTrials2Long</a
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>df</th>
-      <td><p>A data frame with 5 columns (trial_id,
-main_id, sub_id, name, value) as returned from
+      <td><p>A data frame with four columns (_id,
+identifier, name, value) as returned by
 <a href='dfTrials2Long.html'>dfTrials2Long</a></p></td>
     </tr>
     <tr>
@@ -193,8 +193,10 @@ for the variable of interest</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A data frame with columns trial_id, main_id, sub_id,
- name, value that only includes the values of interest</p>
+    <p>A data frame with columns _id, identifier,
+ name, value that only includes the values of interest,
+ where value are strings unless all value elements
+ are numbers.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
