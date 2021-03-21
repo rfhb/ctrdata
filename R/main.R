@@ -992,7 +992,7 @@ ctrLoadQueryIntoDbCtgov <- function(
                      overwrite = TRUE))
 
   # inform user
-  if (file.size(f) == 0) {
+  if (!file.exists(f) || file.size(f) == 0L) {
     stop("No studies downloaded. Please check 'queryterm' or run ",
          "again with verbose = TRUE.", call. = FALSE)
   }
@@ -1258,7 +1258,8 @@ ctrLoadQueryIntoDbEuctr <- function(
   # create pool for concurrent connections
   pool <- curl::new_pool(
     total_con = parallelretrievals,
-    host_con = parallelretrievals)
+    host_con = parallelretrievals,
+    multiplex = TRUE)
 
   # generate vector with URLs of all pages
   urls <- vapply(
@@ -1283,11 +1284,16 @@ ctrLoadQueryIntoDbEuctr <- function(
   pc <- 0L
   curlSuccess <- function(res) {
     pc <<- pc + 1L
-    # save to file
     # note that the number in euctr_trials_nnn
     # is not expected to correspond to the page
     # number in the URL that was downloaded
-    cat(rawToChar(res$content), file = fp[pc])
+    # save to file
+    # if (res$status_code == 200L) {
+    #   cat(rawToChar(res$content), file = fp[pc])
+    # }
+    if (res$status_code == 200L) {
+      writeChar(object = rawToChar(res$content), con = fp[pc], useBytes = TRUE)
+    }
     # inform user
     message("Pages: ", pc, " done, ",
             length(curl::multi_fdset(pool = pool)[["reads"]]), " ongoing   ",
@@ -1312,8 +1318,7 @@ ctrLoadQueryIntoDbEuctr <- function(
 
   # do download and saving
   tmp <- curl::multi_run(
-    pool = pool
-  )
+    pool = pool)
 
   # check plausibility
   if (class(tmp) == "try-error") {
@@ -1453,7 +1458,8 @@ ctrLoadQueryIntoDbEuctr <- function(
       # prepare download and save
       pool <- curl::new_pool(
         total_con = parallelretrievals,
-        host_con = parallelretrievals)
+        host_con = parallelretrievals,
+        multiplex = TRUE)
       #
       urls <- vapply(
         paste0(queryEuRoot, queryEuType4,
@@ -1474,8 +1480,9 @@ ctrLoadQueryIntoDbEuctr <- function(
       curlSuccess <- function(res) {
         pc <<- pc + 1
         # save to file
-        writeBin(object = res$content, con = fp[[pc]])
-      }
+        if (res$status_code == 200L) {
+          writeBin(object = res$content, con = fp[pc])
+        }}
       #
       tmp <- lapply(
         seq_along(urls),
@@ -1492,9 +1499,10 @@ ctrLoadQueryIntoDbEuctr <- function(
 
       # unzip downloaded file and rename
       tmp <- lapply(
-        seq_along(urls), function(i) {
+        seq_along(fp), function(i) {
 
-          if (file.size(fp[i]) != 0) {
+          if (file.exists(fp[i]) &&
+              file.size(fp[i]) != 0L) {
 
             tmp <- utils::unzip(
               zipfile = fp[i],
@@ -1577,7 +1585,7 @@ ctrLoadQueryIntoDbEuctr <- function(
 
         # check file
         if (file.exists(fileName) &&
-            file.size(fileName) > 0) {
+            file.size(fileName) > 0L) {
 
           # read contents
           tmpjson <- readChar(
@@ -1586,9 +1594,9 @@ ctrLoadQueryIntoDbEuctr <- function(
             useBytes = TRUE)
 
           # get eudract number
-          # {"@attributes":{"eudractNumber":"2008-003606-33",
+          # "{\"@attributes\":{\"eudractNumber\":\"2004-004386-15\",
           euctrnumber <- sub(
-            '^.*\\{\"eudractNumber\":\"([0-9]{4}-[0-9]{6}-[0-9]{2})\".*$',
+            '^\\{\"@attributes\":\\{\"eudractNumber\":\"([0-9]{4}-[0-9]{6}-[0-9]{2})\".*$',
             "\\1", tmpjson)
           if (!grepl("^[0-9]{4}-[0-9]{6}-[0-9]{2}$", euctrnumber)) {
             warning("No EudraCT number recognised in file ", fileName, call. = FALSE)
@@ -1653,10 +1661,15 @@ ctrLoadQueryIntoDbEuctr <- function(
         # prepare download and save
         pool <- curl::new_pool(
           total_con = parallelretrievals,
-          host_con = parallelretrievals)
+          host_con = parallelretrievals,
+          multiplex = TRUE)
         #
-        done <- function(res) retdat <<- c(retdat, list(res))
-        #
+        done <- function(res) {
+          if (res$status_code == 206L) {
+            retdat <<- c(retdat, list(res))
+          }}
+
+        # compose urls to access results page
         urls <- vapply(paste0(
           "https://www.clinicaltrialsregister.eu/ctr-search/trial/",
           eudractnumbersimported[startindex:stopindex], "/results"),
@@ -1668,7 +1681,7 @@ ctrLoadQueryIntoDbEuctr <- function(
             curl::multi_add(
               handle = curl::new_handle(
                 url = urls[i],
-                range = "0-22999", # NOTE only top part of page
+                range = "0-30000", # only need top of page
                 accept_encoding = "identity"
               ),
               done = done,
@@ -1679,15 +1692,15 @@ ctrLoadQueryIntoDbEuctr <- function(
         # TODO preferably retdat is pre-allocated
         retdat <- NULL
         tmp <- curl::multi_run(
-          pool = pool,
-          poll = length(urls))
+          pool = pool)
 
+        # process top of results pages
         batchresults <- lapply(
           retdat,
           function(i) rawToChar(i[["content"]]))
 
         # curl return sequence is not predictable
-        # therefore recalculate the eudract numbers
+        # therefore recalculate eudract numbers
         eudractnumberscurled <- sapply(
           retdat, function(i) i[["url"]])
         #
@@ -1724,32 +1737,48 @@ ctrLoadQueryIntoDbEuctr <- function(
         tmpChanges <- vapply(batchresults, function(t) {
           trimws(
             gsub("[ ]+", " ",
-                 gsub("[\n\r]", "",
-                      gsub("<[a-z/]+>", "",
-                           sub(".+Version creation reason.*?<td class=\"valueColumn\">(.+?)</td>.+",
-                               "\\1", ifelse(grepl("Version creation reason", t), t, ""))
-                      ))))},
+            gsub("[\n\r]", "",
+            gsub("<[a-z/]+>", "",
+            sub(".+Version creation reason.*?<td class=\"valueColumn\">(.+?)</td>.+",
+                "\\1", ifelse(grepl("Version creation reason", t), t, ""))
+            ))))},
           character(1L))
-
-        tmp <- lapply(
-          seq_along(along.with = startindex:stopindex),
-          function(i) {
-
-            if (tmpChanges[i] == "") tmpChanges[i] <- "(not specified)"
-
-            upd <- nodbi::docdb_update(
-              src = con,
-              key = con$collection,
-              value = data.frame(
-                "a2_eudract_number" = eudractnumberscurled[i],
-                "firstreceived_results_date" = as.character(tmpFirstDate[i]),
-                "version_results_history" = tmpChanges[i],
-                stringsAsFactors = FALSE))
-
-          })
 
         # clean up large object
         rm(batchresults)
+
+        # create data frame for apply
+        resultHistory <- data.frame(
+          eudractnumberscurled,
+          tmpFirstDate,
+          tmpChanges,
+          stringsAsFactors = FALSE
+        )
+
+        tmp <- apply(
+          resultHistory, 1,
+          function(r) {
+            r <- as.list(r)
+
+            # check, add default, inform user
+            if (r$tmpChanges == "") {
+
+              message("x ", appendLF = FALSE)
+
+            } else {
+
+              # update record
+              message(". ", appendLF = FALSE)
+              nodbi::docdb_update(
+                src = con,
+                key = con$collection,
+                value = data.frame(
+                  "a2_eudract_number" = r$eudractnumberscurled,
+                  "firstreceived_results_date" = as.character(r$tmpFirstDate),
+                  "version_results_history" = r$tmpChanges,
+                  stringsAsFactors = FALSE))
+            }
+          }) # apply resultsHistory
 
       } # for batch
     } else {
