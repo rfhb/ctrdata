@@ -20,7 +20,6 @@ Description: Provides functions for querying, retrieving and analyzing
         the design and conduct as well as results of clinical trials.
 License: MIT + file LICENSE
 RoxygenNote: 7.1.1
-LazyData: true
 Suggests: devtools, knitr, rmarkdown, RSQLite (>= 2.1.2), mongolite, 
         tinytest (>= 1.2.1), R.rsp 
 VignetteBuilder: R.rsp
