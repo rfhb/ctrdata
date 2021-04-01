@@ -23,11 +23,12 @@ suppressWarnings(
     )))
 # test
 expect_identical(
-  suppressMessages(
+  suppressWarnings(
+    suppressMessages(
     dbGetFieldsIntoDf(
       fields = "endPoints.endPoint.title",
       con = dbc
-    ))[1, "_id", drop = TRUE],
+    )))[1, "_id", drop = TRUE],
   "2008-003606-33-GB")
 
 # next
@@ -186,8 +187,9 @@ result <- suppressWarnings(suppressMessages(
            dbFindIdsUniqueTrials(con = dbc), ]
 ))
 # test
-expect_true(
-  nrow(result) < 15L
+expect_identical(
+  nrow(result),
+  length(unique(result$a2_eudract_number))
 )
 
 # test
