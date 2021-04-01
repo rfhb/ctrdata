@@ -130,7 +130,6 @@ expect_message(
   tmpTest <- suppressWarnings(
     ctrLoadQueryIntoDb(
       querytoupdate = "last",
-      verbose = TRUE,
       con = dbc)),
   "(Imported or updated|First result page empty)")
 
@@ -193,7 +192,7 @@ expect_identical(
 )
 
 # test
-expect_true(all(as.Date(c("2013-10-28", "2018-03-13")) %in%
+expect_true(all(as.Date(c("2013-10-28")) %in%
                   result$trialInformation.globalEndOfTrialDate))
 
 # test
@@ -224,7 +223,7 @@ expect_true(
           c("endPoints.endPoint", "title"))
       )[["value"]]
     )), na.rm = TRUE)
-  > 3000L)
+  > 2000L)
 
 # convert to long
 df <- suppressMessages(
@@ -240,7 +239,7 @@ expect_identical(
 
 # test
 expect_true(
-  nrow(df) > 3300L
+  nrow(df) > 1500L
 )
 
 # extract
