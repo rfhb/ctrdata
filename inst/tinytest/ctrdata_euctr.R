@@ -223,7 +223,7 @@ expect_true(
           c("endPoints.endPoint", "title"))
       )[["value"]]
     )), na.rm = TRUE)
-  > 2000L)
+  > 3300L)
 
 # convert to long
 df <- suppressMessages(
@@ -526,7 +526,7 @@ tmpc <- table(tmpc)
 # 51           8         6        11        55
 
 # tests
-expect_true(tmpc[["character"]] > 50)
+expect_true(tmpc[["character"]] > 45)
 expect_true(tmpc[["Date"]]      >  5)
 expect_true(tmpc[["logical"]]   > 50)
 
