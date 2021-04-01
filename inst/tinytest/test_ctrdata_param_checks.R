@@ -98,7 +98,7 @@ tf <- function() {
             ctrLoadQueryIntoDb(
               queryterm = "",
               con = dbc))),
-        "'queryterm' is not an non-empty string")
+        "Cannot use 'queryterm' ")
     }
   }
 

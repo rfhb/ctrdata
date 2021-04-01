@@ -145,8 +145,9 @@ ctrLoadQueryIntoDb <- function(
         silent = TRUE)
 
       if (inherits(tmpTest, "try-error")) {
-        stop("'queryterm' is not an non-empty string: ",
-             deparse(queryterm), call. = FALSE)
+        stop("Cannot use 'queryterm' ", deparse(substitute(queryterm)),
+             " and / or 'register' ", deparse(substitute(register)),
+             call. = FALSE)
       }
 
       queryterm <- tmpTest
