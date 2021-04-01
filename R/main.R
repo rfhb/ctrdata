@@ -1162,7 +1162,7 @@ ctrLoadQueryIntoDbEuctr <- function(
   resultsEuPages <- try(httr::content(
     httr::GET(url = q), as = "text"), silent = TRUE)
   #
-  if (inherits("try-error", resultsEuPages)) {
+  if (inherits(resultsEuPages, "try-error")) {
     stop("Host ", queryEuRoot, " does not respond, cannot continue.",
          call. = FALSE)
   }
