@@ -948,12 +948,6 @@ ctrLoadQueryIntoDbCtgov <- function(
     message("No trials or number of trials could not be determined: ", tmp)
     return(invisible(list(n = 0L, ids = "")))
   }
-  #
-  if (as.integer(tmp) > 10000L) {
-    stop("These are ", tmp, " (more than 10,000) trials, this may be ",
-         "unintended. Downloading more than 10,000 trials is not supported ",
-         "by the register. Consider correcting or splitting queries.")
-  }
 
   # inform user
   message("Retrieved overview, records of ", tmp, " ",
@@ -967,6 +961,16 @@ ctrLoadQueryIntoDbCtgov <- function(
                 success = NULL,
                 failed = NULL))
   }
+
+  # exit if too many records
+  if (as.integer(tmp) > 10000L) {
+    stop("These are ", tmp, " (more than 10,000) trials, this may be ",
+         "unintended. Downloading more than 10,000 trials is not supported ",
+         "by the register. Consider correcting or splitting queries.")
+  }
+
+  ## check database connection
+  con <- ctrDb(con = con)
 
   ## system check, in analogy to onload.R
   message("Checking helper binaries: ", appendLF = FALSE)
