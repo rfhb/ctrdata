@@ -111,11 +111,8 @@ ctrLoadQueryIntoDb <- function(
   annotation.mode = "append",
   parallelretrievals = 10L,
   only.count = FALSE,
-  con,
+  con = NULL,
   verbose = FALSE) {
-
-  ## check database connection
-  con <- ctrDb(con = con)
 
   ## system check, in analogy to onload.R
   if (.Platform$OS.type == "windows") {
@@ -357,6 +354,9 @@ ctrRerunQuery <- function(
   con = con,
   verbose = verbose,
   queryupdateterm = queryupdateterm) {
+
+  ## check database connection
+  con <- ctrDb(con = con)
 
   ## prepare
 
@@ -792,6 +792,9 @@ dbCTRUpdateQueryHistory <- function(
   con,
   verbose) {
 
+  ## check database connection
+  con <- ctrDb(con = con)
+
   # debug
   if (verbose) message("Running dbCTRUpdateQueryHistory...")
 
@@ -1210,6 +1213,9 @@ ctrLoadQueryIntoDbEuctr <- function(
     stop("These are ", resultsEuNumTrials, " (more than 10,000) trials. ",
          "Consider correcting or splitting into separate queries.")
   }
+
+  ## check database connection
+  con <- ctrDb(con = con)
 
   ## system check, in analogy to onload.R
   message("Checking helper binaries: ", appendLF = FALSE)

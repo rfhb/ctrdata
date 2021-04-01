@@ -95,7 +95,8 @@ ctrDb <- function(
 
   ## unprepared for other nodbi adapters so far
   stop("Please specify in parameter 'con' a database connection. ",
-       "crdata supports so far only src_mongo() and src_sqlite().")
+       "crdata supports so far only src_mongo() and src_sqlite().",
+       call. = FALSE)
 
 } # end ctrDb
 
