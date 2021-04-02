@@ -98,9 +98,10 @@ q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=cance
 
 # test
 expect_message(
-  tmpTest <- suppressWarnings(
+  suppressWarnings(
     ctrLoadQueryIntoDb(
       queryterm = paste0(q),
+      verbose = TRUE,
       con = dbc)),
   "(Imported or updated|First result page empty)")
 
@@ -176,19 +177,17 @@ result <- suppressMessages(
   ))
 
 # test
-expect_true(
-  nrow(result) > 45L
-)
+expect_true(nrow(result) > 45L)
 
 # keep only one record for trial
-result <- suppressWarnings(suppressMessages(
+result2 <- suppressWarnings(suppressMessages(
   result[result[["_id"]] %in%
            dbFindIdsUniqueTrials(con = dbc), ]
 ))
 # test
 expect_identical(
-  nrow(result),
-  length(unique(result$a2_eudract_number))
+  length(unique(result$a2_eudract_number)),
+  nrow(result2)
 )
 
 # test
@@ -218,7 +217,7 @@ expect_true(
     # is deprecated
     suppressWarnings(
       dfListExtractKey(
-        df = result,
+        df = result2,
         list.key = list(
           c("endPoints.endPoint", "title"))
       )[["value"]]
@@ -228,7 +227,7 @@ expect_true(
 # convert to long
 df <- suppressMessages(
   dfTrials2Long(
-    df = result
+    df = result2
   ))
 
 # test
@@ -239,7 +238,7 @@ expect_identical(
 
 # test
 expect_true(
-  nrow(df) > 1500L
+  nrow(df) > 3000L
 )
 
 # extract
