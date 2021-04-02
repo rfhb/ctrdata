@@ -1980,11 +1980,8 @@ dfListExtractKey <- function(
 
   }, simplify = FALSE)
 
-  out <- do.call(rbind, out)
-  rownames(out) <- NULL
-
   # return
-  out
+  do.call(rbind, c(out, stringsAsFactors = FALSE, make.row.names = FALSE))
 
 } # end dfListExtractKey
 

@@ -1742,7 +1742,7 @@ ctrLoadQueryIntoDbEuctr <- function(
 
         # do download and save into batchresults
         # TODO preferably retdat is pre-allocated
-        retdat <- NULL
+        retdat <- list()
         tmp <- curl::multi_run(
           pool = pool)
 
