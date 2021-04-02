@@ -116,7 +116,7 @@
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#ctrdata-for-aggregating-and-analysing-clinical-trials" class="anchor"></a>ctrdata for aggregating and analysing clinical trials</h1></div>
 <p>The package <code>ctrdata</code> provides functions for retrieving (downloading) information on clinical trials from public registers, and for aggregating and analysing this information. Use with <a href="https://www.r-project.org/">R</a> for the European Union Clinical Trials Register (“EUCTR”, <a href="https://www.clinicaltrialsregister.eu/" class="uri">https://www.clinicaltrialsregister.eu/</a>) and ClinicalTrials.gov (“CTGOV”, <a href="https://clinicaltrials.gov/" class="uri">https://clinicaltrials.gov/</a>). The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. The package is to be used within the <a href="https://www.r-project.org/">R</a> system.</p>
-<p>Last reviewed on 2021-03-20 for version 1.5.1</p>
+<p>Last reviewed on 2021-04-02 for version 1.5.1.9000</p>
 <p>Main features:</p>
 <ul>
 <li><p>Protocol-related trial information is easily retrieved (downloaded): Users define a query in a register’s web interface and then use <code>ctrdata</code> to retrieve in one step all trials resulting from the query. Results-related trial information and personal annotations can be including during retrieval. Synonyms of an active substance can also be found.</p></li>
@@ -310,12 +310,12 @@ citation("ctrdata")
      <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span>
        <span class="va">p_end_of_trial_status</span>, 
        <span class="va">a7_trial_is_part_of_a_paediatric_investigation_plan</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#                      a7_trial_is_part_of_a_paediatric_investigation_plan</span>
-<span class="co"># p_end_of_trial_status Information not present in EudraCT No Yes</span>
-<span class="co">#     Completed                                          6 31  15</span>
-<span class="co">#     Ongoing                                            0  4   4</span>
-<span class="co">#     Prematurely Ended                                  0  1   0</span>
-<span class="co">#     Restarted                                          0  0   1</span></code></pre></div>
+<span class="co">#                  a7_trial_is_part_of_a_paediatric_investigation_plan</span>
+<span class="co"># p_end_of_trial_status      Information not present in EudraCT No Yes</span>
+<span class="co">#   Completed                                                 6 31  15</span>
+<span class="co">#   GB - no longer in EU/EEA                                  0  4   4</span>
+<span class="co">#   Ongoing                                                   0  1   0</span>
+<span class="co">#   Prematurely Ended                                         1  1   0</span></code></pre></div>
 <ul>
 <li>Add records from another register into the same database</li>
 </ul>
@@ -399,7 +399,7 @@ citation("ctrdata")
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_log10</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_log10</a></span><span class="op">(</span><span class="op">)</span> 
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave</a></span><span class="op">(</span>filename <span class="op">=</span> <span class="st">"inst/image/README-ctrdata_results_neuroblastoma.png"</span>,
-       width <span class="op">=</span> <span class="fl">4</span>, height <span class="op">=</span> <span class="fl">3</span>, units <span class="op">=</span> <span class="st">"in"</span><span class="op">)</span></code></pre></div>
+       width <span class="op">=</span> <span class="fl">5</span>, height <span class="op">=</span> <span class="fl">3</span>, units <span class="op">=</span> <span class="st">"in"</span><span class="op">)</span></code></pre></div>
 <p><img src="inst/image/README-ctrdata_results_neuroblastoma.png" alt="Neuroblastoma trials"></p>
 </div>
 <div id="databases" class="section level1">

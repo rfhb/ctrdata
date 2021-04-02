@@ -103,7 +103,7 @@
       <h1 data-toc-skip>Summarise and analyse clinical trial information</h1>
                         <h4 class="author">Ralf Herold</h4>
             
-            <h4 class="date">2021-03-21</h4>
+            <h4 class="date">2021-04-02</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/rfhb/ctrdata/blob/master/vignettes/ctrdata_analyse.Rmd"><code>vignettes/ctrdata_analyse.Rmd</code></a></small>
       <div class="hidden name"><code>ctrdata_analyse.Rmd</code></div>
@@ -150,8 +150,8 @@
 <span class="op">)</span>
 <span class="fu"><a href="../reference/dbQueryHistory.html">dbQueryHistory</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 <span class="co">#       query-timestamp query-register query-records</span>
-<span class="co"># 1 2021-03-21 08:08:45          EUCTR           135</span>
-<span class="co"># 2 2021-03-21 08:08:52          CTGOV           196</span>
+<span class="co"># 1 2021-04-02 12:03:06          EUCTR           135</span>
+<span class="co"># 2 2021-04-02 12:03:11          CTGOV           194</span>
 <span class="co">#                                          query-term</span>
 <span class="co"># 1 query=neuroblastoma&amp;age=under-18&amp;status=completed</span>
 <span class="co"># 2        cond=neuroblastoma&amp;recrs=e&amp;age=0&amp;intr=Drug</span></code></pre></div>
@@ -212,8 +212,8 @@
 <span class="co"># </span>
 <span class="co"># $`ctrdata-dbqueryhistory`</span>
 <span class="co">#       query-timestamp query-register query-records</span>
-<span class="co"># 1 2021-03-21 08:08:45          EUCTR           135</span>
-<span class="co"># 2 2021-03-21 08:08:52          CTGOV           196</span>
+<span class="co"># 1 2021-04-02 12:03:06          EUCTR           135</span>
+<span class="co"># 2 2021-04-02 12:03:11          CTGOV           194</span>
 <span class="co">#                                          query-term</span>
 <span class="co"># 1 query=neuroblastoma&amp;age=under-18&amp;status=completed</span>
 <span class="co"># 2        cond=neuroblastoma&amp;recrs=e&amp;age=0&amp;intr=Drug</span></code></pre></div>
@@ -389,6 +389,8 @@
   <span class="va">result</span><span class="op">[[</span><span class="st">"_id"</span><span class="op">]</span><span class="op">]</span> <span class="op">%in%</span> <span class="fu">ctrdata</span><span class="fu">::</span><span class="fu"><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span><span class="op">(</span>
     con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>,
 <span class="op">]</span>
+<span class="co"># [...]</span>
+<span class="co"># Concatenating 37 records from EUCTR and 181 from CTGOV</span>
 
 <span class="co"># 2. The columns of the results data.frame </span>
 <span class="co"># contain nested lists of fields, see</span>
@@ -400,7 +402,7 @@
 <span class="va">long_result</span> <span class="op">&lt;-</span> <span class="fu">ctrdata</span><span class="fu">::</span><span class="fu"><a href="../reference/dfTrials2Long.html">dfTrials2Long</a></span><span class="op">(</span>
   df <span class="op">=</span> <span class="va">result</span>
 <span class="op">)</span>
-<span class="co"># Total 67444 rows, 182 unique names of variables</span>
+<span class="co"># Total 67278 rows, 182 unique names of variables</span>
 
 <span class="co"># 3. Obtain values for fields of interest where</span>
 <span class="co"># they related to measures of interest. The</span>
@@ -524,7 +526,8 @@
       <span class="st">"a2_eudract_number"</span><span class="op">)</span>, 
   con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 <span class="co"># [...]</span>
-<span class="co"># * Simplified or collapsed with '/' [3]: 'dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation'</span>
+<span class="co"># * Simplified or collapsed with '/' [3]:</span>
+<span class="co">#    'dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation'</span>
 
 <span class="co"># Find first date of authorisation in EU member state</span>
 <span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html">aggregate</a></span><span class="op">(</span>
@@ -571,8 +574,8 @@
     x <span class="op">=</span> <span class="va">startdatefirst</span>, 
     fill <span class="op">=</span> <span class="va">any_authorised</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_date.html">scale_x_date</a></span><span class="op">(</span>
-    breaks <span class="op">=</span> <span class="fu"><a href="https://scales.r-lib.org//reference/breaks_width.html">breaks_width</a></span><span class="op">(</span>width <span class="op">=</span> <span class="st">"2 years"</span><span class="op">)</span>, 
-    labels <span class="op">=</span> <span class="fu"><a href="https://scales.r-lib.org//reference/label_date.html">date_format</a></span><span class="op">(</span><span class="st">"%Y"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    breaks <span class="op">=</span> <span class="fu"><a href="https://scales.r-lib.org/reference/breaks_width.html">breaks_width</a></span><span class="op">(</span>width <span class="op">=</span> <span class="st">"2 years"</span><span class="op">)</span>, 
+    labels <span class="op">=</span> <span class="fu"><a href="https://scales.r-lib.org/reference/label_date.html">date_format</a></span><span class="op">(</span><span class="st">"%Y"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>
     title <span class="op">=</span> <span class="st">"Neuroblastoma trials in EU"</span>, 
@@ -599,7 +602,7 @@
 
 <span class="co"># Number of records in  collection:</span>
 <span class="va">m</span><span class="op">$</span><span class="fu">count</span><span class="op">(</span><span class="op">)</span>
-<span class="co"># [1] 332</span>
+<span class="co"># [1] 330</span>
 
 <span class="co"># Number of EUCTR records, using JSON for query:</span>
 <span class="va">m</span><span class="op">$</span><span class="fu">count</span><span class="op">(</span>query <span class="op">=</span> <span class="st">'{"_id": {"$regex": "[0-9]{4}-[0-9]{6}-[0-9]{2}", 
@@ -613,11 +616,11 @@
 <span class="co"># Number of CTGOV records:</span>
 <span class="va">m</span><span class="op">$</span><span class="fu">count</span><span class="op">(</span>query <span class="op">=</span> <span class="st">'{"_id": {"$regex": "NCT[0-9]{8}", 
                  "$options": "i"}}'</span><span class="op">)</span>
-<span class="co"># [1] 196</span>
+<span class="co"># [1] 194</span>
 
 <span class="co"># Alternative:</span>
 <span class="va">m</span><span class="op">$</span><span class="fu">count</span><span class="op">(</span>query <span class="op">=</span> <span class="st">'{"ctrname": "CTGOV"}'</span><span class="op">)</span>
-<span class="co"># [1] 196</span>
+<span class="co"># [1] 194</span>
 
 <span class="co"># The following examples use the aggregation pipeline in MongoDB:</span>
 
@@ -671,7 +674,7 @@
 <span class="op">)</span>
 <span class="va">hist</span>
 <span class="co">#   _id value</span>
-<span class="co"># 1  NaN   202</span>
+<span class="co"># 1  NaN   200</span>
 <span class="co"># 2    0    74</span>
 <span class="co"># 3  100    35</span>
 <span class="co"># 4  200     4</span>
