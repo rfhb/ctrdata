@@ -1842,7 +1842,7 @@ ctrLoadQueryIntoDbEuctr <- function(
 
     # sum up successful downloads
     importedresults <- sum(unlist(
-      importedresults), na.rm = TRUE)
+      importedresults, use.names = FALSE), na.rm = TRUE)
 
     ## inform user on final import outcome
     message("\n= Imported or updated results for ",

@@ -999,7 +999,7 @@ dbFindIdsUniqueTrials <- function(
       # a.1 - euctr in ctgov
       dupesA1 <- listofEUCTRids[["a2_eudract_number"]] %in% sub(
         ".*([0-9]{4}-[0-9]{6}-[0-9]{2}).*", # e.g. "EUDRACT-2004-000242-20"
-        "\\1", unlist(listofCTGOVids[["id_info"]]))
+        "\\1", unlist(listofCTGOVids[["id_info"]], use.names = FALSE))
       #
       if (verbose) {
         message(" - ", sum(dupesA1),
@@ -1021,7 +1021,7 @@ dbFindIdsUniqueTrials <- function(
       dupesC1 <- !is.na(
         listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]) &
         listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]] %in%
-        unlist(listofCTGOVids[["id_info"]])
+        unlist(listofCTGOVids[["id_info"]], use.names = FALSE)
       #
       if (verbose) {
         message(
@@ -1036,7 +1036,7 @@ dbFindIdsUniqueTrials <- function(
           "a51_isrctn_international_standard_randomised_controlled_trial_number"]]) &
         listofEUCTRids[[
           "a51_isrctn_international_standard_randomised_controlled_trial_number"]] %in%
-        unlist(listofCTGOVids[["id_info"]])
+        unlist(listofCTGOVids[["id_info"]], use.names = FALSE)
       #
       if (verbose) {
         message(
@@ -1049,7 +1049,7 @@ dbFindIdsUniqueTrials <- function(
       dupesE1 <- !is.na(
         listofEUCTRids[["a41_sponsors_protocol_code_number"]]) &
         listofEUCTRids[["a41_sponsors_protocol_code_number"]] %in%
-        unlist(listofCTGOVids[["id_info"]])
+        unlist(listofCTGOVids[["id_info"]], use.names = FALSE)
       #
       if (verbose) {
         message(
@@ -1062,7 +1062,7 @@ dbFindIdsUniqueTrials <- function(
       dupesF1 <- vapply(
         listofCTGOVids[["id_info"]],
         function(x) !is.null(x[["nct_alias"]]) &&
-          any(unlist(x[["nct_alias"]]) %in%
+          any(unlist(x[["nct_alias"]], use.names = FALSE) %in%
                 listofCTGOVids[["_id"]]), logical(1L))
       #
       if (verbose) {
@@ -1241,7 +1241,7 @@ dbGetFieldsIntoDf <- function(fields = "",
         function(cell) {
 
           # get content
-          cell <- unlist(cell)
+          cell <- unlist(cell, use.names = FALSE)
 
           # check if string could be json
           if (grepl("[\\[{]", cell)) {
@@ -1364,7 +1364,8 @@ dbGetFieldsIntoDf <- function(fields = "",
                 # keep NULL elements in output
                 NULL
               } else {
-                if (is.atomic(unlist(i, recursive = FALSE))) {
+                if (is.atomic(
+                  unlist(i, recursive = FALSE, use.names = FALSE))) {
                   # e.g. for location_countries.country
                   unname(i)
                 } else {
@@ -1433,10 +1434,11 @@ dbGetFieldsIntoDf <- function(fields = "",
             )) {
           # concatenate (has to remain as sapply
           # because of different content types)
-          dfi[, 2] <- sapply(dfi[, 2],
-                             function(x)
-                               paste0(na.omit(unlist(x)),
-                                      collapse = " / "))
+          dfi[, 2] <- sapply(
+            dfi[, 2],
+            function(x)
+              paste0(na.omit(unlist(x, use.names = FALSE)),
+                     collapse = " / "))
           # inform user
           message("\r* Collapsed with '/' [1]: '", item, "'")
           # remove any extraneous columns
@@ -1470,16 +1472,16 @@ dbGetFieldsIntoDf <- function(fields = "",
         }
         #
         # - if each [,2] is a list with a single and the same element
-        if (all(vapply(dfi[, 2], function(i) is.null(i) | is.list(i), logical(1L))) &&
-            length(unique(unlist(sapply(
-              dfi[, 2],
-              function(i)
-                unique(gsub("[0-9]+$", "", names(unlist(i)))))))) <= 1L) {
+        if (all(vapply(
+          dfi[, 2], function(i) is.null(i) | is.list(i), logical(1L))) &&
+          length(unique(unlist(sapply(
+            dfi[, 2], function(i) unique(gsub("[0-9]+$", "", names(unlist(i))))
+              )))) <= 1L) {
           #
           dfi[, 2] <- vapply(
-            dfi[, 2],
-            function(i)
-              paste0(na.omit(unlist(i)), collapse = " / "), character(1L))
+            dfi[, 2], function(i) paste0(
+              na.omit(unlist(i, use.names = FALSE)),
+              collapse = " / "), character(1L))
           # inform user
           message("\r* Simplified or collapsed with '/' [3]: '", item, "'")
         }
@@ -1750,7 +1752,7 @@ dfTrials2Long <- function(df) {
   flattenDf <- function(x) {
     while (any(vapply(x, is.list, logical(1L)))) {
       x <- lapply(x, function(x) if (is.list(x)) x else list(x))
-      x <- unlist(x, recursive = FALSE)
+      x <- unlist(x, recursive = FALSE, use.names = TRUE)
     }
     x
   }
@@ -2032,7 +2034,7 @@ dfMergeTwoVariablesRelevel <- function(
   tmp <- tmp["varnames"]
   tmp <- as.list(tmp)[[1]]
   if (length(tmp) == 3 && colnames == "") {
-    colnames <- unlist(as.list(tmp[-1]))
+    colnames <- unlist(as.list(tmp[-1], use.names = FALSE))
     warning("Parameter varnames is deprecated, use colnames instead.",
             call. = FALSE)
   }
@@ -2093,7 +2095,7 @@ dfMergeTwoVariablesRelevel <- function(
 
     # apply helperfunction to elements of the list
     for (i in seq_len(length(levelslist))) {
-      tmp <- refactor(tmp, unlist(levelslist[i]),
+      tmp <- refactor(tmp, unlist(levelslist[i], use.names = FALSE),
                       attr(levelslist[i], "names"))
     }
 
@@ -2235,7 +2237,7 @@ dfFindUniqueEuctrRecord <- function(
   # uses prefermemberstate and nms
   result <- lapply(nst,
                    function(x) removeMSversions(x))
-  result <- unlist(result)
+  result <- unlist(result, use.names = FALSE)
 
   # eleminate the unwanted EUCTR records
   df <- df[!(df[["_id"]] %in% result), ]
@@ -2434,7 +2436,7 @@ typeField <- function(dfi) {
 
   # prepare output
   if (!inherits(tmp, "try-error") &&
-      !is.null(unlist(tmp))) {
+      !is.null(unlist(tmp, use.names = FALSE))) {
 
     # need to construct new data frame,
     # since replacing columns with
