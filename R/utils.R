@@ -520,8 +520,9 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "") {
   asx <- tmp[[1]]
   asx <- asx[!grepl(
     paste0("(more|synonyms|terms|", as, "|",
-           paste0(unlist(strsplit(as, " ")), collapse = "|"),
-           ")"), asx, ignore.case = TRUE)]
+           paste0(unlist(strsplit(as, " "), use.names = FALSE),
+                  collapse = "|"), ")"), asx,
+    ignore.case = TRUE)]
 
   # prepare and return output
   as <- c(as, asx)
@@ -1834,16 +1835,16 @@ dfTrials2Long <- function(df) {
     paste0(names, ".", out[["name"]]))
 
   # name can have from 0 to about 6 number groups, get all
-  # and concatenate to oid like string such as "1.2.2.1.4"
+  # and concatenate to oid-like string such as "1.2.2.1.4"
   out[["identifier"]] <- vapply(
     stringi::stri_extract_all_regex(out[["name"]], "[0-9]+([.]|$)"),
-    function(i) paste0(gsub("[.]", "", i), collapse = "."),
-    character(1L))
+    function(i) paste0(gsub("[.]", "", i), collapse = "."), character(1L))
   out[["identifier"]] [out[["identifier"]] == "NA"] <- "0"
   message(". ", appendLF = FALSE)
 
   # remove numbers from variable name
-  out[["name"]] <- gsub("[0-9]+([.])|[0-9]+$|[.]?@attributes", "\\1", out[["name"]], perl = TRUE)
+  out[["name"]] <- gsub(
+    "[0-9]+([.])|[0-9]+$|[.]?@attributes", "\\1", out[["name"]], perl = TRUE)
 
   # remove any double separators
   out[["name"]] <- gsub("[.]+", ".", out[["name"]], perl = TRUE)
@@ -1946,12 +1947,12 @@ dfListExtractKey <- function(
   out <- lapply(
     list.key,
     function(k)
-      lapply(df[[k[1]]], # k[1] = "endPoints.endPoint" identifies
+      lapply(df[[k[1]]],
+             # k[1] = "endPoints.endPoint" identifies
              # the column in data frame with the list
-             function(l)
-               extractKey(unlist(l, recursive = TRUE),
-                          k[2]) # k[2] = "^title" identifies
-             # the key in the sublist
+             function(l) extractKey(
+               unlist(l, recursive = TRUE, use.names = TRUE), k[2])
+             # k[2] = "^title" identifies the key in the sublist
       ))
 
   out <- sapply(seq_along(list.key), function(li) {
@@ -1965,9 +1966,8 @@ dfListExtractKey <- function(
 
         data.frame(
           name = gsub("[-0-9]*$", "", # trailing number
-                      gsub("[^a-zA-Z0-9_.-]", "",
-                           paste0(list.key[[li]],
-                                  collapse = "."))),
+                 gsub("[^a-zA-Z0-9_.-]", "",
+                 paste0(list.key[[li]], collapse = "."))),
           "_id" = df[["_id"]][[ii]],
           value = tmp[[ii]],
           item = seq_along(tmp[[ii]]),

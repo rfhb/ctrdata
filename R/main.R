@@ -1549,7 +1549,8 @@ ctrLoadQueryIntoDbEuctr <- function(
             if (any(grepl("pdf$", tmp))) {
               message("PDF ", appendLF = FALSE)
               if (euctrresultspdfpath != tempDir) {
-                euctrnr <- gsub(paste0(".*(", regEuctr, ").*"), "\\1", tmp[!grepl("pdf$", tmp)])
+                euctrnr <- gsub(paste0(".*(", regEuctr, ").*"),
+                                "\\1", tmp[!grepl("pdf$", tmp)])
                 # move PDF file(s) to user specified directory
                 saved <- try(file.rename(
                   from = tmp[grepl("pdf$", tmp)],
