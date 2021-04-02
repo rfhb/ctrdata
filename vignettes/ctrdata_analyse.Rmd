@@ -1,7 +1,7 @@
 ---
 title: "Summarise and analyse clinical trial information"
 author: "Ralf Herold"
-date: 2021-03-21
+date: 2021-04-02
 output: 
   rmarkdown::pdf_document:
     toc: true
@@ -71,8 +71,8 @@ ctrLoadQueryIntoDb(
 )
 dbQueryHistory(con = db)
 #       query-timestamp query-register query-records
-# 1 2021-03-21 08:08:45          EUCTR           135
-# 2 2021-03-21 08:08:52          CTGOV           196
+# 1 2021-04-02 12:03:06          EUCTR           135
+# 2 2021-04-02 12:03:11          CTGOV           194
 #                                          query-term
 # 1 query=neuroblastoma&age=under-18&status=completed
 # 2        cond=neuroblastoma&recrs=e&age=0&intr=Drug
@@ -137,8 +137,8 @@ attributes(result)
 # 
 # $`ctrdata-dbqueryhistory`
 #       query-timestamp query-register query-records
-# 1 2021-03-21 08:08:45          EUCTR           135
-# 2 2021-03-21 08:08:52          CTGOV           196
+# 1 2021-04-02 12:03:06          EUCTR           135
+# 2 2021-04-02 12:03:11          CTGOV           194
 #                                          query-term
 # 1 query=neuroblastoma&age=under-18&status=completed
 # 2        cond=neuroblastoma&recrs=e&age=0&intr=Drug
@@ -331,6 +331,8 @@ result <- result[
   result[["_id"]] %in% ctrdata::dbFindIdsUniqueTrials(
     con = db),
 ]
+# [...]
+# Concatenating 37 records from EUCTR and 181 from CTGOV
 
 # 2. The columns of the results data.frame 
 # contain nested lists of fields, see
@@ -342,7 +344,7 @@ str(result[["endPoints.endPoint"]])
 long_result <- ctrdata::dfTrials2Long(
   df = result
 )
-# Total 67444 rows, 182 unique names of variables
+# Total 67278 rows, 182 unique names of variables
 
 # 3. Obtain values for fields of interest where
 # they related to measures of interest. The
@@ -467,7 +469,8 @@ result <- dbGetFieldsIntoDf(
       "a2_eudract_number"), 
   con = db)
 # [...]
-# * Simplified or collapsed with '/' [3]: 'dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation'
+# * Simplified or collapsed with '/' [3]:
+#    'dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation'
 
 # Find first date of authorisation in EU member state
 tmp <- aggregate(
@@ -541,7 +544,7 @@ m <- mongo(url = paste0(db[["url"]], "/", db[["db"]]),
 
 # Number of records in  collection:
 m$count()
-# [1] 332
+# [1] 330
 
 # Number of EUCTR records, using JSON for query:
 m$count(query = '{"_id": {"$regex": "[0-9]{4}-[0-9]{6}-[0-9]{2}", 
@@ -555,11 +558,11 @@ m$count(query = '{"ctrname": "EUCTR"}')
 # Number of CTGOV records:
 m$count(query = '{"_id": {"$regex": "NCT[0-9]{8}", 
                  "$options": "i"}}')
-# [1] 196
+# [1] 194
 
 # Alternative:
 m$count(query = '{"ctrname": "CTGOV"}')
-# [1] 196
+# [1] 194
 
 # The following examples use the aggregation pipeline in MongoDB:
 
@@ -613,7 +616,7 @@ hist <- m$mapreduce(
 )
 hist
 #   _id value
-# 1  NaN   202
+# 1  NaN   200
 # 2    0    74
 # 3  100    35
 # 4  200     4
