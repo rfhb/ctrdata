@@ -21,7 +21,7 @@ motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. The package
 is to be used within the [R](https://www.r-project.org/) system.
 
-Last reviewed on 2021-03-20 for version 1.5.1
+Last reviewed on 2021-04-02 for version 1.5.1.9000
 
 Main features:
 
@@ -221,12 +221,12 @@ with(result,
      table(
        p_end_of_trial_status, 
        a7_trial_is_part_of_a_paediatric_investigation_plan))
-#                      a7_trial_is_part_of_a_paediatric_investigation_plan
-# p_end_of_trial_status Information not present in EudraCT No Yes
-#     Completed                                          6 31  15
-#     Ongoing                                            0  4   4
-#     Prematurely Ended                                  0  1   0
-#     Restarted                                          0  0   1
+#                  a7_trial_is_part_of_a_paediatric_investigation_plan
+# p_end_of_trial_status      Information not present in EudraCT No Yes
+#   Completed                                                 6 31  15
+#   GB - no longer in EU/EEA                                  0  4   4
+#   Ongoing                                                   0  1   0
+#   Prematurely Ended                                         1  1   0
 ```
 
 -   Add records from another register into the same database
@@ -313,7 +313,7 @@ ggplot(data = nset) +
   scale_x_log10() + 
   scale_y_log10() 
 ggsave(filename = "inst/image/README-ctrdata_results_neuroblastoma.png",
-       width = 4, height = 3, units = "in")
+       width = 5, height = 3, units = "in")
 ```
 
 ![Neuroblastoma
