@@ -21,7 +21,7 @@ motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. The package
 is to be used within the [R](https://www.r-project.org/) system.
 
-Last reviewed on 2021-04-02 for version 1.5.1.9000
+Last reviewed on 2021-04-05 for version 1.5.1.9001
 
 Main features:
 
