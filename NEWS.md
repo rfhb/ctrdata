@@ -1,6 +1,6 @@
-# ctrdata 1.5.1.9000
- - 2021-03-21
- - new dev version
+# ctrdata 1.5.2
+ - 2021-04-05
+ - bugfix of EOL for converting EUCTR files
 
 # ctrdata 1.5.1
  - 2021-03-21
