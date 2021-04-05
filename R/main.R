@@ -1328,7 +1328,7 @@ ctrLoadQueryIntoDbEuctr <- function(
     # number in the URL that was downloaded
     # save to file
     if (res$status_code == 200L) {
-      writeChar(object = rawToChar(res$content), con = fp[pc], useBytes = TRUE)
+      writeLines(text = rawToChar(res$content), con = fp[pc], useBytes = TRUE)
     }
     # inform user
     message("Pages: ", pc, " done, ",
