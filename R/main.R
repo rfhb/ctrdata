@@ -191,13 +191,11 @@ ctrLoadQueryIntoDb <- function(
     }
 
     ## sanity checks
-    if (grepl("[^.a-zA-Z0-9=+&%_-]",
-              gsub("\\[", "",
-                   gsub("\\]", "",
-                        queryterm)))) {
+    if (grepl("[^.a-zA-Z0-9=+&%_:\", -]",
+              gsub("\\[", "", gsub("\\]", "", queryterm)))) {
       stop("Parameter 'queryterm' is not an URL showing results ",
            "of a query or has unexpected characters: ", queryterm,
-           ", expected are: a-zA-Z0-9=+&%_-.[]",
+           ", expected are: a-zA-Z0-9=+&%_-,.: []\"",
            call. = FALSE)
     }
     #
