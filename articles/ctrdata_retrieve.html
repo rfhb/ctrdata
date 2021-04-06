@@ -36,7 +36,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ctrdata</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.2</span>
       </span>
     </div>
 
@@ -102,7 +102,7 @@
       <h1 data-toc-skip>Retrieve clinical trial information</h1>
                         <h4 class="author">Ralf Herold</h4>
             
-            <h4 class="date">2021-03-21</h4>
+            <h4 class="date">2021-04-02</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/rfhb/ctrdata/blob/master/vignettes/ctrdata_retrieve.Rmd"><code>vignettes/ctrdata_retrieve.Rmd</code></a></small>
       <div class="hidden name"><code>ctrdata_retrieve.Rmd</code></div>
@@ -198,9 +198,9 @@
 <span class="co"># Show which queries have been downloaded into database</span>
 <span class="fu"><a href="../reference/dbQueryHistory.html">dbQueryHistory</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 <span class="co">#       query-timestamp query-register query-records</span>
-<span class="co"># 1 2021-03-21 08:01:38          EUCTR           232</span>
-<span class="co">#                                                   query-term</span>
-<span class="co"># 1 query=cancer&amp;age=under-18&amp;status=completed&amp;phase=phase-one</span></code></pre></div>
+<span class="co"># 1 2021-04-02 11:48:10          EUCTR           232 </span>
+<span class="co">#                                                     query-term</span>
+<span class="co"># 1   query=cancer&amp;age=under-18&amp;status=completed&amp;phase=phase-one</span></code></pre></div>
 <p>With file-base SQLite, it takes about 5 minutes for 1000 records.</p>
 <p>Speed is higher when using MongoDB (or memory-based SQLite).</p>
 </div>
@@ -251,6 +251,15 @@
   queryterm <span class="op">=</span> <span class="st">"https://clinicaltrials.gov/ct2/results?cond=neuroblastoma&amp;recrs=e&amp;age=0&amp;intr=Drug"</span>,
   con <span class="op">=</span> <span class="va">db</span>
 <span class="op">)</span>
+<span class="co"># * Found search query from CTGOV: cond=neuroblastoma&amp;recrs=e&amp;age=0&amp;intr=Drug</span>
+<span class="co"># (1/3) Checking trials in CTGOV:</span>
+<span class="co"># Retrieved overview, records of 194 trial(s) are to be downloaded.</span>
+<span class="co"># Checking helper binaries: . . . done.</span>
+<span class="co"># Downloading: 1.2 MB       </span>
+<span class="co"># (2/3) Converting to JSON...</span>
+<span class="co"># (3/3) Importing JSON records into database...</span>
+<span class="co"># = Imported or updated 194 trial(s). </span>
+<span class="co"># * Updated history in meta-info of "test"</span>
 <span class="co"># [...]</span>
 <span class="co"># attr(,"ctrdata-dbqueryhistory")</span>
 <span class="co">#       query-timestamp query-register query-records</span>
