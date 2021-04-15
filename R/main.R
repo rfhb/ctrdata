@@ -1165,8 +1165,15 @@ ctrLoadQueryIntoDbEuctr <- function(
     httr::GET(url = q), as = "text"), silent = TRUE)
   #
   if (inherits(resultsEuPages, "try-error")) {
-    stop("Host ", queryEuRoot, " does not respond, cannot continue.",
-         call. = FALSE)
+    if (grepl("SSL certificate.*local issuer certificate", resultsEuPages)) {
+      stop("Host ", queryEuRoot, " cannot be queried as expected, error:\n",
+           trimws(resultsEuPages), "\nFor a potential workaround, check ",
+           "https://github.com/rfhb/ctrdata/issues/19#issuecomment-820127139",
+           call. = FALSE)
+    } else {
+    stop("Host ", queryEuRoot, " does not respond as expected, error:\n",
+         resultsEuPages, call. = FALSE)
+    }
   }
 
   # get number of trials identified by query

@@ -1,5 +1,6 @@
 # ctrdata 1.5.2.9000
  - 2021-04-06
+ - include message to user how to handle server certificate issues
  
 # ctrdata 1.5.2
  - 2021-04-05
