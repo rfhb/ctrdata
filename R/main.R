@@ -1167,8 +1167,7 @@ ctrLoadQueryIntoDbEuctr <- function(
   q <- utils::URLencode(paste0(queryEuRoot, queryEuType1, queryterm))
   if (verbose) message("DEBUG: queryterm is ", q)
   #
-  resultsEuPages <- try(httr::content(
-    httr::GET(url = q), as = "text"), silent = TRUE)
+  resultsEuPages <- try(httr::GET(url = q), silent = TRUE)
   #
   if (inherits(resultsEuPages, "try-error")) {
     if (grepl("SSL certificate.*local issuer certificate", resultsEuPages)) {
@@ -1181,6 +1180,10 @@ ctrLoadQueryIntoDbEuctr <- function(
          resultsEuPages, call. = FALSE)
     }
   }
+  # - store options from request
+  requestOptions <- resultsEuPages$request$options
+  # - get content of response
+  resultsEuPages <- httr::content(resultsEuPages, as = "text")
 
   # get number of trials identified by query
   resultsEuNumTrials <- sub(
@@ -1286,16 +1289,21 @@ ctrLoadQueryIntoDbEuctr <- function(
 
   # prepare download and saving
 
-  # get cookies
+  # prepare curl operations
+  #
+  # - make handle work with cookies
   cf <- tempfile(
     pattern = "cookies_",
-    fileext = ".txt"
-  )
+    fileext = ".txt")
+  # - new handle
   h <- curl::new_handle(
     useragent = "",
     accept_encoding = "gzip,deflate,zstd,br",
     cookiejar = cf,
     cookiefile = cf)
+  # - add any user options specified for httr
+  curl::handle_setopt(h, .list = requestOptions)
+  # - do fetch
   tmp <- curl::curl_fetch_memory(
     url = paste0(queryEuRoot, queryEuType3,
                  "query=2008-003606-33", "&page=1", queryEuPost),
@@ -1360,10 +1368,13 @@ ctrLoadQueryIntoDbEuctr <- function(
            replace = FALSE,
            prob = NULL),
     function(u) {
+      h <- curl::new_handle()
+      curl::handle_setopt(h, .list = requestOptions)
       curl::curl_fetch_multi(
         url = urls[u],
         done = curlSuccess,
-        pool = pool)
+        pool = pool,
+        handle = h)
     })
 
   # inform user on first page
@@ -1540,11 +1551,14 @@ ctrLoadQueryIntoDbEuctr <- function(
       tmp <- lapply(
         seq_along(urls),
         function(i) {
+          h <- curl::new_handle()
+          curl::handle_setopt(h, .list = requestOptions)
           curl::curl_fetch_multi(
             url = urls[i],
             done = curlSuccess,
-            pool = pool
-          )})
+            pool = pool,
+            handle = h)
+        })
 
       # do download and save
       tmp <- curl::multi_run(
@@ -1747,15 +1761,16 @@ ctrLoadQueryIntoDbEuctr <- function(
         tmp <- lapply(
           seq_along(urls),
           function(i) {
+            h <- curl::new_handle(
+              url = urls[i],
+              range = "0-30000", # only top of page needed
+              accept_encoding = "identity")
+            curl::handle_setopt(h, .list = requestOptions)
             curl::multi_add(
-              handle = curl::new_handle(
-                url = urls[i],
-                range = "0-30000", # only need top of page
-                accept_encoding = "identity"
-              ),
+              handle = h,
               done = done,
-              pool = pool
-            )})
+              pool = pool)
+          })
 
         # do download and save into batchresults
         # TODO preferably retdat is pre-allocated
