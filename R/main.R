@@ -514,7 +514,13 @@ ctrRerunQuery <- function(
         if (length(resultsRssTrials) == 1L &&
             resultsRssTrials == -1L) {
           message("First result page empty - no (new) trials found?")
-          return(invisible(0L))
+          return(invisible(list(
+            # return structure as in dbCTRLoadJSONFiles
+            # which is handed through to ctrLoadQueryIntoDb
+            n = 0L,
+            success = character(0L),
+            failed = character(0L),
+            queryterm = querytermoriginal)))
         }
         #
         # if new trials found, construct
@@ -1196,12 +1202,18 @@ ctrLoadQueryIntoDbEuctr <- function(
   # calculate number of results pages
   resultsEuNumPages  <- ceiling(resultsEuNumTrials / 20)
 
-  # check for plausbility and stop function without erro
+  # check for plausibility and stop function without erro
   if (is.na(resultsEuNumPages) ||
       is.na(resultsEuNumTrials) ||
       (resultsEuNumTrials == 0)) {
     message("First result page empty - no (new) trials found?")
-    return(invisible(list(n = 0, ids = "")))
+    return(invisible(list(
+      # return structure as in dbCTRLoadJSONFiles
+      # which is handed through to ctrLoadQueryIntoDb
+      n = 0L,
+      success = character(0L),
+      failed = character(0L),
+      queryterm = queryterm)))
   }
 
   # inform user
