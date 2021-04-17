@@ -1793,11 +1793,12 @@ dfTrials2Long <- function(df) {
 
   # add _id to list elements and
   # simplify into data frames
+  tmpNames <- df[-1, "_id", drop = TRUE]
   out <- lapply(
     out, function(e) {
       message(". ", appendLF = FALSE)
-      names(e) <- df[-1, "_id", drop = TRUE]
-      do.call(rbind, e)
+      names(e) <- tmpNames
+      do.call(rbind, c(e, e, stringsAsFactors = FALSE))
     })
 
   # combine lists into data frame
@@ -1832,7 +1833,7 @@ dfTrials2Long <- function(df) {
   out[["name"]] <- ifelse(
     out[["name"]] == names,
     out[["name"]],
-    paste0(names, ".", out[["name"]]))
+    paste0(names, ".0.", out[["name"]]))
 
   # name can have from 0 to about 6 number groups, get all
   # and concatenate to oid-like string such as "1.2.2.1.4"
@@ -1848,6 +1849,9 @@ dfTrials2Long <- function(df) {
 
   # remove any double separators
   out[["name"]] <- gsub("[.]+", ".", out[["name"]], perl = TRUE)
+
+  # remove double rows from rbind above
+  out <- unique(out)
 
   # inform
   message("\nTotal ", nrow(out), " rows, ",
