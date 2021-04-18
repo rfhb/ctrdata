@@ -498,9 +498,10 @@ ctrRerunQuery <- function(
           message("DEBUG (rss url): ", rssquery)
         }
         #
-        resultsRss <- httr::content(
+        resultsRss <- try(httr::content(
           httr::GET(url = rssquery),
-          as = "text")
+          encoding = "UTF-8",
+          as = "text"), silent = TRUE)
 
         if (verbose) {
           message("DEBUG (rss content): ", resultsRss)
