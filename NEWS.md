@@ -6,6 +6,7 @@
  - dfTrials2Long: harmonise identifier level assignment, 
    address cases where field occurs only once in input df
  - dfMergeTwoVariablesRelevel: corrected and improved user info
+ - dfName2Value: remove duplicate rows, e.g. from duplicated criteria
  
 # ctrdata 1.5.2
  - 2021-04-05

@@ -1691,6 +1691,9 @@ dfName2Value <- function(df, valuename = "",
   if (all(is.na(tmp) == is.na(out[["value"]]))) {
     out["value"] <- tmp
   }
+  # remove any duplicates such as
+  # from duplicate where... criteria
+  out <- unique(out)
 
   # return
   return(out)
