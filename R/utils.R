@@ -1799,6 +1799,8 @@ dfTrials2Long <- function(df) {
     out, function(e) {
       message(". ", appendLF = FALSE)
       names(e) <- tmpNames
+      # duplicate e to force generating
+      # names in the later rbind step
       do.call(rbind, c(e, e, stringsAsFactors = FALSE))
     })
 
@@ -1851,7 +1853,7 @@ dfTrials2Long <- function(df) {
   # remove any double separators
   out[["name"]] <- gsub("[.]+", ".", out[["name"]], perl = TRUE)
 
-  # remove double rows from rbind above
+  # remove double rows from duplicating e above
   out <- unique(out)
 
   # inform
