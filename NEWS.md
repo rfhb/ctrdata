@@ -1,9 +1,11 @@
 # ctrdata 1.5.2.9000
- - 2021-04-17
- - include message how to handle server certificate issues
+ - 2021-04-18
+ - include message how to handle server certificate issues,
+   by propagating user settings for httr to curl operations
  - ensure identical return structures when no new trials found
- - dfTrials2Long harmonise identifier level assignment, 
+ - dfTrials2Long: harmonise identifier level assignment, 
    address cases where field occurs only once in input df
+ - dfMergeTwoVariablesRelevel: corrected and improved user info
  
 # ctrdata 1.5.2
  - 2021-04-05

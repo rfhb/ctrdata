@@ -2058,15 +2058,23 @@ dfMergeTwoVariablesRelevel <- function(
   # bind as ...
   if (class(df[, 1]) == class(df[, 2]) &&
       class(df[, 1]) != "character") {
+    # check
+    if (nrow(na.omit(df[!vapply(df[, 1, drop = TRUE], is.null, logical(1L)) &
+                        !vapply(df[, 2, drop = TRUE], is.null, logical(1L)), ,
+                        drop = FALSE]))) {
+      warning("Some rows had values for both columns, used first",
+              noBreaks. = TRUE, immediate. = TRUE)
+    }
     # values, with first having
     # priority over the second
     tmp <- ifelse(is.na(tt <- df[, 1]), df[, 2], df[, 1])
-    if (nrow(df)) {
-      warning("Some rows had values for both columns, ",
-              "used ", colnames[1],
+  } else {
+    # check
+    if (nrow(df[df[, 1] != "" &
+                df[, 2] != "", , drop = FALSE])) {
+      warning("Some rows had values for both columns, concatenated",
               noBreaks. = TRUE, immediate. = TRUE)
     }
-  } else {
     # strings, concatenated
     tmp <- paste0(
       ifelse(is.na(tt <- as.character(df[, 1])), "", tt),
@@ -2109,9 +2117,9 @@ dfMergeTwoVariablesRelevel <- function(
   }
 
   # check and inform user
-  if (length(tt <- unique(tmp)) > 10) {
-    message("Unique values returned (limited to ten): ",
-            paste(tt[1:10], collapse = ", "))
+  if (length(tt <- unique(tmp)) > 3L) {
+    message("Unique values returned (first three): ",
+            paste(tt[1L:3L], collapse = ", "))
   } else {
     message("Unique values returned: ",
             paste(tt, collapse = ", "))
