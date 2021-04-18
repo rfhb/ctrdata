@@ -180,7 +180,8 @@ nodbi::<a href='https://docs.ropensci.org/nodbi/reference/src_mongo.html'>src_mo
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Vector of names of found field(s)</p>
+    <p>Vector of names of found field(s) in alphabetical
+order (that is, not by register or field frequency)</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>For fields in EUCTR (protocol- and results-related information),
@@ -190,10 +191,10 @@ see also the register's documentation at
 the register's definitions at
 <a href='https://prsinfo.clinicaltrials.gov/definitions.html'>https://prsinfo.clinicaltrials.gov/definitions.html</a>.</p>
 <p>Note: Generating a list of fields with this function may take
-some time, and may involve running a mapreduce function is
-run on the server. If the user is not not authorized to run
-such a function on the (local or remote) server,
-random documents are sampled to generate a list of fields.</p>
+some time, and may involve running a mapreduce function if using
+a MongoDB server. If the user is not not authorized to run
+such a function, random documents are sampled to generate a
+list of fields.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
