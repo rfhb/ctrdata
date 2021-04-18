@@ -18,7 +18,8 @@ nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()}
 (default \code{FALSE}).}
 }
 \value{
-Vector of names of found field(s)
+Vector of names of found field(s) in alphabetical
+order (that is, not by register or field frequency)
 }
 \description{
 Given part of the name of a field of interest to the user, this
@@ -34,10 +35,10 @@ the register's definitions at
 \url{https://prsinfo.clinicaltrials.gov/definitions.html}.
 
 Note: Generating a list of fields with this function may take
-some time, and may involve running a mapreduce function is
-run on the server. If the user is not not authorized to run
-such a function on the (local or remote) server,
-random documents are sampled to generate a list of fields.
+some time, and may involve running a mapreduce function if using
+a MongoDB server. If the user is not not authorized to run
+such a function, random documents are sampled to generate a
+list of fields.
 }
 \examples{
 

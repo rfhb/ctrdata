@@ -630,10 +630,10 @@ dbQueryHistory <- function(con,
 #' \url{https://prsinfo.clinicaltrials.gov/definitions.html}.
 #'
 #' Note: Generating a list of fields with this function may take
-#' some time, and may involve running a mapreduce function is
-#' run on the server. If the user is not not authorized to run
-#' such a function on the (local or remote) server,
-#' random documents are sampled to generate a list of fields.
+#' some time, and may involve running a mapreduce function if using
+#' a MongoDB server. If the user is not not authorized to run
+#' such a function, random documents are sampled to generate a
+#' list of fields.
 #'
 #' @param namepart A plain string (can include a regular expression,
 #' including Perl-style) to be searched for among all field names
@@ -646,7 +646,8 @@ dbQueryHistory <- function(con,
 #'
 #' @inheritParams ctrDb
 #'
-#' @return Vector of names of found field(s)
+#' @return Vector of names of found field(s) in alphabetical
+#' order (that is, not by register or field frequency)
 #'
 #' @export
 #'
@@ -798,7 +799,7 @@ dbFindFields <- function(namepart = "",
   if (!length(fields)) fields <- ""
 
   # return the match(es)
-  return(fields)
+  return(sort(fields))
 
 } # end dbFindFields
 
