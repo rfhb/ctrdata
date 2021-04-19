@@ -14,7 +14,12 @@
 # 2016-09-11: real 1.2 s for 151 documents: ~  8 ms per trial (MacBookPro2015)
 # 2017-01-12: real 1m23.021s for 10978 doc: ~  8 ms per trial (MacBookPro2015)
 # 2019-08-10: real 3s    for 446 documents: ~  7 ms per trial (MacBookPro2015)
+# 2021-04-18: 5.7 s for 503 records: ~ 11 ms per trial (MacBookPro2015)
 
+# clean to avoid recursion
+rm "$1/euctr_trials_all.txt"
+
+# concatenate into one
 cat "$1/euctr_trials_"* > "$1/euctr_trials_all.txt"
 
 # notes to myself: sed cannot use + or other

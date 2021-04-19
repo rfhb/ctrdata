@@ -7,6 +7,7 @@
 // used for: ctgov, euctr
 // time xml2json.php:
 // 2016-04-20: 0.05 s for 2 trials ~ 25 ms per trial
+// 2021-04-18: 1.5 s for 200 trials ~ 7.5 ms per trial
 
 // note line endings are to be kept by using in
 // .gitattributes for compatibility with cygwin:
