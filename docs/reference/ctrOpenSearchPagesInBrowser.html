@@ -81,7 +81,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ctrdata</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.3</span>
       </span>
     </div>
 
@@ -89,7 +89,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -104,7 +104,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/ctrdata_analyse.html">Analysing clinical trial information</a>
+      <a href="../articles/ctrdata_analyse.html">Summarise and analyse clinical trial information</a>
     </li>
     <li>
       <a href="../articles/ctrdata_install.html">Install R package ctrdata</a>
@@ -121,7 +121,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/rfhb/ctrdata/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -162,15 +162,15 @@
       <th>input</th>
       <td><p>Show results of search for <code>queryterm</code> in
 browser. To open the browser with a previous search, (register or)
-queryterm can be the output of <a href='ctrGetQueryUrlFromBrowser.html'>ctrGetQueryUrlFromBrowser</a> or can
+queryterm can be the output of <a href='ctrGetQueryUrl.html'>ctrGetQueryUrl</a> or can
 be one row from <a href='dbQueryHistory.html'>dbQueryHistory</a>.</p></td>
     </tr>
     <tr>
       <th>register</th>
       <td><p>Register(s) to open. Either "EUCTR" or "CTGOV" or a vector of
 both. Default is to open both registers' advanced search pages. To open the
-browser with a previous search, the output of ctrGetQueryUrlFromBrowser()
-or one row from dbQueryHistory() can be used.</p></td>
+browser with a previous search, the output of <a href='ctrGetQueryUrl.html'>ctrGetQueryUrl</a>
+or one row from <a href='dbQueryHistory.html'>dbQueryHistory</a> can be used.</p></td>
     </tr>
     <tr>
       <th>copyright</th>
@@ -193,8 +193,10 @@ this function.</p></td>
 <span class='fu'>ctrOpenSearchPagesInBrowser</span><span class='op'>(</span>
  <span class='st'>"https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer"</span><span class='op'>)</span>
 
+<span class='co'># for this example, the clipboard has to</span>
+<span class='co'># contain the URL from a search in a register</span>
 <span class='fu'>ctrOpenSearchPagesInBrowser</span><span class='op'>(</span>
- <span class='fu'><a href='ctrGetQueryUrlFromBrowser.html'>ctrGetQueryUrlFromBrowser</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+ <span class='fu'><a href='ctrGetQueryUrl.html'>ctrGetQueryUrl</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'># open the last query that was</span>
 <span class='co'># loaded into the database</span>

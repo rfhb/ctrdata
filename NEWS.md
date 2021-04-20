@@ -1,5 +1,8 @@
+# ctrdata 1.5.3.9000
+ - 2021-04-20
+
 # ctrdata 1.5.3
- - 2021-04-18
+ - 2021-04-19
  - include message how to handle server certificate issues,
    by propagating user settings for httr to curl operations
  - ensure identical return structures when no new trials found
