@@ -1105,7 +1105,6 @@ dbFindIdsUniqueTrials <- function(
   # inform user
   message(
     "= Returning keys (_id) of ", length(retids),
-    " out of total ", nrow(listofIds),
     " records in collection \"", con$collection, "\".")
 
   # return
@@ -2199,6 +2198,11 @@ dfFindUniqueEuctrRecord <- function(
     include3rdcountrytrials <- TRUE
   }
 
+  # count total
+  totalEuctr <- unique(df[["a2_eudract_number"]])
+  totalEuctr <- na.omit(totalEuctr[totalEuctr != ""])
+  totalEuctr <- length(totalEuctr)
+
   # as a first step, handle 3rd country trials e.g. 2010-022945-52-3RD
   # if retained, these trials would count as record for a trial
   if (!include3rdcountrytrials) {
@@ -2264,7 +2268,8 @@ dfFindUniqueEuctrRecord <- function(
   if (length(nms) > (tmp <- length(result))) {
     message(
       " - ", tmp,
-      " EUCTR _id were not preferred EU Member State record of trial")
+      " EUCTR _id were not preferred EU Member State record for ",
+      totalEuctr, " trial(s)")
   }
 
   # return
