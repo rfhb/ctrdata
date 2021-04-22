@@ -12,6 +12,10 @@ statusvalues <- list(
   "Firstvalues" = c("12", "23"),
   "Lastvalue"   = c("34"))
 
+#### binaries ####
+
+expect_error(ctrdata:::checkBinary("notworking"))
+
 
 #### environment ####
 

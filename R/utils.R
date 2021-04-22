@@ -2743,3 +2743,74 @@ installFindBinary <- function(commandtest = NULL, verbose = FALSE) {
   #
 }
 # end installFindBinary
+
+
+#' checkBinary
+#'
+#' @param b Vector of pre-defined binaries to be tested
+#'
+#' @keywords internal
+#'
+#' @return Logical, \code{TRUE} if all binaries ok
+#'
+checkBinary <- function(b = NULL) {
+
+  # check actions and user infos
+  actionsInfos <- list(
+    "notworking" <- c("nonexistingbinarytested",
+                      "not found"),
+    "php" = c("php --version",
+              "php not found, ctrLoadQueryIntoDb() will not work "),
+    "phpxml" = c("php -r 'simplexml_load_string(\"\");'",
+                 "php xml not found, ctrLoadQueryIntoDb() will not work "),
+    "phpjson" = c("php -r 'json_encode(\"<foo>\");'",
+                  "php json not found, ctrLoadQueryIntoDb() will not work "),
+    "sed" = c("echo x | sed s/x/y/",
+              "sed not found, ctrLoadQueryIntoDb() will not work "),
+    "perl" = c("perl -V:osname",
+               "perl not found, ctrLoadQueryIntoDb() will not work ")
+  )
+
+  # check private environment and create if not found
+  if (!exists(x = ".dbffenv", mode = "environment")) {
+    print("env created in checkBinary")
+    .dbffenv <- new.env(parent = emptyenv())
+  }
+
+  # if input empty, just check all except test
+  if (is.null(b)) b <- names(actionsInfos)[-1]
+
+  # do check
+  out <- sapply(X = b, function(bi) {
+
+    # check input
+    actionsInfo <- actionsInfos[[bi]]
+    if (is.null(actionsInfo)) stop("Unknown binary to check: ", bi, call. = FALSE)
+
+    # previously checked and successful?
+    checked <- exists(x = paste0("bin_check_", bi), envir = .dbffenv)
+    if (checked) checked <- get(x = paste0("bin_check_", bi), envir = .dbffenv)
+    if (checked) return(TRUE)
+
+    # check binary
+    ok <- installFindBinary(commandtest = actionsInfo[1])
+    if (!ok) message("\n", actionsInfo[2], appendLF = FALSE)
+
+    # store check to private environment
+    assign(x = paste0("bin_check_", bi), value = ok, envir = .dbffenv)
+
+  })
+
+  # inform user
+  if (!all(out)) stop(
+    "\nTo install command line binaries needed for package ctrdata, ",
+    "see recommendations at https://github.com/rfhb/ctrdata#2-command-",
+    "line-tools-perl-sed-cat-and-php-52-or-higher After installation, ",
+    "detach and load package ctrdata again, or restart the R session.",
+    immediate. = TRUE)
+
+  # return single value since
+  # all tests need to be ok
+  invisible(all(out))
+
+}

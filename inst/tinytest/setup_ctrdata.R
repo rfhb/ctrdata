@@ -9,7 +9,7 @@
 #### setup ####
 
 library(tinytest)
-suppressPackageStartupMessages(library(ctrdata))
+suppressMessages(library(ctrdata))
 
 
 #### global variables for data bases ####
@@ -59,20 +59,21 @@ checkBinaries <- function() {
 
   out &&
 
-    suppressWarnings(ctrdata:::installFindBinary(
-      commandtest = "php --version")) &&
-
-    suppressWarnings(ctrdata:::installFindBinary(
-      commandtest = "php -r 'simplexml_load_string(\"\");'")) &&
-
-    suppressWarnings(ctrdata:::installFindBinary(
-      commandtest = "php -r 'json_encode(\"<foo>\");'")) &&
-
-    suppressWarnings(ctrdata:::installFindBinary(
-      commandtest = "echo x | sed s/x/y/")) &&
-
-    suppressWarnings(ctrdata:::installFindBinary(
-      commandtest = "perl -V:osname"))
+    ctrdata:::checkBinary()
+    # suppressWarnings(ctrdata:::installFindBinary(
+    #   commandtest = "php --version")) &&
+    #
+    # suppressWarnings(ctrdata:::installFindBinary(
+    #   commandtest = "php -r 'simplexml_load_string(\"\");'")) &&
+    #
+    # suppressWarnings(ctrdata:::installFindBinary(
+    #   commandtest = "php -r 'json_encode(\"<foo>\");'")) &&
+    #
+    # suppressWarnings(ctrdata:::installFindBinary(
+    #   commandtest = "echo x | sed s/x/y/")) &&
+    #
+    # suppressWarnings(ctrdata:::installFindBinary(
+    #   commandtest = "perl -V:osname"))
 
 }
 
@@ -144,4 +145,5 @@ checkMongoRemoteRw <- function() {
   out <- all(c("src_mongo", "docdb_src") %in% class(tmp))
   if (out) tmp$con$disconnect()
   out
+
 }

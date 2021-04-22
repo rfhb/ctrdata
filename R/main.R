@@ -980,26 +980,27 @@ ctrLoadQueryIntoDbCtgov <- function(
   ## system check, in analogy to onload.R
   message("Checking helper binaries: ", appendLF = FALSE)
   #
-  if (!suppressWarnings(
-    installFindBinary(
-      commandtest = "php --version"))) {
-    stop("php not found, ctrLoadQueryIntoDb() will not work.",
-         call. = FALSE)
-  }
-  #
-  if (!suppressWarnings(
-    installFindBinary(
-      commandtest = "php -r 'simplexml_load_string(\"\");'"))) {
-    stop("php xml not found, ctrLoadQueryIntoDb() will not work.",
-         call. = FALSE)
-  }
-  #
-  if (!suppressWarnings(
-    installFindBinary(
-      commandtest = "php -r 'json_encode(\"<foo>\");'"))) {
-    stop("php json not found, ctrLoadQueryIntoDb() will not work.",
-         call. = FALSE)
-  }
+  checkBinary(c("php", "phpxml", "phpjson"))
+  # if (!suppressWarnings(
+  #   installFindBinary(
+  #     commandtest = "php --version"))) {
+  #   stop("php not found, ctrLoadQueryIntoDb() will not work.",
+  #        call. = FALSE)
+  # }
+  # #
+  # if (!suppressWarnings(
+  #   installFindBinary(
+  #     commandtest = "php -r 'simplexml_load_string(\"\");'"))) {
+  #   stop("php xml not found, ctrLoadQueryIntoDb() will not work.",
+  #        call. = FALSE)
+  # }
+  # #
+  # if (!suppressWarnings(
+  #   installFindBinary(
+  #     commandtest = "php -r 'json_encode(\"<foo>\");'"))) {
+  #   stop("php json not found, ctrLoadQueryIntoDb() will not work.",
+  #        call. = FALSE)
+  # }
   #
   message("done.")
 
@@ -1245,41 +1246,8 @@ ctrLoadQueryIntoDbEuctr <- function(
 
   ## system check, in analogy to onload.R
   message("Checking helper binaries: ", appendLF = FALSE)
-  #
-  if (euctrresults &&
-      !suppressWarnings(installFindBinary(
-        commandtest = "php --version"))) {
-    stop("php not found, ctrLoadQueryIntoDb() will not work.",
-         call. = FALSE)
-  }
-  #
-  if (euctrresults &&
-      !suppressWarnings(installFindBinary(
-        commandtest = "php -r 'simplexml_load_string(\"\");'"))) {
-    stop("php xml not found, ctrLoadQueryIntoDb() will not work.",
-         call. = FALSE)
-  }
-  #
-  if (euctrresults &&
-      !suppressWarnings(
-        installFindBinary(
-          commandtest = "php -r 'json_encode(\"<foo>\");'"))) {
-    stop("php json not found, ctrLoadQueryIntoDb() will not work.",
-         call. = FALSE)
-  }
-  #
-  if (!suppressWarnings(installFindBinary(
-    commandtest = "echo x | sed s/x/y/"))) {
-    stop("sed not found, ctrLoadQueryIntoDb() will not work.",
-         call. = FALSE)
-  }
-  #
-  if (!suppressWarnings(installFindBinary(
-    commandtest = "perl -V:osname"))) {
-    stop("perl not found, ctrLoadQueryIntoDb() will not work.",
-         call. = FALSE)
-  }
-  #
+  if (euctrresults) checkBinary(c("php", "phpxml", "phpjson"))
+  checkBinary(c("sed", "perl"))
   message("done.")
 
   ## download all text files from pages
