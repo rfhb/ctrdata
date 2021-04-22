@@ -1162,8 +1162,8 @@ ctrLoadQueryIntoDbEuctr <- function(
   queryEuType3 <- "ctr-search/rest/download/full?"
   queryEuType4 <- "ctr-search/rest/download/result/zip/xml/"
   queryEuPost  <- paste0(
-    "&mode=current_page&format=text&dContent=",
-    "summary&number=current_page&submit-download=Download")
+    "&mode=current_page&format=text&dContent=full",
+    "&number=current_page&submit-download=Download")
 
   # get first result page
   q <- utils::URLencode(paste0(queryEuRoot, queryEuType1, queryterm))
