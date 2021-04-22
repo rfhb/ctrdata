@@ -1354,7 +1354,7 @@ ctrLoadQueryIntoDbEuctr <- function(
     pool = pool)
 
   # check plausibility
-  if (class(tmp) == "try-error") {
+  if (inherits(tmp, "try-error")) {
     stop("Download from EUCTR failed; last error: ",
          class(tmp), call. = FALSE)
   }
@@ -1670,7 +1670,7 @@ ctrLoadQueryIntoDbEuctr <- function(
           silent = TRUE)
 
           # inform user on failed trial
-          if (class(tmp) == "try-error") {
+          if (inherits(tmp, "try-error")) {
             warning(paste0("Import into mongo failed for trial ", euctrnumber),
                     immediate. = TRUE)
             tmp <- 0

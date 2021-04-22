@@ -2659,8 +2659,8 @@ installCygwinWindowsTest <- function(verbose = FALSE) {
       ))},
     silent = TRUE)
   #
-  if ((class(tmpcygwin) != "try-error") &
-      (length(tmpcygwin) > 5)) {
+  if (inherits(tmpcygwin, "try-error") &
+      (length(tmpcygwin) > 5L)) {
     if (verbose) message("cygwin seems to work correctly.")
     return(invisible(TRUE))
   } else {
@@ -2719,7 +2719,7 @@ installFindBinary <- function(commandtest = NULL, verbose = FALSE) {
   )
   #
   commandreturn <- ifelse(
-    class(commandresult) == "try-error" ||
+    inherits(commandresult, "try-error") ||
       grepl("error|not found", tolower(paste(commandresult, collapse = " "))) ||
       (!is.null(attr(commandresult, "status")) &&
          (attr(commandresult, "status") != 0)),
@@ -2814,3 +2814,4 @@ checkBinary <- function(b = NULL) {
   invisible(all(out))
 
 }
+
