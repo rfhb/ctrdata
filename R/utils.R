@@ -2659,7 +2659,7 @@ installCygwinWindowsTest <- function(verbose = FALSE) {
       ))},
     silent = TRUE)
   #
-  if (inherits(tmpcygwin, "try-error") &
+  if (!inherits(tmpcygwin, "try-error") &
       (length(tmpcygwin) > 5L)) {
     if (verbose) message("cygwin seems to work correctly.")
     return(invisible(TRUE))
