@@ -116,7 +116,7 @@
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#ctrdata-for-aggregating-and-analysing-clinical-trials" class="anchor"></a>ctrdata for aggregating and analysing clinical trials</h1></div>
 <p>The package <code>ctrdata</code> provides functions for retrieving (downloading) information on clinical trials from public registers, and for aggregating and analysing this information. Use with <a href="https://www.r-project.org/">R</a> for the European Union Clinical Trials Register (“EUCTR”, <a href="https://www.clinicaltrialsregister.eu/" class="uri">https://www.clinicaltrialsregister.eu/</a>) and ClinicalTrials.gov (“CTGOV”, <a href="https://clinicaltrials.gov/" class="uri">https://clinicaltrials.gov/</a>). The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. The package is to be used within the <a href="https://www.r-project.org/">R</a> system.</p>
-<p>Last reviewed on 2021-04-05 for version 1.5.1.9001</p>
+<p>Last reviewed on 2021-04-22 for version 1.5.3.9001</p>
 <p>Main features:</p>
 <ul>
 <li><p>Protocol-related trial information is easily retrieved (downloaded): Users define a query in a register’s web interface and then use <code>ctrdata</code> to retrieve in one step all trials resulting from the query. Results-related trial information and personal annotations can be including during retrieval. Synonyms of an active substance can also be found.</p></li>
@@ -156,8 +156,11 @@ citation("ctrdata")
 <h2 class="hasAnchor">
 <a href="#2-command-line-tools-perl-sed-cat-and-php-52-or-higher" class="anchor"></a>2. Command line tools <code>perl</code>, <code>sed</code>, <code>cat</code> and <code>php</code> (5.2 or higher)</h2>
 <p>These command line tools are required for <code><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code>, the main function of package <code>ctrdata</code>.</p>
-<p>In Linux and macOS (including version 11.2 Big Sur), these are usually already installed.</p>
-<p>For MS Windows, install <a href="https://cygwin.org/install.html">cygwin</a>: In <code>R</code>, run <code><a href="reference/installCygwinWindowsDoInstall.html">ctrdata::installCygwinWindowsDoInstall()</a></code> for an automated minimal installation into <code>c:\cygwin</code>. Alternatively, install manually cygwin with packages <code>perl</code>, <code>php-jsonc</code> and <code>php-simplexml</code> into <code>c:\cygwin</code>. The installation needs about 160 MB disk space; no administrator credentials needed.</p>
+<ul>
+<li><p>For MS Windows, install <a href="https://cygwin.org/install.html">cygwin</a>: In <code>R</code>, run <code><a href="reference/installCygwinWindowsDoInstall.html">ctrdata::installCygwinWindowsDoInstall()</a></code> for an automated minimal installation. Alternatively, install manually cygwin with packages <code>perl</code>, <code>php-jsonc</code> and <code>php-simplexml</code> into <code>c:\cygwin</code>. The installation needs about 160 MB disk space; no administrator credentials needed.</p></li>
+<li><p>In macOS (including version 11.2 Big Sur), these are usually already installed; in case of errors, <a href="https://brew.sh/"><code>homebrew</code></a> can be used to install these binaries.</p></li>
+<li><p>In Linux, these are usually already installed; tools for installation vary by distribution (e.g., <code>apt</code>).</p></li>
+</ul>
 </div>
 <div id="testing" class="section level2">
 <h2 class="hasAnchor">
