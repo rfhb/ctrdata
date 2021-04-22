@@ -21,7 +21,7 @@ motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. The package
 is to be used within the [R](https://www.r-project.org/) system.
 
-Last reviewed on 2021-04-05 for version 1.5.1.9001
+Last reviewed on 2021-04-22 for version 1.5.3.9001
 
 Main features:
 
@@ -92,15 +92,19 @@ These commands also install the package dependencies, which are `nodbi`,
 These command line tools are required for `ctrLoadQueryIntoDb()`, the
 main function of package `ctrdata`.
 
-In Linux and macOS (including version 11.2 Big Sur), these are usually
-already installed.
+-   For MS Windows, install [cygwin](https://cygwin.org/install.html):
+    In `R`, run `ctrdata::installCygwinWindowsDoInstall()` for an
+    automated minimal installation. Alternatively, install manually
+    cygwin with packages `perl`, `php-jsonc` and `php-simplexml` into
+    `c:\cygwin`. The installation needs about 160 MB disk space; no
+    administrator credentials needed.
 
-For MS Windows, install [cygwin](https://cygwin.org/install.html): In
-`R`, run `ctrdata::installCygwinWindowsDoInstall()` for an automated
-minimal installation into `c:\cygwin`. Alternatively, install manually
-cygwin with packages `perl`, `php-jsonc` and `php-simplexml` into
-`c:\cygwin`. The installation needs about 160 MB disk space; no
-administrator credentials needed.
+-   In macOS (including version 11.2 Big Sur), these are usually already
+    installed; in case of errors, [`homebrew`](https://brew.sh/) can be
+    used to install these binaries.
+
+-   In Linux, these are usually already installed; tools for
+    installation vary by distribution (e.g., `apt`).
 
 ## Testing
 

@@ -1,5 +1,9 @@
 # ctrdata 1.5.3.9000
  - 2021-04-20
+ - refactor checking and caching binaries 
+ - update EUCTR download parameters 
+ - harmonise error checking 
+ - avoid script errors
 
 # ctrdata 1.5.3
  - 2021-04-19
