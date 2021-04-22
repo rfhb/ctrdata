@@ -16,11 +16,8 @@
 # 2019-08-10: real 3s    for 446 documents: ~  7 ms per trial (MacBookPro2015)
 # 2021-04-18: 5.7 s for 503 records: ~ 11 ms per trial (MacBookPro2015)
 
-# clean to avoid recursion
-rm "$1/euctr_trials_all.txt"
-
 # concatenate into one
-cat "$1/euctr_trials_"* > "$1/euctr_trials_all.txt"
+cat "$1/euctr_trials_"* > "$1/euctr_all_trials.txt"
 
 # notes to myself: sed cannot use + or other
 # alternatively install gnu-sed: > brew install gnu-sed
@@ -30,7 +27,7 @@ cat "$1/euctr_trials_"* > "$1/euctr_trials_all.txt"
 # transform to json for import in mongodb, reference:
 # http://docs.mongodb.org/manual/reference/bios-example-collection/
 
-LC_CTYPE=C && LANG=C && < "$1/euctr_trials_all.txt" perl -ne '
+LC_CTYPE=C && LANG=C && < "$1/euctr_all_trials.txt" perl -ne '
   # this section is faster with perl compared to sed
 
   # get UTC date, time in format correspondsing to the
