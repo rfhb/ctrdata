@@ -59,7 +59,7 @@ checkBinaries <- function() {
   #
   # out &&
 
-    ctrdata:::checkBinary()
+    all(ctrdata:::checkBinary())
     # suppressWarnings(ctrdata:::installFindBinary(
     #   commandtest = "php --version")) &&
     #
