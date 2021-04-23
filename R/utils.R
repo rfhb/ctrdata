@@ -2726,9 +2726,9 @@ installFindBinary <- function(commandtest = NULL, verbose = FALSE) {
     FALSE, TRUE)
   #
   if (!commandreturn) {
-    warning(commandtest, " not found.",
-            call. = FALSE,
-            immediate. = FALSE)
+    # warning(commandtest, " not found.",
+    #         call. = FALSE,
+    #         immediate. = FALSE)
   } else {
     if (interactive()) {
       message(". ", appendLF = FALSE)
@@ -2757,8 +2757,8 @@ checkBinary <- function(b = NULL) {
 
   # check actions and user infos
   actionsInfos <- list(
-    "notworking" <- c("nonexistingbinarytested",
-                      "not found"),
+    "notworking" = c("nonexistingbinarytested",
+                      "nonexistingbinarytested not found"),
     "php" = c("php --version",
               "php not found, ctrLoadQueryIntoDb() will not work "),
     "phpxml" = c("php -r 'simplexml_load_string(\"\");'",
@@ -2792,22 +2792,24 @@ checkBinary <- function(b = NULL) {
     if (checked) checked <- get(x = paste0("bin_check_", bi), envir = .dbffenv)
     if (checked) return(TRUE)
 
-    # check binary
+    # continue to check binary
     ok <- installFindBinary(commandtest = actionsInfo[1])
     if (!ok) message("\n", actionsInfo[2], appendLF = FALSE)
 
     # store check to private environment
     assign(x = paste0("bin_check_", bi), value = ok, envir = .dbffenv)
 
+    # return
+    ok
+
   })
 
   # inform user
-  if (!all(out)) stop(
+  if (!all(out)) message(
     "\nTo install command line binaries needed for package ctrdata, ",
     "see recommendations at https://github.com/rfhb/ctrdata#2-command-",
-    "line-tools-perl-sed-cat-and-php-52-or-higher After installation, ",
-    "detach and load package ctrdata again, or restart the R session.",
-    immediate. = TRUE)
+    "line-tools-perl-sed-cat-and-php-52-or-higher \nAfter installation, ",
+    "detach and load package ctrdata again, or restart the R session.\n")
 
   # return single value since
   # all tests need to be ok

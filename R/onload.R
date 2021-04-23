@@ -19,15 +19,12 @@
   )
 
   # check availabilities
-  packageStartupMessage(
-    "Checking helper binaries: ",
-    appendLF = FALSE)
-  #
-  if (.Platform$OS.type == "windows") {
-    installCygwinWindowsTest()}
+  packageStartupMessage("Checking helper binaries: ", appendLF = FALSE)
+  if (.Platform$OS.type == "windows") installCygwinWindowsTest()
   checkBinary()
   packageStartupMessage("done.")
 
+  # return
   invisible()
 
 } # .onAttach

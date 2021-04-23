@@ -980,7 +980,7 @@ ctrLoadQueryIntoDbCtgov <- function(
   ## system check, in analogy to onload.R
   message("Checking helper binaries: ", appendLF = FALSE)
   #
-  checkBinary(c("php", "phpxml", "phpjson"))
+  if (!checkBinary(c("php", "phpxml", "phpjson"))) stop(call. = FALSE)
   # if (!suppressWarnings(
   #   installFindBinary(
   #     commandtest = "php --version"))) {
@@ -1246,8 +1246,8 @@ ctrLoadQueryIntoDbEuctr <- function(
 
   ## system check, in analogy to onload.R
   message("Checking helper binaries: ", appendLF = FALSE)
-  if (euctrresults) checkBinary(c("php", "phpxml", "phpjson"))
-  checkBinary(c("sed", "perl"))
+  if (!checkBinary(c("sed", "perl"))) stop(call. = FALSE)
+  if (euctrresults && !checkBinary(c("php", "phpxml", "phpjson"))) stop(call. = FALSE)
   message("done.")
 
   ## download all text files from pages

@@ -14,7 +14,9 @@ statusvalues <- list(
 
 #### binaries ####
 
-expect_error(ctrdata:::checkBinary("notworking"))
+expect_message(
+  ctrdata:::checkBinary(b = "notworking"),
+  "nonexistingbinarytested not found")
 
 
 #### environment ####

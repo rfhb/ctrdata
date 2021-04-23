@@ -49,15 +49,15 @@ mongoRemoteRwUrl <-
 
 checkBinaries <- function() {
 
-  out <- TRUE
-
-  if (.Platform$OS.type == "windows") {
-    if (!suppressMessages(ctrdata:::installCygwinWindowsTest())) {
-      out <- FALSE
-    }
-  }
-
-  out &&
+  # out <- TRUE
+  #
+  # if (.Platform$OS.type == "windows") {
+  #   if (!suppressMessages(ctrdata:::installCygwinWindowsTest())) {
+  #     out <- FALSE
+  #   }
+  # }
+  #
+  # out &&
 
     ctrdata:::checkBinary()
     # suppressWarnings(ctrdata:::installFindBinary(
