@@ -979,30 +979,8 @@ ctrLoadQueryIntoDbCtgov <- function(
 
   ## system check, in analogy to onload.R
   message("Checking helper binaries: ", appendLF = FALSE)
-  #
   if (!checkBinary(c("php", "phpxml", "phpjson"))) stop(
     "ctrLoadQueryIntoDb() cannot continue. ", call. = FALSE)
-  # if (!suppressWarnings(
-  #   installFindBinary(
-  #     commandtest = "php --version"))) {
-  #   stop("php not found, ctrLoadQueryIntoDb() will not work.",
-  #        call. = FALSE)
-  # }
-  # #
-  # if (!suppressWarnings(
-  #   installFindBinary(
-  #     commandtest = "php -r 'simplexml_load_string(\"\");'"))) {
-  #   stop("php xml not found, ctrLoadQueryIntoDb() will not work.",
-  #        call. = FALSE)
-  # }
-  # #
-  # if (!suppressWarnings(
-  #   installFindBinary(
-  #     commandtest = "php -r 'json_encode(\"<foo>\");'"))) {
-  #   stop("php json not found, ctrLoadQueryIntoDb() will not work.",
-  #        call. = FALSE)
-  # }
-  #
   message("done.")
 
   # prepare a file handle for temporary directory

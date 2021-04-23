@@ -49,31 +49,7 @@ mongoRemoteRwUrl <-
 
 checkBinaries <- function() {
 
-  # out <- TRUE
-  #
-  # if (.Platform$OS.type == "windows") {
-  #   if (!suppressMessages(ctrdata:::installCygwinWindowsTest())) {
-  #     out <- FALSE
-  #   }
-  # }
-  #
-  # out &&
-
     all(ctrdata:::checkBinary())
-    # suppressWarnings(ctrdata:::installFindBinary(
-    #   commandtest = "php --version")) &&
-    #
-    # suppressWarnings(ctrdata:::installFindBinary(
-    #   commandtest = "php -r 'simplexml_load_string(\"\");'")) &&
-    #
-    # suppressWarnings(ctrdata:::installFindBinary(
-    #   commandtest = "php -r 'json_encode(\"<foo>\");'")) &&
-    #
-    # suppressWarnings(ctrdata:::installFindBinary(
-    #   commandtest = "echo x | sed s/x/y/")) &&
-    #
-    # suppressWarnings(ctrdata:::installFindBinary(
-    #   commandtest = "perl -V:osname"))
 
 }
 
