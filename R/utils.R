@@ -2305,7 +2305,7 @@ dfFindUniqueEuctrRecord <- function(
     message(
       " - ", tmp,
       " EUCTR _id were not preferred EU Member State record for ",
-      totalEuctr, " trial(s)")
+      totalEuctr, " trials")
   }
 
   # return
@@ -2809,7 +2809,6 @@ checkBinary <- function(b = NULL) {
 
   # check private environment and create if not found
   if (!exists(x = ".dbffenv", mode = "environment")) {
-    print("env created in checkBinary")
     .dbffenv <- new.env(parent = emptyenv())
   }
 

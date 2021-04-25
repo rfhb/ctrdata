@@ -131,7 +131,8 @@ ctrLoadQueryIntoDb <- function(
   }
 
   ## deduce queryterm and register
-  ## if not querytoupdate
+
+  # - if not querytoupdate
   if (querytoupdate == 0L) {
 
     # check queryterm
@@ -150,26 +151,26 @@ ctrLoadQueryIntoDb <- function(
              call. = FALSE)
       }
 
+      # continue
       queryterm <- tmpTest
+
     }
 
-    # deal with data frame as returned from
-    # ctrQueryHistoryInDb and ctrGetQueryUrl
+    # -deal with data frame as returned from
+    #  ctrQueryHistoryInDb and ctrGetQueryUrl
     if (!all(substr(names(queryterm), 1, 6) == "query-") ||
         !is.data.frame(queryterm)) {
       stop("'queryterm' does not seem to result from ctrQueryHistoryInDb() ",
            "or ctrGetQueryUrl(): ", deparse(queryterm), call. = FALSE)
     }
 
-    # process queryterm dataframe
+    # - process queryterm dataframe
     nr <- nrow(queryterm)
-    #
-    if (nr > 1) {
+    if (nr > 1L) {
       warning(
         "Using last row of queryterm parameter.",
         call. = FALSE, immediate. = TRUE)
     }
-    #
     register  <- queryterm[nr, "query-register"]
     queryterm <- queryterm[nr, "query-term"]
 
@@ -261,7 +262,8 @@ ctrLoadQueryIntoDb <- function(
     queryupdateterm   <- rerunparameters$queryupdateterm
     queryterm         <- rerunparameters$queryterm
     register          <- rerunparameters$register
-  }
+    #
+  } # if querytermtoupdate
 
   ## main function
 
@@ -2089,3 +2091,4 @@ ctrLoadQueryIntoDbIsrctn <- function(
   return(imported)
 }
 # end ctrLoadQueryIntoDbIsrctn
+
