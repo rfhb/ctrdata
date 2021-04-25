@@ -557,8 +557,10 @@ rm(tmpf, tmpc, result)
 #### ctrOpenSearchPagesInBrowser #####
 
 # test
-expect_message(
+expect_equal(
   suppressWarnings(
     ctrOpenSearchPagesInBrowser(
       dbQueryHistory(con = dbc)[1, ])),
-  "Opening browser for search:")
+  # first query into the database
+  paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?",
+         "query=2005-001267-63+OR+2008-003606-33"))
