@@ -918,24 +918,6 @@ ctrLoadQueryIntoDbCtgov <- function(
   verbose,
   queryupdateterm) {
 
-  ## sanity correction for naked terms
-  #
-  # test cases:
-  # queryterm = c("cancer&age=adult",                      # correct
-  #               "cancer",                                # correct
-  #               "cancer&age=adult&phase=0",              # correct
-  #               "cancer&age=adult&phase=1&results=true", # correct
-  #               "&age=adult&phase=1&abc=xyz&cancer&results=true", # correct
-  #               "age=adult&cancer",                      # correct
-  #               "2010-024264-18",                        # correct
-  #               "NCT1234567890",                         # correct
-  #               "term=cancer&age=adult",                 # keep
-  #               "age=adult&term=cancer")                 # keep
-  queryterm <- sub(
-    "(^|&|[&]?\\w+=\\w+&)(\\w+|[NCT0-9-]+)($|&\\w+=\\w+)",
-    "\\1term=\\2\\3",
-    queryterm)
-
   ## create empty temporary directory on localhost for
   # downloading from register into temporary directy
   tempDir <- tempfile(pattern = "ctrDATA")
@@ -949,17 +931,6 @@ ctrLoadQueryIntoDbCtgov <- function(
   queryUSRoot   <- "https://clinicaltrials.gov/"
   queryUSType1  <- "ct2/results/download_studies?"
   queryUSType2  <- "ct2/results?"
-
-  ## deal with special cases
-  # ctgov queryterm is just NCT number, prefix with variable name
-  if (grepl("^NCT[0-9]{8}$", queryterm)) {
-    queryterm <- paste0("term=", queryterm)
-  }
-  #
-  # ctgov queryterm is just text, prefix with variable name
-  if (!grepl("=", queryterm)) {
-    queryterm <- paste0("term=", queryterm)
-  }
 
   ## inform user and prepare url for downloading
   message("(1/3) Checking trials in CTGOV:")
