@@ -68,7 +68,7 @@ tf <- function() {
         ctrLoadQueryIntoDb(
           queryterm = "https\\#@",
           con = dbc))),
-    "'queryterm'.*has unexpected characters")
+    "'queryterm' does not seem to result from")
 
   # test no history or no table with
   # the name specified in dbc
@@ -148,6 +148,75 @@ tf <- function() {
     "No records found, check collection")
   # test
   expect_true(grepl("inmemory", dbc$collection))
+
+  #### ctrGetQueryUrl ####
+
+  # EUCTR mangling: list of c(input, expected output)
+  queryterms <- list(
+    c("cancer&age=adult", # add query=
+      "query=cancer&age=adult"),
+    c("cancer", # add query=
+      "query=cancer"),
+    c("cancer+AND breast&age=adult&phase=0", # add query=
+      "query=cancer+AND breast&age=adult&phase=0"),
+    c("cancer&age=adult&phase=0", # add query=
+      "query=cancer&age=adult&phase=0"),
+    c("cancer&age=adult&phase=1&results=true", # add query=
+      "query=cancer&age=adult&phase=1&results=true"),
+    c("&age=adult&phase=1&abc=xyz&cancer&results=true", # insert query=
+      "&age=adult&phase=1&abc=xyz&query=cancer&results=true"),
+    c("age=adult&cancer", # insert query=
+      "age=adult&query=cancer"),
+    c("2010-024264-18", # add query=
+      "query=2010-024264-18"),
+    c("NCT1234567890", # add query=
+      "query=NCT1234567890"),
+    c("teratoid&country=dk", # add query=
+      "query=teratoid&country=dk"),
+    c("term=cancer&age=adult", # keep
+      "term=cancer&age=adult"),
+    c("age=adult&term=cancer", # keep
+      "age=adult&term=cancer")
+  )
+
+  # test
+  expect_true(all(vapply(queryterms, function(qt) {
+    suppressMessages(ctrGetQueryUrl(
+      url = qt[[1]],
+      register = "EUCTR"))[[1]] == qt[[2]]},
+    logical(1L))))
+
+  # CTGOV
+  queryterms <- list(
+    c("cancer&age=adult",  # add term=
+      "term=cancer&age=adult"),
+    c("cancer", # add term=
+      "term=cancer"),
+    c("cancer&age=adult&phase=0", # add term=
+      "term=cancer&age=adult&phase=0"),
+    c("cancer&age=adult&phase=1&results=true", # add term=
+      "term=cancer&age=adult&phase=1&results=true"),
+    c("&age=adult&phase=1&abc=xyz&cancer&results=true", # add term=
+      "&age=adult&phase=1&abc=xyz&term=cancer&results=true"),
+    c("age=adult&cancer", # add term=
+      "age=adult&term=cancer"),
+    c("2010-024264-18", # add term=
+      "term=2010-024264-18"),
+    c("NCT1234567890", # add term=
+      "term=NCT1234567890"),
+    c("NCT1234567890+OR+NCT1234567890+AND+SOMETHING", # add term=
+      "term=NCT1234567890+OR+NCT1234567890+AND+SOMETHING"),
+    c("term=cancer&age=adult", # no change
+      "term=cancer&age=adult"),
+    c("age=adult&term=cancer", # no change
+      "age=adult&term=cancer"))
+
+  # test
+  expect_true(all(vapply(queryterms, function(qt) {
+    suppressMessages(ctrGetQueryUrl(
+      url = qt[[1]],
+      register = "CTGOV"))[[1]] == qt[[2]]},
+    logical(1L))))
 
 } # tf test function
 tf()
