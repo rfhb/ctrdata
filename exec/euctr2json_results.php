@@ -1,10 +1,10 @@
 <?php
 
-// file: xml2json_euctrresults.php
+// file: euctr2json_results.php
 // ralf.herold@gmx.net
 // part of https://github.com/rfhb/ctrdata
 // last edited: 2017-07-28
-// time xml2json_euctrresults.php:
+// time euctr2json_results.php:
 // 2017-07-30: 0.23 s for 3 trials ~ 75 ms per trial
 
 // note line endings are to be kept by using in

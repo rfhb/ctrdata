@@ -1011,7 +1011,7 @@ ctrLoadQueryIntoDbCtgov <- function(
   if (.Platform$OS.type == "windows") {
     #
     xml2json <- utils::shortPathName(
-      path = system.file("exec/xml2json.php",
+      path = system.file("exec/ctgov2json.php",
                          package = "ctrdata",
                          mustWork = TRUE))
     #
@@ -1031,7 +1031,7 @@ ctrLoadQueryIntoDbCtgov <- function(
     #
   } else {
     #
-    xml2json <- system.file("exec/xml2json.php",
+    xml2json <- system.file("exec/ctgov2json.php",
                             package = "ctrdata",
                             mustWork = TRUE)
     #
@@ -1571,7 +1571,7 @@ ctrLoadQueryIntoDbEuctr <- function(
       #
       xml2json <- utils::shortPathName(
         path = system.file(
-          "exec/xml2json_euctrresults.php",
+          "exec/euctr2json_results.php",
           package = "ctrdata",
           mustWork = TRUE))
       #
@@ -1591,7 +1591,7 @@ ctrLoadQueryIntoDbEuctr <- function(
     } else {
       #
       xml2json <- system.file(
-        "exec/xml2json_euctrresults.php",
+        "exec/euctr2json_results.php",
         package = "ctrdata",
         mustWork = TRUE)
       #

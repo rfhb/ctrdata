@@ -1,11 +1,11 @@
 <?php
 
-// file: xml2json.php
+// file: ctgov2json.php
 // ralf.herold@gmx.net
 // part of https://github.com/rfhb/ctrdata
 // last edited: 2021-03-20
-// used for: ctgov, euctr
-// time xml2json.php:
+// used for: ctgov
+// time ctgov2json.php:
 // 2016-04-20: 0.05 s for 2 trials ~ 25 ms per trial
 // 2021-04-18: 1.5 s for 200 trials ~ 7.5 ms per trial
 
@@ -15,7 +15,7 @@
 // *.php text eol=lf
 
 if ($argc <= 1) {
-	die("Usage: php -n -f xml2json.php <directory_path_with_xml_files>\n");
+	die("Usage: php -n -f ctgov2json.php <directory_path_with_xml_files>\n");
 } else {
 	$testXmlFile = $argv[1];
 }
