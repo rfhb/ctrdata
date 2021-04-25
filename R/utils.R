@@ -11,10 +11,15 @@ countriesEUCTR <- c(
   "NO", "3RD")
 #
 # regexpr
-# - EUCTR e.g. 2010-022945-52-3RD
+# - EudraCT e.g. 2010-022945-52
 regEuctr <- "[0-9]{4}-[0-9]{6}-[0-9]{2}"
 # - CTGOV
 regCtgov <- "NCT[0-9]{8}"
+# - regIsrctn
+regIsrctn <- "[0-9]{8}"
+#
+# register list
+registerList <- c("EUCTR", "CTGOV", "ISRCTN")
 
 
 #' Check and prepare nodbi connection object for ctrdata
@@ -799,11 +804,11 @@ dbFindIdsUniqueTrials <- function(
   verbose = TRUE) {
 
   # parameter checks
-  if (!grepl(preferregister, "CTGOVEUCTR")) {
+  if (!any(preferregister == registerList)) {
     stop("Register not known: ", preferregister, call. = FALSE)
   }
 
-  # objective: create a list of mongo database record identifiers (_id)
+  # objective: create a list of database record identifiers (_id)
   # that represent unique records of clinical trials, based on user's
   # preferences for selecting the preferred from any multiple records
 
@@ -854,13 +859,13 @@ dbFindIdsUniqueTrials <- function(
 
   # keep only euctr
   listofEUCTRids <- listofIds[
-    grepl("^[0-9]{4}-[0-9]{6}-[0-9]{2}$", listofIds[["a2_eudract_number"]]),
+    grepl(paste0("^", regEuctr, "$"), listofIds[["a2_eudract_number"]]),
     c(1, seq_len(ncol(listofIds))[grepl("^a[0-9]+_", names(listofIds))])
   ]
 
   # keep only ctgov
   listofCTGOVids <- listofIds[
-    grepl("^NCT[0-9]{8}$", listofIds[["_id"]]),
+    grepl(paste0("^", regCtgov, "$"), listofIds[["_id"]]),
     c(1, seq_len(ncol(listofIds))[grepl("^id_info", names(listofIds))][1]),
     drop = TRUE
   ]
@@ -884,7 +889,7 @@ dbFindIdsUniqueTrials <- function(
       # a2 - ctgov in euctr a2_...
       dupesA2 <- vapply(
         listofCTGOVids[["id_info"]], # e.g. "EUDRACT-2004-000242-20"
-        function(x) any(sub(".*([0-9]{4}-[0-9]{6}-[0-9]{2}).*", "\\1", x) %in%
+        function(x) any(sub(paste0(".*(", regEuctr, ").*"), "\\1", x) %in%
                           listofEUCTRids[["a2_eudract_number"]]), logical(1L))
       #
       if (verbose) {
@@ -950,7 +955,7 @@ dbFindIdsUniqueTrials <- function(
       #
       # a.1 - euctr in ctgov
       dupesA1 <- listofEUCTRids[["a2_eudract_number"]] %in% sub(
-        ".*([0-9]{4}-[0-9]{6}-[0-9]{2}).*", # e.g. "EUDRACT-2004-000242-20"
+        paste0(".*(", regEuctr, ").*"), # e.g. "EUDRACT-2004-000242-20"
         "\\1", unlist(listofCTGOVids[["id_info"]], use.names = FALSE))
       #
       if (verbose) {

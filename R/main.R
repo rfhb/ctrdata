@@ -205,7 +205,7 @@ ctrLoadQueryIntoDb <- function(
            call. = FALSE)
     }
     #
-    if (!grepl(register, "CTGOVEUCTR")) {
+    if (!any(register == registerList)) {
       stop("Parameter 'register' not known: ",
            register, call. = FALSE)
     }
@@ -416,7 +416,7 @@ ctrRerunQuery <- function(
          querytoupdate, call. = FALSE)
   }
   #
-  if (!grepl(register, "CTGOVEUCTR")) {
+  if (!any(register == registerList)) {
     stop("Parameter 'register' not known - cannot update query ",
          querytoupdate, call. = FALSE)
   }
