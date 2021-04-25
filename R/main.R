@@ -20,7 +20,7 @@
 #' use to update records.
 #'
 #' @param register String with abbreviation of register to query,
-#' at this time either "EUCTR" (default) or "CTGOV". Not needed
+#' either "EUCTR", "CTGOV" or "ISRCTN". Not needed
 #' if \code{queryterm} provide the information which register to
 #' query (see \code{queryterm}).
 #'
@@ -191,11 +191,11 @@ ctrLoadQueryIntoDb <- function(
     }
 
     ## sanity checks
-    if (grepl("[^.a-zA-Z0-9=+&%_:\", -]",
+    if (grepl("[^.a-zA-Z0-9=+&%_:\"/, -]",
               gsub("\\[", "", gsub("\\]", "", queryterm)))) {
       stop("Parameter 'queryterm' is not an URL showing results ",
            "of a query or has unexpected characters: ", queryterm,
-           ", expected are: a-zA-Z0-9=+&%_-,.: []\"",
+           ", expected are: a-zA-Z0-9=+&%_-,.: []/\"",
            call. = FALSE)
     }
     #
@@ -282,7 +282,8 @@ ctrLoadQueryIntoDb <- function(
   imported <- switch(
     as.character(register),
     "CTGOV" = do.call(ctrLoadQueryIntoDbCtgov, params),
-    "EUCTR" = do.call(ctrLoadQueryIntoDbEuctr, params)
+    "EUCTR" = do.call(ctrLoadQueryIntoDbEuctr, params),
+    "ISRCTN" = do.call(ctrLoadQueryIntoDbIsrctn, params)
   )
 
   # add query used for function
@@ -466,7 +467,7 @@ ctrRerunQuery <- function(
       #
       message("Rerunning query: ", queryterm,
               "\nLast run: ", initialday)
-    }
+    } # end ctgov
 
     # euctr
     if (register == "EUCTR") {
@@ -555,6 +556,47 @@ ctrRerunQuery <- function(
         #
       }
     } # register euctr
+
+    # isrctn
+    if (register == "ISRCTN") {
+
+      # isrctn last edited:
+      # "&filters=condition:Cancer,
+      #  GT+lastEdited:2021-04-01T00:00:00.000Z,
+      #  LE+lastEdited:2021-04-25T00:00:00.000Z&"
+
+      # if already in query term, just re-run full query to avoid
+      # multiple queries in history that only differ in timestamp:
+      if (grepl("lastEdited", queryterm)) {
+        #
+        # remove queryupdateterm, thus running full again
+        queryupdateterm <- ""
+        warning("Query has date(s) for start or end of last update ",
+                "('lasteEdited'); running again with these limits.",
+                immediate. = TRUE)
+        #
+      } else {
+        #
+        queryupdateterm <- strftime(
+          strptime(initialday,
+                   format = "%Y-%m-%d"),
+          format = "%Y-%m-%d")
+        #
+        queryupdateterm <- paste0(" AND lastEdited GE ",
+                                  queryupdateterm,
+                                  "T00:00:00.000Z")
+        #
+        if (verbose) {
+          message("DEBUG: Updating using this additional query term: ",
+                  queryupdateterm)
+        }
+        #
+      }
+      #
+      message("Rerunning query: ", queryterm,
+              "\nLast run: ", initialday)
+    } # end isrctn
+
   } # forcetoupdate
 
   ## return main parameters needed
@@ -1849,3 +1891,232 @@ ctrLoadQueryIntoDbEuctr <- function(
   return(imported)
 }
 # end ctrLoadQueryIntoDbEuctr
+
+
+#' ctrLoadQueryIntoDbIsrctn
+#'
+#' @inheritParams ctrLoadQueryIntoDb
+#'
+#' @keywords internal
+#'
+#' @importFrom jsonlite toJSON
+#' @importFrom httr content headers progress write_disk GET HEAD
+#' @importFrom nodbi docdb_query
+#'
+ctrLoadQueryIntoDbIsrctn <- function(
+  queryterm = queryterm,
+  register,
+  euctrresults,
+  euctrresultshistory,
+  euctrresultspdfpath,
+  annotation.text,
+  annotation.mode,
+  parallelretrievals,
+  only.count,
+  con,
+  verbose,
+  queryupdateterm) {
+
+  ## create empty temporary directory on localhost for
+  # downloading from register into temporary directy
+  tempDir <- tempfile(pattern = "ctrDATA")
+  dir.create(tempDir)
+  tempDir <- normalizePath(tempDir, mustWork = TRUE)
+
+  # ISRCTN translation to API v0.4 2021-02-04
+  # - limit can be set to arbitrarily high number
+  # - no pagination or batching
+  # - internal means XML
+  queryIsrctnRoot <- "https://www.isrctn.com/"
+  queryIsrctnType1 <- "api/query/format/internal?limit="
+  queryIsrctnType2 <- "api/query/format/internal?limit=1&"
+  #
+  # convert parameters from search queryterm such as
+  # "q=neuroblastoma&filters=LE+lastEdited%3A2021-04-01T00%3A00%3A00.000Z"
+  # into to api format such as
+  # "q=neuroblastoma AND lastEdited LE 2021-03-28T00:00:00.000Z"
+  # - ensure we can use text processing
+  queryterm <- URLdecode(queryterm)
+  # - generate api terms
+  apiterm <- queryterm
+  apiterm <- sub("&filters=", ",", apiterm)
+  apiterm <- strsplit(apiterm, ",")[[1]]
+  # - remove naked q
+  apiterm <- apiterm[!grepl("^q=$", apiterm)]
+  # - translate "LE+lastEdited:2021-04-01T00:00:00.000Z"
+  #   into      "lastEdited LE 2021-03-28T00:00:00.000Z"
+  apiterm <- vapply(
+    apiterm,
+    function(a) sub("^(.*?)[+](.*?)[:](.*)$", "\\2 \\1 \\3", a),
+    character(1L), USE.NAMES = FALSE)
+  apiterm <- paste0(apiterm, collapse = " AND ")
+  # - readd q if missing
+  if (!grepl("^q=", apiterm)) apiterm <- paste0("q=", apiterm)
+  # - inform user
+  if (verbose) message("DEBUG: apiterm is ", apiterm)
+
+  ## inform user and prepare url for downloading
+  message("(1/3) Checking trials in ISRCTN:")
+  #
+  # if (verbose) message("DEBUG: ", ctgovdownloadcsvurl)
+
+  # - check number of trials to be downloaded
+  isrctnfirstpageurl <- paste0(
+    queryIsrctnRoot, queryIsrctnType2, apiterm, queryupdateterm)
+  #
+  tmp <- xml2::read_xml(
+    x = utils::URLencode(isrctnfirstpageurl))
+  #
+  if (inherits(tmp, "try-error")) {
+    stop("Host ", queryIsrctnRoot, " does not respond, cannot continue.",
+         call. = FALSE)
+  }
+  #
+  tmp <- xml2::xml_attr(tmp, "totalCount")
+  #
+  # safeguard against no or unintended large numbers
+  tmp <- suppressWarnings(as.integer(tmp))
+  if (is.na(tmp) ||
+      !length(tmp)) {
+    message("No trials or number of trials could not be determined: ", tmp)
+    return(invisible(list(n = 0L, ids = "")))
+  }
+  #
+  if (tmp == 0L) {
+    message("Search result page empty - no (new) trials found?")
+    return(invisible(list(
+    # return structure as in dbCTRLoadJSONFiles
+    # which is handed through to ctrLoadQueryIntoDb
+    n = 0L,
+    success = character(0L),
+    failed = character(0L),
+    queryterm = queryterm)))
+  }
+  # otherwise continue
+
+  # inform user
+  message("Retrieved overview, records of ", tmp, " ",
+          "trial(s) are to be downloaded.")
+
+  # only count?
+  if (only.count) {
+
+    # return
+    return(list(n = tmp,
+                success = NULL,
+                failed = NULL))
+  }
+
+  # exit if too many records
+  if (as.integer(tmp) > 10000L) {
+    stop("These are ", tmp, " (more than 10,000) trials, this may be ",
+         "unintended. Downloading more than 10,000 trials is not supported ",
+         "by the register. Consider correcting or splitting queries.")
+  }
+
+  ## check database connection
+  con <- ctrDb(con = con)
+
+  ## system check, in analogy to onload.R
+  message("Checking helper binaries: ", appendLF = FALSE)
+  if (!checkBinary(c("php", "phpxml", "phpjson"))) stop(
+    "ctrLoadQueryIntoDb() cannot continue. ", call. = FALSE)
+  message("done.")
+
+  # prepare a file handle for temporary directory
+  f <- paste0(tempDir, "/", "isrctn.xml")
+
+  # inform user
+  message("(1/3) Downloading trials ", appendLF = FALSE)
+
+  # construct API call setting limit to number found above
+  isrctndownloadurl <- paste0(
+    queryIsrctnRoot, queryIsrctnType1, tmp, "&", apiterm, queryupdateterm)
+
+  # get (download) trials in single file f
+  tmp <- httr::GET(
+    url = utils::URLencode(isrctndownloadurl),
+    httr::progress(),
+    httr::write_disk(path = f,
+                     overwrite = TRUE))
+
+  # inform user
+  if (!file.exists(f) || file.size(f) == 0L) {
+    stop("No studies downloaded. Please check 'queryterm' or run ",
+         "again with verbose = TRUE.", call. = FALSE)
+  }
+
+  ## compose commands to transform xml into json, into
+  # a single alltrials.json in the temporaray directory
+  # special command handling on windows
+  if (.Platform$OS.type == "windows") {
+    #
+    xml2json <- utils::shortPathName(
+      path = system.file("exec/isrctn2json.php",
+                         package = "ctrdata",
+                         mustWork = TRUE))
+    #
+    xml2json <- paste0(
+      "php -f ",
+      shQuote(xml2json), " ",
+      utils::shortPathName(path = tempDir))
+    #
+    # xml2json requires cygwin's php. transform paths for cygwin use:
+    xml2json <- gsub("\\\\", "/", xml2json)
+    xml2json <- gsub("([A-Z]):/", "/cygdrive/\\1/", xml2json)
+    #
+    xml2json <- paste0(
+      "cmd.exe /c ",
+      rev(Sys.glob("c:\\cygw*\\bin\\bash.exe"))[1],
+      ' --login -c "', xml2json, '"')
+    #
+  } else {
+    #
+    xml2json <- system.file("exec/isrctn2json.php",
+                            package = "ctrdata",
+                            mustWork = TRUE)
+    #
+    xml2json <- paste0(
+      "php -f ",
+      shQuote(xml2json), " ",
+      tempDir)
+    #
+  } # if windows
+
+  # run conversion of downloaded xml to json
+  message("\n(2/3) Converting to JSON...")
+  if (verbose) message("DEBUG: ", xml2json)
+  imported <- system(xml2json, intern = TRUE)
+  if (verbose) message("DEBUG: ", imported, " converted")
+
+  ## run import
+  message("(3/3) Importing JSON records into database...")
+  if (verbose) message("DEBUG: ", tempDir)
+  imported <- dbCTRLoadJSONFiles(dir = tempDir,
+                                 con = con,
+                                 verbose = verbose)
+
+  ## add annotations
+  if ((annotation.text != "") &
+      (length(imported$success) > 0L)) {
+
+    # dispatch
+    dbCTRAnnotateQueryRecords(
+      recordnumbers = imported$success,
+      annotation.text = annotation.text,
+      annotation.mode = annotation.mode,
+      con = con,
+      verbose = verbose)
+
+  }
+
+  ## find out number of trials imported into database
+  message("= Imported or updated ", imported$n, " trial(s).")
+
+  # clean up temporary directory
+  if (!verbose) unlink(tempDir, recursive = TRUE)
+
+  # return
+  return(imported)
+}
+# end ctrLoadQueryIntoDbIsrctn
