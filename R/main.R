@@ -101,7 +101,7 @@
 #'
 ctrLoadQueryIntoDb <- function(
   queryterm = "",
-  register = "EUCTR",
+  register = "",
   querytoupdate = 0L,
   forcetoupdate = FALSE,
   euctrresults = FALSE,
