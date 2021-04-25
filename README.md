@@ -15,13 +15,14 @@ The package `ctrdata` provides functions for retrieving (downloading)
 information on clinical trials from public registers, and for
 aggregating and analysing this information. Use with
 [R](https://www.r-project.org/) for the European Union Clinical Trials
-Register (“EUCTR”, <https://www.clinicaltrialsregister.eu/>) and
-ClinicalTrials.gov (“CTGOV”, <https://clinicaltrials.gov/>). The
-motivation is to understand trends in design and conduct of trials,
-their availability for patients and their detailled results. The package
-is to be used within the [R](https://www.r-project.org/) system.
+Register (“EUCTR”, <https://www.clinicaltrialsregister.eu/>),
+ClinicalTrials.gov (“CTGOV”, <https://clinicaltrials.gov/>) and 🆕 ISRCTN
+(<https://www.isrctn.com/>). The motivation is to understand trends in
+design and conduct of trials, their availability for patients and their
+detailled results. The package is to be used within the
+[R](https://www.r-project.org/) system.
 
-Last reviewed on 2021-04-22 for version 1.5.3.9001
+Last reviewed on 2021-04-25 for version 1.5.3.9001
 
 Main features:
 
@@ -45,9 +46,9 @@ Main features:
 
 Remember to respect the registers’ terms and conditions (see
 `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
-package in any publication as follows: Ralf Herold (2020). ctrdata:
+package in any publication as follows: Ralf Herold (2021). ctrdata:
 Retrieve and Analyze Clinical Trials in Public Registers. R package
-version 1.4, <https://cran.r-project.org/package=ctrdata>
+version 1.5, <https://cran.r-project.org/package=ctrdata>
 
 <!--
 
@@ -233,13 +234,22 @@ with(result,
 #   Prematurely Ended                                         1  1   0
 ```
 
--   Add records from another register into the same database
+-   Add records from another register (CTGOV) into the same database
 
 ``` r
 # Retrieve trials from another register:
 ctrLoadQueryIntoDb(
   queryterm = "cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug", 
   register = "CTGOV",
+  con = db)
+```
+
+-   Add records from another register (ISRCTN) into the same database
+
+``` r
+# Retrieve trials from another register:
+ctrLoadQueryIntoDb(
+  queryterm = "https://www.isrctn.com/search?q=neuroblastoma",
   con = db)
 ```
 

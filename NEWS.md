@@ -4,6 +4,7 @@
  - update EUCTR download parameters 
  - harmonise error checking 
  - avoid script errors
+ - added support for ISRCTN
 
 # ctrdata 1.5.3
  - 2021-04-19

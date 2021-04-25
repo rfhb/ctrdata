@@ -29,7 +29,7 @@ The queryterm is recorded in the \code{collection} for later
 use to update records.}
 
 \item{register}{String with abbreviation of register to query,
-at this time either "EUCTR" (default) or "CTGOV". Not needed
+either "EUCTR", "CTGOV" or "ISRCTN". Not needed
 if \code{queryterm} provide the information which register to
 query (see \code{queryterm}).}
 
