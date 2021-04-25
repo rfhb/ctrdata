@@ -637,22 +637,21 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
                    full.names = TRUE)
 
   # initialise counters
-  fc <- 0L
-  ic <- 0L
+  fc <- length(tempFiles)
 
   # iterate over files
   retimp <- sapply(
-    X = tempFiles,
+    X = seq_along(tempFiles),
     function(tempFile) {
 
       # main function for fast reading,
       # switching off warning about final EOL missing
-      fd <- file(description = tempFile)
+      fd <- file(description = tempFiles[tempFile])
       tmplines <- readLines(con = fd, warn = FALSE)
       close(fd)
 
       # inform user
-      if (verbose) message("DEBUG: read file ", tempFile,
+      if (verbose) message("DEBUG: read file ", tempFiles[tempFile],
                            "\nImporting line: ", appendLF = FALSE)
 
       # readLines produces: \"_id\": \"2007-000371-42-FR\"
@@ -667,8 +666,6 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
 
       # update counters
       lc <- length(ids)
-      ic <- ic + 1L
-      fc <- fc + 1L
 
       # check if in database, create or update
       tmpinsert <- lapply(
@@ -677,7 +674,8 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
 
           # inform user
           message("JSON record #: ", i, " / ", lc,
-                  ", file #: ", ic, " / ", fc, "\r",
+                  ", file #: ", tempFile, " / ", fc,
+                  "                             \r",
                   appendLF = FALSE)
 
           # one row is one trial record
@@ -686,7 +684,7 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
           tmpvalidate <- jsonlite::validate(tmplines[i])
           if (!tmpvalidate) {
             warning("Invalid json for trial ", ids[i], "\n",
-                    "Line ", i, " in file ", tempFile, "\n",
+                    "Line ", i, " in file ", tempFiles[tempFile], "\n",
                     attr(x = tmpvalidate, which = "err"),
                     noBreaks. = TRUE,
                     call. = FALSE,
