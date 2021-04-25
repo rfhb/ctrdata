@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - master
+      - explore_ISRCTN
   pull_request:
     branches:
       - master
