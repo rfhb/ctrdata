@@ -145,7 +145,7 @@ rm(res)
 expect_message(
   res <- suppressWarnings(
     dbFindIdsUniqueTrials(con = dbc)),
-  " 0 records from EUCTR, 0 from CTGOV, [0-9]+ from ISRCTN")
+  " [0-9]+ records")
 
 # test
 expect_true(length(res) >= 5L)

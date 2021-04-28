@@ -955,15 +955,21 @@ dbFindIdsUniqueTrials <- function(
   rm(dupes, tmp)
 
   # keep necessary columns
-  listofIds <- outSet[, c("_id", "EUCTR")]
-  names(listofIds) <- c("_id", "a2_eudract_number")
+  listofIds <- outSet[, c("_id", "EUCTR", "ctrname")]
+  names(listofIds)[2] <- "a2_eudract_number"
   rm(outSet)
 
   # find unique, preferred country version of euctr
   listofIds <- dfFindUniqueEuctrRecord(
     df = listofIds,
     prefermemberstate = prefermemberstate,
-    include3rdcountrytrials = include3rdcountrytrials)[["_id"]]
+    include3rdcountrytrials = include3rdcountrytrials)
+
+  # count
+  countIds <- table(listofIds[["ctrname"]])
+
+  # prepare output
+  listofIds <- listofIds[["_id"]]
 
   #
   #
@@ -1252,6 +1258,8 @@ dbFindIdsUniqueTrials <- function(
   }
 
   # inform user
+  message(" - Keeping ", paste0(countIds, collapse = " / "), " records",
+          " from ", paste0(names(countIds), collapse = " / "))
   message(
     "= Returning keys (_id) of ", length(listofIds),
     " records in collection \"", con$collection, "\".")
