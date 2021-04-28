@@ -16,7 +16,8 @@ regEuctr <- "[0-9]{4}-[0-9]{6}-[0-9]{2}"
 # - CTGOV
 regCtgov <- "NCT[0-9]{8}"
 # - regIsrctn
-regIsrctn <- "[0-9]{8}"
+# FIXME check if first digit is always non zero
+regIsrctn <- "[1-9][0-9]{7}"
 #
 # register list
 registerList <- c("EUCTR", "CTGOV", "ISRCTN")
@@ -766,10 +767,9 @@ dbFindFields <- function(namepart = "",
 #' recording other identifiers such as the EudraCT number in the field "Other
 #' IDs".
 #'
-#' @param preferregister The abbreviation of the preferred register, in case
-#' a trial is in more than one register (string, either "EUCTR" or "CTGOV").
-#' If set to an empty string (""), keeps the keys for the same trial in both
-#' registers in the returned vector.
+#' @param preferregister A vector of the sequence of preference for registers
+#' from which to generate unique _id's, default
+#' \code{c("EUCTR", "CTGOV", "ISRCTN")}
 #'
 #' @inheritParams dfFindUniqueEuctrRecord
 #'
@@ -797,16 +797,19 @@ dbFindFields <- function(namepart = "",
 #' }
 #'
 dbFindIdsUniqueTrials <- function(
-  preferregister = "EUCTR",
+  preferregister = registerList,
   prefermemberstate = "GB",
   include3rdcountrytrials = TRUE,
   con,
   verbose = TRUE) {
 
   # parameter checks
-  if (!any(preferregister == registerList)) {
+  if (!all(preferregister %in% registerList)) {
     stop("Register not known: ", preferregister, call. = FALSE)
   }
+  # complete if preferregister does not have all
+  preferregister <- unique(preferregister)
+  preferregister <- union(preferregister, registerList)
 
   # objective: create a list of database record identifiers (_id)
   # that represent unique records of clinical trials, based on user's
@@ -815,21 +818,32 @@ dbFindIdsUniqueTrials <- function(
   ## check database connection
   if (is.null(con$ctrDb)) con <- ctrDb(con = con)
 
+  # inform user
+  message("Searching for duplicate trials... ")
+  message(" - Getting trial ids...", appendLF = FALSE)
+
   # get identifiers
   listofIds <- try(suppressMessages(suppressWarnings(
     dbGetFieldsIntoDf(fields = c(
+      "ctrname",
       # euctr
       "a2_eudract_number",
-      "a41_sponsors_protocol_code_number",
-      "a51_isrctn_international_standard_randomised_controlled_trial_number",
       "a52_us_nct_clinicaltrialsgov_registry_number",
-      # not yet used: "a53_who_universal_trial_reference_number_utrn",
+      "a51_isrctn_international_standard_randomised_controlled_trial_number",
+      "a41_sponsors_protocol_code_number",
       # ctgov
-      "id_info",
+      "id_info.secondary_id",
+      "id_info.org_study_id",
+      "id_info.nct_id",
+      "id_info.nct_alias",
+      "id_info.secondary_id",
+      "id_info.secondary_id",
+      "id_info.org_study_id",
       # isrctn
-      "isrctn",
+      "externalRefs.eudraCTNumber",
       "externalRefs.clinicalTrialsGovNumber",
-      "externalRefs.eudraCTNumber"
+      "isrctn",
+      "externalRefs.protocolSerialNumber"
     ),
     con = con,
     verbose = FALSE,
@@ -846,305 +860,404 @@ dbFindIdsUniqueTrials <- function(
   }
 
   # inform user
-  message("Searching for duplicate trials... ")
+  message("\b\b\b, ", nrow(listofIds), " found in collection")
+
+  # copy attributes
+  attribsids <- attributes(listofIds)
+
+  # remove _id column and rename columns for reshaping
+  # listofIds <- listofIds[, -1]
+  names(listofIds) <- c(
+    "_id", "ctrname",
+    "euctr.1", "ctgov.1", "isrctn.1", "sponsor.1",
+    "euctr.2a", "euctr.2b", "ctgov.2a", "ctgov.2b", "isrctn.2", "sponsor.2a", "sponsor.2b",
+    "euctr.3", "ctgov.3", "isrctn.3", "sponsor.3"
+  )
+
+  # keep only relevant entries
+  # - in certain columns
+  colsToMangle <- list(
+    c("ctgov.1", regCtgov),
+    c("ctgov.2a", regCtgov),
+    c("ctgov.2b", regCtgov),
+    c("isrctn.1", regIsrctn),
+    c("isrctn.2", regIsrctn),
+    c("isrctn.3", regIsrctn),
+    c("euctr.1",regEuctr),
+    c("euctr.2a",regEuctr),
+    c("euctr.2b",regEuctr),
+    c("euctr.3",regEuctr)
+  )
+  # - do mangling
+  silencer <- sapply(
+    colsToMangle,
+    function(ctm) {
+      colMangled <- regmatches(
+        listofIds[[ ctm[[1]] ]],
+        regexec(ctm[[2]], listofIds[[ ctm[[1]] ]]))
+      listofIds[[ ctm[[1]] ]] <<- unlist( # needs <<-
+        {colMangled[!lengths(colMangled)] <- ""; colMangled})
+    })
+  rm(silencer)
+  # - merge columns for register ids and sponsor ids
+  for (reg in c(registerList, "SPONSOR")) {
+    listofIds[[reg]] <- apply(listofIds[
+      , grepl(paste0("^", reg, "[.][0-9]"), names(listofIds),
+              ignore.case = TRUE), drop = FALSE], MARGIN = 1,
+      function(r) gsub("^ ?/ | / ?$", "", paste0(unique(r), collapse = " / ")))
+  }
+  # - delete raw columns
+  listofIds <- listofIds[
+    , c("_id", "ctrname", registerList, "SPONSOR"), drop = FALSE]
+
+  # inform user
+  message(" - Finding duplicates among registers' and sponsor ids...")
+
+  # find duplicates
+  colsToCheck <- match(c(preferregister, "SPONSOR"), names(listofIds))
+  outSet <- NULL
+  for (i in seq_along(preferregister)) {
+
+    # to be added
+    tmp <- listofIds[
+      listofIds[["ctrname"]] == preferregister[i], , drop = FALSE ]
+    row.names(tmp) <- NULL
+
+    # check if second etc. set has identifiers
+    # in the previously rbind'ed sets
+    if (i > 1L) {
+
+      # check for duplicates
+      dupes <- mapply(
+        function(c1, c2) {
+          tmpIs <- intersect(
+            unlist(strsplit(c1, " / ")),
+            unlist(strsplit(c2, " / ")))
+          if (length(tmpIs)) {
+            # map found intersecting names back
+            # to the rows of the input data frame
+            grepl(paste0(tmpIs, collapse = "|"), c1)
+          } else {
+            rep(FALSE, times = length(c1))
+          }},
+        tmp[, colsToCheck, drop = FALSE],
+        outSet[, colsToCheck, drop = FALSE]
+      )
+      # keep uniques
+      tmp <- tmp[rowSums(dupes) == 0L, , drop = FALSE]
+    }
+
+    # add to output set
+    outSet <- rbind(outSet, tmp,
+                    make.row.names = FALSE,
+                    stringsAsFactors = FALSE)
+  }
+  rm(dupes, tmp)
+
+  # keep necessary columns
+  listofIds <- outSet[, c("_id", "EUCTR")]
+  names(listofIds) <- c("_id", "a2_eudract_number")
+  rm(outSet)
 
   # find unique, preferred country version of euctr
   listofIds <- dfFindUniqueEuctrRecord(
     df = listofIds,
     prefermemberstate = prefermemberstate,
-    include3rdcountrytrials = include3rdcountrytrials)
+    include3rdcountrytrials = include3rdcountrytrials)[["_id"]]
 
-  # keep only euctr
-  listofEUCTRids <- listofIds[
-    grepl(paste0("^", regEuctr, "$"), listofIds[["a2_eudract_number"]]),
-    c(1, seq_len(ncol(listofIds))[grepl("^a[0-9]+_", names(listofIds))])
-  ]
-
-  # keep only ctgov
-  listofCTGOVids <- listofIds[
-    grepl(paste0("^", regCtgov, "$"), listofIds[["_id"]]),
-    c(1, seq_len(ncol(listofIds))[grepl("^id_info", names(listofIds))][1]),
-    drop = TRUE
-  ]
-
-  # keep only isrctn
-  listofISRCTNids <- listofIds[
-    grepl(paste0("^", regIsrctn, "$"), listofIds[["_id"]]),
-    c(1, seq_len(ncol(listofIds))[grepl("^externalRefs", names(listofIds))]),
-    drop = TRUE
-  ]
-
-  ## find records (_id's) that are in both in euctr and ctgov
-  if (sum(!is.null(listofEUCTRids),
-          !is.null(listofCTGOVids),
-          !is.null(listofISRCTNids)) > 1L) {
-    #
-    # 6. select records from preferred register
-    if (preferregister == "EUCTR") {
-      #
-      # strategy: retain all listofEUCTRids;
-      # identify and remove dupes from listofCTGOVids
-      #
-      # b2 - ctgov in euctr (_id corresponds to index 1)
-      dupesB2 <- listofCTGOVids[["_id"]] %in%
-        listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]
-      #
-      if (verbose) message(" - ", sum(dupesB2),
-                           " CTGOV _id (nct) in EUCTR a52_us_nct_...")
-      #
-      # a2 - ctgov in euctr a2_...
-      dupesA2 <- vapply(
-        listofCTGOVids[["id_info"]], # e.g. "EUDRACT-2004-000242-20"
-        function(x) any(sub(paste0(".*(", regEuctr, ").*"), "\\1", x) %in%
-                          listofEUCTRids[["a2_eudract_number"]]), logical(1L))
-      #
-      if (verbose) {
-        message(
-          " - ", sum(dupesA2),
-          " CTGOV secondary_id / nct_alias / org_study_id in EUCTR a2_eudract_number")
-      }
-      #
-      # c.2 - ctgov in euctr a52_... (id_info corresponds to index 2)
-      dupesC2 <- vapply(
-        listofCTGOVids[["id_info"]],
-        function(x) any(
-          x %in% na.omit(
-            listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]])), logical(1L))
-      #
-      if (verbose) {
-        message(
-          " - ", sum(dupesC2),
-          " CTGOV secondary_id / nct_alias / org_study_id in",
-          " EUCTR a52_us_nct_...")
-      }
-      #
-      # d.2 - ctgov in euctr a51_... (id_info corresponds to index 2)
-      dupesD2 <- vapply(
-        listofCTGOVids[["id_info"]],
-        function(x) any(
-          x %in% na.omit(
-            listofEUCTRids[[
-              "a51_isrctn_international_standard_randomised_controlled_trial_number"]])), logical(1L))
-      #
-      if (verbose) message(" - ", sum(dupesD2),
-                           " CTGOV secondary_id / nct_alias / org_study_id in",
-                           " EUCTR a51_isrctn_...")
-      #
-      # e.2 - ctgov in euctr a41_... (id_info corresponds to index 2)
-      dupesE2 <- vapply(
-        listofCTGOVids[["id_info"]],
-        function(x) any(
-          x %in% na.omit(
-            listofEUCTRids[["a41_sponsors_protocol_code_number"]])), logical(1L))
-      #
-      if (verbose) {
-        message(" - ", sum(dupesE2),
-                " CTGOV secondary_id / nct_alias / org_study_id in",
-                " EUCTR a41_sponsors_protocol_...")
-      }
-      #
-      # f.2 - externalRefs.eudraCTNumber in _id
-      dupesF2 <- sub(paste0("(", regEuctr, ")"), "\\1",
-                     listofISRCTNids[["externalRefs.eudraCTNumber"]]) %in%
-        listofEUCTRids[["a2_eudract_number"]]
-      #
-      if (verbose) {
-        message(" - ", sum(dupesF2),
-                " EUCTR _id in",
-                " ISRCTN eudraCTNumber ")
-      }
-      #
-      # g.2 - externalRefs.externalRefs.clinicalTrialsGovNumber in _id
-      dupesG2 <- sub(paste0("(", regCtgov, ")"), "\\1",
-                     listofISRCTNids[["externalRefs.clinicalTrialsGovNumber"]]) %in%
-        listofCTGOVids[["_id"]]
-      #
-      if (verbose) {
-        message(" - ", sum(dupesG2),
-                " CTGOV _id in",
-                " ISRCTN clinicalTrialsGovNumber ")
-      }
-      #
-      # checks
-      if (!all(sapply(tl <- lapply(
-        list(listofCTGOVids[["_id"]], dupesA2, dupesB2, dupesC2, dupesD2, dupesE2),
-        length), identical, tl[[1]])) |
-        !all(sapply(tl <- lapply(
-          list(listofISRCTNids[["_id"]], dupesF2, dupesG2),
-          length), identical, tl[[1]]))) {
-        warning("Non-matching ids lengths")
-      }
-      #
-      # finalise results set
-      listofEUCTRids <- listofEUCTRids[["_id"]]
-      listofCTGOVids <- listofCTGOVids[[
-        "_id"]] [!dupesA2 & !dupesB2 & !dupesC2 & !dupesD2 & !dupesE2]
-      listofISRCTNids <- listofISRCTNids[[
-        "_id"]] [!dupesF2 & !dupesG2]
-      #
-      message(
-        "Concatenating ",
-        length(listofEUCTRids), " records from EUCTR, ",
-        length(listofCTGOVids), " from CTGOV, ",
-        length(listofISRCTNids), " from ISRCTN:"
-      )
-      #
-      retids <- c(listofEUCTRids, listofCTGOVids, listofISRCTNids)
-      #
-    }
-    #
-    if (preferregister == "CTGOV") {
-      #
-      # a.1 - euctr in ctgov
-      dupesA1 <- listofEUCTRids[["a2_eudract_number"]] %in% sub(
-        paste0(".*(", regEuctr, ").*"), # e.g. "EUDRACT-2004-000242-20"
-        "\\1", unlist(listofCTGOVids[["id_info"]], use.names = FALSE))
-      #
-      if (verbose) {
-        message(" - ", sum(dupesA1),
-                " EUCTR _id in CTGOV secondary_id / nct_alias / org_study_id")
-      }
-      #
-      # b.1 - euctr in ctgov
-      dupesB1 <- !is.na(
-        listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]) &
-        listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]] %in%
-        listofCTGOVids[["_id"]]
-      #
-      if (verbose) {
-        message(" - ", sum(dupesB1),
-                " EUCTR a52_us_nct_... in CTGOV _id (nct)")
-      }
-      #
-      # c.1 - euctr in ctgov
-      dupesC1 <- !is.na(
-        listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]) &
-        listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]] %in%
-        unlist(listofCTGOVids[["id_info"]], use.names = FALSE)
-      #
-      if (verbose) {
-        message(
-          " - ", sum(dupesC1),
-          " EUCTR a52_us_nct_... in",
-          " CTGOV secondary_id / nct_alias / org_study_id")
-      }
-      #
-      # d.1 - euctr in ctgov
-      dupesD1 <- !is.na(
-        listofEUCTRids[[
-          "a51_isrctn_international_standard_randomised_controlled_trial_number"]]) &
-        listofEUCTRids[[
-          "a51_isrctn_international_standard_randomised_controlled_trial_number"]] %in%
-        unlist(listofCTGOVids[["id_info"]], use.names = FALSE)
-      #
-      if (verbose) {
-        message(
-          " - ", sum(dupesD1),
-          " EUCTR a51_isrctn_...",
-          " in CTGOV secondary_id / nct_alias / org_study_id")
-      }
-      #
-      # e.1 - euctr in ctgov
-      dupesE1 <- !is.na(
-        listofEUCTRids[["a41_sponsors_protocol_code_number"]]) &
-        listofEUCTRids[["a41_sponsors_protocol_code_number"]] %in%
-        unlist(listofCTGOVids[["id_info"]], use.names = FALSE)
-      #
-      if (verbose) {
-        message(
-          " - ", sum(dupesD1),
-          " EUCTR a41_sponsors_protocol_...",
-          " in CTGOV secondary_id / nct_alias / org_study_id")
-      }
-      #
-      # f.1 - ctgov other id in nct
-      dupesF1 <- vapply(
-        listofCTGOVids[["id_info"]],
-        function(x) !is.null(x[["nct_alias"]]) &&
-          any(unlist(x[["nct_alias"]], use.names = FALSE) %in%
-                listofCTGOVids[["_id"]]), logical(1L))
-      #
-      if (verbose) {
-        message(
-          " - ", sum(dupesF1),
-          " CTGOV nct_alias in CTGOV _id (nct)")
-      }
-      #
-      # g.1 - externalRefs.eudraCTNumber in _id
-      dupesG1 <- sub(paste0("(", regEuctr, ")"), "\\1",
-                     listofISRCTNids[["externalRefs.eudraCTNumber"]]) %in%
-        listofEUCTRids[["a2_eudract_number"]]
-      #
-      if (verbose) {
-        message(" - ", sum(dupesG1),
-                " EUCTR _id in",
-                " ISRCTN eudraCTNumber ")
-      }
-      #
-      # h.1 - externalRefs.externalRefs.clinicalTrialsGovNumber in _id
-      dupesH1 <- sub(paste0("(", regCtgov, ")"), "\\1",
-                     listofISRCTNids[["externalRefs.clinicalTrialsGovNumber"]]) %in%
-        listofCTGOVids[["_id"]]
-      #
-      if (verbose) {
-        message(" - ", sum(dupesH1),
-                " CTGOV _id in",
-                " ISRCTN clinicalTrialsGovNumber ")
-      }
-      #
-      # checks
-      if (!(length(listofCTGOVids[["_id"]]) == length(dupesF1)) |
-          !all(sapply(tl <- lapply(
-            list(listofEUCTRids[["_id"]], dupesA1, dupesB1, dupesC1, dupesD1, dupesE1),
-            length), identical, tl[[1]])) |
-          !all(sapply(tl <- lapply(
-            list(listofISRCTNids[["_id"]], dupesG1, dupesH1),
-            length), identical, tl[[1]]))) {
-        warning("Non-matching ids lengths")
-      }
-      #
-      # finalise results set
-      listofCTGOVids <- listofCTGOVids[["_id"]] [!dupesF1]
-      listofEUCTRids <- listofEUCTRids[[
-        "_id"]] [!dupesA1 & !dupesB1 & !dupesC1 & !dupesD1  & !dupesE1]
-      listofISRCTNids <- listofISRCTNids[[
-        "_id"]] [!dupesG1 & !dupesH1]
-      #
-      message(
-        "Concatenating ",
-        length(listofCTGOVids), " records from CTGOV, ",
-        length(listofEUCTRids), " from EUCTR, ",
-        length(listofISRCTNids), " from ISRCTN: "
-      )
-      #
-      retids <- c(listofCTGOVids, listofEUCTRids, listofISRCTNids)
-      #
-    }
-  } else {
-    #
-    # fallback
-    retids <- c(listofEUCTRids[["_id"]],
-                listofCTGOVids[["_id"]],
-                listofISRCTNids[["_id"]])
-    #
-  }
+  #
+  #
+  #
+  # # keep only euctr
+  # listofEUCTRids <- listofIds[
+  #   grepl(paste0("^", regEuctr, "$"), listofIds[["a2_eudract_number"]]),
+  #   c(1, seq_len(ncol(listofIds))[grepl("^a[0-9]+_", names(listofIds))])
+  # ]
+  #
+  # # keep only ctgov
+  # listofCTGOVids <- listofIds[
+  #   grepl(paste0("^", regCtgov, "$"), listofIds[["_id"]]),
+  #   c(1, seq_len(ncol(listofIds))[grepl("^id_info", names(listofIds))][1]),
+  #   drop = TRUE
+  # ]
+  #
+  # # keep only isrctn
+  # listofISRCTNids <- listofIds[
+  #   grepl(paste0("^", regIsrctn, "$"), listofIds[["_id"]]),
+  #   c(1, seq_len(ncol(listofIds))[grepl("^externalRefs", names(listofIds))]),
+  #   drop = TRUE
+  # ]
+  #
+  # ## find records (_id's) that are in both in euctr and ctgov
+  # if (sum(!is.null(listofEUCTRids),
+  #         !is.null(listofCTGOVids),
+  #         !is.null(listofISRCTNids)) > 1L) {
+  #   #
+  #   # 6. select records from preferred register
+  #   if (preferregister == "EUCTR") {
+  #     #
+  #     # strategy: retain all listofEUCTRids;
+  #     # identify and remove dupes from listofCTGOVids
+  #     #
+  #     # b2 - ctgov in euctr (_id corresponds to index 1)
+  #     dupesB2 <- listofCTGOVids[["_id"]] %in%
+  #       listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]
+  #     #
+  #     if (verbose) message(" - ", sum(dupesB2),
+  #                          " CTGOV _id (nct) in EUCTR a52_us_nct_...")
+  #     #
+  #     # a2 - ctgov in euctr a2_...
+  #     dupesA2 <- vapply(
+  #       listofCTGOVids[["id_info"]], # e.g. "EUDRACT-2004-000242-20"
+  #       function(x) any(sub(paste0(".*(", regEuctr, ").*"), "\\1", x) %in%
+  #                         listofEUCTRids[["a2_eudract_number"]]), logical(1L))
+  #     #
+  #     if (verbose) {
+  #       message(
+  #         " - ", sum(dupesA2),
+  #         " CTGOV secondary_id / nct_alias / org_study_id in EUCTR a2_eudract_number")
+  #     }
+  #     #
+  #     # c.2 - ctgov in euctr a52_... (id_info corresponds to index 2)
+  #     dupesC2 <- vapply(
+  #       listofCTGOVids[["id_info"]],
+  #       function(x) any(
+  #         x %in% na.omit(
+  #           listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]])), logical(1L))
+  #     #
+  #     if (verbose) {
+  #       message(
+  #         " - ", sum(dupesC2),
+  #         " CTGOV secondary_id / nct_alias / org_study_id in",
+  #         " EUCTR a52_us_nct_...")
+  #     }
+  #     #
+  #     # d.2 - ctgov in euctr a51_... (id_info corresponds to index 2)
+  #     dupesD2 <- vapply(
+  #       listofCTGOVids[["id_info"]],
+  #       function(x) any(
+  #         x %in% na.omit(
+  #           listofEUCTRids[[
+  #             "a51_isrctn_international_standard_randomised_controlled_trial_number"]])), logical(1L))
+  #     #
+  #     if (verbose) message(" - ", sum(dupesD2),
+  #                          " CTGOV secondary_id / nct_alias / org_study_id in",
+  #                          " EUCTR a51_isrctn_...")
+  #     #
+  #     # e.2 - ctgov in euctr a41_... (id_info corresponds to index 2)
+  #     dupesE2 <- vapply(
+  #       listofCTGOVids[["id_info"]],
+  #       function(x) any(
+  #         x %in% na.omit(
+  #           listofEUCTRids[["a41_sponsors_protocol_code_number"]])), logical(1L))
+  #     #
+  #     if (verbose) {
+  #       message(" - ", sum(dupesE2),
+  #               " CTGOV secondary_id / nct_alias / org_study_id in",
+  #               " EUCTR a41_sponsors_protocol_...")
+  #     }
+  #     #
+  #     # f.2 - externalRefs.eudraCTNumber in _id
+  #     dupesF2 <- sub(paste0("(", regEuctr, ")"), "\\1",
+  #                    listofISRCTNids[["externalRefs.eudraCTNumber"]]) %in%
+  #       listofEUCTRids[["a2_eudract_number"]]
+  #     #
+  #     if (verbose) {
+  #       message(" - ", sum(dupesF2),
+  #               " EUCTR _id in",
+  #               " ISRCTN eudraCTNumber ")
+  #     }
+  #     #
+  #     # g.2 - externalRefs.externalRefs.clinicalTrialsGovNumber in _id
+  #     dupesG2 <- sub(paste0("(", regCtgov, ")"), "\\1",
+  #                    listofISRCTNids[["externalRefs.clinicalTrialsGovNumber"]]) %in%
+  #       listofCTGOVids[["_id"]]
+  #     #
+  #     if (verbose) {
+  #       message(" - ", sum(dupesG2),
+  #               " CTGOV _id in",
+  #               " ISRCTN clinicalTrialsGovNumber ")
+  #     }
+  #     #
+  #     # checks
+  #     if (!all(sapply(tl <- lapply(
+  #       list(listofCTGOVids[["_id"]], dupesA2, dupesB2, dupesC2, dupesD2, dupesE2),
+  #       length), identical, tl[[1]])) |
+  #       !all(sapply(tl <- lapply(
+  #         list(listofISRCTNids[["_id"]], dupesF2, dupesG2),
+  #         length), identical, tl[[1]]))) {
+  #       warning("Non-matching ids lengths")
+  #     }
+  #     #
+  #     # finalise results set
+  #     listofEUCTRids <- listofEUCTRids[["_id"]]
+  #     listofCTGOVids <- listofCTGOVids[[
+  #       "_id"]] [!dupesA2 & !dupesB2 & !dupesC2 & !dupesD2 & !dupesE2]
+  #     listofISRCTNids <- listofISRCTNids[[
+  #       "_id"]] [!dupesF2 & !dupesG2]
+  #     #
+  #     message(
+  #       "Concatenating ",
+  #       length(listofEUCTRids), " records from EUCTR, ",
+  #       length(listofCTGOVids), " from CTGOV, ",
+  #       length(listofISRCTNids), " from ISRCTN:"
+  #     )
+  #     #
+  #     retids <- c(listofEUCTRids, listofCTGOVids, listofISRCTNids)
+  #     #
+  #   }
+  #   #
+  #   if (preferregister == "CTGOV") {
+  #     #
+  #     # a.1 - euctr in ctgov
+  #     dupesA1 <- listofEUCTRids[["a2_eudract_number"]] %in% sub(
+  #       paste0(".*(", regEuctr, ").*"), # e.g. "EUDRACT-2004-000242-20"
+  #       "\\1", unlist(listofCTGOVids[["id_info"]], use.names = FALSE))
+  #     #
+  #     if (verbose) {
+  #       message(" - ", sum(dupesA1),
+  #               " EUCTR _id in CTGOV secondary_id / nct_alias / org_study_id")
+  #     }
+  #     #
+  #     # b.1 - euctr in ctgov
+  #     dupesB1 <- !is.na(
+  #       listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]) &
+  #       listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]] %in%
+  #       listofCTGOVids[["_id"]]
+  #     #
+  #     if (verbose) {
+  #       message(" - ", sum(dupesB1),
+  #               " EUCTR a52_us_nct_... in CTGOV _id (nct)")
+  #     }
+  #     #
+  #     # c.1 - euctr in ctgov
+  #     dupesC1 <- !is.na(
+  #       listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]]) &
+  #       listofEUCTRids[["a52_us_nct_clinicaltrialsgov_registry_number"]] %in%
+  #       unlist(listofCTGOVids[["id_info"]], use.names = FALSE)
+  #     #
+  #     if (verbose) {
+  #       message(
+  #         " - ", sum(dupesC1),
+  #         " EUCTR a52_us_nct_... in",
+  #         " CTGOV secondary_id / nct_alias / org_study_id")
+  #     }
+  #     #
+  #     # d.1 - euctr in ctgov
+  #     dupesD1 <- !is.na(
+  #       listofEUCTRids[[
+  #         "a51_isrctn_international_standard_randomised_controlled_trial_number"]]) &
+  #       listofEUCTRids[[
+  #         "a51_isrctn_international_standard_randomised_controlled_trial_number"]] %in%
+  #       unlist(listofCTGOVids[["id_info"]], use.names = FALSE)
+  #     #
+  #     if (verbose) {
+  #       message(
+  #         " - ", sum(dupesD1),
+  #         " EUCTR a51_isrctn_...",
+  #         " in CTGOV secondary_id / nct_alias / org_study_id")
+  #     }
+  #     #
+  #     # e.1 - euctr in ctgov
+  #     dupesE1 <- !is.na(
+  #       listofEUCTRids[["a41_sponsors_protocol_code_number"]]) &
+  #       listofEUCTRids[["a41_sponsors_protocol_code_number"]] %in%
+  #       unlist(listofCTGOVids[["id_info"]], use.names = FALSE)
+  #     #
+  #     if (verbose) {
+  #       message(
+  #         " - ", sum(dupesD1),
+  #         " EUCTR a41_sponsors_protocol_...",
+  #         " in CTGOV secondary_id / nct_alias / org_study_id")
+  #     }
+  #     #
+  #     # f.1 - ctgov other id in nct
+  #     dupesF1 <- vapply(
+  #       listofCTGOVids[["id_info"]],
+  #       function(x) !is.null(x[["nct_alias"]]) &&
+  #         any(unlist(x[["nct_alias"]], use.names = FALSE) %in%
+  #               listofCTGOVids[["_id"]]), logical(1L))
+  #     #
+  #     if (verbose) {
+  #       message(
+  #         " - ", sum(dupesF1),
+  #         " CTGOV nct_alias in CTGOV _id (nct)")
+  #     }
+  #     #
+  #     # g.1 - externalRefs.eudraCTNumber in _id
+  #     dupesG1 <- sub(paste0("(", regEuctr, ")"), "\\1",
+  #                    listofISRCTNids[["externalRefs.eudraCTNumber"]]) %in%
+  #       listofEUCTRids[["a2_eudract_number"]]
+  #     #
+  #     if (verbose) {
+  #       message(" - ", sum(dupesG1),
+  #               " EUCTR _id in",
+  #               " ISRCTN eudraCTNumber ")
+  #     }
+  #     #
+  #     # h.1 - externalRefs.externalRefs.clinicalTrialsGovNumber in _id
+  #     dupesH1 <- sub(paste0("(", regCtgov, ")"), "\\1",
+  #                    listofISRCTNids[["externalRefs.clinicalTrialsGovNumber"]]) %in%
+  #       listofCTGOVids[["_id"]]
+  #     #
+  #     if (verbose) {
+  #       message(" - ", sum(dupesH1),
+  #               " CTGOV _id in",
+  #               " ISRCTN clinicalTrialsGovNumber ")
+  #     }
+  #     #
+  #     # checks
+  #     if (!(length(listofCTGOVids[["_id"]]) == length(dupesF1)) |
+  #         !all(sapply(tl <- lapply(
+  #           list(listofEUCTRids[["_id"]], dupesA1, dupesB1, dupesC1, dupesD1, dupesE1),
+  #           length), identical, tl[[1]])) |
+  #         !all(sapply(tl <- lapply(
+  #           list(listofISRCTNids[["_id"]], dupesG1, dupesH1),
+  #           length), identical, tl[[1]]))) {
+  #       warning("Non-matching ids lengths")
+  #     }
+  #     #
+  #     # finalise results set
+  #     listofCTGOVids <- listofCTGOVids[["_id"]] [!dupesF1]
+  #     listofEUCTRids <- listofEUCTRids[[
+  #       "_id"]] [!dupesA1 & !dupesB1 & !dupesC1 & !dupesD1  & !dupesE1]
+  #     listofISRCTNids <- listofISRCTNids[[
+  #       "_id"]] [!dupesG1 & !dupesH1]
+  #     #
+  #     message(
+  #       "Concatenating ",
+  #       length(listofCTGOVids), " records from CTGOV, ",
+  #       length(listofEUCTRids), " from EUCTR, ",
+  #       length(listofISRCTNids), " from ISRCTN: "
+  #     )
+  #     #
+  #     retids <- c(listofCTGOVids, listofEUCTRids, listofISRCTNids)
+  #     #
+  #   }
+  # } else {
+  #   #
+  #   # fallback
+  #   retids <- c(listofEUCTRids[["_id"]],
+  #               listofCTGOVids[["_id"]],
+  #               listofISRCTNids[["_id"]])
+  #   #
+  # }
 
   # copy attributes
-  attribsids <- attributes(listofIds)
-  attributes(retids) <- attribsids[grepl("^ctrdata-", names(attribsids))]
+  attributes(listofIds) <- attribsids[grepl("^ctrdata-", names(attribsids))]
 
   # avoid returning list() if none found
-  if (length(retids) == 0) {
-    retids <- character()
+  if (length(listofIds) == 0) {
+    listofIds <- character()
   }
 
   # inform user
   message(
-    "= Returning keys (_id) of ", length(retids),
+    "= Returning keys (_id) of ", length(listofIds),
     " records in collection \"", con$collection, "\".")
 
   # return
-  return(retids)
+  return(listofIds)
 
 }
 # end dbFindIdsUniqueTrials

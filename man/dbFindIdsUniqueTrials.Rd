@@ -5,7 +5,7 @@
 \title{Deduplicate records to provide unique clinical trial identifiers}
 \usage{
 dbFindIdsUniqueTrials(
-  preferregister = "EUCTR",
+  preferregister = registerList,
   prefermemberstate = "GB",
   include3rdcountrytrials = TRUE,
   con,
@@ -13,10 +13,9 @@ dbFindIdsUniqueTrials(
 )
 }
 \arguments{
-\item{preferregister}{The abbreviation of the preferred register, in case
-a trial is in more than one register (string, either "EUCTR" or "CTGOV").
-If set to an empty string (""), keeps the keys for the same trial in both
-registers in the returned vector.}
+\item{preferregister}{A vector of the sequence of preference for registers
+from which to generate unique _id's, default
+\code{c("EUCTR", "CTGOV", "ISRCTN")}}
 
 \item{prefermemberstate}{Code of single EU Member State for which records
 should returned. If not available, a record for GB or lacking this, any
