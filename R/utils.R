@@ -862,6 +862,14 @@ dbFindIdsUniqueTrials <- function(
   # inform user
   message("\b\b\b, ", nrow(listofIds), " found in collection")
 
+  # fast return if only records from one register
+  if (sum(table(listofIds[["ctrname"]]) > 0L) == 1L) {
+    message(
+    "= Returning keys (_id) of ", length(listofIds),
+    " records in collection \"", con$collection, "\".")
+    return(listofIds[["_id"]])
+  }
+
   # copy attributes
   attribsids <- attributes(listofIds)
 
