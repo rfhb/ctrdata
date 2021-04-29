@@ -1,5 +1,6 @@
 # ctrdata 1.5.3.9000
- - 2021-04-20
+ - 2021-04-29
+ - adding user info which field entries could not be typed
  - refactor checking and caching binaries 
  - update EUCTR download parameters 
  - harmonise error checking 
