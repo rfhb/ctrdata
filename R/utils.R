@@ -805,7 +805,11 @@ dbFindIdsUniqueTrials <- function(
 
   # parameter checks
   if (!all(preferregister %in% registerList)) {
-    stop("Register not known: ", preferregister, call. = FALSE)
+    stop("'preferregister' not known: ", preferregister, call. = FALSE)
+  }
+  if (length(prefermemberstate) != 1L |
+      !any(prefermemberstate == countriesEUCTR)) {
+    stop("'prefermemberstate' not known: ", prefermemberstate, call. = FALSE)
   }
   # complete if preferregister does not have all
   preferregister <- unique(preferregister)
