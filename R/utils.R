@@ -2458,6 +2458,17 @@ typeField <- function(dfi) {
   if (!inherits(tmp, "try-error") &&
       !is.null(unlist(tmp, use.names = FALSE))) {
 
+    # info to user
+    testType <- dfi[is.na(tmp), , drop = FALSE]
+    testType <- testType[testType[[2]] != "", ]
+    if (nrow(testType)) {
+      message("Unexpected string(s) in column '",
+              names(testType)[2], "':\n",
+              paste0(testType[[2]], collapse = " / "),
+              ", for _id(s)\n",
+              paste0(testType[[1]], collapse = " / "))
+    }
+
     # need to construct new data frame,
     # since replacing columns with
     # posixct did not work
