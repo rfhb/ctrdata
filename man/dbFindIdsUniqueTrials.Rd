@@ -5,7 +5,7 @@
 \title{Deduplicate records to provide unique clinical trial identifiers}
 \usage{
 dbFindIdsUniqueTrials(
-  preferregister = registerList,
+  preferregister = c("EUCTR", "CTGOV", "ISRCTN"),
   prefermemberstate = "GB",
   include3rdcountrytrials = TRUE,
   con,
