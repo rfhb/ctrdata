@@ -938,7 +938,7 @@ dbFindIdsUniqueTrials <- function(
 
     # check if second etc. set has identifiers
     # in the previously rbind'ed sets
-    if (i > 1L) {
+    if (i > 1L && nrow(tmp)) {
 
       # check for duplicates
       dupes <- mapply(
