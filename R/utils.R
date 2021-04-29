@@ -916,7 +916,8 @@ dbFindIdsUniqueTrials <- function(
     listofIds[[reg]] <- apply(listofIds[
       , grepl(paste0("^", reg, "[.][0-9]"), names(listofIds),
               ignore.case = TRUE), drop = FALSE], MARGIN = 1,
-      function(r) gsub("^ ?/ | / ?$", "", paste0(unique(r), collapse = " / ")))
+      function(r) gsub("^ ?/ | / ?$", "",
+                       paste0(na.omit(unique(r)), collapse = " / ")))
   }
   # - delete raw columns
   listofIds <- listofIds[
