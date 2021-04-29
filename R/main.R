@@ -1885,6 +1885,7 @@ ctrLoadQueryIntoDbEuctr <- function(
 #' @importFrom jsonlite toJSON
 #' @importFrom httr content headers progress write_disk GET HEAD
 #' @importFrom nodbi docdb_query
+#' @importFrom utils URLdecode
 #'
 ctrLoadQueryIntoDbIsrctn <- function(
   queryterm = queryterm,
@@ -1919,7 +1920,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
   # into to api format such as
   # "q=neuroblastoma AND lastEdited LE 2021-03-28T00:00:00.000Z"
   # - ensure we can use text processing
-  queryterm <- URLdecode(queryterm)
+  queryterm <- utils::URLdecode(queryterm)
   # - generate api terms
   apiterm <- queryterm
   apiterm <- sub("&filters=", ",", apiterm)
