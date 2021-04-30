@@ -612,6 +612,74 @@ ctrRerunQuery <- function(
 } # end ctrRerunQuery
 
 
+
+
+
+#' ctrConvertToJSON
+#'
+#' @param tempDir Name of temporary directory with downloaded
+#'  trial information
+#' @param scriptName Name of PHP or shell script to run
+#' @inheritParams ctrLoadQueryIntoDb
+#'
+#' @return System messages from converting
+#'
+#' @keywords internal
+#'
+ctrConvertToJSON <- function(tempDir, scriptName, verbose) {
+
+  ## compose commands to transform into json
+
+  # special command handling on windows
+  if (.Platform$OS.type == "windows") {
+    #
+    script2Json <- utils::shortPathName(
+      path = system.file(paste0("exec/", scriptName),
+                         package = "ctrdata",
+                         mustWork = TRUE))
+    #
+    script2Json <- paste0(
+      "php -f ",
+      shQuote(script2Json), " ",
+      utils::shortPathName(path = tempDir))
+    #
+    # transform paths for cygwin use
+    script2Json <- gsub("\\\\", "/", script2Json)
+    script2Json <- gsub("([A-Z]):/", "/cygdrive/\\1/", script2Json)
+    #
+    script2Json <- paste0(
+      "cmd.exe /c ",
+      rev(Sys.glob("c:\\cygw*\\bin\\bash.exe"))[1],
+      ' --login -c "', script2Json, '"')
+    #
+  } else {
+    #
+    # platforms other than windows
+    #
+    script2Json <- system.file(paste0("exec/", scriptName),
+                               package = "ctrdata",
+                               mustWork = TRUE)
+    #
+    script2Json <- paste0(
+      ifelse(grepl("[.]php$", scriptName), "php -f ", ""),
+      shQuote(script2Json), " ",
+      tempDir)
+    #
+  } # if windows
+
+  # run conversion of download to json
+  message("\n(2/3) Converting to JSON...")
+  if (verbose) message("DEBUG: ", script2Json)
+  imported <- system(script2Json, intern = TRUE)
+  if (verbose) message("DEBUG: ", imported, " converted")
+
+  # return
+  return(imported)
+
+}
+
+
+
 #' dbCTRLoadJSONFiles
 #'
 #' @param dir Path to local directory with JSON files
@@ -748,9 +816,6 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
            n = nImported)
 
     }) # sapply tempFiles
-
-  # reset line output
-  message("                                                          ")
 
   # prepare return values, n is successful only
   n <- sum(sapply(retimp, "[[", "n"), na.rm = TRUE)
@@ -1030,47 +1095,8 @@ ctrLoadQueryIntoDbCtgov <- function(
   ## extract all from downloaded zip file
   utils::unzip(f, exdir = tempDir)
 
-  ## compose commands to transform xml into json, into
-  # a single alltrials.json in the temporaray directory
-  # special command handling on windows
-  if (.Platform$OS.type == "windows") {
-    #
-    xml2json <- utils::shortPathName(
-      path = system.file("exec/ctgov2json.php",
-                         package = "ctrdata",
-                         mustWork = TRUE))
-    #
-    xml2json <- paste0(
-      "php -f ",
-      shQuote(xml2json), " ",
-      utils::shortPathName(path = tempDir))
-    #
-    # xml2json requires cygwin's php. transform paths for cygwin use:
-    xml2json <- gsub("\\\\", "/", xml2json)
-    xml2json <- gsub("([A-Z]):/", "/cygdrive/\\1/", xml2json)
-    #
-    xml2json <- paste0(
-      "cmd.exe /c ",
-      rev(Sys.glob("c:\\cygw*\\bin\\bash.exe"))[1],
-      ' --login -c "', xml2json, '"')
-    #
-  } else {
-    #
-    xml2json <- system.file("exec/ctgov2json.php",
-                            package = "ctrdata",
-                            mustWork = TRUE)
-    #
-    xml2json <- paste0(
-      "php -f ",
-      shQuote(xml2json), " ",
-      tempDir)
-    #
-  } # if windows
-
-  # run conversion of downloaded xml to json
-  message("\n(2/3) Converting to JSON...")
-  if (verbose) message("DEBUG: ", xml2json)
-  imported <- system(xml2json, intern = TRUE)
+  ## run conversion
+  ctrConvertToJSON(tempDir, "ctgov2json.php", verbose)
 
   ## run import
   message("(3/3) Importing JSON records into database...")
@@ -1369,47 +1395,8 @@ ctrLoadQueryIntoDbEuctr <- function(
          call. = FALSE)
   }
 
-  ## compose commands: for external script on
-  # all files in temporary directory and for import
-  # special handling in case of windows
-  if (.Platform$OS.type == "windows") {
-    #
-    euctr2json <- utils::shortPathName(
-      path = system.file("exec/euctr2json.sh",
-                         package = "ctrdata",
-                         mustWork = TRUE))
-    #
-    euctr2json <- paste0(
-      shQuote(euctr2json), " ",
-      utils::shortPathName(path = tempDir))
-    #
-    # euctr2json requires cygwin's perl, sed
-    # transform paths for cygwin use
-    euctr2json <- gsub("\\\\", "/", euctr2json)
-    euctr2json <- gsub("([A-Z]):/", "/cygdrive/\\1/", euctr2json)
-    euctr2json <- paste0(
-      "cmd.exe /c ",
-      rev(Sys.glob("c:\\cygw*\\bin\\bash.exe"))[1],
-      ' --login -c "', euctr2json, '"')
-    #
-  } else {
-    #
-    euctr2json <- system.file(
-      "exec/euctr2json.sh",
-      package = "ctrdata",
-      mustWork = TRUE)
-    #
-    euctr2json <- paste0(
-      shQuote(euctr2json), " ",
-      tempDir)
-    #
-  } # if windows
-
-  # run conversion of text files saved
-  # into file system to json file
-  message("\n(2/3) Converting to JSON...")
-  if (verbose) message("DEBUG: ", euctr2json)
-  imported <- system(euctr2json, intern = TRUE)
+  ## run conversion
+  ctrConvertToJSON(tempDir, "euctr2json.sh", verbose)
 
   # run import into mongo from json files
   message("(3/3) Importing JSON records into database...")
@@ -1586,51 +1573,8 @@ ctrLoadQueryIntoDbEuctr <- function(
 
     } # iterate over batches of results
 
-    ## use system commands to convert
-    ## xml to json and to import json
-
-    # compose command
-
-    # special command handling on windows
-    if (.Platform$OS.type == "windows") {
-      #
-      xml2json <- utils::shortPathName(
-        path = system.file(
-          "exec/euctr2json_results.php",
-          package = "ctrdata",
-          mustWork = TRUE))
-      #
-      xml2json <- paste0(
-        "php -f ",
-        shQuote(xml2json), " ",
-        utils::shortPathName(path = tempDir))
-      #
-      # xml2json requires cygwin's php. transform paths for cygwin use:
-      xml2json <- gsub("\\\\", "/", xml2json)
-      xml2json <- gsub("([A-Z]):/", "/cygdrive/\\1/", xml2json)
-      xml2json <- paste0(
-        "cmd.exe /c ",
-        rev(Sys.glob("c:\\cygw*\\bin\\bash.exe"))[1],
-        ' --login -c "', xml2json, '"')
-      #
-    } else {
-      #
-      xml2json <- system.file(
-        "exec/euctr2json_results.php",
-        package = "ctrdata",
-        mustWork = TRUE)
-      #
-      xml2json <- paste0(
-        "php -f ",
-        shQuote(xml2json),
-        " ", tempDir)
-      #
-    } # if windows
-
-    # run conversion of downloaded xml to json
-    message("\n(2/4) Converting to JSON...")
-    if (verbose) message("DEBUG: ", xml2json)
-    importedresults <- system(xml2json, intern = TRUE)
+    ## run conversion
+    ctrConvertToJSON(tempDir, "euctr2json_results.php", verbose)
 
     # iterate over results files
     message("(3/4) Importing JSON into database...")
@@ -2030,48 +1974,8 @@ ctrLoadQueryIntoDbIsrctn <- function(
          "again with verbose = TRUE.", call. = FALSE)
   }
 
-  ## compose commands to transform xml into json, into
-  # a single alltrials.json in the temporaray directory
-  # special command handling on windows
-  if (.Platform$OS.type == "windows") {
-    #
-    xml2json <- utils::shortPathName(
-      path = system.file("exec/isrctn2json.php",
-                         package = "ctrdata",
-                         mustWork = TRUE))
-    #
-    xml2json <- paste0(
-      "php -f ",
-      shQuote(xml2json), " ",
-      utils::shortPathName(path = tempDir))
-    #
-    # xml2json requires cygwin's php. transform paths for cygwin use:
-    xml2json <- gsub("\\\\", "/", xml2json)
-    xml2json <- gsub("([A-Z]):/", "/cygdrive/\\1/", xml2json)
-    #
-    xml2json <- paste0(
-      "cmd.exe /c ",
-      rev(Sys.glob("c:\\cygw*\\bin\\bash.exe"))[1],
-      ' --login -c "', xml2json, '"')
-    #
-  } else {
-    #
-    xml2json <- system.file("exec/isrctn2json.php",
-                            package = "ctrdata",
-                            mustWork = TRUE)
-    #
-    xml2json <- paste0(
-      "php -f ",
-      shQuote(xml2json), " ",
-      tempDir)
-    #
-  } # if windows
-
-  # run conversion of downloaded xml to json
-  message("\n(2/3) Converting to JSON...")
-  if (verbose) message("DEBUG: ", xml2json)
-  imported <- system(xml2json, intern = TRUE)
-  if (verbose) message("DEBUG: ", imported, " converted")
+  ## run conversion
+  ctrConvertToJSON(tempDir, "isrctn2json.php", verbose)
 
   ## run import
   message("(3/3) Importing JSON records into database...")

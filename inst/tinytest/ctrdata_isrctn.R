@@ -37,23 +37,6 @@ q <- paste0("https://www.isrctn.com/search?q=neuroblastoma&filters=condition:Can
             ",LE+lastEdited:", oldQueryDate,
             "T00:00:00.000Z&searchType=advanced-search")
 
-# ctrOpenSearchPagesInBrowser(q)
-# ctrOpenSearchPagesInBrowser("https://www.isrctn.com/search?q=&filters=condition%3ACancer%2CLE+lastEdited%3A2021-04-01T00%3A00%3A00.000Z&searchType=advanced-search")
-# ctrGetQueryUrl(url = "https://www.isrctn.com/search?q=&filters=condition%3ACancer%2CLE+lastEdited%3A2021-04-01T00%3A00%3A00.000Z&searchType=advanced-search")
-# queryterm <- "q=neuroblastoma&filters=LE+lastEdited%3A2021-04-01T00%3A00%3A00.000Z"
-# queryterm <- "q=&filters=condition:Cancer,LE+lastEdited%3A2021-04-01T00%3A00%3A00.000Z"
-# queryterm <- "q=&filters=condition:Cancer,LE+lastEdited:2021-03-28T00:00:00.000Z,recruitmentCountry:Netherlands"
-#
-# xml2::xml_attr(
-#   xml2::read_xml(
-#     URLencode(
-#       "https://www.isrctn.com/api/query/format/internal?limit=1&q=condition:Cancer AND lastEdited LE 2021-03-28T00:00:00.000Z"
-#       "https://www.isrctn.com/api/query/format/internal?limit=1&q=neuroblastoma AND lastEdited LE 2018-03-28T00:00:00.000Z"
-#       "https://www.isrctn.com/api/query/format/internal?limit=1&q=neuroblastoma"
-#     )),
-#   "totalCount")
-
-
 # test
 expect_message(
   tmpTest <- suppressWarnings(
@@ -150,3 +133,4 @@ expect_message(
 # test
 expect_true(length(res) >= 5L)
 rm(res)
+

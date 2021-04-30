@@ -9,6 +9,7 @@
  - refactored url / query mangling, added detailed testing
  - refactored storing JSON into database (handle big files, reduce memory)
  - improved dbFindIdsUniqueTrials (speed, memory, register coverage)
+ - factored out conversion to JSON
 
 # ctrdata 1.5.3
  - 2021-04-19
