@@ -639,7 +639,7 @@ ctrConvertToJSON <- function(tempDir, scriptName, verbose) {
                          mustWork = TRUE))
     #
     script2Json <- paste0(
-      "php -f ",
+      ifelse(grepl("[.]php$", scriptName), "php -f ", ""),
       shQuote(script2Json), " ",
       utils::shortPathName(path = tempDir))
     #
