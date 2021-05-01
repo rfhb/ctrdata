@@ -142,9 +142,10 @@ tf <- function() {
   RSQLite::dbDisconnect(conn = dbc$con)
   # test
   expect_error(
-    suppressWarnings(
-      dbFindIdsUniqueTrials(
-        con = dbc)),
+    suppressMessages(
+      suppressWarnings(
+        dbFindIdsUniqueTrials(
+          con = dbc))),
     "No records found, check collection")
   # test
   expect_true(grepl("inmemory", dbc$collection))
@@ -216,6 +217,39 @@ tf <- function() {
     suppressMessages(ctrGetQueryUrl(
       url = qt[[1]],
       register = "CTGOV"))[[1]] == qt[[2]]},
+    logical(1L))))
+
+  # URLs
+  queryurls <- list(
+    # euctr
+    c("https://www.clinicaltrialsregister.eu/ctr-search/search?query=neuroblastoma",
+      "query=neuroblastoma"),
+    c("https://www.clinicaltrialsregister.eu/ctr-search/trial/2019-003713-33/NL",
+      "query=2019-003713-33"),
+    c("https://www.clinicaltrialsregister.eu/ctr-search/trial/2007-000371-42/results",
+      "query=2007-000371-42&resultsstatus=trials-with-results"),
+    # ctgov
+    c("https://clinicaltrials.gov/ct2/results?cond=Neuroblastoma&term=&intr=Investigational+Agent&type=Intr",
+      "cond=Neuroblastoma&intr=Investigational+Agent&type=Intr"),
+    c("https://clinicaltrials.gov/ct2/show/NCT01492673?type=Intr&cond=Neuroblastoma&intr=Investigational+Agent&draw=2&rank=1",
+      "term=NCT01492673"),
+    c("https://clinicaltrials.gov/ct2/show/NCT01492673",
+      "term=NCT01492673"),
+    # isrctn
+    c("https://www.isrctn.com/search?q=neuroblastoma&searchType=advanced-search",
+      "q=neuroblastoma"),
+    c("https://www.isrctn.com/search?q=&filters=condition:cancer",
+      "q=&filters=condition:cancer"),
+    c("https://www.isrctn.com/search?q=&filters=condition%3Acancer%2CrecruitmentCountry%3AGermany&searchType=basic-search",
+      "q=&filters=condition:cancer,recruitmentCountry:Germany"),
+    c("https://www.isrctn.com/ISRCTN70039829",
+      "q=ISRCTN70039829")
+  )
+
+  # test
+  expect_true(all(vapply(queryurls, function(qt) {
+    suppressMessages(ctrGetQueryUrl(
+      url = qt[[1]]))[[1]] == qt[[2]]},
     logical(1L))))
 
 } # tf test function

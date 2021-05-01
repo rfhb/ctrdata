@@ -313,14 +313,14 @@ ctrGetQueryUrl <- function(
     # search result page
     queryterm <- sub(".*/ctr-search/search[?](.*)", "\\1", url)
     # single trial page
-    queryterm <- sub(".*/ctr-search/trial/([-0-9]+)/.*", "\\1", queryterm)
+    queryterm <- sub(paste0(".*/ctr-search/trial/(", regEuctr, ")/.*"),
+                     "\\1", queryterm)
     # remove any intrapage anchor, e.g. #tableTop
     queryterm <- sub("#.+$", "", queryterm)
     # sanity correction for naked terms
     queryterm <- sub(
       "(^|&|[&]?\\w+=\\w+&)([ a-zA-Z0-9+-]+)($|&\\w+=\\w+)",
-      "\\1query=\\2\\3",
-      queryterm)
+      "\\1query=\\2\\3", queryterm)
     # check if url was for results of single trial
     if (grepl(".*/results$", url)) {
       queryterm <- paste0(queryterm, "&resultsstatus=trials-with-results")
@@ -330,11 +330,21 @@ ctrGetQueryUrl <- function(
   }
   #
   if (register == "CTGOV") {
+    # single trial page
+    queryterm <- sub(paste0(".*/ct2/show/(", regCtgov, ")([?][a-z]+.*|$)"),
+                     "\\1", url)
+    # inform user
+    if (grepl("[?][a-z]+=\\w+", url, perl = TRUE) &
+        grepl(paste0("^", regCtgov, "$"), queryterm)) {message(
+      "* Note: 'url' shows a single trial (and is returned by the function) ",
+      "but also had search parameters: If interested in search results, ",
+      "click 'Return to List' in browser and use this as 'url'.")
+    }
     # search results page
-    queryterm <- sub(".*/ct2/results[?](.*)", "\\1", url)
+    queryterm <- sub(".*/ct2/results[?](.*)", "\\1", queryterm)
     # other results page
-    queryterm <- sub("(.*)&Search[a-zA-Z]*=(Search|Find)[a-zA-Z+]*", "\\1",
-                     queryterm)
+    queryterm <- sub("(.*)&Search[a-zA-Z]*=(Search|Find)[a-zA-Z+]*",
+                     "\\1", queryterm)
     # remove empty parameters
     queryterm <- gsub("[a-z_0-9]+=&", "", queryterm)
     queryterm <- sub("&[a-z_0-9]+=$", "", queryterm)
@@ -343,19 +353,18 @@ ctrGetQueryUrl <- function(
       # "(^|&|[&]?\\w+=\\w+&)(\\w+|[NCT0-9-]+)($|&\\w+=\\w+)",
       "(^|&|[&]?\\w+=\\w+&)(\\w+|[a-zA-z0-9+-.:]+)($|&\\w+=\\w+)",
       "\\1term=\\2\\3", queryterm)
-    # get naked terms
-
-    # if no term and no parameter, add term
-    # if () queryterm <- paste0("term=", queryterm)
     #
     return(outdf(queryterm, register))
   }
   #
   if (register == "ISRCTN") {
+    # single trial page
+    queryterm <- sub(paste0("^.*/ISRCTN(", regIsrctn, ")$"),
+                     "ISRCTN\\1", url)
     # search results page
-    queryterm <- sub(".*/search[?](.*)", "\\1", url)
+    queryterm <- sub(".*/search[?](.*)", "\\1", queryterm)
     # remove unnecessary parameter
-    queryterm <- sub("&searchType=advanced-search", "", queryterm)
+    queryterm <- sub("&searchType=[a-z]+-search", "", queryterm)
     # correct naked terms
     queryterm <- sub(
       "(^|&|[&]?\\w+=\\w+&)(\\w+|[ a-zA-Z0-9+-]+)($|&\\w+=\\w+)",
