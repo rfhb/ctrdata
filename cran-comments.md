@@ -11,9 +11,7 @@
 None so far
 
 ## Submission reason
-* added message in case of server connectivity issues
-* propagating user settings for httr to curl operations
-* bug fix: make return structures identical if trials found or not
-* bug fix: corrected and improved user info in dfMergeTwoVariablesRelevel
-* address marginal cases in dfTrials2Long (field occurs only once, identifier level) 
-* remove duplicate rows fromdfName2Value, e.g. when criteria are duplicated
+* extended to work with a third register of clinical trials (ISRCTN)
+* refactored and improved query handling, checking binaries, duplicate ids
+* better handle queries with thousands of trials and many trial details
+* reduced code complexity
