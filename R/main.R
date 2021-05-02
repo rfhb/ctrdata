@@ -1885,8 +1885,6 @@ ctrLoadQueryIntoDbIsrctn <- function(
 
   ## inform user and prepare url for downloading
   message("(1/3) Checking trials in ISRCTN:")
-  #
-  # if (verbose) message("DEBUG: ", ctgovdownloadcsvurl)
 
   # - check number of trials to be downloaded
   isrctnfirstpageurl <- paste0(
@@ -2008,4 +2006,3 @@ ctrLoadQueryIntoDbIsrctn <- function(
   return(imported)
 }
 # end ctrLoadQueryIntoDbIsrctn
-

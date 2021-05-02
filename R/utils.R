@@ -290,12 +290,13 @@ ctrGetQueryUrl <- function(
   }
   #
   # identify domain and register short name
-  if (register == "") {register <- switch(
-    sub("^https://[w]{0,3}[.]?([a-zA-Z.]+)/.*", "\\1", url),
-    "clinicaltrialsregister.eu" = "EUCTR",
-    "clinicaltrials.gov" = "CTGOV",
-    "isrctn.com" = "ISRCTN",
-    "NONE")
+  if (register == "") {
+    register <- switch(
+      sub("^https://[w]{0,3}[.]?([a-zA-Z.]+)/.*", "\\1", url),
+      "clinicaltrialsregister.eu" = "EUCTR",
+      "clinicaltrials.gov" = "CTGOV",
+      "isrctn.com" = "ISRCTN",
+      "NONE")
   }
   #
   outdf <- function(qt, reg) {
@@ -335,10 +336,11 @@ ctrGetQueryUrl <- function(
                      "\\1", url)
     # inform user
     if (grepl("[?][a-z]+=\\w+", url, perl = TRUE) &
-        grepl(paste0("^", regCtgov, "$"), queryterm)) {message(
-      "* Note: 'url' shows a single trial (and is returned by the function) ",
-      "but also had search parameters: If interested in search results, ",
-      "click 'Return to List' in browser and use this as 'url'.")
+        grepl(paste0("^", regCtgov, "$"), queryterm)) {
+      message("* Note: 'url' shows a single trial (and is returned by the ",
+              "function) but also had search parameters: If interested in ",
+              "search results, click 'Return to List' in browser and use ",
+              "this as 'url'.")
     }
     # search results page
     queryterm <- sub(".*/ct2/results[?](.*)", "\\1", queryterm)
@@ -896,10 +898,10 @@ dbFindIdsUniqueTrials <- function(
     c("isrctn.1", regIsrctn),
     c("isrctn.2", regIsrctn),
     c("isrctn.3", regIsrctn),
-    c("euctr.1",regEuctr),
-    c("euctr.2a",regEuctr),
-    c("euctr.2b",regEuctr),
-    c("euctr.3",regEuctr)
+    c("euctr.1", regEuctr),
+    c("euctr.2a", regEuctr),
+    c("euctr.2b", regEuctr),
+    c("euctr.3", regEuctr)
   )
   # - do mangling
   silencer <- sapply(
@@ -934,7 +936,7 @@ dbFindIdsUniqueTrials <- function(
 
     # to be added
     tmp <- listofIds[
-      listofIds[["ctrname"]] == preferregister[i], , drop = FALSE ]
+      listofIds[["ctrname"]] == preferregister[i], , drop = FALSE]
     row.names(tmp) <- NULL
 
     # check if second etc. set has identifiers
@@ -2708,4 +2710,3 @@ checkBinary <- function(b = NULL) {
   invisible(all(out))
 
 }
-
