@@ -961,6 +961,7 @@ dbFindIdsUniqueTrials <- function(
       )
       # keep uniques
       tmp <- tmp[rowSums(dupes) == 0L, , drop = FALSE]
+      rm(dupes)
     }
 
     # add to output set
@@ -968,7 +969,7 @@ dbFindIdsUniqueTrials <- function(
                     make.row.names = FALSE,
                     stringsAsFactors = FALSE)
   }
-  rm(dupes, tmp)
+  rm(tmp)
 
   # keep necessary columns
   listofIds <- outSet[, c("_id", "EUCTR", "ctrname")]
