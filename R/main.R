@@ -1184,7 +1184,7 @@ ctrLoadQueryIntoDbEuctr <- function(
   euctrresultspdfpath <- normalizePath(euctrresultspdfpath, mustWork = TRUE)
 
   # inform user
-  message("* Checking trials in EUCTR: ", appendLF = FALSE)
+  message("(1/3) Checking trials in EUCTR:")
 
   # EUCTR standard identifiers
   queryEuRoot  <- "https://www.clinicaltrialsregister.eu/"
@@ -1285,8 +1285,8 @@ ctrLoadQueryIntoDbEuctr <- function(
   ## download all text files from pages
 
   # inform user
-  message("(1/3) Downloading trials (max. ",
-          parallelretrievals, " page[s] in parallel)...")
+  message("Downloading trials (max. ",
+          parallelretrievals, " pages in parallel)...")
 
   # prepare download and saving
 
