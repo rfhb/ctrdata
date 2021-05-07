@@ -1453,125 +1453,107 @@ ctrLoadQueryIntoDbEuctr <- function(
     # second version: "2007-000371-42/2"
     # latest version: "2007-000371-42"
 
-    # calculate batches to get data from all results pages
-    resultsNumBatches <- length(
-      eudractnumbersimported) %/% parallelretrievals
-    #
-    resultsNumModulo  <- length(
-      eudractnumbersimported) %%  parallelretrievals
-
     # inform user
     message("(1/4) Downloading results (max. ",
             parallelretrievals,
-            " trials in parallel):",
-            appendLF = FALSE)
+            " trials in parallel):")
 
-    # iterate over batches of results
-    for (i in 1:(resultsNumBatches +
-                 ifelse(resultsNumModulo > 0, 1, 0))) {
+    # prepare download and save
+    pool <- curl::new_pool(
+      total_con = parallelretrievals,
+      host_con = parallelretrievals,
+      multiplex = TRUE)
+    #
+    urls <- vapply(
+      paste0(queryEuRoot, queryEuType4,
+             eudractnumbersimported),
+      utils::URLencode, character(1L), USE.NAMES = FALSE)
+    #
+    fp <- tempfile(
+      pattern = paste0(
+        "euctr_results_",
+        formatC(seq_along(eudractnumbersimported),
+                digits = 0L,
+                width = nchar(length(eudractnumbersimported)),
+                flag = 0), "_"),
+      tmpdir = tempDir,
+      fileext = ".zip"
+    )
+    #
+    # success handling: saving to file
+    # and progress indicator function
+    pc <- 0L
+    curlSuccess <- function(res) {
+      pc <<- pc + 1L
+      # save to file
+      if (res$status_code == 200L) {
+        writeBin(object = res$content, con = fp[pc])
+        message("\r", pc, " downloaded", appendLF = FALSE)
+      }}
+    #
+    tmp <- lapply(
+      seq_along(urls),
+      function(i) {
+        h <- curl::new_handle()
+        curl::handle_setopt(h, .list = requestOptions)
+        curl::curl_fetch_multi(
+          url = urls[i],
+          done = curlSuccess,
+          pool = pool,
+          handle = h)
+      })
 
-      # calculated indices for eudractnumbersimported vector
-      startindex <- (i - 1) * parallelretrievals + 1
-      stopindex  <- ifelse(
-        i > resultsNumBatches,
-        startindex + resultsNumModulo,
-        startindex + parallelretrievals) - 1
+    # do download and save
+    tmp <- curl::multi_run(
+      pool = pool)
 
-      # inform user
-      message("\n t ", startindex, "-",
-              stopindex, " ", appendLF = FALSE)
+    # new line
+    message(", extracting ", appendLF = FALSE)
 
-      # prepare download and save
-      pool <- curl::new_pool(
-        total_con = parallelretrievals,
-        host_con = parallelretrievals,
-        multiplex = TRUE)
-      #
-      urls <- vapply(
-        paste0(queryEuRoot, queryEuType4,
-               eudractnumbersimported[startindex:stopindex]),
-        utils::URLencode, character(1L), USE.NAMES = FALSE)
-      #
-      fp <- tempfile(
-        pattern = paste0(
-          "euctr_results_",
-          startindex:stopindex, "_"),
-        tmpdir = tempDir,
-        fileext = ".zip"
-      )
-      #
-      # success handling: saving to file
-      # and progress indicator function
-      pc <- 0
-      curlSuccess <- function(res) {
-        pc <<- pc + 1
-        # save to file
-        if (res$status_code == 200L) {
-          writeBin(object = res$content, con = fp[pc])
-        }}
-      #
-      tmp <- lapply(
-        seq_along(urls),
-        function(i) {
-          h <- curl::new_handle()
-          curl::handle_setopt(h, .list = requestOptions)
-          curl::curl_fetch_multi(
-            url = urls[i],
-            done = curlSuccess,
-            pool = pool,
-            handle = h)
-        })
+    # unzip downloaded file and rename any PDF files
+    tmp <- lapply(
+      fp, function(f) {
 
-      # do download and save
-      tmp <- curl::multi_run(
-        pool = pool)
+        if (file.exists(f) &&
+            file.size(f) != 0L) {
 
-      # unzip downloaded file and rename
-      tmp <- lapply(
-        fp, function(f) {
+          tmp <- utils::unzip(
+            zipfile = f,
+            exdir = tempDir)
+          # results in files such as
+          # EU-CTR 2008-003606-33 v1 - Results.xml
 
-          if (file.exists(f) &&
-              file.size(f) != 0L) {
+          if (any(grepl("pdf$", tmp))) {
+            message("PDF ", appendLF = FALSE)
+            if (euctrresultspdfpath != tempDir) {
+              euctrnr <- gsub(paste0(".*(", regEuctr, ").*"),
+                              "\\1", tmp[!grepl("pdf$", tmp)])
+              # move PDF file(s) to user specified directory
+              saved <- try(file.rename(
+                from = tmp[grepl("pdf$", tmp)],
+                to = normalizePath(
+                  paste0(euctrresultspdfpath, "/",
+                         euctrnr, "--",
+                         basename(tmp[grepl("pdf$", tmp)])
+                  ), mustWork = FALSE)), silent = TRUE)
+              if (any(!saved)) {
+                warning("Could not save ", tmp[!saved],
+                        call. = FALSE, immediate. = TRUE)
+              }
+            } # if paths
+          } # if any pdf
 
-            tmp <- utils::unzip(
-              zipfile = f,
-              exdir = tempDir)
-            # results in files such as
-            # EU-CTR 2008-003606-33 v1 - Results.xml
+          # inform user
+          message(". ", appendLF = FALSE)
+        } else {
+          # unsuccessful
+          message("x ", appendLF = FALSE)
+        }
 
-            if (any(grepl("pdf$", tmp))) {
-              message("PDF ", appendLF = FALSE)
-              if (euctrresultspdfpath != tempDir) {
-                euctrnr <- gsub(paste0(".*(", regEuctr, ").*"),
-                                "\\1", tmp[!grepl("pdf$", tmp)])
-                # move PDF file(s) to user specified directory
-                saved <- try(file.rename(
-                  from = tmp[grepl("pdf$", tmp)],
-                  to = normalizePath(
-                    paste0(euctrresultspdfpath, "/",
-                           euctrnr, "--",
-                           basename(tmp[grepl("pdf$", tmp)])
-                    ), mustWork = FALSE)), silent = TRUE)
-                if (any(!saved)) {
-                  warning("Could not save ", tmp[!saved],
-                          call. = FALSE, immediate. = TRUE)
-                }
-              } # if paths
-            } # if any pdf
+        # clean up
+        if (!verbose) unlink(f)
 
-            # inform user
-            message(". ", appendLF = FALSE)
-          } else {
-            # unsuccessful
-            message("x ", appendLF = FALSE)
-          }
-
-          # clean up
-          if (!verbose) unlink(f)
-
-        }) # lapply fp
-
-    } # iterate over batches of results
+      }) # lapply fp
 
     ## run conversion
     ctrConvertToJSON(tempDir, "euctr2json_results.php", verbose)
