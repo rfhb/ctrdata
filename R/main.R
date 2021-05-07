@@ -308,12 +308,11 @@ ctrLoadQueryIntoDb <- function(
 
   # inform user
   if (verbose) {
-    message("DEBUG: 'queryterm'=", queryterm,
+    message("DEBUG: \n'queryterm'=", queryterm,
             "\n'queryupdateterm'=", queryupdateterm,
             "\n'imported'=", imported$n,
             "\n'register'=", register,
-            "\n'collection'=", con$collection,
-            "\nImported trials: ", paste0(imported$success, collapse = " "))
+            "\n'collection'=", con$collection)
   }
 
   # add query parameters to database
@@ -668,10 +667,10 @@ ctrConvertToJSON <- function(tempDir, scriptName, verbose) {
   } # if windows
 
   # run conversion of download to json
-  message("\n(2/3) Converting to JSON...")
-  if (verbose) message("DEBUG: ", script2Json)
+  message("\n(2/3) Converting to JSON...", appendLF = FALSE)
   imported <- system(script2Json, intern = TRUE)
-  if (verbose) message("DEBUG: ", imported, " converted")
+  message("\b\b\b, ", imported, " records converted")
+  if (verbose) message("DEBUG: ", script2Json)
 
   # return
   return(imported)
@@ -718,9 +717,6 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
       # switching off warning about final EOL missing
       fd <- file(description = tempFiles[tempFile],
                  open = "rt", blocking = TRUE)
-
-      # inform user
-      if (verbose) message("DEBUG: read file ", tempFiles[tempFile])
 
       # initialise line counter
       li <- 0L
@@ -807,15 +803,15 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
       # close this file
       close(fd)
 
-      # output
-      if (verbose) message(" ")
-
       # return values
       list(success = idSuccess,
            failed = idFailed,
            n = nImported)
 
     }) # sapply tempFiles
+
+  # output
+  if (verbose) message(" ")
 
   # prepare return values, n is successful only
   n <- sum(sapply(retimp, "[[", "n"), na.rm = TRUE)
@@ -928,9 +924,6 @@ dbCTRUpdateQueryHistory <- function(
     dbQueryHistory(con, verbose)
   )
 
-  # debug
-  if (verbose) message(hist)
-
   # append current search
   # default for format methods is "%Y-%m-%d %H:%M:%S"
   hist <- rbind(
@@ -941,10 +934,6 @@ dbCTRUpdateQueryHistory <- function(
       "query-records"   = recordnumber,
       "query-term"      = queryterm),
     stringsAsFactors = FALSE)
-
-
-  # debug
-  if (verbose) message(hist)
 
   # update database
   tmp <- nodbi::docdb_delete(
@@ -1285,8 +1274,9 @@ ctrLoadQueryIntoDbEuctr <- function(
   ## download all text files from pages
 
   # inform user
-  message("Downloading trials (max. ",
-          parallelretrievals, " pages in parallel)...")
+  message("Downloading trials (",
+          min(parallelretrievals, resultsEuNumPages),
+          " pages in parallel)...")
 
   # prepare download and saving
 
@@ -1442,7 +1432,7 @@ ctrLoadQueryIntoDbEuctr <- function(
                 last = 14))
 
     # inform user
-    message("* Retrieve results if available from EUCTR for ",
+    message("* Retrieving results if available from EUCTR for ",
             length(eudractnumbersimported), " trials: ")
 
     ## parallel download and unzipping into temporary directory
