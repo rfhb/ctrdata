@@ -1588,60 +1588,84 @@ ctrLoadQueryIntoDbEuctr <- function(
           full.names = TRUE),
       function(fileName) {
 
+        # initialise import counter
+        nSuccess <- 0L
+
         # check file
         if (file.exists(fileName) &&
             file.size(fileName) > 0L) {
 
-          # read contents
-          tmpjson <- readChar(
-            con = fileName,
-            nchars = file.info(fileName)$size,
-            useBytes = TRUE)
+          # main function for fast reading,
+          # switching off warning about final EOL missing
+          fd <- file(description = fileName,
+                     open = "rt", blocking = TRUE)
 
-          # get eudract number
-          # "{\"@attributes\":{\"eudractNumber\":\"2004-004386-15\",
-          euctrnumber <- sub(
-            '^\\{\"@attributes\":\\{\"eudractNumber\":\"([0-9]{4}-[0-9]{6}-[0-9]{2})\".*$',
-            "\\1", tmpjson)
-          if (!grepl("^[0-9]{4}-[0-9]{6}-[0-9]{2}$", euctrnumber)) {
-            warning("No EudraCT number recognised in file ", fileName, call. = FALSE)
-          }
+          # initialise line counter
+          li <- 0L
 
-          # update database with results
-          tmp <- try({
-            tmpnodbi <-
-              nodbi::docdb_update(
-                src = con,
-                key = con$collection,
-                value = data.frame(
-                  "a2_eudract_number" = euctrnumber,
-                  "json" = tmpjson,
-                  stringsAsFactors = FALSE))
+          # iterate over lines in fileName
+          while (TRUE) {
 
-            max(tmpnodbi, na.rm = TRUE)
-          },
-          silent = TRUE)
+            # read line
+            tmpjson <- readLines(con = fd, n = 1L, warn = FALSE)
 
-          # inform user on failed trial
-          if (inherits(tmp, "try-error")) {
-            warning(paste0("Import into mongo failed for trial ", euctrnumber),
-                    immediate. = TRUE)
-            tmp <- 0
-          }
+            # exit while loop if empty
+            if (length(tmpjson) == 0L) break
 
-        } else {
+            # get eudract number
+            # "{\"@attributes\":{\"eudractNumber\":\"2004-004386-15\",
+            euctrnumber <- sub(
+              paste0('^\\{\"@attributes\":\\{\"eudractNumber\":\"(',
+                     regEuctr, ')\".*$'), "\\1", tmpjson)
+            if (!grepl(paste0("^", regEuctr, "$"), euctrnumber)) {
+              warning("No EudraCT number recognised in file ",
+                      fileName, call. = FALSE)
+            }
 
-          # file did not exist
-          tmp <- 0
+            # update database with results
+            tmp <- try({
+              tmpnodbi <-
+                nodbi::docdb_update(
+                  src = con,
+                  key = con$collection,
+                  value = data.frame(
+                    "a2_eudract_number" = euctrnumber,
+                    "json" = tmpjson,
+                    stringsAsFactors = FALSE))
+              max(tmpnodbi, na.rm = TRUE)
+            },
+            silent = TRUE)
 
-        }
+            # inform user on failed trial
+            if (inherits(tmp, "try-error")) {
+              warning(paste0("Import of results failed for trial ",
+                             euctrnumber), immediate. = TRUE)
+              tmp <- 0
+            }
 
-        # return for accumulating information
-        return(tmp)
+            # inform user on records
+            message(tmp, " records updated with results\r",
+                    appendLF = FALSE)
 
-      }) # end batchresults
+            # however output is number of trials updated
+            nSuccess <- nSuccess + 1L
 
-    # iterate over batches of result history from webpage
+          } # while
+
+          # close this file
+          close(fd)
+
+        } # if file exists
+
+        # return accumulated counts
+        nSuccess
+
+      }) # end importedresults
+
+    # sum up successful downloads
+    importedresults <- sum(unlist(
+      importedresults, use.names = FALSE), na.rm = TRUE)
+
     if (euctrresultshistory) {
 
       # TODO this does not include the retrieval of information
