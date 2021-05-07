@@ -221,3 +221,6 @@ sed \
 > "$outFileName"
 
 done
+
+## print total number of ndjson lines
+sed -n '$=' "$1"/euctr_trials_*.json
