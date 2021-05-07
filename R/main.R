@@ -1648,167 +1648,157 @@ ctrLoadQueryIntoDbEuctr <- function(
     importedresults <- sum(unlist(
       importedresults, use.names = FALSE), na.rm = TRUE)
 
+    # get result history from result webpage, section Results information
+    importedresultshistory <- NULL
     if (euctrresultshistory) {
+
+      # for date time conversion
+      lct <- Sys.getlocale("LC_TIME")
+      Sys.setlocale("LC_TIME", "C")
+
+      # helper function
+      extractResultsInformation <- function(t) {
+
+        # get content of partial webpage
+        wpText <- rawToChar(t[["content"]])
+        eudractNumber <- t[["url"]]
+        eudractNumber <- sub(
+          paste0(".*(", regEuctr, ").*"),
+          "\\1", eudractNumber)
+
+        # extract information about results
+        tmpFirstDate <- as.Date(trimws(
+          sub(".+First version publication date</div>.*?<div>(.+?)</div>.*",
+              "\\1", ifelse(grepl("First version publication date", wpText),
+                            wpText, ""))),
+          format = "%d %b %Y")
+
+        tmpThisDate <- as.Date(trimws(
+          sub(".+This version publication date</div>.*?<div>(.+?)</div>.*",
+              "\\1", ifelse(grepl("This version publication date", wpText),
+                            wpText, ""))),
+          format = "%d %b %Y")
+
+        tmpChanges <- trimws(
+          gsub("[ ]+", " ", gsub("[\n\r]", "", gsub("<[a-z/]+>", "", sub(
+            ".+Version creation reas.*?<td class=\"valueColumn\">(.+?)</td>.+",
+            "\\1", ifelse(grepl("Version creation reas", wpText), wpText, ""))
+          ))))
+
+        # return
+        return(list("eudractNumber" = eudractNumber,
+                    "tmpFirstDate" = tmpFirstDate,
+                    "tmpThisDate" = tmpThisDate,
+                    "tmpChanges" = tmpChanges))
+      }
 
       # TODO this does not include the retrieval of information
       # about amendment to the study, as presented at the bottom
       # of the webpage for the respective trial results
-      message("(4/4) Retrieving results history and importing ",
-              "into database...", appendLF = FALSE)
-      for (i in 1:(resultsNumBatches +
-                   ifelse(resultsNumModulo > 0, 1, 0))) {
+      message("(4/4) Retrieving results history (max. ",
+              parallelretrievals, " in parallel):")
 
-        # calculated indices for eudractnumbersimported vector
-        startindex <- (i - 1) * parallelretrievals + 1
-        stopindex  <- ifelse(
-          i > resultsNumBatches,
-          startindex + resultsNumModulo,
-          startindex + parallelretrievals) - 1
+      # prepare download and save
+      pool <- curl::new_pool(
+        total_con = parallelretrievals,
+        host_con = parallelretrievals,
+        multiplex = TRUE)
+      #
+      pc <- 0L
+      curlSuccess <- function(res) {
+        pc <<- pc + 1L
+        # incomplete data received 206L
+        if (res$status_code == 206L) {
+          retdat <<- c(retdat, list(extractResultsInformation(res)))
+          message("\r", pc, " downloaded", appendLF = FALSE)
+        }}
 
-        # inform user
-        message("\n h ", startindex, "-", stopindex,
-                " ", appendLF = FALSE)
+      # compose urls to access results page
+      urls <- vapply(paste0(
+        "https://www.clinicaltrialsregister.eu/ctr-search/trial/",
+        eudractnumbersimported, "/results"),
+        utils::URLencode, character(1L))
+      # add urls to pool
+      tmp <- lapply(
+        seq_along(urls),
+        function(i) {
+          h <- curl::new_handle(
+            url = urls[i],
+            range = "0-30000", # only top of page needed
+            accept_encoding = "identity")
+          curl::handle_setopt(h, .list = requestOptions)
+          curl::multi_add(
+            handle = h,
+            done = curlSuccess,
+            pool = pool)
+        })
+      # do download and save into batchresults
+      retdat <- list()
+      tmp <- curl::multi_run(
+        pool = pool)
 
-        # prepare download and save
-        pool <- curl::new_pool(
-          total_con = parallelretrievals,
-          host_con = parallelretrievals,
-          multiplex = TRUE)
-        #
-        done <- function(res) {
-          if (res$status_code == 206L) {
-            retdat <<- c(retdat, list(res))
-          }}
+      # combine results
+      resultHistory <- do.call(
+        rbind,
+        c(lapply(retdat, as.data.frame),
+          stringsAsFactors = FALSE,
+          make.row.names = FALSE))
 
-        # compose urls to access results page
-        urls <- vapply(paste0(
-          "https://www.clinicaltrialsregister.eu/ctr-search/trial/",
-          eudractnumbersimported[startindex:stopindex], "/results"),
-          utils::URLencode, character(1L))
+      # apply to store in database
+      message(", updating records ", appendLF = FALSE)
+      importedresultshistory <- apply(
+        resultHistory, 1,
+        function(r) {
+          r <- as.list(r)
 
-        tmp <- lapply(
-          seq_along(urls),
-          function(i) {
-            h <- curl::new_handle(
-              url = urls[i],
-              range = "0-30000", # only top of page needed
-              accept_encoding = "identity")
-            curl::handle_setopt(h, .list = requestOptions)
-            curl::multi_add(
-              handle = h,
-              done = done,
-              pool = pool)
-          })
+          # check, add default, inform user
+          if (is.na(r$tmpFirstDate) &
+              is.na(r$tmpThisDate) &
+              r$tmpChanges == "") {
+            message("x ", appendLF = FALSE)
+          } else {
 
-        # do download and save into batchresults
-        # TODO preferably retdat is pre-allocated
-        retdat <- list()
-        tmp <- curl::multi_run(
-          pool = pool)
+            # update record
+            message(". ", appendLF = FALSE)
+            tmp <- nodbi::docdb_update(
+              src = con,
+              key = con$collection,
+              value = data.frame(
+                "a2_eudract_number" = r$eudractNumber,
+                "firstreceived_results_date" = as.character(r$tmpFirstDate),
+                "this_results_date" = as.character(r$tmpThisDate),
+                "version_results_history" = r$tmpChanges,
+                stringsAsFactors = FALSE))
 
-        # process top of results pages
-        batchresults <- lapply(
-          retdat,
-          function(i) rawToChar(i[["content"]]))
+            # return if successful
+            ifelse(inherits(tmp, "try-error"), 0L, 1L)
+          }
+        }) # apply resultsHistory
 
-        # curl return sequence is not predictable
-        # therefore recalculate eudract numbers
-        eudractnumberscurled <- sapply(
-          retdat, function(i) i[["url"]])
-        #
-        eudractnumberscurled <- sub(
-          ".*([0-9]{4}-[0-9]{6}-[0-9]{2}).*",
-          "\\1", eudractnumberscurled)
+      # reset date time
+      Sys.setlocale("LC_TIME", lct)
 
-        # for date time conversion
-        lct <- Sys.getlocale("LC_TIME")
-        Sys.setlocale("LC_TIME", "C")
+      # sum up successful downloads
+      importedresultshistory <- sum(unlist(
+        importedresultshistory, use.names = FALSE), na.rm = TRUE)
 
-        # extract information about results
-        tmpFirstDate <- as.Date(
-          vapply(batchresults, function(t) {
-            trimws(sub(
-              ".+First version publication date</div>.*?<div>(.+?)</div>.*",
-              "\\1",
-              ifelse(grepl(
-                "First version publication date", t),
-                t, "")))}, character(1L)),
-          format = "%d %b %Y")
-
-        # global end date is variably represented in euctr:
-        # 'p_date_of_the_global_end_of_the_trial',
-        # 'Global completion date' or 'Global end of trial date'
-        # tmpEndDate <- as.Date(sapply(batchresults, function(x)
-        #   trimws(sub(".*Global .+? date</div>.*?<div>(.*?)</div>.*", "\\1",
-        #      ifelse(grepl("Global .+? date", x), x, "")))),
-        #           format = "%d %b %Y")
-
-        # reset date time
-        Sys.setlocale("LC_TIME", lct)
-
-        tmpChanges <- vapply(batchresults, function(t) {
-          trimws(
-            gsub("[ ]+", " ",
-            gsub("[\n\r]", "",
-            gsub("<[a-z/]+>", "",
-            sub(".+Version creation reason.*?<td class=\"valueColumn\">(.+?)</td>.+",
-                "\\1", ifelse(grepl("Version creation reason", t), t, ""))
-            ))))},
-          character(1L))
-
-        # clean up large object
-        rm(batchresults)
-
-        # create data frame for apply
-        resultHistory <- data.frame(
-          eudractnumberscurled,
-          tmpFirstDate,
-          tmpChanges,
-          stringsAsFactors = FALSE
-        )
-
-        tmp <- apply(
-          resultHistory, 1,
-          function(r) {
-            r <- as.list(r)
-
-            # check, add default, inform user
-            if (r$tmpChanges == "") {
-
-              message("x ", appendLF = FALSE)
-
-            } else {
-
-              # update record
-              message(". ", appendLF = FALSE)
-              nodbi::docdb_update(
-                src = con,
-                key = con$collection,
-                value = data.frame(
-                  "a2_eudract_number" = r$eudractnumberscurled,
-                  "firstreceived_results_date" = as.character(r$tmpFirstDate),
-                  "version_results_history" = r$tmpChanges,
-                  stringsAsFactors = FALSE))
-            }
-          }) # apply resultsHistory
-
-      } # for batch
     } else {
 
-      message("(4/4) Retrieving results history: not done ",
+      message("(4/4) Results history: not retrieved ",
               "(euctrresultshistory = FALSE).",
               appendLF = FALSE)
 
     } # if euctrresultshistory
 
-    # sum up successful downloads
-    importedresults <- sum(unlist(
-      importedresults, use.names = FALSE), na.rm = TRUE)
-
-    ## inform user on final import outcome
+    ## inform user on final import outcomes
     message("\n= Imported or updated results for ",
-            importedresults, " records for ",
-            resultsEuNumTrials, " trial(s).")
+            importedresults, " trials.")
+
+    if (!is.null(importedresultshistory) &&
+        importedresultshistory > 0L) {
+    message("= Imported or updated results history for ",
+            importedresultshistory, " trials.")
+      }
     if (euctrresultspdfpath != tempDir) {
       message("= Results PDF files if any saved in '",
               euctrresultspdfpath, "'")
