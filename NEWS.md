@@ -10,6 +10,9 @@
  - refactored storing JSON into database (handle big files, reduce memory)
  - improved dbFindIdsUniqueTrials (speed, memory, register coverage)
  - factored out conversion to JSON
+ - accelerated EUCTR results and history download and storage
+ - external scripts now create multiple chunks of records
+ - use further identifier fields with dbFindIdsUniqueTrials
 
 # ctrdata 1.5.3
  - 2021-04-19
