@@ -916,8 +916,8 @@ dbFindIdsUniqueTrials <- function(
         regexec(ctm[[2]], listofIds[[ ctm[[1]] ]]))
       listofIds[[ ctm[[1]] ]] <<- unlist( # needs <<-
         {colMangled[!lengths(colMangled)] <- ""; colMangled})
+      NULL
     })
-  rm(silencer)
   # - merge columns for register ids and sponsor ids
   for (reg in c(registerList, "SPONSOR")) {
     listofIds[[reg]] <- apply(listofIds[
