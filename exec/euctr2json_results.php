@@ -13,9 +13,9 @@
 // *.php text eol=lf
 
 if ($argc <= 1) {
-	die("Usage: php -n -f xml2json_euctrresults.php <directory_path_with_xml_files>\n");
+  die("Usage: php -n -f euctr2json_results.php <directory_path_with_xml_files>\n");
 } else {
-	$xmlDir = $argv[1];
+  $xmlDir = $argv[1];
 }
 
 file_exists($xmlDir) or die('Directory or file does not exist: ' . $xmlDir);
@@ -57,4 +57,4 @@ foreach (array_chunk(glob("$xmlDir/EU*Results.xml"), 20) as $chunkFileNames) {
   }
 }
 
-?>
+print $tn;
