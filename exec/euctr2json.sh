@@ -15,9 +15,7 @@
 # 2017-01-12: real 1m23.021s for 10978 doc: ~  8 ms per trial (MacBookPro2015)
 # 2019-08-10: real 3s    for 446 documents: ~  7 ms per trial (MacBookPro2015)
 # 2021-04-18: 5.7 s for 503 records: ~ 11 ms per trial (MacBookPro2015)
-
-# concatenate into one
-cat "$1/euctr_trials_"* > "$1/euctr_all_trials.txt"
+# 2021-05-07: total 2.5 s for 366 records: ~ 7 ms per trial (MacBookPro2015)
 
 # notes to myself: sed cannot use + or other
 # alternatively install gnu-sed: > brew install gnu-sed
@@ -27,7 +25,13 @@ cat "$1/euctr_trials_"* > "$1/euctr_all_trials.txt"
 # transform to json for import in mongodb, reference:
 # http://docs.mongodb.org/manual/reference/bios-example-collection/
 
-LC_CTYPE=C && LANG=C && < "$1/euctr_all_trials.txt" perl -ne '
+for inFileName in "$1"/euctr_trials_*.txt; do
+    [ -e "$inFileName" ] || continue
+
+    outFileName=( `echo $inFileName | sed 's/txt$/json/'` )
+    # echo $outFileName
+
+LC_CTYPE=C && LANG=C && < "$inFileName" perl -ne '
   # this section is faster with perl compared to sed
 
   # get UTC date, time in format correspondsing to the
@@ -60,8 +64,8 @@ LC_CTYPE=C && LANG=C && < "$1/euctr_all_trials.txt" perl -ne '
   # workarounds
   # - sponsor records were added but left empty -> create placeholder
   s/^(B\.1\.1 Name of Sponsor:)\s+$/$1 empty/g;
-#  # - some third country records do not have a sponsor -> placeholder
-#  s/^(B\. Sponsor Information)[\n ]+(D.\ IMP)/B.1.1 Name of Sponsor: empty\n\n$2/g;
+  #  # - some third country records do not have a sponsor -> placeholder
+  #  s/^(B\. Sponsor Information)[\n ]+(D.\ IMP)/B.1.1 Name of Sponsor: empty\n\n$2/g;
 
   # - prepare array for meddra
   s/MedDRA Classification/E.1.2 MedDRA Classification: Yes/g;
@@ -214,4 +218,6 @@ perl -pe '
   ' | \
 sed \
   -e '$a\' \
-> "$1/allfiles.json"
+> "$outFileName"
+
+done
