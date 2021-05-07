@@ -8,6 +8,7 @@
 // time ctgov2json.php:
 // 2016-04-20: 0.05 s for 2 trials ~ 25 ms per trial
 // 2021-04-18: 1.5 s for 200 trials ~ 7.5 ms per trial
+// 2021-05-07: total 0.7 s for 246 trials ~ 3 ms per trial
 
 // note line endings are to be kept by using in
 // .gitattributes for compatibility with cygwin:
@@ -15,9 +16,9 @@
 // *.php text eol=lf
 
 if ($argc <= 1) {
-	die("Usage: php -n -f ctgov2json.php <directory_path_with_xml_files>\n");
+  die("Usage: php -n -f ctgov2json.php <directory_path_with_xml_files>\n");
 } else {
-	$testXmlFile = $argv[1];
+  $testXmlFile = $argv[1];
 }
 
 file_exists($testXmlFile) or die('Directory or file does not exist: ' . $testXmlFile);
@@ -89,4 +90,4 @@ foreach (array_chunk(glob("$testXmlFile/NCT*.xml"), 20) as $chunkFileNames) {
   }
 }
 
-?>
+print $tn;
