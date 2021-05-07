@@ -844,7 +844,9 @@ dbFindIdsUniqueTrials <- function(
       # euctr
       "a2_eudract_number",
       "a52_us_nct_clinicaltrialsgov_registry_number",
+      "trialInformation.usctnIdentifier",
       "a51_isrctn_international_standard_randomised_controlled_trial_number",
+      "trialInformation.isrctnIdentifier",
       "a41_sponsors_protocol_code_number",
       # ctgov
       "id_info.secondary_id",
@@ -883,7 +885,7 @@ dbFindIdsUniqueTrials <- function(
   # rename columns for content mangling
   names(listofIds) <- c(
     "_id", "ctrname",
-    "euctr.1", "ctgov.1", "isrctn.1", "sponsor.1",
+    "euctr.1", "ctgov.1a", "ctgov.1b", "isrctn.1a", "isrctn.1b", "sponsor.1",
     "euctr.2a", "euctr.2b", "ctgov.2a", "ctgov.2b", "isrctn.2",
     "sponsor.2a", "sponsor.2b",
     "euctr.3", "ctgov.3", "isrctn.3", "sponsor.3"
@@ -892,10 +894,12 @@ dbFindIdsUniqueTrials <- function(
   # keep only relevant content
   # - in certain raw value columns
   colsToMangle <- list(
-    c("ctgov.1", regCtgov),
+    c("ctgov.1a", regCtgov),
+    c("ctgov.1b", regCtgov),
     c("ctgov.2a", regCtgov),
     c("ctgov.2b", regCtgov),
-    c("isrctn.1", regIsrctn),
+    c("isrctn.1a", regIsrctn),
+    c("isrctn.1b", regIsrctn),
     c("isrctn.2", regIsrctn),
     c("isrctn.3", regIsrctn),
     c("euctr.1", regEuctr),
