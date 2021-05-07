@@ -1578,10 +1578,13 @@ ctrLoadQueryIntoDbEuctr <- function(
 
     # iterate over results files
     message("(3/4) Importing JSON into database...")
+
+    # TODO replace with dbCTRLoadJSONFiles
     importedresults <- sapply(
-      # e.g., EU-CTR 2008-003606-33 v1 - Results.json
+      # e.g., EU-CTR 2008-003606-33 v1 - Results.xml
+      # was converted into EU_Results_1234.json
       dir(path = tempDir,
-          pattern = "EU.*Results[.]json",
+          pattern = "EU_Results_.*[.]json",
           full.names = TRUE),
       function(fileName) {
 
