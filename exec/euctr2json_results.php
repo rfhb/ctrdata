@@ -20,33 +20,41 @@ if ($argc <= 1) {
 
 file_exists($xmlDir) or die('Directory or file does not exist: ' . $xmlDir);
 
+// chunk and trial counters
+$cn = 0;
+$tn = 0;
+
 // euctr format for file name is for example: "EU-CTR 2008-003606-33 v1 - Results.xml"
-foreach (glob("$xmlDir/EU*Results.xml") as $inFileName) {
+foreach (array_chunk(glob("$xmlDir/EU*Results.xml"), 20) as $chunkFileNames) {
 
-  $outFileName = "$xmlDir/" . basename($inFileName, '.xml') . '.json';
+  $cn = $cn + 1;
 
-  $fileContents = file_get_contents($inFileName);
+  foreach ($chunkFileNames as $inFileName) {
 
-  // normalise contents and remove whitespace
-  $fileContents = str_replace(array("\n", "\r", "\t"), '', $fileContents);
+    $fileContents = file_get_contents($inFileName);
 
-  // https://stackoverflow.com/questions/44765194/how-to-parse-invalid-bad-not-well-formed-xml
-  $fileContents = preg_replace('/[^\x{0009}\x{000a}\x{000d}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}]+/u', ' ', $fileContents);
+    // normalise contents and remove whitespace
+    $fileContents = str_replace(array("\n", "\r", "\t"), '', $fileContents);
 
-  // escapes
-  $fileContents = preg_replace('/ +/', ' ', $fileContents);
-  $fileContents = trim(str_replace("'", " &apos;", $fileContents));
-  $fileContents = trim(str_replace("&", " &amp;", $fileContents));
+    // https://stackoverflow.com/questions/44765194/how-to-parse-invalid-bad-not-well-formed-xml
+    $fileContents = preg_replace('/[^\x{0009}\x{000a}\x{000d}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}]+/u', ' ', $fileContents);
 
-  // use single escapes for xml
-  $fileContents = trim(str_replace('"', "'", $fileContents));
+    // escapes
+    $fileContents = preg_replace('/ +/', ' ', $fileContents);
+    $fileContents = trim(str_replace("'", " &apos;", $fileContents));
+    $fileContents = trim(str_replace("&", " &amp;", $fileContents));
 
-  // turn repeat elements
-  $simpleXml = simplexml_load_string($fileContents, 'SimpleXMLElement', LIBXML_COMPACT | LIBXML_NOBLANKS | LIBXML_NOENT);
+    // use single escapes for xml
+    $fileContents = trim(str_replace('"', "'", $fileContents));
 
-  // save in file
-  file_put_contents($outFileName, json_encode($simpleXml), LOCK_EX);
+    // turn repeat elements
+    $simpleXml = simplexml_load_string($fileContents, 'SimpleXMLElement', LIBXML_COMPACT | LIBXML_NOBLANKS | LIBXML_NOENT);
 
+    // save in file
+    file_put_contents("$xmlDir/EU_Results_" . $cn . ".json", json_encode($simpleXml) . "\n", FILE_APPEND | LOCK_EX);
+
+    $tn = $tn + 1;
+  }
 }
 
 ?>
