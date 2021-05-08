@@ -180,9 +180,9 @@ ctrOpenSearchPagesInBrowser <- function(
       function(u) utils::browseURL(u))
   }
 
-  # - open from url
-  if (is.atomic(url) && url != "" && register == "") {
-    url <- ctrGetQueryUrl(url = url)
+  # - open from url, or query and register
+  if (is.atomic(url) && url != "") {
+    url <- ctrGetQueryUrl(url = url, register = register)
   }
 
   # - get from a data frame, such as from
@@ -1005,7 +1005,7 @@ dbFindIdsUniqueTrials <- function(
           " from ", paste0(names(countIds), collapse = " / "))
   message(
     "= Returning keys (_id) of ", length(listofIds),
-    " records in collection \"", con$collection, "\".")
+    " records in collection \"", con$collection, "\"")
 
   # return
   return(listofIds)
@@ -2705,10 +2705,12 @@ checkBinary <- function(b = NULL) {
 
   # inform user
   if (!all(out)) message(
-    "\nTo install command line binaries needed for package ctrdata, ",
-    "see recommendations at https://github.com/rfhb/ctrdata#2-command-",
-    "line-tools-perl-sed-cat-and-php-52-or-higher \nAfter installation, ",
-    "detach and load package ctrdata again, or restart the R session.\n")
+    "\nTo install command line binaries needed for the function ",
+    "ctrLoadQueryIntoDb() of package ctrdata, see recommendations at ",
+    "https://github.com/rfhb/ctrdata#",
+    "2-command-line-tools-perl-sed-cat-and-php-52-or-higher",
+    "\nAfter installation, detach and load package ctrdata again, ",
+    "or restart the R session.\n")
 
   # return single value since
   # all tests need to be ok

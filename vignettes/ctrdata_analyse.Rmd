@@ -1,7 +1,7 @@
 ---
 title: "Summarise and analyse clinical trial information"
 author: "Ralf Herold"
-date: 2021-04-02
+date: 2021-05-08
 output: 
   rmarkdown::pdf_document:
     toc: true
@@ -42,7 +42,7 @@ db <- nodbi::src_mongo(
   db = "my_database_name",
   collection = "my_collection_name")
 db
-# MongoDB 4.0.20 (uptime: 531852s)
+# MongoDB 4.0.22 (uptime: 531852s)
 # URL: laptop.home/my_database_name 
 # Collection: my_collection_name
 ```
@@ -52,10 +52,8 @@ See [Retrieve clinical trial information](ctrdata_retrieve.Rmd) for more details
 ```{r ctrLoadQueryIntoDb}
 library(ctrdata)
 
-# These two queries are similar, for 
-# completed interventional (drug) trials 
-# with children with a neuroblastoma
-# from either register. 
+# These two queries are similar, for completed interventional (drug) 
+# trials with children with a neuroblastoma from either register
 ctrLoadQueryIntoDb(
   # using queryterm and register ...
   queryterm = "query=neuroblastoma&age=under-18&status=completed", 
@@ -71,8 +69,8 @@ ctrLoadQueryIntoDb(
 )
 dbQueryHistory(con = db)
 #       query-timestamp query-register query-records
-# 1 2021-04-02 12:03:06          EUCTR           135
-# 2 2021-04-02 12:03:11          CTGOV           194
+# 1 2021-05-08 11:04:54          EUCTR           135
+# 2 2021-05-08 11:05:52          CTGOV           193
 #                                          query-term
 # 1 query=neuroblastoma&age=under-18&status=completed
 # 2        cond=neuroblastoma&recrs=e&age=0&intr=Drug
@@ -99,8 +97,15 @@ dbFindFields(namepart = "date", con = db)
 # [11] "provided_document_section.provided_document.document_date"                        
 # [12] "required_header.download_date"                                                    
 # [13] "start_date"                                                                       
-# [14] "verification_date"                                                                
-# [15] "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database"
+# [14] "trialChanges.globalAmendments.globalAmendment.date"                               
+# [15] "trialChanges.globalInterruptions.globalInterruption.date"                         
+# [16] "trialChanges.globalInterruptions.globalInterruption.restartDate"                  
+# [17] "trialInformation.analysisStageDate"                                               
+# [18] "trialInformation.globalEndOfTrialDate"                                            
+# [19] "trialInformation.primaryCompletionDate"                                           
+# [20] "trialInformation.recruitmentStartDate"                                            
+# [21] "verification_date"                                                                
+# [22] "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database"
 ```
 
 The search for fields is cached and thus accelerated during the R session, as long as no new `ctrLoadQueryIntoDb()` is executed. 
@@ -129,6 +134,7 @@ The objects returned by functions of this package include attributes with metada
 
 ```{r attributes}
 attributes(result)
+# [...]
 # $`ctrdata-dbname`
 # [1] "my_database_name"
 # 
@@ -137,8 +143,8 @@ attributes(result)
 # 
 # $`ctrdata-dbqueryhistory`
 #       query-timestamp query-register query-records
-# 1 2021-04-02 12:03:06          EUCTR           135
-# 2 2021-04-02 12:03:11          CTGOV           194
+# 1 2021-05-08 11:04:54          EUCTR           135
+# 2 2021-05-08 11:05:52          CTGOV           193
 #                                          query-term
 # 1 query=neuroblastoma&age=under-18&status=completed
 # 2        cond=neuroblastoma&recrs=e&age=0&intr=Drug
@@ -159,15 +165,11 @@ ids <- dbFindIdsUniqueTrials(
   con = db
 )
 # Searching for duplicate trials... 
-# * Total of 331 records in collection.
-#  - 98 EUCTR _id were not preferred EU Member State record of trial
-#  - 3 CTGOV _id (nct) in EUCTR a52_us_nct_...
-#  - 6 CTGOV secondary_id / nct_alias / org_study_id in EUCTR a2_eudract_number
-#  - 3 CTGOV secondary_id / nct_alias / org_study_id in EUCTR a52_us_nct_...
-#  - 0 CTGOV secondary_id / nct_alias / org_study_id in EUCTR a51_isrctn_...
-#  - 11 CTGOV secondary_id / nct_alias / org_study_id in EUCTR a41_sponsors_protocol_...
-# Concatenating 37 records from EUCTR and 183 from CTGOV:
-# = Returning keys (_id) of 220 out of total 233 records in collection "my_collection_name".
+#  - Getting trial ids, 328 found in collection
+#  - Finding duplicates among registers' and sponsor ids...
+#  - 98 EUCTR _id were not preferred EU Member State record for 38 trials
+#  - Keeping 180 / 37 records from CTGOV / EUCTR
+# = Returning keys (_id) of 217 records in collection "my_collection_name"
 ```
 
 The unique ids can be used like this to de-duplicate the data.frame created above: 
@@ -177,7 +179,7 @@ The unique ids can be used like this to de-duplicate the data.frame created abov
 result <- result[ result[["_id"]] %in% ids, ]
 #
 nrow(result)
-# [1] 220
+# [1] 217
 ```
 
 # Simple analysis - dates
@@ -185,18 +187,18 @@ nrow(result)
 In a data.frame generated with `dbGetFieldsIntoDf()`, fields are typed as dates, logical and numbers. 
 
 ```{r str_data_frame}
-str(result)
-# 'data.frame':	220 obs. of  10 variables:
-#  $ _id                                   : chr  "2004-004386-15-GB" "2005-000915-80-GB" ...
+# str(result)
+# 'data.frame':	217 obs. of  10 variables:
+#  $ _id                                   : chr  "2004-004386-15-GB"  ...
 #  $ f41_in_the_member_state               : int  NA 15 5 37 NA 24 100 NA 600 24 ...
 #  $ f422_in_the_whole_clinical_trial      : int  230 63 12 67 70 NA 100 156 2230 NA ...
-#  $ a1_member_state_concerned             : chr  "UK - MHRA" "UK - MHRA" "Italy - ...
+#  $ a1_member_state_concerned             : chr  "UK - MHRA" "Italy - Italian Medicines Agency" ...
 #  $ p_end_of_trial_status                 : chr  "Completed" "Completed" "Completed" "Completed" ...
-#  $ n_date_of_competent_authority_decision: Date, format: "2005-06-02" "2005-09-06" "2005-07-08" ...
-#  $ a2_eudract_number                     : chr  "2004-004386-15" "2005-002089-13" ...
-#  $ overall_status                        : chr  NA NA NA NA ...
-#  $ start_date                            : Date, format: NA NA NA ...
-#  $ primary_completion_date               : Date, format: NA NA NA ...
+#  $ n_date_of_competent_authority_decision: Date, format: "2005-06-02" "2005-09-06" ...
+#  $ a2_eudract_number                     : chr  "2004-004386-15" "2005-000915-80" ...
+#  $ overall_status                        : chr  "" "" "" "" ...
+#  $ start_date                            : Date, format: NA NA ...
+#  $ primary_completion_date               : Date, format: NA NA ....
 ```
 
 This facilitates using the respective type of data for analysis, for example of dates with base R graphics:  
@@ -224,6 +226,8 @@ result$trialstart <- dfMergeTwoVariablesRelevel(
   colnames = c(
     "n_date_of_competent_authority_decision", 
     "start_date"))
+# Unique values returned (first three): 2005-06-02, 2005-09-06, 2005-07-08
+
 # Plot from both registers
 png("vignettes/nb2.png")
 hist(
@@ -256,10 +260,11 @@ tmp <- dfMergeTwoVariablesRelevel(
   colnames = c("overall_status", 
                "p_end_of_trial_status"), 
   levelslist = mapped_values)
+# Unique values returned: completed, other, ongoing
 
 table(tmp)
 # completed   ongoing     other 
-#       215         1         4 
+#       212         1         4 
 ```
 
 # Annotations made by user
@@ -276,11 +281,11 @@ result <- dbGetFieldsIntoDf(
   con = db)
 
 str(result)
-# 'data.frame':	331 obs. of  4 variables:
-#  $ _id                                  : chr  "2004-004386-15-DE" "2004-004386-15-ES" ...
+# 'data.frame':	328 obs. of  4 variables:
+#  $ _id                                  : chr  "2004-004386-15-DE" "2004-004386-15-IT" ...
 #  $ annotation                           : chr  NA NA NA NA ...
-#  $ record_last_import                   : Date, format: "2021-03-21" "2021-03-21" ...
-#  $ clinical_results.outcome_list.outcome:List of 331
+#  $ record_last_import                   : Date, format: "2021-05-08" "2021-05-08" ...
+#  $ clinical_results.outcome_list.outcome:List of 328
 ```
 
 # Analysing nested fields such as trial results
@@ -332,11 +337,12 @@ result <- result[
     con = db),
 ]
 # [...]
-# Concatenating 37 records from EUCTR and 181 from CTGOV
+#  - Keeping 180 / 37 records from CTGOV / EUCTR
+# = Returning keys (_id) of 217 records in collection "my_collection_name"
 
 # 2. The columns of the results data.frame 
 # contain nested lists of fields, see
-str(result[["endPoints.endPoint"]])
+str(result[["endPoints.endPoint"]][1])
 
 # All nested data are transformed to a long,
 # name-value data.frame (resulting in several
@@ -344,7 +350,7 @@ str(result[["endPoints.endPoint"]])
 long_result <- ctrdata::dfTrials2Long(
   df = result
 )
-# Total 67278 rows, 182 unique names of variables
+# Total 72049 rows, 182 unique names of variables
 
 # 3. Obtain values for fields of interest where
 # they related to measures of interest. The
@@ -360,13 +366,6 @@ dor <- dfName2Value(
     "endPoints.*armReportingGroup.tendencyValues.tendencyValue.value"
   )
 )
-# 
-str(dor)
-# 'data.frame':	11 obs. of  4 variables:
-#  $ _id       : chr  "2010-019348-37-GB" "2010-019348-37-GB" " ...
-#  $ identifier: chr  "8.2" "8.3" "8.5" "6.1" ...
-#  $ name      : chr  "endPoints.endPoint.armReportingGroups[...]" ...
-#  $ value     : num  7.03 8.08 4.86 999 999 999 ...
 
 # Duration of response has been reported variably in
 # months and days. Here, just select trials reporting 
@@ -439,7 +438,7 @@ result$pep_is_efs <- grepl(
 # Tabulate
 table(result$pep_is_efs)
 # FALSE  TRUE 
-#   174    18 
+#   171    18 
 
 # Plot
 library(ggplot2)
@@ -457,7 +456,6 @@ ggsave("vignettes/boxpep.png", width = 6, height = 4)
 The information about the status of authorisation (licensing) of a medicine used in a trial is record in EUCTR; a corresponding field in CTGOV is not known. The status is in the tree starting from the `dimp` element. 
 
 ```{r product_status}
-
 # Get results
 result <- dbGetFieldsIntoDf(
   fields = 
@@ -468,9 +466,6 @@ result <- dbGetFieldsIntoDf(
       "f422_in_the_whole_clinical_trial", 
       "a2_eudract_number"), 
   con = db)
-# [...]
-# * Simplified or collapsed with '/' [3]:
-#    'dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation'
 
 # Find first date of authorisation in EU member state
 tmp <- aggregate(
@@ -544,7 +539,7 @@ m <- mongo(url = paste0(db[["url"]], "/", db[["db"]]),
 
 # Number of records in  collection:
 m$count()
-# [1] 330
+# [1] 329
 
 # Number of EUCTR records, using JSON for query:
 m$count(query = '{"_id": {"$regex": "[0-9]{4}-[0-9]{6}-[0-9]{2}", 
@@ -558,11 +553,11 @@ m$count(query = '{"ctrname": "EUCTR"}')
 # Number of CTGOV records:
 m$count(query = '{"_id": {"$regex": "NCT[0-9]{8}", 
                  "$options": "i"}}')
-# [1] 194
+# [1] 193
 
 # Alternative:
 m$count(query = '{"ctrname": "CTGOV"}')
-# [1] 194
+# [1] 193
 
 # The following examples use the aggregation pipeline in MongoDB:
 
@@ -616,7 +611,7 @@ hist <- m$mapreduce(
 )
 hist
 #   _id value
-# 1  NaN   200
+# 1  NaN   199
 # 2    0    74
 # 3  100    35
 # 4  200     4
