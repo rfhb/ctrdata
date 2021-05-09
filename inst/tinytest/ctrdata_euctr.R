@@ -223,7 +223,7 @@ expect_true(
           c("endPoints.endPoint", "title"))
       )[["value"]]
     )), na.rm = TRUE)
-  > 3300L)
+  > 3000L)
 
 # convert to long
 df <- suppressMessages(
@@ -239,7 +239,7 @@ expect_identical(
 
 # test
 expect_true(
-  nrow(df) > 3000L
+  nrow(df) > 3300L
 )
 
 # extract
@@ -420,22 +420,12 @@ expect_false(
 # clean up
 rm(trialsCtgov, trialsEuctr)
 
-#### dbFindIdsUniqueTrials #####
-
-# test
-expect_message(
-  suppressWarnings(
-    dbFindIdsUniqueTrials(
-      con = dbc,
-      preferregister = "EUCTR")),
-  "Searching for duplicate trials")
-
 # test
 expect_error(
   dbFindIdsUniqueTrials(
     con = dbc,
     preferregister = "WRONG"),
-  "Register not known")
+  "not known")
 
 # test
 expect_error(
@@ -444,7 +434,7 @@ expect_error(
       dbFindIdsUniqueTrials(
         con = dbc,
         prefermemberstate = "WRONG"))),
-  "prefermemberstate does not match")
+  "not known")
 
 # test
 expect_message(
@@ -452,7 +442,7 @@ expect_message(
     dbFindIdsUniqueTrials(
       con = dbc,
       preferregister = "CTGOV")),
-  "Returning keys \\(_id\\) of [1-9][0-9]+")
+  "Returning keys \\(_id\\) of [1-9][0-9] records")
 
 # test
 expect_warning(
@@ -529,14 +519,6 @@ tmpc <- table(tmpc)
 # character      Date   integer      list   logical
 #       558        10        19         3        79
 
-# src_mongo:
-# tmpc
-# character Date   integer      list   logical
-# 561         10        19         3        59
-# tmpc
-# character Date   integer      list   logical
-# 51           8         6        11        55
-
 # tests
 expect_true(tmpc[["character"]] > 45)
 expect_true(tmpc[["Date"]]      >  5)
@@ -557,8 +539,10 @@ rm(tmpf, tmpc, result)
 #### ctrOpenSearchPagesInBrowser #####
 
 # test
-expect_message(
+expect_equal(
   suppressWarnings(
     ctrOpenSearchPagesInBrowser(
       dbQueryHistory(con = dbc)[1, ])),
-  "Opening browser for search:")
+  # first query into the database
+  paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?",
+         "query=2005-001267-63+OR+2008-003606-33"))

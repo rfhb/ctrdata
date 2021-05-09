@@ -1,10 +1,22 @@
+# ctrdata 1.5.3.9001
+ - 2021-05-09
+ - refactored checking binaries and caching this info 
+ - updated EUCTR download parameters
+ - refactored ctrGetQueryUrl and ctrOpenSearchPagesInBrowser
+ - harmonised error checking
+ - avoid some errors with external scripts
+ - added support for ISRCTN
+ - refactored url / query mangling, added detailed testing
+ - refactored storing JSON into database (handle big files, reduce memory)
+ - improved dbFindIdsUniqueTrials (speed, memory, register coverage)
+ - factored out conversion to JSON
+ - accelerated EUCTR results and history download and storage
+ - external scripts now create multiple chunks of records
+ - use further identifier fields with dbFindIdsUniqueTrials
+
 # ctrdata 1.5.3.9000
  - 2021-04-29
  - adding user info which field entries could not be typed
- - refactor checking and caching binaries 
- - update EUCTR download parameters 
- - harmonise error checking 
- - avoid script errors
 
 # ctrdata 1.5.3
  - 2021-04-19

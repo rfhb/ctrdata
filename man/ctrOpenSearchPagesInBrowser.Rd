@@ -4,13 +4,11 @@
 \alias{ctrOpenSearchPagesInBrowser}
 \title{Open advanced search pages of register(s) or execute search in browser}
 \usage{
-ctrOpenSearchPagesInBrowser(input = "", register = "", copyright = FALSE, ...)
+ctrOpenSearchPagesInBrowser(url = "", register = "", copyright = FALSE, ...)
 }
 \arguments{
-\item{input}{Show results of search for \code{queryterm} in
-browser. To open the browser with a previous search, (register or)
-queryterm can be the output of \link{ctrGetQueryUrl} or can
-be one row from \link{dbQueryHistory}.}
+\item{url}{of search results page to show in the browser.
+May be the output of \link{ctrGetQueryUrl} or from \link{dbQueryHistory}.}
 
 \item{register}{Register(s) to open. Either "EUCTR" or "CTGOV" or a vector of
 both. Default is to open both registers' advanced search pages. To open the
@@ -20,8 +18,7 @@ or one row from \link{dbQueryHistory} can be used.}
 \item{copyright}{(Optional) If set to \code{TRUE}, opens copyright pages of
 register(s).}
 
-\item{...}{Any additional parameter to use with browseURL, which is called by
-this function.}
+\item{...}{May include the deprecated \code{input} parameter.}
 }
 \value{
 Is always true, invisibly.
