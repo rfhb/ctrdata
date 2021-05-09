@@ -10,6 +10,9 @@
     <loc>https://rfhb.github.io/ctrdata//reference/checkBinary.html</loc>
   </url>
   <url>
+    <loc>https://rfhb.github.io/ctrdata//reference/ctrConvertToJSON.html</loc>
+  </url>
+  <url>
     <loc>https://rfhb.github.io/ctrdata//reference/ctrDb.html</loc>
   </url>
   <url>
@@ -29,6 +32,9 @@
   </url>
   <url>
     <loc>https://rfhb.github.io/ctrdata//reference/ctrLoadQueryIntoDbEuctr.html</loc>
+  </url>
+  <url>
+    <loc>https://rfhb.github.io/ctrdata//reference/ctrLoadQueryIntoDbIsrctn.html</loc>
   </url>
   <url>
     <loc>https://rfhb.github.io/ctrdata//reference/ctrOpenSearchPagesInBrowser.html</loc>

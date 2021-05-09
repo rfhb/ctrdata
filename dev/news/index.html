@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ctrdata</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.5.3.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.5.3.9001</span>
       </span>
     </div>
 
@@ -147,6 +147,27 @@
       <small>Source: <a href='https://github.com/rfhb/ctrdata/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="ctrdata-1539001" class="section level1">
+<h1 class="page-header" data-toc-text="1.5.3.9001">
+<a href="#ctrdata-1539001" class="anchor"></a>ctrdata 1.5.3.9001<small> Unreleased </small>
+</h1>
+<ul>
+<li>2021-05-09</li>
+<li>refactored checking binaries and caching this info</li>
+<li>updated EUCTR download parameters</li>
+<li>refactored ctrGetQueryUrl and ctrOpenSearchPagesInBrowser</li>
+<li>harmonised error checking</li>
+<li>avoid some errors with external scripts</li>
+<li>added support for ISRCTN</li>
+<li>refactored url / query mangling, added detailed testing</li>
+<li>refactored storing JSON into database (handle big files, reduce memory)</li>
+<li>improved dbFindIdsUniqueTrials (speed, memory, register coverage)</li>
+<li>factored out conversion to JSON</li>
+<li>accelerated EUCTR results and history download and storage</li>
+<li>external scripts now create multiple chunks of records</li>
+<li>use further identifier fields with dbFindIdsUniqueTrials</li>
+</ul>
+</div>
     <div id="ctrdata-1539000" class="section level1">
 <h1 class="page-header" data-toc-text="1.5.3.9000">
 <a href="#ctrdata-1539000" class="anchor"></a>ctrdata 1.5.3.9000<small> Unreleased </small>
@@ -154,10 +175,6 @@
 <ul>
 <li>2021-04-29</li>
 <li>adding user info which field entries could not be typed</li>
-<li>refactor checking and caching binaries</li>
-<li>update EUCTR download parameters</li>
-<li>harmonise error checking</li>
-<li>avoid script errors</li>
 </ul>
 </div>
     <div id="ctrdata-153" class="section level1">
