@@ -1,7 +1,7 @@
 ---
 title: "Install R package ctrdata"
 author: "Ralf Herold"
-date: 2021-05-08
+date: 2021-05-09
 output:
   rmarkdown::pdf_document:
     toc: true
@@ -58,27 +58,25 @@ Sys.setenv(https_proxy = "your_proxy.server.domain:8080")
 Sys.setenv(https_proxy_user = "userid:password") # if needed
 ```
 
-# Additional installation aspects for MS Windows
+# Additional installation aspects
 
-On MS Windows, it seems recommended to not use UNC notation (such as `\\server\directory`) for specifying the user's library location, but the following notation using a local disk or mapped network share. If the user's library location needs to be set, use: 
+The ommand line tools `perl`, `sed`, `cat` and `php` (5.2 or higher) are required for `ctrLoadQueryIntoDb()`, the main function of package `ctrdata`. No other function in this package has this requirement.
 
-```{r, eval=FALSE}
-.libPaths("D:/my/directory/")
-```
+## MS Windows
 
-Package `ctrdata` requires on MS Windows that the cygwin environment be installed, into the local directory `c:\cygwin` (or any folder corresponding to `c:\cygw*`). The applications php, bash, perl, cat and sed in the cygwin environment are required for the function `ctrLoadQueryIntoDb()` of package `ctrdata`. No other function in this package has this requirement. The installation of a minimal cygwin environment on MS Windows can be done with the help of package `ctrdata` in R as follows: 
+Package `ctrdata` requires on MS Windows that the [`Cygwin`](https://cygwin.org/install.html) environment be installed, into the local directory `c:\cygwin` (or any folder corresponding to `c:\cygw*`). The installation of a minimal Cygwin environment on MS Windows can be done with the help of package `ctrdata` in R as follows: 
 
 ```{r, eval=FALSE}
 ctrdata::installCygwinWindowsDoInstall() 
 ```
 
-If internet access has to be via a proxy and this was not correctly detected automatically, it can be specified for the installation of cygwin as follows: 
+If internet access has to be via a proxy and this was not correctly detected automatically, it can be specified for the installation of Cygwin as follows: 
 
 ```{r, eval=FALSE}
 ctrdata::installCygwinWindowsDoInstall(proxy = "proxy.server.domain:8080") 
 ```
 
-Users who want or need to install cygwin manually, can download the setup executable from [here](https://cygwin.com/install.html). In a MS Windows command window or Powershell window, use the following command line. The parameters are explained [here](https://cygwin.com/faq/faq.html#faq.setup.cli). 
+Users who want or need to install Cygwin manually can download the setup executable from [here](https://cygwin.com/install.html). In a MS Windows command window or Powershell window, use the following command line. The parameters are explained [here](https://cygwin.com/faq/faq.html#faq.setup.cli). 
 
 ```{bash, eval=FALSE}
 setup-x86_64.exe --no-admin --quiet-mode --verbose --upgrade-also --root c:/cygwin 
@@ -86,7 +84,13 @@ setup-x86_64.exe --no-admin --quiet-mode --verbose --upgrade-also --root c:/cygw
 --packages perl,php-jsonc,php-simplexml
 ```
 
-In typical Linux and macOS environments, the required tools php, bash, perl, cat and sed are installed and available by default. 
+## macOS, Linus and other operating systems
+
+The command line tools `perl`, `sed`, `cat` and `php` (5.2 or higher) are typically installed and available by default in Linux and macOS systems. In case of issues, 
+
+- In macOS, [`homebrew`](https://brew.sh/) can be used to install these binaries
+
+- In Linux, tools for installation vary by distribution (e.g., `sudo apt install php php-xml php-json`)
 
 # Database
 
@@ -100,4 +104,4 @@ After completing the installation, attach the package from the user's library. T
 library(ctrdata)
 ```
 
-Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: Ralf Herold (2020). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.4, https://cran.r-project.org/package=ctrdata
+Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: Ralf Herold (2021). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.5.3, https://cran.r-project.org/package=ctrdata

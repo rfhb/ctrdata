@@ -13,15 +13,17 @@
 
 The package `ctrdata` provides functions for retrieving (downloading)
 information on clinical trials from public registers, and for
-aggregating and analysing this information. Use with
-[R](https://www.r-project.org/) for the European Union Clinical Trials
-Register (“EUCTR”, <https://www.clinicaltrialsregister.eu/>) and
-ClinicalTrials.gov (“CTGOV”, <https://clinicaltrials.gov/>). The
-motivation is to understand trends in design and conduct of trials,
-their availability for patients and their detailled results. The package
-is to be used within the [R](https://www.r-project.org/) system.
+aggregating and analysing this information; it can be used for the
 
-Last reviewed on 2021-04-22 for version 1.5.3.9001
+-   EU Clinical Trials Register (“EUCTR”,
+    <https://www.clinicaltrialsregister.eu/>)
+-   ClinicalTrials.gov (“CTGOV”, <https://clinicaltrials.gov/>)
+-   ISRCTN (<https://www.isrctn.com/>) 🔔new in version 1.5.3.9001 👍
+
+The motivation is to understand trends in design and conduct of trials,
+their availability for patients and their detailled results. The package
+is to be used within the [R](https://www.r-project.org/) system; this
+README was reviewed on 2021-05-09 for version 1.5.3.9001.
 
 Main features:
 
@@ -41,13 +43,19 @@ Main features:
     functions) or others systems. Unique (de-duplicated) trial records
     are identified across registers. `ctrdata` can merge and recode
     information (fields) and also provides easy access even to
-    deeply-nested fields (🆕 new in version 1.4).
+    deeply-nested fields (🔔 new in version 1.4).
 
 Remember to respect the registers’ terms and conditions (see
 `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
-package in any publication as follows: Ralf Herold (2020). ctrdata:
+package in any publication as follows: “Ralf Herold (2021). ctrdata:
 Retrieve and Analyze Clinical Trials in Public Registers. R package
-version 1.4, <https://cran.r-project.org/package=ctrdata>
+version 1.6, <https://cran.r-project.org/package=ctrdata>” Package
+`ctrdata` has been used for: Blogging on [Innovation coming to
+paediatric
+research](https://paediatricdata.eu/innovation-coming-to-paediatric-research/)
+and a Report on [The impact of collaboration: The value of UK medical
+research to EU science and
+health](https://www.cancerresearchuk.org/about-us/we-develop-policy/we-work-with-government/exiting-the-eu/uk-and-eu-research#downloads)
 
 <!--
 
@@ -55,15 +63,6 @@ version 1.4, <https://cran.r-project.org/package=ctrdata>
 citation("ctrdata")
 ```
 -->
-
-Package `ctrdata` has been used for:
-
--   Blogging on [Innovation coming to paediatric
-    research](https://paediatricdata.eu/innovation-coming-to-paediatric-research/)
-
--   Report on [The impact of collaboration: The value of UK medical
-    research to EU science and
-    health](https://www.cancerresearchuk.org/about-us/we-develop-policy/we-work-with-government/exiting-the-eu/uk-and-eu-research#downloads)
 
 # Installation
 
@@ -85,54 +84,57 @@ devtools::install_github("rfhb/ctrdata", build_vignettes = TRUE)
 ```
 
 These commands also install the package dependencies, which are `nodbi`,
-`jsonlite`, `httr`, `curl`, `clipr`, `xml2`, `rvest`.
+`jsonlite`, `httr`, `curl`, `clipr`, `xml2`, `rvest`,`DBI` and
+`stringi`.
 
 ## 2. Command line tools `perl`, `sed`, `cat` and `php` (5.2 or higher)
 
-These command line tools are required for `ctrLoadQueryIntoDb()`, the
-main function of package `ctrdata`.
+These are required for `ctrLoadQueryIntoDb()`, the main function of
+package `ctrdata`.
 
--   For MS Windows, install [cygwin](https://cygwin.org/install.html):
+-   For MS Windows, install [`Cygwin`](https://cygwin.org/install.html):
     In `R`, run `ctrdata::installCygwinWindowsDoInstall()` for an
-    automated minimal installation. Alternatively, install manually
-    cygwin with packages `perl`, `php-jsonc` and `php-simplexml` into
+    automated minimal installation. Alternatively, manually install
+    Cygwin with packages `perl`, `php-jsonc` and `php-simplexml` into
     `c:\cygwin`. The installation needs about 160 MB disk space; no
     administrator credentials needed.
 
--   In macOS (including version 11.2 Big Sur), these are usually already
+-   In macOS (including version 11 Big Sur), these are usually already
     installed; in case of errors, [`homebrew`](https://brew.sh/) can be
     used to install these binaries.
 
 -   In Linux, these are usually already installed; tools for
-    installation vary by distribution (e.g., `apt`).
+    installation vary by distribution (e.g.,
+    `sudo apt install php php-xml php-json`).
 
-## Testing
+## Vignettes
 
-Once installed, a comprehensive testing can be executed as follows (this
-will take several minutes):
-
-``` r
-tinytest::test_package("ctrdata", at_home = TRUE)
-```
+-   [Install R package
+    ctrdata](https://rfhb.github.io/ctrdata/dev/articles/ctrdata_install.html)
+-   [Retrieve clinical trial
+    information](https://rfhb.github.io/ctrdata/dev/articles/ctrdata_retrieve.html)
+-   [Summarise and analyse clinical trial
+    information](https://rfhb.github.io/ctrdata/dev/articles/ctrdata_analyse.html)
 
 # Overview of functions in `ctrdata`
 
-The functions are listed in the approximate order of use.
+The functions are listed in the approximate order of use in a user’s
+workflow.
 
-| Function name                      | Function purpose                                                                                                    |
-|------------------------------------|---------------------------------------------------------------------------------------------------------------------|
-| `ctrOpenSearchPagesInBrowser()`    | Open search pages of registers or execute search in web browser                                                     |
-| `ctrFindActiveSubstanceSynonyms()` | Find synonyms and alternative names for an active substance                                                         |
-| `ctrGetQueryUrl()`                 | Import from clipboard the URL of a search in one of the registers                                                   |
-| `ctrLoadQueryIntoDb()`             | Retrieve (download) or update, and annotate, information on trials from a register and store in database            |
-| `dbQueryHistory()`                 | Show the history of queries that were downloaded into the database                                                  |
-| `dbFindIdsUniqueTrials()`          | Get the identifiers of de-duplicated trials in the database                                                         |
-| `dbFindFields()`                   | Find names of variables (fields) in the database                                                                    |
-| `dbGetFieldsIntoDf()`              | Create a data.frame from trial records in the database with the specified fields                                    |
-| `dfTrials2Long()` 🆕                | Transform a data.frame from `dbGetFieldsIntoDf()` into a long name-value data.frame, including deeply nested fields |
-| `dfName2Value()` 🆕                 | From a long name-value data.frame, extract values for variables (fields) of interest (e.g., endpoints)              |
-| `dfMergeTwoVariablesRelevel()`     | Merge two simple variables into a new variable, optionally map values to a new set of values                        |
-| `installCygwinWindowsDoInstall()`  | Convenience function to install a cygwin environment (MS Windows only)                                              |
+| Function name                      | Function purpose                                                                                                      |
+|------------------------------------|-----------------------------------------------------------------------------------------------------------------------|
+| `ctrOpenSearchPagesInBrowser()`    | Open search pages of registers or execute search in web browser                                                       |
+| `ctrFindActiveSubstanceSynonyms()` | Find synonyms and alternative names for an active substance                                                           |
+| `ctrGetQueryUrl()`                 | Import from clipboard the URL of a search in one of the registers                                                     |
+| `ctrLoadQueryIntoDb()`             | Retrieve (download) or update, and annotate, information on trials from a register and store in database              |
+| `dbQueryHistory()`                 | Show the history of queries that were downloaded into the database                                                    |
+| `dbFindIdsUniqueTrials()`          | Get the identifiers of de-duplicated trials in the database                                                           |
+| `dbFindFields()`                   | Find names of variables (fields) in the database                                                                      |
+| `dbGetFieldsIntoDf()`              | Create a data.frame from trial records in the database with the specified fields                                      |
+| `dfTrials2Long()` 🔔                | Transform the data.frame from `dbGetFieldsIntoDf()` into a long name-value data.frame, including deeply nested fields |
+| `dfName2Value()` 🔔                 | From a long name-value data.frame, extract values for variables (fields) of interest (e.g., endpoints)                |
+| `dfMergeTwoVariablesRelevel()`     | Merge two simple variables into a new variable, optionally map values to a new set of values                          |
+| `installCygwinWindowsDoInstall()`  | Convenience function to install a Cygwin environment (MS Windows only)                                                |
 
 # Example workflow
 
@@ -163,7 +165,7 @@ ctrOpenSearchPagesInBrowser(copyright = TRUE)
 
 ``` r
 q <- ctrGetQueryUrl()
-# * Found search query from EUCTR.
+# * Found search query from EUCTR: query=cancer&age=under-18&phase=phase-one&status=completed
 
 q
 #                                                   query-term  query-register
@@ -194,6 +196,16 @@ db <- nodbi::src_sqlite(
 ctrLoadQueryIntoDb(
   queryterm = q,
   con = db)
+# * Found search query from EUCTR: query=cancer&age=under-18&phase=phase-one&status=completed
+# (1/3) Checking trials in EUCTR: 
+# Retrieved overview, multiple records of 64 trial(s) from 4 page(s) to be downloaded.
+# Checking helper binaries: done.
+# Downloading trials (max. 10 pages in parallel)...
+# Note: register server cannot compress data, transfer takes longer, about 0.4s per trial
+# (2/3) Converting to JSON...
+# (3/3) Importing JSON records into database...
+# = Imported or updated 241 records on 64 trial(s).                                     
+# * Updated history in meta-info of "some_collection_name"
 ```
 
 -   Analyse
@@ -214,8 +226,11 @@ result <- dbGetFieldsIntoDf(
 # one record, for example for several EU Member States: 
 uniqueids <- dbFindIdsUniqueTrials(con = db)
 # Searching for duplicate trials... 
-# * Total of 232 records in collection.
-#  - 169 EUCTR _id were not preferred EU Member State record of trial
+#  - Getting trial ids, 241 found in collection
+#  - Finding duplicates among registers' and sponsor ids...
+#  - 177 EUCTR _id were not preferred EU Member State record for 64 trials
+#  - Keeping 64 records from EUCTR
+# = Returning keys (_id) of 64 records in collection "some_collection_name".
 
 # Keep only unique / de-duplicated records:
 result <- result[ result[["_id"]] %in% uniqueids, ]
@@ -233,7 +248,7 @@ with(result,
 #   Prematurely Ended                                         1  1   0
 ```
 
--   Add records from another register into the same database
+-   Add records from another register (CTGOV) into the same database
 
 ``` r
 # Retrieve trials from another register:
@@ -241,6 +256,33 @@ ctrLoadQueryIntoDb(
   queryterm = "cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug", 
   register = "CTGOV",
   con = db)
+# * Found search query from CTGOV: cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug
+# (1/3) Checking trials in CTGOV:
+# Retrieved overview, records of 37 trial(s) are to be downloaded.
+# Checking helper binaries: done.
+# Downloading: 500 kB     
+# (2/3) Converting to JSON...
+# (3/3) Importing JSON records into database...
+# = Imported or updated 37 trial(s).                                                   
+# * Updated history in meta-info of "some_collection_name"
+```
+
+-   Add records from another register (ISRCTN) into the same database
+
+``` r
+# Retrieve trials from another register:
+ctrLoadQueryIntoDb(
+  queryterm = "https://www.isrctn.com/search?q=neuroblastoma",
+  con = db)
+# * Found search query from ISRCTN: q=neuroblastoma
+# (1/3) Checking trials in ISRCTN:
+# Retrieved overview, records of 9 trial(s) are to be downloaded.
+# Checking helper binaries: done.
+# Downloading: 92 kB       
+# (2/3) Converting to JSON...
+# (3/3) Importing JSON records into database...
+# = Imported or updated 9 trial(s).                                                   
+# * Updated history in meta-info of "some_collection_name"
 ```
 
 -   Result-related trial information
@@ -260,7 +302,7 @@ result <- dbGetFieldsIntoDf(
 
 # Transform all fields into long name - value format
 result <- dfTrials2Long(df = result)
-# Total 5896 rows, 12 unique names of variables
+# Total 5012 rows, 12 unique names of variables
 
 # [1.] get counts of subjects for all arms into data frame
 # This count is in the group that has "Total" in its name

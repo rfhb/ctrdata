@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ctrdata</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.5.3.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.5.3.9001</span>
       </span>
     </div>
 
@@ -103,7 +103,7 @@
       <h1 data-toc-skip>Summarise and analyse clinical trial information</h1>
                         <h4 class="author">Ralf Herold</h4>
             
-            <h4 class="date">2021-04-02</h4>
+            <h4 class="date">2021-05-08</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/rfhb/ctrdata/blob/master/vignettes/ctrdata_analyse.Rmd"><code>vignettes/ctrdata_analyse.Rmd</code></a></small>
       <div class="hidden name"><code>ctrdata_analyse.Rmd</code></div>
@@ -124,17 +124,15 @@
   db <span class="op">=</span> <span class="st">"my_database_name"</span>,
   collection <span class="op">=</span> <span class="st">"my_collection_name"</span><span class="op">)</span>
 <span class="va">db</span>
-<span class="co"># MongoDB 4.0.20 (uptime: 531852s)</span>
+<span class="co"># MongoDB 4.0.22 (uptime: 531852s)</span>
 <span class="co"># URL: laptop.home/my_database_name </span>
 <span class="co"># Collection: my_collection_name</span></code></pre></div>
 <p>See <a href="ctrdata_retrieve.Rmd">Retrieve clinical trial information</a> for more details.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://cran.r-project.org/package=ctrdata">ctrdata</a></span><span class="op">)</span>
 
-<span class="co"># These two queries are similar, for </span>
-<span class="co"># completed interventional (drug) trials </span>
-<span class="co"># with children with a neuroblastoma</span>
-<span class="co"># from either register. </span>
+<span class="co"># These two queries are similar, for completed interventional (drug) </span>
+<span class="co"># trials with children with a neuroblastoma from either register</span>
 <span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span>
   <span class="co"># using queryterm and register ...</span>
   queryterm <span class="op">=</span> <span class="st">"query=neuroblastoma&amp;age=under-18&amp;status=completed"</span>, 
@@ -150,8 +148,8 @@
 <span class="op">)</span>
 <span class="fu"><a href="../reference/dbQueryHistory.html">dbQueryHistory</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 <span class="co">#       query-timestamp query-register query-records</span>
-<span class="co"># 1 2021-04-02 12:03:06          EUCTR           135</span>
-<span class="co"># 2 2021-04-02 12:03:11          CTGOV           194</span>
+<span class="co"># 1 2021-05-08 11:04:54          EUCTR           135</span>
+<span class="co"># 2 2021-05-08 11:05:52          CTGOV           193</span>
 <span class="co">#                                          query-term</span>
 <span class="co"># 1 query=neuroblastoma&amp;age=under-18&amp;status=completed</span>
 <span class="co"># 2        cond=neuroblastoma&amp;recrs=e&amp;age=0&amp;intr=Drug</span></code></pre></div>
@@ -177,8 +175,15 @@
 <span class="co"># [11] "provided_document_section.provided_document.document_date"                        </span>
 <span class="co"># [12] "required_header.download_date"                                                    </span>
 <span class="co"># [13] "start_date"                                                                       </span>
-<span class="co"># [14] "verification_date"                                                                </span>
-<span class="co"># [15] "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database"</span></code></pre></div>
+<span class="co"># [14] "trialChanges.globalAmendments.globalAmendment.date"                               </span>
+<span class="co"># [15] "trialChanges.globalInterruptions.globalInterruption.date"                         </span>
+<span class="co"># [16] "trialChanges.globalInterruptions.globalInterruption.restartDate"                  </span>
+<span class="co"># [17] "trialInformation.analysisStageDate"                                               </span>
+<span class="co"># [18] "trialInformation.globalEndOfTrialDate"                                            </span>
+<span class="co"># [19] "trialInformation.primaryCompletionDate"                                           </span>
+<span class="co"># [20] "trialInformation.recruitmentStartDate"                                            </span>
+<span class="co"># [21] "verification_date"                                                                </span>
+<span class="co"># [22] "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database"</span></code></pre></div>
 <p>The search for fields is cached and thus accelerated during the R session, as long as no new <code><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code> is executed.</p>
 </div>
 <div id="data-frame-from-database" class="section level1">
@@ -204,6 +209,7 @@
 <p>The objects returned by functions of this package include attributes with metadata to indicate from which database, table / collection and query details. Metadata can be reused in R.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/attributes.html">attributes</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span>
+<span class="co"># [...]</span>
 <span class="co"># $`ctrdata-dbname`</span>
 <span class="co"># [1] "my_database_name"</span>
 <span class="co"># </span>
@@ -212,8 +218,8 @@
 <span class="co"># </span>
 <span class="co"># $`ctrdata-dbqueryhistory`</span>
 <span class="co">#       query-timestamp query-register query-records</span>
-<span class="co"># 1 2021-04-02 12:03:06          EUCTR           135</span>
-<span class="co"># 2 2021-04-02 12:03:11          CTGOV           194</span>
+<span class="co"># 1 2021-05-08 11:04:54          EUCTR           135</span>
+<span class="co"># 2 2021-05-08 11:05:52          CTGOV           193</span>
 <span class="co">#                                          query-term</span>
 <span class="co"># 1 query=neuroblastoma&amp;age=under-18&amp;status=completed</span>
 <span class="co"># 2        cond=neuroblastoma&amp;recrs=e&amp;age=0&amp;intr=Drug</span></code></pre></div>
@@ -228,40 +234,36 @@
   con <span class="op">=</span> <span class="va">db</span>
 <span class="op">)</span>
 <span class="co"># Searching for duplicate trials... </span>
-<span class="co"># * Total of 331 records in collection.</span>
-<span class="co">#  - 98 EUCTR _id were not preferred EU Member State record of trial</span>
-<span class="co">#  - 3 CTGOV _id (nct) in EUCTR a52_us_nct_...</span>
-<span class="co">#  - 6 CTGOV secondary_id / nct_alias / org_study_id in EUCTR a2_eudract_number</span>
-<span class="co">#  - 3 CTGOV secondary_id / nct_alias / org_study_id in EUCTR a52_us_nct_...</span>
-<span class="co">#  - 0 CTGOV secondary_id / nct_alias / org_study_id in EUCTR a51_isrctn_...</span>
-<span class="co">#  - 11 CTGOV secondary_id / nct_alias / org_study_id in EUCTR a41_sponsors_protocol_...</span>
-<span class="co"># Concatenating 37 records from EUCTR and 183 from CTGOV:</span>
-<span class="co"># = Returning keys (_id) of 220 out of total 233 records in collection "my_collection_name".</span></code></pre></div>
+<span class="co">#  - Getting trial ids, 328 found in collection</span>
+<span class="co">#  - Finding duplicates among registers' and sponsor ids...</span>
+<span class="co">#  - 98 EUCTR _id were not preferred EU Member State record for 38 trials</span>
+<span class="co">#  - Keeping 180 / 37 records from CTGOV / EUCTR</span>
+<span class="co"># = Returning keys (_id) of 217 records in collection "my_collection_name"</span></code></pre></div>
 <p>The unique ids can be used like this to de-duplicate the data.frame created above:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Eliminate duplicate trials records: </span>
 <span class="va">result</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">[</span> <span class="va">result</span><span class="op">[[</span><span class="st">"_id"</span><span class="op">]</span><span class="op">]</span> <span class="op">%in%</span> <span class="va">ids</span>, <span class="op">]</span>
 <span class="co">#</span>
 <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span>
-<span class="co"># [1] 220</span></code></pre></div>
+<span class="co"># [1] 217</span></code></pre></div>
 </div>
 <div id="simple-analysis---dates" class="section level1">
 <h1 class="hasAnchor">
 <a href="#simple-analysis---dates" class="anchor"></a>Simple analysis - dates</h1>
 <p>In a data.frame generated with <code><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code>, fields are typed as dates, logical and numbers.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span>
-<span class="co"># 'data.frame': 220 obs. of  10 variables:</span>
-<span class="co">#  $ _id                                   : chr  "2004-004386-15-GB" "2005-000915-80-GB" ...</span>
+<code class="sourceCode R"><span class="co"># str(result)</span>
+<span class="co"># 'data.frame': 217 obs. of  10 variables:</span>
+<span class="co">#  $ _id                                   : chr  "2004-004386-15-GB"  ...</span>
 <span class="co">#  $ f41_in_the_member_state               : int  NA 15 5 37 NA 24 100 NA 600 24 ...</span>
 <span class="co">#  $ f422_in_the_whole_clinical_trial      : int  230 63 12 67 70 NA 100 156 2230 NA ...</span>
-<span class="co">#  $ a1_member_state_concerned             : chr  "UK - MHRA" "UK - MHRA" "Italy - ...</span>
+<span class="co">#  $ a1_member_state_concerned             : chr  "UK - MHRA" "Italy - Italian Medicines Agency" ...</span>
 <span class="co">#  $ p_end_of_trial_status                 : chr  "Completed" "Completed" "Completed" "Completed" ...</span>
-<span class="co">#  $ n_date_of_competent_authority_decision: Date, format: "2005-06-02" "2005-09-06" "2005-07-08" ...</span>
-<span class="co">#  $ a2_eudract_number                     : chr  "2004-004386-15" "2005-002089-13" ...</span>
-<span class="co">#  $ overall_status                        : chr  NA NA NA NA ...</span>
-<span class="co">#  $ start_date                            : Date, format: NA NA NA ...</span>
-<span class="co">#  $ primary_completion_date               : Date, format: NA NA NA ...</span></code></pre></div>
+<span class="co">#  $ n_date_of_competent_authority_decision: Date, format: "2005-06-02" "2005-09-06" ...</span>
+<span class="co">#  $ a2_eudract_number                     : chr  "2004-004386-15" "2005-000915-80" ...</span>
+<span class="co">#  $ overall_status                        : chr  "" "" "" "" ...</span>
+<span class="co">#  $ start_date                            : Date, format: NA NA ...</span>
+<span class="co">#  $ primary_completion_date               : Date, format: NA NA ....</span></code></pre></div>
 <p>This facilitates using the respective type of data for analysis, for example of dates with base R graphics:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Open file for saving</span>
@@ -287,6 +289,8 @@
   colnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>
     <span class="st">"n_date_of_competent_authority_decision"</span>, 
     <span class="st">"start_date"</span><span class="op">)</span><span class="op">)</span>
+<span class="co"># Unique values returned (first three): 2005-06-02, 2005-09-06, 2005-07-08</span>
+
 <span class="co"># Plot from both registers</span>
 <span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"vignettes/nb2.png"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/hist.html">hist</a></span><span class="op">(</span>
@@ -318,10 +322,11 @@
   colnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"overall_status"</span>, 
                <span class="st">"p_end_of_trial_status"</span><span class="op">)</span>, 
   levelslist <span class="op">=</span> <span class="va">mapped_values</span><span class="op">)</span>
+<span class="co"># Unique values returned: completed, other, ongoing</span>
 
 <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">)</span>
 <span class="co"># completed   ongoing     other </span>
-<span class="co">#       215         1         4 </span></code></pre></div>
+<span class="co">#       212         1         4 </span></code></pre></div>
 </div>
 <div id="annotations-made-by-user" class="section level1">
 <h1 class="hasAnchor">
@@ -337,11 +342,11 @@
   con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span>
-<span class="co"># 'data.frame': 331 obs. of  4 variables:</span>
-<span class="co">#  $ _id                                  : chr  "2004-004386-15-DE" "2004-004386-15-ES" ...</span>
+<span class="co"># 'data.frame': 328 obs. of  4 variables:</span>
+<span class="co">#  $ _id                                  : chr  "2004-004386-15-DE" "2004-004386-15-IT" ...</span>
 <span class="co">#  $ annotation                           : chr  NA NA NA NA ...</span>
-<span class="co">#  $ record_last_import                   : Date, format: "2021-03-21" "2021-03-21" ...</span>
-<span class="co">#  $ clinical_results.outcome_list.outcome:List of 331</span></code></pre></div>
+<span class="co">#  $ record_last_import                   : Date, format: "2021-05-08" "2021-05-08" ...</span>
+<span class="co">#  $ clinical_results.outcome_list.outcome:List of 328</span></code></pre></div>
 </div>
 <div id="analysing-nested-fields-such-as-trial-results" class="section level1">
 <h1 class="hasAnchor">
@@ -390,11 +395,12 @@
     con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>,
 <span class="op">]</span>
 <span class="co"># [...]</span>
-<span class="co"># Concatenating 37 records from EUCTR and 181 from CTGOV</span>
+<span class="co">#  - Keeping 180 / 37 records from CTGOV / EUCTR</span>
+<span class="co"># = Returning keys (_id) of 217 records in collection "my_collection_name"</span>
 
 <span class="co"># 2. The columns of the results data.frame </span>
 <span class="co"># contain nested lists of fields, see</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">result</span><span class="op">[[</span><span class="st">"endPoints.endPoint"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">result</span><span class="op">[[</span><span class="st">"endPoints.endPoint"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>
 
 <span class="co"># All nested data are transformed to a long,</span>
 <span class="co"># name-value data.frame (resulting in several</span>
@@ -402,7 +408,7 @@
 <span class="va">long_result</span> <span class="op">&lt;-</span> <span class="fu">ctrdata</span><span class="fu">::</span><span class="fu"><a href="../reference/dfTrials2Long.html">dfTrials2Long</a></span><span class="op">(</span>
   df <span class="op">=</span> <span class="va">result</span>
 <span class="op">)</span>
-<span class="co"># Total 67278 rows, 182 unique names of variables</span>
+<span class="co"># Total 72049 rows, 182 unique names of variables</span>
 
 <span class="co"># 3. Obtain values for fields of interest where</span>
 <span class="co"># they related to measures of interest. The</span>
@@ -418,13 +424,6 @@
     <span class="st">"endPoints.*armReportingGroup.tendencyValues.tendencyValue.value"</span>
   <span class="op">)</span>
 <span class="op">)</span>
-<span class="co"># </span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">dor</span><span class="op">)</span>
-<span class="co"># 'data.frame': 11 obs. of  4 variables:</span>
-<span class="co">#  $ _id       : chr  "2010-019348-37-GB" "2010-019348-37-GB" " ...</span>
-<span class="co">#  $ identifier: chr  "8.2" "8.3" "8.5" "6.1" ...</span>
-<span class="co">#  $ name      : chr  "endPoints.endPoint.armReportingGroups[...]" ...</span>
-<span class="co">#  $ value     : num  7.03 8.08 4.86 999 999 999 ...</span>
 
 <span class="co"># Duration of response has been reported variably in</span>
 <span class="co"># months and days. Here, just select trials reporting </span>
@@ -496,7 +495,7 @@
 <span class="co"># Tabulate</span>
 <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">pep_is_efs</span><span class="op">)</span>
 <span class="co"># FALSE  TRUE </span>
-<span class="co">#   174    18 </span>
+<span class="co">#   171    18 </span>
 
 <span class="co"># Plot</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
@@ -525,9 +524,6 @@
       <span class="st">"f422_in_the_whole_clinical_trial"</span>, 
       <span class="st">"a2_eudract_number"</span><span class="op">)</span>, 
   con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
-<span class="co"># [...]</span>
-<span class="co"># * Simplified or collapsed with '/' [3]:</span>
-<span class="co">#    'dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation'</span>
 
 <span class="co"># Find first date of authorisation in EU member state</span>
 <span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html">aggregate</a></span><span class="op">(</span>
@@ -602,7 +598,7 @@
 
 <span class="co"># Number of records in  collection:</span>
 <span class="va">m</span><span class="op">$</span><span class="fu">count</span><span class="op">(</span><span class="op">)</span>
-<span class="co"># [1] 330</span>
+<span class="co"># [1] 329</span>
 
 <span class="co"># Number of EUCTR records, using JSON for query:</span>
 <span class="va">m</span><span class="op">$</span><span class="fu">count</span><span class="op">(</span>query <span class="op">=</span> <span class="st">'{"_id": {"$regex": "[0-9]{4}-[0-9]{6}-[0-9]{2}", 
@@ -616,11 +612,11 @@
 <span class="co"># Number of CTGOV records:</span>
 <span class="va">m</span><span class="op">$</span><span class="fu">count</span><span class="op">(</span>query <span class="op">=</span> <span class="st">'{"_id": {"$regex": "NCT[0-9]{8}", 
                  "$options": "i"}}'</span><span class="op">)</span>
-<span class="co"># [1] 194</span>
+<span class="co"># [1] 193</span>
 
 <span class="co"># Alternative:</span>
 <span class="va">m</span><span class="op">$</span><span class="fu">count</span><span class="op">(</span>query <span class="op">=</span> <span class="st">'{"ctrname": "CTGOV"}'</span><span class="op">)</span>
-<span class="co"># [1] 194</span>
+<span class="co"># [1] 193</span>
 
 <span class="co"># The following examples use the aggregation pipeline in MongoDB:</span>
 
@@ -674,7 +670,7 @@
 <span class="op">)</span>
 <span class="va">hist</span>
 <span class="co">#   _id value</span>
-<span class="co"># 1  NaN   200</span>
+<span class="co"># 1  NaN   199</span>
 <span class="co"># 2    0    74</span>
 <span class="co"># 3  100    35</span>
 <span class="co"># 4  200     4</span>
