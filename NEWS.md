@@ -1,11 +1,11 @@
-# ctrdata 1.5.3.9001
+# ctrdata 1.6.0
  - 2021-05-09
+ - added support for ISRCTN
  - refactored checking binaries and caching this info 
  - updated EUCTR download parameters
  - refactored ctrGetQueryUrl and ctrOpenSearchPagesInBrowser
  - harmonised error checking
  - avoid some errors with external scripts
- - added support for ISRCTN
  - refactored url / query mangling, added detailed testing
  - refactored storing JSON into database (handle big files, reduce memory)
  - improved dbFindIdsUniqueTrials (speed, memory, register coverage)

@@ -18,12 +18,12 @@ aggregating and analysing this information; it can be used for the
 -   EU Clinical Trials Register (“EUCTR”,
     <https://www.clinicaltrialsregister.eu/>)
 -   ClinicalTrials.gov (“CTGOV”, <https://clinicaltrials.gov/>)
--   ISRCTN (<https://www.isrctn.com/>) 🔔new in version 1.5.3.9001 👍
+-   ISRCTN (<https://www.isrctn.com/>) 🔔new in version 1.6.0 👍
 
 The motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. The package
 is to be used within the [R](https://www.r-project.org/) system; this
-README was reviewed on 2021-05-09 for version 1.5.3.9001.
+README was reviewed on 2021-05-09 for version 1.6.0.
 
 Main features:
 
