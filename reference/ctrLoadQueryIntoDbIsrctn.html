@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Open advanced search pages of register(s) or execute search in browser — ctrOpenSearchPagesInBrowser • ctrdata</title>
+<title>ctrLoadQueryIntoDbIsrctn — ctrLoadQueryIntoDbIsrctn • ctrdata</title>
 
 
 <!-- jquery -->
@@ -45,8 +45,8 @@
 
 
 
-<meta property="og:title" content="Open advanced search pages of register(s) or execute search in browser — ctrOpenSearchPagesInBrowser" />
-<meta property="og:description" content="Open advanced search pages of register(s) or execute search in browser" />
+<meta property="og:title" content="ctrLoadQueryIntoDbIsrctn — ctrLoadQueryIntoDbIsrctn" />
+<meta property="og:description" content="ctrLoadQueryIntoDbIsrctn" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:creator" content="@rfhb" />
 <meta name="twitter:site" content="@rfhb" />
@@ -144,67 +144,106 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Open advanced search pages of register(s) or execute search in browser</h1>
-    <small class="dont-index">Source: <a href='https://github.com/rfhb/ctrdata/blob/master/R/utils.R'><code>R/utils.R</code></a></small>
-    <div class="hidden name"><code>ctrOpenSearchPagesInBrowser.Rd</code></div>
+    <h1>ctrLoadQueryIntoDbIsrctn</h1>
+    <small class="dont-index">Source: <a href='https://github.com/rfhb/ctrdata/blob/master/R/main.R'><code>R/main.R</code></a></small>
+    <div class="hidden name"><code>ctrLoadQueryIntoDbIsrctn.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Open advanced search pages of register(s) or execute search in browser</p>
+    <p>ctrLoadQueryIntoDbIsrctn</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ctrOpenSearchPagesInBrowser</span><span class='op'>(</span>url <span class='op'>=</span> <span class='st'>""</span>, register <span class='op'>=</span> <span class='st'>""</span>, copyright <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>ctrLoadQueryIntoDbIsrctn</span><span class='op'>(</span>
+  queryterm <span class='op'>=</span> <span class='va'>queryterm</span>,
+  <span class='va'>register</span>,
+  <span class='va'>euctrresults</span>,
+  <span class='va'>euctrresultshistory</span>,
+  <span class='va'>euctrresultspdfpath</span>,
+  <span class='va'>annotation.text</span>,
+  <span class='va'>annotation.mode</span>,
+  <span class='va'>parallelretrievals</span>,
+  <span class='va'>only.count</span>,
+  <span class='va'>con</span>,
+  <span class='va'>verbose</span>,
+  <span class='va'>queryupdateterm</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>url</th>
-      <td><p>of search results page to show in the browser.
-May be the output of <a href='ctrGetQueryUrl.html'>ctrGetQueryUrl</a> or from <a href='dbQueryHistory.html'>dbQueryHistory</a>.</p></td>
+      <th>queryterm</th>
+      <td><p>Either a string with the full URL of a search in
+a register, or the data frame returned by the
+<a href='ctrGetQueryUrl.html'>ctrGetQueryUrl</a> or the
+<a href='dbQueryHistory.html'>dbQueryHistory</a> functions, or, together with parameter
+<code>register</code>, a string with query elements of a search URL.
+The queryterm is recorded in the <code>collection</code> for later
+use to update records.</p></td>
     </tr>
     <tr>
       <th>register</th>
-      <td><p>Register(s) to open. Either "EUCTR" or "CTGOV" or a vector of
-both. Default is to open both registers' advanced search pages. To open the
-browser with a previous search, the output of <a href='ctrGetQueryUrl.html'>ctrGetQueryUrl</a>
-or one row from <a href='dbQueryHistory.html'>dbQueryHistory</a> can be used.</p></td>
+      <td><p>String with abbreviation of register to query,
+either "EUCTR", "CTGOV" or "ISRCTN". Not needed
+if <code>queryterm</code> provide the information which register to
+query (see <code>queryterm</code>).</p></td>
     </tr>
     <tr>
-      <th>copyright</th>
-      <td><p>(Optional) If set to <code>TRUE</code>, opens copyright pages of
-register(s).</p></td>
+      <th>euctrresults</th>
+      <td><p>If <code>TRUE</code>, also download available
+results when retrieving and loading trials from EUCTR. This
+slows down this function. (For CTGOV, all available results
+are always retrieved and loaded.)</p></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p>May include the deprecated <code>input</code> parameter.</p></td>
+      <th>euctrresultshistory</th>
+      <td><p>If <code>TRUE</code>, also download
+available history of results publication in EUCTR.
+This is quite time-consuming (default is <code>FALSE</code>).</p></td>
+    </tr>
+    <tr>
+      <th>euctrresultspdfpath</th>
+      <td><p>If a valid directory is specified,
+save PDF files of result publications from EUCTR into
+this directory (default is <code>NULL</code>).</p></td>
+    </tr>
+    <tr>
+      <th>annotation.text</th>
+      <td><p>Text to be including in the records
+retrieved with the current query, in the field "annotation".</p></td>
+    </tr>
+    <tr>
+      <th>annotation.mode</th>
+      <td><p>One of "append" (default), "prepend"
+or "replace" for new annotation.text with respect to any
+existing annotation for the records retrieved with the
+current query.</p></td>
+    </tr>
+    <tr>
+      <th>parallelretrievals</th>
+      <td><p>Number of parallel downloads of
+information from the register, defaults to 10.</p></td>
+    </tr>
+    <tr>
+      <th>only.count</th>
+      <td><p>Set to <code>TRUE</code> to return only the
+number of trial records found in the register for the query.
+Does not load trial information into the database.
+Default is <code>FALSE</code>.</p></td>
+    </tr>
+    <tr>
+      <th>con</th>
+      <td><p>A <a href='https://docs.ropensci.org/nodbi/reference/src.html'>src</a> connection object, as obtained with
+nodbi::<a href='https://docs.ropensci.org/nodbi/reference/src_mongo.html'>src_mongo</a>() or nodbi::<a href='https://docs.ropensci.org/nodbi/reference/src_sqlite.html'>src_sqlite</a>()</p></td>
+    </tr>
+    <tr>
+      <th>verbose</th>
+      <td><p>Printing additional information if set to
+<code>TRUE</code>; default is <code>FALSE</code>.</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Is always true, invisibly.</p>
-
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='fu'>ctrOpenSearchPagesInBrowser</span><span class='op'>(</span>
- <span class='st'>"https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer"</span><span class='op'>)</span>
-
-<span class='co'># for this example, the clipboard has to</span>
-<span class='co'># contain the URL from a search in a register</span>
-<span class='fu'>ctrOpenSearchPagesInBrowser</span><span class='op'>(</span>
- <span class='fu'><a href='ctrGetQueryUrl.html'>ctrGetQueryUrl</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
-
-<span class='co'># open the last query that was</span>
-<span class='co'># loaded into the database</span>
-<span class='va'>db</span> <span class='op'>&lt;-</span> <span class='fu'>nodbi</span><span class='fu'>::</span><span class='fu'><a href='https://docs.ropensci.org/nodbi/reference/src_sqlite.html'>src_sqlite</a></span><span class='op'>(</span>
-  collection <span class='op'>=</span> <span class='st'>"previously_created"</span>
-<span class='op'>)</span>
-<span class='fu'>ctrOpenSearchPagesInBrowser</span><span class='op'>(</span>
-  <span class='fu'><a href='dbQueryHistory.html'>dbQueryHistory</a></span><span class='op'>(</span>con <span class='op'>=</span> <span class='va'>db</span><span class='op'>)</span><span class='op'>)</span>
-<span class='op'>}</span>
-
-</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

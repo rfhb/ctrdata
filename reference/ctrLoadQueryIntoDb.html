@@ -88,7 +88,7 @@ user comments added to a record." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ctrdata</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.0</span>
       </span>
     </div>
 
@@ -168,7 +168,7 @@ user comments added to a record.</p>
 
     <pre class="usage"><span class='fu'>ctrLoadQueryIntoDb</span><span class='op'>(</span>
   queryterm <span class='op'>=</span> <span class='st'>""</span>,
-  register <span class='op'>=</span> <span class='st'>"EUCTR"</span>,
+  register <span class='op'>=</span> <span class='st'>""</span>,
   querytoupdate <span class='op'>=</span> <span class='fl'>0L</span>,
   forcetoupdate <span class='op'>=</span> <span class='cn'>FALSE</span>,
   euctrresults <span class='op'>=</span> <span class='cn'>FALSE</span>,
@@ -198,7 +198,7 @@ use to update records.</p></td>
     <tr>
       <th>register</th>
       <td><p>String with abbreviation of register to query,
-at this time either "EUCTR" (default) or "CTGOV". Not needed
+either "EUCTR", "CTGOV" or "ISRCTN". Not needed
 if <code>queryterm</code> provide the information which register to
 query (see <code>queryterm</code>).</p></td>
     </tr>

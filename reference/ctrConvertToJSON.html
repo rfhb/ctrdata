@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Open advanced search pages of register(s) or execute search in browser — ctrOpenSearchPagesInBrowser • ctrdata</title>
+<title>ctrConvertToJSON — ctrConvertToJSON • ctrdata</title>
 
 
 <!-- jquery -->
@@ -45,8 +45,8 @@
 
 
 
-<meta property="og:title" content="Open advanced search pages of register(s) or execute search in browser — ctrOpenSearchPagesInBrowser" />
-<meta property="og:description" content="Open advanced search pages of register(s) or execute search in browser" />
+<meta property="og:title" content="ctrConvertToJSON — ctrConvertToJSON" />
+<meta property="og:description" content="ctrConvertToJSON" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:creator" content="@rfhb" />
 <meta name="twitter:site" content="@rfhb" />
@@ -144,67 +144,40 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Open advanced search pages of register(s) or execute search in browser</h1>
-    <small class="dont-index">Source: <a href='https://github.com/rfhb/ctrdata/blob/master/R/utils.R'><code>R/utils.R</code></a></small>
-    <div class="hidden name"><code>ctrOpenSearchPagesInBrowser.Rd</code></div>
+    <h1>ctrConvertToJSON</h1>
+    <small class="dont-index">Source: <a href='https://github.com/rfhb/ctrdata/blob/master/R/main.R'><code>R/main.R</code></a></small>
+    <div class="hidden name"><code>ctrConvertToJSON.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Open advanced search pages of register(s) or execute search in browser</p>
+    <p>ctrConvertToJSON</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ctrOpenSearchPagesInBrowser</span><span class='op'>(</span>url <span class='op'>=</span> <span class='st'>""</span>, register <span class='op'>=</span> <span class='st'>""</span>, copyright <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>ctrConvertToJSON</span><span class='op'>(</span><span class='va'>tempDir</span>, <span class='va'>scriptName</span>, <span class='va'>verbose</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>url</th>
-      <td><p>of search results page to show in the browser.
-May be the output of <a href='ctrGetQueryUrl.html'>ctrGetQueryUrl</a> or from <a href='dbQueryHistory.html'>dbQueryHistory</a>.</p></td>
+      <th>tempDir</th>
+      <td><p>Name of temporary directory with downloaded
+trial information</p></td>
     </tr>
     <tr>
-      <th>register</th>
-      <td><p>Register(s) to open. Either "EUCTR" or "CTGOV" or a vector of
-both. Default is to open both registers' advanced search pages. To open the
-browser with a previous search, the output of <a href='ctrGetQueryUrl.html'>ctrGetQueryUrl</a>
-or one row from <a href='dbQueryHistory.html'>dbQueryHistory</a> can be used.</p></td>
+      <th>scriptName</th>
+      <td><p>Name of PHP or shell script to run</p></td>
     </tr>
     <tr>
-      <th>copyright</th>
-      <td><p>(Optional) If set to <code>TRUE</code>, opens copyright pages of
-register(s).</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>May include the deprecated <code>input</code> parameter.</p></td>
+      <th>verbose</th>
+      <td><p>Printing additional information if set to
+<code>TRUE</code>; default is <code>FALSE</code>.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Is always true, invisibly.</p>
+    <p>System messages from converting</p>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='fu'>ctrOpenSearchPagesInBrowser</span><span class='op'>(</span>
- <span class='st'>"https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer"</span><span class='op'>)</span>
-
-<span class='co'># for this example, the clipboard has to</span>
-<span class='co'># contain the URL from a search in a register</span>
-<span class='fu'>ctrOpenSearchPagesInBrowser</span><span class='op'>(</span>
- <span class='fu'><a href='ctrGetQueryUrl.html'>ctrGetQueryUrl</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
-
-<span class='co'># open the last query that was</span>
-<span class='co'># loaded into the database</span>
-<span class='va'>db</span> <span class='op'>&lt;-</span> <span class='fu'>nodbi</span><span class='fu'>::</span><span class='fu'><a href='https://docs.ropensci.org/nodbi/reference/src_sqlite.html'>src_sqlite</a></span><span class='op'>(</span>
-  collection <span class='op'>=</span> <span class='st'>"previously_created"</span>
-<span class='op'>)</span>
-<span class='fu'>ctrOpenSearchPagesInBrowser</span><span class='op'>(</span>
-  <span class='fu'><a href='dbQueryHistory.html'>dbQueryHistory</a></span><span class='op'>(</span>con <span class='op'>=</span> <span class='va'>db</span><span class='op'>)</span><span class='op'>)</span>
-<span class='op'>}</span>
-
-</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

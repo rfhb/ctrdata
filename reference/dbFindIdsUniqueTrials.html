@@ -84,7 +84,7 @@ IDs&quot;." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ctrdata</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.0</span>
       </span>
     </div>
 
@@ -160,7 +160,7 @@ IDs".</p>
     </div>
 
     <pre class="usage"><span class='fu'>dbFindIdsUniqueTrials</span><span class='op'>(</span>
-  preferregister <span class='op'>=</span> <span class='st'>"EUCTR"</span>,
+  preferregister <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"EUCTR"</span>, <span class='st'>"CTGOV"</span>, <span class='st'>"ISRCTN"</span><span class='op'>)</span>,
   prefermemberstate <span class='op'>=</span> <span class='st'>"GB"</span>,
   include3rdcountrytrials <span class='op'>=</span> <span class='cn'>TRUE</span>,
   <span class='va'>con</span>,
@@ -172,10 +172,9 @@ IDs".</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>preferregister</th>
-      <td><p>The abbreviation of the preferred register, in case
-a trial is in more than one register (string, either "EUCTR" or "CTGOV").
-If set to an empty string (""), keeps the keys for the same trial in both
-registers in the returned vector.</p></td>
+      <td><p>A vector of the sequence of preference for registers
+from which to generate unique _id's, default
+<code><a href='https://rdrr.io/r/base/c.html'>c("EUCTR", "CTGOV", "ISRCTN")</a></code></p></td>
     </tr>
     <tr>
       <th>prefermemberstate</th>
