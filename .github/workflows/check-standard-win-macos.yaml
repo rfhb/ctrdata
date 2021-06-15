@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - prep_additional_nodbi_functions
   pull_request:
     branches:
       - master

@@ -1051,7 +1051,6 @@ dbFindIdsUniqueTrials <- function(
 #'
 #' @importFrom nodbi docdb_query
 #' @importFrom stats na.omit
-#' @importFrom DBI dbGetQuery
 #'
 #' @export
 #'
@@ -1194,100 +1193,100 @@ dbGetFieldsIntoDf <- function(fields = "",
       #
       tmpItem <- try({
 
-        ## handle special case: src_* is sqlite
-        # json_extract() cannot be used to retrieve all
-        # items since a json path would have to include
-        # an array indicator such as [1] or [#-1], see
-        # https://www.sqlite.org/json1.html#jex ans
-        # https://www.sqlite.org/json1.html#path_arguments
-        if (inherits(con$con, "SQLiteConnection")) {
-
-          # mangle item names into SQL e.g.,
-          # "location[4].facility[#-2].name" # two arrayIndex items
-          # "location.facil[a-z0-0]+.*thing" # user regexp
-          # "location.facil.*"               # user regexp
-          # - remove arrayIndex
-          #   NOTE potential side effect: disruption of user's regexp
-          item <- gsub("\\[[-#0-9]+\\][.]", ".", item)
-          if (verbose) message("DEBUG: 'field' mangled into: ", item)
-          # - protect "." between item and subitem using lookahead for overlapping groups
-          regexpItem <- gsub("([a-zA-Z]+)[.](?=[a-zA-Z]+)", "\\1@@@\\2", item, perl = TRUE)
-          # - add in regexps to match any arrayIndex in fullkey
-          regexpItem <- paste0("^[$][.]", gsub("@@@", "[-#\\\\[\\\\]0-9]*[.]", regexpItem), "$")
-          # - top element in item
-          topElement <- sub("^(.+?)[.].*$", "\\1", item)
-          # - construct statement using json_tree(json, path) as per
-          #   https://www.sqlite.org/json1.html#jtree
-          # - include cast() to string to avoid warnings when types
-          #   of columns are changed after first records are retrieved
-          # - since mongodb returns NULL for documents that do not have the
-          #   sought item but sqlite does not return such documents at all, the
-          #   statement is more complex to also include a row for such
-          #   non-existing items
-          statement <- paste0(
-            "SELECT
-          CAST(allRows._id AS text) AS _id,
-          CAST(jsonRows.value AS text) AS '", item, "'
-          FROM (", con$collection, ") AS allRows
-
-          LEFT JOIN
-               (SELECT
-                  CAST(_id AS text) AS id,
-                  CAST(value AS text) AS value
-               FROM ", con$collection, ",
-                    json_tree(", con$collection, ".json, '$.", topElement, "')
-               WHERE fullkey REGEXP '", regexpItem, "') AS jsonRows
-
-          ON jsonRows.id = allRows._id
-          WHERE allRows._id <> 'meta-info'
-          ;")
-          if (verbose) message("DEBUG: src_sqlite, statement:\n", statement)
-
-          # execute query, bypassing nodbi since my implementation
-          # of nodbi::doc_query.sqlite() does not use json_tree()
-          dfi <- DBI::dbGetQuery(
-            conn = con$con,
-            statement = statement,
-            n = -1L)
-
-          # dfi[, 2] could still be json strings
-          dfi <- json2list(dfi)
-
-          # dfi can be a long table, number of rows corresponding to
-          # number of subitems found in the collection (possibly more
-          # than one per record in the collection): aggregate by _id
-          tmpById <- tapply(
-            X = dfi[, 2],
-            INDEX = dfi[, 1],
-            function(i) {
-              if (all(is.na(i))) {
-                # keep NULL elements in output
-                NULL
-              } else {
-                if (is.atomic(
-                  unlist(i, recursive = FALSE, use.names = FALSE))) {
-                  # e.g. for location_countries.country
-                  unname(i)
-                } else {
-                  data.frame(
-                    unname(i),
-                    check.names = FALSE,
-                    row.names = NULL,
-                    stringsAsFactors = FALSE)
-                }}},
-            simplify = FALSE)
-
-          # now match format for further processing
-          dfi <- data.frame(
-            "_id" = names(tmpById), tmpById,
-            row.names = NULL,
-            check.names = FALSE,
-            stringsAsFactors = FALSE
-          )
-
-        } else {
-
-          # src_mongo
+        # ## handle special case: src_* is sqlite
+        # # json_extract() cannot be used to retrieve all
+        # # items since a json path would have to include
+        # # an array indicator such as [1] or [#-1], see
+        # # https://www.sqlite.org/json1.html#jex ans
+        # # https://www.sqlite.org/json1.html#path_arguments
+        # if (inherits(con$con, "SQLiteConnection")) {
+        #
+        #   # mangle item names into SQL e.g.,
+        #   # "location[4].facility[#-2].name" # two arrayIndex items
+        #   # "location.facil[a-z0-0]+.*thing" # user regexp
+        #   # "location.facil.*"               # user regexp
+        #   # - remove arrayIndex
+        #   #   NOTE potential side effect: disruption of user's regexp
+        #   item <- gsub("\\[[-#0-9]+\\][.]", ".", item)
+        #   if (verbose) message("DEBUG: 'field' mangled into: ", item)
+        #   # - protect "." between item and subitem using lookahead for overlapping groups
+        #   regexpItem <- gsub("([a-zA-Z]+)[.](?=[a-zA-Z]+)", "\\1@@@\\2", item, perl = TRUE)
+        #   # - add in regexps to match any arrayIndex in fullkey
+        #   regexpItem <- paste0("^[$][.]", gsub("@@@", "[-#\\\\[\\\\]0-9]*[.]", regexpItem), "$")
+        #   # - top element in item
+        #   topElement <- sub("^(.+?)[.].*$", "\\1", item)
+        #   # - construct statement using json_tree(json, path) as per
+        #   #   https://www.sqlite.org/json1.html#jtree
+        #   # - include cast() to string to avoid warnings when types
+        #   #   of columns are changed after first records are retrieved
+        #   # - since mongodb returns NULL for documents that do not have the
+        #   #   sought item but sqlite does not return such documents at all, the
+        #   #   statement is more complex to also include a row for such
+        #   #   non-existing items
+        #   statement <- paste0(
+        #     "SELECT
+        #   CAST(allRows._id AS text) AS _id,
+        #   CAST(jsonRows.value AS text) AS '", item, "'
+        #   FROM (", con$collection, ") AS allRows
+        #
+        #   LEFT JOIN
+        #        (SELECT
+        #           CAST(_id AS text) AS id,
+        #           CAST(value AS text) AS value
+        #        FROM ", con$collection, ",
+        #             json_tree(", con$collection, ".json, '$.", topElement, "')
+        #        WHERE fullkey REGEXP '", regexpItem, "') AS jsonRows
+        #
+        #   ON jsonRows.id = allRows._id
+        #   WHERE allRows._id <> 'meta-info'
+        #   ;")
+        #   if (verbose) message("DEBUG: src_sqlite, statement:\n", statement)
+        #
+        #   # execute query, bypassing nodbi since my implementation
+        #   # of nodbi::doc_query.sqlite() does not use json_tree()
+        #   dfi <- DBI::dbGetQuery(
+        #     conn = con$con,
+        #     statement = statement,
+        #     n = -1L)
+        #
+        #   # dfi[, 2] could still be json strings
+        #   dfi <- json2list(dfi)
+        #
+        #   # dfi can be a long table, number of rows corresponding to
+        #   # number of subitems found in the collection (possibly more
+        #   # than one per record in the collection): aggregate by _id
+        #   tmpById <- tapply(
+        #     X = dfi[, 2],
+        #     INDEX = dfi[, 1],
+        #     function(i) {
+        #       if (all(is.na(i))) {
+        #         # keep NULL elements in output
+        #         NULL
+        #       } else {
+        #         if (is.atomic(
+        #           unlist(i, recursive = FALSE, use.names = FALSE))) {
+        #           # e.g. for location_countries.country
+        #           unname(i)
+        #         } else {
+        #           data.frame(
+        #             unname(i),
+        #             check.names = FALSE,
+        #             row.names = NULL,
+        #             stringsAsFactors = FALSE)
+        #         }}},
+        #     simplify = FALSE)
+        #
+        #   # now match format for further processing
+        #   dfi <- data.frame(
+        #     "_id" = names(tmpById), tmpById,
+        #     row.names = NULL,
+        #     check.names = FALSE,
+        #     stringsAsFactors = FALSE
+        #   )
+        #
+        # } else {
+        #
+        #   # src_mongo
 
           # execute query
           dfi <- nodbi::docdb_query(
@@ -1296,8 +1295,13 @@ dbGetFieldsIntoDf <- function(fields = "",
             query = query,
             fields = paste0('{"_id": 1, "', item, '": 1}'))
 
+          # TODO why can this be the case, and
+          # is it for mongo only??
           # dfi[, 2] could still be json strings
-          if (ncol(dfi) == 2L) dfi <- json2list(dfi)
+          #if (ncol(dfi) == 2L) dfi <- json2list(dfi)
+
+          # leave try() early if no results
+          if (!nrow(dfi)) simpleError(message = "")
 
           # unboxing is not done in docdb_query
           # (for loop could not be replaced by
@@ -1313,7 +1317,7 @@ dbGetFieldsIntoDf <- function(fields = "",
 
             }}
 
-        } # if src_sqlite or src_mango
+        # } # if src_sqlite or src_mango
 
         ## mangle further
 
