@@ -542,10 +542,7 @@ dbQueryHistory <- function(con,
     query = '{"_id": {"$eq": "meta-info"}}',
     fields = '{"queries": 1}')
 
-  # access array of meta-info
-  tmp <- tmp[["queries"]][[1]]
-
-  # Check if meeting expectations
+  # check if meeting expectations
   if (is.null(tmp) ||
       nrow(tmp) == 0L) {
     #
@@ -555,14 +552,15 @@ dbQueryHistory <- function(con,
     return(invisible(data.frame(NULL)))
     #
   }
-  # else {
 
-  # Inform user
+  # access data frame of queries
+  tmp <- tmp[["queries"]][[1]]
+
+  # inform user
   if (verbose) {
 
     message("Number of queries in history of \"",
             con$collection, "\": ", nrow(tmp))
-    # }
 
     # total number of records in collection to inform user
     countall <- nodbi::docdb_query(
@@ -574,6 +572,7 @@ dbQueryHistory <- function(con,
     # if (verbose)
     message("Number of records in collection \"",
             con$collection, "\": ", length(countall))
+
   }
 
   # return
