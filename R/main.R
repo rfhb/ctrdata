@@ -1572,9 +1572,6 @@ ctrLoadQueryIntoDbEuctr <- function(
           fd <- file(description = fileName,
                      open = "rt", blocking = TRUE)
 
-          # initialise line counter
-          li <- 0L
-
           # iterate over lines in fileName
           while (TRUE) {
 

@@ -913,8 +913,8 @@ dbFindIdsUniqueTrials <- function(
       colMangled <- regmatches(
         listofIds[[ ctm[[1]] ]],
         regexec(ctm[[2]], listofIds[[ ctm[[1]] ]]))
-      listofIds[[ ctm[[1]] ]] <<- unlist( # needs <<-
-        {colMangled[!lengths(colMangled)] <- ""; colMangled})
+      listofIds[[ ctm[[1]] ]] <<- unlist({ # needs <<-
+        colMangled[!lengths(colMangled)] <- ""; colMangled})
       NULL
     })
   # - merge columns for register ids and sponsor ids
@@ -1122,60 +1122,6 @@ dbGetFieldsIntoDf <- function(fields = "",
     if (is.list(x)) return(1L + max(vapply(x, listDepth, integer(1L)), 0L))
   }
 
-  # helper function to transform values coming from
-  # a database query that are still json strings
-  json2list <- function(df) {
-
-    # prepare content
-    tmpi <- df[[2]]
-    names(tmpi) <- df[[1]]
-    dfn <- names(df)
-
-    if (all(vapply(tmpi, is.character, logical(1L))) &&
-        any(vapply(tmpi, jsonlite::validate, logical(1L)))) {
-
-      # work on row elements
-      outList <- lapply(
-        tmpi,
-        function(cell) {
-
-          # get content
-          cell <- unlist(cell, use.names = FALSE)
-
-          # check if string could be json
-          if (grepl("[\\[{]", cell)) {
-
-            # add [ ] to produce json object in advance of conversion
-            if (!grepl("^\\[.+\\]$", cell)) cell <- paste0("[", cell, "]")
-
-            # convert
-            out <- try(jsonlite::fromJSON(cell, flatten = FALSE), silent = TRUE)
-
-            # output
-            if (!inherits(out, "try-error")) cell <- list(out)
-
-          } # if json string
-
-          # value
-          cell
-
-        }) # lapply
-
-      # bind to resemble input df
-      df <- do.call(rbind, outList)
-      df <- data.frame(
-        row.names(df),
-        df,
-        row.names = NULL,
-        stringsAsFactors = FALSE)
-      names(df) <- dfn
-
-    } # if all vapply
-
-    return(df)
-
-  } # json2list
-
   # initialise output
   nFields <- length(fields)
 
@@ -1193,133 +1139,29 @@ dbGetFieldsIntoDf <- function(fields = "",
       #
       tmpItem <- try({
 
-        # ## handle special case: src_* is sqlite
-        # # json_extract() cannot be used to retrieve all
-        # # items since a json path would have to include
-        # # an array indicator such as [1] or [#-1], see
-        # # https://www.sqlite.org/json1.html#jex ans
-        # # https://www.sqlite.org/json1.html#path_arguments
-        # if (inherits(con$con, "SQLiteConnection")) {
-        #
-        #   # mangle item names into SQL e.g.,
-        #   # "location[4].facility[#-2].name" # two arrayIndex items
-        #   # "location.facil[a-z0-0]+.*thing" # user regexp
-        #   # "location.facil.*"               # user regexp
-        #   # - remove arrayIndex
-        #   #   NOTE potential side effect: disruption of user's regexp
-        #   item <- gsub("\\[[-#0-9]+\\][.]", ".", item)
-        #   if (verbose) message("DEBUG: 'field' mangled into: ", item)
-        #   # - protect "." between item and subitem using lookahead for overlapping groups
-        #   regexpItem <- gsub("([a-zA-Z]+)[.](?=[a-zA-Z]+)", "\\1@@@\\2", item, perl = TRUE)
-        #   # - add in regexps to match any arrayIndex in fullkey
-        #   regexpItem <- paste0("^[$][.]", gsub("@@@", "[-#\\\\[\\\\]0-9]*[.]", regexpItem), "$")
-        #   # - top element in item
-        #   topElement <- sub("^(.+?)[.].*$", "\\1", item)
-        #   # - construct statement using json_tree(json, path) as per
-        #   #   https://www.sqlite.org/json1.html#jtree
-        #   # - include cast() to string to avoid warnings when types
-        #   #   of columns are changed after first records are retrieved
-        #   # - since mongodb returns NULL for documents that do not have the
-        #   #   sought item but sqlite does not return such documents at all, the
-        #   #   statement is more complex to also include a row for such
-        #   #   non-existing items
-        #   statement <- paste0(
-        #     "SELECT
-        #   CAST(allRows._id AS text) AS _id,
-        #   CAST(jsonRows.value AS text) AS '", item, "'
-        #   FROM (", con$collection, ") AS allRows
-        #
-        #   LEFT JOIN
-        #        (SELECT
-        #           CAST(_id AS text) AS id,
-        #           CAST(value AS text) AS value
-        #        FROM ", con$collection, ",
-        #             json_tree(", con$collection, ".json, '$.", topElement, "')
-        #        WHERE fullkey REGEXP '", regexpItem, "') AS jsonRows
-        #
-        #   ON jsonRows.id = allRows._id
-        #   WHERE allRows._id <> 'meta-info'
-        #   ;")
-        #   if (verbose) message("DEBUG: src_sqlite, statement:\n", statement)
-        #
-        #   # execute query, bypassing nodbi since my implementation
-        #   # of nodbi::doc_query.sqlite() does not use json_tree()
-        #   dfi <- DBI::dbGetQuery(
-        #     conn = con$con,
-        #     statement = statement,
-        #     n = -1L)
-        #
-        #   # dfi[, 2] could still be json strings
-        #   dfi <- json2list(dfi)
-        #
-        #   # dfi can be a long table, number of rows corresponding to
-        #   # number of subitems found in the collection (possibly more
-        #   # than one per record in the collection): aggregate by _id
-        #   tmpById <- tapply(
-        #     X = dfi[, 2],
-        #     INDEX = dfi[, 1],
-        #     function(i) {
-        #       if (all(is.na(i))) {
-        #         # keep NULL elements in output
-        #         NULL
-        #       } else {
-        #         if (is.atomic(
-        #           unlist(i, recursive = FALSE, use.names = FALSE))) {
-        #           # e.g. for location_countries.country
-        #           unname(i)
-        #         } else {
-        #           data.frame(
-        #             unname(i),
-        #             check.names = FALSE,
-        #             row.names = NULL,
-        #             stringsAsFactors = FALSE)
-        #         }}},
-        #     simplify = FALSE)
-        #
-        #   # now match format for further processing
-        #   dfi <- data.frame(
-        #     "_id" = names(tmpById), tmpById,
-        #     row.names = NULL,
-        #     check.names = FALSE,
-        #     stringsAsFactors = FALSE
-        #   )
-        #
-        # } else {
-        #
-        #   # src_mongo
+        # execute query
+        dfi <- nodbi::docdb_query(
+          src = con,
+          key = con$collection,
+          query = query,
+          fields = paste0('{"_id": 1, "', item, '": 1}'))
 
-          # execute query
-          dfi <- nodbi::docdb_query(
-            src = con,
-            key = con$collection,
-            query = query,
-            fields = paste0('{"_id": 1, "', item, '": 1}'))
+        # leave try() early if no results
+        if (!nrow(dfi)) simpleError(message = "")
 
-          # TODO why can this be the case, and
-          # is it for mongo only??
-          # dfi[, 2] could still be json strings
-          #if (ncol(dfi) == 2L) dfi <- json2list(dfi)
+        # unboxing is not done in docdb_query
+        # (for loop could not be replaced by
+        # *apply and assignment to dfi[[2]])
+        for (i in seq_len(nrow(dfi))) {
+          if (!is.null(dfi[i, 2]) &&
+              is.list(dfi[i, 2]) &&
+              !identical(dfi[i, 2], list(NULL)) &&
+              !is.data.frame(dfi[i, 2][[1]])) {
 
-          # leave try() early if no results
-          if (!nrow(dfi)) simpleError(message = "")
+            dfi[i, 2][[1]] <- list(jsonlite::fromJSON(
+              jsonlite::toJSON(dfi[i, 2], auto_unbox = TRUE)))
 
-          # unboxing is not done in docdb_query
-          # (for loop could not be replaced by
-          # *apply and assignment to dfi[[2]])
-          for (i in seq_len(nrow(dfi))) {
-            if (!is.null(dfi[i, 2]) &&
-                is.list(dfi[i, 2]) &&
-                !identical(dfi[i, 2], list(NULL)) &&
-                !is.data.frame(dfi[i, 2][[1]])) {
-
-              dfi[i, 2][[1]] <- list(jsonlite::fromJSON(
-                jsonlite::toJSON(dfi[i, 2], auto_unbox = TRUE)))
-
-            }}
-
-        # } # if src_sqlite or src_mango
-
-        ## mangle further
+          }}
 
         # ensure intended column order
         tmp <- names(dfi)
@@ -1380,7 +1222,7 @@ dbGetFieldsIntoDf <- function(fields = "",
           dfi[, 2], function(i) is.null(i) | is.list(i), logical(1L))) &&
           length(unique(unlist(sapply(
             dfi[, 2], function(i) unique(gsub("[0-9]+$", "", names(unlist(i))))
-              )))) <= 1L) {
+          )))) <= 1L) {
           #
           dfi[, 2] <- vapply(
             dfi[, 2], function(i) paste0(
@@ -1551,7 +1393,7 @@ dfName2Value <- function(df, valuename = "",
     # get where... indices per trial
     indexRows <- which(
       grepl(wherename, df[["name"]], perl = TRUE, ignore.case = TRUE) &
-      grepl(wherevalue, df[["value"]], perl = TRUE, ignore.case = TRUE))
+        grepl(wherevalue, df[["value"]], perl = TRUE, ignore.case = TRUE))
     if (!length(indexRows)) stop("No rows found for 'wherename' and 'wherevalue'")
 
     # get trial ids and identifiers for where...
@@ -1651,9 +1493,9 @@ dfTrials2Long <- function(df) {
         call. = FALSE
       )
   if (any(c("identifier", "name", "value") %in% names(df))) stop(
-        "Unexpected columns; 'df' should not come from dfTrials2Long",
-        call. = FALSE
-      )
+    "Unexpected columns; 'df' should not come from dfTrials2Long",
+    call. = FALSE
+  )
 
   # helper function
   flattenDf <- function(x) {
@@ -1878,8 +1720,8 @@ dfListExtractKey <- function(
 
         data.frame(
           name = gsub("[-0-9]*$", "", # trailing number
-                 gsub("[^a-zA-Z0-9_.-]", "",
-                 paste0(list.key[[li]], collapse = "."))),
+                      gsub("[^a-zA-Z0-9_.-]", "",
+                           paste0(list.key[[li]], collapse = "."))),
           "_id" = df[["_id"]][[ii]],
           value = tmp[[ii]],
           item = seq_along(tmp[[ii]]),
@@ -2672,7 +2514,7 @@ checkBinary <- function(b = NULL) {
   # check actions and user infos
   actionsInfos <- list(
     "notworking" = c("nonexistingbinarytested",
-                      "nonexistingbinarytested not found"),
+                     "nonexistingbinarytested not found"),
     "php" = c("php --version",
               "php not found, ctrLoadQueryIntoDb() will not work "),
     "phpxml" = c("php -r 'simplexml_load_string(\"\");'",
