@@ -154,9 +154,8 @@ expect_message(
       queryterm = q,
       euctrresults = TRUE,
       euctrresultshistory = TRUE,
-      verbose = TRUE,
       con = dbc)),
-  "Imported or updated results for")
+  "Imported or updated results for 3")
 
 # get results
 result <- suppressMessages(
@@ -173,8 +172,7 @@ result <- suppressMessages(
         "trialInformation.analysisForPrimaryCompletion",
         "e71_human_pharmacology_phase_i"
       ),
-      con = dbc,
-      stopifnodata = FALSE)
+      con = dbc)
   ))
 
 # test
