@@ -563,15 +563,15 @@ dbQueryHistory <- function(con,
             con$collection, "\": ", nrow(hist))
 
     # total number of records in collection to inform user
-    countall <- nodbi::docdb_query(
+    countall <- length(nodbi::docdb_query(
       src = con,
       key = con$collection,
       query =  '{"_id": {"$ne": "meta-info"}}',
-      fields = '{"_id": 1}')[["_id"]]
+      fields = '{"_id": 1}')[["_id"]])
 
     # if (verbose)
     message("Number of records in collection \"",
-            con$collection, "\": ", length(countall))
+            con$collection, "\": ", countall)
 
   }
 

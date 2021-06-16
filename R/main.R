@@ -929,6 +929,17 @@ dbCTRUpdateQueryHistory <- function(
     dbQueryHistory(con, verbose)
   )
 
+  # create document if not existing
+  if (!nrow(hist)) {
+    nodbi::docdb_create(
+      src = con,
+      key = con$collection,
+      value = data.frame("_id" = "meta-info",
+                         "json" = '{}',
+                         stringsAsFactors = FALSE,
+                         check.names = FALSE))
+  }
+
   # append current search
   # default for format methods is "%Y-%m-%d %H:%M:%S"
   hist <- rbind(
@@ -939,12 +950,6 @@ dbCTRUpdateQueryHistory <- function(
       "query-records"   = recordnumber,
       "query-term"      = queryterm),
     stringsAsFactors = FALSE)
-
-  # update database
-  tmp <- nodbi::docdb_delete(
-    src = con,
-    key = con$collection,
-    query = '{"_id": {"$eq": "meta-info"}}')
 
   # transform into array and encapsulate in element meta-info
   hist <- jsonlite::toJSON(hist)
@@ -960,9 +965,12 @@ dbCTRUpdateQueryHistory <- function(
                        check.names = FALSE))
 
   # inform user
-  message('* Updated history in meta-info of "',
-          con$collection, '"')
-
+  if (tmp == 1L) {
+    message('* Updated history ("meta-info" in "', con$collection, '")')
+  } else {
+    warning('Could not update history ("meta-info" in "', con$collection,
+            '")', call. = FALSE, immediate. = FALSE)
+  }
 }
 # end dbCTRUpdateQueryHistory
 
