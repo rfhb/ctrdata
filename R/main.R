@@ -346,6 +346,7 @@ ctrLoadQueryIntoDb <- function(
 #' @inheritParams ctrLoadQueryIntoDb
 #'
 #' @keywords internal
+#' @noRd
 #'
 #' @importFrom httr content GET
 #'
@@ -624,6 +625,7 @@ ctrRerunQuery <- function(
 #' @return System messages from converting
 #'
 #' @keywords internal
+#' @noRd
 #'
 ctrConvertToJSON <- function(tempDir, scriptName, verbose) {
 
@@ -697,6 +699,7 @@ ctrConvertToJSON <- function(tempDir, scriptName, verbose) {
 #' _id's of trials that failed to import
 #'
 #' @keywords internal
+#' @noRd
 #'
 dbCTRLoadJSONFiles <- function(dir, con, verbose) {
 
@@ -831,6 +834,7 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
 #' @inheritParams ctrLoadQueryIntoDb
 #'
 #' @keywords internal
+#' @noRd
 #'
 #' @importFrom jsonlite toJSON
 #' @importFrom nodbi docdb_update
@@ -902,6 +906,7 @@ dbCTRAnnotateQueryRecords <- function(
 #' @inheritParams ctrLoadQueryIntoDb
 #'
 #' @keywords internal
+#' @noRd
 #'
 #' @importFrom jsonlite toJSON
 #' @importFrom nodbi docdb_delete docdb_create
@@ -967,6 +972,7 @@ dbCTRUpdateQueryHistory <- function(
 #' @inheritParams ctrLoadQueryIntoDb
 #'
 #' @keywords internal
+#' @noRd
 #'
 #' @importFrom jsonlite toJSON
 #' @importFrom httr content headers progress write_disk GET HEAD
@@ -1126,6 +1132,7 @@ ctrLoadQueryIntoDbCtgov <- function(
 #' @inheritParams ctrLoadQueryIntoDb
 #'
 #' @keywords internal
+#' @noRd
 #'
 #' @importFrom httr content headers progress write_disk GET HEAD
 #' @importFrom curl curl_fetch_multi multi_run new_pool
@@ -1811,6 +1818,7 @@ ctrLoadQueryIntoDbEuctr <- function(
 #' @inheritParams ctrLoadQueryIntoDb
 #'
 #' @keywords internal
+#' @noRd
 #'
 #' @importFrom jsonlite toJSON
 #' @importFrom httr content headers progress write_disk GET HEAD

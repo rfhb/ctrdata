@@ -2029,6 +2029,7 @@ dfFindUniqueEuctrRecord <- function(
 #' @param dfi a data frame of columns _id, fieldname
 #'
 #' @keywords internal
+#' @noRd
 #'
 typeField <- function(dfi) {
 
@@ -2238,6 +2239,7 @@ typeField <- function(dfi) {
 #' @inheritParams ctrDb
 #'
 #' @keywords internal
+#' @noRd
 #'
 addMetaData <- function(x, con) {
 
@@ -2259,6 +2261,7 @@ addMetaData <- function(x, con) {
 #' @importFrom curl ie_proxy_info
 #'
 #' @keywords internal
+#' @noRd
 #'
 setProxy <- function() {
 
@@ -2395,6 +2398,7 @@ installCygwinWindowsDoInstall <- function(
 #'  or \code{FALSE}, or NULL if not under MS Windows
 #'
 #' @keywords internal
+#' @noRd
 #
 installCygwinWindowsTest <- function(verbose = FALSE) {
   #
@@ -2447,6 +2451,7 @@ installCygwinWindowsTest <- function(verbose = FALSE) {
 #' returned an error or not
 #'
 #' @keywords internal
+#' @noRd
 #
 installFindBinary <- function(commandtest = NULL, verbose = FALSE) {
   #
@@ -2506,6 +2511,7 @@ installFindBinary <- function(commandtest = NULL, verbose = FALSE) {
 #' @param b Vector of pre-defined binaries to be tested
 #'
 #' @keywords internal
+#' @noRd
 #'
 #' @return Logical, \code{TRUE} if all binaries ok
 #'
