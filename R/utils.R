@@ -1386,7 +1386,7 @@ dfName2Value <- function(df, valuename = "",
   if (wherename == "" & wherevalue == "") {
 
     # get relevant rows
-    out <- df[indexVnames, ]
+    out <- df[indexVnames, , drop = FALSE]
 
   } else {# if where... are specified, continue
 
@@ -1397,7 +1397,7 @@ dfName2Value <- function(df, valuename = "",
     if (!length(indexRows)) stop("No rows found for 'wherename' and 'wherevalue'")
 
     # get trial ids and identifiers for where...
-    indexCases <- df[indexRows, c("_id", "identifier")]
+    indexCases <- df[indexRows, c("_id", "identifier"), drop = FALSE]
 
     # get output iterate over trials
     out <- apply(
