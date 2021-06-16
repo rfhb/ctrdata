@@ -947,15 +947,15 @@ dbCTRUpdateQueryHistory <- function(
     query = '{"_id": {"$eq": "meta-info"}}')
 
   # transform into array and encapsulate in element meta-info
-  tmp <- jsonlite::toJSON(hist)
-  tmp <- paste0('{"queries": ',  as.character(tmp), "}")
+  hist <- jsonlite::toJSON(hist)
+  hist <- paste0('{"queries": ',  as.character(hist), "}")
 
-  # create history
-  tmp <- nodbi::docdb_create(
+  # update database
+  tmp <- nodbi::docdb_update(
     src = con,
     key = con$collection,
     value = data.frame("_id" = "meta-info",
-                       "json" = tmp,
+                       "json" = hist,
                        stringsAsFactors = FALSE,
                        check.names = FALSE))
 

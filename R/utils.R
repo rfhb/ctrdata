@@ -536,15 +536,15 @@ dbQueryHistory <- function(con,
   # debug
   if (verbose) message("Running dbQueryHistory ...")
 
-  tmp <- nodbi::docdb_query(
+  hist <- nodbi::docdb_query(
     src = con,
     key = con$collection,
     query = '{"_id": {"$eq": "meta-info"}}',
     fields = '{"queries": 1}')
 
   # check if meeting expectations
-  if (is.null(tmp) ||
-      nrow(tmp) == 0L) {
+  if (is.null(hist) ||
+      nrow(hist) == 0L) {
     #
     message("No history found in expected format.")
     #
@@ -554,13 +554,13 @@ dbQueryHistory <- function(con,
   }
 
   # access data frame of queries
-  tmp <- tmp[["queries"]][[1]]
+  hist <- hist[["queries"]][[1]]
 
   # inform user
   if (verbose) {
 
     message("Number of queries in history of \"",
-            con$collection, "\": ", nrow(tmp))
+            con$collection, "\": ", nrow(hist))
 
     # total number of records in collection to inform user
     countall <- nodbi::docdb_query(
@@ -576,7 +576,7 @@ dbQueryHistory <- function(con,
   }
 
   # return
-  return(tmp)
+  return(hist)
 
 }
 # end ctrQueryHistoryInDb
