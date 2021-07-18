@@ -8,8 +8,7 @@ expect_error(
     suppressMessages(
       ctrLoadQueryIntoDb(
         queryterm = "query=",
-        register = "EUCTR",
-        con = dbc))),
+        register = "EUCTR"))),
   "more than 10,000) trials")
 
 # correct _id association
@@ -25,10 +24,10 @@ suppressWarnings(
 expect_identical(
   suppressWarnings(
     suppressMessages(
-    dbGetFieldsIntoDf(
-      fields = "endPoints.endPoint.title",
-      con = dbc
-    )))[1, "_id", drop = TRUE],
+      dbGetFieldsIntoDf(
+        fields = "endPoints.endPoint.title",
+        con = dbc
+      )))[1, "_id", drop = TRUE],
   "2008-003606-33-GB")
 
 # next

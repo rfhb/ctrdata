@@ -98,7 +98,7 @@ expect_message(
 
 # test
 expect_message(
-  suppressWarnings(
+ suppressWarnings(
     ctrLoadQueryIntoDb(
       queryterm = "q=98918118",
       register = "ISRCTN",
@@ -106,7 +106,6 @@ expect_message(
       annotation.mode = "replace",
       con = dbc)),
   "Imported or updated 1 trial")
-
 
 #### dbGetFieldsIntoDf ####
 
