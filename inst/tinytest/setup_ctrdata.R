@@ -61,7 +61,7 @@ checkInternet <- function() {
     silent = TRUE
   )
 
-  out <- !("try-error" %in% class(tmp))
+  out <- !inherits(tmp, "try-error")
   out
 }
 
@@ -69,7 +69,7 @@ checkInternet <- function() {
 checkSqlite <- function() {
   tmp <- try(nodbi::src_sqlite(), silent = TRUE)
 
-  out <- all(c("src_sqlite", "docdb_src") %in% class(tmp))
+  out <- inherits(tmp, c("src_sqlite", "docdb_src"))
   if (out) RSQLite::dbDisconnect(conn = tmp$con)
   out
 }
@@ -85,7 +85,7 @@ checkMongoLocal <- function() {
     silent = TRUE
   )
 
-  out <- all(c("src_mongo", "docdb_src") %in% class(tmp))
+  out <- inherits(tmp, c("src_mongo", "docdb_src"))
   if (out) tmp$con$disconnect()
   out
 }
@@ -101,7 +101,7 @@ checkMongoRemoteRo <- function() {
     silent = TRUE
   )
 
-  out <- all(c("src_mongo", "docdb_src") %in% class(tmp))
+  out <- inherits(tmp, c("src_mongo", "docdb_src"))
   if (out) tmp$con$disconnect()
   out
 }
@@ -116,7 +116,7 @@ checkMongoRemoteRw <- function() {
     silent = TRUE
   )
 
-  out <- all(c("src_mongo", "docdb_src") %in% class(tmp))
+  out <- inherits(tmp, c("src_mongo", "docdb_src"))
   if (out) tmp$con$disconnect()
   out
 }
