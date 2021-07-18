@@ -1,3 +1,8 @@
+# ctrdata 1.6.0.9000
+ - 2021-05-10
+ - minimised database-specific code, using nodbi 0.4.2.9000
+ - temporary directory creation when needed and automated deletion
+ 
 # ctrdata 1.6.0
  - 2021-05-09
  - added support for ISRCTN
