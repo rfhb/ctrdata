@@ -1000,12 +1000,6 @@ ctrLoadQueryIntoDbCtgov <- function(
   verbose,
   queryupdateterm) {
 
-  ## create empty temporary directory on localhost for
-  # downloading from register into temporary directy
-  tempDir <- tempfile(pattern = "ctrDATA")
-  dir.create(tempDir)
-  tempDir <- normalizePath(tempDir, mustWork = TRUE)
-
   # CTGOV standard identifiers
   # updated 2017-07 with revised ctgov website links, e.g.
   # "https://clinicaltrials.gov/ct2/results/download_studies?
@@ -1130,10 +1124,7 @@ ctrLoadQueryIntoDbCtgov <- function(
   }
 
   ## find out number of trials imported into database
-  message("= Imported or updated ", imported$n, " trial(s).")
-
-  # clean up temporary directory
-  if (!verbose) unlink(tempDir, recursive = TRUE)
+  message("= Imported or updated ", imported$n, " trial(s)")
 
   # return
   return(imported)
@@ -1173,26 +1164,6 @@ ctrLoadQueryIntoDbEuctr <- function(
     "(^|&|[&]?\\w+=\\w+&)([ a-zA-Z0-9+-]+)($|&\\w+=\\w+)",
     "\\1query=\\2\\3",
     queryterm)
-
-  # create empty temporary directory on localhost for
-  # download from register into temporary directy
-  tempDir <- tempfile(pattern = "ctrDATA")
-  dir.create(tempDir)
-  tempDir <- normalizePath(tempDir, mustWork = TRUE)
-
-  # check results parameters
-  if (is.null(euctrresultspdfpath)) {
-    euctrresultspdfpath <- tempDir
-  }
-  if (euctrresults &&
-      (is.na(file.info(euctrresultspdfpath)[["isdir"]]) ||
-       !file.info(euctrresultspdfpath)[["isdir"]])) {
-    warning("Invalid directory specified for 'euctrresultspdfpath': ",
-            euctrresultspdfpath, call. = FALSE, immediate. = TRUE)
-    euctrresultspdfpath <- tempDir
-  }
-  # canonical directory path
-  euctrresultspdfpath <- normalizePath(euctrresultspdfpath, mustWork = TRUE)
 
   # inform user
   message("(1/3) Checking trials in EUCTR:")
@@ -1291,7 +1262,28 @@ ctrLoadQueryIntoDbEuctr <- function(
     "ctrLoadQueryIntoDb() cannot continue. ", call. = FALSE)
   if (euctrresults && !checkBinary(c("php", "phpxml", "phpjson"))) stop(
     "ctrLoadQueryIntoDb() cannot continue. ", call. = FALSE)
-  message("done.")
+  message("done")
+
+  # create empty temporary directory on localhost for
+  # download from register into temporary directory
+  tempDir <- tempfile(pattern = "ctrDATA")
+  dir.create(tempDir)
+  tempDir <- normalizePath(tempDir, mustWork = TRUE)
+  if (!verbose) on.exit(unlink(tempDir, recursive = TRUE), add = TRUE)
+
+  # check results parameters
+  if (is.null(euctrresultspdfpath)) {
+    euctrresultspdfpath <- tempDir
+  }
+  if (euctrresults &&
+      (is.na(file.info(euctrresultspdfpath)[["isdir"]]) ||
+       !file.info(euctrresultspdfpath)[["isdir"]])) {
+    warning("Invalid directory specified for 'euctrresultspdfpath': ",
+            euctrresultspdfpath, call. = FALSE, immediate. = TRUE)
+    euctrresultspdfpath <- tempDir
+  }
+  # canonical directory path
+  euctrresultspdfpath <- normalizePath(euctrresultspdfpath, mustWork = TRUE)
 
   ## download all text files from pages
 
@@ -1847,12 +1839,6 @@ ctrLoadQueryIntoDbIsrctn <- function(
   verbose,
   queryupdateterm) {
 
-  ## create empty temporary directory on localhost for
-  # downloading from register into temporary directy
-  tempDir <- tempfile(pattern = "ctrDATA")
-  dir.create(tempDir)
-  tempDir <- normalizePath(tempDir, mustWork = TRUE)
-
   # ISRCTN translation to API v0.4 2021-02-04
   # - limit can be set to arbitrarily high number
   # - no pagination or batching
@@ -1939,7 +1925,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
   if (as.integer(tmp) > 10000L) {
     stop("These are ", tmp, " (more than 10,000) trials, this may be ",
          "unintended. Downloading more than 10,000 trials is not supported ",
-         "by the register. Consider correcting or splitting queries.")
+         "by the register; consider correcting or splitting queries")
   }
 
   ## check database connection
@@ -1949,7 +1935,14 @@ ctrLoadQueryIntoDbIsrctn <- function(
   message("Checking helper binaries: ", appendLF = FALSE)
   if (!checkBinary(c("php", "phpxml", "phpjson"))) stop(
     "ctrLoadQueryIntoDb() cannot continue. ", call. = FALSE)
-  message("done.")
+  message("done")
+
+  ## create empty temporary directory on localhost for
+  # downloading from register into temporary directy
+  tempDir <- tempfile(pattern = "ctrDATA")
+  dir.create(tempDir)
+  tempDir <- normalizePath(tempDir, mustWork = TRUE)
+  if (!verbose) on.exit(unlink(tempDir, recursive = TRUE), add = TRUE)
 
   # prepare a file handle for temporary directory
   f <- paste0(tempDir, "/", "isrctn.xml")
@@ -1999,10 +1992,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
   }
 
   ## find out number of trials imported into database
-  message("= Imported or updated ", imported$n, " trial(s).")
-
-  # clean up temporary directory
-  if (!verbose) unlink(tempDir, recursive = TRUE)
+  message("= Imported or updated ", imported$n, " trial(s)")
 
   # return
   return(imported)
