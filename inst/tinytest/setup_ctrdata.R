@@ -57,11 +57,7 @@ checkBinaries <- function() {
 
 checkInternet <- function() {
   tmp <- try(
-    {
-      httr::HEAD("www.clinicaltrials.gov", httr::timeout(5))
-      httr::HEAD("www.clinicaltrialsregister.eu", httr::timeout(5))
-      httr::HEAD("www.isrctn.com", httr::timeout(5))
-    },
+    httr::HEAD("https://httpbin.org/anything", httr::timeout(5)),
     silent = TRUE
   )
 
