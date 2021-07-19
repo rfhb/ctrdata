@@ -66,7 +66,7 @@ jobs:
           install.packages(c("remotes"))
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran(c("rcmdcheck", "covr"))
-          remotes::install_github("ropensci/ndbi")
+          remotes::install_github("ropensci/nodbi")
         shell: Rscript {0}
 
       - name: Windows install additional dependencies
