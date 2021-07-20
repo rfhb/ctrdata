@@ -1012,7 +1012,7 @@ ctrLoadQueryIntoDbCtgov <- function(
     silent = TRUE)
   #
   if (inherits(tmp, "try-error") ||
-      httr::status_code(tmp) != 200L) {
+      !any(httr::status_code(tmp) == c(200L, 404L))) {
     stop("Host ", queryUSRoot, " not working as expected, ",
          "cannot continue: ", tmp[[1]], call. = FALSE)
   }
