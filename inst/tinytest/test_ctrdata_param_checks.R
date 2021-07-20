@@ -28,46 +28,48 @@ tf <- function() {
   names(tmpdf) <- paste0("query-", names(tmpdf))
   # test
   expect_error(
-    suppressWarnings(
-      ctrLoadQueryIntoDb(
-        queryterm = tmpdf,
-        con = dbc)),
+    ctrLoadQueryIntoDb(
+      queryterm = tmpdf),
     "'queryterm' has to be a non-empty string")
   # test
   expect_error(
-    suppressWarnings(
-      suppressMessages(
-        ctrLoadQueryIntoDb(
-          queryterm = tmpdf,
-          querytoupdate = 1L,
-          con = dbc))),
+    ctrLoadQueryIntoDb(
+      queryterm = tmpdf,
+      querytoupdate = 1L,
+      con = dbc),
     "and 'querytoupdate' specified, which is inconsistent")
   tmpdf["query-term"] <- as.character(tmpdf[["query-Species"]])
   # test
   expect_error(
-    suppressWarnings(
-      suppressMessages(
-        ctrLoadQueryIntoDb(
-          queryterm = tmpdf,
-          con = dbc))),
+    ctrLoadQueryIntoDb(
+      queryterm = tmpdf),
     "'register' has to be a non-empty string")
 
   # test
   expect_error(
-    suppressWarnings(
-      suppressMessages(
-        ctrLoadQueryIntoDb(
-          queryterm = iris,
-          con = dbc))),
+    ctrLoadQueryIntoDb(
+      queryterm = iris),
     "'queryterm' does not seem to result from ctr")
 
   # test
   expect_error(
     suppressWarnings(
-      suppressMessages(
-        ctrLoadQueryIntoDb(
-          queryterm = "https\\#@",
-          con = dbc))),
+      ctrLoadQueryIntoDb(
+        queryterm = "https\\#@")),
+    "'queryterm' does not seem to result from")
+
+  # test
+  expect_error(
+    ctrLoadQueryIntoDb(
+      queryterm = "https://www.clinicaltrials.gov/this*"),
+    "'queryterm' has unexpected characters")
+
+  # test
+  expect_error(
+    suppressWarnings(
+      ctrLoadQueryIntoDb(
+        queryterm = "something",
+        register = "unknown")),
     "'queryterm' does not seem to result from")
 
   # test no history or no table with
@@ -137,8 +139,6 @@ tf <- function() {
 
   # test if database connection
   # is opened by ctrDb
-  # dbx <- nodbi::src_sqlite(
-  #   collection = "otherinmemory")
   RSQLite::dbDisconnect(conn = dbc$con)
   # test
   expect_error(
@@ -150,7 +150,29 @@ tf <- function() {
   # test
   expect_true(grepl("inmemory", dbc$collection))
 
+  # sqlite but no collection specified
+  dbc <- nodbi::src_sqlite()
+  # test
+  expect_error(
+    suppressMessages(
+      suppressWarnings(
+        dbFindIdsUniqueTrials(
+          con = dbc))),
+    "parameter .* needs to specify the name of a table")
+
+
   #### ctrGetQueryUrl ####
+
+  # test
+  expect_error(
+    ctrGetQueryUrl(url = c("abc", "def")),
+    "is not a single character string"
+  )
+  # test
+  expect_error(
+    ctrGetQueryUrl(register = c("abc", "def")),
+    "is not a single character string"
+  )
 
   # EUCTR mangling: list of c(input, expected output)
   queryterms <- list(

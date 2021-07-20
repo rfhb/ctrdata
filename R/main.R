@@ -194,21 +194,9 @@ ctrLoadQueryIntoDb <- function(
     ## sanity checks
     if (grepl("[^.a-zA-Z0-9=+&%_:\"/, -]",
               gsub("\\[", "", gsub("\\]", "", queryterm)))) {
-      stop("Parameter 'queryterm' is not an URL showing results ",
-           "of a query or has unexpected characters: ", queryterm,
-           ", expected are: a-zA-Z0-9=+&%_-,.: []/\"",
+      stop("Parameter 'queryterm' has unexpected characters: ",
+           queryterm, ", expected are: a-zA-Z0-9=+&%_-,.: []/\"",
            call. = FALSE)
-    }
-    #
-    if ((queryterm == "") &
-        querytoupdate == 0L) {
-      stop("Parameter 'queryterm' is empty",
-           call. = FALSE)
-    }
-    #
-    if (!any(register == registerList)) {
-      stop("Parameter 'register' not known: ",
-           register, call. = FALSE)
     }
 
     # remove trailing or leading whitespace, line breaks
@@ -569,12 +557,12 @@ ctrRerunQuery <- function(
 
       # if already in query term, just re-run full query to avoid
       # multiple queries in history that only differ in timestamp:
-      if (grepl("lastEdited", queryterm)) {
+      if (grepl("lastEdited:", queryterm)) {
         #
         # remove queryupdateterm, thus running full again
         queryupdateterm <- ""
         warning("Query has date(s) for start or end of last update ",
-                "('lasteEdited'); running again with these limits",
+                "('lastEdited'); running again with these limits",
                 immediate. = TRUE)
         #
       } else {
@@ -1866,8 +1854,6 @@ ctrLoadQueryIntoDbIsrctn <- function(
     function(a) sub("^(.*?)[+](.*?)[:](.*)$", "\\2 \\1 \\3", a),
     character(1L), USE.NAMES = FALSE)
   apiterm <- paste0(apiterm, collapse = " AND ")
-  # - readd q if missing
-  if (!grepl("^q=", apiterm)) apiterm <- paste0("q=", apiterm)
   # - inform user
   if (verbose) message("DEBUG: apiterm is ", apiterm)
 

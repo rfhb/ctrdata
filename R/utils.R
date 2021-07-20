@@ -660,16 +660,6 @@ dbFindFields <- function(namepart = "",
 
   } else {
 
-    ## get keys list from database
-    ## warn if no method yet for backend
-    if (!any(c("src_mongo",
-               "src_sqlite") %in%
-             class(con))) {
-      stop("Function dbFindFields() cannot yet handle nodbi ",
-           "database backend ", class(con)[1], call. = FALSE)
-      ## TODO extended function to additional backends
-    }
-
     # inform user
     message("Finding fields in database (may take some time)")
 

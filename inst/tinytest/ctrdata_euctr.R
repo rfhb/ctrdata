@@ -11,7 +11,16 @@ expect_error(
         register = "EUCTR"))),
   "more than 10,000) trials")
 
+# test
+expect_true(
+  ctrLoadQueryIntoDb(
+    queryterm = "2005-001267-63+OR+2008-003606-33",
+    register = "EUCTR",
+    only.count = TRUE)[["n"]] >= 2L)
+
 # correct _id association
+
+# test
 suppressWarnings(
   suppressMessages(
     ctrLoadQueryIntoDb(
@@ -55,6 +64,14 @@ expect_true(all(
 expect_true(length(tmpTest$failed) == 0L)
 rm(tmpTest, q)
 
+# test
+expect_message(
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
+      # trial with f1111 and f1121
+      queryterm = "2013-003488-71",
+      con = dbc)),
+  "Imported or updated")
 
 #### ctrLoadQueryIntoDb update ####
 
@@ -147,12 +164,17 @@ rm(tmpTest, q, hist, json, date.from, date.to, date.today)
 q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
             "2013-003420-37+OR+2009-011454-17+OR+2006-005357-29")
 
+# temp folder
+tempD <- tempdir()
+
+# test
 expect_message(
   suppressWarnings(
     ctrLoadQueryIntoDb(
       queryterm = q,
       euctrresults = TRUE,
       euctrresultshistory = TRUE,
+      euctrresultspdfpath = tempD,
       con = dbc)),
   "Imported or updated results for 3")
 
@@ -208,6 +230,8 @@ expect_true("Date" == class(result[[
 expect_true("list" == class(result[[
   "endPoints.endPoint"]]))
 
+#### dfListExtractKey ####
+
 # test
 expect_true(
   sum(nchar(
@@ -221,6 +245,15 @@ expect_true(
       )[["value"]]
     )), na.rm = TRUE)
   > 3000L)
+
+# test
+expect_error(
+  suppressWarnings(
+    dfListExtractKey(
+      df = iris)),
+  "'df' lacks '_id' column")
+
+#### dfTrials2Long ####
 
 # convert to long
 df <- suppressMessages(
@@ -238,6 +271,19 @@ expect_identical(
 expect_true(
   nrow(df) > 3300L
 )
+
+# test
+expect_error(
+  dfTrials2Long(
+    df = result2[, -1]),
+  "Missing _id column or other variables in 'df'")
+
+expect_error(
+  dfTrials2Long(
+    df = df),
+  "'df' should not come from dfTrials2Long")
+
+#### dfName2Value ####
 
 # extract
 df2 <- dfName2Value(
@@ -288,10 +334,19 @@ expect_true(
 
 # test
 expect_error(
-  dfTrials2Long(
-    df = result[, -1]
-  ),
-  "Missing _id column or other variables in 'df'")
+  dfName2Value(
+    df = df,
+    valuename = "doesnotexist"),
+  "No rows found for 'valuename'")
+
+# test
+expect_error(
+  dfName2Value(
+    df = df,
+    valuename = "^endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.value$",
+    wherename = "endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.method.value",
+    wherevalue = "doesnotexist"),
+  "No rows found for 'wherename' and 'wherevalue'")
 
 # cleanup
 rm(result, result2, df, df2)

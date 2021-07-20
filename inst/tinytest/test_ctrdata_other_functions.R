@@ -202,3 +202,49 @@ expect_equal(
 expect_null(
   ctrOpenSearchPagesInBrowser(
     copyright = TRUE))
+
+#### dfFindUniqueEuctrRecord ####
+
+# test
+expect_error(
+  ctrdata:::dfFindUniqueEuctrRecord(
+    df = list(1L)),
+  "Parameter df is not a data frame"
+)
+# test
+expect_error(
+  ctrdata:::dfFindUniqueEuctrRecord(
+    df = iris),
+  "Data frame does not include"
+)
+# test
+expect_error(
+  ctrdata:::dfFindUniqueEuctrRecord(
+    df = data.frame(
+      "_id" = "something",
+      "a2_eudract_number" = "something",
+      check.names = FALSE),
+    prefermemberstate = "something"),
+  "Value specified for prefermemberstate does not match"
+)
+
+#### df mangling ####
+
+expect_error(
+  dfName2Value(
+    df = iris,
+    valuename = "something"),
+  "'df' does not seem to come from dfTrials2Long()")
+
+expect_error(
+  dfName2Value(
+    df = iris,
+    valuename = ""),
+  "'valuename' must be specified")
+
+expect_error(
+  ctrdata:::typeField(
+    dfi = iris),
+  "Expect data frame with two columns, _id and a field")
+
+
