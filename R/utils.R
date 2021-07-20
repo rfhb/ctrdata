@@ -2069,7 +2069,6 @@ typeField <- function(dfi) {
       "n_date_of_competent_authority_decision" = ctrDate(),
       "p_date_of_the_global_end_of_the_trial"  = ctrDate(),
       "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database" = ctrDate(),
-      "x7_start_date"                          = ctrDate(),
       "firstreceived_results_date"             = ctrDate(),
       "trialInformation.primaryCompletionDate" = ctrDate(),
       "trialInformation.globalEndOfTrialDate"  = ctrDateTime(),
@@ -2078,10 +2077,9 @@ typeField <- function(dfi) {
       "start_date"              = ctrDateUs(),
       "primary_completion_date" = ctrDateUs(),
       "completion_date"         = ctrDateUs(),
-      "firstreceived_date"      = ctrDateUs(),
-      "resultsfirst_posted"     = ctrDateUs(),
-      "lastupdate_posted"       = ctrDateUs(),
-      "lastchanged_date"        = ctrDateUs(),
+      "study_first_posted"      = ctrDateUs(),
+      "results_first_posted"    = ctrDateUs(),
+      "last_update_posted"      = ctrDateUs(),
       #
       #
       # factors
