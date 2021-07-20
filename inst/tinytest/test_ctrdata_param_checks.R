@@ -28,21 +28,24 @@ tf <- function() {
   names(tmpdf) <- paste0("query-", names(tmpdf))
   # test
   expect_error(
-    ctrLoadQueryIntoDb(
-      queryterm = tmpdf),
+    suppressWarnings(
+      ctrLoadQueryIntoDb(
+        queryterm = tmpdf)),
     "'queryterm' has to be a non-empty string")
   # test
   expect_error(
-    ctrLoadQueryIntoDb(
-      queryterm = tmpdf,
-      querytoupdate = 1L,
-      con = dbc),
+    suppressWarnings(
+      ctrLoadQueryIntoDb(
+        queryterm = tmpdf,
+        querytoupdate = 1L,
+        con = dbc)),
     "and 'querytoupdate' specified, which is inconsistent")
   tmpdf["query-term"] <- as.character(tmpdf[["query-Species"]])
   # test
   expect_error(
-    ctrLoadQueryIntoDb(
-      queryterm = tmpdf),
+    suppressWarnings(
+      ctrLoadQueryIntoDb(
+        queryterm = tmpdf)),
     "'register' has to be a non-empty string")
 
   # test
@@ -60,8 +63,9 @@ tf <- function() {
 
   # test
   expect_error(
-    ctrLoadQueryIntoDb(
-      queryterm = "https://www.clinicaltrials.gov/this*"),
+    suppressMessages(
+      ctrLoadQueryIntoDb(
+        queryterm = "https://www.clinicaltrials.gov/this*")),
     "'queryterm' has unexpected characters")
 
   # test

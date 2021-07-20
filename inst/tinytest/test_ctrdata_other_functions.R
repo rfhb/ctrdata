@@ -246,5 +246,3 @@ expect_error(
   ctrdata:::typeField(
     dfi = iris),
   "Expect data frame with two columns, _id and a field")
-
-

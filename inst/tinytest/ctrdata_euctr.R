@@ -19,10 +19,12 @@ expect_error(
 
 # test
 expect_true(
-  ctrLoadQueryIntoDb(
-    queryterm = "2005-001267-63+OR+2008-003606-33",
-    register = "EUCTR",
-    only.count = TRUE)[["n"]] >= 2L)
+  suppressWarnings(
+    suppressMessages(
+      ctrLoadQueryIntoDb(
+        queryterm = "2005-001267-63+OR+2008-003606-33",
+        register = "EUCTR",
+        only.count = TRUE)))[["n"]] >= 2L)
 
 # correct _id association
 
@@ -74,8 +76,9 @@ rm(tmpTest, q)
 expect_message(
   suppressWarnings(
     ctrLoadQueryIntoDb(
-      # trial with f1111 and f1121
+      # trial with f1111, f1121 to check typeField
       queryterm = "2013-003488-71",
+      register = "EUCTR",
       con = dbc)),
   "Imported or updated")
 

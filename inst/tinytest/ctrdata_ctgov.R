@@ -10,10 +10,11 @@ if (httr::status_code(
 
 # test
 expect_equal(
+  suppressMessages(
   ctrLoadQueryIntoDb(
     queryterm = "2010-024264-18",
     register = "CTGOV",
-    only.count = TRUE)[["n"]], 1L)
+    only.count = TRUE))[["n"]], 1L)
 
 # test
 expect_message(
@@ -232,4 +233,3 @@ expect_error(
         annotation.mode = "WRONG",
         con = dbc))),
   "'annotation.mode' incorrect")
-
