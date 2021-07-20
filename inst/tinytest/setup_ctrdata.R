@@ -11,6 +11,12 @@
 library(tinytest)
 suppressMessages(library(ctrdata))
 
+# throw error for && and || with vectors longer than 1 element
+Sys.setenv("_R_CHECK_LENGTH_1_LOGIC2_" = "TRUE")
+
+# throw error for if statement with length > 1 vector
+Sys.setenv("_R_CHECK_LENGTH_1_CONDITION_" = "TRUE")
+
 
 #### global variables for data bases ####
 
