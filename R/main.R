@@ -1867,12 +1867,14 @@ ctrLoadQueryIntoDbIsrctn <- function(
   isrctnfirstpageurl <- paste0(
     queryIsrctnRoot, queryIsrctnType2, apiterm, queryupdateterm)
   #
-  tmp <- xml2::read_xml(
-    x = utils::URLencode(isrctnfirstpageurl))
+  tmp <- try(suppressWarnings(
+    xml2::read_xml(
+      x = url(utils::URLencode(isrctnfirstpageurl)))),
+    silent = TRUE)
   #
   if (inherits(tmp, "try-error")) {
-    stop("Host ", queryIsrctnRoot, " does not respond, cannot continue",
-         call. = FALSE)
+    stop("Host ", queryIsrctnRoot, " not working as expected, ",
+         "cannot continue: ", tmp[[1]], call. = FALSE)
   }
   #
   tmp <- xml2::xml_attr(tmp, "totalCount")
