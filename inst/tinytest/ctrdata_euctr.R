@@ -1,5 +1,11 @@
 ## RH 2019-09-28
 
+# check server
+if (httr::status_code(
+  httr::HEAD("https://www.clinicaltrialsregister.eu/ctr-search/search",
+             httr::timeout(5))) != 200L
+) exit_file("Reason: EUCTR not working")
+
 #### ctrLoadQueryIntoDb ####
 
 # test

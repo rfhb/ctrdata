@@ -1,5 +1,11 @@
 ## RH 2021-04-25
 
+# check server
+if (httr::status_code(
+  httr::HEAD("https://www.isrctn.com/editAdvancedSearch",
+             httr::timeout(5))) != 200L
+) exit_file("Reason: CTGOV not working")
+
 #### ctrLoadQueryIntoDb ####
 
 # test with slightly incorrect url
