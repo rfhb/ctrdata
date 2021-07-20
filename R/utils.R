@@ -258,9 +258,9 @@ ctrGetQueryUrl <- function(
   # check parameters expectations
   if (!is.atomic(url) || !is.atomic(register) ||
       is.null(url) || is.null(register) ||
-      is.na(url) || is.na(register) ||
       !inherits(url, "character") || !inherits(register, "character") ||
-      length(url) != 1L || length(register) != 1L) {
+      length(url) != 1L || length(register) != 1L ||
+      is.na(url) || is.na(register)) {
     stop("ctrGetQueryUrl(): 'url' and / or 'register' ",
          "is not a single character string, url: '",
          deparse(url), "', register: '", deparse(register), "'",
