@@ -1857,6 +1857,8 @@ ctrLoadQueryIntoDbIsrctn <- function(
     function(a) sub("^(.*?)[+](.*?)[:](.*)$", "\\2 \\1 \\3", a),
     character(1L), USE.NAMES = FALSE)
   apiterm <- paste0(apiterm, collapse = " AND ")
+  # - add q again if missing
+  if (!grepl("^q=", apiterm)) apiterm <- paste0("q=", apiterm)
   # - inform user
   if (verbose) message("DEBUG: apiterm is ", apiterm)
 

@@ -9,14 +9,17 @@ if (httr::status_code(
 #### ctrLoadQueryIntoDb ####
 
 # test with slightly incorrect url
-ctrLoadQueryIntoDb(
-  queryterm = "https://www.isrctn.com/search?neuroblastoma",
-  only.count = TRUE)
+expect_message(
+  ctrLoadQueryIntoDb(
+    queryterm = "https://www.isrctn.com/search?neuroblastoma",
+    only.count = TRUE),
+  "search query from ISRCTN: q=neuroblastoma")
 
 # test
 expect_error(
-  ctrLoadQueryIntoDb(
-    queryterm = "https://www.isrctn.com/search?q="),
+  suppressMessages(
+    ctrLoadQueryIntoDb(
+      queryterm = "https://www.isrctn.com/search?q=")),
   "consider correcting or splitting queries")
 
 # test
