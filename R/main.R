@@ -971,7 +971,7 @@ dbCTRUpdateQueryHistory <- function(
 #' @noRd
 #'
 #' @importFrom jsonlite toJSON
-#' @importFrom httr content headers progress write_disk GET HEAD
+#' @importFrom httr content headers progress write_disk GET HEAD status_code
 #' @importFrom nodbi docdb_query
 #'
 ctrLoadQueryIntoDbCtgov <- function(
@@ -1007,15 +1007,17 @@ ctrLoadQueryIntoDbCtgov <- function(
   ctgovdfirstpageurl <- paste0(
     queryUSRoot, queryUSType2, "&", queryterm, queryupdateterm)
   #
-  tmp <- try(httr::content(httr::GET(
-    url = utils::URLencode(ctgovdfirstpageurl)), as = "text"),
+  tmp <- try(httr::GET(
+    url = utils::URLencode(ctgovdfirstpageurl)),
     silent = TRUE)
   #
-  if (inherits(tmp, "try-error")) {
-    stop("Host ", queryUSRoot, " does not respond, cannot continue",
-         call. = FALSE)
+  if (inherits(tmp, "try-error") ||
+      httr::status_code(tmp) != 200L) {
+    stop("Host ", queryUSRoot, " not working as expected, ",
+         "cannot continue: ", tmp[[1]], call. = FALSE)
   }
   #
+  tmp <- httr::content(tmp, as = "text")
   tmp <- gsub("\n|\t|\r", " ", tmp)
   tmp <- gsub("<.*?>", " ", tmp)
   tmp <- gsub("  +", " ", tmp)
@@ -1128,7 +1130,7 @@ ctrLoadQueryIntoDbCtgov <- function(
 #' @keywords internal
 #' @noRd
 #'
-#' @importFrom httr content headers progress write_disk GET HEAD
+#' @importFrom httr content headers progress write_disk GET HEAD status_code
 #' @importFrom curl curl_fetch_multi multi_run new_pool
 #' @importFrom nodbi docdb_query docdb_update
 #'
@@ -1171,15 +1173,16 @@ ctrLoadQueryIntoDbEuctr <- function(
   #
   resultsEuPages <- try(httr::GET(url = q), silent = TRUE)
   #
-  if (inherits(resultsEuPages, "try-error")) {
+  if (inherits(resultsEuPages, "try-error") ||
+      httr::status_code(resultsEuPages) != 200L) {
     if (grepl("SSL certificate.*local issuer certificate", resultsEuPages)) {
       stop("Host ", queryEuRoot, " cannot be queried as expected, error:\n",
            trimws(resultsEuPages), "\nFor a potential workaround, check ",
            "https://github.com/rfhb/ctrdata/issues/19#issuecomment-820127139",
            call. = FALSE)
     } else {
-    stop("Host ", queryEuRoot, " does not respond as expected, error:\n",
-         resultsEuPages, call. = FALSE)
+    stop("Host ", queryEuRoot, " not working as expected, ",
+         "cannot continue: ", resultsEuPages[[1]], call. = FALSE)
     }
   }
   # - store options from request
@@ -1809,7 +1812,7 @@ ctrLoadQueryIntoDbEuctr <- function(
 #' @noRd
 #'
 #' @importFrom jsonlite toJSON
-#' @importFrom httr content headers progress write_disk GET HEAD
+#' @importFrom httr content headers progress write_disk GET HEAD status_code
 #' @importFrom nodbi docdb_query
 #' @importFrom utils URLdecode
 #'
