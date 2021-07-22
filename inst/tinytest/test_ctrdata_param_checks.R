@@ -97,7 +97,7 @@ tf <- function() {
     )
     # no testing if some content is
     # found in the system clipboard
-    if (is.null(tmpcb) || length(tmpcb) > 1L || tmpcb == "") {
+    if (!is.null(tmpcb) && length(tmpcb) == 1L && tmpcb == "") {
       expect_error(
         suppressWarnings(
           suppressMessages(

@@ -186,6 +186,8 @@ expect_message(
       euctrresultspdfpath = tempD,
       con = dbc)),
   "Imported or updated results for 3")
+rm(tempD, q)
+
 
 # get results
 result <- suppressMessages(
@@ -515,6 +517,8 @@ expect_warning(
   "Preferred EUCTR version set to 3RD country trials")
 
 # test, reusing the query string
+q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
+            "2013-003420-37+OR+2009-011454-17+OR+2006-005357-29")
 tmpQ <- strsplit(q, "+OR+", fixed = TRUE)[[1]]
 tmpQ <- gsub(".+=(.?)", "\\1", tmpQ)
 expect_true(all(
@@ -522,7 +526,7 @@ expect_true(all(
     gsub("([0-9]{4}-[0-9]{6}-[0-9]{2})-.*", "\\1", tmpTest)))
 
 # clean up
-rm(tmpTest, tmpQ)
+rm(tmpTest, tmpQ, q)
 
 #### dbGetFieldsIntoDf ####
 
@@ -581,6 +585,7 @@ tmpc <- table(tmpc)
 #       558        10        19         3        79
 
 # tests
+expect_equal(length(tmpf), ncol(result))
 expect_true(tmpc[["character"]] > 45)
 expect_true(tmpc[["Date"]]      >  5)
 expect_true(tmpc[["logical"]]   > 50)
