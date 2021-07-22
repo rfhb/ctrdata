@@ -2,7 +2,7 @@
 
 # check server
 if (httr::status_code(
-  httr::HEAD("https://www.isrctn.com/editAdvancedSearch",
+  httr::GET("https://www.isrctn.com/editAdvancedSearch",
              httr::timeout(5))) != 200L
 ) exit_file("Reason: CTGOV not working")
 

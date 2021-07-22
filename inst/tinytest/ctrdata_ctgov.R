@@ -2,7 +2,7 @@
 
 # check server
 if (httr::status_code(
-  httr::HEAD("https://clinicaltrials.gov/ct2/search",
+  httr::GET("https://clinicaltrials.gov/ct2/search",
              httr::timeout(5))) != 200L
 ) exit_file("Reason: CTGOV not working")
 
