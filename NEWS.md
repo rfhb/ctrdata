@@ -1,8 +1,11 @@
-# ctrdata 1.6.0.9000
- - 2021-05-10
- - minimised database-specific code, using nodbi 0.4.2.9000
- - temporary directory creation when needed and automated deletion
- 
+# ctrdata 1.7.0
+ - 2021-07-24
+ - much reduced database backend-specific code, using nodbi 0.4.3 (released 2021-07-23)
+   which also introduces transactions for sqlite using RSQLite >=2.2.4 (released 2021-03-12)
+ - temporary directory creation only when needed, more automated deletion
+ - changes in detecting non-functioning register servers
+ - further streamlined unit testing
+
 # ctrdata 1.6.0
  - 2021-05-09
  - added support for ISRCTN

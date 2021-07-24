@@ -1,8 +1,8 @@
 Package: ctrdata
 Type: Package
 Title: Retrieve and Analyze Clinical Trials in Public Registers
-Version: 1.6.0.9000
-Imports: jsonlite, httr, curl, clipr, xml2, rvest, nodbi (>= 0.4.2.9000), DBI, stringi
+Version: 1.7.0
+Imports: jsonlite, httr, curl, clipr, xml2, rvest, nodbi (>= 0.4.3), DBI, stringi
 SystemRequirements: sed, php, cat, perl
 URL: https://cran.r-project.org/package=ctrdata
 BugReports: https://github.com/rfhb/ctrdata/issues
@@ -22,7 +22,7 @@ Description: Provides functions for querying, retrieving and analyzing
         the design and conduct as well as results of clinical trials.
 License: MIT + file LICENSE
 RoxygenNote: 7.1.1
-Suggests: devtools, knitr, rmarkdown, RSQLite (>= 2.1.2), mongolite, 
+Suggests: devtools, knitr, rmarkdown, RSQLite (>= 2.2.4), mongolite, 
         tinytest (>= 1.2.1), R.rsp 
 VignetteBuilder: R.rsp
 NeedsCompilation: no
