@@ -4,15 +4,6 @@
     <loc>https://rfhb.github.io/ctrdata//index.html</loc>
   </url>
   <url>
-    <loc>https://rfhb.github.io/ctrdata//reference/addMetaData.html</loc>
-  </url>
-  <url>
-    <loc>https://rfhb.github.io/ctrdata//reference/checkBinary.html</loc>
-  </url>
-  <url>
-    <loc>https://rfhb.github.io/ctrdata//reference/ctrConvertToJSON.html</loc>
-  </url>
-  <url>
     <loc>https://rfhb.github.io/ctrdata//reference/ctrDb.html</loc>
   </url>
   <url>
@@ -28,31 +19,10 @@
     <loc>https://rfhb.github.io/ctrdata//reference/ctrLoadQueryIntoDb.html</loc>
   </url>
   <url>
-    <loc>https://rfhb.github.io/ctrdata//reference/ctrLoadQueryIntoDbCtgov.html</loc>
-  </url>
-  <url>
-    <loc>https://rfhb.github.io/ctrdata//reference/ctrLoadQueryIntoDbEuctr.html</loc>
-  </url>
-  <url>
-    <loc>https://rfhb.github.io/ctrdata//reference/ctrLoadQueryIntoDbIsrctn.html</loc>
-  </url>
-  <url>
     <loc>https://rfhb.github.io/ctrdata//reference/ctrOpenSearchPagesInBrowser.html</loc>
   </url>
   <url>
-    <loc>https://rfhb.github.io/ctrdata//reference/ctrRerunQuery.html</loc>
-  </url>
-  <url>
     <loc>https://rfhb.github.io/ctrdata//reference/ctrdata.html</loc>
-  </url>
-  <url>
-    <loc>https://rfhb.github.io/ctrdata//reference/dbCTRAnnotateQueryRecords.html</loc>
-  </url>
-  <url>
-    <loc>https://rfhb.github.io/ctrdata//reference/dbCTRLoadJSONFiles.html</loc>
-  </url>
-  <url>
-    <loc>https://rfhb.github.io/ctrdata//reference/dbCTRUpdateQueryHistory.html</loc>
   </url>
   <url>
     <loc>https://rfhb.github.io/ctrdata//reference/dbFindFields.html</loc>
@@ -83,18 +53,6 @@
   </url>
   <url>
     <loc>https://rfhb.github.io/ctrdata//reference/installCygwinWindowsDoInstall.html</loc>
-  </url>
-  <url>
-    <loc>https://rfhb.github.io/ctrdata//reference/installCygwinWindowsTest.html</loc>
-  </url>
-  <url>
-    <loc>https://rfhb.github.io/ctrdata//reference/installFindBinary.html</loc>
-  </url>
-  <url>
-    <loc>https://rfhb.github.io/ctrdata//reference/setProxy.html</loc>
-  </url>
-  <url>
-    <loc>https://rfhb.github.io/ctrdata//reference/typeField.html</loc>
   </url>
   <url>
     <loc>https://rfhb.github.io/ctrdata//articles/ctrdata_analyse.html</loc>

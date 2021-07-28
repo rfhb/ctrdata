@@ -1,3 +1,8 @@
+# ctrdata 1.7.0.9000
+ - 2021-07-26
+ - new development version
+ - DBI not needed in Imports anymore
+
 # ctrdata 1.7.0
  - 2021-07-24
  - much reduced database backend-specific code, using nodbi 0.4.3 (released 2021-07-23)
