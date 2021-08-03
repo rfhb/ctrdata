@@ -1,10 +1,11 @@
 ## RH 2021-04-25
 
 # check server
+httr::set_config(httr::timeout(seconds = 60))
+
 if (httr::status_code(
-  httr::GET("https://www.isrctn.com/editAdvancedSearch",
-             httr::timeout(5))) != 200L
-) exit_file("Reason: CTGOV not working")
+  httr::GET("https://www.isrctn.com/editAdvancedSearch")) != 200L
+) exit_file("Reason: ISRCTN not working")
 
 #### ctrLoadQueryIntoDb ####
 
