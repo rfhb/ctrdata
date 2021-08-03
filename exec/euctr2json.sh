@@ -14,24 +14,22 @@
 # 2016-09-11: real 1.2 s for 151 documents: ~  8 ms per trial (MacBookPro2015)
 # 2017-01-12: real 1m23.021s for 10978 doc: ~  8 ms per trial (MacBookPro2015)
 # 2019-08-10: real 3s    for 446 documents: ~  7 ms per trial (MacBookPro2015)
-# 2021-04-18: 5.7 s for 503 records: ~ 11 ms per trial (MacBookPro2015)
+# 2021-04-18: total 5.7 s for 503 records: ~ 11 ms per trial (MacBookPro2015)
 # 2021-05-07: total 2.5 s for 366 records: ~ 7 ms per trial (MacBookPro2015)
+# 2021-08-03: total 2.6 s for 375 records: ~ 7 ms per trial (MacBookPro2015)
 
 # notes to myself: sed cannot use + or other
 # alternatively install gnu-sed: > brew install gnu-sed
 # perl: The -p argument makes sure the code gets executed on
-# every line, and that the line gets printed out after that.
-
-# transform to json for import in mongodb, reference:
-# http://docs.mongodb.org/manual/reference/bios-example-collection/
+# every line, and that the line gets printed out after that
 
 for inFileName in "$1"/euctr_trials_*.txt; do
-    [ -e "$inFileName" ] || continue
 
-    outFileName=( `echo $inFileName | sed 's/txt$/json/'` )
-    # echo $outFileName
+  [ -e "$inFileName" ] || continue
 
-LC_CTYPE=C && LANG=C && < "$inFileName" perl -ne '
+  outFileName="`echo "$inFileName" | sed 's/txt$/json/'`"
+
+LC_CTYPE=C && LANG=C && perl <"$inFileName" -ne '
   # this section is faster with perl compared to sed
 
   # get UTC date, time in format correspondsing to the
