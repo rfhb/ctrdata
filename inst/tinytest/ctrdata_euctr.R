@@ -1,14 +1,21 @@
 ## RH 2019-09-28
 
 # check server
-if (httr::status_code(
-  httr::GET("https://www.clinicaltrialsregister.eu/ctr-search/search",
-             httr::timeout(5))) != 200L
+testUrl <- "https://www.clinicaltrialsregister.eu/ctr-search/search"
+testGet <- function() try(httr::GET(testUrl, httr::timeout(5)), silent = TRUE)
+testOnce <- testGet()
+
+if (inherits(testOnce, "try-error") &&
+    grepl("SSL certificate.*local issuer certificate", testOnce)) {
+  # message("Switching off certificate verification")
+  httr::set_config(httr::config(ssl_verifypeer = FALSE))
+  testOnce <- testGet()
+}
+
+if (httr::status_code(testOnce) != 200L
 ) exit_file("Reason: EUCTR not working")
 
-# if set in environment, propagate
-if (Sys.getenv("_CURL_NO_SSL_VERIFYPEER_")
-) httr::set_config(httr::config(ssl_verifypeer = FALSE))
+rm(testUrl, testGet, testOnce)
 
 #### ctrLoadQueryIntoDb ####
 
