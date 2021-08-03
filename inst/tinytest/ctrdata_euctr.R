@@ -6,6 +6,10 @@ if (httr::status_code(
              httr::timeout(5))) != 200L
 ) exit_file("Reason: EUCTR not working")
 
+# if set in environment, propagate
+if (Sys.getenv("_CURL_NO_SSL_VERIFYPEER_")
+) httr::set_config(httr::config(ssl_verifypeer = FALSE))
+
 #### ctrLoadQueryIntoDb ####
 
 # test
