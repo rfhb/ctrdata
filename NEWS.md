@@ -2,6 +2,7 @@
  - 2021-07-26
  - new development version
  - DBI not needed in Imports anymore
+ - fix potential file name issue in conversion script
 
 # ctrdata 1.7.0
  - 2021-07-24

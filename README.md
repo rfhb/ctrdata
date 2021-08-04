@@ -23,7 +23,7 @@ aggregating and analysing this information; it can be used for the
 The motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. The package
 is to be used within the [R](https://www.r-project.org/) system; this
-README was reviewed on 2021-07-24 for version 1.7.0.
+README was reviewed on 2021-08-01 for version 1.7.0.9000.
 
 Main features:
 
@@ -161,6 +161,9 @@ ctrOpenSearchPagesInBrowser(copyright = TRUE)
 -   When trials of interest are listed in browser, *copy the address
     from the browser’s address bar to the clipboard*
 
+-   Search used in this example:
+    <https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&age=under-18&phase=phase-one&status=completed>
+
 -   Get address from clipboard:
 
 ``` r
@@ -252,6 +255,9 @@ with(result,
 
 -   Add records from another register (CTGOV) into the same database
 
+-   Search used in this example:
+    <https://clinicaltrials.gov/ct2/results?cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug>
+
 ``` r
 # Retrieve trials from another register:
 ctrLoadQueryIntoDb(
@@ -270,6 +276,9 @@ ctrLoadQueryIntoDb(
 ```
 
 -   Add records from another register (ISRCTN) into the same database
+
+-   Search used in this example:
+    <https://www.isrctn.com/search?q=neuroblastoma>
 
 ``` r
 # Retrieve trials from another register:
@@ -322,7 +331,7 @@ nsite <- dfName2Value(
   # location.name, others use
   # location.facility.name
   valuename = "^location.*name$"
-) 
+)
 # count
 nsite <- tapply(
   X = nsite[["value"]], 
