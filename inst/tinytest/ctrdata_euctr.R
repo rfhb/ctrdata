@@ -584,6 +584,8 @@ result <- suppressMessages(
       verbose = TRUE,
       stopifnodata = FALSE)
   ))
+tmpr <- names(result)
+tmpr <- tmpr[tmpr != "_id"]
 # determine all classes
 tmpc <- sapply(result, class,
                USE.NAMES = FALSE)
@@ -596,7 +598,7 @@ tmpc <- table(tmpc)
 #       558        10        19         3        79
 
 # tests
-expect_equal(length(tmpf), ncol(result))
+expect_equal(length(tmpf), length(tmpr))
 expect_true(tmpc[["character"]] > 45)
 expect_true(tmpc[["Date"]]      >  5)
 expect_true(tmpc[["logical"]]   > 50)
@@ -609,8 +611,11 @@ expect_true(tmpc[["logical"]]   > 50)
 # objects and terminal / no more nested
 # fields
 
+saveRDS(tmpf, "tmpf.rds")
+saveRDS(tmpr, "tmpr.rds")
+
 # clean up
-rm(tmpf, tmpc, result)
+rm(tmpf, tmpr, tmpc, result)
 
 
 #### ctrOpenSearchPagesInBrowser #####
