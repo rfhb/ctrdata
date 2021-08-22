@@ -380,7 +380,7 @@ Use connection with nodbi functions | `nodbi::docdb_*(src = dbc, key = dbc$colle
 
 * Please file issues and bugs [here](https://github.com/rfhb/ctrdata/issues). 
 
-* Information in trial registers may not be fully correct; see for example [this publication on CTGOV](https://www.bmj.com/content/361/bmj.k1452). 
+* Information in trial registers may not be fully correct; see for example [this publication on CTGOV](https://doi.org/10.1136/bmj.k1452). 
 
 * No attempts were made to harmonise field names between registers (nevertheless, `dfMergeTwoVariablesRelevel()` can be used to merge and map two variables / fields into one).
 

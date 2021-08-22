@@ -1,9 +1,10 @@
 # ctrdata 1.7.0.9000
  - 2021-07-26
  - new development version
- - DBI not needed in Imports anymore
+ - fix DBI not needed in Imports anymore (CRAN Note)
  - fix potential file name issue in conversion script
- - fix dbFindFields to not return _id (was returned depending on database backend)
+ - fix dbFindFields() to never return _id (previously depended on database backend)
+ - changed tests (not on CRAN detection, register availability, additional tests)
 
 # ctrdata 1.7.0
  - 2021-07-24

@@ -589,7 +589,7 @@ dbQueryHistory <- function(con,
 #'
 #' For fields in EUCTR (protocol- and results-related information),
 #' see also the register's documentation at
-#' \url{https://eudract.ema.europa.eu/}.
+#' \url{https://eudract.ema.europa.eu/result.html}.
 #'
 #' For fields in CTGOV (protocol-related information), see also
 #' the register's definitions at

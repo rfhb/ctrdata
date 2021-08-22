@@ -423,7 +423,7 @@ functions of `nodbi` in a consistent way, as shown in the table:
 
 -   Information in trial registers may not be fully correct; see for
     example [this publication on
-    CTGOV](https://www.bmj.com/content/361/bmj.k1452).
+    CTGOV](https://doi.org/10.1136/bmj.k1452).
 
 -   No attempts were made to harmonise field names between registers
     (nevertheless, `dfMergeTwoVariablesRelevel()` can be used to merge
