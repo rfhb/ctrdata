@@ -154,9 +154,10 @@
 <ul>
 <li>2021-07-26</li>
 <li>new development version</li>
-<li>DBI not needed in Imports anymore</li>
+<li>fix DBI not needed in Imports anymore (CRAN Note)</li>
 <li>fix potential file name issue in conversion script</li>
-<li>fix dbFindFields to not return _id (was returned depending on database backend)</li>
+<li>fix dbFindFields() to never return _id (previously depended on database backend)</li>
+<li>changed tests (not on CRAN detection, register availability, additional tests)</li>
 </ul>
 </div>
     <div id="ctrdata-170" class="section level1">
