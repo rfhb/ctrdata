@@ -3,6 +3,7 @@
  - new development version
  - DBI not needed in Imports anymore
  - fix potential file name issue in conversion script
+ - fix dbFindFields to not return _id (was returned depending on database backend)
 
 # ctrdata 1.7.0
  - 2021-07-24

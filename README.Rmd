@@ -38,7 +38,7 @@ The package `ctrdata` provides functions for retrieving (downloading) informatio
 - ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/) 
 - ISRCTN (https://www.isrctn.com/) `r emo::ji("bell")`new in version 1.6.0 `r emo::ji("+1")`
 
-The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. The package is to be used within the [R](https://www.r-project.org/) system; this README was reviewed on 2021-08-01 for version 1.7.0.9000.
+The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. The package is to be used within the [R](https://www.r-project.org/) system; this README was reviewed on 2021-08-22 for version 1.7.0.9001.
 
 Main features:
 
