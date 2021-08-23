@@ -1,3 +1,7 @@
+# ctrdata 1.7.1.9000
+ - 2021-08-23
+ - new development version
+
 # ctrdata 1.7.1
  - 2021-08-22
  - fix DBI not needed in Imports anymore (CRAN Note)
