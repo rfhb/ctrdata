@@ -1,5 +1,5 @@
 ## Test environments
-* local: macOS (20.6.0), R 3.6.3, R 4.1.0; Windows (19043.1110), R 4.1.0
+* local: macOS (20.6.0), R 3.6.3, R 4.1.2; Windows (19043.1110), R 4.1.0
 * github-actions: Windows (Microsoft Windows Server 2019), R release
 * github-actions: macOS (10.15.7), R release and R oldrel
 * R: win-builder (2021-08-20 r80804), R-hub builder (check_for_cran)
@@ -11,11 +11,17 @@
 None
 
 ## Submission reason
-* fix DBI not needed in Imports anymore (should fix Note on CRAN)
-* fix potential file name issue in conversion script for register text to JSON
-* fix dbFindFields() to never return _id (previously depended on database backend)
-* changed tests (CRAN detection, register availability, additional tests) (should fix Error on CRAN for r-patched-linux-x86_64)
+* changes to match nodbi 0.5.0 
+* simplifying database operations (user-visible functions: 
+  ctrLoadQueryIntoDb, dbFindIdsUniqueTrials, dbGetFieldsIntoDf), 
+  without changes to API
+* dbGetFieldsIntoDf: a field that is a list containing a data frame
+  is returned as a data frame for RSQLite and as a list for MongoDB
+  database backends, by intention to provide user simple return values
 
+## Note
+
+* this release depends on nodbi 0.5.0, which I just submitted to CRAN 
 
 ----------
 Thanks & greetings

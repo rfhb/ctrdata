@@ -3,7 +3,7 @@
 # check server
 if (httr::status_code(
   httr::GET("https://clinicaltrials.gov/ct2/search",
-             httr::timeout(5))) != 200L
+            httr::timeout(5))) != 200L
 ) exit_file("Reason: CTGOV not working")
 
 #### ctrLoadQueryIntoDb ####
@@ -11,10 +11,10 @@ if (httr::status_code(
 # test
 expect_equal(
   suppressMessages(
-  ctrLoadQueryIntoDb(
-    queryterm = "2010-024264-18",
-    register = "CTGOV",
-    only.count = TRUE))[["n"]], 1L)
+    ctrLoadQueryIntoDb(
+      queryterm = "2010-024264-18",
+      register = "CTGOV",
+      only.count = TRUE))[["n"]], 1L)
 
 # test
 expect_message(
@@ -47,11 +47,11 @@ expect_message(
 expect_error(
   suppressWarnings(
     suppressMessages(
-    ctrLoadQueryIntoDb(
-      queryterm = paste0(
-        "https://clinicaltrials.gov/ct2/results?cond=Cancer&type=Intr&phase=0",
-        "&strd_s=01%2F02%2F2005&strd_e=12%2F31%2F2017"),
-      con = dbc))),
+      ctrLoadQueryIntoDb(
+        queryterm = paste0(
+          "https://clinicaltrials.gov/ct2/results?cond=Cancer&type=Intr&phase=0",
+          "&strd_s=01%2F02%2F2005&strd_e=12%2F31%2F2017"),
+        con = dbc))),
   "more than 10,000) trials")
 
 
@@ -96,13 +96,12 @@ hist[nrow(hist), "query-term"] <-
 json <- jsonlite::toJSON(list("queries" = hist))
 
 # update database
-nodbi::docdb_update(
-  src = dbc,
-  key = dbc$collection,
-  value = data.frame("_id" = "meta-info",
-                     "content" = as.character(json),
-                     stringsAsFactors = FALSE,
-                     check.names = FALSE))
+expect_equal(
+  nodbi::docdb_update(
+    src = dbc,
+    key = dbc$collection,
+    value = as.character(json),
+    query = '{"_id": "meta-info"}'), 1L)
 
 # test
 expect_message(

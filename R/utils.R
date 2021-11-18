@@ -527,8 +527,7 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "") {
 #' )
 #' }
 #'
-dbQueryHistory <- function(con,
-                           verbose = FALSE) {
+dbQueryHistory <- function(con, verbose = FALSE) {
 
   ## check database connection
   if (is.null(con$ctrDb)) con <- ctrDb(con = con)
@@ -569,7 +568,6 @@ dbQueryHistory <- function(con,
       query =  '{"_id": {"$ne": "meta-info"}}',
       fields = '{"_id": 1}')[["_id"]])
 
-    # if (verbose)
     message("Number of records in collection \"",
             con$collection, "\": ", countall)
 
@@ -686,6 +684,7 @@ dbFindFields <- function(namepart = "",
                key = key.replace(/[.][0-9]+[.]/g, '.');
                key = key.replace(/[.][0-9]+$/, '');
                key = key.replace(/[.][.]+/g, '.');
+               key = key.replace(/[.]$/g, '');
                key = key.replace(/^[.]/, '');
                emit(key, 1);
       }}}}",
@@ -827,34 +826,30 @@ dbFindIdsUniqueTrials <- function(
   message("Searching for duplicate trials... ")
   message(" - Getting trial ids...", appendLF = FALSE)
 
+  # fields for database query
+  fields <- c(
+    "ctrname",
+    # euctr
+    "a2_eudract_number",
+    "a52_us_nct_clinicaltrialsgov_registry_number",
+    "trialInformation.usctnIdentifier",
+    "a51_isrctn_international_standard_randomised_controlled_trial_number",
+    "trialInformation.isrctnIdentifier",
+    "a41_sponsors_protocol_code_number",
+    # ctgov
+    "id_info",
+    # isrctn
+    "externalRefs",
+    "isrctn"
+  )
+
   # get identifiers
   listofIds <- try(suppressMessages(suppressWarnings(
-    dbGetFieldsIntoDf(fields = c(
-      "ctrname",
-      # euctr
-      "a2_eudract_number",
-      "a52_us_nct_clinicaltrialsgov_registry_number",
-      "trialInformation.usctnIdentifier",
-      "a51_isrctn_international_standard_randomised_controlled_trial_number",
-      "trialInformation.isrctnIdentifier",
-      "a41_sponsors_protocol_code_number",
-      # ctgov
-      "id_info.secondary_id",
-      "id_info.org_study_id",
-      "id_info.nct_id",
-      "id_info.nct_alias",
-      "id_info.secondary_id",
-      "id_info.secondary_id",
-      "id_info.org_study_id",
-      # isrctn
-      "externalRefs.eudraCTNumber",
-      "externalRefs.clinicalTrialsGovNumber",
-      "isrctn",
-      "externalRefs.protocolSerialNumber"
-    ),
-    con = con,
-    verbose = FALSE,
-    stopifnodata = FALSE)
+    dbGetFieldsIntoDf(
+      fields = fields,
+      con = con,
+      verbose = FALSE,
+      stopifnodata = FALSE)
   )),
   silent = TRUE
   )
@@ -871,6 +866,44 @@ dbFindIdsUniqueTrials <- function(
 
   # copy attributes
   attribsids <- attributes(listofIds)
+
+  # target fields for further steps in this function
+  fields <- c(
+    "_id",
+    "ctrname",
+    # euctr
+    "a2_eudract_number",
+    "a52_us_nct_clinicaltrialsgov_registry_number",
+    "trialInformation.usctnIdentifier",
+    "a51_isrctn_international_standard_randomised_controlled_trial_number",
+    "trialInformation.isrctnIdentifier",
+    "a41_sponsors_protocol_code_number",
+    # ctgov
+    "id_info.secondary_id",
+    "id_info.org_study_id",
+    "id_info.nct_id",
+    "id_info.nct_alias",
+    "id_info.secondary_id",
+    "id_info.secondary_id",
+    "id_info.org_study_id",
+    # isrctn
+    "externalRefs.eudraCTNumber",
+    "externalRefs.clinicalTrialsGovNumber",
+    "isrctn",
+    "externalRefs.protocolSerialNumber"
+  )
+
+  # add any missing columns
+  missFields <- setdiff(fields, names(listofIds))
+  if (length(missFields)) {
+    missCols <- matrix(nrow = nrow(listofIds), ncol = length(missFields))
+    missCols <- data.frame(missCols)
+    names(missCols) <- missFields
+    listofIds <- cbind(listofIds, missCols)
+  }
+
+  # replicate columns to make data frame fit subsequent steps
+  listofIds <- listofIds[, fields, drop = FALSE]
 
   # rename columns for content mangling
   names(listofIds) <- c(
@@ -898,7 +931,7 @@ dbFindIdsUniqueTrials <- function(
     c("euctr.3", regEuctr)
   )
   # - do mangling
-  silencer <- sapply(
+  invisible(sapply(
     colsToMangle,
     function(ctm) {
       colMangled <- regmatches(
@@ -907,7 +940,7 @@ dbFindIdsUniqueTrials <- function(
       listofIds[[ ctm[[1]] ]] <<- unlist({ # needs <<-
         colMangled[!lengths(colMangled)] <- ""; colMangled})
       NULL
-    })
+    }))
   # - merge columns for register ids and sponsor ids
   for (reg in c(registerList, "SPONSOR")) {
     listofIds[[reg]] <- apply(listofIds[
@@ -1106,12 +1139,14 @@ dbGetFieldsIntoDf <- function(fields = "",
   ## check database connection
   if (is.null(con$ctrDb)) con <- ctrDb(con = con)
 
-  # helper function for managing lists
-  listDepth <- function(x) {
-    if (is.null(x)) return(0L)
-    if (is.atomic(x)) return(1L)
-    if (is.list(x)) return(1L + max(vapply(x, listDepth, integer(1L)), 0L))
-  }
+  # get all ids to enable Reduce which would fail
+  # due to holes from NULLs from the merge step
+  dft <- nodbi::docdb_query(
+    src = con,
+    key = con$collection,
+    query = '{}',
+    fields = paste0('{"_id": 1}'))
+  dft <- dft[dft[["_id"]] != "meta-info", "_id", drop = FALSE]
 
   # initialise output
   nFields <- length(fields)
@@ -1123,9 +1158,9 @@ dbGetFieldsIntoDf <- function(fields = "",
     function(i) {
       #
       item <- fields[i]
-      message(". ", appendLF = FALSE)
+      message("     \r", i, appendLF = FALSE)
       #
-      query <- paste0('{"_id": {"$ne": "meta-info"}}')
+      query <- '{"_id": {"$ne": "meta-info"}}'
       if (verbose) message("DEBUG: field: ", item)
       #
       tmpItem <- try({
@@ -1138,119 +1173,98 @@ dbGetFieldsIntoDf <- function(fields = "",
           fields = paste0('{"_id": 1, "', item, '": 1}'))
 
         # leave try() early if no results
-        if (!nrow(dfi)) simpleError(message = "")
+        if (!nrow(dfi) || ncol(dfi) == 1L) simpleError(message = "")
 
-        # unboxing is not done in docdb_query
-        # (for loop could not be replaced by
-        # *apply and assignment to dfi[[2]])
-        for (i in seq_len(nrow(dfi))) {
-          if (!is.null(dfi[i, 2]) &&
-              is.list(dfi[i, 2]) &&
-              !identical(dfi[i, 2], list(NULL)) &&
-              !is.data.frame(dfi[i, 2][[1]])) {
+        # remove any rows without index variable
+        dfi <- dfi[!is.na(dfi[["_id"]]), , drop = FALSE]
 
-            dfi[i, 2][[1]] <- list(jsonlite::fromJSON(
-              jsonlite::toJSON(dfi[i, 2], auto_unbox = TRUE)))
-
-          }}
-
-        # ensure intended column order
-        tmp <- names(dfi)
-        if (tmp[1L] != "_id") {
-          dfi <- dfi[, c("_id", tmp[tmp != "_id"])]
+        # simplify
+        itemSegments <- strsplit(item, "[.]")[[1]]
+        itemSegments <- setdiff(itemSegments, names(dfi))
+        for (iS in itemSegments) {
+          if ((length(names(dfi[[2]])) == 1L) && (iS == names(dfi[[2]]))) {
+            dfi[[2]] <- dfi[[2]][[iS]]
+          } else {
+            tn <- sapply(dfi[[2]], names)
+            if (length(unique(tn)) == 1L && (iS == tn[1]))
+              dfi[[2]] <- sapply(dfi[[2]], "[[", 1)
+          }
         }
 
-        ## simplify if robust
-
-        # - if each [,2] is a list or data frame with one level
-        #   e.g., mongodb: enrollment; study_design_info.allocation
-        if ((ncol(dfi) == 2) &&
-            (all(vapply(dfi[, 2],
-                        function(x)
-                          listDepth(x) <= 1L, logical(1L)))
-            )) {
-          # concatenate (has to remain as sapply
-          # because of different content types)
-          dfi[, 2] <- sapply(
-            dfi[, 2],
-            function(x)
-              paste0(na.omit(unlist(x, use.names = FALSE)),
-                     collapse = " / "))
-          # inform user
-          message("\r* Collapsed with '/' [1]: '", item, "'")
-          # remove any extraneous columns
-          dfi <- dfi[, 1:2]
+        # expand any resulted data frame
+        if (length(unique(names(dfi[[2]]))) > 1L) {
+          item <- paste0(item, ".", names(dfi[[2]]))
+          dfi <- cbind("_id" = dfi[["_id"]], as.data.frame(dfi[[2]]))
+          emptyCols <- sapply(dfi, function(c) all(is.na(c)))
+          emptyCols <- seq_along(emptyCols)[emptyCols]
+          if (length(emptyCols)) dfi <- dfi[, -emptyCols, drop = FALSE]
+          if (length(emptyCols)) item <- item[-(emptyCols - 1L)]
         }
-        #
-        # - if dfi[, 2:ncol(dfi)] is from the same field
-        #   e.g., mongodb: study_design_info
-        if ((length(ncol(dfi[, 2])) && ncol(dfi[, 2]) > 1L) ||
-            ((ncol(dfi) > 2L) &&
-             all(grepl(paste0(item, "[.].+$"),
-                       names(dfi)[-1])))) {
 
-          # store names
-          tmpnames <- gsub(".+?[.](.+)$", "\\1", names(dfi)[-1])
-          names(dfi)[-1] <- tmpnames
+        # name result set
+        names(dfi) <- c("_id", item)
 
-          # concatenate to list
-          tmpById <- split(dfi[, 2:ncol(dfi)],
-                           seq_len(nrow(dfi)))
+        # create output from template
+        dfo <- dft
 
-          # remove extraneous columns
-          dfi <- dfi[, 1:2]
+        # process results
+        for (c in seq_len(ncol(dfi))[-1]) {
 
-          # create items in column from list
-          dfi[[2]] <- tmpById
+          # simplify if each cell is one atomic element
+          if (all(sapply(dfi[[c]], function(r)
+            (length(r) == 1L) && is.atomic(r))) &&
+            (length(dfi[[c]]) == nrow(dfi))) {
+            dfi[[c]] <- sapply(dfi[[c]], "[[", 1)
+          }
 
-          # inform user
-          message("\r* Converted to list [2]: '", item, "'")
+          # simplify vectors by collapsing (compatibility with previous version)
+          if (all(sapply(dfi[[c]], is.character)) &&
+              any(sapply(dfi[[c]], function(r) length(r) > 1L))) {
+            dfi[[c]] <- sapply(dfi[[c]], function(i) paste0(i, collapse = " / "))
+          }
 
-        }
-        #
-        # - if each [,2] is a list with a single and the same element
-        if (all(vapply(
-          dfi[, 2], function(i) is.null(i) | is.list(i), logical(1L))) &&
-          length(unique(unlist(sapply(
-            dfi[, 2], function(i) unique(gsub("[0-9]+$", "", names(unlist(i))))
-          )))) <= 1L) {
-          #
-          dfi[, 2] <- vapply(
-            dfi[, 2], function(i) paste0(
-              na.omit(unlist(i, use.names = FALSE)),
-              collapse = " / "), character(1L))
-          # inform user
-          message("\r* Simplified or collapsed with '/' [3]: '", item, "'")
-        }
+          # type results
+          if (typeof(dfi[[c]]) == "character") dfi[[c]] <-
+              typeField(dfi[, c(1, c), drop = FALSE])[, 2, drop = TRUE]
+
+          # add a column
+          dfo[[c]] <- switch(
+            class(dfi[[c]]),
+            "Date" = as.Date(NA),
+            "numeric" = as.numeric(NA),
+            "character" = as.character(NA),
+            "data.frame" = NA, #as.data.frame(NA),
+            "integer" = as.integer(NA),
+            "list" = NA, #as.list(NA),
+            "logical" = as.logical(NA),
+            NA
+          )
+
+        } # for process
+
+        # add NA where dfi has no data to avoid NULL when merge'ing
+        names(dfo) <- names(dfi)
+        dfi <- rbind(dfo[!(dfo[["_id"]] %in% dfi[["_id"]]), , drop = FALSE], dfi)
 
       },
       silent = TRUE) # tmpItem try
 
       # inform user
       if (inherits(tmpItem, "try-error") ||
-          !nrow(dfi)) {
+          !nrow(dfi) || (ncol(dfi) == 1L)) {
 
         # try-error occurred or no data retrieved
         if (stopifnodata) {
           stop("No data could be extracted for '", item,
                "'. \nUse dbGetFieldsIntoDf(stopifnodata = ",
-               "FALSE) to ignore this. ",
-               call. = FALSE)
+               "FALSE) to ignore this. ", call. = FALSE)
         } else {
           message("* No data: '", item, "'")
           # create empty data set
-          dfi <- data.frame("_id" = NA, NA,
-                            check.names = FALSE,
-                            stringsAsFactors = FALSE)
+          dfi <- cbind(dft, NA)
+          names(dfi) <- c("_id", fields[i])
         } # stopifnodata
       } # if
-
-      # name result set
-      names(dfi) <- c("_id", item)
-
-      # type item field - note this introduces NAs
-      # for fields with no values for a trial
-      dfi <- typeField(dfi)
 
       # add to result
       dfi
@@ -1261,30 +1275,24 @@ dbGetFieldsIntoDf <- function(fields = "",
   result <- Reduce(function(...) merge(..., all = TRUE, by = "_id"), result)
 
   # prune rows that do not have any results
-  result <- result[
-    !is.na(result[["_id"]]) &
-      apply(
-        X = result[, -1, drop = FALSE],
-        MARGIN = 1,
-        function(r) {
-          r <- unlist(r, use.names = FALSE)
-          r <- na.omit(r)
-          r <- nchar(r)
-          sum(r)
-        }), ]
+  result <- result[!is.na(result[["_id"]]), , drop = FALSE]
+
+  # remove rows with only NAs
+  result <- result[!apply(
+    result[, -1, drop = FALSE], 1, function(r) all(is.na(r))), , drop = FALSE]
 
   # finalise output
   if (is.null(result) || !nrow(result)) {
-    stop("No records with values for any specified field. ",
-         call. = FALSE)
+    warning("No records with values for any specified field. ",
+            call. = FALSE)
+    return(NULL)
   }
 
-  # add metadata
-  result <- addMetaData(result,
-                        con = con)
-
-  # return
-  return(result)
+  # sort, add meta data and return
+  return(
+    addMetaData(
+      result[order(result[["_id"]]), , drop = FALSE],
+      con = con))
 }
 # end dbGetFieldsIntoDf
 
@@ -2025,21 +2033,19 @@ dfFindUniqueEuctrRecord <- function(
 typeField <- function(dfi) {
 
   # check
-  if (ncol(dfi) != 2) {
+  if (ncol(dfi) != 2L) {
     stop("Expect data frame with two columns, _id and a field.",
          call. = FALSE)
   }
 
-  # clean up anyway in input
-  #
-  # - just return if all is a list, such as with parent elements
-  if (inherits(dfi[, 2], "list")) return(dfi)
-  #
-  # - if NA as string, change to empty string
-  if (all(class(dfi[, 2]) == "character")) dfi[dfi[, 2] == "NA", 2] <- ""
-  #
+  # clean up input
+  # - if NA as string, change to NA
+  dfi[grepl("^N/?A$", dfi[, 2]), 2] <- NA
   # - give Month Year also a Day to work with as.Date
   dfi[, 2] <- sub("^([a-zA-Z]+) ([0-9]{4})$", "\\1 15, \\2", dfi[, 2])
+  # - convert html entities
+  if (any(grepl("&[a-z]+;", dfi[, 2]))) dfi[, 2] <- sapply(
+    dfi[, 2], function(i) xml2::xml_text(xml2::read_html(charToRaw(i))))
 
   # for date time conversion
   lct <- Sys.getlocale("LC_TIME")
@@ -2081,7 +2087,11 @@ typeField <- function(dfi) {
       "study_first_posted"      = ctrDateUs(),
       "results_first_posted"    = ctrDateUs(),
       "last_update_posted"      = ctrDateUs(),
-      #
+      # - ISRCTN
+      "participants.recruitmentStart" = ctrDateTime(),
+      "participants.recruitmentEnd"   = ctrDateTime(),
+      "trialDesign.overallStartDate"  = ctrDateTime(),
+      "trialDesign.overallEndDate"    = ctrDateTime(),
       #
       # factors
       #
@@ -2153,6 +2163,9 @@ typeField <- function(dfi) {
       "oversight_info.has_dmc"         = ctrYesNo(),
       "eligibility.healthy_volunteers" = ctrYesNo(),
       #
+      # - ISRCTN
+      "trialDescription.acknowledgment" = ctrFalseTrue(),
+      "results.biomedRelated"           = ctrFalseTrue(),
       #
       # numbers
       #
@@ -2182,6 +2195,12 @@ typeField <- function(dfi) {
       "number_of_arms" = ctrInt(),
       "enrollment"     = ctrInt(),
       #
+      # - ISRCTN
+      "participants.targetEnrolment"      = ctrInt(),
+      "participants.totalTarget"          = ctrInt(),
+      "participants.totalFinalEnrolment"  = ctrInt(),
+      "externalRefs.protocolSerialNumber" = ctrInt(),
+      #
       # TODO: results-related variables
       "trialInformation.analysisForPrimaryCompletion" = ctrFalseTrue()
       #
@@ -2193,20 +2212,8 @@ typeField <- function(dfi) {
   if (!inherits(tmp, "try-error") &&
       !is.null(unlist(tmp, use.names = FALSE))) {
 
-    # info to user
-    testType <- dfi[is.na(tmp), , drop = FALSE]
-    testType <- testType[testType[[2]] != "", ]
-    if (nrow(testType)) {
-      message("Unexpected string(s) in column '",
-              names(testType)[2], "':\n",
-              paste0(testType[[2]], collapse = " / "),
-              ", for _id(s)\n",
-              paste0(testType[[1]], collapse = " / "))
-    }
-
-    # need to construct new data frame,
-    # since replacing columns with
-    # posixct did not work
+    # need to construct new data frame, because
+    # replacing columns with posixct does not work
     dfn <- names(dfi)
     dfi <- data.frame(dfi[["_id"]],
                       tmp,
