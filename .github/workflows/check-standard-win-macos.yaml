@@ -3,8 +3,7 @@
 on:
   push:
     branches:
-      - master
-      - prep_additional_nodbi_functions
+      - nodbi050
   pull_request:
     branches:
       - master
@@ -67,7 +66,7 @@ jobs:
           install.packages(c("remotes"))
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran(c("rcmdcheck", "covr"))
-          remotes::install_github("ropensci/nodbi")
+          remotes::install_github("ropensci/nodbi", ref = "harmoniseApi")
         shell: Rscript {0}
 
       - name: Windows change DNS

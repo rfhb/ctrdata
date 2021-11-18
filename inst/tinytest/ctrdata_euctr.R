@@ -48,6 +48,7 @@ suppressWarnings(
       euctrresults = TRUE,
       con = dbc
     )))
+
 # test
 expect_identical(
   suppressWarnings(
@@ -107,13 +108,13 @@ hist[nrow(hist), "query-timestamp"] <- "2000-01-01 00:00:00"
 json <- jsonlite::toJSON(list("queries" = hist))
 #
 # update database
-nodbi::docdb_update(
-  src = dbc,
-  key = dbc$collection,
-  value = data.frame("_id" = "meta-info",
-                     "content" = as.character(json),
-                     stringsAsFactors = FALSE,
-                     check.names = FALSE))
+expect_equal(
+  nodbi::docdb_update(
+    src = dbc,
+    key = dbc$collection,
+    value = as.character(json),
+    query = '{"_id": "meta-info"}'), 1L)
+
 # test
 expect_message(
   suppressWarnings(
@@ -125,11 +126,11 @@ expect_message(
 
 # checking as only works for last 7 days with rss mechanism
 # query just based on date is used to avoids no trials are found
-
+#
 date.today <- Sys.time()
 date.from  <- format(date.today - (60 * 60 * 24 * 9), "%Y-%m-%d")
 date.to    <- format(date.today - (60 * 60 * 24 * 4), "%Y-%m-%d")
-
+#
 q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&phase=phase-two",
             "&dateFrom=", date.from, "&dateTo=", date.to)
 
@@ -150,18 +151,17 @@ hist[nrow(hist), "query-term"] <-
 #
 hist[nrow(hist), "query-timestamp"] <-
   paste0(date.to, " 23:59:59")
-
+#
 # convert into json object
 json <- jsonlite::toJSON(list("queries" = hist))
-
+#
 # update database
-nodbi::docdb_update(
-  src = dbc,
-  key = dbc$collection,
-  value = data.frame("_id" = "meta-info",
-                     "content" = as.character(json),
-                     stringsAsFactors = FALSE,
-                     check.names = FALSE))
+expect_equal(
+  nodbi::docdb_update(
+    src = dbc,
+    key = dbc$collection,
+    value = as.character(json),
+    query = '{"_id": "meta-info"}'), 1L)
 
 # test
 expect_message(
@@ -516,7 +516,7 @@ expect_message(
     dbFindIdsUniqueTrials(
       con = dbc,
       preferregister = "CTGOV")),
-  "Returning keys \\(_id\\) of [1-9][0-9] records")
+  "Returning keys \\(_id\\) of [1-9][0-9]+ records")
 
 # test
 expect_warning(
@@ -581,9 +581,10 @@ result <- suppressMessages(
     dbGetFieldsIntoDf(
       fields = tmpf,
       con = dbc,
-      verbose = TRUE,
+      verbose = FALSE,
       stopifnodata = FALSE)
   ))
+#
 tmpr <- names(result)
 tmpr <- tmpr[tmpr != "_id"]
 # determine all classes
@@ -595,14 +596,24 @@ tmpc <- table(tmpc)
 # src_mongo:
 # tmpc
 # character      Date   integer      list   logical
-#       558        10        19         3        79
+#       243        15        22       253       138
+# src_sqlite:
+# tmpc
+# character      Date   integer      list   logical
+#       411        18        22       538        77
 
-# tests
-expect_equal(length(tmpf), length(tmpr))
-expect_true(tmpc[["character"]] > 45)
+# tests note tmpr has more columns
+# because data frames are expanded
+expect_true(length(tmpf) <= length(tmpr))
+# expect_identical(tmpf, tmpr)
+# adapted to mongo remote server
+expect_true(tmpc[["character"]] > 50)
+expect_true(tmpc[["integer"]]   >  5)
 expect_true(tmpc[["Date"]]      >  5)
+expect_true(tmpc[["list"]]      > 10)
 expect_true(tmpc[["logical"]]   > 50)
 
+# TODO
 # not testing for lists, because
 # src_mongo returns only non-object
 # fields when searching for all fields
@@ -610,9 +621,6 @@ expect_true(tmpc[["logical"]]   > 50)
 # src_sqlite returns names of both
 # objects and terminal / no more nested
 # fields
-
-saveRDS(tmpf, "tmpf.rds")
-saveRDS(tmpr, "tmpr.rds")
 
 # clean up
 rm(tmpf, tmpr, tmpc, result)

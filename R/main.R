@@ -253,6 +253,10 @@ ctrLoadQueryIntoDb <- function(
     #
   } # if querytermtoupdate
 
+  # set user agent for httr and curl to inform registers
+  httr::set_config(httr::user_agent(
+    paste0("ctrdata/", utils::packageDescription("ctrdata")$Version)))
+
   ## main function
 
   # parameters for core functions
@@ -276,8 +280,25 @@ ctrLoadQueryIntoDb <- function(
     "ISRCTN" = do.call(ctrLoadQueryIntoDbIsrctn, params)
   )
 
+  # add annotations
+  if ((annotation.text != "") &
+      (length(imported$success) > 0L)) {
+
+    # dispatch
+    dbCTRAnnotateQueryRecords(
+      recordnumbers = imported$success,
+      recordannotations = imported$annotations,
+      annotation.text = annotation.text,
+      annotation.mode = annotation.mode,
+      con = con,
+      verbose = verbose)
+
+  }
+
   # add query used for function
-  imported <- c(imported, "queryterm" = querytermoriginal)
+  imported <- c(
+    imported[c("n", "success", "failed")],
+    "queryterm" = querytermoriginal)
 
   ## finalise
 
@@ -715,6 +736,7 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
       # initialise output
       idSuccess <- NULL
       idFailed <- NULL
+      idAnnotation <- NULL
       nImported <- 0
 
       # iterate over lines in fd
@@ -755,28 +777,39 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
                   noBreaks. = TRUE, call. = FALSE, immediate. = TRUE)
         }
 
-        # slice data to be processed
-        value <- data.frame("_id" = id,
-                            "json" = tmpline,
-                            stringsAsFactors = FALSE,
-                            check.names = FALSE)
+        # ensure JSON is understood as single record
+        tmpline <- sub(pattern = "(.+)", replacement = "[\\1]", x = tmpline)
 
         # load into database
-        # - first, try update
-        tmp <- try({
-          nodbi::docdb_update(src = con,
-                              key = con$collection,
-                              value = value)
-        }, silent = TRUE)
-        # - if error, try insert
-        if (inherits(tmp, "try-error") ||
-            tmp == 0L) {
-          tmp <- try({
-            nodbi::docdb_create(src = con,
-                                key = con$collection,
-                                value = value)
-          }, silent = TRUE)
+        # - get any annotations
+        annotation <- try({
+          nodbi::docdb_query(
+            src = con,
+            key = con$collection,
+            query = paste0('{"_id": "', id, '"}'),
+            fields = '{"_id": 1, "annotation": 1}')}, silent = TRUE)
+        if (inherits(annotation, "try-error") ||
+            !ncol(annotation) ||
+            !nrow(annotation)) {
+          annotation <- ""
+        } else {
+          annotation <- annotation[1, 2, drop = TRUE]
         }
+        # - try delete
+        tmp <- try({
+          nodbi::docdb_delete(
+            src = con,
+            key = con$collection,
+            query = paste0('{"_id":"', id, '"}')
+          )}, silent = TRUE)
+        # - then insert
+        tmp <- try({
+          suppressMessages(
+            nodbi::docdb_create(
+              src = con,
+              key = con$collection,
+              value = tmpline
+            ))}, silent = TRUE)
 
         # return values for lapply
         if (inherits(tmp, "try-error") ||
@@ -787,6 +820,7 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
         } else {
           idSuccess <- c(idSuccess, id)
           nImported <- nImported + tmp
+          idAnnotation <- c(idAnnotation, annotation)
         }
 
       } # end while
@@ -797,7 +831,8 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
       # return values
       list(success = idSuccess,
            failed = idFailed,
-           n = nImported)
+           n = nImported,
+           annotations = idAnnotation)
 
     }) # sapply tempFiles
 
@@ -808,11 +843,13 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
   n <- sum(sapply(retimp, "[[", "n"), na.rm = TRUE)
   success <- as.vector(unlist(sapply(retimp, "[[", "success")))
   failed <- as.vector(unlist(sapply(retimp, "[[", "failed")))
+  annotations <- as.vector(unlist(sapply(retimp, "[[", "annotations")))
 
   # return
   return(list(n = n,
               success = success,
-              failed = failed))
+              failed = failed,
+              annotations = annotations))
 
 } # end dbCTRLoadJSONFiles
 
@@ -829,6 +866,7 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
 #'
 dbCTRAnnotateQueryRecords <- function(
   recordnumbers,
+  recordannotations,
   annotation.text,
   annotation.mode,
   con,
@@ -839,17 +877,13 @@ dbCTRAnnotateQueryRecords <- function(
   if (verbose) message(recordnumbers)
   if (verbose) message(annotation.mode)
 
-  # get any existing annotations
-  annotations <- nodbi::docdb_query(
-    src = con,
-    key = con$collection,
-    query = paste0('{"_id": {"$ne": "meta-info"}}'),
-    fields = '{"_id": 1, "annotation": 1}')
-
-  # keep only those annotations that are to be modified
-  annotations <- annotations[annotations[["_id"]] %in%
-                               recordnumbers, ,
-                             drop = FALSE]
+  # df from existing annotations
+  if (is.null(recordannotations)) recordannotations <- ""
+  annotations <- data.frame(
+    "_id" = recordnumbers,
+    "annotation" = recordannotations,
+    stringsAsFactors = FALSE,
+    check.names = FALSE)
 
   # check if dataframe is as expected: columns _id and annotation
   # dataframe could be empty if _ids not yet imported
@@ -876,15 +910,18 @@ dbCTRAnnotateQueryRecords <- function(
   if (verbose) message(annotations)
 
   # update the database
+  result <- 0L
   for (i in annotations[["_id"]]) {
-    nodbi::docdb_update(
-      src = con,
-      key = con$collection,
-      value = annotations[annotations[["_id"]] == i, ])
+    result <- result +
+      nodbi::docdb_update(
+        src = con,
+        key = con$collection,
+        value = annotations[annotations[["_id"]] == i, "annotation", drop = FALSE],
+        query = paste0('{"_id":"', i, '"}'))
   }
 
   # inform user
-  message("= Annotated retrieved records")
+  message("= Annotated retrieved records (", result, " records)")
 
 } # end dbCTRAnnotateQueryRecords
 
@@ -912,45 +949,49 @@ dbCTRUpdateQueryHistory <- function(
   # debug
   if (verbose) message("Running dbCTRUpdateQueryHistory...")
 
-  # retrieve existing history data
-  hist <- suppressMessages(
-    dbQueryHistory(con, verbose)
-  )
+  # compose history entry from current search
+  # default for format methods is "%Y-%m-%d %H:%M:%S"
+  newHist <- data.frame(
+    "query-timestamp" = format(Sys.time(), "%Y-%m-%d %H:%M:%S"),
+    "query-register"  = register,
+    "query-records"   = recordnumber,
+    "query-term"      = queryterm,
+    check.names = FALSE,
+    stringsAsFactors = FALSE)
 
-  # create document if not existing
-  if (!nrow(hist)) {
-    nodbi::docdb_create(
-      src = con,
-      key = con$collection,
-      value = data.frame("_id" = "meta-info",
-                         "json" = '{}',
-                         stringsAsFactors = FALSE,
-                         check.names = FALSE))
-  }
+  # retrieve existing history data
+  hist <- dbQueryHistory(con, verbose)
 
   # append current search
   # default for format methods is "%Y-%m-%d %H:%M:%S"
-  hist <- rbind(
-    hist,
-    cbind(
-      "query-timestamp" = format(Sys.time(), "%Y-%m-%d %H:%M:%S"),
-      "query-register"  = register,
-      "query-records"   = recordnumber,
-      "query-term"      = queryterm),
-    stringsAsFactors = FALSE)
+  if (nrow(hist)) {
 
-  # transform into array and encapsulate in element meta-info
-  hist <- jsonlite::toJSON(hist)
-  hist <- paste0('{"queries": ',  as.character(hist), "}")
+    newHist <- rbind(hist, newHist)
+    newHist <- list("queries" = newHist)
 
-  # update database
-  tmp <- nodbi::docdb_update(
-    src = con,
-    key = con$collection,
-    value = data.frame("_id" = "meta-info",
-                       "json" = hist,
-                       stringsAsFactors = FALSE,
-                       check.names = FALSE))
+    tmp <- suppressMessages(
+      nodbi::docdb_update(
+        src = con,
+        key = con$collection,
+        value = newHist,
+        query = '{"_id": "meta-info"}'
+      ))
+
+  } else {
+
+    # to list
+    newHist <- list(list(
+      "_id" = "meta-info",
+      "queries" = newHist))
+
+    # write new document
+    tmp <- suppressMessages(
+      nodbi::docdb_create(
+        src = con,
+        key = con$collection,
+        value = newHist
+      ))
+  }
 
   # inform user
   if (tmp == 1L) {
@@ -1099,20 +1140,6 @@ ctrLoadQueryIntoDbCtgov <- function(
                                  con = con,
                                  verbose = verbose)
 
-  ## add annotations
-  if ((annotation.text != "") &
-      (length(imported$success) > 0L)) {
-
-    # dispatch
-    dbCTRAnnotateQueryRecords(
-      recordnumbers = imported$success,
-      annotation.text = annotation.text,
-      annotation.mode = annotation.mode,
-      con = con,
-      verbose = verbose)
-
-  }
-
   ## find out number of trials imported into database
   message("= Imported or updated ", imported$n, " trial(s)")
 
@@ -1181,8 +1208,8 @@ ctrLoadQueryIntoDbEuctr <- function(
            "https://github.com/rfhb/ctrdata/issues/19#issuecomment-820127139",
            call. = FALSE)
     } else {
-    stop("Host ", queryEuRoot, " not working as expected, ",
-         "cannot continue: ", resultsEuPages[[1]], call. = FALSE)
+      stop("Host ", queryEuRoot, " not working as expected, ",
+           "cannot continue: ", resultsEuPages[[1]], call. = FALSE)
     }
   }
   # - store options from request
@@ -1400,27 +1427,14 @@ ctrLoadQueryIntoDbEuctr <- function(
                                  con = con,
                                  verbose = verbose)
 
-  ## read in the eudract numbers of the
-  ## trials just retrieved and imported
-  eudractnumbersimported <- imported$success
-
-  ## add annotations
-  if ((annotation.text != "") &
-      (length(eudractnumbersimported) > 0)) {
-
-    # dispatch
-    dbCTRAnnotateQueryRecords(
-      recordnumbers = eudractnumbersimported,
-      annotation.text = annotation.text,
-      annotation.mode = annotation.mode,
-      con = con,
-      verbose = verbose)
-  }
-
   ## inform user on final import outcome
   message("= Imported or updated ",
           imported$n, " records on ",
           resultsEuNumTrials, " trial(s)")
+
+  ## read in the eudract numbers of the
+  ## trials just retrieved and imported
+  eudractnumbersimported <- imported$success
 
   ## results: load also euctr trials results if requested
   if (euctrresults) {
@@ -1556,7 +1570,7 @@ ctrLoadQueryIntoDbEuctr <- function(
     # iterate over results files
     message("(3/4) Importing JSON into database...")
 
-    # TODO replace with dbCTRLoadJSONFiles
+    # TODO: replace with dbCTRLoadJSONFiles
     importedresults <- sapply(
       # e.g., EU-CTR 2008-003606-33 v1 - Results.xml
       # was converted into EU_Results_1234.json
@@ -1602,10 +1616,9 @@ ctrLoadQueryIntoDbEuctr <- function(
                 nodbi::docdb_update(
                   src = con,
                   key = con$collection,
-                  value = data.frame(
-                    "a2_eudract_number" = euctrnumber,
-                    "json" = tmpjson,
-                    stringsAsFactors = FALSE))
+                  value = tmpjson,
+                  query = paste0('{"a2_eudract_number":"', euctrnumber, '"}')
+                )
               max(tmpnodbi, na.rm = TRUE)
             },
             silent = TRUE)
@@ -1684,7 +1697,7 @@ ctrLoadQueryIntoDbEuctr <- function(
                     "tmpChanges" = tmpChanges))
       }
 
-      # TODO this does not include the retrieval of information
+      # TODO: this does not include the retrieval of information
       # about amendment to the study, as presented at the bottom
       # of the webpage for the respective trial results
       message("(4/4) Retrieving results history (max. ",
@@ -1755,12 +1768,12 @@ ctrLoadQueryIntoDbEuctr <- function(
             tmp <- nodbi::docdb_update(
               src = con,
               key = con$collection,
-              value = data.frame(
-                "a2_eudract_number" = r$eudractNumber,
-                "firstreceived_results_date" = as.character(r$tmpFirstDate),
-                "this_results_date" = as.character(r$tmpThisDate),
-                "version_results_history" = r$tmpChanges,
-                stringsAsFactors = FALSE))
+              value = list(
+                "firstreceived_results_date" = as.character(r[["tmpFirstDate"]]),
+                "this_results_date" = as.character(r[["tmpThisDate"]]),
+                "version_results_history" = r[["tmpChanges"]]),
+              query = paste0('{"a2_eudract_number":"', r[["eudractNumber"]], '"}')
+            )
 
             # return if successful
             ifelse(inherits(tmp, "try-error"), 0L, 1L)
@@ -1788,9 +1801,9 @@ ctrLoadQueryIntoDbEuctr <- function(
 
     if (!is.null(importedresultshistory) &&
         importedresultshistory > 0L) {
-    message("= Imported or updated results history for ",
-            importedresultshistory, " trials")
-      }
+      message("= Imported or updated results history for ",
+              importedresultshistory, " trials")
+    }
     if (euctrresultspdfpath != tempDir) {
       message("= Results PDF files if any saved in '",
               euctrresultspdfpath, "'")
@@ -1892,12 +1905,12 @@ ctrLoadQueryIntoDbIsrctn <- function(
   if (tmp == 0L) {
     message("Search result page empty - no (new) trials found?")
     return(invisible(list(
-    # return structure as in dbCTRLoadJSONFiles
-    # which is handed through to ctrLoadQueryIntoDb
-    n = 0L,
-    success = character(0L),
-    failed = character(0L),
-    queryterm = queryterm)))
+      # return structure as in dbCTRLoadJSONFiles
+      # which is handed through to ctrLoadQueryIntoDb
+      n = 0L,
+      success = character(0L),
+      failed = character(0L),
+      queryterm = queryterm)))
   }
   # otherwise continue
 
@@ -1969,20 +1982,6 @@ ctrLoadQueryIntoDbIsrctn <- function(
   imported <- dbCTRLoadJSONFiles(dir = tempDir,
                                  con = con,
                                  verbose = verbose)
-
-  ## add annotations
-  if ((annotation.text != "") &
-      (length(imported$success) > 0L)) {
-
-    # dispatch
-    dbCTRAnnotateQueryRecords(
-      recordnumbers = imported$success,
-      annotation.text = annotation.text,
-      annotation.mode = annotation.mode,
-      con = con,
-      verbose = verbose)
-
-  }
 
   ## find out number of trials imported into database
   message("= Imported or updated ", imported$n, " trial(s)")

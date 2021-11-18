@@ -28,7 +28,7 @@ expect_message(
   tmpTest <- suppressWarnings(
     ctrLoadQueryIntoDb(
       queryterm = "neuroblastoma",
-      register = "ISRCTN",
+      register = "ISRCTN", verbose = F,
       con = dbc)),
   "Imported or updated ")
 
@@ -95,13 +95,12 @@ hist[nrow(hist), "query-timestamp"] <-
 json <- jsonlite::toJSON(list("queries" = hist))
 
 # update database
-nodbi::docdb_update(
-  src = dbc,
-  key = dbc$collection,
-  value = data.frame("_id" = "meta-info",
-                     "content" = as.character(json),
-                     stringsAsFactors = FALSE,
-                     check.names = FALSE))
+expect_equal(
+  nodbi::docdb_update(
+    src = dbc,
+    key = dbc$collection,
+    value = as.character(json),
+    query = '{"_id": "meta-info"}'), 1L)
 
 # test
 expect_message(
@@ -143,7 +142,7 @@ expect_message(
       annotation.text = "just_this",
       annotation.mode = "replace",
       con = dbc)),
-  "Imported or updated 1 trial")
+  "Annotated .*1 record")
 
 #### dbGetFieldsIntoDf ####
 

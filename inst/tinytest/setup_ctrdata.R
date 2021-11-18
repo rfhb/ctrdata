@@ -44,7 +44,7 @@ mongoRemoteRwDb <- "users"
 # credentials
 
 mongoRemoteRoUrl <-
-  "mongodb+srv://DWbJ7Wh:bdTHh5cS@cluster0-b9wpw.mongodb.net/"
+  "mongodb+srv://DWbJ7Wh:bdTHh5cS@cluster0.b9wpw.mongodb.net/"
 # permissions are restricted to "find" in "dbperm" in "dbperm"
 # no other functions can be executed, no login possible
 
