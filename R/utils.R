@@ -2066,7 +2066,7 @@ typeField <- function(dfi) {
 
   # clean up input
   # - if NA as string, change to NA
-  dfi[grepl("^N/?A$", dfi[, 2]), 2] <- NA
+  dfi[grepl("^N/?A$|^ND$", dfi[, 2]), 2] <- NA
   # - give Month Year also a Day to work with as.Date
   dfi[, 2] <- sub("^([a-zA-Z]+) ([0-9]{4})$", "\\1 15, \\2", dfi[, 2])
   # - convert html entities
