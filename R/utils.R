@@ -1212,21 +1212,32 @@ dbGetFieldsIntoDf <- function(fields = "",
         # name result set
         names(dfi) <- c("_id", item)
 
-        # create output from template
+        # create NA output from template
         dfo <- dft
 
-        # process results
+        # simplify by processing columns
         for (c in seq_len(ncol(dfi))[-1]) {
 
-          # simplify if each cell is one atomic element
-          if (all(sapply(dfi[[c]], function(r)
-            (length(r) == 1L) && is.atomic(r))) &&
-            (length(dfi[[c]]) == nrow(dfi))) {
-            dfi[[c]] <- sapply(dfi[[c]], "[[", 1)
-          }
+          # special case: column is one-column data frame
+          if (is.data.frame(dfi[[c]]) && (ncol(dfi[[c]]) == 1L) &&
+              (nrow(dfi[[c]]) == nrow(dfi))) dfi[[c]] <-
+              dfi[[c]][, 1, drop = TRUE]
 
-          # simplify vectors by collapsing (compatibility with previous version)
-          if (all(sapply(dfi[[c]], is.character)) &&
+          # simplify at row level, replaces NULL with NA
+          if (!is.data.frame(dfi[[c]]) &&
+              !any(sapply(dfi[[c]], class) == "data.frame")) {
+            dfi[[c]] <- sapply(dfi[[c]], function(i) {
+              l <- length(i)
+              if (l == 0L) i <- NA
+              if (l == 1L) i <- i[1]
+              if (l >= 2L) {
+                if (all(sapply(i, is.character))) {
+                  i } else {i <- list(i) }}
+              i}, USE.NAMES = FALSE, simplify = TRUE)}
+
+          # simplify vectors in cells by collapsing
+          # (compatibility with previous version)
+          if (all(sapply(dfi[[c]], function(r) is.na(r)[1] | is.character(r))) &&
               any(sapply(dfi[[c]], function(r) length(r) > 1L))) {
             dfi[[c]] <- sapply(dfi[[c]], function(i) paste0(i, collapse = " / "))
           }
@@ -1235,15 +1246,15 @@ dbGetFieldsIntoDf <- function(fields = "",
           if (typeof(dfi[[c]]) == "character") dfi[[c]] <-
               typeField(dfi[, c(1, c), drop = FALSE])[, 2, drop = TRUE]
 
-          # add a column
+          # add a column into copy of NA template
           dfo[[c]] <- switch(
             class(dfi[[c]]),
             "Date" = as.Date(NA),
             "numeric" = as.numeric(NA),
             "character" = as.character(NA),
-            "data.frame" = NA, #as.data.frame(NA),
+            "data.frame" = NA,
             "integer" = as.integer(NA),
-            "list" = NA, #as.list(NA),
+            "list" = NA,
             "logical" = as.logical(NA),
             NA
           )
@@ -1278,18 +1289,25 @@ dbGetFieldsIntoDf <- function(fields = "",
       dfi
 
     }) # end lapply
+  message("")
 
-  # bring lists into data frame by trial id
+  # bring result lists into data frame, by record _id
   result <- Reduce(function(...) merge(..., all = TRUE, by = "_id"), result)
 
-  # prune rows that do not have any results
+  # prune rows without _id
   result <- result[!is.na(result[["_id"]]), , drop = FALSE]
 
-  # remove rows with only NAs
-  result <- result[!apply(
-    result[, -1, drop = FALSE], 1, function(r) all(is.na(r))), , drop = FALSE]
+  # remove rows with only NAs; try because
+  # is.na may fail for complex cells
+  onlyNas <- try({apply(result[, -1, drop = FALSE], 1,
+                  function(r) all(is.na(r)))}, silent = TRUE)
+  if (!inherits(onlyNas, "try-error")) {
+    result <- result[!onlyNas, , drop = FALSE]
+  } else {
+    message("Could not remove rows with only NAs")
+  }
 
-  # finalise output
+  # inform user
   if (is.null(result) || !nrow(result)) {
     warning("No records with values for any specified field. ",
             call. = FALSE)
