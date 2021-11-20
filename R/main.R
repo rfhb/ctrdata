@@ -837,7 +837,7 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
     }) # sapply tempFiles
 
   # clear output
-  message("                                       \r", appendLF = FALSE)
+  message("                                       \r")
 
   # prepare return values, n is successful only
   n <- sum(sapply(retimp, "[[", "n"), na.rm = TRUE)
@@ -1630,12 +1630,12 @@ ctrLoadQueryIntoDbEuctr <- function(
               tmp <- 0
             }
 
-            # inform user on records
-            message(tmp, " records updated with results\r",
-                    appendLF = FALSE)
-
             # however output is number of trials updated
             nSuccess <- nSuccess + 1L
+
+            # inform user on records
+            message(nSuccess, " trials' records updated with results\r",
+                    appendLF = FALSE)
 
           } # while
 

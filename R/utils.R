@@ -905,12 +905,17 @@ dbFindIdsUniqueTrials <- function(
   # replicate columns to make data frame fit subsequent steps
   listofIds <- listofIds[, fields, drop = FALSE]
 
-  # rename columns for content mangling
+  # rename columns for content mangling, needs to
+  # correspond to columns and sequence in fields
+  # for mapping identifiers across registers
   names(listofIds) <- c(
     "_id", "ctrname",
+    # euctr
     "euctr.1", "ctgov.1a", "ctgov.1b", "isrctn.1a", "isrctn.1b", "sponsor.1",
+    # ctgov
     "euctr.2a", "euctr.2b", "ctgov.2a", "ctgov.2b", "isrctn.2",
     "sponsor.2a", "sponsor.2b",
+    # isrctn
     "euctr.3", "ctgov.3", "isrctn.3", "sponsor.3"
   )
 
@@ -930,16 +935,19 @@ dbFindIdsUniqueTrials <- function(
     c("euctr.2b", regEuctr),
     c("euctr.3", regEuctr)
   )
-  # - do mangling
+  # - do mangling; prerequisite is
+  #   that each of the columns holds
+  #   a single character vector,
+  #   possibly collapsed with " / "
   invisible(sapply(
     colsToMangle,
     function(ctm) {
+      message(ctm)
       colMangled <- regmatches(
         listofIds[[ ctm[[1]] ]],
         regexec(ctm[[2]], listofIds[[ ctm[[1]] ]]))
-      listofIds[[ ctm[[1]] ]] <<- unlist({ # needs <<-
-        colMangled[!lengths(colMangled)] <- ""; colMangled})
-      NULL
+      colMangled[!lengths(colMangled)] <- ""
+      listofIds[[ ctm[[1]] ]] <<- unlist(colMangled)
     }))
   # - merge columns for register ids and sponsor ids
   for (reg in c(registerList, "SPONSOR")) {
@@ -1151,8 +1159,8 @@ dbGetFieldsIntoDf <- function(fields = "",
   # initialise output
   nFields <- length(fields)
 
-  # iterate over fields so that we can use a custom function to merge results,
-  # given that mongodb clients have different approaches and complex returns
+  # iterate over fields so that we can
+  # use a custom function to merge results
   result <- lapply(
     seq_len(nFields),
     function(i) {
@@ -1178,7 +1186,7 @@ dbGetFieldsIntoDf <- function(fields = "",
         # remove any rows without index variable
         dfi <- dfi[!is.na(dfi[["_id"]]), , drop = FALSE]
 
-        # simplify
+        # simplify by extracting recursively any requested subitem
         itemSegments <- strsplit(item, "[.]")[[1]]
         itemSegments <- setdiff(itemSegments, names(dfi))
         for (iS in itemSegments) {
@@ -1191,7 +1199,7 @@ dbGetFieldsIntoDf <- function(fields = "",
           }
         }
 
-        # expand any resulted data frame
+        # simplify by expanding a resulting data frame
         if (length(unique(names(dfi[[2]]))) > 1L) {
           item <- paste0(item, ".", names(dfi[[2]]))
           dfi <- cbind("_id" = dfi[["_id"]], as.data.frame(dfi[[2]]))
@@ -2201,7 +2209,7 @@ typeField <- function(dfi) {
       "participants.totalFinalEnrolment"  = ctrInt(),
       "externalRefs.protocolSerialNumber" = ctrInt(),
       #
-      # TODO: results-related variables
+      # TODO results-related variables
       "trialInformation.analysisForPrimaryCompletion" = ctrFalseTrue()
       #
     )
