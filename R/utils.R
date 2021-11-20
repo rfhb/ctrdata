@@ -1825,7 +1825,7 @@ dfMergeTwoVariablesRelevel <- function(
 
   # find variables in data frame and merge
   tmp <- match(colnames, names(df))
-  df <- df[, tmp]
+  df <- df[, tmp, drop = FALSE]
 
   # bind as ...
   if (class(df[, 1]) == class(df[, 2]) &&
@@ -1842,8 +1842,8 @@ dfMergeTwoVariablesRelevel <- function(
     tmp <- ifelse(is.na(tt <- df[, 1]), df[, 2], df[, 1])
   } else {
     # check
-    if (nrow(df[df[, 1] != "" &
-                df[, 2] != "", , drop = FALSE])) {
+    if (nrow(df[(!is.na(df[, 1]) & df[, 1] != "") &
+                (!is.na(df[, 2]) & df[, 2] != ""), , drop = FALSE])) {
       warning("Some rows had values for both columns, concatenated",
               noBreaks. = TRUE, immediate. = TRUE)
     }
