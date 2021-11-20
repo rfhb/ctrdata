@@ -15,9 +15,6 @@ None
 * simplifying database operations (user-visible functions: 
   ctrLoadQueryIntoDb, dbFindIdsUniqueTrials, dbGetFieldsIntoDf), 
   without changes to API
-* dbGetFieldsIntoDf: a field that is a list containing a data frame
-  is returned as a data frame for RSQLite and as a list for MongoDB
-  database backends, by intention to provide user simple return values
 
 ## Note
 

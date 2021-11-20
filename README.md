@@ -23,7 +23,7 @@ aggregating and analysing this information; it can be used for the
 The motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. The package
 is to be used within the [R](https://www.r-project.org/) system; this
-README was reviewed on 2021-08-22 for version 1.7.0.9001.
+README was reviewed on 2021-11-20 for version 1.8.0.
 
 Main features:
 
@@ -230,11 +230,11 @@ result <- dbGetFieldsIntoDf(
 # one record, for example for several EU Member States: 
 uniqueids <- dbFindIdsUniqueTrials(con = db)
 # Searching for duplicate trials... 
-#  - Getting trial ids, 248 found in collection
+#  - Getting trial ids, 279 found in collection
 #  - Finding duplicates among registers' and sponsor ids...
-#  - 182 EUCTR _id were not preferred EU Member State record for 66 trials
-#  - Keeping 66 records from EUCTR
-# = Returning keys (_id) of 66 records in collection "some_collection_name"
+#  - 208 EUCTR _id were not preferred EU Member State record for 71 trials
+#  - Keeping 71 records from EUCTR
+# = Returning keys (_id) of 71 records in collection "some_collection_name"
 
 # Keep only unique / de-duplicated records:
 result <- result[ result[["_id"]] %in% uniqueids, ]
@@ -246,10 +246,10 @@ with(result,
        a7_trial_is_part_of_a_paediatric_investigation_plan))
 #                     a7_trial_is_part_of_a_paediatric_investigation_plan
 # p_end_of_trial_status      Information not present in EudraCT No Yes
-#   Completed                                                 6 31  16
-#   GB - no longer in EU/EEA                                  0  5   4
+#   Completed                                                 6 32  16
+#   GB - no longer in EU/EEA                                  0  7   5
 #   Ongoing                                                   0  1   0
-#   Prematurely Ended                                         1  1   0
+#   Prematurely Ended                                         1  2   0
 #   Restarted                                                 0  1   0
 ```
 
@@ -266,12 +266,12 @@ ctrLoadQueryIntoDb(
   con = db)
 # * Found search query from CTGOV: cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug
 # (1/3) Checking trials in CTGOV:
-# Retrieved overview, records of 40 trial(s) are to be downloaded
+# Retrieved overview, records of 44 trial(s) are to be downloaded
 # Checking helper binaries: done
-# Downloading: 580 kB     
-# (2/3) Converting to JSON, 40 records converted
+# Downloading: 620 kB     
+# (2/3) Converting to JSON, 44 records converted
 # (3/3) Importing JSON records into database...
-# = Imported or updated 40 trial(s)                              
+# = Imported or updated 43 trial(s)                              
 # * Updated history ("meta-info" in "some_collection_name")
 ```
 
@@ -289,7 +289,7 @@ ctrLoadQueryIntoDb(
 # (1/3) Checking trials in ISRCTN:
 # Retrieved overview, records of 9 trial(s) are to be downloaded
 # Checking helper binaries: done
-# Downloading: 89 kB       
+# Downloading: 90 kB       
 # (2/3) Converting to JSON, 9 records converted
 # (3/3) Importing JSON records into database...
 # = Imported or updated 9 trial(s)                              
@@ -313,7 +313,7 @@ result <- dbGetFieldsIntoDf(
 
 # Transform all fields into long name - value format
 result <- dfTrials2Long(df = result)
-# Total 6140 rows, 12 unique names of variables
+# Total 6214 rows, 12 unique names of variables
 
 # [1.] get counts of subjects for all arms into data frame
 # This count is in the group that has "Total" in its name

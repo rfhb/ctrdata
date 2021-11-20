@@ -942,7 +942,6 @@ dbFindIdsUniqueTrials <- function(
   invisible(sapply(
     colsToMangle,
     function(ctm) {
-      message(ctm)
       colMangled <- regmatches(
         listofIds[[ ctm[[1]] ]],
         regexec(ctm[[2]], listofIds[[ ctm[[1]] ]]))
