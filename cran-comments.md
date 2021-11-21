@@ -19,13 +19,14 @@ None
 * changes to match nodbi 0.5.0 
 * simplifying database operations (user-visible functions: 
   ctrLoadQueryIntoDb, dbFindIdsUniqueTrials, dbGetFieldsIntoDf), 
-  without changes to API
+  without changes to user-visible API
 
-## Note
+## Notes
 
-* this release depends on nodbi 0.5.0, which I just submitted to CRAN
-* if nodbi 0.5.0 is rejected, please do not release this submission
+The EU trial register server accessed by this package is configured
+with an incomplete SSL certificate chain, which is part of the NOTE
+issued by win-builder. 
 
 ----------
-Thanks & greetings
-Ralf
+Dank & greetings
+Ralf Herold

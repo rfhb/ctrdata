@@ -3,7 +3,7 @@
 <!-- badges: start -->
 
 [![](https://cranlogs.r-pkg.org/badges/ctrdata)](https://cran.r-project.org/package=ctrdata)
-[![codecov](https://codecov.io/gh/rfhb/ctrdata/branch/master/graph/badge.svg)](https://codecov.io/gh/rfhb/ctrdata)
+[![codecov](https://codecov.io/gh/rfhb/ctrdata/branch/master/graph/badge.svg)](https://app.codecov.io/gh/rfhb/ctrdata)
 [![R-CMD-check-win-macos](https://github.com/rfhb/ctrdata/workflows/R-CMD-check-win-macos/badge.svg)](https://github.com/rfhb/ctrdata/actions?query=workflow%3AR-CMD-check-win-macos)
 [![R-CMD-check-linux](https://github.com/rfhb/ctrdata/workflows/R-CMD-check-linux/badge.svg)](https://github.com/rfhb/ctrdata/actions?query=workflow%3AR-CMD-check-linux)
 [![Slack](https://img.shields.io/badge/Slack-Join-green.svg)](https://rfhb.slack.com/messages/C6N1Y75B6)
