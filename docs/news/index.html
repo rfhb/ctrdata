@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ctrdata</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.8.0</span>
       </span>
     </div>
 
@@ -147,12 +147,78 @@
       <small>Source: <a href='https://github.com/rfhb/ctrdata/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="ctrdata-180" class="section level1">
+<h1 class="page-header" data-toc-text="1.8.0">
+<a href="#ctrdata-180" class="anchor"></a>ctrdata 1.8.0<small> Unreleased </small>
+</h1>
+<ul>
+<li>2021-11-18</li>
+<li>changes to match nodbi 0.5.0</li>
+<li>simplifying database operations (user-visible functions: ctrLoadQueryIntoDb, dbFindIdsUniqueTrials, dbGetFieldsIntoDf), without changes to API</li>
+<li>dbGetFieldsIntoDf: a field that is a list containing a data frame is returned as a data frame for RSQLite and as a list for MongoDB database backends, by intention to simplify return values</li>
+</ul>
+</div>
+    <div id="ctrdata-1719000" class="section level1">
+<h1 class="page-header" data-toc-text="1.7.1.9000">
+<a href="#ctrdata-1719000" class="anchor"></a>ctrdata 1.7.1.9000<small> Unreleased </small>
+</h1>
+<ul>
+<li>2021-08-23</li>
+<li>new development version</li>
+</ul>
+</div>
+    <div id="ctrdata-171" class="section level1">
+<h1 class="page-header" data-toc-text="1.7.1">
+<a href="#ctrdata-171" class="anchor"></a>ctrdata 1.7.1<small> 2021-08-22 </small>
+</h1>
+<ul>
+<li>2021-08-22</li>
+<li>fix DBI not needed in Imports anymore (CRAN Note)</li>
+<li>fix potential file name issue in conversion script</li>
+<li>fix dbFindFields() to never return _id (previously depended on database backend)</li>
+<li>changed tests (not on CRAN detection, register availability, additional tests)</li>
+</ul>
+</div>
+    <div id="ctrdata-170" class="section level1">
+<h1 class="page-header" data-toc-text="1.7.0">
+<a href="#ctrdata-170" class="anchor"></a>ctrdata 1.7.0<small> 2021-07-25 </small>
+</h1>
+<ul>
+<li>2021-07-24</li>
+<li>much reduced database backend-specific code, using nodbi 0.4.3 (released 2021-07-23) which also introduces transactions for sqlite using RSQLite &gt;=2.2.4 (released 2021-03-12)</li>
+<li>temporary directory creation only when needed, more automated deletion</li>
+<li>changes in detecting non-functioning register servers</li>
+<li>further streamlined unit testing</li>
+</ul>
+</div>
+    <div id="ctrdata-160" class="section level1">
+<h1 class="page-header" data-toc-text="1.6.0">
+<a href="#ctrdata-160" class="anchor"></a>ctrdata 1.6.0<small> 2021-05-09 </small>
+</h1>
+<ul>
+<li>2021-05-09</li>
+<li>added support for ISRCTN</li>
+<li>refactored checking binaries and caching this info</li>
+<li>updated EUCTR download parameters</li>
+<li>refactored ctrGetQueryUrl and ctrOpenSearchPagesInBrowser</li>
+<li>harmonised error checking</li>
+<li>avoid some errors with external scripts</li>
+<li>refactored url / query mangling, added detailed testing</li>
+<li>refactored storing JSON into database (handle big files, reduce memory)</li>
+<li>improved dbFindIdsUniqueTrials (speed, memory, register coverage)</li>
+<li>factored out conversion to JSON</li>
+<li>accelerated EUCTR results and history download and storage</li>
+<li>external scripts now create multiple chunks of records</li>
+<li>use further identifier fields with dbFindIdsUniqueTrials</li>
+</ul>
+</div>
     <div id="ctrdata-1539000" class="section level1">
 <h1 class="page-header" data-toc-text="1.5.3.9000">
 <a href="#ctrdata-1539000" class="anchor"></a>ctrdata 1.5.3.9000<small> Unreleased </small>
 </h1>
 <ul>
-<li>2021-04-20</li>
+<li>2021-04-29</li>
+<li>adding user info which field entries could not be typed</li>
 </ul>
 </div>
     <div id="ctrdata-153" class="section level1">

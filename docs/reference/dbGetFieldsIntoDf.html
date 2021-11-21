@@ -83,7 +83,7 @@ can be hierarchical and structured, that is, nested." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ctrdata</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.8.0</span>
       </span>
     </div>
 
@@ -206,40 +206,40 @@ extract desired nested variables.</p>
 examples and other packages to query mongodb such as mongolite.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='va'>db</span> <span class='op'>&lt;-</span> <span class='fu'>nodbi</span><span class='fu'>::</span><span class='fu'><a href='https://docs.ropensci.org/nodbi/reference/src_sqlite.html'>src_sqlite</a></span><span class='op'>(</span>
-  collection <span class='op'>=</span> <span class='st'>"my_collection"</span>
-<span class='op'>)</span>
-
-<span class='co'># access fields that are nested within another field</span>
-<span class='co'># and can have multiple values with the other field</span>
-<span class='fu'>dbGetFieldsIntoDf</span><span class='op'>(</span>
-  <span class='st'>"b1_sponsor.b31_and_b32_status_of_the_sponsor"</span>,
-  con <span class='op'>=</span> <span class='va'>db</span>
-<span class='op'>)</span><span class='op'>[</span><span class='fl'>1</span>,<span class='op'>]</span>
-<span class='co'>#                 _id b1_sponsor.b31_and_b32_status_of_the_sponsor</span>
-<span class='co'># 1 2004-000015-25-GB                  Non-commercial / Commercial</span>
-
-<span class='co'># access fields that include a list of values</span>
-<span class='co'># which are printed as comma separated values</span>
-<span class='fu'>dbGetFieldsIntoDf</span><span class='op'>(</span>
-  <span class='st'>"keyword"</span>,
-  con <span class='op'>=</span> <span class='va'>db</span>
-<span class='op'>)</span><span class='op'>[</span><span class='fl'>1</span>,<span class='op'>]</span>
-
-<span class='co'>#           _id                                 keyword</span>
-<span class='co'># 1 NCT00129259 T1D, type 1 diabetes, juvenile diabetes</span>
-
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>.Last.value</span><span class='op'>)</span>
-<span class='co'># 'data.frame':  1 obs. of  2 variables:</span>
-<span class='co'># $ _id    : chr "NCT00129259"</span>
-<span class='co'># $ keyword:List of 1</span>
-<span class='co'># ..$ : chr  "T1D" "type 1 diabetes" "juvenile diabetes"</span>
-
-<span class='op'>}</span>
-
-</div></pre>
+    <pre class="examples"><span class='r-in'></span>
+<span class='r-in'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span></span>
+<span class='r-in'><span class='va'>db</span> <span class='op'>&lt;-</span> <span class='fu'>nodbi</span><span class='fu'>::</span><span class='fu'><a href='https://docs.ropensci.org/nodbi/reference/src_sqlite.html'>src_sqlite</a></span><span class='op'>(</span></span>
+<span class='r-in'>  collection <span class='op'>=</span> <span class='st'>"my_collection"</span></span>
+<span class='r-in'><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># access fields that are nested within another field</span></span>
+<span class='r-in'><span class='co'># and can have multiple values with the other field</span></span>
+<span class='r-in'><span class='fu'>dbGetFieldsIntoDf</span><span class='op'>(</span></span>
+<span class='r-in'>  <span class='st'>"b1_sponsor.b31_and_b32_status_of_the_sponsor"</span>,</span>
+<span class='r-in'>  con <span class='op'>=</span> <span class='va'>db</span></span>
+<span class='r-in'><span class='op'>)</span><span class='op'>[</span><span class='fl'>1</span>,<span class='op'>]</span></span>
+<span class='r-in'><span class='co'>#                 _id b1_sponsor.b31_and_b32_status_of_the_sponsor</span></span>
+<span class='r-in'><span class='co'># 1 2004-000015-25-GB                  Non-commercial / Commercial</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># access fields that include a list of values</span></span>
+<span class='r-in'><span class='co'># which are printed as comma separated values</span></span>
+<span class='r-in'><span class='fu'>dbGetFieldsIntoDf</span><span class='op'>(</span></span>
+<span class='r-in'>  <span class='st'>"keyword"</span>,</span>
+<span class='r-in'>  con <span class='op'>=</span> <span class='va'>db</span></span>
+<span class='r-in'><span class='op'>)</span><span class='op'>[</span><span class='fl'>1</span>,<span class='op'>]</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>#           _id                                 keyword</span></span>
+<span class='r-in'><span class='co'># 1 NCT00129259 T1D, type 1 diabetes, juvenile diabetes</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>.Last.value</span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'># 'data.frame':  1 obs. of  2 variables:</span></span>
+<span class='r-in'><span class='co'># $ _id    : chr "NCT00129259"</span></span>
+<span class='r-in'><span class='co'># $ keyword:List of 1</span></span>
+<span class='r-in'><span class='co'># ..$ : chr  "T1D" "type 1 diabetes" "juvenile diabetes"</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='op'>}</span></span>
+<span class='r-in'></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
