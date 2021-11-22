@@ -601,6 +601,10 @@ tmpc <- table(tmpc)
 # tmpc
 # character      Date   integer      list   logical
 #       411        18        22       538        77
+# mongo_remote_rw
+# tmpc
+# character      Date   integer      list   logical
+#        65        10         6         7        57
 
 # tests note tmpr has more columns
 # because data frames are expanded
@@ -610,7 +614,7 @@ expect_true(length(tmpf) <= length(tmpr))
 expect_true(tmpc[["character"]] > 50)
 expect_true(tmpc[["integer"]]   >  5)
 expect_true(tmpc[["Date"]]      >  5)
-expect_true(tmpc[["list"]]      > 10)
+expect_true(tmpc[["list"]]      >  5)
 expect_true(tmpc[["logical"]]   > 50)
 
 # TODO

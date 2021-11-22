@@ -30,7 +30,7 @@ knitr::opts_chunk$set(
 
 General information on the `ctrdata` package is available here: [https://github.com/rfhb/ctrdata](https://github.com/rfhb/ctrdata). 
 
-Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: Ralf Herold (2020). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.4, https://cran.r-project.org/package=ctrdata
+Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: Ralf Herold (2021). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.8.0. https://cran.r-project.org/package=ctrdata
 
 # Preparations 
 
@@ -68,12 +68,9 @@ ctrLoadQueryIntoDb(
   con = db
 )
 dbQueryHistory(con = db)
-#       query-timestamp query-register query-records
-# 1 2021-05-08 11:04:54          EUCTR           135
-# 2 2021-05-08 11:05:52          CTGOV           193
-#                                          query-term
-# 1 query=neuroblastoma&age=under-18&status=completed
-# 2        cond=neuroblastoma&recrs=e&age=0&intr=Drug
+#       query-timestamp query-register query-records                                        query-term
+# 1 2021-11-20 22:48:18          EUCTR           146 query=neuroblastoma&age=under-18&status=completed
+# 2 2021-11-20 22:48:26          CTGOV           196        cond=neuroblastoma&recrs=e&age=0&intr=Drug
 ```
 
 # Find fields / variables of interest
@@ -142,12 +139,9 @@ attributes(result)
 # [1] "my_collection_name"
 # 
 # $`ctrdata-dbqueryhistory`
-#       query-timestamp query-register query-records
-# 1 2021-05-08 11:04:54          EUCTR           135
-# 2 2021-05-08 11:05:52          CTGOV           193
-#                                          query-term
-# 1 query=neuroblastoma&age=under-18&status=completed
-# 2        cond=neuroblastoma&recrs=e&age=0&intr=Drug
+#       query-timestamp query-register query-records                                        query-term
+# 1 2021-11-20 22:48:18          EUCTR           146 query=neuroblastoma&age=under-18&status=completed
+# 2 2021-11-20 22:48:26          CTGOV           196        cond=neuroblastoma&recrs=e&age=0&intr=Drug
 ```
 
 In the database, the variable "_id" is the unique index for a record. This "_id" is the NCT number for CTGOV records (e.g., "NCT00002560"), and it is the EudraCT number for EUCTR records including the postfix identifying the EU Member State (e.g., "2008-001436-12-NL"). 
@@ -179,7 +173,7 @@ The unique ids can be used like this to de-duplicate the data.frame created abov
 result <- result[ result[["_id"]] %in% ids, ]
 #
 nrow(result)
-# [1] 217
+# [1] 223
 ```
 
 # Simple analysis - dates
@@ -226,7 +220,7 @@ result$trialstart <- dfMergeTwoVariablesRelevel(
   colnames = c(
     "n_date_of_competent_authority_decision", 
     "start_date"))
-# Unique values returned (first three): 2005-06-02, 2005-09-06, 2005-07-08
+# Unique values returned (first three): 2005-07-08, 2005-11-15, 2005-06-02
 
 # Plot from both registers
 png("vignettes/nb2.png")
@@ -263,8 +257,8 @@ tmp <- dfMergeTwoVariablesRelevel(
 # Unique values returned: completed, other, ongoing
 
 table(tmp)
-# completed   ongoing     other 
-#       212         1         4 
+#   completed   ongoing     other 
+#         217         1         6 
 ```
 
 # Annotations made by user
@@ -281,11 +275,11 @@ result <- dbGetFieldsIntoDf(
   con = db)
 
 str(result)
-# 'data.frame':	328 obs. of  4 variables:
+# 'data.frame':	342 obs. of  4 variables:
 #  $ _id                                  : chr  "2004-004386-15-DE" "2004-004386-15-IT" ...
 #  $ annotation                           : chr  NA NA NA NA ...
 #  $ record_last_import                   : Date, format: "2021-05-08" "2021-05-08" ...
-#  $ clinical_results.outcome_list.outcome:List of 328
+#  $ clinical_results.outcome_list.outcome:List of 342
 ```
 
 # Analysing nested fields such as trial results
@@ -321,8 +315,8 @@ result <- ctrdata::dbGetFieldsIntoDf(
     "study_design_info.allocation",
     # EUCTR
     "@attributes.eudractNumber",
-    "trialInformation", 
-    "subjectDisposition.recruitmentDetails", 
+    "trialInformation.populationAgeGroup",
+    "subjectDisposition.recruitmentDetails",
     "baselineCharacteristics.baselineReportingGroups.baselineReportingGroup",
     "endPoints.endPoint",
     "trialChanges.hasGlobalInterruptions",
@@ -438,7 +432,7 @@ result$pep_is_efs <- grepl(
 # Tabulate
 table(result$pep_is_efs)
 # FALSE  TRUE 
-#   171    18 
+#   204    19 
 
 # Plot
 library(ggplot2)
@@ -499,8 +493,8 @@ number_authorised <- stringi::stri_count(
   fixed = "Yes")
 table(number_authorised, exclude = "")
 # number_authorised
-#  0  1  2  4  8 15 
-# 18  9  4  4  1  1 
+#   0   1   2   4   8  15 
+# 203   9   5   4   1   1 
 result[["any_authorised"]] <- number_authorised > 0
 
 # Plot
@@ -532,32 +526,32 @@ Here are example of analysis functions that can be run on the MongoDB server, wh
 # Load library for database access
 library(mongolite)
 
-# Creat R object m to access the 
+# Create R object m to access the 
 # collection created above:
 m <- mongo(url = paste0(db[["url"]], "/", db[["db"]]), 
            collection = db[["collection"]])
 
 # Number of records in  collection:
 m$count()
-# [1] 329
+# [1] 343
 
 # Number of EUCTR records, using JSON for query:
 m$count(query = '{"_id": {"$regex": "[0-9]{4}-[0-9]{6}-[0-9]{2}", 
                  "$options": "i"}}')
-#[1] 135
+#[1] 146
 
 # Alternative: 
 m$count(query = '{"ctrname": "EUCTR"}')
-# [1] 135
+# [1] 146
 
 # Number of CTGOV records:
 m$count(query = '{"_id": {"$regex": "NCT[0-9]{8}", 
                  "$options": "i"}}')
-# [1] 193
+# [1] 196
 
 # Alternative:
 m$count(query = '{"ctrname": "CTGOV"}')
-# [1] 193
+# [1] 196
 
 # The following examples use the aggregation pipeline in MongoDB:
 
@@ -589,7 +583,7 @@ out <- m$aggregate(
       {"$group": {"_id": "null", "count": {"$sum": 1}}}]')
 out
 #    _id count
-# 1 null    15
+# 1 null    16
 
 # [Example 2.] Lists records of OS trials with start date
 out <- m$aggregate(
@@ -598,9 +592,10 @@ out <- m$aggregate(
       {"$regex": "overall survival", "$options": "i"}}}, 
       {"$project": {"_id": 1, "start_date": 1}}]')
 head(out)
-#           _id   start_date
-# 1 NCT00793845  August 2008
-# 2 NCT00923351 June 2, 2007
+#           _id      start_date
+# 1 NCT00499616 October 8, 2007
+# 2 NCT00793845     August 2008
+# 3 NCT00923351    June 2, 2007
 
 
 # [Example 3.] Count number of trials by number of
@@ -610,15 +605,14 @@ hist <- m$mapreduce(
   reduce = "function(id, counts){return Array.sum(counts)}"
 )
 hist
-#   _id value
-# 1  NaN   199
-# 2    0    74
-# 3  100    35
-# 4  200     4
-# 5  400     6
-# 6  600     1
-# 7 2200     4
-# 8 2700     2
-# 9 3300     4
+#    _id value
+# 1 3300     4
+# 2  NaN   204
+# 3  200     6
+# 4 2200     4
+# 5  600     1
+# 6 2700     2
+# 7    0    77
+# 8  400     9
+# 9  100    36
 ```
-

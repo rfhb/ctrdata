@@ -905,12 +905,17 @@ dbFindIdsUniqueTrials <- function(
   # replicate columns to make data frame fit subsequent steps
   listofIds <- listofIds[, fields, drop = FALSE]
 
-  # rename columns for content mangling
+  # rename columns for content mangling, needs to
+  # correspond to columns and sequence in fields
+  # for mapping identifiers across registers
   names(listofIds) <- c(
     "_id", "ctrname",
+    # euctr
     "euctr.1", "ctgov.1a", "ctgov.1b", "isrctn.1a", "isrctn.1b", "sponsor.1",
+    # ctgov
     "euctr.2a", "euctr.2b", "ctgov.2a", "ctgov.2b", "isrctn.2",
     "sponsor.2a", "sponsor.2b",
+    # isrctn
     "euctr.3", "ctgov.3", "isrctn.3", "sponsor.3"
   )
 
@@ -930,16 +935,18 @@ dbFindIdsUniqueTrials <- function(
     c("euctr.2b", regEuctr),
     c("euctr.3", regEuctr)
   )
-  # - do mangling
+  # - do mangling; prerequisite is
+  #   that each of the columns holds
+  #   a single character vector,
+  #   possibly collapsed with " / "
   invisible(sapply(
     colsToMangle,
     function(ctm) {
       colMangled <- regmatches(
         listofIds[[ ctm[[1]] ]],
         regexec(ctm[[2]], listofIds[[ ctm[[1]] ]]))
-      listofIds[[ ctm[[1]] ]] <<- unlist({ # needs <<-
-        colMangled[!lengths(colMangled)] <- ""; colMangled})
-      NULL
+      colMangled[!lengths(colMangled)] <- ""
+      listofIds[[ ctm[[1]] ]] <<- unlist(colMangled)
     }))
   # - merge columns for register ids and sponsor ids
   for (reg in c(registerList, "SPONSOR")) {
@@ -1151,8 +1158,8 @@ dbGetFieldsIntoDf <- function(fields = "",
   # initialise output
   nFields <- length(fields)
 
-  # iterate over fields so that we can use a custom function to merge results,
-  # given that mongodb clients have different approaches and complex returns
+  # iterate over fields so that we can
+  # use a custom function to merge results
   result <- lapply(
     seq_len(nFields),
     function(i) {
@@ -1178,7 +1185,7 @@ dbGetFieldsIntoDf <- function(fields = "",
         # remove any rows without index variable
         dfi <- dfi[!is.na(dfi[["_id"]]), , drop = FALSE]
 
-        # simplify
+        # simplify by extracting recursively any requested subitem
         itemSegments <- strsplit(item, "[.]")[[1]]
         itemSegments <- setdiff(itemSegments, names(dfi))
         for (iS in itemSegments) {
@@ -1191,7 +1198,7 @@ dbGetFieldsIntoDf <- function(fields = "",
           }
         }
 
-        # expand any resulted data frame
+        # simplify by expanding a resulting data frame
         if (length(unique(names(dfi[[2]]))) > 1L) {
           item <- paste0(item, ".", names(dfi[[2]]))
           dfi <- cbind("_id" = dfi[["_id"]], as.data.frame(dfi[[2]]))
@@ -1204,21 +1211,32 @@ dbGetFieldsIntoDf <- function(fields = "",
         # name result set
         names(dfi) <- c("_id", item)
 
-        # create output from template
+        # create NA output from template
         dfo <- dft
 
-        # process results
+        # simplify by processing columns
         for (c in seq_len(ncol(dfi))[-1]) {
 
-          # simplify if each cell is one atomic element
-          if (all(sapply(dfi[[c]], function(r)
-            (length(r) == 1L) && is.atomic(r))) &&
-            (length(dfi[[c]]) == nrow(dfi))) {
-            dfi[[c]] <- sapply(dfi[[c]], "[[", 1)
-          }
+          # special case: column is one-column data frame
+          if (is.data.frame(dfi[[c]]) && (ncol(dfi[[c]]) == 1L) &&
+              (nrow(dfi[[c]]) == nrow(dfi))) dfi[[c]] <-
+              dfi[[c]][, 1, drop = TRUE]
 
-          # simplify vectors by collapsing (compatibility with previous version)
-          if (all(sapply(dfi[[c]], is.character)) &&
+          # simplify at row level, replaces NULL with NA
+          if (!is.data.frame(dfi[[c]]) &&
+              !any(sapply(dfi[[c]], class) == "data.frame")) {
+            dfi[[c]] <- sapply(dfi[[c]], function(i) {
+              l <- length(i)
+              if (l == 0L) i <- NA
+              if (l == 1L) i <- i[1]
+              if (l >= 2L) {
+                if (all(sapply(i, is.character))) {
+                  i } else {i <- list(i) }}
+              i}, USE.NAMES = FALSE, simplify = TRUE)}
+
+          # simplify vectors in cells by collapsing
+          # (compatibility with previous version)
+          if (all(sapply(dfi[[c]], function(r) is.na(r)[1] | is.character(r))) &&
               any(sapply(dfi[[c]], function(r) length(r) > 1L))) {
             dfi[[c]] <- sapply(dfi[[c]], function(i) paste0(i, collapse = " / "))
           }
@@ -1227,15 +1245,15 @@ dbGetFieldsIntoDf <- function(fields = "",
           if (typeof(dfi[[c]]) == "character") dfi[[c]] <-
               typeField(dfi[, c(1, c), drop = FALSE])[, 2, drop = TRUE]
 
-          # add a column
+          # add a column into copy of NA template
           dfo[[c]] <- switch(
             class(dfi[[c]]),
             "Date" = as.Date(NA),
             "numeric" = as.numeric(NA),
             "character" = as.character(NA),
-            "data.frame" = NA, #as.data.frame(NA),
+            "data.frame" = NA,
             "integer" = as.integer(NA),
-            "list" = NA, #as.list(NA),
+            "list" = NA,
             "logical" = as.logical(NA),
             NA
           )
@@ -1270,18 +1288,25 @@ dbGetFieldsIntoDf <- function(fields = "",
       dfi
 
     }) # end lapply
+  message("")
 
-  # bring lists into data frame by trial id
+  # bring result lists into data frame, by record _id
   result <- Reduce(function(...) merge(..., all = TRUE, by = "_id"), result)
 
-  # prune rows that do not have any results
+  # prune rows without _id
   result <- result[!is.na(result[["_id"]]), , drop = FALSE]
 
-  # remove rows with only NAs
-  result <- result[!apply(
-    result[, -1, drop = FALSE], 1, function(r) all(is.na(r))), , drop = FALSE]
+  # remove rows with only NAs; try because
+  # is.na may fail for complex cells
+  onlyNas <- try({apply(result[, -1, drop = FALSE], 1,
+                  function(r) all(is.na(r)))}, silent = TRUE)
+  if (!inherits(onlyNas, "try-error")) {
+    result <- result[!onlyNas, , drop = FALSE]
+  } else {
+    message("Could not remove rows with only NAs")
+  }
 
-  # finalise output
+  # inform user
   if (is.null(result) || !nrow(result)) {
     warning("No records with values for any specified field. ",
             call. = FALSE)
@@ -1799,7 +1824,7 @@ dfMergeTwoVariablesRelevel <- function(
 
   # find variables in data frame and merge
   tmp <- match(colnames, names(df))
-  df <- df[, tmp]
+  df <- df[, tmp, drop = FALSE]
 
   # bind as ...
   if (class(df[, 1]) == class(df[, 2]) &&
@@ -1816,8 +1841,8 @@ dfMergeTwoVariablesRelevel <- function(
     tmp <- ifelse(is.na(tt <- df[, 1]), df[, 2], df[, 1])
   } else {
     # check
-    if (nrow(df[df[, 1] != "" &
-                df[, 2] != "", , drop = FALSE])) {
+    if (nrow(df[(!is.na(df[, 1]) & df[, 1] != "") &
+                (!is.na(df[, 2]) & df[, 2] != ""), , drop = FALSE])) {
       warning("Some rows had values for both columns, concatenated",
               noBreaks. = TRUE, immediate. = TRUE)
     }
@@ -2040,7 +2065,7 @@ typeField <- function(dfi) {
 
   # clean up input
   # - if NA as string, change to NA
-  dfi[grepl("^N/?A$", dfi[, 2]), 2] <- NA
+  dfi[grepl("^N/?A$|^ND$", dfi[, 2]), 2] <- NA
   # - give Month Year also a Day to work with as.Date
   dfi[, 2] <- sub("^([a-zA-Z]+) ([0-9]{4})$", "\\1 15, \\2", dfi[, 2])
   # - convert html entities
@@ -2201,7 +2226,7 @@ typeField <- function(dfi) {
       "participants.totalFinalEnrolment"  = ctrInt(),
       "externalRefs.protocolSerialNumber" = ctrInt(),
       #
-      # TODO: results-related variables
+      # TODO results-related variables
       "trialInformation.analysisForPrimaryCompletion" = ctrFalseTrue()
       #
     )
