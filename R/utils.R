@@ -1224,15 +1224,21 @@ dbGetFieldsIntoDf <- function(fields = "",
 
           # simplify at row level, replaces NULL with NA
           if (!is.data.frame(dfi[[c]]) &&
-              !any(sapply(dfi[[c]], class) == "data.frame")) {
+              !any(sapply(dfi[[c]], function(r)
+                all(class(r) == "data.frame") && ncol(r) > 0L && nrow(r) > 0L))) {
             dfi[[c]] <- sapply(dfi[[c]], function(i) {
               l <- length(i)
               if (l == 0L) i <- NA
               if (l == 1L) i <- i[1]
               if (l >= 2L) {
                 if (all(sapply(i, is.character))) {
-                  i } else {i <- list(i) }}
-              i}, USE.NAMES = FALSE, simplify = TRUE)}
+                  i <- paste0(unlist(i), collapse = " / ")
+                } else {
+                  i <- list(i)
+                }} # l >= 2L
+              i}
+            ) # sapply
+          }
 
           # simplify vectors in cells by collapsing
           # (compatibility with previous version)

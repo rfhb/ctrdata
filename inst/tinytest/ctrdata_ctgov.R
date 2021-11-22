@@ -139,6 +139,7 @@ result <- suppressMessages(
   suppressWarnings(
     dbGetFieldsIntoDf(
       fields = c(
+        "primary_outcome.measure",
         "clinical_results.baseline.analyzed_list.analyzed.count_list.count",
         "clinical_results.baseline.group_list.group",
         "clinical_results.baseline.analyzed_list.analyzed.units",
@@ -232,3 +233,4 @@ expect_error(
         annotation.mode = "WRONG",
         con = dbc))),
   "'annotation.mode' incorrect")
+
