@@ -1,12 +1,13 @@
+# ctrdata 1.8.0.9000
+ - 2021-11-22
+ - new development version
+ 
 # ctrdata 1.8.0
  - 2021-11-18
  - changes to match nodbi 0.5.0 
  - simplifying database operations (user-visible functions: 
    ctrLoadQueryIntoDb, dbFindIdsUniqueTrials, dbGetFieldsIntoDf), 
    without changes to API
- - dbGetFieldsIntoDf: a field that is a list containing a data frame
-   is returned as a data frame for RSQLite and as a list for MongoDB
-   database backends, by intention to simplify return values
 
 # ctrdata 1.7.1.9000
  - 2021-08-23

@@ -1,7 +1,7 @@
 Package: ctrdata
 Type: Package
 Title: Retrieve and Analyze Clinical Trials in Public Registers
-Version: 1.8.0
+Version: 1.8.0.9000
 Imports: jsonlite, httr, curl, clipr, xml2, rvest, nodbi (>= 0.5.0), stringi
 SystemRequirements: sed, php, cat, perl
 URL: https://cran.r-project.org/package=ctrdata
