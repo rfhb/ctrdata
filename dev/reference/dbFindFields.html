@@ -82,7 +82,7 @@ function returns the full field names as found in the database." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ctrdata</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.7.1.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.8.0.9000</span>
       </span>
     </div>
 
@@ -197,18 +197,18 @@ such a function, random documents are sampled to generate a
 list of fields.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='va'>db</span> <span class='op'>&lt;-</span> <span class='fu'>nodbi</span><span class='fu'>::</span><span class='fu'><a href='https://docs.ropensci.org/nodbi/reference/src_sqlite.html'>src_sqlite</a></span><span class='op'>(</span>
-  collection <span class='op'>=</span> <span class='st'>"my_collection"</span>
-<span class='op'>)</span>
-<span class='fu'>dbFindFields</span><span class='op'>(</span>
-  nampepart <span class='op'>=</span> <span class='st'>"date"</span>,
-  con <span class='op'>=</span> <span class='va'>db</span>
-<span class='op'>)</span>
-<span class='op'>}</span>
-
-</div></pre>
+    <pre class="examples"><span class='r-in'></span>
+<span class='r-in'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span></span>
+<span class='r-in'><span class='va'>db</span> <span class='op'>&lt;-</span> <span class='fu'>nodbi</span><span class='fu'>::</span><span class='fu'><a href='https://docs.ropensci.org/nodbi/reference/src_sqlite.html'>src_sqlite</a></span><span class='op'>(</span></span>
+<span class='r-in'>  collection <span class='op'>=</span> <span class='st'>"my_collection"</span></span>
+<span class='r-in'><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'>dbFindFields</span><span class='op'>(</span></span>
+<span class='r-in'>  nampepart <span class='op'>=</span> <span class='st'>"date"</span>,</span>
+<span class='r-in'>  con <span class='op'>=</span> <span class='va'>db</span></span>
+<span class='r-in'><span class='op'>)</span></span>
+<span class='r-in'><span class='op'>}</span></span>
+<span class='r-in'></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
