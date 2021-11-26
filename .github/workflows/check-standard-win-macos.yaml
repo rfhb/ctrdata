@@ -60,12 +60,7 @@ jobs:
           install.packages(c("remotes"))
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran(c("rcmdcheck", "covr"))
-          remotes::install_github("ropensci/nodbi", ref = "harmoniseApi")
-        shell: Rscript {0}
-
-      - name: Install branch-specific dependencies
-        if: github.ref_name == 'nodbi050'
-        run: remotes::install_github("ropensci/nodbi", "harmoniseApi")
+          remotes::install_github("ropensci/nodbi")
         shell: Rscript {0}
 
       # - name: Install branch-specific dependencies
