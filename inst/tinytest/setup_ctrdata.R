@@ -81,6 +81,15 @@ checkSqlite <- function() {
 }
 
 
+checkPostgres <- function() {
+  tmp <- try(nodbi::src_postgres(), silent = TRUE)
+
+  out <- inherits(tmp, c("src_postgres", "docdb_src"))
+  if (out) RPostgres::dbDisconnect(conn = tmp$con)
+  out
+}
+
+
 checkMongoLocal <- function() {
   tmp <- try(
     nodbi::src_mongo(

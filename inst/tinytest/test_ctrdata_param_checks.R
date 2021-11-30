@@ -162,7 +162,7 @@ tf <- function() {
       suppressWarnings(
         dbFindIdsUniqueTrials(
           con = dbc))),
-    "parameter .* needs to specify the name of a table")
+    "parameter .* table")
 
 
   #### ctrGetQueryUrl ####

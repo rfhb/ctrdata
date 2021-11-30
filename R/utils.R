@@ -26,7 +26,8 @@ registerList <- c("EUCTR", "CTGOV", "ISRCTN")
 #' Check and prepare nodbi connection object for ctrdata
 #'
 #' @param con A \link[nodbi]{src} connection object, as obtained with
-#'  nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()
+#'  nodbi::\link[nodbi]{src_mongo()}, nodbi::\link[nodbi]{src_sqlite()}
+#'  or nodbi::\link[nodbi]{src_postgres()}
 #'
 #' @keywords internal
 #'
@@ -40,13 +41,33 @@ ctrDb <- function(
   con = nodbi::src_sqlite(
     collection = "ctrdata_auto_generated")) {
 
+  ## postgres
+  if (inherits(con, "src_postgres")) {
+
+    if (is.null(con$collection)) {
+      stop("Specify attribute 'collection' with a table name, such as ",
+           "attr(<nodbi src_postgres object>, collection = 'test'), ",
+           "for package ctrdata to work.",
+           call. = FALSE)
+    }
+
+    # add database as element under root
+    con <- c(con,
+             "db" = con$dbname,
+             "ctrDb" = TRUE)
+
+    ## return
+    return(structure(con,
+                     class = c("src_postgres", "docdb_src")))
+  }
+
   ## sqlite
   if (inherits(con, "src_sqlite")) {
 
     if (is.null(con$collection)) {
-      stop("In src_sqlite(), a parameter 'collection' needs to specify ",
-           "the name of a table, such as src_sqlite(collection = 'test'), ",
-           "for package ctrdata to work with other nosql databases.",
+      stop("Specify parameter 'collection' with a table name, ",
+           "such as nodbi::src_sqlite(collection = 'test'), ",
+           "for package ctrdata to work.",
            call. = FALSE)
     }
 
@@ -101,7 +122,7 @@ ctrDb <- function(
 
   ## unprepared for other nodbi adapters so far
   stop("Please specify in parameter 'con' a database connection. ",
-       "crdata supports so far only src_mongo() and src_sqlite().",
+       "crdata supports src_mongo(), src_sqlite() and src_potgres().",
        call. = FALSE)
 
 } # end ctrDb
@@ -715,8 +736,8 @@ dbFindFields <- function(namepart = "",
       } # end if error with mapreduce
     } # end if src_mongo
 
-    ## - method for sqlite
-    if (inherits(con, "src_sqlite")) {
+    ## - method for sqlite and postgres
+    if (inherits(con, "src_sqlite") || inherits(con, "src_postgres")) {
 
       # uses special function parameter for
       # src_sqlite query method: listfields
@@ -1275,7 +1296,8 @@ dbGetFieldsIntoDf <- function(fields = "",
 
       # inform user
       if (inherits(tmpItem, "try-error") ||
-          !nrow(dfi) || (ncol(dfi) == 1L)) {
+          !nrow(dfi) || (ncol(dfi) == 1L) ||
+          is.null(dfi[[2]]) || all(is.na(dfi[[2]]))) {
 
         # try-error occurred or no data retrieved
         if (stopifnodata) {
