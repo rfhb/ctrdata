@@ -14,20 +14,20 @@
 <script src="pkgdown.js"></script><!-- docsearch --><script src="docsearch.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.3/docsearch.min.css" integrity="sha256-QOSRU/ra9ActyXkIBbiIB144aDBdtvXBcNc3OTNuX/Q=" crossorigin="anonymous">
 <link href="docsearch.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script><meta property="og:title" content="Retrieve and Analyze Clinical Trials in Public Registers">
-<meta property="og:description" content="Provides functions for querying, retrieving and analyzing
+<meta property="og:description" content="A system for querying, retrieving and analyzing
         protocol- and results-related information on clinical trials from
-        two public registers, the European Union Clinical Trials Register
+        three public registers, the European Union Clinical Trials Register
         (EUCTR, &lt;https://www.clinicaltrialsregister.eu/&gt;), 
         ClinicalTrials.gov (CTGOV, &lt;https://clinicaltrials.gov/&gt;) and
         the ISRCTN (&lt;http://www.isrctn.com/&gt;). 
         Trial information is downloaded, converted and stored in a database 
-        (SQLite or MongoDB, via nodbi). 
-        Functions are provided to identify de-duplicated records, 
+        (PostgreSQL, SQLite or MongoDB; via package nodbi). 
+        Functions are included to identify de-duplicated records, 
         to easily find and extract variables (fields) of interest even 
         from complex nesting as used by the registers, and
-        to update previous queries that users retrieved in a database. 
-        The package can be used for meta analysis and trend-analysis of
-        the design and conduct as well as results of clinical trials.">
+        to update previous queries. 
+        The package can be used for meta-analysis and trend-analysis of
+        the design and conduct as well as for results of clinical trials.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@rfhb">
 <meta name="twitter:site" content="@rfhb">
@@ -121,16 +121,16 @@
 <ul>
 <li>EU Clinical Trials Register (“EUCTR”, <a href="https://www.clinicaltrialsregister.eu/" class="uri">https://www.clinicaltrialsregister.eu/</a>)</li>
 <li>ClinicalTrials.gov (“CTGOV”, <a href="https://clinicaltrials.gov/" class="uri">https://clinicaltrials.gov/</a>)</li>
-<li>ISRCTN (<a href="https://www.isrctn.com/" class="uri">https://www.isrctn.com/</a>) 🔔new in version 1.6.0 👍</li>
+<li>ISRCTN (<a href="https://www.isrctn.com/" class="uri">https://www.isrctn.com/</a>) 🔔new in v1.6.0</li>
 </ul>
-<p>The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. The package is to be used within the <a href="https://www.r-project.org/">R</a> system; this README was reviewed on 2021-11-20 for version 1.8.0.</p>
+<p>The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. The package is to be used within the <a href="https://www.r-project.org/">R</a> system; this README was reviewed on 2021-12-01 for v1.8.0.9000.</p>
 <p>Main features:</p>
 <ul>
 <li><p>Protocol-related trial information is easily retrieved (downloaded): Users define a query in a register’s web interface and then use <code>ctrdata</code> to retrieve in one step all trials resulting from the query. Results-related trial information and personal annotations can be including during retrieval. Synonyms of an active substance can also be found.</p></li>
-<li><p>Retrieved (downloaded) trial information is transformed and stored in a document-centric database, for fast and offline access. Uses <code>RSQLite</code>, local or remote MongoDB servers, via R package <code>nodbi</code>. Easily re-run a previous query to update a database.</p></li>
-<li><p>Analysis can be done with <code>R</code> (using <code>ctrdata</code> convenience functions) or others systems. Unique (de-duplicated) trial records are identified across registers. <code>ctrdata</code> can merge and recode information (fields) and also provides easy access even to deeply-nested fields (🔔 new in version 1.4).</p></li>
+<li><p>Retrieved (downloaded) trial information is transformed and stored in a document-centric database, for fast and offline access. Uses <code>PostgreSQL</code> (🔔new in v1.8.0.9000), <code>RSQLite</code> or <code>MongoDB</code> as databases, via R package <code>nodbi</code>. Easily re-run a previous query to update a database.</p></li>
+<li><p>Analysis can be done with <code>R</code> (using <code>ctrdata</code> convenience functions) or others systems. Unique (de-duplicated) trial records are identified across registers. <code>ctrdata</code> can merge and recode information (fields) and also provides easy access even to deeply-nested fields (🔔 new in v1.4.0).</p></li>
 </ul>
-<p>Remember to respect the registers’ terms and conditions (see <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>). Please cite this package in any publication as follows: “Ralf Herold (2021). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.6, <a href="https://cran.r-project.org/package=ctrdata" class="uri">https://cran.r-project.org/package=ctrdata</a>” Package <code>ctrdata</code> has been used for: Blogging on <a href="https://paediatricdata.eu/innovation-coming-to-paediatric-research/">Innovation coming to paediatric research</a> and a Report on <a href="https://www.cancerresearchuk.org/about-us/we-develop-policy/we-work-with-government/exiting-the-eu/uk-and-eu-research#downloads">The impact of collaboration: The value of UK medical research to EU science and health</a></p>
+<p>Remember to respect the registers’ terms and conditions (see <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>). Please cite this package in any publication as follows: “Ralf Herold (2021). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.8.0, <a href="https://cran.r-project.org/package=ctrdata" class="uri">https://cran.r-project.org/package=ctrdata</a>” Package <code>ctrdata</code> has been used for: Blogging on <a href="https://paediatricdata.eu/innovation-coming-to-paediatric-research/">Innovation coming to paediatric research</a> and a Report on <a href="https://www.cancerresearchuk.org/about-us/we-develop-policy/we-work-with-government/exiting-the-eu/uk-and-eu-research#downloads">The impact of collaboration: The value of UK medical research to EU science and health</a></p>
 <!--
 
 ```r
@@ -275,7 +275,7 @@ citation("ctrdata")
 <ul>
 <li>Retrieve protocol-related information, transform and save to database:</li>
 </ul>
-<p>Under the hood, scripts <code>euctr2json.sh</code> and <code>xml2json.php</code> (in <code>ctrdata/exec</code>) transform EUCTR plain text files and CTGOV <code>XML</code> files to <code>ndjson</code> format, which is imported into the database. The database is specified first, using <code>nodbi</code> (using <code>RSQlite</code> or <code>MongoDB</code> as backend); then, trial information is retrieved and loaded into the database:</p>
+<p>Under the hood, scripts <code>euctr2json.sh</code> and <code>xml2json.php</code> (in <code>ctrdata/exec</code>) transform EUCTR plain text files and CTGOV <code>XML</code> files to <code>ndjson</code> format, which is imported into the database. The database is specified first, using <code>nodbi</code> (using <code>PostgreSQL</code>, <code>RSQlite</code> or <code>MongoDB</code> as backend); then, trial information is retrieved and loaded into the database:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Connect to (or newly create) an SQLite database </span>
 <span class="co"># that is stored in a file on the local system:</span>
@@ -459,30 +459,35 @@ citation("ctrdata")
 <p>The database connection object <code>con</code> is created by calling <code>nodbi::src_*()</code>, with parameters that are specific to the database (e.g., <code>url</code>) and with a special parameter <code>collection</code> that is used by <code>ctrdata</code> to identify which table or collection in the database to use. Any such connection object can then be used by <code>ctrdata</code> and generic functions of <code>nodbi</code> in a consistent way, as shown in the table:</p>
 <table class="table">
 <colgroup>
-<col width="15%">
-<col width="35%">
-<col width="49%">
+<col width="26%">
+<col width="73%">
 </colgroup>
 <thead><tr class="header">
 <th>Purpose</th>
-<th>SQLite</th>
-<th>MongoDB</th>
+<th>Function call</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td>Create database connection</td>
-<td><code>dbc &lt;- nodbi::src_sqlite(dbname = ":memory:", collection = "name_of_my_collection")</code></td>
-<td><code>dbc &lt;- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection", url = "mongodb://localhost")</code></td>
+<td>Create SQLite database connection</td>
+<td><code>dbc &lt;- nodbi::src_sqlite(dbname = "name_of_my_database", collection = "name_of_my_collection")</code></td>
 </tr>
 <tr class="even">
-<td>Use connection with ctrdata functions</td>
-<td><code>ctrdata::{ctr,db}*(con = dbc)</code></td>
-<td><code>ctrdata::{ctr,db}*(con = dbc)</code></td>
+<td>Create PostgreSQL database connection</td>
+<td>
+<code>dbc &lt;- nodbi::src_postgres(dbname = "name_of_my_database")</code>; <code>dbc[["collection"]] &lt;- "name_of_my_collection"</code>
+</td>
 </tr>
 <tr class="odd">
-<td>Use connection with nodbi functions</td>
-<td><code>nodbi::docdb_*(src = dbc, key = dbc$collection)</code></td>
-<td><code>nodbi::docdb_*(src = dbc, key = dbc$collection)</code></td>
+<td>Create MongoDB database connection</td>
+<td><code>dbc &lt;- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")</code></td>
+</tr>
+<tr class="even">
+<td>Use connection with <code>ctrdata</code> functions</td>
+<td><code>ctrdata::{ctr,db}*(con = dbc, ...)</code></td>
+</tr>
+<tr class="odd">
+<td>Use connection with <code>nodbi</code> functions</td>
+<td><code>nodbi::docdb_*(src = dbc, key = dbc$collection, ...)</code></td>
 </tr>
 </tbody>
 </table>
