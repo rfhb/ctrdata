@@ -45,8 +45,8 @@ ctrDb <- function(
   if (inherits(con, "src_postgres")) {
 
     if (is.null(con$collection)) {
-      stop("Specify attribute 'collection' with a table name, such as ",
-           "attr(<nodbi src_postgres object>, collection = 'test'), ",
+      stop("Specify 'collection' with a table name, using ",
+           "<nodbi src_postgres object>[[\"collection\"]] <- \"test\"), ",
            "for package ctrdata to work.",
            call. = FALSE)
     }
