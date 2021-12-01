@@ -8,7 +8,8 @@ dbQueryHistory(con, verbose = FALSE)
 }
 \arguments{
 \item{con}{A \link[nodbi]{src} connection object, as obtained with
-nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()}
+nodbi::\link[nodbi]{src_mongo()}, nodbi::\link[nodbi]{src_sqlite()}
+or nodbi::\link[nodbi]{src_postgres()}}
 
 \item{verbose}{If \code{TRUE}, prints additional information
 (default \code{FALSE}).}

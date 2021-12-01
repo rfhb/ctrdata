@@ -6,20 +6,20 @@ Imports: jsonlite, httr, curl, clipr, xml2, rvest, nodbi (>= 0.5.0), stringi
 SystemRequirements: sed, php, cat, perl
 URL: https://cran.r-project.org/package=ctrdata
 BugReports: https://github.com/rfhb/ctrdata/issues
-Description: Provides functions for querying, retrieving and analyzing
+Description: A system for querying, retrieving and analyzing
         protocol- and results-related information on clinical trials from
-        two public registers, the 'European Union Clinical Trials Register'
+        three public registers, the 'European Union Clinical Trials Register'
         ('EUCTR', <https://www.clinicaltrialsregister.eu/>), 
         'ClinicalTrials.gov' ('CTGOV', <https://clinicaltrials.gov/>) and
         the 'ISRCTN' (<http://www.isrctn.com/>). 
         Trial information is downloaded, converted and stored in a database 
-        ('SQLite' or 'MongoDB', via 'nodbi'). 
-        Functions are provided to identify de-duplicated records, 
+        ('PostgreSQL', 'SQLite' or 'MongoDB'; via package 'nodbi'). 
+        Functions are included to identify de-duplicated records, 
         to easily find and extract variables (fields) of interest even 
         from complex nesting as used by the registers, and
-        to update previous queries that users retrieved in a database. 
-        The package can be used for meta analysis and trend-analysis of
-        the design and conduct as well as results of clinical trials.
+        to update previous queries. 
+        The package can be used for meta-analysis and trend-analysis of
+        the design and conduct as well as for results of clinical trials.
 License: MIT + file LICENSE
 RoxygenNote: 7.1.2
 Suggests: devtools, knitr, rmarkdown, RSQLite (>= 2.2.4), mongolite, 

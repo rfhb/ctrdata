@@ -78,7 +78,8 @@ Does not load trial information into the database.
 Default is \code{FALSE}.}
 
 \item{con}{A \link[nodbi]{src} connection object, as obtained with
-nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()}
+nodbi::\link[nodbi]{src_mongo()}, nodbi::\link[nodbi]{src_sqlite()}
+or nodbi::\link[nodbi]{src_postgres()}}
 
 \item{verbose}{Printing additional information if set to
 \code{TRUE}; default is \code{FALSE}.}

@@ -1263,7 +1263,8 @@ dbGetFieldsIntoDf <- function(fields = "",
 
           # simplify vectors in cells by collapsing
           # (compatibility with previous version)
-          if (all(sapply(dfi[[c]], function(r) is.na(r)[1] | is.character(r))) &&
+          if ((length(names(dfi[[c]])) == 1L) &&
+              all(sapply(dfi[[c]], function(r) is.na(r)[1] | is.character(r))) &&
               any(sapply(dfi[[c]], function(r) length(r) > 1L))) {
             dfi[[c]] <- sapply(dfi[[c]], function(i) paste0(i, collapse = " / "))
           }
@@ -1330,8 +1331,6 @@ dbGetFieldsIntoDf <- function(fields = "",
                   function(r) all(is.na(r)))}, silent = TRUE)
   if (!inherits(onlyNas, "try-error")) {
     result <- result[!onlyNas, , drop = FALSE]
-  } else {
-    message("Could not remove rows with only NAs")
   }
 
   # inform user
