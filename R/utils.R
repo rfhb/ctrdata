@@ -26,8 +26,8 @@ registerList <- c("EUCTR", "CTGOV", "ISRCTN")
 #' Check and prepare nodbi connection object for ctrdata
 #'
 #' @param con A \link[nodbi]{src} connection object, as obtained with
-#'  nodbi::\link[nodbi]{src_mongo()}, nodbi::\link[nodbi]{src_sqlite()}
-#'  or nodbi::\link[nodbi]{src_postgres()}
+#'  [nodbi::src_mongo()], [nodbi::src_sqlite()]
+#'  or [nodbi::src_postgres()]
 #'
 #' @keywords internal
 #'

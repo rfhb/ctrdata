@@ -12,8 +12,8 @@ See function \link{dbFindFields} for how to find names of fields.
 Regular expressions are possible. "item.subitem" notation is supported.}
 
 \item{con}{A \link[nodbi]{src} connection object, as obtained with
-nodbi::\link[nodbi]{src_mongo()}, nodbi::\link[nodbi]{src_sqlite()}
-or nodbi::\link[nodbi]{src_postgres()}}
+[nodbi::src_mongo()], [nodbi::src_sqlite()]
+or [nodbi::src_postgres()]}
 
 \item{verbose}{Printing additional information if set to \code{TRUE};
 default is \code{FALSE}.}
