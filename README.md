@@ -18,12 +18,12 @@ aggregating and analysing this information; it can be used for the
 -   EU Clinical Trials Register (“EUCTR”,
     <https://www.clinicaltrialsregister.eu/>)
 -   ClinicalTrials.gov (“CTGOV”, <https://clinicaltrials.gov/>)
--   ISRCTN (<https://www.isrctn.com/>) 🔔new in version 1.6.0 👍
+-   ISRCTN (<https://www.isrctn.com/>) 🔔new in v1.6.0
 
 The motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. The package
 is to be used within the [R](https://www.r-project.org/) system; this
-README was reviewed on 2021-11-20 for version 1.8.0.
+README was reviewed on 2021-12-01 for v1.8.0.9000.
 
 Main features:
 
@@ -36,20 +36,21 @@ Main features:
 
 -   Retrieved (downloaded) trial information is transformed and stored
     in a document-centric database, for fast and offline access. Uses
-    `RSQLite`, local or remote MongoDB servers, via R package `nodbi`.
-    Easily re-run a previous query to update a database.
+    `PostgreSQL` (🔔new in v1.8.0.9000), `RSQLite` or `MongoDB` as
+    databases, via R package `nodbi`. Easily re-run a previous query to
+    update a database.
 
 -   Analysis can be done with `R` (using `ctrdata` convenience
     functions) or others systems. Unique (de-duplicated) trial records
     are identified across registers. `ctrdata` can merge and recode
     information (fields) and also provides easy access even to
-    deeply-nested fields (🔔 new in version 1.4).
+    deeply-nested fields (🔔 new in v1.4.0).
 
 Remember to respect the registers’ terms and conditions (see
 `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
 package in any publication as follows: “Ralf Herold (2021). ctrdata:
 Retrieve and Analyze Clinical Trials in Public Registers. R package
-version 1.6, <https://cran.r-project.org/package=ctrdata>” Package
+version 1.8.0, <https://cran.r-project.org/package=ctrdata>” Package
 `ctrdata` has been used for: Blogging on [Innovation coming to
 paediatric
 research](https://paediatricdata.eu/innovation-coming-to-paediatric-research/)
@@ -181,9 +182,9 @@ q
 Under the hood, scripts `euctr2json.sh` and `xml2json.php` (in
 `ctrdata/exec`) transform EUCTR plain text files and CTGOV `XML` files
 to `ndjson` format, which is imported into the database. The database is
-specified first, using `nodbi` (using `RSQlite` or `MongoDB` as
-backend); then, trial information is retrieved and loaded into the
-database:
+specified first, using `nodbi` (using `PostgreSQL`, `RSQlite` or
+`MongoDB` as backend); then, trial information is retrieved and loaded
+into the database:
 
 ``` r
 # Connect to (or newly create) an SQLite database 
@@ -385,11 +386,13 @@ The database connection object `con` is created by calling
 Any such connection object can then be used by `ctrdata` and generic
 functions of `nodbi` in a consistent way, as shown in the table:
 
-| Purpose                               | SQLite                                                                                | MongoDB                                                                                                                  |
-|---------------------------------------|---------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------|
-| Create database connection            | `dbc <- nodbi::src_sqlite(dbname = ":memory:", collection = "name_of_my_collection")` | `dbc <- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection", url = "mongodb://localhost")` |
-| Use connection with ctrdata functions | `ctrdata::{ctr,db}*(con = dbc)`                                                       | `ctrdata::{ctr,db}*(con = dbc)`                                                                                          |
-| Use connection with nodbi functions   | `nodbi::docdb_*(src = dbc, key = dbc$collection)`                                     | `nodbi::docdb_*(src = dbc, key = dbc$collection)`                                                                        |
+| Purpose                                 | Function call                                                                                                  |
+|-----------------------------------------|----------------------------------------------------------------------------------------------------------------|
+| Create SQLite database connection       | `dbc <- nodbi::src_sqlite(dbname = "name_of_my_database", collection = "name_of_my_collection")`               |
+| Create PostgreSQL database connection   | `dbc <- nodbi::src_postgres(dbname = "name_of_my_database")`; `dbc[["collection"]] <- "name_of_my_collection"` |
+| Create MongoDB database connection      | `dbc <- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")`                    |
+| Use connection with `ctrdata` functions | `ctrdata::{ctr,db}*(con = dbc, ...)`                                                                           |
+| Use connection with `nodbi` functions   | `nodbi::docdb_*(src = dbc, key = dbc$collection, ...)`                                                         |
 
 # Features in the works
 

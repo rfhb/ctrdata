@@ -28,7 +28,8 @@ that are conducted exclusively in third countries, that is, outside
 the European Union.}
 
 \item{con}{A \link[nodbi]{src} connection object, as obtained with
-nodbi::\link[nodbi]{src_mongo}() or nodbi::\link[nodbi]{src_sqlite}()}
+[nodbi::src_mongo()], [nodbi::src_sqlite()]
+or [nodbi::src_postgres()]}
 
 \item{verbose}{If set to \code{TRUE}, prints out information about numbers
 of records found at subsequent steps when searching for duplicates}
