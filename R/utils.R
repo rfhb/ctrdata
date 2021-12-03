@@ -682,73 +682,44 @@ dbFindFields <- function(namepart = "",
     # inform user
     message("Finding fields in database (may take some time)")
 
-    ## using storage backend- specific methods, since
-    ## no canonical way was found yet to retrieve
-    ## field / key names
+    # TODO new approach
 
-    ## - method for mongodb
-    if (inherits(con, "src_mongo")) {
-
-      # try mapreduce to get all keys
-      keyslist <- try({
-        con$con$mapreduce(
-          map = "function() {
-      obj = this;
-      return searchInObj(obj, '');
-      function searchInObj(obj, pth) {
-         for(var key in obj) {
-            if(typeof obj[key] == 'object' && obj[key] !== null) {
-               if(pth != '') {pth = pth + '.'}
-                  searchInObj(obj[key], pth + key);
-            }else{
-               key = pth + '.' + key;
-               key = key.replace(/[.][0-9]+[.]/g, '.');
-               key = key.replace(/[.][0-9]+$/, '');
-               key = key.replace(/[.][.]+/g, '.');
-               key = key.replace(/[.]$/g, '');
-               key = key.replace(/^[.]/, '');
-               emit(key, 1);
-      }}}}",
-      reduce = "function(id, counts) {return Array.sum(counts)}"
-      # extract and keep only "_id" = first column, with keys
-        )[["_id"]]},
-      silent = TRUE)
-
-      # if mapreduce does not work or is not permitted, revert to guessing
-      if (inherits(keyslist, "try-error")) {
-
-        warning("Mongo server returned: ", as.character(keyslist),
-                "Using alternative method (extracting keys from ",
-                "sample documents, may be incomplete).",
-                call. = FALSE, immediate. = TRUE)
-
-        # get 2 random documents, one for each register EUCTR and CTGOV,
-        # if in collection, and retrieve keys from documents
-        keyslist <- c(
-          "", # avoid empty vector
-          names(con$con$find(
-            query = '{"_id": { "$regex": "^NCT[0-9]{8}", "$options": ""} }',
-            limit = 1L)),
-          names(con$con$find(
-            query = '{"_id": { "$regex": "^[0-9]{4}-[0-9]{6}", "$options": ""} }',
-            limit = 1L)))
-
-      } # end if error with mapreduce
-    } # end if src_mongo
-
-    ## - method for sqlite and postgres
-    if (inherits(con, "src_sqlite") || inherits(con, "src_postgres")) {
-
-      # uses special function parameter for
-      # src_sqlite query method: listfields
-      keyslist <- c("", # avoid empty vector
-                    nodbi::docdb_query(
-                      src = con,
-                      key = con$collection,
-                      query = "",
-                      listfields = TRUE))
-
+    # helper function
+    normNames <- function(df) {
+      sort(unique(sub("[0-9]+$", "", names(unlist(df)))))
     }
+
+    # get names
+    keyslist <- unique(c(
+      "", # avoid empty vector
+      normNames(nodbi::docdb_query(
+        src = con, key = con$collection,
+        # TODO once nodbi 0.6.1 available, change to
+        # "^[0-9]{4}-[0-9]{4}-[0-9]{2}"
+        query = '{"_id": { "$regex": "^[0-9][0-9][0-9][0-9]-[0-9][0-9]", "$options": ""} }',
+        limit = 1L)),
+      normNames(nodbi::docdb_query(
+        src = con, key = con$collection,
+        # TODO once nodbi 0.6.1 available, change to
+        # "^[0-9]{4}-[0-9]{4}-[0-9]{2}"
+        query = '{"@attributes.eudractNumber": { "$regex": "^[0-9][0-9][0-9][0-9]-[0-9][0-9]", "$options": ""} }',
+        limit = 1L)),
+      normNames(nodbi::docdb_query(
+        # TODO once nodbi 0.6.1 available, change to
+        # "^NCT[0-9]{8}"
+        src = con, key = con$collection,
+        query = '{"_id": { "$regex": "^NCT[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]", "$options": ""} }',
+        limit = 1L)),
+      normNames(nodbi::docdb_query(
+        src = con, key = con$collection,
+        # TODO once nodbi 0.6.1 available, change to
+        # "^[0-9]{8}"
+        query = '{"_id": { "$regex": "^[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]", "$options": ""} }',
+        limit = 1L))))
+
+    # clean empty entries and exclude _id for consistency
+    # since different approaches above return _id or not
+    keyslist <- keyslist[keyslist != "_id" & keyslist != ""]
 
     ## store keyslist to environment (cache)
     if (length(keyslist) > 1) {
@@ -770,13 +741,11 @@ dbFindFields <- function(namepart = "",
   fields <- keyslist[grepl(pattern = namepart, x = keyslist,
                            ignore.case = TRUE, perl = TRUE)]
 
-  # clean empty entries and exclude _id for consistency
-  # since different approaches above return _id or not
-  fields <- fields[fields != "_id" & fields != ""]
+  # return value if no fields found
   if (!length(fields)) fields <- ""
 
   # return the match(es)
-  return(sort(fields))
+  return(fields)
 
 } # end dbFindFields
 
@@ -1328,7 +1297,7 @@ dbGetFieldsIntoDf <- function(fields = "",
   # remove rows with only NAs; try because
   # is.na may fail for complex cells
   onlyNas <- try({apply(result[, -1, drop = FALSE], 1,
-                  function(r) all(is.na(r)))}, silent = TRUE)
+                        function(r) all(is.na(r)))}, silent = TRUE)
   if (!inherits(onlyNas, "try-error")) {
     result <- result[!onlyNas, , drop = FALSE]
   }

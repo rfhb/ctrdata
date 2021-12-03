@@ -234,3 +234,28 @@ expect_error(
         con = dbc))),
   "'annotation.mode' incorrect")
 
+#### all fields ####
+
+# get all field names
+tmpf <- suppressMessages(
+  suppressWarnings(
+    dbFindFields(
+      namepart = ".*",
+      con = dbc)))
+
+# get all data
+result <- suppressMessages(
+  suppressWarnings(
+    dbGetFieldsIntoDf(
+      fields = tmpf,
+      con = dbc,
+      verbose = FALSE,
+      stopifnodata = FALSE)
+  ))
+
+# TODO
+print(length(names(result)))
+
+# test
+expect_true(
+  length(names(result)) > 45L)

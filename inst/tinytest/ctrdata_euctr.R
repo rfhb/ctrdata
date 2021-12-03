@@ -585,9 +585,18 @@ result <- suppressMessages(
       stopifnodata = FALSE)
   ))
 #
+
+# TODO
+print(length(names(result)))
+
+# test
+expect_true(
+  length(names(result)) > 300L)
+
+
+# determine all classes
 tmpr <- names(result)
 tmpr <- tmpr[tmpr != "_id"]
-# determine all classes
 tmpc <- sapply(result, class,
                USE.NAMES = FALSE)
 tmpc <- unlist(tmpc)
