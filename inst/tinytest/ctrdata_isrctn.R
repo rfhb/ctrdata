@@ -150,6 +150,7 @@ res <- suppressMessages(
   suppressWarnings(
     dbGetFieldsIntoDf(
       fields = c("annotation"),
+      verbose = TRUE,
       con = dbc)
   ))
 
@@ -168,7 +169,42 @@ expect_error(
         con = dbc))),
   "No data could be extracted for")
 
-#### all fields ####
+# test
+expect_warning(
+  suppressMessages(
+    dbGetFieldsIntoDf(
+      fields = c("doesnotexist"),
+      stopifnodata = FALSE,
+      con = dbc)
+  ),
+  "No records with values for any specified field")
+
+# test
+suppressWarnings(
+  suppressMessages(
+    tmpDf <- dbGetFieldsIntoDf(
+      fields = c(
+        "participants.totalFinalEnrolment"
+        ),
+      stopifnodata = FALSE,
+      con = dbc)))
+#
+expect_equivalent(
+  sapply(tmpDf, typeof),
+  c("character", "integer")
+)
+
+
+#### dbFindFields ####
+
+# test
+expect_equal(
+  suppressMessages(
+    suppressWarnings(
+      dbFindFields(
+        namepart = "thisdoesnotexist",
+        con = dbc))),
+  "")
 
 # get all field names
 tmpf <- suppressMessages(
@@ -187,13 +223,13 @@ result <- suppressMessages(
       stopifnodata = FALSE)
   ))
 
-# TODO
-print(length(names(result)))
+# develop
+#print(length(names(result)))
 
 # test
 expect_true(
   length(names(result)) > 50L)
-rm(result)
+rm(tmpf, result)
 
 #### dbFindIdsUniqueTrials ####
 
@@ -205,4 +241,3 @@ expect_message(
 # test
 expect_true(length(res) >= 5L)
 rm(res)
-

@@ -3,13 +3,13 @@
 #### SETUP ####
 source("setup_ctrdata.R")
 
-## database in memory
-dbc <- nodbi::src_sqlite(
-  collection = "inmemory"
-)
-
 ## test function
 tf <- function() {
+
+  ## database in memory
+  dbc <- nodbi::src_sqlite(
+    collection = "inmemory"
+  )
 
   # register clean-up
   on.exit(expr = {
@@ -155,15 +155,34 @@ tf <- function() {
   expect_true(grepl("inmemory", dbc$collection))
 
   # sqlite but no collection specified
-  dbc <- nodbi::src_sqlite()
-  # test
-  expect_error(
-    suppressMessages(
-      suppressWarnings(
-        dbFindIdsUniqueTrials(
-          con = dbc))),
-    "parameter .* table")
+  dbc <- try(nodbi::src_sqlite(), silent = TRUE)
+  out <- inherits(dbc, c("src_sqlite", "docdb_src"))
+  if (out) {
+    # test
+    expect_error(
+      suppressMessages(
+        suppressWarnings(
+          dbFindIdsUniqueTrials(
+            con = dbc))),
+      "parameter .* table")
+    RSQLite::dbDisconnect(conn = dbc$con)
+  }
+  rm(dbc, out)
 
+  # postgres but no collection specified
+  dbc <- try(nodbi::src_postgres(), silent = TRUE)
+  out <- inherits(dbc, c("src_postgres", "docdb_src"))
+  if (out) {
+    # test
+    expect_error(
+      suppressMessages(
+        suppressWarnings(
+          dbFindIdsUniqueTrials(
+            con = dbc))),
+      "pecify .* table")
+    RPostgres::dbDisconnect(conn = dbc$con)
+  }
+  rm(dbc, out)
 
   #### ctrGetQueryUrl ####
 
@@ -277,6 +296,19 @@ tf <- function() {
     suppressMessages(ctrGetQueryUrl(
       url = qt[[1]]))[[1]] == qt[[2]]},
     logical(1L))))
+
+  #### clipboard ####
+  clipr::write_clip(
+    queryurls[[1]][1],
+    allow_non_interactive = TRUE)
+  expect_message(
+    tmp <- ctrGetQueryUrl(),
+    "Found search query")
+  expect_true(is.data.frame(tmp))
+  expect_equal(tmp[["query-term"]], queryurls[[1]][2])
+
+  # clean up
+  rm(queryurls, tmp)
 
 } # tf test function
 tf()

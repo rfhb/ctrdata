@@ -682,8 +682,6 @@ dbFindFields <- function(namepart = "",
     # inform user
     message("Finding fields in database (may take some time)")
 
-    # TODO new approach
-
     # helper function
     normNames <- function(df) {
       sort(unique(sub("[0-9]+$", "", names(unlist(df)))))
@@ -1844,7 +1842,7 @@ dfMergeTwoVariablesRelevel <- function(
     }
     # strings, concatenated
     tmp <- paste0(
-      ifelse(is.na(tt <- as.character(df[, 1])), "", tt),
+      ifelse(is.na(tt <- as.character(df[, 1])), "", tt), " / ",
       ifelse(is.na(tt <- as.character(df[, 2])), "", tt))
   }
 
@@ -2117,7 +2115,7 @@ typeField <- function(dfi) {
       # factors
       #
       # - EUCTR Yes / No / Information not present in EudraCT
-      "d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation" = ctrYesNo(),
+      "dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation" = ctrYesNo(),
       "e13_condition_being_studied_is_a_rare_disease" = ctrYesNo(),
       #
       "e61_diagnosis"         = ctrYesNo(),

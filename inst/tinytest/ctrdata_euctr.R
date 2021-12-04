@@ -213,7 +213,10 @@ result <- suppressMessages(
         "subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm",
         "endPoints.endPoint",
         "trialInformation.analysisForPrimaryCompletion",
-        "e71_human_pharmacology_phase_i"
+        "e71_human_pharmacology_phase_i",
+        "dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation",
+        "f11_trial_has_subjects_under_18",
+        "e824_number_of_treatment_arms_in_the_trial"
       ),
       con = dbc)
   ))
@@ -525,7 +528,17 @@ expect_warning(
       con = dbc,
       prefermemberstate = "3RD",
       include3rdcountrytrials = FALSE)),
-  "Preferred EUCTR version set to 3RD country trials")
+  "Preferred .* 3RD .* setting it to TRUE")
+
+# test
+expect_true(
+  length(
+    suppressWarnings(
+      suppressMessages(
+        dbFindIdsUniqueTrials(
+          con = dbc,
+          include3rdcountrytrials = FALSE)
+      ))) > 5L)
 
 # test, reusing the query string
 q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
@@ -569,6 +582,17 @@ expect_error(
 
 # test as many fields as possible for typing
 
+#### dbFindFields ####
+
+# test
+expect_equal(
+  suppressMessages(
+    suppressWarnings(
+      dbFindFields(
+        namepart = "thisdoesnotexist",
+        con = dbc))),
+  "")
+
 # get all field names
 tmpf <- suppressMessages(
   suppressWarnings(
@@ -586,8 +610,8 @@ result <- suppressMessages(
   ))
 #
 
-# TODO
-print(length(names(result)))
+# develop
+# print(length(names(result)))
 
 # test
 expect_true(

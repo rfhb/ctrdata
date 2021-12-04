@@ -18,6 +18,10 @@ expect_message(
   ctrdata:::checkBinary(b = "notworking"),
   "nonexistingbinarytested not found")
 
+expect_error(
+  ctrdata:::installFindBinary(),
+  "Empty argument: commandtest")
+
 
 #### environment ####
 
@@ -25,13 +29,21 @@ if (.Platform$OS.type != "windows") {
   expect_error(
     installCygwinWindowsDoInstall(),
     "only for MS Windows")
+  expect_message(
+    ctrdata:::installCygwinWindowsTest(),
+    "only for MS Windows")
 }
 if (.Platform$OS.type == "windows") {
   expect_message(
+    ctrdata:::installCygwinWindowsTest(),
+    "only for MS Windows")
+  expect_message(
     installCygwinWindowsDoInstall(),
     "cygwin seems to work correctly")
+  expect_message(
+    installCygwinWindowsDoInstall(force = TRUE),
+    "cygwin seems to work correctly")
 }
-
 
 #### dfMergeTwoVariablesRelevel ####
 
@@ -86,8 +98,8 @@ expect_warning(
 expect_warning(
   dfMergeTwoVariablesRelevel(
     df = df,
-    varnames = c("var1", "var2")),
-  "Some rows had values for both columns")
+    colnames = c("var1", "var2")),
+  "Some rows had values for both columns, used first")
 
 # test
 expect_error(
@@ -97,6 +109,15 @@ expect_error(
       colnames = c("var1", "var2"),
       levelslist = 1:2)),
   "Need list for parameter 'levelslist'")
+
+# test
+df <- data.frame(var1 = c("A", "B", "C", "D"),
+                 var2 = c("D", "E", "F", "G"))
+expect_warning(
+  dfMergeTwoVariablesRelevel(
+    df = df,
+    colnames = c("var1", "var2")),
+  "Some rows had values for both columns, concatenated")
 
 
 #### ctrGetQueryUrl ####

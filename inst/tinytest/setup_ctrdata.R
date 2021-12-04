@@ -74,7 +74,6 @@ checkInternet <- function() {
 
 checkSqlite <- function() {
   tmp <- try(nodbi::src_sqlite(), silent = TRUE)
-
   out <- inherits(tmp, c("src_sqlite", "docdb_src"))
   if (out) RSQLite::dbDisconnect(conn = tmp$con)
   out
@@ -83,7 +82,6 @@ checkSqlite <- function() {
 
 checkPostgres <- function() {
   tmp <- try(nodbi::src_postgres(), silent = TRUE)
-
   out <- inherits(tmp, c("src_postgres", "docdb_src"))
   if (out) RPostgres::dbDisconnect(conn = tmp$con)
   out

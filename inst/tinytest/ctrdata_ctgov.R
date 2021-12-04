@@ -234,7 +234,16 @@ expect_error(
         con = dbc))),
   "'annotation.mode' incorrect")
 
-#### all fields ####
+#### dbFindFields ####
+
+# test
+expect_equal(
+  suppressMessages(
+    suppressWarnings(
+      dbFindFields(
+        namepart = "thisdoesnotexist",
+        con = dbc))),
+  "")
 
 # get all field names
 tmpf <- suppressMessages(
@@ -253,9 +262,12 @@ result <- suppressMessages(
       stopifnodata = FALSE)
   ))
 
-# TODO
-print(length(names(result)))
+# develop
+# print(length(names(result)))
 
 # test
 expect_true(
   length(names(result)) > 45L)
+
+# clean up
+rm(df, df2, tmpf, result)
