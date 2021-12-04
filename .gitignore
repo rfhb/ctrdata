@@ -5,12 +5,7 @@ _gh-pages
 .Rproj.user
 CRAN-RELEASE
 ctrdata.Rproj
-doc
-inst/doc
-Meta
 private
 revdep
 .vscode/settings.json
-some_database_name.sqlite_file
 .future.R
-docs
