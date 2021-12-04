@@ -35,9 +35,6 @@ if (.Platform$OS.type != "windows") {
 }
 if (.Platform$OS.type == "windows") {
   expect_message(
-    ctrdata:::installCygwinWindowsTest(),
-    "only for MS Windows")
-  expect_message(
     installCygwinWindowsDoInstall(),
     "cygwin seems to work correctly")
   expect_message(

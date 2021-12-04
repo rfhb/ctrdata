@@ -298,17 +298,22 @@ tf <- function() {
     logical(1L))))
 
   #### clipboard ####
-  clipr::write_clip(
-    queryurls[[1]][1],
-    allow_non_interactive = TRUE)
-  expect_message(
-    tmp <- ctrGetQueryUrl(),
-    "Found search query")
-  expect_true(is.data.frame(tmp))
-  expect_equal(tmp[["query-term"]], queryurls[[1]][2])
+  if (Sys.info()[["sysname"]] != "Linux") {
+
+    clipr::write_clip(
+      queryurls[[1]][1],
+      allow_non_interactive = TRUE)
+    expect_message(
+      tmp <- ctrGetQueryUrl(),
+      "Found search query")
+    expect_true(is.data.frame(tmp))
+    expect_equal(tmp[["query-term"]], queryurls[[1]][2])
+
+    rm(tmp)
+  }
 
   # clean up
-  rm(queryurls, tmp)
+  rm(queryurls)
 
 } # tf test function
 tf()
