@@ -14,11 +14,8 @@ reference:
 development:
   mode: auto
 template:
-  params:
-    docsearch:
-      api_key: c06ec790dbbaffba8e7b188f745a4353
-      index_name: ctrdata
-  opengraph:
+  bootstrap: 5
+    opengraph:
     twitter:
       creator: "@rfhb"
       card: summary_large_image
