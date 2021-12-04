@@ -116,7 +116,7 @@ package `ctrdata`.
 -   [Retrieve clinical trial
     information](https://rfhb.github.io/ctrdata/dev/articles/ctrdata_retrieve.html)
 -   [Summarise and analyse clinical trial
-    information](https://rfhb.github.io/ctrdata/dev/articles/ctrdata_analyse.html)
+    information](https://rfhb.github.io/ctrdata/dev/articles/ctrdata_summarise.html)
 
 ## Overview of functions in `ctrdata`
 

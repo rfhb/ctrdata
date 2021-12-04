@@ -87,7 +87,7 @@ These are required for `ctrLoadQueryIntoDb()`, the main function of package `ctr
 
 - [Install R package ctrdata](https://rfhb.github.io/ctrdata/dev/articles/ctrdata_install.html)
 - [Retrieve clinical trial information](https://rfhb.github.io/ctrdata/dev/articles/ctrdata_retrieve.html)
-- [Summarise and analyse clinical trial information](https://rfhb.github.io/ctrdata/dev/articles/ctrdata_analyse.html)
+- [Summarise and analyse clinical trial information](https://rfhb.github.io/ctrdata/dev/articles/ctrdata_summarise.html)
 
 
 ## Overview of functions in `ctrdata`

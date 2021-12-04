@@ -22,5 +22,8 @@ template:
     twitter:
       creator: "@rfhb"
       card: summary_large_image
+  params:
+    docsearch:
+      api_key: c06ec790dbbaffba8e7b188f745a4353
+      index_name: ctrdata
 url: https://rfhb.github.io/ctrdata/
-
