@@ -1,11 +1,14 @@
+home:
+  sidebar:
+    structure: [authors, toc, dev]
 reference:
-- title: "Operations on a clinical trial register"
+- title: "Operations on clinical trial register"
 - contents:
   - starts_with("ctr")
-- title: "Using the database that holds downloaded trial information"
+- title: "Using database with downloaded trial information"
 - contents:
   - starts_with("db")
-- title: "Get an R data frame from database and operate on it"
+- title: "Get data frame from database and operate on it"
 - contents:
   - starts_with("df")
 - title: "Utility functions"
@@ -15,8 +18,9 @@ development:
   mode: auto
 template:
   bootstrap: 5
-    opengraph:
+  opengraph:
     twitter:
       creator: "@rfhb"
       card: summary_large_image
 url: https://rfhb.github.io/ctrdata/
+

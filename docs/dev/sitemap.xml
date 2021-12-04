@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://rfhb.github.io/ctrdata/dev/404.html</loc>
-  </url>
-  <url>
     <loc>https://rfhb.github.io/ctrdata/dev/LICENSE-text.html</loc>
   </url>
   <url>
@@ -13,16 +10,13 @@
     <loc>https://rfhb.github.io/ctrdata/dev/articles/ctrdata_analyse.html</loc>
   </url>
   <url>
-    <loc>https://rfhb.github.io/ctrdata/dev/articles/ctrdata_get_started.html</loc>
-  </url>
-  <url>
     <loc>https://rfhb.github.io/ctrdata/dev/articles/ctrdata_install.html</loc>
   </url>
   <url>
     <loc>https://rfhb.github.io/ctrdata/dev/articles/ctrdata_retrieve.html</loc>
   </url>
   <url>
-    <loc>https://rfhb.github.io/ctrdata/dev/articles/ctrdata_usage_examples.html</loc>
+    <loc>https://rfhb.github.io/ctrdata/dev/articles/ctrdata_summarise.html</loc>
   </url>
   <url>
     <loc>https://rfhb.github.io/ctrdata/dev/articles/index.html</loc>
@@ -35,18 +29,6 @@
   </url>
   <url>
     <loc>https://rfhb.github.io/ctrdata/dev/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://rfhb.github.io/ctrdata/dev/reference/addMetaData.html</loc>
-  </url>
-  <url>
-    <loc>https://rfhb.github.io/ctrdata/dev/reference/checkBinary.html</loc>
-  </url>
-  <url>
-    <loc>https://rfhb.github.io/ctrdata/dev/reference/checkDoc.html</loc>
-  </url>
-  <url>
-    <loc>https://rfhb.github.io/ctrdata/dev/reference/ctrConvertToJSON.html</loc>
   </url>
   <url>
     <loc>https://rfhb.github.io/ctrdata/dev/reference/ctrDb.html</loc>
@@ -64,31 +46,10 @@
     <loc>https://rfhb.github.io/ctrdata/dev/reference/ctrLoadQueryIntoDb.html</loc>
   </url>
   <url>
-    <loc>https://rfhb.github.io/ctrdata/dev/reference/ctrLoadQueryIntoDbCtgov.html</loc>
-  </url>
-  <url>
-    <loc>https://rfhb.github.io/ctrdata/dev/reference/ctrLoadQueryIntoDbEuctr.html</loc>
-  </url>
-  <url>
-    <loc>https://rfhb.github.io/ctrdata/dev/reference/ctrLoadQueryIntoDbIsrctn.html</loc>
-  </url>
-  <url>
     <loc>https://rfhb.github.io/ctrdata/dev/reference/ctrOpenSearchPagesInBrowser.html</loc>
   </url>
   <url>
-    <loc>https://rfhb.github.io/ctrdata/dev/reference/ctrRerunQuery.html</loc>
-  </url>
-  <url>
     <loc>https://rfhb.github.io/ctrdata/dev/reference/ctrdata.html</loc>
-  </url>
-  <url>
-    <loc>https://rfhb.github.io/ctrdata/dev/reference/dbCTRAnnotateQueryRecords.html</loc>
-  </url>
-  <url>
-    <loc>https://rfhb.github.io/ctrdata/dev/reference/dbCTRLoadJSONFiles.html</loc>
-  </url>
-  <url>
-    <loc>https://rfhb.github.io/ctrdata/dev/reference/dbCTRUpdateQueryHistory.html</loc>
   </url>
   <url>
     <loc>https://rfhb.github.io/ctrdata/dev/reference/dbFindFields.html</loc>
@@ -122,17 +83,5 @@
   </url>
   <url>
     <loc>https://rfhb.github.io/ctrdata/dev/reference/installCygwinWindowsDoInstall.html</loc>
-  </url>
-  <url>
-    <loc>https://rfhb.github.io/ctrdata/dev/reference/installCygwinWindowsTest.html</loc>
-  </url>
-  <url>
-    <loc>https://rfhb.github.io/ctrdata/dev/reference/installFindBinary.html</loc>
-  </url>
-  <url>
-    <loc>https://rfhb.github.io/ctrdata/dev/reference/setProxy.html</loc>
-  </url>
-  <url>
-    <loc>https://rfhb.github.io/ctrdata/dev/reference/typeField.html</loc>
   </url>
 </urlset>

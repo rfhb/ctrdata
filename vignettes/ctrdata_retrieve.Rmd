@@ -24,7 +24,9 @@ knitr::opts_chunk$set(
   eval = FALSE)
 ```
 
-# Attach package `ctrdata`
+## Get started 
+
+### Attach package `ctrdata`
 
 ```{r attach_ctrdata}
 library(ctrdata)
@@ -33,7 +35,7 @@ citation("ctrdata")
 
 Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: Ralf Herold (2021). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.8.0. https://cran.r-project.org/package=ctrdata
 
-## Open register's advanced search page in browser
+### Open register's advanced search page in browser
 
 These functions open the browser, where the user can start searching for trials of interest.
 
@@ -49,15 +51,15 @@ ctrOpenSearchPagesInBrowser(
 )
 ```
 
-## Adjust search parameters and execute search in browser 
+### Adjust search parameters and execute search in browser 
 
 Refine the search until the trials of interest are listed in the browser. The total number of trials that can be retrieved with package `ctrdata` is intentionally limited to queries with at most 10000 result records.
 
-## Copy address from browser address bar to clipboard
+### Copy address from browser address bar to clipboard
 
 Use functions or keyboard shortcuts according to the operating system. 
 
-## Get address from clipboard
+### Get address from clipboard
 
 The next steps are executed in the R environment: 
 
@@ -81,7 +83,7 @@ ctrOpenSearchPagesInBrowser(
 )
 ```
 
-## Retrieve protocol-related information, transform, save to database, check
+### Retrieve protocol-related information, transform, save to database, check
 
 ```{r execute_load_query, eval=FALSE}
 # Connect to a database and chose a table / collection
@@ -142,7 +144,7 @@ Instead of "last", an integer number can be specified for `querytoupdate` that c
 
 Depending on the register, an update (differential update) is possible or the original query is executed fully again. 
 
-# Retrieve results
+## Retrieve results
 
 For EUCTR, result-related trial information has to be requested to be retrieved, because it will take longer to download and store. For CTGOV, any results are always included in the retrieval. 
 
@@ -165,7 +167,7 @@ ctrLoadQueryIntoDb(
 
 The download or presence of results is not recorded in `dbQueryHistory()` because the availability of results increases over time. 
 
-# Add trial information from other register
+## Add information from another register
 
 The same database and table / collection can be used to store (and analyse) trial information from different registers. At the moment, `ctrdata` only supports the two registers https://ClinicalTrials.Gov/ and https://ClinicalTrialsRegister.EU/. Example: 
 
@@ -185,7 +187,7 @@ ctrLoadQueryIntoDb(
 # * Updated history ("meta-info" in "test")
 ```
 
-# Add personal annotations when retrieving trial information
+## Add personal annotations
 
 When downloading trial information, the user can specify an annotation to all records that are downloaded. By default, annotations are accumulated if trial records are loaded again or updated; alternatively, annotations can be replaced. 
 
@@ -210,7 +212,7 @@ ctrLoadQueryIntoDb(
 # * Updated history ("meta-info" in "test")
 ```
 
-# Find synonyms of active substance names
+## Find synonyms of active substance names
 
 Not all registers automatically expand search terms to include alternative terms, such as codes and other names of active substances. To obtain a character vector of synonyms for any active substance name, use: 
 
@@ -228,7 +230,7 @@ These names can then be used in queries in any register.
 unlink("sqlite_file.sql")
 ```
 
-# Using a mongo database
+## Using a MongoDB database
 
 This example works with a free service [here](https://www.mongodb.com/cloud/atlas). Note that the user name and password need to be encoded. The format of the connection string is documented at https://docs.mongodb.com/manual/reference/connection-string/. 
 
@@ -237,7 +239,7 @@ This example works with a free service [here](https://www.mongodb.com/cloud/atla
 # Specify base uri for remote mongodb server,
 #  as part of the encoded connection string
 db <- nodbi::src_mongo(
-  # Note: this provides a read-only access
+  # Note: this provides read-only access
   url = "mongodb+srv://DWbJ7Wh:bdTHh5cS@cluster0-b9wpw.mongodb.net",
   db = "dbperm",
   collection = "dbperm")

@@ -1,6 +1,8 @@
 # ctrdata 1.8.0.9000
  - 2021-11-22
  - new development version
+ - uses nodbi 0.6.0
+ - can use PostgreSQL
  
 # ctrdata 1.8.0
  - 2021-11-18

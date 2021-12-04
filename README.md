@@ -23,7 +23,7 @@ aggregating and analysing this information; it can be used for the
 The motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. The package
 is to be used within the [R](https://www.r-project.org/) system; this
-README was reviewed on 2021-12-01 for v1.8.0.9000.
+README was reviewed on 2021-12-04 for v1.8.0.9000.
 
 Main features:
 
@@ -37,7 +37,8 @@ Main features:
 -   Retrieved (downloaded) trial information is transformed and stored
     in a document-centric database, for fast and offline access. Uses
     `PostgreSQL` (🔔new in v1.8.0.9000), `RSQLite` or `MongoDB` as
-    databases, via R package `nodbi`. Easily re-run a previous query to
+    databases, via R package `nodbi`: see section
+    [Databases](#databases) below. Easily re-run a previous query to
     update a database.
 
 -   Analysis can be done with `R` (using `ctrdata` convenience
@@ -65,9 +66,9 @@ citation("ctrdata")
 ```
 -->
 
-# Installation
+## Installation
 
-## 1. Install package in R
+### 1. Install package in R
 
 Package `ctrdata` is [on
 CRAN](https://cran.r-project.org/package=ctrdata) and [on
@@ -88,7 +89,7 @@ These commands also install the package dependencies, which are `nodbi`,
 `jsonlite`, `httr`, `curl`, `clipr`, `xml2`, `rvest`,`DBI` and
 `stringi`.
 
-## 2. Command line tools `perl`, `sed`, `cat` and `php` (5.2 or higher)
+### 2. Command line tools `perl`, `sed`, `cat` and `php` (5.2 or higher)
 
 These are required for `ctrLoadQueryIntoDb()`, the main function of
 package `ctrdata`.
@@ -108,7 +109,7 @@ package `ctrdata`.
     installation vary by distribution (e.g.,
     `sudo apt install php php-xml php-json`).
 
-## Vignettes
+### Vignettes
 
 -   [Install R package
     ctrdata](https://rfhb.github.io/ctrdata/dev/articles/ctrdata_install.html)
@@ -117,7 +118,7 @@ package `ctrdata`.
 -   [Summarise and analyse clinical trial
     information](https://rfhb.github.io/ctrdata/dev/articles/ctrdata_analyse.html)
 
-# Overview of functions in `ctrdata`
+## Overview of functions in `ctrdata`
 
 The functions are listed in the approximate order of use in a user’s
 workflow.
@@ -137,7 +138,7 @@ workflow.
 | `dfMergeTwoVariablesRelevel()`     | Merge two simple variables into a new variable, optionally map values to a new set of values                          |
 | `installCygwinWindowsDoInstall()`  | Convenience function to install a Cygwin environment (MS Windows only)                                                |
 
-# Example workflow
+## Example workflow
 
 The aim is to download protocol-related trial information and tabulate
 the trials’ status of conduct.
@@ -370,14 +371,14 @@ ggplot(data = nset) +
       colour = value.y == "Randomized")) + 
   scale_x_log10() + 
   scale_y_log10() 
-ggsave(filename = "inst/image/README-ctrdata_results_neuroblastoma.png",
+ggsave(filename = "man/figures/README-ctrdata_results_neuroblastoma.png",
        width = 5, height = 3, units = "in")
 ```
 
 ![Neuroblastoma
-trials](inst/image/README-ctrdata_results_neuroblastoma.png)
+trials](man/figures/README-ctrdata_results_neuroblastoma.png)
 
-# Databases
+## Databases
 
 The database connection object `con` is created by calling
 `nodbi::src_*()`, with parameters that are specific to the database
@@ -386,15 +387,17 @@ The database connection object `con` is created by calling
 Any such connection object can then be used by `ctrdata` and generic
 functions of `nodbi` in a consistent way, as shown in the table:
 
-| Purpose                                 | Function call                                                                                                  |
-|-----------------------------------------|----------------------------------------------------------------------------------------------------------------|
-| Create SQLite database connection       | `dbc <- nodbi::src_sqlite(dbname = "name_of_my_database", collection = "name_of_my_collection")`               |
-| Create PostgreSQL database connection   | `dbc <- nodbi::src_postgres(dbname = "name_of_my_database")`; `dbc[["collection"]] <- "name_of_my_collection"` |
-| Create MongoDB database connection      | `dbc <- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")`                    |
-| Use connection with `ctrdata` functions | `ctrdata::{ctr,db}*(con = dbc, ...)`                                                                           |
-| Use connection with `nodbi` functions   | `nodbi::docdb_*(src = dbc, key = dbc$collection, ...)`                                                         |
+| Purpose                                 | Function call                                                                                                  | Reference               |
+|-----------------------------------------|----------------------------------------------------------------------------------------------------------------|-------------------------|
+| Create SQLite database connection       | `dbc <- nodbi::src_sqlite(dbname = "name_of_my_database", collection = "name_of_my_collection")`               | `nodbi::src_sqlite()`   |
+| Create PostgreSQL database connection   | `dbc <- nodbi::src_postgres(dbname = "name_of_my_database")`; `dbc[["collection"]] <- "name_of_my_collection"` | `nodbi::src_postgres()` |
+| Create MongoDB database connection      | `dbc <- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")`                    | `nodbi::src_mongo()`    |
+| Use connection with `ctrdata` functions | `ctrdata::{ctr,db}*(con = dbc, ...)`                                                                           |                         |
+| Use connection with `nodbi` functions   | `nodbi::docdb_*(src = dbc, key = dbc$collection, ...)`                                                         |                         |
 
-# Features in the works
+## Meta
+
+### Features in the works
 
 -   Merge results-related information retrieved from different registers
     (e.g. corresponding endpoints) for analyses across trials
@@ -402,7 +405,7 @@ functions of `nodbi` in a consistent way, as shown in the table:
 -   Explore relevance to retrieve previous versions of protocol- or
     results-related information
 
-# Acknowledgements
+### Acknowledgements
 
 -   Data providers and curators of the clinical trial registers. Please
     review and respect their copyrights and terms and conditions
@@ -419,7 +422,7 @@ functions of `nodbi` in a consistent way, as shown in the table:
     [RSQLite](https://CRAN.R-project.org/package=RSQLite) and
     [clipr](https://cran.r-project.org/package=clipr).
 
-# Issues and notes
+### Issues and notes
 
 -   Please file issues and bugs
     [here](https://github.com/rfhb/ctrdata/issues).
@@ -432,14 +435,14 @@ functions of `nodbi` in a consistent way, as shown in the table:
     (nevertheless, `dfMergeTwoVariablesRelevel()` can be used to merge
     and map two variables / fields into one).
 
-# Trial records’ JSON in databases
+## Trial records’ JSON in databases
 
-## MongoDB
-
-![Example JSON representation in
-MongoDB](inst/image/README-ctrdata_json_mongodb.jpg)
-
-## SQLite
+### MongoDB
 
 ![Example JSON representation in
-SQLite](inst/image/README-ctrdata_json_sqlite.jpg)
+MongoDB](man/figures/README-ctrdata_json_mongodb.jpg)
+
+### SQLite
+
+![Example JSON representation in
+SQLite](man/figures/README-ctrdata_json_sqlite.jpg)

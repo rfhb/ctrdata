@@ -49,7 +49,7 @@ devtools::install_github("rfhb/ctrdata")
 
 Either of the above should install package `ctrdata` into the user's library. 
 
-# Internet access via proxy
+## Internet access via proxy
 
 Functions in package `ctrdata` that start with `ctr...` require access to trial registers over the internet via the `https` protocol. Package `ctrdata` checks and _automatically uses_ the proxy that is set under MS Windows in system settings. However, proxy settings need to be set by the user for other operating systems and for more complicated environments such as using authenticating proxies, as follows: 
 
@@ -58,11 +58,11 @@ Sys.setenv(https_proxy = "your_proxy.server.domain:8080")
 Sys.setenv(https_proxy_user = "userid:password") # if needed
 ```
 
-# Additional installation aspects
+## Additional installation aspects
 
 The ommand line tools `perl`, `sed`, `cat` and `php` (5.2 or higher) are required for `ctrLoadQueryIntoDb()`, the main function of package `ctrdata`. No other function in this package has this requirement.
 
-## MS Windows
+### MS Windows
 
 Package `ctrdata` requires on MS Windows that the [`Cygwin`](https://cygwin.org/install.html) environment be installed, into the local directory `c:\cygwin` (or any folder corresponding to `c:\cygw*`). The installation of a minimal Cygwin environment on MS Windows can be done with the help of package `ctrdata` in R as follows: 
 
@@ -84,7 +84,7 @@ setup-x86_64.exe --no-admin --quiet-mode --verbose --upgrade-also --root c:/cygw
 --packages perl,php-jsonc,php-simplexml
 ```
 
-## macOS, Linus and other operating systems
+### macOS, Linux and other operating systems
 
 The command line tools `perl`, `sed`, `cat` and `php` (5.2 or higher) are typically installed and available by default in Linux and macOS systems. In case of issues, 
 
@@ -92,11 +92,18 @@ The command line tools `perl`, `sed`, `cat` and `php` (5.2 or higher) are typica
 
 - In Linux, tools for installation vary by distribution (e.g., `sudo apt install php php-xml php-json`)
 
-# Database
+## Databases to use
 
-At this time, an SQLite or a remote or a local MongoDB database can be used with the package `ctrdata`. SQLite is provided in the R package [`RSQLite`](https://rsqlite.r-dbi.org/). Suggested installation instructions for a local MongoDB server are [here](https://docs.mongodb.com/manual/administration/install-community/); a remote MongoDB database server is accessible [here](https://www.mongodb.com/cloud/atlas). 
+At this time, a PostgreSQL, an SQLite or a remote or a local MongoDB database can be used with the package `ctrdata`. SQLite is provided in the R package [`RSQLite`](https://rsqlite.r-dbi.org/). Suggested installation instructions for a local MongoDB server are [here](https://docs.mongodb.com/manual/administration/install-community/); a remote MongoDB database server is accessible [here](https://www.mongodb.com/cloud/atlas). 
 
-# Attach package `ctrdata`
+Purpose | Function call | Reference 
+-------------------- | -------------------- | ----------------
+Create SQLite database connection | `dbc <- nodbi::src_sqlite(dbname = "name_of_my_database", collection = "name_of_my_collection")` | `nodbi::src_sqlite()`
+Create PostgreSQL database connection | `dbc <- nodbi::src_postgres(dbname = "name_of_my_database")`; `dbc[["collection"]] <- "name_of_my_collection"`  | `nodbi::src_postgres()`
+Create MongoDB database connection | `dbc <- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")`  | `nodbi::src_mongo()`
+Subsequently, use connection `dbc` with `ctrdata` functions | `ctrdata::{ctr,db}*(con = dbc, ...)` | 
+
+## Attach package `ctrdata`
 
 After completing the installation, attach the package from the user's library. This will also check the availability of the additional installation requirements as mentioned above: 
 
