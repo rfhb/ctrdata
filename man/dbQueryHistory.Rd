@@ -2,14 +2,13 @@
 % Please edit documentation in R/utils.R
 \name{dbQueryHistory}
 \alias{dbQueryHistory}
-\title{Show the history of queries that were loaded into a database}
+\title{Show history of queries loaded into a database collection}
 \usage{
 dbQueryHistory(con, verbose = FALSE)
 }
 \arguments{
-\item{con}{A \link[nodbi]{src} connection object, as obtained with
-[nodbi::src_mongo()], [nodbi::src_sqlite()]
-or [nodbi::src_postgres()]}
+\item{con}{\strong{A connection object, see section
+`Databases` in \link{ctrdata-package}}}
 
 \item{verbose}{If \code{TRUE}, prints additional information
 (default \code{FALSE}).}
@@ -18,20 +17,20 @@ or [nodbi::src_postgres()]}
 A data frame with columns: query-timestamp, query-register,
  query-records (note: this is the number of records loaded when last
  executing \link{ctrLoadQueryIntoDb}, not the total record number) and
- query-term, and with one row for each \link{ctrLoadQueryIntoDb}
- loading trial records in this collection.
+ query-term, and with one row for each time \link{ctrLoadQueryIntoDb}
+ loaded trial records into this collection.
 }
 \description{
-Show the history of queries that were loaded into a database
+Show history of queries loaded into a database collection
 }
 \examples{
 
 \dontrun{
-db <- nodbi::src_sqlite(
+dbc <- nodbi::src_sqlite(
   collection = "my_collection"
 )
 dbQueryHistory(
-  con = db
+  con = dbc
 )
 }
 

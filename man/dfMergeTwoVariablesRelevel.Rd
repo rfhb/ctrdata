@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{dfMergeTwoVariablesRelevel}
 \alias{dfMergeTwoVariablesRelevel}
-\title{Merge two variables into one, optionally map values to new levels}
+\title{Merge two variables}
 \usage{
 dfMergeTwoVariablesRelevel(df = NULL, colnames = "", levelslist = NULL, ...)
 }
@@ -23,7 +23,8 @@ used for a vector of old values (optional).}
 A vector of strings
 }
 \description{
-Merge two variables into one, optionally map values to new levels
+Merge two variables in a data frame such as returned by \link{dbGetFieldsIntoDf}
+into a new variable, and optionally also map its values to new levels.
 }
 \examples{
 

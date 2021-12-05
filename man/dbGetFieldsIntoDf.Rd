@@ -2,29 +2,28 @@
 % Please edit documentation in R/utils.R
 \name{dbGetFieldsIntoDf}
 \alias{dbGetFieldsIntoDf}
-\title{Create data frame by extracting specified fields from database collection}
+\title{Create data frame of specified fields from database collection}
 \usage{
 dbGetFieldsIntoDf(fields = "", con, verbose = FALSE, stopifnodata = TRUE)
 }
 \arguments{
-\item{fields}{Vector of one or more strings, with names of the sought fields.
+\item{fields}{Vector of one or more strings, with names of sought fields.
 See function \link{dbFindFields} for how to find names of fields.
-Regular expressions are possible. "item.subitem" notation is supported.}
+"item.subitem" notation is supported.}
 
-\item{con}{A \link[nodbi]{src} connection object, as obtained with
-[nodbi::src_mongo()], [nodbi::src_sqlite()]
-or [nodbi::src_postgres()]}
+\item{con}{\strong{A connection object, see section
+`Databases` in \link{ctrdata-package}}}
 
 \item{verbose}{Printing additional information if set to \code{TRUE};
-default is \code{FALSE}.}
+(default \code{FALSE}).}
 
-\item{stopifnodata}{Stops with an error (\code{TRUE}, default) or with
+\item{stopifnodata}{Stops with an error (detaul \code{TRUE}) or with
 a warning (\code{FALSE}) if the sought field is empty in all,
 or not available in any of the records in the database collection.}
 }
 \value{
 A data frame with columns corresponding to the sought fields.
-Note: a column for the record _id will always be included.
+A column for the record _id will always be included.
 Each column can be either a simple data type (numeric, character, date)
 or a list (see example below): For complicated lists, use function
 \link{dfTrials2Long} followed by function \link{dfName2Value} to
@@ -33,23 +32,17 @@ The maximum number of rows of the returned data frame is equal to,
 or less than the number of records of trials in the database.
 }
 \description{
-With this convenience function, fields in the database are retrieved
-into an R data frame. Note that fields within the record of a trial
-can be hierarchical and structured, that is, nested.
-}
-\details{
-With both src_sqlite and src_mongo, the function returns a list of data
-for a field that includes nested content; use function
-\link{dfTrials2Long} followed by \link{dfName2Value} to
+Fields in the database are retrieved into a data frame. Note that fields
+within the record of a trial can be hierarchical and structured, that is,
+nested. Names of fields can be found with \link{dbFindFields}.
+The function returns a list for a field that includes nested content;
+use function \link{dfTrials2Long} followed by \link{dfName2Value} to
 extract desired nested variables.
-
-For more sophisticated data retrieval from the database, see vignette
-examples and other packages to query mongodb such as mongolite.
 }
 \examples{
 
 \dontrun{
-db <- nodbi::src_sqlite(
+dbc <- nodbi::src_sqlite(
   collection = "my_collection"
 )
 
@@ -57,7 +50,7 @@ db <- nodbi::src_sqlite(
 # and can have multiple values with the other field
 dbGetFieldsIntoDf(
   "b1_sponsor.b31_and_b32_status_of_the_sponsor",
-  con = db
+  con = dbc
 )[1,]
 #                 _id b1_sponsor.b31_and_b32_status_of_the_sponsor
 # 1 2004-000015-25-GB                  Non-commercial / Commercial
@@ -66,7 +59,7 @@ dbGetFieldsIntoDf(
 # which are printed as comma separated values
 dbGetFieldsIntoDf(
   "keyword",
-  con = db
+  con = dbc
 )[1,]
 
 #           _id                                 keyword

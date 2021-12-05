@@ -9,11 +9,10 @@ dbFindFields(namepart = "", con, verbose = FALSE)
 \arguments{
 \item{namepart}{A plain string (can include a regular expression,
 including Perl-style) to be searched for among all field names
-(keys) in the database.}
+(keys) in the database. Use `".*` to find all fields.}
 
-\item{con}{A \link[nodbi]{src} connection object, as obtained with
-[nodbi::src_mongo()], [nodbi::src_sqlite()]
-or [nodbi::src_postgres()]}
+\item{con}{\strong{A connection object, see section
+`Databases` in \link{ctrdata-package}}}
 
 \item{verbose}{If \code{TRUE}, prints additional information
 (default \code{FALSE}).}
@@ -28,28 +27,26 @@ function returns the full field names as found in the database.
 }
 \details{
 For fields in EUCTR (protocol- and results-related information),
-see also the register's documentation at
 \url{https://eudract.ema.europa.eu/result.html}.
 
-For fields in CTGOV (protocol-related information), see also
-the register's definitions at
+For fields in CTGOV (protocol-related information), see
 \url{https://prsinfo.clinicaltrials.gov/definitions.html}.
 
-Note: Generating a list of fields with this function may take
-some time, and may involve running a mapreduce function if using
-a MongoDB server. If the user is not not authorized to run
-such a function, random documents are sampled to generate a
-list of fields.
+For fields in ISRCTN (protocol-related information), see
+\url{https://www.isrctn.com/page/definitions}.
+
+Note: Only when `dbFindFields` is first called after
+\link{ctrLoadQueryIntoDb}, it will take a moment.
 }
 \examples{
 
 \dontrun{
-db <- nodbi::src_sqlite(
+dbc <- nodbi::src_sqlite(
   collection = "my_collection"
 )
 dbFindFields(
   nampepart = "date",
-  con = db
+  con = dbc
 )
 }
 

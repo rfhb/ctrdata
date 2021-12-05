@@ -2,8 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{installCygwinWindowsDoInstall}
 \alias{installCygwinWindowsDoInstall}
-\title{Convenience function to install a minimal cygwin environment under MS
-Windows, including perl, sed and php}
+\title{Install necessary helper apps (Windows only)}
 \usage{
 installCygwinWindowsDoInstall(force = FALSE, proxy = "")
 }
@@ -17,6 +16,8 @@ the proxy configuration used in MS Windows to use an automatic proxy
 configuration script. Authenticated proxies are not supported at this time.}
 }
 \description{
+Convenience function to install a minimal Cygwin environment under MS
+Windows, including perl, sed and php.
 Alternatively and in case of difficulties, download and run the cygwin
 setup yourself as follows: \code{cygwinsetup.exe --no-admin --quiet-mode
 --verbose --upgrade-also --root c:/cygwin --site

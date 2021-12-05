@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{dbFindIdsUniqueTrials}
 \alias{dbFindIdsUniqueTrials}
-\title{Deduplicate records to provide unique clinical trial identifiers}
+\title{Get identifiers of deduplicated trial records}
 \usage{
 dbFindIdsUniqueTrials(
   preferregister = c("EUCTR", "CTGOV", "ISRCTN"),
@@ -13,8 +13,8 @@ dbFindIdsUniqueTrials(
 )
 }
 \arguments{
-\item{preferregister}{A vector of the sequence of preference for registers
-from which to generate unique _id's, default
+\item{preferregister}{A vector of the order of preference for
+registers from which to generate unique _id's, default
 \code{c("EUCTR", "CTGOV", "ISRCTN")}}
 
 \item{prefermemberstate}{Code of single EU Member State for which records
@@ -27,9 +27,8 @@ other record for the trial will be returned. For a list of codes of EU
 that are conducted exclusively in third countries, that is, outside
 the European Union.}
 
-\item{con}{A \link[nodbi]{src} connection object, as obtained with
-[nodbi::src_mongo()], [nodbi::src_sqlite()]
-or [nodbi::src_postgres()]}
+\item{con}{\strong{A connection object, see section
+`Databases` in \link{ctrdata-package}}}
 
 \item{verbose}{If set to \code{TRUE}, prints out information about numbers
 of records found at subsequent steps when searching for duplicates}
@@ -39,19 +38,20 @@ A vector with strings of keys ("_id" in the database) that
   represent non-duplicate trials.
 }
 \description{
-If records for a clinical trial are found from more than one register, the
-record from EUCTR is returned. The function currently relies on CTGOV
-recording other identifiers such as the EudraCT number in the field "Other
-IDs".
+Records for a clinical trial can be loaded from more than one
+register. The function returns identifiers of records from the
+register(s) preferred by the user. All registers are recording
+identifiers also from other registers, which is used by this
+function to provide a vector of identifiers of deduplicated trials.
 }
 \examples{
 
 \dontrun{
-db <- nodbi::src_sqlite(
+dbc <- nodbi::src_sqlite(
   collection = "my_collection"
 )
 dbFindIdsUniqueTrials(
-  con = db
+  con = dbc
 )
 }
 

@@ -1,0 +1,50 @@
+#' ctrdata: get started, connect database and function overview
+#'
+#' ctrdata package for aggregating and analysing
+#' information on clinical trials from public registers
+#'
+#' @section Database connection:
+#' Package `ctrdata` retrieves trial information and stores it in a
+#' database collection, which has to be given as a connection object
+#' to parameter `con` for several ctrdata functions and this is
+#' created in different ways for the three supported databases:
+#'
+#' **Database** | **Connection object**
+#' -------- | ---------
+#' MongoDB | `dbc <- `[nodbi::src_mongo]`(db = "my_db", collection = "my_coll")`
+#' SQLite | `dbc <- `[nodbi::src_sqlite]`(dbname = "my_db", collection = "my_coll")`
+#' PostgreSQL | `dbc <- `[nodbi::src_postgres]`(dbname = "my_db"); dbc[["collection"]] <- "my_coll"`
+#'
+#' Example of using a `ctrdata` function with any such connection object:
+#' [ctrdata::dbQueryHistory]`(con = dbc)`.
+#' Besides ctrdata functions below, any such a connection object can equally
+#' be used with functions of package `nodbi`, for example
+#' [nodbi::docdb_query](`src = dbc, key = dbc$collection, fields = '{"_id": 1}', query = '{"sponsors.lead_sponsor.agency_class": "Industry"}')`
+#'
+#' @section ctrdata operations on a clinical trial register:
+#'
+#' \link{ctrOpenSearchPagesInBrowser},
+#' \link{ctrFindActiveSubstanceSynonyms},
+#' \link{ctrGetQueryUrl},
+#' \link{ctrLoadQueryIntoDb}
+#'
+#' @section Get a data frame from the database collection:
+#'
+#' \link{dbFindFields},
+#' \link{dbGetFieldsIntoDf},
+#' \link{dbFindIdsUniqueTrials} (de-duplicated identifiers of
+#' clinical trial records that can be used to subset a data frame)
+#'
+#' @section Operate on a data frame with trial information:
+#'
+#' \link{dfTrials2Long} (convert nested lists into long format),
+#' \link{dfName2Value} (get values for variable(s) of interest).
+#' \link{dfMergeTwoVariablesRelevel},
+#'
+#' @name ctrdata-package
+#' @docType package
+#' @author Ralf Herold \email{ralf.herold@@mailbox.org}
+#' @keywords package
+#' @md
+NULL
+#> NULL

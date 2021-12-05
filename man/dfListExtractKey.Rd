@@ -24,6 +24,7 @@ A data frame in long format with columns
  per _id).
 }
 \description{
+(Deprecated, use \link{dfTrials2Long} and \link{dfName2Value}!)
 The function uses a name (key) to extract an element
 from a list in a data.frame such as obtained with
 \link{dbGetFieldsIntoDf}. This helps to simplify
@@ -32,14 +33,14 @@ working with nested lists and with complex structures.
 \examples{
 
 \dontrun{
-db <- nodbi::src_sqlite(
+dbc <- nodbi::src_sqlite(
   collection = "my_collection"
 )
 df <- dbGetFieldsIntoDf(
   fields = c(
     "endPoints.endPoint",
     "subjectDisposition.postAssignmentPeriods"),
-  con = db
+  con = dbc
 )
 dfListExtractKey(
   df = df,

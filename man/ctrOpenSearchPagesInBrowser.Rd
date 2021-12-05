@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{ctrOpenSearchPagesInBrowser}
 \alias{ctrOpenSearchPagesInBrowser}
-\title{Open advanced search pages of register(s) or execute search in browser}
+\title{Open stored query or register search page}
 \usage{
 ctrOpenSearchPagesInBrowser(url = "", register = "", copyright = FALSE, ...)
 }
@@ -28,21 +28,14 @@ Open advanced search pages of register(s) or execute search in browser
 }
 \examples{
 \dontrun{
-ctrOpenSearchPagesInBrowser(
- "https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer")
+# Check copyrights before using registers
+ctrOpenSearchPagesInBrowser(copyright = TRUE)
 
-# for this example, the clipboard has to
-# contain the URL from a search in a register
-ctrOpenSearchPagesInBrowser(
- ctrGetQueryUrl())
-
-# open the last query that was
-# loaded into the database
-db <- nodbi::src_sqlite(
+# open last query loaded into the database
+dbc <- nodbi::src_sqlite(
   collection = "previously_created"
 )
 ctrOpenSearchPagesInBrowser(
-  dbQueryHistory(con = db))
+  dbQueryHistory(con = dbc))
 }
-
 }

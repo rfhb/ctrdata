@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{dfTrials2Long}
 \alias{dfTrials2Long}
-\title{Extract trial information into long format}
+\title{Convert data frame with trial records into long format}
 \usage{
 dfTrials2Long(df)
 }
@@ -14,27 +14,24 @@ one or more variables as obtained from
 }
 \value{
 A data frame with the four columns:
- _id, identifier, name, value
+ `_id`, `identifier`, `name`, `value`
 }
 \description{
-The function works with procotol- and results-
-related information. It converts lists and other
-values into individual rows of a long data frame.
-From the resulting data frame, values of interest
-can then be selected (e.g. select an outcome
-and its analysis by the identifier of the measure
-which has "Hazard Ratio" in its name, see
-\link{dfName2Value}).
+The function works with procotol- and results- related information.
+It converts lists and other values that are in a data frame returned
+by \link{dbGetFieldsIntoDf} into individual rows of a long data frame.
+From the resulting data frame, values of interest can be selected
+using \link{dfName2Value}).
 }
 \examples{
 \dontrun{
-db <- nodbi::src_sqlite(
+dbc <- nodbi::src_sqlite(
   collection = "my_collection"
 )
 df <- dbGetFieldsIntoDf(
   fields = c(
     "clinical_results.outcome_list.outcome"),
-  con = db
+  con = dbc
 )
 dfTrials2Long(
   df = df

@@ -2,7 +2,7 @@
 <!-- README.md is generated from README.Rmd -->
 <!-- badges: start -->
 
-[![](https://cranlogs.r-pkg.org/badges/ctrdata)](https://cran.r-project.org/package=ctrdata)
+[![CRAN](https://cranchecks.info/badges/worst/ctrdata)](https://cran.r-project.org/package=ctrdata)
 [![codecov](https://codecov.io/gh/rfhb/ctrdata/branch/master/graph/badge.svg)](https://app.codecov.io/gh/rfhb/ctrdata)
 [![R-CMD-check-win-macos](https://github.com/rfhb/ctrdata/workflows/R-CMD-check-win-macos/badge.svg)](https://github.com/rfhb/ctrdata/actions?query=workflow%3AR-CMD-check-win-macos)
 [![R-CMD-check-linux](https://github.com/rfhb/ctrdata/workflows/R-CMD-check-linux/badge.svg)](https://github.com/rfhb/ctrdata/actions?query=workflow%3AR-CMD-check-linux)
@@ -23,7 +23,7 @@ aggregating and analysing this information; it can be used for the
 The motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. The package
 is to be used within the [R](https://www.r-project.org/) system; this
-README was reviewed on 2021-12-04 for v1.8.0.9000.
+README was reviewed on 2021-12-05 for v1.8.0.9000.
 
 Main features:
 
