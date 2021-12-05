@@ -2,7 +2,6 @@
 
 export(ctrFindActiveSubstanceSynonyms)
 export(ctrGetQueryUrl)
-export(ctrGetQueryUrlFromBrowser)
 export(ctrLoadQueryIntoDb)
 export(ctrOpenSearchPagesInBrowser)
 export(dbFindFields)

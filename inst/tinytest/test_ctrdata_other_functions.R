@@ -153,12 +153,6 @@ expect_equal(
 
 # test
 expect_warning(
-  ctrGetQueryUrlFromBrowser(
-    url = "ThisDoesNotExist"),
-  "is deprecated")
-
-# test
-expect_warning(
   ctrGetQueryUrl(
     url = "LETTERS"),
   "no clinical trial register search URL found")

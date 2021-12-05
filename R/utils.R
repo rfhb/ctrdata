@@ -406,51 +406,6 @@ ctrGetQueryUrl <- function(
 # end ctrGetQueryUrl
 
 
-#' Import from clipboard the URL of a search in one of the registers
-#'
-#' @inheritParams ctrGetQueryUrl
-#'
-#' @return A string of query parameters that can be used to retrieve data
-#' from the register.
-#'
-#' @export
-#'
-#' @return A data frame with column names query term and register name
-#' that can directly be used in \link{ctrLoadQueryIntoDb} and in
-#' \link{ctrOpenSearchPagesInBrowser}
-#'
-#' @examples
-#'
-#' \dontrun{
-#' db <- nodbi::src_sqlite(
-#'   collection = "my_collection"
-#' )
-#'
-#' # user now copies into the clipboard the URL from
-#' # the address bar of the browser that shows results
-#' # from a query in one of the trial registers
-#' ctrLoadQueryIntoDb(
-#'   ctrGetQueryUrlFromBrowser(),
-#'   con = db
-#' )
-#' }
-#'
-#' @importFrom clipr read_clip
-#'
-ctrGetQueryUrlFromBrowser <- function(
-  url = "",
-  register = "") {
-
-  # deprecate
-  .Deprecated(new = "ctrGetQueryUrl")
-
-  # defer call
-  ctrGetQueryUrl(url = url, register = register)
-
-}
-# end ctrGetQueryUrlFromBrowser
-
-
 #' Find synonyms of an active substance
 #'
 #' An active substance can be identified by a recommended international
