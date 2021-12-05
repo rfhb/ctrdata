@@ -51,7 +51,17 @@
       <img src="" class="logo" alt=""><h1>Function reference</h1>
     </div>
 
-    <div class="section level2">
+    <div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="ctrdata-package.html">ctrdata-package</a></code> 
+        </dt>
+        <dd>ctrdata: get started, connect database and function overview</dd>
+      </dl></div><div class="section level2">
       <h2 id="operations-on-clinical-trial-register">Operations on clinical trial register<a class="anchor" aria-label="anchor" href="#operations-on-clinical-trial-register"></a></h2>
       
       
@@ -71,24 +81,17 @@
           
           <code><a href="ctrGetQueryUrl.html">ctrGetQueryUrl()</a></code> 
         </dt>
-        <dd>Extract query parameters and register name from input or from
-clipboard into which the URL of a register search was copied</dd>
-      </dl><dl><dt>
-          
-          <code><a href="ctrGetQueryUrlFromBrowser.html">ctrGetQueryUrlFromBrowser()</a></code> 
-        </dt>
-        <dd>Import from clipboard the URL of a search in one of the registers</dd>
+        <dd>Get query details</dd>
       </dl><dl><dt>
           
           <code><a href="ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code> 
         </dt>
-        <dd>Retrieve or update information on clinical trials from register
-and store in database</dd>
+        <dd>Load and store register trial information</dd>
       </dl><dl><dt>
           
           <code><a href="ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser()</a></code> 
         </dt>
-        <dd>Open advanced search pages of register(s) or execute search in browser</dd>
+        <dd>Open stored query or register search page</dd>
       </dl></div><div class="section level2">
       <h2 id="using-database-with-downloaded-trial-information">Using database with downloaded trial information<a class="anchor" aria-label="anchor" href="#using-database-with-downloaded-trial-information"></a></h2>
       
@@ -109,17 +112,17 @@ and store in database</dd>
           
           <code><a href="dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials()</a></code> 
         </dt>
-        <dd>Deduplicate records to provide unique clinical trial identifiers</dd>
+        <dd>Get identifiers of deduplicated trial records</dd>
       </dl><dl><dt>
           
           <code><a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code> 
         </dt>
-        <dd>Create data frame by extracting specified fields from database collection</dd>
+        <dd>Create data frame of specified fields from database collection</dd>
       </dl><dl><dt>
           
           <code><a href="dbQueryHistory.html">dbQueryHistory()</a></code> 
         </dt>
-        <dd>Show the history of queries that were loaded into a database</dd>
+        <dd>Show history of queries loaded into a database collection</dd>
       </dl></div><div class="section level2">
       <h2 id="get-data-frame-from-database-and-operate-on-it">Get data frame from database and operate on it<a class="anchor" aria-label="anchor" href="#get-data-frame-from-database-and-operate-on-it"></a></h2>
       
@@ -133,27 +136,19 @@ and store in database</dd>
 
       <dl><dt>
           
-          <code><a href="dfListExtractKey.html">dfListExtractKey()</a></code> 
-        </dt>
-        <dd>Extract named element(s) from list(s) into long-format
-data frame</dd>
-      </dl><dl><dt>
-          
           <code><a href="dfMergeTwoVariablesRelevel.html">dfMergeTwoVariablesRelevel()</a></code> 
         </dt>
-        <dd>Merge two variables into one, optionally map values to new levels</dd>
+        <dd>Merge two variables</dd>
       </dl><dl><dt>
           
           <code><a href="dfName2Value.html">dfName2Value()</a></code> 
         </dt>
-        <dd>Extract information of interest (e.g., endpoint)
-from long data frame of protocol- or result-related
-trial information as returned by dfTrials2Long</dd>
+        <dd>Get value for variable of interest</dd>
       </dl><dl><dt>
           
           <code><a href="dfTrials2Long.html">dfTrials2Long()</a></code> 
         </dt>
-        <dd>Extract trial information into long format</dd>
+        <dd>Convert data frame with trial records into long format</dd>
       </dl></div><div class="section level2">
       <h2 id="utility-functions">Utility functions<a class="anchor" aria-label="anchor" href="#utility-functions"></a></h2>
       
@@ -169,8 +164,24 @@ trial information as returned by dfTrials2Long</dd>
           
           <code><a href="installCygwinWindowsDoInstall.html">installCygwinWindowsDoInstall()</a></code> 
         </dt>
-        <dd>Convenience function to install a minimal cygwin environment under MS
-Windows, including perl, sed and php</dd>
+        <dd>Install necessary helper apps (Windows only)</dd>
+      </dl></div><div class="section level2">
+      <h2 id="deprecated">Deprecated<a class="anchor" aria-label="anchor" href="#deprecated"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="dfListExtractKey.html">dfListExtractKey()</a></code> 
+        </dt>
+        <dd>Extract named element(s) from list(s) into long-format
+data frame</dd>
       </dl></div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>

@@ -37,16 +37,13 @@
     <loc>https://rfhb.github.io/ctrdata/dev/reference/ctrGetQueryUrl.html</loc>
   </url>
   <url>
-    <loc>https://rfhb.github.io/ctrdata/dev/reference/ctrGetQueryUrlFromBrowser.html</loc>
-  </url>
-  <url>
     <loc>https://rfhb.github.io/ctrdata/dev/reference/ctrLoadQueryIntoDb.html</loc>
   </url>
   <url>
     <loc>https://rfhb.github.io/ctrdata/dev/reference/ctrOpenSearchPagesInBrowser.html</loc>
   </url>
   <url>
-    <loc>https://rfhb.github.io/ctrdata/dev/reference/ctrdata.html</loc>
+    <loc>https://rfhb.github.io/ctrdata/dev/reference/ctrdata-package.html</loc>
   </url>
   <url>
     <loc>https://rfhb.github.io/ctrdata/dev/reference/dbFindFields.html</loc>

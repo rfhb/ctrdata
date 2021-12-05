@@ -108,7 +108,7 @@
 <li>ClinicalTrials.gov (“CTGOV”, <a href="https://clinicaltrials.gov/" class="external-link uri">https://clinicaltrials.gov/</a>)</li>
 <li>ISRCTN (<a href="https://www.isrctn.com/" class="external-link uri">https://www.isrctn.com/</a>) 🔔new in v1.6.0</li>
 </ul>
-<p>The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. The package is to be used within the <a href="https://www.r-project.org/" class="external-link">R</a> system; this README was reviewed on 2021-12-04 for v1.8.0.9000.</p>
+<p>The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. The package is to be used within the <a href="https://www.r-project.org/" class="external-link">R</a> system; this README was reviewed on 2021-12-05 for v1.8.0.9000.</p>
 <p>Main features:</p>
 <ul>
 <li><p>Protocol-related trial information is easily retrieved (downloaded): Users define a query in a register’s web interface and then use <code>ctrdata</code> to retrieve in one step all trials resulting from the query. Results-related trial information and personal annotations can be including during retrieval. Synonyms of an active substance can also be found.</p></li>
@@ -436,7 +436,7 @@ citation("ctrdata")
 <span class="fu">ggsave</span><span class="op">(</span>filename <span class="op">=</span> <span class="st">"man/figures/README-ctrdata_results_neuroblastoma.png"</span>,
        width <span class="op">=</span> <span class="fl">5</span>, height <span class="op">=</span> <span class="fl">3</span>, units <span class="op">=</span> <span class="st">"in"</span><span class="op">)</span></code></pre></div>
 <div class="figure">
-<img src="reference/figures/README-ctrdata_results_neuroblastoma.png" alt=""><p class="caption">Neuroblastoma trials</p>
+<img src="https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/dev/reference/figures/README-ctrdata_results_neuroblastoma.png" alt=""><p class="caption">Neuroblastoma trials</p>
 </div>
 </div>
 <div class="section level2">
@@ -501,7 +501,7 @@ citation("ctrdata")
 </h3>
 <ul>
 <li><p>Data providers and curators of the clinical trial registers. Please review and respect their copyrights and terms and conditions (<code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>).</p></li>
-<li><p>This package <code>ctrdata</code> has been made possible building on the work done for <a href="https://www.r-project.org/" class="external-link">R</a>, <a href="https://cran.r-project.org/package=curl" class="external-link">curl</a>, <a href="https://cran.r-project.org/package=httr" class="external-link">httr</a>, <a href="https://cran.r-project.org/package=xml2" class="external-link">xml2</a>, <a href="https://cran.r-project.org/package=rvest" class="external-link">rvest</a>, <a href="https://cran.r-project.org/package=mongolite" class="external-link">mongolite</a>, <a href="https://cran.r-project.org/package=nodbi" class="external-link">nodbi</a>, <a href="https://CRAN.R-project.org/package=RSQLite" class="external-link">RSQLite</a> and <a href="https://cran.r-project.org/package=clipr" class="external-link">clipr</a>.</p></li>
+<li><p>This package <code>ctrdata</code> has been made possible building on the work done for <a href="https://www.r-project.org/" class="external-link">R</a>, <a href="https://cran.r-project.org/package=curl" class="external-link">curl</a>, <a href="https://cran.r-project.org/package=httr" class="external-link">httr</a>, <a href="https://cran.r-project.org/package=xml2" class="external-link">xml2</a>, <a href="https://cran.r-project.org/package=rvest" class="external-link">rvest</a>, <a href="https://cran.r-project.org/package=mongolite" class="external-link">mongolite</a>, <a href="https://cran.r-project.org/package=jsonlite" class="external-link">jsonlite</a>, <a href="https://cran.r-project.org/package=nodbi" class="external-link">nodbi</a>, <a href="https://cran.r-project.org/package=RPostgres" class="external-link">RPostgres</a>, <a href="https://CRAN.R-project.org/package=RSQLite" class="external-link">RSQLite</a> and <a href="https://cran.r-project.org/package=clipr" class="external-link">clipr</a>.</p></li>
 </ul>
 </div>
 <div class="section level3">
@@ -521,14 +521,14 @@ citation("ctrdata")
 <h3 id="mongodb">MongoDB<a class="anchor" aria-label="anchor" href="#mongodb"></a>
 </h3>
 <div class="figure">
-<img src="reference/figures/README-ctrdata_json_mongodb.jpg" alt=""><p class="caption">Example JSON representation in MongoDB</p>
+<img src="https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/dev/reference/figures/README-ctrdata_json_mongodb.jpg" alt=""><p class="caption">Example JSON representation in MongoDB</p>
 </div>
 </div>
 <div class="section level3">
 <h3 id="sqlite">SQLite<a class="anchor" aria-label="anchor" href="#sqlite"></a>
 </h3>
 <div class="figure">
-<img src="reference/figures/README-ctrdata_json_sqlite.jpg" alt=""><p class="caption">Example JSON representation in SQLite</p>
+<img src="https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/dev/reference/figures/README-ctrdata_json_sqlite.jpg" alt=""><p class="caption">Example JSON representation in SQLite</p>
 </div>
 </div>
 </div>
@@ -551,7 +551,7 @@ citation("ctrdata")
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://cran.r-project.org/package=ctrdata" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/ctrdata"></a></li>
+<li><a href="https://cran.r-project.org/package=ctrdata" class="external-link"><img src="https://cranchecks.info/badges/worst/ctrdata" alt="CRAN"></a></li>
 <li><a href="https://app.codecov.io/gh/rfhb/ctrdata" class="external-link"><img src="https://codecov.io/gh/rfhb/ctrdata/branch/master/graph/badge.svg" alt="codecov"></a></li>
 <li><a href="https://github.com/rfhb/ctrdata/actions?query=workflow%3AR-CMD-check-win-macos" class="external-link"><img src="https://github.com/rfhb/ctrdata/workflows/R-CMD-check-win-macos/badge.svg" alt="R-CMD-check-win-macos"></a></li>
 <li><a href="https://github.com/rfhb/ctrdata/actions?query=workflow%3AR-CMD-check-linux" class="external-link"><img src="https://github.com/rfhb/ctrdata/workflows/R-CMD-check-linux/badge.svg" alt="R-CMD-check-linux"></a></li>
