@@ -2,15 +2,17 @@ home:
   sidebar:
     structure: [authors, toc, dev]
 reference:
+- contents:
+  - starts_with("ctrdata")
 - title: "Operations on clinical trial register"
 - contents:
-  - starts_with("ctr")
+  - starts_with("ctr[A-Z]")
 - title: "Using database with downloaded trial information"
 - contents:
   - starts_with("db")
 - title: "Get data frame from database and operate on it"
 - contents:
-  - starts_with("df")
+  - starts_with("df[^L]")
 - title: "Utility functions"
 - contents:
   - starts_with("install")
