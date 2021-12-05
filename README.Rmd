@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   eval = FALSE,
   comment = "#>",
-  fig.path = "man/figures/README-",
+  fig.path = "README-",
   out.width = "100%"
 )
 
@@ -336,7 +336,7 @@ ggplot(data = nset) +
 ggsave(filename = "man/figures/README-ctrdata_results_neuroblastoma.png",
        width = 5, height = 3, units = "in")
 ```
-![Neuroblastoma trials](man/figures/README-ctrdata_results_neuroblastoma.png)
+![Neuroblastoma trials](https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/dev/reference/figures/README-ctrdata_results_neuroblastoma.png)
 
 ```{r, include=FALSE}
 # cleanup
@@ -376,7 +376,9 @@ Use connection with `nodbi` functions | `nodbi::docdb_*(src = dbc, key = dbc$col
 [xml2](https://cran.r-project.org/package=xml2), 
 [rvest](https://cran.r-project.org/package=rvest),
 [mongolite](https://cran.r-project.org/package=mongolite), 
+[jsonlite](https://cran.r-project.org/package=jsonlite), 
 [nodbi](https://cran.r-project.org/package=nodbi), 
+[RPostgres](https://cran.r-project.org/package=RPostgres), 
 [RSQLite](https://CRAN.R-project.org/package=RSQLite) and
 [clipr](https://cran.r-project.org/package=clipr). 
 
@@ -392,11 +394,11 @@ Use connection with `nodbi` functions | `nodbi::docdb_*(src = dbc, key = dbc$col
 
 ### MongoDB
 
-![Example JSON representation in MongoDB](man/figures/README-ctrdata_json_mongodb.jpg)
+![Example JSON representation in MongoDB](https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/dev/reference/figures/README-ctrdata_json_mongodb.jpg)
 
 ### SQLite
 
-![Example JSON representation in SQLite](man/figures/README-ctrdata_json_sqlite.jpg)
+![Example JSON representation in SQLite](https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/dev/reference/figures/README-ctrdata_json_sqlite.jpg)
 
 
 

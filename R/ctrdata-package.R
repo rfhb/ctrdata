@@ -11,15 +11,15 @@
 #'
 #' **Database** | **Connection object**
 #' -------- | ---------
-#' MongoDB | `dbc <- `[nodbi::src_mongo]`(db = "my_db", collection = "my_coll")`
-#' SQLite | `dbc <- `[nodbi::src_sqlite]`(dbname = "my_db", collection = "my_coll")`
-#' PostgreSQL | `dbc <- `[nodbi::src_postgres]`(dbname = "my_db"); dbc[["collection"]] <- "my_coll"`
+#' MongoDB | \code{dbc <- \link[nodbi:src_mongo]{nodbi::src_mongo}(db = "my_db", collection = "my_coll")}
+#' SQLite | \code{dbc <- \link[nodbi:src_sqlite]{nodbi::src_sqlite}(dbname = "my_db", collection = "my_coll")}
+#' PostgreSQL | \code{dbc <- \link[nodbi:src_postgres]{nodbi::src_postgres}(dbname = "my_db"); dbc[["collection"]] <- "my_coll"}
 #'
 #' Example of using a `ctrdata` function with any such connection object:
-#' [ctrdata::dbQueryHistory]`(con = dbc)`.
+#' \code{\link[ctrdata:dbQueryHistory]{ctrdata::dbQueryHistory}(con = dbc)}.
 #' Besides ctrdata functions below, any such a connection object can equally
 #' be used with functions of package `nodbi`, for example
-#' [nodbi::docdb_query](`src = dbc, key = dbc$collection, fields = '{"_id": 1}', query = '{"sponsors.lead_sponsor.agency_class": "Industry"}')`
+#' \code{\link[nodbi:docdb_query]{nodbi::docdb_query}(src = dbc, key = dbc$collection, fields = '{"_id": 1}', query = '{"sponsors.lead_sponsor.agency_class": "Industry"}')}
 #'
 #' @section ctrdata operations on a clinical trial register:
 #'

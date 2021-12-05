@@ -376,7 +376,7 @@ ggsave(filename = "man/figures/README-ctrdata_results_neuroblastoma.png",
 ```
 
 ![Neuroblastoma
-trials](man/figures/README-ctrdata_results_neuroblastoma.png)
+trials](https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/dev/reference/figures/README-ctrdata_results_neuroblastoma.png)
 
 ## Databases
 
@@ -418,7 +418,9 @@ functions of `nodbi` in a consistent way, as shown in the table:
     [xml2](https://cran.r-project.org/package=xml2),
     [rvest](https://cran.r-project.org/package=rvest),
     [mongolite](https://cran.r-project.org/package=mongolite),
+    [jsonlite](https://cran.r-project.org/package=jsonlite),
     [nodbi](https://cran.r-project.org/package=nodbi),
+    [RPostgres](https://cran.r-project.org/package=RPostgres),
     [RSQLite](https://CRAN.R-project.org/package=RSQLite) and
     [clipr](https://cran.r-project.org/package=clipr).
 
@@ -440,9 +442,9 @@ functions of `nodbi` in a consistent way, as shown in the table:
 ### MongoDB
 
 ![Example JSON representation in
-MongoDB](man/figures/README-ctrdata_json_mongodb.jpg)
+MongoDB](https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/dev/reference/figures/README-ctrdata_json_mongodb.jpg)
 
 ### SQLite
 
 ![Example JSON representation in
-SQLite](man/figures/README-ctrdata_json_sqlite.jpg)
+SQLite](https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/dev/reference/figures/README-ctrdata_json_sqlite.jpg)

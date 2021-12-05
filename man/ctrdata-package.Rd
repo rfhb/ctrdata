@@ -15,17 +15,17 @@ database collection, which has to be given as a connection object
 to parameter \code{con} for several ctrdata functions and this is
 created in different ways for the three supported databases:\tabular{ll}{
    \strong{Database} \tab \strong{Connection object} \cr
-   MongoDB \tab \verb{dbc <- }\link[nodbi:src_mongo]{nodbi::src_mongo}\verb{(db = "my_db", collection = "my_coll")} \cr
-   SQLite \tab \verb{dbc <- }\link[nodbi:src_sqlite]{nodbi::src_sqlite}\verb{(dbname = "my_db", collection = "my_coll")} \cr
-   PostgreSQL \tab \verb{dbc <- }\link[nodbi:src_postgres]{nodbi::src_postgres}\verb{(dbname = "my_db"); dbc[["collection"]] <- "my_coll"} \cr
+   MongoDB \tab \code{dbc <- \link[nodbi:src_mongo]{nodbi::src_mongo}(db = "my_db", collection = "my_coll")} \cr
+   SQLite \tab \code{dbc <- \link[nodbi:src_sqlite]{nodbi::src_sqlite}(dbname = "my_db", collection = "my_coll")} \cr
+   PostgreSQL \tab \code{dbc <- \link[nodbi:src_postgres]{nodbi::src_postgres}(dbname = "my_db"); dbc[["collection"]] <- "my_coll"} \cr
 }
 
 
 Example of using a \code{ctrdata} function with any such connection object:
-\link{dbQueryHistory}\code{(con = dbc)}.
+\code{\link[ctrdata:dbQueryHistory]{ctrdata::dbQueryHistory}(con = dbc)}.
 Besides ctrdata functions below, any such a connection object can equally
 be used with functions of package \code{nodbi}, for example
-\link[nodbi:docdb_query]{nodbi::docdb_query}(\verb{src = dbc, key = dbc$collection, fields = '\{"_id": 1\}', query = '\{"sponsors.lead_sponsor.agency_class": "Industry"\}')}
+\code{\link[nodbi:docdb_query]{nodbi::docdb_query}(src = dbc, key = dbc$collection, fields = '{"_id": 1}', query = '{"sponsors.lead_sponsor.agency_class": "Industry"}')}
 }
 
 \section{ctrdata operations on a clinical trial register}{
