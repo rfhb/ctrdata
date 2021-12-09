@@ -629,7 +629,7 @@ dbFindFields <- function(namepart = "",
 
     # helper function
     normNames <- function(df) {
-      sort(unique(sub("[0-9]+$", "", names(unlist(df)))))
+      sort(unique(sub("([a-z])[0-9]+$", "\\1", names(unlist(df)))))
     }
 
     # get names
