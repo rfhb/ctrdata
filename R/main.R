@@ -328,7 +328,8 @@ ctrLoadQueryIntoDb <- function(
   if (!exists("imported") ||
       (imported$n == 0)) {
     message("Function did not result in any trial information imports")
-    return(invisible(list(n = 0, ids = "")))
+    return(invisible(list(
+      n = 0, success = "", failed = "", queryterm = querytermoriginal)))
   }
 
   # inform user
