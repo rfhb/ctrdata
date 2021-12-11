@@ -25,7 +25,8 @@ expect_error(
     suppressMessages(
       ctrLoadQueryIntoDb(
         queryterm = "query=",
-        register = "EUCTR"))),
+        register = "EUCTR",
+        con = dbc))),
   "more than 10,000) trials")
 
 # test

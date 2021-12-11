@@ -5,7 +5,8 @@
 // part of https://github.com/rfhb/ctrdata
 // last edited: 2017-07-28
 // time euctr2json_results.php:
-// 2017-07-30: 0.23 s for 3 trials ~ 75 ms per trial
+// 2017-07-30: 0.23s for 3 trials ~ 75 ms per trial
+// 2021-12-11: 0.34s total for 40 trials ~ 8.5 ms per trial
 
 // note line endings are to be kept by using in
 // .gitattributes for compatibility with cygwin:
@@ -18,7 +19,7 @@ if ($argc <= 1) {
   $xmlDir = $argv[1];
 }
 
-file_exists($xmlDir) or die('Directory or file does not exist: ' . $xmlDir);
+file_exists($xmlDir) or die('Directorydoes not exist: ' . $xmlDir);
 
 // chunk and trial counters
 $cn = 0;
@@ -40,9 +41,9 @@ foreach (array_chunk(glob("$xmlDir/EU*Results.xml"), 20) as $chunkFileNames) {
     $fileContents = preg_replace('/[^\x{0009}\x{000a}\x{000d}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}]+/u', ' ', $fileContents);
 
     // escapes
-    $fileContents = preg_replace('/ +/', ' ', $fileContents);
-    $fileContents = trim(str_replace("'", " &apos;", $fileContents));
-    $fileContents = trim(str_replace("&", " &amp;", $fileContents));
+    $fileContents = preg_replace('/  +/', ' ', $fileContents);
+    $fileContents = trim(str_replace("'", "&apos;", $fileContents));
+    $fileContents = trim(str_replace("&", "&amp;", $fileContents));
 
     // use single escapes for xml
     $fileContents = trim(str_replace('"', "'", $fileContents));

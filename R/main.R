@@ -357,8 +357,7 @@ ctrLoadQueryIntoDb <- function(
   }
 
   # add metadata
-  imported <- addMetaData(x = imported,
-                          con = con)
+  imported <- addMetaData(x = imported, con = con)
 
   ## return
   return(imported)
@@ -1567,7 +1566,7 @@ ctrLoadQueryIntoDbEuctr <- function(
     # iterate over results files
     message("(3/4) Importing JSON into database...")
 
-    # TODO: replace with dbCTRLoadJSONFiles
+    # import results data from json file
     importedresults <- sapply(
       # e.g., EU-CTR 2008-003606-33 v1 - Results.xml
       # was converted into EU_Results_1234.json

@@ -5,6 +5,7 @@
 // part of https://github.com/rfhb/ctrdata
 // last edited: 2021-04-24
 // used for: isrctn
+// 2021-12-11: total 0.7 s for 540 trials ~ 1.3 ms per trial
 
 // note line endings are to be kept by using in
 // .gitattributes for compatibility with cygwin:
@@ -19,7 +20,7 @@ if ($argc <= 1) {
 
 // check infile
 $inFileName = "$testXmlFile/isrctn.xml";
-file_exists($inFileName) or die('Directory or file does not exist: ' . $inFileName);
+file_exists($inFileName) or die('Directory does not exist: ' . $inFileName);
 $outFileName = "$testXmlFile/isrctn_out.xml";
 
 // get UTC date, time in format correspondsing to the
@@ -31,27 +32,22 @@ $fileContents = file_get_contents($inFileName);
 
 // normalise contents
 $fileContents = str_replace(array("\n", "\r", "\t"), ' ', $fileContents);
-$fileContents = preg_replace('/ +/', ' ', $fileContents);
-$fileContents = trim(str_replace("'", " &apos;", $fileContents));
-$fileContents = trim(str_replace("&", " &amp;", $fileContents));
+$fileContents = trim(str_replace("'", "&apos;", $fileContents));
+$fileContents = trim(str_replace("&", "&amp;", $fileContents));
 
 // remove white space
-$fileContents = preg_replace('/ +/', ' ', $fileContents);
+$fileContents = preg_replace('/  +/', ' ', $fileContents);
 
 // use single quotes for xml
 $fileContents = trim(str_replace('"', "'", $fileContents));
 
-// write date of last import into additional field:
-//   <record_last_import>2016-06-22 08:35:32</record_last_import>
-//  write clinical trial register name into additional field:
-//    <ctrname>ISRCTN</ctrname>
+// write date of last import into additional field
 $fileContents = str_replace('<trialDescription>',
                             '<record_last_import>' . $dt . '</record_last_import>' .
                             '<ctrname>ISRCTN</ctrname>' .
                             '<trialDescription>', $fileContents);
 
-// copy ISRCTN number into _id for respective study:
-//    <isrctn dateAssigned="2018-03-27T14:14:41.068Z">21727048</isrctn>
+// copy ISRCTN number into _id for respective study
 $fileContents = preg_replace('/>([0-9]{8}?)<\/isrctn>/',
                              '>$1</isrctn><_id>$1</_id>',
                              $fileContents, -1, $counter);

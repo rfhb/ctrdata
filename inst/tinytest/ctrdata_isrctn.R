@@ -20,7 +20,8 @@ expect_message(
 expect_error(
   suppressMessages(
     ctrLoadQueryIntoDb(
-      queryterm = "https://www.isrctn.com/search?q=")),
+      queryterm = "https://www.isrctn.com/search?q=",
+      con = dbc)),
   "consider correcting or splitting queries")
 
 # test
