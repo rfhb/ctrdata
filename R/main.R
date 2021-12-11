@@ -1114,7 +1114,7 @@ ctrLoadQueryIntoDbCtgov <- function(
   tempDir <- tempfile(pattern = "ctrDATA")
   dir.create(tempDir)
   tempDir <- normalizePath(tempDir, mustWork = TRUE)
-  on.exit(unlink(tempDir, recursive = TRUE), add = TRUE)
+  if (!verbose) on.exit(unlink(tempDir, recursive = TRUE), add = TRUE)
 
   # prepare a file handle for temporary directory
   f <- paste0(tempDir, "/", "ctgov.zip")
