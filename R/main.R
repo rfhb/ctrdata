@@ -137,20 +137,11 @@ ctrLoadQueryIntoDb <- function(
     if (!is.data.frame(queryterm)) {
 
       # obtain url and register
-      tmpTest <- try(
+      queryterm <- try(
         ctrGetQueryUrl(
           url = queryterm,
           register = register),
         silent = TRUE)
-
-      if (inherits(tmpTest, "try-error")) {
-        stop("Cannot use 'queryterm' ", deparse(substitute(queryterm)),
-             " and / or 'register' ", deparse(substitute(register)),
-             call. = FALSE)
-      }
-
-      # continue
-      queryterm <- tmpTest
 
     }
 
