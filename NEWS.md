@@ -1,8 +1,16 @@
+# ctrdata 1.8.0.9001
+ - 2021-12-11
+ - thorough documentation improvement
+ - simplified dbFindFields
+ - cleaned up testing binaries
+ - cleaned up heper scripts
+ - removed ctrGetQueryUrlFromBrowser(), long deprecated
+
 # ctrdata 1.8.0.9000
  - 2021-11-22
- - new development version
  - uses nodbi 0.6.0
- - can use PostgreSQL
+ - can use PostgreSQL as backend
+ - include PostgreSQL in Github Actions
  
 # ctrdata 1.8.0
  - 2021-11-18
