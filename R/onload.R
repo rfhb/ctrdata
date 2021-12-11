@@ -19,12 +19,6 @@
     "https://www.isrctn.com/page/faqs#usingISRCTN\n"
   )
 
-  # check availabilities
-  packageStartupMessage("Checking helper binaries: ", appendLF = FALSE)
-  if (.Platform$OS.type == "windows") installCygwinWindowsTest()
-  checkBinary()
-  packageStartupMessage("done.")
-
   # return
   invisible()
 

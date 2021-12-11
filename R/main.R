@@ -119,13 +119,6 @@ ctrLoadQueryIntoDb <- function(
   con = NULL,
   verbose = FALSE) {
 
-  ## system check, in analogy to onload.R
-  if (.Platform$OS.type == "windows") {
-    if (!installCygwinWindowsTest()) {
-      stop(call. = FALSE)
-    }
-  }
-
   ## check params for update request
   if ((class(querytoupdate) != "character" &&
        querytoupdate != trunc(querytoupdate)) ||
@@ -261,6 +254,24 @@ ctrLoadQueryIntoDb <- function(
   # set user agent for httr and curl to inform registers
   httr::set_config(httr::user_agent(
     paste0("ctrdata/", utils::packageDescription("ctrdata")$Version)))
+
+  ## system check
+  if (!only.count) {
+
+    # check binaries
+    message("Checking helper binaries: ", appendLF = FALSE)
+    suppressMessages(installCygwinWindowsTest())
+    if (register != "EUCTR") testBinaries <- c("php", "phpxml", "phpjson")
+    if (register == "EUCTR") testBinaries <- c("sed", "perl")
+    if (euctrresults) testBinaries <- c("sed", "perl", "php", "phpxml", "phpjson")
+    if (!checkBinary(testBinaries)) stop(
+      "ctrLoadQueryIntoDb() cannot continue. ", call. = FALSE)
+    message("done")
+
+    # check database connection
+    con <- ctrDb(con = con)
+
+  }
 
   ## main function
 
@@ -1097,15 +1108,6 @@ ctrLoadQueryIntoDbCtgov <- function(
          "by the register; consider correcting or splitting queries")
   }
 
-  ## check database connection
-  con <- ctrDb(con = con)
-
-  ## system check, in analogy to onload.R
-  message("Checking helper binaries: ", appendLF = FALSE)
-  if (!checkBinary(c("php", "phpxml", "phpjson"))) stop(
-    "ctrLoadQueryIntoDb() cannot continue. ", call. = FALSE)
-  message("done")
-
   ## create empty temporary directory on localhost for
   # downloading from register into temporary directy
   tempDir <- tempfile(pattern = "ctrDATA")
@@ -1275,17 +1277,6 @@ ctrLoadQueryIntoDbEuctr <- function(
     stop("These are ", resultsEuNumTrials, " (more than 10,000) trials; ",
          "consider correcting or splitting into separate queries")
   }
-
-  ## check database connection
-  con <- ctrDb(con = con)
-
-  ## system check, in analogy to onload.R
-  message("Checking helper binaries: ", appendLF = FALSE)
-  if (!checkBinary(c("sed", "perl"))) stop(
-    "ctrLoadQueryIntoDb() cannot continue. ", call. = FALSE)
-  if (euctrresults && !checkBinary(c("php", "phpxml", "phpjson"))) stop(
-    "ctrLoadQueryIntoDb() cannot continue. ", call. = FALSE)
-  message("done")
 
   # create empty temporary directory on localhost for
   # download from register into temporary directory
@@ -1938,15 +1929,6 @@ ctrLoadQueryIntoDbIsrctn <- function(
          "unintended. Downloading more than 10,000 trials is not supported ",
          "by the register; consider correcting or splitting queries")
   }
-
-  ## check database connection
-  con <- ctrDb(con = con)
-
-  ## system check, in analogy to onload.R
-  message("Checking helper binaries: ", appendLF = FALSE)
-  if (!checkBinary(c("php", "phpxml", "phpjson"))) stop(
-    "ctrLoadQueryIntoDb() cannot continue. ", call. = FALSE)
-  message("done")
 
   ## create empty temporary directory on localhost for
   # downloading from register into temporary directy

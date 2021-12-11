@@ -2393,10 +2393,10 @@ installCygwinWindowsTest <- function(verbose = FALSE) {
     if (verbose) message("cygwin seems to work correctly")
     return(invisible(TRUE))
   } else {
-    message(
-      "cygwin is not available, ctrLoadQueryIntoDb() will not work.\n",
-      "Consider calling ctrdata::installCygwinWindowsDoInstall()")
-    return(invisible(FALSE))
+    stop(
+      "cygwin is not available, ctrLoadQueryIntoDb() will not work. ",
+      "Consider calling ctrdata::installCygwinWindowsDoInstall()",
+      call. = FALSE)
   }
 }
 # end installCygwinWindowsTest
