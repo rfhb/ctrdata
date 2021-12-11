@@ -628,8 +628,14 @@ dbFindFields <- function(namepart = "",
     message("Finding fields in database (may take some time)")
 
     # helper function
-    normNames <- function(df) {
-      sort(unique(sub("([a-z])[0-9]+$", "\\1", names(unlist(df)))))
+    normNames <- function(df, endNumberDelete = TRUE) {
+      out <- names(unlist(df))
+      out <- ifelse(
+        # exception for euctr protocol and results fields
+        test = grepl("65To84|Over85|under_18", out),
+        yes = out,
+        no = sub("[0-9]+$", "", out))
+      sort(unique(out))
     }
 
     # get names
