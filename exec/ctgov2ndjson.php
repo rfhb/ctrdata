@@ -32,15 +32,13 @@ $dt = gmdate("Y-m-d H:i:s");
 $cn = 0;
 $tn = 0;
 
-foreach (array_chunk(glob("$testXmlFile/NCT*.xml"), 20) as $chunkFileNames) {
+foreach (array_chunk(glob("$testXmlFile/NCT*.xml"), 50) as $chunkFileNames) {
 
   $cn = $cn + 1;
 
   foreach ($chunkFileNames as $inFileName) {
 
-    // user info
-    // print $inFileName . PHP_EOL;
-
+    // get contents
     $fileContents = file_get_contents($inFileName);
 
     // normalise contents
@@ -50,6 +48,7 @@ foreach (array_chunk(glob("$testXmlFile/NCT*.xml"), 20) as $chunkFileNames) {
     $fileContents = preg_replace('/[^\x{0009}\x{000a}\x{000d}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}]+/u', ' ', $fileContents);
 
     // escapes
+    $fileContents = trim(str_replace("@", "", $fileContents));
     $fileContents = trim(str_replace("'", "&apos;", $fileContents));
     $fileContents = trim(str_replace("&", "&amp;", $fileContents));
 
@@ -73,7 +72,9 @@ foreach (array_chunk(glob("$testXmlFile/NCT*.xml"), 20) as $chunkFileNames) {
     $simpleXml = simplexml_load_string($fileContents, 'SimpleXMLElement', LIBXML_COMPACT | LIBXML_NOBLANKS | LIBXML_NOENT);
 
     // save all in concatenated file per chunk
-    file_put_contents("$testXmlFile/NCT_" . $cn . ".json", json_encode($simpleXml) . "\n", FILE_APPEND | LOCK_EX);
+    file_put_contents("$testXmlFile/NCT_" . $cn . ".ndjson", json_encode($simpleXml) . "\n", FILE_APPEND | LOCK_EX);
+
+    // increment trial counter
     $tn = $tn + 1;
   }
 }

@@ -1,5 +1,6 @@
 # ctrdata 1.8.0.9001
  - 2021-12-11
+ - chunked, much accelerated database import
  - thorough documentation improvement
  - simplified dbFindFields
  - cleaned up testing binaries
