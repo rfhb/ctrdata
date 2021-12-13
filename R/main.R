@@ -1560,7 +1560,7 @@ ctrLoadQueryIntoDbEuctr <- function(
       # e.g., EU-CTR 2008-003606-33 v1 - Results.xml
       # was converted into EU_Results_1234.json
       dir(path = tempDir,
-          pattern = "EU_Results_.*[.]json",
+          pattern = "EU_Results_[0-9]+[.]ndjson",
           full.names = TRUE),
       function(fileName) {
 
