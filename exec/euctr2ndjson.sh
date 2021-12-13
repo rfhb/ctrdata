@@ -211,13 +211,9 @@ perl -pe '
   s/\n//g ;
   s/NEWRECORDIDENTIFIER/\n/g ;
 
-  # add a final EOL with sed
-  # note: to keep line break
+  # add newline if not existing
   ' | \
-sed \
-  -e '$a\
-' \
-> "$outFileName"
+sed -e '$a\' > "$outFileName"
 
 done
 
