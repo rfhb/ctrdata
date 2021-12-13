@@ -754,10 +754,8 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
         "                               \r",
         appendLF = FALSE)
 
-      # get any annotations and
-      # delete existing docs
-      # TODO get annotations
-      # and delete in chunks
+      # get any annotations, delete
+      # existing docs in chunks
       while (TRUE) {
 
         # read line

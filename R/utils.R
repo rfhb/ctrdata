@@ -1164,7 +1164,9 @@ dbGetFieldsIntoDf <- function(fields = "",
             dfi[[c]] <- sapply(dfi[[c]], function(i) {
               l <- length(i)
               if (l == 0L) i <- NA
-              if (l == 1L) i <- i[1]
+              if (l == 1L) {
+                if (is.list(i[[1]]) && !length(i[[1]])) {
+                  i <- NA } else { i <- i[1] }}
               if (l >= 2L) {
                 if (all(sapply(i, is.character))) {
                   i <- paste0(unlist(i), collapse = " / ")
