@@ -255,7 +255,7 @@ ctrLoadQueryIntoDb <- function(
     if (register != "EUCTR") testBinaries <- c("php", "phpxml", "phpjson")
     if (register == "EUCTR") testBinaries <- c("sed", "perl")
     if (euctrresults) testBinaries <- c("sed", "perl", "php", "phpxml", "phpjson")
-    if (!checkBinary(testBinaries)) stop(
+    if (!checkBinary(b = testBinaries)) stop(
       "ctrLoadQueryIntoDb() cannot continue. ", call. = FALSE)
     message("done")
 

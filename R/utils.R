@@ -2459,19 +2459,9 @@ installFindBinary <- function(commandtest = NULL, verbose = FALSE) {
          (attr(commandresult, "status") != 0)),
     FALSE, TRUE)
   #
-  if (!commandreturn) {
-    # warning(commandtest, " not found.",
-    #         call. = FALSE,
-    #         immediate. = FALSE)
-  } else {
-    if (interactive()) {
-      message(". ", appendLF = FALSE)
-    }
-  }
-  #
-  if (verbose) {
-    print(commandresult)
-  }
+  # user info
+  if (commandreturn && interactive()) message(". ", appendLF = FALSE)
+  if (verbose) print(commandresult)
   #
   return(commandreturn)
   #
