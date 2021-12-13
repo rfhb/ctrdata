@@ -216,7 +216,7 @@ perl -pe '
   ' | \
 sed \
   -e '$a\
-  ' \
+' \
 > "$outFileName"
 
 done
