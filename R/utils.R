@@ -2519,7 +2519,7 @@ checkBinary <- function(b = NULL) {
     if (checked) return(TRUE)
 
     # continue to check binary
-    ok <- installFindBinary(commandtest = actionsInfo[1])
+    ok <- checkCommand(commandtest = actionsInfo[1], verbose = verbose)
     if (!ok) message("\n", actionsInfo[2], appendLF = FALSE)
 
     # store check to private environment

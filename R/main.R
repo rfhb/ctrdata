@@ -646,14 +646,14 @@ ctrRerunQuery <- function(
 ctrConvertToJSON <- function(tempDir, scriptName, verbose) {
 
   ## compose commands to transform into json
+  scriptFile <- system.file(paste0("exec/", scriptName),
+                            package = "ctrdata",
+                            mustWork = TRUE)
 
   # special command handling on windows
   if (.Platform$OS.type == "windows") {
     #
-    script2Json <- utils::shortPathName(
-      path = system.file(paste0("exec/", scriptName),
-                         package = "ctrdata",
-                         mustWork = TRUE))
+    script2Json <- utils::shortPathName(path = scriptFile)
     #
     script2Json <- paste0(
       ifelse(grepl("[.]php$", scriptName), "php -f ", ""),
@@ -665,9 +665,11 @@ ctrConvertToJSON <- function(tempDir, scriptName, verbose) {
     script2Json <- gsub("([A-Z]):/", "/cygdrive/\\1/", script2Json)
     #
     script2Json <- paste0(
-      "cmd.exe /c ",
       rev(Sys.glob("c:\\cygw*\\bin\\bash.exe"))[1],
-      ' --login -c "', script2Json, '"')
+      ' --noprofile --norc --noediting -c ',
+      shQuote(paste0(
+        "PATH=/usr/local/bin:/usr/bin; ",
+        script2Json)))
     #
   } else {
     #
