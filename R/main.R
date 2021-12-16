@@ -255,7 +255,7 @@ ctrLoadQueryIntoDb <- function(
     if (register != "EUCTR") testBinaries <- c("php", "phpxml", "phpjson")
     if (register == "EUCTR") testBinaries <- c("sed", "perl")
     if (euctrresults) testBinaries <- c("sed", "perl", "php", "phpxml", "phpjson")
-    if (!checkBinary(testBinaries)) stop(
+    if (!checkBinary(b = testBinaries)) stop(
       "ctrLoadQueryIntoDb() cannot continue. ", call. = FALSE)
     message("done")
 
@@ -646,14 +646,14 @@ ctrRerunQuery <- function(
 ctrConvertToJSON <- function(tempDir, scriptName, verbose) {
 
   ## compose commands to transform into json
+  scriptFile <- system.file(paste0("exec/", scriptName),
+                            package = "ctrdata",
+                            mustWork = TRUE)
 
   # special command handling on windows
   if (.Platform$OS.type == "windows") {
     #
-    script2Json <- utils::shortPathName(
-      path = system.file(paste0("exec/", scriptName),
-                         package = "ctrdata",
-                         mustWork = TRUE))
+    script2Json <- utils::shortPathName(path = scriptFile)
     #
     script2Json <- paste0(
       ifelse(grepl("[.]php$", scriptName), "php -f ", ""),
@@ -665,9 +665,11 @@ ctrConvertToJSON <- function(tempDir, scriptName, verbose) {
     script2Json <- gsub("([A-Z]):/", "/cygdrive/\\1/", script2Json)
     #
     script2Json <- paste0(
-      "cmd.exe /c ",
       rev(Sys.glob("c:\\cygw*\\bin\\bash.exe"))[1],
-      ' --login -c "', script2Json, '"')
+      ' --noprofile --norc --noediting -c ',
+      shQuote(paste0(
+        "PATH=/usr/local/bin:/usr/bin; ",
+        script2Json)))
     #
   } else {
     #
@@ -721,7 +723,7 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
 
   # find files
   tempFiles <- dir(path = dir,
-                   pattern = ".json",
+                   pattern = ".ndjson",
                    full.names = TRUE)
 
   # initialise counters
@@ -732,21 +734,30 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
     X = seq_along(tempFiles),
     function(tempFile) {
 
-      # main function for fast reading,
-      # switching off warning about final EOL missing
-      fd <- file(description = tempFiles[tempFile],
-                 open = "rt", blocking = TRUE)
-
-      # initialise line counter
-      li <- 0L
-
-      # initialise output
+      ## initialise output
       idSuccess <- NULL
       idFailed <- NULL
       idAnnotation <- NULL
       nImported <- 0
+      ids <- NULL
+      annotations <- NULL
 
-      # iterate over lines in fd
+      ## get _id's
+
+      # main function for fast reading,
+      # switching off warning about final EOL missing
+      fd <- file(description = tempFiles[tempFile],
+                 open = "rt", blocking = TRUE)
+      on.exit(try(close(fd), silent = TRUE), add = TRUE)
+
+      # inform user
+      message(
+        "JSON file #: ", tempFile, " / ", fc,
+        "                               \r",
+        appendLF = FALSE)
+
+      # get any annotations, delete
+      # existing docs in chunks
       while (TRUE) {
 
         # read line
@@ -755,82 +766,72 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
         # exit while loop if empty
         if (length(tmpline) == 0L) break
 
-        # update line counter
-        li <- li + 1L
-
-        # one row is one trial record
-
         # readLines produces: \"_id\": \"2007-000371-42-FR\"
         id <- sub(".*_id\":[ ]*\"(.*?)\".*", "\\1", tmpline)
 
         # ids should always be found and later,
         # one id will be assumed to be on one line each
-        if (length(id) != 1L || !nchar(id)) {
-          stop("No or more than one _id detected ", call. = FALSE)
-        }
+        if (length(id) == 1L && nchar(id)) ids <- c(ids, id)
 
-        # inform user
-        message("JSON record #: ", li,
-                ", file #: ", tempFile, " / ", fc,
-                "                               \r",
-                appendLF = FALSE)
+      } # while
 
-        # check validity
-        tmpvalidate <- jsonlite::validate(tmpline)
-        if (!tmpvalidate) {
-          warning("Invalid json for trial ", id, "\n",
-                  "Line ", li, " in file ", tempFiles[tempFile], "\n",
-                  attr(x = tmpvalidate, which = "err"),
-                  noBreaks. = TRUE, call. = FALSE, immediate. = TRUE)
-        }
+      # get annotations
+      annoDf <- try({
+        nodbi::docdb_query(
+          src = con,
+          key = con$collection,
+          query = paste0(
+            '{"_id": {"$in": [',
+            paste0('"', ids, '"', collapse = ","), ']}}'),
+          fields = '{"_id": 1, "annotation": 1}')
+      }, silent = TRUE)
+      if (!inherits(annoDf, "try-error") &&
+          length(annoDf[["_id"]])) {
+        annotations <- merge(
+          data.frame("_id" = ids, check.names = FALSE, stringsAsFactors = FALSE),
+          annoDf, all.x = TRUE
+        )[["annotation"]]
+      } else {
+        annotations <- rep("", length(ids))
+      }
 
-        # ensure JSON is understood as single record
-        tmpline <- sub(pattern = "(.+)", replacement = "[\\1]", x = tmpline)
+      # delete any existing records
+      deleteIds <- try({
+        nodbi::docdb_query(
+          src = con,
+          key = con$collection,
+          query = paste0(
+            '{"_id": {"$in": [',
+            paste0('"', ids, '"', collapse = ","), ']}}'),
+          fields = '{"_id": 1}')
+      }, silent = TRUE)
+      if (!inherits(deleteIds, "try-error") &&
+          length(deleteIds[["_id"]])) {
+        nodbi::docdb_delete(
+          src = con,
+          key = con$collection,
+          query = paste0(
+            '{"_id": {"$in": [',
+            paste0('"', deleteIds[["_id"]], '"', collapse = ","), ']}}'))
+      }
 
-        # load into database
-        # - get any annotations
-        annotation <- try({
-          nodbi::docdb_query(
+      ## import
+      tmp <- try({
+        suppressMessages(
+          nodbi::docdb_create(
             src = con,
             key = con$collection,
-            query = paste0('{"_id": "', id, '"}'),
-            fields = '{"_id": 1, "annotation": 1}')}, silent = TRUE)
-        if (inherits(annotation, "try-error") ||
-            !ncol(annotation) ||
-            !nrow(annotation)) {
-          annotation <- ""
-        } else {
-          annotation <- annotation[1, 2, drop = TRUE]
-        }
-        # - try delete
-        tmp <- try({
-          nodbi::docdb_delete(
-            src = con,
-            key = con$collection,
-            query = paste0('{"_id":"', id, '"}')
-          )}, silent = TRUE)
-        # - then insert
-        tmp <- try({
-          suppressMessages(
-            nodbi::docdb_create(
-              src = con,
-              key = con$collection,
-              value = tmpline
-            ))}, silent = TRUE)
+            value = tempFiles[tempFile]
+          ))}, silent = TRUE)
 
-        # return values for lapply
-        if (inherits(tmp, "try-error") ||
-            tmp == 0L) {
-          # inform user
-          message(id, ": ", tmp)
-          idFailed <- c(idFailed, id)
-        } else {
-          idSuccess <- c(idSuccess, id)
-          nImported <- nImported + tmp
-          idAnnotation <- c(idAnnotation, annotation)
-        }
-
-      } # end while
+      ## return values for lapply
+      if (inherits(tmp, "try-error") || tmp == 0L) {
+        idFailed <- c(idFailed, ids)
+      } else {
+        idSuccess <- c(idSuccess, ids)
+        nImported <- nImported + tmp
+        idAnnotation <- c(idAnnotation, annotations)
+      }
 
       # close this file
       close(fd)
@@ -842,9 +843,6 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
            annotations = idAnnotation)
 
     }) # sapply tempFiles
-
-  # clear output
-  message("                                       \r")
 
   # prepare return values, n is successful only
   n <- sum(sapply(retimp, "[[", "n"), na.rm = TRUE)
@@ -880,7 +878,7 @@ dbCTRAnnotateQueryRecords <- function(
   verbose) {
 
   # debug
-  if (verbose) message("* Running dbCTRAnnotateQueryRecords...")
+  if (verbose) message("Annotating records...")
   if (verbose) message(recordnumbers)
   if (verbose) message(annotation.mode)
 
@@ -1002,7 +1000,7 @@ dbCTRUpdateQueryHistory <- function(
 
   # inform user
   if (tmp == 1L) {
-    message('* Updated history ("meta-info" in "', con$collection, '")')
+    message('Updated history ("meta-info" in "', con$collection, '")')
   } else {
     warning('Could not update history ("meta-info" in "', con$collection,
             '")', call. = FALSE, immediate. = FALSE)
@@ -1129,7 +1127,7 @@ ctrLoadQueryIntoDbCtgov <- function(
   utils::unzip(f, exdir = tempDir)
 
   ## run conversion
-  ctrConvertToJSON(tempDir, "ctgov2json.php", verbose)
+  ctrConvertToJSON(tempDir, "ctgov2ndjson.php", verbose)
 
   ## run import
   message("(3/3) Importing JSON records into database...")
@@ -1405,7 +1403,7 @@ ctrLoadQueryIntoDbEuctr <- function(
   }
 
   ## run conversion
-  ctrConvertToJSON(tempDir, "euctr2json.sh", verbose)
+  ctrConvertToJSON(tempDir, "euctr2ndjson.sh", verbose)
 
   # run import into mongo from json files
   message("(3/3) Importing JSON records into database...")
@@ -1438,7 +1436,7 @@ ctrLoadQueryIntoDbEuctr <- function(
                 last = 14))
 
     # inform user
-    message("* Retrieving results if available from EUCTR for ",
+    message("Retrieving results if available from EUCTR for ",
             length(eudractnumbersimported), " trials: ")
 
     ## parallel download and unzipping into temporary directory
@@ -1552,7 +1550,7 @@ ctrLoadQueryIntoDbEuctr <- function(
       }) # lapply fp
 
     ## run conversion
-    ctrConvertToJSON(tempDir, "euctr2json_results.php", verbose)
+    ctrConvertToJSON(tempDir, "euctr2ndjson_results.php", verbose)
 
     # iterate over results files
     message("(3/4) Importing JSON into database...")
@@ -1562,7 +1560,7 @@ ctrLoadQueryIntoDbEuctr <- function(
       # e.g., EU-CTR 2008-003606-33 v1 - Results.xml
       # was converted into EU_Results_1234.json
       dir(path = tempDir,
-          pattern = "EU_Results_.*[.]json",
+          pattern = "EU_Results_[0-9]+[.]ndjson",
           full.names = TRUE),
       function(fileName) {
 
@@ -1952,7 +1950,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
   }
 
   ## run conversion
-  ctrConvertToJSON(tempDir, "isrctn2json.php", verbose)
+  ctrConvertToJSON(tempDir, "isrctn2ndjson.php", verbose)
 
   ## run import
   message("(3/3) Importing JSON records into database...")

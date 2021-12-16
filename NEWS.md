@@ -1,3 +1,8 @@
+# ctrdata 1.8.0.9002
+ - 2021-12-16
+ - chunked and accelerated database import
+ - accelerated binary checks (cygwin / Windows)
+
 # ctrdata 1.8.0.9001
  - 2021-12-11
  - thorough documentation improvement
@@ -5,7 +10,7 @@
  - cleaned up testing binaries
  - cleaned up heper scripts
  - removed ctrGetQueryUrlFromBrowser(), long deprecated
-
+ 
 # ctrdata 1.8.0.9000
  - 2021-11-22
  - uses nodbi 0.6.0

@@ -12,9 +12,9 @@ if (!checkBinaries()) exit_file("Reason: no binaries php or sed or perl")
 tf <- function() {
 
   # create database object
-  dbc <- nodbi::src_sqlite(
+  dbc <- suppressWarnings(nodbi::src_sqlite(
     dbname = ":memory:",
-    collection = mongoLocalRwCollection)
+    collection = mongoLocalRwCollection))
 
   # register clean-up
   on.exit(expr = {

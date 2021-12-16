@@ -1164,7 +1164,9 @@ dbGetFieldsIntoDf <- function(fields = "",
             dfi[[c]] <- sapply(dfi[[c]], function(i) {
               l <- length(i)
               if (l == 0L) i <- NA
-              if (l == 1L) i <- i[1]
+              if (l == 1L) {
+                if (is.list(i[[1]]) && !length(i[[1]])) {
+                  i <- NA } else { i <- i[1] }}
               if (l >= 2L) {
                 if (all(sapply(i, is.character))) {
                   i <- paste0(unlist(i), collapse = " / ")
@@ -2247,7 +2249,7 @@ setProxy <- function() {
 
     if (!is.null(p)) {
 
-      # used by httr and curl
+      # used by httr, curl, download.file
       Sys.setenv(https_proxy = p)
 
     }
@@ -2262,7 +2264,7 @@ setProxy <- function() {
 #' Alternatively and in case of difficulties, download and run the cygwin
 #' setup yourself as follows: \code{cygwinsetup.exe --no-admin --quiet-mode
 #' --verbose --upgrade-also --root c:/cygwin --site
-#' http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages
+#' https://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages
 #' perl,php-jsonc,php-simplexml}
 #'
 #' @export
@@ -2276,29 +2278,20 @@ setProxy <- function() {
 #'   configuration script. Authenticated proxies are not supported at this time.
 #'
 installCygwinWindowsDoInstall <- function(
-  force = FALSE,
-  proxy = "") {
+  force = FALSE, proxy = "") {
 
   # checks
   if (.Platform$OS.type != "windows") {
-    stop(
-      "This function is only for MS Windows operating systems.",
-      call. = FALSE)
+    stop("This function is only for MS Windows operating systems.",
+         call. = FALSE)
   }
   #
   if (!force & dir.exists("c:\\cygwin")) {
     message("cygwin is already installed in c:\\cygwin. ",
-            "To re-install, use force = TRUE.")
+            "To update or re-install, use force = TRUE.")
     # exit function after testing
     return(installCygwinWindowsTest(verbose = TRUE))
   }
-
-  # define installation command
-  installcmd <- paste0(
-    "--no-admin --quiet-mode --upgrade-also --no-shortcuts --prune-install ",
-    "--root c:/cygwin ",
-    "--site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ ",
-    "--packages perl,php-simplexml,php-json")
 
   # create R session temporary directory
   tmpfile <- paste0(tempdir(), "/cygwin_inst")
@@ -2313,29 +2306,10 @@ installCygwinWindowsDoInstall <- function(
   tmpurl <- paste0("https://cygwin.org/", tmpurl)
 
   # inform user
-  message("Attempting cygwin download using ",
-          tmpurl, " ...")
+  message("Attempting download of ", tmpurl, " ...")
 
   # check and set proxy if needed to access internet
   setProxy()
-
-  # download.file uses the proxy configured in the system
-  tmpdl <- try({
-    utils::download.file(
-      url = tmpurl,
-      destfile = dstfile,
-      quiet = FALSE,
-      mode = "wb")
-  }, silent = TRUE)
-
-  # check
-  if (!file.exists(dstfile) ||
-      file.size(dstfile) < (5 * 10 ^ 5) ||
-      (inherits(tmpdl, "try-error"))) {
-    stop("Failed, please download manually and install with:\n",
-         tmpurl, " ", installcmd,
-         call. = FALSE)
-  }
 
   # proxy handling
   if (proxy != "") {
@@ -2353,9 +2327,36 @@ installCygwinWindowsDoInstall <- function(
     }
   }
 
+  # download.file uses the proxy configured in the system
+  tmpdl <- try({
+    utils::download.file(
+      url = tmpurl,
+      destfile = dstfile,
+      quiet = FALSE,
+      mode = "wb")
+  }, silent = TRUE)
+
+  # compose setup command
+  setupcmd <- paste0(
+    dstfile,
+    " --no-admin --quiet-mode --upgrade-also --no-shortcuts --prune-install",
+    " --root c:/cygwin",
+    " --site https://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/",
+    " --packages perl,php-simplexml,php-json ",
+    " --local-package-dir", tmpfile,
+    " ", proxy)
+
+  # check
+  if (!file.exists(dstfile) ||
+      file.size(dstfile) < (5 * 10 ^ 5) ||
+      (inherits(tmpdl, "try-error"))) {
+    stop("Failed, please download manually and install with:\n",
+         tmpurl, " ", setupcmd, call. = FALSE)
+  }
+
   # execute cygwin setup command
-  system(paste0(dstfile, " ", installcmd,
-                " --local-package-dir ", tmpfile, " ", proxy))
+  message("Executing: ", setupcmd)
+  system(setupcmd)
 
   # return cygwin installation test
   return(installCygwinWindowsTest(verbose = TRUE))
@@ -2426,22 +2427,26 @@ installCygwinWindowsTest <- function(verbose = FALSE) {
 #' @keywords internal
 #' @noRd
 #
-installFindBinary <- function(commandtest = NULL, verbose = FALSE) {
-  #
+checkCommand <- function(commandtest = NULL, verbose = FALSE) {
+
+  # check
   if (is.null(commandtest)) {
     stop("Empty argument: commandtest",
          call. = FALSE)
   }
-  #
+
+  # only for windows, add cygwin shell
   if (.Platform$OS.type == "windows") {
-    commandtest <-
-      paste0(rev(Sys.glob("c:\\cygw*\\bin\\bash.exe"))[1],
-             " --login -c ",
-             shQuote(commandtest))
+    commandtest <- paste0(
+      rev(Sys.glob("c:\\cygw*\\bin\\bash.exe"))[1],
+      ' --noprofile --norc --noediting -c ',
+      shQuote(paste0(
+        "PATH=/usr/local/bin:/usr/bin; ",
+        commandtest)))
   }
-  #
-  if (verbose) print(commandtest)
-  #
+  if (verbose) message(commandtest)
+
+  # test command
   commandresult <- try(
     suppressWarnings(
       system(commandtest,
@@ -2451,44 +2456,37 @@ installFindBinary <- function(commandtest = NULL, verbose = FALSE) {
                       FALSE, TRUE))),
     silent = TRUE
   )
-  #
+
+  # evaluate command
   commandreturn <- ifelse(
     inherits(commandresult, "try-error") ||
       grepl("error|not found", tolower(paste(commandresult, collapse = " "))) ||
       (!is.null(attr(commandresult, "status")) &&
          (attr(commandresult, "status") != 0)),
     FALSE, TRUE)
-  #
-  if (!commandreturn) {
-    # warning(commandtest, " not found.",
-    #         call. = FALSE,
-    #         immediate. = FALSE)
-  } else {
-    if (interactive()) {
-      message(". ", appendLF = FALSE)
-    }
-  }
-  #
-  if (verbose) {
-    print(commandresult)
-  }
-  #
+
+  # user info
+  if (commandreturn && interactive()) message(". ", appendLF = FALSE)
+  if (verbose) print(commandresult)
+
+  # return
   return(commandreturn)
-  #
 }
-# end installFindBinary
+# end checkCommand
 
 
 #' checkBinary
 #'
 #' @param b Vector of pre-defined binaries to be tested
 #'
+#' @param verbose Set to \code{TRUE} for more information
+#'
 #' @keywords internal
 #' @noRd
 #'
 #' @return Logical, \code{TRUE} if all binaries ok
 #'
-checkBinary <- function(b = NULL) {
+checkBinary <- function(b = NULL, verbose = FALSE) {
 
   # check actions and user infos
   actionsInfos <- list(
@@ -2496,7 +2494,7 @@ checkBinary <- function(b = NULL) {
                      "nonexistingbinarytested not found"),
     "php" = c("php --version",
               "php not found, ctrLoadQueryIntoDb() will not work "),
-    "phpxml" = c("php -r 'simplexml_load_string(\"\");'",
+    "phpxml" = c("php -r 'simplexml_load_string(\"<br />\");'",
                  "php xml not found, ctrLoadQueryIntoDb() will not work "),
     "phpjson" = c("php -r 'json_encode(\"<foo>\");'",
                   "php json not found, ctrLoadQueryIntoDb() will not work "),
@@ -2527,7 +2525,7 @@ checkBinary <- function(b = NULL) {
     if (checked) return(TRUE)
 
     # continue to check binary
-    ok <- installFindBinary(commandtest = actionsInfo[1])
+    ok <- checkCommand(commandtest = actionsInfo[1], verbose = verbose)
     if (!ok) message("\n", actionsInfo[2], appendLF = FALSE)
 
     # store check to private environment

@@ -28,7 +28,7 @@ for inFileName in "$1"/euctr_trials_*.txt; do
 
   [ -e "$inFileName" ] || continue
 
-  outFileName="`echo "$inFileName" | sed 's/txt$/json/'`"
+  outFileName="`echo "$inFileName" | sed 's/txt$/ndjson/'`"
 
 LC_CTYPE=C && LANG=C && perl <"$inFileName" -ne '
   # this section is faster with perl compared to sed
@@ -211,13 +211,11 @@ perl -pe '
   s/\n//g ;
   s/NEWRECORDIDENTIFIER/\n/g ;
 
-  # add a final EOL with sed
+  # add newline if not existing
   ' | \
-sed \
-  -e '$a\' \
-> "$outFileName"
+sed -e '$a\' > "$outFileName"
 
 done
 
 ## print total number of ndjson lines
-sed -n '$=' "$1"/euctr_trials_*.json
+sed -n '$=' "$1"/euctr_trials_*.ndjson

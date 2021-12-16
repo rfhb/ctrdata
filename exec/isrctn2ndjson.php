@@ -62,8 +62,9 @@ $simpleXml = simplexml_load_file($outFileName, 'SimpleXMLElement', LIBXML_COMPAC
 $i = 0;
 foreach ($simpleXml->children('http://www.67bricks.com/isrctn')->fullTrial as $trial) {
   $i = $i + 1;
-  file_put_contents($testXmlFile . "/isrctn_trial_" . $i . ".json", json_encode($trial->trial), LOCK_EX);
+  file_put_contents($testXmlFile . "/isrctn_trial.ndjson", json_encode($trial->trial) . "\n", FILE_APPEND | LOCK_EX);
 }
+
 // return value for import
 echo $i;
 

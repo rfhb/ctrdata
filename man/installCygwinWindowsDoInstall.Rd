@@ -21,6 +21,6 @@ Windows, including perl, sed and php.
 Alternatively and in case of difficulties, download and run the cygwin
 setup yourself as follows: \code{cygwinsetup.exe --no-admin --quiet-mode
 --verbose --upgrade-also --root c:/cygwin --site
-http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages
+https://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages
 perl,php-jsonc,php-simplexml}
 }

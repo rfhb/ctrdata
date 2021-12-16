@@ -26,7 +26,7 @@ $cn = 0;
 $tn = 0;
 
 // euctr format for file name is for example: "EU-CTR 2008-003606-33 v1 - Results.xml"
-foreach (array_chunk(glob("$xmlDir/EU*Results.xml"), 20) as $chunkFileNames) {
+foreach (array_chunk(glob("$xmlDir/EU*Results.xml"), 50) as $chunkFileNames) {
 
   $cn = $cn + 1;
 
@@ -52,7 +52,7 @@ foreach (array_chunk(glob("$xmlDir/EU*Results.xml"), 20) as $chunkFileNames) {
     $simpleXml = simplexml_load_string($fileContents, 'SimpleXMLElement', LIBXML_COMPACT | LIBXML_NOBLANKS | LIBXML_NOENT);
 
     // save in file
-    file_put_contents("$xmlDir/EU_Results_" . $cn . ".json", json_encode($simpleXml) . "\n", FILE_APPEND | LOCK_EX);
+    file_put_contents("$xmlDir/EU_Results_" . $cn . ".ndjson", json_encode($simpleXml) . "\n", FILE_APPEND | LOCK_EX);
 
     $tn = $tn + 1;
   }
