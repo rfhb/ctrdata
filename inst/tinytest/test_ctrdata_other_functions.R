@@ -19,7 +19,7 @@ expect_message(
   "nonexistingbinarytested not found")
 
 expect_error(
-  ctrdata:::installFindBinary(),
+  ctrdata:::checkCommand(),
   "Empty argument: commandtest")
 
 

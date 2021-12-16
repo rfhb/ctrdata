@@ -1,6 +1,7 @@
 # ctrdata 1.8.0.9002
- - 2021-12-13
- - chunked, much accelerated database import
+ - 2021-12-16
+ - chunked and accelerated database import
+ - accelerated binary checks (cygwin / Windows)
 
 # ctrdata 1.8.0.9001
  - 2021-12-11

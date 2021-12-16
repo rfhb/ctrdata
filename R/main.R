@@ -878,7 +878,7 @@ dbCTRAnnotateQueryRecords <- function(
   verbose) {
 
   # debug
-  if (verbose) message("* Running dbCTRAnnotateQueryRecords...")
+  if (verbose) message("Annotating records...")
   if (verbose) message(recordnumbers)
   if (verbose) message(annotation.mode)
 
@@ -1000,7 +1000,7 @@ dbCTRUpdateQueryHistory <- function(
 
   # inform user
   if (tmp == 1L) {
-    message('* Updated history ("meta-info" in "', con$collection, '")')
+    message('Updated history ("meta-info" in "', con$collection, '")')
   } else {
     warning('Could not update history ("meta-info" in "', con$collection,
             '")', call. = FALSE, immediate. = FALSE)
@@ -1436,7 +1436,7 @@ ctrLoadQueryIntoDbEuctr <- function(
                 last = 14))
 
     # inform user
-    message("* Retrieving results if available from EUCTR for ",
+    message("Retrieving results if available from EUCTR for ",
             length(eudractnumbersimported), " trials: ")
 
     ## parallel download and unzipping into temporary directory

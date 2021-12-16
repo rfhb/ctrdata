@@ -23,7 +23,7 @@ aggregating and analysing this information; it can be used for the
 The motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. The package
 is to be used within the [R](https://www.r-project.org/) system; this
-README was reviewed on 2021-12-05 for v1.8.0.9000.
+README was reviewed on 2021-12-16 for v1.8.0.9002.
 
 Main features:
 
@@ -86,8 +86,7 @@ devtools::install_github("rfhb/ctrdata", build_vignettes = TRUE)
 ```
 
 These commands also install the package dependencies, which are `nodbi`,
-`jsonlite`, `httr`, `curl`, `clipr`, `xml2`, `rvest`,`DBI` and
-`stringi`.
+`jsonlite`, `httr`, `curl`, `clipr`, `xml2`, `rvest` and `stringi`.
 
 ### 2. Command line tools `perl`, `sed`, `cat` and `php` (5.2 or higher)
 
@@ -101,9 +100,9 @@ package `ctrdata`.
     `c:\cygwin`. The installation needs about 160 MB disk space; no
     administrator credentials needed.
 
--   In macOS (including version 11 Big Sur), these are usually already
-    installed; in case of errors, [`homebrew`](https://brew.sh/) can be
-    used to install these binaries.
+-   In macOS including up to 11 Big Sur, these are already installed;
+    for macOS 12 Monterey and in case of errors,
+    [`homebrew`](https://brew.sh/) can be used to install `php`.
 
 -   In Linux, these are usually already installed; tools for
     installation vary by distribution (e.g.,
