@@ -2427,22 +2427,26 @@ installCygwinWindowsTest <- function(verbose = FALSE) {
 #' @keywords internal
 #' @noRd
 #
-installFindBinary <- function(commandtest = NULL, verbose = FALSE) {
-  #
+checkCommand <- function(commandtest = NULL, verbose = FALSE) {
+
+  # check
   if (is.null(commandtest)) {
     stop("Empty argument: commandtest",
          call. = FALSE)
   }
-  #
+
+  # only for windows, add cygwin shell
   if (.Platform$OS.type == "windows") {
-    commandtest <-
-      paste0(rev(Sys.glob("c:\\cygw*\\bin\\bash.exe"))[1],
-             " --login -c ",
-             shQuote(commandtest))
+    commandtest <- paste0(
+      rev(Sys.glob("c:\\cygw*\\bin\\bash.exe"))[1],
+      ' --noprofile --norc --noediting -c ',
+      shQuote(paste0(
+        "PATH=/usr/local/bin:/usr/bin; ",
+        commandtest)))
   }
-  #
-  if (verbose) print(commandtest)
-  #
+  if (verbose) message(commandtest)
+
+  # test command
   commandresult <- try(
     suppressWarnings(
       system(commandtest,
@@ -2452,34 +2456,37 @@ installFindBinary <- function(commandtest = NULL, verbose = FALSE) {
                       FALSE, TRUE))),
     silent = TRUE
   )
-  #
+
+  # evaluate command
   commandreturn <- ifelse(
     inherits(commandresult, "try-error") ||
       grepl("error|not found", tolower(paste(commandresult, collapse = " "))) ||
       (!is.null(attr(commandresult, "status")) &&
          (attr(commandresult, "status") != 0)),
     FALSE, TRUE)
-  #
+
   # user info
   if (commandreturn && interactive()) message(". ", appendLF = FALSE)
   if (verbose) print(commandresult)
-  #
+
+  # return
   return(commandreturn)
-  #
 }
-# end installFindBinary
+# end checkCommand
 
 
 #' checkBinary
 #'
 #' @param b Vector of pre-defined binaries to be tested
 #'
+#' @param verbose Set to \code{TRUE} for more information
+#'
 #' @keywords internal
 #' @noRd
 #'
 #' @return Logical, \code{TRUE} if all binaries ok
 #'
-checkBinary <- function(b = NULL) {
+checkBinary <- function(b = NULL, verbose = FALSE) {
 
   # check actions and user infos
   actionsInfos <- list(
@@ -2487,7 +2494,7 @@ checkBinary <- function(b = NULL) {
                      "nonexistingbinarytested not found"),
     "php" = c("php --version",
               "php not found, ctrLoadQueryIntoDb() will not work "),
-    "phpxml" = c("php -r 'simplexml_load_string(\"\");'",
+    "phpxml" = c("php -r 'simplexml_load_string(\"<br />\");'",
                  "php xml not found, ctrLoadQueryIntoDb() will not work "),
     "phpjson" = c("php -r 'json_encode(\"<foo>\");'",
                   "php json not found, ctrLoadQueryIntoDb() will not work "),
