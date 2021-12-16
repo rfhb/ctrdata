@@ -2249,7 +2249,7 @@ setProxy <- function() {
 
     if (!is.null(p)) {
 
-      # used by httr and curl
+      # used by httr, curl, download.file
       Sys.setenv(https_proxy = p)
 
     }
@@ -2264,7 +2264,7 @@ setProxy <- function() {
 #' Alternatively and in case of difficulties, download and run the cygwin
 #' setup yourself as follows: \code{cygwinsetup.exe --no-admin --quiet-mode
 #' --verbose --upgrade-also --root c:/cygwin --site
-#' http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages
+#' https://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages
 #' perl,php-jsonc,php-simplexml}
 #'
 #' @export
@@ -2278,29 +2278,20 @@ setProxy <- function() {
 #'   configuration script. Authenticated proxies are not supported at this time.
 #'
 installCygwinWindowsDoInstall <- function(
-  force = FALSE,
-  proxy = "") {
+  force = FALSE, proxy = "") {
 
   # checks
   if (.Platform$OS.type != "windows") {
-    stop(
-      "This function is only for MS Windows operating systems.",
-      call. = FALSE)
+    stop("This function is only for MS Windows operating systems.",
+         call. = FALSE)
   }
   #
   if (!force & dir.exists("c:\\cygwin")) {
     message("cygwin is already installed in c:\\cygwin. ",
-            "To re-install, use force = TRUE.")
+            "To update or re-install, use force = TRUE.")
     # exit function after testing
     return(installCygwinWindowsTest(verbose = TRUE))
   }
-
-  # define installation command
-  installcmd <- paste0(
-    "--no-admin --quiet-mode --upgrade-also --no-shortcuts --prune-install ",
-    "--root c:/cygwin ",
-    "--site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ ",
-    "--packages perl,php-simplexml,php-json")
 
   # create R session temporary directory
   tmpfile <- paste0(tempdir(), "/cygwin_inst")
@@ -2315,29 +2306,10 @@ installCygwinWindowsDoInstall <- function(
   tmpurl <- paste0("https://cygwin.org/", tmpurl)
 
   # inform user
-  message("Attempting cygwin download using ",
-          tmpurl, " ...")
+  message("Attempting download of ", tmpurl, " ...")
 
   # check and set proxy if needed to access internet
   setProxy()
-
-  # download.file uses the proxy configured in the system
-  tmpdl <- try({
-    utils::download.file(
-      url = tmpurl,
-      destfile = dstfile,
-      quiet = FALSE,
-      mode = "wb")
-  }, silent = TRUE)
-
-  # check
-  if (!file.exists(dstfile) ||
-      file.size(dstfile) < (5 * 10 ^ 5) ||
-      (inherits(tmpdl, "try-error"))) {
-    stop("Failed, please download manually and install with:\n",
-         tmpurl, " ", installcmd,
-         call. = FALSE)
-  }
 
   # proxy handling
   if (proxy != "") {
@@ -2355,9 +2327,36 @@ installCygwinWindowsDoInstall <- function(
     }
   }
 
+  # download.file uses the proxy configured in the system
+  tmpdl <- try({
+    utils::download.file(
+      url = tmpurl,
+      destfile = dstfile,
+      quiet = FALSE,
+      mode = "wb")
+  }, silent = TRUE)
+
+  # compose setup command
+  setupcmd <- paste0(
+    dstfile,
+    " --no-admin --quiet-mode --upgrade-also --no-shortcuts --prune-install",
+    " --root c:/cygwin",
+    " --site https://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/",
+    " --packages perl,php-simplexml,php-json ",
+    " --local-package-dir", tmpfile,
+    " ", proxy)
+
+  # check
+  if (!file.exists(dstfile) ||
+      file.size(dstfile) < (5 * 10 ^ 5) ||
+      (inherits(tmpdl, "try-error"))) {
+    stop("Failed, please download manually and install with:\n",
+         tmpurl, " ", setupcmd, call. = FALSE)
+  }
+
   # execute cygwin setup command
-  system(paste0(dstfile, " ", installcmd,
-                " --local-package-dir ", tmpfile, " ", proxy))
+  message("Executing: ", setupcmd)
+  system(setupcmd)
 
   # return cygwin installation test
   return(installCygwinWindowsTest(verbose = TRUE))
