@@ -12,8 +12,9 @@ information on clinical trials from public registers
 
 Package \code{ctrdata} retrieves trial information and stores it in a
 database collection, which has to be given as a connection object
-to parameter \code{con} for several ctrdata functions and this is
-created in different ways for the three supported databases:\tabular{ll}{
+to parameter \code{con} for several ctrdata functions, and this
+connection object is created in slightly different ways for the
+three supported database backends:\tabular{ll}{
    \strong{Database} \tab \strong{Connection object} \cr
    MongoDB \tab \code{dbc <- \link[nodbi:src_mongo]{nodbi::src_mongo}(db = "my_db", collection = "my_coll")} \cr
    SQLite \tab \code{dbc <- \link[nodbi:src_sqlite]{nodbi::src_sqlite}(dbname = "my_db", collection = "my_coll")} \cr

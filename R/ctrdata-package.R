@@ -6,8 +6,9 @@
 #' @section Database connection:
 #' Package `ctrdata` retrieves trial information and stores it in a
 #' database collection, which has to be given as a connection object
-#' to parameter `con` for several ctrdata functions and this is
-#' created in different ways for the three supported databases:
+#' to parameter `con` for several ctrdata functions, and this
+#' connection object is created in slightly different ways for the
+#' three supported database backends:
 #'
 #' **Database** | **Connection object**
 #' -------- | ---------

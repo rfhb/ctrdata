@@ -439,7 +439,7 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "") {
   as <- activesubstance
 
   # check and set proxy if needed to access internet
-  setProxy()
+  setProxy("https://clinicaltrials.gov/")
 
   # getting synonyms
   ctgovfirstpageurl <-
@@ -2231,21 +2231,23 @@ addMetaData <- function(x, con) {
 } # end addMetaData
 
 
-#' Function to set proxy
+#' Function to set proxy under MS Windows
 #'
-#' @importFrom curl ie_proxy_info
+#' @param targetUrl url that is targeted
+#'
+#' @importFrom curl ie_get_proxy_for_url
 #'
 #' @keywords internal
 #' @noRd
 #'
-setProxy <- function() {
+setProxy <- function(targetUrl) {
 
   # only act if environment
   # variable is not already set
   if (Sys.getenv("https_proxy") == "") {
 
     # works under windows only
-    p <- curl::ie_proxy_info()$Proxy
+    p <- curl::ie_get_proxy_for_url(target_url = targetUrl)
 
     if (!is.null(p)) {
 
@@ -2309,23 +2311,7 @@ installCygwinWindowsDoInstall <- function(
   message("Attempting download of ", tmpurl, " ...")
 
   # check and set proxy if needed to access internet
-  setProxy()
-
-  # proxy handling
-  if (proxy != "") {
-    # manual setting overriding
-    proxy <- paste0(" --proxy ", proxy)
-    message("Setting cygwin proxy install argument to: ",
-            proxy, ", based on provided parameter.")
-  } else {
-    # detect proxy
-    proxy <- curl::ie_proxy_info()$Proxy
-    if (!is.null(proxy)) {
-      message("Setting cygwin proxy install argument to: ",
-              proxy, ", based on system settings.")
-      proxy <- paste0(" --proxy ", proxy)
-    }
-  }
+  setProxy("https://cygwin.org/")
 
   # download.file uses the proxy configured in the system
   tmpdl <- try({
@@ -2335,6 +2321,22 @@ installCygwinWindowsDoInstall <- function(
       quiet = FALSE,
       mode = "wb")
   }, silent = TRUE)
+
+  # proxy handling
+  if (proxy != "") {
+    # manual setting overriding
+    proxy <- paste0(" --proxy ", proxy)
+    message("Setting cygwin proxy install argument to: ",
+            proxy, ", based on provided parameter.")
+  } else {
+    # detect proxy
+    proxy <- curl::ie_get_proxy_for_url("https://www.mirrorservice.org/")
+    if (!is.null(proxy)) {
+      message("Setting cygwin proxy install argument to: ",
+              proxy, ", based on system settings.")
+      proxy <- paste0(" --proxy ", proxy)
+    }
+  }
 
   # compose setup command
   setupcmd <- paste0(

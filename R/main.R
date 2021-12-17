@@ -202,9 +202,6 @@ ctrLoadQueryIntoDb <- function(
   # initialise variable that is filled if an update is to be made
   queryupdateterm <- ""
 
-  # check and set proxy if needed to access internet
-  setProxy()
-
   ## handle if we need to rerun previous query
 
   # check if parameters are consistent
@@ -1042,6 +1039,9 @@ ctrLoadQueryIntoDbCtgov <- function(
   queryUSType1  <- "ct2/results/download_studies?"
   queryUSType2  <- "ct2/results?"
 
+  # check and set proxy if needed to access internet
+  setProxy(queryUSRoot)
+
   ## inform user and prepare url for downloading
   message("(1/3) Checking trials in CTGOV:")
   ctgovdownloadcsvurl <- paste0(
@@ -1189,6 +1189,9 @@ ctrLoadQueryIntoDbEuctr <- function(
   queryEuPost  <- paste0(
     "&mode=current_page&format=text&dContent=full",
     "&number=current_page&submit-download=Download")
+
+  # check and set proxy if needed to access internet
+  setProxy(queryEuRoot)
 
   # get first result page
   q <- utils::URLencode(paste0(queryEuRoot, queryEuType1, queryterm))
@@ -1859,6 +1862,9 @@ ctrLoadQueryIntoDbIsrctn <- function(
   if (!grepl("^q=", apiterm)) apiterm <- paste0("q=", apiterm)
   # - inform user
   if (verbose) message("DEBUG: apiterm is ", apiterm)
+
+  # check and set proxy if needed to access internet
+  setProxy(queryIsrctnRoot)
 
   ## inform user and prepare url for downloading
   message("(1/3) Checking trials in ISRCTN:")
