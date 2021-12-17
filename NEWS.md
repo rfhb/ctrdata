@@ -1,8 +1,8 @@
 # ctrdata 1.8.0.9002
  - 2021-12-16
- - chunked and much accelerated database import
+ - chunked trial batches in ndjson files for accelerated database import
  - accelerated binary checks (cygwin / Windows)
- - remove internet proxy mangling, to rely on general configurations (e.g., transparent proxies used, or https_proxy specified)
+ - remove internet proxy mangling in order to use system configuration (e.g., transparent proxies used, or environment variable https_proxy specified by user)
 
 # ctrdata 1.8.0.9001
  - 2021-12-11
