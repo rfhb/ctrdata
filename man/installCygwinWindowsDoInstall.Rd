@@ -11,7 +11,8 @@ installCygwinWindowsDoInstall(force = FALSE, proxy = Sys.getenv("https_proxy"))
 installation in \code{c:\\cygwin}}
 
 \item{proxy}{Specify any proxy to be used for downloading via http, e.g.
-"host_or_ip:port", default is to use the proxy defined in `https_proxy`.}
+`host_or_ip:port`; defaults to the environment variable `https_proxy`.
+Set to `""` to not specify or unset a proxy.}
 }
 \description{
 Convenience function to install a minimal Cygwin environment under MS

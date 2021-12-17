@@ -1,7 +1,7 @@
 ---
 title: "Install R package ctrdata"
 author: "Ralf Herold"
-date: 2021-05-09
+date: 2021-12-16
 output:
   rmarkdown::pdf_document:
     toc: true
@@ -51,16 +51,16 @@ Either of the above should install package `ctrdata` into the user's library.
 
 ## Internet access via proxy
 
-Functions in package `ctrdata` that start with `ctr...` require access to trial registers over the internet via the `https` protocol. Package `ctrdata` checks and _automatically uses_ the proxy that is set under MS Windows in system settings. However, proxy settings need to be set by the user for other operating systems and for more complicated environments such as using authenticating proxies, as follows: 
+Functions in package `ctrdata` that start with `ctr...` require access to trial registers over the internet via the `https` protocol. Many organisastions use transparent proxies that may not require users to do any configurations. However, if necessary, package `ctrdata` can use proxy settings set by a such as follows: 
 
 ```{r, eval=FALSE}
-Sys.setenv(https_proxy = "your_proxy.server.domain:8080")
-Sys.setenv(https_proxy_user = "userid:password") # if needed
+Sys.setenv(https_proxy = "your_proxy.server.domain:8080") # if needed
+Sys.setenv(https_proxy_user = "your_userid:your_password") # if needed
 ```
 
 ## Additional installation aspects
 
-The ommand line tools `perl`, `sed`, `cat` and `php` (5.2 or higher) are required for `ctrLoadQueryIntoDb()`, the main function of package `ctrdata`. No other function in this package has this requirement.
+The ommand line tools `perl`, `sed` and `php` (5.2 or higher) are required for `ctrLoadQueryIntoDb()`, the main function of package `ctrdata`. No other function in this package has this requirement.
 
 ### MS Windows
 
@@ -70,7 +70,13 @@ Package `ctrdata` requires on MS Windows that the [`Cygwin`](https://cygwin.org/
 ctrdata::installCygwinWindowsDoInstall() 
 ```
 
-If internet access has to be via a proxy and this was not correctly detected automatically, it can be specified for the installation of Cygwin as follows: 
+To update or correct the Cygwin installation: 
+
+```{r, eval=FALSE}
+ctrdata::installCygwinWindowsDoInstall(force = TRUE) 
+```
+
+If internet access requires to specify a proxy (see above): 
 
 ```{r, eval=FALSE}
 ctrdata::installCygwinWindowsDoInstall(proxy = "proxy.server.domain:8080") 
@@ -86,15 +92,15 @@ setup-x86_64.exe --no-admin --quiet-mode --verbose --upgrade-also --root c:/cygw
 
 ### macOS, Linux and other operating systems
 
-The command line tools `perl`, `sed`, `cat` and `php` (5.2 or higher) are typically installed and available by default in Linux and macOS systems. In case of issues, 
+The command line tools `perl`, `sed` and `php` (5.2 or higher) are typically installed and available by default in Linux and macOS systems. In case of issues, 
 
-- In macOS, [`homebrew`](https://brew.sh/) can be used to install these binaries
+- In macOS, [`homebrew`](https://brew.sh/) can be used to install `php` which may be needed starting from macOS 12 Monterey 
 
 - In Linux, tools for installation vary by distribution (e.g., `sudo apt install php php-xml php-json`)
 
 ## Databases to use
 
-At this time, a PostgreSQL, an SQLite or a remote or a local MongoDB database can be used with the package `ctrdata`. SQLite is provided in the R package [`RSQLite`](https://rsqlite.r-dbi.org/). Suggested installation instructions for a local MongoDB server are [here](https://docs.mongodb.com/manual/administration/install-community/); a remote MongoDB database server is accessible [here](https://www.mongodb.com/cloud/atlas). 
+At this time, a PostgreSQL, an SQLite or a remote or local MongoDB database can be used with the package `ctrdata`. SQLite is provided in the R package [`RSQLite`](https://rsqlite.r-dbi.org/). Suggested installation instructions for a local MongoDB server are [here](https://docs.mongodb.com/manual/administration/install-community/); a remote MongoDB database server is accessible [here](https://www.mongodb.com/cloud/atlas). 
 
 Purpose | Function call | Reference 
 -------------------- | -------------------- | ----------------

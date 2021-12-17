@@ -1,7 +1,8 @@
 # ctrdata 1.8.0.9002
  - 2021-12-16
- - chunked and accelerated database import
+ - chunked and much accelerated database import
  - accelerated binary checks (cygwin / Windows)
+ - remove internet proxy mangling, to rely on general configurations (e.g., transparent proxies used, or https_proxy specified)
 
 # ctrdata 1.8.0.9001
  - 2021-12-11
