@@ -26,7 +26,8 @@ $cn = 0;
 $tn = 0;
 
 // euctr format for file name is for example: "EU-CTR 2008-003606-33 v1 - Results.xml"
-foreach (array_chunk(glob("$xmlDir/EU*Results.xml"), 50) as $chunkFileNames) {
+// chunk size set to 20 to avoid stack overrun issues
+foreach (array_chunk(glob("$xmlDir/EU*Results.xml"), 20) as $chunkFileNames) {
 
   $cn = $cn + 1;
 

@@ -32,7 +32,8 @@ $dt = gmdate("Y-m-d H:i:s");
 $cn = 0;
 $tn = 0;
 
-foreach (array_chunk(glob("$testXmlFile/NCT*.xml"), 50) as $chunkFileNames) {
+// chunk size set to 25 to avoid stack overrun issues and to mirror euctr
+foreach (array_chunk(glob("$testXmlFile/NCT*.xml"), 25) as $chunkFileNames) {
 
   $cn = $cn + 1;
 
