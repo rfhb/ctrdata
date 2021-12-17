@@ -2343,7 +2343,7 @@ installCygwinWindowsDoInstall <- function(
     " --root c:/cygwin",
     " --site https://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/",
     " --packages perl,php-simplexml,php-json ",
-    " --local-package-dir", tmpfile,
+    " --local-package-dir ", tmpfile,
     " ", proxy)
 
   # check
