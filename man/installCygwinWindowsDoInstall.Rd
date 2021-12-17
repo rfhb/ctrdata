@@ -4,16 +4,14 @@
 \alias{installCygwinWindowsDoInstall}
 \title{Install necessary helper apps (Windows only)}
 \usage{
-installCygwinWindowsDoInstall(force = FALSE, proxy = "")
+installCygwinWindowsDoInstall(force = FALSE, proxy = Sys.getenv("https_proxy"))
 }
 \arguments{
 \item{force}{Set to \code{TRUE} to force updating and overwriting an existing
 installation in \code{c:\\cygwin}}
 
 \item{proxy}{Specify any proxy to be used for downloading via http, e.g.
-"host_or_ip:port". \code{installCygwinWindowsDoInstall} may detect and use
-the proxy configuration used in MS Windows to use an automatic proxy
-configuration script. Authenticated proxies are not supported at this time.}
+"host_or_ip:port", default is to use the proxy defined in `https_proxy`.}
 }
 \description{
 Convenience function to install a minimal Cygwin environment under MS

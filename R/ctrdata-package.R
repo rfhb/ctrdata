@@ -6,7 +6,7 @@
 #' @section Database connection:
 #' Package `ctrdata` retrieves trial information and stores it in a
 #' database collection, which has to be given as a connection object
-#' to parameter `con` for several ctrdata functions, and this
+#' to parameter `con` for several ctrdata functions; this
 #' connection object is created in slightly different ways for the
 #' three supported database backends:
 #'
@@ -22,16 +22,15 @@
 #' be used with functions of package `nodbi`, for example
 #' \code{\link[nodbi:docdb_query]{nodbi::docdb_query}(src = dbc, key = dbc$collection, fields = '{"_id": 1}', query = '{"sponsors.lead_sponsor.agency_class": "Industry"}')}
 #'
-#' @section ctrdata operations on a clinical trial register:
+#' @section Operations on a clinical trial register:
 #'
 #' \link{ctrOpenSearchPagesInBrowser},
-#' \link{ctrFindActiveSubstanceSynonyms},
-#' \link{ctrGetQueryUrl},
-#' \link{ctrLoadQueryIntoDb}
+#' \link{ctrLoadQueryIntoDb} (load trial records into collection),
+#' \link{ctrFindActiveSubstanceSynonyms}
 #'
 #' @section Get a data frame from the database collection:
 #'
-#' \link{dbFindFields},
+#' \link{dbFindFields} (find fields of interest in trial records),
 #' \link{dbGetFieldsIntoDf},
 #' \link{dbFindIdsUniqueTrials} (de-duplicated identifiers of
 #' clinical trial records that can be used to subset a data frame)
@@ -40,7 +39,7 @@
 #'
 #' \link{dfTrials2Long} (convert nested lists into long format),
 #' \link{dfName2Value} (get values for variable(s) of interest).
-#' \link{dfMergeTwoVariablesRelevel},
+#' \link{dfMergeTwoVariablesRelevel}
 #'
 #' @name ctrdata-package
 #' @docType package

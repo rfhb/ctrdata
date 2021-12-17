@@ -438,9 +438,6 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "") {
   # initialise output variable
   as <- activesubstance
 
-  # check and set proxy if needed to access internet
-  setProxy("https://clinicaltrials.gov/")
-
   # getting synonyms
   ctgovfirstpageurl <-
     paste0("https://clinicaltrials.gov/ct2/results/details?term=",
@@ -2231,34 +2228,6 @@ addMetaData <- function(x, con) {
 } # end addMetaData
 
 
-#' Function to set proxy under MS Windows
-#'
-#' @param targetUrl url that is targeted
-#'
-#' @importFrom curl ie_get_proxy_for_url
-#'
-#' @keywords internal
-#' @noRd
-#'
-setProxy <- function(targetUrl) {
-
-  # only act if environment
-  # variable is not already set
-  if (Sys.getenv("https_proxy") == "") {
-
-    # works under windows only
-    p <- curl::ie_get_proxy_for_url(target_url = targetUrl)
-
-    if (!is.null(p)) {
-
-      # used by httr, curl, download.file
-      Sys.setenv(https_proxy = p)
-
-    }
-  }
-} # end setproxy
-
-
 #' Install necessary helper apps (Windows only)
 #'
 #' Convenience function to install a minimal Cygwin environment under MS
@@ -2275,12 +2244,10 @@ setProxy <- function(targetUrl) {
 #'   installation in \code{c:\\cygwin}
 #'
 #' @param proxy Specify any proxy to be used for downloading via http, e.g.
-#'   "host_or_ip:port". \code{installCygwinWindowsDoInstall} may detect and use
-#'   the proxy configuration used in MS Windows to use an automatic proxy
-#'   configuration script. Authenticated proxies are not supported at this time.
+#'   "host_or_ip:port", defaults to the environment variable `https_proxy`.
 #'
 installCygwinWindowsDoInstall <- function(
-  force = FALSE, proxy = "") {
+  force = FALSE, proxy = Sys.getenv("https_proxy")) {
 
   # checks
   if (.Platform$OS.type != "windows") {
@@ -2310,9 +2277,6 @@ installCygwinWindowsDoInstall <- function(
   # inform user
   message("Attempting download of ", tmpurl, " ...")
 
-  # check and set proxy if needed to access internet
-  setProxy("https://cygwin.org/")
-
   # download.file uses the proxy configured in the system
   tmpdl <- try({
     utils::download.file(
@@ -2322,22 +2286,6 @@ installCygwinWindowsDoInstall <- function(
       mode = "wb")
   }, silent = TRUE)
 
-  # proxy handling
-  if (proxy != "") {
-    # manual setting overriding
-    proxy <- paste0(" --proxy ", proxy)
-    message("Setting cygwin proxy install argument to: ",
-            proxy, ", based on provided parameter.")
-  } else {
-    # detect proxy
-    proxy <- curl::ie_get_proxy_for_url("https://www.mirrorservice.org/")
-    if (!is.null(proxy)) {
-      message("Setting cygwin proxy install argument to: ",
-              proxy, ", based on system settings.")
-      proxy <- paste0(" --proxy ", proxy)
-    }
-  }
-
   # compose setup command
   setupcmd <- paste0(
     dstfile,
@@ -2346,7 +2294,8 @@ installCygwinWindowsDoInstall <- function(
     " --site https://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/",
     " --packages perl,php-simplexml,php-json ",
     " --local-package-dir ", tmpfile,
-    " ", proxy)
+    ifelse(nchar(proxy), " --proxy ", ""), proxy
+  )
 
   # check
   if (!file.exists(dstfile) ||
@@ -2543,7 +2492,7 @@ checkBinary <- function(b = NULL, verbose = FALSE) {
     "\nTo install command line binaries needed for the function ",
     "ctrLoadQueryIntoDb() of package ctrdata, see recommendations at ",
     "https://github.com/rfhb/ctrdata#",
-    "2-command-line-tools-perl-sed-cat-and-php-52-or-higher",
+    "2-command-line-tools-perl-sed-and-php-52-or-higher",
     "\nAfter installation, detach and load package ctrdata again, ",
     "or restart the R session.\n")
 
