@@ -824,6 +824,7 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
       ## return values for lapply
       if (inherits(tmp, "try-error") || tmp == 0L) {
         idFailed <- c(idFailed, ids)
+        warning(tempFiles[tempFile], ": ", tmp, call. = FALSE)
       } else {
         idSuccess <- c(idSuccess, ids)
         nImported <- nImported + tmp
