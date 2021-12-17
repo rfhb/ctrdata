@@ -18,12 +18,14 @@
 # 2021-05-07: total 2.5 s for 366 records: ~ 7 ms per trial (MacBookPro2015)
 # 2021-08-03: total 2.6 s for 375 records: ~ 7 ms per trial (MacBookPro2015)
 # 2021-12-11: total 7.6 s for 1153 records: ~ 6.6 ms per trial (MacBookPro2015)
+# 2021-12-17: total 1.9 s for 280 records: ~ 6.8 ms per trial (MacBookPro2015)
 
 # notes to myself: sed cannot use + or other
 # alternatively install gnu-sed: > brew install gnu-sed
 # perl: The -p argument makes sure the code gets executed on
 # every line, and that the line gets printed out after that
 
+# chunk size is the number of trials per euctr page, currently 25
 for inFileName in "$1"/euctr_trials_*.txt; do
 
   [ -e "$inFileName" ] || continue
@@ -211,11 +213,11 @@ perl -pe '
   s/\n//g ;
   s/NEWRECORDIDENTIFIER/\n/g ;
 
-  # add newline if not existing
-  ' | \
-sed -e '$a\' > "$outFileName"
+  # add newline
+  eof && do{chomp; print "$_\n"; exit}
+  ' > "$outFileName"
 
 done
 
-## print total number of ndjson lines
+## sum of ndjson lines across chunks
 sed -n '$=' "$1"/euctr_trials_*.ndjson
