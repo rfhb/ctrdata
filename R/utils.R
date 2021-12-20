@@ -1249,11 +1249,22 @@ dbGetFieldsIntoDf <- function(fields = "",
         } # stopifnodata
       } # if
 
-      # add to result
-      dfi
+      # add to result unless item was
+      # previously specified in fields
+      if (i == 1L) {
+        dfi
+      } else {
+        dna <- names(dfi)
+        dni <- intersect(dna, fields[1:(i - 1L)])
+        dnd <- setdiff(dna, fields[1:(i - 1L)])
+        if (length(dni)) warning(
+          "From field ", fields[i], ", not included again: ",
+          paste0(dni, collapse = ", "),
+          call. = FALSE, immediate. = FALSE)
+        dfi[, dnd, drop = FALSE]
+      }
 
     }) # end lapply
-  message("")
 
   # bring result lists into data frame, by record _id
   result <- Reduce(function(...) merge(..., all = TRUE, by = "_id"), result)
