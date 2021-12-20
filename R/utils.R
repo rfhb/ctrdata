@@ -1497,33 +1497,33 @@ dfTrials2Long <- function(df) {
       x <- lapply(x, function(x) if (is.list(x)) x else list(x))
       x <- unlist(x, recursive = FALSE, use.names = TRUE)
     }
-    x
+    return(x)
   }
 
-  # to add a first row in the next step,
-  # columns that are not compatible with
-  # adding a row are converted to character
+  # columns that are not compatible with the
+  # later operations are converted to character
   conv <- sapply(df, class) == "Date"
   conv <- seq_len(ncol(df))[conv]
   for (c in conv) df[, c] <- as.character(df[, c, drop = TRUE])
 
-  # add a first row to df to hold item name
-  # which otherwise is not available in apply
-  df <- rbind(
-    names(df),
-    df)
-
   # iterative unnesting, by column
+  dfn <- names(df)
   out <- lapply(
-    df[, -match("_id", names(df)), drop = FALSE],
+    seq_len(ncol(df))[-1],
     function(cc) {
-      message(". ", appendLF = FALSE)
-      # get item name as added in first row
-      tn <- cc[[1]]
-      # and by element in column
-      lapply(cc[-1], function(c) {
+      # inform user
+      message(cc, "\r", appendLF = FALSE)
+      # get item
+      ci <- df[[cc]]
+      # get item name
+      tn <- dfn[cc]
+      # handle case when column is data
+      # frame, turn into list by row
+      if (is.data.frame(ci)) ci <- split(ci, seq_len(nrow(ci)))
+      # and by cell in column
+      lapply(ci, function(c) {
         x <- unlist(flattenDf(c))
-        if (!is.null(names(x))) tn <- names(x)
+        if (!is.null(names(x))) tn <- paste0(tn, ".", names(x))
         if (is.null(x)) x <- NA
         data.frame(
           "name" = tn,
@@ -1535,35 +1535,24 @@ dfTrials2Long <- function(df) {
 
   # add _id to list elements and
   # simplify into data frames
-  tmpNames <- df[-1, "_id", drop = TRUE]
   out <- lapply(
     out, function(e) {
       message(". ", appendLF = FALSE)
-      names(e) <- tmpNames
-      # duplicate e to force generating
-      # names in the later rbind step
-      do.call(rbind, c(e, e, stringsAsFactors = FALSE))
+      names(e) <- df[["_id"]]
+      do.call(rbind, c(e, stringsAsFactors = FALSE))
     })
-
-  # combine lists into data frame
   out <- do.call(rbind, c(out, stringsAsFactors = FALSE))
   message(". ", appendLF = FALSE)
 
   # remove rows where value is NA
   out <- out[!is.na(out[["value"]]), , drop = FALSE]
 
-  # process row.names such as "clinical_results.NCT00082758.73"
-  # to to obtain "clinical_results" as part of variable name
-  names <- stringi::stri_replace_first(
-    str = row.names(out), replacement = "",
-    regex = c(paste0(".(", regCtgov, "|", regEuctr, "-[3A-Z]+)[.0-9]*")))
-
   # generate new data frame with target columns and order
   out <- data.frame(
     # process row.names to obtain trial id
     "_id" = stringi::stri_extract_first(
       str = row.names(out),
-      regex = c(paste0(regCtgov, "|", regEuctr, "-[3A-Z]+"))),
+      regex = c(paste0(regCtgov, "|", regIsrctn, "|", regEuctr, "-[3]?[A-Z]+"))),
     "identifier" = NA,
     "name" = out[["name"]],
     "value" = out[["value"]],
@@ -1572,15 +1561,10 @@ dfTrials2Long <- function(df) {
     stringsAsFactors = FALSE)
   message(". ", appendLF = FALSE)
 
-  # generate variable names from processed row names
-  # and name unless the same is as already in name
-  out[["name"]] <- ifelse(
-    out[["name"]] == names,
-    out[["name"]],
-    paste0(names, ".0.", out[["name"]]))
-
-  # name can have from 0 to about 6 number groups, get all
-  # and concatenate to oid-like string such as "1.2.2.1.4"
+  # name can include from 0 to about 6 number groups, get all
+  # and concatenate to oid-like string such as "1.2.3.4.5.6",
+  # e.g. "9.8.2" which should be extracted from the this name
+  # clinical...class9.analyzed...count8.@attributes.value2
   out[["identifier"]] <- vapply(
     stringi::stri_extract_all_regex(out[["name"]], "[0-9]+([.]|$)"),
     function(i) paste0(gsub("[.]", "", i), collapse = "."), character(1L))
