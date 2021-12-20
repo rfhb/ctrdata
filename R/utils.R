@@ -1114,7 +1114,9 @@ dbGetFieldsIntoDf <- function(fields = "",
     function(i) {
       #
       item <- fields[i]
-      message("     \r", i, appendLF = FALSE)
+
+      # user info
+      message("\r", i, appendLF = FALSE)
       #
       query <- '{"_id": {"$ne": "meta-info"}}'
       if (verbose) message("DEBUG: field: ", item)
@@ -1222,11 +1224,27 @@ dbGetFieldsIntoDf <- function(fields = "",
             NA
           )
 
-        } # for process
+        } # for processing columns
 
-        # add NA where dfi has no data to avoid NULL when merge'ing
+        # user info blanking info from processing columns
+        message("\r                                      ",
+                "                   \r",  appendLF = FALSE)
+
+        # add NA where dfi has no data to avoid NULL when
+        # merging with Reduce below, which otherwise raises
+        #  Error in `[<-.data.frame`(`*tmp*`, value, value = NA) :
+        #  new columns would leave holes after existing columns
         names(dfo) <- names(dfi)
-        dfi <- rbind(dfo[!(dfo[["_id"]] %in% dfi[["_id"]]), , drop = FALSE], dfi)
+        dfi <- suppressWarnings(
+          rbind(dfo[!(dfo[["_id"]] %in% dfi[["_id"]]), , drop = FALSE], dfi))
+        # suppressing the following which is related to adding a list into a
+        # column that has NAs from dfo; warning does not occur with reversing
+        # to dfi, dfo[] so that it seems acceptable to suppress warnings
+        # Warning messages:
+        # 1: In value[[jj]][ri] <- if (is.factor(xij)) as.vector(xij) else xij :
+        #   number of items to replace is not a multiple of replacement length
+        # 2: In names(value[[jj]])[ri] <- nm :
+        #   number of items to replace is not a multiple of replacement length
 
       },
       silent = TRUE) # tmpItem try
