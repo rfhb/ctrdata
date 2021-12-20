@@ -207,8 +207,8 @@ ctrOpenSearchPagesInBrowser <- function(
     nr <- nrow(url)
     if (nr > 1L) warning("Using last query",
                          call. = FALSE, immediate. = TRUE)
-    register  <- url[nr, "query-register"]
-    url <- url[nr, "query-term"]
+    register  <- url[nr, "query-register", drop = TRUE]
+    url <- url[nr, "query-term", drop = TRUE]
   }
 
   # - open from url and register
@@ -248,6 +248,7 @@ ctrOpenSearchPagesInBrowser <- function(
 #' \link{ctrOpenSearchPagesInBrowser}
 #'
 #' @importFrom clipr read_clip
+#' @importFrom dplyr as_tibble
 #'
 #' @examples
 #'
@@ -341,6 +342,8 @@ ctrGetQueryUrl <- function(
       queryterm <- paste0(queryterm, "&resultsstatus=trials-with-results")
     }
     #
+    if (any("dplyr" == .packages())) return(
+      dplyr::as_tibble(outdf(queryterm, register)))
     return(outdf(queryterm, register))
   }
   #
@@ -370,6 +373,8 @@ ctrGetQueryUrl <- function(
       "(^|&|[&]?\\w+=\\w+&)(\\w+|[a-zA-z0-9+-.:]+)($|&\\w+=\\w+)",
       "\\1term=\\2\\3", queryterm)
     #
+    if (any("dplyr" == .packages())) return(
+      dplyr::as_tibble(outdf(queryterm, register)))
     return(outdf(queryterm, register))
   }
   #
@@ -386,6 +391,8 @@ ctrGetQueryUrl <- function(
       "(^|&|[&]?\\w+=\\w+&)(\\w+|[ a-zA-Z0-9+-]+)($|&\\w+=\\w+)",
       "\\1q=\\2\\3", queryterm)
     #
+    if (any("dplyr" == .packages())) return(
+      dplyr::as_tibble(outdf(queryterm, register)))
     return(outdf(queryterm, register))
   }
   #
@@ -478,6 +485,7 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "") {
 #' (default \code{FALSE}).
 #'
 #' @importFrom nodbi docdb_query
+#' @importFrom dplyr as_tibble
 #'
 #' @export
 #'
@@ -539,6 +547,7 @@ dbQueryHistory <- function(con, verbose = FALSE) {
   }
 
   # return
+  if (any("dplyr" == .packages())) return(dplyr::as_tibble(hist))
   return(hist)
 
 }
@@ -1014,6 +1023,7 @@ dbFindIdsUniqueTrials <- function(
 #'
 #' @importFrom nodbi docdb_query
 #' @importFrom stats na.omit
+#' @importFrom dplyr as_tibble
 #'
 #' @export
 #'
@@ -1242,7 +1252,7 @@ dbGetFieldsIntoDf <- function(fields = "",
   # is.na may fail for complex cells
   onlyNas <- try({apply(result[, -1, drop = FALSE], 1,
                         function(r) all(is.na(r)))}, silent = TRUE)
-  if (!inherits(onlyNas, "try-error")) {
+  if (!inherits(onlyNas, "try-error") && any(onlyNas)) {
     result <- result[!onlyNas, , drop = FALSE]
   }
 
@@ -1253,11 +1263,15 @@ dbGetFieldsIntoDf <- function(fields = "",
     return(NULL)
   }
 
-  # sort, add meta data and return
-  return(
-    addMetaData(
-      result[order(result[["_id"]]), , drop = FALSE],
-      con = con))
+  # sort, add meta data
+  result <- addMetaData(
+    result[order(result[["_id"]]), , drop = FALSE],
+    con = con)
+
+  # return
+  if (any("dplyr" == .packages())) return(dplyr::as_tibble(result))
+  return(result)
+
 }
 # end dbGetFieldsIntoDf
 
@@ -1291,7 +1305,10 @@ dbGetFieldsIntoDf <- function(fields = "",
 #'  \link{dfTrials2Long} to identify matching elements, e.g.
 #'  endpoint descriptions and measurements.
 #'
+#' @importFrom dplyr as_tibble
+#'
 #' @export
+#'
 #' @examples
 #' \dontrun{
 #' dbc <- nodbi::src_sqlite(
@@ -1411,6 +1428,7 @@ dfName2Value <- function(df, valuename = "",
   out <- unique(out)
 
   # return
+  if (any("dplyr" == .packages())) return(dplyr::as_tibble(out))
   return(out)
 
 } # end dfName2Value
@@ -1435,6 +1453,7 @@ dfName2Value <- function(df, valuename = "",
 #' @importFrom stringi stri_extract_all_charclass
 #' @importFrom stringi stri_extract_first
 #' @importFrom stringi stri_replace_first
+#' @importFrom dplyr as_tibble
 #'
 #' @export
 #'
@@ -1577,6 +1596,7 @@ dfTrials2Long <- function(df) {
           " unique names of variables")
 
   # output
+  if (any("dplyr" == .packages())) return(dplyr::as_tibble(out))
   return(out)
 
 } # end dfTrials2Long
@@ -1592,6 +1612,7 @@ dfTrials2Long <- function(df) {
 #' working with nested lists and with complex structures.
 #'
 #' @param df A data frame
+#'
 #' @param list.key A list of pairs of list names and
 #'  key names, where the list name corresponds to the
 #'  name of a column in \code{df} that holds a list and
@@ -1603,6 +1624,8 @@ dfTrials2Long <- function(df) {
 #'  "<list>.<key>"), _id (of the trial record), value
 #'  (of name per _id), item (number of value of name
 #'  per _id).
+#'
+#' @importFrom dplyr as_tibble
 #'
 #' @export
 #'
@@ -1703,8 +1726,12 @@ dfListExtractKey <- function(
 
   }, simplify = FALSE)
 
+  # result
+  out <- do.call(rbind, c(out, stringsAsFactors = FALSE, make.row.names = FALSE))
+
   # return
-  do.call(rbind, c(out, stringsAsFactors = FALSE, make.row.names = FALSE))
+  if (any("dplyr" == .packages())) return(dplyr::as_tibble(out))
+  return(out)
 
 } # end dfListExtractKey
 
@@ -1727,6 +1754,8 @@ dfListExtractKey <- function(
 #' @param ... for deprecated \code{varnames} parameter (will be removed)
 #'
 #' @return A vector of strings
+#'
+#' @importFrom dplyr as_tibble
 #'
 #' @export
 #'
@@ -1848,6 +1877,7 @@ dfMergeTwoVariablesRelevel <- function(
   }
 
   # return
+  if (any("dplyr" == .packages())) return(dplyr::as_tibble(tmp))
   return(tmp)
 }
 # end dfMergeTwoVariablesRelevel
