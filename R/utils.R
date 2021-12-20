@@ -2079,11 +2079,11 @@ typeField <- function(dfi) {
     switch(
       EXPR = names(dfi)[2],
       #
-      #
       # dates
       #
-      # - intern
+      # - ctrdata intern
       "record_last_import" = ctrDateCtr(),
+      #
       # - EUCTR
       "n_date_of_ethics_committee_opinion"     = ctrDate(),
       "n_date_of_competent_authority_decision" = ctrDate(),
@@ -2091,8 +2091,10 @@ typeField <- function(dfi) {
       "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database" = ctrDate(),
       "firstreceived_results_date"             = ctrDate(),
       "trialInformation.primaryCompletionDate" = ctrDate(),
+      "trialInformation.analysisStageDate"     = ctrDateTime(),
       "trialInformation.globalEndOfTrialDate"  = ctrDateTime(),
       "trialInformation.recruitmentStartDate"  = ctrDateTime(),
+      #
       # - CTGOV
       "start_date"              = ctrDateUs(),
       "primary_completion_date" = ctrDateUs(),
@@ -2100,11 +2102,13 @@ typeField <- function(dfi) {
       "study_first_posted"      = ctrDateUs(),
       "results_first_posted"    = ctrDateUs(),
       "last_update_posted"      = ctrDateUs(),
+      #
       # - ISRCTN
       "participants.recruitmentStart" = ctrDateTime(),
       "participants.recruitmentEnd"   = ctrDateTime(),
       "trialDesign.overallStartDate"  = ctrDateTime(),
       "trialDesign.overallEndDate"    = ctrDateTime(),
+      #
       #
       # factors
       #
@@ -2180,6 +2184,20 @@ typeField <- function(dfi) {
       "trialDescription.acknowledgment" = ctrFalseTrue(),
       "results.biomedRelated"           = ctrFalseTrue(),
       #
+      #
+      # logical
+      #
+      # - EUCTR
+      "trialInformation.analysisForPrimaryCompletion" = ctrFalseTrue(),
+      "trialInformation.partOfPIP" = ctrFalseTrue(),
+      "trialInformation.art45Related" = ctrFalseTrue(),
+      "trialInformation.art46Related" = ctrFalseTrue(),
+      "trialInformation.longTermFollowUpPlanned" = ctrFalseTrue(),
+      "trialInformation.idmcInvolvement" = ctrFalseTrue(),
+      "trialInformation.isGlobalEndOfTrialReached" = ctrFalseTrue(),
+      "trialInformation.globalEndOfTrialPremature" = ctrFalseTrue(),
+      #
+      #
       # numbers
       #
       # - EUCTR
@@ -2210,12 +2228,7 @@ typeField <- function(dfi) {
       #
       # - ISRCTN
       "participants.targetEnrolment"      = ctrInt(),
-      "participants.totalTarget"          = ctrInt(),
-      "participants.totalFinalEnrolment"  = ctrInt(),
-      "externalRefs.protocolSerialNumber" = ctrInt(),
-      #
-      # TODO results-related variables
-      "trialInformation.analysisForPrimaryCompletion" = ctrFalseTrue()
+      "participants.totalFinalEnrolment"  = ctrInt()
       #
     )
   },
