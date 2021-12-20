@@ -647,15 +647,12 @@ dbFindFields <- function(namepart = "",
     # queries to be used
     queries <- list(
       "EUCTR" = c(
-        # '{"_id": { "$regex": "^[0-9][0-9][0-9][0-9]-[0-9][0-9]", "$options": ""} }',
-        '{"@attributes.eudractNumber": {"$ne": ""} }',
+        '{"trialInformation.analysisStage.value": {"$regex": ".+"}}',
         '{"ctrname": "EUCTR"}'),
       "CTGOV" = c(
-        # '{"_id": { "$regex": "^NCT[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]", "$options": ""} }',
-        '{"results_first_submitted": {"$ne": ""} }',
+        '{"results_first_submitted": {"$regex": ".+"}}',
         '{"ctrname": "CTGOV"}'),
       "ISRCTN" = c(
-        # '{"_id": { "$regex": "^[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]", "$options": ""} }',
         '{"results.publicationStage": "Results"}',
         '{"ctrname": "ISRCTN"}'
       )
@@ -668,7 +665,7 @@ dbFindFields <- function(namepart = "",
       keysAdd <- normNames(nodbi::docdb_query(
         src = con, key = con$collection,
         query = queries[[q]][1], limit = 1L))
-      # fallback to protocol-related fields
+      # fall back to protocol-related fields
       if (!length(keysAdd)) {
         keysAdd <- normNames(nodbi::docdb_query(
             src = con, key = con$collection,
