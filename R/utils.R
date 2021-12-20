@@ -1166,10 +1166,16 @@ dbGetFieldsIntoDf <- function(fields = "",
         # simplify by processing columns
         for (c in seq_len(ncol(dfi))[-1]) {
 
+          # inform user
+          if (c > 2L) message(" .", appendLF = FALSE)
+
           # special case: column is one-column data frame
           if (is.data.frame(dfi[[c]]) && (ncol(dfi[[c]]) == 1L) &&
-              (nrow(dfi[[c]]) == nrow(dfi))) dfi[[c]] <-
-              dfi[[c]][, 1, drop = TRUE]
+              (nrow(dfi[[c]]) == nrow(dfi))) {
+            tn <- names(dfi[[c]])
+            dfi[[c]] <- dfi[[c]][, 1, drop = TRUE]
+            names(dfi)[c] <- paste0(names(dfi)[c], ".", tn)
+          }
 
           # simplify at row level, replaces NULL with NA
           if (!is.data.frame(dfi[[c]]) &&
