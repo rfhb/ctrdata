@@ -207,15 +207,18 @@ result <- suppressMessages(
     dbGetFieldsIntoDf(
       fields = c(
         "a2_eudract_number",
-        "trialInformation.globalEndOfTrialDate",
         "p_date_of_the_global_end_of_the_trial",
-        "trialInformation.recruitmentStartDate",
         "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database",
         "subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm",
-        "endPoints.endPoint",
+        "endPoints.endPoint.statisticalAnalyses",
+        "trialInformation.globalEndOfTrialDate",
         "trialInformation.analysisForPrimaryCompletion",
+        "trialInformation.sponsors",
+        "trialInformation",
+        "endPoints.endPoint",
         "e71_human_pharmacology_phase_i",
         "dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation",
+        "trialInformation",
         "f11_trial_has_subjects_under_18",
         "e824_number_of_treatment_arms_in_the_trial"
       ),
@@ -641,10 +644,8 @@ tmpc <- table(tmpc)
 # character      Date   integer      list   logical
 #        65        10         6         7        57
 
-# tests note tmpr has more columns
-# because data frames are expanded
-expect_true(length(tmpf) <= length(tmpr))
-# expect_identical(tmpf, tmpr)
+# tests note tmpr may have fewer columns
+expect_true(length(tmpr) <= length(tmpf))
 # adapted to mongo remote server
 expect_true(tmpc[["character"]] > 50)
 expect_true(tmpc[["integer"]]   >  5)

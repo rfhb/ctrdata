@@ -18,10 +18,11 @@ expect_message(
 
 # test
 expect_error(
-  suppressMessages(
-    ctrLoadQueryIntoDb(
-      queryterm = "https://www.isrctn.com/search?q=",
-      con = dbc)),
+  suppressWarnings(
+    suppressMessages(
+      ctrLoadQueryIntoDb(
+        queryterm = "https://www.isrctn.com/search?q=",
+        con = dbc))),
   "consider correcting or splitting queries")
 
 # test
@@ -229,7 +230,7 @@ result <- suppressMessages(
 
 # test
 expect_true(
-  length(names(result)) > 50L)
+  length(names(result)) > 40L)
 rm(tmpf, result)
 
 #### dbFindIdsUniqueTrials ####
