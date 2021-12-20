@@ -18,7 +18,7 @@ tf <- function() {
       RSQLite::dbDisconnect(conn = dbc$con)
     },
     silent = TRUE)
-  })
+  }, add = TRUE)
 
   # do tests
 
@@ -156,6 +156,14 @@ tf <- function() {
 
   # sqlite but no collection specified
   dbc <- try(nodbi::src_sqlite(), silent = TRUE)
+  # register clean-up
+  on.exit(expr = {
+    try({
+      RSQLite::dbRemoveTable(conn = dbc$con, name = dbc$collection)
+      RSQLite::dbDisconnect(conn = dbc$con)
+    },
+    silent = TRUE)
+  }, add = TRUE)
   out <- inherits(dbc, c("src_sqlite", "docdb_src"))
   if (out) {
     # test
@@ -171,6 +179,14 @@ tf <- function() {
 
   # postgres but no collection specified
   dbc <- try(nodbi::src_postgres(), silent = TRUE)
+  # register clean-up
+  on.exit(expr = {
+    try({
+      RPostgres::dbRemoveTable(conn = dbc$con, name = dbc$collection)
+      RPostgres::dbDisconnect(conn = dbc$con)
+    },
+    silent = TRUE)
+  }, add = TRUE)
   out <- inherits(dbc, c("src_postgres", "docdb_src"))
   if (out) {
     # test

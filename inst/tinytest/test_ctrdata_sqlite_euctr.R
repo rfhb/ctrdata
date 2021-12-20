@@ -23,7 +23,7 @@ tf <- function() {
       RSQLite::dbDisconnect(conn = dbc$con)
     },
     silent = TRUE)
-  })
+  }, add = TRUE)
 
   # do tests
   source("ctrdata_euctr.R", local = TRUE)

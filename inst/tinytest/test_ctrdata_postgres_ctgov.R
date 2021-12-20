@@ -22,7 +22,7 @@ tf <- function() {
       RPostgres::dbDisconnect(conn = dbc$con)
     },
     silent = TRUE)
-  })
+  }, add = TRUE)
 
   # do tests
   source("ctrdata_ctgov.R", local = TRUE)
