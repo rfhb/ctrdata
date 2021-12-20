@@ -634,7 +634,7 @@ dbFindFields <- function(namepart = "",
     message("Finding fields in database (may take some time)")
 
     # helper function
-    normNames <- function(df, endNumberDelete = TRUE) {
+    normNames <- function(df) {
       out <- names(unlist(df))
       out <- ifelse(
         # exception for euctr protocol and results fields
@@ -644,33 +644,40 @@ dbFindFields <- function(namepart = "",
       sort(unique(out))
     }
 
+    # queries to be used
+    queries <- list(
+      "EUCTR" = c(
+        # '{"_id": { "$regex": "^[0-9][0-9][0-9][0-9]-[0-9][0-9]", "$options": ""} }',
+        '{"@attributes.eudractNumber": {"$ne": ""} }',
+        '{"ctrname": "EUCTR"}'),
+      "CTGOV" = c(
+        # '{"_id": { "$regex": "^NCT[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]", "$options": ""} }',
+        '{"results_first_submitted": {"$ne": ""} }',
+        '{"ctrname": "CTGOV"}'),
+      "ISRCTN" = c(
+        # '{"_id": { "$regex": "^[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]", "$options": ""} }',
+        '{"results.publicationStage": "Results"}',
+        '{"ctrname": "ISRCTN"}'
+      )
+    )
+
     # get names
-    keyslist <- unique(c(
-      "", # avoid empty vector
-      normNames(nodbi::docdb_query(
+    keyslist <- NULL
+    for (q in seq_along(queries)) {
+      # first use queries for records with results
+      keysAdd <- normNames(nodbi::docdb_query(
         src = con, key = con$collection,
-        # TODO once nodbi 0.6.1 available, change to
-        # "^[0-9]{4}-[0-9]{4}-[0-9]{2}"
-        query = '{"_id": { "$regex": "^[0-9][0-9][0-9][0-9]-[0-9][0-9]", "$options": ""} }',
-        limit = 1L)),
-      normNames(nodbi::docdb_query(
-        src = con, key = con$collection,
-        # TODO once nodbi 0.6.1 available, change to
-        # "^[0-9]{4}-[0-9]{4}-[0-9]{2}"
-        query = '{"@attributes.eudractNumber": { "$regex": "^[0-9][0-9][0-9][0-9]-[0-9][0-9]", "$options": ""} }',
-        limit = 1L)),
-      normNames(nodbi::docdb_query(
-        # TODO once nodbi 0.6.1 available, change to
-        # "^NCT[0-9]{8}"
-        src = con, key = con$collection,
-        query = '{"_id": { "$regex": "^NCT[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]", "$options": ""} }',
-        limit = 1L)),
-      normNames(nodbi::docdb_query(
-        src = con, key = con$collection,
-        # TODO once nodbi 0.6.1 available, change to
-        # "^[0-9]{8}"
-        query = '{"_id": { "$regex": "^[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]", "$options": ""} }',
-        limit = 1L))))
+        query = queries[[q]][1], limit = 1L))
+      # fallback to protocol-related fields
+      if (!length(keysAdd)) {
+        keysAdd <- normNames(nodbi::docdb_query(
+            src = con, key = con$collection,
+            query = queries[[q]][2], limit = 1L))
+      }
+      # give keys name of register
+      names(keysAdd) <- rep(names(queries)[q], length(keysAdd))
+      keyslist <- c(keyslist, keysAdd)
+    }
 
     # clean empty entries and exclude _id for consistency
     # since different approaches above return _id or not
