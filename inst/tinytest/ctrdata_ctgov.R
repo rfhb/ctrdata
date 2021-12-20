@@ -267,7 +267,33 @@ result <- suppressMessages(
 
 # test
 expect_true(
-  length(names(result)) > 45L)
+  length(names(result)) > 150L)
+
+# determine all classes
+tmpr <- names(result)
+tmpr <- tmpr[tmpr != "_id"]
+tmpc <- sapply(result, class, USE.NAMES = FALSE)
+tmpc <- unlist(tmpc)
+tmpc <- table(tmpc)
+
+# develop
+# print(tmpc)
+
+# src_mongo local
+# character  Date   integer      list   logical
+# 69            7         2        73         4
+#
+# src_mongo remote
+# character  Date   integer      list   logical
+# 69            7         2        73         4
+#
+# postgres
+# character  Date   integer      list   logical
+#       128     7         2         7        11
+#
+# sqlite
+# character  Date   integer      list   logical
+#       128     7         2         7        11
 
 # clean up
 rm(df, df2, tmpf, result)

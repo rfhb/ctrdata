@@ -231,6 +231,29 @@ result <- suppressMessages(
 # test
 expect_true(
   length(names(result)) > 40L)
+
+# determine all classes
+tmpr <- names(result)
+tmpr <- tmpr[tmpr != "_id"]
+tmpc <- sapply(result, class, USE.NAMES = FALSE)
+tmpc <- unlist(tmpc)
+tmpc <- table(tmpc)
+
+# develop
+# print(tmpc)
+
+# postgres
+# character      Date   integer   logical
+#        44         5         1         3
+#
+# mongo_local
+# character      Date   integer   logical
+#        39         5         1         3
+#
+# sqlite
+# character      Date   integer   logical
+#        39         5         1         3
+
 rm(tmpf, result)
 
 #### dbFindIdsUniqueTrials ####

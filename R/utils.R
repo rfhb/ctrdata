@@ -1272,10 +1272,9 @@ dbGetFieldsIntoDf <- function(fields = "",
         dna <- names(dfi)
         dni <- intersect(dna, fields[1:(i - 1L)])
         dnd <- setdiff(dna, fields[1:(i - 1L)])
-        if (length(dni)) warning(
-          "From field ", fields[i], ", not included again: ",
-          paste0(dni, collapse = ", "),
-          call. = FALSE, immediate. = FALSE)
+        if (length(dni)) message(
+          "From fields element ", i, " (", fields[i], "), ",
+          "not included again: ", paste0(dni, collapse = ", "))
         dfi[, dnd, drop = FALSE]
       }
 

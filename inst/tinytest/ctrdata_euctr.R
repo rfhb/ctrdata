@@ -620,47 +620,44 @@ result <- suppressMessages(
 
 # test
 expect_true(
-  length(names(result)) > 300L)
+  length(names(result)) > 400L)
 
 
 # determine all classes
 tmpr <- names(result)
 tmpr <- tmpr[tmpr != "_id"]
-tmpc <- sapply(result, class,
-               USE.NAMES = FALSE)
+tmpc <- sapply(result, class, USE.NAMES = FALSE)
 tmpc <- unlist(tmpc)
 tmpc <- table(tmpc)
 
-# src_mongo:
-# tmpc
+# develop
+# print(tmpc)
+
+# mongo local
 # character      Date   integer      list   logical
-#       243        15        22       253       138
-# src_sqlite:
-# tmpc
+#       164        15        12       257        66
+#
+# sqlite
 # character      Date   integer      list   logical
-#       411        18        22       538        77
-# mongo_remote_rw
-# tmpc
+#       396        15        16        42        74
+#
+# mongo remote
 # character      Date   integer      list   logical
-#        65        10         6         7        57
+#       164        15        12       257        66
+#
+# postgres
+# character      Date   integer      list   logical
+#       307        15        10        23        73
+
 
 # tests note tmpr may have fewer columns
 expect_true(length(tmpr) <= length(tmpf))
 # adapted to mongo remote server
-expect_true(tmpc[["character"]] > 50)
-expect_true(tmpc[["integer"]]   >  5)
-expect_true(tmpc[["Date"]]      >  5)
-expect_true(tmpc[["list"]]      >  5)
-expect_true(tmpc[["logical"]]   > 50)
-
-# TODO
-# not testing for lists, because
-# src_mongo returns only non-object
-# fields when searching for all fields
-# with dbFindFields(".*") whereas
-# src_sqlite returns names of both
-# objects and terminal / no more nested
-# fields
+expect_true(tmpc[["character"]] > 150)
+expect_true(tmpc[["Date"]]      >  10)
+expect_true(tmpc[["integer"]]   >   5)
+expect_true(tmpc[["list"]]      >  20)
+expect_true(tmpc[["logical"]]   >  50)
 
 # clean up
 rm(tmpf, tmpr, tmpc, result)
