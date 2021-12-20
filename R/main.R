@@ -1680,7 +1680,7 @@ ctrLoadQueryIntoDbEuctr <- function(
                     "tmpChanges" = tmpChanges))
       }
 
-      # TODO: this does not include the retrieval of information
+      # this does not include the retrieval of information
       # about amendment to the study, as presented at the bottom
       # of the webpage for the respective trial results
       message("(4/4) Retrieving results history (max. ",
