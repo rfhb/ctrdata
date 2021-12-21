@@ -56,7 +56,7 @@
     
     <a class="navbar-brand me-2" href="index.html">ctrdata</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.8.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.8.0.9002</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -108,7 +108,7 @@
 <li>ClinicalTrials.gov (“CTGOV”, <a href="https://clinicaltrials.gov/" class="external-link uri">https://clinicaltrials.gov/</a>)</li>
 <li>ISRCTN (<a href="https://www.isrctn.com/" class="external-link uri">https://www.isrctn.com/</a>) 🔔new in v1.6.0</li>
 </ul>
-<p>The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. The package is to be used within the <a href="https://www.r-project.org/" class="external-link">R</a> system; this README was reviewed on 2021-12-05 for v1.8.0.9000.</p>
+<p>The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. The package is to be used within the <a href="https://www.r-project.org/" class="external-link">R</a> system; this README was reviewed on 2021-12-21 for v1.8.0.9002.</p>
 <p>Main features:</p>
 <ul>
 <li><p>Protocol-related trial information is easily retrieved (downloaded): Users define a query in a register’s web interface and then use <code>ctrdata</code> to retrieve in one step all trials resulting from the query. Results-related trial information and personal annotations can be including during retrieval. Synonyms of an active substance can also be found.</p></li>
@@ -136,15 +136,15 @@ citation("ctrdata")
 <span class="co"># Alternatively, install development version: </span>
 <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
 <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/remote-reexports.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"rfhb/ctrdata"</span>, build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
-<p>These commands also install the package dependencies, which are <code>nodbi</code>, <code>jsonlite</code>, <code>httr</code>, <code>curl</code>, <code>clipr</code>, <code>xml2</code>, <code>rvest</code>,<code>DBI</code> and <code>stringi</code>.</p>
+<p>These commands also install the package dependencies, which are <code>nodbi</code>, <code>jsonlite</code>, <code>httr</code>, <code>curl</code>, <code>clipr</code>, <code>xml2</code>, <code>rvest</code> and <code>stringi</code>.</p>
 </div>
 <div class="section level3">
-<h3 id="2-command-line-tools-perl-sed-cat-and-php-52-or-higher">2. Command line tools <code>perl</code>, <code>sed</code>, <code>cat</code> and <code>php</code> (5.2 or higher)<a class="anchor" aria-label="anchor" href="#2-command-line-tools-perl-sed-cat-and-php-52-or-higher"></a>
+<h3 id="2-command-line-tools-perl-sed-and-php-52-or-higher">2. Command line tools <code>perl</code>, <code>sed</code> and <code>php</code> (5.2 or higher)<a class="anchor" aria-label="anchor" href="#2-command-line-tools-perl-sed-and-php-52-or-higher"></a>
 </h3>
 <p>These are required for <code><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code>, the main function of package <code>ctrdata</code>.</p>
 <ul>
 <li><p>For MS Windows, install <a href="https://cygwin.org/install.html" class="external-link"><code>Cygwin</code></a>: In <code>R</code>, run <code><a href="reference/installCygwinWindowsDoInstall.html">ctrdata::installCygwinWindowsDoInstall()</a></code> for an automated minimal installation. Alternatively, manually install Cygwin with packages <code>perl</code>, <code>php-jsonc</code> and <code>php-simplexml</code> into <code>c:\cygwin</code>. The installation needs about 160 MB disk space; no administrator credentials needed.</p></li>
-<li><p>In macOS (including version 11 Big Sur), these are usually already installed; in case of errors, <a href="https://brew.sh/" class="external-link"><code>homebrew</code></a> can be used to install these binaries.</p></li>
+<li><p>In macOS including 11 Big Sur, these are already installed; 🔔for macOS 12 Monterey and in case of errors, <a href="https://brew.sh/" class="external-link"><code>homebrew</code></a> can be used to install <code>php</code>.</p></li>
 <li><p>In Linux, these are usually already installed; tools for installation vary by distribution (e.g., <code>sudo apt install php php-xml php-json</code>).</p></li>
 </ul>
 </div>
@@ -165,8 +165,8 @@ citation("ctrdata")
 <p>The functions are listed in the approximate order of use in a user’s workflow.</p>
 <table class="table">
 <colgroup>
-<col width="23%">
-<col width="76%">
+<col width="22%">
+<col width="77%">
 </colgroup>
 <thead><tr class="header">
 <th>Function name</th>
@@ -187,19 +187,19 @@ citation("ctrdata")
 </tr>
 <tr class="even">
 <td><code><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code></td>
-<td>Retrieve (download) or update, and annotate, information on trials from a register and store in database</td>
+<td>Retrieve (download) or update, and annotate, information on trials from a register and store in a collection in a database</td>
 </tr>
 <tr class="odd">
 <td><code><a href="reference/dbQueryHistory.html">dbQueryHistory()</a></code></td>
-<td>Show the history of queries that were downloaded into the database</td>
+<td>Show the history of queries that were downloaded into the collection</td>
 </tr>
 <tr class="even">
 <td><code><a href="reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials()</a></code></td>
-<td>Get the identifiers of de-duplicated trials in the database</td>
+<td>Get the identifiers of de-duplicated trials in the collection</td>
 </tr>
 <tr class="odd">
 <td><code><a href="reference/dbFindFields.html">dbFindFields()</a></code></td>
-<td>Find names of variables (fields) in the database</td>
+<td>Find names of variables (fields) in the collection</td>
 </tr>
 <tr class="even">
 <td><code><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code></td>
@@ -225,6 +225,46 @@ citation("ctrdata")
 </tr>
 </tbody>
 </table>
+<p>If package <code>dplyr</code> is loaded, a tibble is returned instead of a data.frame.</p>
+</div>
+<div class="section level2">
+<h2 id="databases-that-can-be-used-with-ctrdata">Databases that can be used with <code>ctrdata</code>
+<a class="anchor" aria-label="anchor" href="#databases-that-can-be-used-with-ctrdata"></a>
+</h2>
+<p>Package <code>ctrdata</code> retrieves trial information and stores it in a database collection, which has to be given as a connection object to parameter <code>con</code> for several <code>ctrdata</code> functions; this connection object is created in slightly different ways for the three supported database backends that can be used with <code>ctrdata</code> as shown in the table.</p>
+<p>Besides ctrdata functions below, any such a connection object can equally be used with functions of other packages, such as <code>nodbi</code> (last row in table) or, in case of MongoDB as database backend, <code>mongolite</code> (see vignettes).</p>
+<table class="table">
+<colgroup>
+<col width="27%">
+<col width="72%">
+</colgroup>
+<thead><tr class="header">
+<th>Purpose</th>
+<th>Function call</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>Create SQLite database connection</td>
+<td><code>dbc &lt;- nodbi::src_sqlite(dbname = "name_of_my_database", collection = "name_of_my_collection")</code></td>
+</tr>
+<tr class="even">
+<td>Create PostgreSQL database connection</td>
+<td><code>dbc &lt;- nodbi::src_postgres(dbname = "name_of_my_database"); dbc[["collection"]] &lt;- "name_of_my_collection"</code></td>
+</tr>
+<tr class="odd">
+<td>Create MongoDB database connection</td>
+<td><code>dbc &lt;- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")</code></td>
+</tr>
+<tr class="even">
+<td>Use connection with <code>ctrdata</code> functions</td>
+<td><code>ctrdata::{ctr,db}*(con = dbc, ...)</code></td>
+</tr>
+<tr class="odd">
+<td>Use connection with <code>nodbi</code> functions</td>
+<td><code>nodbi::docdb_*(src = dbc, key = dbc$collection, ...)</code></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="section level2">
 <h2 id="example-workflow">Example workflow<a class="anchor" aria-label="anchor" href="#example-workflow"></a>
@@ -236,9 +276,14 @@ citation("ctrdata")
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://cran.r-project.org/package=ctrdata" class="external-link">ctrdata</a></span><span class="op">)</span></code></pre></div>
 <ul>
-<li>Open registers’ advanced search pages in browser:</li>
+<li>See help to get started with <code>ctrdata</code>:</li>
 </ul>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/help.html" class="external-link">help</a></span><span class="op">(</span><span class="st">"ctrdata-package"</span><span class="op">)</span></code></pre></div>
+<ul>
+<li>Open registers’ advanced search pages in browser:</li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser</a></span><span class="op">(</span><span class="op">)</span>
 
 <span class="co"># Please review and respect register copyrights:</span>
@@ -249,8 +294,9 @@ citation("ctrdata")
 <li><p>Search used in this example: <a href="https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&amp;age=under-18&amp;phase=phase-one&amp;status=completed" class="external-link uri">https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&amp;age=under-18&amp;phase=phase-one&amp;status=completed</a></p></li>
 <li><p>Get address from clipboard:</p></li>
 </ul>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">q</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ctrGetQueryUrl.html">ctrGetQueryUrl</a></span><span class="op">(</span><span class="op">)</span>
+<span class="co"># * Using clipboard content as register query URL: https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&amp;age=under-18&amp;phase=phase-one&amp;status=completed</span>
 <span class="co"># * Found search query from EUCTR: query=cancer&amp;age=under-18&amp;phase=phase-one&amp;status=completed</span>
 
 <span class="va">q</span>
@@ -259,8 +305,8 @@ citation("ctrdata")
 <ul>
 <li>Retrieve protocol-related information, transform and save to database:</li>
 </ul>
-<p>Under the hood, scripts <code>euctr2json.sh</code> and <code>xml2json.php</code> (in <code>ctrdata/exec</code>) transform EUCTR plain text files and CTGOV <code>XML</code> files to <code>ndjson</code> format, which is imported into the database. The database is specified first, using <code>nodbi</code> (using <code>PostgreSQL</code>, <code>RSQlite</code> or <code>MongoDB</code> as backend); then, trial information is retrieved and loaded into the database:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<p>The database collection is specified first, using <code>nodbi</code> (see above for how to specify <code>PostgreSQL</code>, <code>RSQlite</code> or <code>MongoDB</code> as backend); then, trial information is retrieved and loaded into the collection:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Connect to (or newly create) an SQLite database </span>
 <span class="co"># that is stored in a file on the local system:</span>
 <span class="va">db</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">src_sqlite</a></span><span class="op">(</span>
@@ -285,11 +331,12 @@ citation("ctrdata")
 <span class="co"># (3/3) Importing JSON records into database...</span>
 <span class="co"># = Imported or updated 248 records on 66 trial(s)                </span>
 <span class="co"># * Updated history ("meta-info" in "some_collection_name")</span></code></pre></div>
+<p>Under the hood, scripts <code>euctr2json.sh</code> and <code>xml2json.php</code> (in <code>ctrdata/exec</code>) transform EUCTR plain text files and CTGOV as well as ISRCTN <code>XML</code> files to <code>ndjson</code> format, which is imported into the database collection.</p>
 <ul>
 <li>Analyse</li>
 </ul>
 <p>Tabulate the status of trials that are part of an agreed paediatric development program (paediatric investigation plan, PIP):</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Get all records that have values in the fields of interest:</span>
 <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span>
   fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>
@@ -309,7 +356,10 @@ citation("ctrdata")
 <span class="co"># = Returning keys (_id) of 71 records in collection "some_collection_name"</span>
 
 <span class="co"># Keep only unique / de-duplicated records:</span>
-<span class="va">result</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">[</span> <span class="va">result</span><span class="op">[[</span><span class="st">"_id"</span><span class="op">]</span><span class="op">]</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">uniqueids</span>, <span class="op">]</span>
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span>
+  <span class="va">result</span>, 
+  subset <span class="op">=</span> <span class="va">`_id`</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">uniqueids</span>
+<span class="op">)</span>
 
 <span class="co"># Tabulate the selected clinical trial information:</span>
 <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">result</span>, 
@@ -324,10 +374,10 @@ citation("ctrdata")
 <span class="co">#   Prematurely Ended                                         1  2   0</span>
 <span class="co">#   Restarted                                                 0  1   0</span></code></pre></div>
 <ul>
-<li><p>Add records from another register (CTGOV) into the same database</p></li>
+<li><p>Add records from another register (CTGOV) into the same collection</p></li>
 <li><p>Search used in this example: <a href="https://clinicaltrials.gov/ct2/results?cond=neuroblastoma&amp;rslt=With&amp;recrs=e&amp;age=0&amp;intr=Drug" class="external-link uri">https://clinicaltrials.gov/ct2/results?cond=neuroblastoma&amp;rslt=With&amp;recrs=e&amp;age=0&amp;intr=Drug</a></p></li>
 </ul>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Retrieve trials from another register:</span>
 <span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span>
   queryterm <span class="op">=</span> <span class="st">"cond=neuroblastoma&amp;rslt=With&amp;recrs=e&amp;age=0&amp;intr=Drug"</span>, 
@@ -343,10 +393,10 @@ citation("ctrdata")
 <span class="co"># = Imported or updated 43 trial(s)                              </span>
 <span class="co"># * Updated history ("meta-info" in "some_collection_name")</span></code></pre></div>
 <ul>
-<li><p>Add records from another register (ISRCTN) into the same database</p></li>
+<li><p>Add records from a third register (ISRCTN) into the same collection</p></li>
 <li><p>Search used in this example: <a href="https://www.isrctn.com/search?q=neuroblastoma" class="external-link uri">https://www.isrctn.com/search?q=neuroblastoma</a></p></li>
 </ul>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Retrieve trials from another register:</span>
 <span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span>
   queryterm <span class="op">=</span> <span class="st">"https://www.isrctn.com/search?q=neuroblastoma"</span>,
@@ -364,7 +414,7 @@ citation("ctrdata")
 <li>Result-related trial information</li>
 </ul>
 <p>Analyse some simple result details (see vignette for more examples):</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Get all records that have values in any of the specified fields</span>
 <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span>
   fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>
@@ -440,59 +490,13 @@ citation("ctrdata")
 </div>
 </div>
 <div class="section level2">
-<h2 id="databases">Databases<a class="anchor" aria-label="anchor" href="#databases"></a>
-</h2>
-<p>The database connection object <code>con</code> is created by calling <code>nodbi::src_*()</code>, with parameters that are specific to the database (e.g., <code>url</code>) and with a special parameter <code>collection</code> that is used by <code>ctrdata</code> to identify which table or collection in the database to use. Any such connection object can then be used by <code>ctrdata</code> and generic functions of <code>nodbi</code> in a consistent way, as shown in the table:</p>
-<table class="table">
-<colgroup>
-<col width="23%">
-<col width="62%">
-<col width="14%">
-</colgroup>
-<thead><tr class="header">
-<th>Purpose</th>
-<th>Function call</th>
-<th>Reference</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td>Create SQLite database connection</td>
-<td><code>dbc &lt;- nodbi::src_sqlite(dbname = "name_of_my_database", collection = "name_of_my_collection")</code></td>
-<td><code><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">nodbi::src_sqlite()</a></code></td>
-</tr>
-<tr class="even">
-<td>Create PostgreSQL database connection</td>
-<td>
-<code>dbc &lt;- nodbi::src_postgres(dbname = "name_of_my_database")</code>; <code>dbc[["collection"]] &lt;- "name_of_my_collection"</code>
-</td>
-<td><code><a href="https://docs.ropensci.org/nodbi/reference/src_postgres.html" class="external-link">nodbi::src_postgres()</a></code></td>
-</tr>
-<tr class="odd">
-<td>Create MongoDB database connection</td>
-<td><code>dbc &lt;- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")</code></td>
-<td><code><a href="https://docs.ropensci.org/nodbi/reference/src_mongo.html" class="external-link">nodbi::src_mongo()</a></code></td>
-</tr>
-<tr class="even">
-<td>Use connection with <code>ctrdata</code> functions</td>
-<td><code>ctrdata::{ctr,db}*(con = dbc, ...)</code></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td>Use connection with <code>nodbi</code> functions</td>
-<td><code>nodbi::docdb_*(src = dbc, key = dbc$collection, ...)</code></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section level2">
 <h2 id="meta">Meta<a class="anchor" aria-label="anchor" href="#meta"></a>
 </h2>
 <div class="section level3">
 <h3 id="features-in-the-works">Features in the works<a class="anchor" aria-label="anchor" href="#features-in-the-works"></a>
 </h3>
 <ul>
-<li><p>Merge results-related information retrieved from different registers (e.g. corresponding endpoints) for analyses across trials</p></li>
+<li><p>Merge results-related fields retrieved from different registers (e.g. corresponding endpoints)</p></li>
 <li><p>Explore relevance to retrieve previous versions of protocol- or results-related information</p></li>
 </ul>
 </div>
@@ -500,8 +504,8 @@ citation("ctrdata")
 <h3 id="acknowledgements">Acknowledgements<a class="anchor" aria-label="anchor" href="#acknowledgements"></a>
 </h3>
 <ul>
-<li><p>Data providers and curators of the clinical trial registers. Please review and respect their copyrights and terms and conditions (<code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>).</p></li>
-<li><p>This package <code>ctrdata</code> has been made possible building on the work done for <a href="https://www.r-project.org/" class="external-link">R</a>, <a href="https://cran.r-project.org/package=curl" class="external-link">curl</a>, <a href="https://cran.r-project.org/package=httr" class="external-link">httr</a>, <a href="https://cran.r-project.org/package=xml2" class="external-link">xml2</a>, <a href="https://cran.r-project.org/package=rvest" class="external-link">rvest</a>, <a href="https://cran.r-project.org/package=mongolite" class="external-link">mongolite</a>, <a href="https://cran.r-project.org/package=jsonlite" class="external-link">jsonlite</a>, <a href="https://cran.r-project.org/package=nodbi" class="external-link">nodbi</a>, <a href="https://cran.r-project.org/package=RPostgres" class="external-link">RPostgres</a>, <a href="https://CRAN.R-project.org/package=RSQLite" class="external-link">RSQLite</a> and <a href="https://cran.r-project.org/package=clipr" class="external-link">clipr</a>.</p></li>
+<li><p>Data providers and curators of the clinical trial registers. Please review and respect their copyrights and terms and conditions, see <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>.</p></li>
+<li><p>Package <code>ctrdata</code> has been made possible building on the work done for <a href="https://www.r-project.org/" class="external-link">R</a>, <a href="https://cran.r-project.org/package=curl" class="external-link">curl</a>, <a href="https://cran.r-project.org/package=httr" class="external-link">httr</a>, <a href="https://cran.r-project.org/package=xml2" class="external-link">xml2</a>, <a href="https://cran.r-project.org/package=rvest" class="external-link">rvest</a>, <a href="https://cran.r-project.org/package=mongolite" class="external-link">mongolite</a>, <a href="https://cran.r-project.org/package=jsonlite" class="external-link">jsonlite</a>, <a href="https://cran.r-project.org/package=nodbi" class="external-link">nodbi</a>, <a href="https://cran.r-project.org/package=RPostgres" class="external-link">RPostgres</a>, <a href="https://CRAN.R-project.org/package=RSQLite" class="external-link">RSQLite</a> and <a href="https://cran.r-project.org/package=clipr" class="external-link">clipr</a>.</p></li>
 </ul>
 </div>
 <div class="section level3">

@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.8.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.8.0.9002</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,11 +53,31 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.8.0.9002" id="ctrdata-1809002">ctrdata 1.8.0.9002<a class="anchor" aria-label="anchor" href="#ctrdata-1809002"></a></h2>
+<ul><li>2021-12-20</li>
+<li>chunked trial batches in ndjson files for accelerated database import</li>
+<li>if package dplyr is loaded, functions return a tibble instead of a data frame</li>
+<li>dbFindFields() returns a vector of fields which now has as names the register in which a field occurs</li>
+<li>accelerated binary checks (cygwin / Windows)</li>
+<li>remove internet proxy mangling in order to use system configuration (e.g., transparent proxies used, or environment variable https_proxy specified by user)</li>
+<li>correct dbGetFieldsIntoDf() for specific nested data structures</li>
+<li>correct dfTrials2Long() for specific fields</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.8.0.9001" id="ctrdata-1809001">ctrdata 1.8.0.9001<a class="anchor" aria-label="anchor" href="#ctrdata-1809001"></a></h2>
+<ul><li>2021-12-11</li>
+<li>thorough documentation improvement</li>
+<li>simplified dbFindFields</li>
+<li>cleaned up testing binaries</li>
+<li>cleaned up heper scripts</li>
+<li>removed ctrGetQueryUrlFromBrowser(), long deprecated</li>
+</ul></div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.8.0.9000" id="ctrdata-1809000">ctrdata 1.8.0.9000<a class="anchor" aria-label="anchor" href="#ctrdata-1809000"></a></h2>
 <ul><li>2021-11-22</li>
-<li>new development version</li>
 <li>uses nodbi 0.6.0</li>
-<li>can use PostgreSQL</li>
+<li>can use PostgreSQL as backend</li>
+<li>include PostgreSQL in Github Actions</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.8.0" id="ctrdata-180">ctrdata 1.8.0<a class="anchor" aria-label="anchor" href="#ctrdata-180"></a></h2><p class="text-muted">CRAN release: 2021-11-21</p>
