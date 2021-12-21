@@ -30,6 +30,15 @@ expect_error(
   "more than 10,000) trials")
 
 # test
+expect_message(
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
+      queryterm = "SHOULDNOTEXISTATALL",
+      register = "EUCTR",
+      con = dbc)),
+  "no.*trials found")
+
+# test
 expect_true(
   suppressWarnings(
     suppressMessages(
@@ -185,9 +194,6 @@ rm(tmpTest, q, hist, json, date.from, date.to, date.today)
 q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
             "2013-003420-37+OR+2009-011454-17+OR+2006-005357-29")
 
-# temp folder
-tempD <- tempdir()
-
 # test
 expect_message(
   suppressWarnings(
@@ -195,10 +201,10 @@ expect_message(
       queryterm = q,
       euctrresults = TRUE,
       euctrresultshistory = TRUE,
-      euctrresultspdfpath = tempD,
+      euctrresultspdfpath = "DOESNOTEXIST",
       con = dbc)),
   "Imported or updated results for 3")
-rm(tempD, q)
+rm(q)
 
 
 # get results
@@ -669,7 +675,7 @@ rm(tmpf, tmpr, tmpc, result)
 expect_equal(
   suppressWarnings(
     ctrOpenSearchPagesInBrowser(
-      dbQueryHistory(con = dbc)[1, ])),
-  # first query into the database
+      dbQueryHistory(con = dbc))),
+  # opens last query loaded into the database
   paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?",
-         "query=2005-001267-63+OR+2008-003606-33"))
+         "query=2010-024264-18"))

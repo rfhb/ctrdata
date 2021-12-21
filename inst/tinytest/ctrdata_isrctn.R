@@ -27,10 +27,20 @@ expect_error(
 
 # test
 expect_message(
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
+      queryterm = "SHOULDNOTEXISTATALL",
+      register = "ISRCTN",
+      con = dbc)),
+  "no.*trials")
+
+# test
+expect_message(
   tmpTest <- suppressWarnings(
     ctrLoadQueryIntoDb(
       queryterm = "neuroblastoma",
-      register = "ISRCTN", verbose = F,
+      register = "ISRCTN",
+      verbose = TRUE,
       con = dbc)),
   "Imported or updated ")
 

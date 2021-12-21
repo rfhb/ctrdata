@@ -214,8 +214,7 @@ ctrLoadQueryIntoDb <- function(
 
   # rewrite parameters for running as update
   querytermoriginal <- queryterm
-  if ((querytoupdate > 0) &&
-      (queryterm == "")) {
+  if (querytoupdate > 0) {
     #
     rerunparameters <- ctrRerunQuery(
       querytoupdate = querytoupdate,
@@ -223,13 +222,6 @@ ctrLoadQueryIntoDb <- function(
       con = con,
       verbose = verbose,
       queryupdateterm = queryupdateterm)
-    #
-    # check rerunparameters and stop ctrLoadQueryIntoDb
-    # without error if rerunparameters cannot be used for
-    # running and loading a query
-    if (!is.data.frame(rerunparameters)) {
-      return(invisible(rerunparameters))
-    }
     #
     # set main parameters
     querytermoriginal <- rerunparameters$querytermoriginal
@@ -380,7 +372,7 @@ ctrRerunQuery <- function(
                                verbose = verbose)
 
   # check parameters
-  if (is.null(rerunquery))
+  if (is.null(rerunquery) || !nrow(rerunquery))
     stop("'querytoupdate': no previous queries found in collection, ",
          "aborting query update", call. = FALSE)
 
@@ -427,7 +419,7 @@ ctrRerunQuery <- function(
   }
 
   # secondary check parameters
-  if (queryterm == "") {
+  if (!length(queryterm) || queryterm == "") {
     stop("Parameter 'queryterm' is empty - cannot update query ",
          querytoupdate, call. = FALSE)
   }

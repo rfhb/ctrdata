@@ -17,6 +17,29 @@ expect_equal(
       only.count = TRUE))[["n"]], 1L)
 
 # test
+nodbi::docdb_create(
+  src = dbc,
+  key = dbc$collection,
+  value = data.frame()
+)
+expect_error(
+  suppressWarnings(
+    suppressMessages(
+      ctrLoadQueryIntoDb(
+        querytoupdate = "last",
+        con = dbc))),
+  "no previous queries")
+
+# test
+expect_message(
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
+      queryterm = "SHOULDNOTEXISTATALL",
+      register = "CTGOV",
+      con = dbc)),
+  "no.*trials found")
+
+# test
 expect_message(
   tmpTest <- suppressWarnings(
     ctrLoadQueryIntoDb(
@@ -64,7 +87,7 @@ expect_message(
       querytoupdate = "last",
       verbose = TRUE,
       con = dbc)),
-  "No trials or number of trials could not be determined")
+  "no.*trials found")
 
 # test
 expect_error(
@@ -108,6 +131,7 @@ expect_message(
   tmpTest <- suppressWarnings(
     ctrLoadQueryIntoDb(
       querytoupdate = "last",
+      verbose = TRUE,
       con = dbc)),
   "Imported or updated")
 
