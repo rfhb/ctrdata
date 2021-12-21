@@ -109,11 +109,11 @@
 <div class="section level2">
 <h2 id="additional-installation-aspects">Additional installation aspects<a class="anchor" aria-label="anchor" href="#additional-installation-aspects"></a>
 </h2>
-<p>The ommand line tools <code>perl</code>, <code>sed</code> and <code>php</code> (5.2 or higher) are required for <code><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code>, the main function of package <code>ctrdata</code>. No other function in this package has this requirement.</p>
+<p>The command line tools <code>perl</code>, <code>sed</code> and <code>php</code> (5.2 or higher) are required for <code><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code>, the main function of package <code>ctrdata</code>. No other function in this package has this requirement.</p>
 <div class="section level3">
 <h3 id="ms-windows">MS Windows<a class="anchor" aria-label="anchor" href="#ms-windows"></a>
 </h3>
-<p>Package <code>ctrdata</code> requires on MS Windows that the <a href="https://cygwin.org/install.html" class="external-link"><code>Cygwin</code></a> environment be installed, into the local directory <code>c:\cygwin</code> (or any folder corresponding to <code>c:\cygw*</code>). The installation of a minimal Cygwin environment on MS Windows can be done with the help of package <code>ctrdata</code> in R as follows:</p>
+<p>For this requirement on MS Windows, the <a href="https://cygwin.org/install.html" class="external-link"><code>Cygwin</code></a> environment be installed, into the local directory <code>c:\cygwin</code> (or any folder corresponding to <code>c:\cygw*</code>). The installation of a minimal Cygwin environment on MS Windows can be done with the help of package <code>ctrdata</code> in R as follows:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">ctrdata</span><span class="fu">::</span><span class="fu"><a href="../reference/installCygwinWindowsDoInstall.html">installCygwinWindowsDoInstall</a></span><span class="op">(</span><span class="op">)</span> </code></pre></div>
 <p>To update or correct the Cygwin installation:</p>
@@ -122,7 +122,7 @@
 <p>If internet access requires to specify a proxy (see above):</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">ctrdata</span><span class="fu">::</span><span class="fu"><a href="../reference/installCygwinWindowsDoInstall.html">installCygwinWindowsDoInstall</a></span><span class="op">(</span>proxy <span class="op">=</span> <span class="st">"proxy.server.domain:8080"</span><span class="op">)</span> </code></pre></div>
-<p>Users who want or need to install Cygwin manually can download the setup executable from <a href="https://cygwin.com/install.html" class="external-link">here</a>. In a MS Windows command window or Powershell window, use the following command line. The parameters are explained <a href="https://cygwin.com/faq/faq.html#faq.setup.cli" class="external-link">here</a>.</p>
+<p>To install Cygwin manually, download the setup executable from <a href="https://cygwin.com/install.html" class="external-link">here</a>. In a MS Windows command window or Powershell window, use the following command line. The parameters are explained <a href="https://cygwin.com/faq/faq.html#faq.setup.cli" class="external-link">here</a>.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1"></a><span class="ex">setup-x86_64.exe</span> --no-admin --quiet-mode --verbose --upgrade-also --root c:/cygwin </span>
 <span id="cb7-2"><a href="#cb7-2"></a><span class="ex">--site</span> http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ </span>
 <span id="cb7-3"><a href="#cb7-3"></a><span class="ex">--packages</span> perl,php-jsonc,php-simplexml</span></code></pre></div>
@@ -130,9 +130,9 @@
 <div class="section level3">
 <h3 id="macos-linux-and-other-operating-systems">macOS, Linux and other operating systems<a class="anchor" aria-label="anchor" href="#macos-linux-and-other-operating-systems"></a>
 </h3>
-<p>The command line tools <code>perl</code>, <code>sed</code> and <code>php</code> (5.2 or higher) are typically installed and available by default in Linux and macOS systems. In case of issues,</p>
+<p>The command line tools <code>perl</code>, <code>sed</code> and <code>php</code> (5.2 or higher) are typically installed and available by default in Linux and macOS systems.</p>
 <ul>
-<li><p>In macOS, <a href="https://brew.sh/" class="external-link"><code>homebrew</code></a> can be used to install <code>php</code> which may be needed starting from macOS 12 Monterey</p></li>
+<li><p>In macOS, <a href="https://brew.sh/" class="external-link"><code>homebrew</code></a> can be used to install <code>php</code> which may be needed starting from macOS 12 Monterey: first install <a href="https://brew.sh/" class="external-link"><code>homebrew</code></a> and then run on the command line: <code>brew install php</code>.</p></li>
 <li><p>In Linux, tools for installation vary by distribution (e.g., <code>sudo apt install php php-xml php-json</code>)</p></li>
 </ul>
 </div>
