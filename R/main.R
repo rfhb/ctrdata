@@ -202,6 +202,9 @@ ctrLoadQueryIntoDb <- function(
   # initialise variable that is filled if an update is to be made
   queryupdateterm <- ""
 
+  # prototype return structure
+  emptyReturn <- list(n = 0L, success = NULL, failed = NULL)
+
   ## handle if we need to rerun previous query
 
   # check if parameters are consistent
@@ -308,8 +311,7 @@ ctrLoadQueryIntoDb <- function(
   if (!exists("imported") ||
       (imported$n == 0)) {
     message("Function did not result in any trial information imports")
-    return(invisible(list(
-      n = 0, success = "", failed = "", queryterm = querytermoriginal)))
+    return(invisible(emptyReturn))
   }
 
   # inform user
@@ -502,18 +504,21 @@ ctrRerunQuery <- function(
           paste0("https://www.clinicaltrialsregister.eu/ctr-search/",
                  "rest/feed/bydates?", queryterm))
         #
-        if (verbose) {
-          message("DEBUG (rss url): ", rssquery)
-        }
+        if (verbose) message("DEBUG (rss url): ", rssquery)
         #
         resultsRss <- try(httr::content(
           httr::GET(url = rssquery),
           encoding = "UTF-8",
           as = "text"), silent = TRUE)
 
-        if (verbose) {
-          message("DEBUG (rss content): ", resultsRss)
+        # check plausibility
+        if (inherits(resultsRss, "try-error")) {
+          message("Download from EUCTR failed; last error: ", class(resultsRss))
+          return(invisible(emptyReturn))
         }
+
+        # inform user
+        if (verbose) message("DEBUG (rss content): ", resultsRss)
         #
         # attempt to extract euctr number(s)
         resultsRssTrials <- gregexpr(
@@ -523,13 +528,7 @@ ctrRerunQuery <- function(
         if (length(resultsRssTrials) == 1L &&
             resultsRssTrials == -1L) {
           message("First result page empty - no (new) trials found?")
-          return(invisible(list(
-            # return structure as in dbCTRLoadJSONFiles
-            # which is handed through to ctrLoadQueryIntoDb
-            n = 0L,
-            success = character(0L),
-            failed = character(0L),
-            queryterm = querytermoriginal)))
+          return(invisible(emptyReturn))
         }
         #
         # if new trials found, construct
@@ -544,9 +543,7 @@ ctrRerunQuery <- function(
             resultsRssTrials,
             collapse = "+OR+"))
         #
-        if (verbose) {
-          message("DEBUG (rss trials): ", resultsRssTrials)
-        }
+        if (verbose) message("DEBUG (rss trials): ", resultsRssTrials)
         #
         # run query for extracted euctr number(s)
         # store original query in update term
@@ -1064,13 +1061,7 @@ ctrLoadQueryIntoDbCtgov <- function(
   tmp <- suppressWarnings(as.integer(tmp))
   if (is.na(tmp) || !length(tmp) || !tmp) {
     message("Search result page empty - no (new) trials found?")
-    return(invisible(list(
-      # return structure as in dbCTRLoadJSONFiles
-      # which is handed through to ctrLoadQueryIntoDb
-      n = 0L,
-      success = character(0L),
-      failed = character(0L),
-      queryterm = queryterm)))
+    return(invisible(emptyReturn))
   }
 
   # inform user
@@ -1107,11 +1098,20 @@ ctrLoadQueryIntoDbCtgov <- function(
   message("Downloading trials ", appendLF = FALSE)
 
   # get (download) trials in single zip file f
-  tmp <- httr::GET(
+  tmp <- try(httr::GET(
     url = utils::URLencode(ctgovdownloadcsvurl),
     httr::progress(),
     httr::write_disk(path = f,
-                     overwrite = TRUE))
+                     overwrite = TRUE)),
+    silent = TRUE)
+
+  # inform user, exit gracefully
+  if (inherits(tmp, "try-error") ||
+      !any(httr::status_code(tmp) == c(200L))) {
+    message("Host ", queryUSRoot, " not working as expected, ",
+            "cannot continue: ", tmp[[1]])
+    return(invisible(emptyReturn))
+  }
 
   # inform user
   if (!file.exists(f) || file.size(f) == 0L) {
@@ -1200,8 +1200,9 @@ ctrLoadQueryIntoDbEuctr <- function(
            "https://github.com/rfhb/ctrdata/issues/19#issuecomment-820127139",
            call. = FALSE)
     } else {
-      stop("Host ", queryEuRoot, " not working as expected, ",
-           "cannot continue: ", resultsEuPages[[1]], call. = FALSE)
+      message("Host ", queryEuRoot, " not working as expected, ",
+              "cannot continue: ", tmp[[1]])
+      return(invisible(emptyReturn))
     }
   }
   # - store options from request
@@ -1220,10 +1221,10 @@ ctrLoadQueryIntoDbEuctr <- function(
   #
   # no trials found even though host may have been online
   if (!is.integer(resultsEuNumTrials)) {
-    stop("ctrLoadQueryIntoDb(): register does not deliver ",
-         "search results as expected, check if working with ",
-         "'browseURL(\"", q, "\")'",
-         call. = FALSE)
+    message("ctrLoadQueryIntoDb(): register does not deliver ",
+            "search results as expected, check if working with ",
+            "'browseURL(\"", q, "\")'")
+    return(invisible(emptyReturn))
   }
 
   # calculate number of results pages
@@ -1234,13 +1235,7 @@ ctrLoadQueryIntoDbEuctr <- function(
       is.na(resultsEuNumTrials) ||
       (resultsEuNumTrials == 0)) {
     message("First result page empty - no (new) trials found?")
-    return(invisible(list(
-      # return structure as in dbCTRLoadJSONFiles
-      # which is handed through to ctrLoadQueryIntoDb
-      n = 0L,
-      success = character(0L),
-      failed = character(0L),
-      queryterm = queryterm)))
+    return(invisible(emptyReturn))
   }
 
   # inform user
@@ -1385,17 +1380,17 @@ ctrLoadQueryIntoDbEuctr <- function(
   message("Pages: 0 done...\r", appendLF = FALSE)
 
   # do download and saving
-  tmp <- curl::multi_run(
-    pool = pool)
+  tmp <- try(curl::multi_run(
+    pool = pool), silent = TRUE)
 
   # check plausibility
   if (inherits(tmp, "try-error")) {
-    stop("Download from EUCTR failed; last error: ",
-         class(tmp), call. = FALSE)
+    message("Download from EUCTR failed; last error: ", class(tmp))
+    return(invisible(emptyReturn))
   }
   if (tmp[["success"]] != resultsEuNumPages) {
-    stop("Download from EUCTR failed; incorrect number of records",
-         call. = FALSE)
+    message("Download from EUCTR failed; incorrect number of records")
+    return(invisible(emptyReturn))
   }
 
   ## run conversion
@@ -1494,8 +1489,14 @@ ctrLoadQueryIntoDbEuctr <- function(
       })
 
     # do download and save
-    tmp <- curl::multi_run(
-      pool = pool)
+    tmp <- try(curl::multi_run(
+      pool = pool), silent = TRUE)
+
+    # check plausibility
+    if (inherits(tmp, "try-error")) {
+      message("Download from EUCTR failed; last error: ", class(tmp))
+      return(invisible(emptyReturn))
+    }
 
     # new line
     message(", extracting ", appendLF = FALSE)
@@ -1720,8 +1721,14 @@ ctrLoadQueryIntoDbEuctr <- function(
         })
       # do download and save into batchresults
       retdat <- list()
-      tmp <- curl::multi_run(
-        pool = pool)
+      tmp <- try(curl::multi_run(
+        pool = pool), silent = TRUE)
+
+      # check plausibility
+      if (inherits(tmp, "try-error")) {
+        message("Download from EUCTR failed; last error: ", class(tmp))
+        return(invisible(emptyReturn))
+      }
 
       # combine results
       resultHistory <- do.call(
@@ -1869,29 +1876,23 @@ ctrLoadQueryIntoDbIsrctn <- function(
     silent = TRUE)
   #
   if (inherits(tmp, "try-error")) {
-    stop("Host ", queryIsrctnRoot, " not working as expected, ",
-         "cannot continue: ", tmp[[1]], call. = FALSE)
+    message("Host ", queryIsrctnRoot, " not working as expected, ",
+            "cannot continue: ", tmp[[1]])
+    return(invisible(emptyReturn))
   }
   #
-  tmp <- xml2::xml_attr(tmp, "totalCount")
+  tmp <- try(xml2::xml_attr(tmp, "totalCount"), silent = TRUE)
   #
   # safeguard against no or unintended large numbers
   tmp <- suppressWarnings(as.integer(tmp))
-  if (is.na(tmp) ||
-      !length(tmp)) {
+  if (is.na(tmp) || !length(tmp)) {
     message("No trials or number of trials could not be determined: ", tmp)
-    return(invisible(list(n = 0L, ids = "")))
+    return(invisible(emptyReturn))
   }
   #
   if (tmp == 0L) {
     message("Search result page empty - no (new) trials found?")
-    return(invisible(list(
-      # return structure as in dbCTRLoadJSONFiles
-      # which is handed through to ctrLoadQueryIntoDb
-      n = 0L,
-      success = character(0L),
-      failed = character(0L),
-      queryterm = queryterm)))
+    return(invisible(emptyReturn))
   }
   # otherwise continue
 
@@ -1933,16 +1934,23 @@ ctrLoadQueryIntoDbIsrctn <- function(
     queryIsrctnRoot, queryIsrctnType1, tmp, "&", apiterm, queryupdateterm)
 
   # get (download) trials in single file f
-  tmp <- httr::GET(
+  tmp <- try(httr::GET(
     url = utils::URLencode(isrctndownloadurl),
     httr::progress(),
     httr::write_disk(path = f,
-                     overwrite = TRUE))
+                     overwrite = TRUE)),
+    silent = TRUE)
+
+  # check plausibility
+  if (inherits(tmp, "try-error")) {
+    message("Download from EUCTR failed; last error: ", class(tmp))
+    return(invisible(emptyReturn))
+  }
 
   # inform user
   if (!file.exists(f) || file.size(f) == 0L) {
-    stop("No studies downloaded. Please check 'queryterm' or run ",
-         "again with verbose = TRUE", call. = FALSE)
+    message("No studies downloaded. Please check 'queryterm' ",
+            " or run again with verbose = TRUE")
   }
 
   ## run conversion
