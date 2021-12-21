@@ -23,7 +23,7 @@ aggregating and analysing this information; it can be used for the
 The motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. The package
 is to be used within the [R](https://www.r-project.org/) system; this
-README was reviewed on 2021-12-16 for v1.8.0.9002.
+README was reviewed on 2021-12-21 for v1.8.0.9002.
 
 Main features:
 
@@ -100,8 +100,8 @@ package `ctrdata`.
     `c:\cygwin`. The installation needs about 160 MB disk space; no
     administrator credentials needed.
 
--   In macOS including up to 11 Big Sur, these are already installed;
-    🔔for macOS 12 Monterey and in case of errors,
+-   In macOS including 11 Big Sur, these are already installed; 🔔for
+    macOS 12 Monterey and in case of errors,
     [`homebrew`](https://brew.sh/) can be used to install `php`.
 
 -   In Linux, these are usually already installed; tools for
@@ -122,20 +122,44 @@ package `ctrdata`.
 The functions are listed in the approximate order of use in a user’s
 workflow.
 
-| Function name                      | Function purpose                                                                                                      |
-|------------------------------------|-----------------------------------------------------------------------------------------------------------------------|
-| `ctrOpenSearchPagesInBrowser()`    | Open search pages of registers or execute search in web browser                                                       |
-| `ctrFindActiveSubstanceSynonyms()` | Find synonyms and alternative names for an active substance                                                           |
-| `ctrGetQueryUrl()`                 | Import from clipboard the URL of a search in one of the registers                                                     |
-| `ctrLoadQueryIntoDb()`             | Retrieve (download) or update, and annotate, information on trials from a register and store in database              |
-| `dbQueryHistory()`                 | Show the history of queries that were downloaded into the database                                                    |
-| `dbFindIdsUniqueTrials()`          | Get the identifiers of de-duplicated trials in the database                                                           |
-| `dbFindFields()`                   | Find names of variables (fields) in the database                                                                      |
-| `dbGetFieldsIntoDf()`              | Create a data.frame from trial records in the database with the specified fields                                      |
-| `dfTrials2Long()` 🔔                | Transform the data.frame from `dbGetFieldsIntoDf()` into a long name-value data.frame, including deeply nested fields |
-| `dfName2Value()` 🔔                 | From a long name-value data.frame, extract values for variables (fields) of interest (e.g., endpoints)                |
-| `dfMergeTwoVariablesRelevel()`     | Merge two simple variables into a new variable, optionally map values to a new set of values                          |
-| `installCygwinWindowsDoInstall()`  | Convenience function to install a Cygwin environment (MS Windows only)                                                |
+| Function name                      | Function purpose                                                                                                           |
+|------------------------------------|----------------------------------------------------------------------------------------------------------------------------|
+| `ctrOpenSearchPagesInBrowser()`    | Open search pages of registers or execute search in web browser                                                            |
+| `ctrFindActiveSubstanceSynonyms()` | Find synonyms and alternative names for an active substance                                                                |
+| `ctrGetQueryUrl()`                 | Import from clipboard the URL of a search in one of the registers                                                          |
+| `ctrLoadQueryIntoDb()`             | Retrieve (download) or update, and annotate, information on trials from a register and store in a collection in a database |
+| `dbQueryHistory()`                 | Show the history of queries that were downloaded into the collection                                                       |
+| `dbFindIdsUniqueTrials()`          | Get the identifiers of de-duplicated trials in the collection                                                              |
+| `dbFindFields()`                   | Find names of variables (fields) in the collection                                                                         |
+| `dbGetFieldsIntoDf()`              | Create a data.frame from trial records in the database with the specified fields                                           |
+| `dfTrials2Long()` 🔔                | Transform the data.frame from `dbGetFieldsIntoDf()` into a long name-value data.frame, including deeply nested fields      |
+| `dfName2Value()` 🔔                 | From a long name-value data.frame, extract values for variables (fields) of interest (e.g., endpoints)                     |
+| `dfMergeTwoVariablesRelevel()`     | Merge two simple variables into a new variable, optionally map values to a new set of values                               |
+| `installCygwinWindowsDoInstall()`  | Convenience function to install a Cygwin environment (MS Windows only)                                                     |
+
+If package `dplyr` is loaded, a tibble is returned instead of a
+data.frame.
+
+## Databases that can be used with `ctrdata`
+
+Package `ctrdata` retrieves trial information and stores it in a
+database collection, which has to be given as a connection object to
+parameter `con` for several `ctrdata` functions; this connection object
+is created in slightly different ways for the three supported database
+backends that can be used with `ctrdata` as shown in the table.
+
+Besides ctrdata functions below, any such a connection object can
+equally be used with functions of other packages, such as `nodbi` (last
+row in table) or, in case of MongoDB as database backend, `mongolite`
+(see vignettes).
+
+| Purpose                                 | Function call                                                                                                |
+|-----------------------------------------|--------------------------------------------------------------------------------------------------------------|
+| Create SQLite database connection       | `dbc <- nodbi::src_sqlite(dbname = "name_of_my_database", collection = "name_of_my_collection")`             |
+| Create PostgreSQL database connection   | `dbc <- nodbi::src_postgres(dbname = "name_of_my_database"); dbc[["collection"]] <- "name_of_my_collection"` |
+| Create MongoDB database connection      | `dbc <- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")`                  |
+| Use connection with `ctrdata` functions | `ctrdata::{ctr,db}*(con = dbc, ...)`                                                                         |
+| Use connection with `nodbi` functions   | `nodbi::docdb_*(src = dbc, key = dbc$collection, ...)`                                                       |
 
 ## Example workflow
 
@@ -175,6 +199,7 @@ ctrOpenSearchPagesInBrowser(copyright = TRUE)
 
 ``` r
 q <- ctrGetQueryUrl()
+# * Using clipboard content as register query URL: https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&age=under-18&phase=phase-one&status=completed
 # * Found search query from EUCTR: query=cancer&age=under-18&phase=phase-one&status=completed
 
 q
@@ -185,12 +210,9 @@ q
 -   Retrieve protocol-related information, transform and save to
     database:
 
-Under the hood, scripts `euctr2json.sh` and `xml2json.php` (in
-`ctrdata/exec`) transform EUCTR plain text files and CTGOV `XML` files
-to `ndjson` format, which is imported into the database. The database is
-specified first, using `nodbi` (using `PostgreSQL`, `RSQlite` or
-`MongoDB` as backend); then, trial information is retrieved and loaded
-into the database:
+The database collection is specified first, using `nodbi` (see above for
+how to specify `PostgreSQL`, `RSQlite` or `MongoDB` as backend); then,
+trial information is retrieved and loaded into the collection:
 
 ``` r
 # Connect to (or newly create) an SQLite database 
@@ -219,6 +241,11 @@ ctrLoadQueryIntoDb(
 # * Updated history ("meta-info" in "some_collection_name")
 ```
 
+Under the hood, scripts `euctr2json.sh` and `xml2json.php` (in
+`ctrdata/exec`) transform EUCTR plain text files and CTGOV as well as
+ISRCTN `XML` files to `ndjson` format, which is imported into the
+database collection.
+
 -   Analyse
 
 Tabulate the status of trials that are part of an agreed paediatric
@@ -244,7 +271,10 @@ uniqueids <- dbFindIdsUniqueTrials(con = db)
 # = Returning keys (_id) of 71 records in collection "some_collection_name"
 
 # Keep only unique / de-duplicated records:
-result <- result[ result[["_id"]] %in% uniqueids, ]
+result <- subset(
+  result, 
+  subset = `_id` %in% uniqueids
+)
 
 # Tabulate the selected clinical trial information:
 with(result, 
@@ -260,7 +290,7 @@ with(result,
 #   Restarted                                                 0  1   0
 ```
 
--   Add records from another register (CTGOV) into the same database
+-   Add records from another register (CTGOV) into the same collection
 
 -   Search used in this example:
     <https://clinicaltrials.gov/ct2/results?cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug>
@@ -282,7 +312,7 @@ ctrLoadQueryIntoDb(
 # * Updated history ("meta-info" in "some_collection_name")
 ```
 
--   Add records from another register (ISRCTN) into the same database
+-   Add records from a third register (ISRCTN) into the same collection
 
 -   Search used in this example:
     <https://www.isrctn.com/search?q=neuroblastoma>
@@ -383,29 +413,12 @@ ggsave(filename = "man/figures/README-ctrdata_results_neuroblastoma.png",
 ![Neuroblastoma
 trials](https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/dev/reference/figures/README-ctrdata_results_neuroblastoma.png)
 
-## Databases
-
-The database connection object `con` is created by calling
-`nodbi::src_*()`, with parameters that are specific to the database
-(e.g., `url`) and with a special parameter `collection` that is used by
-`ctrdata` to identify which table or collection in the database to use.
-Any such connection object can then be used by `ctrdata` and generic
-functions of `nodbi` in a consistent way, as shown in the table:
-
-| Purpose                                 | Function call                                                                                                  | Reference               |
-|-----------------------------------------|----------------------------------------------------------------------------------------------------------------|-------------------------|
-| Create SQLite database connection       | `dbc <- nodbi::src_sqlite(dbname = "name_of_my_database", collection = "name_of_my_collection")`               | `nodbi::src_sqlite()`   |
-| Create PostgreSQL database connection   | `dbc <- nodbi::src_postgres(dbname = "name_of_my_database")`; `dbc[["collection"]] <- "name_of_my_collection"` | `nodbi::src_postgres()` |
-| Create MongoDB database connection      | `dbc <- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")`                    | `nodbi::src_mongo()`    |
-| Use connection with `ctrdata` functions | `ctrdata::{ctr,db}*(con = dbc, ...)`                                                                           |                         |
-| Use connection with `nodbi` functions   | `nodbi::docdb_*(src = dbc, key = dbc$collection, ...)`                                                         |                         |
-
 ## Meta
 
 ### Features in the works
 
--   Merge results-related information retrieved from different registers
-    (e.g. corresponding endpoints) for analyses across trials
+-   Merge results-related fields retrieved from different registers
+    (e.g. corresponding endpoints)
 
 -   Explore relevance to retrieve previous versions of protocol- or
     results-related information
@@ -413,11 +426,11 @@ functions of `nodbi` in a consistent way, as shown in the table:
 ### Acknowledgements
 
 -   Data providers and curators of the clinical trial registers. Please
-    review and respect their copyrights and terms and conditions
-    (`ctrOpenSearchPagesInBrowser(copyright = TRUE)`).
+    review and respect their copyrights and terms and conditions, see
+    `ctrOpenSearchPagesInBrowser(copyright = TRUE)`.
 
--   This package `ctrdata` has been made possible building on the work
-    done for [R](https://www.r-project.org/),
+-   Package `ctrdata` has been made possible building on the work done
+    for [R](https://www.r-project.org/),
     [curl](https://cran.r-project.org/package=curl),
     [httr](https://cran.r-project.org/package=httr),
     [xml2](https://cran.r-project.org/package=xml2),

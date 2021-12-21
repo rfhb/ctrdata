@@ -1058,13 +1058,19 @@ ctrLoadQueryIntoDbCtgov <- function(
   tmp <- gsub("<.*?>", " ", tmp)
   tmp <- gsub("  +", " ", tmp)
   tmp <- sub(".* (.*?) Stud(y|ies) found for.*", "\\1", tmp)
+  tmp <- sub("^No$", "0", tmp)
 
   # safeguard against no or unintended large numbers
   tmp <- suppressWarnings(as.integer(tmp))
-  if (is.na(tmp) ||
-      !length(tmp)) {
-    message("No trials or number of trials could not be determined: ", tmp)
-    return(invisible(list(n = 0L, ids = "")))
+  if (is.na(tmp) || !length(tmp) || !tmp) {
+    message("Search result page empty - no (new) trials found?")
+    return(invisible(list(
+      # return structure as in dbCTRLoadJSONFiles
+      # which is handed through to ctrLoadQueryIntoDb
+      n = 0L,
+      success = character(0L),
+      failed = character(0L),
+      queryterm = queryterm)))
   }
 
   # inform user

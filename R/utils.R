@@ -1140,6 +1140,7 @@ dbGetFieldsIntoDf <- function(fields = "",
           if ((length(names(dfi[[2]])) == 1L) && (iS == names(dfi[[2]]))) {
             dfi[[2]] <- dfi[[2]][[iS]]
           } else {
+            # TODO is this used for any field?
             tn <- sapply(dfi[[2]], names)
             if (length(unique(tn)) == 1L && (iS == tn[1]))
               dfi[[2]] <- sapply(dfi[[2]], "[[", 1)
@@ -1196,6 +1197,7 @@ dbGetFieldsIntoDf <- function(fields = "",
             ) # sapply
           }
 
+          # TODO is this used for any field?
           # simplify vectors in cells by collapsing
           # (compatibility with previous version)
           if ((length(names(dfi[[c]])) == 1L) &&

@@ -60,11 +60,11 @@ Sys.setenv(https_proxy_user = "your_userid:your_password") # if needed
 
 ## Additional installation aspects
 
-The ommand line tools `perl`, `sed` and `php` (5.2 or higher) are required for `ctrLoadQueryIntoDb()`, the main function of package `ctrdata`. No other function in this package has this requirement.
+The command line tools `perl`, `sed` and `php` (5.2 or higher) are required for `ctrLoadQueryIntoDb()`, the main function of package `ctrdata`. No other function in this package has this requirement.
 
 ### MS Windows
 
-Package `ctrdata` requires on MS Windows that the [`Cygwin`](https://cygwin.org/install.html) environment be installed, into the local directory `c:\cygwin` (or any folder corresponding to `c:\cygw*`). The installation of a minimal Cygwin environment on MS Windows can be done with the help of package `ctrdata` in R as follows: 
+For this requirement on MS Windows, the [`Cygwin`](https://cygwin.org/install.html) environment be installed, into the local directory `c:\cygwin` (or any folder corresponding to `c:\cygw*`). The installation of a minimal Cygwin environment on MS Windows can be done with the help of package `ctrdata` in R as follows: 
 
 ```{r, eval=FALSE}
 ctrdata::installCygwinWindowsDoInstall() 
@@ -82,7 +82,7 @@ If internet access requires to specify a proxy (see above):
 ctrdata::installCygwinWindowsDoInstall(proxy = "proxy.server.domain:8080") 
 ```
 
-Users who want or need to install Cygwin manually can download the setup executable from [here](https://cygwin.com/install.html). In a MS Windows command window or Powershell window, use the following command line. The parameters are explained [here](https://cygwin.com/faq/faq.html#faq.setup.cli). 
+To install Cygwin manually, download the setup executable from [here](https://cygwin.com/install.html). In a MS Windows command window or Powershell window, use the following command line. The parameters are explained [here](https://cygwin.com/faq/faq.html#faq.setup.cli). 
 
 ```{bash, eval=FALSE}
 setup-x86_64.exe --no-admin --quiet-mode --verbose --upgrade-also --root c:/cygwin 
@@ -92,9 +92,9 @@ setup-x86_64.exe --no-admin --quiet-mode --verbose --upgrade-also --root c:/cygw
 
 ### macOS, Linux and other operating systems
 
-The command line tools `perl`, `sed` and `php` (5.2 or higher) are typically installed and available by default in Linux and macOS systems. In case of issues, 
+The command line tools `perl`, `sed` and `php` (5.2 or higher) are typically installed and available by default in Linux and macOS systems. 
 
-- In macOS, [`homebrew`](https://brew.sh/) can be used to install `php` which may be needed starting from macOS 12 Monterey 
+- In macOS, [`homebrew`](https://brew.sh/) can be used to install `php` which may be needed starting from macOS 12 Monterey: first install [`homebrew`](https://brew.sh/) and then run on the command line: `brew install php`. 
 
 - In Linux, tools for installation vary by distribution (e.g., `sudo apt install php php-xml php-json`)
 
