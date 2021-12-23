@@ -1,7 +1,7 @@
 ---
 title: "Retrieve clinical trial information"
 author: "Ralf Herold"
-date: 2021-11-20
+date: 2021-12-23
 output:
   rmarkdown::pdf_document:
     toc: true
@@ -65,43 +65,40 @@ The next steps are executed in the R environment:
 
 ```{r, include=FALSE}
 q <- "https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&age=under-18&status=completed&phase=phase-one"
+clipr::write_clip(q)
 ```
 
 
 ```{r get_query_from_browser}
 q <- ctrGetQueryUrl()
-# Found search query from EUCTR.
+# * Found search query from EUCTR: query=cancer&age=under-18&status=completed&phase=phase-one
 
 q
 #                                                   query-term  query-register
 # 1 query=cancer&age=under-18&status=completed&phase=phase-one           EUCTR
 
-# To check, a browser with this query
-# is opened with this command
-ctrOpenSearchPagesInBrowser(
-  url = q
-)
+# To check, this opens a browser with the query
+ctrOpenSearchPagesInBrowser(url = q)
 ```
 
 ### Retrieve protocol-related information, transform, save to database, check
 
 ```{r execute_load_query, eval=FALSE}
-# Connect to a database and chose a table / collection
-db <- nodbi::src_sqlite(
-  dbname = "sqlite_file.sql",
-  collection = "test"
-)
-
 # Count number of trial records
 ctrLoadQueryIntoDb(
   queryterm = q,
-  only.count = TRUE,
-  con = db
+  only.count = TRUE
 )$n
 # * Found search query from EUCTR: query=cancer&age=under-18&status=completed&phase=phase-one
 # (1/3) Checking trials in EUCTR:
 # Retrieved overview, multiple records of 71 trial(s) from 4 page(s) to be downloaded
 # [1] 71
+
+# Connect to a database and chose a table / collection
+db <- nodbi::src_sqlite(
+  dbname = "sqlite_file.sql",
+  collection = "test"
+)
 
 # Retrieve records, download into database
 ctrLoadQueryIntoDb(
@@ -119,7 +116,7 @@ ctrLoadQueryIntoDb(
 # (3/3) Importing JSON records into database...
 # = Imported or updated 279 records on 71 trial(s)                
 # No history found in expected format.
-# * Updated history ("meta-info" in "test")
+# Updated history ("meta-info" in "test")
 
 # Show which queries have been downloaded into database
 dbQueryHistory(con = db)
@@ -158,18 +155,18 @@ ctrLoadQueryIntoDb(
 # * Retrieving results if available from EUCTR for 71 trials: 
 # (1/4) Downloading results (max. 10 trials in parallel):
 # 71 downloaded, extracting x x x . . . . . PDF . . . PDF . . PDF . . . PDF . x PDF . x x x . PDF . x x . . x . . . . . x . . . . PDF . . . . x x x . . . x x . PDF . . x . . . . x . . . . . . . . . . . 
-# (2/3) Converting to JSON, 53 records converted
+# (2/3) Converting to JSON, 54 records converted
 # (3/4) Importing JSON into database...
 # (4/4) Results history: not retrieved (euctrresultshistory = FALSE)
-# = Imported or updated results for 53 trials
-# * Updated history ("meta-info" in "test")
+# = Imported or updated results for 54 trials
+# Updated history ("meta-info" in "test")
 ```
 
 The download or presence of results is not recorded in `dbQueryHistory()` because the availability of results increases over time. 
 
 ## Add information from another register
 
-The same database and table / collection can be used to store (and analyse) trial information from different registers. At the moment, `ctrdata` only supports the two registers https://ClinicalTrials.Gov/ and https://ClinicalTrialsRegister.EU/. Example: 
+The same collection can be used to store (and analyse) trial information from different registers. At the moment, `ctrdata` supports three registers: https://ClinicalTrials.Gov/, https://ClinicalTrialsRegister.EU/ and https://www.ISRCTN.com/. Example: 
 
 ```{r}
 ctrLoadQueryIntoDb(
@@ -178,13 +175,13 @@ ctrLoadQueryIntoDb(
 )
 # * Found search query from CTGOV: cond=neuroblastoma&recrs=e&age=0&intr=Drug
 # (1/3) Checking trials in CTGOV:
-# Retrieved overview, records of 196 trial(s) are to be downloaded
+# Retrieved overview, records of 197 trial(s) are to be downloaded
 # Checking helper binaries: done
-# Downloading: 1.3 MB       
-# (2/3) Converting to JSON, 196 records converted
+# Downloading: 1.4 MB       
+# (2/3) Converting to JSON, 197 records converted
 # (3/3) Importing JSON records into database...
-# = Imported or updated 195 trial(s)                               
-# * Updated history ("meta-info" in "test")
+# = Imported or updated 197 trial(s)                               
+# Updated history ("meta-info" in "test")
 ```
 
 ## Add personal annotations
@@ -209,7 +206,7 @@ ctrLoadQueryIntoDb(
 # (3/3) Importing JSON records into database...
 # = Imported or updated 11 trial(s)                              
 # = Annotated retrieved records (11 records)
-# * Updated history ("meta-info" in "test")
+# Updated history ("meta-info" in "test")
 ```
 
 ## Find synonyms of active substance names
@@ -236,7 +233,7 @@ This example works with a free service [here](https://www.mongodb.com/cloud/atla
 
 ```{r remote_mongo}
 
-# Specify base uri for remote mongodb server,
+# Specify base uri for remote MongoDB server,
 #  as part of the encoded connection string
 db <- nodbi::src_mongo(
   # Note: this provides read-only access
