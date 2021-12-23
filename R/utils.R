@@ -3,6 +3,9 @@
 
 ## variable definitions
 #
+# prototype return structure
+emptyReturn <- list(n = 0L, success = NULL, failed = NULL)
+#
 # EUCTR definitions
 countriesEUCTR <- c(
   "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR",

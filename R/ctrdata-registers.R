@@ -17,7 +17,7 @@
 #' | Home page | [link](https://www.clinicaltrialsregister.eu/) | [link](https://clinicaltrials.gov/) | [link](https://www.isrctn.com/) |
 #' | About | [link](https://www.clinicaltrialsregister.eu/about.html) | [link](https://clinicaltrials.gov/ct2/about-site/background) | [link](https://www.isrctn.com/page/about) |
 #' | How to search | [link](https://www.clinicaltrialsregister.eu/doc/How_to_Search_EU_CTR.pdf) | [link](https://clinicaltrials.gov/ct2/help/how-find/advanced) | [link](https://www.isrctn.com/page/search-tips) |
-#' | Search | [link](https://www.clinicaltrialsregister.eu/ctr-search/search) | [link](https://clinicaltrials.gov/ct2/search/advanced) | [link]
+#' | Search | [link](https://www.clinicaltrialsregister.eu/ctr-search/search) | [link](https://clinicaltrials.gov/ct2/search/advanced) | [link](https://www.isrctn.com/)
 #' | Glossary | [link](https://www.clinicaltrialsregister.eu/doc/EU_Clinical_Trials_Register_Glossary.pdf)  | [link](https://clinicaltrials.gov/ct2/about-studies/glossary) | [link](https://www.who.int/clinical-trials-registry-platform/network/who-data-set) |
 #' | FAQ | [link](https://www.clinicaltrialsregister.eu/doc/EU_CTR_FAQ.pdf) | [link](https://clinicaltrials.gov/ct2/resources/pubs) | [link](https://www.isrctn.com/page/faqs) |
 #' | Expert / advanced search | [link](https://www.clinicaltrialsregister.eu/ctr-search/search) | [link](https://clinicaltrials.gov/ct2/results/refine?show_xprt=Y) | [link](https://www.isrctn.com/editAdvancedSearch) |
