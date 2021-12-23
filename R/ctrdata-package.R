@@ -1,7 +1,8 @@
 #' ctrdata: get started, connect database and function overview
 #'
-#' ctrdata package for aggregating and analysing
-#' information on clinical trials from public registers
+#' A package for aggregating and analysing
+#' information on and results from clinical trials,
+#' retrieved from public study registers
 #'
 #' @section Database connection:
 #' Package `ctrdata` retrieves trial information and stores it in a
@@ -26,7 +27,8 @@
 #'
 #' \link{ctrOpenSearchPagesInBrowser},
 #' \link{ctrLoadQueryIntoDb} (load trial records into collection),
-#' \link{ctrFindActiveSubstanceSynonyms}
+#' \link{ctrFindActiveSubstanceSynonyms}; see
+#' \link{ctrdata-registers} for details on registers and how to search
 #'
 #' @section Get a data frame from the database collection:
 #'

@@ -23,7 +23,7 @@ aggregating and analysing this information; it can be used for the
 The motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. The package
 is to be used within the [R](https://www.r-project.org/) system; this
-README was reviewed on 2021-12-21 for v1.8.0.9002.
+README was reviewed on 2021-12-23 for v1.8.0.9002.
 
 Main features:
 
@@ -176,6 +176,12 @@ library(ctrdata)
 
 ``` r
 help("ctrdata-package")
+```
+
+-   Information on trial registers that can be used with `ctrdata`:
+
+``` r
+help("ctrdata-registers")
 ```
 
 -   Open registers’ advanced search pages in browser:

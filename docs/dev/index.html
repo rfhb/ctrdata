@@ -108,7 +108,7 @@
 <li>ClinicalTrials.gov (“CTGOV”, <a href="https://clinicaltrials.gov/" class="external-link uri">https://clinicaltrials.gov/</a>)</li>
 <li>ISRCTN (<a href="https://www.isrctn.com/" class="external-link uri">https://www.isrctn.com/</a>) 🔔new in v1.6.0</li>
 </ul>
-<p>The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. The package is to be used within the <a href="https://www.r-project.org/" class="external-link">R</a> system; this README was reviewed on 2021-12-21 for v1.8.0.9002.</p>
+<p>The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. The package is to be used within the <a href="https://www.r-project.org/" class="external-link">R</a> system; this README was reviewed on 2021-12-23 for v1.8.0.9002.</p>
 <p>Main features:</p>
 <ul>
 <li><p>Protocol-related trial information is easily retrieved (downloaded): Users define a query in a register’s web interface and then use <code>ctrdata</code> to retrieve in one step all trials resulting from the query. Results-related trial information and personal annotations can be including during retrieval. Synonyms of an active substance can also be found.</p></li>
@@ -281,9 +281,14 @@ citation("ctrdata")
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/help.html" class="external-link">help</a></span><span class="op">(</span><span class="st">"ctrdata-package"</span><span class="op">)</span></code></pre></div>
 <ul>
-<li>Open registers’ advanced search pages in browser:</li>
+<li>Information on trial registers that can be used with <code>ctrdata</code>:</li>
 </ul>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/help.html" class="external-link">help</a></span><span class="op">(</span><span class="st">"ctrdata-registers"</span><span class="op">)</span></code></pre></div>
+<ul>
+<li>Open registers’ advanced search pages in browser:</li>
+</ul>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser</a></span><span class="op">(</span><span class="op">)</span>
 
 <span class="co"># Please review and respect register copyrights:</span>
@@ -294,7 +299,7 @@ citation("ctrdata")
 <li><p>Search used in this example: <a href="https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&amp;age=under-18&amp;phase=phase-one&amp;status=completed" class="external-link uri">https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&amp;age=under-18&amp;phase=phase-one&amp;status=completed</a></p></li>
 <li><p>Get address from clipboard:</p></li>
 </ul>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">q</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ctrGetQueryUrl.html">ctrGetQueryUrl</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co"># * Using clipboard content as register query URL: https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&amp;age=under-18&amp;phase=phase-one&amp;status=completed</span>
 <span class="co"># * Found search query from EUCTR: query=cancer&amp;age=under-18&amp;phase=phase-one&amp;status=completed</span>
@@ -306,7 +311,7 @@ citation("ctrdata")
 <li>Retrieve protocol-related information, transform and save to database:</li>
 </ul>
 <p>The database collection is specified first, using <code>nodbi</code> (see above for how to specify <code>PostgreSQL</code>, <code>RSQlite</code> or <code>MongoDB</code> as backend); then, trial information is retrieved and loaded into the collection:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Connect to (or newly create) an SQLite database </span>
 <span class="co"># that is stored in a file on the local system:</span>
 <span class="va">db</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">src_sqlite</a></span><span class="op">(</span>
@@ -336,7 +341,7 @@ citation("ctrdata")
 <li>Analyse</li>
 </ul>
 <p>Tabulate the status of trials that are part of an agreed paediatric development program (paediatric investigation plan, PIP):</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Get all records that have values in the fields of interest:</span>
 <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span>
   fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>
@@ -377,7 +382,7 @@ citation("ctrdata")
 <li><p>Add records from another register (CTGOV) into the same collection</p></li>
 <li><p>Search used in this example: <a href="https://clinicaltrials.gov/ct2/results?cond=neuroblastoma&amp;rslt=With&amp;recrs=e&amp;age=0&amp;intr=Drug" class="external-link uri">https://clinicaltrials.gov/ct2/results?cond=neuroblastoma&amp;rslt=With&amp;recrs=e&amp;age=0&amp;intr=Drug</a></p></li>
 </ul>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Retrieve trials from another register:</span>
 <span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span>
   queryterm <span class="op">=</span> <span class="st">"cond=neuroblastoma&amp;rslt=With&amp;recrs=e&amp;age=0&amp;intr=Drug"</span>, 
@@ -396,7 +401,7 @@ citation("ctrdata")
 <li><p>Add records from a third register (ISRCTN) into the same collection</p></li>
 <li><p>Search used in this example: <a href="https://www.isrctn.com/search?q=neuroblastoma" class="external-link uri">https://www.isrctn.com/search?q=neuroblastoma</a></p></li>
 </ul>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Retrieve trials from another register:</span>
 <span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span>
   queryterm <span class="op">=</span> <span class="st">"https://www.isrctn.com/search?q=neuroblastoma"</span>,
@@ -414,7 +419,7 @@ citation("ctrdata")
 <li>Result-related trial information</li>
 </ul>
 <p>Analyse some simple result details (see vignette for more examples):</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Get all records that have values in any of the specified fields</span>
 <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span>
   fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>
