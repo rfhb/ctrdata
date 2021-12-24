@@ -1,14 +1,17 @@
 #!/bin/sh
 
-## ralf.herold@gmx.net - 2015-08-15
+## file: euctr2ndjson.sh
+## ralf.herold@gmx.net
 ## part of https://github.com/rfhb/ctrdata
-#
+## last edited: 2021-12-23
+## used for: ctgov
+
 # note line endings are to be kept by using in
 # .gitattributes for compatibility with cygwin:
 # *.sh  text eol=lf
 # *.php text eol=lf
-#
-# time euctr2json.sh:
+
+# time euctr2ndjson.sh:
 # 2015-08-15: real 2.4 s for 221 documents: ~ 11 ms per trial (MacBookPro2011)
 # 2016-04-20: real 1.2 s for 151 documents: ~  8 ms per trial (MacBookPro2011)
 # 2016-09-11: real 1.2 s for 151 documents: ~  8 ms per trial (MacBookPro2015)

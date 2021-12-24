@@ -1,10 +1,12 @@
 <?php
 
-// file: euctr2json_results.php
+// file: euctr2ndjson_results.php
 // ralf.herold@gmx.net
 // part of https://github.com/rfhb/ctrdata
-// last edited: 2017-07-28
-// time euctr2json_results.php:
+// last edited: 2021-12-23
+// used for: euctr
+
+// time php -f euctr2ndjson_results.php:
 // 2017-07-30: 0.23s for 3 trials ~ 75 ms per trial
 // 2021-12-11: 0.34s total for 40 trials ~ 8.5 ms per trial
 
@@ -24,6 +26,9 @@ file_exists($xmlDir) or die('Directorydoes not exist: ' . $xmlDir);
 // chunk and trial counters
 $cn = 0;
 $tn = 0;
+
+// remove any ndjson files from previous runs
+array_map('unlink', glob("$xmlDir/EU_Results_*.ndjson"));
 
 // euctr format for file name is for example: "EU-CTR 2008-003606-33 v1 - Results.xml"
 // chunk size set to 20 to avoid stack overrun issues

@@ -709,7 +709,7 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
 
   # find files
   tempFiles <- dir(path = dir,
-                   pattern = ".ndjson",
+                   pattern = ".+_trials_.*.ndjson",
                    full.names = TRUE)
 
   # initialise counters

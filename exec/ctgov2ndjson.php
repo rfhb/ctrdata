@@ -1,11 +1,12 @@
 <?php
 
-// file: ctgov2json.php
+// file: ctgov2ndjson.php
 // ralf.herold@gmx.net
 // part of https://github.com/rfhb/ctrdata
-// last edited: 2021-03-20
+// last edited: 2021-12-23
 // used for: ctgov
-// time ctgov2json.php:
+
+// time php -f ctgov2ndjson.php:
 // 2016-04-20: 0.05s for 2 trials ~ 25 ms per trial
 // 2021-04-18: 1.5s for 200 trials ~ 7.5 ms per trial
 // 2021-05-07: total 0.7s for 246 trials ~ 3 ms per trial
@@ -19,10 +20,10 @@
 if ($argc <= 1) {
   die("Usage: php -n -f ctgov2json.php <directory_path_with_xml_files>\n");
 } else {
-  $testXmlFile = $argv[1];
+  $xmlDir = $argv[1];
 }
 
-file_exists($testXmlFile) or die('Directory does not exist: ' . $testXmlFile);
+file_exists($xmlDir) or die('Directory does not exist: ' . $xmlDir);
 
 // get UTC date, time in format corresponding to the
 // R default for format methods: "%Y-%m-%d %H:%M:%S"
@@ -32,8 +33,11 @@ $dt = gmdate("Y-m-d H:i:s");
 $cn = 0;
 $tn = 0;
 
+// remove any ndjson files from previous runs
+array_map('unlink', glob("$xmlDir/ctgov_trials_*.ndjson"));
+
 // chunk size set to 25 to avoid stack overrun issues and to mirror euctr
-foreach (array_chunk(glob("$testXmlFile/NCT*.xml"), 25) as $chunkFileNames) {
+foreach (array_chunk(glob("$xmlDir/NCT*.xml"), 25) as $chunkFileNames) {
 
   $cn = $cn + 1;
 
@@ -73,7 +77,7 @@ foreach (array_chunk(glob("$testXmlFile/NCT*.xml"), 25) as $chunkFileNames) {
     $simpleXml = simplexml_load_string($fileContents, 'SimpleXMLElement', LIBXML_COMPACT | LIBXML_NOBLANKS | LIBXML_NOENT);
 
     // save all in concatenated file per chunk
-    file_put_contents("$testXmlFile/NCT_" . $cn . ".ndjson", json_encode($simpleXml) . "\n", FILE_APPEND | LOCK_EX);
+    file_put_contents("$xmlDir/ctgov_trials_" . $cn . ".ndjson", json_encode($simpleXml) . "\n", FILE_APPEND | LOCK_EX);
 
     // increment trial counter
     $tn = $tn + 1;

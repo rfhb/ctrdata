@@ -1,10 +1,12 @@
 <?php
 
-// file: isrctn2json.php
+// file: isrctn2ndjson.php
 // ralf.herold@gmx.net
 // part of https://github.com/rfhb/ctrdata
-// last edited: 2021-04-24
+// last edited: 2021-12-23
 // used for: isrctn
+
+// time php -f isrctn2ndjson.php:
 // 2021-12-11: total 0.7 s for 540 trials ~ 1.3 ms per trial
 
 // note line endings are to be kept by using in
@@ -15,15 +17,18 @@
 if ($argc <= 1) {
 	die("Usage: php -n -f isrctn2json.php <directory_path_with_xml_files>\n");
 } else {
-	$testXmlFile = $argv[1];
+	$xmlDir = $argv[1];
 }
 
 // check infile
-$inFileName = "$testXmlFile/isrctn.xml";
+$inFileName = "$xmlDir/isrctn.xml";
 file_exists($inFileName) or die('Directory does not exist: ' . $inFileName);
-$outFileName = "$testXmlFile/isrctn_out.xml";
+$outFileName = "$xmlDir/isrctn_out.xml";
 
-// get UTC date, time in format correspondsing to the
+// remove any ndjson files from previous runs
+array_map('unlink', glob("$xmlDir/isrctn_trials_*.ndjson"));
+
+// get UTC date, time in format corresponding to the
 // R default for format methods: "%Y-%m-%d %H:%M:%S"
 $dt = gmdate("Y-m-d H:i:s");
 
@@ -62,7 +67,7 @@ $simpleXml = simplexml_load_file($outFileName, 'SimpleXMLElement', LIBXML_COMPAC
 $i = 0;
 foreach ($simpleXml->children('http://www.67bricks.com/isrctn')->fullTrial as $trial) {
   $i = $i + 1;
-  file_put_contents($testXmlFile . "/isrctn_trial.ndjson", json_encode($trial->trial) . "\n", FILE_APPEND | LOCK_EX);
+  file_put_contents($xmlDir . "/isrctn_trials_.ndjson", json_encode($trial->trial) . "\n", FILE_APPEND | LOCK_EX);
 }
 
 // return value for import
