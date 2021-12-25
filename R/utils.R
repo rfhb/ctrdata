@@ -362,6 +362,8 @@ ctrGetQueryUrl <- function(
               "search results, click 'Return to List' in browser and use ",
               "this as 'url'.")
     }
+    # expert search page
+    queryterm <- sub(".*/ct2/results/refine[?](.*)", "\\1", queryterm)
     # search results page
     queryterm <- sub(".*/ct2/results[?](.*)", "\\1", queryterm)
     # other results page
@@ -372,7 +374,6 @@ ctrGetQueryUrl <- function(
     queryterm <- sub("&[a-z_0-9]+=$", "", queryterm)
     # correct naked terms
     queryterm <- sub(
-      # "(^|&|[&]?\\w+=\\w+&)(\\w+|[NCT0-9-]+)($|&\\w+=\\w+)",
       "(^|&|[&]?\\w+=\\w+&)(\\w+|[a-zA-z0-9+-.:]+)($|&\\w+=\\w+)",
       "\\1term=\\2\\3", queryterm)
     #

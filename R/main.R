@@ -181,10 +181,10 @@ ctrLoadQueryIntoDb <- function(
     }
 
     ## sanity checks
-    if (grepl("[^.a-zA-Z0-9=+&%_:\"/, -]",
+    if (grepl("[^.a-zA-Z0-9=?+&%_:\"/, -]",
               gsub("\\[", "", gsub("\\]", "", queryterm)))) {
       stop("Parameter 'queryterm' has unexpected characters: ",
-           queryterm, ", expected are: a-zA-Z0-9=+&%_-,.: []/\"",
+           queryterm, ", expected are: a-zA-Z0-9=?+&%_-,.: []/\"",
            call. = FALSE)
     }
 
