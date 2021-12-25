@@ -356,15 +356,18 @@ result <- dbGetFieldsIntoDf(
 
 # Transform all fields into long name - value format
 result <- dfTrials2Long(df = result)
-# Total 6214 rows, 12 unique names of variables
+# Total 6386 rows, 12 unique names of variables
 
 # [1.] get counts of subjects for all arms into data frame
-# This count is in the group that has "Total" in its name
+# This count is in the group where either its title or its 
+# description starts with "Total"
 nsubj <- dfName2Value(
   df = result, 
   valuename = "clinical_results.baseline.analyzed_list.analyzed.count_list.count.value",
-  wherename = "clinical_results.baseline.group_list.group.title",
-  wherevalue = "Total"
+  wherename = paste0(
+    "clinical_results.baseline.group_list.group.title|", 
+    "clinical_results.baseline.group_list.group.description"),
+  wherevalue = "^Total"
 )
 
 # [2.] count number of sites
@@ -411,7 +414,10 @@ ggplot(data = nset) +
       y = value.x,
       colour = value.y == "Randomized")) + 
   scale_x_log10() + 
-  scale_y_log10() 
+  scale_y_log10() +
+  xlab("Number of sites") + 
+  ylab("Total number of subjects") + 
+  labs(colour = "Randomised?")
 ggsave(filename = "man/figures/README-ctrdata_results_neuroblastoma.png",
        width = 5, height = 3, units = "in")
 ```
@@ -421,13 +427,16 @@ trials](https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/dev/reference
 
 ## Meta
 
-### Features in the works
+### Additional features under consideration
+
+-   Retrieve previous versions of protocol- or results-related
+    information. The challenge is that, apparently, initial versions
+    cannot be queried and historical versions can only be retrieved
+    one-by-one and not in structured format.
 
 -   Merge results-related fields retrieved from different registers
-    (e.g. corresponding endpoints)
-
--   Explore relevance to retrieve previous versions of protocol- or
-    results-related information
+    (e.g., corresponding endpoints). The challenge is the incomplete
+    congruency and different structure of fields.
 
 ### Acknowledgements
 
