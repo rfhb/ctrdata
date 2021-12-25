@@ -2076,9 +2076,12 @@ typeField <- function(dfi) {
   dfi[grepl("^N/?A$|^ND$", dfi[, 2]), 2] <- NA
   # - give Month Year also a Day to work with as.Date
   dfi[, 2] <- sub("^([a-zA-Z]+) ([0-9]{4})$", "\\1 15, \\2", dfi[, 2])
-  # - convert html entities
-  if (any(grepl("&[a-z]+;", dfi[, 2]))) dfi[, 2] <- sapply(
+  # - convert html entities because these had to
+  #   be left intact when converting to ndjson
+  if (any(grepl("&[#a-zA-Z]+;", dfi[, 2]))) dfi[, 2] <- sapply(
     dfi[, 2], function(i) xml2::xml_text(xml2::read_html(charToRaw(i))))
+  # - convert newline
+  dfi[, 2] <- gsub("\r", "\n", dfi[, 2])
 
   # for date time conversion
   lct <- Sys.getlocale("LC_TIME")
