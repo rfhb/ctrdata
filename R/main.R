@@ -202,13 +202,10 @@ ctrLoadQueryIntoDb <- function(
   # initialise variable that is filled if an update is to be made
   queryupdateterm <- ""
 
-  # prototype return structure
-  emptyReturn <- list(n = 0L, success = NULL, failed = NULL)
-
   ## handle if we need to rerun previous query
 
   # check if parameters are consistent
-  if ((querytoupdate > 0) &&
+  if (!(querytoupdate == 0L) &&
       (!is.atomic(queryterm) || queryterm != "")) {
     stop("'queryterm' and 'querytoupdate' specified,",
          " which is inconsistent, cannot continue",
@@ -217,7 +214,7 @@ ctrLoadQueryIntoDb <- function(
 
   # rewrite parameters for running as update
   querytermoriginal <- queryterm
-  if (querytoupdate > 0) {
+  if (!(querytoupdate == 0L)) {
     #
     rerunparameters <- ctrRerunQuery(
       querytoupdate = querytoupdate,
@@ -231,6 +228,10 @@ ctrLoadQueryIntoDb <- function(
     queryupdateterm   <- rerunparameters$queryupdateterm
     queryterm         <- rerunparameters$queryterm
     register          <- rerunparameters$register
+    failed            <- rerunparameters$failed
+    #
+    # early exit if ctrRerunQuery failed
+    if (failed) return(invisible(emptyReturn))
     #
   } # if querytermtoupdate
 
@@ -368,6 +369,7 @@ ctrRerunQuery <- function(
   con <- ctrDb(con = con)
 
   ## prepare
+  failed <- FALSE
 
   # get history
   rerunquery <- dbQueryHistory(con = con,
@@ -486,7 +488,7 @@ ctrRerunQuery <- function(
       # bydates?query=cancer&age=children"
 
       # check if update request is in time window of the register (7 days)
-      if (difftime(Sys.Date(), initialday, units = "days") > 7) {
+      if (difftime(Sys.Date(), initialday, units = "days") > 7L) {
         #
         warning("'querytoupdate=", querytoupdate, "' not possible because ",
                 "it was last run more than 7 days ago and the register ",
@@ -514,7 +516,7 @@ ctrRerunQuery <- function(
         # check plausibility
         if (inherits(resultsRss, "try-error")) {
           message("Download from EUCTR failed; last error: ", class(resultsRss))
-          return(invisible(emptyReturn))
+          failed <- TRUE
         }
 
         # inform user
@@ -527,36 +529,38 @@ ctrRerunQuery <- function(
         #
         if (length(resultsRssTrials) == 1L &&
             resultsRssTrials == -1L) {
+          # inform user
           message("First result page empty - no (new) trials found?")
-          return(invisible(emptyReturn))
+          failed <- TRUE
+          #
+        } else {
+          # new trials found, construct
+          # differential query to run
+          resultsRssTrials <- vapply(
+            resultsRssTrials, FUN = function(x)
+              substr(resultsRss, x + 15, x + 28), character(1L))
+          #
+          resultsRssTrials <- paste0(
+            "query=",
+            paste(
+              resultsRssTrials,
+              collapse = "+OR+"))
+          #
+          if (verbose) message("DEBUG (rss trials): ", resultsRssTrials)
+          #
+          # run query for extracted euctr number(s)
+          # store original query in update term
+          queryupdateterm <- queryterm
+          queryterm <- resultsRssTrials
+          #
+          if (verbose) {
+            message("DEBUG: Updating using this queryterm: ",
+                    queryupdateterm)
+          }
+          #
+          message("Rerunning query: ", queryupdateterm,
+                  "\nLast run: ", initialday)
         }
-        #
-        # if new trials found, construct
-        # differential query to run
-        resultsRssTrials <- vapply(
-          resultsRssTrials, FUN = function(x)
-            substr(resultsRss, x + 15, x + 28), character(1L))
-        #
-        resultsRssTrials <- paste0(
-          "query=",
-          paste(
-            resultsRssTrials,
-            collapse = "+OR+"))
-        #
-        if (verbose) message("DEBUG (rss trials): ", resultsRssTrials)
-        #
-        # run query for extracted euctr number(s)
-        # store original query in update term
-        queryupdateterm <- queryterm
-        queryterm <- resultsRssTrials
-        #
-        if (verbose) {
-          message("DEBUG: Updating using this queryterm: ",
-                  queryupdateterm)
-        }
-        #
-        message("Rerunning query: ", queryupdateterm,
-                "\nLast run: ", initialday)
         #
       }
     } # register euctr
@@ -604,12 +608,12 @@ ctrRerunQuery <- function(
   } # forcetoupdate
 
   ## return main parameters needed
-  return(data.frame(
+  return(list(
     "querytermoriginal" = querytermoriginal,
     "queryupdateterm"   = queryupdateterm,
     "queryterm"         = queryterm,
     "register"          = register,
-    stringsAsFactors = FALSE))
+    "failed"            = failed))
 
 } # end ctrRerunQuery
 

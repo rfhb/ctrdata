@@ -185,7 +185,7 @@ expect_message(
 expect_true(tmpTest$n >= 0L)
 
 # test
-expect_true(is.character(tmpTest$success))
+expect_true(is.character(tmpTest$success) | is.null(tmpTest$success))
 rm(tmpTest, q, hist, json, date.from, date.to, date.today)
 
 #### ctrLoadQueryIntoDb results ####
@@ -662,7 +662,7 @@ expect_true(length(tmpr) <= length(tmpf))
 expect_true(tmpc[["character"]] > 150)
 expect_true(tmpc[["Date"]]      >  10)
 expect_true(tmpc[["integer"]]   >   5)
-expect_true(tmpc[["list"]]      >  20)
+expect_true(tmpc[["list"]]      >  15)
 expect_true(tmpc[["logical"]]   >  50)
 
 # clean up
