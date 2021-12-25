@@ -432,15 +432,18 @@ citation("ctrdata")
 
 <span class="co"># Transform all fields into long name - value format</span>
 <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dfTrials2Long.html">dfTrials2Long</a></span><span class="op">(</span>df <span class="op">=</span> <span class="va">result</span><span class="op">)</span>
-<span class="co"># Total 6214 rows, 12 unique names of variables</span>
+<span class="co"># Total 6386 rows, 12 unique names of variables</span>
 
 <span class="co"># [1.] get counts of subjects for all arms into data frame</span>
-<span class="co"># This count is in the group that has "Total" in its name</span>
+<span class="co"># This count is in the group where either its title or its </span>
+<span class="co"># description starts with "Total"</span>
 <span class="va">nsubj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dfName2Value.html">dfName2Value</a></span><span class="op">(</span>
   df <span class="op">=</span> <span class="va">result</span>, 
   valuename <span class="op">=</span> <span class="st">"clinical_results.baseline.analyzed_list.analyzed.count_list.count.value"</span>,
-  wherename <span class="op">=</span> <span class="st">"clinical_results.baseline.group_list.group.title"</span>,
-  wherevalue <span class="op">=</span> <span class="st">"Total"</span>
+  wherename <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span>
+    <span class="st">"clinical_results.baseline.group_list.group.title|"</span>, 
+    <span class="st">"clinical_results.baseline.group_list.group.description"</span><span class="op">)</span>,
+  wherevalue <span class="op">=</span> <span class="st">"^Total"</span>
 <span class="op">)</span>
 
 <span class="co"># [2.] count number of sites</span>
@@ -487,7 +490,10 @@ citation("ctrdata")
       y <span class="op">=</span> <span class="va">value.x</span>,
       colour <span class="op">=</span> <span class="va">value.y</span> <span class="op">==</span> <span class="st">"Randomized"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu">scale_x_log10</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu">scale_y_log10</span><span class="op">(</span><span class="op">)</span> 
+  <span class="fu">scale_y_log10</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">xlab</span><span class="op">(</span><span class="st">"Number of sites"</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu">ylab</span><span class="op">(</span><span class="st">"Total number of subjects"</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu">labs</span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"Randomised?"</span><span class="op">)</span>
 <span class="fu">ggsave</span><span class="op">(</span>filename <span class="op">=</span> <span class="st">"man/figures/README-ctrdata_results_neuroblastoma.png"</span>,
        width <span class="op">=</span> <span class="fl">5</span>, height <span class="op">=</span> <span class="fl">3</span>, units <span class="op">=</span> <span class="st">"in"</span><span class="op">)</span></code></pre></div>
 <div class="figure">
@@ -498,11 +504,11 @@ citation("ctrdata")
 <h2 id="meta">Meta<a class="anchor" aria-label="anchor" href="#meta"></a>
 </h2>
 <div class="section level3">
-<h3 id="features-in-the-works">Features in the works<a class="anchor" aria-label="anchor" href="#features-in-the-works"></a>
+<h3 id="additional-features-under-consideration">Additional features under consideration<a class="anchor" aria-label="anchor" href="#additional-features-under-consideration"></a>
 </h3>
 <ul>
-<li><p>Merge results-related fields retrieved from different registers (e.g. corresponding endpoints)</p></li>
-<li><p>Explore relevance to retrieve previous versions of protocol- or results-related information</p></li>
+<li><p>Retrieve previous versions of protocol- or results-related information. The challenge is that, apparently, initial versions cannot be queried and historical versions can only be retrieved one-by-one and not in structured format.</p></li>
+<li><p>Merge results-related fields retrieved from different registers (e.g., corresponding endpoints). The challenge is the incomplete congruency and different structure of fields.</p></li>
 </ul>
 </div>
 <div class="section level3">
