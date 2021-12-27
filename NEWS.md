@@ -1,10 +1,11 @@
 # ctrdata 1.8.0.9002
- - 2021-12-20
+ - 2021-12-27
  - chunked trial batches in ndjson files for accelerated database import
  - if package dplyr is loaded, functions return a tibble instead of a data frame
  - dbFindFields() returns a vector of fields which now has as names the register in which a field occurs
  - accelerated binary checks (cygwin / Windows)
  - remove internet proxy mangling in order to use system configuration (e.g., transparent proxies used, or environment variable https_proxy specified by user)
+ - refactored internal caching
  - correct dbGetFieldsIntoDf() for specific nested data structures
  - correct dfTrials2Long() for specific fields
 

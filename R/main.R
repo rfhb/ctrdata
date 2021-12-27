@@ -331,14 +331,6 @@ ctrLoadQueryIntoDb <- function(
                           con = con,
                           verbose = verbose)
 
-  # invalidate any cached list of keys in collection
-  if (exists(".dbffenv")) {
-    suppressWarnings({
-      remove(list = paste0(con$db, "/", con$collection),
-             envir = .dbffenv)
-    })
-  }
-
   # add metadata
   imported <- addMetaData(x = imported, con = con)
 

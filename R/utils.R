@@ -26,6 +26,44 @@ regIsrctn <- "[1-9][0-9]{7}"
 registerList <- c("EUCTR", "CTGOV", "ISRCTN")
 
 
+
+#' Check, write, read cache object for ctrdata
+#'
+#' @param xname name of variable to read or write
+#'
+#' @param xvalue value of variable to write
+#'
+#' @param verbose set to `TRUE` to print debug info
+#'
+#' @keywords internal
+#'
+#' @return value of variable or `NULL` if variable does not exist
+#'
+ctrCache <- function(xname, xvalue = NULL, verbose = FALSE) {
+
+  # hidden environment .ctrdataenv created in onload.R
+
+  # write or overwrite and exit early
+  if (!is.null(xvalue)) {
+    assign(x = xname, value = xvalue, envir = .ctrdataenv)
+    if (verbose) message(" wrote ", xname, " to cache ")
+    return(xvalue)
+  }
+
+  # check and ready any value for variable
+  if (verbose) message(" accessing cache...", appendLF = FALSE)
+  if (exists(x = xname, envir = .ctrdataenv)) {
+    tmp <- try(get(x = xname, envir = .ctrdataenv), silent = TRUE)
+    if (inherits(tmp, "try-error")) return(NULL)
+    if (verbose) message("\b\b\b, returning ", xname, " ", appendLF = FALSE)
+    return(tmp)
+  }
+
+  # default
+  return(NULL)
+}
+
+
 #' Check and prepare nodbi connection object for ctrdata
 #'
 #' @param con \strong{A connection object, see section
@@ -615,24 +653,22 @@ dbFindFields <- function(namepart = "",
   ## check database connection
   if (is.null(con$ctrDb)) con <- ctrDb(con = con)
 
-  ## check if cache for list of keys in collection exists,
-  # otherwise create new environment as session cache
-  if (!exists(".dbffenv")) {
-    .dbffenv <- new.env(parent = emptyenv())
-  }
-
   ## check if cache environment has entry for the database
-  if (exists(x = paste0(con$db, "/", con$collection),
-             envir = .dbffenv)) {
+  keyslist <- ctrCache(xname = paste0("keyslist_", con$db, "/", con$collection),
+                       verbose = verbose)
 
-    # if true, get keys list from cache
-    keyslist <- get(x = paste0(con$db, "/", con$collection),
-                    envir = .dbffenv)
+  ## get cache reference value
+  cacheRef <- as.character(rev(unlist(try(nodbi::docdb_query(
+    src = con, key = con$collection, query = '{"_id": "meta-info"}',
+    fields = '{"queries.query-timestamp": 1}'), silent = TRUE)))[1])
 
-    # informing user
-    message("Using cache of fields.")
+  ## invalidate cache
+  cacheOutdated <- is.null(keyslist) || (cacheRef != ctrCache(
+    xname = paste0("keyslist_", con$db, "/", con$collection, "_timestamp"),
+    verbose = verbose))
 
-  } else {
+  ## get keyslist
+  if (cacheOutdated) {
 
     # inform user
     message("Finding fields in database (may take some time)")
@@ -686,13 +722,20 @@ dbFindFields <- function(namepart = "",
 
     ## store keyslist to environment (cache)
     if (length(keyslist) > 1) {
-      assign(x = paste0(con$db, "/", con$collection),
-             value = keyslist,
-             envir = .dbffenv)
+      ctrCache(
+        xname = paste0("keyslist_", con$db, "/", con$collection),
+        xvalue = keyslist, verbose = verbose)
+      ctrCache(
+        xname = paste0("keyslist_", con$db, "/", con$collection, "_timestamp"),
+        xvalue = cacheRef, verbose = verbose)
       message("Field names cached for this session.")
     }
 
-  } # end get cached list or generate new list
+  } else {
+
+    message("Using cache of fields.")
+
+  } # generate keyslist
 
   ## inform user of unexpected situation
   if ((length(keyslist) == 0) || all(keyslist == "")) {
@@ -755,7 +798,7 @@ dbFindIdsUniqueTrials <- function(
   prefermemberstate = "GB",
   include3rdcountrytrials = TRUE,
   con,
-  verbose = TRUE) {
+  verbose = FALSE) {
 
   # parameter checks
   if (!all(preferregister %in% registerList)) {
@@ -778,7 +821,6 @@ dbFindIdsUniqueTrials <- function(
 
   # inform user
   message("Searching for duplicate trials... ")
-  message(" - Getting trial ids...", appendLF = FALSE)
 
   # fields for database query
   fields <- c(
@@ -797,23 +839,57 @@ dbFindIdsUniqueTrials <- function(
     "isrctn"
   )
 
-  # get identifiers
-  listofIds <- try(suppressMessages(suppressWarnings(
-    dbGetFieldsIntoDf(
-      fields = fields,
-      con = con,
-      verbose = FALSE,
-      stopifnodata = FALSE)
-  )),
-  silent = TRUE
-  )
+  # check if cache environment has entry for the database
+  listofIds <- ctrCache(
+    xname = paste0("listofids_", con$db, "/", con$collection),
+                   verbose = verbose)
 
-  # error check
-  if (inherits(listofIds, "try-error") ||
-      !length(listofIds) || !nrow(listofIds)) {
-    stop("No records found, check collection '", con$collection, "'",
-         call. = FALSE)
-  }
+  # get cache reference value
+  cacheRef <- as.character(rev(unlist(try(nodbi::docdb_query(
+    src = con, key = con$collection, query = '{"_id": "meta-info"}',
+    fields = '{"queries.query-timestamp": 1}'), silent = TRUE)))[1])
+
+  # cache validity
+  cacheOutdated <- is.null(listofIds) || (cacheRef != ctrCache(
+    xname = paste0("listofids_", con$db, "/", con$collection, "_timestamp"),
+    verbose = verbose))
+
+  # inform user
+  message(" - Getting trial ids...", appendLF = FALSE)
+
+  # cache outdated
+  if (cacheOutdated) {
+
+    # inform user
+    message("\b\b\b (may take some time)...", appendLF = FALSE)
+
+    # get identifiers
+    listofIds <- try(suppressMessages(suppressWarnings(
+      dbGetFieldsIntoDf(
+        fields = fields,
+        con = con,
+        verbose = FALSE,
+        stopifnodata = FALSE)
+    )),
+    silent = TRUE
+    )
+
+    # error check
+    if (inherits(listofIds, "try-error") ||
+        !length(listofIds) || !nrow(listofIds)) {
+      stop("No records found, check collection '", con$collection, "'",
+           call. = FALSE)
+    }
+
+    # write cache entries
+    ctrCache(
+      xname = paste0("listofids_", con$db, "/", con$collection),
+      xvalue = listofIds, verbose = verbose)
+    ctrCache(
+      xname = paste0("listofids_", con$db, "/", con$collection, "_timestamp"),
+      xvalue = cacheRef, verbose = verbose)
+
+  } # if outdated
 
   # inform user
   message("\b\b\b, ", nrow(listofIds), " found in collection")
@@ -980,9 +1056,7 @@ dbFindIdsUniqueTrials <- function(
   attributes(listofIds) <- attribsids[grepl("^ctrdata-", names(attribsids))]
 
   # avoid returning list() if none found
-  if (length(listofIds) == 0) {
-    listofIds <- character()
-  }
+  if (length(listofIds) == 0) listofIds <- character()
 
   # inform user
   message(" - Keeping ", paste0(countIds, collapse = " / "), " records",
@@ -992,7 +1066,7 @@ dbFindIdsUniqueTrials <- function(
     " records in collection \"", con$collection, "\"")
 
   # return
-  return(listofIds)
+  return(sort(listofIds))
 
 }
 # end dbFindIdsUniqueTrials
@@ -2530,11 +2604,6 @@ checkBinary <- function(b = NULL, verbose = FALSE) {
                "perl not found, ctrLoadQueryIntoDb() will not work ")
   )
 
-  # check private environment and create if not found
-  if (!exists(x = ".dbffenv", mode = "environment")) {
-    .dbffenv <- new.env(parent = emptyenv())
-  }
-
   # if input empty, just check all except test
   if (is.null(b)) b <- names(actionsInfos)[-1]
 
@@ -2546,16 +2615,15 @@ checkBinary <- function(b = NULL, verbose = FALSE) {
     if (is.null(actionsInfo)) stop("Unknown binary to check: ", bi, call. = FALSE)
 
     # previously checked and successful?
-    checked <- exists(x = paste0("bin_check_", bi), envir = .dbffenv)
-    if (checked) checked <- get(x = paste0("bin_check_", bi), envir = .dbffenv)
-    if (checked) return(TRUE)
+    checked <- ctrCache(xname = paste0("bin_check_", bi))
+    if (!is.null(checked) && checked) return(TRUE)
 
     # continue to check binary
     ok <- checkCommand(commandtest = actionsInfo[1], verbose = verbose)
     if (!ok) message("\n", actionsInfo[2], appendLF = FALSE)
 
     # store check to private environment
-    assign(x = paste0("bin_check_", bi), value = ok, envir = .dbffenv)
+    ctrCache(xname = paste0("bin_check_", bi), xvalue = ok)
 
     # return
     ok
