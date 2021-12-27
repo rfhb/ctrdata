@@ -8,6 +8,7 @@
  - refactored internal caching
  - correct dbGetFieldsIntoDf() for specific nested data structures
  - correct dfTrials2Long() for specific fields
+ - correct dbFindIdsUniqueTrials() when only single trial in any register
 
 # ctrdata 1.8.0.9001
  - 2021-12-11
