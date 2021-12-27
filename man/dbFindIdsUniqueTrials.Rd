@@ -9,7 +9,7 @@ dbFindIdsUniqueTrials(
   prefermemberstate = "GB",
   include3rdcountrytrials = TRUE,
   con,
-  verbose = TRUE
+  verbose = FALSE
 )
 }
 \arguments{

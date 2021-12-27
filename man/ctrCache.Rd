@@ -4,7 +4,7 @@
 \alias{ctrCache}
 \title{Check, write, read cache object for ctrdata}
 \usage{
-ctrCache(xname, xvalue = NULL, verbose = TRUE)
+ctrCache(xname, xvalue = NULL, verbose = FALSE)
 }
 \arguments{
 \item{xname}{name of variable to read or write}

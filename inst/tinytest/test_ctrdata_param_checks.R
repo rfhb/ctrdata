@@ -2,6 +2,7 @@
 
 #### SETUP ####
 source("setup_ctrdata.R")
+if (!checkSqlite()) exit_file("Reason: no SQLite")
 
 ## test function
 tf <- function() {

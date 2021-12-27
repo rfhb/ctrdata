@@ -23,7 +23,7 @@ aggregating and analysing this information; it can be used for the
 The motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. The package
 is to be used within the [R](https://www.r-project.org/) system; this
-README was reviewed on 2021-12-23 for v1.8.0.9002.
+README was reviewed on 2021-12-27 for v1.8.0.9002.
 
 Main features:
 
@@ -68,7 +68,7 @@ citation("ctrdata")
 
 ## Installation
 
-### 1. Install package in R
+### 1. Install package `ctrdata` in R
 
 Package `ctrdata` is [on
 CRAN](https://cran.r-project.org/package=ctrdata) and [on
@@ -91,7 +91,8 @@ These commands also install the package dependencies, which are `nodbi`,
 ### 2. Command line tools `perl`, `sed` and `php` (5.2 or higher)
 
 These are required for `ctrLoadQueryIntoDb()`, the main function of
-package `ctrdata`.
+package `ctrdata` (see [Example workflow](#example-workflow)); the
+function also checks if the tools can be used.
 
 -   For MS Windows, install [`Cygwin`](https://cygwin.org/install.html):
     In `R`, run `ctrdata::installCygwinWindowsDoInstall()` for an
@@ -100,9 +101,10 @@ package `ctrdata`.
     `c:\cygwin`. The installation needs about 160 MB disk space; no
     administrator credentials needed.
 
--   In macOS including 11 Big Sur, these are already installed; 🔔for
-    macOS 12 Monterey and in case of errors,
-    [`homebrew`](https://brew.sh/) can be used to install `php`.
+-   In macOS including 11 Big Sur, these are already installed; as
+    alternative and 🔔for macOS 12 Monterey,
+    [`homebrew`](https://brew.sh/) can be used: `brew install php`,
+    which seems to include the libraries required for `ctrdata`.
 
 -   In Linux, these are usually already installed; tools for
     installation vary by distribution (e.g.,
@@ -120,22 +122,22 @@ package `ctrdata`.
 ## Overview of functions in `ctrdata`
 
 The functions are listed in the approximate order of use in a user’s
-workflow.
+workflow (in bold, main functions).
 
-| Function name                      | Function purpose                                                                                                           |
-|------------------------------------|----------------------------------------------------------------------------------------------------------------------------|
-| `ctrOpenSearchPagesInBrowser()`    | Open search pages of registers or execute search in web browser                                                            |
-| `ctrFindActiveSubstanceSynonyms()` | Find synonyms and alternative names for an active substance                                                                |
-| `ctrGetQueryUrl()`                 | Import from clipboard the URL of a search in one of the registers                                                          |
-| `ctrLoadQueryIntoDb()`             | Retrieve (download) or update, and annotate, information on trials from a register and store in a collection in a database |
-| `dbQueryHistory()`                 | Show the history of queries that were downloaded into the collection                                                       |
-| `dbFindIdsUniqueTrials()`          | Get the identifiers of de-duplicated trials in the collection                                                              |
-| `dbFindFields()`                   | Find names of variables (fields) in the collection                                                                         |
-| `dbGetFieldsIntoDf()`              | Create a data.frame from trial records in the database with the specified fields                                           |
-| `dfTrials2Long()` 🔔                | Transform the data.frame from `dbGetFieldsIntoDf()` into a long name-value data.frame, including deeply nested fields      |
-| `dfName2Value()` 🔔                 | From a long name-value data.frame, extract values for variables (fields) of interest (e.g., endpoints)                     |
-| `dfMergeTwoVariablesRelevel()`     | Merge two simple variables into a new variable, optionally map values to a new set of values                               |
-| `installCygwinWindowsDoInstall()`  | Convenience function to install a Cygwin environment (MS Windows only)                                                     |
+| Function name                      | Function purpose                                                                                                               |
+|------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
+| `ctrOpenSearchPagesInBrowser()`    | Open search pages of registers or execute search in web browser                                                                |
+| `ctrFindActiveSubstanceSynonyms()` | Find synonyms and alternative names for an active substance                                                                    |
+| `ctrGetQueryUrl()`                 | Import from clipboard the URL of a search in one of the registers                                                              |
+| `ctrLoadQueryIntoDb()`             | **Retrieve (download) or update, and annotate, information on trials from a register and store in a collection in a database** |
+| `dbQueryHistory()`                 | Show the history of queries that were downloaded into the collection                                                           |
+| `dbFindIdsUniqueTrials()`          | **Get the identifiers of de-duplicated trials in the collection**                                                              |
+| `dbFindFields()`                   | Find names of variables (fields) in the collection                                                                             |
+| `dbGetFieldsIntoDf()`              | **Create a data.frame from trial records in the database with the specified fields**                                           |
+| `dfTrials2Long()`                  | Transform the data.frame from `dbGetFieldsIntoDf()` into a long name-value data.frame, including deeply nested fields          |
+| `dfName2Value()`                   | From a long name-value data.frame, extract values for variables (fields) of interest (e.g., endpoints)                         |
+| `dfMergeTwoVariablesRelevel()`     | Merge two simple variables into a new variable, optionally map values to a new set of values                                   |
+| `installCygwinWindowsDoInstall()`  | Convenience function to install a Cygwin environment (MS Windows only)                                                         |
 
 If package `dplyr` is loaded, a tibble is returned instead of a
 data.frame.
