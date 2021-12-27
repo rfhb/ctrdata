@@ -108,7 +108,7 @@
 <li>ClinicalTrials.gov (“CTGOV”, <a href="https://clinicaltrials.gov/" class="external-link uri">https://clinicaltrials.gov/</a>)</li>
 <li>ISRCTN (<a href="https://www.isrctn.com/" class="external-link uri">https://www.isrctn.com/</a>) 🔔new in v1.6.0</li>
 </ul>
-<p>The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. The package is to be used within the <a href="https://www.r-project.org/" class="external-link">R</a> system; this README was reviewed on 2021-12-23 for v1.8.0.9002.</p>
+<p>The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. The package is to be used within the <a href="https://www.r-project.org/" class="external-link">R</a> system; this README was reviewed on 2021-12-27 for v1.8.0.9002.</p>
 <p>Main features:</p>
 <ul>
 <li><p>Protocol-related trial information is easily retrieved (downloaded): Users define a query in a register’s web interface and then use <code>ctrdata</code> to retrieve in one step all trials resulting from the query. Results-related trial information and personal annotations can be including during retrieval. Synonyms of an active substance can also be found.</p></li>
@@ -126,7 +126,7 @@ citation("ctrdata")
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <div class="section level3">
-<h3 id="1-install-package-in-r">1. Install package in R<a class="anchor" aria-label="anchor" href="#1-install-package-in-r"></a>
+<h3 id="1-install-package-ctrdata-in-r">1. Install package <code>ctrdata</code> in R<a class="anchor" aria-label="anchor" href="#1-install-package-ctrdata-in-r"></a>
 </h3>
 <p>Package <code>ctrdata</code> is <a href="https://cran.r-project.org/package=ctrdata" class="external-link">on CRAN</a> and <a href="https://github.com/rfhb/ctrdata" class="external-link">on GitHub</a>. Within <a href="https://www.r-project.org/" class="external-link">R</a>, use the following commands to install package <code>ctrdata</code>:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -141,10 +141,10 @@ citation("ctrdata")
 <div class="section level3">
 <h3 id="2-command-line-tools-perl-sed-and-php-52-or-higher">2. Command line tools <code>perl</code>, <code>sed</code> and <code>php</code> (5.2 or higher)<a class="anchor" aria-label="anchor" href="#2-command-line-tools-perl-sed-and-php-52-or-higher"></a>
 </h3>
-<p>These are required for <code><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code>, the main function of package <code>ctrdata</code>.</p>
+<p>These are required for <code><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code>, the main function of package <code>ctrdata</code> (see <a href="#example-workflow">Example workflow</a>); the function also checks if the tools can be used.</p>
 <ul>
 <li><p>For MS Windows, install <a href="https://cygwin.org/install.html" class="external-link"><code>Cygwin</code></a>: In <code>R</code>, run <code><a href="reference/installCygwinWindowsDoInstall.html">ctrdata::installCygwinWindowsDoInstall()</a></code> for an automated minimal installation. Alternatively, manually install Cygwin with packages <code>perl</code>, <code>php-jsonc</code> and <code>php-simplexml</code> into <code>c:\cygwin</code>. The installation needs about 160 MB disk space; no administrator credentials needed.</p></li>
-<li><p>In macOS including 11 Big Sur, these are already installed; 🔔for macOS 12 Monterey and in case of errors, <a href="https://brew.sh/" class="external-link"><code>homebrew</code></a> can be used to install <code>php</code>.</p></li>
+<li><p>In macOS including 11 Big Sur, these are already installed; as alternative and 🔔for macOS 12 Monterey, <a href="https://brew.sh/" class="external-link"><code>homebrew</code></a> can be used: <code>brew install php</code>, which seems to include the libraries required for <code>ctrdata</code>.</p></li>
 <li><p>In Linux, these are usually already installed; tools for installation vary by distribution (e.g., <code>sudo apt install php php-xml php-json</code>).</p></li>
 </ul>
 </div>
@@ -162,11 +162,11 @@ citation("ctrdata")
 <h2 id="overview-of-functions-in-ctrdata">Overview of functions in <code>ctrdata</code>
 <a class="anchor" aria-label="anchor" href="#overview-of-functions-in-ctrdata"></a>
 </h2>
-<p>The functions are listed in the approximate order of use in a user’s workflow.</p>
+<p>The functions are listed in the approximate order of use in a user’s workflow (in bold, main functions).</p>
 <table class="table">
 <colgroup>
-<col width="22%">
-<col width="77%">
+<col width="21%">
+<col width="78%">
 </colgroup>
 <thead><tr class="header">
 <th>Function name</th>
@@ -187,7 +187,7 @@ citation("ctrdata")
 </tr>
 <tr class="even">
 <td><code><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code></td>
-<td>Retrieve (download) or update, and annotate, information on trials from a register and store in a collection in a database</td>
+<td><strong>Retrieve (download) or update, and annotate, information on trials from a register and store in a collection in a database</strong></td>
 </tr>
 <tr class="odd">
 <td><code><a href="reference/dbQueryHistory.html">dbQueryHistory()</a></code></td>
@@ -195,7 +195,7 @@ citation("ctrdata")
 </tr>
 <tr class="even">
 <td><code><a href="reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials()</a></code></td>
-<td>Get the identifiers of de-duplicated trials in the collection</td>
+<td><strong>Get the identifiers of de-duplicated trials in the collection</strong></td>
 </tr>
 <tr class="odd">
 <td><code><a href="reference/dbFindFields.html">dbFindFields()</a></code></td>
@@ -203,16 +203,14 @@ citation("ctrdata")
 </tr>
 <tr class="even">
 <td><code><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code></td>
-<td>Create a data.frame from trial records in the database with the specified fields</td>
+<td><strong>Create a data.frame from trial records in the database with the specified fields</strong></td>
 </tr>
 <tr class="odd">
-<td>
-<code><a href="reference/dfTrials2Long.html">dfTrials2Long()</a></code> 🔔</td>
+<td><code><a href="reference/dfTrials2Long.html">dfTrials2Long()</a></code></td>
 <td>Transform the data.frame from <code><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code> into a long name-value data.frame, including deeply nested fields</td>
 </tr>
 <tr class="even">
-<td>
-<code><a href="reference/dfName2Value.html">dfName2Value()</a></code> 🔔</td>
+<td><code><a href="reference/dfName2Value.html">dfName2Value()</a></code></td>
 <td>From a long name-value data.frame, extract values for variables (fields) of interest (e.g., endpoints)</td>
 </tr>
 <tr class="odd">
