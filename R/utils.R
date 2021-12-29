@@ -1899,12 +1899,15 @@ dfMergeTwoVariablesRelevel <- function(
   }
 
   # other checks
-  if (class(df) != "data.frame") {
+  if (!any(class(df) == "data.frame")) {
     stop("Need a data frame as input.", call. = FALSE)
   }
   if (length(colnames) != 2) {
     stop("Please provide exactly two column names.", call. = FALSE)
   }
+  # change to data frame because
+  # variable classes are compared
+  df <- as.data.frame(df)
 
   # find variables in data frame and merge
   tmp <- match(colnames, names(df))
@@ -1981,7 +1984,6 @@ dfMergeTwoVariablesRelevel <- function(
   }
 
   # return
-  if (any("dplyr" == .packages())) return(dplyr::as_tibble(tmp))
   return(tmp)
 }
 # end dfMergeTwoVariablesRelevel
