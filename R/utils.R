@@ -358,11 +358,13 @@ ctrGetQueryUrl <- function(
   outdf <- function(qt, reg) {
     qt <- utils::URLdecode(qt)
     message("* Found search query from ", reg, ": ", qt)
-    data.frame(
+    out <- data.frame(
       `query-term` = qt,
       `query-register` = reg,
       check.names = FALSE,
       stringsAsFactors = FALSE)
+    if (any("dplyr" == .packages())) out <- dplyr::as_tibble(out)
+    return(out)
   }
   # identify query term per register
   #
@@ -383,8 +385,6 @@ ctrGetQueryUrl <- function(
       queryterm <- paste0(queryterm, "&resultsstatus=trials-with-results")
     }
     #
-    if (any("dplyr" == .packages())) return(
-      dplyr::as_tibble(outdf(queryterm, register)))
     return(outdf(queryterm, register))
   }
   #
@@ -415,8 +415,6 @@ ctrGetQueryUrl <- function(
       "(^|&|[&]?\\w+=\\w+&)(\\w+|[a-zA-z0-9+-.:]+)($|&\\w+=\\w+)",
       "\\1term=\\2\\3", queryterm)
     #
-    if (any("dplyr" == .packages())) return(
-      dplyr::as_tibble(outdf(queryterm, register)))
     return(outdf(queryterm, register))
   }
   #
@@ -433,8 +431,6 @@ ctrGetQueryUrl <- function(
       "(^|&|[&]?\\w+=\\w+&)(\\w+|[ a-zA-Z0-9+-]+)($|&\\w+=\\w+)",
       "\\1q=\\2\\3", queryterm)
     #
-    if (any("dplyr" == .packages())) return(
-      dplyr::as_tibble(outdf(queryterm, register)))
     return(outdf(queryterm, register))
   }
   #
@@ -1925,7 +1921,7 @@ dfMergeTwoVariablesRelevel <- function(
     }
     # values, with first having
     # priority over the second
-    tmp <- ifelse(is.na(tt <- df[, 1]), df[, 2], df[, 1])
+    tmp <- ifelse(is.na(tt <- df[[1]]), df[[2]], df[[1]])
   } else {
     # check
     if (nrow(df[(!is.na(df[[1]]) & df[[1]] != "") &

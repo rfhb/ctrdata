@@ -391,7 +391,7 @@ ctrRerunQuery <- function(
   #
   # - dates of all the same queries
   initialday <- rerunquery[["query-timestamp"]][
-    rerunquery[querytoupdate, "query-term"] ==
+    rerunquery[querytoupdate, "query-term", drop = TRUE] ==
       rerunquery[["query-term"]]]
   #
   # - remove time, keep date
