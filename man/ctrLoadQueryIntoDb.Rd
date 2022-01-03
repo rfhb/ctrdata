@@ -5,9 +5,9 @@
 \title{Load and store register trial information}
 \usage{
 ctrLoadQueryIntoDb(
-  queryterm = "",
+  queryterm = NULL,
   register = "",
-  querytoupdate = 0L,
+  querytoupdate = NULL,
   forcetoupdate = FALSE,
   euctrresults = FALSE,
   euctrresultshistory = FALSE,

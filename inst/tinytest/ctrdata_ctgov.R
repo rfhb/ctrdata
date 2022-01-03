@@ -95,7 +95,7 @@ expect_error(
     ctrLoadQueryIntoDb(
       querytoupdate = 999L,
       con = dbc)),
-  "'querytoupdate': specified number not found")
+  "'querytoupdate': specified query number.*not found")
 
 # new query
 q <- paste0("https://clinicaltrials.gov/ct2/results?",

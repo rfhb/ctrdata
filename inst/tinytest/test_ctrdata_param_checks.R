@@ -40,7 +40,7 @@ tf <- function() {
         queryterm = tmpdf,
         querytoupdate = 1L,
         con = dbc)),
-    "and 'querytoupdate' specified, which is inconsistent")
+    "only one of 'queryterm' and 'querytoupdate'")
   tmpdf["query-term"] <- as.character(tmpdf[["query-Species"]])
   # test
   expect_error(
@@ -132,7 +132,7 @@ tf <- function() {
         querytoupdate = 1L,
         only.count = TRUE,
         con = dbc)),
-    "'queryterm' and 'querytoupdate' specified.*cannot continue")
+    "only one of 'queryterm' and 'querytoupdate'")
 
   #### database ####
 

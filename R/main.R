@@ -105,9 +105,9 @@
 #' @export
 #'
 ctrLoadQueryIntoDb <- function(
-  queryterm = "",
+  queryterm = NULL,
   register = "",
-  querytoupdate = 0L,
+  querytoupdate = NULL,
   forcetoupdate = FALSE,
   euctrresults = FALSE,
   euctrresultshistory = FALSE,
@@ -119,19 +119,23 @@ ctrLoadQueryIntoDb <- function(
   con = NULL,
   verbose = FALSE) {
 
-  ## check params for update request
-  if ((class(querytoupdate) != "character" &&
-       querytoupdate != trunc(querytoupdate)) ||
-      (class(querytoupdate) == "character" &&
-       querytoupdate != "last")) {
-    stop("Parameter 'querytoupdate' is not an integer value or 'last'",
-         call. = FALSE)
+  ## check params
+
+  # - minimum information
+  if (is.null(queryterm) && is.null(querytoupdate)) {
+    stop("neither 'queryterm' nor 'querytoupdate' specified.")
+  }
+
+  # - parameters consistent
+  if (!is.null(querytoupdate) && !is.null(queryterm)) {
+    stop("only one of 'queryterm' and 'querytoupdate' should be ",
+         "specified, cannot continue", call. = FALSE)
   }
 
   ## deduce queryterm and register
 
   # - if not querytoupdate
-  if (querytoupdate == 0L) {
+  if (is.null(querytoupdate)) {
 
     # check queryterm
     if (!is.data.frame(queryterm)) {
@@ -204,17 +208,9 @@ ctrLoadQueryIntoDb <- function(
 
   ## handle if we need to rerun previous query
 
-  # check if parameters are consistent
-  if (!(querytoupdate == 0L) &&
-      (!is.atomic(queryterm) || queryterm != "")) {
-    stop("'queryterm' and 'querytoupdate' specified,",
-         " which is inconsistent, cannot continue",
-         call. = FALSE)
-  }
-
   # rewrite parameters for running as update
   querytermoriginal <- queryterm
-  if (!(querytoupdate == 0L)) {
+  if (!is.null(querytoupdate)) {
     #
     rerunparameters <- ctrRerunQuery(
       querytoupdate = querytoupdate,
@@ -376,10 +372,15 @@ ctrRerunQuery <- function(
   if (querytoupdate == "last")
     querytoupdate <- nrow(rerunquery)
 
+  # check parameters
+  if (!is.integer(querytoupdate))
+    stop("'querytoupdate' needs to be an integer number", call. = FALSE)
+
   # try to select the query to be updated
-  if (querytoupdate > nrow(rerunquery)) {
-    stop("'querytoupdate': specified number not found, check ",
-         "'dbQueryHistory()'", call. = FALSE)
+  if (querytoupdate > nrow(rerunquery) ||
+      querytoupdate < 1L) {
+    stop("'querytoupdate': specified query number ", querytoupdate,
+         " not found, check 'dbQueryHistory()'", call. = FALSE)
   }
 
   # set query values as retrieved
