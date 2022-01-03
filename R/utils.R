@@ -1523,7 +1523,7 @@ dfName2Value <- function(df, valuename = "",
             indexVnames
           ))
         # return value
-        if (length(ids)) df[ids, ]
+        if (length(ids)) df[ids, , drop = FALSE]
       }
     )
 
@@ -1914,11 +1914,11 @@ dfMergeTwoVariablesRelevel <- function(
   df <- df[, tmp, drop = FALSE]
 
   # bind as ...
-  if (class(df[, 1]) == class(df[, 2]) &&
-      class(df[, 1]) != "character") {
+  if (class(df[[1]]) == class(df[[2]]) &&
+      class(df[[1]]) != "character") {
     # check
-    if (nrow(na.omit(df[!vapply(df[, 1, drop = TRUE], is.null, logical(1L)) &
-                        !vapply(df[, 2, drop = TRUE], is.null, logical(1L)), ,
+    if (nrow(na.omit(df[!vapply(df[[1]], is.null, logical(1L)) &
+                        !vapply(df[[2]], is.null, logical(1L)), ,
                         drop = FALSE]))) {
       warning("Some rows had values for both columns, used first",
               noBreaks. = TRUE, immediate. = TRUE)
@@ -1928,22 +1928,23 @@ dfMergeTwoVariablesRelevel <- function(
     tmp <- ifelse(is.na(tt <- df[, 1]), df[, 2], df[, 1])
   } else {
     # check
-    if (nrow(df[(!is.na(df[, 1]) & df[, 1] != "") &
-                (!is.na(df[, 2]) & df[, 2] != ""), , drop = FALSE])) {
+    if (nrow(df[(!is.na(df[[1]]) & df[[1]] != "") &
+                (!is.na(df[[2]]) & df[[2]] != ""), ,
+                drop = FALSE])) {
       warning("Some rows had values for both columns, concatenated",
               noBreaks. = TRUE, immediate. = TRUE)
     }
     # strings, concatenated
     tmp <- paste0(
-      ifelse(is.na(tt <- as.character(df[, 1])), "", tt), " / ",
-      ifelse(is.na(tt <- as.character(df[, 2])), "", tt))
+      ifelse(is.na(tt <- as.character(df[[1]])), "", tt), " / ",
+      ifelse(is.na(tt <- as.character(df[[2]])), "", tt))
   }
 
   # type where possible
-  if (class(df[, 1]) == class(df[, 2]) &&
-      class(df[, 1]) != "character") {
-    mode(tmp) <- mode(df[, 1])
-    class(tmp) <- class(df[, 1])
+  if (class(df[[1]]) == class(df[[2]]) &&
+      class(df[[1]]) != "character") {
+    mode(tmp) <- mode(df[[1]])
+    class(tmp) <- class(df[[1]])
   }
 
   # relevel if specified
@@ -2026,7 +2027,7 @@ dfFindUniqueEuctrRecord <- function(
   }
   #
   if (is.null(df[["_id"]]) ||
-      is.null(df["a2_eudract_number"])) {
+      is.null(df[["a2_eudract_number"]])) {
     stop('Data frame does not include "_id"',
          ' and "a2_eudract_number" columns.',
          call. = FALSE)
@@ -2062,7 +2063,7 @@ dfFindUniqueEuctrRecord <- function(
   # as a first step, handle 3rd country trials e.g. 2010-022945-52-3RD
   # if retained, these trials would count as record for a trial
   if (!include3rdcountrytrials) {
-    df <- df[!grepl("-3RD", df[["_id"]]), ]
+    df <- df[!grepl("-3RD", df[["_id"]]), , drop = FALSE]
   }
 
   # count number of records by eudract number
@@ -2115,10 +2116,10 @@ dfFindUniqueEuctrRecord <- function(
   result <- unlist(result, use.names = FALSE)
 
   # eleminate the unwanted EUCTR records
-  df <- df[!(df[["_id"]] %in% result), ]
+  df <- df[!(df[["_id"]] %in% result), , drop = FALSE]
 
   # also eliminate the meta-info record
-  df <- df[!(df[["_id"]] == "meta-info"), ]
+  df <- df[!(df[["_id"]] == "meta-info"), , drop = FALSE]
 
   # inform user about changes to data frame
   if (length(nms) > (tmp <- length(result))) {
@@ -2152,15 +2153,15 @@ typeField <- function(dfi) {
 
   # clean up input
   # - if NA as string, change to NA
-  dfi[grepl("^N/?A$|^ND$", dfi[, 2]), 2] <- NA
+  dfi[[2]][grepl("^N/?A$|^ND$", dfi[[2]])] <- NA
   # - give Month Year also a Day to work with as.Date
-  dfi[, 2] <- sub("^([a-zA-Z]+) ([0-9]{4})$", "\\1 15, \\2", dfi[, 2])
+  dfi[[2]] <- sub("^([a-zA-Z]+) ([0-9]{4})$", "\\1 15, \\2", dfi[[2]])
   # - convert html entities because these had to
   #   be left intact when converting to ndjson
-  if (any(grepl("&[#a-zA-Z]+;", dfi[, 2]))) dfi[, 2] <- sapply(
-    dfi[, 2], function(i) xml2::xml_text(xml2::read_html(charToRaw(i))))
+  if (any(grepl("&[#a-zA-Z]+;", dfi[[2]]))) dfi[, 2] <-
+    sapply(dfi[[2]], function(i) xml2::xml_text(xml2::read_html(charToRaw(i))))
   # - convert newline
-  dfi[, 2] <- gsub("\r", "\n", dfi[, 2])
+  dfi[[2]] <- gsub("\r", "\n", dfi[[2]])
 
   # for date time conversion
   lct <- Sys.getlocale("LC_TIME")
@@ -2168,13 +2169,13 @@ typeField <- function(dfi) {
   on.exit(Sys.setlocale("LC_TIME", lct))
 
   # main typing functions
-  ctrDate      <- function() as.Date(dfi[, 2], format = "%Y-%m-%d")
-  ctrDateUs    <- function() as.Date(dfi[, 2], format = "%b %e, %Y")
-  ctrDateCtr   <- function() as.Date(dfi[, 2], format = "%Y-%m-%d %H:%M:%S")
-  ctrDateTime  <- function() as.Date(dfi[, 2], format = "%Y-%m-%dT%H:%M:%S")
-  ctrYesNo     <- function() vapply(dfi[, 2], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA), logical(1L))
-  ctrFalseTrue <- function() vapply(dfi[, 2], FUN = function(x) switch(x, "true" = TRUE, "false" = FALSE, NA), logical(1L))
-  ctrInt       <- function() vapply(dfi[, 2], FUN = function(x) as.integer(x = x), integer(1L))
+  ctrDate      <- function() as.Date(dfi[[2]], format = "%Y-%m-%d")
+  ctrDateUs    <- function() as.Date(dfi[[2]], format = "%b %e, %Y")
+  ctrDateCtr   <- function() as.Date(dfi[[2]], format = "%Y-%m-%d %H:%M:%S")
+  ctrDateTime  <- function() as.Date(dfi[[2]], format = "%Y-%m-%dT%H:%M:%S")
+  ctrYesNo     <- function() vapply(dfi[[2]], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA), logical(1L))
+  ctrFalseTrue <- function() vapply(dfi[[2]], FUN = function(x) switch(x, "true" = TRUE, "false" = FALSE, NA), logical(1L))
+  ctrInt       <- function() vapply(dfi[[2]], FUN = function(x) as.integer(x = x), integer(1L))
 
   # selective typing
   tmp <- try({

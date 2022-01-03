@@ -1,5 +1,5 @@
 # ctrdata 1.8.0.9002
- - 2021-12-27
+ - 2022-01-03
  - chunked trial batches in ndjson files for accelerated database import
  - if package dplyr is loaded, functions return a tibble instead of a data frame
  - dbFindFields() returns a vector of fields which now has as names the register in which a field occurs

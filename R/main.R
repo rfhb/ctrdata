@@ -145,8 +145,8 @@ ctrLoadQueryIntoDb <- function(
 
     }
 
-    # -deal with data frame as returned from
-    #  ctrQueryHistoryInDb and ctrGetQueryUrl
+    # - deal with data frame as returned from
+    #   ctrQueryHistoryInDb and ctrGetQueryUrl
     if (!all(substr(names(queryterm), 1, 6) == "query-") ||
         !is.data.frame(queryterm)) {
       stop("'queryterm' does not seem to result from ctrQueryHistoryInDb() ",
@@ -160,8 +160,8 @@ ctrLoadQueryIntoDb <- function(
         "Using last row of queryterm parameter",
         call. = FALSE, immediate. = TRUE)
     }
-    register  <- queryterm[nr, "query-register"]
-    queryterm <- queryterm[nr, "query-term"]
+    register  <- queryterm[nr, "query-register", drop = TRUE]
+    queryterm <- queryterm[nr, "query-term", drop = TRUE]
 
     # check queryterm
     if (length(queryterm) != 1L ||
@@ -383,8 +383,8 @@ ctrRerunQuery <- function(
   }
 
   # set query values as retrieved
-  queryterm  <- rerunquery[querytoupdate, "query-term"]
-  register   <- rerunquery[querytoupdate, "query-register"]
+  queryterm  <- rerunquery[querytoupdate, "query-term", drop = TRUE]
+  register   <- rerunquery[querytoupdate, "query-register", drop = TRUE]
 
   # when was this query last run?
   #
@@ -411,7 +411,7 @@ ctrRerunQuery <- function(
   } else {
     # - fallback to number (querytoupdate)
     #   as specified by user
-    initialday <- rerunquery[querytoupdate, "query-timestamp"]
+    initialday <- rerunquery[querytoupdate, "query-timestamp", drop = TRUE]
   }
 
   # secondary check parameters
