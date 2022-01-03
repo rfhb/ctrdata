@@ -3,14 +3,6 @@
 #### SETUP ####
 source("setup_ctrdata.R")
 
-df <- data.frame(
-  "var1" = 1:3,
-  "var2" = 2:4,
-  stringsAsFactors = FALSE)
-
-statusvalues <- list(
-  "Firstvalues" = c("12", "23"),
-  "Lastvalue"   = c("34"))
 
 #### binaries ####
 
@@ -42,7 +34,28 @@ if (.Platform$OS.type == "windows") {
     "cygwin seems to work correctly")
 }
 
+
+#### typeField ####
+
+df <- data.frame(
+  "var2" = 2:5,
+  "var1" = c(1, "2", "NA", NA),
+  stringsAsFactors = FALSE)
+
+expect_true(all(is.na(
+  ctrdata:::typeField(df)[3:4, 2, drop = TRUE])))
+
+
 #### dfMergeTwoVariablesRelevel ####
+
+df <- data.frame(
+  "var1" = 1:3,
+  "var2" = 2:4,
+  stringsAsFactors = FALSE)
+
+statusvalues <- list(
+  "Firstvalues" = c("12", "23"),
+  "Lastvalue"   = c("34"))
 
 # test
 expect_error(
