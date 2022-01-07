@@ -2210,9 +2210,11 @@ typeField <- function(dfi) {
       "trialDesign.overallEndDate"    = ctrDateTime(),
       #
       #
-      # factors
+      # factors / logical
       #
       # - EUCTR Yes / No / Information not present in EudraCT
+      #
+      "a7_trial_is_part_of_a_paediatric_investigation_plan" = ctrYesNo(),
       "dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation" = ctrYesNo(),
       "e13_condition_being_studied_is_a_rare_disease" = ctrYesNo(),
       #
@@ -2275,19 +2277,6 @@ typeField <- function(dfi) {
       "f335_emergency_situation" = ctrYesNo(),
       "f336_subjects_incapable_of_giving_consent_personally" = ctrYesNo(),
       #
-      # - CTGOV
-      "has_expanded_access"            = ctrYesNo(),
-      "oversight_info.has_dmc"         = ctrYesNo(),
-      "eligibility.healthy_volunteers" = ctrYesNo(),
-      #
-      # - ISRCTN
-      "trialDescription.acknowledgment" = ctrFalseTrue(),
-      "results.biomedRelated"           = ctrFalseTrue(),
-      #
-      #
-      # logical
-      #
-      # - EUCTR
       "trialInformation.analysisForPrimaryCompletion" = ctrFalseTrue(),
       "trialInformation.partOfPIP" = ctrFalseTrue(),
       "trialInformation.art45Related" = ctrFalseTrue(),
@@ -2297,6 +2286,14 @@ typeField <- function(dfi) {
       "trialInformation.isGlobalEndOfTrialReached" = ctrFalseTrue(),
       "trialInformation.globalEndOfTrialPremature" = ctrFalseTrue(),
       #
+      # - CTGOV
+      "has_expanded_access"            = ctrYesNo(),
+      "oversight_info.has_dmc"         = ctrYesNo(),
+      "eligibility.healthy_volunteers" = ctrYesNo(),
+      #
+      # - ISRCTN
+      "trialDescription.acknowledgment" = ctrFalseTrue(),
+      "results.biomedRelated"           = ctrFalseTrue(),
       #
       # numbers
       #
