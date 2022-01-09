@@ -164,13 +164,15 @@ result <- suppressMessages(
     dbGetFieldsIntoDf(
       fields = c(
         "primary_outcome.measure",
+        "start_date",
         "clinical_results.baseline.analyzed_list.analyzed.count_list.count",
         "clinical_results.baseline.group_list.group",
         "clinical_results.baseline.analyzed_list.analyzed.units",
         "clinical_results.outcome_list.outcome",
         "study_design_info.allocation",
         "location.facility.name",
-        "location"),
+        "location"
+        ),
       con = dbc)
   ))
 
@@ -184,6 +186,10 @@ expect_equal(
 # test
 expect_true("character" == class(result[[
   "study_design_info.allocation"]]))
+
+# test
+expect_true("Date" == class(result[[
+  "start_date"]]))
 
 # test
 expect_true(

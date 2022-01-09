@@ -1260,38 +1260,83 @@ dbGetFieldsIntoDf <- function(fields = "",
             names(dfi)[c] <- paste0(names(dfi)[c], ".", tn)
           }
 
-          # simplify at row level, replaces NULL with NA
-          if (!is.data.frame(dfi[[c]]) &&
-              !any(sapply(dfi[[c]], function(r)
-                all(class(r) == "data.frame") && ncol(r) > 0L && nrow(r) > 0L))) {
-            dfi[[c]] <- sapply(dfi[[c]], function(i) {
-              l <- length(i)
-              if (l == 0L) i <- NA
-              if (l == 1L) {
-                if (is.list(i[[1]]) && !length(i[[1]])) {
-                  i <- NA } else { i <- i[1] }}
-              if (l >= 2L) {
-                if (all(sapply(i, is.character))) {
-                  i <- paste0(unlist(i), collapse = " / ")
-                } else {
-                  i <- list(i)
-                }} # l >= 2L
-              i}
-            ) # sapply
-          }
+          # type results at column level
+          if (typeof(dfi[[c]]) == "character") {
 
-          # TODO is this used for any field?
-          # simplify vectors in cells by collapsing
-          # (compatibility with previous version)
-          if ((length(names(dfi[[c]])) == 1L) &&
-              all(sapply(dfi[[c]], function(r) is.na(r)[1] | is.character(r))) &&
-              any(sapply(dfi[[c]], function(r) length(r) > 1L))) {
-            dfi[[c]] <- sapply(dfi[[c]], function(i) paste0(i, collapse = " / "))
-          }
+            dfi[[c]] <- typeField(dfi[, c(1, c), drop = FALSE])[, 2, drop = TRUE]
 
-          # type results
-          if (typeof(dfi[[c]]) == "character") dfi[[c]] <-
-              typeField(dfi[, c(1, c), drop = FALSE])[, 2, drop = TRUE]
+          } else {
+
+            # simplify column with one-column data frames
+            # e.g. CTGOV "primary_outcome.measure"
+            if (!is.data.frame(dfi[[c]]) &&
+                all(sapply(dfi[[c]], function(r)
+                  is.null(r) || (
+                    class(r) == "data.frame" &&
+                    ncol(r) == 1L && nrow(r) > 0L)
+                ))) {
+              dfi[[c]] <- sapply(
+                dfi[[c]], function(i) {i[[1]]},
+                USE.NAMES = FALSE, simplify = TRUE)
+            }
+
+            # simplify at row level, replaces NULL with NA
+            # also integrates typing because some fields
+            # are returning lists that need typing by row
+            if (!is.data.frame(dfi[[c]]) &&
+                !any(sapply(dfi[[c]], function(r)
+                  all(class(r) == "data.frame") &&
+                  ncol(r) > 0L && nrow(r) > 0L))) {
+              out <- sapply(dfi[[c]], function(i) {
+                l <- length(i)
+                #
+                if (l == 0L) i <- NA
+                #
+                if (l == 1L) {
+                  if (is.list(i[[1]]) && !length(i[[1]])) {
+                    i <- NA } else {
+                      i <- i[1]
+                      if (is.character(i)) {
+                        # TODO the next two lines take too much time
+                        # need to refactor typeField and run only
+                        # for item names that are in typeField's switch
+                        i <- setNames(data.frame("id", i), c("_id", item[c - 1L]))
+                        if (nrow(i)) i <- typeField(i)[, 2, drop = TRUE]
+                      }
+                    }}
+                #
+                if (l >= 2L) {
+                  if (all(sapply(i, is.character))) {
+                    i <- setNames(data.frame("id", i), c("_id", item[c - 1L]))
+                    if (nrow(i)) {i <- typeField(i)[, 2, drop = TRUE]
+                    } else {i <- NA}
+                    if (all(sapply(i, is.character))) {
+                      i <- paste0(unlist(i), collapse = " / ")}
+                  } else {
+                    i <- list(i)
+                  }}
+                #
+                i},
+                USE.NAMES = FALSE,
+                # FALSE for EUCTR "trialInformation.globalEndOfTrialDate"
+                # when "trialInformation" is requested as field:
+                simplify = FALSE
+              ) # sapply
+
+              # e.g. for list of one-element lists such as dates
+              if (all(sapply(out, length) == 1L)) {
+                # get class in case it is a date
+                conv2date <- ifelse(any(sapply(out, class) == "Date"), TRUE, FALSE)
+                out <- unlist(out, recursive = FALSE, use.names = FALSE)
+                if (conv2date) {out <- as.Date(out, origin = "1970-01-01")}
+              }
+
+              # write back
+              dfi[[c]] <- out
+
+            } # if
+
+          } # else
 
           # add a column into copy of NA template
           dfo[[c]] <- switch(
@@ -1357,8 +1402,8 @@ dbGetFieldsIntoDf <- function(fields = "",
         dni <- intersect(dna, accumNames)
         dnd <- setdiff(dna, accumNames)
         if (length(dni)) {
-          message("From fields element ", i, " (", fields[i], "), ",
-                  "not included again: ", paste0(dni, collapse = ", "))
+          message("From field ", i, " (", fields[i], "), not ",
+                  "included again item: ", paste0(dni, collapse = ", "))
           dfi <- dfi[, dnd, drop = FALSE]
         }
       }
