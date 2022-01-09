@@ -43,7 +43,7 @@ df <- data.frame(
   stringsAsFactors = FALSE)
 
 expect_true(all(is.na(
-  ctrdata:::typeField(df)[3:4, 2, drop = TRUE])))
+  ctrdata:::typeField(df[[2]])[3:4])))
 
 
 #### dfMergeTwoVariablesRelevel ####
@@ -269,7 +269,3 @@ expect_error(
       valuename = "")),
   "'valuename' must be specified")
 
-expect_error(
-  ctrdata:::typeField(
-    dfi = iris),
-  "Expect data frame with two columns, _id and a field")
