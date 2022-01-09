@@ -1185,6 +1185,7 @@ dbGetFieldsIntoDf <- function(fields = "",
 
   # initialise output
   nFields <- length(fields)
+  accumNames <- NULL
 
   # iterate over fields so that we can
   # use a custom function to merge results
@@ -1195,7 +1196,7 @@ dbGetFieldsIntoDf <- function(fields = "",
       item <- fields[i]
 
       # user info
-      message("\r", rep(" ", 200), "\r", item, appendLF = FALSE)
+      message("\r", rep(" ", 200), "\r", item, " ", appendLF = FALSE)
       #
       query <- '{"_id": {"$ne": "meta-info"}}'
       if (verbose) message("DEBUG: field: ", item)
@@ -1336,9 +1337,9 @@ dbGetFieldsIntoDf <- function(fields = "",
 
         # try-error occurred or no data retrieved
         if (stopifnodata) {
-          stop("No data could be extracted for '", item,
-               "'. \nUse dbGetFieldsIntoDf(stopifnodata = ",
-               "FALSE) to ignore this. ", call. = FALSE)
+          stop("No data could be extracted for ", paste0(item, collapse = ", "),
+               ". \nUse dbGetFieldsIntoDf(stopifnodata = FALSE) to ignore this.",
+               call. = FALSE)
         } else {
           message("* No data: '", item, "'")
           # create empty data set
@@ -1349,17 +1350,20 @@ dbGetFieldsIntoDf <- function(fields = "",
 
       # add to result unless item was
       # previously specified in fields
-      if (i == 1L) {
-        dfi
-      } else {
+      if (i > 1L) {
         dna <- names(dfi)
-        dni <- intersect(dna, fields[1:(i - 1L)])
-        dnd <- setdiff(dna, fields[1:(i - 1L)])
-        if (length(dni)) message(
-          "From fields element ", i, " (", fields[i], "), ",
-          "not included again: ", paste0(dni, collapse = ", "))
-        dfi[, dnd, drop = FALSE]
+        # dni <- intersect(dna, fields[1:(i - 1L)])
+        # dnd <- setdiff(dna, fields[1:(i - 1L)])
+        dni <- intersect(dna, accumNames)
+        dnd <- setdiff(dna, accumNames)
+        if (length(dni)) {
+          message("From fields element ", i, " (", fields[i], "), ",
+                  "not included again: ", paste0(dni, collapse = ", "))
+          dfi <- dfi[, dnd, drop = FALSE]
+        }
       }
+      accumNames <<- c(accumNames, names(dfi)[-1])
+      dfi
 
     }) # end lapply
 
