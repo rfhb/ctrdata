@@ -680,18 +680,22 @@ dbFindFields <- function(namepart = "",
       sort(unique(out))
     }
 
+    # get all ids
+    allIds <- nodbi::docdb_query(
+      src = con, key = con$collection,
+      fields = '{"_id": 1}', query = '{}')[["_id"]]
+
     # queries to be used
     queries <- list(
       "EUCTR" = c(
         '{"trialInformation.analysisStage.value": {"$regex": ".+"}}',
-        '{"ctrname": "EUCTR"}'),
+        paste0('{"_id": "', rev(allIds[grepl(regEuctr, allIds)])[1], '"}')),
       "CTGOV" = c(
         '{"results_first_submitted": {"$regex": ".+"}}',
-        '{"ctrname": "CTGOV"}'),
+        paste0('{"_id": "', rev(allIds[grepl(regCtgov, allIds)])[1], '"}')),
       "ISRCTN" = c(
         '{"results.publicationStage": "Results"}',
-        '{"ctrname": "ISRCTN"}'
-      )
+        paste0('{"_id": "', rev(allIds[grepl(regIsrctn, allIds)])[1], '"}'))
     )
 
     # get names
@@ -701,12 +705,13 @@ dbFindFields <- function(namepart = "",
       keysAdd <- normNames(nodbi::docdb_query(
         src = con, key = con$collection,
         query = queries[[q]][1], limit = 1L))
-      # fall back to protocol-related fields
-      if (!length(keysAdd)) {
-        keysAdd <- normNames(nodbi::docdb_query(
-            src = con, key = con$collection,
-            query = queries[[q]][2], limit = 1L))
-      }
+      # give keys name of register
+      names(keysAdd) <- rep(names(queries)[q], length(keysAdd))
+      keyslist <- c(keyslist, keysAdd)
+      # second query for highest = latest _id
+      keysAdd <- normNames(nodbi::docdb_query(
+        src = con, key = con$collection,
+        query = queries[[q]][2], limit = 1L))
       # give keys name of register
       names(keysAdd) <- rep(names(queries)[q], length(keysAdd))
       keyslist <- c(keyslist, keysAdd)
@@ -714,6 +719,7 @@ dbFindFields <- function(namepart = "",
 
     # clean empty entries and exclude _id for consistency
     # since different approaches above return _id or not
+    keyslist <- keyslist[!duplicated(keyslist)]
     keyslist <- keyslist[keyslist != "_id" & keyslist != ""]
 
     ## store keyslist to environment (cache)
@@ -1189,7 +1195,7 @@ dbGetFieldsIntoDf <- function(fields = "",
       item <- fields[i]
 
       # user info
-      message("\r", i, appendLF = FALSE)
+      message("\r", rep(" ", 200), "\r", item, appendLF = FALSE)
       #
       query <- '{"_id": {"$ne": "meta-info"}}'
       if (verbose) message("DEBUG: field: ", item)
@@ -1302,8 +1308,7 @@ dbGetFieldsIntoDf <- function(fields = "",
         } # for processing columns
 
         # user info blanking info from processing columns
-        message("\r                                      ",
-                "                   \r",  appendLF = FALSE)
+        message("\r", rep(" ", 200), "\r", appendLF = FALSE)
 
         # add NA where dfi has no data to avoid NULL when
         # merging with Reduce below, which otherwise raises
