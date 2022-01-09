@@ -1,7 +1,7 @@
 ### ctrdata package
 ### utility functions
 
-## variable definitions
+#### variable definitions ####
 #
 # prototype return structure
 emptyReturn <- list(n = 0L, success = NULL, failed = NULL)
@@ -24,8 +24,163 @@ regIsrctn <- "[1-9][0-9]{7}"
 #
 # register list
 registerList <- c("EUCTR", "CTGOV", "ISRCTN")
+#
+# mapping field names to typing function for typeField()
+typeVars <- list(
+  #
+  # dates
+  #
+  # - "ctrdata intern
+  "record_last_import" = "ctrDateCtr",
+  #
+  # - EUCTR
+  "n_date_of_ethics_committee_opinion"     = "ctrDate",
+  "n_date_of_competent_authority_decision" = "ctrDate",
+  "p_date_of_the_global_end_of_the_trial"  = "ctrDate",
+  "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database" = "ctrDate",
+  "firstreceived_results_date"             = "ctrDate",
+  "trialInformation.primaryCompletionDate" = "ctrDate",
+  "trialInformation.analysisStageDate"     = "ctrDateTime",
+  "trialInformation.globalEndOfTrialDate"  = "ctrDateTime",
+  "trialInformation.recruitmentStartDate"  = "ctrDateTime",
+  #
+  # - CTGOV
+  "start_date"              = "ctrDateUs",
+  "primary_completion_date" = "ctrDateUs",
+  "completion_date"         = "ctrDateUs",
+  "study_first_posted"      = "ctrDateUs",
+  "results_first_posted"    = "ctrDateUs",
+  "last_update_posted"      = "ctrDateUs",
+  #
+  # - ISRCTN
+  "participants.recruitmentStart" = "ctrDateTime",
+  "participants.recruitmentEnd"   = "ctrDateTime",
+  "trialDesign.overallStartDate"  = "ctrDateTime",
+  "trialDesign.overallEndDate"    = "ctrDateTime",
+  #
+  #
+  # factors / logical
+  #
+  # - EUCTR Yes / No / Information not present in EudraCT
+  #
+  "a7_trial_is_part_of_a_paediatric_investigation_plan" = "ctrYesNo",
+  "dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation" = "ctrYesNo",
+  "e13_condition_being_studied_is_a_rare_disease" = "ctrYesNo",
+  #
+  "e61_diagnosis"         = "ctrYesNo",
+  "e62_prophylaxis"       = "ctrYesNo",
+  "e63_therapy"           = "ctrYesNo",
+  "e64_safety"            = "ctrYesNo",
+  "e65_efficacy"          = "ctrYesNo",
+  "e66_pharmacokinetic"   = "ctrYesNo",
+  "e67_pharmacodynamic"   = "ctrYesNo",
+  "e68_bioequivalence"    = "ctrYesNo",
+  "e69_dose_response"     = "ctrYesNo",
+  "e610_pharmacogenetic"  = "ctrYesNo",
+  "e611_pharmacogenomic"  = "ctrYesNo",
+  "e612_pharmacoeconomic" = "ctrYesNo",
+  "e613_others"           = "ctrYesNo",
+  #
+  "e71_human_pharmacology_phase_i"         = "ctrYesNo",
+  "e711_first_administration_to_humans"    = "ctrYesNo",
+  "e712_bioequivalence_study"              = "ctrYesNo",
+  "e713_other"                             = "ctrYesNo",
+  "e72_therapeutic_exploratory_phase_ii"   = "ctrYesNo",
+  "e73_therapeutic_confirmatory_phase_iii" = "ctrYesNo",
+  "e74_therapeutic_use_phase_iv"           = "ctrYesNo",
+  #
+  "e81_controlled"      = "ctrYesNo",
+  "e811_randomised"     = "ctrYesNo",
+  "e812_open"           = "ctrYesNo",
+  "e813_single_blind"   = "ctrYesNo",
+  "e814_double_blind"   = "ctrYesNo",
+  "e815_parallel_group" = "ctrYesNo",
+  "e816_cross_over"     = "ctrYesNo",
+  "e817_other"          = "ctrYesNo",
+  #
+  "e83_the_trial_involves_single_site_in_the_member_state_concerned"    = "ctrYesNo",
+  "e84_the_trial_involves_multiple_sites_in_the_member_state_concerned" = "ctrYesNo",
+  "e85_the_trial_involves_multiple_member_states"                       = "ctrYesNo",
+  "e861_trial_being_conducted_both_within_and_outside_the_eea"          = "ctrYesNo",
+  "e862_trial_being_conducted_completely_outside_of_the_eea"            = "ctrYesNo",
+  "e87_trial_has_a_data_monitoring_committee"                           = "ctrYesNo",
+  #
+  "f11_trial_has_subjects_under_18"            = "ctrYesNo",
+  "f111_in_utero"                              = "ctrYesNo",
+  "f112_preterm_newborn_infants_up_to_gestational_age__37_weeks" = "ctrYesNo",
+  "f113_newborns_027_days"                     = "ctrYesNo",
+  "f114_infants_and_toddlers_28_days23_months" = "ctrYesNo",
+  "f115_children_211years"                     = "ctrYesNo",
+  "f116_adolescents_1217_years"                = "ctrYesNo",
+  "f12_adults_1864_years"                      = "ctrYesNo",
+  "f13_elderly_65_years"                       = "ctrYesNo",
+  "f21_female"                                 = "ctrYesNo",
+  "f22_male"                                   = "ctrYesNo",
+  "f31_healthy_volunteers"                     = "ctrYesNo",
+  "f32_patients"                               = "ctrYesNo",
+  "f33_specific_vulnerable_populations"        = "ctrYesNo",
+  "f331_women_of_childbearing_potential_not_using_contraception_" = "ctrYesNo",
+  "f332_women_of_childbearing_potential_using_contraception"      = "ctrYesNo",
+  "f333_pregnant_women"      = "ctrYesNo",
+  "f334_nursing_women"       = "ctrYesNo",
+  "f335_emergency_situation" = "ctrYesNo",
+  "f336_subjects_incapable_of_giving_consent_personally" = "ctrYesNo",
+  #
+  "trialInformation.analysisForPrimaryCompletion" = "ctrFalseTrue",
+  "trialInformation.partOfPIP" = "ctrFalseTrue",
+  "trialInformation.art45Related" = "ctrFalseTrue",
+  "trialInformation.art46Related" = "ctrFalseTrue",
+  "trialInformation.longTermFollowUpPlanned" = "ctrFalseTrue",
+  "trialInformation.idmcInvolvement" = "ctrFalseTrue",
+  "trialInformation.isGlobalEndOfTrialReached" = "ctrFalseTrue",
+  "trialInformation.globalEndOfTrialPremature" = "ctrFalseTrue",
+  #
+  # - CTGOV
+  "has_expanded_access"            = "ctrYesNo",
+  "oversight_info.has_dmc"         = "ctrYesNo",
+  "eligibility.healthy_volunteers" = "ctrYesNo",
+  #
+  # - ISRCTN
+  "trialDescription.acknowledgment" = "ctrFalseTrue",
+  "results.biomedRelated"           = "ctrFalseTrue",
+  #
+  # numbers
+  #
+  # - EUCTR
+  "e824_number_of_treatment_arms_in_the_trial" = "ctrInt",
+  "e891_in_the_member_state_concerned_years"   = "ctrInt",
+  "e891_in_the_member_state_concerned_months"  = "ctrInt",
+  "e891_in_the_member_state_concerned_days"    = "ctrInt",
+  "e892_in_all_countries_concerned_by_the_trial_years"  = "ctrInt",
+  "e892_in_all_countries_concerned_by_the_trial_months" = "ctrInt",
+  "e892_in_all_countries_concerned_by_the_trial_days"   = "ctrInt",
+  "e841_number_of_sites_anticipated_in_member_state_concerned" = "ctrInt",
+  "f11_number_of_subjects_for_this_age_range"   = "ctrInt",
+  "f1111_number_of_subjects_for_this_age_range" = "ctrInt",
+  "f1121_number_of_subjects_for_this_age_range" = "ctrInt",
+  "f1131_number_of_subjects_for_this_age_range" = "ctrInt",
+  "f1141_number_of_subjects_for_this_age_range" = "ctrInt",
+  "f1151_number_of_subjects_for_this_age_range" = "ctrInt",
+  "f1161_number_of_subjects_for_this_age_range" = "ctrInt",
+  "f121_number_of_subjects_for_this_age_range"  = "ctrInt",
+  "f131_number_of_subjects_for_this_age_range"  = "ctrInt",
+  "f41_in_the_member_state"          = "ctrInt",
+  "f421_in_the_eea"                  = "ctrInt",
+  "f422_in_the_whole_clinical_trial" = "ctrInt",
+  #
+  # - CTGOV
+  "number_of_arms" = "ctrInt",
+  "enrollment"     = "ctrInt",
+  #
+  # - ISRCTN
+  "participants.targetEnrolment"      = "ctrInt",
+  "participants.totalFinalEnrolment"  = "ctrInt"
+  #
+)
 
 
+
+#### functions ####
 
 #' Check, write, read cache object for ctrdata
 #'
@@ -1263,7 +1418,7 @@ dbGetFieldsIntoDf <- function(fields = "",
           # type results at column level
           if (typeof(dfi[[c]]) == "character") {
 
-            dfi[[c]] <- typeField(dfi[, c(1, c), drop = FALSE])[, 2, drop = TRUE]
+            dfi[[c]] <- typeField(dfi[[c]], names(dfi)[c])
 
           } else {
 
@@ -1296,19 +1451,12 @@ dbGetFieldsIntoDf <- function(fields = "",
                   if (is.list(i[[1]]) && !length(i[[1]])) {
                     i <- NA } else {
                       i <- i[1]
-                      if (is.character(i)) {
-                        # TODO the next two lines take too much time
-                        # need to refactor typeField and run only
-                        # for item names that are in typeField's switch
-                        i <- setNames(data.frame("id", i), c("_id", item[c - 1L]))
-                        if (nrow(i)) i <- typeField(i)[, 2, drop = TRUE]
-                      }
+                      if (length(i)) i <- typeField(i, item[c - 1L])
                     }}
                 #
                 if (l >= 2L) {
                   if (all(sapply(i, is.character))) {
-                    i <- setNames(data.frame("id", i), c("_id", item[c - 1L]))
-                    if (nrow(i)) {i <- typeField(i)[, 2, drop = TRUE]
+                    if (length(i)) {i <- typeField(i, item[c - 1L])
                     } else {i <- NA}
                     if (all(sapply(i, is.character))) {
                       i <- paste0(unlist(i), collapse = " / ")}
@@ -2192,219 +2340,66 @@ dfFindUniqueEuctrRecord <- function(
 
 #' Change type of field based on name of field
 #'
-#' @param dfi a data frame of columns _id, fieldname
+#' @param dv a vector of character strings
+#'
+#' @param fn a field name
+#'
+#' @return a typed vector, same length as dv
 #'
 #' @keywords internal
 #' @noRd
 #'
-typeField <- function(dfi) {
+typeField <- function(dv, fn) {
 
-  # check
-  if (ncol(dfi) != 2L) {
-    stop("Expect data frame with two columns, _id and a field.",
-         call. = FALSE)
-  }
+  # early exit if dv is not character
+  if (class(dv) != "character") return(dv)
 
-  # clean up input
+  # clean up for all character vectors
   # - if NA as string, change to NA
-  dfi[[2]][grepl("^N/?A$|^ND$", dfi[[2]])] <- NA
+  dv[grepl("^N/?A$|^ND$", dv)] <- NA
   # - give Month Year also a Day to work with as.Date
-  dfi[[2]] <- sub("^([a-zA-Z]+) ([0-9]{4})$", "\\1 15, \\2", dfi[[2]])
+  dv <- sub("^([a-zA-Z]+) ([0-9]{4})$", "\\1 15, \\2", dv)
   # - convert html entities because these had to
   #   be left intact when converting to ndjson
-  if (any(grepl("&[#a-zA-Z]+;", dfi[[2]]))) dfi[[2]][!is.na(dfi[[2]])] <-
-    sapply(dfi[[2]][!is.na(dfi[[2]])], function(i)
+  if (any(grepl("&[#a-zA-Z]+;", dv))) dv[!is.na(dv)] <-
+    sapply(dv[!is.na(dv)], function(i)
       xml2::xml_text(xml2::read_html(charToRaw(i))), USE.NAMES = FALSE)
   # - convert newline
-  dfi[[2]] <- gsub("\r", "\n", dfi[[2]])
+  dv <- gsub("\r", "\n", dv)
+
+  # early exit if fn is not in typeVars
+  if (is.null(typeVars[[fn]])) return(dv)
 
   # for date time conversion
-  lct <- Sys.getlocale("LC_TIME")
-  Sys.setlocale("LC_TIME", "C")
-  on.exit(Sys.setlocale("LC_TIME", lct))
+  tzSet <- function() {
+    lct <- Sys.getlocale("LC_TIME")
+    Sys.setlocale("LC_TIME", "C")
+    on.exit(Sys.setlocale("LC_TIME", lct))
+  }
 
   # main typing functions
-  ctrDate      <- function() as.Date(dfi[[2]], format = "%Y-%m-%d")
-  ctrDateUs    <- function() as.Date(dfi[[2]], format = "%b %e, %Y")
-  ctrDateCtr   <- function() as.Date(dfi[[2]], format = "%Y-%m-%d %H:%M:%S")
-  ctrDateTime  <- function() as.Date(dfi[[2]], format = "%Y-%m-%dT%H:%M:%S")
-  ctrYesNo     <- function() vapply(dfi[[2]], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA), logical(1L), USE.NAMES = FALSE)
-  ctrFalseTrue <- function() vapply(dfi[[2]], FUN = function(x) switch(x, "true" = TRUE, "false" = FALSE, NA), logical(1L), USE.NAMES = FALSE)
-  ctrInt       <- function() vapply(dfi[[2]], FUN = function(x) as.integer(x = x), integer(1L), USE.NAMES = FALSE)
+  ctrDate      <- function() {tzSet(); as.Date(dv, format = "%Y-%m-%d")}
+  ctrDateUs    <- function() {tzSet(); as.Date(dv, format = "%b %e, %Y")}
+  ctrDateCtr   <- function() {tzSet(); as.Date(dv, format = "%Y-%m-%d %H:%M:%S")}
+  ctrDateTime  <- function() {tzSet(); as.Date(dv, format = "%Y-%m-%dT%H:%M:%S")}
+  ctrYesNo     <- function() vapply(dv, FUN = function(x)
+    switch(x, "Yes" = TRUE, "No" = FALSE, NA), logical(1L), USE.NAMES = FALSE)
+  ctrFalseTrue <- function() vapply(dv, FUN = function(x)
+    switch(x, "true" = TRUE, "false" = FALSE, NA), logical(1L), USE.NAMES = FALSE)
+  ctrInt       <- function() vapply(dv, FUN = function(x)
+    as.integer(x = x), integer(1L), USE.NAMES = FALSE)
 
-  # selective typing
-  tmp <- try({
-    switch(
-      EXPR = names(dfi)[2],
-      #
-      # dates
-      #
-      # - ctrdata intern
-      "record_last_import" = ctrDateCtr(),
-      #
-      # - EUCTR
-      "n_date_of_ethics_committee_opinion"     = ctrDate(),
-      "n_date_of_competent_authority_decision" = ctrDate(),
-      "p_date_of_the_global_end_of_the_trial"  = ctrDate(),
-      "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database" = ctrDate(),
-      "firstreceived_results_date"             = ctrDate(),
-      "trialInformation.primaryCompletionDate" = ctrDate(),
-      "trialInformation.analysisStageDate"     = ctrDateTime(),
-      "trialInformation.globalEndOfTrialDate"  = ctrDateTime(),
-      "trialInformation.recruitmentStartDate"  = ctrDateTime(),
-      #
-      # - CTGOV
-      "start_date"              = ctrDateUs(),
-      "primary_completion_date" = ctrDateUs(),
-      "completion_date"         = ctrDateUs(),
-      "study_first_posted"      = ctrDateUs(),
-      "results_first_posted"    = ctrDateUs(),
-      "last_update_posted"      = ctrDateUs(),
-      #
-      # - ISRCTN
-      "participants.recruitmentStart" = ctrDateTime(),
-      "participants.recruitmentEnd"   = ctrDateTime(),
-      "trialDesign.overallStartDate"  = ctrDateTime(),
-      "trialDesign.overallEndDate"    = ctrDateTime(),
-      #
-      #
-      # factors / logical
-      #
-      # - EUCTR Yes / No / Information not present in EudraCT
-      #
-      "a7_trial_is_part_of_a_paediatric_investigation_plan" = ctrYesNo(),
-      "dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation" = ctrYesNo(),
-      "e13_condition_being_studied_is_a_rare_disease" = ctrYesNo(),
-      #
-      "e61_diagnosis"         = ctrYesNo(),
-      "e62_prophylaxis"       = ctrYesNo(),
-      "e63_therapy"           = ctrYesNo(),
-      "e64_safety"            = ctrYesNo(),
-      "e65_efficacy"          = ctrYesNo(),
-      "e66_pharmacokinetic"   = ctrYesNo(),
-      "e67_pharmacodynamic"   = ctrYesNo(),
-      "e68_bioequivalence"    = ctrYesNo(),
-      "e69_dose_response"     = ctrYesNo(),
-      "e610_pharmacogenetic"  = ctrYesNo(),
-      "e611_pharmacogenomic"  = ctrYesNo(),
-      "e612_pharmacoeconomic" = ctrYesNo(),
-      "e613_others"           = ctrYesNo(),
-      #
-      "e71_human_pharmacology_phase_i"         = ctrYesNo(),
-      "e711_first_administration_to_humans"    = ctrYesNo(),
-      "e712_bioequivalence_study"              = ctrYesNo(),
-      "e713_other"                             = ctrYesNo(),
-      "e72_therapeutic_exploratory_phase_ii"   = ctrYesNo(),
-      "e73_therapeutic_confirmatory_phase_iii" = ctrYesNo(),
-      "e74_therapeutic_use_phase_iv"           = ctrYesNo(),
-      #
-      "e81_controlled"      = ctrYesNo(),
-      "e811_randomised"     = ctrYesNo(),
-      "e812_open"           = ctrYesNo(),
-      "e813_single_blind"   = ctrYesNo(),
-      "e814_double_blind"   = ctrYesNo(),
-      "e815_parallel_group" = ctrYesNo(),
-      "e816_cross_over"     = ctrYesNo(),
-      "e817_other"          = ctrYesNo(),
-      #
-      "e83_the_trial_involves_single_site_in_the_member_state_concerned"    = ctrYesNo(),
-      "e84_the_trial_involves_multiple_sites_in_the_member_state_concerned" = ctrYesNo(),
-      "e85_the_trial_involves_multiple_member_states"                       = ctrYesNo(),
-      "e861_trial_being_conducted_both_within_and_outside_the_eea"          = ctrYesNo(),
-      "e862_trial_being_conducted_completely_outside_of_the_eea"            = ctrYesNo(),
-      "e87_trial_has_a_data_monitoring_committee"                           = ctrYesNo(),
-      #
-      "f11_trial_has_subjects_under_18"            = ctrYesNo(),
-      "f111_in_utero"                              = ctrYesNo(),
-      "f112_preterm_newborn_infants_up_to_gestational_age__37_weeks" = ctrYesNo(),
-      "f113_newborns_027_days"                     = ctrYesNo(),
-      "f114_infants_and_toddlers_28_days23_months" = ctrYesNo(),
-      "f115_children_211years"                     = ctrYesNo(),
-      "f116_adolescents_1217_years"                = ctrYesNo(),
-      "f12_adults_1864_years"                      = ctrYesNo(),
-      "f13_elderly_65_years"                       = ctrYesNo(),
-      "f21_female"                                 = ctrYesNo(),
-      "f22_male"                                   = ctrYesNo(),
-      "f31_healthy_volunteers"                     = ctrYesNo(),
-      "f32_patients"                               = ctrYesNo(),
-      "f33_specific_vulnerable_populations"        = ctrYesNo(),
-      "f331_women_of_childbearing_potential_not_using_contraception_" = ctrYesNo(),
-      "f332_women_of_childbearing_potential_using_contraception"      = ctrYesNo(),
-      "f333_pregnant_women"      = ctrYesNo(),
-      "f334_nursing_women"       = ctrYesNo(),
-      "f335_emergency_situation" = ctrYesNo(),
-      "f336_subjects_incapable_of_giving_consent_personally" = ctrYesNo(),
-      #
-      "trialInformation.analysisForPrimaryCompletion" = ctrFalseTrue(),
-      "trialInformation.partOfPIP" = ctrFalseTrue(),
-      "trialInformation.art45Related" = ctrFalseTrue(),
-      "trialInformation.art46Related" = ctrFalseTrue(),
-      "trialInformation.longTermFollowUpPlanned" = ctrFalseTrue(),
-      "trialInformation.idmcInvolvement" = ctrFalseTrue(),
-      "trialInformation.isGlobalEndOfTrialReached" = ctrFalseTrue(),
-      "trialInformation.globalEndOfTrialPremature" = ctrFalseTrue(),
-      #
-      # - CTGOV
-      "has_expanded_access"            = ctrYesNo(),
-      "oversight_info.has_dmc"         = ctrYesNo(),
-      "eligibility.healthy_volunteers" = ctrYesNo(),
-      #
-      # - ISRCTN
-      "trialDescription.acknowledgment" = ctrFalseTrue(),
-      "results.biomedRelated"           = ctrFalseTrue(),
-      #
-      # numbers
-      #
-      # - EUCTR
-      "e824_number_of_treatment_arms_in_the_trial" = ctrInt(),
-      "e891_in_the_member_state_concerned_years"   = ctrInt(),
-      "e891_in_the_member_state_concerned_months"  = ctrInt(),
-      "e891_in_the_member_state_concerned_days"    = ctrInt(),
-      "e892_in_all_countries_concerned_by_the_trial_years"  = ctrInt(),
-      "e892_in_all_countries_concerned_by_the_trial_months" = ctrInt(),
-      "e892_in_all_countries_concerned_by_the_trial_days"   = ctrInt(),
-      "e841_number_of_sites_anticipated_in_member_state_concerned" = ctrInt(),
-      "f11_number_of_subjects_for_this_age_range"   = ctrInt(),
-      "f1111_number_of_subjects_for_this_age_range" = ctrInt(),
-      "f1121_number_of_subjects_for_this_age_range" = ctrInt(),
-      "f1131_number_of_subjects_for_this_age_range" = ctrInt(),
-      "f1141_number_of_subjects_for_this_age_range" = ctrInt(),
-      "f1151_number_of_subjects_for_this_age_range" = ctrInt(),
-      "f1161_number_of_subjects_for_this_age_range" = ctrInt(),
-      "f121_number_of_subjects_for_this_age_range"  = ctrInt(),
-      "f131_number_of_subjects_for_this_age_range"  = ctrInt(),
-      "f41_in_the_member_state"          = ctrInt(),
-      "f421_in_the_eea"                  = ctrInt(),
-      "f422_in_the_whole_clinical_trial" = ctrInt(),
-      #
-      # - CTGOV
-      "number_of_arms" = ctrInt(),
-      "enrollment"     = ctrInt(),
-      #
-      # - ISRCTN
-      "participants.targetEnrolment"      = ctrInt(),
-      "participants.totalFinalEnrolment"  = ctrInt()
-      #
-    )
-  },
-  silent = TRUE)
+  # apply typing
+  out <- try(do.call(typeVars[[fn]], list()), silent = TRUE)
 
-  # prepare output
-  if (!inherits(tmp, "try-error") &&
-      !is.null(unlist(tmp, use.names = FALSE))) {
-
-    # need to construct new data frame, because
-    # replacing columns with posixct does not work
-    dfn <- names(dfi)
-    dfi <- data.frame(dfi[["_id"]],
-                      tmp,
-                      stringsAsFactors = FALSE)
-    names(dfi) <- dfn
-
+  # error output
+  if (inherits(out, "try-error") ||
+      length(out) != length(dv)) {
+    out <- rep.int(x = NA, times = length(dv))
   }
 
   # return
-  return(dfi)
+  return(out)
 
 } # end typeField
 
