@@ -2165,7 +2165,7 @@ typeField <- function(dfi) {
   #   be left intact when converting to ndjson
   if (any(grepl("&[#a-zA-Z]+;", dfi[[2]]))) dfi[[2]][!is.na(dfi[[2]])] <-
     sapply(dfi[[2]][!is.na(dfi[[2]])], function(i)
-      xml2::xml_text(xml2::read_html(charToRaw(i))))
+      xml2::xml_text(xml2::read_html(charToRaw(i))), USE.NAMES = FALSE)
   # - convert newline
   dfi[[2]] <- gsub("\r", "\n", dfi[[2]])
 
@@ -2179,9 +2179,9 @@ typeField <- function(dfi) {
   ctrDateUs    <- function() as.Date(dfi[[2]], format = "%b %e, %Y")
   ctrDateCtr   <- function() as.Date(dfi[[2]], format = "%Y-%m-%d %H:%M:%S")
   ctrDateTime  <- function() as.Date(dfi[[2]], format = "%Y-%m-%dT%H:%M:%S")
-  ctrYesNo     <- function() vapply(dfi[[2]], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA), logical(1L))
-  ctrFalseTrue <- function() vapply(dfi[[2]], FUN = function(x) switch(x, "true" = TRUE, "false" = FALSE, NA), logical(1L))
-  ctrInt       <- function() vapply(dfi[[2]], FUN = function(x) as.integer(x = x), integer(1L))
+  ctrYesNo     <- function() vapply(dfi[[2]], FUN = function(x) switch(x, "Yes" = TRUE, "No" = FALSE, NA), logical(1L), USE.NAMES = FALSE)
+  ctrFalseTrue <- function() vapply(dfi[[2]], FUN = function(x) switch(x, "true" = TRUE, "false" = FALSE, NA), logical(1L), USE.NAMES = FALSE)
+  ctrInt       <- function() vapply(dfi[[2]], FUN = function(x) as.integer(x = x), integer(1L), USE.NAMES = FALSE)
 
   # selective typing
   tmp <- try({
