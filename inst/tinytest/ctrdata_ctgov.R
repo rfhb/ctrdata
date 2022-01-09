@@ -226,15 +226,16 @@ expect_true(
 
 # select value from
 # measure in where
-df2 <- dfName2Value(
-  df = df,
-  valuename = paste0(
-    "clinical_results.*category_list.category.measurement_list.measurement.value|",
-    "clinical_results.outcome_list.outcome.measure.units"
-  ),
-  wherename = "clinical_results.outcome_list.outcome.measure.title",
-  wherevalue = "duration of response"
-)
+df2 <- suppressMessages(
+  dfName2Value(
+    df = df,
+    valuename = paste0(
+      "clinical_results.*category_list.category.measurement_list.measurement.value|",
+      "clinical_results.outcome_list.outcome.measure.units"
+    ),
+    wherename = "clinical_results.outcome_list.outcome.measure.title",
+    wherevalue = "duration of response"
+  ))
 
 # test
 expect_true(

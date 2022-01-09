@@ -256,15 +256,17 @@ expect_error(
 #### df mangling ####
 
 expect_error(
-  dfName2Value(
-    df = iris,
-    valuename = "something"),
+  suppressMessages(
+    dfName2Value(
+      df = iris,
+      valuename = "something")),
   "'df' does not seem to come from dfTrials2Long()")
 
 expect_error(
-  dfName2Value(
-    df = iris,
-    valuename = ""),
+  suppressMessages(
+    dfName2Value(
+      df = iris,
+      valuename = "")),
   "'valuename' must be specified")
 
 expect_error(

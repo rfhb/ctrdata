@@ -233,6 +233,8 @@ result <- suppressMessages(
 
 # test
 expect_true(nrow(result) > 30L)
+expect_true(ncol(result) > 30L)
+expect_true(ncol(result) < 40L)
 
 # keep only one record for trial
 result2 <- suppressWarnings(suppressMessages(
@@ -321,22 +323,24 @@ expect_error(
 #### dfName2Value ####
 
 # extract
-df2 <- dfName2Value(
-  df = df,
-  valuename = "subjectDisposition.*postAssignmentPeriod.arms.arm.type.value"
-)
+df2 <- suppressMessages(
+  dfName2Value(
+    df = df,
+    valuename = "subjectDisposition.*postAssignmentPeriod.arms.arm.type.value"
+  ))
 # test
 expect_true(
   length(unique(df2[["_id"]])) >= 2L
 )
 
 # extract
-df2 <- dfName2Value(
-  df = df,
-  valuename = "subjectDisposition.*postAssignmentPeriod.arms.arm.type.value",
-  wherename = "endPoints.endPoint.title",
-  wherevalue = "percentage"
-)
+df2 <- suppressMessages(
+  dfName2Value(
+    df = df,
+    valuename = "subjectDisposition.*postAssignmentPeriod.arms.arm.type.value",
+    wherename = "endPoints.endPoint.title",
+    wherevalue = "percentage"
+  ))
 
 # test
 expect_true(
@@ -355,12 +359,13 @@ expect_true(all(
 )
 
 # extract
-df2 <- dfName2Value(
-  df = df,
-  valuename = "^endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.value$",
-  wherename = "endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.method.value",
-  wherevalue = "HYPOTHESIS_METHOD.*"
-)
+df2 <- suppressMessages(
+  dfName2Value(
+    df = df,
+    valuename = "^endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.value$",
+    wherename = "endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.method.value",
+    wherevalue = "HYPOTHESIS_METHOD.*"
+  ))
 
 # test
 expect_true(
@@ -369,18 +374,20 @@ expect_true(
 
 # test
 expect_error(
-  dfName2Value(
-    df = df,
-    valuename = "doesnotexist"),
+  suppressMessages(
+    dfName2Value(
+      df = df,
+      valuename = "doesnotexist")),
   "No rows found for 'valuename'")
 
 # test
 expect_error(
-  dfName2Value(
-    df = df,
-    valuename = "^endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.value$",
-    wherename = "endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.method.value",
-    wherevalue = "doesnotexist"),
+  suppressMessages(
+    dfName2Value(
+      df = df,
+      valuename = "^endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.value$",
+      wherename = "endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.method.value",
+      wherevalue = "doesnotexist")),
   "No rows found for 'wherename' and 'wherevalue'")
 
 # cleanup
@@ -504,6 +511,10 @@ expect_true(
 # test
 expect_false(
   any(c("NCT01471782") %in% trialsEuctr))
+
+# test
+expect_equal(length(
+  intersect(trialsCtgov, trialsEuctr)), 18L)
 
 # clean up
 rm(trialsCtgov, trialsEuctr)

@@ -1548,6 +1548,10 @@ dfName2Value <- function(df, valuename = "",
   # from duplicate where... criteria
   out <- unique(out)
 
+  # inform user
+  message("Returning values for ", length(unique(out[["_id"]])),
+          " out of ", length(unique(df[["_id"]])), " trials")
+
   # return
   if (any("dplyr" == .packages())) return(dplyr::as_tibble(out))
   return(out)
