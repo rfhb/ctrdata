@@ -1423,7 +1423,7 @@ dbGetFieldsIntoDf <- function(fields = "",
           } else {
 
             # simplify column with one-column data frames
-            # e.g. CTGOV "primary_outcome.measure"
+            # TODO e.g. CTGOV "primary_outcome.measure"?
             if (!is.data.frame(dfi[[c]]) &&
                 all(sapply(dfi[[c]], function(r)
                   is.null(r) || (

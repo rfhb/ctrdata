@@ -178,6 +178,7 @@ expect_message(
   tmpTest <- suppressWarnings(
     ctrLoadQueryIntoDb(
       querytoupdate = "last",
+      verbose = TRUE,
       con = dbc)),
   "(Imported or updated|First result page empty)")
 
@@ -201,7 +202,7 @@ expect_message(
       queryterm = q,
       euctrresults = TRUE,
       euctrresultshistory = TRUE,
-      euctrresultspdfpath = "DOESNOTEXIST",
+      euctrresultspdfpath = tempdir(),
       con = dbc)),
   "Imported or updated results for 3")
 rm(q)

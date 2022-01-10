@@ -25,6 +25,11 @@ tf <- function() {
 
   #### ctrLoadQueryIntoDb ####
 
+  # test
+  expect_error(
+      ctrLoadQueryIntoDb(),
+    "either 'queryterm' nor 'querytoupdate' specified")
+
   tmpdf <- iris[1:5, ]
   names(tmpdf) <- paste0("query-", names(tmpdf))
   # test
@@ -325,8 +330,15 @@ tf <- function() {
       "Found search query")
     expect_true(is.data.frame(tmp))
     expect_equal(tmp[["query-term"]], queryurls[[1]][2])
-
     rm(tmp)
+
+    clipr::write_clip(
+      "NotARegisterUrl",
+      allow_non_interactive = TRUE)
+    expect_warning(
+      ctrGetQueryUrl(),
+      "no clinical trial register")
+
   }
 
   # clean up
