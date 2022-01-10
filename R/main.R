@@ -1198,7 +1198,7 @@ ctrLoadQueryIntoDbEuctr <- function(
            call. = FALSE)
     } else {
       message("Host ", queryEuRoot, " not working as expected, ",
-              "cannot continue: ", tmp[[1]])
+              "cannot continue: ", resultsEuPages[[1]])
       return(invisible(emptyReturn))
     }
   }
