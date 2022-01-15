@@ -1,5 +1,5 @@
 # ctrdata 1.8.0.9002
- - 2022-01-14
+ - 2022-01-15
  - chunked trial batches in ndjson files for accelerated database import
  - if package dplyr is loaded, functions return a tibble instead of a data frame
  - update and correct documentation

@@ -24,7 +24,7 @@ The motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created by it. This
-README was reviewed on 2022-01-03 for v1.8.0.9002.
+README was reviewed on 2022-01-15 for v1.8.0.9002.
 
 Main features:
 
@@ -134,7 +134,7 @@ workflow (in bold, main functions).
 | `dbQueryHistory()`                 | Show the history of queries that were downloaded into the collection                                                           |
 | `dbFindIdsUniqueTrials()`          | **Get the identifiers of de-duplicated trials in the collection**                                                              |
 | `dbFindFields()`                   | Find names of variables (fields) in the collection                                                                             |
-| `dbGetFieldsIntoDf()`              | **Create a data.frame from trial records in the database with the specified fields**                                           |
+| `dbGetFieldsIntoDf()`              | **Create a data frame (or tibble) from trial records in the database with the specified fields**                               |
 | `dfTrials2Long()`                  | Transform the data.frame from `dbGetFieldsIntoDf()` into a long name-value data.frame, including deeply nested fields          |
 | `dfName2Value()`                   | From a long name-value data.frame, extract values for variables (fields) of interest (e.g., endpoints)                         |
 | `dfMergeTwoVariablesRelevel()`     | Merge two simple variables into a new variable, optionally map values to a new set of values                                   |
@@ -463,7 +463,11 @@ trials](https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/dev/reference
 ### Issues and notes
 
 -   Please file issues and bugs
-    [here](https://github.com/rfhb/ctrdata/issues).
+    [here](https://github.com/rfhb/ctrdata/issues). Also check out how
+    to handle some of the closed issues, e.g. on [C stack usage too
+    close to the limit](https://github.com/rfhb/ctrdata/issues/22) and
+    on a [SSL certificate problem: unable to get local issuer
+    certificate](https://github.com/rfhb/ctrdata/issues/19#issuecomment-820127139)
 
 -   Information in trial registers may not be fully correct; see for
     example [this publication on
