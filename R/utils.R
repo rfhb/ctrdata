@@ -2386,23 +2386,50 @@ typeField <- function(dv, fn) {
   if (is.null(typeVars[[fn]])) return(dv)
 
   # for date time conversion
-  tzSet <- function() {
-    lct <- Sys.getlocale("LC_TIME")
-    Sys.setlocale("LC_TIME", "C")
-    on.exit(Sys.setlocale("LC_TIME", lct))
-  }
+  lct <- Sys.getlocale("LC_TIME")
 
   # main typing functions
-  ctrDate      <- function() {tzSet(); as.Date(dv, format = "%Y-%m-%d")}
-  ctrDateUs    <- function() {tzSet(); as.Date(dv, format = "%b %e, %Y")}
-  ctrDateCtr   <- function() {tzSet(); as.Date(dv, format = "%Y-%m-%d %H:%M:%S")}
-  ctrDateTime  <- function() {tzSet(); as.Date(dv, format = "%Y-%m-%dT%H:%M:%S")}
-  ctrYesNo     <- function() vapply(dv, FUN = function(x)
-    switch(x, "Yes" = TRUE, "No" = FALSE, NA), logical(1L), USE.NAMES = FALSE)
-  ctrFalseTrue <- function() vapply(dv, FUN = function(x)
-    switch(x, "true" = TRUE, "false" = FALSE, NA), logical(1L), USE.NAMES = FALSE)
-  ctrInt       <- function() vapply(dv, FUN = function(x)
-    as.integer(x = x), integer(1L), USE.NAMES = FALSE)
+  ctrDate <- function() {
+    Sys.setlocale("LC_TIME", "C")
+    on.exit(Sys.setlocale("LC_TIME", lct), add = TRUE)
+    as.Date(dv, format = "%Y-%m-%d")
+  }
+  #
+  ctrDateUs <- function() {
+    Sys.setlocale("LC_TIME", "C")
+    on.exit(Sys.setlocale("LC_TIME", lct), add = TRUE)
+    as.Date(dv, format = "%b %e, %Y")
+  }
+  #
+  ctrDateCtr <- function() {
+    Sys.setlocale("LC_TIME", "C")
+    on.exit(Sys.setlocale("LC_TIME", lct), add = TRUE)
+    as.Date(dv, format = "%Y-%m-%d %H:%M:%S")
+  }
+  #
+  ctrDateTime <- function() {
+    Sys.setlocale("LC_TIME", "C")
+    on.exit(Sys.setlocale("LC_TIME", lct), add = TRUE)
+    as.Date(dv, format = "%Y-%m-%dT%H:%M:%S")
+  }
+  #
+  ctrYesNo <- function() {
+    vapply(dv, FUN = function(x)
+      switch(x, "Yes" = TRUE, "No" = FALSE, NA),
+      logical(1L), USE.NAMES = FALSE)
+  }
+  #
+  ctrFalseTrue <- function() {
+    vapply(dv, FUN = function(x)
+      switch(x, "true" = TRUE, "false" = FALSE, NA),
+      logical(1L), USE.NAMES = FALSE)
+  }
+  #
+  ctrInt       <- function() {
+    vapply(dv, FUN = function(x)
+      as.integer(x = x), integer(1L),
+      USE.NAMES = FALSE)
+  }
 
   # apply typing
   out <- try(do.call(typeVars[[fn]], list()), silent = TRUE)
