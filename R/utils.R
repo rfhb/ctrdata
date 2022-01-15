@@ -2501,6 +2501,8 @@ addMetaData <- function(x, con) {
 #'   `host_or_ip:port`; defaults to the environment variable `https_proxy`.
 #'   Set to `""` to not specify or to unset a proxy.
 #'
+#' @examples
+#'
 #' \dontrun{
 #'
 #' installCygwinWindowsDoInstall()

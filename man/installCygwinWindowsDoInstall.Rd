@@ -12,14 +12,8 @@ was previously installed with the function, or to overwrite any existing
 installation in \code{c:\\cygwin}}
 
 \item{proxy}{Specify any proxy to be used for downloading via http, e.g.
-  `host_or_ip:port`; defaults to the environment variable `https_proxy`.
-  Set to `""` to not specify or to unset a proxy.
-
-\dontrun{
-
-installCygwinWindowsDoInstall()
-
-}}
+`host_or_ip:port`; defaults to the environment variable `https_proxy`.
+Set to `""` to not specify or to unset a proxy.}
 }
 \description{
 Convenience function to install a minimal Cygwin environment under MS
@@ -31,4 +25,13 @@ https://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages
 perl,php-jsonc,php-simplexml}.
 These binaries are required only for function \link{ctrLoadQueryIntoDb}
 but not for any other function in this package.
+}
+\examples{
+
+\dontrun{
+
+installCygwinWindowsDoInstall()
+
+}
+
 }
