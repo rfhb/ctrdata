@@ -1345,6 +1345,12 @@ dbGetFieldsIntoDf <- function(fields = "",
     key = con$collection,
     query = '{}',
     fields = paste0('{"_id": 1}'))
+
+  # early exit if no records
+  if (!nrow(dft)) stop(
+    "No data found in collection \"", con$collection, "\"", call. = FALSE)
+
+  # continue with data frame of _id's
   dft <- dft[dft[["_id"]] != "meta-info", "_id", drop = FALSE]
 
   # initialise output
@@ -1384,10 +1390,11 @@ dbGetFieldsIntoDf <- function(fields = "",
         itemSegments <- strsplit(item, "[.]")[[1]]
         itemSegments <- setdiff(itemSegments, names(dfi))
         for (iS in itemSegments) {
-          if ((length(names(dfi[[2]])) == 1L) && (iS == names(dfi[[2]]))) {
+          if ((length(names(dfi[[2]])) == 1L) &&
+              (iS == names(dfi[[2]]))) {
             dfi[[2]] <- dfi[[2]][[iS]]
           } else {
-            # TODO is this used for any field?
+            # e.g. for "primary_outcome.measure" from MongoDB
             tn <- sapply(dfi[[2]], names)
             if (length(unique(tn)) == 1L && (iS == tn[1]))
               dfi[[2]] <- sapply(dfi[[2]], "[[", 1)
@@ -1431,16 +1438,15 @@ dbGetFieldsIntoDf <- function(fields = "",
 
           } else {
 
-            # simplify column with one-column data frames
-            # TODO e.g. CTGOV "primary_outcome.measure"?
+            # simplify column with one-column data frames or
+            # one-item list e.g. "primary_outcome.measure"
             if (!is.data.frame(dfi[[c]]) &&
                 all(sapply(dfi[[c]], function(r)
-                  is.null(r) || (
-                    class(r) == "data.frame" &&
-                    ncol(r) == 1L && nrow(r) > 0L)
+                  (length(unlist(r)) <= 1L) ||
+                  (is.data.frame(r) && ncol(r) == 1L && nrow(r) > 0L)
                 ))) {
               dfi[[c]] <- sapply(
-                dfi[[c]], function(i) {i[[1]]},
+                dfi[[c]], function(i) if (length(i)) i[[1]] else NA,
                 USE.NAMES = FALSE, simplify = TRUE)
             }
 
