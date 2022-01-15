@@ -1094,6 +1094,9 @@ dbFindIdsUniqueTrials <- function(
     "isrctn",
     "externalRefs.protocolSerialNumber"
   )
+  if (verbose) message(
+    "\nFields used for finding corresponding register records of trials: ",
+    "\n\n", paste0(fields, collapse = ", "), "\n")
 
   # add any missing columns
   missFields <- setdiff(fields, names(listofIds))
