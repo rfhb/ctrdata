@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{dfFindUniqueEuctrRecord}
 \alias{dfFindUniqueEuctrRecord}
-\title{Select single trial record from records of different EU Member States}
+\title{Select a single trial record from records of different EU Member States}
 \usage{
 dfFindUniqueEuctrRecord(
   df = NULL,

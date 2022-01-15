@@ -11,8 +11,8 @@ dbGetFieldsIntoDf(fields = "", con, verbose = FALSE, stopifnodata = TRUE)
 See function \link{dbFindFields} for how to find names of fields.
 "item.subitem" notation is supported.}
 
-\item{con}{\strong{A connection object, see section
-`Databases` in \link{ctrdata-package}}}
+\item{con}{A connection object, see section
+`Databases` in \link{ctrdata-package}}
 
 \item{verbose}{Printing additional information if set to \code{TRUE};
 (default \code{FALSE}).}
@@ -22,54 +22,48 @@ a warning (\code{FALSE}) if the sought field is empty in all,
 or not available in any of the records in the database collection.}
 }
 \value{
-A data frame with columns corresponding to the sought fields.
-A column for the record _id will always be included.
+A data frame (or tibble, if \code{dplyr} is loaded)
+with columns corresponding to the sought fields.
+A column for the record `_id` will always be included.
 Each column can be either a simple data type (numeric, character, date)
-or a list (see example below): For complicated lists, use function
+or a list. For complicated lists, use function
 \link{dfTrials2Long} followed by function \link{dfName2Value} to
 extract values for nested variables.
 The maximum number of rows of the returned data frame is equal to,
 or less than the number of records of trials in the database.
 }
 \description{
-Fields in the database are retrieved into a data frame. Note that fields
-within the record of a trial can be hierarchical and structured, that is,
-nested. Names of fields can be found with \link{dbFindFields}.
-The function returns a list for a field that includes nested content;
-use function \link{dfTrials2Long} followed by \link{dfName2Value} to
-extract desired nested variables.
+Fields in the collection are retrieved into a data frame (or tibble).
+Note that fields within the record of a trial can be hierarchical
+and structured, that is, nested.
+Names of fields can be found with \link{dbFindFields}.
+The function uses the field names to appropriately type the values
+that it returns, harmonising original values (e.g. "Information not present
+in EudraCT" becomes `NA`, "Yes" becomes `TRUE`, "false" becomes `FALSE`,
+date strings become class Date, number strings become numbers).
+The function attempts so simplify the structure of some nested data and
+may concatenate multiple strings in a field using " / " (see below);
+for complex nested data, use function \link{dfTrials2Long} followed by
+\link{dfName2Value} to extract the desired nested variable(s).
 }
 \examples{
 
 \dontrun{
-dbc <- nodbi::src_sqlite(
-  collection = "my_collection"
-)
+
+dbc <- nodbi::src_sqlite(collection = "my_collection")
 
 # access fields that are nested within another field
-# and can have multiple values with the other field
+# and can have multiple values with the nested field
 dbGetFieldsIntoDf(
   "b1_sponsor.b31_and_b32_status_of_the_sponsor",
   con = dbc
-)[1,]
-#                 _id b1_sponsor.b31_and_b32_status_of_the_sponsor
-# 1 2004-000015-25-GB                  Non-commercial / Commercial
+)
 
-# access fields that include a list of values
-# which are printed as comma separated values
-dbGetFieldsIntoDf(
-  "keyword",
-  con = dbc
-)[1,]
-
-#           _id                                 keyword
-# 1 NCT00129259 T1D, type 1 diabetes, juvenile diabetes
-
-str(.Last.value)
-# 'data.frame':	1 obs. of  2 variables:
-# $ _id    : chr "NCT00129259"
-# $ keyword:List of 1
-# ..$ : chr  "T1D" "type 1 diabetes" "juvenile diabetes"
+# access fields that include a list of values which
+# (if they are strings) are concatenated with a slash
+dbGetFieldsIntoDf("keyword", con = dbc)[1,]
+#           _id                                   keyword
+# 1 NCT00129259 T1D / type 1 diabetes / juvenile diabetes
 
 }
 

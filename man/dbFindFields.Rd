@@ -11,15 +11,17 @@ dbFindFields(namepart = "", con, verbose = FALSE)
 including Perl-style) to be searched for among all field names
 (keys) in the database. Use `".*` to find all fields.}
 
-\item{con}{\strong{A connection object, see section
-`Databases` in \link{ctrdata-package}}}
+\item{con}{A connection object, see section
+`Databases` in \link{ctrdata-package}}
 
 \item{verbose}{If \code{TRUE}, prints additional information
 (default \code{FALSE}).}
 }
 \value{
-Vector of names of found field(s) in alphabetical
-order (that is, not by register or field frequency)
+Vector of strings with full names of field(s) found,
+in alphabetical order by register. This is a named vector
+where the names of the vector are the register names for
+the respective fields.
 }
 \description{
 Given part of the name of a field of interest to the user, this
@@ -41,13 +43,11 @@ Note: Only when `dbFindFields` is first called after
 \examples{
 
 \dontrun{
-dbc <- nodbi::src_sqlite(
-  collection = "my_collection"
-)
-dbFindFields(
-  nampepart = "date",
-  con = dbc
-)
+
+dbc <- nodbi::src_sqlite(collection = "my_collection")
+
+dbFindFields(namepart = "date", con = dbc)
+
 }
 
 }

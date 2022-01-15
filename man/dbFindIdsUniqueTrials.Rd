@@ -27,19 +27,20 @@ other record for the trial will be returned. For a list of codes of EU
 that are conducted exclusively in third countries, that is, outside
 the European Union.}
 
-\item{con}{\strong{A connection object, see section
-`Databases` in \link{ctrdata-package}}}
+\item{con}{A connection object, see section
+`Databases` in \link{ctrdata-package}}
 
-\item{verbose}{If set to \code{TRUE}, prints out information about numbers
-of records found at subsequent steps when searching for duplicates}
+\item{verbose}{If set to \code{TRUE}, prints out which fields
+of the registers are used to find corresponding trial records}
 }
 \value{
-A vector with strings of keys ("_id" in the database) that
-  represent non-duplicate trials.
+A vector with strings of keys ("_id") of records in
+the collection that represent unique trials.
 }
 \description{
 Records for a clinical trial can be loaded from more than one
-register. The function returns identifiers of records from the
+register into a collection. The function returns identifiers of
+records in the collection that were loaded from the
 register(s) preferred by the user. All registers are recording
 identifiers also from other registers, which is used by this
 function to provide a vector of identifiers of deduplicated trials.
@@ -47,12 +48,10 @@ function to provide a vector of identifiers of deduplicated trials.
 \examples{
 
 \dontrun{
-dbc <- nodbi::src_sqlite(
-  collection = "my_collection"
-)
-dbFindIdsUniqueTrials(
-  con = dbc
-)
+dbc <- nodbi::src_sqlite(collection = "my_collection")
+
+dbFindIdsUniqueTrials(con = dbc)
+
 }
 
 }

@@ -191,6 +191,7 @@ typeVars <- list(
 #' @param verbose set to `TRUE` to print debug info
 #'
 #' @keywords internal
+#' @noRd
 #'
 #' @return value of variable or `NULL` if variable does not exist
 #'
@@ -205,7 +206,7 @@ ctrCache <- function(xname, xvalue = NULL, verbose = FALSE) {
     return(xvalue)
   }
 
-  # check and ready any value for variable
+  # check and read any value for xname variable
   if (verbose) message(" accessing cache...", appendLF = FALSE)
   if (exists(x = xname, envir = .ctrdataenv)) {
     tmp <- try(get(x = xname, envir = .ctrdataenv), silent = TRUE)
@@ -221,8 +222,8 @@ ctrCache <- function(xname, xvalue = NULL, verbose = FALSE) {
 
 #' Check and prepare nodbi connection object for ctrdata
 #'
-#' @param con \strong{A connection object, see section
-#' `Databases` in \link{ctrdata-package}}
+#' @param con A connection object, see section
+#' `Databases` in \link{ctrdata-package}
 #'
 #' @keywords internal
 #'
@@ -325,10 +326,10 @@ ctrDb <- function(
 
 #' Open stored query or register search page
 #'
-#' Open advanced search pages of register(s) or execute search in browser
+#' Open advanced search pages of register(s), or execute search in browser
 #'
 #' @param url of search results page to show in the browser.
-#'   May be the output of \link{ctrGetQueryUrl} or from \link{dbQueryHistory}.
+#'   Can be the return value of \link{ctrGetQueryUrl} or \link{dbQueryHistory}.
 #'
 #' @param register Register(s) to open. Either "EUCTR" or "CTGOV" or a vector of
 #'   both. Default is to open both registers' advanced search pages. To open the
@@ -342,10 +343,11 @@ ctrDb <- function(
 #'
 #' @export
 #'
-#' @return Is always true, invisibly.
+#' @return Always \code{TRUE}, invisibly.
 #'
 #' @examples
 #' \dontrun{
+#'
 #' # Check copyrights before using registers
 #' ctrOpenSearchPagesInBrowser(copyright = TRUE)
 #'
@@ -355,6 +357,7 @@ ctrDb <- function(
 #' )
 #' ctrOpenSearchPagesInBrowser(
 #'   dbQueryHistory(con = dbc))
+#'
 #' }
 ctrOpenSearchPagesInBrowser <- function(
   url = "",
@@ -439,9 +442,11 @@ ctrOpenSearchPagesInBrowser <- function(
 #'
 #' @export
 #'
-#' @return A data frame with column names query term and register name
-#' that can directly be used in \link{ctrLoadQueryIntoDb} and in
-#' \link{ctrOpenSearchPagesInBrowser}
+#' @return A data frame (or tibble, if \code{dplyr} is loaded)
+#' with column names `query-term` and `query-register`.
+#' The data frame (or tibble) can be passed as such as parameter
+#' `query-term` to \link{ctrLoadQueryIntoDb} and as parameter
+#' `url` to \link{ctrOpenSearchPagesInBrowser}.
 #'
 #' @importFrom clipr read_clip
 #' @importFrom dplyr as_tibble
@@ -449,17 +454,17 @@ ctrOpenSearchPagesInBrowser <- function(
 #' @examples
 #'
 #' \dontrun{
-#' dbc <- nodbi::src_sqlite(
-#'   collection = "my_collection"
-#' )
+#'
+#' dbc <- nodbi::src_sqlite(collection = "my_collection")
 #'
 #' # user now copies into the clipboard the URL from
 #' # the address bar of the browser that shows results
 #' # from a query in one of the trial registers
 #' ctrLoadQueryIntoDb(
-#'   ctrGetQueryUrl(),
+#'   queryterm = ctrGetQueryUrl(),
 #'   con = dbc
 #' )
+#'
 #' }
 #'
 ctrGetQueryUrl <- function(
@@ -619,9 +624,10 @@ ctrGetQueryUrl <- function(
 #' @examples
 #'
 #' \dontrun{
-#' ctrFindActiveSubstanceSynonyms(
-#'   activesubstance = "imatinib"
-#' )
+#'
+#' ctrFindActiveSubstanceSynonyms(activesubstance = "imatinib")
+#' # [1] "imatinib"  "gleevec"   "sti 571"   "glivec"    "CGP 57148" "st1571"
+#'
 #' }
 #'
 ctrFindActiveSubstanceSynonyms <- function(activesubstance = "") {
@@ -668,7 +674,8 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "") {
 #'
 #' @inheritParams ctrDb
 #'
-#' @return A data frame with columns: query-timestamp, query-register,
+#' @return A data frame (or tibble, if \code{dplyr} is loaded)
+#'  with columns: query-timestamp, query-register,
 #'  query-records (note: this is the number of records loaded when last
 #'  executing \link{ctrLoadQueryIntoDb}, not the total record number) and
 #'  query-term, and with one row for each time \link{ctrLoadQueryIntoDb}
@@ -685,12 +692,11 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "") {
 #' @examples
 #'
 #' \dontrun{
-#' dbc <- nodbi::src_sqlite(
-#'   collection = "my_collection"
-#' )
-#' dbQueryHistory(
-#'   con = dbc
-#' )
+#'
+#' dbc <- nodbi::src_sqlite(collection = "my_collection")
+#'
+#' dbQueryHistory(con = dbc)
+#'
 #' }
 #'
 dbQueryHistory <- function(con, verbose = FALSE) {
@@ -775,21 +781,21 @@ dbQueryHistory <- function(con, verbose = FALSE) {
 #'
 #' @inheritParams ctrDb
 #'
-#' @return Vector of names of found field(s) in alphabetical
-#' order (that is, not by register or field frequency)
+#' @return Vector of strings with full names of field(s) found,
+#' in alphabetical order by register. This is a named vector
+#' where the names of the vector are the register names for
+#' the respective fields.
 #'
 #' @export
 #'
 #' @examples
 #'
 #' \dontrun{
-#' dbc <- nodbi::src_sqlite(
-#'   collection = "my_collection"
-#' )
-#' dbFindFields(
-#'   nampepart = "date",
-#'   con = dbc
-#' )
+#'
+#' dbc <- nodbi::src_sqlite(collection = "my_collection")
+#'
+#' dbFindFields(namepart = "date", con = dbc)
+#'
 #' }
 #'
 dbFindFields <- function(namepart = "",
@@ -916,7 +922,8 @@ dbFindFields <- function(namepart = "",
 #' Get identifiers of deduplicated trial records
 #'
 #' Records for a clinical trial can be loaded from more than one
-#' register. The function returns identifiers of records from the
+#' register into a collection. The function returns identifiers of
+#' records in the collection that were loaded from the
 #' register(s) preferred by the user. All registers are recording
 #' identifiers also from other registers, which is used by this
 #' function to provide a vector of identifiers of deduplicated trials.
@@ -927,27 +934,25 @@ dbFindFields <- function(namepart = "",
 #'
 #' @inheritParams dfFindUniqueEuctrRecord
 #'
-#' @param verbose If set to \code{TRUE}, prints out information about numbers
-#' of records found at subsequent steps when searching for duplicates
+#' @param verbose If set to \code{TRUE}, prints out which fields
+#'  of the registers are used to find corresponding trial records
 #'
 #' @importFrom nodbi docdb_query
 #'
 #' @inheritParams ctrDb
 #'
-#' @return A vector with strings of keys ("_id" in the database) that
-#'   represent non-duplicate trials.
+#' @return A vector with strings of keys ("_id") of records in
+#' the collection that represent unique trials.
 #'
 #' @export
 #'
 #' @examples
 #'
 #' \dontrun{
-#' dbc <- nodbi::src_sqlite(
-#'   collection = "my_collection"
-#' )
-#' dbFindIdsUniqueTrials(
-#'   con = dbc
-#' )
+#' dbc <- nodbi::src_sqlite(collection = "my_collection")
+#'
+#' dbFindIdsUniqueTrials(con = dbc)
+#'
 #' }
 #'
 dbFindIdsUniqueTrials <- function(
@@ -999,7 +1004,7 @@ dbFindIdsUniqueTrials <- function(
   # check if cache environment has entry for the database
   listofIds <- ctrCache(
     xname = paste0("listofids_", con$db, "/", con$collection),
-                   verbose = verbose)
+                   verbose = FALSE)
 
   # get cache reference value
   cacheRef <- as.character(rev(unlist(try(nodbi::docdb_query(
@@ -1009,7 +1014,7 @@ dbFindIdsUniqueTrials <- function(
   # cache validity
   cacheOutdated <- is.null(listofIds) || (cacheRef != ctrCache(
     xname = paste0("listofids_", con$db, "/", con$collection, "_timestamp"),
-    verbose = verbose))
+    verbose = FALSE))
 
   # inform user
   message(" - Getting trial ids...", appendLF = FALSE)
@@ -1041,10 +1046,10 @@ dbFindIdsUniqueTrials <- function(
     # write cache entries
     ctrCache(
       xname = paste0("listofids_", con$db, "/", con$collection),
-      xvalue = listofIds, verbose = verbose)
+      xvalue = listofIds, verbose = FALSE)
     ctrCache(
       xname = paste0("listofids_", con$db, "/", con$collection, "_timestamp"),
-      xvalue = cacheRef, verbose = verbose)
+      xvalue = cacheRef, verbose = FALSE)
 
   } # if outdated
 
@@ -1093,7 +1098,7 @@ dbFindIdsUniqueTrials <- function(
   listofIds <- listofIds[, fields, drop = FALSE]
 
   # rename columns for content mangling, needs to
-  # correspond to columns and sequence in fields
+  # correspond to columns and sequence in "fields"
   # for mapping identifiers across registers
   names(listofIds) <- c(
     "_id", "ctrname",
@@ -1233,12 +1238,18 @@ dbFindIdsUniqueTrials <- function(
 
 #' Create data frame of specified fields from database collection
 #'
-#' Fields in the database are retrieved into a data frame. Note that fields
-#' within the record of a trial can be hierarchical and structured, that is,
-#' nested. Names of fields can be found with \link{dbFindFields}.
-#' The function returns a list for a field that includes nested content;
-#' use function \link{dfTrials2Long} followed by \link{dfName2Value} to
-#' extract desired nested variables.
+#' Fields in the collection are retrieved into a data frame (or tibble).
+#' Note that fields within the record of a trial can be hierarchical
+#' and structured, that is, nested.
+#' Names of fields can be found with \link{dbFindFields}.
+#' The function uses the field names to appropriately type the values
+#' that it returns, harmonising original values (e.g. "Information not present
+#' in EudraCT" becomes `NA`, "Yes" becomes `TRUE`, "false" becomes `FALSE`,
+#' date strings become class Date, number strings become numbers).
+#' The function attempts so simplify the structure of some nested data and
+#' may concatenate multiple strings in a field using " / " (see below);
+#' for complex nested data, use function \link{dfTrials2Long} followed by
+#' \link{dfName2Value} to extract the desired nested variable(s).
 #'
 #' @param fields Vector of one or more strings, with names of sought fields.
 #' See function \link{dbFindFields} for how to find names of fields.
@@ -1253,10 +1264,11 @@ dbFindIdsUniqueTrials <- function(
 #'
 #' @inheritParams ctrDb
 #'
-#' @return A data frame with columns corresponding to the sought fields.
-#' A column for the record _id will always be included.
+#' @return A data frame (or tibble, if \code{dplyr} is loaded)
+#' with columns corresponding to the sought fields.
+#' A column for the record `_id` will always be included.
 #' Each column can be either a simple data type (numeric, character, date)
-#' or a list (see example below): For complicated lists, use function
+#' or a list. For complicated lists, use function
 #' \link{dfTrials2Long} followed by function \link{dfName2Value} to
 #' extract values for nested variables.
 #' The maximum number of rows of the returned data frame is equal to,
@@ -1271,34 +1283,21 @@ dbFindIdsUniqueTrials <- function(
 #' @examples
 #'
 #' \dontrun{
-#' dbc <- nodbi::src_sqlite(
-#'   collection = "my_collection"
-#' )
+#'
+#' dbc <- nodbi::src_sqlite(collection = "my_collection")
 #'
 #' # access fields that are nested within another field
-#' # and can have multiple values with the other field
+#' # and can have multiple values with the nested field
 #' dbGetFieldsIntoDf(
 #'   "b1_sponsor.b31_and_b32_status_of_the_sponsor",
 #'   con = dbc
-#' )[1,]
-#' #                 _id b1_sponsor.b31_and_b32_status_of_the_sponsor
-#' # 1 2004-000015-25-GB                  Non-commercial / Commercial
+#' )
 #'
-#' # access fields that include a list of values
-#' # which are printed as comma separated values
-#' dbGetFieldsIntoDf(
-#'   "keyword",
-#'   con = dbc
-#' )[1,]
-#'
-#' #           _id                                 keyword
-#' # 1 NCT00129259 T1D, type 1 diabetes, juvenile diabetes
-#'
-#' str(.Last.value)
-#' # 'data.frame':	1 obs. of  2 variables:
-#' # $ _id    : chr "NCT00129259"
-#' # $ keyword:List of 1
-#' # ..$ : chr  "T1D" "type 1 diabetes" "juvenile diabetes"
+#' # access fields that include a list of values which
+#' # (if they are strings) are concatenated with a slash
+#' dbGetFieldsIntoDf("keyword", con = dbc)[1,]
+#' #           _id                                   keyword
+#' # 1 NCT00129259 T1D / type 1 diabetes / juvenile diabetes
 #'
 #' }
 #'
@@ -1602,8 +1601,8 @@ dbGetFieldsIntoDf <- function(fields = "",
 #' Parameters `valuename`, `wherename` and `wherevalue` are matched
 #' using Perl regular expressions and ignoring case.
 #'
-#' @param df A data frame with four columns (_id,
-#'  identifier, name, value) as returned by
+#' @param df A data frame (or tibble) with four columns (`_id`,
+#'  `identifier`, `name`, `value`) as returned by
 #'  \link{dfTrials2Long}
 #'
 #' @param valuename A character string for the name of the field
@@ -1616,7 +1615,8 @@ dbGetFieldsIntoDf <- function(fields = "",
 #' @param wherevalue A character string with the value of interest
 #'  for the variable of interest (e.g., "duration of response")
 #'
-#' @return A data frame with columns `_id`, `identifier`,
+#' @return A data frame (or tibble, if \code{dplyr} is loaded)
+#'  with columns `_id`, `identifier`,
 #'  `name`, `value` that only includes the values of interest,
 #'  where values are strings unless all value elements
 #'  are numbers. The `ìdentifier` is generated by function
@@ -1629,10 +1629,10 @@ dbGetFieldsIntoDf <- function(fields = "",
 #'
 #' @examples
 #' \dontrun{
-#' dbc <- nodbi::src_sqlite(
-#'   collection = "my_collection"
-#' )
-#' df <- ctrdata::dbGetFieldsIntoDf(
+#'
+#' dbc <- nodbi::src_sqlite(collection = "my_collection")
+#'
+#' df <- dbGetFieldsIntoDf(
 #' fields = c(
 #'   # ctgov - typical results fields
 #'   "clinical_results.baseline.analyzed_list.analyzed.count_list.count",
@@ -1650,21 +1650,22 @@ dbGetFieldsIntoDf <- function(fields = "",
 #'   "adverseEvents.seriousAdverseEvents.seriousAdverseEvent"
 #'   ), con = dbc
 #' )
+#'
 #' # convert to long
-#' reslong <- ctrdata::dfTrials2Long(
-#'   df = df
-#' )
-#' # get values for endpoint of interest, duration of response
-#' ctrdata::dfValue2Name(
-#'   df = df,
+#' reslong <- dfTrials2Long(df = df)
+#'
+#' # get values for endpoint of interest, e.g. 'response'
+#' dfName2Value(
+#'   df = reslong,
 #'   valuename = paste0(
 #'     "endPoints.endPoint.*armReportingGroup.tendencyValues.tendencyValue.value|",
 #'     "clinical_results.*category.measurement_list.measurement.value|",
 #'     "clinical_results.*outcome.measure.units|endPoints.endPoint.unit"
 #'   ),
 #'   wherename = "clinical_results.*outcome.measure.title|endPoints.endPoint.title",
-#'   wherevalue = "duration of response"
+#'   wherevalue = "response"
 #' )
+#'
 #' }
 #'
 dfName2Value <- function(df, valuename = "",
@@ -1764,13 +1765,13 @@ dfName2Value <- function(df, valuename = "",
 #' From the resulting data frame, values of interest can be selected
 #' using \link{dfName2Value}).
 #'
-#' @param df Data frame with columns including
+#' @param df Data frame (or tibble) with columns including
 #'  the trial identifier (\code{_id}) and
 #'  one or more variables as obtained from
 #'  \link{dbGetFieldsIntoDf}
 #'
-#' @return A data frame with the four columns:
-#'  `_id`, `identifier`, `name`, `value`
+#' @return A data frame  (or tibble, if \code{dplyr} is loaded)
+#' with the four columns: `_id`, `identifier`, `name`, `value`
 #'
 #' @importFrom stringi stri_extract_all_charclass
 #' @importFrom stringi stri_extract_first
@@ -1781,17 +1782,16 @@ dfName2Value <- function(df, valuename = "",
 #'
 #' @examples
 #' \dontrun{
-#' dbc <- nodbi::src_sqlite(
-#'   collection = "my_collection"
-#' )
+#'
+#' dbc <- nodbi::src_sqlite(collection = "my_collection")
+#'
 #' df <- dbGetFieldsIntoDf(
 #'   fields = c(
 #'     "clinical_results.outcome_list.outcome"),
 #'   con = dbc
 #' )
-#' dfTrials2Long(
-#'   df = df
-#' )
+#' head(dfTrials2Long(df = df))
+#'
 #' }
 dfTrials2Long <- function(df) {
 
@@ -1917,7 +1917,7 @@ dfTrials2Long <- function(df) {
 #' \link{dbGetFieldsIntoDf}. This helps to simplify
 #' working with nested lists and with complex structures.
 #'
-#' @param df A data frame
+#' @param df A data frame (or tibble)
 #'
 #' @param list.key A list of pairs of list names and
 #'  key names, where the list name corresponds to the
@@ -1925,7 +1925,8 @@ dfTrials2Long <- function(df) {
 #'  the name of the key identifies the element to be
 #'  extracted. See example.
 #'
-#' @return A data frame in long format with columns
+#' @return A data frame (or tibble, if \code{dplyr} is loaded)
+#'  in long format with columns
 #'  name (identifying the full path in the data frame,
 #'  "<list>.<key>"), _id (of the trial record), value
 #'  (of name per _id), item (number of value of name
@@ -1938,15 +1939,16 @@ dfTrials2Long <- function(df) {
 #' @examples
 #'
 #' \dontrun{
-#' dbc <- nodbi::src_sqlite(
-#'   collection = "my_collection"
-#' )
+#'
+#' dbc <- nodbi::src_sqlite(collection = "my_collection")
+#'
 #' df <- dbGetFieldsIntoDf(
 #'   fields = c(
 #'     "endPoints.endPoint",
 #'     "subjectDisposition.postAssignmentPeriods"),
 #'   con = dbc
 #' )
+#'
 #' dfListExtractKey(
 #'   df = df,
 #'   list.key = list(
@@ -1955,6 +1957,7 @@ dfTrials2Long <- function(df) {
 #'       c("subjectDisposition.postAssignmentPeriods",
 #'         "arms.arm.type.value")
 #' ))
+#'
 #' }
 #'
 dfListExtractKey <- function(
@@ -2068,6 +2071,7 @@ dfListExtractKey <- function(
 #' @examples
 #'
 #' \dontrun{
+#'
 #' statusvalues <- list(
 #'   "ongoing" = c("Recruiting", "Active", "Ongoing",
 #'                 "Active, not recruiting", "Enrolling by invitation"),
@@ -2076,9 +2080,10 @@ dfListExtractKey <- function(
 #'               "No longer available", "Not yet recruiting"))
 #'
 #' dfMergeTwoVariablesRelevel(
-#'   df = result,
-#'   colnames = c("Recruitment", "x5_trial_status"),
+#'   df = df,
+#'   colnames = c("overall_status", "x5_trial_status"),
 #'   levelslist = statusvalues)
+#'
 #' }
 #'
 dfMergeTwoVariablesRelevel <- function(
@@ -2192,7 +2197,7 @@ dfMergeTwoVariablesRelevel <- function(
 # end dfMergeTwoVariablesRelevel
 
 
-#' Select single trial record from records of different EU Member States
+#' Select a single trial record from records of different EU Member States
 #'
 #' The EUCTR provides one record per trial per EU Member State in which the
 #' trial is conducted. For all trials conducted in more than one Member State,
@@ -2436,16 +2441,25 @@ addMetaData <- function(x, con) {
 #' setup yourself as follows: \code{cygwinsetup.exe --no-admin --quiet-mode
 #' --verbose --upgrade-also --root c:/cygwin --site
 #' https://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages
-#' perl,php-jsonc,php-simplexml}
+#' perl,php-jsonc,php-simplexml}.
+#' These binaries are required only for function \link{ctrLoadQueryIntoDb}
+#' but not for any other function in this package.
 #'
 #' @export
 #'
-#' @param force Set to \code{TRUE} to force updating and overwriting an existing
+#' @param force Set to \code{TRUE} to update a Cygwin environment that
+#'   was previously installed with the function, or to overwrite any existing
 #'   installation in \code{c:\\cygwin}
 #'
 #' @param proxy Specify any proxy to be used for downloading via http, e.g.
 #'   `host_or_ip:port`; defaults to the environment variable `https_proxy`.
-#'   Set to `""` to not specify or unset a proxy.
+#'   Set to `""` to not specify or to unset a proxy.
+#'
+#' \dontrun{
+#'
+#' installCygwinWindowsDoInstall()
+#'
+#' }
 #'
 installCygwinWindowsDoInstall <- function(
   force = FALSE, proxy = Sys.getenv("https_proxy")) {
@@ -2522,7 +2536,7 @@ installCygwinWindowsDoInstall <- function(
 #' @param verbose If \code{TRUE}, prints confirmatory
 #'  message (default \code{FALSE})
 #'
-#' @return Information if cygwin can be used, \code{TRUE}
+#' @return Information if Cygwin can be used, \code{TRUE}
 #'  or \code{FALSE}, or NULL if not under MS Windows
 #'
 #' @keywords internal
@@ -2573,7 +2587,7 @@ installCygwinWindowsTest <- function(verbose = FALSE) {
 #' @param verbose Set to \code{TRUE} to see printed
 #' return value of \code{commandtest}
 #'
-#' @return A logical if executing commandtest
+#' @return Logical indicating if executing `commandtest`
 #' returned an error or not
 #'
 #' @keywords internal

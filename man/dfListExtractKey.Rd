@@ -8,7 +8,7 @@ data frame}
 dfListExtractKey(df, list.key = list(c("endPoints.endPoint", "^title")))
 }
 \arguments{
-\item{df}{A data frame}
+\item{df}{A data frame (or tibble)}
 
 \item{list.key}{A list of pairs of list names and
 key names, where the list name corresponds to the
@@ -17,7 +17,8 @@ the name of the key identifies the element to be
 extracted. See example.}
 }
 \value{
-A data frame in long format with columns
+A data frame (or tibble, if \code{dplyr} is loaded)
+ in long format with columns
  name (identifying the full path in the data frame,
  "<list>.<key>"), _id (of the trial record), value
  (of name per _id), item (number of value of name
@@ -33,15 +34,16 @@ working with nested lists and with complex structures.
 \examples{
 
 \dontrun{
-dbc <- nodbi::src_sqlite(
-  collection = "my_collection"
-)
+
+dbc <- nodbi::src_sqlite(collection = "my_collection")
+
 df <- dbGetFieldsIntoDf(
   fields = c(
     "endPoints.endPoint",
     "subjectDisposition.postAssignmentPeriods"),
   con = dbc
 )
+
 dfListExtractKey(
   df = df,
   list.key = list(
@@ -50,6 +52,7 @@ dfListExtractKey(
       c("subjectDisposition.postAssignmentPeriods",
         "arms.arm.type.value")
 ))
+
 }
 
 }

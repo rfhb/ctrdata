@@ -29,6 +29,7 @@ into a new variable, and optionally also map its values to new levels.
 \examples{
 
 \dontrun{
+
 statusvalues <- list(
   "ongoing" = c("Recruiting", "Active", "Ongoing",
                 "Active, not recruiting", "Enrolling by invitation"),
@@ -37,9 +38,10 @@ statusvalues <- list(
               "No longer available", "Not yet recruiting"))
 
 dfMergeTwoVariablesRelevel(
-  df = result,
-  colnames = c("Recruitment", "x5_trial_status"),
+  df = df,
+  colnames = c("overall_status", "x5_trial_status"),
   levelslist = statusvalues)
+
 }
 
 }

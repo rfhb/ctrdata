@@ -16,9 +16,11 @@ a suitable URL. Can also contain a query term such as from
 "CTGOV") in case url is a query term}
 }
 \value{
-A data frame with column names query term and register name
-that can directly be used in \link{ctrLoadQueryIntoDb} and in
-\link{ctrOpenSearchPagesInBrowser}
+A data frame (or tibble, if \code{dplyr} is loaded)
+with column names `query-term` and `query-register`.
+The data frame (or tibble) can be passed as such as parameter
+`query-term` to \link{ctrLoadQueryIntoDb} and as parameter
+`url` to \link{ctrOpenSearchPagesInBrowser}.
 }
 \description{
 Extracts query parameters and register name from parameter `url` or
@@ -27,17 +29,17 @@ from the clipboard, into which the URL of a register search was copied.
 \examples{
 
 \dontrun{
-dbc <- nodbi::src_sqlite(
-  collection = "my_collection"
-)
+
+dbc <- nodbi::src_sqlite(collection = "my_collection")
 
 # user now copies into the clipboard the URL from
 # the address bar of the browser that shows results
 # from a query in one of the trial registers
 ctrLoadQueryIntoDb(
-  ctrGetQueryUrl(),
+  queryterm = ctrGetQueryUrl(),
   con = dbc
 )
+
 }
 
 }

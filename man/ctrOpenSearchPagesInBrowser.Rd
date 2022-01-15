@@ -8,7 +8,7 @@ ctrOpenSearchPagesInBrowser(url = "", register = "", copyright = FALSE, ...)
 }
 \arguments{
 \item{url}{of search results page to show in the browser.
-May be the output of \link{ctrGetQueryUrl} or from \link{dbQueryHistory}.}
+Can be the return value of \link{ctrGetQueryUrl} or \link{dbQueryHistory}.}
 
 \item{register}{Register(s) to open. Either "EUCTR" or "CTGOV" or a vector of
 both. Default is to open both registers' advanced search pages. To open the
@@ -21,13 +21,14 @@ register(s).}
 \item{...}{May include the deprecated \code{input} parameter.}
 }
 \value{
-Is always true, invisibly.
+Always \code{TRUE}, invisibly.
 }
 \description{
-Open advanced search pages of register(s) or execute search in browser
+Open advanced search pages of register(s), or execute search in browser
 }
 \examples{
 \dontrun{
+
 # Check copyrights before using registers
 ctrOpenSearchPagesInBrowser(copyright = TRUE)
 
@@ -37,5 +38,6 @@ dbc <- nodbi::src_sqlite(
 )
 ctrOpenSearchPagesInBrowser(
   dbQueryHistory(con = dbc))
+
 }
 }

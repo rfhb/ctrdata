@@ -7,14 +7,15 @@
 dbQueryHistory(con, verbose = FALSE)
 }
 \arguments{
-\item{con}{\strong{A connection object, see section
-`Databases` in \link{ctrdata-package}}}
+\item{con}{A connection object, see section
+`Databases` in \link{ctrdata-package}}
 
 \item{verbose}{If \code{TRUE}, prints additional information
 (default \code{FALSE}).}
 }
 \value{
-A data frame with columns: query-timestamp, query-register,
+A data frame (or tibble, if \code{dplyr} is loaded)
+ with columns: query-timestamp, query-register,
  query-records (note: this is the number of records loaded when last
  executing \link{ctrLoadQueryIntoDb}, not the total record number) and
  query-term, and with one row for each time \link{ctrLoadQueryIntoDb}
@@ -26,12 +27,11 @@ Show history of queries loaded into a database collection
 \examples{
 
 \dontrun{
-dbc <- nodbi::src_sqlite(
-  collection = "my_collection"
-)
-dbQueryHistory(
-  con = dbc
-)
+
+dbc <- nodbi::src_sqlite(collection = "my_collection")
+
+dbQueryHistory(con = dbc)
+
 }
 
 }

@@ -12,7 +12,7 @@ package \link{ctrdata-package} as of end 2021
 \itemize{
 \item \strong{EUCTR}: The European Union Clinical Trials Register contains more
 than 40,000 clinical trials (using one or more medicines as
-investigational medicinal product, IMPD; in Europe and beyond)
+investigational medicinal product, IMP; in Europe and beyond)
 \item \strong{CTGOV}: ClinicalTrials.gov includes almost 400,000
 interventional and observational studies
 \item \strong{ISCRTN}: The ISRCTN Registry includes more than 21,000
@@ -22,7 +22,7 @@ interventional or observational health studies
    Home page \tab \href{https://www.clinicaltrialsregister.eu/}{link} \tab \href{https://clinicaltrials.gov/}{link} \tab \href{https://www.isrctn.com/}{link} \cr
    About \tab \href{https://www.clinicaltrialsregister.eu/about.html}{link} \tab \href{https://clinicaltrials.gov/ct2/about-site/background}{link} \tab \href{https://www.isrctn.com/page/about}{link} \cr
    How to search \tab \href{https://www.clinicaltrialsregister.eu/doc/How_to_Search_EU_CTR.pdf}{link} \tab \href{https://clinicaltrials.gov/ct2/help/how-find/advanced}{link} \tab \href{https://www.isrctn.com/page/search-tips}{link} \cr
-   Search \tab \href{https://www.clinicaltrialsregister.eu/ctr-search/search}{link} \tab \href{https://clinicaltrials.gov/ct2/search/advanced}{link} \tab \href{https://www.isrctn.com/}{link} \cr
+   Search interface \tab \href{https://www.clinicaltrialsregister.eu/ctr-search/search}{link} \tab \href{https://clinicaltrials.gov/ct2/search/advanced}{link} \tab \href{https://www.isrctn.com/}{link} \cr
    Glossary \tab \href{https://www.clinicaltrialsregister.eu/doc/EU_Clinical_Trials_Register_Glossary.pdf}{link} \tab \href{https://clinicaltrials.gov/ct2/about-studies/glossary}{link} \tab \href{https://www.who.int/clinical-trials-registry-platform/network/who-data-set}{link} \cr
    FAQ \tab \href{https://www.clinicaltrialsregister.eu/doc/EU_CTR_FAQ.pdf}{link} \tab \href{https://clinicaltrials.gov/ct2/resources/pubs}{link} \tab \href{https://www.isrctn.com/page/faqs}{link} \cr
    Expert / advanced search \tab \href{https://www.clinicaltrialsregister.eu/ctr-search/search}{link} \tab \href{https://clinicaltrials.gov/ct2/results/refine?show_xprt=Y}{link} \tab \href{https://www.isrctn.com/editAdvancedSearch}{link} \cr

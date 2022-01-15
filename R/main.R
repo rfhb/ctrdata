@@ -78,28 +78,32 @@
 #' `success` (a vector of _id's of successfully loaded records),
 #' `failed` (a vector of identifiers of records that failed to load)
 #' and `queryterm` (the query term used).
-#' The returned list has several attributes set
-#' (database and collection name, as well as the query history
-#' of this database collection).
+#' The returned list has several attributes (including database and
+#' collection name, as well as the query history of this database
+#' collection) to facilitate documentation.
 #'
 #' @examples
 #' \dontrun{
-#' dbc <- nodbi::src_sqlite(
-#'   collection = "test"
-#' )
-#' # Retrieve protocol-related information on a
-#' # single trial identified by EudraCT number
+#' dbc <- nodbi::src_sqlite(collection = "my_collection")
+#'
+#' # Retrieve protocol- and results-related information
+#' # on a single trial identified by its EU number
 #' ctrLoadQueryIntoDb(
 #'   queryterm = "2013-001291-38",
+#'   register = "EUCTR",
+#'   euctrresults = TRUE,
 #'   con = dbc
 #' )
-#' # Retrieve information on ongoing interventional
-#' # cancer trials involving children
+#'
+#' # Retrieve all information on about 2,000 ongoing
+#' # interventional cancer trials involving children
+#' # into the same collection as used before
 #' ctrLoadQueryIntoDb(
 #'   queryterm = "cancer&recr=Open&type=Intr&age=0",
 #'   register = "CTGOV",
 #'   con = dbc
 #' )
+#'
 #' }
 #'
 #' @export

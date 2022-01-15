@@ -7,14 +7,14 @@
 dfTrials2Long(df)
 }
 \arguments{
-\item{df}{Data frame with columns including
+\item{df}{Data frame (or tibble) with columns including
 the trial identifier (\code{_id}) and
 one or more variables as obtained from
 \link{dbGetFieldsIntoDf}}
 }
 \value{
-A data frame with the four columns:
- `_id`, `identifier`, `name`, `value`
+A data frame  (or tibble, if \code{dplyr} is loaded)
+with the four columns: `_id`, `identifier`, `name`, `value`
 }
 \description{
 The function works with procotol- and results- related information.
@@ -25,16 +25,15 @@ using \link{dfName2Value}).
 }
 \examples{
 \dontrun{
-dbc <- nodbi::src_sqlite(
-  collection = "my_collection"
-)
+
+dbc <- nodbi::src_sqlite(collection = "my_collection")
+
 df <- dbGetFieldsIntoDf(
   fields = c(
     "clinical_results.outcome_list.outcome"),
   con = dbc
 )
-dfTrials2Long(
-  df = df
-)
+head(dfTrials2Long(df = df))
+
 }
 }
