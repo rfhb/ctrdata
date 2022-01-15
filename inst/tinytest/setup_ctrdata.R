@@ -11,6 +11,9 @@
 library(tinytest)
 suppressMessages(library(ctrdata))
 
+# test with dplyr
+if (any(row.names(installed.packages()) == "dplyr")) library(dplyr)
+
 # throw error for && and || with vectors longer than 1 element
 Sys.setenv("_R_CHECK_LENGTH_1_LOGIC2_" = "TRUE")
 

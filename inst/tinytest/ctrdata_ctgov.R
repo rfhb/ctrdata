@@ -188,6 +188,10 @@ expect_true("character" == class(result[[
   "study_design_info.allocation"]]))
 
 # test
+expect_true("character" == class(result[[
+  "primary_outcome.measure"]]))
+
+# test
 expect_true("Date" == class(result[[
   "start_date"]]))
 

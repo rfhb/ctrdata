@@ -15,6 +15,31 @@ expect_error(
   "Empty argument: commandtest")
 
 
+#### cache ####
+
+expect_equal(
+  suppressMessages(
+    ctrdata:::ctrCache(
+      xname = "shouldNotExist",
+      verbose = TRUE
+    )), NULL)
+
+expect_equal(
+  suppressMessages(
+    ctrdata:::ctrCache(
+      xname = "shouldNotExist",
+      xvalue = iris,
+      verbose = TRUE
+    )), iris)
+
+expect_equal(
+  suppressMessages(
+    ctrdata:::ctrCache(
+      xname = "shouldNotExist",
+      verbose = TRUE
+    )), iris)
+
+
 #### environment ####
 
 if (.Platform$OS.type != "windows") {
