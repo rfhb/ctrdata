@@ -19,7 +19,7 @@ function returns the full field names as found in the database."><meta name="twi
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div id="navbar" class="collapse navbar-collapse ms-2">
+    <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
@@ -72,16 +72,18 @@ function returns the full field names as found in the database.</p>
 including Perl-style) to be searched for among all field names
 (keys) in the database. Use `".*` to find all fields.</p></dd>
 <dt>con</dt>
-<dd><p><strong>A connection object, see section
-`Databases` in <a href="ctrdata-package.html">ctrdata-package</a></strong></p></dd>
+<dd><p>A connection object, see section
+`Databases` in <a href="ctrdata-package.html">ctrdata-package</a></p></dd>
 <dt>verbose</dt>
 <dd><p>If <code>TRUE</code>, prints additional information
 (default <code>FALSE</code>).</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Vector of names of found field(s) in alphabetical
-order (that is, not by register or field frequency)</p>
+    <p>Vector of strings with full names of field(s) found,
+in alphabetical order by register. This is a named vector
+where the names of the vector are the register names for
+the respective fields.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -99,13 +101,11 @@ order (that is, not by register or field frequency)</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="va">dbc</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">src_sqlite</a></span><span class="op">(</span></span>
-<span class="r-in">  collection <span class="op">=</span> <span class="st">"my_collection"</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="fu">dbFindFields</span><span class="op">(</span></span>
-<span class="r-in">  nampepart <span class="op">=</span> <span class="st">"date"</span>,</span>
-<span class="r-in">  con <span class="op">=</span> <span class="va">dbc</span></span>
-<span class="r-in"><span class="op">)</span></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="va">dbc</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">src_sqlite</a></span><span class="op">(</span>collection <span class="op">=</span> <span class="st">"my_collection"</span><span class="op">)</span></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="fu">dbFindFields</span><span class="op">(</span>namepart <span class="op">=</span> <span class="st">"date"</span>, con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span></span>
+<span class="r-in"></span>
 <span class="r-in"><span class="op">}</span></span>
 <span class="r-in"></span>
 </code></pre></div>
@@ -119,7 +119,7 @@ order (that is, not by register or field frequency)</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
     </footer></div>

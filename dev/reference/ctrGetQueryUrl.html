@@ -19,7 +19,7 @@ from the clipboard, into which the URL of a register search was copied."><meta n
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div id="navbar" class="collapse navbar-collapse ms-2">
+    <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
@@ -78,26 +78,28 @@ a suitable URL. Can also contain a query term such as from
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A data frame with column names query term and register name
-that can directly be used in <a href="ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a> and in
-<a href="ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser</a></p>
+    <p>A data frame (or tibble, if <code>dplyr</code> is loaded)
+with column names `query-term` and `query-register`.
+The data frame (or tibble) can be passed as such as parameter
+`query-term` to <a href="ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a> and as parameter
+`url` to <a href="ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser</a>.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="va">dbc</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">src_sqlite</a></span><span class="op">(</span></span>
-<span class="r-in">  collection <span class="op">=</span> <span class="st">"my_collection"</span></span>
-<span class="r-in"><span class="op">)</span></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="va">dbc</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">src_sqlite</a></span><span class="op">(</span>collection <span class="op">=</span> <span class="st">"my_collection"</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># user now copies into the clipboard the URL from</span></span>
 <span class="r-in"><span class="co"># the address bar of the browser that shows results</span></span>
 <span class="r-in"><span class="co"># from a query in one of the trial registers</span></span>
 <span class="r-in"><span class="fu"><a href="ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
-<span class="r-in">  <span class="fu">ctrGetQueryUrl</span><span class="op">(</span><span class="op">)</span>,</span>
+<span class="r-in">  queryterm <span class="op">=</span> <span class="fu">ctrGetQueryUrl</span><span class="op">(</span><span class="op">)</span>,</span>
 <span class="r-in">  con <span class="op">=</span> <span class="va">dbc</span></span>
 <span class="r-in"><span class="op">)</span></span>
+<span class="r-in"></span>
 <span class="r-in"><span class="op">}</span></span>
 <span class="r-in"></span>
 </code></pre></div>
@@ -111,7 +113,7 @@ that can directly be used in <a href="ctrLoadQueryIntoDb.html">ctrLoadQueryIntoD
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
     </footer></div>
