@@ -108,7 +108,7 @@
 <li>ClinicalTrials.gov (“CTGOV”, <a href="https://clinicaltrials.gov/" class="external-link uri">https://clinicaltrials.gov/</a>)</li>
 <li>ISRCTN (<a href="https://www.isrctn.com/" class="external-link uri">https://www.isrctn.com/</a>) 🔔new in v1.6.0</li>
 </ul>
-<p>The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created by it. This README was reviewed on 2022-01-03 for v1.8.0.9002.</p>
+<p>The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created by it. This README was reviewed on 2022-01-15 for v1.8.0.9002.</p>
 <p>Main features:</p>
 <ul>
 <li><p>Protocol-related trial information is easily retrieved (downloaded): Users define a query in a register’s web interface and then use <code>ctrdata</code> to retrieve in one step all trials resulting from the query. Results-related trial information and personal annotations can be including during retrieval. Synonyms of an active substance can also be found.</p></li>
@@ -203,7 +203,7 @@ citation("ctrdata")
 </tr>
 <tr class="even">
 <td><code><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code></td>
-<td><strong>Create a data.frame from trial records in the database with the specified fields</strong></td>
+<td><strong>Create a data frame (or tibble) from trial records in the database with the specified fields</strong></td>
 </tr>
 <tr class="odd">
 <td><code><a href="reference/dfTrials2Long.html">dfTrials2Long()</a></code></td>
@@ -521,7 +521,7 @@ citation("ctrdata")
 <h3 id="issues-and-notes">Issues and notes<a class="anchor" aria-label="anchor" href="#issues-and-notes"></a>
 </h3>
 <ul>
-<li><p>Please file issues and bugs <a href="https://github.com/rfhb/ctrdata/issues" class="external-link">here</a>.</p></li>
+<li><p>Please file issues and bugs <a href="https://github.com/rfhb/ctrdata/issues" class="external-link">here</a>. Also check out how to handle some of the closed issues, e.g. on <a href="https://github.com/rfhb/ctrdata/issues/22" class="external-link">C stack usage too close to the limit</a> and on a <a href="https://github.com/rfhb/ctrdata/issues/19#issuecomment-820127139" class="external-link">SSL certificate problem: unable to get local issuer certificate</a></p></li>
 <li><p>Information in trial registers may not be fully correct; see for example <a href="https://doi.org/10.1136/bmj.k1452" class="external-link">this publication on CTGOV</a>.</p></li>
 <li><p>No attempts were made to harmonise field names between registers (nevertheless, <code><a href="reference/dfMergeTwoVariablesRelevel.html">dfMergeTwoVariablesRelevel()</a></code> can be used to merge and map two variables / fields into one).</p></li>
 </ul>
