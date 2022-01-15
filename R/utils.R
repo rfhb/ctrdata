@@ -168,6 +168,16 @@ typeVars <- list(
   "f421_in_the_eea"                  = "ctrInt",
   "f422_in_the_whole_clinical_trial" = "ctrInt",
   #
+  "trialInformation.populationAgeGroup.inUtero"               = "ctrInt",
+  "trialInformation.populationAgeGroup.pretermNewbornInfants" = "ctrInt",
+  "trialInformation.populationAgeGroup.newborns"              = "ctrInt",
+  "trialInformation.populationAgeGroup.infantsAndToddlers"    = "ctrInt",
+  "trialInformation.populationAgeGroup.children"              = "ctrInt",
+  "trialInformation.populationAgeGroup.adolescents"           = "ctrInt",
+  "trialInformation.populationAgeGroup.adults"                = "ctrInt",
+  "trialInformation.populationAgeGroup.elderly65To84"         = "ctrInt",
+  "trialInformation.populationAgeGroup.elderlyOver85"         = "ctrInt",
+  #
   # - CTGOV
   "number_of_arms" = "ctrInt",
   "enrollment"     = "ctrInt",
