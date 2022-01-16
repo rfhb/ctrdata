@@ -150,7 +150,6 @@ sed \
   -e 's/^"d38_imp_identification_details": "Yes",$/"d38_imp_identification_details": [ {/g' \
   -e 's/^"d8_information_on_placebo": "Yes",$/"d8_information_on_placebo": [/g' \
   -e '/^["{}]/!d' \
-  -e '/""/d' \
   | \
 sed \
   -e '1 s/}{/{/' \
