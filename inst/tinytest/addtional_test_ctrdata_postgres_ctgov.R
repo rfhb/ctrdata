@@ -24,8 +24,14 @@ tf <- function() {
     silent = TRUE)
   }, add = TRUE)
 
+  # check server
+  if (httr::status_code(
+    httr::GET("https://clinicaltrials.gov/ct2/search",
+              httr::timeout(5))) != 200L
+  ) return(exit_file("Reason: CTGOV not working"))
+
   # do tests
-  source("ctrdata_euctr.R", local = TRUE)
+  source("ctrdata_ctgov.R", local = TRUE)
 
 }
 tf()

@@ -8,14 +8,15 @@ if (!checkMongoRemoteRw()) exit_file("Reason: no remote rw MongoDB")
 if (!checkInternet())      exit_file("Reason: no internet connectivity")
 if (!checkBinaries())      exit_file("Reason: no binaries php or sed or perl")
 
-# create database object
-dbc <- nodbi::src_mongo(
-  db = mongoRemoteRwDb,
-  collection = mongoRemoteRwCollection,
-  url = mongoRemoteRwUrl)
-
-#### EUCTR ####
+#### CTGOV ####
 tf <- function() {
+
+  # create database object
+  dbc <- nodbi::src_mongo(
+    db = mongoRemoteRwDb,
+    collection = mongoRemoteRwCollection,
+    url = mongoRemoteRwUrl)
+
   # register clean-up
   on.exit(expr = {
     try({
@@ -24,7 +25,14 @@ tf <- function() {
     },
     silent = TRUE)
   })
+
+  # check server
+  if (httr::status_code(
+    httr::GET("https://clinicaltrials.gov/ct2/search",
+              httr::timeout(5))) != 200L
+  ) return(exit_file("Reason: CTGOV not working"))
+
   # do tests
-  source("ctrdata_euctr.R", local = TRUE)
+  source("ctrdata_ctgov.R", local = TRUE)
 }
 tf()

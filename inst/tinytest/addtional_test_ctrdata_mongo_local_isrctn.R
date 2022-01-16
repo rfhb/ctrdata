@@ -8,14 +8,15 @@ if (!checkMongoLocal()) exit_file("Reason: no local MongoDB")
 if (!checkInternet())   exit_file("Reason: no internet connectivity")
 if (!checkBinaries())   exit_file("Reason: no binaries php or sed or perl")
 
-# create database object
-dbc <- nodbi::src_mongo(
-  db = mongoLocalRwDb,
-  collection = mongoLocalRwCollection,
-  url = "mongodb://localhost")
-
-#### CTGOV ####
+#### ISRCTN ####
 tf <- function() {
+
+  # create database object
+  dbc <- nodbi::src_mongo(
+    db = mongoLocalRwDb,
+    collection = mongoLocalRwCollection,
+    url = "mongodb://localhost")
+
   # register clean-up
   on.exit(expr = {
     try({
@@ -24,7 +25,14 @@ tf <- function() {
     },
     silent = TRUE)
   })
+
+  # check server
+  httr::set_config(httr::timeout(seconds = 60))
+  if (httr::status_code(
+    httr::GET("https://www.isrctn.com/editAdvancedSearch")) != 200L
+  ) return(exit_file("Reason: ISRCTN not working"))
+
   # do tests
-  source("ctrdata_ctgov.R", local = TRUE)
+  source("ctrdata_isrctn.R", local = TRUE)
 }
 tf()

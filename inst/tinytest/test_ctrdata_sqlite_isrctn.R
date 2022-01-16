@@ -25,6 +25,12 @@ tf <- function() {
     silent = TRUE)
   }, add = TRUE)
 
+  # check server
+  httr::set_config(httr::timeout(seconds = 60))
+  if (httr::status_code(
+    httr::GET("https://www.isrctn.com/editAdvancedSearch")) != 200L
+  ) return(exit_file("Reason: ISRCTN not working"))
+
   # do tests
   source("ctrdata_isrctn.R", local = TRUE)
 

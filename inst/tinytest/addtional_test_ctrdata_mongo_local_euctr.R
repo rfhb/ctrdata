@@ -4,26 +4,27 @@
 if (!at_home()) exit_file("Reason: not at_home")
 source("setup_ctrdata.R")
 
-if (!checkSqlite())   exit_file("Reason: no SQLite")
-if (!checkInternet()) exit_file("Reason: no internet connectivity")
-if (!checkBinaries()) exit_file("Reason: no binaries php or sed or perl")
+if (!checkMongoLocal()) exit_file("Reason: no local MongoDB")
+if (!checkInternet())   exit_file("Reason: no internet connectivity")
+if (!checkBinaries())   exit_file("Reason: no binaries php or sed or perl")
 
 #### EUCTR ####
 tf <- function() {
 
   # create database object
-  dbc <- suppressWarnings(nodbi::src_sqlite(
-    dbname = ":memory:",
-    collection = mongoLocalRwCollection))
+  dbc <- nodbi::src_mongo(
+    db = mongoLocalRwDb,
+    collection = mongoLocalRwCollection,
+    url = "mongodb://localhost")
 
   # register clean-up
   on.exit(expr = {
     try({
-      RSQLite::dbRemoveTable(conn = dbc$con, name = dbc$collection)
-      RSQLite::dbDisconnect(conn = dbc$con)
+      dbc$con$drop()
+      dbc$con$disconnect()
     },
     silent = TRUE)
-  }, add = TRUE)
+  })
 
   # check server
   testUrl <- "https://www.clinicaltrialsregister.eu/ctr-search/search"
@@ -42,6 +43,5 @@ tf <- function() {
 
   # do tests
   source("ctrdata_euctr.R", local = TRUE)
-
 }
 tf()
