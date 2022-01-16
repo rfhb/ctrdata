@@ -66,6 +66,7 @@ typeVars <- list(
   "a7_trial_is_part_of_a_paediatric_investigation_plan" = "ctrYesNo",
   "dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation" = "ctrYesNo",
   "e13_condition_being_studied_is_a_rare_disease" = "ctrYesNo",
+  "e23_trial_contains_a_substudy" = "ctrYesNo",
   #
   "e61_diagnosis"         = "ctrYesNo",
   "e62_prophylaxis"       = "ctrYesNo",
