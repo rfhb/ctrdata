@@ -159,6 +159,7 @@ sed \
 perl -pe 'BEGIN{undef $/;}
 
   # here we can do multi-line edits
+  # dot does not match newlines
 
   # delete comma from last line in record
   s/,\n\}\{/\}\nNEWRECORDIDENTIFIER\n\{/g ;
@@ -166,6 +167,8 @@ perl -pe 'BEGIN{undef $/;}
   # create array with imp(s)
   s/("d[0-9]+_.*"),\n"dimp": "([2-9]|[1-9][0-9])",/$1\}, \n\{ "_dimp": "$2",/g ;
   s/("d[0-9]+_.*"),\n"x9_enddmp.*/$1\}\n],/g ;
+  # if no array, remove remnant
+  s/"x9_enddmp": "TRUE",//g ;
 
   # create array with sponsor(s)
   s/,\n"b1_sponsor": "([2-9])",/}, \n\{ "_b1_sponsor": "$1",/g ;
