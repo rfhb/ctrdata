@@ -19,8 +19,10 @@ tf <- function() {
   # register clean-up
   on.exit(expr = {
     try({
-      RSQLite::dbRemoveTable(conn = dbc$con, name = dbc$collection)
+      if (DBI::dbExistsTable(conn = dbc$con, name = dbc$collection))
+        DBI::dbRemoveTable(conn = dbc$con, name = dbc$collection)
       RSQLite::dbDisconnect(conn = dbc$con)
+      rm(dbc)
     },
     silent = TRUE)
   }, add = TRUE)
