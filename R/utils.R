@@ -1846,12 +1846,12 @@ dfTrials2Long <- function(df) {
   out <- lapply(
     seq_len(ncol(df))[-1],
     function(cc) {
-      # inform user
-      message(cc, "\r", appendLF = FALSE)
       # get item
       ci <- df[[cc]]
       # get item name
       tn <- dfn[cc]
+      # inform user
+      message(tn, rep(" ", 200 - nchar(tn)), "\r", appendLF = FALSE)
       # handle case when column is data
       # frame, turn into list by row
       if (is.data.frame(ci)) ci <- split(ci, seq_len(nrow(ci)))
