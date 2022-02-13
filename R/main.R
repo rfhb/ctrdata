@@ -1067,7 +1067,8 @@ ctrLoadQueryIntoDbCtgov <- function(
 
   # inform user
   message("Retrieved overview, records of ", tmp, " ",
-          "trial(s) are to be downloaded")
+          "trial(s) are to be downloaded (estimate: ",
+          format(tmp * 0.008, digits = 2), " MB)")
 
   # only count?
   if (only.count) {

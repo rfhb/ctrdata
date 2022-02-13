@@ -1851,7 +1851,7 @@ dfTrials2Long <- function(df) {
       # get item name
       tn <- dfn[cc]
       # inform user
-      message(tn, rep(" ", 200 - nchar(tn)), "\r", appendLF = FALSE)
+      message(tn, rep(" ", 200L - nchar(tn)), "\r", appendLF = FALSE)
       # handle case when column is data
       # frame, turn into list by row
       if (is.data.frame(ci)) ci <- split(ci, seq_len(nrow(ci)))
