@@ -51,6 +51,8 @@ typeVars <- list(
   "study_first_posted"      = "ctrDateUs",
   "results_first_posted"    = "ctrDateUs",
   "last_update_posted"      = "ctrDateUs",
+  "eligibility.minimum_age" = "ctrDifftime",
+  "eligibility.maximum_age" = "ctrDifftime",
   #
   # - ISRCTN
   "participants.recruitmentStart" = "ctrDateTime",
@@ -1797,6 +1799,7 @@ dfName2Value <- function(df, valuename = "",
 #' @importFrom stringi stri_extract_first
 #' @importFrom stringi stri_replace_first
 #' @importFrom dplyr as_tibble
+#' @importFrom xml2 xml_text read_html
 #'
 #' @export
 #'
@@ -1867,6 +1870,7 @@ dfTrials2Long <- function(df) {
           stringsAsFactors = FALSE,
           row.names = NULL)
       })})
+  message(rep(" ", 200L), "\r", appendLF = FALSE)
 
   # add _id to list elements and
   # simplify into data frames
@@ -2371,6 +2375,9 @@ dfFindUniqueEuctrRecord <- function(
 #'
 #' @return a typed vector, same length as dv
 #'
+#' @importFrom xml2 xml_text read_html
+#' @importFrom lubridate duration
+#'
 #' @keywords internal
 #' @noRd
 #'
@@ -2386,8 +2393,9 @@ typeField <- function(dv, fn) {
   dv <- sub("^([a-zA-Z]+) ([0-9]{4})$", "\\1 15, \\2", dv)
   # - convert html entities because these had to
   #   be left intact when converting to ndjson
-  if (any(grepl("&[#a-zA-Z]+;", dv))) dv[!is.na(dv)] <-
-    sapply(dv[!is.na(dv)], function(i)
+  htmlEnt <- grepl("&[#a-zA-Z]+;", dv)
+  if (any(htmlEnt)) dv[htmlEnt] <-
+    sapply(dv[htmlEnt], function(i)
       xml2::xml_text(xml2::read_html(charToRaw(i))), USE.NAMES = FALSE)
   # - convert newline
   dv <- gsub("\r", "\n", dv)
@@ -2439,6 +2447,18 @@ typeField <- function(dv, fn) {
     vapply(dv, FUN = function(x)
       as.integer(x = x), integer(1L),
       USE.NAMES = FALSE)
+  }
+  #
+  ctrDifftime   <- function() {
+    out <- sapply(dv, FUN = function(x) {
+      if (is.na(x)) {NA} else {
+        as.numeric(
+          lubridate::duration(
+            tolower(x)
+          ), units = "days")
+      }
+    }, USE.NAMES = FALSE)
+    as.difftime(out, units = "days")
   }
 
   # apply typing

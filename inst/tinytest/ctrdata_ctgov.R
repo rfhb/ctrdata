@@ -164,6 +164,7 @@ result <- suppressMessages(
         "clinical_results.baseline.analyzed_list.analyzed.units",
         "clinical_results.outcome_list.outcome",
         "study_design_info.allocation",
+        "eligibility.maximum_age",
         "location.facility.name",
         "location"
         ),
@@ -188,6 +189,10 @@ expect_true("character" == class(result[[
 # test
 expect_true("Date" == class(result[[
   "start_date"]]))
+
+# test
+expect_true("difftime" == class(result[[
+  "eligibility.maximum_age"]]))
 
 # test
 expect_true(
