@@ -1886,6 +1886,13 @@ dfTrials2Long <- function(df) {
   # remove rows where value is NA
   out <- out[!is.na(out[["value"]]), , drop = FALSE]
 
+  # convert html entities
+  htmlEnt <- grepl("&[#a-zA-Z]+;", out[["value"]])
+  if (any(htmlEnt)) out[["value"]][htmlEnt] <-
+    sapply(out[["value"]][htmlEnt], function(i)
+      xml2::xml_text(xml2::read_html(charToRaw(i))), USE.NAMES = FALSE)
+  message(". ", appendLF = FALSE)
+
   # generate new data frame with target columns and order
   out <- data.frame(
     # process row.names to obtain trial id
