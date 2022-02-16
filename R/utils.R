@@ -1437,12 +1437,8 @@ dbGetFieldsIntoDf <- function(fields = "",
             names(dfi)[c] <- paste0(names(dfi)[c], ".", tn)
           }
 
-          # type results at column level
-          if (typeof(dfi[[c]]) == "character") {
-
-            dfi[[c]] <- typeField(dfi[[c]], names(dfi)[c])
-
-          } else {
+          # mangle column if not simply character
+          if (typeof(dfi[[c]]) != "character") {
 
             # simplify column with one-column data frames or
             # one-item list e.g. "primary_outcome.measure"
@@ -1459,7 +1455,8 @@ dbGetFieldsIntoDf <- function(fields = "",
             # simplify at row level, replaces NULL with NA
             # also integrates typing because some fields
             # are returning lists that need typing by row
-            if (!is.data.frame(dfi[[c]]) &&
+            if (typeof(dfi[[c]]) != "character" &&
+                !is.data.frame(dfi[[c]]) &&
                 !any(sapply(dfi[[c]], function(r)
                   all(class(r) == "data.frame") &&
                   ncol(r) > 0L && nrow(r) > 0L))) {
@@ -1472,12 +1469,14 @@ dbGetFieldsIntoDf <- function(fields = "",
                   if (is.list(i[[1]]) && !length(i[[1]])) {
                     i <- NA } else {
                       i <- i[1]
-                      if (length(i)) i <- typeField(i, item[c - 1L])
+                      if (length(i)) {
+                        i <- typeField(i, item[c - 1L])}
                     }}
                 #
                 if (l >= 2L) {
                   if (all(sapply(i, is.character))) {
-                    if (length(i)) {i <- typeField(i, item[c - 1L])
+                    if (length(i)) {
+                      i <- typeField(i, item[c - 1L])
                     } else {i <- NA}
                     if (all(sapply(i, is.character))) {
                       i <- paste0(unlist(i), collapse = " / ")}
@@ -1503,9 +1502,14 @@ dbGetFieldsIntoDf <- function(fields = "",
               # write back
               dfi[[c]] <- out
 
-            } # if
+            } # if simplify at row level
 
-          } # else
+          } # if typeof
+
+          # type after if typeof
+          if (typeof(dfi[[c]]) == "character") {
+            dfi[[c]] <- typeField(dfi[[c]], names(dfi)[c])
+          }
 
           # add a column into copy of NA template
           dfo[[c]] <- switch(
