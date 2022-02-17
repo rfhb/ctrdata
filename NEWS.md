@@ -1,5 +1,5 @@
 # ctrdata 1.8.0.9002
- - 2022-01-15
+ - 2022-02-16
  - chunked trial batches in ndjson files for accelerated database import
  - if package dplyr is loaded, functions return a tibble instead of a data frame
  - update and correct documentation
@@ -11,6 +11,8 @@
  - correct dfTrials2Long() for specific fields
  - correct dbFindIdsUniqueTrials() when only single trial in any register
  - modify field typing to decode HTML entities
+ - type some fields as difftime, e.g. min_age
+ - speed up parts of dbGetFieldsIntoDf()
 
 # ctrdata 1.8.0.9001
  - 2021-12-11
