@@ -24,7 +24,7 @@ The motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created by it. This
-README was reviewed on 2022-01-15 for v1.8.0.9002.
+README was reviewed on 2022-02-017 for v1.8.0.9002.
 
 Main features:
 
@@ -39,8 +39,8 @@ Main features:
     in a document-centric database, for fast and offline access. Uses
     `PostgreSQL` (🔔new in v1.8.0.9000), `RSQLite` or `MongoDB` as
     databases, via R package `nodbi`: see section
-    [Databases](#databases) below. Easily re-run a previous query to
-    update a database.
+    [Databases](#databases-that-can-be-used-with-ctrdata) below. Easily
+    re-run a previous query to update a database.
 
 -   Analysis can be done with `R` (using `ctrdata` convenience
     functions) or others systems. Unique (de-duplicated) trial records

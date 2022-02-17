@@ -38,13 +38,13 @@ The package `ctrdata` provides functions for retrieving (downloading) informatio
 - ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/) 
 - ISRCTN (https://www.isrctn.com/) `r emo::ji("bell")`new in v1.6.0
 
-The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can be used with the databases created by it. This README was reviewed on 2022-01-15 for v1.8.0.9002.
+The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can be used with the databases created by it. This README was reviewed on 2022-02-017 for v1.8.0.9002.
 
 Main features:
 
 * Protocol-related trial information is easily retrieved (downloaded): Users define a query in a register's web interface and then use `ctrdata` to retrieve in one step all trials resulting from the query. Results-related trial information and personal annotations can be including during retrieval. Synonyms of an active substance can also be found. 
 
-* Retrieved (downloaded) trial information is transformed and stored in a document-centric database, for fast and offline access. Uses `PostgreSQL` (`r emo::ji("bell")`new in v1.8.0.9000), `RSQLite` or `MongoDB` as databases, via R package `nodbi`: see section [Databases](#databases) below. Easily re-run a previous query to update a database.
+* Retrieved (downloaded) trial information is transformed and stored in a document-centric database, for fast and offline access. Uses `PostgreSQL` (`r emo::ji("bell")`new in v1.8.0.9000), `RSQLite` or `MongoDB` as databases, via R package `nodbi`: see section [Databases](#databases-that-can-be-used-with-ctrdata) below. Easily re-run a previous query to update a database.
 
 * Analysis can be done with `R` (using `ctrdata` convenience functions) or others systems. Unique (de-duplicated) trial records are identified across registers. `ctrdata` can merge and recode information (fields) and also provides easy access even to deeply-nested fields (`r emo::ji("bell")` new in v1.4.0).
 
