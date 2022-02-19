@@ -1372,10 +1372,9 @@ dbGetFieldsIntoDf <- function(fields = "",
       item <- fields[i]
 
       # user info
-      message("\r", rep(" ", 200), "\r", item, " ", appendLF = FALSE)
+      message(item, "... ", appendLF = FALSE)
       #
       query <- '{"_id": {"$ne": "meta-info"}}'
-      if (verbose) message("DEBUG: field: ", item)
       #
       tmpItem <- try({
 
@@ -1385,6 +1384,7 @@ dbGetFieldsIntoDf <- function(fields = "",
           key = con$collection,
           query = query,
           fields = paste0('{"_id": 1, "', item, '": 1}'))
+        message("\b\b\b\b \U2713 ", appendLF = FALSE)
 
         # leave try() early if no results
         if (!nrow(dfi) || ncol(dfi) == 1L) simpleError(message = "")
@@ -1396,14 +1396,20 @@ dbGetFieldsIntoDf <- function(fields = "",
         itemSegments <- strsplit(item, "[.]")[[1]]
         itemSegments <- setdiff(itemSegments, names(dfi))
         for (iS in itemSegments) {
+          message(". ", appendLF = FALSE)
           if ((length(names(dfi[[2]])) == 1L) &&
               (iS == names(dfi[[2]]))) {
             dfi[[2]] <- dfi[[2]][[iS]]
           } else {
             # e.g. for "primary_outcome.measure" from MongoDB
-            tn <- sapply(dfi[[2]], names)
-            if (length(unique(tn)) == 1L && (iS == tn[1]))
-              dfi[[2]] <- sapply(dfi[[2]], "[[", 1)
+            tn <- unlist(sapply(dfi[[2]], names))
+            if (length(unique(tn)) == 1L && (iS == tn[1])) {
+              dfi[[2]] <- lapply(dfi[[2]], "[[", iS)
+            } else {
+              # no more predictable simplification possible:
+              # break to leave for loop over itemSegments
+              break
+            }
           }
         }
 
@@ -1411,6 +1417,7 @@ dbGetFieldsIntoDf <- function(fields = "",
         if (length(unique(names(dfi[[2]]))) > 1L) {
           item <- paste0(item, ".", names(dfi[[2]]))
           dfi <- cbind("_id" = dfi[["_id"]], as.data.frame(dfi[[2]]))
+          message(". ", appendLF = FALSE)
           emptyCols <- sapply(dfi, function(c) all(is.na(c)))
           emptyCols <- seq_along(emptyCols)[emptyCols]
           if (length(emptyCols)) dfi <- dfi[, -emptyCols, drop = FALSE]
@@ -1427,7 +1434,20 @@ dbGetFieldsIntoDf <- function(fields = "",
         for (c in seq_len(ncol(dfi))[-1]) {
 
           # inform user
-          if (c > 2L) message(" .", appendLF = FALSE)
+          if (c > 2L) message(". ", appendLF = FALSE)
+
+          # data frames with single rows are lists
+          # turn such lists back into data frames
+          # e.g. location.facility but not location
+          # thus check names per row, data frame should
+          # have more than one column name
+          tmpDfs <- sapply(dfi[[c]], class) == "data.frame"
+          tmpLst <- sapply(dfi[[c]], class) == "list"
+          tmpLen <- sapply(dfi[[c]][ !sapply(dfi[[c]], is.null) ], length)
+          if (any(tmpDfs) && any(tmpLst) &&
+              all(tmpLen > 1L) && length(unique(tmpLen)) == 1L) {
+            dfi[[c]][tmpLst] <- lapply(dfi[[c]][tmpLst], data.frame)
+          }
 
           # special case: column is one-column data frame
           if (is.data.frame(dfi[[c]]) && (ncol(dfi[[c]]) == 1L) &&
@@ -1439,6 +1459,9 @@ dbGetFieldsIntoDf <- function(fields = "",
 
           # mangle column if not simply character
           if (typeof(dfi[[c]]) != "character") {
+
+            # simplify and replace NULL with NA
+            dfi[[c]][!sapply(dfi[[c]], length)] <- NA
 
             # simplify column with one-column data frames or
             # one-item list e.g. "primary_outcome.measure"
@@ -1452,57 +1475,29 @@ dbGetFieldsIntoDf <- function(fields = "",
                 USE.NAMES = FALSE, simplify = TRUE)
             }
 
-            # simplify at row level, replaces NULL with NA
-            # also integrates typing because some fields
-            # are returning lists that need typing by row
-            if (typeof(dfi[[c]]) != "character" &&
-                !is.data.frame(dfi[[c]]) &&
-                !any(sapply(dfi[[c]], function(r)
-                  all(class(r) == "data.frame") &&
-                  ncol(r) > 0L && nrow(r) > 0L))) {
-              out <- sapply(dfi[[c]], function(i) {
-                l <- length(i)
-                #
-                if (l == 0L) i <- NA
-                #
-                if (l == 1L) {
-                  if (is.list(i[[1]]) && !length(i[[1]])) {
-                    i <- NA } else {
-                      i <- i[1]
-                      if (length(i)) {
-                        i <- typeField(i, item[c - 1L])}
-                    }}
-                #
-                if (l >= 2L) {
-                  if (all(sapply(i, is.character))) {
-                    if (length(i)) {
-                      i <- typeField(i, item[c - 1L])
-                    } else {i <- NA}
-                    if (all(sapply(i, is.character))) {
-                      i <- paste0(unlist(i), collapse = " / ")}
-                  } else {
-                    i <- list(i)
-                  }}
-                #
-                i},
-                USE.NAMES = FALSE,
-                # FALSE for EUCTR "trialInformation.globalEndOfTrialDate"
-                # when "trialInformation" is requested as field:
-                simplify = FALSE
-              ) # sapply
+            # concatenate data if any rows are of type character
+            # and if there is no more complex structure
+            # (thus, vector of types is not a named vector)
+            rowName <- sapply(dfi[[c]], function(i) is.null(names(i)))
+            rowType <- sapply(
+              dfi[[c]], function(i) typeof(unlist(i, recursive = FALSE)))
+            #
+            if (all(rowName) &
+                length(unique(rowName)) <= 1L &
+                any(rowType == "character")) {
+              #
+              dfi[[c]] <- sapply(dfi[[c]], function(i)
+                if (length(i) > 1L) {
+                  rowI <- paste0(i[!is.na(i)], collapse = " / ")
+                  if (nchar(rowI)) rowI else NA
+                  } else if (length(i) && !is.na(i)) i else NA)
+            }
 
-              # e.g. for list of one-element lists such as dates
-              if (all(sapply(out, length) == 1L)) {
-                # get class in case it is a date
-                conv2date <- ifelse(any(sapply(out, class) == "Date"), TRUE, FALSE)
-                out <- unlist(out, recursive = FALSE, use.names = FALSE)
-                if (conv2date) {out <- as.Date(out, origin = "1970-01-01")}
-              }
-
-              # write back
-              dfi[[c]] <- out
-
-            } # if simplify at row level
+            # list of one-element lists such as dates
+            if (any(sapply(dfi[[c]], class) == "Date")) {
+              dfi[[c]] <- unlist(dfi[[c]], recursive = FALSE, use.names = FALSE)
+              dfi[[c]] <- as.Date(dfi[[c]], origin = "1970-01-01")
+            }
 
           } # if typeof
 
@@ -1527,7 +1522,7 @@ dbGetFieldsIntoDf <- function(fields = "",
         } # for processing columns
 
         # user info blanking info from processing columns
-        message("\r", rep(" ", 200), "\r", appendLF = FALSE)
+        message("")
 
         # add NA where dfi has no data to avoid NULL when
         # merging with Reduce below, which otherwise raises
@@ -1559,7 +1554,7 @@ dbGetFieldsIntoDf <- function(fields = "",
                ". \nUse dbGetFieldsIntoDf(stopifnodata = FALSE) to ignore this.",
                call. = FALSE)
         } else {
-          message("* No data: '", item, "'")
+          message("* no data or extraction error *")
           # create empty data set
           dfi <- cbind(dft, NA)
           names(dfi) <- c("_id", fields[i])
@@ -2393,6 +2388,9 @@ dfFindUniqueEuctrRecord <- function(
 #' @noRd
 #'
 typeField <- function(dv, fn) {
+
+  # early exit if dv is not character
+  if (!is.atomic(dv)) return(dv)
 
   # early exit if dv is not character
   if (class(dv) != "character") return(dv)
