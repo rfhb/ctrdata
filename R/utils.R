@@ -1461,7 +1461,9 @@ dbGetFieldsIntoDf <- function(fields = "",
           tmpLen <- sapply(dfi[[c]][ !sapply(dfi[[c]], is.null) ], length)
           if (any(tmpDfs) && any(tmpLst) &&
               all(tmpLen > 1L) && length(unique(tmpLen)) == 1L) {
-            dfi[[c]][tmpLst] <- lapply(dfi[[c]][tmpLst], data.frame)
+            dfi[[c]][tmpLst] <- lapply(
+              dfi[[c]][tmpLst], function(i) data.frame(
+                do.call(rbind, i), check.names = FALSE))
           }
 
           # special case: column is one-column data frame
