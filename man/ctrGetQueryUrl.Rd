@@ -35,6 +35,9 @@ dbc <- nodbi::src_sqlite(collection = "my_collection")
 # user now copies into the clipboard the URL from
 # the address bar of the browser that shows results
 # from a query in one of the trial registers
+#
+# information about all trials found with this query
+# is now loaded into the database collection
 ctrLoadQueryIntoDb(
   queryterm = ctrGetQueryUrl(),
   con = dbc

@@ -311,23 +311,35 @@ tmpc <- unlist(tmpc)
 tmpc <- table(tmpc)
 
 # develop
+#
 # print(tmpc)
-
-# src_mongo local
-# character  Date   integer      list   logical
-# 69            7         2        73         4
 #
-# src_mongo remote
-# character  Date   integer      list   logical
-# 69            7         2        73         4
+# 2022-02-20
 #
-# postgres
-# character  Date   integer      list   logical
-#       128     7         2         7        11
-#
-# sqlite
-# character  Date   integer      list   logical
-#       128     7         2         7        11
+# tinytest::run_test_file("inst/tinytest/test_ctrdata_mongo_local_ctgov.R") # 155
+# Downloading: 8.3 kB     tmpcov.R    0 tests
+# character data.frame       Date   difftime    integer       list    logical
+# 116          4          7          1          2         82          5
+# test_ctrdata_mongo_local_ctgov.R   34 tests OK 12.2s
+# All ok, 34 results (12.2s)
+# > tinytest::run_test_file("inst/tinytest/test_ctrdata_mongo_remote_rw_ctgov.R") # 155
+# Downloading: 8.3 kB     tmpc_ctgov.R    0 tests
+# character data.frame       Date   difftime    integer       list    logical
+# 116          4          7          1          2         82          5
+# test_ctrdata_mongo_remote_rw_ctgov.R   34 tests OK 41.7s
+# All ok, 34 results (41.7s)
+# > tinytest::run_test_file("inst/tinytest/test_ctrdata_postgres_ctgov.R") # 155
+# Downloading: 8.3 kB     tmpcR.    0 tests
+# character      Date  difftime   integer      list   logical
+# 138         7         1         2        73        14
+# test_ctrdata_postgres_ctgov.R.   34 tests OK 22.7s
+# All ok, 34 results (22.7s)
+# > tinytest::run_test_file("inst/tinytest/test_ctrdata_sqlite_ctgov.R") # 155
+# Downloading: 8.3 kB     tmpc..    0 tests
+# character      Date  difftime   integer      list   logical
+# 134         7         1         2        59        32
+# test_ctrdata_sqlite_ctgov.R...   34 tests OK 21.8s
+# All ok, 34 results (21.8s)
 
 # clean up
 rm(df, df2, tmpf, result)

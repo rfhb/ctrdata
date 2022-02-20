@@ -628,23 +628,35 @@ tmpc <- unlist(tmpc)
 tmpc <- table(tmpc)
 
 # develop
+#
 # print(tmpc)
-
-# mongo local
-# character      Date   integer      list   logical
-#       164        15        12       257        66
 #
-# sqlite
-# character      Date   integer      list   logical
-#       396        15        16        42        74
+# 2022-02-20
 #
-# mongo remote
-# character      Date   integer      list   logical
-#       164        15        12       257        66
-#
-# postgres
-# character      Date   integer      list   logical
-#       307        15        10        23        73
+# > tinytest::run_test_file("inst/tinytest/test_ctrdata_mongo_local_euctr.R") # 514
+# Downloading: 33 kB     tmpcctr.R    0 tests    . . . . .
+# character data.frame       Date   difftime    integer       list    logical
+# 381         18         16          2         24        212         77
+# test_ctrdata_mongo_local_euctr.R   72 tests OK 1.6s
+# All ok, 72 results (1.6s)
+# > tinytest::run_test_file("inst/tinytest/test_ctrdata_mongo_remote_rw_euctr.R") # 514
+# Downloading: 33 kB     tmpcw_euctr.R    0 tests
+# character data.frame       Date   difftime    integer       list    logical
+# 381         18         16          2         24        212         77
+# test_ctrdata_mongo_remote_rw_euctr.R   72 tests OK 3.1s
+# All ok, 72 results (3.1s)
+# > tinytest::run_test_file("inst/tinytest/test_ctrdata_postgres_euctr.R") # 428
+# Downloading: 33 kB     tmpc.R.    0 tests
+# character data.frame       Date   difftime    integer       list    logical
+# 408          9         15          2         29        137         80
+# test_ctrdata_postgres_euctr.R.   72 tests OK 1.7s
+# All ok, 72 results (1.7s)
+# > tinytest::run_test_file("inst/tinytest/test_ctrdata_sqlite_euctr.R") # 543
+# Downloading: 33 kB     tmpc...    0 tests
+# character      Date   integer      list   logical   numeric
+# 503        16        29       188        84         2
+# test_ctrdata_sqlite_euctr.R...   72 tests OK 4.6s
+# All ok, 72 results (4.6s)
 
 
 # tests note tmpr may have fewer columns

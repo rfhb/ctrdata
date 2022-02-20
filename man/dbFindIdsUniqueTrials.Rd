@@ -6,7 +6,7 @@
 \usage{
 dbFindIdsUniqueTrials(
   preferregister = c("EUCTR", "CTGOV", "ISRCTN"),
-  prefermemberstate = "GB",
+  prefermemberstate = "DE",
   include3rdcountrytrials = TRUE,
   con,
   verbose = FALSE
@@ -18,14 +18,15 @@ registers from which to generate unique _id's, default
 \code{c("EUCTR", "CTGOV", "ISRCTN")}}
 
 \item{prefermemberstate}{Code of single EU Member State for which records
-should returned. If not available, a record for GB or lacking this, any
-other record for the trial will be returned. For a list of codes of EU
-  Member States, please see vector \code{countriesEUCTR}. Alternatively,
-  "3RD" will lead to return a Third Country record of a trial, if available.}
+should returned. If not available, a record for DE or lacking this, any
+random Member State's record for the trial will be returned.
+For a list of codes of EU  Member States, please see vector
+\code{countriesEUCTR}. Specifying "3RD" will return a Third Country
+records of trials, where available.}
 
 \item{include3rdcountrytrials}{A logical value if trials should be retained
 that are conducted exclusively in third countries, that is, outside
-the European Union.}
+the European Union. Ignored if \code{prefermemberstate} is set to "3RD".}
 
 \item{con}{A connection object, see section
 `Databases` in \link{ctrdata-package}}

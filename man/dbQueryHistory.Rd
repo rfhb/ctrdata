@@ -15,10 +15,10 @@ dbQueryHistory(con, verbose = FALSE)
 }
 \value{
 A data frame (or tibble, if \code{dplyr} is loaded)
- with columns: query-timestamp, query-register,
- query-records (note: this is the number of records loaded when last
+ with columns: `query-timestamp`, `query-register`,
+ `query-records` (note: this is the number of records loaded when last
  executing \link{ctrLoadQueryIntoDb}, not the total record number) and
- query-term, and with one row for each time \link{ctrLoadQueryIntoDb}
+ `query-term`, with one row for each time \link{ctrLoadQueryIntoDb}
  loaded trial records into this collection.
 }
 \description{

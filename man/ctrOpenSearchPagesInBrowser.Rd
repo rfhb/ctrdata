@@ -32,7 +32,7 @@ Open advanced search pages of register(s), or execute search in browser
 # Check copyrights before using registers
 ctrOpenSearchPagesInBrowser(copyright = TRUE)
 
-# open last query loaded into the database
+# open last query loaded into the collection
 dbc <- nodbi::src_sqlite(
   collection = "previously_created"
 )

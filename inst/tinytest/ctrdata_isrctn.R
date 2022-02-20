@@ -246,19 +246,29 @@ tmpc <- unlist(tmpc)
 tmpc <- table(tmpc)
 
 # develop
+#
 # print(tmpc)
-
-# postgres
-# character      Date   integer   logical
-#        44         5         1         3
 #
-# mongo_local
-# character      Date   integer   logical
-#        39         5         1         3
+# 2022-02-20
 #
-# sqlite
-# character      Date   integer   logical
-#        39         5         1         3
+# > tinytest::run_test_file("inst/tinytest/test_ctrdata_postgres_isrctn.R") # 53
+# Downloading: 10 kB     tmpcn.R    0 tests
+# character      Date   integer      list   logical
+# 50         5         2         3         4
+# test_ctrdata_postgres_isrctn.R   26 tests OK 9.0s
+# All ok, 26 results (9.0s)
+# > tinytest::run_test_file("inst/tinytest/test_ctrdata_mongo_local_isrctn.R") # 55
+# Downloading: 10 kB     tmpcrctn.R    0 tests
+# character      Date   integer      list   logical
+# 51         5         2         1         4
+# test_ctrdata_mongo_local_isrctn.R   26 tests OK 4.1s
+# All ok, 26 results (4.1s)
+# > tinytest::run_test_file("inst/tinytest/test_ctrdata_sqlite_isrctn.R") # 55
+# Downloading: 10 kB     tmpcR..    0 tests
+# character      Date   integer      list   logical
+# 50         5         2         3         4
+# test_ctrdata_sqlite_isrctn.R..   26 tests OK 5.8s
+# All ok, 26 results (5.8s)
 
 rm(tmpf, result)
 

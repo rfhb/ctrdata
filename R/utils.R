@@ -364,7 +364,7 @@ ctrDb <- function(
 #' # Check copyrights before using registers
 #' ctrOpenSearchPagesInBrowser(copyright = TRUE)
 #'
-#' # open last query loaded into the database
+#' # open last query loaded into the collection
 #' dbc <- nodbi::src_sqlite(
 #'   collection = "previously_created"
 #' )
@@ -473,6 +473,9 @@ ctrOpenSearchPagesInBrowser <- function(
 #' # user now copies into the clipboard the URL from
 #' # the address bar of the browser that shows results
 #' # from a query in one of the trial registers
+#' #
+#' # information about all trials found with this query
+#' # is now loaded into the database collection
 #' ctrLoadQueryIntoDb(
 #'   queryterm = ctrGetQueryUrl(),
 #'   con = dbc
@@ -688,10 +691,10 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "") {
 #' @inheritParams ctrDb
 #'
 #' @return A data frame (or tibble, if \code{dplyr} is loaded)
-#'  with columns: query-timestamp, query-register,
-#'  query-records (note: this is the number of records loaded when last
+#'  with columns: `query-timestamp`, `query-register`,
+#'  `query-records` (note: this is the number of records loaded when last
 #'  executing \link{ctrLoadQueryIntoDb}, not the total record number) and
-#'  query-term, and with one row for each time \link{ctrLoadQueryIntoDb}
+#'  `query-term`, with one row for each time \link{ctrLoadQueryIntoDb}
 #'  loaded trial records into this collection.
 #'
 #' @param verbose If \code{TRUE}, prints additional information
@@ -769,7 +772,18 @@ dbQueryHistory <- function(con, verbose = FALSE) {
 #' Find names of fields in the database collection
 #'
 #' Given part of the name of a field of interest to the user, this
-#' function returns the full field names as found in the database.
+#' function returns the full field names used in records that were
+#' previously loaded into a collection
+#' (using \link{ctrLoadQueryIntoDb}). The field names can be fed
+#' into function \link{dbGetFieldsIntoDf} to extract the data
+#' from the collection into a data frame.
+#' In addition to the full names of leaf fields (e.g.,
+#' \code{clinical_results.outcome_list.outcome.measure.class_list.class.title})
+#' this function also returns names of node fields (e.g.,
+#' \code{clinical_results}). Data in node fields is typically complex
+#' (multiply nested) and can be converted into individual data
+#' elements by function \link{dfTrials2Long}, possibly followed
+#' by function \link{dfName2Value}.
 #'
 #' For fields in EUCTR (protocol- and results-related information),
 #' \url{https://eudract.ema.europa.eu/result.html}.
@@ -785,7 +799,7 @@ dbQueryHistory <- function(con, verbose = FALSE) {
 #'
 #' @param namepart A plain string (can include a regular expression,
 #' including Perl-style) to be searched for among all field names
-#' (keys) in the database. Use `".*` to find all fields.
+#' (keys) in the collection. Use `".*` to find all fields.
 #'
 #' @param verbose If \code{TRUE}, prints additional information
 #' (default \code{FALSE}).
@@ -916,7 +930,7 @@ dbFindFields <- function(namepart = "",
   ## inform user of unexpected situation
   if ((length(keyslist) == 0) || all(keyslist == "")) {
     warning("No keys could be extracted, please check database ",
-            "and contents: ", con$db, "/", con$collection, call. = FALSE)
+            "and collection: ", con$db, "/", con$collection, call. = FALSE)
   }
 
   ## now do the actual search and find for key name parts
@@ -970,7 +984,7 @@ dbFindFields <- function(namepart = "",
 #'
 dbFindIdsUniqueTrials <- function(
   preferregister = c("EUCTR", "CTGOV", "ISRCTN"),
-  prefermemberstate = "GB",
+  prefermemberstate = "DE",
   include3rdcountrytrials = TRUE,
   con,
   verbose = FALSE) {
@@ -1288,7 +1302,8 @@ dbFindIdsUniqueTrials <- function(
 #' \link{dfTrials2Long} followed by function \link{dfName2Value} to
 #' extract values for nested variables.
 #' The maximum number of rows of the returned data frame is equal to,
-#' or less than the number of records of trials in the database.
+#' or less than the number of records of trials in the database
+#' collection.
 #'
 #' @importFrom nodbi docdb_query
 #' @importFrom stats na.omit
@@ -1372,7 +1387,7 @@ dbGetFieldsIntoDf <- function(fields = "",
       item <- fields[i]
 
       # user info
-      message(item, "... ", appendLF = FALSE)
+      message(ifelse(i > 1L, "\n", ""), item, "... ", appendLF = FALSE)
       #
       query <- '{"_id": {"$ne": "meta-info"}}'
       #
@@ -1521,9 +1536,6 @@ dbGetFieldsIntoDf <- function(fields = "",
 
         } # for processing columns
 
-        # user info blanking info from processing columns
-        message("")
-
         # add NA where dfi has no data to avoid NULL when
         # merging with Reduce below, which otherwise raises
         #  Error in `[<-.data.frame`(`*tmp*`, value, value = NA) :
@@ -1570,8 +1582,7 @@ dbGetFieldsIntoDf <- function(fields = "",
         dni <- intersect(dna, accumNames)
         dnd <- setdiff(dna, accumNames)
         if (length(dni)) {
-          message("From field ", i, " (", fields[i], "), not ",
-                  "included again item: ", paste0(dni, collapse = ", "))
+          message("(not included again: ", paste0(dni, collapse = ", "), ") ")
           dfi <- dfi[, dnd, drop = FALSE]
         }
       }
@@ -1784,7 +1795,11 @@ dfName2Value <- function(df, valuename = "",
 #' It converts lists and other values that are in a data frame returned
 #' by \link{dbGetFieldsIntoDf} into individual rows of a long data frame.
 #' From the resulting data frame, values of interest can be selected
-#' using \link{dfName2Value}).
+#' using \link{dfName2Value}.
+#' The function is intended for fields with complex content, such as node
+#' field "\code{clinical_results}" from EUCTR, which \link{dbGetFieldsIntoDf}
+#' returns as a multiply nested list and for which this function then
+#' converts every observation of every (leaf) field into a row of its own.
 #'
 #' @param df Data frame (or tibble) with columns including
 #'  the trial identifier (\code{_id}) and
@@ -1808,8 +1823,7 @@ dfName2Value <- function(df, valuename = "",
 #' dbc <- nodbi::src_sqlite(collection = "my_collection")
 #'
 #' df <- dbGetFieldsIntoDf(
-#'   fields = c(
-#'     "clinical_results.outcome_list.outcome"),
+#'   fields = c("clinical_results"),
 #'   con = dbc
 #' )
 #' head(dfTrials2Long(df = df))
@@ -2234,19 +2248,22 @@ dfMergeTwoVariablesRelevel <- function(
 #' this function returns only one record per trial.
 #'
 #' Note: To deduplicate trials from different registers (EUCTR and CTGOV),
-#' please first use function \code{\link{dbFindIdsUniqueTrials}}.
+#' please first use function \link{dbFindIdsUniqueTrials}.
 #'
-#' @param df A data frame created from the database that includes the columns
-#'   "_id" and "a2_eudract_number", for example created with function
-#'   dbGetFieldsIntoDf(c("_id", "a2_eudract_number")).
+#' @param df A data frame created from the database collection that includes
+#'   the columns "_id" and "a2_eudract_number", for example created with
+#'   function dbGetFieldsIntoDf(c("_id", "a2_eudract_number")).
+#'
 #' @param prefermemberstate Code of single EU Member State for which records
-#' should returned. If not available, a record for GB or lacking this, any
-#' other record for the trial will be returned. For a list of codes of EU
-#'   Member States, please see vector \code{countriesEUCTR}. Alternatively,
-#'   "3RD" will lead to return a Third Country record of a trial, if available.
+#' should returned. If not available, a record for DE or lacking this, any
+#' random Member State's record for the trial will be returned.
+#' For a list of codes of EU  Member States, please see vector
+#' \code{countriesEUCTR}. Specifying "3RD" will return a Third Country
+#' records of trials, where available.
+#'
 #' @param include3rdcountrytrials A logical value if trials should be retained
-#'   that are conducted exclusively in third countries, that is, outside
-#'   the European Union.
+#' that are conducted exclusively in third countries, that is, outside
+#' the European Union. Ignored if \code{prefermemberstate} is set to "3RD".
 #'
 #' @return A data frame as subset of \code{df} corresponding to the sought
 #'   records.
@@ -2255,7 +2272,7 @@ dfMergeTwoVariablesRelevel <- function(
 #
 dfFindUniqueEuctrRecord <- function(
   df = NULL,
-  prefermemberstate = "GB",
+  prefermemberstate = "DE",
   include3rdcountrytrials = TRUE) {
 
   # check parameters
@@ -2333,7 +2350,7 @@ dfFindUniqueEuctrRecord <- function(
       return(result)
     }
     #
-    if (sum(fnd <- grepl("GB", recordnames)) != 0) {
+    if (sum(fnd <- grepl("DE", recordnames)) != 0) {
       result <- recordnames[!fnd]
       return(result)
     }

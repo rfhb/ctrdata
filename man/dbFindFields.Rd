@@ -9,7 +9,7 @@ dbFindFields(namepart = "", con, verbose = FALSE)
 \arguments{
 \item{namepart}{A plain string (can include a regular expression,
 including Perl-style) to be searched for among all field names
-(keys) in the database. Use `".*` to find all fields.}
+(keys) in the collection. Use `".*` to find all fields.}
 
 \item{con}{A connection object, see section
 `Databases` in \link{ctrdata-package}}
@@ -25,7 +25,18 @@ the respective fields.
 }
 \description{
 Given part of the name of a field of interest to the user, this
-function returns the full field names as found in the database.
+function returns the full field names used in records that were
+previously loaded into a collection
+(using \link{ctrLoadQueryIntoDb}). The field names can be fed
+into function \link{dbGetFieldsIntoDf} to extract the data
+from the collection into a data frame.
+In addition to the full names of leaf fields (e.g.,
+\code{clinical_results.outcome_list.outcome.measure.class_list.class.title})
+this function also returns names of node fields (e.g.,
+\code{clinical_results}). Data in node fields is typically complex
+(multiply nested) and can be converted into individual data
+elements by function \link{dfTrials2Long}, possibly followed
+by function \link{dfName2Value}.
 }
 \details{
 For fields in EUCTR (protocol- and results-related information),

@@ -21,7 +21,11 @@ The function works with procotol- and results- related information.
 It converts lists and other values that are in a data frame returned
 by \link{dbGetFieldsIntoDf} into individual rows of a long data frame.
 From the resulting data frame, values of interest can be selected
-using \link{dfName2Value}).
+using \link{dfName2Value}.
+The function is intended for fields with complex content, such as node
+field "\code{clinical_results}" from EUCTR, which \link{dbGetFieldsIntoDf}
+returns as a multiply nested list and for which this function then
+converts every observation of every (leaf) field into a row of its own.
 }
 \examples{
 \dontrun{
@@ -29,8 +33,7 @@ using \link{dfName2Value}).
 dbc <- nodbi::src_sqlite(collection = "my_collection")
 
 df <- dbGetFieldsIntoDf(
-  fields = c(
-    "clinical_results.outcome_list.outcome"),
+  fields = c("clinical_results"),
   con = dbc
 )
 head(dfTrials2Long(df = df))

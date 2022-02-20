@@ -30,7 +30,8 @@ or a list. For complicated lists, use function
 \link{dfTrials2Long} followed by function \link{dfName2Value} to
 extract values for nested variables.
 The maximum number of rows of the returned data frame is equal to,
-or less than the number of records of trials in the database.
+or less than the number of records of trials in the database
+collection.
 }
 \description{
 Fields in the collection are retrieved into a data frame (or tibble).
