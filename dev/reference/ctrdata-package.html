@@ -74,7 +74,7 @@ to parameter <code>con</code> for several ctrdata functions; this
 connection object is created in slightly different ways for the
 three supported database backends:</p><table class="table table"><tr><td><strong>Database</strong></td><td><strong>Connection object</strong></td></tr><tr><td>MongoDB</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_mongo.html" class="external-link">nodbi::src_mongo</a>(db = "my_db", collection = "my_coll")</code></td></tr><tr><td>SQLite</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">nodbi::src_sqlite</a>(dbname = "my_db", collection = "my_coll")</code></td></tr><tr><td>PostgreSQL</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_postgres.html" class="external-link">nodbi::src_postgres</a>(dbname = "my_db"); dbc[["collection"]] &lt;- "my_coll"</code></td></tr></table><p>Example of using a <code>ctrdata</code> function with any such connection object:
 <code><a href="dbQueryHistory.html">ctrdata::dbQueryHistory</a>(con = dbc)</code>.
-Besides ctrdata functions below, any such a connection object can equally
+Besides <code>ctrdata</code> functions below, any such a connection object can equally
 be used with functions of package <code>nodbi</code>, for example
 <code><a href="https://docs.ropensci.org/nodbi/reference/docdb_query.html" class="external-link">nodbi::docdb_query</a>(src = dbc, key = dbc$collection, fields = '{"_id": 1}', query = '{"sponsors.lead_sponsor.agency_class": "Industry"}')</code></p>
     </div>
@@ -84,7 +84,7 @@ be used with functions of package <code>nodbi</code>, for example
 
 
 <p><a href="ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser</a>,
-<a href="ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a> (load trial records into collection),
+<a href="ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a> (load trial records into database collection),
 <a href="ctrFindActiveSubstanceSynonyms.html">ctrFindActiveSubstanceSynonyms</a>; see
 <a href="ctrdata-registers.html">ctrdata-registers</a> for details on registers and how to search</p>
     </div>
@@ -93,8 +93,8 @@ be used with functions of package <code>nodbi</code>, for example
     
 
 
-<p><a href="dbFindFields.html">dbFindFields</a> (find fields of interest in trial records),
-<a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a>,
+<p><a href="dbFindFields.html">dbFindFields</a> (find names of fields of interest in trial records in a collection),
+<a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a> (create a data frame for fields of interest from collection),
 <a href="dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a> (de-duplicated identifiers of
 clinical trial records that can be used to subset a data frame)</p>
     </div>
@@ -103,7 +103,7 @@ clinical trial records that can be used to subset a data frame)</p>
     
 
 
-<p><a href="dfTrials2Long.html">dfTrials2Long</a> (convert nested lists into long format),
+<p><a href="dfTrials2Long.html">dfTrials2Long</a> (convert fields with nested elements into long format),
 <a href="dfName2Value.html">dfName2Value</a> (get values for variable(s) of interest).
 <a href="dfMergeTwoVariablesRelevel.html">dfMergeTwoVariablesRelevel</a></p>
     </div>
