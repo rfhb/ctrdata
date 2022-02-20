@@ -855,17 +855,31 @@ dbFindFields <- function(namepart = "",
   if (cacheOutdated) {
 
     # inform user
-    message("Finding fields in database (may take some time)")
+    message("Finding fields in database collection (may take some time)")
+
+    # helpder function
+    getNodes <- function(fn) {
+      nodesList <- strsplit(fn, split = ".", fixed = TRUE)
+      nodesList <- sapply(nodesList, function(i) {
+        i <- i[-length(i)]
+        sapply(
+          seq_along(i),
+          function(ii) paste0(i[1:ii], collapse = "."), USE.NAMES = FALSE)
+      }, USE.NAMES = FALSE)
+      return(unique(unlist(nodesList)))
+    }
 
     # helper function
     normNames <- function(df) {
       out <- names(unlist(df))
+      if (!length(out)) return("")
       out <- ifelse(
         # exception for euctr protocol and results fields
         test = grepl("65To84|Over85|under_18", out),
         yes = out,
         no = sub("[0-9]+$", "", out))
-      sort(unique(out))
+      out <- c(out, getNodes(out))
+      return(sort(unique(out)))
     }
 
     # get all ids
