@@ -15,6 +15,7 @@
  - speed up parts of dbGetFieldsIntoDf() and simplify more fields
  - dbFindFields() returns names of all leaf and also node fields
  - improve and update documentation
+ - changed EU Member State to default to DE for dbFindIdsUniqueTrials()
 
 # ctrdata 1.8.0.9001
  - 2021-12-11
