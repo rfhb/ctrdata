@@ -1,5 +1,5 @@
 # ctrdata 1.8.0.9002
- - 2022-02-20
+ - 2022-02-21
  - chunked trial batches in ndjson files for accelerated database import
  - if package dplyr is loaded, functions return a tibble instead of a data frame
  - update and correct documentation
@@ -16,6 +16,8 @@
  - dbFindFields() returns names of all leaf and also node fields
  - improve and update documentation
  - changed EU Member State to default to DE for dbFindIdsUniqueTrials()
+ - corrected installCygwinWindowsDoInstall() to properly update an installation (remove --prune-install)
+ - test all binaries after installCygwinWindowsDoInstall() and only cache successful binary testing
 
 # ctrdata 1.8.0.9001
  - 2021-12-11
