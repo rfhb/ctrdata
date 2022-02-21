@@ -2615,8 +2615,7 @@ installCygwinWindowsDoInstall <- function(
   # compose setup command
   setupcmd <- paste0(
     dstfile,
-    " --no-admin --quiet-mode --upgrade-also --no-shortcuts --prune-install",
-    " --root c:/cygwin",
+    " --no-admin --quiet-mode --upgrade-also --no-shortcuts --root c:/cygwin",
     " --site https://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/",
     " --packages perl,php-simplexml,php-json ",
     " --local-package-dir ", tmpfile,
