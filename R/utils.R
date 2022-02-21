@@ -2661,19 +2661,7 @@ installCygwinWindowsTest <- function(verbose = FALSE) {
     return(invisible(NULL))
   }
   #
-  tmpcygwin <- try({
-    suppressWarnings(
-      system(
-        paste0("cmd.exe /c ",
-               rev(Sys.glob("c:\\cygw*\\bin\\bash.exe"))[1],
-               " --version"),
-        intern = TRUE,
-        ignore.stderr = TRUE
-      ))},
-    silent = TRUE)
-  #
-  if (!inherits(tmpcygwin, "try-error") &
-      (length(tmpcygwin) > 5L)) {
+  if (checkBinary()) {
     if (verbose) message("cygwin seems to work correctly")
     return(invisible(TRUE))
   } else {
