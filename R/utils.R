@@ -1413,7 +1413,7 @@ dbGetFieldsIntoDf <- function(fields = "",
           key = con$collection,
           query = query,
           fields = paste0('{"_id": 1, "', item, '": 1}'))
-        message("\b\b\b\b \U2713 ", appendLF = FALSE)
+        message("\b\b\b\b ", appendLF = FALSE)
 
         # leave try() early if no results
         if (!nrow(dfi) || ncol(dfi) == 1L) simpleError(message = "")
