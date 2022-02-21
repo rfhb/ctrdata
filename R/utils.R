@@ -2799,11 +2799,11 @@ checkBinary <- function(b = NULL, verbose = FALSE) {
     ok <- checkCommand(commandtest = actionsInfo[1], verbose = verbose)
     if (!ok) message("\n", actionsInfo[2], appendLF = FALSE)
 
-    # store check to private environment
-    ctrCache(xname = paste0("bin_check_", bi), xvalue = ok)
+    # store check to private environment only if successful
+    if (ok) ctrCache(xname = paste0("bin_check_", bi), xvalue = ok)
 
     # return
-    ok
+    return(ok)
 
   })
 
