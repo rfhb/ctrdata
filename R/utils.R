@@ -34,23 +34,27 @@ typeVars <- list(
   "record_last_import" = "ctrDateCtr",
   #
   # - EUCTR
-  "n_date_of_ethics_committee_opinion"     = "ctrDate",
   "n_date_of_competent_authority_decision" = "ctrDate",
+  "n_date_of_ethics_committee_opinion"     = "ctrDate",
   "p_date_of_the_global_end_of_the_trial"  = "ctrDate",
-  "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database" = "ctrDate",
   "firstreceived_results_date"             = "ctrDate",
+  "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database" = "ctrDate",
   "trialInformation.primaryCompletionDate" = "ctrDate",
   "trialInformation.analysisStageDate"     = "ctrDateTime",
   "trialInformation.globalEndOfTrialDate"  = "ctrDateTime",
   "trialInformation.recruitmentStartDate"  = "ctrDateTime",
   #
   # - CTGOV
-  "start_date"              = "ctrDateUs",
-  "primary_completion_date" = "ctrDateUs",
-  "completion_date"         = "ctrDateUs",
-  "study_first_posted"      = "ctrDateUs",
-  "results_first_posted"    = "ctrDateUs",
-  "last_update_posted"      = "ctrDateUs",
+  "completion_date"          = "ctrDateUs",
+  "last_update_posted"       = "ctrDateUs",
+  "last_update_submitted_qc" = "ctrDateUs",
+  "last_update_submitted"    = "ctrDateUs",
+  "primary_completion_date"  = "ctrDateUs",
+  "results_first_posted"     = "ctrDateUs",
+  "start_date"               = "ctrDateUs",
+  "study_first_posted"       = "ctrDateUs",
+  "verification_date"        = "ctrDateUs",
+  "required_header.download_date" = "ctrDateUs",
   "eligibility.minimum_age" = "ctrDifftime",
   "eligibility.maximum_age" = "ctrDifftime",
   #
@@ -64,7 +68,6 @@ typeVars <- list(
   # factors / logical
   #
   # - EUCTR Yes / No / Information not present in EudraCT
-  #
   "a7_trial_is_part_of_a_paediatric_investigation_plan" = "ctrYesNo",
   "dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation" = "ctrYesNo",
   "e13_condition_being_studied_is_a_rare_disease" = "ctrYesNo",
@@ -130,11 +133,11 @@ typeVars <- list(
   "f336_subjects_incapable_of_giving_consent_personally" = "ctrYesNo",
   #
   "trialInformation.analysisForPrimaryCompletion" = "ctrFalseTrue",
-  "trialInformation.partOfPIP" = "ctrFalseTrue",
-  "trialInformation.art45Related" = "ctrFalseTrue",
-  "trialInformation.art46Related" = "ctrFalseTrue",
-  "trialInformation.longTermFollowUpPlanned" = "ctrFalseTrue",
-  "trialInformation.idmcInvolvement" = "ctrFalseTrue",
+  "trialInformation.partOfPIP"                 = "ctrFalseTrue",
+  "trialInformation.art45Related"              = "ctrFalseTrue",
+  "trialInformation.art46Related"              = "ctrFalseTrue",
+  "trialInformation.longTermFollowUpPlanned"   = "ctrFalseTrue",
+  "trialInformation.idmcInvolvement"           = "ctrFalseTrue",
   "trialInformation.isGlobalEndOfTrialReached" = "ctrFalseTrue",
   "trialInformation.globalEndOfTrialPremature" = "ctrFalseTrue",
   #
@@ -186,8 +189,8 @@ typeVars <- list(
   "enrollment"     = "ctrInt",
   #
   # - ISRCTN
-  "participants.targetEnrolment"      = "ctrInt",
-  "participants.totalFinalEnrolment"  = "ctrInt"
+  "participants.targetEnrolment"     = "ctrInt",
+  "participants.totalFinalEnrolment" = "ctrInt"
   #
 )
 
