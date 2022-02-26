@@ -163,6 +163,7 @@ result <- suppressMessages(
         "clinical_results.baseline.group_list.group",
         "clinical_results.baseline.analyzed_list.analyzed.units",
         "clinical_results.outcome_list.outcome",
+        "clinical_results",
         "study_design_info.allocation",
         "eligibility.maximum_age",
         "location.facility.name",
@@ -204,6 +205,15 @@ expect_true(
 # test
 expect_true("list" == class(result[[
   "clinical_results.baseline.group_list.group"]]))
+
+# test
+tmpTest <- c(
+  "clinical_results.baseline", "clinical_results.outcome_list.outcome",
+   "clinical_results.reported_events", "clinical_results.participant_flow",
+  "clinical_results.point_of_contact", "clinical_results.certain_agreements",
+  "clinical_results.limitations_and_caveats")
+expect_true(
+  length(setdiff(tmpTest, names(result))) == 0L)
 
 # test
 expect_true(

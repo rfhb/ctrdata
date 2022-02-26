@@ -1513,10 +1513,11 @@ dbGetFieldsIntoDf <- function(fields = "",
             # and if there is no more complex structure
             # (thus, vector of types is not a named vector)
             rowName <- sapply(dfi[[c]], function(i) is.null(names(i)))
+            rowName2 <- sapply(names(rowName), function(i) is.null(i))
             rowType <- sapply(
               dfi[[c]], function(i) typeof(unlist(i, recursive = FALSE)))
             #
-            if (all(rowName) &
+            if (all(rowName) & all(rowName2) &
                 length(unique(rowName)) <= 1L &
                 any(rowType == "character")) {
               #
