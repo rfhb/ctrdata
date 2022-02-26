@@ -2435,6 +2435,8 @@ typeField <- function(dv, fn) {
   # clean up for all character vectors
   # - if NA as string, change to NA
   dv[grepl("^N/?A$|^ND$", dv)] <- NA
+  # - remove explanatory text before date
+  dv <- sub("^ClinicalTrials.gov processed this data on ", "", dv)
   # - give Month Year also a Day to work with as.Date
   dv <- sub("^([a-zA-Z]+) ([0-9]{4})$", "\\1 15, \\2", dv)
   # - convert html entities because these had to
