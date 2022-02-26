@@ -30,7 +30,7 @@ typeVars <- list(
   #
   # dates
   #
-  # - "ctrdata intern
+  # - ctrdata intern
   "record_last_import" = "ctrDateCtr",
   #
   # - EUCTR
@@ -1416,7 +1416,7 @@ dbGetFieldsIntoDf <- function(fields = "",
           key = con$collection,
           query = query,
           fields = paste0('{"_id": 1, "', item, '": 1}'))
-        message("\b\b\b\b   \b\b\b", appendLF = FALSE)
+        message("\b\b\b\b   \b\b\b ", appendLF = FALSE)
 
         # leave try() early if no results
         if (!nrow(dfi) || ncol(dfi) == 1L) simpleError(message = "")
@@ -1596,12 +1596,12 @@ dbGetFieldsIntoDf <- function(fields = "",
       # previously specified in fields
       if (i > 1L) {
         dna <- names(dfi)
-        # dni <- intersect(dna, fields[1:(i - 1L)])
-        # dnd <- setdiff(dna, fields[1:(i - 1L)])
         dni <- intersect(dna, accumNames)
         dnd <- setdiff(dna, accumNames)
         if (length(dni)) {
-          message("(not included again: ", paste0(dni, collapse = ", "), ") ")
+          message("(not included again: ",
+                  paste0(dni, collapse = ", "), ") ",
+                  appendLF = FALSE)
           dfi <- dfi[, dnd, drop = FALSE]
         }
       }

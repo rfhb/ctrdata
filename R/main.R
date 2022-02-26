@@ -455,7 +455,7 @@ ctrRerunQuery <- function(
         queryupdateterm <- ""
         warning("Query has date(s) for start or end of last update ",
                 "('&lup_'); running again with these limits",
-                immediate. = TRUE)
+                call. = FALSE, immediate. = TRUE)
         #
       } else {
         #
@@ -490,8 +490,8 @@ ctrRerunQuery <- function(
         warning("'querytoupdate=", querytoupdate, "' not possible because ",
                 "it was last run more than 7 days ago and the register ",
                 "provides information on changes only for the last 7 days. ",
-                "Reverting to normal download",
-                immediate. = TRUE)
+                "Reverting to normal download. ",
+                call. = FALSE, immediate. = TRUE)
         #
         message("Rerunning query: ", queryterm,
                 "\nLast run: ", initialday)
