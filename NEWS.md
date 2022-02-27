@@ -13,11 +13,12 @@
  - modify field typing to decode HTML entities
  - type some fields as difftime, e.g. min_age in CTGOV
  - speed up parts of dbGetFieldsIntoDf() and simplify more fields
- - dbFindFields() returns names of all leaf and also node fields
+ - dbFindFields() returns names of all leaf and node fields
  - improve and update documentation
  - changed EU Member State to default to DE for dbFindIdsUniqueTrials()
  - corrected installCygwinWindowsDoInstall() to properly update an installation (remove --prune-install)
  - test all binaries after installCygwinWindowsDoInstall() and only cache successful binary testing
+ - correct typing required_header.download_date
 
 # ctrdata 1.8.0.9001
  - 2021-12-11
