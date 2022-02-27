@@ -1554,17 +1554,17 @@ ctrLoadQueryIntoDbEuctr <- function(
     # iterate over results files
     message("(3/4) Importing JSON into database...")
 
+    # initiate counter
+    importedresults <- 0L
+
     # import results data from json file
-    importedresults <- sapply(
+    sapply(
       # e.g., EU-CTR 2008-003606-33 v1 - Results.xml
       # was converted into EU_Results_1234.json
       dir(path = tempDir,
           pattern = "EU_Results_[0-9]+[.]ndjson",
           full.names = TRUE),
       function(fileName) {
-
-        # initialise import counter
-        nSuccess <- 0L
 
         # check file
         if (file.exists(fileName) &&
@@ -1611,15 +1611,17 @@ ctrLoadQueryIntoDbEuctr <- function(
             if (inherits(tmp, "try-error")) {
               warning(paste0("Import of results failed for trial ",
                              euctrnumber), immediate. = TRUE)
-              tmp <- 0
+              tmp <- 0L
             }
 
             # however output is number of trials updated
-            nSuccess <- nSuccess + 1L
+            importedresults <<- importedresults + 1L
 
             # inform user on records
-            message(nSuccess, " trials' records updated with results\r",
-                    appendLF = FALSE)
+            message(
+              importedresults,
+              " trials' records updated with results\r",
+              appendLF = FALSE)
 
           } # while
 
@@ -1628,14 +1630,7 @@ ctrLoadQueryIntoDbEuctr <- function(
 
         } # if file exists
 
-        # return accumulated counts
-        nSuccess
-
-      }) # end importedresults
-
-    # sum up successful downloads
-    importedresults <- sum(unlist(
-      importedresults, use.names = FALSE), na.rm = TRUE)
+      }) # end import results
 
     # get result history from result webpage, section Results information
     importedresultshistory <- NULL
