@@ -265,7 +265,7 @@ expect_true(
 
 # test
 expect_true(
-  all(grepl("^5", df2[["identifier"]][ df2[["_id"]] == "NCT01471782" ]))
+  all(grepl("5", df2[["identifier"]][ df2[["_id"]] == "NCT01471782" ]))
 )
 
 # test

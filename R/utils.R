@@ -1902,17 +1902,29 @@ dfTrials2Long <- function(df) {
       tn <- dfn[cc]
       # inform user
       message(tn, rep(" ", 200L - nchar(tn)), "\r", appendLF = FALSE)
-      # handle case when column is data
-      # frame, turn into list by row
+      # handle case when column is data frame, turn into list by row
       if (is.data.frame(ci)) ci <- split(ci, seq_len(nrow(ci)))
       # and by cell in column
       lapply(ci, function(c) {
-        x <- unlist(flattenDf(c))
-        if (!is.null(names(x))) tn <- paste0(tn, ".", names(x))
-        if (is.null(x)) x <- NA
+        # initialise
+        xx <- NULL
+        tnn <- NULL
+        # need to iterate since there may be repeats, e.g, 1, 2, 3.1, 3.2
+        sapply(seq_len(length(c)), function(i) {
+          #
+          x <- unlist(flattenDf(c[i]))
+          if (!is.null(names(x))) tn <- paste0(tn, ".", i, ".", names(x))
+          if (is.null(x)) x <- NA
+          #
+          xx <<- c(xx, x)
+          tnn <<- c(tnn, tn)
+          #
+        }, USE.NAMES = FALSE)
+        #
+        # compose
         data.frame(
-          "name" = tn,
-          "value" = x,
+          "name" = tnn,
+          "value" = xx,
           check.names = FALSE,
           stringsAsFactors = FALSE,
           row.names = NULL)
@@ -1960,7 +1972,8 @@ dfTrials2Long <- function(df) {
   # clinical...class9.analyzed...count8.@attributes.value2
   #
   # except where name is exactly one of dfn
-  onlyHere <- vapply(out[["name"]], function(i) !any(i == dfn), logical(1L))
+  onlyHere <- vapply(out[["name"]], function(i) !any(i == dfn),
+                     logical(1L), USE.NAMES = FALSE)
   #
   out[["identifier"]][onlyHere] <- vapply(
     stringi::stri_extract_all_regex(out[["name"]][onlyHere], "[0-9]+([.]|$)"),
@@ -2299,8 +2312,8 @@ dfMergeTwoVariablesRelevel <- function(
 #' should returned. If not available, a record for DE or lacking this, any
 #' random Member State's record for the trial will be returned.
 #' For a list of codes of EU  Member States, please see vector
-#' \code{countriesEUCTR}. Specifying "3RD" will return a Third Country
-#' records of trials, where available.
+#' \code{countriesEUCTR}. Specifying "3RD" will return the Third Country
+#' record of trials, where available.
 #'
 #' @param include3rdcountrytrials A logical value if trials should be retained
 #' that are conducted exclusively in third countries, that is, outside
