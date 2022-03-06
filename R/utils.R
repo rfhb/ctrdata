@@ -2509,13 +2509,29 @@ typeField <- function(dv, fn) {
     as.difftime(out, units = "days")
   }
 
-  # apply typing
-  out <- try(do.call(typeVars[[fn]], list()), silent = TRUE)
+  ## apply typing
+  ldv <- length(dv)
+  if (any(grepl(" / ", dv))) {
+
+    # if any concatenations, apply typing per concatenated
+    # item and return list per item. note that dv has to be
+    # overwritten in outer environment for typeVars to work
+    out <- lapply(dv, function(r)  {
+      dv <<- strsplit(r, " / ", fixed = TRUE)[[1]]
+      try(do.call(typeVars[[fn]], list()), silent = TRUE)
+    })
+
+  } else {
+
+    # apply typing function with its specified type
+    out <- try(do.call(typeVars[[fn]], list()), silent = TRUE)
+
+  }
 
   # error output
-  if (inherits(out, "try-error") ||
-      length(out) != length(dv)) {
-    out <- rep.int(x = NA, times = length(dv))
+  if (any(sapply(out, function(r) inherits(r, "try-error"))) ||
+      length(out) != ldv) {
+    out <- rep.int(x = NA, times = ldv)
   }
 
   # return

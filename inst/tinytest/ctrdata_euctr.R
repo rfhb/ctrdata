@@ -251,6 +251,22 @@ expect_true("Date" == class(result[[
 expect_true("list" == class(result[[
   "endPoints.endPoint"]]))
 
+# test
+tmp <- result[["dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation"]]
+expect_true((class(tmp) == "list" & (length(unlist(tmp)) > length(tmp)) &
+               all(class(unlist(tmp)) == "logical")) | (class(tmp) == "logical"))
+
+# test
+expect_true("logical" == class(result[[
+  "f11_trial_has_subjects_under_18"]]))
+
+# test
+expect_true("integer" == class(result[[
+  "e824_number_of_treatment_arms_in_the_trial"]]))
+
+# cleanup
+rm(tmp)
+
 #### dfListExtractKey ####
 
 # test
