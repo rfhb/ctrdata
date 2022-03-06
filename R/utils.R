@@ -1906,28 +1906,39 @@ dfTrials2Long <- function(df) {
       if (is.data.frame(ci)) ci <- split(ci, seq_len(nrow(ci)))
       # and by cell in column
       lapply(ci, function(c) {
-        # initialise
-        xx <- NULL
-        tnn <- NULL
-        # need to iterate since there may be repeats, e.g, 1, 2, 3.1, 3.2
-        sapply(seq_len(length(c)), function(i) {
-          #
-          x <- unlist(flattenDf(c[i]))
-          if (!is.null(names(x))) tn <- paste0(tn, ".", i, ".", names(x))
+        if (is.data.frame(c)) {
+          # decompose
+          x <- unlist(flattenDf(c))
+          if (!is.null(names(x))) tn <- paste0(tn, ".", names(x))
           if (is.null(x)) x <- NA
-          #
-          xx <<- c(xx, x)
-          tnn <<- c(tnn, tn)
-          #
-        }, USE.NAMES = FALSE)
-        #
-        # compose
-        data.frame(
-          "name" = tnn,
-          "value" = xx,
-          check.names = FALSE,
-          stringsAsFactors = FALSE,
-          row.names = NULL)
+          # compose
+          data.frame(
+            "name" = tn,
+            "value" = x,
+            check.names = FALSE,
+            stringsAsFactors = FALSE,
+            row.names = NULL)
+        } else {
+          # initialise
+          xx <- NULL
+          tnn <- NULL
+          # need to iterate since there may be repeats, e.g, 1, 2, 3.1, 3.2
+          sapply(seq_len(length(c)), function(i) {
+            # decompose
+            x <- unlist(flattenDf(c[i]))
+            if (!is.null(names(x))) tn <- paste0(tn, ".", i, ".", names(x))
+            if (is.null(x)) x <- NA
+            xx <<- c(xx, x)
+            tnn <<- c(tnn, tn)
+          }, USE.NAMES = FALSE)
+          # compose
+          data.frame(
+            "name" = tnn,
+            "value" = xx,
+            check.names = FALSE,
+            stringsAsFactors = FALSE,
+            row.names = NULL)
+        } # if is.data.frame
       })})
   message(rep(" ", 200L), "\r", appendLF = FALSE)
 
