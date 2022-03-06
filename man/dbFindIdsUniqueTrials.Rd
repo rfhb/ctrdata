@@ -21,8 +21,8 @@ registers from which to generate unique _id's, default
 should returned. If not available, a record for DE or lacking this, any
 random Member State's record for the trial will be returned.
 For a list of codes of EU  Member States, please see vector
-\code{countriesEUCTR}. Specifying "3RD" will return a Third Country
-records of trials, where available.}
+\code{countriesEUCTR}. Specifying "3RD" will return the Third Country
+record of trials, where available.}
 
 \item{include3rdcountrytrials}{A logical value if trials should be retained
 that are conducted exclusively in third countries, that is, outside

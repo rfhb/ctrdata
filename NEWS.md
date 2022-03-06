@@ -19,6 +19,7 @@
  - corrected installCygwinWindowsDoInstall() to properly update an installation (remove --prune-install)
  - test all binaries after installCygwinWindowsDoInstall() and only cache successful binary testing
  - correct typing required_header.download_date
+ - improve numbering in dfTrials2Long, covering nested items
 
 # ctrdata 1.8.0.9001
  - 2021-12-11
