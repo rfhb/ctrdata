@@ -1424,6 +1424,9 @@ dbGetFieldsIntoDf <- function(fields = "",
         # remove any rows without index variable
         dfi <- dfi[!is.na(dfi[["_id"]]), , drop = FALSE]
 
+        # simplify and replace NULL with NA
+        dfi[[2]][!sapply(dfi[[2]], length)] <- NA
+
         # simplify by extracting recursively any requested subitem
         itemSegments <- strsplit(item, "[.]")[[1]]
         itemSegments <- setdiff(itemSegments, names(dfi))
@@ -1582,8 +1585,11 @@ dbGetFieldsIntoDf <- function(fields = "",
 
         # try-error occurred or no data retrieved
         if (stopifnodata) {
+          if (inherits(tmpItem, "try-error")) message(
+            "\nProcessing error: '", trimws(tmpItem[[1]]), "'\nThank you ",
+            "for reporting it at https://github.com/rfhb/ctrdata/issues\n")
           stop("No data could be extracted for ", paste0(item, collapse = ", "),
-               ". \nUse dbGetFieldsIntoDf(stopifnodata = FALSE) to ignore this.",
+               ". \nUse dbGetFieldsIntoDf(stopifnodata = FALSE) to ignore error.",
                call. = FALSE)
         } else {
           message("* no data or extraction error *")
