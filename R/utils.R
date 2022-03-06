@@ -1857,16 +1857,25 @@ dfName2Value <- function(df, valuename = "",
 #' }
 dfTrials2Long <- function(df) {
 
+  # get names
+  dfn <- names(df)
+
   # check parameters
-  if (!any("_id" == names(df)) ||
+  if (!any("_id" == dfn) ||
       ncol(df) == 1L) stop(
         "Missing _id column or other variables in 'df'",
         call. = FALSE
       )
-  if (any(c("identifier", "name", "value") %in% names(df))) stop(
+  if (any(c("identifier", "name", "value") %in% dfn)) stop(
     "Unexpected columns; 'df' should not come from dfTrials2Long",
     call. = FALSE
   )
+
+  # make _id the first column
+  if (dfn[1] != "_id") {
+    dfn <- c("_id", dfn[dfn != "_id"])
+    df <- df[, dfn, drop = FALSE]
+  }
 
   # helper function
   flattenDf <- function(x) {
@@ -1884,7 +1893,6 @@ dfTrials2Long <- function(df) {
   for (c in conv) df[, c] <- as.character(df[, c, drop = TRUE])
 
   # iterative unnesting, by column
-  dfn <- names(df)
   out <- lapply(
     seq_len(ncol(df))[-1],
     function(cc) {
@@ -1950,16 +1958,23 @@ dfTrials2Long <- function(df) {
   # and concatenate to oid-like string such as "1.2.3.4.5.6",
   # e.g. "9.8.2" which should be extracted from the this name
   # clinical...class9.analyzed...count8.@attributes.value2
-  out[["identifier"]] <- vapply(
-    stringi::stri_extract_all_regex(out[["name"]], "[0-9]+([.]|$)"),
+  #
+  # except where name is exactly one of dfn
+  onlyHere <- vapply(out[["name"]], function(i) !any(i == dfn), logical(1L))
+  #
+  out[["identifier"]][onlyHere] <- vapply(
+    stringi::stri_extract_all_regex(out[["name"]][onlyHere], "[0-9]+([.]|$)"),
     function(i) paste0(gsub("[.]", "", i), collapse = "."), character(1L))
+  # defaults
   out[["identifier"]] [out[["identifier"]] == "NA"] <- "0"
+  out[["identifier"]] [is.na(out[["identifier"]])]  <- "0"
   message(". ", appendLF = FALSE)
-
+  #
   # remove numbers from variable name
-  out[["name"]] <- gsub(
-    "[0-9]+([.])|[0-9]+$|[.]?@attributes", "\\1", out[["name"]], perl = TRUE)
-
+  out[["name"]][onlyHere] <- gsub(
+    "[0-9]+([.])|[0-9]+$|[.]?@attributes", "\\1",
+    out[["name"]][onlyHere], perl = TRUE)
+  #
   # remove any double separators
   out[["name"]] <- gsub("[.]+", ".", out[["name"]], perl = TRUE)
 

@@ -278,7 +278,7 @@ expect_error(
   "Value specified for prefermemberstate does not match"
 )
 
-#### df mangling ####
+#### dfName2Value ####
 
 expect_error(
   suppressMessages(
@@ -294,3 +294,20 @@ expect_error(
       valuename = "")),
   "'valuename' must be specified")
 
+#### dfTrials2Long ####
+
+dF <- data.frame(
+  "_id" = paste0("NCT1234567", 1:5),
+  alpha1 = 1:5,
+  beta = 1:5,
+  gamma_1 = 1:5,
+  check.names = FALSE
+)
+dL <- dfTrials2Long(dF)
+
+# test
+expect_equal(nrow(dL), 15L)
+expect_equal(unique(dL[["name"]]), names(dF)[-1])
+
+# cleanup
+rm(dF, dL)
