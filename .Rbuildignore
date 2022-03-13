@@ -26,3 +26,4 @@ some_database_name.sqlite_file
 .future.R
 ^cran-comments\.md$
 codecov.yml
+^CRAN-SUBMISSION$

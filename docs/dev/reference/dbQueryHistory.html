@@ -10,14 +10,14 @@
     
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.8.0.9002</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.9.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div id="navbar" class="collapse navbar-collapse ms-2">
+    <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
@@ -65,30 +65,30 @@
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>con</dt>
-<dd><p><strong>A connection object, see section
-`Databases` in <a href="ctrdata-package.html">ctrdata-package</a></strong></p></dd>
+<dd><p>A connection object, see section
+`Databases` in <a href="ctrdata-package.html">ctrdata-package</a></p></dd>
 <dt>verbose</dt>
 <dd><p>If <code>TRUE</code>, prints additional information
 (default <code>FALSE</code>).</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A data frame with columns: query-timestamp, query-register,
- query-records (note: this is the number of records loaded when last
+    <p>A data frame (or tibble, if <code>dplyr</code> is loaded)
+ with columns: `query-timestamp`, `query-register`,
+ `query-records` (note: this is the number of records loaded when last
  executing <a href="ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a>, not the total record number) and
- query-term, and with one row for each time <a href="ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a> loaded trial records into this collection.</p>
+ `query-term`, with one row for each time <a href="ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a> loaded trial records into this collection.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="va">dbc</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">src_sqlite</a></span><span class="op">(</span></span>
-<span class="r-in">  collection <span class="op">=</span> <span class="st">"my_collection"</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="fu">dbQueryHistory</span><span class="op">(</span></span>
-<span class="r-in">  con <span class="op">=</span> <span class="va">dbc</span></span>
-<span class="r-in"><span class="op">)</span></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="va">dbc</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">src_sqlite</a></span><span class="op">(</span>collection <span class="op">=</span> <span class="st">"my_collection"</span><span class="op">)</span></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="fu">dbQueryHistory</span><span class="op">(</span>con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span></span>
+<span class="r-in"></span>
 <span class="r-in"><span class="op">}</span></span>
 <span class="r-in"></span>
 </code></pre></div>
@@ -102,7 +102,8 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.</p>
 </div>
 
     </footer></div>
