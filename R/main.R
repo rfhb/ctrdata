@@ -441,7 +441,7 @@ ctrRerunQuery <- function(
     if (register == "CTGOV") {
 
       # ctgov:
-      # speficy any date - "lup_s/e" last update start / end:
+      # specify any date - "lup_s/e" last update start / end:
       # https://clinicaltrials.gov/ct2/results?term=&recr=&rslt=&type=Intr&cond=
       # Cancer&intr=&titles=&outc=&spons=&lead=
       # &id=&state1=&cntry1=&state2=&cntry2=&state3=&cntry3=&locn=&gndr=&age=0

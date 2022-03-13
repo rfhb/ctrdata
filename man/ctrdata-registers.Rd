@@ -21,23 +21,28 @@ interventional or observational health studies
    \strong{Material} \tab \strong{EUCTR} \tab \strong{CTGOV} \tab \strong{ISRCTN} \cr
    Home page \tab \href{https://www.clinicaltrialsregister.eu/}{link} \tab \href{https://clinicaltrials.gov/}{link} \tab \href{https://www.isrctn.com/}{link} \cr
    About \tab \href{https://www.clinicaltrialsregister.eu/about.html}{link} \tab \href{https://clinicaltrials.gov/ct2/about-site/background}{link} \tab \href{https://www.isrctn.com/page/about}{link} \cr
-   Terms & conditions, disclaimer \tab \href{https://www.clinicaltrialsregister.eu/disclaimer.html}{link} \tab \href{https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use}{link} \tab \href{https://www.isrctn.com/page/faqs#usingISRCTN}{link} \cr
+   Terms and conditions, disclaimer \tab \href{https://www.clinicaltrialsregister.eu/disclaimer.html}{link} \tab \ifelse{latex}{\href{https://clinicaltrials.gov/ct2/about-site/terms-conditions\#Use}{link}}{\href{https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use}{link}} \tab \ifelse{latex}{\href{https://www.isrctn.com/page/faqs\#usingISRCTN}{link}}{\href{https://www.isrctn.com/page/faqs#usingISRCTN}{link}} \cr
    How to search \tab \href{https://www.clinicaltrialsregister.eu/doc/How_to_Search_EU_CTR.pdf}{link} \tab \href{https://clinicaltrials.gov/ct2/help/how-find/advanced}{link} \tab \href{https://www.isrctn.com/page/search-tips}{link} \cr
    Search interface \tab \href{https://www.clinicaltrialsregister.eu/ctr-search/search}{link} \tab \href{https://clinicaltrials.gov/ct2/search/advanced}{link} \tab \href{https://www.isrctn.com/}{link} \cr
    Glossary \tab \href{https://www.clinicaltrialsregister.eu/doc/EU_Clinical_Trials_Register_Glossary.pdf}{link} \tab \href{https://clinicaltrials.gov/ct2/about-studies/glossary}{link} \tab \href{https://www.who.int/clinical-trials-registry-platform/network/who-data-set}{link} \cr
    FAQ \tab \href{https://www.clinicaltrialsregister.eu/doc/EU_CTR_FAQ.pdf}{link} \tab \href{https://clinicaltrials.gov/ct2/resources/pubs}{link} \tab \href{https://www.isrctn.com/page/faqs}{link} \cr
    Expert / advanced search \tab \href{https://www.clinicaltrialsregister.eu/ctr-search/search}{link} \tab \href{https://clinicaltrials.gov/ct2/results/refine?show_xprt=Y}{link} \tab \href{https://www.isrctn.com/editAdvancedSearch}{link} \cr
-   Example* \tab \href{https://www.clinicaltrialsregister.eu/ctr-search/search?query=Infections&age=newborn&age=preterm-new-born-infants}{link} \tab \href{https://clinicaltrials.gov/ct2/results/refine?term=AREA\%5BMaximumAge\%5D+RANGE\%5B0+days\%2C+1+months\%5D&type=Intr&cond=Infections&intr=Investigational+Agent&show_xprt=Y}{link} \tab \href{https://www.isrctn.com/search?q=&filters=ageRange\%3ANeonate\%2CconditionCategory\%3AInfections+and+Infestations&searchType=advanced-search}{link} \cr
+   Example* \tab \ifelse{latex}{\href{https://www.clinicaltrialsregister.eu/ctr-search/search?query=Infections\&age=newborn\&age=preterm-new-born-infants}{link}}{\href{https://www.clinicaltrialsregister.eu/ctr-search/search?query=Infections&age=newborn&age=preterm-new-born-infants}{link}} \tab \ifelse{latex}{\href{https://clinicaltrials.gov/ct2/results/refine?term=AREA\%5BMaximumAge\%5D+RANGE\%5B0+days\%2C+1+months\%5D\&type=Intr\&cond=Infections\&intr=Investigational+Agent\&show_xprt=Y}{link}}{\href{https://clinicaltrials.gov/ct2/results/refine?term=AREA\%5BMaximumAge\%5D+RANGE\%5B0+days\%2C+1+months\%5D&type=Intr&cond=Infections&intr=Investigational+Agent&show_xprt=Y}{link}} \tab \ifelse{latex}{\href{https://www.isrctn.com/search?q=\&filters=ageRange\%3ANeonate\%2CconditionCategory\%3AInfections+and+Infestations\&searchType=advanced-search}{link}}{\href{https://www.isrctn.com/search?q=&filters=ageRange\%3ANeonate\%2CconditionCategory\%3AInfections+and+Infestations&searchType=advanced-search}{link}} \cr
    Definitions \tab \href{https://eudract.ema.europa.eu/result.html}{link} \tab \href{https://prsinfo.clinicaltrials.gov/definitions.html}{Protocol}, \href{https://prsinfo.clinicaltrials.gov/results_definitions.html}{results}, \href{https://clinicaltrials.gov/api/gui/ref/crosswalks}{names}, \href{https://clinicaltrials.gov/api/gui/ref/syntax}{syntax} \tab \href{https://www.isrctn.com/page/definitions}{link} \cr
 }
 
 
-*The example intends to retrieve interventional trials with neonates, investigating
-infectious conditions: EUCTR retrieves trials with neonates but not exclusively.
-The CTGOV expert search retrieves trials exclusively in neonates. ISRCTN retrieves
-a small number of studies. Thus, after loading trials with \link{ctrLoadQueryIntoDb}
-into a database collection, corresponding sets of trials need to be selected
-using fields of interest obtained from the collection using \link{dbGetFieldsIntoDf}.
+*The example expert search retrieves interventional trials with neonates,
+investigating infectious conditions:
+EUCTR retrieves trials with neonates, but not exclusively.
+The CTGOV expert search retrieves trials exclusively in neonates.
+ISRCTN retrieves a small number of studies.
+Thus, after loading trials with \link{ctrLoadQueryIntoDb}
+into a database collection, corresponding sets of trials need to be defined,
+based on values of fields of interest
+(e.g., \code{eligibility.maximum_age} from CTGOV and
+\code{f115_children_211years} from EUCTR),
+which can be obtained from the collection using \link{dbGetFieldsIntoDf}.
 }
 \author{
 Ralf Herold \email{ralf.herold@mailbox.org}
