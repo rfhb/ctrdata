@@ -153,14 +153,15 @@ typeVars <- list(
   # numbers
   #
   # - EUCTR
-  "e824_number_of_treatment_arms_in_the_trial" = "ctrInt",
-  "e891_in_the_member_state_concerned_years"   = "ctrInt",
-  "e891_in_the_member_state_concerned_months"  = "ctrInt",
-  "e891_in_the_member_state_concerned_days"    = "ctrInt",
+  "e824_number_of_treatment_arms_in_the_trial"  = "ctrInt",
+  "e841_number_of_sites_anticipated_in_member_state_concerned" = "ctrInt",
+  "e851_number_of_sites_anticipated_in_the_eea" = "ctrInt",
+  "e891_in_the_member_state_concerned_years"    = "ctrInt",
+  "e891_in_the_member_state_concerned_months"   = "ctrInt",
+  "e891_in_the_member_state_concerned_days"     = "ctrInt",
   "e892_in_all_countries_concerned_by_the_trial_years"  = "ctrInt",
   "e892_in_all_countries_concerned_by_the_trial_months" = "ctrInt",
   "e892_in_all_countries_concerned_by_the_trial_days"   = "ctrInt",
-  "e841_number_of_sites_anticipated_in_member_state_concerned" = "ctrInt",
   "f11_number_of_subjects_for_this_age_range"   = "ctrInt",
   "f1111_number_of_subjects_for_this_age_range" = "ctrInt",
   "f1121_number_of_subjects_for_this_age_range" = "ctrInt",
