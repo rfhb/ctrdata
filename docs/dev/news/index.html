@@ -55,28 +55,43 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.9.0.9000" id="ctrdata-1909000">ctrdata 1.9.0.9000<a class="anchor" aria-label="anchor" href="#ctrdata-1909000"></a></h2>
 <ul><li>2022-03-13</li>
-</ul><p># ctrdata 1.9.0 - 2022-03-13 - chunked trial batches in ndjson files
-for accelerated database import - if package dplyr is loaded, functions
-return a tibble instead of a data frame - update and correct
-documentation - dbFindFields() returns a vector of fields which now has
-as names the register in which a field occurs - accelerated binary
-checks (cygwin / Windows) - remove internet proxy mangling in order to
-use system configuration (e.g., transparent proxies used, or environment
-variable https_proxy specified by user) - refactored internal caching -
-correct dbGetFieldsIntoDf() for specific nested data structures -
-correct dfTrials2Long() for specific fields - correct
-dbFindIdsUniqueTrials() when only single trial in any register - modify
-field typing to decode HTML entities - type some fields as difftime,
-e.g. min_age in CTGOV - speed up parts of dbGetFieldsIntoDf() and
-simplify more fields - dbFindFields() returns names of all leaf and node
-fields - improve and update documentation - changed EU Member State to
-default to DE for dbFindIdsUniqueTrials() - corrected
-installCygwinWindowsDoInstall() to properly update an installation
-(remove –prune-install) - test all binaries after
-installCygwinWindowsDoInstall() and only cache successful binary testing
-- correct typing required_header.download_date - improve numbering in
-dfTrials2Long, covering nested items</p>
-</div>
+<li>new development version</li>
+<li>editorial update vignettes [2021-03-20]</li>
+<li>minor bugfix in dbGetFieldsIntoDf() [2021-03-20]</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.9.0" id="ctrdata-190">ctrdata 1.9.0<a class="anchor" aria-label="anchor" href="#ctrdata-190"></a></h2><p class="text-muted">CRAN release: 2022-03-13</p>
+<ul><li>2022-03-13</li>
+<li>chunked trial batches in ndjson files for accelerated database
+import</li>
+<li>if package dplyr is loaded, functions return a tibble instead of a
+data frame</li>
+<li>update and correct documentation</li>
+<li>dbFindFields() returns a vector of fields which now has as names the
+register in which a field occurs</li>
+<li>accelerated binary checks (cygwin / Windows)</li>
+<li>remove internet proxy mangling in order to use system configuration
+(e.g., transparent proxies used, or environment variable https_proxy
+specified by user)</li>
+<li>refactored internal caching</li>
+<li>correct dbGetFieldsIntoDf() for specific nested data structures</li>
+<li>correct dfTrials2Long() for specific fields</li>
+<li>correct dbFindIdsUniqueTrials() when only single trial in any
+register</li>
+<li>modify field typing to decode HTML entities</li>
+<li>type some fields as difftime, e.g. min_age in CTGOV</li>
+<li>speed up parts of dbGetFieldsIntoDf() and simplify more fields</li>
+<li>dbFindFields() returns names of all leaf and node fields</li>
+<li>improve and update documentation</li>
+<li>changed EU Member State to default to DE for
+dbFindIdsUniqueTrials()</li>
+<li>corrected installCygwinWindowsDoInstall() to properly update an
+installation (remove –prune-install)</li>
+<li>test all binaries after installCygwinWindowsDoInstall() and only
+cache successful binary testing</li>
+<li>correct typing required_header.download_date</li>
+<li>improve numbering in dfTrials2Long, covering nested items</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.8.0.9001" id="ctrdata-1809001">ctrdata 1.8.0.9001<a class="anchor" aria-label="anchor" href="#ctrdata-1809001"></a></h2>
 <ul><li>2021-12-11</li>

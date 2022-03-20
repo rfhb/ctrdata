@@ -1,7 +1,10 @@
 # ctrdata 1.9.0.9000
  - 2022-03-13
+ - new development version
+ - editorial update vignettes [2021-03-20]
+ - minor bugfix in dbGetFieldsIntoDf() [2021-03-20]
  
- # ctrdata 1.9.0
+# ctrdata 1.9.0
  - 2022-03-13
  - chunked trial batches in ndjson files for accelerated database import
  - if package dplyr is loaded, functions return a tibble instead of a data frame
