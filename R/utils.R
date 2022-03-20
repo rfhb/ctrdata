@@ -2237,23 +2237,25 @@ dfMergeTwoVariablesRelevel <- function(
     if (nrow(na.omit(df[!vapply(df[[1]], is.null, logical(1L)) &
                         !vapply(df[[2]], is.null, logical(1L)), ,
                         drop = FALSE]))) {
-      warning("Some rows had values for both columns, used first",
+      warning("Some rows had non-character values for both columns, used first",
               noBreaks. = TRUE, immediate. = TRUE)
     }
     # values, with first having
     # priority over the second
     tmp <- ifelse(is.na(tt <- df[[1]]), df[[2]], df[[1]])
   } else {
+    catind <- which((!is.na(df[[1]]) & df[[1]] != "") &
+                    (!is.na(df[[2]]) & df[[2]] != ""))
     # check
-    if (nrow(df[(!is.na(df[[1]]) & df[[1]] != "") &
-                (!is.na(df[[2]]) & df[[2]] != ""), ,
-                drop = FALSE])) {
-      warning("Some rows had values for both columns, concatenated",
-              noBreaks. = TRUE, immediate. = TRUE)
+    if (length(catind)) {warning(
+      "Some rows had character values for both columns, concatenated",
+      noBreaks. = TRUE, immediate. = TRUE)
     }
     # strings, concatenated
+    tmp <- rep_len("", length.out = nrow(df))
+    tmp[catind] <- " / "
     tmp <- paste0(
-      ifelse(is.na(tt <- as.character(df[[1]])), "", tt), " / ",
+      ifelse(is.na(tt <- as.character(df[[1]])), "", tt), tmp,
       ifelse(is.na(tt <- as.character(df[[2]])), "", tt))
   }
 
