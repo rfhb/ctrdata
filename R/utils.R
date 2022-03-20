@@ -1440,7 +1440,7 @@ dbGetFieldsIntoDf <- function(fields = "",
             # e.g. for "primary_outcome.measure" from MongoDB
             tn <- unlist(sapply(dfi[[2]], names))
             if (length(unique(tn)) == 1L && (iS == tn[1])) {
-              dfi[[2]] <- lapply(dfi[[2]], "[[", iS)
+              dfi[[2]] <- lapply(dfi[[2]], "[[", 1)
             } else {
               # no more predictable simplification possible:
               # break to leave for loop over itemSegments

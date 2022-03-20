@@ -188,6 +188,10 @@ expect_true("character" == class(result[[
   "primary_outcome.measure"]]))
 
 # test
+expect_true(
+  any(grepl(" / ", result[["primary_outcome.measure"]])))
+
+# test
 expect_true("Date" == class(result[[
   "start_date"]]))
 
