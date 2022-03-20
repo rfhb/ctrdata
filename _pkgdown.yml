@@ -4,16 +4,16 @@ home:
 reference:
 - contents:
   - starts_with("ctrdata")
-- title: "Operations on clinical trial register"
+- title: "Dowloand information from clinical trial registers"
 - contents:
   - starts_with("ctr[A-Z]")
 - title: "Using database with downloaded trial information"
 - contents:
   - starts_with("db")
-- title: "Get data frame from database and operate on it"
+- title: "Operate on data frame from dbGetFieldsIntoDf"
 - contents:
   - starts_with("df[^L]")
-- title: "Utility functions"
+- title: "Utility function (MS Windows)"
 - contents:
   - starts_with("install")
 - title: "Deprecated"

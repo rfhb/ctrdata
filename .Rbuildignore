@@ -27,3 +27,4 @@ some_database_name.sqlite_file
 ^cran-comments\.md$
 codecov.yml
 ^CRAN-SUBMISSION$
+.vscode
