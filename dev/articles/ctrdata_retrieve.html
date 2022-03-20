@@ -79,7 +79,7 @@
       <img src="" class="logo" alt=""><h1>Retrieve clinical trial information</h1>
                         <h4 data-toc-skip class="author">Ralf Herold</h4>
             
-            <h4 data-toc-skip class="date">2021-12-23</h4>
+            <h4 data-toc-skip class="date">2022-03-20</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/rfhb/ctrdata/blob/HEAD/vignettes/ctrdata_retrieve.Rmd" class="external-link"><code>vignettes/ctrdata_retrieve.Rmd</code></a></small>
       <div class="d-none name"><code>ctrdata_retrieve.Rmd</code></div>
@@ -96,7 +96,7 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://cran.r-project.org/package=ctrdata" class="external-link">ctrdata</a></span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"ctrdata"</span><span class="op">)</span></code></pre></div>
-<p>Remember to respect the registers’ terms and conditions (see <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>). Please cite this package in any publication as follows: Ralf Herold (2021). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.8.0. <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a></p>
+<p>Remember to respect the registers’ terms and conditions (see <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>). Please cite this package in any publication as follows: Ralf Herold (2022). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.9.0. <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a></p>
 </div>
 <div class="section level3">
 <h3 id="open-registers-advanced-search-page-in-browser">Open register’s advanced search page in browser<a class="anchor" aria-label="anchor" href="#open-registers-advanced-search-page-in-browser"></a>
@@ -129,6 +129,7 @@
 <p>The next steps are executed in the R environment:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">q</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ctrGetQueryUrl.html">ctrGetQueryUrl</a></span><span class="op">(</span><span class="op">)</span>
+<span class="co"># * Using clipboard content as register query URL: https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&amp;age=under-18&amp;status=completed&amp;phase=phase-one</span>
 <span class="co"># * Found search query from EUCTR: query=cancer&amp;age=under-18&amp;status=completed&amp;phase=phase-one</span>
 
 <span class="va">q</span>
@@ -147,7 +148,6 @@
   queryterm <span class="op">=</span> <span class="va">q</span>,
   only.count <span class="op">=</span> <span class="cn">TRUE</span>
 <span class="op">)</span><span class="op">$</span><span class="va">n</span>
-<span class="co"># * Found search query from EUCTR: query=cancer&amp;age=under-18&amp;status=completed&amp;phase=phase-one</span>
 <span class="co"># (1/3) Checking trials in EUCTR:</span>
 <span class="co"># Retrieved overview, multiple records of 71 trial(s) from 4 page(s) to be downloaded</span>
 <span class="co"># [1] 71</span>
@@ -163,26 +163,24 @@
   queryterm <span class="op">=</span> <span class="va">q</span>,
   con <span class="op">=</span> <span class="va">db</span>
 <span class="op">)</span>
-<span class="co"># * Found search query from EUCTR: query=cancer&amp;age=under-18&amp;status=completed&amp;phase=phase-one</span>
+<span class="co"># Checking helper binaries: done</span>
 <span class="co"># (1/3) Checking trials in EUCTR:</span>
 <span class="co"># Retrieved overview, multiple records of 71 trial(s) from 4 page(s) to be downloaded</span>
-<span class="co"># Checking helper binaries: done</span>
 <span class="co"># Downloading trials (4 pages in parallel)...</span>
-<span class="co"># Note: register server cannot compress data, transfer takes longer, about 0.3s per trial</span>
-<span class="co"># Pages: 4 done, 0 ongoing   </span>
-<span class="co"># (2/3) Converting to JSON, 279 records converted</span>
+<span class="co"># Note: register server cannot compress data, transfer takes longer, about 0.4s per trial</span>
+<span class="co"># Pages: 4 done, 0 ongoing</span>
+<span class="co"># (2/3) Converting to JSON, 281 records converted</span>
 <span class="co"># (3/3) Importing JSON records into database...</span>
-<span class="co"># = Imported or updated 279 records on 71 trial(s)                </span>
-<span class="co"># No history found in expected format.</span>
+<span class="co"># = Imported or updated 281 records on 71 trial(s)</span>
 <span class="co"># Updated history ("meta-info" in "test")</span>
 
 <span class="co"># Show which queries have been downloaded into database</span>
 <span class="fu"><a href="../reference/dbQueryHistory.html">dbQueryHistory</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 <span class="co">#       query-timestamp query-register query-records</span>
-<span class="co"># 1 2021-11-18 22:27:12          EUCTR           279</span>
+<span class="co"># 1 2022-03-19 09:41:36          EUCTR           281</span>
 <span class="co">#                                                   query-term</span>
 <span class="co"># 1 query=cancer&amp;age=under-18&amp;status=completed&amp;phase=phase-one</span></code></pre></div>
-<p>With a file-base SQLite database, this takes about 3 minutes for 1000 records, with most of the time needed for internet-retrieval with is slow from this register. Speed is higher with other registers, with using MongoDB and with memory-based SQLite.</p>
+<p>With a file-base SQLite database, this takes about 20 seconds for about 300 records, with most of the time needed for internet-retrieval with is slow from this register. Speed is higher with other registers, with using MongoDB and with memory-based SQLite.</p>
 </div>
 </div>
 <div class="section level2">
@@ -206,15 +204,26 @@
   euctrresults <span class="op">=</span> <span class="cn">TRUE</span>,
   con <span class="op">=</span> <span class="va">db</span>
 <span class="op">)</span>
-<span class="co"># [...]</span>
-<span class="co"># * Retrieving results if available from EUCTR for 71 trials: </span>
+<span class="co"># Checking helper binaries: done</span>
+<span class="co"># (1/3) Checking trials in EUCTR:</span>
+<span class="co"># Retrieved overview, multiple records of 71 trial(s) from 4 page(s) to be downloaded</span>
+<span class="co"># Downloading trials (4 pages in parallel)...</span>
+<span class="co"># Note: register server cannot compress data, transfer takes longer, about 0.2s per trial</span>
+<span class="co"># Pages: 4 done, 0 ongoing</span>
+<span class="co"># (2/3) Converting to JSON, 281 records converted</span>
+<span class="co"># (3/3) Importing JSON records into database...</span>
+<span class="co"># = Imported or updated 281 records on 71 trial(s)</span>
+<span class="co"># Retrieving results if available from EUCTR for 71 trials:</span>
 <span class="co"># (1/4) Downloading results (max. 10 trials in parallel):</span>
-<span class="co"># 71 downloaded, extracting x x x . . . . . PDF . . . PDF . . PDF . . . PDF . x PDF . x x x . PDF . x x . . x . . . . . x . . . . PDF . . . . x x x . . . x x . PDF . . x . . . . x . . . . . . . . . . . </span>
-<span class="co"># (2/3) Converting to JSON, 54 records converted</span>
+<span class="co"># 71 downloaded, extracting x x x x x . x . PDF . . . x . . . x PDF . PDF . . PDF . x . .</span>
+<span class="co"># x . . x x . . x . . . . . . . . . . . . . . x . . . . . . PDF . . . . . . . . . . . .</span>
+<span class="co"># PDF . . . . . PDF . PDF .</span>
+<span class="co"># (2/3) Converting to JSON, 57 records converted</span>
 <span class="co"># (3/4) Importing JSON into database...</span>
 <span class="co"># (4/4) Results history: not retrieved (euctrresultshistory = FALSE)</span>
-<span class="co"># = Imported or updated results for 54 trials</span>
+<span class="co"># = Imported or updated results for 57 trials</span>
 <span class="co"># Updated history ("meta-info" in "test")</span></code></pre></div>
+<p>With a file-base SQLite database, this takes about 4 minutes for about 300 records, with most of the time needed for merging result- and protocol-related information in SQLite; this is much faster with MongoDB and PostgreSQL.</p>
 <p>The download or presence of results is not recorded in <code><a href="../reference/dbQueryHistory.html">dbQueryHistory()</a></code> because the availability of results increases over time.</p>
 </div>
 <div class="section level2">
@@ -227,14 +236,19 @@
   con <span class="op">=</span> <span class="va">db</span>
 <span class="op">)</span>
 <span class="co"># * Found search query from CTGOV: cond=neuroblastoma&amp;recrs=e&amp;age=0&amp;intr=Drug</span>
-<span class="co"># (1/3) Checking trials in CTGOV:</span>
-<span class="co"># Retrieved overview, records of 197 trial(s) are to be downloaded</span>
 <span class="co"># Checking helper binaries: done</span>
-<span class="co"># Downloading: 1.4 MB       </span>
-<span class="co"># (2/3) Converting to JSON, 197 records converted</span>
+<span class="co"># (1/3) Checking trials in CTGOV:</span>
+<span class="co"># Retrieved overview, records of 200 trial(s) are to be downloaded (estimate: 1.6 MB)</span>
+<span class="co"># Downloading: 1.4 MB</span>
+<span class="co"># (2/3) Converting to JSON, 200 records converted</span>
 <span class="co"># (3/3) Importing JSON records into database...</span>
-<span class="co"># = Imported or updated 197 trial(s)                               </span>
-<span class="co"># Updated history ("meta-info" in "test")</span></code></pre></div>
+<span class="co"># = Imported or updated 175 trial(s)</span>
+<span class="co"># Updated history ("meta-info" in "test")</span>
+
+<span class="co"># Warning message:</span>
+<span class="co"># [...]/ctrDATA15bc13c33351a/ctgov_trials_7.ndjson: Error : C stack usage  8342562 is too close to the limit</span></code></pre></div>
+<p>With a file-base SQLite database, this takes about 10 seconds for about 200 records.</p>
+<p>Note that in this example, a warning message is issued from importing an NDJSON file with trial records. The warning arises from the high level of complexity of some of the XML content of some of the trial records. The issue can be resolved by increasing in the operating system the stack size available to R, see: <a href="https://github.com/rfhb/ctrdata/issues/22" class="external-link uri">https://github.com/rfhb/ctrdata/issues/22</a></p>
 </div>
 <div class="section level2">
 <h2 id="add-personal-annotations">Add personal annotations<a class="anchor" aria-label="anchor" href="#add-personal-annotations"></a>
@@ -249,13 +263,13 @@
   con <span class="op">=</span> <span class="va">db</span>
 <span class="op">)</span>
 <span class="co"># * Found search query from CTGOV: cond=neuroblastoma&amp;recrs=e&amp;age=0&amp;intr=Drug&amp;cntry=DE</span>
-<span class="co"># (1/3) Checking trials in CTGOV:</span>
-<span class="co"># Retrieved overview, records of 11 trial(s) are to be downloaded</span>
 <span class="co"># Checking helper binaries: done</span>
+<span class="co"># (1/3) Checking trials in CTGOV:</span>
+<span class="co"># Retrieved overview, records of 11 trial(s) are to be downloaded (estimate: 0.088 MB)</span>
 <span class="co"># Downloading: 69 kB     </span>
 <span class="co"># (2/3) Converting to JSON, 11 records converted</span>
 <span class="co"># (3/3) Importing JSON records into database...</span>
-<span class="co"># = Imported or updated 11 trial(s)                              </span>
+<span class="co"># = Imported or updated 11 trial(s)                </span>
 <span class="co"># = Annotated retrieved records (11 records)</span>
 <span class="co"># Updated history ("meta-info" in "test")</span></code></pre></div>
 </div>
@@ -284,10 +298,10 @@
   collection <span class="op">=</span> <span class="st">"dbperm"</span><span class="op">)</span>
 
 <span class="co"># Since the above access is read-only,</span>
-<span class="co"># just obtain fields of interest: </span>
+<span class="co"># just obtain fields of interest:</span>
 <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span>
   fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a2_eudract_number"</span>,
-             <span class="st">"e71_human_pharmacology_phase_i"</span><span class="op">)</span>, 
+             <span class="st">"e71_human_pharmacology_phase_i"</span><span class="op">)</span>,
   con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 <span class="co">#                  _id a2_eudract_number e71_human_pharmacology_phase_i</span>
 <span class="co"># 1 2010-024264-18-3RD    2010-024264-18                           TRUE</span>
