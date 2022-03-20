@@ -1,13 +1,13 @@
 ---
 title: "Install R package ctrdata"
 author: "Ralf Herold"
-date: 2021-12-16
+date: 2022-03-20
 output:
   rmarkdown::pdf_document:
     toc: true
     number_sections: true
     latex_engine: xelatex
-  rmarkdown::html_vignette: 
+  rmarkdown::html_vignette:
     toc: true
 vignette: >
   %\VignetteIndexEntry{Install R package ctrdata}
@@ -15,31 +15,27 @@ vignette: >
   %\VignettePackage{ctrdata}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
-editor_options: 
+editor_options:
   chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
-#
-knitr::opts_chunk$set(
-  eval = FALSE
-  )
-#
+knitr::opts_chunk$set(eval = FALSE)
 ```
 
 # Install package `ctrdata` on a R system
 
-The R Project website ([https://www.r-project.org/](https://www.r-project.org/)) provides installers for the R system. It can be used with software products and graphical user interfaces such as [R Studio](https://www.rstudio.com/products/RStudio/), or [Microsoft R Open](https://mran.microsoft.com/open/), or from [Visual Studio Code](https://marketplace.visualstudio.com/search?term=R&target=VSCode&category=All%20categories&sortBy=Relevance). 
+The R Project website ([https://www.r-project.org/](https://www.r-project.org/)) provides installers for the R system. It can be used with software products and graphical user interfaces such as [R Studio](https://www.rstudio.com/products/RStudio/), or [Microsoft R Open](https://mran.microsoft.com/open/), or from [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=Ikuyadeu.r).
 
-General information on the `ctrdata` package is available here: [https://github.com/rfhb/ctrdata](https://github.com/rfhb/ctrdata). 
+General information on the `ctrdata` package is available here: [https://github.com/rfhb/ctrdata](https://github.com/rfhb/ctrdata).
 
-In R, execute: 
+In R, execute:
 
 ```{r install_ctrdata, eval=FALSE}
 install.packages("ctrdata")
 ```
 
-For using the development version of package `ctrdata`, install from GitHub: 
+For using the development version of package `ctrdata`, install from GitHub:
 
 ```{r, eval=FALSE}
 # install preparatory package
@@ -47,11 +43,11 @@ install.packages(c("devtools", "httr"))
 devtools::install_github("rfhb/ctrdata")
 ```
 
-Either of the above should install package `ctrdata` into the user's library. 
+Either of the above should install package `ctrdata` into the user's library.
 
 ## Internet access via proxy
 
-Functions in package `ctrdata` that start with `ctr...` require access to trial registers over the internet via the `https` protocol. Many organisastions use transparent proxies that may not require users to do any configurations. However, if necessary, package `ctrdata` can use proxy settings set by a such as follows: 
+Functions in package `ctrdata` that start with `ctr...` require access to trial registers over the internet via the `https` protocol. Many organisastions use transparent proxies that may _not_ require users to do any configurations. However, if necessary, package `ctrdata` can use proxy settings set by users in their R session such as follows:
 
 ```{r, eval=FALSE}
 Sys.setenv(https_proxy = "your_proxy.server.domain:8080") # if needed
@@ -64,57 +60,59 @@ The command line tools `perl`, `sed` and `php` (5.2 or higher) are required for 
 
 ### MS Windows
 
-For this requirement on MS Windows, the [`Cygwin`](https://cygwin.org/install.html) environment be installed, into the local directory `c:\cygwin` (or any folder corresponding to `c:\cygw*`). The installation of a minimal Cygwin environment on MS Windows can be done with the help of package `ctrdata` in R as follows: 
+For this requirement on MS Windows, the [`Cygwin`](https://cygwin.org/install.html) environment has to be installed, into the local directory `c:\cygwin` (or any folder corresponding to `c:\cygw*`). The installation of a minimal Cygwin environment on MS Windows can be done with the help of package `ctrdata` in R as follows:
 
 ```{r, eval=FALSE}
-ctrdata::installCygwinWindowsDoInstall() 
+ctrdata::installCygwinWindowsDoInstall()
 ```
 
-To update or correct the Cygwin installation: 
+To update or correct the Cygwin installation:
 
 ```{r, eval=FALSE}
-ctrdata::installCygwinWindowsDoInstall(force = TRUE) 
+ctrdata::installCygwinWindowsDoInstall(force = TRUE)
 ```
 
-If internet access requires to specify a proxy (see above): 
+If internet access requires to specify a proxy (see above):
 
 ```{r, eval=FALSE}
-ctrdata::installCygwinWindowsDoInstall(proxy = "proxy.server.domain:8080") 
+ctrdata::installCygwinWindowsDoInstall(proxy = "proxy.server.domain:8080")
 ```
 
-To install Cygwin manually, download the setup executable from [here](https://cygwin.com/install.html). In a MS Windows command window or Powershell window, use the following command line. The parameters are explained [here](https://cygwin.com/faq/faq.html#faq.setup.cli). 
+To install Cygwin manually, download the setup executable from [here](https://cygwin.com/install.html). In a MS Windows command window or Powershell window, use the following command line. The parameters are explained [here](https://cygwin.com/faq/faq.html#faq.setup.cli).
 
 ```{bash, eval=FALSE}
-setup-x86_64.exe --no-admin --quiet-mode --verbose --upgrade-also --root c:/cygwin 
---site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ 
+setup-x86_64.exe --no-admin --quiet-mode --verbose --upgrade-also --root c:/cygwin
+--site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/
 --packages perl,php-jsonc,php-simplexml
 ```
 
 ### macOS, Linux and other operating systems
 
-The command line tools `perl`, `sed` and `php` (5.2 or higher) are typically installed and available by default in Linux and macOS systems. 
+The command line tools `perl`, `sed` and `php` (5.2 or higher) may already be available by default in some Linux and macOS systems. They are checked when running `ctrLoadQueryIntoDb()`; alternatively, check with `(ctrdata:::checkBinary())`.  
 
-- In macOS, [`homebrew`](https://brew.sh/) can be used to install `php` which may be needed starting from macOS 12 Monterey: first install [`homebrew`](https://brew.sh/) and then run on the command line: `brew install php`. 
+- In macOS, [`homebrew`](https://brew.sh/) can be used to install `php` which may be needed starting from macOS 12 Monterey: first install [`homebrew`](https://brew.sh/) and then run in Terminal the command: `brew install php`.
 
 - In Linux, tools for installation vary by distribution (e.g., `sudo apt install php php-xml php-json`)
 
 ## Databases to use
 
-At this time, a PostgreSQL, an SQLite or a remote or local MongoDB database can be used with the package `ctrdata`. SQLite is provided in the R package [`RSQLite`](https://rsqlite.r-dbi.org/). Suggested installation instructions for a local MongoDB server are [here](https://docs.mongodb.com/manual/administration/install-community/); a remote MongoDB database server is accessible [here](https://www.mongodb.com/cloud/atlas). 
+At this time, a PostgreSQL, an SQLite or a remote or local MongoDB database can be used with the package `ctrdata`. A full SQLite database is provided in the R package [`RSQLite`](https://rsqlite.r-dbi.org/). Suggested installation instructions for PostgreSQL are [here](https://www.postgresql.org/download/) and for a local MongoDB server are [here](https://docs.mongodb.com/manual/administration/install-community/); a remote MongoDB database server is accessible [here](https://www.mongodb.com/cloud/atlas). 
 
-Purpose | Function call | Reference 
+If available, a PostgreSQL or MongoDB local server is recommended for notably faster performance than SQLite. 
+
+Purpose | Function call | Reference
 -------------------- | -------------------- | ----------------
 Create SQLite database connection | `dbc <- nodbi::src_sqlite(dbname = "name_of_my_database", collection = "name_of_my_collection")` | `nodbi::src_sqlite()`
 Create PostgreSQL database connection | `dbc <- nodbi::src_postgres(dbname = "name_of_my_database")`; `dbc[["collection"]] <- "name_of_my_collection"`  | `nodbi::src_postgres()`
 Create MongoDB database connection | `dbc <- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")`  | `nodbi::src_mongo()`
-Subsequently, use connection `dbc` with `ctrdata` functions | `ctrdata::{ctr,db}*(con = dbc, ...)` | 
+Subsequently, use connection `dbc` with `ctrdata` functions | `ctrdata::{ctr,db}*(con = dbc, ...)` |
 
 ## Attach package `ctrdata`
 
-After completing the installation, attach the package from the user's library. This will also check the availability of the additional installation requirements as mentioned above: 
+After completing the installation, attach the package from the user's library. This will also check the availability of the additional installation requirements as mentioned above:
 
 ```{r attach_ctrdata}
 library(ctrdata)
 ```
 
-Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: Ralf Herold (2021). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.8.0. https://cran.r-project.org/package=ctrdata
+Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: Ralf Herold (2022). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.9.0. https://cran.r-project.org/package=ctrdata
