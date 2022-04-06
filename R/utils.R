@@ -44,6 +44,13 @@ typeVars <- list(
   "trialInformation.globalEndOfTrialDate"  = "ctrDateTime",
   "trialInformation.recruitmentStartDate"  = "ctrDateTime",
   #
+  "e891_in_the_member_state_concerned_days"   = "ctrDifftimeDays",
+  "e891_in_the_member_state_concerned_months" = "ctrDifftimeMonths",
+  "e891_in_the_member_state_concerned_years"  = "ctrDifftimeYears",
+  "e892_in_all_countries_concerned_by_the_trial_days"   = "ctrDifftimeDays",
+  "e892_in_all_countries_concerned_by_the_trial_months" = "ctrDifftimeMonths",
+  "e892_in_all_countries_concerned_by_the_trial_years"  = "ctrDifftimeYears",
+  #
   # - CTGOV
   "completion_date"          = "ctrDateUs",
   "last_update_posted"       = "ctrDateUs",
@@ -103,9 +110,12 @@ typeVars <- list(
   "e815_parallel_group" = "ctrYesNo",
   "e816_cross_over"     = "ctrYesNo",
   "e817_other"          = "ctrYesNo",
+  "e822_placebo"        = "ctrYesNo",
   #
   "e83_the_trial_involves_single_site_in_the_member_state_concerned"    = "ctrYesNo",
+  "e83_will_this_trial_be_conducted_at_a_single_site_globally"          = "ctrYesNo",
   "e84_the_trial_involves_multiple_sites_in_the_member_state_concerned" = "ctrYesNo",
+  "e84_will_this_trial_be_conducted_at_multiple_sites_globally"         = "ctrYesNo",
   "e85_the_trial_involves_multiple_member_states"                       = "ctrYesNo",
   "e861_trial_being_conducted_both_within_and_outside_the_eea"          = "ctrYesNo",
   "e862_trial_being_conducted_completely_outside_of_the_eea"            = "ctrYesNo",
@@ -2555,6 +2565,18 @@ typeField <- function(dv, fn) {
       }
     }, USE.NAMES = FALSE)
     as.difftime(out, units = "days")
+  }
+  #
+  ctrDifftimeDays   <- function() {
+    lubridate::ddays(x = as.numeric(dv))
+  }
+  #
+  ctrDifftimeMonths   <- function() {
+    lubridate::dmonths(x = as.numeric(dv))
+  }
+  #
+  ctrDifftimeYears   <- function() {
+    lubridate::dyears(x = as.numeric(dv))
   }
 
   ## apply typing

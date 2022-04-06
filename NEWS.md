@@ -3,6 +3,7 @@
  - new development version
  - editorial update vignettes [2021-03-20]
  - minor bugfix in dbGetFieldsIntoDf() [2021-03-20]
+ - type e811... variables [2022-04-02]
  
 # ctrdata 1.9.0
  - 2022-03-13
