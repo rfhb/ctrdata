@@ -3,7 +3,7 @@ output:
   github_document:
     toc: false
     toc_depth: 1
-editor_options: 
+editor_options:
   chunk_output_type: console
 ---
 
@@ -32,17 +32,17 @@ knitr::opts_chunk$set(
 
 # ctrdata for aggregating and analysing clinical trials
 
-The package `ctrdata` provides functions for retrieving (downloading) information on clinical trials from public registers, and for aggregating and analysing this information; it can be used for the 
+The package `ctrdata` provides functions for retrieving (downloading) information on clinical trials from public registers, and for aggregating and analysing this information; it can be used for the
 
 - EU Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/)
-- ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/) 
+- ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/)
 - ISRCTN (https://www.isrctn.com/) `r emo::ji("bell")`new in v1.6.0
 
 The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can be used with the databases created by it. This README was reviewed on 2022-03-20 for v1.9.0.9000.
 
 Main features:
 
-* Protocol-related trial information is easily retrieved (downloaded): Users define a query in a register's web interface and then use `ctrdata` to retrieve in one step all trials resulting from the query. Results-related trial information and personal annotations can be including during retrieval. Synonyms of an active substance can also be found. 
+* Protocol-related trial information is easily retrieved (downloaded): Users define a query in a register's web interface and then use `ctrdata` to retrieve in one step all trials resulting from the query. Results-related trial information and personal annotations can be including during retrieval. Synonyms of an active substance can also be found.
 
 * Retrieved (downloaded) trial information is transformed and stored in a document-centric database, for fast and offline access. Uses `PostgreSQL` (`r emo::ji("bell")`new in v1.8.0.9000), `RSQLite` or `MongoDB` as databases, via R package `nodbi`: see section [Databases](#databases-that-can-be-used-with-ctrdata) below. Easily re-run a previous query to update a database.
 
@@ -66,7 +66,7 @@ Package `ctrdata` is [on CRAN](https://cran.r-project.org/package=ctrdata) and [
 # Install CRAN version:
 install.packages("ctrdata")
 
-# Alternatively, install development version: 
+# Alternatively, install development version:
 install.packages("devtools")
 devtools::install_github("rfhb/ctrdata", build_vignettes = TRUE)
 ```
@@ -75,13 +75,13 @@ These commands also install the package dependencies, which are `nodbi`, `jsonli
 
 ### 2. Command line tools `perl`, `sed` and `php` (5.2 or higher)
 
-These are required for `ctrLoadQueryIntoDb()`, the main function of package `ctrdata` (see [Example workflow](#example-workflow)); the function also checks if the tools can be used. 
+These are required for `ctrLoadQueryIntoDb()`, the main function of package `ctrdata` (see [Example workflow](#example-workflow)); the function also checks if the tools can be used.
 
-- For MS Windows, install [`Cygwin`](https://cygwin.org/install.html): In `R`, run `ctrdata::installCygwinWindowsDoInstall()` for an automated minimal installation. Alternatively, manually install Cygwin with packages `perl`, `php-jsonc` and `php-simplexml` into `c:\cygwin`. The installation needs about 160 MB disk space; no administrator credentials needed. 
+- For MS Windows, install [`Cygwin`](https://cygwin.org/install.html): In `R`, run `ctrdata::installCygwinWindowsDoInstall()` for an automated minimal installation. Alternatively, manually install Cygwin with packages `perl`, `php-jsonc` and `php-simplexml` into `c:\cygwin`. The installation needs about 160 MB disk space; no administrator credentials needed.
 
-- In macOS including 11 Big Sur, these are already installed; as alternative and `r emo::ji("bell")`for macOS 12 Monterey, [`homebrew`](https://brew.sh/) can be used: `brew install php`, which seems to include the libraries required for `ctrdata`. 
+- In macOS including 11 Big Sur, these are already installed; as alternative and `r emo::ji("bell")`for macOS 12 Monterey, [`homebrew`](https://brew.sh/) can be used: `brew install php`, which seems to include the libraries required for `ctrdata`.
 
-- In Linux, these are usually already installed; tools for installation vary by distribution (e.g., `sudo apt install php php-xml php-json`). 
+- In Linux, these are usually already installed; tools for installation vary by distribution (e.g., `sudo apt install php php-xml php-json`).
 
 ### Vignettes
 
@@ -92,7 +92,7 @@ These are required for `ctrLoadQueryIntoDb()`, the main function of package `ctr
 
 ## Overview of functions in `ctrdata`
 
-The functions are listed in the approximate order of use in a user's workflow (in bold, main functions). 
+The functions are listed in the approximate order of use in a user's workflow (in bold, main functions).
 
 Function name | Function purpose
 ---------------------------- | --------------------------------------------
@@ -109,43 +109,43 @@ Function name | Function purpose
 `dfMergeTwoVariablesRelevel()` | Merge two simple variables into a new variable, optionally map values to a new set of values
 `installCygwinWindowsDoInstall()` | Convenience function to install a Cygwin environment (MS Windows only)
 
-If package `dplyr` is loaded, a tibble is returned instead of a data.frame. 
+If package `dplyr` is loaded, a tibble is returned instead of a data.frame.
 
 
 ## Databases that can be used with `ctrdata`
 
-Package `ctrdata` retrieves trial information and stores it in a database collection, which has to be given as a connection object to parameter `con` for several `ctrdata` functions; this connection object is created in slightly different ways for the three supported database backends that can be used with `ctrdata` as shown in the table. 
+Package `ctrdata` retrieves trial information and stores it in a database collection, which has to be given as a connection object to parameter `con` for several `ctrdata` functions; this connection object is created in slightly different ways for the three supported database backends that can be used with `ctrdata` as shown in the table.
 
-Besides ctrdata functions below, any such a connection object can equally be used with functions of other packages, such as `nodbi` (last row in table) or, in case of MongoDB as database backend, `mongolite` (see vignettes). 
+Besides ctrdata functions below, any such a connection object can equally be used with functions of other packages, such as `nodbi` (last row in table) or, in case of MongoDB as database backend, `mongolite` (see vignettes).
 
-Purpose | Function call 
+Purpose | Function call
 -------------------- | --------------------
-Create SQLite database connection | `dbc <- nodbi::src_sqlite(dbname = "name_of_my_database", collection = "name_of_my_collection")` 
-Create PostgreSQL database connection | `dbc <- nodbi::src_postgres(dbname = "name_of_my_database"); dbc[["collection"]] <- "name_of_my_collection"` 
-Create MongoDB database connection | `dbc <- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")` 
+Create SQLite database connection | `dbc <- nodbi::src_sqlite(dbname = "name_of_my_database", collection = "name_of_my_collection")`
+Create PostgreSQL database connection | `dbc <- nodbi::src_postgres(dbname = "name_of_my_database"); dbc[["collection"]] <- "name_of_my_collection"`
+Create MongoDB database connection | `dbc <- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")`
 Use connection with `ctrdata` functions | `ctrdata::{ctr,db}*(con = dbc, ...)`
-Use connection with `nodbi` functions | `nodbi::docdb_*(src = dbc, key = dbc$collection, ...)` 
+Use connection with `nodbi` functions | `nodbi::docdb_*(src = dbc, key = dbc$collection, ...)`
 
 ## Example workflow
 
-The aim is to download protocol-related trial information and tabulate the trials' status of conduct. 
+The aim is to download protocol-related trial information and tabulate the trials' status of conduct.
 
-* Attach package `ctrdata`: 
+* Attach package `ctrdata`:
 ```{r}
 library(ctrdata)
 ```
 
-* See help to get started with `ctrdata`: 
+* See help to get started with `ctrdata`:
 ```{r}
 help("ctrdata-package")
 ```
 
-* Information on trial registers that can be used with `ctrdata`: 
+* Information on trial registers that can be used with `ctrdata`:
 ```{r}
 help("ctrdata-registers")
 ```
 
-* Open registers' advanced search pages in browser: 
+* Open registers' advanced search pages in browser:
 ```{r}
 ctrOpenSearchPagesInBrowser()
 
@@ -153,13 +153,13 @@ ctrOpenSearchPagesInBrowser()
 ctrOpenSearchPagesInBrowser(copyright = TRUE)
 ```
 
-* Adjust search parameters and execute search in browser 
+* Adjust search parameters and execute search in browser
 
 * When trials of interest are listed in browser, _copy the address from the browser's address bar to the clipboard_
 
 * Search used in this example: https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&age=under-18&phase=phase-one&status=completed
 
-* Get address from clipboard: 
+* Get address from clipboard:
 ```{r}
 q <- ctrGetQueryUrl()
 # * Using clipboard content as register query URL: https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&age=under-18&phase=phase-one&status=completed
@@ -177,16 +177,16 @@ q <- "https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&age=u
 ctrOpenSearchPagesInBrowser(q)
 ```
 
-The database collection is specified first, using `nodbi` (see above for how to specify `PostgreSQL`, `RSQlite` or `MongoDB` as backend); then, trial information is retrieved and loaded into the collection: 
+The database collection is specified first, using `nodbi` (see above for how to specify `PostgreSQL`, `RSQlite` or `MongoDB` as backend); then, trial information is retrieved and loaded into the collection:
 
 ```{r}
-# Connect to (or newly create) an SQLite database 
+# Connect to (or newly create) an SQLite database
 # that is stored in a file on the local system:
 db <- nodbi::src_sqlite(
-  dbname = "some_database_name.sqlite_file", 
+  dbname = "some_database_name.sqlite_file",
   collection = "some_collection_name")
 
-# See section Databases below 
+# See section Databases below
 # for MongoDB as alternative
 
 # Retrieve trials from public register:
@@ -199,32 +199,32 @@ ctrLoadQueryIntoDb(
 # Checking helper binaries: done
 # Downloading trials (4 pages in parallel)...
 # Note: register server cannot compress data, transfer takes longer, about 0.4s per trial
-# Pages: 4 done, 0 ongoing   
+# Pages: 4 done, 0 ongoing
 # (2/3) Converting to JSON, 248 records converted
 # (3/3) Importing JSON records into database...
-# = Imported or updated 248 records on 66 trial(s)                
+# = Imported or updated 248 records on 66 trial(s)
 # * Updated history ("meta-info" in "some_collection_name")
 ```
 
-Under the hood, scripts `euctr2json.sh` and `xml2json.php` (in `ctrdata/exec`) transform EUCTR plain text files and CTGOV as well as ISRCTN `XML` files to `ndjson` format, which is imported into the database collection. 
+Under the hood, scripts `euctr2json.sh` and `xml2json.php` (in `ctrdata/exec`) transform EUCTR plain text files and CTGOV as well as ISRCTN `XML` files to `ndjson` format, which is imported into the database collection.
 
-* Analyse 
+* Analyse
 
-Tabulate the status of trials that are part of an agreed paediatric development program (paediatric investigation plan, PIP): 
+Tabulate the status of trials that are part of an agreed paediatric development program (paediatric investigation plan, PIP):
 
 ```{r}
 # Get all records that have values in the fields of interest:
 result <- dbGetFieldsIntoDf(
   fields = c(
-    "a7_trial_is_part_of_a_paediatric_investigation_plan", 
-    "p_end_of_trial_status", 
+    "a7_trial_is_part_of_a_paediatric_investigation_plan",
+    "p_end_of_trial_status",
     "a2_eudract_number"),
   con = db)
 
-# Find unique trial identifiers for trials that have nore than 
-# one record, for example for several EU Member States: 
+# Find unique trial identifiers for trials that have nore than
+# one record, for example for several EU Member States:
 uniqueids <- dbFindIdsUniqueTrials(con = db)
-# Searching for duplicate trials... 
+# Searching for duplicate trials...
 #  - Getting trial ids, 279 found in collection
 #  - Finding duplicates among registers' and sponsor ids...
 #  - 208 EUCTR _id were not preferred EU Member State record for 71 trials
@@ -233,14 +233,14 @@ uniqueids <- dbFindIdsUniqueTrials(con = db)
 
 # Keep only unique / de-duplicated records:
 result <- subset(
-  result, 
+  result,
   subset = `_id` %in% uniqueids
 )
 
 # Tabulate the selected clinical trial information:
-with(result, 
+with(result,
      table(
-       p_end_of_trial_status, 
+       p_end_of_trial_status,
        a7_trial_is_part_of_a_paediatric_investigation_plan))
 #                     a7_trial_is_part_of_a_paediatric_investigation_plan
 # p_end_of_trial_status      Information not present in EudraCT No Yes
@@ -258,17 +258,17 @@ with(result,
 ```{r}
 # Retrieve trials from another register:
 ctrLoadQueryIntoDb(
-  queryterm = "cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug", 
+  queryterm = "cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug",
   register = "CTGOV",
   con = db)
 # * Found search query from CTGOV: cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug
 # (1/3) Checking trials in CTGOV:
 # Retrieved overview, records of 44 trial(s) are to be downloaded
 # Checking helper binaries: done
-# Downloading: 620 kB     
+# Downloading: 620 kB
 # (2/3) Converting to JSON, 44 records converted
 # (3/3) Importing JSON records into database...
-# = Imported or updated 43 trial(s)                              
+# = Imported or updated 43 trial(s)
 # * Updated history ("meta-info" in "some_collection_name")
 ```
 
@@ -285,16 +285,16 @@ ctrLoadQueryIntoDb(
 # (1/3) Checking trials in ISRCTN:
 # Retrieved overview, records of 9 trial(s) are to be downloaded
 # Checking helper binaries: done
-# Downloading: 90 kB       
+# Downloading: 90 kB
 # (2/3) Converting to JSON, 9 records converted
 # (3/3) Importing JSON records into database...
-# = Imported or updated 9 trial(s)                              
+# = Imported or updated 9 trial(s)
 # * Updated history ("meta-info" in "some_collection_name")
 ```
 
-* Result-related trial information 
+* Result-related trial information
 
-Analyse some simple result details (see vignette for more examples): 
+Analyse some simple result details (see vignette for more examples):
 
 ```{r}
 # Get all records that have values in any of the specified fields
@@ -302,8 +302,8 @@ result <- dbGetFieldsIntoDf(
   fields = c(
     "clinical_results.baseline.analyzed_list.analyzed.count_list.count",
     "clinical_results.baseline.group_list.group",
-    "clinical_results.baseline.analyzed_list.analyzed.units", 
-    "study_design_info.allocation", 
+    "clinical_results.baseline.analyzed_list.analyzed.units",
+    "study_design_info.allocation",
     "location"),
   con = db)
 
@@ -312,20 +312,20 @@ result <- dfTrials2Long(df = result)
 # Total 6386 rows, 12 unique names of variables
 
 # [1.] get counts of subjects for all arms into data frame
-# This count is in the group where either its title or its 
+# This count is in the group where either its title or its
 # description starts with "Total"
 nsubj <- dfName2Value(
-  df = result, 
+  df = result,
   valuename = "clinical_results.baseline.analyzed_list.analyzed.count_list.count.value",
   wherename = paste0(
-    "clinical_results.baseline.group_list.group.title|", 
+    "clinical_results.baseline.group_list.group.title|",
     "clinical_results.baseline.group_list.group.description"),
   wherevalue = "^Total"
 )
 
 # [2.] count number of sites
 nsite <- dfName2Value(
-  df = result, 
+  df = result,
   # some ctgov records use
   # location.name, others use
   # location.facility.name
@@ -333,14 +333,14 @@ nsite <- dfName2Value(
 )
 # count
 nsite <- tapply(
-  X = nsite[["value"]], 
+  X = nsite[["value"]],
   INDEX = nsite[["_id"]],
   FUN = length,
   simplify = TRUE
 )
 nsite <- data.frame(
   "_id" = names(nsite),
-  nsite, 
+  nsite,
   check.names = FALSE,
   stringsAsFactors = FALSE,
   row.names = NULL
@@ -348,9 +348,9 @@ nsite <- data.frame(
 
 # [3.] randomised?
 ncon <- dfName2Value(
-  df = result, 
+  df = result,
   valuename = "study_design_info.allocation"
-) 
+)
 
 # merge sets
 nset <- merge(nsubj, nsite, by = "_id")
@@ -358,18 +358,18 @@ nset <- merge(nset, ncon, by = "_id")
 
 # Example plot
 library(ggplot2)
-ggplot(data = nset) + 
+ggplot(data = nset) +
   labs(title = "Neuroblastoma trials with results",
        subtitle = "clinicaltrials.gov") +
   geom_point(
     mapping = aes(
       x = nsite,
       y = value.x,
-      colour = value.y == "Randomized")) + 
-  scale_x_log10() + 
+      colour = value.y == "Randomized")) +
+  scale_x_log10() +
   scale_y_log10() +
-  xlab("Number of sites") + 
-  ylab("Total number of subjects") + 
+  xlab("Number of sites") +
+  ylab("Total number of subjects") +
   labs(colour = "Randomised?")
 ggsave(filename = "man/figures/README-ctrdata_results_neuroblastoma.png",
        width = 5, height = 3, units = "in")
@@ -386,33 +386,33 @@ unlink("some_database_name.sqlite_file")
 
 ### Additional features under consideration
 
-* Retrieve previous versions of protocol- or results-related information. The challenge is that, apparently, initial versions cannot be queried and historical versions can only be retrieved one-by-one and not in structured format. 
+* Retrieve previous versions of protocol- or results-related information. The challenge is that, apparently, initial versions cannot be queried and historical versions can only be retrieved one-by-one and not in structured format.
 
-* Merge results-related fields retrieved from different registers (e.g., corresponding endpoints). The challenge is the incomplete congruency and different structure of fields. 
+* Merge results-related fields retrieved from different registers (e.g., corresponding endpoints). The challenge is the incomplete congruency and different structure of fields.
 
 
-### Acknowledgements 
+### Acknowledgements
 
-* Data providers and curators of the clinical trial registers. Please review and respect their copyrights and terms and conditions, see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`. 
+* Data providers and curators of the clinical trial registers. Please review and respect their copyrights and terms and conditions, see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`.
 
-* Package `ctrdata` has been made possible building on the work done for 
-[R](https://www.r-project.org/), 
-[curl](https://cran.r-project.org/package=curl), 
-[httr](https://cran.r-project.org/package=httr), 
-[xml2](https://cran.r-project.org/package=xml2), 
+* Package `ctrdata` has been made possible building on the work done for
+[R](https://www.r-project.org/),
+[curl](https://cran.r-project.org/package=curl),
+[httr](https://cran.r-project.org/package=httr),
+[xml2](https://cran.r-project.org/package=xml2),
 [rvest](https://cran.r-project.org/package=rvest),
-[mongolite](https://cran.r-project.org/package=mongolite), 
-[jsonlite](https://cran.r-project.org/package=jsonlite), 
-[nodbi](https://cran.r-project.org/package=nodbi), 
-[RPostgres](https://cran.r-project.org/package=RPostgres), 
+[mongolite](https://cran.r-project.org/package=mongolite),
+[jsonlite](https://cran.r-project.org/package=jsonlite),
+[nodbi](https://cran.r-project.org/package=nodbi),
+[RPostgres](https://cran.r-project.org/package=RPostgres),
 [RSQLite](https://CRAN.R-project.org/package=RSQLite) and
-[clipr](https://cran.r-project.org/package=clipr). 
+[clipr](https://cran.r-project.org/package=clipr).
 
 ### Issues and notes
 
 * Please file issues and bugs [here](https://github.com/rfhb/ctrdata/issues). Also check out how to handle some of the closed issues, e.g. on [C stack usage too close to the limit](https://github.com/rfhb/ctrdata/issues/22) and on a [SSL certificate problem: unable to get local issuer certificate](https://github.com/rfhb/ctrdata/issues/19#issuecomment-820127139)
 
-* Information in trial registers may not be fully correct; see for example [this publication on CTGOV](https://doi.org/10.1136/bmj.k1452). 
+* Information in trial registers may not be fully correct; see for example [this publication on CTGOV](https://doi.org/10.1136/bmj.k1452).
 
 * No attempts were made to harmonise field names between registers (nevertheless, `dfMergeTwoVariablesRelevel()` can be used to merge and map two variables / fields into one).
 
