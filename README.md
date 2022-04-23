@@ -24,7 +24,7 @@ The motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created by it. This
-README was reviewed on 2022-03-20 for v1.9.0.9000.
+README was reviewed on 2022-04-23 for v1.9.0.9000.
 
 Main features:
 
