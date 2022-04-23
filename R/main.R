@@ -727,7 +727,6 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
       idAnnotation <- NULL
       nImported <- 0
       ids <- NULL
-      annotations <- NULL
 
       ## get _id's
 
@@ -772,15 +771,16 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
             paste0('"', ids, '"', collapse = ","), ']}}'),
           fields = '{"_id": 1, "annotation": 1}')
       }, silent = TRUE)
-      if (!inherits(annoDf, "try-error") &&
-          length(annoDf[["_id"]])) {
-        annotations <- merge(
+      if (!inherits(annoDf, "try-error") && length(annoDf[["_id"]])) {
+        annoDf <- merge(
           data.frame("_id" = ids, check.names = FALSE, stringsAsFactors = FALSE),
-          annoDf, all.x = TRUE
-        )[["annotation"]]
+          annoDf, all.x = TRUE) # only need input ids, do not need all.y
       } else {
-        annotations <- rep("", length(ids))
+        annoDf <-
+          data.frame("_id" = ids, check.names = FALSE, stringsAsFactors = FALSE)
       }
+      if (is.null(annoDf[["annotation"]]))
+        annoDf[["annotation"]] <- rep(NA, length(ids))
 
       # delete any existing records
       deleteIds <- try({
@@ -812,13 +812,13 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
           ))}, silent = TRUE)
 
       ## return values for lapply
-      if (inherits(tmp, "try-error") || tmp == 0L) {
-        idFailed <- c(idFailed, ids)
+      if (inherits(tmp, "try-error") || tmp == 0L || tmp != nrow(annoDf)) {
+        idFailed <- c(idFailed, annoDf[ , "_id", drop = TRUE]) # ids,
         warning(tempFiles[tempFile], ": ", tmp, call. = FALSE)
       } else {
-        idSuccess <- c(idSuccess, ids)
         nImported <- nImported + tmp
-        idAnnotation <- c(idAnnotation, annotations)
+        idSuccess <- c(idSuccess, annoDf[ , "_id", drop = TRUE]) # ids,
+        idAnnotation <- c(idAnnotation, annoDf[ , "annotation", drop = TRUE]) # ids,
       }
 
       # close this file
@@ -892,12 +892,14 @@ dbCTRAnnotateQueryRecords <- function(
     switch(
       annotation.mode,
       "replace" = paste0(annotation.text),
-      "prepend" = paste0(annotation.text, " ", annotations$annotation),
-      paste0(annotations$annotation, " ", annotation.text)
+      "prepend" = paste0(annotation.text, " ", ifelse(
+        is.na(annotations[["annotation"]]), "", annotations[["annotation"]])),
+      paste0(ifelse(is.na(annotations[["annotation"]]), "", annotations[["annotation"]]),
+             " ", annotation.text)
     ))
 
   # ensure columns including order
-  annotations <- annotations[, c("_id", "annotation")]
+  annotations <- annotations[, c("_id", "annotation"), drop = FALSE]
 
   # debug
   if (verbose) message(annotations)
