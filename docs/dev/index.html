@@ -56,7 +56,7 @@
     
     <a class="navbar-brand me-2" href="index.html">ctrdata</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.9.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.9.1.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -109,13 +109,13 @@ the</p>
 <ul>
 <li>EU Clinical Trials Register (“EUCTR”, <a href="https://www.clinicaltrialsregister.eu/" class="external-link uri">https://www.clinicaltrialsregister.eu/</a>)</li>
 <li>ClinicalTrials.gov (“CTGOV”, <a href="https://clinicaltrials.gov/" class="external-link uri">https://clinicaltrials.gov/</a>)</li>
-<li>ISRCTN (<a href="https://www.isrctn.com/" class="external-link uri">https://www.isrctn.com/</a>) 🔔new in v1.6.0</li>
+<li>ISRCTN (<a href="https://www.isrctn.com/" class="external-link uri">https://www.isrctn.com/</a>)</li>
 </ul>
 <p>The motivation is to understand trends in design and conduct of
 trials, their availability for patients and their detailled results.
 <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and
 tools can be used with the databases created by it. This README was
-reviewed on 2022-03-13 for v1.9.0.9000.</p>
+reviewed on 2022-04-24 for v1.9.1.</p>
 <p>Main features:</p>
 <ul>
 <li><p>Protocol-related trial information is easily retrieved
@@ -126,7 +126,7 @@ annotations can be including during retrieval. Synonyms of an active
 substance can also be found.</p></li>
 <li><p>Retrieved (downloaded) trial information is transformed and
 stored in a document-centric database, for fast and offline access. Uses
-<code>PostgreSQL</code> (🔔new in v1.8.0.9000), <code>RSQLite</code> or
+<code>PostgreSQL</code> (🔔new in v1.9.0), <code>RSQLite</code> or
 <code>MongoDB</code> as databases, via R package <code>nodbi</code>: see
 section <a href="#databases-that-can-be-used-with-ctrdata">Databases</a>
 below. Easily re-run a previous query to update a database.</p></li>
@@ -134,7 +134,7 @@ below. Easily re-run a previous query to update a database.</p></li>
 <code>ctrdata</code> convenience functions) or others systems. Unique
 (de-duplicated) trial records are identified across registers.
 <code>ctrdata</code> can merge and recode information (fields) and also
-provides easy access even to deeply-nested fields (🔔 new in
+provides easy access even to deeply-nested fields (new in
 v1.4.0).</p></li>
 </ul>
 <p>Remember to respect the registers’ terms and conditions (see
@@ -156,7 +156,7 @@ citation("ctrdata")
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <div class="section level3">
-<h3 id="1-install-package-ctrdata-in-r">1. Install package <code>ctrdata</code> in R<a class="anchor" aria-label="anchor" href="#1-install-package-ctrdata-in-r"></a>
+<h3 id="id_1-install-package-ctrdata-in-r">1. Install package <code>ctrdata</code> in R<a class="anchor" aria-label="anchor" href="#id_1-install-package-ctrdata-in-r"></a>
 </h3>
 <p>Package <code>ctrdata</code> is <a href="https://cran.r-project.org/package=ctrdata" class="external-link">on CRAN</a> and <a href="https://github.com/rfhb/ctrdata" class="external-link">on GitHub</a>. Within <a href="https://www.r-project.org/" class="external-link">R</a>, use the following commands to
 install package <code>ctrdata</code>:</p>
@@ -164,7 +164,7 @@ install package <code>ctrdata</code>:</p>
 <code class="sourceCode R"><span class="co"># Install CRAN version:</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"ctrdata"</span><span class="op">)</span>
 
-<span class="co"># Alternatively, install development version: </span>
+<span class="co"># Alternatively, install development version:</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
 <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/remote-reexports.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"rfhb/ctrdata"</span>, build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p>These commands also install the package dependencies, which are
@@ -173,8 +173,8 @@ install package <code>ctrdata</code>:</p>
 <code>rvest</code> and <code>stringi</code>.</p>
 </div>
 <div class="section level3">
-<h3 id="2-command-line-tools-perl-sed-and-php-52-or-higher">2. Command line tools <code>perl</code>, <code>sed</code> and
-<code>php</code> (5.2 or higher)<a class="anchor" aria-label="anchor" href="#2-command-line-tools-perl-sed-and-php-52-or-higher"></a>
+<h3 id="id_2-command-line-tools-perl-sed-and-php-52-or-higher">2. Command line tools <code>perl</code>, <code>sed</code> and
+<code>php</code> (5.2 or higher)<a class="anchor" aria-label="anchor" href="#id_2-command-line-tools-perl-sed-and-php-52-or-higher"></a>
 </h3>
 <p>These are required for <code><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code>, the main
 function of package <code>ctrdata</code> (see <a href="#example-workflow">Example workflow</a>); the function also checks
@@ -389,13 +389,13 @@ database:</li>
 <code>RSQlite</code> or <code>MongoDB</code> as backend); then, trial
 information is retrieved and loaded into the collection:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Connect to (or newly create) an SQLite database </span>
+<code class="sourceCode R"><span class="co"># Connect to (or newly create) an SQLite database</span>
 <span class="co"># that is stored in a file on the local system:</span>
 <span class="va">db</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">src_sqlite</a></span><span class="op">(</span>
-  dbname <span class="op">=</span> <span class="st">"some_database_name.sqlite_file"</span>, 
+  dbname <span class="op">=</span> <span class="st">"some_database_name.sqlite_file"</span>,
   collection <span class="op">=</span> <span class="st">"some_collection_name"</span><span class="op">)</span>
 
-<span class="co"># See section Databases below </span>
+<span class="co"># See section Databases below</span>
 <span class="co"># for MongoDB as alternative</span>
 
 <span class="co"># Retrieve trials from public register:</span>
@@ -408,10 +408,10 @@ information is retrieved and loaded into the collection:</p>
 <span class="co"># Checking helper binaries: done</span>
 <span class="co"># Downloading trials (4 pages in parallel)...</span>
 <span class="co"># Note: register server cannot compress data, transfer takes longer, about 0.4s per trial</span>
-<span class="co"># Pages: 4 done, 0 ongoing   </span>
+<span class="co"># Pages: 4 done, 0 ongoing</span>
 <span class="co"># (2/3) Converting to JSON, 248 records converted</span>
 <span class="co"># (3/3) Importing JSON records into database...</span>
-<span class="co"># = Imported or updated 248 records on 66 trial(s)                </span>
+<span class="co"># = Imported or updated 248 records on 66 trial(s)</span>
 <span class="co"># * Updated history ("meta-info" in "some_collection_name")</span></code></pre></div>
 <p>Under the hood, scripts <code>euctr2json.sh</code> and
 <code>xml2json.php</code> (in <code>ctrdata/exec</code>) transform EUCTR
@@ -427,15 +427,15 @@ development program (paediatric investigation plan, PIP):</p>
 <code class="sourceCode R"><span class="co"># Get all records that have values in the fields of interest:</span>
 <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span>
   fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>
-    <span class="st">"a7_trial_is_part_of_a_paediatric_investigation_plan"</span>, 
-    <span class="st">"p_end_of_trial_status"</span>, 
+    <span class="st">"a7_trial_is_part_of_a_paediatric_investigation_plan"</span>,
+    <span class="st">"p_end_of_trial_status"</span>,
     <span class="st">"a2_eudract_number"</span><span class="op">)</span>,
   con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 
-<span class="co"># Find unique trial identifiers for trials that have nore than </span>
-<span class="co"># one record, for example for several EU Member States: </span>
+<span class="co"># Find unique trial identifiers for trials that have nore than</span>
+<span class="co"># one record, for example for several EU Member States:</span>
 <span class="va">uniqueids</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
-<span class="co"># Searching for duplicate trials... </span>
+<span class="co"># Searching for duplicate trials...</span>
 <span class="co">#  - Getting trial ids, 279 found in collection</span>
 <span class="co">#  - Finding duplicates among registers' and sponsor ids...</span>
 <span class="co">#  - 208 EUCTR _id were not preferred EU Member State record for 71 trials</span>
@@ -444,14 +444,14 @@ development program (paediatric investigation plan, PIP):</p>
 
 <span class="co"># Keep only unique / de-duplicated records:</span>
 <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span>
-  <span class="va">result</span>, 
+  <span class="va">result</span>,
   subset <span class="op">=</span> <span class="va">`_id`</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">uniqueids</span>
 <span class="op">)</span>
 
 <span class="co"># Tabulate the selected clinical trial information:</span>
-<span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">result</span>, 
+<span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">result</span>,
      <span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span>
-       <span class="va">p_end_of_trial_status</span>, 
+       <span class="va">p_end_of_trial_status</span>,
        <span class="va">a7_trial_is_part_of_a_paediatric_investigation_plan</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#                     a7_trial_is_part_of_a_paediatric_investigation_plan</span>
 <span class="co"># p_end_of_trial_status      Information not present in EudraCT No Yes</span>
@@ -468,17 +468,17 @@ collection</p></li>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Retrieve trials from another register:</span>
 <span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span>
-  queryterm <span class="op">=</span> <span class="st">"cond=neuroblastoma&amp;rslt=With&amp;recrs=e&amp;age=0&amp;intr=Drug"</span>, 
+  queryterm <span class="op">=</span> <span class="st">"cond=neuroblastoma&amp;rslt=With&amp;recrs=e&amp;age=0&amp;intr=Drug"</span>,
   register <span class="op">=</span> <span class="st">"CTGOV"</span>,
   con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 <span class="co"># * Found search query from CTGOV: cond=neuroblastoma&amp;rslt=With&amp;recrs=e&amp;age=0&amp;intr=Drug</span>
 <span class="co"># (1/3) Checking trials in CTGOV:</span>
 <span class="co"># Retrieved overview, records of 44 trial(s) are to be downloaded</span>
 <span class="co"># Checking helper binaries: done</span>
-<span class="co"># Downloading: 620 kB     </span>
+<span class="co"># Downloading: 620 kB</span>
 <span class="co"># (2/3) Converting to JSON, 44 records converted</span>
 <span class="co"># (3/3) Importing JSON records into database...</span>
-<span class="co"># = Imported or updated 43 trial(s)                              </span>
+<span class="co"># = Imported or updated 43 trial(s)</span>
 <span class="co"># * Updated history ("meta-info" in "some_collection_name")</span></code></pre></div>
 <ul>
 <li><p>Add records from a third register (ISRCTN) into the same
@@ -494,10 +494,10 @@ collection</p></li>
 <span class="co"># (1/3) Checking trials in ISRCTN:</span>
 <span class="co"># Retrieved overview, records of 9 trial(s) are to be downloaded</span>
 <span class="co"># Checking helper binaries: done</span>
-<span class="co"># Downloading: 90 kB       </span>
+<span class="co"># Downloading: 90 kB</span>
 <span class="co"># (2/3) Converting to JSON, 9 records converted</span>
 <span class="co"># (3/3) Importing JSON records into database...</span>
-<span class="co"># = Imported or updated 9 trial(s)                              </span>
+<span class="co"># = Imported or updated 9 trial(s)</span>
 <span class="co"># * Updated history ("meta-info" in "some_collection_name")</span></code></pre></div>
 <ul>
 <li>Result-related trial information</li>
@@ -510,8 +510,8 @@ examples):</p>
   fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>
     <span class="st">"clinical_results.baseline.analyzed_list.analyzed.count_list.count"</span>,
     <span class="st">"clinical_results.baseline.group_list.group"</span>,
-    <span class="st">"clinical_results.baseline.analyzed_list.analyzed.units"</span>, 
-    <span class="st">"study_design_info.allocation"</span>, 
+    <span class="st">"clinical_results.baseline.analyzed_list.analyzed.units"</span>,
+    <span class="st">"study_design_info.allocation"</span>,
     <span class="st">"location"</span><span class="op">)</span>,
   con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 
@@ -520,20 +520,20 @@ examples):</p>
 <span class="co"># Total 6386 rows, 12 unique names of variables</span>
 
 <span class="co"># [1.] get counts of subjects for all arms into data frame</span>
-<span class="co"># This count is in the group where either its title or its </span>
+<span class="co"># This count is in the group where either its title or its</span>
 <span class="co"># description starts with "Total"</span>
 <span class="va">nsubj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dfName2Value.html">dfName2Value</a></span><span class="op">(</span>
-  df <span class="op">=</span> <span class="va">result</span>, 
+  df <span class="op">=</span> <span class="va">result</span>,
   valuename <span class="op">=</span> <span class="st">"clinical_results.baseline.analyzed_list.analyzed.count_list.count.value"</span>,
   wherename <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span>
-    <span class="st">"clinical_results.baseline.group_list.group.title|"</span>, 
+    <span class="st">"clinical_results.baseline.group_list.group.title|"</span>,
     <span class="st">"clinical_results.baseline.group_list.group.description"</span><span class="op">)</span>,
   wherevalue <span class="op">=</span> <span class="st">"^Total"</span>
 <span class="op">)</span>
 
 <span class="co"># [2.] count number of sites</span>
 <span class="va">nsite</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dfName2Value.html">dfName2Value</a></span><span class="op">(</span>
-  df <span class="op">=</span> <span class="va">result</span>, 
+  df <span class="op">=</span> <span class="va">result</span>,
   <span class="co"># some ctgov records use</span>
   <span class="co"># location.name, others use</span>
   <span class="co"># location.facility.name</span>
@@ -541,14 +541,14 @@ examples):</p>
 <span class="op">)</span>
 <span class="co"># count</span>
 <span class="va">nsite</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tapply.html" class="external-link">tapply</a></span><span class="op">(</span>
-  X <span class="op">=</span> <span class="va">nsite</span><span class="op">[[</span><span class="st">"value"</span><span class="op">]</span><span class="op">]</span>, 
+  X <span class="op">=</span> <span class="va">nsite</span><span class="op">[[</span><span class="st">"value"</span><span class="op">]</span><span class="op">]</span>,
   INDEX <span class="op">=</span> <span class="va">nsite</span><span class="op">[[</span><span class="st">"_id"</span><span class="op">]</span><span class="op">]</span>,
   FUN <span class="op">=</span> <span class="va">length</span>,
   simplify <span class="op">=</span> <span class="cn">TRUE</span>
 <span class="op">)</span>
 <span class="va">nsite</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>
   <span class="st">"_id"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">nsite</span><span class="op">)</span>,
-  <span class="va">nsite</span>, 
+  <span class="va">nsite</span>,
   check.names <span class="op">=</span> <span class="cn">FALSE</span>,
   stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span>,
   row.names <span class="op">=</span> <span class="cn">NULL</span>
@@ -556,9 +556,9 @@ examples):</p>
 
 <span class="co"># [3.] randomised?</span>
 <span class="va">ncon</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dfName2Value.html">dfName2Value</a></span><span class="op">(</span>
-  df <span class="op">=</span> <span class="va">result</span>, 
+  df <span class="op">=</span> <span class="va">result</span>,
   valuename <span class="op">=</span> <span class="st">"study_design_info.allocation"</span>
-<span class="op">)</span> 
+<span class="op">)</span>
 
 <span class="co"># merge sets</span>
 <span class="va">nset</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">nsubj</span>, <span class="va">nsite</span>, by <span class="op">=</span> <span class="st">"_id"</span><span class="op">)</span>
@@ -566,18 +566,18 @@ examples):</p>
 
 <span class="co"># Example plot</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">nset</span><span class="op">)</span> <span class="op">+</span> 
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">nset</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Neuroblastoma trials with results"</span>,
        subtitle <span class="op">=</span> <span class="st">"clinicaltrials.gov"</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>
     mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>
       x <span class="op">=</span> <span class="va">nsite</span>,
       y <span class="op">=</span> <span class="va">value.x</span>,
-      colour <span class="op">=</span> <span class="va">value.y</span> <span class="op">==</span> <span class="st">"Randomized"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_log10</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
+      colour <span class="op">=</span> <span class="va">value.y</span> <span class="op">==</span> <span class="st">"Randomized"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_log10</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_log10</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"Number of sites"</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ylab</a></span><span class="op">(</span><span class="st">"Total number of subjects"</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"Number of sites"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ylab</a></span><span class="op">(</span><span class="st">"Total number of subjects"</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"Randomised?"</span><span class="op">)</span>
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggsave</a></span><span class="op">(</span>filename <span class="op">=</span> <span class="st">"man/figures/README-ctrdata_results_neuroblastoma.png"</span>,
        width <span class="op">=</span> <span class="fl">5</span>, height <span class="op">=</span> <span class="fl">3</span>, units <span class="op">=</span> <span class="st">"in"</span><span class="op">)</span></code></pre></div>
