@@ -18,13 +18,13 @@ aggregating and analysing this information; it can be used for the
 -   EU Clinical Trials Register (“EUCTR”,
     <https://www.clinicaltrialsregister.eu/>)
 -   ClinicalTrials.gov (“CTGOV”, <https://clinicaltrials.gov/>)
--   ISRCTN (<https://www.isrctn.com/>) 🔔new in v1.6.0
+-   ISRCTN (<https://www.isrctn.com/>)
 
 The motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created by it. This
-README was reviewed on 2022-04-23 for v1.9.0.9000.
+README was reviewed on 2022-04-24 for v1.9.1.
 
 Main features:
 
@@ -37,8 +37,8 @@ Main features:
 
 -   Retrieved (downloaded) trial information is transformed and stored
     in a document-centric database, for fast and offline access. Uses
-    `PostgreSQL` (🔔new in v1.8.0.9000), `RSQLite` or `MongoDB` as
-    databases, via R package `nodbi`: see section
+    `PostgreSQL` (🔔new in v1.9.0), `RSQLite` or `MongoDB` as databases,
+    via R package `nodbi`: see section
     [Databases](#databases-that-can-be-used-with-ctrdata) below. Easily
     re-run a previous query to update a database.
 
@@ -46,7 +46,7 @@ Main features:
     functions) or others systems. Unique (de-duplicated) trial records
     are identified across registers. `ctrdata` can merge and recode
     information (fields) and also provides easy access even to
-    deeply-nested fields (🔔 new in v1.4.0).
+    deeply-nested fields (new in v1.4.0).
 
 Remember to respect the registers’ terms and conditions (see
 `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this

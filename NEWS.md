@@ -1,10 +1,9 @@
-# ctrdata 1.9.0.9000
- - 2022-03-13
- - new development version
- - editorial update vignettes [2021-03-20]
- - minor bugfix in dbGetFieldsIntoDf() [2021-03-20]
- - type e811... variables [2022-04-02]
- - fixed annotations sequence mix up for some backends
+# ctrdata 1.9.1
+ - 2022-04-24
+ - type e811... variables
+ - bugfix in dbGetFieldsIntoDf
+ - bugfix annotations mix up for some backends
+ - editorial update vignettes
  
 # ctrdata 1.9.0
  - 2022-03-13
