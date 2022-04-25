@@ -644,7 +644,7 @@ ctrGetQueryUrl <- function(
 #' @param activesubstance An active substance, in an atomic character vector
 #'
 #' @return A character vector of the active substance (input parameter) and
-#'  synonyms, if any were found
+#'  synonyms, or NULL if active substance was not found and may be invalid
 #'
 #' @importFrom xml2 read_html
 #' @importFrom rvest html_node html_table
@@ -676,9 +676,24 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "") {
 
   # getting synonyms
   ctgovfirstpageurl <-
-    paste0("https://clinicaltrials.gov/ct2/results/details?term=",
-           activesubstance)
-  tmp <- xml2::read_html(x = utils::URLencode(ctgovfirstpageurl))
+    utils::URLencode(
+      paste0("https://clinicaltrials.gov/ct2/results/details?term=",
+             activesubstance))
+  tmp <- try({
+    xml2::read_html(x = ctgovfirstpageurl)},
+    silent = TRUE)
+
+  # check result
+  if (inherits(tmp, "try-error")) {
+    if (attr(tmp, "condition")[["message"]] == "HTTP error 404.") {
+      # 404 means active substance not found, early exit
+      message("Check active substance '", as, "', may not exist.")
+      return(NULL)
+    } else {
+      # present error
+      stop(tmp)
+    }
+  }
 
   # extract from table "Terms and Synonyms Searched:"
   tmp <- rvest::html_node(

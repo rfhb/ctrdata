@@ -26,3 +26,9 @@ expect_error(
   ctrFindActiveSubstanceSynonyms(
     activesubstance = iris)
 )
+
+# test
+expect_null(
+  suppressMessages(
+    ctrFindActiveSubstanceSynonyms("ISURELYDONOTEXIST"))
+)

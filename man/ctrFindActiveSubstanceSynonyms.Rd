@@ -11,7 +11,7 @@ ctrFindActiveSubstanceSynonyms(activesubstance = "")
 }
 \value{
 A character vector of the active substance (input parameter) and
- synonyms, if any were found
+ synonyms, or NULL if active substance was not found and may be invalid
 }
 \description{
 An active substance can be identified by a recommended international
