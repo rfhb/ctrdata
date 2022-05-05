@@ -646,8 +646,8 @@ ctrGetQueryUrl <- function(
 #' @return A character vector of the active substance (input parameter) and
 #'  synonyms, or NULL if active substance was not found and may be invalid
 #'
-#' @importFrom xml2 read_html
-#' @importFrom rvest html_node html_table
+#' @importFrom httr GET
+#' @importFrom rvest html_element html_table read_html
 #'
 #' @export
 #'
@@ -663,54 +663,48 @@ ctrGetQueryUrl <- function(
 ctrFindActiveSubstanceSynonyms <- function(activesubstance = "") {
 
   # check parameters
-  if ((length(activesubstance) != 1) ||
+  if ((length(activesubstance) != 1L) ||
       !is.character(activesubstance) ||
-      (nchar(activesubstance) == 0)) {
+      (nchar(activesubstance) == 0L)) {
     stop("ctrFindActiveSubstanceSynonyms(): ",
          "activesubstance should be a single string.",
          call. = FALSE)
   }
 
-  # initialise output variable
-  as <- activesubstance
-
-  # getting synonyms
+  # getting synonyms using httr since rvest::read_html
+  # does not close network connection in case of 404
   ctgovfirstpageurl <-
     utils::URLencode(
       paste0("https://clinicaltrials.gov/ct2/results/details?term=",
              activesubstance))
   tmp <- try({
-    xml2::read_html(x = ctgovfirstpageurl)},
-    silent = TRUE)
+    httr::GET(url = ctgovfirstpageurl)
+  }, silent = TRUE)
 
   # check result
-  if (inherits(tmp, "try-error")) {
-    if (attr(tmp, "condition")[["message"]] == "HTTP error 404.") {
-      # 404 means active substance not found, early exit
-      message("Check active substance '", as, "', may not exist.")
-      return(NULL)
-    } else {
-      # present error
-      stop(tmp)
-    }
+  if (tmp[["status_code"]] == 404L) {
+    # 404 means active substance not found, thus early exit
+    message("Check active substance '", activesubstance, "', may not exist.")
+    return(NULL)
   }
 
+  # make page content accessible to rvest
+  tmp <- rvest::read_html(httr::content(tmp, as = "text"))
+
   # extract from table "Terms and Synonyms Searched:"
-  tmp <- rvest::html_node(
-    tmp, xpath =
-      '//*[@id="searchdetail"]//table[1]')
+  tmp <- rvest::html_element(
+    tmp, xpath = '//*[@id="searchdetail"]//table[1]')
   tmp <- rvest::html_table(tmp, fill = TRUE)
-  asx <- tmp[[1]]
+  asx <- tmp[["Terms"]]
   asx <- asx[!grepl(
-    paste0("(more|synonyms|terms|", as, "|",
-           paste0(unlist(strsplit(as, " "), use.names = FALSE),
+    paste0("(more|synonyms|terms|", activesubstance, "|",
+           paste0(unlist(strsplit(activesubstance, " "), use.names = FALSE),
                   collapse = "|"), ")"), asx,
     ignore.case = TRUE)]
 
   # prepare and return output
-  as <- c(as, asx)
-  as <- unique(as)
-  return(as)
+  asx <- c(activesubstance, asx)
+  return(unique(asx))
 }
 # end ctrFindActiveSubstanceSynonyms
 
