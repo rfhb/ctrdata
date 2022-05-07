@@ -1375,7 +1375,7 @@ dbGetFieldsIntoDf <- function(fields = "",
 
   # check parameters
   if (!is.vector(fields) |
-      class(fields) != "character") {
+      !isa(fields, "character")) {
     stop("Input should be a vector of strings of field names.", call. = FALSE)
   }
 
@@ -2235,7 +2235,7 @@ dfMergeTwoVariablesRelevel <- function(
   }
 
   # other checks
-  if (!any(class(df) == "data.frame")) {
+  if (!inherits(df, "data.frame")) {
     stop("Need a data frame as input.", call. = FALSE)
   }
   if (length(colnames) != 2) {
@@ -2251,7 +2251,7 @@ dfMergeTwoVariablesRelevel <- function(
 
   # bind as ...
   if (class(df[[1]]) == class(df[[2]]) &&
-      class(df[[1]]) != "character") {
+      !isa(df[[1]], "character")) {
     # check
     if (nrow(na.omit(df[!vapply(df[[1]], is.null, logical(1L)) &
                         !vapply(df[[2]], is.null, logical(1L)), ,
@@ -2280,7 +2280,7 @@ dfMergeTwoVariablesRelevel <- function(
 
   # type where possible
   if (class(df[[1]]) == class(df[[2]]) &&
-      class(df[[1]]) != "character") {
+      !isa(df[[1]], "character")) {
     mode(tmp) <- mode(df[[1]])
     class(tmp) <- class(df[[1]])
   }
@@ -2289,7 +2289,7 @@ dfMergeTwoVariablesRelevel <- function(
   if (!is.null(levelslist)) {
 
     # check
-    if (class(levelslist) != "list") {
+    if (!isa(levelslist, "list")) {
       stop("Need list for parameter 'levelslist'.", call. = FALSE)
     }
 
@@ -2363,7 +2363,7 @@ dfFindUniqueEuctrRecord <- function(
   include3rdcountrytrials = TRUE) {
 
   # check parameters
-  if (class(df) != "data.frame") {
+  if (!isa(df, "data.frame")) {
     stop("Parameter df is not a data frame.", call. = FALSE)
   }
   #
@@ -2497,7 +2497,7 @@ typeField <- function(dv, fn) {
   if (!is.atomic(dv)) return(dv)
 
   # early exit if dv is not character
-  if (class(dv) != "character") return(dv)
+  if (!isa(dv, "character")) return(dv)
 
   # clean up for all character vectors
   # - if NA as string, change to NA
