@@ -427,6 +427,25 @@ ggsave(filename = "man/figures/README-ctrdata_results_neuroblastoma.png",
 
 ![Neuroblastoma
 trials](https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/dev/reference/figures/README-ctrdata_results_neuroblastoma.png)
+\* Retrieve protocols, statistical analysis plans and other documents
+into a local folder `./files/`
+
+``` r
+# eudract files are downloaded as part of results
+ctrLoadQueryIntoDb(
+  queryterm = q,
+  euctrresults = TRUE, 
+  euctrresultspdfpath = "./files/",
+  con = db)
+
+# ctgov files can separately be downloaded
+sapply(
+  dbGetFieldsIntoDf(
+    fields = "provided_document_section.provided_document.document_url",
+    con = db)[[2]], 
+  function(f) download.file(
+    f, paste0("./files/", gsub("[/:]", "-", f))))
+```
 
 ## Meta
 
