@@ -48,9 +48,10 @@
 #' available history of results publication in EUCTR.
 #' This is quite time-consuming (default is \code{FALSE}).
 #'
-#' @param euctrresultsfilespath If a valid directory is specified,
-#' save results files (e.g., PDF files of result publications from
-#' EUCTR into this directory (default is \code{NULL}).
+#' @param euctrresultsfilespath If this is a relative or absolute
+#' path to a  directory that exists or can be created,
+#' save results files into it, e.g., PDF files of result publications
+#' that had been submitted to EUCTR (default is \code{NULL}).
 #'
 #' @param euctrresultspdfpath Deprecated, use \code{euctrresultsfilespath}
 #'
@@ -127,6 +128,12 @@ ctrLoadQueryIntoDb <- function(
   verbose = FALSE) {
 
   ## check params
+
+  # - deprecated
+  if (!is.null(euctrresultspdfpath)) {
+    warning("Parameter 'euctrresultspdfpath' is deprecated, ",
+            "use euctrresultsfilespath.", call. = FALSE)
+  }
 
   # - minimum information
   if (is.null(queryterm) && is.null(querytoupdate)) {
@@ -1279,9 +1286,16 @@ ctrLoadQueryIntoDbEuctr <- function(
   if (euctrresults &&
       (is.na(file.info(euctrresultsfilespath)[["isdir"]]) ||
        !file.info(euctrresultsfilespath)[["isdir"]])) {
-    warning("Invalid directory specified for 'euctrresultsfilespath': ",
-            euctrresultsfilespath, call. = FALSE, immediate. = TRUE)
-    euctrresultsfilespath <- tempDir
+    createdDir <- try(
+      dir.create(euctrresultsfilespath, recursive = TRUE, showWarnings = FALSE),
+      silent = TRUE)
+    if (!inherits(createdDir, "try-errror") && createdDir) {
+      message("Created directory ", euctrresultsfilespath)
+    } else {
+      warning("Directory could not be created for 'euctrresultsfilespath' ",
+              euctrresultsfilespath, ", ignored", call. = FALSE)
+      euctrresultsfilespath <- tempDir
+    }
   }
   # canonical directory path
   euctrresultsfilespath <- normalizePath(euctrresultsfilespath, mustWork = TRUE)

@@ -57,9 +57,10 @@ are always retrieved and loaded.)}
 available history of results publication in EUCTR.
 This is quite time-consuming (default is \code{FALSE}).}
 
-\item{euctrresultsfilespath}{If a valid directory is specified,
-save results files (e.g., PDF files of result publications from
-EUCTR into this directory (default is \code{NULL}).}
+\item{euctrresultsfilespath}{If this is a relative or absolute
+path to a  directory that exists or can be created,
+save results files into it, e.g., PDF files of result publications
+that had been submitted to EUCTR (default is \code{NULL}).}
 
 \item{euctrresultspdfpath}{Deprecated, use \code{euctrresultsfilespath}}
 
