@@ -677,6 +677,12 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "") {
     utils::URLencode(
       paste0("https://clinicaltrials.gov/ct2/results/details?term=",
              activesubstance))
+
+  # set user agent for httr and curl to inform registers
+  httr::set_config(httr::user_agent(
+    paste0("ctrdata/", utils::packageDescription("ctrdata")$Version)))
+
+  # get webpage
   tmp <- try({
     httr::GET(url = ctgovfirstpageurl)
   }, silent = TRUE)
