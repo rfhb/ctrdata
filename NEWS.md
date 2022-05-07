@@ -1,3 +1,7 @@
+# ctrdata 1.9.1.9002 (2022-05-07)
+ - ctrLoadQueryIntoDb new parameter euctrresultsfilespath, deprecating euctrresultspdfpath
+ - ctrLoadQueryIntoDb now also extracts and saves results files other than PDF files
+ 
 # ctrdata 1.9.1.9001 (2022-05-04)
  - ctrFindActiveSubstanceSynonyms() returns NULL for non-existing active substance
  

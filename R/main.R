@@ -48,9 +48,11 @@
 #' available history of results publication in EUCTR.
 #' This is quite time-consuming (default is \code{FALSE}).
 #'
-#' @param euctrresultspdfpath If a valid directory is specified,
-#' save PDF files of result publications from EUCTR into
-#' this directory (default is \code{NULL}).
+#' @param euctrresultsfilespath If a valid directory is specified,
+#' save results files (e.g., PDF files of result publications from
+#' EUCTR into this directory (default is \code{NULL}).
+#'
+#' @param euctrresultspdfpath Deprecated, use \code{euctrresultsfilespath}
 #'
 #' @param annotation.text Text to be including in the records
 #' retrieved with the current query, in the field "annotation".
@@ -115,6 +117,7 @@ ctrLoadQueryIntoDb <- function(
   forcetoupdate = FALSE,
   euctrresults = FALSE,
   euctrresultshistory = FALSE,
+  euctrresultsfilespath = euctrresultspdfpath,
   euctrresultspdfpath = NULL,
   annotation.text = "",
   annotation.mode = "append",
@@ -264,7 +267,7 @@ ctrLoadQueryIntoDb <- function(
                  register = register,
                  euctrresults = euctrresults,
                  euctrresultshistory = euctrresultshistory,
-                 euctrresultspdfpath = euctrresultspdfpath,
+                 euctrresultsfilespath = euctrresultsfilespath,
                  annotation.text = annotation.text,
                  annotation.mode = annotation.mode,
                  parallelretrievals = parallelretrievals,
@@ -1015,7 +1018,7 @@ ctrLoadQueryIntoDbCtgov <- function(
   register,
   euctrresults,
   euctrresultshistory,
-  euctrresultspdfpath,
+  euctrresultsfilespath,
   annotation.text,
   annotation.mode,
   parallelretrievals,
@@ -1162,7 +1165,7 @@ ctrLoadQueryIntoDbEuctr <- function(
   register,
   euctrresults,
   euctrresultshistory,
-  euctrresultspdfpath,
+  euctrresultsfilespath,
   annotation.text,
   annotation.mode,
   parallelretrievals,
@@ -1270,18 +1273,18 @@ ctrLoadQueryIntoDbEuctr <- function(
   if (!verbose) on.exit(unlink(tempDir, recursive = TRUE), add = TRUE)
 
   # check results parameters
-  if (is.null(euctrresultspdfpath)) {
-    euctrresultspdfpath <- tempDir
+  if (is.null(euctrresultsfilespath)) {
+    euctrresultsfilespath <- tempDir
   }
   if (euctrresults &&
-      (is.na(file.info(euctrresultspdfpath)[["isdir"]]) ||
-       !file.info(euctrresultspdfpath)[["isdir"]])) {
-    warning("Invalid directory specified for 'euctrresultspdfpath': ",
-            euctrresultspdfpath, call. = FALSE, immediate. = TRUE)
-    euctrresultspdfpath <- tempDir
+      (is.na(file.info(euctrresultsfilespath)[["isdir"]]) ||
+       !file.info(euctrresultsfilespath)[["isdir"]])) {
+    warning("Invalid directory specified for 'euctrresultsfilespath': ",
+            euctrresultsfilespath, call. = FALSE, immediate. = TRUE)
+    euctrresultsfilespath <- tempDir
   }
   # canonical directory path
-  euctrresultspdfpath <- normalizePath(euctrresultspdfpath, mustWork = TRUE)
+  euctrresultsfilespath <- normalizePath(euctrresultsfilespath, mustWork = TRUE)
 
   ## download all text files from pages
 
@@ -1503,11 +1506,11 @@ ctrLoadQueryIntoDbEuctr <- function(
     }
 
     # new line
-    message(", extracting ", appendLF = FALSE)
+    message(", extracting: ", appendLF = FALSE)
 
     # unzip downloaded file and rename any PDF files
     tmp <- lapply(
-      fp, function(f) {
+      fp, function(f) { # fp was returned by download above
 
         if (file.exists(f) &&
             file.size(f) != 0L) {
@@ -1517,22 +1520,22 @@ ctrLoadQueryIntoDbEuctr <- function(
             exdir = tempDir)
           # results in files such as
           # EU-CTR 2008-003606-33 v1 - Results.xml
+          nonXmlFiles <- tmp[!grepl("Results[.]xml$", tmp)]
+          euctrnr <- gsub(paste0(".*(", regEuctr, ").*"),
+                          "\\1", tmp[grepl("Results[.]xml$", tmp)])[1]
 
-          if (any(grepl("pdf$", tmp))) {
-            message("PDF ", appendLF = FALSE)
-            if (euctrresultspdfpath != tempDir) {
-              euctrnr <- gsub(paste0(".*(", regEuctr, ").*"),
-                              "\\1", tmp[!grepl("pdf$", tmp)])
-              # move PDF file(s) to user specified directory
+          if (length(nonXmlFiles)) {
+            message("F ", appendLF = FALSE)
+            if (euctrresultsfilespath != tempDir) {
+              # move results file(s) to user specified directory
               saved <- try(file.rename(
-                from = tmp[grepl("pdf$", tmp)],
-                to = normalizePath(
-                  paste0(euctrresultspdfpath, "/",
-                         euctrnr, "--",
-                         basename(tmp[grepl("pdf$", tmp)])
-                  ), mustWork = FALSE)), silent = TRUE)
+                from = nonXmlFiles,
+                to = paste0(
+                  normalizePath(path = euctrresultsfilespath, mustWork = TRUE),
+                  "/", euctrnr, "--", basename(nonXmlFiles)
+                )), silent = TRUE)
               if (any(!saved)) {
-                warning("Could not save ", tmp[!saved],
+                warning("Could not save ", nonXmlFiles[!saved],
                         call. = FALSE, immediate. = TRUE)
               }
             } # if paths
@@ -1550,7 +1553,7 @@ ctrLoadQueryIntoDbEuctr <- function(
 
       }) # lapply fp
 
-    ## run conversion
+    ## run conversion of XML files
     ctrConvertToJSON(tempDir, "euctr2ndjson_results.php", verbose)
 
     # iterate over results files
@@ -1791,9 +1794,9 @@ ctrLoadQueryIntoDbEuctr <- function(
       message("= Imported or updated results history for ",
               importedresultshistory, " trials")
     }
-    if (euctrresultspdfpath != tempDir) {
+    if (euctrresultsfilespath != tempDir) {
       message("= Results PDF files if any saved in '",
-              euctrresultspdfpath, "'")
+              euctrresultsfilespath, "'")
     }
 
   } # if euctrresults
@@ -1821,7 +1824,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
   register,
   euctrresults,
   euctrresultshistory,
-  euctrresultspdfpath,
+  euctrresultsfilespath,
   annotation.text,
   annotation.mode,
   parallelretrievals,
