@@ -1494,7 +1494,7 @@ ctrLoadQueryIntoDbEuctr <- function(
       # save to file
       if (res$status_code == 200L) {
         writeBin(object = res$content, con = fp[pc])
-        message("\r", pc, " downloaded", appendLF = FALSE)
+        message("\r", pc, " downloaded or checked", appendLF = FALSE)
       }}
     #
     tmp <- lapply(
