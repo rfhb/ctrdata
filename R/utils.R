@@ -1381,7 +1381,7 @@ dbGetFieldsIntoDf <- function(fields = "",
 
   # check parameters
   if (!is.vector(fields) |
-      !isa(fields, "character")) {
+      !all(class(fields) %in% "character")) {
     stop("Input should be a vector of strings of field names.", call. = FALSE)
   }
 
@@ -2257,7 +2257,7 @@ dfMergeTwoVariablesRelevel <- function(
 
   # bind as ...
   if (class(df[[1]]) == class(df[[2]]) &&
-      !isa(df[[1]], "character")) {
+      !all(class(df[[1]]) %in% "character")) {
     # check
     if (nrow(na.omit(df[!vapply(df[[1]], is.null, logical(1L)) &
                         !vapply(df[[2]], is.null, logical(1L)), ,
@@ -2286,7 +2286,7 @@ dfMergeTwoVariablesRelevel <- function(
 
   # type where possible
   if (class(df[[1]]) == class(df[[2]]) &&
-      !isa(df[[1]], "character")) {
+      !all(class(df[[1]]) %in% "character")) {
     mode(tmp) <- mode(df[[1]])
     class(tmp) <- class(df[[1]])
   }
@@ -2295,7 +2295,7 @@ dfMergeTwoVariablesRelevel <- function(
   if (!is.null(levelslist)) {
 
     # check
-    if (!isa(levelslist, "list")) {
+    if (!all(class(levelslist) %in% "list")) {
       stop("Need list for parameter 'levelslist'.", call. = FALSE)
     }
 
@@ -2369,7 +2369,7 @@ dfFindUniqueEuctrRecord <- function(
   include3rdcountrytrials = TRUE) {
 
   # check parameters
-  if (!isa(df, "data.frame")) {
+  if (!all(class(df) %in% "data.frame")) {
     stop("Parameter df is not a data frame.", call. = FALSE)
   }
   #
@@ -2503,7 +2503,7 @@ typeField <- function(dv, fn) {
   if (!is.atomic(dv)) return(dv)
 
   # early exit if dv is not character
-  if (!isa(dv, "character")) return(dv)
+  if (!all(class(dv) %in% "character")) return(dv)
 
   # clean up for all character vectors
   # - if NA as string, change to NA
@@ -2915,18 +2915,3 @@ checkBinary <- function(b = NULL, verbose = FALSE) {
   invisible(all(out))
 
 }
-
-
-#' isa
-#'
-#' @keywords internal
-#' @noRd
-#'
-#' @importFrom methods is
-#'
-isa <- function(x, what) {
-  if (isS4(x))
-    methods::is(x, what)
-  else all(class(x) %in% what)
-}
-
