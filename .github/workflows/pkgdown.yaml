@@ -22,6 +22,8 @@ jobs:
           use-public-rspm: true
 
       - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::pkgdown, local::.
 
       - name: Install package
         run: R CMD INSTALL .
