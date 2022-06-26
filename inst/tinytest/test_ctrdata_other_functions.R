@@ -308,7 +308,9 @@ dF <- data.frame(
   gamma_1 = 1:5,
   check.names = FALSE
 )
-dL <- dfTrials2Long(dF)
+dL <- suppressMessages(
+  dfTrials2Long(dF)
+)
 
 # test
 expect_equal(nrow(dL), 15L)
