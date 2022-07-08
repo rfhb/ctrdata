@@ -1,3 +1,7 @@
+# ctrdata 1.10.9000 (2022-07-07)
+ - new development version
+ - fix documentation issue (https://stat.ethz.ch/pipermail/r-package-devel/2022q3/008240.html)
+ 
 # ctrdata 1.10.0 (2022-07-01)
  - ctrLoadQueryIntoDb new parameter euctrresultsfilespath, deprecating euctrresultspdfpath
  - ctrLoadQueryIntoDb now also extracts and saves results files other than PDF files
