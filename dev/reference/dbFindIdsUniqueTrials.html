@@ -20,7 +20,7 @@ function to provide a vector of identifiers of deduplicated trials."><meta name=
     
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.9.1.9002</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.10.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -74,13 +74,13 @@ function to provide a vector of identifiers of deduplicated trials.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">dbFindIdsUniqueTrials</span><span class="op">(</span>
-  preferregister <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"EUCTR"</span>, <span class="st">"CTGOV"</span>, <span class="st">"ISRCTN"</span><span class="op">)</span>,
-  prefermemberstate <span class="op">=</span> <span class="st">"DE"</span>,
-  include3rdcountrytrials <span class="op">=</span> <span class="cn">TRUE</span>,
-  <span class="va">con</span>,
-  verbose <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">dbFindIdsUniqueTrials</span><span class="op">(</span></span>
+<span>  preferregister <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"EUCTR"</span>, <span class="st">"CTGOV"</span>, <span class="st">"ISRCTN"</span><span class="op">)</span>,</span>
+<span>  prefermemberstate <span class="op">=</span> <span class="st">"DE"</span>,</span>
+<span>  include3rdcountrytrials <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">con</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -89,6 +89,8 @@ function to provide a vector of identifiers of deduplicated trials.</p>
 <dd><p>A vector of the order of preference for
 registers from which to generate unique _id's, default
 <code>c("EUCTR", "CTGOV", "ISRCTN")</code></p></dd>
+
+
 <dt>prefermemberstate</dt>
 <dd><p>Code of single EU Member State for which records
 should returned. If not available, a record for DE or lacking this, any
@@ -96,33 +98,42 @@ random Member State's record for the trial will be returned.
 For a list of codes of EU  Member States, please see vector
 <code>countriesEUCTR</code>. Specifying "3RD" will return the Third Country
 record of trials, where available.</p></dd>
+
+
 <dt>include3rdcountrytrials</dt>
 <dd><p>A logical value if trials should be retained
 that are conducted exclusively in third countries, that is, outside
 the European Union. Ignored if <code>prefermemberstate</code> is set to "3RD".</p></dd>
+
+
 <dt>con</dt>
 <dd><p>A connection object, see section
 `Databases` in <a href="ctrdata-package.html">ctrdata-package</a></p></dd>
+
+
 <dt>verbose</dt>
 <dd><p>If set to <code>TRUE</code>, prints out which fields
 of the registers are used to find corresponding trial records</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A vector with strings of keys ("_id") of records in
+    
+
+<p>A vector with strings of keys ("_id") of records in
 the collection that represent unique trials.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="va">dbc</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">src_sqlite</a></span><span class="op">(</span>collection <span class="op">=</span> <span class="st">"my_collection"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">dbFindIdsUniqueTrials</span><span class="op">(</span>con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">dbc</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">src_sqlite</a></span><span class="op">(</span>collection <span class="op">=</span> <span class="st">"my_collection"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">dbFindIdsUniqueTrials</span><span class="op">(</span>con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -134,7 +145,7 @@ the collection that represent unique trials.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
     </footer></div>

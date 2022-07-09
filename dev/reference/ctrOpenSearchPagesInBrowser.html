@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.9.1.9002</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.10.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,7 +59,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">ctrOpenSearchPagesInBrowser</span><span class="op">(</span>url <span class="op">=</span> <span class="st">""</span>, register <span class="op">=</span> <span class="st">""</span>, copyright <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ctrOpenSearchPagesInBrowser</span><span class="op">(</span>url <span class="op">=</span> <span class="st">""</span>, register <span class="op">=</span> <span class="st">""</span>, copyright <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -67,37 +67,46 @@
     <dl><dt>url</dt>
 <dd><p>of search results page to show in the browser.
 Can be the return value of <a href="ctrGetQueryUrl.html">ctrGetQueryUrl</a> or <a href="dbQueryHistory.html">dbQueryHistory</a>.</p></dd>
+
+
 <dt>register</dt>
 <dd><p>Register(s) to open. Either "EUCTR" or "CTGOV" or a vector of
 both. Default is to open both registers' advanced search pages. To open the
 browser with a previous search, the output of <a href="ctrGetQueryUrl.html">ctrGetQueryUrl</a>
 or one row from <a href="dbQueryHistory.html">dbQueryHistory</a> can be used.</p></dd>
+
+
 <dt>copyright</dt>
 <dd><p>(Optional) If set to <code>TRUE</code>, opens copyright pages of
 register(s).</p></dd>
+
+
 <dt>...</dt>
 <dd><p>May include the deprecated <code>input</code> parameter.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Always <code>TRUE</code>, invisibly.</p>
+    
+
+<p>Always <code>TRUE</code>, invisibly.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Check copyrights before using registers</span></span>
-<span class="r-in"><span class="fu">ctrOpenSearchPagesInBrowser</span><span class="op">(</span>copyright <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># open last query loaded into the collection</span></span>
-<span class="r-in"><span class="va">dbc</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">src_sqlite</a></span><span class="op">(</span></span>
-<span class="r-in">  collection <span class="op">=</span> <span class="st">"previously_created"</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="fu">ctrOpenSearchPagesInBrowser</span><span class="op">(</span></span>
-<span class="r-in">  <span class="fu"><a href="dbQueryHistory.html">dbQueryHistory</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Check copyrights before using registers</span></span></span>
+<span class="r-in"><span><span class="fu">ctrOpenSearchPagesInBrowser</span><span class="op">(</span>copyright <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># open last query loaded into the collection</span></span></span>
+<span class="r-in"><span><span class="va">dbc</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">src_sqlite</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  collection <span class="op">=</span> <span class="st">"previously_created"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">ctrOpenSearchPagesInBrowser</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="dbQueryHistory.html">dbQueryHistory</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -109,7 +118,7 @@ register(s).</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
     </footer></div>
