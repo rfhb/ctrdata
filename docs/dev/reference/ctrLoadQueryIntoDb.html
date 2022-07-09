@@ -26,7 +26,7 @@ records. However, user annotations of trial records are kept."><meta name="twitt
     
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.9.1.9002</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.10.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -83,22 +83,22 @@ records. However, user annotations of trial records are kept.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">ctrLoadQueryIntoDb</span><span class="op">(</span>
-  queryterm <span class="op">=</span> <span class="cn">NULL</span>,
-  register <span class="op">=</span> <span class="st">""</span>,
-  querytoupdate <span class="op">=</span> <span class="cn">NULL</span>,
-  forcetoupdate <span class="op">=</span> <span class="cn">FALSE</span>,
-  euctrresults <span class="op">=</span> <span class="cn">FALSE</span>,
-  euctrresultshistory <span class="op">=</span> <span class="cn">FALSE</span>,
-  euctrresultsfilespath <span class="op">=</span> <span class="va">euctrresultspdfpath</span>,
-  euctrresultspdfpath <span class="op">=</span> <span class="cn">NULL</span>,
-  annotation.text <span class="op">=</span> <span class="st">""</span>,
-  annotation.mode <span class="op">=</span> <span class="st">"append"</span>,
-  parallelretrievals <span class="op">=</span> <span class="fl">10L</span>,
-  only.count <span class="op">=</span> <span class="cn">FALSE</span>,
-  con <span class="op">=</span> <span class="cn">NULL</span>,
-  verbose <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ctrLoadQueryIntoDb</span><span class="op">(</span></span>
+<span>  queryterm <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  register <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  querytoupdate <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  forcetoupdate <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  euctrresults <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  euctrresultshistory <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  euctrresultsfilespath <span class="op">=</span> <span class="va">euctrresultspdfpath</span>,</span>
+<span>  euctrresultspdfpath <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  annotation.text <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  annotation.mode <span class="op">=</span> <span class="st">"append"</span>,</span>
+<span>  parallelretrievals <span class="op">=</span> <span class="fl">10L</span>,</span>
+<span>  only.count <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  con <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -111,11 +111,15 @@ a register, or the data frame returned by the
 <code>register</code>, a string with query elements of a search URL.
 The queryterm is recorded in the <code>collection</code> for later
 use to update records.</p></dd>
+
+
 <dt>register</dt>
 <dd><p>String with abbreviation of register to query,
 either "EUCTR", "CTGOV" or "ISRCTN". Not needed
 if <code>queryterm</code> provide the information which register to
 query (see <code>queryterm</code>).</p></dd>
+
+
 <dt>querytoupdate</dt>
 <dd><p>Either the word "last" or the number of the
 query (based on <a href="dbQueryHistory.html">dbQueryHistory</a>) that should be run to
@@ -125,52 +129,77 @@ This parameter takes precedence over <code>queryterm</code>.
 For EUCTR, updates are available only for the last seven days;
 the query is run again if more time has passed since it was
 run last.</p></dd>
+
+
 <dt>forcetoupdate</dt>
 <dd><p>If <code>TRUE</code>, run again the query
 given in <code>querytoupdate</code>, irrespective of when it was
 run last (default is <code>FALSE</code>).</p></dd>
+
+
 <dt>euctrresults</dt>
 <dd><p>If <code>TRUE</code>, also download available
 results when retrieving and loading trials from EUCTR. This
 slows down this function. (For CTGOV, all available results
 are always retrieved and loaded.)</p></dd>
+
+
 <dt>euctrresultshistory</dt>
 <dd><p>If <code>TRUE</code>, also download
 available history of results publication in EUCTR.
 This is quite time-consuming (default is <code>FALSE</code>).</p></dd>
+
+
 <dt>euctrresultsfilespath</dt>
 <dd><p>If this is a relative or absolute
 path to a  directory that exists or can be created,
 save results files into it, e.g., PDF files of result publications
 that had been submitted to EUCTR (default is <code>NULL</code>).</p></dd>
+
+
 <dt>euctrresultspdfpath</dt>
 <dd><p>Deprecated, use <code>euctrresultsfilespath</code></p></dd>
+
+
 <dt>annotation.text</dt>
 <dd><p>Text to be including in the records
 retrieved with the current query, in the field "annotation".</p></dd>
+
+
 <dt>annotation.mode</dt>
 <dd><p>One of "append" (default), "prepend"
 or "replace" for new annotation.text with respect to any
 existing annotation for the records retrieved with the
 current query.</p></dd>
+
+
 <dt>parallelretrievals</dt>
 <dd><p>Number of parallel downloads of
 information from the register, defaults to 10.</p></dd>
+
+
 <dt>only.count</dt>
 <dd><p>Set to <code>TRUE</code> to return only the
 number of trial records found in the register for the query.
 Does not load trial information into the database.
 Default is <code>FALSE</code>.</p></dd>
+
+
 <dt>con</dt>
 <dd><p>A connection object, see section
 `Databases` in <a href="ctrdata-package.html">ctrdata-package</a></p></dd>
+
+
 <dt>verbose</dt>
 <dd><p>Printing additional information if set to
 <code>TRUE</code>; default is <code>FALSE</code>.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A list with elements
+    
+
+<p>A list with elements
 `n` (number of trial records newly imported or updated),
 `success` (a vector of _id's of successfully loaded records),
 `failed` (a vector of identifiers of records that failed to load)
@@ -182,29 +211,29 @@ collection) to facilitate documentation.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="va">dbc</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">src_sqlite</a></span><span class="op">(</span>collection <span class="op">=</span> <span class="st">"my_collection"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Retrieve protocol- and results-related information</span></span>
-<span class="r-in"><span class="co"># on a single trial identified by its EU number</span></span>
-<span class="r-in"><span class="fu">ctrLoadQueryIntoDb</span><span class="op">(</span></span>
-<span class="r-in">  queryterm <span class="op">=</span> <span class="st">"2013-001291-38"</span>,</span>
-<span class="r-in">  register <span class="op">=</span> <span class="st">"EUCTR"</span>,</span>
-<span class="r-in">  euctrresults <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span class="r-in">  con <span class="op">=</span> <span class="va">dbc</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Retrieve all information on about 2,000 ongoing</span></span>
-<span class="r-in"><span class="co"># interventional cancer trials involving children</span></span>
-<span class="r-in"><span class="co"># into the same collection as used before</span></span>
-<span class="r-in"><span class="fu">ctrLoadQueryIntoDb</span><span class="op">(</span></span>
-<span class="r-in">  queryterm <span class="op">=</span> <span class="st">"cancer&amp;recr=Open&amp;type=Intr&amp;age=0"</span>,</span>
-<span class="r-in">  register <span class="op">=</span> <span class="st">"CTGOV"</span>,</span>
-<span class="r-in">  con <span class="op">=</span> <span class="va">dbc</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">dbc</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">src_sqlite</a></span><span class="op">(</span>collection <span class="op">=</span> <span class="st">"my_collection"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Retrieve protocol- and results-related information</span></span></span>
+<span class="r-in"><span><span class="co"># on a single trial identified by its EU number</span></span></span>
+<span class="r-in"><span><span class="fu">ctrLoadQueryIntoDb</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  queryterm <span class="op">=</span> <span class="st">"2013-001291-38"</span>,</span></span>
+<span class="r-in"><span>  register <span class="op">=</span> <span class="st">"EUCTR"</span>,</span></span>
+<span class="r-in"><span>  euctrresults <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  con <span class="op">=</span> <span class="va">dbc</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Retrieve all information on about 2,000 ongoing</span></span></span>
+<span class="r-in"><span><span class="co"># interventional cancer trials involving children</span></span></span>
+<span class="r-in"><span><span class="co"># into the same collection as used before</span></span></span>
+<span class="r-in"><span><span class="fu">ctrLoadQueryIntoDb</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  queryterm <span class="op">=</span> <span class="st">"cancer&amp;recr=Open&amp;type=Intr&amp;age=0"</span>,</span></span>
+<span class="r-in"><span>  register <span class="op">=</span> <span class="st">"CTGOV"</span>,</span></span>
+<span class="r-in"><span>  con <span class="op">=</span> <span class="va">dbc</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -216,7 +245,7 @@ collection) to facilitate documentation.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
     </footer></div>

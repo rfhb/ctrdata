@@ -32,7 +32,7 @@ dfName2Value to extract the desired nested variable(s).'><meta name="twitter:car
     
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.9.1.9002</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.10.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -92,7 +92,7 @@ for complex nested data, use function <a href="dfTrials2Long.html">dfTrials2Long
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">dbGetFieldsIntoDf</span><span class="op">(</span>fields <span class="op">=</span> <span class="st">""</span>, <span class="va">con</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, stopifnodata <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">dbGetFieldsIntoDf</span><span class="op">(</span>fields <span class="op">=</span> <span class="st">""</span>, <span class="va">con</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, stopifnodata <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -101,20 +101,29 @@ for complex nested data, use function <a href="dfTrials2Long.html">dfTrials2Long
 <dd><p>Vector of one or more strings, with names of sought fields.
 See function <a href="dbFindFields.html">dbFindFields</a> for how to find names of fields.
 "item.subitem" notation is supported.</p></dd>
+
+
 <dt>con</dt>
 <dd><p>A connection object, see section
 `Databases` in <a href="ctrdata-package.html">ctrdata-package</a></p></dd>
+
+
 <dt>verbose</dt>
 <dd><p>Printing additional information if set to <code>TRUE</code>;
 (default <code>FALSE</code>).</p></dd>
+
+
 <dt>stopifnodata</dt>
 <dd><p>Stops with an error (detaul <code>TRUE</code>) or with
 a warning (<code>FALSE</code>) if the sought field is empty in all,
 or not available in any of the records in the database collection.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A data frame (or tibble, if <code>dplyr</code> is loaded)
+    
+
+<p>A data frame (or tibble, if <code>dplyr</code> is loaded)
 with columns corresponding to the sought fields.
 A column for the record `_id` will always be included.
 Each column can be either a simple data type (numeric, character, date)
@@ -128,26 +137,26 @@ collection.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">dbc</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">src_sqlite</a></span><span class="op">(</span>collection <span class="op">=</span> <span class="st">"my_collection"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># access fields that are nested within another field</span></span>
-<span class="r-in"><span class="co"># and can have multiple values with the nested field</span></span>
-<span class="r-in"><span class="fu">dbGetFieldsIntoDf</span><span class="op">(</span></span>
-<span class="r-in">  <span class="st">"b1_sponsor.b31_and_b32_status_of_the_sponsor"</span>,</span>
-<span class="r-in">  con <span class="op">=</span> <span class="va">dbc</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># access fields that include a list of values which</span></span>
-<span class="r-in"><span class="co"># (if they are strings) are concatenated with a slash</span></span>
-<span class="r-in"><span class="fu">dbGetFieldsIntoDf</span><span class="op">(</span><span class="st">"keyword"</span>, con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span></span>
-<span class="r-in"><span class="co">#           _id                                   keyword</span></span>
-<span class="r-in"><span class="co"># 1 NCT00129259 T1D / type 1 diabetes / juvenile diabetes</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">dbc</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">src_sqlite</a></span><span class="op">(</span>collection <span class="op">=</span> <span class="st">"my_collection"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># access fields that are nested within another field</span></span></span>
+<span class="r-in"><span><span class="co"># and can have multiple values with the nested field</span></span></span>
+<span class="r-in"><span><span class="fu">dbGetFieldsIntoDf</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="st">"b1_sponsor.b31_and_b32_status_of_the_sponsor"</span>,</span></span>
+<span class="r-in"><span>  con <span class="op">=</span> <span class="va">dbc</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># access fields that include a list of values which</span></span></span>
+<span class="r-in"><span><span class="co"># (if they are strings) are concatenated with a slash</span></span></span>
+<span class="r-in"><span><span class="fu">dbGetFieldsIntoDf</span><span class="op">(</span><span class="st">"keyword"</span>, con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span></span></span>
+<span class="r-in"><span><span class="co">#           _id                                   keyword</span></span></span>
+<span class="r-in"><span><span class="co"># 1 NCT00129259 T1D / type 1 diabetes / juvenile diabetes</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -159,7 +168,7 @@ collection.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
     </footer></div>

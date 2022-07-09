@@ -7,9 +7,6 @@
     <loc>https://rfhb.github.io/ctrdata/dev/LICENSE.html</loc>
   </url>
   <url>
-    <loc>https://rfhb.github.io/ctrdata/dev/articles/ctrdata_analyse.html</loc>
-  </url>
-  <url>
     <loc>https://rfhb.github.io/ctrdata/dev/articles/ctrdata_install.html</loc>
   </url>
   <url>
@@ -31,9 +28,6 @@
     <loc>https://rfhb.github.io/ctrdata/dev/news/index.html</loc>
   </url>
   <url>
-    <loc>https://rfhb.github.io/ctrdata/dev/reference/ctrCache.html</loc>
-  </url>
-  <url>
     <loc>https://rfhb.github.io/ctrdata/dev/reference/ctrDb.html</loc>
   </url>
   <url>
@@ -41,9 +35,6 @@
   </url>
   <url>
     <loc>https://rfhb.github.io/ctrdata/dev/reference/ctrGetQueryUrl.html</loc>
-  </url>
-  <url>
-    <loc>https://rfhb.github.io/ctrdata/dev/reference/ctrGetQueryUrlFromBrowser.html</loc>
   </url>
   <url>
     <loc>https://rfhb.github.io/ctrdata/dev/reference/ctrLoadQueryIntoDb.html</loc>
@@ -56,9 +47,6 @@
   </url>
   <url>
     <loc>https://rfhb.github.io/ctrdata/dev/reference/ctrdata-registers.html</loc>
-  </url>
-  <url>
-    <loc>https://rfhb.github.io/ctrdata/dev/reference/ctrdata.html</loc>
   </url>
   <url>
     <loc>https://rfhb.github.io/ctrdata/dev/reference/dbFindFields.html</loc>
