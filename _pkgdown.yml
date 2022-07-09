@@ -20,7 +20,7 @@ reference:
 - contents:
   - starts_with("dfL")
 development:
-  mode: auto
+  mode: release
 template:
   bootstrap: 5
   opengraph:
