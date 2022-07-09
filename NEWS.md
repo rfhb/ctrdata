@@ -1,4 +1,4 @@
-# ctrdata 1.10.9000 (2022-07-07)
+# ctrdata 1.10.9000 (2022-07-09)
  - new development version
  - fix documentation issue (https://stat.ethz.ch/pipermail/r-package-devel/2022q3/008240.html)
  
