@@ -68,7 +68,7 @@ df <- data.frame(
   stringsAsFactors = FALSE)
 
 expect_true(all(is.na(
-  ctrdata:::typeField(df[[2]])[3:4])))
+  ctrdata:::typeField(df[[2]], "anyname")[3:4])))
 
 
 #### dfMergeTwoVariablesRelevel ####
