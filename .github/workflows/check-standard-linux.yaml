@@ -46,22 +46,16 @@ jobs:
         shell: Rscript {0}
 
       - name: Cache R packages
-        if: runner.os != 'Windows'
         uses: actions/cache@v2
         with:
           path: ${{ env.R_LIBS_USER }}
           key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
           restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
 
-      - name: Install xclip to complete checks
-        run: sudo apt-get install xclip
-
-      - name: Install development libraries
-        if: runner.os == 'Linux'
-        run: sudo apt-get install -y libjq-dev
+      - name: Install xclip for checks and other dependencies
+        run: sudo apt-get install -y xclip libjq-dev php-cli
 
       - name: Install system dependencies
-        if: runner.os == 'Linux'
         run: |
           while read -r cmd
           do
@@ -81,6 +75,12 @@ jobs:
         with:
           postgres-version: 14
           database: test
+
+      - name: Wait to reduce ctgov timeouts
+        uses: 1itachi/sleep-random@v1.0.0
+        with:
+          minutes: '10'
+          random: 'true'
 
       - name: Check
         env:
