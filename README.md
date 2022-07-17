@@ -108,7 +108,7 @@ function also checks if the tools can be used.
 
 -   In Linux, these are usually already installed; tools for
     installation vary by distribution (e.g.,
-    `sudo apt install php php-xml php-json`).
+    `sudo apt install php-cli php-xml php-json`).
 
 ### Vignettes
 
