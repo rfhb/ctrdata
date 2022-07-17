@@ -437,7 +437,7 @@ expect_message(
       verbose = TRUE,
       annotation.text = "ANNO",
       annotation.mode = "replace")),
-  "Imported or updated 5 trial")
+  "Imported or updated.*5 trial")
 
 # test
 expect_message(

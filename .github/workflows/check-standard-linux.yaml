@@ -1,4 +1,7 @@
 # https://github.com/r-lib/actions/tree/master/examples#standard-ci-workflow
+#
+# note: update
+# https://github.com/rfhb/ctrdata/settings/secrets/actions/CACHE_VERSION
 
 on: [push, pull_request]
 
@@ -64,11 +67,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-          remotes::install_deps(dependencies = TRUE)
           install.packages(c("remotes"))
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran(c("rcmdcheck", "covr"))
           remotes::install_github("ropensci/nodbi")
+          remotes::install_github("rfhb/ctrdata")
         shell: Rscript {0}
 
       - uses: ankane/setup-postgres@v1
@@ -86,6 +89,7 @@ jobs:
         env:
           _R_CHECK_CRAN_INCOMING_REMOTE_: false
           _CURL_NO_SSL_VERIFYPEER_: true
+          ctrdatamongouri: ${{ secrets.CTRDATAMONGOURI }}
         run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
         shell: Rscript {0}
 
