@@ -23,7 +23,7 @@ The motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created by it. This
-README was reviewed on 2022-07-16 for v1.10.0.9001.
+README was reviewed on 2022-07-24 for version 1.10.0.9002.
 
 Main features:
 
@@ -36,8 +36,8 @@ Main features:
 
 -   Retrieved (downloaded) trial information is transformed and stored
     in a document-centric database, for fast and offline access. Uses
-    `PostgreSQL` (🔔new in v1.9.0), `RSQLite` or `MongoDB` as databases,
-    via R package `nodbi`: see section
+    `PostgreSQL` (🔔new in version 1.9.0), `RSQLite` or `MongoDB` as
+    databases, via R package `nodbi`: see section
     [Databases](#databases-that-can-be-used-with-ctrdata) below. Easily
     re-run a previous query to update a database.
 
@@ -45,13 +45,13 @@ Main features:
     functions) or others systems. Unique (de-duplicated) trial records
     are identified across registers. `ctrdata` can merge and recode
     information (fields) and also provides easy access even to
-    deeply-nested fields (new in v1.4.0).
+    deeply-nested fields (new in version 1.4.0).
 
 Remember to respect the registers’ terms and conditions (see
 `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
 package in any publication as follows: “Ralf Herold (2021). ctrdata:
 Retrieve and Analyze Clinical Trials in Public Registers. R package
-version 1.8.0, <https://cran.r-project.org/package=ctrdata>” Package
+version 1.10.0, <https://cran.r-project.org/package=ctrdata>” Package
 `ctrdata` has been used for: Blogging on [Innovation coming to
 paediatric
 research](https://paediatricdata.eu/innovation-coming-to-paediatric-research/)
