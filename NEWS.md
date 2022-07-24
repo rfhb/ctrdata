@@ -1,6 +1,7 @@
-# ctrdata 1.10.0.9002 (2022-07-09)
- - new development version
- - fix documentation issue (https://stat.ethz.ch/pipermail/r-package-devel/2022q3/008240.html)
+# ctrdata 1.10.1 (2022-07-24)
+ - fix documentation issues (https://stat.ethz.ch/pipermail/r-package-devel/2022q3/008240.html)
+ - fix unit test with unused but missing argument
+ - fix GitHub actions and tests
  
 # ctrdata 1.10.0 (2022-07-01)
  - ctrLoadQueryIntoDb new parameter euctrresultsfilespath, deprecating euctrresultspdfpath
