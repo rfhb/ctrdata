@@ -1,3 +1,6 @@
+# ctrdata 1.10.1.9000 (2022-07-25)
+ - new development version
+ 
 # ctrdata 1.10.1 (2022-07-24)
  - fix documentation issues (https://stat.ethz.ch/pipermail/r-package-devel/2022q3/008240.html)
  - fix unit test with unused but missing argument
