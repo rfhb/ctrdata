@@ -1853,12 +1853,14 @@ ctrLoadQueryIntoDbIsrctn <- function(
   # - internal means XML
   queryIsrctnRoot <- "https://www.isrctn.com/"
   queryIsrctnType1 <- "api/query/format/internal?limit="
-  queryIsrctnType2 <- "api/query/format/internal?limit=1&"
+  queryIsrctnType2 <- "api/query/format/internal?limit=0&"
   #
   # convert parameters from search queryterm such as
-  # "q=neuroblastoma&filters=LE+lastEdited%3A2021-04-01T00%3A00%3A00.000Z"
+  # "q=neuroblastoma+OR+lymphoma&filters=phase%3APhase+III%2CLE+lastEdited%3A2021-01-01"
+  # "q=&filters=phase%3APhase+III%2CLE+lastEdited%3A2021-01-01"
   # into to api format such as
-  # "q=neuroblastoma AND lastEdited LE 2021-03-28T00:00:00.000Z"
+  # "q=(neuroblastoma OR lymphoma) AND phase:"Phase+III" AND lastEdited LE 2021-01-01T00:00:00.000Z"
+  #
   # - ensure we can use text processing
   queryterm <- utils::URLdecode(queryterm)
   # - generate api terms
@@ -1867,14 +1869,33 @@ ctrLoadQueryIntoDbIsrctn <- function(
   apiterm <- strsplit(apiterm, ",")[[1]]
   # - remove naked q
   apiterm <- apiterm[!grepl("^q=$", apiterm)]
-  # - translate "LE+lastEdited:2021-04-01T00:00:00.000Z"
-  #   into      "lastEdited LE 2021-03-28T00:00:00.000Z"
+  # - translate "LE+lastEdited:2021-04-01"
+  #   into      "lastEdited LE 2021-04-01T00:00:00.000Z"
   apiterm <- vapply(
     apiterm,
     function(a) sub("^(.*?)[+](.*?)[:](.*)$", "\\2 \\1 \\3", a),
     character(1L), USE.NAMES = FALSE)
+  # - add time if date does not end with it
+  apiterm <- vapply(
+    apiterm,
+    function(a) sub("(.+[0-9]{4}-[0-9]{2}-[0-9]{2})$", "\\1T00:00:00.000Z", a),
+    character(1L), USE.NAMES = FALSE)
+  #
+  # - quote anything right of colon; this is an advanced search URL:
+  #   https://www.isrctn.com/search?q=&filters=phase%3APhase+III
+  #   which needs to be changed to phase:"Phase III", noting
+  #   `+` is interpreted by the API as space, thus unchanged
+  termstoquote <- grepl("[ +]", sub("^.*?[:](.+)$", "\\1", apiterm))
+  apiterm[termstoquote] <- vapply(
+    apiterm[termstoquote],
+    function(a) sub("^(.*?)[:](.+)$", "\\1:\"\\2\"", a),
+    character(1L), USE.NAMES = FALSE)
+  # - put q in brackets to respect logical operators
+  qtoquote <- grepl("^q=.+$", apiterm)
+  apiterm[qtoquote] <- sub("^q=(.+)$", "q=(\\1)", apiterm[qtoquote])
+  # - collapse
   apiterm <- paste0(apiterm, collapse = " AND ")
-  # - add q again if missing
+  # - add empty q if q is missing
   if (!grepl("^q=", apiterm)) apiterm <- paste0("q=", apiterm)
   # - inform user
   if (verbose) message("DEBUG: apiterm is ", apiterm)

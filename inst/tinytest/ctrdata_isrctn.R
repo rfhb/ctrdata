@@ -49,6 +49,33 @@ expect_true(all(c("98918118", "79815499") %in% tmpTest$success))
 # test
 expect_true(length(tmpTest$failed) == 0L)
 
+# test
+expect_message(
+  tmpTest <- suppressWarnings(
+    ctrLoadQueryIntoDb(
+      queryterm = "https://www.isrctn.com/search?q=&filters=phase%3APhase+III%2CLE+lastEdited%3A2018-01-01",
+      only.count = TRUE,
+      verbose = TRUE,
+      con = dbc)),
+  "Retrieved overview")
+
+# test
+expect_equal(tmpTest$n, 225)
+
+# test
+expect_message(
+  tmpTest <- suppressWarnings(
+    ctrLoadQueryIntoDb(
+      queryterm = "q=neuroblastoma+OR+lymphoma&filters=phase%3APhase+III%2CLE+lastEdited%3A2018-01-01",
+      register = "ISRCTN",
+      only.count = TRUE,
+      verbose = TRUE,
+      con = dbc)),
+  "are to be downloaded")
+
+# test
+expect_equal(tmpTest$n, 11)
+
 
 #### ctrLoadQueryIntoDb update ####
 
