@@ -2373,7 +2373,7 @@ dfFindUniqueEuctrRecord <- function(
   include3rdcountrytrials = TRUE) {
 
   # check parameters
-  if (!all(class(df) %in% "data.frame")) {
+  if (!any(class(df) %in% "data.frame")) {
     stop("Parameter df is not a data frame.", call. = FALSE)
   }
   #
