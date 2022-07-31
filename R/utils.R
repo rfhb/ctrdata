@@ -995,8 +995,12 @@ dbFindFields <- function(namepart = "",
 #' register into a collection. The function returns identifiers of
 #' records in the collection that were loaded from the
 #' register(s) preferred by the user. All registers are recording
-#' identifiers also from other registers, which is used by this
+#' identifiers also from other registers, which are used by this
 #' function to provide a vector of identifiers of deduplicated trials.
+#'
+#' Note that the content of records may differ between registers
+#' (and, for EUCTR, between records for different Member States).
+#' Such differences are not considered by this function.
 #'
 #' @param preferregister A vector of the order of preference for
 #' registers from which to generate unique _id's, default
@@ -1087,7 +1091,7 @@ dbFindIdsUniqueTrials <- function(
     verbose = FALSE))
 
   # inform user
-  message(" - Getting trial ids...", appendLF = FALSE)
+  message(" - Getting all trial identifiers...", appendLF = FALSE)
 
   # cache outdated
   if (cacheOutdated) {

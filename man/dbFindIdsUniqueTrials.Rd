@@ -43,8 +43,13 @@ Records for a clinical trial can be loaded from more than one
 register into a collection. The function returns identifiers of
 records in the collection that were loaded from the
 register(s) preferred by the user. All registers are recording
-identifiers also from other registers, which is used by this
+identifiers also from other registers, which are used by this
 function to provide a vector of identifiers of deduplicated trials.
+}
+\details{
+Note that the content of records may differ between registers
+(and, for EUCTR, between records for different Member States).
+Such differences are not considered by this function.
 }
 \examples{
 
