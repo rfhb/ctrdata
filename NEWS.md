@@ -1,5 +1,7 @@
-# ctrdata 1.10.1.9000 (2022-07-25)
+# ctrdata 1.10.1.9001 (2022-07-31)
  - new development version
+ - handle tibble in internal function
+ - fix handling certain ISRCTN queries
  
 # ctrdata 1.10.1 (2022-07-24)
  - fix documentation issues (https://stat.ethz.ch/pipermail/r-package-devel/2022q3/008240.html)
