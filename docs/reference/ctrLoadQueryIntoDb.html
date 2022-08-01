@@ -26,7 +26,7 @@ records. However, user annotations of trial records are kept."><meta name="twitt
     
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.10.1.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.10.1.9002</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -229,6 +229,15 @@ collection) to facilitate documentation.</p>
 <span class="r-in"><span><span class="fu">ctrLoadQueryIntoDb</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  queryterm <span class="op">=</span> <span class="st">"cancer&amp;recr=Open&amp;type=Intr&amp;age=0"</span>,</span></span>
 <span class="r-in"><span>  register <span class="op">=</span> <span class="st">"CTGOV"</span>,</span></span>
+<span class="r-in"><span>  con <span class="op">=</span> <span class="va">dbc</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Retrieve all information on more than 40 trials</span></span></span>
+<span class="r-in"><span><span class="co"># that are labelled as phase 3 and that mention</span></span></span>
+<span class="r-in"><span><span class="co"># either neuroblastoma or lymphoma from ISRCTN,</span></span></span>
+<span class="r-in"><span><span class="co"># into the same collection as used before</span></span></span>
+<span class="r-in"><span><span class="fu">ctrLoadQueryIntoDb</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  queryterm <span class="op">=</span> <span class="st">"https://www.isrctn.com/search?q=neuroblastoma+OR+lymphoma&amp;filters=phase%3APhase+III"</span>,</span></span>
 <span class="r-in"><span>  con <span class="op">=</span> <span class="va">dbc</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
