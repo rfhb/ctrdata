@@ -29,7 +29,7 @@ tf <- function() {
 
   # check server
   testUrl <- "https://www.clinicaltrialsregister.eu/ctr-search/search"
-  testGet <- function() try(httr::GET(testUrl, httr::timeout(5L)), silent = TRUE)
+  testGet <- function() try(httr::HEAD(testUrl, httr::timeout(10L)), silent = TRUE)
   testOnce <- testGet()
 
   if (inherits(testOnce, "try-error") &&

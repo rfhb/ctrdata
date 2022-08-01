@@ -67,7 +67,7 @@ checkBinaries <- function() {
 
 checkInternet <- function() {
   tmp <- try(
-    httr::HEAD("https://httpbin.org/anything", httr::timeout(5)),
+    httr::HEAD("https://httpbin.org/anything", httr::timeout(10L)),
     silent = TRUE
   )
 
