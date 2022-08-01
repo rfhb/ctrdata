@@ -1,7 +1,8 @@
-# ctrdata 1.10.1.9002 (2022-08-01)
+# ctrdata 1.10.1.9003 (2022-08-01)
  - new development version
  - handle tibble in internal function
  - fix handling certain ISRCTN queries
+ - fix dbGetFieldsIntoDf() with missing data
  - changing timeouts and methods in testing
  
 # ctrdata 1.10.1 (2022-07-24)

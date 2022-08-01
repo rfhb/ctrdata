@@ -1449,7 +1449,7 @@ dbGetFieldsIntoDf <- function(fields = "",
         message("\b\b\b\b   \b\b\b ", appendLF = FALSE)
 
         # leave try() early if no results
-        if (!nrow(dfi) || ncol(dfi) == 1L) simpleError(message = "")
+        if (!nrow(dfi) || ncol(dfi) == 1L) stop(simpleError("No data"))
 
         # remove any rows without index variable
         dfi <- dfi[!is.na(dfi[["_id"]]), , drop = FALSE]
@@ -1615,11 +1615,14 @@ dbGetFieldsIntoDf <- function(fields = "",
 
         # try-error occurred or no data retrieved
         if (stopifnodata) {
-          if (inherits(tmpItem, "try-error")) message(
-            "\nProcessing error: '", trimws(tmpItem[[1]]), "'\nThank you ",
-            "for reporting it at https://github.com/rfhb/ctrdata/issues\n")
-          stop("No data could be extracted for ", paste0(item, collapse = ", "),
-               ". \nUse dbGetFieldsIntoDf(stopifnodata = FALSE) to ignore error.",
+          if (inherits(tmpItem, "try-error") &&
+              !attr(tmpItem, "condition")["message"] == "No data") message(
+                "\nProcessing error: '", trimws(tmpItem[[1]]), "'\nThank you ",
+                "for reporting it at https://github.com/rfhb/ctrdata/issues")
+          message("")
+          stop("No data could be extracted for '", paste0(item, collapse = "', '"), "'.",
+               "\nUse dbGetFieldsIntoDf(..., stopifnodata = FALSE) to ignore the error.",
+               "\nUse dbFindFieldsIntoDf() to find fields that exist in the collection.",
                call. = FALSE)
         } else {
           message("* no data or extraction error *")
