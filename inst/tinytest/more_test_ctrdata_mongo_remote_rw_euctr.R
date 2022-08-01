@@ -41,6 +41,9 @@ tf <- function() {
       httr::status_code(testOnce) != 200L
   ) return(exit_file("Reason: EUCTR not working"))
 
+  # clean up
+  rm(testUrl, testGet, testOnce)
+
   # do tests
   source("ctrdata_euctr.R", local = TRUE)
 }
