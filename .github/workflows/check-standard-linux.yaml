@@ -5,7 +5,7 @@
 
 on: [push, pull_request]
 
-name: R-CMD-check-linux
+name: R-CMD-CHECK-ubuntu-postgresql-mongodb-sqlite
 
 jobs:
   R-CMD-check:
