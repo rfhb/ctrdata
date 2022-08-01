@@ -107,6 +107,15 @@
 #'   con = dbc
 #' )
 #'
+#' # Retrieve all information on more than 40 trials
+#' # that are labelled as phase 3 and that mention
+#' # either neuroblastoma or lymphoma from ISRCTN,
+#' # into the same collection as used before
+#' ctrLoadQueryIntoDb(
+#'   queryterm = "https://www.isrctn.com/search?q=neuroblastoma+OR+lymphoma&filters=phase%3APhase+III",
+#'   con = dbc
+#' )
+#'
 #' }
 #'
 #' @export
