@@ -43,13 +43,14 @@ df <- dbGetFieldsIntoDf(
     "subjectDisposition.postAssignmentPeriods"),
   con = dbc)
 
-dfListExtractKey(
-  df = df,
-  list.key = list(
-      c("endPoints.endPoint",
-        "^title"),
-      c("subjectDisposition.postAssignmentPeriods",
-        "arms.arm.type.value")
+suppressWarnings(
+  dfListExtractKey(
+    df = df,
+    list.key = list(
+        c("endPoints.endPoint",
+          "^title"),
+        c("subjectDisposition.postAssignmentPeriods",
+          "arms.arm.type.value"))
 ))
 
 }

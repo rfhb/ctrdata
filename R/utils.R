@@ -485,8 +485,14 @@ ctrOpenSearchPagesInBrowser <- function(
 #' try(ctrGetQueryUrl(), silent = TRUE)
 #'
 #' # extract query parameters from search result URL
+#' # (URL was cut for the purpose of formatting only)
 #' ctrGetQueryUrl(
-#'   url = "https://clinicaltrials.gov/ct2/results?cond=&term=AREA%5BMaximumAge%5D+RANGE%5B0+days%2C+28+days%5D&type=Intr&rslt=&age_v=&gndr=&intr=Drugs%2C+Investigational&titles=&outc=&spons=&lead=&id=&cntry=&state=&city=&dist=&locn=&phase=2&rsub=&strd_s=01%2F01%2F2015&strd_e=01%2F01%2F2016&prcd_s=&prcd_e=&sfpd_s=&sfpd_e=&rfpd_s=&rfpd_e=&lupd_s=&lupd_e=&sort=")
+#'   url = paste0("https://clinicaltrials.gov/ct2/results?",
+#'   "cond=&term=AREA%5BMaximumAge%5D+RANGE%5B0+days%2C+28+days%5D",
+#'   "&type=Intr&rslt=&age_v=&gndr=&intr=Drugs%2C+Investigational",
+#'   "&titles=&outc=&spons=&lead=&id=&cntry=&state=&city=&dist=",
+#'   "&locn=&phase=2&rsub=&strd_s=01%2F01%2F2015&strd_e=01%2F01%2F2016",
+#'   "&prcd_s=&prcd_e=&sfpd_s=&sfpd_e=&rfpd_s=&rfpd_e=&lupd_s=&lupd_e=&sort=")
 #'
 ctrGetQueryUrl <- function(
   url = "",
@@ -2076,13 +2082,14 @@ dfTrials2Long <- function(df) {
 #'     "subjectDisposition.postAssignmentPeriods"),
 #'   con = dbc)
 #'
-#' dfListExtractKey(
-#'   df = df,
-#'   list.key = list(
-#'       c("endPoints.endPoint",
-#'         "^title"),
-#'       c("subjectDisposition.postAssignmentPeriods",
-#'         "arms.arm.type.value")
+#' suppressWarnings(
+#'   dfListExtractKey(
+#'     df = df,
+#'     list.key = list(
+#'         c("endPoints.endPoint",
+#'           "^title"),
+#'         c("subjectDisposition.postAssignmentPeriods",
+#'           "arms.arm.type.value"))
 #' ))
 #'
 dfListExtractKey <- function(
