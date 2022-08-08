@@ -492,7 +492,7 @@ ctrOpenSearchPagesInBrowser <- function(
 #'   "&type=Intr&rslt=&age_v=&gndr=&intr=Drugs%2C+Investigational",
 #'   "&titles=&outc=&spons=&lead=&id=&cntry=&state=&city=&dist=",
 #'   "&locn=&phase=2&rsub=&strd_s=01%2F01%2F2015&strd_e=01%2F01%2F2016",
-#'   "&prcd_s=&prcd_e=&sfpd_s=&sfpd_e=&rfpd_s=&rfpd_e=&lupd_s=&lupd_e=&sort=")
+#'   "&prcd_s=&prcd_e=&sfpd_s=&sfpd_e=&rfpd_s=&rfpd_e=&lupd_s=&lupd_e=&sort="))
 #'
 ctrGetQueryUrl <- function(
   url = "",
