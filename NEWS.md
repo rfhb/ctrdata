@@ -1,9 +1,10 @@
-# ctrdata 1.10.1.9003 (2022-08-01)
+# ctrdata 1.10.1.9004 (2022-08-08)
  - new development version
  - handle tibble in internal function
  - fix handling certain ISRCTN queries
  - fix dbGetFieldsIntoDf() with missing data
  - changing timeouts and methods in testing
+ - fix slow speed in dfName2Value()
  
 # ctrdata 1.10.1 (2022-07-24)
  - fix documentation issues (https://stat.ethz.ch/pipermail/r-package-devel/2022q3/008240.html)

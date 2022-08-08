@@ -1715,6 +1715,7 @@ dbGetFieldsIntoDf <- function(fields = "",
 #'  endpoint descriptions and measurements.
 #'
 #' @importFrom dplyr as_tibble
+#' @importFrom stringi stri_detect_regex
 #'
 #' @export
 #'
@@ -1798,22 +1799,29 @@ dfName2Value <- function(df, valuename = "",
     indexCases <- df[indexRows, c("_id", "identifier"), drop = FALSE]
 
     # get output iterate over trials
+    out <- list(nrow(indexCases))
     out <- apply(
       indexCases, 1,
       function(i) {
-        ids <- Reduce(
-          intersect, list(
-            # trial id
-            which(grepl(i[["_id"]], df[["_id"]], fixed = TRUE)),
+        ids <- intersect(
+          # trial id
+          which(i[["_id"]] == df[["_id"]]),
+          # indices of sought valuename
+          indexVnames
+        )
+        if (length(ids)) {
+          ids <- ids[
             # identifier to match starting from left and
             # do not match e.g. 22 for identifier 2
-            which(grepl(paste0("^", i[["identifier"]], "([.]|$)"),
-                        df[["identifier"]])),
-            # indices of sought valuename
-            indexVnames
-          ))
+            stringi::stri_detect_regex(
+              str = df[ids, "identifier", drop = TRUE],
+              pattern = paste0("^", i[["identifier"]], "([.]|$)")
+            )]
+        }
         # return value
-        if (length(ids)) df[ids, , drop = FALSE]
+        if (length(ids)) {
+          df[ids, , drop = FALSE]
+        }
       }
     )
 
