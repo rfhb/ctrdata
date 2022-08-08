@@ -109,6 +109,7 @@ records. However, user annotations of trial records are kept.
 }
 \examples{
 \dontrun{
+
 dbc <- nodbi::src_sqlite(collection = "my_collection")
 
 # Retrieve protocol- and results-related information

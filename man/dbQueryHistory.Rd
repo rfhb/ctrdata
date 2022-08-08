@@ -26,12 +26,10 @@ Show history of queries loaded into a database collection
 }
 \examples{
 
-\dontrun{
-
-dbc <- nodbi::src_sqlite(collection = "my_collection")
+dbc <- nodbi::src_sqlite(
+   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+   collection = "my_trials")
 
 dbQueryHistory(con = dbc)
-
-}
 
 }

@@ -28,10 +28,6 @@ but not for any other function in this package.
 }
 \examples{
 
-\dontrun{
-
-installCygwinWindowsDoInstall()
-
-}
+try(installCygwinWindowsDoInstall(), silent = TRUE)
 
 }

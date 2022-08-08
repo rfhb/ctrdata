@@ -28,15 +28,15 @@ returns as a multiply nested list and for which this function then
 converts every observation of every (leaf) field into a row of its own.
 }
 \examples{
-\dontrun{
 
-dbc <- nodbi::src_sqlite(collection = "my_collection")
+dbc <- nodbi::src_sqlite(
+   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+   collection = "my_trials")
 
 df <- dbGetFieldsIntoDf(
-  fields = c("clinical_results"),
-  con = dbc
-)
-head(dfTrials2Long(df = df))
+  fields = "clinical_results",
+  con = dbc)
 
-}
+dfTrials2Long(df = df)
+
 }

@@ -49,23 +49,20 @@ for complex nested data, use function \link{dfTrials2Long} followed by
 }
 \examples{
 
-\dontrun{
+dbc <- nodbi::src_sqlite(
+   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+   collection = "my_trials")
 
-dbc <- nodbi::src_sqlite(collection = "my_collection")
-
-# access fields that are nested within another field
+# get fields that are nested within another field
 # and can have multiple values with the nested field
 dbGetFieldsIntoDf(
-  "b1_sponsor.b31_and_b32_status_of_the_sponsor",
-  con = dbc
-)
+  fields = "b1_sponsor.b31_and_b32_status_of_the_sponsor",
+  con = dbc)
 
-# access fields that include a list of values which
-# (if they are strings) are concatenated with a slash
-dbGetFieldsIntoDf("keyword", con = dbc)[1,]
-#           _id                                   keyword
-# 1 NCT00129259 T1D / type 1 diabetes / juvenile diabetes
-
-}
+# fields that are lists of string values are
+# returned by concatenating values with a slash
+dbGetFieldsIntoDf(
+  fields = "keyword",
+  con = dbc)
 
 }

@@ -87,6 +87,7 @@
 #'
 #' @examples
 #' \dontrun{
+#'
 #' dbc <- nodbi::src_sqlite(collection = "my_collection")
 #'
 #' # Retrieve protocol- and results-related information

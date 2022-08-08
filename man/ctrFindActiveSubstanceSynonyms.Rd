@@ -21,11 +21,7 @@ Retrieves the substances which are searched for by the register
 }
 \examples{
 
-\dontrun{
-
 ctrFindActiveSubstanceSynonyms(activesubstance = "imatinib")
-# [1] "imatinib"  "gleevec"   "sti 571"   "glivec"    "CGP 57148" "st1571"
-
-}
+# [1] "imatinib" "gleevec" "sti 571" "glivec" "CGP 57148" "st1571"
 
 }

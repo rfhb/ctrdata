@@ -28,21 +28,13 @@ from the clipboard, into which the URL of a register search was copied.
 }
 \examples{
 
-\dontrun{
-
-dbc <- nodbi::src_sqlite(collection = "my_collection")
-
-# user now copies into the clipboard the URL from
+# user copied into the clipboard the URL from
 # the address bar of the browser that shows results
 # from a query in one of the trial registers
-#
-# information about all trials found with this query
-# is now loaded into the database collection
-ctrLoadQueryIntoDb(
-  queryterm = ctrGetQueryUrl(),
-  con = dbc
-)
+try(ctrGetQueryUrl(), silent = TRUE)
 
-}
+# extract query parameters from search result URL
+ctrGetQueryUrl(
+  url = "https://clinicaltrials.gov/ct2/results?cond=&term=AREA\%5BMaximumAge\%5D+RANGE\%5B0+days\%2C+28+days\%5D&type=Intr&rslt=&age_v=&gndr=&intr=Drugs\%2C+Investigational&titles=&outc=&spons=&lead=&id=&cntry=&state=&city=&dist=&locn=&phase=2&rsub=&strd_s=01\%2F01\%2F2015&strd_e=01\%2F01\%2F2016&prcd_s=&prcd_e=&sfpd_s=&sfpd_e=&rfpd_s=&rfpd_e=&lupd_s=&lupd_e=&sort=")
 
 }

@@ -133,12 +133,48 @@ Such differences are not considered by this function.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span><span class="va">dbc</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">src_sqlite</a></span><span class="op">(</span>collection <span class="op">=</span> <span class="st">"my_collection"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">dbc</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">src_sqlite</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>   dbname <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"demo.sqlite"</span>, package <span class="op">=</span> <span class="st">"ctrdata"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>   collection <span class="op">=</span> <span class="st">"my_trials"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">dbFindIdsUniqueTrials</span><span class="op">(</span>con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Searching for duplicate trials... </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  - Getting all trial identifiers...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  (may take some time)...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> , 157 found in collection</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  - Finding duplicates among registers' and sponsor ids...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  - 69 EUCTR _id were not preferred EU Member State record for 22 trials</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  - Keeping 70 / 10 / 7 records from CTGOV / EUCTR / ISRCTN</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> = Returning keys (_id) of 87 records in collection "my_trials"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "12949496"           "13281214"           "2007-004092-19-DE" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "2007-004277-26-DE"  "2011-001033-16-PT"  "2012-001916-41-NL" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "2013-003629-27-DE"  "2013-005512-10-DE"  "2014-003066-24-DE" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10] "2014-003556-31-SE"  "2014-003582-24-DE"  "2014-004527-42-3RD"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "20343063"           "48721236"           "61070850"          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [16] "76463425"           "88261002"           "NCT00004500"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [19] "NCT00005773"        "NCT00005774"        "NCT00005775"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [22] "NCT00005776"        "NCT00005777"        "NCT00009646"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [25] "NCT00016523"        "NCT00031447"        "NCT00031460"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [28] "NCT00099359"        "NCT00515281"        "NCT00623740"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [31] "NCT00640263"        "NCT00646399"        "NCT00682006"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [34] "NCT00713726"        "NCT00734539"        "NCT00908401"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [37] "NCT00922532"        "NCT00931632"        "NCT00977964"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [40] "NCT00994149"        "NCT01006668"        "NCT01035190"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [43] "NCT01183611"        "NCT01190995"        "NCT01243996"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [46] "NCT01265589"        "NCT01389856"        "NCT01490580"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [49] "NCT01517828"        "NCT01528852"        "NCT01536483"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [52] "NCT01555957"        "NCT01720524"        "NCT01723501"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [55] "NCT01783041"        "NCT01875757"        "NCT01899677"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [58] "NCT01954082"        "NCT02056223"        "NCT02305160"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [61] "NCT02374281"        "NCT02499393"        "NCT02510560"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [64] "NCT02620761"        "NCT02685137"        "NCT02700893"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [67] "NCT02802059"        "NCT02810782"        "NCT02954926"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [70] "NCT03022253"        "NCT03058666"        "NCT03079167"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [73] "NCT03082001"        "NCT03097484"        "NCT03110341"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [76] "NCT03163589"        "NCT03181646"        "NCT03208894"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [79] "NCT03268902"        "NCT03272594"        "NCT03280147"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [82] "NCT03325439"        "NCT03431558"        "NCT03876704"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [85] "NCT04001712"        "NCT04037514"        "NCT04041765"       </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

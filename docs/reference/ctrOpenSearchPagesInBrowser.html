@@ -94,19 +94,20 @@ register(s).</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Check copyrights before using registers</span></span></span>
 <span class="r-in"><span><span class="fu">ctrOpenSearchPagesInBrowser</span><span class="op">(</span>copyright <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># open last query loaded into the collection</span></span></span>
 <span class="r-in"><span><span class="va">dbc</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">src_sqlite</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  collection <span class="op">=</span> <span class="st">"previously_created"</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span>   dbname <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"demo.sqlite"</span>, package <span class="op">=</span> <span class="st">"ctrdata"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>   collection <span class="op">=</span> <span class="st">"my_trials"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">ctrOpenSearchPagesInBrowser</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="dbQueryHistory.html">dbQueryHistory</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Using last query</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "https://www.isrctn.com/search?q=&amp;filters=ageRange:Neonate,phase:Phase+III"</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

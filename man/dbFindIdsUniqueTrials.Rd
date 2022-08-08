@@ -53,11 +53,10 @@ Such differences are not considered by this function.
 }
 \examples{
 
-\dontrun{
-dbc <- nodbi::src_sqlite(collection = "my_collection")
+dbc <- nodbi::src_sqlite(
+   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+   collection = "my_trials")
 
 dbFindIdsUniqueTrials(con = dbc)
-
-}
 
 }

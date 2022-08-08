@@ -138,24 +138,218 @@ collection.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">dbc</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">src_sqlite</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>   dbname <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"demo.sqlite"</span>, package <span class="op">=</span> <span class="st">"ctrdata"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>   collection <span class="op">=</span> <span class="st">"my_trials"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">dbc</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">src_sqlite</a></span><span class="op">(</span>collection <span class="op">=</span> <span class="st">"my_collection"</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># access fields that are nested within another field</span></span></span>
+<span class="r-in"><span><span class="co"># get fields that are nested within another field</span></span></span>
 <span class="r-in"><span><span class="co"># and can have multiple values with the nested field</span></span></span>
 <span class="r-in"><span><span class="fu">dbGetFieldsIntoDf</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="st">"b1_sponsor.b31_and_b32_status_of_the_sponsor"</span>,</span></span>
-<span class="r-in"><span>  con <span class="op">=</span> <span class="va">dbc</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span>  fields <span class="op">=</span> <span class="st">"b1_sponsor.b31_and_b32_status_of_the_sponsor"</span>,</span></span>
+<span class="r-in"><span>  con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> b1_sponsor.b31_and_b32_status_of_the_sponsor... </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> . </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                    _id b1_sponsor.b31_and_b32_status_of_the_sponsor</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 158  2007-004092-19-AT                               Non-Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 210  2007-004092-19-CZ                               Non-Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    2007-004092-19-DE                               Non-Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    2007-004092-19-FR                               Non-Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    2007-004092-19-GB                               Non-Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    2007-004092-19-NL                               Non-Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   2007-004277-26-3RD                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8    2007-004277-26-AT                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9    2007-004277-26-BE                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10   2007-004277-26-DE                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11   2007-004277-26-DK                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12   2007-004277-26-ES                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13   2007-004277-26-FR                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14   2007-004277-26-GB                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15   2007-004277-26-IE                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16   2007-004277-26-IT                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17   2007-004277-26-NL                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18   2007-004277-26-PT                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19   2011-001033-16-AT                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20   2011-001033-16-DK                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21   2011-001033-16-ES                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22   2011-001033-16-GB                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23   2011-001033-16-GR                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24   2011-001033-16-HU                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25   2011-001033-16-LT                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26   2011-001033-16-PL                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27   2011-001033-16-PT                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28   2012-001916-41-BE                               Non-Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29   2012-001916-41-ES                               Non-Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30   2012-001916-41-IT                               Non-Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31   2012-001916-41-NL                               Non-Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32   2013-003629-27-BE                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33   2013-003629-27-DE                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34   2013-003629-27-DK                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35   2013-003629-27-ES                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36   2013-003629-27-FR                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37   2013-003629-27-GB                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38   2013-003629-27-IE                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39   2013-003629-27-IT                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40   2013-003629-27-NL                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41   2013-003629-27-PL                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42   2013-003629-27-SE                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43   2013-005512-10-DE                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44   2013-005512-10-DK                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45   2013-005512-10-ES                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46   2013-005512-10-FR                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47   2013-005512-10-GB                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48   2013-005512-10-IE                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49   2013-005512-10-IT                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50   2013-005512-10-NL                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 51   2013-005512-10-PL                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 52   2013-005512-10-SE                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 53   2014-003066-24-AT                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54   2014-003066-24-BE                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 55   2014-003066-24-BG                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 56   2014-003066-24-CZ                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 57   2014-003066-24-DE                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 58   2014-003066-24-ES                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 59   2014-003066-24-FR                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 60   2014-003066-24-GB                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 61   2014-003066-24-HU                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 62   2014-003066-24-IT                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 63   2014-003066-24-NL                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 64   2014-003066-24-PL                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 65   2014-003066-24-SE                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 66   2014-003066-24-SK                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 67   2014-003556-31-GB                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 68   2014-003556-31-IT                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 69   2014-003556-31-NL                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 70   2014-003556-31-PL                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 71   2014-003556-31-SE                                   Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 72   2014-003582-24-CZ                               Non-Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 73   2014-003582-24-DE                               Non-Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 74   2014-003582-24-EE                               Non-Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 75   2014-003582-24-ES                               Non-Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 76   2014-003582-24-IT                               Non-Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 77   2014-003582-24-NL                               Non-Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 78   2014-003582-24-SE                               Non-Commercial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 79  2014-004527-42-3RD                                   Commercial</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># access fields that include a list of values which</span></span></span>
-<span class="r-in"><span><span class="co"># (if they are strings) are concatenated with a slash</span></span></span>
-<span class="r-in"><span><span class="fu">dbGetFieldsIntoDf</span><span class="op">(</span><span class="st">"keyword"</span>, con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span></span></span>
-<span class="r-in"><span><span class="co">#           _id                                   keyword</span></span></span>
-<span class="r-in"><span><span class="co"># 1 NCT00129259 T1D / type 1 diabetes / juvenile diabetes</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="co"># fields that are lists of string values are</span></span></span>
+<span class="r-in"><span><span class="co"># returned by concatenating values with a slash</span></span></span>
+<span class="r-in"><span><span class="fu">dbGetFieldsIntoDf</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  fields <span class="op">=</span> <span class="st">"keyword"</span>,</span></span>
+<span class="r-in"><span>  con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> keyword... </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             _id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 88  NCT00004500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 89  NCT00005773</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 90  NCT00005774</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 91  NCT00005775</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 92  NCT00005776</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 93  NCT00005777</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 94  NCT00009646</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95  NCT00016523</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 96  NCT00031447</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 97  NCT00031460</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 98  NCT00099359</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 99  NCT00515281</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 100 NCT00623740</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 101 NCT00640263</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 102 NCT00646399</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 103 NCT00682006</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 104 NCT00713726</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 105 NCT00734539</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 106 NCT00908401</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 107 NCT00922532</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 108 NCT00931632</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 109 NCT00977964</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 110 NCT00994149</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 111 NCT01006668</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 112 NCT01035190</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 113 NCT01183611</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 114 NCT01190995</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 115 NCT01243996</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 116 NCT01265589</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 117 NCT01389856</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 118 NCT01490580</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 119 NCT01517828</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 120 NCT01528852</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 121 NCT01536483</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 123 NCT01720524</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 124 NCT01723501</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 125 NCT01783041</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 126 NCT01875757</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 127 NCT01899677</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 128 NCT01954082</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 129 NCT02056223</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 130 NCT02305160</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 131 NCT02374281</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 132 NCT02499393</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 135 NCT02685137</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 138 NCT02810782</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 140 NCT03022253</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 141 NCT03058666</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 143 NCT03082001</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 150 NCT03272594</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 151 NCT03280147</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 152 NCT03325439</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 153 NCT03431558</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 155 NCT04001712</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 157 NCT04041765</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                                                                                   keyword</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 88                                                                                                                                                                                                                                                  cardiovascular and respiratory diseases / meconium aspiration syndrome / rare disease</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 89  NICHD Neonatal Research Network / Hypertension, pulmonary / Hypoxic respiratory failure / Meconium aspiration / Methemoglobinemia / Nitric oxide / Oxygen inhalation therapy / Persistent Fetal Circulation Syndrome / Pneumonia, aspiration / Respiratory distress syndrome / Respiratory insufficiency / Severe respiratory failure</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 90                                                                                                                                                        NICHD Neonatal Research Network / Pulmonary ventilation / Respiratory distress syndrome / Respiratory insufficiency / Surfactant, pulmonary / Mechanical Ventilation / Survanta</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 91                                                                                                                                                  NICHD Neonatal Research Network / Extremely Low Birth Weight (ELBW) infants / Prematurity / Glutamine / Total parenteral nutrition / Nutrition / Very low birth weight (VLBW) infants</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 92  NICHD Neonatal Research Network / Hypertension, pulmonary / Hypoxic respiratory failure / Meconium aspiration / Methemoglobinemia / Nitric oxide / Oxygen inhalation therapy / Persistent Fetal Circulation Syndrome / Pneumonia, aspiration / Respiratory distress syndrome / Respiratory insufficiency / Severe respiratory failure</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 93                                                                                                        NICHD Neonatal Research Network / Extremely Low Birth Weight (ELBW) / Prematurity / Chronic Lung Disease (CLD) / Dexamethasone / Glucocorticoids / Respiration, Artificial / Mechanical ventilation / Respiratory Insufficiency</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 94                                                                                                                                             Chronic lung disease / Indocin / Indomethacin / Infants, very low birth weight / Intraventricular hemorrhage / Necrotizing enterocolitis / Patent ductus arteriosus / Pulmonary hemorrhage</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95                                                                                                               NICHD Neonatal Research Network / Extremely Low Birth Weight (ELBW) / Very Low Birth Weight (VLBW) / Prematurity / Inhaled nitric oxide / Aspiration syndrome / Idiopathic pulmonary hypertension / Pulmonary hypoplasia</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 96                                                                                                                                                                                                                                                                                                     Herpes Simplex, Acyclovir, Infants</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 97                                                                                                                                                                                                                                                                                acyclovir, central nervous system, Herpes Simplex Virus</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 98                                                                                                                                                       HIV / Perinatal / Prevention / Transmission / Nevirapine / Epivir / Zidovudine / Nelfinavir / ZDV / NVP / 3TC / NFV / Viracept / Viramune / HIV Seronegativity / Treatment Naive</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 99                                                                                                                                                                                                prematurity / nitric oxide / bronchopulmonary dysplasia / intraventricular hemorrhage / periventricular leukomalacia / neurodevelopment</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 100                                                                                                                                                                                                                                       Hydrocortisone / Very low birth weight / Bronchopulmonary dysplasia / Prevention Cerebral palsy</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 101                                                                                                                                                                                                                                                                 HIV-1 / Breastfeeding / Prevention / lamivudine / lopinavir/ritonavir</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 102                                                                                                                                                                                                              Staphylococcal / Coagulase Negative Staphylococcus / Monoclonal antibodies / Very Low Birth Weight Infants / Prophylaxis</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 103                                                                                                                                                                                                                                                                                              Omphalitis / 4% Chlorhexidine / Newborns</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 104                                                                                                                                                                                                                                           Pain / Analgesia / Newborn Infant / Opioids / Side-effects / Intensive care / Postoperative</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 105                                                                                                                                                                                                                                                             Candida / Neonate / Fluconazole / Prophylaxis / Colonization / Resistance</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 106                                                                                                                                                                                                                                                                   breastmilk / oral sucrose / analgesia / preterm neonates / Neonates</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 107                                                                                                                                                                                                                                                                             Hypoxic Respiratory Failure (HRF), Pulmonary Hypertension</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 108                                                                                                                                                                                                                                                                                                       Bronchopulmonary Dysplasia, BPD</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 109                                                                                                                                                                                                                                                                                                                                Infant</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 110                                                                                                                                                                                                                                                  Infants of Diabetic Mothers / Hypoglycemia / Diazoxide / Large for Gestation Infants</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 111                                                                                                                                                                                                                                                      Neonates / Intensive care / Endotracheal intubation / Neonates in intensive care</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 112                                                                                                                                                                                                                                                                Preterm Infants / Inhaled Corticosteroids / Bronchopulmonary Dysplasia</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 113                                                                                                                                                                                                                                                                        safety / immunogenicity / HBV vaccine / perinatal transmission</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 114                                                                                                                                                                                                                                                                                 Pain / Neonate / Procedure / Neurobehavioural outcome</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 115                                                                                                                                                                                                                                                                                  Patent ductus arteriosus, ibuprofen, preterm infants</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 116                                                                                                                                                                                                                                                                                        RDS / Infant, newborn / Vitamin A / Surfactant</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 117                                                                                                                                                                                                                                                                                     Persistent pulmonary hypertension, newborn / PPHN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 118                                                                                                                                                                                                                                                  Pain / Newborn / Anaesthesia / opioids / propofol / neuromuscular blocker / atropine</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 119                                                                                                                                                                                                                                                                                     Intubation / Delivery room / Sedation / Analgesia</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 120                                                                                                                                                                                                                                   neonatal Mortality / chlorhexidine cord care / cord infections / african settings / clinical trials</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 121                                                                                                                                                                      Butyrate / Preterms / Very Low Birth Weight (&lt;1250g) / Rectocolonic enemas / Digestive maturation / Parenteral nutrition weaning / ECUN / Whole gut transit time</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 123                                                                                                                                                                  persistent pulmonary hypertension / newborn / neonates / iv sildenafil / hypoxic respiratory failure and at risk of persistent pulmonary hypertension of the newborn</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 124                                                                                                                                                                                                                                                                         chlorhexidine / sepsis / neonatal / whole-body skin cleansing</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 125                                                                                                                                                      Prematurity / Carnitine supplementation / Neonatal Intensive Care / MRI / Amplitude-integrated EEG / NICU Network Neurobehavioral Scale / Bayley Scale of Infant Development III</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 126                                                                                                                                                                                                               Vitamin D / Acute bronchitis / Upper respiratory tract infection / Recurrent bronchitis / Acute bronchiolitis / Infants</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 127                                                                                                                                                                                                                                                                                        Symbiotic,cytokines, necrotising enterocolitis</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 128                                                                                                                                                                                                                                                                                 Retinopathy / Prematurity / Infant, Newborn, Diseases</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 129                                                                                                                                                                                                                                                                   Patent ductus arteriosus / Preterm infant / Paracetamol / Ibuprofen</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 130                                                                                                                                                                                                                                                        Respiratory distress syndrome / Pulmonary surfactant / Mortality / Prematurity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 131                                                                                                                                                   Newborn / Neonatal Screening / Autonomic Nervous System / Pain / non-nutritive sucking / sucrose administration / nociceptive action / Electro acoustical characteristics of crying</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 132                                                                                                                                                                                                                                                                                newborn / therapeutic hypothermia / magnesium sulphate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 135                                                                                                                                                                                                                                               Kernicterus / Neonatal Jaundice / Newborn Jaundice / Hyperbilirubinemia / Stannsoporfin</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 138                                                                                                                                                                                                                                                                                              opiate dependence / withdrawal / newborn</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 140                                                                                                                                                                                                                                                                                                                       PDA / Platelets</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 141                                                                                                                                                                                                                             Aerosol / surfactant / calfactant / Infasurf / Respiratory Distress Syndrome / RDS / Premature / Neonates</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 143                                                                                                                                                                                                                                                                                                                 Neonate / Pain / ELBW</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 150                                                                                                                                                               Neonatal pain / Pediatric pain / Pain assessment / Breastfeeding / Sucrose / Randomized controlled trial / Behavioural pain response / Neurophysiological pain response</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 151                                                                                                                                                                                                                                                                                             Neonate / Sepsis / Antibiotics / Duration</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 152                                                                                                                                                                                                                                Electroencephalographic neonatal seizures / Brivaracetam / Epilepsy / ENS / Newborns / Pharmacokinetic</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 153                                                                                                                                                                                                                                                                              Bovine Lactoferrin, Neonatal infection, Low Birth Weight</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 155                                                                                                                                                                                                                                                                                                                early caffeine preterm</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 157                                                                                                                                                                                                                                                                                               IgM-enriched Intravenous Immunoglobulin</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

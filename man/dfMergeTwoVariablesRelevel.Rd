@@ -28,7 +28,15 @@ into a new variable, and optionally also map its values to new levels.
 }
 \examples{
 
-\dontrun{
+vars2merge <- c("overall_status", "x5_trial_status")
+
+dbc <- nodbi::src_sqlite(
+   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+   collection = "my_trials")
+
+df <- dbGetFieldsIntoDf(
+  fields = vars2merge,
+  con = dbc)
 
 statusvalues <- list(
   "ongoing" = c("Recruiting", "Active", "Ongoing",
@@ -39,9 +47,7 @@ statusvalues <- list(
 
 dfMergeTwoVariablesRelevel(
   df = df,
-  colnames = c("overall_status", "x5_trial_status"),
+  colnames = vars2merge,
   levelslist = statusvalues)
-
-}
 
 }

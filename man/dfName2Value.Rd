@@ -38,9 +38,10 @@ Parameters `valuename`, `wherename` and `wherevalue` are matched
 using Perl regular expressions and ignoring case.
 }
 \examples{
-\dontrun{
 
-dbc <- nodbi::src_sqlite(collection = "my_collection")
+dbc <- nodbi::src_sqlite(
+   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+   collection = "my_trials")
 
 df <- dbGetFieldsIntoDf(
 fields = c(
@@ -58,8 +59,7 @@ fields = c(
   "trialChanges.hasGlobalInterruptions",
   "subjectAnalysisSets",
   "adverseEvents.seriousAdverseEvents.seriousAdverseEvent"
-  ), con = dbc
-)
+  ), con = dbc)
 
 # convert to long
 reslong <- dfTrials2Long(df = df)
@@ -72,10 +72,9 @@ dfName2Value(
     "clinical_results.*category.measurement_list.measurement.value|",
     "clinical_results.*outcome.measure.units|endPoints.endPoint.unit"
   ),
-  wherename = "clinical_results.*outcome.measure.title|endPoints.endPoint.title",
-  wherevalue = "response"
-)
-
-}
+  wherename = paste0(
+    "clinical_results.*outcome.measure.title|",
+    "endPoints.endPoint.title"),
+  wherevalue = "response")
 
 }

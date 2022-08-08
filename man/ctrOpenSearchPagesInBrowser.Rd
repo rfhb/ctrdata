@@ -27,17 +27,16 @@ Always \code{TRUE}, invisibly.
 Open advanced search pages of register(s), or execute search in browser
 }
 \examples{
-\dontrun{
 
 # Check copyrights before using registers
 ctrOpenSearchPagesInBrowser(copyright = TRUE)
 
 # open last query loaded into the collection
 dbc <- nodbi::src_sqlite(
-  collection = "previously_created"
-)
+   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+   collection = "my_trials")
+
 ctrOpenSearchPagesInBrowser(
   dbQueryHistory(con = dbc))
 
-}
 }

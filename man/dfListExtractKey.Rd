@@ -33,16 +33,15 @@ working with nested lists and with complex structures.
 }
 \examples{
 
-\dontrun{
-
-dbc <- nodbi::src_sqlite(collection = "my_collection")
+dbc <- nodbi::src_sqlite(
+   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+   collection = "my_trials")
 
 df <- dbGetFieldsIntoDf(
   fields = c(
     "endPoints.endPoint",
     "subjectDisposition.postAssignmentPeriods"),
-  con = dbc
-)
+  con = dbc)
 
 dfListExtractKey(
   df = df,
@@ -52,7 +51,5 @@ dfListExtractKey(
       c("subjectDisposition.postAssignmentPeriods",
         "arms.arm.type.value")
 ))
-
-}
 
 }

@@ -373,19 +373,18 @@ ctrDb <- function(
 #' @return Always \code{TRUE}, invisibly.
 #'
 #' @examples
-#' \dontrun{
 #'
 #' # Check copyrights before using registers
 #' ctrOpenSearchPagesInBrowser(copyright = TRUE)
 #'
 #' # open last query loaded into the collection
 #' dbc <- nodbi::src_sqlite(
-#'   collection = "previously_created"
-#' )
+#'    dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+#'    collection = "my_trials")
+#'
 #' ctrOpenSearchPagesInBrowser(
 #'   dbQueryHistory(con = dbc))
 #'
-#' }
 ctrOpenSearchPagesInBrowser <- function(
   url = "",
   register = "",
@@ -480,22 +479,14 @@ ctrOpenSearchPagesInBrowser <- function(
 #'
 #' @examples
 #'
-#' \dontrun{
-#'
-#' dbc <- nodbi::src_sqlite(collection = "my_collection")
-#'
-#' # user now copies into the clipboard the URL from
+#' # user copied into the clipboard the URL from
 #' # the address bar of the browser that shows results
 #' # from a query in one of the trial registers
-#' #
-#' # information about all trials found with this query
-#' # is now loaded into the database collection
-#' ctrLoadQueryIntoDb(
-#'   queryterm = ctrGetQueryUrl(),
-#'   con = dbc
-#' )
+#' try(ctrGetQueryUrl(), silent = TRUE)
 #'
-#' }
+#' # extract query parameters from search result URL
+#' ctrGetQueryUrl(
+#'   url = "https://clinicaltrials.gov/ct2/results?cond=&term=AREA%5BMaximumAge%5D+RANGE%5B0+days%2C+28+days%5D&type=Intr&rslt=&age_v=&gndr=&intr=Drugs%2C+Investigational&titles=&outc=&spons=&lead=&id=&cntry=&state=&city=&dist=&locn=&phase=2&rsub=&strd_s=01%2F01%2F2015&strd_e=01%2F01%2F2016&prcd_s=&prcd_e=&sfpd_s=&sfpd_e=&rfpd_s=&rfpd_e=&lupd_s=&lupd_e=&sort=")
 #'
 ctrGetQueryUrl <- function(
   url = "",
@@ -653,12 +644,8 @@ ctrGetQueryUrl <- function(
 #'
 #' @examples
 #'
-#' \dontrun{
-#'
 #' ctrFindActiveSubstanceSynonyms(activesubstance = "imatinib")
-#' # [1] "imatinib"  "gleevec"   "sti 571"   "glivec"    "CGP 57148" "st1571"
-#'
-#' }
+#' # [1] "imatinib" "gleevec" "sti 571" "glivec" "CGP 57148" "st1571"
 #'
 ctrFindActiveSubstanceSynonyms <- function(activesubstance = "") {
 
@@ -736,13 +723,11 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "") {
 #'
 #' @examples
 #'
-#' \dontrun{
-#'
-#' dbc <- nodbi::src_sqlite(collection = "my_collection")
+#' dbc <- nodbi::src_sqlite(
+#'    dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+#'    collection = "my_trials")
 #'
 #' dbQueryHistory(con = dbc)
-#'
-#' }
 #'
 dbQueryHistory <- function(con, verbose = FALSE) {
 
@@ -846,13 +831,11 @@ dbQueryHistory <- function(con, verbose = FALSE) {
 #'
 #' @examples
 #'
-#' \dontrun{
-#'
-#' dbc <- nodbi::src_sqlite(collection = "my_collection")
+#' dbc <- nodbi::src_sqlite(
+#'    dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+#'    collection = "my_trials")
 #'
 #' dbFindFields(namepart = "date", con = dbc)
-#'
-#' }
 #'
 dbFindFields <- function(namepart = "",
                          con,
@@ -1022,12 +1005,11 @@ dbFindFields <- function(namepart = "",
 #'
 #' @examples
 #'
-#' \dontrun{
-#' dbc <- nodbi::src_sqlite(collection = "my_collection")
+#' dbc <- nodbi::src_sqlite(
+#'    dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+#'    collection = "my_trials")
 #'
 #' dbFindIdsUniqueTrials(con = dbc)
-#'
-#' }
 #'
 dbFindIdsUniqueTrials <- function(
   preferregister = c("EUCTR", "CTGOV", "ISRCTN"),
@@ -1360,24 +1342,21 @@ dbFindIdsUniqueTrials <- function(
 #'
 #' @examples
 #'
-#' \dontrun{
+#' dbc <- nodbi::src_sqlite(
+#'    dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+#'    collection = "my_trials")
 #'
-#' dbc <- nodbi::src_sqlite(collection = "my_collection")
-#'
-#' # access fields that are nested within another field
+#' # get fields that are nested within another field
 #' # and can have multiple values with the nested field
 #' dbGetFieldsIntoDf(
-#'   "b1_sponsor.b31_and_b32_status_of_the_sponsor",
-#'   con = dbc
-#' )
+#'   fields = "b1_sponsor.b31_and_b32_status_of_the_sponsor",
+#'   con = dbc)
 #'
-#' # access fields that include a list of values which
-#' # (if they are strings) are concatenated with a slash
-#' dbGetFieldsIntoDf("keyword", con = dbc)[1,]
-#' #           _id                                   keyword
-#' # 1 NCT00129259 T1D / type 1 diabetes / juvenile diabetes
-#'
-#' }
+#' # fields that are lists of string values are
+#' # returned by concatenating values with a slash
+#' dbGetFieldsIntoDf(
+#'   fields = "keyword",
+#'   con = dbc)
 #'
 dbGetFieldsIntoDf <- function(fields = "",
                               con, verbose = FALSE,
@@ -1720,9 +1699,10 @@ dbGetFieldsIntoDf <- function(fields = "",
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #'
-#' dbc <- nodbi::src_sqlite(collection = "my_collection")
+#' dbc <- nodbi::src_sqlite(
+#'    dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+#'    collection = "my_trials")
 #'
 #' df <- dbGetFieldsIntoDf(
 #' fields = c(
@@ -1740,8 +1720,7 @@ dbGetFieldsIntoDf <- function(fields = "",
 #'   "trialChanges.hasGlobalInterruptions",
 #'   "subjectAnalysisSets",
 #'   "adverseEvents.seriousAdverseEvents.seriousAdverseEvent"
-#'   ), con = dbc
-#' )
+#'   ), con = dbc)
 #'
 #' # convert to long
 #' reslong <- dfTrials2Long(df = df)
@@ -1754,11 +1733,10 @@ dbGetFieldsIntoDf <- function(fields = "",
 #'     "clinical_results.*category.measurement_list.measurement.value|",
 #'     "clinical_results.*outcome.measure.units|endPoints.endPoint.unit"
 #'   ),
-#'   wherename = "clinical_results.*outcome.measure.title|endPoints.endPoint.title",
-#'   wherevalue = "response"
-#' )
-#'
-#' }
+#'   wherename = paste0(
+#'     "clinical_results.*outcome.measure.title|",
+#'     "endPoints.endPoint.title"),
+#'   wherevalue = "response")
 #'
 dfName2Value <- function(df, valuename = "",
                          wherename = "", wherevalue = "") {
@@ -1885,17 +1863,17 @@ dfName2Value <- function(df, valuename = "",
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #'
-#' dbc <- nodbi::src_sqlite(collection = "my_collection")
+#' dbc <- nodbi::src_sqlite(
+#'    dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+#'    collection = "my_trials")
 #'
 #' df <- dbGetFieldsIntoDf(
-#'   fields = c("clinical_results"),
-#'   con = dbc
-#' )
-#' head(dfTrials2Long(df = df))
+#'   fields = "clinical_results",
+#'   con = dbc)
 #'
-#' }
+#' dfTrials2Long(df = df)
+#'
 dfTrials2Long <- function(df) {
 
   # get names
@@ -2088,16 +2066,15 @@ dfTrials2Long <- function(df) {
 #'
 #' @examples
 #'
-#' \dontrun{
-#'
-#' dbc <- nodbi::src_sqlite(collection = "my_collection")
+#' dbc <- nodbi::src_sqlite(
+#'    dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+#'    collection = "my_trials")
 #'
 #' df <- dbGetFieldsIntoDf(
 #'   fields = c(
 #'     "endPoints.endPoint",
 #'     "subjectDisposition.postAssignmentPeriods"),
-#'   con = dbc
-#' )
+#'   con = dbc)
 #'
 #' dfListExtractKey(
 #'   df = df,
@@ -2107,8 +2084,6 @@ dfTrials2Long <- function(df) {
 #'       c("subjectDisposition.postAssignmentPeriods",
 #'         "arms.arm.type.value")
 #' ))
-#'
-#' }
 #'
 dfListExtractKey <- function(
   df,
@@ -2220,7 +2195,15 @@ dfListExtractKey <- function(
 #'
 #' @examples
 #'
-#' \dontrun{
+#' vars2merge <- c("overall_status", "x5_trial_status")
+#'
+#' dbc <- nodbi::src_sqlite(
+#'    dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+#'    collection = "my_trials")
+#'
+#' df <- dbGetFieldsIntoDf(
+#'   fields = vars2merge,
+#'   con = dbc)
 #'
 #' statusvalues <- list(
 #'   "ongoing" = c("Recruiting", "Active", "Ongoing",
@@ -2231,10 +2214,8 @@ dfListExtractKey <- function(
 #'
 #' dfMergeTwoVariablesRelevel(
 #'   df = df,
-#'   colnames = c("overall_status", "x5_trial_status"),
+#'   colnames = vars2merge,
 #'   levelslist = statusvalues)
-#'
-#' }
 #'
 dfMergeTwoVariablesRelevel <- function(
   df = NULL,
@@ -2688,11 +2669,7 @@ addMetaData <- function(x, con) {
 #'
 #' @examples
 #'
-#' \dontrun{
-#'
-#' installCygwinWindowsDoInstall()
-#'
-#' }
+#' try(installCygwinWindowsDoInstall(), silent = TRUE)
 #'
 installCygwinWindowsDoInstall <- function(
   force = FALSE, proxy = Sys.getenv("https_proxy")) {
