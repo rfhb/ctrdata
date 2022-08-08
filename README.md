@@ -14,38 +14,39 @@ The package `ctrdata` provides functions for retrieving (downloading)
 information on clinical trials from public registers, and for
 aggregating and analysing this information; it can be used for the
 
--   EU Clinical Trials Register (“EUCTR”,
-    <https://www.clinicaltrialsregister.eu/>)
--   ClinicalTrials.gov (“CTGOV”, <https://clinicaltrials.gov/>)
--   ISRCTN (<https://www.isrctn.com/>)
+- EU Clinical Trials Register (“EUCTR”,
+  <https://www.clinicaltrialsregister.eu/>)
+- ClinicalTrials.gov (“CTGOV”, <https://clinicaltrials.gov/>)
+- ISRCTN (<https://www.isrctn.com/>)
 
 The motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created by it. This
-README was reviewed on 2022-07-24 for version 1.10.0.9002.
+README was reviewed on 2022-08-08 for version 1.10.0.9004 (see
+[NEWS.md](NEWS.md)).
 
 Main features:
 
--   Protocol-related trial information is easily retrieved (downloaded):
-    Users define a query in a register’s web interface and then use
-    `ctrdata` to retrieve in one step all trials resulting from the
-    query. Results-related trial information and personal annotations
-    can be including during retrieval. Synonyms of an active substance
-    can also be found.
+- Protocol-related trial information is easily retrieved (downloaded):
+  Users define a query in a register’s web interface and then use
+  `ctrdata` to retrieve in one step all trials resulting from the query.
+  Results-related trial information and personal annotations can be
+  including during retrieval. Synonyms of an active substance can also
+  be found.
 
--   Retrieved (downloaded) trial information is transformed and stored
-    in a document-centric database, for fast and offline access. Uses
-    `PostgreSQL` (🔔new in version 1.9.0), `RSQLite` or `MongoDB` as
-    databases, via R package `nodbi`: see section
-    [Databases](#databases-that-can-be-used-with-ctrdata) below. Easily
-    re-run a previous query to update a database.
+- Retrieved (downloaded) trial information is transformed and stored in
+  a document-centric database, for fast and offline access. Uses
+  `PostgreSQL` (🔔new in version 1.9.0), `RSQLite` or `MongoDB` as
+  databases, via R package `nodbi`: see section
+  [Databases](#databases-that-can-be-used-with-ctrdata) below. Easily
+  re-run a previous query to update a database.
 
--   Analysis can be done with `R` (using `ctrdata` convenience
-    functions) or others systems. Unique (de-duplicated) trial records
-    are identified across registers. `ctrdata` can merge and recode
-    information (fields) and also provides easy access even to
-    deeply-nested fields (new in version 1.4.0).
+- Analysis can be done with `R` (using `ctrdata` convenience functions)
+  or others systems. Unique (de-duplicated) trial records are identified
+  across registers. `ctrdata` can merge and recode information (fields)
+  and also provides easy access even to deeply-nested fields (new in
+  version 1.4.0).
 
 Remember to respect the registers’ terms and conditions (see
 `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
@@ -94,30 +95,30 @@ These are required for `ctrLoadQueryIntoDb()`, the main function of
 package `ctrdata` (see [Example workflow](#example-workflow)); the
 function also checks if the tools can be used.
 
--   For MS Windows, install [`Cygwin`](https://cygwin.org/install.html):
-    In `R`, run `ctrdata::installCygwinWindowsDoInstall()` for an
-    automated minimal installation. Alternatively, manually install
-    Cygwin with packages `perl`, `php-jsonc` and `php-simplexml` into
-    `c:\cygwin`. The installation needs about 160 MB disk space; no
-    administrator credentials needed.
+- For MS Windows, install [`Cygwin`](https://cygwin.org/install.html):
+  In `R`, run `ctrdata::installCygwinWindowsDoInstall()` for an
+  automated minimal installation. Alternatively, manually install Cygwin
+  with packages `perl`, `php-jsonc` and `php-simplexml` into
+  `c:\cygwin`. The installation needs about 160 MB disk space; no
+  administrator credentials needed.
 
--   In macOS including 11 Big Sur, these are already installed; as
-    alternative and 🔔for macOS 12 Monterey,
-    [`homebrew`](https://brew.sh/) can be used: `brew install php`,
-    which seems to include the libraries required for `ctrdata`.
+- In macOS including 11 Big Sur, these are already installed; as
+  alternative and 🔔for macOS 12 Monterey,
+  [`homebrew`](https://brew.sh/) can be used: `brew install php`, which
+  seems to include the libraries required for `ctrdata`.
 
--   In Linux, these are usually already installed; tools for
-    installation vary by distribution (e.g.,
-    `sudo apt install php-cli php-xml php-json`).
+- In Linux, these are usually already installed; tools for installation
+  vary by distribution (e.g.,
+  `sudo apt install php-cli php-xml php-json`).
 
 ### Vignettes
 
--   [Install R package
-    ctrdata](https://rfhb.github.io/ctrdata/dev/articles/ctrdata_install.html)
--   [Retrieve clinical trial
-    information](https://rfhb.github.io/ctrdata/dev/articles/ctrdata_retrieve.html)
--   [Summarise and analyse clinical trial
-    information](https://rfhb.github.io/ctrdata/dev/articles/ctrdata_summarise.html)
+- [Install R package
+  ctrdata](https://rfhb.github.io/ctrdata/dev/articles/ctrdata_install.html)
+- [Retrieve clinical trial
+  information](https://rfhb.github.io/ctrdata/dev/articles/ctrdata_retrieve.html)
+- [Summarise and analyse clinical trial
+  information](https://rfhb.github.io/ctrdata/dev/articles/ctrdata_summarise.html)
 
 ## Overview of functions in `ctrdata`
 
@@ -168,25 +169,25 @@ row in table) or, in case of MongoDB as database backend, `mongolite`
 The aim is to download protocol-related trial information and tabulate
 the trials’ status of conduct.
 
--   Attach package `ctrdata`:
+- Attach package `ctrdata`:
 
 ``` r
 library(ctrdata)
 ```
 
--   See help to get started with `ctrdata`:
+- See help to get started with `ctrdata`:
 
 ``` r
 help("ctrdata-package")
 ```
 
--   Information on trial registers that can be used with `ctrdata`:
+- Information on trial registers that can be used with `ctrdata`:
 
 ``` r
 help("ctrdata-registers")
 ```
 
--   Open registers’ advanced search pages in browser:
+- Open registers’ advanced search pages in browser:
 
 ``` r
 ctrOpenSearchPagesInBrowser()
@@ -195,15 +196,15 @@ ctrOpenSearchPagesInBrowser()
 ctrOpenSearchPagesInBrowser(copyright = TRUE)
 ```
 
--   Adjust search parameters and execute search in browser
+- Adjust search parameters and execute search in browser
 
--   When trials of interest are listed in browser, *copy the address
-    from the browser’s address bar to the clipboard*
+- When trials of interest are listed in browser, *copy the address from
+  the browser’s address bar to the clipboard*
 
--   Search used in this example:
-    <https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&age=under-18&phase=phase-one&status=completed>
+- Search used in this example:
+  <https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&age=under-18&phase=phase-one&status=completed>
 
--   Get address from clipboard:
+- Get address from clipboard:
 
 ``` r
 q <- ctrGetQueryUrl()
@@ -215,8 +216,7 @@ q
 # 1 query=cancer&age=under-18&phase=phase-one&status=completed           EUCTR
 ```
 
--   Retrieve protocol-related information, transform and save to
-    database:
+- Retrieve protocol-related information, transform and save to database:
 
 The database collection is specified first, using `nodbi` (see above for
 how to specify `PostgreSQL`, `RSQlite` or `MongoDB` as backend); then,
@@ -254,7 +254,7 @@ Under the hood, scripts `euctr2json.sh` and `xml2json.php` (in
 ISRCTN `XML` files to `ndjson` format, which is imported into the
 database collection.
 
--   Analyse
+- Analyse
 
 Tabulate the status of trials that are part of an agreed paediatric
 development program (paediatric investigation plan, PIP):
@@ -298,10 +298,10 @@ with(result,
 #   Restarted                                                 0  1   0
 ```
 
--   Add records from another register (CTGOV) into the same collection
+- Add records from another register (CTGOV) into the same collection
 
--   Search used in this example:
-    <https://clinicaltrials.gov/ct2/results?cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug>
+- Search used in this example:
+  <https://clinicaltrials.gov/ct2/results?cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug>
 
 ``` r
 # Retrieve trials from another register:
@@ -320,10 +320,10 @@ ctrLoadQueryIntoDb(
 # * Updated history ("meta-info" in "some_collection_name")
 ```
 
--   Add records from a third register (ISRCTN) into the same collection
+- Add records from a third register (ISRCTN) into the same collection
 
--   Search used in this example:
-    <https://www.isrctn.com/search?q=neuroblastoma>
+- Search used in this example:
+  <https://www.isrctn.com/search?q=neuroblastoma>
 
 ``` r
 # Retrieve trials from another register:
@@ -341,7 +341,7 @@ ctrLoadQueryIntoDb(
 # * Updated history ("meta-info" in "some_collection_name")
 ```
 
--   Result-related trial information
+- Result-related trial information
 
 Analyse some simple result details (see vignette for more examples):
 
@@ -452,59 +452,64 @@ sapply(
 
 ### Additional features under consideration
 
--   Retrieve previous versions of protocol- or results-related
-    information. The challenge is that, apparently, initial versions
-    cannot be queried and historical versions can only be retrieved
-    one-by-one and not in structured format.
+- Retrieve previous versions of protocol- or results-related
+  information. The challenge is that, apparently, initial versions
+  cannot be queried and historical versions can only be retrieved
+  one-by-one and not in structured format.
 
--   Merge results-related fields retrieved from different registers
-    (e.g., corresponding endpoints). The challenge is the incomplete
-    congruency and different structure of fields.
+- Merge results-related fields retrieved from different registers (e.g.,
+  corresponding endpoints). The challenge is the incomplete congruency
+  and different structure of fields.
 
 ### Acknowledgements
 
--   Data providers and curators of the clinical trial registers. Please
-    review and respect their copyrights and terms and conditions, see
-    `ctrOpenSearchPagesInBrowser(copyright = TRUE)`.
+- Data providers and curators of the clinical trial registers. Please
+  review and respect their copyrights and terms and conditions, see
+  `ctrOpenSearchPagesInBrowser(copyright = TRUE)`.
 
--   Package `ctrdata` has been made possible building on the work done
-    for [R](https://www.r-project.org/),
-    [curl](https://cran.r-project.org/package=curl),
-    [httr](https://cran.r-project.org/package=httr),
-    [xml2](https://cran.r-project.org/package=xml2),
-    [rvest](https://cran.r-project.org/package=rvest),
-    [mongolite](https://cran.r-project.org/package=mongolite),
-    [jsonlite](https://cran.r-project.org/package=jsonlite),
-    [nodbi](https://cran.r-project.org/package=nodbi),
-    [RPostgres](https://cran.r-project.org/package=RPostgres),
-    [RSQLite](https://CRAN.R-project.org/package=RSQLite) and
-    [clipr](https://cran.r-project.org/package=clipr).
+- Package `ctrdata` has been made possible building on the work done for
+  [R](https://www.r-project.org/),
+  [curl](https://cran.r-project.org/package=curl),
+  [httr](https://cran.r-project.org/package=httr),
+  [xml2](https://cran.r-project.org/package=xml2),
+  [rvest](https://cran.r-project.org/package=rvest),
+  [mongolite](https://cran.r-project.org/package=mongolite),
+  [jsonlite](https://cran.r-project.org/package=jsonlite),
+  [nodbi](https://cran.r-project.org/package=nodbi),
+  [RPostgres](https://cran.r-project.org/package=RPostgres),
+  [RSQLite](https://CRAN.R-project.org/package=RSQLite) and
+  [clipr](https://cran.r-project.org/package=clipr).
 
 ### Issues and notes
 
--   Please file issues and bugs
-    [here](https://github.com/rfhb/ctrdata/issues). Also check out how
-    to handle some of the closed issues, e.g. on [C stack usage too
-    close to the limit](https://github.com/rfhb/ctrdata/issues/22) and
-    on a [SSL certificate problem: unable to get local issuer
-    certificate](https://github.com/rfhb/ctrdata/issues/19#issuecomment-820127139)
+- Please file issues and bugs
+  [here](https://github.com/rfhb/ctrdata/issues). Also check out how to
+  handle some of the closed issues, e.g. on [C stack usage too close to
+  the limit](https://github.com/rfhb/ctrdata/issues/22) and on a [SSL
+  certificate problem: unable to get local issuer
+  certificate](https://github.com/rfhb/ctrdata/issues/19#issuecomment-820127139)
 
--   Information in trial registers may not be fully correct; see for
-    example [this publication on
-    CTGOV](https://doi.org/10.1136/bmj.k1452).
+- Information in trial registers may not be fully correct; see for
+  example [this publication on
+  CTGOV](https://doi.org/10.1136/bmj.k1452).
 
--   No attempts were made to harmonise field names between registers
-    (nevertheless, `dfMergeTwoVariablesRelevel()` can be used to merge
-    and map two variables / fields into one).
+- No attempts were made to harmonise field names between registers
+  (nevertheless, `dfMergeTwoVariablesRelevel()` can be used to merge and
+  map two variables / fields into one).
 
 ## Trial records’ JSON in databases
+
+### PostgreSQL
+
+![Example JSON representation in
+PostgreSQL](https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_json_postgresql.jpg)
 
 ### MongoDB
 
 ![Example JSON representation in
-MongoDB](https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/dev/reference/figures/README-ctrdata_json_mongodb.jpg)
+MongoDB](https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_json_mongodb.jpg)
 
 ### SQLite
 
 ![Example JSON representation in
-SQLite](https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/dev/reference/figures/README-ctrdata_json_sqlite.jpg)
+SQLite](https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_json_sqlite.jpg)
