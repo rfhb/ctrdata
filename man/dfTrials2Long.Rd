@@ -33,10 +33,10 @@ dbc <- nodbi::src_sqlite(
    dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
    collection = "my_trials")
 
-df <- dbGetFieldsIntoDf(
-  fields = "clinical_results",
+dfwide <- dbGetFieldsIntoDf(
+  fields = "clinical_results.participant_flow",
   con = dbc)
 
-dfTrials2Long(df = df)
+dfTrials2Long(df = dfwide)
 
 }

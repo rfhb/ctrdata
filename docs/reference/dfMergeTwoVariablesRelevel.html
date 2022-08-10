@@ -12,7 +12,7 @@ into a new variable, and optionally also map its values to new levels."><meta na
     
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.10.1.9006</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.10.1.9007</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -123,69 +123,33 @@ used for a vector of old values (optional).</p></dd>
 <span class="r-in"><span>  df <span class="op">=</span> <span class="va">df</span>,</span></span>
 <span class="r-in"><span>  colnames <span class="op">=</span> <span class="va">vars2merge</span>,</span></span>
 <span class="r-in"><span>  levelslist <span class="op">=</span> <span class="va">statusvalues</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Unique values returned (first three): ongoing, GB - no longer in EU/EEA, completed</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [1] "ongoing"                  "ongoing"                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [3] "ongoing"                  "GB - no longer in EU/EEA"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [5] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [7] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [9] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [11] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [13] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [15] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [17] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [19] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [21] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [23] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [25] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [27] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [29] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [31] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [33] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [35] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [37] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [39] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [41] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [43] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [45] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [47] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [49] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [51] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [53] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [55] "completed"                "ongoing"                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [57] "Temporarily Halted"       "ongoing"                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [59] "GB - no longer in EU/EEA" "Not Authorised"          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [61] "ongoing"                  "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [63] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [65] "completed"                "ongoing"                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [67] "ongoing"                  "ongoing"                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [69] "completed"                "ongoing"                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [71] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [73] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [75] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [77] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [79] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [81] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [83] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [85] "Unknown status"           "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [87] "completed"                "Unknown status"          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [89] "Unknown status"           "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [91] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [93] "other"                    "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [95] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [97] "completed"                "other"                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [99] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [101] "Unknown status"           "ongoing"                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [103] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [105] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [107] "completed"                "ongoing"                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [109] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [111] "Unknown status"           "Unknown status"          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [113] "Unknown status"           "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [115] "completed"                "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [117] "ongoing"                  "completed"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [119] "Unknown status"           "Unknown status"          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [121] "completed"                "Unknown status"          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [123] "Unknown status"          </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Unique values returned (first three): completed, ongoing, Temporarily Halted</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "completed"                "completed"               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3] "completed"                "completed"               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] "completed"                "completed"               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "completed"                "ongoing"                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] "Temporarily Halted"       "ongoing"                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [11] "GB - no longer in EU/EEA" "Not Authorised"          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "ongoing"                  "completed"               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [15] "completed"                "completed"               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [17] "completed"                "completed"               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [19] "completed"                "Unknown status"          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [21] "completed"                "completed"               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [23] "Unknown status"           "Unknown status"          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [25] "completed"                "completed"               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [27] "completed"                "other"                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [29] "completed"                "completed"               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [31] "completed"                "completed"               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [33] "other"                    "completed"               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [35] "completed"                "Unknown status"          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [37] "completed"                "completed"               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [39] "completed"                "completed"               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [41] "completed"                "ongoing"                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [43] "completed"                "completed"               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [45] "Unknown status"           "Unknown status"          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [47] "Unknown status"           "completed"               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [49] "completed"                "completed"               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [51] "Unknown status"          </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
