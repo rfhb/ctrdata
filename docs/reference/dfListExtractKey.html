@@ -123,17 +123,15 @@ extracted. See example.</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> . </span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">dfListExtractKey</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  df <span class="op">=</span> <span class="va">df</span>,</span></span>
-<span class="r-in"><span>  list.key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>      <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"endPoints.endPoint"</span>,</span></span>
-<span class="r-in"><span>        <span class="st">"^title"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>      <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"subjectDisposition.postAssignmentPeriods"</span>,</span></span>
-<span class="r-in"><span>        <span class="st">"arms.arm.type.value"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu">dfListExtractKey</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    df <span class="op">=</span> <span class="va">df</span>,</span></span>
+<span class="r-in"><span>    list.key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>        <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"endPoints.endPoint"</span>,</span></span>
+<span class="r-in"><span>          <span class="st">"^title"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>        <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"subjectDisposition.postAssignmentPeriods"</span>,</span></span>
+<span class="r-in"><span>          <span class="st">"arms.arm.type.value"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'dfListExtractKey' is deprecated.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> Use 'dfName2Value' instead.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> See help("Deprecated")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                         name                _id</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1   endPoints.endPoint.title 2007-004277-26-3RD</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2   endPoints.endPoint.title 2007-004277-26-3RD</span>
@@ -288,103 +286,103 @@ extracted. See example.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 151 endPoints.endPoint.title  2011-001033-16-PT</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 152 endPoints.endPoint.title  2011-001033-16-PT</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 153 endPoints.endPoint.title  2011-001033-16-PT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 154 endPoints.endPoint.title  2013-003629-27-BE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 155 endPoints.endPoint.title  2013-003629-27-BE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 156 endPoints.endPoint.title  2013-003629-27-BE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 157 endPoints.endPoint.title  2013-003629-27-BE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 158 endPoints.endPoint.title  2013-003629-27-BE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 159 endPoints.endPoint.title  2013-003629-27-BE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 160 endPoints.endPoint.title  2013-003629-27-BE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 161 endPoints.endPoint.title  2013-003629-27-BE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 162 endPoints.endPoint.title  2013-003629-27-BE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 163 endPoints.endPoint.title  2013-003629-27-DE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 164 endPoints.endPoint.title  2013-003629-27-DE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 165 endPoints.endPoint.title  2013-003629-27-DE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 166 endPoints.endPoint.title  2013-003629-27-DE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 167 endPoints.endPoint.title  2013-003629-27-DE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 168 endPoints.endPoint.title  2013-003629-27-DE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 169 endPoints.endPoint.title  2013-003629-27-DE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 170 endPoints.endPoint.title  2013-003629-27-DE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 171 endPoints.endPoint.title  2013-003629-27-DE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 172 endPoints.endPoint.title  2013-003629-27-DK</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 173 endPoints.endPoint.title  2013-003629-27-DK</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 174 endPoints.endPoint.title  2013-003629-27-DK</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 175 endPoints.endPoint.title  2013-003629-27-DK</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 176 endPoints.endPoint.title  2013-003629-27-DK</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 177 endPoints.endPoint.title  2013-003629-27-DK</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 178 endPoints.endPoint.title  2013-003629-27-DK</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 179 endPoints.endPoint.title  2013-003629-27-DK</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 180 endPoints.endPoint.title  2013-003629-27-DK</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 181 endPoints.endPoint.title  2013-003629-27-ES</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 182 endPoints.endPoint.title  2013-003629-27-ES</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 183 endPoints.endPoint.title  2013-003629-27-ES</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 184 endPoints.endPoint.title  2013-003629-27-ES</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 185 endPoints.endPoint.title  2013-003629-27-ES</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 186 endPoints.endPoint.title  2013-003629-27-ES</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 187 endPoints.endPoint.title  2013-003629-27-ES</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 188 endPoints.endPoint.title  2013-003629-27-ES</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 189 endPoints.endPoint.title  2013-003629-27-ES</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 190 endPoints.endPoint.title  2013-003629-27-FR</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 191 endPoints.endPoint.title  2013-003629-27-FR</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 192 endPoints.endPoint.title  2013-003629-27-FR</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 193 endPoints.endPoint.title  2013-003629-27-FR</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 194 endPoints.endPoint.title  2013-003629-27-FR</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 195 endPoints.endPoint.title  2013-003629-27-FR</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 196 endPoints.endPoint.title  2013-003629-27-FR</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 197 endPoints.endPoint.title  2013-003629-27-FR</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 198 endPoints.endPoint.title  2013-003629-27-FR</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 199 endPoints.endPoint.title  2013-003629-27-GB</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 200 endPoints.endPoint.title  2013-003629-27-GB</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 201 endPoints.endPoint.title  2013-003629-27-GB</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 202 endPoints.endPoint.title  2013-003629-27-GB</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 203 endPoints.endPoint.title  2013-003629-27-GB</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 204 endPoints.endPoint.title  2013-003629-27-GB</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 205 endPoints.endPoint.title  2013-003629-27-GB</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 206 endPoints.endPoint.title  2013-003629-27-GB</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 207 endPoints.endPoint.title  2013-003629-27-GB</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 208 endPoints.endPoint.title  2013-003629-27-IE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 209 endPoints.endPoint.title  2013-003629-27-IE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 210 endPoints.endPoint.title  2013-003629-27-IE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 211 endPoints.endPoint.title  2013-003629-27-IE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 212 endPoints.endPoint.title  2013-003629-27-IE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 213 endPoints.endPoint.title  2013-003629-27-IE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 214 endPoints.endPoint.title  2013-003629-27-IE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 215 endPoints.endPoint.title  2013-003629-27-IE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 216 endPoints.endPoint.title  2013-003629-27-IE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 217 endPoints.endPoint.title  2013-003629-27-IT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 218 endPoints.endPoint.title  2013-003629-27-IT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 219 endPoints.endPoint.title  2013-003629-27-IT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 220 endPoints.endPoint.title  2013-003629-27-IT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 221 endPoints.endPoint.title  2013-003629-27-IT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 222 endPoints.endPoint.title  2013-003629-27-IT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 223 endPoints.endPoint.title  2013-003629-27-IT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 224 endPoints.endPoint.title  2013-003629-27-IT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 225 endPoints.endPoint.title  2013-003629-27-IT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 226 endPoints.endPoint.title  2013-003629-27-NL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 227 endPoints.endPoint.title  2013-003629-27-NL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 228 endPoints.endPoint.title  2013-003629-27-NL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 229 endPoints.endPoint.title  2013-003629-27-NL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 230 endPoints.endPoint.title  2013-003629-27-NL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 231 endPoints.endPoint.title  2013-003629-27-NL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 232 endPoints.endPoint.title  2013-003629-27-NL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 233 endPoints.endPoint.title  2013-003629-27-NL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 234 endPoints.endPoint.title  2013-003629-27-NL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 235 endPoints.endPoint.title  2013-003629-27-PL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 236 endPoints.endPoint.title  2013-003629-27-PL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 237 endPoints.endPoint.title  2013-003629-27-PL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 238 endPoints.endPoint.title  2013-003629-27-PL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 239 endPoints.endPoint.title  2013-003629-27-PL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 240 endPoints.endPoint.title  2013-003629-27-PL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 241 endPoints.endPoint.title  2013-003629-27-PL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 242 endPoints.endPoint.title  2013-003629-27-PL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 243 endPoints.endPoint.title  2013-003629-27-PL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 244 endPoints.endPoint.title  2013-003629-27-SE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 245 endPoints.endPoint.title  2013-003629-27-SE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 246 endPoints.endPoint.title  2013-003629-27-SE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 247 endPoints.endPoint.title  2013-003629-27-SE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 248 endPoints.endPoint.title  2013-003629-27-SE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 249 endPoints.endPoint.title  2013-003629-27-SE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 250 endPoints.endPoint.title  2013-003629-27-SE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 154 endPoints.endPoint.title  2012-003632-23-AT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 155 endPoints.endPoint.title  2012-003632-23-AT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 156 endPoints.endPoint.title  2012-003632-23-AT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 157 endPoints.endPoint.title  2012-003632-23-AT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 158 endPoints.endPoint.title  2012-003632-23-AT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 159 endPoints.endPoint.title  2012-003632-23-AT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 160 endPoints.endPoint.title  2012-003632-23-AT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 161 endPoints.endPoint.title  2012-003632-23-AT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 162 endPoints.endPoint.title  2012-003632-23-CZ</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 163 endPoints.endPoint.title  2012-003632-23-CZ</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 164 endPoints.endPoint.title  2012-003632-23-CZ</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 165 endPoints.endPoint.title  2012-003632-23-CZ</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 166 endPoints.endPoint.title  2012-003632-23-CZ</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 167 endPoints.endPoint.title  2012-003632-23-CZ</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 168 endPoints.endPoint.title  2012-003632-23-CZ</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 169 endPoints.endPoint.title  2012-003632-23-CZ</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 170 endPoints.endPoint.title  2012-003632-23-DE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 171 endPoints.endPoint.title  2012-003632-23-DE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 172 endPoints.endPoint.title  2012-003632-23-DE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 173 endPoints.endPoint.title  2012-003632-23-DE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 174 endPoints.endPoint.title  2012-003632-23-DE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 175 endPoints.endPoint.title  2012-003632-23-DE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 176 endPoints.endPoint.title  2012-003632-23-DE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 177 endPoints.endPoint.title  2012-003632-23-DE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 178 endPoints.endPoint.title  2012-003632-23-ES</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 179 endPoints.endPoint.title  2012-003632-23-ES</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 180 endPoints.endPoint.title  2012-003632-23-ES</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 181 endPoints.endPoint.title  2012-003632-23-ES</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 182 endPoints.endPoint.title  2012-003632-23-ES</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 183 endPoints.endPoint.title  2012-003632-23-ES</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 184 endPoints.endPoint.title  2012-003632-23-ES</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 185 endPoints.endPoint.title  2012-003632-23-ES</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 186 endPoints.endPoint.title  2012-003632-23-GB</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 187 endPoints.endPoint.title  2012-003632-23-GB</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 188 endPoints.endPoint.title  2012-003632-23-GB</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 189 endPoints.endPoint.title  2012-003632-23-GB</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 190 endPoints.endPoint.title  2012-003632-23-GB</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 191 endPoints.endPoint.title  2012-003632-23-GB</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 192 endPoints.endPoint.title  2012-003632-23-GB</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 193 endPoints.endPoint.title  2012-003632-23-GB</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 194 endPoints.endPoint.title  2012-003632-23-IT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 195 endPoints.endPoint.title  2012-003632-23-IT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 196 endPoints.endPoint.title  2012-003632-23-IT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 197 endPoints.endPoint.title  2012-003632-23-IT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 198 endPoints.endPoint.title  2012-003632-23-IT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 199 endPoints.endPoint.title  2012-003632-23-IT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 200 endPoints.endPoint.title  2012-003632-23-IT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 201 endPoints.endPoint.title  2012-003632-23-IT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 202 endPoints.endPoint.title  2012-003632-23-SE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 203 endPoints.endPoint.title  2012-003632-23-SE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 204 endPoints.endPoint.title  2012-003632-23-SE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 205 endPoints.endPoint.title  2012-003632-23-SE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 206 endPoints.endPoint.title  2012-003632-23-SE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 207 endPoints.endPoint.title  2012-003632-23-SE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 208 endPoints.endPoint.title  2012-003632-23-SE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 209 endPoints.endPoint.title  2012-003632-23-SE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 210 endPoints.endPoint.title  2013-003629-27-BE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 211 endPoints.endPoint.title  2013-003629-27-BE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 212 endPoints.endPoint.title  2013-003629-27-BE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 213 endPoints.endPoint.title  2013-003629-27-BE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 214 endPoints.endPoint.title  2013-003629-27-BE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 215 endPoints.endPoint.title  2013-003629-27-BE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 216 endPoints.endPoint.title  2013-003629-27-BE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 217 endPoints.endPoint.title  2013-003629-27-BE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 218 endPoints.endPoint.title  2013-003629-27-BE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 219 endPoints.endPoint.title  2013-003629-27-DE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 220 endPoints.endPoint.title  2013-003629-27-DE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 221 endPoints.endPoint.title  2013-003629-27-DE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 222 endPoints.endPoint.title  2013-003629-27-DE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 223 endPoints.endPoint.title  2013-003629-27-DE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 224 endPoints.endPoint.title  2013-003629-27-DE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 225 endPoints.endPoint.title  2013-003629-27-DE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 226 endPoints.endPoint.title  2013-003629-27-DE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 227 endPoints.endPoint.title  2013-003629-27-DE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 228 endPoints.endPoint.title  2013-003629-27-DK</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 229 endPoints.endPoint.title  2013-003629-27-DK</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 230 endPoints.endPoint.title  2013-003629-27-DK</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 231 endPoints.endPoint.title  2013-003629-27-DK</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 232 endPoints.endPoint.title  2013-003629-27-DK</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 233 endPoints.endPoint.title  2013-003629-27-DK</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 234 endPoints.endPoint.title  2013-003629-27-DK</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 235 endPoints.endPoint.title  2013-003629-27-DK</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 236 endPoints.endPoint.title  2013-003629-27-DK</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 237 endPoints.endPoint.title  2013-003629-27-ES</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 238 endPoints.endPoint.title  2013-003629-27-ES</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 239 endPoints.endPoint.title  2013-003629-27-ES</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 240 endPoints.endPoint.title  2013-003629-27-ES</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 241 endPoints.endPoint.title  2013-003629-27-ES</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 242 endPoints.endPoint.title  2013-003629-27-ES</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 243 endPoints.endPoint.title  2013-003629-27-ES</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 244 endPoints.endPoint.title  2013-003629-27-ES</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 245 endPoints.endPoint.title  2013-003629-27-ES</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 246 endPoints.endPoint.title  2013-003629-27-FR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 247 endPoints.endPoint.title  2013-003629-27-FR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 248 endPoints.endPoint.title  2013-003629-27-FR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 249 endPoints.endPoint.title  2013-003629-27-FR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 250 endPoints.endPoint.title  2013-003629-27-FR</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                       value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                                                                                  Relative Change from Baseline in Forced Expiratory Volume in 1 Second (FEV1) Percent Predicted at Day 28</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                                                                                                     Mean Actual change from baseline in FEV1 percent predicted across 3 treatment courses</span>
@@ -539,103 +537,103 @@ extracted. See example.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 151                                                                                                                            Annualised bleeding rate: Combined main and extension phases</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 152                                                                                                                           Incidence rate of FVIII inhibitors (≥0.6 BU): Extension phase</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 153                                                                                                        Incidence rate of FVIII inhibitors (≥0.6 BU): Combined main and extension phases</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 154                                                                         Percentage of Subjects With Confirmed Inhibitor Development as Measured by the Nijmegen-Modified Bethesda Assay</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 155                                                                         Annualized Number of Bleeding Episodes (Spontaneous and Traumatic) per Subject (Annualized Bleeding Rate [ABR])</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 156                                                                                                                                Annualized Number of Spontaneous Joint Bleeding Episodes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 157                                                                  Number of rFIXFc Injections with Excellent or Good, Moderate or None Treatment Response Assessed Using a 4-Point Scale</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 158                                                                                                                                                     Total Number of Exposure Days (EDs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 159                                                                                   Total Annualized rFIXFc Consumption per Subject for the Prevention and Treatment of Bleeding Episodes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 160                                                                                                                   Number of Injections of rFIXFc Required to Resolve a Bleeding Episode</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 161                                                                                                             Average dose per Injection of rFIXFc Required to Resolve a Bleeding Episode</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 162                                                                                                                                Change From Baseline in rFIXFc Incremental Recovery (IR)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 163                                                                         Percentage of Subjects With Confirmed Inhibitor Development as Measured by the Nijmegen-Modified Bethesda Assay</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 164                                                                         Annualized Number of Bleeding Episodes (Spontaneous and Traumatic) per Subject (Annualized Bleeding Rate [ABR])</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 165                                                                                                                                Annualized Number of Spontaneous Joint Bleeding Episodes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 166                                                                  Number of rFIXFc Injections with Excellent or Good, Moderate or None Treatment Response Assessed Using a 4-Point Scale</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 167                                                                                                                                                     Total Number of Exposure Days (EDs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 168                                                                                   Total Annualized rFIXFc Consumption per Subject for the Prevention and Treatment of Bleeding Episodes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 169                                                                                                                   Number of Injections of rFIXFc Required to Resolve a Bleeding Episode</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 170                                                                                                             Average dose per Injection of rFIXFc Required to Resolve a Bleeding Episode</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 171                                                                                                                                Change From Baseline in rFIXFc Incremental Recovery (IR)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 172                                                                         Percentage of Subjects With Confirmed Inhibitor Development as Measured by the Nijmegen-Modified Bethesda Assay</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 173                                                                         Annualized Number of Bleeding Episodes (Spontaneous and Traumatic) per Subject (Annualized Bleeding Rate [ABR])</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 174                                                                                                                                Annualized Number of Spontaneous Joint Bleeding Episodes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 175                                                                  Number of rFIXFc Injections with Excellent or Good, Moderate or None Treatment Response Assessed Using a 4-Point Scale</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 176                                                                                                                                                     Total Number of Exposure Days (EDs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 177                                                                                   Total Annualized rFIXFc Consumption per Subject for the Prevention and Treatment of Bleeding Episodes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 178                                                                                                                   Number of Injections of rFIXFc Required to Resolve a Bleeding Episode</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 179                                                                                                             Average dose per Injection of rFIXFc Required to Resolve a Bleeding Episode</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 180                                                                                                                                Change From Baseline in rFIXFc Incremental Recovery (IR)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 181                                                                         Percentage of Subjects With Confirmed Inhibitor Development as Measured by the Nijmegen-Modified Bethesda Assay</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 182                                                                         Annualized Number of Bleeding Episodes (Spontaneous and Traumatic) per Subject (Annualized Bleeding Rate [ABR])</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 183                                                                                                                                Annualized Number of Spontaneous Joint Bleeding Episodes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 184                                                                  Number of rFIXFc Injections with Excellent or Good, Moderate or None Treatment Response Assessed Using a 4-Point Scale</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 185                                                                                                                                                     Total Number of Exposure Days (EDs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 186                                                                                   Total Annualized rFIXFc Consumption per Subject for the Prevention and Treatment of Bleeding Episodes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 187                                                                                                                   Number of Injections of rFIXFc Required to Resolve a Bleeding Episode</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 188                                                                                                             Average dose per Injection of rFIXFc Required to Resolve a Bleeding Episode</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 189                                                                                                                                Change From Baseline in rFIXFc Incremental Recovery (IR)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 190                                                                         Percentage of Subjects With Confirmed Inhibitor Development as Measured by the Nijmegen-Modified Bethesda Assay</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 191                                                                         Annualized Number of Bleeding Episodes (Spontaneous and Traumatic) per Subject (Annualized Bleeding Rate [ABR])</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 192                                                                                                                                Annualized Number of Spontaneous Joint Bleeding Episodes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 193                                                                  Number of rFIXFc Injections with Excellent or Good, Moderate or None Treatment Response Assessed Using a 4-Point Scale</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 194                                                                                                                                                     Total Number of Exposure Days (EDs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 195                                                                                   Total Annualized rFIXFc Consumption per Subject for the Prevention and Treatment of Bleeding Episodes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 196                                                                                                                   Number of Injections of rFIXFc Required to Resolve a Bleeding Episode</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 197                                                                                                             Average dose per Injection of rFIXFc Required to Resolve a Bleeding Episode</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 198                                                                                                                                Change From Baseline in rFIXFc Incremental Recovery (IR)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 199                                                                         Percentage of Subjects With Confirmed Inhibitor Development as Measured by the Nijmegen-Modified Bethesda Assay</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 200                                                                         Annualized Number of Bleeding Episodes (Spontaneous and Traumatic) per Subject (Annualized Bleeding Rate [ABR])</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 201                                                                                                                                Annualized Number of Spontaneous Joint Bleeding Episodes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 202                                                                  Number of rFIXFc Injections with Excellent or Good, Moderate or None Treatment Response Assessed Using a 4-Point Scale</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 203                                                                                                                                                     Total Number of Exposure Days (EDs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 204                                                                                   Total Annualized rFIXFc Consumption per Subject for the Prevention and Treatment of Bleeding Episodes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 205                                                                                                                   Number of Injections of rFIXFc Required to Resolve a Bleeding Episode</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 206                                                                                                             Average dose per Injection of rFIXFc Required to Resolve a Bleeding Episode</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 207                                                                                                                                Change From Baseline in rFIXFc Incremental Recovery (IR)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 208                                                                         Percentage of Subjects With Confirmed Inhibitor Development as Measured by the Nijmegen-Modified Bethesda Assay</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 209                                                                         Annualized Number of Bleeding Episodes (Spontaneous and Traumatic) per Subject (Annualized Bleeding Rate [ABR])</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 210                                                                                                                                Annualized Number of Spontaneous Joint Bleeding Episodes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 211                                                                  Number of rFIXFc Injections with Excellent or Good, Moderate or None Treatment Response Assessed Using a 4-Point Scale</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 212                                                                                                                                                     Total Number of Exposure Days (EDs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 213                                                                                   Total Annualized rFIXFc Consumption per Subject for the Prevention and Treatment of Bleeding Episodes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 214                                                                                                                   Number of Injections of rFIXFc Required to Resolve a Bleeding Episode</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 215                                                                                                             Average dose per Injection of rFIXFc Required to Resolve a Bleeding Episode</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 216                                                                                                                                Change From Baseline in rFIXFc Incremental Recovery (IR)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 217                                                                         Percentage of Subjects With Confirmed Inhibitor Development as Measured by the Nijmegen-Modified Bethesda Assay</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 218                                                                         Annualized Number of Bleeding Episodes (Spontaneous and Traumatic) per Subject (Annualized Bleeding Rate [ABR])</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 219                                                                                                                                Annualized Number of Spontaneous Joint Bleeding Episodes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 220                                                                  Number of rFIXFc Injections with Excellent or Good, Moderate or None Treatment Response Assessed Using a 4-Point Scale</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 221                                                                                                                                                     Total Number of Exposure Days (EDs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 222                                                                                   Total Annualized rFIXFc Consumption per Subject for the Prevention and Treatment of Bleeding Episodes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 223                                                                                                                   Number of Injections of rFIXFc Required to Resolve a Bleeding Episode</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 224                                                                                                             Average dose per Injection of rFIXFc Required to Resolve a Bleeding Episode</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 225                                                                                                                                Change From Baseline in rFIXFc Incremental Recovery (IR)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 226                                                                         Percentage of Subjects With Confirmed Inhibitor Development as Measured by the Nijmegen-Modified Bethesda Assay</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 227                                                                         Annualized Number of Bleeding Episodes (Spontaneous and Traumatic) per Subject (Annualized Bleeding Rate [ABR])</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 228                                                                                                                                Annualized Number of Spontaneous Joint Bleeding Episodes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 229                                                                  Number of rFIXFc Injections with Excellent or Good, Moderate or None Treatment Response Assessed Using a 4-Point Scale</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 230                                                                                                                                                     Total Number of Exposure Days (EDs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 231                                                                                   Total Annualized rFIXFc Consumption per Subject for the Prevention and Treatment of Bleeding Episodes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 232                                                                                                                   Number of Injections of rFIXFc Required to Resolve a Bleeding Episode</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 233                                                                                                             Average dose per Injection of rFIXFc Required to Resolve a Bleeding Episode</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 234                                                                                                                                Change From Baseline in rFIXFc Incremental Recovery (IR)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 235                                                                         Percentage of Subjects With Confirmed Inhibitor Development as Measured by the Nijmegen-Modified Bethesda Assay</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 236                                                                         Annualized Number of Bleeding Episodes (Spontaneous and Traumatic) per Subject (Annualized Bleeding Rate [ABR])</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 237                                                                                                                                Annualized Number of Spontaneous Joint Bleeding Episodes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 238                                                                  Number of rFIXFc Injections with Excellent or Good, Moderate or None Treatment Response Assessed Using a 4-Point Scale</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 239                                                                                                                                                     Total Number of Exposure Days (EDs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 240                                                                                   Total Annualized rFIXFc Consumption per Subject for the Prevention and Treatment of Bleeding Episodes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 241                                                                                                                   Number of Injections of rFIXFc Required to Resolve a Bleeding Episode</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 242                                                                                                             Average dose per Injection of rFIXFc Required to Resolve a Bleeding Episode</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 243                                                                                                                                Change From Baseline in rFIXFc Incremental Recovery (IR)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 244                                                                         Percentage of Subjects With Confirmed Inhibitor Development as Measured by the Nijmegen-Modified Bethesda Assay</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 245                                                                         Annualized Number of Bleeding Episodes (Spontaneous and Traumatic) per Subject (Annualized Bleeding Rate [ABR])</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 246                                                                                                                                Annualized Number of Spontaneous Joint Bleeding Episodes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 247                                                                  Number of rFIXFc Injections with Excellent or Good, Moderate or None Treatment Response Assessed Using a 4-Point Scale</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 248                                                                                                                                                     Total Number of Exposure Days (EDs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 249                                                                                   Total Annualized rFIXFc Consumption per Subject for the Prevention and Treatment of Bleeding Episodes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 250                                                                                                                   Number of Injections of rFIXFc Required to Resolve a Bleeding Episode</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 154                                                                                                                                                                Time to Overall Response</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 155                                                                                                                                                            Durability of First Response</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 156                                                                                                                                                                   Glucocortoid Tapering</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 157                                                                                                                                                                       Survival Pre-HSCT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 158                                                                                                                                                                        Overall Survival</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 159                                                                                                                                                                        Overall Response</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 160                                                                                                                                                                      Survival Post-HSCT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 161                                                                                                                                                         Cumulative Duration of Response</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 162                                                                                                                                                                Time to Overall Response</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 163                                                                                                                                                            Durability of First Response</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 164                                                                                                                                                                   Glucocortoid Tapering</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 165                                                                                                                                                                       Survival Pre-HSCT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 166                                                                                                                                                                        Overall Survival</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 167                                                                                                                                                                        Overall Response</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 168                                                                                                                                                                      Survival Post-HSCT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 169                                                                                                                                                         Cumulative Duration of Response</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 170                                                                                                                                                                Time to Overall Response</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 171                                                                                                                                                            Durability of First Response</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 172                                                                                                                                                                   Glucocortoid Tapering</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 173                                                                                                                                                                       Survival Pre-HSCT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 174                                                                                                                                                                        Overall Survival</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 175                                                                                                                                                                        Overall Response</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 176                                                                                                                                                                      Survival Post-HSCT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 177                                                                                                                                                         Cumulative Duration of Response</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 178                                                                                                                                                                Time to Overall Response</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 179                                                                                                                                                            Durability of First Response</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 180                                                                                                                                                                   Glucocortoid Tapering</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 181                                                                                                                                                                       Survival Pre-HSCT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 182                                                                                                                                                                        Overall Survival</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 183                                                                                                                                                                        Overall Response</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 184                                                                                                                                                                      Survival Post-HSCT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 185                                                                                                                                                         Cumulative Duration of Response</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 186                                                                                                                                                                Time to Overall Response</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 187                                                                                                                                                            Durability of First Response</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 188                                                                                                                                                                   Glucocortoid Tapering</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 189                                                                                                                                                                       Survival Pre-HSCT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 190                                                                                                                                                                        Overall Survival</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 191                                                                                                                                                                        Overall Response</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 192                                                                                                                                                                      Survival Post-HSCT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 193                                                                                                                                                         Cumulative Duration of Response</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 194                                                                                                                                                                Time to Overall Response</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 195                                                                                                                                                            Durability of First Response</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 196                                                                                                                                                                   Glucocortoid Tapering</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 197                                                                                                                                                                       Survival Pre-HSCT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 198                                                                                                                                                                        Overall Survival</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 199                                                                                                                                                                        Overall Response</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 200                                                                                                                                                                      Survival Post-HSCT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 201                                                                                                                                                         Cumulative Duration of Response</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 202                                                                                                                                                                Time to Overall Response</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 203                                                                                                                                                            Durability of First Response</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 204                                                                                                                                                                   Glucocortoid Tapering</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 205                                                                                                                                                                       Survival Pre-HSCT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 206                                                                                                                                                                        Overall Survival</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 207                                                                                                                                                                        Overall Response</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 208                                                                                                                                                                      Survival Post-HSCT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 209                                                                                                                                                         Cumulative Duration of Response</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 210                                                                         Percentage of Subjects With Confirmed Inhibitor Development as Measured by the Nijmegen-Modified Bethesda Assay</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 211                                                                         Annualized Number of Bleeding Episodes (Spontaneous and Traumatic) per Subject (Annualized Bleeding Rate [ABR])</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 212                                                                                                                                Annualized Number of Spontaneous Joint Bleeding Episodes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 213                                                                  Number of rFIXFc Injections with Excellent or Good, Moderate or None Treatment Response Assessed Using a 4-Point Scale</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 214                                                                                                                                                     Total Number of Exposure Days (EDs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 215                                                                                   Total Annualized rFIXFc Consumption per Subject for the Prevention and Treatment of Bleeding Episodes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 216                                                                                                                   Number of Injections of rFIXFc Required to Resolve a Bleeding Episode</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 217                                                                                                             Average dose per Injection of rFIXFc Required to Resolve a Bleeding Episode</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 218                                                                                                                                Change From Baseline in rFIXFc Incremental Recovery (IR)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 219                                                                         Percentage of Subjects With Confirmed Inhibitor Development as Measured by the Nijmegen-Modified Bethesda Assay</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 220                                                                         Annualized Number of Bleeding Episodes (Spontaneous and Traumatic) per Subject (Annualized Bleeding Rate [ABR])</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 221                                                                                                                                Annualized Number of Spontaneous Joint Bleeding Episodes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 222                                                                  Number of rFIXFc Injections with Excellent or Good, Moderate or None Treatment Response Assessed Using a 4-Point Scale</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 223                                                                                                                                                     Total Number of Exposure Days (EDs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 224                                                                                   Total Annualized rFIXFc Consumption per Subject for the Prevention and Treatment of Bleeding Episodes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 225                                                                                                                   Number of Injections of rFIXFc Required to Resolve a Bleeding Episode</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 226                                                                                                             Average dose per Injection of rFIXFc Required to Resolve a Bleeding Episode</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 227                                                                                                                                Change From Baseline in rFIXFc Incremental Recovery (IR)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 228                                                                         Percentage of Subjects With Confirmed Inhibitor Development as Measured by the Nijmegen-Modified Bethesda Assay</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 229                                                                         Annualized Number of Bleeding Episodes (Spontaneous and Traumatic) per Subject (Annualized Bleeding Rate [ABR])</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 230                                                                                                                                Annualized Number of Spontaneous Joint Bleeding Episodes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 231                                                                  Number of rFIXFc Injections with Excellent or Good, Moderate or None Treatment Response Assessed Using a 4-Point Scale</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 232                                                                                                                                                     Total Number of Exposure Days (EDs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 233                                                                                   Total Annualized rFIXFc Consumption per Subject for the Prevention and Treatment of Bleeding Episodes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 234                                                                                                                   Number of Injections of rFIXFc Required to Resolve a Bleeding Episode</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 235                                                                                                             Average dose per Injection of rFIXFc Required to Resolve a Bleeding Episode</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 236                                                                                                                                Change From Baseline in rFIXFc Incremental Recovery (IR)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 237                                                                         Percentage of Subjects With Confirmed Inhibitor Development as Measured by the Nijmegen-Modified Bethesda Assay</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 238                                                                         Annualized Number of Bleeding Episodes (Spontaneous and Traumatic) per Subject (Annualized Bleeding Rate [ABR])</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 239                                                                                                                                Annualized Number of Spontaneous Joint Bleeding Episodes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 240                                                                  Number of rFIXFc Injections with Excellent or Good, Moderate or None Treatment Response Assessed Using a 4-Point Scale</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 241                                                                                                                                                     Total Number of Exposure Days (EDs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 242                                                                                   Total Annualized rFIXFc Consumption per Subject for the Prevention and Treatment of Bleeding Episodes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 243                                                                                                                   Number of Injections of rFIXFc Required to Resolve a Bleeding Episode</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 244                                                                                                             Average dose per Injection of rFIXFc Required to Resolve a Bleeding Episode</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 245                                                                                                                                Change From Baseline in rFIXFc Incremental Recovery (IR)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 246                                                                         Percentage of Subjects With Confirmed Inhibitor Development as Measured by the Nijmegen-Modified Bethesda Assay</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 247                                                                         Annualized Number of Bleeding Episodes (Spontaneous and Traumatic) per Subject (Annualized Bleeding Rate [ABR])</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 248                                                                                                                                Annualized Number of Spontaneous Joint Bleeding Episodes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 249                                                                  Number of rFIXFc Injections with Excellent or Good, Moderate or None Treatment Response Assessed Using a 4-Point Scale</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 250                                                                                                                                                     Total Number of Exposure Days (EDs)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     item</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1      1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2      2</span>
@@ -798,96 +796,96 @@ extracted. See example.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 159    6</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 160    7</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 161    8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 162    9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 163    1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 164    2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 165    3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 166    4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 167    5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 168    6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 169    7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 170    8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 171    9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 172    1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 173    2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 174    3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 175    4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 176    5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 177    6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 178    7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 179    8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 180    9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 181    1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 182    2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 183    3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 184    4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 185    5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 186    6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 187    7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 188    8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 189    9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 190    1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 191    2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 192    3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 193    4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 194    5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 195    6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 196    7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 197    8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 198    9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 199    1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 200    2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 201    3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 202    4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 203    5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 204    6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 205    7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 206    8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 207    9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 208    1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 209    2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 210    3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 211    4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 212    5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 213    6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 214    7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 215    8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 216    9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 217    1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 218    2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 219    3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 220    4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 221    5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 222    6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 223    7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 224    8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 225    9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 226    1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 227    2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 228    3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 229    4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 230    5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 231    6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 232    7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 233    8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 234    9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 235    1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 236    2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 237    3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 238    4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 239    5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 240    6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 241    7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 242    8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 243    9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 244    1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 245    2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 246    3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 247    4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 248    5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 249    6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 250    7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [ reached 'max' / getOption("max.print") -- omitted 418 rows ]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 162    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 163    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 164    3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 165    4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 166    5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 167    6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 168    7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 169    8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 170    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 171    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 172    3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 173    4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 174    5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 175    6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 176    7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 177    8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 178    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 179    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 180    3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 181    4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 182    5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 183    6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 184    7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 185    8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 186    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 187    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 188    3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 189    4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 190    5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 191    6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 192    7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 193    8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 194    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 195    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 196    3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 197    4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 198    5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 199    6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 200    7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 201    8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 202    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 203    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 204    3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 205    4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 206    5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 207    6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 208    7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 209    8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 210    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 211    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 212    3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 213    4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 214    5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 215    6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 216    7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 217    8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 218    9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 219    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 220    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 221    3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 222    4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 223    5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 224    6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 225    7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 226    8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 227    9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 228    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 229    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 230    3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 231    4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 232    5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 233    6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 234    7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 235    8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 236    9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 237    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 238    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 239    3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 240    4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 241    5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 242    6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 243    7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 244    8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 245    9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 246    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 247    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 248    3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 249    4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 250    5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [ reached 'max' / getOption("max.print") -- omitted 481 rows ]</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
