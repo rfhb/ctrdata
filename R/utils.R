@@ -1561,7 +1561,7 @@ dbGetFieldsIntoDf <- function(fields = "",
 
           # add a column into copy of NA template
           dfo[[c]] <- switch(
-            class(dfi[[c]]),
+            class(dfi[[c]])[1],
             "Date" = as.Date(NA),
             "numeric" = as.numeric(NA),
             "character" = as.character(NA),
