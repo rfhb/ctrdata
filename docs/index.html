@@ -55,7 +55,7 @@
     
     <a class="navbar-brand me-2" href="index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.10.1.9004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.10.1.9006</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -107,7 +107,7 @@
 <li>ClinicalTrials.gov (“CTGOV”, <a href="https://clinicaltrials.gov/" class="external-link uri">https://clinicaltrials.gov/</a>)</li>
 <li>ISRCTN (<a href="https://www.isrctn.com/" class="external-link uri">https://www.isrctn.com/</a>)</li>
 </ul>
-<p>The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created by it. This README was reviewed on 2022-08-08 for version 1.10.0.9005 (see <a href="NEWS.html">NEWS.md</a>).</p>
+<p>The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created by it. This README was reviewed on 2022-08-10 for version 1.10.0.9006 (see <a href="NEWS.html">NEWS.md</a>).</p>
 <p>Main features:</p>
 <ul>
 <li><p>Protocol-related trial information is easily retrieved (downloaded): Users define a query in a register’s web interface and then use <code>ctrdata</code> to retrieve in one step all trials resulting from the query. Results-related trial information and personal annotations can be including during retrieval. Synonyms of an active substance can also be found.</p></li>
@@ -147,21 +147,12 @@ citation("ctrdata")
 <li><p>In Linux, these are usually already installed; tools for installation vary by distribution (e.g., <code>sudo apt install php-cli php-xml php-json</code>).</p></li>
 </ul>
 </div>
-<div class="section level3">
-<h3 id="vignettes">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes"></a>
-</h3>
-<ul>
-<li><a href="https://rfhb.github.io/ctrdata/dev/articles/ctrdata_install.html">Install R package ctrdata</a></li>
-<li><a href="https://rfhb.github.io/ctrdata/dev/articles/ctrdata_retrieve.html">Retrieve clinical trial information</a></li>
-<li><a href="https://rfhb.github.io/ctrdata/dev/articles/ctrdata_summarise.html">Summarise and analyse clinical trial information</a></li>
-</ul>
-</div>
 </div>
 <div class="section level2">
 <h2 id="overview-of-functions-in-ctrdata">Overview of functions in <code>ctrdata</code>
 <a class="anchor" aria-label="anchor" href="#overview-of-functions-in-ctrdata"></a>
 </h2>
-<p>The functions are listed in the approximate order of use in a user’s workflow (in bold, main functions).</p>
+<p>The functions are listed in the approximate order of use in a user’s workflow (in bold, main functions). See also the <a href="https://rfhb.github.io/ctrdata/reference/index.html">package documentation overview</a>.</p>
 <table class="table">
 <colgroup>
 <col width="21%">
@@ -228,12 +219,12 @@ citation("ctrdata")
 <h2 id="databases-that-can-be-used-with-ctrdata">Databases that can be used with <code>ctrdata</code>
 <a class="anchor" aria-label="anchor" href="#databases-that-can-be-used-with-ctrdata"></a>
 </h2>
-<p>Package <code>ctrdata</code> retrieves trial information and stores it in a database collection, which has to be given as a connection object to parameter <code>con</code> for several <code>ctrdata</code> functions; this connection object is created in slightly different ways for the three supported database backends that can be used with <code>ctrdata</code> as shown in the table.</p>
+<p>Package <code>ctrdata</code> retrieves trial information and stores it in a database collection, which has to be given as a connection object to parameter <code>con</code> for several <code>ctrdata</code> functions; this connection object is created in slightly different ways for the three supported database backends that can be used with <code>ctrdata</code> as shown in the table. For a speed comparison, see the <a href="https://github.com/ropensci/nodbi#benchmark" class="external-link">nodbi documentation</a>.</p>
 <p>Besides ctrdata functions below, any such a connection object can equally be used with functions of other packages, such as <code>nodbi</code> (last row in table) or, in case of MongoDB as database backend, <code>mongolite</code> (see vignettes).</p>
 <table class="table">
 <colgroup>
-<col width="27%">
-<col width="72%">
+<col width="26%">
+<col width="73%">
 </colgroup>
 <thead><tr class="header">
 <th>Purpose</th>
@@ -241,27 +232,37 @@ citation("ctrdata")
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td>Create SQLite database connection</td>
+<td>Create <strong>SQLite</strong> database connection</td>
 <td><code>dbc &lt;- nodbi::src_sqlite(dbname = "name_of_my_database", collection = "name_of_my_collection")</code></td>
 </tr>
 <tr class="even">
-<td>Create PostgreSQL database connection</td>
-<td><code>dbc &lt;- nodbi::src_postgres(dbname = "name_of_my_database"); dbc[["collection"]] &lt;- "name_of_my_collection"</code></td>
+<td>Create <strong>MongoDB</strong> database connection</td>
+<td><code>dbc &lt;- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")</code></td>
 </tr>
 <tr class="odd">
-<td>Create MongoDB database connection</td>
-<td><code>dbc &lt;- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")</code></td>
+<td>Create <strong>PostgreSQL</strong> database connection</td>
+<td><code>dbc &lt;- nodbi::src_postgres(dbname = "name_of_my_database"); dbc[["collection"]] &lt;- "name_of_my_collection"</code></td>
 </tr>
 <tr class="even">
 <td>Use connection with <code>ctrdata</code> functions</td>
-<td><code>ctrdata::{ctr,db}*(con = dbc, ...)</code></td>
+<td><code>ctrdata::{ctrLoadQueryIntoDb, dbQueryHistory, dbFindIdsUniqueTrials, dbFindFields, dbGetFieldsIntoDf}(con = dbc, ...)</code></td>
 </tr>
 <tr class="odd">
 <td>Use connection with <code>nodbi</code> functions</td>
-<td><code>nodbi::docdb_*(src = dbc, key = dbc$collection, ...)</code></td>
+<td>e.g., <code>nodbi::docdb_query(src = dbc, key = dbc$collection, ...)</code>
+</td>
 </tr>
 </tbody>
 </table>
+</div>
+<div class="section level2">
+<h2 id="vignettes">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes"></a>
+</h2>
+<ul>
+<li><a href="https://rfhb.github.io/ctrdata/dev/articles/ctrdata_install.html">Install R package ctrdata</a></li>
+<li><a href="https://rfhb.github.io/ctrdata/dev/articles/ctrdata_retrieve.html">Retrieve clinical trial information</a></li>
+<li><a href="https://rfhb.github.io/ctrdata/dev/articles/ctrdata_summarise.html">Summarise and analyse clinical trial information</a></li>
+</ul>
 </div>
 <div class="section level2">
 <h2 id="example-workflow">Example workflow<a class="anchor" aria-label="anchor" href="#example-workflow"></a>
@@ -493,7 +494,13 @@ citation("ctrdata")
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"Randomised?"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggsave</a></span><span class="op">(</span>filename <span class="op">=</span> <span class="st">"man/figures/README-ctrdata_results_neuroblastoma.png"</span>,</span>
 <span>       width <span class="op">=</span> <span class="fl">5</span>, height <span class="op">=</span> <span class="fl">3</span>, units <span class="op">=</span> <span class="st">"in"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/dev/reference/figures/README-ctrdata_results_neuroblastoma.png" alt="Neuroblastoma trials"> * Retrieve protocols, statistical analysis plans and other documents into a local folder <code>./files/</code></p>
+<div class="figure">
+<img src="https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_results_neuroblastoma.png" alt=""><p class="caption">Neuroblastoma trials</p>
+</div>
+<ul>
+<li>Retrieve protocols, statistical analysis plans and other documents into a local folder <code>./files/</code>
+</li>
+</ul>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># eudract files are downloaded as part of results</span></span>
 <span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>

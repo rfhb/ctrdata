@@ -23,7 +23,7 @@ The motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created by it. This
-README was reviewed on 2022-08-08 for version 1.10.0.9005 (see
+README was reviewed on 2022-08-10 for version 1.10.0.9006 (see
 [NEWS.md](NEWS.md)).
 
 Main features:
@@ -111,19 +111,11 @@ function also checks if the tools can be used.
   vary by distribution (e.g.,
   `sudo apt install php-cli php-xml php-json`).
 
-### Vignettes
-
-- [Install R package
-  ctrdata](https://rfhb.github.io/ctrdata/dev/articles/ctrdata_install.html)
-- [Retrieve clinical trial
-  information](https://rfhb.github.io/ctrdata/dev/articles/ctrdata_retrieve.html)
-- [Summarise and analyse clinical trial
-  information](https://rfhb.github.io/ctrdata/dev/articles/ctrdata_summarise.html)
-
 ## Overview of functions in `ctrdata`
 
 The functions are listed in the approximate order of use in a user’s
-workflow (in bold, main functions).
+workflow (in bold, main functions). See also the [package documentation
+overview](https://rfhb.github.io/ctrdata/reference/index.html).
 
 | Function name                      | Function purpose                                                                                                               |
 |------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
@@ -149,20 +141,31 @@ Package `ctrdata` retrieves trial information and stores it in a
 database collection, which has to be given as a connection object to
 parameter `con` for several `ctrdata` functions; this connection object
 is created in slightly different ways for the three supported database
-backends that can be used with `ctrdata` as shown in the table.
+backends that can be used with `ctrdata` as shown in the table. For a
+speed comparison, see the [nodbi
+documentation](https://github.com/ropensci/nodbi#benchmark).
 
 Besides ctrdata functions below, any such a connection object can
 equally be used with functions of other packages, such as `nodbi` (last
 row in table) or, in case of MongoDB as database backend, `mongolite`
 (see vignettes).
 
-| Purpose                                 | Function call                                                                                                |
-|-----------------------------------------|--------------------------------------------------------------------------------------------------------------|
-| Create SQLite database connection       | `dbc <- nodbi::src_sqlite(dbname = "name_of_my_database", collection = "name_of_my_collection")`             |
-| Create PostgreSQL database connection   | `dbc <- nodbi::src_postgres(dbname = "name_of_my_database"); dbc[["collection"]] <- "name_of_my_collection"` |
-| Create MongoDB database connection      | `dbc <- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")`                  |
-| Use connection with `ctrdata` functions | `ctrdata::{ctr,db}*(con = dbc, ...)`                                                                         |
-| Use connection with `nodbi` functions   | `nodbi::docdb_*(src = dbc, key = dbc$collection, ...)`                                                       |
+| Purpose                                   | Function call                                                                                                           |
+|-------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
+| Create **SQLite** database connection     | `dbc <- nodbi::src_sqlite(dbname = "name_of_my_database", collection = "name_of_my_collection")`                        |
+| Create **MongoDB** database connection    | `dbc <- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")`                             |
+| Create **PostgreSQL** database connection | `dbc <- nodbi::src_postgres(dbname = "name_of_my_database"); dbc[["collection"]] <- "name_of_my_collection"`            |
+| Use connection with `ctrdata` functions   | `ctrdata::{ctrLoadQueryIntoDb, dbQueryHistory, dbFindIdsUniqueTrials, dbFindFields, dbGetFieldsIntoDf}(con = dbc, ...)` |
+| Use connection with `nodbi` functions     | e.g., `nodbi::docdb_query(src = dbc, key = dbc$collection, ...)`                                                        |
+
+## Vignettes
+
+- [Install R package
+  ctrdata](https://rfhb.github.io/ctrdata/dev/articles/ctrdata_install.html)
+- [Retrieve clinical trial
+  information](https://rfhb.github.io/ctrdata/dev/articles/ctrdata_retrieve.html)
+- [Summarise and analyse clinical trial
+  information](https://rfhb.github.io/ctrdata/dev/articles/ctrdata_summarise.html)
 
 ## Example workflow
 
@@ -425,9 +428,10 @@ ggsave(filename = "man/figures/README-ctrdata_results_neuroblastoma.png",
 ```
 
 ![Neuroblastoma
-trials](https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/dev/reference/figures/README-ctrdata_results_neuroblastoma.png)
-\* Retrieve protocols, statistical analysis plans and other documents
-into a local folder `./files/`
+trials](https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_results_neuroblastoma.png)
+
+- Retrieve protocols, statistical analysis plans and other documents
+  into a local folder `./files/`
 
 ``` r
 # eudract files are downloaded as part of results

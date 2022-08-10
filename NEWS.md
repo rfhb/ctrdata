@@ -1,4 +1,4 @@
-# ctrdata 1.10.1.9005 (2022-08-08)
+# ctrdata 1.10.1.9006 (2022-08-10)
  - new development version
  - handle tibble in internal function
  - fix handling certain ISRCTN queries
