@@ -1711,34 +1711,33 @@ dbGetFieldsIntoDf <- function(fields = "",
 #'    dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
 #'    collection = "my_trials")
 #'
-#' df <- dbGetFieldsIntoDf(
-#' fields = c(
-#'   # ctgov - typical results fields
-#'   "clinical_results.baseline.analyzed_list.analyzed.count_list.count",
-#'   "clinical_results.baseline.group_list.group",
-#'   "clinical_results.baseline.analyzed_list.analyzed.units",
+#' dfwide <- dbGetFieldsIntoDf(
+#'  fields = c(
+#'   ## ctgov - typical results fields
+#'   # "clinical_results.baseline.analyzed_list.analyzed.count_list.count",
+#'   # "clinical_results.baseline.group_list.group",
+#'   # "clinical_results.baseline.analyzed_list.analyzed.units",
 #'   "clinical_results.outcome_list.outcome",
 #'   "study_design_info.allocation",
-#'   # euctr - typical results fields
-#'   "trialInformation.fullTitle",
-#'   "subjectDisposition.recruitmentDetails",
-#'   "baselineCharacteristics.baselineReportingGroups.baselineReportingGroup",
+#'   ## euctr - typical results fields
+#'   # "trialInformation.fullTitle",
+#'   # "baselineCharacteristics.baselineReportingGroups.baselineReportingGroup",
+#'   # "trialChanges.hasGlobalInterruptions",
+#'   # "subjectAnalysisSets",
+#'   # "adverseEvents.seriousAdverseEvents.seriousAdverseEvent",
 #'   "endPoints.endPoint",
-#'   "trialChanges.hasGlobalInterruptions",
-#'   "subjectAnalysisSets",
-#'   "adverseEvents.seriousAdverseEvents.seriousAdverseEvent"
+#'   "subjectDisposition.recruitmentDetails"
 #'   ), con = dbc)
 #'
-#' # convert to long
-#' reslong <- dfTrials2Long(df = df)
+#' dflong <- dfTrials2Long(df = dfwide)
 #'
-#' # get values for endpoint of interest, e.g. 'response'
+#' ## get values for endpoint of interest, e.g. 'response'
 #' dfName2Value(
-#'   df = reslong,
+#'   df = dflong,
 #'   valuename = paste0(
-#'     "endPoints.endPoint.*armReportingGroup.tendencyValues.tendencyValue.value|",
 #'     "clinical_results.*category.measurement_list.measurement.value|",
-#'     "clinical_results.*outcome.measure.units|endPoints.endPoint.unit"
+#'     "clinical_results.*outcome.measure.units|endPoints.endPoint.unit|",
+#'     "endPoints.endPoint.*armReportingGroup.tendencyValues.tendencyValue.value"
 #'   ),
 #'   wherename = paste0(
 #'     "clinical_results.*outcome.measure.title|",
