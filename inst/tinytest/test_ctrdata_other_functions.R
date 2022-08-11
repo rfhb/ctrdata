@@ -316,5 +316,35 @@ dL <- suppressMessages(
 expect_equal(nrow(dL), 15L)
 expect_equal(unique(dL[["name"]]), names(dF)[-1])
 
+dF <- suppressMessages(
+  dfName2Value(
+    df = dL,
+    valuename = "alp.*"))
+
+# test
+expect_equal(
+  nrow(dF), 5L)
+expect_equal(
+  names(dF),
+  c("_id", "identifier", "name", "value"))
+
+dF <- suppressMessages(
+  dfName2Value(
+    df = dL,
+    valuename = "[mp]",
+    wherename = "[a]",
+    wherevalue = "[3-4]"))
+
+# test
+expect_equal(
+  nrow(dF), 4L)
+expect_equal(
+  names(dF),
+  c("_id", "identifier", "name", "value", "where"))
+expect_true(
+  all(df[["name"]] %in% c("alpha1", "gamma_1")))
+expect_true(
+  all(df[["value"]] %in% c(3, 4)))
+
 # cleanup
 rm(dF, dL)
