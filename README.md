@@ -4,8 +4,8 @@
 
 [![CRAN](https://cranchecks.info/badges/worst/ctrdata)](https://cran.r-project.org/package=ctrdata)
 [![codecov](https://codecov.io/gh/rfhb/ctrdata/branch/master/graph/badge.svg)](https://app.codecov.io/gh/rfhb/ctrdata)
-[![R-CMD-check-win-macos](https://github.com/rfhb/ctrdata/workflows/R-CMD-check-win-macos/badge.svg)](https://github.com/rfhb/ctrdata/actions?query=workflow%3AR-CMD-check-win-macos)
-[![R-CMD-check-linux](https://github.com/rfhb/ctrdata/workflows/R-CMD-check-linux/badge.svg)](https://github.com/rfhb/ctrdata/actions?query=workflow%3AR-CMD-check-linux)
+[![R-CMD-CHECK-ubuntu-postgresql-mongodb-sqlite](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-linux.yaml/badge.svg)](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-linux.yaml)
+[![R-CMD-CHECK-win-macos-postgresql-mongodb-sqlite](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-win-macos.yaml/badge.svg)](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-win-macos.yaml)
 <!-- badges: end -->
 
 # ctrdata for aggregating and analysing clinical trials
@@ -23,7 +23,7 @@ The motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created by it. This
-README was reviewed on 2022-08-10 for version 1.10.0.9007 (see
+README was reviewed on 2022-08-11 for version 1.10.0.9008 (see
 [NEWS.md](NEWS.md)).
 
 Main features:
