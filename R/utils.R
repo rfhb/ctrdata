@@ -1839,6 +1839,7 @@ dfName2Value <- function(df, valuename = "",
   # remove any duplicates such as
   # from duplicate where... criteria
   out <- unique(out)
+  row.names(out) <- NULL
 
   # inform user
   message("Returning values for ", length(unique(out[["_id"]])),
