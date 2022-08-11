@@ -12,14 +12,15 @@ dfName2Value(df, valuename = "", wherename = "", wherevalue = "")
 \link{dfTrials2Long}}
 
 \item{valuename}{A character string for the name of the field
-that holds the value for the variable of interest
+that holds the value of the variable of interest
 (e.g., a summary measure such as "endPoints.*tendencyValue.value")}
 
-\item{wherename}{A character string to identify the variable
-of interest (e.g., "endPoints.endPoint.title")}
+\item{wherename}{(optional) A character string to identify the
+variable of interest among those that repeatedly occur in a
+trial record (e.g., "endPoints.endPoint.title")}
 
-\item{wherevalue}{A character string with the value of interest
-for the variable of interest (e.g., "duration of response")}
+\item{wherevalue}{(optional) A character string with the value of
+the variable identified by `wherename` (e.g., "response")}
 }
 \value{
 A data frame (or tibble, if \code{dplyr} is loaded)
@@ -35,8 +36,8 @@ that includes the values of interest, with columns
 Get information of interest (e.g., endpoint)
 from long data frame of protocol- or result-related
 trial information as returned by \link{dfTrials2Long}.
-Parameters `valuename`, `wherename` and `wherevalue` are matched
-using Perl regular expressions and ignoring case.
+Parameters `valuename`, `wherename` and `wherevalue` are
+matched using Perl regular expressions and ignoring case.
 }
 \examples{
 
@@ -64,13 +65,14 @@ dfwide <- dbGetFieldsIntoDf(
 
 dflong <- dfTrials2Long(df = dfwide)
 
-## get values for endpoint of interest, e.g. 'response'
+## get values for the endpoint 'response'
 dfName2Value(
   df = dflong,
   valuename = paste0(
-    "clinical_results.*category.measurement_list.measurement.value|",
-    "clinical_results.*outcome.measure.units|endPoints.endPoint.unit|",
-    "endPoints.endPoint.*armReportingGroup.tendencyValues.tendencyValue.value"
+    "clinical_results.*measurement.value|",
+    "clinical_results.*outcome.measure.units|",
+    "endPoints.endPoint.*tendencyValue.value|",
+    "endPoints.endPoint.unit"
   ),
   wherename = paste0(
     "clinical_results.*outcome.measure.title|",

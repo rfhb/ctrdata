@@ -1674,22 +1674,23 @@ dbGetFieldsIntoDf <- function(fields = "",
 #' Get information of interest (e.g., endpoint)
 #' from long data frame of protocol- or result-related
 #' trial information as returned by \link{dfTrials2Long}.
-#' Parameters `valuename`, `wherename` and `wherevalue` are matched
-#' using Perl regular expressions and ignoring case.
+#' Parameters `valuename`, `wherename` and `wherevalue` are
+#' matched using Perl regular expressions and ignoring case.
 #'
 #' @param df A data frame (or tibble) with four columns (`_id`,
 #'  `identifier`, `name`, `value`) as returned by
 #'  \link{dfTrials2Long}
 #'
 #' @param valuename A character string for the name of the field
-#' that holds the value for the variable of interest
+#' that holds the value of the variable of interest
 #' (e.g., a summary measure such as "endPoints.*tendencyValue.value")
 #'
-#' @param wherename A character string to identify the variable
-#'  of interest (e.g., "endPoints.endPoint.title")
+#' @param wherename (optional) A character string to identify the
+#' variable of interest among those that repeatedly occur in a
+#' trial record (e.g., "endPoints.endPoint.title")
 #'
-#' @param wherevalue A character string with the value of interest
-#'  for the variable of interest (e.g., "duration of response")
+#' @param wherevalue (optional) A character string with the value of
+#' the variable identified by `wherename` (e.g., "response")
 #'
 #' @return A data frame (or tibble, if \code{dplyr} is loaded)
 #' that includes the values of interest, with columns
@@ -1731,13 +1732,14 @@ dbGetFieldsIntoDf <- function(fields = "",
 #'
 #' dflong <- dfTrials2Long(df = dfwide)
 #'
-#' ## get values for endpoint of interest, e.g. 'response'
+#' ## get values for the endpoint 'response'
 #' dfName2Value(
 #'   df = dflong,
 #'   valuename = paste0(
-#'     "clinical_results.*category.measurement_list.measurement.value|",
-#'     "clinical_results.*outcome.measure.units|endPoints.endPoint.unit|",
-#'     "endPoints.endPoint.*armReportingGroup.tendencyValues.tendencyValue.value"
+#'     "clinical_results.*measurement.value|",
+#'     "clinical_results.*outcome.measure.units|",
+#'     "endPoints.endPoint.*tendencyValue.value|",
+#'     "endPoints.endPoint.unit"
 #'   ),
 #'   wherename = paste0(
 #'     "clinical_results.*outcome.measure.title|",
