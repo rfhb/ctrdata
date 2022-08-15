@@ -403,6 +403,11 @@ ctrOpenSearchPagesInBrowser <- function(
             call. = FALSE)
   }
 
+  ## in case a browser is not available
+  ctrOpenUrl <- function(u) {
+    try(utils::browseURL(u), silent = TRUE)
+  }
+
   ## check combination of arguments to select action
 
   # - open all registers if no parameter is specified
@@ -411,7 +416,7 @@ ctrOpenSearchPagesInBrowser <- function(
       c("https://www.clinicaltrialsregister.eu/ctr-search/search",
         "https://clinicaltrials.gov/ct2/search/advanced",
         "https://www.isrctn.com/editAdvancedSearch"),
-      function(u) utils::browseURL(u))
+      ctrOpenUrl)
   }
 
   # - open copyright or similar pages
@@ -420,7 +425,7 @@ ctrOpenSearchPagesInBrowser <- function(
       c("https://www.clinicaltrialsregister.eu/disclaimer.html",
         "https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use",
         "https://www.isrctn.com/page/faqs#usingISRCTN"),
-      function(u) utils::browseURL(u))
+      ctrOpenUrl)
   }
 
   # - open from url, or query and register
@@ -446,11 +451,11 @@ ctrOpenSearchPagesInBrowser <- function(
       "EUCTR" = paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?", url),
       "CTGOV" = paste0("https://clinicaltrials.gov/ct2/results?", url),
       "ISRCTN" = paste0("https://www.isrctn.com/search?", url))
-    utils::browseURL(url = url)
+    ctrOpenUrl(url)
     return(url)
   }
 
-  # return
+  # if not returned before
   invisible(NULL)
 }
 # end ctrOpenSearchPagesInBrowser
