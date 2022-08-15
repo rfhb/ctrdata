@@ -657,10 +657,12 @@ ctrGetQueryUrl <- function(
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #'
 #' ctrFindActiveSubstanceSynonyms(activesubstance = "imatinib")
 #' # [1] "imatinib" "gleevec" "sti 571" "glivec" "CGP 57148" "st1571"
 #'
+#' }
 ctrFindActiveSubstanceSynonyms <- function(activesubstance = "") {
 
   # check parameters
@@ -2695,9 +2697,12 @@ addMetaData <- function(x, con) {
 #'   Set to `""` to not specify or to unset a proxy.
 #'
 #' @examples
+#' \dontrun{
+#'
 #'
 #' try(installCygwinWindowsDoInstall(), silent = TRUE)
 #'
+#' }
 installCygwinWindowsDoInstall <- function(
   force = FALSE, proxy = Sys.getenv("https_proxy")) {
 
