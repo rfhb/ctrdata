@@ -23,7 +23,7 @@ The motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created by it. This
-README was reviewed on 2022-08-11 for version 1.10.0.9008 (see
+README was reviewed on 2022-08-14 for version 1.10.0.9009 (see
 [NEWS.md](NEWS.md)).
 
 Main features:
@@ -161,11 +161,11 @@ row in table) or, in case of MongoDB as database backend, `mongolite`
 ## Vignettes
 
 - [Install R package
-  ctrdata](https://rfhb.github.io/ctrdata/dev/articles/ctrdata_install.html)
+  ctrdata](https://rfhb.github.io/ctrdata/articles/ctrdata_install.html)
 - [Retrieve clinical trial
-  information](https://rfhb.github.io/ctrdata/dev/articles/ctrdata_retrieve.html)
+  information](https://rfhb.github.io/ctrdata/articles/ctrdata_retrieve.html)
 - [Summarise and analyse clinical trial
-  information](https://rfhb.github.io/ctrdata/dev/articles/ctrdata_summarise.html)
+  information](https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html)
 
 ## Example workflow
 
