@@ -1,7 +1,7 @@
 Package: ctrdata
 Type: Package
 Title: Retrieve and Analyze Clinical Trials in Public Registers
-Version: 1.10.1.9009
+Version: 1.10.2
 Imports: jsonlite, httr, curl, clipr, xml2, rvest, nodbi (>= 0.7.0), 
          stringi, dplyr, lubridate
 SystemRequirements: sed, php, cat, perl
@@ -15,7 +15,7 @@ Description: A system for querying, retrieving and analyzing
         the 'ISRCTN' (<http://www.isrctn.com/>). 
         Trial information is downloaded, converted and stored in a database 
         ('PostgreSQL', 'SQLite' or 'MongoDB'; via package 'nodbi'). 
-        Functions are included to identify de-duplicated records, 
+        Functions are included to identify deduplicated records, 
         to easily find and extract variables (fields) of interest even 
         from complex nesting as used by the registers, and
         to update previous queries. 

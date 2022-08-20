@@ -1,10 +1,12 @@
 ## Test environments
 
-* local: macOS 21.6.0, R 3.6.3, R 4.2.1
-* win-builder: R Under development (unstable) (2022-07-22 r82614 ucrt)
-* r-hub-builder: macOS 10.13.6 High Sierra, R-release, CRAN's setup; Oracle Solaris 10, x86, 32 bit, R-release; Windows Server 2022, R-devel, 64 bit; Ubuntu Linux 20.04.1 LTS, R-release, GCC; Fedora Linux, R-devel, clang, gfortran
+* local: macOS 21.6.0, R 4.2.1, R 3.6.3
+* win-builder: R Under development (unstable) (2022-08-19 r82734 ucrt)
+* macOS builder: r-release-macosx-arm64|4.2.1|macosx|macOS 11.5.2 (20G95)|Mac mini|Apple M1||en_US.UTF-8 
+* r-hub-builder: Apple Silicon (M1), macOS 11.6 Big Sur, R-release; macOS 10.13.6 High Sierra, R-release, CRAN's setup; 
+  Debian Linux, R-devel, clang, ISO-8859-15 locale;	Fedora Linux, R-devel, GCC
 
-## R CMD check results
+## Local R CMD check results
 
 0 errors | 0 warnings | 0 notes
 
@@ -14,10 +16,18 @@ There are no reverse dependencies.
 
 ## Submission reason
 
- - fixed documentation issues (https://stat.ethz.ch/pipermail/r-package-devel/2022q3/008240.html)
- 
- - fixed unit test and GitHub actions
+Fixes concerning: 
 
+ - documentation (missed escaping one URL and this 
+   resolves a CRAN check note, ability to run examples)
+ 
+ - package testing (timeouts and methods) 
+ 
+ - functionality (slow speed of dfName2Value(), row names of
+   dfName2Value(), tibble handling, certain queries to ISRCTN, 
+   handling missing data in dbGetFieldsIntoDf(), complex fields
+   in dbGetFieldsIntoDf(), `wherevalue` lacked in dfName2Value())
+ 
 ----------
 Thank you!
 Ralf Herold
