@@ -1,3 +1,6 @@
+# ctrdata 1.10.2.9000 (2022-08-21)
+ - new develompent version
+ 
 # ctrdata 1.10.2 (2022-08-20)
  - fix slow speed in dfName2Value()
  - fix to remove row names from dfName2Value()
