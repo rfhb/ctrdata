@@ -6,6 +6,7 @@ if (requireNamespace("tinytest", quietly = TRUE)) {
 
   # see section 4.4 in vignette("using_tinytest", "tinytest")
   cran <- length(unclass(packageVersion("ctrdata"))[[1]]) == 3
+  # cran <- TRUE
 
   # do testing unless on CRAN
   if (!cran) {

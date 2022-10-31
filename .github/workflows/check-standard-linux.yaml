@@ -68,6 +68,8 @@ jobs:
       - name: Install dependencies
         run: |
           install.packages(c("remotes"))
+          utils::install.packages("DBI")
+          utils::install.packages("duckdb", repos = "https://duckdb.r-universe.dev")
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran(c("rcmdcheck", "covr"))
           remotes::install_github("ropensci/nodbi")

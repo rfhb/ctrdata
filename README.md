@@ -23,7 +23,7 @@ The motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created by it. This
-README was reviewed on 2022-08-14 for version 1.10.0.9009 (see
+README was reviewed on 2022-10-30 for version 1.11.0 (see
 [NEWS.md](NEWS.md)).
 
 Main features:
@@ -37,10 +37,10 @@ Main features:
 
 - Retrieved (downloaded) trial information is transformed and stored in
   a document-centric database, for fast and offline access. Uses
-  `PostgreSQL` (🔔new in version 1.9.0), `RSQLite` or `MongoDB` as
-  databases, via R package `nodbi`: see section
-  [Databases](#databases-that-can-be-used-with-ctrdata) below. Easily
-  re-run a previous query to update a database.
+  `DuckDB` (🔔new in version 1.11.0), `PostgreSQL` (new in version
+  1.9.0), `RSQLite` or `MongoDB` as databases, via R package `nodbi`:
+  see section [Databases](#databases-that-can-be-used-with-ctrdata)
+  below. Easily re-run a previous query to update a database.
 
 - Analysis can be done with `R` (using `ctrdata` convenience functions)
   or others systems. Unique (de-duplicated) trial records are identified
@@ -50,9 +50,9 @@ Main features:
 
 Remember to respect the registers’ terms and conditions (see
 `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
-package in any publication as follows: “Ralf Herold (2021). ctrdata:
+package in any publication as follows: “Ralf Herold (2022). ctrdata:
 Retrieve and Analyze Clinical Trials in Public Registers. R package
-version 1.10.0, <https://cran.r-project.org/package=ctrdata>” Package
+version 1.11.0, <https://cran.r-project.org/package=ctrdata>” Package
 `ctrdata` has been used for: Blogging on [Innovation coming to
 paediatric
 research](https://paediatricdata.eu/innovation-coming-to-paediatric-research/)
@@ -230,7 +230,8 @@ trial information is retrieved and loaded into the collection:
 # that is stored in a file on the local system:
 db <- nodbi::src_sqlite(
   dbname = "some_database_name.sqlite_file",
-  collection = "some_collection_name")
+  collection = "some_collection_name"
+)
 
 # See section Databases below
 # for MongoDB as alternative
@@ -238,7 +239,8 @@ db <- nodbi::src_sqlite(
 # Retrieve trials from public register:
 ctrLoadQueryIntoDb(
   queryterm = q,
-  con = db)
+  con = db
+)
 # * Found search query from EUCTR: query=cancer&age=under-18&phase=phase-one&status=completed
 # (1/3) Checking trials in EUCTR:
 # Retrieved overview, multiple records of 66 trial(s) from 4 page(s) to be downloaded
@@ -268,8 +270,10 @@ result <- dbGetFieldsIntoDf(
   fields = c(
     "a7_trial_is_part_of_a_paediatric_investigation_plan",
     "p_end_of_trial_status",
-    "a2_eudract_number"),
-  con = db)
+    "a2_eudract_number"
+  ),
+  con = db
+)
 
 # Find unique trial identifiers for trials that have nore than
 # one record, for example for several EU Member States:
@@ -288,10 +292,13 @@ result <- subset(
 )
 
 # Tabulate the selected clinical trial information:
-with(result,
-     table(
-       p_end_of_trial_status,
-       a7_trial_is_part_of_a_paediatric_investigation_plan))
+with(
+  result,
+  table(
+    p_end_of_trial_status,
+    a7_trial_is_part_of_a_paediatric_investigation_plan
+  )
+)
 #                     a7_trial_is_part_of_a_paediatric_investigation_plan
 # p_end_of_trial_status      Information not present in EudraCT No Yes
 #   Completed                                                 6 32  16
@@ -311,7 +318,8 @@ with(result,
 ctrLoadQueryIntoDb(
   queryterm = "cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug",
   register = "CTGOV",
-  con = db)
+  con = db
+)
 # * Found search query from CTGOV: cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug
 # (1/3) Checking trials in CTGOV:
 # Retrieved overview, records of 44 trial(s) are to be downloaded
@@ -332,7 +340,8 @@ ctrLoadQueryIntoDb(
 # Retrieve trials from another register:
 ctrLoadQueryIntoDb(
   queryterm = "https://www.isrctn.com/search?q=neuroblastoma",
-  con = db)
+  con = db
+)
 # * Found search query from ISRCTN: q=neuroblastoma
 # (1/3) Checking trials in ISRCTN:
 # Retrieved overview, records of 9 trial(s) are to be downloaded
@@ -356,8 +365,10 @@ result <- dbGetFieldsIntoDf(
     "clinical_results.baseline.group_list.group",
     "clinical_results.baseline.analyzed_list.analyzed.units",
     "study_design_info.allocation",
-    "location"),
-  con = db)
+    "location"
+  ),
+  con = db
+)
 
 # Transform all fields into long name - value format
 result <- dfTrials2Long(df = result)
@@ -371,7 +382,8 @@ nsubj <- dfName2Value(
   valuename = "clinical_results.baseline.analyzed_list.analyzed.count_list.count.value",
   wherename = paste0(
     "clinical_results.baseline.group_list.group.title|",
-    "clinical_results.baseline.group_list.group.description"),
+    "clinical_results.baseline.group_list.group.description"
+  ),
   wherevalue = "^Total"
 )
 
@@ -411,20 +423,26 @@ nset <- merge(nset, ncon, by = "_id")
 # Example plot
 library(ggplot2)
 ggplot(data = nset) +
-  labs(title = "Neuroblastoma trials with results",
-       subtitle = "clinicaltrials.gov") +
+  labs(
+    title = "Neuroblastoma trials with results",
+    subtitle = "clinicaltrials.gov"
+  ) +
   geom_point(
     mapping = aes(
       x = nsite,
       y = value.x,
-      colour = value.y == "Randomized")) +
+      colour = value.y == "Randomized"
+    )
+  ) +
   scale_x_log10() +
   scale_y_log10() +
   xlab("Number of sites") +
   ylab("Total number of subjects") +
   labs(colour = "Randomised?")
-ggsave(filename = "man/figures/README-ctrdata_results_neuroblastoma.png",
-       width = 5, height = 3, units = "in")
+ggsave(
+  filename = "man/figures/README-ctrdata_results_neuroblastoma.png",
+  width = 5, height = 3, units = "in"
+)
 ```
 
 ![Neuroblastoma
@@ -437,19 +455,22 @@ trials](https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/fig
 # eudract files are downloaded as part of results
 ctrLoadQueryIntoDb(
   queryterm = q,
-  euctrresults = TRUE, 
+  euctrresults = TRUE,
   euctrresultspdfpath = "./files/",
-  con = db)
+  con = db
+)
 
 # ctgov files can separately be downloaded
 sapply(
   unlist(strsplit(
     dbGetFieldsIntoDf(
       fields = "provided_document_section.provided_document.document_url",
-      con = db)[[2]], 
-    split = " / ")), 
-  function(f) download.file(
-    f, paste0("./files/", gsub("[/:]", "-", f))))
+      con = db
+    )[[2]],
+    split = " / "
+  )),
+  function(f) download.file(f, paste0("./files/", gsub("[/:]", "-", f)))
+)
 ```
 
 ## Meta

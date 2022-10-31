@@ -49,6 +49,9 @@ expect_true(all(c("98918118", "79815499") %in% tmpTest$success))
 # test
 expect_true(length(tmpTest$failed) == 0L)
 
+# clean up
+rm(tmpTest)
+
 # test
 expect_message(
   tmpTest <- suppressWarnings(
@@ -60,7 +63,7 @@ expect_message(
   "Retrieved overview")
 
 # test
-expect_equal(tmpTest$n, 225)
+expect_true(tmpTest$n < 250L)
 
 # test
 expect_message(
@@ -74,8 +77,10 @@ expect_message(
   "are to be downloaded")
 
 # test
-expect_equal(tmpTest$n, 11)
+expect_true(tmpTest$n < 15L)
 
+# clean up
+rm(tmpTest)
 
 #### ctrLoadQueryIntoDb update ####
 
@@ -110,6 +115,9 @@ expect_message(
       queryterm = q,
       con = dbc)),
   "Imported or updated ")
+
+# clean up
+rm(q, tmpTest)
 
 # test
 expect_warning(
@@ -165,6 +173,9 @@ expect_message(
       con = dbc)),
   "Search result page empty")
 
+# clean up
+rm(tmpTest, json, hist, oldQueryDate)
+
 
 #### annotating ####
 
@@ -193,6 +204,8 @@ res <- suppressMessages(
 expect_true(
   res[, "annotation", drop = TRUE] == "just_this" &
     res[, "_id", drop = TRUE] == "98918118")
+
+# clean up
 rm(res)
 
 # test
@@ -229,6 +242,8 @@ expect_equivalent(
   c("character", "integer")
 )
 
+# clean up
+rm(tmpDf)
 
 #### dbFindFields ####
 
@@ -276,6 +291,11 @@ tmpc <- table(tmpc)
 #
 # print(tmpc)
 #
+# 2022-10-30
+# tmpc
+# character data.frame       Date    integer       list    logical
+#        49          2          5          2          2          3
+#
 # 2022-02-20
 #
 # > tinytest::run_test_file("inst/tinytest/test_ctrdata_postgres_isrctn.R") # 53
@@ -297,7 +317,7 @@ tmpc <- table(tmpc)
 # test_ctrdata_sqlite_isrctn.R..   26 tests OK 5.8s
 # All ok, 26 results (5.8s)
 
-rm(tmpf, result)
+rm(tmpf, tmpr, tmpc, result)
 
 #### dbFindIdsUniqueTrials ####
 

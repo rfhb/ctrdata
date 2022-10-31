@@ -254,7 +254,7 @@ ctrCache <- function(xname, xvalue = NULL, verbose = FALSE) {
 #'
 #' @keywords internal
 #'
-#' @importFrom nodbi src_sqlite
+#' @importFrom nodbi src_sqlite src_duckdb docdb_list
 #' @importFrom utils capture.output
 #'
 #' @return Connection object as list, with collection
@@ -295,7 +295,7 @@ ctrDb <- function(
     }
 
     # check
-    if (!RSQLite::dbIsValid(con$con)) {
+    if (inherits(try(nodbi::docdb_list(con), silent = TRUE), "try-error")) {
       con <- nodbi::src_sqlite(dbname = con$dbname,
                                collection = con$collection)
     }
@@ -343,9 +343,46 @@ ctrDb <- function(
                      class = c("src_mongo", "docdb_src")))
   }
 
+  ## duckdb
+  if (inherits(con, "src_duckdb")) {
+
+    if (is.null(con$collection)) {
+      stop("Specify parameter 'collection' with a table name, ",
+           "such as nodbi::src_duckdb(collection = 'test'), ",
+           "for package ctrdata to work.",
+           call. = FALSE)
+    }
+
+    # check
+    if (inherits(try(nodbi::docdb_list(con), silent = TRUE), "try-error")) {
+      con <- nodbi::src_duckdb(
+        dbdir = attr(attr(con$con, "driver"), "dbdir"),
+        collection = con$collection)
+    }
+
+    # add database as element under root
+    con <- c(con,
+             "db" = attr(attr(con$con, "driver"), "dbdir"),
+             "ctrDb" = TRUE)
+
+    # print warning about nodbi::src_duckdb()
+    if (grepl(":memory:", attr(attr(con$con, "driver"), "dbdir"))) {
+      warning("Database not persisting\n",
+              call. = FALSE,
+              noBreaks. = FALSE,
+              immediate. = TRUE)
+
+    }
+
+    ## return
+    return(structure(con,
+                     class = c("src_duckdb", "docdb_src")))
+
+  }
+
   ## unprepared for other nodbi adapters so far
   stop("Please specify in parameter 'con' a database connection. ",
-       "crdata supports src_mongo(), src_sqlite() and src_postgres().",
+       "crdata supports src_mongo(), src_sqlite(), src_postgres() and src_duckdb().",
        call. = FALSE)
 
 } # end ctrDb
@@ -1529,11 +1566,16 @@ dbGetFieldsIntoDf <- function(fields = "",
             # one-item list e.g. "primary_outcome.measure"
             if (!is.data.frame(dfi[[c]]) &&
                 all(sapply(dfi[[c]], function(r)
-                  (length(unlist(r)) <= 1L) ||
-                  (is.data.frame(r) && ncol(r) == 1L && nrow(r) > 0L)
+                  (!is.atomic(r)) &&
+                  ((length(unlist(r)) <= 1L) ||
+                  (is.data.frame(r) && ncol(r) == 1L && nrow(r) > 0L))
                 ))) {
               dfi[[c]] <- sapply(
-                dfi[[c]], function(i) if (length(i)) i[[1]] else NA,
+                dfi[[c]], function(i) {
+                  if (length(i))
+                    if (!is.null(ncol(i[[1]])) && ncol(i[[1]]) > 1L)
+                      i[1] else i[[1]]
+                  else NA},
                 USE.NAMES = FALSE, simplify = TRUE)
             }
 

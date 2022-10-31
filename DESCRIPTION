@@ -1,8 +1,8 @@
 Package: ctrdata
 Type: Package
 Title: Retrieve and Analyze Clinical Trials in Public Registers
-Version: 1.10.2.9000
-Imports: jsonlite, httr, curl, clipr, xml2, rvest, nodbi (>= 0.7.0), 
+Version: 1.10.2.9001
+Imports: jsonlite, httr, curl, clipr, xml2, rvest, nodbi (>= 0.9.0), 
          stringi, dplyr, lubridate
 SystemRequirements: sed, php, cat, perl
 URL: https://cran.r-project.org/package=ctrdata
@@ -14,7 +14,7 @@ Description: A system for querying, retrieving and analyzing
         'ClinicalTrials.gov' ('CTGOV', <https://clinicaltrials.gov/>) and
         the 'ISRCTN' (<http://www.isrctn.com/>). 
         Trial information is downloaded, converted and stored in a database 
-        ('PostgreSQL', 'SQLite' or 'MongoDB'; via package 'nodbi'). 
+        ('PostgreSQL', 'SQLite', 'DuckDB' or 'MongoDB'; via package 'nodbi'). 
         Functions are included to identify deduplicated records, 
         to easily find and extract variables (fields) of interest even 
         from complex nesting as used by the registers, and
@@ -23,8 +23,9 @@ Description: A system for querying, retrieving and analyzing
         the design and conduct as well as for results of clinical trials.
 License: MIT + file LICENSE
 RoxygenNote: 7.2.1
-Suggests: devtools, knitr, rmarkdown, RSQLite (>= 2.2.4), mongolite, 
-        tinytest (>= 1.2.1), R.rsp 
+Suggests: devtools, knitr, rmarkdown, RSQLite (>= 2.2.4), 
+        mongolite, duckdb (>= 0.6.0), tinytest (>= 1.2.1), R.rsp 
+Additional_repositories: https://duckdb.r-universe.dev
 VignetteBuilder: R.rsp
 NeedsCompilation: no
 Encoding: UTF-8

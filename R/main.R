@@ -64,7 +64,7 @@
 #' current query.
 #'
 #' @param parallelretrievals Number of parallel downloads of
-#' information from the register, defaults to 10.
+#' information from the register, defaults to 4
 #'
 #' @param only.count Set to \code{TRUE} to return only the
 #' number of trial records found in the register for the query.
@@ -132,7 +132,7 @@ ctrLoadQueryIntoDb <- function(
   euctrresultspdfpath = NULL,
   annotation.text = "",
   annotation.mode = "append",
-  parallelretrievals = 10L,
+  parallelretrievals = 4L,
   only.count = FALSE,
   con = NULL,
   verbose = FALSE) {

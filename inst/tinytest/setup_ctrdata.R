@@ -83,6 +83,11 @@ checkSqlite <- function() {
   out
 }
 
+checkDuckdb <- function() {
+  !inherits(try(
+    duckdb::dbDisconnect(nodbi::src_duckdb()$con, shutdown = TRUE),
+    silent = TRUE), "try-error")
+}
 
 checkPostgres <- function() {
   tmp <- try(nodbi::src_postgres(), silent = TRUE)
@@ -90,7 +95,6 @@ checkPostgres <- function() {
   if (out) RPostgres::dbDisconnect(conn = tmp$con)
   out
 }
-
 
 checkMongoLocal <- function() {
   tmp <- try(
