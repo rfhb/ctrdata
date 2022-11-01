@@ -33,6 +33,8 @@ jobs:
     # includes on macOS 10.15 mongod 4.2.8 and Windows Server 201{6,9}:
     # Version ServiceName ServiceStatus ServiceStartType
     # 4.2.8.0 MongoDB     Running       Automatic
+    # disabled on Windows from August 2022
+    # https://github.com/actions/runner-images/issues/5949
 
     steps:
       - uses: actions/checkout@v3
@@ -68,6 +70,11 @@ jobs:
           remotes::install_github("ropensci/nodbi")
         shell: Rscript {0}
 
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::covr
+          needs: coverage
+
       - name: Windows install additional dependencies
         if: runner.os == 'windows-latest'
         # to install cygwin to provide php, sed, cat etc.
@@ -84,36 +91,36 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@v1
 
-      - uses: ankane/setup-postgres@v1
-        with:
-          postgres-version: 14
-          database: test
+      # - uses: ankane/setup-postgres@v1
+      #   with:
+      #     postgres-version: 14
+      #     database: test
 
-      - name: Check
-        if: runner.os == 'windows-latest' || matrix.config.r == 'oldrel'
-        env:
-          _R_CHECK_CRAN_INCOMING_REMOTE_: false
-          _R_CHECK_EXAMPLE_TIMING_THRESHOLD_: 30
-          ctrdatamongouri: ${{ secrets.CTRDATAMONGOURI }}
-        run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
-        shell: Rscript {0}
-
-      - name: Upload all check results
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ runner.os }}-r${{ matrix.config.r }}-tinytest
-          path: check/ctrdata.Rcheck/tests/tinytest*
-
-      - name: Upload failed check results
-        if: failure()
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ runner.os }}-r${{ matrix.config.r }}-results
-          path: check
+      # - name: Check
+      #   if: runner.os == 'windows-latest' || matrix.config.r == 'oldrel'
+      #   env:
+      #     _R_CHECK_CRAN_INCOMING_REMOTE_: false
+      #     _R_CHECK_EXAMPLE_TIMING_THRESHOLD_: 30
+      #     ctrdatamongouri: ${{ secrets.CTRDATAMONGOURI }}
+      #   run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
+      #   shell: Rscript {0}
+      #
+      # - name: Upload all check results
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: ${{ runner.os }}-r${{ matrix.config.r }}-tinytest
+      #     path: check/ctrdata.Rcheck/tests/tinytest*
+      #
+      # - name: Upload failed check results
+      #   if: failure()
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: ${{ runner.os }}-r${{ matrix.config.r }}-results
+      #     path: check
 
       - name: Test coverage
         if: matrix.config.os == 'macOS-latest' && matrix.config.r == 'release'
         # covr::codecov() never ends under Windows
         # covr::codecov() uses environment variable CODECOV_TOKEN
-        run: covr::codecov()
+        run: covr::codecov(quiet = FALSE)
         shell: Rscript {0}

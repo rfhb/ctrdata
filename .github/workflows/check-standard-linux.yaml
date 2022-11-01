@@ -76,10 +76,10 @@ jobs:
           remotes::install_github("rfhb/ctrdata")
         shell: Rscript {0}
 
-      - uses: ankane/setup-postgres@v1
-        with:
-          postgres-version: 14
-          database: test
+      # - uses: ankane/setup-postgres@v1
+      #   with:
+      #     postgres-version: 14
+      #     database: test
 
       - name: Wait to reduce ctgov timeouts
         uses: 1itachi/sleep-random@v1.0.0
@@ -87,24 +87,38 @@ jobs:
           minutes: '10'
           random: 'true'
 
-      - name: Check
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::rcmdcheck
+          needs: check
+
+      - uses: r-lib/actions/check-r-package@v2
         env:
           _R_CHECK_CRAN_INCOMING_REMOTE_: false
           _CURL_NO_SSL_VERIFYPEER_: true
           _R_CHECK_EXAMPLE_TIMING_THRESHOLD_: 30
           ctrdatamongouri: ${{ secrets.CTRDATAMONGOURI }}
-        run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
-        shell: Rscript {0}
-
-      - name: Upload check results
-        if: failure()
-        uses: actions/upload-artifact@main
         with:
-          name: ${{ runner.os }}-r${{ matrix.config.r }}-results
-          path: check
+          upload-snapshots: true
 
-      - name: Upload all check results
-        uses: actions/upload-artifact@main
-        with:
-          name: ${{ runner.os }}-r${{ matrix.config.r }}-tinytest
-          path: check/ctrdata.Rcheck/tests/tinytest*
+      # - name: Check
+      #   env:
+      #     _R_CHECK_CRAN_INCOMING_REMOTE_: false
+      #     _CURL_NO_SSL_VERIFYPEER_: true
+      #     _R_CHECK_EXAMPLE_TIMING_THRESHOLD_: 30
+      #     ctrdatamongouri: ${{ secrets.CTRDATAMONGOURI }}
+      #   run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
+      #   shell: Rscript {0}
+      #
+      # - name: Upload check results
+      #   if: failure()
+      #   uses: actions/upload-artifact@main
+      #   with:
+      #     name: ${{ runner.os }}-r${{ matrix.config.r }}-results
+      #     path: check
+      #
+      # - name: Upload all check results
+      #   uses: actions/upload-artifact@main
+      #   with:
+      #     name: ${{ runner.os }}-r${{ matrix.config.r }}-tinytest
+      #     path: check/ctrdata.Rcheck/tests/tinytest*
