@@ -115,5 +115,5 @@ jobs:
         if: matrix.config.r == 'release'
         # covr::codecov() never ends under Windows
         # covr::codecov() uses environment variable CODECOV_TOKEN
-        run: covr::codecov(type = "tests")
+        run: covr::codecov()
         shell: Rscript {0}
