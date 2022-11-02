@@ -23,7 +23,7 @@ The motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created by it. This
-README was reviewed on 2022-10-30 for version 1.11.0 (see
+README was reviewed on 2022-11-02 for version 1.11.0 (see
 [NEWS.md](NEWS.md)).
 
 Main features:
@@ -155,6 +155,7 @@ row in table) or, in case of MongoDB as database backend, `mongolite`
 | Create **SQLite** database connection     | `dbc <- nodbi::src_sqlite(dbname = "name_of_my_database", collection = "name_of_my_collection")`                        |
 | Create **MongoDB** database connection    | `dbc <- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")`                             |
 | Create **PostgreSQL** database connection | `dbc <- nodbi::src_postgres(dbname = "name_of_my_database"); dbc[["collection"]] <- "name_of_my_collection"`            |
+| Create **DuckDB** database connection     | `dbc <- nodbi::src_duckdb(dbname = "name_of_my_database", collection = "name_of_my_collection")`                        |
 | Use connection with `ctrdata` functions   | `ctrdata::{ctrLoadQueryIntoDb, dbQueryHistory, dbFindIdsUniqueTrials, dbFindFields, dbGetFieldsIntoDf}(con = dbc, ...)` |
 | Use connection with `nodbi` functions     | e.g., `nodbi::docdb_query(src = dbc, key = dbc$collection, ...)`                                                        |
 
@@ -222,8 +223,9 @@ q
 - Retrieve protocol-related information, transform and save to database:
 
 The database collection is specified first, using `nodbi` (see above for
-how to specify `PostgreSQL`, `RSQlite` or `MongoDB` as backend); then,
-trial information is retrieved and loaded into the collection:
+how to specify `PostgreSQL`, `RSQlite`, `DuckDB` or `MongoDB` as
+backend); then, trial information is retrieved and loaded into the
+collection:
 
 ``` r
 # Connect to (or newly create) an SQLite database

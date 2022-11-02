@@ -1,7 +1,7 @@
 Package: ctrdata
 Type: Package
 Title: Retrieve and Analyze Clinical Trials in Public Registers
-Version: 1.10.2.9001
+Version: 1.11.0
 Imports: jsonlite, httr, curl, clipr, xml2, rvest, nodbi (>= 0.9.0), 
          stringi, dplyr, lubridate
 SystemRequirements: sed, php, cat, perl
@@ -24,8 +24,7 @@ Description: A system for querying, retrieving and analyzing
 License: MIT + file LICENSE
 RoxygenNote: 7.2.1
 Suggests: devtools, knitr, rmarkdown, RSQLite (>= 2.2.4), 
-        mongolite, duckdb (>= 0.6.0), tinytest (>= 1.2.1), R.rsp 
-Additional_repositories: https://duckdb.r-universe.dev
+        mongolite, tinytest (>= 1.2.1), R.rsp 
 VignetteBuilder: R.rsp
 NeedsCompilation: no
 Encoding: UTF-8
