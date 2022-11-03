@@ -14,7 +14,7 @@ retrieved from public study registers"><meta name="twitter:card" content="summar
     
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.10.2.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.11.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -72,12 +72,7 @@ retrieved from public study registers</p>
 database collection, which has to be given as a connection object
 to parameter <code>con</code> for several ctrdata functions; this
 connection object is created in slightly different ways for the
-three supported database backends:</p><table class="table table"><tr><td><strong>Database</strong></td><td><strong>Connection object</strong></td></tr><tr><td>MongoDB</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_mongo.html" class="external-link">nodbi::src_mongo</a>(db = "my_db", collection = "my_coll")</code></td></tr><tr><td>SQLite</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">nodbi::src_sqlite</a>(dbname = "my_db", collection = "my_coll")</code></td></tr><tr><td>PostgreSQL</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_postgres.html" class="external-link">nodbi::src_postgres</a>(dbname = "my_db"); dbc[["collection"]] &lt;- "my_coll"</code></td></tr></table><p>Example of using a <code>ctrdata</code> function with any such connection object:
-<code><a href="dbQueryHistory.html">ctrdata::dbQueryHistory</a>(con = dbc)</code>.
-Besides <code>ctrdata</code> functions below, any such a connection object can equally
-be used with functions of package <code>nodbi</code>, for example
-<code><a href="https://docs.ropensci.org/nodbi/reference/docdb_query.html" class="external-link">nodbi::docdb_query</a>(src = dbc, key = dbc$collection, fields = '{"_id": 1}', query = '{"sponsors.lead_sponsor.agency_class": "Industry"}')</code></p>
-    </div>
+three supported database backends:</p><table class="table table"><tr><td><strong>Database</strong></td><td><strong>Connection object</strong></td></tr><tr><td>MongoDB</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_mongo.html" class="external-link">nodbi::src_mongo</a>(db = "my_db", collection = "my_coll")</code></td></tr><tr><td>SQLite</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">nodbi::src_sqlite</a>(dbname = "my_db", collection = "my_coll")</code></td></tr><tr><td>PostgreSQL</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_postgres.html" class="external-link">nodbi::src_postgres</a>(dbname = "my_db"); dbc[["collection"]] &lt;- "my_coll"</code></td></tr><tr><td>DuckDB</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_duckdb.html" class="external-link">nodbi::src_duckdb</a>(dbname = "my_db", collection = "my_coll")</code></td></tr><tr><td>Example of using a <code>ctrdata</code> function with any such connection object:</td><td></td></tr><tr><td><code><a href="dbQueryHistory.html">ctrdata::dbQueryHistory</a>(con = dbc)</code>.</td><td></td></tr><tr><td>Besides <code>ctrdata</code> functions below, any such a connection object can equally</td><td></td></tr><tr><td>be used with functions of package <code>nodbi</code>, for example</td><td></td></tr><tr><td><code><a href="https://docs.ropensci.org/nodbi/reference/docdb_query.html" class="external-link">nodbi::docdb_query</a>(src = dbc, key = dbc$collection, fields = '{"_id": 1}', query = '{"sponsors.lead_sponsor.agency_class": "Industry"}')</code></td><td></td></tr></table></div>
     <div class="section level2">
     <h2 id="operations-on-a-clinical-trial-register">Operations on a clinical trial register<a class="anchor" aria-label="anchor" href="#operations-on-a-clinical-trial-register"></a></h2>
     

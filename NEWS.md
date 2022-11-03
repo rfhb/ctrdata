@@ -1,3 +1,6 @@
+# ctrdata 1.11.0.9000 (2022-11-03)
+ - new development version
+ 
 # ctrdata 1.11.0 (2022-11-02)
  - now works with DuckDB (>= v0.6.0) as database backend, using nodbi (>= v0.9.0)
  - reduced default number of parallel connections to EUCTR from 10 to 4

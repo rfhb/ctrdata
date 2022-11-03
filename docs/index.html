@@ -55,7 +55,7 @@
     
     <a class="navbar-brand me-2" href="index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.10.2.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.11.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -107,7 +107,7 @@
 <li>ClinicalTrials.gov (“CTGOV”, <a href="https://clinicaltrials.gov/" class="external-link uri">https://clinicaltrials.gov/</a>)</li>
 <li>ISRCTN (<a href="https://www.isrctn.com/" class="external-link uri">https://www.isrctn.com/</a>)</li>
 </ul>
-<p>The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created by it. This README was reviewed on 2022-10-30 for version 1.11.0 (see <a href="NEWS.html">NEWS.md</a>).</p>
+<p>The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created by it. This README was reviewed on 2022-11-02 for version 1.11.0 (see <a href="NEWS.html">NEWS.md</a>).</p>
 <p>Main features:</p>
 <ul>
 <li><p>Protocol-related trial information is easily retrieved (downloaded): Users define a query in a register’s web interface and then use <code>ctrdata</code> to retrieve in one step all trials resulting from the query. Results-related trial information and personal annotations can be including during retrieval. Synonyms of an active substance can also be found.</p></li>
@@ -244,10 +244,14 @@ citation("ctrdata")
 <td><code>dbc &lt;- nodbi::src_postgres(dbname = "name_of_my_database"); dbc[["collection"]] &lt;- "name_of_my_collection"</code></td>
 </tr>
 <tr class="even">
+<td>Create <strong>DuckDB</strong> database connection</td>
+<td><code>dbc &lt;- nodbi::src_duckdb(dbname = "name_of_my_database", collection = "name_of_my_collection")</code></td>
+</tr>
+<tr class="odd">
 <td>Use connection with <code>ctrdata</code> functions</td>
 <td><code>ctrdata::{ctrLoadQueryIntoDb, dbQueryHistory, dbFindIdsUniqueTrials, dbFindFields, dbGetFieldsIntoDf}(con = dbc, ...)</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Use connection with <code>nodbi</code> functions</td>
 <td>e.g., <code>nodbi::docdb_query(src = dbc, key = dbc$collection, ...)</code>
 </td>
@@ -308,7 +312,7 @@ citation("ctrdata")
 <ul>
 <li>Retrieve protocol-related information, transform and save to database:</li>
 </ul>
-<p>The database collection is specified first, using <code>nodbi</code> (see above for how to specify <code>PostgreSQL</code>, <code>RSQlite</code> or <code>MongoDB</code> as backend); then, trial information is retrieved and loaded into the collection:</p>
+<p>The database collection is specified first, using <code>nodbi</code> (see above for how to specify <code>PostgreSQL</code>, <code>RSQlite</code>, <code>DuckDB</code> or <code>MongoDB</code> as backend); then, trial information is retrieved and loaded into the collection:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Connect to (or newly create) an SQLite database</span></span>
 <span><span class="co"># that is stored in a file on the local system:</span></span>
