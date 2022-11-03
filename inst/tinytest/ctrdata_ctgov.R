@@ -34,6 +34,7 @@ expect_message(
   "no.*trials found")
 
 # test
+Sys.sleep(15L)
 expect_message(
   tmpTest <- suppressWarnings(
     ctrLoadQueryIntoDb(
@@ -60,7 +61,9 @@ expect_message(
       con = dbc)),
   "Imported or updated 1 trial")
 
+
 # test
+Sys.sleep(15L)
 expect_error(
   suppressWarnings(
     suppressMessages(
@@ -96,6 +99,7 @@ q <- paste0("https://clinicaltrials.gov/ct2/results?",
             "term=osteosarcoma&type=Intr&phase=0&age=0&lup_e=")
 
 # test
+Sys.sleep(15L)
 expect_message(
   tmpTest <- suppressWarnings(
     ctrLoadQueryIntoDb(
@@ -121,6 +125,7 @@ expect_equal(
     query = '{"_id": "meta-info"}'), 1L)
 
 # test
+Sys.sleep(15L)
 expect_message(
   tmpTest <- suppressWarnings(
     ctrLoadQueryIntoDb(
@@ -273,6 +278,7 @@ expect_true(
 )
 
 # test
+Sys.sleep(15L)
 expect_error(
   suppressWarnings(
     suppressMessages(
