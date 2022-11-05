@@ -584,6 +584,7 @@ ctrGetQueryUrl <- function(
       "clinicaltrialsregister.eu" = "EUCTR",
       "clinicaltrials.gov" = "CTGOV",
       "isrctn.com" = "ISRCTN",
+      "beta.clinicaltrials.gov" = "BETACTGOV",
       "NONE")
   }
   #
@@ -664,6 +665,15 @@ ctrGetQueryUrl <- function(
       "\\1q=\\2\\3", queryterm)
     #
     return(outdf(queryterm, register))
+  }
+  #
+  if (register == "BETACTGOV") {
+    #
+    stop("The beta website of ClinicalTrials.gov is not supported, ",
+         "please use the classic website. Package 'ctrdata' is being ",
+         "prepared to use the forthcoming website's functionality.")
+    #
+    return(invisible(NULL))
   }
   #
   # default / NONE
