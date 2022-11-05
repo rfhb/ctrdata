@@ -1720,8 +1720,8 @@ ctrLoadQueryIntoDbEuctr <- function(
       pc <- 0L
       curlSuccess <- function(res) {
         pc <<- pc + 1L
-        # incomplete data received 206L
-        if (res$status_code == 206L) {
+        # incomplete data is 206L but some results pages are complete
+        if (any(res$status_code == c(200L, 206L))) {
           retdat <<- c(retdat, list(extractResultsInformation(res)))
           message("\r", pc, " downloaded", appendLF = FALSE)
         }}
@@ -1751,7 +1751,7 @@ ctrLoadQueryIntoDbEuctr <- function(
         pool = pool), silent = TRUE)
 
       # check plausibility
-      if (inherits(tmp, "try-error")) {
+      if (inherits(tmp, "try-error") || !length(retdat)) {
         message("Download from EUCTR failed; last error: ", class(tmp))
         return(invisible(emptyReturn))
       }
