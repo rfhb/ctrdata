@@ -1027,7 +1027,7 @@ dbCTRUpdateQueryHistory <- function(
 #' @noRd
 #'
 #' @importFrom jsonlite toJSON
-#' @importFrom httr content headers progress write_disk GET HEAD status_code
+#' @importFrom httr content progress write_disk GET status_code config
 #' @importFrom nodbi docdb_query
 #'
 ctrLoadQueryIntoDbCtgov <- function(
@@ -1064,7 +1064,8 @@ ctrLoadQueryIntoDbCtgov <- function(
     queryUSRoot, queryUSType2, "&", queryterm, queryupdateterm)
   #
   tmp <- try(httr::GET(
-    url = utils::URLencode(ctgovdfirstpageurl)),
+    url = utils::URLencode(ctgovdfirstpageurl),
+    httr::config(forbid_reuse = 1)),
     silent = TRUE)
   #
   if (inherits(tmp, "try-error") ||
@@ -1122,8 +1123,8 @@ ctrLoadQueryIntoDbCtgov <- function(
   tmp <- try(httr::GET(
     url = utils::URLencode(ctgovdownloadcsvurl),
     httr::progress(),
-    httr::write_disk(path = f,
-                     overwrite = TRUE)),
+    httr::write_disk(path = f, overwrite = TRUE),
+    httr::config(forbid_reuse = 1)),
     silent = TRUE)
 
   # inform user, exit gracefully
@@ -1170,8 +1171,10 @@ ctrLoadQueryIntoDbCtgov <- function(
 #' @keywords internal
 #' @noRd
 #'
-#' @importFrom httr content headers progress write_disk GET HEAD status_code
-#' @importFrom curl curl_fetch_multi multi_run new_pool
+#' @importFrom httr content GET status_code config
+#' @importFrom curl new_handle handle_data handle_setopt parse_headers new_pool
+#' @importFrom curl curl_fetch_multi multi_run curl_fetch_memory multi_fdset
+#' @importFrom curl multi_run multi_add
 #' @importFrom nodbi docdb_query docdb_update
 #'
 ctrLoadQueryIntoDbEuctr <- function(
@@ -1211,7 +1214,9 @@ ctrLoadQueryIntoDbEuctr <- function(
   q <- utils::URLencode(paste0(queryEuRoot, queryEuType1, queryterm))
   if (verbose) message("DEBUG: queryterm is ", q)
   #
-  resultsEuPages <- try(httr::GET(url = q), silent = TRUE)
+  resultsEuPages <- try(
+    httr::GET(url = q),
+    silent = TRUE)
   #
   if (inherits(resultsEuPages, "try-error") ||
       httr::status_code(resultsEuPages) != 200L) {
@@ -1278,6 +1283,9 @@ ctrLoadQueryIntoDbEuctr <- function(
     stop("These are ", resultsEuNumTrials, " (more than 10,000) trials; ",
          "consider correcting or splitting into separate queries")
   }
+
+  # close connections after running
+  on.exit(try(rm(h, pool), silent = TRUE), add = TRUE)
 
   # create empty temporary directory on localhost for
   # download from register into temporary directory
@@ -1836,7 +1844,7 @@ ctrLoadQueryIntoDbEuctr <- function(
 #' @noRd
 #'
 #' @importFrom jsonlite toJSON
-#' @importFrom httr content headers progress write_disk GET HEAD status_code
+#' @importFrom httr progress write_disk GET config
 #' @importFrom nodbi docdb_query
 #' @importFrom utils URLdecode
 #'
@@ -1954,7 +1962,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
   }
 
   # exit if too many records
-  if (as.integer(tmp) > 10000L) {
+  if (tmp > 10000L) {
     stop("These are ", tmp, " (more than 10,000) trials, this may be ",
          "unintended. Downloading more than 10,000 trials may not be supported ",
          "by the register; consider correcting or splitting queries")
@@ -1981,8 +1989,8 @@ ctrLoadQueryIntoDbIsrctn <- function(
   tmp <- try(httr::GET(
     url = utils::URLencode(isrctndownloadurl),
     httr::progress(),
-    httr::write_disk(path = f,
-                     overwrite = TRUE)),
+    httr::write_disk(path = f, overwrite = TRUE),
+    httr::config(forbid_reuse = 1)),
     silent = TRUE)
 
   # check plausibility
