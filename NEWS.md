@@ -2,6 +2,7 @@
  - new development version
  - cater for very short EUCTR results-related information
  - show warning as beta CTGOV website not supported
+ - limit unit testing to MongoDB and SQLite
  
 # ctrdata 1.11.0 (2022-11-02)
  - now works with DuckDB (>= v0.6.0) as database backend, using nodbi (>= v0.9.0)
