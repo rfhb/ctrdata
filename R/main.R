@@ -1074,10 +1074,7 @@ ctrLoadQueryIntoDbCtgov <- function(
   }
   #
   tmp <- httr::content(tmp, as = "text")
-  tmp <- gsub("\n|\t|\r", " ", tmp)
-  tmp <- gsub("<.*?>", " ", tmp)
-  tmp <- gsub("  +", " ", tmp)
-  tmp <- sub(".* (.*?) Stud(y|ies) found for.*", "\\1", tmp)
+  tmp <- sub(".*[> ](.*?) Stud(y|ies) found for: .*", "\\1", tmp)
   tmp <- sub("^No$", "0", tmp)
 
   # safeguard against no or unintended large numbers
@@ -1102,9 +1099,9 @@ ctrLoadQueryIntoDbCtgov <- function(
   }
 
   # exit if too many records
-  if (as.integer(tmp) > 10000L) {
+  if (tmp > 10000L) {
     stop("These are ", tmp, " (more than 10,000) trials, this may be ",
-         "unintended. Downloading more than 10,000 trials is not supported ",
+         "unintended. Downloading more than 10,000 trials may not be supported ",
          "by the register; consider correcting or splitting queries")
   }
 
@@ -1959,7 +1956,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
   # exit if too many records
   if (as.integer(tmp) > 10000L) {
     stop("These are ", tmp, " (more than 10,000) trials, this may be ",
-         "unintended. Downloading more than 10,000 trials is not supported ",
+         "unintended. Downloading more than 10,000 trials may not be supported ",
          "by the register; consider correcting or splitting queries")
   }
 
