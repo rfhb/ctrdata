@@ -2006,7 +2006,7 @@ dfTrials2Long <- function(df) {
       # and by cell in column
       lapply(ci, function(c) {
         if (is.data.frame(c)) {
-          # decompose
+          # unlist is numbering repeat item names
           x <- unlist(flattenDf(c))
           if (!is.null(names(x))) tn <- paste0(tn, ".", names(x))
           if (is.null(x)) x <- NA
@@ -2023,9 +2023,22 @@ dfTrials2Long <- function(df) {
           tnn <- NULL
           # need to iterate since there may be repeats, e.g, 1, 2, 3.1, 3.2
           sapply(seq_len(length(c)), function(i) {
-            # decompose
+            # unlist is numbering repeat item names
             x <- unlist(flattenDf(c[i]))
-            if (!is.null(names(x))) tn <- paste0(tn, ".", i, ".", names(x))
+            if (!is.null(names(x))) {
+              # any first numeric identifier?
+              tst <- stringi::stri_extract_first_regex(names(x), "[0-9]+")
+              if (all(!is.na(tst))) {
+                # if yes bring into middle
+                tn <- paste0(
+                  tn, ".", tst, ".",
+                  stringi::stri_replace_first_regex(names(x), "[0-9]+", ""))
+              } else {
+                # if no add using i
+                # TODO is this ever called?
+                tn <- paste0(tn, ".", i, ".", names(x))
+              }
+            }
             if (is.null(x)) x <- NA
             xx <<- c(xx, x)
             tnn <<- c(tnn, tn)
