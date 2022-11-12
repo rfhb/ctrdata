@@ -562,7 +562,8 @@ ctrGetQueryUrl <- function(
       clipr::read_clip(
         allow_non_interactive = TRUE)
     )
-    if (is.null(url) || (length(url) != 1L) || (nchar(url) == 0L)) {
+    if (is.null(url) || (length(url) != 1L) || (nchar(url) == 0L) ||
+        grepl("[^-a-zA-Z/:_.0-9%#+?=&]", url)) {
       stop("ctrGetQueryUrl(): no clinical trial register ",
            "search URL found in parameter 'url' or in clipboard.",
            call. = FALSE)
@@ -578,14 +579,21 @@ ctrGetQueryUrl <- function(
   }
   #
   # identify domain and register short name
-  if (register == "") {
-    register <- switch(
+  registerFromUrl <- switch(
       sub("^https://[w]{0,3}[.]?([a-zA-Z.]+)/.*", "\\1", url),
       "clinicaltrialsregister.eu" = "EUCTR",
       "clinicaltrials.gov" = "CTGOV",
       "isrctn.com" = "ISRCTN",
       "beta.clinicaltrials.gov" = "BETACTGOV",
       "NONE")
+  #
+  # check parameters expectations
+  if (register != "" && registerFromUrl != "NONE" && register != registerFromUrl) {
+    stop("ctrGetQueryUrl(): 'url' and / or 'register' mismatch, url: '",
+         deparse(url), "', register: '", deparse(register), "'",
+         call. = FALSE)
+  } else {
+    if (registerFromUrl != "NONE") register <- registerFromUrl
   }
   #
   outdf <- function(qt, reg) {
@@ -622,11 +630,11 @@ ctrGetQueryUrl <- function(
   }
   #
   if (register == "CTGOV") {
-    # single trial page
-    queryterm <- sub(paste0(".*/ct2/show/(", regCtgov, ")([?][a-z]+.*|$)"),
+    #
+    queryterm <- sub(paste0(".*/ct2/show/[recodsult/]*(", regCtgov, ")([?][a-z]+.*|$)"),
                      "\\1", url)
-    # inform user
-    if (grepl("[?][a-z]+=\\w+", url, perl = TRUE) &
+    # single trial page
+    if (grepl("[?][a-z]+=\\w+", url, perl = TRUE) &&
         grepl(paste0("^", regCtgov, "$"), queryterm)) {
       message("* Note: 'url' shows a single trial (and is returned by the ",
               "function) but also had search parameters: If interested in ",
@@ -2035,7 +2043,6 @@ dfTrials2Long <- function(df) {
                   stringi::stri_replace_first_regex(names(x), "[0-9]+", ""))
               } else {
                 # if no add using i
-                # TODO is this ever called?
                 tn <- paste0(tn, ".", i, ".", names(x))
               }
             }

@@ -214,6 +214,51 @@ expect_warning(
     register = "CTGOV"),
   "no clinical trial register search URL")
 
+# test
+expect_error(
+  ctrGetQueryUrl(
+    url = c("https://onething", "https://something"),
+    register = "CTGOV"),
+  "is not a single character string")
+
+# test
+expect_error(
+  ctrGetQueryUrl(
+    url = "",
+    register = "EUCTR"),
+  "no clinical trial register search URL found")
+
+# test
+expect_message(
+  ctrGetQueryUrl(
+    url = "https://clinicaltrials.gov/ct2/show/results/NCT00031447"),
+  "Found search query from CTGOV")
+
+# test
+expect_message(
+  ctrGetQueryUrl(
+    url = "https://clinicaltrials.gov/ct2/show/NCT04372602?cond=COVID-19"),
+  "but also had search")
+
+# test
+expect_message(
+  ctrGetQueryUrl(
+    url = "https://clinicaltrials.gov/ct2/show/results/NCT04372602?cond=COVID-19"),
+  "but also had search")
+
+# test
+expect_message(
+  ctrGetQueryUrl(
+    url = "https://clinicaltrials.gov/ct2/show/record/NCT04372602?cond=COVID-19"),
+  "but also had search")
+
+# test
+expect_error(
+  ctrGetQueryUrl(
+    url = "https://beta.clinicaltrials.gov/search?cond=NCT04412252,%20NCT04368728"),
+  "beta website")
+
+
 #### ctrOpenSearchPagesInBrowser ####
 
 if (!at_home()) exit_file("Reason: not at_home")
