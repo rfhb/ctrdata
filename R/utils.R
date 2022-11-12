@@ -564,7 +564,8 @@ ctrGetQueryUrl <- function(
       silent = TRUE)
     if (inherits(url, "try-error")) url <- ""
     if (is.null(url) || (length(url) != 1L) || (nchar(url) == 0L) ||
-        grepl("[^-a-zA-Z/:_.0-9%#+?=&]", url)) {
+        grepl("[^-a-zA-Z/:_.0-9%#+?=&]", url) ||
+        !grepl("^https://", url)) {
       stop("ctrGetQueryUrl(): no clinical trial register ",
            "search URL found in parameter 'url' or in clipboard.",
            call. = FALSE)
