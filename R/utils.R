@@ -558,10 +558,11 @@ ctrGetQueryUrl <- function(
   # if no parameter specified,
   # check clipboard contents
   if (nchar(url) == 0L) {
-    url <- suppressWarnings(
+    url <- try(suppressWarnings(
       clipr::read_clip(
-        allow_non_interactive = TRUE)
-    )
+        allow_non_interactive = TRUE)),
+      silent = TRUE)
+    if (inherits(url, "try-error")) url <- ""
     if (is.null(url) || (length(url) != 1L) || (nchar(url) == 0L) ||
         grepl("[^-a-zA-Z/:_.0-9%#+?=&]", url)) {
       stop("ctrGetQueryUrl(): no clinical trial register ",
