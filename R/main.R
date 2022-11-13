@@ -330,7 +330,6 @@ ctrLoadQueryIntoDb <- function(
 
   # add query parameters to database
   if (imported$n > 0L || !is.null(querytoupdate)) {
-    if (!exists("imported")) imported <- list(n = 0L)
     dbCTRUpdateQueryHistory(register = register,
                             queryterm = querytermoriginal,
                             recordnumber = imported$n,
@@ -339,10 +338,8 @@ ctrLoadQueryIntoDb <- function(
   }
 
   # return some useful information or break
-  if (imported$n == 0L) {
-    message("Function did not result in any trial information imports")
-    return(invisible(emptyReturn))
-  }
+  if (imported$n == 0L) message(
+    "Function did not result in any trial information imports")
 
   # inform user
   if (verbose) {
