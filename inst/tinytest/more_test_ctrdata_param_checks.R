@@ -208,16 +208,7 @@ tf <- function() {
 
   #### ctrGetQueryUrl ####
 
-  # test
-  expect_error(
-    ctrGetQueryUrl(url = c("abc", "def")),
-    "is not a single character string"
-  )
-  # test
-  expect_error(
-    ctrGetQueryUrl(register = c("abc", "def")),
-    "is not a single character string"
-  )
+  # see also test_ctrdata_other_functions.R
 
   # EUCTR mangling: list of c(input, expected output)
   queryterms <- list(
@@ -335,7 +326,7 @@ tf <- function() {
     clipr::write_clip(
       "NotARegisterUrl",
       allow_non_interactive = TRUE)
-    expect_warning(
+    expect_error(
       ctrGetQueryUrl(),
       "no clinical trial register")
 

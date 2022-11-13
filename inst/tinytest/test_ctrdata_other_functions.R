@@ -162,6 +162,8 @@ expect_equal(
 
 #### ctrGetQueryUrl ####
 
+# see also test_ctrdata_param_checks.R
+
 expect_equal(
   suppressWarnings(ctrGetQueryUrl(
     "ThisDoesNotExist")),
