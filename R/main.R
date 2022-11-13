@@ -227,10 +227,14 @@ ctrLoadQueryIntoDb <- function(
     stop("'annotation.mode' incorrect", call. = FALSE)
   }
 
-  # initialise variable that is filled if an update is to be made
-  queryupdateterm <- ""
+  # set user agent for httr and curl to inform registers
+  httr::set_config(httr::user_agent(
+    paste0("ctrdata/", utils::packageDescription("ctrdata")$Version)))
 
   ## handle if we need to rerun previous query
+
+  # initialise variable that is filled if an update is to be made
+  queryupdateterm <- ""
 
   # rewrite parameters for running as update
   querytermoriginal <- queryterm
@@ -254,10 +258,6 @@ ctrLoadQueryIntoDb <- function(
     if (failed) return(invisible(emptyReturn))
     #
   } # if querytermtoupdate
-
-  # set user agent for httr and curl to inform registers
-  httr::set_config(httr::user_agent(
-    paste0("ctrdata/", utils::packageDescription("ctrdata")$Version)))
 
   ## system check
   if (!only.count) {
@@ -328,9 +328,18 @@ ctrLoadQueryIntoDb <- function(
     return(imported)
   }
 
+  # add query parameters to database
+  if (imported$n > 0L || !is.null(querytoupdate)) {
+    if (!exists("imported")) imported <- list(n = 0L)
+    dbCTRUpdateQueryHistory(register = register,
+                            queryterm = querytermoriginal,
+                            recordnumber = imported$n,
+                            con = con,
+                            verbose = verbose)
+  }
+
   # return some useful information or break
-  if (!exists("imported") ||
-      (imported$n == 0)) {
+  if (imported$n == 0L) {
     message("Function did not result in any trial information imports")
     return(invisible(emptyReturn))
   }
@@ -343,13 +352,6 @@ ctrLoadQueryIntoDb <- function(
             "\n'register'=", register,
             "\n'collection'=", con$collection)
   }
-
-  # add query parameters to database
-  dbCTRUpdateQueryHistory(register = register,
-                          queryterm = querytermoriginal,
-                          recordnumber = imported$n,
-                          con = con,
-                          verbose = verbose)
 
   # add metadata
   imported <- addMetaData(x = imported, con = con)
@@ -549,6 +551,14 @@ ctrRerunQuery <- function(
           # inform user
           message("First result page empty - no (new) trials found?")
           failed <- TRUE
+          # only for EUCTR, update history here because not for EUCTR but
+          # only for other registers, ctrLoadQueryIntoDb needs to be run
+          # to determine the number of new trial records
+          dbCTRUpdateQueryHistory(register = register,
+                                  queryterm = queryterm,
+                                  recordnumber = 0L,
+                                  con = con,
+                                  verbose = verbose)
           #
         } else {
           # new trials found, construct
