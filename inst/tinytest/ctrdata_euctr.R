@@ -633,7 +633,7 @@ result <- suppressMessages(
 
 # test
 expect_true(
-  length(names(result)) > 400L)
+  length(names(result)) > 390L)
 
 
 # determine all classes
