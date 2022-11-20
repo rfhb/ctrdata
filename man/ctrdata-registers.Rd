@@ -3,19 +3,22 @@
 \docType{data}
 \name{ctrdata-registers}
 \alias{ctrdata-registers}
-\title{ctrdata: detailed information on clinical trial registers}
+\title{ctrdata: information on clinical trial registers}
 \description{
 Registers of clinical trials that can be accessed with
-package \link{ctrdata-package} as of end 2021
+package \link{ctrdata-package} as of November 2022.
+The EU CTIS will be mandatory for sponsors from January 2023
+and cannot yet supported by \code{ctrdata}.
 }
 \details{
 \itemize{
-\item \strong{EUCTR}: The European Union Clinical Trials Register contains more
-than 40,000 clinical trials (using one or more medicines as
+\item \strong{EUCTR}: The European Union Clinical Trials Register contains
+almost 43,000 clinical trials (using one or more medicines as
 investigational medicinal product, IMP; in Europe and beyond)
-\item \strong{CTGOV}: ClinicalTrials.gov includes almost 400,000
-interventional and observational studies
-\item \strong{ISRCTN}: The ISRCTN Registry includes more than 21,000
+\item \strong{CTGOV}: ClinicalTrials.gov includes more than 430,000
+interventional and observational studies (the beta website
+is not supported by package \code{ctrdata})
+\item \strong{ISRCTN}: The ISRCTN Registry includes almost 23,000
 interventional or observational health studies
 }\tabular{lccc}{
    \strong{Material} \tab \strong{EUCTR} \tab \strong{CTGOV} \tab \strong{ISRCTN} \cr
@@ -32,8 +35,8 @@ interventional or observational health studies
 }
 
 
-*The example expert search retrieves interventional trials with neonates,
-investigating infectious conditions:
+*The example is an expert search that retrieves interventional
+trials with neonates, investigating infectious conditions:
 EUCTR retrieves trials with neonates, but not exclusively.
 The CTGOV expert search retrieves trials exclusively in neonates.
 ISRCTN retrieves a small number of studies.

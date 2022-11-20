@@ -23,8 +23,7 @@ The motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created by it. This
-README was reviewed on 2022-11-02 for version 1.11.0 (see
-[NEWS.md](NEWS.md)).
+README was reviewed on 2022-11-20 for version 1.11.0.9000.
 
 Main features:
 
@@ -52,13 +51,7 @@ Remember to respect the registers’ terms and conditions (see
 `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
 package in any publication as follows: “Ralf Herold (2022). ctrdata:
 Retrieve and Analyze Clinical Trials in Public Registers. R package
-version 1.11.0, <https://cran.r-project.org/package=ctrdata>” Package
-`ctrdata` has been used for: Blogging on [Innovation coming to
-paediatric
-research](https://paediatricdata.eu/innovation-coming-to-paediatric-research/)
-and a Report on [The impact of collaboration: The value of UK medical
-research to EU science and
-health](https://www.cancerresearchuk.org/about-us/we-develop-policy/we-work-with-government/exiting-the-eu/uk-and-eu-research#downloads)
+version 1.11.0, <https://cran.r-project.org/package=ctrdata>”.
 
 <!--
 
@@ -103,13 +96,12 @@ function also checks if the tools can be used.
   administrator credentials needed.
 
 - In macOS including 11 Big Sur, these are already installed; as
-  alternative and 🔔for macOS 12 Monterey,
+  alternative and 🔔for macOS 12 Monterey and above,
   [`homebrew`](https://brew.sh/) can be used: `brew install php`, which
   seems to include the libraries required for `ctrdata`.
 
-- In Linux, these are usually already installed; tools for installation
-  vary by distribution (e.g.,
-  `sudo apt install php-cli php-xml php-json`).
+- In Linux, these are usually already installed; tools to install vary
+  by distribution (e.g., `sudo apt install php-cli php-xml php-json`).
 
 ## Overview of functions in `ctrdata`
 
@@ -476,6 +468,13 @@ sapply(
 ```
 
 ## Meta
+
+Package `ctrdata` has been used for: Blogging on [Innovation coming to
+paediatric
+research](https://paediatricdata.eu/innovation-coming-to-paediatric-research/)
+and a Report on [The impact of collaboration: The value of UK medical
+research to EU science and
+health](https://www.cancerresearchuk.org/about-us/we-develop-policy/we-work-with-government/exiting-the-eu/uk-and-eu-research#downloads)
 
 ### Additional features under consideration
 

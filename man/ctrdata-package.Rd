@@ -24,11 +24,15 @@ three supported database backends:\tabular{ll}{
 }
 
 
-Example of using a connection object with a \code{ctrdata} function:
+Use a connection object with a \code{ctrdata} function, for example:
 \code{\link[ctrdata:dbQueryHistory]{ctrdata::dbQueryHistory}(con = dbc)}.
-Besides \code{ctrdata} functions, any such a connection object can equally
-be used with functions of package \code{nodbi}, for example
+
+Any such connection object can also be used with other packages, for example
+\code{\link[mongolite:mongo]{mongolite::mongo}()} or:
 \code{\link[nodbi:docdb_query]{nodbi::docdb_query}(src = dbc, key = dbc$collection, fields = '{"_id": 1}', query = '{"sponsors.lead_sponsor.agency_class": "Industry"}')}
+
+A demo database in package \code{ctrdata} can be used with:
+\code{dbc <- nodbi::src_sqlite(dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"), collection = "my_trials")}
 }
 
 \section{2 - Operate on a clinical trial register}{

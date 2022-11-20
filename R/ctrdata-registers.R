@@ -1,14 +1,17 @@
-#' ctrdata: detailed information on clinical trial registers
+#' ctrdata: information on clinical trial registers
 #'
 #' Registers of clinical trials that can be accessed with
-#' package \link{ctrdata-package} as of end 2021
+#' package \link{ctrdata-package} as of November 2022.
+#' The EU CTIS will be mandatory for sponsors from January 2023
+#' and cannot yet supported by `ctrdata`.
 #'
-#' - **EUCTR**: The European Union Clinical Trials Register contains more
-#' than 40,000 clinical trials (using one or more medicines as
+#' - **EUCTR**: The European Union Clinical Trials Register contains
+#' almost 43,000 clinical trials (using one or more medicines as
 #' investigational medicinal product, IMP; in Europe and beyond)
-#' - **CTGOV**: ClinicalTrials.gov includes almost 400,000
-#' interventional and observational studies
-#' - **ISRCTN**: The ISRCTN Registry includes more than 21,000
+#' - **CTGOV**: ClinicalTrials.gov includes more than 430,000
+#' interventional and observational studies (the beta website
+#' is not supported by package `ctrdata`)
+#' - **ISRCTN**: The ISRCTN Registry includes almost 23,000
 #' interventional or observational health studies
 #'
 #' | **Material** | **EUCTR** | **CTGOV** | **ISRCTN** |
@@ -24,8 +27,8 @@
 #' | Example* | \ifelse{latex}{\out{\href{https://www.clinicaltrialsregister.eu/ctr-search/search?query=Infections\&age=newborn\&age=preterm-new-born-infants}{link}}}{\href{https://www.clinicaltrialsregister.eu/ctr-search/search?query=Infections&age=newborn&age=preterm-new-born-infants}{link}} | \ifelse{latex}{\out{\href{https://clinicaltrials.gov/ct2/results/refine?term=AREA[MaximumAge]+RANGE[0+days,1+months]\&type=Intr\&cond=Infections\&intr=Investigational+Agent\&show_xprt=Y}{link}}}{\href{https://clinicaltrials.gov/ct2/results/refine?term=AREA%5BMaximumAge%5D+RANGE%5B0+days,1+months%5D&type=Intr&cond=Infections&intr=Investigational+Agent&show_xprt=Y}{link}} | \ifelse{latex}{\out{\href{https://www.isrctn.com/search?q=\&filters=ageRange:Neonate,conditionCategory:Infections+and+Infestations\&searchType=advanced-search}{link}}}{\href{https://www.isrctn.com/search?q=&filters=ageRange:Neonate,conditionCategory:Infections+and+Infestations&searchType=advanced-search}{link}} |
 #' | Definitions | \href{https://eudract.ema.europa.eu/result.html}{link} | \href{https://prsinfo.clinicaltrials.gov/definitions.html}{Protocol}, \href{https://prsinfo.clinicaltrials.gov/results_definitions.html}{results}, \href{https://clinicaltrials.gov/api/gui/ref/crosswalks}{names}, \href{https://clinicaltrials.gov/api/gui/ref/syntax}{syntax} | \href{https://www.isrctn.com/page/definitions}{link} |
 #'
-#' *The example expert search retrieves interventional trials with neonates,
-#' investigating infectious conditions:
+#' *The example is an expert search that retrieves interventional
+#' trials with neonates, investigating infectious conditions:
 #' EUCTR retrieves trials with neonates, but not exclusively.
 #' The CTGOV expert search retrieves trials exclusively in neonates.
 #' ISRCTN retrieves a small number of studies.

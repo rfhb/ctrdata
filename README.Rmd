@@ -37,7 +37,7 @@ The package `ctrdata` provides functions for retrieving (downloading) informatio
 - ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/)
 - ISRCTN (https://www.isrctn.com/) 
 
-The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can be used with the databases created by it. This README was reviewed on 2022-11-02 for version 1.11.0 (see [NEWS.md](NEWS.md)).
+The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can be used with the databases created by it. This README was reviewed on 2022-11-20 for version 1.11.0.9000.
 
 Main features:
 
@@ -47,7 +47,7 @@ Main features:
 
 * Analysis can be done with `R` (using `ctrdata` convenience functions) or others systems. Unique (de-duplicated) trial records are identified across registers. `ctrdata` can merge and recode information (fields) and also provides easy access even to deeply-nested fields (new in version 1.4.0).
 
-Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: "Ralf Herold (2022). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.11.0, https://cran.r-project.org/package=ctrdata" Package `ctrdata` has been used for: Blogging on [Innovation coming to paediatric research](https://paediatricdata.eu/innovation-coming-to-paediatric-research/) and a Report on [The impact of collaboration: The value of UK medical research to EU science and health](https://www.cancerresearchuk.org/about-us/we-develop-policy/we-work-with-government/exiting-the-eu/uk-and-eu-research#downloads)
+Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: "Ralf Herold (2022). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.11.0, https://cran.r-project.org/package=ctrdata". 
 
 <!--
 ```{r}
@@ -78,9 +78,9 @@ These are required for `ctrLoadQueryIntoDb()`, the main function of package `ctr
 
 - For MS Windows, install [`Cygwin`](https://cygwin.org/install.html): In `R`, run `ctrdata::installCygwinWindowsDoInstall()` for an automated minimal installation. Alternatively, manually install Cygwin with packages `perl`, `php-jsonc` and `php-simplexml` into `c:\cygwin`. The installation needs about 160 MB disk space; no administrator credentials needed.
 
-- In macOS including 11 Big Sur, these are already installed; as alternative and `r emo::ji("bell")`for macOS 12 Monterey, [`homebrew`](https://brew.sh/) can be used: `brew install php`, which seems to include the libraries required for `ctrdata`.
+- In macOS including 11 Big Sur, these are already installed; as alternative and `r emo::ji("bell")`for macOS 12 Monterey and above, [`homebrew`](https://brew.sh/) can be used: `brew install php`, which seems to include the libraries required for `ctrdata`.
 
-- In Linux, these are usually already installed; tools for installation vary by distribution (e.g., `sudo apt install php-cli php-xml php-json`).
+- In Linux, these are usually already installed; tools to install vary by distribution (e.g., `sudo apt install php-cli php-xml php-json`).
 
 ## Overview of functions in `ctrdata`
 
@@ -426,6 +426,8 @@ unlink("./pdfs/", recursive = TRUE)
 
 
 ## Meta
+
+Package `ctrdata` has been used for: Blogging on [Innovation coming to paediatric research](https://paediatricdata.eu/innovation-coming-to-paediatric-research/) and a Report on [The impact of collaboration: The value of UK medical research to EU science and health](https://www.cancerresearchuk.org/about-us/we-develop-policy/we-work-with-government/exiting-the-eu/uk-and-eu-research#downloads)
 
 ### Additional features under consideration
 

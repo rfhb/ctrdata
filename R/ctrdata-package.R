@@ -18,11 +18,15 @@
 #' PostgreSQL | \code{dbc <- \link[nodbi:src_postgres]{nodbi::src_postgres}(dbname = "my_db"); dbc[["collection"]] <- "my_coll"}
 #' DuckDB | \code{dbc <- \link[nodbi:src_duckdb]{nodbi::src_duckdb}(dbname = "my_db", collection = "my_coll")}
 #'
-#' Example of using a connection object with a `ctrdata` function:
+#' Use a connection object with a `ctrdata` function, for example:
 #' \code{\link[ctrdata:dbQueryHistory]{ctrdata::dbQueryHistory}(con = dbc)}.
-#' Besides `ctrdata` functions, any such a connection object can equally
-#' be used with functions of package `nodbi`, for example
+#'
+#' Any such connection object can also be used with other packages, for example
+#' \code{\link[mongolite:mongo]{mongolite::mongo}()} or:
 #' \code{\link[nodbi:docdb_query]{nodbi::docdb_query}(src = dbc, key = dbc$collection, fields = '{"_id": 1}', query = '{"sponsors.lead_sponsor.agency_class": "Industry"}')}
+#'
+#' A demo database in package `ctrdata` can be used with:
+#' \code{dbc <- nodbi::src_sqlite(dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"), collection = "my_trials")}
 #'
 #' @section 2 - Operate on a clinical trial register:
 #'
