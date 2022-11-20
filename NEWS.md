@@ -1,5 +1,4 @@
-# ctrdata 1.11.0.9000 (2022-11-13)
- - new development version
+# ctrdata 1.11.1 (2022-11-20)
  - cater for very short EUCTR results-related information
  - show warning as beta CTGOV website is not supported
  - limit unit testing to MongoDB and SQLite
