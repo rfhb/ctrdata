@@ -53,8 +53,17 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.11.0.9000" id="ctrdata-11109000-2022-11-03">ctrdata 1.11.0.9000 (2022-11-03)<a class="anchor" aria-label="anchor" href="#ctrdata-11109000-2022-11-03"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.11.0.9000" id="ctrdata-11109000-2022-11-13">ctrdata 1.11.0.9000 (2022-11-13)<a class="anchor" aria-label="anchor" href="#ctrdata-11109000-2022-11-13"></a></h2>
 <ul><li>new development version</li>
+<li>cater for very short EUCTR results-related information</li>
+<li>show warning as beta CTGOV website is not supported</li>
+<li>limit unit testing to MongoDB and SQLite</li>
+<li>return error for ctrGetQueryUrl() if no query URL</li>
+<li>prevent re-using connections to reduce http/2 layer errors</li>
+<li>update query history when querytoupdate was used but no new records found</li>
+<li>make ctrLoadQueryIntoDb() to always return visible result</li>
+<li>correct dfTrials2Long() identifier (EUCTR no more top “1” across fields)</li>
+<li>correct non-ASCII characters</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.11.0" id="ctrdata-1110-2022-11-02">ctrdata 1.11.0 (2022-11-02)<a class="anchor" aria-label="anchor" href="#ctrdata-1110-2022-11-02"></a></h2><p class="text-muted">CRAN release: 2022-11-02</p>
@@ -121,7 +130,7 @@
 <ul><li>thorough documentation improvement</li>
 <li>simplified dbFindFields</li>
 <li>cleaned up testing binaries</li>
-<li>cleaned up heper scripts</li>
+<li>cleaned up helper scripts</li>
 <li>removed ctrGetQueryUrlFromBrowser(), long deprecated</li>
 </ul></div>
     <div class="section level2">
