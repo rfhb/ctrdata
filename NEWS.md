@@ -1,3 +1,6 @@
+# ctrdata 1.11.1.9000 (2022-11-20)
+ - stop (instead of warning) if register host errors (e.g. incorrect number of records)
+ 
 # ctrdata 1.11.1 (2022-11-20)
  - cater for very short EUCTR results-related information
  - show warning as beta CTGOV website is not supported
