@@ -531,8 +531,8 @@ ctrRerunQuery <- function(
 
         # check plausibility
         if (inherits(resultsRss, "try-error")) {
-          message("Download from EUCTR failed; last error: ", class(resultsRss))
-          failed <- TRUE
+          stop("Download from EUCTR failed; last error: ",
+               class(resultsRss), call. = FALSE)
         }
 
         # inform user
@@ -547,15 +547,20 @@ ctrRerunQuery <- function(
             resultsRssTrials == -1L) {
           # inform user
           message("First result page empty - no (new) trials found?")
+          # only for EUCTR, update history here because
+          # for EUCTR the query to be used with function
+          # ctrLoadQueryIntoDb cannot be specified to only
+          # query for updated trials;
+          # unless technical failure of retrieval
+          if (!failed) dbCTRUpdateQueryHistory(
+            register = register,
+            queryterm = queryterm,
+            recordnumber = 0L,
+            con = con,
+            verbose = verbose)
+          #
+          # set indicator
           failed <- TRUE
-          # only for EUCTR, update history here because not for EUCTR but
-          # only for other registers, ctrLoadQueryIntoDb needs to be run
-          # to determine the number of new trial records
-          dbCTRUpdateQueryHistory(register = register,
-                                  queryterm = queryterm,
-                                  recordnumber = 0L,
-                                  con = con,
-                                  verbose = verbose)
           #
         } else {
           # new trials found, construct
@@ -1137,9 +1142,8 @@ ctrLoadQueryIntoDbCtgov <- function(
   # inform user, exit gracefully
   if (inherits(tmp, "try-error") ||
       !any(httr::status_code(tmp) == c(200L))) {
-    message("Host ", queryUSRoot, " not working as expected, ",
-            "cannot continue: ", tmp[[1]])
-    return(invisible(emptyReturn))
+    stop("Host ", queryUSRoot, " not working as expected, ",
+         "cannot continue: ", tmp[[1]], call. = FALSE)
   }
 
   # inform user
@@ -1233,9 +1237,8 @@ ctrLoadQueryIntoDbEuctr <- function(
            "https://github.com/rfhb/ctrdata/issues/19#issuecomment-820127139",
            call. = FALSE)
     } else {
-      message("Host ", queryEuRoot, " not working as expected, ",
-              "cannot continue: ", resultsEuPages[[1]])
-      return(invisible(emptyReturn))
+      stop("Host ", queryEuRoot, " not working as expected, ",
+           "cannot continue: ", resultsEuPages[[1]], call. = FALSE)
     }
   }
   # - store options from request
@@ -1428,8 +1431,7 @@ ctrLoadQueryIntoDbEuctr <- function(
 
   # check plausibility
   if (inherits(tmp, "try-error")) {
-    message("Download from EUCTR failed; last error: ", class(tmp))
-    return(invisible(emptyReturn))
+    stop("Download from EUCTR failed; last error: ", class(tmp), call. = FALSE)
   }
   if (tmp[["success"]] != resultsEuNumPages) {
     message("Download from EUCTR failed; incorrect number of records")
@@ -1537,8 +1539,7 @@ ctrLoadQueryIntoDbEuctr <- function(
 
     # check plausibility
     if (inherits(tmp, "try-error")) {
-      message("Download from EUCTR failed; last error: ", class(tmp))
-      return(invisible(emptyReturn))
+      stop("Download from EUCTR failed; last error: ", class(tmp), call. = FALSE)
     }
 
     # new line
@@ -1764,8 +1765,7 @@ ctrLoadQueryIntoDbEuctr <- function(
 
       # check plausibility
       if (inherits(tmp, "try-error") || !length(retdat)) {
-        message("Download from EUCTR failed; last error: ", class(tmp))
-        return(invisible(emptyReturn))
+        stop("Download from EUCTR failed; last error: ", class(tmp), call. = FALSE)
       }
 
       # combine results
@@ -1935,9 +1935,8 @@ ctrLoadQueryIntoDbIsrctn <- function(
     silent = TRUE)
   #
   if (inherits(tmp, "try-error")) {
-    message("Host ", queryIsrctnRoot, " not working as expected, ",
-            "cannot continue: ", tmp[[1]])
-    return(invisible(emptyReturn))
+    stop("Host ", queryIsrctnRoot, " not working as expected, ",
+         "cannot continue: ", tmp[[1]], call. = FALSE)
   }
   #
   tmp <- try(xml2::xml_attr(tmp, "totalCount"), silent = TRUE)
@@ -2002,8 +2001,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
 
   # check plausibility
   if (inherits(tmp, "try-error")) {
-    message("Download from EUCTR failed; last error: ", class(tmp))
-    return(invisible(emptyReturn))
+    stop("Download from EUCTR failed; last error: ", class(tmp), call. = FALSE)
   }
 
   # inform user
