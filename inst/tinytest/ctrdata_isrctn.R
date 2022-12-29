@@ -154,10 +154,10 @@ expect_message(
   "Imported or updated")
 
 # test
-expect_true(tmpTest$n > 2L)
+expect_true(tmpTest$n >= 1L)
 
 # test
-expect_true(length(tmpTest$success) > 2L)
+expect_true(length(tmpTest$success) >= 1L)
 
 # test
 expect_true(length(tmpTest$failed) == 0L)
@@ -329,3 +329,4 @@ expect_message(
 # test
 expect_true(length(res) >= 5L)
 rm(res)
+
