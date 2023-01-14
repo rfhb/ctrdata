@@ -1043,8 +1043,9 @@ dbCTRUpdateQueryHistory <- function(
 #' @noRd
 #'
 #' @importFrom jsonlite toJSON
-#' @importFrom httr content progress write_disk GET status_code config
+#' @importFrom httr content GET status_code config
 #' @importFrom nodbi docdb_query
+#' @importFrom curl multi_download
 #'
 ctrLoadQueryIntoDbCtgov <- function(
   queryterm = queryterm,
@@ -1083,6 +1084,8 @@ ctrLoadQueryIntoDbCtgov <- function(
     url = utils::URLencode(ctgovdfirstpageurl),
     httr::config(forbid_reuse = 1)),
     silent = TRUE)
+  # save request options
+  requestOptions <- tmp$request$options
   #
   if (inherits(tmp, "try-error") ||
       !any(httr::status_code(tmp) == c(200L, 404L))) {
@@ -1136,18 +1139,21 @@ ctrLoadQueryIntoDbCtgov <- function(
   message("Downloading trials ", appendLF = FALSE)
 
   # get (download) trials in single zip file f
-  tmp <- try(httr::GET(
-    url = utils::URLencode(ctgovdownloadcsvurl),
-    httr::progress(),
-    httr::write_disk(path = f, overwrite = TRUE),
-    httr::config(forbid_reuse = 1)),
-    silent = TRUE)
+  tmp <- do.call(
+    curl::multi_download,
+    c(urls = list(utils::URLencode(ctgovdownloadcsvurl)),
+      destfiles = list(f),
+      progress = TRUE,
+      timeout = Inf,
+      requestOptions
+    )
+  )
 
   # inform user, exit gracefully
   if (inherits(tmp, "try-error") ||
-      !any(httr::status_code(tmp) == c(200L))) {
+      !any((tmp[["status_code"]]) == c(200L))) {
     stop("Host ", queryUSRoot, " not working as expected, ",
-         "cannot continue: ", tmp[[1]], call. = FALSE)
+         "cannot continue ", call. = FALSE)
   }
 
   # inform user
@@ -1189,7 +1195,7 @@ ctrLoadQueryIntoDbCtgov <- function(
 #' @importFrom httr content GET status_code config
 #' @importFrom curl new_handle handle_data handle_setopt parse_headers new_pool
 #' @importFrom curl curl_fetch_multi multi_run curl_fetch_memory multi_fdset
-#' @importFrom curl multi_run multi_add
+#' @importFrom curl multi_run multi_add multi_download
 #' @importFrom nodbi docdb_query docdb_update
 #'
 ctrLoadQueryIntoDbEuctr <- function(
@@ -1298,9 +1304,6 @@ ctrLoadQueryIntoDbEuctr <- function(
          "consider correcting or splitting into separate queries")
   }
 
-  # close connections after running
-  on.exit(try(rm(h, pool), silent = TRUE), add = TRUE)
-
   # create empty temporary directory on localhost for
   # download from register into temporary directory
   tempDir <- tempfile(pattern = "ctrDATA")
@@ -1332,31 +1335,21 @@ ctrLoadQueryIntoDbEuctr <- function(
   ## download all text files from pages
 
   # inform user
-  message("Downloading trials (",
-          min(parallelretrievals, resultsEuNumPages),
-          " pages in parallel)...")
+  message("Downloading trials...")
 
-  # prepare download and saving
-
-  # prepare curl operations
-  #
-  # - make handle work with cookies
-  cf <- tempfile(
-    pattern = "cookies_",
-    fileext = ".txt")
-  # - new handle
-  h <- curl::new_handle(
-    useragent = "",
-    accept_encoding = "gzip,deflate,zstd,br",
-    cookiejar = cf,
-    cookiefile = cf)
-  # - add any user options specified for httr
-  curl::handle_setopt(h, .list = requestOptions)
-  # - do fetch
+  # new handle
+  h <- do.call(
+    curl::new_handle,
+    c(accept_encoding = "gzip,deflate,zstd,br",
+      requestOptions)
+  )
+  # test fetch
   tmp <- curl::curl_fetch_memory(
-    url = paste0(queryEuRoot, queryEuType3,
-                 "query=2008-003606-33", "&page=1", queryEuPost),
-    handle = h)
+    url = paste0(
+      queryEuRoot, queryEuType3,
+      "query=2008-003606-33", "&page=1", queryEuPost),
+    handle = h
+  )
   # inform user about capabilities
   stime <- curl::handle_data(h)[["times"]][["total"]]
   sgzip <- curl::parse_headers(tmp$headers)
@@ -1367,12 +1360,6 @@ ctrLoadQueryIntoDbEuctr <- function(
             "transfer takes longer, about ", signif(stime, digits = 1),
             "s per trial")
   }
-
-  # create pool for concurrent connections
-  pool <- curl::new_pool(
-    total_con = parallelretrievals,
-    host_con = parallelretrievals,
-    multiplex = TRUE)
 
   # generate vector with URLs of all pages
   urls <- vapply(
@@ -1392,52 +1379,24 @@ ctrLoadQueryIntoDbEuctr <- function(
     fileext = ".txt"
   )
 
-  # success handling: saving to file
-  # and progress indicator function
-  pc <- 0L
-  curlSuccess <- function(res) {
-    pc <<- pc + 1L
-    # note that the number in euctr_trials_nnn
-    # is not expected to correspond to the page
-    # number in the URL that was downloaded
-    # save to file
-    if (res$status_code == 200L) {
-      writeLines(text = rawToChar(res$content), con = fp[pc], useBytes = TRUE)
-    }
-    # inform user
-    message("Pages: ", pc, " done, ",
-            length(curl::multi_fdset(pool = pool)[["reads"]]), " ongoing   ",
-            "\r", appendLF = FALSE)
-  }
-
-  # add randomised URLs and file names into pool
-  tmp <- lapply(
-    sample(seq_along(urls),
-           size = length(urls),
-           replace = FALSE,
-           prob = NULL),
-    function(u) {
-      h <- curl::new_handle()
-      curl::handle_setopt(h, .list = requestOptions)
-      curl::curl_fetch_multi(
-        url = urls[u],
-        done = curlSuccess,
-        pool = pool,
-        handle = h)
-    })
-
-  # inform user on first page
-  message("Pages: 0 done...\r", appendLF = FALSE)
-
   # do download and saving
-  tmp <- try(curl::multi_run(
-    pool = pool), silent = TRUE)
+  tmp <- do.call(
+    curl::multi_download,
+    c(urls = list(urls),
+      destfiles = list(fp),
+      resume = TRUE,
+      progress = TRUE,
+      timeout = Inf,
+      requestOptions,
+      accept_encoding = "gzip,deflate,zstd,br"
+    )
+  )
 
   # check plausibility
   if (inherits(tmp, "try-error")) {
     stop("Download from EUCTR failed; last error: ", class(tmp), call. = FALSE)
   }
-  if (tmp[["success"]] != resultsEuNumPages) {
+  if (nrow(tmp) != resultsEuNumPages) {
     message("Download from EUCTR failed; incorrect number of records")
     return(invisible(emptyReturn))
   }
@@ -1488,21 +1447,18 @@ ctrLoadQueryIntoDbEuctr <- function(
     # latest version: "2007-000371-42"
 
     # inform user
-    message("(1/4) Downloading results (max. ",
-            parallelretrievals,
-            " trials in parallel):")
+    message("(1/4) Downloading and extracting results ",
+            "(. = data, F = file[s] and data, x = none):")
 
     # prepare download and save
-    pool <- curl::new_pool(
-      total_con = parallelretrievals,
-      host_con = parallelretrievals,
-      multiplex = TRUE)
-    #
+
+    # urls
     urls <- vapply(
       paste0(queryEuRoot, queryEuType4,
              eudractnumbersimported),
       utils::URLencode, character(1L), USE.NAMES = FALSE)
-    #
+
+    # destfiles
     fp <- tempfile(
       pattern = paste0(
         "euctr_results_",
@@ -1513,33 +1469,19 @@ ctrLoadQueryIntoDbEuctr <- function(
       tmpdir = tempDir,
       fileext = ".zip"
     )
-    #
-    # success handling: saving to file
-    # and progress indicator function
-    pc <- 0L
-    curlSuccess <- function(res) {
-      pc <<- pc + 1L
-      # save to file
-      if (res$status_code == 200L) {
-        writeBin(object = res$content, con = fp[pc])
-        message("\r", pc, " downloaded or checked", appendLF = FALSE)
-      }}
-    #
-    tmp <- lapply(
-      seq_along(urls),
-      function(i) {
-        h <- curl::new_handle()
-        curl::handle_setopt(h, .list = requestOptions)
-        curl::curl_fetch_multi(
-          url = urls[i],
-          done = curlSuccess,
-          pool = pool,
-          handle = h)
-      })
 
     # do download and save
-    tmp <- try(curl::multi_run(
-      pool = pool), silent = TRUE)
+    tmp <- do.call(
+      curl::multi_download,
+      c(urls = list(urls),
+        destfiles = list(fp),
+        resume = TRUE,
+        progress = TRUE,
+        timeout = Inf,
+        requestOptions,
+        accept_encoding = "gzip,deflate,zstd,br"
+      )
+    )
 
     # check plausibility
     if (inherits(tmp, "try-error")) {
@@ -1549,9 +1491,9 @@ ctrLoadQueryIntoDbEuctr <- function(
     # new line
     message(", extracting: ", appendLF = FALSE)
 
-    # unzip downloaded file and rename any PDF files
+    # unzip downloaded files and move non-XML extracted files
     tmp <- lapply(
-      fp, function(f) { # fp was returned by download above
+      fp, function(f) {
 
         if (file.exists(f) &&
             file.size(f) != 0L) {
@@ -1565,6 +1507,7 @@ ctrLoadQueryIntoDbEuctr <- function(
           euctrnr <- gsub(paste0(".*(", regEuctr, ").*"),
                           "\\1", tmp[grepl("Results[.]xml$", tmp)])[1]
 
+          # any non-XML file
           if (length(nonXmlFiles)) {
             message("F ", appendLF = FALSE)
             if (euctrresultsfilespath != tempDir) {
@@ -1580,10 +1523,12 @@ ctrLoadQueryIntoDbEuctr <- function(
                         call. = FALSE, immediate. = TRUE)
               }
             } # if paths
-          } # if any pdf
+          } else {
+            # only XML data file
+            if (any(grepl("Results[.]xml$", tmp)))
+              message(". ", appendLF = FALSE)
+          }
 
-          # inform user
-          message(". ", appendLF = FALSE)
         } else {
           # unsuccessful
           message("x ", appendLF = FALSE)
@@ -1855,9 +1800,9 @@ ctrLoadQueryIntoDbEuctr <- function(
 #' @noRd
 #'
 #' @importFrom jsonlite toJSON
-#' @importFrom httr progress write_disk GET config
 #' @importFrom nodbi docdb_query
 #' @importFrom utils URLdecode
+#' @importFrom curl multi_download
 #'
 ctrLoadQueryIntoDbIsrctn <- function(
   queryterm = queryterm,
@@ -1960,7 +1905,8 @@ ctrLoadQueryIntoDbIsrctn <- function(
 
   # inform user
   message("Retrieved overview, records of ", tmp, " ",
-          "trial(s) are to be downloaded")
+          "trial(s) are to be downloaded (estimate: ",
+          format(tmp * 0.018, digits = 2), " MB)")
 
   # only count?
   if (only.count) {
@@ -1996,12 +1942,15 @@ ctrLoadQueryIntoDbIsrctn <- function(
     queryIsrctnRoot, queryIsrctnType1, tmp, "&", apiterm, queryupdateterm)
 
   # get (download) trials in single file f
-  tmp <- try(httr::GET(
-    url = utils::URLencode(isrctndownloadurl),
-    httr::progress(),
-    httr::write_disk(path = f, overwrite = TRUE),
-    httr::config(forbid_reuse = 1)),
-    silent = TRUE)
+  tmp <- do.call(
+    curl::multi_download,
+    c(urls = list(utils::URLencode(isrctndownloadurl)),
+      destfiles = list(f),
+      progress = TRUE,
+      timeout = Inf,
+      getOption("httr_config")[["options"]]
+    )
+  )
 
   # check plausibility
   if (inherits(tmp, "try-error")) {
