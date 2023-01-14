@@ -57,6 +57,10 @@
 #'
 #' @param annotation.text Text to be including in the records
 #' retrieved with the current query, in the field "annotation".
+#' The contents of the field "annotation" for a trial record
+#' can be preserved e.g. when running this function again and
+#' loading a record of the annotated trial again, see parameter
+#' \code{annotation.mode}.
 #'
 #' @param annotation.mode One of "append" (default), "prepend"
 #' or "replace" for new annotation.text with respect to any

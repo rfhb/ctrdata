@@ -1679,7 +1679,7 @@ dbGetFieldsIntoDf <- function(fields = "",
           message("")
           stop("No data could be extracted for '", paste0(item, collapse = "', '"), "'.",
                "\nUse dbGetFieldsIntoDf(..., stopifnodata = FALSE) to ignore the error.",
-               "\nUse dbFindFieldsIntoDf() to find fields that exist in the collection.",
+               "\nUse dbFindFields() to find fields that exist in the collection.",
                call. = FALSE)
         } else {
           message("* no data or extraction error *")
