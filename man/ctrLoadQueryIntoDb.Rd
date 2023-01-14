@@ -15,7 +15,7 @@ ctrLoadQueryIntoDb(
   euctrresultspdfpath = NULL,
   annotation.text = "",
   annotation.mode = "append",
-  parallelretrievals = 4L,
+  parallelretrievals = NULL,
   only.count = FALSE,
   con = NULL,
   verbose = FALSE
@@ -76,8 +76,8 @@ or "replace" for new annotation.text with respect to any
 existing annotation for the records retrieved with the
 current query.}
 
-\item{parallelretrievals}{Number of parallel downloads of
-information from the register, defaults to 4}
+\item{parallelretrievals}{Deprecated, ignored since
+version 1.11.2}
 
 \item{only.count}{Set to \code{TRUE} to return only the
 number of trial records found in the register for the query.

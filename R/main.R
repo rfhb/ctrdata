@@ -67,8 +67,8 @@
 #' existing annotation for the records retrieved with the
 #' current query.
 #'
-#' @param parallelretrievals Number of parallel downloads of
-#' information from the register, defaults to 4
+#' @param parallelretrievals Deprecated, ignored since
+#' version 1.11.2
 #'
 #' @param only.count Set to \code{TRUE} to return only the
 #' number of trial records found in the register for the query.
@@ -136,7 +136,7 @@ ctrLoadQueryIntoDb <- function(
   euctrresultspdfpath = NULL,
   annotation.text = "",
   annotation.mode = "append",
-  parallelretrievals = 4L,
+  parallelretrievals = NULL,
   only.count = FALSE,
   con = NULL,
   verbose = FALSE) {
@@ -146,12 +146,15 @@ ctrLoadQueryIntoDb <- function(
   # - deprecated
   if (!is.null(euctrresultspdfpath)) {
     warning("Parameter 'euctrresultspdfpath' is deprecated, ",
-            "use euctrresultsfilespath.", call. = FALSE)
+            "use euctrresultsfilespath", call. = FALSE)
+  }
+  if (!missing("parallelretrievals")) {
+    warning("Parameter 'parallelretrievals' is deprecated and ignored")
   }
 
   # - minimum information
   if (is.null(queryterm) && is.null(querytoupdate)) {
-    stop("neither 'queryterm' nor 'querytoupdate' specified.")
+    stop("neither 'queryterm' nor 'querytoupdate' specified")
   }
 
   # - parameters consistent
@@ -273,7 +276,7 @@ ctrLoadQueryIntoDb <- function(
     if (register == "EUCTR") testBinaries <- c("sed", "perl")
     if (euctrresults) testBinaries <- c("sed", "perl", "php", "phpxml", "phpjson")
     if (!checkBinary(b = testBinaries)) stop(
-      "ctrLoadQueryIntoDb() cannot continue. ", call. = FALSE)
+      "ctrLoadQueryIntoDb() cannot continue", call. = FALSE)
     message("done")
 
     # check database connection
@@ -291,7 +294,7 @@ ctrLoadQueryIntoDb <- function(
                  euctrresultsfilespath = euctrresultsfilespath,
                  annotation.text = annotation.text,
                  annotation.mode = annotation.mode,
-                 parallelretrievals = parallelretrievals,
+                 # parallelretrievals = parallelretrievals,
                  only.count = only.count,
                  con = con, verbose = verbose,
                  queryupdateterm = queryupdateterm)
@@ -343,7 +346,7 @@ ctrLoadQueryIntoDb <- function(
 
   # return some useful information or break
   if (imported$n == 0L) message(
-    "Function did not result in any trial information imports")
+    "Function did not result in any trial records having been imported")
 
   # inform user
   if (verbose) {
@@ -710,7 +713,7 @@ ctrConvertToJSON <- function(tempDir, scriptName, verbose) {
   } # if windows
 
   # run conversion of download to json
-  message("\n(2/3) Converting to JSON...", appendLF = FALSE)
+  message("(2/3) Converting to JSON...", appendLF = FALSE)
   imported <- system(script2Json, intern = TRUE)
   message("\b\b\b, ", imported, " records converted")
   if (verbose) message("DEBUG: ", script2Json)
@@ -1055,7 +1058,7 @@ ctrLoadQueryIntoDbCtgov <- function(
   euctrresultsfilespath,
   annotation.text,
   annotation.mode,
-  parallelretrievals,
+  # parallelretrievals,
   only.count,
   con,
   verbose,
@@ -1206,7 +1209,7 @@ ctrLoadQueryIntoDbEuctr <- function(
   euctrresultsfilespath,
   annotation.text,
   annotation.mode,
-  parallelretrievals,
+  # parallelretrievals,
   only.count,
   con, verbose,
   queryupdateterm) {
@@ -1287,7 +1290,8 @@ ctrLoadQueryIntoDbEuctr <- function(
   # inform user
   message("Retrieved overview, multiple records of ",
           resultsEuNumTrials, " trial(s) from ",
-          resultsEuNumPages, " page(s) to be downloaded")
+          resultsEuNumPages, " page(s) to be downloaded ",
+          "(estimate: ", format(resultsEuNumPages * 1.5, digits = 2), " MB)")
 
   # only count?
   if (only.count) {
@@ -1488,9 +1492,6 @@ ctrLoadQueryIntoDbEuctr <- function(
       stop("Download from EUCTR failed; last error: ", class(tmp), call. = FALSE)
     }
 
-    # new line
-    message(", extracting: ", appendLF = FALSE)
-
     # unzip downloaded files and move non-XML extracted files
     tmp <- lapply(
       fp, function(f) {
@@ -1538,6 +1539,9 @@ ctrLoadQueryIntoDbEuctr <- function(
         if (!verbose) unlink(f)
 
       }) # lapply fp
+
+    # line break
+    message("", appendLF = TRUE)
 
     ## run conversion of XML files
     ctrConvertToJSON(tempDir, "euctr2ndjson_results.php", verbose)
@@ -1670,13 +1674,12 @@ ctrLoadQueryIntoDbEuctr <- function(
       # this does not include the retrieval of information
       # about amendment to the study, as presented at the bottom
       # of the webpage for the respective trial results
-      message("(4/4) Retrieving results history (max. ",
-              parallelretrievals, " in parallel):")
+      message("(4/4) Retrieving results history:")
 
       # prepare download and save
       pool <- curl::new_pool(
-        total_con = parallelretrievals,
-        host_con = parallelretrievals,
+        # total_con = parallelretrievals,
+        # host_con = parallelretrievals,
         multiplex = TRUE)
       #
       pc <- 0L
@@ -1812,7 +1815,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
   euctrresultsfilespath,
   annotation.text,
   annotation.mode,
-  parallelretrievals,
+  # parallelretrievals,
   only.count,
   con,
   verbose,
