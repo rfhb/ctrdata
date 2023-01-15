@@ -2,10 +2,12 @@
 <!-- README.md is generated from README.Rmd -->
 <!-- badges: start -->
 
-[![CRAN](https://cranchecks.info/badges/worst/ctrdata)](https://cran.r-project.org/package=ctrdata)
+[![CRAN](https://badges.cranchecks.info/worst/ctrdata.svg)](https://cran.r-project.org/package=ctrdata)
+[![ctrdata status
+badge](https://rfhb.r-universe.dev/badges/ctrdata)](https://rfhb.r-universe.dev)
 [![codecov](https://codecov.io/gh/rfhb/ctrdata/branch/master/graph/badge.svg)](https://app.codecov.io/gh/rfhb/ctrdata)
-[![R-CMD-CHECK-ubuntu-postgresql-mongodb-sqlite](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-linux.yaml/badge.svg)](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-linux.yaml)
-[![R-CMD-CHECK-win-macos-postgresql-mongodb-sqlite](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-win-macos.yaml/badge.svg)](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-win-macos.yaml)
+[![R-CMD-CHECK-ubuntu-duckdb-mongodb-sqlite](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-linux.yaml/badge.svg)](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-linux.yaml)
+[![R-CMD-CHECK-win-macos-duckdb-mongodb-sqlite](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-win-macos.yaml/badge.svg)](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-win-macos.yaml)
 <!-- badges: end -->
 
 # ctrdata for aggregating and analysing clinical trials
@@ -23,7 +25,7 @@ The motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created by it. This
-README was reviewed on 2022-11-20 for version 1.11.1.
+README was reviewed on 2023-01-15 for version 1.11.1.9000.
 
 Main features:
 
