@@ -75,6 +75,17 @@ expect_error(
         con = dbc))),
   "more than 10,000) trials")
 
+# test
+expect_message(
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
+      queryterm = "someQueryForErrorTriggering",
+      register = "CTGOV",
+      verbose = TRUE,
+      only.count = TRUE,
+      con = dbc)),
+  "term=someQueryForErrorTriggering")
+
 
 #### ctrLoadQueryIntoDb update ####
 
@@ -86,6 +97,15 @@ expect_message(
       verbose = TRUE,
       con = dbc)),
   "no.*trials found")
+
+# test
+expect_message(
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
+      querytoupdate = "last",
+      forcetoupdate = TRUE,
+      con = dbc)),
+  "Imported or updated ")
 
 # test
 expect_error(
@@ -111,7 +131,7 @@ expect_message(
 # implemented in dbCTRUpdateQueryHistory
 hist <- suppressWarnings(dbQueryHistory(con = dbc))
 hist[nrow(hist), "query-term"] <-
-  sub("(.*&lup_e=).*", "\\112%2F31%2F2009", hist[nrow(hist), "query-term"])
+  sub("(.*&lup_e=).*", "\\112%2F31%2F2011", hist[nrow(hist), "query-term"])
 
 # convert into json object
 json <- jsonlite::toJSON(list("queries" = hist))
@@ -125,6 +145,8 @@ expect_equal(
     query = '{"_id": "meta-info"}'), 1L)
 
 # test
+tmpTest2 <- suppressWarnings(
+  dbQueryHistory(con = dbc))
 expect_message(
   tmpTest <- suppressWarnings(
     ctrLoadQueryIntoDb(
@@ -134,24 +156,10 @@ expect_message(
   "Imported or updated")
 
 # test
-expect_true(tmpTest$n > 2L)
-
-# test
-expect_true(length(tmpTest$success) > 2L)
+expect_true(tmpTest$n > rev(tmpTest2[["query-records"]])[[1]])
 
 # test
 expect_true(length(tmpTest$failed) == 0L)
-
-# test
-expect_message(
-  suppressWarnings(
-    ctrLoadQueryIntoDb(
-      queryterm = "someQueryForErrorTriggering",
-      register = "CTGOV",
-      verbose = TRUE,
-      only.count = TRUE,
-      con = dbc)),
-  "term=someQueryForErrorTriggering")
 
 
 #### ctrLoadQueryIntoDb results ####
