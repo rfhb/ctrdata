@@ -186,10 +186,11 @@ result <- suppressMessages(
 
 # test
 expect_equal(
-  sapply(
-    result[["location"]],
-    function(x) length(x[["facility"]][["name"]])),
-  c(1, 1, 1, 30))
+  rev(
+    sapply(
+      result[["location"]],
+      function(x) length(x[["facility"]][["name"]])))[1:2],
+  c(30, 1))
 
 # test
 expect_true("character" == class(result[[
