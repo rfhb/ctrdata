@@ -107,20 +107,35 @@
 <li>ClinicalTrials.gov (“CTGOV”, <a href="https://clinicaltrials.gov/" class="external-link uri">https://clinicaltrials.gov/</a>)</li>
 <li>ISRCTN (<a href="https://www.isrctn.com/" class="external-link uri">https://www.isrctn.com/</a>)</li>
 </ul>
-<p>The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created by it. This README was reviewed on 2023-01-15 for version 1.11.1.9000.</p>
-<p>Main features:</p>
+<p>The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-02-04 for version 1.11.1.9000.</p>
+<div class="section level2">
+<h2 id="main-features">Main features<a class="anchor" aria-label="anchor" href="#main-features"></a>
+</h2>
 <ul>
-<li><p>Protocol-related trial information is easily retrieved (downloaded): Users define a query in a register’s web interface and then use <code>ctrdata</code> to retrieve in one step all trials resulting from the query. Results-related trial information and personal annotations can be including during retrieval. Synonyms of an active substance can also be found.</p></li>
-<li><p>Retrieved (downloaded) trial information is transformed and stored in a document-centric database, for fast and offline access. Uses <code>DuckDB</code> (🔔new in version 1.11.0), <code>PostgreSQL</code> (new in version 1.9.0), <code>RSQLite</code> or <code>MongoDB</code> as databases, via R package <code>nodbi</code>: see section <a href="#databases-that-can-be-used-with-ctrdata">Databases</a> below. Easily re-run a previous query to update a database.</p></li>
-<li><p>Analysis can be done with <code>R</code> (using <code>ctrdata</code> convenience functions) or others systems. Unique (de-duplicated) trial records are identified across registers. <code>ctrdata</code> can merge and recode information (fields) and also provides easy access even to deeply-nested fields (new in version 1.4.0).</p></li>
+<li>Protocol- and results-related trial information is easily retrieved (downloaded): Users define a query in a register’s web interface and then use <code>ctrdata</code> to retrieve in one go all trials found and to accumulate information from different registers. Personal annotations can be including during retrieval. Synonyms of an active substance can also be found.</li>
+<li>Retrieved (downloaded) trial information is transformed and stored in a single collection of a document-centric database, for fast and offline access. Uses <code>DuckDB</code>, <code>PostgreSQL</code>, <code>RSQLite</code> or <code>MongoDB</code>, via R package <code>nodbi</code>: see section <a href="#databases-that-can-be-used-with-ctrdata">Databases</a> below. Easily re-run any previous query in a collection to retrieve and update trial records.</li>
+<li>Analyses can be done with <code>R</code> (using convenience functions in <code>ctrdata</code> to identify unique (de-duplicated) trial records across registers, to merge and recode fields as well as to enumerate and provide easy access to deeply-nested fields) and with many other systems.</li>
 </ul>
-<p>Remember to respect the registers’ terms and conditions (see <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>). Please cite this package in any publication as follows: “Ralf Herold (2022). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.11.0, <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a>”.</p>
+<p>Remember to respect the registers’ terms and conditions (see <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>). Please cite this package in any publication as follows: “Ralf Herold (2023). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.11.1, <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a>”.</p>
 <!--
-
-```r
+&#10;```r
 citation("ctrdata")
 ```
 -->
+</div>
+<div class="section level2">
+<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
+<p>Package <code>ctrdata</code> has been used for:</p>
+<ul>
+<li>Lasch et al. (2022) The Impact of COVID‐19 on the Initiation of Clinical Trials in Europe and the United States. Clinical Pharmacology &amp; Therapeutics, <a href="https://doi.org/10.1002/cpt.2534" class="external-link uri">https://doi.org/10.1002/cpt.2534</a>
+</li>
+<li>Blogging on <a href="https://paediatricdata.eu/innovation-coming-to-paediatric-research/" class="external-link">Innovation coming to paediatric research</a>
+</li>
+<li>Cancer Research UK (2017) <a href="https://www.cancerresearchuk.org/about-us/we-develop-policy/we-work-with-government/exiting-the-eu/uk-and-eu-research#downloads" class="external-link">The impact of collaboration: The value of UK medical research to EU science and health</a>
+</li>
+</ul>
+</div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -135,7 +150,7 @@ citation("ctrdata")
 <span><span class="co"># Alternatively, install development version:</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"rfhb/ctrdata"</span>, build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p>These commands also install the package dependencies, which are <code>nodbi</code>, <code>jsonlite</code>, <code>httr</code>, <code>curl</code>, <code>clipr</code>, <code>xml2</code>, <code>rvest</code> and <code>stringi</code>.</p>
+<p>These commands also install the package’s dependencies (<code>nodbi</code>, <code>jsonlite</code>, <code>httr</code>, <code>curl</code>, <code>clipr</code>, <code>xml2</code>, <code>rvest</code>, <code>lubridate</code> and <code>stringi</code>).</p>
 </div>
 <div class="section level3">
 <h3 id="id_2-command-line-tools-perl-sed-and-php-52-or-higher">2. Command line tools <code>perl</code>, <code>sed</code> and <code>php</code> (5.2 or higher)<a class="anchor" aria-label="anchor" href="#id_2-command-line-tools-perl-sed-and-php-52-or-higher"></a>
@@ -143,7 +158,7 @@ citation("ctrdata")
 <p>These are required for <code><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code>, the main function of package <code>ctrdata</code> (see <a href="#example-workflow">Example workflow</a>); the function also checks if the tools can be used.</p>
 <ul>
 <li><p>For MS Windows, install <a href="https://cygwin.org/install.html" class="external-link"><code>Cygwin</code></a>: In <code>R</code>, run <code><a href="reference/installCygwinWindowsDoInstall.html">ctrdata::installCygwinWindowsDoInstall()</a></code> for an automated minimal installation. Alternatively, manually install Cygwin with packages <code>perl</code>, <code>php-jsonc</code> and <code>php-simplexml</code> into <code>c:\cygwin</code>. The installation needs about 160 MB disk space; no administrator credentials needed.</p></li>
-<li><p>In macOS including 11 Big Sur, these are already installed; as alternative and 🔔for macOS 12 Monterey and above, <a href="https://brew.sh/" class="external-link"><code>homebrew</code></a> can be used: <code>brew install php</code>, which seems to include the libraries required for <code>ctrdata</code>.</p></li>
+<li><p>In macOS including 11 Big Sur, these are already installed; as alternative and 🔔for macOS 12 Monterey and above, <a href="https://brew.sh/" class="external-link"><code>homebrew</code></a> can be used: <code>brew install php</code>, which seems to include all <code>php</code> libraries required for <code>ctrdata</code>.</p></li>
 <li><p>In Linux, these are usually already installed; tools to install vary by distribution (e.g., <code>sudo apt install php-cli php-xml php-json</code>).</p></li>
 </ul>
 </div>
@@ -516,10 +531,9 @@ citation("ctrdata")
 <span>  filename <span class="op">=</span> <span class="st">"man/figures/README-ctrdata_results_neuroblastoma.png"</span>,</span>
 <span>  width <span class="op">=</span> <span class="fl">5</span>, height <span class="op">=</span> <span class="fl">3</span>, units <span class="op">=</span> <span class="st">"in"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_results_neuroblastoma.png" alt=""><p class="caption">Neuroblastoma trials</p>
-</div>
-<ul>
+<figure><img src="https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_results_neuroblastoma.png" alt="Neuroblastoma trials"><figcaption aria-hidden="true">
+Neuroblastoma trials
+</figcaption></figure><ul>
 <li>Retrieve protocols, statistical analysis plans and other documents into a local folder <code>./files/</code>
 </li>
 </ul>
@@ -545,25 +559,20 @@ citation("ctrdata")
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="meta">Meta<a class="anchor" aria-label="anchor" href="#meta"></a>
+<h2 id="additional-features-under-consideration">Additional features under consideration<a class="anchor" aria-label="anchor" href="#additional-features-under-consideration"></a>
 </h2>
-<p>Package <code>ctrdata</code> has been used for: Blogging on <a href="https://paediatricdata.eu/innovation-coming-to-paediatric-research/" class="external-link">Innovation coming to paediatric research</a> and a Report on <a href="https://www.cancerresearchuk.org/about-us/we-develop-policy/we-work-with-government/exiting-the-eu/uk-and-eu-research#downloads" class="external-link">The impact of collaboration: The value of UK medical research to EU science and health</a></p>
-<div class="section level3">
-<h3 id="additional-features-under-consideration">Additional features under consideration<a class="anchor" aria-label="anchor" href="#additional-features-under-consideration"></a>
-</h3>
 <ul>
 <li><p>Retrieve previous versions of protocol- or results-related information. The challenge is that, apparently, initial versions cannot be queried and historical versions can only be retrieved one-by-one and not in structured format.</p></li>
 <li><p>Merge results-related fields retrieved from different registers (e.g., corresponding endpoints). The challenge is the incomplete congruency and different structure of fields.</p></li>
 </ul>
 </div>
-<div class="section level3">
-<h3 id="acknowledgements">Acknowledgements<a class="anchor" aria-label="anchor" href="#acknowledgements"></a>
-</h3>
+<div class="section level2">
+<h2 id="acknowledgements">Acknowledgements<a class="anchor" aria-label="anchor" href="#acknowledgements"></a>
+</h2>
 <ul>
 <li><p>Data providers and curators of the clinical trial registers. Please review and respect their copyrights and terms and conditions, see <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>.</p></li>
 <li><p>Package <code>ctrdata</code> has been made possible building on the work done for <a href="https://www.r-project.org/" class="external-link">R</a>, <a href="https://cran.r-project.org/package=curl" class="external-link">curl</a>, <a href="https://cran.r-project.org/package=httr" class="external-link">httr</a>, <a href="https://cran.r-project.org/package=xml2" class="external-link">xml2</a>, <a href="https://cran.r-project.org/package=rvest" class="external-link">rvest</a>, <a href="https://cran.r-project.org/package=mongolite" class="external-link">mongolite</a>, <a href="https://cran.r-project.org/package=jsonlite" class="external-link">jsonlite</a>, <a href="https://cran.r-project.org/package=nodbi" class="external-link">nodbi</a>, <a href="https://cran.r-project.org/package=RPostgres" class="external-link">RPostgres</a>, <a href="https://CRAN.R-project.org/package=RSQLite" class="external-link">RSQLite</a> and <a href="https://cran.r-project.org/package=clipr" class="external-link">clipr</a>.</p></li>
 </ul>
-</div>
 <div class="section level3">
 <h3 id="issues-and-notes">Issues and notes<a class="anchor" aria-label="anchor" href="#issues-and-notes"></a>
 </h3>
@@ -580,23 +589,23 @@ citation("ctrdata")
 <div class="section level3">
 <h3 id="postgresql">PostgreSQL<a class="anchor" aria-label="anchor" href="#postgresql"></a>
 </h3>
-<div class="figure">
-<img src="https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_json_postgresql.jpg" alt=""><p class="caption">Example JSON representation in PostgreSQL</p>
-</div>
+<figure><img src="https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_json_postgresql.jpg" alt="Example JSON representation in PostgreSQL"><figcaption aria-hidden="true">
+Example JSON representation in PostgreSQL
+</figcaption></figure>
 </div>
 <div class="section level3">
 <h3 id="mongodb">MongoDB<a class="anchor" aria-label="anchor" href="#mongodb"></a>
 </h3>
-<div class="figure">
-<img src="https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_json_mongodb.jpg" alt=""><p class="caption">Example JSON representation in MongoDB</p>
-</div>
+<figure><img src="https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_json_mongodb.jpg" alt="Example JSON representation in MongoDB"><figcaption aria-hidden="true">
+Example JSON representation in MongoDB
+</figcaption></figure>
 </div>
 <div class="section level3">
 <h3 id="sqlite">SQLite<a class="anchor" aria-label="anchor" href="#sqlite"></a>
 </h3>
-<div class="figure">
-<img src="https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_json_sqlite.jpg" alt=""><p class="caption">Example JSON representation in SQLite</p>
-</div>
+<figure><img src="https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_json_sqlite.jpg" alt="Example JSON representation in SQLite"><figcaption aria-hidden="true">
+Example JSON representation in SQLite
+</figcaption></figure>
 </div>
 </div>
 </div>

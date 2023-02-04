@@ -1,4 +1,4 @@
-# ctrdata 1.11.1.9000 (2023-01-14)
+# ctrdata 1.11.1.9000 (2023-02-04)
  - stop (instead of warning) if register host errors (e.g. incorrect number of records)
  - switch to use curl::multi_download() which can resume retrievals from registers
  - require curl >= 5.0

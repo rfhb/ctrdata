@@ -68,7 +68,7 @@
 #' current query.
 #'
 #' @param parallelretrievals Deprecated, ignored since
-#' version 1.11.2
+#' version 1.11.1.9000
 #'
 #' @param only.count Set to \code{TRUE} to return only the
 #' number of trial records found in the register for the query.
@@ -294,7 +294,6 @@ ctrLoadQueryIntoDb <- function(
                  euctrresultsfilespath = euctrresultsfilespath,
                  annotation.text = annotation.text,
                  annotation.mode = annotation.mode,
-                 # parallelretrievals = parallelretrievals,
                  only.count = only.count,
                  con = con, verbose = verbose,
                  queryupdateterm = queryupdateterm)
@@ -1058,7 +1057,6 @@ ctrLoadQueryIntoDbCtgov <- function(
   euctrresultsfilespath,
   annotation.text,
   annotation.mode,
-  # parallelretrievals,
   only.count,
   con,
   verbose,
@@ -1209,7 +1207,6 @@ ctrLoadQueryIntoDbEuctr <- function(
   euctrresultsfilespath,
   annotation.text,
   annotation.mode,
-  # parallelretrievals,
   only.count,
   con, verbose,
   queryupdateterm) {
@@ -1291,7 +1288,7 @@ ctrLoadQueryIntoDbEuctr <- function(
   message("Retrieved overview, multiple records of ",
           resultsEuNumTrials, " trial(s) from ",
           resultsEuNumPages, " page(s) to be downloaded ",
-          "(estimate: ", format(resultsEuNumPages * 1.5, digits = 2), " MB)")
+          "(estimate: ", format(resultsEuNumTrials * 0.05, digits = 2), " MB)")
 
   # only count?
   if (only.count) {
@@ -1678,8 +1675,6 @@ ctrLoadQueryIntoDbEuctr <- function(
 
       # prepare download and save
       pool <- curl::new_pool(
-        # total_con = parallelretrievals,
-        # host_con = parallelretrievals,
         multiplex = TRUE)
       #
       pc <- 0L
@@ -1815,7 +1810,6 @@ ctrLoadQueryIntoDbIsrctn <- function(
   euctrresultsfilespath,
   annotation.text,
   annotation.mode,
-  # parallelretrievals,
   only.count,
   con,
   verbose,

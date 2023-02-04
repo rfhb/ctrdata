@@ -24,43 +24,54 @@ aggregating and analysing this information; it can be used for the
 The motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
-systems and tools can be used with the databases created by it. This
-README was reviewed on 2023-01-15 for version 1.11.1.9000.
+systems and tools can be used with the databases created with the
+package. This README was reviewed on 2023-02-04 for version 1.11.1.9000.
 
-Main features:
+## Main features
 
-- Protocol-related trial information is easily retrieved (downloaded):
-  Users define a query in a register’s web interface and then use
-  `ctrdata` to retrieve in one step all trials resulting from the query.
-  Results-related trial information and personal annotations can be
-  including during retrieval. Synonyms of an active substance can also
-  be found.
-
+- Protocol- and results-related trial information is easily retrieved
+  (downloaded): Users define a query in a register’s web interface and
+  then use `ctrdata` to retrieve in one go all trials found and to
+  accumulate information from different registers. Personal annotations
+  can be including during retrieval. Synonyms of an active substance can
+  also be found.
 - Retrieved (downloaded) trial information is transformed and stored in
-  a document-centric database, for fast and offline access. Uses
-  `DuckDB` (🔔new in version 1.11.0), `PostgreSQL` (new in version
-  1.9.0), `RSQLite` or `MongoDB` as databases, via R package `nodbi`:
-  see section [Databases](#databases-that-can-be-used-with-ctrdata)
-  below. Easily re-run a previous query to update a database.
-
-- Analysis can be done with `R` (using `ctrdata` convenience functions)
-  or others systems. Unique (de-duplicated) trial records are identified
-  across registers. `ctrdata` can merge and recode information (fields)
-  and also provides easy access even to deeply-nested fields (new in
-  version 1.4.0).
+  a single collection of a document-centric database, for fast and
+  offline access. Uses `DuckDB`, `PostgreSQL`, `RSQLite` or `MongoDB`,
+  via R package `nodbi`: see section
+  [Databases](#databases-that-can-be-used-with-ctrdata) below. Easily
+  re-run any previous query in a collection to retrieve and update trial
+  records.
+- Analyses can be done with `R` (using convenience functions in
+  `ctrdata` to identify unique (de-duplicated) trial records across
+  registers, to merge and recode fields as well as to enumerate and
+  provide easy access to deeply-nested fields) and with many other
+  systems.
 
 Remember to respect the registers’ terms and conditions (see
 `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
-package in any publication as follows: “Ralf Herold (2022). ctrdata:
+package in any publication as follows: “Ralf Herold (2023). ctrdata:
 Retrieve and Analyze Clinical Trials in Public Registers. R package
-version 1.11.0, <https://cran.r-project.org/package=ctrdata>”.
+version 1.11.1, <https://cran.r-project.org/package=ctrdata>”.
 
 <!--
-
-```r
+&#10;```r
 citation("ctrdata")
 ```
 -->
+
+## References
+
+Package `ctrdata` has been used for:
+
+- Lasch et al. (2022) The Impact of COVID‐19 on the Initiation of
+  Clinical Trials in Europe and the United States. Clinical Pharmacology
+  & Therapeutics, <https://doi.org/10.1002/cpt.2534>
+- Blogging on [Innovation coming to paediatric
+  research](https://paediatricdata.eu/innovation-coming-to-paediatric-research/)
+- Cancer Research UK (2017) [The impact of collaboration: The value of
+  UK medical research to EU science and
+  health](https://www.cancerresearchuk.org/about-us/we-develop-policy/we-work-with-government/exiting-the-eu/uk-and-eu-research#downloads)
 
 ## Installation
 
@@ -81,8 +92,9 @@ install.packages("devtools")
 devtools::install_github("rfhb/ctrdata", build_vignettes = TRUE)
 ```
 
-These commands also install the package dependencies, which are `nodbi`,
-`jsonlite`, `httr`, `curl`, `clipr`, `xml2`, `rvest` and `stringi`.
+These commands also install the package’s dependencies (`nodbi`,
+`jsonlite`, `httr`, `curl`, `clipr`, `xml2`, `rvest`, `lubridate` and
+`stringi`).
 
 ### 2. Command line tools `perl`, `sed` and `php` (5.2 or higher)
 
@@ -100,7 +112,7 @@ function also checks if the tools can be used.
 - In macOS including 11 Big Sur, these are already installed; as
   alternative and 🔔for macOS 12 Monterey and above,
   [`homebrew`](https://brew.sh/) can be used: `brew install php`, which
-  seems to include the libraries required for `ctrdata`.
+  seems to include all `php` libraries required for `ctrdata`.
 
 - In Linux, these are usually already installed; tools to install vary
   by distribution (e.g., `sudo apt install php-cli php-xml php-json`).
@@ -441,8 +453,12 @@ ggsave(
 )
 ```
 
-![Neuroblastoma
-trials](https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_results_neuroblastoma.png)
+<figure>
+<img
+src="https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_results_neuroblastoma.png"
+alt="Neuroblastoma trials" />
+<figcaption aria-hidden="true">Neuroblastoma trials</figcaption>
+</figure>
 
 - Retrieve protocols, statistical analysis plans and other documents
   into a local folder `./files/`
@@ -469,16 +485,7 @@ sapply(
 )
 ```
 
-## Meta
-
-Package `ctrdata` has been used for: Blogging on [Innovation coming to
-paediatric
-research](https://paediatricdata.eu/innovation-coming-to-paediatric-research/)
-and a Report on [The impact of collaboration: The value of UK medical
-research to EU science and
-health](https://www.cancerresearchuk.org/about-us/we-develop-policy/we-work-with-government/exiting-the-eu/uk-and-eu-research#downloads)
-
-### Additional features under consideration
+## Additional features under consideration
 
 - Retrieve previous versions of protocol- or results-related
   information. The challenge is that, apparently, initial versions
@@ -489,7 +496,7 @@ health](https://www.cancerresearchuk.org/about-us/we-develop-policy/we-work-with
   corresponding endpoints). The challenge is the incomplete congruency
   and different structure of fields.
 
-### Acknowledgements
+## Acknowledgements
 
 - Data providers and curators of the clinical trial registers. Please
   review and respect their copyrights and terms and conditions, see
@@ -529,15 +536,30 @@ health](https://www.cancerresearchuk.org/about-us/we-develop-policy/we-work-with
 
 ### PostgreSQL
 
-![Example JSON representation in
-PostgreSQL](https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_json_postgresql.jpg)
+<figure>
+<img
+src="https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_json_postgresql.jpg"
+alt="Example JSON representation in PostgreSQL" />
+<figcaption aria-hidden="true">Example JSON representation in
+PostgreSQL</figcaption>
+</figure>
 
 ### MongoDB
 
-![Example JSON representation in
-MongoDB](https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_json_mongodb.jpg)
+<figure>
+<img
+src="https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_json_mongodb.jpg"
+alt="Example JSON representation in MongoDB" />
+<figcaption aria-hidden="true">Example JSON representation in
+MongoDB</figcaption>
+</figure>
 
 ### SQLite
 
-![Example JSON representation in
-SQLite](https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_json_sqlite.jpg)
+<figure>
+<img
+src="https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_json_sqlite.jpg"
+alt="Example JSON representation in SQLite" />
+<figcaption aria-hidden="true">Example JSON representation in
+SQLite</figcaption>
+</figure>

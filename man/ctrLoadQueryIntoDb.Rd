@@ -77,7 +77,7 @@ existing annotation for the records retrieved with the
 current query.}
 
 \item{parallelretrievals}{Deprecated, ignored since
-version 1.11.2}
+version 1.11.1.9000}
 
 \item{only.count}{Set to \code{TRUE} to return only the
 number of trial records found in the register for the query.
