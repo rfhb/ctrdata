@@ -1711,8 +1711,10 @@ ctrLoadQueryIntoDbEuctr <- function(
         pool = pool), silent = TRUE)
 
       # check plausibility
-      if (inherits(tmp, "try-error") || !length(retdat)) {
-        stop("Download from EUCTR failed; last error: ", class(tmp), call. = FALSE)
+      if (inherits(tmp, "try-error") || tmp[["error"]] || !length(retdat)) {
+        stop("Download from EUCTR failed; last error with one or more of:\n",
+        paste0(urls, collapse = "\n"), call. = FALSE
+        )
       }
 
       # combine results
