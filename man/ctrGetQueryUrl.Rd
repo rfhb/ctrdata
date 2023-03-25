@@ -12,8 +12,8 @@ If not specified, clipboard contents will be checked for
 a suitable URL. Can also contain a query term such as from
 \link{dbQueryHistory}()["query-term"]}
 
-\item{register}{Optional name of register (i.e., "EUCTR" or
-"CTGOV") in case url is a query term}
+\item{register}{Optional name of register (one of "EUCTR", "CTGOV",
+"ISRCTN" or "CTIS") in case url is a query term}
 }
 \value{
 A data frame (or tibble, if \code{dplyr} is loaded)

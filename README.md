@@ -20,6 +20,8 @@ aggregating and analysing this information; it can be used for the
   <https://www.clinicaltrialsregister.eu/>)
 - ClinicalTrials.gov (“CTGOV”, <https://clinicaltrials.gov/>)
 - ISRCTN (<https://www.isrctn.com/>)
+- EU Clinical Trials Information System (“CTIS”,
+  <https://euclinicaltrials.eu/>) NEW since 2023-03-25 🔔
 
 The motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. `ctrdata`
@@ -359,6 +361,29 @@ ctrLoadQueryIntoDb(
 # (3/3) Importing JSON records into database...
 # = Imported or updated 9 trial(s)
 # * Updated history ("meta-info" in "some_collection_name")
+```
+
+- Add records from a fourth register (CTIS) into the same collection
+
+At this time, there is no URL that can be used in analogy to the other
+registers for specifying trials of interest. Therefore, all trial
+records are downloaded (around 150 end March 2023).
+
+``` r
+# Retrieve trials from another register:
+ctrLoadQueryIntoDb(
+  queryterm = "",
+  register = "CTIS",
+  con = db
+)
+# * Found search query from CTIS: - queryterm ignored at the moment -
+# Download status: 1 done; 0 in progress. Total size: 253.67 Kb (100%)... done!             
+# (2/3) Converting to NDJSON...
+# (3/3) Importing JSON records into database...
+# = Imported or updated 137 records on 137 trial(s)
+# * Updated history ("meta-info" in "some_collection_name")
+# Warning message: 
+# At the moment, all CTIS trial records are downloaded; a mechanism to select trials of interest is being developed. 
 ```
 
 - Result-related trial information

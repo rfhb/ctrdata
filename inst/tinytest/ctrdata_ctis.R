@@ -1,0 +1,160 @@
+## RH 2023-03-25
+
+#### ctrLoadQueryIntoDb ####
+
+# test
+expect_message(
+  tmpTest <- suppressWarnings(
+    ctrLoadQueryIntoDb(
+      queryterm = "",
+      register = "CTIS",
+      verbose = TRUE,
+      con = dbc)),
+  "Imported or updated ")
+
+# test
+expect_true(tmpTest$n >= 130L)
+
+# test
+expect_true(all(c("2022-500657-17-00", "2022-501537-23-00") %in% tmpTest$success))
+
+# test
+expect_true(length(tmpTest$failed) == 0L)
+
+# clean up
+rm(tmpTest)
+
+#### ctrLoadQueryIntoDb update ####
+
+#### annotating ####
+
+# test
+expect_message(
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
+      queryterm = "",
+      register = "CTIS",
+      annotation.text = "just_this",
+      annotation.mode = "replace",
+      con = dbc)),
+  "Annotated retrieved records [(][1-9][0-9]+")
+
+#### dbGetFieldsIntoDf ####
+
+res <- suppressMessages(
+  suppressWarnings(
+    dbGetFieldsIntoDf(
+      fields = c("annotation"),
+      verbose = TRUE,
+      con = dbc)
+  ))
+
+# test
+expect_true(
+  all(res[, "annotation", drop = TRUE] == "just_this"))
+
+# clean up
+rm(res)
+
+# test
+expect_error(
+  suppressMessages(
+    suppressWarnings(
+      dbGetFieldsIntoDf(
+        fields = c("doesnotexist"),
+        con = dbc))),
+  "No data could be extracted for")
+
+# test
+expect_warning(
+  suppressMessages(
+    dbGetFieldsIntoDf(
+      fields = c("doesnotexist"),
+      stopifnodata = FALSE,
+      con = dbc)
+  ),
+  "No records with values for any specified field")
+
+# test
+suppressWarnings(
+  suppressMessages(
+    tmpDf <- dbGetFieldsIntoDf(
+      fields = c(
+        "totalNumberEnrolled"
+        ),
+      stopifnodata = FALSE,
+      con = dbc)))
+#
+expect_equivalent(
+  sapply(tmpDf, typeof),
+  c("character", "integer")
+)
+
+# clean up
+rm(tmpDf)
+
+#### dbFindFields ####
+
+# test
+expect_equal(
+  suppressMessages(
+    suppressWarnings(
+      dbFindFields(
+        namepart = "thisdoesnotexist",
+        con = dbc))),
+  "")
+
+# get all field names
+tmpf <- suppressMessages(
+  suppressWarnings(
+    dbFindFields(
+      namepart = ".*",
+      con = dbc)))
+
+# get all data
+result <- suppressMessages(
+  suppressWarnings(
+    dbGetFieldsIntoDf(
+      fields = tmpf,
+      con = dbc,
+      verbose = FALSE,
+      stopifnodata = FALSE)
+  ))
+
+# develop
+#print(length(names(result)))
+
+# test
+expect_true(
+  length(names(result)) > 25L)
+
+# determine all classes
+tmpr <- names(result)
+tmpr <- tmpr[tmpr != "_id"]
+tmpc <- sapply(result, class, USE.NAMES = FALSE)
+tmpc <- unlist(tmpc)
+tmpc <- table(tmpc)
+
+# develop
+#
+# print(tmpc)
+#
+# 2022-03-25
+#
+# tmpc
+# character      Date   integer   logical
+# 21         3         5         1
+
+rm(tmpf, tmpr, tmpc, result)
+
+#### dbFindIdsUniqueTrials ####
+
+expect_message(
+  res <- suppressWarnings(
+    dbFindIdsUniqueTrials(con = dbc)),
+  " [0-9]+ records")
+
+# test
+expect_true(length(res) >= 135L)
+rm(res)
+
