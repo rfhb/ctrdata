@@ -36,7 +36,7 @@ The package `ctrdata` provides functions for retrieving (downloading) informatio
 - ISRCTN (https://www.isrctn.com/) 
 - EU Clinical Trials Information System ("CTIS", https://euclinicaltrials.eu/) NEW since 2023-03-25 `r emoji::emoji("bell")`
 
-The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-02-04 for version 1.11.1.9000.
+The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-03-25 for version 1.12.0.
 
 ## Main features
 
@@ -44,7 +44,7 @@ The motivation is to understand trends in design and conduct of trials, their av
 * Retrieved (downloaded) trial information is transformed and stored in a single collection of a document-centric database, for fast and offline access. Uses `DuckDB`, `PostgreSQL`, `RSQLite` or `MongoDB`, via R package `nodbi`: see section [Databases](#databases-that-can-be-used-with-ctrdata) below. Easily re-run any previous query in a collection to retrieve and update trial records. 
 * Analyses can be done with `R` (using convenience functions in `ctrdata` to identify unique (de-duplicated) trial records across registers, to merge and recode fields as well as to enumerate and provide easy access to deeply-nested fields) and with many other systems. 
 
-Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: "Ralf Herold (2023). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.11.1, https://cran.r-project.org/package=ctrdata". 
+Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: "Ralf Herold (2023). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.12.0, https://cran.r-project.org/package=ctrdata". 
 
 <!--
 ```{r}
@@ -84,7 +84,7 @@ These are required for `ctrLoadQueryIntoDb()`, the main function of package `ctr
 
 - For MS Windows, install [`Cygwin`](https://cygwin.org/install.html): In `R`, run `ctrdata::installCygwinWindowsDoInstall()` for an automated minimal installation. Alternatively, manually install Cygwin with packages `perl`, `php-jsonc` and `php-simplexml` into `c:\cygwin`. The installation needs about 160 MB disk space; no administrator credentials needed.
 
-- In macOS including 11 Big Sur, these are already installed; as alternative and `r emo::ji("bell")`for macOS 12 Monterey and above, [`homebrew`](https://brew.sh/) can be used: `brew install php`, which seems to include all `php` libraries required for `ctrdata`.
+- In macOS including 11 Big Sur, these are already installed; as alternative and `r emoji::emoji("bell")`for macOS 12 Monterey and above, [`homebrew`](https://brew.sh/) can be used: `brew install php`, which seems to include all `php` libraries required for `ctrdata`.
 
 - In Linux, these are usually already installed; tools to install vary by distribution (e.g., `sudo apt install php-cli php-xml php-json`).
 

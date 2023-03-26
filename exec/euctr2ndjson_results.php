@@ -21,7 +21,7 @@ if ($argc <= 1) {
   $xmlDir = $argv[1];
 }
 
-file_exists($xmlDir) or die('Directorydoes not exist: ' . $xmlDir);
+file_exists($xmlDir) or die('Directory does not exist: ' . $xmlDir);
 
 // chunk and trial counters
 $cn = 0;

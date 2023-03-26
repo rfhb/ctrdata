@@ -17,7 +17,7 @@
 #' started in January 2023, including around 150 trials March 2023
 #'
 #' | **Material** | **EUCTR** | **CTGOV** | **ISRCTN** | **CTIS** |
-#' | -------------- | :-------: | :------: | :------: |
+#' | -------------- | :-------: | :------: | :------: | :------: |
 #' | Home page | \href{https://www.clinicaltrialsregister.eu/}{link} | \href{https://clinicaltrials.gov/}{link} | \href{https://www.isrctn.com/}{link} | \href{https://euclinicaltrials.eu/}{link} |
 #' | About | \href{https://www.clinicaltrialsregister.eu/about.html}{link} | \href{https://clinicaltrials.gov/ct2/about-site/background}{link} | \href{https://www.isrctn.com/page/about}{link} | \href{https://euclinicaltrials.eu/about-this-website/}{link} |
 #' | Terms and conditions, disclaimer | \href{https://www.clinicaltrialsregister.eu/disclaimer.html}{link} | \ifelse{latex}{\out{\href{https://clinicaltrials.gov/ct2/about-site/terms-conditions\#Use}{link}}}{\href{https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use}{link}} | \ifelse{latex}{\out{\href{https://www.isrctn.com/page/faqs\#usingISRCTN}{link}}}{\href{https://www.isrctn.com/page/faqs#usingISRCTN}{link}} | \href{https://euclinicaltrials.eu/guidance-and-q-as/}{link} |
