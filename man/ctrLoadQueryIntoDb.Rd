@@ -31,7 +31,7 @@ The queryterm is recorded in the \code{collection} for later
 use to update records.
 If register = "CTIS": The queryterm should be an empty string
 to obtain all trial records, all other queryterms are ignored
-at the moment .}
+at the moment.}
 
 \item{register}{String with abbreviation of register to query,
 either "EUCTR", "CTGOV", "ISRCTN" or "CTIS". Not needed

@@ -22,7 +22,7 @@
 #' use to update records.
 #' If register = "CTIS": The queryterm should be an empty string
 #' to obtain all trial records, all other queryterms are ignored
-#' at the moment .
+#' at the moment.
 #'
 #' @param register String with abbreviation of register to query,
 #' either "EUCTR", "CTGOV", "ISRCTN" or "CTIS". Not needed
