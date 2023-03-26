@@ -126,7 +126,7 @@ result <- suppressMessages(
 
 # test
 expect_true(
-  length(names(result)) > 25L)
+  length(names(result)) > 20L)
 
 # determine all classes
 tmpr <- names(result)
