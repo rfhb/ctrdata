@@ -20,11 +20,13 @@
 #' \code{register}, a string with query elements of a search URL.
 #' The queryterm is recorded in the \code{collection} for later
 #' use to update records.
+#' If register = "CTIS": The queryterm should be an empty string
+#' to obtain all trial records, all other queryterms are ignored
+#' at the moment .
 #'
 #' @param register String with abbreviation of register to query,
-#' either "EUCTR", "CTGOV" or "ISRCTN". Not needed
-#' if \code{queryterm} provide the information which register to
-#' query (see \code{queryterm}).
+#' either "EUCTR", "CTGOV", "ISRCTN" or "CTIS". Not needed
+#' if \code{queryterm} provides a query's full URL.
 #'
 #' @param querytoupdate Either the word "last" or the number of the
 #' query (based on \link{dbQueryHistory}) that should be run to
@@ -121,6 +123,13 @@
 #'   con = dbc
 #' )
 #'
+#' # Retrieve information on all trials in CTIS
+#' ctrLoadQueryIntoDb(
+#'   queryterm = "",
+#'   register = "CTIS",
+#'   con = dbc
+#' )
+#'
 #' }
 #'
 #' @export
@@ -153,8 +162,8 @@ ctrLoadQueryIntoDb <- function(
   }
 
   # - minimum information
-  if (is.null(queryterm) && is.null(querytoupdate)) {
-    stop("neither 'queryterm' nor 'querytoupdate' specified")
+  if (is.null(queryterm) && is.null(querytoupdate) && register != "CTIS") {
+    stop("neither 'queryterm' nor 'querytoupdate' nor 'register = \"CTIS\"' specified")
   }
 
   # - parameters consistent
@@ -270,14 +279,16 @@ ctrLoadQueryIntoDb <- function(
   if (!only.count) {
 
     # check binaries
-    message("Checking helper binaries: ", appendLF = FALSE)
-    suppressMessages(installCygwinWindowsTest())
-    if (register != "EUCTR") testBinaries <- c("php", "phpxml", "phpjson")
-    if (register == "EUCTR") testBinaries <- c("sed", "perl")
-    if (euctrresults) testBinaries <- c("sed", "perl", "php", "phpxml", "phpjson")
-    if (!checkBinary(b = testBinaries)) stop(
-      "ctrLoadQueryIntoDb() cannot continue", call. = FALSE)
-    message("done")
+    if (register != "CTIS") {
+      message("Checking helper binaries: ", appendLF = FALSE)
+      suppressMessages(installCygwinWindowsTest())
+      if (register == "ISRCTN" || register == "CTGOV") testBinaries <- c("php", "phpxml", "phpjson")
+      if (register == "EUCTR") testBinaries <- c("sed", "perl")
+      if (euctrresults) testBinaries <- c("sed", "perl", "php", "phpxml", "phpjson")
+      if (!checkBinary(b = testBinaries)) stop(
+        "ctrLoadQueryIntoDb() cannot continue", call. = FALSE)
+      message("done")
+    }
 
     # check database connection
     con <- ctrDb(con = con)
@@ -303,7 +314,8 @@ ctrLoadQueryIntoDb <- function(
     as.character(register),
     "CTGOV" = do.call(ctrLoadQueryIntoDbCtgov, params),
     "EUCTR" = do.call(ctrLoadQueryIntoDbEuctr, params),
-    "ISRCTN" = do.call(ctrLoadQueryIntoDbIsrctn, params)
+    "ISRCTN" = do.call(ctrLoadQueryIntoDbIsrctn, params),
+    "CTIS" = do.call(ctrLoadQueryIntoDbCtis, params)
   )
 
   # add annotations
@@ -750,6 +762,9 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
   tempFiles <- dir(path = dir,
                    pattern = ".+_trials_.*.ndjson",
                    full.names = TRUE)
+
+  # check
+  if (!length(tempFiles)) stop("no .+_trials_.*.ndjson files found in ", dir)
 
   # initialise counters
   fc <- length(tempFiles)
@@ -1405,7 +1420,7 @@ ctrLoadQueryIntoDbEuctr <- function(
   ## run conversion
   ctrConvertToJSON(tempDir, "euctr2ndjson.sh", verbose)
 
-  # run import into mongo from json files
+  # run import into database from json files
   message("(3/3) Importing JSON records into database...")
   if (verbose) message("DEBUG: ", tempDir)
   imported <- dbCTRLoadJSONFiles(dir = tempDir,
@@ -1953,7 +1968,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
 
   # check plausibility
   if (inherits(tmp, "try-error")) {
-    stop("Download from EUCTR failed; last error: ", class(tmp), call. = FALSE)
+    stop("Download from ISRCTN failed; last error: ", class(tmp), call. = FALSE)
   }
 
   # inform user
@@ -1979,3 +1994,126 @@ ctrLoadQueryIntoDbIsrctn <- function(
   return(imported)
 }
 # end ctrLoadQueryIntoDbIsrctn
+
+
+#' ctrLoadQueryIntoDbCtis
+#'
+#' @inheritParams ctrLoadQueryIntoDb
+#'
+#' @keywords internal
+#' @noRd
+#'
+#' @importFrom curl multi_download
+#' @importFrom jqr jq jq_flags
+#'
+ctrLoadQueryIntoDbCtis <- function(
+    queryterm = queryterm,
+    register,
+    euctrresults,
+    euctrresultshistory,
+    euctrresultsfilespath,
+    annotation.text,
+    annotation.mode,
+    only.count,
+    con, verbose,
+    queryupdateterm) {
+
+  ## create empty temporary directory on localhost for
+  # downloading from register into temporary directy
+  tempDir <- tempfile(pattern = "ctrDATA")
+  dir.create(tempDir)
+  tempDir <- normalizePath(tempDir, mustWork = TRUE)
+
+  # prepare a file handle for temporary directory
+  fin <- paste0(tempDir, "/", "ctis_trials_.json")
+  fout <- paste0(tempDir, "/", "ctis_trials_.ndjson")
+
+  # register to remove files after use for streaming
+  if (!verbose) on.exit(unlink(tempDir, recursive = TRUE), add = TRUE)
+
+  # inform user
+  message("(1/3) Downloading trials...")
+
+  # TODO currently just all trial records are downloaded
+  warning("At the moment, all CTIS trial records are downloaded; ",
+          "a mechanism to select trials of interest is being developed.",
+          call. = FALSE)
+
+  # construct url
+  ctisdownloadurl <- paste0(
+    "https://euclinicaltrials.eu/ct-public-api-services/services/ct/publiclookup",
+    "?&paging=0,-1" # corresponds to "pageInfo":{"offset":0,"limit":-1}
+  )
+
+  # get (download) trials in single file f
+  tmp <- do.call(
+    curl::multi_download,
+    c(urls = list(utils::URLencode(ctisdownloadurl)),
+      destfiles = list(fin),
+      progress = TRUE,
+      timeout = Inf,
+      getOption("httr_config")[["options"]],
+      # "HTTP server doesn't seem to support byte ranges. Cannot resume."
+      # resume = TRUE,
+      accept_encoding = "gzip,deflate,zstd,br"
+    )
+  )
+
+  # check plausibility
+  if (inherits(tmp, "try-error")) {
+    stop("Download from CTIS failed; last error: ", class(tmp), call. = FALSE)
+  }
+
+  # extract number of trial records
+  resultsEuNumTrials <- as.numeric(
+    jqr::jq(
+      file(fin, encoding = "UTF-8"),
+      ' {name: .totalSize} | .[]'))
+
+  # compose jq string
+  jqString <- paste0(
+    # get trial records array
+    '.elements[] += { ',
+    # add register name
+    'ctrname: "CTIS", ',
+    # add date and time "Y-m-d H:i:s"
+    'record_last_import: "',
+    strftime(Sys.time(), "%Y-%m-%d %H:%M:%S"),
+    '" }',
+    # extract trial records
+    ' | .elements | .[] ',
+    # add element _id
+    '| .["_id"] = .ctNumber',
+    # remove backticks ``, \n, \t, "
+    ' | walk(if type == "string" then
+      gsub("[\\n\\r\\t`\u0002]"; "") else . end) ' # \\"
+  )
+
+  # convert trial records array to ndjson
+  message("(2/3) Converting to NDJSON...")
+  jqr::jq(
+    file(fin, encoding = "UTF-8"),
+    jqString,
+    flags = jqr::jq_flags(pretty = FALSE),
+    out = fout
+  )
+
+  # run import into database from json files
+  message("(3/3) Importing JSON records into database...")
+  if (verbose) message("DEBUG: ", tempDir)
+  imported <- dbCTRLoadJSONFiles(dir = tempDir,
+                                 con = con,
+                                 verbose = verbose)
+
+  # TODO
+  # View(nodbi::docdb_get(src = con, key = "xyz"))
+
+  ## inform user on final import outcome
+  message("= Imported or updated ",
+          imported$n, " records on ",
+          resultsEuNumTrials, " trial(s)")
+
+  # return
+  return(imported)
+}
+# end ctrLoadQueryIntoDbCtis

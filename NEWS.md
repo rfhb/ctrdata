@@ -1,4 +1,5 @@
-# ctrdata 1.11.1.9000 (2023-02-04)
+# ctrdata 1.12.0 (2023-03-25)
+ - added first access to new register: CTIS, the EU Clinical Trial Information System
  - stop (instead of warning) if register host errors (e.g. incorrect number of records)
  - switch to use curl::multi_download() which can resume retrievals from registers
  - require curl >= 5.0

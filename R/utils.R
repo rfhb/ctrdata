@@ -21,9 +21,11 @@ regCtgov <- "NCT[0-9]{8}"
 # - regIsrctn
 # FIXME check if first digit is always non zero
 regIsrctn <- "[1-9][0-9]{7}"
+# - CTIS e.g. 2022-501549-57-00
+regCtis <- "[0-9]{4}-[0-9]{6}-[0-9]{2}-[0-9]{2}"
 #
 # register list
-registerList <- c("EUCTR", "CTGOV", "ISRCTN")
+registerList <- c("EUCTR", "CTGOV", "ISRCTN", "CTIS")
 #
 # mapping field names to typing function for typeField()
 typeVars <- list(
@@ -70,6 +72,10 @@ typeVars <- list(
   "participants.recruitmentEnd"   = "ctrDateTime",
   "trialDesign.overallStartDate"  = "ctrDateTime",
   "trialDesign.overallEndDate"    = "ctrDateTime",
+  #
+  # - CTIS
+  "startDateEU" = "ctrDate",
+  "authorizationDate" = "ctrDate",
   #
   #
   # factors / logical
@@ -160,6 +166,11 @@ typeVars <- list(
   "trialDescription.acknowledgment" = "ctrFalseTrue",
   "results.biomedRelated"           = "ctrFalseTrue",
   #
+  # - CTIS
+  "hasDeferrallApplied" = "ctrFalseTrue",
+  "hasAmendmentApplied" = "ctrFalseTrue",
+  "eudraCtInfo.hasVhp" = "ctrFalseTrue",
+  #
   # numbers
   #
   # - EUCTR
@@ -201,7 +212,10 @@ typeVars <- list(
   #
   # - ISRCTN
   "participants.targetEnrolment"     = "ctrInt",
-  "participants.totalFinalEnrolment" = "ctrInt"
+  "participants.totalFinalEnrolment" = "ctrInt",
+  #
+  # - CTIS
+  "totalNumberEnrolled" = "ctrInt"
   #
 )
 
@@ -452,7 +466,8 @@ ctrOpenSearchPagesInBrowser <- function(
     sapply(
       c("https://www.clinicaltrialsregister.eu/ctr-search/search",
         "https://clinicaltrials.gov/ct2/search/advanced",
-        "https://www.isrctn.com/editAdvancedSearch"),
+        "https://www.isrctn.com/editAdvancedSearch",
+        "https://euclinicaltrials.eu/app/#/search"),
       ctrOpenUrl)
   }
 
@@ -461,7 +476,8 @@ ctrOpenSearchPagesInBrowser <- function(
     sapply(
       c("https://www.clinicaltrialsregister.eu/disclaimer.html",
         "https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use",
-        "https://www.isrctn.com/page/faqs#usingISRCTN"),
+        "https://www.isrctn.com/page/faqs#usingISRCTN",
+        "https://euclinicaltrials.eu/data-protection-and-privacy/"),
       ctrOpenUrl)
   }
 
@@ -508,8 +524,8 @@ ctrOpenSearchPagesInBrowser <- function(
 #' a suitable URL. Can also contain a query term such as from
 #' \link{dbQueryHistory}()["query-term"]
 #'
-#' @param register Optional name of register (i.e., "EUCTR" or
-#' "CTGOV") in case url is a query term
+#' @param register Optional name of register (one of "EUCTR", "CTGOV",
+#' "ISRCTN" or "CTIS") in case url is a query term
 #'
 #' @export
 #'
@@ -557,7 +573,7 @@ ctrGetQueryUrl <- function(
   #
   # if no parameter specified,
   # check clipboard contents
-  if (nchar(url) == 0L) {
+  if (nchar(url) == 0L && register != "CTIS") {
     url <- try(suppressWarnings(
       clipr::read_clip(
         allow_non_interactive = TRUE)),
@@ -684,6 +700,13 @@ ctrGetQueryUrl <- function(
          "prepared to use the forthcoming website's functionality.")
     #
     return(invisible(NULL))
+  }
+  #
+  if (register == "CTIS") {
+    # search result page
+    queryterm <- "- queryterm ignored at the moment -"
+    #
+    return(outdf(queryterm, register))
   }
   #
   # default / NONE
@@ -976,13 +999,16 @@ dbFindFields <- function(namepart = "",
     queries <- list(
       "EUCTR" = c(
         '{"trialInformation.analysisStage.value": {"$regex": ".+"}}',
-        paste0('{"_id": "', rev(allIds[grepl(regEuctr, allIds)])[1], '"}')),
+        paste0('{"_id": "', rev(allIds[grepl(paste0(regEuctr, "$"), allIds)])[1], '"}')),
       "CTGOV" = c(
         '{"results_first_submitted": {"$regex": ".+"}}',
         paste0('{"_id": "', rev(allIds[grepl(regCtgov, allIds)])[1], '"}')),
       "ISRCTN" = c(
         '{"results.publicationStage": "Results"}',
-        paste0('{"_id": "', rev(allIds[grepl(regIsrctn, allIds)])[1], '"}'))
+        paste0('{"_id": "', rev(allIds[grepl(regIsrctn, allIds)])[1], '"}')),
+      "CTIS" = c(
+        paste0('{"_id": "', sample(c("", allIds[grepl(regCtis, allIds)]), 1), '"}'),
+        paste0('{"_id": "', sample(c("", allIds[grepl(regCtis, allIds)]), 1), '"}'))
     )
 
     # get names

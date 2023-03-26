@@ -28,12 +28,14 @@ a register, or the data frame returned by the
 \link{dbQueryHistory} functions, or, together with parameter
 \code{register}, a string with query elements of a search URL.
 The queryterm is recorded in the \code{collection} for later
-use to update records.}
+use to update records.
+If register = "CTIS": The queryterm should be an empty string
+to obtain all trial records, all other queryterms are ignored
+at the moment .}
 
 \item{register}{String with abbreviation of register to query,
-either "EUCTR", "CTGOV" or "ISRCTN". Not needed
-if \code{queryterm} provide the information which register to
-query (see \code{queryterm}).}
+either "EUCTR", "CTGOV", "ISRCTN" or "CTIS". Not needed
+if \code{queryterm} provides a query's full URL.}
 
 \item{querytoupdate}{Either the word "last" or the number of the
 query (based on \link{dbQueryHistory}) that should be run to
@@ -140,6 +142,13 @@ ctrLoadQueryIntoDb(
 # into the same collection as used before
 ctrLoadQueryIntoDb(
   queryterm = "https://www.isrctn.com/search?q=neuroblastoma+OR+lymphoma&filters=phase\%3APhase+III",
+  con = dbc
+)
+
+# Retrieve information on all trials in CTIS
+ctrLoadQueryIntoDb(
+  queryterm = "",
+  register = "CTIS",
   con = dbc
 )
 

@@ -26,7 +26,7 @@ records. However, user annotations of trial records are kept."><meta name="twitt
     
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.11.1.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.12.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -110,14 +110,16 @@ a register, or the data frame returned by the
 <a href="dbQueryHistory.html">dbQueryHistory</a> functions, or, together with parameter
 <code>register</code>, a string with query elements of a search URL.
 The queryterm is recorded in the <code>collection</code> for later
-use to update records.</p></dd>
+use to update records.
+If register = "CTIS": The queryterm should be an empty string
+to obtain all trial records, all other queryterms are ignored
+at the moment .</p></dd>
 
 
 <dt>register</dt>
 <dd><p>String with abbreviation of register to query,
-either "EUCTR", "CTGOV" or "ISRCTN". Not needed
-if <code>queryterm</code> provide the information which register to
-query (see <code>queryterm</code>).</p></dd>
+either "EUCTR", "CTGOV", "ISRCTN" or "CTIS". Not needed
+if <code>queryterm</code> provides a query's full URL.</p></dd>
 
 
 <dt>querytoupdate</dt>
@@ -179,7 +181,7 @@ current query.</p></dd>
 
 <dt>parallelretrievals</dt>
 <dd><p>Deprecated, ignored since
-version 1.11.2</p></dd>
+version 1.11.1.9000</p></dd>
 
 
 <dt>only.count</dt>
@@ -243,6 +245,13 @@ collection) to facilitate documentation.</p>
 <span class="r-in"><span><span class="co"># into the same collection as used before</span></span></span>
 <span class="r-in"><span><span class="fu">ctrLoadQueryIntoDb</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  queryterm <span class="op">=</span> <span class="st">"https://www.isrctn.com/search?q=neuroblastoma+OR+lymphoma&amp;filters=phase%3APhase+III"</span>,</span></span>
+<span class="r-in"><span>  con <span class="op">=</span> <span class="va">dbc</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Retrieve information on all trials in CTIS</span></span></span>
+<span class="r-in"><span><span class="fu">ctrLoadQueryIntoDb</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  queryterm <span class="op">=</span> <span class="st">""</span>,</span></span>
+<span class="r-in"><span>  register <span class="op">=</span> <span class="st">"CTIS"</span>,</span></span>
 <span class="r-in"><span>  con <span class="op">=</span> <span class="va">dbc</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
