@@ -2025,8 +2025,8 @@ ctrLoadQueryIntoDbCtis <- function(
   tempDir <- normalizePath(tempDir, mustWork = TRUE)
 
   # prepare a file handle for temporary directory
-  fin <- paste0(tempDir, "/", "ctis_trials_.json")
-  fout <- paste0(tempDir, "/", "ctis_trials_.ndjson")
+  fin <- file.path(tempDir, "ctis_trials_.json")
+  fout <- file.path(tempDir, "ctis_trials_.ndjson")
 
   # register to remove files after use for streaming
   if (!verbose) on.exit(unlink(tempDir, recursive = TRUE), add = TRUE)
@@ -2067,7 +2067,7 @@ ctrLoadQueryIntoDbCtis <- function(
   # extract number of trial records
   resultsEuNumTrials <- as.numeric(
     jqr::jq(
-      file(fin, encoding = "UTF-8"),
+      file(fin),
       ' {name: .totalSize} | .[]'))
 
   # compose jq string
@@ -2092,7 +2092,7 @@ ctrLoadQueryIntoDbCtis <- function(
   # convert trial records array to ndjson
   message("(2/3) Converting to NDJSON...")
   jqr::jq(
-    file(fin, encoding = "UTF-8"),
+    file(fin),
     jqString,
     flags = jqr::jq_flags(pretty = FALSE),
     out = fout
