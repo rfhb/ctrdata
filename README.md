@@ -21,13 +21,14 @@ aggregating and analysing this information; it can be used for the
 - ClinicalTrials.gov (“CTGOV”, <https://clinicaltrials.gov/>)
 - ISRCTN (<https://www.isrctn.com/>)
 - EU Clinical Trials Information System (“CTIS”,
-  <https://euclinicaltrials.eu/>) NEW since 2023-03-25 🔔
+  <https://euclinicaltrials.eu/>) NEW since 2023-03-25 🔔 (see [Example
+  workflow](#example-workflow))
 
 The motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2023-03-25 for version 1.12.0.
+package. This README was reviewed on 2023-03-29 for version 1.12.1.
 
 ## Main features
 
@@ -54,7 +55,7 @@ Remember to respect the registers’ terms and conditions (see
 `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
 package in any publication as follows: “Ralf Herold (2023). ctrdata:
 Retrieve and Analyze Clinical Trials in Public Registers. R package
-version 1.12.0, <https://cran.r-project.org/package=ctrdata>”.
+version 1.12., <https://cran.r-project.org/package=ctrdata>”.
 
 <!--
 &#10;```r
@@ -377,13 +378,21 @@ ctrLoadQueryIntoDb(
   con = db
 )
 # * Found search query from CTIS: - queryterm ignored at the moment -
-# Download status: 1 done; 0 in progress. Total size: 253.67 Kb (100%)... done!             
-# (2/3) Converting to NDJSON...
-# (3/3) Importing JSON records into database...
-# = Imported or updated 137 records on 137 trial(s)
-# * Updated history ("meta-info" in "some_collection_name")
+# (1/4) Downloading trials...
+# Download status: 1 done; 0 in progress. Total size: 254.45 Kb (100%)... done!             
+# (2/4) Downloading trial applications...
+# Download status: 138 done; 0 in progress. Total size: 71.14 Kb (100%)... done!             
+# (3/4) Converting to NDJSON...
+# (4/4) Importing JSON records into database... updating with application details 
+# . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+# . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+# . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+# . . . . . . . . . . . . . . . . . . . . .
+# = Imported or updated 138 records on 138 trial(s)
+# Updated history ("meta-info" in "some_collection_name")
 # Warning message: 
-# At the moment, all CTIS trial records are downloaded; a mechanism to select trials of interest is being developed. 
+# At the moment, all CTIS trial records are downloaded; a mechanism to select
+# trials of interest is being developed. 
 ```
 
 - Result-related trial information
