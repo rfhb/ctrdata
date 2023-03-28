@@ -2005,6 +2005,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
 #'
 #' @importFrom curl multi_download
 #' @importFrom jqr jq jq_flags
+#' @importFrom utils read.table
 #'
 ctrLoadQueryIntoDbCtis <- function(
     queryterm = queryterm,
@@ -2023,21 +2024,16 @@ ctrLoadQueryIntoDbCtis <- function(
   tempDir <- tempfile(pattern = "ctrDATA")
   dir.create(tempDir)
   tempDir <- normalizePath(tempDir, mustWork = TRUE)
-
-  # prepare a file handle for temporary directory
-  fin <- file.path(tempDir, "ctis_trials_.json")
-  fout <- file.path(tempDir, "ctis_trials_.ndjson")
-
   # register to remove files after use for streaming
   if (!verbose) on.exit(unlink(tempDir, recursive = TRUE), add = TRUE)
-
-  # inform user
-  message("(1/3) Downloading trials...")
 
   # TODO currently just all trial records are downloaded
   warning("At the moment, all CTIS trial records are downloaded; ",
           "a mechanism to select trials of interest is being developed.",
           call. = FALSE)
+
+  # inform user
+  message("(1/4) Downloading trials...")
 
   # construct url
   ctisdownloadurl <- paste0(
@@ -2045,7 +2041,8 @@ ctrLoadQueryIntoDbCtis <- function(
     "?&paging=0,-1" # corresponds to "pageInfo":{"offset":0,"limit":-1}
   )
 
-  # get (download) trials in single file f
+  # download A
+  fin <- file.path(tempDir, "ctis_trialslist.json")
   tmp <- do.call(
     curl::multi_download,
     c(urls = list(utils::URLencode(ctisdownloadurl)),
@@ -2058,8 +2055,6 @@ ctrLoadQueryIntoDbCtis <- function(
       accept_encoding = "gzip,deflate,zstd,br"
     )
   )
-
-  # check plausibility
   if (inherits(tmp, "try-error")) {
     stop("Download from CTIS failed; last error: ", class(tmp), call. = FALSE)
   }
@@ -2070,7 +2065,42 @@ ctrLoadQueryIntoDbCtis <- function(
       file(fin),
       ' {name: .totalSize} | .[]'))
 
-  # compose jq string
+  # get ids of trial records
+  ids <- read.table(
+    text = jqr::jq(
+      file(fin),
+      ' .elements[] | .ctNumber ',
+      flags = jqr::jq_flags(pretty = FALSE)
+    ), quote = "\"'"
+  )[[1]]
+
+  # inform user
+  message("(2/4) Downloading trial applications...")
+
+  # download B
+  urls <- paste0(
+    "https://euclinicaltrials.eu/ct-public-api-services/services/ct/",
+    ids, "/download")
+  fids <- function(i) {
+    file.path(tempDir, paste0("ctis_trial_application_", i, ".ndjson"))
+  }
+  tmp <- do.call(
+    curl::multi_download,
+    c(urls = list(utils::URLencode(urls)),
+      destfiles = list(fids(ids)),
+      progress = TRUE,
+      timeout = Inf,
+      getOption("httr_config")[["options"]],
+      # "HTTP server doesn't seem to support byte ranges. Cannot resume."
+      # resume = TRUE,
+      accept_encoding = "gzip,deflate,zstd,br"
+    )
+  )
+  if (inherits(tmp, "try-error")) {
+    stop("Download from CTIS failed; last error: ", class(tmp), call. = FALSE)
+  }
+
+  # compose jq string to extract trial records
   jqString <- paste0(
     # get trial records array
     '.elements[] += { ',
@@ -2086,11 +2116,12 @@ ctrLoadQueryIntoDbCtis <- function(
     '| .["_id"] = .ctNumber',
     # remove backticks ``, \n, \t, "
     ' | walk(if type == "string" then
-      gsub("[\\n\\r\\t`\u0002]"; "") else . end) ' # \\"
+      gsub("[\\n\\r\\t`\u0002]"; "") else . end) '
   )
 
   # convert trial records array to ndjson
-  message("(2/3) Converting to NDJSON...")
+  message("(3/4) Converting to NDJSON...")
+  fout <- file.path(tempDir, "ctis_trials_.ndjson")
   jqr::jq(
     file(fin),
     jqString,
@@ -2099,17 +2130,49 @@ ctrLoadQueryIntoDbCtis <- function(
   )
 
   # run import into database from json files
-  message("(3/3) Importing JSON records into database...")
+  message("(4/4) Importing JSON records into database...")
   if (verbose) message("DEBUG: ", tempDir)
   imported <- dbCTRLoadJSONFiles(dir = tempDir,
                                  con = con,
                                  verbose = verbose)
+  message("\b updating with application details ", appendLF = FALSE)
 
-  # TODO
-  # View(nodbi::docdb_get(src = con, key = "xyz"))
+  # update trial records A with B
+  res <- NULL
+  for (fn in tmp[["destfile"]]) {
+
+    # B trial application details:
+    # authorizationDate in A seems date for last submission e.g. modification
+    # ctStatus in B would overwrite more informative field in A, remove from B
+    # id, ctNumber are the same in A and B, remove id from B
+    val <- jqr::jq(
+      file(fn),
+      ' del(.ctStatus, .id) ',
+      flags = jqr::jq_flags(pretty = FALSE)
+    )
+
+    # update
+    res <- c(
+      res,
+      nodbi::docdb_update(
+        src = con,
+        key = con$collection,
+        query = sub(
+          paste0(".+(", regCtis, ").+"), '{"ctNumber": "\\1"}', fn),
+        value = val)
+      )
+    message(". ", appendLF = FALSE)
+
+
+  }
+
+  # check
+  if (sum(res) != imported$n) {message(
+    "No applications found for: ", paste0(ids[!res], " "))
+  }
 
   ## inform user on final import outcome
-  message("= Imported or updated ",
+  message("\n= Imported or updated ",
           imported$n, " records on ",
           resultsEuNumTrials, " trial(s)")
 
