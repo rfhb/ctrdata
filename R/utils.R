@@ -1086,7 +1086,7 @@ dbFindFields <- function(namepart = "",
 #'
 #' @param preferregister A vector of the order of preference for
 #' registers from which to generate unique _id's, default
-#' \code{c("EUCTR", "CTGOV", "ISRCTN")}
+#' \code{c("EUCTR", "CTGOV", "ISRCTN", "CTIS")}
 #'
 #' @inheritParams dfFindUniqueEuctrRecord
 #'
@@ -1111,7 +1111,7 @@ dbFindFields <- function(namepart = "",
 #' dbFindIdsUniqueTrials(con = dbc)
 #'
 dbFindIdsUniqueTrials <- function(
-  preferregister = c("EUCTR", "CTGOV", "ISRCTN"),
+  preferregister = c("EUCTR", "CTGOV", "ISRCTN", "CTIS"),
   prefermemberstate = "DE",
   include3rdcountrytrials = TRUE,
   con,
@@ -1153,7 +1153,10 @@ dbFindIdsUniqueTrials <- function(
     "id_info",
     # isrctn
     "externalRefs",
-    "isrctn"
+    "isrctn",
+    # ctis
+    "ctNumber",
+    "eudraCtInfo.eudraCtCode"
   )
 
   # check if cache environment has entry for the database
@@ -1237,7 +1240,10 @@ dbFindIdsUniqueTrials <- function(
     "externalRefs.eudraCTNumber",
     "externalRefs.clinicalTrialsGovNumber",
     "isrctn",
-    "externalRefs.protocolSerialNumber"
+    "externalRefs.protocolSerialNumber",
+    # ctis
+    "ctNumber",
+    "eudraCtInfo.eudraCtCode"
   )
   if (verbose) message(
     "\nFields used for finding corresponding register records of trials: ",
@@ -1266,7 +1272,9 @@ dbFindIdsUniqueTrials <- function(
     "euctr.2a", "euctr.2b", "ctgov.2a", "ctgov.2b", "isrctn.2",
     "sponsor.2a", "sponsor.2b",
     # isrctn
-    "euctr.3", "ctgov.3", "isrctn.3", "sponsor.3"
+    "euctr.3", "ctgov.3", "isrctn.3", "sponsor.3",
+    # ctis
+    "ctis.1", "euctr.4"
   )
 
   # keep only relevant content
@@ -1283,7 +1291,9 @@ dbFindIdsUniqueTrials <- function(
     c("euctr.1", regEuctr),
     c("euctr.2a", regEuctr),
     c("euctr.2b", regEuctr),
-    c("euctr.3", regEuctr)
+    c("euctr.3", regEuctr),
+    c("ctis.1", regCtis),
+    c("euctr.4", regEuctr)
   )
   # - do mangling; prerequisite is
   #   that each of the columns holds

@@ -1,3 +1,6 @@
+# ctrdata 1.12.9000
+ - adapt dbFindIdsUniqueTrials to accommodate CTIS
+ 
 # ctrdata 1.12.1 (2023-03-29)
  - fix escaping hash symbol in PDF rendition of an help page
  - fix file encoding for CTIS downloads under MS Windows
