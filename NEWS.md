@@ -1,5 +1,6 @@
 # ctrdata 1.12.9000
- - adapt dbFindIdsUniqueTrials to accommodate CTIS
+ - adapt dbFindIdsUniqueTrials() to accommodate CTIS
+ - keep register names on vector returned by dbFindIdsUniqueTrials()
  
 # ctrdata 1.12.1 (2023-03-29)
  - fix escaping hash symbol in PDF rendition of an help page

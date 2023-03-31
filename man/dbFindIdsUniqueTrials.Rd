@@ -35,8 +35,9 @@ the European Union. Ignored if \code{prefermemberstate} is set to "3RD".}
 of the registers are used to find corresponding trial records}
 }
 \value{
-A vector with strings of keys ("_id") of records in
-the collection that represent unique trials.
+A named vector with strings of keys ("_id") of records in
+the collection that represent unique trials, where names correspond
+to the register of the record.
 }
 \description{
 Records for a clinical trial can be loaded from more than one

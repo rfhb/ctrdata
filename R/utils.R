@@ -1097,8 +1097,9 @@ dbFindFields <- function(namepart = "",
 #'
 #' @inheritParams ctrDb
 #'
-#' @return A vector with strings of keys ("_id") of records in
-#' the collection that represent unique trials.
+#' @return A named vector with strings of keys ("_id") of records in
+#' the collection that represent unique trials, where names correspond
+#' to the register of the record.
 #'
 #' @export
 #'
@@ -1378,12 +1379,14 @@ dbFindIdsUniqueTrials <- function(
     prefermemberstate = prefermemberstate,
     include3rdcountrytrials = include3rdcountrytrials)
 
-  # count
-  countIds <- table(listofIds[["ctrname"]])
-
   # prepare output
-  listofIds <- listofIds[["_id"]]
-
+  listofIds <- setNames(
+    object = listofIds[["_id"]], 
+    nm = listofIds[["ctrname"]])
+  
+  # count
+  countIds <- table(names(listofIds))
+  
   # copy attributes
   attributes(listofIds) <- attribsids[grepl("^ctrdata-", names(attribsids))]
 
