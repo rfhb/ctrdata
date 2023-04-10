@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="A system for querying, retrieving and analyzing
         protocol- and results-related information on clinical trials from
-        three public registers, the European Union Clinical Trials Register
+        four public registers, the European Union Clinical Trials Register
         (EUCTR, &lt;https://www.clinicaltrialsregister.eu/&gt;), 
         ClinicalTrials.gov (CTGOV, &lt;https://clinicaltrials.gov/&gt;), 
         the ISRCTN (&lt;http://www.isrctn.com/&gt;) and the
@@ -29,7 +29,7 @@
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Retrieve and Analyze Clinical Trials in Public Registers">
 <meta property="og:description" content="A system for querying, retrieving and analyzing
         protocol- and results-related information on clinical trials from
-        three public registers, the European Union Clinical Trials Register
+        four public registers, the European Union Clinical Trials Register
         (EUCTR, &lt;https://www.clinicaltrialsregister.eu/&gt;), 
         ClinicalTrials.gov (CTGOV, &lt;https://clinicaltrials.gov/&gt;), 
         the ISRCTN (&lt;http://www.isrctn.com/&gt;) and the
@@ -59,7 +59,7 @@
     
     <a class="navbar-brand me-2" href="index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.12.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.12.1.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -121,7 +121,7 @@
 <li>Retrieved (downloaded) trial information is transformed and stored in a single collection of a document-centric database, for fast and offline access. Uses <code>DuckDB</code>, <code>PostgreSQL</code>, <code>RSQLite</code> or <code>MongoDB</code>, via R package <code>nodbi</code>: see section <a href="#databases-that-can-be-used-with-ctrdata">Databases</a> below. Easily re-run any previous query in a collection to retrieve and update trial records.</li>
 <li>Analyses can be done with <code>R</code> (using convenience functions in <code>ctrdata</code> to identify unique (de-duplicated) trial records across registers, to merge and recode fields as well as to enumerate and provide easy access to deeply-nested fields) and with many other systems.</li>
 </ul>
-<p>Remember to respect the registers’ terms and conditions (see <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>). Please cite this package in any publication as follows: “Ralf Herold (2023). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.12., <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a>”.</p>
+<p>Remember to respect the registers’ terms and conditions (see <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>). Please cite this package in any publication as follows: “Ralf Herold (2023). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.12.1, <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a>”.</p>
 <!--
 &#10;```r
 citation("ctrdata")
@@ -603,7 +603,7 @@ Neuroblastoma trials
 </h2>
 <ul>
 <li><p>Data providers and curators of the clinical trial registers. Please review and respect their copyrights and terms and conditions, see <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>.</p></li>
-<li><p>Package <code>ctrdata</code> has been made possible building on the work done for <a href="https://www.r-project.org/" class="external-link">R</a>, <a href="https://cran.r-project.org/package=curl" class="external-link">curl</a>, <a href="https://cran.r-project.org/package=httr" class="external-link">httr</a>, <a href="https://cran.r-project.org/package=xml2" class="external-link">xml2</a>, <a href="https://cran.r-project.org/package=rvest" class="external-link">rvest</a>, <a href="https://cran.r-project.org/package=mongolite" class="external-link">mongolite</a>, <a href="https://cran.r-project.org/package=jsonlite" class="external-link">jsonlite</a>, <a href="https://cran.r-project.org/package=nodbi" class="external-link">nodbi</a>, <a href="https://cran.r-project.org/package=RPostgres" class="external-link">RPostgres</a>, <a href="https://CRAN.R-project.org/package=RSQLite" class="external-link">RSQLite</a> and <a href="https://cran.r-project.org/package=clipr" class="external-link">clipr</a>.</p></li>
+<li><p>Package <code>ctrdata</code> has been made possible building on the work done for <a href="https://www.r-project.org/" class="external-link">R</a>, <a href="https://cran.r-project.org/package=curl" class="external-link">curl</a>, <a href="https://cran.r-project.org/package=httr" class="external-link">httr</a>, <a href="https://cran.r-project.org/package=jqr" class="external-link">jqr</a>, <a href="https://cran.r-project.org/package=xml2" class="external-link">xml2</a>, <a href="https://cran.r-project.org/package=rvest" class="external-link">rvest</a>, <a href="https://cran.r-project.org/package=dplyr" class="external-link">dplyr</a>, <a href="https://cran.r-project.org/package=stringi" class="external-link">stringi</a>, <a href="https://cran.r-project.org/package=lubridate" class="external-link">lubridate</a>, <a href="https://cran.r-project.org/package=mongolite" class="external-link">mongolite</a>, <a href="https://cran.r-project.org/package=jsonlite" class="external-link">jsonlite</a>, <a href="https://cran.r-project.org/package=nodbi" class="external-link">nodbi</a>, <a href="https://cran.r-project.org/package=RPostgres" class="external-link">RPostgres</a>, <a href="https://CRAN.R-project.org/package=RSQLite" class="external-link">RSQLite</a> and <a href="https://cran.r-project.org/package=clipr" class="external-link">clipr</a>.</p></li>
 </ul>
 <div class="section level3">
 <h3 id="issues-and-notes">Issues and notes<a class="anchor" aria-label="anchor" href="#issues-and-notes"></a>

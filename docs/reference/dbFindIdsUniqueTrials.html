@@ -20,7 +20,7 @@ function to provide a vector of identifiers of deduplicated trials."><meta name=
     
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.12.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.12.1.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -75,7 +75,7 @@ function to provide a vector of identifiers of deduplicated trials.</p>
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">dbFindIdsUniqueTrials</span><span class="op">(</span></span>
-<span>  preferregister <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"EUCTR"</span>, <span class="st">"CTGOV"</span>, <span class="st">"ISRCTN"</span><span class="op">)</span>,</span>
+<span>  preferregister <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"EUCTR"</span>, <span class="st">"CTGOV"</span>, <span class="st">"ISRCTN"</span>, <span class="st">"CTIS"</span><span class="op">)</span>,</span>
 <span>  prefermemberstate <span class="op">=</span> <span class="st">"DE"</span>,</span>
 <span>  include3rdcountrytrials <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">con</span>,</span>
@@ -88,7 +88,7 @@ function to provide a vector of identifiers of deduplicated trials.</p>
     <dl><dt>preferregister</dt>
 <dd><p>A vector of the order of preference for
 registers from which to generate unique _id's, default
-<code>c("EUCTR", "CTGOV", "ISRCTN")</code></p></dd>
+<code>c("EUCTR", "CTGOV", "ISRCTN", "CTIS")</code></p></dd>
 
 
 <dt>prefermemberstate</dt>
@@ -120,8 +120,9 @@ of the registers are used to find corresponding trial records</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>A vector with strings of keys ("_id") of records in
-the collection that represent unique trials.</p>
+<p>A named vector with strings of keys ("_id") of records in
+the collection that represent unique trials, where names correspond
+to the register of the record.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>

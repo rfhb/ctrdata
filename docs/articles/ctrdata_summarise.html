@@ -29,7 +29,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.12.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.12.1.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -398,7 +398,7 @@ for CTGOV is this:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># remotes::install_github("https://github.com/hrbrmstr/jsonview")</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span><span class="st">"clinical_results.outcome_list.outcome"</span>, <span class="va">db</span><span class="op">)</span></span>
-<span><span class="fu">jsonview</span><span class="fu">::</span><span class="fu">json_tree_view</span><span class="op">(</span><span class="va">result</span><span class="op">[[</span><span class="st">"clinical_results.outcome_list.outcome"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span></span>
+<span><span class="fu">jsonview</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonview/man/json_tree_view.html" class="external-link">json_tree_view</a></span><span class="op">(</span><span class="va">result</span><span class="op">[[</span><span class="st">"clinical_results.outcome_list.outcome"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span></span>
 <span> <span class="va">result</span><span class="op">[[</span><span class="st">"_id"</span><span class="op">]</span><span class="op">]</span> <span class="op">==</span> <span class="st">"NCT00520936"</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <div class="float">
 <img src="ctgovnested.png" alt="CtgovNested"><div class="figcaption">CtgovNested</div>

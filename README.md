@@ -55,7 +55,7 @@ Remember to respect the registers’ terms and conditions (see
 `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
 package in any publication as follows: “Ralf Herold (2023). ctrdata:
 Retrieve and Analyze Clinical Trials in Public Registers. R package
-version 1.12., <https://cran.r-project.org/package=ctrdata>”.
+version 1.12.1, <https://cran.r-project.org/package=ctrdata>”.
 
 <!--
 &#10;```r
@@ -540,8 +540,12 @@ sapply(
   [R](https://www.r-project.org/),
   [curl](https://cran.r-project.org/package=curl),
   [httr](https://cran.r-project.org/package=httr),
+  [jqr](https://cran.r-project.org/package=jqr),
   [xml2](https://cran.r-project.org/package=xml2),
   [rvest](https://cran.r-project.org/package=rvest),
+  [dplyr](https://cran.r-project.org/package=dplyr),
+  [stringi](https://cran.r-project.org/package=stringi),
+  [lubridate](https://cran.r-project.org/package=lubridate),
   [mongolite](https://cran.r-project.org/package=mongolite),
   [jsonlite](https://cran.r-project.org/package=jsonlite),
   [nodbi](https://cran.r-project.org/package=nodbi),

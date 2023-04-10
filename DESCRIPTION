@@ -9,7 +9,7 @@ URL: https://cran.r-project.org/package=ctrdata
 BugReports: https://github.com/rfhb/ctrdata/issues
 Description: A system for querying, retrieving and analyzing
         protocol- and results-related information on clinical trials from
-        three public registers, the 'European Union Clinical Trials Register'
+        four public registers, the 'European Union Clinical Trials Register'
         ('EUCTR', <https://www.clinicaltrialsregister.eu/>), 
         'ClinicalTrials.gov' ('CTGOV', <https://clinicaltrials.gov/>), 
         the 'ISRCTN' (<http://www.isrctn.com/>) and the
