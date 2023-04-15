@@ -51,10 +51,11 @@ package. This README was reviewed on 2023-04-15 for version 1.12.1.9000.
   provide easy access to deeply-nested fields) and with many other
   systems.
 - 🔔Queries in the registers are automatically copied to the clipboard
-  (including for “CTIS”, where the URL does not show the query) using a
-  [browser extension](https://www.tampermonkey.net/) and our [user
-  script](https://raw.githubusercontent.com/rfhb/ctrdata/tools/ctrdataURLcopier.js)
-  NEW since 2023-04-15
+  (including for “CTIS”, where the URL does not show the query) using
+  our [user
+  script](https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js)
+  with a [browser extension](https://www.tampermonkey.net/) NEW since
+  2023-04-15
 
 Remember to respect the registers’ terms and conditions (see
 `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
@@ -235,10 +236,11 @@ q
 ```
 
 🔔Queries in the registers are automatically copied to the clipboard
-(including for “CTIS”, where the URL does not show the query) using a
-[browser extension](https://www.tampermonkey.net/) and our [user
-script](https://raw.githubusercontent.com/rfhb/ctrdata/tools/ctrdataURLcopier.js)
-NEW since 2023-04-15
+(including for “CTIS”, where the URL does not show the query) using our
+[user
+script](https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js)
+with a [browser extension](https://www.tampermonkey.net/) NEW since
+2023-04-15
 
 - Retrieve protocol-related information, transform and save to database:
 

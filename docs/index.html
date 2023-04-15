@@ -110,9 +110,9 @@
 <li>EU Clinical Trials Register (“EUCTR”, <a href="https://www.clinicaltrialsregister.eu/" class="external-link uri">https://www.clinicaltrialsregister.eu/</a>)</li>
 <li>ClinicalTrials.gov (“CTGOV”, <a href="https://clinicaltrials.gov/" class="external-link uri">https://clinicaltrials.gov/</a>)</li>
 <li>ISRCTN (<a href="https://www.isrctn.com/" class="external-link uri">https://www.isrctn.com/</a>)</li>
-<li>EU Clinical Trials Information System (“CTIS”, <a href="https://euclinicaltrials.eu/" class="external-link uri">https://euclinicaltrials.eu/</a>) NEW since 2023-03-25 🔔 (see <a href="#example-workflow">Example workflow</a>)</li>
+<li>🔔EU Clinical Trials Information System (“CTIS”, <a href="https://euclinicaltrials.eu/" class="external-link uri">https://euclinicaltrials.eu/</a>) NEW since 2023-03-25 (see <a href="#example-workflow">Example workflow</a>)</li>
 </ul>
-<p>The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-03-29 for version 1.12.1.</p>
+<p>The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-04-15 for version 1.12.1.9000.</p>
 <div class="section level2">
 <h2 id="main-features">Main features<a class="anchor" aria-label="anchor" href="#main-features"></a>
 </h2>
@@ -120,6 +120,7 @@
 <li>Protocol- and results-related trial information is easily retrieved (downloaded): Users define a query in a register’s web interface and then use <code>ctrdata</code> to retrieve in one go all trials found and to accumulate information from different registers. Personal annotations can be including during retrieval. Synonyms of an active substance can also be found.</li>
 <li>Retrieved (downloaded) trial information is transformed and stored in a single collection of a document-centric database, for fast and offline access. Uses <code>DuckDB</code>, <code>PostgreSQL</code>, <code>RSQLite</code> or <code>MongoDB</code>, via R package <code>nodbi</code>: see section <a href="#databases-that-can-be-used-with-ctrdata">Databases</a> below. Easily re-run any previous query in a collection to retrieve and update trial records.</li>
 <li>Analyses can be done with <code>R</code> (using convenience functions in <code>ctrdata</code> to identify unique (de-duplicated) trial records across registers, to merge and recode fields as well as to enumerate and provide easy access to deeply-nested fields) and with many other systems.</li>
+<li>🔔Queries in the registers are automatically copied to the clipboard (including for “CTIS”, where the URL does not show the query) using our <a href="https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js" class="external-link">user script</a> with a <a href="https://www.tampermonkey.net/" class="external-link">browser extension</a> NEW since 2023-04-15</li>
 </ul>
 <p>Remember to respect the registers’ terms and conditions (see <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>). Please cite this package in any publication as follows: “Ralf Herold (2023). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.12.1, <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a>”.</p>
 <!--
@@ -329,6 +330,7 @@ citation("ctrdata")
 <span><span class="va">q</span></span>
 <span><span class="co">#                                                   query-term  query-register</span></span>
 <span><span class="co"># 1 query=cancer&amp;age=under-18&amp;phase=phase-one&amp;status=completed           EUCTR</span></span></code></pre></div>
+<p>🔔Queries in the registers are automatically copied to the clipboard (including for “CTIS”, where the URL does not show the query) using our <a href="https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js" class="external-link">user script</a> with a <a href="https://www.tampermonkey.net/" class="external-link">browser extension</a> NEW since 2023-04-15</p>
 <ul>
 <li>Retrieve protocol-related information, transform and save to database:</li>
 </ul>
@@ -453,26 +455,17 @@ citation("ctrdata")
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Retrieve trials from another register:</span></span>
 <span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
-<span>  queryterm <span class="op">=</span> <span class="st">""</span>,</span>
-<span>  register <span class="op">=</span> <span class="st">"CTIS"</span>,</span>
+<span>  queryterm <span class="op">=</span> <span class="st">"https://euclinicaltrials.eu/ct-public-api-services/services/ct/publiclookup?ageGroupCode=3"</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># * Found search query from CTIS: - queryterm ignored at the moment -</span></span>
 <span><span class="co"># (1/4) Downloading trials...</span></span>
-<span><span class="co"># Download status: 1 done; 0 in progress. Total size: 254.45 Kb (100%)... done!             </span></span>
+<span><span class="co"># Download status: 1 done; 0 in progress. Total size: 255.17 Kb (100%)... done!             </span></span>
 <span><span class="co"># (2/4) Downloading trial applications...</span></span>
-<span><span class="co"># Download status: 138 done; 0 in progress. Total size: 71.14 Kb (100%)... done!             </span></span>
+<span><span class="co"># Download status: 125 done; 0 in progress. Total size: 65.41 Kb (100%)... done!             </span></span>
 <span><span class="co"># (3/4) Converting to NDJSON...</span></span>
-<span><span class="co"># (4/4) Importing JSON records into database... updating with application details </span></span>
-<span><span class="co"># . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . </span></span>
-<span><span class="co"># . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .</span></span>
-<span><span class="co"># . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . </span></span>
-<span><span class="co"># . . . . . . . . . . . . . . . . . . . . .</span></span>
-<span><span class="co"># = Imported or updated 138 records on 138 trial(s)</span></span>
-<span><span class="co"># Updated history ("meta-info" in "some_collection_name")</span></span>
-<span><span class="co"># Warning message: </span></span>
-<span><span class="co"># At the moment, all CTIS trial records are downloaded; a mechanism to select</span></span>
-<span><span class="co"># trials of interest is being developed. </span></span></code></pre></div>
+<span><span class="co"># (4/4) Importing JSON records into database... updating with application details                </span></span>
+<span><span class="co"># = Imported or updated 125 records on 125 trial(s)</span></span>
+<span><span class="co"># Updated history ("meta-info" in "some_collection_name")</span></span></code></pre></div>
 <ul>
 <li>Result-related trial information</li>
 </ul>
