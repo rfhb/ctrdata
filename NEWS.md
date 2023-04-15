@@ -1,6 +1,9 @@
 # ctrdata 1.12.9000
+ - speed up ctrLoadQueryIntoDb() for CTIS with nodbi >=0.9.2.9000
+ - provide Tampermonkey script to extract the URL of a user's query in CTIS 
  - adapt dbFindIdsUniqueTrials() to accommodate CTIS
  - keep register names on vector returned by dbFindIdsUniqueTrials()
+ - adapt ctrGetQueryUrl() to handle CTIS query URLs
  
 # ctrdata 1.12.1 (2023-03-29)
  - fix escaping hash symbol in PDF rendition of an help page

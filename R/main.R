@@ -738,7 +738,7 @@ ctrConvertToJSON <- function(tempDir, scriptName, verbose) {
 #' from downloading and converting
 #'
 #' @importFrom jsonlite validate
-#' @importFrom nodbi docdb_create docdb_update
+#' @importFrom nodbi docdb_create
 #' @importFrom stats na.omit
 #'
 #' @inheritParams ctrDb
@@ -832,8 +832,8 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
         annoDf[["annotation"]] <- rep(NA, length(ids))
 
       # delete any existing records
-      deleteIds <- try({
-        nodbi::docdb_query(
+      try({
+        nodbi::docdb_delete(
           src = con,
           key = con$collection,
           query = paste0(
@@ -841,15 +841,24 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
             paste0('"', ids, '"', collapse = ","), ']}}'),
           fields = '{"_id": 1}')
       }, silent = TRUE)
-      if (!inherits(deleteIds, "try-error") &&
-          length(deleteIds[["_id"]])) {
-        nodbi::docdb_delete(
-          src = con,
-          key = con$collection,
-          query = paste0(
-            '{"_id": {"$in": [',
-            paste0('"', deleteIds[["_id"]], '"', collapse = ","), ']}}'))
-      }
+      # deleteIds <- try({
+      #   nodbi::docdb_query(
+      #     src = con,
+      #     key = con$collection,
+      #     query = paste0(
+      #       '{"_id": {"$in": [',
+      #       paste0('"', ids, '"', collapse = ","), ']}}'),
+      #     fields = '{"_id": 1}')
+      # }, silent = TRUE)
+      # if (!inherits(deleteIds, "try-error") &&
+      #     length(deleteIds[["_id"]])) {
+      #   nodbi::docdb_delete(
+      #     src = con,
+      #     key = con$collection,
+      #     query = paste0(
+      #       '{"_id": {"$in": [',
+      #       paste0('"', deleteIds[["_id"]], '"', collapse = ","), ']}}'))
+      # }
 
       ## import
       tmp <- try({
@@ -953,16 +962,22 @@ dbCTRAnnotateQueryRecords <- function(
   # debug
   if (verbose) message(annotations)
 
+  # TODO verify
   # update the database
-  result <- 0L
-  for (i in annotations[["_id"]]) {
-    result <- result +
-      nodbi::docdb_update(
-        src = con,
-        key = con$collection,
-        value = annotations[annotations[["_id"]] == i, "annotation", drop = FALSE],
-        query = paste0('{"_id":"', i, '"}'))
-  }
+  # result <- 0L
+  # for (i in annotations[["_id"]]) {
+  #   result <- result +
+  #     nodbi::docdb_update(
+  #       src = con,
+  #       key = con$collection,
+  #       value = annotations[annotations[["_id"]] == i, "annotation", drop = FALSE],
+  #       query = paste0('{"_id":"', i, '"}'))
+  # }
+  result <- nodbi::docdb_update(
+      src = con,
+      key = con$collection,
+      value = annotations,
+      query = "")
 
   # inform user
   message("= Annotated retrieved records (", result, " records)")
@@ -978,7 +993,7 @@ dbCTRAnnotateQueryRecords <- function(
 #' @noRd
 #'
 #' @importFrom jsonlite toJSON
-#' @importFrom nodbi docdb_delete docdb_create
+#' @importFrom nodbi docdb_delete docdb_create docdb_update
 #'
 dbCTRUpdateQueryHistory <- function(
   register,
@@ -2002,6 +2017,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
 #' @importFrom curl multi_download
 #' @importFrom jqr jq jq_flags
 #' @importFrom utils read.table
+#' @importFrom nodbi docdb_update
 #'
 ctrLoadQueryIntoDbCtis <- function(
     queryterm = queryterm,
@@ -2020,21 +2036,17 @@ ctrLoadQueryIntoDbCtis <- function(
   tempDir <- tempfile(pattern = "ctrDATA")
   dir.create(tempDir)
   tempDir <- normalizePath(tempDir, mustWork = TRUE)
-  # register to remove files after use for streaming
+  # register function to remove files after use for streaming
   if (!verbose) on.exit(unlink(tempDir, recursive = TRUE), add = TRUE)
-
-  # TODO currently just all trial records are downloaded
-  warning("At the moment, all CTIS trial records are downloaded; ",
-          "a mechanism to select trials of interest is being developed.",
-          call. = FALSE)
 
   # inform user
   message("(1/4) Downloading trials...")
 
   # construct url
   ctisdownloadurl <- paste0(
-    "https://euclinicaltrials.eu/ct-public-api-services/services/ct/publiclookup",
-    "?&paging=0,-1" # corresponds to "pageInfo":{"offset":0,"limit":-1}
+    "https://euclinicaltrials.eu/ct-public-api-services/services/ct/publiclookup?",
+    "&paging=0,-1&", # corresponds to "pageInfo":{"offset":0,"limit":-1}
+    queryterm
   )
 
   # download A
@@ -2115,7 +2127,7 @@ ctrLoadQueryIntoDbCtis <- function(
       gsub("[\\n\\r\\t`\u0002]"; "") else . end) '
   )
 
-  # convert trial records array to ndjson
+  # convert trial records' array to ndjson
   message("(3/4) Converting to NDJSON...")
   fout <- file.path(tempDir, "ctis_trials_.ndjson")
   jqr::jq(
@@ -2125,46 +2137,31 @@ ctrLoadQueryIntoDbCtis <- function(
     out = fout
   )
 
-  # run import into database from json files
-  message("(4/4) Importing JSON records into database...")
-  if (verbose) message("DEBUG: ", tempDir)
-  imported <- dbCTRLoadJSONFiles(dir = tempDir,
-                                 con = con,
-                                 verbose = verbose)
-  message("\b updating with application details ", appendLF = FALSE)
-
-  # update trial records A with B
-  res <- NULL
-  for (fn in tmp[["destfile"]]) {
-
-    # B trial application details:
-    # authorizationDate in A seems date for last submission e.g. modification
-    # ctStatus in B would overwrite more informative field in A, remove from B
-    # id, ctNumber are the same in A and B, remove id from B
-    val <- jqr::jq(
-      file(fn),
-      ' del(.ctStatus, .id) ',
-      flags = jqr::jq_flags(pretty = FALSE)
-    )
-
-    # update
-    res <- c(
-      res,
-      nodbi::docdb_update(
-        src = con,
-        key = con$collection,
-        query = sub(
-          paste0(".+(", regCtis, ").+"), '{"ctNumber": "\\1"}', fn),
-        value = val)
-      )
-    message(". ", appendLF = FALSE)
-
-
+  # convert appications into ndjson file
+  fo <- file.path(tempDir, "ctis_merged_applications_.ndjson")
+  unlink(fo)
+  for (fa in tmp[["destfile"]]) {
+    cat(
+      sub("\"id\":[0-9]+,", "",
+      sub("\"ctStatus\":\"[a-zA-Z ]+\",", "",
+      sub("\"ctNumber\"", "\"_id\"",
+          readLines(fa, warn = FALSE)
+      ))),
+      file = fo,
+      append = TRUE,
+      sep = "\n")
   }
 
+  # run import into database from ndjson files
+  message("(4/4) Importing JSON records into database...")
+  if (verbose) message("DEBUG: ", tempDir)
+  imported <- dbCTRLoadJSONFiles(dir = tempDir, con = con, verbose = verbose)
+  message("\b updating with application details ...", appendLF = FALSE)
+  res <- nodbi::docdb_update(src = con, key = con$collection, query = "", value = fo)
+
   # check
-  if (sum(res) != imported$n) {message(
-    "No applications found for: ", paste0(ids[!res], " "))
+  if (sum(res) != imported$n) {
+    warning("Mismatch between number of trial records and applications")
   }
 
   ## inform user on final import outcome
