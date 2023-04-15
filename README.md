@@ -20,15 +20,15 @@ aggregating and analysing this information; it can be used for the
   <https://www.clinicaltrialsregister.eu/>)
 - ClinicalTrials.gov (“CTGOV”, <https://clinicaltrials.gov/>)
 - ISRCTN (<https://www.isrctn.com/>)
-- EU Clinical Trials Information System (“CTIS”,
-  <https://euclinicaltrials.eu/>) NEW since 2023-03-25 🔔 (see [Example
+- 🔔EU Clinical Trials Information System (“CTIS”,
+  <https://euclinicaltrials.eu/>) NEW since 2023-03-25 (see [Example
   workflow](#example-workflow))
 
 The motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2023-03-29 for version 1.12.1.
+package. This README was reviewed on 2023-04-15 for version 1.12.1.9000.
 
 ## Main features
 
@@ -50,6 +50,11 @@ package. This README was reviewed on 2023-03-29 for version 1.12.1.
   registers, to merge and recode fields as well as to enumerate and
   provide easy access to deeply-nested fields) and with many other
   systems.
+- 🔔Queries in the registers are automatically copied to the clipboard
+  (including for “CTIS”, where the URL does not show the query) using a
+  [browser extension](https://www.tampermonkey.net/) and our [user
+  script](https://raw.githubusercontent.com/rfhb/ctrdata/tools/ctrdataURLcopier.js)
+  NEW since 2023-04-15
 
 Remember to respect the registers’ terms and conditions (see
 `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
@@ -229,6 +234,12 @@ q
 # 1 query=cancer&age=under-18&phase=phase-one&status=completed           EUCTR
 ```
 
+🔔Queries in the registers are automatically copied to the clipboard
+(including for “CTIS”, where the URL does not show the query) using a
+[browser extension](https://www.tampermonkey.net/) and our [user
+script](https://raw.githubusercontent.com/rfhb/ctrdata/tools/ctrdataURLcopier.js)
+NEW since 2023-04-15
+
 - Retrieve protocol-related information, transform and save to database:
 
 The database collection is specified first, using `nodbi` (see above for
@@ -373,26 +384,17 @@ records are downloaded (around 150 end March 2023).
 ``` r
 # Retrieve trials from another register:
 ctrLoadQueryIntoDb(
-  queryterm = "",
-  register = "CTIS",
+  queryterm = "https://euclinicaltrials.eu/ct-public-api-services/services/ct/publiclookup?ageGroupCode=3",
   con = db
 )
-# * Found search query from CTIS: - queryterm ignored at the moment -
 # (1/4) Downloading trials...
-# Download status: 1 done; 0 in progress. Total size: 254.45 Kb (100%)... done!             
+# Download status: 1 done; 0 in progress. Total size: 255.17 Kb (100%)... done!             
 # (2/4) Downloading trial applications...
-# Download status: 138 done; 0 in progress. Total size: 71.14 Kb (100%)... done!             
+# Download status: 125 done; 0 in progress. Total size: 65.41 Kb (100%)... done!             
 # (3/4) Converting to NDJSON...
-# (4/4) Importing JSON records into database... updating with application details 
-# . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-# . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-# . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-# . . . . . . . . . . . . . . . . . . . . .
-# = Imported or updated 138 records on 138 trial(s)
+# (4/4) Importing JSON records into database... updating with application details                
+# = Imported or updated 125 records on 125 trial(s)
 # Updated history ("meta-info" in "some_collection_name")
-# Warning message: 
-# At the moment, all CTIS trial records are downloaded; a mechanism to select
-# trials of interest is being developed. 
 ```
 
 - Result-related trial information

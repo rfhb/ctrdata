@@ -603,6 +603,7 @@ ctrGetQueryUrl <- function(
       "clinicaltrials.gov" = "CTGOV",
       "isrctn.com" = "ISRCTN",
       "beta.clinicaltrials.gov" = "BETACTGOV",
+      "euclinicaltrials.eu" = "CTIS",
       "NONE")
   #
   # check parameters expectations
@@ -703,8 +704,16 @@ ctrGetQueryUrl <- function(
   }
   #
   if (register == "CTIS") {
-    # search result page
-    queryterm <- "- queryterm ignored at the moment -"
+    # url can be empty to retrieve all or looks like
+    # https://euclinicaltrials.eu/ct-public-api-services/services/ct/publiclookup?ageGroupCode=3
+    queryterm <- sub(
+      "https://euclinicaltrials.eu/ct-public-api-services/services/ct/publiclookup[?]", "", url)
+    # remove unnecessary components
+    queryterm <- sub("&?paging=[-,0-9]+", "", queryterm)
+    queryterm <- sub("&?sorting=[-a-zA-Z]+", "", queryterm)
+    queryterm <- sub("&?isEeaOnly=false", "", queryterm)
+    queryterm <- sub("&?isNonEeaOnly=false", "", queryterm)
+    queryterm <- sub("&?isBothEeaNonEea=false", "", queryterm)
     #
     return(outdf(queryterm, register))
   }
@@ -1034,6 +1043,7 @@ dbFindFields <- function(namepart = "",
     # since different approaches above return _id or not
     keyslist <- keyslist[!duplicated(keyslist)]
     keyslist <- keyslist[keyslist != "_id" & keyslist != ""]
+    keyslist <- sub("[.]$", "", keyslist)
 
     ## store keyslist to environment (cache)
     if (length(keyslist) > 1) {
@@ -1094,6 +1104,7 @@ dbFindFields <- function(namepart = "",
 #'  of the registers are used to find corresponding trial records
 #'
 #' @importFrom nodbi docdb_query
+#' @importFrom stats setNames
 #'
 #' @inheritParams ctrDb
 #'
@@ -1381,12 +1392,12 @@ dbFindIdsUniqueTrials <- function(
 
   # prepare output
   listofIds <- setNames(
-    object = listofIds[["_id"]], 
+    object = listofIds[["_id"]],
     nm = listofIds[["ctrname"]])
-  
+
   # count
   countIds <- table(names(listofIds))
-  
+
   # copy attributes
   attributes(listofIds) <- attribsids[grepl("^ctrdata-", names(attribsids))]
 

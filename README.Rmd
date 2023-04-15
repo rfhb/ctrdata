@@ -34,15 +34,16 @@ The package `ctrdata` provides functions for retrieving (downloading) informatio
 - EU Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/)
 - ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/)
 - ISRCTN (https://www.isrctn.com/) 
-- EU Clinical Trials Information System ("CTIS", https://euclinicaltrials.eu/) NEW since 2023-03-25 `r emoji::emoji("bell")` (see [Example workflow](#example-workflow))
+- `r emoji::emoji("bell")`EU Clinical Trials Information System ("CTIS", https://euclinicaltrials.eu/) NEW since 2023-03-25 (see [Example workflow](#example-workflow))
 
-The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-03-29 for version 1.12.1.
+The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-04-15 for version 1.12.1.9000.
 
 ## Main features
 
 * Protocol- and results-related trial information is easily retrieved (downloaded): Users define a query in a register's web interface and then use `ctrdata` to retrieve in one go all trials found and to accumulate information from different registers. Personal annotations can be including during retrieval. Synonyms of an active substance can also be found.
 * Retrieved (downloaded) trial information is transformed and stored in a single collection of a document-centric database, for fast and offline access. Uses `DuckDB`, `PostgreSQL`, `RSQLite` or `MongoDB`, via R package `nodbi`: see section [Databases](#databases-that-can-be-used-with-ctrdata) below. Easily re-run any previous query in a collection to retrieve and update trial records. 
 * Analyses can be done with `R` (using convenience functions in `ctrdata` to identify unique (de-duplicated) trial records across registers, to merge and recode fields as well as to enumerate and provide easy access to deeply-nested fields) and with many other systems. 
+* `r emoji::emoji("bell")`Queries in the registers are automatically copied to the clipboard (including for "CTIS", where the URL does not show the query) using a [browser extension](https://www.tampermonkey.net/) and our [user script](https://raw.githubusercontent.com/rfhb/ctrdata/tools/ctrdataURLcopier.js) NEW since 2023-04-15
 
 Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: "Ralf Herold (2023). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.12.1, https://cran.r-project.org/package=ctrdata". 
 
@@ -175,6 +176,8 @@ q
 #                                                   query-term  query-register
 # 1 query=cancer&age=under-18&phase=phase-one&status=completed           EUCTR
 ```
+
+`r emoji::emoji("bell")`Queries in the registers are automatically copied to the clipboard (including for "CTIS", where the URL does not show the query) using a [browser extension](https://www.tampermonkey.net/) and our [user script](https://raw.githubusercontent.com/rfhb/ctrdata/tools/ctrdataURLcopier.js) NEW since 2023-04-15
 
 * Retrieve protocol-related information, transform and save to database:
 
@@ -314,26 +317,17 @@ At this time, there is no URL that can be used in analogy to the other registers
 ```{r register_import_ctis}
 # Retrieve trials from another register:
 ctrLoadQueryIntoDb(
-  queryterm = "",
-  register = "CTIS",
+  queryterm = "https://euclinicaltrials.eu/ct-public-api-services/services/ct/publiclookup?ageGroupCode=3",
   con = db
 )
-# * Found search query from CTIS: - queryterm ignored at the moment -
 # (1/4) Downloading trials...
-# Download status: 1 done; 0 in progress. Total size: 254.45 Kb (100%)... done!             
+# Download status: 1 done; 0 in progress. Total size: 255.17 Kb (100%)... done!             
 # (2/4) Downloading trial applications...
-# Download status: 138 done; 0 in progress. Total size: 71.14 Kb (100%)... done!             
+# Download status: 125 done; 0 in progress. Total size: 65.41 Kb (100%)... done!             
 # (3/4) Converting to NDJSON...
-# (4/4) Importing JSON records into database... updating with application details 
-# . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-# . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-# . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-# . . . . . . . . . . . . . . . . . . . . .
-# = Imported or updated 138 records on 138 trial(s)
+# (4/4) Importing JSON records into database... updating with application details                
+# = Imported or updated 125 records on 125 trial(s)
 # Updated history ("meta-info" in "some_collection_name")
-# Warning message: 
-# At the moment, all CTIS trial records are downloaded; a mechanism to select
-# trials of interest is being developed. 
 ```
 
 * Result-related trial information

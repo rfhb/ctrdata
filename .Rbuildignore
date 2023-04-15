@@ -28,3 +28,4 @@ some_database_name.sqlite_file
 codecov.yml
 ^CRAN-SUBMISSION$
 .vscode
+^tools

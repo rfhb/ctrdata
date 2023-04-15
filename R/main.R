@@ -161,11 +161,6 @@ ctrLoadQueryIntoDb <- function(
     warning("Parameter 'parallelretrievals' is deprecated and ignored")
   }
 
-  # - minimum information
-  if (is.null(queryterm) && is.null(querytoupdate) && register != "CTIS") {
-    stop("neither 'queryterm' nor 'querytoupdate' nor 'register = \"CTIS\"' specified")
-  }
-
   # - parameters consistent
   if (!is.null(querytoupdate) && !is.null(queryterm)) {
     stop("only one of 'queryterm' and 'querytoupdate' should be ",
@@ -183,7 +178,7 @@ ctrLoadQueryIntoDb <- function(
       # obtain url and register
       queryterm <- try(
         ctrGetQueryUrl(
-          url = queryterm,
+          url = ifelse(is.null(queryterm), "", queryterm),
           register = register),
         silent = TRUE)
 
@@ -207,21 +202,22 @@ ctrLoadQueryIntoDb <- function(
     register  <- queryterm[nr, "query-register", drop = TRUE]
     queryterm <- queryterm[nr, "query-term", drop = TRUE]
 
-    # check queryterm
-    if (length(queryterm) != 1L ||
-        !all(class(queryterm) %in% "character") ||
-        is.na(queryterm) ||
-        nchar(queryterm) == 0L) {
-      stop("'queryterm' has to be a non-empty string: ",
-           deparse(queryterm), call. = FALSE)
-    }
-
     # check register
     if (length(register) != 1L ||
         !all(class(register) %in% "character") ||
         is.na(register)) {
       stop("'register' has to be a non-empty string: ",
            register, call. = FALSE)
+    }
+
+    # check queryterm
+    if (register != "CTIS" &&
+        (length(queryterm) != 1L ||
+         !all(class(queryterm) %in% "character") ||
+         is.na(queryterm) ||
+         nchar(queryterm) == 0L)) {
+      stop("'queryterm' has to be a non-empty string: ",
+           deparse(queryterm), call. = FALSE)
     }
 
     ## sanity checks
