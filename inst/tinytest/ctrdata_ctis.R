@@ -21,6 +21,19 @@ expect_true(all(c("2022-500657-17-00", "2022-501537-23-00") %in% tmpTest$success
 # test
 expect_true(length(tmpTest$failed) == 0L)
 
+# test
+expect_true(suppressWarnings(
+    ctrLoadQueryIntoDb(
+      queryterm = "https://euclinicaltrials.eu/ct-public-api-services/services/ct/publiclookup?basicSearchInputAND=cancer&msc=528",
+      con = dbc))[["n"]] >= 9L)
+
+# test
+expect_true(suppressWarnings(
+  ctrLoadQueryIntoDb(
+    queryterm = "basicSearchInputAND=infection&status=Ended",
+    register = "CTIS",
+    con = dbc))[["n"]] >= 2L)
+
 # clean up
 rm(tmpTest)
 
