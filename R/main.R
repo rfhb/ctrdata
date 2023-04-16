@@ -961,17 +961,7 @@ dbCTRAnnotateQueryRecords <- function(
   # debug
   if (verbose) message(annotations)
 
-  # TODO verify
   # update the database
-  # result <- 0L
-  # for (i in annotations[["_id"]]) {
-  #   result <- result +
-  #     nodbi::docdb_update(
-  #       src = con,
-  #       key = con$collection,
-  #       value = annotations[annotations[["_id"]] == i, "annotation", drop = FALSE],
-  #       query = paste0('{"_id":"', i, '"}'))
-  # }
   result <- nodbi::docdb_update(
       src = con,
       key = con$collection,
@@ -1618,7 +1608,7 @@ ctrLoadQueryIntoDbEuctr <- function(
                   src = con,
                   key = con$collection,
                   value = tmpjson,
-                  query = paste0('{"a2_eudract_number":"', euctrnumber, '"}')
+                  query = paste0('{"_id": {"$regex": "^', euctrnumber, '.+"}}')
                 )
               max(tmpnodbi, na.rm = TRUE)
             },
