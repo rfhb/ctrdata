@@ -1544,15 +1544,14 @@ dbGetFieldsIntoDf <- function(fields = "",
       # user info
       message(ifelse(i > 1L, "\n", ""), item, "... ", appendLF = FALSE)
       #
-      query <- '{"_id": {"$ne": "meta-info"}}'
-      #
       tmpItem <- try({
 
         # execute query
         dfi <- nodbi::docdb_query(
           src = con,
           key = con$collection,
-          query = query,
+          # query = '{"_id": {"$ne": "meta-info"}}',
+          query = '{}', # TODO
           fields = paste0('{"_id": 1, "', item, '": 1}'))
         message("\b\b\b\b   \b\b\b ", appendLF = FALSE)
 
@@ -1560,7 +1559,7 @@ dbGetFieldsIntoDf <- function(fields = "",
         if (!nrow(dfi) || ncol(dfi) == 1L) stop(simpleError("No data"))
 
         # remove any rows without index variable
-        dfi <- dfi[!is.na(dfi[["_id"]]), , drop = FALSE]
+        dfi <- dfi[!is.na(dfi[["_id"]]) & (dfi[["_id"]] != "meta-info"), , drop = FALSE] # TODO
 
         # simplify and replace NULL with NA
         dfi[[2]][!sapply(dfi[[2]], length)] <- NA
