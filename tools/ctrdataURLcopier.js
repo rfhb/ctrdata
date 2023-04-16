@@ -1,7 +1,7 @@
 // ==UserScript==
 //
 // @name         ctrdataURLcopier
-// @version      0.2
+// @version      0.3
 // @description  Copies to the clipboard the link to a user's search in trial registers (CTIS, EUCTR, CTGOV, ISRCTN) for use with R package ctrdata
 // @author       ralf.herold@mailbox.org
 //
@@ -10,8 +10,6 @@
 // @downloadURL  https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js
 // @supportURL   https://github.com/rfhb/ctrdata/issues
 //
-// @match        https://euclinicaltrials.eu/search*
-// @match        https://euclinicaltrials.eu/app*
 // @match        https://clinicaltrials.gov/ct2/results?*
 // @match        https://clinicaltrials.gov/ct2/show/*
 // @match        https://beta.clinicaltrials.gov/search?*
@@ -19,6 +17,8 @@
 // @match        https://www.clinicaltrialsregister.eu/ctr-search/trial/*
 // @match        https://www.isrctn.com/search?*
 // @match        https://www.isrctn.com/ISRCTN*?q=*
+// @match        https://euclinicaltrials.eu/search*
+// @match        https://euclinicaltrials.eu/app*
 //
 // @grant        unsafeWindow
 // @grant        GM_setClipboard
@@ -48,9 +48,16 @@ if (window.location.href.indexOf("euclinicaltrials") == -1) {
         queryUrl = queryUrl.replace(/&?isEeaOnly=false/, '');
         queryUrl = queryUrl.replace(/&?isNonEeaOnly=false/, '');
         queryUrl = queryUrl.replace(/&?isBothEeaNonEea=false/, '');
-
-        console.log(queryUrl);
+        queryUrl = queryUrl.replace(/[?]$/, '');
+        queryUrl = queryUrl.replace(
+            'https://euclinicaltrials.eu/ct-public-api-services/services/ct/publiclookup',
+            'https://euclinicaltrials.eu/app/#/search');
         GM_setClipboard(queryUrl);
+        console.log(queryUrl);
+
+        queryUrl = queryUrl.replace('https://euclinicaltrials.eu', '');
+        console.log(queryUrl);
+        window.history.pushState({}, "", queryUrl);
 
         return origOpen.apply(this, arguments);
     };

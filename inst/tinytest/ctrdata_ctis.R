@@ -23,9 +23,15 @@ expect_true(length(tmpTest$failed) == 0L)
 
 # test
 expect_true(suppressWarnings(
-    ctrLoadQueryIntoDb(
-      queryterm = "https://euclinicaltrials.eu/ct-public-api-services/services/ct/publiclookup?basicSearchInputAND=cancer&msc=528",
-      con = dbc))[["n"]] >= 9L)
+  ctrLoadQueryIntoDb(
+    queryterm = "https://euclinicaltrials.eu/ct-public-api-services/services/ct/publiclookup?basicSearchInputAND=cancer&msc=528",
+    con = dbc))[["n"]] >= 9L)
+
+# test
+expect_true(suppressWarnings(
+  ctrLoadQueryIntoDb(
+    queryterm = "https://euclinicaltrials.eu/app/#/search?basicSearchInputAND=cancer&msc=528",
+    con = dbc))[["n"]] >= 9L)
 
 # test
 expect_true(suppressWarnings(

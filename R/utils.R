@@ -428,6 +428,8 @@ ctrDb <- function(
 #' # Check copyrights before using registers
 #' ctrOpenSearchPagesInBrowser(copyright = TRUE)
 #'
+#' ctrOpenSearchPagesInBrowser(url = "status=Ended", register = "CTIS")
+#'
 #' # open all queries loaded into demo collection
 #' dbc <- nodbi::src_sqlite(
 #'    dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
@@ -503,7 +505,8 @@ ctrOpenSearchPagesInBrowser <- function(
       register,
       "EUCTR" = paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?", url),
       "CTGOV" = paste0("https://clinicaltrials.gov/ct2/results?", url),
-      "ISRCTN" = paste0("https://www.isrctn.com/search?", url))
+      "ISRCTN" = paste0("https://www.isrctn.com/search?", url),
+      "CTIS" = paste0("https://euclinicaltrials.eu/app/#/search?", url))
     ctrOpenUrl(url)
     return(url)
   }
@@ -708,6 +711,9 @@ ctrGetQueryUrl <- function(
     # https://euclinicaltrials.eu/ct-public-api-services/services/ct/publiclookup?ageGroupCode=3
     queryterm <- sub(
       "https://euclinicaltrials.eu/ct-public-api-services/services/ct/publiclookup[?]", "", url)
+    # or https://euclinicaltrials.eu/app/#/search?status=Ended
+    queryterm <- sub(
+      "https://euclinicaltrials.eu/app/#/search[?]", "", queryterm)
     # remove unnecessary components
     queryterm <- sub("&?paging=[-,0-9]+", "", queryterm)
     queryterm <- sub("&?sorting=[-a-zA-Z]+", "", queryterm)
