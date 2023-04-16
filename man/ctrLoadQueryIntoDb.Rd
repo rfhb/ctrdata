@@ -145,10 +145,9 @@ ctrLoadQueryIntoDb(
   con = dbc
 )
 
-# Retrieve information on all trials in CTIS
+# Retrieve information on trials in CTIS
 ctrLoadQueryIntoDb(
-  queryterm = "",
-  register = "CTIS",
+  queryterm = "https://euclinicaltrials.eu/app/#/search?status=Ended",
   con = dbc
 )
 

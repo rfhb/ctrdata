@@ -98,6 +98,10 @@ register(s).</p></dd>
 <span class="r-in"><span><span class="co"># Check copyrights before using registers</span></span></span>
 <span class="r-in"><span><span class="fu">ctrOpenSearchPagesInBrowser</span><span class="op">(</span>copyright <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">ctrOpenSearchPagesInBrowser</span><span class="op">(</span>url <span class="op">=</span> <span class="st">"status=Ended"</span>, register <span class="op">=</span> <span class="st">"CTIS"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from CTIS: status=Ended</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "https://euclinicaltrials.eu/app/#/search?status=Ended"</span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># open all queries loaded into demo collection</span></span></span>
 <span class="r-in"><span><span class="va">dbc</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">src_sqlite</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>   dbname <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"demo.sqlite"</span>, package <span class="op">=</span> <span class="st">"ctrdata"</span><span class="op">)</span>,</span></span>

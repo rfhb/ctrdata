@@ -4,6 +4,7 @@
  - adapt dbFindIdsUniqueTrials() to accommodate CTIS
  - keep register names on vector returned by dbFindIdsUniqueTrials()
  - adapt ctrGetQueryUrl() to handle CTIS query URLs
+ - correct dbFindFields() for EUCTR
  
 # ctrdata 1.12.1 (2023-03-29)
  - fix escaping hash symbol in PDF rendition of an help page

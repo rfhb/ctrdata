@@ -1014,7 +1014,7 @@ dbFindFields <- function(namepart = "",
     queries <- list(
       "EUCTR" = c(
         '{"trialInformation.analysisStage.value": {"$regex": ".+"}}',
-        paste0('{"_id": "', rev(allIds[grepl(paste0(regEuctr, "$"), allIds)])[1], '"}')),
+        paste0('{"_id": "', rev(allIds[grepl(paste0("^", regEuctr, "-[3]?[A-Z]{2}$"), allIds)])[1], '"}')),
       "CTGOV" = c(
         '{"results_first_submitted": {"$regex": ".+"}}',
         paste0('{"_id": "', rev(allIds[grepl(regCtgov, allIds)])[1], '"}')),
@@ -2145,7 +2145,7 @@ dfTrials2Long <- function(df) {
     # process row.names to obtain trial id
     "_id" = stringi::stri_extract_first(
       str = row.names(out),
-      regex = c(paste0(regCtgov, "|", regIsrctn, "|", regEuctr, "-[3]?[A-Z]+"))),
+      regex = c(paste0(regCtgov, "|", regIsrctn, "|", regEuctr, "-[3]?[A-Z]{2}"))),
     "identifier" = NA,
     "name" = out[["name"]],
     "value" = out[["value"]],

@@ -31,6 +31,8 @@ Open advanced search pages of register(s), or execute search in browser
 # Check copyrights before using registers
 ctrOpenSearchPagesInBrowser(copyright = TRUE)
 
+ctrOpenSearchPagesInBrowser(url = "status=Ended", register = "CTIS")
+
 # open all queries loaded into demo collection
 dbc <- nodbi::src_sqlite(
    dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
