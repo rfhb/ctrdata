@@ -402,17 +402,17 @@ ctrDb <- function(
 } # end ctrDb
 
 
-#' Open stored query or register search page
+#' Open stored query in register or its search page
 #'
 #' Open advanced search pages of register(s), or execute search in browser
 #'
-#' @param url of search results page to show in the browser.
-#'   Can be the return value of \link{ctrGetQueryUrl} or \link{dbQueryHistory}.
-#'
-#' @param register Register(s) to open. Either "EUCTR" or "CTGOV" or a vector of
-#'   both. Default is to open both registers' advanced search pages. To open the
+#' @param url of search results page to show in the browser. To open the
 #'   browser with a previous search, the output of \link{ctrGetQueryUrl}
-#'   or one row from \link{dbQueryHistory} can be used.
+#'   or \link{dbQueryHistory} can be used. Can be left empty
+#'   to open the advanced search page of the \code{register}.
+#'
+#' @param register Register(s) to open, "EUCTR", "CTGOV", "ISRCTN" or "CTIS".
+#'   Default is to open the advanced search page of the register.
 #'
 #' @param copyright (Optional) If set to \code{TRUE}, opens copyright pages of
 #'   register(s).
@@ -425,17 +425,23 @@ ctrDb <- function(
 #'
 #' @examples
 #'
-#' # Check copyrights before using registers
+#' # Open all and check copyrights before using registers
 #' ctrOpenSearchPagesInBrowser(copyright = TRUE)
 #'
+#' # Open specific register advanced search page
+#' ctrOpenSearchPagesInBrowser(register = "EUCTR")
+#' ctrOpenSearchPagesInBrowser(register = "CTGOV")
+#' ctrOpenSearchPagesInBrowser(register = "ISRCTN")
+#' ctrOpenSearchPagesInBrowser(register = "CTIS")
 #' ctrOpenSearchPagesInBrowser(url = "status=Ended", register = "CTIS")
 #'
-#' # open all queries loaded into demo collection
+#' # Open all queries that were loaded into demo collection
 #' dbc <- nodbi::src_sqlite(
-#'    dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
-#'    collection = "my_trials")
+#'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+#'   collection = "my_trials")
 #'
-#' dbh <- dbQueryHistory(con = dbc)
+#' dbh <- dbQueryHistory(
+#'   con = dbc)
 #'
 #' for (r in seq_len(nrow(dbh))) {
 #'   ctrOpenSearchPagesInBrowser(dbh[r, ])
@@ -501,12 +507,24 @@ ctrOpenSearchPagesInBrowser <- function(
 
   # - open from url and register
   if (is.atomic(url) && url != "" && register != "") {
-    url <- switch(
-      register,
-      "EUCTR" = paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?", url),
-      "CTGOV" = paste0("https://clinicaltrials.gov/ct2/results?", url),
-      "ISRCTN" = paste0("https://www.isrctn.com/search?", url),
-      "CTIS" = paste0("https://euclinicaltrials.eu/app/#/search?", url))
+    url <- switch(register,
+                  "EUCTR" = paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?", url),
+                  "CTGOV" = paste0("https://clinicaltrials.gov/ct2/results?", url),
+                  "ISRCTN" = paste0("https://www.isrctn.com/search?", url),
+                  "CTIS" = paste0("https://euclinicaltrials.eu/app/#/search?", url)
+    )
+    ctrOpenUrl(url)
+    return(url)
+  }
+
+  # - open register
+  if (is.atomic(url) && url == "" && register != "") {
+    url <- switch(register,
+                  "EUCTR" = paste0("https://www.clinicaltrialsregister.eu/ctr-search/search"),
+                  "CTGOV" = paste0("https://clinicaltrials.gov/ct2/results/refine"),
+                  "ISRCTN" = paste0("https://www.isrctn.com/editAdvancedSearch"),
+                  "CTIS" = paste0("https://euclinicaltrials.eu/app/#/search")
+    )
     ctrOpenUrl(url)
     return(url)
   }
