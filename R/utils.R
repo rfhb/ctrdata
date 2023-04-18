@@ -14,6 +14,8 @@ countriesEUCTR <- c(
   "NO", "3RD")
 #
 # regexpr
+# - queryterm and urls
+regQueryterm <- "[^-.a-zA-Z0-9=?+&#%_:\"/, ]"
 # - EudraCT e.g. 2010-022945-52
 regEuctr <- "[0-9]{4}-[0-9]{6}-[0-9]{2}"
 # - CTGOV
@@ -601,7 +603,7 @@ ctrGetQueryUrl <- function(
       silent = TRUE)
     if (inherits(url, "try-error")) url <- ""
     if (is.null(url) || (length(url) != 1L) || (nchar(url) == 0L) ||
-        grepl("[^-a-zA-Z/:_.0-9%#+?=&]", url) ||
+        grepl(regQueryterm, url) ||
         !grepl("^https://", url)) {
       stop("ctrGetQueryUrl(): no clinical trial register ",
            "search URL found in parameter 'url' or in clipboard.",
@@ -731,7 +733,7 @@ ctrGetQueryUrl <- function(
       "https://euclinicaltrials.eu/ct-public-api-services/services/ct/publiclookup[?]", "", url)
     # or https://euclinicaltrials.eu/app/#/search?status=Ended
     queryterm <- sub(
-      "https://euclinicaltrials.eu/app/#/search[?]", "", queryterm)
+      "https://euclinicaltrials.eu/app/#/search[?]?", "", queryterm)
     # remove unnecessary components
     queryterm <- sub("&?paging=[-,0-9]+", "", queryterm)
     queryterm <- sub("&?sorting=[-a-zA-Z]+", "", queryterm)

@@ -2,18 +2,18 @@
 % Please edit documentation in R/utils.R
 \name{ctrOpenSearchPagesInBrowser}
 \alias{ctrOpenSearchPagesInBrowser}
-\title{Open stored query or register search page}
+\title{Open stored query in register or its search page}
 \usage{
 ctrOpenSearchPagesInBrowser(url = "", register = "", copyright = FALSE, ...)
 }
 \arguments{
-\item{url}{of search results page to show in the browser.
-Can be the return value of \link{ctrGetQueryUrl} or \link{dbQueryHistory}.}
-
-\item{register}{Register(s) to open. Either "EUCTR" or "CTGOV" or a vector of
-both. Default is to open both registers' advanced search pages. To open the
+\item{url}{of search results page to show in the browser. To open the
 browser with a previous search, the output of \link{ctrGetQueryUrl}
-or one row from \link{dbQueryHistory} can be used.}
+or \link{dbQueryHistory} can be used. Can be left empty
+to open the advanced search page of the \code{register}.}
+
+\item{register}{Register(s) to open, "EUCTR", "CTGOV", "ISRCTN" or "CTIS".
+Default is to open the advanced search page of the register.}
 
 \item{copyright}{(Optional) If set to \code{TRUE}, opens copyright pages of
 register(s).}
@@ -28,17 +28,23 @@ Open advanced search pages of register(s), or execute search in browser
 }
 \examples{
 
-# Check copyrights before using registers
+# Open all and check copyrights before using registers
 ctrOpenSearchPagesInBrowser(copyright = TRUE)
 
+# Open specific register advanced search page
+ctrOpenSearchPagesInBrowser(register = "EUCTR")
+ctrOpenSearchPagesInBrowser(register = "CTGOV")
+ctrOpenSearchPagesInBrowser(register = "ISRCTN")
+ctrOpenSearchPagesInBrowser(register = "CTIS")
 ctrOpenSearchPagesInBrowser(url = "status=Ended", register = "CTIS")
 
-# open all queries loaded into demo collection
+# Open all queries that were loaded into demo collection
 dbc <- nodbi::src_sqlite(
-   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
-   collection = "my_trials")
+  dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+  collection = "my_trials")
 
-dbh <- dbQueryHistory(con = dbc)
+dbh <- dbQueryHistory(
+  con = dbc)
 
 for (r in seq_len(nrow(dbh))) {
   ctrOpenSearchPagesInBrowser(dbh[r, ])
