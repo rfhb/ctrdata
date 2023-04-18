@@ -839,24 +839,6 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
             paste0('"', ids, '"', collapse = ","), ']}}'),
           fields = '{"_id": 1}')
       }, silent = TRUE)
-      # deleteIds <- try({
-      #   nodbi::docdb_query(
-      #     src = con,
-      #     key = con$collection,
-      #     query = paste0(
-      #       '{"_id": {"$in": [',
-      #       paste0('"', ids, '"', collapse = ","), ']}}'),
-      #     fields = '{"_id": 1}')
-      # }, silent = TRUE)
-      # if (!inherits(deleteIds, "try-error") &&
-      #     length(deleteIds[["_id"]])) {
-      #   nodbi::docdb_delete(
-      #     src = con,
-      #     key = con$collection,
-      #     query = paste0(
-      #       '{"_id": {"$in": [',
-      #       paste0('"', deleteIds[["_id"]], '"', collapse = ","), ']}}'))
-      # }
 
       ## import
       tmp <- try({
