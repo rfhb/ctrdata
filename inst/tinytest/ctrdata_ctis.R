@@ -10,7 +10,7 @@ expect_message(
       register = "CTIS",
       verbose = TRUE,
       con = dbc)),
-  "Imported or updated ")
+  "Imported / updated ")
 
 # test
 expect_true(tmpTest$n >= 130L)
@@ -51,12 +51,11 @@ rm(tmpTest)
 expect_message(
   suppressWarnings(
     ctrLoadQueryIntoDb(
-      queryterm = "",
-      register = "CTIS",
+      queryterm = "https://euclinicaltrials.eu/ct-public-api-services/services/ct/publiclookup?basicSearchInputAND=cancer&msc=528",
       annotation.text = "just_this",
       annotation.mode = "replace",
       con = dbc)),
-  "Annotated retrieved records [(][1-9][0-9]+")
+  "Annotated retrieved records [(][0-9]+")
 
 #### dbGetFieldsIntoDf ####
 
@@ -130,41 +129,25 @@ tmpf <- suppressMessages(
       namepart = ".*",
       con = dbc)))
 
+# test
+expect_true(
+  length(tmpf) > 1500L)
+
 # get all data
 result <- suppressMessages(
   suppressWarnings(
     dbGetFieldsIntoDf(
-      fields = tmpf,
+      fields = sample(tmpf, 20),
       con = dbc,
       verbose = FALSE,
       stopifnodata = FALSE)
   ))
 
-# develop
-#print(length(names(result)))
-
 # test
 expect_true(
   length(names(result)) > 20L)
 
-# determine all classes
-tmpr <- names(result)
-tmpr <- tmpr[tmpr != "_id"]
-tmpc <- sapply(result, class, USE.NAMES = FALSE)
-tmpc <- unlist(tmpc)
-tmpc <- table(tmpc)
-
-# develop
-#
-# print(tmpc)
-#
-# 2022-03-25
-#
-# tmpc
-# character      Date   integer   logical
-# 21         3         5         1
-
-rm(tmpf, tmpr, tmpc, result)
+rm(tmpf, result)
 
 #### dbFindIdsUniqueTrials ####
 

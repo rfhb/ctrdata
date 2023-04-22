@@ -2010,17 +2010,33 @@ ctrLoadQueryIntoDbCtis <- function(
   if (!verbose) on.exit(unlink(tempDir, recursive = TRUE), add = TRUE)
   if (verbose) message("Downloading into ", tempDir)
 
-  ## download 1 - trials list ------------------------------------------------------
+  ## ctis endpoints ---------------------------------------------------------------
+
+  ctisEndpoints <- c(
+    # %s is ctNumber
+    "https://euclinicaltrials.eu/ct-public-api-services/services/ct/publiclookup?&paging=0,-1&%s",
+    "https://euclinicaltrials.eu/ct-public-api-services/services/ct/%s/publicview", # partI and partsII
+    "https://euclinicaltrials.eu/ct-public-api-services/services/ct/%s/publicevents",
+    "https://euclinicaltrials.eu/ct-public-api-services/services/ct/public/%s/summary/list",
+    "https://euclinicaltrials.eu/ct-public-api-services/services/ct/public/%s/layperson/list",
+    "https://euclinicaltrials.eu/ct-public-api-services/services/ct/public/%s/csr/list",
+    "https://euclinicaltrials.eu/ct-public-api-services/services/ct/public/%s/cm/list",
+    "https://euclinicaltrials.eu/ct-public-api-services/services/ct/public/%s/inspections/list"
+    #
+    # %s is entity identifier
+    # "https://euclinicaltrials.eu/ct-public-api-services/services/document/product-group-common/%s/list"
+    # "https://euclinicaltrials.eu/ct-public-api-services/services/document/part1/%s/list"
+    # "https://euclinicaltrials.eu/ct-public-api-services/services/document/part2/%s/list"
+  )
+
+  ## 1 - trials list --------------------------------------------------------------
 
   message("(1/5) Downloading trials list...")
 
-  urls <- paste0(
-    "https://euclinicaltrials.eu/ct-public-api-services/services/ct/publiclookup?",
-    "&paging=0,-1&", # corresponds to "pageInfo":{"offset":0,"limit":-1}
-    queryterm
-  )
+  # corresponds in output to "pageInfo":{"offset":0,"limit":-1}
+  urls <- sprintf(ctisEndpoints[1], queryterm)
 
-  fTrialsJson <- file.path(tempDir, "ctis_trialslist.json")
+  fTrialsJson <- file.path(tempDir, "ctis_add_1.json")
 
   # "HTTP server doesn't seem to support byte ranges. Cannot resume."
   # Note: at this time, this is just a single file to be downloaded
@@ -2028,13 +2044,11 @@ ctrLoadQueryIntoDbCtis <- function(
     curl::multi_download,
     c(urls = list(utils::URLencode(urls)),
       destfiles = list(fTrialsJson),
-      progress = TRUE,
-      timeout = Inf,
+      progress = FALSE, timeout = Inf,
       getOption("httr_config")[["options"]],
       accept_encoding = "gzip,deflate,zstd,br"
     )
   )
-
   if (inherits(tmp, "try-error")) {
     stop("Download from CTIS failed; last error: ", class(tmp), call. = FALSE)
   }
@@ -2054,103 +2068,49 @@ ctrLoadQueryIntoDbCtis <- function(
     ), quote = "\"'"
   )[[1]]
 
-  # # jq to extract trial records
-  # jqString <- paste0(
-  #   # get trial records array
-  #   '.elements[] += { ',
-  #   # add register name
-  #   'ctrname: "CTIS", ',
-  #   # add date and time "Y-m-d H:i:s"
-  #   'record_last_import: "',
-  #   strftime(Sys.time(), "%Y-%m-%d %H:%M:%S"),
-  #   '" }',
-  #   # extract trial records
-  #   ' | .elements | .[] ',
-  #   # add element _id
-  #   '| .["_id"] = .ctNumber',
-  #   # remove backticks ``, \n, \t, "
-  #   ' | walk(if type == "string" then
-  #     gsub("[\\n\\r\\t`\u0002]"; "") else . end) '
-  # )
-  #
-  # # convert trial records' array to ndjson
-  # fTrialsNdjson <- file.path(tempDir, "ctis_trials_.ndjson")
-  # jqr::jq(
-  #   file(fTrialsJson),
-  #   jqString,
-  #   flags = jqr::jq_flags(pretty = FALSE),
-  #   out = fTrialsNdjson
-  # )
+  # convert to ndjson
+  fTrialsNdjson <- file.path(tempDir, "ctis_add_1.ndjson")
+  jqr::jq(
+    file(fTrialsJson),
+    paste0(
+      # extract trial records
+      ' .elements | .[] ',
+      # add element _id
+      '| .["_id"] = .ctNumber',
+      # keep only standardised fields
+      '| del(.id, .ctNumber, .product, .endPoint, .eudraCtInfo, .ctTitle,
+             .eudraCtInfo, .primaryEndPoint, .sponsor, .conditions) '
+    ),
+    flags = jqr::jq_flags(pretty = FALSE),
+    out = fTrialsNdjson
+  )
 
-  # ## download 2 - per trial: applications  -----------------------------------------
-  #
-  # message("(2/5) Downloading and processing trial applications...")
-  #
-  # urls <- paste0(
-  #   "https://euclinicaltrials.eu/ct-public-api-services/services/ct/",
-  #   idsTrials, "/download")
-  #
-  # fApplicationsJson <- function(i) {
-  #   file.path(tempDir, paste0("ctis_trial_application_", i, ".json"))
-  # }
-  #
-  # # "HTTP server doesn't seem to support byte ranges. Cannot resume."
-  # tmp <- do.call(
-  #   curl::multi_download,
-  #   c(urls = list(utils::URLencode(urls)),
-  #     destfiles = list(fApplicationsJson(idsTrials)),
-  #     progress = TRUE,
-  #     timeout = Inf,
-  #     getOption("httr_config")[["options"]],
-  #     accept_encoding = "gzip,deflate,zstd,br"
-  #   )
-  # )
-  #
-  # if (inherits(tmp, "try-error")) {
-  #   stop("Download from CTIS failed; last error: ", class(tmp), call. = FALSE)
-  # }
-  #
-  # # convert applications into ndjson file
-  # fApplicationsNdjson <- file.path(tempDir, "ctis_merged_applications_.ndjson")
-  # unlink(fApplicationsNdjson)
-  # for (fa in tmp[["destfile"]]) {
-  #   cat(
-  #     sub("\"id\":[0-9]+,", "",
-  #     sub("\"ctStatus\":\"[a-zA-Z ]+\",", "",
-  #     sub("\"ctNumber\"", "\"_id\"",
-  #         readLines(fa, warn = FALSE)
-  #     ))),
-  #     file = fApplicationsNdjson,
-  #     append = TRUE,
-  #     sep = "\n")
-  # }
+  # TODO
+  # tools::showNonASCIIfile(fTrialsNdjson)
+  # tmp <- jsonlite::stream_in(file(fTrialsNdjson))
+  # jsonify::from_ndjson(fTrialsNdjson)
 
-  ## download 3 - per trial: partI and partsII -------------------------------------
+  ## 2 - per trial partI and partsII ----------------------------------------------
 
-  message("(3/5) Downloading and processing part I and parts II... (",
+  message("(2/5) Downloading and processing part I and parts II... (",
           "approx. ", length(idsTrials) * 0.15, " Mb)")
 
-  urls <- paste0(
-    "https://euclinicaltrials.eu/ct-public-api-services/services/ct/",
-    idsTrials, "/publicview")
+  urls <- sprintf(ctisEndpoints[2], idsTrials)
 
   fPartIPartsIIJson <- function(i) {
     file.path(tempDir, paste0("ctis_trial_partIpartsII_", i, ".json"))
   }
 
   # "HTTP server doesn't seem to support byte ranges. Cannot resume."
-  # TODO 22 Mb for 155 trials
   tmp <- do.call(
     curl::multi_download,
     c(urls = list(utils::URLencode(urls)),
       destfiles = list(fPartIPartsIIJson(idsTrials)),
-      progress = TRUE,
-      timeout = Inf,
+      progress = TRUE, timeout = Inf,
       getOption("httr_config")[["options"]],
       accept_encoding = "gzip,deflate,zstd,br"
     )
   )
-
   if (inherits(tmp, "try-error")) {
     stop("Download from CTIS failed; last error: ", class(tmp), call. = FALSE)
   }
@@ -2163,18 +2123,14 @@ ctrLoadQueryIntoDbCtis <- function(
   fPartIPartsIINdjson <- file.path(tempDir, "ctis_trials_partIpartsII_.ndjson")
   unlink(fPartIPartsIINdjson)
 
-  # TODO
-  # fa = tmp[["destfile"]][1]
-
-  for (fa in tmp[["destfile"]]) {
-    if (!file.exists(fa)) next
+  for (fn in tmp[["destfile"]]) {
+    if (!file.exists(fn)) next
     cat(
-      # gsub("[\n\r\t`\u0002]", "",
       # files include id, ctNumber and others repeatedly
       # only replace first instance for updating records
       sub("(\"id\":[0-9]+),", importString,
       sub("(\"ctNumber\"):(\"[-0-9]+\"),", '\\1:\\2,"_id":\\2,',
-          readLines(fa, warn = FALSE)
+          readLines(fn, warn = FALSE)
       )), #)
       file = fPartIPartsIINdjson,
       append = TRUE,
@@ -2182,33 +2138,96 @@ ctrLoadQueryIntoDbCtis <- function(
     message(". ", appendLF = FALSE)
   }
 
-  ## import into database from ndjson files ----------------------------------------
+  ## 3 - per trial additional data ----------------------------------------------
+
+  message("\n(3/5) Downloading and processing additional data: ")
+
+  for (e in (3:length(ctisEndpoints))) {
+
+    urls <- sprintf(ctisEndpoints[e], idsTrials)
+    ep <- sub(".+/(.+?)$", "\\1", sub("/list$", "", urls[1]))
+    message(ep, appendLF = FALSE)
+
+    fAddJson <- function(i) {
+      file.path(tempDir, paste0("ctis_add_", e, "_", i, ".json"))
+    }
+
+    # "HTTP server doesn't seem to support byte ranges. Cannot resume."
+    tmp <- do.call(
+      curl::multi_download,
+      c(urls = list(utils::URLencode(urls)),
+        destfiles = list(fAddJson(idsTrials)),
+        progress = FALSE, timeout = Inf,
+        getOption("httr_config")[["options"]],
+        accept_encoding = "gzip,deflate,zstd,br"
+      )
+    )
+    if (inherits(tmp, "try-error")) {
+      stop("Download from CTIS failed; last error: ", class(tmp), call. = FALSE)
+    }
+
+    # convert into ndjson file
+    fAddNdjson <- file.path(tempDir, paste0("ctis_add_", e, ".ndjson"))
+    unlink(fAddNdjson)
+
+    for (fi in seq_len(nrow(tmp))) {
+
+      fn <- tmp[["destfile"]][fi]
+      if (file.size(fn) < 150L) next # sizes 99, 100, 134 byte
+
+      # get data
+      jOut <- readLines(fn, warn = FALSE)
+
+      # remove irrelevant information
+      jOut <- sub('^.*"elements":(.*?)}?$', "\\1", jOut)
+      jOut <- sub('(,?)"showWarning":(false|true)(,?)', "\\3", jOut)
+      jOut <- sub('(,?)"totalSize":[0-9]+(,?)', "\\2", jOut)
+      jOut <- sub('(,?)"pageInfo":[{].+?[}](,?)', "\\2", jOut)
+      if (!nchar(jOut) || jOut == "[]") next
+
+      # reconstruct trial id
+      id <- sub(paste0(".+/(", regCtis, ")/.+"), "\\1", tmp[["url"]][fi])
+
+      # write out into ndjson file
+      cat(
+        paste0(
+          # use endpoint as name for top level element
+          '{"_id":"', id, '","', ep, '":', jOut, '}'),
+        file = fAddNdjson,
+        append = TRUE,
+        sep = "\n")
+
+    }
+
+    message("\b\b")
+
+  }
+
+  ## 4 - import into database -----------------------------------------------------
 
   message("\n(4/5) Importing JSON records into database...")
   if (verbose) message("DEBUG: ", tempDir)
 
+  # TODO nodbi::docdb_delete(dbc, dbc$collection)
+
   # dbCTRLoadJSONFiles operates on pattern = ".+_trials_.*.ndjson"
   imported <- dbCTRLoadJSONFiles(dir = tempDir, con = con, verbose = verbose)
 
-  # TODO
-  # docdb_delete(src = dbc, key = dbc$collection)
-  # nodbi::docdb_create(src = dbc, key = dbc$collection, value = fPartIPartsIINdjson)
-  #
-  # message("\b updating with applications...", appendLF = FALSE)
-  # res <- nodbi::docdb_update(src = con, key = con$collection, query = "", value = fApplicationsNdjson)
-  #
-  # message("\b updating with part I and parts II...", appendLF = FALSE)
-  # res <- nodbi::docdb_update(src = con, key = con$collection, query = "", value = fPartIPartsIINdjson)
+  # iterating over any additional ndjson files
+  resAll <- NULL
+  message("\n(5/5) Updating with additional data: ", appendLF = FALSE)
+  for (f in dir(path = tempDir, pattern = "ctis_add_[1-9]+[0-9]*.ndjson", full.names = TRUE)) {
 
-  # check
-  if (resultsEuNumTrials != imported$n) {
-    warning("Mismatch between number of trial records and applications")
+    message(". ", appendLF = FALSE)
+    res <- nodbi::docdb_update(src = con, key = con$collection, query = "", value = f)
+    resAll <- c(resAll, res)
+
   }
 
   ## inform user on final import outcome
-  message("\n= Imported or updated ",
-          imported$n, " records on ",
-          resultsEuNumTrials, " trial(s)")
+  message("\n= Imported / updated ",
+          paste0(c(imported$n, resAll), collapse = " / "),
+          " records on ", resultsEuNumTrials, " trial(s)")
 
   # return
   return(imported)

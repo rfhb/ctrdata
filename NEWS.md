@@ -1,4 +1,5 @@
 # ctrdata 1.12.9000
+ - complete data from CTIS imported, refactored import from CTIS
  - speed up ctrLoadQueryIntoDb() for CTIS with nodbi >=0.9.2.9000
  - provide Tampermonkey script to extract the URL of a user's query in CTIS 
  - adapt dbFindIdsUniqueTrials() to accommodate CTIS
