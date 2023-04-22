@@ -21,6 +21,7 @@
     "https://www.clinicaltrialsregister.eu/disclaimer.html\n",
     "https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use\n",
     "https://www.isrctn.com/page/faqs#usingISRCTN\n",
+    "https://euclinicaltrials.eu/about-this-website/\n",
     "\n", vTxt[grepl("^Version", vTxt)]
   )
 
