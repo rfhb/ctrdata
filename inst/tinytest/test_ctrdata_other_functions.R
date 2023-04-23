@@ -298,7 +298,8 @@ expect_message(
 
 # test
 expect_equal(
-  ctrOpenSearchPagesInBrowser(tmpTest), q)
+  ctrOpenSearchPagesInBrowser(tmpTest),
+  paste0(q, "#tabs"))
 
 # test
 expect_null(

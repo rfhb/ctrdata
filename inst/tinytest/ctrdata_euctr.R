@@ -697,4 +697,4 @@ expect_equal(
       dbQueryHistory(con = dbc))),
   # opens last query loaded into the database
   paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?",
-         "query=2010-024264-18"))
+         "query=2010-024264-18#tabs"))

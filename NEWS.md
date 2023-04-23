@@ -1,4 +1,4 @@
-# ctrdata 1.12.9000
+# ctrdata 1.13.0 (2023-04-23)
  - data from CTIS is imported more completely
  - adapt other functions to accommodate CTIS
  - provide Tampermonkey script to get the URL of a user's query in a register 
