@@ -20,9 +20,10 @@
 #' \code{register}, a string with query elements of a search URL.
 #' The queryterm is recorded in the \code{collection} for later
 #' use to update records.
-#' If register = "CTIS": The queryterm should be an empty string
-#' to obtain all trial records, all other queryterms are ignored
-#' at the moment.
+#' For "CTIS", the queryterm can be an empty string to obtain
+#' all trial records; for automatically copying the user's
+#' query of a register in a web browser to the clipboard, see
+#' \ifelse{latex}{\out{\href{https://github.com/rfhb/ctrdata\#id_3-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://github.com/rfhb/ctrdata#id_3-script-to-automatically-copy-users-query-from-web-browser}{here}}
 #'
 #' @param register String with abbreviation of register to query,
 #' either "EUCTR", "CTGOV", "ISRCTN" or "CTIS". Not needed
@@ -166,7 +167,7 @@ ctrLoadQueryIntoDb <- function(
          "specified, cannot continue", call. = FALSE)
   }
 
-  ## deduce queryterm and register
+  ## obtain queryterm register --------------------------------------------
 
   # - if not querytoupdate
   if (is.null(querytoupdate)) {
@@ -241,7 +242,7 @@ ctrLoadQueryIntoDb <- function(
   httr::set_config(httr::user_agent(
     paste0("ctrdata/", utils::packageDescription("ctrdata")$Version)))
 
-  ## handle if we need to rerun previous query
+  ## handle querytoupdate -----------------------------------------------------
 
   # initialise variable that is filled if an update is to be made
   queryupdateterm <- ""
@@ -269,14 +270,16 @@ ctrLoadQueryIntoDb <- function(
     #
   } # if querytermtoupdate
 
-  ## system check
+  ## check extra binaries -----------------------------------------------------
+
   if (!only.count) {
 
-    # check binaries
+    # check extra binaries as needed for register
     if (register != "CTIS") {
       message("Checking helper binaries: ", appendLF = FALSE)
       suppressMessages(installCygwinWindowsTest())
-      if (register == "ISRCTN" || register == "CTGOV") testBinaries <- c("php", "phpxml", "phpjson")
+      if (register == "ISRCTN") testBinaries <- c("php", "phpxml", "phpjson")
+      if (register == "CTGOV") testBinaries <- c("php", "phpxml", "phpjson")
       if (register == "EUCTR") testBinaries <- c("sed", "perl")
       if (euctrresults) testBinaries <- c("sed", "perl", "php", "phpxml", "phpjson")
       if (!checkBinary(b = testBinaries)) stop(
@@ -288,6 +291,8 @@ ctrLoadQueryIntoDb <- function(
     con <- ctrDb(con = con)
 
   }
+
+  ## call register function ---------------------------------------------------
 
   ## main function
 
@@ -311,6 +316,8 @@ ctrLoadQueryIntoDb <- function(
     "ISRCTN" = do.call(ctrLoadQueryIntoDbIsrctn, params),
     "CTIS" = do.call(ctrLoadQueryIntoDbCtis, params)
   )
+
+  ## annotate records ---------------------------------------------------------
 
   # add annotations
   if ((annotation.text != "") &
@@ -394,7 +401,7 @@ ctrRerunQuery <- function(
   ## prepare
   failed <- FALSE
 
-  # get history
+  ## handle query history -----------------------------------------------------
   rerunquery <- dbQueryHistory(con = con,
                                verbose = verbose)
 
@@ -464,11 +471,11 @@ ctrRerunQuery <- function(
   ## adapt updating procedure to respective register
   querytermoriginal <- queryterm
 
-  ## mangle parameter only if not forcetoupdate,
-  # which stipulates to just rerun original query
+  # mangle parameter only if not forcetoupdate,
+  # which just returns parameters of original query
   if (!forcetoupdate) {
 
-    # ctgov
+    # ctgov --------------------------------------------------------------------
     if (register == "CTGOV") {
 
       # ctgov:
@@ -508,7 +515,7 @@ ctrRerunQuery <- function(
               "\nLast run: ", initialday)
     } # end ctgov
 
-    # euctr
+    # euctr -------------------------------------------------------------------
     if (register == "EUCTR") {
 
       # euctr: studies added or updated in the last 7 days:
@@ -606,7 +613,7 @@ ctrRerunQuery <- function(
       }
     } # register euctr
 
-    # isrctn
+    # isrctn ------------------------------------------------------------------
     if (register == "ISRCTN") {
 
       # isrctn last edited:
@@ -645,6 +652,20 @@ ctrRerunQuery <- function(
       message("Rerunning query: ", queryterm,
               "\nLast run: ", initialday)
     } # end isrctn
+
+    # ctis ------------------------------------------------------------------
+    if (register == "CTIS") {
+
+      # as of 2023-04-22, the RSS function in the public
+      # interface of CTIS does not seem to be working
+      warning("'querytoupdate=", querytoupdate, "' not possible because no ",
+              "way to implement querying CTIS for recent changes were found ",
+              "thus far. Reverting to normal download. ",
+              call. = FALSE, immediate. = TRUE)
+
+      message("Rerunning query: ", queryterm,
+              "\nLast run: ", initialday)
+    } # end ctis
 
   } # forcetoupdate
 
@@ -763,7 +784,8 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
   # initialise counters
   fc <- length(tempFiles)
 
-  # iterate over files
+  ## iterate ndjson files -----------------------------------------------------------------
+
   retimp <- lapply(
     X = seq_along(tempFiles),
     function(tempFile) {
@@ -788,6 +810,8 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
         "JSON file #: ", tempFile, " / ", fc,
         "                               \r",
         appendLF = FALSE)
+
+      ## existing annotations -------------------------------------------------
 
       # get any annotations, delete
       # existing docs in chunks
@@ -829,6 +853,8 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
       if (is.null(annoDf[["annotation"]]))
         annoDf[["annotation"]] <- rep(NA, length(ids))
 
+      ## delete and import ----------------------------------------------------
+
       # delete any existing records
       try({
         nodbi::docdb_delete(
@@ -851,12 +877,12 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
 
       ## return values for lapply
       if (inherits(tmp, "try-error") || tmp == 0L || tmp != nrow(annoDf)) {
-        idFailed <- c(idFailed, annoDf[ , "_id", drop = TRUE]) # ids,
+        idFailed <- c(idFailed, annoDf[ , "_id", drop = TRUE])
         warning(tempFiles[tempFile], ": ", tmp, call. = FALSE)
       } else {
         nImported <- nImported + tmp
-        idSuccess <- c(idSuccess, annoDf[ , "_id", drop = TRUE]) # ids,
-        idAnnotation <- c(idAnnotation, annoDf[ , "annotation", drop = TRUE]) # ids,
+        idSuccess <- c(idSuccess, annoDf[ , "_id", drop = TRUE])
+        idAnnotation <- c(idAnnotation, annoDf[ , "annotation", drop = TRUE])
       }
 
       # close this file
@@ -1058,6 +1084,8 @@ ctrLoadQueryIntoDbCtgov <- function(
   verbose,
   queryupdateterm) {
 
+  ## ctgov api ----------------------------------------------------------------
+
   # CTGOV standard identifiers
   # updated 2017-07 with revised ctgov website links, e.g.
   # "https://clinicaltrials.gov/ct2/results/download_studies?
@@ -1072,6 +1100,8 @@ ctrLoadQueryIntoDbCtgov <- function(
     queryUSRoot, queryUSType1, "&", queryterm, queryupdateterm)
   #
   if (verbose) message("DEBUG: ", ctgovdownloadcsvurl)
+
+  ## checks -------------------------------------------------------------------
 
   # check number of trials to be downloaded
   ctgovdfirstpageurl <- paste0(
@@ -1121,6 +1151,8 @@ ctrLoadQueryIntoDbCtgov <- function(
          "unintended. Downloading more than 10,000 trials may not be supported ",
          "by the register; consider correcting or splitting queries")
   }
+
+  ## download -----------------------------------------------------------------
 
   ## create empty temporary directory on localhost for
   # downloading from register into temporary directy
@@ -1218,7 +1250,8 @@ ctrLoadQueryIntoDbEuctr <- function(
   # inform user
   message("(1/3) Checking trials in EUCTR:")
 
-  # EUCTR standard identifiers
+  ## euctr api ----------------------------------------------------------------
+
   queryEuRoot  <- "https://www.clinicaltrialsregister.eu/"
   queryEuType1 <- "ctr-search/search?"
   queryEuType3 <- "ctr-search/rest/download/full?"
@@ -1300,6 +1333,8 @@ ctrLoadQueryIntoDbEuctr <- function(
     stop("These are ", resultsEuNumTrials, " (more than 10,000) trials; ",
          "consider correcting or splitting into separate queries")
   }
+
+  ## protocol-related information ---------------------------------------------
 
   # create empty temporary directory on localhost for
   # download from register into temporary directory
@@ -1417,7 +1452,8 @@ ctrLoadQueryIntoDbEuctr <- function(
   ## trials just retrieved and imported
   eudractnumbersimported <- imported$success
 
-  ## results: load also euctr trials results if requested
+  ## result-related information -----------------------------------------------
+
   if (euctrresults) {
 
     # results are available only one-by-one for
@@ -1620,6 +1656,8 @@ ctrLoadQueryIntoDbEuctr <- function(
 
       }) # end import results
 
+    ## result history information ---------------------------------------------
+
     # get result history from result webpage, section Results information
     importedresultshistory <- NULL
     if (euctrresultshistory) {
@@ -1813,6 +1851,8 @@ ctrLoadQueryIntoDbIsrctn <- function(
   verbose,
   queryupdateterm) {
 
+  ## isrctn api ---------------------------------------------------------------
+
   # ISRCTN translation to API v0.4 2021-02-04
   # - limit can be set to arbitrarily high number
   # - no pagination or batching
@@ -1866,7 +1906,8 @@ ctrLoadQueryIntoDbIsrctn <- function(
   # - inform user
   if (verbose) message("DEBUG: apiterm is ", apiterm)
 
-  ## inform user and prepare url for downloading
+  ## checks -------------------------------------------------------------------
+
   message("(1/3) Checking trials in ISRCTN:")
 
   # - check number of trials to be downloaded
@@ -1918,6 +1959,8 @@ ctrLoadQueryIntoDbIsrctn <- function(
          "unintended. Downloading more than 10,000 trials may not be supported ",
          "by the register; consider correcting or splitting queries")
   }
+
+  ## download -----------------------------------------------------------------
 
   ## create empty temporary directory on localhost for
   # downloading from register into temporary directy
@@ -2010,9 +2053,10 @@ ctrLoadQueryIntoDbCtis <- function(
   if (!verbose) on.exit(unlink(tempDir, recursive = TRUE), add = TRUE)
   if (verbose) message("Downloading into ", tempDir)
 
-  ## ctis endpoints ---------------------------------------------------------------
+  ## ctis api -----------------------------------------------------------
 
   ctisEndpoints <- c(
+    #
     # %s is ctNumber
     "https://euclinicaltrials.eu/ct-public-api-services/services/ct/publiclookup?&paging=0,-1&%s",
     "https://euclinicaltrials.eu/ct-public-api-services/services/ct/%s/publicview", # partI and partsII
@@ -2029,7 +2073,7 @@ ctrLoadQueryIntoDbCtis <- function(
     # "https://euclinicaltrials.eu/ct-public-api-services/services/document/part2/%s/list"
   )
 
-  ## 1 - trials list --------------------------------------------------------------
+  ## trials list --------------------------------------------------------------
 
   message("(1/5) Downloading trials list...")
 
@@ -2090,7 +2134,7 @@ ctrLoadQueryIntoDbCtis <- function(
   # tmp <- jsonlite::stream_in(file(fTrialsNdjson))
   # jsonify::from_ndjson(fTrialsNdjson)
 
-  ## 2 - per trial partI and partsII ----------------------------------------------
+  ## per trial partI and partsII ----------------------------------------------
 
   message("(2/5) Downloading and processing part I and parts II... (",
           "approx. ", length(idsTrials) * 0.15, " Mb)")
@@ -2138,7 +2182,7 @@ ctrLoadQueryIntoDbCtis <- function(
     message(". ", appendLF = FALSE)
   }
 
-  ## 3 - per trial additional data ----------------------------------------------
+  ## per trial additional data ----------------------------------------------
 
   message("\n(3/5) Downloading and processing additional data: ")
 
@@ -2203,12 +2247,10 @@ ctrLoadQueryIntoDbCtis <- function(
 
   }
 
-  ## 4 - import into database -----------------------------------------------------
+  ## import into database -----------------------------------------------------
 
   message("\n(4/5) Importing JSON records into database...")
   if (verbose) message("DEBUG: ", tempDir)
-
-  # TODO nodbi::docdb_delete(dbc, dbc$collection)
 
   # dbCTRLoadJSONFiles operates on pattern = ".+_trials_.*.ndjson"
   imported <- dbCTRLoadJSONFiles(dir = tempDir, con = con, verbose = verbose)
