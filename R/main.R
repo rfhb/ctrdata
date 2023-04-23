@@ -1521,9 +1521,12 @@ ctrLoadQueryIntoDbEuctr <- function(
       stop("Download from EUCTR failed; last error: ", class(tmp), call. = FALSE)
     }
 
+    # work only on successful downloads
+    tmp <- tmp[tmp[["status_code"]] == 200L, , drop = FALSE]
+
     # unzip downloaded files and move non-XML extracted files
     tmp <- lapply(
-      fp, function(f) {
+      tmp[["destfile"]], function(f) {
 
         if (file.exists(f) &&
             file.size(f) != 0L) {
@@ -1531,6 +1534,8 @@ ctrLoadQueryIntoDbEuctr <- function(
           tmp <- utils::unzip(
             zipfile = f,
             exdir = tempDir)
+          if (is.null(tmp)) return(NULL)
+
           # results in files such as
           # EU-CTR 2008-003606-33 v1 - Results.xml
           nonXmlFiles <- tmp[!grepl("Results[.]xml$", tmp)]
@@ -2132,7 +2137,7 @@ ctrLoadQueryIntoDbCtis <- function(
   ## per trial partI and partsII ----------------------------------------------
 
   message("(2/5) Downloading and processing part I and parts II... (",
-          "approx. ", length(idsTrials) * 0.15, " Mb)")
+          "estimate: ", length(idsTrials) * 0.15, " Mb)")
 
   urls <- sprintf(ctisEndpoints[2], idsTrials)
 
