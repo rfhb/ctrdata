@@ -544,8 +544,12 @@ ctrOpenSearchPagesInBrowser <- function(
 #'
 #' @param url URL such as from the browser address bar.
 #' If not specified, clipboard contents will be checked for
-#' a suitable URL. Can also contain a query term such as from
-#' \link{dbQueryHistory}()["query-term"]
+#' a suitable URL.
+#' For automatically copying the user's query of a register
+#' in a web browser to the clipboard, see
+#' \ifelse{latex}{\out{\href{https://github.com/rfhb/ctrdata\#3-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://github.com/rfhb/ctrdata#3-script-to-automatically-copy-users-query-from-web-browser}{here}}.
+#' Can also contain a query term such as from
+#' \link{dbQueryHistory}()["query-term"].
 #'
 #' @param register Optional name of register (one of "EUCTR", "CTGOV",
 #' "ISRCTN" or "CTIS") in case url is a query term

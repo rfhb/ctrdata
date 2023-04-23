@@ -32,7 +32,7 @@ use to update records.
 For "CTIS", the queryterm can be an empty string to obtain
 all trial records; for automatically copying the user's
 query of a register in a web browser to the clipboard, see
-\ifelse{latex}{\out{\href{https://github.com/rfhb/ctrdata\#id_3-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://github.com/rfhb/ctrdata#id_3-script-to-automatically-copy-users-query-from-web-browser}{here}}}
+\ifelse{latex}{\out{\href{https://github.com/rfhb/ctrdata\#3-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://github.com/rfhb/ctrdata#3-script-to-automatically-copy-users-query-from-web-browser}{here}}}
 
 \item{register}{String with abbreviation of register to query,
 either "EUCTR", "CTGOV", "ISRCTN" or "CTIS". Not needed

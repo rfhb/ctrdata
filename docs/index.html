@@ -120,7 +120,7 @@
 <li>Protocol- and results-related trial information is easily retrieved (downloaded): Users define a query in a register’s web interface and then use <code>ctrdata</code> to retrieve in one go all trials found and to accumulate information from different registers. Personal annotations can be including during retrieval. Synonyms of an active substance can also be found.</li>
 <li>Retrieved (downloaded) trial information is transformed and stored in a single collection of a document-centric database, for fast and offline access. Uses <code>DuckDB</code>, <code>PostgreSQL</code>, <code>RSQLite</code> or <code>MongoDB</code>, via R package <code>nodbi</code>: see section <a href="#databases-that-can-be-used-with-ctrdata">Databases</a> below. Easily re-run any previous query in a collection to retrieve and update trial records.</li>
 <li>Analyses can be done with <code>R</code> (using convenience functions in <code>ctrdata</code> to identify unique (de-duplicated) trial records across registers, to merge and recode fields as well as to enumerate and provide easy access to deeply-nested fields) and with many other systems.</li>
-<li>🔔Queries in the registers are automatically copied to the clipboard (including for “CTIS”, where the URL does not show the query) using our <a href="https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js" class="external-link">user script</a> with a <a href="https://www.tampermonkey.net/" class="external-link">browser extension</a> NEW since 2023-04-15</li>
+<li>🔔Queries in the registers can be automatically copied to the clipboard (including for “CTIS”, where the URL does not show the query), see <a href="#id_3-script-to-automatically-copy-users-query-from-web-browser">here</a> NEW since 2023-04-15</li>
 </ul>
 <p>Remember to respect the registers’ terms and conditions (see <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>). Please cite this package in any publication as follows: “Ralf Herold (2023). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.12.1, <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a>”.</p>
 <!--
@@ -172,7 +172,7 @@ citation("ctrdata")
 <h3 id="id_3-script-to-automatically-copy-users-query-from-web-browser">3. Script to automatically copy user’s query from web browser<a class="anchor" aria-label="anchor" href="#id_3-script-to-automatically-copy-users-query-from-web-browser"></a>
 </h3>
 <p>This is optional; it works with all registers supported by <code>ctrdata</code> but is recommended for CTIS because the URL in the web browser does not reflect the parameters the user specified for the querying this register.</p>
-<p>In the web browser, install the <a href="https://www.tampermonkey.net/" class="external-link">Tampermonkey browser extension</a>, click on “New user script” and then on “Tools”, then enter into “Import from URL”: <a href="https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js" class="external-link"><code>https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js</code></a> and last click on “Install”.</p>
+<p>In the web browser, install the <a href="https://www.tampermonkey.net/" class="external-link">Tampermonkey browser extension</a>, click on “New user script” and then on “Tools”, then enter into “Import from URL” this URL: <a href="https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js" class="external-link"><code>https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js</code></a> and last click on “Install”.</p>
 <p>The browser extension can be disabled and enabled by the user. When enabled, the URLs to all user’s queries in the registers are now automatically copied to the clipboard and can be pasted into the <code>queryterm=...</code> parameter of function <code><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code>.</p>
 </div>
 </div>
@@ -458,7 +458,7 @@ citation("ctrdata")
 <ul>
 <li>Add records from a fourth register (CTIS) into the same collection</li>
 </ul>
-<p>At this time, there is no URL that can be used in analogy to the other registers for specifying trials of interest. Therefore, all trial records are downloaded (around 150 end March 2023).</p>
+<p>At this time, there is no URL that can be used in analogy to the other registers for specifying trials of interest. Therefore, all trial records are downloaded (more than 150 April 2023).</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Retrieve trials from another register:</span></span>
 <span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
@@ -485,7 +485,41 @@ citation("ctrdata")
 <span><span class="co"># JSON file #: 1 / 1                               </span></span>
 <span><span class="co"># (5/5) Updating with additional data: . . </span></span>
 <span><span class="co"># = Imported / updated 129 / 129 / 2 records on 129 trial(s)</span></span>
-<span><span class="co"># Updated history ("meta-info" in "some_collection_name")</span></span></code></pre></div>
+<span><span class="co"># Updated history ("meta-info" in "some_collection_name")</span></span>
+<span><span class="co"># </span></span>
+<span><span class="va">allFields</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbFindFields.html">dbFindFields</a></span><span class="op">(</span><span class="st">".*"</span>, <span class="va">db</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">allFields</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"CTIS"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">allFields</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="co"># [1] 3052</span></span>
+<span><span class="co"># </span></span>
+<span><span class="va">allFields</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"defer"</span>, <span class="va">allFields</span>, ignore.case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">#                 CTIS </span></span>
+<span><span class="co"># "hasDeferrallApplied"</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># use an alternative to dbGetFieldsIntoDf()</span></span>
+<span><span class="va">allData</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/docdb_query.html" class="external-link">docdb_query</a></span><span class="op">(</span>src <span class="op">=</span> <span class="va">db</span>, key <span class="op">=</span> <span class="va">db</span><span class="op">$</span><span class="va">collection</span>, query <span class="op">=</span> <span class="st">'{"ctrname":"CTIS"}'</span><span class="op">)</span></span>
+<span><span class="co"># names of top-level data items</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">allData</span><span class="op">)</span></span>
+<span><span class="co">#  [1] "_id"                           "ctrname"                      </span></span>
+<span><span class="co">#  [3] "id"                            "record_last_import"           </span></span>
+<span><span class="co">#  [5] "title"                         "ctNumber"                     </span></span>
+<span><span class="co">#  [7] "ctStatus"                      "primarySponsor"               </span></span>
+<span><span class="co">#  [9] "coSponsors"                    "submissionDate"               </span></span>
+<span><span class="co"># [11] "initialApplicationId"          "applications"                 </span></span>
+<span><span class="co"># [13] "memberStatesConcerned"         "eeaStartDate"                 </span></span>
+<span><span class="co"># [15] "trialGlobalEnd"                "trialStartDate"               </span></span>
+<span><span class="co"># [17] "authorizedPartI"               "authorizedPartsII"            </span></span>
+<span><span class="co"># [19] "authorizationDate"             "isRmsTacitAssignment"         </span></span>
+<span><span class="co"># [21] "eudraCtInfo"                   "lastUpdated"                  </span></span>
+<span><span class="co"># [23] "mscTrialNotificationsInfoList" "totalPartIISubjectCount"      </span></span>
+<span><span class="co"># [25] "trialEndDate"                  "eeaEndDate"                   </span></span>
+<span><span class="co"># [27] "trialCountries"                "decisionDate"                 </span></span>
+<span><span class="co"># [29] "therapeuticAreas"              "recruitmentStatus"            </span></span>
+<span><span class="co"># [31] "sponsorType"                   "totalNumberEnrolled"          </span></span>
+<span><span class="co"># [33] "hasDeferrallApplied"           "hasAmendmentApplied"          </span></span>
+<span><span class="co"># [35] "cm"                            "trialPhase"                   </span></span>
+<span><span class="co"># [37] "ageGroup"                      "gender"                       </span></span>
+<span><span class="co"># [39] "startDateEU"                   "endDateEU"                    </span></span>
+<span><span class="co"># [41] "queries" </span></span></code></pre></div>
 <ul>
 <li>Result-related trial information</li>
 </ul>

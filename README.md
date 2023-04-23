@@ -53,7 +53,7 @@ package. This README was reviewed on 2023-04-15 for version 1.12.1.9000.
 - 🔔Queries in the registers can be automatically copied to the
   clipboard (including for “CTIS”, where the URL does not show the
   query), see
-  [here](#id_3-script-to-automatically-copy-users-query-from-web-browser)
+  [here](#3-script-to-automatically-copy-users-query-from-web-browser)
   NEW since 2023-04-15
 
 Remember to respect the registers’ terms and conditions (see
@@ -398,7 +398,7 @@ ctrLoadQueryIntoDb(
 
 At this time, there is no URL that can be used in analogy to the other
 registers for specifying trials of interest. Therefore, all trial
-records are downloaded (around 150 end March 2023).
+records are downloaded (more than 150 April 2023).
 
 ``` r
 # Retrieve trials from another register:
@@ -427,6 +427,40 @@ ctrLoadQueryIntoDb(
 # (5/5) Updating with additional data: . . 
 # = Imported / updated 129 / 129 / 2 records on 129 trial(s)
 # Updated history ("meta-info" in "some_collection_name")
+# 
+allFields <- dbFindFields(".*", db)
+length(allFields[grepl("CTIS", names(allFields))])
+# [1] 3052
+# 
+allFields[grepl("defer", allFields, ignore.case = TRUE)]
+#                 CTIS 
+# "hasDeferrallApplied"
+# 
+# use an alternative to dbGetFieldsIntoDf()
+allData <- nodbi::docdb_query(src = db, key = db$collection, query = '{"ctrname":"CTIS"}')
+# names of top-level data items
+names(allData)
+#  [1] "_id"                           "ctrname"                      
+#  [3] "id"                            "record_last_import"           
+#  [5] "title"                         "ctNumber"                     
+#  [7] "ctStatus"                      "primarySponsor"               
+#  [9] "coSponsors"                    "submissionDate"               
+# [11] "initialApplicationId"          "applications"                 
+# [13] "memberStatesConcerned"         "eeaStartDate"                 
+# [15] "trialGlobalEnd"                "trialStartDate"               
+# [17] "authorizedPartI"               "authorizedPartsII"            
+# [19] "authorizationDate"             "isRmsTacitAssignment"         
+# [21] "eudraCtInfo"                   "lastUpdated"                  
+# [23] "mscTrialNotificationsInfoList" "totalPartIISubjectCount"      
+# [25] "trialEndDate"                  "eeaEndDate"                   
+# [27] "trialCountries"                "decisionDate"                 
+# [29] "therapeuticAreas"              "recruitmentStatus"            
+# [31] "sponsorType"                   "totalNumberEnrolled"          
+# [33] "hasDeferrallApplied"           "hasAmendmentApplied"          
+# [35] "cm"                            "trialPhase"                   
+# [37] "ageGroup"                      "gender"                       
+# [39] "startDateEU"                   "endDateEU"                    
+# [41] "queries" 
 ```
 
 - Result-related trial information

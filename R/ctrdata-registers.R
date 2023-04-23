@@ -15,7 +15,7 @@
 #' started in January 2023, including more than 150 publicly
 #' accessible trials in April 2023. For how a user can specify
 #' a query and get its URL, see
-#' \ifelse{latex}{\out{\href{https://github.com/rfhb/ctrdata\#id_3-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://github.com/rfhb/ctrdata#id_3-script-to-automatically-copy-users-query-from-web-browser}{here}}
+#' \ifelse{latex}{\out{\href{https://github.com/rfhb/ctrdata\#3-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://github.com/rfhb/ctrdata#3-script-to-automatically-copy-users-query-from-web-browser}{here}}
 #'
 #'
 #' | **Material** | **EUCTR** | **CTGOV** | **ISRCTN** | **CTIS** |
