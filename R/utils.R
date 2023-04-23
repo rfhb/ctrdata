@@ -509,11 +509,12 @@ ctrOpenSearchPagesInBrowser <- function(
 
   # - open from url and register
   if (is.atomic(url) && url != "" && register != "") {
-    url <- switch(register,
-                  "EUCTR" = paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?", url),
-                  "CTGOV" = paste0("https://clinicaltrials.gov/ct2/results?", url),
-                  "ISRCTN" = paste0("https://www.isrctn.com/search?", url),
-                  "CTIS" = paste0("https://euclinicaltrials.eu/app/#/search?", url)
+    url <- switch(
+      register,
+      "EUCTR" = paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?", url, "#tabs"),
+      "CTGOV" = paste0("https://clinicaltrials.gov/ct2/results?", url),
+      "ISRCTN" = paste0("https://www.isrctn.com/search?", url),
+      "CTIS" = paste0("https://euclinicaltrials.eu/app/#/search?", url)
     )
     ctrOpenUrl(url)
     return(url)
@@ -521,11 +522,12 @@ ctrOpenSearchPagesInBrowser <- function(
 
   # - open register
   if (is.atomic(url) && url == "" && register != "") {
-    url <- switch(register,
-                  "EUCTR" = paste0("https://www.clinicaltrialsregister.eu/ctr-search/search"),
-                  "CTGOV" = paste0("https://clinicaltrials.gov/ct2/results/refine"),
-                  "ISRCTN" = paste0("https://www.isrctn.com/editAdvancedSearch"),
-                  "CTIS" = paste0("https://euclinicaltrials.eu/app/#/search")
+    url <- switch(
+      register,
+      "EUCTR" = paste0("https://www.clinicaltrialsregister.eu/ctr-search/search"),
+      "CTGOV" = paste0("https://clinicaltrials.gov/ct2/results/refine"),
+      "ISRCTN" = paste0("https://www.isrctn.com/editAdvancedSearch"),
+      "CTIS" = paste0("https://euclinicaltrials.eu/app/#/search")
     )
     ctrOpenUrl(url)
     return(url)
