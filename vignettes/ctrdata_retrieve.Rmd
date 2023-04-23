@@ -175,7 +175,7 @@ The download or presence of results is not recorded in `dbQueryHistory()` becaus
 
 ## Add information from another register
 
-The same collection can be used to store (and analyse) trial information from different registers. At the moment, `ctrdata` supports three registers: https://ClinicalTrials.Gov/, https://ClinicalTrialsRegister.EU/ and https://www.ISRCTN.com/. Example:
+The same collection can be used to store (and analyse) trial information from different registers. At the moment, `ctrdata` supports three registers: https://ClinicalTrials.Gov/, https://ClinicalTrialsRegister.EU/,  https://www.ISRCTN.com/ and https://euclinicaltrials.eu/. Example:
 
 ```{r}
 ctrLoadQueryIntoDb(
@@ -246,6 +246,8 @@ unlink("sqlite_file.sql")
 ## Using a MongoDB database
 
 This example works with a free service [here](https://www.mongodb.com/cloud/atlas). Note that the user name and password need to be encoded. The format of the connection string is documented at https://docs.mongodb.com/manual/reference/connection-string/.
+
+For recommended databases, see vignette [Install R package ctrdata](file:///Users/ralfherold/Daten/mak/r/emea/ctrdata/docs/articles/ctrdata_install.html#databases-to-use).
 
 ```{r remote_mongo}
 

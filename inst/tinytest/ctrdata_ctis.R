@@ -40,6 +40,12 @@ expect_true(suppressWarnings(
     register = "CTIS",
     con = dbc))[["n"]] >= 2L)
 
+# test
+expect_true(suppressWarnings(
+  ctrLoadQueryIntoDb(
+    querytoupdate = "last",
+    con = dbc))[["n"]] >= 2L)
+
 # clean up
 rm(tmpTest)
 

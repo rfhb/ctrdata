@@ -1,7 +1,7 @@
 ---
 title: "Install R package ctrdata"
 author: "Ralf Herold"
-date: 2022-03-20
+date: 2023-04-22
 output:
   rmarkdown::pdf_document:
     toc: true
@@ -94,18 +94,19 @@ The command line tools `perl`, `sed` and `php` (5.2 or higher) may already be av
 
 - In Linux, tools for installation vary by distribution (e.g., `sudo apt install php php-xml php-json`)
 
+- Install script to automatically copy user's query from web browser, see [here](https://github.com/rfhb/ctrdata#id_3-script-to-automatically-copy-users-query-from-web-browser)
+
 ## Databases to use
 
-At this time, a PostgreSQL, an SQLite or a remote or local MongoDB database can be used with the package `ctrdata`. A full SQLite database is provided in the R package [`RSQLite`](https://rsqlite.r-dbi.org/). Suggested installation instructions for PostgreSQL are [here](https://www.postgresql.org/download/) and for a local MongoDB server are [here](https://docs.mongodb.com/manual/administration/install-community/); a remote MongoDB database server is accessible [here](https://www.mongodb.com/cloud/atlas). 
+At this time, a PostgreSQL, DuckDB, an SQLite or a remote or local MongoDB database can be used with the package `ctrdata`. A full SQLite database is provided in the R package [`RSQLite`](https://rsqlite.r-dbi.org/). Suggested installation instructions for PostgreSQL are [here](https://www.postgresql.org/download/) and for a local MongoDB server are [here](https://docs.mongodb.com/manual/administration/install-community/); a remote MongoDB database server is accessible [here](https://www.mongodb.com/cloud/atlas). See [here](https://github.com/ropensci/nodbi#benchmark) for a speed comparison of the databases; recommended: DuckDB, PostgreSQL or MongoDB local server. 
 
-If available, a PostgreSQL or MongoDB local server is recommended for notably faster performance than SQLite. 
-
-Purpose | Function call | Reference
--------------------- | -------------------- | ----------------
-Create SQLite database connection | `dbc <- nodbi::src_sqlite(dbname = "name_of_my_database", collection = "name_of_my_collection")` | `nodbi::src_sqlite()`
-Create PostgreSQL database connection | `dbc <- nodbi::src_postgres(dbname = "name_of_my_database")`; `dbc[["collection"]] <- "name_of_my_collection"`  | `nodbi::src_postgres()`
-Create MongoDB database connection | `dbc <- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")`  | `nodbi::src_mongo()`
-Subsequently, use connection `dbc` with `ctrdata` functions | `ctrdata::{ctr,db}*(con = dbc, ...)` |
+Purpose | Function call
+-------------------- | --------------------
+Create **SQLite** database connection | `dbc <- nodbi::src_sqlite(dbname = "name_of_my_database", collection = "name_of_my_collection")`
+Create **MongoDB** database connection | `dbc <- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")`
+Create **PostgreSQL** database connection | `dbc <- nodbi::src_postgres(dbname = "name_of_my_database"); dbc[["collection"]] <- "name_of_my_collection"`
+Create **DuckDB** database connection | `dbc <- nodbi::src_duckdb(dbname = "name_of_my_database", collection = "name_of_my_collection")`
+Use connection with `ctrdata` functions | `ctrdata::{ctrLoadQueryIntoDb, dbQueryHistory, dbFindIdsUniqueTrials, dbFindFields, dbGetFieldsIntoDf}(con = dbc, ...)`
 
 ## Attach package `ctrdata`
 
@@ -115,4 +116,4 @@ After completing the installation, attach the package from the user's library. T
 library(ctrdata)
 ```
 
-Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: Ralf Herold (2022). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.9.0. https://cran.r-project.org/package=ctrdata
+Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: Ralf Herold (2023). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.12.0. https://cran.r-project.org/package=ctrdata

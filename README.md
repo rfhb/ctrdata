@@ -50,12 +50,11 @@ package. This README was reviewed on 2023-04-15 for version 1.12.1.9000.
   registers, to merge and recode fields as well as to enumerate and
   provide easy access to deeply-nested fields) and with many other
   systems.
-- 🔔Queries in the registers are automatically copied to the clipboard
-  (including for “CTIS”, where the URL does not show the query) using
-  our [user
-  script](https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js)
-  with a [browser extension](https://www.tampermonkey.net/) NEW since
-  2023-04-15
+- 🔔Queries in the registers can be automatically copied to the
+  clipboard (including for “CTIS”, where the URL does not show the
+  query), see
+  [here](#id_3-script-to-automatically-copy-users-query-from-web-browser)
+  NEW since 2023-04-15
 
 Remember to respect the registers’ terms and conditions (see
 `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
@@ -108,15 +107,15 @@ These commands also install the package’s dependencies (`nodbi`,
 ### 2. Command line tools `perl`, `sed` and `php` (5.2 or higher)
 
 These are required for `ctrLoadQueryIntoDb()`, the main function of
-package `ctrdata` (see [Example workflow](#example-workflow)); the
-function also checks if the tools can be used.
+package `ctrdata` (see [Example workflow](#example-workflow)), to with
+the registers EUCTR, CTGOV, ISRCTN (but not CTIS); the function also
+checks if the tools can be used.
 
 - For MS Windows, install [`Cygwin`](https://cygwin.org/install.html):
   In `R`, run `ctrdata::installCygwinWindowsDoInstall()` for an
   automated minimal installation. Alternatively, manually install Cygwin
   with packages `perl`, `php-jsonc` and `php-simplexml` into
-  `c:\cygwin`. The installation needs about 160 MB disk space; no
-  administrator credentials needed.
+  `c:\cygwin`. The installation needs about 160 MB disk space.
 
 - In macOS including 11 Big Sur, these are already installed; as
   alternative and 🔔for macOS 12 Monterey and above,
@@ -125,6 +124,24 @@ function also checks if the tools can be used.
 
 - In Linux, these are usually already installed; tools to install vary
   by distribution (e.g., `sudo apt install php-cli php-xml php-json`).
+
+### 3. Script to automatically copy user’s query from web browser
+
+This is optional; it works with all registers supported by `ctrdata` but
+is recommended for CTIS because the URL in the web browser does not
+reflect the parameters the user specified for the querying this
+register.
+
+In the web browser, install the [Tampermonkey browser
+extension](https://www.tampermonkey.net/), click on “New user script”
+and then on “Tools”, then enter into “Import from URL” this URL:
+[`https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js`](https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js)
+and last click on “Install”.
+
+The browser extension can be disabled and enabled by the user. When
+enabled, the URLs to all user’s queries in the registers are now
+automatically copied to the clipboard and can be pasted into the
+`queryterm=...` parameter of function `ctrLoadQueryIntoDb()`.
 
 ## Overview of functions in `ctrdata`
 
@@ -389,13 +406,26 @@ ctrLoadQueryIntoDb(
   queryterm = "https://euclinicaltrials.eu/ct-public-api-services/services/ct/publiclookup?ageGroupCode=3",
   con = db
 )
-# (1/4) Downloading trials...
-# Download status: 1 done; 0 in progress. Total size: 255.17 Kb (100%)... done!             
-# (2/4) Downloading trial applications...
-# Download status: 125 done; 0 in progress. Total size: 65.41 Kb (100%)... done!             
-# (3/4) Converting to NDJSON...
-# (4/4) Importing JSON records into database... updating with application details                
-# = Imported or updated 125 records on 125 trial(s)
+# * Found search query from CTIS: ageGroupCode=3
+# (1/5) Downloading trials list...
+# (2/5) Downloading and processing part I and parts II... (approx. 19.35 Mb)
+# Download status: 129 done; 0 in progress. Total size: 19.44 Mb (100%)... done!             
+# . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+# . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+# . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+# . . . . . . . . . . . . 
+# (3/5) Downloading and processing additional data: 
+# publicevents
+# summary
+# layperson
+# csr
+# cm
+# inspections
+# 
+# (4/5) Importing JSON records into database...
+# JSON file #: 1 / 1                               
+# (5/5) Updating with additional data: . . 
+# = Imported / updated 129 / 129 / 2 records on 129 trial(s)
 # Updated history ("meta-info" in "some_collection_name")
 ```
 

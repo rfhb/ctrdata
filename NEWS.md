@@ -1,10 +1,9 @@
 # ctrdata 1.12.9000
- - complete data from CTIS imported, refactored import from CTIS
+ - data from CTIS is imported more completely
+ - adapt other functions to accommodate CTIS
+ - provide Tampermonkey script to get the URL of a user's query in a register 
  - speed up ctrLoadQueryIntoDb() for CTIS with nodbi >=0.9.2.9000
- - provide Tampermonkey script to extract the URL of a user's query in CTIS 
- - adapt dbFindIdsUniqueTrials() to accommodate CTIS
  - keep register names on vector returned by dbFindIdsUniqueTrials()
- - adapt ctrGetQueryUrl() to handle CTIS query URLs
  - correct dbFindFields() for EUCTR
  
 # ctrdata 1.12.1 (2023-03-29)

@@ -255,8 +255,8 @@ increases over time.</p>
 </h2>
 <p>The same collection can be used to store (and analyse) trial
 information from different registers. At the moment,
-<code>ctrdata</code> supports three registers: <a href="https://ClinicalTrials.Gov/" class="external-link uri">https://ClinicalTrials.Gov/</a>, <a href="https://ClinicalTrialsRegister.EU/" class="external-link uri">https://ClinicalTrialsRegister.EU/</a> and <a href="https://www.ISRCTN.com/" class="external-link uri">https://www.ISRCTN.com/</a>.
-Example:</p>
+<code>ctrdata</code> supports three registers: <a href="https://ClinicalTrials.Gov/" class="external-link uri">https://ClinicalTrials.Gov/</a>, <a href="https://ClinicalTrialsRegister.EU/" class="external-link uri">https://ClinicalTrialsRegister.EU/</a>, <a href="https://www.ISRCTN.com/" class="external-link uri">https://www.ISRCTN.com/</a>
+and <a href="https://euclinicaltrials.eu/" class="external-link uri">https://euclinicaltrials.eu/</a>. Example:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
 <span>  queryterm <span class="op">=</span> <span class="st">"https://clinicaltrials.gov/ct2/results?cond=neuroblastoma&amp;recrs=e&amp;age=0&amp;intr=Drug"</span>,</span>
@@ -329,6 +329,8 @@ use:</p>
 <p>This example works with a free service <a href="https://www.mongodb.com/cloud/atlas" class="external-link">here</a>. Note that the user
 name and password need to be encoded. The format of the connection
 string is documented at <a href="https://docs.mongodb.com/manual/reference/connection-string/" class="external-link uri">https://docs.mongodb.com/manual/reference/connection-string/</a>.</p>
+<p>For recommended databases, see vignette <a href="file:///Users/ralfherold/Daten/mak/r/emea/ctrdata/docs/articles/ctrdata_install.html#databases-to-use">Install
+R package ctrdata</a>.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Specify base uri for remote MongoDB server,</span></span>
 <span><span class="co">#  as part of the encoded connection string</span></span>

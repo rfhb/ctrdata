@@ -29,9 +29,10 @@ a register, or the data frame returned by the
 \code{register}, a string with query elements of a search URL.
 The queryterm is recorded in the \code{collection} for later
 use to update records.
-If register = "CTIS": The queryterm should be an empty string
-to obtain all trial records, all other queryterms are ignored
-at the moment.}
+For "CTIS", the queryterm can be an empty string to obtain
+all trial records; for automatically copying the user's
+query of a register in a web browser to the clipboard, see
+\ifelse{latex}{\out{\href{https://github.com/rfhb/ctrdata\#id_3-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://github.com/rfhb/ctrdata#id_3-script-to-automatically-copy-users-query-from-web-browser}{here}}}
 
 \item{register}{String with abbreviation of register to query,
 either "EUCTR", "CTGOV", "ISRCTN" or "CTIS". Not needed
