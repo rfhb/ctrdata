@@ -179,15 +179,26 @@ q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
             "2013-003420-37+OR+2009-011454-17+OR+2006-005357-29")
 
 # test
-expect_message(
-  suppressWarnings(
-    ctrLoadQueryIntoDb(
-      queryterm = q,
-      euctrresults = TRUE,
-      euctrresultshistory = TRUE,
-      euctrresultsfilespath = tempdir(),
-      con = dbc)),
-  "Imported or updated results for 3")
+if (!length(dbc$url) || grepl("localhost", dbc$url)) {
+  expect_message(
+    suppressWarnings(
+      ctrLoadQueryIntoDb(
+        queryterm = q,
+        euctrresults = TRUE,
+        euctrresultshistory = TRUE,
+        documents.path = newTempDir(),
+        con = dbc)),
+    "Imported or updated results for 3")
+} else {
+  expect_message(
+    suppressWarnings(
+      ctrLoadQueryIntoDb(
+        queryterm = q,
+        euctrresults = TRUE,
+        euctrresultshistory = TRUE,
+        con = dbc)),
+    "Imported or updated results for 3")
+}
 rm(q)
 
 

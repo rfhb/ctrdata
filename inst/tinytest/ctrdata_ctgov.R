@@ -297,6 +297,22 @@ expect_error(
         con = dbc))),
   "'annotation.mode' incorrect")
 
+#### documents.path ####
+
+if (!length(dbc$url) || grepl("localhost", dbc$url)) {
+  expect_message(
+    suppressWarnings(
+      ctrLoadQueryIntoDb(
+        queryterm = "cond=Neuroblastoma&type=Intr&recrs=e&phase=1&u_prot=Y&u_sap=Y&u_icf=Y",
+        register = "CTGOV",
+        documents.path = newTempDir(),
+        documents.regexp = ".*",
+        con = dbc
+      )),
+    "Newly saved [0-9]+ document"
+  )
+}
+
 #### dbFindFields ####
 
 # test

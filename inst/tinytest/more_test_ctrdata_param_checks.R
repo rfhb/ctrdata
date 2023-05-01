@@ -27,8 +27,8 @@ tf <- function() {
 
   # test
   expect_error(
-      ctrLoadQueryIntoDb(),
-    "either 'queryterm' nor 'querytoupdate' specified")
+    ctrLoadQueryIntoDb(),
+    "does not seem to result")
 
   tmpdf <- iris[1:5, ]
   names(tmpdf) <- paste0("query-", names(tmpdf))
@@ -37,7 +37,7 @@ tf <- function() {
     suppressWarnings(
       ctrLoadQueryIntoDb(
         queryterm = tmpdf)),
-    "'queryterm' has to be a non-empty string")
+    "has to be a non-empty string")
   # test
   expect_error(
     suppressWarnings(

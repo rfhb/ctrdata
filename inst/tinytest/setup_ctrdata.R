@@ -141,3 +141,11 @@ checkMongoRemoteRw <- function() {
   if (out) tmp$con$disconnect()
   out
 }
+
+newTempDir <- function() {
+
+  d <- tempfile()
+  dir.create(d)
+  d
+
+}
