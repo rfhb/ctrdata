@@ -68,10 +68,6 @@
 #'
 #' @param euctrresultsfilespath Deprecated,
 #' use \code{documents.path}
-#' TODO If this is a relative or absolute
-#' path to a  directory that exists or can be created,
-#' save results files into it, e.g., PDF files of result publications
-#' that had been submitted to EUCTR. Default is \code{NULL}.
 #'
 #' @param euctrresultspdfpath Deprecated,
 #' use \code{documents.path}
@@ -1262,15 +1258,10 @@ ctrLoadQueryIntoDbCtgov <- function(
       documents.path <- normalizePath(documents.path, mustWork = TRUE)
       if (createdDir) message("- Created directory ", documents.path)
 
-      # TODO
-      # system2("code-insiders", tempDir)
-
       # get documents urls, file names
       fDocsOut <- file.path(tempDir, "ctgov_docs.ndjson")
       unlink(fDocsOut)
       for (f in dir(path = tempDir, pattern = "ctgov_trials_[0-9]+[.]ndjson", full.names = TRUE)) {
-        # TODO
-        # f = "/private/var/folders/zr/jr1_n41x0z3btntsqdn4gv1h0000gn/T/RtmpzyJNKe/ctrDATA7d1f680c59ea/ctgov_trials_1.ndjson"
         cat(jqr::jq(
           file(f),
           ' { _id: ._id, docs: [ .provided_document_section.provided_document[].document_url ] } ',
@@ -1709,11 +1700,6 @@ ctrLoadQueryIntoDbEuctr <- function(
           if (length(nonXmlFiles)) {
             message("F ", appendLF = FALSE)
             if (documents.path != tempDir) {
-              # TODO
-              # # select nonXmlFiles
-              # if (!is.null(documents.regexp)) {
-              #   nonXmlFiles <- nonXmlFiles[
-              #     grepl(documents.regexp, dlFiles$filename, ignore.case = TRUE)]}
               # move results file(s) to user specified directory
               saved <- try(file.rename(
                 from = nonXmlFiles,
@@ -2267,13 +2253,6 @@ ctrLoadQueryIntoDbCtis <- function(
     # https://euclinicaltrials.eu/ct-public-api-services/services/document/part2/14808/list/?documentType=41
     # https://euclinicaltrials.eu/ct-public-api-services/services/document/considerationDoc/32137/list
     #
-    # TODO delete examples
-    # https://euclinicaltrials.eu/ct-public-api-services/services/document/part1/4433/list?documentType=274 # AR
-    # https://euclinicaltrials.eu/ct-public-api-services/services/document/part2/14808/list/?documentType=43 # auth letter
-    # https://euclinicaltrials.eu/ct-public-api-services/services/document/part2/14808/list/?documentType=42 # ARs
-    # https://euclinicaltrials.eu/ct-public-api-services/services/ct/3577/publicEvaluation # overview
-    # has "considerations": ids such as 32137 as needed for considerationDoc, "partIRfis"
-    # https://euclinicaltrials.eu/ct-public-api-services/services/document/rfi/2891/list
   )
 
   ## add_1: overviews ---------------------------------------------------------
@@ -2281,11 +2260,6 @@ ctrLoadQueryIntoDbCtis <- function(
   # this is for importing overview (recruitment, status etc.) into database
 
   message("(1/5) Downloading trials list", appendLF = FALSE)
-
-  # TODO
-  # queryterm <- "basicSearchInputOR=2022-501537-23-00,%202022-502872-22-00"
-  # queryterm <- "basicSearchInputAND=solidact"
-  # queryterm <- "basicSearchInputOR=2022-500783-35-00"
 
   # corresponds in output to "pageInfo":{"offset":0,"limit":-1}
   urls <- sprintf(ctisEndpoints[1], queryterm)
@@ -2477,8 +2451,6 @@ ctrLoadQueryIntoDbCtis <- function(
 
   idsApplications <- jsonlite::stream_in(file(fApplicationsJson), verbose = FALSE)
 
-  # TODO
-  # r = idsApplications[2,,drop=F]
   dlFiles <- apply(idsApplications, 1, function(r) {
     data.frame(
       "_id" = unlist(r[1], use.names = TRUE), r[-1],
@@ -2538,9 +2510,6 @@ ctrLoadQueryIntoDbCtis <- function(
       paste0(jApps, collapse = ","),
       ']}')
 
-    # TODO
-    if (!jsonlite::validate(jApps)) stop()
-
     # write ndjson
     cat(
       jApps,
@@ -2566,10 +2535,6 @@ ctrLoadQueryIntoDbCtis <- function(
   for (f in dir(path = tempDir, pattern = "ctis_add_[1-9]+[0-9]*.ndjson", full.names = TRUE)) {
 
     message(". ", appendLF = FALSE)
-
-    # TODO
-    # f = fApplicationsNdjson
-
     res <- nodbi::docdb_update(src = con, key = con$collection, query = "", value = f)
     resAll <- c(resAll, res)
 
@@ -2624,31 +2589,20 @@ ctrLoadQueryIntoDbCtis <- function(
         out = downloadsNdjson
       )
 
-      # TODO
-      # sed -n 1p ctis_add_9.ndjson > tmp.json
-
       # extract ids of rfis from publicEvaluation
       rfiIds1 <- jqr::jq(
         file(fApplicationsNdjson),
         '{ _id: ._id, rfis1: [ .publicEvaluation[].partIRfis[].id ]}')
       rfiIds1 <- jsonlite::fromJSON(paste0("[", paste0(rfiIds1, collapse = ","), "]"))
-      # TODO
-      # rfiIds1 <- jsonify::from_ndjson(paste0(rfiIds1, collapse = "\n"))
       rfiIds2 <- jqr::jq(
         file(fApplicationsNdjson),
         '{ _id: ._id, rfis2: [ .publicEvaluation[].partIIEvaluationList[].partIIRfis[].id ]}')
       rfiIds2 <- jsonlite::fromJSON(paste0("[", paste0(rfiIds2, collapse = ","), "]"))
-      # TODO
-      # rfiIds2 <- jsonify::from_ndjson(paste0(rfiIds2, collapse = "\n"))
 
       # convert and merge rfi ids
       dlFiles <- jsonlite::stream_in(file(downloadsNdjson), verbose = FALSE)
       if (nrow(rfiIds1)) dlFiles <- merge(dlFiles, rfiIds1)
       if (nrow(rfiIds2)) dlFiles <- merge(dlFiles, rfiIds2)
-
-      # TODO
-      # names(dlFiles)
-      # View(dlFiles)
 
       epTyp <- list(
         "part1" = ctisEndpoints[11],
@@ -2660,16 +2614,10 @@ ctrLoadQueryIntoDbCtis <- function(
         "rfis" = ctisEndpoints[17]
       )
 
-      # TODO
-      # r = dlFiles[1, , drop = FALSE]
-
       dlFiles <- apply(dlFiles, 1, function(r) {
         tmp <- data.frame(id = unlist(r[-1], use.names = TRUE), r[1],
                           check.names = FALSE, stringsAsFactors = FALSE)
         # if id occurs repeatedly, only use last from defined order
-        # TODO
-        # View(tmp)
-        # sort(unique(tmp$part))
         tmp$part <- sub("[0-9]+$", "", row.names(tmp))
         tmp$part <- ordered(tmp$part, orderedParts)
         tmp$typ <- sub("appl|auth", "", tmp$part)
@@ -2686,11 +2634,6 @@ ctrLoadQueryIntoDbCtis <- function(
       dlFiles <- do.call(rbind, dlFiles)
       dlFiles <- na.omit(dlFiles)
 
-      # TODO
-      # View(dlFiles)
-      # nrow(dlFiles)
-      # nrow(unique(dlFiles))
-
       # do downloads of list files
       message("- Downloading ", nrow(dlFiles),
               " lists with document information (estimate: ",
@@ -2702,12 +2645,6 @@ ctrLoadQueryIntoDbCtis <- function(
 
       dlFiles$destfile <- fFilesListJson(
         dlFiles[["_id"]], dlFiles[["part"]], dlFiles[["id"]])
-
-      # TODO
-      # dlFiles$exists <- file.exists(dlFiles$destfile)
-
-      # TODO
-      # View(dlFiles)
 
       tmp <- do.call(
         curl::multi_download,
@@ -2722,8 +2659,6 @@ ctrLoadQueryIntoDbCtis <- function(
         stop("Download from CTIS failed; last error: ", class(tmp), call. = FALSE)
       }
 
-      # TODO
-      # View(tmp)
       if (sum(tmp$status_code != 200L, na.rm = TRUE)) {
         warning("Could not download these lists with document information: ",
                 paste0(tmp$url[tmp$status_code != 200L], collapse = ", "))
@@ -2784,9 +2719,6 @@ ctrLoadQueryIntoDbCtis <- function(
 
       } # for
 
-      # TODO
-      # system2("code-insiders", tempDir)
-
       # 3 - documents download
       message("- Creating subfolder for each trial")
 
@@ -2804,7 +2736,6 @@ ctrLoadQueryIntoDbCtis <- function(
         dlFiles$part, "_",
         # mangle html entities and special characters
         gsub("&[a-z]+;|[/\\#%&{}$?!'\":<>|=@+.;]", "-_-",  dlFiles$title),
-        #   "_", dlFiles$documentIdentity, # TODO
         ".", dlFiles$fileTypeLabel)
 
       # add destination file directory path
@@ -2822,17 +2753,6 @@ ctrLoadQueryIntoDbCtis <- function(
       # View(dlFiles)
       dlFiles$fileexists <- file.exists(dlFiles$filepathname) &
         file.size(dlFiles$filepathname) > 10L
-
-      # TODO
-      # table(dlFiles$fileexists, exclude = NULL)
-      # names(dlFiles)
-      # View(dlFiles)
-      # dlFiles <- dlFiles[435:445,]
-      # dlFiles <- dlFiles[sample(seq_len(nrow(dlFiles)), 20L),]
-      # table(grepl(documents.regexp, dlFiles$filename, ignore.case = TRUE), exclude = NULL)
-
-      # documents.regexp = NULL
-      # documents.regexp = "protocol|sample|statist|p1ar|p2ars|rfi"
 
       # finally download
 
@@ -2883,10 +2803,6 @@ ctrLoadQueryIntoDbCtis <- function(
           invisible(sapply(
             tmp[tmp$status_code != 200L, "destfile", drop = TRUE], unlink
           ))
-
-          # TODO
-          # system2("open", shQuote(tmp$destfile[
-          #   sample(seq_len(nrow(tmp)), min(nrow(tmp), 4L))]))
 
           tmp <- nrow(tmp[tmp$status_code == 200L, , drop = FALSE])
 
