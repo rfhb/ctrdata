@@ -63,11 +63,7 @@ available history of results publication in "EUCTR."
 This is quite time-consuming. Default is \code{FALSE}.}
 
 \item{euctrresultsfilespath}{Deprecated,
-use \code{documents.path}
-TODO If this is a relative or absolute
-path to a  directory that exists or can be created,
-save results files into it, e.g., PDF files of result publications
-that had been submitted to EUCTR. Default is \code{NULL}.}
+use \code{documents.path}}
 
 \item{euctrresultspdfpath}{Deprecated,
 use \code{documents.path}}

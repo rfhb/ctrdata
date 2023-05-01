@@ -28,7 +28,7 @@ The motivation is to understand trends in design and conduct of trials,
 their availability for patients and their detailled results. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2023-04-23 for version 1.12.2.
+package. This README was reviewed on 2023-05-01 for version 1.13.0.9000.
 
 ## Main features
 
@@ -398,16 +398,14 @@ of April 2023, more than 150 trials are publicly accessible in CTIS.
 # Retrieve trials from another register:
 ctrLoadQueryIntoDb(
   queryterm = "https://euclinicaltrials.eu/ct-public-api-services/services/ct/publiclookup?ageGroupCode=3",
+  documents.path = "./files-ctis", # new since 2023-05-01
   con = db
 )
 # * Found search query from CTIS: ageGroupCode=3
-# (1/5) Downloading trials list...
-# (2/5) Downloading and processing part I and parts II... (approx. 19.35 Mb)
-# Download status: 129 done; 0 in progress. Total size: 19.44 Mb (100%)... done!             
-# . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-# . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-# . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-# . . . . . . . . . . . . 
+# (1/5) Downloading trials list, found 135 trials
+# (2/5) Downloading and processing part I and parts II... (estimate: 20.25 Mb)
+# Download status: 135 done; 0 in progress. Total size: 20.35 Mb (100%)... done!             
+# . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 # (3/5) Downloading and processing additional data: 
 # publicevents
 # summary
@@ -415,20 +413,59 @@ ctrLoadQueryIntoDb(
 # csr
 # cm
 # inspections
-# 
+# publicevaluation 
+# Download status: 213 done; 0 in progress. Total size: 6.24 Mb (100%)... done!             
+# 135
 # (4/5) Importing JSON records into database...
-# JSON file #: 1 / 1                               
-# (5/5) Updating with additional data: . . 
-# = Imported / updated 129 / 129 / 2 records on 129 trial(s)
+# (5/5) Updating with additional data: . . .       
+# Downloading documents into 'documents.path' = ./files-ctis
+# - Created directory /Users/ralfherold/Daten/mak/r/emea/ctrdata/files-ctis
+# - Getting ids of lists with document information
+# - Downloading 1594 lists with document information (estimate: 31.88 Mb)
+# Download status: 1594 done; 0 in progress. Total size: 4.93 Mb (100%)... done!             
+# - Processing document information in 1594 lists
+# - Creating subfolder for each trial
+# - Applying 'documents.regexp' to 1651 documents:
+# - Downloading 380 documents
+# Download status: 380 done; 0 in progress. Total size: 223.96 Mb (100%)... done!             
+# Newly saved 356 document(s) for 116 trial(s) (latest versions only, and 
+# deduplicated if e.g. in applications and authorised parts); 
+# 0 document(s) for 0 trial(s) already existed in ./files-ctis
+# = Imported / updated 135 / 135 / 2 / 135 records on 135 trial(s)
 # Updated history ("meta-info" in "some_collection_name")
+
 
 allFields <- dbFindFields(".*", db)
 length(allFields[grepl("CTIS", names(allFields))])
-# [1] 3052
+# [1] 2690
 
-allFields[grepl("defer", allFields, ignore.case = TRUE)]
-#                 CTIS 
-# "hasDeferrallApplied"
+
+allFields[grepl("defer|consideration$", allFields, ignore.case = TRUE)]
+#                                                                                            CTIS 
+#                                                                           "hasDeferrallApplied" 
+#                                                                                            CTIS 
+# "publicEvaluation.partIIEvaluationList.partIIRfiConsiderations.rfiConsiderations.consideration" 
+#                                                                                            CTIS 
+#                       "publicEvaluation.partIRfiConsiderations.rfiConsiderations.consideration" 
+#                                                                                            CTIS 
+#                  "publicEvaluation.partIRfiConsiderations.rfiConsiderations.part1Consideration" 
+#                                                                                            CTIS 
+#                  "publicEvaluation.validationRfiConsiderations.rfiConsiderations.consideration" 
+#                                                                                            CTIS 
+#             "publicEvaluation.validationRfiConsiderations.rfiConsiderations.part1Consideration"
+
+dbGetFieldsIntoDf("publicEvaluation.partIRfiConsiderations.rfiConsiderations.consideration", db)[1,]
+#               _id    publicEvaluation.partIRfiConsiderations.rfiConsiderations.consideration
+# 2022-500024-30-00    A detailed description of potential protocol deviations for the per-protocol 
+# set is missing on page 63/76 of the protocol and should be added. / Please, also amend the 
+# rationale why the secondary aims are exploratory, considering the study design, sample size,
+# and statistical modeling. / The sample size is based on uncorrected two sided p-value, 
+# ignoring multiplicity. The study will be more realistic by re-calculating what the sample-size 
+# could be, based on the adjusted one-side p-value. Please elaborate your reply. / Sample-size 
+# calculations make sense, except for considering multiplicity adjusted p-value. It is debatable 
+# whether hierarchical testing should be applied in this project since the objectives and 
+# outcomes are not ranked/ordered as hierarchical/sequential.
+
 
 # use an alternative to dbGetFieldsIntoDf()
 allData <- nodbi::docdb_query(src = db, key = db$collection, query = '{"ctrname":"CTIS"}')
@@ -451,10 +488,13 @@ names(allData)
 # [29] "therapeuticAreas"              "recruitmentStatus"            
 # [31] "sponsorType"                   "totalNumberEnrolled"          
 # [33] "hasDeferrallApplied"           "hasAmendmentApplied"          
-# [35] "cm"                            "trialPhase"                   
-# [37] "ageGroup"                      "gender"                       
-# [39] "startDateEU"                   "endDateEU"                    
-# [41] "queries" 
+# [35] "cm"                            "publicEvaluation"             
+# [37] "trialPhase"                    "ageGroup"                     
+# [39] "gender"                        "startDateEU"                  
+# [41] "endDateEU" 
+# 
+format(object.size(allData), "MB")
+# [1] "111.9 Mb"
 ```
 
 - Result-related trial information
@@ -560,24 +600,20 @@ alt="Neuroblastoma trials" />
   into a local folder `./files/`
 
 ``` r
-# eudract files are downloaded as part of results
+# euctr files are downloaded as part of results
 ctrLoadQueryIntoDb(
   queryterm = q,
   euctrresults = TRUE,
-  euctrresultspdfpath = "./files/",
+  documents.path = "./files-euctr/",
   con = db
 )
 
-# ctgov files can separately be downloaded
-sapply(
-  unlist(strsplit(
-    dbGetFieldsIntoDf(
-      fields = "provided_document_section.provided_document.document_url",
-      con = db
-    )[[2]],
-    split = " / "
-  )),
-  function(f) download.file(f, paste0("./files/", gsub("[/:]", "-", f)))
+# ctgov files (integrated since 2023-05-01)
+ctrLoadQueryIntoDb(
+  queryterm = "cond=Neuroblastoma&type=Intr&recrs=e&phase=1&u_prot=Y&u_sap=Y&u_icf=Y",
+  register = "CTGOV",
+  documents.path = "./files-ctgov/",
+  con = db
 )
 ```
 

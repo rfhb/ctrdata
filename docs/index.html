@@ -112,7 +112,7 @@
 <li>ISRCTN (<a href="https://www.isrctn.com/" class="external-link uri">https://www.isrctn.com/</a>)</li>
 <li>EU Clinical Trials Information System (“CTIS”, <a href="https://euclinicaltrials.eu/" class="external-link uri">https://euclinicaltrials.eu/</a>) 🔔 NEW since 2023-03-25 (see <a href="#workflow-ctis-example">example</a>) in workflow below</li>
 </ul>
-<p>The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-04-23 for version 1.12.2.</p>
+<p>The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-05-01 for version 1.13.0.9000.</p>
 <div class="section level2">
 <h2 id="main-features">Main features<a class="anchor" aria-label="anchor" href="#main-features"></a>
 </h2>
@@ -456,16 +456,14 @@ citation("ctrdata")
 <code class="sourceCode R"><span><span class="co"># Retrieve trials from another register:</span></span>
 <span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
 <span>  queryterm <span class="op">=</span> <span class="st">"https://euclinicaltrials.eu/ct-public-api-services/services/ct/publiclookup?ageGroupCode=3"</span>,</span>
+<span>  documents.path <span class="op">=</span> <span class="st">"./files-ctis"</span>, <span class="co"># new since 2023-05-01</span></span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># * Found search query from CTIS: ageGroupCode=3</span></span>
-<span><span class="co"># (1/5) Downloading trials list...</span></span>
-<span><span class="co"># (2/5) Downloading and processing part I and parts II... (approx. 19.35 Mb)</span></span>
-<span><span class="co"># Download status: 129 done; 0 in progress. Total size: 19.44 Mb (100%)... done!             </span></span>
-<span><span class="co"># . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . </span></span>
-<span><span class="co"># . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .</span></span>
-<span><span class="co"># . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . </span></span>
-<span><span class="co"># . . . . . . . . . . . . </span></span>
+<span><span class="co"># (1/5) Downloading trials list, found 135 trials</span></span>
+<span><span class="co"># (2/5) Downloading and processing part I and parts II... (estimate: 20.25 Mb)</span></span>
+<span><span class="co"># Download status: 135 done; 0 in progress. Total size: 20.35 Mb (100%)... done!             </span></span>
+<span><span class="co"># . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . </span></span>
 <span><span class="co"># (3/5) Downloading and processing additional data: </span></span>
 <span><span class="co"># publicevents</span></span>
 <span><span class="co"># summary</span></span>
@@ -473,20 +471,59 @@ citation("ctrdata")
 <span><span class="co"># csr</span></span>
 <span><span class="co"># cm</span></span>
 <span><span class="co"># inspections</span></span>
-<span><span class="co"># </span></span>
+<span><span class="co"># publicevaluation </span></span>
+<span><span class="co"># Download status: 213 done; 0 in progress. Total size: 6.24 Mb (100%)... done!             </span></span>
+<span><span class="co"># 135</span></span>
 <span><span class="co"># (4/5) Importing JSON records into database...</span></span>
-<span><span class="co"># JSON file #: 1 / 1                               </span></span>
-<span><span class="co"># (5/5) Updating with additional data: . . </span></span>
-<span><span class="co"># = Imported / updated 129 / 129 / 2 records on 129 trial(s)</span></span>
+<span><span class="co"># (5/5) Updating with additional data: . . .       </span></span>
+<span><span class="co"># Downloading documents into 'documents.path' = ./files-ctis</span></span>
+<span><span class="co"># - Created directory /Users/ralfherold/Daten/mak/r/emea/ctrdata/files-ctis</span></span>
+<span><span class="co"># - Getting ids of lists with document information</span></span>
+<span><span class="co"># - Downloading 1594 lists with document information (estimate: 31.88 Mb)</span></span>
+<span><span class="co"># Download status: 1594 done; 0 in progress. Total size: 4.93 Mb (100%)... done!             </span></span>
+<span><span class="co"># - Processing document information in 1594 lists</span></span>
+<span><span class="co"># - Creating subfolder for each trial</span></span>
+<span><span class="co"># - Applying 'documents.regexp' to 1651 documents:</span></span>
+<span><span class="co"># - Downloading 380 documents</span></span>
+<span><span class="co"># Download status: 380 done; 0 in progress. Total size: 223.96 Mb (100%)... done!             </span></span>
+<span><span class="co"># Newly saved 356 document(s) for 116 trial(s) (latest versions only, and </span></span>
+<span><span class="co"># deduplicated if e.g. in applications and authorised parts); </span></span>
+<span><span class="co"># 0 document(s) for 0 trial(s) already existed in ./files-ctis</span></span>
+<span><span class="co"># = Imported / updated 135 / 135 / 2 / 135 records on 135 trial(s)</span></span>
 <span><span class="co"># Updated history ("meta-info" in "some_collection_name")</span></span>
+<span></span>
 <span></span>
 <span><span class="va">allFields</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbFindFields.html">dbFindFields</a></span><span class="op">(</span><span class="st">".*"</span>, <span class="va">db</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">allFields</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"CTIS"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">allFields</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co"># [1] 3052</span></span>
+<span><span class="co"># [1] 2690</span></span>
 <span></span>
-<span><span class="va">allFields</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"defer"</span>, <span class="va">allFields</span>, ignore.case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="co">#                 CTIS </span></span>
-<span><span class="co"># "hasDeferrallApplied"</span></span>
+<span></span>
+<span><span class="va">allFields</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"defer|consideration$"</span>, <span class="va">allFields</span>, ignore.case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">#                                                                                            CTIS </span></span>
+<span><span class="co">#                                                                           "hasDeferrallApplied" </span></span>
+<span><span class="co">#                                                                                            CTIS </span></span>
+<span><span class="co"># "publicEvaluation.partIIEvaluationList.partIIRfiConsiderations.rfiConsiderations.consideration" </span></span>
+<span><span class="co">#                                                                                            CTIS </span></span>
+<span><span class="co">#                       "publicEvaluation.partIRfiConsiderations.rfiConsiderations.consideration" </span></span>
+<span><span class="co">#                                                                                            CTIS </span></span>
+<span><span class="co">#                  "publicEvaluation.partIRfiConsiderations.rfiConsiderations.part1Consideration" </span></span>
+<span><span class="co">#                                                                                            CTIS </span></span>
+<span><span class="co">#                  "publicEvaluation.validationRfiConsiderations.rfiConsiderations.consideration" </span></span>
+<span><span class="co">#                                                                                            CTIS </span></span>
+<span><span class="co">#             "publicEvaluation.validationRfiConsiderations.rfiConsiderations.part1Consideration"</span></span>
+<span></span>
+<span><span class="fu"><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span><span class="st">"publicEvaluation.partIRfiConsiderations.rfiConsiderations.consideration"</span>, <span class="va">db</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span></span>
+<span><span class="co">#               _id    publicEvaluation.partIRfiConsiderations.rfiConsiderations.consideration</span></span>
+<span><span class="co"># 2022-500024-30-00    A detailed description of potential protocol deviations for the per-protocol </span></span>
+<span><span class="co"># set is missing on page 63/76 of the protocol and should be added. / Please, also amend the </span></span>
+<span><span class="co"># rationale why the secondary aims are exploratory, considering the study design, sample size,</span></span>
+<span><span class="co"># and statistical modeling. / The sample size is based on uncorrected two sided p-value, </span></span>
+<span><span class="co"># ignoring multiplicity. The study will be more realistic by re-calculating what the sample-size </span></span>
+<span><span class="co"># could be, based on the adjusted one-side p-value. Please elaborate your reply. / Sample-size </span></span>
+<span><span class="co"># calculations make sense, except for considering multiplicity adjusted p-value. It is debatable </span></span>
+<span><span class="co"># whether hierarchical testing should be applied in this project since the objectives and </span></span>
+<span><span class="co"># outcomes are not ranked/ordered as hierarchical/sequential.</span></span>
+<span></span>
 <span></span>
 <span><span class="co"># use an alternative to dbGetFieldsIntoDf()</span></span>
 <span><span class="va">allData</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/docdb_query.html" class="external-link">docdb_query</a></span><span class="op">(</span>src <span class="op">=</span> <span class="va">db</span>, key <span class="op">=</span> <span class="va">db</span><span class="op">$</span><span class="va">collection</span>, query <span class="op">=</span> <span class="st">'{"ctrname":"CTIS"}'</span><span class="op">)</span></span>
@@ -509,10 +546,13 @@ citation("ctrdata")
 <span><span class="co"># [29] "therapeuticAreas"              "recruitmentStatus"            </span></span>
 <span><span class="co"># [31] "sponsorType"                   "totalNumberEnrolled"          </span></span>
 <span><span class="co"># [33] "hasDeferrallApplied"           "hasAmendmentApplied"          </span></span>
-<span><span class="co"># [35] "cm"                            "trialPhase"                   </span></span>
-<span><span class="co"># [37] "ageGroup"                      "gender"                       </span></span>
-<span><span class="co"># [39] "startDateEU"                   "endDateEU"                    </span></span>
-<span><span class="co"># [41] "queries" </span></span></code></pre></div>
+<span><span class="co"># [35] "cm"                            "publicEvaluation"             </span></span>
+<span><span class="co"># [37] "trialPhase"                    "ageGroup"                     </span></span>
+<span><span class="co"># [39] "gender"                        "startDateEU"                  </span></span>
+<span><span class="co"># [41] "endDateEU" </span></span>
+<span><span class="co"># </span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/object.size.html" class="external-link">object.size</a></span><span class="op">(</span><span class="va">allData</span><span class="op">)</span>, <span class="st">"MB"</span><span class="op">)</span></span>
+<span><span class="co"># [1] "111.9 Mb"</span></span></code></pre></div>
 <ul>
 <li>Result-related trial information</li>
 </ul>
@@ -610,24 +650,20 @@ Neuroblastoma trials
 </li>
 </ul>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># eudract files are downloaded as part of results</span></span>
+<code class="sourceCode R"><span><span class="co"># euctr files are downloaded as part of results</span></span>
 <span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
 <span>  queryterm <span class="op">=</span> <span class="va">q</span>,</span>
 <span>  euctrresults <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  euctrresultspdfpath <span class="op">=</span> <span class="st">"./files/"</span>,</span>
+<span>  documents.path <span class="op">=</span> <span class="st">"./files-euctr/"</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># ctgov files can separately be downloaded</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/strsplit.html" class="external-link">strsplit</a></span><span class="op">(</span></span>
-<span>    <span class="fu"><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span>
-<span>      fields <span class="op">=</span> <span class="st">"provided_document_section.provided_document.document_url"</span>,</span>
-<span>      con <span class="op">=</span> <span class="va">db</span></span>
-<span>    <span class="op">)</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>,</span>
-<span>    split <span class="op">=</span> <span class="st">" / "</span></span>
-<span>  <span class="op">)</span><span class="op">)</span>,</span>
-<span>  <span class="kw">function</span><span class="op">(</span><span class="va">f</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/download.file.html" class="external-link">download.file</a></span><span class="op">(</span><span class="va">f</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"./files/"</span>, <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"[/:]"</span>, <span class="st">"-"</span>, <span class="va">f</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># ctgov files (integrated since 2023-05-01)</span></span>
+<span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
+<span>  queryterm <span class="op">=</span> <span class="st">"cond=Neuroblastoma&amp;type=Intr&amp;recrs=e&amp;phase=1&amp;u_prot=Y&amp;u_sap=Y&amp;u_icf=Y"</span>,</span>
+<span>  register <span class="op">=</span> <span class="st">"CTGOV"</span>,</span>
+<span>  documents.path <span class="op">=</span> <span class="st">"./files-ctgov/"</span>,</span>
+<span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">

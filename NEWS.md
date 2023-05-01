@@ -1,6 +1,9 @@
 # ctrdata 1.13.9000 (2023-05-01)
  - new development version
  - load more CTIS data (publicEvaluation) and download documents
+ - integrate documents downloading into ctrLoadQueryIntoDb() also for CTGOV
+ - use documents.path for CTGOV, EUCTR, CTIS; deprecated euctrresultsfilespath
+ - added documents.regexp to select documents for downloading based on their file name
  
 # ctrdata 1.13.0 (2023-04-23)
  - data from CTIS is imported more completely
