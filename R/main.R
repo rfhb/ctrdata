@@ -159,10 +159,10 @@ ctrLoadQueryIntoDb <- function(
   forcetoupdate = FALSE,
   euctrresults = FALSE,
   euctrresultshistory = FALSE,
-  euctrresultsfilespath = euctrresultspdfpath,
+  euctrresultsfilespath = NULL,
   euctrresultspdfpath = NULL,
   documents.path = NULL,
-  documents.regexp = "protocol|sample|statist|p1ar|p2ars|ctaletter",
+  documents.regexp = "prot|sample|statist|_sap_|p1ar|p2ars|ctaletter",
   annotation.text = "",
   annotation.mode = "append",
   parallelretrievals = NULL,
@@ -175,7 +175,11 @@ ctrLoadQueryIntoDb <- function(
   # - deprecated
   if (!is.null(euctrresultspdfpath)) {
     warning("Parameter 'euctrresultspdfpath' is deprecated, ",
-            "use euctrresultsfilespath", call. = FALSE)
+            "use 'documents.path'", call. = FALSE)
+  }
+  if (!is.null(euctrresultsfilespath)) {
+    warning("Parameter 'euctrresultsfilespath' is deprecated, ",
+            "use 'documents.path'", call. = FALSE)
   }
   if (!missing("parallelretrievals")) {
     warning("Parameter 'parallelretrievals' is deprecated and ignored")
@@ -1091,10 +1095,11 @@ dbCTRUpdateQueryHistory <- function(
 #' @keywords internal
 #' @noRd
 #'
-#' @importFrom jsonlite toJSON
+#' @importFrom jsonlite toJSON stream_in
 #' @importFrom httr content GET status_code config
 #' @importFrom nodbi docdb_query
 #' @importFrom curl multi_download
+#' @importFrom jqr jq jq_flags
 #'
 ctrLoadQueryIntoDbCtgov <- function(
   queryterm = queryterm,
@@ -1138,14 +1143,15 @@ ctrLoadQueryIntoDbCtgov <- function(
     url = utils::URLencode(ctgovdfirstpageurl),
     httr::config(forbid_reuse = 1)),
     silent = TRUE)
-  # save request options
-  requestOptions <- tmp$request$options
   #
   if (inherits(tmp, "try-error") ||
       !any(httr::status_code(tmp) == c(200L, 404L))) {
     stop("Host ", queryUSRoot, " not working as expected, ",
          "cannot continue: ", tmp[[1]], call. = FALSE)
   }
+  #
+  # save request options
+  requestOptions <- tmp$request$options
   #
   tmp <- httr::content(tmp, as = "text")
   tmp <- sub(".*[> ](.*?) Stud(y|ies) found for: .*", "\\1", tmp)
@@ -1189,7 +1195,7 @@ ctrLoadQueryIntoDbCtgov <- function(
   if (!verbose) on.exit(unlink(tempDir, recursive = TRUE), add = TRUE)
 
   # prepare a file handle for temporary directory
-  f <- paste0(tempDir, "/", "ctgov.zip")
+  f <- file.path(tempDir, "ctgov.zip")
 
   # inform user
   message("Downloading trials ", appendLF = FALSE)
@@ -1222,7 +1228,7 @@ ctrLoadQueryIntoDbCtgov <- function(
   utils::unzip(f, exdir = tempDir)
 
   ## run conversion
-  ctrConvertToJSON(tempDir, "ctgov2ndjson.php", verbose)
+  tmp <- ctrConvertToJSON(tempDir, "ctgov2ndjson.php", verbose)
 
   ## run import
   message("(3/3) Importing JSON records into database...")
@@ -1233,6 +1239,134 @@ ctrLoadQueryIntoDbCtgov <- function(
 
   ## find out number of trials imported into database
   message("= Imported or updated ", imported$n, " trial(s)")
+
+
+  ## documents -----------------------------------------------------------------
+
+  ## save any documents
+  if (!is.null(documents.path)) {
+
+    # check and create directory
+    createdDir <- try(
+      dir.create(documents.path, recursive = TRUE, showWarnings = FALSE),
+      silent = TRUE)
+    if (inherits(createdDir, "try-errror")) {
+      warning("Directory could not be created for 'documents.path' ",
+              documents.path, ", cannot download files", call. = FALSE)
+    } else {
+
+      # continue after if
+      message("Downloading documents into 'documents.path' = ", documents.path)
+
+      # canonical directory path
+      documents.path <- normalizePath(documents.path, mustWork = TRUE)
+      if (createdDir) message("- Created directory ", documents.path)
+
+      # TODO
+      # system2("code-insiders", tempDir)
+
+      # get documents urls, file names
+      fDocsOut <- file.path(tempDir, "ctgov_docs.ndjson")
+      unlink(fDocsOut)
+      for (f in dir(path = tempDir, pattern = "ctgov_trials_[0-9]+[.]ndjson", full.names = TRUE)) {
+        # TODO
+        # f = "/private/var/folders/zr/jr1_n41x0z3btntsqdn4gv1h0000gn/T/RtmpzyJNKe/ctrDATA7d1f680c59ea/ctgov_trials_1.ndjson"
+        cat(jqr::jq(
+          file(f),
+          ' { _id: ._id, docs: [ .provided_document_section.provided_document[].document_url ] } ',
+        flags = jqr::jq_flags(pretty = FALSE)
+        ), sep = "\n",
+        file = fDocsOut
+        )
+      }
+
+      # create directory per trial
+      dlFiles <- jsonlite::stream_in(file(fDocsOut), verbose = FALSE)
+      invisible(sapply(
+        dlFiles[["_id"]], function(i) {
+          d <- file.path(documents.path, i)
+          if (!dir.exists(d))
+          dir.create(d, showWarnings = FALSE, recursive = TRUE)
+      }))
+
+      # create data frame with file info
+      # r = fDocsOut[1, , drop = FALSE]
+      dlFiles <- apply(dlFiles, 1, function(r) {
+        data.frame(url = unlist(r[-1], use.names = TRUE), r[1],
+                   check.names = FALSE, stringsAsFactors = FALSE)
+      })
+      dlFiles <- do.call(rbind, dlFiles)
+      dlFiles$filename <- sub("^.+/(.+?)$", "\\1", dlFiles$url)
+      dlFiles$destfile <- file.path(
+        documents.path, dlFiles$`_id`, dlFiles$filename)
+      dlFiles$exists <- file.exists(dlFiles$destfile) &
+        file.size(dlFiles$destfile) > 10L
+
+      if (is.null(documents.regexp)) {
+
+        message("Creating empty document placeholders (max. ", nrow(dlFiles), ")")
+
+        # create empty files
+        tmp <-
+          sapply(
+            dlFiles$destfile,
+            function(i) if (!file.exists(i))
+              file.create(i, showWarnings = TRUE),
+            USE.NAMES = FALSE)
+
+        tmp <- sum(unlist(tmp), na.rm = TRUE)
+
+      } else {
+
+        message("Applying 'documents.regexp' to ",
+                nrow(dlFiles), " documents")
+        dlFiles <- dlFiles[
+          grepl(documents.regexp, dlFiles$filename, ignore.case = TRUE), ,
+          drop = FALSE]
+
+        # download and save
+        message("Downloading ", nrow(dlFiles), " documents:")
+
+        tmp <- do.call(
+          curl::multi_download,
+          c(urls = list(utils::URLencode(dlFiles$url[!dlFiles$exists])),
+            destfiles = list(dlFiles$destfile[!dlFiles$exists]),
+            progress = TRUE, timeout = Inf,
+            getOption("httr_config")[["options"]],
+            accept_encoding = "gzip,deflate,zstd,br"
+          )
+        )
+        if (inherits(tmp, "try-error")) {
+          stop("Download from CTGOV failed; last error: ", class(tmp), call. = FALSE)
+        }
+        if (!nrow(tmp)) tmp <- 0L else {
+
+          # handle failures despite success is true
+          invisible(sapply(
+            tmp[tmp$status_code != 200L, "destfile", drop = TRUE], unlink
+          ))
+
+          tmp <- nrow(tmp[tmp$status_code == 200L, , drop = FALSE])
+
+        }
+
+      } # if documents.regexp
+
+      message(sprintf(paste0(
+        "Newly saved %i ",
+        ifelse(is.null(documents.regexp), "placeholder ", ""),
+        "document(s) for %i trial(s); ",
+        "%i document(s) for %i trial(s) already existed in %s"),
+        tmp,
+        length(unique(dlFiles$`_id`)),
+        sum(dlFiles$fileexists),
+        length(unique(dlFiles$`_id`[dlFiles$fileexists])),
+        documents.path
+      ))
+
+    } # if documents.path available
+
+  } # if documents.path
 
   # return
   return(imported)
@@ -1373,25 +1507,25 @@ ctrLoadQueryIntoDbEuctr <- function(
   if (!verbose) on.exit(unlink(tempDir, recursive = TRUE), add = TRUE)
 
   # check results parameters
-  if (is.null(euctrresultsfilespath)) {
-    euctrresultsfilespath <- tempDir
+  if (is.null(documents.path)) {
+    documents.path <- tempDir
   }
   if (euctrresults &&
-      (is.na(file.info(euctrresultsfilespath)[["isdir"]]) ||
-       !file.info(euctrresultsfilespath)[["isdir"]])) {
+      (is.na(file.info(documents.path)[["isdir"]]) ||
+       !file.info(documents.path)[["isdir"]])) {
     createdDir <- try(
-      dir.create(euctrresultsfilespath, recursive = TRUE, showWarnings = FALSE),
+      dir.create(documents.path, recursive = TRUE, showWarnings = FALSE),
       silent = TRUE)
     if (!inherits(createdDir, "try-errror") && createdDir) {
-      message("Created directory ", euctrresultsfilespath)
+      message("Created directory ", documents.path)
     } else {
-      warning("Directory could not be created for 'euctrresultsfilespath' ",
-              euctrresultsfilespath, ", ignored", call. = FALSE)
-      euctrresultsfilespath <- tempDir
+      warning("Directory could not be created for 'documents.path' ",
+              documents.path, ", ignored", call. = FALSE)
+      documents.path <- tempDir
     }
   }
   # canonical directory path
-  euctrresultsfilespath <- normalizePath(euctrresultsfilespath, mustWork = TRUE)
+  documents.path <- normalizePath(documents.path, mustWork = TRUE)
 
   ## download all text files from pages
 
@@ -1574,12 +1708,17 @@ ctrLoadQueryIntoDbEuctr <- function(
           # any non-XML file
           if (length(nonXmlFiles)) {
             message("F ", appendLF = FALSE)
-            if (euctrresultsfilespath != tempDir) {
+            if (documents.path != tempDir) {
+              # TODO
+              # # select nonXmlFiles
+              # if (!is.null(documents.regexp)) {
+              #   nonXmlFiles <- nonXmlFiles[
+              #     grepl(documents.regexp, dlFiles$filename, ignore.case = TRUE)]}
               # move results file(s) to user specified directory
               saved <- try(file.rename(
                 from = nonXmlFiles,
                 to = paste0(
-                  normalizePath(path = euctrresultsfilespath, mustWork = TRUE),
+                  normalizePath(path = documents.path, mustWork = TRUE),
                   "/", euctrnr, "--", basename(nonXmlFiles)
                 )), silent = TRUE)
               if (any(!saved)) {
@@ -1847,9 +1986,8 @@ ctrLoadQueryIntoDbEuctr <- function(
       message("= Imported or updated results history for ",
               importedresultshistory, " trials")
     }
-    if (euctrresultsfilespath != tempDir) {
-      message("= Results PDF files if any saved in '",
-              euctrresultsfilespath, "'")
+    if (documents.path != tempDir) {
+      message("= documents saved in '", documents.path, "'")
     }
 
   } # if euctrresults
@@ -2385,7 +2523,7 @@ ctrLoadQueryIntoDbCtis <- function(
     if (!length(jApps)) next
 
     # sanitise texts
-    jApps <- gsub("['´`’‘]", "", jApps)
+    jApps <- gsub("['\xc2\xb4`\xe2\x80\x99\xe2\x80\x98]", "", jApps)
 
     # add applicationId
     jApps <- mapply(function(i, j) sub(
@@ -2747,8 +2885,8 @@ ctrLoadQueryIntoDbCtis <- function(
           ))
 
           # TODO
-          system2("open", shQuote(tmp$destfile[
-            sample(seq_len(nrow(tmp)), min(nrow(tmp), 4L))]))
+          # system2("open", shQuote(tmp$destfile[
+          #   sample(seq_len(nrow(tmp)), min(nrow(tmp), 4L))]))
 
           tmp <- nrow(tmp[tmp$status_code == 200L, , drop = FALSE])
 
