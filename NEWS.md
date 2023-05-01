@@ -1,5 +1,6 @@
-# ctrdata 1.13.9000 (2023-04-25)
+# ctrdata 1.13.9000 (2023-05-01)
  - new development version
+ - load more CTIS data (publicEvaluation) and download documents
  
 # ctrdata 1.13.0 (2023-04-23)
  - data from CTIS is imported more completely
