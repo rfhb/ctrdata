@@ -1808,6 +1808,9 @@ dbGetFieldsIntoDf <- function(fields = "",
     return(NULL)
   }
 
+  # remove row names
+  row.names(result) <- NULL
+
   # sort, add meta data
   result <- addMetaData(
     result[order(result[["_id"]]), , drop = FALSE],
