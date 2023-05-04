@@ -2205,7 +2205,7 @@ dfTrials2Long <- function(df) {
     out[["name"]][onlyHere], perl = TRUE)
   #
   # remove any double separators
-  out[["name"]] <- gsub("[.]+", ".", out[["name"]], perl = TRUE)
+  out[["name"]] <- gsub("[.][.]+", ".", out[["name"]], perl = TRUE)
 
   # remove double rows from duplicating e above
   out <- unique(out)
