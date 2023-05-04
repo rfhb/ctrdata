@@ -596,7 +596,7 @@ ctrGetQueryUrl <- function(
       is.na(url) || is.na(register)) {
     stop("ctrGetQueryUrl(): 'url' and / or 'register' ",
          "is not a single character string, url: '",
-         deparse(url), "', register: '", deparse(register), "'",
+         url, "', register: '", register, "'",
          call. = FALSE)
   }
   #
