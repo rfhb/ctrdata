@@ -338,7 +338,7 @@ ctrLoadQueryIntoDb(
 # (4/5) Importing JSON records into database...
 # (5/5) Updating with additional data: . . .       
 # Downloading documents into 'documents.path' = ./files-ctis
-# - Created directory /Users/ralfherold/Daten/mak/r/emea/ctrdata/files-ctis
+# - Created directory ./files-ctis
 # - Getting ids of lists with document information
 # - Downloading 1594 lists with document information (estimate: 31.88 Mb)
 # Download status: 1594 done; 0 in progress. Total size: 4.93 Mb (100%)... done!             
