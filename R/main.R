@@ -1097,7 +1097,7 @@ dbCTRUpdateQueryHistory <- function(
 #' @noRd
 #'
 #' @importFrom jsonlite toJSON stream_in
-#' @importFrom httr content GET status_code config
+#' @importFrom httr content GET status_code config set_config
 #' @importFrom nodbi docdb_query
 #' @importFrom curl multi_download
 #' @importFrom jqr jq jq_flags
@@ -1136,13 +1136,15 @@ ctrLoadQueryIntoDbCtgov <- function(
 
   ## checks -------------------------------------------------------------------
 
+  # set configuration option
+  httr::set_config(httr::config(forbid_reuse = 1))
+
   # check number of trials to be downloaded
   ctgovdfirstpageurl <- paste0(
     queryUSRoot, queryUSType2, "&", queryterm, queryupdateterm)
   #
   tmp <- try(httr::GET(
-    url = utils::URLencode(ctgovdfirstpageurl),
-    httr::config(forbid_reuse = 1)),
+    url = utils::URLencode(ctgovdfirstpageurl)),
     silent = TRUE)
   #
   if (inherits(tmp, "try-error") ||

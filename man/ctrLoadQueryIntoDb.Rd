@@ -134,12 +134,15 @@ records. However, user annotations of trial records are kept.
 \examples{
 \dontrun{
 
+dbc <- nodbi::src_sqlite(collection = "my_collection")
+
 # Retrieve protocol- and results-related information
 # on a single trial identified by its EU number
 ctrLoadQueryIntoDb(
   queryterm = "2013-001291-38",
   register = "EUCTR",
-  euctrresults = TRUE
+  euctrresults = TRUE,
+  con = dbc
 )
 
 # Retrieve all information on about 2,000 ongoing
@@ -147,11 +150,9 @@ ctrLoadQueryIntoDb(
 # into the same collection as used before
 ctrLoadQueryIntoDb(
   queryterm = "cancer&recr=Open&type=Intr&age=0",
-  register = "CTGOV"
+  register = "CTGOV",
+  con = dbc
 )
-
-# Use specific database and collection
-dbc <- nodbi::src_sqlite(collection = "my_collection")
 
 # Retrieve all information on more than 40 trials
 # that are labelled as phase 3 and that mention
@@ -164,7 +165,8 @@ ctrLoadQueryIntoDb(
 
 # Retrieve information on trials in CTIS
 ctrLoadQueryIntoDb(
-  queryterm = "https://euclinicaltrials.eu/app/#/search?status=Ended"
+  queryterm = "https://euclinicaltrials.eu/app/#/search?status=Ended",
+  con = dbc
 )
 
 }
