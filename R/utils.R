@@ -1168,7 +1168,7 @@ dbFindIdsUniqueTrials <- function(
   if (!all(preferregister %in% registerList)) {
     stop("'preferregister' not known: ", preferregister, call. = FALSE)
   }
-  if (length(prefermemberstate) != 1L |
+  if (length(prefermemberstate) != 1L ||
       !any(prefermemberstate == countriesEUCTR)) {
     stop("'prefermemberstate' not known: ", prefermemberstate, call. = FALSE)
   }
@@ -1521,7 +1521,7 @@ dbGetFieldsIntoDf <- function(fields = "",
                               stopifnodata = TRUE) {
 
   # check parameters
-  if (!is.vector(fields) |
+  if (!is.vector(fields) ||
       !all(class(fields) %in% "character")) {
     stop("Input should be a vector of strings of field names.", call. = FALSE)
   }
@@ -1533,7 +1533,7 @@ dbGetFieldsIntoDf <- function(fields = "",
   fields <- fields["_id" != fields]
 
   # check if valid fields
-  if (any(fields == "") | (length(fields) == 0)) {
+  if (any(fields == "") || (length(fields) == 0)) {
     stop("'fields' contains empty elements; ",
          "please provide a vector of strings of field names. ",
          "Function dbFindFields() can be used to find field names. ",
@@ -1926,7 +1926,7 @@ dfName2Value <- function(df, valuename = "",
   # if no where... are specified, just
   # return rows where name corresponds
   # to valuename
-  if (wherename == "" & wherevalue == "") {
+  if (wherename == "" && wherevalue == "") {
 
     # get relevant rows
     out <- df[indexVnames, , drop = FALSE]
@@ -2579,7 +2579,7 @@ dfFindUniqueEuctrRecord <- function(
   }
 
   # notify it mismatching parameters
-  if (prefermemberstate == "3RD" & !include3rdcountrytrials) {
+  if (prefermemberstate == "3RD" && !include3rdcountrytrials) {
     warning("Preferred EUCTR version set to 3RD country trials, but ",
             "'include3rdcountrytrials' was FALSE, setting it to TRUE.",
             call. = FALSE,
@@ -2873,7 +2873,7 @@ installCygwinWindowsDoInstall <- function(
          call. = FALSE)
   }
   #
-  if (!force & dir.exists("c:\\cygwin")) {
+  if (!force && dir.exists("c:\\cygwin")) {
     message("cygwin is already installed in c:\\cygwin. ",
             "To update or re-install, use force = TRUE.")
     # exit function after testing
@@ -3133,3 +3133,4 @@ ctrMultiDownload <- function(urls, destfiles, progress = TRUE) {
   }
 
   return(downloadValue)
+}
