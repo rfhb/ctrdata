@@ -29,3 +29,4 @@ codecov.yml
 ^CRAN-SUBMISSION$
 .vscode
 ^tools
+^files

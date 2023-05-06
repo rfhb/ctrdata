@@ -266,9 +266,7 @@ ctrCache <- function(xname, xvalue = NULL, verbose = FALSE) {
 #' Check and prepare nodbi connection object for ctrdata
 #'
 #' @param con A connection object, see section
-#' `Databases` in \link{ctrdata-package}. If not specified,
-#' defaults to an in-memory SQLite database using the
-#' collection named "ctrdata_auto_generated".
+#' `Databases` in \link{ctrdata-package}.
 #'
 #' @keywords internal
 #'
@@ -278,11 +276,7 @@ ctrCache <- function(xname, xvalue = NULL, verbose = FALSE) {
 #' @return Connection object as list, with collection
 #'  element under root
 #'
-ctrDb <- function(con = NULL) {
-
-  ## default
-  if (is.null(con)) con <- nodbi::src_sqlite(
-    collection = "ctrdata_auto_generated")
+ctrDb <- function(con) {
 
   ## postgres
   if (inherits(con, "src_postgres")) {
@@ -328,12 +322,6 @@ ctrDb <- function(con = NULL) {
     # print warning
     if (grepl(":memory:", con$dbname)) {
       warning("Database not persisting",
-              call. = FALSE, noBreaks. = FALSE)
-    }
-
-    if (con$collection == "ctrdata_auto_generated") {
-      warning("Auto-generated database connection, ",
-              "using collection '", con$collection, "'",
               call. = FALSE, noBreaks. = FALSE)
     }
 

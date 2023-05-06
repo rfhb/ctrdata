@@ -8,7 +8,7 @@ dbQueryHistory(con, verbose = FALSE)
 }
 \arguments{
 \item{con}{A connection object, see section
-`Databases` in \link{ctrdata-package}}
+`Databases` in \link{ctrdata-package}.}
 
 \item{verbose}{If \code{TRUE}, prints additional information
 (default \code{FALSE}).}

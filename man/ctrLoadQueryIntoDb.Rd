@@ -75,13 +75,14 @@ the register ("EUCTR", "CTGOV", "CTIS") such as PDFs on results,
 analysis plans, spreadsheets, assessments or product information
 Default is \code{NULL}, which disables saving documents.}
 
-\item{documents.regexp}{Regular expression to select documents
-if saving documents is requested (see \code{documents.path}).
+\item{documents.regexp}{Regular expression, case insensitive,
+to select documents, if saving documents is requested
+(see \code{documents.path}).
 If set to \code{NULL}, empty placeholder files are saved for
 every document that could be saved. Default is
 \code{"prot|sample|statist|_sap_|p1ar|p2ars|ctaletter"}.
-Used with "CTGOV" and "CTIS" but not "EUCTR" for which all
-documents are saved.}
+Used with "CTGOV" and "CTIS" (but not "EUCTR" for which all
+available documents are saved).}
 
 \item{annotation.text}{Text to be including in the records
 retrieved with the current query, in the field "annotation".
@@ -104,7 +105,7 @@ Does not load trial information into the database.
 Default is \code{FALSE}.}
 
 \item{con}{A connection object, see section
-`Databases` in \link{ctrdata-package}}
+`Databases` in \link{ctrdata-package}.}
 
 \item{verbose}{Printing additional information if set to
 \code{TRUE}; default is \code{FALSE}.}
@@ -133,15 +134,12 @@ records. However, user annotations of trial records are kept.
 \examples{
 \dontrun{
 
-dbc <- nodbi::src_sqlite(collection = "my_collection")
-
 # Retrieve protocol- and results-related information
 # on a single trial identified by its EU number
 ctrLoadQueryIntoDb(
   queryterm = "2013-001291-38",
   register = "EUCTR",
-  euctrresults = TRUE,
-  con = dbc
+  euctrresults = TRUE
 )
 
 # Retrieve all information on about 2,000 ongoing
@@ -149,9 +147,11 @@ ctrLoadQueryIntoDb(
 # into the same collection as used before
 ctrLoadQueryIntoDb(
   queryterm = "cancer&recr=Open&type=Intr&age=0",
-  register = "CTGOV",
-  con = dbc
+  register = "CTGOV"
 )
+
+# Use specific database and collection
+dbc <- nodbi::src_sqlite(collection = "my_collection")
 
 # Retrieve all information on more than 40 trials
 # that are labelled as phase 3 and that mention
@@ -164,8 +164,7 @@ ctrLoadQueryIntoDb(
 
 # Retrieve information on trials in CTIS
 ctrLoadQueryIntoDb(
-  queryterm = "https://euclinicaltrials.eu/app/#/search?status=Ended",
-  con = dbc
+  queryterm = "https://euclinicaltrials.eu/app/#/search?status=Ended"
 )
 
 }

@@ -29,7 +29,7 @@ that are conducted exclusively in third countries, that is, outside
 the European Union. Ignored if \code{prefermemberstate} is set to "3RD".}
 
 \item{con}{A connection object, see section
-`Databases` in \link{ctrdata-package}}
+`Databases` in \link{ctrdata-package}.}
 
 \item{verbose}{If set to \code{TRUE}, prints out which fields
 of the registers are used to find corresponding trial records}

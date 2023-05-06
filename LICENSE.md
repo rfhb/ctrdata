@@ -1,7 +1,7 @@
 MIT License
 ===========
 
-Copyright (c) 2017 Ralf Herold
+Copyright (c) 2023 Ralf Herold
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
