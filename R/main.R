@@ -49,13 +49,14 @@
 #' analysis plans, spreadsheets, assessments or product information
 #' Default is \code{NULL}, which disables saving documents.
 #'
-#' @param documents.regexp Regular expression to select documents
-#' if saving documents is requested (see \code{documents.path}).
+#' @param documents.regexp Regular expression, case insensitive,
+#' to select documents, if saving documents is requested
+#' (see \code{documents.path}).
 #' If set to \code{NULL}, empty placeholder files are saved for
 #' every document that could be saved. Default is
 #' \code{"prot|sample|statist|_sap_|p1ar|p2ars|ctaletter"}.
-#' Used with "CTGOV" and "CTIS" but not "EUCTR" for which all
-#' documents are saved.
+#' Used with "CTGOV" and "CTIS" (but not "EUCTR" for which all
+#' available documents are saved).
 #'
 #' @param euctrresults If \code{TRUE}, also download available
 #' results when retrieving and loading trials from EUCTR. This
@@ -147,6 +148,9 @@
 #' }
 #'
 #' @export
+#'
+#' @importFrom httr set_config user_agent
+#' @importFrom utils packageDescription
 #'
 ctrLoadQueryIntoDb <- function(
   queryterm = NULL,
@@ -253,7 +257,7 @@ ctrLoadQueryIntoDb <- function(
   } # if not querytoupdate
 
   # check annotation parameters
-  if (annotation.text != "" &
+  if (annotation.text != "" &&
       !any(annotation.mode == c("append", "prepend", "replace"))) {
     stop("'annotation.mode' incorrect", call. = FALSE)
   }
@@ -308,7 +312,7 @@ ctrLoadQueryIntoDb <- function(
     }
 
     # check database connection
-    con <- ctrDb(con = con)
+    con <- ctrDb(con)
 
   }
 
@@ -327,7 +331,8 @@ ctrLoadQueryIntoDb <- function(
                  annotation.text = annotation.text,
                  annotation.mode = annotation.mode,
                  only.count = only.count,
-                 con = con, verbose = verbose,
+                 con = con,
+                 verbose = verbose,
                  queryupdateterm = queryupdateterm)
 
   # call core functions
@@ -342,7 +347,7 @@ ctrLoadQueryIntoDb <- function(
   ## annotate records ---------------------------------------------------------
 
   # add annotations
-  if ((annotation.text != "") &
+  if ((annotation.text != "") &&
       (length(imported$success) > 0L)) {
 
     # dispatch
@@ -421,7 +426,7 @@ ctrRerunQuery <- function(
   queryupdateterm = queryupdateterm) {
 
   ## check database connection
-  con <- ctrDb(con = con)
+  con <- ctrDb(con)
 
   ## prepare
   failed <- FALSE
@@ -1024,7 +1029,7 @@ dbCTRUpdateQueryHistory <- function(
   verbose) {
 
   ## check database connection
-  con <- ctrDb(con = con)
+  con <- ctrDb(con)
 
   # debug
   if (verbose) message("Running dbCTRUpdateQueryHistory...")
@@ -1146,9 +1151,6 @@ ctrLoadQueryIntoDbCtgov <- function(
          "cannot continue: ", tmp[[1]], call. = FALSE)
   }
   #
-  # save request options
-  requestOptions <- tmp$request$options
-  #
   tmp <- httr::content(tmp, as = "text")
   tmp <- sub(".*[> ](.*?) Stud(y|ies) found for: .*", "\\1", tmp)
   tmp <- sub("^No$", "0", tmp)
@@ -1197,22 +1199,7 @@ ctrLoadQueryIntoDbCtgov <- function(
   message("Downloading trials ", appendLF = FALSE)
 
   # get (download) trials in single zip file f
-  tmp <- do.call(
-    curl::multi_download,
-    c(urls = list(utils::URLencode(ctgovdownloadcsvurl)),
-      destfiles = list(f),
-      progress = TRUE,
-      timeout = Inf,
-      requestOptions
-    )
-  )
-
-  # inform user, exit gracefully
-  if (inherits(tmp, "try-error") ||
-      !any((tmp[["status_code"]]) == c(200L))) {
-    stop("Host ", queryUSRoot, " not working as expected, ",
-         "cannot continue ", call. = FALSE)
-  }
+  tmp <- ctrMultiDownload(ctgovdownloadcsvurl, f)
 
   # inform user
   if (!file.exists(f) || file.size(f) == 0L) {
@@ -1281,7 +1268,6 @@ ctrLoadQueryIntoDbCtgov <- function(
       }))
 
       # create data frame with file info
-      # r = fDocsOut[1, , drop = FALSE]
       dlFiles <- apply(dlFiles, 1, function(r) {
         data.frame(url = unlist(r[-1], use.names = TRUE), r[1],
                    check.names = FALSE, stringsAsFactors = FALSE)
@@ -1318,18 +1304,9 @@ ctrLoadQueryIntoDbCtgov <- function(
         # download and save
         message("Downloading ", nrow(dlFiles), " documents:")
 
-        tmp <- do.call(
-          curl::multi_download,
-          c(urls = list(utils::URLencode(dlFiles$url[!dlFiles$exists])),
-            destfiles = list(dlFiles$destfile[!dlFiles$exists]),
-            progress = TRUE, timeout = Inf,
-            getOption("httr_config")[["options"]],
-            accept_encoding = "gzip,deflate,zstd,br"
-          )
-        )
-        if (inherits(tmp, "try-error")) {
-          stop("Download from CTGOV failed; last error: ", class(tmp), call. = FALSE)
-        }
+        tmp <- ctrMultiDownload(dlFiles$url[!dlFiles$exists],
+                                dlFiles$destfile[!dlFiles$exists])
+
         if (!nrow(tmp)) tmp <- 0L else {
 
           # handle failures despite success is true
@@ -1434,8 +1411,6 @@ ctrLoadQueryIntoDbEuctr <- function(
            "cannot continue: ", resultsEuPages[[1]], call. = FALSE)
     }
   }
-  # - store options from request
-  requestOptions <- resultsEuPages$request$options
   # - get content of response
   resultsEuPages <- httr::content(resultsEuPages, as = "text")
 
@@ -1527,7 +1502,7 @@ ctrLoadQueryIntoDbEuctr <- function(
   h <- do.call(
     curl::new_handle,
     c(accept_encoding = "gzip,deflate,zstd,br",
-      requestOptions)
+      getOption("httr_config")[["options"]])
   )
   # test fetch
   tmp <- curl::curl_fetch_memory(
@@ -1566,22 +1541,8 @@ ctrLoadQueryIntoDbEuctr <- function(
   )
 
   # do download and saving
-  tmp <- do.call(
-    curl::multi_download,
-    c(urls = list(urls),
-      destfiles = list(fp),
-      resume = TRUE,
-      progress = TRUE,
-      timeout = Inf,
-      requestOptions,
-      accept_encoding = "gzip,deflate,zstd,br"
-    )
-  )
+  tmp <- ctrMultiDownload(urls, fp)
 
-  # check plausibility
-  if (inherits(tmp, "try-error")) {
-    stop("Download from EUCTR failed; last error: ", class(tmp), call. = FALSE)
-  }
   if (nrow(tmp) != resultsEuNumPages) {
     message("Download from EUCTR failed; incorrect number of records")
     return(invisible(emptyReturn))
@@ -1658,22 +1619,7 @@ ctrLoadQueryIntoDbEuctr <- function(
     )
 
     # do download and save
-    tmp <- do.call(
-      curl::multi_download,
-      c(urls = list(urls),
-        destfiles = list(fp),
-        resume = TRUE,
-        progress = TRUE,
-        timeout = Inf,
-        requestOptions,
-        accept_encoding = "gzip,deflate,zstd,br"
-      )
-    )
-
-    # check plausibility
-    if (inherits(tmp, "try-error")) {
-      stop("Download from EUCTR failed; last error: ", class(tmp), call. = FALSE)
-    }
+    tmp <- ctrMultiDownload(urls, fp)
 
     # work only on successful downloads
     tmp <- tmp[tmp[["status_code"]] == 200L, , drop = FALSE]
@@ -1892,7 +1838,7 @@ ctrLoadQueryIntoDbEuctr <- function(
             url = urls[i],
             range = "0-30000", # only top of page needed
             accept_encoding = "identity")
-          curl::handle_setopt(h, .list = requestOptions)
+          curl::handle_setopt(h, .list = getOption("httr_config")[["options"]])
           curl::multi_add(
             handle = h,
             done = curlSuccess,
@@ -1994,7 +1940,6 @@ ctrLoadQueryIntoDbEuctr <- function(
 #' @importFrom jsonlite toJSON
 #' @importFrom nodbi docdb_query
 #' @importFrom utils URLdecode
-#' @importFrom curl multi_download
 #'
 ctrLoadQueryIntoDbIsrctn <- function(
   queryterm = queryterm,
@@ -2140,20 +2085,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
     queryIsrctnRoot, queryIsrctnType1, tmp, "&", apiterm, queryupdateterm)
 
   # get (download) trials in single file f
-  tmp <- do.call(
-    curl::multi_download,
-    c(urls = list(utils::URLencode(isrctndownloadurl)),
-      destfiles = list(f),
-      progress = TRUE,
-      timeout = Inf,
-      getOption("httr_config")[["options"]]
-    )
-  )
-
-  # check plausibility
-  if (inherits(tmp, "try-error")) {
-    stop("Download from ISRCTN failed; last error: ", class(tmp), call. = FALSE)
-  }
+  tmp <- ctrMultiDownload(isrctndownloadurl, f)
 
   # inform user
   if (!file.exists(f) || file.size(f) == 0L) {
@@ -2187,7 +2119,6 @@ ctrLoadQueryIntoDbIsrctn <- function(
 #' @keywords internal
 #' @noRd
 #'
-#' @importFrom curl multi_download
 #' @importFrom jqr jq jq_flags
 #' @importFrom utils read.table URLencode
 #' @importFrom nodbi docdb_update
@@ -2268,18 +2199,7 @@ ctrLoadQueryIntoDbCtis <- function(
 
   # "HTTP server doesn't seem to support byte ranges. Cannot resume."
   # Note: at this time, this is just a single file to be downloaded
-  tmp <- do.call(
-    curl::multi_download,
-    c(urls = list(utils::URLencode(urls)),
-      destfiles = list(fTrialsJson),
-      progress = FALSE, timeout = Inf,
-      getOption("httr_config")[["options"]],
-      accept_encoding = "gzip,deflate,zstd,br"
-    )
-  )
-  if (inherits(tmp, "try-error")) {
-    stop("Download from CTIS failed; last error: ", class(tmp), call. = FALSE)
-  }
+  tmp <- ctrMultiDownload(urls, fTrialsJson)
 
   # extract total number of trial records
   resultsEuNumTrials <- as.numeric(
@@ -2292,6 +2212,15 @@ ctrLoadQueryIntoDbCtis <- function(
   if (!resultsEuNumTrials) {
     warning("No trials found, check 'queryterm' and 'register'")
     return(emptyReturn)
+  }
+
+  # only count?
+  if (only.count) {
+
+    # return
+    return(list(n = resultsEuNumTrials,
+                success = NULL,
+                failed = NULL))
   }
 
   # get ids of trial records
@@ -2334,18 +2263,7 @@ ctrLoadQueryIntoDbCtis <- function(
   }
 
   # "HTTP server doesn't seem to support byte ranges. Cannot resume."
-  tmp <- do.call(
-    curl::multi_download,
-    c(urls = list(utils::URLencode(urls)),
-      destfiles = list(fPartIPartsIIJson(idsTrials)),
-      progress = TRUE, timeout = Inf,
-      getOption("httr_config")[["options"]],
-      accept_encoding = "gzip,deflate,zstd,br"
-    )
-  )
-  if (inherits(tmp, "try-error")) {
-    stop("Download from CTIS failed; last error: ", class(tmp), call. = FALSE)
-  }
+  tmp <- ctrMultiDownload(urls, fPartIPartsIIJson(idsTrials))
 
   importString <- paste0(
     '"ctrname":"CTIS",\\1,"record_last_import":"',
@@ -2385,18 +2303,7 @@ ctrLoadQueryIntoDbCtis <- function(
     }
 
     # "HTTP server doesn't seem to support byte ranges. Cannot resume."
-    tmp <- do.call(
-      curl::multi_download,
-      c(urls = list(utils::URLencode(urls)),
-        destfiles = list(fAddJson(idsTrials)),
-        progress = FALSE, timeout = Inf,
-        getOption("httr_config")[["options"]],
-        accept_encoding = "gzip,deflate,zstd,br"
-      )
-    )
-    if (inherits(tmp, "try-error")) {
-      stop("Download from CTIS failed; last error: ", class(tmp), call. = FALSE)
-    }
+    tmp <- ctrMultiDownload(urls, fAddJson(idsTrials))
 
     # convert into ndjson file
     fAddNdjson <- file.path(tempDir, paste0("ctis_add_", e, ".ndjson"))
@@ -2464,18 +2371,7 @@ ctrLoadQueryIntoDbCtis <- function(
     tempDir, paste0("ctis_add_9_", dlFiles$applicationIds, ".json"))
 
   # "HTTP server doesn't seem to support byte ranges. Cannot resume."
-  tmp <- do.call(
-    curl::multi_download,
-    c(urls = list(utils::URLencode(dlFiles$url)),
-      destfiles = list(dlFiles$filepathname),
-      progress = TRUE, timeout = Inf,
-      getOption("httr_config")[["options"]],
-      accept_encoding = "gzip,deflate,zstd,br"
-    )
-  )
-  if (inherits(tmp, "try-error")) {
-    stop("Download from CTIS failed; last error: ", class(tmp), call. = FALSE)
-  }
+  tmp <- ctrMultiDownload(dlFiles$url, dlFiles$filepathname)
 
   fApplicationsNdjson <- file.path(tempDir, "ctis_add_9.ndjson")
   unlink(fApplicationsNdjson)
@@ -2563,7 +2459,7 @@ ctrLoadQueryIntoDbCtis <- function(
       # define order for factor for sorting
       orderedParts <- c(
         "ctaletter", "p1ar", "p2ars", "part1auth", "part1appl",
-        "parts2auth","parts2appl", "prodauth", "prodappl", "rfis")
+        "parts2auth", "parts2appl", "prodauth", "prodappl", "rfis")
 
       # 1 - get ids of lists (which include urls to download)
       message("- Getting ids of lists with document information")
@@ -2646,18 +2542,7 @@ ctrLoadQueryIntoDbCtis <- function(
       dlFiles$destfile <- fFilesListJson(
         dlFiles[["_id"]], dlFiles[["part"]], dlFiles[["id"]])
 
-      tmp <- do.call(
-        curl::multi_download,
-        c(urls = list(utils::URLencode(dlFiles[["url"]])),
-          destfiles = list(dlFiles[["destfile"]]),
-          progress = TRUE, timeout = Inf,
-          getOption("httr_config")[["options"]],
-          accept_encoding = "gzip,deflate,zstd,br"
-        )
-      )
-      if (inherits(tmp, "try-error")) {
-        stop("Download from CTIS failed; last error: ", class(tmp), call. = FALSE)
-      }
+      tmp <- ctrMultiDownload(dlFiles[["url"]], dlFiles[["destfile"]])
 
       if (sum(tmp$status_code != 200L, na.rm = TRUE)) {
         warning("Could not download these lists with document information: ",
@@ -2667,7 +2552,7 @@ ctrLoadQueryIntoDbCtis <- function(
 
       # 2 - create data frame with info on documents (url, name, extension etc.)
 
-      message("- Processing document information in ", nrow(tmp)," lists")
+      message("- Processing document information in ", nrow(tmp), " lists")
       epTypChars <- paste0(names(epTyp), "appl", "auth", collapse = "")
       epTypChars <- rawToChar(unique(charToRaw(epTypChars)))
       unlink(downloadsNdjson)
@@ -2684,7 +2569,6 @@ ctrLoadQueryIntoDbCtis <- function(
         part <- sub(paste0(
           "^.+_([", epTypChars, "]+?)_[0-9]+[.]json$"),
           "\\1", tmp[["destfile"]][fi])
-        # message(part)
 
         # get data
         jOut <- readLines(fn, warn = FALSE)
@@ -2750,7 +2634,6 @@ ctrLoadQueryIntoDbCtis <- function(
       # check if destination document exists
       dlFiles$filepathname <- file.path(dlFiles$filepath, dlFiles$filename)
 
-      # View(dlFiles)
       dlFiles$fileexists <- file.exists(dlFiles$filepathname) &
         file.size(dlFiles$filepathname) > 10L
 
@@ -2784,19 +2667,10 @@ ctrLoadQueryIntoDbCtis <- function(
         message("- Downloading ", nrow(dlFiles), " documents")
 
         # do download
-        tmp <- do.call(
-          curl::multi_download,
-          c(urls = list(utils::URLencode(sprintf(
-            ctisEndpoints[10], dlFiles$url[!dlFiles$fileexists]))),
-            destfiles = list(dlFiles$filepathname[!dlFiles$fileexists]),
-            progress = TRUE, timeout = Inf,
-            getOption("httr_config")[["options"]],
-            accept_encoding = "gzip,deflate,zstd,br"
-          )
-        )
-        if (inherits(tmp, "try-error")) {
-          stop("Download from CTIS failed; last error: ", class(tmp), call. = FALSE)
-        }
+        tmp <- ctrMultiDownload(
+          urls = sprintf(ctisEndpoints[10], dlFiles$url[!dlFiles$fileexists]),
+          destfiles = dlFiles$filepathname[!dlFiles$fileexists])
+
         if (!nrow(tmp)) tmp <- 0L else {
 
           # handle failures despite success is true

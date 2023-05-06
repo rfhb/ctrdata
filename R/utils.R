@@ -3097,3 +3097,36 @@ checkBinary <- function(b = NULL, verbose = FALSE) {
   invisible(all(out))
 
 }
+
+
+#' ctrMultiDownload
+#'
+#' @param urls Vector of urls to be downloaded
+#'
+#' @param progress Set to \code{FALSE} to not print progress bar
+#'
+#' @keywords internal
+#' @noRd
+#'
+#' @return Data frame with columns such as status_code etc
+#'
+#' @importFrom curl multi_download
+#' @importFrom utils URLencode
+#'
+ctrMultiDownload <- function(urls, destfiles, progress = TRUE) {
+
+  downloadValue <- do.call(
+    curl::multi_download,
+    c(urls = list(utils::URLencode(urls)),
+      destfiles = list(destfiles),
+      progress = progress,
+      timeout = Inf,
+      getOption("httr_config")[["options"]],
+      accept_encoding = "gzip,deflate,zstd,br"
+    )
+  )
+  if (inherits(downloadValue, "try-error")) {
+    stop("Download failed; last error: ", class(downloadValue), call. = FALSE)
+  }
+
+  return(downloadValue)
