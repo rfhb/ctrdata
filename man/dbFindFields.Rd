@@ -7,9 +7,9 @@
 dbFindFields(namepart = "", con, verbose = FALSE)
 }
 \arguments{
-\item{namepart}{A plain string (can include a regular expression,
+\item{namepart}{A character string (can include a regular expression,
 including Perl-style) to be searched for among all field names
-(keys) in the collection. Use `".*` to find all fields.}
+(keys) in the collection, case-insensitive. Use `".*` to find all fields.}
 
 \item{con}{A connection object, see section
 `Databases` in \link{ctrdata-package}.}
@@ -19,9 +19,9 @@ including Perl-style) to be searched for among all field names
 }
 \value{
 Vector of strings with full names of field(s) found,
-in alphabetical order by register. This is a named vector
-where the names of the vector are the register names for
-the respective fields.
+ordered by register and alphabet. This is a named vector
+where the names of the vector elements are the register names
+for the respective fields.
 }
 \description{
 Given part of the name of a field of interest to the user, this
@@ -30,10 +30,10 @@ previously loaded into a collection
 (using \link{ctrLoadQueryIntoDb}). The field names can be fed
 into function \link{dbGetFieldsIntoDf} to extract the data
 from the collection into a data frame.
-In addition to the full names of leaf fields (e.g.,
+In addition to the full names of all child fields (e.g.,
 \code{clinical_results.outcome_list.outcome.measure.class_list.class.title})
-this function also returns names of node fields (e.g.,
-\code{clinical_results}). Data in node fields is typically complex
+this function may return names of parent fields (e.g.,
+\code{clinical_results}). Data in parent fields is typically complex
 (multiply nested) and can be converted into individual data
 elements by function \link{dfTrials2Long}, possibly followed
 by function \link{dfName2Value}.

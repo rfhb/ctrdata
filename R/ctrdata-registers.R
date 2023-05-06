@@ -34,7 +34,7 @@
 #' *The example is an expert search that retrieves interventional
 #' trials with neonates, investigating infectious conditions:
 #' EUCTR retrieves trials with neonates, but not exclusively.
-#' The CTGOV expert search retrieves trials exclusively in neonates.
+#' The above CTGOV expert search retrieves trials exclusively in neonates.
 #' ISRCTN retrieves a small number of studies.
 #' Thus, after loading trials with \link{ctrLoadQueryIntoDb}
 #' into a database collection, corresponding sets of trials need to be defined,

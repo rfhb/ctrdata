@@ -71,8 +71,8 @@ retrieved from public study registers</p>
 <p>Package <code>ctrdata</code> retrieves trial information and stores it in a
 database collection, which has to be given as a connection object
 to parameter <code>con</code> for several ctrdata functions; this
-connection object is created in slightly different ways for the
-three supported database backends:</p><table class="table table"><tr><td><em>Database</em></td><td><em>Connection object</em></td></tr><tr><td>MongoDB</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_mongo.html" class="external-link">nodbi::src_mongo</a>(db = "my_db", collection = "my_coll")</code></td></tr><tr><td>SQLite</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">nodbi::src_sqlite</a>(dbname = "my_db", collection = "my_coll")</code></td></tr><tr><td>PostgreSQL</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_postgres.html" class="external-link">nodbi::src_postgres</a>(dbname = "my_db"); dbc[["collection"]] &lt;- "my_coll"</code></td></tr><tr><td>DuckDB</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_duckdb.html" class="external-link">nodbi::src_duckdb</a>(dbname = "my_db", collection = "my_coll")</code></td></tr></table><p>Use a connection object with a <code>ctrdata</code> function, for example:
+connection object is created in almost identical ways for
+these supported backends:</p><table class="table table"><tr><td><em>Database</em></td><td><em>Connection object</em></td></tr><tr><td>MongoDB</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_mongo.html" class="external-link">nodbi::src_mongo</a>(db = "my_db", collection = "my_coll")</code></td></tr><tr><td>SQLite</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">nodbi::src_sqlite</a>(dbname = "my_db", collection = "my_coll")</code></td></tr><tr><td>PostgreSQL</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_postgres.html" class="external-link">nodbi::src_postgres</a>(dbname = "my_db"); dbc[["collection"]] &lt;- "my_coll"</code></td></tr><tr><td>DuckDB</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_duckdb.html" class="external-link">nodbi::src_duckdb</a>(dbname = "my_db", collection = "my_coll")</code></td></tr></table><p>Use a connection object with a <code>ctrdata</code> function, for example:
 <code><a href="dbQueryHistory.html">ctrdata::dbQueryHistory</a>(con = dbc)</code>.</p>
 <p>Any such connection object can also be used with other packages, for example
 <code><a href="https://rdrr.io/pkg/mongolite/man/mongo.html" class="external-link">mongolite::mongo</a>()</code> or:
@@ -86,8 +86,8 @@ three supported database backends:</p><table class="table table"><tr><td><em>Dat
 
 
 <p><a href="ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser</a>,
-<a href="ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a> (load trial records into database collection),
-<a href="ctrFindActiveSubstanceSynonyms.html">ctrFindActiveSubstanceSynonyms</a>; see
+<a href="ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a> (load trial records into database collection);
+see
 <a href="ctrdata-registers.html">ctrdata-registers</a> for details on registers and how to search.</p>
     </div>
     <div class="section level2">
@@ -96,9 +96,9 @@ three supported database backends:</p><table class="table table"><tr><td><em>Dat
 
 
 <p><a href="dbFindFields.html">dbFindFields</a> (find names of fields of interest in trial records in a collection),
-<a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a> (create a data frame for fields of interest from collection),
-<a href="dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a> (de-duplicated identifiers of
-clinical trial records that can be used to subset a data frame).</p>
+<a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a> (create a data frame with fields of interest from collection),
+<a href="dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a> (get de-duplicated identifiers of
+clinical trials' records that can be used to subset a data frame).</p>
     </div>
     <div class="section level2">
     <h2 id="-operate-on-a-data-frame-with-trial-information">4 - Operate on a data frame with trial information<a class="anchor" aria-label="anchor" href="#-operate-on-a-data-frame-with-trial-information"></a></h2>
@@ -106,8 +106,7 @@ clinical trial records that can be used to subset a data frame).</p>
 
 
 <p><a href="dfTrials2Long.html">dfTrials2Long</a> (convert fields with nested elements into long format),
-<a href="dfName2Value.html">dfName2Value</a> (get values for variable(s) of interest), and
-<a href="dfMergeTwoVariablesRelevel.html">dfMergeTwoVariablesRelevel</a>.</p>
+<a href="dfName2Value.html">dfName2Value</a> (get values for variable(s) of interest).</p>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>

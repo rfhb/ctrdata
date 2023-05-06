@@ -544,7 +544,7 @@ ctrOpenSearchPagesInBrowser <- function(
 #' \link{dbQueryHistory}()["query-term"].
 #'
 #' @param register Optional name of register (one of "EUCTR", "CTGOV",
-#' "ISRCTN" or "CTIS") in case url is a query term
+#' "ISRCTN" or "CTIS") in case `url` is a query term
 #'
 #' @export
 #'
@@ -919,10 +919,10 @@ dbQueryHistory <- function(con, verbose = FALSE) {
 #' (using \link{ctrLoadQueryIntoDb}). The field names can be fed
 #' into function \link{dbGetFieldsIntoDf} to extract the data
 #' from the collection into a data frame.
-#' In addition to the full names of leaf fields (e.g.,
+#' In addition to the full names of all child fields (e.g.,
 #' \code{clinical_results.outcome_list.outcome.measure.class_list.class.title})
-#' this function also returns names of node fields (e.g.,
-#' \code{clinical_results}). Data in node fields is typically complex
+#' this function may return names of parent fields (e.g.,
+#' \code{clinical_results}). Data in parent fields is typically complex
 #' (multiply nested) and can be converted into individual data
 #' elements by function \link{dfTrials2Long}, possibly followed
 #' by function \link{dfName2Value}.
@@ -939,9 +939,9 @@ dbQueryHistory <- function(con, verbose = FALSE) {
 #' Note: Only when `dbFindFields` is first called after
 #' \link{ctrLoadQueryIntoDb}, it will take a moment.
 #'
-#' @param namepart A plain string (can include a regular expression,
+#' @param namepart A character string (can include a regular expression,
 #' including Perl-style) to be searched for among all field names
-#' (keys) in the collection. Use `".*` to find all fields.
+#' (keys) in the collection, case-insensitive. Use `".*` to find all fields.
 #'
 #' @param verbose If \code{TRUE}, prints additional information
 #' (default \code{FALSE}).
@@ -951,9 +951,9 @@ dbQueryHistory <- function(con, verbose = FALSE) {
 #' @inheritParams ctrDb
 #'
 #' @return Vector of strings with full names of field(s) found,
-#' in alphabetical order by register. This is a named vector
-#' where the names of the vector are the register names for
-#' the respective fields.
+#' ordered by register and alphabet. This is a named vector
+#' where the names of the vector elements are the register names
+#' for the respective fields.
 #'
 #' @export
 #'
@@ -2514,7 +2514,7 @@ dfMergeTwoVariablesRelevel <- function(
 #' trial is conducted. For all trials conducted in more than one Member State,
 #' this function returns only one record per trial.
 #'
-#' Note: To deduplicate trials from different registers (EUCTR and CTGOV),
+#' Note: To deduplicate trials from different registers,
 #' please first use function \link{dbFindIdsUniqueTrials}.
 #'
 #' @param df A data frame created from the database collection that includes

@@ -14,8 +14,8 @@ retrieved from public study registers
 Package \code{ctrdata} retrieves trial information and stores it in a
 database collection, which has to be given as a connection object
 to parameter \code{con} for several ctrdata functions; this
-connection object is created in slightly different ways for the
-three supported database backends:\tabular{ll}{
+connection object is created in almost identical ways for
+these supported backends:\tabular{ll}{
    \emph{Database} \tab \emph{Connection object} \cr
    MongoDB \tab \code{dbc <- \link[nodbi:src_mongo]{nodbi::src_mongo}(db = "my_db", collection = "my_coll")} \cr
    SQLite \tab \code{dbc <- \link[nodbi:src_sqlite]{nodbi::src_sqlite}(dbname = "my_db", collection = "my_coll")} \cr
@@ -39,8 +39,8 @@ A demo database in package \code{ctrdata} can be used with:
 
 
 \link{ctrOpenSearchPagesInBrowser},
-\link{ctrLoadQueryIntoDb} (load trial records into database collection),
-\link{ctrFindActiveSubstanceSynonyms}; see
+\link{ctrLoadQueryIntoDb} (load trial records into database collection);
+see
 \link{ctrdata-registers} for details on registers and how to search.
 }
 
@@ -48,17 +48,16 @@ A demo database in package \code{ctrdata} can be used with:
 
 
 \link{dbFindFields} (find names of fields of interest in trial records in a collection),
-\link{dbGetFieldsIntoDf} (create a data frame for fields of interest from collection),
-\link{dbFindIdsUniqueTrials} (de-duplicated identifiers of
-clinical trial records that can be used to subset a data frame).
+\link{dbGetFieldsIntoDf} (create a data frame with fields of interest from collection),
+\link{dbFindIdsUniqueTrials} (get de-duplicated identifiers of
+clinical trials' records that can be used to subset a data frame).
 }
 
 \section{4 - Operate on a data frame with trial information}{
 
 
 \link{dfTrials2Long} (convert fields with nested elements into long format),
-\link{dfName2Value} (get values for variable(s) of interest), and
-\link{dfMergeTwoVariablesRelevel}.
+\link{dfName2Value} (get values for variable(s) of interest).
 }
 
 \author{
