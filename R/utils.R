@@ -266,7 +266,9 @@ ctrCache <- function(xname, xvalue = NULL, verbose = FALSE) {
 #' Check and prepare nodbi connection object for ctrdata
 #'
 #' @param con A connection object, see section
-#' `Databases` in \link{ctrdata-package}
+#' `Databases` in \link{ctrdata-package}. If not specified,
+#' defaults to an in-memory SQLite database using the
+#' collection named "ctrdata_auto_generated".
 #'
 #' @keywords internal
 #'
@@ -276,9 +278,11 @@ ctrCache <- function(xname, xvalue = NULL, verbose = FALSE) {
 #' @return Connection object as list, with collection
 #'  element under root
 #'
-ctrDb <- function(
-  con = nodbi::src_sqlite(
-    collection = "ctrdata_auto_generated")) {
+ctrDb <- function(con = NULL) {
+
+  ## default
+  if (is.null(con)) con <- nodbi::src_sqlite(
+    collection = "ctrdata_auto_generated")
 
   ## postgres
   if (inherits(con, "src_postgres")) {
@@ -321,16 +325,16 @@ ctrDb <- function(
              "db" = con$dbname,
              "ctrDb" = TRUE)
 
-    # print warning from nodbi::src_sqlite()
+    # print warning
     if (grepl(":memory:", con$dbname)) {
-      warning("Database not persisting,\ncopy to persistant database like ",
-              "this:\n\nRSQLite::sqliteCopyDatabase(",
-              "\n  from = <your in-memory-database-object>$con,",
-              "\n  to = RSQLite::dbConnect(RSQLite::SQLite(),",
-              "\n                          dbname = 'local_file.db'))\n",
-              call. = FALSE,
-              noBreaks. = FALSE,
-              immediate. = TRUE)
+      warning("Database not persisting",
+              call. = FALSE, noBreaks. = FALSE)
+    }
+
+    if (con$collection == "ctrdata_auto_generated") {
+      warning("Auto-generated database connection, ",
+              "using collection '", con$collection, "'",
+              call. = FALSE, noBreaks. = FALSE)
     }
 
     ## return
@@ -384,9 +388,7 @@ ctrDb <- function(
     # print warning about nodbi::src_duckdb()
     if (grepl(":memory:", attr(attr(con$con, "driver"), "dbdir"))) {
       warning("Database not persisting\n",
-              call. = FALSE,
-              noBreaks. = FALSE,
-              immediate. = TRUE)
+              call. = FALSE, noBreaks. = FALSE)
 
     }
 
@@ -772,7 +774,8 @@ ctrGetQueryUrl <- function(
 #' @return A character vector of the active substance (input parameter) and
 #'  synonyms, or NULL if active substance was not found and may be invalid
 #'
-#' @importFrom httr GET
+#' @importFrom httr GET set_config user_agent
+#' @importFrom utils packageDescription
 #' @importFrom rvest html_element html_table read_html
 #'
 #' @export
