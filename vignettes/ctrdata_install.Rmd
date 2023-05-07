@@ -1,7 +1,7 @@
 ---
 title: "Install R package ctrdata"
 author: "Ralf Herold"
-date: 2023-04-22
+date: 2023-05-07
 output:
   rmarkdown::pdf_document:
     toc: true
@@ -47,7 +47,7 @@ Either of the above should install package `ctrdata` into the user's library.
 
 ## Internet access via proxy
 
-Functions in package `ctrdata` that start with `ctr...` require access to trial registers over the internet via the `https` protocol. Many organisastions use transparent proxies that may _not_ require users to do any configurations. However, if necessary, package `ctrdata` can use proxy settings set by users in their R session such as follows:
+Functions in package `ctrdata` that start with `ctr...` require access to trial registers over the internet via the `https` protocol. Many organisations use transparent proxies that may _not_ require users to do any configurations. However, if necessary, package `ctrdata` can use proxy settings set by users in their R session such as follows:
 
 ```{r, eval=FALSE}
 Sys.setenv(https_proxy = "your_proxy.server.domain:8080") # if needed
@@ -56,7 +56,7 @@ Sys.setenv(https_proxy_user = "your_userid:your_password") # if needed
 
 ## Additional installation aspects
 
-The command line tools `perl`, `sed` and `php` (5.2 or higher) are required for `ctrLoadQueryIntoDb()`, the main function of package `ctrdata`. No other function in this package has this requirement.
+The command line tools `perl`, `sed` and `php` (5.2 or higher) are required for `ctrLoadQueryIntoDb()`, the main function of package `ctrdata` to work with registers "EUCTR", "CTGOV" and "ISRCTN" (but not "CTIS"). No other function in this package has this requirement.
 
 ### MS Windows
 
@@ -98,7 +98,7 @@ The command line tools `perl`, `sed` and `php` (5.2 or higher) may already be av
 
 ## Databases to use
 
-At this time, a PostgreSQL, DuckDB, an SQLite or a remote or local MongoDB database can be used with the package `ctrdata`. A full SQLite database is provided in the R package [`RSQLite`](https://rsqlite.r-dbi.org/). Suggested installation instructions for PostgreSQL are [here](https://www.postgresql.org/download/) and for a local MongoDB server are [here](https://docs.mongodb.com/manual/administration/install-community/); a remote MongoDB database server is accessible [here](https://www.mongodb.com/cloud/atlas). See [here](https://github.com/ropensci/nodbi#benchmark) for a speed comparison of the databases; recommended: DuckDB, PostgreSQL or MongoDB local server. 
+At this time, a PostgreSQL, DuckDB, an SQLite or a MongoDB (local or remote) database can be used with the package `ctrdata`. A full SQLite database is provided in the R package [`RSQLite`](https://rsqlite.r-dbi.org/). Suggested installation instructions for PostgreSQL are [here](https://www.postgresql.org/download/) and for a local MongoDB server are [here](https://docs.mongodb.com/manual/administration/install-community/); a remote MongoDB database server is accessible [here](https://www.mongodb.com/cloud/atlas). See [here](https://github.com/ropensci/nodbi#benchmark) for a speed comparison of the databases; recommended: DuckDB, PostgreSQL or MongoDB local server. 
 
 Purpose | Function call
 -------------------- | --------------------
@@ -116,4 +116,4 @@ After completing the installation, attach the package from the user's library. T
 library(ctrdata)
 ```
 
-Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: Ralf Herold (2023). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.12.0. https://cran.r-project.org/package=ctrdata
+Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: Ralf Herold (2023). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.13.0. https://cran.r-project.org/package=ctrdata

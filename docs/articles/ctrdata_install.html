@@ -80,7 +80,7 @@
                         <h4 data-toc-skip class="author">Ralf
 Herold</h4>
             
-            <h4 data-toc-skip class="date">2023-04-22</h4>
+            <h4 data-toc-skip class="date">2023-05-07</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/rfhb/ctrdata/blob/HEAD/vignettes/ctrdata_install.Rmd" class="external-link"><code>vignettes/ctrdata_install.Rmd</code></a></small>
       <div class="d-none name"><code>ctrdata_install.Rmd</code></div>
@@ -113,7 +113,7 @@ the user’s library.</p>
 </h3>
 <p>Functions in package <code>ctrdata</code> that start with
 <code>ctr...</code> require access to trial registers over the internet
-via the <code>https</code> protocol. Many organisastions use transparent
+via the <code>https</code> protocol. Many organisations use transparent
 proxies that may <em>not</em> require users to do any configurations.
 However, if necessary, package <code>ctrdata</code> can use proxy
 settings set by users in their R session such as follows:</p>
@@ -127,7 +127,8 @@ settings set by users in their R session such as follows:</p>
 <p>The command line tools <code>perl</code>, <code>sed</code> and
 <code>php</code> (5.2 or higher) are required for
 <code><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code>, the main function of package
-<code>ctrdata</code>. No other function in this package has this
+<code>ctrdata</code> to work with registers “EUCTR”, “CTGOV” and
+“ISRCTN” (but not “CTIS”). No other function in this package has this
 requirement.</p>
 <div class="section level4">
 <h4 id="ms-windows">MS Windows<a class="anchor" aria-label="anchor" href="#ms-windows"></a>
@@ -176,8 +177,8 @@ browser, see <a href="https://github.com/rfhb/ctrdata#id_3-script-to-automatical
 <div class="section level3">
 <h3 id="databases-to-use">Databases to use<a class="anchor" aria-label="anchor" href="#databases-to-use"></a>
 </h3>
-<p>At this time, a PostgreSQL, DuckDB, an SQLite or a remote or local
-MongoDB database can be used with the package <code>ctrdata</code>. A
+<p>At this time, a PostgreSQL, DuckDB, an SQLite or a MongoDB (local or
+remote) database can be used with the package <code>ctrdata</code>. A
 full SQLite database is provided in the R package <a href="https://rsqlite.r-dbi.org/" class="external-link"><code>RSQLite</code></a>. Suggested
 installation instructions for PostgreSQL are <a href="https://www.postgresql.org/download/" class="external-link">here</a> and for a local
 MongoDB server are <a href="https://docs.mongodb.com/manual/administration/install-community/" class="external-link">here</a>;
@@ -229,7 +230,7 @@ installation requirements as mentioned above:</p>
 <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>). Please cite
 this package in any publication as follows: Ralf Herold (2023). ctrdata:
 Retrieve and Analyze Clinical Trials in Public Registers. R package
-version 1.12.0. <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a></p>
+version 1.13.0. <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a></p>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

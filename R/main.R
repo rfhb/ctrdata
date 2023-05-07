@@ -2187,7 +2187,7 @@ ctrLoadQueryIntoDbCtis <- function(
 
   # "HTTP server doesn't seem to support byte ranges. Cannot resume."
   # Note: at this time, this is just a single file to be downloaded
-  tmp <- ctrMultiDownload(urls, fTrialsJson)
+  tmp <- ctrMultiDownload(urls, fTrialsJson, progress = FALSE)
 
   # extract total number of trial records
   resultsEuNumTrials <- as.numeric(
@@ -2291,7 +2291,7 @@ ctrLoadQueryIntoDbCtis <- function(
     }
 
     # "HTTP server doesn't seem to support byte ranges. Cannot resume."
-    tmp <- ctrMultiDownload(urls, fAddJson(idsTrials))
+    tmp <- ctrMultiDownload(urls, fAddJson(idsTrials), progress = FALSE)
 
     # convert into ndjson file
     fAddNdjson <- file.path(tempDir, paste0("ctis_add_", e, ".ndjson"))

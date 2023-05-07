@@ -80,7 +80,7 @@
                         <h4 data-toc-skip class="author">Ralf
 Herold</h4>
             
-            <h4 data-toc-skip class="date">2022-03-20</h4>
+            <h4 data-toc-skip class="date">2023-05-07</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/rfhb/ctrdata/blob/HEAD/vignettes/ctrdata_summarise.Rmd" class="external-link"><code>vignettes/ctrdata_summarise.Rmd</code></a></small>
       <div class="d-none name"><code>ctrdata_summarise.Rmd</code></div>
@@ -714,25 +714,25 @@ a MongoDB server, which are fast and do not consume R resources.</p>
 <span></span>
 <span><span class="co"># Number of records in  collection:</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="fu">count</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co"># [1] 374</span></span>
+<span><span class="co"># [1] 404</span></span>
 <span></span>
 <span><span class="co"># Number of EUCTR records, using JSON for query:</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="fu">count</span><span class="op">(</span>query <span class="op">=</span> <span class="st">'{"_id": {"$regex": "[0-9]{4}-[0-9]{6}-[0-9]{2}",</span></span>
 <span><span class="st">                 "$options": "i"}}'</span><span class="op">)</span></span>
-<span><span class="co"># [1] 173</span></span>
+<span><span class="co"># [1] 196</span></span>
 <span></span>
 <span><span class="co"># Alternative:</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="fu">count</span><span class="op">(</span>query <span class="op">=</span> <span class="st">'{"ctrname": "EUCTR"}'</span><span class="op">)</span></span>
-<span><span class="co"># [1] 173</span></span>
+<span><span class="co"># [1] 196</span></span>
 <span></span>
 <span><span class="co"># Number of CTGOV records:</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="fu">count</span><span class="op">(</span>query <span class="op">=</span> <span class="st">'{"_id": {"$regex": "NCT[0-9]{8}",</span></span>
 <span><span class="st">                 "$options": "i"}}'</span><span class="op">)</span></span>
-<span><span class="co"># [1] 200</span></span>
+<span><span class="co"># [1] 207</span></span>
 <span></span>
 <span><span class="co"># Alternative:</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="fu">count</span><span class="op">(</span>query <span class="op">=</span> <span class="st">'{"ctrname": "CTGOV"}'</span><span class="op">)</span></span>
-<span><span class="co"># [1] 200</span></span>
+<span><span class="co"># [1] 207</span></span>
 <span></span>
 <span><span class="co"># To best define regular expressions for analyses,</span></span>
 <span><span class="co"># inspect the field (here, primary_outcome.measure):</span></span>
@@ -740,7 +740,7 @@ a MongoDB server, which are fast and do not consume R resources.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span></span>
 <span>  <span class="va">m</span><span class="op">$</span><span class="fu">distinct</span><span class="op">(</span></span>
 <span>    key <span class="op">=</span> <span class="st">"primary_outcome.measure"</span>,</span>
-<span>    query <span class="op">=</span> <span class="st">'{"_id": {"$regex": "NCT[0-9]{8}", "$options": "i"}}'</span></span>
+<span>    query <span class="op">=</span> <span class="st">'{"ctrname": "CTGOV"}'</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># [1] "- To demonstrate that 123I-mIBG planar scintigraphy is sensitive and ..."</span></span>
@@ -768,7 +768,7 @@ here for details on mongo’s aggregation pipleline: <a href="https://docs.mongo
 <span><span class="op">)</span></span>
 <span><span class="va">out</span></span>
 <span><span class="co">#    _id count</span></span>
-<span><span class="co"># 1 null    16</span></span>
+<span><span class="co"># 1 null    17</span></span>
 <span></span>
 <span><span class="co"># List records of trials with overall survival</span></span>
 <span><span class="co"># as primary endpoint, and list start date</span></span>
@@ -780,53 +780,85 @@ here for details on mongo’s aggregation pipleline: <a href="https://docs.mongo
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span>
 <span><span class="co">#           _id      start_date</span></span>
-<span><span class="co"># 1 NCT00499616 October 8, 2007</span></span>
-<span><span class="co"># 2 NCT00793845     August 2008</span></span>
-<span><span class="co"># 3 NCT00923351    June 2, 2007</span></span></code></pre></div>
+<span><span class="co"># 1 NCT00445965    January 2006</span></span>
+<span><span class="co"># 2 NCT00499616 October 8, 2007</span></span>
+<span><span class="co"># 3 NCT00793845     August 2008</span></span>
+<span><span class="co"># 4 NCT00923351    June 2, 2007</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="mapreduce">Mapreduce<a class="anchor" aria-label="anchor" href="#mapreduce"></a>
 </h3>
 <p>The following examples uses the map-reduce operation in MongoDB. Note
-this is deprecated starting in MongoDB 5. More information: <a href="https://docs.mongodb.com/manual/core/map-reduce/" class="external-link uri">https://docs.mongodb.com/manual/core/map-reduce/</a></p>
+this is deprecated starting in MongoDB 5. More information: <a href="https://docs.mongodb.com/manual/core/map-reduce/" class="external-link uri">https://docs.mongodb.com/manual/core/map-reduce/</a> Thus,
+below is the same query expressed as aggregation pipeline.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Count number of trials by number of study</span></span>
 <span><span class="co"># participants in bins of hundreds of participants:</span></span>
 <span><span class="va">hist</span> <span class="op">&lt;-</span> <span class="va">m</span><span class="op">$</span><span class="fu">mapreduce</span><span class="op">(</span></span>
-<span>  map <span class="op">=</span> <span class="st">"function() {emit(Math.floor(this.f422_in_the_whole_clinical_trial/100)*100, 1)}"</span>,</span>
+<span>  map <span class="op">=</span> <span class="st">"function() {emit(Math.floor(this.enrollment/100)*100, 1)}"</span>,</span>
 <span>  reduce <span class="op">=</span> <span class="st">"function(id, counts) {return Array.sum(counts)}"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># read as: 85 trials had 0 to less than 100 participants</span></span>
+<span><span class="co"># read as: 135 trials had 0 to less than 100 participants</span></span>
 <span><span class="va">hist</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">hist</span><span class="op">[[</span><span class="st">"_id"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>, <span class="op">]</span></span>
-<span><span class="co">#     _id value</span></span>
-<span><span class="co"># 4     0    85</span></span>
-<span><span class="co"># 7   100    45</span></span>
-<span><span class="co"># 10  200    11</span></span>
-<span><span class="co"># 6   300     4</span></span>
-<span><span class="co"># 5   400     9</span></span>
-<span><span class="co"># 2   600     1</span></span>
-<span><span class="co"># 3  2200     4</span></span>
-<span><span class="co"># 9  2700     2</span></span>
-<span><span class="co"># 8  3300     4</span></span>
-<span><span class="co"># 1   NaN   209</span></span></code></pre></div>
-<!--
-# rewriting this to use aggregate because mapreduce 
-# is deprecated starting from MongoDB 5: 
-
-m$aggregate('[
-    {"$group":{"_id": {"$floor": {"$divide": [ {"$toInt": "$f422_in_the_whole_clinical_trial"}, 100 ]}}}}]')
-m$aggregate(
-  pipeline = '[
-  {"$project": {"$emits": {"participantBin": {"$floor": "$f422_in_the_whole_clinical_trial"}}}},
-  {"$group": {"numberTrials": { "$sum": "participantBin" }}}
-  ]')
-
-tmp <- jsonlite::validate('[
-  {"$project": {"participantBin": { "$floor": "$f422_in_the_whole_clinical_trial"}}, "value": 1}
-  ]')
-
-cat(attr(tmp, "err"))
--->
+<span><span class="co">#   _id value</span></span>
+<span><span class="co"># 8   0   135</span></span>
+<span><span class="co"># 1 100    28</span></span>
+<span><span class="co"># 5 200     5</span></span>
+<span><span class="co"># 2 300     1</span></span>
+<span><span class="co"># 9 400     4</span></span>
+<span><span class="co"># 6 500     4</span></span>
+<span><span class="co"># 7 600     1</span></span>
+<span><span class="co"># 3 900     1</span></span>
+<span><span class="co"># 4 NaN   225</span></span>
+<span></span>
+<span><span class="co"># same but as aggregation pipeline,</span></span>
+<span><span class="co"># future proof with MongoDB</span></span>
+<span><span class="va">m</span><span class="op">$</span><span class="fu">aggregate</span><span class="op">(</span>pipeline <span class="op">=</span> <span class="st">'</span></span>
+<span><span class="st">[</span></span>
+<span><span class="st">  {</span></span>
+<span><span class="st">    "$project": {</span></span>
+<span><span class="st">      "flooredNumber": {</span></span>
+<span><span class="st">        "$multiply": [</span></span>
+<span><span class="st">          {</span></span>
+<span><span class="st">            "$floor": {</span></span>
+<span><span class="st">              "$divide": [</span></span>
+<span><span class="st">                {</span></span>
+<span><span class="st">                  "$toInt": "$enrollment"</span></span>
+<span><span class="st">                },</span></span>
+<span><span class="st">                100</span></span>
+<span><span class="st">              ]</span></span>
+<span><span class="st">            }</span></span>
+<span><span class="st">          },</span></span>
+<span><span class="st">          100</span></span>
+<span><span class="st">        ]</span></span>
+<span><span class="st">      }</span></span>
+<span><span class="st">    }</span></span>
+<span><span class="st">  },</span></span>
+<span><span class="st">  {</span></span>
+<span><span class="st">    "$group": {</span></span>
+<span><span class="st">      "_id": "$flooredNumber",</span></span>
+<span><span class="st">      "count": {</span></span>
+<span><span class="st">        "$count": {}</span></span>
+<span><span class="st">      }</span></span>
+<span><span class="st">    }</span></span>
+<span><span class="st">  },</span></span>
+<span><span class="st">  {</span></span>
+<span><span class="st">    "$sort": {</span></span>
+<span><span class="st">      "_id": 1</span></span>
+<span><span class="st">    }</span></span>
+<span><span class="st">  }</span></span>
+<span><span class="st">]</span></span>
+<span><span class="st">'</span><span class="op">)</span></span>
+<span><span class="co">#   _id count</span></span>
+<span><span class="co"># 1  NA   225</span></span>
+<span><span class="co"># 2   0   135</span></span>
+<span><span class="co"># 3 100    28</span></span>
+<span><span class="co"># 4 200     5</span></span>
+<span><span class="co"># 5 300     1</span></span>
+<span><span class="co"># 6 400     4</span></span>
+<span><span class="co"># 7 500     4</span></span>
+<span><span class="co"># 8 600     1</span></span>
+<span><span class="co"># 9 900     1</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
