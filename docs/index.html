@@ -112,18 +112,18 @@
 <li>EU Clinical Trials Register (“EUCTR”, <a href="https://www.clinicaltrialsregister.eu/" class="external-link uri">https://www.clinicaltrialsregister.eu/</a>)</li>
 <li>ClinicalTrials.gov (“CTGOV”, <a href="https://clinicaltrials.gov/" class="external-link uri">https://clinicaltrials.gov/</a>)</li>
 <li>ISRCTN (<a href="https://www.isrctn.com/" class="external-link uri">https://www.isrctn.com/</a>)</li>
-<li>EU Clinical Trials Information System (“CTIS”, <a href="https://euclinicaltrials.eu/" class="external-link uri">https://euclinicaltrials.eu/</a>) 🔔 NEW since 2023-03-25 (see <a href="#workflow-ctis-example">example</a>) in workflow below</li>
+<li>EU Clinical Trials Information System (“CTIS”, <a href="https://euclinicaltrials.eu/" class="external-link uri">https://euclinicaltrials.eu/</a>) 🔔 see <a href="#workflow-ctis-example">example</a> below</li>
 </ul>
-<p>The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-05-01 for version 1.13.0.9000.</p>
+<p>The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-05-07 for version 1.13.0.9000.</p>
 <div class="section level2">
 <h2 id="main-features">Main features<a class="anchor" aria-label="anchor" href="#main-features"></a>
 </h2>
 <ul>
-<li>Protocol- and results-related trial information is easily retrieved (downloaded): Users define a query in a register’s web interface and then use <code>ctrdata</code> to retrieve in one go all trials found and to accumulate information from different registers. Personal annotations can be including during retrieval. Synonyms of an active substance can also be found.</li>
-<li>Retrieved (downloaded) trial information is transformed and stored in a single collection of a document-centric database, for fast and offline access. Uses <code>DuckDB</code>, <code>PostgreSQL</code>, <code>RSQLite</code> or <code>MongoDB</code>, via R package <code>nodbi</code>: see section <a href="#databases-that-can-be-used-with-ctrdata">Databases</a> below. Easily re-run any previous query in a collection to retrieve and update trial records.</li>
-<li>Analyses can be done with <code>R</code> (using convenience functions in <code>ctrdata</code> to identify unique (de-duplicated) trial records across registers, to merge and recode fields as well as to enumerate and provide easy access to deeply-nested fields) and with many other systems.</li>
-<li>🔔Queries in the registers can be automatically copied to the clipboard (including for “CTIS”, where the URL does not show the query), see <a href="#id_3-script-to-automatically-copy-users-query-from-web-browser">here</a> NEW since 2023-04-15</li>
+<li>Protocol- and results-related trial information is easily downloaded: Users define a query in a register’s web interface and then enter the URL into <code>ctrdata</code> which retrieves in one go all trials found. Documents in registers on trials can also be downloaded. Personal annotations can be made to trials when downloading a query. Synonyms of an active substance can also be found.</li>
+<li>Downloaded trial information is transformed and stored in a collection of a document-centric database, for fast and offline access. Information from different registers can be accumalated in a single collection. Uses <code>DuckDB</code>, <code>PostgreSQL</code>, <code>RSQLite</code> or <code>MongoDB</code>, via R package <code>nodbi</code>: see section <a href="#databases-that-can-be-used-with-ctrdata">Databases</a> below. Re-run any previous query in a collection to retrieve and update trial records.</li>
+<li>For analyses, convenience functions in <code>ctrdata</code> allow to identify unique (de-duplicated) trial records across registers, to merge and recode fields as well as to easily access deeply-nested fields. Analysis can be done with <code>R</code> or other systems, by accessing the structured information in the database.</li>
 </ul>
+<p>URLs of queries in the registers can be automatically copied to the clipboard (including for “CTIS”, where the URL does not show the query), see <a href="#id_3-script-to-automatically-copy-users-query-from-web-browser">here</a>.</p>
 <p>Remember to respect the registers’ terms and conditions (see <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>). Please cite this package in any publication as follows: “Ralf Herold (2023). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.13.0, <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a>”.</p>
 <!--
 &#10;```r
@@ -243,7 +243,6 @@ citation("ctrdata")
 </tr>
 </tbody>
 </table>
-<p>If package <code>dplyr</code> is loaded, a tibble is returned instead of a data.frame.</p>
 </div>
 <div class="section level2">
 <h2 id="databases-that-can-be-used-with-ctrdata">Databases that can be used with <code>ctrdata</code>
@@ -373,7 +372,7 @@ citation("ctrdata")
 <ul>
 <li>Analyse</li>
 </ul>
-<p>Tabulate the status of trials that are part of an agreed paediatric development program (paediatric investigation plan, PIP):</p>
+<p>Tabulate the status of trials that are part of an agreed paediatric development program (paediatric investigation plan, PIP). Where <code>ctrdata</code> functions would return a data.frame, a tibble is returned if package <code>dplyr</code> is loaded.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get all records that have values in the fields of interest:</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span>
@@ -453,12 +452,12 @@ citation("ctrdata")
 <ul>
 <li>Add records from a fourth register (CTIS 🔔) into the same collection</li>
 </ul>
-<p>Queries in the CTIS search interface can be automatically copied to the clipboard so that a user can paste them into <code>queryterm</code>, see <a href="#id_3-script-to-automatically-copy-users-query-from-web-browser">here</a>. As of April 2023, more than 150 trials are publicly accessible in CTIS.</p>
+<p>Queries in the CTIS search interface can be automatically copied to the clipboard so that a user can paste them into <code>queryterm</code>, see <a href="#id_3-script-to-automatically-copy-users-query-from-web-browser">here</a>. As of April 2023, more than 160 trials are publicly accessible in CTIS.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Retrieve trials from another register:</span></span>
 <span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
 <span>  queryterm <span class="op">=</span> <span class="st">"https://euclinicaltrials.eu/ct-public-api-services/services/ct/publiclookup?ageGroupCode=3"</span>,</span>
-<span>  documents.path <span class="op">=</span> <span class="st">"./files-ctis"</span>, <span class="co"># new since 2023-05-01</span></span>
+<span>  documents.path <span class="op">=</span> <span class="st">"./files-ctis"</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># * Found search query from CTIS: ageGroupCode=3</span></span>
@@ -558,7 +557,7 @@ citation("ctrdata")
 <ul>
 <li>Result-related trial information</li>
 </ul>
-<p>Analyse some simple result details (see vignette for more examples):</p>
+<p>Analyse some simple result details (see this <a href="https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html">vignette</a> for more examples):</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get all records that have values in any of the specified fields</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span>
@@ -592,9 +591,7 @@ citation("ctrdata")
 <span><span class="co"># [2.] count number of sites</span></span>
 <span><span class="va">nsite</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dfName2Value.html">dfName2Value</a></span><span class="op">(</span></span>
 <span>  df <span class="op">=</span> <span class="va">result</span>,</span>
-<span>  <span class="co"># some ctgov records use</span></span>
-<span>  <span class="co"># location.name, others use</span></span>
-<span>  <span class="co"># location.facility.name</span></span>
+<span>  <span class="co"># some ctgov records use location.name, others location.facility.name</span></span>
 <span>  valuename <span class="op">=</span> <span class="st">"^location.*name$"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># count</span></span>
@@ -622,7 +619,7 @@ citation("ctrdata")
 <span><span class="va">nset</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">nsubj</span>, <span class="va">nsite</span>, by <span class="op">=</span> <span class="st">"_id"</span><span class="op">)</span></span>
 <span><span class="va">nset</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">nset</span>, <span class="va">ncon</span>, by <span class="op">=</span> <span class="st">"_id"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Example plot</span></span>
+<span><span class="co"># example plot</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">nset</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
@@ -648,19 +645,19 @@ citation("ctrdata")
 <figure><img src="https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_results_neuroblastoma.png" alt="Neuroblastoma trials"><figcaption aria-hidden="true">
 Neuroblastoma trials
 </figcaption></figure><ul>
-<li>Retrieve protocols, statistical analysis plans and other documents into a local folder <code>./files/</code>
+<li>Download documents: retrieve protocols, statistical analysis plans and other documents into the local folder <code>./files/</code>
 </li>
 </ul>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># euctr files are downloaded as part of results</span></span>
+<code class="sourceCode R"><span><span class="co"># euctr document files can be downloaded when results are requested</span></span>
 <span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
-<span>  queryterm <span class="op">=</span> <span class="va">q</span>,</span>
+<span>  queryterm <span class="op">=</span> <span class="st">"https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&amp;age=under-18&amp;phase=phase-one"</span>,</span>
 <span>  euctrresults <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  documents.path <span class="op">=</span> <span class="st">"./files-euctr/"</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># ctgov files (integrated since 2023-05-01)</span></span>
+<span><span class="co"># ctgov files</span></span>
 <span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
 <span>  queryterm <span class="op">=</span> <span class="st">"cond=Neuroblastoma&amp;type=Intr&amp;recrs=e&amp;phase=1&amp;u_prot=Y&amp;u_sap=Y&amp;u_icf=Y"</span>,</span>
 <span>  register <span class="op">=</span> <span class="st">"CTGOV"</span>,</span>

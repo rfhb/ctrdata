@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 [![CRAN](https://badges.cranchecks.info/worst/ctrdata.svg)](https://cran.r-project.org/package=ctrdata)
 [![ctrdata status badge](https://rfhb.r-universe.dev/badges/ctrdata)](https://rfhb.r-universe.dev)
 [![codecov](https://codecov.io/gh/rfhb/ctrdata/branch/master/graph/badge.svg)](https://app.codecov.io/gh/rfhb/ctrdata)
-[![R-CMD-CHECK-ubuntu-duckdb-mongodb-sqlite](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-linux.yaml/badge.svg)](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-linux.yaml)
+[![R-CMD-CHECK-ubuntu-postgresql-duckdb-mongodb-sqlite](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-linux.yaml/badge.svg)](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-linux.yaml)
 [![R-CMD-CHECK-win-macos-duckdb-mongodb-sqlite](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-win-macos.yaml/badge.svg)](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-win-macos.yaml)
 <!-- badges: end -->
 
@@ -34,16 +34,17 @@ The package `ctrdata` provides functions for retrieving (downloading) informatio
 - EU Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/)
 - ClinicalTrials.gov ("CTGOV", https://clinicaltrials.gov/)
 - ISRCTN (https://www.isrctn.com/) 
-- EU Clinical Trials Information System ("CTIS", https://euclinicaltrials.eu/) `r emoji::emoji("bell")` NEW since 2023-03-25 (see [example](#workflow-ctis-example)) in workflow below
+- EU Clinical Trials Information System ("CTIS", https://euclinicaltrials.eu/) `r emoji::emoji("bell")` see [example](#workflow-ctis-example) below
 
-The motivation is to understand trends in design and conduct of trials, their availability for patients and their detailled results. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-05-01 for version 1.13.0.9000.
+The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-05-07 for version 1.13.0.9000.
 
 ## Main features
 
-* Protocol- and results-related trial information is easily retrieved (downloaded): Users define a query in a register's web interface and then use `ctrdata` to retrieve in one go all trials found and to accumulate information from different registers. Personal annotations can be including during retrieval. Synonyms of an active substance can also be found.
-* Retrieved (downloaded) trial information is transformed and stored in a single collection of a document-centric database, for fast and offline access. Uses `DuckDB`, `PostgreSQL`, `RSQLite` or `MongoDB`, via R package `nodbi`: see section [Databases](#databases-that-can-be-used-with-ctrdata) below. Easily re-run any previous query in a collection to retrieve and update trial records. 
-* Analyses can be done with `R` (using convenience functions in `ctrdata` to identify unique (de-duplicated) trial records across registers, to merge and recode fields as well as to enumerate and provide easy access to deeply-nested fields) and with many other systems. 
-* `r emoji::emoji("bell")`Queries in the registers can be automatically copied to the clipboard (including for "CTIS", where the URL does not show the query), see [here](#3-script-to-automatically-copy-users-query-from-web-browser) NEW since 2023-04-15
+* Protocol- and results-related trial information is easily downloaded: Users define a query in a register's web interface and then enter the URL into `ctrdata` which retrieves in one go all trials found. Documents in registers on trials can also be downloaded. Personal annotations can be made to trials when downloading a query. Synonyms of an active substance can also be found.
+* Downloaded trial information is transformed and stored in a collection of a document-centric database, for fast and offline access. Information from different registers can be accumalated in a single collection. Uses `DuckDB`, `PostgreSQL`, `RSQLite` or `MongoDB`, via R package `nodbi`: see section [Databases](#databases-that-can-be-used-with-ctrdata) below. Re-run any previous query in a collection to retrieve and update trial records. 
+* For analyses, convenience functions in `ctrdata` allow to identify unique (de-duplicated) trial records across registers, to merge and recode fields as well as to easily access deeply-nested fields. Analysis can be done with `R` or other systems, by accessing the structured information in the database. 
+
+URLs of queries in the registers can be automatically copied to the clipboard (including for "CTIS", where the URL does not show the query), see [here](#3-script-to-automatically-copy-users-query-from-web-browser). 
 
 Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: "Ralf Herold (2023). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.13.0, https://cran.r-project.org/package=ctrdata". 
 
@@ -115,8 +116,6 @@ Function name | Function purpose
 `dfName2Value()` | From a long name-value data.frame, extract values for variables (fields) of interest (e.g., endpoints)
 `dfMergeTwoVariablesRelevel()` | Merge two simple variables into a new variable, optionally map values to a new set of values
 `installCygwinWindowsDoInstall()` | Convenience function to install a Cygwin environment (MS Windows only)
-
-If package `dplyr` is loaded, a tibble is returned instead of a data.frame.
 
 
 ## Databases that can be used with `ctrdata`
@@ -227,7 +226,7 @@ Under the hood, scripts `euctr2json.sh` and `xml2json.php` (in `ctrdata/exec`) t
 
 * Analyse
 
-Tabulate the status of trials that are part of an agreed paediatric development program (paediatric investigation plan, PIP):
+Tabulate the status of trials that are part of an agreed paediatric development program (paediatric investigation plan, PIP). Where `ctrdata` functions would return a data.frame, a tibble is returned if package `dplyr` is loaded.
 
 ```{r}
 # Get all records that have values in the fields of interest:
@@ -311,13 +310,13 @@ ctrLoadQueryIntoDb(
 <div id="workflow-ctis-example"></div>
 * Add records from a fourth register (CTIS `r emoji::emoji("bell")`) into the same collection
 
-Queries in the CTIS search interface can be automatically copied to the clipboard so that a user can paste them into `queryterm`, see [here](#3-script-to-automatically-copy-users-query-from-web-browser). As of April 2023, more than 150 trials are publicly accessible in CTIS. 
+Queries in the CTIS search interface can be automatically copied to the clipboard so that a user can paste them into `queryterm`, see [here](#3-script-to-automatically-copy-users-query-from-web-browser). As of April 2023, more than 160 trials are publicly accessible in CTIS. 
 
 ```{r register_import_ctis}
 # Retrieve trials from another register:
 ctrLoadQueryIntoDb(
   queryterm = "https://euclinicaltrials.eu/ct-public-api-services/services/ct/publiclookup?ageGroupCode=3",
-  documents.path = "./files-ctis", # new since 2023-05-01
+  documents.path = "./files-ctis",
   con = db
 )
 # * Found search query from CTIS: ageGroupCode=3
@@ -418,7 +417,7 @@ format(object.size(allData), "MB")
 
 * Result-related trial information
 
-Analyse some simple result details (see vignette for more examples):
+Analyse some simple result details (see this [vignette](https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html) for more examples):
 
 ```{r}
 # Get all records that have values in any of the specified fields
@@ -453,9 +452,7 @@ nsubj <- dfName2Value(
 # [2.] count number of sites
 nsite <- dfName2Value(
   df = result,
-  # some ctgov records use
-  # location.name, others use
-  # location.facility.name
+  # some ctgov records use location.name, others location.facility.name
   valuename = "^location.*name$"
 )
 # count
@@ -483,7 +480,7 @@ ncon <- dfName2Value(
 nset <- merge(nsubj, nsite, by = "_id")
 nset <- merge(nset, ncon, by = "_id")
 
-# Example plot
+# example plot
 library(ggplot2)
 ggplot(data = nset) +
   labs(
@@ -509,18 +506,18 @@ ggsave(
 ```
 ![Neuroblastoma trials](https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_results_neuroblastoma.png)
 
-* Retrieve protocols, statistical analysis plans and other documents into a local folder `./files/`
+* Download documents: retrieve protocols, statistical analysis plans and other documents into the local folder `./files/`
 
 ```{r}
-# euctr files are downloaded as part of results
+# euctr document files can be downloaded when results are requested
 ctrLoadQueryIntoDb(
-  queryterm = q,
+  queryterm = "https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&age=under-18&phase=phase-one",
   euctrresults = TRUE,
   documents.path = "./files-euctr/",
   con = db
 )
 
-# ctgov files (integrated since 2023-05-01)
+# ctgov files
 ctrLoadQueryIntoDb(
   queryterm = "cond=Neuroblastoma&type=Intr&recrs=e&phase=1&u_prot=Y&u_sap=Y&u_icf=Y",
   register = "CTGOV",
@@ -532,7 +529,9 @@ ctrLoadQueryIntoDb(
 ```{r, include=FALSE}
 # cleanup
 unlink("some_database_name.sqlite_file")
-unlink("./files/", recursive = TRUE)
+unlink("./files-ctis/", recursive = TRUE)
+unlink("./files-euctr/", recursive = TRUE)
+unlink("./files-ctgov/", recursive = TRUE)
 ```
 
 
