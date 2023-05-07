@@ -162,6 +162,8 @@ expect_equal(
 
 #### ctrGetQueryUrl ####
 
+clipr::clear_clip()
+
 # see also test_ctrdata_param_checks.R
 
 expect_equal(

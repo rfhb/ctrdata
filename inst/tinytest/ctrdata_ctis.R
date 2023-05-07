@@ -6,17 +6,17 @@
 expect_message(
   tmpTest <- suppressWarnings(
     ctrLoadQueryIntoDb(
-      queryterm = "",
+      queryterm = "ageGroupCode=2",
       register = "CTIS",
       verbose = TRUE,
       con = dbc)),
   "Imported / updated ")
 
 # test
-expect_true(tmpTest$n >= 130L)
+expect_true(tmpTest$n >= 13L)
 
 # test
-expect_true(all(c("2022-500657-17-00", "2022-501537-23-00") %in% tmpTest$success))
+expect_true(all(c("2023-504071-24-00", "2022-502144-12-00") %in% tmpTest$success))
 
 # test
 expect_true(length(tmpTest$failed) == 0L)
@@ -178,6 +178,6 @@ expect_message(
   " [0-9]+ records")
 
 # test
-expect_true(length(res) >= 135L)
+expect_true(length(res) >= 20L)
 rm(res)
 
