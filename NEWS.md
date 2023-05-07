@@ -1,3 +1,6 @@
+# ctrdata 1.13.1.9000 (2023-05-07)
+ - new dev version
+ 
 # ctrdata 1.13.1 (2023-05-07)
  - load more CTIS data (publicEvaluation) and download documents
  - integrate downloading documents into ctrLoadQueryIntoDb() also for CTGOV
