@@ -3111,7 +3111,6 @@ ctrMultiDownload <- function(urls, destfiles, progress = TRUE) {
     c(urls = list(utils::URLencode(urls)),
       destfiles = list(destfiles),
       progress = progress,
-      timeout = Inf,
       getOption("httr_config")[["options"]],
       accept_encoding = "gzip,deflate,zstd,br"
     )
