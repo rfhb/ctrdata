@@ -109,9 +109,9 @@ These commands also install the package’s dependencies (`nodbi`,
 ### 2. Command line tools `perl`, `sed` and `php` (5.2 or higher)
 
 These are required for `ctrLoadQueryIntoDb()`, the main function of
-package `ctrdata` (see [Example workflow](#example-workflow)), to with
-the registers EUCTR, CTGOV, ISRCTN (but not CTIS); the function also
-checks if the tools can be used.
+package `ctrdata` (see [Example workflow](#example-workflow)), to work
+with the registers EUCTR, CTGOV, ISRCTN (but are not required to work
+with CTIS); the function also checks if the tools can be used.
 
 - For MS Windows, install [`Cygwin`](https://cygwin.org/install.html):
   In `R`, run `ctrdata::installCygwinWindowsDoInstall()` for an
@@ -131,8 +131,7 @@ checks if the tools can be used.
 
 This is optional; it works with all registers supported by `ctrdata` but
 is recommended for CTIS because the URL in the web browser does not
-reflect the parameters the user specified for the querying this
-register.
+reflect the parameters the user specified for querying this register.
 
 In the web browser, install the [Tampermonkey browser
 extension](https://www.tampermonkey.net/), click on “New user script”
@@ -141,7 +140,7 @@ and then on “Tools”, then enter into “Import from URL” this URL:
 and last click on “Install”.
 
 The browser extension can be disabled and enabled by the user. When
-enabled, the URLs to all user’s queries in the registers are now
+enabled, the URLs to all user’s queries in the registers are
 automatically copied to the clipboard and can be pasted into the
 `queryterm=...` parameter of function `ctrLoadQueryIntoDb()`.
 

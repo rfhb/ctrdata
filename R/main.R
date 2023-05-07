@@ -67,12 +67,6 @@
 #' available history of results publication in "EUCTR."
 #' This is quite time-consuming. Default is \code{FALSE}.
 #'
-#' @param euctrresultsfilespath Deprecated,
-#' use \code{documents.path}
-#'
-#' @param euctrresultspdfpath Deprecated,
-#' use \code{documents.path}
-#'
 #' @param annotation.text Text to be including in the records
 #' retrieved with the current query, in the field "annotation".
 #' The contents of the field "annotation" for a trial record
@@ -84,9 +78,6 @@
 #' or "replace" for new annotation.text with respect to any
 #' existing annotation for the records retrieved with the
 #' current query.
-#'
-#' @param parallelretrievals Deprecated, ignored since
-#' version 1.11.1.9000
 #'
 #' @param only.count Set to \code{TRUE} to return only the
 #' number of trial records found in the register for the query.
@@ -159,29 +150,29 @@ ctrLoadQueryIntoDb <- function(
   forcetoupdate = FALSE,
   euctrresults = FALSE,
   euctrresultshistory = FALSE,
-  euctrresultsfilespath = NULL,
-  euctrresultspdfpath = NULL,
   documents.path = NULL,
   documents.regexp = "prot|sample|statist|_sap_|p1ar|p2ars|ctaletter",
   annotation.text = "",
   annotation.mode = "append",
-  parallelretrievals = NULL,
   only.count = FALSE,
   con = NULL,
-  verbose = FALSE) {
+  verbose = FALSE, ...) {
 
   ## check params
 
   # - deprecated
-  if (!is.null(euctrresultspdfpath)) {
+  params <- list(...)
+  if (!is.null(params$euctrresultspdfpath)) {
     warning("Parameter 'euctrresultspdfpath' is deprecated, ",
             "use 'documents.path'", call. = FALSE)
+    documents.path <- params$euctrresultspdfpath
   }
-  if (!is.null(euctrresultsfilespath)) {
+  if (!is.null(params$euctrresultsfilespath)) {
     warning("Parameter 'euctrresultsfilespath' is deprecated, ",
             "use 'documents.path'", call. = FALSE)
+    documents.path <- params$euctrresultsfilespath
   }
-  if (!missing("parallelretrievals")) {
+  if (!is.null(params$parallelretrievals)) {
     warning("Parameter 'parallelretrievals' is deprecated and ignored")
   }
 
@@ -325,7 +316,6 @@ ctrLoadQueryIntoDb <- function(
                  register = register,
                  euctrresults = euctrresults,
                  euctrresultshistory = euctrresultshistory,
-                 euctrresultsfilespath = euctrresultsfilespath,
                  documents.path = documents.path,
                  documents.regexp = documents.regexp,
                  annotation.text = annotation.text,
@@ -1107,7 +1097,6 @@ ctrLoadQueryIntoDbCtgov <- function(
   register,
   euctrresults,
   euctrresultshistory,
-  euctrresultsfilespath,
   documents.path,
   documents.regexp,
   annotation.text,
@@ -1363,7 +1352,6 @@ ctrLoadQueryIntoDbEuctr <- function(
   register,
   euctrresults,
   euctrresultshistory,
-  euctrresultsfilespath,
   documents.path,
   documents.regexp,
   annotation.text,
@@ -1948,7 +1936,6 @@ ctrLoadQueryIntoDbIsrctn <- function(
   register,
   euctrresults,
   euctrresultshistory,
-  euctrresultsfilespath,
   documents.path,
   documents.regexp,
   annotation.text,
@@ -2132,7 +2119,6 @@ ctrLoadQueryIntoDbCtis <- function(
     register,
     euctrresults,
     euctrresultshistory,
-    euctrresultsfilespath,
     documents.path,
     documents.regexp,
     annotation.text,

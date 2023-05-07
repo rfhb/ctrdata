@@ -11,16 +11,14 @@ ctrLoadQueryIntoDb(
   forcetoupdate = FALSE,
   euctrresults = FALSE,
   euctrresultshistory = FALSE,
-  euctrresultsfilespath = NULL,
-  euctrresultspdfpath = NULL,
   documents.path = NULL,
   documents.regexp = "prot|sample|statist|_sap_|p1ar|p2ars|ctaletter",
   annotation.text = "",
   annotation.mode = "append",
-  parallelretrievals = NULL,
   only.count = FALSE,
   con = NULL,
-  verbose = FALSE
+  verbose = FALSE,
+  ...
 )
 }
 \arguments{
@@ -62,12 +60,6 @@ are always retrieved and loaded.}
 available history of results publication in "EUCTR."
 This is quite time-consuming. Default is \code{FALSE}.}
 
-\item{euctrresultsfilespath}{Deprecated,
-use \code{documents.path}}
-
-\item{euctrresultspdfpath}{Deprecated,
-use \code{documents.path}}
-
 \item{documents.path}{If this is a relative or absolute
 path to a directory that exists or can be created,
 save any documents into it that are directly available from
@@ -95,9 +87,6 @@ loading a record of the annotated trial again, see parameter
 or "replace" for new annotation.text with respect to any
 existing annotation for the records retrieved with the
 current query.}
-
-\item{parallelretrievals}{Deprecated, ignored since
-version 1.11.1.9000}
 
 \item{only.count}{Set to \code{TRUE} to return only the
 number of trial records found in the register for the query.
