@@ -5,7 +5,7 @@
 
 on: [push, pull_request]
 
-name: R-CMD-CHECK-win-macos-postgresql-mongodb-sqlite
+name: R-CMD-CHECK-win-macos-duckdb-mongodb-sqlite
 
 jobs:
   R-CMD-check:

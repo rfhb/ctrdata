@@ -5,7 +5,7 @@
 
 on: [push, pull_request]
 
-name: R-CMD-CHECK-ubuntu-postgresql-mongodb-sqlite
+name: R-CMD-CHECK-ubuntu-postgresql-duckdb-mongodb-sqlite
 
 jobs:
   R-CMD-check:
@@ -76,10 +76,10 @@ jobs:
           remotes::install_github("rfhb/ctrdata")
         shell: Rscript {0}
 
-      # - uses: ankane/setup-postgres@v1
-      #   with:
-      #     postgres-version: 14
-      #     database: test
+      - uses: ankane/setup-postgres@v1
+        with:
+          postgres-version: 14
+          database: test
 
       - uses: r-lib/actions/check-r-package@v2
         env:
