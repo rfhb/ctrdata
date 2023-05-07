@@ -162,7 +162,7 @@ expect_equal(
 
 #### ctrGetQueryUrl ####
 
-clipr::clear_clip()
+try(clipr::clear_clip(allow_non_interactive = TRUE), silent = TRUE)
 
 # see also test_ctrdata_param_checks.R
 
