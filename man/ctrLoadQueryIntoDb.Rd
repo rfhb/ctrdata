@@ -98,6 +98,8 @@ Default is \code{FALSE}.}
 
 \item{verbose}{Printing additional information if set to
 \code{TRUE}; default is \code{FALSE}.}
+
+\item{...}{Do not use (capture deprecated parameters).}
 }
 \value{
 A list with elements

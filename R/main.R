@@ -89,6 +89,8 @@
 #' @param verbose Printing additional information if set to
 #' \code{TRUE}; default is \code{FALSE}.
 #'
+#' @param ... Do not use (capture deprecated parameters).
+#'
 #' @return A list with elements
 #' `n` (number of trial records newly imported or updated),
 #' `success` (a vector of _id's of successfully loaded records),
@@ -2284,7 +2286,7 @@ ctrLoadQueryIntoDbCtis <- function(
 
     urls <- sprintf(ctisEndpoints[e], idsTrials)
     ep <- sub(".+/(.+?)$", "\\1", sub("/list$", "", urls[1]))
-    message(ep, appendLF = FALSE)
+    message("- ", ep, appendLF = FALSE)
 
     fAddJson <- function(i) {
       file.path(tempDir, paste0("ctis_add_", e, "_", i, ".json"))
@@ -2332,7 +2334,7 @@ ctrLoadQueryIntoDbCtis <- function(
 
   ## add_9: more data -------------------------------------------------------
 
-  message("publicevaluation ")
+  message("- publicevaluation ")
 
   fApplicationsJson <- file.path(tempDir, "ctis_add_9.json")
 
@@ -2438,7 +2440,7 @@ ctrLoadQueryIntoDbCtis <- function(
     } else {
 
       # continue after if
-      message("\nDownloading documents into 'documents.path' = ", documents.path)
+      message("\n* Downloading documents into 'documents.path' = ", documents.path)
 
       # canonical directory path
       documents.path <- normalizePath(documents.path, mustWork = TRUE)
@@ -2673,10 +2675,10 @@ ctrLoadQueryIntoDbCtis <- function(
 
       # inform user
       message(sprintf(paste0(
-        "Newly saved %i ",
+        "= Newly saved %i ",
         ifelse(is.null(documents.regexp), "placeholder ", ""),
         "document(s) for %i trial(s) (latest versions only, ",
-        "and deduplicated if e.g. in applications and authorised parts); ",
+        "deduplicated if e.g. in application and authorised part); ",
         "%i document(s) for %i trial(s) already existed in %s"),
         tmp,
         length(unique(dlFiles$`_id`)),

@@ -221,13 +221,13 @@ ctrLoadQueryIntoDb(
 # . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 # . . . . . . . . . . . . . . . . . . . . . . . . 
 # (3/5) Downloading and processing additional data: 
-# publicevents
-# summary
-# layperson
-# csr
-# cm
-# inspections
-# publicevaluation 
+# - publicevents
+# - summary
+# - layperson
+# - csr
+# - cm
+# - inspections
+# - publicevaluation 
 # Download status: 221 done; 0 in progress. Total size: 6.45 Mb (100%)... done!             
 # 141
 # (4/5) Importing JSON records into database...

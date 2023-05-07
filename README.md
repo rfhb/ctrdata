@@ -407,18 +407,18 @@ ctrLoadQueryIntoDb(
 # Download status: 135 done; 0 in progress. Total size: 20.35 Mb (100%)... done!             
 # . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 # (3/5) Downloading and processing additional data: 
-# publicevents
-# summary
-# layperson
-# csr
-# cm
-# inspections
-# publicevaluation 
+# - publicevents
+# - summary
+# - layperson
+# - csr
+# - cm
+# - inspections
+# - publicevaluation 
 # Download status: 213 done; 0 in progress. Total size: 6.24 Mb (100%)... done!             
 # 135
 # (4/5) Importing JSON records into database...
 # (5/5) Updating with additional data: . . .       
-# Downloading documents into 'documents.path' = ./files-ctis
+# * Downloading documents into 'documents.path' = ./files-ctis
 # - Created directory ./files-ctis
 # - Getting ids of lists with document information
 # - Downloading 1594 lists with document information (estimate: 31.88 Mb)
@@ -428,9 +428,9 @@ ctrLoadQueryIntoDb(
 # - Applying 'documents.regexp' to 1651 documents:
 # - Downloading 380 documents
 # Download status: 380 done; 0 in progress. Total size: 223.96 Mb (100%)... done!             
-# Newly saved 356 document(s) for 116 trial(s) (latest versions only, and 
-# deduplicated if e.g. in applications and authorised parts); 
-# 0 document(s) for 0 trial(s) already existed in ./files-ctis
+# = Newly saved 356 document(s) for 116 trial(s) (latest versions only,  
+# deduplicated if e.g. in application and authorised part); 0 document(s) 
+# for 0 trial(s) already existed in ./files-ctis
 # = Imported / updated 135 / 135 / 2 / 135 records on 135 trial(s)
 # Updated history ("meta-info" in "some_collection_name")
 
