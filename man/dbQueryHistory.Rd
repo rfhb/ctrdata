@@ -14,7 +14,7 @@ dbQueryHistory(con, verbose = FALSE)
 (default \code{FALSE}).}
 }
 \value{
-A data frame (or tibble, if \code{dplyr} is loaded)
+A data frame (or tibble, if \code{tibble} is loaded)
  with columns: `query-timestamp`, `query-register`,
  `query-records` (note: this is the number of records loaded when last
  executing \link{ctrLoadQueryIntoDb}, not the total record number) and

@@ -548,14 +548,14 @@ ctrOpenSearchPagesInBrowser <- function(
 #'
 #' @export
 #'
-#' @return A data frame (or tibble, if \code{dplyr} is loaded)
+#' @return A data frame (or tibble, if \code{tibble} is loaded)
 #' with column names `query-term` and `query-register`.
 #' The data frame (or tibble) can be passed as such as parameter
 #' `query-term` to \link{ctrLoadQueryIntoDb} and as parameter
 #' `url` to \link{ctrOpenSearchPagesInBrowser}.
 #'
 #' @importFrom clipr read_clip
-#' @importFrom dplyr as_tibble
+#' @importFrom tibble as_tibble
 #'
 #' @examples
 #'
@@ -642,7 +642,7 @@ ctrGetQueryUrl <- function(
       `query-register` = reg,
       check.names = FALSE,
       stringsAsFactors = FALSE)
-    if (any("dplyr" == .packages())) out <- dplyr::as_tibble(out)
+    if (any("tibble" == .packages())) out <- tibble::as_tibble(out)
     return(out)
   }
   # identify query term per register
@@ -764,7 +764,6 @@ ctrGetQueryUrl <- function(
 #'
 #' @importFrom httr GET set_config user_agent
 #' @importFrom utils packageDescription
-#' @importFrom rvest html_element html_table read_html
 #'
 #' @export
 #'
@@ -809,19 +808,10 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "") {
     return(NULL)
   }
 
-  # make page content accessible to rvest
-  tmp <- rvest::read_html(httr::content(tmp, as = "text"))
-
   # extract from table "Terms and Synonyms Searched:"
-  tmp <- rvest::html_element(
-    tmp, xpath = '//*[@id="searchdetail"]//table[1]')
-  tmp <- rvest::html_table(tmp, fill = TRUE)
-  asx <- tmp[["Terms"]]
-  asx <- asx[!grepl(
-    paste0("(more|synonyms|terms|", activesubstance, "|",
-           paste0(unlist(strsplit(activesubstance, " "), use.names = FALSE),
-                  collapse = "|"), ")"), asx,
-    ignore.case = TRUE)]
+  asx <- xml2::read_html(tmp)
+  asx <- xml2::xml_find_all(asx, '//*[@id="searchdetail"]/div[1]/div/table[1]/tbody/tr/td[1]')
+  asx <- trimws(xml2::xml_text(asx))
 
   # prepare and return output
   asx <- c(activesubstance, asx)
@@ -834,7 +824,7 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "") {
 #'
 #' @inheritParams ctrDb
 #'
-#' @return A data frame (or tibble, if \code{dplyr} is loaded)
+#' @return A data frame (or tibble, if \code{tibble} is loaded)
 #'  with columns: `query-timestamp`, `query-register`,
 #'  `query-records` (note: this is the number of records loaded when last
 #'  executing \link{ctrLoadQueryIntoDb}, not the total record number) and
@@ -845,7 +835,7 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "") {
 #' (default \code{FALSE}).
 #'
 #' @importFrom nodbi docdb_query
-#' @importFrom dplyr as_tibble
+#' @importFrom tibble as_tibble
 #'
 #' @export
 #'
@@ -904,7 +894,7 @@ dbQueryHistory <- function(con, verbose = FALSE) {
   }
 
   # return
-  if (any("dplyr" == .packages())) return(dplyr::as_tibble(hist))
+  if (any("tibble" == .packages())) return(tibble::as_tibble(hist))
   return(hist)
 
 }
@@ -1469,7 +1459,7 @@ dbFindIdsUniqueTrials <- function(
 #'
 #' @inheritParams ctrDb
 #'
-#' @return A data frame (or tibble, if \code{dplyr} is loaded)
+#' @return A data frame (or tibble, if \code{tibble} is loaded)
 #' with columns corresponding to the sought fields.
 #' A column for the record `_id` will always be included.
 #' Each column can be either a simple data type (numeric, character, date)
@@ -1482,7 +1472,7 @@ dbFindIdsUniqueTrials <- function(
 #'
 #' @importFrom nodbi docdb_query
 #' @importFrom stats na.omit
-#' @importFrom dplyr as_tibble
+#' @importFrom tibble as_tibble
 #'
 #' @export
 #'
@@ -1808,7 +1798,7 @@ dbGetFieldsIntoDf <- function(fields = "",
     con = con)
 
   # return
-  if (any("dplyr" == .packages())) return(dplyr::as_tibble(result))
+  if (any("tibble" == .packages())) return(tibble::as_tibble(result))
   return(result)
 
 }
@@ -1838,7 +1828,7 @@ dbGetFieldsIntoDf <- function(fields = "",
 #' @param wherevalue (optional) A character string with the value of
 #' the variable identified by `wherename` (e.g., "response")
 #'
-#' @return A data frame (or tibble, if \code{dplyr} is loaded)
+#' @return A data frame (or tibble, if \code{tibble} is loaded)
 #' that includes the values of interest, with columns
 #' `_id`, `identifier`, `name`, `value` (and `where`, with the
 #'  contents of `wherevalue` found at `wherename`).
@@ -1847,7 +1837,7 @@ dbGetFieldsIntoDf <- function(fields = "",
 #'  \link{dfTrials2Long} to identify matching elements, e.g.
 #'  endpoint descriptions and measurements.
 #'
-#' @importFrom dplyr as_tibble
+#' @importFrom tibble as_tibble
 #' @importFrom stringi stri_detect_regex
 #'
 #' @export
@@ -1994,7 +1984,7 @@ dfName2Value <- function(df, valuename = "",
           " out of ", length(unique(df[["_id"]])), " trials")
 
   # return
-  if (any("dplyr" == .packages())) return(dplyr::as_tibble(out))
+  if (any("tibble" == .packages())) return(tibble::as_tibble(out))
   return(out)
 
 } # end dfName2Value
@@ -2017,11 +2007,11 @@ dfName2Value <- function(df, valuename = "",
 #'  one or more variables as obtained from
 #'  \link{dbGetFieldsIntoDf}
 #'
-#' @return A data frame  (or tibble, if \code{dplyr} is loaded)
+#' @return A data frame  (or tibble, if \code{tibble} is loaded)
 #' with the four columns: `_id`, `identifier`, `name`, `value`
 #'
 #' @importFrom stringi stri_extract_all_charclass stri_extract_first stri_replace_first
-#' @importFrom dplyr as_tibble
+#' @importFrom tibble as_tibble
 #' @importFrom xml2 xml_text read_html
 #'
 #' @export
@@ -2207,7 +2197,7 @@ dfTrials2Long <- function(df) {
           " unique names of variables")
 
   # output
-  if (any("dplyr" == .packages())) return(dplyr::as_tibble(out))
+  if (any("tibble" == .packages())) return(tibble::as_tibble(out))
   return(out)
 
 } # end dfTrials2Long
@@ -2230,14 +2220,14 @@ dfTrials2Long <- function(df) {
 #'  the name of the key identifies the element to be
 #'  extracted. See example.
 #'
-#' @return A data frame (or tibble, if \code{dplyr} is loaded)
+#' @return A data frame (or tibble, if \code{tibble} is loaded)
 #'  in long format with columns
 #'  name (identifying the full path in the data frame,
 #'  "<list>.<key>"), _id (of the trial record), value
 #'  (of name per _id), item (number of value of name
 #'  per _id).
 #'
-#' @importFrom dplyr as_tibble
+#' @importFrom tibble as_tibble
 #'
 #' @export
 #'
@@ -2342,7 +2332,7 @@ dfListExtractKey <- function(
   out <- do.call(rbind, c(out, stringsAsFactors = FALSE, make.row.names = FALSE))
 
   # return
-  if (any("dplyr" == .packages())) return(dplyr::as_tibble(out))
+  if (any("tibble" == .packages())) return(tibble::as_tibble(out))
   return(out)
 
 } # end dfListExtractKey
@@ -2367,7 +2357,7 @@ dfListExtractKey <- function(
 #'
 #' @return A vector of strings
 #'
-#' @importFrom dplyr as_tibble
+#' @importFrom tibble as_tibble
 #'
 #' @export
 #'

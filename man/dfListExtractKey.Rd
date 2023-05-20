@@ -17,7 +17,7 @@ the name of the key identifies the element to be
 extracted. See example.}
 }
 \value{
-A data frame (or tibble, if \code{dplyr} is loaded)
+A data frame (or tibble, if \code{tibble} is loaded)
  in long format with columns
  name (identifying the full path in the data frame,
  "<list>.<key>"), _id (of the trial record), value

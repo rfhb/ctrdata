@@ -13,7 +13,7 @@ one or more variables as obtained from
 \link{dbGetFieldsIntoDf}}
 }
 \value{
-A data frame  (or tibble, if \code{dplyr} is loaded)
+A data frame  (or tibble, if \code{tibble} is loaded)
 with the four columns: `_id`, `identifier`, `name`, `value`
 }
 \description{

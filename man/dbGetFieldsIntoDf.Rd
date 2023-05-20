@@ -22,7 +22,7 @@ a warning (\code{FALSE}) if the sought field is empty in all,
 or not available in any of the records in the database collection.}
 }
 \value{
-A data frame (or tibble, if \code{dplyr} is loaded)
+A data frame (or tibble, if \code{tibble} is loaded)
 with columns corresponding to the sought fields.
 A column for the record `_id` will always be included.
 Each column can be either a simple data type (numeric, character, date)

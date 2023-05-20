@@ -12,8 +12,8 @@ library(tinytest)
 suppressPackageStartupMessages(library(ctrdata))
 
 # test with dplyr
-if (any(row.names(installed.packages()) == "dplyr"))
-  suppressPackageStartupMessages(library(dplyr))
+if (any("tibble" == .packages()))
+  suppressPackageStartupMessages(library(tibble))
 
 # throw error for && and || with vectors longer than 1 element
 Sys.setenv("_R_CHECK_LENGTH_1_LOGIC2_" = "TRUE")

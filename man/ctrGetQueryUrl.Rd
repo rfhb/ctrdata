@@ -20,7 +20,7 @@ Can also contain a query term such as from
 "ISRCTN" or "CTIS") in case `url` is a query term}
 }
 \value{
-A data frame (or tibble, if \code{dplyr} is loaded)
+A data frame (or tibble, if \code{tibble} is loaded)
 with column names `query-term` and `query-register`.
 The data frame (or tibble) can be passed as such as parameter
 `query-term` to \link{ctrLoadQueryIntoDb} and as parameter

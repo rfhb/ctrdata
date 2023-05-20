@@ -1,5 +1,5 @@
 # ctrdata 1.13.1.9000 (2023-05-07)
- - new dev version
+ - reduce dependencies (rvest, dplyr removed)
  
 # ctrdata 1.13.1 (2023-05-07)
  - load more CTIS data (publicEvaluation) and download documents

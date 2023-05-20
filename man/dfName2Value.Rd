@@ -23,7 +23,7 @@ trial record (e.g., "endPoints.endPoint.title")}
 the variable identified by `wherename` (e.g., "response")}
 }
 \value{
-A data frame (or tibble, if \code{dplyr} is loaded)
+A data frame (or tibble, if \code{tibble} is loaded)
 that includes the values of interest, with columns
 `_id`, `identifier`, `name`, `value` (and `where`, with the
  contents of `wherevalue` found at `wherename`).
