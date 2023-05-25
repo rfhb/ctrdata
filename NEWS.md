@@ -1,4 +1,5 @@
-# ctrdata 1.13.1.9000 (2023-05-07)
+# ctrdata 1.13.1.9000 (2023-05-25)
+ - correct selection of lists with ids for documents to download from CTIS
  - reduce dependencies (rvest, dplyr removed)
  
 # ctrdata 1.13.1 (2023-05-07)

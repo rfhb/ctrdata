@@ -2503,7 +2503,7 @@ ctrLoadQueryIntoDbCtis <- function(
       dlFiles <- apply(dlFiles, 1, function(r) {
         tmp <- data.frame(id = unlist(r[-1], use.names = TRUE), r[1],
                           check.names = FALSE, stringsAsFactors = FALSE)
-        # if id occurs repeatedly, only use last from defined order
+        # if url occurs repeatedly, only use last from defined order
         tmp$part <- sub("[0-9]+$", "", row.names(tmp))
         tmp$part <- ordered(tmp$part, orderedParts)
         tmp$typ <- sub("appl|auth", "", tmp$part)
@@ -2511,8 +2511,8 @@ ctrLoadQueryIntoDbCtis <- function(
         tmp$url <- mapply(
           function(t, i) sprintf(epTyp[t][[1]], i), tmp$typ, tmp$id)
         #
-        tmp <- tmp[order(tmp$id, tmp$part), , drop = FALSE]
-        rl <- rle(tmp$id)
+        tmp <- tmp[order(tmp$url, tmp$part), , drop = FALSE]
+        rl <- rle(tmp$url)
         rl <- unlist(sapply(rl$lengths, function(i) c(TRUE, rep(FALSE, i - 1L))))
         tmp <- tmp[rl, , drop = FALSE]
       })
