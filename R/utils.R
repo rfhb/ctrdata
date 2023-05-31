@@ -764,6 +764,7 @@ ctrGetQueryUrl <- function(
 #'
 #' @importFrom httr GET set_config user_agent
 #' @importFrom utils packageDescription
+#' @importFrom xml2 read_html xml_find_all xml_text
 #'
 #' @export
 #'
@@ -794,7 +795,9 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "") {
 
   # set user agent for httr and curl to inform registers
   httr::set_config(httr::user_agent(
-    paste0("ctrdata/", utils::packageDescription("ctrdata")$Version)))
+    paste0(
+      "ctrdata/", utils::packageDescription("ctrdata")$Version,
+      " (https://cran.r-project.org/package=ctrdata)")))
 
   # get webpage
   tmp <- try({

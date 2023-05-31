@@ -257,7 +257,9 @@ ctrLoadQueryIntoDb <- function(
 
   # set user agent for httr and curl to inform registers
   httr::set_config(httr::user_agent(
-    paste0("ctrdata/", utils::packageDescription("ctrdata")$Version)))
+    paste0(
+      "ctrdata/", utils::packageDescription("ctrdata")$Version,
+      " (https://cran.r-project.org/package=ctrdata)")))
 
   ## handle querytoupdate -----------------------------------------------------
 
