@@ -2288,7 +2288,7 @@ ctrLoadQueryIntoDbCtis <- function(
 
     urls <- sprintf(ctisEndpoints[e], idsTrials)
     ep <- sub(".+/(.+?)$", "\\1", sub("/list$", "", urls[1]))
-    message("- ", ep, appendLF = FALSE)
+    message(ep, ", ", appendLF = FALSE)
 
     fAddJson <- function(i) {
       file.path(tempDir, paste0("ctis_add_", e, "_", i, ".json"))
@@ -2330,13 +2330,13 @@ ctrLoadQueryIntoDbCtis <- function(
 
     }
 
-    message("\b\b")
+    # message("\b\b")
 
   }
 
   ## add_9: more data -------------------------------------------------------
 
-  message("- publicevaluation ")
+  message("publicevaluation")
 
   fApplicationsJson <- file.path(tempDir, "ctis_add_9.json")
 
@@ -2516,7 +2516,7 @@ ctrLoadQueryIntoDbCtis <- function(
         tmp <- tmp[order(tmp$url, tmp$part), , drop = FALSE]
         rl <- rle(tmp$url)
         rl <- unlist(sapply(rl$lengths, function(i) c(TRUE, rep(FALSE, i - 1L))))
-        tmp <- tmp[rl, , drop = FALSE]
+        tmp[rl, , drop = FALSE]
       })
 
       dlFiles <- do.call(rbind, dlFiles)
@@ -2649,14 +2649,16 @@ ctrLoadQueryIntoDbCtis <- function(
       } else {
 
         message("- Applying 'documents.regexp' to ",
-                nrow(dlFiles), " documents:")
+                nrow(dlFiles), " documents")
 
         dlFiles <- dlFiles[
           grepl(documents.regexp, dlFiles$filename, ignore.case = TRUE), ,
           drop = FALSE]
 
         # do download
-        message("- Downloading ", nrow(dlFiles), " documents")
+        message("- Downloading ",
+                nrow(dlFiles[!dlFiles$fileexists, , drop = FALSE]),
+                " missing documents")
 
         # do download
         tmp <- ctrMultiDownload(
