@@ -9,7 +9,7 @@ dbFindFields(namepart = "", con, verbose = FALSE)
 \arguments{
 \item{namepart}{A character string (can include a regular expression,
 including Perl-style) to be searched for among all field names
-(keys) in the collection, case-insensitive. Use `".*` to find all fields.}
+(keys) in the collection, case-insensitive. Use ".*" to find all fields.}
 
 \item{con}{A connection object, see section
 `Databases` in \link{ctrdata-package}.}

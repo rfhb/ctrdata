@@ -934,7 +934,7 @@ dbQueryHistory <- function(con, verbose = FALSE) {
 #'
 #' @param namepart A character string (can include a regular expression,
 #' including Perl-style) to be searched for among all field names
-#' (keys) in the collection, case-insensitive. Use `".*` to find all fields.
+#' (keys) in the collection, case-insensitive. Use ".*" to find all fields.
 #'
 #' @param verbose If \code{TRUE}, prints additional information
 #' (default \code{FALSE}).
