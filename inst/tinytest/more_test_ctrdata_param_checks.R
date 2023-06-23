@@ -71,7 +71,7 @@ tf <- function() {
   expect_error(
     suppressMessages(
       ctrLoadQueryIntoDb(
-        queryterm = "https://www.clinicaltrials.gov/this*")),
+        queryterm = "https://classic.clinicaltrials.gov/this*")),
     "'queryterm' has unexpected characters")
 
   # test
@@ -287,11 +287,11 @@ tf <- function() {
     c("https://www.clinicaltrialsregister.eu/ctr-search/trial/2007-000371-42/results",
       "query=2007-000371-42&resultsstatus=trials-with-results"),
     # ctgov
-    c("https://clinicaltrials.gov/ct2/results?cond=Neuroblastoma&term=&intr=Investigational+Agent&type=Intr",
+    c("https://classic.clinicaltrials.gov/ct2/results?cond=Neuroblastoma&term=&intr=Investigational+Agent&type=Intr",
       "cond=Neuroblastoma&intr=Investigational+Agent&type=Intr"),
-    c("https://clinicaltrials.gov/ct2/show/NCT01492673?type=Intr&cond=Neuroblastoma&intr=Investigational+Agent&draw=2&rank=1",
+    c("https://classic.clinicaltrials.gov/ct2/show/NCT01492673?type=Intr&cond=Neuroblastoma&intr=Investigational+Agent&draw=2&rank=1",
       "term=NCT01492673"),
-    c("https://clinicaltrials.gov/ct2/show/NCT01492673",
+    c("https://classic.clinicaltrials.gov/ct2/show/NCT01492673",
       "term=NCT01492673"),
     # isrctn
     c("https://www.isrctn.com/search?q=neuroblastoma&searchType=advanced-search",

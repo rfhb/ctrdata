@@ -171,7 +171,7 @@ expect_equal(
     "ThisDoesNotExist")),
   NULL)
 
-q <- "https://clinicaltrials.gov/ct2/results?type=Intr&cond=cancer&age=0"
+q <- "https://classic.clinicaltrials.gov/ct2/results?type=Intr&cond=cancer&age=0"
 
 tmpTest <- suppressMessages(
   ctrGetQueryUrl(
@@ -235,32 +235,32 @@ expect_error(
 # test
 expect_message(
   ctrGetQueryUrl(
-    url = "https://clinicaltrials.gov/ct2/show/results/NCT00031447"),
+    url = "https://classic.clinicaltrials.gov/ct2/show/results/NCT00031447"),
   "Found search query from CTGOV")
 
 # test
 expect_message(
   ctrGetQueryUrl(
-    url = "https://clinicaltrials.gov/ct2/show/NCT04372602?cond=COVID-19"),
+    url = "https://classic.clinicaltrials.gov/ct2/show/NCT04372602?cond=COVID-19"),
   "but also had search")
 
 # test
 expect_message(
   ctrGetQueryUrl(
-    url = "https://clinicaltrials.gov/ct2/show/results/NCT04372602?cond=COVID-19"),
+    url = "https://classic.clinicaltrials.gov/ct2/show/results/NCT04372602?cond=COVID-19"),
   "but also had search")
 
 # test
 expect_message(
   ctrGetQueryUrl(
-    url = "https://clinicaltrials.gov/ct2/show/record/NCT04372602?cond=COVID-19"),
+    url = "https://classic.clinicaltrials.gov/ct2/show/record/NCT04372602?cond=COVID-19"),
   "but also had search")
 
 # test
 expect_error(
   ctrGetQueryUrl(
-    url = "https://beta.clinicaltrials.gov/search?cond=NCT04412252,%20NCT04368728"),
-  "beta website")
+    url = "https://clinicaltrials.gov/search?cond=NCT04412252,%20NCT04368728"),
+  "website")
 
 
 #### ctrOpenSearchPagesInBrowser ####

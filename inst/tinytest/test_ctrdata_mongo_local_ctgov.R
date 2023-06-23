@@ -28,7 +28,7 @@ tf <- function() {
 
   # check server
   if (httr::status_code(
-    httr::HEAD("https://clinicaltrials.gov/ct2/search",
+    httr::HEAD("https://classic.clinicaltrials.gov/ct2/search",
                httr::timeout(10L))) != 200L
   ) return(exit_file("Reason: CTGOV not working"))
 

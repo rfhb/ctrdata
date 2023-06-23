@@ -206,7 +206,7 @@ ctrLoadQueryIntoDb <- function(
     if (!all(substr(names(queryterm), 1, 6) == "query-") ||
         !is.data.frame(queryterm)) {
       stop("'queryterm' does not seem to result from ctrQueryHistoryInDb() ",
-           "or ctrGetQueryUrl(): ", deparse(queryterm), call. = FALSE)
+           "or ctrGetQueryUrl(): ", queryterm, call. = FALSE)
     }
 
     # - process queryterm dataframe
@@ -504,7 +504,7 @@ ctrRerunQuery <- function(
 
       # ctgov:
       # specify any date - "lup_s/e" last update start / end:
-      # https://clinicaltrials.gov/ct2/results?term=&recr=&rslt=&type=Intr&cond=
+      # https://classic.clinicaltrials.gov/ct2/results?term=&recr=&rslt=&type=Intr&cond=
       # Cancer&intr=&titles=&outc=&spons=&lead=
       # &id=&state1=&cntry1=&state2=&cntry2=&state3=&cntry3=&locn=&gndr=&age=0
       # &rcv_s=&rcv_e=&lup_s=01%2F01%2F2015&lup_e=12%2F31%2F2016
@@ -1114,9 +1114,9 @@ ctrLoadQueryIntoDbCtgov <- function(
 
   # CTGOV standard identifiers
   # updated 2017-07 with revised ctgov website links, e.g.
-  # "https://clinicaltrials.gov/ct2/results/download_studies?
+  # "https://classic.clinicaltrials.gov/ct2/results/download_studies?
   # rslt=With&cond=Neuroblastoma&age=0&draw=3"
-  queryUSRoot   <- "https://clinicaltrials.gov/"
+  queryUSRoot   <- "https://classic.clinicaltrials.gov/"
   queryUSType1  <- "ct2/results/download_studies?"
   queryUSType2  <- "ct2/results?"
 

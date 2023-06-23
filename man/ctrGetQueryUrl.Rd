@@ -40,7 +40,7 @@ try(ctrGetQueryUrl(), silent = TRUE)
 # extract query parameters from search result URL
 # (URL was cut for the purpose of formatting only)
 ctrGetQueryUrl(
-  url = paste0("https://clinicaltrials.gov/ct2/results?",
+  url = paste0("https://classic.clinicaltrials.gov/ct2/results?",
   "cond=&term=AREA\%5BMaximumAge\%5D+RANGE\%5B0+days\%2C+28+days\%5D",
   "&type=Intr&rslt=&age_v=&gndr=&intr=Drugs\%2C+Investigational",
   "&titles=&outc=&spons=&lead=&id=&cntry=&state=&city=&dist=",

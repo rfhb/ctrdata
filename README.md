@@ -18,7 +18,8 @@ aggregating and analysing this information; it can be used for the
 
 - EU Clinical Trials Register (“EUCTR”,
   <https://www.clinicaltrialsregister.eu/>)
-- ClinicalTrials.gov (“CTGOV”, <https://clinicaltrials.gov/>)
+- ClinicalTrials.gov (“CTGOV” classic,
+  <https://classic.clinicaltrials.gov/>)
 - ISRCTN (<https://www.isrctn.com/>)
 - EU Clinical Trials Information System (“CTIS”,
   <https://euclinicaltrials.eu/>) 🔔 see
@@ -29,7 +30,8 @@ conduct of trials, their availability for patients and to facilitate
 using their detailed results for research and meta-analyses. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2023-05-31 for version 1.13.2.9000.
+package. This README was reviewed on 2023-06-23 for version 1.13.2.9000
+(after change of CTGOV website).
 
 ## Main features
 
@@ -62,7 +64,7 @@ Remember to respect the registers’ terms and conditions (see
 `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
 package in any publication as follows: “Ralf Herold (2023). ctrdata:
 Retrieve and Analyze Clinical Trials in Public Registers. R package
-version 1.13.0, <https://cran.r-project.org/package=ctrdata>”.
+version 1.13.2, <https://cran.r-project.org/package=ctrdata>”.
 
 <!--
 &#10;```r
@@ -349,7 +351,7 @@ with(
 - Add records from another register (CTGOV) into the same collection
 
 - Search used in this example:
-  <https://clinicaltrials.gov/ct2/results?cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug>
+  <https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug>
 
 ``` r
 # Retrieve trials from another register:

@@ -465,7 +465,8 @@ ctrOpenSearchPagesInBrowser <- function(
   if (all(register == "") && all(url == "")) {
     sapply(
       c("https://www.clinicaltrialsregister.eu/ctr-search/search",
-        "https://clinicaltrials.gov/ct2/search/advanced",
+        "https://classic.clinicaltrials.gov/ct2/search/advanced",
+        # "https://www.clinicaltrials.gov/",
         "https://www.isrctn.com/editAdvancedSearch",
         "https://euclinicaltrials.eu/app/#/search"),
       ctrOpenUrl)
@@ -475,7 +476,8 @@ ctrOpenSearchPagesInBrowser <- function(
   if (copyright) {
     sapply(
       c("https://www.clinicaltrialsregister.eu/disclaimer.html",
-        "https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use",
+        "https://classic.clinicaltrials.gov/ct2/about-site/terms-conditions#Use",
+        # "https://www.clinicaltrials.gov/about-site/terms-conditions",
         "https://www.isrctn.com/page/faqs#usingISRCTN",
         "https://euclinicaltrials.eu/data-protection-and-privacy/"),
       ctrOpenUrl)
@@ -502,7 +504,7 @@ ctrOpenSearchPagesInBrowser <- function(
     url <- switch(
       register,
       "EUCTR" = paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?", url, "#tabs"),
-      "CTGOV" = paste0("https://clinicaltrials.gov/ct2/results?", url),
+      "CTGOV" = paste0("https://classic.clinicaltrials.gov/ct2/results?", url),
       "ISRCTN" = paste0("https://www.isrctn.com/search?", url),
       "CTIS" = paste0("https://euclinicaltrials.eu/app/#/search?", url)
     )
@@ -515,7 +517,7 @@ ctrOpenSearchPagesInBrowser <- function(
     url <- switch(
       register,
       "EUCTR" = paste0("https://www.clinicaltrialsregister.eu/ctr-search/search"),
-      "CTGOV" = paste0("https://clinicaltrials.gov/ct2/results/refine"),
+      "CTGOV" = paste0("https://classic.clinicaltrials.gov/ct2/results/refine"),
       "ISRCTN" = paste0("https://www.isrctn.com/editAdvancedSearch"),
       "CTIS" = paste0("https://euclinicaltrials.eu/app/#/search")
     )
@@ -567,7 +569,7 @@ ctrOpenSearchPagesInBrowser <- function(
 #' # extract query parameters from search result URL
 #' # (URL was cut for the purpose of formatting only)
 #' ctrGetQueryUrl(
-#'   url = paste0("https://clinicaltrials.gov/ct2/results?",
+#'   url = paste0("https://classic.clinicaltrials.gov/ct2/results?",
 #'   "cond=&term=AREA%5BMaximumAge%5D+RANGE%5B0+days%2C+28+days%5D",
 #'   "&type=Intr&rslt=&age_v=&gndr=&intr=Drugs%2C+Investigational",
 #'   "&titles=&outc=&spons=&lead=&id=&cntry=&state=&city=&dist=",
@@ -619,9 +621,9 @@ ctrGetQueryUrl <- function(
   registerFromUrl <- switch(
       sub("^https://[w]{0,3}[.]?([a-zA-Z.]+)/.*", "\\1", url),
       "clinicaltrialsregister.eu" = "EUCTR",
-      "clinicaltrials.gov" = "CTGOV",
+      "classic.clinicaltrials.gov" = "CTGOV",
       "isrctn.com" = "ISRCTN",
-      "beta.clinicaltrials.gov" = "BETACTGOV",
+      "clinicaltrials.gov" = "BETACTGOV",
       "euclinicaltrials.eu" = "CTIS",
       "NONE")
   #
@@ -715,9 +717,12 @@ ctrGetQueryUrl <- function(
   #
   if (register == "BETACTGOV") {
     #
-    stop("The beta website of ClinicalTrials.gov is not supported, ",
-         "please use the classic website. Package 'ctrdata' is being ",
-         "prepared to use the forthcoming website's functionality.")
+    stop("The new website of ClinicalTrials.gov is not yet supported, ",
+         "While package 'ctrdata' is being adapted to it, ",
+         "please use the classic website: call ",
+         "ctrOpenSearchPagesInBrowser(register = \"CTGOV\")",
+         " or open https://classic.clinicaltrials.gov/",
+         call. = FALSE)
     #
     return(invisible(NULL))
   }
@@ -790,7 +795,7 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "") {
   # does not close network connection in case of 404
   ctgovfirstpageurl <-
     utils::URLencode(
-      paste0("https://clinicaltrials.gov/ct2/results/details?term=",
+      paste0("https://classic.clinicaltrials.gov/ct2/results/details?term=",
              activesubstance))
 
   # set user agent for httr and curl to inform registers

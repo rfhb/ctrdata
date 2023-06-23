@@ -70,7 +70,7 @@ expect_error(
     suppressMessages(
       ctrLoadQueryIntoDb(
         queryterm = paste0(
-          "https://clinicaltrials.gov/ct2/results?cond=Cancer&type=Intr&phase=0",
+          "https://classic.clinicaltrials.gov/ct2/results?cond=Cancer&type=Intr&phase=0",
           "&strd_s=01%2F02%2F2005&strd_e=12%2F31%2F2017"),
         con = dbc))),
   "more than 10,000) trials")
@@ -116,7 +116,7 @@ expect_error(
   "'querytoupdate': specified query number.*not found")
 
 # new query
-q <- paste0("https://clinicaltrials.gov/ct2/results?",
+q <- paste0("https://classic.clinicaltrials.gov/ct2/results?",
             "term=osteosarcoma&type=Intr&phase=0&age=0&lup_e=")
 
 # test
