@@ -1,7 +1,7 @@
-# ctrdata 1.13.2.9000 (2023-06-23)
- - new dev version
+# ctrdata 1.13.3 (2023-06-24)
  - typo in dbFindFields()
- - use CTGOV classic website (new website in the works)
+ - use only CTGOV classic website (ctrdata is being adapted to new website)
+ - correct missing names and attributes on return vector of dbFindIdsUniqueTrials()
  
 # ctrdata 1.13.2 (2023-05-27)
  - correct selection of lists with ids for documents to download from CTIS
