@@ -1418,11 +1418,16 @@ dbFindIdsUniqueTrials <- function(
     object = listofIds[["_id"]],
     nm = listofIds[["ctrname"]])
 
+  listofIds <- sort(listofIds)
+
   # count
   countIds <- table(names(listofIds))
 
-  # copy attributes
-  attributes(listofIds) <- attribsids[grepl("^ctrdata-", names(attribsids))]
+  # append attributes
+  attributes(listofIds) <- c(
+    attributes(listofIds),
+    attribsids[grepl("^ctrdata-", names(attribsids))]
+  )
 
   # avoid returning list() if none found
   if (length(listofIds) == 0) listofIds <- character()
@@ -1435,7 +1440,7 @@ dbFindIdsUniqueTrials <- function(
     " records in collection \"", con$collection, "\"")
 
   # return
-  return(sort(listofIds))
+  return(listofIds)
 
 }
 # end dbFindIdsUniqueTrials
