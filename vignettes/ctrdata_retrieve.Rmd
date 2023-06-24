@@ -1,7 +1,7 @@
 ---
 title: "Retrieve clinical trial information"
 author: "Ralf Herold"
-date: 2023-05-07
+date: 2023-06-24
 output:
   rmarkdown::pdf_document:
     toc: true
@@ -180,7 +180,7 @@ The same collection can be used to store (and analyse) trial information from di
 
 ```{r}
 ctrLoadQueryIntoDb(
-  queryterm = "https://clinicaltrials.gov/ct2/results?cond=neuroblastoma&recrs=e&age=0&intr=Drug",
+  queryterm = "https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&recrs=e&age=0&intr=Drug",
   con = db
 )
 # * Found search query from CTGOV: cond=neuroblastoma&recrs=e&age=0&intr=Drug
@@ -245,7 +245,7 @@ Annotations are useful for analyses, for example to specially identify subsets o
 
 ```{r}
 ctrLoadQueryIntoDb(
-  queryterm = "https://clinicaltrials.gov/ct2/results?cond=neuroblastoma&recrs=e&age=0&intr=Drug&cntry=DE",
+  queryterm = "https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&recrs=e&age=0&intr=Drug&cntry=DE",
   annotation.text = "site_DE ",
   annotation.mode = "append",
   con = db

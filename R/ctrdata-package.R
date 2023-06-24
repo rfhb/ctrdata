@@ -2,6 +2,7 @@
 #'
 #' A package for aggregating and analysing
 #' information on and results from clinical trials,
+#' and of documents about clinical trials,
 #' retrieved from public study registers
 #'
 #' @section 1 - Database connection:

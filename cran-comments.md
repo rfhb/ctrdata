@@ -4,11 +4,11 @@
 
 * macOS builder: r-release-macosx-arm64|4.3.0|macosx|macOS 13.3.1 (22E261)|Mac mini|Apple M1||en_US.UTF-8|macOS 11.3|clang-1403.0.22.14.1|GNU Fortran (GCC) 12.2.0 (ok)
 
-* github actions: ubuntu-22.04 Version: 20230507.1 R Under development (unstable) (2023-05-24 r84463); windows-2022 Version: 20230508.3; R-4.3.0 (ok)
+* github actions: ubuntu-22.04 Version: 20230619.1.0 R Under development (unstable) (2023-06-22 r84597); windows-2022 Version: 20230612.1; R-4.3.0; macos-12 Version: 20230618.1 R-4.3.1-x86_64 (ok)
 
-* Win-builder: R Under development (unstable) (2023-05-24 r84463 ucrt) (ok)
+* Win-builder: R Under development (unstable) (2023-06-23 r84599 ucrt) (ok)
 
-* R-hub: Fedora Linux, R-devel, clang, gfortran; Ubuntu Linux 20.04.1 LTS, R-release, GCC; Windows Server 2022, R-devel, 64 bit (ok)
+* R-hub: Windows Server 2022, R-devel, 64 bit; Ubuntu Linux 20.04.1 LTS, R-release, GCC; Fedora Linux, R-devel, clang, gfortran (ok)
 
 
 ## Local R CMD check results
@@ -24,8 +24,9 @@ server, and this cannot be rectified by the package author.)
 
 Bug fixes: 
 
- - correct selection of lists with ids for documents to download from CTIS
- - removed certain dependencies
+ - urgent: upstream register (CTGOV) changed FQDN
+ 
+ - re-add names to return vector of a helper function
 
 
 ## Reverse dependencies
@@ -33,5 +34,5 @@ Bug fixes:
 None at the moment.
 
 ----------
-Thank you!
+Thank you,
 Ralf Herold

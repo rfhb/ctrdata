@@ -9,17 +9,18 @@
         protocol- and results-related information on clinical trials from
         four public registers, the European Union Clinical Trials Register
         (EUCTR, &lt;https://www.clinicaltrialsregister.eu/&gt;), 
-        ClinicalTrials.gov (CTGOV, &lt;https://clinicaltrials.gov/&gt;), 
-        the ISRCTN (&lt;http://www.isrctn.com/&gt;) and the
+        ClinicalTrials.gov (CTGOV, using the classic interface at 
+        &lt;https://classic.clinicaltrials.gov/&gt;), the 
+        ISRCTN (&lt;http://www.isrctn.com/&gt;) and the
         European Union Clinical Trials Information System
         (CTIS, &lt;https://euclinicaltrials.eu/&gt;). 
         Trial information is downloaded, converted and stored in a database 
         (PostgreSQL, SQLite, DuckDB or MongoDB; via package nodbi). 
-        Documents in registers associated with trials can also be downloaded. 
-        Functions can identify deduplicated records, 
+        All documents in registers associated with trials can also be downloaded. 
+        Other functions identify deduplicated records, 
         easily find and extract variables (fields) of interest even 
-        from complex nesting as used by the registers, and
-        to update queries. 
+        from complex nested data as used by the registers, and
+        update queries. 
         The package can be used for meta-analysis and trend-analysis of
         the design and conduct as well as of the results of clinical trials.">
 <title>Retrieve and Analyze Clinical Trials in Public Registers • ctrdata</title>
@@ -32,17 +33,18 @@
         protocol- and results-related information on clinical trials from
         four public registers, the European Union Clinical Trials Register
         (EUCTR, &lt;https://www.clinicaltrialsregister.eu/&gt;), 
-        ClinicalTrials.gov (CTGOV, &lt;https://clinicaltrials.gov/&gt;), 
-        the ISRCTN (&lt;http://www.isrctn.com/&gt;) and the
+        ClinicalTrials.gov (CTGOV, using the classic interface at 
+        &lt;https://classic.clinicaltrials.gov/&gt;), the 
+        ISRCTN (&lt;http://www.isrctn.com/&gt;) and the
         European Union Clinical Trials Information System
         (CTIS, &lt;https://euclinicaltrials.eu/&gt;). 
         Trial information is downloaded, converted and stored in a database 
         (PostgreSQL, SQLite, DuckDB or MongoDB; via package nodbi). 
-        Documents in registers associated with trials can also be downloaded. 
-        Functions can identify deduplicated records, 
+        All documents in registers associated with trials can also be downloaded. 
+        Other functions identify deduplicated records, 
         easily find and extract variables (fields) of interest even 
-        from complex nesting as used by the registers, and
-        to update queries. 
+        from complex nested data as used by the registers, and
+        update queries. 
         The package can be used for meta-analysis and trend-analysis of
         the design and conduct as well as of the results of clinical trials.">
 <meta name="twitter:card" content="summary_large_image">
@@ -61,7 +63,7 @@
     
     <a class="navbar-brand me-2" href="index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.13.2.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.13.3</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -110,11 +112,11 @@
 <p>The package <code>ctrdata</code> provides functions for retrieving (downloading) information on clinical trials from public registers, and for aggregating and analysing this information; it can be used for the</p>
 <ul>
 <li>EU Clinical Trials Register (“EUCTR”, <a href="https://www.clinicaltrialsregister.eu/" class="external-link uri">https://www.clinicaltrialsregister.eu/</a>)</li>
-<li>ClinicalTrials.gov (“CTGOV”, <a href="https://clinicaltrials.gov/" class="external-link uri">https://clinicaltrials.gov/</a>)</li>
+<li>ClinicalTrials.gov (“CTGOV” classic, <a href="https://classic.clinicaltrials.gov/" class="external-link uri">https://classic.clinicaltrials.gov/</a>)</li>
 <li>ISRCTN (<a href="https://www.isrctn.com/" class="external-link uri">https://www.isrctn.com/</a>)</li>
 <li>EU Clinical Trials Information System (“CTIS”, <a href="https://euclinicaltrials.eu/" class="external-link uri">https://euclinicaltrials.eu/</a>) 🔔 see <a href="#workflow-ctis-example">example</a> below</li>
 </ul>
-<p>The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-05-07 for version 1.13.1.</p>
+<p>The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-06-23 for version 1.13.2.9000 (after change of CTGOV website).</p>
 <div class="section level2">
 <h2 id="main-features">Main features<a class="anchor" aria-label="anchor" href="#main-features"></a>
 </h2>
@@ -124,7 +126,7 @@
 <li>For analyses, convenience functions in <code>ctrdata</code> allow to identify unique (de-duplicated) trial records across registers, to merge and recode fields as well as to easily access deeply-nested fields. Analysis can be done with <code>R</code> or other systems, by accessing the structured information in the database.</li>
 </ul>
 <p>URLs of queries in the registers can be automatically copied to the clipboard (including for “CTIS”, where the URL does not show the query), see <a href="#id_3-script-to-automatically-copy-users-query-from-web-browser">here</a>.</p>
-<p>Remember to respect the registers’ terms and conditions (see <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>). Please cite this package in any publication as follows: “Ralf Herold (2023). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.13.0, <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a>”.</p>
+<p>Remember to respect the registers’ terms and conditions (see <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>). Please cite this package in any publication as follows: “Ralf Herold (2023). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.13.2, <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a>”.</p>
 <!--
 &#10;```r
 citation("ctrdata")
@@ -274,7 +276,7 @@ citation("ctrdata")
 </tr>
 <tr class="even">
 <td>Create <strong>DuckDB</strong> database connection</td>
-<td><code>dbc &lt;- nodbi::src_duckdb(dbname = "name_of_my_database", collection = "name_of_my_collection")</code></td>
+<td><code>dbc &lt;- nodbi::src_duckdb(dbdir = "name_of_my_database", collection = "name_of_my_collection")</code></td>
 </tr>
 <tr class="odd">
 <td>Use connection with <code>ctrdata</code> functions</td>
@@ -417,7 +419,7 @@ citation("ctrdata")
 <span><span class="co">#   Temporarily Halted           1    1</span></span></code></pre></div>
 <ul>
 <li><p>Add records from another register (CTGOV) into the same collection</p></li>
-<li><p>Search used in this example: <a href="https://clinicaltrials.gov/ct2/results?cond=neuroblastoma&amp;rslt=With&amp;recrs=e&amp;age=0&amp;intr=Drug" class="external-link uri">https://clinicaltrials.gov/ct2/results?cond=neuroblastoma&amp;rslt=With&amp;recrs=e&amp;age=0&amp;intr=Drug</a></p></li>
+<li><p>Search used in this example: <a href="https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&amp;rslt=With&amp;recrs=e&amp;age=0&amp;intr=Drug" class="external-link uri">https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&amp;rslt=With&amp;recrs=e&amp;age=0&amp;intr=Drug</a></p></li>
 </ul>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Retrieve trials from another register:</span></span>

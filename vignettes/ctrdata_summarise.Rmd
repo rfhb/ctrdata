@@ -1,7 +1,7 @@
 ---
 title: "Summarise and analyse clinical trial information"
 author: "Ralf Herold"
-date: 2023-05-07
+date: 2023-06-24
 output:
   rmarkdown::pdf_document:
     toc: true
@@ -67,7 +67,7 @@ ctrLoadQueryIntoDb(
 ctrLoadQueryIntoDb(
   # or using full URL of search results
   queryterm =
-    "https://clinicaltrials.gov/ct2/results?cond=neuroblastoma&recrs=e&age=0&intr=Drug",
+    "https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&recrs=e&age=0&intr=Drug",
   con = db
 )
 dbQueryHistory(con = db)

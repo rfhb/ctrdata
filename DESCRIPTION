@@ -1,7 +1,7 @@
 Package: ctrdata
 Type: Package
 Title: Retrieve and Analyze Clinical Trials in Public Registers
-Version: 1.13.2.9000
+Version: 1.13.3
 Imports: jsonlite, httr, curl (>= 5.0), clipr, xml2, nodbi (>= 0.9.3), 
          stringi, tibble, lubridate, jqr
 SystemRequirements: sed, php, cat, perl
@@ -11,17 +11,18 @@ Description: A system for querying, retrieving and analyzing
         protocol- and results-related information on clinical trials from
         four public registers, the 'European Union Clinical Trials Register'
         ('EUCTR', <https://www.clinicaltrialsregister.eu/>), 
-        'ClinicalTrials.gov' ('CTGOV', <https://clinicaltrials.gov/>), 
-        the 'ISRCTN' (<http://www.isrctn.com/>) and the
+        'ClinicalTrials.gov' ('CTGOV', using the classic interface at 
+        <https://classic.clinicaltrials.gov/>), the 
+        'ISRCTN' (<http://www.isrctn.com/>) and the
         'European Union Clinical Trials Information System'
         ('CTIS', <https://euclinicaltrials.eu/>). 
         Trial information is downloaded, converted and stored in a database 
         ('PostgreSQL', 'SQLite', 'DuckDB' or 'MongoDB'; via package 'nodbi'). 
-        Documents in registers associated with trials can also be downloaded. 
-        Functions can identify deduplicated records, 
+        All documents in registers associated with trials can also be downloaded. 
+        Other functions identify deduplicated records, 
         easily find and extract variables (fields) of interest even 
-        from complex nesting as used by the registers, and
-        to update queries. 
+        from complex nested data as used by the registers, and
+        update queries. 
         The package can be used for meta-analysis and trend-analysis of
         the design and conduct as well as of the results of clinical trials.
 License: MIT + file LICENSE
