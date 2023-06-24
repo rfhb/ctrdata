@@ -35,21 +35,21 @@ the European Union. Ignored if \code{prefermemberstate} is set to "3RD".}
 of the registers are used to find corresponding trial records}
 }
 \value{
-A named vector with strings of keys ("_id") of records in
-the collection that represent unique trials, where names correspond
-to the register of the record.
+A named vector with strings of keys (field "_id") of
+records in the collection that represent unique trials, where
+names correspond to the register of the record.
 }
 \description{
 Records for a clinical trial can be loaded from more than one
-register into a collection. The function returns identifiers of
-records in the collection that were loaded from the
+register into a collection. This function returns deduplicated
+identifiers for all trials in the collection, respecting the
 register(s) preferred by the user. All registers are recording
 identifiers also from other registers, which are used by this
 function to provide a vector of identifiers of deduplicated trials.
 }
 \details{
 Note that the content of records may differ between registers
-(and, for EUCTR, between records for different Member States).
+(and, for "EUCTR", between records for different Member States).
 Such differences are not considered by this function.
 }
 \examples{

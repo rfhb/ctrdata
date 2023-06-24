@@ -24,11 +24,11 @@ or not available in any of the records in the database collection.}
 \value{
 A data frame (or tibble, if \code{tibble} is loaded)
 with columns corresponding to the sought fields.
-A column for the record `_id` will always be included.
+A column for the records' `_id` will always be included.
 Each column can be either a simple data type (numeric, character, date)
-or a list. For complicated lists, use function
-\link{dfTrials2Long} followed by function \link{dfName2Value} to
-extract values for nested variables.
+or a list (typically for nested data, see above). For complicated lists,
+use function \link{dfTrials2Long} followed by function \link{dfName2Value}
+to extract values for sought nested variables.
 The maximum number of rows of the returned data frame is equal to,
 or less than the number of records of trials in the database
 collection.
@@ -40,12 +40,12 @@ and structured, that is, nested.
 Names of fields can be found with \link{dbFindFields}.
 The function uses the field names to appropriately type the values
 that it returns, harmonising original values (e.g. "Information not present
-in EudraCT" becomes `NA`, "Yes" becomes `TRUE`, "false" becomes `FALSE`,
-date strings become class Date, number strings become numbers).
-The function attempts so simplify the structure of some nested data and
-may concatenate multiple strings in a field using " / " (see below);
-for complex nested data, use function \link{dfTrials2Long} followed by
-\link{dfName2Value} to extract the desired nested variable(s).
+in EudraCT" to `NA`, "Yes" to `TRUE`, "false" to `FALSE`,
+date strings to class Date, number strings to numbers).
+The function also attempts to simplify the structure of nested data and
+may concatenate multiple strings in a field using " / " (see example).
+For full handling of complex nested data, use function \link{dfTrials2Long}
+followed by \link{dfName2Value} to extract the sought nested variable(s).
 }
 \examples{
 

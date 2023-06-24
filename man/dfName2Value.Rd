@@ -33,9 +33,9 @@ that includes the values of interest, with columns
  endpoint descriptions and measurements.
 }
 \description{
-Get information of interest (e.g., endpoint)
-from long data frame of protocol- or result-related
-trial information as returned by \link{dfTrials2Long}.
+Get information for variable of interest  (e.g., clinical endpoints)
+from long data frame of protocol- or result-related trial information
+as returned by \link{dfTrials2Long}.
 Parameters `valuename`, `wherename` and `wherevalue` are
 matched using Perl regular expressions and ignoring case.
 }

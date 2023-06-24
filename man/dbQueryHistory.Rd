@@ -18,8 +18,8 @@ A data frame (or tibble, if \code{tibble} is loaded)
  with columns: `query-timestamp`, `query-register`,
  `query-records` (note: this is the number of records loaded when last
  executing \link{ctrLoadQueryIntoDb}, not the total record number) and
- `query-term`, with one row for each time \link{ctrLoadQueryIntoDb}
- loaded trial records into this collection.
+ `query-term`, with one row for each time that
+ \link{ctrLoadQueryIntoDb} loaded trial records into this collection.
 }
 \description{
 Show history of queries loaded into a database collection

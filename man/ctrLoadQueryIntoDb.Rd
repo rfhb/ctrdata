@@ -22,15 +22,15 @@ ctrLoadQueryIntoDb(
 )
 }
 \arguments{
-\item{queryterm}{Either a string with the full URL of a search in
-a register, or the data frame returned by the
+\item{queryterm}{Either a string with the full URL of a search
+query in a register, or the data frame returned by the
 \link{ctrGetQueryUrl} or the
 \link{dbQueryHistory} functions, or, together with parameter
 \code{register}, a string with query elements of a search URL.
-The queryterm is recorded in the \code{collection} for later
-use to update records.
-For "CTIS", the queryterm can be an empty string to obtain
-all trial records; for automatically copying the user's
+The query details are recorded in the \code{collection} for
+later use to update records.
+For "CTIS", \code{queryterm} can be an empty string to obtain
+all trial records. For automatically copying the user's
 query of a register in a web browser to the clipboard, see
 \ifelse{latex}{\out{\href{https://github.com/rfhb/ctrdata\#3-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://github.com/rfhb/ctrdata#3-script-to-automatically-copy-users-query-from-web-browser}{here}}}
 
@@ -38,14 +38,15 @@ query of a register in a web browser to the clipboard, see
 either "EUCTR", "CTGOV", "ISRCTN" or "CTIS". Not needed
 if \code{queryterm} provides a query's full URL.}
 
-\item{querytoupdate}{Either the word "last" or the number of the
-query (based on \link{dbQueryHistory}) that should be run to
-retrieve any trial records that are new or have been updated
-since this query was run the last time.
+\item{querytoupdate}{Either the word "last", or the row number of
+a query in the data frame returned by \link{dbQueryHistory} that
+should be run to retrieve any new or update trial records since
+this query was run the last time.
 This parameter takes precedence over \code{queryterm}.
-For EUCTR, updates are available only for the last seven days;
+For "EUCTR", updates are available only for the last seven days;
 the query is run again if more time has passed since it was
-run last.}
+run last.
+Does not work with "CTIS" at this time.}
 
 \item{forcetoupdate}{If \code{TRUE}, run again the query
 given in \code{querytoupdate}, irrespective of when it was
@@ -53,8 +54,9 @@ run last. Default is \code{FALSE}.}
 
 \item{euctrresults}{If \code{TRUE}, also download available
 results when retrieving and loading trials from EUCTR. This
-slows down this function. For "CTGOV", all available results
-are always retrieved and loaded.}
+slows down this function. (For "CTGOV" and "CTIS", all
+available results are always retrieved and loaded into the
+collection.)}
 
 \item{euctrresultshistory}{If \code{TRUE}, also download
 available history of results publication in "EUCTR."
@@ -74,19 +76,21 @@ If set to \code{NULL}, empty placeholder files are saved for
 every document that could be saved. Default is
 \code{"prot|sample|statist|_sap_|p1ar|p2ars|ctaletter"}.
 Used with "CTGOV" and "CTIS" (but not "EUCTR" for which all
-available documents are saved).}
+available documents are saved, and not with "ISRCTN" which
+does not hold documents).}
 
-\item{annotation.text}{Text to be including in the records
-retrieved with the current query, in the field "annotation".
+\item{annotation.text}{Text to be including into the field
+"annotation" in the records retrieved with the query
+that is to be loaded into the collection.
 The contents of the field "annotation" for a trial record
-can be preserved e.g. when running this function again and
-loading a record of the annotated trial again, see parameter
+are preserved e.g. when running this function again and
+loading a record of a with an annotation, see parameter
 \code{annotation.mode}.}
 
 \item{annotation.mode}{One of "append" (default), "prepend"
 or "replace" for new annotation.text with respect to any
-existing annotation for the records retrieved with the
-current query.}
+existing annotation for the records retrieved with the query
+that is to be loaded into the collection.}
 
 \item{only.count}{Set to \code{TRUE} to return only the
 number of trial records found in the register for the query.
@@ -112,15 +116,14 @@ collection name, as well as the query history of this database
 collection) to facilitate documentation.
 }
 \description{
-Retrieves or updates information on clinical trials from registers
-and stores it in a collection in a database.
-This is the main function of \link{ctrdata-package} for accessing
-registers and loading trial information into a database collection,
-even if from different queries or different registers.
-The query details are stored in the database collection and can
-be accessed using \link{dbQueryHistory}.
+Retrieves information on clinical trials from registers
+and stores it in a collection in a database. Main function
+of \link{ctrdata-package} for accessing registers.
+A collection can store trial information from different queries
+or different registers. Query details are stored in the
+collection and can be accessed using \link{dbQueryHistory}.
 A previous query can be re-run, which replaces or adds trial
-records. However, user annotations of trial records are kept.
+records while keeping any user annotations of trial records.
 }
 \examples{
 \dontrun{

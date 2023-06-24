@@ -20,12 +20,13 @@ with the four columns: `_id`, `identifier`, `name`, `value`
 The function works with procotol- and results- related information.
 It converts lists and other values that are in a data frame returned
 by \link{dbGetFieldsIntoDf} into individual rows of a long data frame.
-From the resulting data frame, values of interest can be selected
+From the resulting long data frame, values of interest can be selected
 using \link{dfName2Value}.
-The function is intended for fields with complex content, such as node
-field "\code{clinical_results}" from EUCTR, which \link{dbGetFieldsIntoDf}
-returns as a multiply nested list and for which this function then
-converts every observation of every (leaf) field into a row of its own.
+The function is particularly useful for fields with complex content,
+such as node field "\code{clinical_results}" from EUCTR, for which
+\link{dbGetFieldsIntoDf} returns as a multiply nested list and for
+which this function then converts every observation of every (leaf)
+field into a row of its own.
 }
 \examples{
 

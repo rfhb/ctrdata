@@ -16,8 +16,8 @@ A character vector of the active substance (input parameter) and
 \description{
 An active substance can be identified by a recommended international
 nonproprietary name (INN), a trade or product name, or a company code(s).
-Retrieves the substances which are searched for by the register
-'ClinicalTrials.Gov' for a given active substance.
+Retrieves the names of substance which are searched for by "CTGOV"
+when querying for a given active substance.
 }
 \examples{
 \dontrun{
