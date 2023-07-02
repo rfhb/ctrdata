@@ -30,7 +30,7 @@ conduct of trials, their availability for patients and to facilitate
 using their detailed results for research and meta-analyses. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2023-06-23 for version 1.13.2.9000
+package. This README was reviewed on 2023-07-02 for version 1.13.3.9000
 (after change of CTGOV website).
 
 ## Main features
@@ -64,7 +64,7 @@ Remember to respect the registers’ terms and conditions (see
 `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
 package in any publication as follows: “Ralf Herold (2023). ctrdata:
 Retrieve and Analyze Clinical Trials in Public Registers. R package
-version 1.13.2, <https://cran.r-project.org/package=ctrdata>”.
+version 1.13.3, <https://cran.r-project.org/package=ctrdata>”.
 
 <!--
 &#10;```r
@@ -394,7 +394,7 @@ ctrLoadQueryIntoDb(
 Queries in the CTIS search interface can be automatically copied to the
 clipboard so that a user can paste them into `queryterm`, see
 [here](#3-script-to-automatically-copy-users-query-from-web-browser). As
-of April 2023, more than 160 trials are publicly accessible in CTIS.
+of June 2023, more than 200 trials are publicly accessible in CTIS.
 
 ``` r
 # Retrieve trials from another register:
@@ -404,42 +404,41 @@ ctrLoadQueryIntoDb(
   con = db
 )
 # * Found search query from CTIS: ageGroupCode=3
-# (1/5) Downloading trials list, found 135 trials
-# (2/5) Downloading and processing part I and parts II... (estimate: 20.25 Mb)
-# Download status: 135 done; 0 in progress. Total size: 20.35 Mb (100%)... done!             
-# . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+# (1/5) Downloading trials list, found 191 trials
+# (2/5) Downloading and processing part I and parts II... (estimate: 28.65 Mb)
+# Download status: 191 done; 0 in progress. Total size: 28.58 Mb (100%)... done!             
+# . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+# . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+# . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+# . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+# . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 # (3/5) Downloading and processing additional data: 
-# - publicevents
-# - summary
-# - layperson
-# - csr
-# - cm
-# - inspections
-# - publicevaluation 
-# Download status: 213 done; 0 in progress. Total size: 6.24 Mb (100%)... done!             
-# 135
+# publicevents, summary, layperson, csr, cm, inspections, publicevaluation
+# Download status: 305 done; 0 in progress. Total size: 8.68 Mb (100%)... done!             
+# 191
 # (4/5) Importing JSON records into database...
 # (5/5) Updating with additional data: . . .       
 # * Downloading documents into 'documents.path' = ./files-ctis
-# - Created directory ./files-ctis
+# - Created directory /Users/ralfherold/Daten/mak/r/emea/ctrdata/files-ctis
 # - Getting ids of lists with document information
-# - Downloading 1594 lists with document information (estimate: 31.88 Mb)
-# Download status: 1594 done; 0 in progress. Total size: 4.93 Mb (100%)... done!             
-# - Processing document information in 1594 lists
+# - Downloading 3435 lists with document information (estimate: 68.7 Mb)
+# Download status: 3435 done; 0 in progress. Total size: 29.28 Mb (100%)... done!             
+# - Processing document information in 3435 lists
 # - Creating subfolder for each trial
-# - Applying 'documents.regexp' to 1651 documents:
-# - Downloading 380 documents
-# Download status: 380 done; 0 in progress. Total size: 223.96 Mb (100%)... done!             
-# = Newly saved 356 document(s) for 116 trial(s) (latest versions only,  
-# deduplicated if e.g. in application and authorised part); 0 document(s) 
-# for 0 trial(s) already existed in ./files-ctis
-# = Imported / updated 135 / 135 / 2 / 135 records on 135 trial(s)
+# - Applying 'documents.regexp' to 12685 documents
+# - Downloading 1504 missing documents
+# Download status: 1504 done; 0 in progress. Total size: 900.53 Mb (100%)... done!             
+# = Newly saved 1398 document(s) for 188 trial(s) (latest versions only, deduplicated 
+# if e.g. in application and authorised part); 0 document(s) for 0 trial(s) already 
+# existed in ./files-ctis
+# = Imported / updated 191 / 191 / 1 / 191 records on 191 trial(s)
+# No history found in expected format.
 # Updated history ("meta-info" in "some_collection_name")
 
 
 allFields <- dbFindFields(".*", db)
 length(allFields[grepl("CTIS", names(allFields))])
-# [1] 2690
+# [1] 2020
 
 
 allFields[grepl("defer|consideration$", allFields, ignore.case = TRUE)]
@@ -472,31 +471,31 @@ dbGetFieldsIntoDf("publicEvaluation.partIRfiConsiderations.rfiConsiderations.con
 # use an alternative to dbGetFieldsIntoDf()
 allData <- nodbi::docdb_query(src = db, key = db$collection, query = '{"ctrname":"CTIS"}')
 # names of top-level data items
-names(allData)
-#  [1] "_id"                           "ctrname"                      
-#  [3] "id"                            "record_last_import"           
-#  [5] "title"                         "ctNumber"                     
-#  [7] "ctStatus"                      "primarySponsor"               
-#  [9] "coSponsors"                    "submissionDate"               
-# [11] "initialApplicationId"          "applications"                 
-# [13] "memberStatesConcerned"         "eeaStartDate"                 
-# [15] "trialGlobalEnd"                "trialStartDate"               
-# [17] "authorizedPartI"               "authorizedPartsII"            
-# [19] "authorizationDate"             "isRmsTacitAssignment"         
-# [21] "eudraCtInfo"                   "lastUpdated"                  
-# [23] "mscTrialNotificationsInfoList" "totalPartIISubjectCount"      
-# [25] "trialEndDate"                  "eeaEndDate"                   
-# [27] "trialCountries"                "decisionDate"                 
-# [29] "therapeuticAreas"              "recruitmentStatus"            
-# [31] "sponsorType"                   "totalNumberEnrolled"          
-# [33] "hasDeferrallApplied"           "hasAmendmentApplied"          
-# [35] "cm"                            "publicEvaluation"             
-# [37] "trialPhase"                    "ageGroup"                     
-# [39] "gender"                        "startDateEU"                  
-# [41] "endDateEU" 
+sort(names(allData))
+#  [1] "_id"                           "ageGroup"                     
+#  [3] "applications"                  "authorizationDate"            
+#  [5] "authorizedPartI"               "authorizedPartsII"            
+#  [7] "cm"                            "coSponsors"                   
+#  [9] "ctNumber"                      "ctrname"                      
+# [11] "ctStatus"                      "decisionDate"                 
+# [13] "eeaEndDate"                    "eeaStartDate"                 
+# [15] "endDateEU"                     "eudraCtInfo"                  
+# [17] "gender"                        "hasAmendmentApplied"          
+# [19] "hasDeferrallApplied"           "id"                           
+# [21] "initialApplicationId"          "isRmsTacitAssignment"         
+# [23] "lastUpdated"                   "memberStatesConcerned"        
+# [25] "mscTrialNotificationsInfoList" "primarySponsor"               
+# [27] "publicEvaluation"              "record_last_import"           
+# [29] "recruitmentStatus"             "sponsorType"                  
+# [31] "startDateEU"                   "submissionDate"               
+# [33] "therapeuticAreas"              "title"                        
+# [35] "totalNumberEnrolled"           "totalPartIISubjectCount"      
+# [37] "trialCountries"                "trialEndDate"                 
+# [39] "trialGlobalEnd"                "trialPhase"                   
+# [41] "trialStartDate" 
 # 
 format(object.size(allData), "MB")
-# [1] "111.9 Mb"
+# [1] "157.6 Mb"
 ```
 
 - Result-related trial information
