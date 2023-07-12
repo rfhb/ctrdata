@@ -1388,8 +1388,11 @@ dbFindIdsUniqueTrials <- function(
         tmp[, colsToCheck, drop = FALSE],
         outSet[, colsToCheck, drop = FALSE]
       )
+      
       # mangle dupes for marginal cases, e.g. one record
-      if (length(dim(dupes)) == 1L) dupes <- t(dupes)
+      if (is.null(dim(dupes))) dupes <- t(dupes)
+      dupes <- as.data.frame(dupes)
+
       # keep uniques
       tmp <- tmp[rowSums(dupes) == 0L, , drop = FALSE]
       rm(dupes)
