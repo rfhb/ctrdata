@@ -1386,11 +1386,12 @@ dbFindIdsUniqueTrials <- function(
             rep(FALSE, times = length(c1))
           }},
         tmp[, colsToCheck, drop = FALSE],
-        outSet[, colsToCheck, drop = FALSE]
+        outSet[, colsToCheck, drop = FALSE],
+        SIMPLIFY = FALSE
       )
       
       # mangle dupes for marginal cases, e.g. one record
-      if (is.null(dim(dupes))) dupes <- t(dupes)
+      dupes <- do.call(cbind, dupes)
       dupes <- as.data.frame(dupes)
 
       # keep uniques

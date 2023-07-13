@@ -1,5 +1,6 @@
 # ctrdata 1.13.3.9000 (2023-07-02)
  - new dev version
+ - fix dbFindIdsUniqueTrials() for single-record register contents
  
 # ctrdata 1.13.3 (2023-06-24)
  - typo in dbFindFields()
