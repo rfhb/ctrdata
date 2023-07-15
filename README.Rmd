@@ -579,27 +579,12 @@ ctrLoadQueryIntoDb(
   con = db
 )
 # * Found search query from EUCTR: query=cancer&age=under-18&phase=phase-one
-# Checking helper binaries: done
-# (1/3) Checking trials in EUCTR:
-# Retrieved overview, multiple records of 240 trial(s) from 12 page(s) to be downloaded (estimate: 12 MB)
+# [...]
 # Created directory ./files-euctr/
 # Downloading trials...
-# Note: register server cannot compress data, transfer takes longer, about 0.3s per trial
-# Download status: 12 done; 0 in progress. Total size: 17.03 Mb (100%)... done!             
-# (2/3) Converting to JSON, 751 records converted
-# (3/3) Importing JSON records into database...
-# Warning: Could not create some documents, reeason: UNIQUE constraint failed
-# = Imported or updated 640 records on 240 trial(s)  
-# Retrieving results if available from EUCTR for 220 trials: 
-# (1/4) Downloading and extracting results (. = data, F = file[s] and data, x = none):
-# Download status: 220 done; 0 in progress. Total size: 75.96 Mb (100%)... done!             
-# F . . . . F . . F F . F . . . . F . . . . F . . . . F . . . . . F . . . . F F . . . . . . . . . . . . . . . F F . F . . . . . . . . . . . . . . . . . . . . F F . . . . . . . . . . F . . F . . . . F . . . 
-# (2/3) Converting to JSON, 102 records converted
-# (3/4) Importing JSON into database...
-# (4/4) Results history: not retrieved (euctrresultshistory = FALSE)
+# [...]
 # = Imported or updated results for 102 trials
 # = documents saved in './files-euctr'
-# Updated history ("meta-info" in "some_collection_name")
 
 # CTGOV files
 ctrLoadQueryIntoDb(
@@ -609,20 +594,13 @@ ctrLoadQueryIntoDb(
   con = db
 )
 # * Found search query from CTGOV: cond=Neuroblastoma&type=Intr&recrs=e&phase=1&u_prot=Y&u_sap=Y&u_icf=Y
-# Checking helper binaries: done
-# (1/3) Checking trials in CTGOV:
-# Retrieved overview, records of 22 trial(s) are to be downloaded (estimate: 0.18 MB)
-# Download status: 1 done; 0 in progress. Total size: 291.10 Kb (100%)... done!             
-# (2/3) Converting to JSON, 22 records converted
-# (3/3) Importing JSON records into database...
-# = Imported or updated 22 trial(s)                
+# [...]
 # Downloading documents into 'documents.path' = ./files-ctgov/
 # - Created directory ./files-ctgov
 # Applying 'documents.regexp' to 14 documents
 # Downloading 7 documents:
 # Download status: 7 done; 0 in progress. Total size: 30.88 Mb (100%)... done!             
 # Newly saved 7 document(s) for 7 trial(s); 0 document(s) for 0 trial(s) already existed in ./files-ctgov
-# Updated history ("meta-info" in "some_collection_name")
 
 # CTIS files
 ctrLoadQueryIntoDb(
@@ -631,16 +609,7 @@ ctrLoadQueryIntoDb(
   con = db
 )
 # * Found search query from CTIS: ageGroupCode=2
-# (1/5) Downloading trials list, found 25 trials
-# (2/5) Downloading and processing part I and parts II... (estimate: 3.75 Mb)
-# Download status: 25 done; 0 in progress. Total size: 3.84 Mb (100%)... done!             
-# . . . . . . . . . . . . . . . . . . . . . . . . . 
-# (3/5) Downloading and processing additional data: 
-# publicevents, summary, layperson, csr, cm, inspections, publicevaluation
-# Download status: 37 done; 0 in progress. Total size: 1.53 Mb (100%)... done!             
-# 25
-# (4/5) Importing JSON records into database...
-# (5/5) Updating with additional data: . .         
+# [...]
 # * Downloading documents into 'documents.path' = ./files-ctis/
 # - Created directory ./files-ctis
 # - Getting ids of lists with document information
@@ -653,8 +622,6 @@ ctrLoadQueryIntoDb(
 # Download status: 258 done; 0 in progress. Total size: 203.70 Mb (100%)... done!             
 # = Newly saved 235 document(s) for 25 trial(s) (latest versions only, deduplicated 
 # if e.g. in application and authorised part); 0 document(s) for 0 trial(s) already existed in ./files-ctis
-# = Imported / updated 25 / 25 / 25 records on 25 trial(s)
-# Updated history ("meta-info" in "some_collection_name")
 ```
 
 ```{r cleanup, include=FALSE}

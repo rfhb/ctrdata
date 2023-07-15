@@ -114,9 +114,10 @@
 <li>EU Clinical Trials Register (“EUCTR”, <a href="https://www.clinicaltrialsregister.eu/" class="external-link uri">https://www.clinicaltrialsregister.eu/</a>)</li>
 <li>ClinicalTrials.gov (“CTGOV” classic, <a href="https://classic.clinicaltrials.gov/" class="external-link uri">https://classic.clinicaltrials.gov/</a>)</li>
 <li>ISRCTN (<a href="https://www.isrctn.com/" class="external-link uri">https://www.isrctn.com/</a>)</li>
-<li>EU Clinical Trials Information System (“CTIS”, <a href="https://euclinicaltrials.eu/" class="external-link uri">https://euclinicaltrials.eu/</a>) 🔔 see <a href="#workflow-ctis-example">example</a> below</li>
+<li>EU Clinical Trials Information System (“CTIS”, <a href="https://euclinicaltrials.eu/" class="external-link uri">https://euclinicaltrials.eu/</a>) 🔔 see <a href="#workflow-ctis-example">example</a>
+</li>
 </ul>
-<p>The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-07-02 for version 1.13.3.9000 (after change of CTGOV website).</p>
+<p>The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-07-14 for version 1.13.3.9000 (after change of CTGOV website).</p>
 <div class="section level2">
 <h2 id="main-features">Main features<a class="anchor" aria-label="anchor" href="#main-features"></a>
 </h2>
@@ -236,8 +237,8 @@ citation("ctrdata")
 <td>From a long name-value data.frame, extract values for variables (fields) of interest (e.g., endpoints)</td>
 </tr>
 <tr class="odd">
-<td><code><a href="reference/dfMergeTwoVariablesRelevel.html">dfMergeTwoVariablesRelevel()</a></code></td>
-<td>Merge two simple variables into a new variable, optionally map values to a new set of values</td>
+<td><code><a href="reference/dfMergeVariablesRelevel.html">dfMergeVariablesRelevel()</a></code></td>
+<td>Merge variables into a new variable, optionally map values to a new set of levels</td>
 </tr>
 <tr class="even">
 <td><code><a href="reference/installCygwinWindowsDoInstall.html">installCygwinWindowsDoInstall()</a></code></td>
@@ -374,7 +375,7 @@ citation("ctrdata")
 <ul>
 <li>Analyse</li>
 </ul>
-<p>Tabulate the status of trials that are part of an agreed paediatric development program (paediatric investigation plan, PIP). Where <code>ctrdata</code> functions would return a data.frame, a tibble is returned if package <code>dplyr</code> is loaded.</p>
+<p>Tabulate the status of trials that are part of an agreed paediatric development program (paediatric investigation plan, PIP). <code>ctrdata</code> functions return a data.frame (or a tibble, if package <code>tibble</code> is loaded).</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get all records that have values in the fields of interest:</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span>
@@ -386,15 +387,15 @@ citation("ctrdata")
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Find unique trial identifiers for trials that have nore than</span></span>
-<span><span class="co"># one record, for example for several EU Member States:</span></span>
+<span><span class="co"># Find unique (deduplicated) trial identifiers for trials that have more than</span></span>
+<span><span class="co"># one record, for example for several EU Member States or in several registers:</span></span>
 <span><span class="va">uniqueids</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></span>
 <span><span class="co"># Searching for duplicate trials... </span></span>
-<span><span class="co">#  - Getting all trial identifiers (may take some time), 339 found in collection</span></span>
+<span><span class="co">#  - Getting all trial identifiers (may take some time), 347 found in collection</span></span>
 <span><span class="co">#  - Finding duplicates among registers' and sponsor ids...</span></span>
-<span><span class="co">#  - 251 EUCTR _id were not preferred EU Member State record for 88 trials</span></span>
-<span><span class="co">#  - Keeping 88 records from EUCTR</span></span>
-<span><span class="co"># = Returning keys (_id) of 88 records in collection "some_collection_name"</span></span>
+<span><span class="co">#  - 256 EUCTR _id were not preferred EU Member State record for 91 trials</span></span>
+<span><span class="co">#  - Keeping 91 records from EUCTR</span></span>
+<span><span class="co"># = Returning keys (_id) of 91 records in collection "some_collection_name"</span></span>
 <span></span>
 <span><span class="co"># Keep only unique / de-duplicated records:</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span></span>
@@ -412,10 +413,11 @@ citation("ctrdata")
 <span><span class="op">)</span></span>
 <span><span class="co">#                           a7_trial_is_part_of_a_paediatric_investigation_plan</span></span>
 <span><span class="co"># p_end_of_trial_status      FALSE TRUE</span></span>
-<span><span class="co">#   Completed                   43   21</span></span>
+<span><span class="co">#   Completed                   46   20</span></span>
 <span><span class="co">#   GB - no longer in EU/EEA     1    1</span></span>
-<span><span class="co">#   Ongoing                      2    1</span></span>
+<span><span class="co">#   Ongoing                      3    1</span></span>
 <span><span class="co">#   Prematurely Ended            2    2</span></span>
+<span><span class="co">#   Restarted                    0    1</span></span>
 <span><span class="co">#   Temporarily Halted           1    1</span></span></code></pre></div>
 <ul>
 <li><p>Add records from another register (CTGOV) into the same collection</p></li>
@@ -440,13 +442,13 @@ citation("ctrdata")
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># * Found search query from CTGOV: cond=neuroblastoma&amp;rslt=With&amp;recrs=e&amp;age=0&amp;intr=Drug</span></span>
-<span><span class="co"># Checking helper binaries: . . . done</span></span>
+<span><span class="co"># Checking helper binaries: done</span></span>
 <span><span class="co"># (1/3) Checking trials in CTGOV:</span></span>
-<span><span class="co"># Retrieved overview, records of 53 trial(s) are to be downloaded (estimate: 0.42 MB)</span></span>
-<span><span class="co"># Download status: 1 done; 0 in progress. Total size: 718.51 Kb (100%)... done!             </span></span>
-<span><span class="co"># (2/3) Converting to JSON, 53 records converted</span></span>
+<span><span class="co"># Retrieved overview, records of 55 trial(s) are to be downloaded (estimate: 0.44 MB)</span></span>
+<span><span class="co"># Download status: 1 done; 0 in progress. Total size: 754.96 Kb (100%)... done!             </span></span>
+<span><span class="co"># (2/3) Converting to JSON, 55 records converted</span></span>
 <span><span class="co"># (3/3) Importing JSON records into database...</span></span>
-<span><span class="co"># = Imported or updated 28 trial(s)                </span></span>
+<span><span class="co"># = Imported or updated 55 trial(s)                </span></span>
 <span><span class="co"># Updated history ("meta-info" in "some_collection_name")</span></span></code></pre></div>
 <div id="workflow-ctis-example">
 
@@ -454,51 +456,32 @@ citation("ctrdata")
 <ul>
 <li>Add records from a fourth register (CTIS 🔔) into the same collection</li>
 </ul>
-<p>Queries in the CTIS search interface can be automatically copied to the clipboard so that a user can paste them into <code>queryterm</code>, see <a href="#id_3-script-to-automatically-copy-users-query-from-web-browser">here</a>. As of June 2023, more than 200 trials are publicly accessible in CTIS.</p>
+<p>Queries in the CTIS search interface can be automatically copied to the clipboard so that a user can paste them into <code>queryterm</code>, see <a href="#id_3-script-to-automatically-copy-users-query-from-web-browser">here</a>. As of June 2023, more than 200 trials are publicly accessible in CTIS. See <a href="documents-example">below</a> for how to download documents from CTIS.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Retrieve trials from another register:</span></span>
 <span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
-<span>  queryterm <span class="op">=</span> <span class="st">"https://euclinicaltrials.eu/ct-public-api-services/services/ct/publiclookup?ageGroupCode=3"</span>,</span>
-<span>  documents.path <span class="op">=</span> <span class="st">"./files-ctis"</span>,</span>
+<span>  queryterm <span class="op">=</span> <span class="st">"https://euclinicaltrials.eu/app/#/search?ageGroupCode=2"</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># * Found search query from CTIS: ageGroupCode=3</span></span>
-<span><span class="co"># (1/5) Downloading trials list, found 191 trials</span></span>
-<span><span class="co"># (2/5) Downloading and processing part I and parts II... (estimate: 28.65 Mb)</span></span>
-<span><span class="co"># Download status: 191 done; 0 in progress. Total size: 28.58 Mb (100%)... done!             </span></span>
-<span><span class="co"># . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . </span></span>
-<span><span class="co"># . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . </span></span>
-<span><span class="co"># . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . </span></span>
-<span><span class="co"># . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . </span></span>
-<span><span class="co"># . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . </span></span>
+<span><span class="co"># * Found search query from CTIS: ageGroupCode=2</span></span>
+<span><span class="co"># (1/5) Downloading trials list, found 25 trials</span></span>
+<span><span class="co"># (2/5) Downloading and processing part I and parts II... (estimate: 3.75 Mb)</span></span>
+<span><span class="co"># Download status: 25 done; 0 in progress. Total size: 3.84 Mb (100%)... done!             </span></span>
+<span><span class="co"># . . . . . . . . . . . . . . . . . . . . . . . . . </span></span>
 <span><span class="co"># (3/5) Downloading and processing additional data: </span></span>
 <span><span class="co"># publicevents, summary, layperson, csr, cm, inspections, publicevaluation</span></span>
-<span><span class="co"># Download status: 305 done; 0 in progress. Total size: 8.68 Mb (100%)... done!             </span></span>
-<span><span class="co"># 191</span></span>
+<span><span class="co"># Download status: 37 done; 0 in progress. Total size: 1.53 Mb (100%)... done!             </span></span>
+<span><span class="co"># 25</span></span>
 <span><span class="co"># (4/5) Importing JSON records into database...</span></span>
-<span><span class="co"># (5/5) Updating with additional data: . . .       </span></span>
-<span><span class="co"># * Downloading documents into 'documents.path' = ./files-ctis</span></span>
-<span><span class="co"># - Created directory /Users/ralfherold/Daten/mak/r/emea/ctrdata/files-ctis</span></span>
-<span><span class="co"># - Getting ids of lists with document information</span></span>
-<span><span class="co"># - Downloading 3435 lists with document information (estimate: 68.7 Mb)</span></span>
-<span><span class="co"># Download status: 3435 done; 0 in progress. Total size: 29.28 Mb (100%)... done!             </span></span>
-<span><span class="co"># - Processing document information in 3435 lists</span></span>
-<span><span class="co"># - Creating subfolder for each trial</span></span>
-<span><span class="co"># - Applying 'documents.regexp' to 12685 documents</span></span>
-<span><span class="co"># - Downloading 1504 missing documents</span></span>
-<span><span class="co"># Download status: 1504 done; 0 in progress. Total size: 900.53 Mb (100%)... done!             </span></span>
-<span><span class="co"># = Newly saved 1398 document(s) for 188 trial(s) (latest versions only, deduplicated </span></span>
-<span><span class="co"># if e.g. in application and authorised part); 0 document(s) for 0 trial(s) already </span></span>
-<span><span class="co"># existed in ./files-ctis</span></span>
-<span><span class="co"># = Imported / updated 191 / 191 / 1 / 191 records on 191 trial(s)</span></span>
-<span><span class="co"># No history found in expected format.</span></span>
+<span><span class="co"># (5/5) Updating with additional data: . .         </span></span>
+<span><span class="co"># = Imported / updated 25 / 25 / 25 records on 25 trial(s)</span></span>
 <span><span class="co"># Updated history ("meta-info" in "some_collection_name")</span></span>
 <span></span>
-<span></span>
 <span><span class="va">allFields</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbFindFields.html">dbFindFields</a></span><span class="op">(</span><span class="st">".*"</span>, <span class="va">db</span><span class="op">)</span></span>
+<span><span class="co"># Finding fields in database collection (may take some time)</span></span>
+<span><span class="co"># Field names cached for this session.</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">allFields</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"CTIS"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">allFields</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co"># [1] 2020</span></span>
-<span></span>
+<span><span class="co"># [1] 2254</span></span>
 <span></span>
 <span><span class="va">allFields</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"defer|consideration$"</span>, <span class="va">allFields</span>, ignore.case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#                                                                                            CTIS </span></span>
@@ -512,20 +495,24 @@ citation("ctrdata")
 <span><span class="co">#                                                                                            CTIS </span></span>
 <span><span class="co">#                  "publicEvaluation.validationRfiConsiderations.rfiConsiderations.consideration" </span></span>
 <span><span class="co">#                                                                                            CTIS </span></span>
-<span><span class="co">#             "publicEvaluation.validationRfiConsiderations.rfiConsiderations.part1Consideration"</span></span>
+<span><span class="co">#             "publicEvaluation.validationRfiConsiderations.rfiConsiderations.part1Consideration" </span></span>
 <span></span>
-<span><span class="fu"><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span><span class="st">"publicEvaluation.partIRfiConsiderations.rfiConsiderations.consideration"</span>, <span class="va">db</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span></span>
-<span><span class="co">#               _id    publicEvaluation.partIRfiConsiderations.rfiConsiderations.consideration</span></span>
-<span><span class="co"># 2022-500024-30-00    A detailed description of potential protocol deviations for the per-protocol </span></span>
-<span><span class="co"># set is missing on page 63/76 of the protocol and should be added. / Please, also amend the </span></span>
-<span><span class="co"># rationale why the secondary aims are exploratory, considering the study design, sample size,</span></span>
-<span><span class="co"># and statistical modeling. / The sample size is based on uncorrected two sided p-value, </span></span>
-<span><span class="co"># ignoring multiplicity. The study will be more realistic by re-calculating what the sample-size </span></span>
-<span><span class="co"># could be, based on the adjusted one-side p-value. Please elaborate your reply. / Sample-size </span></span>
-<span><span class="co"># calculations make sense, except for considering multiplicity adjusted p-value. It is debatable </span></span>
-<span><span class="co"># whether hierarchical testing should be applied in this project since the objectives and </span></span>
-<span><span class="co"># outcomes are not ranked/ordered as hierarchical/sequential.</span></span>
-<span></span>
+<span><span class="fu"><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span><span class="st">"publicEvaluation.partIRfiConsiderations.rfiConsiderations.consideration"</span>, <span class="va">db</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">]</span></span>
+<span><span class="co"># publicEvaluation.partIRfiConsiderations.rfiConsiderations.consideration</span></span>
+<span><span class="co"># In(EX)clusion criteria: An adequate definition of WOCBP or postmenopausal woman </span></span>
+<span><span class="co"># is missing and should be added to the protocol. / The rationale for the treatment duration of 7 to </span></span>
+<span><span class="co"># 18 weeks cannot be followed. No data are available for this short time period and nivolumab treatment. </span></span>
+<span><span class="co"># The shortest duration tested so far in 1 year in adjuvant or maintenance treatment protocol. </span></span>
+<span><span class="co"># The sponsor is asked to justify and substantiate his assumption that this treatment duration is </span></span>
+<span><span class="co"># adequate with respective data. / E: Information regarding the special clinical conditions for </span></span>
+<span><span class="co"># conducting clinical trials with minors, \nsee Article 32 Par. 1 lit e) to g) of Regulation (EU) </span></span>
+<span><span class="co"># 536/2014 is missing. Please revise the protocol accordingly. So it is indicated to include the </span></span>
+<span><span class="co"># patients older than 18 years first and in case of positive results the planned younger patients </span></span>
+<span><span class="co"># could follow.\nStatistical Comment: The statistical analyses are missing in the trial protocol. </span></span>
+<span><span class="co"># Biometric adequate is a restriction to descriptive evaluations. A sequential evaluation is </span></span>
+<span><span class="co"># recommended (adults first and then children). The protocol has to be amended accordingly / </span></span>
+<span><span class="co"># Discontinuation criteria for study subjects and clinical trial termination criteria are missing </span></span>
+<span><span class="co"># and have to be added. Please amend. [...]</span></span>
 <span></span>
 <span><span class="co"># use an alternative to dbGetFieldsIntoDf()</span></span>
 <span><span class="va">allData</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/docdb_query.html" class="external-link">docdb_query</a></span><span class="op">(</span>src <span class="op">=</span> <span class="va">db</span>, key <span class="op">=</span> <span class="va">db</span><span class="op">$</span><span class="va">collection</span>, query <span class="op">=</span> <span class="st">'{"ctrname":"CTIS"}'</span><span class="op">)</span></span>
@@ -554,12 +541,87 @@ citation("ctrdata")
 <span><span class="co"># [41] "trialStartDate" </span></span>
 <span><span class="co"># </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/object.size.html" class="external-link">object.size</a></span><span class="op">(</span><span class="va">allData</span><span class="op">)</span>, <span class="st">"MB"</span><span class="op">)</span></span>
-<span><span class="co"># [1] "157.6 Mb"</span></span></code></pre></div>
+<span><span class="co"># [1] "20.1 Mb"</span></span></code></pre></div>
 <ul>
+<li>Analyse across trials</li>
+</ul>
+<p>Show umulative start of trials over time.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># get names of all fields / variables in the collaction</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="reference/dbFindFields.html">dbFindFields</a></span><span class="op">(</span><span class="st">".*"</span>, con <span class="op">=</span> <span class="va">db</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># Finding fields in database collection (may take some time)</span></span>
+<span><span class="co"># Field names cached for this session.</span></span>
+<span><span class="co"># [1] 2946</span></span>
+<span></span>
+<span><span class="fu"><a href="reference/dbFindFields.html">dbFindFields</a></span><span class="op">(</span><span class="st">"startdate"</span>, con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></span>
+<span><span class="co"># Using cache of fields.</span></span>
+<span></span>
+<span><span class="co"># get trial data</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span>
+<span>  fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>    <span class="co"># CTGOV</span></span>
+<span>    <span class="st">"start_date"</span>,</span>
+<span>    <span class="st">"overall_status"</span>,</span>
+<span>    <span class="co"># EUCTR</span></span>
+<span>    <span class="st">"trialInformation.recruitmentStartDate"</span>,</span>
+<span>    <span class="st">"x5_trial_status"</span>, </span>
+<span>    <span class="co"># ISRCTN</span></span>
+<span>    <span class="st">"trialDesign.overallStartDate"</span>,</span>
+<span>    <span class="co"># CTIS</span></span>
+<span>    <span class="st">"authorizedPartI.trialDetails.trialInformation.trialDuration.estimatedRecruitmentStartDate"</span>,</span>
+<span>    <span class="st">"ctStatus"</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  con <span class="op">=</span> <span class="va">db</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Deduplicate trials and obtain unique identifiers </span></span>
+<span><span class="co"># for trials that have records in several registers:</span></span>
+<span><span class="va">uniqueids</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">result</span>, <span class="va">`_id`</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">uniqueids</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Merge variables / fields from different registers</span></span>
+<span><span class="va">result</span><span class="op">$</span><span class="va">start</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dfMergeTwoVariablesRelevel.html">dfMergeTwoVariablesRelevel</a></span><span class="op">(</span></span>
+<span>  df <span class="op">=</span> <span class="va">result</span>, </span>
+<span>  colnames <span class="op">=</span> <span class="st">'contains("date")'</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co"># dfMergeTwoVariablesRelevel() is deprecated, use dfMergeVariablesRelevel()</span></span>
+<span></span>
+<span><span class="co"># Merge variables / fields from different registers with releveling</span></span>
+<span><span class="va">statusvalues</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  <span class="st">"ongoing"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>    <span class="co"># EUCTR</span></span>
+<span>    <span class="st">"Recruiting"</span>, <span class="st">"Active"</span>, <span class="st">"Ongoing"</span>, <span class="st">"Temporarily Halted"</span>, <span class="st">"Restarted"</span>,</span>
+<span>    <span class="co"># CTGOV</span></span>
+<span>    <span class="st">"Active, not recruiting"</span>, <span class="st">"Enrolling by invitation"</span>, <span class="st">"Not yet recruiting"</span>,</span>
+<span>    <span class="co"># CTIS</span></span>
+<span>    <span class="st">"Ongoing, recruiting"</span>, <span class="st">"Ongoing, recruitment ended"</span>, </span>
+<span>    <span class="st">"Ongoing, not yet recruiting"</span>, <span class="st">"Authorised, not started"</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  <span class="st">"completed"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Completed"</span>, <span class="st">"Prematurely Ended"</span>, <span class="st">"Terminated"</span><span class="op">)</span>,</span>
+<span>  <span class="st">"other"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"GB - no longer in EU/EEA"</span>, <span class="st">"Trial now transitioned"</span>,</span>
+<span>              <span class="st">"Withdrawn"</span>, <span class="st">"Suspended"</span>, <span class="st">"No longer available"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">result</span><span class="op">$</span><span class="va">state</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dfMergeVariablesRelevel.html">dfMergeVariablesRelevel</a></span><span class="op">(</span></span>
+<span>  df <span class="op">=</span> <span class="va">result</span>, </span>
+<span>  colnames <span class="op">=</span> <span class="st">'contains("status")'</span>,</span>
+<span>  levelslist <span class="op">=</span> <span class="va">statusvalues</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># example plot</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_ecdf.html" class="external-link">stat_ecdf</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">start</span>, colour <span class="op">=</span> <span class="va">state</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggsave</a></span><span class="op">(</span></span>
+<span>  filename <span class="op">=</span> <span class="st">"man/figures/README-ctrdata_across_registers.png"</span>,</span>
+<span>  width <span class="op">=</span> <span class="fl">5</span>, height <span class="op">=</span> <span class="fl">3</span>, units <span class="op">=</span> <span class="st">"in"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<figure><img src="https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_across%20registers.png" alt="Analysis across registers"><figcaption aria-hidden="true">
+Analysis across registers
+</figcaption></figure><ul>
 <li>Result-related trial information</li>
 </ul>
 <p>Analyse some simple result details (see this <a href="https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html">vignette</a> for more examples):</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get all records that have values in any of the specified fields</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span>
 <span>  fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
@@ -645,26 +707,65 @@ citation("ctrdata")
 <span><span class="op">)</span></span></code></pre></div>
 <figure><img src="https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_results_neuroblastoma.png" alt="Neuroblastoma trials"><figcaption aria-hidden="true">
 Neuroblastoma trials
-</figcaption></figure><ul>
-<li>Download documents: retrieve protocols, statistical analysis plans and other documents into the local folder <code>./files/</code>
+</figcaption></figure><div id="documents-example">
+
+</div>
+<ul>
+<li>Download documents: retrieve protocols, statistical analysis plans and other documents into the local folder <code>./files-.../</code>
 </li>
 </ul>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># euctr document files can be downloaded when results are requested</span></span>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># EUCTR document files can be downloaded when results are requested</span></span>
 <span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
 <span>  queryterm <span class="op">=</span> <span class="st">"https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&amp;age=under-18&amp;phase=phase-one"</span>,</span>
 <span>  euctrresults <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  documents.path <span class="op">=</span> <span class="st">"./files-euctr/"</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co"># * Found search query from EUCTR: query=cancer&amp;age=under-18&amp;phase=phase-one</span></span>
+<span><span class="co"># [...]</span></span>
+<span><span class="co"># Created directory ./files-euctr/</span></span>
+<span><span class="co"># Downloading trials...</span></span>
+<span><span class="co"># [...]</span></span>
+<span><span class="co"># = Imported or updated results for 102 trials</span></span>
+<span><span class="co"># = documents saved in './files-euctr'</span></span>
 <span></span>
-<span><span class="co"># ctgov files</span></span>
+<span><span class="co"># CTGOV files</span></span>
 <span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
 <span>  queryterm <span class="op">=</span> <span class="st">"cond=Neuroblastoma&amp;type=Intr&amp;recrs=e&amp;phase=1&amp;u_prot=Y&amp;u_sap=Y&amp;u_icf=Y"</span>,</span>
 <span>  register <span class="op">=</span> <span class="st">"CTGOV"</span>,</span>
 <span>  documents.path <span class="op">=</span> <span class="st">"./files-ctgov/"</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span>
+<span><span class="co"># * Found search query from CTGOV: cond=Neuroblastoma&amp;type=Intr&amp;recrs=e&amp;phase=1&amp;u_prot=Y&amp;u_sap=Y&amp;u_icf=Y</span></span>
+<span><span class="co"># [...]</span></span>
+<span><span class="co"># Downloading documents into 'documents.path' = ./files-ctgov/</span></span>
+<span><span class="co"># - Created directory ./files-ctgov</span></span>
+<span><span class="co"># Applying 'documents.regexp' to 14 documents</span></span>
+<span><span class="co"># Downloading 7 documents:</span></span>
+<span><span class="co"># Download status: 7 done; 0 in progress. Total size: 30.88 Mb (100%)... done!             </span></span>
+<span><span class="co"># Newly saved 7 document(s) for 7 trial(s); 0 document(s) for 0 trial(s) already existed in ./files-ctgov</span></span>
+<span></span>
+<span><span class="co"># CTIS files</span></span>
+<span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
+<span>  queryterm <span class="op">=</span> <span class="st">"https://euclinicaltrials.eu/app/#/search?ageGroupCode=2"</span>,</span>
+<span>  documents.path <span class="op">=</span> <span class="st">"./files-ctis/"</span>,</span>
+<span>  con <span class="op">=</span> <span class="va">db</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co"># * Found search query from CTIS: ageGroupCode=2</span></span>
+<span><span class="co"># [...]</span></span>
+<span><span class="co"># * Downloading documents into 'documents.path' = ./files-ctis/</span></span>
+<span><span class="co"># - Created directory ./files-ctis</span></span>
+<span><span class="co"># - Getting ids of lists with document information</span></span>
+<span><span class="co"># - Downloading 510 lists with document information (estimate: 10.2 Mb)</span></span>
+<span><span class="co"># Download status: 510 done; 0 in progress. Total size: 6.96 Mb (100%)... done!             </span></span>
+<span><span class="co"># - Processing document information in 510 lists</span></span>
+<span><span class="co"># - Creating subfolder for each trial</span></span>
+<span><span class="co"># - Applying 'documents.regexp' to 2909 documents</span></span>
+<span><span class="co"># - Downloading 258 missing documents</span></span>
+<span><span class="co"># Download status: 258 done; 0 in progress. Total size: 203.70 Mb (100%)... done!             </span></span>
+<span><span class="co"># = Newly saved 235 document(s) for 25 trial(s) (latest versions only, deduplicated </span></span>
+<span><span class="co"># if e.g. in application and authorised part); 0 document(s) for 0 trial(s) already existed in ./files-ctis</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="additional-features-under-consideration">Additional features under consideration<a class="anchor" aria-label="anchor" href="#additional-features-under-consideration"></a>
@@ -687,7 +788,7 @@ Neuroblastoma trials
 <ul>
 <li><p>Please file issues and bugs <a href="https://github.com/rfhb/ctrdata/issues" class="external-link">here</a>. Also check out how to handle some of the closed issues, e.g. on <a href="https://github.com/rfhb/ctrdata/issues/22" class="external-link">C stack usage too close to the limit</a> and on a <a href="https://github.com/rfhb/ctrdata/issues/19#issuecomment-820127139" class="external-link">SSL certificate problem: unable to get local issuer certificate</a></p></li>
 <li><p>Information in trial registers may not be fully correct; see for example <a href="https://doi.org/10.1136/bmj.k1452" class="external-link">this publication on CTGOV</a>.</p></li>
-<li><p>No attempts were made to harmonise field names between registers (nevertheless, <code><a href="reference/dfMergeTwoVariablesRelevel.html">dfMergeTwoVariablesRelevel()</a></code> can be used to merge and map two variables / fields into one).</p></li>
+<li><p>No attempts were made to harmonise field names between registers (nevertheless, <code><a href="reference/dfMergeVariablesRelevel.html">dfMergeVariablesRelevel()</a></code> can be used to merge and map several variables / fields into one).</p></li>
 </ul>
 </div>
 </div>

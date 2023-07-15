@@ -2702,7 +2702,7 @@ ctrLoadQueryIntoDbCtis <- function(
   } # end if documents.path
 
   ## inform user on final import outcome
-  message("\n= Imported / updated ",
+  message("= Imported / updated ",
           paste0(c(imported$n, resAll), collapse = " / "),
           " records on ", resultsEuNumTrials, " trial(s)")
 
