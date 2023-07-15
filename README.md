@@ -562,7 +562,7 @@ ggsave(
 
 <figure>
 <img
-src="https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_across%20registers.png"
+src="https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_across_registers.png"
 alt="Analysis across registers" />
 <figcaption aria-hidden="true">Analysis across registers</figcaption>
 </figure>
