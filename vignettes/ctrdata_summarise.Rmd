@@ -230,11 +230,11 @@ dev.off()
 
 ## Merge corresponding fields from registers
 
-The field "n_date_of_competent_authority_decision" used above exists only in EUCTR, yet it corresponds to the field "start_date" in CTGOV. Thus, to give the start of the trial, the two fields can be merged for analysis, using the convenience function `dfMergeTwoVariablesRelevel()` in `ctrdata` package:
+The field "n_date_of_competent_authority_decision" used above exists only in EUCTR, yet it corresponds to the field "start_date" in CTGOV. Thus, to give the start of the trial, the two fields can be merged for analysis, using the convenience function `dfMergeVariablesRelevel()` in `ctrdata` package:
 
-```{r dfMergeTwoVariablesRelevel}
+```{r dfMergeVariablesRelevel}
 # Merge two variables into a new variable:
-result$trialstart <- dfMergeTwoVariablesRelevel(
+result$trialstart <- dfMergeVariablesRelevel(
   result,
   colnames = c(
     "n_date_of_competent_authority_decision",
@@ -254,9 +254,9 @@ dev.off()
 ```
 ![Histogram2](nb2.png)
 
-In a more sophisticated use of `dfMergeTwoVariablesRelevel()`, values of the original variables can be mapped into new values of the merged variable, as follows:
+In a more sophisticated use of `dfMergeVariablesRelevel()`, values of the original variables can be mapped into new values of the merged variable, as follows:
 
-```{r dfMergeTwoVariablesRelevel_relevel}
+```{r dfMergeVariablesRelevel_relevel}
 # First, define how values of the new, merged variable
 # (e.g., "ongoing") will result from values of the
 # original variable (e.g, "Recruiting):
@@ -276,7 +276,7 @@ mapped_values <- list(
 
 # Secondly, use the list of mapped
 # values when merging two variable:
-tmp <- dfMergeTwoVariablesRelevel(
+tmp <- dfMergeVariablesRelevel(
   result,
   colnames = c(
     "overall_status",
@@ -462,7 +462,7 @@ result <- result[
 ]
 
 # Merge primary endpoint (pep)
-result$pep <- dfMergeTwoVariablesRelevel(
+result$pep <- dfMergeVariablesRelevel(
   df = result,
   colnames =
     c(
@@ -472,7 +472,7 @@ result$pep <- dfMergeTwoVariablesRelevel(
 )
 
 # Merge number of subjects
-result$nsubj <- dfMergeTwoVariablesRelevel(
+result$nsubj <- dfMergeVariablesRelevel(
   df = result,
   colnames =
     c(
@@ -541,7 +541,7 @@ result <- merge(
   by.y = "Group.1",
   all.x = TRUE
 )
-result[["startdatefirst"]] <- dfMergeTwoVariablesRelevel(
+result[["startdatefirst"]] <- dfMergeVariablesRelevel(
   df = result,
   colnames = c(
     "x",

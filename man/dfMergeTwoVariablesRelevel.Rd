@@ -2,52 +2,20 @@
 % Please edit documentation in R/utils.R
 \name{dfMergeTwoVariablesRelevel}
 \alias{dfMergeTwoVariablesRelevel}
-\title{Merge two variables}
+\title{Merge two variables (superseded)}
 \usage{
-dfMergeTwoVariablesRelevel(df = NULL, colnames = "", levelslist = NULL, ...)
+dfMergeTwoVariablesRelevel(df = NULL, colnames = "", levelslist = NULL)
 }
 \arguments{
-\item{df}{A \link{data.frame} in which there are two variables (columns)
-to be merged into one.}
+\item{df}{A \link{data.frame} with the variables (columns) to be merged into
+one vector.}
 
-\item{colnames}{A vector of length two with names of the two columns
-that hold the variables to be merged. See \link{colnames} for how to
-obtain the names of columns of a data frame.}
+\item{colnames}{A vector of names of columns in `df` that hold the variables
+to be merged, or a selection of columns as per \code{\link[dplyr]{select}}.}
 
-\item{levelslist}{A list with one slice each for a new value to be
+\item{levelslist}{A names list with one slice each for a new value to be
 used for a vector of old values (optional).}
-
-\item{...}{for deprecated \code{varnames} parameter (will be removed)}
-}
-\value{
-A vector of strings
 }
 \description{
-Merge two variables in a data frame such as returned by \link{dbGetFieldsIntoDf}
-into a new variable, and optionally also map its values to new levels.
-}
-\examples{
-
-vars2merge <- c("overall_status", "x5_trial_status")
-
-dbc <- nodbi::src_sqlite(
-   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
-   collection = "my_trials")
-
-df <- dbGetFieldsIntoDf(
-  fields = vars2merge,
-  con = dbc)
-
-statusvalues <- list(
-  "ongoing" = c("Recruiting", "Active", "Ongoing",
-                "Active, not recruiting", "Enrolling by invitation"),
-  "completed" = c("Completed", "Prematurely Ended", "Terminated"),
-  "other" = c("Withdrawn", "Suspended",
-              "No longer available", "Not yet recruiting"))
-
-dfMergeTwoVariablesRelevel(
-  df = df,
-  colnames = vars2merge,
-  levelslist = statusvalues)
-
+Superseded, please use \link{dfMergeVariablesRelevel}
 }

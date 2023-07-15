@@ -71,7 +71,7 @@ expect_true(all(is.na(
   ctrdata:::typeField(df[[2]], "anyname")[3:4])))
 
 
-#### dfMergeTwoVariablesRelevel ####
+#### dfMergeVariablesRelevel ####
 
 df1 <- data.frame(
   "var1" = 1:3,
@@ -88,75 +88,54 @@ df2 <- data.frame(var1 = c("A", "B", "C", "D"),
 # test
 expect_error(
   suppressWarnings(
-    dfMergeTwoVariablesRelevel(list("var1", "var2"))),
-  "Need a data frame as input.")
+    dfMergeVariablesRelevel(list("var1", "var2"))),
+  "no appli")
 
 # test
 expect_message(
   suppressWarnings(
-    dfMergeTwoVariablesRelevel(
+    dfMergeVariablesRelevel(
       df = df1,
       colnames = c("var1", "var2"))),
-  "Unique values returned: 1, 2, 3")
+  "More than one column had values, returning")
 
 # test
 expect_true(
-  "integer" %in% class(
+  "character" %in% class(
     suppressWarnings(
       suppressMessages(
-        dfMergeTwoVariablesRelevel(
+        dfMergeVariablesRelevel(
           df = df1,
           colnames = c("var1", "var2"))))))
 
 # test
-expect_message(
+expect_equal(
   suppressWarnings(
-    dfMergeTwoVariablesRelevel(
+    nchar(dfMergeVariablesRelevel(
       df = df1,
-      colnames = c("var1", "var2"),
-      levelslist = statusvalues)),
-  "Unique values returned: 1, 2, 3")
+      colnames = c("var1", "var2")))),
+  c(5, 5, 5))
 
 # test
 expect_error(
   suppressWarnings(
-    dfMergeTwoVariablesRelevel(
-      df = df1,
-      colnames = 1:3)),
-  "Please provide exactly two column names.")
-
-# test
-expect_warning(
-  dfMergeTwoVariablesRelevel(
-    df = df1,
-    varnames = c("var1", "var2")),
-  "Parameter varnames is deprecated, use colnames instead")
-
-# test
-expect_warning(
-  dfMergeTwoVariablesRelevel(
-    df = df1,
-    colnames = c("var1", "var2")),
-  "Some rows had non-character values for both columns, used first")
+    dfMergeVariablesRelevel(
+      df = cbind(df1, df1),
+      colnames = 1:3)))
 
 # test
 expect_error(
   suppressWarnings(
-    dfMergeTwoVariablesRelevel(
+    dfMergeVariablesRelevel(
       df = df1,
       colnames = c("var1", "var2"),
       levelslist = 1:2)),
-  "Need list for parameter 'levelslist'")
+  "number of levels differs")
 
 # test
-expect_warning(
-  dfMergeTwoVariablesRelevel(
-    df = df2,
-    colnames = c("var1", "var2")),
-  "Some rows had character values for both columns, concatenated")
 expect_equal(
   sum(grepl(" / ", suppressWarnings(suppressMessages(
-    dfMergeTwoVariablesRelevel(
+    dfMergeVariablesRelevel(
       df = df2, colnames = c("var1", "var2")))))), 3L)
 
 

@@ -1,6 +1,8 @@
-# ctrdata 1.13.3.9000 (2023-07-02)
+# ctrdata 1.13.3.9000 (2023-07-14)
  - new dev version
  - fix dbFindIdsUniqueTrials() for single-record register contents
+ - expand number of CTIS variables that are typed as date
+ - dfMergeVariablesRelevel() superseeds a refactored dfMergeTwoVariablesRelevel()
  
 # ctrdata 1.13.3 (2023-06-24)
  - typo in dbFindFields()
