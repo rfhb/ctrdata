@@ -10,8 +10,6 @@
 # check helper functions
 .onAttach <- function(libname, pkgname) {
 
-  vTxt <- readLines(system.file("DESCRIPTION", package = "ctrdata"))
-
   packageStartupMessage(
     "\nInformation on this package and how to use it:\n",
     "https://cran.r-project.org/package=ctrdata\n\n",
@@ -23,7 +21,7 @@
     "https://www.isrctn.com/page/faqs#usingISRCTN\n",
     "https://euclinicaltrials.eu/about-this-website/\n",
     "\nPlease cite this package, see citation(\"ctrdata\").\n",
-    "\n", vTxt[grepl("^Version", vTxt)]
+    "\n", utils::packageVersion("ctrdata")
   )
 
   # return
