@@ -36,7 +36,7 @@ query of a register in a web browser to the clipboard, see
 
 \item{register}{String with abbreviation of register to query,
 either "EUCTR", "CTGOV", "ISRCTN" or "CTIS". Not needed
-if \code{queryterm} provides a query's full URL.}
+if \code{queryterm} provides a full URL to query results.}
 
 \item{querytoupdate}{Either the word "last", or the row number of
 a query in the data frame returned by \link{dbQueryHistory} that
@@ -131,9 +131,9 @@ records while keeping any user annotations of trial records.
 dbc <- nodbi::src_sqlite(collection = "my_collection")
 
 # Retrieve protocol- and results-related information
-# on a single trial identified by its EU number
+# on two specific trials identified by their EU number
 ctrLoadQueryIntoDb(
-  queryterm = "2013-001291-38",
+  queryterm = "2005-001267-63+OR+2008-003606-33",
   register = "EUCTR",
   euctrresults = TRUE,
   con = dbc
@@ -157,7 +157,7 @@ ctrLoadQueryIntoDb(
   con = dbc
 )
 
-# Retrieve information on trials in CTIS
+# Retrieve all information on completed trials in CTIS
 ctrLoadQueryIntoDb(
   queryterm = "https://euclinicaltrials.eu/app/#/search?status=Ended",
   con = dbc

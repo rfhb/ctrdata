@@ -117,7 +117,7 @@ query of a register in a web browser to the clipboard, see
 <dt>register</dt>
 <dd><p>String with abbreviation of register to query,
 either "EUCTR", "CTGOV", "ISRCTN" or "CTIS". Not needed
-if <code>queryterm</code> provides a query's full URL.</p></dd>
+if <code>queryterm</code> provides a full URL to query results.</p></dd>
 
 
 <dt>querytoupdate</dt>
@@ -232,9 +232,9 @@ collection) to facilitate documentation.</p>
 <span class="r-in"><span><span class="va">dbc</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">src_sqlite</a></span><span class="op">(</span>collection <span class="op">=</span> <span class="st">"my_collection"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Retrieve protocol- and results-related information</span></span></span>
-<span class="r-in"><span><span class="co"># on a single trial identified by its EU number</span></span></span>
+<span class="r-in"><span><span class="co"># on two specific trials identified by their EU number</span></span></span>
 <span class="r-in"><span><span class="fu">ctrLoadQueryIntoDb</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  queryterm <span class="op">=</span> <span class="st">"2013-001291-38"</span>,</span></span>
+<span class="r-in"><span>  queryterm <span class="op">=</span> <span class="st">"2005-001267-63+OR+2008-003606-33"</span>,</span></span>
 <span class="r-in"><span>  register <span class="op">=</span> <span class="st">"EUCTR"</span>,</span></span>
 <span class="r-in"><span>  euctrresults <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>  con <span class="op">=</span> <span class="va">dbc</span></span></span>
@@ -258,7 +258,7 @@ collection) to facilitate documentation.</p>
 <span class="r-in"><span>  con <span class="op">=</span> <span class="va">dbc</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Retrieve information on trials in CTIS</span></span></span>
+<span class="r-in"><span><span class="co"># Retrieve all information on completed trials in CTIS</span></span></span>
 <span class="r-in"><span><span class="fu">ctrLoadQueryIntoDb</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  queryterm <span class="op">=</span> <span class="st">"https://euclinicaltrials.eu/app/#/search?status=Ended"</span>,</span></span>
 <span class="r-in"><span>  con <span class="op">=</span> <span class="va">dbc</span></span></span>
