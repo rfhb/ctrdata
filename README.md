@@ -4,7 +4,7 @@
 
 [![CRAN](https://badges.cranchecks.info/worst/ctrdata.svg)](https://cran.r-project.org/package=ctrdata)
 [![ctrdata status
-badge](https://rfhb.r-universe.dev/badges/ctrdata)](https://rfhb.r-universe.dev)
+badge](https://rfhb.r-universe.dev/badges/ctrdata)](https://rfhb.r-universe.dev/ctrdata)
 [![codecov](https://codecov.io/gh/rfhb/ctrdata/branch/master/graph/badge.svg)](https://app.codecov.io/gh/rfhb/ctrdata)
 [![R-CMD-CHECK-ubuntu-postgresql-duckdb-mongodb-sqlite](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-linux.yaml/badge.svg)](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-linux.yaml)
 [![R-CMD-CHECK-win-macos-duckdb-mongodb-sqlite](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-win-macos.yaml/badge.svg)](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-win-macos.yaml)
@@ -30,7 +30,7 @@ conduct of trials, their availability for patients and to facilitate
 using their detailed results for research and meta-analyses. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2023-07-14 for version 1.13.3.9000
+package. This README was reviewed on 2023-07-16 for version 1.14.0
 (after change of CTGOV website).
 
 ## Main features
@@ -38,9 +38,10 @@ package. This README was reviewed on 2023-07-14 for version 1.13.3.9000
 - Protocol- and results-related trial information is easily downloaded:
   Users define a query in a register’s web interface and then enter the
   URL into `ctrdata` which retrieves in one go all trials found.
-  Documents in registers on trials can also be downloaded. Personal
-  annotations can be made to trials when downloading a query. Synonyms
-  of an active substance can also be found.
+  [Documents](#documents-example) in registers on trials can also be
+  downloaded. Personal annotations can be made to trials when
+  downloading a query. Synonyms of an active substance can also be
+  found.
 - Downloaded trial information is transformed and stored in a collection
   of a document-centric database, for fast and offline access.
   Information from different registers can be accumalated in a single
@@ -396,7 +397,7 @@ Queries in the CTIS search interface can be automatically copied to the
 clipboard so that a user can paste them into `queryterm`, see
 [here](#3-script-to-automatically-copy-users-query-from-web-browser). As
 of June 2023, more than 200 trials are publicly accessible in CTIS. See
-[below](documents-example) for how to download documents from CTIS.
+[below](#documents-example) for how to download documents from CTIS.
 
 ``` r
 # Retrieve trials from another register:

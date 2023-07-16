@@ -4,9 +4,7 @@
 
 * macOS builder: r-release-macosx-arm64|4.3.0|macosx|macOS 13.3.1 (22E261)|Mac mini|Apple M1||en_US.UTF-8|macOS 11.3|clang-1403.0.22.14.1|GNU Fortran (GCC) 12.2.0 (ok)
 
-* github actions: ubuntu-22.04 Version: 20230619.1.0 R Under development (unstable) (2023-06-22 r84597); windows-2022 Version: 20230612.1; R-4.3.0; macos-12 Version: 20230618.1 R-4.3.1-x86_64 (ok)
-
-* Win-builder: R Under development (unstable) (2023-06-23 r84599 ucrt) (ok)
+* Win-builder: R Under development (unstable) (2023-07-15 r84693 ucrt); R version 4.3.1 (2023-06-16 ucrt); R version 4.2.3 (2023-03-15 ucrt) (ok)
 
 * R-hub: Windows Server 2022, R-devel, 64 bit; Ubuntu Linux 20.04.1 LTS, R-release, GCC; Fedora Linux, R-devel, clang, gfortran (ok)
 
@@ -24,15 +22,20 @@ server, and this cannot be rectified by the package author.)
 
 Bug fixes: 
 
- - urgent: upstream register (CTGOV) changed FQDN
- 
- - re-add names to return vector of a helper function
+ - fix dbFindIdsUniqueTrials() for single-record register contents
 
+Improvements:
+
+ - expand number of CTIS variables that are typed as date
+ 
+ - dfMergeVariablesRelevel() superseeds dfMergeTwoVariablesRelevel()
+ 
 
 ## Reverse dependencies
 
 None at the moment.
 
-----------
-Thank you,
+----
+
+Many thanks & wishing a good summer break,
 Ralf Herold
