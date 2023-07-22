@@ -19,8 +19,8 @@
         All documents in registers associated with trials can also be downloaded. 
         Other functions identify deduplicated records, 
         easily find and extract variables (fields) of interest even 
-        from complex nested data as used by the registers, and
-        update queries. 
+        from complex nested data as used by the registers, 
+        merge variables and update queries. 
         The package can be used for meta-analysis and trend-analysis of
         the design and conduct as well as of the results of clinical trials.">
 <title>Retrieve and Analyze Clinical Trials in Public Registers • ctrdata</title>
@@ -43,8 +43,8 @@
         All documents in registers associated with trials can also be downloaded. 
         Other functions identify deduplicated records, 
         easily find and extract variables (fields) of interest even 
-        from complex nested data as used by the registers, and
-        update queries. 
+        from complex nested data as used by the registers, 
+        merge variables and update queries. 
         The package can be used for meta-analysis and trend-analysis of
         the design and conduct as well as of the results of clinical trials.">
 <meta name="twitter:card" content="summary_large_image">
@@ -63,7 +63,7 @@
     
     <a class="navbar-brand me-2" href="index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.13.3.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.14.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -117,12 +117,12 @@
 <li>EU Clinical Trials Information System (“CTIS”, <a href="https://euclinicaltrials.eu/" class="external-link uri">https://euclinicaltrials.eu/</a>) 🔔 see <a href="#workflow-ctis-example">example</a>
 </li>
 </ul>
-<p>The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-07-14 for version 1.13.3.9000 (after change of CTGOV website).</p>
+<p>The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-07-16 for version 1.14.0 (after change of CTGOV website).</p>
 <div class="section level2">
 <h2 id="main-features">Main features<a class="anchor" aria-label="anchor" href="#main-features"></a>
 </h2>
 <ul>
-<li>Protocol- and results-related trial information is easily downloaded: Users define a query in a register’s web interface and then enter the URL into <code>ctrdata</code> which retrieves in one go all trials found. Documents in registers on trials can also be downloaded. Personal annotations can be made to trials when downloading a query. Synonyms of an active substance can also be found.</li>
+<li>Protocol- and results-related trial information is easily downloaded: Users define a query in a register’s web interface and then enter the URL into <code>ctrdata</code> which retrieves in one go all trials found. <a href="#documents-example">Documents</a> in registers on trials can also be downloaded. Personal annotations can be made to trials when downloading a query. Synonyms of an active substance can also be found.</li>
 <li>Downloaded trial information is transformed and stored in a collection of a document-centric database, for fast and offline access. Information from different registers can be accumalated in a single collection. Uses <code>DuckDB</code>, <code>PostgreSQL</code>, <code>RSQLite</code> or <code>MongoDB</code>, via R package <code>nodbi</code>: see section <a href="#databases-that-can-be-used-with-ctrdata">Databases</a> below. Re-run any previous query in a collection to retrieve and update trial records.</li>
 <li>For analyses, convenience functions in <code>ctrdata</code> allow to identify unique (de-duplicated) trial records across registers, to merge and recode fields as well as to easily access deeply-nested fields. Analysis can be done with <code>R</code> or other systems, by accessing the structured information in the database.</li>
 </ul>
@@ -456,7 +456,7 @@ citation("ctrdata")
 <ul>
 <li>Add records from a fourth register (CTIS 🔔) into the same collection</li>
 </ul>
-<p>Queries in the CTIS search interface can be automatically copied to the clipboard so that a user can paste them into <code>queryterm</code>, see <a href="#id_3-script-to-automatically-copy-users-query-from-web-browser">here</a>. As of June 2023, more than 200 trials are publicly accessible in CTIS. See <a href="documents-example">below</a> for how to download documents from CTIS.</p>
+<p>Queries in the CTIS search interface can be automatically copied to the clipboard so that a user can paste them into <code>queryterm</code>, see <a href="#id_3-script-to-automatically-copy-users-query-from-web-browser">here</a>. As of June 2023, more than 200 trials are publicly accessible in CTIS. See <a href="#documents-example">below</a> for how to download documents from CTIS.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Retrieve trials from another register:</span></span>
 <span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>

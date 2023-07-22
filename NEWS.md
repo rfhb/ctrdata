@@ -1,3 +1,6 @@
+# ctrdata 1.14.0.9000 (2023-07-22)
+ - new dev version
+
 # ctrdata 1.14.0 (2023-07-16)
  - fix dbFindIdsUniqueTrials() for single-record register contents
  - expand number of CTIS variables that are typed as date
