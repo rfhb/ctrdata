@@ -2530,6 +2530,13 @@ dfMergeVariablesRelevel <- function(
   # merge columns
   if (length(colnames) == 1L && grepl("[()]", colnames)) {
 
+    identifiedColumns <- names(
+      dplyr::select(df, eval(parse(text = colnames))))
+
+    message(
+      "Columns identified to be merged: ",
+      paste0(identifiedColumns, collapse = ", "))
+
     out <- dplyr::mutate(
       dplyr::rowwise(df),
       out = getValuesOrNa(dplyr::c_across(eval(parse(text = colnames))))
