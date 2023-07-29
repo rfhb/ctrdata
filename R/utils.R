@@ -1891,13 +1891,10 @@ dbGetFieldsIntoDf <- function(fields = "",
   # prune rows without _id
   result <- result[!is.na(result[["_id"]]), , drop = FALSE]
 
-  # remove rows with only NAs; try because
-  # is.na may fail for complex cells
-  onlyNas <- try({apply(result[, -1, drop = FALSE], 1,
-                        function(r) all(is.na(r)))}, silent = TRUE)
-  if (!inherits(onlyNas, "try-error") && any(onlyNas)) {
-    result <- result[!onlyNas, , drop = FALSE]
-  }
+  # remove rows with only NAs
+  naout <- is.na(result)
+  nc <- length(setdiff(attr(naout, "dimnames")[[2]], "_id"))
+  result <- result[rowSums(naout) < nc, , drop = FALSE]
 
   # inform user
   if (is.null(result) || !nrow(result)) {
