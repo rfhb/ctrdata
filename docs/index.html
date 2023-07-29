@@ -117,7 +117,7 @@
 <li>EU Clinical Trials Information System (“CTIS”, <a href="https://euclinicaltrials.eu/" class="external-link uri">https://euclinicaltrials.eu/</a>) 🔔 see <a href="#workflow-ctis-example">example</a>
 </li>
 </ul>
-<p>The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-07-16 for version 1.14.0 (after change of CTGOV website).</p>
+<p>The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-07-29 for version 1.14.0.9000 (after change of CTGOV website).</p>
 <div class="section level2">
 <h2 id="main-features">Main features<a class="anchor" aria-label="anchor" href="#main-features"></a>
 </h2>
@@ -766,6 +766,23 @@ Neuroblastoma trials
 <span><span class="co"># Download status: 258 done; 0 in progress. Total size: 203.70 Mb (100%)... done!             </span></span>
 <span><span class="co"># = Newly saved 235 document(s) for 25 trial(s) (latest versions only, deduplicated </span></span>
 <span><span class="co"># if e.g. in application and authorised part); 0 document(s) for 0 trial(s) already existed in ./files-ctis</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="tests">Tests<a class="anchor" aria-label="anchor" href="#tests"></a>
+</h2>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressMessages</a></span><span class="op">(</span><span class="fu">tinytest</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tinytest/man/run_test_dir.html" class="external-link">test_all</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># test_ctrdata_ctrfindactivesubstance.R    4 tests OK 1.7s</span></span>
+<span><span class="co"># test_ctrdata_mongo_local_ctgov.R   37 tests OK 59.6s</span></span>
+<span><span class="co"># test_ctrdata_mongo_local_ctis.R   19 tests OK 1.4s</span></span>
+<span><span class="co"># test_ctrdata_mongo_local_euctr.R   75 tests OK 2.3s</span></span>
+<span><span class="co"># test_ctrdata_mongo_local_isrctn.R   30 tests OK 7.4s</span></span>
+<span><span class="co"># test_ctrdata_other_functions.R   50 tests OK 0.6s</span></span>
+<span><span class="co"># test_ctrdata_sqlite_ctgov.R   37 tests OK 3.0s</span></span>
+<span><span class="co"># test_ctrdata_sqlite_ctis.R   19 tests OK 2.4s</span></span>
+<span><span class="co"># test_ctrdata_sqlite_euctr.R   75 tests OK 7.0s</span></span>
+<span><span class="co"># test_ctrdata_sqlite_isrctn.R   30 tests OK 9.7s</span></span>
+<span><span class="co"># All ok, 376 results (17m 25.3s)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="additional-features-under-consideration">Additional features under consideration<a class="anchor" aria-label="anchor" href="#additional-features-under-consideration"></a>

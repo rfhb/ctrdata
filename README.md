@@ -30,7 +30,7 @@ conduct of trials, their availability for patients and to facilitate
 using their detailed results for research and meta-analyses. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2023-07-16 for version 1.14.0
+package. This README was reviewed on 2023-07-29 for version 1.14.0.9000
 (after change of CTGOV website).
 
 ## Main features
@@ -726,6 +726,23 @@ ctrLoadQueryIntoDb(
 # Download status: 258 done; 0 in progress. Total size: 203.70 Mb (100%)... done!             
 # = Newly saved 235 document(s) for 25 trial(s) (latest versions only, deduplicated 
 # if e.g. in application and authorised part); 0 document(s) for 0 trial(s) already existed in ./files-ctis
+```
+
+## Tests
+
+``` r
+suppressMessages(tinytest::test_all())
+# test_ctrdata_ctrfindactivesubstance.R    4 tests OK 1.7s
+# test_ctrdata_mongo_local_ctgov.R   37 tests OK 59.6s
+# test_ctrdata_mongo_local_ctis.R   19 tests OK 1.4s
+# test_ctrdata_mongo_local_euctr.R   75 tests OK 2.3s
+# test_ctrdata_mongo_local_isrctn.R   30 tests OK 7.4s
+# test_ctrdata_other_functions.R   50 tests OK 0.6s
+# test_ctrdata_sqlite_ctgov.R   37 tests OK 3.0s
+# test_ctrdata_sqlite_ctis.R   19 tests OK 2.4s
+# test_ctrdata_sqlite_euctr.R   75 tests OK 7.0s
+# test_ctrdata_sqlite_isrctn.R   30 tests OK 9.7s
+# All ok, 376 results (17m 25.3s)
 ```
 
 ## Additional features under consideration
