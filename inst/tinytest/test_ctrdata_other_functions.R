@@ -82,7 +82,7 @@ statusvalues <- list(
   "Firstvalues" = c("12", "23"),
   "Lastvalue"   = c("34"))
 
-df2 <- data.frame(var1 = c("A", "B", "C", "D"),
+df2 <- data.frame(var1 = c("A", "B", "C", NA),
                   var2 = c("D", "E", "",  "G"))
 
 # test
@@ -136,7 +136,14 @@ expect_error(
 expect_equal(
   sum(grepl(" / ", suppressWarnings(suppressMessages(
     dfMergeVariablesRelevel(
-      df = df2, colnames = c("var1", "var2")))))), 3L)
+      df = df2, colnames = c("var1", "var2")))))), 2L)
+
+# test
+expect_equal(
+  sum(grepl(" / ", suppressWarnings(suppressMessages(
+    dfMergeVariablesRelevel(
+      df = df2,
+      colnames = 'matches("var")'))))), 2L)
 
 
 #### ctrGetQueryUrl ####

@@ -64,17 +64,15 @@ checkBinaries <- function() {
   all(ctrdata:::checkBinary())
 }
 
-
 checkInternet <- function() {
   tmp <- try(
-    httr::HEAD("https://httpbin.org/anything", httr::timeout(10L)),
+    curl::nslookup("r-project.org"),
     silent = TRUE
   )
 
   out <- !inherits(tmp, "try-error")
   out
 }
-
 
 checkSqlite <- function() {
   tmp <- try(nodbi::src_sqlite(), silent = TRUE)
