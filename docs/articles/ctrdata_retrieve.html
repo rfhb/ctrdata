@@ -80,7 +80,7 @@
                         <h4 data-toc-skip class="author">Ralf
 Herold</h4>
             
-            <h4 data-toc-skip class="date">2023-06-24</h4>
+            <h4 data-toc-skip class="date">2023-08-03</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/rfhb/ctrdata/blob/HEAD/vignettes/ctrdata_retrieve.Rmd" class="external-link"><code>vignettes/ctrdata_retrieve.Rmd</code></a></small>
       <div class="d-none name"><code>ctrdata_retrieve.Rmd</code></div>
@@ -162,8 +162,8 @@ check<a class="anchor" aria-label="anchor" href="#retrieve-protocol-related-info
 <span>  only.count <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span><span class="op">$</span><span class="va">n</span></span>
 <span><span class="co"># (1/3) Checking trials in EUCTR:</span></span>
-<span><span class="co"># Retrieved overview, multiple records of 88 trial(s) from 4 page(s) to be downloaded</span></span>
-<span><span class="co"># [1] 88</span></span>
+<span><span class="co"># Retrieved overview, multiple records of 91 trial(s) from 5 page(s) to be downloaded (estimate: 4.5 MB)</span></span>
+<span><span class="co"># [1] 91</span></span>
 <span></span>
 <span><span class="co"># Connect to a database and chose a table / collection</span></span>
 <span><span class="va">db</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">src_sqlite</a></span><span class="op">(</span></span>
@@ -178,20 +178,19 @@ check<a class="anchor" aria-label="anchor" href="#retrieve-protocol-related-info
 <span><span class="op">)</span></span>
 <span><span class="co"># Checking helper binaries: done</span></span>
 <span><span class="co"># (1/3) Checking trials in EUCTR:</span></span>
-<span><span class="co"># Retrieved overview, multiple records of 88 trial(s) from 5 page(s) to be downloaded (estimate: 4.4 MB)</span></span>
+<span><span class="co"># Retrieved overview, multiple records of 91 trial(s) from 5 page(s) to be downloaded (estimate: 4.5 MB)</span></span>
 <span><span class="co"># Downloading trials...</span></span>
 <span><span class="co"># Note: register server cannot compress data, transfer takes longer, about 0.4s per trial</span></span>
-<span><span class="co"># Download status: 5 done; 0 in progress. Total size: 6.99 Mb (100%)... done!             </span></span>
-<span><span class="co"># (2/3) Converting to JSON, 339 records converted</span></span>
+<span><span class="co"># Download status: 5 done; 0 in progress. Total size: 7.17 Mb (100%)... done!             </span></span>
+<span><span class="co"># (2/3) Converting to JSON, 347 records converted</span></span>
 <span><span class="co"># (3/3) Importing JSON records into database...</span></span>
-<span><span class="co"># = Imported or updated 339 records on 88 trial(s) </span></span>
-<span><span class="co"># No history found in expected format.</span></span>
+<span><span class="co"># = Imported or updated 347 records on 91 trial(s) </span></span>
 <span><span class="co"># Updated history ("meta-info" in "test")</span></span>
 <span></span>
 <span><span class="co"># Show which queries have been downloaded into database</span></span>
 <span><span class="fu"><a href="../reference/dbQueryHistory.html">dbQueryHistory</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></span>
 <span><span class="co">#       query-timestamp query-register query-records</span></span>
-<span><span class="co"># 1 2023-05-07 09:41:36          EUCTR           339</span></span>
+<span><span class="co"># 1 2023-08-02 19:41:36          EUCTR           347</span></span>
 <span><span class="co">#                                                   query-term</span></span>
 <span><span class="co"># 1 query=cancer&amp;age=under-18&amp;status=completed&amp;phase=phase-one</span></span></code></pre></div>
 <p>With a file-base SQLite database, this takes about 20 seconds for
@@ -203,14 +202,14 @@ with using MongoDB and with memory-based SQLite.</p>
 <div class="section level2">
 <h2 id="repeat-and-update-a-previous-query">Repeat and update a previous query<a class="anchor" aria-label="anchor" href="#repeat-and-update-a-previous-query"></a>
 </h2>
+<p>Instead of “last”, an integer number can be specified for
+<code>querytoupdate</code> that corresponds to the number when using
+<code><a href="../reference/dbQueryHistory.html">dbQueryHistory()</a></code>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
 <span>  querytoupdate <span class="op">=</span> <span class="st">"last"</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>Instead of “last”, an integer number can be specified for
-<code>querytoupdate</code> that corresponds to the number when using
-<code><a href="../reference/dbQueryHistory.html">dbQueryHistory()</a></code>.</p>
 <p>Depending on the register, an update (differential update) is
 possible or the original query is executed fully again.</p>
 </div>
@@ -219,7 +218,10 @@ possible or the original query is executed fully again.</p>
 </h2>
 <p>For EUCTR, result-related trial information has to be requested to be
 retrieved, because it will take longer to download and store. For CTGOV,
-any results are always included in the retrieval.</p>
+any results are always included in the retrieval. Note that trial
+documents, including any results reports, can be downloaded by
+specifying parameter <code>documents.path</code>, see
+<code><a href="../reference/ctrLoadQueryIntoDb.html">help(ctrLoadQueryIntoDb)</a></code>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
 <span>  queryterm <span class="op">=</span> <span class="va">q</span>,</span>
@@ -266,22 +268,23 @@ and <a href="https://euclinicaltrials.eu/" class="external-link uri">https://euc
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># * Found search query from CTGOV: cond=neuroblastoma&amp;recrs=e&amp;age=0&amp;intr=Drug</span></span>
-<span><span class="co"># Checking helper binaries: done</span></span>
+<span><span class="co"># Checking helper binaries: . . . done</span></span>
 <span><span class="co"># (1/3) Checking trials in CTGOV:</span></span>
-<span><span class="co"># Retrieved overview, records of 207 trial(s) are to be downloaded (estimate: 1.7 MB)</span></span>
-<span><span class="co"># Download status: 1 done; 0 in progress. Total size: 1.43 Mb (100%)... done!             </span></span>
-<span><span class="co"># (2/3) Converting to JSON, 207 records converted</span></span>
+<span><span class="co"># Retrieved overview, records of 209 trial(s) are to be downloaded (estimate: 1.7 MB)</span></span>
+<span><span class="co"># Download status: 1 done; 0 in progress. Total size: 1.44 Mb (100%)... done!             </span></span>
+<span><span class="co"># (2/3) Converting to JSON, 209 records converted</span></span>
 <span><span class="co"># (3/3) Importing JSON records into database...</span></span>
-<span><span class="co"># = Imported or updated 182 trial(s)               </span></span>
+<span><span class="co"># = Imported or updated 209 trial(s)               </span></span>
+<span><span class="co"># No history found in expected format.</span></span>
 <span><span class="co"># Updated history ("meta-info" in "test")</span></span>
 <span></span>
 <span><span class="co"># Warning message:</span></span>
 <span><span class="co"># [...]/ctrDATA15bc13c33351a/ctgov_trials_7.ndjson: Error : C stack usage  8336652 is too close to the limit</span></span></code></pre></div>
 <p>With a file-base SQLite database, this takes about 10 seconds for
 about 200 records.</p>
-<p>Note that in this example, a warning message is issued from importing
-an NDJSON file with trial records. The warning arises from the high
-level of complexity of some of the XML content of some of the trial
+<p>Note that in this example, a warning message may be issued from
+importing an NDJSON file with trial records. The warning arises from the
+high level of complexity of some of the XML content of some of the trial
 records. The issue can be resolved by increasing in the operating system
 the stack size available to R, see: <a href="https://github.com/rfhb/ctrdata/issues/22" class="external-link uri">https://github.com/rfhb/ctrdata/issues/22</a></p>
 </div>
@@ -300,26 +303,18 @@ to the clipboard so that a user can paste them into
 <span>  register <span class="op">=</span> <span class="st">"CTIS"</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># * Found search query from CTIS: ageGroupCode=3, found 141 trials</span></span>
-<span><span class="co"># (2/5) Downloading and processing part I and parts II... (estimate: 21.15 Mb)</span></span>
-<span><span class="co"># Download status: 141 done; 0 in progress. Total size: 20.88 Mb (100%)... done!             </span></span>
-<span><span class="co"># . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . </span></span>
-<span><span class="co"># . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . </span></span>
-<span><span class="co"># . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . </span></span>
-<span><span class="co"># . . . . . . . . . . . . . . . . . . . . . . . . </span></span>
+<span><span class="co"># * Found search query from CTIS: ageGroupCode=3</span></span>
+<span><span class="co"># (1/5) Downloading trials list, found 200 trials</span></span>
+<span><span class="co"># (2/5) Downloading and processing part I and parts II... (estimate: 30 Mb)</span></span>
+<span><span class="co"># Download status: 200 done; 0 in progress. Total size: 30.50 Mb (100%)... done!             </span></span>
+<span><span class="co"># . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . </span></span>
 <span><span class="co"># (3/5) Downloading and processing additional data: </span></span>
-<span><span class="co"># - publicevents</span></span>
-<span><span class="co"># - summary</span></span>
-<span><span class="co"># - layperson</span></span>
-<span><span class="co"># - csr</span></span>
-<span><span class="co"># - cm</span></span>
-<span><span class="co"># - inspections</span></span>
-<span><span class="co"># - publicevaluation </span></span>
-<span><span class="co"># Download status: 221 done; 0 in progress. Total size: 6.45 Mb (100%)... done!             </span></span>
-<span><span class="co"># 141</span></span>
+<span><span class="co"># publicevents, summary, layperson, csr, cm, inspections, publicevaluation</span></span>
+<span><span class="co"># Download status: 329 done; 0 in progress. Total size: 8.82 Mb (100%)... done!             </span></span>
+<span><span class="co"># 200</span></span>
 <span><span class="co"># (4/5) Importing JSON records into database...</span></span>
-<span><span class="co"># (5/5) Updating with additional data: . . .       </span></span>
-<span><span class="co"># = Imported / updated 141 / 141 / 2 / 141 records on 141 trial(s)</span></span>
+<span><span class="co"># (5/5) Updating with additional data: . . . . </span></span>
+<span><span class="co"># = Imported / updated 200 / 200 / 1 / 1 / 200 records on 200 trial(s)</span></span>
 <span><span class="co"># Updated history ("meta-info" in "test")</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -350,13 +345,70 @@ identify subsets of records in the database.</p>
 <span><span class="co"># Updated history ("meta-info" in "test")</span></span></code></pre></div>
 </div>
 <div class="section level2">
+<h2 id="add-information-using-trial-identifiers">Add information using trial identifiers<a class="anchor" aria-label="anchor" href="#add-information-using-trial-identifiers"></a>
+</h2>
+<p>When identifiers of clinical trials of interest are already known,
+this example shows how they can be processed to import the trial
+information into a database collection. This involves constructing a
+query that combines the identifiers and then iterating over the sets of
+identifiers. Note to combine identifiers using “+OR+” into the
+<code>queryterm</code>, and that <code>register</code> has to be
+specified.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># ids of trials of interest</span></span>
+<span><span class="va">ctIds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"NCT00001209"</span>, <span class="st">"NCT00001436"</span>, <span class="st">"NCT00187109"</span>, <span class="st">"NCT01516567"</span>, <span class="st">"NCT01471782"</span>, <span class="st">"NCT03042429"</span>,</span>
+<span>  <span class="st">"NCT00357084"</span>, <span class="st">"NCT00357500"</span>, <span class="st">"NCT00365755"</span>, <span class="st">"NCT00407433"</span>, <span class="st">"NCT00410657"</span>, <span class="st">"NCT00436657"</span>,</span>
+<span>  <span class="st">"NCT00436852"</span>, <span class="st">"NCT00445965"</span>, <span class="st">"NCT00450307"</span>, <span class="st">"NCT00450827"</span>, <span class="st">"NCT00471679"</span>, <span class="st">"NCT00486564"</span>,</span>
+<span>  <span class="st">"NCT00492167"</span>, <span class="st">"NCT00499616"</span>, <span class="st">"NCT00503724"</span>, <span class="st">"NCT00509353"</span>, <span class="st">"NCT00520936"</span>, <span class="st">"NCT00536601"</span>,</span>
+<span>  <span class="st">"NCT00567567"</span>, <span class="st">"NCT00578864"</span>, <span class="st">"NCT00601003"</span>, <span class="st">"NCT00644696"</span>, <span class="st">"NCT00646230"</span>, <span class="st">"NCT00659984"</span>,</span>
+<span>  <span class="st">"NCT00716976"</span>, <span class="st">"NCT00743496"</span>, <span class="st">"NCT00793845"</span>, <span class="st">"NCT00806182"</span>, <span class="st">"NCT00831844"</span>, <span class="st">"NCT00867568"</span>,</span>
+<span>  <span class="st">"NCT00877110"</span>, <span class="st">"NCT00885326"</span>, <span class="st">"NCT00918320"</span>, <span class="st">"NCT00923351"</span>, <span class="st">"NCT00939770"</span>, <span class="st">"NCT00960739"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># split into sets of each 25 trial ids </span></span>
+<span><span class="co"># (larger sets e.g. 50 may still work)</span></span>
+<span><span class="va">idSets</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/split.html" class="external-link">split</a></span><span class="op">(</span><span class="va">ctIds</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">ceiling</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">ctIds</span><span class="op">)</span> <span class="op">/</span> <span class="fl">25</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># variable to collect import results</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
+<span></span>
+<span><span class="co"># iterate over sets of trial ids</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">idSet</span> <span class="kw">in</span> <span class="va">idSets</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  </span>
+<span>  <span class="co"># import</span></span>
+<span>  <span class="va">setResult</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
+<span></span>
+<span>    <span class="co"># for CTGOV, EUCTR, ISRCTN use:</span></span>
+<span>    queryterm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">idSet</span>, collapse <span class="op">=</span> <span class="st">"+OR+"</span><span class="op">)</span>,</span>
+<span></span>
+<span>    <span class="co"># specify register that holds the information</span></span>
+<span>    register <span class="op">=</span> <span class="st">"CTGOV"</span>,</span>
+<span>    con <span class="op">=</span> <span class="va">db</span></span>
+<span>  <span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># append results</span></span>
+<span>  <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">result</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">setResult</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># inspect results </span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">result</span><span class="op">)</span><span class="op">)</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"n"</span>, <span class="st">"failed"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">#    n failed</span></span>
+<span><span class="co"># 1 25   NULL</span></span>
+<span><span class="co"># 2 17   NULL</span></span></code></pre></div>
+<p>Note that from <code>CTIS</code>, trial information <em>identified by
+trial identifiers</em> can be retrieved only one-by-one, repeating
+queries for each trial such as
+<code>https://euclinicaltrials.eu/app/#/search?number=2023-503994-39-00</code>.</p>
+</div>
+<div class="section level2">
 <h2 id="find-synonyms-of-active-substance-names">Find synonyms of active substance names<a class="anchor" aria-label="anchor" href="#find-synonyms-of-active-substance-names"></a>
 </h2>
 <p>Not all registers automatically expand search terms to include
 alternative terms, such as codes and other names of active substances.
 To obtain a character vector of synonyms for any active substance name,
 use:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/ctrFindActiveSubstanceSynonyms.html">ctrFindActiveSubstanceSynonyms</a></span><span class="op">(</span></span>
 <span>  activesubstance <span class="op">=</span> <span class="st">"imatinib"</span></span>
 <span><span class="op">)</span></span>
@@ -369,9 +421,9 @@ use:</p>
 <p>This example works with a free service <a href="https://www.mongodb.com/cloud/atlas" class="external-link">here</a>. Note that the user
 name and password need to be encoded. The format of the connection
 string is documented at <a href="https://docs.mongodb.com/manual/reference/connection-string/" class="external-link uri">https://docs.mongodb.com/manual/reference/connection-string/</a>.</p>
-<p>For recommended databases, see vignette <a href="file:///Users/ralfherold/Daten/mak/r/emea/ctrdata/docs/articles/ctrdata_install.html#databases-to-use">Install
+<p>For recommended databases, see vignette <a href="https://rfhb.github.io/ctrdata/#databases-that-can-be-used-with-ctrdata">Install
 R package ctrdata</a>.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Specify base uri for remote MongoDB server,</span></span>
 <span><span class="co">#  as part of the encoded connection string</span></span>
 <span><span class="va">db</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_mongo.html" class="external-link">src_mongo</a></span><span class="op">(</span></span>

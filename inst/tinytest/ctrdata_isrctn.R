@@ -82,6 +82,18 @@ expect_true(tmpTest$n < 15L)
 # clean up
 rm(tmpTest)
 
+# test
+tmpTest <- suppressWarnings(
+  ctrLoadQueryIntoDb(
+    queryterm = "21727048+OR+10746820+OR+98918118+OR+40708286+OR+57509500+OR+37126758+OR+67769193",
+    register = "ISRCTN",
+    only.count = TRUE,
+    verbose = TRUE))
+
+# test
+expect_true(tmpTest$n == 7L)
+
+
 #### ctrLoadQueryIntoDb update ####
 
 # test
