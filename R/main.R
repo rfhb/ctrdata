@@ -2433,6 +2433,7 @@ ctrLoadQueryIntoDbCtis <- function(
     resAll <- c(resAll, res)
 
   }
+  message("")
 
   ## download files -----------------------------------------------------------
 
@@ -2448,7 +2449,7 @@ ctrLoadQueryIntoDbCtis <- function(
     } else {
 
       # continue after if
-      message("\n* Downloading documents into 'documents.path' = ", documents.path)
+      message("* Downloading documents into 'documents.path' = ", documents.path)
 
       # canonical directory path
       documents.path <- normalizePath(documents.path, mustWork = TRUE)
