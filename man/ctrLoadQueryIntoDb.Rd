@@ -12,7 +12,7 @@ ctrLoadQueryIntoDb(
   euctrresults = FALSE,
   euctrresultshistory = FALSE,
   documents.path = NULL,
-  documents.regexp = "prot|sample|statist|_sap_|p1ar|p2ars|ctaletter",
+  documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctaletter",
   annotation.text = "",
   annotation.mode = "append",
   only.count = FALSE,
@@ -74,7 +74,7 @@ to select documents, if saving documents is requested
 (see \code{documents.path}).
 If set to \code{NULL}, empty placeholder files are saved for
 every document that could be saved. Default is
-\code{"prot|sample|statist|_sap_|p1ar|p2ars|ctaletter"}.
+\code{"prot|sample|statist|sap_|p1ar|p2ars|ctaletter"}.
 Used with "CTGOV" and "CTIS" (but not "EUCTR" for which all
 available documents are saved, and not with "ISRCTN" which
 does not hold documents).}

@@ -47,6 +47,7 @@ tf <- function() {
         con = dbc)),
     "only one of 'queryterm' and 'querytoupdate'")
   tmpdf["query-term"] <- as.character(tmpdf[["query-Species"]])
+
   # test
   expect_error(
     suppressWarnings(
@@ -238,6 +239,10 @@ tf <- function() {
       "age=adult&term=cancer")
   )
 
+  # sapply(sapply(queryterms, "[[", 1),
+  #        function(i) ctrGetQueryUrl(url = i, register = "EUCTR")[["query-term"]],
+  #        USE.NAMES = FALSE, simplify = TRUE)
+
   # test
   expect_true(all(vapply(queryterms, function(qt) {
     suppressMessages(ctrGetQueryUrl(
@@ -270,12 +275,17 @@ tf <- function() {
     c("age=adult&term=cancer", # no change
       "age=adult&term=cancer"))
 
+  # sapply(sapply(queryterms, "[[", 1),
+  #        function(i) ctrGetQueryUrl(url = i, register = "CTGOV")[["query-term"]],
+  #        USE.NAMES = FALSE, simplify = TRUE)
+
   # test
   expect_true(all(vapply(queryterms, function(qt) {
     suppressMessages(ctrGetQueryUrl(
       url = qt[[1]],
       register = "CTGOV"))[[1]] == qt[[2]]},
-    logical(1L))))
+    logical(1L))
+  ))
 
   # URLs
   queryurls <- list(

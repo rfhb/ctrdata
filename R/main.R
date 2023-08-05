@@ -54,7 +54,7 @@
 #' (see \code{documents.path}).
 #' If set to \code{NULL}, empty placeholder files are saved for
 #' every document that could be saved. Default is
-#' \code{"prot|sample|statist|_sap_|p1ar|p2ars|ctaletter"}.
+#' \code{"prot|sample|statist|sap_|p1ar|p2ars|ctaletter"}.
 #' Used with "CTGOV" and "CTIS" (but not "EUCTR" for which all
 #' available documents are saved, and not with "ISRCTN" which
 #' does not hold documents).
@@ -156,7 +156,7 @@ ctrLoadQueryIntoDb <- function(
   euctrresults = FALSE,
   euctrresultshistory = FALSE,
   documents.path = NULL,
-  documents.regexp = "prot|sample|statist|_sap_|p1ar|p2ars|ctaletter",
+  documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctaletter",
   annotation.text = "",
   annotation.mode = "append",
   only.count = FALSE,
@@ -292,16 +292,21 @@ ctrLoadQueryIntoDb <- function(
     #
   } # if querytermtoupdate
 
-  ## check extra binaries -----------------------------------------------------
+  ## call register function ---------------------------------------------------
+
+  # adapt register
+  # register <- ifelse(register == "CTGOV", ctgovVersion(queryterm), register)
+
+  ## . check extra binaries -----------------------------------------------------
 
   if (!only.count) {
 
     # check extra binaries as needed for register
-    if (register != "CTIS") {
+    if (grepl("ISRCTN|CTGOVCLASSIC|EUCTR", register)) {
       message("Checking helper binaries: ", appendLF = FALSE)
       suppressMessages(installCygwinWindowsTest())
       if (register == "ISRCTN") testBinaries <- c("php", "phpxml", "phpjson")
-      if (register == "CTGOV") testBinaries <- c("php", "phpxml", "phpjson")
+      if (register == "CTGOVCLASSIC") testBinaries <- c("php", "phpxml", "phpjson")
       if (register == "EUCTR") testBinaries <- c("sed", "perl")
       if (euctrresults) testBinaries <- c("sed", "perl", "php", "phpxml", "phpjson")
       if (!checkBinary(b = testBinaries)) stop(
@@ -314,13 +319,11 @@ ctrLoadQueryIntoDb <- function(
 
   }
 
-  ## call register function ---------------------------------------------------
-
-  ## main function
+  ## . main function -----------------------------------------------------
 
   # parameters for core functions
   params <- list(queryterm = queryterm,
-                 register = register,
+                 register = ifelse(register == "CTGOV", ctgovVersion(queryterm), register),
                  euctrresults = euctrresults,
                  euctrresultshistory = euctrresultshistory,
                  documents.path = documents.path,
@@ -334,8 +337,9 @@ ctrLoadQueryIntoDb <- function(
 
   # call core functions
   imported <- switch(
-    as.character(register),
-    "CTGOV" = do.call(ctrLoadQueryIntoDbCtgov, params),
+    as.character(params$register),
+    "CTGOV2023" = do.call(ctrLoadQueryIntoDbCtgov2023, params),
+    "CTGOVCLASSIC" = do.call(ctrLoadQueryIntoDbCtgov, params),
     "EUCTR" = do.call(ctrLoadQueryIntoDbEuctr, params),
     "ISRCTN" = do.call(ctrLoadQueryIntoDbIsrctn, params),
     "CTIS" = do.call(ctrLoadQueryIntoDbCtis, params)
@@ -498,12 +502,15 @@ ctrRerunQuery <- function(
   ## adapt updating procedure to respective register
   querytermoriginal <- queryterm
 
+  # adjust register
+  registerToUpdate <- ifelse(register == "CTGOV", ctgovVersion(queryterm), register)
+
   # mangle parameter only if not forcetoupdate,
   # which just returns parameters of original query
   if (!forcetoupdate) {
 
     # ctgov --------------------------------------------------------------------
-    if (register == "CTGOV") {
+    if (registerToUpdate == "CTGOVCLASSIC") {
 
       # ctgov:
       # specify any date - "lup_s/e" last update start / end:
@@ -542,8 +549,44 @@ ctrRerunQuery <- function(
               "\nLast run: ", initialday)
     } # end ctgov
 
+    if (registerToUpdate == "CTGOV2023") {
+
+      # ctgov:
+      # specify last update start / end:
+      # https://www.clinicaltrials.gov/search?cond=Cancer&lastUpdPost=2022-01-01_2023-12-31
+
+      # if "lastUpdPost" is already in query term, just re-run full query to avoid
+      # multiple queries in history that only differ in the timestamp:
+      if (grepl("&lastUpdPost=[0-9]{2}", queryterm)) {
+        #
+        # remove queryupdateterm, thus running full again
+        queryupdateterm <- ""
+        warning("Query has date(s) for start or end of last update ",
+                "('&lastUpdPost'); running again with these limits",
+                call. = FALSE, immediate. = TRUE)
+        #
+      } else {
+        #
+        queryupdateterm <- strftime(
+          strptime(initialday,
+                   format = "%Y-%m-%d"),
+          format = "%Y-%m-%d")
+        #
+        queryupdateterm <- paste0("&lastUpdPost=", queryupdateterm, "_")
+        #
+        if (verbose) {
+          message("DEBUG: Updating using this additional query term: ",
+                  queryupdateterm)
+        }
+        #
+      }
+      #
+      message("Rerunning query: ", queryterm,
+              "\nLast run: ", initialday)
+    } # end ctgov
+
     # euctr -------------------------------------------------------------------
-    if (register == "EUCTR") {
+    if (registerToUpdate == "EUCTR") {
 
       # euctr: studies added or updated in the last 7 days:
       # "https://www.clinicaltrialsregister.eu/ctr-search/rest/feed/
@@ -641,7 +684,7 @@ ctrRerunQuery <- function(
     } # register euctr
 
     # isrctn ------------------------------------------------------------------
-    if (register == "ISRCTN") {
+    if (registerToUpdate == "ISRCTN") {
 
       # isrctn last edited:
       # "&filters=condition:Cancer,
@@ -681,7 +724,7 @@ ctrRerunQuery <- function(
     } # end isrctn
 
     # ctis ------------------------------------------------------------------
-    if (register == "CTIS") {
+    if (registerToUpdate == "CTIS") {
 
       # https://euclinicaltrials.eu/ct-public-api-services/services/ct/rss?basicSearchInputAND=cancer
       # issue: returned data do not include trial identifiers, thus no efficient loading possible
@@ -1127,7 +1170,7 @@ ctrLoadQueryIntoDbCtgov <- function(
   queryUSType2  <- "ct2/results?"
 
   ## inform user and prepare url for downloading
-  message("(1/3) Checking trials in CTGOV:")
+  message("(1/3) Checking trials in CTGOV classic:")
   ctgovdownloadcsvurl <- paste0(
     queryUSRoot, queryUSType1, "&", queryterm, queryupdateterm)
   #
@@ -2632,7 +2675,6 @@ ctrLoadQueryIntoDbCtis <- function(
 
       # check if destination document exists
       dlFiles$filepathname <- file.path(dlFiles$filepath, dlFiles$filename)
-
       dlFiles$fileexists <- file.exists(dlFiles$filepathname) &
         file.size(dlFiles$filepathname) > 10L
 
@@ -2711,3 +2753,310 @@ ctrLoadQueryIntoDbCtis <- function(
   return(imported)
 }
 # end ctrLoadQueryIntoDbCtis
+
+
+#' ctrLoadQueryIntoDbCtogv2023
+#'
+#' @inheritParams ctrLoadQueryIntoDb
+#'
+#' @keywords internal
+#' @noRd
+#'
+#' @importFrom jqr jq jq_flags
+#' @importFrom utils URLencode
+#' @importFrom jsonlite stream_in
+#' @importFrom httr GET status_code content
+#' @importFrom stringi stri_replace_all_regex
+#'
+ctrLoadQueryIntoDbCtgov2023 <- function(
+    queryterm = queryterm,
+    register,
+    euctrresults,
+    euctrresultshistory,
+    documents.path,
+    documents.regexp,
+    annotation.text,
+    annotation.mode,
+    only.count,
+    con, verbose,
+    queryupdateterm) {
+
+  ## create empty temporary directory on localhost for
+  # downloading from register into temporary directy
+  tempDir <- tempfile(pattern = "ctrDATA")
+  dir.create(tempDir)
+  tempDir <- normalizePath(tempDir, mustWork = TRUE)
+  # register function to remove files after use for streaming
+  if (!verbose) on.exit(unlink(tempDir, recursive = TRUE), add = TRUE)
+  if (verbose) message("DEBUG: ", tempDir)
+
+  ## ctgov api ---------------------------------------------------------
+
+  ctgovEndpoints <- c(
+    # pageSize 0 delivers default 10
+    "https://www.clinicaltrials.gov/api/v2/studies?format=json&countTotal=true&pageSize=1&%s",
+    "https://www.clinicaltrials.gov/api/v2/studies?format=json&countTotal=true&pageSize=1000&%s",
+    "https://storage.googleapis.com/ctgov2-large-docs/%s/%s/%s"
+  )
+
+  ## process parameters ------------------------------------------------
+
+  # append if to update
+  queryterm <- paste0(queryterm, "&", queryupdateterm)
+
+  # translation to ClinicalTrials.gov REST API 2.0.0-draft
+
+  # - some parameters have been removed in ctrGetQueryUrl
+  # - aggFilters can remain
+  # - parameters in only lowercase, prefix with query.
+  queryterm <- stringi::stri_replace_all_regex(
+    str = queryterm,
+    pattern = "(^|&)([a-z]+)=",
+    replacement = "$1query.$2="
+  )
+  # - last update
+  queryterm <- sub(
+    "(lastUpdPost=)([0-9-]+)_",
+    "query.term=AREA[LastUpdatePostDate]RANGE[\\2,MAX]",
+    queryterm)
+
+  ## process query -----------------------------------------------------
+
+  message("* Getting information on trials...", appendLF = FALSE)
+
+  # corresponds to count
+  url <- sprintf(ctgovEndpoints[1], queryterm)
+  url <- utils::URLencode(url)
+  counts <- httr::GET(url)
+
+  # early exit
+  if (httr::status_code(counts) != 200L) {
+    warning("Could not be retrieved, check 'queryterm' and 'register'")
+    return(emptyReturn)
+  }
+
+  # extract total number of trial records
+  counts <- suppressMessages(httr::content(counts, as = "text"))
+  resultsEuNumTrials <- as.numeric(jqr::jq(counts, '.totalCount'))
+  message("\b\b\b, found ", resultsEuNumTrials, " trials")
+
+  # early exit
+  if (!resultsEuNumTrials) {
+    warning("No trials found, check 'queryterm' and 'register'")
+    return(emptyReturn)
+  }
+
+  # only count?
+  if (only.count) {
+
+    # return
+    return(list(n = resultsEuNumTrials,
+                success = NULL,
+                failed = NULL))
+  }
+
+  ## download json -----------------------------------------------------
+
+  # corresponds to trials
+
+  url <- sprintf(ctgovEndpoints[2], queryterm)
+  url <- utils::URLencode(url)
+
+  pageNextToken <- ""
+  pageNumber <- 1L
+
+  message("(1/2) Downloading and converting in ",
+          ceiling(resultsEuNumTrials / 1000L),
+          " batch(es) (1000 trials each)...")
+
+  while (TRUE) {
+
+    # for download
+    fTrialJson <- file.path(tempDir, paste0("ctgov_trials_", pageNumber,".json"))
+
+    # page url
+    urlToDownload <- ifelse(pageNextToken != "",
+                            paste0(url, "&pageToken=", pageNextToken), url)
+
+    # do download
+    tmp <- ctrMultiDownload(urlToDownload, fTrialJson, progress = TRUE)
+
+    # inform user
+    if (tmp[1, "status_code", drop = TRUE] != 200L) message(
+      "Download not successful for ", urlToDownload)
+
+    # convert to ndjson
+    message("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bconverting to NDJSON...")
+    fTrialsNdjson <- file.path(tempDir, paste0("ctgov_trials_", pageNumber,".ndjson"))
+    jqr::jq(
+      file(fTrialJson),
+      paste0(
+        # extract trial records
+        ' .studies | .[] ',
+        # add elements
+        '| .["_id"] = .protocolSection.identificationModule.nctId
+         | .["ctrname"] = "CTGOV"
+         | .["record_last_import"] = "', format(Sys.time(), "%Y-%m-%d %H:%M:%S"), '"'
+      ),
+      flags = jqr::jq_flags(pretty = FALSE),
+      out = fTrialsNdjson
+    )
+
+    # continue or exit
+    pageNumber <- pageNumber + 1L
+    # "nextPageToken":"NF0g5JGBlPMuwQY"} at end of json
+    fTrialJsonCon <- file(fTrialJson, open = "rb")
+    seek(fTrialJsonCon, where = file.size(fTrialJson) - 40L)
+    pageNextTokenTest <- readChar(fTrialJsonCon, 1000L)
+    close(fTrialJsonCon)
+    pageNextToken <- sub('.*"nextPageToken":"([a-zA-Z0-9]+)".*', "\\1", pageNextTokenTest)
+    if (pageNextToken == pageNextTokenTest) break
+
+  }
+
+  ## database import -----------------------------------------------------
+
+  message("(2/2) Importing JSON records into database...")
+
+  # dbCTRLoadJSONFiles operates on pattern = ".+_trials_.*.ndjson"
+  imported <- dbCTRLoadJSONFiles(dir = tempDir, con = con, verbose = verbose)
+  message("")
+
+  ## download files-----------------------------------------------------
+
+  if (!is.null(documents.path)) {
+
+    # check and create directory
+    createdDir <- try(
+      dir.create(documents.path, recursive = TRUE, showWarnings = FALSE),
+      silent = TRUE)
+    if (inherits(createdDir, "try-errror")) {
+      warning("Directory could not be created for 'documents.path' ",
+              documents.path, ", cannot download files", call. = FALSE)
+    } else {
+
+      # continue after if
+      message("* Downloading documents into 'documents.path' = ", documents.path)
+
+      # canonical directory path
+      documents.path <- normalizePath(documents.path, mustWork = TRUE)
+      if (createdDir) message("- Created directory ", documents.path)
+
+      # get temporary file for trial ids and file names
+      downloadsNdjson <- file.path(tempDir, "ctis_downloads.ndjson")
+      suppressMessages(unlink(downloadsNdjson))
+      downloadsNdjsonCon <- file(downloadsNdjson, open = "at")
+
+      # extract trial ids and file name and save in temporary file
+      for (ndjsonFile in dir(
+        path = tempDir, pattern = ".+_trials_.*.ndjson", full.names = TRUE)) {
+        jqr::jq(
+          file(ndjsonFile),
+          ' { _id: ._id,
+          filename: .documentSection.largeDocumentModule.largeDocs[].filename }',
+          flags = jqr::jq_flags(pretty = FALSE),
+          out = downloadsNdjsonCon)
+        message(". ", appendLF = FALSE)
+      }
+      close(downloadsNdjsonCon)
+
+      # get document trial id and file name
+      dlFiles <- jsonlite::stream_in(file(downloadsNdjson), verbose = FALSE)
+
+      # documents download
+      message("\n- Creating subfolder for each trial")
+
+      # add destination file directory path
+      dlFiles$filepath <- file.path(documents.path, dlFiles$`_id`)
+
+      # create subdirectories by trial
+      invisible(sapply(
+        unique(dlFiles$filepath), function(i) if (!dir.exists(i))
+          dir.create(i, showWarnings = FALSE, recursive = TRUE)
+      ))
+
+      # check if destination document exists
+      dlFiles$filepathname <- file.path(dlFiles$filepath, dlFiles$filename)
+      dlFiles$fileexists <- file.exists(dlFiles$filepathname) &
+        file.size(dlFiles$filepathname) > 10L
+
+      # calculate urls
+      dlFiles$url <- sprintf(
+        ctgovEndpoints[3], sub(".*([0-9]{2})$", "\\1", dlFiles$`_id`),
+        dlFiles$`_id`, dlFiles$filename)
+
+      # finally download
+
+      # apply regexp
+      if (is.null(documents.regexp)) {
+
+        message("- Creating empty document placeholders (max. ", nrow(dlFiles), ")")
+
+        # create empty files
+        tmp <-
+          sapply(
+            dlFiles$filepathname,
+            function(i) if (!file.exists(i))
+              file.create(i, showWarnings = TRUE),
+            USE.NAMES = FALSE)
+
+        tmp <- sum(unlist(tmp), na.rm = TRUE)
+
+      } else {
+
+        message("- Applying 'documents.regexp' to ",
+                nrow(dlFiles), " documents")
+
+        dlFiles <- dlFiles[
+          grepl(documents.regexp, dlFiles$filename, ignore.case = TRUE), ,
+          drop = FALSE]
+
+        # do download
+        message("- Downloading ",
+                nrow(dlFiles[!dlFiles$fileexists, , drop = FALSE]),
+                " missing documents")
+
+        # do download
+        tmp <- ctrMultiDownload(
+          urls = dlFiles$url[!dlFiles$fileexists],
+          destfiles = dlFiles$filepathname[!dlFiles$fileexists])
+
+        if (!nrow(tmp)) tmp <- 0L else {
+
+          # handle failures despite success is true
+          suppressMessages(invisible(sapply(
+            tmp[tmp$status_code != 200L, "destfile", drop = TRUE], unlink
+          )))
+          tmp <- nrow(tmp[tmp$status_code == 200L, , drop = FALSE])
+
+        }
+      }
+
+      # inform user
+      message(sprintf(paste0(
+        "= Newly saved %i ",
+        ifelse(is.null(documents.regexp), "placeholder ", ""),
+        "document(s) for %i trial(s); ",
+        "%i document(s) for %i trial(s) already existed in %s"),
+        tmp,
+        length(unique(dlFiles$`_id`)),
+        sum(dlFiles$fileexists),
+        length(unique(dlFiles$`_id`[dlFiles$fileexists])),
+        documents.path
+      ))
+
+    } # directory created
+
+  } # if download files
+
+  ## inform user -----------------------------------------------------
+
+  message("= Imported / updated ",
+          paste0(c(imported$n), collapse = " / "),
+          " records on ", resultsEuNumTrials, " trial(s)")
+
+  # return
+  return(imported)
+
+}
+# end ctrLoadQueryIntoDbCtogv2023

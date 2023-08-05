@@ -18,7 +18,7 @@ aggregating and analysing this information; it can be used for the
 
 - EU Clinical Trials Register (“EUCTR”,
   <https://www.clinicaltrialsregister.eu/>)
-- ClinicalTrials.gov (“CTGOV” classic,
+- ClinicalTrials.gov (“CTGOV” current🔔 and classic,
   <https://classic.clinicaltrials.gov/>)
 - ISRCTN (<https://www.isrctn.com/>)
 - EU Clinical Trials Information System (“CTIS”,
@@ -30,8 +30,7 @@ conduct of trials, their availability for patients and to facilitate
 using their detailed results for research and meta-analyses. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2023-07-29 for version 1.14.0.9000
-(after change of CTGOV website).
+package. This README was reviewed on 2023-08-05 for version 1.14.0.9000.
 
 ## Main features
 
@@ -352,14 +351,31 @@ with(
 
 - Add records from another register (CTGOV) into the same collection
 
+🔔Both the current and classical CTGOV website searches are supported as
+of 2023-08-05 when using the full URL. When queryterms such as in the
+next example are used, `ctrdata` guesses which interface to use, based
+on the parameters in the query.
+
 - Search used in this example:
+  <https://www.clinicaltrials.gov/search?cond=Neuroblastoma&aggFilters=ages:child,results:with,studyType:int>
+
+``` r
+# Retrieve trials from another register:
+ctrLoadQueryIntoDb(
+  queryterm = "cond=Neuroblastoma&aggFilters=ages:child,results:with,studyType:int",
+  register = "CTGOV",
+  con = db
+)
+# 
+```
+
+- Using an example from classic CTGOV:
   <https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug>
 
 ``` r
 # Retrieve trials from another register:
 ctrLoadQueryIntoDb(
-  queryterm = "cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug",
-  register = "CTGOV",
+  queryterm = "https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug",
   con = db
 )
 # 
