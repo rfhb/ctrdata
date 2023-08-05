@@ -335,13 +335,39 @@ typeVars <- list(
 #'
 ctgovVersion <- function(url) {
 
-  # logic
+  # logic 1
   if (grepl(paste0(
-    "aggFilters|[:][^/]|%3[aA]|,|%2[cC]|clinicaltrials[.]gov/search[?]|",
-    regCtgov), url) && !grepl(paste0(
-      "&type=|&rslt=|&gndr=|&titles=|&outc=|&spons=|&lead=|&id=|&cntry=|&state=|&city=|&dist=|",
-      "&locn=|&rsub=|&[a-z]_[a-z]="), url)) {
-    #
+    # clear identifiers of ctgov 2023
+    "aggFilters|clinicaltrials[.]gov/search[/?]|clinicaltrials[.]gov/study[/?]|",
+    "[:][^/]|%3[aA]|,|%2[cC]"), url)) {
+    message("Appears compatible with CTGOV REST API 2.0.0")
+    return("CTGOV2023")
+  }
+
+  # logic 2
+  if (grepl(paste0(
+    "clinicaltrials[.]gov/ct2/|",
+    # vvv These capture classic-specific parameters
+    "[?&]state=|[?&]city=|[?&]dist=|[?&]rsub=|",
+    "[?&]type=|[?&]rslt=|[?&]gndr=|[?&]cntry=|",
+    "[?&][a-z]+_[a-z]+="), url)) {
+    message("Appears compatible with CTGOV CLASSIC API")
+    return("CTGOVCLASSIC")
+  }
+
+  # logic 3
+  # TODO this is unnecessary given overlap with above
+  if (grepl(paste0(
+    "[?&]cond=|[?&]term=|[?&]locn=|[?&]titles=|",
+    "[?&]intr=|[?&]outc=|[?&]spons=|[?&]lead=|[?&]id="),
+    # ^^^ These are well-know, frequently used and high level search terms.
+    # Many could readily be mapped into the 2023 CTGOV API 2.0.0, by pre-
+    # fixing with "query.". However, this will likely break user scripts
+    # classic and 2023 return different field names in the XML and JSON data.
+    url) &&
+    # Thus to force 2023, provide full URL which has new search result form:
+    grepl("clinicaltrials[.]gov/(search|study)", url)
+  ) {
     message("Appears compatible with CTGOV REST API 2.0.0")
     return("CTGOV2023")
   }
@@ -360,7 +386,6 @@ ctgovVersion <- function(url) {
   # not =|
   # &type=|&rslt=|&gndr=|&titles=|&outc=|&spons=|&lead=|&id=|&cntry=|&state=|&city=|&dist=|&locn=|&rsub=|
   # &age_v=|%strd_s=|&strd_e=|&prcd_s=|&prcd_e=|&sfpd_s=|&sfpd_e=|&rfpd_s=|&rfpd_e=|&lupd_s=|&lupd_e=|&sort=|
-
 
   # 2023
   #
@@ -605,6 +630,10 @@ ctrOpenSearchPagesInBrowser <- function(
     try(utils::browseURL(u), silent = TRUE)
   }
 
+  ## store orginal parameter for reference
+  urlOrig <- url
+  registerOrig <- register
+
   ## check combination of arguments to select action
 
   # - open all registers if no parameter is specified
@@ -660,7 +689,7 @@ ctrOpenSearchPagesInBrowser <- function(
   }
 
   # handle ctgov versions
-  if (register == "CTGOV") register <- ctgovVersion(url)
+  if (register == "CTGOV") register <- ctgovVersion(urlOrig)
 
   # - open search from url and register
   if (is.atomic(url) && url != "" && register != "" &&
@@ -688,7 +717,7 @@ ctrOpenSearchPagesInBrowser <- function(
     url <- switch(
       register,
       # "EUCTR" = paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?", url, "#tabs"),
-      "CTGOVCLASSIC" = paste0("https://classic.clinicaltrials.gov/ct2/results?", url),
+      "CTGOVCLASSIC" = paste0("https://classic.clinicaltrials.gov/ct2/show/", url),
       "ISRCTN" = paste0("https://www.isrctn.com/ISRCTN", url),
       "CTIS" = paste0("https://euclinicaltrials.eu/app/#/view/", url),
       "CTGOV2023" = paste0("https://www.clinicaltrials.gov/study/", url, "#main-content")
@@ -828,6 +857,7 @@ ctrGetQueryUrl <- function(
 
   # euctr
   if (register == "EUCTR") {
+
     # search result page
     queryterm <- sub(".*/ctr-search/search[?](.*)", "\\1", url)
     # single trial page
@@ -842,7 +872,7 @@ ctrGetQueryUrl <- function(
 
     # check if url was for results of single trial
     if (grepl(".*/results$", url)) {
-      queryterm <- paste0(queryterm, "&resultsstatus=trials-with-results")
+      queryterm <- paste0(queryterm)
     }
 
     # return
@@ -926,7 +956,8 @@ ctrGetQueryUrl <- function(
               "search results, click 'Return to List' in browser and use ",
               "this as 'url'.")
     }
-    if (grepl(paste0("^", regCtgov, "$"), url)) queryterm <- sub(paste0(".*(", regCtgov, ").*"), "\\1", url)
+    if (grepl(paste0("study/", regCtgov), url)) queryterm <-
+        sub(paste0(".*(", regCtgov, ").*"), "\\1", url)
 
     # remove empty parameters, rank, sort
     queryterm <- gsub("[a-z_0-9]+=&", "", queryterm)
