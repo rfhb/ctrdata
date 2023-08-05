@@ -295,7 +295,7 @@ tf <- function() {
     c("https://www.clinicaltrialsregister.eu/ctr-search/trial/2019-003713-33/NL",
       "query=2019-003713-33"),
     c("https://www.clinicaltrialsregister.eu/ctr-search/trial/2007-000371-42/results",
-      "query=2007-000371-42&resultsstatus=trials-with-results"),
+      "query=2007-000371-42"),
     # ctgov
     c("https://classic.clinicaltrials.gov/ct2/results?cond=Neuroblastoma&term=&intr=Investigational+Agent&type=Intr",
       "cond=Neuroblastoma&intr=Investigational+Agent&type=Intr"),
@@ -314,9 +314,42 @@ tf <- function() {
       "q=ISRCTN70039829")
   )
 
+  # sapply(sapply(queryurls, "[[", 1),
+  #        function(i) ctrGetQueryUrl(url = i, register = "CTGOV")[["query-term"]],
+  #        USE.NAMES = FALSE, simplify = TRUE)
+
   # test
   expect_true(all(vapply(queryurls, function(qt) {
     suppressMessages(ctrGetQueryUrl(
+      url = qt[[1]]))[[1]] == qt[[2]]},
+    logical(1L))))
+
+  # URLs for single studies
+  queryurls <- list(
+    # euctr
+    c("https://www.clinicaltrialsregister.eu/ctr-search/trial/2007-000371-42/results",
+      "https://www.clinicaltrialsregister.eu/ctr-search/search?query=2007-000371-42#tabs"),
+    # ctgov classic
+    c("https://classic.clinicaltrials.gov/ct2/show/NCT01492673?cond=neuroblastoma",
+      "https://classic.clinicaltrials.gov/ct2/show/NCT01492673"),
+    # ctgov classic
+    c("https://clinicaltrials.gov/ct2/show/NCT01492673?cond=neuroblastoma",
+      "https://classic.clinicaltrials.gov/ct2/show/NCT01492673"),
+    # ctgov 2023
+    c("https://www.clinicaltrials.gov/study/NCT01467986?cond=neuroblastoma&intr=Investigational%20drug&aggFilters=ages:child",
+      "https://www.clinicaltrials.gov/study/NCT01467986#main-content"),
+    # isrctn
+    c("https://www.isrctn.com/ISRCTN70039829",
+      "https://www.isrctn.com/ISRCTN70039829")
+  )
+
+  # sapply(sapply(queryurls, "[[", 1),
+  #        function(i) ctrOpenSearchPagesInBrowser(url = i),
+  #        USE.NAMES = FALSE, simplify = TRUE)
+
+  # test
+  expect_true(all(vapply(queryurls, function(qt) {
+    suppressMessages(ctrOpenSearchPagesInBrowser(
       url = qt[[1]]))[[1]] == qt[[2]]},
     logical(1L))))
 

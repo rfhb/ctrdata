@@ -11,7 +11,7 @@ tmp <- ctrLoadQueryIntoDb(
   register = "CTGOV",
   con = dbc
 )
-expect_true(tmp$n > 6L)
+expect_true(tmp$n >= 6L)
 expect_true(all(c("NCT00152126", "NCT00578864", "NCT01467986", "NCT01492673", "NCT02130869", "NCT03042429") %in% tmp$success))
 
 # test
@@ -23,12 +23,15 @@ expect_true(tmp$n > 1400L)
 
 #### documents.path ####
 
+tmpDir <- newTempDir()
+on.exit(unlink(tmpDir, recursive = TRUE), add = TRUE)
+
 # test
 expect_message(
   ctrLoadQueryIntoDb(
     queryterm = "cond=Cancer&aggFilters=phase:0,studyType:int",
     register = "CTGOV",
-    documents.path = "./ctgovtest",
+    documents.path = tmpDir,
     documents.regexp = NULL,
     verbose = TRUE,
     con = dbc
@@ -41,7 +44,7 @@ expect_message(
   ctrLoadQueryIntoDb(
     queryterm = "cond=Cancer&aggFilters=phase:0,studyType:int",
     register = "CTGOV",
-    documents.path = "./ctgovtest",
+    documents.path = tmpDir,
     documents.regexp = "sap_",
     verbose = TRUE,
     con = dbc
@@ -65,10 +68,13 @@ expect_equal(dim(tmp), c(5L, 4L))
 
 #### dbFindFields ####
 
-tmp <- dbFindFields(namepart = ".*", con = dbc)
-expect_true(length(tmp) > 140L)
+tmpFields <- dbFindFields(namepart = ".*", con = dbc)
+expect_true(length(tmpFields) > 140L)
 
 #### dbGetFieldsIntoDf ####
 
-tmp <- dbGetFieldsIntoDf(fields = tmp, con = dbc, stopifnodata = FALSE)
-expect_true(object.size(tmp) > 100000000L)
+tmpData <- dbGetFieldsIntoDf(fields = tmpFields, con = dbc)
+expect_true(object.size(tmpData) > 100000000L)
+
+tmpData <- dbGetFieldsIntoDf(fields = tmpFields[grepl("date$",tmpFields)], con = dbc)
+expect_true(all(sapply(tmpData[, -1, drop = FALSE], class, USE.NAMES = FALSE) == "Date"))

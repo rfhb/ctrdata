@@ -51,13 +51,16 @@ rm(tmpTest)
 
 #### documents.path ####
 
+tmpDir <- newTempDir()
+on.exit(unlink(tmpDir, recursive = TRUE), add = TRUE)
+
 if (!length(dbc$url) || grepl("localhost", dbc$url)) {
   expect_message(
     suppressWarnings(
       ctrLoadQueryIntoDb(
         queryterm = "basicSearchInputAND=leukemia",
         register = "CTIS",
-        documents.path = newTempDir(),
+        documents.path = tmpDir,
         con = dbc
       )),
     "Newly saved [1-9][0-9]+ document"

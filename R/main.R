@@ -297,7 +297,7 @@ ctrLoadQueryIntoDb <- function(
   # adapt register
   # register <- ifelse(register == "CTGOV", ctgovVersion(queryterm), register)
 
-  ## . check extra binaries -----------------------------------------------------
+  ## . checkbinaries ---------------------------------------------------------
 
   if (!only.count) {
 
