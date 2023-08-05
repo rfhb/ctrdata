@@ -69,6 +69,14 @@ typeVars <- list(
   "eligibility.minimum_age" = "ctrDifftime",
   "eligibility.maximum_age" = "ctrDifftime",
   #
+  # - CTGOV REST API 2.0.0-test
+  "protocolSection.statusModule.completionDateStruct.date"        = "ctrDate",
+  "protocolSection.statusModule.lastUpdatePostDateStruct.date"    = "ctrDate",
+  "protocolSection.statusModule.lastUpdateSubmitDate"             = "ctrDate",
+  "protocolSection.statusModule.primaryCompletionDateStruct.date" = "ctrDate",
+  "protocolSection.statusModule.startDateStruct.date"             = "ctrDate",
+  "protocolSection.statusModule.studyFirstPostDateStruct.date"    = "ctrDate",
+  #
   # - ISRCTN
   "participants.recruitmentStart" = "ctrDateTime",
   "participants.recruitmentEnd"   = "ctrDateTime",
