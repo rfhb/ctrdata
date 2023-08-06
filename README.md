@@ -19,7 +19,7 @@ aggregating and analysing this information; it can be used for the
 - EU Clinical Trials Register (“EUCTR”,
   <https://www.clinicaltrialsregister.eu/>)
 - ClinicalTrials.gov (“CTGOV”, current🔔
-  <https://classic.clinicaltrials.gov/> and classic
+  <https://www.clinicaltrials.gov/> and classic
   <https://classic.clinicaltrials.gov/>)
 - ISRCTN (<https://www.isrctn.com/>)
 - EU Clinical Trials Information System (“CTIS”,
@@ -360,10 +360,10 @@ with(
 
 - Add records from another register (CTGOV) into the same collection
 
-🔔Both the current and classical CTGOV website searches are supported as
-of 2023-08-05 when using the full URL. When not full URLs but queryterms
-such as in the next example are used, `ctrdata` guesses which interface
-to use, based on the parameters in the query.
+🔔Both the current and classic CTGOV website are supported as of
+2023-08-05 when using the full URL. When a queryterm such as in the next
+example is used, `ctrdata` guesses which CTGOV interface to use, based
+on the parameters in the query.
 
 - Search used in this example:
   <https://www.clinicaltrials.gov/search?cond=Neuroblastoma&aggFilters=ages:child,results:with,studyType:int>
@@ -410,8 +410,8 @@ ctrLoadQueryIntoDb(
 
 - Add records from a third register (ISRCTN) into the same collection
 
-- Search used in this example:
-  <https://www.isrctn.com/search?q=neuroblastoma>
+Search used in this example:
+<https://www.isrctn.com/search?q=neuroblastoma>
 
 ``` r
 # Retrieve trials from another register:
@@ -444,11 +444,6 @@ of June 2023, more than 200 trials are publicly accessible in CTIS. See
 [below](#documents-example) for how to download documents from CTIS.
 
 ``` r
-# Retrieve trials from another register:
-ctrLoadQueryIntoDb(
-  queryterm = "https://euclinicaltrials.eu/app/#/search?ageGroupCode=2",
-  con = db
-)
 # * Found search query from CTIS: ageGroupCode=2
 # * Checking trials in EUCTR...
 # (1/5) Downloading trials list, found 29 trials

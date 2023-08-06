@@ -1,4 +1,7 @@
 # ctrdata 1.14.0.9000 (2023-08-06)
+ - mangle ctis: change partIIInfo object into array, addin a new partIIIinfoKey:
+   '{"partIIInfo": "<int>": {...}, "<int>": {...}}'  
+   '{"partIIInfo": [{"partIIIinfoKey": <int>, ...}, {"partIIIinfoKey": <int>, ...}]}')
  - handle CTGOV both classic interface and current REST API 2.0.0.-test 
  - correct dbGetFieldsIntoDf() for specific lists
 
