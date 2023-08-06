@@ -683,7 +683,7 @@ ctrOpenSearchPagesInBrowser <- function(
                          call. = FALSE, immediate. = TRUE)
     register  <- url[nr, "query-register", drop = TRUE]
     url <- url[nr, "query-term", drop = TRUE]
-    urlOrig <- url
+    if (!is.atomic(urlOrig)) urlOrig <- url
   }
 
   # - open register search pages
