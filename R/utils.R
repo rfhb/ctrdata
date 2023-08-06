@@ -990,13 +990,13 @@ ctrGetQueryUrl <- function(
 
   # ctis
   if (register == "CTIS") {
-    # url can be empty to retrieve all or looks like
-    # https://euclinicaltrials.eu/ct-public-api-services/services/ct/publiclookup?ageGroupCode=3
+    # some seem to use this
     queryterm <- sub(
       "https://euclinicaltrials.eu/ct-public-api-services/services/ct/publiclookup[?]", "", url)
     # or https://euclinicaltrials.eu/app/#/search?status=Ended
     queryterm <- sub(
       "https://euclinicaltrials.eu/app/#/search[?]?", "", queryterm)
+
     # remove unnecessary components
     queryterm <- sub("&?paging=[-,0-9]+", "", queryterm)
     queryterm <- sub("&?sorting=[-a-zA-Z]+", "", queryterm)
@@ -1004,16 +1004,10 @@ ctrGetQueryUrl <- function(
     queryterm <- sub("&?isNonEeaOnly=false", "", queryterm)
     queryterm <- sub("&?isBothEeaNonEea=false", "", queryterm)
 
-    # single trial
-    if (nchar(queryterm) && grepl(regCtis, url)) {
-      message("* Note: 'url' shows a single trial (and is returned by the ",
-              "function) but also had search parameters: If interested in ",
-              "search results, click 'Return to List' in browser and use ",
-              "this as 'url'.")
-    }
-    if (grepl(paste0(".*(", regCtis, ").*"), url)) queryterm <- sub(paste0(".*(", regCtis, ").*"), "\\1", url)
+    # url lists single trial as part of a
+    # query is not yet handed by CTIS
 
-    # reuturn
+    # return
     return(outdf(queryterm, register))
   }
 
