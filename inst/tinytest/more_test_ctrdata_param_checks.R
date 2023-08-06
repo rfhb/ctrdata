@@ -7,6 +7,10 @@ if (!checkSqlite()) exit_file("Reason: no SQLite")
 ## test function
 tf <- function() {
 
+  if (Sys.info()[["sysname"]] != "Linux") {
+    clipr::clear_clip()
+  }
+
   ## database in memory
   dbc <- nodbi::src_sqlite(
     collection = "inmemory"
@@ -324,6 +328,29 @@ tf <- function() {
       url = qt[[1]]))[[1]] == qt[[2]]},
     logical(1L))))
 
+  #### clipboard ####
+  if (Sys.info()[["sysname"]] != "Linux") {
+
+    clipr::clear_clip()
+    clipr::write_clip(
+      queryurls[[1]][1],
+      allow_non_interactive = TRUE)
+    expect_message(
+      tmp <- ctrGetQueryUrl(),
+      "Found search query")
+    expect_true(is.data.frame(tmp))
+    expect_equal(tmp[["query-term"]], queryurls[[1]][2])
+    rm(tmp)
+
+    clipr::write_clip(
+      "NotARegisterUrl",
+      allow_non_interactive = TRUE)
+    expect_error(
+      ctrGetQueryUrl(),
+      "no clinical trial register")
+
+  }
+
   # URLs for single studies
   queryurls <- list(
     # euctr
@@ -352,28 +379,6 @@ tf <- function() {
     suppressMessages(ctrOpenSearchPagesInBrowser(
       url = qt[[1]]))[[1]] == qt[[2]]},
     logical(1L))))
-
-  #### clipboard ####
-  if (Sys.info()[["sysname"]] != "Linux") {
-
-    clipr::write_clip(
-      queryurls[[1]][1],
-      allow_non_interactive = TRUE)
-    expect_message(
-      tmp <- ctrGetQueryUrl(),
-      "Found search query")
-    expect_true(is.data.frame(tmp))
-    expect_equal(tmp[["query-term"]], queryurls[[1]][2])
-    rm(tmp)
-
-    clipr::write_clip(
-      "NotARegisterUrl",
-      allow_non_interactive = TRUE)
-    expect_error(
-      ctrGetQueryUrl(),
-      "no clinical trial register")
-
-  }
 
   # clean up
   rm(queryurls)
