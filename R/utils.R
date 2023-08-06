@@ -343,16 +343,11 @@ typeVars <- list(
 #'
 ctgovVersion <- function(url) {
 
-  # logic 1
-  if (grepl(paste0(
-    # clear identifiers of ctgov 2023
-    "aggFilters|clinicaltrials[.]gov/search[/?]|clinicaltrials[.]gov/study[/?]|",
-    "[:][^/]|%3[aA]|,|%2[cC]"), url)) {
-    message("Appears compatible with CTGOV REST API 2.0.0")
-    return("CTGOV2023")
-  }
+  # in case the input is from dbQueryHistory
+  if (!is.atomic(url)) try({url <- url[["query-term"]]}, silent = TRUE)
+  if (inherits(url, "try-error")) return("CTGOVCLASSIC")
 
-  # logic 2
+  # logic 1
   if (grepl(paste0(
     "clinicaltrials[.]gov/ct2/|",
     # vvv These capture classic-specific parameters
@@ -363,8 +358,17 @@ ctgovVersion <- function(url) {
     return("CTGOVCLASSIC")
   }
 
+  # logic 2
+  if (grepl(paste0(
+    # clear identifiers of ctgov 2023
+    "aggFilters|clinicaltrials[.]gov/search[/?]|clinicaltrials[.]gov/study[/?]|",
+    "[:][^/]|%3[aA]"), url)) {
+    message("Appears compatible with CTGOV REST API 2.0.0")
+    return("CTGOV2023")
+  }
+
   # logic 3
-  # TODO this is unnecessary given overlap with above
+  # TODO unnecessary given overlap with above
   if (grepl(paste0(
     "[?&]cond=|[?&]term=|[?&]locn=|[?&]titles=|",
     "[?&]intr=|[?&]outc=|[?&]spons=|[?&]lead=|[?&]id="),
@@ -649,7 +653,7 @@ ctrOpenSearchPagesInBrowser <- function(
     sapply(
       c("https://www.clinicaltrialsregister.eu/ctr-search/search",
         "https://classic.clinicaltrials.gov/ct2/search/advanced",
-        # "https://www.clinicaltrials.gov/",
+        "https://www.clinicaltrials.gov/",
         "https://www.isrctn.com/editAdvancedSearch",
         "https://euclinicaltrials.eu/app/#/search"),
       ctrOpenUrl)
@@ -659,8 +663,7 @@ ctrOpenSearchPagesInBrowser <- function(
   if (copyright) {
     sapply(
       c("https://www.clinicaltrialsregister.eu/disclaimer.html",
-        "https://classic.clinicaltrials.gov/ct2/about-site/terms-conditions#Use",
-        # "https://www.clinicaltrials.gov/about-site/terms-conditions",
+        "https://www.clinicaltrials.gov/about-site/terms-conditions",
         "https://www.isrctn.com/page/faqs#usingISRCTN",
         "https://euclinicaltrials.eu/data-protection-and-privacy/"),
       ctrOpenUrl)
@@ -680,6 +683,7 @@ ctrOpenSearchPagesInBrowser <- function(
                          call. = FALSE, immediate. = TRUE)
     register  <- url[nr, "query-register", drop = TRUE]
     url <- url[nr, "query-term", drop = TRUE]
+    urlOrig <- url
   }
 
   # - open register search pages
