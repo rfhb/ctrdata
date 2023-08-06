@@ -1,5 +1,6 @@
-# ctrdata 1.14.0.9000 (2023-07-22)
- - new dev version
+# ctrdata 1.14.0.9000 (2023-08-06)
+ - handle CTGOV both classic interface and current REST API 2.0.0.-test 
+ - correct dbGetFieldsIntoDf() for specific lists
 
 # ctrdata 1.14.0 (2023-07-16)
  - fix dbFindIdsUniqueTrials() for single-record register contents

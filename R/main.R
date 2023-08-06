@@ -812,7 +812,6 @@ ctrConvertToJSON <- function(tempDir, scriptName, verbose) {
   } # if windows
 
   # run conversion of download to json
-  message("(2/3) Converting to JSON...", appendLF = FALSE)
   imported <- system(script2Json, intern = TRUE)
   message("\b\b\b, ", imported, " records converted")
   if (verbose) message("DEBUG: ", script2Json)
@@ -1170,7 +1169,7 @@ ctrLoadQueryIntoDbCtgov <- function(
   queryUSType2  <- "ct2/results?"
 
   ## inform user and prepare url for downloading
-  message("(1/3) Checking trials in CTGOV classic:")
+  message("* Checking trials in CTGOV classic...")
   ctgovdownloadcsvurl <- paste0(
     queryUSRoot, queryUSType1, "&", queryterm, queryupdateterm)
   #
@@ -1240,7 +1239,7 @@ ctrLoadQueryIntoDbCtgov <- function(
   f <- file.path(tempDir, "ctgov.zip")
 
   # inform user
-  message("Downloading trials ", appendLF = FALSE)
+  message("(1/3) Downloading trial file...")
 
   # get (download) trials in single zip file f
   tmp <- ctrMultiDownload(ctgovdownloadcsvurl, f)
@@ -1255,6 +1254,7 @@ ctrLoadQueryIntoDbCtgov <- function(
   utils::unzip(f, exdir = tempDir)
 
   ## run conversion
+  message("(2/3) Converting to JSON...", appendLF = FALSE)
   tmp <- ctrConvertToJSON(tempDir, "ctgov2ndjson.php", verbose)
 
   ## run import
@@ -1422,7 +1422,7 @@ ctrLoadQueryIntoDbEuctr <- function(
     queryterm)
 
   # inform user
-  message("(1/3) Checking trials in EUCTR:")
+  message("* Checking trials in EUCTR...")
 
   ## euctr api ----------------------------------------------------------------
 
@@ -1539,7 +1539,7 @@ ctrLoadQueryIntoDbEuctr <- function(
   ## download all text files from pages
 
   # inform user
-  message("Downloading trials...")
+  message("(1/3) Downloading trials...")
 
   # new handle
   h <- do.call(
@@ -1592,6 +1592,7 @@ ctrLoadQueryIntoDbEuctr <- function(
   }
 
   ## run conversion
+  message("(2/3) Converting to JSON...", appendLF = FALSE)
   ctrConvertToJSON(tempDir, "euctr2ndjson.sh", verbose)
 
   # run import into database from json files
@@ -1626,7 +1627,7 @@ ctrLoadQueryIntoDbEuctr <- function(
                 last = 14))
 
     # inform user
-    message("Retrieving results if available from EUCTR for ",
+    message("* Checking results if available from EUCTR for ",
             length(eudractnumbersimported), " trials: ")
 
     ## parallel download and unzipping into temporary directory
@@ -2055,7 +2056,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
 
   ## checks -------------------------------------------------------------------
 
-  message("(1/3) Checking trials in ISRCTN:")
+  message("* Checking trials in ISRCTN...")
 
   # - check number of trials to be downloaded
   isrctnfirstpageurl <- paste0(
@@ -2120,7 +2121,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
   f <- paste0(tempDir, "/", "isrctn.xml")
 
   # inform user
-  message("(1/3) Downloading trials ", appendLF = FALSE)
+  message("(1/3) Downloading trial file... ")
 
   # construct API call setting limit to number found above
   isrctndownloadurl <- paste0(
@@ -2136,6 +2137,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
   }
 
   ## run conversion
+  message("(2/3) Converting to JSON...", appendLF = FALSE)
   ctrConvertToJSON(tempDir, "isrctn2ndjson.php", verbose)
 
   ## run import
@@ -2230,16 +2232,15 @@ ctrLoadQueryIntoDbCtis <- function(
   ## add_1: overviews ---------------------------------------------------------
 
   # this is for importing overview (recruitment, status etc.) into database
-
-  message("(1/5) Downloading trials list", appendLF = FALSE)
+  message("* Checking trials in EUCTR...")
 
   # corresponds in output to "pageInfo":{"offset":0,"limit":-1}
   urls <- sprintf(ctisEndpoints[1], queryterm)
-
   fTrialsJson <- file.path(tempDir, "ctis_add_1.json")
 
   # "HTTP server doesn't seem to support byte ranges. Cannot resume."
   # Note: at this time, this is just a single file to be downloaded
+  message("(1/5) Downloading trials list", appendLF = FALSE)
   tmp <- ctrMultiDownload(urls, fTrialsJson, progress = FALSE)
 
   # extract total number of trial records
@@ -2329,9 +2330,9 @@ ctrLoadQueryIntoDbCtis <- function(
     message(". ", appendLF = FALSE)
   }
 
-  ## add_3:8: more data -------------------------------------------------------
+  ## add_3:8: get more data ----------------------------------------------------
 
-  message("\n(3/5) Downloading and processing additional data: ")
+  message("\n(3/5) Downloading and processing additional data:")
 
   for (e in 3:8) {
 
@@ -2822,7 +2823,7 @@ ctrLoadQueryIntoDbCtgov2023 <- function(
 
   ## process query -----------------------------------------------------
 
-  message("* Getting information on trials...", appendLF = FALSE)
+  message("* Checking trials using CTGOV API 2.0.0.-test...", appendLF = FALSE)
 
   # corresponds to count
   url <- sprintf(ctgovEndpoints[1], queryterm)
@@ -2867,7 +2868,8 @@ ctrLoadQueryIntoDbCtgov2023 <- function(
 
   message("(1/2) Downloading and converting in ",
           ceiling(resultsEuNumTrials / 1000L),
-          " batch(es) (1000 trials each)...")
+          " batch(es) (max. 1000 trials each; estimate: ",
+          format(resultsEuNumTrials * 0.1, digits = 2), " MB total)")
 
   while (TRUE) {
 

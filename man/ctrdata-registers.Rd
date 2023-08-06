@@ -6,22 +6,22 @@
 \title{ctrdata: information on clinical trial registers}
 \description{
 Registers of clinical trials that can be accessed with
-package \link{ctrdata-package} as of April 2023.
+package \link{ctrdata-package} as of July 2023.
 }
 \details{
 \itemize{
 \item \strong{EUCTR}: The European Union Clinical Trials Register contains
-almost 43,000 clinical trials (using one or more medicines as
-investigational medicinal product, IMP; in Europe and beyond)
-\item \strong{CTGOV}: ClinicalTrials.gov includes more than 430,000
-interventional and observational studies (the beta website
-is not supported by package \code{ctrdata})
+more than 43,000 clinical trials (using one or more medicines as
+investigational medicinal product, IMP; in the European Union and beyond)
+\item \strong{CTGOV}: ClinicalTrials.gov includes more than 460,000
+interventional and observational studies (both the current and
+the classic website are supported)
 \item \strong{ISRCTN}: The ISRCTN Registry includes almost 23,000
 interventional or observational health studies
 \item \strong{CTIS}: The EU Clinical Trials Information System was
-started in January 2023, including more than 200 publicly
-accessible trials in June 2023. For how a user can specify
-a query and get its URL, see
+started in January 2023, including around 200 publicly
+accessible trials in July 2023. How to specify
+a query and get its URL:
 \ifelse{latex}{\out{\href{https://github.com/rfhb/ctrdata\#3-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://github.com/rfhb/ctrdata#3-script-to-automatically-copy-users-query-from-web-browser}{here}}
 }\tabular{lcccc}{
    \strong{Material} \tab \strong{EUCTR} \tab \strong{CTGOV} \tab \strong{ISRCTN} \tab \strong{CTIS} \cr
@@ -34,18 +34,17 @@ a query and get its URL, see
    FAQ \tab \href{https://www.clinicaltrialsregister.eu/doc/EU_CTR_FAQ.pdf}{link} \tab \href{https://www.clinicaltrials.gov/about-site/selected-publications}{link} \tab \href{https://www.isrctn.com/page/faqs}{link} \tab  \cr
    Expert / advanced search \tab \href{https://www.clinicaltrialsregister.eu/ctr-search/search}{link} \tab \href{https://classic.clinicaltrials.gov/ct2/results/refine?show_xprt=Y}{link} \tab \href{https://www.isrctn.com/editAdvancedSearch}{link} \tab \ifelse{latex}{\out{\href{https://euclinicaltrials.eu/app/\#/search}{link}}}{\href{https://euclinicaltrials.eu/app/#/search}{link}} \cr
    Example* \tab \ifelse{latex}{\out{\href{https://www.clinicaltrialsregister.eu/ctr-search/search?query=Infections\&age=newborn\&age=preterm-new-born-infants}{link}}}{\href{https://www.clinicaltrialsregister.eu/ctr-search/search?query=Infections&age=newborn&age=preterm-new-born-infants}{link}} \tab \ifelse{latex}{\out{\href{https://classic.clinicaltrials.gov/ct2/results/refine?term=AREA[MaximumAge]+RANGE[0+days,1+months]\&type=Intr\&cond=Infections\&intr=Investigational+Agent\&show_xprt=Y}{link}}}{\href{https://classic.clinicaltrials.gov/ct2/results/refine?term=AREA\%5BMaximumAge\%5D+RANGE\%5B0+days,1+months\%5D&type=Intr&cond=Infections&intr=Investigational+Agent&show_xprt=Y}{link}} \tab \ifelse{latex}{\out{\href{https://www.isrctn.com/search?q=\&filters=ageRange:Neonate,conditionCategory:Infections+and+Infestations\&searchType=advanced-search}{link}}}{\href{https://www.isrctn.com/search?q=&filters=ageRange:Neonate,conditionCategory:Infections+and+Infestations&searchType=advanced-search}{link}} \tab  \cr
-   Definitions \tab \href{https://eudract.ema.europa.eu/result.html}{link} \tab \href{https://prsinfo.clinicaltrials.gov/prs-xml-schemas.html}{definitions, XML schemas}, \href{https://classic.clinicaltrials.gov/api/gui/ref/crosswalks}{crosswalks}, \href{https://classic.clinicaltrials.gov/api/gui/ref/syntax}{syntax} \tab \href{https://www.isrctn.com/page/definitions}{link} \tab \href{https://www.ema.europa.eu/en/human-regulatory/research-development/clinical-trials/clinical-trials-information-system-training-support}{training} \cr
+   Definitions \tab \href{https://eudract.ema.europa.eu/result.html}{link} \tab \href{https://prsinfo.clinicaltrials.gov/prs-xml-schemas.html}{link} \tab \href{https://www.isrctn.com/page/definitions}{link} \tab \href{https://www.ema.europa.eu/en/human-regulatory/research-development/clinical-trials/clinical-trials-information-system-training-support}{link} \cr
 }
 
 
 *The example is an expert search that retrieves interventional
 trials with neonates, investigating infectious conditions:
-EUCTR retrieves trials with neonates, but not exclusively.
-The above CTGOV expert search retrieves trials exclusively in neonates.
-ISRCTN retrieves a small number of studies.
+The CTGOV expert search retrieves trials conducted exclusively with neonates.
+EUCTR retrieves trials with neonates, but not only those exclusively in neonates.
 Thus, after loading trials with \link{ctrLoadQueryIntoDb}
-into a database collection, corresponding sets of trials need to be defined,
-based on values of fields of interest
+into a database collection, trials of interest have to be selected
+in a second step, based on values of fields of interest
 (e.g., \code{eligibility.maximum_age} from CTGOV and
 \code{f115_children_211years} from EUCTR),
 which can be obtained from the collection using \link{dbGetFieldsIntoDf}.

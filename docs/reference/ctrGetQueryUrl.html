@@ -101,6 +101,12 @@ The data frame (or tibble) can be passed as such as parameter
 <span class="r-in"><span><span class="co"># the address bar of the browser that shows results</span></span></span>
 <span class="r-in"><span><span class="co"># from a query in one of the trial registers</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu">ctrGetQueryUrl</span><span class="op">(</span><span class="op">)</span>, silent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> * Using clipboard content as register query URL: https://www.clinicaltrialsregister.eu/ctr-search/search?age=newborn&amp;phase=phase-three&amp;dateFrom=2015-03-01&amp;dateTo=2015-03-31#tabs</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from EUCTR: age=newborn&amp;phase=phase-three&amp;dateFrom=2015-03-01&amp;dateTo=2015-03-31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                            query-term</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 age=newborn&amp;phase=phase-three&amp;dateFrom=2015-03-01&amp;dateTo=2015-03-31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   query-register</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1          EUCTR</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># extract query parameters from search result URL</span></span></span>
 <span class="r-in"><span><span class="co"># (URL was cut for the purpose of formatting only)</span></span></span>
