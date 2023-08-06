@@ -847,7 +847,7 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
 
   # find files
   tempFiles <- dir(path = dir,
-                   pattern = ".+_trials_.*.ndjson",
+                   pattern = "^.+_trials_.*.ndjson$",
                    full.names = TRUE)
 
   # check
@@ -1292,7 +1292,7 @@ ctrLoadQueryIntoDbCtgov <- function(
       # get documents urls, file names
       fDocsOut <- file.path(tempDir, "ctgov_docs.ndjson")
       unlink(fDocsOut)
-      for (f in dir(path = tempDir, pattern = "ctgov_trials_[0-9]+[.]ndjson", full.names = TRUE)) {
+      for (f in dir(path = tempDir, pattern = "^ctgov_trials_[0-9]+[.]ndjson$", full.names = TRUE)) {
         cat(jqr::jq(
           file(f),
           ' { _id: ._id, docs: [ .provided_document_section.provided_document[].document_url ] } ',
@@ -1735,7 +1735,7 @@ ctrLoadQueryIntoDbEuctr <- function(
       # e.g., EU-CTR 2008-003606-33 v1 - Results.xml
       # was converted into EU_Results_1234.json
       dir(path = tempDir,
-          pattern = "EU_Results_[0-9]+[.]ndjson",
+          pattern = "^EU_Results_[0-9]+[.]ndjson$",
           full.names = TRUE),
       function(fileName) {
 
@@ -2330,6 +2330,22 @@ ctrLoadQueryIntoDbCtis <- function(
     message(". ", appendLF = FALSE)
   }
 
+  # address and mangle "applications" which has (as only field in ctis)
+  # '"partIIInfo": "<integer number>": {...}' by replacing with array
+  # '{"partIIInfo": [{"partIIIinfoKey": <integer number>, ...}]}'
+  ctisMangle <- list(
+    # file in, file out, pattern, replacement
+    c(fPartIPartsIINdjson, paste0(fPartIPartsIINdjson, "1"), '"([0-9]+)": ?[{]', '{"partIIIinfoKey":$1,'),
+    c(paste0(fPartIPartsIINdjson, "1"), paste0(fPartIPartsIINdjson, "2"), '"partIIInfo":[{]', '"partIIInfo":['),
+    c(paste0(fPartIPartsIINdjson, "2"), fPartIPartsIINdjson, '[}],"(reporting|decision)Date"', '],"$1Date"')
+  )
+  for (i in ctisMangle) {
+    cat(stringi::stri_replace_all_regex(
+      str = readLines(i[1], warn = FALSE),
+      pattern = i[3], replacement = i[4]
+    ), file = i[2], sep = "\n")
+  }
+
   ## add_3:8: get more data ----------------------------------------------------
 
   message("\n(3/5) Downloading and processing additional data:")
@@ -2384,7 +2400,7 @@ ctrLoadQueryIntoDbCtis <- function(
 
   }
 
-  ## add_9: more data -------------------------------------------------------
+  ## add_9: publicevaluation -----------------------------------------------------
 
   message("publicevaluation")
 
@@ -2470,7 +2486,7 @@ ctrLoadQueryIntoDbCtis <- function(
   resAll <- NULL
   message("(5/5) Updating with additional data: ", appendLF = FALSE)
 
-  for (f in dir(path = tempDir, pattern = "ctis_add_[1-9]+[0-9]*.ndjson", full.names = TRUE)) {
+  for (f in dir(path = tempDir, pattern = "^ctis_add_[1-9]+[0-9]*.ndjson$", full.names = TRUE)) {
 
     message(". ", appendLF = FALSE)
     res <- nodbi::docdb_update(src = con, key = con$collection, query = "", value = f)
@@ -2951,7 +2967,7 @@ ctrLoadQueryIntoDbCtgov2023 <- function(
 
       # extract trial ids and file name and save in temporary file
       for (ndjsonFile in dir(
-        path = tempDir, pattern = ".+_trials_.*.ndjson", full.names = TRUE)) {
+        path = tempDir, pattern = "^.+_trials_.*.ndjson$", full.names = TRUE)) {
         jqr::jq(
           file(ndjsonFile),
           ' { _id: ._id,
