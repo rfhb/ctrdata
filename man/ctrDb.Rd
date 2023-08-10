@@ -8,7 +8,7 @@ ctrDb(con)
 }
 \arguments{
 \item{con}{A connection object, see section
-`Databases` in \link{ctrdata-package}.}
+`Databases` in \link{ctrdata}.}
 }
 \value{
 Connection object as list, with collection

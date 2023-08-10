@@ -6,7 +6,7 @@
 \title{ctrdata: information on clinical trial registers}
 \description{
 Registers of clinical trials that can be accessed with
-package \link{ctrdata-package} as of July 2023.
+package \link{ctrdata} as of July 2023.
 }
 \details{
 \itemize{

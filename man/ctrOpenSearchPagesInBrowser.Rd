@@ -20,8 +20,8 @@ advanced search page of the register(s).}
 copyright pages of all registers.}
 }
 \value{
-(String) Full URL corresponding to the shortened \link{url}
-  in conjunction with \link{register} if any, or invisibly
+(String) Full URL corresponding to the shortened \code{url}
+  in conjunction with \code{register} if any, or invisibly
   \code{TRUE} if no \code{url} is specified.
 }
 \description{

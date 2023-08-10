@@ -431,7 +431,7 @@ ctrCache <- function(xname, xvalue = NULL, verbose = FALSE) {
 #' Check and prepare nodbi connection object for ctrdata
 #'
 #' @param con A connection object, see section
-#' `Databases` in \link{ctrdata-package}.
+#' `Databases` in \link{ctrdata}.
 #'
 #' @keywords internal
 #'
@@ -577,8 +577,8 @@ ctrDb <- function(con) {
 #'
 #' @export
 #'
-#' @returns (String) Full URL corresponding to the shortened \link{url}
-#'   in conjunction with \link{register} if any, or invisibly
+#' @returns (String) Full URL corresponding to the shortened \code{url}
+#'   in conjunction with \code{register} if any, or invisibly
 #'   \code{TRUE} if no \code{url} is specified.
 #'
 #' @examples

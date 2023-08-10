@@ -1,7 +1,7 @@
 #' ctrdata: information on clinical trial registers
 #'
 #' Registers of clinical trials that can be accessed with
-#' package \link{ctrdata-package} as of July 2023.
+#' package \link{ctrdata} as of July 2023.
 #'
 #' - **EUCTR**: The European Union Clinical Trials Register contains
 #' more than 43,000 clinical trials (using one or more medicines as

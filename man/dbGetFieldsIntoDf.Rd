@@ -12,7 +12,7 @@ See function \link{dbFindFields} for how to find names of fields.
 "item.subitem" notation is supported.}
 
 \item{con}{A connection object, see section
-`Databases` in \link{ctrdata-package}.}
+`Databases` in \link{ctrdata}.}
 
 \item{verbose}{Printing additional information if set to \code{TRUE};
 (default \code{FALSE}).}

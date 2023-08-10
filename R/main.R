@@ -5,7 +5,7 @@
 #'
 #' Retrieves information on clinical trials from registers
 #' and stores it in a collection in a database. Main function
-#' of \link{ctrdata-package} for accessing registers.
+#' of \link{ctrdata} for accessing registers.
 #' A collection can store trial information from different queries
 #' or different registers. Query details are stored in the
 #' collection and can be accessed using \link{dbQueryHistory}.

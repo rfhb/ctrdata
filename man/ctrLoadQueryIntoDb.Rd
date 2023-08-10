@@ -98,7 +98,7 @@ Does not load trial information into the database.
 Default is \code{FALSE}.}
 
 \item{con}{A connection object, see section
-`Databases` in \link{ctrdata-package}.}
+`Databases` in \link{ctrdata}.}
 
 \item{verbose}{Printing additional information if set to
 \code{TRUE}; default is \code{FALSE}.}
@@ -118,7 +118,7 @@ collection) to facilitate documentation.
 \description{
 Retrieves information on clinical trials from registers
 and stores it in a collection in a database. Main function
-of \link{ctrdata-package} for accessing registers.
+of \link{ctrdata} for accessing registers.
 A collection can store trial information from different queries
 or different registers. Query details are stored in the
 collection and can be accessed using \link{dbQueryHistory}.

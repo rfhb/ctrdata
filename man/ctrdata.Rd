@@ -25,7 +25,7 @@ these supported backends:\tabular{ll}{
 
 Use a connection object with a \code{ctrdata} function, for example
 \link{dbQueryHistory}, or other packages, for example
-\link{mongolite:mongo} or \link{nodbi:docdb_query}.
+\link[mongolite:mongo]{mongolite::mongo} or \link[nodbi:docdb_query]{nodbi::docdb_query}.
 Use a demo database:
 \code{dbc <- nodbi::src_sqlite(dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"), collection = "my_trials")}
 }

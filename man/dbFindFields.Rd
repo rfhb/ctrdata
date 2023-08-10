@@ -12,7 +12,7 @@ including Perl-style) to be searched for among all field names
 (keys) in the collection, case-insensitive. Use ".*" to find all fields.}
 
 \item{con}{A connection object, see section
-`Databases` in \link{ctrdata-package}.}
+`Databases` in \link{ctrdata}.}
 
 \item{verbose}{If \code{TRUE}, prints additional information
 (default \code{FALSE}).}
