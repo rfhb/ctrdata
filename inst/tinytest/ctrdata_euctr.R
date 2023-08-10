@@ -531,7 +531,7 @@ expect_error(
   dbFindIdsUniqueTrials(
     con = dbc,
     preferregister = "WRONG"),
-  "not known")
+  "unknown")
 
 # test
 expect_error(
@@ -540,7 +540,7 @@ expect_error(
       dbFindIdsUniqueTrials(
         con = dbc,
         prefermemberstate = "WRONG"))),
-  "not known")
+  "unknown")
 
 # test
 expect_message(

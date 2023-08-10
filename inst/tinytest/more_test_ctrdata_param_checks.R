@@ -248,11 +248,13 @@ tf <- function() {
   #        USE.NAMES = FALSE, simplify = TRUE)
 
   # test
-  expect_true(all(vapply(queryterms, function(qt) {
-    suppressMessages(ctrGetQueryUrl(
-      url = qt[[1]],
-      register = "EUCTR"))[[1]] == qt[[2]]},
-    logical(1L))))
+  expect_true(all(
+    vapply(queryterms, function(qt) {
+      suppressMessages(ctrGetQueryUrl(
+        url = qt[[1]],
+        register = "EUCTR"))[[1]] == qt[[2]]},
+      logical(1L))
+  ))
 
   # CTGOV
   queryterms <- list(
@@ -284,11 +286,12 @@ tf <- function() {
   #        USE.NAMES = FALSE, simplify = TRUE)
 
   # test
-  expect_true(all(vapply(queryterms, function(qt) {
-    suppressMessages(ctrGetQueryUrl(
-      url = qt[[1]],
-      register = "CTGOV"))[[1]] == qt[[2]]},
-    logical(1L))
+  expect_true(all(
+    vapply(queryterms, function(qt) {
+      suppressMessages(ctrGetQueryUrl(
+        url = qt[[1]],
+        register = "CTGOV"))[[1]] == qt[[2]]},
+      logical(1L))
   ))
 
   # URLs
@@ -319,14 +322,16 @@ tf <- function() {
   )
 
   # sapply(sapply(queryurls, "[[", 1),
-  #        function(i) ctrGetQueryUrl(url = i, register = "CTGOV")[["query-term"]],
+  #        function(i) ctrGetQueryUrl(url = i)[["query-term"]],
   #        USE.NAMES = FALSE, simplify = TRUE)
 
   # test
-  expect_true(all(vapply(queryurls, function(qt) {
-    suppressMessages(ctrGetQueryUrl(
-      url = qt[[1]]))[[1]] == qt[[2]]},
-    logical(1L))))
+  expect_true(all(
+    vapply(queryurls, function(qt) {
+      suppressMessages(ctrGetQueryUrl(
+        url = qt[[1]]))[[1]] == qt[[2]]},
+      logical(1L))
+  ))
 
   #### clipboard ####
   if (Sys.info()[["sysname"]] != "Linux") {
@@ -362,12 +367,15 @@ tf <- function() {
     # ctgov classic
     c("https://clinicaltrials.gov/ct2/show/NCT01492673?cond=neuroblastoma",
       "https://classic.clinicaltrials.gov/ct2/show/NCT01492673"),
-    # ctgov 2023
+    # ctgov2
     c("https://www.clinicaltrials.gov/study/NCT01467986?cond=neuroblastoma&intr=Investigational%20drug&aggFilters=ages:child",
       "https://www.clinicaltrials.gov/study/NCT01467986#main-content"),
     # isrctn
     c("https://www.isrctn.com/ISRCTN70039829",
-      "https://www.isrctn.com/ISRCTN70039829")
+      "https://www.isrctn.com/ISRCTN70039829"),
+    # isrctn
+    c("https://www.isrctn.com/ISRCTN61139514?q=&filters=condition:cancer",
+      "https://www.isrctn.com/ISRCTN61139514")
   )
 
   # sapply(sapply(queryurls, "[[", 1),
@@ -375,10 +383,12 @@ tf <- function() {
   #        USE.NAMES = FALSE, simplify = TRUE)
 
   # test
-  expect_true(all(vapply(queryurls, function(qt) {
+  expect_true(all(
+    vapply(queryurls, function(qt) {
     suppressMessages(ctrOpenSearchPagesInBrowser(
       url = qt[[1]]))[[1]] == qt[[2]]},
-    logical(1L))))
+    logical(1L))
+    ))
 
   # clean up
   rm(queryurls)

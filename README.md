@@ -31,7 +31,7 @@ conduct of trials, their availability for patients and to facilitate
 using their detailed results for research and meta-analyses. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2023-08-06 for version 1.14.0.9000.
+package. This README was reviewed on 2023-08-09 for version 1.14.0.9000.
 
 ## Main features
 
@@ -215,7 +215,7 @@ library(ctrdata)
 - See help to get started with `ctrdata`:
 
 ``` r
-help("ctrdata-package")
+help("ctrdata")
 ```
 
 - Information on trial registers that can be used with `ctrdata`:
@@ -372,18 +372,18 @@ on the parameters in the query.
 # Retrieve trials from another register:
 ctrLoadQueryIntoDb(
   queryterm = "cond=Neuroblastoma&aggFilters=ages:child,results:with,studyType:int",
-  register = "CTGOV",
+  register = "CTGOV2",
   con = db
 )
-# Appears compatible with CTGOV REST API 2.0.0
-# * Found search query from CTGOV: cond=Neuroblastoma&aggFilters=ages:child,results:with,studyType:int
-# Appears compatible with CTGOV REST API 2.0.0
+# Appears specific for CTGOV REST API 2.0.0
+# * Found search query from CTGOV2: cond=Neuroblastoma&aggFilters=ages:child,results:with,studyType:int
 # * Checking trials using CTGOV API 2.0.0.-test, found 88 trials
 # (1/2) Downloading and converting in 1 batch(es) (max. 1000 trials each; estimate: 8.8 MB total)
 # Download status: 1 done; 0 in progress. Total size: 8.75 Mb (837%)...converting to NDJSON...
 # (2/2) Importing JSON records into database...
 # JSON file #: 1 / 1                               
 # = Imported / updated 88 records on 88 trial(s)
+# No history found in expected format.
 # Updated history ("meta-info" in "some_collection_name") 
 ```
 
@@ -396,16 +396,17 @@ ctrLoadQueryIntoDb(
   queryterm = "https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug",
   con = db
 )
+# Appears specific for CTGOV CLASSIC API
 # * Found search query from CTGOV: cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug
-# Appears compatible with CTGOV CLASSIC API
+# Checking helper binaries: . . . done
 # * Checking trials in CTGOV classic...
 # Retrieved overview, records of 55 trial(s) are to be downloaded (estimate: 0.44 MB)
 # (1/3) Downloading trial file...
-# Download status: 1 done; 0 in progress. Total size: 755.01 Kb (100%)... done!             
+# Download status: 1 done; 0 in progress. Total size: 755.00 Kb (100%)... done!             
 # (2/3) Converting to JSON, 55 records converted
 # (3/3) Importing JSON records into database...
 # = Imported or updated 55 trial(s)                
-# Updated history ("meta-info" in "some_collection_name")
+# Updated history ("meta-info" in "some_collection_name")-
 ```
 
 - Add records from a third register (ISRCTN) into the same collection
@@ -444,6 +445,11 @@ of June 2023, more than 200 trials are publicly accessible in CTIS. See
 [below](#documents-example) for how to download documents from CTIS.
 
 ``` r
+# Retrieve trials from another register:
+ctrLoadQueryIntoDb(
+  queryterm = "https://euclinicaltrials.eu/app/#/search?ageGroupCode=2",
+  con = db
+)
 # * Found search query from CTIS: ageGroupCode=2
 # * Checking trials in EUCTR...
 # (1/5) Downloading trials list, found 29 trials

@@ -292,21 +292,16 @@ ctrLoadQueryIntoDb <- function(
     #
   } # if querytermtoupdate
 
-  ## call register function ---------------------------------------------------
-
-  # adapt register
-  # register <- ifelse(register == "CTGOV", ctgovVersion(queryterm), register)
-
   ## . checkbinaries ---------------------------------------------------------
 
   if (!only.count) {
 
     # check extra binaries as needed for register
-    if (grepl("ISRCTN|CTGOVCLASSIC|EUCTR", register)) {
+    if (grepl("^(ISRCTN|CTGOV|EUCTR)$", register)) {
       message("Checking helper binaries: ", appendLF = FALSE)
       suppressMessages(installCygwinWindowsTest())
       if (register == "ISRCTN") testBinaries <- c("php", "phpxml", "phpjson")
-      if (register == "CTGOVCLASSIC") testBinaries <- c("php", "phpxml", "phpjson")
+      if (register == "CTGOV") testBinaries <- c("php", "phpxml", "phpjson")
       if (register == "EUCTR") testBinaries <- c("sed", "perl")
       if (euctrresults) testBinaries <- c("sed", "perl", "php", "phpxml", "phpjson")
       if (!checkBinary(b = testBinaries)) stop(
@@ -323,7 +318,7 @@ ctrLoadQueryIntoDb <- function(
 
   # parameters for core functions
   params <- list(queryterm = queryterm,
-                 register = ifelse(register == "CTGOV", ctgovVersion(queryterm), register),
+                 register = register,
                  euctrresults = euctrresults,
                  euctrresultshistory = euctrresultshistory,
                  documents.path = documents.path,
@@ -338,8 +333,8 @@ ctrLoadQueryIntoDb <- function(
   # call core functions
   imported <- switch(
     as.character(params$register),
-    "CTGOV2023" = do.call(ctrLoadQueryIntoDbCtgov2023, params),
-    "CTGOVCLASSIC" = do.call(ctrLoadQueryIntoDbCtgov, params),
+    "CTGOV2" = do.call(ctrLoadQueryIntoDbCtgov2, params),
+    "CTGOV" = do.call(ctrLoadQueryIntoDbCtgov, params),
     "EUCTR" = do.call(ctrLoadQueryIntoDbEuctr, params),
     "ISRCTN" = do.call(ctrLoadQueryIntoDbIsrctn, params),
     "CTIS" = do.call(ctrLoadQueryIntoDbCtis, params)
@@ -502,15 +497,12 @@ ctrRerunQuery <- function(
   ## adapt updating procedure to respective register
   querytermoriginal <- queryterm
 
-  # adjust register
-  registerToUpdate <- ifelse(register == "CTGOV", ctgovVersion(queryterm), register)
-
   # mangle parameter only if not forcetoupdate,
   # which just returns parameters of original query
   if (!forcetoupdate) {
 
     # ctgov --------------------------------------------------------------------
-    if (registerToUpdate == "CTGOVCLASSIC") {
+    if (register == "CTGOV") {
 
       # ctgov:
       # specify any date - "lup_s/e" last update start / end:
@@ -549,7 +541,7 @@ ctrRerunQuery <- function(
               "\nLast run: ", initialday)
     } # end ctgov
 
-    if (registerToUpdate == "CTGOV2023") {
+    if (register == "CTGOV2") {
 
       # ctgov:
       # specify last update start / end:
@@ -586,7 +578,7 @@ ctrRerunQuery <- function(
     } # end ctgov
 
     # euctr -------------------------------------------------------------------
-    if (registerToUpdate == "EUCTR") {
+    if (register == "EUCTR") {
 
       # euctr: studies added or updated in the last 7 days:
       # "https://www.clinicaltrialsregister.eu/ctr-search/rest/feed/
@@ -684,7 +676,7 @@ ctrRerunQuery <- function(
     } # register euctr
 
     # isrctn ------------------------------------------------------------------
-    if (registerToUpdate == "ISRCTN") {
+    if (register == "ISRCTN") {
 
       # isrctn last edited:
       # "&filters=condition:Cancer,
@@ -724,7 +716,7 @@ ctrRerunQuery <- function(
     } # end isrctn
 
     # ctis ------------------------------------------------------------------
-    if (registerToUpdate == "CTIS") {
+    if (register == "CTIS") {
 
       # https://euclinicaltrials.eu/ct-public-api-services/services/ct/rss?basicSearchInputAND=cancer
       # issue: returned data do not include trial identifiers, thus no efficient loading possible
@@ -2772,7 +2764,7 @@ ctrLoadQueryIntoDbCtis <- function(
 # end ctrLoadQueryIntoDbCtis
 
 
-#' ctrLoadQueryIntoDbCtogv2023
+#' ctrLoadQueryIntoDbCtgov2
 #'
 #' @inheritParams ctrLoadQueryIntoDb
 #'
@@ -2785,7 +2777,7 @@ ctrLoadQueryIntoDbCtis <- function(
 #' @importFrom httr GET status_code content
 #' @importFrom stringi stri_replace_all_regex
 #'
-ctrLoadQueryIntoDbCtgov2023 <- function(
+ctrLoadQueryIntoDbCtgov2 <- function(
     queryterm = queryterm,
     register,
     euctrresults,
@@ -2820,11 +2812,15 @@ ctrLoadQueryIntoDbCtgov2023 <- function(
 
   # append if to update
   queryterm <- paste0(queryterm, "&", queryupdateterm)
+  queryterm <- sub("&$", "", queryterm)
 
   # translation to ClinicalTrials.gov REST API 2.0.0-draft
+  # https://clinicaltrials.gov/data-about-studies/learn-about-api
 
   # - some parameters have been removed in ctrGetQueryUrl
   # - aggFilters can remain
+  queryterm <- sub("([&]?)distance=(.+?)(&|$)", "\\1filter.geo=distance(\\2)\\3",
+                   queryterm)
   # - parameters in only lowercase, prefix with query.
   queryterm <- stringi::stri_replace_all_regex(
     str = queryterm,
@@ -2843,12 +2839,15 @@ ctrLoadQueryIntoDbCtgov2023 <- function(
 
   # corresponds to count
   url <- sprintf(ctgovEndpoints[1], queryterm)
+  if (verbose) message("API call: ", url)
   url <- utils::URLencode(url)
   counts <- httr::GET(url)
 
   # early exit
   if (httr::status_code(counts) != 200L) {
-    warning("Could not be retrieved, check 'queryterm' and 'register'")
+    warning("Could not be retrieved, check 'queryterm' and / or 'register'. ",
+            "\nAPI call: ", url, "\nAPI returned: ", httr::content(counts),
+            call. = FALSE)
     return(emptyReturn)
   }
 
@@ -2913,7 +2912,7 @@ ctrLoadQueryIntoDbCtgov2023 <- function(
         ' .studies | .[] ',
         # add elements
         '| .["_id"] = .protocolSection.identificationModule.nctId
-         | .["ctrname"] = "CTGOV"
+         | .["ctrname"] = "CTGOV2"
          | .["record_last_import"] = "', format(Sys.time(), "%Y-%m-%d %H:%M:%S"), '"'
       ),
       flags = jqr::jq_flags(pretty = FALSE),

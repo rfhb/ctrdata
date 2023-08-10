@@ -1,7 +1,7 @@
 ---
 title: "Retrieve clinical trial information"
 author: "Ralf Herold"
-date: 2023-08-03
+date: 2023-08-09
 output:
   rmarkdown::pdf_document:
     toc: true
@@ -258,6 +258,9 @@ ctrLoadQueryIntoDb(
 
 When identifiers of clinical trials of interest are already known, this example shows how they can be processed to import the trial information into a database collection. This involves constructing a query that combines the identifiers and then iterating over the sets of identifiers. Note to combine identifiers using "+OR+" into the `queryterm`, and that `register` has to be specified. 
 
+
+
+
 ```{r}
 # ids of trials of interest
 ctIds <- c(
@@ -278,16 +281,20 @@ idSets <- split(ctIds, ceiling(seq_along(ctIds) / 25))
 result <- NULL
 
 # iterate over sets of trial ids
-for (idSet in idSets) {
+for (idSet in idSets[1]) {
   
   # import
   setResult <- ctrLoadQueryIntoDb(
 
-    # for CTGOV, EUCTR, ISRCTN use:
-    queryterm = paste0(idSet, collapse = "+OR+"),
-
+    # for CTGOV classic, EUCTR, ISRCTN use:
+    # queryterm = paste0(idSet, collapse = "+OR+"),
+    
+    # for CTGOV use: 
+    queryterm = paste0("https://www.clinicaltrials.gov/search?term=", 
+                       paste0(idSet, collapse = " ")),
+    
     # specify register that holds the information
-    register = "CTGOV",
+    # register = "CTGOV",
     con = db
   )
   
@@ -302,7 +309,7 @@ as.data.frame(do.call(rbind, result))[, c("n", "failed")]
 # 2 17   NULL
 ```
 
-Note that from `CTIS`, trial information *identified by trial identifiers* can be retrieved only one-by-one, repeating queries for each trial such as `https://euclinicaltrials.eu/app/#/search?number=2023-503994-39-00`. 
+Note that from `CTIS`, trial information *identified by trial identifiers* can be retrieved only one-by-one, repeating queries for each trial such as https://euclinicaltrials.eu/app/#/search?number=2023-503994-39-00. 
 
 ## Find synonyms of active substance names
 

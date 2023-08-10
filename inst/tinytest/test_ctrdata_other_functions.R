@@ -285,10 +285,6 @@ expect_message(
   "Found search query")
 
 # test
-expect_warning(
-  ctrOpenSearchPagesInBrowser(input = tmpTest),
-  "Parameter 'input' is deprecated, use 'url' instead")
-
 q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/",
             "search?query=&age=under-18&status=completed")
 
@@ -315,7 +311,7 @@ expect_equal(
   paste0(q, "#tabs"))
 
 # test
-expect_null(
+expect_true(
   ctrOpenSearchPagesInBrowser(
     copyright = TRUE))
 
@@ -344,6 +340,7 @@ expect_equal(
   ctrOpenSearchPagesInBrowser(
     url = "https://www.isrctn.com/ISRCTN54460428?q=alzheimer&filters=&sort=&offset=29&totalResults=286&page=3&pageSize=10"
   ), "https://www.isrctn.com/ISRCTN54460428")
+
 
 
 #### dfFindUniqueEuctrRecord ####

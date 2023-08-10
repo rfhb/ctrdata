@@ -47,4 +47,10 @@ ctrGetQueryUrl(
   "&locn=&phase=2&rsub=&strd_s=01\%2F01\%2F2015&strd_e=01\%2F01\%2F2016",
   "&prcd_s=&prcd_e=&sfpd_s=&sfpd_e=&rfpd_s=&rfpd_e=&lupd_s=&lupd_e=&sort="))
 
+ctrGetQueryUrl("https://www.clinicaltrialsregister.eu/ctr-search/trial/2007-000371-42/results")
+ctrGetQueryUrl("https://classic.clinicaltrials.gov/ct2/show/NCT01492673?cond=neuroblastoma")
+ctrGetQueryUrl(url = "https://clinicaltrials.gov/ct2/show/NCT01492673?cond=neuroblastoma")
+ctrGetQueryUrl("https://www.clinicaltrials.gov/study/NCT01467986?cond=neuroblastoma&aggFilters=ages:child")
+ctrGetQueryUrl("https://www.isrctn.com/ISRCTN70039829")
+
 }

@@ -1,9 +1,7 @@
-#' ctrdata: get started, connect database and function overview
+#' ctrdata: get started, database connection, function overview
 #'
-#' A package for aggregating and analysing
-#' information on and results from clinical trials,
-#' and of documents about clinical trials,
-#' retrieved from public study registers
+#' A package for aggregating and analysing information on clinical
+#' studies, and for obtaining documents, from public registers
 #'
 #' @section 1 - Database connection:
 #' Package `ctrdata` retrieves trial information and stores it in a
@@ -19,14 +17,10 @@
 #' PostgreSQL | \code{dbc <- \link[nodbi:src_postgres]{nodbi::src_postgres}(dbname = "my_db"); dbc[["collection"]] <- "my_coll"}
 #' DuckDB | \code{dbc <- \link[nodbi:src_duckdb]{nodbi::src_duckdb}(dbname = "my_db", collection = "my_coll")}
 #'
-#' Use a connection object with a `ctrdata` function, for example:
-#' \code{\link[ctrdata:dbQueryHistory]{ctrdata::dbQueryHistory}(con = dbc)}.
-#'
-#' Any such connection object can also be used with other packages, for example
-#' \code{\link[mongolite:mongo]{mongolite::mongo}()} or:
-#' \code{\link[nodbi:docdb_query]{nodbi::docdb_query}(src = dbc, key = dbc$collection, fields = '{"_id": 1}', query = '{"sponsors.lead_sponsor.agency_class": "Industry"}')}
-#'
-#' A demo database in package `ctrdata` can be used with:
+#' Use a connection object with a `ctrdata` function, for example
+#' \link{dbQueryHistory}, or other packages, for example
+#' \link{mongolite:mongo} or \link{nodbi:docdb_query}.
+#' Use a demo database:
 #' \code{dbc <- nodbi::src_sqlite(dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"), collection = "my_trials")}
 #'
 #' @section 2 - Operate on a clinical trial register:
@@ -48,10 +42,12 @@
 #' \link{dfTrials2Long} (convert fields with nested elements into long format),
 #' \link{dfName2Value} (get values for variable(s) of interest).
 #'
-#' @name ctrdata-package
+#' @name ctrdata
 #' @docType package
 #' @author Ralf Herold \email{ralf.herold@@mailbox.org}
 #' @keywords package
 #' @md
+#'
 NULL
-#> NULL
+
+

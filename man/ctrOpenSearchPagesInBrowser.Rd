@@ -4,24 +4,25 @@
 \alias{ctrOpenSearchPagesInBrowser}
 \title{Open stored query in register or its search page}
 \usage{
-ctrOpenSearchPagesInBrowser(url = "", register = "", copyright = FALSE, ...)
+ctrOpenSearchPagesInBrowser(url = "", register = "", copyright = FALSE)
 }
 \arguments{
 \item{url}{of search results page to show in the browser. To open the
 browser with a previous search, the output of \link{ctrGetQueryUrl}
-or \link{dbQueryHistory} can be used. Can be left empty
-to open the advanced search page of the \code{register}.}
+or \link{dbQueryHistory} can be used. Can be left as empty string
+(default) to open the advanced search page of \code{register}.}
 
-\item{register}{Register(s) to open, "EUCTR", "CTGOV", "ISRCTN" or "CTIS".
-Default is to open the advanced search page of the register.}
+\item{register}{Register(s) to open, "EUCTR", "CTGOV", "CTGOV2",
+"ISRCTN" or "CTIS". Default is empty string, and this open the
+advanced search page of the register(s).}
 
-\item{copyright}{(Optional) If set to \code{TRUE}, opens copyright pages of
-register(s).}
-
-\item{...}{May include the deprecated \code{input} parameter.}
+\item{copyright}{(Optional) If set to \code{TRUE}, opens only the
+copyright pages of all registers.}
 }
 \value{
-Always \code{TRUE}, invisibly.
+(String) Full URL corresponding to the shortened \link{url}
+  in conjunction with \link{register} if any, or invisibly
+  \code{TRUE} if no \code{url} is specified.
 }
 \description{
 Open advanced search pages of register(s), or execute search in browser
@@ -32,10 +33,11 @@ Open advanced search pages of register(s), or execute search in browser
 ctrOpenSearchPagesInBrowser(copyright = TRUE)
 
 # Open specific register advanced search page
-ctrOpenSearchPagesInBrowser(register = "EUCTR")
 ctrOpenSearchPagesInBrowser(register = "CTGOV")
-ctrOpenSearchPagesInBrowser(register = "ISRCTN")
+ctrOpenSearchPagesInBrowser(register = "CTGOV2")
 ctrOpenSearchPagesInBrowser(register = "CTIS")
+ctrOpenSearchPagesInBrowser(register = "EUCTR")
+ctrOpenSearchPagesInBrowser(register = "ISRCTN")
 ctrOpenSearchPagesInBrowser(url = "status=Ended", register = "CTIS")
 
 # Open all queries that were loaded into demo collection
