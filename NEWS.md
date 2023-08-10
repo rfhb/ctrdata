@@ -1,19 +1,18 @@
 # ctrdata 1.14.0.9000 (2023-08-06)
- - mangle ctis: change partIIInfo object into array, addin a new partIIIinfoKey:
-   '{"partIIInfo": "<int>": {...}, "<int>": {...}}'  
-   '{"partIIInfo": [{"partIIIinfoKey": <int>, ...}, {"partIIIinfoKey": <int>, ...}]}')
- - handle CTGOV both classic interface and current REST API 2.0.0.-test 
+ - added CTGOV REST API 2.0.0.-test as new register with identifier `CTGOV2`
+ - handle CTGOV classic interface as register `CTGOV` 
+ - mangle CTIS: change `partIIInfo` object into array, adding a new `partIIIinfoKey` so that `'{"partIIInfo": "<int>": {...}, "<int>": {...}}'` becomes `'{"partIIInfo": [{"partIIIinfoKey": <int>, ...}, {"partIIIinfoKey": <int>, ...}]}')`
  - correct dbGetFieldsIntoDf() for specific lists
 
 # ctrdata 1.14.0 (2023-07-16)
- - fix dbFindIdsUniqueTrials() for single-record register contents
+ - fix `dbFindIdsUniqueTrials()` for single-record register contents
  - expand number of CTIS variables that are typed as date
- - dfMergeVariablesRelevel() superseeds dfMergeTwoVariablesRelevel()
+ - `dfMergeVariablesRelevel()` superseeds `dfMergeTwoVariablesRelevel()`
  
 # ctrdata 1.13.3 (2023-06-24)
- - typo in dbFindFields()
+ - typo in `dbFindFields()`
  - use only CTGOV classic website (ctrdata is being adapted to new website)
- - correct missing names and attributes on return vector of dbFindIdsUniqueTrials()
+ - correct missing names and attributes on return vector of `dbFindIdsUniqueTrials()`
  
 # ctrdata 1.13.2 (2023-05-27)
  - correct selection of lists with ids for documents to download from CTIS
@@ -29,9 +28,9 @@
  - data from CTIS is imported more completely
  - adapt other functions to accommodate CTIS
  - provide Tampermonkey script to get the URL of a user's query in a register 
- - speed up ctrLoadQueryIntoDb() for CTIS with nodbi >=0.9.2.9000
- - keep register names on vector returned by dbFindIdsUniqueTrials()
- - correct dbFindFields() for EUCTR
+ - speed up `ctrLoadQueryIntoDb()` for CTIS with nodbi >=0.9.2.9000
+ - keep register names on vector returned by `dbFindIdsUniqueTrials()`
+ - correct `dbFindFields()` for EUCTR
  
 # ctrdata 1.12.1 (2023-03-29)
  - fix escaping hash symbol in PDF rendition of an help page
@@ -40,7 +39,7 @@
 # ctrdata 1.12.0 (2023-03-25)
  - added first access to new register: CTIS, the EU Clinical Trial Information System
  - stop (instead of warning) if register host errors (e.g. incorrect number of records)
- - switch to use curl::multi_download() which can resume retrievals from registers
+ - switch to use `curl::multi_download()` which can resume retrievals from registers
  - require curl >= 5.0
  
 # ctrdata 1.11.1 (2022-11-20)
@@ -50,8 +49,8 @@
  - return error for ctrGetQueryUrl() if no query URL
  - prevent re-using connections to reduce http/2 layer errors
  - update query history when querytoupdate was used but no new records found
- - make ctrLoadQueryIntoDb() to always return visible result
- - correct dfTrials2Long() identifier (EUCTR no more top "1" across fields)
+ - make `ctrLoadQueryIntoDb()` to always return visible result
+ - correct `dfTrials2Long()` identifier (EUCTR no more top "1" across fields)
  - correct non-ASCII characters
  
 # ctrdata 1.11.0 (2022-11-02)
@@ -59,16 +58,16 @@
  - reduced default number of parallel connections to EUCTR from 10 to 4
  
 # ctrdata 1.10.2 (2022-08-20)
- - fix slow speed in dfName2Value()
- - fix to remove row names from dfName2Value()
+ - fix slow speed in `dfName2Value()`
+ - fix to remove row names from `dfName2Value()`
  - fix for internal function to handle tibble
  - fix for handling certain ISRCTN queries
- - fix dbGetFieldsIntoDf() with missing data
+ - fix `dbGetFieldsIntoDf()` with missing data
  - fix timeouts and methods in package testing
- - fix dbGetFieldsIntoDf() for rare complex fields
+ - fix `dbGetFieldsIntoDf()` for rare complex fields
  - fix URL in Rd file
  - make examples runnable with demo database
- - include `wherevalue` in dfName2Value() result
+ - include `wherevalue` in `dfName2Value()` result
  
 # ctrdata 1.10.1 (2022-07-24)
  - fix documentation issues (https://stat.ethz.ch/pipermail/r-package-devel/2022q3/008240.html)
@@ -76,9 +75,9 @@
  - fix GitHub actions and tests
  
 # ctrdata 1.10.0 (2022-07-01)
- - ctrLoadQueryIntoDb new parameter euctrresultsfilespath, deprecating euctrresultspdfpath
- - ctrLoadQueryIntoDb now also extracts and saves results files other than PDF files
- - ctrFindActiveSubstanceSynonyms() returns NULL for non-existing active substance
+ - `ctrLoadQueryIntoDb()` new parameter `euctrresultsfilespath`, deprecating `euctrresultspdfpath`
+ - `ctrLoadQueryIntoDb()` now also extracts and saves results files other than PDF files
+ - `ctrFindActiveSubstanceSynonyms()` returns NULL for non-existing active substance
  
 # ctrdata 1.9.1 (2022-04-24)
  - type e811... variables
@@ -90,30 +89,30 @@
  - chunked trial batches in ndjson files for accelerated database import
  - if package dplyr is loaded, functions return a tibble instead of a data frame
  - update and correct documentation
- - dbFindFields() returns a vector of fields which now has as names the register in which a field occurs
+ - `dbFindFields()` returns a vector of fields which now has as names the register in which a field occurs
  - accelerated binary checks (cygwin / Windows)
  - remove internet proxy mangling in order to use system configuration (e.g., transparent proxies used, or environment variable https_proxy specified by user)
  - refactored internal caching
- - correct dbGetFieldsIntoDf() for specific nested data structures
- - correct dfTrials2Long() for specific fields
- - correct dbFindIdsUniqueTrials() when only single trial in any register
+ - correct `dbGetFieldsIntoDf()` for specific nested data structures
+ - correct `dfTrials2Long()` for specific fields
+ - correct `dbFindIdsUniqueTrials()` when only single trial in any register
  - modify field typing to decode HTML entities
- - type some fields as difftime, e.g. min_age in CTGOV
- - speed up parts of dbGetFieldsIntoDf() and simplify more fields
- - dbFindFields() returns names of all leaf and node fields
+ - type some fields as difftime, e.g. `min_age` in CTGOV
+ - speed up parts of `dbGetFieldsIntoDf()` and simplify more fields
+ - `dbFindFields()` returns names of all leaf and node fields
  - improve and update documentation
  - changed EU Member State to default to DE for dbFindIdsUniqueTrials()
- - corrected installCygwinWindowsDoInstall() to properly update an installation (remove --prune-install)
- - test all binaries after installCygwinWindowsDoInstall() and only cache successful binary testing
- - correct typing required_header.download_date
- - improve numbering in dfTrials2Long, covering nested items
+ - corrected `installCygwinWindowsDoInstall()` to properly update an installation (remove --prune-install)
+ - test all binaries after `installCygwinWindowsDoInstall()` and only cache successful binary testing
+ - correct typing `required_header.download_date`
+ - improve numbering in `dfTrials2Long()`, covering nested items
 
 # ctrdata 1.8.0.9001 (2021-12-11)
  - thorough documentation improvement
- - simplified dbFindFields
+ - simplified `dbFindFields()`
  - cleaned up testing binaries
  - cleaned up helper scripts
- - removed ctrGetQueryUrlFromBrowser(), long deprecated
+ - removed `ctrGetQueryUrlFromBrowser()`, long deprecated
  
 # ctrdata 1.8.0.9000 (2021-11-22)
  - uses nodbi 0.6.0

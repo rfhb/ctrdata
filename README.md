@@ -18,9 +18,8 @@ aggregating and analysing this information; it can be used for the
 
 - EU Clinical Trials Register (“EUCTR”,
   <https://www.clinicaltrialsregister.eu/>)
-- ClinicalTrials.gov (“CTGOV”, current🔔
-  <https://www.clinicaltrials.gov/> and classic
-  <https://classic.clinicaltrials.gov/>)
+- ClinicalTrials.gov (“CTGOV” or 🔔“CTGOV2”, see
+  [example](#workflow-ctgov-example))
 - ISRCTN (<https://www.isrctn.com/>)
 - EU Clinical Trials Information System (“CTIS”,
   <https://euclinicaltrials.eu/>) 🔔 see
@@ -31,7 +30,8 @@ conduct of trials, their availability for patients and to facilitate
 using their detailed results for research and meta-analyses. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2023-08-09 for version 1.14.0.9000.
+package. This README was reviewed on 2023-08-10 for version 1.14.0.9000
+for [CTGOV changes](#workflow-ctgov-example).
 
 ## Main features
 
@@ -358,12 +358,34 @@ with(
 #   Temporarily Halted           1    1
 ```
 
+<div id="workflow-ctgov-example">
+
+</div>
+
 - Add records from another register (CTGOV) into the same collection
 
 🔔Both the current and classic CTGOV website are supported as of
-2023-08-05 when using the full URL. When a queryterm such as in the next
-example is used, `ctrdata` guesses which CTGOV interface to use, based
-on the parameters in the query.
+2023-08-05. The new website and API introduced in July 2023
+(<https://www.clinicaltrials.gov/>) is identified in `ctrdata` as
+`CTGOV2`. The website and API which is now called “classic”
+(<https://classic.clinicaltrials.gov/>) is identified in `ctrdata` as
+`CTGOV`, and this is backwards-compatible with queries that were
+previously retrieved with `ctrdata`.
+
+Both use the same trial identifier (e.g., NCT01234567) for same trial.
+As a consequence, queries for the same trial retrieved using `CTGOV` or
+`CTGOV2` overwrite any previous record for that trial, whether from
+`CTGOV` or `CTGOV2`. Thus, only a single version (the last retrieved)
+will be in the collection in the user’s database.
+
+Important differences exist between field names and contents of
+information retrieved using `CTGOV` or `CTGOV2`; see the [XML schemas
+for `CTGOV`](https://prsinfo.clinicaltrials.gov/prs-xml-schemas.html)
+and the [REST API for
+`CTGOV2`](https://clinicaltrials.gov/data-about-studies/learn-about-api).
+For more details, call `help("ctrdata-registers")`. This is one of the
+reasons why `ctrdata` handles the situation as if there were 2
+registers.
 
 - Search used in this example:
   <https://www.clinicaltrials.gov/search?cond=Neuroblastoma&aggFilters=ages:child,results:with,studyType:int>

@@ -2819,6 +2819,10 @@ ctrLoadQueryIntoDbCtgov2 <- function(
 
   # - some parameters have been removed in ctrGetQueryUrl
   # - aggFilters can remain
+  # TODO
+  # - distance=50 seems to be added in webinterface
+  #   even though not requested by user, removing it
+  queryterm <- sub("([&]?)distance=50(&|$)", "&", queryterm)
   queryterm <- sub("([&]?)distance=(.+?)(&|$)", "\\1filter.geo=distance(\\2)\\3",
                    queryterm)
   # - parameters in only lowercase, prefix with query.
@@ -2832,6 +2836,8 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     "(lastUpdPost=)([0-9-]+)_",
     "query.term=AREA[LastUpdatePostDate]RANGE[\\2,MAX]",
     queryterm)
+  # - other changes
+  queryterm <- sub("&&+", "&", queryterm)
 
   ## process query -----------------------------------------------------
 
