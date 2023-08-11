@@ -942,7 +942,7 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
 
       ## return values for lapply
       if (inherits(tmp, "try-error") || tmp == 0L || tmp != nrow(annoDf)) {
-        
+
         # step into line by line mode
         # idFailed <- c(idFailed, annoDf[ , "_id", drop = TRUE])
         # warning(tempFiles[tempFile], ": imported ", tmp, call. = FALSE)
@@ -955,14 +955,14 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
           id <- sub(".*\"_id\":[ ]*\"(.*?)\".*", "\\1", tmpOneLine)
           cat(tmpOneLine, file = fLineOut)
           tmp <- suppressWarnings(suppressMessages(nodbi::docdb_create(
-            src = dbc, key = dbc$collection, value = fLineOut)))
+            src = con, key = con$collection, value = fLineOut)))
           nImported <- nImported + tmp
           if (tmp) idSuccess <- c(idSuccess, id)
           if (!tmp) idFailed <- c(idFailed, id)
           if (!tmp) warning("Failed to load: ", id, call. = FALSE)
-          idAnnotation <- c(idAnnotation, annoDf[
-            annoDf[["_id"]] == id, "annotation", drop = TRUE])
-        }  
+          if (tmp) idAnnotation <- c(idAnnotation, annoDf[
+            annoDf[["_id"]] == id, "annotation", drop = TRUE][1])
+        }
         close(fdLines)
 
       } else {
