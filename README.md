@@ -173,7 +173,7 @@ overview](https://rfhb.github.io/ctrdata/reference/index.html).
 Package `ctrdata` retrieves trial information and stores it in a
 database collection, which has to be given as a connection object to
 parameter `con` for several `ctrdata` functions; this connection object
-is created in slightly different ways for the three supported database
+is created in slightly different ways for the four supported database
 backends that can be used with `ctrdata` as shown in the table. For a
 speed comparison, see the [nodbi
 documentation](https://github.com/ropensci/nodbi#benchmark).

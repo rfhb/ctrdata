@@ -175,7 +175,7 @@ The download or presence of results is not recorded in `dbQueryHistory()` becaus
 
 ## Add information from another register
 
-The same collection can be used to store (and analyse) trial information from different registers. At the moment, `ctrdata` supports three registers: https://ClinicalTrials.Gov/, https://ClinicalTrialsRegister.EU/,  https://www.ISRCTN.com/ and https://euclinicaltrials.eu/. Example:
+The same collection can be used to store (and analyse) trial information from different registers. Example:
 
 ```{r}
 ctrLoadQueryIntoDb(
@@ -257,9 +257,6 @@ ctrLoadQueryIntoDb(
 ## Add information using trial identifiers
 
 When identifiers of clinical trials of interest are already known, this example shows how they can be processed to import the trial information into a database collection. This involves constructing a query that combines the identifiers and then iterating over the sets of identifiers. Note to combine identifiers using "+OR+" into the `queryterm`, and that `register` has to be specified. 
-
-
-
 
 ```{r}
 # ids of trials of interest

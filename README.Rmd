@@ -120,7 +120,7 @@ Function name | Function purpose
 
 ## Databases that can be used with `ctrdata`
 
-Package `ctrdata` retrieves trial information and stores it in a database collection, which has to be given as a connection object to parameter `con` for several `ctrdata` functions; this connection object is created in slightly different ways for the three supported database backends that can be used with `ctrdata` as shown in the table. For a speed comparison, see the [nodbi documentation](https://github.com/ropensci/nodbi#benchmark). 
+Package `ctrdata` retrieves trial information and stores it in a database collection, which has to be given as a connection object to parameter `con` for several `ctrdata` functions; this connection object is created in slightly different ways for the four supported database backends that can be used with `ctrdata` as shown in the table. For a speed comparison, see the [nodbi documentation](https://github.com/ropensci/nodbi#benchmark). 
 
 Besides ctrdata functions below, any such a connection object can equally be used with functions of other packages, such as `nodbi` (last row in table) or, in case of MongoDB as database backend, `mongolite` (see vignettes).
 
