@@ -932,17 +932,39 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
 
       ## import
       tmp <- try({
-        suppressMessages(
-          nodbi::docdb_create(
-            src = con,
-            key = con$collection,
-            value = tempFiles[tempFile]
-          ))}, silent = TRUE)
+        suppressWarnings(
+          suppressMessages(
+            nodbi::docdb_create(
+              src = con,
+              key = con$collection,
+              value = tempFiles[tempFile]
+            )))}, silent = TRUE)
 
       ## return values for lapply
       if (inherits(tmp, "try-error") || tmp == 0L || tmp != nrow(annoDf)) {
-        idFailed <- c(idFailed, annoDf[ , "_id", drop = TRUE])
-        warning(tempFiles[tempFile], ": ", tmp, call. = FALSE)
+        
+        # step into line by line mode
+        # idFailed <- c(idFailed, annoDf[ , "_id", drop = TRUE])
+        # warning(tempFiles[tempFile], ": imported ", tmp, call. = FALSE)
+        fdLines <- file(tempFiles[tempFile], open = "rt", blocking = TRUE)
+        fLineOut <- tempfile(pattern = "tmpOneLine", tmpdir = dir, fileext = ".ndjson")
+        fTmp <- NULL
+        while (TRUE) {
+          tmpOneLine <- readLines(con = fdLines, n = 1L, warn = FALSE)
+          if (length(tmpOneLine) == 0L || !nchar(tmpOneLine)) break
+          id <- sub(".*\"_id\":[ ]*\"(.*?)\".*", "\\1", tmpOneLine)
+          cat(tmpOneLine, file = fLineOut)
+          tmp <- suppressWarnings(suppressMessages(nodbi::docdb_create(
+            src = dbc, key = dbc$collection, value = fLineOut)))
+          nImported <- nImported + tmp
+          if (tmp) idSuccess <- c(idSuccess, id)
+          if (!tmp) idFailed <- c(idFailed, id)
+          if (!tmp) warning("Failed to load: ", id, call. = FALSE)
+          idAnnotation <- c(idAnnotation, annoDf[
+            annoDf[["_id"]] == id, "annotation", drop = TRUE])
+        }  
+        close(fdLines)
+
       } else {
         nImported <- nImported + tmp
         idSuccess <- c(idSuccess, annoDf[ , "_id", drop = TRUE])
