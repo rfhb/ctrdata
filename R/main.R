@@ -2220,7 +2220,7 @@ ctrLoadQueryIntoDbCtis <- function(
     "https://euclinicaltrials.eu/ct-public-api-services/services/ct/public/%s/cm/list", # corrective measures
     "https://euclinicaltrials.eu/ct-public-api-services/services/ct/public/%s/inspections/list",
     #
-    # %s is an application id
+    # trial information - %s is an application id
     "https://euclinicaltrials.eu/ct-public-api-services/services/ct/%s/publicEvaluation",
     #
     # download files - %s is document url
@@ -2834,48 +2834,125 @@ ctrLoadQueryIntoDbCtgov2 <- function(
 
   # append if to update
   queryterm <- paste0(queryterm, "&", queryupdateterm)
-  queryterm <- sub("&$", "", queryterm)
+  queryterm <- gsub("&$", "", queryterm)
+  queryterm <- gsub("%20", " ", queryterm) # for URLencode
 
   # translation to ClinicalTrials.gov REST API 2.0.0-draft
   # https://clinicaltrials.gov/data-about-studies/learn-about-api
 
-  # - some parameters have been removed in ctrGetQueryUrl
-  # - aggFilters can remain
-  # TODO
-  # - distance=50 seems to be added in webinterface
-  #   even though not requested by user, removing it
+  # distance=50 seems to be added in webinterface
+  # even though not requested by user, removing it
   queryterm <- sub("([&]?)distance=50(&|$)", "&", queryterm)
-  queryterm <- sub("([&]?)distance=(.+?)(&|$)", "\\1filter.geo=distance(\\2)\\3",
-                   queryterm)
-  # - parameters in only lowercase, prefix with query.
-  queryterm <- stringi::stri_replace_all_regex(
-    str = queryterm,
-    pattern = "(^|&)([a-z]+)=",
-    replacement = "$1query.$2="
+
+  # slice by "&"
+  queryterm <- sort(strsplit(queryterm, split = "&")[[1]][-1])
+
+  # url to api
+  apiParams <- list(
+    # -------------
+    "filter.geo" = list(
+      "extract" = "distance=(.+?)(&|$)",
+      "replace" = "filter.geo=distance(\\1)",
+      "collapse" = "",
+      "out" = character()
+      ),
+    # -------------
+    "filter.advanced" = list(
+      "extract" = list(
+        "primComp=([0-9-]+)_?([0-9-]*)(&.+|$)",
+        "studyComp=([0-9-]+)_?([0-9-]*)(&.+|$)",
+        "lastUpdPost=([0-9-]+)_?([0-9-]*)(&.+|$)",
+        "firstPost==([0-9-]+)_?([0-9-]*)(&.+|$)",
+        "start==([0-9-]+)_?([0-9-]*)(&.+|$)",
+        "ageRange=([0-9a-z]+)_?([0-9a-z]*)(&.+|$)"
+      ),
+      "replace" = list(
+        "AREA[PrimaryCompletionDate]RANGE[\\1,\\2]",
+        "AREA[CompletionDate]RANGE[\\1,\\2]",
+        "AREA[LastUpdatePostDate]RANGE[\\1,\\2]",
+        "AREA[StudyFirstPostDate]RANGE[\\1,\\2]",
+        "AREA[StartDate]RANGE[\\1,\\2]",
+        "AREA[MinimumAge]RANGE[\\1, MAX] AND AREA[MaximumAge]RANGE[MIN, \\2]"
+      ),
+      "collapse" = " AND ",
+      "out" = character()
+    ),
+    # -------------
+    "query.locn" = list(
+      "extract" = list(
+        "locn=(.+)(&|$)",
+        "locStr=(.+)(&.+|$)"
+      ),
+      "replace" = list(
+        "LocationFacility:\\1",
+        "LocationCity:\\1"
+      ),
+      "collapse" = ",",
+      "out" = character()
+    ),
+    # -------------
+    list(
+      "extract" = "(aggFilters=.+)(&|$)",
+      "replace" = "&\\1",
+      "collapse" = "",
+      "out" = character()
+    ),
+    # -------------
+    # other "query." terms
+    list(
+      "extract" = "^(condition|term|intr|title|outc|sponsor|lead|id)=(.+)(&|$)",
+      "replace" = "&query.\\1=\\2",
+      "collapse" = "",
+      "out" = character()
+    )
   )
-  # - last update
-  queryterm <- sub(
-    "(lastUpdPost=)([0-9-]+)_",
-    "query.term=AREA[LastUpdatePostDate]RANGE[\\2,MAX]",
-    queryterm)
-  # - other changes
+
+  # iterate over API terms
+  for (t in seq_along(queryterm)) { # t = 11
+    for (a in seq_along(apiParams)) { # a = 3
+      for (i in seq_along(apiParams[[a]][["extract"]])) { # i = 1
+        if (grepl(apiParams[[a]][["extract"]][[i]], queryterm[t])) {
+          item <-
+            sub(apiParams[[a]][["extract"]][[i]],
+                apiParams[[a]][["replace"]][[i]],
+                queryterm[t]
+            )
+            apiParams[[a]][["out"]] <-
+              paste0(
+                c(apiParams[[a]][["out"]], item),
+                collapse = apiParams[[a]][["collapse"]]
+              )
+        } # if extract
+      } # extract item
+    } # apiParams
+  } # queryterm
+
+  # concatenate
+  queryterm <- sapply(apiParams, "[[", "out")
+  queryterm <- queryterm[seq_along(queryterm)[sapply(queryterm, length) > 0L]]
+  for (i in seq_along(queryterm)) { # i = 4
+    nm <- names(queryterm)[i]
+    if (nchar(nm)) queryterm[i] <- paste0(nm, "=", queryterm[i])
+  }
+  queryterm <- paste0(queryterm, collapse = "&")
+
+  # clean up
   queryterm <- sub("&&+", "&", queryterm)
 
   ## process query -----------------------------------------------------
 
-  message("* Checking trials using CTGOV API 2.0.0.-test...", appendLF = FALSE)
-
   # corresponds to count
   url <- sprintf(ctgovEndpoints[1], queryterm)
   if (verbose) message("API call: ", url)
+  message("* Checking trials using CTGOV API 2.0.0.-test...", appendLF = FALSE)
   url <- utils::URLencode(url)
   counts <- httr::GET(url)
 
   # early exit
   if (httr::status_code(counts) != 200L) {
     warning("Could not be retrieved, check 'queryterm' and / or 'register'. ",
-            "\nAPI call: ", url, "\nAPI returned: ", httr::content(counts),
-            call. = FALSE)
+            "\nAPI returned: ", httr::content(counts), call. = FALSE)
+    message("API call: ", url)
     return(emptyReturn)
   }
 
