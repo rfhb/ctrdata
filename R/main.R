@@ -2954,7 +2954,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     seek(fTrialJsonCon, where = file.size(fTrialJson) - 40L)
     pageNextTokenTest <- readChar(fTrialJsonCon, 1000L)
     close(fTrialJsonCon)
-    pageNextToken <- sub('.*"nextPageToken":"([a-zA-Z0-9]+)".*', "\\1", pageNextTokenTest)
+    pageNextToken <- sub('.*"nextPageToken":"(.+?)".*', "\\1", pageNextTokenTest)
     if (pageNextToken == pageNextTokenTest) break
 
   }
