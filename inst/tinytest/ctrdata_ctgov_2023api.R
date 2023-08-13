@@ -73,8 +73,8 @@ expect_true(length(tmpFields) > 140L)
 
 #### dbGetFieldsIntoDf ####
 
-tmpData <- dbGetFieldsIntoDf(fields = tmpFields, con = dbc)
+tmpData <- suppressMessages(dbGetFieldsIntoDf(fields = tmpFields, con = dbc))
 expect_true(object.size(tmpData) > 100000000L)
 
-tmpData <- dbGetFieldsIntoDf(fields = tmpFields[grepl("date$",tmpFields)], con = dbc)
+tmpData <- suppressMessages(dbGetFieldsIntoDf(fields = tmpFields[grepl("date$",tmpFields)], con = dbc))
 expect_true(all(sapply(tmpData[, -1, drop = FALSE], class, USE.NAMES = FALSE) == "Date"))
