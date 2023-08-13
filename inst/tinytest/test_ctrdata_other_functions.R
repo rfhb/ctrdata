@@ -242,8 +242,6 @@ expect_message(
     url = "https://classic.clinicaltrials.gov/ct2/show/record/NCT04372602?cond=COVID-19"),
   "but also had search")
 
-## TODO
-
 # test
 expect_message(
   ctrGetQueryUrl(

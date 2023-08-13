@@ -541,6 +541,7 @@ ctrRerunQuery <- function(
               "\nLast run: ", initialday)
     } # end ctgov
 
+    # ctgov2 -------------------------------------------------------------------
     if (register == "CTGOV2") {
 
       # ctgov:
@@ -2845,18 +2846,20 @@ ctrLoadQueryIntoDbCtgov2 <- function(
   queryterm <- sub("([&]?)distance=50(&|$)", "&", queryterm)
 
   # slice by "&"
-  queryterm <- sort(strsplit(queryterm, split = "&")[[1]][-1])
+  queryterm <- sort(strsplit(queryterm, split = "&")[[1]])
+  queryterm <- queryterm[!grepl("^https://", queryterm)]
+  queryterm <- queryterm[queryterm != ""]
 
   # url to api
   apiParams <- list(
-    # -------------
+    #
     "filter.geo" = list(
       "extract" = "distance=(.+?)(&|$)",
       "replace" = "filter.geo=distance(\\1)",
       "collapse" = "",
       "out" = character()
       ),
-    # -------------
+    #
     "filter.advanced" = list(
       "extract" = list(
         "primComp=([0-9-]+)_?([0-9-]*)(&.+|$)",
@@ -2877,7 +2880,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
       "collapse" = " AND ",
       "out" = character()
     ),
-    # -------------
+    #
     "query.locn" = list(
       "extract" = list(
         "locn=(.+)(&|$)",
@@ -2890,17 +2893,17 @@ ctrLoadQueryIntoDbCtgov2 <- function(
       "collapse" = ",",
       "out" = character()
     ),
-    # -------------
+    #
     list(
       "extract" = "(aggFilters=.+)(&|$)",
       "replace" = "&\\1",
       "collapse" = "",
       "out" = character()
     ),
-    # -------------
+    #
     # other "query." terms
     list(
-      "extract" = "^(condition|term|intr|title|outc|sponsor|lead|id)=(.+)(&|$)",
+      "extract" = "(cond|term|intr|title|outc|sponsor|lead|id)=(.+)(&|$)",
       "replace" = "&query.\\1=\\2",
       "collapse" = "",
       "out" = character()
@@ -2908,9 +2911,9 @@ ctrLoadQueryIntoDbCtgov2 <- function(
   )
 
   # iterate over API terms
-  for (t in seq_along(queryterm)) { # t = 11
-    for (a in seq_along(apiParams)) { # a = 3
-      for (i in seq_along(apiParams[[a]][["extract"]])) { # i = 1
+  for (t in seq_along(queryterm)) {
+    for (a in seq_along(apiParams)) {
+      for (i in seq_along(apiParams[[a]][["extract"]])) {
         if (grepl(apiParams[[a]][["extract"]][[i]], queryterm[t])) {
           item <-
             sub(apiParams[[a]][["extract"]][[i]],
@@ -2923,7 +2926,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
                 collapse = apiParams[[a]][["collapse"]]
               )
         } # if extract
-      } # extract item
+      } # extract
     } # apiParams
   } # queryterm
 
@@ -2936,8 +2939,10 @@ ctrLoadQueryIntoDbCtgov2 <- function(
   }
   queryterm <- paste0(queryterm, collapse = "&")
 
-  # clean up
-  queryterm <- sub("&&+", "&", queryterm)
+  # adjust remaining quirks
+  queryterm <- gsub("&&+", "&", queryterm)
+  queryterm <- gsub("RANGE\\[,", "RANGE[MIN,", queryterm)
+  queryterm <- stringi::stri_replace_all_regex(queryterm, "(RANGE\\[.+?),\\]", "$1,MAX]")
 
   ## process query -----------------------------------------------------
 
