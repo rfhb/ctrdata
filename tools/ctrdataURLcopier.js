@@ -1,7 +1,7 @@
 // ==UserScript==
 //
 // @name         ctrdataURLcopier
-// @version      0.3
+// @version      0.4
 // @description  Copies to the clipboard the link to a user's search in trial registers (CTIS, EUCTR, CTGOV, ISRCTN) for use with R package ctrdata
 // @author       ralf.herold@mailbox.org
 //
@@ -10,15 +10,15 @@
 // @downloadURL  https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js
 // @supportURL   https://github.com/rfhb/ctrdata/issues
 //
-// @match        https://clinicaltrials.gov/ct2/results?*
-// @match        https://clinicaltrials.gov/ct2/show/*
-// @match        https://beta.clinicaltrials.gov/search?*
-// @match        https://www.clinicaltrialsregister.eu/ctr-search/search?*
-// @match        https://www.clinicaltrialsregister.eu/ctr-search/trial/*
+// @match        https://classic.clinicaltrials.gov/ct2/results?*
+// @match        https://classic.clinicaltrials.gov/ct2/show/*
+// @match        https://www.clinicaltrials.gov/search?*
+// @match        https://www.clinicaltrials.gov/study/*
+// @match        https://clinicaltrials.gov/search?*
+// @match        https://clinicaltrials.gov/study/*
 // @match        https://www.isrctn.com/search?*
 // @match        https://www.isrctn.com/ISRCTN*?q=*
-// @match        https://euclinicaltrials.eu/search*
-// @match        https://euclinicaltrials.eu/app*
+// @match        https://euclinicaltrials.eu/app/*
 //
 // @grant        unsafeWindow
 // @grant        GM_setClipboard
