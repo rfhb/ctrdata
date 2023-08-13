@@ -50,7 +50,7 @@ ctrGetQueryUrl(
 ctrGetQueryUrl("https://www.clinicaltrialsregister.eu/ctr-search/trial/2007-000371-42/results")
 ctrGetQueryUrl("https://classic.clinicaltrials.gov/ct2/show/NCT01492673?cond=neuroblastoma")
 ctrGetQueryUrl(url = "https://clinicaltrials.gov/ct2/show/NCT01492673?cond=neuroblastoma")
-ctrGetQueryUrl("https://www.clinicaltrials.gov/study/NCT01467986?cond=neuroblastoma&aggFilters=ages:child")
+ctrGetQueryUrl("https://www.clinicaltrials.gov/study/NCT01467986?aggFilters=ages:child")
 ctrGetQueryUrl("https://www.isrctn.com/ISRCTN70039829")
 
 }
