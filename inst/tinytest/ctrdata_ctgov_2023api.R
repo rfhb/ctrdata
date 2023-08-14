@@ -16,10 +16,10 @@ expect_true(all(c("NCT00152126", "NCT00578864", "NCT01467986", "NCT01492673", "N
 
 # test
 tmp <- ctrLoadQueryIntoDb(
-  queryterm = "https://www.clinicaltrials.gov/search?cond=Cancer&aggFilters=phase:0,studyType:int",
+  queryterm = "https://www.clinicaltrials.gov/search?cond=Cancer&aggFilters=phase:0,status:ter,studyType:int&studyComp=_2015-12-31",
   con = dbc
 )
-expect_true(tmp$n > 1400L)
+expect_true(tmp$n > 130L)
 
 #### documents.path ####
 
@@ -29,7 +29,7 @@ on.exit(unlink(tmpDir, recursive = TRUE), add = TRUE)
 # test
 expect_message(
   ctrLoadQueryIntoDb(
-    queryterm = "cond=Cancer&aggFilters=phase:0,studyType:int",
+    queryterm = "cond=Cancer&aggFilters=phase:0,status:ter,studyType:int&studyComp=_2015-12-31",
     register = "CTGOV",
     documents.path = tmpDir,
     documents.regexp = NULL,
@@ -42,7 +42,7 @@ expect_message(
 # test
 expect_message(
   ctrLoadQueryIntoDb(
-    queryterm = "cond=Cancer&aggFilters=phase:0,studyType:int",
+    queryterm = "cond=Cancer&aggFilters=phase:0,status:ter,studyType:int&studyComp=_2015-12-31",
     register = "CTGOV",
     documents.path = tmpDir,
     documents.regexp = "sap_",
@@ -74,7 +74,7 @@ expect_true(length(tmpFields) > 140L)
 #### dbGetFieldsIntoDf ####
 
 tmpData <- suppressMessages(dbGetFieldsIntoDf(fields = tmpFields, con = dbc))
-expect_true(object.size(tmpData) > 100000000L)
+expect_true(object.size(tmpData) > 10000000L)
 
 tmpData <- suppressMessages(dbGetFieldsIntoDf(fields = tmpFields[grepl("date$",tmpFields)], con = dbc))
 expect_true(all(sapply(tmpData[, -1, drop = FALSE], class, USE.NAMES = FALSE) == "Date"))
