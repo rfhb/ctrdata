@@ -1287,7 +1287,7 @@ ctrLoadQueryIntoDbCtgov <- function(
 
   ## save any documents
   if (!is.null(documents.path)) {
-
+    
     # check and create directory
     createdDir <- try(
       dir.create(documents.path, recursive = TRUE, showWarnings = FALSE),
@@ -1296,14 +1296,14 @@ ctrLoadQueryIntoDbCtgov <- function(
       warning("Directory could not be created for 'documents.path' ",
               documents.path, ", cannot download files", call. = FALSE)
     } else {
-
+      
       # continue after if
       message("Downloading documents into 'documents.path' = ", documents.path)
-
+      
       # canonical directory path
       documents.path <- normalizePath(documents.path, mustWork = TRUE)
       if (createdDir) message("- Created directory ", documents.path)
-
+      
       # get documents urls, file names
       fDocsOut <- file.path(tempDir, "ctgov_docs.ndjson")
       unlink(fDocsOut)
@@ -1311,28 +1311,28 @@ ctrLoadQueryIntoDbCtgov <- function(
         cat(jqr::jq(
           file(f),
           ' { _id: ._id, docs: [ .provided_document_section.provided_document[].document_url ] } ',
-        flags = jqr::jq_flags(pretty = FALSE)
-        ), sep = "\n",
+          flags = jqr::jq_flags(pretty = FALSE)
+        ), 
+        sep = "\n",
         file = fDocsOut,
-        append = TRUE
-        )
+        append = TRUE)
       }
-
+      
       # create directory per trial
       dlFiles <- jsonlite::stream_in(file(fDocsOut), verbose = FALSE)
       invisible(sapply(
         dlFiles[["_id"]], function(i) {
           d <- file.path(documents.path, i)
           if (!dir.exists(d))
-          dir.create(d, showWarnings = FALSE, recursive = TRUE)
-      }))
+            dir.create(d, showWarnings = FALSE, recursive = TRUE)
+        }))
       
       if (!nrow(dlFiles)) {
         
         message("No documents for downloading identified.")
         
       } else {
-
+        
         # create data frame with file info
         dlFiles <- apply(dlFiles, 1, function(r) {
           data.frame(url = unlist(r[-1], use.names = TRUE), r[1],
@@ -1403,7 +1403,7 @@ ctrLoadQueryIntoDbCtgov <- function(
     } # if documents.path available
     
   } # if documents.path
-
+  
   # return
   return(imported)
 }
