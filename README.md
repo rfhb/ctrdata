@@ -10,6 +10,14 @@ badge](https://rfhb.r-universe.dev/badges/ctrdata)](https://rfhb.r-universe.dev/
 [![R-CMD-CHECK-win-macos-duckdb-mongodb-sqlite](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-win-macos.yaml/badge.svg)](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-win-macos.yaml)
 <!-- badges: end -->
 
+[Main features](#main-set) • [Installation](#installation) •
+[Overview](#overview-of-functions-in-ctrdata) •
+[Databases](#databases-that-can-be-used-with-ctrdata) • [Example
+workflow](#example-workflow) • [Analysis across
+trials](#workflow-cross-trial-example) • [Tests](#tests) •
+[Acknowledgements](#acknowledgements) •
+[Future](#additional-features-under-consideration)
+
 # ctrdata for aggregating and analysing clinical trials
 
 The package `ctrdata` provides functions for retrieving (downloading)
@@ -30,7 +38,7 @@ conduct of trials, their availability for patients and to facilitate
 using their detailed results for research and meta-analyses. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2023-08-10 for version 1.14.0.9000
+package. This README was reviewed on 2023-08-20 for version 1.14.0.9000
 for [CTGOV changes](#workflow-ctgov-example).
 
 ## Main features
@@ -281,23 +289,24 @@ ctrLoadQueryIntoDb(
   con = db
 )
 # * Found search query from EUCTR: query=cancer&age=under-18&phase=phase-one&status=completed
-# Checking helper binaries: . . . done
+# Checking helper binaries: . . . . . done
 # * Checking trials in EUCTR...
-# Retrieved overview, multiple records of 91 trial(s) from 5 page(s) to be downloaded (estimate: 4.5 MB)
+# Retrieved overview, multiple records of 92 trial(s) from 5 page(s) to be downloaded (estimate: 4.6 MB)
 # (1/3) Downloading trials...
-# Note: register server cannot compress data, transfer takes longer, about 0.5s per trial
-# Download status: 5 done; 0 in progress. Total size: 7.17 Mb (100%)... done!             
-# (2/3) Converting to JSON, 347 records converted
+# Note: register server cannot compress data, transfer takes longer, about 0.2s per trial
+# Download status: 5 done; 0 in progress. Total size: 7.33 Mb (100%)... done!             
+# (2/3) Converting to JSON, 353 records converted
 # (3/3) Importing JSON records into database...
-# = Imported or updated 347 records on 91 trial(s) 
-# * Checking results if available from EUCTR for 91 trials: 
+# = Imported or updated 353 records on 92 trial(s) 
+# * Checking results if available from EUCTR for 92 trials: 
 # (1/4) Downloading and extracting results (. = data, F = file[s] and data, x = none):
-# Download status: 91 done; 0 in progress. Total size: 57.24 Mb (100%)... done!             
-# F . F F . F . F . . . . F F . . . . . . F . . . . . . . . . . . . . . . . . . . . .
-# . . . . . . . . F . . . . F . . F . . . . . . F . . . . F . , 73 records converted
+# Download status: 92 done; 0 in progress. Total size: 57.94 Mb (100%)... done!             
+# F . F F . F . F . . . . F F . . . . . . F . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+# . . F . . . . F . . F . . . . . . F . . . . F . , 74 records converted
 # (3/4) Importing JSON into database...
 # (4/4) Results history: not retrieved (euctrresultshistory = FALSE)
-# = Imported or updated results for 73 trials
+# = Imported or updated results for 74 trials
+# No history found in expected format.
 # Updated history ("meta-info" in "some_collection_name")
 ```
 
@@ -328,11 +337,11 @@ result <- dbGetFieldsIntoDf(
 # one record, for example for several EU Member States or in several registers:
 uniqueids <- dbFindIdsUniqueTrials(con = db)
 # Searching for duplicate trials... 
-#  - Getting all trial identifiers (may take some time), 347 found in collection
+#  - Getting all trial identifiers (may take some time), 353 found in collection
 #  - Finding duplicates among registers' and sponsor ids...
-#  - 256 EUCTR _id were not preferred EU Member State record for 91 trials
-#  - Keeping 91 records from EUCTR
-# = Returning keys (_id) of 91 records in collection "some_collection_name"
+#  - 261 EUCTR _id were not preferred EU Member State record for 92 trials
+#  - Keeping 92 / 0 / 0 / 0 / 0 records from EUCTR / CTGOV / CTGOV2 / ISRCTN / CTIS
+# = Returning keys (_id) of 92 records in collection "some_collection_name"
 
 # Keep only unique / de-duplicated records:
 result <- subset(
@@ -352,7 +361,7 @@ with(
 # p_end_of_trial_status      FALSE TRUE
 #   Completed                   46   20
 #   GB - no longer in EU/EEA     1    1
-#   Ongoing                      2    1
+#   Ongoing                      3    1
 #   Prematurely Ended            3    2
 #   Restarted                    0    1
 #   Temporarily Halted           1    1
@@ -372,11 +381,11 @@ with(
 `CTGOV`, and this is backwards-compatible with queries that were
 previously retrieved with `ctrdata`.
 
-Both use the same trial identifier (e.g., NCT01234567) for same trial.
-As a consequence, queries for the same trial retrieved using `CTGOV` or
-`CTGOV2` overwrite any previous record for that trial, whether from
-`CTGOV` or `CTGOV2`. Thus, only a single version (the last retrieved)
-will be in the collection in the user’s database.
+Both use the same trial identifier (e.g., NCT01234567) for the same
+trial. As a consequence, queries for the same trial retrieved using
+`CTGOV` or `CTGOV2` overwrite any previous record for that trial,
+whether loaded from `CTGOV` or `CTGOV2`. Thus, only a single version
+(the last retrieved) will be in the collection in the user’s database.
 
 Important differences exist between field names and contents of
 information retrieved using `CTGOV` or `CTGOV2`; see the [XML schemas
@@ -384,8 +393,8 @@ for `CTGOV`](https://prsinfo.clinicaltrials.gov/prs-xml-schemas.html)
 and the [REST API for
 `CTGOV2`](https://clinicaltrials.gov/data-about-studies/learn-about-api).
 For more details, call `help("ctrdata-registers")`. This is one of the
-reasons why `ctrdata` handles the situation as if there were 2
-registers.
+reasons why `ctrdata` handles the situation as if these were two
+different registers.
 
 - Search used in this example:
   <https://www.clinicaltrials.gov/search?cond=Neuroblastoma&aggFilters=ages:child,results:with,studyType:int>
@@ -405,8 +414,7 @@ ctrLoadQueryIntoDb(
 # (2/2) Importing JSON records into database...
 # JSON file #: 1 / 1                               
 # = Imported / updated 88 records on 88 trial(s)
-# No history found in expected format.
-# Updated history ("meta-info" in "some_collection_name") 
+# Updated history ("meta-info" in "some_collection_name")
 ```
 
 - Using an example from classic CTGOV:
@@ -420,7 +428,7 @@ ctrLoadQueryIntoDb(
 )
 # Appears specific for CTGOV CLASSIC API
 # * Found search query from CTGOV: cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug
-# Checking helper binaries: . . . done
+# Checking helper binaries: done
 # * Checking trials in CTGOV classic...
 # Retrieved overview, records of 55 trial(s) are to be downloaded (estimate: 0.44 MB)
 # (1/3) Downloading trial file...
@@ -428,7 +436,7 @@ ctrLoadQueryIntoDb(
 # (2/3) Converting to JSON, 55 records converted
 # (3/3) Importing JSON records into database...
 # = Imported or updated 55 trial(s)                
-# Updated history ("meta-info" in "some_collection_name")-
+# Updated history ("meta-info" in "some_collection_name")
 ```
 
 - Add records from a third register (ISRCTN) into the same collection
@@ -443,7 +451,7 @@ ctrLoadQueryIntoDb(
   con = db
 )
 # * Found search query from ISRCTN: q=neuroblastoma
-# Checking helper binaries: . . . done
+# Checking helper binaries: done
 # * Checking trials in ISRCTN...
 # Retrieved overview, records of 9 trial(s) are to be downloaded (estimate: 0.16 MB)
 # (1/3) Downloading trial file... 
@@ -474,24 +482,24 @@ ctrLoadQueryIntoDb(
 )
 # * Found search query from CTIS: ageGroupCode=2
 # * Checking trials in EUCTR...
-# (1/5) Downloading trials list, found 29 trials
-# (2/5) Downloading and processing part I and parts II... (estimate: 4.35 Mb)
-# Download status: 29 done; 0 in progress. Total size: 4.27 Mb (100%)... done!             
-# . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-# (3/5) Downloading and processing additional data: 
+# (1/5) Downloading trials list, found 32 trials
+# (2/5) Downloading and processing part I and parts II... (estimate: 4.8 Mb)
+# Download status: 32 done; 0 in progress. Total size: 4.94 Mb (100%)... done!
+# . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+# (3/5) Downloading and processing additional data:
 # publicevents, summary, layperson, csr, cm, inspections, publicevaluation
-# Download status: 42 done; 0 in progress. Total size: 1.66 Mb (100%)... done!             
-# 29
+# Download status: 46 done; 0 in progress. Total size: 1.84 Mb (100%)... done!             
+# 32
 # (4/5) Importing JSON records into database...
 # (5/5) Updating with additional data: . .         
-# = Imported / updated 29 / 29 / 29 records on 29 trial(s)
+# = Imported / updated 32 / 32 / 32 records on 32 trial(s)
 # Updated history ("meta-info" in "some_collection_name")
 
 allFields <- dbFindFields(".*", db)
 # Finding fields in database collection (may take some time)
 # Field names cached for this session.
 length(allFields[grepl("CTIS", names(allFields))])
-# [1] 1789
+# [1] 1886
 
 allFields[grepl("defer|consideration$", allFields, ignore.case = TRUE)]
 #                                                                                            CTIS 
@@ -541,32 +549,48 @@ sort(names(allData))
 # [37] "trialStartDate"  
 # 
 format(object.size(allData), "MB")
-# [1] "22.9 Mb"
+# [1] "25.5 Mb"
 ```
 
-- Analyse across trials
+<div id="workflow-cross-trial-example">
 
-Show umulative start of trials over time.
+</div>
+
+- Analysis across trials
+
+Show cumulative start of trials over time.
 
 ``` r
+# use helper library
+library(dplyr)
+library(magrittr)
+library(tibble)
+
 # get names of all fields / variables in the collaction
 length(dbFindFields(".*", con = db))
-# [1] 2878
+# [1] 3014
 
-dbFindFields("startdate", con = db)
+dbFindFields("(start.*date)|(date.*decision)", con = db)
 # Using cache of fields.
 
-# get trial data
+# - Get trial data
 result <- dbGetFieldsIntoDf(
   fields = c(
+    "ctrname",
+    "record_last_import",
     # CTGOV
     "start_date",
     "overall_status",
+    # CTGOV2
+    "protocolSection.statusModule.startDateStruct.date",
+    "protocolSection.statusModule.overallStatus",
     # EUCTR
-    "trialInformation.recruitmentStartDate", # see above: euctrresults = TRUE
-    "x5_trial_status", 
+    "n_date_of_competent_authority_decision",
+    "trialInformation.recruitmentStartDate", # needs above: 'euctrresults = TRUE'
+    "p_end_of_trial_status", 
     # ISRCTN
     "trialDesign.overallStartDate",
+    "trialDesign.overallEndDate",
     # CTIS
     "authorizedPartI.trialDetails.trialInformation.trialDuration.estimatedRecruitmentStartDate",
     "ctStatus"
@@ -574,41 +598,42 @@ result <- dbGetFieldsIntoDf(
   con = db
 )
 
-# Deduplicate trials and obtain unique identifiers 
-# for trials that have records in several registers:
-uniqueids <- dbFindIdsUniqueTrials(con = db)
-result <- subset(result, `_id` %in% uniqueids)
-
-# Merge variables / fields from different registers
-result$start <- dfMergeVariablesRelevel(
-  df = result, 
-  colnames = 'contains("date")'
-)
-# Columns identified to be merged: start_date, 
-# trialInformation.recruitmentStartDate, trialDesign.overallStartDate,
-# authorizedPartI.trialDetails.trialInformation.trialDuration.estimatedRecruitmentStartDate
-
-# Merge variables / fields from different registers with releveling:
-statusvalues <- list(
+# - Deduplicate trials and obtain unique identifiers 
+#   for trials that have records in several registers
+# - Calculate trial start date
+# - Calculate simple status for ISRCTN
+result %<>% 
+  filter(`_id` %in% dbFindIdsUniqueTrials(con = db)) %>% 
+  rowwise() %>% 
+  mutate(start = max(c_across(matches("(date.*decision)|(start.*date)")), na.rm = TRUE)) %>% 
+  mutate(isrctnStatus = if_else(trialDesign.overallEndDate < record_last_import, "Ongoing", "Completed")) %>% 
+  ungroup()
+  
+# Merge variables / fields from different registers with re-leveling:
+statusValues <- list(
   "ongoing" = c(
     # EUCTR
     "Recruiting", "Active", "Ongoing", "Temporarily Halted", "Restarted",
     # CTGOV
     "Active, not recruiting", "Enrolling by invitation", "Not yet recruiting",
+    "ACTIVE_NOT_RECRUITING",
     # CTIS
     "Ongoing, recruiting", "Ongoing, recruitment ended", 
     "Ongoing, not yet recruiting", "Authorised, not started"
   ),
-  "completed" = c("Completed", "Prematurely Ended", "Terminated"),
+  "completed" = c("Completed", "COMPLETED"),
   "other" = c("GB - no longer in EU/EEA", "Trial now transitioned",
-              "Withdrawn", "Suspended", "No longer available")
+              "Withdrawn", "Suspended", "No longer available", 
+              "Terminated", "TERMINATED", "Prematurely Ended")
 )
-result$state <- dfMergeVariablesRelevel(
+result[["state"]] <- dfMergeVariablesRelevel(
   df = result, 
-  colnames = 'contains("status")',
-  levelslist = statusvalues
+  colnames = c(
+    "overall_status",  "p_end_of_trial_status",                            
+    "ctStatus", "isrctnStatus"
+  ),
+  levelslist = statusValues
 )
-# Columns identified to be merged: overall_status, x5_trial_status, ctStatus
 
 # example plot
 library(ggplot2)

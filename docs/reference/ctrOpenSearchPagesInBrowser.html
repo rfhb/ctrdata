@@ -59,7 +59,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ctrOpenSearchPagesInBrowser</span><span class="op">(</span>url <span class="op">=</span> <span class="st">""</span>, register <span class="op">=</span> <span class="st">""</span>, copyright <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ctrOpenSearchPagesInBrowser</span><span class="op">(</span>url <span class="op">=</span> <span class="st">""</span>, register <span class="op">=</span> <span class="st">""</span>, copyright <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -67,29 +67,31 @@
     <dl><dt>url</dt>
 <dd><p>of search results page to show in the browser. To open the
 browser with a previous search, the output of <a href="ctrGetQueryUrl.html">ctrGetQueryUrl</a>
-or <a href="dbQueryHistory.html">dbQueryHistory</a> can be used. Can be left empty
-to open the advanced search page of the <code>register</code>.</p></dd>
+or <a href="dbQueryHistory.html">dbQueryHistory</a> can be used. Can be left as empty string
+(default) to open the advanced search page of <code>register</code>.</p></dd>
 
 
 <dt>register</dt>
-<dd><p>Register(s) to open, "EUCTR", "CTGOV", "ISRCTN" or "CTIS".
-Default is to open the advanced search page of the register.</p></dd>
+<dd><p>Register(s) to open, "EUCTR", "CTGOV", "CTGOV2",
+"ISRCTN" or "CTIS". Default is empty string, and this open the
+advanced search page of the register(s).</p></dd>
 
 
 <dt>copyright</dt>
-<dd><p>(Optional) If set to <code>TRUE</code>, opens copyright pages of
-register(s).</p></dd>
-
-
-<dt>...</dt>
-<dd><p>May include the deprecated <code>input</code> parameter.</p></dd>
+<dd><p>(Optional) If set to <code>TRUE</code>, opens only the
+copyright pages of all registers.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>Always <code>TRUE</code>, invisibly.</p>
+<p>(String) Full URL corresponding to the shortened <code>url</code></p>
+
+
+<p>in conjunction with <code>register</code> if any, or invisibly</p>
+<p></p>
+<p><code>TRUE</code> if no <code>url</code> is specified.</p>
     </div>
 
     <div class="section level2">
@@ -99,14 +101,11 @@ register(s).</p></dd>
 <span class="r-in"><span><span class="fu">ctrOpenSearchPagesInBrowser</span><span class="op">(</span>copyright <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Open specific register advanced search page</span></span></span>
-<span class="r-in"><span><span class="fu">ctrOpenSearchPagesInBrowser</span><span class="op">(</span>register <span class="op">=</span> <span class="st">"EUCTR"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "https://www.clinicaltrialsregister.eu/ctr-search/search"</span>
 <span class="r-in"><span><span class="fu">ctrOpenSearchPagesInBrowser</span><span class="op">(</span>register <span class="op">=</span> <span class="st">"CTGOV"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "https://www.clinicaltrials.gov/#main-content"</span>
-<span class="r-in"><span><span class="fu">ctrOpenSearchPagesInBrowser</span><span class="op">(</span>register <span class="op">=</span> <span class="st">"ISRCTN"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "https://www.isrctn.com/editAdvancedSearch"</span>
+<span class="r-in"><span><span class="fu">ctrOpenSearchPagesInBrowser</span><span class="op">(</span>register <span class="op">=</span> <span class="st">"CTGOV2"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">ctrOpenSearchPagesInBrowser</span><span class="op">(</span>register <span class="op">=</span> <span class="st">"CTIS"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "https://euclinicaltrials.eu/app/#/search"</span>
+<span class="r-in"><span><span class="fu">ctrOpenSearchPagesInBrowser</span><span class="op">(</span>register <span class="op">=</span> <span class="st">"EUCTR"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">ctrOpenSearchPagesInBrowser</span><span class="op">(</span>register <span class="op">=</span> <span class="st">"ISRCTN"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">ctrOpenSearchPagesInBrowser</span><span class="op">(</span>url <span class="op">=</span> <span class="st">"status=Ended"</span>, register <span class="op">=</span> <span class="st">"CTIS"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from CTIS: status=Ended</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "https://euclinicaltrials.eu/app/#/search?status=Ended"</span>
@@ -122,7 +121,6 @@ register(s).</p></dd>
 <span class="r-in"><span><span class="kw">for</span> <span class="op">(</span><span class="va">r</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dbh</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>  <span class="fu">ctrOpenSearchPagesInBrowser</span><span class="op">(</span><span class="va">dbh</span><span class="op">[</span><span class="va">r</span>, <span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Appears compatible with CTGOV CLASSIC API</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
