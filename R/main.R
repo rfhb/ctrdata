@@ -1287,7 +1287,7 @@ ctrLoadQueryIntoDbCtgov <- function(
 
   ## save any documents
   if (!is.null(documents.path)) {
-    
+
     # check and create directory
     createdDir <- try(
       dir.create(documents.path, recursive = TRUE, showWarnings = FALSE),
@@ -1296,14 +1296,14 @@ ctrLoadQueryIntoDbCtgov <- function(
       warning("Directory could not be created for 'documents.path' ",
               documents.path, ", cannot download files", call. = FALSE)
     } else {
-      
+
       # continue after if
       message("Downloading documents into 'documents.path' = ", documents.path)
-      
+
       # canonical directory path
       documents.path <- normalizePath(documents.path, mustWork = TRUE)
       if (createdDir) message("- Created directory ", documents.path)
-      
+
       # get documents urls, file names
       fDocsOut <- file.path(tempDir, "ctgov_docs.ndjson")
       unlink(fDocsOut)
@@ -1312,12 +1312,12 @@ ctrLoadQueryIntoDbCtgov <- function(
           file(f),
           ' { _id: ._id, docs: [ .provided_document_section.provided_document[].document_url ] } ',
           flags = jqr::jq_flags(pretty = FALSE)
-        ), 
+        ),
         sep = "\n",
         file = fDocsOut,
         append = TRUE)
       }
-      
+
       # create directory per trial
       dlFiles <- jsonlite::stream_in(file(fDocsOut), verbose = FALSE)
       invisible(sapply(
@@ -1326,13 +1326,13 @@ ctrLoadQueryIntoDbCtgov <- function(
           if (!dir.exists(d))
             dir.create(d, showWarnings = FALSE, recursive = TRUE)
         }))
-      
+
       if (!nrow(dlFiles)) {
-        
+
         message("No documents for downloading identified.")
-        
+
       } else {
-        
+
         # create data frame with file info
         dlFiles <- apply(dlFiles, 1, function(r) {
           data.frame(url = unlist(r[-1], use.names = TRUE), r[1],
@@ -1344,11 +1344,11 @@ ctrLoadQueryIntoDbCtgov <- function(
           documents.path, dlFiles$`_id`, dlFiles$filename)
         dlFiles$exists <- file.exists(dlFiles$destfile) &
           file.size(dlFiles$destfile) > 10L
-        
+
         if (is.null(documents.regexp)) {
-          
+
           message("Creating empty document placeholders (max. ", nrow(dlFiles), ")")
-          
+
           # create empty files
           tmp <-
             sapply(
@@ -1356,36 +1356,36 @@ ctrLoadQueryIntoDbCtgov <- function(
               function(i) if (!file.exists(i))
                 file.create(i, showWarnings = TRUE),
               USE.NAMES = FALSE)
-          
+
           tmp <- sum(unlist(tmp), na.rm = TRUE)
-          
+
         } else {
-          
+
           message("Applying 'documents.regexp' to ",
                   nrow(dlFiles), " documents")
           dlFiles <- dlFiles[
             grepl(documents.regexp, dlFiles$filename, ignore.case = TRUE), ,
             drop = FALSE]
-          
+
           # download and save
           message("Downloading ", nrow(dlFiles), " documents:")
-          
+
           tmp <- ctrMultiDownload(dlFiles$url[!dlFiles$exists],
                                   dlFiles$destfile[!dlFiles$exists])
-          
+
           if (!nrow(tmp)) tmp <- 0L else {
-            
+
             # handle failures despite success is true
             invisible(sapply(
               tmp[tmp$status_code != 200L, "destfile", drop = TRUE], unlink
             ))
-            
+
             tmp <- nrow(tmp[tmp$status_code == 200L, , drop = FALSE])
-            
+
           }
-          
+
         } # if documents.regexp
-        
+
         message(sprintf(paste0(
           "Newly saved %i ",
           ifelse(is.null(documents.regexp), "placeholder ", ""),
@@ -1397,13 +1397,13 @@ ctrLoadQueryIntoDbCtgov <- function(
           length(unique(dlFiles$`_id`[dlFiles$fileexists])),
           documents.path
         ))
-        
+
       } # if !nrow
-      
+
     } # if documents.path available
-    
+
   } # if documents.path
-  
+
   # return
   return(imported)
 }
@@ -1556,9 +1556,9 @@ ctrLoadQueryIntoDbEuctr <- function(
               documents.path, ", ignored", call. = FALSE)
       documents.path <- tempDir
     }
+    # canonical directory path
+    documents.path <- normalizePath(documents.path, mustWork = TRUE)
   }
-  # canonical directory path
-  documents.path <- normalizePath(documents.path, mustWork = TRUE)
 
   ## download all text files from pages
 

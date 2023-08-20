@@ -48,8 +48,10 @@ ctrGetQueryUrl(
   "&prcd_s=&prcd_e=&sfpd_s=&sfpd_e=&rfpd_s=&rfpd_e=&lupd_s=&lupd_e=&sort="))
 
 ctrGetQueryUrl("https://www.clinicaltrialsregister.eu/ctr-search/trial/2007-000371-42/results")
+ctrGetQueryUrl("https://euclinicaltrials.eu/app/#/view/2022-500041-24-00")
+ctrGetQueryUrl("https://euclinicaltrials.eu/app/#/search?sponsorTypeCode=1")
 ctrGetQueryUrl("https://classic.clinicaltrials.gov/ct2/show/NCT01492673?cond=neuroblastoma")
-ctrGetQueryUrl(url = "https://clinicaltrials.gov/ct2/show/NCT01492673?cond=neuroblastoma")
+ctrGetQueryUrl("https://clinicaltrials.gov/ct2/show/NCT01492673?cond=neuroblastoma")
 ctrGetQueryUrl("https://www.clinicaltrials.gov/study/NCT01467986?aggFilters=ages:child")
 ctrGetQueryUrl("https://www.isrctn.com/ISRCTN70039829")
 

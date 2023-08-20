@@ -1,6 +1,7 @@
-# ctrdata 1.14.0.9000 (2023-08-06)
+# ctrdata 1.15.0 (2023-08-27)
  - added CTGOV REST API 2.0.0.-test as new register with identifier `CTGOV2`
  - handle CTGOV classic interface as register `CTGOV` 
+ - improved `ctrdataURLcopier.js` to only rewrite searches and views from `CTIS`
  - mangle CTIS: change `partIIInfo` object into array, adding a new `partIIIinfoKey` so that `'{"partIIInfo": "<int>": {...}, "<int>": {...}}'` becomes `'{"partIIInfo": [{"partIIIinfoKey": <int>, ...}, {"partIIIinfoKey": <int>, ...}]}')`
  - correct dbGetFieldsIntoDf() for specific lists
 

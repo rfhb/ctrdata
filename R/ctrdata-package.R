@@ -48,4 +48,4 @@
 #' @keywords package
 #' @md
 #'
-NULL
+"_PACKAGE"

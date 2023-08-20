@@ -63,7 +63,7 @@
     
     <a class="navbar-brand me-2" href="index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.14.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.15.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -106,7 +106,7 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9">
-<p><a href="#main-set">Main features</a> • <a href="#installation">Installation</a> • <a href="#overview-of-functions-in-ctrdata">Overview</a> • <a href="#databases-that-can-be-used-with-ctrdata">Databases</a> • <a href="#example-workflow">Example workflow</a> • <a href="#workflow-cross-trial-example">Analysis across trials</a> • <a href="#tests">Tests</a> • <a href="#acknowledgements">Acknowledgements</a> • <a href="#additional-features-under-consideration">Future</a></p>
+<p><a href="#main-set">Main features</a> • <a href="#installation">Installation</a> • <a href="#overview-of-functions-in-ctrdata">Overview</a> • <a href="#databases-that-can-be-used-with-ctrdata">Databases</a> • <a href="#example-workflow">Example workflow</a> • <a href="#workflow-cross-trial-example">Analysis across trials</a> • <a href="#tests">Tests</a> • <a href="#acknowledgements">Acknowledgements</a> • <a href="#future-features">Future</a></p>
 <div class="section level1">
 <div class="page-header"><h1 id="ctrdata-for-aggregating-and-analysing-clinical-trials">ctrdata for aggregating and analysing clinical trials<a class="anchor" aria-label="anchor" href="#ctrdata-for-aggregating-and-analysing-clinical-trials"></a>
 </h1></div>
@@ -118,7 +118,7 @@
 <li>EU Clinical Trials Information System (“CTIS”, <a href="https://euclinicaltrials.eu/" class="external-link uri">https://euclinicaltrials.eu/</a>) 🔔 see <a href="#workflow-ctis-example">example</a>
 </li>
 </ul>
-<p>The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-08-20 for version 1.14.0.9000 for <a href="#workflow-ctgov-example">CTGOV changes</a>.</p>
+<p>The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-08-27 for version 1.15.0 for <a href="#workflow-ctgov-example">CTGOV changes</a>.</p>
 <div class="section level2">
 <h2 id="main-features">Main features<a class="anchor" aria-label="anchor" href="#main-features"></a>
 </h2>
@@ -449,7 +449,7 @@ citation("ctrdata")
 <span>  register <span class="op">=</span> <span class="st">"CTGOV2"</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># Appears specific for CTGOV REST API 2.0.0</span></span>
+<span><span class="co"># * Appears specific for CTGOV REST API 2.0.0</span></span>
 <span><span class="co"># * Found search query from CTGOV2: cond=Neuroblastoma&amp;aggFilters=ages:child,results:with,studyType:int</span></span>
 <span><span class="co"># * Checking trials using CTGOV API 2.0.0.-test, found 88 trials</span></span>
 <span><span class="co"># (1/2) Downloading and converting in 1 batch(es) (max. 1000 trials each; estimate: 8.8 MB total)</span></span>
@@ -468,7 +468,7 @@ citation("ctrdata")
 <span>  queryterm <span class="op">=</span> <span class="st">"https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&amp;rslt=With&amp;recrs=e&amp;age=0&amp;intr=Drug"</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># Appears specific for CTGOV CLASSIC API</span></span>
+<span><span class="co"># * Appears specific for CTGOV CLASSIC</span></span>
 <span><span class="co"># * Found search query from CTGOV: cond=neuroblastoma&amp;rslt=With&amp;recrs=e&amp;age=0&amp;intr=Drug</span></span>
 <span><span class="co"># Checking helper binaries: done</span></span>
 <span><span class="co"># * Checking trials in CTGOV classic...</span></span>
@@ -845,11 +845,14 @@ Neuroblastoma trials
 <span><span class="co"># All ok, 376 results (17m 25.3s)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="additional-features-under-consideration">Additional features under consideration<a class="anchor" aria-label="anchor" href="#additional-features-under-consideration"></a>
+<h2 id="future-features">Future features<a class="anchor" aria-label="anchor" href="#future-features"></a>
 </h2>
 <ul>
-<li><p>Retrieve previous versions of protocol- or results-related information. The challenge is that, apparently, initial versions cannot be queried and historical versions can only be retrieved one-by-one and not in structured format.</p></li>
-<li><p>Merge results-related fields retrieved from different registers (e.g., corresponding endpoints). The challenge is the incomplete congruency and different structure of fields.</p></li>
+<li><p>Canonical definitions, filters, calculations are in the works (since August 2023) for data mangling and analyses across registers, e.g. to define study population, identify interventional trials, calculate study duration; public collaboration on these canonical scripts will speed up harmonising analyses.</p></li>
+<li><p>Authentication, expected to be required by CTGOV2; specifications not yet known (work not yet started).</p></li>
+<li><p>Explore further registers such as <a href="https://trialsearch.who.int/" class="external-link">ICTRP</a> (authentication needed), <a href="https://rctportal.niph.go.jp/" class="external-link">JPRN</a>, <a href="https://jrct.niph.go.jp/" class="external-link">jRCT</a>, <a href="https://www.umin.ac.jp/ctr/" class="external-link">UMIN-CTR</a>, <a href="https://www.chictr.org.cn/" class="external-link">ChiCTR</a> (exploration is continually ongoing; added value, terms and conditions for programmatic access vary; no clear roadmap is established yet).</p></li>
+<li><p>Retrieve previous versions of protocol- or results-related information (work not yet started). The challenge is that, apparently, initial versions cannot be queried and historical versions can only be retrieved one-by-one and not in structured format.</p></li>
+<li><p>Merge results-related fields retrieved from different registers, such as corresponding endpoints (work not yet started). The challenge is the incomplete congruency and different structure of data fields.</p></li>
 </ul>
 </div>
 <div class="section level2">
@@ -857,7 +860,7 @@ Neuroblastoma trials
 </h2>
 <ul>
 <li><p>Data providers and curators of the clinical trial registers. Please review and respect their copyrights and terms and conditions, see <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>.</p></li>
-<li><p>Package <code>ctrdata</code> has been made possible building on the work done for <a href="https://www.r-project.org/" class="external-link">R</a>, <a href="https://cran.r-project.org/package=curl" class="external-link">curl</a>, <a href="https://cran.r-project.org/package=httr" class="external-link">httr</a>, <a href="https://cran.r-project.org/package=jqr" class="external-link">jqr</a>, <a href="https://cran.r-project.org/package=xml2" class="external-link">xml2</a>, <a href="https://cran.r-project.org/package=rvest" class="external-link">rvest</a>, <a href="https://cran.r-project.org/package=dplyr" class="external-link">dplyr</a>, <a href="https://cran.r-project.org/package=stringi" class="external-link">stringi</a>, <a href="https://cran.r-project.org/package=lubridate" class="external-link">lubridate</a>, <a href="https://cran.r-project.org/package=mongolite" class="external-link">mongolite</a>, <a href="https://cran.r-project.org/package=jsonlite" class="external-link">jsonlite</a>, <a href="https://cran.r-project.org/package=nodbi" class="external-link">nodbi</a>, <a href="https://cran.r-project.org/package=RPostgres" class="external-link">RPostgres</a>, <a href="https://CRAN.R-project.org/package=RSQLite" class="external-link">RSQLite</a> and <a href="https://cran.r-project.org/package=clipr" class="external-link">clipr</a>.</p></li>
+<li><p>Package <code>ctrdata</code> has been made possible building on the work done for <a href="https://www.r-project.org/" class="external-link">R</a>, <a href="https://cran.r-project.org/package=clipr" class="external-link">clipr</a>. <a href="https://cran.r-project.org/package=curl" class="external-link">curl</a>, <a href="https://cran.r-project.org/package=dplyr" class="external-link">dplyr</a>, <a href="https://cran.r-project.org/package=duckdb" class="external-link">duckdb</a>, <a href="https://cran.r-project.org/package=httr" class="external-link">httr</a>, <a href="https://cran.r-project.org/package=jqr" class="external-link">jqr</a>, <a href="https://cran.r-project.org/package=jsonlite" class="external-link">jsonlite</a>, <a href="https://cran.r-project.org/package=lubridate" class="external-link">lubridate</a>, <a href="https://cran.r-project.org/package=mongolite" class="external-link">mongolite</a>, <a href="https://cran.r-project.org/package=nodbi" class="external-link">nodbi</a>, <a href="https://cran.r-project.org/package=RPostgres" class="external-link">RPostgres</a>, <a href="https://CRAN.R-project.org/package=RSQLite" class="external-link">RSQLite</a>, <a href="https://cran.r-project.org/package=rvest" class="external-link">rvest</a>, <a href="https://cran.r-project.org/package=stringi" class="external-link">stringi</a> and <a href="https://cran.r-project.org/package=xml2" class="external-link">xml2</a>.</p></li>
 </ul>
 <div class="section level3">
 <h3 id="issues-and-notes">Issues and notes<a class="anchor" aria-label="anchor" href="#issues-and-notes"></a>

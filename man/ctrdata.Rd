@@ -3,6 +3,7 @@
 \docType{package}
 \name{ctrdata}
 \alias{ctrdata}
+\alias{ctrdata-package}
 \title{ctrdata: get started, database connection, function overview}
 \description{
 A package for aggregating and analysing information on clinical
@@ -55,6 +56,14 @@ clinical trials' records that can be used to subset a data frame).
 \link{dfName2Value} (get values for variable(s) of interest).
 }
 
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://cran.r-project.org/package=ctrdata}
+  \item Report bugs at \url{https://github.com/rfhb/ctrdata/issues}
+}
+
+}
 \author{
 Ralf Herold \email{ralf.herold@mailbox.org}
 }

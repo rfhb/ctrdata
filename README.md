@@ -15,8 +15,7 @@ badge](https://rfhb.r-universe.dev/badges/ctrdata)](https://rfhb.r-universe.dev/
 [Databases](#databases-that-can-be-used-with-ctrdata) • [Example
 workflow](#example-workflow) • [Analysis across
 trials](#workflow-cross-trial-example) • [Tests](#tests) •
-[Acknowledgements](#acknowledgements) •
-[Future](#additional-features-under-consideration)
+[Acknowledgements](#acknowledgements) • [Future](#future-features)
 
 # ctrdata for aggregating and analysing clinical trials
 
@@ -38,8 +37,8 @@ conduct of trials, their availability for patients and to facilitate
 using their detailed results for research and meta-analyses. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2023-08-20 for version 1.14.0.9000
-for [CTGOV changes](#workflow-ctgov-example).
+package. This README was reviewed on 2023-08-27 for version 1.15.0 for
+[CTGOV changes](#workflow-ctgov-example).
 
 ## Main features
 
@@ -406,7 +405,7 @@ ctrLoadQueryIntoDb(
   register = "CTGOV2",
   con = db
 )
-# Appears specific for CTGOV REST API 2.0.0
+# * Appears specific for CTGOV REST API 2.0.0
 # * Found search query from CTGOV2: cond=Neuroblastoma&aggFilters=ages:child,results:with,studyType:int
 # * Checking trials using CTGOV API 2.0.0.-test, found 88 trials
 # (1/2) Downloading and converting in 1 batch(es) (max. 1000 trials each; estimate: 8.8 MB total)
@@ -426,7 +425,7 @@ ctrLoadQueryIntoDb(
   queryterm = "https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug",
   con = db
 )
-# Appears specific for CTGOV CLASSIC API
+# * Appears specific for CTGOV CLASSIC
 # * Found search query from CTGOV: cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug
 # Checking helper binaries: done
 # * Checking trials in CTGOV classic...
@@ -832,16 +831,34 @@ suppressMessages(tinytest::test_all())
 # All ok, 376 results (17m 25.3s)
 ```
 
-## Additional features under consideration
+## Future features
 
-- Retrieve previous versions of protocol- or results-related
-  information. The challenge is that, apparently, initial versions
-  cannot be queried and historical versions can only be retrieved
-  one-by-one and not in structured format.
+- Canonical definitions, filters, calculations are in the works (since
+  August 2023) for data mangling and analyses across registers, e.g. to
+  define study population, identify interventional trials, calculate
+  study duration; public collaboration on these canonical scripts will
+  speed up harmonising analyses.
 
-- Merge results-related fields retrieved from different registers (e.g.,
-  corresponding endpoints). The challenge is the incomplete congruency
-  and different structure of fields.
+- Authentication, expected to be required by CTGOV2; specifications not
+  yet known (work not yet started).
+
+- Explore further registers such as
+  [ICTRP](https://trialsearch.who.int/) (authentication needed),
+  [JPRN](https://rctportal.niph.go.jp/),
+  [jRCT](https://jrct.niph.go.jp/),
+  [UMIN-CTR](https://www.umin.ac.jp/ctr/),
+  [ChiCTR](https://www.chictr.org.cn/) (exploration is continually
+  ongoing; added value, terms and conditions for programmatic access
+  vary; no clear roadmap is established yet).
+
+- Retrieve previous versions of protocol- or results-related information
+  (work not yet started). The challenge is that, apparently, initial
+  versions cannot be queried and historical versions can only be
+  retrieved one-by-one and not in structured format.
+
+- Merge results-related fields retrieved from different registers, such
+  as corresponding endpoints (work not yet started). The challenge is
+  the incomplete congruency and different structure of data fields.
 
 ## Acknowledgements
 
@@ -851,20 +868,21 @@ suppressMessages(tinytest::test_all())
 
 - Package `ctrdata` has been made possible building on the work done for
   [R](https://www.r-project.org/),
+  [clipr](https://cran.r-project.org/package=clipr).
   [curl](https://cran.r-project.org/package=curl),
+  [dplyr](https://cran.r-project.org/package=dplyr),
+  [duckdb](https://cran.r-project.org/package=duckdb),
   [httr](https://cran.r-project.org/package=httr),
   [jqr](https://cran.r-project.org/package=jqr),
-  [xml2](https://cran.r-project.org/package=xml2),
-  [rvest](https://cran.r-project.org/package=rvest),
-  [dplyr](https://cran.r-project.org/package=dplyr),
-  [stringi](https://cran.r-project.org/package=stringi),
+  [jsonlite](https://cran.r-project.org/package=jsonlite),
   [lubridate](https://cran.r-project.org/package=lubridate),
   [mongolite](https://cran.r-project.org/package=mongolite),
-  [jsonlite](https://cran.r-project.org/package=jsonlite),
   [nodbi](https://cran.r-project.org/package=nodbi),
   [RPostgres](https://cran.r-project.org/package=RPostgres),
-  [RSQLite](https://CRAN.R-project.org/package=RSQLite) and
-  [clipr](https://cran.r-project.org/package=clipr).
+  [RSQLite](https://CRAN.R-project.org/package=RSQLite),
+  [rvest](https://cran.r-project.org/package=rvest),
+  [stringi](https://cran.r-project.org/package=stringi) and
+  [xml2](https://cran.r-project.org/package=xml2).
 
 ### Issues and notes
 

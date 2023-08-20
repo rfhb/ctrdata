@@ -40,9 +40,11 @@ if (window.location.href.indexOf("euclinicaltrials") == -1) {
 
     let origOpen = unsafeWindow.XMLHttpRequest.prototype.open;
 
-    unsafeWindow.XMLHttpRequest.prototype.open = function(method, url) {
+    unsafeWindow.XMLHttpRequest.prototype.open = function (method, url) {
 
         var queryUrl = url;
+        console.log(queryUrl);
+
         queryUrl = queryUrl.replace(/&?paging=[-,0-9]+/, '');
         queryUrl = queryUrl.replace(/&?sorting=[-a-zA-Z]+/, '');
         queryUrl = queryUrl.replace(/&?isEeaOnly=false/, '');
@@ -52,13 +54,25 @@ if (window.location.href.indexOf("euclinicaltrials") == -1) {
         queryUrl = queryUrl.replace(
             'https://euclinicaltrials.eu/ct-public-api-services/services/ct/publiclookup',
             'https://euclinicaltrials.eu/app/#/search');
-        GM_setClipboard(queryUrl);
-        console.log(queryUrl);
+        queryUrl = queryUrl.replace(
+            /https:\/\/euclinicaltrials.eu\/ct-public-api-services\/services\/ct\/([-0-9]+)\/publicview/,
+            'https://euclinicaltrials.eu/app/#/view/$1');
 
-        queryUrl = queryUrl.replace('https://euclinicaltrials.eu', '');
-        console.log(queryUrl);
-        window.history.pushState({}, "", queryUrl);
+        console.log('[ctrdataURLcopier] Mangled query: ', queryUrl);
+
+        if (queryUrl.match('app/#/(search|view)')) {
+
+            GM_setClipboard(queryUrl);
+            console.log('[ctrdataURLcopier] Copied to clipboard: ', queryUrl);
+
+            queryUrl = queryUrl.replace('https://euclinicaltrials.eu', '');
+            console.log('[ctrdataURLcopier] Window history updated with: ', queryUrl);
+            window.history.pushState({}, "", queryUrl);
+
+        };
 
         return origOpen.apply(this, arguments);
     };
+
 }
+
