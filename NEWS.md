@@ -1,3 +1,6 @@
+# ctrdata 1.15.0.9000 (2023-08-27)
+ - new development version
+ 
 # ctrdata 1.15.0 (2023-08-27)
  - added CTGOV REST API 2.0.0.-test as new register with identifier `CTGOV2`
  - handle CTGOV classic interface as register `CTGOV` 
