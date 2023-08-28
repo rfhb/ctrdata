@@ -2191,7 +2191,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
 #' @importFrom utils read.table URLencode
 #' @importFrom nodbi docdb_update
 #' @importFrom jsonlite stream_in fromJSON
-#' @importFrom stringi stri_extract_all_regex stri_trans_general
+#' @importFrom stringi stri_extract_all_regex
 #'
 ctrLoadQueryIntoDbCtis <- function(
     queryterm = queryterm,
@@ -2754,9 +2754,7 @@ ctrLoadQueryIntoDbCtis <- function(
       dlFiles$filename <- paste0(
         dlFiles$part, "_",
         # mangle html entities and special characters
-        stringi::stri_trans_general(
-          str = gsub("&[a-z]+;|[/\\#%&{}$?!'\":<>|=@+.;]", "-_-",  dlFiles$title),
-          id = "latin; ascii;"),
+        gsub("[^[:alnum:] ._-]", "",  dlFiles$title),
         ".", dlFiles$fileTypeLabel)
 
       # add destination file directory path
