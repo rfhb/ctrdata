@@ -1,7 +1,7 @@
 #' ctrdata: information on clinical trial registers
 #'
 #' Registers of clinical trials that can be accessed with
-#' package \link{ctrdata} as of July 2023.
+#' package \link{ctrdata} as of August 2023.
 #'
 #' - **EUCTR**: The European Union Clinical Trials Register contains
 #' more than 43,000 clinical trials (using one or more medicines as
@@ -9,13 +9,12 @@
 #' - **CTGOV** and **CTGOV2**: ClinicalTrials.gov includes more than 460,000
 #' interventional and observational studies (both the current and
 #' the classic website are supported)
-#' - **ISRCTN**: The ISRCTN Registry includes almost 23,000
+#' - **ISRCTN**: The ISRCTN Registry includes almost 24,000
 #' interventional or observational health studies
 #' - **CTIS**: The EU Clinical Trials Information System was
-#' started in January 2023, including around 200 publicly
-#' accessible trials in July 2023. How to specify
-#' a query and get its URL:
-#' \ifelse{latex}{\out{\href{https://github.com/rfhb/ctrdata\#3-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://github.com/rfhb/ctrdata#3-script-to-automatically-copy-users-query-from-web-browser}{here}}
+#' started in January 2023, including more than 300 publicly
+#' accessible trials end August 2023. How to automatically
+#' get a query URL: \ifelse{latex}{\out{\href{https://github.com/rfhb/ctrdata\#3-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://github.com/rfhb/ctrdata#3-script-to-automatically-copy-users-query-from-web-browser}{here}}
 #'
 #'
 #' | **Material** | **EUCTR** | **CTGOV** | **CTGOV2**| **ISRCTN** | **CTIS** |
@@ -28,7 +27,7 @@
 #' | Glossary | \href{https://www.clinicaltrialsregister.eu/doc/EU_Clinical_Trials_Register_Glossary.pdf}{link} | \href{https://classic.clinicaltrials.gov/ct2/about-studies/glossary}{link} | \href{https://www.clinicaltrials.gov/study-basics/glossary}{link} | \href{https://www.who.int/clinical-trials-registry-platform/network/who-data-set}{link} | |
 #' | FAQ | \href{https://www.clinicaltrialsregister.eu/doc/EU_CTR_FAQ.pdf}{link} | \href{https://www.clinicaltrials.gov/about-site/selected-publications}{link} | \href{https://www.clinicaltrials.gov/about-site/about-ctg}{link} | \href{https://www.isrctn.com/page/faqs}{link} | |
 #' | Expert / advanced search | \href{https://www.clinicaltrialsregister.eu/ctr-search/search}{link} | \href{https://classic.clinicaltrials.gov/ct2/results/refine?show_xprt=Y}{link} | | \href{https://www.isrctn.com/editAdvancedSearch}{link} | \ifelse{latex}{\out{\href{https://euclinicaltrials.eu/app/\#/search}{link}}}{\href{https://euclinicaltrials.eu/app/#/search}{link}} |
-#' | Example* | \ifelse{latex}{\out{\href{https://www.clinicaltrialsregister.eu/ctr-search/search?query=Infections\&age=newborn\&age=preterm-new-born-infants}{link}}}{\href{https://www.clinicaltrialsregister.eu/ctr-search/search?query=Infections&age=newborn&age=preterm-new-born-infants}{link}} | \ifelse{latex}{\out{\href{https://classic.clinicaltrials.gov/ct2/results/refine?term=AREA[MaximumAge]+RANGE[0+days,1+months]\&type=Intr\&cond=Infections\&intr=Investigational+Agent\&show_xprt=Y}{link}}}{\href{https://classic.clinicaltrials.gov/ct2/results/refine?term=AREA%5BMaximumAge%5D+RANGE%5B0+days,1+months%5D&type=Intr&cond=Infections&intr=Investigational+Agent&show_xprt=Y}{link}} | \href{https://www.clinicaltrials.gov/search?ageRange=0M_1M&cond=Infections&aggFilters=studyType:int&distance=50&intr=Investigational%20Agent}{link} | \ifelse{latex}{\out{\href{https://www.isrctn.com/search?q=\&filters=ageRange:Neonate,conditionCategory:Infections+and+Infestations\&searchType=advanced-search}{link}}}{\href{https://www.isrctn.com/search?q=&filters=ageRange:Neonate,conditionCategory:Infections+and+Infestations&searchType=advanced-search}{link}} | |
+#' | Example* | \ifelse{latex}{\out{\href{https://www.clinicaltrialsregister.eu/ctr-search/search?query=Infections\&age=newborn\&age=preterm-new-born-infants}{link}}}{\href{https://www.clinicaltrialsregister.eu/ctr-search/search?query=Infections&age=newborn&age=preterm-new-born-infants}{link}} | \ifelse{latex}{\out{\href{https://classic.clinicaltrials.gov/ct2/results/refine?term=AREA[MaximumAge]+RANGE[0+days,1+months]\&type=Intr\&cond=Infections\&intr=Investigational+Agent\&show_xprt=Y}{link}}}{\href{https://classic.clinicaltrials.gov/ct2/results/refine?term=AREA%5BMaximumAge%5D+RANGE%5B0+days,1+months%5D&type=Intr&cond=Infections&intr=Investigational+Agent&show_xprt=Y}{link}} | \ifelse{latex}{\out{\href{https://www.clinicaltrials.gov/search?ageRange=0M_1M\&cond=Infections\&aggFilters=studyType:int\&distance=50\&intr=Investigational+Agent}{link}}}{\href{https://www.clinicaltrials.gov/search?ageRange=0M_1M&cond=Infections&aggFilters=studyType:int&distance=50&intr=Investigational+Agent}{link}} | \ifelse{latex}{\out{\href{https://www.isrctn.com/search?q=\&filters=ageRange:Neonate,conditionCategory:Infections+and+Infestations\&searchType=advanced-search}{link}}}{\href{https://www.isrctn.com/search?q=&filters=ageRange:Neonate,conditionCategory:Infections+and+Infestations&searchType=advanced-search}{link}} | \ifelse{latex}{\out{\href{https://euclinicaltrials.eu/app/\#/search?basicSearchInputAND=infections\&ageGroupCode=2}{link}}}{\href{https://euclinicaltrials.eu/app/#/search?basicSearchInputAND=infections&ageGroupCode=2}{link}} |
 #' | Definitions | \href{https://eudract.ema.europa.eu/result.html}{link} | \href{https://prsinfo.clinicaltrials.gov/prs-xml-schemas.html}{link} | \href{https://www.clinicaltrials.gov/data-about-studies/study-data-structure}{link} | \href{https://www.isrctn.com/page/definitions}{link} | \href{https://www.ema.europa.eu/en/human-regulatory/research-development/clinical-trials/clinical-trials-information-system-training-support}{link} |
 #'
 #' *The example is an expert search that retrieves interventional

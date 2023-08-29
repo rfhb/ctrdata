@@ -1,7 +1,7 @@
 Package: ctrdata
 Type: Package
 Title: Retrieve and Analyze Clinical Trials in Public Registers
-Version: 1.15.0.9000
+Version: 1.15.1
 Imports: jsonlite, httr, curl (>= 5.0), clipr, xml2, nodbi (>= 0.9.3), 
          stringi, tibble, lubridate, jqr, dplyr
 SystemRequirements: sed, php, cat, perl
@@ -12,7 +12,8 @@ Description: A system for querying, retrieving and analyzing
         four public registers, the 'European Union Clinical Trials Register'
         ('EUCTR', <https://www.clinicaltrialsregister.eu/>), 
         'ClinicalTrials.gov' ('CTGOV', using the classic interface at 
-        <https://classic.clinicaltrials.gov/>), the 
+        <https://classic.clinicaltrials.gov/>, and 'CTGOV2', using the 
+        current interface at <https://www.clinicaltrials.gov/>), the 
         'ISRCTN' (<http://www.isrctn.com/>) and the
         'European Union Clinical Trials Information System'
         ('CTIS', <https://euclinicaltrials.eu/>). 

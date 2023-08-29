@@ -6,7 +6,7 @@
 \title{ctrdata: information on clinical trial registers}
 \description{
 Registers of clinical trials that can be accessed with
-package \link{ctrdata} as of July 2023.
+package \link{ctrdata} as of August 2023.
 }
 \details{
 \itemize{
@@ -16,13 +16,12 @@ investigational medicinal product, IMP; in the European Union and beyond)
 \item \strong{CTGOV} and \strong{CTGOV2}: ClinicalTrials.gov includes more than 460,000
 interventional and observational studies (both the current and
 the classic website are supported)
-\item \strong{ISRCTN}: The ISRCTN Registry includes almost 23,000
+\item \strong{ISRCTN}: The ISRCTN Registry includes almost 24,000
 interventional or observational health studies
 \item \strong{CTIS}: The EU Clinical Trials Information System was
-started in January 2023, including around 200 publicly
-accessible trials in July 2023. How to specify
-a query and get its URL:
-\ifelse{latex}{\out{\href{https://github.com/rfhb/ctrdata\#3-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://github.com/rfhb/ctrdata#3-script-to-automatically-copy-users-query-from-web-browser}{here}}
+started in January 2023, including more than 300 publicly
+accessible trials end August 2023. How to automatically
+get a query URL: \ifelse{latex}{\out{\href{https://github.com/rfhb/ctrdata\#3-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://github.com/rfhb/ctrdata#3-script-to-automatically-copy-users-query-from-web-browser}{here}}
 }\tabular{lccccc}{
    \strong{Material} \tab \strong{EUCTR} \tab \strong{CTGOV} \tab \strong{CTGOV2} \tab \strong{ISRCTN} \tab \strong{CTIS} \cr
    Home page \tab \href{https://www.clinicaltrialsregister.eu/}{link} \tab \href{https://classic.clinicaltrials.gov/}{link} \tab \href{https://www.isrctn.com/}{link} \tab \href{https://euclinicaltrials.eu/}{link} \tab  \cr
@@ -33,7 +32,7 @@ a query and get its URL:
    Glossary \tab \href{https://www.clinicaltrialsregister.eu/doc/EU_Clinical_Trials_Register_Glossary.pdf}{link} \tab \href{https://classic.clinicaltrials.gov/ct2/about-studies/glossary}{link} \tab \href{https://www.clinicaltrials.gov/study-basics/glossary}{link} \tab \href{https://www.who.int/clinical-trials-registry-platform/network/who-data-set}{link} \tab  \cr
    FAQ \tab \href{https://www.clinicaltrialsregister.eu/doc/EU_CTR_FAQ.pdf}{link} \tab \href{https://www.clinicaltrials.gov/about-site/selected-publications}{link} \tab \href{https://www.clinicaltrials.gov/about-site/about-ctg}{link} \tab \href{https://www.isrctn.com/page/faqs}{link} \tab  \cr
    Expert / advanced search \tab \href{https://www.clinicaltrialsregister.eu/ctr-search/search}{link} \tab \href{https://classic.clinicaltrials.gov/ct2/results/refine?show_xprt=Y}{link} \tab  \tab \href{https://www.isrctn.com/editAdvancedSearch}{link} \tab \ifelse{latex}{\out{\href{https://euclinicaltrials.eu/app/\#/search}{link}}}{\href{https://euclinicaltrials.eu/app/#/search}{link}} \cr
-   Example* \tab \ifelse{latex}{\out{\href{https://www.clinicaltrialsregister.eu/ctr-search/search?query=Infections\&age=newborn\&age=preterm-new-born-infants}{link}}}{\href{https://www.clinicaltrialsregister.eu/ctr-search/search?query=Infections&age=newborn&age=preterm-new-born-infants}{link}} \tab \ifelse{latex}{\out{\href{https://classic.clinicaltrials.gov/ct2/results/refine?term=AREA[MaximumAge]+RANGE[0+days,1+months]\&type=Intr\&cond=Infections\&intr=Investigational+Agent\&show_xprt=Y}{link}}}{\href{https://classic.clinicaltrials.gov/ct2/results/refine?term=AREA\%5BMaximumAge\%5D+RANGE\%5B0+days,1+months\%5D&type=Intr&cond=Infections&intr=Investigational+Agent&show_xprt=Y}{link}} \tab \href{https://www.clinicaltrials.gov/search?ageRange=0M_1M&cond=Infections&aggFilters=studyType:int&distance=50&intr=Investigational\%20Agent}{link} \tab \ifelse{latex}{\out{\href{https://www.isrctn.com/search?q=\&filters=ageRange:Neonate,conditionCategory:Infections+and+Infestations\&searchType=advanced-search}{link}}}{\href{https://www.isrctn.com/search?q=&filters=ageRange:Neonate,conditionCategory:Infections+and+Infestations&searchType=advanced-search}{link}} \tab  \cr
+   Example* \tab \ifelse{latex}{\out{\href{https://www.clinicaltrialsregister.eu/ctr-search/search?query=Infections\&age=newborn\&age=preterm-new-born-infants}{link}}}{\href{https://www.clinicaltrialsregister.eu/ctr-search/search?query=Infections&age=newborn&age=preterm-new-born-infants}{link}} \tab \ifelse{latex}{\out{\href{https://classic.clinicaltrials.gov/ct2/results/refine?term=AREA[MaximumAge]+RANGE[0+days,1+months]\&type=Intr\&cond=Infections\&intr=Investigational+Agent\&show_xprt=Y}{link}}}{\href{https://classic.clinicaltrials.gov/ct2/results/refine?term=AREA\%5BMaximumAge\%5D+RANGE\%5B0+days,1+months\%5D&type=Intr&cond=Infections&intr=Investigational+Agent&show_xprt=Y}{link}} \tab \ifelse{latex}{\out{\href{https://www.clinicaltrials.gov/search?ageRange=0M_1M\&cond=Infections\&aggFilters=studyType:int\&distance=50\&intr=Investigational+Agent}{link}}}{\href{https://www.clinicaltrials.gov/search?ageRange=0M_1M&cond=Infections&aggFilters=studyType:int&distance=50&intr=Investigational+Agent}{link}} \tab \ifelse{latex}{\out{\href{https://www.isrctn.com/search?q=\&filters=ageRange:Neonate,conditionCategory:Infections+and+Infestations\&searchType=advanced-search}{link}}}{\href{https://www.isrctn.com/search?q=&filters=ageRange:Neonate,conditionCategory:Infections+and+Infestations&searchType=advanced-search}{link}} \tab \ifelse{latex}{\out{\href{https://euclinicaltrials.eu/app/\#/search?basicSearchInputAND=infections\&ageGroupCode=2}{link}}}{\href{https://euclinicaltrials.eu/app/#/search?basicSearchInputAND=infections&ageGroupCode=2}{link}} \cr
    Definitions \tab \href{https://eudract.ema.europa.eu/result.html}{link} \tab \href{https://prsinfo.clinicaltrials.gov/prs-xml-schemas.html}{link} \tab \href{https://www.clinicaltrials.gov/data-about-studies/study-data-structure}{link} \tab \href{https://www.isrctn.com/page/definitions}{link} \tab \href{https://www.ema.europa.eu/en/human-regulatory/research-development/clinical-trials/clinical-trials-information-system-training-support}{link} \cr
 }
 

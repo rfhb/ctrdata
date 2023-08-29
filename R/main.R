@@ -720,13 +720,14 @@ ctrRerunQuery <- function(
     if (register == "CTIS") {
 
       # https://euclinicaltrials.eu/ct-public-api-services/services/ct/rss?basicSearchInputAND=cancer
-      # issue: returned data do not include trial identifiers, thus no efficient loading possible
-      # checked from: 2023-04-22
-      # checked last: 2023-06-24
+      # issues: returned data do not include trial identifiers, thus no efficient loading possible;
+      # returned data include all trials found with search, not only those updated or added in last
+      # seven days; timestamp is the same for every trial listed, corresponding to time when called.
+      # checked from: 2023-04-22 to last: 2023-08-29
 
       warning("'querytoupdate=", querytoupdate, "' not possible because no ",
-              "way to implement querying CTIS for recent changes were found ",
-              "thus far. Reverting to normal download. ",
+              "way to query CTIS for recent changes was found thus far ",
+              "(last checked 2023-08-29). Reverting to normal download. ",
               call. = FALSE, immediate. = TRUE)
 
       message("Rerunning query: ", queryterm,
@@ -1287,7 +1288,7 @@ ctrLoadQueryIntoDbCtgov <- function(
 
   ## save any documents
   if (!is.null(documents.path)) {
-    
+
     # check and create directory
     createdDir <- try(
       dir.create(documents.path, recursive = TRUE, showWarnings = FALSE),
@@ -1296,14 +1297,14 @@ ctrLoadQueryIntoDbCtgov <- function(
       warning("Directory could not be created for 'documents.path' ",
               documents.path, ", cannot download files", call. = FALSE)
     } else {
-      
+
       # continue after if
       message("Downloading documents into 'documents.path' = ", documents.path)
-      
+
       # canonical directory path
       documents.path <- normalizePath(documents.path, mustWork = TRUE)
       if (createdDir) message("- Created directory ", documents.path)
-      
+
       # get documents urls, file names
       fDocsOut <- file.path(tempDir, "ctgov_docs.ndjson")
       unlink(fDocsOut)
@@ -1312,12 +1313,12 @@ ctrLoadQueryIntoDbCtgov <- function(
           file(f),
           ' { _id: ._id, docs: [ .provided_document_section.provided_document[].document_url ] } ',
           flags = jqr::jq_flags(pretty = FALSE)
-        ), 
+        ),
         sep = "\n",
         file = fDocsOut,
         append = TRUE)
       }
-      
+
       # create directory per trial
       dlFiles <- jsonlite::stream_in(file(fDocsOut), verbose = FALSE)
       invisible(sapply(
@@ -1326,13 +1327,13 @@ ctrLoadQueryIntoDbCtgov <- function(
           if (!dir.exists(d))
             dir.create(d, showWarnings = FALSE, recursive = TRUE)
         }))
-      
+
       if (!nrow(dlFiles)) {
-        
+
         message("No documents for downloading identified.")
-        
+
       } else {
-        
+
         # create data frame with file info
         dlFiles <- apply(dlFiles, 1, function(r) {
           data.frame(url = unlist(r[-1], use.names = TRUE), r[1],
@@ -1344,11 +1345,11 @@ ctrLoadQueryIntoDbCtgov <- function(
           documents.path, dlFiles$`_id`, dlFiles$filename)
         dlFiles$exists <- file.exists(dlFiles$destfile) &
           file.size(dlFiles$destfile) > 10L
-        
+
         if (is.null(documents.regexp)) {
-          
+
           message("Creating empty document placeholders (max. ", nrow(dlFiles), ")")
-          
+
           # create empty files
           tmp <-
             sapply(
@@ -1356,36 +1357,36 @@ ctrLoadQueryIntoDbCtgov <- function(
               function(i) if (!file.exists(i))
                 file.create(i, showWarnings = TRUE),
               USE.NAMES = FALSE)
-          
+
           tmp <- sum(unlist(tmp), na.rm = TRUE)
-          
+
         } else {
-          
+
           message("Applying 'documents.regexp' to ",
                   nrow(dlFiles), " documents")
           dlFiles <- dlFiles[
             grepl(documents.regexp, dlFiles$filename, ignore.case = TRUE), ,
             drop = FALSE]
-          
+
           # download and save
           message("Downloading ", nrow(dlFiles), " documents:")
-          
+
           tmp <- ctrMultiDownload(dlFiles$url[!dlFiles$exists],
                                   dlFiles$destfile[!dlFiles$exists])
-          
+
           if (!nrow(tmp)) tmp <- 0L else {
-            
+
             # handle failures despite success is true
             invisible(sapply(
               tmp[tmp$status_code != 200L, "destfile", drop = TRUE], unlink
             ))
-            
+
             tmp <- nrow(tmp[tmp$status_code == 200L, , drop = FALSE])
-            
+
           }
-          
+
         } # if documents.regexp
-        
+
         message(sprintf(paste0(
           "Newly saved %i ",
           ifelse(is.null(documents.regexp), "placeholder ", ""),
@@ -1397,13 +1398,13 @@ ctrLoadQueryIntoDbCtgov <- function(
           length(unique(dlFiles$`_id`[dlFiles$fileexists])),
           documents.path
         ))
-        
+
       } # if !nrow
-      
+
     } # if documents.path available
-    
+
   } # if documents.path
-  
+
   # return
   return(imported)
 }
@@ -2253,31 +2254,31 @@ ctrLoadQueryIntoDbCtis <- function(
     # https://euclinicaltrials.eu/ct-public-api-services/services/document/considerationDoc/32137/list
     #
   )
-  
+
   ## add_1: overviews ---------------------------------------------------------
-  
+
   # this is for importing overview (recruitment, status etc.) into database
   message("* Checking trials in EUCTR...")
-  
+
   # "HTTP server doesn't seem to support byte ranges. Cannot resume."
   message("(1/5) Downloading trials list ", appendLF = FALSE)
-  
+
   # prepare
   i <- 0L
   di <- 200L
   idsTrials <- NULL
   fTrialsNdjson <- file.path(tempDir, "ctis_add_1.ndjson")
   unlink(fTrialsNdjson)
-  
+
   # need to iterate / paginate as total number cannot be determined
   while (TRUE) {
-    
+
     # {"totalSize":299,"pageInfo":{"offset":200,"limit":200,"pageNumber":2}
     url <- sprintf(ctisEndpoints[1], i, di, queryterm)
     url <- utils::URLencode(url)
     trialsJson <- httr::GET(url)
     message(". ", appendLF = FALSE)
-    
+
     # early exit
     if (httr::status_code(trialsJson) != 200L) {
       warning("Could not be retrieved, check 'queryterm' and / or 'register'. ",
@@ -2287,17 +2288,17 @@ ctrLoadQueryIntoDbCtis <- function(
       message("API call: ", url)
       return(emptyReturn)
     }
-    
+
     # extract json
     trialsJson <- suppressMessages(
       httr::content(trialsJson, as = "text")
     )
-    
+
     # get total size
     totalSize <- as.numeric(
       jqr::jq(trialsJson, " {name: .totalSize} | .[]")
     )
-    
+
     # extract trial information
     # and convert to ndjson
     trialsJson <- jqr::jq(
@@ -2313,7 +2314,7 @@ ctrLoadQueryIntoDbCtis <- function(
       ),
       flags = jqr::jq_flags(pretty = FALSE)
     )
-    
+
     # get ids
     idsTrialsBatch <- gsub(
       '"', "", as.character(
@@ -2321,11 +2322,11 @@ ctrLoadQueryIntoDbCtis <- function(
           trialsJson,
           ' ."_id" '
         )))
-    
+
     # check for any duplicates
     nonDuplicates <- !(idsTrialsBatch %in% idsTrials)
     idsTrials <- c(idsTrials, idsTrialsBatch[nonDuplicates])
-    
+
     # save and append to ndjson
     cat(
       trialsJson[nonDuplicates],
@@ -2333,29 +2334,29 @@ ctrLoadQueryIntoDbCtis <- function(
       file = fTrialsNdjson,
       append = TRUE
     )
-    
+
     # iterate or break
     if (totalSize < (i + di)) break
-    
+
     # update batch parameters
     i <- i + di
   }
-  
+
   # early exit
   if (!totalSize) {
     warning("No trials found, check 'queryterm' and 'register'")
     return(emptyReturn)
   }
-  
+
   # duplicates?
   if (totalSize != length(idsTrials)) {
-    warning("Overview retrieval resulted in duplicate ", 
+    warning("Overview retrieval resulted in duplicate ",
             "trial records, only first record was kept. ")
   }
-  
+
   # inform user
   message("found ", length(idsTrials), " trials")
-  
+
   # only count?
   if (only.count) {
     # return
@@ -2365,7 +2366,7 @@ ctrLoadQueryIntoDbCtis <- function(
       failed = NULL
     ))
   }
-  
+
   ## import: partI, partsII ---------------------------------------------------
 
   # this is imported as the main data into the database
@@ -2753,7 +2754,7 @@ ctrLoadQueryIntoDbCtis <- function(
       # add destination file name
       dlFiles$filename <- paste0(
         dlFiles$part, "_",
-        # mangle html entities and special characters
+        # robustly sanitise file name
         gsub("[^[:alnum:] ._-]", "",  dlFiles$title),
         ".", dlFiles$fileTypeLabel)
 

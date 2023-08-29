@@ -37,7 +37,7 @@ conduct of trials, their availability for patients and to facilitate
 using their detailed results for research and meta-analyses. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2023-08-27 for version 1.15.0 for
+package. This README was reviewed on 2023-08-29 for version 1.15.1 for
 [CTGOV changes](#workflow-ctgov-example).
 
 ## Main features

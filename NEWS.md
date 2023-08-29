@@ -1,4 +1,5 @@
-# ctrdata 1.15.0.9000 (2023-08-27)
+# ctrdata 1.15.1 (2023-08-29)
+ - correct LaTeX documentation resulting in CRAN error
  - correct parts of downloading from `CTIS`, including file name sanitisation
  
 # ctrdata 1.15.0 (2023-08-27)
