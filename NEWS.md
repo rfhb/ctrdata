@@ -1,3 +1,6 @@
+# ctrdata 1.15.1.9000 (2023-09-03)
+ - fix handling as utf8 upstream multi-language strings from CTIS
+
 # ctrdata 1.15.1 (2023-08-29)
  - correct LaTeX documentation resulting in CRAN error
  - correct parts of downloading from `CTIS`, including file name sanitisation

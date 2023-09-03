@@ -946,8 +946,6 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
       if (inherits(tmp, "try-error") || tmp == 0L || tmp != nrow(annoDf)) {
 
         # step into line by line mode
-        # idFailed <- c(idFailed, annoDf[ , "_id", drop = TRUE])
-        # warning(tempFiles[tempFile], ": imported ", tmp, call. = FALSE)
         fdLines <- file(tempFiles[tempFile], open = "rt", blocking = TRUE)
         fLineOut <- tempfile(pattern = "tmpOneLine", tmpdir = dir, fileext = ".ndjson")
         fTmp <- NULL
@@ -2299,6 +2297,10 @@ ctrLoadQueryIntoDbCtis <- function(
       jqr::jq(trialsJson, " {name: .totalSize} | .[]")
     )
 
+    # sanitise texts removing various quotation marks and ensure utf8
+    trialsJson <- gsub("['\xc2\xb4`\xe2\x80\x99\xe2\x80\x98]", "", trialsJson)
+    trialsJson <- iconv(trialsJson, from = "", to = "UTF-8", sub = "")
+
     # extract trial information
     # and convert to ndjson
     trialsJson <- jqr::jq(
@@ -2396,9 +2398,13 @@ ctrLoadQueryIntoDbCtis <- function(
     cat(
       # files include id, ctNumber and others repeatedly
       # only replace first instance for updating records
+      # sanitise texts removing various quotation marks and ensure utf8
       sub("(\"id\":[0-9]+),", importString,
       sub("(\"ctNumber\"):(\"[-0-9]+\"),", '\\1:\\2,"_id":\\2,',
-          readLines(fn, warn = FALSE)
+      iconv(
+        gsub("['\xc2\xb4`\xe2\x80\x99\xe2\x80\x98]", "",
+             readLines(fn, warn = FALSE)),
+        from = "", to = "UTF-8", sub = "")
       )),
       file = fPartIPartsIINdjson,
       append = TRUE,
@@ -2451,6 +2457,10 @@ ctrLoadQueryIntoDbCtis <- function(
 
       # get data
       jOut <- readLines(fn, warn = FALSE)
+
+      # sanitise texts removing various quotation marks and ensure utf8
+      jOut <- gsub("['\xc2\xb4`\xe2\x80\x99\xe2\x80\x98]", "", jOut)
+      jOut <- iconv(jOut, from = "", to = "UTF-8", sub = "")
 
       # remove irrelevant information
       jOut <- sub('^.*"elements":(.*?)}?$', "\\1", jOut)
@@ -2525,8 +2535,9 @@ ctrLoadQueryIntoDbCtis <- function(
     jApps <- sapply(fApps, readLines, warn = FALSE, USE.NAMES = FALSE)
     if (!length(jApps)) next
 
-    # sanitise texts
+    # sanitise texts removing various quotation marks and ensure utf8
     jApps <- gsub("['\xc2\xb4`\xe2\x80\x99\xe2\x80\x98]", "", jApps)
+    jApps <- iconv(jApps, from = "", to = "UTF-8", sub = "")
 
     # add applicationId
     jApps <- mapply(function(i, j) sub(
