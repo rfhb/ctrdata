@@ -2248,6 +2248,7 @@ ctrLoadQueryIntoDbCtis <- function(
     "https://euclinicaltrials.eu/ct-public-api-services/services/document/part2/%s/list/?documentType=42", # p2 ARs
     "https://euclinicaltrials.eu/ct-public-api-services/services/document/rfi/%s/list", # rfis
     "https://euclinicaltrials.eu/ct-public-api-services/services/document/notification/%s/list?documentType=101", # events
+    "https://euclinicaltrials.eu/ct-public-api-services/services/document/cm/%s/list", # corrective measures
     #
     # sub 3 additional info public events - %s is id, %s is type of notification
     "https://euclinicaltrials.eu/ct-public-api-services/services/ct/%s/eventdetails?notificationType=%s"
@@ -2303,10 +2304,6 @@ ctrLoadQueryIntoDbCtis <- function(
     totalSize <- as.numeric(
       jqr::jq(trialsJson, " {name: .totalSize} | .[]")
     )
-
-    # sanitise texts removing various quotation marks and ensure utf8
-    trialsJson <- gsub("['\xc2\xb4`\xe2\x80\x99\xe2\x80\x98]", "", trialsJson)
-    trialsJson <- iconv(trialsJson, from = "", to = "UTF-8", sub = "")
 
     # extract trial information
     # and convert to ndjson
@@ -2407,12 +2404,9 @@ ctrLoadQueryIntoDbCtis <- function(
       # only replace first instance for updating records
       # sanitise texts removing various quotation marks and ensure utf8
       sub("(\"id\":[0-9]+),", importString,
-      sub("(\"ctNumber\"):(\"[-0-9]+\"),", '\\1:\\2,"_id":\\2,',
-      iconv(
-        gsub("['\xc2\xb4`\xe2\x80\x99\xe2\x80\x98]", "",
-             readLines(fn, warn = FALSE)),
-        from = "", to = "UTF-8", sub = "")
-      )),
+          sub("(\"ctNumber\"):(\"[-0-9]+\"),", '\\1:\\2,"_id":\\2,',
+              readLines(fn, warn = FALSE)
+          )),
       file = fPartIPartsIINdjson,
       append = TRUE,
       sep = "\n")
@@ -2454,7 +2448,7 @@ ctrLoadQueryIntoDbCtis <- function(
       ids[1] <- gsub("\"", "", ids[1])
 
       # get data
-      urls <- sprintf(ctisEndpoints[19], ids[2],
+      urls <- sprintf(ctisEndpoints[20], ids[2],
                       toupper(gsub("([A-Z])", "_\\1", gsub("List", "", ids[1]))))
       eventData <- httr::GET(urls)
       if (httr::status_code(eventData) != 200L) next
@@ -2511,10 +2505,6 @@ ctrLoadQueryIntoDbCtis <- function(
 
       # if publicevents, obtain additional data
       if (e == 3L) jOut <- publicEventsMerger(jOut)
-
-      # sanitise texts removing various quotation marks and ensure utf8
-      jOut <- gsub("['\xc2\xb4`\xe2\x80\x99\xe2\x80\x98]", "", jOut)
-      jOut <- iconv(jOut, from = "", to = "UTF-8", sub = "")
 
       # reconstruct trial id
       id <- sub(paste0(".+/(", regCtis, ")/.+"), "\\1", tmp[["url"]][fi])
@@ -2580,10 +2570,6 @@ ctrLoadQueryIntoDbCtis <- function(
     jApps <- sapply(fApps, readLines, warn = FALSE, USE.NAMES = FALSE)
     if (!length(jApps)) next
 
-    # sanitise texts removing various quotation marks and ensure utf8
-    jApps <- gsub("['\xc2\xb4`\xe2\x80\x99\xe2\x80\x98]", "", jApps)
-    jApps <- iconv(jApps, from = "", to = "UTF-8", sub = "")
-
     # add applicationId
     jApps <- mapply(function(i, j) sub(
       "^[{]", paste0('{"id":', i, ","), j),
@@ -2628,7 +2614,7 @@ ctrLoadQueryIntoDbCtis <- function(
   }
   message("")
 
-  ## api_10-18: documents -------------------------------------------------------
+  ## api_10-19: documents -------------------------------------------------------
 
   if (!is.null(documents.path)) {
 
@@ -2651,7 +2637,8 @@ ctrLoadQueryIntoDbCtis <- function(
       # define order for factor for sorting
       orderedParts <- c(
         "ctaletter", "p1ar", "p2ars", "part1auth", "part1appl",
-        "parts2auth", "parts2appl", "prodauth", "prodappl", "rfis", "events")
+        "parts2auth", "parts2appl", "prodauth", "prodappl", "rfis", 
+        "events", "cms")
 
       # 1 - get ids of lists (which include urls to download)
       message("- Getting ids of lists with document information")
@@ -2690,18 +2677,28 @@ ctrLoadQueryIntoDbCtis <- function(
       # extract ids of documents from publicEvents (ep = 3)
       if (file.exists(file.path(tempDir, "ctis_add_3.ndjson"))) {
         eventIds <- jqr::jq(file(file.path(tempDir, "ctis_add_3.ndjson")),
-                            " {_id: ._id, events: .publicevents[][][].id }")
+                            " {_id: ._id, events: [ .publicevents[][][].id ]}")
         eventIds <- jsonlite::fromJSON(paste0("[", paste0(eventIds, collapse = ","), "]"))
       } else {
         eventIds <- data.frame()
       }
-
+      
+      # extract ids of documents from corrective events (ep = 7)
+      if (file.exists(file.path(tempDir, "ctis_add_7.ndjson"))) {
+        cmIds <- jqr::jq(file(file.path(tempDir, "ctis_add_7.ndjson")),
+                            " {_id: ._id, cms: [ .cm[].id ]}")
+        cmIds <- jsonlite::fromJSON(paste0("[", paste0(cmIds, collapse = ","), "]"))
+      } else {
+        cmIds <- data.frame()
+      }
+      
       # convert and merge ids
       dlFiles <- jsonlite::stream_in(file(downloadsNdjson), verbose = FALSE)
       if (nrow(rfiIds1)) dlFiles <- merge(dlFiles, rfiIds1)
       if (nrow(rfiIds2)) dlFiles <- merge(dlFiles, rfiIds2)
       if (nrow(eventIds)) dlFiles <- merge(dlFiles, eventIds)
-
+      if (nrow(cmIds)) dlFiles <- merge(dlFiles, cmIds)
+      
       # map
       epTyp <- list(
         "part1" = ctisEndpoints[11],
@@ -2711,7 +2708,8 @@ ctrLoadQueryIntoDbCtis <- function(
         "p2ars" = ctisEndpoints[15],
         "ctaletter" = ctisEndpoints[16],
         "rfis" = ctisEndpoints[17],
-        "events" = ctisEndpoints[18]
+        "events" = ctisEndpoints[18],
+        "cms" = ctisEndpoints[19]
       )
 
       dlFiles <- apply(dlFiles, 1, function(r) {
