@@ -2694,10 +2694,10 @@ ctrLoadQueryIntoDbCtis <- function(
       
       # convert and merge ids
       dlFiles <- jsonlite::stream_in(file(downloadsNdjson), verbose = FALSE)
-      if (nrow(rfiIds1)) dlFiles <- merge(dlFiles, rfiIds1)
-      if (nrow(rfiIds2)) dlFiles <- merge(dlFiles, rfiIds2)
-      if (nrow(eventIds)) dlFiles <- merge(dlFiles, eventIds)
-      if (nrow(cmIds)) dlFiles <- merge(dlFiles, cmIds)
+      if (nrow(rfiIds1)) {dlFiles <- merge(dlFiles, rfiIds1, all.x = TRUE)}
+      if (nrow(rfiIds2)) {dlFiles <- merge(dlFiles, rfiIds2, all.x = TRUE)}
+      if (nrow(eventIds)) {dlFiles <- merge(dlFiles, eventIds, all.x = TRUE)}
+      if (nrow(cmIds)) {dlFiles <- merge(dlFiles, cmIds, all.x = TRUE)}
       
       # map
       epTyp <- list(
