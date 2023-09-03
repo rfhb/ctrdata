@@ -2191,6 +2191,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
 #' @importFrom nodbi docdb_update
 #' @importFrom jsonlite stream_in fromJSON
 #' @importFrom stringi stri_extract_all_regex
+#' @importFrom httr GET status_code content
 #'
 ctrLoadQueryIntoDbCtis <- function(
     queryterm = queryterm,
@@ -2218,32 +2219,38 @@ ctrLoadQueryIntoDbCtis <- function(
 
   ctisEndpoints <- c(
     #
-    # trial overview - %s is for pagination
+    # 1 trial overview - %s is for pagination
     "https://euclinicaltrials.eu/ct-public-api-services/services/ct/publiclookup?&paging=%s,%s&sorting=+ctNumber&%s",
     #
-    # trial information - %s is ctNumber
+    # 2-3 trial information - %s is ctNumber
     "https://euclinicaltrials.eu/ct-public-api-services/services/ct/%s/publicview", # partI and partsII
-    "https://euclinicaltrials.eu/ct-public-api-services/services/ct/%s/publicevents",
+    "https://euclinicaltrials.eu/ct-public-api-services/services/ct/%s/publicevents", # serious breach, unexpected event, urgent safety measure, inspection outside EEA, temporary halt
+    #
+    # 4-8 additional information -  - %s is ctNumber
     "https://euclinicaltrials.eu/ct-public-api-services/services/ct/public/%s/summary/list",
     "https://euclinicaltrials.eu/ct-public-api-services/services/ct/public/%s/layperson/list",
     "https://euclinicaltrials.eu/ct-public-api-services/services/ct/public/%s/csr/list", # clinical study report
     "https://euclinicaltrials.eu/ct-public-api-services/services/ct/public/%s/cm/list", # corrective measures
     "https://euclinicaltrials.eu/ct-public-api-services/services/ct/public/%s/inspections/list",
     #
-    # trial information - %s is an application id
+    # 9 trial information - %s is an application id
     "https://euclinicaltrials.eu/ct-public-api-services/services/ct/%s/publicEvaluation",
     #
-    # download files - %s is document url
+    # 10 download files - %s is document url
     "https://euclinicaltrials.eu/ct-public-api-services/services/ct/public/download/%s",
     #
-    # documents - %s is entity identifier, lists
+    # 11-18 documents - %s is entity identifier, lists
     "https://euclinicaltrials.eu/ct-public-api-services/services/document/part1/%s/list", # appl auth
     "https://euclinicaltrials.eu/ct-public-api-services/services/document/part2/%s/list", # appl auth
     "https://euclinicaltrials.eu/ct-public-api-services/services/document/product-group-common/%s/list",
     "https://euclinicaltrials.eu/ct-public-api-services/services/document/part1/%s/list?documentType=274", # p1 AR
     "https://euclinicaltrials.eu/ct-public-api-services/services/document/part2/%s/list/?documentType=43", # auth letter
     "https://euclinicaltrials.eu/ct-public-api-services/services/document/part2/%s/list/?documentType=42", # p2 ARs
-    "https://euclinicaltrials.eu/ct-public-api-services/services/document/rfi/%s/list" # rfis
+    "https://euclinicaltrials.eu/ct-public-api-services/services/document/rfi/%s/list", # rfis
+    "https://euclinicaltrials.eu/ct-public-api-services/services/document/notification/%s/list?documentType=101", # events
+    #
+    # sub 3 additional info public events - %s is id, %s is type of notification
+    "https://euclinicaltrials.eu/ct-public-api-services/services/ct/%s/eventdetails?notificationType=%s"
     #
     # unclear or not publicly accessible
     # https://euclinicaltrials.eu/ct-public-api-services/services/document/part1/4433/list?documentType=93
@@ -2253,7 +2260,7 @@ ctrLoadQueryIntoDbCtis <- function(
     #
   )
 
-  ## add_1: overviews ---------------------------------------------------------
+  ## api_1: overviews ---------------------------------------------------------
 
   # this is for importing overview (recruitment, status etc.) into database
   message("* Checking trials in EUCTR...")
@@ -2369,7 +2376,7 @@ ctrLoadQueryIntoDbCtis <- function(
     ))
   }
 
-  ## import: partI, partsII ---------------------------------------------------
+  ## api_2: partI, partsII ---------------------------------------------------
 
   # this is imported as the main data into the database
 
@@ -2429,7 +2436,44 @@ ctrLoadQueryIntoDbCtis <- function(
     message(". ", appendLF = FALSE)
   }
 
-  ## add_3:8: get more data ----------------------------------------------------
+  ## api_3: public events ----------------------------------------------------
+
+  # helper function
+  publicEventsMerger <- function(publicEvents) {
+
+    # get event types that have data with ids of events
+    eventTypes <- jqr::jq(
+      publicEvents,
+      " to_entries[] | select(.value | length > 0) | ([.key] + (.value[] | [.id])) ")
+
+    # loop over event type
+    for (eventType in eventTypes) {
+
+      # get ids
+      ids <- jqr::jq(eventType, " .[] ")
+      ids[1] <- gsub("\"", "", ids[1])
+
+      # get data
+      urls <- sprintf(ctisEndpoints[19], ids[2],
+                      toupper(gsub("([A-Z])", "_\\1", gsub("List", "", ids[1]))))
+      eventData <- httr::GET(urls)
+      if (httr::status_code(eventData) != 200L) next
+      eventData <- suppressMessages(httr::content(eventData, as = "text"))
+
+      # update input json with event data
+      eventData <- paste0(
+        " .", ids[1], " |= map( [select( .id == ", ids[2], ") | .details = ",
+        eventData, "], [select( .id != ", ids[2], ")] | select( . | length > 0) ) ")
+      publicEvents <- jqr::jq(publicEvents, eventData)
+
+    }
+
+    # return updated publicEvents json
+    return(publicEvents)
+
+  }
+
+  ## api_3-8: more data ----------------------------------------------------
 
   message("\n(3/5) Downloading and processing additional data:")
 
@@ -2458,16 +2502,19 @@ ctrLoadQueryIntoDbCtis <- function(
       # get data
       jOut <- readLines(fn, warn = FALSE)
 
-      # sanitise texts removing various quotation marks and ensure utf8
-      jOut <- gsub("['\xc2\xb4`\xe2\x80\x99\xe2\x80\x98]", "", jOut)
-      jOut <- iconv(jOut, from = "", to = "UTF-8", sub = "")
-
       # remove irrelevant information
       jOut <- sub('^.*"elements":(.*?)}?$', "\\1", jOut)
       jOut <- sub('(,?)"showWarning":(false|true)(,?)', "\\3", jOut)
       jOut <- sub('(,?)"totalSize":[0-9]+(,?)', "\\2", jOut)
       jOut <- sub('(,?)"pageInfo":[{].+?[}](,?)', "\\2", jOut)
       if (!nchar(jOut) || jOut == "[]") next
+
+      # if publicevents, obtain additional data
+      if (e == 3L) jOut <- publicEventsMerger(jOut)
+
+      # sanitise texts removing various quotation marks and ensure utf8
+      jOut <- gsub("['\xc2\xb4`\xe2\x80\x99\xe2\x80\x98]", "", jOut)
+      jOut <- iconv(jOut, from = "", to = "UTF-8", sub = "")
 
       # reconstruct trial id
       id <- sub(paste0(".+/(", regCtis, ")/.+"), "\\1", tmp[["url"]][fi])
@@ -2482,8 +2529,6 @@ ctrLoadQueryIntoDbCtis <- function(
         sep = "\n")
 
     }
-
-    # message("\b\b")
 
   }
 
@@ -2583,7 +2628,7 @@ ctrLoadQueryIntoDbCtis <- function(
   }
   message("")
 
-  ## download files -----------------------------------------------------------
+  ## api_10-18: documents -------------------------------------------------------
 
   if (!is.null(documents.path)) {
 
@@ -2606,7 +2651,7 @@ ctrLoadQueryIntoDbCtis <- function(
       # define order for factor for sorting
       orderedParts <- c(
         "ctaletter", "p1ar", "p2ars", "part1auth", "part1appl",
-        "parts2auth", "parts2appl", "prodauth", "prodappl", "rfis")
+        "parts2auth", "parts2appl", "prodauth", "prodappl", "rfis", "events")
 
       # 1 - get ids of lists (which include urls to download)
       message("- Getting ids of lists with document information")
@@ -2632,7 +2677,7 @@ ctrLoadQueryIntoDbCtis <- function(
         out = downloadsNdjson
       )
 
-      # extract ids of rfis from publicEvaluation
+      # extract ids of rfis from publicevaluation
       rfiIds1 <- jqr::jq(
         file(fApplicationsNdjson),
         '{ _id: ._id, rfis1: [ .publicEvaluation[].partIRfis[].id ]}')
@@ -2642,11 +2687,22 @@ ctrLoadQueryIntoDbCtis <- function(
         '{ _id: ._id, rfis2: [ .publicEvaluation[].partIIEvaluationList[].partIIRfis[].id ]}')
       rfiIds2 <- jsonlite::fromJSON(paste0("[", paste0(rfiIds2, collapse = ","), "]"))
 
-      # convert and merge rfi ids
+      # extract ids of documents from publicEvents (ep = 3)
+      if (file.exists(file.path(tempDir, "ctis_add_3.ndjson"))) {
+        eventIds <- jqr::jq(file(file.path(tempDir, "ctis_add_3.ndjson")),
+                            " {_id: ._id, events: .publicevents[][][].id }")
+        eventIds <- jsonlite::fromJSON(paste0("[", paste0(eventIds, collapse = ","), "]"))
+      } else {
+        eventIds <- data.frame()
+      }
+
+      # convert and merge ids
       dlFiles <- jsonlite::stream_in(file(downloadsNdjson), verbose = FALSE)
       if (nrow(rfiIds1)) dlFiles <- merge(dlFiles, rfiIds1)
       if (nrow(rfiIds2)) dlFiles <- merge(dlFiles, rfiIds2)
+      if (nrow(eventIds)) dlFiles <- merge(dlFiles, eventIds)
 
+      # map
       epTyp <- list(
         "part1" = ctisEndpoints[11],
         "parts2" = ctisEndpoints[12],
@@ -2654,7 +2710,8 @@ ctrLoadQueryIntoDbCtis <- function(
         "p1ar" = ctisEndpoints[14],
         "p2ars" = ctisEndpoints[15],
         "ctaletter" = ctisEndpoints[16],
-        "rfis" = ctisEndpoints[17]
+        "rfis" = ctisEndpoints[17],
+        "events" = ctisEndpoints[18]
       )
 
       dlFiles <- apply(dlFiles, 1, function(r) {

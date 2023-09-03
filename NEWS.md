@@ -1,5 +1,7 @@
 # ctrdata 1.15.1.9000 (2023-09-03)
  - fix handling as utf8 upstream multi-language strings from CTIS
+ - additional endpoints for CTIS which has an increasing amount of data, 
+   e.g. publicevents.temporaryHaltList.details for 2022-501559-99-00
 
 # ctrdata 1.15.1 (2023-08-29)
  - correct LaTeX documentation resulting in CRAN error

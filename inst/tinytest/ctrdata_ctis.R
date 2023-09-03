@@ -21,6 +21,9 @@ expect_true(all(c("2023-504071-24-00", "2022-502144-12-00") %in% tmpTest$success
 # test
 expect_true(length(tmpTest$failed) == 0L)
 
+# clean up
+rm(tmpTest)
+
 # test
 expect_true(suppressWarnings(
   ctrLoadQueryIntoDb(
@@ -46,8 +49,18 @@ expect_true(suppressWarnings(
     querytoupdate = "last",
     con = dbc))[["n"]] >= 2L)
 
-# clean up
-rm(tmpTest)
+# test
+expect_true(suppressWarnings(
+  ctrLoadQueryIntoDb(
+    queryterm = "https://euclinicaltrials.eu/app/#/search?number=2022-500271-31-00",
+    con = dbc))[["n"]] == 1L)
+
+# test
+expect_true(suppressWarnings(
+  ctrLoadQueryIntoDb(
+    queryterm = "https://euclinicaltrials.eu/app/#/search?number=2022-501559-99-00",
+    con = dbc))[["n"]] == 1L)
+
 
 #### documents.path ####
 
