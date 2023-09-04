@@ -2190,7 +2190,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
 #' @importFrom utils read.table URLencode
 #' @importFrom nodbi docdb_update
 #' @importFrom jsonlite stream_in fromJSON
-#' @importFrom stringi stri_extract_all_regex
+#' @importFrom stringi stri_extract_all_regex stri_replace_all_fixed
 #' @importFrom httr GET status_code content
 #'
 ctrLoadQueryIntoDbCtis <- function(
@@ -2207,13 +2207,21 @@ ctrLoadQueryIntoDbCtis <- function(
     queryupdateterm) {
 
   ## create empty temporary directory on localhost for
-  # downloading from register into temporary directy
+  # downloading from register into temporary directory
   tempDir <- tempfile(pattern = "ctrDATA")
   dir.create(tempDir)
   tempDir <- normalizePath(tempDir, mustWork = TRUE)
   # register function to remove files after use for streaming
   if (!verbose) on.exit(unlink(tempDir, recursive = TRUE), add = TRUE)
   if (verbose) message("DEBUG: ", tempDir)
+
+  ## output mangle helper -----------------------------------------------
+
+  mangleText <- function(t) {
+
+    stringi::stri_replace_all_fixed(str = t, pattern = "'", replacement = "")
+
+  }
 
   ## ctis api -----------------------------------------------------------
 
@@ -2226,7 +2234,7 @@ ctrLoadQueryIntoDbCtis <- function(
     "https://euclinicaltrials.eu/ct-public-api-services/services/ct/%s/publicview", # partI and partsII
     "https://euclinicaltrials.eu/ct-public-api-services/services/ct/%s/publicevents", # serious breach, unexpected event, urgent safety measure, inspection outside EEA, temporary halt
     #
-    # 4-8 additional information -  - %s is ctNumber
+    # 4-8 additional information - %s is ctNumber
     "https://euclinicaltrials.eu/ct-public-api-services/services/ct/public/%s/summary/list",
     "https://euclinicaltrials.eu/ct-public-api-services/services/ct/public/%s/layperson/list",
     "https://euclinicaltrials.eu/ct-public-api-services/services/ct/public/%s/csr/list", # clinical study report
@@ -2333,6 +2341,9 @@ ctrLoadQueryIntoDbCtis <- function(
     nonDuplicates <- !(idsTrialsBatch %in% idsTrials)
     idsTrials <- c(idsTrials, idsTrialsBatch[nonDuplicates])
 
+    # sanitise
+    trialsJson <- mangleText(trialsJson)
+
     # save and append to ndjson
     cat(
       trialsJson[nonDuplicates],
@@ -2402,10 +2413,10 @@ ctrLoadQueryIntoDbCtis <- function(
     cat(
       # files include id, ctNumber and others repeatedly
       # only replace first instance for updating records
-      # sanitise texts removing various quotation marks and ensure utf8
+      # sanitise texts removing various quotation marks
       sub("(\"id\":[0-9]+),", importString,
           sub("(\"ctNumber\"):(\"[-0-9]+\"),", '\\1:\\2,"_id":\\2,',
-              readLines(fn, warn = FALSE)
+              mangleText(readLines(fn, warn = FALSE))
           )),
       file = fPartIPartsIINdjson,
       append = TRUE,
@@ -2496,6 +2507,9 @@ ctrLoadQueryIntoDbCtis <- function(
       # get data
       jOut <- readLines(fn, warn = FALSE)
 
+      # sanitise
+      jOut <- mangleText(jOut)
+
       # remove irrelevant information
       jOut <- sub('^.*"elements":(.*?)}?$', "\\1", jOut)
       jOut <- sub('(,?)"showWarning":(false|true)(,?)', "\\3", jOut)
@@ -2570,6 +2584,9 @@ ctrLoadQueryIntoDbCtis <- function(
     jApps <- sapply(fApps, readLines, warn = FALSE, USE.NAMES = FALSE)
     if (!length(jApps)) next
 
+    # sanitise
+    jApps <- mangleText(jApps)
+
     # add applicationId
     jApps <- mapply(function(i, j) sub(
       "^[{]", paste0('{"id":', i, ","), j),
@@ -2637,7 +2654,7 @@ ctrLoadQueryIntoDbCtis <- function(
       # define order for factor for sorting
       orderedParts <- c(
         "ctaletter", "p1ar", "p2ars", "part1auth", "part1appl",
-        "parts2auth", "parts2appl", "prodauth", "prodappl", "rfis", 
+        "parts2auth", "parts2appl", "prodauth", "prodappl", "rfis",
         "events", "cms")
 
       # 1 - get ids of lists (which include urls to download)
@@ -2682,7 +2699,7 @@ ctrLoadQueryIntoDbCtis <- function(
       } else {
         eventIds <- data.frame()
       }
-      
+
       # extract ids of documents from corrective events (ep = 7)
       if (file.exists(file.path(tempDir, "ctis_add_7.ndjson"))) {
         cmIds <- jqr::jq(file(file.path(tempDir, "ctis_add_7.ndjson")),
@@ -2691,14 +2708,14 @@ ctrLoadQueryIntoDbCtis <- function(
       } else {
         cmIds <- data.frame()
       }
-      
+
       # convert and merge ids
       dlFiles <- jsonlite::stream_in(file(downloadsNdjson), verbose = FALSE)
       if (nrow(rfiIds1)) {dlFiles <- merge(dlFiles, rfiIds1, all.x = TRUE)}
       if (nrow(rfiIds2)) {dlFiles <- merge(dlFiles, rfiIds2, all.x = TRUE)}
       if (nrow(eventIds)) {dlFiles <- merge(dlFiles, eventIds, all.x = TRUE)}
       if (nrow(cmIds)) {dlFiles <- merge(dlFiles, cmIds, all.x = TRUE)}
-      
+
       # map
       epTyp <- list(
         "part1" = ctisEndpoints[11],

@@ -1,4 +1,4 @@
-# ctrdata 1.15.1.9000 (2023-09-03)
+# ctrdata 1.15.1.9000 (2023-09-04)
  - fix handling as utf8 upstream multi-language strings from CTIS
  - correct creating lists for downloading documents for ctis
  - additional endpoints for CTIS which has an increasing amount of data, 
