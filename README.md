@@ -10,7 +10,7 @@ badge](https://rfhb.r-universe.dev/badges/ctrdata)](https://rfhb.r-universe.dev/
 [![R-CMD-CHECK-win-macos-duckdb-mongodb-sqlite](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-win-macos.yaml/badge.svg)](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-win-macos.yaml)
 <!-- badges: end -->
 
-[Main features](#main-set) • [Installation](#installation) •
+[Main features](#main-features) • [Installation](#installation) •
 [Overview](#overview-of-functions-in-ctrdata) •
 [Databases](#databases-that-can-be-used-with-ctrdata) • [Example
 workflow](#example-workflow) • [Analysis across
@@ -37,7 +37,7 @@ conduct of trials, their availability for patients and to facilitate
 using their detailed results for research and meta-analyses. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2023-08-29 for version 1.15.1 for
+package. This README was reviewed on 2023-09-10 for version 1.15.2 for
 [CTGOV changes](#workflow-ctgov-example).
 
 ## Main features
