@@ -2,7 +2,8 @@
 <!-- README.md is generated from README.Rmd -->
 <!-- badges: start -->
 
-[![CRAN](https://badges.cranchecks.info/worst/ctrdata.svg)](https://cran.r-project.org/package=ctrdata)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/ctrdata)](https://CRAN.R-project.org/package=ctrdata)
 [![ctrdata status
 badge](https://rfhb.r-universe.dev/badges/ctrdata)](https://rfhb.r-universe.dev/ctrdata)
 [![codecov](https://codecov.io/gh/rfhb/ctrdata/branch/master/graph/badge.svg)](https://app.codecov.io/gh/rfhb/ctrdata)
@@ -37,8 +38,8 @@ conduct of trials, their availability for patients and to facilitate
 using their detailed results for research and meta-analyses. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2023-09-10 for version 1.15.2 for
-[CTGOV changes](#workflow-ctgov-example).
+package. This README was reviewed on 2023-09-17 for version 1.15.2.9000
+for [CTGOV changes](#workflow-ctgov-example).
 
 ## Main features
 

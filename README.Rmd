@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 ```
 
 <!-- badges: start -->
-[![CRAN](https://badges.cranchecks.info/worst/ctrdata.svg)](https://cran.r-project.org/package=ctrdata)
+[![CRAN status](https://www.r-pkg.org/badges/version/ctrdata)](https://CRAN.R-project.org/package=ctrdata)
 [![ctrdata status badge](https://rfhb.r-universe.dev/badges/ctrdata)](https://rfhb.r-universe.dev/ctrdata)
 [![codecov](https://codecov.io/gh/rfhb/ctrdata/branch/master/graph/badge.svg)](https://app.codecov.io/gh/rfhb/ctrdata)
 [![R-CMD-CHECK-ubuntu-postgresql-duckdb-mongodb-sqlite](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-linux.yaml/badge.svg)](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-linux.yaml)
@@ -46,7 +46,7 @@ The package `ctrdata` provides functions for retrieving (downloading) informatio
 - ISRCTN (https://www.isrctn.com/) 
 - EU Clinical Trials Information System ("CTIS", https://euclinicaltrials.eu/) `r emoji::emoji("bell")` see [example](#workflow-ctis-example)
 
-The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-09-10 for version 1.15.2 for [CTGOV changes](#workflow-ctgov-example).
+The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-09-17 for version 1.15.2.9000 for [CTGOV changes](#workflow-ctgov-example).
 
 ## Main features
 
