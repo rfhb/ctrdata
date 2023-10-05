@@ -95,11 +95,16 @@ LC_CTYPE=C && LANG=C && perl <"$inFileName" -ne '
   # add identifier for end of arrays
   s/^D\. IMP Identification$/X.9 ENDSPONSOR: TRUE/;
 
+  # 3rd country trials vs other trials
+  s/^E\.8\.3.+single site.+:/E.8.3. Single site trial:/g;
+  s/^E\.8\.4 Will this trial be conducted at multiple sites globally.+:/E.8.4.0 Multiple sites globally:/g;
+  s/^E\.8\.4 The trial involves multiple sites in the Member State.+:/E.8.4 Multiple sites in Member State:/g;
+  s/^E\.8\.6\.3.+trial sites are planned:/E.8.6.3 Trial sites planned in:/g;
+
   print "\nX.9 ENDDMP: TRUE"      if /^D\.8 Information on Placebo$/;
   print "\nX.9 ENDMEDDRA: TRUE"   if /^E\.1\.3 Condition/;
   print "\nX.9 ENDSUPPORT: TRUE"  if /^B\.5 Contact/;
   print "\nX.9 ENDNETWORK: TRUE"  if /^N\. Review|^H\.4 Third Country/;
-  # print "\nX.9 ENDIMPIDENT: TRUE" if /^D\.3\.11 The IMP contains an/;
 
   # sanitise file
   s/\t/ /g;

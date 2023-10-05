@@ -224,8 +224,12 @@ typeVars <- list(
   #
   "e83_the_trial_involves_single_site_in_the_member_state_concerned"    = "ctrYesNo",
   "e83_will_this_trial_be_conducted_at_a_single_site_globally"          = "ctrYesNo",
-  "e84_the_trial_involves_multiple_sites_in_the_member_state_concerned" = "ctrYesNo",
+  "e83_single_site_trial"                                               = "ctrYesNo", # 2023-10-05
+  "e84_multiple_sites_in_member_state"                                  = "ctrYesNo", # 2023-10-05
   "e84_will_this_trial_be_conducted_at_multiple_sites_globally"         = "ctrYesNo",
+  "e84_the_trial_involves_multiple_sites_in_the_member_state_concerned" = "ctrYesNo",
+  "e840_multiple_sites_globally"                                        = "ctrYesNo", # 2023-10-05
+  "e84_multiple_sites_in_member_state"                                  = "ctrYesNo", # 2023-10-05
   "e85_the_trial_involves_multiple_member_states"                       = "ctrYesNo",
   "e861_trial_being_conducted_both_within_and_outside_the_eea"          = "ctrYesNo",
   "e862_trial_being_conducted_completely_outside_of_the_eea"            = "ctrYesNo",

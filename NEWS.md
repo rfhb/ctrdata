@@ -1,5 +1,12 @@
-# ctrdata 1.15.2.9000 (2023-09-17)
+# ctrdata 1.15.2.9000 (2023-10-05)
  - new dev version
+ - breaking changes for EUCTR, fields renamed to harmonise: 
+   new: "e83_single_site_trial", was: "e83_the_trial_involves_single_site_ in_the_member_state_concerned"
+   new: "e83_single_site_trial", was: "e83_will_this_trial_be_conducted_ at_a_single_site_globally"
+   new: "e84_multiple_sites_in_member_state", was "e84_the_trial_involves_multiple_sites_ in_the_member_state_concerned"
+   new: "e840_multiple_sites_globally", was "e84_will_this_trial_be_conducted_ at_multiple_sites_globally"
+   new: "e863_trial_sites_planned_in", was "e863_specify_the_regions_in_which_ trial_sites_are_planned"
+   new: "e863_trial_sites_planned_in", was "e863_specify_the_countries_outside_ of_the_eea_in_which_ trial_sites_are_planned"
  
 # ctrdata 1.15.2 (2023-09-10)
  - fix handling as utf8 upstream multi-language strings from CTIS
