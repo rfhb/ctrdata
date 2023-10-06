@@ -19,9 +19,12 @@ including Perl-style) to be searched for among all field names
 }
 \value{
 Vector of strings with full names of field(s) found,
-ordered by register and alphabet. This is a named vector
-where the names of the vector elements are the register names
-for the respective fields.
+ordered by register and alphabet. Names of the vector elements
+are the register names for the respective fields.
+
+Only names of fields that have a value in the collection
+are returned, and the names may be incomplete because they
+are from sampled records.
 }
 \description{
 Given part of the name of a field of interest to the user, this
@@ -30,8 +33,6 @@ previously loaded into a collection
 (using \link{ctrLoadQueryIntoDb}). The field names can be fed
 into function \link{dbGetFieldsIntoDf} to extract the data
 from the collection into a data frame.
-Since the function is based on sampling records in the
-collection, a complete set of names cannot be ensured.
 }
 \details{
 In addition to the full names of all child fields (e.g.,

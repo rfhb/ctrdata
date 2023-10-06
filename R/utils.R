@@ -1172,8 +1172,6 @@ dbQueryHistory <- function(con, verbose = FALSE) {
 #' (using \link{ctrLoadQueryIntoDb}). The field names can be fed
 #' into function \link{dbGetFieldsIntoDf} to extract the data
 #' from the collection into a data frame.
-#' Since the function is based on sampling records in the
-#' collection, a complete set of names cannot be ensured.
 #'
 #' In addition to the full names of all child fields (e.g.,
 #' \code{clinical_results.outcome_list.outcome.measure.class_list.class.title})
@@ -1208,9 +1206,12 @@ dbQueryHistory <- function(con, verbose = FALSE) {
 #' @inheritParams ctrDb
 #'
 #' @return Vector of strings with full names of field(s) found,
-#' ordered by register and alphabet. This is a named vector
-#' where the names of the vector elements are the register names
-#' for the respective fields.
+#' ordered by register and alphabet. Names of the vector elements
+#' are the register names for the respective fields.
+#'
+#' Only names of fields that have a value in the collection
+#' are returned, and the names may be incomplete because they
+#' are from sampled records.
 #'
 #' @export
 #'
