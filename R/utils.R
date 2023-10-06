@@ -1172,6 +1172,8 @@ dbQueryHistory <- function(con, verbose = FALSE) {
 #' (using \link{ctrLoadQueryIntoDb}). The field names can be fed
 #' into function \link{dbGetFieldsIntoDf} to extract the data
 #' from the collection into a data frame.
+#' Since the function is based on sampling records in the
+#' collection, a complete set of names cannot be ensured.
 #'
 #' In addition to the full names of all child fields (e.g.,
 #' \code{clinical_results.outcome_list.outcome.measure.class_list.class.title})
