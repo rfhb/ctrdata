@@ -1288,38 +1288,36 @@ dbFindFields <- function(namepart = "",
     queries <- list(
       "EUCTR" = c(
         '{"trialInformation.analysisStage.value": {"$regex": ".+"}}',
-        paste0('{"_id": "', rev(allIds[grepl(paste0("^", regEuctr, "-[3]?[A-Z]{2}$"), allIds)])[1], '"}')),
+        paste0('{"_id": "', rev(allIds[grepl(paste0("^", regEuctr, "-[A-Z]{2}$"), allIds)])[1], '"}'),
+        paste0('{"_id": "', rev(allIds[grepl(paste0("^", regEuctr, "-3RD$"), allIds)])[1], '"}')),
       "CTGOV" = c(
         '{"results_first_submitted": {"$regex": ".+"}}',
-        paste0('{"_id": "', rev(allIds[grepl(regCtgov, allIds)])[1], '"}')),
+        '{"ctrname":"CTGOV"}'),
       "CTGOV2" = c(
-        '{"ctrname":"CTGOV2"}',
-        paste0('{"_id": "', rev(allIds[grepl(regCtgov, allIds)])[1], '"}')),
+        '{"resultsFirstSubmitDate": {"$regex": ".+"}}',
+        '{"ctrname":"CTGOV2"}'),
       "ISRCTN" = c(
         '{"results.publicationStage": "Results"}',
-        paste0('{"_id": "', rev(allIds[grepl(regIsrctn, allIds)])[1], '"}')),
+        '{"ctrname":"ISRCTN"}'),
       "CTIS" = c(
-        '{"ctrname":"CTIS"}',
-        paste0('{"_id": "', sample(c("", allIds[grepl(regCtis, allIds)]), 1), '"}'))
+        '{"ctrname":"CTIS"}')
     )
 
     # get names
     keyslist <- NULL
+    # iterate over queries
     for (q in seq_along(queries)) {
-      # first use queries for records with results
-      keysAdd <- normNames(nodbi::docdb_query(
-        src = con, key = con$collection,
-        query = queries[[q]][1], limit = 1L))
-      # give keys name of register
-      names(keysAdd) <- rep(names(queries)[q], length(keysAdd))
-      keyslist <- c(keyslist, keysAdd)
-      # second query for highest = latest _id
-      keysAdd <- normNames(nodbi::docdb_query(
-        src = con, key = con$collection,
-        query = queries[[q]][2], limit = 1L))
-      # give keys name of register
-      names(keysAdd) <- rep(names(queries)[q], length(keysAdd))
-      keyslist <- c(keyslist, keysAdd)
+      # iterate over query items
+      for (i in seq_along(queries[[q]])) {
+        # get record from register
+        keysAdd <- normNames(nodbi::docdb_query(
+          src = con, key = con$collection,
+          query = queries[[q]][i], limit = 1L))
+        # give keys name of register
+        names(keysAdd) <- rep(names(queries)[q], length(keysAdd))
+        # accumulate keys
+        keyslist <- c(keyslist, keysAdd)
+      }
     }
 
     # clean empty entries and exclude _id for consistency
