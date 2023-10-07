@@ -1273,17 +1273,12 @@ dbFindFields <- function(namepart = "",
       return(sort(unique(out)))
     }
 
-    # get all ids
-    allIds <- nodbi::docdb_query(
-      src = con, key = con$collection,
-      fields = '{"_id": 1}', query = '{}')[["_id"]]
-
     # queries to be used
     queries <- list(
       "EUCTR" = c(
         '{"trialInformation.analysisStage.value": {"$regex": ".+"}}',
-        paste0('{"_id": "', rev(allIds[grepl(paste0("^", regEuctr, "-[A-Z]{2}$"), allIds)])[1], '"}'),
-        paste0('{"_id": "', rev(allIds[grepl(paste0("^", regEuctr, "-3RD$"), allIds)])[1], '"}')),
+        '{"_id": {"$regex": "-[A-Z][A-Z]$"}}',
+        '{"_id": {"$regex": "-3RD$"}}'),
       "CTGOV" = c(
         '{"results_first_submitted": {"$regex": ".+"}}',
         '{"ctrname":"CTGOV"}'),
