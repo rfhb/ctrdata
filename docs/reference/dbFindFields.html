@@ -81,8 +81,8 @@ from the collection into a data frame.</p>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>namepart</dt>
 <dd><p>A character string (can include a regular expression,
-including Perl-style) to be searched for among all field names
-(keys) in the collection, case-insensitive. Use ".*" to find all fields.</p></dd>
+including Perl-style) to be searched among all field names (keys)
+in the collection, case-insensitive. Use ".*" to find all fields.</p></dd>
 
 
 <dt>con</dt>
@@ -106,7 +106,11 @@ are the register names for the respective fields.</p>
 
 <p>Only names of fields that have a value in the collection
 are returned, and the names may be incomplete because they
-are from sampled records.</p>
+are from sampled records. See here for obtaining a complete
+set of field names (albeit without register names):
+<a href="https://github.com/rfhb/ctrdata/issues/26#issuecomment-1751452462" class="external-link">https://github.com/rfhb/ctrdata/issues/26#issuecomment-1751452462</a></p>
+
+
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -114,17 +118,12 @@ are from sampled records.</p>
 <code>clinical_results.outcome_list.outcome.measure.class_list.class.title</code>)
 this function may return names of parent fields (e.g.,
 <code>clinical_results</code>).
-Data in parent fields is typically complex
-(multiply nested) and can be converted into individual data
-elements by function <a href="dfTrials2Long.html">dfTrials2Long</a>, and subelements
-can be accessed with function <a href="dfName2Value.html">dfName2Value</a>.</p>
-<p>For fields in "EUCTR" (protocol- and results-related information),
-<a href="https://eudract.ema.europa.eu/result.html" class="external-link">https://eudract.ema.europa.eu/result.html</a>.</p>
-<p>For fields in "CTGOV" (protocol-related information), see
-<a href="https://prsinfo.clinicaltrials.gov/definitions.html" class="external-link">https://prsinfo.clinicaltrials.gov/definitions.html</a>.</p>
-<p>For fields in "ISRCTN" (protocol-related information), see
-<a href="https://www.isrctn.com/page/definitions" class="external-link">https://www.isrctn.com/page/definitions</a>.</p>
-<p>Note: Only when <code>dbFindFields</code> is first called after
+Data in parent fields is typically complex (nested) and can be
+converted into individual data elements with <a href="dfTrials2Long.html">dfTrials2Long</a>,
+and subelements can then be accessed with <a href="dfName2Value.html">dfName2Value</a>.
+For field definitions of the registers, see row
+"Definition" in <a href="ctrdata-registers.html">ctrdata-registers</a>.
+Note: Only when <code>dbFindFields</code> is first called after
 <a href="ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a>, it will take a moment.</p>
     </div>
 

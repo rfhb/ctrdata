@@ -8,8 +8,8 @@ dbFindFields(namepart = "", con, verbose = FALSE)
 }
 \arguments{
 \item{namepart}{A character string (can include a regular expression,
-including Perl-style) to be searched for among all field names
-(keys) in the collection, case-insensitive. Use ".*" to find all fields.}
+including Perl-style) to be searched among all field names (keys)
+in the collection, case-insensitive. Use ".*" to find all fields.}
 
 \item{con}{A connection object, see section
 `Databases` in \link{ctrdata}.}
@@ -24,7 +24,9 @@ are the register names for the respective fields.
 
 Only names of fields that have a value in the collection
 are returned, and the names may be incomplete because they
-are from sampled records.
+are from sampled records. See here for obtaining a complete
+set of field names (albeit without register names):
+\url{https://github.com/rfhb/ctrdata/issues/26#issuecomment-1751452462}
 }
 \description{
 Given part of the name of a field of interest to the user, this
@@ -39,20 +41,11 @@ In addition to the full names of all child fields (e.g.,
 \code{clinical_results.outcome_list.outcome.measure.class_list.class.title})
 this function may return names of parent fields (e.g.,
 \code{clinical_results}).
-Data in parent fields is typically complex
-(multiply nested) and can be converted into individual data
-elements by function \link{dfTrials2Long}, and subelements
-can be accessed with function \link{dfName2Value}.
-
-For fields in "EUCTR" (protocol- and results-related information),
-\url{https://eudract.ema.europa.eu/result.html}.
-
-For fields in "CTGOV" (protocol-related information), see
-\url{https://prsinfo.clinicaltrials.gov/definitions.html}.
-
-For fields in "ISRCTN" (protocol-related information), see
-\url{https://www.isrctn.com/page/definitions}.
-
+Data in parent fields is typically complex (nested) and can be
+converted into individual data elements with \link{dfTrials2Long},
+and subelements can then be accessed with \link{dfName2Value}.
+For field definitions of the registers, see row
+"Definition" in \link{ctrdata-registers}.
 Note: Only when \code{dbFindFields} is first called after
 \link{ctrLoadQueryIntoDb}, it will take a moment.
 }

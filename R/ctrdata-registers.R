@@ -1,19 +1,19 @@
 #' ctrdata: information on clinical trial registers
 #'
 #' Registers of clinical trials that can be accessed with
-#' package \link{ctrdata} as of August 2023.
+#' package \link{ctrdata} as of September 2023.
 #'
 #' - **EUCTR**: The European Union Clinical Trials Register contains
-#' more than 43,000 clinical trials (using one or more medicines as
+#' more than 43,500 clinical trials (using one or more medicines as
 #' investigational medicinal product, IMP; in the European Union and beyond)
-#' - **CTGOV** and **CTGOV2**: ClinicalTrials.gov includes more than 460,000
+#' - **CTGOV** and **CTGOV2**: ClinicalTrials.gov includes more than 465,000
 #' interventional and observational studies (both the current and
 #' the classic website are supported)
 #' - **ISRCTN**: The ISRCTN Registry includes almost 24,000
 #' interventional or observational health studies
 #' - **CTIS**: The EU Clinical Trials Information System was
-#' started in January 2023, including more than 300 publicly
-#' accessible trials end August 2023. How to automatically
+#' started in January 2023, including almost 400 publicly
+#' accessible trials end September 2023. How to automatically
 #' get a query URL: \ifelse{latex}{\out{\href{https://github.com/rfhb/ctrdata\#3-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://github.com/rfhb/ctrdata#3-script-to-automatically-copy-users-query-from-web-browser}{here}}
 #'
 #'

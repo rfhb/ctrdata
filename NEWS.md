@@ -1,6 +1,6 @@
 # ctrdata 1.15.2.9000 (2023-10-06)
- - ensure `dbFindFields()` return fields for EU and 3rd country trials in EUCTR
- - breaking changes for EUCTR, fields renamed to harmonise: 
+ - ensure `dbFindFields()` return fields for EU and 3rd country trials in EUCTR, updated documentation
+ - potentially breaking changes for EUCTR, fields renamed to harmonise EU and 3rd country trials: 
    new: "e83_single_site_trial", was: "e83_the_trial_involves_single_site_ in_the_member_state_concerned"
    new: "e83_single_site_trial", was: "e83_will_this_trial_be_conducted_ at_a_single_site_globally"
    new: "e84_multiple_sites_in_member_state", was "e84_the_trial_involves_multiple_sites_ in_the_member_state_concerned"
