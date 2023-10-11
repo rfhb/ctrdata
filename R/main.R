@@ -206,7 +206,8 @@ ctrLoadQueryIntoDb <- function(
 
     # - deal with data frame as returned from
     #   ctrQueryHistoryInDb and ctrGetQueryUrl
-    if (!all(substr(names(queryterm), 1, 6) == "query-") ||
+    if (inherits(queryterm, "try-error") ||
+        !all(substr(names(queryterm), 1, 6) == "query-") ||
         !is.data.frame(queryterm)) {
       stop("'queryterm' does not seem to result from ctrQueryHistoryInDb() ",
            "or ctrGetQueryUrl(): ", queryterm, call. = FALSE)
@@ -1720,6 +1721,8 @@ ctrLoadQueryIntoDbEuctr <- function(
                   normalizePath(path = documents.path, mustWork = TRUE),
                   "/", euctrnr, "--", basename(nonXmlFiles)
                 )), silent = TRUE)
+              # inform user
+              saved <- sapply(saved, function(r) inherits(r, "try-error") || !r)
               if (any(!saved)) {
                 warning("Could not save ", nonXmlFiles[!saved],
                         call. = FALSE, immediate. = TRUE)

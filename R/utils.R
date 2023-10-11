@@ -1065,7 +1065,7 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "") {
   }, silent = TRUE)
 
   # check result
-  if (tmp[["status_code"]] == 404L) {
+  if (inherits(tmp, "try-error") || tmp[["status_code"]] == 404L) {
     # 404 means active substance not found, thus early exit
     message("Check active substance '", activesubstance, "', may not exist.")
     return(NULL)
