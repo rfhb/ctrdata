@@ -1720,10 +1720,11 @@ ctrLoadQueryIntoDbEuctr <- function(
                   normalizePath(path = documents.path, mustWork = TRUE),
                   "/", euctrnr, "--", basename(nonXmlFiles)
                 )), silent = TRUE)
-              if (any(!saved)) {
-                warning("Could not save ", nonXmlFiles[!saved],
-                        call. = FALSE, immediate. = TRUE)
-              }
+              # 2023/10/11 Commenting this out as it causes an error with saved being an invalid argument to any()
+              #if (any(!saved)) {
+              #  warning("Could not save ", nonXmlFiles[!saved],
+              #          call. = FALSE, immediate. = TRUE)
+              #}
             } # if paths
           } else {
             # only XML data file
