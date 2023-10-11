@@ -1423,6 +1423,7 @@ ctrLoadQueryIntoDbCtgov <- function(
 #' @importFrom curl curl_fetch_multi multi_run curl_fetch_memory multi_fdset
 #' @importFrom curl multi_run multi_add multi_download
 #' @importFrom nodbi docdb_query docdb_update
+#' @importFrom zip unzip
 #'
 ctrLoadQueryIntoDbEuctr <- function(
   queryterm = queryterm,
@@ -1699,10 +1700,18 @@ ctrLoadQueryIntoDbEuctr <- function(
         if (file.exists(f) &&
             file.size(f) != 0L) {
 
+          # this unzip does not handle special
+          # characters under windows, thus only
+          # obtain file names and extract with
+          # extra package
           tmp <- utils::unzip(
-            zipfile = f,
-            exdir = tempDir)
+            zipfile = f, 
+            list = TRUE)$Name
           if (is.null(tmp)) return(NULL)
+          try(zip::unzip(
+            zipfile = f,
+            exdir = tempDir), 
+            silent = TRUE)
 
           # results in files such as
           # EU-CTR 2008-003606-33 v1 - Results.xml
@@ -1715,15 +1724,22 @@ ctrLoadQueryIntoDbEuctr <- function(
             message("F ", appendLF = FALSE)
             if (documents.path != tempDir) {
               # move results file(s) to user specified directory
-              saved <- try(file.rename(
-                from = nonXmlFiles,
-                to = paste0(
-                  normalizePath(path = documents.path, mustWork = TRUE),
-                  "/", euctrnr, "--", basename(nonXmlFiles)
-                )), silent = TRUE)
+              saved <- try(suppressWarnings(
+                file.rename(
+                  from = file.path(tempDir, nonXmlFiles),
+                  to = file.path(documents.path, 
+                                 paste0(euctrnr, "--", basename(nonXmlFiles))
+                ))), silent = TRUE)
               # inform user
-              saved <- sapply(saved, function(r) inherits(r, "try-error") || !r)
-              if (any(!saved)) {
+              if (inherits(saved, "try-error")) {
+                warning("Could not save ", nonXmlFiles, "; ", trimws(saved),
+                        call. = FALSE, immediate. = TRUE)
+                if (grepl("expanded 'from' name too long", saved)) {
+                  message("Try setting environment variable TMPDIR to a short ", 
+                          "absolute path name for a directory and restart R.")
+                }
+              }
+              if (!inherits(saved, "try-error") && any(!saved)) {
                 warning("Could not save ", nonXmlFiles[!saved],
                         call. = FALSE, immediate. = TRUE)
               }

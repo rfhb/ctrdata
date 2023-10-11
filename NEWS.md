@@ -1,5 +1,5 @@
 # ctrdata 1.15.2.9000 (2023-10-11)
- - add missing handler for try-error when attempting to save EUCTR results
+ - add handler for errors when attempting to save EUCTR results (e.g., too long file path name)
  - ensure `dbFindFields()` return fields for EU and 3rd country trials in EUCTR, updated documentation
  - potentially breaking changes for EUCTR, fields renamed to harmonise EU and 3rd country trials: 
    new: "e83_single_site_trial", was: "e83_the_trial_involves_single_site_ in_the_member_state_concerned"
