@@ -46,48 +46,54 @@ ctrLoadQueryIntoDbCtis <- function(
 
   ## ctis api -----------------------------------------------------------
 
-  ctisEndpoints <- c(
+  ctisEndpoints <- paste0(
     #
-    # 1 trial overview - %s is for pagination
-    "https://euclinicaltrials.eu/ct-public-api-services/services/ct/publiclookup?&paging=%s,%s&sorting=+ctNumber&%s",
+    # root
+    "https://euclinicaltrials.eu/ct-public-api-services/services",
     #
-    # 2-3 trial information - %s is ctNumber
-    "https://euclinicaltrials.eu/ct-public-api-services/services/ct/%s/publicview", # partI and partsII
-    "https://euclinicaltrials.eu/ct-public-api-services/services/ct/%s/publicevents", # serious breach, unexpected event, urgent safety measure, inspection outside EEA, temporary halt
-    #
-    # 4-8 additional information - %s is ctNumber
-    "https://euclinicaltrials.eu/ct-public-api-services/services/ct/public/%s/summary/list",
-    "https://euclinicaltrials.eu/ct-public-api-services/services/ct/public/%s/layperson/list",
-    "https://euclinicaltrials.eu/ct-public-api-services/services/ct/public/%s/csr/list", # clinical study report
-    "https://euclinicaltrials.eu/ct-public-api-services/services/ct/public/%s/cm/list", # corrective measures
-    "https://euclinicaltrials.eu/ct-public-api-services/services/ct/public/%s/inspections/list",
-    #
-    # 9 trial information - %s is an application id
-    "https://euclinicaltrials.eu/ct-public-api-services/services/ct/%s/publicEvaluation",
-    #
-    # 10 download files - %s is document url
-    "https://euclinicaltrials.eu/ct-public-api-services/services/ct/public/download/%s",
-    #
-    # 11-18 documents - %s is entity identifier, lists
-    "https://euclinicaltrials.eu/ct-public-api-services/services/document/part1/%s/list", # appl auth
-    "https://euclinicaltrials.eu/ct-public-api-services/services/document/part2/%s/list", # appl auth
-    "https://euclinicaltrials.eu/ct-public-api-services/services/document/product-group-common/%s/list",
-    "https://euclinicaltrials.eu/ct-public-api-services/services/document/part1/%s/list?documentType=274", # p1 AR
-    "https://euclinicaltrials.eu/ct-public-api-services/services/document/part2/%s/list/?documentType=43", # auth letter
-    "https://euclinicaltrials.eu/ct-public-api-services/services/document/part2/%s/list/?documentType=42", # p2 ARs
-    "https://euclinicaltrials.eu/ct-public-api-services/services/document/rfi/%s/list", # rfis
-    "https://euclinicaltrials.eu/ct-public-api-services/services/document/notification/%s/list?documentType=101", # events
-    "https://euclinicaltrials.eu/ct-public-api-services/services/document/cm/%s/list", # corrective measures
-    #
-    # sub 3 additional info public events - %s is id, %s is type of notification
-    "https://euclinicaltrials.eu/ct-public-api-services/services/ct/%s/eventdetails?notificationType=%s"
-    #
-    # unclear or not publicly accessible
-    # https://euclinicaltrials.eu/ct-public-api-services/services/document/part1/4433/list?documentType=93
-    # https://euclinicaltrials.eu/ct-public-api-services/services/document/part1/4433/list?documentType=94
-    # https://euclinicaltrials.eu/ct-public-api-services/services/document/part2/14808/list/?documentType=41
-    # https://euclinicaltrials.eu/ct-public-api-services/services/document/considerationDoc/32137/list
-    #
+    # endpoints
+    c(
+      # - 1 trial overview - %s is for pagination
+      "/ct/publiclookup?&paging=%s,%s&sorting=+ctNumber&%s",
+      #
+      # - 2-3 trial information - %s is ctNumber
+      "/ct/%s/publicview",   # partI and partsII
+      "/ct/%s/publicevents", # serious breach, unexpected event, urgent
+      # safety measure, inspection outside EEA, temporary halt
+      #
+      # - 4-8 additional information - %s is ctNumber
+      "/ct/public/%s/summary/list",
+      "/ct/public/%s/layperson/list",
+      "/ct/public/%s/csr/list", # clinical study report
+      "/ct/public/%s/cm/list",  # corrective measures
+      "/ct/public/%s/inspections/list",
+      #
+      # - 9 trial information - %s is an application id
+      "/ct/%s/publicEvaluation",
+      #
+      # - 10 download files - %s is document url
+      "/ct/public/download/%s",
+      #
+      # - 11-18 documents - %s is entity identifier, lists
+      "/document/part1/%s/list", # appl auth
+      "/document/part2/%s/list", # appl auth
+      "/document/product-group-common/%s/list",
+      "/document/part1/%s/list?documentType=274", # p1 AR
+      "/document/part2/%s/list/?documentType=43", # auth letter
+      "/document/part2/%s/list/?documentType=42", # p2 ARs
+      "/document/rfi/%s/list",                    # rfis
+      "/document/notification/%s/list?documentType=101", # events
+      "/document/cm/%s/list", # corrective measures
+      #
+      # - sub 3 additional info public events - %s is id, %s is type of notification
+      "/ct/%s/eventdetails?notificationType=%s"
+      #
+      # unclear or not publicly accessible
+      # /document/part1/4433/list?documentType=93
+      # /document/part1/4433/list?documentType=94
+      # /document/part2/14808/list/?documentType=41
+      # /document/considerationDoc/32137/list
+    )
   )
 
   ## api_1: overviews ---------------------------------------------------------
