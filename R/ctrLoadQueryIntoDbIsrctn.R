@@ -1,0 +1,204 @@
+### ctrdata package
+
+#' ctrLoadQueryIntoDbIsrctn
+#'
+#' @inheritParams ctrLoadQueryIntoDb
+#'
+#' @keywords internal
+#' @noRd
+#'
+#' @importFrom jsonlite toJSON
+#' @importFrom nodbi docdb_query
+#' @importFrom utils URLdecode
+#'
+ctrLoadQueryIntoDbIsrctn <- function(
+    queryterm = queryterm,
+    register,
+    euctrresults,
+    euctrresultshistory,
+    documents.path,
+    documents.regexp,
+    annotation.text,
+    annotation.mode,
+    only.count,
+    con,
+    verbose,
+    queryupdateterm) {
+  ## isrctn api ---------------------------------------------------------------
+
+  # ISRCTN translation to API v0.4 2021-02-04
+  # - limit can be set to arbitrarily high number
+  # - no pagination or batching
+  # - internal means XML
+  queryIsrctnRoot <- "https://www.isrctn.com/"
+  queryIsrctnType1 <- "api/query/format/internal?limit="
+  queryIsrctnType2 <- "api/query/format/internal?limit=0&"
+  #
+  # convert parameters from search queryterm such as
+  # "q=neuroblastoma+OR+lymphoma&filters=phase%3APhase+III%2CLE+lastEdited%3A2021-01-01"
+  # "q=&filters=phase%3APhase+III%2CLE+lastEdited%3A2021-01-01"
+  # into to api format such as
+  # "q=(neuroblastoma OR lymphoma) AND phase:"Phase+III" AND lastEdited LE 2021-01-01T00:00:00.000Z"
+  #
+  # - ensure we can use text processing
+  queryterm <- utils::URLdecode(queryterm)
+  # - generate api terms
+  apiterm <- queryterm
+  apiterm <- sub("&filters=", ",", apiterm)
+  apiterm <- strsplit(apiterm, ",")[[1]]
+  # - remove naked q
+  apiterm <- apiterm[!grepl("^q=$", apiterm)]
+  # - translate "LE+lastEdited:2021-04-01"
+  #   into      "lastEdited LE 2021-04-01T00:00:00.000Z"
+  apiterm <- vapply(
+    apiterm,
+    function(a) sub("^(.*?)[+](.*?)[:](.*)$", "\\2 \\1 \\3", a),
+    character(1L),
+    USE.NAMES = FALSE
+  )
+  # - add time if date does not end with it
+  apiterm <- vapply(
+    apiterm,
+    function(a) sub("(.+[0-9]{4}-[0-9]{2}-[0-9]{2})$", "\\1T00:00:00.000Z", a),
+    character(1L),
+    USE.NAMES = FALSE
+  )
+  #
+  # - quote anything right of colon; this is an advanced search URL:
+  #   https://www.isrctn.com/search?q=&filters=phase%3APhase+III
+  #   which needs to be changed to phase:"Phase III", noting
+  #   `+` is interpreted by the API as space, thus unchanged
+  termstoquote <- grepl("[ +]", sub("^.*?[:](.+)$", "\\1", apiterm))
+  apiterm[termstoquote] <- vapply(
+    apiterm[termstoquote],
+    function(a) sub("^(.*?)[:](.+)$", "\\1:\"\\2\"", a),
+    character(1L),
+    USE.NAMES = FALSE
+  )
+  # - put q in brackets to respect logical operators
+  qtoquote <- grepl("^q=.+$", apiterm)
+  apiterm[qtoquote] <- sub("^q=(.+)$", "q=(\\1)", apiterm[qtoquote])
+  # - collapse
+  apiterm <- paste0(apiterm, collapse = " AND ")
+  # - add empty q if q is missing
+  if (!grepl("^q=", apiterm)) apiterm <- paste0("q=", apiterm)
+  # - inform user
+  if (verbose) message("DEBUG: apiterm is ", apiterm)
+
+  ## checks -------------------------------------------------------------------
+
+  message("* Checking trials in ISRCTN...")
+
+  # - check number of trials to be downloaded
+  isrctnfirstpageurl <- paste0(
+    queryIsrctnRoot, queryIsrctnType2, apiterm, queryupdateterm
+  )
+  #
+  tmp <- try(
+    suppressWarnings(
+      xml2::read_xml(
+        x = url(utils::URLencode(isrctnfirstpageurl))
+      )
+    ),
+    silent = TRUE
+  )
+  #
+  if (inherits(tmp, "try-error")) {
+    stop("Host ", queryIsrctnRoot, " not working as expected, ",
+         "cannot continue: ", tmp[[1]],
+         call. = FALSE
+    )
+  }
+  #
+  tmp <- try(xml2::xml_attr(tmp, "totalCount"), silent = TRUE)
+  #
+  # safeguard against no or unintended large numbers
+  tmp <- suppressWarnings(as.integer(tmp))
+  if (is.na(tmp) || !length(tmp)) {
+    message("No trials or number of trials could not be determined: ", tmp)
+    return(invisible(emptyReturn))
+  }
+  #
+  if (tmp == 0L) {
+    message("Search result page empty - no (new) trials found?")
+    return(invisible(emptyReturn))
+  }
+  # otherwise continue
+
+  # inform user
+  message(
+    "Retrieved overview, records of ", tmp, " ",
+    "trial(s) are to be downloaded (estimate: ",
+    format(tmp * 0.018, digits = 2), " MB)"
+  )
+
+  # only count?
+  if (only.count) {
+    # return
+    return(list(
+      n = tmp,
+      success = NULL,
+      failed = NULL
+    ))
+  }
+
+  # exit if too many records
+  if (tmp > 10000L) {
+    stop(
+      "These are ", tmp, " (more than 10,000) trials, this may be ",
+      "unintended. Downloading more than 10,000 trials may not be supported ",
+      "by the register; consider correcting or splitting queries"
+    )
+  }
+
+  ## download -----------------------------------------------------------------
+
+  ## create empty temporary directory on localhost for
+  # downloading from register into temporary directy
+  tempDir <- tempfile(pattern = "ctrDATA")
+  dir.create(tempDir)
+  tempDir <- normalizePath(tempDir, mustWork = TRUE)
+  if (!verbose) on.exit(unlink(tempDir, recursive = TRUE), add = TRUE)
+
+  # prepare a file handle for temporary directory
+  f <- paste0(tempDir, "/", "isrctn.xml")
+
+  # inform user
+  message("(1/3) Downloading trial file... ")
+
+  # construct API call setting limit to number found above
+  isrctndownloadurl <- paste0(
+    queryIsrctnRoot, queryIsrctnType1, tmp, "&", apiterm, queryupdateterm
+  )
+
+  # get (download) trials in single file f
+  tmp <- ctrMultiDownload(isrctndownloadurl, f)
+
+  # inform user
+  if (!file.exists(f) || file.size(f) == 0L) {
+    message(
+      "No studies downloaded. Please check 'queryterm' ",
+      " or run again with verbose = TRUE"
+    )
+  }
+
+  ## run conversion
+  message("(2/3) Converting to JSON...", appendLF = FALSE)
+  ctrConvertToJSON(tempDir, "isrctn2ndjson.php", verbose)
+
+  ## run import
+  message("(3/3) Importing JSON records into database...")
+  if (verbose) message("DEBUG: ", tempDir)
+  imported <- dbCTRLoadJSONFiles(
+    dir = tempDir,
+    con = con,
+    verbose = verbose
+  )
+
+  ## find out number of trials imported into database
+  message("= Imported or updated ", imported$n, " trial(s)")
+
+  # return
+  return(imported)
+}
+# end ctrLoadQueryIntoDbIsrctn
