@@ -278,28 +278,6 @@ expect_true("integer" == class(result[[
 # cleanup
 rm(tmp)
 
-#### dfListExtractKey ####
-
-# test
-expect_true(
-  sum(nchar(
-    # note: function
-    # is deprecated
-    suppressWarnings(
-      dfListExtractKey(
-        df = result2,
-        list.key = list(
-          c("endPoints.endPoint", "title"))
-      )[["value"]]
-    )), na.rm = TRUE)
-  > 3000L)
-
-# test
-expect_error(
-  suppressWarnings(
-    dfListExtractKey(
-      df = iris)),
-  "'df' lacks '_id' column")
 
 #### dfTrials2Long ####
 

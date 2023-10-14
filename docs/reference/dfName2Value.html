@@ -57,7 +57,7 @@ matched using Perl regular expressions and ignoring case."><meta name="twitter:c
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Get value for variable of interest</h1>
-      <small class="dont-index">Source: <a href="https://github.com/rfhb/ctrdata/blob/HEAD/R/utils.R" class="external-link"><code>R/utils.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/rfhb/ctrdata/blob/HEAD/R/dfName2Value.R" class="external-link"><code>R/dfName2Value.R</code></a></small>
       <div class="d-none name"><code>dfName2Value.Rd</code></div>
     </div>
 
@@ -118,26 +118,28 @@ that includes the values of interest, with columns
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">dbc</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">src_sqlite</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>   dbname <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"demo.sqlite"</span>, package <span class="op">=</span> <span class="st">"ctrdata"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>   collection <span class="op">=</span> <span class="st">"my_trials"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    dbname <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"demo.sqlite"</span>, package <span class="op">=</span> <span class="st">"ctrdata"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    collection <span class="op">=</span> <span class="st">"my_trials"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">dfwide</span> <span class="op">&lt;-</span> <span class="fu"><a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span> fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="co">## ctgov - typical results fields</span></span></span>
-<span class="r-in"><span>  <span class="co"># "clinical_results.baseline.analyzed_list.analyzed.count_list.count",</span></span></span>
-<span class="r-in"><span>  <span class="co"># "clinical_results.baseline.group_list.group",</span></span></span>
-<span class="r-in"><span>  <span class="co"># "clinical_results.baseline.analyzed_list.analyzed.units",</span></span></span>
-<span class="r-in"><span>  <span class="st">"clinical_results.outcome_list.outcome"</span>,</span></span>
-<span class="r-in"><span>  <span class="st">"study_design_info.allocation"</span>,</span></span>
-<span class="r-in"><span>  <span class="co">## euctr - typical results fields</span></span></span>
-<span class="r-in"><span>  <span class="co"># "trialInformation.fullTitle",</span></span></span>
-<span class="r-in"><span>  <span class="co"># "baselineCharacteristics.baselineReportingGroups.baselineReportingGroup",</span></span></span>
-<span class="r-in"><span>  <span class="co"># "trialChanges.hasGlobalInterruptions",</span></span></span>
-<span class="r-in"><span>  <span class="co"># "subjectAnalysisSets",</span></span></span>
-<span class="r-in"><span>  <span class="co"># "adverseEvents.seriousAdverseEvents.seriousAdverseEvent",</span></span></span>
-<span class="r-in"><span>  <span class="st">"endPoints.endPoint"</span>,</span></span>
-<span class="r-in"><span>  <span class="st">"subjectDisposition.recruitmentDetails"</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span>, con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>        <span class="co">## ctgov - typical results fields</span></span></span>
+<span class="r-in"><span>        <span class="co"># "clinical_results.baseline.analyzed_list.analyzed.count_list.count",</span></span></span>
+<span class="r-in"><span>        <span class="co"># "clinical_results.baseline.group_list.group",</span></span></span>
+<span class="r-in"><span>        <span class="co"># "clinical_results.baseline.analyzed_list.analyzed.units",</span></span></span>
+<span class="r-in"><span>        <span class="st">"clinical_results.outcome_list.outcome"</span>,</span></span>
+<span class="r-in"><span>        <span class="st">"study_design_info.allocation"</span>,</span></span>
+<span class="r-in"><span>        <span class="co">## euctr - typical results fields</span></span></span>
+<span class="r-in"><span>        <span class="co"># "trialInformation.fullTitle",</span></span></span>
+<span class="r-in"><span>        <span class="co"># "baselineCharacteristics.baselineReportingGroups.baselineReportingGroup",</span></span></span>
+<span class="r-in"><span>        <span class="co"># "trialChanges.hasGlobalInterruptions",</span></span></span>
+<span class="r-in"><span>        <span class="co"># "subjectAnalysisSets",</span></span></span>
+<span class="r-in"><span>        <span class="co"># "adverseEvents.seriousAdverseEvents.seriousAdverseEvent",</span></span></span>
+<span class="r-in"><span>        <span class="st">"endPoints.endPoint"</span>,</span></span>
+<span class="r-in"><span>        <span class="st">"subjectDisposition.recruitmentDetails"</span></span></span>
+<span class="r-in"><span>    <span class="op">)</span>, con <span class="op">=</span> <span class="va">dbc</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> clinical_results.outcome_list.outcome... </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> . </span>
@@ -174,252 +176,34 @@ that includes the values of interest, with columns
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## get values for the endpoint 'response'</span></span></span>
 <span class="r-in"><span><span class="fu">dfName2Value</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  df <span class="op">=</span> <span class="va">dflong</span>,</span></span>
-<span class="r-in"><span>  valuename <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="st">"clinical_results.*measurement.value|"</span>,</span></span>
-<span class="r-in"><span>    <span class="st">"clinical_results.*outcome.measure.units|"</span>,</span></span>
-<span class="r-in"><span>    <span class="st">"endPoints.endPoint.*tendencyValue.value|"</span>,</span></span>
-<span class="r-in"><span>    <span class="st">"endPoints.endPoint.unit"</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span>,</span></span>
-<span class="r-in"><span>  wherename <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="st">"clinical_results.*outcome.measure.title|"</span>,</span></span>
-<span class="r-in"><span>    <span class="st">"endPoints.endPoint.title"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  wherevalue <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    df <span class="op">=</span> <span class="va">dflong</span>,</span></span>
+<span class="r-in"><span>    valuename <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>        <span class="st">"clinical_results.*measurement.value|"</span>,</span></span>
+<span class="r-in"><span>        <span class="st">"clinical_results.*outcome.measure.units|"</span>,</span></span>
+<span class="r-in"><span>        <span class="st">"endPoints.endPoint.*tendencyValue.value|"</span>,</span></span>
+<span class="r-in"><span>        <span class="st">"endPoints.endPoint.unit"</span></span></span>
+<span class="r-in"><span>    <span class="op">)</span>,</span></span>
+<span class="r-in"><span>    wherename <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>        <span class="st">"clinical_results.*outcome.measure.title|"</span>,</span></span>
+<span class="r-in"><span>        <span class="st">"endPoints.endPoint.title"</span></span></span>
+<span class="r-in"><span>    <span class="op">)</span>,</span></span>
+<span class="r-in"><span>    wherevalue <span class="op">=</span> <span class="st">"response"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Returning values for 7 out of 46 trials</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                  _id identifier</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  2012-003632-23-AT          1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  2012-003632-23-AT          1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  2012-003632-23-AT          2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  2012-003632-23-AT          6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  2012-003632-23-AT        6.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  2012-003632-23-AT        6.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  2012-003632-23-AT        6.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  2012-003632-23-AT        6.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  2012-003632-23-AT        6.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 2012-003632-23-AT          8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 2012-003632-23-AT          8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12 2012-003632-23-CZ          1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13 2012-003632-23-CZ          1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14 2012-003632-23-CZ          2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15 2012-003632-23-CZ          6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16 2012-003632-23-CZ        6.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17 2012-003632-23-CZ        6.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18 2012-003632-23-CZ        6.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19 2012-003632-23-CZ        6.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20 2012-003632-23-CZ        6.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21 2012-003632-23-CZ          8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22 2012-003632-23-CZ          8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23 2012-003632-23-DE          1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24 2012-003632-23-DE          1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25 2012-003632-23-DE          2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26 2012-003632-23-DE          6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27 2012-003632-23-DE        6.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28 2012-003632-23-DE        6.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29 2012-003632-23-DE        6.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30 2012-003632-23-DE        6.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31 2012-003632-23-DE        6.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32 2012-003632-23-DE          8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 33 2012-003632-23-DE          8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34 2012-003632-23-ES          1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 35 2012-003632-23-ES          1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 36 2012-003632-23-ES          2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 37 2012-003632-23-ES          6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 38 2012-003632-23-ES        6.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 39 2012-003632-23-ES        6.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 40 2012-003632-23-ES        6.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 41 2012-003632-23-ES        6.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 42 2012-003632-23-ES        6.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 43 2012-003632-23-ES          8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 44 2012-003632-23-ES          8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 45 2012-003632-23-GB          1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 46 2012-003632-23-GB          1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 47 2012-003632-23-GB          2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 48 2012-003632-23-GB          6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 49 2012-003632-23-GB        6.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50 2012-003632-23-GB        6.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 51 2012-003632-23-GB        6.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 52 2012-003632-23-GB        6.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 53 2012-003632-23-GB        6.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54 2012-003632-23-GB          8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 55 2012-003632-23-GB          8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 56 2012-003632-23-IT          1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 57 2012-003632-23-IT          1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 58 2012-003632-23-IT          2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59 2012-003632-23-IT          6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 60 2012-003632-23-IT        6.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 61 2012-003632-23-IT        6.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 62 2012-003632-23-IT        6.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 63 2012-003632-23-IT        6.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 64 2012-003632-23-IT        6.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65 2012-003632-23-IT          8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 66 2012-003632-23-IT          8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 67 2012-003632-23-SE          1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 68 2012-003632-23-SE          1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 69 2012-003632-23-SE          2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 70 2012-003632-23-SE          6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 71 2012-003632-23-SE        6.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 72 2012-003632-23-SE        6.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 73 2012-003632-23-SE        6.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 74 2012-003632-23-SE        6.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 75 2012-003632-23-SE        6.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 76 2012-003632-23-SE          8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 77 2012-003632-23-SE          8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                        name</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                                                                                   endPoints.endPoint.unit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                                                                                   endPoints.endPoint.unit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4                                                                                                   endPoints.endPoint.unit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10                                                                                                  endPoints.endPoint.unit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12                                                                                                  endPoints.endPoint.unit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14                                                                                                  endPoints.endPoint.unit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15                                                                                                  endPoints.endPoint.unit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21                                                                                                  endPoints.endPoint.unit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23                                                                                                  endPoints.endPoint.unit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25                                                                                                  endPoints.endPoint.unit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26                                                                                                  endPoints.endPoint.unit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32                                                                                                  endPoints.endPoint.unit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 33 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34                                                                                                  endPoints.endPoint.unit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 35 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 36                                                                                                  endPoints.endPoint.unit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 37                                                                                                  endPoints.endPoint.unit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 38 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 39 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 40 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 41 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 42 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 43                                                                                                  endPoints.endPoint.unit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 44 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 45                                                                                                  endPoints.endPoint.unit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 46 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 47                                                                                                  endPoints.endPoint.unit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 48                                                                                                  endPoints.endPoint.unit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 49 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 51 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 52 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 53 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54                                                                                                  endPoints.endPoint.unit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 55 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 56                                                                                                  endPoints.endPoint.unit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 57 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 58                                                                                                  endPoints.endPoint.unit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59                                                                                                  endPoints.endPoint.unit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 60 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 61 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 62 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 63 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 64 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65                                                                                                  endPoints.endPoint.unit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 66 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 67                                                                                                  endPoints.endPoint.unit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 68 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 69                                                                                                  endPoints.endPoint.unit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 70                                                                                                  endPoints.endPoint.unit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 71 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 72 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 73 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 74 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 75 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 76                                                                                                  endPoints.endPoint.unit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 77 endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.tendencyValues.tendencyValue.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                           value                           where</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                          Days        Time to Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                           7.0        Time to Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  At least 1 response (number)    Durability of First Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4         Overall Response Rate                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5                          0.63                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6                             0                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7                          0.65                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8                          0.59                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9                          0.60                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 Percentage of treatment time Cumulative Duration of Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11                         78.6 Cumulative Duration of Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12                         Days        Time to Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13                          7.0        Time to Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14 At least 1 response (number)    Durability of First Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15        Overall Response Rate                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16                         0.63                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17                            0                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18                         0.65                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19                         0.59                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20                         0.60                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21 Percentage of treatment time Cumulative Duration of Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22                         78.6 Cumulative Duration of Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23                         Days        Time to Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24                          7.0        Time to Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25 At least 1 response (number)    Durability of First Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26        Overall Response Rate                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27                         0.63                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28                            0                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29                         0.65                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30                         0.59                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31                         0.60                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32 Percentage of treatment time Cumulative Duration of Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 33                         78.6 Cumulative Duration of Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34                         Days        Time to Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 35                          7.0        Time to Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 36 At least 1 response (number)    Durability of First Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 37        Overall Response Rate                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 38                         0.63                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 39                            0                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 40                         0.65                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 41                         0.59                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 42                         0.60                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 43 Percentage of treatment time Cumulative Duration of Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 44                         78.6 Cumulative Duration of Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 45                         Days        Time to Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 46                          7.0        Time to Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 47 At least 1 response (number)    Durability of First Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 48        Overall Response Rate                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 49                         0.63                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50                            0                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 51                         0.65                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 52                         0.59                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 53                         0.60                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54 Percentage of treatment time Cumulative Duration of Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 55                         78.6 Cumulative Duration of Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 56                         Days        Time to Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 57                          7.0        Time to Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 58 At least 1 response (number)    Durability of First Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59        Overall Response Rate                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 60                         0.63                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 61                            0                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 62                         0.65                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 63                         0.59                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 64                         0.60                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65 Percentage of treatment time Cumulative Duration of Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 66                         78.6 Cumulative Duration of Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 67                         Days        Time to Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 68                          7.0        Time to Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 69 At least 1 response (number)    Durability of First Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 70        Overall Response Rate                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 71                         0.63                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 72                            0                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 73                         0.65                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 74                         0.59                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 75                         0.60                Overall Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 76 Percentage of treatment time Cumulative Duration of Response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 77                         78.6 Cumulative Duration of Response</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 77 × 5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    `_id`             identifier name                                                                 value where</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 2012-003632-23-AT 1          endPoints.endPoint.unit                                              Days  Time…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 2012-003632-23-AT 1          endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysi… 7.0   Time…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 2012-003632-23-AT 2          endPoints.endPoint.unit                                              At l… Dura…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 2012-003632-23-AT 6          endPoints.endPoint.unit                                              Over… Over…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 2012-003632-23-AT 6.1        endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysi… 0.63  Over…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 2012-003632-23-AT 6.2        endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysi… 0     Over…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 2012-003632-23-AT 6.3        endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysi… 0.65  Over…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 2012-003632-23-AT 6.4        endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysi… 0.59  Over…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 2012-003632-23-AT 6.5        endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysi… 0.60  Over…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 2012-003632-23-AT 8          endPoints.endPoint.unit                                              Perc… Cumu…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 67 more rows</span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

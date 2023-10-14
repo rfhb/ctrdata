@@ -63,7 +63,7 @@ records while keeping any user annotations of trial records."><meta name="twitte
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Load and store register trial information</h1>
-      <small class="dont-index">Source: <a href="https://github.com/rfhb/ctrdata/blob/HEAD/R/main.R" class="external-link"><code>R/main.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/rfhb/ctrdata/blob/HEAD/R/ctrLoadQueryIntoDb.R" class="external-link"><code>R/ctrLoadQueryIntoDb.R</code></a></small>
       <div class="d-none name"><code>ctrLoadQueryIntoDb.Rd</code></div>
     </div>
 
@@ -254,7 +254,9 @@ collection) to facilitate documentation.</p>
 <span class="r-in"><span><span class="co"># either neuroblastoma or lymphoma from ISRCTN,</span></span></span>
 <span class="r-in"><span><span class="co"># into the same collection as used before</span></span></span>
 <span class="r-in"><span><span class="fu">ctrLoadQueryIntoDb</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  queryterm <span class="op">=</span> <span class="st">"https://www.isrctn.com/search?q=neuroblastoma+OR+lymphoma&amp;filters=phase%3APhase+III"</span>,</span></span>
+<span class="r-in"><span>  queryterm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="st">"https://www.isrctn.com/search?"</span>,</span></span>
+<span class="r-in"><span>    <span class="st">"q=neuroblastoma+OR+lymphoma&amp;filters=phase%3APhase+III"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  con <span class="op">=</span> <span class="va">dbc</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -263,7 +265,6 @@ collection) to facilitate documentation.</p>
 <span class="r-in"><span>  queryterm <span class="op">=</span> <span class="st">"https://euclinicaltrials.eu/app/#/search?status=Ended"</span>,</span></span>
 <span class="r-in"><span>  con <span class="op">=</span> <span class="va">dbc</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
