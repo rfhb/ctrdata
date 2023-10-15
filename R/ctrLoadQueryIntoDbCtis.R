@@ -369,7 +369,6 @@ ctrLoadQueryIntoDbCtis <- function(
 
   fApplicationsJson <- file.path(tempDir, "ctis_add_9.json")
 
-  message("-a-")
   # get ids of trial applications
   jqr::jq(
     file(fPartIPartsIINdjson),
@@ -378,10 +377,8 @@ ctrLoadQueryIntoDbCtis <- function(
     out = fApplicationsJson
   )
 
-  message("-b-")
   idsApplications <- jsonlite::stream_in(file(fApplicationsJson), verbose = FALSE)
 
-  message("-c-")
   dlFiles <- apply(idsApplications, 1, function(r) {
     data.frame(
       "_id" = unlist(r[1], use.names = TRUE), r[-1],
@@ -389,17 +386,14 @@ ctrLoadQueryIntoDbCtis <- function(
       row.names = NULL, check.rows = FALSE)
   })
 
-  message("-d-")
   dlFiles <- do.call(rbind, dlFiles)
   dlFiles$url <- sprintf(ctisEndpoints[9], dlFiles$applicationIds)
   dlFiles$filepathname <- file.path(
     tempDir, paste0("ctis_add_9_", dlFiles$applicationIds, ".json"))
 
-  message("-e-")
   # "HTTP server doesn't seem to support byte ranges. Cannot resume."
   tmp <- ctrMultiDownload(dlFiles$url, dlFiles$filepathname)
 
-  message("-f-")
   fApplicationsNdjson <- file.path(tempDir, "ctis_add_9.ndjson")
   unlink(fApplicationsNdjson)
 
