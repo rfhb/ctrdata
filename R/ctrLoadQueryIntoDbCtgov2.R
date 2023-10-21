@@ -26,14 +26,8 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     con, verbose,
     queryupdateterm) {
 
-  ## create empty temporary directory on localhost for
-  # downloading from register into temporary directy
-  tempDir <- tempfile(pattern = "ctrDATA")
-  dir.create(tempDir)
-  tempDir <- normalizePath(tempDir, mustWork = TRUE)
-  # register function to remove files after use for streaming
-  if (!verbose) on.exit(unlink(tempDir, recursive = TRUE), add = TRUE)
-  if (verbose) message("DEBUG: ", tempDir)
+  ## create empty temporary directory
+  tempDir <- ctrTempDir(verbose)
 
   ## ctgov api ---------------------------------------------------------
 

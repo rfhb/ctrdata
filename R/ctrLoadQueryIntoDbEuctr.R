@@ -122,12 +122,8 @@ ctrLoadQueryIntoDbEuctr <- function(
 
   ## protocol-related information ---------------------------------------------
 
-  # create empty temporary directory on localhost for
-  # download from register into temporary directory
-  tempDir <- tempfile(pattern = "ctrDATA")
-  dir.create(tempDir)
-  tempDir <- normalizePath(tempDir, mustWork = TRUE)
-  if (!verbose) on.exit(unlink(tempDir, recursive = TRUE), add = TRUE)
+  ## create empty temporary directory
+  tempDir <- ctrTempDir(verbose)
 
   # check results parameters
   if (is.null(documents.path)) {

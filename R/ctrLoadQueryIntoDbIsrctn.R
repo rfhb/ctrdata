@@ -153,12 +153,8 @@ ctrLoadQueryIntoDbIsrctn <- function(
 
   ## download -----------------------------------------------------------------
 
-  ## create empty temporary directory on localhost for
-  # downloading from register into temporary directy
-  tempDir <- tempfile(pattern = "ctrDATA")
-  dir.create(tempDir)
-  tempDir <- normalizePath(tempDir, mustWork = TRUE)
-  if (!verbose) on.exit(unlink(tempDir, recursive = TRUE), add = TRUE)
+  ## create empty temporary directory
+  tempDir <- ctrTempDir(verbose)
 
   # prepare a file handle for temporary directory
   f <- paste0(tempDir, "/", "isrctn.xml")

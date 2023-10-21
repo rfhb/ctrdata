@@ -1099,6 +1099,50 @@ ctrConvertToJSON <- function(tempDir, scriptName, verbose) {
 
 
 
+#' ctrTempDir
+#'
+#' create empty temporary directory on localhost for
+#' downloading from register into temporary directory
+#'
+#' @return path to existing directory
+#'
+#' @keywords internal
+#' @noRd
+#'
+ctrTempDir <- function(verbose = FALSE) {
+
+  # get temporary space
+  # tempDir <- tempfile(pattern = "ctrDATA")
+  tempDir <- getOption(
+    "ctrdata.tempdir",
+    default = tempfile(pattern = "ctrDATA"))
+
+  # create and normalise for OS
+  dir.create(tempDir, showWarnings = FALSE, recursive = TRUE)
+  tempDir <- normalizePath(tempDir, mustWork = TRUE)
+
+  # insert on.exit() call into the parent function
+  if (!verbose) {
+    do.call(
+      on.exit,
+      list(
+        substitute(fun(), list(
+          fun = function() unlink(tempDir, recursive = TRUE))),
+        add = TRUE),
+      envir = parent.frame(2L)
+    )
+  }
+
+  # inform user
+  if (verbose) message("DEBUG: ", tempDir)
+
+  # return
+  return(tempDir)
+
+}
+
+
+
 #' dbCTRLoadJSONFiles
 #'
 #' @param dir Path to local directory with JSON files
