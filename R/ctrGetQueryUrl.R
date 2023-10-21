@@ -86,7 +86,7 @@ ctrGetQueryUrl <- function(
     if (inherits(url, "try-error")) url <- ""
     if (is.null(url) || (length(url) != 1L) || (nchar(url) == 0L) ||
         grepl(regQueryterm, url) ||
-        !grepl("^https://", url)) {
+        !startsWith(url, "https://")) {
       stop("ctrGetQueryUrl(): no clinical trial register ",
            "search URL found in parameter 'url' or in clipboard.",
            call. = FALSE
@@ -96,7 +96,7 @@ ctrGetQueryUrl <- function(
   }
 
   # check parameter combination
-  if (register != "" && grepl("^http", url)) {
+  if (register != "" && startsWith(url, "http")) {
     warning("Full URL but also 'register' specified; ",
             "continuing with register = ''",
             immediate. = TRUE
@@ -163,7 +163,7 @@ ctrGetQueryUrl <- function(
     )
 
     # check if url was for results of single trial
-    if (grepl(".*/results$", url)) {
+    if (endsWith(url, ".*/results")) {
       queryterm <- paste0(queryterm)
     }
 

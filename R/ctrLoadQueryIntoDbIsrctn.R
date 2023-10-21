@@ -81,7 +81,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
   # - collapse
   apiterm <- paste0(apiterm, collapse = " AND ")
   # - add empty q if q is missing
-  if (!grepl("^q=", apiterm)) apiterm <- paste0("q=", apiterm)
+  if (!startsWith(apiterm, "q=")) apiterm <- paste0("q=", apiterm)
   # - inform user
   if (verbose) message("DEBUG: apiterm is ", apiterm)
 

@@ -397,7 +397,7 @@ dbFindIdsUniqueTrials <- function(
     # append attributes
     attributes(listofIds) <- c(
         attributes(listofIds),
-        attribsids[grepl("^ctrdata-", names(attribsids))]
+        attribsids[startsWith(names(attribsids), "ctrdata-")]
     )
 
     # avoid returning list() if none found
