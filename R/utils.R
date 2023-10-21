@@ -1010,23 +1010,72 @@ checkBinary <- function(b = NULL, verbose = FALSE) {
 #' @importFrom curl multi_download
 #' @importFrom utils URLencode
 #'
-ctrMultiDownload <- function(urls, destfiles, progress = TRUE) {
+ctrMultiDownload <- function(
+    urls,
+    destfiles,
+    progress = TRUE,
+    resume = FALSE,
+    verbose = TRUE) {
 
-  downloadValue <- do.call(
-    curl::multi_download,
-    c(urls = list(utils::URLencode(urls)),
-      destfiles = list(destfiles),
-      progress = progress,
-      getOption("httr_config")[["options"]],
-      accept_encoding = "gzip,deflate,zstd,br",
-      multiplex = TRUE
+  stopifnot(length(urls) == length(destfiles))
+
+  # does not error in case any of the individual requests fail
+  # inspect the return value to find out which were successful
+
+  toDo <- rep.int(TRUE, times = length(urls))
+  numI <- 1L
+  canR <- resume
+
+  while (any(toDo) && numI < 5L) {
+
+    res <- do.call(
+      curl::multi_download,
+      c(urls = list(utils::URLencode(urls[toDo])),
+        destfiles = list(destfiles[toDo]),
+        progress = progress,
+        getOption("httr_config")[["options"]],
+        multiplex = TRUE,
+        resume = canR,
+        accept_encoding = "gzip,deflate,zstd,br"
+      )
     )
-  )
-  if (inherits(downloadValue, "try-error")) {
-    stop("Download failed; last error: ", class(downloadValue), call. = FALSE)
+
+    if (numI == 1L) {
+      downloadValue <- res
+    } else {
+      downloadValue[toDo, , drop = FALSE] <- res
+    }
+
+    if (any(grepl(
+      "annot resume", downloadValue[toDo, "error", drop = TRUE]))) canR <- FALSE
+
+    if (inherits(downloadValue, "try-error")) {
+      stop("Download failed; last error: ", class(downloadValue), call. = FALSE)
+    }
+
+    numI <- numI + 1L
+    toDo <- is.na(downloadValue[["success"]]) |
+      !downloadValue[["success"]] |
+      !(downloadValue[["status_code"]] %in% c(200L, 206L, 416L))
+
   }
 
-  return(downloadValue)
+  if (any(toDo)) {
+
+    # remove any files from failed downloads
+    unlink(downloadValue[toDo, c("destfile"), drop = TRUE])
+
+    if (verbose) {
+      message(
+        "Download failed for: status code / url(s):")
+      apply(
+        downloadValue[toDo, c("status_code", "url"), drop = FALSE],
+        1, function(r) message(r[1], " / ", r[2], "\n", appendLF = FALSE)
+    )}
+
+  }
+
+  return(downloadValue[!toDo, , drop = FALSE])
 
 } # end ctrMultiDownload
 
