@@ -93,7 +93,7 @@ ctrLoadQueryIntoDbCtis <- function(
   ## api_1: overviews ---------------------------------------------------------
 
   # this is for importing overview (recruitment, status etc.) into database
-  message("* Checking trials in EUCTR...")
+  message("* Checking trials in CTIS...")
 
   # "HTTP server doesn't seem to support byte ranges. Cannot resume."
   message("(1/5) Downloading trials list ", appendLF = FALSE)
@@ -102,7 +102,7 @@ ctrLoadQueryIntoDbCtis <- function(
   i <- 0L
   di <- 200L
   idsTrials <- NULL
-  fTrialsNdjson <- file.path(tempDir, "ctis_add_1.ndjson")
+  fTrialsNdjson <- file.path(tempDir, "ctis_trials_1.ndjson")
   unlink(fTrialsNdjson)
 
   # need to iterate / paginate as total number cannot be determined
@@ -226,7 +226,7 @@ ctrLoadQueryIntoDbCtis <- function(
     strftime(Sys.time(), "%Y-%m-%d %H:%M:%S"), '",')
 
   # convert partI and partsII details into ndjson file
-  fPartIPartsIINdjson <- file.path(tempDir, "ctis_trials_partIpartsII_.ndjson")
+  fPartIPartsIINdjson <- file.path(tempDir, "ctis_add_2.ndjson")
   unlink(fPartIPartsIINdjson)
 
   for (fn in tmp[["destfile"]]) {
@@ -250,9 +250,9 @@ ctrLoadQueryIntoDbCtis <- function(
   # '{"partIIInfo": [{"partIIIinfoKey": <integer number>, ...}]}'
   ctisMangle <- list(
     # file in, file out, pattern, replacement
-    c(fPartIPartsIINdjson, paste0(fPartIPartsIINdjson, "1"), '"([0-9]+)": ?[{]', '{"partIIIinfoKey":$1,'),
-    c(paste0(fPartIPartsIINdjson, "1"), paste0(fPartIPartsIINdjson, "2"), '"partIIInfo":[{]', '"partIIInfo":['),
-    c(paste0(fPartIPartsIINdjson, "2"), fPartIPartsIINdjson, '[}],"(reporting|decision)Date"', '],"$1Date"')
+    c(fPartIPartsIINdjson, paste0(fPartIPartsIINdjson, "a"), '"([0-9]+)": ?[{]', '{"partIIIinfoKey":$1,'),
+    c(paste0(fPartIPartsIINdjson, "a"), paste0(fPartIPartsIINdjson, "b"), '"partIIInfo":[{]', '"partIIInfo":['),
+    c(paste0(fPartIPartsIINdjson, "b"), fPartIPartsIINdjson, '[}],"(reporting|decision)Date"', '],"$1Date"')
   )
   for (i in ctisMangle) {
     cat(stringi::stri_replace_all_regex(
@@ -261,6 +261,7 @@ ctrLoadQueryIntoDbCtis <- function(
     ), file = i[2], sep = "\n")
     message(". ", appendLF = FALSE)
   }
+  if (!verbose) unlink(paste0(fPartIPartsIINdjson, c("a", "b")))
 
   ## api_3: public events ----------------------------------------------------
 
@@ -323,6 +324,7 @@ ctrLoadQueryIntoDbCtis <- function(
     for (fi in seq_len(nrow(tmp))) {
 
       fn <- tmp[["destfile"]][fi]
+
       if (file.size(fn) < 150L) next # sizes 99, 100, 134 byte
 
       # get data
