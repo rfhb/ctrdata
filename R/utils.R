@@ -887,7 +887,7 @@ checkCommand <- function(commandtest = NULL, verbose = FALSE) {
   if (.Platform$OS.type == "windows") {
     commandtest <- paste0(
       rev(Sys.glob("c:\\cygw*\\bin\\bash.exe"))[1],
-      ' --noprofile --norc --noediting -c ',
+      " --noprofile --norc --noediting -c ",
       shQuote(paste0(
         "PATH=/usr/local/bin:/usr/bin; ",
         commandtest)))
@@ -1067,11 +1067,13 @@ ctrMultiDownload <- function(
 
     if (verbose) {
       message(
-        "Download failed for: status code / url(s):")
+        "Download failed for: status code / url(s):"
+      )
       apply(
         downloadValue[toDo, c("status_code", "url"), drop = FALSE],
         1, function(r) message(r[1], " / ", r[2], "\n", appendLF = FALSE)
-    )}
+      )
+    }
 
   }
 
@@ -1161,7 +1163,6 @@ ctrConvertToJSON <- function(tempDir, scriptName, verbose) {
 ctrTempDir <- function(verbose = FALSE) {
 
   # get temporary space
-  # tempDir <- tempfile(pattern = "ctrDATA")
   tempDir <- getOption(
     "ctrdata.tempdir",
     default = tempfile(pattern = "ctrDATA"))
@@ -1280,7 +1281,7 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
           key = con$collection,
           query = paste0(
             '{"_id": {"$in": [',
-            paste0('"', ids, '"', collapse = ","), ']}}'),
+            paste0('"', ids, '"', collapse = ","), "]}}"),
           fields = '{"_id": 1, "annotation": 1}')
       }, silent = TRUE)
       if (!inherits(annoDf, "try-error") && length(annoDf[["_id"]])) {

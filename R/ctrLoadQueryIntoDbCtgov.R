@@ -160,7 +160,7 @@ ctrLoadQueryIntoDbCtgov <- function(
       for (f in dir(path = tempDir, pattern = "^ctgov_trials_[0-9]+[.]ndjson$", full.names = TRUE)) {
         cat(jqr::jq(
           file(f),
-          ' { _id: ._id, docs: [ .provided_document_section.provided_document[].document_url ] } ',
+          " { _id: ._id, docs: [ .provided_document_section.provided_document[].document_url ] } ",
           flags = jqr::jq_flags(pretty = FALSE)
         ),
         sep = "\n",
