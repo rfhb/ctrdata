@@ -1,11 +1,14 @@
-# ctrdata 1.15.2.9000 (2023-10-11)
+# ctrdata 1.15.2.9000 (2023-10-21)
 ## Improvements
 
 - add handler for errors when attempting to save EUCTR results (e.g., too long file path name)
 - ensure `dbFindFields()` return fields for EU and 3rd country trials in EUCTR, updated documentation
+- changed order of importing from CTIS into database
+- better checked downloads, repeat where necessary
+- factored out temporary folder creation
 - removed `dfListExtractKey()`, long deprecated
 - removed `dfMergeTwoVariablesRelevel()`, long deprecated
-- reorganise file layour 
+- reorganise file layout
   
 ## Breaking changes
 
@@ -16,6 +19,7 @@
   new: "e840_multiple_sites_globally", was "e84_will_this_trial_be_conducted_at_multiple_sites_globally"
   new: "e863_trial_sites_planned_in", was "e863_specify_the_regions_in_which_trial_sites_are_planned"
   new: "e863_trial_sites_planned_in", was "e863_specify_the_countries_outside_of_the_eea_in_which_trial_sites_are_planned"
+  see also comments on issue https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
 
 # ctrdata 1.15.2 (2023-09-10)
 
