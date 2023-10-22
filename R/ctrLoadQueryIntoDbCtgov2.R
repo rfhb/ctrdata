@@ -214,18 +214,24 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     fTrialJson <- file.path(tempDir, paste0("ctgov_trials_", pageNumber,".json"))
 
     # page url
-    urlToDownload <- ifelse(pageNextToken != "",
-                            paste0(url, "&pageToken=", pageNextToken), url)
+    urlToDownload <- ifelse(
+      pageNextToken != "",
+      paste0(url, "&pageToken=", pageNextToken),
+      url)
 
     # do download
-    tmp <- ctrMultiDownload(urlToDownload, fTrialJson, progress = TRUE)
+    tmp <- ctrMultiDownload(
+      urlToDownload,
+      fTrialJson,
+      progress = TRUE,
+      verbose = verbose)
 
     # inform user
     if (tmp[1, "status_code", drop = TRUE] != 200L) message(
       "Download not successful for ", urlToDownload)
 
     # convert to ndjson
-    message("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bconverting to NDJSON...")
+    message("converting to NDJSON...")
     fTrialsNdjson <- file.path(tempDir, paste0("ctgov_trials_", pageNumber,".ndjson"))
     jqr::jq(
       file(fTrialJson),
@@ -343,6 +349,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
 
       } else {
 
+        # inform
         message("- Applying 'documents.regexp' to ",
                 nrow(dlFiles), " documents")
 
@@ -350,7 +357,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
           grepl(documents.regexp, dlFiles$filename, ignore.case = TRUE), ,
           drop = FALSE]
 
-        # do download
+        # inform
         message("- Downloading ",
                 nrow(dlFiles[!dlFiles$fileexists, , drop = FALSE]),
                 " missing documents")
@@ -358,7 +365,8 @@ ctrLoadQueryIntoDbCtgov2 <- function(
         # do download
         tmp <- ctrMultiDownload(
           urls = dlFiles$url[!dlFiles$fileexists],
-          destfiles = dlFiles$filepathname[!dlFiles$fileexists])
+          destfiles = dlFiles$filepathname[!dlFiles$fileexists],
+          verbose = verbose)
 
         if (!nrow(tmp)) tmp <- 0L else {
 

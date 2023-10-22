@@ -107,7 +107,7 @@ ctrLoadQueryIntoDbCtgov <- function(
   message("(1/3) Downloading trial file...")
 
   # get (download) trials in single zip file f
-  tmp <- ctrMultiDownload(ctgovdownloadcsvurl, f)
+  tmp <- ctrMultiDownload(ctgovdownloadcsvurl, f, verbose = verbose)
 
   # inform user
   if (!file.exists(f) || file.size(f) == 0L) {
@@ -220,8 +220,10 @@ ctrLoadQueryIntoDbCtgov <- function(
           # download and save
           message("Downloading ", nrow(dlFiles), " documents:")
 
-          tmp <- ctrMultiDownload(dlFiles$url[!dlFiles$exists],
-                                  dlFiles$destfile[!dlFiles$exists])
+          tmp <- ctrMultiDownload(
+            dlFiles$url[!dlFiles$exists],
+            dlFiles$destfile[!dlFiles$exists],
+            verbose = verbose)
 
           if (!nrow(tmp)) tmp <- 0L else {
 

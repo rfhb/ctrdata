@@ -44,8 +44,9 @@
 #' @param documents.path If this is a relative or absolute
 #' path to a directory that exists or can be created,
 #' save any documents into it that are directly available from
-#' the register ("EUCTR", "CTGOV", "CTIS") such as PDFs on results,
-#' analysis plans, spreadsheets, assessments or product information
+#' the register ("EUCTR", "CTGOV", "CTGOV2", "ISRCTN", "CTIS")
+#' such as PDFs on results, analysis plans, spreadsheets,
+#' patient information sheets, assessments or product information.
 #' Default is \code{NULL}, which disables saving documents.
 #'
 #' @param documents.regexp Regular expression, case insensitive,
@@ -53,15 +54,14 @@
 #' (see \code{documents.path}).
 #' If set to \code{NULL}, empty placeholder files are saved for
 #' every document that could be saved. Default is
-#' \code{"prot|sample|statist|sap_|p1ar|p2ars|ctaletter"}.
-#' Used with "CTGOV" and "CTIS" (but not "EUCTR" for which all
-#' available documents are saved, and not with "ISRCTN" which
-#' does not hold documents).
+#' \code{"prot|sample|statist|sap_|p1ar|p2ars|ctaletter|^[0-9]+ "}.
+#' Used with "CTGOV", "CTGOV2", "ISRCTN" and "CTIS" (but not "EUCTR",
+#' for which all available documents are saved in any case).
 #'
 #' @param euctrresults If \code{TRUE}, also download available
 #' results when retrieving and loading trials from EUCTR. This
-#' slows down this function. (For "CTGOV" and "CTIS", all
-#' available results are always retrieved and loaded into the
+#' slows down this function. (For "CTGOV", "CTGOV2" and "CTIS",
+#' all available results are always retrieved and loaded into the
 #' collection.)
 #'
 #' @param euctrresultshistory If \code{TRUE}, also download
@@ -156,7 +156,7 @@ ctrLoadQueryIntoDb <- function(
     euctrresults = FALSE,
     euctrresultshistory = FALSE,
     documents.path = NULL,
-    documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctaletter",
+    documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctaletter|^[0-9]+ ",
     annotation.text = "",
     annotation.mode = "append",
     only.count = FALSE,

@@ -19,7 +19,7 @@ Description: A system for querying, retrieving and analyzing
         ('CTIS', <https://euclinicaltrials.eu/>). 
         Trial information is downloaded, converted and stored in a database 
         ('PostgreSQL', 'SQLite', 'DuckDB' or 'MongoDB'; via package 'nodbi'). 
-        All documents in registers associated with trials can also be downloaded. 
+        Documents in registers associated with trials can also be downloaded. 
         Other functions identify deduplicated records, 
         easily find and extract variables (fields) of interest even 
         from complex nested data as used by the registers, 

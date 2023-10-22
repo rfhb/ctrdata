@@ -219,7 +219,7 @@ ctrLoadQueryIntoDbCtis <- function(
   }
 
   # "HTTP server doesn't seem to support byte ranges. Cannot resume."
-  tmp <- ctrMultiDownload(urls, fPartIPartsIIJson(idsTrials))
+  tmp <- ctrMultiDownload(urls, fPartIPartsIIJson(idsTrials), verbose = verbose)
 
   importString <- paste0(
     '"ctrname":"CTIS",\\1,"record_last_import":"',
@@ -315,7 +315,7 @@ ctrLoadQueryIntoDbCtis <- function(
     }
 
     # "HTTP server doesn't seem to support byte ranges. Cannot resume."
-    tmp <- ctrMultiDownload(urls, fAddJson(idsTrials), progress = FALSE)
+    tmp <- ctrMultiDownload(urls, fAddJson(idsTrials), progress = FALSE, verbose = verbose)
 
     # convert into ndjson file
     fAddNdjson <- file.path(tempDir, paste0("ctis_add_", e, ".ndjson"))
@@ -388,7 +388,11 @@ ctrLoadQueryIntoDbCtis <- function(
     tempDir, paste0("ctis_add_9_", dlFiles$applicationIds, ".json"))
 
   # "HTTP server doesn't seem to support byte ranges. Cannot resume."
-  tmp <- ctrMultiDownload(dlFiles$url, dlFiles$filepathname)
+  tmp <- ctrMultiDownload(
+    dlFiles$url,
+    dlFiles$filepathname,
+    resume = FALSE,
+    verbose = verbose)
 
   fApplicationsNdjson <- file.path(tempDir, "ctis_add_9.ndjson")
   unlink(fApplicationsNdjson)
@@ -584,7 +588,10 @@ ctrLoadQueryIntoDbCtis <- function(
       dlFiles$destfile <- fFilesListJson(
         dlFiles[["_id"]], dlFiles[["part"]], dlFiles[["id"]])
 
-      tmp <- ctrMultiDownload(dlFiles[["url"]], dlFiles[["destfile"]])
+      tmp <- ctrMultiDownload(
+        dlFiles[["url"]],
+        dlFiles[["destfile"]],
+        verbose = verbose)
 
       if (sum(tmp$status_code != 200L, na.rm = TRUE)) {
         warning("Could not download these lists with document information: ",
@@ -712,7 +719,8 @@ ctrLoadQueryIntoDbCtis <- function(
         # do download
         tmp <- ctrMultiDownload(
           urls = sprintf(ctisEndpoints[10], dlFiles$url[!dlFiles$fileexists]),
-          destfiles = dlFiles$filepathname[!dlFiles$fileexists])
+          destfiles = dlFiles$filepathname[!dlFiles$fileexists],
+          verbose = verbose)
 
         if (!nrow(tmp)) tmp <- 0L else {
 

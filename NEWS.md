@@ -17,7 +17,8 @@
 
 ## Improvements
 
-- add handler for errors when attempting to save EUCTR results (e.g., too long file path name)
+- added documents download for ISRCTN
+- added handler for errors when attempting to save EUCTR results (e.g., too long file path name)
 - ensure `dbFindFields()` return fields for EU and 3rd country trials in EUCTR, updated documentation
 - changed order of importing from CTIS into database
 - better checked downloads, repeat where necessary

@@ -366,7 +366,7 @@ ctrLoadQueryIntoDb(
 <div id="workflow-ctis-example"></div>
 * Add records from a fourth register (CTIS `r emoji::emoji("bell")`) into the same collection
 
-Queries in the CTIS search interface can be automatically copied to the clipboard so that a user can paste them into `queryterm`, see [here](#3-script-to-automatically-copy-users-query-from-web-browser). As of June 2023, more than 200 trials are publicly accessible in CTIS. See [below](#documents-example) for how to download documents from CTIS. 
+Queries in the CTIS search interface can be automatically copied to the clipboard so that a user can paste them into `queryterm`, see [here](#3-script-to-automatically-copy-users-query-from-web-browser). As of October 2023, more than 350 trials are publicly accessible in CTIS. See [below](#documents-example) for how to download documents from CTIS. 
 
 ```{r load_ctis}
 # Retrieve trials from another register:
@@ -625,7 +625,8 @@ ggsave(
 ### EUCTR document files can be downloaded when results are requested
 # All files are downloaded and saved (documents.regexp is not used) 
 ctrLoadQueryIntoDb(
-  queryterm = "https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&age=under-18&phase=phase-one",
+  queryterm = "query=cancer&age=under-18&phase=phase-one",
+  register = "EUCTR",
   euctrresults = TRUE,
   documents.path = "./files-euctr/",
   con = db
@@ -638,8 +639,9 @@ ctrLoadQueryIntoDb(
 # = Imported or updated results for 114 trials
 # = documents saved in './files-euctr'
 
+
 ### CTGOV files are downloaded, here corresponding to the default of 
-# documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctaletter"
+# documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctaletter|^[0-9]+ "
 ctrLoadQueryIntoDb(
   queryterm = "cond=Neuroblastoma&type=Intr&recrs=e&phase=1&u_prot=Y&u_sap=Y&u_icf=Y",
   register = "CTGOV",
@@ -655,8 +657,37 @@ ctrLoadQueryIntoDb(
 # Download status: 10 done; 0 in progress. Total size: 38.10 Mb (100%)... done!             
 # Newly saved 10 document(s) for 7 trial(s); 0 document(s) for 0 trial(s) already existed
 
+
+### CTGOV2 files are downloaded, here corresponding to the default of 
+# documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctaletter|^[0-9]+ "
+ctrLoadQueryIntoDb(
+  queryterm = "https://clinicaltrials.gov/search?cond=neuroblastoma&aggFilters=phase:1,results:with",
+  documents.path = "./files-ctgov2/",
+  con = db
+)
+
+
+### ISRCTN files are downloaded, here corresponding to the default of 
+# documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctaletter|^[0-9]+ "
+ctrLoadQueryIntoDb(
+  queryterm = "https://www.isrctn.com/search?q=alzheimer",
+  documents.path = "./files-isrctn/",
+  con = db
+)
+# * Found search query from CTGOV2: cond=neuroblastoma&aggFilters=phase:1,results:with
+# [...]
+# * Downloading documents into 'documents.path' = ./files-ctgov2/
+# - Created directory ./files-ctgov2
+# - Creating subfolder for each trial
+# - Applying 'documents.regexp' to 30 documents
+# - Downloading 26 missing documents
+# Download status: 26 done; 0 in progress. Total size: 70.12 Mb (100%)... done!             
+# = Newly saved 26 document(s) for 19 trial(s); 0 document(s) for 0 trial(s) already 
+# existed in ./files-ctgov2
+
+
 ### CTIS files are downloaded, here corresponding to the default of 
-# documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctaletter"
+# documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctaletter|^[0-9]+ "
 ctrLoadQueryIntoDb(
   queryterm = "https://euclinicaltrials.eu/app/#/search?ageGroupCode=2",
   documents.path = "./files-ctis/",
@@ -665,17 +696,22 @@ ctrLoadQueryIntoDb(
 # * Found search query from CTIS: ageGroupCode=2
 # [...]
 # * Downloading documents into 'documents.path' = ./files-ctis/
-# - Created directory /Users/ralfherold/Daten/mak/r/emea/ctrdata/files-ctis
+# - Created directory ./files-ctis
 # - Getting ids of lists with document information
-# - Downloading 899 lists with document information (estimate: 17.98 Mb)
-# Download status: 899 done; 0 in progress. Total size: 14.25 Mb (100%)... done!             
-# - Processing document information in 899 lists
+# - Downloading 939 lists with document information (estimate: 18.78 Mb)
+# Download status: 939 done; 0 in progress. Total size: 12.82 Mb (100%)... done!             
+# Download status: 294 done; 0 in progress. Total size: 2.16 Mb (100%)... done!             
+# - Processing document information in 939 lists
 # - Creating subfolder for each trial
-# - Applying 'documents.regexp' to 4460 documents
-# - Downloading 418 missing documents
-# Download status: 418 done; 0 in progress. Total size: 274.75 Mb (100%)... done!             
-# = Newly saved 371 document(s) for 37 trial(s) (latest versions only, deduplicated if 
-# e.g. in application and authorised part); 0 document(s) for 0 trial(s) already existed
+# - Applying 'documents.regexp' to 4733 documents
+# - Downloading 440 missing documents
+# Download status: 440 done; 0 in progress. Total size: 115.61 Mb (100%)... done!             
+# Download status: 211 done; 0 in progress. Total size: 148.06 Mb (100%)... done!             
+# Download status: 81 done; 0 in progress. Total size: 130.86 Mb (100%)... done!             
+# Download status: 47 done; 0 in progress. Total size: 690 b (100%)... done!             
+# = Newly saved 393 document(s) for 39 trial(s) (latest versions only, deduplicated 
+# if e.g. in application and authorised part); 0 document(s) for 0 trial(s) already 
+# existed in./files-ctis
 ```
 
 ```{r cleanup, include=FALSE}
@@ -684,6 +720,8 @@ unlink("some_database_name.sqlite_file")
 unlink("./files-ctis/", recursive = TRUE)
 unlink("./files-euctr/", recursive = TRUE)
 unlink("./files-ctgov/", recursive = TRUE)
+unlink("./files-ctgov2/", recursive = TRUE)
+unlink("./files-isrctn/", recursive = TRUE)
 ```
 
 
@@ -693,20 +731,20 @@ See also [https://app.codecov.io/gh/rfhb/ctrdata/tree/master/R](https://app.code
 
 ```{r}
 suppressMessages(tinytest::test_all())
-# test_ctrdata_ctrfindactivesubstance.R    4 tests OK 4.5s
-# test_ctrdata_mongo_local_ctgov.R   36 tests OK 1.2s
-# test_ctrdata_mongo_local_ctgov2.R   10 tests OK 20.3s
-# test_ctrdata_mongo_local_ctis.R   21 tests OK 3.6s
-# test_ctrdata_mongo_local_euctr.R   73 tests OK 2.1s
-# test_ctrdata_mongo_local_isrctn.R   31 tests OK 8.1s
-# test_ctrdata_other_functions.R   58 tests OK 0.7s
-# test_ctrdata_sqlite_ctgov.R...   36 tests OK 4.4s
-# test_ctrdata_sqlite_ctgov2.R..   10 tests OK 1.5s
-# test_ctrdata_sqlite_ctis.R....   21 tests OK 5.5s
-# test_ctrdata_sqlite_euctr.R...   73 tests OK 10.4s
-# test_ctrdata_sqlite_isrctn.R..   31 tests OK 24.1s
-# test_euctr_error_sample.R.....    9 tests OK 1.1s
-# All ok, 413 results (29m 33.7s)
+# test_ctrdata_ctrfindactivesubstance.R    4 tests OK 2.3s
+# test_ctrdata_mongo_local_ctgov.R   36 tests OK 1.0s
+# test_ctrdata_mongo_local_ctgov2.R   12 tests OK 19.7s
+# test_ctrdata_mongo_local_ctis.R   21 tests OK 2.1s
+# test_ctrdata_mongo_local_euctr.R   73 tests OK 1.9s
+# test_ctrdata_mongo_local_isrctn.R   32 tests OK 15.9s
+# test_ctrdata_other_functions.R   58 tests OK 0.9s
+# test_ctrdata_sqlite_ctgov.R...   36 tests OK 4.7s
+# test_ctrdata_sqlite_ctgov2.R..   12 tests OK 1.6s
+# test_ctrdata_sqlite_ctis.R....   21 tests OK 3.5s
+# test_ctrdata_sqlite_euctr.R...   73 tests OK 11.0s
+# test_ctrdata_sqlite_isrctn.R..   31 tests OK 22.4s
+# test_euctr_error_sample.R.....    9 tests OK 1.3s
+# All ok, 417 results (26m 43.8s)
 ```
 
 

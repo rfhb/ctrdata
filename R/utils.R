@@ -1018,6 +1018,7 @@ ctrMultiDownload <- function(
     verbose = TRUE) {
 
   stopifnot(length(urls) == length(destfiles))
+  if (!length(urls)) return(data.frame())
 
   # does not error in case any of the individual requests fail
   # inspect the return value to find out which were successful
@@ -1028,17 +1029,17 @@ ctrMultiDownload <- function(
 
   while (any(toDo) && numI < 5L) {
 
-    res <- do.call(
-      curl::multi_download,
-      c(urls = list(utils::URLencode(urls[toDo])),
-        destfiles = list(destfiles[toDo]),
-        progress = progress,
-        getOption("httr_config")[["options"]],
-        multiplex = TRUE,
-        resume = canR,
-        accept_encoding = "gzip,deflate,zstd,br"
-      )
+    args <- c(
+      urls = list(utils::URLencode(urls[toDo])),
+      destfiles = list(destfiles[toDo]),
+      progress = progress,
+      getOption("httr_config")[["options"]],
+      multiplex = TRUE,
+      resume = canR,
+      accept_encoding = "gzip,deflate,zstd,br"
     )
+
+    res <- do.call(curl::multi_download, args)
 
     if (numI == 1L) {
       downloadValue <- res

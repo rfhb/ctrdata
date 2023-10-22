@@ -194,7 +194,7 @@ ctrLoadQueryIntoDbEuctr <- function(
   )
 
   # do download and saving
-  tmp <- ctrMultiDownload(urls, fp)
+  tmp <- ctrMultiDownload(urls, fp, verbose = verbose)
 
   if (nrow(tmp) != resultsEuNumPages) {
     message("Download from EUCTR failed; incorrect number of records")
@@ -273,7 +273,7 @@ ctrLoadQueryIntoDbEuctr <- function(
     )
 
     # do download and save
-    tmp <- ctrMultiDownload(urls, fp)
+    tmp <- ctrMultiDownload(urls, fp, verbose = verbose)
 
     # work only on successful downloads
     tmp <- tmp[tmp[["status_code"]] == 200L, , drop = FALSE]
