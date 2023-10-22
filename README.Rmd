@@ -46,7 +46,7 @@ The package `ctrdata` provides functions for retrieving (downloading) informatio
 - ISRCTN (https://www.isrctn.com/) 
 - EU Clinical Trials Information System ("CTIS", https://euclinicaltrials.eu/) `r emoji::emoji("bell")` see [example](#workflow-ctis-example)
 
-The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-10-14 for version 1.15.2.9000 for [CTGOV changes](#workflow-ctgov-example).
+The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-10-22 for version 1.15.2.9000 for [CTGOV changes](#workflow-ctgov-example).
 
 ## Main features
 
@@ -505,14 +505,15 @@ result %<>%
   mutate(isrctnStatus = if_else(trialDesign.overallEndDate < record_last_import, "Ongoing", "Completed")) %>% 
   ungroup()
   
-# Merge variables / fields from different registers with re-leveling:
+# - Merge fields from different registers with re-leveling
 statusValues <- list(
   "ongoing" = c(
     # EUCTR
-    "Recruiting", "Active", "Ongoing", "Temporarily Halted", "Restarted",
+    "Recruiting", "Active", "Ongoing", 
+    "Temporarily Halted", "Restarted",
     # CTGOV
-    "Active, not recruiting", "Enrolling by invitation", "Not yet recruiting",
-    "ACTIVE_NOT_RECRUITING",
+    "Active, not recruiting", "Enrolling by invitation", 
+    "Not yet recruiting", "ACTIVE_NOT_RECRUITING",
     # CTIS
     "Ongoing, recruiting", "Ongoing, recruitment ended", 
     "Ongoing, not yet recruiting", "Authorised, not started"
@@ -531,7 +532,7 @@ result[["state"]] <- dfMergeVariablesRelevel(
   levelslist = statusValues
 )
 
-# example plot
+# - Plot example
 library(ggplot2)
 ggplot(result) + 
   stat_ecdf(aes(x = start, colour = state))
@@ -541,6 +542,7 @@ ggsave(
 )
 ```
 ![Analysis across registers](https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_across_registers.png)
+
 
 * Result-related trial information
 
@@ -564,7 +566,7 @@ result <- dbGetFieldsIntoDf(
 # Mangle to calculate:
 # - which columns with values for group counts are not labelled Total
 # - what are the numbers in each of the groups etc.
-result %>% 
+result %<>% 
   mutate(
     which_not_total = lapply(clinical_results.baseline.group_list.group, "[[", 1),
     which_not_total = lapply(which_not_total, function(i) which(i[["title"]] != "Total")),
@@ -582,7 +584,7 @@ rowwise() %>%
     which_not_total = list(if (length(which_not_total)) which_not_total else 1L),
     num_participants = sum(as.integer(num_participants[[1]][which_not_total])),
     num_arms_or_groups = max(number_of_arms, length(which_not_total))
-  ) -> result
+  )
 
 # Inspect:
 # View(result)
@@ -620,7 +622,7 @@ ggsave(
 * Download documents: retrieve protocols, statistical analysis plans and other documents into the local folder `./files-.../`
 
 ```{r load_documents}
-# EUCTR document files can be downloaded when results are requested
+### EUCTR document files can be downloaded when results are requested
 # All files are downloaded and saved (documents.regexp is not used) 
 ctrLoadQueryIntoDb(
   queryterm = "https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&age=under-18&phase=phase-one",
@@ -636,7 +638,7 @@ ctrLoadQueryIntoDb(
 # = Imported or updated results for 114 trials
 # = documents saved in './files-euctr'
 
-# CTGOV files are downloaded, here corresponding to the default of 
+### CTGOV files are downloaded, here corresponding to the default of 
 # documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctaletter"
 ctrLoadQueryIntoDb(
   queryterm = "cond=Neuroblastoma&type=Intr&recrs=e&phase=1&u_prot=Y&u_sap=Y&u_icf=Y",
@@ -653,7 +655,7 @@ ctrLoadQueryIntoDb(
 # Download status: 10 done; 0 in progress. Total size: 38.10 Mb (100%)... done!             
 # Newly saved 10 document(s) for 7 trial(s); 0 document(s) for 0 trial(s) already existed
 
-# CTIS files are downloaded, here corresponding to the default of 
+### CTIS files are downloaded, here corresponding to the default of 
 # documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctaletter"
 ctrLoadQueryIntoDb(
   queryterm = "https://euclinicaltrials.eu/app/#/search?ageGroupCode=2",
@@ -709,6 +711,8 @@ suppressMessages(tinytest::test_all())
 
 
 ## Future features
+
+* See project outline https://github.com/users/rfhb/projects/1
 
 * Canonical definitions, filters, calculations are in the works (since August 2023) for data mangling and analyses across registers, e.g. to define study population, identify interventional trials, calculate study duration; public collaboration on these canonical scripts will speed up harmonising analyses. 
 

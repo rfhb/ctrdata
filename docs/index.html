@@ -120,7 +120,7 @@
 <li>EU Clinical Trials Information System (“CTIS”, <a href="https://euclinicaltrials.eu/" class="external-link uri">https://euclinicaltrials.eu/</a>) 🔔 see <a href="#workflow-ctis-example">example</a>
 </li>
 </ul>
-<p>The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-10-14 for version 1.15.2.9000 for <a href="#workflow-ctgov-example">CTGOV changes</a>.</p>
+<p>The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-10-22 for version 1.15.2.9000 for <a href="#workflow-ctgov-example">CTGOV changes</a>.</p>
 <div class="section level2">
 <h2 id="main-features">Main features<a class="anchor" aria-label="anchor" href="#main-features"></a>
 </h2>
@@ -644,14 +644,15 @@ citation("ctrdata")
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>isrctnStatus <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">if_else</a></span><span class="op">(</span><span class="va">trialDesign.overallEndDate</span> <span class="op">&lt;</span> <span class="va">record_last_import</span>, <span class="st">"Ongoing"</span>, <span class="st">"Completed"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">ungroup</a></span><span class="op">(</span><span class="op">)</span></span>
 <span>  </span>
-<span><span class="co"># Merge variables / fields from different registers with re-leveling:</span></span>
+<span><span class="co"># - Merge fields from different registers with re-leveling</span></span>
 <span><span class="va">statusValues</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>  <span class="st">"ongoing"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>    <span class="co"># EUCTR</span></span>
-<span>    <span class="st">"Recruiting"</span>, <span class="st">"Active"</span>, <span class="st">"Ongoing"</span>, <span class="st">"Temporarily Halted"</span>, <span class="st">"Restarted"</span>,</span>
+<span>    <span class="st">"Recruiting"</span>, <span class="st">"Active"</span>, <span class="st">"Ongoing"</span>, </span>
+<span>    <span class="st">"Temporarily Halted"</span>, <span class="st">"Restarted"</span>,</span>
 <span>    <span class="co"># CTGOV</span></span>
-<span>    <span class="st">"Active, not recruiting"</span>, <span class="st">"Enrolling by invitation"</span>, <span class="st">"Not yet recruiting"</span>,</span>
-<span>    <span class="st">"ACTIVE_NOT_RECRUITING"</span>,</span>
+<span>    <span class="st">"Active, not recruiting"</span>, <span class="st">"Enrolling by invitation"</span>, </span>
+<span>    <span class="st">"Not yet recruiting"</span>, <span class="st">"ACTIVE_NOT_RECRUITING"</span>,</span>
 <span>    <span class="co"># CTIS</span></span>
 <span>    <span class="st">"Ongoing, recruiting"</span>, <span class="st">"Ongoing, recruitment ended"</span>, </span>
 <span>    <span class="st">"Ongoing, not yet recruiting"</span>, <span class="st">"Authorised, not started"</span></span>
@@ -670,7 +671,7 @@ citation("ctrdata")
 <span>  levelslist <span class="op">=</span> <span class="va">statusValues</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># example plot</span></span>
+<span><span class="co"># - Plot example</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_ecdf.html" class="external-link">stat_ecdf</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">start</span>, colour <span class="op">=</span> <span class="va">state</span><span class="op">)</span><span class="op">)</span></span>
@@ -702,7 +703,7 @@ Analysis across registers
 <span><span class="co"># Mangle to calculate:</span></span>
 <span><span class="co"># - which columns with values for group counts are not labelled Total</span></span>
 <span><span class="co"># - what are the numbers in each of the groups etc.</span></span>
-<span><span class="va">result</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span><span class="va">result</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/compound.html" class="external-link">%&lt;&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>    which_not_total <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">clinical_results.baseline.group_list.group</span>, <span class="st">"[["</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>    which_not_total <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">which_not_total</span>, <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">i</span><span class="op">[[</span><span class="st">"title"</span><span class="op">]</span><span class="op">]</span> <span class="op">!=</span> <span class="st">"Total"</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -720,7 +721,7 @@ Analysis across registers
 <span>    which_not_total <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">which_not_total</span><span class="op">)</span><span class="op">)</span> <span class="va">which_not_total</span> <span class="kw">else</span> <span class="fl">1L</span><span class="op">)</span>,</span>
 <span>    num_participants <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">num_participants</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">which_not_total</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    num_arms_or_groups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">number_of_arms</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">which_not_total</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op">-&gt;</span> <span class="va">result</span></span>
+<span>  <span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Inspect:</span></span>
 <span><span class="co"># View(result)</span></span>
@@ -761,7 +762,7 @@ Neuroblastoma trials
 </li>
 </ul>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># EUCTR document files can be downloaded when results are requested</span></span>
+<code class="sourceCode R"><span><span class="co">### EUCTR document files can be downloaded when results are requested</span></span>
 <span><span class="co"># All files are downloaded and saved (documents.regexp is not used) </span></span>
 <span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
 <span>  queryterm <span class="op">=</span> <span class="st">"https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&amp;age=under-18&amp;phase=phase-one"</span>,</span>
@@ -777,7 +778,7 @@ Neuroblastoma trials
 <span><span class="co"># = Imported or updated results for 114 trials</span></span>
 <span><span class="co"># = documents saved in './files-euctr'</span></span>
 <span></span>
-<span><span class="co"># CTGOV files are downloaded, here corresponding to the default of </span></span>
+<span><span class="co">### CTGOV files are downloaded, here corresponding to the default of </span></span>
 <span><span class="co"># documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctaletter"</span></span>
 <span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
 <span>  queryterm <span class="op">=</span> <span class="st">"cond=Neuroblastoma&amp;type=Intr&amp;recrs=e&amp;phase=1&amp;u_prot=Y&amp;u_sap=Y&amp;u_icf=Y"</span>,</span>
@@ -794,7 +795,7 @@ Neuroblastoma trials
 <span><span class="co"># Download status: 10 done; 0 in progress. Total size: 38.10 Mb (100%)... done!             </span></span>
 <span><span class="co"># Newly saved 10 document(s) for 7 trial(s); 0 document(s) for 0 trial(s) already existed</span></span>
 <span></span>
-<span><span class="co"># CTIS files are downloaded, here corresponding to the default of </span></span>
+<span><span class="co">### CTIS files are downloaded, here corresponding to the default of </span></span>
 <span><span class="co"># documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctaletter"</span></span>
 <span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
 <span>  queryterm <span class="op">=</span> <span class="st">"https://euclinicaltrials.eu/app/#/search?ageGroupCode=2"</span>,</span>
@@ -841,6 +842,7 @@ Neuroblastoma trials
 <h2 id="future-features">Future features<a class="anchor" aria-label="anchor" href="#future-features"></a>
 </h2>
 <ul>
+<li><p>See project outline <a href="https://github.com/users/rfhb/projects/1" class="external-link uri">https://github.com/users/rfhb/projects/1</a></p></li>
 <li><p>Canonical definitions, filters, calculations are in the works (since August 2023) for data mangling and analyses across registers, e.g. to define study population, identify interventional trials, calculate study duration; public collaboration on these canonical scripts will speed up harmonising analyses.</p></li>
 <li><p>Authentication, expected to be required by CTGOV2; specifications not yet known (work not yet started).</p></li>
 <li><p>Explore further registers such as <a href="https://trialsearch.who.int/" class="external-link">ICTRP</a> (authentication needed), <a href="https://rctportal.niph.go.jp/" class="external-link">JPRN</a>, <a href="https://jrct.niph.go.jp/" class="external-link">jRCT</a>, <a href="https://www.umin.ac.jp/ctr/" class="external-link">UMIN-CTR</a>, <a href="https://www.chictr.org.cn/" class="external-link">ChiCTR</a> (exploration is continually ongoing; added value, terms and conditions for programmatic access vary; no clear roadmap is established yet).</p></li>
