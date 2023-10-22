@@ -3,6 +3,64 @@
 # set server
 httr::set_config(httr::timeout(seconds = 60))
 
+#### url to api translation ####
+
+queryterm <- "
+https://clinicaltrials.gov/search?
+&locn=MyFacility
+&locStr=USA
+&country=United%20States
+&distance=50
+&ageRange=18d_64y
+&cond=cancer
+&term=krebs
+&intr=Investigational%20drug
+&start=1990-01-01_2030-01-01
+&primComp=1990-01-01_2030-01-01
+&firstPost=1990-01-01_2030-01-01
+&aggFilters=
+funderType:industry,
+phase:2,
+results:without,
+status:rec%20act,
+studyType:int%20exp%20exp_indiv,
+violation:y
+&resFirstPost=1990-01-01_2030-01-01
+&lastUpdPost=1990-01-01_2030-01-01
+&studyComp=1990-01-01_2030-01-01
+&titles=MyAcronym
+&outc=MyOutComeMeasure
+&spons=MySponsor
+&lead=MySponsorLead
+&id=NCT05429502
+"
+queryterm <- gsub("\n", "", queryterm)
+# utils::browseURL(queryterm)
+
+tmp1 <-
+  capture.output(
+    tmp2 <- ctrLoadQueryIntoDb(
+      queryterm = queryterm,
+      only.count = TRUE,
+      verbose = TRUE
+    ),
+    type = "message"
+  )
+tmp1 <- tmp1[startsWith(tmp1, "API call: ")]
+
+refapicall <- "API call: https://www.clinicaltrials.gov/api/v2/studies?format=json&countTotal=true&pageSize=1&filter.advanced=AREA[MinimumAge]RANGE[18d, MAX] AND AREA[MaximumAge]RANGE[MIN, 64y] AND AREA[StudyFirstPostDate]RANGE[1990-01-01,2030-01-01] AND AREA[LastUpdatePostDate]RANGE[1990-01-01,2030-01-01] AND AREA[PrimaryCompletionDate]RANGE[1990-01-01,2030-01-01] AND AREA[ResultsFirstPostDate]RANGE[1990-01-01,2030-01-01] AND AREA[StartDate]RANGE[1990-01-01,2030-01-01] AND AREA[CompletionDate]RANGE[1990-01-01,2030-01-01]&query.locn=AREA[LocationCountry]United States,AREA[LocationFacility]MyFacility,AREA[LocationCity]USA&aggFilters=funderType:industry,phase:2,results:without,status:rec act,studyType:int exp exp_indiv,violation:y&query.cond=cancer&query.id=NCT05429502&query.intr=Investigational drug&query.lead=MySponsorLead&query.outc=MyOutComeMeasure&query.spons=MySponsor&query.term=krebs&query.titles=MyAcronym"
+# utils::browseURL(sub("API call: ", "", refapicall))
+
+# test
+expect_equal(
+  sort(strsplit(tmp1, "&")[[1]]),
+  sort(strsplit(refapicall, "&")[[1]])
+)
+
+# test
+expect_equal(tmp2$n, 1L)
+
+
 #### ctrLoadQueryIntoDb ####
 
 # test

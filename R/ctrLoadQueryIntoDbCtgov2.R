@@ -69,14 +69,16 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     #
     "filter.advanced" = list(
       "extract" = list(
+        "resFirstPost=([0-9-]+)_?([0-9-]*)(&.+|$)",
         "primComp=([0-9-]+)_?([0-9-]*)(&.+|$)",
         "studyComp=([0-9-]+)_?([0-9-]*)(&.+|$)",
         "lastUpdPost=([0-9-]+)_?([0-9-]*)(&.+|$)",
-        "firstPost==([0-9-]+)_?([0-9-]*)(&.+|$)",
-        "start==([0-9-]+)_?([0-9-]*)(&.+|$)",
+        "firstPost=([0-9-]+)_?([0-9-]*)(&.+|$)",
+        "start=([0-9-]+)_?([0-9-]*)(&.+|$)",
         "ageRange=([0-9a-z]+)_?([0-9a-z]*)(&.+|$)"
       ),
       "replace" = list(
+        "AREA[ResultsFirstPostDate]RANGE[\\1,\\2]",
         "AREA[PrimaryCompletionDate]RANGE[\\1,\\2]",
         "AREA[CompletionDate]RANGE[\\1,\\2]",
         "AREA[LastUpdatePostDate]RANGE[\\1,\\2]",
@@ -90,17 +92,20 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     #
     "query.locn" = list(
       "extract" = list(
+        "country=(.+)(&|$)",
         "locn=(.+)(&|$)",
         "locStr=(.+)(&.+|$)"
       ),
       "replace" = list(
-        "LocationFacility:\\1",
-        "LocationCity:\\1"
+        "AREA[LocationCountry]\\1",
+        "AREA[LocationFacility]\\1",
+        "AREA[LocationCity]\\1"
       ),
       "collapse" = ",",
       "out" = character()
     ),
     #
+    # hand through aggFilters
     list(
       "extract" = "(aggFilters=.+)(&|$)",
       "replace" = "&\\1",
@@ -110,7 +115,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     #
     # other "query." terms
     list(
-      "extract" = "(cond|term|intr|title|outc|sponsor|lead|id)=(.+)(&|$)",
+      "extract" = "(cond|term|intr|titles|outc|spons|lead|id)=(.+)(&|$)",
       "replace" = "&query.\\1=\\2",
       "collapse" = "",
       "out" = character()
