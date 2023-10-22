@@ -54,8 +54,6 @@ refapicall <- "API call: https://www.clinicaltrials.gov/api/v2/studies?format=js
 hlpSplit <- function(x) strsplit(x, "&| AND |,[^0-9]", fixed = FALSE)[[1]]
 
 # test
-print(sort(hlpSplit(tmp1)))
-print(sort(hlpSplit(refapicall)))
 expect_equal(setdiff(hlpSplit(tmp1), hlpSplit(refapicall)), character(0L))
 
 # test
