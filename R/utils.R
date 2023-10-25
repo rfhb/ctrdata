@@ -1032,11 +1032,12 @@ ctrMultiDownload <- function(
     args <- c(
       urls = list(utils::URLencode(urls[toDo])),
       destfiles = list(destfiles[toDo]),
-      progress = progress,
-      getOption("httr_config")[["options"]],
-      multiplex = TRUE,
       resume = canR,
-      accept_encoding = "gzip,deflate,zstd,br"
+      progress = progress,
+      timeout = Inf,
+      multiplex = TRUE,
+      c(getOption("httr_config")[["options"]],
+        accept_encoding = "gzip,deflate,zstd,br")
     )
 
     res <- do.call(curl::multi_download, args)
