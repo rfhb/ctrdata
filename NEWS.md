@@ -14,6 +14,7 @@
 ## Bug fixes
 
  - corrected translation of some fields from the browser URL to the API call for CTGOV2
+ - corrected minimum version number for curl to 5.1.0 to avoid error under MS Windows
 
 ## Improvements
 
