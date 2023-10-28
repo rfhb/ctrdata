@@ -169,7 +169,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
     queryIsrctnRoot, queryIsrctnType1, tmp, "&", apiterm, queryupdateterm
   )
 
-  # get (download) trials in single file f
+  # get (download) trials into single file f
   tmp <- ctrMultiDownload(isrctndownloadurl, f, verbose = verbose)
 
   # inform user
@@ -180,13 +180,19 @@ ctrLoadQueryIntoDbIsrctn <- function(
     )
   }
 
+  ## convert to json ------------------------------------------------
+
   ## run conversion
   message("(2/3) Converting to JSON...", appendLF = FALSE)
   ctrConvertToJSON(tempDir, "isrctn2ndjson.php", verbose)
 
+  ## import json -----------------------------------------------------
+
   ## run import
   message("(3/3) Importing JSON records into database...")
   if (verbose) message("DEBUG: ", tempDir)
+
+  # do import
   imported <- dbCTRLoadJSONFiles(
     dir = tempDir,
     con = con,
@@ -197,140 +203,48 @@ ctrLoadQueryIntoDbIsrctn <- function(
 
   if (!is.null(documents.path)) {
 
-    # check and create directory
-    createdDir <- try(
-      dir.create(documents.path, recursive = TRUE, showWarnings = FALSE),
-      silent = TRUE)
-    if (inherits(createdDir, "try-errror")) {
-      warning("Directory could not be created for 'documents.path' ",
-              documents.path, ", cannot download files", call. = FALSE)
-    } else {
+    # temporary file for trial ids and file names
+    downloadsNdjson <- file.path(tempDir, "isrctn_downloads.ndjson")
+    suppressMessages(unlink(downloadsNdjson))
+    downloadsNdjsonCon <- file(downloadsNdjson, open = "at")
 
-      # continue after if
-      message("* Downloading documents into 'documents.path' = ", documents.path)
-
-      # canonical directory path
-      documents.path <- normalizePath(documents.path, mustWork = TRUE)
-      if (createdDir) message("- Created directory ", documents.path)
-
-      # get temporary file for trial ids and file names
-      downloadsNdjson <- file.path(tempDir, "isrctn_downloads.ndjson")
-      suppressMessages(unlink(downloadsNdjson))
-      downloadsNdjsonCon <- file(downloadsNdjson, open = "at")
-
-      # extract trial ids and file name and save in temporary file
-      for (ndjsonFile in dir(
-        path = tempDir, pattern = "^.+_trials_.*.ndjson$", full.names = TRUE)) {
-        jqr::jq(
-          file(ndjsonFile), # use digit prefix from trial as fileref
-          '._id as $trialid |
+    # extract trial ids and file name and save in temporary file
+    for (ndjsonFile in dir(
+      path = tempDir, pattern = "^.+_trials_.*.ndjson$", full.names = TRUE)) {
+      jqr::jq(
+        file(ndjsonFile), # use digit prefix from trial as fileref
+        '._id as $trialid |
           ([.attachedFiles.attachedFile[] | .name |
             capture("(?<n>^[0-9]+)[ _]").n][0]) as $fileprefix |
           .attachedFiles.attachedFile[] |
           {_id: $trialid, filename: .name, fileref1: .id, fileref2: $fileprefix}',
-          flags = jqr::jq_flags(pretty = FALSE),
-          out = downloadsNdjsonCon)
-        message(". ", appendLF = FALSE)
-      }
-      close(downloadsNdjsonCon)
+        flags = jqr::jq_flags(pretty = FALSE),
+        out = downloadsNdjsonCon)
+      message(". ", appendLF = FALSE)
+    }
+    close(downloadsNdjsonCon)
 
-      # get document trial id and file name
-      dlFiles <- jsonlite::stream_in(file(downloadsNdjson), verbose = FALSE)
+    # get document trial id and file name
+    dlFiles <- jsonlite::stream_in(file(downloadsNdjson), verbose = FALSE)
 
-      # documents download
-      message("\n- Creating subfolder for each trial")
+    # calculate urls
+    dlFiles$url <- sprintf(
+      "https://www.isrctn.com/editorial/retrieveFile/%s/%s",
+      dlFiles$fileref1, dlFiles$fileref2)
 
-      # add destination file directory path
-      dlFiles$filepath <- file.path(documents.path, dlFiles$`_id`)
+    # do download with special config to avoid error
+    # "Unrecognized content encoding type.
+    #  libcurl understands deflate, gzip content encodings."
+    httr::with_config(
+      config = httr::config("http_content_decoding" = 0), {
+        resFiles <- ctrDocsDownload(
+          dlFiles[, c("_id", "filename", "url"), drop = FALSE],
+          documents.path, documents.regexp, verbose)
+      }, override = FALSE)
 
-      # create subdirectories by trial
-      invisible(sapply(
-        unique(dlFiles$filepath), function(i) if (!dir.exists(i))
-          dir.create(i, showWarnings = FALSE, recursive = TRUE)
-      ))
+  } # !is.null(documents.path)
 
-      # check if destination document exists
-      dlFiles$filepathname <- file.path(dlFiles$filepath, dlFiles$filename)
-      dlFiles$fileexists <- file.exists(dlFiles$filepathname) &
-        file.size(dlFiles$filepathname) > 10L
-
-      # calculate urls
-      dlFiles$url <- sprintf(
-        "https://www.isrctn.com/editorial/retrieveFile/%s/%s",
-        dlFiles$fileref1, dlFiles$fileref2)
-
-      # finally download
-
-      # apply regexp
-      if (is.null(documents.regexp)) {
-
-        message("- Creating empty document placeholders (max. ", nrow(dlFiles), ")")
-
-        # create empty files
-        tmp <-
-          sapply(
-            dlFiles$filepathname,
-            function(i) if (!file.exists(i))
-              file.create(i, showWarnings = TRUE),
-            USE.NAMES = FALSE)
-
-        tmp <- sum(unlist(tmp), na.rm = TRUE)
-
-      } else {
-
-        # inform
-        message("- Applying 'documents.regexp' to ",
-                nrow(dlFiles), " documents")
-
-        dlFiles <- dlFiles[
-          grepl(documents.regexp, dlFiles$filename, ignore.case = TRUE), ,
-          drop = FALSE]
-
-        # inform
-        message("- Downloading ",
-                nrow(dlFiles[!dlFiles$fileexists, , drop = FALSE]),
-                " missing documents")
-
-        # specific: if no fileref2, the url is incomplete, thus remove
-        dlFiles <- dlFiles[!is.na(dlFiles$fileref2), , drop = FALSE]
-
-        # do download, adding a configuration which if absent has
-        # the error: Unrecognized content encoding type
-        httr::with_config(
-          config = httr::config("http_content_decoding" = 0), {
-            tmp <- ctrMultiDownload(
-              urls = dlFiles$url[!dlFiles$fileexists],
-              destfiles = dlFiles$filepathname[!dlFiles$fileexists],
-              verbose = verbose)},
-          override = FALSE)
-
-        if (!nrow(tmp)) tmp <- 0L else {
-
-          # handle failures despite success is true
-          suppressMessages(invisible(sapply(
-            tmp[tmp$status_code != 200L, "destfile", drop = TRUE], unlink
-          )))
-          tmp <- nrow(tmp[tmp$status_code == 200L, , drop = FALSE])
-
-        }
-      }
-
-      # inform user
-      message(sprintf(paste0(
-        "= Newly saved %i ",
-        ifelse(is.null(documents.regexp), "placeholder ", ""),
-        "document(s) for %i trial(s); ",
-        "%i document(s) for %i trial(s) already existed in %s"),
-        tmp,
-        length(unique(dlFiles$`_id`)),
-        sum(dlFiles$fileexists),
-        length(unique(dlFiles$`_id`[dlFiles$fileexists])),
-        documents.path
-      ))
-
-    } # directory created
-
-  } # if download files
+  ## inform user -----------------------------------------------------
 
   ## find out number of trials imported into database
   message("= Imported or updated ", imported$n, " trial(s)")

@@ -462,38 +462,38 @@ ctrLoadQueryIntoDbCtis <- function(
 
   if (!is.null(documents.path)) {
 
-    # check and create directory
-    createdDir <- try(
-      dir.create(documents.path, recursive = TRUE, showWarnings = FALSE),
-      silent = TRUE)
-    if (inherits(createdDir, "try-errror")) {
-      warning("Directory could not be created for 'documents.path' ",
-              documents.path, ", cannot download files", call. = FALSE)
-    } else {
+    # # check and create directory
+    # createdDir <- try(
+    #   dir.create(documents.path, recursive = TRUE, showWarnings = FALSE),
+    #   silent = TRUE)
+    # if (inherits(createdDir, "try-errror")) {
+    #   warning("Directory could not be created for 'documents.path' ",
+    #           documents.path, ", cannot download files", call. = FALSE)
+    # } else {
+    #
+    #   # continue after if
+    #   message("* Downloading documents into 'documents.path' = ", documents.path)
+    #
+    #   # canonical directory path
+    #   documents.path <- normalizePath(documents.path, mustWork = TRUE)
+    #   if (createdDir) message("- Created directory ", documents.path)
 
-      # continue after if
-      message("* Downloading documents into 'documents.path' = ", documents.path)
+    # define order for factor for sorting
+    orderedParts <- c(
+      "ctaletter", "p1ar", "p2ars", "part1auth", "part1appl",
+      "parts2auth", "parts2appl", "prodauth", "prodappl", "rfis",
+      "events", "cms")
 
-      # canonical directory path
-      documents.path <- normalizePath(documents.path, mustWork = TRUE)
-      if (createdDir) message("- Created directory ", documents.path)
+    # 1 - get ids of lists (which include urls to download)
+    message("- Getting ids of lists with document information")
 
-      # define order for factor for sorting
-      orderedParts <- c(
-        "ctaletter", "p1ar", "p2ars", "part1auth", "part1appl",
-        "parts2auth", "parts2appl", "prodauth", "prodappl", "rfis",
-        "events", "cms")
+    # get temporary file
+    downloadsNdjson <- file.path(tempDir, "ctis_downloads.ndjson")
 
-      # 1 - get ids of lists (which include urls to download)
-      message("- Getting ids of lists with document information")
-
-      # get temporary file
-      downloadsNdjson <- file.path(tempDir, "ctis_downloads.ndjson")
-
-      # extract ids of lists per parts per trial
-      jqr::jq(
-        file(fPartIPartsIINdjson),
-        ' ._id |= gsub("\\""; "") | { _id: ._id,
+    # extract ids of lists per parts per trial
+    jqr::jq(
+      file(fPartIPartsIINdjson),
+      ' ._id |= gsub("\\""; "") | { _id: ._id,
           part1appl: [ .applications[].partI.id ],
           part1auth: [ .authorizedPartI.id ],
           parts2appl: [ .applications[].partIIInfo[].id ],
@@ -504,255 +504,266 @@ ctrLoadQueryIntoDbCtis <- function(
           p2ars: [ .applications[].partIIInfo[].id ],
           ctaletter: [ .applications[].partIIInfo[].id ]
         } ',
-        flags = jqr::jq_flags(pretty = FALSE),
-        out = downloadsNdjson
-      )
+      flags = jqr::jq_flags(pretty = FALSE),
+      out = downloadsNdjson
+    )
 
-      # extract ids of rfis from publicevaluation
-      rfiIds1 <- jqr::jq(
-        file(fApplicationsNdjson),
-        '{ _id: ._id, rfis1: [ .publicEvaluation[].partIRfis[].id ]}')
-      rfiIds1 <- jsonlite::fromJSON(paste0("[", paste0(rfiIds1, collapse = ","), "]"))
-      rfiIds2 <- jqr::jq(
-        file(fApplicationsNdjson),
-        '{ _id: ._id, rfis2: [ .publicEvaluation[].partIIEvaluationList[].partIIRfis[].id ]}')
-      rfiIds2 <- jsonlite::fromJSON(paste0("[", paste0(rfiIds2, collapse = ","), "]"))
+    # extract ids of rfis from publicevaluation
+    rfiIds1 <- jqr::jq(
+      file(fApplicationsNdjson),
+      '{ _id: ._id, rfis1: [ .publicEvaluation[].partIRfis[].id ]}')
+    rfiIds1 <- jsonlite::fromJSON(paste0("[", paste0(rfiIds1, collapse = ","), "]"))
+    rfiIds2 <- jqr::jq(
+      file(fApplicationsNdjson),
+      '{ _id: ._id, rfis2: [ .publicEvaluation[].partIIEvaluationList[].partIIRfis[].id ]}')
+    rfiIds2 <- jsonlite::fromJSON(paste0("[", paste0(rfiIds2, collapse = ","), "]"))
 
-      # extract ids of documents from publicEvents (ep = 3)
-      if (file.exists(file.path(tempDir, "ctis_add_3.ndjson"))) {
-        eventIds <- jqr::jq(file(file.path(tempDir, "ctis_add_3.ndjson")),
-                            " {_id: ._id, events: [ .publicevents[][][].id ]}")
-        eventIds <- jsonlite::fromJSON(paste0("[", paste0(eventIds, collapse = ","), "]"))
-      } else {
-        eventIds <- data.frame()
-      }
+    # extract ids of documents from publicEvents (ep = 3)
+    if (file.exists(file.path(tempDir, "ctis_add_3.ndjson"))) {
+      eventIds <- jqr::jq(file(file.path(tempDir, "ctis_add_3.ndjson")),
+                          " {_id: ._id, events: [ .publicevents[][][].id ]}")
+      eventIds <- jsonlite::fromJSON(paste0("[", paste0(eventIds, collapse = ","), "]"))
+    } else {
+      eventIds <- data.frame()
+    }
 
-      # extract ids of documents from corrective events (ep = 7)
-      if (file.exists(file.path(tempDir, "ctis_add_7.ndjson"))) {
-        cmIds <- jqr::jq(file(file.path(tempDir, "ctis_add_7.ndjson")),
-                         " {_id: ._id, cms: [ .cm[].id ]}")
-        cmIds <- jsonlite::fromJSON(paste0("[", paste0(cmIds, collapse = ","), "]"))
-      } else {
-        cmIds <- data.frame()
-      }
+    # extract ids of documents from corrective events (ep = 7)
+    if (file.exists(file.path(tempDir, "ctis_add_7.ndjson"))) {
+      cmIds <- jqr::jq(file(file.path(tempDir, "ctis_add_7.ndjson")),
+                       " {_id: ._id, cms: [ .cm[].id ]}")
+      cmIds <- jsonlite::fromJSON(paste0("[", paste0(cmIds, collapse = ","), "]"))
+    } else {
+      cmIds <- data.frame()
+    }
 
-      # convert and merge ids
-      dlFiles <- jsonlite::stream_in(file(downloadsNdjson), verbose = FALSE)
-      if (nrow(rfiIds1)) {dlFiles <- merge(dlFiles, rfiIds1, all.x = TRUE)}
-      if (nrow(rfiIds2)) {dlFiles <- merge(dlFiles, rfiIds2, all.x = TRUE)}
-      if (nrow(eventIds)) {dlFiles <- merge(dlFiles, eventIds, all.x = TRUE)}
-      if (nrow(cmIds)) {dlFiles <- merge(dlFiles, cmIds, all.x = TRUE)}
+    # convert and merge ids
+    dlFiles <- jsonlite::stream_in(file(downloadsNdjson), verbose = FALSE)
+    if (nrow(rfiIds1)) {dlFiles <- merge(dlFiles, rfiIds1, all.x = TRUE)}
+    if (nrow(rfiIds2)) {dlFiles <- merge(dlFiles, rfiIds2, all.x = TRUE)}
+    if (nrow(eventIds)) {dlFiles <- merge(dlFiles, eventIds, all.x = TRUE)}
+    if (nrow(cmIds)) {dlFiles <- merge(dlFiles, cmIds, all.x = TRUE)}
 
-      # map
-      epTyp <- list(
-        "part1" = ctisEndpoints[11],
-        "parts2" = ctisEndpoints[12],
-        "prod" = ctisEndpoints[13],
-        "p1ar" = ctisEndpoints[14],
-        "p2ars" = ctisEndpoints[15],
-        "ctaletter" = ctisEndpoints[16],
-        "rfis" = ctisEndpoints[17],
-        "events" = ctisEndpoints[18],
-        "cms" = ctisEndpoints[19]
-      )
+    # map
+    epTyp <- list(
+      "part1" = ctisEndpoints[11],
+      "parts2" = ctisEndpoints[12],
+      "prod" = ctisEndpoints[13],
+      "p1ar" = ctisEndpoints[14],
+      "p2ars" = ctisEndpoints[15],
+      "ctaletter" = ctisEndpoints[16],
+      "rfis" = ctisEndpoints[17],
+      "events" = ctisEndpoints[18],
+      "cms" = ctisEndpoints[19]
+    )
 
-      dlFiles <- apply(dlFiles, 1, function(r) {
-        tmp <- data.frame(id = unlist(r[-1], use.names = TRUE), r[1],
-                          check.names = FALSE, stringsAsFactors = FALSE)
-        # if url occurs repeatedly, only use last from defined order
-        tmp$part <- sub("[0-9]+$", "", row.names(tmp))
-        tmp$part <- ordered(tmp$part, orderedParts)
-        tmp$typ <- sub("appl|auth", "", tmp$part)
-        #
-        tmp$url <- mapply(
-          function(t, i) sprintf(epTyp[t][[1]], i), tmp$typ, tmp$id)
-        #
-        tmp <- tmp[order(tmp$url, tmp$part), , drop = FALSE]
-        rl <- rle(tmp$url)
-        rl <- unlist(sapply(rl$lengths, function(i) c(TRUE, rep(FALSE, i - 1L))))
-        tmp[rl, , drop = FALSE]
-      })
-
-      dlFiles <- do.call(rbind, dlFiles)
-      dlFiles <- na.omit(dlFiles)
-
-      # do downloads of list files
-      message("- Downloading ", nrow(dlFiles),
-              " lists with document information (estimate: ",
-              nrow(dlFiles) * 0.02, " Mb)")
-
-      fFilesListJson <- function(t, p, id) {
-        file.path(tempDir, paste0("ctis_fileslist_", t, "_", p, "_", id, ".json"))
-      }
-
-      dlFiles$destfile <- fFilesListJson(
-        dlFiles[["_id"]], dlFiles[["part"]], dlFiles[["id"]])
-
-      tmp <- ctrMultiDownload(
-        dlFiles[["url"]],
-        dlFiles[["destfile"]],
-        verbose = verbose)
-
-      if (sum(tmp$status_code != 200L, na.rm = TRUE)) {
-        warning("Could not download these lists with document information: ",
-                paste0(tmp$url[tmp$status_code != 200L], collapse = ", "))
-        tmp <- tmp[tmp$status_code == 200L, , drop = FALSE]
-      }
-
-      # 2 - create data frame with info on documents (url, name, extension etc.)
-
-      message("- Processing document information in ", nrow(tmp), " lists")
-      epTypChars <- paste0(names(epTyp), "appl", "auth", collapse = "")
-      epTypChars <- rawToChar(unique(charToRaw(epTypChars)))
-      unlink(downloadsNdjson)
-
-      for (fi in seq_len(nrow(tmp))) {
-
-        fn <- tmp[["destfile"]][fi]
-        if (file.size(fn) < 50L) next # size 49
-
-        # reconstruct trial id
-        id <- sub(paste0(".+_(", regCtis, ")_.+"), "\\1", tmp[["destfile"]][fi])
-
-        # reconstruct part
-        part <- sub(paste0(
-          "^.+_([", epTypChars, "]+?)_[0-9]+[.]json$"),
-          "\\1", tmp[["destfile"]][fi])
-
-        # get data
-        jOut <- readLines(fn, warn = FALSE)
-
-        # remove irrelevant information
-        jOut <- sub('^.*"elements":(.*?)}?$', "\\1", jOut)
-        jOut <- sub('(,?)"showWarning":(false|true)(,?)', "\\3", jOut)
-        jOut <- sub('(,?)"totalSize":[0-9]+(,?)', "\\2", jOut)
-        jOut <- sub('(,?)"pageInfo":[{].+?[}](,?)', "\\2", jOut)
-        jOut <- gsub('"versions":[[][{].+?[}][]],', "", jOut) # reconsider
-        if (!nchar(jOut) || jOut == "[]") next
-
-        jOut <- paste0(
-          '{"_id":"', id, '",',
-          stringi::stri_extract_all_regex(jOut, '"url":"[-a-z0-9]+?",')[[1]],
-          stringi::stri_extract_all_regex(jOut, '"title":".+?",')[[1]],
-          stringi::stri_extract_all_regex(jOut, '"fileTypeLabel":"[A-Z]+?",')[[1]],
-          stringi::stri_extract_all_regex(jOut, '"documentIdentity":[0-9]+?,')[[1]],
-          '"part":"', part, '"}'
-        )
-
-        jOut <- jOut[!grepl('",NA"', jOut)]
-        if (!length(jOut)) next
-
-        cat(
-          jOut,
-          file = downloadsNdjson,
-          append = TRUE,
-          sep = "\n")
-
-        message(fi, rep("\b", nchar(fi)), appendLF = FALSE)
-
-      } # for
-
-      # 3 - documents download
-      message("- Creating subfolder for each trial")
-
-      dlFiles <- jsonlite::stream_in(file(downloadsNdjson), verbose = FALSE)
-
-      # remove duplicate files based on their title
-      dlFiles$part <- ordered(dlFiles$part, orderedParts)
-      dlFiles <- dlFiles[order(dlFiles$title, dlFiles$part), , drop = FALSE]
-      rl <- rle(dlFiles$title)
+    dlFiles <- apply(dlFiles, 1, function(r) {
+      tmp <- data.frame(id = unlist(r[-1], use.names = TRUE), r[1],
+                        check.names = FALSE, stringsAsFactors = FALSE)
+      # if url occurs repeatedly, only use last from defined order
+      tmp$part <- sub("[0-9]+$", "", row.names(tmp))
+      tmp$part <- ordered(tmp$part, orderedParts)
+      tmp$typ <- sub("appl|auth", "", tmp$part)
+      #
+      tmp$url <- mapply(
+        function(t, i) sprintf(epTyp[t][[1]], i), tmp$typ, tmp$id)
+      #
+      tmp <- tmp[order(tmp$url, tmp$part), , drop = FALSE]
+      rl <- rle(tmp$url)
       rl <- unlist(sapply(rl$lengths, function(i) c(TRUE, rep(FALSE, i - 1L))))
-      dlFiles <- dlFiles[rl, , drop = FALSE]
+      tmp[rl, , drop = FALSE]
+    })
 
-      # add destination file name
-      dlFiles$filename <- paste0(
-        dlFiles$part, "_",
-        # robustly sanitise file name
-        gsub("[^[:alnum:] ._-]", "",  dlFiles$title),
-        ".", dlFiles$fileTypeLabel)
+    dlFiles <- do.call(rbind, dlFiles)
+    dlFiles <- na.omit(dlFiles)
 
-      # add destination file directory path
-      dlFiles$filepath <- file.path(documents.path, dlFiles$`_id`)
+    # do downloads of list files
+    message("- Downloading ", nrow(dlFiles),
+            " lists with document information (estimate: ",
+            nrow(dlFiles) * 0.02, " Mb)")
 
-      # create subdirectories by trial
-      invisible(sapply(
-        unique(dlFiles$filepath), function(i) if (!dir.exists(i))
-          dir.create(i, showWarnings = FALSE, recursive = TRUE)
-      ))
+    fFilesListJson <- function(t, p, id) {
+      file.path(tempDir, paste0("ctis_fileslist_", t, "_", p, "_", id, ".json"))
+    }
 
-      # check if destination document exists
-      dlFiles$filepathname <- file.path(dlFiles$filepath, dlFiles$filename)
-      dlFiles$fileexists <- file.exists(dlFiles$filepathname) &
-        file.size(dlFiles$filepathname) > 10L
+    dlFiles$destfile <- fFilesListJson(
+      dlFiles[["_id"]], dlFiles[["part"]], dlFiles[["id"]])
 
-      # finally download
+    tmp <- ctrMultiDownload(
+      dlFiles[["url"]],
+      dlFiles[["destfile"]],
+      verbose = verbose)
 
-      # apply regexp
-      if (is.null(documents.regexp)) {
+    if (sum(tmp$status_code != 200L, na.rm = TRUE)) {
+      warning("Could not download these lists with document information: ",
+              paste0(tmp$url[tmp$status_code != 200L], collapse = ", "))
+      tmp <- tmp[tmp$status_code == 200L, , drop = FALSE]
+    }
 
-        message("- Creating empty document placeholders (max. ", nrow(dlFiles), ")")
+    # 2 - create data frame with info on documents (url, name, extension etc.)
 
-        # create empty files
-        tmp <-
-          sapply(
-            dlFiles$filepathname,
-            function(i) if (!file.exists(i))
-              file.create(i, showWarnings = TRUE),
-            USE.NAMES = FALSE)
+    message("- Processing document information in ", nrow(tmp), " lists")
+    epTypChars <- paste0(names(epTyp), "appl", "auth", collapse = "")
+    epTypChars <- rawToChar(unique(charToRaw(epTypChars)))
+    unlink(downloadsNdjson)
 
-        tmp <- sum(unlist(tmp), na.rm = TRUE)
+    for (fi in seq_len(nrow(tmp))) {
 
-      } else {
+      fn <- tmp[["destfile"]][fi]
+      if (file.size(fn) < 50L) next # size 49
 
-        message("- Applying 'documents.regexp' to ",
-                nrow(dlFiles), " documents")
+      # reconstruct trial id
+      id <- sub(paste0(".+_(", regCtis, ")_.+"), "\\1", tmp[["destfile"]][fi])
 
-        dlFiles <- dlFiles[
-          grepl(documents.regexp, dlFiles$filename, ignore.case = TRUE), ,
-          drop = FALSE]
+      # reconstruct part
+      part <- sub(paste0(
+        "^.+_([", epTypChars, "]+?)_[0-9]+[.]json$"),
+        "\\1", tmp[["destfile"]][fi])
 
-        # do download
-        message("- Downloading ",
-                nrow(dlFiles[!dlFiles$fileexists, , drop = FALSE]),
-                " missing documents")
+      # get data
+      jOut <- readLines(fn, warn = FALSE)
 
-        # do download
-        tmp <- ctrMultiDownload(
-          urls = sprintf(ctisEndpoints[10], dlFiles$url[!dlFiles$fileexists]),
-          destfiles = dlFiles$filepathname[!dlFiles$fileexists],
-          verbose = verbose)
+      # remove irrelevant information
+      jOut <- sub('^.*"elements":(.*?)}?$', "\\1", jOut)
+      jOut <- sub('(,?)"showWarning":(false|true)(,?)', "\\3", jOut)
+      jOut <- sub('(,?)"totalSize":[0-9]+(,?)', "\\2", jOut)
+      jOut <- sub('(,?)"pageInfo":[{].+?[}](,?)', "\\2", jOut)
+      jOut <- gsub('"versions":[[][{].+?[}][]],', "", jOut) # reconsider
+      if (!nchar(jOut) || jOut == "[]") next
 
-        if (!nrow(tmp)) tmp <- 0L else {
+      jOut <- paste0(
+        '{"_id":"', id, '",',
+        stringi::stri_extract_all_regex(jOut, '"url":"[-a-z0-9]+?",')[[1]],
+        stringi::stri_extract_all_regex(jOut, '"title":".+?",')[[1]],
+        stringi::stri_extract_all_regex(jOut, '"fileTypeLabel":"[A-Z]+?",')[[1]],
+        stringi::stri_extract_all_regex(jOut, '"documentIdentity":[0-9]+?,')[[1]],
+        '"part":"', part, '"}'
+      )
 
-          # handle failures despite success is true
-          invisible(sapply(
-            tmp[tmp$status_code != 200L, "destfile", drop = TRUE], unlink
-          ))
+      jOut <- jOut[!grepl('",NA"', jOut)]
+      if (!length(jOut)) next
 
-          tmp <- nrow(tmp[tmp$status_code == 200L, , drop = FALSE])
+      cat(
+        jOut,
+        file = downloadsNdjson,
+        append = TRUE,
+        sep = "\n")
 
-        }
-      }
+      message(fi, rep("\b", nchar(fi)), appendLF = FALSE)
 
-      # inform user
-      message(sprintf(paste0(
-        "= Newly saved %i ",
-        ifelse(is.null(documents.regexp), "placeholder ", ""),
-        "document(s) for %i trial(s) (latest versions only, ",
-        "deduplicated if e.g. in application and authorised part); ",
-        "%i document(s) for %i trial(s) already existed in %s"),
-        tmp,
-        length(unique(dlFiles$`_id`)),
-        sum(dlFiles$fileexists),
-        length(unique(dlFiles$`_id`[dlFiles$fileexists])),
-        documents.path
-      ))
+    } # for
 
-    } # directory created
+    # 3 - documents download
 
-  } # end if documents.path
+    dlFiles <- jsonlite::stream_in(file(downloadsNdjson), verbose = FALSE)
 
-  ## inform user on final import outcome
+    # remove duplicate files based on their title
+    dlFiles$part <- ordered(dlFiles$part, orderedParts)
+    dlFiles <- dlFiles[order(dlFiles$title, dlFiles$part), , drop = FALSE]
+    rl <- rle(dlFiles$title)
+    rl <- unlist(sapply(rl$lengths, function(i) c(TRUE, rep(FALSE, i - 1L))))
+    dlFiles <- dlFiles[rl, , drop = FALSE]
+
+    # add destination file name
+    dlFiles$filename <- paste0(
+      dlFiles$part, "_",
+      # robustly sanitise file name
+      gsub("[^[:alnum:] ._-]", "",  dlFiles$title),
+      ".", dlFiles$fileTypeLabel)
+
+    # calculate url
+    dlFiles$url <- sprintf(ctisEndpoints[10], dlFiles$url)
+
+    # do download
+    resFiles <- ctrDocsDownload(
+      dlFiles[, c("_id", "filename", "url"), drop = FALSE],
+      documents.path, documents.regexp, verbose)
+
+  } # !is.null(documents.path)
+
+  #     # add destination file directory path
+  #     dlFiles$filepath <- file.path(documents.path, dlFiles$`_id`)
+  #
+  #     # create subdirectories by trial
+  #     invisible(sapply(
+  #       unique(dlFiles$filepath), function(i) if (!dir.exists(i))
+  #         dir.create(i, showWarnings = FALSE, recursive = TRUE)
+  #     ))
+  #
+  #     # check if destination document exists
+  #     dlFiles$filepathname <- file.path(dlFiles$filepath, dlFiles$filename)
+  #     dlFiles$fileexists <- file.exists(dlFiles$filepathname) &
+  #       file.size(dlFiles$filepathname) > 10L
+  #
+  #     # finally download
+  #
+  #     # apply regexp
+  #     if (is.null(documents.regexp)) {
+  #
+  #       message("- Creating empty document placeholders (max. ", nrow(dlFiles), ")")
+  #
+  #       # create empty files
+  #       tmp <-
+  #         sapply(
+  #           dlFiles$filepathname,
+  #           function(i) if (!file.exists(i))
+  #             file.create(i, showWarnings = TRUE),
+  #           USE.NAMES = FALSE)
+  #
+  #       tmp <- sum(unlist(tmp), na.rm = TRUE)
+  #
+  #     } else {
+  #
+  #       message("- Applying 'documents.regexp' to ",
+  #               nrow(dlFiles), " documents")
+  #
+  #       dlFiles <- dlFiles[
+  #         grepl(documents.regexp, dlFiles$filename, ignore.case = TRUE), ,
+  #         drop = FALSE]
+  #
+  #       # do download
+  #       message("- Downloading ",
+  #               nrow(dlFiles[!dlFiles$fileexists, , drop = FALSE]),
+  #               " missing documents")
+  #
+  #       # do download
+  #       tmp <- ctrMultiDownload(
+  #         urls = sprintf(ctisEndpoints[10], dlFiles$url[!dlFiles$fileexists]),
+  #         destfiles = dlFiles$filepathname[!dlFiles$fileexists],
+  #         verbose = verbose)
+  #
+  #       if (!nrow(tmp)) tmp <- 0L else {
+  #
+  #         # handle failures despite success is true
+  #         invisible(sapply(
+  #           tmp[tmp$status_code != 200L, "destfile", drop = TRUE], unlink
+  #         ))
+  #
+  #         tmp <- nrow(tmp[tmp$status_code == 200L, , drop = FALSE])
+  #
+  #       }
+  #     }
+  #
+  #     # inform user
+  #     message(sprintf(paste0(
+  #       "= Newly saved %i ",
+  #       ifelse(is.null(documents.regexp), "placeholder ", ""),
+  #       "document(s) for %i trial(s) (latest versions only, ",
+  #       "deduplicated if e.g. in application and authorised part); ",
+  #       "%i document(s) for %i trial(s) already existed in %s"),
+  #       tmp,
+  #       length(unique(dlFiles$`_id`)),
+  #       sum(dlFiles$fileexists),
+  #       length(unique(dlFiles$`_id`[dlFiles$fileexists])),
+  #       documents.path
+  #     ))
+  #
+  #   } # directory created
+  #
+  # } # end if documents.path
+
+  ## inform user -----------------------------------------------------
+
+  #  find out number of trials imported into database
   message("= Imported / updated ",
           paste0(c(imported$n, resAll), collapse = " / "),
           " records on ", length(idsTrials), " trial(s)")

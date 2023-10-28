@@ -62,10 +62,12 @@
 <div class="section level3">
 <h3 id="bug-fixes-1-15-2-9000">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-15-2-9000"></a></h3>
 <ul><li>corrected translation of some fields from the browser URL to the API call for CTGOV2</li>
+<li>corrected minimum version number for curl to 5.1.0 to avoid error under MS Windows</li>
 </ul></div>
 <div class="section level3">
 <h3 id="improvements-1-15-2-9000">Improvements<a class="anchor" aria-label="anchor" href="#improvements-1-15-2-9000"></a></h3>
 <ul><li>added documents download for ISRCTN</li>
+<li>factor out document download function</li>
 <li>added handler for errors when attempting to save EUCTR results (e.g., too long file path name)</li>
 <li>ensure <code><a href="../reference/dbFindFields.html">dbFindFields()</a></code> return fields for EU and 3rd country trials in EUCTR, updated documentation</li>
 <li>changed order of importing from CTIS into database</li>

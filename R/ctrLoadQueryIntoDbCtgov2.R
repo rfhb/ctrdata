@@ -271,136 +271,45 @@ ctrLoadQueryIntoDbCtgov2 <- function(
 
   if (!is.null(documents.path)) {
 
-    # check and create directory
-    createdDir <- try(
-      dir.create(documents.path, recursive = TRUE, showWarnings = FALSE),
-      silent = TRUE)
-    if (inherits(createdDir, "try-errror")) {
-      warning("Directory could not be created for 'documents.path' ",
-              documents.path, ", cannot download files", call. = FALSE)
-    } else {
+    # temporary file for trial ids and file names
+    downloadsNdjson <- file.path(tempDir, "ctgov2_downloads.ndjson")
+    suppressMessages(unlink(downloadsNdjson))
+    downloadsNdjsonCon <- file(downloadsNdjson, open = "at")
 
-      # continue after if
-      message("* Downloading documents into 'documents.path' = ", documents.path)
+    # extract trial ids and file name and save in temporary file
+    for (ndjsonFile in dir(
+      path = tempDir, pattern = "^.+_trials_.*.ndjson$", full.names = TRUE)) {
+      jqr::jq(
+        file(ndjsonFile),
+        ' { _id: ._id,
+            filename: .documentSection.largeDocumentModule.largeDocs[].filename }',
+        flags = jqr::jq_flags(pretty = FALSE),
+        out = downloadsNdjsonCon)
+      message(". ", appendLF = FALSE)
+    }
+    close(downloadsNdjsonCon)
 
-      # canonical directory path
-      documents.path <- normalizePath(documents.path, mustWork = TRUE)
-      if (createdDir) message("- Created directory ", documents.path)
+    # get document trial id and file name
+    dlFiles <- jsonlite::stream_in(file(downloadsNdjson), verbose = FALSE)
 
-      # get temporary file for trial ids and file names
-      downloadsNdjson <- file.path(tempDir, "ctis_downloads.ndjson")
-      suppressMessages(unlink(downloadsNdjson))
-      downloadsNdjsonCon <- file(downloadsNdjson, open = "at")
+    # calculate urls
+    dlFiles$url <- sprintf(
+      ctgovEndpoints[3],
+      sub(".*([0-9]{2})$", "\\1", dlFiles$`_id`),
+      dlFiles$`_id`,
+      dlFiles$filename)
 
-      # extract trial ids and file name and save in temporary file
-      for (ndjsonFile in dir(
-        path = tempDir, pattern = "^.+_trials_.*.ndjson$", full.names = TRUE)) {
-        jqr::jq(
-          file(ndjsonFile),
-          ' { _id: ._id,
-          filename: .documentSection.largeDocumentModule.largeDocs[].filename }',
-          flags = jqr::jq_flags(pretty = FALSE),
-          out = downloadsNdjsonCon)
-        message(". ", appendLF = FALSE)
-      }
-      close(downloadsNdjsonCon)
+    # do download
+    resFiles <- ctrDocsDownload(
+      dlFiles[, c("_id", "filename", "url"), drop = FALSE],
+      documents.path, documents.regexp, verbose)
 
-      # get document trial id and file name
-      dlFiles <- jsonlite::stream_in(file(downloadsNdjson), verbose = FALSE)
-
-      # documents download
-      message("\n- Creating subfolder for each trial")
-
-      # add destination file directory path
-      dlFiles$filepath <- file.path(documents.path, dlFiles$`_id`)
-
-      # create subdirectories by trial
-      invisible(sapply(
-        unique(dlFiles$filepath), function(i) if (!dir.exists(i))
-          dir.create(i, showWarnings = FALSE, recursive = TRUE)
-      ))
-
-      # check if destination document exists
-      dlFiles$filepathname <- file.path(dlFiles$filepath, dlFiles$filename)
-      dlFiles$fileexists <- file.exists(dlFiles$filepathname) &
-        file.size(dlFiles$filepathname) > 10L
-
-      # calculate urls
-      dlFiles$url <- sprintf(
-        ctgovEndpoints[3], sub(".*([0-9]{2})$", "\\1", dlFiles$`_id`),
-        dlFiles$`_id`, dlFiles$filename)
-
-      # finally download
-
-      # apply regexp
-      if (is.null(documents.regexp)) {
-
-        message("- Creating empty document placeholders (max. ", nrow(dlFiles), ")")
-
-        # create empty files
-        tmp <-
-          sapply(
-            dlFiles$filepathname,
-            function(i) if (!file.exists(i))
-              file.create(i, showWarnings = TRUE),
-            USE.NAMES = FALSE)
-
-        tmp <- sum(unlist(tmp), na.rm = TRUE)
-
-      } else {
-
-        # inform
-        message("- Applying 'documents.regexp' to ",
-                nrow(dlFiles), " documents")
-
-        dlFiles <- dlFiles[
-          grepl(documents.regexp, dlFiles$filename, ignore.case = TRUE), ,
-          drop = FALSE]
-
-        # inform
-        message("- Downloading ",
-                nrow(dlFiles[!dlFiles$fileexists, , drop = FALSE]),
-                " missing documents")
-
-        # do download
-        tmp <- ctrMultiDownload(
-          urls = dlFiles$url[!dlFiles$fileexists],
-          destfiles = dlFiles$filepathname[!dlFiles$fileexists],
-          verbose = verbose)
-
-        if (!nrow(tmp)) tmp <- 0L else {
-
-          # handle failures despite success is true
-          suppressMessages(invisible(sapply(
-            tmp[tmp$status_code != 200L, "destfile", drop = TRUE], unlink
-          )))
-          tmp <- nrow(tmp[tmp$status_code == 200L, , drop = FALSE])
-
-        }
-      }
-
-      # inform user
-      message(sprintf(paste0(
-        "= Newly saved %i ",
-        ifelse(is.null(documents.regexp), "placeholder ", ""),
-        "document(s) for %i trial(s); ",
-        "%i document(s) for %i trial(s) already existed in %s"),
-        tmp,
-        length(unique(dlFiles$`_id`)),
-        sum(dlFiles$fileexists),
-        length(unique(dlFiles$`_id`[dlFiles$fileexists])),
-        documents.path
-      ))
-
-    } # directory created
-
-  } # if download files
+  } # !is.null(documents.path)
 
   ## inform user -----------------------------------------------------
 
-  message("= Imported / updated ",
-          paste0(c(imported$n), collapse = " / "),
-          " records on ", resultsEuNumTrials, " trial(s)")
+  # find out number of trials imported into database
+  message("= Imported or updated ", imported$n, " trial(s)")
 
   # return
   return(imported)
