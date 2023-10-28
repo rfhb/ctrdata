@@ -88,27 +88,35 @@ on.exit(unlink(tmpDir, recursive = TRUE), add = TRUE)
 
 # test
 expect_message(
-  ctrLoadQueryIntoDb(
-    queryterm = "cond=Cancer&aggFilters=phase:0,status:ter,studyType:int&studyComp=_2015-12-31",
-    register = "CTGOV",
-    documents.path = tmpDir,
-    documents.regexp = NULL,
-    verbose = TRUE,
-    con = dbc
-  ),
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
+      queryterm = "cond=Cancer&aggFilters=phase:0,status:ter,studyType:int&studyComp=_2015-12-31",
+      register = "CTGOV",
+      documents.path = tmpDir,
+      documents.regexp = NULL,
+      verbose = TRUE,
+      con = dbc
+    )),
   "Newly saved [0-9]+ placeholder document[(]s[)] for [0-9]+ trial"
 )
 
 # test
+expect_true(
+  length(
+    dir(pattern = ".pdf", path = tmpDir, recursive = TRUE)) > 20L
+)
+
+# test
 expect_message(
-  ctrLoadQueryIntoDb(
-    queryterm = "cond=Cancer&aggFilters=phase:0,status:ter,studyType:int&studyComp=_2015-12-31",
-    register = "CTGOV",
-    documents.path = tmpDir,
-    documents.regexp = "sap_",
-    verbose = TRUE,
-    con = dbc
-  ),
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
+      queryterm = "cond=Cancer&aggFilters=phase:0,status:ter,studyType:int&studyComp=_2015-12-31",
+      register = "CTGOV2",
+      documents.path = tmpDir,
+      documents.regexp = "sap_",
+      verbose = TRUE,
+      con = dbc
+    )),
   "Newly saved [0-9]+ document[(]s[)] for [0-9]+ trial"
 )
 
@@ -123,8 +131,36 @@ expect_warning(
 )
 
 # test
+expect_message(
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
+      querytoupdate = "last",
+      con = dbc)),
+  "Rerunning query")
+
+# test
+expect_message(
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
+      queryterm = "cond=Neuroblastoma&lastUpdPost=2022-01-01_2023-12-31&aggFilters=phase:1,results:with,studyType:int",
+      register = "CTGOV2",
+      con = dbc
+    )),
+  "Imported or updated [0-9]+ trial"
+)
+
+# test
+expect_warning(
+  ctrLoadQueryIntoDb(
+    querytoupdate = "last",
+    con = dbc
+  ),
+  "running again with these limits"
+)
+
+# test
 tmp <- dbQueryHistory(con = dbc)
-expect_equal(dim(tmp), c(5L, 4L))
+expect_equal(dim(tmp), c(8L, 4L))
 
 #### dbFindFields ####
 

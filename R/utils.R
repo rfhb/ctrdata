@@ -334,7 +334,8 @@ typeVars <- list(
 #' Checks for mismatch between label CTGOV and CTGOV2
 #' and tries to guess the correct label
 #'
-#' @param url
+#' @param url url or data frame with query term
+#' @param register any of the register names
 #'
 #' @keywords internal
 #' @noRd
@@ -357,7 +358,7 @@ ctgovVersion <- function(url, register) {
 
   # in case the input is from dbQueryHistory
   if (!is.atomic(url)) try({url <- url[["query-term"]]}, silent = TRUE)
-  if (inherits(url, "try-error")) return(register)
+  if (inherits(url, "try-error") || is.null(url)) return(register)
 
   # logic 1
   if (grepl(paste0(

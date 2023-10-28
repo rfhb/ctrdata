@@ -462,22 +462,6 @@ ctrLoadQueryIntoDbCtis <- function(
 
   if (!is.null(documents.path)) {
 
-    # # check and create directory
-    # createdDir <- try(
-    #   dir.create(documents.path, recursive = TRUE, showWarnings = FALSE),
-    #   silent = TRUE)
-    # if (inherits(createdDir, "try-errror")) {
-    #   warning("Directory could not be created for 'documents.path' ",
-    #           documents.path, ", cannot download files", call. = FALSE)
-    # } else {
-    #
-    #   # continue after if
-    #   message("* Downloading documents into 'documents.path' = ", documents.path)
-    #
-    #   # canonical directory path
-    #   documents.path <- normalizePath(documents.path, mustWork = TRUE)
-    #   if (createdDir) message("- Created directory ", documents.path)
-
     # define order for factor for sorting
     orderedParts <- c(
       "ctaletter", "p1ar", "p2ars", "part1auth", "part1appl",
@@ -679,87 +663,6 @@ ctrLoadQueryIntoDbCtis <- function(
       documents.path, documents.regexp, verbose)
 
   } # !is.null(documents.path)
-
-  #     # add destination file directory path
-  #     dlFiles$filepath <- file.path(documents.path, dlFiles$`_id`)
-  #
-  #     # create subdirectories by trial
-  #     invisible(sapply(
-  #       unique(dlFiles$filepath), function(i) if (!dir.exists(i))
-  #         dir.create(i, showWarnings = FALSE, recursive = TRUE)
-  #     ))
-  #
-  #     # check if destination document exists
-  #     dlFiles$filepathname <- file.path(dlFiles$filepath, dlFiles$filename)
-  #     dlFiles$fileexists <- file.exists(dlFiles$filepathname) &
-  #       file.size(dlFiles$filepathname) > 10L
-  #
-  #     # finally download
-  #
-  #     # apply regexp
-  #     if (is.null(documents.regexp)) {
-  #
-  #       message("- Creating empty document placeholders (max. ", nrow(dlFiles), ")")
-  #
-  #       # create empty files
-  #       tmp <-
-  #         sapply(
-  #           dlFiles$filepathname,
-  #           function(i) if (!file.exists(i))
-  #             file.create(i, showWarnings = TRUE),
-  #           USE.NAMES = FALSE)
-  #
-  #       tmp <- sum(unlist(tmp), na.rm = TRUE)
-  #
-  #     } else {
-  #
-  #       message("- Applying 'documents.regexp' to ",
-  #               nrow(dlFiles), " documents")
-  #
-  #       dlFiles <- dlFiles[
-  #         grepl(documents.regexp, dlFiles$filename, ignore.case = TRUE), ,
-  #         drop = FALSE]
-  #
-  #       # do download
-  #       message("- Downloading ",
-  #               nrow(dlFiles[!dlFiles$fileexists, , drop = FALSE]),
-  #               " missing documents")
-  #
-  #       # do download
-  #       tmp <- ctrMultiDownload(
-  #         urls = sprintf(ctisEndpoints[10], dlFiles$url[!dlFiles$fileexists]),
-  #         destfiles = dlFiles$filepathname[!dlFiles$fileexists],
-  #         verbose = verbose)
-  #
-  #       if (!nrow(tmp)) tmp <- 0L else {
-  #
-  #         # handle failures despite success is true
-  #         invisible(sapply(
-  #           tmp[tmp$status_code != 200L, "destfile", drop = TRUE], unlink
-  #         ))
-  #
-  #         tmp <- nrow(tmp[tmp$status_code == 200L, , drop = FALSE])
-  #
-  #       }
-  #     }
-  #
-  #     # inform user
-  #     message(sprintf(paste0(
-  #       "= Newly saved %i ",
-  #       ifelse(is.null(documents.regexp), "placeholder ", ""),
-  #       "document(s) for %i trial(s) (latest versions only, ",
-  #       "deduplicated if e.g. in application and authorised part); ",
-  #       "%i document(s) for %i trial(s) already existed in %s"),
-  #       tmp,
-  #       length(unique(dlFiles$`_id`)),
-  #       sum(dlFiles$fileexists),
-  #       length(unique(dlFiles$`_id`[dlFiles$fileexists])),
-  #       documents.path
-  #     ))
-  #
-  #   } # directory created
-  #
-  # } # end if documents.path
 
   ## inform user -----------------------------------------------------
 

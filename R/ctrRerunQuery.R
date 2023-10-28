@@ -8,6 +8,7 @@
 #' @noRd
 #'
 #' @importFrom httr content GET
+#' @importFrom stringi stri_extract_all_regex
 #'
 ctrRerunQuery <- function(
     querytoupdate = querytoupdate,
@@ -139,7 +140,7 @@ ctrRerunQuery <- function(
     # ctgov2 -------------------------------------------------------------------
     if (register == "CTGOV2") {
 
-      # ctgov:
+      # ctgov2:
       # specify last update start / end:
       # https://www.clinicaltrials.gov/search?cond=Cancer&lastUpdPost=2022-01-01_2023-12-31
 
@@ -171,7 +172,7 @@ ctrRerunQuery <- function(
       #
       message("Rerunning query: ", queryterm,
               "\nLast run: ", initialday)
-    } # end ctgov
+    } # end ctgov2
 
     # euctr -------------------------------------------------------------------
     if (register == "EUCTR") {
@@ -314,16 +315,36 @@ ctrRerunQuery <- function(
     # ctis ------------------------------------------------------------------
     if (register == "CTIS") {
 
-      # https://euclinicaltrials.eu/ct-public-api-services/services/ct/rss?basicSearchInputAND=cancer
+      # obtain rss feed with list of recently updated trials
+      rssquery <- utils::URLencode(
+        paste0(
+          "https://euclinicaltrials.eu/ct-public-api-services/services/ct/rss?",
+          queryterm))
+
+      if (verbose) message("DEBUG (rss url): ", rssquery)
+
+      resultsRss <- try(httr::content(
+        httr::GET(url = rssquery),
+        encoding = "UTF-8",
+        as = "text"), silent = TRUE)
+
+      message(
+        "Since the query was last run, ",
+        length(stringi::stri_extract_all_regex(
+          resultsRss, "<item [^>]+>\\s*<title>")[[1]]),
+        " trials have been updated.")
+
       # issues: returned data do not include trial identifiers, thus no efficient loading possible;
       # returned data include all trials found with search, not only those updated or added in last
       # seven days; timestamp is the same for every trial listed, corresponding to time when called.
-      # checked from: 2023-04-22 to last: 2023-08-29
+      # checked from: 2023-04-22 to last: 2023-10-28
 
-      warning("'querytoupdate=", querytoupdate, "' not possible because no ",
-              "way to query CTIS for recent changes was found thus far ",
-              "(last checked 2023-08-29). Reverting to normal download. ",
+      warning("'querytoupdate=", querytoupdate, "' not possible because no effcient way ",
+              "was found thus far to retrieve from CTIS only recently changed trials ",
+              "(last checked 2023-10-28). Reverting to normal download. ",
               call. = FALSE, immediate. = TRUE)
+
+      # end issues
 
       message("Rerunning query: ", queryterm,
               "\nLast run: ", initialday)

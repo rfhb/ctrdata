@@ -104,6 +104,19 @@ expect_message(
       con = dbc)),
   "Search result page empty")
 
+tempDf <- data.frame(
+  `query-term` = c("q=neuroblastoma", "q=neuroblastoma"),
+  `query-register` = c("ISRCTN", "ISRTCN"),
+  check.names = FALSE
+)
+
+# test
+expect_warning(
+  ctrLoadQueryIntoDb(
+    queryterm = tempDf,
+    con = dbc),
+  "Using last row of queryterm parameter")
+
 # test
 expect_message(
   suppressWarnings(
@@ -245,7 +258,7 @@ suppressWarnings(
     tmpDf <- dbGetFieldsIntoDf(
       fields = c(
         "participants.totalFinalEnrolment"
-        ),
+      ),
       stopifnodata = FALSE,
       con = dbc)))
 #

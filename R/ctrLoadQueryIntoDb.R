@@ -262,6 +262,7 @@ ctrLoadQueryIntoDb <- function(
 
     # remove trailing or leading whitespace, line breaks
     queryterm <- gsub("^\\s+|\\s+$|\n|\r", "", queryterm)
+
   } # if not querytoupdate
 
   # check annotation parameters

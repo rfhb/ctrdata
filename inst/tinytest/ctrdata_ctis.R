@@ -3,6 +3,16 @@
 #### ctrLoadQueryIntoDb ####
 
 # test
+expect_true(
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
+      queryterm = "ageGroupCode=2",
+      register = "CTIS",
+      only.count = TRUE,
+      verbose = TRUE,
+      con = dbc)[["n"]] >= 13L))
+
+# test
 expect_message(
   tmpTest <- suppressWarnings(
     ctrLoadQueryIntoDb(
@@ -37,29 +47,42 @@ expect_true(suppressWarnings(
     con = dbc))[["n"]] >= 9L)
 
 # test
-expect_true(suppressWarnings(
-  ctrLoadQueryIntoDb(
-    queryterm = "basicSearchInputAND=infection&status=Ended",
-    register = "CTIS",
-    con = dbc))[["n"]] >= 2L)
+expect_true(
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
+      queryterm = "basicSearchInputAND=infection&status=Ended",
+      register = "CTIS",
+      con = dbc))[["n"]] >= 2L)
 
 # test
-expect_true(suppressWarnings(
-  ctrLoadQueryIntoDb(
-    querytoupdate = "last",
-    con = dbc))[["n"]] >= 2L)
+expect_true(
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
+      querytoupdate = "last",
+      con = dbc))[["n"]] >= 2L)
 
 # test
-expect_true(suppressWarnings(
-  ctrLoadQueryIntoDb(
-    queryterm = "https://euclinicaltrials.eu/app/#/search?number=2022-500271-31-00",
-    con = dbc))[["n"]] == 1L)
+expect_message(
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
+      querytoupdate = "last",
+      only.count = TRUE,
+      con = dbc)),
+  "[0-9]+ trials have been updated")
 
 # test
-expect_true(suppressWarnings(
-  ctrLoadQueryIntoDb(
-    queryterm = "https://euclinicaltrials.eu/app/#/search?number=2022-501559-99-00",
-    con = dbc))[["n"]] == 1L)
+expect_true(
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
+      queryterm = "https://euclinicaltrials.eu/app/#/search?number=2022-500271-31-00",
+      con = dbc))[["n"]] == 1L)
+
+# test
+expect_true(
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
+      queryterm = "https://euclinicaltrials.eu/app/#/search?number=2022-501559-99-00",
+      con = dbc))[["n"]] == 1L)
 
 
 #### documents.path ####
@@ -136,7 +159,7 @@ suppressWarnings(
     tmpDf <- dbGetFieldsIntoDf(
       fields = c(
         "totalNumberEnrolled"
-        ),
+      ),
       stopifnodata = FALSE,
       con = dbc)))
 #

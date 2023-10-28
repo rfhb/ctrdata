@@ -248,28 +248,46 @@ expect_message(
     url = "https://clinicaltrials.gov/search?cond=neuroblastoma&intr=Investigational%20drug&aggFilters=ages:child,status:com&rank=8&sort=EnrollmentCount%3Adesc%2CNumArmGroups"),
   "REST API")
 
+# test
 expect_message(
   ctrGetQueryUrl(
     url = "cond=neuroblastoma&intr=Investigational%20Drug&aggFilters=ages%3Achild%2Cstatus%3Acom&sort=EnrollmentCount%3Adesc%2CNumArmGroups",
     register = "CTGOV"),
   "REST API")
 
+# test
 expect_message(
   ctrGetQueryUrl(
     url =
       "https://clinicaltrials.gov/study/NCT01467986?cond=neuroblastoma&intr=Investigational%20drug&aggFilters=ages:child,status:com&rank=2"),
   "REST API")
 
+# test
 expect_message(
   ctrGetQueryUrl(
     url = "https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug"),
   "Found search query from CTGOV")
 
+# test
 expect_message(
   ctrGetQueryUrl(
     url = "cond=Neuroblastoma&aggFilters=ages:child,results:with,studyType:int",
     register = "CTGOV"),
   "REST API")
+
+# test
+expect_equal(
+  ctrdata:::ctgovVersion(
+    url = data.frame(`no-query-term` = "something", check.names = FALSE),
+    register = "inout"),
+  "inout")
+
+# test
+expect_equal(
+  ctrdata:::ctgovVersion(
+    url = data.frame(`query-term` = "something", check.names = FALSE),
+    register = "inout"),
+  "inout")
 
 
 #### ctrOpenSearchPagesInBrowser ####
@@ -282,7 +300,6 @@ expect_message(
   ctrOpenSearchPagesInBrowser(url = q),
   "Found search query")
 
-# test
 q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/",
             "search?query=&age=under-18&status=completed")
 
@@ -319,26 +336,97 @@ expect_equal(
     url = "https://www.clinicaltrials.gov/search?cond=neuroblastoma&intr=Investigational%20drug&aggFilters=ages:child,status:com&rank=200&sort=EnrollmentCount%3Adesc%2CNumArmGroups"
   ), "https://www.clinicaltrials.gov/search?cond=neuroblastoma&intr=Investigational drug&aggFilters=ages:child,status:com")
 
+# test
 expect_equal(
   ctrOpenSearchPagesInBrowser(
     url = "https://www.clinicaltrials.gov/study/NCT01467986?cond=neuroblastoma&intr=Investigational%20drug&aggFilters=ages:child,status:com&rank=2"
   ), "https://www.clinicaltrials.gov/study/NCT01467986#main-content")
 
+# test
 expect_equal(
   ctrOpenSearchPagesInBrowser(
     url = "https://euclinicaltrials.eu/app/#/view/2022-502267-37-00"
   ), "https://euclinicaltrials.eu/app/#/view/2022-502267-37-00")
 
+# test
 expect_equal(
   ctrOpenSearchPagesInBrowser(
     url = "https://www.clinicaltrialsregister.eu/ctr-search/trial/2015-005219-34/DE"
   ), "https://www.clinicaltrialsregister.eu/ctr-search/search?query=2015-005219-34#tabs")
 
+# test
 expect_equal(
   ctrOpenSearchPagesInBrowser(
     url = "https://www.isrctn.com/ISRCTN54460428?q=alzheimer&filters=&sort=&offset=29&totalResults=286&page=3&pageSize=10"
   ), "https://www.isrctn.com/ISRCTN54460428")
 
+# test
+expect_equal(
+  ctrOpenSearchPagesInBrowser(
+    url = "",
+    register = "CTGOV2"
+  ), TRUE)
+
+
+#### ctrLoadQueryIntoDb parameters ####
+
+if (checkInternet()) {
+
+  # test
+  expect_warning(
+    ctrLoadQueryIntoDb(
+      queryterm = "somethingnonexisting",
+      register = "EUCTR",
+      euctrresultsfilespath = "something",
+      only.count = TRUE
+    ), "deprecated"
+  )
+
+  # test
+  expect_warning(
+    ctrLoadQueryIntoDb(
+      queryterm = "somethingnonexisting",
+      register = "EUCTR",
+      euctrresultspdfpath = "something",
+      only.count = TRUE
+    ), "deprecated"
+  )
+
+  # test
+  expect_warning(
+    ctrLoadQueryIntoDb(
+      queryterm = "somethingnonexisting",
+      register = "EUCTR",
+      parallelretrievals = 99L,
+      only.count = TRUE
+    ), "ignored"
+  )
+
+}
+
+# test
+expect_error(
+  ctrLoadQueryIntoDb(
+    queryterm = "somethingnonexisting",
+    querytoupdate = 1L,
+  ), "cannot"
+)
+
+# test
+expect_error(
+  ctrLoadQueryIntoDb(
+    queryterm = "somethingnonexisting",
+    register = 5L
+  ), "does not seem"
+)
+
+# test
+expect_error(
+  ctrLoadQueryIntoDb(
+    queryterm = "*",
+    register = "CTGOV"
+  ), "unexpected character"
+)
 
 
 #### dfFindUniqueEuctrRecord ####
