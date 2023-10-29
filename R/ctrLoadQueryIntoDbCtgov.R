@@ -157,14 +157,21 @@ ctrLoadQueryIntoDbCtgov <- function(
     # get document trial id and file name
     dlFiles <- jsonlite::stream_in(file(downloadsNdjson), verbose = FALSE)
 
-    # calculate filename
-    dlFiles$filename <- sub("^.+/(.+?)$", "\\1", dlFiles$url)
-
-    # do download
-    resFiles <- ctrDocsDownload(
-      dlFiles[, c("_id", "filename", "url"), drop = FALSE],
-      documents.path, documents.regexp, verbose)
-
+    # check if any documents
+    if (!nrow(dlFiles)) {
+      message("= No documents identified for downloading.")
+    } else {
+      
+      # calculate filename
+      dlFiles$filename <- sub("^.+/(.+?)$", "\\1", dlFiles$url)
+      
+      # do download
+      resFiles <- ctrDocsDownload(
+        dlFiles[, c("_id", "filename", "url"), drop = FALSE],
+        documents.path, documents.regexp, verbose)
+      
+    } # if (!nrow(dlFiles))
+    
   } # !is.null(documents.path)
 
   ## inform user -----------------------------------------------------

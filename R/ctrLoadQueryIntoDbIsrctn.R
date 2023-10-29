@@ -227,23 +227,30 @@ ctrLoadQueryIntoDbIsrctn <- function(
     # get document trial id and file name
     dlFiles <- jsonlite::stream_in(file(downloadsNdjson), verbose = FALSE)
 
-    # calculate urls
-    dlFiles$url <- sprintf(
-      "https://www.isrctn.com/editorial/retrieveFile/%s/%s",
-      dlFiles$fileref1, dlFiles$fileref2)
-
-    # do download with special config to avoid error
-    # "Unrecognized content encoding type.
-    #  libcurl understands deflate, gzip content encodings."
-    httr::with_config(
-      config = httr::config("http_content_decoding" = 0), {
-        resFiles <- ctrDocsDownload(
-          dlFiles[, c("_id", "filename", "url"), drop = FALSE],
-          documents.path, documents.regexp, verbose)
-      }, override = FALSE)
-
+    # check if any documents
+    if (!nrow(dlFiles)) {
+      message("= No documents identified for downloading.")
+    } else {
+      
+      # calculate urls
+      dlFiles$url <- sprintf(
+        "https://www.isrctn.com/editorial/retrieveFile/%s/%s",
+        dlFiles$fileref1, dlFiles$fileref2)
+      
+      # do download with special config to avoid error
+      # "Unrecognized content encoding type.
+      #  libcurl understands deflate, gzip content encodings."
+      httr::with_config(
+        config = httr::config("http_content_decoding" = 0), {
+          resFiles <- ctrDocsDownload(
+            dlFiles[, c("_id", "filename", "url"), drop = FALSE],
+            documents.path, documents.regexp, verbose)
+        }, override = FALSE)
+      
+    } # if (!nrow(dlFiles))
+    
   } # !is.null(documents.path)
-
+  
   ## inform user -----------------------------------------------------
 
   ## find out number of trials imported into database

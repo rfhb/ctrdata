@@ -637,31 +637,37 @@ ctrLoadQueryIntoDbCtis <- function(
     } # for
 
     # 3 - documents download
-
     dlFiles <- jsonlite::stream_in(file(downloadsNdjson), verbose = FALSE)
 
-    # remove duplicate files based on their title
-    dlFiles$part <- ordered(dlFiles$part, orderedParts)
-    dlFiles <- dlFiles[order(dlFiles$title, dlFiles$part), , drop = FALSE]
-    rl <- rle(dlFiles$title)
-    rl <- unlist(sapply(rl$lengths, function(i) c(TRUE, rep(FALSE, i - 1L))))
-    dlFiles <- dlFiles[rl, , drop = FALSE]
-
-    # add destination file name
-    dlFiles$filename <- paste0(
-      dlFiles$part, "_",
-      # robustly sanitise file name
-      gsub("[^[:alnum:] ._-]", "",  dlFiles$title),
-      ".", dlFiles$fileTypeLabel)
-
-    # calculate url
-    dlFiles$url <- sprintf(ctisEndpoints[10], dlFiles$url)
-
-    # do download
-    resFiles <- ctrDocsDownload(
-      dlFiles[, c("_id", "filename", "url"), drop = FALSE],
-      documents.path, documents.regexp, verbose)
-
+    # check if any documents
+    if (!nrow(dlFiles)) {
+      message("= No documents identified for downloading.")
+    } else {
+      
+      # remove duplicate files based on their title
+      dlFiles$part <- ordered(dlFiles$part, orderedParts)
+      dlFiles <- dlFiles[order(dlFiles$title, dlFiles$part), , drop = FALSE]
+      rl <- rle(dlFiles$title)
+      rl <- unlist(sapply(rl$lengths, function(i) c(TRUE, rep(FALSE, i - 1L))))
+      dlFiles <- dlFiles[rl, , drop = FALSE]
+      
+      # add destination file name
+      dlFiles$filename <- paste0(
+        dlFiles$part, "_",
+        # robustly sanitise file name
+        gsub("[^[:alnum:] ._-]", "",  dlFiles$title),
+        ".", dlFiles$fileTypeLabel)
+      
+      # calculate url
+      dlFiles$url <- sprintf(ctisEndpoints[10], dlFiles$url)
+      
+      # do download
+      resFiles <- ctrDocsDownload(
+        dlFiles[, c("_id", "filename", "url"), drop = FALSE],
+        documents.path, documents.regexp, verbose)
+      
+    } # if (!nrow(dlFiles))
+    
   } # !is.null(documents.path)
 
   ## inform user -----------------------------------------------------
