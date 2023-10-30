@@ -50,9 +50,7 @@ for [CTGOV changes](#workflow-ctgov-example).
   [script](#3-script-to-automatically-copy-users-query-from-web-browser)
   can automate copying the query URL from all registers.
   [Documents](#documents-example) in registers on trials can also be
-  downloaded. Personal annotations can be made to trials when
-  downloading a query. Synonyms of an active substance can also be
-  found.
+  downloaded. Personal annotations can be made when downloading trials.
 - Downloaded trial information is transformed and stored in a collection
   of a document-centric database, for fast and offline access.
   Information from different registers can be accumalated in a single
@@ -61,11 +59,12 @@ for [CTGOV changes](#workflow-ctgov-example).
   [Databases](#databases-that-can-be-used-with-ctrdata) below. Re-run
   any previous query in a collection to retrieve and update trial
   records.
-- For analyses, convenience functions in `ctrdata` allow to identify
-  unique (de-duplicated) trial records across all registers, to merge
-  and recode fields as well as to easily access deeply-nested fields.
-  Analysis can be done with `R` or other systems, using the
-  `JSON`-[structured information in the database](#mongodb).
+- For analyses, convenience functions in `ctrdata` allow find synonyms
+  of an active substance, to identify unique (de-duplicated) trial
+  records across all registers, to merge and recode fields as well as to
+  easily access deeply-nested fields. Analysis can be done with `R` or
+  other systems, using the `JSON`-[structured information in the
+  database](#mongodb).
 
 Remember to respect the registers’ terms and conditions (see
 `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
