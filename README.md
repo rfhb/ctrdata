@@ -38,14 +38,17 @@ conduct of trials, their availability for patients and to facilitate
 using their detailed results for research and meta-analyses. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2023-10-28 for version 1.15.2.9000
+package. This README was reviewed on 2023-10-29 for version 1.15.2.9000
 for [CTGOV changes](#workflow-ctgov-example).
 
 ## Main features
 
 - Protocol- and results-related trial information is easily downloaded:
-  Users define a query in a register’s web interface and then enter the
-  URL into `ctrdata` which retrieves in one go all trials found.
+  Users define a query in a register’s web interface, then copy the URL
+  and enter it into `ctrdata` which retrieves in one go all trials
+  found. A
+  [script](#3-script-to-automatically-copy-users-query-from-web-browser)
+  can automate copying the query URL from all registers.
   [Documents](#documents-example) in registers on trials can also be
   downloaded. Personal annotations can be made to trials when
   downloading a query. Synonyms of an active substance can also be
@@ -59,21 +62,16 @@ for [CTGOV changes](#workflow-ctgov-example).
   any previous query in a collection to retrieve and update trial
   records.
 - For analyses, convenience functions in `ctrdata` allow to identify
-  unique (de-duplicated) trial records across registers, to merge and
-  recode fields as well as to easily access deeply-nested fields.
-  Analysis can be done with `R` or other systems, by accessing the
-  structured information in the database.
-
-URLs of queries in the registers can be automatically copied to the
-clipboard (including for “CTIS”, where the URL does not show the query),
-see
-[here](#3-script-to-automatically-copy-users-query-from-web-browser).
+  unique (de-duplicated) trial records across all registers, to merge
+  and recode fields as well as to easily access deeply-nested fields.
+  Analysis can be done with `R` or other systems, using the
+  `JSON`-[structured information in the database](#mongodb).
 
 Remember to respect the registers’ terms and conditions (see
 `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
 package in any publication as follows: “Ralf Herold (2023). *ctrdata:
 Retrieve and Analyze Clinical Trials in Public Registers.* R package
-version 1.15.0, <https://cran.r-project.org/package=ctrdata>”.
+version 1.15.2, <https://cran.r-project.org/package=ctrdata>”.
 
 <!--
 &#10;```r
@@ -121,8 +119,9 @@ These commands also install the package’s dependencies (`nodbi`,
 
 These are required for `ctrLoadQueryIntoDb()`, the main function of
 package `ctrdata` (see [Example workflow](#example-workflow)), to work
-with the registers EUCTR, CTGOV, ISRCTN (but are not required to work
-with CTIS); the function also checks if the tools can be used.
+with the registers EUCTR, CTGOV, ISRCTN (but are *not* required to work
+with the registers CTIS or CTGOV2); the function also checks if the
+tools can be used.
 
 - For MS Windows, install [`Cygwin`](https://cygwin.org/install.html):
   In `R`, run `ctrdata::installCygwinWindowsDoInstall()` for an
