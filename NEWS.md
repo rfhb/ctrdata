@@ -20,12 +20,13 @@
 
 - added results summary download for CTIS
 - added documents download for ISRCTN
-- factor out document download function
+- factored out document download function
 - added handler for errors when attempting to save EUCTR results (e.g., too long file path name)
 - ensure `dbFindFields()` return fields for EU and 3rd country trials in EUCTR, updated documentation
 - changed order of importing from CTIS into database
 - better checked downloads, repeat where necessary
 - factored out temporary folder creation
+- added using `options(ctrdata.tempdir = ...)` if set
 - removed `dfListExtractKey()`, long deprecated
 - removed `dfMergeTwoVariablesRelevel()`, long deprecated
 - reorganise file layout
