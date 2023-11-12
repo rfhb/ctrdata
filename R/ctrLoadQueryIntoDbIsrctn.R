@@ -171,7 +171,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
 
   # get (download) trials into single file f
   tmp <- ctrMultiDownload(isrctndownloadurl, f, verbose = verbose)
-
+  
   # inform user
   if (!file.exists(f) || file.size(f) == 0L) {
     message(
@@ -184,7 +184,11 @@ ctrLoadQueryIntoDbIsrctn <- function(
 
   ## run conversion
   message("(2/3) Converting to JSON...", appendLF = FALSE)
-  ctrConvertToJSON(tempDir, "isrctn2ndjson.php", verbose)
+  tmp <- ctrConvertToJSON(tempDir, "isrctn2ndjson.php", verbose)
+  if (attr(tmp, "status") != 0L) {
+    message("Downloaded data invalid, cannot continue.")
+    return(emptyReturn)
+  }
 
   ## import json -----------------------------------------------------
 
