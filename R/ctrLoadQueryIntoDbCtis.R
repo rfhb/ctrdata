@@ -50,25 +50,30 @@ ctrLoadQueryIntoDbCtis <- function(
       # - 1 trial overview - %s is for pagination
       "/ct/publiclookup?&paging=%s,%s&sorting=+ctNumber&%s",
       #
-      # - 2-3 trial information - %s is ctNumber
-      "/ct/%s/publicview",   # partI and partsII
-      "/ct/%s/publicevents", # serious breach, unexpected event, urgent
-      # safety measure, inspection outside EEA, temporary halt
+      # - 2 trial information - %s is ctNumber
+      "/ct/%s/publicview", # partI and partsII
+      #      
+      # - 3 additional info public events - %s is id, %s is type of notification
+      "/ct/%s/eventdetails?notificationType=%s",
       #
-      # - 4-8 additional information - %s is ctNumber
+      # - 4 trial information - %s is ctNumber
+      "/ct/%s/publicevents", # serious breach, unexpected event, 
+      # urgent safety measure, inspection outside EEA, temporary halt
+      #
+      # - 5-9 additional information - %s is ctNumber
       "/ct/public/%s/summary/list",
       "/ct/public/%s/layperson/list",
       "/ct/public/%s/csr/list", # clinical study report
       "/ct/public/%s/cm/list",  # corrective measures
       "/ct/public/%s/inspections/list",
       #
-      # - 9 trial information - %s is an application id
+      # - 10 trial information - %s is an application id
       "/ct/%s/publicEvaluation",
       #
-      # - 10 download files - %s is document url
+      # - 11 download files - %s is document url
       "/ct/public/download/%s",
       #
-      # - 11-18 documents - %s is entity identifier, lists
+      # - 12-21 documents - %s is entity identifier, lists
       "/document/part1/%s/list", # appl auth
       "/document/part2/%s/list", # appl auth
       "/document/product-group-common/%s/list",
@@ -78,15 +83,13 @@ ctrLoadQueryIntoDbCtis <- function(
       "/document/rfi/%s/list",                    # rfis
       "/document/notification/%s/list?documentType=101", # events
       "/document/cm/%s/list", # corrective measures
-      #
-      # - sub 3 additional info public events - %s is id, %s is type of notification
-      "/ct/%s/eventdetails?notificationType=%s"
+      "/document/smr/%s/list"
       #
       # unclear or not publicly accessible
-      # /document/part1/4433/list?documentType=93
-      # /document/part1/4433/list?documentType=94
-      # /document/part2/14808/list/?documentType=41
-      # /document/considerationDoc/32137/list
+      # https://euclinicaltrials.eu/ct-public-api-services/services/document/part1/4433/list?documentType=93
+      # https://euclinicaltrials.eu/ct-public-api-services/services/document/part1/4433/list?documentType=94
+      # https://euclinicaltrials.eu/ct-public-api-services/services/document/part2/14808/list/?documentType=41
+      # https://euclinicaltrials.eu/ct-public-api-services/services/document/considerationDoc/32137/list
     )
   )
 
@@ -263,8 +266,8 @@ ctrLoadQueryIntoDbCtis <- function(
   }
   if (!verbose) unlink(paste0(fPartIPartsIINdjson, c("a", "b")))
 
-  ## api_3: public events ----------------------------------------------------
-
+  ## api_3-9: more data ----------------------------------------------------
+  
   # helper function
   publicEventsMerger <- function(publicEvents) {
 
@@ -281,7 +284,7 @@ ctrLoadQueryIntoDbCtis <- function(
       ids[1] <- gsub("\"", "", ids[1])
 
       # get data
-      urls <- sprintf(ctisEndpoints[20], ids[2],
+      urls <- sprintf(ctisEndpoints[3], ids[2],
                       toupper(gsub("([A-Z])", "_\\1", gsub("List", "", ids[1]))))
       eventData <- httr::GET(urls)
       if (httr::status_code(eventData) != 200L) next
@@ -300,11 +303,9 @@ ctrLoadQueryIntoDbCtis <- function(
 
   }
 
-  ## api_3-8: more data ----------------------------------------------------
-
   message("\n(3/5) Downloading and processing additional data:")
 
-  for (e in 3:8) {
+  for (e in 4:9) {
 
     urls <- sprintf(ctisEndpoints[e], idsTrials)
     ep <- sub(".+/(.+?)$", "\\1", sub("/list$", "", urls[1]))
@@ -340,8 +341,8 @@ ctrLoadQueryIntoDbCtis <- function(
       jOut <- sub('(,?)"pageInfo":[{].+?[}](,?)', "\\2", jOut)
       if (!nchar(jOut) || jOut == "[]") next
 
-      # if publicevents, obtain additional data
-      if (e == 3L) jOut <- publicEventsMerger(jOut)
+      # if publicevents (ctisEndpoints[4]), obtain additional data
+      if (e == 4L) jOut <- publicEventsMerger(jOut)
 
       # reconstruct trial id
       id <- sub(paste0(".+/(", regCtis, ")/.+"), "\\1", tmp[["url"]][fi])
@@ -359,11 +360,11 @@ ctrLoadQueryIntoDbCtis <- function(
 
   }
 
-  ## add_9: publicevaluation -----------------------------------------------------
+  ## add_10: publicevaluation -----------------------------------------------------
 
   message("publicevaluation")
 
-  fApplicationsJson <- file.path(tempDir, "ctis_add_9.json")
+  fApplicationsJson <- file.path(tempDir, "ctis_add_10.json")
 
   # get ids of trial applications
   jqr::jq(
@@ -383,9 +384,9 @@ ctrLoadQueryIntoDbCtis <- function(
   })
 
   dlFiles <- do.call(rbind, dlFiles)
-  dlFiles$url <- sprintf(ctisEndpoints[9], dlFiles$applicationIds)
+  dlFiles$url <- sprintf(ctisEndpoints[10], dlFiles$applicationIds)
   dlFiles$filepathname <- file.path(
-    tempDir, paste0("ctis_add_9_", dlFiles$applicationIds, ".json"))
+    tempDir, paste0("ctis_add_10_", dlFiles$applicationIds, ".json"))
 
   # "HTTP server doesn't seem to support byte ranges. Cannot resume."
   tmp <- ctrMultiDownload(
@@ -394,14 +395,14 @@ ctrLoadQueryIntoDbCtis <- function(
     resume = FALSE,
     verbose = verbose)
 
-  fApplicationsNdjson <- file.path(tempDir, "ctis_add_9.ndjson")
+  fApplicationsNdjson <- file.path(tempDir, "ctis_add_10.ndjson")
   unlink(fApplicationsNdjson)
 
   for (i in seq_len(nrow(idsApplications))) {
 
     # read all files for _id into vector
     fApps <- file.path(tempDir, paste0(
-      "ctis_add_9_", unlist(idsApplications$applicationIds[i]), ".json"))
+      "ctis_add_10_", unlist(idsApplications$applicationIds[i]), ".json"))
 
     fApps <- fApps[file.size(fApps) >= 50L]
     fn <- tmp[["destfile"]][fi]
@@ -458,15 +459,9 @@ ctrLoadQueryIntoDbCtis <- function(
   }
   message("")
 
-  ## api_10-19: documents -------------------------------------------------------
+  ## api_12-21: documents -------------------------------------------------------
 
   if (!is.null(documents.path)) {
-
-    # define order for factor for sorting
-    orderedParts <- c(
-      "ctaletter", "p1ar", "p2ars", "part1auth", "part1appl",
-      "parts2auth", "parts2appl", "prodauth", "prodappl", "rfis",
-      "events", "cms")
 
     # 1 - get ids of lists (which include urls to download)
     message("- Getting ids of lists with document information")
@@ -474,7 +469,9 @@ ctrLoadQueryIntoDbCtis <- function(
     # get temporary file
     downloadsNdjson <- file.path(tempDir, "ctis_downloads.ndjson")
 
-    # extract ids of lists per parts per trial
+    ## extract ids of lists per parts per trial
+    
+    # extract ids from parts 1 and 2
     jqr::jq(
       file(fPartIPartsIINdjson),
       ' ._id |= gsub("\\""; "") | { _id: ._id,
@@ -491,8 +488,25 @@ ctrLoadQueryIntoDbCtis <- function(
       flags = jqr::jq_flags(pretty = FALSE),
       out = downloadsNdjson
     )
+    
+    # extract ids from additional data
+    for (i in 5L:9L) {
+      inF <- file.path(tempDir, paste0("ctis_add_", i, ".ndjson"))
+      outF <- file.path(tempDir, paste0("ctis_downloads_add_", i, ".ndjson"))
+      if (!file.exists(inF)) next
+      jqr::jq(
+        file(inF),
+        paste0(
+          ' ._id |= gsub("\\""; "") | { _id: ._id, ',
+          sub(".+/%s/(.+?)/list", "\\1", ctisEndpoints[i]), ': [ .',
+          sub(".+/%s/(.+?)/list", "\\1", ctisEndpoints[i]), '[].id ] ',
+          '} '),
+        flags = jqr::jq_flags(pretty = FALSE),
+        out = outF
+      )
+    }
 
-    # extract ids of rfis from publicevaluation
+    # extract ids of rfis from publicevaluation (ctisEndpoints[10])
     rfiIds1 <- jqr::jq(
       file(fApplicationsNdjson),
       '{ _id: ._id, rfis1: [ .publicEvaluation[].partIRfis[].id ]}')
@@ -502,7 +516,7 @@ ctrLoadQueryIntoDbCtis <- function(
       '{ _id: ._id, rfis2: [ .publicEvaluation[].partIIEvaluationList[].partIIRfis[].id ]}')
     rfiIds2 <- jsonlite::fromJSON(paste0("[", paste0(rfiIds2, collapse = ","), "]"))
 
-    # extract ids of documents from publicEvents (ep = 3)
+    # extract ids of documents from publicEvents (ctisEndpoints[3])
     if (file.exists(file.path(tempDir, "ctis_add_3.ndjson"))) {
       eventIds <- jqr::jq(file(file.path(tempDir, "ctis_add_3.ndjson")),
                           " {_id: ._id, events: [ .publicevents[][][].id ]}")
@@ -511,52 +525,54 @@ ctrLoadQueryIntoDbCtis <- function(
       eventIds <- data.frame()
     }
 
-    # extract ids of documents from corrective events (ep = 7)
-    if (file.exists(file.path(tempDir, "ctis_add_7.ndjson"))) {
-      cmIds <- jqr::jq(file(file.path(tempDir, "ctis_add_7.ndjson")),
-                       " {_id: ._id, cms: [ .cm[].id ]}")
-      cmIds <- jsonlite::fromJSON(paste0("[", paste0(cmIds, collapse = ","), "]"))
-    } else {
-      cmIds <- data.frame()
-    }
-
-    # convert and merge ids
+    # convert and merge by ids
     dlFiles <- jsonlite::stream_in(file(downloadsNdjson), verbose = FALSE)
     if (nrow(rfiIds1)) {dlFiles <- merge(dlFiles, rfiIds1, all.x = TRUE)}
     if (nrow(rfiIds2)) {dlFiles <- merge(dlFiles, rfiIds2, all.x = TRUE)}
     if (nrow(eventIds)) {dlFiles <- merge(dlFiles, eventIds, all.x = TRUE)}
-    if (nrow(cmIds)) {dlFiles <- merge(dlFiles, cmIds, all.x = TRUE)}
+    for (i in 5L:9L) {
+      outF <- file.path(tempDir, paste0("ctis_downloads_add_", i, ".ndjson"))
+      if (!file.exists(outF)) next
+      tmp <- jsonlite::stream_in(file(outF), verbose = FALSE)
+      if (nrow(tmp)) {dlFiles <- merge(dlFiles, tmp, all.x = TRUE)}
+    }
 
     # map
-    epTyp <- list(
-      "part1" = ctisEndpoints[11],
-      "parts2" = ctisEndpoints[12],
-      "prod" = ctisEndpoints[13],
-      "p1ar" = ctisEndpoints[14],
-      "p2ars" = ctisEndpoints[15],
-      "ctaletter" = ctisEndpoints[16],
-      "rfis" = ctisEndpoints[17],
-      "events" = ctisEndpoints[18],
-      "cms" = ctisEndpoints[19]
-    )
+    epTyp <- ctisEndpoints[12:21]
+    names(epTyp) <- c(
+      "part1", "parts2", "prod", "p1ar", "p2ars", "ctaletter", "rfis", 
+      "events", "cm", "layperson")
+    epTyp <- as.list(epTyp)
 
+    # define order for factor for sorting
+    orderedParts <- c(
+      "ctaletter", "p1ar", "p2ars", "part1auth", "part1appl",
+      "parts2auth", "parts2appl", "prodauth", "prodappl", "rfis",
+      "events", "cm", "layperson")
+    
+    # ordering files list
     dlFiles <- apply(dlFiles, 1, function(r) {
       tmp <- data.frame(id = unlist(r[-1], use.names = TRUE), r[1],
                         check.names = FALSE, stringsAsFactors = FALSE)
+      # remove rows from absent elements (5 to 9 above)
+      tmp <- tmp[!is.na(tmp$id), , drop = FALSE]
+      #
       # if url occurs repeatedly, only use last from defined order
       tmp$part <- sub("[0-9]+$", "", row.names(tmp))
       tmp$part <- ordered(tmp$part, orderedParts)
       tmp$typ <- sub("appl|auth", "", tmp$part)
       #
+      # construct url
       tmp$url <- mapply(
         function(t, i) sprintf(epTyp[t][[1]], i), tmp$typ, tmp$id)
       #
+      # if url occurs repeatedly, only use last 
       tmp <- tmp[order(tmp$url, tmp$part), , drop = FALSE]
       rl <- rle(tmp$url)
       rl <- unlist(sapply(rl$lengths, function(i) c(TRUE, rep(FALSE, i - 1L))))
       tmp[rl, , drop = FALSE]
     })
-
+    #
     dlFiles <- do.call(rbind, dlFiles)
     dlFiles <- na.omit(dlFiles)
 
@@ -658,8 +674,10 @@ ctrLoadQueryIntoDbCtis <- function(
         gsub("[^[:alnum:] ._-]", "",  dlFiles$title),
         ".", dlFiles$fileTypeLabel)
       
+      #### api_11: urls ####
+      
       # calculate url
-      dlFiles$url <- sprintf(ctisEndpoints[10], dlFiles$url)
+      dlFiles$url <- sprintf(ctisEndpoints[11], dlFiles$url)
       
       # do download
       resFiles <- ctrDocsDownload(

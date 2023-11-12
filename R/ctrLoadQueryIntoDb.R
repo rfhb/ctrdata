@@ -54,7 +54,7 @@
 #' (see \code{documents.path}).
 #' If set to \code{NULL}, empty placeholder files are saved for
 #' every document that could be saved. Default is
-#' \code{"prot|sample|statist|sap_|p1ar|p2ars|ctaletter|^[0-9]+ "}.
+#' \code{"prot|sample|statist|sap_|p1ar|p2ars|ctalett|lay|^[0-9]+ "}.
 #' Used with "CTGOV", "CTGOV2", "ISRCTN" and "CTIS" (but not "EUCTR",
 #' for which all available documents are saved in any case).
 #'
@@ -156,7 +156,7 @@ ctrLoadQueryIntoDb <- function(
     euctrresults = FALSE,
     euctrresultshistory = FALSE,
     documents.path = NULL,
-    documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctaletter|^[0-9]+ ",
+    documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctalett|lay|^[0-9]+ ",
     annotation.text = "",
     annotation.mode = "append",
     only.count = FALSE,

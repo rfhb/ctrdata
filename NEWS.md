@@ -1,4 +1,4 @@
-# ctrdata 1.15.2.9000 (2023-10-22)
+# ctrdata 1.15.2.9000 (2023-11-12)
 
 ## Breaking changes
 
@@ -18,6 +18,7 @@
 
 ## Improvements
 
+- added results summary download for CTIS
 - added documents download for ISRCTN
 - factor out document download function
 - added handler for errors when attempting to save EUCTR results (e.g., too long file path name)
