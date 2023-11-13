@@ -185,10 +185,6 @@ ctrLoadQueryIntoDbIsrctn <- function(
   ## run conversion
   message("(2/3) Converting to JSON...", appendLF = FALSE)
   tmp <- ctrConvertToJSON(tempDir, "isrctn2ndjson.php", verbose)
-  if (attr(tmp, "status") != 0L) {
-    message("Downloaded data invalid, cannot continue.")
-    return(emptyReturn)
-  }
 
   ## import json -----------------------------------------------------
 
