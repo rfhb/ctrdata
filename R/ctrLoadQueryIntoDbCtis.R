@@ -362,7 +362,7 @@ ctrLoadQueryIntoDbCtis <- function(
 
   ## add_10: publicevaluation -----------------------------------------------------
 
-  message("publicevaluation")
+  message("publicevaluation", appendLF = FALSE)
 
   fApplicationsJson <- file.path(tempDir, "ctis_add_10.json")
 
@@ -388,6 +388,8 @@ ctrLoadQueryIntoDbCtis <- function(
   dlFiles$filepathname <- file.path(
     tempDir, paste0("ctis_add_10_", dlFiles$applicationIds, ".json"))
 
+  message(" (estimate: ", nrow(dlFiles) * 0.026, " Mb)")
+  
   # "HTTP server doesn't seem to support byte ranges. Cannot resume."
   tmp <- ctrMultiDownload(
     dlFiles$url,
@@ -579,7 +581,7 @@ ctrLoadQueryIntoDbCtis <- function(
     # do downloads of list files
     message("- Downloading ", nrow(dlFiles),
             " lists with document information (estimate: ",
-            nrow(dlFiles) * 0.02, " Mb)")
+            nrow(dlFiles) * 0.009, " Mb)")
 
     fFilesListJson <- function(t, p, id) {
       file.path(tempDir, paste0("ctis_fileslist_", t, "_", p, "_", id, ".json"))
