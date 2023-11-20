@@ -38,7 +38,7 @@ conduct of trials, their availability for patients and to facilitate
 using their detailed results for research and meta-analyses. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2023-10-29 for version 1.15.2.9000
+package. This README was reviewed on 2023-11-20 for version 1.15.2.9000
 for [CTGOV changes](#workflow-ctgov-example).
 
 ## Main features
@@ -114,13 +114,12 @@ These commands also install the package’s dependencies (`nodbi`,
 `jsonlite`, `httr`, `curl`, `clipr`, `xml2`, `rvest`, `lubridate` and
 `stringi`).
 
-### 2. Command line tools `perl`, `sed` and `php` (5.2 or higher)
+### 2. External tools (not needed for CTIS or CTGOV2)
 
 These are required for `ctrLoadQueryIntoDb()`, the main function of
 package `ctrdata` (see [Example workflow](#example-workflow)), to work
-with the registers EUCTR, CTGOV, ISRCTN (but are *not* required to work
-with the registers CTIS or CTGOV2); the function also checks if the
-tools can be used.
+with the registers EUCTR, CTGOV, ISRCTN (but are *not* required for
+`ctrdata` to work with the registers CTIS or CTGOV2).
 
 - For MS Windows, install [`Cygwin`](https://cygwin.org/install.html):
   In `R`, run `ctrdata::installCygwinWindowsDoInstall()` for an
@@ -129,7 +128,7 @@ tools can be used.
   `c:\cygwin`. The installation needs about 160 MB disk space.
 
 - In macOS including 11 Big Sur, these are already installed; as
-  alternative and 🔔for macOS 12 Monterey and above,
+  alternative and 🔔for macOS 12 Monterey and later,
   [`homebrew`](https://brew.sh/) can be used: `brew install php`, which
   seems to include all `php` libraries required for `ctrdata`.
 
@@ -862,6 +861,9 @@ suppressMessages(tinytest::test_all())
 ## Future features
 
 - See project outline <https://github.com/users/rfhb/projects/1>
+
+- Replace external command line tools still needed for EUCTR, CTGOV,
+  ISRCTN, likely by V8 and custom Javascript
 
 - Canonical definitions, filters, calculations are in the works (since
   August 2023) for data mangling and analyses across registers, e.g. to

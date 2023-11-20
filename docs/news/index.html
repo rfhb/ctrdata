@@ -53,7 +53,7 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.15.2.9000" id="ctrdata-11529000-2023-10-22">ctrdata 1.15.2.9000 (2023-10-22)<a class="anchor" aria-label="anchor" href="#ctrdata-11529000-2023-10-22"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.15.2.9000" id="ctrdata-11529000-2023-11-12">ctrdata 1.15.2.9000 (2023-11-12)<a class="anchor" aria-label="anchor" href="#ctrdata-11529000-2023-11-12"></a></h2>
 <div class="section level3">
 <h3 id="breaking-changes-1-15-2-9000">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-1-15-2-9000"></a></h3>
 <ul><li>potentially breaking changes for EUCTR, fields renamed to harmonise EU and 3rd country trials: new: “e83_single_site_trial”, was: “e83_the_trial_involves_single_site_in_the_member_state_concerned” new: “e83_single_site_trial”, was: “e83_will_this_trial_be_conducted_ at_a_single_site_globally” new: “e84_multiple_sites_in_member_state”, was “e84_the_trial_involves_multiple_sites_in_the_member_state_concerned” new: “e840_multiple_sites_globally”, was “e84_will_this_trial_be_conducted_at_multiple_sites_globally” new: “e863_trial_sites_planned_in”, was “e863_specify_the_regions_in_which_trial_sites_are_planned” new: “e863_trial_sites_planned_in”, was “e863_specify_the_countries_outside_of_the_eea_in_which_trial_sites_are_planned” see also comments on issue <a href="https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081" class="external-link uri">https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081</a>
@@ -66,13 +66,15 @@
 </ul></div>
 <div class="section level3">
 <h3 id="improvements-1-15-2-9000">Improvements<a class="anchor" aria-label="anchor" href="#improvements-1-15-2-9000"></a></h3>
-<ul><li>added documents download for ISRCTN</li>
-<li>factor out document download function</li>
+<ul><li>added results summary download for CTIS</li>
+<li>added documents download for ISRCTN</li>
+<li>factored out document download function</li>
 <li>added handler for errors when attempting to save EUCTR results (e.g., too long file path name)</li>
 <li>ensure <code><a href="../reference/dbFindFields.html">dbFindFields()</a></code> return fields for EU and 3rd country trials in EUCTR, updated documentation</li>
 <li>changed order of importing from CTIS into database</li>
 <li>better checked downloads, repeat where necessary</li>
 <li>factored out temporary folder creation</li>
+<li>added using <code>options(ctrdata.tempdir = ...)</code> if set</li>
 <li>removed <code>dfListExtractKey()</code>, long deprecated</li>
 <li>removed <code>dfMergeTwoVariablesRelevel()</code>, long deprecated</li>
 <li>reorganise file layout</li>
