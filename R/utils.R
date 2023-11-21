@@ -735,7 +735,7 @@ addMetaData <- function(x, con) {
 #' https://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages
 #' perl,php-jsonc,php-simplexml}.
 #' These binaries are required only for function \link{ctrLoadQueryIntoDb}
-#' when used for register "EUCTR", "CTGOV" or "ISRCT",
+#' when used for register "EUCTR",
 #' but not for any other register or any other function in this package.
 #'
 #' @export
@@ -985,7 +985,7 @@ checkBinary <- function(b = NULL, verbose = FALSE) {
     "\nTo install command line binaries needed for the function ",
     "ctrLoadQueryIntoDb() of package ctrdata, see recommendations at ",
     "https://github.com/rfhb/ctrdata#",
-    "2-command-line-tools-perl-sed-and-php-52-or-higher",
+    "id_2-external-tools-only-needed-for-euctr",
     "\nAfter installation, detach and load package ctrdata again, ",
     "or restart the R session.\n")
 

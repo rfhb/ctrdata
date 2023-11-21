@@ -65,7 +65,7 @@
     
     <a class="navbar-brand me-2" href="index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.15.2.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.15.2.9001</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -120,7 +120,7 @@
 <li>EU Clinical Trials Information System (“CTIS”, <a href="https://euclinicaltrials.eu/" class="external-link uri">https://euclinicaltrials.eu/</a>) 🔔 see <a href="#workflow-ctis-example">example</a>
 </li>
 </ul>
-<p>The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-11-20 for version 1.15.2.9000 for <a href="#workflow-ctgov-example">CTGOV changes</a>.</p>
+<p>The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-11-21 for version 1.15.2.9001 for <a href="#workflow-ctgov-example">CTGOV changes</a>.</p>
 <div class="section level2">
 <h2 id="main-features">Main features<a class="anchor" aria-label="anchor" href="#main-features"></a>
 </h2>
@@ -163,12 +163,12 @@ citation("ctrdata")
 <span><span class="co"># Alternatively, install development version:</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"rfhb/ctrdata"</span>, build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p>These commands also install the package’s dependencies (<code>nodbi</code>, <code>jsonlite</code>, <code>httr</code>, <code>curl</code>, <code>clipr</code>, <code>xml2</code>, <code>rvest</code>, <code>lubridate</code> and <code>stringi</code>).</p>
+<p>These commands also install the package’s dependencies (<code>jsonlite</code>, <code>httr</code>, <code>curl</code>, <code>clipr</code>, <code>xml2</code>, <code>nodbi</code>, <code>stringi</code>, <code>tibble</code>, <code>lubridate</code>, <code>jqr</code>, <code>dplyr</code>, <code>zip</code> and <code>V8</code>).</p>
 </div>
 <div class="section level3">
-<h3 id="id_2-external-tools-not-needed-for-ctis-or-ctgov2">2. External tools (not needed for CTIS or CTGOV2)<a class="anchor" aria-label="anchor" href="#id_2-external-tools-not-needed-for-ctis-or-ctgov2"></a>
+<h3 id="id_2-external-tools-only-needed-for-euctr">2. External tools (🔔only needed for EUCTR)<a class="anchor" aria-label="anchor" href="#id_2-external-tools-only-needed-for-euctr"></a>
 </h3>
-<p>These are required for <code><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code>, the main function of package <code>ctrdata</code> (see <a href="#example-workflow">Example workflow</a>), to work with the registers EUCTR, CTGOV, ISRCTN (but are <em>not</em> required for <code>ctrdata</code> to work with the registers CTIS or CTGOV2).</p>
+<p>These are required for <code><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code>, the main function of package <code>ctrdata</code> (see <a href="#example-workflow">Example workflow</a>), to work with the register EUCTR (but are <em>not</em> required for any other function or for <code>ctrdata</code> to work with the registers CTIS, CTGOV, CTGOV2 or ISRCTN, since 2023-11-21).</p>
 <ul>
 <li><p>For MS Windows, install <a href="https://cygwin.org/install.html" class="external-link"><code>Cygwin</code></a>: In <code>R</code>, run <code><a href="reference/installCygwinWindowsDoInstall.html">ctrdata::installCygwinWindowsDoInstall()</a></code> for an automated minimal installation. Alternatively, manually install Cygwin with packages <code>perl</code>, <code>php-jsonc</code> and <code>php-simplexml</code> into <code>c:\cygwin</code>. The installation needs about 160 MB disk space.</p></li>
 <li><p>In macOS including 11 Big Sur, these are already installed; as alternative and 🔔for macOS 12 Monterey and later, <a href="https://brew.sh/" class="external-link"><code>homebrew</code></a> can be used: <code>brew install php</code>, which seems to include all <code>php</code> libraries required for <code>ctrdata</code>.</p></li>

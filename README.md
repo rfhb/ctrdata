@@ -38,7 +38,7 @@ conduct of trials, their availability for patients and to facilitate
 using their detailed results for research and meta-analyses. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2023-11-20 for version 1.15.2.9000
+package. This README was reviewed on 2023-11-21 for version 1.15.2.9001
 for [CTGOV changes](#workflow-ctgov-example).
 
 ## Main features
@@ -110,16 +110,17 @@ install.packages("devtools")
 devtools::install_github("rfhb/ctrdata", build_vignettes = TRUE)
 ```
 
-These commands also install the package’s dependencies (`nodbi`,
-`jsonlite`, `httr`, `curl`, `clipr`, `xml2`, `rvest`, `lubridate` and
-`stringi`).
+These commands also install the package’s dependencies (`jsonlite`,
+`httr`, `curl`, `clipr`, `xml2`, `nodbi`, `stringi`, `tibble`,
+`lubridate`, `jqr`, `dplyr`, `zip` and `V8`).
 
-### 2. External tools (not needed for CTIS or CTGOV2)
+### 2. External tools (🔔only needed for EUCTR)
 
 These are required for `ctrLoadQueryIntoDb()`, the main function of
 package `ctrdata` (see [Example workflow](#example-workflow)), to work
-with the registers EUCTR, CTGOV, ISRCTN (but are *not* required for
-`ctrdata` to work with the registers CTIS or CTGOV2).
+with the register EUCTR (but are *not* required for any other function
+or for `ctrdata` to work with the registers CTIS, CTGOV, CTGOV2 or
+ISRCTN, since 2023-11-21).
 
 - For MS Windows, install [`Cygwin`](https://cygwin.org/install.html):
   In `R`, run `ctrdata::installCygwinWindowsDoInstall()` for an

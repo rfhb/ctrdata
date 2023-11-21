@@ -24,7 +24,7 @@ setup yourself as follows: \code{cygwinsetup.exe --no-admin --quiet-mode
 https://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages
 perl,php-jsonc,php-simplexml}.
 These binaries are required only for function \link{ctrLoadQueryIntoDb}
-when used for register "EUCTR", "CTGOV" or "ISRCT",
+when used for register "EUCTR",
 but not for any other register or any other function in this package.
 }
 \examples{
