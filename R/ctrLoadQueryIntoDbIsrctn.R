@@ -11,6 +11,7 @@
 #' @importFrom nodbi docdb_query
 #' @importFrom utils URLdecode
 #' @importFrom httr with_config config
+#' @importFrom V8 JS
 #'
 ctrLoadQueryIntoDbIsrctn <- function(
     queryterm = queryterm,
@@ -171,7 +172,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
 
   # get (download) trials into single file f
   tmp <- ctrMultiDownload(isrctndownloadurl, f, verbose = verbose)
-  
+
   # inform user
   if (!file.exists(f) || file.size(f) == 0L) {
     message(
@@ -183,8 +184,32 @@ ctrLoadQueryIntoDbIsrctn <- function(
   ## convert to json ------------------------------------------------
 
   ## run conversion
-  message("(2/3) Converting to JSON...", appendLF = FALSE)
-  tmp <- ctrConvertToJSON(tempDir, "isrctn2ndjson.php", verbose)
+  message("(2/3) Converting to NDJSON...")
+
+  if (length(.ctrdataenv$ct) == 0L) initTranformers()
+
+  jqr::jq(
+    # input
+    textConnection(
+      .ctrdataenv$ct$call(
+        "parsexml",
+        # read source xml file
+        paste0(readLines(f, warn = FALSE), collapse = ""),
+        # important parameters
+        V8::JS('{trim: true, ignoreAttrs: true, explicitArray: false}'))
+    ),
+    # processing
+    paste0(
+      # extract trial record(s)
+      ' .allTrials.fullTrial | (if type != "array" then .trial else .[].trial end) ' ,
+      # add elements
+      '| .["_id"] = .isrctn
+       | .["ctrname"] = "ISRCTN"
+       | .["record_last_import"] = "', format(Sys.time(), "%Y-%m-%d %H:%M:%S"), '"'
+    ),
+    flags = jqr::jq_flags(pretty = FALSE),
+    out = file.path(tempDir, "isrctn_trials_.ndjson")
+  )
 
   ## import json -----------------------------------------------------
 
@@ -207,6 +232,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
     downloadsNdjson <- file.path(tempDir, "isrctn_downloads.ndjson")
     suppressMessages(unlink(downloadsNdjson))
     downloadsNdjsonCon <- file(downloadsNdjson, open = "at")
+    on.exit(try(close(downloadsNdjsonCon), silent = TRUE), add = TRUE)
 
     # extract trial ids and file name and save in temporary file
     for (ndjsonFile in dir(
@@ -231,12 +257,12 @@ ctrLoadQueryIntoDbIsrctn <- function(
     if (!nrow(dlFiles)) {
       message("= No documents identified for downloading.")
     } else {
-      
+
       # calculate urls
       dlFiles$url <- sprintf(
         "https://www.isrctn.com/editorial/retrieveFile/%s/%s",
         dlFiles$fileref1, dlFiles$fileref2)
-      
+
       # do download with special config to avoid error
       # "Unrecognized content encoding type.
       #  libcurl understands deflate, gzip content encodings."
@@ -246,11 +272,11 @@ ctrLoadQueryIntoDbIsrctn <- function(
             dlFiles[, c("_id", "filename", "url"), drop = FALSE],
             documents.path, documents.regexp, verbose)
         }, override = FALSE)
-      
+
     } # if (!nrow(dlFiles))
-    
+
   } # !is.null(documents.path)
-  
+
   ## inform user -----------------------------------------------------
 
   ## find out number of trials imported into database

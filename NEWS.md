@@ -18,6 +18,11 @@
 
 ## Improvements
 
+### Major 
+- No external command line tools anymore for CTGOV, ISRCTN, CTGOV2, CTIS; replaced 
+  with Javascript using `R` package `V8` (only EUCTR remains to be refactored)
+
+### Other
 - added results summary download for CTIS
 - added documents download for ISRCTN
 - factored out document download function

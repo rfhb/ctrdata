@@ -119,8 +119,54 @@ ctrLoadQueryIntoDbCtgov <- function(
   ## convert to json ----------------------------------------------------------
 
   ## run conversion
-  message("(2/3) Converting to JSON...", appendLF = FALSE)
-  tmp <- ctrConvertToJSON(tempDir, "ctgov2ndjson.php", verbose)
+  message("(2/3) Converting to NDJSON...")
+
+  if (length(.ctrdataenv$ct) == 0L) initTranformers()
+
+  # run in batches of 25
+  xmlFileList <- dir(path = tempDir, pattern = "NCT.+xml", full.names = TRUE)
+  numInterv <- 1L + (length(xmlFileList) %/% 20)
+  if (numInterv > 1L) {
+    xmlFileList <- split(xmlFileList, cut(seq_along(xmlFileList), numInterv))
+  } else {
+    xmlFileList <- list(xmlFileList)
+  }
+
+  for (f in seq_along(xmlFileList)) {
+
+    fNdjsonCon <- file(file.path(tempDir, paste0("ctgov_trials_", f, ".ndjson")), open = "at")
+    on.exit(try(close(fNdjsonCon), silent = TRUE), add = TRUE)
+
+    for (i in xmlFileList[[f]]) {
+
+      jqr::jq(
+        # input
+        textConnection(
+          .ctrdataenv$ct$call(
+            "parsexml",
+            # read source xml file
+            paste0(readLines(i, warn = FALSE), collapse = ""),
+            # important parameters
+            V8::JS('{trim: true, ignoreAttrs: true, explicitArray: false}'))
+        ),
+        # processing
+        paste0(
+          # extract trial record(s)
+          " .clinical_study ",
+          # add elements
+          '| .["_id"] = .id_info.nct_id
+           | .["ctrname"] = "CTGOV"
+           | .["record_last_import"] = "', format(Sys.time(), "%Y-%m-%d %H:%M:%S"), '"'
+        ),
+       flags = jqr::jq_flags(pretty = FALSE),
+      out = fNdjsonCon
+      )
+
+    } # for i
+
+    close(fNdjsonCon)
+
+  } # for f
 
   ## import -------------------------------------------------------------------
 
@@ -139,6 +185,7 @@ ctrLoadQueryIntoDbCtgov <- function(
     downloadsNdjson <- file.path(tempDir, "ctgov_downloads.ndjson")
     suppressMessages(unlink(downloadsNdjson))
     downloadsNdjsonCon <- file(downloadsNdjson, open = "at")
+    on.exit(try(close(downloadsNdjsonCon), silent = TRUE), add = TRUE)
 
     # extract trial ids and file name and save in temporary file
     for (ndjsonFile in dir(
@@ -161,17 +208,17 @@ ctrLoadQueryIntoDbCtgov <- function(
     if (!nrow(dlFiles)) {
       message("= No documents identified for downloading.")
     } else {
-      
+
       # calculate filename
       dlFiles$filename <- sub("^.+/(.+?)$", "\\1", dlFiles$url)
-      
+
       # do download
       resFiles <- ctrDocsDownload(
         dlFiles[, c("_id", "filename", "url"), drop = FALSE],
         documents.path, documents.regexp, verbose)
-      
+
     } # if (!nrow(dlFiles))
-    
+
   } # !is.null(documents.path)
 
   ## inform user -----------------------------------------------------

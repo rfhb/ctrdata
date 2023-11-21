@@ -314,18 +314,13 @@ ctrLoadQueryIntoDb <- function(
 
   if (!only.count) {
     # check extra binaries as needed for register
-    if (grepl("^(ISRCTN|CTGOV|EUCTR)$", register)) {
+    if (grepl("^(EUCTR)$", register)) {
       message("Checking helper binaries: ", appendLF = FALSE)
       suppressMessages(installCygwinWindowsTest())
-      if (register == "ISRCTN") testBinaries <- c("php", "phpxml", "phpjson")
-      if (register == "CTGOV") testBinaries <- c("php", "phpxml", "phpjson")
       if (register == "EUCTR") testBinaries <- c("sed", "perl")
-      if (euctrresults) testBinaries <- c("sed", "perl", "php", "phpxml", "phpjson")
+      if (register == "EUCTR" && euctrresults) testBinaries <- c("sed", "perl", "php", "phpxml", "phpjson")
       if (!checkBinary(b = testBinaries)) {
-        stop(
-          "ctrLoadQueryIntoDb() cannot continue",
-          call. = FALSE
-        )
+        stop("ctrLoadQueryIntoDb() cannot continue", call. = FALSE)
       }
       message("done")
     }
