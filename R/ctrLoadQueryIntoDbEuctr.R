@@ -372,8 +372,8 @@ ctrLoadQueryIntoDbEuctr <- function(
 
           # main function for fast reading,
           # switching off warning about final EOL missing
-          fd <- file(description = fileName,
-                     open = "rt", blocking = TRUE)
+          fd <- file(description = fileName, open = "rt", blocking = TRUE)
+          on.exit(try(close(fd), silent = TRUE), add = TRUE)
 
           # iterate over lines in fileName
           while (TRUE) {

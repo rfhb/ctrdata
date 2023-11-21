@@ -236,7 +236,8 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     jqr::jq(
       file(fTrialJson),
       paste0(
-        # extract trial records
+        # extract trial records. studies seems always to be an array,
+        # even for a single trial, thus no handling needed if array or not
         ' .studies | .[] ',
         # add elements
         '| .["_id"] = .protocolSection.identificationModule.nctId
@@ -275,6 +276,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     downloadsNdjson <- file.path(tempDir, "ctgov2_downloads.ndjson")
     suppressMessages(unlink(downloadsNdjson))
     downloadsNdjsonCon <- file(downloadsNdjson, open = "at")
+    on.exit(try(close(downloadsNdjsonCon), silent = TRUE), add = TRUE)
 
     # extract trial ids and file name and save in temporary file
     for (ndjsonFile in dir(
@@ -296,21 +298,21 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     if (!nrow(dlFiles)) {
       message("= No documents identified for downloading.")
     } else {
-      
+
       # calculate urls
       dlFiles$url <- sprintf(
         ctgovEndpoints[3],
         sub(".*([0-9]{2})$", "\\1", dlFiles$`_id`),
         dlFiles$`_id`,
         dlFiles$filename)
-      
+
       # do download
       resFiles <- ctrDocsDownload(
         dlFiles[, c("_id", "filename", "url"), drop = FALSE],
         documents.path, documents.regexp, verbose)
-      
+
     } # if (!nrow(dlFiles))
-    
+
   } # !is.null(documents.path)
 
   ## inform user -----------------------------------------------------
