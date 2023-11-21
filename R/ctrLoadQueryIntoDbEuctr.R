@@ -356,37 +356,28 @@ ctrLoadQueryIntoDbEuctr <- function(
 
     if (length(.ctrdataenv$ct) == 0L) initTranformers()
 
-    # run in batches of 25
+    # for each file create new ndjson file
     xmlFileList <- dir(path = tempDir, pattern = "EU-CTR.+Results.xml", full.names = TRUE)
-    numInterv <- 1L + ((length(xmlFileList) - 1L) %/% 25)
-    if (numInterv > 1L) {
-      xmlFileList <- split(xmlFileList, cut(seq_along(xmlFileList), numInterv))
-    } else {
-      xmlFileList <- list(xmlFileList)
-    }
 
     for (f in seq_along(xmlFileList)) {
 
-      fNdjsonCon <- file.path(tempDir, paste0("EU_Results_", f, ".ndjson"))
-
-      for (i in xmlFileList[[f]]) {
-
-        cat(stringi::stri_replace_all_fixed(
-          .ctrdataenv$ct$call(
-            "parsexml",
-            # read source xml file
-            paste0(readLines(i, warn = FALSE), collapse = ""),
-            # important parameters
-            V8::JS('{trim: true, ignoreAttrs: false, mergeAttrs: true,
+      cat(stringi::stri_replace_all_fixed(
+        .ctrdataenv$ct$call(
+          "parsexml",
+          # read source xml file
+          paste0(readLines(xmlFileList[f], warn = FALSE), collapse = ""),
+          # important parameters
+          V8::JS('{trim: true, ignoreAttrs: false, mergeAttrs: true,
                      explicitRoot: false, explicitArray: false, xmlns: false}')),
-          c('"xmlns:ns0":"http://eudract.ema.europa.eu/schema/clinical_trial_result",',
-            '"xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","xsi:nil":"true"',
-            "&", "'", "\n", "\r", "\t"),
-          c("", "", "&amp;", "&apos;", " ", " ", " "),
-          vectorize_all = FALSE),
-          file = fNdjsonCon, sep = "\n", append = TRUE)
+        # remove conversion remnants and conformity breaking characters
+        c('"xmlns:ns0":"http://eudract.ema.europa.eu/schema/clinical_trial_result",',
+          '"xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","xsi:nil":"true"',
+          "&", "'", "\n", "\r", "\t"),
+        c("", "", "&amp;", "&apos;", " ", " ", " "),
+        vectorize_all = FALSE),
+        file = file.path(tempDir, paste0("EU_Results_", f, ".ndjson"))
+      )
 
-      } # for i
     } # for f
 
     # iterate over results files
@@ -395,80 +386,47 @@ ctrLoadQueryIntoDbEuctr <- function(
     # initiate counter
     importedresults <- 0L
 
-    # import results data from json file
-    sapply(
-      # e.g., EU-CTR 2008-003606-33 v1 - Results.xml
-      # was converted into EU_Results_1234.json
-      dir(path = tempDir,
-          pattern = "^EU_Results_[0-9]+[.]ndjson$",
-          full.names = TRUE),
-      function(fileName) {
+    # import results data from json files
+    jsonFileList <- dir(
+      path = tempDir, pattern = "^EU_Results_[0-9]+[.]ndjson$", full.names = TRUE)
 
-        # check file
-        if (file.exists(fileName) &&
-            file.size(fileName) > 0L) {
+    for (f in jsonFileList) {
 
-          # main function for fast reading,
-          # switching off warning about final EOL missing
-          fd <- file(description = fileName, open = "rt", blocking = TRUE)
-          on.exit(try(close(fd), silent = TRUE), add = TRUE)
+      if (!file.exists(f) || file.size(f) == 0L) next
 
-          # iterate over lines in fileName
-          while (TRUE) {
+      eudractNumber <- gsub(
+        "\"", "", as.character(jqr::jq(file(f), " .eudractNumber ")))
 
-            # read line
-            tmpjson <- readLines(con = fd, n = 1L, warn = FALSE)
+      # update database with results
+      tmp <- try({
+        tmpnodbi <-
+          nodbi::docdb_update(
+            src = con,
+            key = con$collection,
+            value = f,
+            query = paste0('{"a2_eudract_number": "', eudractNumber, '"}')
+          )
+        max(tmpnodbi, na.rm = TRUE)
+      },
+      silent = TRUE)
 
-            # exit while loop if empty
-            if (length(tmpjson) == 0L) break
+      # inform user on failed trial
+      if (inherits(tmp, "try-error")) {
+        warning(paste0(
+          "Import of results failed for trial ", eudractNumber), immediate. = TRUE)
+        tmp <- 0L
+      }
 
-            # get eudract number
-            # "{\"eudractNumber\":\"2004-004386-15\",
-            euctrnumber <- sub(
-              paste0('^\\{\"eudractNumber\":\"(',
-                     regEuctr, ')\".*$'), "\\1", tmpjson)
-            if (!grepl(paste0("^", regEuctr, "$"), euctrnumber)) {
-              warning("No EudraCT number recognised in file ",
-                      fileName, call. = FALSE)
-            }
+      # however output is number of trials updated
+      importedresults <- importedresults + 1L
 
-            # update database with results
-            tmp <- try({
-              tmpnodbi <-
-                nodbi::docdb_update(
-                  src = con,
-                  key = con$collection,
-                  value = tmpjson,
-                  query = paste0('{"_id": {"$regex": "^', euctrnumber, '.+"}}')
-                )
-              max(tmpnodbi, na.rm = TRUE)
-            },
-            silent = TRUE)
+      # inform user on records
+      message(
+        importedresults,
+        " trials' records updated with results\r",
+        appendLF = FALSE)
 
-            # inform user on failed trial
-            if (inherits(tmp, "try-error")) {
-              warning(paste0("Import of results failed for trial ",
-                             euctrnumber), immediate. = TRUE)
-              tmp <- 0L
-            }
-
-            # however output is number of trials updated
-            importedresults <<- importedresults + 1L
-
-            # inform user on records
-            message(
-              importedresults,
-              " trials' records updated with results\r",
-              appendLF = FALSE)
-
-          } # while
-
-          # close this file
-          close(fd)
-
-        } # if file exists
-
-      }) # end import results
+    } # for f
 
     ## result history information ---------------------------------------------
 
