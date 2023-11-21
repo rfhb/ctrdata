@@ -1412,26 +1412,10 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
         "                               \r",
         appendLF = FALSE)
 
+      # get all ids using jq, safet than regex
+      ids <- gsub("\"", "", as.vector(jqr::jq(file(tempFiles[tempFile]), " ._id ")))
+
       ## existing annotations -------------------------------------------------
-
-      # get any annotations, delete
-      # existing docs in chunks
-      while (TRUE) {
-
-        # read line
-        tmpline <- readLines(con = fd, n = 1L, warn = FALSE)
-
-        # exit while loop if empty
-        if (length(tmpline) == 0L) break
-
-        # readLines produces: \"_id\": \"2007-000371-42-FR\"
-        id <- sub(".*_id\":[ ]*\"(.*?)\".*", "\\1", tmpline)
-
-        # ids should always be found and later,
-        # one id will be assumed to be on one line each
-        if (length(id) == 1L && nchar(id)) ids <- c(ids, id)
-
-      } # while
 
       # get annotations
       annoDf <- try({
