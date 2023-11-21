@@ -125,16 +125,11 @@ ISRCTN, since 2023-11-21).
 - For MS Windows, install [`Cygwin`](https://cygwin.org/install.html):
   In `R`, run `ctrdata::installCygwinWindowsDoInstall()` for an
   automated minimal installation. Alternatively, manually install Cygwin
-  with packages `perl`, `php-jsonc` and `php-simplexml` into
-  `c:\cygwin`. The installation needs about 160 MB disk space.
+  with packages `perl`, `cat` and `sed` into `c:\cygwin`. The
+  installation needs about 160 MB disk space.
 
-- In macOS including 11 Big Sur, these are already installed; as
-  alternative and 🔔for macOS 12 Monterey and later,
-  [`homebrew`](https://brew.sh/) can be used: `brew install php`, which
-  seems to include all `php` libraries required for `ctrdata`.
-
-- In Linux, these are usually already installed; tools to install vary
-  by distribution (e.g., `sudo apt install php-cli php-xml php-json`).
+In Linux and macOS 12 Monterey and later, these tools are typically
+already available as part of the OS, thus *no* action required.
 
 ### 3. Script to automatically copy user’s query from web browser
 

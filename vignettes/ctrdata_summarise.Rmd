@@ -509,6 +509,111 @@ ggsave("vignettes/boxpep.png", width = 6, height = 4)
 ```
 ![BoxPEP](boxpep.png)
 
+## Analysis methods and p values
+
+```{r analyse_results_data}
+
+# helper 
+normalise_string <- function(x) {
+  
+  x <- gsub(",", "",  x)
+  x <- gsub("-", " ", x)
+  x <- tolower(x)
+  x <- tools::toTitleCase(x)
+  x <- gsub("[ ]+", " ", x)
+  x <- trimws(x)
+  x
+  
+}
+
+# get trials into database
+if (FALSE) {
+  db <- nodbi::src_sqlite(collection = "x")
+  ctrLoadQueryIntoDb(
+    queryterm = paste0("https://clinicaltrials.gov/ct2/results?rslt=With&age=0&intr=Drug&", 
+                       "phase=1&phase=2&strd_s=01%2F01%2F2010&strd_e=12%2F31%2F2012"), 
+    con = db)
+}
+
+# get result set
+result <- dbGetFieldsIntoDf(
+  c("start_date", "detailed_description.textblock", "official_title", "eligibility.maximum_age",
+    "study_design_info.allocation", "primary_outcome.measure", "arm_group.arm_group_type", 
+    "clinical_results.outcome_list.outcome.analysis_list.analysis.method",
+    "clinical_results.outcome_list.outcome.analysis_list.analysis.p_value",
+    "clinical_results.outcome_list.outcome.analysis_list.analysis.param_type",
+    "clinical_results.outcome_list.outcome.analysis_list.analysis.non_inferiority_type",
+    "clinical_results.baseline.analyzed_list.analyzed.units", 
+    "clinical_results.baseline.analyzed_list.analyzed.count_list.count.value"
+  ), 
+  con = db, 
+  stopifnodata = FALSE)
+
+# number of paticipants (last number is typicall all groups summed up)
+result$totalparticipants <- vapply(
+  result[["clinical_results.baseline.analyzed_list.analyzed.count_list.count.value"]],
+  FUN = function(x) as.numeric(rev(strsplit(x, " / ")[[1]])[1]), numeric(1L))
+
+result$clinical_results.baseline.analyzed_list.analyzed.count_list.count.value[1:3]
+
+# first reported p value for primary endpoint analysis
+result$pvalueprimaryanalysis <- vapply(
+  result[["clinical_results.outcome_list.outcome.analysis_list.analysis.p_value"]],
+  FUN = function(x) as.numeric(strsplit(x, " / ")[[1]][1]), numeric(1))
+
+# statistical method used for primary endpoint analysis
+result$methodprimaryanalysis <- vapply(
+    result[["clinical_results.outcome_list.outcome.analysis_list.analysis.method"]],
+    FUN = function(x) normalise_string(strsplit(x, " / ")[[1]][1]), character(1))
+  
+# based on allocation arms, keep trials that are likely to investigate safety and efficacy
+result$controlled <- grepl("(Placebo|No Intervention)", 
+                           result$arm_group.arm_group_type, ignore.case = TRUE)
+result <- subset(result, controlled == TRUE)
+
+# http://varianceexplained.org/statistics/interpreting-pvalue-histogram/
+# http://www.pnas.org/content/100/16/9440.full
+# plot p values
+library(ggplot2)
+ggplot(result, aes(pvalueprimaryanalysis)) + 
+  stat_ecdf(geom = "step") +
+  labs(title = "Paediatric phase 2 or 3 interventional trials\nwith randomisation to placebo or to no intervention", 
+       x = "Range of p values", 
+       y = "Empirical cumulative density of p values\nof primary endpoint results") 
+ggsave("vignettes/phase23_paed_p_values.png", width = 6, height = 4)
+
+# plot sample size v p value
+ggplot(result, aes(x = totalparticipants, y = pvalueprimaryanalysis)) +
+  geom_point() + 
+  ylim(0, 1) + 
+  xlim(0, 1000) + 
+  scale_x_log10()
+ggsave("vignettes/phase23_paed_p_values_participants.png", width = 6, height = 4)
+
+# statistical method used for primary endpoint analysis
+tmp <- table(result$methodprimaryanalysis)
+tmp <- tmp[rev(order(tmp))]
+tmp <- data.frame(tmp)
+knitr::kable(tmp[1:10,])
+```
+
+|Var1                                 | Freq|
+|:------------------------------------|----:|
+|Ancova                               |   51|
+|Mixed Models Analysis                |   18|
+|Cochran Mantel Haenszel              |   18|
+|Anova                                |   14|
+|t Test 2 Sided                       |   10|
+|Chi Squared                          |   10|
+|Fisher Exact                         |    9|
+|Wilcoxon (Mann Whitney)              |    6|
+|Mixed Model Repeated Measures (Mmrm) |    6|
+|Regression Logistic                  |    3|
+
+![phase23_paed_p_values](phase23_paed_p_values.png)
+
+![phase23_paed_p_values](phase23_paed_p_values_participants.png)
+
 ## Investigational or authorised medicinal product?
 
 The information about the status of authorisation (licensing) of a medicine used in a trial is recorded in EUCTR in the field `dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation`. A corresponding field in CTGOV is not known. The status is in the tree starting from the `dimp` element.

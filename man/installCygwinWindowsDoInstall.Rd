@@ -22,7 +22,7 @@ Alternatively and in case of difficulties, download and run the cygwin
 setup yourself as follows: \code{cygwinsetup.exe --no-admin --quiet-mode
 --verbose --upgrade-also --root c:/cygwin --site
 https://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages
-perl,php-jsonc,php-simplexml}.
+perl}.
 These binaries are required only for function \link{ctrLoadQueryIntoDb}
 when used for register "EUCTR",
 but not for any other register or any other function in this package.
