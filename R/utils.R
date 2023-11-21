@@ -1344,6 +1344,7 @@ initTranformers <- function() {
   # functions for conversions
   ct$assign(
     "parsexml",
+    # https://www.npmjs.com/package/xml2js#options
     V8::JS("function(x, y) {injs.parseString(x, y, function (err, result)
            { out = result; }); return JSON.stringify(out); }"))
 

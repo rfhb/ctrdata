@@ -147,7 +147,8 @@ ctrLoadQueryIntoDbCtgov <- function(
             # read source xml file
             paste0(readLines(i, warn = FALSE), collapse = ""),
             # important parameters
-            V8::JS('{trim: true, ignoreAttrs: true, explicitArray: false}'))
+            V8::JS('{trim: true, ignoreAttrs: false, mergeAttrs: true,
+                     explicitRoot: true, explicitArray: false}'))
         ),
         # processing
         paste0(

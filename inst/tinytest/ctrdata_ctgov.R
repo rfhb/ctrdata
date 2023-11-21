@@ -248,7 +248,7 @@ expect_identical(
 
 # test
 expect_true(
-  nrow(df) > 600L
+  nrow(df) > 800L
 )
 
 # select value from
