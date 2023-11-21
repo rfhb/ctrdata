@@ -6,7 +6,6 @@ source("setup_ctrdata.R")
 
 if (!checkPostgres()) exit_file("Reason: no PostgreSQL")
 if (!checkInternet()) exit_file("Reason: no internet connectivity")
-if (!checkBinaries()) exit_file("Reason: no binaries php or sed or perl")
 
 #### ISRCTN ####
 tf <- function() {

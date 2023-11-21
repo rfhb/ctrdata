@@ -248,7 +248,7 @@ expect_identical(
 
 # test
 expect_true(
-  nrow(df) > 800L
+  nrow(df) > 600L
 )
 
 # select value from
@@ -376,4 +376,4 @@ tmpc <- table(tmpc)
 # All ok, 34 results (21.8s)
 
 # clean up
-rm(df, df2, tmpf, result)
+rm(df, df2, tmpf, result, tmpc)

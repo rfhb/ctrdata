@@ -6,7 +6,6 @@ source("setup_ctrdata.R")
 
 if (!checkSqlite())   exit_file("Reason: no SQLite")
 if (!checkInternet()) exit_file("Reason: no internet connectivity")
-if (!checkBinaries()) exit_file("Reason: no binaries php or sed or perl")
 
 #### ISRCTN ####
 tf <- function() {
