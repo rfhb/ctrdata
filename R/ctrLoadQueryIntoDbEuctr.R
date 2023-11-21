@@ -13,6 +13,7 @@
 #' @importFrom curl multi_run multi_add multi_download
 #' @importFrom nodbi docdb_query docdb_update
 #' @importFrom zip unzip
+#' @importFrom stringi stri_replace_all_fixed
 #'
 ctrLoadQueryIntoDbEuctr <- function(
     queryterm = queryterm,
@@ -349,7 +350,44 @@ ctrLoadQueryIntoDbEuctr <- function(
     message("", appendLF = TRUE)
 
     ## run conversion of XML files
-    ctrConvertToJSON(tempDir, "euctr2ndjson_results.php", verbose)
+
+    # TODO
+    # ctrConvertToJSON(tempDir, "euctr2ndjson_results.php", verbose)
+
+    if (length(.ctrdataenv$ct) == 0L) initTranformers()
+
+    # run in batches of 25
+    xmlFileList <- dir(path = tempDir, pattern = "EU-CTR.+Results.xml", full.names = TRUE)
+    numInterv <- 1L + ((length(xmlFileList) - 1L) %/% 25)
+    if (numInterv > 1L) {
+      xmlFileList <- split(xmlFileList, cut(seq_along(xmlFileList), numInterv))
+    } else {
+      xmlFileList <- list(xmlFileList)
+    }
+
+    for (f in seq_along(xmlFileList)) {
+
+      fNdjsonCon <- file.path(tempDir, paste0("EU_Results_", f, ".ndjson"))
+
+      for (i in xmlFileList[[f]]) {
+
+        cat(stringi::stri_replace_all_fixed(
+          .ctrdataenv$ct$call(
+            "parsexml",
+            # read source xml file
+            paste0(readLines(i, warn = FALSE), collapse = ""),
+            # important parameters
+            V8::JS('{trim: true, ignoreAttrs: false, mergeAttrs: true,
+                     explicitRoot: false, explicitArray: false, xmlns: false}')),
+          c('"xmlns:ns0":"http://eudract.ema.europa.eu/schema/clinical_trial_result",',
+            '"xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","xsi:nil":"true"',
+            "&", "'", "\n", "\r", "\t"),
+          c("", "", "&amp;", "&apos;", " ", " ", " "),
+          vectorize_all = FALSE),
+          file = fNdjsonCon, sep = "\n", append = TRUE)
+
+      } # for i
+    } # for f
 
     # iterate over results files
     message("(3/4) Importing JSON into database...")
@@ -385,9 +423,9 @@ ctrLoadQueryIntoDbEuctr <- function(
             if (length(tmpjson) == 0L) break
 
             # get eudract number
-            # "{\"@attributes\":{\"eudractNumber\":\"2004-004386-15\",
+            # "{\"eudractNumber\":\"2004-004386-15\",
             euctrnumber <- sub(
-              paste0('^\\{\"@attributes\":\\{\"eudractNumber\":\"(',
+              paste0('^\\{\"eudractNumber\":\"(',
                      regEuctr, ')\".*$'), "\\1", tmpjson)
             if (!grepl(paste0("^", regEuctr, "$"), euctrnumber)) {
               warning("No EudraCT number recognised in file ",

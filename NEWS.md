@@ -2,14 +2,18 @@
 
 ## Breaking changes
 
-- potentially breaking changes for EUCTR, fields renamed to harmonise EU and 3rd country trials:
-  new: "e83_single_site_trial", was: "e83_the_trial_involves_single_site_in_the_member_state_concerned"
-  new: "e83_single_site_trial", was: "e83_will_this_trial_be_conducted_ at_a_single_site_globally"
-  new: "e84_multiple_sites_in_member_state", was "e84_the_trial_involves_multiple_sites_in_the_member_state_concerned"
-  new: "e840_multiple_sites_globally", was "e84_will_this_trial_be_conducted_at_multiple_sites_globally"
-  new: "e863_trial_sites_planned_in", was "e863_specify_the_regions_in_which_trial_sites_are_planned"
-  new: "e863_trial_sites_planned_in", was "e863_specify_the_countries_outside_of_the_eea_in_which_trial_sites_are_planned"
-  see also comments on issue https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
+Potentially breaking changes for EUCTR: 
+
+### Fields renamed to harmonise EU and 3rd country trials, see also comments on issue https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081:
+  
+- new: `e83_single_site_trial`, was: `e83_the_trial_involves_single_site_in_the_member_state_concerned`
+- new: `e83_single_site_trial`, was: `e83_will_this_trial_be_conducted_ at_a_single_site_globally`
+- new: `e84_multiple_sites_in_member_state`, was `e84_the_trial_involves_multiple_sites_in_the_member_state_concerned`
+- new: `e840_multiple_sites_globally`, was `e84_will_this_trial_be_conducted_at_multiple_sites_globally`
+- new: `e863_trial_sites_planned_in`, was `e863_specify_the_regions_in_which_trial_sites_are_planned`
+- new: `e863_trial_sites_planned_in`, was `e863_specify_the_countries_outside_of_the_eea_in_which_trial_sites_are_planned`
+
+### Results files parsed slightly differently, affecting `@attribute` keys, new: `{"id":"PostAssignmentPeriod-46349"}`, was: `{"@attributes":{"id":"PostAssignmentPeriod-46349"}}`
 
 ## Bug fixes
 
@@ -19,8 +23,8 @@
 ## Improvements
 
 ### Major 
-- No external command line tools anymore for CTGOV, ISRCTN, CTGOV2, CTIS; replaced 
-  with Javascript using `R` package `V8` (only EUCTR remains to be refactored)
+- No external command line tools anymore for CTGOV, ISRCTN, CTGOV2, CTIS; replacing `php` with
+  Javascript using `R` package `V8` (only EUCTR needs `perl` and `sed`, still to be refactored)
 
 ### Other
 - added results summary download for CTIS

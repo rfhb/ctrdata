@@ -318,7 +318,6 @@ ctrLoadQueryIntoDb <- function(
       message("Checking helper binaries: ", appendLF = FALSE)
       suppressMessages(installCygwinWindowsTest())
       if (register == "EUCTR") testBinaries <- c("sed", "perl")
-      if (register == "EUCTR" && euctrresults) testBinaries <- c("sed", "perl", "php", "phpxml", "phpjson")
       if (!checkBinary(b = testBinaries)) {
         stop("ctrLoadQueryIntoDb() cannot continue", call. = FALSE)
       }

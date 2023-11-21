@@ -125,7 +125,7 @@ ctrLoadQueryIntoDbCtgov <- function(
 
   # run in batches of 25
   xmlFileList <- dir(path = tempDir, pattern = "NCT.+xml", full.names = TRUE)
-  numInterv <- 1L + (length(xmlFileList) %/% 20)
+  numInterv <- 1L + ((length(xmlFileList) - 1L) %/% 25)
   if (numInterv > 1L) {
     xmlFileList <- split(xmlFileList, cut(seq_along(xmlFileList), numInterv))
   } else {
