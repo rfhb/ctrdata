@@ -1323,6 +1323,34 @@ ctrDocsDownload <- function(
 
 
 
+#' initTranformers
+#'
+#' https://cran.r-project.org/web/packages/V8/vignettes/npm.html
+#'
+#' @importFrom V8 v8 JS
+#'
+#' @keywords internal
+#' @noRd
+#'
+initTranformers <- function() {
+
+  # prepare V8, see ./inst/js/
+  ct <- V8::v8()
+
+  # get javascript
+  ct$source(system.file("js/bundle.js", package = "ctrdata"))
+  assign("ct", ct, envir = .ctrdataenv)
+
+  # functions for conversions
+  ct$assign(
+    "parsexml",
+    V8::JS("function(x, y) {injs.parseString(x, y, function (err, result)
+           { out = result; }); return JSON.stringify(out); }"))
+
+}
+
+
+
 #' dbCTRLoadJSONFiles
 #'
 #' @param dir Path to local directory with JSON files
@@ -1331,6 +1359,7 @@ ctrDocsDownload <- function(
 #' @importFrom jsonlite validate
 #' @importFrom nodbi docdb_create
 #' @importFrom stats na.omit
+#' @importFrom jqr jq
 #'
 #' @inheritParams ctrDb
 #'

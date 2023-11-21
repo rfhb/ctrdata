@@ -10,6 +10,7 @@
 # check helper functions
 .onAttach <- function(libname, pkgname) {
 
+  # inform user
   packageStartupMessage(
     "\nInformation on this package and how to use it:\n",
     "https://cran.r-project.org/package=ctrdata\n\n",
@@ -23,6 +24,9 @@
     "\nPlease cite this package, see citation(\"ctrdata\").\n",
     "\n", utils::packageVersion("ctrdata")
   )
+
+  # initialise
+  initTranformers()
 
   # return
   invisible()
