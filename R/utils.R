@@ -733,7 +733,7 @@ addMetaData <- function(x, con) {
 #' setup yourself as follows: \code{cygwinsetup.exe --no-admin --quiet-mode
 #' --verbose --upgrade-also --root c:/cygwin --site
 #' https://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/ --packages
-#' perl,php-jsonc,php-simplexml}.
+#' perl}.
 #' These binaries are required only for function \link{ctrLoadQueryIntoDb}
 #' when used for register "EUCTR",
 #' but not for any other register or any other function in this package.
@@ -800,7 +800,7 @@ installCygwinWindowsDoInstall <- function(
     dstfile,
     " --no-admin --quiet-mode --upgrade-also --no-shortcuts --root c:/cygwin",
     " --site https://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/",
-    " --packages perl,php-simplexml,php-json ",
+    " --packages perl ",
     " --local-package-dir ", tmpfile,
     ifelse(nchar(proxy), " --proxy ", ""), proxy
   )
@@ -942,12 +942,6 @@ checkBinary <- function(b = NULL, verbose = FALSE) {
   actionsInfos <- list(
     "notworking" = c("nonexistingbinarytested",
                      "nonexistingbinarytested not found"),
-    "php" = c("php --version",
-              "php not found, ctrLoadQueryIntoDb() will not work "),
-    "phpxml" = c("php -r 'simplexml_load_string(\"<br />\");'",
-                 "php xml not found, ctrLoadQueryIntoDb() will not work "),
-    "phpjson" = c("php -r 'json_encode(\"<foo>\");'",
-                  "php json not found, ctrLoadQueryIntoDb() will not work "),
     "sed" = c("echo x | sed s/x/y/",
               "sed not found, ctrLoadQueryIntoDb() will not work "),
     "perl" = c("perl -V:osname",
