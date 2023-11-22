@@ -1,7 +1,7 @@
 ---
 title: "Install R package ctrdata"
 author: "Ralf Herold"
-date: 2023-05-07
+date: 2023-11-22
 output:
   rmarkdown::pdf_document:
     toc: true
@@ -56,7 +56,7 @@ Sys.setenv(https_proxy_user = "your_userid:your_password") # if needed
 
 ## Additional installation aspects
 
-The command line tools `perl`, `sed` and `php` (5.2 or higher) are required for `ctrLoadQueryIntoDb()`, the main function of package `ctrdata` to work with registers "EUCTR", "CTGOV" and "ISRCTN" (but not "CTIS"). No other function in this package has this requirement.
+The command line tools `perl`, `sed` and `cat` are required for `ctrLoadQueryIntoDb()`, the main function of package `ctrdata`, but *only* for register "EUCTR". No other function in this package and no other register has this requirement.
 
 ### MS Windows
 
@@ -83,18 +83,18 @@ To install Cygwin manually, download the setup executable from [here](https://cy
 ```{bash, eval=FALSE}
 setup-x86_64.exe --no-admin --quiet-mode --verbose --upgrade-also --root c:/cygwin
 --site http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/
---packages perl,php-jsonc,php-simplexml
+--packages perl
 ```
 
 ### macOS, Linux and other operating systems
 
-The command line tools `perl`, `sed` and `php` (5.2 or higher) may already be available by default in some Linux and macOS systems. They are checked when running `ctrLoadQueryIntoDb()`; alternatively, check with `(ctrdata:::checkBinary())`.  
+- For convenience, install a script to automatically copy user's query from web browser, see [here](https://github.com/rfhb/ctrdata#id_3-script-to-automatically-copy-users-query-from-web-browser)
 
-- In macOS, [`homebrew`](https://brew.sh/) can be used to install `php` which may be needed starting from macOS 12 Monterey: first install [`homebrew`](https://brew.sh/) and then run in Terminal the command: `brew install php`.
+Command line tools `perl`, `cat` and `sed` are required for `ctrLoadQueryIntoDb()`, the main function of package `ctrdata`, to work with the register "EUCTR" (but are *not* required for any other function or for `ctrdata` to work with the registers CTIS, CTGOV, CTGOV2 or ISRCTN, since 2023-11-21).
 
-- In Linux, tools for installation vary by distribution (e.g., `sudo apt install php php-xml php-json`)
+- For MS Windows, install [`Cygwin`](https://cygwin.org/install.html): In `R`, run `ctrdata::installCygwinWindowsDoInstall()` for an automated minimal installation. Alternatively, manually install Cygwin with packages `perl`, `cat` and `sed` into `c:\cygwin`. The installation needs about 160 MB disk space.
 
-- Install script to automatically copy user's query from web browser, see [here](https://github.com/rfhb/ctrdata#id_3-script-to-automatically-copy-users-query-from-web-browser)
+In Linux and macOS 12 Monterey and later, these tools are typically already available as part of the OS, thus *no* action required.
 
 ## Databases to use
 

@@ -54,7 +54,7 @@ jobs:
       - uses: r-lib/actions/setup-pandoc@v2
 
       - name: Install xclip for checks and other dependencies
-        run: sudo apt-get install -y xclip libjq-dev php-cli
+        run: sudo apt-get install -y xclip libjq-dev
 
       - name: Install system dependencies
         run: |

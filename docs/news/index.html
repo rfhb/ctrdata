@@ -55,27 +55,23 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.15.2.9001" id="ctrdata-11529001-2023-11-21">ctrdata 1.15.2.9001 (2023-11-21)<a class="anchor" aria-label="anchor" href="#ctrdata-11529001-2023-11-21"></a></h2>
 <div class="section level3">
-<h3 id="breaking-changes-1-15-2-9001">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-1-15-2-9001"></a></h3>
-<p>Potentially breaking changes for EUCTR:</p>
+<h3 id="possibly-breaking-changes-for-euctr-1-15-2-9001">Possibly breaking changes, for EUCTR<a class="anchor" aria-label="anchor" href="#possibly-breaking-changes-for-euctr-1-15-2-9001"></a></h3>
 <div class="section level4">
-<h4 id="fields-renamed-to-harmonise-eu-andrd-country-trials-see-also-comments-on-issue-httpsgithubcomrfhbctrdataissues26issuecomment-1-15-2-9001">Fields renamed to harmonise EU and 3rd country trials, see also comments on issue <a href="https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081" class="external-link uri">https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081</a>:<a class="anchor" aria-label="anchor" href="#fields-renamed-to-harmonise-eu-andrd-country-trials-see-also-comments-on-issue-httpsgithubcomrfhbctrdataissues26issuecomment-1-15-2-9001"></a></h4>
-<ul><li>new: <code>e83_single_site_trial</code>, was: <code>e83_the_trial_involves_single_site_in_the_member_state_concerned</code>
-</li>
-<li>new: <code>e83_single_site_trial</code>, was: <code>e83_will_this_trial_be_conducted_ at_a_single_site_globally</code>
-</li>
-<li>new: <code>e84_multiple_sites_in_member_state</code>, was <code>e84_the_trial_involves_multiple_sites_in_the_member_state_concerned</code>
-</li>
-<li>new: <code>e840_multiple_sites_globally</code>, was <code>e84_will_this_trial_be_conducted_at_multiple_sites_globally</code>
-</li>
-<li>new: <code>e863_trial_sites_planned_in</code>, was <code>e863_specify_the_regions_in_which_trial_sites_are_planned</code>
-</li>
-<li>new: <code>e863_trial_sites_planned_in</code>, was <code>e863_specify_the_countries_outside_of_the_eea_in_which_trial_sites_are_planned</code>
+<h4 id="fields-renamed-to-harmonise-eu-andrd-country-trials-1-15-2-9001">Fields renamed to harmonise EU and 3rd country trials<a class="anchor" aria-label="anchor" href="#fields-renamed-to-harmonise-eu-andrd-country-trials-1-15-2-9001"></a></h4>
+<ul><li>new: <code>e83_single_site_trial</code>, was: <code>e83_the_trial_involves_single_site_in_the_member_state_concerned</code> (EU trials)</li>
+<li>new: <code>e83_single_site_trial</code>, was: <code>e83_will_this_trial_be_conducted_ at_a_single_site_globally</code> (3rd country trials)</li>
+<li>new: <code>e863_trial_sites_planned_in</code>, was <code>e863_specify_the_regions_in_which_trial_sites_are_planned</code> (EU trials)</li>
+<li>new: <code>e863_trial_sites_planned_in</code>, was <code>e863_specify_the_countries_outside_of_the_eea_in_which_trial_sites_are_planned</code> (3rd country trials)</li>
+<li>new: <code>e84_multiple_sites_in_member_state</code>, was <code>e84_the_trial_involves_multiple_sites_in_the_member_state_concerned</code> (EU trials)</li>
+<li>new: <code>e840_multiple_sites_globally</code>, was <code>e84_will_this_trial_be_conducted_at_multiple_sites_globally</code> (3rd country trials)</li>
+</ul><p>See also comments on issue <a href="https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081" class="external-link uri">https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081</a></p>
+</div>
+<div class="section level4">
+<h4 id="results-xml-files-parsed-slightly-differently-1-15-2-9001">Results XML files parsed slightly differently<a class="anchor" aria-label="anchor" href="#results-xml-files-parsed-slightly-differently-1-15-2-9001"></a></h4>
+<ul><li>this may affect <code>@attribute</code> keys and deep elements, example:<br></li>
+<li>new: <code>{"id":"PostAssignmentPeriod-46349"}</code>, was: <code>{"@attributes":{"id":"PostAssignmentPeriod-46349"}}</code>
 </li>
 </ul></div>
-<div class="section level4">
-<h4 id="results-files-parsed-slightly-differently-affecting-attribute-keys-new-idpostassignmentperiod-was-attributesidpostassignmentperiod-1-15-2-9001">Results files parsed slightly differently, affecting <code>@attribute</code> keys, new: <code>{"id":"PostAssignmentPeriod-46349"}</code>, was: <code>{"@attributes":{"id":"PostAssignmentPeriod-46349"}}</code>
-<a class="anchor" aria-label="anchor" href="#results-files-parsed-slightly-differently-affecting-attribute-keys-new-idpostassignmentperiod-was-attributesidpostassignmentperiod-1-15-2-9001"></a></h4>
-</div>
 </div>
 <div class="section level3">
 <h3 id="bug-fixes-1-15-2-9001">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-15-2-9001"></a></h3>

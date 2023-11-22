@@ -120,7 +120,7 @@
 <li>EU Clinical Trials Information System (“CTIS”, <a href="https://euclinicaltrials.eu/" class="external-link uri">https://euclinicaltrials.eu/</a>) 🔔 see <a href="#workflow-ctis-example">example</a>
 </li>
 </ul>
-<p>The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-11-21 for version 1.15.2.9001 for <a href="#workflow-ctgov-example">CTGOV changes</a>.</p>
+<p>The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-11-22 for version 1.15.2.9001 for <a href="#workflow-ctgov-example">CTGOV changes</a>.</p>
 <div class="section level2">
 <h2 id="main-features">Main features<a class="anchor" aria-label="anchor" href="#main-features"></a>
 </h2>
@@ -168,7 +168,7 @@ citation("ctrdata")
 <div class="section level3">
 <h3 id="id_2-external-tools-only-needed-for-euctr">2. External tools (🔔only needed for EUCTR)<a class="anchor" aria-label="anchor" href="#id_2-external-tools-only-needed-for-euctr"></a>
 </h3>
-<p>These are required for <code><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code>, the main function of package <code>ctrdata</code> (see <a href="#example-workflow">Example workflow</a>), to work with the register EUCTR (but are <em>not</em> required for any other function or for <code>ctrdata</code> to work with the registers CTIS, CTGOV, CTGOV2 or ISRCTN, since 2023-11-21).</p>
+<p>Command line tools <code>perl</code>, <code>cat</code> and <code>sed</code> are required for <code><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code>, the main function of package <code>ctrdata</code> (see <a href="#example-workflow">Example workflow</a>), to work with the register EUCTR (but are <em>not</em> required for any other function or for <code>ctrdata</code> to work with the registers CTIS, CTGOV, CTGOV2 or ISRCTN, since 2023-11-21).</p>
 <ul>
 <li>For MS Windows, install <a href="https://cygwin.org/install.html" class="external-link"><code>Cygwin</code></a>: In <code>R</code>, run <code><a href="reference/installCygwinWindowsDoInstall.html">ctrdata::installCygwinWindowsDoInstall()</a></code> for an automated minimal installation. Alternatively, manually install Cygwin with packages <code>perl</code>, <code>cat</code> and <code>sed</code> into <code>c:\cygwin</code>. The installation needs about 160 MB disk space.</li>
 </ul>
@@ -380,7 +380,7 @@ citation("ctrdata")
 <span><span class="co"># = Imported or updated results for 75 trials</span></span>
 <span><span class="co"># No history found in expected format.</span></span>
 <span><span class="co"># Updated history ("meta-info" in "some_collection_name")</span></span></code></pre></div>
-<p>Under the hood, scripts <code>euctr2json.sh</code> and <code>xml2json.php</code> (in <code>ctrdata/exec</code>) transform EUCTR plain text files and CTGOV as well as ISRCTN <code>XML</code> files to <code>ndjson</code> format, which is imported into the database collection.</p>
+<p>Under the hood, external script <code>euctr2json.sh</code> (in <code>ctrdata/exec</code>) transform EUCTR plain text files, and <code>xml2js</code> via <code>V8</code> in <code>R</code> transforms CTGOV’s ISRCTN’s <code>XML</code> files, into <code>NDJSON</code>, which is imported into the database collection.</p>
 <ul>
 <li>Analyse</li>
 </ul>

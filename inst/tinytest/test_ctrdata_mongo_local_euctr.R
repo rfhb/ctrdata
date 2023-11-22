@@ -6,7 +6,7 @@ source("setup_ctrdata.R")
 
 if (!checkMongoLocal()) exit_file("Reason: no local MongoDB")
 if (!checkInternet())   exit_file("Reason: no internet connectivity")
-if (!checkBinaries())   exit_file("Reason: no binaries php or sed or perl")
+if (!checkBinaries())   exit_file("Reason: no binaries sed or perl")
 
 #### EUCTR ####
 tf <- function() {

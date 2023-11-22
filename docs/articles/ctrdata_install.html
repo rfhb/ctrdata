@@ -80,7 +80,7 @@
                         <h4 data-toc-skip class="author">Ralf
 Herold</h4>
             
-            <h4 data-toc-skip class="date">2023-05-07</h4>
+            <h4 data-toc-skip class="date">2023-11-22</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/rfhb/ctrdata/blob/HEAD/vignettes/ctrdata_install.Rmd" class="external-link"><code>vignettes/ctrdata_install.Rmd</code></a></small>
       <div class="d-none name"><code>ctrdata_install.Rmd</code></div>
@@ -125,11 +125,10 @@ settings set by users in their R session such as follows:</p>
 <h3 id="additional-installation-aspects">Additional installation aspects<a class="anchor" aria-label="anchor" href="#additional-installation-aspects"></a>
 </h3>
 <p>The command line tools <code>perl</code>, <code>sed</code> and
-<code>php</code> (5.2 or higher) are required for
-<code><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code>, the main function of package
-<code>ctrdata</code> to work with registers “EUCTR”, “CTGOV” and
-“ISRCTN” (but not “CTIS”). No other function in this package has this
-requirement.</p>
+<code>cat</code> are required for <code><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code>, the
+main function of package <code>ctrdata</code>, but <em>only</em> for
+register “EUCTR”. No other function in this package and no other
+register has this requirement.</p>
 <div class="section level4">
 <h4 id="ms-windows">MS Windows<a class="anchor" aria-label="anchor" href="#ms-windows"></a>
 </h4>
@@ -152,26 +151,34 @@ window or Powershell window, use the following command line. The
 parameters are explained <a href="https://cygwin.com/faq/faq.html#faq.setup.cli" class="external-link">here</a>.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="ex">setup-x86_64.exe</span> <span class="at">--no-admin</span> <span class="at">--quiet-mode</span> <span class="at">--verbose</span> <span class="at">--upgrade-also</span> <span class="at">--root</span> c:/cygwin</span>
 <span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="ex">--site</span> http://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/</span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="ex">--packages</span> perl,php-jsonc,php-simplexml</span></code></pre></div>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="ex">--packages</span> perl</span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="macos-linux-and-other-operating-systems">macOS, Linux and other operating systems<a class="anchor" aria-label="anchor" href="#macos-linux-and-other-operating-systems"></a>
 </h4>
-<p>The command line tools <code>perl</code>, <code>sed</code> and
-<code>php</code> (5.2 or higher) may already be available by default in
-some Linux and macOS systems. They are checked when running
-<code><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code>; alternatively, check with
-<code>(ctrdata:::checkBinary())</code>.</p>
 <ul>
-<li><p>In macOS, <a href="https://brew.sh/" class="external-link"><code>homebrew</code></a>
-can be used to install <code>php</code> which may be needed starting
-from macOS 12 Monterey: first install <a href="https://brew.sh/" class="external-link"><code>homebrew</code></a> and then run in
-Terminal the command: <code>brew install php</code>.</p></li>
-<li><p>In Linux, tools for installation vary by distribution (e.g.,
-<code>sudo apt install php php-xml php-json</code>)</p></li>
-<li><p>Install script to automatically copy user’s query from web
-browser, see <a href="https://github.com/rfhb/ctrdata#id_3-script-to-automatically-copy-users-query-from-web-browser" class="external-link">here</a></p></li>
+<li>For convenience, install a script to automatically copy user’s query
+from web browser, see <a href="https://github.com/rfhb/ctrdata#id_3-script-to-automatically-copy-users-query-from-web-browser" class="external-link">here</a>
+</li>
 </ul>
+<p>Command line tools <code>perl</code>, <code>cat</code> and
+<code>sed</code> are required for <code><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code>, the
+main function of package <code>ctrdata</code>, to work with the register
+“EUCTR” (but are <em>not</em> required for any other function or for
+<code>ctrdata</code> to work with the registers CTIS, CTGOV, CTGOV2 or
+ISRCTN, since 2023-11-21).</p>
+<ul>
+<li>For MS Windows, install <a href="https://cygwin.org/install.html" class="external-link"><code>Cygwin</code></a>: In
+<code>R</code>, run
+<code><a href="../reference/installCygwinWindowsDoInstall.html">ctrdata::installCygwinWindowsDoInstall()</a></code> for an automated
+minimal installation. Alternatively, manually install Cygwin with
+packages <code>perl</code>, <code>cat</code> and <code>sed</code> into
+<code>c:\cygwin</code>. The installation needs about 160 MB disk
+space.</li>
+</ul>
+<p>In Linux and macOS 12 Monterey and later, these tools are typically
+already available as part of the OS, thus <em>no</em> action
+required.</p>
 </div>
 </div>
 <div class="section level3">

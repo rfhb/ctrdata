@@ -72,7 +72,7 @@ jobs:
 
       - name: Windows install additional dependencies
         if: runner.os == 'windows-latest'
-        # to install cygwin to provide php, sed, cat etc.
+        # to install cygwin to provide sed, cat etc.
         run: |
           ctrdata::installCygwinWindowsDoInstall()
         shell: Rscript {0}

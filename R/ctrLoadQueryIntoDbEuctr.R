@@ -351,9 +351,6 @@ ctrLoadQueryIntoDbEuctr <- function(
 
     ## run conversion of XML files
 
-    # TODO
-    # ctrConvertToJSON(tempDir, "euctr2ndjson_results.php", verbose)
-
     if (length(.ctrdataenv$ct) == 0L) initTranformers()
 
     # for each file create new ndjson file

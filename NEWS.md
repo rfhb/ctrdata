@@ -1,24 +1,24 @@
 # ctrdata 1.15.2.9001 (2023-11-21)
 
-## Breaking changes
+## Possibly breaking changes, for EUCTR
 
-Potentially breaking changes for EUCTR: 
+### Fields renamed to harmonise EU and 3rd country trials
+- new: `e83_single_site_trial`, was: `e83_the_trial_involves_single_site_in_the_member_state_concerned` (EU trials)
+- new: `e83_single_site_trial`, was: `e83_will_this_trial_be_conducted_ at_a_single_site_globally` (3rd country trials)
+- new: `e863_trial_sites_planned_in`, was `e863_specify_the_regions_in_which_trial_sites_are_planned` (EU trials)
+- new: `e863_trial_sites_planned_in`, was `e863_specify_the_countries_outside_of_the_eea_in_which_trial_sites_are_planned` (3rd country trials)
+- new: `e84_multiple_sites_in_member_state`, was `e84_the_trial_involves_multiple_sites_in_the_member_state_concerned` (EU trials)
+- new: `e840_multiple_sites_globally`, was `e84_will_this_trial_be_conducted_at_multiple_sites_globally` (3rd country trials)
 
-### Fields renamed to harmonise EU and 3rd country trials, see also comments on issue https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081:
+See also comments on issue https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
   
-- new: `e83_single_site_trial`, was: `e83_the_trial_involves_single_site_in_the_member_state_concerned`
-- new: `e83_single_site_trial`, was: `e83_will_this_trial_be_conducted_ at_a_single_site_globally`
-- new: `e84_multiple_sites_in_member_state`, was `e84_the_trial_involves_multiple_sites_in_the_member_state_concerned`
-- new: `e840_multiple_sites_globally`, was `e84_will_this_trial_be_conducted_at_multiple_sites_globally`
-- new: `e863_trial_sites_planned_in`, was `e863_specify_the_regions_in_which_trial_sites_are_planned`
-- new: `e863_trial_sites_planned_in`, was `e863_specify_the_countries_outside_of_the_eea_in_which_trial_sites_are_planned`
-
-### Results files parsed slightly differently, affecting `@attribute` keys, new: `{"id":"PostAssignmentPeriod-46349"}`, was: `{"@attributes":{"id":"PostAssignmentPeriod-46349"}}`
+### Results XML files parsed slightly differently
+- this may affect `@attribute` keys and deep elements, example:  
+- new: `{"id":"PostAssignmentPeriod-46349"}`, was: `{"@attributes":{"id":"PostAssignmentPeriod-46349"}}`
 
 ## Bug fixes
-
- - corrected translation of some fields from the browser URL to the API call for CTGOV2
- - corrected minimum version number for curl to 5.1.0 to avoid error under MS Windows
+- corrected translation of some fields from the browser URL to the API call for CTGOV2
+- corrected minimum version number for curl to 5.1.0 to avoid error under MS Windows
 
 ## Improvements
 

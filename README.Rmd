@@ -46,7 +46,7 @@ The package `ctrdata` provides functions for retrieving (downloading) informatio
 - ISRCTN (https://www.isrctn.com/) 
 - EU Clinical Trials Information System ("CTIS", https://euclinicaltrials.eu/) `r emoji::emoji("bell")` see [example](#workflow-ctis-example)
 
-The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-11-21 for version 1.15.2.9001 for [CTGOV changes](#workflow-ctgov-example).
+The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-11-22 for version 1.15.2.9001 for [CTGOV changes](#workflow-ctgov-example).
 
 ## Main features
 
@@ -90,7 +90,7 @@ These commands also install the package's dependencies (`jsonlite`, `httr`, `cur
 
 ### 2. External tools (`r emoji::emoji("bell")`only needed for EUCTR)
 
-These are required for `ctrLoadQueryIntoDb()`, the main function of package `ctrdata` (see [Example workflow](#example-workflow)), to work with the register EUCTR (but are *not* required for any other function or for `ctrdata` to work with the registers CTIS, CTGOV, CTGOV2 or ISRCTN, since 2023-11-21).
+Command line tools `perl`, `cat` and `sed` are required for `ctrLoadQueryIntoDb()`, the main function of package `ctrdata` (see [Example workflow](#example-workflow)), to work with the register EUCTR (but are *not* required for any other function or for `ctrdata` to work with the registers CTIS, CTGOV, CTGOV2 or ISRCTN, since 2023-11-21).
 
 - For MS Windows, install [`Cygwin`](https://cygwin.org/install.html): In `R`, run `ctrdata::installCygwinWindowsDoInstall()` for an automated minimal installation. Alternatively, manually install Cygwin with packages `perl`, `cat` and `sed` into `c:\cygwin`. The installation needs about 160 MB disk space.
 
@@ -236,7 +236,7 @@ ctrLoadQueryIntoDb(
 # Updated history ("meta-info" in "some_collection_name")
 ```
 
-Under the hood, scripts `euctr2json.sh` and `xml2json.php` (in `ctrdata/exec`) transform EUCTR plain text files and CTGOV as well as ISRCTN `XML` files to `ndjson` format, which is imported into the database collection.
+Under the hood, external script `euctr2json.sh` (in `ctrdata/exec`) transform EUCTR plain text files, and `xml2js` via `V8` in `R` transforms CTGOV's ISRCTN's `XML` files, into `NDJSON`, which is imported into the database collection.
 
 * Analyse
 

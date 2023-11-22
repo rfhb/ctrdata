@@ -728,7 +728,7 @@ addMetaData <- function(x, con) {
 #' Install necessary helper apps (Windows only)
 #'
 #' Convenience function to install a minimal Cygwin environment under MS
-#' Windows, including perl, sed and php.
+#' Windows, including perl, cat and sed.
 #' Alternatively and in case of difficulties, download and run the cygwin
 #' setup yourself as follows: \code{cygwinsetup.exe --no-admin --quiet-mode
 #' --verbose --upgrade-also --root c:/cygwin --site
@@ -861,11 +861,7 @@ installCygwinWindowsTest <- function(verbose = FALSE) {
 #' Check availability of binaries installed locally
 #'
 #' @param commandtest Command to be used for testing
-#' the availability of the binary, e.g. "php -v".
-#' Note internal quotes need to be escaped, e.g.
-#' \code{installFindBinary('php -r
-#' \"simplexml_load_string(\'\');\"')}.
-#' See R/zzz.R for tested binaries.
+#' the availability of a binary, e.g. perl.
 #'
 #' @param verbose Set to \code{TRUE} to see printed
 #' return value of \code{commandtest}
@@ -1084,7 +1080,8 @@ ctrMultiDownload <- function(
 #'
 #' @param tempDir Name of temporary directory with downloaded
 #'  trial information
-#' @param scriptName Name of PHP or shell script to run
+#' @param scriptName Name of script to run
+#'
 #' @inheritParams ctrLoadQueryIntoDb
 #'
 #' @return System messages from converting
@@ -1105,7 +1102,6 @@ ctrConvertToJSON <- function(tempDir, scriptName, verbose) {
     script2Json <- utils::shortPathName(path = scriptFile)
     #
     script2Json <- paste0(
-      ifelse(grepl("[.]php$", scriptName), "php -f ", ""),
       shQuote(script2Json), " ",
       utils::shortPathName(path = tempDir))
     #
@@ -1129,7 +1125,6 @@ ctrConvertToJSON <- function(tempDir, scriptName, verbose) {
                                mustWork = TRUE)
     #
     script2Json <- paste0(
-      ifelse(grepl("[.]php$", scriptName), "php -f ", ""),
       shQuote(script2Json), " ",
       tempDir)
     #
