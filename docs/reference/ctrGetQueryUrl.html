@@ -101,6 +101,8 @@ The data frame (or tibble) can be passed as such as parameter
 <span class="r-in"><span><span class="co"># the address bar of the browser that shows results</span></span></span>
 <span class="r-in"><span><span class="co"># from a query in one of the trial registers</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu">ctrGetQueryUrl</span><span class="op">(</span><span class="op">)</span>, silent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> * Using clipboard content as register query URL: https://teams.microsoft.com/l/meetup-join/19%3ameeting_M2Y2NmNjNmItZGFlNS00OWFmLWIwY2YtNmNhYmI5MjljMTgz%40thread.v2/0?context=%7b%22Tid%22%3a%22bc9dc15c-61bc-4f03-b60b-e5b6d8922839%22%2c%22Oid%22%3a%22a2ed9fc5-009d-4024-9712-e5d2241a0251%22%7d</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>ctrGetQueryUrl(): no clinical trial register search URL found in parameter 'url' or in clipboard.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># extract query parameters from search result URL</span></span></span>
 <span class="r-in"><span><span class="co"># (URL was cut for the purpose of formatting only)</span></span></span>

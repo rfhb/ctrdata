@@ -17,7 +17,7 @@ Set to `""` to not specify or to unset a proxy.}
 }
 \description{
 Convenience function to install a minimal Cygwin environment under MS
-Windows, including perl, sed and php.
+Windows, including perl, cat and sed.
 Alternatively and in case of difficulties, download and run the cygwin
 setup yourself as follows: \code{cygwinsetup.exe --no-admin --quiet-mode
 --verbose --upgrade-also --root c:/cygwin --site
