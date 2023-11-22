@@ -1,4 +1,4 @@
-# ctrdata 1.15.2.9001 (2023-11-21)
+# ctrdata 1.15.2.9001 (2023-11-22)
 
 ## Possibly breaking changes, for EUCTR
 
@@ -17,6 +17,7 @@ See also comments on issue https://github.com/rfhb/ctrdata/issues/26#issuecommen
 - new: `{"id":"PostAssignmentPeriod-46349"}`, was: `{"@attributes":{"id":"PostAssignmentPeriod-46349"}}`
 
 ## Bug fixes
+- corrected batch iterations over CTIS trials accommodating unclear totalSize response
 - corrected translation of some fields from the browser URL to the API call for CTGOV2
 - corrected minimum version number for curl to 5.1.0 to avoid error under MS Windows
 

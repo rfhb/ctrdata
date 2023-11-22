@@ -463,8 +463,8 @@ ctrLoadQueryIntoDb(
 Queries in the CTIS search interface can be automatically copied to the
 clipboard so that a user can paste them into `queryterm`, see
 [here](#3-script-to-automatically-copy-users-query-from-web-browser). As
-of October 2023, more than 350 trials are publicly accessible in CTIS.
-See [below](#documents-example) for how to download documents from CTIS.
+of 2023-11-22, there are 410 trials are publicly accessible in CTIS. See
+[below](#documents-example) for how to download documents from CTIS.
 
 ``` r
 # Retrieve trials from another register:

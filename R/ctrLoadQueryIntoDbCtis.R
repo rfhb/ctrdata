@@ -52,12 +52,12 @@ ctrLoadQueryIntoDbCtis <- function(
       #
       # - 2 trial information - %s is ctNumber
       "/ct/%s/publicview", # partI and partsII
-      #      
+      #
       # - 3 additional info public events - %s is id, %s is type of notification
       "/ct/%s/eventdetails?notificationType=%s",
       #
       # - 4 trial information - %s is ctNumber
-      "/ct/%s/publicevents", # serious breach, unexpected event, 
+      "/ct/%s/publicevents", # serious breach, unexpected event,
       # urgent safety measure, inspection outside EEA, temporary halt
       #
       # - 5-9 additional information - %s is ctNumber
@@ -102,8 +102,8 @@ ctrLoadQueryIntoDbCtis <- function(
   message("(1/5) Downloading trials list ", appendLF = FALSE)
 
   # prepare
-  i <- 0L
-  di <- 200L
+  offset <- 0L
+  limit <- 200L
   idsTrials <- NULL
   fTrialsNdjson <- file.path(tempDir, "ctis_trials_1.ndjson")
   unlink(fTrialsNdjson)
@@ -112,7 +112,7 @@ ctrLoadQueryIntoDbCtis <- function(
   while (TRUE) {
 
     # {"totalSize":299,"pageInfo":{"offset":200,"limit":200,"pageNumber":2}
-    url <- sprintf(ctisEndpoints[1], i, di, queryterm)
+    url <- sprintf(ctisEndpoints[1], offset, limit, queryterm)
     url <- utils::URLencode(url)
     trialsJson <- httr::GET(url)
     message(". ", appendLF = FALSE)
@@ -132,7 +132,7 @@ ctrLoadQueryIntoDbCtis <- function(
       httr::content(trialsJson, as = "text")
     )
 
-    # get total size
+    # get total size note this increases with every batch
     totalSize <- as.numeric(
       jqr::jq(trialsJson, " {name: .totalSize} | .[]")
     )
@@ -176,23 +176,24 @@ ctrLoadQueryIntoDbCtis <- function(
       append = TRUE
     )
 
-    # iterate or break
-    if (totalSize < (i + di)) break
+    # iterate or not, accommodating unclear logic
+    # for the returned values of totalSize:
+    #
+    # totalSize offset limit
+    #   200       0     200
+    #   200      200    200
+    #   410      400    200
+    #
+    if ((totalSize %% limit) > 0L) break
 
     # update batch parameters
-    i <- i + di
+    offset <- offset + limit
   }
 
   # early exit
   if (!totalSize) {
     warning("No trials found, check 'queryterm' and 'register'")
     return(emptyReturn)
-  }
-
-  # duplicates?
-  if (totalSize != length(idsTrials)) {
-    warning("Overview retrieval resulted in duplicate ",
-            "trial records, only first record was kept. ")
   }
 
   # inform user
@@ -267,7 +268,7 @@ ctrLoadQueryIntoDbCtis <- function(
   if (!verbose) unlink(paste0(fPartIPartsIINdjson, c("a", "b")))
 
   ## api_3-9: more data ----------------------------------------------------
-  
+
   # helper function
   publicEventsMerger <- function(publicEvents) {
 
@@ -389,7 +390,7 @@ ctrLoadQueryIntoDbCtis <- function(
     tempDir, paste0("ctis_add_10_", dlFiles$applicationIds, ".json"))
 
   message(" (estimate: ", nrow(dlFiles) * 0.026, " Mb)")
-  
+
   # "HTTP server doesn't seem to support byte ranges. Cannot resume."
   tmp <- ctrMultiDownload(
     dlFiles$url,
@@ -472,7 +473,7 @@ ctrLoadQueryIntoDbCtis <- function(
     downloadsNdjson <- file.path(tempDir, "ctis_downloads.ndjson")
 
     ## extract ids of lists per parts per trial
-    
+
     # extract ids from parts 1 and 2
     jqr::jq(
       file(fPartIPartsIINdjson),
@@ -490,7 +491,7 @@ ctrLoadQueryIntoDbCtis <- function(
       flags = jqr::jq_flags(pretty = FALSE),
       out = downloadsNdjson
     )
-    
+
     # extract ids from additional data
     for (i in 5L:9L) {
       inF <- file.path(tempDir, paste0("ctis_add_", i, ".ndjson"))
@@ -542,7 +543,7 @@ ctrLoadQueryIntoDbCtis <- function(
     # map
     epTyp <- ctisEndpoints[12:21]
     names(epTyp) <- c(
-      "part1", "parts2", "prod", "p1ar", "p2ars", "ctaletter", "rfis", 
+      "part1", "parts2", "prod", "p1ar", "p2ars", "ctaletter", "rfis",
       "events", "cm", "layperson")
     epTyp <- as.list(epTyp)
 
@@ -551,7 +552,7 @@ ctrLoadQueryIntoDbCtis <- function(
       "ctaletter", "p1ar", "p2ars", "part1auth", "part1appl",
       "parts2auth", "parts2appl", "prodauth", "prodappl", "rfis",
       "events", "cm", "layperson")
-    
+
     # ordering files list
     dlFiles <- apply(dlFiles, 1, function(r) {
       tmp <- data.frame(id = unlist(r[-1], use.names = TRUE), r[1],
@@ -568,7 +569,7 @@ ctrLoadQueryIntoDbCtis <- function(
       tmp$url <- mapply(
         function(t, i) sprintf(epTyp[t][[1]], i), tmp$typ, tmp$id)
       #
-      # if url occurs repeatedly, only use last 
+      # if url occurs repeatedly, only use last
       tmp <- tmp[order(tmp$url, tmp$part), , drop = FALSE]
       rl <- rle(tmp$url)
       rl <- unlist(sapply(rl$lengths, function(i) c(TRUE, rep(FALSE, i - 1L))))
@@ -661,33 +662,33 @@ ctrLoadQueryIntoDbCtis <- function(
     if (!nrow(dlFiles)) {
       message("= No documents identified for downloading.")
     } else {
-      
+
       # remove duplicate files based on their title
       dlFiles$part <- ordered(dlFiles$part, orderedParts)
       dlFiles <- dlFiles[order(dlFiles$title, dlFiles$part), , drop = FALSE]
       rl <- rle(dlFiles$title)
       rl <- unlist(sapply(rl$lengths, function(i) c(TRUE, rep(FALSE, i - 1L))))
       dlFiles <- dlFiles[rl, , drop = FALSE]
-      
+
       # add destination file name
       dlFiles$filename <- paste0(
         dlFiles$part, "_",
         # robustly sanitise file name
         gsub("[^[:alnum:] ._-]", "",  dlFiles$title),
         ".", dlFiles$fileTypeLabel)
-      
+
       #### api_11: urls ####
-      
+
       # calculate url
       dlFiles$url <- sprintf(ctisEndpoints[11], dlFiles$url)
-      
+
       # do download
       resFiles <- ctrDocsDownload(
         dlFiles[, c("_id", "filename", "url"), drop = FALSE],
         documents.path, documents.regexp, verbose)
-      
+
     } # if (!nrow(dlFiles))
-    
+
   } # !is.null(documents.path)
 
   ## inform user -----------------------------------------------------

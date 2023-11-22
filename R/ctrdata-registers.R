@@ -12,8 +12,8 @@
 #' - **ISRCTN**: The ISRCTN Registry includes almost 24,000
 #' interventional or observational health studies
 #' - **CTIS**: The EU Clinical Trials Information System was
-#' started in January 2023, including almost 400 publicly
-#' accessible trials end September 2023. How to automatically
+#' started in January 2023, including 410 publicly
+#' accessible trials on 2023-11-22. How to automatically
 #' get a query URL: \ifelse{latex}{\out{\href{https://github.com/rfhb/ctrdata\#3-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://github.com/rfhb/ctrdata#3-script-to-automatically-copy-users-query-from-web-browser}{here}}
 #'
 #'
