@@ -48,7 +48,9 @@ function euctr2ndjson(txt, dt) {
     txt = txt.replaceAll(/^(.+)Opinion: Reason(.+)$/gm, "$1Opinion Reason$2");
 
     // create id per record from eudract number followed by country 2 character id or by "3rd" for non - EU countries
-    txt = txt.replaceAll(/^X.7 Link.*trial\/([0-9-]*)\/([A-Z][A-Z]|3rd)\/$/gm, "xxxxxxxxxx\"_id\": \"$1-$2\""); // TODO 3rd -> 3RD
+    txt = txt.replaceAll(/^X.7 Link.*trial\/([0-9-]*)\/([A-Z][A-Z]|3rd)\/$/gm,
+        function(match, p1, p2, offset, string, groups) {
+          return 'xxxxxxxxxx"_id": "' + p1 + '-' + p2.toUpperCase() + '"'});
 
     // remove newlines within variable fields
     txt = txt.replaceAll(/^([ABDEFGHNPX][.][1-9 I].+)$/gm, "\nxxxxxxxxxx$1");
