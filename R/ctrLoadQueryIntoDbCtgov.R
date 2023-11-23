@@ -147,21 +147,32 @@ ctrLoadQueryIntoDbCtgov <- function(
             "parsexml",
             # read source xml file
             paste0(readLines(i, warn = FALSE), collapse = ""),
-            # important parameters
+            # https://www.npmjs.com/package/xml2js#options
             V8::JS('{trim: true, ignoreAttrs: false, mergeAttrs: true,
-                     explicitRoot: true, explicitArray: false}'))
+                   explicitRoot: true, explicitArray: false}'))
         ),
         # processing
         paste0(
           # extract trial record(s)
           " .clinical_study ",
+          # mangle _ and attributes which only some study records have, e.g.
+          # {"start_date":{"_":"March 15, 2004","type":"Actual"}} becomes
+          # {"start_date":"March 15, 2004"}, dropping the information if
+          # the field holds "Estimated" or "Actual" information
+          '| "completion_date"         as $p | if(.[$p] | type == "object") then .[$p] = .[$p]._ else . end',
+          '| "enrollment"              as $p | if(.[$p] | type == "object") then .[$p] = .[$p]._ else . end',
+          '| "last_update_posted"      as $p | if(.[$p] | type == "object") then .[$p] = .[$p]._ else . end',
+          '| "primary_completion_date" as $p | if(.[$p] | type == "object") then .[$p] = .[$p]._ else . end',
+          '| "results_first_posted"    as $p | if(.[$p] | type == "object") then .[$p] = .[$p]._ else . end',
+          '| "start_date"              as $p | if(.[$p] | type == "object") then .[$p] = .[$p]._ else . end',
+          '| "study_first_posted"      as $p | if(.[$p] | type == "object") then .[$p] = .[$p]._ else . end',
           # add elements
           '| .["_id"] = .id_info.nct_id
            | .["ctrname"] = "CTGOV"
            | .["record_last_import"] = "', format(Sys.time(), "%Y-%m-%d %H:%M:%S"), '"'
         ),
-       flags = jqr::jq_flags(pretty = FALSE),
-      out = fNdjsonCon
+        flags = jqr::jq_flags(pretty = FALSE),
+        out = fNdjsonCon
       )
 
     } # for i
