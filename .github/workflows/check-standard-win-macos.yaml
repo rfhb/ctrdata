@@ -70,20 +70,6 @@ jobs:
           remotes::install_github("ropensci/nodbi")
         shell: Rscript {0}
 
-      - name: Windows install additional dependencies
-        if: runner.os == 'windows-latest'
-        # to install cygwin to provide sed, cat etc.
-        run: |
-          ctrdata::installCygwinWindowsDoInstall()
-        shell: Rscript {0}
-
-      - name: Windows cache additional dependencies
-        if: runner.os == 'windows-latest'
-        uses: actions/cache@v2
-        with:
-          path: c:\cygwin
-          key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
-
       - uses: r-lib/actions/setup-pandoc@v1
 
       # - uses: ankane/setup-postgres@v1

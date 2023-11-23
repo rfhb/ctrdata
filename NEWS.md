@@ -1,4 +1,4 @@
-# ctrdata 1.15.2.9001 (2023-11-22)
+# ctrdata 1.15.2.9002 (2023-11-23)
 
 ## Possibly breaking changes, for EUCTR
 
@@ -12,9 +12,10 @@
 
 See also comments on issue https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
   
-### Results XML files parsed slightly differently
-- this may affect `@attribute` keys and deep elements, example:  
+### XML files parsed slightly differently
+- in results, this may affect `@attribute` keys and deep elements, example:  
 - new: `{"id":"PostAssignmentPeriod-46349"}`, was: `{"@attributes":{"id":"PostAssignmentPeriod-46349"}}`
+- protocol-related information might also differ slightly
 
 ## Bug fixes
 - corrected batch iterations over CTIS trials accommodating unclear totalSize response
@@ -24,8 +25,7 @@ See also comments on issue https://github.com/rfhb/ctrdata/issues/26#issuecommen
 ## Improvements
 
 ### Major 
-- No external command line tools anymore for CTGOV, ISRCTN, CTGOV2, CTIS; replacing `php` with
-  Javascript using `R` package `V8` (only EUCTR needs `perl` and `sed`, still to be refactored)
+- No external tools required anymore (replaced `php`, `perl`, `cat` and `sed` with Javascript using `R` package `V8`)
 
 ### Other
 - added results summary download for CTIS
