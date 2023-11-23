@@ -202,24 +202,40 @@ ctrLoadQueryIntoDbEuctr <- function(
     return(invisible(emptyReturn))
   }
 
-  ## run conversion
-  message("(2/3) Converting to JSON...", appendLF = FALSE)
-  ctrConvertToJSON(tempDir, "euctr2ndjson.sh", verbose)
+  ## convert euctr to ndjson -----------------------------------------------
+
+  if (length(.ctrdataenv$ct) == 0L) initTranformers()
+
+  # run conversion (~6 ms per record, ~3 rec per trial)
+  message("(2/3) Converting to NDJSON (estimate: ",
+          signif(resultsEuNumTrials * 0.006 * 3, 1L), " s)...")
+
+  for (i in tmp$destfile) {
+
+    readr::write_file(
+      .ctrdataenv$ct$call("euctr2ndjson", readr::read_file(i),
+              format(Sys.time(), "%Y-%m-%d %H:%M:%S")),
+      file = sub("[.]txt$", ".ndjson", i))
+
+  }
+
+  ## import into database -----------------------------------------------
 
   # run import into database from json files
-  message("(3/3) Importing JSON records into database...")
+  message("(3/3) Importing records into database...")
   if (verbose) message("DEBUG: ", tempDir)
+
   imported <- dbCTRLoadJSONFiles(dir = tempDir,
                                  con = con,
                                  verbose = verbose)
 
-  ## inform user on final import outcome
+  # inform user on final import outcome
   message("= Imported or updated ",
           imported$n, " records on ",
           resultsEuNumTrials, " trial(s)")
 
-  ## read in the eudract numbers of the
-  ## trials just retrieved and imported
+  # read in the eudract numbers of the
+  # trials just retrieved and imported
   eudractnumbersimported <- imported$success
 
   ## result-related information -----------------------------------------------

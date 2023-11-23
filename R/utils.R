@@ -1317,6 +1317,7 @@ ctrDocsDownload <- function(
 #' https://cran.r-project.org/web/packages/V8/vignettes/npm.html
 #'
 #' @importFrom V8 v8 JS
+#' @importFrom readr read_file
 #'
 #' @keywords internal
 #' @noRd
@@ -1326,16 +1327,21 @@ initTranformers <- function() {
   # prepare V8, see ./inst/js/
   ct <- V8::v8()
 
-  # get javascript
+  # get javascript for xml to ndjson
   ct$source(system.file("js/bundle.js", package = "ctrdata"))
-  assign("ct", ct, envir = .ctrdataenv)
 
-  # functions for conversions
+  # function for xml to ndjson conversion
   ct$assign(
     "parsexml",
     # https://www.npmjs.com/package/xml2js#options
-    V8::JS("function(x, y) {injs.parseString(x, y, function (err, result)
+    V8::JS("function(xml, opts) {injs.parseString(xml, opts, function (err, result)
            { out = result; }); return JSON.stringify(out); }"))
+
+  # native javascript function for euctr txt to ndjson conversion
+  ct$eval(readr::read_file(system.file("js/euctr2ndjson.js", package = "ctrdata")))
+
+  # assign into package private environment, see zzz.R
+  assign("ct", ct, envir = .ctrdataenv)
 
 }
 
