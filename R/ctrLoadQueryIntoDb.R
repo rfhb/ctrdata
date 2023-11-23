@@ -310,23 +310,8 @@ ctrLoadQueryIntoDb <- function(
     #
   } # if querytermtoupdate
 
-  ## . checkbinaries ---------------------------------------------------------
-
-  if (!only.count) {
-    # check extra binaries as needed for register
-    if (grepl("^(EUCTR)$", register)) {
-      message("Checking helper binaries: ", appendLF = FALSE)
-      suppressMessages(installCygwinWindowsTest())
-      if (register == "EUCTR") testBinaries <- c("sed", "perl")
-      if (!checkBinary(b = testBinaries)) {
-        stop("ctrLoadQueryIntoDb() cannot continue", call. = FALSE)
-      }
-      message("done")
-    }
-
-    # check database connection
-    con <- ctrDb(con)
-  }
+  # continue with database if needed
+  if (!only.count) {con <- ctrDb(con)}
 
   ## . main function -----------------------------------------------------
 

@@ -85,7 +85,7 @@ dbFindFields <- function(namepart = "",
   ## get keyslist
   if (cacheOutdated) {
     # inform user
-    message("Finding fields in database collection (may take some time)")
+    message("Finding fields in database collection (may take some time)...")
 
     # helpder function
     getNodes <- function(fn) {

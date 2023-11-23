@@ -118,9 +118,6 @@ ctrLoadQueryIntoDbCtgov <- function(
 
   ## convert to json ----------------------------------------------------------
 
-  ## run conversion
-  message("(2/3) Converting to NDJSON...")
-
   if (length(.ctrdataenv$ct) == 0L) initTranformers()
 
   # run in batches of 25
@@ -131,6 +128,10 @@ ctrLoadQueryIntoDbCtgov <- function(
   } else {
     xmlFileList <- list(xmlFileList)
   }
+
+  ## run conversion (235 trial records in 10 s)
+  message("(2/3) Converting to NDJSON (estimate: ",
+          signif(length(unlist(xmlFileList)) * 10 / 235, 1L), " s)...")
 
   for (f in seq_along(xmlFileList)) {
 
@@ -172,7 +173,7 @@ ctrLoadQueryIntoDbCtgov <- function(
   ## import -------------------------------------------------------------------
 
   ## run import
-  message("(3/3) Importing JSON records into database...")
+  message("(3/3) Importing records into database...")
   if (verbose) message("DEBUG: ", tempDir)
   imported <- dbCTRLoadJSONFiles(dir = tempDir,
                                  con = con,

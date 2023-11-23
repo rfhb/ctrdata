@@ -8,12 +8,12 @@
 #' @noRd
 #'
 #' @importFrom httr content GET status_code config
-#' @importFrom curl new_handle handle_data handle_setopt parse_headers new_pool
-#' @importFrom curl curl_fetch_multi multi_run curl_fetch_memory multi_fdset
-#' @importFrom curl multi_run multi_add multi_download
+#' @importFrom curl new_handle handle_data handle_setopt parse_headers
+#' @importFrom curl multi_run curl_fetch_memory multi_add new_pool
 #' @importFrom nodbi docdb_query docdb_update
 #' @importFrom zip unzip
 #' @importFrom stringi stri_replace_all_fixed
+#' @importFrom readr write_file read_file
 #'
 ctrLoadQueryIntoDbEuctr <- function(
     queryterm = queryterm,
@@ -104,7 +104,7 @@ ctrLoadQueryIntoDbEuctr <- function(
   message("Retrieved overview, multiple records of ",
           resultsEuNumTrials, " trial(s) from ",
           resultsEuNumPages, " page(s) to be downloaded ",
-          "(estimate: ", format(resultsEuNumTrials * 0.05, digits = 2), " MB)")
+          "(estimate: ", signif(resultsEuNumTrials * 0.05, 1L), " MB)")
 
   # only count?
   if (only.count) {
@@ -172,8 +172,8 @@ ctrLoadQueryIntoDbEuctr <- function(
   sgzip <- grepl("gzip|deflate", sgzip)
   if (length(sgzip) && !sgzip) {
     message("Note: register server cannot compress data, ",
-            "transfer takes longer, about ", signif(stime, digits = 1),
-            "s per trial")
+            "transfer takes longer (estimate: ",
+            signif(stime * resultsEuNumTrials, 1L), " s)")
   }
 
   # generate vector with URLs of all pages
@@ -365,12 +365,16 @@ ctrLoadQueryIntoDbEuctr <- function(
     # line break
     message("", appendLF = TRUE)
 
-    ## run conversion of XML files
+    ## convert xml to ndjson -----------------------------------------------
 
     if (length(.ctrdataenv$ct) == 0L) initTranformers()
 
     # for each file create new ndjson file
     xmlFileList <- dir(path = tempDir, pattern = "EU-CTR.+Results.xml", full.names = TRUE)
+
+    # run conversion (~2 s for 19 records)
+    message("(2/4) Converting to NDJSON (estimate: ",
+            signif(length(xmlFileList) * 2 / 19, 1L), " s)...")
 
     for (f in seq_along(xmlFileList)) {
 
@@ -394,7 +398,7 @@ ctrLoadQueryIntoDbEuctr <- function(
     } # for f
 
     # iterate over results files
-    message("(3/4) Importing JSON into database...")
+    message("(3/4) Importing results into database (may take some time)...")
 
     # initiate counter
     importedresults <- 0L

@@ -2,9 +2,9 @@
 ### initialising
 
 # create environment private to this package
-# for caching (field names, binary checks)
+# for caching field names, javascript functions;
 # name of hidden environment: .ctrdataenv
-# see also ctrCache
+# see also ctrCache in utils.R
 .ctrdataenv <- new.env()
 
 # check helper functions

@@ -214,7 +214,7 @@ ctrLoadQueryIntoDbCtis <- function(
   # this is imported as the main data into the database
 
   message("(2/5) Downloading and processing part I and parts II... (",
-          "estimate: ", length(idsTrials) * 0.15, " Mb)")
+          "estimate: ", signif(length(idsTrials) * 8.7 / 44, 1L), " Mb)")
 
   urls <- sprintf(ctisEndpoints[2], idsTrials)
 
@@ -389,7 +389,7 @@ ctrLoadQueryIntoDbCtis <- function(
   dlFiles$filepathname <- file.path(
     tempDir, paste0("ctis_add_10_", dlFiles$applicationIds, ".json"))
 
-  message(" (estimate: ", nrow(dlFiles) * 0.026, " Mb)")
+  message(" (estimate: ", signif(nrow(dlFiles) * 2.7 / 83, 1L), " Mb)")
 
   # "HTTP server doesn't seem to support byte ranges. Cannot resume."
   tmp <- ctrMultiDownload(
@@ -444,7 +444,7 @@ ctrLoadQueryIntoDbCtis <- function(
 
   ## database import -----------------------------------------------------
 
-  message("\n(4/5) Importing JSON records into database...")
+  message("\n(4/5) Importing records into database...")
 
   # dbCTRLoadJSONFiles operates on pattern = ".+_trials_.*.ndjson"
   imported <- dbCTRLoadJSONFiles(dir = tempDir, con = con, verbose = verbose)
@@ -582,7 +582,7 @@ ctrLoadQueryIntoDbCtis <- function(
     # do downloads of list files
     message("- Downloading ", nrow(dlFiles),
             " lists with document information (estimate: ",
-            nrow(dlFiles) * 0.009, " Mb)")
+            signif(nrow(dlFiles) * 0.009, 1L), " Mb)")
 
     fFilesListJson <- function(t, p, id) {
       file.path(tempDir, paste0("ctis_fileslist_", t, "_", p, "_", id, ".json"))

@@ -203,7 +203,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
   pageNextToken <- ""
   pageNumber <- 1L
 
-  message("(1/2) Downloading and converting in ",
+  message("(1/3) Downloading in ",
           ceiling(resultsEuNumTrials / 1000L),
           " batch(es) (max. 1000 trials each; estimate: ",
           format(resultsEuNumTrials * 0.1, digits = 2), " MB total)")
@@ -231,7 +231,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
       "Download not successful for ", urlToDownload)
 
     # convert to ndjson
-    message("converting to NDJSON...")
+    message("(2/3) Converting to NDJSON...")
     fTrialsNdjson <- file.path(tempDir, paste0("ctgov_trials_", pageNumber,".ndjson"))
     jqr::jq(
       file(fTrialJson),
@@ -262,7 +262,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
 
   ## database import -----------------------------------------------------
 
-  message("(2/2) Importing JSON records into database...")
+  message("(3/3) Importing records into database...")
 
   # dbCTRLoadJSONFiles operates on pattern = ".+_trials_.*.ndjson"
   imported <- dbCTRLoadJSONFiles(dir = tempDir, con = con, verbose = verbose)

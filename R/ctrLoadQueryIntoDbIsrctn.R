@@ -132,7 +132,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
   message(
     "Retrieved overview, records of ", tmp, " ",
     "trial(s) are to be downloaded (estimate: ",
-    format(tmp * 0.018, digits = 2), " MB)"
+    signif(tmp * 0.018, 1L), " MB)"
   )
 
   # only count?
@@ -171,7 +171,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
   )
 
   # get (download) trials into single file f
-  tmp <- ctrMultiDownload(isrctndownloadurl, f, verbose = verbose)
+  ctrMultiDownload(isrctndownloadurl, f, verbose = verbose)
 
   # inform user
   if (!file.exists(f) || file.size(f) == 0L) {
@@ -183,10 +183,11 @@ ctrLoadQueryIntoDbIsrctn <- function(
 
   ## convert to json ------------------------------------------------
 
-  ## run conversion
-  message("(2/3) Converting to NDJSON...")
-
   if (length(.ctrdataenv$ct) == 0L) initTranformers()
+
+  # run conversion (~1.7 s for 290 trials)
+  message("(2/3) Converting to NDJSON (estimate: ",
+          signif(tmp * 1.7 / 290, 1L), " s)...")
 
   jqr::jq(
     # input
@@ -214,7 +215,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
   ## import json -----------------------------------------------------
 
   ## run import
-  message("(3/3) Importing JSON records into database...")
+  message("(3/3) Importing records into database...")
   if (verbose) message("DEBUG: ", tempDir)
 
   # do import
