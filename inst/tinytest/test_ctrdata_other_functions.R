@@ -39,27 +39,6 @@ expect_equal(
       verbose = TRUE
     )), iris)
 
-
-#### environment ####
-
-if (.Platform$OS.type != "windows") {
-  expect_error(
-    installCygwinWindowsDoInstall(),
-    "only for MS Windows")
-  expect_message(
-    ctrdata:::installCygwinWindowsTest(),
-    "only for MS Windows")
-}
-if (.Platform$OS.type == "windows") {
-  expect_message(
-    installCygwinWindowsDoInstall(),
-    "cygwin seems to work correctly")
-  expect_message(
-    installCygwinWindowsDoInstall(force = TRUE),
-    "cygwin seems to work correctly")
-}
-
-
 #### typeField ####
 
 df <- data.frame(

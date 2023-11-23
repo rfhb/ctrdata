@@ -60,10 +60,6 @@ mongoRemoteRwUrl <-
 
 #### helper functions system detection ####
 
-checkBinaries <- function() {
-  all(ctrdata:::checkBinary())
-}
-
 checkInternet <- function() {
   tmp <- try(
     curl::nslookup("r-project.org"),
