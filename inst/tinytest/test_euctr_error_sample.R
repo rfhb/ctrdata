@@ -2,6 +2,7 @@
 
 # setup
 source("setup_ctrdata.R")
+if (!at_home()) exit_file("Reason: not at_home")
 
 # tests
 tf <- function() {
@@ -19,15 +20,25 @@ tf <- function() {
     fileext = ".txt")
 
   on.exit(suppressWarnings(file.remove(fileTo)), add = TRUE)
-  on.exit(suppressWarnings(file.remove(dir(path = tmpDir, pattern = ".ndjson", full.names = TRUE))), add = TRUE)
+  on.exit(suppressWarnings(file.remove(
+    dir(path = tmpDir, pattern = ".ndjson", full.names = TRUE))), add = TRUE)
 
   if (!file.copy(fileFrom, fileTo, overwrite = TRUE))
     exit_file("Could not copy trial text file")
 
-  # test
-  res <- ctrdata:::ctrConvertToJSON(
-    tempDir = tmpDir, scriptName = "euctr2ndjson.sh", verbose = FALSE)
-  expect_equal(res, "10")
+  i <- fileTo
+  ct <- V8::v8()
+  ct$eval(readr::read_file(system.file("js/euctr2ndjson.js", package = "ctrdata")))
+
+  # start copy from ctrLoadQueryIntoEuctr.R but
+  # change .ctrdataenv$ct$call to ct$call
+
+  readr::write_file(
+    ct$call("euctr2ndjson", readr::read_file(i),
+            format(Sys.time(), "%Y-%m-%d %H:%M:%S")),
+    file = sub("[.]txt$", ".ndjson", i))
+
+  # end copy from ctrLoadQueryIntoEuctr.R
 
   # setup
   if (!checkSqlite()) exit_file("Reason: no SQLite")

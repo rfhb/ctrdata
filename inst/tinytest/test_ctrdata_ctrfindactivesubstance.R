@@ -1,9 +1,8 @@
 ## RH 2019-09-28
 
 #### SETUP ####
-source("setup_ctrdata.R")
-
 if (!checkInternet()) exit_file("Reason: no internet connectivity")
+source("setup_ctrdata.R")
 
 #### active substance ####
 

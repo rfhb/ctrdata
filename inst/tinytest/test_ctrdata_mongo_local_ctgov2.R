@@ -32,6 +32,6 @@ tf <- function() {
   ) return(exit_file("Reason: CTGOV not working"))
 
   # do tests
-  source("ctrdata_ctgov_2023api.R", local = TRUE)
+  source("ctrdata_ctgov2.R", local = TRUE)
 }
 tf()

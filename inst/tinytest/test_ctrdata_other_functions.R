@@ -3,18 +3,6 @@
 #### SETUP ####
 source("setup_ctrdata.R")
 
-
-#### binaries ####
-
-expect_message(
-  ctrdata:::checkBinary(b = "notworking"),
-  "nonexistingbinarytested not found")
-
-expect_error(
-  ctrdata:::checkCommand(),
-  "Empty argument: commandtest")
-
-
 #### cache ####
 
 expect_equal(
