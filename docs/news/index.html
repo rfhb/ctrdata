@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.15.2.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.15.2.9002</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,11 +53,20 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.15.2.9001" id="ctrdata-11529001-2023-11-22">ctrdata 1.15.2.9001 (2023-11-22)<a class="anchor" aria-label="anchor" href="#ctrdata-11529001-2023-11-22"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.15.2.9002" id="ctrdata-11529002-2023-11-23">ctrdata 1.15.2.9002 (2023-11-23)<a class="anchor" aria-label="anchor" href="#ctrdata-11529002-2023-11-23"></a></h2>
 <div class="section level3">
-<h3 id="possibly-breaking-changes-for-euctr-1-15-2-9001">Possibly breaking changes, for EUCTR<a class="anchor" aria-label="anchor" href="#possibly-breaking-changes-for-euctr-1-15-2-9001"></a></h3>
+<h3 id="possibly-breaking-changes-1-15-2-9002">Possibly breaking changes<a class="anchor" aria-label="anchor" href="#possibly-breaking-changes-1-15-2-9002"></a></h3>
 <div class="section level4">
-<h4 id="fields-renamed-to-harmonise-eu-andrd-country-trials-1-15-2-9001">Fields renamed to harmonise EU and 3rd country trials<a class="anchor" aria-label="anchor" href="#fields-renamed-to-harmonise-eu-andrd-country-trials-1-15-2-9001"></a></h4>
+<h4 id="xml-files-are-converted-slightly-differently-1-15-2-9002">XML files are converted slightly differently<a class="anchor" aria-label="anchor" href="#xml-files-are-converted-slightly-differently-1-15-2-9002"></a></h4>
+<ul><li>EUCTR result-related information in attributes: e.g. new: <code>{"id":"PostAssignmentPeriod-46349"}</code>, was: <code>{"@attributes":{"id":"PostAssignmentPeriod-46349"}}</code>
+</li>
+<li>Consequently, it should work to just delete <code>@attributes</code> field names such as <code>dbGetFieldsIntoDf("clinical_results.baseline.analyzed_list.analyzed.count_list.count.@attributes.value", db)</code>
+</li>
+<li>EUCTR protocol-related information might convert slightly differently albeit no differences were found yet</li>
+<li>CTGOV attributes of bare values remain not included in the resulting <code>NDJSON</code> (e.g., some but not all records have <code>&lt;start_date type="Actual"&gt;March 15, 2004&lt;/start_date&gt;</code> is converted to <code>{"start_date":"March 15, 2004"}</code>)</li>
+</ul></div>
+<div class="section level4">
+<h4 id="euctr-small-number-fields-renamed-to-harmonise-eu-andrd-country-trials-1-15-2-9002">EUCTR: small number Fields renamed to harmonise EU and 3rd country trials<a class="anchor" aria-label="anchor" href="#euctr-small-number-fields-renamed-to-harmonise-eu-andrd-country-trials-1-15-2-9002"></a></h4>
 <ul><li>new: <code>e83_single_site_trial</code>, was: <code>e83_the_trial_involves_single_site_in_the_member_state_concerned</code> (EU trials)</li>
 <li>new: <code>e83_single_site_trial</code>, was: <code>e83_will_this_trial_be_conducted_ at_a_single_site_globally</code> (3rd country trials)</li>
 <li>new: <code>e863_trial_sites_planned_in</code>, was <code>e863_specify_the_regions_in_which_trial_sites_are_planned</code> (EU trials)</li>
@@ -66,27 +75,21 @@
 <li>new: <code>e840_multiple_sites_globally</code>, was <code>e84_will_this_trial_be_conducted_at_multiple_sites_globally</code> (3rd country trials)</li>
 </ul><p>See also comments on issue <a href="https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081" class="external-link uri">https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081</a></p>
 </div>
-<div class="section level4">
-<h4 id="results-xml-files-parsed-slightly-differently-1-15-2-9001">Results XML files parsed slightly differently<a class="anchor" aria-label="anchor" href="#results-xml-files-parsed-slightly-differently-1-15-2-9001"></a></h4>
-<ul><li>this may affect <code>@attribute</code> keys and deep elements, example:<br></li>
-<li>new: <code>{"id":"PostAssignmentPeriod-46349"}</code>, was: <code>{"@attributes":{"id":"PostAssignmentPeriod-46349"}}</code>
-</li>
-</ul></div>
 </div>
 <div class="section level3">
-<h3 id="bug-fixes-1-15-2-9001">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-15-2-9001"></a></h3>
+<h3 id="bug-fixes-1-15-2-9002">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-15-2-9002"></a></h3>
 <ul><li>corrected batch iterations over CTIS trials accommodating unclear totalSize response</li>
 <li>corrected translation of some fields from the browser URL to the API call for CTGOV2</li>
 <li>corrected minimum version number for curl to 5.1.0 to avoid error under MS Windows</li>
 </ul></div>
 <div class="section level3">
-<h3 id="improvements-1-15-2-9001">Improvements<a class="anchor" aria-label="anchor" href="#improvements-1-15-2-9001"></a></h3>
+<h3 id="improvements-1-15-2-9002">Improvements<a class="anchor" aria-label="anchor" href="#improvements-1-15-2-9002"></a></h3>
 <div class="section level4">
-<h4 id="major-1-15-2-9001">Major<a class="anchor" aria-label="anchor" href="#major-1-15-2-9001"></a></h4>
-<ul><li>No external command line tools anymore for CTGOV, ISRCTN, CTGOV2, CTIS; replacing <code>php</code> with Javascript using <code>R</code> package <code>V8</code> (only EUCTR needs <code>perl</code> and <code>sed</code>, still to be refactored)</li>
+<h4 id="major-1-15-2-9002">Major<a class="anchor" aria-label="anchor" href="#major-1-15-2-9002"></a></h4>
+<ul><li>No external tools required anymore (replaced <code>php</code>, <code>perl</code>, <code>cat</code> and <code>sed</code> with Javascript using <code>R</code> package <code>V8</code>)</li>
 </ul></div>
 <div class="section level4">
-<h4 id="other-1-15-2-9001">Other<a class="anchor" aria-label="anchor" href="#other-1-15-2-9001"></a></h4>
+<h4 id="other-1-15-2-9002">Other<a class="anchor" aria-label="anchor" href="#other-1-15-2-9002"></a></h4>
 <ul><li>added results summary download for CTIS</li>
 <li>added documents download for ISRCTN</li>
 <li>factored out document download function</li>
@@ -250,8 +253,8 @@
 <code><a href="../reference/dbFindFields.html">dbFindFields()</a></code> returns names of all leaf and node fields</li>
 <li>improve and update documentation</li>
 <li>changed EU Member State to default to DE for dbFindIdsUniqueTrials()</li>
-<li>corrected <code><a href="../reference/installCygwinWindowsDoInstall.html">installCygwinWindowsDoInstall()</a></code> to properly update an installation (remove –prune-install)</li>
-<li>test all binaries after <code><a href="../reference/installCygwinWindowsDoInstall.html">installCygwinWindowsDoInstall()</a></code> and only cache successful binary testing</li>
+<li>corrected <code>installCygwinWindowsDoInstall()</code> to properly update an installation (remove –prune-install)</li>
+<li>test all binaries after <code>installCygwinWindowsDoInstall()</code> and only cache successful binary testing</li>
 <li>correct typing <code>required_header.download_date</code>
 </li>
 <li>improve numbering in <code><a href="../reference/dfTrials2Long.html">dfTrials2Long()</a></code>, covering nested items</li>

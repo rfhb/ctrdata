@@ -20,7 +20,7 @@ function to provide a vector of identifiers of deduplicated trials."><meta name=
     
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.15.2.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.15.2.9002</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -143,46 +143,38 @@ Such differences are not considered by this function.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Searching for duplicate trials... </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  - Getting all trial identifiers...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  (may take some time)...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> , 61 found in collection</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> , 36 found in collection</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  - Finding duplicates among registers' and sponsor ids...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  - 16 EUCTR _id were not preferred EU Member State record for 12 trials</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  - Keeping 3 / 34 / 0 / 7 / 0 records from EUCTR / CTGOV / CTGOV2 / ISRCTN / CTIS</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> = Returning keys (_id) of 44 records in collection "my_trials"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              ISRCTN              ISRCTN               EUCTR               EUCTR </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          "12949496"          "13281214" "2012-003632-23-DE" "2014-002606-20-DE" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               EUCTR              ISRCTN              ISRCTN              ISRCTN </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> "2014-003556-31-SE"          "20343063"          "48721236"          "61070850" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              ISRCTN              ISRCTN               CTGOV               CTGOV </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          "76463425"          "88261002"       "NCT01035190"       "NCT01190995" </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  - 10 EUCTR _id were not preferred EU Member State record for 9 trials</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  - Keeping 2 / 8 / 5 / 8 / 3 records from EUCTR / CTGOV / CTGOV2 / ISRCTN / CTIS</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> = Returning keys (_id) of 26 records in collection "my_trials"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              ISRCTN              ISRCTN              ISRCTN               EUCTR </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          "12949496"          "13281214"          "17473621" "2012-003632-23-DE" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               EUCTR                CTIS                CTIS                CTIS </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "2014-003556-31-SE" "2022-500676-59-00" "2022-501180-40-00" "2022-502516-37-00" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              ISRCTN              ISRCTN              ISRCTN              ISRCTN </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          "20343063"          "61070850"          "76463425"          "80181452" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              ISRCTN              CTGOV2              CTGOV2              CTGOV2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          "88261002"       "NCT00617929"       "NCT01125800"       "NCT01483820" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              CTGOV2              CTGOV2               CTGOV               CTGOV </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "NCT01505608"       "NCT01592045"       "NCT02620761"       "NCT03280147" </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               CTGOV               CTGOV               CTGOV               CTGOV </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "NCT01265589"       "NCT01389856"       "NCT01490580"       "NCT01517828" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               CTGOV               CTGOV               CTGOV               CTGOV </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "NCT01528852"       "NCT01536483"       "NCT01555957"       "NCT01720524" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               CTGOV               CTGOV               CTGOV               CTGOV </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "NCT01723501"       "NCT01783041"       "NCT01875757"       "NCT01899677" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               CTGOV               CTGOV               CTGOV               CTGOV </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "NCT01954082"       "NCT02056223"       "NCT02374281"       "NCT02499393" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               CTGOV               CTGOV               CTGOV               CTGOV </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "NCT02510560"       "NCT02700893"       "NCT02802059"       "NCT02954926" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               CTGOV               CTGOV               CTGOV               CTGOV </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "NCT03022253"       "NCT03058666"       "NCT03079167"       "NCT03082001" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               CTGOV               CTGOV               CTGOV               CTGOV </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "NCT03097484"       "NCT03110341"       "NCT03163589"       "NCT03181646" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               CTGOV               CTGOV               CTGOV               CTGOV </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "NCT03208894"       "NCT03268902"       "NCT03272594"       "NCT04037514" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "NCT03325439"       "NCT03431558"       "NCT03876704"       "NCT04001712" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               CTGOV               CTGOV </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "NCT04041765"       "NCT05969327" </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"ctrdata-dbname")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/Library/Frameworks/R.framework/Versions/4.2/Resources/library/ctrdata/extdata/demo.sqlite"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"ctrdata-table")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "my_trials"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"ctrdata-dbqueryhistory")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       query-timestamp query-register query-records</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2022-08-10 16:50:16          EUCTR            19</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2022-08-10 16:50:35          CTGOV            34</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2022-08-10 16:50:40         ISRCTN             8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                    query-term</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                                                  query=&amp;age=newborn&amp;phase=phase-three&amp;dateFrom=2015-03-01&amp;dateTo=2015-03-31</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 term=AREA[MaximumAge]+RANGE[0+days,+28+days]&amp;intr=Drugs,+Investigational&amp;strd_s=01/01/2010&amp;strd_e=01/01/2018&amp;type=Intr&amp;phase=2&amp;Search=Apply</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                                                                                 q=&amp;filters=ageRange:Neonate,phase:Phase+III</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 4</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   `query-timestamp`   `query-register` `query-records` `query-term`             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 2023-11-23 13:33:41 EUCTR                         12 query=&amp;age=newborn&amp;phase…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> 2023-11-23 13:35:33 CTGOV                          8 term=AREA[MaximumAge]+RA…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> 2023-11-23 13:35:47 ISRCTN                         8 q=&amp;filters=ageRange:Neon…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> 2023-11-23 13:36:13 CTIS                           3 basicSearchInputAND=canc…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> 2023-11-23 13:36:28 CTGOV2                         5 distance=50&amp;cond=neurobl…</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

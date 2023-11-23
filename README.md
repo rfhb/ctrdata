@@ -38,8 +38,8 @@ conduct of trials, their availability for patients and to facilitate
 using their detailed results for research and meta-analyses. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2023-11-22 for version 1.15.2.9001
-for [CTGOV changes](#workflow-ctgov-example).
+package. This README was reviewed on 2023-11-23 for version 1.15.2.9002
+(major imporovement: remove dependency on external tools).
 
 ## Main features
 
@@ -114,24 +114,7 @@ These commands also install the package’s dependencies (`jsonlite`,
 `httr`, `curl`, `clipr`, `xml2`, `nodbi`, `stringi`, `tibble`,
 `lubridate`, `jqr`, `dplyr`, `zip` and `V8`).
 
-### 2. External tools (🔔only needed for EUCTR)
-
-Command line tools `perl`, `cat` and `sed` are required for
-`ctrLoadQueryIntoDb()`, the main function of package `ctrdata` (see
-[Example workflow](#example-workflow)), to work with the register EUCTR
-(but are *not* required for any other function or for `ctrdata` to work
-with the registers CTIS, CTGOV, CTGOV2 or ISRCTN, since 2023-11-21).
-
-- For MS Windows, install [`Cygwin`](https://cygwin.org/install.html):
-  In `R`, run `ctrdata::installCygwinWindowsDoInstall()` for an
-  automated minimal installation. Alternatively, manually install Cygwin
-  with packages `perl`, `cat` and `sed` into `c:\cygwin`. The
-  installation needs about 160 MB disk space.
-
-In Linux and macOS 12 Monterey and later, these tools are typically
-already available as part of the OS, thus *no* action required.
-
-### 3. Script to automatically copy user’s query from web browser
+### 2. Script to automatically copy user’s query from web browser
 
 This is optional; it works with all registers supported by `ctrdata` but
 is recommended for CTIS because the URL in the web browser does not
@@ -167,7 +150,6 @@ overview](https://rfhb.github.io/ctrdata/reference/index.html).
 | `dfTrials2Long()`                  | Transform the data.frame from `dbGetFieldsIntoDf()` into a long name-value data.frame, including deeply nested fields          |
 | `dfName2Value()`                   | From a long name-value data.frame, extract values for variables (fields) of interest (e.g., endpoints)                         |
 | `dfMergeVariablesRelevel()`        | Merge variables into a new variable, optionally map values to a new set of levels                                              |
-| `installCygwinWindowsDoInstall()`  | Convenience function to install a Cygwin environment (MS Windows only)                                                         |
 
 ## Databases that can be used with `ctrdata`
 
@@ -282,22 +264,25 @@ ctrLoadQueryIntoDb(
   con = db
 )
 # * Found search query from EUCTR: query=cancer&age=under-18&phase=phase-one&status=completed
-# Checking helper binaries: . . . . . done
 # * Checking trials in EUCTR...
-# Retrieved overview, multiple records of 93 trial(s) from 5 page(s) to be downloaded (estimate: 4.7 MB)
+# Retrieved overview, multiple records of 95 trial(s) from 5 page(s) to be downloaded (estimate: 5 MB)
 # (1/3) Downloading trials...
-# Note: register server cannot compress data, transfer takes longer, about 0.3s per trial
-# Download status: 5 done; 0 in progress. Total size: 7.42 Mb (100%)... done!             
-# (2/3) Converting to JSON, 358 records converted
-# (3/3) Importing JSON records into database...
-# = Imported or updated 358 records on 93 trial(s) 
-# * Checking results if available from EUCTR for 93 trials: 
+# Note: register server cannot compress data, transfer takes longer (estimate: 30 s)
+# Download status: 5 done; 0 in progress. Total size: 7.72 Mb (100%)... done!             
+# (2/3) Converting to NDJSON (estimate: 1.7 s)...
+# (3/3) Importing records into database...
+# = Imported or updated 369 records on 95 trial(s) 
+# * Checking results if available from EUCTR for 95 trials: 
 # (1/4) Downloading and extracting results (. = data, F = file[s] and data, x = none):
-# Download status: 93 done; 0 in progress. Total size: 47.10 Mb (100%)... done!             
-# F . . . . F . . F . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . , 75 records converted
-# (3/4) Importing JSON into database...
+# Download status: 95 done; 0 in progress. Total size: 48.63 Mb (100%)... done!             
+# Download status: 19 done; 0 in progress. Total size: 76.48 Kb (308%)... done!             
+# Download status: 19 done; 0 in progress. Total size: 76.48 Kb (308%)... done!             
+# Download status: 19 done; 0 in progress. Total size: 76.48 Kb (308%)... done!             
+# F . . . . F . . F . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+# (2/4) Converting to NDJSON (estimate: 8 s)...
+# (3/4) Importing results into database (may take some time)...
 # (4/4) Results history: not retrieved (euctrresultshistory = FALSE)
-# = Imported or updated results for 75 trials
+# = Imported or updated results for 76 trials
 # No history found in expected format.
 # Updated history ("meta-info" in "some_collection_name")
 ```
@@ -329,11 +314,11 @@ result <- dbGetFieldsIntoDf(
 # one record, for example for several EU Member States or in several registers:
 uniqueids <- dbFindIdsUniqueTrials(con = db)
 # Searching for duplicate trials... 
-#  - Getting all trial identifiers (may take some time), 358 found in collection
+#  - Getting all trial identifiers (may take some time), 369 found in collection
 #  - Finding duplicates among registers' and sponsor ids...
-#  - 265 EUCTR _id were not preferred EU Member State record for 93 trials
-#  - Keeping 93 / 0 / 0 / 0 / 0 records from EUCTR / CTGOV / CTGOV2 / ISRCTN / CTIS
-# = Returning keys (_id) of 93 records in collection "some_collection_name"
+#  - 274 EUCTR _id were not preferred EU Member State record for 95 trials
+#  - Keeping 95 / 0 / 0 / 0 / 0 records from EUCTR / CTGOV / CTGOV2 / ISRCTN / CTIS
+# = Returning keys (_id) of 95 records in collection "some_collection_name"
 
 # Keep only unique / de-duplicated records:
 result <- subset(
@@ -351,6 +336,7 @@ with(
 )
 #                           a7_trial_is_part_of_a_paediatric_investigation_plan
 # p_end_of_trial_status      FALSE TRUE
+#                                1    1
 #   Completed                   47   20
 #   GB - no longer in EU/EEA     1    1
 #   Ongoing                      5    1
@@ -401,11 +387,12 @@ ctrLoadQueryIntoDb(
 # * Appears specific for CTGOV REST API 2.0.0
 # * Found search query from CTGOV2: cond=Neuroblastoma&aggFilters=ages:child,results:with,studyType:int
 # * Checking trials using CTGOV API 2.0.0.-test, found 89 trials
-# (1/2) Downloading and converting in 1 batch(es) (max. 1000 trials each; estimate: 8.9 MB total)
-# Download status: 1 done; 0 in progress. Total size: 8.82 Mb (832%)...converting to NDJSON...
-# (2/2) Importing JSON records into database...
+# (1/3) Downloading in 1 batch(es) (max. 1000 trials each; estimate: 8.9 MB total)
+# Download status: 1 done; 0 in progress. Total size: 8.37 Mb (813%)... done!             
+# (2/3) Converting to NDJSON...
+# (3/3) Importing records into database...
 # JSON file #: 1 / 1                               
-# = Imported / updated 89 records on 89 trial(s)
+# = Imported or updated 89 trial(s)
 # Updated history ("meta-info" in "some_collection_name")
 ```
 
@@ -413,20 +400,20 @@ ctrLoadQueryIntoDb(
   <https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug>
 
 ``` r
-# Retrieve trials from another register:
+# Retrieve trials:
 ctrLoadQueryIntoDb(
   queryterm = "https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug",
+  verbose = TRUE,
   con = db
 )
 # * Appears specific for CTGOV CLASSIC
 # * Found search query from CTGOV: cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug
-# Checking helper binaries: done
 # * Checking trials in CTGOV classic...
 # Retrieved overview, records of 56 trial(s) are to be downloaded (estimate: 0.45 MB)
 # (1/3) Downloading trial file...
-# Download status: 1 done; 0 in progress. Total size: 779.09 Kb (100%)... done!             
-# (2/3) Converting to JSON, 56 records converted
-# (3/3) Importing JSON records into database...
+# Download status: 1 done; 0 in progress. Total size: 779.10 Kb (100%)... done!             
+# (2/3) Converting to NDJSON (estimate: 2 s)...
+# (3/3) Importing records into database...
 # = Imported or updated 56 trial(s)                
 # Updated history ("meta-info" in "some_collection_name")
 ```
@@ -443,13 +430,12 @@ ctrLoadQueryIntoDb(
   con = db
 )
 # * Found search query from ISRCTN: q=neuroblastoma
-# Checking helper binaries: done
 # * Checking trials in ISRCTN...
-# Retrieved overview, records of 9 trial(s) are to be downloaded (estimate: 0.16 MB)
+# Retrieved overview, records of 9 trial(s) are to be downloaded (estimate: 0.2 MB)
 # (1/3) Downloading trial file... 
-# Download status: 1 done; 0 in progress. Total size: 93.10 Kb (100%)... done!             
-# (2/3) Converting to JSON, 9 records converted
-# (3/3) Importing JSON records into database...
+# Download status: 1 done; 0 in progress. Total size: 93.12 Kb (100%)... done!             
+# (2/3) Converting to NDJSON (estimate: 0.05 s)...
+# (3/3) Importing records into database...
 # = Imported or updated 9 trial(s)                 
 # Updated history ("meta-info" in "some_collection_name")
 ```
@@ -467,31 +453,41 @@ of 2023-11-22, there are 410 trials are publicly accessible in CTIS. See
 [below](#documents-example) for how to download documents from CTIS.
 
 ``` r
+# See how many trials are in CTIS publicly accessible:
+ctrLoadQueryIntoDb(
+  queryterm = "",
+  register = "CTIS",
+  only.count = TRUE,
+  con = db
+)
+# $n
+# [1] 411
+
 # Retrieve trials from another register:
 ctrLoadQueryIntoDb(
   queryterm = "https://euclinicaltrials.eu/app/#/search?ageGroupCode=2",
   con = db
 )
 # * Found search query from CTIS: ageGroupCode=2
-# * Checking trials in EUCTR...
-# (1/5) Downloading trials list . found 37 trials
-# (2/5) Downloading and processing part I and parts II... (estimate: 5.55 Mb)
-# Download status: 37 done; 0 in progress. Total size: 6.91 Mb (100%)... done!             
-# . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+# * Checking trials in CTIS...
+# (1/5) Downloading trials list . found 44 trials
+# (2/5) Downloading and processing part I and parts II... (estimate: 9 Mb)
+# Download status: 44 done; 0 in progress. Total size: 8.69 Mb (100%)... done!             
+# . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 # (3/5) Downloading and processing additional data:
-# publicevents, summary, layperson, csr, cm, inspections, publicevaluation
-# Download status: 64 done; 0 in progress. Total size: 2.42 Mb (100%)... done!             
-# 37
-# (4/5) Importing JSON records into database...
+# publicevents, summary, layperson, csr, cm, inspections, publicevaluation (estimate: 3 Mb)
+# Download status: 83 done; 0 in progress. Total size: 2.71 Mb (100%)... done!             
+# 44
+# (4/5) Importing records into database...
 # (5/5) Updating with additional data: . .         
-# = Imported / updated 37 / 37 / 37 records on 37 trial(s)
+# = Imported / updated 44 / 44 / 44 records on 44 trial(s)
 # Updated history ("meta-info" in "some_collection_name")
 
 allFields <- dbFindFields(".*", db)
-# Finding fields in database collection (may take some time)
+# Finding fields in database collection (may take some time)...
 # Field names cached for this session.
 length(allFields[grepl("CTIS", names(allFields))])
-# [1] 1697
+# [1] 1704
 
 allFields[grepl("defer|consideration$", allFields, ignore.case = TRUE)]
 #                                                                                            CTIS 
@@ -505,7 +501,7 @@ allFields[grepl("defer|consideration$", allFields, ignore.case = TRUE)]
 #                                                                                            CTIS 
 #                  "publicEvaluation.validationRfiConsiderations.rfiConsiderations.consideration" 
 #                                                                                            CTIS 
-#             "publicEvaluation.validationRfiConsiderations.rfiConsiderations.part1Consideration" 
+#             "publicEvaluation.validationRfiConsiderations.rfiConsiderations.part1Consideration"  
 
 dbGetFieldsIntoDf("publicEvaluation.partIRfiConsiderations.rfiConsiderations.consideration", db)[1,2]
 # publicEvaluation.partIRfiConsiderations.rfiConsiderations.consideration
@@ -544,7 +540,7 @@ sort(names(allData))
 # [40] "trialStartDate" 
 
 format(object.size(allData), "MB")
-# [1] "34.9 Mb"
+# [1] "42.9 Mb"
 ```
 
 <div id="workflow-cross-trial-example">
@@ -565,7 +561,7 @@ library(tidyr)
 
 # get names of all fields / variables in the collaction
 length(dbFindFields(".*", con = db))
-# [1] 2830
+# [1] 2750
 
 dbFindFields("(start.*date)|(date.*decision)", con = db)
 # Using cache of fields.
@@ -677,11 +673,12 @@ result <- dbGetFieldsIntoDf(
 result %<>% 
   mutate(
     which_not_total = lapply(clinical_results.baseline.group_list.group, "[[", 1),
-    which_not_total = lapply(which_not_total, function(i) which(i[["title"]] != "Total")),
-    num_participants = lapply(clinical_results.baseline.analyzed_list.analyzed.count_list.count, "[[", 1),
-    num_participants = lapply(num_participants, function(i) if (is.data.frame(i[[1]])) i[[1]][2] else i[2])
+    which_not_total = lapply(which_not_total, function(i) which(i["title"] != "Total")),
+    num_participants = lapply(
+      clinical_results.baseline.analyzed_list.analyzed.count_list.count, 
+      function(i) if (is.data.frame(i[[1]])) i[[1]][2] else i[2])
   ) %>% 
-rowwise() %>% 
+  rowwise() %>% 
   mutate(
     is_randomised = case_when(
       study_design_info.allocation == "Randomized" ~ TRUE,
@@ -692,7 +689,7 @@ rowwise() %>%
     which_not_total = list(if (length(which_not_total)) which_not_total else 1L),
     num_participants = sum(as.integer(num_participants[[1]][which_not_total])),
     num_arms_or_groups = max(number_of_arms, length(which_not_total))
-  )
+  ) 
 
 # Inspect:
 # View(result)

@@ -1,8 +1,14 @@
 # ctrdata 1.15.2.9002 (2023-11-23)
 
-## Possibly breaking changes, for EUCTR
+## Possibly breaking changes
 
-### Fields renamed to harmonise EU and 3rd country trials
+### XML files are converted slightly differently
+- EUCTR result-related information in attributes: e.g. new: `{"id":"PostAssignmentPeriod-46349"}`, was: `{"@attributes":{"id":"PostAssignmentPeriod-46349"}}`
+- Consequently, it should work to just delete `@attributes` field names such as `dbGetFieldsIntoDf("clinical_results.baseline.analyzed_list.analyzed.count_list.count.@attributes.value", db)`
+- EUCTR protocol-related information might convert slightly differently albeit no differences were found yet 
+- CTGOV attributes of bare values remain not included in the resulting `NDJSON` (e.g., some but not all records have `<start_date type="Actual">March 15, 2004</start_date>` is converted to `{"start_date":"March 15, 2004"}`)
+
+### EUCTR: small number Fields renamed to harmonise EU and 3rd country trials
 - new: `e83_single_site_trial`, was: `e83_the_trial_involves_single_site_in_the_member_state_concerned` (EU trials)
 - new: `e83_single_site_trial`, was: `e83_will_this_trial_be_conducted_ at_a_single_site_globally` (3rd country trials)
 - new: `e863_trial_sites_planned_in`, was `e863_specify_the_regions_in_which_trial_sites_are_planned` (EU trials)
@@ -12,11 +18,6 @@
 
 See also comments on issue https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
   
-### XML files parsed slightly differently
-- in results, this may affect `@attribute` keys and deep elements, example:  
-- new: `{"id":"PostAssignmentPeriod-46349"}`, was: `{"@attributes":{"id":"PostAssignmentPeriod-46349"}}`
-- protocol-related information might also differ slightly
-
 ## Bug fixes
 - corrected batch iterations over CTIS trials accommodating unclear totalSize response
 - corrected translation of some fields from the browser URL to the API call for CTGOV2

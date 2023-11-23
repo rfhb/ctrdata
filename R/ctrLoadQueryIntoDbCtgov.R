@@ -129,9 +129,9 @@ ctrLoadQueryIntoDbCtgov <- function(
     xmlFileList <- list(xmlFileList)
   }
 
-  ## run conversion (235 trial records in 10 s)
+  ## run conversion (235 trial records in ~10 s)
   message("(2/3) Converting to NDJSON (estimate: ",
-          signif(length(unlist(xmlFileList)) * 10 / 235, 1L), " s)...")
+          signif(length(unlist(xmlFileList)) * 12 / 235, 1L), " s)...")
 
   for (f in seq_along(xmlFileList)) {
 
