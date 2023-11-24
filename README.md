@@ -38,8 +38,8 @@ conduct of trials, their availability for patients and to facilitate
 using their detailed results for research and meta-analyses. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2023-11-23 for version 1.15.2.9002
-(major imporovement: remove dependency on external tools).
+package. This README was reviewed on 2023-11-24 for version 1.16.0
+(major improvement: remove all dependencies on external tools).
 
 ## Main features
 
@@ -70,7 +70,7 @@ Remember to respect the registers’ terms and conditions (see
 `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
 package in any publication as follows: “Ralf Herold (2023). *ctrdata:
 Retrieve and Analyze Clinical Trials in Public Registers.* R package
-version 1.15.2, <https://cran.r-project.org/package=ctrdata>”.
+version 1.16.0, <https://cran.r-project.org/package=ctrdata>”.
 
 <!--
 &#10;```r
@@ -89,7 +89,7 @@ Package `ctrdata` has been used for:
   research](https://paediatricdata.eu/innovation-coming-to-paediatric-research/)
 - Cancer Research UK (2017) [The impact of collaboration: The value of
   UK medical research to EU science and
-  health](https://www.cancerresearchuk.org/about-us/we-develop-policy/we-work-with-government/exiting-the-eu/uk-and-eu-research#downloads)
+  health](https://www.cancerresearchuk.org/about-us/we-develop-policy/policy-publications-and-research-tenders#Policy_publications4)
 
 ## Installation
 
@@ -871,10 +871,9 @@ tinytest::test_all()
   [ICTRP](https://trialsearch.who.int/) (authentication needed),
   [JPRN](https://rctportal.niph.go.jp/),
   [jRCT](https://jrct.niph.go.jp/),
-  [UMIN-CTR](https://www.umin.ac.jp/ctr/),
-  [ChiCTR](https://www.chictr.org.cn/) (exploration is continually
-  ongoing; added value, terms and conditions for programmatic access
-  vary; no clear roadmap is established yet).
+  [UMIN-CTR](https://www.umin.ac.jp/ctr/), ChiCTR (exploration is
+  continually ongoing; added value, terms and conditions for
+  programmatic access vary; no clear roadmap is established yet).
 
 - Retrieve previous versions of protocol- or results-related information
   (work not yet started). The challenge is that, apparently, initial

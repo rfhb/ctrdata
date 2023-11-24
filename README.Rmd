@@ -46,7 +46,7 @@ The package `ctrdata` provides functions for retrieving (downloading) informatio
 - ISRCTN (https://www.isrctn.com/) 
 - EU Clinical Trials Information System ("CTIS", https://euclinicaltrials.eu/) `r emoji::emoji("bell")` see [example](#workflow-ctis-example)
 
-The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-11-23 for version 1.15.2.9002 (major imporovement: remove dependency on external tools).
+The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-11-24 for version 1.16.0 (major improvement: remove all dependencies on external tools).
 
 ## Main features
 
@@ -54,7 +54,7 @@ The motivation is to investigate and understand trends in design and conduct of 
 * Downloaded trial information is transformed and stored in a collection of a document-centric database, for fast and offline access. Information from different registers can be accumalated in a single collection. Uses `DuckDB`, `PostgreSQL`, `RSQLite` or `MongoDB`, via R package `nodbi`: see section [Databases](#databases-that-can-be-used-with-ctrdata) below. Re-run any previous query in a collection to retrieve and update trial records. 
 * For analyses, convenience functions in `ctrdata` allow find synonyms of an active substance, to identify unique (de-duplicated) trial records across all registers, to merge and recode fields as well as to easily access deeply-nested fields. Analysis can be done with `R` or other systems, using the `JSON`-[structured information in the database](#mongodb). 
 
-Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: "Ralf Herold (2023). _ctrdata: Retrieve and Analyze Clinical Trials in Public Registers._ R package version 1.15.2, https://cran.r-project.org/package=ctrdata". 
+Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: "Ralf Herold (2023). _ctrdata: Retrieve and Analyze Clinical Trials in Public Registers._ R package version 1.16.0, https://cran.r-project.org/package=ctrdata". 
 
 <!--
 ```{r}
@@ -69,7 +69,7 @@ Package `ctrdata` has been used for:
 * Lasch et al. (2022) The Impact of COVID‐19 on the Initiation of Clinical Trials in Europe and the United States. 
 Clinical Pharmacology & Therapeutics, [https://doi.org/10.1002/cpt.2534](https://doi.org/10.1002/cpt.2534)
 * Blogging on [Innovation coming to paediatric research](https://paediatricdata.eu/innovation-coming-to-paediatric-research/) 
-* Cancer Research UK (2017) [The impact of collaboration: The value of UK medical research to EU science and health](https://www.cancerresearchuk.org/about-us/we-develop-policy/we-work-with-government/exiting-the-eu/uk-and-eu-research#downloads)
+* Cancer Research UK (2017) [The impact of collaboration: The value of UK medical research to EU science and health](https://www.cancerresearchuk.org/about-us/we-develop-policy/policy-publications-and-research-tenders#Policy_publications4)
 
 ## Installation
 
@@ -760,7 +760,7 @@ tinytest::test_all()
 
 * Authentication, expected to be required by CTGOV2; specifications not yet known (work not yet started).
 
-* Explore further registers such as [ICTRP](https://trialsearch.who.int/) (authentication needed), [JPRN](https://rctportal.niph.go.jp/), [jRCT](https://jrct.niph.go.jp/), [UMIN-CTR](https://www.umin.ac.jp/ctr/), [ChiCTR](https://www.chictr.org.cn/) (exploration is continually ongoing; added value, terms and conditions for programmatic access vary; no clear roadmap is established yet).
+* Explore further registers such as [ICTRP](https://trialsearch.who.int/) (authentication needed), [JPRN](https://rctportal.niph.go.jp/), [jRCT](https://jrct.niph.go.jp/), [UMIN-CTR](https://www.umin.ac.jp/ctr/), ChiCTR (exploration is continually ongoing; added value, terms and conditions for programmatic access vary; no clear roadmap is established yet).
 
 * Retrieve previous versions of protocol- or results-related information (work not yet started). The challenge is that, apparently, initial versions cannot be queried and historical versions can only be retrieved one-by-one and not in structured format.
 
