@@ -53,7 +53,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
   queryterm <- sub("([&]?)distance=50(&|$)", "&", queryterm)
 
   # slice by "&"
-  queryterm <- sort(strsplit(queryterm, split = "&")[[1]])
+  queryterm <- strsplit(queryterm, split = "&")[[1]]
   queryterm <- queryterm[!grepl("^https://", queryterm)]
   queryterm <- queryterm[queryterm != ""]
 
@@ -93,13 +93,13 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     "query.locn" = list(
       "extract" = list(
         "country=(.+)(&|$)",
-        "locn=(.+)(&|$)",
-        "locStr=(.+)(&.+|$)"
+        "locStr=(.+)(&.+|$)",
+        "locn=(.+)(&|$)"
       ),
       "replace" = list(
         "AREA[LocationCountry]\\1",
-        "AREA[LocationFacility]\\1",
-        "AREA[LocationCity]\\1"
+        "AREA[LocationCity]\\1",
+        "AREA[LocationFacility]\\1"
       ),
       "collapse" = ",",
       "out" = character()
