@@ -96,14 +96,18 @@
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">dbQueryHistory</span><span class="op">(</span>con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 4</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   `query-timestamp`   `query-register` `query-records` `query-term`             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 2023-11-23 13:33:41 EUCTR                         12 query=&amp;age=newborn&amp;phase…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> 2023-11-23 13:35:33 CTGOV                          8 term=AREA[MaximumAge]+RA…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> 2023-11-23 13:35:47 ISRCTN                         8 q=&amp;filters=ageRange:Neon…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> 2023-11-23 13:36:13 CTIS                           3 basicSearchInputAND=canc…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> 2023-11-23 13:36:28 CTGOV2                         5 distance=50&amp;cond=neurobl…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       query-timestamp query-register query-records</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2023-11-23 13:33:41          EUCTR            12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2023-11-23 13:35:33          CTGOV             8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2023-11-23 13:35:47         ISRCTN             8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 2023-11-23 13:36:13           CTIS             3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 2023-11-23 13:36:28         CTGOV2             5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                       query-term</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                    query=&amp;age=newborn&amp;phase=phase-three&amp;dateFrom=2015-02-28&amp;dateTo=2015-03-31&amp;status=completed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 term=AREA[MaximumAge]+RANGE[0+days,+28+days]&amp;intr=Drugs,+Investigational&amp;strd_s=01/01/2018&amp;strd_e=01/01/2020&amp;type=Intr&amp;phase=2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                                                                    q=&amp;filters=ageRange:Neonate,phase:Phase+III</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                               basicSearchInputAND=cancer&amp;status=Ongoing, recruiting&amp;ageGroupCode=2&amp;haveOrphanDesignation=false</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                                  distance=50&amp;cond=neuroblastoma&amp;aggFilters=phase:2,results:with&amp;primComp=2014-01-01_2014-12-31</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

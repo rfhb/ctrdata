@@ -4,43 +4,43 @@
 
 ### XML files are converted slightly differently
 - EUCTR result-related information in attributes: e.g. new: `{"id":"PostAssignmentPeriod-46349"}`, was: `{"@attributes":{"id":"PostAssignmentPeriod-46349"}}`
-- Consequently, it should work to just delete `@attributes` field names such as `dbGetFieldsIntoDf("clinical_results.baseline.analyzed_list.analyzed.count_list.count.@attributes.value", db)`
-- EUCTR protocol-related information might convert slightly differently albeit no differences were found yet 
-- CTGOV attributes of bare values remain not included in the resulting `NDJSON` (e.g., some but not all records have `<start_date type="Actual">March 15, 2004</start_date>` is converted to `{"start_date":"March 15, 2004"}`)
+- Consequently, it should work to just delete `@attributes` from field names such as `dbGetFieldsIntoDf("clinical_results.baseline.analyzed_list.analyzed.count_list.count.@attributes.value", db)`
+- EUCTR protocol-related information although no differences were found yet 
+- CTGOV attributes of bare values remain not included in the resulting `NDJSON` (e.g., some but not all records have `<start_date type="Actual">March 15, 2004</start_date>`, and this is converted to `{"start_date":"March 15, 2004"}`)
 
-### EUCTR: small number Fields renamed to harmonise EU and 3rd country trials
-- new: `e83_single_site_trial`, was: `e83_the_trial_involves_single_site_in_the_member_state_concerned` (EU trials)
-- new: `e83_single_site_trial`, was: `e83_will_this_trial_be_conducted_ at_a_single_site_globally` (3rd country trials)
-- new: `e863_trial_sites_planned_in`, was `e863_specify_the_regions_in_which_trial_sites_are_planned` (EU trials)
-- new: `e863_trial_sites_planned_in`, was `e863_specify_the_countries_outside_of_the_eea_in_which_trial_sites_are_planned` (3rd country trials)
-- new: `e84_multiple_sites_in_member_state`, was `e84_the_trial_involves_multiple_sites_in_the_member_state_concerned` (EU trials)
-- new: `e840_multiple_sites_globally`, was `e84_will_this_trial_be_conducted_at_multiple_sites_globally` (3rd country trials)
+### EUCTR: some renaming to harmonise EU and 3rd country trial fields
+- new: `e83_single_site_trial`, was (EU trials): `e83_the_trial_involves_single_site_in_the_member_state_concerned`
+- new: `e83_single_site_trial`, was (3rd country trials): `e83_will_this_trial_be_conducted_ at_a_single_site_globally` 
+- new: `e863_trial_sites_planned_in`, was (EU trials): `e863_specify_the_regions_in_which_trial_sites_are_planned` 
+- new: `e863_trial_sites_planned_in`, was (3rd country trials): `e863_specify_the_countries_outside_of_the_eea_in_which_trial_sites_are_planned` 
+- new: `e84_multiple_sites_in_member_state`, was (EU trials): `e84_the_trial_involves_multiple_sites_in_the_member_state_concerned` 
+- new: `e840_multiple_sites_globally`, was (3rd country trials): `e84_will_this_trial_be_conducted_at_multiple_sites_globally`
 
-See also comments on issue https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
+See also https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
   
 ## Bug fixes
-- corrected batch iterations over CTIS trials accommodating unclear totalSize response
-- corrected translation of some fields from the browser URL to the API call for CTGOV2
-- corrected minimum version number for curl to 5.1.0 to avoid error under MS Windows
+- corrected batch iterations over CTIS trials accommodating unclear `totalSize` response
+- corrected translation of some fields from the browser URL to the API call for CTGOV2 (closes https://github.com/rfhb/ctrdata/issues/32)
+- corrected minimum curl version to 5.1.0 (closes https://github.com/rfhb/ctrdata/issues/31)
+- handled errors when saving EUCTR results (e.g., too long file path name, closes https://github.com/rfhb/ctrdata/issues/30 and https://github.com/rfhb/ctrdata/issues/28)
 
 ## Improvements
 
 ### Major 
-- No external tools required anymore (replaced `php`, `perl`, `cat` and `sed` with Javascript using `R` package `V8`)
+- **No external tools required anymore** (`Cygwin`, `perl`, `cat`, `sed`, `php` functionality for transforming text, XML and NDJSON replaced by Javascript using `R` package `V8`); addresses personally communicated concerns and faciliates use of package `ctrdata` in more environments (e.g., https://github.com/rfhb/ctrdata/issues/26); consequently, this might be a breaking change for analysing certain fields, see above which fields are affected. 
 
 ### Other
 - added results summary download for CTIS
 - added documents download for ISRCTN
 - factored out document download function
-- added handler for errors when attempting to save EUCTR results (e.g., too long file path name)
-- ensure `dbFindFields()` return fields for EU and 3rd country trials in EUCTR, updated documentation
-- changed order of importing from CTIS into database
-- better checked downloads, repeat where necessary
+- ensure `dbFindFields()` returns fields for EU and 3rd country trials in EUCTR (addresses https://github.com/rfhb/ctrdata/issues/26)
+- changed order of importing from CTIS into database, improved speed
+- better checked data downloads, and repeat them where necessary
 - factored out temporary folder creation
 - added using `options(ctrdata.tempdir = ...)` if set
 - removed `dfListExtractKey()`, long deprecated
 - removed `dfMergeTwoVariablesRelevel()`, long deprecated
-- reorganise file layout
+- reorganised code file layout 
   
 # ctrdata 1.15.2 (2023-09-10)
 
