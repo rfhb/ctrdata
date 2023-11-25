@@ -781,7 +781,7 @@ Neuroblastoma trials
 <span></span>
 <span></span>
 <span><span class="co">### CTGOV files are downloaded, here corresponding to the default of </span></span>
-<span><span class="co"># documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctaletter|^[0-9]+ "</span></span>
+<span><span class="co"># documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctalett|lay|^[0-9]+ "</span></span>
 <span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
 <span>  queryterm <span class="op">=</span> <span class="st">"cond=Neuroblastoma&amp;type=Intr&amp;recrs=e&amp;phase=1&amp;u_prot=Y&amp;u_sap=Y&amp;u_icf=Y"</span>,</span>
 <span>  register <span class="op">=</span> <span class="st">"CTGOV"</span>,</span>
@@ -799,19 +799,10 @@ Neuroblastoma trials
 <span></span>
 <span></span>
 <span><span class="co">### CTGOV2 files are downloaded, here corresponding to the default of </span></span>
-<span><span class="co"># documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctaletter|^[0-9]+ "</span></span>
+<span><span class="co"># documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctalett|lay|^[0-9]+ "</span></span>
 <span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
 <span>  queryterm <span class="op">=</span> <span class="st">"https://clinicaltrials.gov/search?cond=neuroblastoma&amp;aggFilters=phase:1,results:with"</span>,</span>
 <span>  documents.path <span class="op">=</span> <span class="st">"./files-ctgov2/"</span>,</span>
-<span>  con <span class="op">=</span> <span class="va">db</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span></span>
-<span><span class="co">### ISRCTN files are downloaded, here corresponding to the default of </span></span>
-<span><span class="co"># documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctaletter|^[0-9]+ "</span></span>
-<span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
-<span>  queryterm <span class="op">=</span> <span class="st">"https://www.isrctn.com/search?q=alzheimer"</span>,</span>
-<span>  documents.path <span class="op">=</span> <span class="st">"./files-isrctn/"</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># * Found search query from CTGOV2: cond=neuroblastoma&amp;aggFilters=phase:1,results:with</span></span>
@@ -826,8 +817,30 @@ Neuroblastoma trials
 <span><span class="co"># existed in ./files-ctgov2</span></span>
 <span></span>
 <span></span>
+<span><span class="co">### ISRCTN files are downloaded, here corresponding to the default of </span></span>
+<span><span class="co"># documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctalett|lay|^[0-9]+ "</span></span>
+<span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
+<span>  queryterm <span class="op">=</span> <span class="st">"https://www.isrctn.com/search?q=alzheimer"</span>,</span>
+<span>  documents.path <span class="op">=</span> <span class="st">"./files-isrctn/"</span>,</span>
+<span>  con <span class="op">=</span> <span class="va">db</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co"># * Found search query from ISRCTN: q=alzheimer</span></span>
+<span><span class="co"># [...]</span></span>
+<span><span class="co"># * Downloading documents into 'documents.path' = ./files-isrctn/</span></span>
+<span><span class="co"># - Created directory /Users/ralfherold/Daten/mak/r/emea/ctrdata/files-isrctn</span></span>
+<span><span class="co"># - Creating subfolder for each trial</span></span>
+<span><span class="co"># - Applying 'documents.regexp' to 34 documents</span></span>
+<span><span class="co"># - Downloading 23 missing documents</span></span>
+<span><span class="co"># Download status: 23 done; 0 in progress. Total size: 10.42 Mb (100%)... done!             </span></span>
+<span><span class="co"># Download status: 2 done; 0 in progress. Total size: 6.53 Kb (100%)... done!             </span></span>
+<span><span class="co"># Download status: 2 done; 0 in progress. Total size: 6.53 Kb (100%)... done!             </span></span>
+<span><span class="co"># Download status: 2 done; 0 in progress. Total size: 6.53 Kb (100%)... done!             </span></span>
+<span><span class="co"># = Newly saved 21 document(s) for 9 trial(s); 0 document(s) for 0 trial(s) already </span></span>
+<span><span class="co"># existed in ./files-isrctn</span></span>
+<span></span>
+<span></span>
 <span><span class="co">### CTIS files are downloaded, here corresponding to the default of </span></span>
-<span><span class="co"># documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctaletter|^[0-9]+ "</span></span>
+<span><span class="co"># documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctalett|lay|^[0-9]+ "</span></span>
 <span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
 <span>  queryterm <span class="op">=</span> <span class="st">"https://euclinicaltrials.eu/app/#/search?ageGroupCode=2"</span>,</span>
 <span>  documents.path <span class="op">=</span> <span class="st">"./files-ctis/"</span>,</span>

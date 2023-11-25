@@ -643,7 +643,7 @@ ctrLoadQueryIntoDb(
 
 
 ### CTGOV files are downloaded, here corresponding to the default of 
-# documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctaletter|^[0-9]+ "
+# documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctalett|lay|^[0-9]+ "
 ctrLoadQueryIntoDb(
   queryterm = "cond=Neuroblastoma&type=Intr&recrs=e&phase=1&u_prot=Y&u_sap=Y&u_icf=Y",
   register = "CTGOV",
@@ -661,19 +661,10 @@ ctrLoadQueryIntoDb(
 
 
 ### CTGOV2 files are downloaded, here corresponding to the default of 
-# documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctaletter|^[0-9]+ "
+# documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctalett|lay|^[0-9]+ "
 ctrLoadQueryIntoDb(
   queryterm = "https://clinicaltrials.gov/search?cond=neuroblastoma&aggFilters=phase:1,results:with",
   documents.path = "./files-ctgov2/",
-  con = db
-)
-
-
-### ISRCTN files are downloaded, here corresponding to the default of 
-# documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctaletter|^[0-9]+ "
-ctrLoadQueryIntoDb(
-  queryterm = "https://www.isrctn.com/search?q=alzheimer",
-  documents.path = "./files-isrctn/",
   con = db
 )
 # * Found search query from CTGOV2: cond=neuroblastoma&aggFilters=phase:1,results:with
@@ -688,8 +679,30 @@ ctrLoadQueryIntoDb(
 # existed in ./files-ctgov2
 
 
+### ISRCTN files are downloaded, here corresponding to the default of 
+# documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctalett|lay|^[0-9]+ "
+ctrLoadQueryIntoDb(
+  queryterm = "https://www.isrctn.com/search?q=alzheimer",
+  documents.path = "./files-isrctn/",
+  con = db
+)
+# * Found search query from ISRCTN: q=alzheimer
+# [...]
+# * Downloading documents into 'documents.path' = ./files-isrctn/
+# - Created directory /Users/ralfherold/Daten/mak/r/emea/ctrdata/files-isrctn
+# - Creating subfolder for each trial
+# - Applying 'documents.regexp' to 34 documents
+# - Downloading 23 missing documents
+# Download status: 23 done; 0 in progress. Total size: 10.42 Mb (100%)... done!             
+# Download status: 2 done; 0 in progress. Total size: 6.53 Kb (100%)... done!             
+# Download status: 2 done; 0 in progress. Total size: 6.53 Kb (100%)... done!             
+# Download status: 2 done; 0 in progress. Total size: 6.53 Kb (100%)... done!             
+# = Newly saved 21 document(s) for 9 trial(s); 0 document(s) for 0 trial(s) already 
+# existed in ./files-isrctn
+
+
 ### CTIS files are downloaded, here corresponding to the default of 
-# documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctaletter|^[0-9]+ "
+# documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctalett|lay|^[0-9]+ "
 ctrLoadQueryIntoDb(
   queryterm = "https://euclinicaltrials.eu/app/#/search?ageGroupCode=2",
   documents.path = "./files-ctis/",
