@@ -126,7 +126,7 @@
 </h2>
 <ul>
 <li>Protocol- and results-related trial information is easily downloaded: Users define a query in a register’s web interface, then copy the URL and enter it into <code>ctrdata</code> which retrieves in one go all trials found. A <a href="#id_3-script-to-automatically-copy-users-query-from-web-browser">script</a> can automate copying the query URL from all registers. <a href="#documents-example">Documents</a> in registers on trials can also be downloaded. Personal annotations can be made when downloading trials.</li>
-<li>Downloaded trial information is transformed and stored in a collection of a document-centric database, for fast and offline access. Information from different registers can be accumalated in a single collection. Uses <code>DuckDB</code>, <code>PostgreSQL</code>, <code>RSQLite</code> or <code>MongoDB</code>, via R package <code>nodbi</code>: see section <a href="#databases-that-can-be-used-with-ctrdata">Databases</a> below. Re-run any previous query in a collection to retrieve and update trial records.</li>
+<li>Downloaded trial information is transformed and stored in a collection of a document-centric database, for fast and offline access. Information from different registers can be accumulated in a single collection. Uses <code>DuckDB</code>, <code>PostgreSQL</code>, <code>RSQLite</code> or <code>MongoDB</code>, via R package <code>nodbi</code>: see section <a href="#databases-that-can-be-used-with-ctrdata">Databases</a> below. Re-run any previous query in a collection to retrieve and update trial records.</li>
 <li>For analyses, convenience functions in <code>ctrdata</code> allow find synonyms of an active substance, to identify unique (de-duplicated) trial records across all registers, to merge and recode fields as well as to easily access deeply-nested fields. Analysis can be done with <code>R</code> or other systems, using the <code>JSON</code>-<a href="#mongodb">structured information in the database</a>.</li>
 </ul>
 <p>Remember to respect the registers’ terms and conditions (see <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>). Please cite this package in any publication as follows: “Ralf Herold (2023). <em>ctrdata: Retrieve and Analyze Clinical Trials in Public Registers.</em> R package version 1.16.0, <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a>”.</p>
@@ -370,7 +370,7 @@ citation("ctrdata")
 <span><span class="co"># = Imported or updated results for 76 trials</span></span>
 <span><span class="co"># No history found in expected format.</span></span>
 <span><span class="co"># Updated history ("meta-info" in "some_collection_name")</span></span></code></pre></div>
-<p>Under the hood, external script <code>euctr2json.sh</code> (in <code>ctrdata/exec</code>) transform EUCTR plain text files, and <code>xml2js</code> via <code>V8</code> in <code>R</code> transforms CTGOV’s ISRCTN’s <code>XML</code> files, into <code>NDJSON</code>, which is imported into the database collection.</p>
+<p>Under the hood, EUCTR plain text and XML files from EUCTR, CTGOV, ISRCTN are converted using Javascript via <code>V8</code> in <code>R</code> into <code>NDJSON</code>, which is imported into the database collection.</p>
 <ul>
 <li>Analyse</li>
 </ul>
@@ -495,7 +495,7 @@ citation("ctrdata")
 <ul>
 <li>Add records from a fourth register (CTIS 🔔) into the same collection</li>
 </ul>
-<p>Queries in the CTIS search interface can be automatically copied to the clipboard so that a user can paste them into <code>queryterm</code>, see <a href="#id_3-script-to-automatically-copy-users-query-from-web-browser">here</a>. As of 2023-11-22, there are 410 trials are publicly accessible in CTIS. See <a href="#documents-example">below</a> for how to download documents from CTIS.</p>
+<p>Queries in the CTIS search interface can be automatically copied to the clipboard so that a user can paste them into <code>queryterm</code>, see <a href="#id_3-script-to-automatically-copy-users-query-from-web-browser">here</a>. As of 2023-11-22, there are 410 trials publicly accessible in CTIS. See <a href="#documents-example">below</a> for how to download documents from CTIS.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># See how many trials are in CTIS publicly accessible:</span></span>
 <span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>

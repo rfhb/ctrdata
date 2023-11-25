@@ -19,7 +19,7 @@
 #' See function \link{dbFindFields} for how to find names of fields.
 #' "item.subitem" notation is supported.
 #'
-#' @param stopifnodata Stops with an error (detaul \code{TRUE}) or with
+#' @param stopifnodata Stops with an error (default \code{TRUE}) or with
 #' a warning (\code{FALSE}) if the sought field is empty in all,
 #' or not available in any of the records in the database collection.
 #'

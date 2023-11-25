@@ -31,7 +31,7 @@ See also https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
 ## Improvements
 
 ### Major 
-- **No external tools required anymore** (`Cygwin`, `perl`, `cat`, `sed`, `php` functionality for transforming text, XML and NDJSON replaced by Javascript using `R` package `V8`); addresses personally communicated concerns and faciliates use of package `ctrdata` in more environments (e.g., https://github.com/rfhb/ctrdata/issues/26); consequently, this might be a breaking change for analysing certain fields, see above which fields are affected. 
+- **No external tools required any more** (`Cygwin`, `perl`, `cat`, `sed`, `php` functionality for transforming text, XML and NDJSON replaced by Javascript using `R` package `V8`); addresses personally communicated concerns and faciliates use of package `ctrdata` in more environments (e.g., https://github.com/rfhb/ctrdata/issues/26); consequently, this might be a breaking change for analysing certain fields, see above which fields are affected. 
 
 ### Other
 - added results summary download for CTIS
@@ -212,7 +212,7 @@ See also https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
 
 # ctrdata 1.7.1 (2021-08-22)
 
-- fix DBI not needed in Imports anymore (CRAN Note)
+- fix DBI not needed in Imports any more (CRAN Note)
 - fix potential file name issue in conversion script
 - fix dbFindFields() to never return _id (previously depended on database backend)
 - changed tests (not on CRAN detection, register availability, additional tests)

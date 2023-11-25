@@ -17,7 +17,16 @@
 #' registers from which to generate unique _id's, default
 #' \code{c("EUCTR", "CTGOV", "CTGOV2", "ISRCTN", "CTIS")}
 #'
-#' @inheritParams dfFindUniqueEuctrRecord
+#' @param prefermemberstate Code of single EU Member State for which records
+#' should returned. If not available, a record for DE or lacking this, any
+#' random Member State's record for the trial will be returned.
+#' For a list of codes of EU  Member States, please see vector
+#' \code{countriesEUCTR}. Specifying "3RD" will return the Third Country
+#' record of trials, where available.
+#'
+#' @param include3rdcountrytrials A logical value if trials should be retained
+#' that are conducted exclusively in third countries, that is, outside
+#' the European Union. Ignored if \code{prefermemberstate} is set to "3RD".
 #'
 #' @param verbose If set to \code{TRUE}, prints out which fields
 #'  of the registers are used to find corresponding trial records
@@ -433,21 +442,13 @@ dbFindIdsUniqueTrials <- function(
 #'   the columns "_id" and "a2_eudract_number", for example created with
 #'   function dbGetFieldsIntoDf(c("_id", "a2_eudract_number")).
 #'
-#' @param prefermemberstate Code of single EU Member State for which records
-#' should returned. If not available, a record for DE or lacking this, any
-#' random Member State's record for the trial will be returned.
-#' For a list of codes of EU  Member States, please see vector
-#' \code{countriesEUCTR}. Specifying "3RD" will return the Third Country
-#' record of trials, where available.
-#'
-#' @param include3rdcountrytrials A logical value if trials should be retained
-#' that are conducted exclusively in third countries, that is, outside
-#' the European Union. Ignored if \code{prefermemberstate} is set to "3RD".
+#' @inheritParams dfFindIdsUniqueTrials
 #'
 #' @return A data frame as subset of \code{df} corresponding to the sought
 #'   records.
 #'
 #' @keywords internal
+#' @noRd
 #
 dfFindUniqueEuctrRecord <- function(
     df = NULL,

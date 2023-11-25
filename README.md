@@ -53,7 +53,7 @@ package. This README was reviewed on 2023-11-24 for version 1.16.0
   downloaded. Personal annotations can be made when downloading trials.
 - Downloaded trial information is transformed and stored in a collection
   of a document-centric database, for fast and offline access.
-  Information from different registers can be accumalated in a single
+  Information from different registers can be accumulated in a single
   collection. Uses `DuckDB`, `PostgreSQL`, `RSQLite` or `MongoDB`, via R
   package `nodbi`: see section
   [Databases](#databases-that-can-be-used-with-ctrdata) below. Re-run
@@ -287,9 +287,8 @@ ctrLoadQueryIntoDb(
 # Updated history ("meta-info" in "some_collection_name")
 ```
 
-Under the hood, external script `euctr2json.sh` (in `ctrdata/exec`)
-transform EUCTR plain text files, and `xml2js` via `V8` in `R`
-transforms CTGOV’s ISRCTN’s `XML` files, into `NDJSON`, which is
+Under the hood, EUCTR plain text and XML files from EUCTR, CTGOV, ISRCTN
+are converted using Javascript via `V8` in `R` into `NDJSON`, which is
 imported into the database collection.
 
 - Analyse
@@ -449,7 +448,7 @@ ctrLoadQueryIntoDb(
 Queries in the CTIS search interface can be automatically copied to the
 clipboard so that a user can paste them into `queryterm`, see
 [here](#3-script-to-automatically-copy-users-query-from-web-browser). As
-of 2023-11-22, there are 410 trials are publicly accessible in CTIS. See
+of 2023-11-22, there are 410 trials publicly accessible in CTIS. See
 [below](#documents-example) for how to download documents from CTIS.
 
 ``` r

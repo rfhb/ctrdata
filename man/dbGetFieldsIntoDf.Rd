@@ -17,7 +17,7 @@ See function \link{dbFindFields} for how to find names of fields.
 \item{verbose}{Printing additional information if set to \code{TRUE};
 (default \code{FALSE}).}
 
-\item{stopifnodata}{Stops with an error (detaul \code{TRUE}) or with
+\item{stopifnodata}{Stops with an error (default \code{TRUE}) or with
 a warning (\code{FALSE}) if the sought field is empty in all,
 or not available in any of the records in the database collection.}
 }
