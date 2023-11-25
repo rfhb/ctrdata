@@ -854,9 +854,6 @@ tinytest::test_all()
 
 - See project outline <https://github.com/users/rfhb/projects/1>
 
-- Replace external command line tools still needed for EUCTR, CTGOV,
-  ISRCTN, likely by V8 and custom Javascript
-
 - Canonical definitions, filters, calculations are in the works (since
   August 2023) for data mangling and analyses across registers, e.g. to
   define study population, identify interventional trials, calculate
