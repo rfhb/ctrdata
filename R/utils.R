@@ -23,8 +23,7 @@ regCtgov <- "NCT[0-9]{8}"
 # - CTGOV2
 regCtgov2 <- regCtgov
 # - regIsrctn
-# FIXME check if first digit is always non zero
-regIsrctn <- "[1-9][0-9]{7}"
+regIsrctn <- "[0-9][0-9]{7}"
 # - CTIS e.g. 2022-501549-57-00
 regCtis <- "[0-9]{4}-[0-9]{6}-[0-9]{2}-[0-9]{2}"
 #
