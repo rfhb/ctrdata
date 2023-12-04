@@ -131,7 +131,7 @@ ctrOpenSearchPagesInBrowser <- function(
     ) {
       # - open single study from url and register
       url <- sub(paste0(
-        ".*(", paste0(
+        ".*?(", paste0(
           c(regCtgov, regCtgov2, regCtis, regEuctr, regIsrctn),
           collapse = "|"
         ), ").*"
