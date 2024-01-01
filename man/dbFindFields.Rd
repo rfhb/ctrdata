@@ -4,12 +4,12 @@
 \alias{dbFindFields}
 \title{Find names of fields in the database collection}
 \usage{
-dbFindFields(namepart = "", con, verbose = FALSE)
+dbFindFields(namepart = ".*", con, verbose = FALSE)
 }
 \arguments{
 \item{namepart}{A character string (can include a regular expression,
 including Perl-style) to be searched among all field names (keys)
-in the collection, case-insensitive. Use ".*" to find all fields.}
+in the collection, case-insensitive. The default ".*" lists all fields.}
 
 \item{con}{A connection object, see section
 `Databases` in \link{ctrdata}.}
@@ -21,20 +21,15 @@ in the collection, case-insensitive. Use ".*" to find all fields.}
 Vector of strings with full names of field(s) found,
 ordered by register and alphabet. Names of the vector elements
 are the register names for the respective fields.
-
-Only names of fields that have a value in the collection
-are returned, and the names may be incomplete because they
-are from sampled records. See here for obtaining a complete
-set of field names (albeit without register names):
-\url{https://github.com/rfhb/ctrdata/issues/26#issuecomment-1751452462}
 }
 \description{
 Given part of the name of a field of interest to the user, this
 function returns the full field names used in records that were
 previously loaded into a collection
-(using \link{ctrLoadQueryIntoDb}). The field names can be fed
-into function \link{dbGetFieldsIntoDf} to extract the data
-from the collection into a data frame.
+(using \link{ctrLoadQueryIntoDb}). Only names of fields that have
+a value in the collection can be returned. The field names can be
+fed into function \link{dbGetFieldsIntoDf} to extract the data
+for the field(s) from the collection into a data frame.
 }
 \details{
 In addition to the full names of all child fields (e.g.,
@@ -57,5 +52,13 @@ dbc <- nodbi::src_sqlite(
 )
 
 dbFindFields(namepart = "date", con = dbc)
+
+# view all 3350+ fields from all registers:
+
+allFields <- dbFindFields(con = dbc)
+
+if (interactive()) View(data.frame(
+  register = names(allFields),
+  field = allFields))
 
 }

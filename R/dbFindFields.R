@@ -5,9 +5,10 @@
 #' Given part of the name of a field of interest to the user, this
 #' function returns the full field names used in records that were
 #' previously loaded into a collection
-#' (using \link{ctrLoadQueryIntoDb}). The field names can be fed
-#' into function \link{dbGetFieldsIntoDf} to extract the data
-#' from the collection into a data frame.
+#' (using \link{ctrLoadQueryIntoDb}). Only names of fields that have
+#' a value in the collection can be returned. The field names can be
+#' fed into function \link{dbGetFieldsIntoDf} to extract the data
+#' for the field(s) from the collection into a data frame.
 #'
 #' In addition to the full names of all child fields (e.g.,
 #' \code{clinical_results.outcome_list.outcome.measure.class_list.class.title})
@@ -23,7 +24,7 @@
 #'
 #' @param namepart A character string (can include a regular expression,
 #' including Perl-style) to be searched among all field names (keys)
-#' in the collection, case-insensitive. Use ".*" to find all fields.
+#' in the collection, case-insensitive. The default ".*" lists all fields.
 #'
 #' @param verbose If \code{TRUE}, prints additional information
 #' (default \code{FALSE}).
@@ -36,12 +37,6 @@
 #' ordered by register and alphabet. Names of the vector elements
 #' are the register names for the respective fields.
 #'
-#' Only names of fields that have a value in the collection
-#' are returned, and the names may be incomplete because they
-#' are from sampled records. See here for obtaining a complete
-#' set of field names (albeit without register names):
-#' \url{https://github.com/rfhb/ctrdata/issues/26#issuecomment-1751452462}
-#'
 #' @export
 #'
 #' @examples
@@ -53,7 +48,15 @@
 #'
 #' dbFindFields(namepart = "date", con = dbc)
 #'
-dbFindFields <- function(namepart = "",
+#' # view all 3350+ fields from all registers:
+#'
+#' allFields <- dbFindFields(con = dbc)
+#'
+#' if (interactive()) View(data.frame(
+#'   register = names(allFields),
+#'   field = allFields))
+#'
+dbFindFields <- function(namepart = ".*",
                          con,
                          verbose = FALSE) {
   ## sanity checks
@@ -85,85 +88,32 @@ dbFindFields <- function(namepart = "",
   ## get keyslist
   if (cacheOutdated) {
     # inform user
-    message("Finding fields in database collection (may take some time)...")
-
-    # helpder function
-    getNodes <- function(fn) {
-      nodesList <- strsplit(fn, split = ".", fixed = TRUE)
-      nodesList <- sapply(nodesList, function(i) {
-        i <- i[-length(i)]
-        sapply(
-          seq_along(i),
-          function(ii) paste0(i[1:ii], collapse = "."),
-          USE.NAMES = FALSE
-        )
-      }, USE.NAMES = FALSE)
-      return(unique(unlist(nodesList)))
-    }
-
-    # helper function
-    normNames <- function(df) {
-      out <- names(unlist(df))
-      if (!length(out)) {
-        return("")
-      }
-      out <- ifelse(
-        # exception for euctr protocol and results fields
-        test = grepl("65To84|Over85|under_18", out),
-        yes = out,
-        no = sub("[0-9]+$", "", out)
-      )
-      out <- c(out, getNodes(out))
-      return(sort(unique(out)))
-    }
-
-    # queries to be used
-    queries <- list(
-      "EUCTR" = c(
-        '{"trialInformation.analysisStage.value": {"$regex": ".+"}}',
-        '{"_id": {"$regex": "-[A-Z][A-Z]$"}}',
-        '{"_id": {"$regex": "-3RD$"}}'
-      ),
-      "CTGOV" = c(
-        '{"results_first_submitted": {"$regex": ".+"}}',
-        '{"ctrname":"CTGOV"}'
-      ),
-      "CTGOV2" = c(
-        '{"resultsFirstSubmitDate": {"$regex": ".+"}}',
-        '{"ctrname":"CTGOV2"}'
-      ),
-      "ISRCTN" = c(
-        '{"results.publicationStage": "Results"}',
-        '{"ctrname":"ISRCTN"}'
-      ),
-      "CTIS" = c(
-        '{"ctrname":"CTIS"}'
-      )
-    )
+    message("Finding fields in database collection ",
+            "(may take some time) ", appendLF = FALSE)
 
     # get names
     keyslist <- NULL
-    # iterate over queries
-    for (q in seq_along(queries)) {
+
+    # iterate over registers
+    for (q in registerList) {
+      message(" . ", appendLF = FALSE)
       # iterate over query items
-      for (i in seq_along(queries[[q]])) {
-        # get record from register
-        keysAdd <- normNames(nodbi::docdb_query(
-          src = con, key = con$collection,
-          query = queries[[q]][i], limit = 1L
-        ))
-        # give keys name of register
-        names(keysAdd) <- rep(names(queries)[q], length(keysAdd))
-        # accumulate keys
-        keyslist <- c(keyslist, keysAdd)
-      }
+      # get fields from register
+      keysAdd <- nodbi::docdb_query(
+        src = con,
+        key = con$collection,
+        query = paste0('{"ctrname": "', q, '"}'),
+        listfields = TRUE
+      )
+      # give keys name of register
+      names(keysAdd) <- rep(q, length(keysAdd))
+      # accumulate keys
+      keyslist <- c(keyslist, keysAdd)
     }
+    message()
 
     # clean empty entries and exclude _id for consistency
-    # since different approaches above return _id or not
-    keyslist <- keyslist[!duplicated(keyslist)]
     keyslist <- keyslist[keyslist != "_id" & keyslist != ""]
-    keyslist <- sub("[.]$", "", keyslist)
 
     ## store keyslist to environment (cache)
     if (length(keyslist) > 1) {
@@ -195,9 +145,13 @@ dbFindFields <- function(namepart = "",
     ignore.case = TRUE, perl = TRUE
   )]
 
+  # user info
+  if (verbose) message("Found ", length(fields), " fields.")
+
   # return value if no fields found
   if (!length(fields)) fields <- ""
 
   # return the match(es)
   return(fields)
+
 } # end dbFindFields
