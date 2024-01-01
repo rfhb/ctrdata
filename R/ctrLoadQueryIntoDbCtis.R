@@ -540,18 +540,19 @@ ctrLoadQueryIntoDbCtis <- function(
       if (nrow(tmp)) {dlFiles <- merge(dlFiles, tmp, all.x = TRUE)}
     }
 
-    # map
-    epTyp <- ctisEndpoints[12:21]
+    # map type to endpoints for lists
+    epTyp <- ctisEndpoints[c(12:21, 21, 21)]
     names(epTyp) <- c(
-      "part1", "parts2", "prod", "p1ar", "p2ars", "ctaletter", "rfis",
-      "events", "cm", "layperson")
+      "part1", "parts2", "prod", "p1ar", "p2ars",
+      "ctaletter", "rfis", "events", "cm", "layperson",
+      "summary", "csr")
     epTyp <- as.list(epTyp)
 
-    # define order for factor for sorting
+    # define order for sorting
     orderedParts <- c(
       "ctaletter", "p1ar", "p2ars", "part1auth", "part1appl",
       "parts2auth", "parts2appl", "prodauth", "prodappl", "rfis",
-      "events", "cm", "layperson")
+      "events", "cm", "csr", "summary", "layperson")
 
     # ordering files list
     dlFiles <- apply(dlFiles, 1, function(r) {
