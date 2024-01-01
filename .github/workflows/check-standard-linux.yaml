@@ -3,7 +3,7 @@
 # note: update
 # https://github.com/rfhb/ctrdata/settings/secrets/actions/CACHE_VERSION
 
-on: [push, pull_request]
+on: [push, pull_request, workflow_dispatch]
 
 name: R-CMD-CHECK-ubuntu-postgresql-duckdb-mongodb-sqlite
 
