@@ -63,14 +63,17 @@ dbQueryHistory <- function(con, verbose = FALSE) {
       con$collection, "\": ", nrow(hist)
     )
 
-    # total number of records in collection to inform user
+    # total number of records in collection
+    # use fast queries for _id's only
     countall <- length(nodbi::docdb_query(
       src = con,
       key = con$collection,
-      query = '{"_id": {"$ne": "meta-info"}}',
+      query = '{}',
       fields = '{"_id": 1}'
     )[["_id"]])
+    countall <- countall[countall != "meta-info"]
 
+    # inform user
     message(
       "Number of records in collection \"",
       con$collection, "\": ", countall

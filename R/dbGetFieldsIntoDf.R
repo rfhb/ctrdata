@@ -87,8 +87,52 @@ dbGetFieldsIntoDf <- function(fields = "",
          call. = FALSE)
   }
 
-  ## check database connection
+  # check database connection
   if (is.null(con$ctrDb)) con <- ctrDb(con = con)
+
+  # get the data
+  dfi <- nodbi::docdb_query(
+    src = con,
+    key = con$collection,
+    query = '{}',
+    fields = paste0('{"', paste0(fields, collapse = '": 1, "'), '": 1}')
+  )
+
+  # iterate over columns
+  nm <- names(dfi)
+
+  # for date time conversion
+  lct <- Sys.getlocale("LC_TIME")
+  Sys.setlocale("LC_TIME", "C")
+  on.exit(Sys.setlocale("LC_TIME", lct), add = TRUE)
+
+  # type columns
+  for (i in seq_len(ncol(dfi))) {
+
+    # TODO
+    message("\n", nm[i], ": ", typeof(dfi[[i]]), " -> ", appendLF = FALSE)
+
+    # simplify and replace NULL with NA
+    dfi[[i]][!sapply(dfi[[i]], length)] <- NA
+
+    # type column
+    if (nm[i] == "_id") next
+    # TODO
+    # if (typeof(dfi[, i]) == "character")
+    dfi[[i]] <- typeField(dfi[[i]], nm[i])
+
+    # TODO
+    message(typeof(dfi[[i]]), appendLF = FALSE)
+
+  }
+
+  # return
+  if (any("tibble" == .packages())) return(tibble::as_tibble(dfi))
+  return(dfi)
+
+} # end dbGetFieldsIntoDf
+
+if (FALSE) {
 
   # get all ids to enable Reduce which would fail
   # due to holes from NULLs from the merge step
@@ -370,4 +414,3 @@ dbGetFieldsIntoDf <- function(fields = "",
   return(result)
 
 }
-# end dbGetFieldsIntoDf

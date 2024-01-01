@@ -370,7 +370,7 @@ ctrLoadQueryIntoDbCtis <- function(
   # get ids of trial applications
   jqr::jq(
     file(fPartIPartsIINdjson),
-    ' { ctNumber: .ctNumber, applicationIds: [ .applications[] | .id ] } ',
+    ' { ctNumber: .ctNumber, applicationIds: [ .applications[].id ] } ',
     flags = jqr::jq_flags(pretty = FALSE),
     out = fApplicationsJson
   )
@@ -456,7 +456,7 @@ ctrLoadQueryIntoDbCtis <- function(
   for (f in dir(path = tempDir, pattern = "^ctis_add_[1-9]+[0-9]*.ndjson$", full.names = TRUE)) {
 
     message(". ", appendLF = FALSE)
-    res <- nodbi::docdb_update(src = con, key = con$collection, query = "", value = f)
+    res <- nodbi::docdb_update(src = con, key = con$collection, query = "{}", value = f)
     resAll <- c(resAll, res)
 
   }

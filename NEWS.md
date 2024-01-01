@@ -1,6 +1,13 @@
-# ctrdata 1.16.0.9000 (2023-11-24)
+# ctrdata 1.16.0.9000 (2024-01-01)
 
-New development version
+## Possibly breaking changes
+
+- Reimplemented `dbGetFieldsIntoDf()` to accelerate and for more predictable returns, in particular for nested fields
+- Reimplemented `dbFindFields()` to accelerate; both using improved `nodbi::docdb_query()` functionality
+- Reimplemented typing fields to speed up and simplify
+
+## Bug fixes
+
 
 # ctrdata 1.16.0 (released 2023-11-24)
 

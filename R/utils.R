@@ -63,6 +63,7 @@ typeVars <- list(
   "last_update_submitted"    = "ctrDateUs",
   "primary_completion_date"  = "ctrDateUs",
   "results_first_posted"     = "ctrDateUs",
+  "results_first_submitted_qc" = "ctrDateUs",
   "start_date"               = "ctrDateUs",
   "study_first_posted"       = "ctrDateUs",
   "verification_date"        = "ctrDateUs",
@@ -274,9 +275,169 @@ typeVars <- list(
   "results.biomedRelated"           = "ctrFalseTrue",
   #
   # - CTIS
+  "includesPaediatricSubjects" = "ctrFalseTrue",
   "hasDeferrallApplied" = "ctrFalseTrue",
   "hasAmendmentApplied" = "ctrFalseTrue",
+  #
+  "baselineCharacteristics.ageCategoricalCharacteristic.readyForValues" = "ctrFalseTrue",
+  "baselineCharacteristics.ageContinuousCharacteristic.readyForValues" = "ctrFalseTrue",
+  "baselineCharacteristics.genderCategoricalCharacteristic.readyForValues" = "ctrFalseTrue",
+  "baselineCharacteristics.studyCategoricalCharacteristics.studyCategoricalCharacteristic.readyForValues" = "ctrFalseTrue",
+  "endPoints.endPoint.readyForValues" = "ctrFalseTrue",
+  #
+  "trialChanges.hasGlobalAmendments" = "ctrFalseTrue",
+  "trialChanges.hasGlobalInterruptions" = "ctrFalseTrue",
+  "oversight_info.has_dmc" = "ctrFalseTrue",
+  "applications.ctMSCsByApplication.hasRecruitmentStarted" = "ctrFalseTrue",
+  "applications.ctMSCs.hasRecruitmentStarted" = "ctrFalseTrue",
+  "applications.eudraCtInfo.hasVhp" = "ctrFalseTrue",
+  "applications.partI.productRoleGroupInfos.products.hasDevice" = "ctrFalseTrue",
+  "applications.partI.products.hasDevice" = "ctrFalseTrue",
+  "applications.partI.trialDetails.associatedClinicalTrials.hasDocument" = "ctrFalseTrue",
+  "applications.partIIInfo.mscInfo.hasRecruitmentStarted" = "ctrFalseTrue",
+  "authorizedPartI.productRoleGroupInfos.products.hasDevice" = "ctrFalseTrue",
+  "authorizedPartI.products.hasDevice" = "ctrFalseTrue",
+  "authorizedPartI.trialDetails.associatedClinicalTrials.hasDocument" = "ctrFalseTrue",
+  "authorizedPartsII.mscInfo.hasRecruitmentStarted" = "ctrFalseTrue",
   "eudraCtInfo.hasVhp" = "ctrFalseTrue",
+  "memberStatesConcerned.hasRecruitmentStarted" = "ctrFalseTrue",
+  "publicEvaluation.partIIEvaluationList.partIIRfis.hasApplicationChanges" = "ctrFalseTrue",
+  "publicEvaluation.validationRfis.hasApplicationChanges" = "ctrFalseTrue",
+  "publicEvaluation.partIRfis.hasApplicationChanges" = "ctrFalseTrue",
+  "protocolSection.statusModule.expandedAccessInfo.hasExpandedAccess" = "ctrFalseTrue",
+  #
+  "trialInformation.isGlobalEndOfTrialReached" = "ctrFalseTrue",
+  "applications.ctMSCsByApplication.isProposedRms" = "ctrFalseTrue",
+  "applications.ctMSCsByApplication.organisationInfo.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.ctMSCs.isProposedRms" = "ctrFalseTrue",
+  "applications.ctMSCs.organisationInfo.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.eudraCtInfo.isTransitioned" = "ctrFalseTrue",
+  "applications.isDossierUpdate" = "ctrFalseTrue",
+  "applications.isMultiTrialSM" = "ctrFalseTrue",
+  "applications.partI.isEditable" = "ctrFalseTrue",
+  "applications.partI.isLowIntervention" = "ctrFalseTrue",
+  "applications.partI.medicalConditions.isConditionRareDisease" = "ctrFalseTrue",
+  "applications.partI.productRoleGroupInfos.products.isDraftUnauthProduct" = "ctrFalseTrue",
+  "applications.partI.productRoleGroupInfos.products.isPaediatricFormulation" = "ctrFalseTrue",
+  "applications.partI.productRoleGroupInfos.products.productDictionaryInfo.isSelectedInMultiTrialSM" = "ctrFalseTrue",
+  "applications.partI.products.isDraftUnauthProduct" = "ctrFalseTrue",
+  "applications.partI.products.isPaediatricFormulation" = "ctrFalseTrue",
+  "applications.partI.products.productDictionaryInfo.isSelectedInMultiTrialSM" = "ctrFalseTrue",
+  "applications.partI.sponsors.addresses.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.partI.sponsors.addresses.isCreate" = "ctrFalseTrue",
+  "applications.partI.sponsors.addresses.isSave" = "ctrFalseTrue",
+  "applications.partI.sponsors.addresses.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.partI.sponsors.contactPointForUnion.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.partI.sponsors.isCommercial" = "ctrFalseTrue",
+  "applications.partI.sponsors.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.partI.sponsors.publicContacts.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.partI.sponsors.scientificContacts.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.partI.sponsors.thirdParties.organisationAddress.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.partI.sponsors.thirdParties.organisationAddress.isCreate" = "ctrFalseTrue",
+  "applications.partI.sponsors.thirdParties.organisationAddress.isSave" = "ctrFalseTrue",
+  "applications.partI.sponsors.thirdParties.organisationAddress.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.partI.trialDetails.isClockStopRemovalRequested" = "ctrFalseTrue",
+  "applications.partI.trialDetails.trialInformation.endPoint.primaryEndPoints.isPrimary" = "ctrFalseTrue",
+  "applications.partI.trialDetails.trialInformation.endPoint.secondaryEndPoints.isPrimary" = "ctrFalseTrue",
+  "applications.partI.trialDetails.trialInformation.medicalCondition.meddraConditionTerms.isActive" = "ctrFalseTrue",
+  "applications.partI.trialDetails.trialInformation.medicalCondition.partIMedicalConditions.isConditionRareDisease" = "ctrFalseTrue",
+  "applications.partI.trialDetails.trialInformation.populationOfTrialSubjects.isFemaleSubjects" = "ctrFalseTrue",
+  "applications.partI.trialDetails.trialInformation.populationOfTrialSubjects.isMaleSubjects" = "ctrFalseTrue",
+  "applications.partI.trialDetails.trialInformation.populationOfTrialSubjects.isVulnerablePopulationSelected" = "ctrFalseTrue",
+  "applications.partI.trialDetails.trialInformation.trialCategory.isLowIntervention" = "ctrFalseTrue",
+  "applications.partIIInfo.isEditable" = "ctrFalseTrue",
+  "applications.partIIInfo.mscInfo.isProposedRms" = "ctrFalseTrue",
+  "applications.partIIInfo.mscInfo.organisationInfo.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.partIIInfo.trialSites.organisationAddressInfo.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.partIIInfo.trialSites.organisationAddressInfo.isCreate" = "ctrFalseTrue",
+  "applications.partIIInfo.trialSites.organisationAddressInfo.isSave" = "ctrFalseTrue",
+  "applications.partIIInfo.trialSites.organisationAddressInfo.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.primarySponsor.addresses.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.primarySponsor.addresses.isCreate" = "ctrFalseTrue",
+  "applications.primarySponsor.addresses.isSave" = "ctrFalseTrue",
+  "applications.primarySponsor.addresses.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.primarySponsor.contactPointForUnion.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.primarySponsor.isCommercial" = "ctrFalseTrue",
+  "applications.primarySponsor.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.primarySponsor.publicContacts.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.primarySponsor.scientificContacts.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.primarySponsor.thirdParties.organisationAddress.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.primarySponsor.thirdParties.organisationAddress.isCreate" = "ctrFalseTrue",
+  "applications.primarySponsor.thirdParties.organisationAddress.isSave" = "ctrFalseTrue",
+  "applications.primarySponsor.thirdParties.organisationAddress.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "authorizedPartI.isEditable" = "ctrFalseTrue",
+  "authorizedPartI.isLowIntervention" = "ctrFalseTrue",
+  "authorizedPartI.medicalConditions.isConditionRareDisease" = "ctrFalseTrue",
+  "authorizedPartI.productRoleGroupInfos.products.isDraftUnauthProduct" = "ctrFalseTrue",
+  "authorizedPartI.productRoleGroupInfos.products.isPaediatricFormulation" = "ctrFalseTrue",
+  "authorizedPartI.productRoleGroupInfos.products.productDictionaryInfo.isSelectedInMultiTrialSM" = "ctrFalseTrue",
+  "authorizedPartI.products.isDraftUnauthProduct" = "ctrFalseTrue",
+  "authorizedPartI.products.isPaediatricFormulation" = "ctrFalseTrue",
+  "authorizedPartI.products.productDictionaryInfo.isSelectedInMultiTrialSM" = "ctrFalseTrue",
+  "authorizedPartI.sponsors.addresses.isBusinessKeyValidated" = "ctrFalseTrue",
+  "authorizedPartI.sponsors.addresses.isCreate" = "ctrFalseTrue",
+  "authorizedPartI.sponsors.addresses.isSave" = "ctrFalseTrue",
+  "authorizedPartI.sponsors.addresses.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "authorizedPartI.sponsors.contactPointForUnion.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "authorizedPartI.sponsors.isCommercial" = "ctrFalseTrue",
+  "authorizedPartI.sponsors.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "authorizedPartI.sponsors.publicContacts.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "authorizedPartI.sponsors.scientificContacts.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "authorizedPartI.sponsors.thirdParties.organisationAddress.isBusinessKeyValidated" = "ctrFalseTrue",
+  "authorizedPartI.sponsors.thirdParties.organisationAddress.isCreate" = "ctrFalseTrue",
+  "authorizedPartI.sponsors.thirdParties.organisationAddress.isSave" = "ctrFalseTrue",
+  "authorizedPartI.sponsors.thirdParties.organisationAddress.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "authorizedPartI.trialDetails.isClockStopRemovalRequested" = "ctrFalseTrue",
+  "authorizedPartI.trialDetails.trialInformation.endPoint.primaryEndPoints.isPrimary" = "ctrFalseTrue",
+  "authorizedPartI.trialDetails.trialInformation.endPoint.secondaryEndPoints.isPrimary" = "ctrFalseTrue",
+  "authorizedPartI.trialDetails.trialInformation.medicalCondition.meddraConditionTerms.isActive" = "ctrFalseTrue",
+  "authorizedPartI.trialDetails.trialInformation.medicalCondition.partIMedicalConditions.isConditionRareDisease" = "ctrFalseTrue",
+  "authorizedPartI.trialDetails.trialInformation.populationOfTrialSubjects.isFemaleSubjects" = "ctrFalseTrue",
+  "authorizedPartI.trialDetails.trialInformation.populationOfTrialSubjects.isMaleSubjects" = "ctrFalseTrue",
+  "authorizedPartI.trialDetails.trialInformation.populationOfTrialSubjects.isVulnerablePopulationSelected" = "ctrFalseTrue",
+  "authorizedPartI.trialDetails.trialInformation.trialCategory.isLowIntervention" = "ctrFalseTrue",
+  "authorizedPartsII.isEditable" = "ctrFalseTrue",
+  "authorizedPartsII.mscInfo.isProposedRms" = "ctrFalseTrue",
+  "authorizedPartsII.mscInfo.organisationInfo.isBusinessKeyValidated" = "ctrFalseTrue",
+  "authorizedPartsII.trialSites.organisationAddressInfo.isBusinessKeyValidated" = "ctrFalseTrue",
+  "authorizedPartsII.trialSites.organisationAddressInfo.isCreate" = "ctrFalseTrue",
+  "authorizedPartsII.trialSites.organisationAddressInfo.isSave" = "ctrFalseTrue",
+  "authorizedPartsII.trialSites.organisationAddressInfo.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "coSponsors.addresses.isBusinessKeyValidated" = "ctrFalseTrue",
+  "coSponsors.addresses.isCreate" = "ctrFalseTrue",
+  "coSponsors.addresses.isSave" = "ctrFalseTrue",
+  "coSponsors.addresses.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "coSponsors.contactPointForUnion.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "coSponsors.isCommercial" = "ctrFalseTrue",
+  "coSponsors.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "coSponsors.publicContacts.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "coSponsors.scientificContacts.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "coSponsors.thirdParties.organisationAddress.isBusinessKeyValidated" = "ctrFalseTrue",
+  "coSponsors.thirdParties.organisationAddress.isCreate" = "ctrFalseTrue",
+  "coSponsors.thirdParties.organisationAddress.isSave" = "ctrFalseTrue",
+  "coSponsors.thirdParties.organisationAddress.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "memberStatesConcerned.isProposedRms" = "ctrFalseTrue",
+  "memberStatesConcerned.organisationInfo.isBusinessKeyValidated" = "ctrFalseTrue",
+  "mscTrialNotificationsInfoList.mscNotificationsListInfo.isBenefitRisckBalanceChange" = "ctrFalseTrue",
+  "mscTrialNotificationsInfoList.mscNotificationsListInfo.isPublished" = "ctrFalseTrue",
+  "primarySponsor.addresses.isBusinessKeyValidated" = "ctrFalseTrue",
+  "primarySponsor.addresses.isCreate" = "ctrFalseTrue",
+  "primarySponsor.addresses.isSave" = "ctrFalseTrue",
+  "primarySponsor.addresses.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "primarySponsor.contactPointForUnion.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "primarySponsor.isCommercial" = "ctrFalseTrue",
+  "primarySponsor.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "primarySponsor.publicContacts.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "primarySponsor.scientificContacts.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "publicEvaluation.partIIEvaluationList.partIIRfiConsiderations.rfiConsiderations.isDeConsolidated" = "ctrFalseTrue",
+  "publicEvaluation.partIIEvaluationList.partIIRfis.isDueInLessThanTwoDays" = "ctrFalseTrue",
+  "publicEvaluation.partIIEvaluationList.partIIRfis.isEditingApplication" = "ctrFalseTrue",
+  "publicEvaluation.validationRfiConsiderations.rfiConsiderations.isDeConsolidated" = "ctrFalseTrue",
+  "publicEvaluation.validationRfis.isDueInLessThanTwoDays" = "ctrFalseTrue",
+  "publicEvaluation.validationRfis.isEditingApplication" = "ctrFalseTrue",
+  "publicEvaluation.partIRfiConsiderations.rfiConsiderations.isDeConsolidated" = "ctrFalseTrue",
+  "publicEvaluation.partIRfis.isDueInLessThanTwoDays" = "ctrFalseTrue",
+  "publicEvaluation.partIRfis.isEditingApplication" = "ctrFalseTrue",
   #
   # numbers
   #
@@ -316,13 +477,39 @@ typeVars <- list(
   # - CTGOV
   "number_of_arms" = "ctrInt",
   "enrollment"     = "ctrInt",
+  "rank"           = "ctrInt",
   #
   # - ISRCTN
   "participants.targetEnrolment"     = "ctrInt",
   "participants.totalFinalEnrolment" = "ctrInt",
   #
   # - CTIS
-  "totalNumberEnrolled" = "ctrInt"
+  "totalNumberEnrolled"     = "ctrInt",
+  "totalPartIISubjectCount" = "ctrInt",
+  "authorizedPartI.rowSubjectCount" = "ctrInt",
+  "applications.mscExtendedInfoList.numberSubjects" = "ctrInt",
+  "applications.partIIInfo.recruitmentSubjectCount" = "ctrInt",
+  "applications.partI.rowSubjectCount" = "ctrInt",
+  "applications.ctMSCs.recruitmentSubjectCount" = "ctrInt",
+  "applications.ctMSCsByApplication.recruitmentSubjectCount" = "ctrInt",
+  #
+  "applications.partI.trialDetails.trialInformation.eligibilityCriteria.principalExclusionCriteria.number" = "ctrInt",
+  "applications.partI.trialDetails.trialInformation.eligibilityCriteria.principalInclusionCriteria.number" = "ctrInt",
+  "applications.partI.trialDetails.trialInformation.endPoint.primaryEndPoints.number" = "ctrInt",
+  "applications.partI.trialDetails.trialInformation.endPoint.secondaryEndPoints.number" = "ctrInt",
+  "applications.partI.trialDetails.trialInformation.trialObjective.secondaryObjectives.number" = "ctrInt",
+  "authorizedPartI.trialDetails.clinicalTrialIdentifiers.secondaryIdentifyingNumbers.additionalRegistries.number" = "ctrInt",
+  "authorizedPartI.trialDetails.clinicalTrialIdentifiers.secondaryIdentifyingNumbers.nctNumber.number" = "ctrInt",
+  "authorizedPartI.trialDetails.trialInformation.eligibilityCriteria.principalExclusionCriteria.number" = "ctrInt",
+  "authorizedPartI.trialDetails.trialInformation.eligibilityCriteria.principalInclusionCriteria.number" = "ctrInt",
+  "authorizedPartI.trialDetails.trialInformation.endPoint.primaryEndPoints.number" = "ctrInt",
+  "authorizedPartI.trialDetails.trialInformation.endPoint.secondaryEndPoints.number" = "ctrInt",
+  "authorizedPartI.trialDetails.trialInformation.trialObjective.secondaryObjectives.number" = "ctrInt",
+  #
+  # - CTGOV2
+  "protocolSection.designModule.enrollmentInfo.count" = "ctrInt",
+  "resultsSection.baselineCharacteristicsModule.denoms.counts.value" = "ctrInt",
+  "resultsSection.outcomeMeasuresModule.outcomeMeasures.denoms.counts.value" = "ctrInt"
   #
 )
 
@@ -406,16 +593,16 @@ ctrCache <- function(xname, xvalue = NULL, verbose = FALSE) {
   # write or overwrite and exit early
   if (!is.null(xvalue)) {
     assign(x = xname, value = xvalue, envir = .ctrdataenv)
-    if (verbose) message(" wrote ", xname, " to cache ")
+    if (verbose) message("- Wrote ", xname, " to cache ")
     return(xvalue)
   }
 
   # check and read any value for xname variable
-  if (verbose) message(" accessing cache...", appendLF = FALSE)
+  if (verbose) message("- Checking cache...")
   if (exists(x = xname, envir = .ctrdataenv)) {
     tmp <- try(get(x = xname, envir = .ctrdataenv), silent = TRUE)
     if (inherits(tmp, "try-error")) return(NULL)
-    if (verbose) message("\b\b\b, returning ", xname, " ", appendLF = FALSE)
+    if (verbose) message("- Returning ", xname, " ")
     return(tmp)
   }
 
@@ -565,135 +752,189 @@ ctrDb <- function(con) {
 #' @return a typed vector, same length as dv
 #'
 #' @importFrom xml2 xml_text read_html
-#' @importFrom lubridate duration
+#' @importFrom lubridate duration dyears dmonths ddays
 #'
 #' @keywords internal
 #' @noRd
 #'
 typeField <- function(dv, fn) {
 
-  # early exit if dv is not character
-  if (!is.atomic(dv)) return(dv)
+  # get function name
+  ft <- typeVars[[fn]]
 
-  # early exit if dv is not character
-  if (!all(class(dv) %in% "character")) return(dv)
+  # expand to function
+  if (!is.null(ft)) ft <- switch(
+    typeVars[[fn]],
+    "ctrInt" = 'as.integer(x = x)',
+    "ctrYesNo" = 'switch(x, "Yes" = TRUE, "No" = FALSE, NA)',
+    "ctrFalseTrue" = 'switch(x, "true" = TRUE, "false" = FALSE, NA)',
+    # "ctrDate" = 'as.Date(x, format = "%Y-%m-%d")',
+    # "ctrDateUs" = 'as.Date(x, format = "%b %e, %Y")',
+    # "ctrDateCtr" = 'as.Date(x, format = "%Y-%m-%d %H:%M:%S")',
+    # "ctrDateTime" = 'lubridate::ymd_hms(x)',
+    "ctrDate" = 'lubridate::ymd_hms(x)',
+    "ctrDateUs" = 'lubridate::as_format(x, format = "%b %e, %Y")',
+    "ctrDateCtr" = 'lubridate::ymd_hms(x)',
+    "ctrDateTime" = 'lubridate::ymd_hms(x)',
+    "ctrDifftimeDays" = 'lubridate::ddays(x = as.numeric(x))',
+    "ctrDifftimeMonths" = 'lubridate::dmonths(x = as.numeric(x))',
+    "ctrDifftimeYears" = 'lubridate::dyears(x = as.numeric(x))',
+    "ctrDifftime" = 'lubridate::duration(tolower(x)), units = "days")',
+    NULL
+  )
 
-  # clean up for all character vectors
-  # - if NA as string, change to NA
-  dv[grepl("^N/?A$|^ND$", dv)] <- NA
-  # - remove explanatory text before date
-  dv <- sub("^ClinicalTrials.gov processed this data on ", "", dv)
-  # - give Month Year also a Day to work with as.Date
-  dv <- sub("^([a-zA-Z]+) ([0-9]{4})$", "\\1 15, \\2", dv)
-  # - convert html entities because these had to
-  #   be left intact when converting to ndjson
-  htmlEnt <- grepl("&[#a-zA-Z]+;", dv)
-  if (any(htmlEnt)) dv[htmlEnt] <-
-    sapply(dv[htmlEnt], function(i)
-      xml2::xml_text(xml2::read_html(charToRaw(i))), USE.NAMES = FALSE)
-  # - convert newline
-  dv <- gsub("\r", "\n", dv)
+  # clean up text
+  if (is.null(ft) && all(sapply(dv, typeof) == "character")) {
 
-  # early exit if fn is not in typeVars
-  if (is.null(typeVars[[fn]])) return(dv)
+    # - if NA as string, change to NA
+    dv[grepl("^N/?A$|^ND$", dv)] <- NA
 
-  # for date time conversion
-  lct <- Sys.getlocale("LC_TIME")
+    # - check if any html entities
+    htmlEnt <- grepl("&[#a-zA-Z]+;", dv)
 
-  # main typing functions
-  ctrDate <- function() {
-    Sys.setlocale("LC_TIME", "C")
-    on.exit(Sys.setlocale("LC_TIME", lct), add = TRUE)
-    as.Date(dv, format = "%Y-%m-%d")
-  }
-  #
-  ctrDateUs <- function() {
-    Sys.setlocale("LC_TIME", "C")
-    on.exit(Sys.setlocale("LC_TIME", lct), add = TRUE)
-    as.Date(dv, format = "%b %e, %Y")
-  }
-  #
-  ctrDateCtr <- function() {
-    Sys.setlocale("LC_TIME", "C")
-    on.exit(Sys.setlocale("LC_TIME", lct), add = TRUE)
-    as.Date(dv, format = "%Y-%m-%d %H:%M:%S")
-  }
-  #
-  ctrDateTime <- function() {
-    Sys.setlocale("LC_TIME", "C")
-    on.exit(Sys.setlocale("LC_TIME", lct), add = TRUE)
-    as.Date(dv, format = "%Y-%m-%dT%H:%M:%S")
-  }
-  #
-  ctrYesNo <- function() {
-    vapply(dv, FUN = function(x)
-      switch(x, "Yes" = TRUE, "No" = FALSE, NA),
-      logical(1L), USE.NAMES = FALSE)
-  }
-  #
-  ctrFalseTrue <- function() {
-    vapply(dv, FUN = function(x)
-      switch(x, "true" = TRUE, "false" = FALSE, NA),
-      logical(1L), USE.NAMES = FALSE)
-  }
-  #
-  ctrInt       <- function() {
-    vapply(dv, FUN = function(x)
-      as.integer(x = x), integer(1L),
-      USE.NAMES = FALSE)
-  }
-  #
-  ctrDifftime   <- function() {
-    out <- sapply(dv, FUN = function(x) {
-      if (is.na(x)) {NA} else {
-        as.numeric(
-          lubridate::duration(
-            tolower(x)
-          ), units = "days")
-      }
+    # - convert html entities because these had to
+    #   be left intact when converting to ndjson
+    if (any(htmlEnt)) dv[htmlEnt] <-
+      sapply(dv[htmlEnt], function(i)
+        xml2::xml_text(xml2::read_html(charToRaw(i))),
+        USE.NAMES = FALSE)
+
+    # - remove explanatory text before date
+    dv <- sapply(dv, function(x) {
+      x <- gsub("\r", "\n", x)
+      x <- sub("^ClinicalTrials.gov processed this data on ", "", x)
+      if (length(x) == 1L && is.na(x))
+        NA else paste0(x, collapse = " / ")
     }, USE.NAMES = FALSE)
-    as.difftime(out, units = "days")
+
+    # return
+    return(dv)
+
   }
+
+  # exit if no fn is found
+  if (is.null(ft) || any(sapply(dv, typeof) != "character")) return(dv)
+
+  # apply typing function, returning
+  # if possible a vector over list
+  dv <- lapply(dv, function(x) {
+
+    # - give Month Year also a Day to work with as.Date
+    if (grepl("Date", fn)) x <-
+        sub("^([a-zA-Z]+) ([0-9]{4})$", "\\1 15, \\2", x)
+
+    # - apply function
+    eval(parse(text = ft))
+
+  })
+
+  if (all(sapply(dv, length) <= 1L)) {
+    return(do.call("c", dv))}
+
+  return(dv)
+
+
+  # # early exit if fn is not in typeVars
+  # if (is.null(typeVars[[fn]])) return(dv)
   #
-  ctrDifftimeDays   <- function() {
-    lubridate::ddays(x = as.numeric(dv))
-  }
+  # # for date time conversion
+  # lct <- Sys.getlocale("LC_TIME")
   #
-  ctrDifftimeMonths   <- function() {
-    lubridate::dmonths(x = as.numeric(dv))
-  }
+  # # main typing functions
+  # ctrDate <- function() {
+  #   Sys.setlocale("LC_TIME", "C")
+  #   on.exit(Sys.setlocale("LC_TIME", lct), add = TRUE)
+  #   # as.Date(dv, format = "%Y-%m-%d")
+  #   lapply(dv, function(i) as.Date(i, format = "%Y-%m-%d"))
+  # }
+  # #
+  # ctrDateUs <- function() {
+  #   Sys.setlocale("LC_TIME", "C")
+  #   on.exit(Sys.setlocale("LC_TIME", lct), add = TRUE)
+  #   as.Date(dv, format = "%b %e, %Y")
+  # }
+  # #
+  # ctrDateCtr <- function() {
+  #   Sys.setlocale("LC_TIME", "C")
+  #   on.exit(Sys.setlocale("LC_TIME", lct), add = TRUE)
+  #   as.Date(dv, format = "%Y-%m-%d %H:%M:%S")
+  # }
+  # #
+  # ctrDateTime <- function() {
+  #   Sys.setlocale("LC_TIME", "C")
+  #   on.exit(Sys.setlocale("LC_TIME", lct), add = TRUE)
+  #   as.Date(dv, format = "%Y-%m-%dT%H:%M:%S")
+  # }
+  # #
+  # ctrYesNo <- function() {
+  #   vapply(dv, FUN = function(x)
+  #     switch(x, "Yes" = TRUE, "No" = FALSE, NA),
+  #     logical(1L), USE.NAMES = FALSE)
+  # }
+  # #
+  # ctrFalseTrue <- function() {
+  #   vapply(dv, FUN = function(x)
+  #     switch(x, "true" = TRUE, "false" = FALSE, NA),
+  #     logical(1L), USE.NAMES = FALSE)
+  # }
+  # #
+  # ctrInt       <- function() {
+  #   vapply(dv, FUN = function(x)
+  #     as.integer(x = x), integer(1L),
+  #     USE.NAMES = FALSE)
+  # }
+  # #
+  # ctrDifftime   <- function() {
+  #   out <- sapply(dv, FUN = function(x) {
+  #     if (is.na(x)) {NA} else {
+  #       as.numeric(
+  #         lubridate::duration(
+  #           tolower(x)
+  #         ), units = "days")
+  #     }
+  #   }, USE.NAMES = FALSE)
+  #   as.difftime(out, units = "days")
+  # }
+  # #
+  # ctrDifftimeDays   <- function() {
+  #   lubridate::ddays(x = as.numeric(dv))
+  # }
+  # #
+  # ctrDifftimeMonths   <- function() {
+  #   lubridate::dmonths(x = as.numeric(dv))
+  # }
+  # #
+  # ctrDifftimeYears   <- function() {
+  #   lubridate::dyears(x = as.numeric(dv))
+  # }
+
+  # ## apply typing
+  # ldv <- length(dv)
+  # if (any(grepl(" / ", dv))) {
   #
-  ctrDifftimeYears   <- function() {
-    lubridate::dyears(x = as.numeric(dv))
-  }
+  #   # if any concatenations, apply typing per concatenated
+  #   # item and return list per item. note that dv has to be
+  #   # overwritten in outer environment for typeVars to work
+  #   out <- lapply(dv, function(r)  {
+  #     dv <<- strsplit(r, " / ", fixed = TRUE)[[1]]
+  #     try(do.call(typeVars[[fn]], list()), silent = TRUE)
+  #   })
+  #
+  # } else {
+  #
+  #   # apply typing function with its specified type
+  #   out <- try(do.call(typeVars[[fn]], list()), silent = TRUE)
+  #
+  # }
 
-  ## apply typing
-  ldv <- length(dv)
-  if (any(grepl(" / ", dv))) {
-
-    # if any concatenations, apply typing per concatenated
-    # item and return list per item. note that dv has to be
-    # overwritten in outer environment for typeVars to work
-    out <- lapply(dv, function(r)  {
-      dv <<- strsplit(r, " / ", fixed = TRUE)[[1]]
-      try(do.call(typeVars[[fn]], list()), silent = TRUE)
-    })
-
-  } else {
-
-    # apply typing function with its specified type
-    out <- try(do.call(typeVars[[fn]], list()), silent = TRUE)
-
-  }
-
-  # error output
-  if (any(sapply(out, function(r) inherits(r, "try-error"))) ||
-      length(out) != ldv) {
-    out <- rep.int(x = NA, times = ldv)
-  }
+  # # error output
+  # if (any(sapply(out, function(r) inherits(r, "try-error"))) ||
+  #     length(out) != ldv) {
+  #   out <- rep.int(x = NA, times = ldv)
+  # }
 
   # return
-  return(out)
+  # return(out)
 
 } # end typeField
 
