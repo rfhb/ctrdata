@@ -63,10 +63,8 @@ dbGetFieldsIntoDf
 dbGetVariablesIntoDf
 dbMergeTwoVariablesRelevel
 dbQueryHistory
-deduplicate
 deduplicated
 deduplication
-detaul
 df
 dfFindIdsUniqueEuctrRecord
 dfFindIdsUniqueEuctrRecords
@@ -77,6 +75,7 @@ dfName
 dfTrials
 difftime
 docdb
+doi
 dplyr
 duckdb
 endPoint
@@ -84,7 +83,8 @@ endPoints
 etc
 euctr
 euctrresultsfilespath
-eudract
+eudraCTNumber
+externalRefs
 faciliates
 findCTRkey
 firstreceived

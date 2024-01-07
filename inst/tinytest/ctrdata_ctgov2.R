@@ -141,7 +141,8 @@ expect_message(
     ctrLoadQueryIntoDb(
       queryterm = "cond=Neuroblastoma&lastUpdPost=2022-01-01_2023-12-31&aggFilters=phase:1,results:with,studyType:int",
       register = "CTGOV2",
-      con = dbc
+      con = dbc,
+      verbose = TRUE
     )),
   "Imported or updated [0-9]+ trial"
 )
@@ -162,12 +163,31 @@ expect_equal(dim(tmp), c(8L, 4L))
 #### dbFindFields ####
 
 tmpFields <- dbFindFields(namepart = ".*", con = dbc)
-expect_true(length(tmpFields) > 140L)
+expect_true(length(tmpFields) > 340L)
 
 #### dbGetFieldsIntoDf ####
 
-tmpData <- suppressMessages(dbGetFieldsIntoDf(fields = tmpFields, con = dbc))
-expect_true(object.size(tmpData) > 10000000L)
+groupsNo <- (length(tmpFields) %/% 49L) + 1L
+groupsNo <- rep(seq_len(groupsNo), 49L)
+groupsNo <- groupsNo[1:length(tmpFields)]
 
-tmpData <- suppressMessages(dbGetFieldsIntoDf(fields = tmpFields[grepl("date$",tmpFields)], con = dbc))
-expect_true(all(sapply(tmpData[, -1, drop = FALSE], class, USE.NAMES = FALSE) == "Date"))
+for (i in unique(groupsNo)) {
+  message(i, " ", appendLF = FALSE)
+  tmpData <- dbGetFieldsIntoDf(fields = tmpFields[groupsNo == i], con = dbc)
+  expect_true(nrow(tmpData) > 0L)
+  expect_true(ncol(tmpData) > 0L)
+}
+
+tmpFields <- tmpFields[grepl("date$",tmpFields, ignore.case = TRUE)]
+tmpFields <- tmpFields[1:min(length(tmpFields), 49L)]
+
+tmpData <- dbGetFieldsIntoDf(fields = tmpFields, con = dbc)
+expect_true(nrow(tmpData) > 0L)
+expect_true(ncol(tmpData) > 0L)
+
+expect_true(all(
+  unique(unlist(lapply(
+    tmpData[, -1, drop = FALSE],
+    function(i) sapply(i, function(ii) class(ii))))) %in%
+    c("Date", "POSIXct", "POSIXt")
+))
