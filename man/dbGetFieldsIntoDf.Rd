@@ -4,7 +4,7 @@
 \alias{dbGetFieldsIntoDf}
 \title{Create data frame of specified fields from database collection}
 \usage{
-dbGetFieldsIntoDf(fields = "", con, verbose = FALSE, stopifnodata = TRUE, ...)
+dbGetFieldsIntoDf(fields = "", con, verbose = FALSE, ...)
 }
 \arguments{
 \item{fields}{Vector of one or more strings, with names of sought fields.
@@ -18,6 +18,8 @@ Dot path notation ("field.subfield") without indices is supported.}
 
 \item{verbose}{Printing additional information if set to \code{TRUE};
 (default \code{FALSE}).}
+
+\item{...}{Do not use (captures deprecated parameter \code{stopifnodata})}
 }
 \value{
 A data frame (or tibble, if \code{tibble} is loaded)

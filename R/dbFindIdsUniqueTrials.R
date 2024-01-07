@@ -137,8 +137,7 @@ dbFindIdsUniqueTrials <- function(
                 dbGetFieldsIntoDf(
                     fields = fields,
                     con = con,
-                    verbose = FALSE,
-                    stopifnodata = FALSE
+                    verbose = FALSE
                 )
             )),
             silent = TRUE

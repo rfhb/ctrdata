@@ -28,6 +28,8 @@
 #'
 #' @inheritParams ctrDb
 #'
+#' @param ... Do not use (captures deprecated parameter \code{stopifnodata})
+#'
 #' @return A data frame (or tibble, if \code{tibble} is loaded)
 #' with columns corresponding to the sought fields.
 #' A column for the records' `_id` will always be included.
@@ -59,8 +61,7 @@
 #'   con = dbc)
 #'
 dbGetFieldsIntoDf <- function(fields = "",
-                              con, verbose = FALSE,
-                              stopifnodata = TRUE, ...) {
+                              con, verbose = FALSE, ...) {
 
   # check fields
   if (!is.vector(fields) ||

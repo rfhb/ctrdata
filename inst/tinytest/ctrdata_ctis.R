@@ -208,9 +208,6 @@ for (i in unique(groupsNo)) {
   ))
 }
 
-devtools::load_all()
-clipr::write_clip(paste0('"', sort(tmpFields), '" = "ctrDate",\n'))
-
 #### dbFindIdsUniqueTrials ####
 
 expect_message(
