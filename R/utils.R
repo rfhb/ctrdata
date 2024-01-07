@@ -1562,7 +1562,7 @@ dbCTRAnnotateQueryRecords <- function(
     src = con,
     key = con$collection,
     value = annotations,
-    query = "")
+    query = "{}")
 
   # inform user
   message("= Annotated retrieved records (", result, " records)")
@@ -1608,7 +1608,8 @@ dbCTRUpdateQueryHistory <- function(
 
   # append current search
   # default for format methods is "%Y-%m-%d %H:%M:%S"
-  if (nrow(hist)) {
+  if (!is.null(hist) &&
+      nrow(hist)) {
 
     newHist <- rbind(hist, newHist)
     newHist <- list("queries" = newHist)
