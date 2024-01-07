@@ -69,8 +69,6 @@ jobs:
           remotes::install_cran(c("rcmdcheck", "covr"))
         shell: Rscript {0}
 
-      - uses: r-lib/actions/setup-pandoc@v1
-
       # - uses: ankane/setup-postgres@v1
       #   with:
       #     postgres-version: 14

@@ -39,6 +39,8 @@ jobs:
         with:
           r-version: ${{ matrix.config.r }}
 
+      - uses: r-lib/actions/setup-pandoc@v2
+
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           cache-version: 2
@@ -47,10 +49,8 @@ jobs:
       - name: Install dependencies
         run: |
           remotes::install_github(repo = "ropensci/nodbi", ref = "reimplementation_end_2023")
-          remotes::install_deps(pkgdir = ".", dependencies = TRUE)
+          remotes::install_deps(dependencies = TRUE)
         shell: Rscript {0}
-
-      - uses: r-lib/actions/setup-pandoc@v2
 
       - name: Install xclip for checks and other dependencies
         run: sudo apt-get install -y xclip libjq-dev
