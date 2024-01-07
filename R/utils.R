@@ -36,18 +36,19 @@ typeVars <- list(
   # dates
   #
   # - ctrdata intern
-  "record_last_import" = "ctrDateCtr",
+  "record_last_import" = "ctrDate",
   #
   # - EUCTR
   "n_date_of_competent_authority_decision" = "ctrDate",
   "n_date_of_ethics_committee_opinion"     = "ctrDate",
   "p_date_of_the_global_end_of_the_trial"  = "ctrDate",
   "firstreceived_results_date"             = "ctrDate",
-  "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database" = "ctrDate",
   "trialInformation.primaryCompletionDate" = "ctrDate",
-  "trialInformation.analysisStageDate"     = "ctrDateTime",
-  "trialInformation.globalEndOfTrialDate"  = "ctrDateTime",
-  "trialInformation.recruitmentStartDate"  = "ctrDateTime",
+  "trialInformation.analysisStageDate"     = "ctrDate",
+  "trialInformation.globalEndOfTrialDate"  = "ctrDate",
+  "trialInformation.recruitmentStartDate"  = "ctrDate",
+  "trialChanges.globalAmendments.globalAmendment.date" = "ctrDate",
+  "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database" = "ctrDate",
   #
   "e891_in_the_member_state_concerned_days"   = "ctrDifftimeDays",
   "e891_in_the_member_state_concerned_months" = "ctrDifftimeMonths",
@@ -57,27 +58,43 @@ typeVars <- list(
   "e892_in_all_countries_concerned_by_the_trial_years"  = "ctrDifftimeYears",
   #
   # - CTGOV
-  "completion_date"          = "ctrDateUs",
-  "last_update_posted"       = "ctrDateUs",
-  "last_update_submitted_qc" = "ctrDateUs",
-  "last_update_submitted"    = "ctrDateUs",
-  "primary_completion_date"  = "ctrDateUs",
-  "results_first_posted"     = "ctrDateUs",
-  "results_first_submitted_qc" = "ctrDateUs",
-  "start_date"               = "ctrDateUs",
-  "study_first_posted"       = "ctrDateUs",
-  "verification_date"        = "ctrDateUs",
+  "completion_date"            = "ctrDateUs",
+  "eligibility.minimum_age"    = "ctrDifftime",
+  "eligibility.maximum_age"    = "ctrDifftime",
+  "last_update_posted"         = "ctrDateUs",
+  "last_update_submitted_qc"   = "ctrDateUs",
+  "last_update_submitted"      = "ctrDateUs",
+  "primary_completion_date"    = "ctrDateUs",
+  "provided_document_section.provided_document.document_date" = "ctrDateUs",
   "required_header.download_date" = "ctrDateUs",
-  "eligibility.minimum_age" = "ctrDifftime",
-  "eligibility.maximum_age" = "ctrDifftime",
+  "results_first_posted"       = "ctrDateUs",
+  "results_first_submitted_qc" = "ctrDateUs",
+  "start_date"                 = "ctrDateUs",
+  "this_results_date"          = "ctrDateUs",
+  "study_first_posted"         = "ctrDateUs",
+  "verification_date"          = "ctrDateUs",
   #
   # - CTGOV2
+  "annotationSection.annotationModule.unpostedAnnotation.unpostedEvents.date" = "ctrDate",
+  "derivedSection.miscInfoModule.submissionTracking.estimatedResultsFirstSubmitDate"  = "ctrDate",
+  "derivedSection.miscInfoModule.submissionTracking.firstMcpInfo.postDateStruct.date" = "ctrDate",
+  "derivedSection.miscInfoModule.submissionTracking.submissionInfos.releaseDate"   = "ctrDate",
+  "derivedSection.miscInfoModule.submissionTracking.submissionInfos.resetDate"     = "ctrDate",
+  "derivedSection.miscInfoModule.submissionTracking.submissionInfos.unreleaseDate" = "ctrDate",
+  "documentSection.largeDocumentModule.largeDocs.date"            = "ctrDate",
+  "documentSection.largeDocumentModule.largeDocs.uploadDate"      = "ctrDate",
   "protocolSection.statusModule.completionDateStruct.date"        = "ctrDate",
   "protocolSection.statusModule.lastUpdatePostDateStruct.date"    = "ctrDate",
   "protocolSection.statusModule.lastUpdateSubmitDate"             = "ctrDate",
   "protocolSection.statusModule.primaryCompletionDateStruct.date" = "ctrDate",
+  "protocolSection.statusModule.resultsFirstPostDateStruct.date"  = "ctrDate",
+  "protocolSection.statusModule.resultsFirstSubmitQcDate"         = "ctrDate",
+  "protocolSection.statusModule.resultsFirstSubmitDate"           = "ctrDate",
   "protocolSection.statusModule.startDateStruct.date"             = "ctrDate",
+  "protocolSection.statusModule.statusVerifiedDate"               = "ctrDate",
   "protocolSection.statusModule.studyFirstPostDateStruct.date"    = "ctrDate",
+  "protocolSection.statusModule.studyFirstSubmitDate"             = "ctrDate",
+  "protocolSection.statusModule.studyFirstSubmitQcDate"           = "ctrDate",
   #
   # - ISRCTN
   "participants.recruitmentStart" = "ctrDateTime",
@@ -87,33 +104,95 @@ typeVars <- list(
   #
   # - CTIS
   "applications.ctMSCs.activeTrialPeriod.fromDate" = "ctrDate",
+  "applications.ctMSCs.activeTrialPeriod.trialEndDate" = "ctrDate",
   "applications.ctMSCs.activeTrialPeriod.trialStartDate" = "ctrDate",
+  "applications.ctMSCs.activeTrialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "applications.ctMSCs.activeTrialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
+  "applications.ctMSCs.clinicalTrialStatusHistory.trialStatusDate" = "ctrDate",
   "applications.ctMSCs.firstDecisionDate" = "ctrDate",
   "applications.ctMSCs.fromDate" = "ctrDate",
+  "applications.ctMSCs.temporaryHaltDate" = "ctrDate",
   "applications.ctMSCs.toDate" = "ctrDate",
   "applications.ctMSCs.trialPeriod.fromDate" = "ctrDate",
+  "applications.ctMSCs.trialPeriod.trialEndDate" = "ctrDate",
   "applications.ctMSCs.trialPeriod.trialStartDate" = "ctrDate",
+  "applications.ctMSCs.trialRecruitmentPeriod.fromDate" = "ctrDate",
+  "applications.ctMSCs.trialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "applications.ctMSCs.trialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
+  "applications.ctMSCsByApplication.activeTrialPeriod.fromDate" = "ctrDate",
+  "applications.ctMSCsByApplication.activeTrialPeriod.trialEndDate" = "ctrDate",
+  "applications.ctMSCsByApplication.activeTrialPeriod.trialStartDate" = "ctrDate",
+  "applications.ctMSCsByApplication.activeTrialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "applications.ctMSCsByApplication.activeTrialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
+  "applications.ctMSCsByApplication.clinicalTrialStatusHistory.trialStatusDate" = "ctrDate",
+  "applications.ctMSCsByApplication.firstDecisionDate" = "ctrDate",
   "applications.ctMSCsByApplication.fromDate" = "ctrDate",
+  "applications.ctMSCsByApplication.rmsNotWillingDate" = "ctrDate",
+  "applications.ctMSCsByApplication.rmsWillingDate" = "ctrDate",
+  "applications.ctMSCsByApplication.temporaryHaltDate" = "ctrDate",
   "applications.ctMSCsByApplication.toDate" = "ctrDate",
+  "applications.ctMSCsByApplication.trialPeriod.fromDate" = "ctrDate",
+  "applications.ctMSCsByApplication.trialPeriod.trialEndDate" = "ctrDate",
+  "applications.ctMSCsByApplication.trialPeriod.trialStartDate" = "ctrDate",
+  "applications.ctMSCsByApplication.trialRecruitmentPeriod.fromDate" = "ctrDate",
+  "applications.ctMSCsByApplication.trialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "applications.ctMSCsByApplication.trialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
   "applications.decisionDate" = "ctrDate",
-  "applications.isDossierUpdate" = "ctrDate",
   "applications.partI.assessmentOutcomeDate" = "ctrDate",
   "applications.partI.conclusionDate" = "ctrDate",
+  "applications.partI.productRoleGroupInfos.linkedProducts.startDate" = "ctrDate",
+  "applications.partI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialPeriod.fromDate" = "ctrDate",
+  "applications.partI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialPeriod.trialStartDate" = "ctrDate",
+  "applications.partI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "applications.partI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
+  "applications.partI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.clinicalTrialStatusHistory.trialStatusDate" = "ctrDate",
+  "applications.partI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.firstDecisionDate" = "ctrDate",
+  "applications.partI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.fromDate" = "ctrDate",
+  "applications.partI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.toDate" = "ctrDate",
+  "applications.partI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialPeriod.fromDate" = "ctrDate",
+  "applications.partI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialPeriod.trialStartDate" = "ctrDate",
+  "applications.partI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialRecruitmentPeriod.fromDate" = "ctrDate",
+  "applications.partI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "applications.partI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
   "applications.partI.productRoleGroupInfos.products.startDate" = "ctrDate",
+  "applications.partI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialPeriod.fromDate" = "ctrDate",
+  "applications.partI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialPeriod.trialStartDate" = "ctrDate",
+  "applications.partI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "applications.partI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
+  "applications.partI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.clinicalTrialStatusHistory.trialStatusDate" = "ctrDate",
+  "applications.partI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.firstDecisionDate" = "ctrDate",
+  "applications.partI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.fromDate" = "ctrDate",
+  "applications.partI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.toDate" = "ctrDate",
+  "applications.partI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialPeriod.fromDate" = "ctrDate",
+  "applications.partI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialPeriod.trialStartDate" = "ctrDate",
+  "applications.partI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialRecruitmentPeriod.fromDate" = "ctrDate",
+  "applications.partI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "applications.partI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
   "applications.partI.products.startDate" = "ctrDate",
   "applications.partI.sponsors.fromDate" = "ctrDate",
   "applications.partI.submissionDate" = "ctrDate",
   "applications.partI.trialDetails.trialInformation.trialDuration.estimatedEndDate" = "ctrDate",
+  "applications.partI.trialDetails.trialInformation.trialDuration.estimatedGlobalEndDate" = "ctrDate",
   "applications.partI.trialDetails.trialInformation.trialDuration.estimatedRecruitmentStartDate" = "ctrDate",
   "applications.partIIInfo.applicationStatusDate" = "ctrDate",
   "applications.partIIInfo.conclusionDate" = "ctrDate",
+  "applications.partIIInfo.lapsedDate" = "ctrDate",
   "applications.partIIInfo.mscInfo.activeTrialPeriod.fromDate" = "ctrDate",
+  "applications.partIIInfo.mscInfo.activeTrialPeriod.trialEndDate" = "ctrDate",
   "applications.partIIInfo.mscInfo.activeTrialPeriod.trialStartDate" = "ctrDate",
+  "applications.partIIInfo.mscInfo.activeTrialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "applications.partIIInfo.mscInfo.activeTrialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
+  "applications.partIIInfo.mscInfo.clinicalTrialStatusHistory.trialStatusDate" = "ctrDate",
   "applications.partIIInfo.mscInfo.firstDecisionDate" = "ctrDate",
   "applications.partIIInfo.mscInfo.fromDate" = "ctrDate",
+  "applications.partIIInfo.mscInfo.temporaryHaltDate" = "ctrDate",
   "applications.partIIInfo.mscInfo.toDate" = "ctrDate",
   "applications.partIIInfo.mscInfo.trialPeriod.fromDate" = "ctrDate",
+  "applications.partIIInfo.mscInfo.trialPeriod.trialEndDate" = "ctrDate",
   "applications.partIIInfo.mscInfo.trialPeriod.trialStartDate" = "ctrDate",
+  "applications.partIIInfo.mscInfo.trialRecruitmentPeriod.fromDate" = "ctrDate",
+  "applications.partIIInfo.mscInfo.trialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "applications.partIIInfo.mscInfo.trialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
   "applications.partIIInfo.submissionDate" = "ctrDate",
   "applications.primarySponsor.fromDate" = "ctrDate",
   "applications.reportingDate" = "ctrDate",
@@ -122,32 +201,80 @@ typeVars <- list(
   "authorizationDate" = "ctrDate",
   "authorizedPartI.assessmentOutcomeDate" = "ctrDate",
   "authorizedPartI.conclusionDate" = "ctrDate",
+  "authorizedPartI.productRoleGroupInfos.linkedProducts.startDate" = "ctrDate",
+  "authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialPeriod.fromDate" = "ctrDate",
+  "authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialPeriod.trialStartDate" = "ctrDate",
+  "authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
+  "authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.clinicalTrialStatusHistory.trialStatusDate" = "ctrDate",
+  "authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.firstDecisionDate" = "ctrDate",
+  "authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.fromDate" = "ctrDate",
+  "authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.toDate" = "ctrDate",
+  "authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialPeriod.fromDate" = "ctrDate",
+  "authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialPeriod.trialStartDate" = "ctrDate",
+  "authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialRecruitmentPeriod.fromDate" = "ctrDate",
+  "authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
   "authorizedPartI.productRoleGroupInfos.products.startDate" = "ctrDate",
+  "authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialPeriod.fromDate" = "ctrDate",
+  "authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialPeriod.trialStartDate" = "ctrDate",
+  "authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
+  "authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.clinicalTrialStatusHistory.trialStatusDate" = "ctrDate",
+  "authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.firstDecisionDate" = "ctrDate",
+  "authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.fromDate" = "ctrDate",
+  "authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.toDate" = "ctrDate",
+  "authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialPeriod.fromDate" = "ctrDate",
+  "authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialPeriod.trialStartDate" = "ctrDate",
+  "authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialRecruitmentPeriod.fromDate" = "ctrDate",
+  "authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
   "authorizedPartI.products.startDate" = "ctrDate",
   "authorizedPartI.sponsors.fromDate" = "ctrDate",
   "authorizedPartI.submissionDate" = "ctrDate",
   "authorizedPartI.trialDetails.trialInformation.trialDuration.estimatedEndDate" = "ctrDate",
+  "authorizedPartI.trialDetails.trialInformation.trialDuration.estimatedGlobalEndDate" = "ctrDate",
   "authorizedPartI.trialDetails.trialInformation.trialDuration.estimatedRecruitmentStartDate" = "ctrDate",
   "authorizedPartsII.applicationStatusDate" = "ctrDate",
   "authorizedPartsII.conclusionDate" = "ctrDate",
   "authorizedPartsII.mscInfo.activeTrialPeriod.fromDate" = "ctrDate",
+  "authorizedPartsII.mscInfo.activeTrialPeriod.trialEndDate" = "ctrDate",
   "authorizedPartsII.mscInfo.activeTrialPeriod.trialStartDate" = "ctrDate",
+  "authorizedPartsII.mscInfo.activeTrialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "authorizedPartsII.mscInfo.activeTrialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
+  "authorizedPartsII.mscInfo.clinicalTrialStatusHistory.trialStatusDate" = "ctrDate",
   "authorizedPartsII.mscInfo.firstDecisionDate" = "ctrDate",
   "authorizedPartsII.mscInfo.fromDate" = "ctrDate",
+  "authorizedPartsII.mscInfo.temporaryHaltDate" = "ctrDate",
   "authorizedPartsII.mscInfo.toDate" = "ctrDate",
   "authorizedPartsII.mscInfo.trialPeriod.fromDate" = "ctrDate",
+  "authorizedPartsII.mscInfo.trialPeriod.trialEndDate" = "ctrDate",
   "authorizedPartsII.mscInfo.trialPeriod.trialStartDate" = "ctrDate",
+  "authorizedPartsII.mscInfo.trialRecruitmentPeriod.fromDate" = "ctrDate",
+  "authorizedPartsII.mscInfo.trialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "authorizedPartsII.mscInfo.trialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
+  "authorizedPartsII.mscInfo.trialRestartDate" = "ctrDate",
   "authorizedPartsII.submissionDate" = "ctrDate",
   "coSponsors.fromDate" = "ctrDate",
-  "decisionDate" = "ctrDate",
+  "eeaEndDate" = "ctrDate",
   "eeaStartDate" = "ctrDate",
   "memberStatesConcerned.activeTrialPeriod.fromDate" = "ctrDate",
+  "memberStatesConcerned.activeTrialPeriod.trialEndDate" = "ctrDate",
   "memberStatesConcerned.activeTrialPeriod.trialStartDate" = "ctrDate",
+  "memberStatesConcerned.activeTrialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "memberStatesConcerned.activeTrialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
+  "memberStatesConcerned.clinicalTrialStatusHistory.trialStatusDate" = "ctrDate",
   "memberStatesConcerned.firstDecisionDate" = "ctrDate",
   "memberStatesConcerned.fromDate" = "ctrDate",
+  "memberStatesConcerned.temporaryHaltDate" = "ctrDate",
   "memberStatesConcerned.toDate" = "ctrDate",
   "memberStatesConcerned.trialPeriod.fromDate" = "ctrDate",
+  "memberStatesConcerned.trialPeriod.trialEndDate" = "ctrDate",
   "memberStatesConcerned.trialPeriod.trialStartDate" = "ctrDate",
+  "memberStatesConcerned.trialRecruitmentPeriod.fromDate" = "ctrDate",
+  "memberStatesConcerned.trialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "memberStatesConcerned.trialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
+  "memberStatesConcerned.trialRestartDate" = "ctrDate",
   "mscTrialNotificationsInfoList.mscNotificationsListInfo.date" = "ctrDate",
   "mscTrialNotificationsInfoList.mscNotificationsListInfo.submitDate" = "ctrDate",
   "primarySponsor.fromDate" = "ctrDate",
@@ -177,8 +304,13 @@ typeVars <- list(
   "publicEvaluation.validationRfis.dueDate" = "ctrDate",
   "publicEvaluation.validationRfis.responseDate" = "ctrDate",
   "publicEvaluation.validationRfis.submissionDate" = "ctrDate",
-  "startDateEU" = "ctrDate",
+  "publicevents.temporaryHaltList.details.eventDate" = "ctrDate",
+  "publicevents.temporaryHaltList.details.plannedRestartDate" = "ctrDate",
+  "publicevents.temporaryHaltList.details.submissionDate" = "ctrDate",
+  "publicevents.temporaryHaltList.submissionDate" = "ctrDate",
   "submissionDate" = "ctrDate",
+  "summary.submissionDate" = "ctrDate",
+  "trialEndDate" = "ctrDate",
   "trialStartDate" = "ctrDate",
   #
   #
@@ -498,8 +630,6 @@ typeVars <- list(
   "applications.partI.trialDetails.trialInformation.endPoint.primaryEndPoints.number" = "ctrInt",
   "applications.partI.trialDetails.trialInformation.endPoint.secondaryEndPoints.number" = "ctrInt",
   "applications.partI.trialDetails.trialInformation.trialObjective.secondaryObjectives.number" = "ctrInt",
-  "authorizedPartI.trialDetails.clinicalTrialIdentifiers.secondaryIdentifyingNumbers.additionalRegistries.number" = "ctrInt",
-  "authorizedPartI.trialDetails.clinicalTrialIdentifiers.secondaryIdentifyingNumbers.nctNumber.number" = "ctrInt",
   "authorizedPartI.trialDetails.trialInformation.eligibilityCriteria.principalExclusionCriteria.number" = "ctrInt",
   "authorizedPartI.trialDetails.trialInformation.eligibilityCriteria.principalInclusionCriteria.number" = "ctrInt",
   "authorizedPartI.trialDetails.trialInformation.endPoint.primaryEndPoints.number" = "ctrInt",
@@ -752,7 +882,7 @@ ctrDb <- function(con) {
 #' @return a typed vector, same length as dv
 #'
 #' @importFrom xml2 xml_text read_html
-#' @importFrom lubridate duration dyears dmonths ddays
+#' @importFrom lubridate duration ymd_hms dyears dmonths ddays
 #'
 #' @keywords internal
 #' @noRd
@@ -766,25 +896,23 @@ typeField <- function(dv, fn) {
   if (!is.null(ft)) ft <- switch(
     typeVars[[fn]],
     "ctrInt" = 'as.integer(x = x)',
-    "ctrYesNo" = 'switch(x, "Yes" = TRUE, "No" = FALSE, NA)',
-    "ctrFalseTrue" = 'switch(x, "true" = TRUE, "false" = FALSE, NA)',
-    # "ctrDate" = 'as.Date(x, format = "%Y-%m-%d")',
-    # "ctrDateUs" = 'as.Date(x, format = "%b %e, %Y")',
-    # "ctrDateCtr" = 'as.Date(x, format = "%Y-%m-%d %H:%M:%S")',
-    # "ctrDateTime" = 'lubridate::ymd_hms(x)',
-    "ctrDate" = 'lubridate::ymd_hms(x)',
-    "ctrDateUs" = 'lubridate::as_format(x, format = "%b %e, %Y")',
-    "ctrDateCtr" = 'lubridate::ymd_hms(x)',
+    "ctrYesNo" = 'sapply(x, function(i) switch(i, "Yes" = TRUE, "No" = FALSE, NA))',
+    "ctrFalseTrue" = 'if (is.numeric(x)) as.logical(x) else
+       sapply(x, function(i) switch(i, "true" = TRUE, "false" = FALSE, NA))',
+    "ctrDate" = 'as.Date(x, tryFormats =
+       c("%Y-%m-%d", "%Y-%m", "%Y-%m-%d %H:%M:%S", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M:%S%z"))',
+    "ctrDateUs" = 'as.Date(x, tryFormats = c("%b %e, %Y", "%Y-%m-%d", "%Y-%m"))',
     "ctrDateTime" = 'lubridate::ymd_hms(x)',
+    "ctrDifftime" = 'as.difftime(as.numeric(lubridate::duration(
+       tolower(x)), units = "days"), units = "days")',
     "ctrDifftimeDays" = 'lubridate::ddays(x = as.numeric(x))',
     "ctrDifftimeMonths" = 'lubridate::dmonths(x = as.numeric(x))',
     "ctrDifftimeYears" = 'lubridate::dyears(x = as.numeric(x))',
-    "ctrDifftime" = 'lubridate::duration(tolower(x)), units = "days")',
     NULL
   )
 
   # clean up text
-  if (is.null(ft) && all(sapply(dv, typeof) == "character")) {
+  if (is.null(ft)) {
 
     # - if NA as string, change to NA
     dv[grepl("^N/?A$|^ND$", dv)] <- NA
@@ -794,147 +922,95 @@ typeField <- function(dv, fn) {
 
     # - convert html entities because these had to
     #   be left intact when converting to ndjson
-    if (any(htmlEnt)) dv[htmlEnt] <-
-      sapply(dv[htmlEnt], function(i)
-        xml2::xml_text(xml2::read_html(charToRaw(i))),
-        USE.NAMES = FALSE)
+    if (any(htmlEnt) && all(sapply(dv, typeof) == "character")) {
+      dv[htmlEnt] <-
+        sapply(dv[htmlEnt], function(i)
+          xml2::xml_text(xml2::read_html(
+            charToRaw(i))),
+          USE.NAMES = FALSE)
+    }
 
-    # - remove explanatory text before date
-    dv <- sapply(dv, function(x) {
-      x <- gsub("\r", "\n", x)
-      x <- sub("^ClinicalTrials.gov processed this data on ", "", x)
-      if (length(x) == 1L && is.na(x))
-        NA else paste0(x, collapse = " / ")
-    }, USE.NAMES = FALSE)
+    # - check if possible and convert to numeric
+    if (all(is.numeric(dv) | is.na(dv))) dv <- as.numeric(dv)
 
-    # return
+    # - collapse unless list structure is heterogenous
+    rowN1 <- sapply(dv, function(i) is.null(names(i)))
+    rowN2 <- sapply(names(rowN1), function(i) is.null(i))
+    rowType <- sapply(dv, function(i) typeof(unlist(i, recursive = FALSE)))
+    #
+    if (all(rowN1) &&
+        all(rowN2) &&
+        length(unique(rowN1)) <= 1L &&
+        any(rowType == "character")) {
+      #
+      dv <- sapply(dv, function(i) {
+        i <- gsub("\r", "\n", i)
+        i <- sub("^Information not present in EudraCT", "", i)
+        if (length(i) > 1L) {
+          rowI <- paste0(i[!is.na(i)], collapse = " / ")
+          if (nchar(rowI)) rowI else NA
+        } else if (length(i) && !is.na(i)) i else NA
+      })
+    }
+
+    # early return
     return(dv)
 
   }
 
-  # exit if no fn is found
-  if (is.null(ft) || any(sapply(dv, typeof) != "character")) return(dv)
+  # early exit if already date or logical
+  if (all(sapply(dv, class) %in%
+          c("logical", "Date", "POSIXct", "POSIXt"))) return(dv)
+
+  # record length of input dv for NULL handling
+  lenDv <- length(dv)
 
   # apply typing function, returning
   # if possible a vector over list
-  dv <- lapply(dv, function(x) {
+  tryCatch(
+    expr = {
+      dv <- lapply(dv, function(x) {
+        # - text mangling
+        x <- ifelse(grepl("Information not present in EudraCT", x), NA, x)
+        # - give Month Year a Day to allow conversion
+        if (grepl("date", fn, ignore.case = TRUE)) {
+          x <- sub("^ClinicalTrials.gov processed this data on ", "", x)
+          x <- sub("^([a-zA-Z]+) ([0-9]{4})$", "\\1 15, \\2", x)
+          x <- sub("^([0-9]{4}-[0-9]{2})$", "\\1-15", x)
+        }
+        # - apply function to x
+        eval(parse(text = ft))
+      })
+    },
+    error = function(e) {
+      message(fn, ": returning untyped values, as ",
+              ft, " raised an error when applied to ",
+              paste0(unlist(dv), collapse = " / "))
+      return(dv)
+    },
+    warning = function(w) {
+      message(fn, ": returning untyped values, as ",
+              ft, " raised a warning when applied to ",
+              paste0(unlist(dv), collapse = " / "))
+      return(dv)
+    }
+  )
 
-    # - give Month Year also a Day to work with as.Date
-    if (grepl("Date", fn)) x <-
-        sub("^([a-zA-Z]+) ([0-9]{4})$", "\\1 15, \\2", x)
+  # exceptional case inform user
+  if (is.null(dv)) {
+    warning(paste0(
+      fn, " could not be typed, please report here: ",
+      "https://github.com/rfhb/ctrdata/issues"))
+    dv <- rep_len(NA, lenDv)
+  }
 
-    # - apply function
-    eval(parse(text = ft))
-
-  })
-
+  # make original classes (e.g., Date) reappear
+  if (!is.list(dv)) dv <- as.list(dv)
   if (all(sapply(dv, length) <= 1L)) {
     return(do.call("c", dv))}
 
-  return(dv)
-
-
-  # # early exit if fn is not in typeVars
-  # if (is.null(typeVars[[fn]])) return(dv)
-  #
-  # # for date time conversion
-  # lct <- Sys.getlocale("LC_TIME")
-  #
-  # # main typing functions
-  # ctrDate <- function() {
-  #   Sys.setlocale("LC_TIME", "C")
-  #   on.exit(Sys.setlocale("LC_TIME", lct), add = TRUE)
-  #   # as.Date(dv, format = "%Y-%m-%d")
-  #   lapply(dv, function(i) as.Date(i, format = "%Y-%m-%d"))
-  # }
-  # #
-  # ctrDateUs <- function() {
-  #   Sys.setlocale("LC_TIME", "C")
-  #   on.exit(Sys.setlocale("LC_TIME", lct), add = TRUE)
-  #   as.Date(dv, format = "%b %e, %Y")
-  # }
-  # #
-  # ctrDateCtr <- function() {
-  #   Sys.setlocale("LC_TIME", "C")
-  #   on.exit(Sys.setlocale("LC_TIME", lct), add = TRUE)
-  #   as.Date(dv, format = "%Y-%m-%d %H:%M:%S")
-  # }
-  # #
-  # ctrDateTime <- function() {
-  #   Sys.setlocale("LC_TIME", "C")
-  #   on.exit(Sys.setlocale("LC_TIME", lct), add = TRUE)
-  #   as.Date(dv, format = "%Y-%m-%dT%H:%M:%S")
-  # }
-  # #
-  # ctrYesNo <- function() {
-  #   vapply(dv, FUN = function(x)
-  #     switch(x, "Yes" = TRUE, "No" = FALSE, NA),
-  #     logical(1L), USE.NAMES = FALSE)
-  # }
-  # #
-  # ctrFalseTrue <- function() {
-  #   vapply(dv, FUN = function(x)
-  #     switch(x, "true" = TRUE, "false" = FALSE, NA),
-  #     logical(1L), USE.NAMES = FALSE)
-  # }
-  # #
-  # ctrInt       <- function() {
-  #   vapply(dv, FUN = function(x)
-  #     as.integer(x = x), integer(1L),
-  #     USE.NAMES = FALSE)
-  # }
-  # #
-  # ctrDifftime   <- function() {
-  #   out <- sapply(dv, FUN = function(x) {
-  #     if (is.na(x)) {NA} else {
-  #       as.numeric(
-  #         lubridate::duration(
-  #           tolower(x)
-  #         ), units = "days")
-  #     }
-  #   }, USE.NAMES = FALSE)
-  #   as.difftime(out, units = "days")
-  # }
-  # #
-  # ctrDifftimeDays   <- function() {
-  #   lubridate::ddays(x = as.numeric(dv))
-  # }
-  # #
-  # ctrDifftimeMonths   <- function() {
-  #   lubridate::dmonths(x = as.numeric(dv))
-  # }
-  # #
-  # ctrDifftimeYears   <- function() {
-  #   lubridate::dyears(x = as.numeric(dv))
-  # }
-
-  # ## apply typing
-  # ldv <- length(dv)
-  # if (any(grepl(" / ", dv))) {
-  #
-  #   # if any concatenations, apply typing per concatenated
-  #   # item and return list per item. note that dv has to be
-  #   # overwritten in outer environment for typeVars to work
-  #   out <- lapply(dv, function(r)  {
-  #     dv <<- strsplit(r, " / ", fixed = TRUE)[[1]]
-  #     try(do.call(typeVars[[fn]], list()), silent = TRUE)
-  #   })
-  #
-  # } else {
-  #
-  #   # apply typing function with its specified type
-  #   out <- try(do.call(typeVars[[fn]], list()), silent = TRUE)
-  #
-  # }
-
-  # # error output
-  # if (any(sapply(out, function(r) inherits(r, "try-error"))) ||
-  #     length(out) != ldv) {
-  #   out <- rep.int(x = NA, times = ldv)
-  # }
-
   # return
-  # return(out)
+  return(dv)
 
 } # end typeField
 
