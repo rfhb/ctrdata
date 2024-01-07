@@ -6,25 +6,22 @@
 #' function returns the full field names used in records that were
 #' previously loaded into a collection
 #' (using \link{ctrLoadQueryIntoDb}). Only names of fields that have
-#' a value in the collection can be returned. The field names can be
-#' fed into function \link{dbGetFieldsIntoDf} to extract the data
-#' for the field(s) from the collection into a data frame.
+#' a value in the collection can be returned.
 #'
 #' In addition to the full names of all child fields (e.g.,
 #' \code{clinical_results.outcome_list.outcome.measure.class_list.class.title})
-#' this function may return names of parent fields (e.g.,
+#' this function returns names of parent fields (e.g.,
 #' \code{clinical_results}).
-#' Data in parent fields is typically complex (nested) and can be
-#' converted into individual data elements with \link{dfTrials2Long},
-#' and subelements can then be accessed with \link{dfName2Value}.
-#' For field definitions of the registers, see row
+#' Data in parent fields is typically complex (nested), see
+#' \link{dfTrials2Long} for easily handling it.
+#' For field definitions of the registers, see
 #' "Definition" in \link{ctrdata-registers}.
-#' Note: Only when \code{dbFindFields} is first called after
+#' Note: When \code{dbFindFields} is first called after
 #' \link{ctrLoadQueryIntoDb}, it will take a moment.
 #'
-#' @param namepart A character string (can include a regular expression,
+#' @param namepart A character string (can be a regular expression,
 #' including Perl-style) to be searched among all field names (keys)
-#' in the collection, case-insensitive. The default ".*" lists all fields.
+#' in the collection, case-insensitive. The default `".*"` lists all fields.
 #'
 #' @param verbose If \code{TRUE}, prints additional information
 #' (default \code{FALSE}).
@@ -34,8 +31,10 @@
 #' @inheritParams ctrDb
 #'
 #' @return Vector of strings with full names of field(s) found,
-#' ordered by register and alphabet. Names of the vector elements
-#' are the register names for the respective fields.
+#' ordered by register and alphabet, see examples. Names of the vector
+#' are the names of the register holding the respective fields. The field
+#' names can be fed into \link{dbGetFieldsIntoDf} to extract the
+#' data for the field(s) from the collection into a data frame.
 #'
 #' @export
 #'
@@ -46,7 +45,7 @@
 #'     collection = "my_trials"
 #' )
 #'
-#' dbFindFields(namepart = "date", con = dbc)
+#' dbFindFields(namepart = "date", con = dbc)[1:5]
 #'
 #' # view all 3350+ fields from all registers:
 #'
@@ -69,21 +68,18 @@ dbFindFields <- function(namepart = ".*",
 
   ## check if cache environment has entry for the database
   keyslist <- ctrCache(
-    xname = paste0("keyslist_", con$db, "/", con$collection),
+    xname = paste0("keyslist_", con$db, "/", con$collection, "_timestamp"),
     verbose = verbose
   )
 
   ## get cache reference value
   cacheRef <- as.character(rev(unlist(try(nodbi::docdb_query(
     src = con, key = con$collection, query = '{"_id": "meta-info"}',
-    fields = '{"queries.query-timestamp": 1}'
+    fields = '{"queries.query-timestamp": 1, "_id": 0}'
   ), silent = TRUE)))[1])
 
   ## invalidate cache
-  cacheOutdated <- is.null(keyslist) || (cacheRef != ctrCache(
-    xname = paste0("keyslist_", con$db, "/", con$collection, "_timestamp"),
-    verbose = verbose
-  ))
+  cacheOutdated <- is.null(keyslist) || (cacheRef != keyslist)
 
   ## get keyslist
   if (cacheOutdated) {
@@ -128,7 +124,14 @@ dbFindFields <- function(namepart = ".*",
       message("Field names cached for this session.")
     }
   } else {
+
     message("Using cache of fields.")
+
+    keyslist <- ctrCache(
+      xname = paste0("keyslist_", con$db, "/", con$collection),
+      verbose = verbose
+    )
+
   } # generate keyslist
 
   ## inform user of unexpected situation
