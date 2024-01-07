@@ -4,48 +4,43 @@
 \alias{dbGetFieldsIntoDf}
 \title{Create data frame of specified fields from database collection}
 \usage{
-dbGetFieldsIntoDf(fields = "", con, verbose = FALSE, stopifnodata = TRUE)
+dbGetFieldsIntoDf(fields = "", con, verbose = FALSE, stopifnodata = TRUE, ...)
 }
 \arguments{
 \item{fields}{Vector of one or more strings, with names of sought fields.
+Specify fewer than 50 fields or use parent fields (e.g., "a.b" instead
+of "a.b.c" as not all backend functionality supports 50 or more fields.
 See function \link{dbFindFields} for how to find names of fields.
-"item.subitem" notation is supported.}
+Dot path notation ("field.subfield") without indices is supported.}
 
 \item{con}{A connection object, see section
 `Databases` in \link{ctrdata}.}
 
 \item{verbose}{Printing additional information if set to \code{TRUE};
 (default \code{FALSE}).}
-
-\item{stopifnodata}{Stops with an error (default \code{TRUE}) or with
-a warning (\code{FALSE}) if the sought field is empty in all,
-or not available in any of the records in the database collection.}
 }
 \value{
 A data frame (or tibble, if \code{tibble} is loaded)
 with columns corresponding to the sought fields.
 A column for the records' `_id` will always be included.
-Each column can be either a simple data type (numeric, character, date)
-or a list (typically for nested data, see above). For complicated lists,
-use function \link{dfTrials2Long} followed by function \link{dfName2Value}
-to extract values for sought nested variables.
 The maximum number of rows of the returned data frame is equal to,
-or less than the number of records of trials in the database
-collection.
+or less than the number of trial records in the database collection.
 }
 \description{
-Fields in the collection are retrieved into a data frame (or tibble).
-Note that fields within the record of a trial can be hierarchical
-and structured, that is, nested.
-Names of fields can be found with \link{dbFindFields}.
-The function uses the field names to appropriately type the values
+Fields in the collection are retrieved from all records into a data
+frame (or tibble). Within a given trial record, a fields can be
+hierarchical and structured, that is, nested.
+Th function uses the field names to appropriately type the values
 that it returns, harmonising original values (e.g. "Information not present
 in EudraCT" to `NA`, "Yes" to `TRUE`, "false" to `FALSE`,
-date strings to class Date, number strings to numbers).
-The function also attempts to simplify the structure of nested data and
-may concatenate multiple strings in a field using " / " (see example).
-For full handling of complex nested data, use function \link{dfTrials2Long}
-followed by \link{dfName2Value} to extract the sought nested variable(s).
+date strings to dates or time differences, number strings to numbers).
+The function simplifies the structure of nested data and
+may concatenate multiple strings in a field using " / " (see example)
+and may have widened the returned data frame with additional columns that
+were recursively expanded from simply nested data (e.g., "externalRefs"
+to columns "externalRefs.doi", "externalRefs.eudraCTNumber" etc.).
+For further handling of complex nested data, use \link{dfTrials2Long}
+followed by \link{dfName2Value} to extract the sought variable(s).
 }
 \examples{
 

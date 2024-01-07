@@ -30,16 +30,17 @@ aggregating and analysing this information; it can be used for the
   [example](#workflow-ctgov-example))
 - ISRCTN (<https://www.isrctn.com/>)
 - EU Clinical Trials Information System (“CTIS”,
-  <https://euclinicaltrials.eu/>) 🔔 see
-  [example](#workflow-ctis-example)
+  <https://euclinicaltrials.eu/> 🔔 [example](#workflow-ctis-example))
 
 The motivation is to investigate and understand trends in design and
 conduct of trials, their availability for patients and to facilitate
 using their detailed results for research and meta-analyses. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2023-11-24 for version 1.16.0
-(major improvement: remove all dependencies on external tools).
+package. This README was reviewed on 2024-01-07 for version 1.16.0
+(major improvement: remove all dependencies on external tools;
+development of refactored
+[`dbGetFieldsIntoDf()`](https://github.com/rfhb/ctrdata/tree/refactor_dbgetfieldsintodf)).
 
 ## Main features
 
@@ -68,7 +69,7 @@ package. This README was reviewed on 2023-11-24 for version 1.16.0
 
 Remember to respect the registers’ terms and conditions (see
 `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
-package in any publication as follows: “Ralf Herold (2023). *ctrdata:
+package in any publication as follows: “Ralf Herold (2024). *ctrdata:
 Retrieve and Analyze Clinical Trials in Public Registers.* R package
 version 1.16.0, <https://cran.r-project.org/package=ctrdata>”.
 
@@ -151,7 +152,7 @@ overview](https://rfhb.github.io/ctrdata/reference/index.html).
 | `dfName2Value()`                   | From a long name-value data.frame, extract values for variables (fields) of interest (e.g., endpoints)                         |
 | `dfMergeVariablesRelevel()`        | Merge variables into a new variable, optionally map values to a new set of levels                                              |
 
-## Databases that can be used with `ctrdata`
+## Databases for use with `ctrdata`
 
 Package `ctrdata` retrieves trial information and stores it in a
 database collection, which has to be given as a connection object to
@@ -350,8 +351,8 @@ with(
 
 - Add records from another register (CTGOV) into the same collection
 
-🔔Both the current and classic CTGOV website are supported as of
-2023-08-05. The new website and API introduced in July 2023
+🔔Both the current and classic CTGOV website are supported by `ctrdata`
+since 2023-08-05. The new website and API introduced in July 2023
 (<https://www.clinicaltrials.gov/>) is identified in `ctrdata` as
 `CTGOV2`. The website and API which is now called “classic”
 (<https://classic.clinicaltrials.gov/>) is identified in `ctrdata` as
@@ -448,8 +449,9 @@ ctrLoadQueryIntoDb(
 Queries in the CTIS search interface can be automatically copied to the
 clipboard so that a user can paste them into `queryterm`, see
 [here](#3-script-to-automatically-copy-users-query-from-web-browser). As
-of 2023-11-22, there are 410 trials publicly accessible in CTIS. See
-[below](#documents-example) for how to download documents from CTIS.
+of 2024-01-06, there are more than 410 trials publicly accessible in
+CTIS. See [below](#documents-example) for how to download documents from
+CTIS.
 
 ``` r
 # See how many trials are in CTIS publicly accessible:
@@ -460,7 +462,7 @@ ctrLoadQueryIntoDb(
   con = db
 )
 # $n
-# [1] 411
+# [1] 454
 
 # Retrieve trials from another register:
 ctrLoadQueryIntoDb(

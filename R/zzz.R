@@ -16,7 +16,7 @@
     "https://cran.r-project.org/package=ctrdata\n\n",
     "Please respect the requirements and the copyrights of the\n",
     "clinical trial registers when using their information. Call\n",
-    "ctrOpenSearchPagesInBrowser(copyright = TRUE) and visit\n",
+    "ctrOpenSearchPagesInBrowser(copyright = TRUE) and visit\n\n",
     "https://www.clinicaltrialsregister.eu/disclaimer.html\n",
     "https://classic.clinicaltrials.gov/ct2/about-site/terms-conditions#Use\n",
     "https://www.isrctn.com/page/faqs#usingISRCTN\n",

@@ -116,13 +116,14 @@ with the four columns: `_id`, `identifier`, `name`, `value`</p>
 <span class="r-in"><span><span class="va">dfwide</span> <span class="op">&lt;-</span> <span class="fu"><a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  fields <span class="op">=</span> <span class="st">"clinical_results.participant_flow"</span>,</span></span>
 <span class="r-in"><span>  con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> clinical_results.participant_flow... </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> . </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">dfTrials2Long</span><span class="op">(</span>df <span class="op">=</span> <span class="va">dfwide</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> clinical_results.participant_flow                                                                                                                                                                       </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> clinical_results.participant_flow.group_list.group                                                                                                                                                      </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> clinical_results.participant_flow.period_list.period.title                                                                                                                                              </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> clinical_results.participant_flow.period_list.period.milestone_list.milestone                                                                                                                           </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                         </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> . </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> . </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> . </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> . </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> . </span>

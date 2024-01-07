@@ -7,9 +7,9 @@
 dbFindFields(namepart = ".*", con, verbose = FALSE)
 }
 \arguments{
-\item{namepart}{A character string (can include a regular expression,
+\item{namepart}{A character string (can be a regular expression,
 including Perl-style) to be searched among all field names (keys)
-in the collection, case-insensitive. The default ".*" lists all fields.}
+in the collection, case-insensitive. The default `".*"` lists all fields.}
 
 \item{con}{A connection object, see section
 `Databases` in \link{ctrdata}.}
@@ -19,29 +19,28 @@ in the collection, case-insensitive. The default ".*" lists all fields.}
 }
 \value{
 Vector of strings with full names of field(s) found,
-ordered by register and alphabet. Names of the vector elements
-are the register names for the respective fields.
+ordered by register and alphabet, see examples. Names of the vector
+are the names of the register holding the respective fields. The field
+names can be fed into \link{dbGetFieldsIntoDf} to extract the
+data for the field(s) from the collection into a data frame.
 }
 \description{
 Given part of the name of a field of interest to the user, this
 function returns the full field names used in records that were
 previously loaded into a collection
 (using \link{ctrLoadQueryIntoDb}). Only names of fields that have
-a value in the collection can be returned. The field names can be
-fed into function \link{dbGetFieldsIntoDf} to extract the data
-for the field(s) from the collection into a data frame.
+a value in the collection can be returned.
 }
 \details{
 In addition to the full names of all child fields (e.g.,
 \code{clinical_results.outcome_list.outcome.measure.class_list.class.title})
-this function may return names of parent fields (e.g.,
+this function returns names of parent fields (e.g.,
 \code{clinical_results}).
-Data in parent fields is typically complex (nested) and can be
-converted into individual data elements with \link{dfTrials2Long},
-and subelements can then be accessed with \link{dfName2Value}.
-For field definitions of the registers, see row
+Data in parent fields is typically complex (nested), see
+\link{dfTrials2Long} for easily handling it.
+For field definitions of the registers, see
 "Definition" in \link{ctrdata-registers}.
-Note: Only when \code{dbFindFields} is first called after
+Note: When \code{dbFindFields} is first called after
 \link{ctrLoadQueryIntoDb}, it will take a moment.
 }
 \examples{
@@ -51,7 +50,7 @@ dbc <- nodbi::src_sqlite(
     collection = "my_trials"
 )
 
-dbFindFields(namepart = "date", con = dbc)
+dbFindFields(namepart = "date", con = dbc)[1:5]
 
 # view all 3350+ fields from all registers:
 

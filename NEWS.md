@@ -1,13 +1,17 @@
-# ctrdata 1.16.0.9000 (2024-01-01)
+# ctrdata 1.16.0.9000 (2024-01-06)
 
 ## Possibly breaking changes
 
-- Reimplemented `dbGetFieldsIntoDf()` to accelerate and for more predictable returns, in particular for nested fields
-- Reimplemented `dbFindFields()` to accelerate; both using improved `nodbi::docdb_query()` functionality
-- Reimplemented typing fields to speed up and simplify
+- Reimplemented `dbGetFieldsIntoDf()` to accelerate and have more predictable, simplified returns, in particular for nested fields; also attempts to recursively expand simply nested data into additional columns in the returned data frame
+- Reimplemented `dbFindFields()` to accelerate; both points are based on improved `nodbi::docdb_query()` functionality
+- Parameter `fields` of `dbGetFieldsIntoDf()` is limited to less than 50 fields, as not all backend functionality supports 50 or more; use parent fields (e.g., `a.b` instead of `c("a.b.c.d", "a.b.c.e")` or directly access the collection with `nodbi::docdb_get()`) if more fields are necessary to be retrieved in one go
+- Parameter `stopifnodata` of `dbGetFieldsIntoDf()` is no more needed and deprecated
+- Reimplemented typing fields to speed up and to simplify
 
-## Bug fixes
+## Improvements
 
+- Adapted information loading to newly available data in `CTIS`
+- Many fields added for typing e.g. as date in `dbGetFieldsIntoDf()`
 
 # ctrdata 1.16.0 (released 2023-11-24)
 

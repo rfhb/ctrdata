@@ -117,10 +117,9 @@
 <li>EU Clinical Trials Register (“EUCTR”, <a href="https://www.clinicaltrialsregister.eu/" class="external-link uri">https://www.clinicaltrialsregister.eu/</a>)</li>
 <li>ClinicalTrials.gov (“CTGOV” or 🔔“CTGOV2”, see <a href="#workflow-ctgov-example">example</a>)</li>
 <li>ISRCTN (<a href="https://www.isrctn.com/" class="external-link uri">https://www.isrctn.com/</a>)</li>
-<li>EU Clinical Trials Information System (“CTIS”, <a href="https://euclinicaltrials.eu/" class="external-link uri">https://euclinicaltrials.eu/</a>) 🔔 see <a href="#workflow-ctis-example">example</a>
-</li>
+<li>EU Clinical Trials Information System (“CTIS”, <a href="https://euclinicaltrials.eu/" class="external-link uri">https://euclinicaltrials.eu/</a> 🔔 <a href="#workflow-ctis-example">example</a>)</li>
 </ul>
-<p>The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2023-11-24 for version 1.16.0 (major improvement: remove all dependencies on external tools).</p>
+<p>The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2024-01-07 for version 1.16.0 (major improvement: remove all dependencies on external tools; development of refactored <a href="https://github.com/rfhb/ctrdata/tree/refactor_dbgetfieldsintodf" class="external-link"><code>dbGetFieldsIntoDf()</code></a>).</p>
 <div class="section level2">
 <h2 id="main-features">Main features<a class="anchor" aria-label="anchor" href="#main-features"></a>
 </h2>
@@ -129,7 +128,7 @@
 <li>Downloaded trial information is transformed and stored in a collection of a document-centric database, for fast and offline access. Information from different registers can be accumulated in a single collection. Uses <code>DuckDB</code>, <code>PostgreSQL</code>, <code>RSQLite</code> or <code>MongoDB</code>, via R package <code>nodbi</code>: see section <a href="#databases-that-can-be-used-with-ctrdata">Databases</a> below. Re-run any previous query in a collection to retrieve and update trial records.</li>
 <li>For analyses, convenience functions in <code>ctrdata</code> allow find synonyms of an active substance, to identify unique (de-duplicated) trial records across all registers, to merge and recode fields as well as to easily access deeply-nested fields. Analysis can be done with <code>R</code> or other systems, using the <code>JSON</code>-<a href="#mongodb">structured information in the database</a>.</li>
 </ul>
-<p>Remember to respect the registers’ terms and conditions (see <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>). Please cite this package in any publication as follows: “Ralf Herold (2023). <em>ctrdata: Retrieve and Analyze Clinical Trials in Public Registers.</em> R package version 1.16.0, <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a>”.</p>
+<p>Remember to respect the registers’ terms and conditions (see <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>). Please cite this package in any publication as follows: “Ralf Herold (2024). <em>ctrdata: Retrieve and Analyze Clinical Trials in Public Registers.</em> R package version 1.16.0, <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a>”.</p>
 <!--
 &#10;```r
 citation("ctrdata")
@@ -236,8 +235,8 @@ citation("ctrdata")
 </table>
 </div>
 <div class="section level2">
-<h2 id="databases-that-can-be-used-with-ctrdata">Databases that can be used with <code>ctrdata</code>
-<a class="anchor" aria-label="anchor" href="#databases-that-can-be-used-with-ctrdata"></a>
+<h2 id="databases-for-use-with-ctrdata">Databases for use with <code>ctrdata</code>
+<a class="anchor" aria-label="anchor" href="#databases-for-use-with-ctrdata"></a>
 </h2>
 <p>Package <code>ctrdata</code> retrieves trial information and stores it in a database collection, which has to be given as a connection object to parameter <code>con</code> for several <code>ctrdata</code> functions; this connection object is created in slightly different ways for the four supported database backends that can be used with <code>ctrdata</code> as shown in the table. For a speed comparison, see the <a href="https://github.com/ropensci/nodbi#benchmark" class="external-link">nodbi documentation</a>.</p>
 <p>Besides ctrdata functions below, any such a connection object can equally be used with functions of other packages, such as <code>nodbi</code> (last row in table) or, in case of MongoDB as database backend, <code>mongolite</code> (see vignettes).</p>
@@ -425,7 +424,7 @@ citation("ctrdata")
 <ul>
 <li>Add records from another register (CTGOV) into the same collection</li>
 </ul>
-<p>🔔Both the current and classic CTGOV website are supported as of 2023-08-05. The new website and API introduced in July 2023 (<a href="https://www.clinicaltrials.gov/" class="external-link uri">https://www.clinicaltrials.gov/</a>) is identified in <code>ctrdata</code> as <code>CTGOV2</code>. The website and API which is now called “classic” (<a href="https://classic.clinicaltrials.gov/" class="external-link uri">https://classic.clinicaltrials.gov/</a>) is identified in <code>ctrdata</code> as <code>CTGOV</code>, and this is backwards-compatible with queries that were previously retrieved with <code>ctrdata</code>.</p>
+<p>🔔Both the current and classic CTGOV website are supported by <code>ctrdata</code> since 2023-08-05. The new website and API introduced in July 2023 (<a href="https://www.clinicaltrials.gov/" class="external-link uri">https://www.clinicaltrials.gov/</a>) is identified in <code>ctrdata</code> as <code>CTGOV2</code>. The website and API which is now called “classic” (<a href="https://classic.clinicaltrials.gov/" class="external-link uri">https://classic.clinicaltrials.gov/</a>) is identified in <code>ctrdata</code> as <code>CTGOV</code>, and this is backwards-compatible with queries that were previously retrieved with <code>ctrdata</code>.</p>
 <p>Both use the same trial identifier (e.g., NCT01234567) for the same trial. As a consequence, queries for the same trial retrieved using <code>CTGOV</code> or <code>CTGOV2</code> overwrite any previous record for that trial, whether loaded from <code>CTGOV</code> or <code>CTGOV2</code>. Thus, only a single version (the last retrieved) will be in the collection in the user’s database.</p>
 <p>Important differences exist between field names and contents of information retrieved using <code>CTGOV</code> or <code>CTGOV2</code>; see the <a href="https://prsinfo.clinicaltrials.gov/prs-xml-schemas.html" class="external-link">XML schemas for <code>CTGOV</code></a> and the <a href="https://clinicaltrials.gov/data-about-studies/learn-about-api" class="external-link">REST API for <code>CTGOV2</code></a>. For more details, call <code><a href="reference/ctrdata-registers.html">help("ctrdata-registers")</a></code>. This is one of the reasons why <code>ctrdata</code> handles the situation as if these were two different registers.</p>
 <ul>
@@ -495,7 +494,7 @@ citation("ctrdata")
 <ul>
 <li>Add records from a fourth register (CTIS 🔔) into the same collection</li>
 </ul>
-<p>Queries in the CTIS search interface can be automatically copied to the clipboard so that a user can paste them into <code>queryterm</code>, see <a href="#id_3-script-to-automatically-copy-users-query-from-web-browser">here</a>. As of 2023-11-22, there are 410 trials publicly accessible in CTIS. See <a href="#documents-example">below</a> for how to download documents from CTIS.</p>
+<p>Queries in the CTIS search interface can be automatically copied to the clipboard so that a user can paste them into <code>queryterm</code>, see <a href="#id_3-script-to-automatically-copy-users-query-from-web-browser">here</a>. As of 2024-01-06, there are more than 410 trials publicly accessible in CTIS. See <a href="#documents-example">below</a> for how to download documents from CTIS.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># See how many trials are in CTIS publicly accessible:</span></span>
 <span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
@@ -505,7 +504,7 @@ citation("ctrdata")
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># $n</span></span>
-<span><span class="co"># [1] 411</span></span>
+<span><span class="co"># [1] 454</span></span>
 <span></span>
 <span><span class="co"># Retrieve trials from another register:</span></span>
 <span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
