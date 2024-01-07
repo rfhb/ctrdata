@@ -64,10 +64,9 @@ jobs:
         run: |
           utils::install.packages("DBI")
           utils::install.packages("duckdb", repos = "https://duckdb.r-universe.dev")
-          remotes::install_github("rfhb/ctrdata")
+          remotes::install_github(repo = "ropensci/nodbi", ref = "reimplementation_end_2023")
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran(c("rcmdcheck", "covr"))
-          remotes::install_github("ropensci/nodbi")
         shell: Rscript {0}
 
       - uses: r-lib/actions/setup-pandoc@v1

@@ -46,8 +46,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          remotes::install_github("ropensci/nodbi")
-          remotes::install_github("rfhb/ctrdata")
+          remotes::install_github(repo = "ropensci/nodbi", ref = "reimplementation_end_2023")
           remotes::install_deps(pkgdir = ".", dependencies = TRUE)
         shell: Rscript {0}
 
