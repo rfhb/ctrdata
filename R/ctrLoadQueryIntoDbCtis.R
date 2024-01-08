@@ -34,7 +34,7 @@ ctrLoadQueryIntoDbCtis <- function(
 
   mangleText <- function(t) {
 
-    stringi::stri_replace_all_fixed(str = t, pattern = "'", replacement = "")
+    stringi::stri_replace_all_fixed(str = t, pattern = "'", replacement = "&quot;")
 
   }
 
@@ -332,9 +332,6 @@ ctrLoadQueryIntoDbCtis <- function(
       # get data
       jOut <- readLines(fn, warn = FALSE)
 
-      # sanitise
-      jOut <- mangleText(jOut)
-
       # remove irrelevant information
       jOut <- sub('^.*"elements":(.*?)}?$', "\\1", jOut)
       jOut <- sub('(,?)"showWarning":(false|true)(,?)', "\\3", jOut)
@@ -345,6 +342,9 @@ ctrLoadQueryIntoDbCtis <- function(
       # if publicevents (ctisEndpoints[4]), obtain additional data
       if (e == 4L) jOut <- publicEventsMerger(jOut)
 
+      # sanitise
+      jOut <- mangleText(jOut)
+      
       # reconstruct trial id
       id <- sub(paste0(".+/(", regCtis, ")/.+"), "\\1", tmp[["url"]][fi])
 
