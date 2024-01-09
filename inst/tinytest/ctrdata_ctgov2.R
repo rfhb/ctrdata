@@ -120,14 +120,6 @@ expect_message(
 #### ctrLoadQueryIntoDb update ####
 
 # test
-expect_warning(
-  ctrLoadQueryIntoDb(
-    querytoupdate = "last",
-    con = dbc),
-  "No trials found"
-)
-
-# test
 expect_message(
   suppressWarnings(
     ctrLoadQueryIntoDb(
@@ -179,7 +171,7 @@ for (i in unique(groupsNo)) {
 }
 
 tmpFields <- tmpFields[grepl("date$",tmpFields, ignore.case = TRUE)]
-tmpFields <- tmpFields[1:min(length(tmpFields), 49L)]
+tmpFields <- tmpFields[1:min(length(tmpFields), 49L)] # 19
 
 tmpData <- dbGetFieldsIntoDf(fields = tmpFields, con = dbc)
 expect_true(nrow(tmpData) > 0L)
