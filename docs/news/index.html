@@ -53,18 +53,21 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.16.0.9000" id="ctrdata-11609000-2024-01-06">ctrdata 1.16.0.9000 (2024-01-06)<a class="anchor" aria-label="anchor" href="#ctrdata-11609000-2024-01-06"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.16.0.9000" id="ctrdata-11609000-2024-01-09">ctrdata 1.16.0.9000 (2024-01-09)<a class="anchor" aria-label="anchor" href="#ctrdata-11609000-2024-01-09"></a></h2>
 <div class="section level3">
 <h3 id="possibly-breaking-changes-1-16-0-9000">Possibly breaking changes<a class="anchor" aria-label="anchor" href="#possibly-breaking-changes-1-16-0-9000"></a></h3>
 <ul><li>Reimplemented <code><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code> to accelerate and have more predictable, simplified returns, in particular for nested fields; also attempts to recursively expand simply nested data into additional columns in the returned data frame</li>
 <li>Reimplemented <code><a href="../reference/dbFindFields.html">dbFindFields()</a></code> to accelerate; both points are based on improved <code><a href="https://docs.ropensci.org/nodbi/reference/docdb_query.html" class="external-link">nodbi::docdb_query()</a></code> functionality</li>
-<li>Parameter <code>fields</code> of <code><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code> is limited to less than 50 fields, as not all backend functionality supports 50 or more; use parent fields (e.g., <code>a.b</code> instead of <code>c("a.b.c.d", "a.b.c.e")</code> or directly access the collection with <code><a href="https://docs.ropensci.org/nodbi/reference/docdb_get.html" class="external-link">nodbi::docdb_get()</a></code>) if more fields are necessary to be retrieved in one go</li>
+<li>Parameter <code>fields</code> of <code><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code> is limited to less than 50 fields, as not all backend functionality supports 50 or more; use parent fields (e.g., <code>a.b</code> instead of <code>c("a.b.c.d", "a.b.c.e")</code> or directly get the full collection with <code><a href="https://docs.ropensci.org/nodbi/reference/docdb_get.html" class="external-link">nodbi::docdb_get()</a></code>) or other methods</li>
 <li>Parameter <code>stopifnodata</code> of <code><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code> is no more needed and deprecated</li>
 <li>Reimplemented typing fields to speed up and to simplify</li>
 </ul></div>
 <div class="section level3">
 <h3 id="improvements-1-16-0-9000">Improvements<a class="anchor" aria-label="anchor" href="#improvements-1-16-0-9000"></a></h3>
-<ul><li>Adapted information loading to newly available data in <code>CTIS</code>
+<ul><li>No files downloading again when using <code>verbose = TRUE</code> and <code>options(ctrdata.tempdir = "&lt;user_specified_folder&gt;")</code>
+</li>
+<li>Inform MS Windows users if <code>cygwin</code> was found that they may chose to delete it</li>
+<li>Adapted information loading to newly available data in <code>CTIS</code>
 </li>
 <li>Many fields added for typing e.g. as date in <code><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code>
 </li>
