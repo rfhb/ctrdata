@@ -34,7 +34,7 @@ ctrLoadQueryIntoDbCtis <- function(
 
   mangleText <- function(t) {
 
-    stringi::stri_replace_all_fixed(str = t, pattern = "'", replacement = "&quot;")
+    stringi::stri_replace_all_fixed(str = t, pattern = "'", replacement = "&apos;")
 
   }
 
@@ -344,7 +344,7 @@ ctrLoadQueryIntoDbCtis <- function(
 
       # sanitise
       jOut <- mangleText(jOut)
-      
+
       # reconstruct trial id
       id <- sub(paste0(".+/(", regCtis, ")/.+"), "\\1", tmp[["url"]][fi])
 

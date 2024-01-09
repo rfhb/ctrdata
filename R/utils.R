@@ -671,11 +671,11 @@ typeVars <- list(
 #' ctgovVersion("https://www.clinicaltrials.gov/search?distance=50&cond=Cancer", "")
 #'
 ctgovVersion <- function(url, register) {
-  
+
   # in case the input is from dbQueryHistory
   if (!is.atomic(url)) try({url <- url[["query-term"]]}, silent = TRUE)
   if (inherits(url, "try-error") || is.null(url)) return(register)
-  
+
   # logic 1
   if (grepl(paste0(
     "clinicaltrials[.]gov/ct2/|",
@@ -686,7 +686,7 @@ ctgovVersion <- function(url, register) {
     message("* Appears specific for CTGOV CLASSIC")
     return("CTGOV")
   }
-  
+
   # logic 2
   if (grepl(paste0(
     # clear identifiers of CTGOV2
@@ -695,11 +695,11 @@ ctgovVersion <- function(url, register) {
     message("* Appears specific for CTGOV REST API 2.0.0")
     return("CTGOV2")
   }
-  
+
   # default return
   message("Not overruling register label ", register)
   return(register)
-  
+
 }
 
 
@@ -717,16 +717,16 @@ ctgovVersion <- function(url, register) {
 #' @return value of variable or `NULL` if variable does not exist
 #'
 ctrCache <- function(xname, xvalue = NULL, verbose = FALSE) {
-  
+
   # hidden environment .ctrdataenv created in zzz.R
-  
+
   # write or overwrite and exit early
   if (!is.null(xvalue)) {
     assign(x = xname, value = xvalue, envir = .ctrdataenv)
     if (verbose) message("- Wrote ", xname, " to cache ")
     return(xvalue)
   }
-  
+
   # check and read any value for xname variable
   if (verbose) message("- Checking cache...")
   if (exists(x = xname, envir = .ctrdataenv)) {
@@ -735,7 +735,7 @@ ctrCache <- function(xname, xvalue = NULL, verbose = FALSE) {
     if (verbose) message("- Returning ", xname, " ")
     return(tmp)
   }
-  
+
   # default
   return(NULL)
 }
@@ -755,62 +755,62 @@ ctrCache <- function(xname, xvalue = NULL, verbose = FALSE) {
 #'  element under root
 #'
 ctrDb <- function(con) {
-  
+
   ## postgres
   if (inherits(con, "src_postgres")) {
-    
+
     if (is.null(con$collection)) {
       stop("Specify 'collection' with a table name, using ",
            "<nodbi src_postgres object>[[\"collection\"]] <- \"test\"), ",
            "for package ctrdata to work.",
            call. = FALSE)
     }
-    
+
     # add database as element under root
     con <- c(con,
              "db" = con$dbname,
              "ctrDb" = TRUE)
-    
+
     ## return
     return(structure(con,
                      class = c("src_postgres", "docdb_src")))
   }
-  
+
   ## sqlite
   if (inherits(con, "src_sqlite")) {
-    
+
     if (is.null(con$collection)) {
       stop("Specify parameter 'collection' with a table name, ",
            "such as nodbi::src_sqlite(collection = 'test'), ",
            "for package ctrdata to work.",
            call. = FALSE)
     }
-    
+
     # check
     if (inherits(try(nodbi::docdb_list(con), silent = TRUE), "try-error")) {
       con <- nodbi::src_sqlite(dbname = con$dbname,
                                collection = con$collection)
     }
-    
+
     # add database as element under root
     con <- c(con,
              "db" = con$dbname,
              "ctrDb" = TRUE)
-    
+
     # print warning
     if (grepl(":memory:", con$dbname)) {
       warning("Database not persisting",
               call. = FALSE, noBreaks. = FALSE)
     }
-    
+
     ## return
     return(structure(con,
                      class = c("src_sqlite", "docdb_src")))
   }
-  
+
   ## mongo
   if (inherits(con, "src_mongo")) {
-    
+
     # rights may be insufficient to call info(),
     # hence this workaround that should always
     # work and be stable to retrieve name of
@@ -818,57 +818,57 @@ ctrDb <- function(con) {
     # suppress... for reconnect info from mongolite
     coll <- suppressMessages(utils::capture.output(con$con)[1])
     coll <- sub("^.*'(.*)'.*$", "\\1", coll)
-    
+
     # add collection as element under root
     con <- c(con,
              "collection" = coll,
              "ctrDb" = TRUE)
-    
+
     ## return
     return(structure(con,
                      class = c("src_mongo", "docdb_src")))
   }
-  
+
   ## duckdb
   if (inherits(con, "src_duckdb")) {
-    
+
     if (is.null(con$collection)) {
       stop("Specify parameter 'collection' with a table name, ",
            "such as nodbi::src_duckdb(collection = 'test'), ",
            "for package ctrdata to work.",
            call. = FALSE)
     }
-    
+
     # check
     if (inherits(try(nodbi::docdb_list(con), silent = TRUE), "try-error")) {
       con <- nodbi::src_duckdb(
         dbdir = attr(attr(con$con, "driver"), "dbdir"),
         collection = con$collection)
     }
-    
+
     # add database as element under root
     con <- c(con,
              "db" = attr(attr(con$con, "driver"), "dbdir"),
              "ctrDb" = TRUE)
-    
+
     # print warning about nodbi::src_duckdb()
     if (grepl(":memory:", attr(attr(con$con, "driver"), "dbdir"))) {
       warning("Database not persisting\n",
               call. = FALSE, noBreaks. = FALSE)
-      
+
     }
-    
+
     ## return
     return(structure(con,
                      class = c("src_duckdb", "docdb_src")))
-    
+
   }
-  
+
   ## unprepared for other nodbi adapters so far
   stop("Please specify in parameter 'con' a database connection. ",
        "crdata supports src_mongo(), src_sqlite(), src_postgres() and src_duckdb().",
        call. = FALSE)
-  
+
 } # end ctrDb
 
 
@@ -888,10 +888,10 @@ ctrDb <- function(con) {
 #' @noRd
 #'
 typeField <- function(dv, fn) {
-  
+
   # get function name
   ft <- typeVars[[fn]]
-  
+
   # expand to function
   if (!is.null(ft)) ft <- switch(
     typeVars[[fn]],
@@ -910,29 +910,28 @@ typeField <- function(dv, fn) {
     "ctrDifftimeYears" = 'lubridate::dyears(x = as.numeric(x))',
     NULL
   )
-  
+
   # clean up text
   if (is.null(ft)) {
-    
+
     # - if NA as string, change to NA
     dv[grepl("^N/?A$|^ND$", dv)] <- NA
-    
+
     # - check if any html entities
     htmlEnt <- grepl("&[#a-zA-Z]+;", dv)
-    
-    # - convert html entities because these had to
-    #   be left intact when converting to ndjson
+
+    # - convert html entities to text and symbols
     if (any(htmlEnt) && all(sapply(dv, typeof) == "character")) {
       dv[htmlEnt] <-
-        sapply(dv[htmlEnt], function(i)
-          xml2::xml_text(xml2::read_html(
-            charToRaw(i))),
-          USE.NAMES = FALSE)
+        lapply(dv[htmlEnt], function(i)
+          sapply(i, function(ii)
+            xml2::xml_text(xml2::read_html(charToRaw(ii))),
+            USE.NAMES = FALSE))
     }
-    
+
     # - check if possible and convert to numeric
     if (all(is.numeric(dv) | is.na(dv))) dv <- as.numeric(dv)
-    
+
     # - collapse unless list structure is heterogenous
     rowN1 <- sapply(dv, function(i) is.null(names(i)))
     rowN2 <- sapply(names(rowN1), function(i) is.null(i))
@@ -952,19 +951,19 @@ typeField <- function(dv, fn) {
         } else if (length(i) && !is.na(i)) i else NA
       })
     }
-    
+
     # early return
     return(dv)
-    
+
   }
-  
+
   # early exit if already date or logical
   if (all(sapply(dv, class) %in%
           c("logical", "Date", "POSIXct", "POSIXt"))) return(dv)
-  
+
   # record length of input dv for NULL handling
   lenDv <- length(dv)
-  
+
   # apply typing function, returning
   # if possible a vector over list
   tryCatch(
@@ -995,7 +994,7 @@ typeField <- function(dv, fn) {
       return(dv)
     }
   )
-  
+
   # exceptional case inform user
   if (is.null(dv)) {
     warning(paste0(
@@ -1003,15 +1002,15 @@ typeField <- function(dv, fn) {
       "https://github.com/rfhb/ctrdata/issues"))
     dv <- rep_len(NA, lenDv)
   }
-  
+
   # make original classes (e.g., Date) reappear
   if (!is.list(dv)) dv <- as.list(dv)
   if (all(sapply(dv, length) <= 1L)) {
     return(do.call("c", dv))}
-  
+
   # return
   return(dv)
-  
+
 } # end typeField
 
 
@@ -1026,17 +1025,17 @@ typeField <- function(dv, fn) {
 #' @noRd
 #'
 addMetaData <- function(x, con) {
-  
+
   # add metadata
   attr(x, "ctrdata-dbname")         <- con$db
   attr(x, "ctrdata-table")          <- con$collection
   attr(x, "ctrdata-dbqueryhistory") <- dbQueryHistory(
     con = con,
     verbose = FALSE)
-  
+
   # return annotated object
   return(x)
-  
+
 } # end addMetaData
 
 
@@ -1061,40 +1060,40 @@ ctrMultiDownload <- function(
     progress = TRUE,
     resume = FALSE,
     verbose = TRUE) {
-  
+
   stopifnot(length(urls) == length(destfiles))
   if (!length(urls)) return(data.frame())
-  
+
   # starting values
   numI <- 1L
   canR <- resume
-  
+
   # do not again download files that already exist
-  # or that do not have an (arbitrary) minimal size. 
+  # or that do not have an (arbitrary) minimal size.
   # nchar("Request failed.") is 15L
   toDo <- rep.int(TRUE, times = length(urls))
   toDo[file.exists(destfiles) &
-         (is.na(file.size(destfiles)) | 
+         (is.na(file.size(destfiles)) |
             file.size(destfiles) > 20L)] <- FALSE
-  
+
   downloadValue <- data.frame(
-    "success" = !toDo, 
-    "status_code" = rep.int(200L, length(toDo)), 
-    "resumefrom" = double(length(toDo)), 
-    "url" = urls, 
-    "destfile" = destfiles, 
-    "error" = character(length(toDo)), 
-    "type" = character(length(toDo)), 
-    "modified" = double(length(toDo)), 
-    "time" = double(length(toDo)), 
+    "success" = !toDo,
+    "status_code" = rep.int(200L, length(toDo)),
+    "resumefrom" = double(length(toDo)),
+    "url" = urls,
+    "destfile" = destfiles,
+    "error" = character(length(toDo)),
+    "type" = character(length(toDo)),
+    "modified" = double(length(toDo)),
+    "time" = double(length(toDo)),
     "headers" = character(length(toDo))
   )
-  
+
   # does not error in case any of the individual requests fail
   # inspect the return value to find out which were successful
   # make no more than 5 attempts to complete downloading
   while (any(toDo) && numI < 5L) {
-    
+
     args <- c(
       urls = list(utils::URLencode(downloadValue[toDo, "url", drop = TRUE])),
       destfiles = list(downloadValue[toDo, "destfile", drop = TRUE]),
@@ -1105,30 +1104,30 @@ ctrMultiDownload <- function(
       c(getOption("httr_config")[["options"]],
         accept_encoding = "gzip,deflate,zstd,br")
     )
-    
+
     res <- do.call(curl::multi_download, args)
-    
+
     downloadValue[toDo, ] <- res
 
     if (any(grepl(
       "annot resume", downloadValue[toDo, "error", drop = TRUE]))) canR <- FALSE
-    
+
     if (inherits(downloadValue, "try-error")) {
       stop("Download failed; last error: ", class(downloadValue), call. = FALSE)
     }
-    
+
     numI <- numI + 1L
     toDo <- is.na(downloadValue[["success"]]) |
       !downloadValue[["success"]] |
       !(downloadValue[["status_code"]] %in% c(200L, 206L, 416L))
-    
+
   }
-  
+
   if (any(toDo)) {
-    
+
     # remove any files from failed downloads
     unlink(downloadValue[toDo, c("destfile"), drop = TRUE])
-    
+
     if (verbose) {
       message(
         "Download failed for: status code / url(s):"
@@ -1138,11 +1137,11 @@ ctrMultiDownload <- function(
         1, function(r) message(r[1], " / ", r[2], "\n", appendLF = FALSE)
       )
     }
-    
+
   }
-  
+
   return(downloadValue[!toDo, , drop = FALSE])
-  
+
 } # end ctrMultiDownload
 
 
@@ -1158,16 +1157,16 @@ ctrMultiDownload <- function(
 #' @noRd
 #'
 ctrTempDir <- function(verbose = FALSE) {
-  
+
   # get temporary space
   tempDir <- getOption(
     "ctrdata.tempdir",
     default = tempfile(pattern = "ctrDATA"))
-  
+
   # create and normalise for OS
   dir.create(tempDir, showWarnings = FALSE, recursive = TRUE)
   tempDir <- normalizePath(tempDir, mustWork = TRUE)
-  
+
   # insert on.exit() call into the parent function
   if (!verbose) {
     do.call(
@@ -1179,17 +1178,17 @@ ctrTempDir <- function(verbose = FALSE) {
       envir = parent.frame(2L)
     )
   }
-  
+
   # inform user
   if (verbose) message("\nDEBUG: ", tempDir, "\n")
   if (verbose && !is.null(getOption(
     "ctrdata.tempdir", default = NULL))) warning(
-      "Using any files previously downloaded into this folder.\n", 
+      "Using any files previously downloaded into this folder.\n",
       call. = FALSE, immediate. = TRUE)
-  
+
   # return
   return(tempDir)
-  
+
 }
 
 
@@ -1213,50 +1212,50 @@ ctrDocsDownload <- function(
     documents.path,
     documents.regexp,
     verbose) {
-  
+
   # check and create directory
   createdDir <- try(
     dir.create(documents.path, recursive = TRUE, showWarnings = FALSE),
     silent = TRUE)
-  
+
   # early return
   if (inherits(createdDir, "try-errror")) {
-    
+
     warning("Directory could not be created for 'documents.path' ",
             documents.path, ", cannot download files", call. = FALSE)
-    
+
     return(0L)
   }
-  
+
   # continue after if
   message("* Downloading documents into 'documents.path' = ", documents.path)
-  
+
   # canonical directory path
   documents.path <- normalizePath(documents.path, mustWork = TRUE)
   if (createdDir) message("- Created directory ", documents.path)
-  
+
   # documents download
   message("- Creating subfolder for each trial")
-  
+
   # add destination file directory path
   dlFiles$filepath <- file.path(documents.path, dlFiles$`_id`)
-  
+
   # create subdirectories by trial
   invisible(sapply(
     unique(dlFiles$filepath), function(i) if (!dir.exists(i))
       dir.create(i, showWarnings = FALSE, recursive = TRUE)
   ))
-  
+
   # check if destination document exists
   dlFiles$filepathname <- file.path(dlFiles$filepath, dlFiles$filename)
   dlFiles$fileexists <- file.exists(dlFiles$filepathname) &
     file.size(dlFiles$filepathname) > 10L
-  
+
   # placeholder or files
   if (is.null(documents.regexp)) {
-    
+
     message("- Creating empty document placeholders (max. ", nrow(dlFiles), ")")
-    
+
     # create empty files
     tmp <-
       sapply(
@@ -1264,43 +1263,43 @@ ctrDocsDownload <- function(
         function(i) if (!file.exists(i))
           file.create(i, showWarnings = TRUE),
         USE.NAMES = FALSE)
-    
+
     tmp <- sum(unlist(tmp), na.rm = TRUE)
-    
+
   } else {
-    
+
     # inform
     message("- Applying 'documents.regexp' to ", nrow(dlFiles), " documents")
-    
+
     # apply regexp
     dlFiles <- dlFiles[
       grepl(documents.regexp, dlFiles$filename, ignore.case = TRUE), ,
       drop = FALSE]
-    
+
     # inform
     message("- Downloading ",
             nrow(dlFiles[!dlFiles$fileexists, , drop = FALSE]),
             " missing documents")
-    
+
     # do download
     tmp <- ctrMultiDownload(
       urls = dlFiles$url[!dlFiles$fileexists],
       destfiles = dlFiles$filepathname[!dlFiles$fileexists],
       verbose = verbose)
-    
+
     # check results
     if (!nrow(tmp)) tmp <- 0L else {
-      
+
       # handle failures despite success is true
       suppressMessages(invisible(sapply(
         tmp[tmp$status_code != 200L, "destfile", drop = TRUE], unlink
       )))
       tmp <- nrow(tmp[tmp$status_code == 200L, , drop = FALSE])
-      
+
     }
-    
+
   } # is.null(documents.regexp)
-  
+
   # inform user
   message(sprintf(paste0(
     "= Newly saved %i ",
@@ -1313,10 +1312,10 @@ ctrDocsDownload <- function(
     length(unique(dlFiles$`_id`[dlFiles$fileexists])),
     documents.path
   ))
-  
+
   # return
   return(tmp)
-  
+
 } # end ctrDocsDownload
 
 
@@ -1332,26 +1331,26 @@ ctrDocsDownload <- function(
 #' @noRd
 #'
 initTranformers <- function() {
-  
+
   # prepare V8, see ./inst/js/
   ct <- V8::v8()
-  
+
   # get javascript for xml to ndjson
   ct$source(system.file("js/bundle.js", package = "ctrdata"))
-  
+
   # function for xml to ndjson conversion
   ct$assign(
     "parsexml",
     # https://www.npmjs.com/package/xml2js#options
     V8::JS("function(xml, opts) {injs.parseString(xml, opts, function (err, result)
            { out = result; }); return JSON.stringify(out); }"))
-  
+
   # native javascript function for euctr txt to ndjson conversion
   ct$eval(readr::read_file(system.file("js/euctr2ndjson.js", package = "ctrdata")))
-  
+
   # assign into package private environment, see zzz.R
   assign("ct", ct, envir = .ctrdataenv)
-  
+
 }
 
 
@@ -1378,50 +1377,50 @@ initTranformers <- function() {
 #' @noRd
 #'
 dbCTRLoadJSONFiles <- function(dir, con, verbose) {
-  
+
   # find files
   tempFiles <- dir(path = dir,
                    pattern = "^.+_trials_.*.ndjson$",
                    full.names = TRUE)
-  
+
   # check
   if (!length(tempFiles)) stop("no .+_trials_.*.ndjson files found in ", dir)
-  
+
   # initialise counters
   fc <- length(tempFiles)
-  
+
   ## iterate ndjson files -----------------------------------------------------------------
-  
+
   retimp <- lapply(
     X = seq_along(tempFiles),
     function(tempFile) {
-      
+
       ## initialise output
       idSuccess <- NULL
       idFailed <- NULL
       idAnnotation <- NULL
       nImported <- 0
       ids <- NULL
-      
+
       ## get _id's
-      
+
       # main function for fast reading,
       # switching off warning about final EOL missing
       fd <- file(description = tempFiles[tempFile],
                  open = "rt", blocking = TRUE)
       on.exit(try(close(fd), silent = TRUE), add = TRUE)
-      
+
       # inform user
       message(
         "JSON file #: ", tempFile, " / ", fc,
         "                               \r",
         appendLF = FALSE)
-      
+
       # get all ids using jq, safet than regex
       ids <- gsub("\"", "", as.vector(jqr::jq(file(tempFiles[tempFile]), " ._id ")))
-      
+
       ## existing annotations -------------------------------------------------
-      
+
       # get annotations
       annoDf <- try({
         nodbi::docdb_query(
@@ -1442,9 +1441,9 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
       }
       if (is.null(annoDf[["annotation"]]))
         annoDf[["annotation"]] <- rep(NA, length(ids))
-      
+
       ## delete and import ----------------------------------------------------
-      
+
       # delete any existing records
       try({
         nodbi::docdb_delete(
@@ -1455,7 +1454,7 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
             paste0('"', ids, '"', collapse = ","), ']}}'),
           fields = '{"_id": 1}')
       }, silent = TRUE)
-      
+
       ## import
       tmp <- try({
         suppressWarnings(
@@ -1465,10 +1464,10 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
               key = con$collection,
               value = tempFiles[tempFile]
             )))}, silent = TRUE)
-      
+
       ## return values for lapply
       if (inherits(tmp, "try-error") || tmp == 0L || tmp != nrow(annoDf)) {
-        
+
         # step into line by line mode
         fdLines <- file(tempFiles[tempFile], open = "rt", blocking = TRUE)
         fLineOut <- tempfile(pattern = "tmpOneLine", tmpdir = dir, fileext = ".ndjson")
@@ -1488,36 +1487,36 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
             annoDf[["_id"]] == id, "annotation", drop = TRUE][1])
         }
         close(fdLines)
-        
+
       } else {
         nImported <- nImported + tmp
         idSuccess <- c(idSuccess, annoDf[ , "_id", drop = TRUE])
         idAnnotation <- c(idAnnotation, annoDf[ , "annotation", drop = TRUE])
       }
-      
+
       # close this file
       close(fd)
-      
+
       # return values
       list(success = idSuccess,
            failed = idFailed,
            n = nImported,
            annotations = idAnnotation)
-      
+
     }) # sapply tempFiles
-  
+
   # prepare return values, n is successful only
   n <- sum(sapply(retimp, "[[", "n"), na.rm = TRUE)
   success <- as.vector(unlist(sapply(retimp, "[[", "success")))
   failed <- as.vector(unlist(sapply(retimp, "[[", "failed")))
   annotations <- as.vector(unlist(sapply(retimp, "[[", "annotations")))
-  
+
   # return
   return(list(n = n,
               success = success,
               failed = failed,
               annotations = annotations))
-  
+
 } # end dbCTRLoadJSONFiles
 
 
@@ -1538,12 +1537,12 @@ dbCTRAnnotateQueryRecords <- function(
     annotation.mode,
     con,
     verbose) {
-  
+
   # debug
   if (verbose) message("Annotating records...")
   if (verbose) message(recordnumbers)
   if (verbose) message(annotation.mode)
-  
+
   # df from existing annotations
   if (is.null(recordannotations)) recordannotations <- ""
   annotations <- data.frame(
@@ -1551,7 +1550,7 @@ dbCTRAnnotateQueryRecords <- function(
     "annotation" = recordannotations,
     stringsAsFactors = FALSE,
     check.names = FALSE)
-  
+
   # check if dataframe is as expected: columns _id and annotation
   # dataframe could be empty if _ids not yet imported
   if (nrow(annotations) == 0) {
@@ -1560,7 +1559,7 @@ dbCTRAnnotateQueryRecords <- function(
                               stringsAsFactors = FALSE,
                               check.names = FALSE)
   }
-  
+
   # modify the annotations
   annotations[["annotation"]] <- trimws(
     switch(
@@ -1571,23 +1570,23 @@ dbCTRAnnotateQueryRecords <- function(
       paste0(ifelse(is.na(annotations[["annotation"]]), "", annotations[["annotation"]]),
              " ", annotation.text)
     ))
-  
+
   # ensure columns including order
   annotations <- annotations[, c("_id", "annotation"), drop = FALSE]
-  
+
   # debug
   if (verbose) message(annotations)
-  
+
   # update the database
   result <- nodbi::docdb_update(
     src = con,
     key = con$collection,
     value = annotations,
     query = "{}")
-  
+
   # inform user
   message("= Annotated retrieved records (", result, " records)")
-  
+
 } # end dbCTRAnnotateQueryRecords
 
 
@@ -1607,13 +1606,13 @@ dbCTRUpdateQueryHistory <- function(
     recordnumber,
     con,
     verbose) {
-  
+
   ## check database connection
   con <- ctrDb(con)
-  
+
   # debug
   if (verbose) message("Running dbCTRUpdateQueryHistory...")
-  
+
   # compose history entry from current search
   # default for format methods is "%Y-%m-%d %H:%M:%S"
   newHist <- data.frame(
@@ -1623,18 +1622,18 @@ dbCTRUpdateQueryHistory <- function(
     "query-term"      = queryterm,
     check.names = FALSE,
     stringsAsFactors = FALSE)
-  
+
   # retrieve existing history data
   hist <- dbQueryHistory(con, verbose)
-  
+
   # append current search
   # default for format methods is "%Y-%m-%d %H:%M:%S"
   if (!is.null(hist) &&
       nrow(hist)) {
-    
+
     newHist <- rbind(hist, newHist)
     newHist <- list("queries" = newHist)
-    
+
     tmp <- suppressMessages(
       nodbi::docdb_update(
         src = con,
@@ -1642,14 +1641,14 @@ dbCTRUpdateQueryHistory <- function(
         value = newHist,
         query = '{"_id": "meta-info"}'
       ))
-    
+
   } else {
-    
+
     # to list
     newHist <- list(list(
       "_id" = "meta-info",
       "queries" = newHist))
-    
+
     # write new document
     tmp <- suppressMessages(
       nodbi::docdb_create(
@@ -1658,7 +1657,7 @@ dbCTRUpdateQueryHistory <- function(
         value = newHist
       ))
   }
-  
+
   # inform user
   if (tmp == 1L) {
     message('Updated history ("meta-info" in "', con$collection, '")')
