@@ -41,17 +41,6 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@v2
 
-      - uses: r-lib/actions/setup-r-dependencies@v2
-        with:
-          cache-version: 2
-          extra-packages: remotes, DBI, duckdb, rcmdcheck, covr
-
-      - name: Install dependencies
-        run: |
-          remotes::install_github(repo = "ropensci/nodbi", ref = "reimplementation_end_2023")
-          remotes::install_deps(dependencies = TRUE)
-        shell: Rscript {0}
-
       - name: Install xclip for checks and other dependencies
         run: sudo apt-get install -y xclip libjq-dev
 
@@ -61,6 +50,21 @@ jobs:
           do
             eval sudo $cmd
           done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "20.04"))')
+
+      - name: Install dependencies
+        run: |
+          install.packages("remotes")
+          utils::install.packages("DBI")
+          utils::install.packages("duckdb", repos = "https://duckdb.r-universe.dev")
+          remotes::install_github(repo = "ropensci/nodbi", ref = "reimplementation_end_2023")
+          remotes::install_deps(dependencies = TRUE)
+          remotes::install_cran(c("rcmdcheck", "covr"))
+        shell: Rscript {0}
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          cache-version: 2
+          extra-packages: remotes, DBI, duckdb, rcmdcheck, covr
 
       - uses: ankane/setup-postgres@v1
         with:
