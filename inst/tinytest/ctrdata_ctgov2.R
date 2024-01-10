@@ -150,7 +150,7 @@ expect_warning(
 
 # test
 tmp <- dbQueryHistory(con = dbc)
-expect_equal(dim(tmp), c(8L, 4L))
+expect_equal(dim(tmp), c(7L, 4L))
 
 #### dbFindFields ####
 
