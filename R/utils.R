@@ -896,7 +896,8 @@ typeField <- function(dv, fn) {
   if (!is.null(ft)) ft <- switch(
     typeVars[[fn]],
     "ctrInt" = 'as.integer(x = x)',
-    "ctrYesNo" = 'sapply(x, function(i) switch(i, "Yes" = TRUE, "No" = FALSE, NA))',
+    "ctrYesNo" = 'sapply(x, function(i) if (is.na(i)) NA else
+       switch(i, "Yes" = TRUE, "No" = FALSE, NA), simplify = TRUE)',
     "ctrFalseTrue" = 'if (is.numeric(x)) as.logical(x) else
        sapply(x, function(i) switch(i, "true" = TRUE, "false" = FALSE, NA))',
     "ctrDate" = 'as.Date(x, tryFormats =
