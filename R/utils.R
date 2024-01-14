@@ -1452,8 +1452,7 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
           key = con$collection,
           query = paste0(
             '{"_id": {"$in": [',
-            paste0('"', ids, '"', collapse = ","), ']}}'),
-          fields = '{"_id": 1}')
+            paste0('"', ids, '"', collapse = ","), ']}}'))
       }, silent = TRUE)
 
       ## import
