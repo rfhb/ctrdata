@@ -2,8 +2,8 @@
 % Please edit documentation in R/ctrdata-package.R
 \docType{package}
 \name{ctrdata}
-\alias{ctrdata}
 \alias{ctrdata-package}
+\alias{ctrdata}
 \title{ctrdata: get started, database connection, function overview}
 \description{
 A package for aggregating and analysing information on clinical
