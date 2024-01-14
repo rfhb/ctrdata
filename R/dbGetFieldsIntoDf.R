@@ -180,6 +180,11 @@ dbGetFieldsIntoDf <- function(fields = "",
   nc <- length(setdiff(attr(naout, "dimnames")[[2]], "_id"))
   dfi <- dfi[rowSums(naout) < nc, , drop = FALSE]
 
+  # sort, add meta data
+  dfi <- addMetaData(
+    dfi[order(dfi[["_id"]]), , drop = FALSE],
+    con = con)
+
   # return
   if (any("tibble" == .packages())) return(tibble::as_tibble(dfi))
   return(dfi)

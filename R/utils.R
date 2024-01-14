@@ -33,7 +33,7 @@ registerList <- c("EUCTR", "CTGOV", "ISRCTN", "CTIS", "CTGOV2")
 # mapping field names to typing function for typeField()
 typeVars <- list(
   #
-  # dates
+  #### . dates ####
   #
   # - ctrdata intern
   "record_last_import" = "ctrDate",
@@ -314,7 +314,7 @@ typeVars <- list(
   "trialStartDate" = "ctrDate",
   #
   #
-  # factors / logical
+  #### . factors / logical ####
   #
   # - EUCTR Yes / No / Information not present in EudraCT
   "a7_trial_is_part_of_a_paediatric_investigation_plan" = "ctrYesNo",
@@ -571,7 +571,7 @@ typeVars <- list(
   "publicEvaluation.partIRfis.isDueInLessThanTwoDays" = "ctrFalseTrue",
   "publicEvaluation.partIRfis.isEditingApplication" = "ctrFalseTrue",
   #
-  # numbers
+  #### . numbers ####
   #
   # - EUCTR
   "e824_number_of_treatment_arms_in_the_trial"  = "ctrInt",
@@ -596,6 +596,7 @@ typeVars <- list(
   "f421_in_the_eea"                  = "ctrInt",
   "f422_in_the_whole_clinical_trial" = "ctrInt",
   #
+  "trialInformation.countrySubjectCounts.countrySubjectCount.subjects" = "ctrInt",
   "trialInformation.populationAgeGroup.inUtero"               = "ctrInt",
   "trialInformation.populationAgeGroup.pretermNewbornInfants" = "ctrInt",
   "trialInformation.populationAgeGroup.newborns"              = "ctrInt",
@@ -610,6 +611,10 @@ typeVars <- list(
   "number_of_arms" = "ctrInt",
   "enrollment"     = "ctrInt",
   "rank"           = "ctrInt",
+  "clinical_results.baseline.analyzed_list.analyzed.count_list.count.value" = "ctrInt",
+  "clinical_results.baseline.measure_list.measure.class_list.class.analyzed_list.analyzed.count_list.count.value" = "ctrInt",
+  "clinical_results.outcome_list.outcome.measure.analyzed_list.analyzed.count_list.count.value" = "ctrInt",
+  "clinical_results.outcome_list.outcome.measure.class_list.class.analyzed_list.analyzed.count_list.count.value" = "ctrInt",
   #
   # - ISRCTN
   "participants.targetEnrolment"     = "ctrInt",
