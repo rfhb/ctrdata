@@ -1,7 +1,7 @@
 ---
 title: "Install R package ctrdata"
 author: "Ralf Herold"
-date: 2023-11-23
+date: 2024-01-14
 output:
   rmarkdown::pdf_document:
     toc: true
@@ -23,7 +23,7 @@ editor_options:
 knitr::opts_chunk$set(eval = FALSE)
 ```
 
-# Install package `ctrdata` on a R system
+# Install package `ctrdata` on an R system
 
 The R Project website ([https://www.r-project.org/](https://www.r-project.org/)) provides installers for the R system. It can be used with software products and graphical user interfaces such as [R Studio](https://www.rstudio.com/products/RStudio/), or [Microsoft R Open](https://mran.microsoft.com/open/), or from [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=Ikuyadeu.r). 
 
@@ -74,4 +74,4 @@ After completing the installation, attach the package from the user's library. T
 library(ctrdata)
 ```
 
-Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: Ralf Herold (2023). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.13.0. https://cran.r-project.org/package=ctrdata
+Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: Ralf Herold (2024). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.16.0. https://cran.r-project.org/package=ctrdata

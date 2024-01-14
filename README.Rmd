@@ -397,7 +397,7 @@ allFields <- dbFindFields(".*", db)
 # Finding fields in database collection (may take some time) . . . . .
 # Field names cached for this session.
 length(allFields[grepl("CTIS", names(allFields))])
-# [1] 3147
+# [1] 3183
 
 allFields[grepl("defer|consideration$", allFields, ignore.case = TRUE)]
 #                                                                                            CTIS 
@@ -556,12 +556,12 @@ Analyse some simple result details (see this [vignette](https://rfhb.github.io/c
 # Get all records that have values in any of the specified fields:
 result <- dbGetFieldsIntoDf(
   fields = c(
-    "clinical_results.baseline.analyzed_list.analyzed.count_list.count",
-    "clinical_results.baseline.group_list.group",
+    "clinical_results.baseline.analyzed_list.analyzed.count_list.count.value",
+    "clinical_results.baseline.group_list.group.title",
     "clinical_results.baseline.analyzed_list.analyzed.units",
     "number_of_arms",
     "study_design_info.allocation",
-    "location",
+    "location.facility.name",
     "condition"
   ),
   con = db
@@ -570,14 +570,7 @@ result <- dbGetFieldsIntoDf(
 # Mangle to calculate:
 # - which columns with values for group counts are not labelled Total
 # - what are the numbers in each of the groups etc.
-result %<>% 
-  mutate(
-    which_not_total = lapply(clinical_results.baseline.group_list.group, "[[", 1),
-    which_not_total = lapply(which_not_total, function(i) which(i["title"] != "Total")),
-    num_participants = lapply(
-      clinical_results.baseline.analyzed_list.analyzed.count_list.count, 
-      function(i) if (is.data.frame(i[[1]])) i[[1]][2] else i[2])
-  ) %>% 
+ result %<>% 
   rowwise() %>% 
   mutate(
     is_randomised = case_when(
@@ -585,11 +578,12 @@ result %<>%
       study_design_info.allocation == "Non-Randomized" ~ FALSE, 
       number_of_arms == 1L ~ FALSE
     ),
-    num_sites = length(sapply(location, "[[", "name")),
-    which_not_total = list(if (length(which_not_total)) which_not_total else 1L),
-    num_participants = sum(as.integer(num_participants[[1]][which_not_total])),
+    which_not_total = list(which(strsplit(
+      clinical_results.baseline.group_list.group.title, " / ")[[1]] != "Total")),
+    num_sites = length(strsplit(location.facility.name, " / ")[[1]]),
+    num_participants = sum(as.integer(clinical_results.baseline.analyzed_list.analyzed.count_list.count.value[which_not_total])),
     num_arms_or_groups = max(number_of_arms, length(which_not_total))
-  ) 
+  )
 
 # Inspect:
 # View(result)

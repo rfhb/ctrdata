@@ -80,7 +80,7 @@
                         <h4 data-toc-skip class="author">Ralf
 Herold</h4>
             
-            <h4 data-toc-skip class="date">2023-08-09</h4>
+            <h4 data-toc-skip class="date">2024-01-14</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/rfhb/ctrdata/blob/HEAD/vignettes/ctrdata_retrieve.Rmd" class="external-link"><code>vignettes/ctrdata_retrieve.Rmd</code></a></small>
       <div class="d-none name"><code>ctrdata_retrieve.Rmd</code></div>
@@ -99,9 +99,9 @@ Herold</h4>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"ctrdata"</span><span class="op">)</span></span></code></pre></div>
 <p>Remember to respect the registers’ terms and conditions (see
 <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>). Please cite
-this package in any publication as follows: Ralf Herold (2022). ctrdata:
+this package in any publication as follows: Ralf Herold (2024). ctrdata:
 Retrieve and Analyze Clinical Trials in Public Registers. R package
-version 1.9.0. <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a></p>
+version 1.16.0. <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a></p>
 </div>
 <div class="section level3">
 <h3 id="open-registers-advanced-search-page-in-browser">Open register’s advanced search page in browser<a class="anchor" aria-label="anchor" href="#open-registers-advanced-search-page-in-browser"></a>
@@ -161,9 +161,10 @@ check<a class="anchor" aria-label="anchor" href="#retrieve-protocol-related-info
 <span>  queryterm <span class="op">=</span> <span class="va">q</span>,</span>
 <span>  only.count <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span><span class="op">$</span><span class="va">n</span></span>
-<span><span class="co"># (1/3) Checking trials in EUCTR:</span></span>
-<span><span class="co"># Retrieved overview, multiple records of 91 trial(s) from 5 page(s) to be downloaded (estimate: 4.5 MB)</span></span>
-<span><span class="co"># [1] 91</span></span>
+<span><span class="co"># * Found search query from EUCTR: query=cancer&amp;age=under-18&amp;status=completed&amp;phase=phase-one</span></span>
+<span><span class="co"># * Checking trials in EUCTR...</span></span>
+<span><span class="co"># Retrieved overview, multiple records of 97 trial(s) from 5 page(s) to be downloaded (estimate: 5 MB)</span></span>
+<span><span class="co"># [1] 97</span></span>
 <span></span>
 <span><span class="co"># Connect to a database and chose a table / collection</span></span>
 <span><span class="va">db</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">src_sqlite</a></span><span class="op">(</span></span>
@@ -176,20 +177,24 @@ check<a class="anchor" aria-label="anchor" href="#retrieve-protocol-related-info
 <span>  queryterm <span class="op">=</span> <span class="va">q</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># (1/3) Checking trials in EUCTR:</span></span>
-<span><span class="co"># Retrieved overview, multiple records of 91 trial(s) from 5 page(s) to be downloaded (estimate: 4.5 MB)</span></span>
-<span><span class="co"># Downloading trials...</span></span>
-<span><span class="co"># Note: register server cannot compress data, transfer takes longer, about 0.4s per trial</span></span>
-<span><span class="co"># Download status: 5 done; 0 in progress. Total size: 7.17 Mb (100%)... done!             </span></span>
-<span><span class="co"># (2/3) Converting to JSON, 347 records converted</span></span>
-<span><span class="co"># (3/3) Importing JSON records into database...</span></span>
-<span><span class="co"># = Imported or updated 347 records on 91 trial(s) </span></span>
+<span><span class="co"># * Found search query from EUCTR: query=cancer&amp;age=under-18&amp;status=completed&amp;phase=phase-one</span></span>
+<span><span class="co"># * Checking trials in EUCTR...</span></span>
+<span><span class="co"># Retrieved overview, multiple records of 97 trial(s) from 5 page(s) to be downloaded (estimate: 5 MB)</span></span>
+<span><span class="co"># (1/3) Downloading trials...</span></span>
+<span><span class="co"># Note: register server cannot compress data, transfer takes longer (estimate: 20 s)</span></span>
+<span><span class="co"># Download status: 5 done; 0 in progress. Total size: 7.91 Mb (100%)... done!             </span></span>
+<span><span class="co"># (2/3) Converting to NDJSON (estimate: 2 s)...</span></span>
+<span><span class="co"># (3/3) Importing records into database...</span></span>
+<span><span class="co"># = Imported or updated 377 records on 97 trial(s) </span></span>
+<span><span class="co"># No history found in expected format.</span></span>
 <span><span class="co"># Updated history ("meta-info" in "test")</span></span>
+<span><span class="co"># $n</span></span>
+<span><span class="co"># [1] 377</span></span>
 <span></span>
 <span><span class="co"># Show which queries have been downloaded into database</span></span>
 <span><span class="fu"><a href="../reference/dbQueryHistory.html">dbQueryHistory</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></span>
 <span><span class="co">#       query-timestamp query-register query-records</span></span>
-<span><span class="co"># 1 2023-08-02 19:41:36          EUCTR           347</span></span>
+<span><span class="co"># 1 2024-01-14 12:40:16          EUCTR           377</span></span>
 <span><span class="co">#                                                   query-term</span></span>
 <span><span class="co"># 1 query=cancer&amp;age=under-18&amp;status=completed&amp;phase=phase-one</span></span></code></pre></div>
 <p>With a file-base SQLite database, this takes about 20 seconds for
@@ -227,23 +232,26 @@ specifying parameter <code>documents.path</code>, see
 <span>  euctrresults <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># (1/3) Checking trials in EUCTR:</span></span>
-<span><span class="co"># Retrieved overview, multiple records of 88 trial(s) from 5 page(s) to be downloaded (estimate: 4.4 MB)</span></span>
-<span><span class="co"># Downloading trials...</span></span>
-<span><span class="co"># Note: register server cannot compress data, transfer takes longer, about 0.3s per trial</span></span>
-<span><span class="co"># Download status: 5 done; 0 in progress. Total size: 6.99 Mb (100%)... done!             </span></span>
-<span><span class="co"># (2/3) Converting to JSON, 339 records converted</span></span>
-<span><span class="co"># (3/3) Importing JSON records into database...</span></span>
-<span><span class="co"># = Imported or updated 339 records on 88 trial(s) </span></span>
-<span><span class="co"># Retrieving results if available from EUCTR for 88 trials: </span></span>
+<span><span class="co"># * Found search query from EUCTR: query=cancer&amp;age=under-18&amp;status=completed&amp;phase=phase-one</span></span>
+<span><span class="co"># * Checking trials in EUCTR...</span></span>
+<span><span class="co"># Retrieved overview, multiple records of 97 trial(s) from 5 page(s) to be downloaded (estimate: 5 MB)</span></span>
+<span><span class="co"># (1/3) Downloading trials...</span></span>
+<span><span class="co"># Note: register server cannot compress data, transfer takes longer (estimate: 20 s)</span></span>
+<span><span class="co"># Download status: 5 done; 0 in progress. Total size: 7.91 Mb (100%)... done!             </span></span>
+<span><span class="co"># (2/3) Converting to NDJSON (estimate: 2 s)...</span></span>
+<span><span class="co"># (3/3) Importing records into database...</span></span>
+<span><span class="co"># = Imported or updated 377 records on 97 trial(s) </span></span>
+<span><span class="co"># * Checking results if available from EUCTR for 97 trials: </span></span>
 <span><span class="co"># (1/4) Downloading and extracting results (. = data, F = file[s] and data, x = none):</span></span>
-<span><span class="co"># Download status: 88 done; 0 in progress. Total size: 55.07 Mb (100%)... done!             </span></span>
-<span><span class="co"># F . F F . F . F . F . . . F . . . . . . F . . . . . . . . . . . . . . . . . . . </span></span>
-<span><span class="co"># . . . . . . . . F . . . . . F . . F . . . . . . F . . . . . </span></span>
-<span><span class="co"># (2/3) Converting to JSON, 70 records converted</span></span>
-<span><span class="co"># (3/4) Importing JSON into database...</span></span>
+<span><span class="co"># Download status: 97 done; 0 in progress. Total size: 48.64 Mb (100%)... done!             </span></span>
+<span><span class="co"># Download status: 21 done; 0 in progress. Total size: 84.53 Kb (308%)... done!             </span></span>
+<span><span class="co"># Download status: 21 done; 0 in progress. Total size: 84.53 Kb (308%)... done!             </span></span>
+<span><span class="co"># Download status: 21 done; 0 in progress. Total size: 84.53 Kb (308%)... done!             </span></span>
+<span><span class="co"># F . . . . F . . F . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . </span></span>
+<span><span class="co"># (2/4) Converting to NDJSON (estimate: 8 s)...</span></span>
+<span><span class="co"># (3/4) Importing results into database (may take some time)...</span></span>
 <span><span class="co"># (4/4) Results history: not retrieved (euctrresultshistory = FALSE)</span></span>
-<span><span class="co"># = Imported or updated results for 70 trials</span></span>
+<span><span class="co"># = Imported or updated results for 76 trials</span></span>
 <span><span class="co"># Updated history ("meta-info" in "test")</span></span></code></pre></div>
 <p>With a file-base SQLite database, this takes about 4 minutes for
 about 300 records, with most of the time needed for merging result- and
@@ -263,18 +271,16 @@ information from different registers. Example:</p>
 <span>  queryterm <span class="op">=</span> <span class="st">"https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&amp;recrs=e&amp;age=0&amp;intr=Drug"</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co"># * Appears specific for CTGOV CLASSIC</span></span>
 <span><span class="co"># * Found search query from CTGOV: cond=neuroblastoma&amp;recrs=e&amp;age=0&amp;intr=Drug</span></span>
-<span><span class="co"># (1/3) Checking trials in CTGOV:</span></span>
-<span><span class="co"># Retrieved overview, records of 209 trial(s) are to be downloaded (estimate: 1.7 MB)</span></span>
-<span><span class="co"># Download status: 1 done; 0 in progress. Total size: 1.44 Mb (100%)... done!             </span></span>
-<span><span class="co"># (2/3) Converting to JSON, 209 records converted</span></span>
-<span><span class="co"># (3/3) Importing JSON records into database...</span></span>
-<span><span class="co"># = Imported or updated 209 trial(s)               </span></span>
-<span><span class="co"># No history found in expected format.</span></span>
-<span><span class="co"># Updated history ("meta-info" in "test")</span></span>
-<span></span>
-<span><span class="co"># Warning message:</span></span>
-<span><span class="co"># [...]/ctrDATA15bc13c33351a/ctgov_trials_7.ndjson: Error : C stack usage  8336652 is too close to the limit</span></span></code></pre></div>
+<span><span class="co"># * Checking trials in CTGOV classic...</span></span>
+<span><span class="co"># Retrieved overview, records of 216 trial(s) are to be downloaded (estimate: 1.7 MB)</span></span>
+<span><span class="co"># (1/3) Downloading trial file...</span></span>
+<span><span class="co"># Download status: 1 done; 0 in progress. Total size: 1.52 Mb (100%)... done!             </span></span>
+<span><span class="co"># (2/3) Converting to NDJSON (estimate: 10 s)...</span></span>
+<span><span class="co"># (3/3) Importing records into database...</span></span>
+<span><span class="co"># = Imported or updated 216 trial(s)               </span></span>
+<span><span class="co"># Updated history ("meta-info" in "test")</span></span></code></pre></div>
 <p>With a file-base SQLite database, this takes about 10 seconds for
 about 200 records.</p>
 <p>Note that in this example, a warning message may be issued from
@@ -297,20 +303,7 @@ to the clipboard so that a user can paste them into
 <span>  queryterm <span class="op">=</span> <span class="st">"ageGroupCode=3"</span>,</span>
 <span>  register <span class="op">=</span> <span class="st">"CTIS"</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co"># * Found search query from CTIS: ageGroupCode=3</span></span>
-<span><span class="co"># (1/5) Downloading trials list, found 200 trials</span></span>
-<span><span class="co"># (2/5) Downloading and processing part I and parts II... (estimate: 30 Mb)</span></span>
-<span><span class="co"># Download status: 200 done; 0 in progress. Total size: 30.50 Mb (100%)... done!             </span></span>
-<span><span class="co"># . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . </span></span>
-<span><span class="co"># (3/5) Downloading and processing additional data: </span></span>
-<span><span class="co"># publicevents, summary, layperson, csr, cm, inspections, publicevaluation</span></span>
-<span><span class="co"># Download status: 329 done; 0 in progress. Total size: 8.82 Mb (100%)... done!             </span></span>
-<span><span class="co"># 200</span></span>
-<span><span class="co"># (4/5) Importing JSON records into database...</span></span>
-<span><span class="co"># (5/5) Updating with additional data: . . . . </span></span>
-<span><span class="co"># = Imported / updated 200 / 200 / 1 / 1 / 200 records on 200 trial(s)</span></span>
-<span><span class="co"># Updated history ("meta-info" in "test")</span></span></code></pre></div>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="add-personal-annotations">Add personal annotations<a class="anchor" aria-label="anchor" href="#add-personal-annotations"></a>
@@ -328,15 +321,25 @@ identify subsets of records in the database.</p>
 <span>  annotation.mode <span class="op">=</span> <span class="st">"append"</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># * Found search query from CTGOV: cond=neuroblastoma&amp;recrs=e&amp;age=0&amp;intr=Drug&amp;cntry=DE</span></span>
-<span><span class="co"># (1/3) Checking trials in CTGOV:</span></span>
-<span><span class="co"># Retrieved overview, records of 12 trial(s) are to be downloaded (estimate: 0.096 MB)</span></span>
-<span><span class="co"># Download status: 1 done; 0 in progress. Total size: 70.25 Kb (100%)... done!             </span></span>
-<span><span class="co"># (2/3) Converting to JSON, 12 records converted</span></span>
-<span><span class="co"># (3/3) Importing JSON records into database...</span></span>
-<span><span class="co"># = Imported or updated 12 trial(s)                </span></span>
-<span><span class="co"># = Annotated retrieved records (12 records)</span></span>
-<span><span class="co"># Updated history ("meta-info" in "test")</span></span></code></pre></div>
+<span><span class="co"># * Found search query from CTIS: ageGroupCode=3</span></span>
+<span><span class="co"># * Checking trials in CTIS...</span></span>
+<span><span class="co"># (1/5) Downloading trials list . . found 392 trials</span></span>
+<span><span class="co"># (2/5) Downloading and processing part I and parts II... (estimate: 80 Mb)</span></span>
+<span><span class="co"># Download status: 392 done; 0 in progress. Total size: 62.56 Mb (100%)... done!             </span></span>
+<span><span class="co"># Download status: 2 done; 0 in progress. Total size: 30 b (100%)... done!             </span></span>
+<span><span class="co"># Download status: 2 done; 0 in progress. Total size: 30 b (100%)... done!             </span></span>
+<span><span class="co"># Download status: 2 done; 0 in progress. Total size: 30 b (100%)... done!             </span></span>
+<span><span class="co"># . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . </span></span>
+<span><span class="co"># (3/5) Downloading and processing additional data:</span></span>
+<span><span class="co"># publicevents, summary, layperson, csr, cm, inspections, publicevaluation (estimate: 20 Mb)</span></span>
+<span><span class="co"># Download status: 680 done; 0 in progress. Total size: 17.83 Mb (100%)... done!             </span></span>
+<span><span class="co"># 390</span></span>
+<span><span class="co"># (4/5) Importing records into database...</span></span>
+<span><span class="co"># (5/5) Updating with additional data: . . . . .   </span></span>
+<span><span class="co"># = Imported / updated 392 / 390 / 390 / 4 / 1 / 3 records on 392 trial(s)</span></span>
+<span><span class="co"># Updated history ("meta-info" in "test")</span></span>
+<span><span class="co"># $n</span></span>
+<span><span class="co"># [1] 392</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="add-information-using-trial-identifiers">Add information using trial identifiers<a class="anchor" aria-label="anchor" href="#add-information-using-trial-identifiers"></a>
@@ -368,7 +371,7 @@ specified.</p>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
 <span></span>
 <span><span class="co"># iterate over sets of trial ids</span></span>
-<span><span class="kw">for</span> <span class="op">(</span><span class="va">idSet</span> <span class="kw">in</span> <span class="va">idSets</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">idSet</span> <span class="kw">in</span> <span class="va">idSets</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  </span>
 <span>  <span class="co"># import</span></span>
 <span>  <span class="va">setResult</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
