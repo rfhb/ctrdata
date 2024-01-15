@@ -28,8 +28,8 @@
 #' that are conducted exclusively in third countries, that is, outside
 #' the European Union. Ignored if \code{prefermemberstate} is set to "3RD".
 #'
-#' @param verbose If set to \code{TRUE}, prints out which fields
-#'  of the registers are used to find corresponding trial records
+#' @param verbose If \code{TRUE}, prints out the fields of registers used to
+#' find corresponding trial records
 #'
 #' @importFrom nodbi docdb_query
 #' @importFrom stats setNames

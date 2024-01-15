@@ -154,7 +154,7 @@ expect_equal(dim(tmp), c(7L, 4L))
 
 #### dbFindFields ####
 
-tmpFields <- dbFindFields(namepart = ".*", con = dbc)
+tmpFields <- dbFindFields(namepart = ".*", con = dbc, sample = FALSE)
 expect_true(length(tmpFields) > 340L)
 
 #### dbGetFieldsIntoDf ####

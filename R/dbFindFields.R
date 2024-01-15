@@ -7,11 +7,13 @@
 #' previously loaded into a collection
 #' (using \link{ctrLoadQueryIntoDb}). Only names of fields that have
 #' a value in the collection can be returned.
+#' Set \code{sample = FALSE} to force screening all records in the
+#' collection for field names, see below.
 #'
-#' In addition to the full names of all child fields (e.g.,
+#' The full names of child fields are returned in dot notation (e.g.,
 #' \code{clinical_results.outcome_list.outcome.measure.class_list.class.title})
-#' this function returns names of parent fields (e.g.,
-#' \code{clinical_results}).
+#' In addition, names of parent fields (e.g.,
+#' \code{clinical_results}) are returned.
 #' Data in parent fields is typically complex (nested), see
 #' \link{dfTrials2Long} for easily handling it.
 #' For field definitions of the registers, see
@@ -22,6 +24,13 @@
 #' @param namepart A character string (can be a regular expression,
 #' including Perl-style) to be searched among all field names (keys)
 #' in the collection, case-insensitive. The default `".*"` lists all fields.
+#'
+#' @param sample If \code{TRUE} (default), uses a sample of only 5 trial
+#' records per register to identify fields, to rapidly return a possible
+#' incomplete set of field names.
+#' If \code{FALSE}, uses all trial records in the collection, which will
+#' take more time with more trials but returns all names of fields in the
+#' collection.
 #'
 #' @param verbose If \code{TRUE}, prints additional information
 #' (default \code{FALSE}).
@@ -49,7 +58,7 @@
 #'
 #' # view all 3350+ fields from all registers:
 #'
-#' allFields <- dbFindFields(con = dbc)
+#' allFields <- dbFindFields(con = dbc, sample = FALSE)
 #'
 #' if (interactive()) View(data.frame(
 #'   register = names(allFields),
@@ -57,6 +66,7 @@
 #'
 dbFindFields <- function(namepart = ".*",
                          con,
+                         sample = TRUE,
                          verbose = FALSE) {
   ## sanity checks
   if (!is.atomic(namepart)) stop("'namepart' should be atomic.", call. = FALSE)
@@ -68,8 +78,12 @@ dbFindFields <- function(namepart = ".*",
 
   ## check if cache environment has entry for the database
   keyslist <- ctrCache(
-    xname = paste0("keyslist_", con$db, "/", con$collection, "_timestamp"),
-    verbose = verbose
+    xname = paste0("keyslist_", con$db, "/", con$collection, "_timestamp")
+  )
+
+  ## get sample reference value
+  cacheSmpl <- ctrCache(
+    xname = paste0("keyslist_", con$db, "/", con$collection, "_sample")
   )
 
   ## get cache reference value
@@ -79,30 +93,54 @@ dbFindFields <- function(namepart = ".*",
   ), silent = TRUE)))[1])
 
   ## invalidate cache
-  cacheOutdated <- is.null(keyslist) || (cacheRef != keyslist)
+  cacheOutdated <- is.null(keyslist) || (cacheRef != keyslist) || (!sample & cacheSmpl)
 
   ## get keyslist
   if (cacheOutdated) {
     # inform user
-    message("Finding fields in database collection ",
-            "(may take some time) ", appendLF = FALSE)
+    message("Finding fields in database collection", appendLF = FALSE)
+
+    queries <- paste0('{"ctrname": "', sort(registerList), '"}')
+    names(queries) <- sort(registerList)
+
+    # queries by sample
+    if (sample) {
+
+      # adding query for EUCTR results data
+      queries <- c('{"trialInformation": {"$regex": ".+"}}',
+                   '{"clinical_results": {"$regex": ".+"}}', queries)
+      names(queries)[1:2] <- c("EUCTR", "CTGOV")
+      n <- 5L
+      message(" (sampling ", n, " trial records) ", appendLF = FALSE)
+
+    } else {
+
+      message(" (may take some time) ", appendLF = FALSE)
+      n <- -1L
+
+    }
 
     # get names
     keyslist <- NULL
 
     # iterate over registers
-    for (q in registerList) {
+    for (i in seq_along(queries)) {
+
       message(" . ", appendLF = FALSE)
+
       # iterate over query items
       # get fields from register
       keysAdd <- nodbi::docdb_query(
         src = con,
         key = con$collection,
-        query = paste0('{"ctrname": "', q, '"}'),
-        listfields = TRUE
+        query = queries[i],
+        listfields = TRUE,
+        limit = n
       )
+
       # give keys name of register
-      names(keysAdd) <- rep(q, length(keysAdd))
+      if (!is.null(keysAdd)) names(keysAdd) <- rep(names(queries)[i], length(keysAdd))
+
       # accumulate keys
       keyslist <- c(keyslist, keysAdd)
     }
@@ -115,17 +153,25 @@ dbFindFields <- function(namepart = ".*",
     if (length(keyslist) > 1) {
       ctrCache(
         xname = paste0("keyslist_", con$db, "/", con$collection),
-        xvalue = keyslist, verbose = verbose
+        xvalue = keyslist
       )
       ctrCache(
         xname = paste0("keyslist_", con$db, "/", con$collection, "_timestamp"),
-        xvalue = cacheRef, verbose = verbose
+        xvalue = cacheRef
+      )
+      ctrCache(
+        xname = paste0("keyslist_", con$db, "/", con$collection, "_sample"),
+        xvalue = sample
       )
       message("Field names cached for this session.")
     }
+
   } else {
 
-    message("Using cache of fields.")
+    message("Using cache of fields. ")
+
+    if (cacheSmpl) message(
+      "Sample used, specify 'sample = FALSE' to digest all records.", "")
 
     keyslist <- ctrCache(
       xname = paste0("keyslist_", con$db, "/", con$collection),
@@ -147,6 +193,22 @@ dbFindFields <- function(namepart = ".*",
     pattern = namepart, x = keyslist,
     ignore.case = TRUE, perl = TRUE
   )]
+
+  ## to remove duplicates
+  fieldsDf <- unique(data.frame(
+    register = names(fields),
+    field = fields,
+    stringsAsFactors = FALSE))
+
+  fieldsTbl <- table(fieldsDf[["register"]])
+
+  # user info
+  if (verbose) message(
+    paste0(names(fieldsTbl), collapse = " / "), ": ",
+    paste0(fieldsTbl, collapse = " / "))
+
+  fields <- fieldsDf[["field"]]
+  names(fields) <- fieldsDf[["register"]]
 
   # user info
   if (verbose) message("Found ", length(fields), " fields.")

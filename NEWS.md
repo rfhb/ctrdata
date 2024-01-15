@@ -3,6 +3,7 @@
 ## Possibly breaking changes
 - Reimplemented `dbGetFieldsIntoDf()` to accelerate and have more predictable, simplified returns, in particular for nested fields; also attempts to recursively expand simply nested data into additional columns in the returned data frame
 - Reimplemented `dbFindFields()` to accelerate; both points are based on improved `nodbi::docdb_query()` functionality
+- `dbFindFields()` now digests a sample of records to quickly find fields, or all records if `sample = FALSE` but taking increasing time with increasing number of records
 - Parameter `fields` of `dbGetFieldsIntoDf()` is limited to less than 50 fields, as not all backend functionality supports 50 or more; use parent fields (e.g., `a.b` instead of `c("a.b.c.d", "a.b.c.e")` or directly get the full collection with `nodbi::docdb_get()`) or other methods
 - Parameter `stopifnodata` of `dbGetFieldsIntoDf()` is no more needed and deprecated
 - Reimplemented typing fields to speed up and to simplify
