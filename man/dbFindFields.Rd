@@ -4,7 +4,7 @@
 \alias{dbFindFields}
 \title{Find names of fields in the database collection}
 \usage{
-dbFindFields(namepart = ".*", con, verbose = FALSE)
+dbFindFields(namepart = ".*", con, sample = TRUE, verbose = FALSE)
 }
 \arguments{
 \item{namepart}{A character string (can be a regular expression,
@@ -13,6 +13,13 @@ in the collection, case-insensitive. The default `".*"` lists all fields.}
 
 \item{con}{A connection object, see section
 `Databases` in \link{ctrdata}.}
+
+\item{sample}{If \code{TRUE} (default), uses a sample of only 5 trial
+records per register to identify fields, to rapidly return a possible
+incomplete set of field names.
+If \code{FALSE}, uses all trial records in the collection, which will
+take more time with more trials but returns all names of fields in the
+collection.}
 
 \item{verbose}{If \code{TRUE}, prints additional information
 (default \code{FALSE}).}
@@ -30,12 +37,14 @@ function returns the full field names used in records that were
 previously loaded into a collection
 (using \link{ctrLoadQueryIntoDb}). Only names of fields that have
 a value in the collection can be returned.
+Set \code{sample = FALSE} to force screening all records in the
+collection for field names, see below.
 }
 \details{
-In addition to the full names of all child fields (e.g.,
+The full names of child fields are returned in dot notation (e.g.,
 \code{clinical_results.outcome_list.outcome.measure.class_list.class.title})
-this function returns names of parent fields (e.g.,
-\code{clinical_results}).
+In addition, names of parent fields (e.g.,
+\code{clinical_results}) are returned.
 Data in parent fields is typically complex (nested), see
 \link{dfTrials2Long} for easily handling it.
 For field definitions of the registers, see
@@ -54,7 +63,7 @@ dbFindFields(namepart = "date", con = dbc)[1:5]
 
 # view all 3350+ fields from all registers:
 
-allFields <- dbFindFields(con = dbc)
+allFields <- dbFindFields(con = dbc, sample = FALSE)
 
 if (interactive()) View(data.frame(
   register = names(allFields),
