@@ -33,14 +33,19 @@ expect_true(
 # correct _id association
 
 # test
-suppressWarnings(
-  suppressMessages(
-    ctrLoadQueryIntoDb(
-      queryterm = "2005-001267-63+OR+2008-003606-33",
-      register = "EUCTR",
-      euctrresults = TRUE,
-      con = dbc
-    )))
+expect_true(
+  setequal(
+    suppressWarnings(
+      suppressMessages(
+        ctrLoadQueryIntoDb(
+          queryterm = "2005-001267-63+OR+2008-003606-33",
+          register = "EUCTR",
+          euctrresults = TRUE,
+          con = dbc
+        )[["success"]])),
+    c("2008-003606-33-GB",
+      "2005-001267-63-AT",
+      "2005-001267-63-IT")))
 
 # test
 expect_identical(
@@ -580,7 +585,7 @@ tmpFields <- suppressMessages(
 
 # test
 expect_true(
-  length(tmpFields) > 390L)
+  length(tmpFields) > 600)
 
 #### dbGetFieldsIntoDf ####
 

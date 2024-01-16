@@ -159,9 +159,6 @@ ctrLoadQueryIntoDbIsrctn <- function(
   ## create empty temporary directory
   tempDir <- ctrTempDir(verbose)
 
-  # prepare a file handle for temporary directory
-  f <- paste0(tempDir, "/", "isrctn.xml")
-
   # inform user
   message("(1/3) Downloading trial file... ")
 
@@ -169,6 +166,13 @@ ctrLoadQueryIntoDbIsrctn <- function(
   isrctndownloadurl <- paste0(
     queryIsrctnRoot, queryIsrctnType1, tmp, "&", apiterm, queryupdateterm
   )
+
+  # prepare a file handle for temporary directory
+  f <- file.path(
+    tempDir, paste0("isrctn_",
+    # include query in file name for potential re-download
+    sapply(isrctndownloadurl, digest::digest, algo = "crc32"),
+    ".xml"))
 
   # get (download) trials into single file f
   ctrMultiDownload(isrctndownloadurl, f, verbose = verbose)
@@ -225,6 +229,11 @@ ctrLoadQueryIntoDbIsrctn <- function(
     verbose = verbose
   )
 
+  ## delete for any re-downloads
+  try(unlink(dir(
+    path = tempDir, pattern = "isrctn_trials_.*.ndjson",
+    full.names = TRUE)), silent = TRUE)
+
   ## documents -----------------------------------------------------
 
   if (!is.null(documents.path)) {
@@ -234,6 +243,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
     suppressMessages(unlink(downloadsNdjson))
     downloadsNdjsonCon <- file(downloadsNdjson, open = "at")
     on.exit(try(close(downloadsNdjsonCon), silent = TRUE), add = TRUE)
+    on.exit(try(unlink(downloadsNdjson), silent = TRUE), add = TRUE)
 
     # extract trial ids and file name and save in temporary file
     for (ndjsonFile in dir(

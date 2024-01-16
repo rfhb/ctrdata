@@ -1175,23 +1175,31 @@ ctrTempDir <- function(verbose = FALSE) {
 
   # retain tempdir for session to accelerate
   options(ctrdata.tempdir = tempDir)
-  
-  # insert on.exit() call into the parent function
-  if (!verbose) {
-    do.call(
-      on.exit,
-      list(
-        substitute(fun(), list(
-          fun = function() unlink(tempDir, recursive = TRUE))),
-        add = TRUE),
-      envir = parent.frame(2L)
-    )
+
+  # register deleting tempDir when exiting session
+  assign("keeptempdir", verbose, envir = .ctrdataenv)
+  delCtrdataTempDir <- function(x) {
+    if (length(.ctrdataenv$keeptempdir) &&
+        !is.null(.ctrdataenv$keeptempdir)) {
+      if (.ctrdataenv$keeptempdir) {
+        message("Since 'VERBOSE = TRUE', not deleting ctrdata.tempdir ", tempDir)
+      } else {
+        try(unlink(tempDir, recursive = TRUE), silent = TRUE)
+        message("...deleted ctrdata.tempdir\r")
+      }
+    }
+    assign("keeptempdir", NULL, envir = .ctrdataenv)
   }
+  reg.finalizer(
+    e = .ctrdataenv,
+    f = delCtrdataTempDir,
+    onexit = TRUE
+  )
 
   # inform user
   if (verbose) message(
-    "\nDEBUG: ", tempDir, 
-    "\nUsing any previously downloaded files of the ", 
+    "\nDEBUG: ", tempDir,
+    "\nUsing any previously downloaded files of the ",
     length(dir(path = tempDir)),
     " files existing in this folder.\n")
 
@@ -1301,8 +1309,8 @@ ctrDocsDownload <- function(
 
       # handle failures despite success is true
       suppressMessages(invisible(sapply(
-        tmp[tmp$status_code != 200L, "destfile", drop = TRUE], 
-        
+        tmp[tmp$status_code != 200L, "destfile", drop = TRUE],
+
         # delete but only micro files, possible remnants
         function(f) if (file.size(f) < 20L) unlink(f)
       )))

@@ -99,7 +99,11 @@ ctrLoadQueryIntoDbCtgov <- function(
   tempDir <- ctrTempDir(verbose)
 
   # prepare a file handle for temporary directory
-  f <- file.path(tempDir, "ctgov.zip")
+  f <- file.path(
+    tempDir, paste0("ctgov_",
+    # include query in file name for potential re-download
+    sapply(ctgovdownloadcsvurl, digest::digest, algo = "crc32"),
+    ".zip"))
 
   # inform user
   message("(1/3) Downloading trial file...")
@@ -190,6 +194,11 @@ ctrLoadQueryIntoDbCtgov <- function(
                                  con = con,
                                  verbose = verbose)
 
+  ## delete for any re-downloads
+  try(unlink(dir(
+    path = tempDir, pattern = "ctgov_trials_[0-9]+.ndjson",
+    full.names = TRUE)), silent = TRUE)
+
   ## documents ----------------------------------------------------------------
 
   if (!is.null(documents.path)) {
@@ -199,6 +208,7 @@ ctrLoadQueryIntoDbCtgov <- function(
     suppressMessages(unlink(downloadsNdjson))
     downloadsNdjsonCon <- file(downloadsNdjson, open = "at")
     on.exit(try(close(downloadsNdjsonCon), silent = TRUE), add = TRUE)
+    on.exit(try(unlink(downloadsNdjsonCon), silent = TRUE), add = TRUE)
 
     # extract trial ids and file name and save in temporary file
     for (ndjsonFile in dir(
