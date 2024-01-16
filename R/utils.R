@@ -1301,7 +1301,10 @@ ctrDocsDownload <- function(
 
       # handle failures despite success is true
       suppressMessages(invisible(sapply(
-        tmp[tmp$status_code != 200L, "destfile", drop = TRUE], unlink
+        tmp[tmp$status_code != 200L, "destfile", drop = TRUE], 
+        
+        # delete but only micro files, possible remnants
+        function(f) if (file.size(f) < 20L) unlink(f)
       )))
       tmp <- nrow(tmp[tmp$status_code == 200L, , drop = FALSE])
 
