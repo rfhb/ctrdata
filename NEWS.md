@@ -9,8 +9,9 @@
 - Reimplemented typing fields to speed up and to simplify
 
 ## Improvements
-- No files downloading again when using `verbose = TRUE` and `options(ctrdata.tempdir = "<user_specified_folder>")`
-- Inform MS Windows users if `cygwin` was found that they may chose to delete it
+- No files downloading again; temporary folder is now re-used throughout a session 
+- Temporary folder can be set by users with `options(ctrdata.tempdir = "<user_specified_folder>")`
+- Inform MS Windows users if `cygwin` was found so that they may chose to delete it
 - Many fields added for typing e.g. as date in `dbGetFieldsIntoDf()`
 
 ## Bug fixes

@@ -1173,6 +1173,9 @@ ctrTempDir <- function(verbose = FALSE) {
   dir.create(tempDir, showWarnings = FALSE, recursive = TRUE)
   tempDir <- normalizePath(tempDir, mustWork = TRUE)
 
+  # retain tempdir for session to accelerate
+  options(ctrdata.tempdir = tempDir)
+  
   # insert on.exit() call into the parent function
   if (!verbose) {
     do.call(
@@ -1186,11 +1189,11 @@ ctrTempDir <- function(verbose = FALSE) {
   }
 
   # inform user
-  if (verbose) message("\nDEBUG: ", tempDir, "\n")
-  if (verbose && !is.null(getOption(
-    "ctrdata.tempdir", default = NULL))) warning(
-      "Using any files previously downloaded into this folder.\n",
-      call. = FALSE, immediate. = TRUE)
+  if (verbose) message(
+    "\nDEBUG: ", tempDir, 
+    "\nUsing any previously downloaded files of the ", 
+    length(dir(path = tempDir)),
+    " files existing in this folder.\n")
 
   # return
   return(tempDir)
