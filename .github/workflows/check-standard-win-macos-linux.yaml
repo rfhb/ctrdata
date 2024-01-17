@@ -30,13 +30,6 @@ jobs:
       RSPM: ${{ matrix.config.rspm }}
       GITHUB_PAT: ${{ secrets.GHPAT }}
 
-    # https://docs.github.com/en/actions/reference/software-installed-on-github-hosted-runners
-    # includes on macOS 10.15 mongod 4.2.8 and Windows Server 201{6,9}:
-    # Version ServiceName ServiceStatus ServiceStartType
-    # 4.2.8.0 MongoDB     Running       Automatic
-    # disabled on Windows from August 2022
-    # https://github.com/actions/runner-images/issues/5949
-
     steps:
       - uses: actions/checkout@v3
 
@@ -69,6 +62,8 @@ jobs:
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran(c("rcmdcheck", "covr"))
         shell: Rscript {0}
+
+      - uses: ankane/setup-mongodb@v1
 
       - uses: ankane/setup-postgres@v1
         with:
