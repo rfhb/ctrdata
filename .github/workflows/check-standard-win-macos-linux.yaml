@@ -5,7 +5,7 @@
 
 on: [push, pull_request, workflow_dispatch]
 
-name: R-CMD-CHECK-win-macos-duckdb-mongodb-sqlite
+name: R-CMD-CHECK-win-macos-linux-duckdb-mongodb-sqlite-postgres
 
 jobs:
   R-CMD-check:
@@ -20,6 +20,7 @@ jobs:
           - {os: windows-latest, r: 'release'}
           - {os: macOS-latest, r: 'release'}
           - {os: macOS-latest, r: 'oldrel'}
+          - {os: ubuntu-latest, r: 'devel', http-user-agent: 'release'}
           # error installing dependencies under devel
           #- {os: macOS-latest, r: 'devel'}
 
@@ -35,6 +36,12 @@ jobs:
     # 4.2.8.0 MongoDB     Running       Automatic
     # disabled on Windows from August 2022
     # https://github.com/actions/runner-images/issues/5949
+
+    services:
+      mongodb:
+        image: mongo:4.2
+        ports:
+          - 27017:27017
 
     steps:
       - uses: actions/checkout@v3
@@ -69,10 +76,10 @@ jobs:
           remotes::install_cran(c("rcmdcheck", "covr"))
         shell: Rscript {0}
 
-      # - uses: ankane/setup-postgres@v1
-      #   with:
-      #     postgres-version: 14
-      #     database: test
+      - uses: ankane/setup-postgres@v1
+        with:
+          postgres-version: 14
+          database: test
 
       - name: Test coverage
         if: matrix.config.os == 'macOS-latest' && matrix.config.r == 'release'
