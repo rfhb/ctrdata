@@ -273,11 +273,6 @@ ctrLoadQueryIntoDbCtgov2 <- function(
   imported <- dbCTRLoadJSONFiles(dir = tempDir, con = con, verbose = verbose)
   message("")
 
-  ## delete for any re-downloads
-  try(unlink(dir(
-    path = tempDir, pattern = "ctgov_trials_[0-9]+.ndjson",
-    full.names = TRUE)), silent = TRUE)
-
   ## download files-----------------------------------------------------
 
   if (!is.null(documents.path)) {
@@ -325,6 +320,11 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     } # if (!nrow(dlFiles))
 
   } # !is.null(documents.path)
+
+  ## delete for any re-downloads
+  try(unlink(dir(
+    path = tempDir, pattern = "ctgov_trials_[0-9]+.ndjson",
+    full.names = TRUE)), silent = TRUE)
 
   ## inform user -----------------------------------------------------
 

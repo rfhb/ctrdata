@@ -105,7 +105,10 @@ ctrLoadQueryIntoDbCtis <- function(
   offset <- 0L
   limit <- 200L
   idsTrials <- NULL
+
+  # temp file for mangled download
   fTrialsNdjson <- file.path(tempDir, "ctis_trials_1.ndjson")
+  on.exit(try(unlink(fTrialsNdjson), silent = TRUE), add = TRUE)
   unlink(fTrialsNdjson)
 
   # need to iterate / paginate as total number cannot be determined
@@ -113,34 +116,34 @@ ctrLoadQueryIntoDbCtis <- function(
 
     # {"totalSize":299,"pageInfo":{"offset":200,"limit":200,"pageNumber":2}
     url <- sprintf(ctisEndpoints[1], offset, limit, queryterm)
-    url <- utils::URLencode(url)
-    trialsJson <- httr::GET(url)
+
+    tmp <- ctrMultiDownload(url, file.path(
+      tempDir, paste0(
+        "ctis_trials_",
+        sapply(url, digest::digest, algo = "crc32"),
+        ".json")))
+
     message(". ", appendLF = FALSE)
 
     # early exit
-    if (httr::status_code(trialsJson) != 200L) {
+    if (tmp$status_code[1] != 200L) {
       warning("Could not be retrieved, check 'queryterm' and / or 'register'. ",
-              "\nAPI returned: ", httr::content(trialsJson),
+              "\nAPI returned: ", tmp$error[1],
               call. = FALSE
       )
       message("API call: ", url)
       return(emptyReturn)
     }
 
-    # extract json
-    trialsJson <- suppressMessages(
-      httr::content(trialsJson, as = "text")
-    )
-
     # get total size note this increases with every batch
     totalSize <- as.numeric(
-      jqr::jq(trialsJson, " {name: .totalSize} | .[]")
+      jqr::jq(file(tmp$destfile[1]), " {name: .totalSize} | .[]")
     )
 
     # extract trial information
     # and convert to ndjson
     trialsJson <- jqr::jq(
-      trialsJson,
+      file(tmp$destfile[1]),
       paste0(
         # extract trial records
         " .elements | .[] ",
@@ -156,10 +159,7 @@ ctrLoadQueryIntoDbCtis <- function(
     # get ids
     idsTrialsBatch <- gsub(
       '"', "", as.character(
-        jqr::jq(
-          trialsJson,
-          ' ."_id" '
-        )))
+        jqr::jq(trialsJson, ' ."_id" ')))
 
     # check for any duplicates
     nonDuplicates <- !(idsTrialsBatch %in% idsTrials)
@@ -231,6 +231,7 @@ ctrLoadQueryIntoDbCtis <- function(
 
   # convert partI and partsII details into ndjson file
   fPartIPartsIINdjson <- file.path(tempDir, "ctis_add_2.ndjson")
+  on.exit(try(unlink(fPartIPartsIINdjson), silent = TRUE), add = TRUE)
   unlink(fPartIPartsIINdjson)
 
   for (fn in tmp[["destfile"]]) {
@@ -265,7 +266,7 @@ ctrLoadQueryIntoDbCtis <- function(
     ), file = i[2], sep = "\n")
     message(". ", appendLF = FALSE)
   }
-  if (!verbose) unlink(paste0(fPartIPartsIINdjson, c("a", "b")))
+  try(unlink(paste0(fPartIPartsIINdjson, c("a", "b"))), silent = TRUE)
 
   ## api_3-9: more data ----------------------------------------------------
 
@@ -321,6 +322,7 @@ ctrLoadQueryIntoDbCtis <- function(
 
     # convert into ndjson file
     fAddNdjson <- file.path(tempDir, paste0("ctis_add_", e, ".ndjson"))
+    on.exit(try(unlink(fAddNdjson), silent = TRUE), add = TRUE)
     unlink(fAddNdjson)
 
     for (fi in seq_len(nrow(tmp))) {
@@ -366,6 +368,7 @@ ctrLoadQueryIntoDbCtis <- function(
   message("publicevaluation", appendLF = FALSE)
 
   fApplicationsJson <- file.path(tempDir, "ctis_add_10.json")
+  on.exit(try(unlink(fApplicationsJson), silent = TRUE), add = TRUE)
 
   # get ids of trial applications
   jqr::jq(
@@ -399,6 +402,7 @@ ctrLoadQueryIntoDbCtis <- function(
     verbose = verbose)
 
   fApplicationsNdjson <- file.path(tempDir, "ctis_add_10.ndjson")
+  on.exit(try(unlink(fApplicationsNdjson), silent = TRUE), add = TRUE)
   unlink(fApplicationsNdjson)
 
   for (i in seq_len(nrow(idsApplications))) {
@@ -457,6 +461,7 @@ ctrLoadQueryIntoDbCtis <- function(
 
     message(". ", appendLF = FALSE)
     res <- nodbi::docdb_update(src = con, key = con$collection, query = "{}", value = f)
+    on.exit(try(unlink(f), silent = TRUE), add = TRUE)
     resAll <- c(resAll, res)
 
   }
@@ -471,6 +476,7 @@ ctrLoadQueryIntoDbCtis <- function(
 
     # get temporary file
     downloadsNdjson <- file.path(tempDir, "ctis_downloads.ndjson")
+    on.exit(try(unlink(downloadsNdjson), silent = TRUE), add = TRUE)
 
     ## extract ids of lists per parts per trial
 
@@ -491,11 +497,13 @@ ctrLoadQueryIntoDbCtis <- function(
       flags = jqr::jq_flags(pretty = FALSE),
       out = downloadsNdjson
     )
+    try(unlink(fPartIPartsIINdjson), silent = TRUE)
 
     # extract ids from additional data
     for (i in 5L:9L) {
       inF <- file.path(tempDir, paste0("ctis_add_", i, ".ndjson"))
       outF <- file.path(tempDir, paste0("ctis_downloads_add_", i, ".ndjson"))
+      on.exit(try(unlink(outF), silent = TRUE), add = TRUE)
       if (!file.exists(inF)) next
       jqr::jq(
         file(inF),
@@ -608,7 +616,7 @@ ctrLoadQueryIntoDbCtis <- function(
     message("- Processing document information in ", nrow(tmp), " lists")
     epTypChars <- paste0(names(epTyp), "appl", "auth", collapse = "")
     epTypChars <- rawToChar(unique(charToRaw(epTypChars)))
-    unlink(downloadsNdjson)
+    try(unlink(downloadsNdjson), silent = TRUE)
 
     for (fi in seq_len(nrow(tmp))) {
 
@@ -658,6 +666,7 @@ ctrLoadQueryIntoDbCtis <- function(
 
     # 3 - documents download
     dlFiles <- jsonlite::stream_in(file(downloadsNdjson), verbose = FALSE)
+    try(unlink(downloadsNdjson), silent = TRUE)
 
     # check if any documents
     if (!nrow(dlFiles)) {

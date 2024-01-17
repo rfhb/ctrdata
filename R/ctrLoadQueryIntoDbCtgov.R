@@ -194,11 +194,6 @@ ctrLoadQueryIntoDbCtgov <- function(
                                  con = con,
                                  verbose = verbose)
 
-  ## delete for any re-downloads
-  try(unlink(dir(
-    path = tempDir, pattern = "ctgov_trials_[0-9]+.ndjson",
-    full.names = TRUE)), silent = TRUE)
-
   ## documents ----------------------------------------------------------------
 
   if (!is.null(documents.path)) {
@@ -208,7 +203,7 @@ ctrLoadQueryIntoDbCtgov <- function(
     suppressMessages(unlink(downloadsNdjson))
     downloadsNdjsonCon <- file(downloadsNdjson, open = "at")
     on.exit(try(close(downloadsNdjsonCon), silent = TRUE), add = TRUE)
-    on.exit(try(unlink(downloadsNdjsonCon), silent = TRUE), add = TRUE)
+    on.exit(try(unlink(downloadsNdjson), silent = TRUE), add = TRUE)
 
     # extract trial ids and file name and save in temporary file
     for (ndjsonFile in dir(
@@ -243,6 +238,11 @@ ctrLoadQueryIntoDbCtgov <- function(
     } # if (!nrow(dlFiles))
 
   } # !is.null(documents.path)
+
+  ## delete for any re-downloads
+  try(unlink(dir(
+    path = tempDir, pattern = "ctgov_trials_[0-9]+.ndjson",
+    full.names = TRUE)), silent = TRUE)
 
   ## inform user -----------------------------------------------------
 

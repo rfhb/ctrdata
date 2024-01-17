@@ -188,12 +188,6 @@ ctrLoadQueryIntoDbEuctr <- function(
   fp <- file.path(
     tempDir, paste0(
       "euctr_trials_",
-      formatC(
-        seq_len(resultsEuNumPages),
-        digits = 0L,
-        width = nchar(resultsEuNumPages),
-        flag = 0),
-      "_",
       # appending hash of query for re-download
       sapply(urls, digest::digest, algo = "crc32"),
       ".txt"
@@ -448,6 +442,9 @@ ctrLoadQueryIntoDbEuctr <- function(
         appendLF = FALSE)
 
     } # for f
+
+    ## delete for any re-downloads
+    try(unlink(jsonFileList), silent = TRUE)
 
     ## result history information ---------------------------------------------
 

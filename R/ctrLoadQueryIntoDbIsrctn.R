@@ -229,11 +229,6 @@ ctrLoadQueryIntoDbIsrctn <- function(
     verbose = verbose
   )
 
-  ## delete for any re-downloads
-  try(unlink(dir(
-    path = tempDir, pattern = "isrctn_trials_.*.ndjson",
-    full.names = TRUE)), silent = TRUE)
-
   ## documents -----------------------------------------------------
 
   if (!is.null(documents.path)) {
@@ -287,6 +282,11 @@ ctrLoadQueryIntoDbIsrctn <- function(
     } # if (!nrow(dlFiles))
 
   } # !is.null(documents.path)
+
+  ## delete for any re-downloads
+  try(unlink(dir(
+    path = tempDir, pattern = "isrctn_trials_.*.ndjson",
+    full.names = TRUE)), silent = TRUE)
 
   ## inform user -----------------------------------------------------
 
