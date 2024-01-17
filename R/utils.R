@@ -1490,6 +1490,7 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
         # step into line by line mode
         fdLines <- file(tempFiles[tempFile], open = "rt", blocking = TRUE)
         fLineOut <- tempfile(pattern = "tmpOneLine", tmpdir = dir, fileext = ".ndjson")
+        on.exit(try(unlink(fLineOut), silent = TRUE), add = TRUE)
         fTmp <- NULL
         while (TRUE) {
           tmpOneLine <- readLines(con = fdLines, n = 1L, warn = FALSE)

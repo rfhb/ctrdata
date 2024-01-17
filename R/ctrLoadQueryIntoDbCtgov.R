@@ -139,8 +139,10 @@ ctrLoadQueryIntoDbCtgov <- function(
 
   for (f in seq_along(xmlFileList)) {
 
-    fNdjsonCon <- file(file.path(tempDir, paste0("ctgov_trials_", f, ".ndjson")), open = "at")
+    fNdjson <- file.path(tempDir, paste0("ctgov_trials_", f, ".ndjson"))
+    fNdjsonCon <- file(fNdjson, open = "at")
     on.exit(try(close(fNdjsonCon), silent = TRUE), add = TRUE)
+    on.exit(try(unlink(fNdjson), silent = TRUE), add = TRUE)
 
     for (i in xmlFileList[[f]]) {
 
@@ -184,6 +186,9 @@ ctrLoadQueryIntoDbCtgov <- function(
     close(fNdjsonCon)
 
   } # for f
+
+  ## delete for any re-downloads
+  try(unlink(unlist(xmlFileList)), silent = TRUE)
 
   ## import -------------------------------------------------------------------
 
