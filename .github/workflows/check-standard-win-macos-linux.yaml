@@ -37,12 +37,6 @@ jobs:
     # disabled on Windows from August 2022
     # https://github.com/actions/runner-images/issues/5949
 
-    services:
-      mongodb:
-        image: mongo:4.2
-        ports:
-          - 27017:27017
-
     steps:
       - uses: actions/checkout@v3
 
