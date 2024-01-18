@@ -1173,8 +1173,13 @@ ctrTempDir <- function(verbose = FALSE) {
   dir.create(tempDir, showWarnings = FALSE, recursive = TRUE)
   tempDir <- normalizePath(tempDir, mustWork = TRUE)
 
-  # retain tempdir for session to accelerate
-  options(ctrdata.tempdir = tempDir)
+  # retain tempdir for session to accelerate,
+  # but only if session is user-interactive.
+  # from ctrdata 1.16.0.9000 onwards, all
+  # intermediate files are deleted before
+  # finalising a ctrLoadQueryIntoDb() call
+  # (that is, only downloaded files are kept).
+  if (interactive()) options(ctrdata.tempdir = tempDir)
 
   # register deleting tempDir when exiting session
   assign("keeptempdir", verbose, envir = .ctrdataenv)
