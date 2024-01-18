@@ -57,6 +57,7 @@ jobs:
       - name: Install dependencies
         run: |
           utils::install.packages("DBI")
+          remotes::install_github("r-dbi/RSQLite")
           utils::install.packages("duckdb", repos = "https://duckdb.r-universe.dev")
           remotes::install_github(repo = "ropensci/nodbi", ref = "reimplementation_end_2023")
           remotes::install_deps(dependencies = TRUE)
