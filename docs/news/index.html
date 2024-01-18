@@ -53,7 +53,7 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.16.0.9000" id="ctrdata-11609000-2024-01-09">ctrdata 1.16.0.9000 (2024-01-09)<a class="anchor" aria-label="anchor" href="#ctrdata-11609000-2024-01-09"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.16.0.9000" id="ctrdata-11609000-2024-01-18">ctrdata 1.16.0.9000 (2024-01-18)<a class="anchor" aria-label="anchor" href="#ctrdata-11609000-2024-01-18"></a></h2>
 <div class="section level3">
 <h3 id="possibly-breaking-changes-1-16-0-9000">Possibly breaking changes<a class="anchor" aria-label="anchor" href="#possibly-breaking-changes-1-16-0-9000"></a></h3>
 <ul><li>Reimplemented <code><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code> to accelerate and have more predictable, simplified returns, in particular for nested fields; also attempts to recursively expand simply nested data into additional columns in the returned data frame</li>
@@ -66,9 +66,10 @@
 </ul></div>
 <div class="section level3">
 <h3 id="improvements-1-16-0-9000">Improvements<a class="anchor" aria-label="anchor" href="#improvements-1-16-0-9000"></a></h3>
-<ul><li>No files downloading again when using <code>verbose = TRUE</code> and <code>options(ctrdata.tempdir = "&lt;user_specified_folder&gt;")</code>
+<ul><li>Register data are re-used and not downloaded again in an interactive session (that is, the same temporary folder is now re-used throughout a user’s session)</li>
+<li>Temporary folder can be set by users with <code>options(ctrdata.tempdir = "&lt;user_specified_folder&gt;")</code>
 </li>
-<li>Inform MS Windows users if <code>cygwin</code> was found that they may chose to delete it</li>
+<li>Inform MS Windows users if <code>cygwin</code> was found so that they may chose to delete it</li>
 <li>Many fields added for typing e.g. as date in <code><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code>
 </li>
 </ul></div>

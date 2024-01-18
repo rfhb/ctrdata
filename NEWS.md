@@ -1,4 +1,4 @@
-# ctrdata 1.16.0.9000 (2024-01-16)
+# ctrdata 1.16.0.9000 (2024-01-18)
 
 ## Possibly breaking changes
 - Reimplemented `dbGetFieldsIntoDf()` to accelerate and have more predictable, simplified returns, in particular for nested fields; also attempts to recursively expand simply nested data into additional columns in the returned data frame
@@ -9,7 +9,7 @@
 - Reimplemented typing fields to speed up and to simplify
 
 ## Improvements
-- No files are downloaded again in a session; temporary folder is now re-used throughout a session 
+- Register data are re-used and not downloaded again in an interactive session (that is, the same temporary folder is now re-used throughout a user's session) 
 - Temporary folder can be set by users with `options(ctrdata.tempdir = "<user_specified_folder>")`
 - Inform MS Windows users if `cygwin` was found so that they may chose to delete it
 - Many fields added for typing e.g. as date in `dbGetFieldsIntoDf()`

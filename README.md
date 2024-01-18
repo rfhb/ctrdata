@@ -36,7 +36,7 @@ conduct of trials, their availability for patients and to facilitate
 using their detailed results for research and meta-analyses. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2024-01-14 for version 1.16.0.9000
+package. This README was reviewed on 2024-01-18 for version 1.16.0.9000
 (major improvement: remove all dependencies on external tools;
 development of refactored
 [`dbGetFieldsIntoDf()`](https://github.com/rfhb/ctrdata/tree/refactor_dbgetfieldsintodf)).
