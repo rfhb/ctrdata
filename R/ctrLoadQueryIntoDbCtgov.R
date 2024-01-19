@@ -223,6 +223,7 @@ ctrLoadQueryIntoDbCtgov <- function(
       message(". ", appendLF = FALSE)
     }
     close(downloadsNdjsonCon)
+    message()
 
     # get document trial id and file name
     dlFiles <- jsonlite::stream_in(file(downloadsNdjson), verbose = FALSE)

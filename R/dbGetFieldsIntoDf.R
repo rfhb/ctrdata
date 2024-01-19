@@ -89,9 +89,10 @@ dbGetFieldsIntoDf <- function(fields = "",
          call. = FALSE)
   }
   if (length(fields) > 49L) {
-    stop("Specify fewer than 50 fields (was: ", length(fields),
-         ') or use parent fields (e.g., "a.b" instead of "a.b.c");',
-         "not all nodbi backend functionality supports 50 or more.")
+    message(
+      "If compatibility with nodbi::src_postgres() is needed, specify fewer ",
+      "than 50 (was: ", length(fields), ") fields or specify parent fields ", 
+      '(e.g., "a.b" instead of "a.b.c.d")')
   }
 
   # check database connection

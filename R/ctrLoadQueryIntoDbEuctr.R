@@ -270,8 +270,7 @@ ctrLoadQueryIntoDbEuctr <- function(
     # latest version: "2007-000371-42"
 
     # inform user
-    message("(1/4) Downloading and extracting results ",
-            "(. = data, F = file[s] and data, x = none):")
+    message("(1/4) Downloading results...")
 
     # prepare download and save
 
@@ -295,6 +294,10 @@ ctrLoadQueryIntoDbEuctr <- function(
     # work only on successful downloads
     tmp <- tmp[tmp[["status_code"]] == 200L, , drop = FALSE]
 
+    # inform user
+    message(
+      "- extracting results (. = data, F = file[s] and data, x = none):")
+    
     # unzip downloaded files and move non-XML extracted files
     tmp <- lapply(
       tmp[["destfile"]], function(f) {
