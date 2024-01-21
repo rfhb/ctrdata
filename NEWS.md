@@ -1,4 +1,4 @@
-# ctrdata 1.16.0.9000 (2024-01-19)
+# ctrdata 1.17.0
 
 ## Possibly breaking changes
 - Reimplemented `dbGetFieldsIntoDf()` to accelerate and have more predictable, simplified returns, in particular for nested fields; also attempts to recursively expand simply nested data into additional columns in the returned data frame

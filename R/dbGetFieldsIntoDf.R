@@ -14,14 +14,17 @@
 #' and may have widened the returned data frame with additional columns that
 #' were recursively expanded from simply nested data (e.g., "externalRefs"
 #' to columns "externalRefs.doi", "externalRefs.eudraCTNumber" etc.).
-#' For further handling of complex nested data, use \link{dfTrials2Long}
-#' followed by \link{dfName2Value} to extract the sought variable(s).
+#' For an alternative way for handling the complex nested data, see
+#' \link{dfTrials2Long} followed by \link{dfName2Value} for extracting
+#' the sought variable(s).
 #'
 #' @param fields Vector of one or more strings, with names of sought fields.
-#' Specify fewer than 50 fields or use parent fields (e.g., "a.b" instead
-#' of "a.b.c" as not all backend functionality supports 50 or more fields.
 #' See function \link{dbFindFields} for how to find names of fields.
 #' Dot path notation ("field.subfield") without indices is supported.
+#' If compatibility with `nodbi::src_postgres()` is needed, specify fewer
+#' than 50 fields, consider also using parent fields e.g., `"a.b"` instead
+#' of `c("a.b.c.d", "a.b.c.e")`, accessing sought fields with
+#' \link{dfTrials2Long} followed by \link{dfName2Value} or other R functions.
 #'
 #' @param verbose Printing additional information if set to \code{TRUE};
 #' (default \code{FALSE}).
@@ -91,8 +94,10 @@ dbGetFieldsIntoDf <- function(fields = "",
   if (length(fields) > 49L) {
     message(
       "If compatibility with nodbi::src_postgres() is needed, specify fewer ",
-      "than 50 (was: ", length(fields), ") fields or specify parent fields ", 
-      '(e.g., "a.b" instead of "a.b.c.d")')
+      "than 50 (was: ", length(fields), ") fields; parent fields, ",
+      'e.g., "a.b" instead of c("a.b.c.d", "a.b.c.e"), can also be used ',
+      "and sought fields can be extracted with dfTrials2Long() followed by ",
+      "dfName2Value() or other R functions.")
   }
 
   # check database connection

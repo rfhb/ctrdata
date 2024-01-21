@@ -36,10 +36,9 @@ conduct of trials, their availability for patients and to facilitate
 using their detailed results for research and meta-analyses. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2024-01-18 for version 1.16.0.9000
-(major improvement: remove all dependencies on external tools;
-development of refactored
-[`dbGetFieldsIntoDf()`](https://github.com/rfhb/ctrdata/tree/refactor_dbgetfieldsintodf)).
+package. This README was reviewed on 2024-01-21 for version 1.17.0
+(major improvement: removed external dependencies; refactored
+[`dbGetFieldsIntoDf()`](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.html)).
 
 ## Main features
 
@@ -70,7 +69,7 @@ Remember to respect the registers’ terms and conditions (see
 `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
 package in any publication as follows: “Ralf Herold (2024). *ctrdata:
 Retrieve and Analyze Clinical Trials in Public Registers.* R package
-version 1.16.0, <https://cran.r-project.org/package=ctrdata>”.
+version 1.17.0, <https://cran.r-project.org/package=ctrdata>”.
 
 <!--
 &#10;```r
@@ -846,19 +845,19 @@ See also <https://app.codecov.io/gh/rfhb/ctrdata/tree/master/R>
 ``` r
 tinytest::test_all()
 # test_ctrdata_ctrfindactivesubstance.R    4 tests OK 2.9s
-# test_ctrdata_mongo_local_ctgov.R   55 tests OK 43.5s
+# test_ctrdata_mongo_local_ctgov.R   51 tests OK 43.5s
 # test_ctrdata_mongo_local_ctgov2.R   32 tests OK 38.0s
-# test_ctrdata_mongo_local_ctis.R  165 tests OK 7.4s   
-# test_ctrdata_mongo_local_euctr.R  109 tests OK 1.1s
+# test_ctrdata_mongo_local_ctis.R  129 tests OK 7.4s   
+# test_ctrdata_mongo_local_euctr.R  98 tests OK 1.1s
 # test_ctrdata_mongo_local_isrctn.R   37 tests OK 14.2s
 # test_ctrdata_other_functions.R   63 tests OK 2.2s
-# test_ctrdata_sqlite_ctgov.R...   55 tests OK 55.0s
+# test_ctrdata_sqlite_ctgov.R...   51 tests OK 55.0s
 # test_ctrdata_sqlite_ctgov2.R..   32 tests OK 44.7s
-# test_ctrdata_sqlite_ctis.R....  177 tests OK 6.1s      
-# test_ctrdata_sqlite_euctr.R...  107 tests OK 1.0s
+# test_ctrdata_sqlite_ctis.R....  131 tests OK 6.1s      
+# test_ctrdata_sqlite_euctr.R...  98 tests OK 1.0s
 # test_ctrdata_sqlite_isrctn.R..   37 tests OK 14.1s
 # test_euctr_error_sample.R.....    8 tests OK 0.5s
-# All ok, 881 results (19m 11.1s)
+# All ok, 771 results (14m 34.6s)
 ```
 
 ## Future features
