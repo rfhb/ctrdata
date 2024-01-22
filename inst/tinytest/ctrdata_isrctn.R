@@ -234,33 +234,12 @@ expect_true(
 rm(res)
 
 # test
-expect_error(
-  suppressMessages(
-    suppressWarnings(
-      dbGetFieldsIntoDf(
-        fields = c("doesnotexist"),
-        con = dbc))),
-  "No data could be extracted for")
-
-# test
-expect_warning(
-  suppressMessages(
-    dbGetFieldsIntoDf(
-      fields = c("doesnotexist"),
-      stopifnodata = FALSE,
-      con = dbc)
-  ),
-  "No records with values for any specified field")
-
-# test
 suppressWarnings(
   suppressMessages(
     tmpDf <- dbGetFieldsIntoDf(
       fields = c(
         "participants.totalFinalEnrolment"
-      ),
-      stopifnodata = FALSE,
-      con = dbc)))
+      ), con = dbc)))
 #
 expect_equivalent(
   sapply(tmpDf, typeof),
@@ -282,67 +261,46 @@ expect_equal(
   "")
 
 # get all field names
-tmpf <- suppressMessages(
+tmpFields <- suppressMessages(
   suppressWarnings(
     dbFindFields(
       namepart = ".*",
       con = dbc)))
 
-# get all data
-result <- suppressMessages(
-  suppressWarnings(
-    dbGetFieldsIntoDf(
-      fields = tmpf,
-      con = dbc,
-      verbose = FALSE,
-      stopifnodata = FALSE)
-  ))
+#### dbGetFieldsIntoDf ####
 
-# develop
-#print(length(names(result)))
+groupsNo <- (length(tmpFields) %/% 49L) + 1L
+groupsNo <- rep(seq_len(groupsNo), 49L)
+groupsNo <- groupsNo[1:length(tmpFields)]
 
-# test
-expect_true(
-  length(names(result)) > 40L)
+for (i in unique(groupsNo)) {
+  message(i, " ", appendLF = FALSE)
+  tmpData <- dbGetFieldsIntoDf(fields = tmpFields[groupsNo == i], con = dbc)
+  expect_true(nrow(tmpData) > 0L)
+  expect_true(ncol(tmpData) > 0L)
+}
+
+tmpFields <- tmpFields[grepl("date$", tmpFields, ignore.case = TRUE)]
+tmpFields <- tmpFields[1:min(length(tmpFields), 49L)]
+
+tmpData <- dbGetFieldsIntoDf(fields = tmpFields, con = dbc)
+expect_true(nrow(tmpData) > 0L)
+expect_true(ncol(tmpData) > 0L)
+
+expect_true(all(
+  unique(unlist(lapply(
+    tmpData[, -1, drop = FALSE],
+    function(i) sapply(i, function(ii) class(ii))))) %in%
+    c("Date", "POSIXct", "POSIXt")
+))
 
 # determine all classes
-tmpr <- names(result)
-tmpr <- tmpr[tmpr != "_id"]
-tmpc <- sapply(result, class, USE.NAMES = FALSE)
-tmpc <- unlist(tmpc)
-tmpc <- table(tmpc)
+# tmpr <- names(result)
+# tmpr <- tmpr[tmpr != "_id"]
+# tmpc <- sapply(result, class, USE.NAMES = FALSE)
+# tmpc <- unlist(tmpc)
+# tmpc <- table(tmpc)
 
-# develop
-#
-# print(tmpc)
-#
-# 2022-10-30
-# tmpc
-# character data.frame       Date    integer       list    logical
-#        49          2          5          2          2          3
-#
-# 2022-02-20
-#
-# > tinytest::run_test_file("inst/tinytest/test_ctrdata_postgres_isrctn.R") # 53
-# Downloading: 10 kB     tmpcn.R    0 tests
-# character      Date   integer      list   logical
-# 50         5         2         3         4
-# test_ctrdata_postgres_isrctn.R   26 tests OK 9.0s
-# All ok, 26 results (9.0s)
-# > tinytest::run_test_file("inst/tinytest/test_ctrdata_mongo_local_isrctn.R") # 55
-# Downloading: 10 kB     tmpcrctn.R    0 tests
-# character      Date   integer      list   logical
-# 51         5         2         1         4
-# test_ctrdata_mongo_local_isrctn.R   26 tests OK 4.1s
-# All ok, 26 results (4.1s)
-# > tinytest::run_test_file("inst/tinytest/test_ctrdata_sqlite_isrctn.R") # 55
-# Downloading: 10 kB     tmpcR..    0 tests
-# character      Date   integer      list   logical
-# 50         5         2         3         4
-# test_ctrdata_sqlite_isrctn.R..   26 tests OK 5.8s
-# All ok, 26 results (5.8s)
-
-rm(tmpf, tmpr, tmpc, result)
 
 #### dbFindIdsUniqueTrials ####
 
@@ -352,7 +310,7 @@ expect_message(
   " [0-9]+ records")
 
 # test
-expect_true(length(res) >= 5L)
+expect_true(length(res) >= 7L)
 rm(res)
 
 

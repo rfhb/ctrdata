@@ -1,6 +1,22 @@
-# ctrdata 1.16.0.9000 (2023-11-24)
+# ctrdata 1.17.0
 
-New development version
+## Possibly breaking changes
+- Reimplemented `dbGetFieldsIntoDf()` to accelerate and have more predictable, simplified returns, in particular for nested fields; also attempts to recursively expand simply nested data into additional columns in the returned data frame
+- Reimplemented `dbFindFields()` to accelerate; both based on improved `nodbi::docdb_query()`
+- `dbFindFields()` now digests a sample of records to quickly find fields, or all records if `sample = FALSE` but taking increasing time with increasing number of records
+- If using `nodbi::scr_postgres()`, parameter `fields` of `dbGetFieldsIntoDf()` is limited to less than 50 fields; a message flags for any backend potential compatibility issues, suggesting to use parent fields, e.g., `a.b` instead of `c("a.b.c.d", "a.b.c.e")`
+- Parameter `stopifnodata` of `dbGetFieldsIntoDf()` is no more needed and deprecated
+- Reimplemented typing fields to speed up and to simplify
+
+## Improvements
+- Register data are re-used and not downloaded again in an interactive session (that is, the same temporary folder is now re-used throughout a user's session) 
+- Temporary folder can be set by users with `options(ctrdata.tempdir = "<user_specified_folder>")`
+- Inform MS Windows users if `cygwin` was found so that they may chose to delete it
+- Many fields added for typing e.g. as date in `dbGetFieldsIntoDf()`
+
+## Bug fixes
+- Adapted and corrected information loading to newly available data in `CTIS`
+- Corrected escaping, and back-conversion, of characters in `JSON` from `CTIS`
 
 # ctrdata 1.16.0 (released 2023-11-24)
 

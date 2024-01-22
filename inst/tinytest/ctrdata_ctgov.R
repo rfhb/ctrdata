@@ -180,16 +180,17 @@ result <- suppressMessages(
         "eligibility.maximum_age",
         "location.facility.name",
         "location"
-        ),
+      ),
       con = dbc)
   ))
 
 # test
 expect_equal(
   rev(
-    sapply(
-      result[["location"]],
-      function(x) length(x[["facility"]][["name"]])))[1:2],
+    sort(
+      sapply(
+        result[["location"]],
+        function(x) length(x[["facility"]][["name"]]))))[1:2],
   c(30, 1))
 
 # test
@@ -215,6 +216,8 @@ expect_true("difftime" == class(result[[
 # test
 expect_true(
   any(grepl(" / ", result[["location.facility.name"]])))
+
+# test
 expect_true(
   length(unlist(strsplit(
     result[["location.facility.name"]], " / "))) >= 32L)
@@ -225,14 +228,22 @@ expect_true("list" == class(result[[
 
 # test
 tmpTest <- c(
-  "clinical_results.baseline", "clinical_results.outcome_list.outcome",
-  "clinical_results.reported_events", "clinical_results.participant_flow",
-  "clinical_results.point_of_contact", "clinical_results.certain_agreements"
+  "clinical_results.outcome_list.outcome",
+  # these all would have come from auto-expansion:
+  "clinical_results.baseline",
+  "clinical_results.reported_events",
+  "clinical_results.participant_flow",
+  "clinical_results.point_of_contact",
+  "clinical_results.certain_agreements"
   # not in the downloaded but in other trials:
   # "clinical_results.limitations_and_caveats"
-  )
+)
 expect_true(
-  length(setdiff(tmpTest, names(result))) == 0L)
+  all(
+    sapply(tmpTest, function(i)
+      any(grepl(i, names(result))))
+  )
+)
 
 # convert to long
 df <- suppressMessages(
@@ -248,7 +259,7 @@ expect_identical(
 
 # test
 expect_true(
-  nrow(df) > 800L
+  nrow(df) > 6000L
 )
 
 # select value from
@@ -314,66 +325,47 @@ expect_equal(
   "")
 
 # get all field names
-tmpf <- suppressMessages(
+tmpFields <- suppressMessages(
   suppressWarnings(
     dbFindFields(
       namepart = ".*",
       con = dbc)))
 
-# get all data
-result <- suppressMessages(
-  suppressWarnings(
-    dbGetFieldsIntoDf(
-      fields = tmpf,
-      con = dbc,
-      verbose = FALSE,
-      stopifnodata = FALSE)
-  ))
-
-# develop
-# print(length(names(result)))
-
 # test
 expect_true(
-  length(names(result)) > 150L)
+  length(tmpFields) > 150L)
+
+#### dbGetFieldsIntoDf ####
+
+groupsNo <- (length(tmpFields) %/% 49L) + 1L
+groupsNo <- rep(seq_len(groupsNo), 49L)
+groupsNo <- groupsNo[1:length(tmpFields)]
+
+for (i in unique(groupsNo)) {
+  message(i, " ", appendLF = FALSE)
+  tmpData <- dbGetFieldsIntoDf(fields = tmpFields[groupsNo == i], con = dbc)
+  expect_true(nrow(tmpData) > 0L)
+  expect_true(ncol(tmpData) > 0L)
+}
+
+tmpFields <- tmpFields[grepl("date$",tmpFields, ignore.case = TRUE)]
+tmpFields <- tmpFields[1:min(length(tmpFields), 49L)]
+
+tmpData <- dbGetFieldsIntoDf(fields = tmpFields, con = dbc)
+expect_true(nrow(tmpData) > 0L)
+expect_true(ncol(tmpData) > 0L)
+
+expect_true(all(
+  unique(unlist(lapply(
+    tmpData[, -1, drop = FALSE],
+    function(i) sapply(i, function(ii) class(ii))))) %in%
+    c("Date", "POSIXct", "POSIXt")
+))
 
 # determine all classes
-tmpr <- names(result)
-tmpr <- tmpr[tmpr != "_id"]
-tmpc <- sapply(result, class, USE.NAMES = FALSE)
-tmpc <- unlist(tmpc)
-tmpc <- table(tmpc)
+# tmpr <- names(result)
+# tmpr <- tmpr[tmpr != "_id"]
+# tmpc <- sapply(result, class, USE.NAMES = FALSE)
+# tmpc <- unlist(tmpc)
+# tmpc <- table(tmpc)
 
-# develop
-#
-# print(tmpc)
-#
-# 2022-02-20
-#
-# tinytest::run_test_file("inst/tinytest/test_ctrdata_mongo_local_ctgov.R") # 155
-# Downloading: 8.3 kB     tmpcov.R    0 tests
-# character data.frame       Date   difftime    integer       list    logical
-# 116          4          7          1          2         82          5
-# test_ctrdata_mongo_local_ctgov.R   34 tests OK 12.2s
-# All ok, 34 results (12.2s)
-# > tinytest::run_test_file("inst/tinytest/test_ctrdata_mongo_remote_rw_ctgov.R") # 155
-# Downloading: 8.3 kB     tmpc_ctgov.R    0 tests
-# character data.frame       Date   difftime    integer       list    logical
-# 116          4          7          1          2         82          5
-# test_ctrdata_mongo_remote_rw_ctgov.R   34 tests OK 41.7s
-# All ok, 34 results (41.7s)
-# > tinytest::run_test_file("inst/tinytest/test_ctrdata_postgres_ctgov.R") # 155
-# Downloading: 8.3 kB     tmpcR.    0 tests
-# character      Date  difftime   integer      list   logical
-# 138         7         1         2        73        14
-# test_ctrdata_postgres_ctgov.R.   34 tests OK 22.7s
-# All ok, 34 results (22.7s)
-# > tinytest::run_test_file("inst/tinytest/test_ctrdata_sqlite_ctgov.R") # 155
-# Downloading: 8.3 kB     tmpc..    0 tests
-# character      Date  difftime   integer      list   logical
-# 134         7         1         2        59        32
-# test_ctrdata_sqlite_ctgov.R...   34 tests OK 21.8s
-# All ok, 34 results (21.8s)
-
-# clean up
-rm(df, df2, tmpf, result, tmpc)

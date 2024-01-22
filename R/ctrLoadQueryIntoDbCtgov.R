@@ -99,7 +99,11 @@ ctrLoadQueryIntoDbCtgov <- function(
   tempDir <- ctrTempDir(verbose)
 
   # prepare a file handle for temporary directory
-  f <- file.path(tempDir, "ctgov.zip")
+  f <- file.path(
+    tempDir, paste0("ctgov_",
+    # include query in file name for potential re-download
+    sapply(ctgovdownloadcsvurl, digest::digest, algo = "crc32"),
+    ".zip"))
 
   # inform user
   message("(1/3) Downloading trial file...")
@@ -135,8 +139,10 @@ ctrLoadQueryIntoDbCtgov <- function(
 
   for (f in seq_along(xmlFileList)) {
 
-    fNdjsonCon <- file(file.path(tempDir, paste0("ctgov_trials_", f, ".ndjson")), open = "at")
+    fNdjson <- file.path(tempDir, paste0("ctgov_trials_", f, ".ndjson"))
+    fNdjsonCon <- file(fNdjson, open = "at")
     on.exit(try(close(fNdjsonCon), silent = TRUE), add = TRUE)
+    on.exit(try(unlink(fNdjson), silent = TRUE), add = TRUE)
 
     for (i in xmlFileList[[f]]) {
 
@@ -181,6 +187,9 @@ ctrLoadQueryIntoDbCtgov <- function(
 
   } # for f
 
+  ## delete for any re-downloads
+  try(unlink(unlist(xmlFileList)), silent = TRUE)
+
   ## import -------------------------------------------------------------------
 
   ## run import
@@ -199,6 +208,7 @@ ctrLoadQueryIntoDbCtgov <- function(
     suppressMessages(unlink(downloadsNdjson))
     downloadsNdjsonCon <- file(downloadsNdjson, open = "at")
     on.exit(try(close(downloadsNdjsonCon), silent = TRUE), add = TRUE)
+    on.exit(try(unlink(downloadsNdjson), silent = TRUE), add = TRUE)
 
     # extract trial ids and file name and save in temporary file
     for (ndjsonFile in dir(
@@ -213,6 +223,7 @@ ctrLoadQueryIntoDbCtgov <- function(
       message(". ", appendLF = FALSE)
     }
     close(downloadsNdjsonCon)
+    message()
 
     # get document trial id and file name
     dlFiles <- jsonlite::stream_in(file(downloadsNdjson), verbose = FALSE)
@@ -233,6 +244,11 @@ ctrLoadQueryIntoDbCtgov <- function(
     } # if (!nrow(dlFiles))
 
   } # !is.null(documents.path)
+
+  ## delete for any re-downloads
+  try(unlink(dir(
+    path = tempDir, pattern = "ctgov_trials_[0-9]+.ndjson",
+    full.names = TRUE)), silent = TRUE)
 
   ## inform user -----------------------------------------------------
 

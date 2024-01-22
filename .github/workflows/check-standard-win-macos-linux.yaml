@@ -3,9 +3,9 @@
 # note: update
 # https://github.com/rfhb/ctrdata/settings/secrets/actions/CACHE_VERSION
 
-on: [push, pull_request]
+on: [push, pull_request, workflow_dispatch]
 
-name: R-CMD-CHECK-win-macos-duckdb-mongodb-sqlite
+name: R-CMD-CHECK-win-macos-linux-duckdb-mongodb-sqlite-postgres
 
 jobs:
   R-CMD-check:
@@ -17,9 +17,10 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - {os: windows-latest, r: 'release'}
+          - {os: windows-2022, r: 'release'}
           - {os: macOS-latest, r: 'release'}
           - {os: macOS-latest, r: 'oldrel'}
+          - {os: ubuntu-latest, r: 'devel', http-user-agent: 'release'}
           # error installing dependencies under devel
           #- {os: macOS-latest, r: 'devel'}
 
@@ -28,13 +29,6 @@ jobs:
       AT_HOME: true
       RSPM: ${{ matrix.config.rspm }}
       GITHUB_PAT: ${{ secrets.GHPAT }}
-
-    # https://docs.github.com/en/actions/reference/software-installed-on-github-hosted-runners
-    # includes on macOS 10.15 mongod 4.2.8 and Windows Server 201{6,9}:
-    # Version ServiceName ServiceStatus ServiceStartType
-    # 4.2.8.0 MongoDB     Running       Automatic
-    # disabled on Windows from August 2022
-    # https://github.com/actions/runner-images/issues/5949
 
     steps:
       - uses: actions/checkout@v3
@@ -52,30 +46,24 @@ jobs:
           writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
         shell: Rscript {0}
 
-      - name: Cache R packages
-        if: runner.os != 'windows-latest'
-        uses: actions/cache@v1
-        with:
-          path: ${{ env.R_LIBS_USER }}
-          key: ${{ runner.os }}-${{ secrets.CACHE_VERSION }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
-          restore-keys: ${{ runner.os }}-${{ secrets.CACHE_VERSION }}-${{ hashFiles('.github/R-version') }}-1-
-
+      # remotes::install_github("r-dbi/RSQLite")
+      # remotes::install_github(repo = "ropensci/nodbi", ref = "reimplementation_end_2023")
       - name: Install dependencies
         run: |
           utils::install.packages("DBI")
+          utils::install.packages("RSQLite")
+          utils::install.packages("nodbi")
           utils::install.packages("duckdb", repos = "https://duckdb.r-universe.dev")
-          remotes::install_github("rfhb/ctrdata")
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran(c("rcmdcheck", "covr"))
-          remotes::install_github("ropensci/nodbi")
         shell: Rscript {0}
 
-      - uses: r-lib/actions/setup-pandoc@v1
+      - uses: ankane/setup-mongodb@v1
 
-      # - uses: ankane/setup-postgres@v1
-      #   with:
-      #     postgres-version: 14
-      #     database: test
+      - uses: ankane/setup-postgres@v1
+        with:
+          postgres-version: 14
+          database: test
 
       - name: Test coverage
         if: matrix.config.os == 'macOS-latest' && matrix.config.r == 'release'

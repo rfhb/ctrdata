@@ -33,14 +33,19 @@ expect_true(
 # correct _id association
 
 # test
-suppressWarnings(
-  suppressMessages(
-    ctrLoadQueryIntoDb(
-      queryterm = "2005-001267-63+OR+2008-003606-33",
-      register = "EUCTR",
-      euctrresults = TRUE,
-      con = dbc
-    )))
+expect_true(
+  setequal(
+    suppressWarnings(
+      suppressMessages(
+        ctrLoadQueryIntoDb(
+          queryterm = "2005-001267-63+OR+2008-003606-33",
+          register = "EUCTR",
+          euctrresults = TRUE,
+          con = dbc
+        )[["success"]])),
+    c("2008-003606-33-GB",
+      "2005-001267-63-AT",
+      "2005-001267-63-IT")))
 
 # test
 expect_identical(
@@ -229,7 +234,7 @@ result <- suppressMessages(
 # test
 expect_true(nrow(result) > 30L)
 expect_true(ncol(result) > 30L)
-expect_true(ncol(result) < 40L)
+expect_true(ncol(result) > 15L)
 
 # keep only one record for trial
 result2 <- suppressWarnings(suppressMessages(
@@ -243,8 +248,9 @@ expect_identical(
 )
 
 # test
-expect_true(all(as.Date(c("2013-10-28")) %in%
-                  result$trialInformation.globalEndOfTrialDate))
+expect_true(all(
+  as.Date(c("2013-10-28")) %in%
+    result$trialInformation.globalEndOfTrialDate))
 
 # test
 expect_true("logical" == class(result[[
@@ -559,36 +565,6 @@ expect_true(all(
 # clean up
 rm(tmpTest, tmpQ, q)
 
-#### dbGetFieldsIntoDf ####
-
-# test
-expect_error(
-  dbGetFieldsIntoDf(
-    fields = 1:3,
-    con = dbc),
-  "Input should be a vector of strings of field names")
-
-# test
-expect_error(
-  suppressWarnings(
-    suppressMessages(
-      dbGetFieldsIntoDf(
-        fields = c(NA, "willNeverBeFound"),
-        con = dbc))),
-  paste0(
-    "No data could be extracted for",
-    "|No records with values for any specified field"))
-
-# test
-expect_error(
-  suppressWarnings(
-    dbGetFieldsIntoDf(
-      fields = c(NA, "willNeverBeFound", ""),
-      con = dbc)),
-  "'fields' contains empty elements")
-
-# test as many fields as possible for typing
-
 #### dbFindFields ####
 
 # test
@@ -601,80 +577,67 @@ expect_equal(
   "")
 
 # get all field names
-tmpf <- suppressMessages(
+tmpFields <- suppressMessages(
   suppressWarnings(
     dbFindFields(
       namepart = ".*",
       con = dbc)))
-# get all data (takes long with sqlite)
-result <- suppressMessages(
-  suppressWarnings(
-    dbGetFieldsIntoDf(
-      fields = tmpf,
-      con = dbc,
-      verbose = FALSE,
-      stopifnodata = FALSE)
-  ))
-#
-
-# develop
-# print(length(names(result)))
 
 # test
 expect_true(
-  length(names(result)) > 390L)
+  length(tmpFields) > 600)
+
+#### dbGetFieldsIntoDf ####
+
+# test
+expect_error(
+  dbGetFieldsIntoDf(
+    fields = 1:3,
+    con = dbc),
+  "Input should be a vector of strings of field names")
+
+# test
+expect_error(
+  suppressWarnings(
+    dbGetFieldsIntoDf(
+      fields = c(NA, "willNeverBeFound", ""),
+      con = dbc)),
+  "'fields' contains empty elements")
+
+# test as many fields as possible for typing
+
+groupsNo <- (length(tmpFields) %/% 49L) + 1L
+groupsNo <- rep(seq_len(groupsNo), 49L)
+groupsNo <- groupsNo[1:length(tmpFields)]
+
+for (i in unique(groupsNo)) {
+  message(i, " ", appendLF = FALSE)
+  tmpData <- dbGetFieldsIntoDf(fields = tmpFields[groupsNo == i], con = dbc)
+  expect_true(nrow(tmpData) > 0L)
+  expect_true(ncol(tmpData) > 0L)
+}
+
+tmpFields <- tmpFields[grepl("date$",tmpFields, ignore.case = TRUE)]
+tmpFields <- tmpFields[1:min(length(tmpFields), 49L)]
+
+tmpData <- dbGetFieldsIntoDf(fields = tmpFields, con = dbc)
+expect_true(nrow(tmpData) > 0L)
+expect_true(ncol(tmpData) > 0L)
+
+expect_true(all(
+  unique(unlist(lapply(
+    tmpData[, -1, drop = FALSE],
+    function(i) sapply(i, function(ii) class(ii))))) %in%
+    c("Date", "POSIXct", "POSIXt")
+))
 
 
 # determine all classes
-tmpr <- names(result)
-tmpr <- tmpr[tmpr != "_id"]
-tmpc <- sapply(result, class, USE.NAMES = FALSE)
-tmpc <- unlist(tmpc)
-tmpc <- table(tmpc)
-
-# develop
-#
-# print(tmpc)
-#
-# 2022-02-20
-#
-# > tinytest::run_test_file("inst/tinytest/test_ctrdata_mongo_local_euctr.R") # 514
-# Downloading: 33 kB     tmpcctr.R    0 tests    . . . . .
-# character data.frame       Date   difftime    integer       list    logical
-# 381         18         16          2         24        212         77
-# test_ctrdata_mongo_local_euctr.R   72 tests OK 1.6s
-# All ok, 72 results (1.6s)
-# > tinytest::run_test_file("inst/tinytest/test_ctrdata_mongo_remote_rw_euctr.R") # 514
-# Downloading: 33 kB     tmpcw_euctr.R    0 tests
-# character data.frame       Date   difftime    integer       list    logical
-# 381         18         16          2         24        212         77
-# test_ctrdata_mongo_remote_rw_euctr.R   72 tests OK 3.1s
-# All ok, 72 results (3.1s)
-# > tinytest::run_test_file("inst/tinytest/test_ctrdata_postgres_euctr.R") # 428
-# Downloading: 33 kB     tmpc.R.    0 tests
-# character data.frame       Date   difftime    integer       list    logical
-# 408          9         15          2         29        137         80
-# test_ctrdata_postgres_euctr.R.   72 tests OK 1.7s
-# All ok, 72 results (1.7s)
-# > tinytest::run_test_file("inst/tinytest/test_ctrdata_sqlite_euctr.R") # 543
-# Downloading: 33 kB     tmpc...    0 tests
-# character      Date   integer      list   logical   numeric
-# 503        16        29       188        84         2
-# test_ctrdata_sqlite_euctr.R...   72 tests OK 4.6s
-# All ok, 72 results (4.6s)
-
-
-# tests note tmpr may have fewer columns
-expect_true(length(tmpr) <= length(tmpf))
-# adapted to mongo remote server
-expect_true(tmpc[["character"]] > 150)
-expect_true(tmpc[["Date"]]      >  10)
-expect_true(tmpc[["integer"]]   >   5)
-expect_true(tmpc[["list"]]      >  15)
-expect_true(tmpc[["logical"]]   >  50)
-
-# clean up
-rm(tmpf, tmpr, tmpc, result)
+# tmpr <- names(result)
+# tmpr <- tmpr[tmpr != "_id"]
+# tmpc <- sapply(result, class, USE.NAMES = FALSE)
+# tmpc <- unlist(tmpc)
+# tmpc <- table(tmpc)
 
 
 #### ctrOpenSearchPagesInBrowser #####

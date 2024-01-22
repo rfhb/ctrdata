@@ -20,7 +20,7 @@ function to provide a vector of identifiers of deduplicated trials."><meta name=
     
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.16.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.17.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -112,8 +112,8 @@ the European Union. Ignored if <code>prefermemberstate</code> is set to "3RD".</
 
 
 <dt>verbose</dt>
-<dd><p>If set to <code>TRUE</code>, prints out which fields
-of the registers are used to find corresponding trial records</p></dd>
+<dd><p>If <code>TRUE</code>, prints out the fields of registers used to
+find corresponding trial records</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -168,11 +168,11 @@ Such differences are not considered by this function.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "my_trials"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"ctrdata-dbqueryhistory")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       query-timestamp query-register query-records</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2023-11-23 13:33:41          EUCTR            12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2023-11-23 13:35:33          CTGOV             8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2023-11-23 13:35:47         ISRCTN             8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 2023-11-23 13:36:13           CTIS             3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 2023-11-23 13:36:28         CTGOV2             5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2023-12-03 11:35:44          EUCTR            12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2023-12-03 11:35:58          CTGOV             8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2023-12-03 11:36:02         ISRCTN             8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 2023-12-03 11:36:11           CTIS             3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 2023-12-03 11:36:16         CTGOV2             5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                       query-term</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                                    query=&amp;age=newborn&amp;phase=phase-three&amp;dateFrom=2015-02-28&amp;dateTo=2015-03-31&amp;status=completed</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 term=AREA[MaximumAge]+RANGE[0+days,+28+days]&amp;intr=Drugs,+Investigational&amp;strd_s=01/01/2018&amp;strd_e=01/01/2020&amp;type=Intr&amp;phase=2</span>

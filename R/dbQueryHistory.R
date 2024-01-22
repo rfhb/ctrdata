@@ -39,7 +39,7 @@ dbQueryHistory <- function(con, verbose = FALSE) {
     src = con,
     key = con$collection,
     query = '{"_id": {"$eq": "meta-info"}}',
-    fields = '{"queries": 1}'
+    fields = '{"queries": 1, "_id": 0}'
   )
 
   # check if meeting expectations
@@ -54,7 +54,11 @@ dbQueryHistory <- function(con, verbose = FALSE) {
   }
 
   # access data frame of queries
-  hist <- hist[["queries"]][[1]]
+  hist <- hist[["queries"]]
+  if (!is.data.frame(hist)) hist <- hist[[1]]
+
+  # maintain simple names historically
+  # names(hist) <- sub("^queries[.]", "", names(hist))
 
   # inform user
   if (verbose) {
@@ -63,14 +67,17 @@ dbQueryHistory <- function(con, verbose = FALSE) {
       con$collection, "\": ", nrow(hist)
     )
 
-    # total number of records in collection to inform user
+    # total number of records in collection
+    # use fast queries for _id's only
     countall <- length(nodbi::docdb_query(
       src = con,
       key = con$collection,
-      query = '{"_id": {"$ne": "meta-info"}}',
+      query = '{}',
       fields = '{"_id": 1}'
     )[["_id"]])
+    countall <- countall[countall != "meta-info"]
 
+    # inform user
     message(
       "Number of records in collection \"",
       con$collection, "\": ", countall

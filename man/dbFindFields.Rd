@@ -4,49 +4,52 @@
 \alias{dbFindFields}
 \title{Find names of fields in the database collection}
 \usage{
-dbFindFields(namepart = "", con, verbose = FALSE)
+dbFindFields(namepart = ".*", con, sample = TRUE, verbose = FALSE)
 }
 \arguments{
-\item{namepart}{A character string (can include a regular expression,
+\item{namepart}{A character string (can be a regular expression,
 including Perl-style) to be searched among all field names (keys)
-in the collection, case-insensitive. Use ".*" to find all fields.}
+in the collection, case-insensitive. The default `".*"` lists all fields.}
 
 \item{con}{A connection object, see section
 `Databases` in \link{ctrdata}.}
+
+\item{sample}{If \code{TRUE} (default), uses a sample of only 5 trial
+records per register to identify fields, to rapidly return a possible
+incomplete set of field names.
+If \code{FALSE}, uses all trial records in the collection, which will
+take more time with more trials but returns all names of fields in the
+collection.}
 
 \item{verbose}{If \code{TRUE}, prints additional information
 (default \code{FALSE}).}
 }
 \value{
 Vector of strings with full names of field(s) found,
-ordered by register and alphabet. Names of the vector elements
-are the register names for the respective fields.
-
-Only names of fields that have a value in the collection
-are returned, and the names may be incomplete because they
-are from sampled records. See here for obtaining a complete
-set of field names (albeit without register names):
-\url{https://github.com/rfhb/ctrdata/issues/26#issuecomment-1751452462}
+ordered by register and alphabet, see examples. Names of the vector
+are the names of the register holding the respective fields. The field
+names can be fed into \link{dbGetFieldsIntoDf} to extract the
+data for the field(s) from the collection into a data frame.
 }
 \description{
 Given part of the name of a field of interest to the user, this
 function returns the full field names used in records that were
 previously loaded into a collection
-(using \link{ctrLoadQueryIntoDb}). The field names can be fed
-into function \link{dbGetFieldsIntoDf} to extract the data
-from the collection into a data frame.
+(using \link{ctrLoadQueryIntoDb}). Only names of fields that have
+a value in the collection can be returned.
+Set \code{sample = FALSE} to force screening all records in the
+collection for field names, see below.
 }
 \details{
-In addition to the full names of all child fields (e.g.,
+The full names of child fields are returned in dot notation (e.g.,
 \code{clinical_results.outcome_list.outcome.measure.class_list.class.title})
-this function may return names of parent fields (e.g.,
-\code{clinical_results}).
-Data in parent fields is typically complex (nested) and can be
-converted into individual data elements with \link{dfTrials2Long},
-and subelements can then be accessed with \link{dfName2Value}.
-For field definitions of the registers, see row
+In addition, names of parent fields (e.g.,
+\code{clinical_results}) are returned.
+Data in parent fields is typically complex (nested), see
+\link{dfTrials2Long} for easily handling it.
+For field definitions of the registers, see
 "Definition" in \link{ctrdata-registers}.
-Note: Only when \code{dbFindFields} is first called after
+Note: When \code{dbFindFields} is first called after
 \link{ctrLoadQueryIntoDb}, it will take a moment.
 }
 \examples{
@@ -56,6 +59,14 @@ dbc <- nodbi::src_sqlite(
     collection = "my_trials"
 )
 
-dbFindFields(namepart = "date", con = dbc)
+dbFindFields(namepart = "date", con = dbc)[1:5]
+
+# view all 3350+ fields from all registers:
+
+allFields <- dbFindFields(con = dbc, sample = FALSE)
+
+if (interactive()) View(data.frame(
+  register = names(allFields),
+  field = allFields))
 
 }

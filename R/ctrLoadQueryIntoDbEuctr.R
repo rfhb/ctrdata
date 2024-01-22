@@ -12,8 +12,9 @@
 #' @importFrom curl multi_run curl_fetch_memory multi_add new_pool
 #' @importFrom nodbi docdb_query docdb_update
 #' @importFrom zip unzip
-#' @importFrom stringi stri_replace_all_fixed
+#' @importFrom stringi stri_replace_all_fixed stri_detect_fixed
 #' @importFrom readr write_file read_file
+#' @importFrom digest digest
 #'
 ctrLoadQueryIntoDbEuctr <- function(
     queryterm = queryterm,
@@ -158,6 +159,7 @@ ctrLoadQueryIntoDbEuctr <- function(
     c(accept_encoding = "gzip,deflate,zstd,br",
       getOption("httr_config")[["options"]])
   )
+
   # test fetch
   tmp <- curl::curl_fetch_memory(
     url = paste0(
@@ -183,16 +185,13 @@ ctrLoadQueryIntoDbEuctr <- function(
     utils::URLencode, character(1L))
 
   # generate vector with file names for saving pages
-  fp <- tempfile(
-    pattern = paste0(
+  fp <- file.path(
+    tempDir, paste0(
       "euctr_trials_",
-      formatC(seq_len(resultsEuNumPages),
-              digits = 0L,
-              width = nchar(resultsEuNumPages),
-              flag = 0), "_"),
-    tmpdir = tempDir,
-    fileext = ".txt"
-  )
+      # appending hash of query for re-download
+      sapply(urls, digest::digest, algo = "crc32"),
+      ".txt"
+    ))
 
   # do download and saving
   tmp <- ctrMultiDownload(urls, fp, verbose = verbose)
@@ -206,18 +205,19 @@ ctrLoadQueryIntoDbEuctr <- function(
 
   if (length(.ctrdataenv$ct) == 0L) initTranformers()
 
-  # run conversion (~6 ms per record, ~3 rec per trial)
+  # run conversion (~6 ms per record, ~3 records per trial)
   message("(2/3) Converting to NDJSON (estimate: ",
           signif(resultsEuNumTrials * 0.006 * 3, 1L), " s)...")
 
-  for (i in tmp$destfile) {
+  tmp$ndjsonfile <- sub("[.]txt$", ".ndjson", tmp$destfile)
 
+  sapply(seq_len(nrow(tmp)), function(r) {
     readr::write_file(
-      .ctrdataenv$ct$call("euctr2ndjson", readr::read_file(i),
-              format(Sys.time(), "%Y-%m-%d %H:%M:%S")),
-      file = sub("[.]txt$", ".ndjson", i))
-
-  }
+      .ctrdataenv$ct$call(
+        "euctr2ndjson", readr::read_file(tmp$destfile[r]),
+        format(Sys.time(), "%Y-%m-%d %H:%M:%S")),
+      file = tmp$ndjsonfile[r])
+  })
 
   ## import into database -----------------------------------------------
 
@@ -237,6 +237,10 @@ ctrLoadQueryIntoDbEuctr <- function(
   # read in the eudract numbers of the
   # trials just retrieved and imported
   eudractnumbersimported <- imported$success
+
+  # remove calculated ndjson files in case of re-download import
+  # because dbCTRLoadJSONFiles() imports all ndjson in the folder
+  try(unlink(tmp$ndjsonfile), silent = TRUE)
 
   ## result-related information -----------------------------------------------
 
@@ -266,8 +270,7 @@ ctrLoadQueryIntoDbEuctr <- function(
     # latest version: "2007-000371-42"
 
     # inform user
-    message("(1/4) Downloading and extracting results ",
-            "(. = data, F = file[s] and data, x = none):")
+    message("(1/4) Downloading results...")
 
     # prepare download and save
 
@@ -278,16 +281,12 @@ ctrLoadQueryIntoDbEuctr <- function(
       utils::URLencode, character(1L), USE.NAMES = FALSE)
 
     # destfiles
-    fp <- tempfile(
-      pattern = paste0(
+    fp <- file.path(
+      tempDir, paste0(
         "euctr_results_",
-        formatC(seq_along(eudractnumbersimported),
-                digits = 0L,
-                width = nchar(length(eudractnumbersimported)),
-                flag = 0), "_"),
-      tmpdir = tempDir,
-      fileext = ".zip"
-    )
+        eudractnumbersimported,
+        ".zip"
+      ))
 
     # do download and save
     tmp <- ctrMultiDownload(urls, fp, verbose = verbose)
@@ -295,6 +294,10 @@ ctrLoadQueryIntoDbEuctr <- function(
     # work only on successful downloads
     tmp <- tmp[tmp[["status_code"]] == 200L, , drop = FALSE]
 
+    # inform user
+    message(
+      "- extracting results (. = data, F = file[s] and data, x = none):")
+    
     # unzip downloaded files and move non-XML extracted files
     tmp <- lapply(
       tmp[["destfile"]], function(f) {
@@ -337,8 +340,8 @@ ctrLoadQueryIntoDbEuctr <- function(
                 warning("Could not save ", nonXmlFiles, "; ", trimws(saved),
                         call. = FALSE, immediate. = TRUE)
                 if (grepl("expanded 'from' name too long", saved)) {
-                  message("Try setting environment variable TMPDIR to a short ",
-                          "absolute path name for a directory and restart R.")
+                  message("Set options(ctrdata.tempdir = <dir>) to a ",
+                          "short absolute path name for a directory.")
                 }
               }
               if (!inherits(saved, "try-error") && any(!saved)) {
@@ -357,9 +360,6 @@ ctrLoadQueryIntoDbEuctr <- function(
           message("x ", appendLF = FALSE)
         }
 
-        # clean up
-        if (!verbose) unlink(f)
-
       }) # lapply fp
 
     # line break
@@ -369,14 +369,20 @@ ctrLoadQueryIntoDbEuctr <- function(
 
     if (length(.ctrdataenv$ct) == 0L) initTranformers()
 
-    # for each file create new ndjson file
+    # for each file of an imported trial create new ndjson file
     xmlFileList <- dir(path = tempDir, pattern = "EU-CTR.+Results.xml", full.names = TRUE)
+    xmlFileList <- xmlFileList[vapply(xmlFileList, function(i) any(
+      stringi::stri_detect_fixed(i, eudractnumbersimported)), logical(1L))]
+    on.exit(try(unlink(xmlFileList), silent = TRUE), add = TRUE)
+    jsonFileList <- file.path(tempDir, paste0(
+      "EU_Results_", sub(".+ ([0-9]{4}-[0-9]{6}-[0-9]{2}) .+", "\\1.ndjson", xmlFileList)))
+    on.exit(try(unlink(jsonFileList), silent = TRUE), add = TRUE)
 
     # run conversion (~2 s for 19 records)
     message("(2/4) Converting to NDJSON (estimate: ",
             signif(length(xmlFileList) * 2 / 19, 1L), " s)...")
 
-    for (f in seq_along(xmlFileList)) {
+    sapply(seq_along(xmlFileList), function(f) {
 
       cat(stringi::stri_replace_all_fixed(
         .ctrdataenv$ct$call(
@@ -392,10 +398,13 @@ ctrLoadQueryIntoDbEuctr <- function(
           "&", "'", "\n", "\r", "\t"),
         c("", "", "&amp;", "&apos;", " ", " ", " "),
         vectorize_all = FALSE),
-        file = file.path(tempDir, paste0("EU_Results_", f, ".ndjson"))
+        file = jsonFileList[f]
       )
 
-    } # for f
+    }) # sapply xmlFileList
+
+    ## delete for any re-downloads
+    try(unlink(xmlFileList), silent = TRUE)
 
     # iterate over results files
     message("(3/4) Importing results into database (may take some time)...")
@@ -403,10 +412,7 @@ ctrLoadQueryIntoDbEuctr <- function(
     # initiate counter
     importedresults <- 0L
 
-    # import results data from json files
-    jsonFileList <- dir(
-      path = tempDir, pattern = "^EU_Results_[0-9]+[.]ndjson$", full.names = TRUE)
-
+    # import results data from ndjson files
     for (f in jsonFileList) {
 
       if (!file.exists(f) || file.size(f) == 0L) next
@@ -444,6 +450,9 @@ ctrLoadQueryIntoDbEuctr <- function(
         appendLF = FALSE)
 
     } # for f
+
+    ## delete for any re-downloads
+    try(unlink(jsonFileList), silent = TRUE)
 
     ## result history information ---------------------------------------------
 

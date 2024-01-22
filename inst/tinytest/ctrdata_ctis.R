@@ -135,33 +135,12 @@ expect_true(
 rm(res)
 
 # test
-expect_error(
-  suppressMessages(
-    suppressWarnings(
-      dbGetFieldsIntoDf(
-        fields = c("doesnotexist"),
-        con = dbc))),
-  "No data could be extracted for")
-
-# test
-expect_warning(
-  suppressMessages(
-    dbGetFieldsIntoDf(
-      fields = c("doesnotexist"),
-      stopifnodata = FALSE,
-      con = dbc)
-  ),
-  "No records with values for any specified field")
-
-# test
 suppressWarnings(
   suppressMessages(
     tmpDf <- dbGetFieldsIntoDf(
       fields = c(
         "totalNumberEnrolled"
-      ),
-      stopifnodata = FALSE,
-      con = dbc)))
+      ), con = dbc)))
 #
 expect_equivalent(
   sapply(tmpDf, typeof),
@@ -183,7 +162,7 @@ expect_equal(
   "")
 
 # get all field names
-tmpf <- suppressMessages(
+tmpFields <- suppressMessages(
   suppressWarnings(
     dbFindFields(
       namepart = ".*",
@@ -191,23 +170,43 @@ tmpf <- suppressMessages(
 
 # test
 expect_true(
-  length(tmpf) > 1500L)
+  length(tmpFields) > 1500L)
 
-# get all data
-result <- suppressMessages(
-  suppressWarnings(
-    dbGetFieldsIntoDf(
-      fields = sample(tmpf, 20),
-      con = dbc,
-      verbose = FALSE,
-      stopifnodata = FALSE)
+#### dbGetFieldsIntoDf ####
+
+groupsNo <- (length(tmpFields) %/% 49L) + 1L
+groupsNo <- rep(seq_len(groupsNo), 49L)
+groupsNo <- groupsNo[1:length(tmpFields)]
+
+for (i in unique(groupsNo)) {
+  message(i, " ", appendLF = FALSE)
+  tmpData <- dbGetFieldsIntoDf(fields = tmpFields[groupsNo == i], con = dbc)
+  expect_true(nrow(tmpData) > 0L)
+  expect_true(ncol(tmpData) > 0L)
+}
+
+tmpFields <- tmpFields[
+  grepl("date$", tmpFields, ignore.case = TRUE) &
+    !grepl("update$", tmpFields, ignore.case = TRUE) &
+    !grepl("^decisionDate$", tmpFields, ignore.case = TRUE)
+]
+
+groupsNo <- (length(tmpFields) %/% 49L) + 1L
+groupsNo <- rep(seq_len(groupsNo), 49L)
+groupsNo <- groupsNo[1:length(tmpFields)]
+
+for (i in unique(groupsNo)) {
+  message(i, " ", appendLF = FALSE)
+  tmpData <- dbGetFieldsIntoDf(fields = tmpFields[groupsNo == i], con = dbc)
+  expect_true(nrow(tmpData) > 0L)
+  expect_true(ncol(tmpData) > 0L)
+  expect_true(all(
+    unique(unlist(lapply(
+      tmpData[ , -1, drop = FALSE],
+      function(i) sapply(i, function(ii) class(ii))))) %in%
+      c("Date", "POSIXct", "POSIXt")
   ))
-
-# test
-expect_true(
-  length(names(result)) > 20L)
-
-rm(tmpf, result)
+}
 
 #### dbFindIdsUniqueTrials ####
 
@@ -218,5 +217,3 @@ expect_message(
 
 # test
 expect_true(length(res) >= 20L)
-rm(res)
-

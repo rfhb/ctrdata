@@ -31,8 +31,8 @@ the European Union. Ignored if \code{prefermemberstate} is set to "3RD".}
 \item{con}{A connection object, see section
 `Databases` in \link{ctrdata}.}
 
-\item{verbose}{If set to \code{TRUE}, prints out which fields
-of the registers are used to find corresponding trial records}
+\item{verbose}{If \code{TRUE}, prints out the fields of registers used to
+find corresponding trial records}
 }
 \value{
 A named vector with strings of keys (field "_id") of

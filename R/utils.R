@@ -33,21 +33,22 @@ registerList <- c("EUCTR", "CTGOV", "ISRCTN", "CTIS", "CTGOV2")
 # mapping field names to typing function for typeField()
 typeVars <- list(
   #
-  # dates
+  #### . dates ####
   #
   # - ctrdata intern
-  "record_last_import" = "ctrDateCtr",
+  "record_last_import" = "ctrDate",
   #
   # - EUCTR
   "n_date_of_competent_authority_decision" = "ctrDate",
   "n_date_of_ethics_committee_opinion"     = "ctrDate",
   "p_date_of_the_global_end_of_the_trial"  = "ctrDate",
   "firstreceived_results_date"             = "ctrDate",
-  "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database" = "ctrDate",
   "trialInformation.primaryCompletionDate" = "ctrDate",
-  "trialInformation.analysisStageDate"     = "ctrDateTime",
-  "trialInformation.globalEndOfTrialDate"  = "ctrDateTime",
-  "trialInformation.recruitmentStartDate"  = "ctrDateTime",
+  "trialInformation.analysisStageDate"     = "ctrDate",
+  "trialInformation.globalEndOfTrialDate"  = "ctrDate",
+  "trialInformation.recruitmentStartDate"  = "ctrDate",
+  "trialChanges.globalAmendments.globalAmendment.date" = "ctrDate",
+  "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database" = "ctrDate",
   #
   "e891_in_the_member_state_concerned_days"   = "ctrDifftimeDays",
   "e891_in_the_member_state_concerned_months" = "ctrDifftimeMonths",
@@ -57,26 +58,43 @@ typeVars <- list(
   "e892_in_all_countries_concerned_by_the_trial_years"  = "ctrDifftimeYears",
   #
   # - CTGOV
-  "completion_date"          = "ctrDateUs",
-  "last_update_posted"       = "ctrDateUs",
-  "last_update_submitted_qc" = "ctrDateUs",
-  "last_update_submitted"    = "ctrDateUs",
-  "primary_completion_date"  = "ctrDateUs",
-  "results_first_posted"     = "ctrDateUs",
-  "start_date"               = "ctrDateUs",
-  "study_first_posted"       = "ctrDateUs",
-  "verification_date"        = "ctrDateUs",
+  "completion_date"            = "ctrDateUs",
+  "eligibility.minimum_age"    = "ctrDifftime",
+  "eligibility.maximum_age"    = "ctrDifftime",
+  "last_update_posted"         = "ctrDateUs",
+  "last_update_submitted_qc"   = "ctrDateUs",
+  "last_update_submitted"      = "ctrDateUs",
+  "primary_completion_date"    = "ctrDateUs",
+  "provided_document_section.provided_document.document_date" = "ctrDateUs",
   "required_header.download_date" = "ctrDateUs",
-  "eligibility.minimum_age" = "ctrDifftime",
-  "eligibility.maximum_age" = "ctrDifftime",
+  "results_first_posted"       = "ctrDateUs",
+  "results_first_submitted_qc" = "ctrDateUs",
+  "start_date"                 = "ctrDateUs",
+  "this_results_date"          = "ctrDateUs",
+  "study_first_posted"         = "ctrDateUs",
+  "verification_date"          = "ctrDateUs",
   #
   # - CTGOV2
+  "annotationSection.annotationModule.unpostedAnnotation.unpostedEvents.date" = "ctrDate",
+  "derivedSection.miscInfoModule.submissionTracking.estimatedResultsFirstSubmitDate"  = "ctrDate",
+  "derivedSection.miscInfoModule.submissionTracking.firstMcpInfo.postDateStruct.date" = "ctrDate",
+  "derivedSection.miscInfoModule.submissionTracking.submissionInfos.releaseDate"   = "ctrDate",
+  "derivedSection.miscInfoModule.submissionTracking.submissionInfos.resetDate"     = "ctrDate",
+  "derivedSection.miscInfoModule.submissionTracking.submissionInfos.unreleaseDate" = "ctrDate",
+  "documentSection.largeDocumentModule.largeDocs.date"            = "ctrDate",
+  "documentSection.largeDocumentModule.largeDocs.uploadDate"      = "ctrDate",
   "protocolSection.statusModule.completionDateStruct.date"        = "ctrDate",
   "protocolSection.statusModule.lastUpdatePostDateStruct.date"    = "ctrDate",
   "protocolSection.statusModule.lastUpdateSubmitDate"             = "ctrDate",
   "protocolSection.statusModule.primaryCompletionDateStruct.date" = "ctrDate",
+  "protocolSection.statusModule.resultsFirstPostDateStruct.date"  = "ctrDate",
+  "protocolSection.statusModule.resultsFirstSubmitQcDate"         = "ctrDate",
+  "protocolSection.statusModule.resultsFirstSubmitDate"           = "ctrDate",
   "protocolSection.statusModule.startDateStruct.date"             = "ctrDate",
+  "protocolSection.statusModule.statusVerifiedDate"               = "ctrDate",
   "protocolSection.statusModule.studyFirstPostDateStruct.date"    = "ctrDate",
+  "protocolSection.statusModule.studyFirstSubmitDate"             = "ctrDate",
+  "protocolSection.statusModule.studyFirstSubmitQcDate"           = "ctrDate",
   #
   # - ISRCTN
   "participants.recruitmentStart" = "ctrDateTime",
@@ -86,33 +104,95 @@ typeVars <- list(
   #
   # - CTIS
   "applications.ctMSCs.activeTrialPeriod.fromDate" = "ctrDate",
+  "applications.ctMSCs.activeTrialPeriod.trialEndDate" = "ctrDate",
   "applications.ctMSCs.activeTrialPeriod.trialStartDate" = "ctrDate",
+  "applications.ctMSCs.activeTrialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "applications.ctMSCs.activeTrialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
+  "applications.ctMSCs.clinicalTrialStatusHistory.trialStatusDate" = "ctrDate",
   "applications.ctMSCs.firstDecisionDate" = "ctrDate",
   "applications.ctMSCs.fromDate" = "ctrDate",
+  "applications.ctMSCs.temporaryHaltDate" = "ctrDate",
   "applications.ctMSCs.toDate" = "ctrDate",
   "applications.ctMSCs.trialPeriod.fromDate" = "ctrDate",
+  "applications.ctMSCs.trialPeriod.trialEndDate" = "ctrDate",
   "applications.ctMSCs.trialPeriod.trialStartDate" = "ctrDate",
+  "applications.ctMSCs.trialRecruitmentPeriod.fromDate" = "ctrDate",
+  "applications.ctMSCs.trialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "applications.ctMSCs.trialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
+  "applications.ctMSCsByApplication.activeTrialPeriod.fromDate" = "ctrDate",
+  "applications.ctMSCsByApplication.activeTrialPeriod.trialEndDate" = "ctrDate",
+  "applications.ctMSCsByApplication.activeTrialPeriod.trialStartDate" = "ctrDate",
+  "applications.ctMSCsByApplication.activeTrialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "applications.ctMSCsByApplication.activeTrialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
+  "applications.ctMSCsByApplication.clinicalTrialStatusHistory.trialStatusDate" = "ctrDate",
+  "applications.ctMSCsByApplication.firstDecisionDate" = "ctrDate",
   "applications.ctMSCsByApplication.fromDate" = "ctrDate",
+  "applications.ctMSCsByApplication.rmsNotWillingDate" = "ctrDate",
+  "applications.ctMSCsByApplication.rmsWillingDate" = "ctrDate",
+  "applications.ctMSCsByApplication.temporaryHaltDate" = "ctrDate",
   "applications.ctMSCsByApplication.toDate" = "ctrDate",
+  "applications.ctMSCsByApplication.trialPeriod.fromDate" = "ctrDate",
+  "applications.ctMSCsByApplication.trialPeriod.trialEndDate" = "ctrDate",
+  "applications.ctMSCsByApplication.trialPeriod.trialStartDate" = "ctrDate",
+  "applications.ctMSCsByApplication.trialRecruitmentPeriod.fromDate" = "ctrDate",
+  "applications.ctMSCsByApplication.trialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "applications.ctMSCsByApplication.trialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
   "applications.decisionDate" = "ctrDate",
-  "applications.isDossierUpdate" = "ctrDate",
   "applications.partI.assessmentOutcomeDate" = "ctrDate",
   "applications.partI.conclusionDate" = "ctrDate",
+  "applications.partI.productRoleGroupInfos.linkedProducts.startDate" = "ctrDate",
+  "applications.partI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialPeriod.fromDate" = "ctrDate",
+  "applications.partI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialPeriod.trialStartDate" = "ctrDate",
+  "applications.partI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "applications.partI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
+  "applications.partI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.clinicalTrialStatusHistory.trialStatusDate" = "ctrDate",
+  "applications.partI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.firstDecisionDate" = "ctrDate",
+  "applications.partI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.fromDate" = "ctrDate",
+  "applications.partI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.toDate" = "ctrDate",
+  "applications.partI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialPeriod.fromDate" = "ctrDate",
+  "applications.partI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialPeriod.trialStartDate" = "ctrDate",
+  "applications.partI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialRecruitmentPeriod.fromDate" = "ctrDate",
+  "applications.partI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "applications.partI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
   "applications.partI.productRoleGroupInfos.products.startDate" = "ctrDate",
+  "applications.partI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialPeriod.fromDate" = "ctrDate",
+  "applications.partI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialPeriod.trialStartDate" = "ctrDate",
+  "applications.partI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "applications.partI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
+  "applications.partI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.clinicalTrialStatusHistory.trialStatusDate" = "ctrDate",
+  "applications.partI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.firstDecisionDate" = "ctrDate",
+  "applications.partI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.fromDate" = "ctrDate",
+  "applications.partI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.toDate" = "ctrDate",
+  "applications.partI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialPeriod.fromDate" = "ctrDate",
+  "applications.partI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialPeriod.trialStartDate" = "ctrDate",
+  "applications.partI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialRecruitmentPeriod.fromDate" = "ctrDate",
+  "applications.partI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "applications.partI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
   "applications.partI.products.startDate" = "ctrDate",
   "applications.partI.sponsors.fromDate" = "ctrDate",
   "applications.partI.submissionDate" = "ctrDate",
   "applications.partI.trialDetails.trialInformation.trialDuration.estimatedEndDate" = "ctrDate",
+  "applications.partI.trialDetails.trialInformation.trialDuration.estimatedGlobalEndDate" = "ctrDate",
   "applications.partI.trialDetails.trialInformation.trialDuration.estimatedRecruitmentStartDate" = "ctrDate",
   "applications.partIIInfo.applicationStatusDate" = "ctrDate",
   "applications.partIIInfo.conclusionDate" = "ctrDate",
+  "applications.partIIInfo.lapsedDate" = "ctrDate",
   "applications.partIIInfo.mscInfo.activeTrialPeriod.fromDate" = "ctrDate",
+  "applications.partIIInfo.mscInfo.activeTrialPeriod.trialEndDate" = "ctrDate",
   "applications.partIIInfo.mscInfo.activeTrialPeriod.trialStartDate" = "ctrDate",
+  "applications.partIIInfo.mscInfo.activeTrialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "applications.partIIInfo.mscInfo.activeTrialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
+  "applications.partIIInfo.mscInfo.clinicalTrialStatusHistory.trialStatusDate" = "ctrDate",
   "applications.partIIInfo.mscInfo.firstDecisionDate" = "ctrDate",
   "applications.partIIInfo.mscInfo.fromDate" = "ctrDate",
+  "applications.partIIInfo.mscInfo.temporaryHaltDate" = "ctrDate",
   "applications.partIIInfo.mscInfo.toDate" = "ctrDate",
   "applications.partIIInfo.mscInfo.trialPeriod.fromDate" = "ctrDate",
+  "applications.partIIInfo.mscInfo.trialPeriod.trialEndDate" = "ctrDate",
   "applications.partIIInfo.mscInfo.trialPeriod.trialStartDate" = "ctrDate",
+  "applications.partIIInfo.mscInfo.trialRecruitmentPeriod.fromDate" = "ctrDate",
+  "applications.partIIInfo.mscInfo.trialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "applications.partIIInfo.mscInfo.trialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
   "applications.partIIInfo.submissionDate" = "ctrDate",
   "applications.primarySponsor.fromDate" = "ctrDate",
   "applications.reportingDate" = "ctrDate",
@@ -121,32 +201,80 @@ typeVars <- list(
   "authorizationDate" = "ctrDate",
   "authorizedPartI.assessmentOutcomeDate" = "ctrDate",
   "authorizedPartI.conclusionDate" = "ctrDate",
+  "authorizedPartI.productRoleGroupInfos.linkedProducts.startDate" = "ctrDate",
+  "authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialPeriod.fromDate" = "ctrDate",
+  "authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialPeriod.trialStartDate" = "ctrDate",
+  "authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
+  "authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.clinicalTrialStatusHistory.trialStatusDate" = "ctrDate",
+  "authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.firstDecisionDate" = "ctrDate",
+  "authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.fromDate" = "ctrDate",
+  "authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.toDate" = "ctrDate",
+  "authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialPeriod.fromDate" = "ctrDate",
+  "authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialPeriod.trialStartDate" = "ctrDate",
+  "authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialRecruitmentPeriod.fromDate" = "ctrDate",
+  "authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
   "authorizedPartI.productRoleGroupInfos.products.startDate" = "ctrDate",
+  "authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialPeriod.fromDate" = "ctrDate",
+  "authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialPeriod.trialStartDate" = "ctrDate",
+  "authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
+  "authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.clinicalTrialStatusHistory.trialStatusDate" = "ctrDate",
+  "authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.firstDecisionDate" = "ctrDate",
+  "authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.fromDate" = "ctrDate",
+  "authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.toDate" = "ctrDate",
+  "authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialPeriod.fromDate" = "ctrDate",
+  "authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialPeriod.trialStartDate" = "ctrDate",
+  "authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialRecruitmentPeriod.fromDate" = "ctrDate",
+  "authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
   "authorizedPartI.products.startDate" = "ctrDate",
   "authorizedPartI.sponsors.fromDate" = "ctrDate",
   "authorizedPartI.submissionDate" = "ctrDate",
   "authorizedPartI.trialDetails.trialInformation.trialDuration.estimatedEndDate" = "ctrDate",
+  "authorizedPartI.trialDetails.trialInformation.trialDuration.estimatedGlobalEndDate" = "ctrDate",
   "authorizedPartI.trialDetails.trialInformation.trialDuration.estimatedRecruitmentStartDate" = "ctrDate",
   "authorizedPartsII.applicationStatusDate" = "ctrDate",
   "authorizedPartsII.conclusionDate" = "ctrDate",
   "authorizedPartsII.mscInfo.activeTrialPeriod.fromDate" = "ctrDate",
+  "authorizedPartsII.mscInfo.activeTrialPeriod.trialEndDate" = "ctrDate",
   "authorizedPartsII.mscInfo.activeTrialPeriod.trialStartDate" = "ctrDate",
+  "authorizedPartsII.mscInfo.activeTrialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "authorizedPartsII.mscInfo.activeTrialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
+  "authorizedPartsII.mscInfo.clinicalTrialStatusHistory.trialStatusDate" = "ctrDate",
   "authorizedPartsII.mscInfo.firstDecisionDate" = "ctrDate",
   "authorizedPartsII.mscInfo.fromDate" = "ctrDate",
+  "authorizedPartsII.mscInfo.temporaryHaltDate" = "ctrDate",
   "authorizedPartsII.mscInfo.toDate" = "ctrDate",
   "authorizedPartsII.mscInfo.trialPeriod.fromDate" = "ctrDate",
+  "authorizedPartsII.mscInfo.trialPeriod.trialEndDate" = "ctrDate",
   "authorizedPartsII.mscInfo.trialPeriod.trialStartDate" = "ctrDate",
+  "authorizedPartsII.mscInfo.trialRecruitmentPeriod.fromDate" = "ctrDate",
+  "authorizedPartsII.mscInfo.trialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "authorizedPartsII.mscInfo.trialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
+  "authorizedPartsII.mscInfo.trialRestartDate" = "ctrDate",
   "authorizedPartsII.submissionDate" = "ctrDate",
   "coSponsors.fromDate" = "ctrDate",
-  "decisionDate" = "ctrDate",
+  "eeaEndDate" = "ctrDate",
   "eeaStartDate" = "ctrDate",
   "memberStatesConcerned.activeTrialPeriod.fromDate" = "ctrDate",
+  "memberStatesConcerned.activeTrialPeriod.trialEndDate" = "ctrDate",
   "memberStatesConcerned.activeTrialPeriod.trialStartDate" = "ctrDate",
+  "memberStatesConcerned.activeTrialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "memberStatesConcerned.activeTrialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
+  "memberStatesConcerned.clinicalTrialStatusHistory.trialStatusDate" = "ctrDate",
   "memberStatesConcerned.firstDecisionDate" = "ctrDate",
   "memberStatesConcerned.fromDate" = "ctrDate",
+  "memberStatesConcerned.temporaryHaltDate" = "ctrDate",
   "memberStatesConcerned.toDate" = "ctrDate",
   "memberStatesConcerned.trialPeriod.fromDate" = "ctrDate",
+  "memberStatesConcerned.trialPeriod.trialEndDate" = "ctrDate",
   "memberStatesConcerned.trialPeriod.trialStartDate" = "ctrDate",
+  "memberStatesConcerned.trialRecruitmentPeriod.fromDate" = "ctrDate",
+  "memberStatesConcerned.trialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
+  "memberStatesConcerned.trialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
+  "memberStatesConcerned.trialRestartDate" = "ctrDate",
   "mscTrialNotificationsInfoList.mscNotificationsListInfo.date" = "ctrDate",
   "mscTrialNotificationsInfoList.mscNotificationsListInfo.submitDate" = "ctrDate",
   "primarySponsor.fromDate" = "ctrDate",
@@ -176,12 +304,17 @@ typeVars <- list(
   "publicEvaluation.validationRfis.dueDate" = "ctrDate",
   "publicEvaluation.validationRfis.responseDate" = "ctrDate",
   "publicEvaluation.validationRfis.submissionDate" = "ctrDate",
-  "startDateEU" = "ctrDate",
+  "publicevents.temporaryHaltList.details.eventDate" = "ctrDate",
+  "publicevents.temporaryHaltList.details.plannedRestartDate" = "ctrDate",
+  "publicevents.temporaryHaltList.details.submissionDate" = "ctrDate",
+  "publicevents.temporaryHaltList.submissionDate" = "ctrDate",
   "submissionDate" = "ctrDate",
+  "summary.submissionDate" = "ctrDate",
+  "trialEndDate" = "ctrDate",
   "trialStartDate" = "ctrDate",
   #
   #
-  # factors / logical
+  #### . factors / logical ####
   #
   # - EUCTR Yes / No / Information not present in EudraCT
   "a7_trial_is_part_of_a_paediatric_investigation_plan" = "ctrYesNo",
@@ -274,11 +407,171 @@ typeVars <- list(
   "results.biomedRelated"           = "ctrFalseTrue",
   #
   # - CTIS
+  "includesPaediatricSubjects" = "ctrFalseTrue",
   "hasDeferrallApplied" = "ctrFalseTrue",
   "hasAmendmentApplied" = "ctrFalseTrue",
-  "eudraCtInfo.hasVhp" = "ctrFalseTrue",
   #
-  # numbers
+  "baselineCharacteristics.ageCategoricalCharacteristic.readyForValues" = "ctrFalseTrue",
+  "baselineCharacteristics.ageContinuousCharacteristic.readyForValues" = "ctrFalseTrue",
+  "baselineCharacteristics.genderCategoricalCharacteristic.readyForValues" = "ctrFalseTrue",
+  "baselineCharacteristics.studyCategoricalCharacteristics.studyCategoricalCharacteristic.readyForValues" = "ctrFalseTrue",
+  "endPoints.endPoint.readyForValues" = "ctrFalseTrue",
+  #
+  "trialChanges.hasGlobalAmendments" = "ctrFalseTrue",
+  "trialChanges.hasGlobalInterruptions" = "ctrFalseTrue",
+  "oversight_info.has_dmc" = "ctrFalseTrue",
+  "applications.ctMSCsByApplication.hasRecruitmentStarted" = "ctrFalseTrue",
+  "applications.ctMSCs.hasRecruitmentStarted" = "ctrFalseTrue",
+  "applications.eudraCtInfo.hasVhp" = "ctrFalseTrue",
+  "applications.partI.productRoleGroupInfos.products.hasDevice" = "ctrFalseTrue",
+  "applications.partI.products.hasDevice" = "ctrFalseTrue",
+  "applications.partI.trialDetails.associatedClinicalTrials.hasDocument" = "ctrFalseTrue",
+  "applications.partIIInfo.mscInfo.hasRecruitmentStarted" = "ctrFalseTrue",
+  "authorizedPartI.productRoleGroupInfos.products.hasDevice" = "ctrFalseTrue",
+  "authorizedPartI.products.hasDevice" = "ctrFalseTrue",
+  "authorizedPartI.trialDetails.associatedClinicalTrials.hasDocument" = "ctrFalseTrue",
+  "authorizedPartsII.mscInfo.hasRecruitmentStarted" = "ctrFalseTrue",
+  "eudraCtInfo.hasVhp" = "ctrFalseTrue",
+  "memberStatesConcerned.hasRecruitmentStarted" = "ctrFalseTrue",
+  "publicEvaluation.partIIEvaluationList.partIIRfis.hasApplicationChanges" = "ctrFalseTrue",
+  "publicEvaluation.validationRfis.hasApplicationChanges" = "ctrFalseTrue",
+  "publicEvaluation.partIRfis.hasApplicationChanges" = "ctrFalseTrue",
+  "protocolSection.statusModule.expandedAccessInfo.hasExpandedAccess" = "ctrFalseTrue",
+  #
+  "trialInformation.isGlobalEndOfTrialReached" = "ctrFalseTrue",
+  "applications.ctMSCsByApplication.isProposedRms" = "ctrFalseTrue",
+  "applications.ctMSCsByApplication.organisationInfo.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.ctMSCs.isProposedRms" = "ctrFalseTrue",
+  "applications.ctMSCs.organisationInfo.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.eudraCtInfo.isTransitioned" = "ctrFalseTrue",
+  "applications.isDossierUpdate" = "ctrFalseTrue",
+  "applications.isMultiTrialSM" = "ctrFalseTrue",
+  "applications.partI.isEditable" = "ctrFalseTrue",
+  "applications.partI.isLowIntervention" = "ctrFalseTrue",
+  "applications.partI.medicalConditions.isConditionRareDisease" = "ctrFalseTrue",
+  "applications.partI.productRoleGroupInfos.products.isDraftUnauthProduct" = "ctrFalseTrue",
+  "applications.partI.productRoleGroupInfos.products.isPaediatricFormulation" = "ctrFalseTrue",
+  "applications.partI.productRoleGroupInfos.products.productDictionaryInfo.isSelectedInMultiTrialSM" = "ctrFalseTrue",
+  "applications.partI.products.isDraftUnauthProduct" = "ctrFalseTrue",
+  "applications.partI.products.isPaediatricFormulation" = "ctrFalseTrue",
+  "applications.partI.products.productDictionaryInfo.isSelectedInMultiTrialSM" = "ctrFalseTrue",
+  "applications.partI.sponsors.addresses.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.partI.sponsors.addresses.isCreate" = "ctrFalseTrue",
+  "applications.partI.sponsors.addresses.isSave" = "ctrFalseTrue",
+  "applications.partI.sponsors.addresses.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.partI.sponsors.contactPointForUnion.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.partI.sponsors.isCommercial" = "ctrFalseTrue",
+  "applications.partI.sponsors.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.partI.sponsors.publicContacts.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.partI.sponsors.scientificContacts.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.partI.sponsors.thirdParties.organisationAddress.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.partI.sponsors.thirdParties.organisationAddress.isCreate" = "ctrFalseTrue",
+  "applications.partI.sponsors.thirdParties.organisationAddress.isSave" = "ctrFalseTrue",
+  "applications.partI.sponsors.thirdParties.organisationAddress.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.partI.trialDetails.isClockStopRemovalRequested" = "ctrFalseTrue",
+  "applications.partI.trialDetails.trialInformation.endPoint.primaryEndPoints.isPrimary" = "ctrFalseTrue",
+  "applications.partI.trialDetails.trialInformation.endPoint.secondaryEndPoints.isPrimary" = "ctrFalseTrue",
+  "applications.partI.trialDetails.trialInformation.medicalCondition.meddraConditionTerms.isActive" = "ctrFalseTrue",
+  "applications.partI.trialDetails.trialInformation.medicalCondition.partIMedicalConditions.isConditionRareDisease" = "ctrFalseTrue",
+  "applications.partI.trialDetails.trialInformation.populationOfTrialSubjects.isFemaleSubjects" = "ctrFalseTrue",
+  "applications.partI.trialDetails.trialInformation.populationOfTrialSubjects.isMaleSubjects" = "ctrFalseTrue",
+  "applications.partI.trialDetails.trialInformation.populationOfTrialSubjects.isVulnerablePopulationSelected" = "ctrFalseTrue",
+  "applications.partI.trialDetails.trialInformation.trialCategory.isLowIntervention" = "ctrFalseTrue",
+  "applications.partIIInfo.isEditable" = "ctrFalseTrue",
+  "applications.partIIInfo.mscInfo.isProposedRms" = "ctrFalseTrue",
+  "applications.partIIInfo.mscInfo.organisationInfo.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.partIIInfo.trialSites.organisationAddressInfo.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.partIIInfo.trialSites.organisationAddressInfo.isCreate" = "ctrFalseTrue",
+  "applications.partIIInfo.trialSites.organisationAddressInfo.isSave" = "ctrFalseTrue",
+  "applications.partIIInfo.trialSites.organisationAddressInfo.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.primarySponsor.addresses.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.primarySponsor.addresses.isCreate" = "ctrFalseTrue",
+  "applications.primarySponsor.addresses.isSave" = "ctrFalseTrue",
+  "applications.primarySponsor.addresses.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.primarySponsor.contactPointForUnion.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.primarySponsor.isCommercial" = "ctrFalseTrue",
+  "applications.primarySponsor.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.primarySponsor.publicContacts.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.primarySponsor.scientificContacts.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.primarySponsor.thirdParties.organisationAddress.isBusinessKeyValidated" = "ctrFalseTrue",
+  "applications.primarySponsor.thirdParties.organisationAddress.isCreate" = "ctrFalseTrue",
+  "applications.primarySponsor.thirdParties.organisationAddress.isSave" = "ctrFalseTrue",
+  "applications.primarySponsor.thirdParties.organisationAddress.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "authorizedPartI.isEditable" = "ctrFalseTrue",
+  "authorizedPartI.isLowIntervention" = "ctrFalseTrue",
+  "authorizedPartI.medicalConditions.isConditionRareDisease" = "ctrFalseTrue",
+  "authorizedPartI.productRoleGroupInfos.products.isDraftUnauthProduct" = "ctrFalseTrue",
+  "authorizedPartI.productRoleGroupInfos.products.isPaediatricFormulation" = "ctrFalseTrue",
+  "authorizedPartI.productRoleGroupInfos.products.productDictionaryInfo.isSelectedInMultiTrialSM" = "ctrFalseTrue",
+  "authorizedPartI.products.isDraftUnauthProduct" = "ctrFalseTrue",
+  "authorizedPartI.products.isPaediatricFormulation" = "ctrFalseTrue",
+  "authorizedPartI.products.productDictionaryInfo.isSelectedInMultiTrialSM" = "ctrFalseTrue",
+  "authorizedPartI.sponsors.addresses.isBusinessKeyValidated" = "ctrFalseTrue",
+  "authorizedPartI.sponsors.addresses.isCreate" = "ctrFalseTrue",
+  "authorizedPartI.sponsors.addresses.isSave" = "ctrFalseTrue",
+  "authorizedPartI.sponsors.addresses.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "authorizedPartI.sponsors.contactPointForUnion.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "authorizedPartI.sponsors.isCommercial" = "ctrFalseTrue",
+  "authorizedPartI.sponsors.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "authorizedPartI.sponsors.publicContacts.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "authorizedPartI.sponsors.scientificContacts.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "authorizedPartI.sponsors.thirdParties.organisationAddress.isBusinessKeyValidated" = "ctrFalseTrue",
+  "authorizedPartI.sponsors.thirdParties.organisationAddress.isCreate" = "ctrFalseTrue",
+  "authorizedPartI.sponsors.thirdParties.organisationAddress.isSave" = "ctrFalseTrue",
+  "authorizedPartI.sponsors.thirdParties.organisationAddress.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "authorizedPartI.trialDetails.isClockStopRemovalRequested" = "ctrFalseTrue",
+  "authorizedPartI.trialDetails.trialInformation.endPoint.primaryEndPoints.isPrimary" = "ctrFalseTrue",
+  "authorizedPartI.trialDetails.trialInformation.endPoint.secondaryEndPoints.isPrimary" = "ctrFalseTrue",
+  "authorizedPartI.trialDetails.trialInformation.medicalCondition.meddraConditionTerms.isActive" = "ctrFalseTrue",
+  "authorizedPartI.trialDetails.trialInformation.medicalCondition.partIMedicalConditions.isConditionRareDisease" = "ctrFalseTrue",
+  "authorizedPartI.trialDetails.trialInformation.populationOfTrialSubjects.isFemaleSubjects" = "ctrFalseTrue",
+  "authorizedPartI.trialDetails.trialInformation.populationOfTrialSubjects.isMaleSubjects" = "ctrFalseTrue",
+  "authorizedPartI.trialDetails.trialInformation.populationOfTrialSubjects.isVulnerablePopulationSelected" = "ctrFalseTrue",
+  "authorizedPartI.trialDetails.trialInformation.trialCategory.isLowIntervention" = "ctrFalseTrue",
+  "authorizedPartsII.isEditable" = "ctrFalseTrue",
+  "authorizedPartsII.mscInfo.isProposedRms" = "ctrFalseTrue",
+  "authorizedPartsII.mscInfo.organisationInfo.isBusinessKeyValidated" = "ctrFalseTrue",
+  "authorizedPartsII.trialSites.organisationAddressInfo.isBusinessKeyValidated" = "ctrFalseTrue",
+  "authorizedPartsII.trialSites.organisationAddressInfo.isCreate" = "ctrFalseTrue",
+  "authorizedPartsII.trialSites.organisationAddressInfo.isSave" = "ctrFalseTrue",
+  "authorizedPartsII.trialSites.organisationAddressInfo.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "coSponsors.addresses.isBusinessKeyValidated" = "ctrFalseTrue",
+  "coSponsors.addresses.isCreate" = "ctrFalseTrue",
+  "coSponsors.addresses.isSave" = "ctrFalseTrue",
+  "coSponsors.addresses.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "coSponsors.contactPointForUnion.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "coSponsors.isCommercial" = "ctrFalseTrue",
+  "coSponsors.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "coSponsors.publicContacts.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "coSponsors.scientificContacts.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "coSponsors.thirdParties.organisationAddress.isBusinessKeyValidated" = "ctrFalseTrue",
+  "coSponsors.thirdParties.organisationAddress.isCreate" = "ctrFalseTrue",
+  "coSponsors.thirdParties.organisationAddress.isSave" = "ctrFalseTrue",
+  "coSponsors.thirdParties.organisationAddress.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "memberStatesConcerned.isProposedRms" = "ctrFalseTrue",
+  "memberStatesConcerned.organisationInfo.isBusinessKeyValidated" = "ctrFalseTrue",
+  "mscTrialNotificationsInfoList.mscNotificationsListInfo.isBenefitRisckBalanceChange" = "ctrFalseTrue",
+  "mscTrialNotificationsInfoList.mscNotificationsListInfo.isPublished" = "ctrFalseTrue",
+  "primarySponsor.addresses.isBusinessKeyValidated" = "ctrFalseTrue",
+  "primarySponsor.addresses.isCreate" = "ctrFalseTrue",
+  "primarySponsor.addresses.isSave" = "ctrFalseTrue",
+  "primarySponsor.addresses.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "primarySponsor.contactPointForUnion.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "primarySponsor.isCommercial" = "ctrFalseTrue",
+  "primarySponsor.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "primarySponsor.publicContacts.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "primarySponsor.scientificContacts.organisation.isBusinessKeyValidated" = "ctrFalseTrue",
+  "publicEvaluation.partIIEvaluationList.partIIRfiConsiderations.rfiConsiderations.isDeConsolidated" = "ctrFalseTrue",
+  "publicEvaluation.partIIEvaluationList.partIIRfis.isDueInLessThanTwoDays" = "ctrFalseTrue",
+  "publicEvaluation.partIIEvaluationList.partIIRfis.isEditingApplication" = "ctrFalseTrue",
+  "publicEvaluation.validationRfiConsiderations.rfiConsiderations.isDeConsolidated" = "ctrFalseTrue",
+  "publicEvaluation.validationRfis.isDueInLessThanTwoDays" = "ctrFalseTrue",
+  "publicEvaluation.validationRfis.isEditingApplication" = "ctrFalseTrue",
+  "publicEvaluation.partIRfiConsiderations.rfiConsiderations.isDeConsolidated" = "ctrFalseTrue",
+  "publicEvaluation.partIRfis.isDueInLessThanTwoDays" = "ctrFalseTrue",
+  "publicEvaluation.partIRfis.isEditingApplication" = "ctrFalseTrue",
+  #
+  #### . numbers ####
   #
   # - EUCTR
   "e824_number_of_treatment_arms_in_the_trial"  = "ctrInt",
@@ -303,6 +596,7 @@ typeVars <- list(
   "f421_in_the_eea"                  = "ctrInt",
   "f422_in_the_whole_clinical_trial" = "ctrInt",
   #
+  "trialInformation.countrySubjectCounts.countrySubjectCount.subjects" = "ctrInt",
   "trialInformation.populationAgeGroup.inUtero"               = "ctrInt",
   "trialInformation.populationAgeGroup.pretermNewbornInfants" = "ctrInt",
   "trialInformation.populationAgeGroup.newborns"              = "ctrInt",
@@ -316,13 +610,41 @@ typeVars <- list(
   # - CTGOV
   "number_of_arms" = "ctrInt",
   "enrollment"     = "ctrInt",
+  "rank"           = "ctrInt",
+  "clinical_results.baseline.analyzed_list.analyzed.count_list.count.value" = "ctrInt",
+  "clinical_results.baseline.measure_list.measure.class_list.class.analyzed_list.analyzed.count_list.count.value" = "ctrInt",
+  "clinical_results.outcome_list.outcome.measure.analyzed_list.analyzed.count_list.count.value" = "ctrInt",
+  "clinical_results.outcome_list.outcome.measure.class_list.class.analyzed_list.analyzed.count_list.count.value" = "ctrInt",
   #
   # - ISRCTN
   "participants.targetEnrolment"     = "ctrInt",
   "participants.totalFinalEnrolment" = "ctrInt",
   #
   # - CTIS
-  "totalNumberEnrolled" = "ctrInt"
+  "totalNumberEnrolled"     = "ctrInt",
+  "totalPartIISubjectCount" = "ctrInt",
+  "authorizedPartI.rowSubjectCount" = "ctrInt",
+  "applications.mscExtendedInfoList.numberSubjects" = "ctrInt",
+  "applications.partIIInfo.recruitmentSubjectCount" = "ctrInt",
+  "applications.partI.rowSubjectCount" = "ctrInt",
+  "applications.ctMSCs.recruitmentSubjectCount" = "ctrInt",
+  "applications.ctMSCsByApplication.recruitmentSubjectCount" = "ctrInt",
+  #
+  "applications.partI.trialDetails.trialInformation.eligibilityCriteria.principalExclusionCriteria.number" = "ctrInt",
+  "applications.partI.trialDetails.trialInformation.eligibilityCriteria.principalInclusionCriteria.number" = "ctrInt",
+  "applications.partI.trialDetails.trialInformation.endPoint.primaryEndPoints.number" = "ctrInt",
+  "applications.partI.trialDetails.trialInformation.endPoint.secondaryEndPoints.number" = "ctrInt",
+  "applications.partI.trialDetails.trialInformation.trialObjective.secondaryObjectives.number" = "ctrInt",
+  "authorizedPartI.trialDetails.trialInformation.eligibilityCriteria.principalExclusionCriteria.number" = "ctrInt",
+  "authorizedPartI.trialDetails.trialInformation.eligibilityCriteria.principalInclusionCriteria.number" = "ctrInt",
+  "authorizedPartI.trialDetails.trialInformation.endPoint.primaryEndPoints.number" = "ctrInt",
+  "authorizedPartI.trialDetails.trialInformation.endPoint.secondaryEndPoints.number" = "ctrInt",
+  "authorizedPartI.trialDetails.trialInformation.trialObjective.secondaryObjectives.number" = "ctrInt",
+  #
+  # - CTGOV2
+  "protocolSection.designModule.enrollmentInfo.count" = "ctrInt",
+  "resultsSection.baselineCharacteristicsModule.denoms.counts.value" = "ctrInt",
+  "resultsSection.outcomeMeasuresModule.outcomeMeasures.denoms.counts.value" = "ctrInt"
   #
 )
 
@@ -406,16 +728,16 @@ ctrCache <- function(xname, xvalue = NULL, verbose = FALSE) {
   # write or overwrite and exit early
   if (!is.null(xvalue)) {
     assign(x = xname, value = xvalue, envir = .ctrdataenv)
-    if (verbose) message(" wrote ", xname, " to cache ")
+    if (verbose) message("- Wrote ", xname, " to cache ")
     return(xvalue)
   }
 
   # check and read any value for xname variable
-  if (verbose) message(" accessing cache...", appendLF = FALSE)
+  if (verbose) message("- Checking cache...")
   if (exists(x = xname, envir = .ctrdataenv)) {
     tmp <- try(get(x = xname, envir = .ctrdataenv), silent = TRUE)
     if (inherits(tmp, "try-error")) return(NULL)
-    if (verbose) message("\b\b\b, returning ", xname, " ", appendLF = FALSE)
+    if (verbose) message("- Returning ", xname, " ")
     return(tmp)
   }
 
@@ -565,135 +887,135 @@ ctrDb <- function(con) {
 #' @return a typed vector, same length as dv
 #'
 #' @importFrom xml2 xml_text read_html
-#' @importFrom lubridate duration
+#' @importFrom lubridate duration ymd_hms dyears dmonths ddays
 #'
 #' @keywords internal
 #' @noRd
 #'
 typeField <- function(dv, fn) {
 
-  # early exit if dv is not character
-  if (!is.atomic(dv)) return(dv)
+  # get function name
+  ft <- typeVars[[fn]]
 
-  # early exit if dv is not character
-  if (!all(class(dv) %in% "character")) return(dv)
+  # expand to function
+  if (!is.null(ft)) ft <- switch(
+    typeVars[[fn]],
+    "ctrInt" = 'as.integer(x = x)',
+    "ctrYesNo" = 'sapply(x, function(i) if (is.na(i)) NA else
+       switch(i, "Yes" = TRUE, "No" = FALSE, NA), simplify = TRUE)',
+    "ctrFalseTrue" = 'if (is.numeric(x)) as.logical(x) else
+       sapply(x, function(i) switch(i, "true" = TRUE, "false" = FALSE, NA))',
+    "ctrDate" = 'as.Date(x, tryFormats =
+       c("%Y-%m-%d", "%Y-%m", "%Y-%m-%d %H:%M:%S", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M:%S%z"))',
+    "ctrDateUs" = 'as.Date(x, tryFormats = c("%b %e, %Y", "%Y-%m-%d", "%Y-%m"))',
+    "ctrDateTime" = 'lubridate::ymd_hms(x)',
+    "ctrDifftime" = 'as.difftime(as.numeric(lubridate::duration(
+       tolower(x)), units = "days"), units = "days")',
+    "ctrDifftimeDays" = 'lubridate::ddays(x = as.numeric(x))',
+    "ctrDifftimeMonths" = 'lubridate::dmonths(x = as.numeric(x))',
+    "ctrDifftimeYears" = 'lubridate::dyears(x = as.numeric(x))',
+    NULL
+  )
 
-  # clean up for all character vectors
-  # - if NA as string, change to NA
-  dv[grepl("^N/?A$|^ND$", dv)] <- NA
-  # - remove explanatory text before date
-  dv <- sub("^ClinicalTrials.gov processed this data on ", "", dv)
-  # - give Month Year also a Day to work with as.Date
-  dv <- sub("^([a-zA-Z]+) ([0-9]{4})$", "\\1 15, \\2", dv)
-  # - convert html entities because these had to
-  #   be left intact when converting to ndjson
-  htmlEnt <- grepl("&[#a-zA-Z]+;", dv)
-  if (any(htmlEnt)) dv[htmlEnt] <-
-    sapply(dv[htmlEnt], function(i)
-      xml2::xml_text(xml2::read_html(charToRaw(i))), USE.NAMES = FALSE)
-  # - convert newline
-  dv <- gsub("\r", "\n", dv)
+  # clean up text
+  if (is.null(ft)) {
 
-  # early exit if fn is not in typeVars
-  if (is.null(typeVars[[fn]])) return(dv)
+    # - if NA as string, change to NA
+    dv[grepl("^N/?A$|^ND$", dv)] <- NA
 
-  # for date time conversion
-  lct <- Sys.getlocale("LC_TIME")
+    # - check if any html entities
+    htmlEnt <- grepl("&[#a-zA-Z]+;", dv)
 
-  # main typing functions
-  ctrDate <- function() {
-    Sys.setlocale("LC_TIME", "C")
-    on.exit(Sys.setlocale("LC_TIME", lct), add = TRUE)
-    as.Date(dv, format = "%Y-%m-%d")
-  }
-  #
-  ctrDateUs <- function() {
-    Sys.setlocale("LC_TIME", "C")
-    on.exit(Sys.setlocale("LC_TIME", lct), add = TRUE)
-    as.Date(dv, format = "%b %e, %Y")
-  }
-  #
-  ctrDateCtr <- function() {
-    Sys.setlocale("LC_TIME", "C")
-    on.exit(Sys.setlocale("LC_TIME", lct), add = TRUE)
-    as.Date(dv, format = "%Y-%m-%d %H:%M:%S")
-  }
-  #
-  ctrDateTime <- function() {
-    Sys.setlocale("LC_TIME", "C")
-    on.exit(Sys.setlocale("LC_TIME", lct), add = TRUE)
-    as.Date(dv, format = "%Y-%m-%dT%H:%M:%S")
-  }
-  #
-  ctrYesNo <- function() {
-    vapply(dv, FUN = function(x)
-      switch(x, "Yes" = TRUE, "No" = FALSE, NA),
-      logical(1L), USE.NAMES = FALSE)
-  }
-  #
-  ctrFalseTrue <- function() {
-    vapply(dv, FUN = function(x)
-      switch(x, "true" = TRUE, "false" = FALSE, NA),
-      logical(1L), USE.NAMES = FALSE)
-  }
-  #
-  ctrInt       <- function() {
-    vapply(dv, FUN = function(x)
-      as.integer(x = x), integer(1L),
-      USE.NAMES = FALSE)
-  }
-  #
-  ctrDifftime   <- function() {
-    out <- sapply(dv, FUN = function(x) {
-      if (is.na(x)) {NA} else {
-        as.numeric(
-          lubridate::duration(
-            tolower(x)
-          ), units = "days")
-      }
-    }, USE.NAMES = FALSE)
-    as.difftime(out, units = "days")
-  }
-  #
-  ctrDifftimeDays   <- function() {
-    lubridate::ddays(x = as.numeric(dv))
-  }
-  #
-  ctrDifftimeMonths   <- function() {
-    lubridate::dmonths(x = as.numeric(dv))
-  }
-  #
-  ctrDifftimeYears   <- function() {
-    lubridate::dyears(x = as.numeric(dv))
-  }
+    # - convert html entities to text and symbols
+    if (any(htmlEnt) && all(sapply(dv, typeof) == "character")) {
+      dv[htmlEnt] <-
+        lapply(dv[htmlEnt], function(i)
+          sapply(i, function(ii)
+            xml2::xml_text(xml2::read_html(charToRaw(ii))),
+            USE.NAMES = FALSE))
+    }
 
-  ## apply typing
-  ldv <- length(dv)
-  if (any(grepl(" / ", dv))) {
+    # - check if possible and convert to numeric
+    if (all(is.numeric(dv) | is.na(dv))) dv <- as.numeric(dv)
 
-    # if any concatenations, apply typing per concatenated
-    # item and return list per item. note that dv has to be
-    # overwritten in outer environment for typeVars to work
-    out <- lapply(dv, function(r)  {
-      dv <<- strsplit(r, " / ", fixed = TRUE)[[1]]
-      try(do.call(typeVars[[fn]], list()), silent = TRUE)
-    })
+    # - collapse unless list structure is heterogenous
+    rowN1 <- sapply(dv, function(i) is.null(names(i)))
+    rowN2 <- sapply(names(rowN1), function(i) is.null(i))
+    rowType <- sapply(dv, function(i) typeof(unlist(i, recursive = FALSE)))
+    #
+    if (all(rowN1) &&
+        all(rowN2) &&
+        length(unique(rowN1)) <= 1L &&
+        any(rowType == "character")) {
+      #
+      dv <- sapply(dv, function(i) {
+        i <- gsub("\r", "\n", i)
+        i <- sub("^Information not present in EudraCT", "", i)
+        if (length(i) > 1L) {
+          rowI <- paste0(i[!is.na(i)], collapse = " / ")
+          if (nchar(rowI)) rowI else NA
+        } else if (length(i) && !is.na(i)) i else NA
+      })
+    }
 
-  } else {
-
-    # apply typing function with its specified type
-    out <- try(do.call(typeVars[[fn]], list()), silent = TRUE)
+    # early return
+    return(dv)
 
   }
 
-  # error output
-  if (any(sapply(out, function(r) inherits(r, "try-error"))) ||
-      length(out) != ldv) {
-    out <- rep.int(x = NA, times = ldv)
+  # early exit if already date or logical
+  if (all(sapply(dv, class) %in%
+          c("logical", "Date", "POSIXct", "POSIXt"))) return(dv)
+
+  # record length of input dv for NULL handling
+  lenDv <- length(dv)
+
+  # apply typing function, returning
+  # if possible a vector over list
+  tryCatch(
+    expr = {
+      dv <- lapply(dv, function(x) {
+        # - text mangling
+        x <- ifelse(grepl("Information not present in EudraCT", x), NA, x)
+        # - give Month Year a Day to allow conversion
+        if (grepl("date", fn, ignore.case = TRUE)) {
+          x <- sub("^ClinicalTrials.gov processed this data on ", "", x)
+          x <- sub("^([a-zA-Z]+) ([0-9]{4})$", "\\1 15, \\2", x)
+          x <- sub("^([0-9]{4}-[0-9]{2})$", "\\1-15", x)
+        }
+        # - apply function to x
+        eval(parse(text = ft))
+      })
+    },
+    error = function(e) {
+      message(fn, ": returning untyped values, as ",
+              ft, " raised an error when applied to ",
+              paste0(unlist(dv), collapse = " / "))
+      return(dv)
+    },
+    warning = function(w) {
+      message(fn, ": returning untyped values, as ",
+              ft, " raised a warning when applied to ",
+              paste0(unlist(dv), collapse = " / "))
+      return(dv)
+    }
+  )
+
+  # exceptional case inform user
+  if (is.null(dv)) {
+    warning(paste0(
+      fn, " could not be typed, please report here: ",
+      "https://github.com/rfhb/ctrdata/issues"))
+    dv <- rep_len(NA, lenDv)
   }
+
+  # make original classes (e.g., Date) reappear
+  if (!is.list(dv)) dv <- as.list(dv)
+  if (all(sapply(dv, length) <= 1L)) {
+    return(do.call("c", dv))}
 
   # return
-  return(out)
+  return(dv)
 
 } # end typeField
 
@@ -748,18 +1070,39 @@ ctrMultiDownload <- function(
   stopifnot(length(urls) == length(destfiles))
   if (!length(urls)) return(data.frame())
 
-  # does not error in case any of the individual requests fail
-  # inspect the return value to find out which were successful
-
-  toDo <- rep.int(TRUE, times = length(urls))
+  # starting values
   numI <- 1L
   canR <- resume
 
+  # do not again download files that already exist
+  # or that do not have an (arbitrary) minimal size.
+  # nchar("Request failed.") is 15L
+  toDo <- rep.int(TRUE, times = length(urls))
+  toDo[file.exists(destfiles) &
+         (is.na(file.size(destfiles)) |
+            file.size(destfiles) > 20L)] <- FALSE
+
+  downloadValue <- data.frame(
+    "success" = !toDo,
+    "status_code" = rep.int(200L, length(toDo)),
+    "resumefrom" = double(length(toDo)),
+    "url" = urls,
+    "destfile" = destfiles,
+    "error" = character(length(toDo)),
+    "type" = character(length(toDo)),
+    "modified" = double(length(toDo)),
+    "time" = double(length(toDo)),
+    "headers" = character(length(toDo))
+  )
+
+  # does not error in case any of the individual requests fail
+  # inspect the return value to find out which were successful
+  # make no more than 5 attempts to complete downloading
   while (any(toDo) && numI < 5L) {
 
     args <- c(
-      urls = list(utils::URLencode(urls[toDo])),
-      destfiles = list(destfiles[toDo]),
+      urls = list(utils::URLencode(downloadValue[toDo, "url", drop = TRUE])),
+      destfiles = list(downloadValue[toDo, "destfile", drop = TRUE]),
       resume = canR,
       progress = progress,
       timeout = Inf,
@@ -770,11 +1113,7 @@ ctrMultiDownload <- function(
 
     res <- do.call(curl::multi_download, args)
 
-    if (numI == 1L) {
-      downloadValue <- res
-    } else {
-      downloadValue[toDo, , drop = FALSE] <- res
-    }
+    downloadValue[toDo, ] <- res
 
     if (any(grepl(
       "annot resume", downloadValue[toDo, "error", drop = TRUE]))) canR <- FALSE
@@ -834,20 +1173,40 @@ ctrTempDir <- function(verbose = FALSE) {
   dir.create(tempDir, showWarnings = FALSE, recursive = TRUE)
   tempDir <- normalizePath(tempDir, mustWork = TRUE)
 
-  # insert on.exit() call into the parent function
-  if (!verbose) {
-    do.call(
-      on.exit,
-      list(
-        substitute(fun(), list(
-          fun = function() unlink(tempDir, recursive = TRUE))),
-        add = TRUE),
-      envir = parent.frame(2L)
-    )
+  # retain tempdir for session to accelerate,
+  # but only if session is user-interactive.
+  # from ctrdata 1.16.0.9000 onwards, all
+  # intermediate files are deleted before
+  # finalising a ctrLoadQueryIntoDb() call
+  # (that is, only downloaded files are kept).
+  if (interactive()) options(ctrdata.tempdir = tempDir)
+
+  # register deleting tempDir when exiting session
+  assign("keeptempdir", verbose, envir = .ctrdataenv)
+  delCtrdataTempDir <- function(x) {
+    if (length(.ctrdataenv$keeptempdir) &&
+        !is.null(.ctrdataenv$keeptempdir)) {
+      if (.ctrdataenv$keeptempdir) {
+        message("Since 'VERBOSE = TRUE', not deleting ctrdata.tempdir ", tempDir)
+      } else {
+        try(unlink(tempDir, recursive = TRUE), silent = TRUE)
+        message("...deleted ctrdata.tempdir\r")
+      }
+    }
+    assign("keeptempdir", NULL, envir = .ctrdataenv)
   }
+  reg.finalizer(
+    e = .ctrdataenv,
+    f = delCtrdataTempDir,
+    onexit = TRUE
+  )
 
   # inform user
-  if (verbose) message("DEBUG: ", tempDir)
+  if (verbose) message(
+    "\nDEBUG: ", tempDir,
+    "\nUsing any previously downloaded files of the ",
+    length(dir(path = tempDir)),
+    " files existing in this folder.\n")
 
   # return
   return(tempDir)
@@ -955,7 +1314,10 @@ ctrDocsDownload <- function(
 
       # handle failures despite success is true
       suppressMessages(invisible(sapply(
-        tmp[tmp$status_code != 200L, "destfile", drop = TRUE], unlink
+        tmp[tmp$status_code != 200L, "destfile", drop = TRUE],
+
+        # delete but only micro files, possible remnants
+        function(f) if (file.size(f) < 20L) unlink(f)
       )))
       tmp <- nrow(tmp[tmp$status_code == 200L, , drop = FALSE])
 
@@ -1114,8 +1476,7 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
           key = con$collection,
           query = paste0(
             '{"_id": {"$in": [',
-            paste0('"', ids, '"', collapse = ","), ']}}'),
-          fields = '{"_id": 1}')
+            paste0('"', ids, '"', collapse = ","), ']}}'))
       }, silent = TRUE)
 
       ## import
@@ -1134,6 +1495,7 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
         # step into line by line mode
         fdLines <- file(tempFiles[tempFile], open = "rt", blocking = TRUE)
         fLineOut <- tempfile(pattern = "tmpOneLine", tmpdir = dir, fileext = ".ndjson")
+        on.exit(try(unlink(fLineOut), silent = TRUE), add = TRUE)
         fTmp <- NULL
         while (TRUE) {
           tmpOneLine <- readLines(con = fdLines, n = 1L, warn = FALSE)
@@ -1245,7 +1607,7 @@ dbCTRAnnotateQueryRecords <- function(
     src = con,
     key = con$collection,
     value = annotations,
-    query = "")
+    query = "{}")
 
   # inform user
   message("= Annotated retrieved records (", result, " records)")
@@ -1291,7 +1653,8 @@ dbCTRUpdateQueryHistory <- function(
 
   # append current search
   # default for format methods is "%Y-%m-%d %H:%M:%S"
-  if (nrow(hist)) {
+  if (!is.null(hist) &&
+      nrow(hist)) {
 
     newHist <- rbind(hist, newHist)
     newHist <- list("queries" = newHist)

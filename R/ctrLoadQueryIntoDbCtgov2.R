@@ -210,14 +210,19 @@ ctrLoadQueryIntoDbCtgov2 <- function(
 
   while (TRUE) {
 
-    # for download
-    fTrialJson <- file.path(tempDir, paste0("ctgov_trials_", pageNumber,".json"))
-
     # page url
     urlToDownload <- ifelse(
       pageNextToken != "",
       paste0(url, "&pageToken=", pageNextToken),
       url)
+
+    # for download
+    fTrialJson <- file.path(
+      tempDir, paste0(
+        "ctgov_trials_",
+        # include query in file name for potential re-download
+        sapply(url, digest::digest, algo = "crc32"),
+        "_", pageNumber, ".json"))
 
     # do download
     tmp <- ctrMultiDownload(
@@ -277,6 +282,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     suppressMessages(unlink(downloadsNdjson))
     downloadsNdjsonCon <- file(downloadsNdjson, open = "at")
     on.exit(try(close(downloadsNdjsonCon), silent = TRUE), add = TRUE)
+    on.exit(try(unlink(downloadsNdjson), silent = TRUE), add = TRUE)
 
     # extract trial ids and file name and save in temporary file
     for (ndjsonFile in dir(
@@ -314,6 +320,11 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     } # if (!nrow(dlFiles))
 
   } # !is.null(documents.path)
+
+  ## delete for any re-downloads
+  try(unlink(dir(
+    path = tempDir, pattern = "ctgov_trials_[0-9]+.ndjson",
+    full.names = TRUE)), silent = TRUE)
 
   ## inform user -----------------------------------------------------
 

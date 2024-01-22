@@ -22,7 +22,7 @@ dbc <- nodbi::src_mongo(
 # test
 expect_message(
   suppressWarnings(
-    dbFindFields(
+    tmpf <- dbFindFields(
       namepart = "date",
       con = dbc)),
   "Finding fields|Using cache")
@@ -30,26 +30,21 @@ expect_message(
 # test
 tmp <- suppressMessages(
   dbGetFieldsIntoDf(
-    fields = c(
-      "a2_eudract_number",
-      "overall_status",
-      "record_last_import",
-      "primary_completion_date",
-      "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database",
-      "study_design_info.intervention_model",
-      "e71_human_pharmacology_phase_i"),
+    fields = c(tmpf, "record_last_import", "study_design_info.intervention_model"),
     con = dbc))
 
 # tests
-expect_equal(dim(tmp)[2], 8)
+expect_equal(dim(tmp)[2], 15)
 
 # test
-expect_true("Date" %in%
-              class(tmp[["record_last_import"]]))
+expect_true(
+  class(tmp[["record_last_import"]]) %in%
+    c("Date", "POSIXct", "POSIXt"))
 
 # test
-expect_true("character" %in%
-              class(tmp[["study_design_info.intervention_model"]]))
+expect_true(
+  "character" %in%
+    class(tmp[["study_design_info.intervention_model"]]))
 
 
 #### close ####
