@@ -1,3 +1,8 @@
+# ctrdata 1.17.0.9000 (2024-01-25)
+
+## Bug fixes
+- Added handling of unexpected Unicode in data from `EUCTR`
+
 # ctrdata 1.17.0
 
 ## Possibly breaking changes

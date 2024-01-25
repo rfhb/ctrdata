@@ -1,5 +1,10 @@
 function euctr2ndjson(txt, dt) {
 
+    // found <U+2028> in 2016-004774-17 between E.5.1.1 and E.5.1.1 (fi)
+    // remove only unicode Separators from this list:
+    // https://github.com/slevithan/xregexp/blob/2b652889fc14524d20f85604f291f725347f8033/src/addons/unicode-categories.js#L215
+    txt = txt.replaceAll(/[\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]/g, "");
+
     // delete non-informative lines e.g. explanatory information from key F.3.3.1
     txt = txt.replaceAll(/^Summary$|^This file contains.*$|^A. Protocol Info.*$|^F. Population of Trial Sub.*$|^P. End of Trial$|^[(]For clinical trials.*$|^did not include the words.*$|^or not they would be using contraception.*$|^database on [0-9][0-9][0-9][0-9].*$/gm, "");
 

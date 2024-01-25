@@ -30,6 +30,15 @@ expect_true(
         register = "EUCTR",
         only.count = TRUE)))[["n"]] >= 2L)
 
+# test
+expect_true(
+  suppressWarnings(
+    suppressMessages(
+      ctrLoadQueryIntoDb(
+        queryterm = "2016-004774-17",
+        register = "EUCTR",
+        con = dbc)))[["n"]] >= 1L)
+
 # correct _id association
 
 # test
