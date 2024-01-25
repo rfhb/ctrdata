@@ -1,5 +1,8 @@
 # ctrdata 1.17.0.9000 (2024-01-25)
 
+## Improvements
+- Further `CTIS` fields types
+
 ## Bug fixes
 - Added handling of unexpected Unicode in data from `EUCTR`
 

@@ -166,11 +166,12 @@ tmpFields <- suppressMessages(
   suppressWarnings(
     dbFindFields(
       namepart = ".*",
-      con = dbc)))
+      con = dbc,
+      sample = FALSE)))
 
 # test
 expect_true(
-  length(tmpFields) > 1500L)
+  length(tmpFields) > 3000L)
 
 #### dbGetFieldsIntoDf ####
 
@@ -201,10 +202,11 @@ for (i in unique(groupsNo)) {
   expect_true(nrow(tmpData) > 0L)
   expect_true(ncol(tmpData) > 0L)
   expect_true(all(
-    unique(unlist(lapply(
-      tmpData[ , -1, drop = FALSE],
-      function(i) sapply(i, function(ii) class(ii))))) %in%
-      c("Date", "POSIXct", "POSIXt")
+    unique(unlist(
+      lapply(
+        tmpData[ , -1, drop = FALSE],
+        function(i) sapply(i, function(ii) class(ii)))
+    )) %in% c("Date", "POSIXct", "POSIXt")
   ))
 }
 
