@@ -121,7 +121,8 @@ ctrLoadQueryIntoDbCtis <- function(
       tempDir, paste0(
         "ctis_trials_",
         sapply(url, digest::digest, algo = "crc32"),
-        ".json")))
+        ".json")),
+      progress = FALSE)
 
     message(". ", appendLF = FALSE)
 
