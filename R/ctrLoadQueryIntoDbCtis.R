@@ -73,7 +73,7 @@ ctrLoadQueryIntoDbCtis <- function(
       # - 11 download files - %s is document url
       "/ct/public/download/%s",
       #
-      # - 12-21 documents - %s is entity identifier, lists
+      # - 12-22 documents - %s is entity identifier, lists
       "/document/part1/%s/list", # appl auth
       "/document/part2/%s/list", # appl auth
       "/document/product-group-common/%s/list",
@@ -83,9 +83,10 @@ ctrLoadQueryIntoDbCtis <- function(
       "/document/rfi/%s/list",                    # rfis
       "/document/notification/%s/list?documentType=101", # events
       "/document/cm/%s/list", # corrective measures
-      "/document/smr/%s/list"
+      "/document/smr/%s/list",
+      "/document/association/%s/list" # associated clinical trials
       #
-      # unclear or not publicly accessible
+      # unclear or no data publicly accessible at this time
       # https://euclinicaltrials.eu/ct-public-api-services/services/document/part1/4433/list?documentType=93
       # https://euclinicaltrials.eu/ct-public-api-services/services/document/part1/4433/list?documentType=94
       # https://euclinicaltrials.eu/ct-public-api-services/services/document/part2/14808/list/?documentType=41
@@ -493,7 +494,8 @@ ctrLoadQueryIntoDbCtis <- function(
           prodauth: [ .authorizedPartI.productRoleGroupInfos[].id ],
           p1ar: [ .applications[].partI.id ],
           p2ars: [ .applications[].partIIInfo[].id ],
-          ctaletter: [ .applications[].partIIInfo[].id ]
+          ctaletter: [ .applications[].partIIInfo[].id ],
+          asscts: [ .applications[].partI.trialDetails.associatedClinicalTrials[].id ]
         } ',
       flags = jqr::jq_flags(pretty = FALSE),
       out = downloadsNdjson
@@ -550,18 +552,18 @@ ctrLoadQueryIntoDbCtis <- function(
     }
 
     # map type to endpoints for lists
-    epTyp <- ctisEndpoints[c(12:21, 21, 21)]
+    epTyp <- ctisEndpoints[c(12:21, 21, 21, 22)]
     names(epTyp) <- c(
       "part1", "parts2", "prod", "p1ar", "p2ars",
       "ctaletter", "rfis", "events", "cm", "layperson",
-      "summary", "csr")
+      "summary", "csr", "asscts")
     epTyp <- as.list(epTyp)
 
     # define order for sorting
     orderedParts <- c(
       "ctaletter", "p1ar", "p2ars", "part1auth", "part1appl",
       "parts2auth", "parts2appl", "prodauth", "prodappl", "rfis",
-      "events", "cm", "csr", "summary", "layperson")
+      "events", "cm", "csr", "summary", "layperson", "asscts")
 
     # ordering files list
     dlFiles <- apply(dlFiles, 1, function(r) {

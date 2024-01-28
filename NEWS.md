@@ -1,7 +1,7 @@
-# ctrdata 1.17.0.9000 (2024-01-25)
+# ctrdata 1.17.0.9000 (2024-01-28)
 
 ## Improvements
-- Further `CTIS` fields types
+- Additional `CTIS` field types and possibly documents (associated clinical trials)
 
 ## Bug fixes
 - Added handling of unexpected Unicode in data from `EUCTR`
