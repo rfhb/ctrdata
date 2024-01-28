@@ -619,7 +619,11 @@ ctrLoadQueryIntoDbCtis <- function(
     message("- Processing document information in ", nrow(tmp), " lists")
     epTypChars <- paste0(names(epTyp), "appl", "auth", collapse = "")
     epTypChars <- rawToChar(unique(charToRaw(epTypChars)))
+
     try(unlink(downloadsNdjson), silent = TRUE)
+    downloadsNdjsonCon <- file(downloadsNdjson, open = "at")
+    on.exit(try(close(downloadsNdjsonCon), silent = TRUE), add = TRUE)
+    on.exit(try(unlink(downloadsNdjson), silent = TRUE), add = TRUE)
 
     for (fi in seq_len(nrow(tmp))) {
 
@@ -634,40 +638,23 @@ ctrLoadQueryIntoDbCtis <- function(
         "^.+_([", epTypChars, "]+?)_[0-9]+[.]json$"),
         "\\1", tmp[["destfile"]][fi])
 
-      # get data
-      jOut <- readLines(fn, warn = FALSE)
-
-      # remove irrelevant information
-      jOut <- sub('^.*"elements":(.*?)}?$', "\\1", jOut)
-      jOut <- sub('(,?)"showWarning":(false|true)(,?)', "\\3", jOut)
-      jOut <- sub('(,?)"totalSize":[0-9]+(,?)', "\\2", jOut)
-      jOut <- sub('(,?)"pageInfo":[{].+?[}](,?)', "\\2", jOut)
-      jOut <- gsub('"versions":[[][{].+?[}][]],', "", jOut) # reconsider
-      if (!nchar(jOut) || jOut == "[]") next
-
-      jOut <- paste0(
-        '{"_id":"', id, '",',
-        stringi::stri_extract_all_regex(jOut, '"url":"[-a-z0-9]+?",')[[1]],
-        stringi::stri_extract_all_regex(jOut, '"title":".+?",')[[1]],
-        stringi::stri_extract_all_regex(jOut, '"fileTypeLabel":"[A-Z]+?",')[[1]],
-        stringi::stri_extract_all_regex(jOut, '"documentIdentity":[0-9]+?,')[[1]],
-        '"part":"', part, '"}'
+      # get data for downloading
+      jOut <- jqr::jq(
+        file(fn), paste0(
+          ' .elements[] | { ',
+          '_id: "', id, '", part: "', part, '",',
+          'url, title, fileTypeLabel, documentIdentity
+       }'),
+       flags = jqr::jq_flags(pretty = FALSE),
+       out = downloadsNdjsonCon
       )
-
-      jOut <- jOut[!grepl('",NA"', jOut)]
-      if (!length(jOut)) next
-
-      cat(
-        jOut,
-        file = downloadsNdjson,
-        append = TRUE,
-        sep = "\n")
 
       message(fi, rep("\b", nchar(fi)), appendLF = FALSE)
 
     } # for
 
     # 3 - documents download
+    close(downloadsNdjsonCon)
     dlFiles <- jsonlite::stream_in(file(downloadsNdjson), verbose = FALSE)
     try(unlink(downloadsNdjson), silent = TRUE)
 
