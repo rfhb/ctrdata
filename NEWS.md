@@ -1,12 +1,15 @@
-# ctrdata 1.17.0.9000 (2024-01-28)
+# ctrdata 1.17.0.9000 (2024-02-04)
 
 ## Improvements
 - Additional `CTIS` field types and possibly documents (associated clinical trials)
+- Use `ctId` instead of `id` as `CTIS` top-level field (a further synonym used in the API is `clinicalTrialId`)
 
 ## Bug fixes
-- Added handling of unexpected Unicode in data from `EUCTR`
+- Added handling of unexpected Unicode in protocol-related data from one trial in `EUCTR`
+- Improved predicted download sizes and times for `EUCTR`
+- Return with message if `CTIS` query did not result in any trials
 
-# ctrdata 1.17.0
+# ctrdata 1.17.0 (2024-01-22)
 
 ## Possibly breaking changes
 - Reimplemented `dbGetFieldsIntoDf()` to accelerate and have more predictable, simplified returns, in particular for nested fields; also attempts to recursively expand simply nested data into additional columns in the returned data frame
@@ -26,7 +29,7 @@
 - Adapted and corrected information loading to newly available data in `CTIS`
 - Corrected escaping, and back-conversion, of characters in `JSON` from `CTIS`
 
-# ctrdata 1.16.0 (released 2023-11-24)
+# ctrdata 1.16.0 (2023-11-24)
 
 ## Possibly breaking changes
 
