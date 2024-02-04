@@ -12,10 +12,11 @@ badge](https://rfhb.r-universe.dev/badges/ctrdata)](https://rfhb.r-universe.dev/
 
 [Main features](#main-features) • [Installation](#installation) •
 [Overview](#overview-of-functions-in-ctrdata) •
-[Databases](#databases-that-can-be-used-with-ctrdata) • [Example
-workflow](#example-workflow) • [Analysis across
-trials](#workflow-cross-trial-example) • [Tests](#tests) •
-[Acknowledgements](#acknowledgements) • [Future](#future-features)
+[Databases](#databases-that-can-be-used-with-ctrdata) • [Data
+model](#data-model-of-ctrdata) • [Example workflow](#example-workflow) •
+[Analysis across trials](#workflow-cross-trial-example) •
+[Tests](#tests) • [Acknowledgements](#acknowledgements) •
+[Future](#future-features)
 
 # ctrdata for aggregating and analysing clinical trials
 
@@ -36,7 +37,7 @@ conduct of trials, their availability for patients and to facilitate
 using their detailed results for research and meta-analyses. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2024-01-21 for version 1.17.0
+package. This README was reviewed on 2024-02-04 for version 1.17.0
 (major improvement: removed external dependencies; refactored
 [`dbGetFieldsIntoDf()`](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.html)).
 
@@ -173,6 +174,41 @@ row in table) or, in case of MongoDB as database backend, `mongolite`
 | Create **DuckDB** database connection     | `dbc <- nodbi::src_duckdb(dbdir = "name_of_my_database", collection = "name_of_my_collection")`                         |
 | Use connection with `ctrdata` functions   | `ctrdata::{ctrLoadQueryIntoDb, dbQueryHistory, dbFindIdsUniqueTrials, dbFindFields, dbGetFieldsIntoDf}(con = dbc, ...)` |
 | Use connection with `nodbi` functions     | e.g., `nodbi::docdb_query(src = dbc, key = dbc$collection, ...)`                                                        |
+
+## Data model of `ctrdata`
+
+Package `ctrdata` uses the data models that are implicit in data
+retrieved from the different registers. No mapping is provided for any
+register’s data model to a putative target data model. The reasons
+include that registers’ data models are notably evolving over time and
+that there are only few data fields with similar values and meaning
+between the registers.
+
+Thus, the handling of data from different models of registers is to be
+done at the time of analysis. This approach allows a high level of
+flexibility, transparency and reproducibility. See examples in the help
+text for function
+[dfMergeVariablesRelevel()](https://rfhb.github.io/ctrdata/reference/dfMergeVariablesRelevel.html)
+and section [Analysis across trials](#workflow-cross-trial-example)
+below for how to align related fields from different registers for a
+joint analysis.
+
+In any backend `NoSQL`
+[database](https://rfhb.github.io/ctrdata/index.html#databases-for-use-with-ctrdata),
+one clinical trial is one document (and one row in `SQLite`,
+`PostgreSQL`, `DuckDB`). The `NoSQL` backends allow different documents
+to have different structures. Package `ctrdata` stores in every such
+document:
+
+- field `_id` with the trial identification as provided by the register
+  from which it was retrieved
+- field `ctrname` with the name of the register (`EUCTR`, `CTGOV`,
+  `CTGOV2`, `ISRCTN`, `CTIS`) from which that trial was retrieved
+- field `record_last_import` with the date and time when that document
+  was last updated using `ctrLoadQueryIntoDb()`
+- all original fields exactly as provided by the register for that trial
+  (see examples
+  [below](https://rfhb.github.io/ctrdata/index.html#trial-records-json-in-databases))
 
 ## Vignettes
 
