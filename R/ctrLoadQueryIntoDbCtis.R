@@ -142,6 +142,12 @@ ctrLoadQueryIntoDbCtis <- function(
       jqr::jq(file(tmp$destfile[1]), " {name: .totalSize} | .[]")
     )
 
+    # early exit
+    if (totalSize == 0L) {
+      message("No trials found? Check 'queryterm' and / or 'register'.")
+      return(emptyReturn)
+    }
+
     # extract trial information
     # and convert to ndjson
     trialsJson <- jqr::jq(
