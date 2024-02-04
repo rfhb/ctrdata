@@ -1,4 +1,4 @@
-# ctrdata 1.17.0.9000 (2024-02-04)
+# ctrdata 1.17.1
 
 ## Improvements
 - Additional `CTIS` field types and possibly documents (associated clinical trials)
