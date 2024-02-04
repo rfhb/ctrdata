@@ -234,7 +234,7 @@ ctrLoadQueryIntoDbCtis <- function(
   tmp <- ctrMultiDownload(urls, fPartIPartsIIJson(idsTrials), verbose = verbose)
 
   importString <- paste0(
-    '"ctrname":"CTIS",\\1,"record_last_import":"',
+    '"ctrname":"CTIS","ctId":\\1,"record_last_import":"',
     strftime(Sys.time(), "%Y-%m-%d %H:%M:%S"), '",')
 
   # convert partI and partsII details into ndjson file
@@ -248,7 +248,7 @@ ctrLoadQueryIntoDbCtis <- function(
       # files include id, ctNumber and others repeatedly
       # only replace first instance for updating records
       # sanitise texts removing various quotation marks
-      sub("(\"id\":[0-9]+),", importString,
+      sub("\"id\":([0-9]+),", importString,
           sub("(\"ctNumber\"):(\"[-0-9]+\"),", '\\1:\\2,"_id":\\2,',
               mangleText(readLines(fn, warn = FALSE))
           )),
