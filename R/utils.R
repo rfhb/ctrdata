@@ -1188,7 +1188,7 @@ ctrTempDir <- function(verbose = FALSE) {
     if (length(.ctrdataenv$keeptempdir) &&
         !is.null(.ctrdataenv$keeptempdir)) {
       if (.ctrdataenv$keeptempdir) {
-        message("Since 'VERBOSE = TRUE', not deleting ctrdata.tempdir ", tempDir)
+        message("Since 'verbose = TRUE', not deleting ctrdata.tempdir ", tempDir)
       } else {
         try(unlink(tempDir, recursive = TRUE), silent = TRUE)
         message("...deleted ctrdata.tempdir\r")
