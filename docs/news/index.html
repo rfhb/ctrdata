@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.17.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.17.1.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,19 +53,27 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.17.0.9000" id="ctrdata-11709000-2024-01-28">ctrdata 1.17.0.9000 (2024-01-28)<a class="anchor" aria-label="anchor" href="#ctrdata-11709000-2024-01-28"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.17.1.9000" id="ctrdata-11719000">ctrdata 1.17.1.9000<a class="anchor" aria-label="anchor" href="#ctrdata-11719000"></a></h2>
+<ul><li>new dev version</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.17.1" id="ctrdata-1171-2024-02-05">ctrdata 1.17.1 (2024-02-05)<a class="anchor" aria-label="anchor" href="#ctrdata-1171-2024-02-05"></a></h2><p class="text-muted">CRAN release: 2024-02-04</p>
 <div class="section level3">
-<h3 id="improvements-1-17-0-9000">Improvements<a class="anchor" aria-label="anchor" href="#improvements-1-17-0-9000"></a></h3>
+<h3 id="improvements-1-17-1">Improvements<a class="anchor" aria-label="anchor" href="#improvements-1-17-1"></a></h3>
 <ul><li>Additional <code>CTIS</code> field types and possibly documents (associated clinical trials)</li>
+<li>Use <code>ctId</code> instead of <code>id</code> as <code>CTIS</code> top-level field (a further synonym used in the API is <code>clinicalTrialId</code>)</li>
 </ul></div>
 <div class="section level3">
-<h3 id="bug-fixes-1-17-0-9000">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-17-0-9000"></a></h3>
-<ul><li>Added handling of unexpected Unicode in data from <code>EUCTR</code>
+<h3 id="bug-fixes-1-17-1">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-17-1"></a></h3>
+<ul><li>Added handling of unexpected Unicode in protocol-related data from one trial in <code>EUCTR</code>
 </li>
+<li>Improved predicted download sizes and times for <code>EUCTR</code>
+</li>
+<li>Return with message if <code>CTIS</code> query did not result in any trials</li>
 </ul></div>
 </div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.17.0" id="ctrdata-1170">ctrdata 1.17.0<a class="anchor" aria-label="anchor" href="#ctrdata-1170"></a></h2><p class="text-muted">CRAN release: 2024-01-22</p>
+<h2 class="pkg-version" data-toc-text="1.17.0" id="ctrdata-1170-2024-01-22">ctrdata 1.17.0 (2024-01-22)<a class="anchor" aria-label="anchor" href="#ctrdata-1170-2024-01-22"></a></h2><p class="text-muted">CRAN release: 2024-01-22</p>
 <div class="section level3">
 <h3 id="possibly-breaking-changes-1-17-0">Possibly breaking changes<a class="anchor" aria-label="anchor" href="#possibly-breaking-changes-1-17-0"></a></h3>
 <ul><li>Reimplemented <code><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code> to accelerate and have more predictable, simplified returns, in particular for nested fields; also attempts to recursively expand simply nested data into additional columns in the returned data frame</li>
@@ -96,7 +104,7 @@
 </ul></div>
 </div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.16.0" id="ctrdata-1160-released-2023-11-24">ctrdata 1.16.0 (released 2023-11-24)<a class="anchor" aria-label="anchor" href="#ctrdata-1160-released-2023-11-24"></a></h2><p class="text-muted">CRAN release: 2023-11-24</p>
+<h2 class="pkg-version" data-toc-text="1.16.0" id="ctrdata-1160-2023-11-24">ctrdata 1.16.0 (2023-11-24)<a class="anchor" aria-label="anchor" href="#ctrdata-1160-2023-11-24"></a></h2><p class="text-muted">CRAN release: 2023-11-24</p>
 <div class="section level3">
 <h3 id="possibly-breaking-changes-1-16-0">Possibly breaking changes<a class="anchor" aria-label="anchor" href="#possibly-breaking-changes-1-16-0"></a></h3>
 <div class="section level4">

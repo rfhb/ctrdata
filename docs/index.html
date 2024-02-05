@@ -65,7 +65,7 @@
     
     <a class="navbar-brand me-2" href="index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.17.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.17.1.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -108,7 +108,7 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9">
-<p><a href="#main-features">Main features</a> • <a href="#installation">Installation</a> • <a href="#overview-of-functions-in-ctrdata">Overview</a> • <a href="#databases-that-can-be-used-with-ctrdata">Databases</a> • <a href="#example-workflow">Example workflow</a> • <a href="#workflow-cross-trial-example">Analysis across trials</a> • <a href="#tests">Tests</a> • <a href="#acknowledgements">Acknowledgements</a> • <a href="#future-features">Future</a></p>
+<p><a href="#main-features">Main features</a> • <a href="#installation">Installation</a> • <a href="#overview-of-functions-in-ctrdata">Overview</a> • <a href="#databases-that-can-be-used-with-ctrdata">Databases</a> • <a href="#data-model-of-ctrdata">Data model</a> • <a href="#example-workflow">Example workflow</a> • <a href="#workflow-cross-trial-example">Analysis across trials</a> • <a href="#tests">Tests</a> • <a href="#acknowledgements">Acknowledgements</a> • <a href="#future-features">Future</a></p>
 <div class="section level1">
 <div class="page-header"><h1 id="ctrdata-for-aggregating-and-analysing-clinical-trials">ctrdata for aggregating and analysing clinical trials<a class="anchor" aria-label="anchor" href="#ctrdata-for-aggregating-and-analysing-clinical-trials"></a>
 </h1></div>
@@ -119,7 +119,7 @@
 <li>ISRCTN (<a href="https://www.isrctn.com/" class="external-link uri">https://www.isrctn.com/</a>)</li>
 <li>EU Clinical Trials Information System (“CTIS”, <a href="https://euclinicaltrials.eu/" class="external-link uri">https://euclinicaltrials.eu/</a> 🔔 <a href="#workflow-ctis-example">example</a>)</li>
 </ul>
-<p>The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2024-01-21 for version 1.17.0 (major improvement: removed external dependencies; refactored <a href="https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.html"><code>dbGetFieldsIntoDf()</code></a>).</p>
+<p>The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2024-02-04 for version 1.17.0 (major improvement: removed external dependencies; refactored <a href="https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.html"><code>dbGetFieldsIntoDf()</code></a>).</p>
 <div class="section level2">
 <h2 id="main-features">Main features<a class="anchor" aria-label="anchor" href="#main-features"></a>
 </h2>
@@ -277,6 +277,21 @@ citation("ctrdata")
 </tr>
 </tbody>
 </table>
+</div>
+<div class="section level2">
+<h2 id="data-model-of-ctrdata">Data model of <code>ctrdata</code>
+<a class="anchor" aria-label="anchor" href="#data-model-of-ctrdata"></a>
+</h2>
+<p>Package <code>ctrdata</code> uses the data models that are implicit in data retrieved from the different registers. No mapping is provided for any register’s data model to a putative target data model. The reasons include that registers’ data models are notably evolving over time and that there are only few data fields with similar values and meaning between the registers.</p>
+<p>Thus, the handling of data from different models of registers is to be done at the time of analysis. This approach allows a high level of flexibility, transparency and reproducibility. See examples in the help text for function <a href="https://rfhb.github.io/ctrdata/reference/dfMergeVariablesRelevel.html">dfMergeVariablesRelevel()</a> and section <a href="#workflow-cross-trial-example">Analysis across trials</a> below for how to align related fields from different registers for a joint analysis.</p>
+<p>In any backend <code>NoSQL</code> <a href="https://rfhb.github.io/ctrdata/index.html#databases-for-use-with-ctrdata">database</a>, one clinical trial is one document (and one row in <code>SQLite</code>, <code>PostgreSQL</code>, <code>DuckDB</code>). The <code>NoSQL</code> backends allow different documents to have different structures. Package <code>ctrdata</code> stores in every such document:</p>
+<ul>
+<li>field <code>_id</code> with the trial identification as provided by the register from which it was retrieved</li>
+<li>field <code>ctrname</code> with the name of the register (<code>EUCTR</code>, <code>CTGOV</code>, <code>CTGOV2</code>, <code>ISRCTN</code>, <code>CTIS</code>) from which that trial was retrieved</li>
+<li>field <code>record_last_import</code> with the date and time when that document was last updated using <code><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code>
+</li>
+<li>all original fields exactly as provided by the register for that trial (see examples <a href="https://rfhb.github.io/ctrdata/index.html#trial-records-json-in-databases">below</a>)</li>
+</ul>
 </div>
 <div class="section level2">
 <h2 id="vignettes">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes"></a>
