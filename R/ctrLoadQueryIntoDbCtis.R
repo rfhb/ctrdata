@@ -120,7 +120,7 @@ ctrLoadQueryIntoDbCtis <- function(
 
     tmp <- ctrMultiDownload(url, file.path(
       tempDir, paste0(
-        "ctis_trials_",
+        "ctis_trials_", offset, "_",
         sapply(url, digest::digest, algo = "crc32"),
         ".json")),
       progress = FALSE)
@@ -206,6 +206,11 @@ ctrLoadQueryIntoDbCtis <- function(
 
   # inform user
   message("found ", length(idsTrials), " trials")
+
+  # remove last download so as to become aware of
+  # any further trials if the query is re-run and
+  # previously downloaded files are used
+  unlink(tmp$destfile[1])
 
   # only count?
   if (only.count) {

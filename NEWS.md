@@ -1,6 +1,7 @@
 # ctrdata 1.17.1.9000
 
-* new dev version
+## Bug fixes
+- Re-use `CTIS` downloads but check for new trials compared to last run
 
 # ctrdata 1.17.1 (2024-02-05)
 
