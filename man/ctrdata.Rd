@@ -60,6 +60,7 @@ clinical trials' records that can be used to subset a data frame).
 Useful links:
 \itemize{
   \item \url{https://cran.r-project.org/package=ctrdata}
+  \item \url{https://rfhb.github.io/ctrdata/}
   \item Report bugs at \url{https://github.com/rfhb/ctrdata/issues}
 }
 
