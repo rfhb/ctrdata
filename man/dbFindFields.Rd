@@ -15,11 +15,11 @@ in the collection, case-insensitive. The default `".*"` lists all fields.}
 `Databases` in \link{ctrdata}.}
 
 \item{sample}{If \code{TRUE} (default), uses a sample of only 5 trial
-records per register to identify fields, to rapidly return a possible
+records per register to identify fields, to rapidly return a possibly
 incomplete set of field names.
 If \code{FALSE}, uses all trial records in the collection, which will
-take more time with more trials but returns all names of fields in the
-collection.}
+take more time with more trials but ensures to returns all names of
+all fields in the collection.}
 
 \item{verbose}{If \code{TRUE}, prints additional information
 (default \code{FALSE}).}

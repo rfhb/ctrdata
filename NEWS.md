@@ -1,7 +1,7 @@
 # ctrdata 1.17.1.9000
 
 ## Bug fixes
-- Change API endpoint to provide `CTIS` basic trial information 
+- Switch sequence of API endpoints used with `CTIS` 
 - Re-use `CTIS` downloads but check for new trials compared to last run
 
 # ctrdata 1.17.1 (2024-02-05)
