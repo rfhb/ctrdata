@@ -202,6 +202,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
 
   pageNextToken <- ""
   pageNumber <- 1L
+  importDateTime <- strftime(Sys.time(), "%Y-%m-%d %H:%M:%S")
 
   message("(1/3) Downloading in ",
           ceiling(resultsEuNumTrials / 1000L),
@@ -247,7 +248,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
         # add elements
         '| .["_id"] = .protocolSection.identificationModule.nctId
          | .["ctrname"] = "CTGOV2"
-         | .["record_last_import"] = "', format(Sys.time(), "%Y-%m-%d %H:%M:%S"), '"'
+         | .["record_last_import"] = "', importDateTime, '"'
       ),
       flags = jqr::jq_flags(pretty = FALSE),
       out = fTrialsNdjson

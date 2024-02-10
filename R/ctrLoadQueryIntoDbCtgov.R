@@ -133,7 +133,8 @@ ctrLoadQueryIntoDbCtgov <- function(
     xmlFileList <- list(xmlFileList)
   }
 
-  ## run conversion (235 trial records in ~10 s)
+  ## run conversion
+  importDateTime <- strftime(Sys.time(), "%Y-%m-%d %H:%M:%S")
   message("(2/3) Converting to NDJSON (estimate: ",
           signif(length(unlist(xmlFileList)) * 12 / 235, 1L), " s)...")
 
@@ -175,7 +176,7 @@ ctrLoadQueryIntoDbCtgov <- function(
           # add elements
           '| .["_id"] = .id_info.nct_id
            | .["ctrname"] = "CTGOV"
-           | .["record_last_import"] = "', format(Sys.time(), "%Y-%m-%d %H:%M:%S"), '"'
+           | .["record_last_import"] = "',   importDateTime, '"'
         ),
         flags = jqr::jq_flags(pretty = FALSE),
         out = fNdjsonCon

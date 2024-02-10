@@ -189,7 +189,8 @@ ctrLoadQueryIntoDbIsrctn <- function(
 
   if (length(.ctrdataenv$ct) == 0L) initTranformers()
 
-  # run conversion (~1.7 s for 290 trials)
+  # run conversion
+  importDateTime <- strftime(Sys.time(), "%Y-%m-%d %H:%M:%S")
   message("(2/3) Converting to NDJSON (estimate: ",
           signif(tmp * 1.7 / 290, 1L), " s)...")
 
@@ -210,7 +211,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
       # add elements
       '| .["_id"] = .isrctn
        | .["ctrname"] = "ISRCTN"
-       | .["record_last_import"] = "', format(Sys.time(), "%Y-%m-%d %H:%M:%S"), '"'
+       | .["record_last_import"] = "', importDateTime, '"'
     ),
     flags = jqr::jq_flags(pretty = FALSE),
     out = file.path(tempDir, "isrctn_trials_.ndjson")
