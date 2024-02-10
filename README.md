@@ -37,7 +37,7 @@ conduct of trials, their availability for patients and to facilitate
 using their detailed results for research and meta-analyses. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2024-02-04 for version 1.17.0
+package. This README was reviewed on 2024-02-10 for version 1.17.1
 (major improvement: removed external dependencies; refactored
 [`dbGetFieldsIntoDf()`](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.html)).
 
@@ -70,7 +70,7 @@ Remember to respect the registers’ terms and conditions (see
 `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
 package in any publication as follows: “Ralf Herold (2024). *ctrdata:
 Retrieve and Analyze Clinical Trials in Public Registers.* R package
-version 1.17.0, <https://cran.r-project.org/package=ctrdata>”.
+version 1.17.1, <https://cran.r-project.org/package=ctrdata>”.
 
 <!--
 &#10;```r
@@ -486,7 +486,7 @@ ctrLoadQueryIntoDb(
 Queries in the CTIS search interface can be automatically copied to the
 clipboard so that a user can paste them into `queryterm`, see
 [here](#3-script-to-automatically-copy-users-query-from-web-browser). As
-of 2024-01-06, there are more than 410 trials publicly accessible in
+of 2024-02-10, there are more than 500 trials publicly accessible in
 CTIS. See [below](#documents-example) for how to download documents from
 CTIS.
 

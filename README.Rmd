@@ -46,7 +46,7 @@ The package `ctrdata` provides functions for retrieving (downloading) informatio
 - ISRCTN (https://www.isrctn.com/) 
 - EU Clinical Trials Information System ("CTIS", https://euclinicaltrials.eu/ `r emoji::emoji("bell")` [example](#workflow-ctis-example))
 
-The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2024-02-04 for version 1.17.0 (major improvement: removed external dependencies; refactored [`dbGetFieldsIntoDf()`](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.html)).
+The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2024-02-10 for version 1.17.1 (major improvement: removed external dependencies; refactored [`dbGetFieldsIntoDf()`](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.html)).
 
 ## Main features
 
@@ -54,7 +54,7 @@ The motivation is to investigate and understand trends in design and conduct of 
 * Downloaded trial information is transformed and stored in a collection of a document-centric database, for fast and offline access. Information from different registers can be accumulated in a single collection. Uses `DuckDB`, `PostgreSQL`, `RSQLite` or `MongoDB`, via R package `nodbi`: see section [Databases](#databases-that-can-be-used-with-ctrdata) below. Re-run any previous query in a collection to retrieve and update trial records. 
 * For analyses, convenience functions in `ctrdata` allow find synonyms of an active substance, to identify unique (de-duplicated) trial records across all registers, to merge and recode fields as well as to easily access deeply-nested fields. Analysis can be done with `R` or other systems, using the `JSON`-[structured information in the database](#mongodb). 
 
-Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: "Ralf Herold (2024). _ctrdata: Retrieve and Analyze Clinical Trials in Public Registers._ R package version 1.17.0, https://cran.r-project.org/package=ctrdata". 
+Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: "Ralf Herold (2024). _ctrdata: Retrieve and Analyze Clinical Trials in Public Registers._ R package version 1.17.1, https://cran.r-project.org/package=ctrdata". 
 
 <!--
 ```{r}
@@ -373,7 +373,7 @@ ctrLoadQueryIntoDb(
 <div id="workflow-ctis-example"></div>
 * Add records from a fourth register (CTIS `r emoji::emoji("bell")`) into the same collection
 
-Queries in the CTIS search interface can be automatically copied to the clipboard so that a user can paste them into `queryterm`, see [here](#3-script-to-automatically-copy-users-query-from-web-browser). As of 2024-01-06, there are more than 410 trials publicly accessible in CTIS. See [below](#documents-example) for how to download documents from CTIS. 
+Queries in the CTIS search interface can be automatically copied to the clipboard so that a user can paste them into `queryterm`, see [here](#3-script-to-automatically-copy-users-query-from-web-browser). As of 2024-02-10, there are more than 500 trials publicly accessible in CTIS. See [below](#documents-example) for how to download documents from CTIS. 
 
 ```{r load_ctis}
 # See how many trials are in CTIS publicly accessible:
