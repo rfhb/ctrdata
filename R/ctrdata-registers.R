@@ -51,4 +51,3 @@
 #' @md
 #'
 NULL
-#> NULL

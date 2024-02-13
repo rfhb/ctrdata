@@ -26,18 +26,18 @@ aggregating and analysing this information; it can be used for the
 
 - EU Clinical Trials Register (“EUCTR”,
   <https://www.clinicaltrialsregister.eu/>)
-- ClinicalTrials.gov (“CTGOV” or 🔔“CTGOV2”, see
-  [example](#workflow-ctgov-example))
-- ISRCTN (<https://www.isrctn.com/>)
 - EU Clinical Trials Information System (“CTIS”,
-  <https://euclinicaltrials.eu/> 🔔 [example](#workflow-ctis-example))
+  <https://euclinicaltrials.eu/>, see [example](#workflow-ctis-example))
+- ClinicalTrials.gov (“CTGOV” classic and the 2023 “CTGOV2”, see
+  [example](#workflow-ctgov-example))
+- ISRCTN Registry (<https://www.isrctn.com/>)
 
 The motivation is to investigate and understand trends in design and
 conduct of trials, their availability for patients and to facilitate
 using their detailed results for research and meta-analyses. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2024-02-10 for version 1.17.1
+package. This README was reviewed on 2024-02-13 for version 1.17.1
 (major improvement: removed external dependencies; refactored
 [`dbGetFieldsIntoDf()`](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.html)).
 
@@ -48,22 +48,24 @@ package. This README was reviewed on 2024-02-10 for version 1.17.1
   and enter it into `ctrdata` which retrieves in one go all trials
   found. A
   [script](#3-script-to-automatically-copy-users-query-from-web-browser)
-  can automate copying the query URL from all registers.
-  [Documents](#documents-example) in registers on trials can also be
-  downloaded. Personal annotations can be made when downloading trials.
+  can automate copying the query URL from all registers. Personal
+  annotations can be made when downloading trials. Also, [trial
+  documents](#documents-example) available in registers on trials can be
+  downloaded.
 - Downloaded trial information is transformed and stored in a collection
   of a document-centric database, for fast and offline access.
   Information from different registers can be accumulated in a single
   collection. Uses `DuckDB`, `PostgreSQL`, `RSQLite` or `MongoDB`, via R
   package `nodbi`: see section
-  [Databases](#databases-that-can-be-used-with-ctrdata) below. Re-run
-  any previous query in a collection to retrieve and update trial
+  [Databases](#databases-that-can-be-used-with-ctrdata) below. Easily
+  re-run any previous query in a collection to retrieve and update trial
   records.
 - For analyses, convenience functions in `ctrdata` allow find synonyms
   of an active substance, to identify unique (de-duplicated) trial
   records across all registers, to merge and recode fields as well as to
-  easily access deeply-nested fields. Analysis can be done with `R` or
-  other systems, using the `JSON`-[structured information in the
+  easily access deeply-nested fields. Analysis can be done with `R` (see
+  [vignette](https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html))
+  or other systems, using the `JSON`-[structured information in the
   database](#mongodb).
 
 Remember to respect the registers’ terms and conditions (see
@@ -80,7 +82,7 @@ citation("ctrdata")
 
 ## References
 
-Package `ctrdata` has been used for:
+Package `ctrdata` has been used for unpublished work and for:
 
 - Lasch et al. (2022) The Impact of COVID‐19 on the Initiation of
   Clinical Trials in Europe and the United States. Clinical Pharmacology
@@ -129,7 +131,8 @@ and last click on “Install”.
 The browser extension can be disabled and enabled by the user. When
 enabled, the URLs to all user’s queries in the registers are
 automatically copied to the clipboard and can be pasted into the
-`queryterm=...` parameter of function `ctrLoadQueryIntoDb()`.
+`queryterm = ...` parameter of function
+[ctrLoadQueryIntoDb()](https://rfhb.github.io/ctrdata/reference/ctrLoadQueryIntoDb.html)
 
 ## Overview of functions in `ctrdata`
 
@@ -193,11 +196,13 @@ and section [Analysis across trials](#workflow-cross-trial-example)
 below for how to align related fields from different registers for a
 joint analysis.
 
-In any backend `NoSQL`
-[database](https://rfhb.github.io/ctrdata/index.html#databases-for-use-with-ctrdata),
-one clinical trial is one document (and one row in `SQLite`,
-`PostgreSQL`, `DuckDB`). The `NoSQL` backends allow different documents
-to have different structures. Package `ctrdata` stores in every such
+In any of the `NoSQL`
+[databases](https://rfhb.github.io/ctrdata/index.html#databases-for-use-with-ctrdata),
+one clinical trial is one document, corresponding to one row in a
+`SQLite`, `PostgreSQL` or `DuckDB` table, and to one document in a
+`MongoDB` collection. The `NoSQL` backends allow documents to have
+different structures, which is used here to accommodate the different
+data models of registers. Package `ctrdata` stores in every such
 document:
 
 - field `_id` with the trial identification as provided by the register
@@ -209,6 +214,9 @@ document:
 - all original fields exactly as provided by the register for that trial
   (see examples
   [below](https://rfhb.github.io/ctrdata/index.html#trial-records-json-in-databases))
+
+For visualising the data structure for a trial, see this [vignette
+section](https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html#analysing-nested-fields-such-as-trial-results).
 
 ## Vignettes
 
@@ -386,10 +394,14 @@ with(
 
 - Add records from another register (CTGOV) into the same collection
 
-🔔Both the current and classic CTGOV website are supported by `ctrdata`
-since 2023-08-05. The new website and API introduced in July 2023
+Both the current and classic CTGOV website are supported by `ctrdata`
+since 2023-08-05:
+
+The new website and API introduced in July 2023
 (<https://www.clinicaltrials.gov/>) is identified in `ctrdata` as
-`CTGOV2`. The website and API which is now called “classic”
+`CTGOV2`.
+
+The website and API which is now called “classic”
 (<https://classic.clinicaltrials.gov/>) is identified in `ctrdata` as
 `CTGOV`, and this is backwards-compatible with queries that were
 previously retrieved with `ctrdata`.
@@ -404,10 +416,10 @@ Important differences exist between field names and contents of
 information retrieved using `CTGOV` or `CTGOV2`; see the [XML schemas
 for `CTGOV`](https://prsinfo.clinicaltrials.gov/prs-xml-schemas.html)
 and the [REST API for
-`CTGOV2`](https://clinicaltrials.gov/data-about-studies/learn-about-api).
-For more details, call `help("ctrdata-registers")`. This is one of the
-reasons why `ctrdata` handles the situation as if these were two
-different registers.
+`CTGOV2`](https://clinicaltrials.gov/data-api/api#extapi). For more
+details, call `help("ctrdata-registers")`. This is one of the reasons
+why `ctrdata` handles the situation as if these were two different
+registers.
 
 - Search used in this example:
   <https://www.clinicaltrials.gov/search?cond=Neuroblastoma&aggFilters=ages:child,results:with,studyType:int>
@@ -485,7 +497,7 @@ ctrLoadQueryIntoDb(
 
 Queries in the CTIS search interface can be automatically copied to the
 clipboard so that a user can paste them into `queryterm`, see
-[here](#3-script-to-automatically-copy-users-query-from-web-browser). As
+[here](#2-script-to-automatically-copy-users-query-from-web-browser). As
 of 2024-02-10, there are more than 500 trials publicly accessible in
 CTIS. See [below](#documents-example) for how to download documents from
 CTIS.
