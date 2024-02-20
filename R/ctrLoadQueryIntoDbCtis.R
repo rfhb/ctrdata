@@ -285,15 +285,15 @@ ctrLoadQueryIntoDbCtis <- function(
   publicEventsMerger <- function(publicEvents) {
 
     # get event types that have data with ids of events
-    eventTypes <- jqr::jq(
+    events <- jqr::jq(
       publicEvents,
       " to_entries[] | select(.value | length > 0) | ([.key] + (.value[] | [.id])) ")
 
     # loop over event type
-    for (eventType in eventTypes) {
+    for (event in events) {
 
       # get ids
-      ids <- jqr::jq(eventType, " .[] ")
+      ids <- jqr::jq(event, " .[] ")
       ids[1] <- gsub("\"", "", ids[1])
 
       # get data
@@ -302,11 +302,13 @@ ctrLoadQueryIntoDbCtis <- function(
       eventData <- httr::GET(urls)
       if (httr::status_code(eventData) != 200L) next
       eventData <- suppressMessages(httr::content(eventData, as = "text"))
+      eventData <- mangleText(eventData)
 
       # update input json with event data
       eventData <- paste0(
-        " .", ids[1], " |= map( [select( .id == ", ids[2], ") | .details = ",
-        eventData, "], [select( .id != ", ids[2], ")] | select( . | length > 0) ) ")
+        " .", ids[1], " |= [( .[] | ",
+        "(select( .id == ", ids[2], ") | .details = ", eventData, "),",
+        " select( .id != ", ids[2], ") )]")
       publicEvents <- jqr::jq(publicEvents, eventData)
 
     }
