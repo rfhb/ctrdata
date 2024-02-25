@@ -71,10 +71,10 @@ dfFindIdsUniqueEuctrRecords
 dfFindUniqueEuctrRecord
 dfListExtractKey
 dfMergeTwoVariablesRelevel
+dfMergeVariablesRelevel
 dfName
 dfTrials
 difftime
-docdb
 doi
 dplyr
 duckdb
@@ -97,6 +97,7 @@ jRCT
 jqr
 json
 jsonlite
+linux
 lubridate
 macos
 mapreduce
@@ -112,7 +113,7 @@ nonproprietary
 paed
 perl
 pipleline
-postgresql
+postgres
 procotol
 publicEvaluation
 publicevents

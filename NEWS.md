@@ -1,9 +1,9 @@
-# ctrdata 1.17.1.9000
+# ctrdata 1.17.2
 
 ## Bug fixes
 - Switch sequence of API endpoints used with `CTIS` 
-- Re-use `CTIS` downloads but check for new trials compared to last run
 - Correct handling multiple public events with `CTIS`
+- Re-use `CTIS` downloads in a given session
 
 # ctrdata 1.17.1 (2024-02-05)
 
