@@ -1,4 +1,8 @@
-# ctrdata 1.17.2
+# ctrdata 1.17.2.9000
+
+* new dev version
+
+# ctrdata 1.17.2 (2024-02-25)
 
 ## Bug fixes
 - Switch sequence of API endpoints used with `CTIS` 
@@ -218,17 +222,11 @@ See also https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
 - test all binaries after `installCygwinWindowsDoInstall()` and only cache successful binary testing
 - correct typing `required_header.download_date`
 - improve numbering in `dfTrials2Long()`, covering nested items
-
-# ctrdata 1.8.0.9001 (2021-12-11)
-
 - thorough documentation improvement
 - simplified `dbFindFields()`
 - cleaned up testing binaries
 - cleaned up helper scripts
 - removed `ctrGetQueryUrlFromBrowser()`, long deprecated
-
-# ctrdata 1.8.0.9000 (2021-11-22)
-
 - uses nodbi 0.6.0
 - can use PostgreSQL as backend
 - include PostgreSQL in Github Actions
@@ -239,10 +237,6 @@ See also https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
 - simplifying database operations (user-visible functions:
    ctrLoadQueryIntoDb, dbFindIdsUniqueTrials, dbGetFieldsIntoDf),
    without changes to API
-
-# ctrdata 1.7.1.9000 (2021-08-23)
-
-- new development version
 
 # ctrdata 1.7.1 (2021-08-22)
 
@@ -274,9 +268,6 @@ See also https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
 - accelerated EUCTR results and history download and storage
 - external scripts now create multiple chunks of records
 - use further identifier fields with dbFindIdsUniqueTrials
-
-# ctrdata 1.5.3.9000 (2021-04-29)
-
 - adding user info which field entries could not be typed
 
 # ctrdata 1.5.3 (2021-04-19)
@@ -315,8 +306,7 @@ See also https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
 - speed up routines in dbGetFieldsIntoDf
 - make dfTrials2Long handle NA better
 - improved documentation, clarified examples
-- simplified internals for typing fields,
-   start typing results fields
+- simplified internals for typing fields, start typing results fields
 
 # ctrdata 1.4.1 (2020-11-03)
 
@@ -332,12 +322,7 @@ See also https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
 - revised and simplified vignettes
 - deprecated: dfListExtractKey()
 - refactored parts of euctr retrieval
-- notify user when euctr register server
-   does not permit compression and how
-   long retrieval will take
-
-# ctrdata 1.3.2.9000 (2020-10-08)
-
+- notify user when euctr register server does not permit compression and how long retrieval will take
 - fixed identifying unique ids
 
 # ctrdata 1.3.2 (2020-10-03)
@@ -353,12 +338,9 @@ See also https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
 - workaround EUCTR certificate issue
 - streamline ctrGetQueryUrlFromBrowser()
 - better handling of complex fields
-- include further tests for query string handling,
-   checking more parameters and return values
+- include further tests for query string handling, checking more parameters and return values
 - better clean-up after testing
-- ctrLoadQueryIntoDb(querytorerun = ...) now looks
-   for the date when the querytorerun was last run,
-   to more often use euctr update options
+- ctrLoadQueryIntoDb(querytorerun = ...) now looks for the date when the querytorerun was last run, to more often use euctr update options
 - switching from travis to github action
 - upped coverage of code tested
 
@@ -374,23 +356,11 @@ See also https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
 # ctrdata 1.1 (2019-11-12)
 
 - release after nodbi 0.4 is available
-
-# ctrdata 1.0.1.9005 (2019-11-09)
-
 - update description for installation from github
-
-# ctrdata 1.0.1.9004 (2019-11-04)
-
 - handled mixed arrays and text values in same key of ctgov trial records
 - more user information during importing
-
-# ctrdata 1.0.1.9003 (2019-11-04)
-
 - further nesting added for euctr trial records
 - user verbose information extended for record importing
-
-# ctrdata 1.0.1.9002 (2019-11-03)
-
 - improved parsing of euctr trial records
 - correct re-opening of sqlite connection
 
@@ -400,29 +370,17 @@ See also https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
 
 # ctrdata 1.0 (2019-10-16)
 
-- switch to nodbi::scr_{mongo,sqlite}() with
-   re-implementation of most functions
-- switch from testthat to tinytest, so that users
-   can check with tinytest::test_package("ctrdata")
+- switch to nodbi::scr_{mongo,sqlite}() with re-implementation of most functions
+- switch from testthat to tinytest, so that users can check with tinytest::test_package("ctrdata")
 - improvements to euctr trial import  
 - new function dfListExtractKey
-
-# ctrdata 0.18.9005 (2019-05-02)
-
 - speed up testing bash commands under windows
 
 # ctrdata 0.18.2 (2019-04-30)
 
-- new release
 - extended compatibility with cygwin and Windows
-
-# ctrdata 0.18.9004 (2019-04-28)
-
 - find and use any cygw* under windows
 - refactored escaping bash command when called under windows
-
-# ctrdata 0.18.9002 (2019-04-21)
-
 - corrected typing date fields
 
 # ctrdata 0.18.1 (2019-04-14)
@@ -430,9 +388,6 @@ See also https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
 - simplified cygwin install
 - updated documentation
 - corrected inconsistent handling of query terms
-
-# ctrdata 0.18.9001 (2019-04-12)
-
 - added automated proxy handling
 
 # ctrdata 0.18 (2019-04-11)
@@ -444,31 +399,15 @@ See also https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
 
 # ctrdata 0.17 (2019-03-27)
 
-- release version
-
-# ctrdata 0.16.9002 (2019-03-26)
-
 - improve dbFindFields() formatting
 - added parameter to force running a query again
-
-# ctrdata 0.16.9001 (2019-03-26
-
 - added further typing (some of the numeric fields)
 - improve cygwin install attempts and information
-
-# ctrdata 0.16.9000 (2019-03-24)
-
 - removed dependency on local mongodb installation (major rewrite)
 - improved support for remote mongodb servers (note changes in host / db / uri parameters)
-
-# ctrdata 0.15.9007 (2019-03-15)
-
 - Important: Added no checking of SSL certificates for EUCTR because the EUCTR server is
    not sending the required intermediate and root certificates, thus failing curl and httr, see
    https://www.digicert.com/help/?host=www.clinicaltrialsregister.eu
-
-# ctrdata 0.15.0 (2019-03-13)
-
 - fixed EUCTR results retrieval (curl return value order not predictable)
 - removed second time adding metadata in one function
 - streamlined user information and progress feedback

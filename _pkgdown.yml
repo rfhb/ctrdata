@@ -4,7 +4,7 @@ home:
 reference:
 - contents:
   - starts_with("ctrdata")
-- title: "Dowloand information from clinical trial registers"
+- title: "Download information from clinical trial registers"
 - contents:
   - starts_with("ctr[A-Z]")
 - title: "Using database with downloaded trial information"
@@ -13,12 +13,6 @@ reference:
 - title: "Operate on data frame from dbGetFieldsIntoDf"
 - contents:
   - starts_with("df[^L]")
-- title: "Utility function (MS Windows)"
-- contents:
-  - starts_with("install")
-- title: "Deprecated"
-- contents:
-  - starts_with("dfL")
 development:
   mode: release
 template:
