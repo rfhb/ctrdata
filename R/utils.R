@@ -124,6 +124,7 @@ typeVars <- list(
   "trialDesign.overallEndDate"    = "ctrDateTime",
   #
   # - CTIS
+  #
   "applications.ctMSCs.activeTrialPeriod.fromDate" = "ctrDate",
   "applications.ctMSCs.activeTrialPeriod.trialEndDate" = "ctrDate",
   "applications.ctMSCs.activeTrialPeriod.trialStartDate" = "ctrDate",
@@ -279,6 +280,7 @@ typeVars <- list(
   "coSponsors.fromDate" = "ctrDate",
   "eeaEndDate" = "ctrDate",
   "eeaStartDate" = "ctrDate",
+  "layperson.submissionDate" = "ctrDate",
   "memberStatesConcerned.activeTrialPeriod.fromDate" = "ctrDate",
   "memberStatesConcerned.activeTrialPeriod.trialEndDate" = "ctrDate",
   "memberStatesConcerned.activeTrialPeriod.trialStartDate" = "ctrDate",
@@ -298,6 +300,7 @@ typeVars <- list(
   "memberStatesConcerned.trialRestartDate" = "ctrDate",
   "mscTrialNotificationsInfoList.mscNotificationsListInfo.date" = "ctrDate",
   "mscTrialNotificationsInfoList.mscNotificationsListInfo.submitDate" = "ctrDate",
+  "mscTrialNotificationsInfoList.mscNotificationsListInfo.versions.versionDate" = "ctrDate",
   "primarySponsor.fromDate" = "ctrDate",
   "publicEvaluation.decisions.decisionDate" = "ctrDate",
   "publicEvaluation.partIAssessmentOutcomeDate" = "ctrDate",
@@ -654,16 +657,17 @@ typeVars <- list(
   #
   "applications.partI.trialDetails.trialInformation.eligibilityCriteria.principalExclusionCriteria.number" = "ctrInt",
   "applications.partI.trialDetails.trialInformation.eligibilityCriteria.principalInclusionCriteria.number" = "ctrInt",
-  "applications.partI.trialDetails.trialInformation.endPoint.primaryEndPoints.number" = "ctrInt",
-  "applications.partI.trialDetails.trialInformation.endPoint.secondaryEndPoints.number" = "ctrInt",
+  "applications.partI.trialDetails.trialInformation.endPoint.primaryEndPoints.number"          = "ctrInt",
+  "applications.partI.trialDetails.trialInformation.endPoint.secondaryEndPoints.number"        = "ctrInt",
   "applications.partI.trialDetails.trialInformation.trialObjective.secondaryObjectives.number" = "ctrInt",
   "authorizedPartI.trialDetails.trialInformation.eligibilityCriteria.principalExclusionCriteria.number" = "ctrInt",
   "authorizedPartI.trialDetails.trialInformation.eligibilityCriteria.principalInclusionCriteria.number" = "ctrInt",
-  "authorizedPartI.trialDetails.trialInformation.endPoint.primaryEndPoints.number" = "ctrInt",
-  "authorizedPartI.trialDetails.trialInformation.endPoint.secondaryEndPoints.number" = "ctrInt",
+  "authorizedPartI.trialDetails.trialInformation.endPoint.primaryEndPoints.number"          = "ctrInt",
+  "authorizedPartI.trialDetails.trialInformation.endPoint.secondaryEndPoints.number"        = "ctrInt",
   "authorizedPartI.trialDetails.trialInformation.trialObjective.secondaryObjectives.number" = "ctrInt",
   #
   # - CTGOV2
+  "history.history_version.version_number" = "ctrInt",
   "protocolSection.designModule.enrollmentInfo.count" = "ctrInt",
   "resultsSection.baselineCharacteristicsModule.denoms.counts.value" = "ctrInt",
   "resultsSection.outcomeMeasuresModule.outcomeMeasures.denoms.counts.value" = "ctrInt"
@@ -710,7 +714,7 @@ ctgovVersion <- function(url, register) {
     "[?&]state=|[?&]city=|[?&]dist=|[?&]rsub=|",
     "[?&]type=|[?&]rslt=|[?&]gndr=|[?&]cntry=|",
     "[?&][a-z]+_[a-z]+="), url)) {
-    message("* Appears specific for CTGOV CLASSIC")
+    message("* Appears specific for CTGOV Classic website")
     return("CTGOV")
   }
 
@@ -719,7 +723,7 @@ ctgovVersion <- function(url, register) {
     # clear identifiers of CTGOV2
     "aggFilters|clinicaltrials[.]gov/(search|study)[/?]|",
     "[:][^/]|%3[aA]"), url)) {
-    message("* Appears specific for CTGOV REST API 2.0.0")
+    message("* Appears specific for CTGOV REST API 2.0")
     return("CTGOV2")
   }
 
@@ -1119,8 +1123,8 @@ ctrMultiDownload <- function(
 
   # does not error in case any of the individual requests fail
   # inspect the return value to find out which were successful
-  # make no more than 5 attempts to complete downloading
-  while (any(toDo) && numI < 5L) {
+  # make no more than 3 attempts to complete downloading
+  while (any(toDo) && numI < 3L) {
 
     args <- c(
       urls = list(utils::URLencode(downloadValue[toDo, "url", drop = TRUE])),

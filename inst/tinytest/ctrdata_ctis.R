@@ -201,6 +201,13 @@ for (i in unique(groupsNo)) {
   tmpData <- dbGetFieldsIntoDf(fields = tmpFields[groupsNo == i], con = dbc)
   expect_true(nrow(tmpData) > 0L)
   expect_true(ncol(tmpData) > 0L)
+  #
+  tmpClass <- lapply(
+    tmpData[ , -1, drop = FALSE],
+    function(i) sapply(i, function(ii) class(ii))[1])
+  tmpClass <- names(tmpClass[sapply(tmpClass, function(c) c == "character")])
+  if (length(tmpClass)) print(tmpClass)
+  #
   expect_true(all(
     unique(unlist(
       lapply(

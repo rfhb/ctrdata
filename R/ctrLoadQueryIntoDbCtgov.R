@@ -39,7 +39,7 @@ ctrLoadQueryIntoDbCtgov <- function(
   queryUSType2  <- "ct2/results?"
 
   ## inform user and prepare url for downloading
-  message("* Checking trials in CTGOV classic...")
+  message("* Checking trials using CTGOV Classic website...")
   ctgovdownloadcsvurl <- paste0(
     queryUSRoot, queryUSType1, "&", queryterm, queryupdateterm)
   #

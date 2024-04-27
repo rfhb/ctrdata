@@ -172,7 +172,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
   # corresponds to count
   url <- sprintf(ctgovEndpoints[1], queryterm)
   if (verbose) message("API call: ", url)
-  message("* Checking trials using CTGOV API 2.0.0.-test...", appendLF = FALSE)
+  message("* Checking trials using CTGOV REST API 2.0...", appendLF = FALSE)
   url <- utils::URLencode(url)
   counts <- httr::GET(url)
 
