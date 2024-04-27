@@ -117,13 +117,48 @@ expect_message(
   "Newly saved [0-9]+ document[(]s[)] for [0-9]+ trial"
 )
 
+#### ctgov2history ####
+
+# test
+expect_message(
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
+      queryterm = "https://clinicaltrials.gov/search?cond=neuroblastoma&aggFilters=phase:3,status:com",
+      ctgov2history = 3,
+      con = dbc
+    )),
+  "Updating trial records"
+)
+
+# test
+expect_message(
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
+      queryterm = "https://clinicaltrials.gov/search?cond=neuroblastoma&aggFilters=phase:3,status:com",
+      ctgov2history = "2:4",
+      con = dbc
+    )),
+  "Updating trial records"
+)
+
+# test
+expect_message(
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
+      queryterm = "https://clinicaltrials.gov/search?cond=neuroblastoma&aggFilters=phase:3,status:com",
+      ctgov2history = -1,
+      con = dbc
+    )),
+  "Updating trial records"
+)
+
 #### ctrLoadQueryIntoDb update ####
 
 # test
 expect_message(
   suppressWarnings(
     ctrLoadQueryIntoDb(
-      querytoupdate = "last",
+      querytoupdate = 2L,
       con = dbc)),
   "Rerunning query")
 
@@ -150,7 +185,7 @@ expect_warning(
 
 # test
 tmp <- dbQueryHistory(con = dbc)
-expect_equal(dim(tmp), c(7L, 4L))
+expect_equal(dim(tmp), c(10L, 4L))
 
 #### dbFindFields ####
 
@@ -171,15 +206,16 @@ for (i in unique(groupsNo)) {
 }
 
 tmpFields <- tmpFields[grepl("date$",tmpFields, ignore.case = TRUE)]
-tmpFields <- tmpFields[1:min(length(tmpFields), 49L)] # 19
+tmpFields <- tmpFields[1:min(length(tmpFields), 49L)] # 36
 
 tmpData <- dbGetFieldsIntoDf(fields = tmpFields, con = dbc)
 expect_true(nrow(tmpData) > 0L)
 expect_true(ncol(tmpData) > 0L)
 
 expect_true(all(
-  unique(unlist(lapply(
-    tmpData[, -1, drop = FALSE],
-    function(i) sapply(i, function(ii) class(ii))))) %in%
-    c("Date", "POSIXct", "POSIXt")
+  unique(unlist(
+    lapply(
+      tmpData[, -1, drop = FALSE],
+      function(i) sapply(i, function(ii) class(ii)))
+    )) %in% c("Date", "POSIXct", "POSIXt")
 ))
