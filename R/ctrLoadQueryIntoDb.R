@@ -68,6 +68,18 @@
 #' available history of results publication in "EUCTR."
 #' This is quite time-consuming. Default is \code{FALSE}.
 #'
+#' @param ctgov2history For trials from CTGOV2, retrieve historic
+#' versions of the record. Default is \code{FALSE}, because this
+#' is a time-consuming operation. Use
+#' \code{n} for n from all versions (recommended),
+#' \code{1} for the first (original) version,
+#' \code{-1} for the last-but-one version,
+#' \code{"n:m"} for the nth to the mth versions, or
+#' \code{TRUE} for all versions
+#' of the trial record to be retrieved. Note that for register
+#' CTIS, historic versions are available in the `applications`
+#' field and are retrieved automatically.
+#'
 #' @param annotation.text Text to be including into the field
 #' "annotation" in the records retrieved with the query
 #' that is to be loaded into the collection.
@@ -155,6 +167,7 @@ ctrLoadQueryIntoDb <- function(
     forcetoupdate = FALSE,
     euctrresults = FALSE,
     euctrresultshistory = FALSE,
+    ctgov2history = FALSE,
     documents.path = NULL,
     documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctalett|lay|^[0-9]+ ",
     annotation.text = "",
@@ -321,6 +334,7 @@ ctrLoadQueryIntoDb <- function(
     register = register,
     euctrresults = euctrresults,
     euctrresultshistory = euctrresultshistory,
+    ctgov2history = ctgov2history,
     documents.path = documents.path,
     documents.regexp = documents.regexp,
     annotation.text = annotation.text,

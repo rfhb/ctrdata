@@ -18,6 +18,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     register,
     euctrresults,
     euctrresultshistory,
+    ctgov2history,
     documents.path,
     documents.regexp,
     annotation.text,
@@ -35,10 +36,20 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     # pageSize 0 delivers default 10
     "https://www.clinicaltrials.gov/api/v2/studies?format=json&countTotal=true&pageSize=1&%s",
     "https://www.clinicaltrials.gov/api/v2/studies?format=json&countTotal=true&pageSize=1000&%s",
-    "https://storage.googleapis.com/ctgov2-large-docs/%s/%s/%s"
+    "https://storage.googleapis.com/ctgov2-large-docs/%s/%s/%s",
+    "https://www.clinicaltrials.gov/api/int/studies/%s/history/%s",
+    "https://www.clinicaltrials.gov/api/int/studies/%s?history=true"
   )
 
   ## process parameters ------------------------------------------------
+
+  ## check
+  ctgov2history <- as.character(ctgov2history)
+  if (!length(ctgov2history) ||
+      !grepl("^(FALSE|TRUE|-1|1|[0-9]+:[0-9]+|[1-9]+[0-9]+|[1-9]+)$", ctgov2history)) {
+    message("Parameter 'ctgov2history' invalid, ignored: ", ctgov2history)
+    ctgov2history <- "FALSE"
+  }
 
   # append if to update
   queryterm <- paste0(queryterm, "&", queryupdateterm)
@@ -273,6 +284,178 @@ ctrLoadQueryIntoDbCtgov2 <- function(
   # dbCTRLoadJSONFiles operates on pattern = ".+_trials_.*.ndjson"
   imported <- dbCTRLoadJSONFiles(dir = tempDir, con = con, verbose = verbose)
   message("")
+
+  ## download history---------------------------------------------------
+
+  if (ctgov2history != "FALSE") {
+
+    message("* Checking and processing historic versions (may take some time)...")
+
+    ## 1 - get history overview for every trial
+    urls <- as.vector(vapply(
+      X = imported$success,
+      FUN = function(i) sprintf(ctgovEndpoints[5], i),
+      FUN.VALUE = character(1L),
+      USE.NAMES = FALSE
+    ))
+    #
+    files <- as.vector(vapply(
+      X = urls,
+      FUN = function(i) file.path(
+        tempDir, paste0(
+          "h_ov_",
+          sub(".+/(NCT[0-9]+)[?].+", "\\1", i),
+          ".json")),
+      FUN.VALUE = character(1L),
+      USE.NAMES = FALSE
+    ))
+    #
+    tmp <- ctrMultiDownload(
+      urls = urls,
+      destfiles = files,
+      resume = FALSE,
+      verbose = verbose
+    )
+    #
+    # process
+    historyDf <- lapply(
+      X = files,
+      FUN = function(i) {
+        jsonlite::stream_in(
+          textConnection(
+            jqr::jq(file(i), paste0(
+              " .history.changes[] | { ",
+              '"_id": "', sub(".+_(NCT[0-9]+)[.]json", "\\1", i), '", ',
+              "version_number: .version, version_date: .date }"
+            ))), verbose = FALSE)})
+    #
+    historyDf <- do.call(rbind, historyDf)
+    if (verbose) print(table(historyDf[["_id"]]))
+    #
+    # shift version number from API 0... to ctrdata 1...
+    historyDf[["version_number"]] <- historyDf[["version_number"]] + 1L
+
+    ## 2 - for specific ctgov2history
+    ##     values, adjust historyDf
+    #
+    # n versions per trial
+    if (grepl("^([1-9]+[0-9]+|[1-9]+)$", ctgov2history)) {
+      countVersions <- as.integer(ctgov2history)
+      historyDf <- array2DF(tapply(
+        historyDf, historyDf[["_id"]],
+        FUN = function(i) {
+          ntr <- sort(i[["version_number"]])
+          ntl <- seq(1L, length(ntr), length.out = countVersions)
+          i[i[["version_number"]] %in% ntr[ntl], ]
+        }))[, -1]
+    }
+    # last-but-one version
+    if (ctgov2history == "-1") {
+      historyDf <- array2DF(tapply(
+        historyDf, historyDf[["_id"]],
+        FUN = function(i) {
+          lbo <- max(i[["version_number"]])
+          i[i[["version_number"]] == max(lbo - 1L, 1L), ]
+        }))[, -1]
+    }
+    # only initial version
+    if (ctgov2history == "1") {
+      historyDf <- historyDf[historyDf[["version_number"]] == 1L, ]
+    }
+    # selected versions
+    if (grepl(":", ctgov2history)) {
+      minVersion <- as.numeric(sub("([0-9]+):([0-9]+)", "\\1", ctgov2history))
+      maxVersion <- as.numeric(sub("([0-9]+):([0-9]+)", "\\2", ctgov2history))
+      soughtVersion <- historyDf[["version_number"]] >= minVersion &
+        historyDf[["version_number"]] <= maxVersion
+      historyDf <- historyDf[soughtVersion, ]
+    }
+    # construct urls
+    urls <- sprintf(
+      ctgovEndpoints[4], historyDf[["_id"]], historyDf[["version_number"]] - 1L)
+
+    ## 3 - handle historical versions
+    #
+    # calculate file paths
+    files <- as.vector(vapply(
+      X = urls,
+      FUN = function(i) file.path(
+        tempDir, paste0(
+          "h_v_",
+          sub(".+/(NCT[0-9]+)/.+", "\\1", i), "_",
+          sub(".+/([0-9]+)$", "\\1", i),
+          ".json")),
+      FUN.VALUE = character(1L),
+      USE.NAMES = FALSE
+    ))
+    #
+    # download
+    tmp <- ctrMultiDownload(
+      urls = urls,
+      destfiles = files,
+      resume = FALSE,
+      verbose = verbose
+    )
+
+    ## 4 - merge versions by trial
+    message("- Merging trial versions ", appendLF = FALSE)
+
+    res <- sapply(
+      X = unique(historyDf[["_id"]]),
+      FUN = function(i) {
+
+        out <- file.path(tempDir, paste0("h_m_", i, ".json"))
+        unlink(out)
+        fOut <- file(out, open = "at")
+        on.exit(try(close(fOut), silent = TRUE), add = TRUE)
+
+        # put historic versions into top level array
+        cat(paste0('{"_id": "', i, '", "history": ['), file = fOut)
+
+        fToMerge <- tmp[["destfile"]][grepl(i, tmp[["destfile"]])]
+
+        # write history study versions into array
+        for (ii in seq_along(fToMerge)) {
+
+          if (!file.exists(fToMerge[ii]) || !file.size(fToMerge[ii]) > 10L) next
+          if (ii > 1L) cat(",", file = fOut)
+
+          vn <- as.numeric(jqr::jq(file(fToMerge[ii]), ' .studyVersion')) + 1L
+
+          # add information about version
+          jqr::jq(file(fToMerge[ii]), paste0(
+            ' .study | .history_version = { "version_number": ', vn, ",",
+            ' "version_date": "', historyDf[["version_date"]][
+              historyDf[["_id"]] == i & historyDf[["version_number"]] == vn], '"} '
+          ),
+          flags = jqr::jq_flags(pretty = FALSE),
+          out = fOut
+          )
+
+        }
+
+        cat(']}', file = fOut)
+        close(fOut)
+        message(". ", appendLF = FALSE)
+        # line breaks in out do not seem to impact later jq use
+      },
+      USE.NAMES = FALSE
+    )
+
+    ## 5 - import
+    message("\n- Updating trial records ", appendLF = FALSE)
+    resAll <- NULL
+    for (f in dir(path = tempDir, pattern = "^h_m_.*.json$", full.names = TRUE)) {
+
+      message(". ", appendLF = FALSE)
+      res <- nodbi::docdb_update(src = con, key = con$collection, query = "{}", value = f)
+      on.exit(try(unlink(f), silent = TRUE), add = TRUE)
+      resAll <- c(resAll, res)
+
+    }
+    message("\nUpdated ", sum(resAll), " trial(s) with historic versions")
+
+  }
 
   ## download files-----------------------------------------------------
 

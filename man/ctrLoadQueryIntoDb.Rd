@@ -11,6 +11,7 @@ ctrLoadQueryIntoDb(
   forcetoupdate = FALSE,
   euctrresults = FALSE,
   euctrresultshistory = FALSE,
+  ctgov2history = FALSE,
   documents.path = NULL,
   documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctalett|lay|^[0-9]+ ",
   annotation.text = "",
@@ -61,6 +62,18 @@ collection.)}
 \item{euctrresultshistory}{If \code{TRUE}, also download
 available history of results publication in "EUCTR."
 This is quite time-consuming. Default is \code{FALSE}.}
+
+\item{ctgov2history}{For trials from CTGOV2, retrieve historic
+versions of the record. Default is \code{FALSE}, because this
+is a time-consuming operation. Use
+\code{n} for n from all versions (recommended),
+\code{1} for the first (original) version,
+\code{-1} for the last-but-one version,
+\code{"n:m"} for the nth to the mth versions, or
+\code{TRUE} for all versions
+of the trial record to be retrieved. Note that for register
+CTIS, historic versions are available in the `applications`
+field and are retrieved automatically.}
 
 \item{documents.path}{If this is a relative or absolute
 path to a directory that exists or can be created,

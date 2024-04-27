@@ -19,6 +19,7 @@ ctrLoadQueryIntoDbCtis <- function(
     register,
     euctrresults,
     euctrresultshistory,
+    ctgov2history,
     documents.path,
     documents.regexp,
     annotation.text,
