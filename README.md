@@ -37,9 +37,10 @@ conduct of trials, their availability for patients and to facilitate
 using their detailed results for research and meta-analyses. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2024-02-13 for version 1.17.1
-(major improvement: removed external dependencies; refactored
-[`dbGetFieldsIntoDf()`](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.html)).
+package. This README was reviewed on 2024-04-27 for version 1.17.2.9000
+(major improvements: removed external dependencies; refactored
+[`dbGetFieldsIntoDf()`](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.html);
+🔔 retrieve historic CTGOV2 versions).
 
 ## Main features
 
@@ -50,8 +51,8 @@ package. This README was reviewed on 2024-02-13 for version 1.17.1
   [script](#3-script-to-automatically-copy-users-query-from-web-browser)
   can automate copying the query URL from all registers. Personal
   annotations can be made when downloading trials. Also, [trial
-  documents](#documents-example) available in registers on trials can be
-  downloaded.
+  documents](#documents-example) and [historic versions]() available in
+  registers on trials can be downloaded.
 - Downloaded trial information is transformed and stored in a collection
   of a document-centric database, for fast and offline access.
   Information from different registers can be accumulated in a single
@@ -72,7 +73,7 @@ Remember to respect the registers’ terms and conditions (see
 `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
 package in any publication as follows: “Ralf Herold (2024). *ctrdata:
 Retrieve and Analyze Clinical Trials in Public Registers.* R package
-version 1.17.1, <https://cran.r-project.org/package=ctrdata>”.
+version 1.17.2, <https://cran.r-project.org/package=ctrdata>”.
 
 <!--
 &#10;```r
@@ -86,7 +87,10 @@ Package `ctrdata` has been used for unpublished work and for:
 
 - Lasch et al. (2022) The Impact of COVID‐19 on the Initiation of
   Clinical Trials in Europe and the United States. Clinical Pharmacology
-  & Therapeutics, <https://doi.org/10.1002/cpt.2534>
+  & Therapeutics <https://doi.org/10.1002/cpt.2534>
+- Sood et al. Managing the Evidence Infodemic: Automation Approaches
+  Used for Developing NICE COVID-19 Living Guidelines. medRxiv
+  <https://doi.org/10.1101/2022.06.13.22276242> 🔔
 - Blogging on [Innovation coming to paediatric
   research](https://paediatricdata.eu/innovation-coming-to-paediatric-research/)
 - Cancer Research UK (2017) [The impact of collaboration: The value of
@@ -211,8 +215,11 @@ document:
   `CTGOV2`, `ISRCTN`, `CTIS`) from which that trial was retrieved
 - field `record_last_import` with the date and time when that document
   was last updated using `ctrLoadQueryIntoDb()`
-- all original fields exactly as provided by the register for that trial
-  (see examples
+- only for `CTGOV2`: object `history` with a historic version of the
+  trial and with `history_version`, which contains the fields
+  `version_number` (starting from 1) and `version_date`
+- all original fields as provided by the register for that trial (see
+  examples
   [below](https://rfhb.github.io/ctrdata/index.html#trial-records-json-in-databases))
 
 For visualising the data structure for a trial, see this [vignette
@@ -293,8 +300,8 @@ backend, see section
 information is retrieved and loaded into the collection:
 
 ``` r
-# Connect to (or newly create) an SQLite database
-# that is stored in a file on the local system:
+# Connect to (or create) an SQLite database
+# stored in a file on the local system:
 db <- nodbi::src_sqlite(
   dbname = "some_database_name.sqlite_file",
   collection = "some_collection_name"
@@ -306,21 +313,22 @@ ctrLoadQueryIntoDb(
   euctrresults = TRUE,
   con = db
 )
+# * Found search query from EUCTR: query=cancer&age=under-18&phase=phase-one&status=completed
 # * Checking trials in EUCTR...
-# Retrieved overview, multiple records of 97 trial(s) from 5 page(s) to be downloaded (estimate: 5 MB)
+# Retrieved overview, multiple records of 102 trial(s) from 6 page(s) to be downloaded (estimate: 10 MB)
 # (1/3) Downloading trials...
-# Note: register server cannot compress data, transfer takes longer (estimate: 30 s)
-# Download status: 5 done; 0 in progress. Total size: 7.91 Mb (100%)... done!             
+# Note: register server cannot compress data, transfer takes longer (estimate: 100 s)
+# Download status: 6 done; 0 in progress. Total size: 8.41 Mb (100%)... done!             
 # (2/3) Converting to NDJSON (estimate: 2 s)...
 # (3/3) Importing records into database...
-# = Imported or updated 377 records on 97 trial(s) 
-# * Checking results if available from EUCTR for 97 trials: 
-# (1/4) Downloading and extracting results (. = data, F = file[s] and data, x = none):
-# Download status: 97 done; 0 in progress. Total size: 48.64 Mb (100%)... done!             
-# Download status: 21 done; 0 in progress. Total size: 84.53 Kb (308%)... done!             
-# Download status: 21 done; 0 in progress. Total size: 84.53 Kb (308%)... done!             
-# Download status: 21 done; 0 in progress. Total size: 84.53 Kb (308%)... done!             
-# F . . . . F . . F . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+# = Imported or updated 399 records on 102 trial(s)
+# * Checking results if available from EUCTR for 102 trials: 
+# (1/4) Downloading results...
+# Download status: 102 done; 0 in progress. Total size: 59.71 Mb (100%)... done!             
+# Download status: 26 done; 0 in progress. Total size: 104.66 Kb (100%)... done!             
+# - extracting results (. = data, F = file[s] and data, x = none):
+# F . F F . F . . F . . . F F . . . . . . . . . . . . . . . . . . F . . . . . . F . . . 
+# F . . . . . . . . . F . . . . F . . . . . F . . . . . . . . . . . 
 # (2/4) Converting to NDJSON (estimate: 8 s)...
 # (3/4) Importing results into database (may take some time)...
 # (4/4) Results history: not retrieved (euctrresultshistory = FALSE)
@@ -328,7 +336,7 @@ ctrLoadQueryIntoDb(
 # No history found in expected format.
 # Updated history ("meta-info" in "some_collection_name")
 # $n
-# [1] 377
+# [1] 399
 ```
 
 Under the hood, EUCTR plain text and XML files from EUCTR, CTGOV, ISRCTN
@@ -357,11 +365,11 @@ result <- dbGetFieldsIntoDf(
 # one record, for example for several EU Member States or in several registers:
 uniqueids <- dbFindIdsUniqueTrials(con = db)
 # Searching for duplicate trials... 
-#  - Getting all trial identifiers (may take some time), 369 found in collection
+#  - Getting all trial identifiers (may take some time), 399 found in collection
 #  - Finding duplicates among registers' and sponsor ids...
-#  - 274 EUCTR _id were not preferred EU Member State record for 95 trials
-#  - Keeping 95 / 0 / 0 / 0 / 0 records from EUCTR / CTGOV / CTGOV2 / ISRCTN / CTIS
-# = Returning keys (_id) of 95 records in collection "some_collection_name"
+#  - 297 EUCTR _id were not preferred EU Member State record for 102 trials
+#  - Keeping 102 / 0 / 0 / 0 / 0 records from EUCTR / CTGOV / CTGOV2 / ISRCTN / CTIS
+# = Returning keys (_id) of 102 records in collection "some_collection_name"
 
 # Keep only unique / de-duplicated records:
 result <- subset(
@@ -379,11 +387,10 @@ with(
 )
 #                           a7_trial_is_part_of_a_paediatric_investigation_plan
 # p_end_of_trial_status      FALSE TRUE
-#                                1    1
-#   Completed                   48   21
+#   Completed                   49   21
 #   GB - no longer in EU/EEA     1    1
-#   Ongoing                      5    1
-#   Prematurely Ended            2    2
+#   Ongoing                      5    3
+#   Prematurely Ended            2    3
 #   Restarted                    0    1
 #   Temporarily Halted           1    1
 ```
@@ -404,7 +411,10 @@ The new website and API introduced in July 2023
 The website and API which is now called “classic”
 (<https://classic.clinicaltrials.gov/>) is identified in `ctrdata` as
 `CTGOV`, and this is backwards-compatible with queries that were
-previously retrieved with `ctrdata`.
+previously retrieved with `ctrdata`. As long as the classic website is
+available, `ctrdata` should work (it does not use the classic API,
+announced to be retired in June 2024; it is unclear if and when the
+classic website is retired).
 
 Both use the same trial identifier (e.g., NCT01234567) for the same
 trial. As a consequence, queries for the same trial retrieved using
@@ -431,16 +441,18 @@ ctrLoadQueryIntoDb(
   register = "CTGOV2",
   con = db
 )
-# * Appears specific for CTGOV REST API 2.0.0
+# * Appears specific for CTGOV REST API 2.0
 # * Found search query from CTGOV2: cond=Neuroblastoma&aggFilters=ages:child,results:with,studyType:int
-# * Checking trials using CTGOV API 2.0.0.-test, found 91 trials
-# (1/3) Downloading in 1 batch(es) (max. 1000 trials each; estimate: 9.1 MB total)
-# Download status: 1 done; 0 in progress. Total size: 8.80 Mb (829%)... done!             
+# * Checking trials using CTGOV REST API 2.0, found 99 trials
+# (1/3) Downloading in 1 batch(es) (max. 1000 trials each; estimate: 9.9 MB total)
+# Download status: 1 done; 0 in progress. Total size: 9.13 Mb (806%)... done!             
 # (2/3) Converting to NDJSON...
 # (3/3) Importing records into database...
 # JSON file #: 1 / 1                               
-# = Imported or updated 91 trial(s)
+# = Imported or updated 99 trial(s)
 # Updated history ("meta-info" in "some_collection_name")
+# $n
+# [1] 99
 ```
 
 - Using an example from classic CTGOV:
@@ -452,19 +464,17 @@ ctrLoadQueryIntoDb(
   queryterm = "https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug",
   con = db
 )
-# * Appears specific for CTGOV CLASSIC
+# * Appears specific for CTGOV Classic website
 # * Found search query from CTGOV: cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug
-# * Checking trials in CTGOV classic...
+# * Checking trials using CTGOV Classic website...
+# Retrieved overview, records of 62 trial(s) are to be downloaded (estimate: 0.5 MB)
 # (1/3) Downloading trial file...
-# Download status: 1 done; 0 in progress. Total size: 812.73 Kb (100%)... done!             
 # (2/3) Converting to NDJSON (estimate: 3 s)...
 # (3/3) Importing records into database...
-# = Imported or updated 58 trial(s)                
-# Running dbCTRUpdateQueryHistory...
-# Running dbQueryHistory ...
-# Number of queries in history of "some_collection_name": 3
-# Number of records in collection "some_collection_name": 469
+# = Imported or updated 62 trial(s)                
 # Updated history ("meta-info" in "some_collection_name")
+# $n
+# [1] 62
 ```
 
 - Add records from a third register (ISRCTN) into the same collection
@@ -482,11 +492,13 @@ ctrLoadQueryIntoDb(
 # * Checking trials in ISRCTN...
 # Retrieved overview, records of 9 trial(s) are to be downloaded (estimate: 0.2 MB)
 # (1/3) Downloading trial file... 
-# Download status: 1 done; 0 in progress. Total size: 93.12 Kb (100%)... done!             
+# Download status: 1 done; 0 in progress. Total size: 93.28 Kb (100%)... done!             
 # (2/3) Converting to NDJSON (estimate: 0.05 s)...
 # (3/3) Importing records into database...
 # = Imported or updated 9 trial(s)                 
 # Updated history ("meta-info" in "some_collection_name")
+# $n
+# [1] 9
 ```
 
 <div id="workflow-ctis-example">
@@ -498,7 +510,7 @@ ctrLoadQueryIntoDb(
 Queries in the CTIS search interface can be automatically copied to the
 clipboard so that a user can paste them into `queryterm`, see
 [here](#2-script-to-automatically-copy-users-query-from-web-browser). As
-of 2024-02-10, there are more than 500 trials publicly accessible in
+of 2024-04-27, there are more than 730 trials publicly accessible in
 CTIS. See [below](#documents-example) for how to download documents from
 CTIS.
 
@@ -511,7 +523,7 @@ ctrLoadQueryIntoDb(
   con = db
 )
 # $n
-# [1] 464
+# [1] 731
 
 # Retrieve trials from another register:
 ctrLoadQueryIntoDb(
@@ -520,24 +532,28 @@ ctrLoadQueryIntoDb(
 )
 # * Found search query from CTIS: ageGroupCode=2
 # * Checking trials in CTIS...
-# (1/5) Downloading trials list . found 46 trials
-# (2/5) Downloading and processing part I and parts II... (estimate: 9 Mb)
-# Download status: 46 done; 0 in progress. Total size: 9.25 Mb (100%)... done!             
-# . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+# (1/5) Downloading trials list . found 69 trials
+# (2/5) Downloading and processing part I and parts II... (estimate: 10 Mb)
+# Download status: 69 done; 0 in progress. Total size: 15.05 Mb (100%)... done!             
+# . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+# . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 # (3/5) Downloading and processing additional data:
-# publicevents, summary, layperson, csr, cm, inspections, publicevaluation (estimate: 3 Mb)
-# Download status: 95 done; 0 in progress. Total size: 2.93 Mb (100%)... done!             
-# 46
+# publicevents, summary, layperson, csr, cm, inspections, publicevaluation (estimate: 5 Mb)
+# Download status: 147 done; 0 in progress. Total size: 4.06 Mb (100%)... done!             
+# 69
 # (4/5) Importing records into database...
-# (5/5) Updating with additional data: . .         
-# = Imported / updated 46 / 46 / 46 records on 46 trial(s)
+# (5/5) Updating with additional data: . . .       
+# = Imported / updated 69 / 69 / 69 / 1 records on 69 trial(s)
 # Updated history ("meta-info" in "some_collection_name")
+# $n
+# [1] 69
 
-allFields <- dbFindFields(".*", db)
-# Finding fields in database collection (may take some time) . . . . .
+allFields <- dbFindFields(".*", db, sample = TRUE)
+# Finding fields in database collection (sampling 5 trial records)  .  .  .  .  .  .  . 
 # Field names cached for this session.
+
 length(allFields[grepl("CTIS", names(allFields))])
-# [1] 3183
+# [1] 2557
 
 allFields[grepl("defer|consideration$", allFields, ignore.case = TRUE)]
 #                                                                                            CTIS 
@@ -572,6 +588,7 @@ dbGetFieldsIntoDf("publicEvaluation.partIRfiConsiderations.rfiConsiderations.con
 
 # use an alternative to dbGetFieldsIntoDf()
 allData <- nodbi::docdb_query(src = db, key = db$collection, query = '{"ctrname":"CTIS"}')
+
 # names of top-level data items
 sort(names(allData))
 #  [1] "_id"                           "ageGroup"                      "applications"                 
@@ -583,14 +600,14 @@ sort(names(allData))
 # [19] "id"                            "initialApplicationId"          "isRmsTacitAssignment"         
 # [22] "lastUpdated"                   "memberStatesConcerned"         "mscTrialNotificationsInfoList"
 # [25] "primarySponsor"                "publicEvaluation"              "record_last_import"           
-# [28] "recruitmentStatus"             "sponsorType"                   "startDateEU"                  
-# [31] "submissionDate"                "therapeuticAreas"              "title"                        
-# [34] "totalNumberEnrolled"           "totalPartIISubjectCount"       "trialCountries"               
-# [37] "trialEndDate"                  "trialGlobalEnd"                "trialPhase"                   
-# [40] "trialStartDate" 
+# [28] "recruitmentStartDate"          "recruitmentStatus"             "sponsorType"                  
+# [31] "startDateEU"                   "submissionDate"                "summary"                      
+# [34] "therapeuticAreas"              "title"                         "totalNumberEnrolled"          
+# [37] "totalPartIISubjectCount"       "trialCountries"                "trialEndDate"                 
+# [40] "trialGlobalEnd"                "trialPhase"                    "trialStartDate"
 
 format(object.size(allData), "MB")
-# [1] "47.2 Mb"
+# [1] "75.6 Mb"
 ```
 
 <div id="workflow-cross-trial-example">
@@ -611,7 +628,7 @@ library(tidyr)
 
 # get names of all fields / variables in the collaction
 length(dbFindFields(".*", con = db))
-# [1] 4788
+# [1] 3883
 
 dbFindFields("(start.*date)|(date.*decision)", con = db)
 # Using cache of fields.
@@ -650,6 +667,8 @@ result %<>%
   rowwise() %>% 
   mutate(start = max(c_across(matches("(date.*decision)|(start.*date)")), na.rm = TRUE)) %>% 
   mutate(isrctnStatus = if_else(trialDesign.overallEndDate < record_last_import, "Ongoing", "Completed")) %>% 
+  mutate(p_end_of_trial_status = if_else(
+    is.na(p_end_of_trial_status) & !is.na(n_date_of_competent_authority_decision), "Ongoing", p_end_of_trial_status)) %>% 
   ungroup()
   
 # - Merge fields from different registers with re-leveling
@@ -665,24 +684,38 @@ statusValues <- list(
     "Ongoing, recruiting", "Ongoing, recruitment ended", 
     "Ongoing, not yet recruiting", "Authorised, not started"
   ),
-  "completed" = c("Completed", "COMPLETED"),
-  "other" = c("GB - no longer in EU/EEA", "Trial now transitioned",
-              "Withdrawn", "Suspended", "No longer available", 
-              "Terminated", "TERMINATED", "Prematurely Ended")
+  "completed" = c(
+    "Completed", "COMPLETED", "Ended"),
+  "other" = c(
+    "GB - no longer in EU/EEA", "Trial now transitioned",
+    "Withdrawn", "Suspended", "No longer available", 
+    "Terminated", "TERMINATED", "Prematurely Ended", 
+    "Under evaluation")
 )
 result[["state"]] <- dfMergeVariablesRelevel(
   df = result, 
   colnames = c(
-    "overall_status",  "p_end_of_trial_status",                            
+    "overall_status", "p_end_of_trial_status",
+    "protocolSection.statusModule.overallStatus",
     "ctStatus", "isrctnStatus"
   ),
   levelslist = statusValues
 )
 
+dbQueryHistory(con = db)
+
 # - Plot example
 library(ggplot2)
 ggplot(result) + 
-  stat_ecdf(aes(x = start, colour = state))
+  stat_ecdf(aes(x = start, colour = state)) +
+  labs(
+    title = "Evolution over time of a set of trials", 
+    subtitle = "Data from EUCTR, CTIS, ISRCTN, CTGOV, CTGOV2",
+    x = "Date of start (proposed or realised)", 
+    y = "Cumulative proportion of trials",
+    colour = "Current status",
+    caption = Sys.Date()
+  )
 ggsave(
   filename = "man/figures/README-ctrdata_across_registers.png",
   width = 5, height = 3, units = "in"
@@ -795,7 +828,7 @@ ctrLoadQueryIntoDb(
 # Created directory ./files-euctr/
 # Downloading trials...
 # [...]
-# = Imported or updated results for 114 trials
+# = Imported or updated results for 121 trials
 # = documents saved in './files-euctr'
 
 
@@ -811,10 +844,10 @@ ctrLoadQueryIntoDb(
 # [...]
 # Downloading documents into 'documents.path' = ./files-ctgov/
 # - Created directory ./files-ctgov
-# Applying 'documents.regexp' to 14 documents
-# Downloading 10 documents:
-# Download status: 10 done; 0 in progress. Total size: 38.10 Mb (100%)... done!             
-# Newly saved 10 document(s) for 7 trial(s); 0 document(s) for 0 trial(s) already existed
+# Applying 'documents.regexp' to 16 documents
+# Downloading 11 missing documents:
+# Download status: 11 done; 0 in progress. Total size: 39.48 Mb (100%)... done!             
+# Newly saved 11 document(s) for 8 trial(s); 0 document(s) for 0 trial(s) already existed
 
 
 ### CTGOV2 files are downloaded, here corresponding to the default of 
@@ -829,10 +862,10 @@ ctrLoadQueryIntoDb(
 # * Downloading documents into 'documents.path' = ./files-ctgov2/
 # - Created directory ./files-ctgov2
 # - Creating subfolder for each trial
-# - Applying 'documents.regexp' to 30 documents
-# - Downloading 26 missing documents
-# Download status: 26 done; 0 in progress. Total size: 70.12 Mb (100%)... done!             
-# = Newly saved 26 document(s) for 19 trial(s); 0 document(s) for 0 trial(s) already 
+# - Applying 'documents.regexp' to 35 documents
+# - Downloading 30 missing documents
+# Download status: 30 done; 0 in progress. Total size: 75.14 Mb (100%)... done!             
+# = Newly saved 30 document(s) for 22 trial(s); 0 document(s) for 0 trial(s) already 
 # existed in ./files-ctgov2
 
 
@@ -848,13 +881,13 @@ ctrLoadQueryIntoDb(
 # * Downloading documents into 'documents.path' = ./files-isrctn/
 # - Created directory /Users/ralfherold/Daten/mak/r/emea/ctrdata/files-isrctn
 # - Creating subfolder for each trial
-# - Applying 'documents.regexp' to 34 documents
-# - Downloading 23 missing documents
-# Download status: 23 done; 0 in progress. Total size: 10.42 Mb (100%)... done!             
-# Download status: 2 done; 0 in progress. Total size: 6.53 Kb (100%)... done!             
-# Download status: 2 done; 0 in progress. Total size: 6.53 Kb (100%)... done!             
-# Download status: 2 done; 0 in progress. Total size: 6.53 Kb (100%)... done!             
-# = Newly saved 21 document(s) for 9 trial(s); 0 document(s) for 0 trial(s) already 
+# - Applying 'documents.regexp' to 41 documents
+# - Downloading 26 missing documents
+# Download status: 26 done; 0 in progress. Total size: 12.83 Mb (100%)... done!             
+# Download status: 2 done; 0 in progress. Total size: 6.56 Kb (100%)... done!             
+# = Newly saved 24 document(s) for 12 trial(s); 0 document(s) for 0 trial(s) already 
+# existed in /Users/ralfherold/Daten/mak/r/emea/ctrdata/files-isrctn
+# = Imported or updated 299 trial(s)
 # existed in ./files-isrctn
 
 
@@ -868,21 +901,13 @@ ctrLoadQueryIntoDb(
 # * Found search query from CTIS: ageGroupCode=2
 # [...]
 # * Downloading documents into 'documents.path' = ./files-ctis/
-# - Created directory ./files-ctis
-# - Getting ids of lists with document information
-# - Downloading 939 lists with document information (estimate: 18.78 Mb)
-# Download status: 939 done; 0 in progress. Total size: 12.82 Mb (100%)... done!             
-# Download status: 294 done; 0 in progress. Total size: 2.16 Mb (100%)... done!             
-# - Processing document information in 939 lists
+# - Created directory /Users/ralfherold/Daten/mak/r/emea/ctrdata/files-ctis
 # - Creating subfolder for each trial
-# - Applying 'documents.regexp' to 4733 documents
-# - Downloading 440 missing documents
-# Download status: 440 done; 0 in progress. Total size: 115.61 Mb (100%)... done!             
-# Download status: 211 done; 0 in progress. Total size: 148.06 Mb (100%)... done!             
-# Download status: 81 done; 0 in progress. Total size: 130.86 Mb (100%)... done!             
-# Download status: 47 done; 0 in progress. Total size: 690 b (100%)... done!             
-# = Newly saved 393 document(s) for 39 trial(s) (latest versions only, deduplicated 
-# if e.g. in application and authorised part); 0 document(s) for 0 trial(s) already 
+# - Applying 'documents.regexp' to 5757 documents
+# - Downloading 577 missing documents
+# Download status: 577 done; 0 in progress. Total size: 338.89 Mb (100%)... done!             
+# Download status: 68 done; 0 in progress. Total size: 1020 b (100%)... done!             
+# = Newly saved 509 document(s) for 47 trial(s); 0 document(s) for 0 trial(s) already 
 # existed in./files-ctis
 ```
 

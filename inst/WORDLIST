@@ -18,6 +18,7 @@ Haenszel
 HistogramNBtrials
 ICTRP
 ISRCTN
+Infodemic
 Investigational
 JPRN
 Javascript
@@ -35,6 +36,7 @@ RPostgres
 RSQLite
 Rmd
 SQLite
+Sood
 Tampermonkey
 UMIN
 Var
@@ -102,11 +104,13 @@ lubridate
 macos
 mapreduce
 md
+medRxiv
 mongo
 mongo's
 mongoDB
 mongodb
 mongolite
+mth
 ndjson
 nodbi
 nonproprietary
