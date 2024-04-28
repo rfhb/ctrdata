@@ -72,7 +72,7 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9">
-<p><a href="#main-features">Main features</a> • <a href="#installation">Installation</a> • <a href="#overview-of-functions-in-ctrdata">Overview</a> • <a href="#databases-that-can-be-used-with-ctrdata">Databases</a> • <a href="#data-model-of-ctrdata">Data model</a> • <a href="#example-workflow">Example workflow</a> • <a href="#workflow-cross-trial-example">Analysis across trials</a> • <a href="#tests">Tests</a> • <a href="#acknowledgements">Acknowledgements</a> • <a href="#future-features">Future</a></p>
+<p><a href="#main-features">Main features</a> • <a href="#installation">Installation</a> • <a href="#overview-of-functions-in-ctrdata">Overview</a> • <a href="#databases-for-use-with-ctrdata">Databases</a> • <a href="#data-model-of-ctrdata">Data model</a> • <a href="#example-workflow">Example workflow</a> • <a href="#workflow-cross-trial-example">Analysis across trials</a> • <a href="#tests">Tests</a> • <a href="#acknowledgements">Acknowledgements</a> • <a href="#future-features">Future</a></p>
 <div class="section level1">
 <div class="page-header"><h1 id="ctrdata-for-aggregating-and-analysing-clinical-trials">ctrdata for aggregating and analysing clinical trials<a class="anchor" aria-label="anchor" href="#ctrdata-for-aggregating-and-analysing-clinical-trials"></a>
 </h1></div>
@@ -83,12 +83,12 @@
 <li>ClinicalTrials.gov (“CTGOV” classic and the 2023 “CTGOV2”, see <a href="#workflow-ctgov-example">example</a>)</li>
 <li>ISRCTN Registry (<a href="https://www.isrctn.com/" class="external-link uri">https://www.isrctn.com/</a>)</li>
 </ul>
-<p>The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2024-04-27 for version 1.17.2.9000 (major improvements: removed external dependencies; refactored <a href="https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.html"><code>dbGetFieldsIntoDf()</code></a>; 🔔 retrieve historic CTGOV2 versions).</p>
+<p>The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2024-04-28 for version 1.17.2.9000 (major improvements: removed external dependencies; refactored <a href="https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.html"><code>dbGetFieldsIntoDf()</code></a>; 🔔 retrieve historic CTGOV2 versions).</p>
 <div class="section level2">
 <h2 id="main-features">Main features<a class="anchor" aria-label="anchor" href="#main-features"></a>
 </h2>
 <ul>
-<li>Protocol- and results-related trial information is easily downloaded: Users define a query in a register’s web interface, then copy the URL and enter it into <code>ctrdata</code> which retrieves in one go all trials found. A <a href="#id_2-script-to-automatically-copy-users-query-from-web-browser">script</a> can automate copying the query URL from all registers. Personal annotations can be made when downloading trials. Also, <a href="#documents-example">trial documents</a> and <a href="">historic versions</a> available in registers on trials can be downloaded.</li>
+<li>Protocol- and results-related trial information is easily downloaded: Users define a query in a register’s web interface, then copy the URL and enter it into <code>ctrdata</code> which retrieves in one go all trials found. A <a href="#id_2-script-to-automatically-copy-users-query-from-web-browser">script</a> can automate copying the query URL from all registers. Personal annotations can be made when downloading trials. Also, <a href="#documents-example">trial documents</a> and <a href="https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html#analysing-sample-size-using-historic-versions-of-trial-records">historic versions</a> available in registers on trials can be downloaded.</li>
 <li>Downloaded trial information is transformed and stored in a collection of a document-centric database, for fast and offline access. Information from different registers can be accumulated in a single collection. Uses <code>DuckDB</code>, <code>PostgreSQL</code>, <code>RSQLite</code> or <code>MongoDB</code>, via R package <code>nodbi</code>: see section <a href="#databases-that-can-be-used-with-ctrdata">Databases</a> below. Easily re-run any previous query in a collection to retrieve and update trial records.</li>
 <li>For analyses, convenience functions in <code>ctrdata</code> allow find synonyms of an active substance, to identify unique (de-duplicated) trial records across all registers, to merge and recode fields as well as to easily access deeply-nested fields. Analysis can be done with <code>R</code> (see <a href="https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html">vignette</a>) or other systems, using the <code>JSON</code>-<a href="#mongodb">structured information in the database</a>.</li>
 </ul>
@@ -630,6 +630,7 @@ citation("ctrdata")
 <span><span class="co">#   for trials that have records in several registers</span></span>
 <span><span class="co"># - Calculate trial start date</span></span>
 <span><span class="co"># - Calculate simple status for ISRCTN</span></span>
+<span><span class="co"># - Update end of trial status for EUCTR</span></span>
 <span><span class="va">result</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/compound.html" class="external-link">%&lt;&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">`_id`</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rowwise.html" class="external-link">rowwise</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -669,8 +670,6 @@ citation("ctrdata")
 <span>  <span class="op">)</span>,</span>
 <span>  levelslist <span class="op">=</span> <span class="va">statusValues</span></span>
 <span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="reference/dbQueryHistory.html">dbQueryHistory</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># - Plot example</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
@@ -868,20 +867,15 @@ Neuroblastoma trials
 <p>See also <a href="https://app.codecov.io/gh/rfhb/ctrdata/tree/master/R" class="external-link uri">https://app.codecov.io/gh/rfhb/ctrdata/tree/master/R</a></p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">tinytest</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tinytest/man/run_test_dir.html" class="external-link">test_all</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co"># test_ctrdata_ctrfindactivesubstance.R    4 tests OK 2.9s</span></span>
-<span><span class="co"># test_ctrdata_mongo_local_ctgov.R   51 tests OK 43.5s</span></span>
-<span><span class="co"># test_ctrdata_mongo_local_ctgov2.R   32 tests OK 38.0s</span></span>
-<span><span class="co"># test_ctrdata_mongo_local_ctis.R  129 tests OK 7.4s   </span></span>
-<span><span class="co"># test_ctrdata_mongo_local_euctr.R  98 tests OK 1.1s</span></span>
-<span><span class="co"># test_ctrdata_mongo_local_isrctn.R   37 tests OK 14.2s</span></span>
-<span><span class="co"># test_ctrdata_other_functions.R   63 tests OK 2.2s</span></span>
-<span><span class="co"># test_ctrdata_sqlite_ctgov.R...   51 tests OK 55.0s</span></span>
-<span><span class="co"># test_ctrdata_sqlite_ctgov2.R..   32 tests OK 44.7s</span></span>
-<span><span class="co"># test_ctrdata_sqlite_ctis.R....  131 tests OK 6.1s      </span></span>
-<span><span class="co"># test_ctrdata_sqlite_euctr.R...  98 tests OK 1.0s</span></span>
-<span><span class="co"># test_ctrdata_sqlite_isrctn.R..   37 tests OK 14.1s</span></span>
-<span><span class="co"># test_euctr_error_sample.R.....    8 tests OK 0.5s</span></span>
-<span><span class="co"># All ok, 771 results (14m 34.6s)</span></span></code></pre></div>
+<span><span class="co"># test_ctrdata_ctrfindactivesubstance.R    4 tests OK 1.4s</span></span>
+<span><span class="co"># test_ctrdata_other_functions.R   63 tests OK 2.6s</span></span>
+<span><span class="co"># test_ctrdata_sqlite_ctgov.R...   51 tests OK 1.1s</span></span>
+<span><span class="co"># test_ctrdata_sqlite_ctgov2.R..   47 tests OK 1.6s</span></span>
+<span><span class="co"># test_ctrdata_sqlite_ctis.R....  187 tests OK 9.2</span></span>
+<span><span class="co"># test_ctrdata_sqlite_euctr.R...  101 tests OK 58.7s</span></span>
+<span><span class="co"># test_ctrdata_sqlite_isrctn.R..   37 tests OK 17.2s</span></span>
+<span><span class="co"># test_euctr_error_sample.R.....    8 tests OK 0.6s</span></span>
+<span><span class="co"># All ok, 498 results (13m 17.2s)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="future-features">Future features<a class="anchor" aria-label="anchor" href="#future-features"></a>
@@ -889,10 +883,10 @@ Neuroblastoma trials
 <ul>
 <li><p>See project outline <a href="https://github.com/users/rfhb/projects/1" class="external-link uri">https://github.com/users/rfhb/projects/1</a></p></li>
 <li><p>Canonical definitions, filters, calculations are in the works (since August 2023) for data mangling and analyses across registers, e.g. to define study population, identify interventional trials, calculate study duration; public collaboration on these canonical scripts will speed up harmonising analyses.</p></li>
+<li><p>Merge results-related fields retrieved from different registers, such as corresponding endpoints (work not yet started). The challenge is the incomplete congruency and different structure of data fields.</p></li>
 <li><p>Authentication, expected to be required by CTGOV2; specifications not yet known (work not yet started).</p></li>
 <li><p>Explore further registers such as <a href="https://trialsearch.who.int/" class="external-link">ICTRP</a> (authentication needed), <a href="https://rctportal.niph.go.jp/" class="external-link">JPRN</a>, <a href="https://jrct.niph.go.jp/" class="external-link">jRCT</a>, <a href="https://www.umin.ac.jp/ctr/" class="external-link">UMIN-CTR</a>, ChiCTR (exploration is continually ongoing; added value, terms and conditions for programmatic access vary; no clear roadmap is established yet).</p></li>
-<li><p>Retrieve previous versions of protocol- or results-related information (work not yet started). The challenge is that, apparently, initial versions cannot be queried and historical versions can only be retrieved one-by-one and not in structured format.</p></li>
-<li><p>Merge results-related fields retrieved from different registers, such as corresponding endpoints (work not yet started). The challenge is the incomplete congruency and different structure of data fields.</p></li>
+<li><p><del>Retrieve previous versions of protocol- or results-related information. The challenges include, historic versions can only be retrieved one-by-one, do not include results, or are not in structured format.</del> (functionality available with version 1.17.2.9000 to the extent that seems reasonably possible at this time, namely for protocol-related information for CTIS and for protocol- and results-related information in CTGOV2)</p></li>
 </ul>
 </div>
 <div class="section level2">

@@ -51,8 +51,9 @@ package. This README was reviewed on 2024-04-28 for version 1.17.2.9000
   [script](#2-script-to-automatically-copy-users-query-from-web-browser)
   can automate copying the query URL from all registers. Personal
   annotations can be made when downloading trials. Also, [trial
-  documents](#documents-example) and [historic versions]() available in
-  registers on trials can be downloaded.
+  documents](#documents-example) and [historic
+  versions](https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html#analysing-sample-size-using-historic-versions-of-trial-records)
+  available in registers on trials can be downloaded.
 - Downloaded trial information is transformed and stored in a collection
   of a document-centric database, for fast and offline access.
   Information from different registers can be accumulated in a single

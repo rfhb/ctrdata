@@ -56,7 +56,7 @@ Refine the search until the trials of interest are listed in the browser. The to
 
 ### Copy address from browser address bar to clipboard
 
-Use functions or keyboard shortcuts according to the operating system. See [here](https://rfhb.github.io/ctrdata/#id_3-script-to-automatically-copy-users-query-from-web-browser) for our automation to copy the URLs of a user's queries in any of the supported clinical trial registers. 
+Use functions or keyboard shortcuts according to the operating system. See [here](https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser) for our automation to copy the URLs of a user's queries in any of the supported clinical trial registers. 
 
 ### Get address from clipboard
 

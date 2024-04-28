@@ -12,7 +12,7 @@ If not specified, clipboard contents will be checked for
 a suitable URL.
 For automatically copying the user's query of a register
 in a web browser to the clipboard, see
-\ifelse{latex}{\out{\href{https://github.com/rfhb/ctrdata\#3-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://github.com/rfhb/ctrdata#3-script-to-automatically-copy-users-query-from-web-browser}{here}}.
+\ifelse{latex}{\out{\href{https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}}.
 Can also contain a query term such as from
 \link{dbQueryHistory}()["query-term"].}
 
