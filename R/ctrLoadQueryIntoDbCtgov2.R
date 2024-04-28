@@ -374,7 +374,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     urls <- sprintf(
       ctgovEndpoints[4], historyDf[["_id"]], historyDf[["version_number"]] - 1L)
 
-    ## 3 - handle historical versions
+    ## 3 - handle historic versions
     #
     # calculate file paths
     files <- as.vector(vapply(

@@ -12,7 +12,7 @@ badge](https://rfhb.r-universe.dev/badges/ctrdata)](https://rfhb.r-universe.dev/
 
 [Main features](#main-features) • [Installation](#installation) •
 [Overview](#overview-of-functions-in-ctrdata) •
-[Databases](#databases-that-can-be-used-with-ctrdata) • [Data
+[Databases](#databases-for-use-with-ctrdata) • [Data
 model](#data-model-of-ctrdata) • [Example workflow](#example-workflow) •
 [Analysis across trials](#workflow-cross-trial-example) •
 [Tests](#tests) • [Acknowledgements](#acknowledgements) •
@@ -37,7 +37,7 @@ conduct of trials, their availability for patients and to facilitate
 using their detailed results for research and meta-analyses. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2024-04-27 for version 1.17.2.9000
+package. This README was reviewed on 2024-04-28 for version 1.17.2.9000
 (major improvements: removed external dependencies; refactored
 [`dbGetFieldsIntoDf()`](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.html);
 🔔 retrieve historic CTGOV2 versions).
@@ -48,7 +48,7 @@ package. This README was reviewed on 2024-04-27 for version 1.17.2.9000
   Users define a query in a register’s web interface, then copy the URL
   and enter it into `ctrdata` which retrieves in one go all trials
   found. A
-  [script](#3-script-to-automatically-copy-users-query-from-web-browser)
+  [script](#2-script-to-automatically-copy-users-query-from-web-browser)
   can automate copying the query URL from all registers. Personal
   annotations can be made when downloading trials. Also, [trial
   documents](#documents-example) and [historic versions]() available in
@@ -662,6 +662,7 @@ result <- dbGetFieldsIntoDf(
 #   for trials that have records in several registers
 # - Calculate trial start date
 # - Calculate simple status for ISRCTN
+# - Update end of trial status for EUCTR
 result %<>% 
   filter(`_id` %in% dbFindIdsUniqueTrials(con = db)) %>% 
   rowwise() %>% 
@@ -701,8 +702,6 @@ result[["state"]] <- dfMergeVariablesRelevel(
   ),
   levelslist = statusValues
 )
-
-dbQueryHistory(con = db)
 
 # - Plot example
 library(ggplot2)
@@ -917,20 +916,15 @@ See also <https://app.codecov.io/gh/rfhb/ctrdata/tree/master/R>
 
 ``` r
 tinytest::test_all()
-# test_ctrdata_ctrfindactivesubstance.R    4 tests OK 2.9s
-# test_ctrdata_mongo_local_ctgov.R   51 tests OK 43.5s
-# test_ctrdata_mongo_local_ctgov2.R   32 tests OK 38.0s
-# test_ctrdata_mongo_local_ctis.R  129 tests OK 7.4s   
-# test_ctrdata_mongo_local_euctr.R  98 tests OK 1.1s
-# test_ctrdata_mongo_local_isrctn.R   37 tests OK 14.2s
-# test_ctrdata_other_functions.R   63 tests OK 2.2s
-# test_ctrdata_sqlite_ctgov.R...   51 tests OK 55.0s
-# test_ctrdata_sqlite_ctgov2.R..   32 tests OK 44.7s
-# test_ctrdata_sqlite_ctis.R....  131 tests OK 6.1s      
-# test_ctrdata_sqlite_euctr.R...  98 tests OK 1.0s
-# test_ctrdata_sqlite_isrctn.R..   37 tests OK 14.1s
-# test_euctr_error_sample.R.....    8 tests OK 0.5s
-# All ok, 771 results (14m 34.6s)
+# test_ctrdata_ctrfindactivesubstance.R    4 tests OK 1.4s
+# test_ctrdata_other_functions.R   63 tests OK 2.6s
+# test_ctrdata_sqlite_ctgov.R...   51 tests OK 1.1s
+# test_ctrdata_sqlite_ctgov2.R..   47 tests OK 1.6s
+# test_ctrdata_sqlite_ctis.R....  187 tests OK 9.2
+# test_ctrdata_sqlite_euctr.R...  101 tests OK 58.7s
+# test_ctrdata_sqlite_isrctn.R..   37 tests OK 17.2s
+# test_euctr_error_sample.R.....    8 tests OK 0.6s
+# All ok, 498 results (13m 17.2s)
 ```
 
 ## Future features
@@ -943,6 +937,10 @@ tinytest::test_all()
   study duration; public collaboration on these canonical scripts will
   speed up harmonising analyses.
 
+- Merge results-related fields retrieved from different registers, such
+  as corresponding endpoints (work not yet started). The challenge is
+  the incomplete congruency and different structure of data fields.
+
 - Authentication, expected to be required by CTGOV2; specifications not
   yet known (work not yet started).
 
@@ -954,14 +952,13 @@ tinytest::test_all()
   continually ongoing; added value, terms and conditions for
   programmatic access vary; no clear roadmap is established yet).
 
-- Retrieve previous versions of protocol- or results-related information
-  (work not yet started). The challenge is that, apparently, initial
-  versions cannot be queried and historical versions can only be
-  retrieved one-by-one and not in structured format.
-
-- Merge results-related fields retrieved from different registers, such
-  as corresponding endpoints (work not yet started). The challenge is
-  the incomplete congruency and different structure of data fields.
+- ~~Retrieve previous versions of protocol- or results-related
+  information. The challenges include, historic versions can only be
+  retrieved one-by-one, do not include results, or are not in structured
+  format.~~ (functionality available with version 1.17.2.9000 to the
+  extent that seems reasonably possible at this time, namely for
+  protocol-related information for CTIS and for protocol- and
+  results-related information in CTGOV2)
 
 ## Acknowledgements
 

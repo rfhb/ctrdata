@@ -345,7 +345,7 @@ str(result)
 
 Historic versions can set to be retrieved for CTGOV2 by specifying `ctgov2history = <...>` when using `ctrLoadQueryIntoDb()`; this functionality was added in `ctrdata` version 1.18.0. Historic versions are automatically retrieved for CTIS. The versions include all trial data available at the date of the respective version. 
 
-For CTGOV2 records, the historic version are added as follows into the `ctrdata` data model of a trial record, where the ellipsis `...` represents all trial data fields: 
+For CTGOV2 records, the historic versions are added as follows into the `ctrdata` data model of a trial record, where the ellipsis `...` represents all trial data fields: 
 
 `{"_id":"NCT01234567", "title": "Current title", ..., "history": [{"history_version": {"version_number": 1, "version_date": "2020-21-22 10:11:12"}, "title": "Original title", ...}, {"history_version": {"number": 2, "date": "2021-22-23 11:13:13"}, "title": "Later title", ...}]}`
 
