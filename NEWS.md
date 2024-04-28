@@ -1,7 +1,7 @@
 # ctrdata 1.17.2.9000
 
 ## Improvements 
-- Add retrieval of historical versions of trial records from CTGOV2 (for CTIS, they are automatically retrieved.)
+- Add retrieval of histori versions of trial records from CTGOV2 (for CTIS, they are automatically retrieved.)
 
 ## Bug fixes
 - Handle marginal case in `dbGetFieldsIntoDf()`
