@@ -57,9 +57,6 @@ dbQueryHistory <- function(con, verbose = FALSE) {
   hist <- hist[["queries"]]
   if (!is.data.frame(hist)) hist <- hist[[1]]
 
-  # maintain simple names historically
-  # names(hist) <- sub("^queries[.]", "", names(hist))
-
   # inform user
   if (verbose) {
     message(
