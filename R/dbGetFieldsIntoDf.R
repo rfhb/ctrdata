@@ -168,8 +168,7 @@ dbGetFieldsIntoDf <- function(fields = "",
   for (i in seq_len(ncol(dfi))) {
 
     if (nm[i] == "_id") next
-    if (class(dfi[[i]]) == "data.frame" &&
-        !ncol(dfi[[i]])) next
+    if (inherits(dfi[[i]], "data.frame") && !ncol(dfi[[i]])) next
 
     # simplify and replace NULL with NA
     dfi[[i]][!sapply(dfi[[i]], length)] <- NA
