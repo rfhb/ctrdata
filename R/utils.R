@@ -163,6 +163,9 @@ typeVars <- list(
   "applications.partI.assessmentOutcomeDate" = "ctrDate",
   "applications.partI.conclusionDate" = "ctrDate",
   "applications.partI.productRoleGroupInfos.linkedProducts.startDate" = "ctrDate",
+  "applications.partI.productRoleGroupInfos.linkedProducts.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.toDate" = "ctrDate",
+  "applications.partI.productRoleGroupInfos.linkedProducts.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.fromDate" = "ctrDate",
+  "applications.partI.productRoleGroupInfos.linkedProducts.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.firstDecisionDate" = "ctrDate",
   "applications.partI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialPeriod.fromDate" = "ctrDate",
   "applications.partI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialPeriod.trialStartDate" = "ctrDate",
   "applications.partI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
@@ -224,6 +227,9 @@ typeVars <- list(
   "authorizedPartI.assessmentOutcomeDate" = "ctrDate",
   "authorizedPartI.conclusionDate" = "ctrDate",
   "authorizedPartI.productRoleGroupInfos.linkedProducts.startDate" = "ctrDate",
+  "authorizedPartI.productRoleGroupInfos.linkedProducts.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.firstDecisionDate" = "ctrDate",
+  "authorizedPartI.productRoleGroupInfos.linkedProducts.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.fromDate" = "ctrDate",
+  "authorizedPartI.productRoleGroupInfos.linkedProducts.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.toDate" = "ctrDate",
   "authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialPeriod.fromDate" = "ctrDate",
   "authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialPeriod.trialStartDate" = "ctrDate",
   "authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
@@ -280,6 +286,7 @@ typeVars <- list(
   "coSponsors.fromDate" = "ctrDate",
   "eeaEndDate" = "ctrDate",
   "eeaStartDate" = "ctrDate",
+  "endDate" = "ctrDate",
   "layperson.submissionDate" = "ctrDate",
   "memberStatesConcerned.activeTrialPeriod.fromDate" = "ctrDate",
   "memberStatesConcerned.activeTrialPeriod.trialEndDate" = "ctrDate",
@@ -337,6 +344,8 @@ typeVars <- list(
   "summary.submissionDate" = "ctrDate",
   "trialEndDate" = "ctrDate",
   "trialStartDate" = "ctrDate",
+  "trialGlobalEnd.endDate" = "ctrDate",
+  "trialGlobalEndDate" = "ctrDate",
   #
   #
   #### . factors / logical ####

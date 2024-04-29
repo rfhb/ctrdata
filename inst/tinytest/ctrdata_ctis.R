@@ -217,6 +217,7 @@ for (i in unique(groupsNo)) {
   ))
 }
 
+
 #### dbFindIdsUniqueTrials ####
 
 expect_message(
