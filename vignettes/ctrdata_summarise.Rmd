@@ -422,7 +422,7 @@ result %>%
 
 ggsave("vignettes/samplesizechanges.png", width = 6, height = 4)
 ```
-
+![Sample size changes](samplesizechanges.png)
 
 ## Analysing nested fields such as trial results
 
