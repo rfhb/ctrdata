@@ -30,6 +30,8 @@ jobs:
       AT_HOME: true
       RSPM: ${{ matrix.config.rspm }}
       GITHUB_PAT: ${{ secrets.GHPAT }}
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      CTRDATAMONGOURI: ${{ secrets.CTRDATAMONGOURI }}
 
     steps:
       - uses: actions/checkout@v4
