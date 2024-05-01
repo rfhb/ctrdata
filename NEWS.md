@@ -3,6 +3,7 @@
 ## Improvements 
 - Add retrieval of historic versions of trial records from CTGOV2 (for CTIS, they are automatically retrieved)
 - Added typing of newly appearing fields from CTIS
+- Increase continuous integration testing from 91% to 93%
 
 ## Bug fixes
 - Handle marginal case in `dbGetFieldsIntoDf()`
