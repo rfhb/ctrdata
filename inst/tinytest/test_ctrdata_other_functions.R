@@ -450,6 +450,16 @@ dL <- suppressMessages(
   dfTrials2Long(dF)
 )
 
+dL2 <- dfTrials2Long(
+  df = dF[, 4:1]
+)
+
+# test
+expect_equivalent(
+  dL[order(dL$name), ],
+  dL2[order(dL2$name), ]
+)
+
 # test
 expect_equal(nrow(dL), 15L)
 expect_equal(unique(dL[["name"]]), names(dF)[-1])

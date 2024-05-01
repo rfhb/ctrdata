@@ -10,6 +10,14 @@ if (!checkInternet()) exit_file("Reason: no internet connectivity")
 #### ISRCTN ####
 tf <- function() {
 
+  # test
+  expect_error(
+    dbQueryHistory(
+      nodbi::src_postgres()
+    ),
+    "Specify attribute"
+  )
+
   # create database object
   dbc <- nodbi::src_postgres()
   dbc[["collection"]] <- mongoLocalRwCollection

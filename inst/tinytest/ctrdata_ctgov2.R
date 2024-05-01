@@ -198,6 +198,11 @@ groupsNo <- (length(tmpFields) %/% 49L) + 1L
 groupsNo <- rep(seq_len(groupsNo), 49L)
 groupsNo <- groupsNo[1:length(tmpFields)]
 
+expect_message(
+  dbGetFieldsIntoDf(fields = tmpFields[1:50], con = dbc),
+  "specify fewer than 50"
+)
+
 for (i in unique(groupsNo)) {
   message(i, " ", appendLF = FALSE)
   tmpData <- dbGetFieldsIntoDf(fields = tmpFields[groupsNo == i], con = dbc)
@@ -219,3 +224,8 @@ expect_true(all(
       function(i) sapply(i, function(ii) class(ii)))
     )) %in% c("Date", "POSIXct", "POSIXt")
 ))
+
+expect_error(
+  dbGetFieldsIntoDf(fields = c("nonexistingfield", "anothernonexisting"), con = dbc),
+  "No records with values"
+)

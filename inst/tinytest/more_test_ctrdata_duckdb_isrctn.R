@@ -10,6 +10,14 @@ if (!checkInternet()) exit_file("Reason: no internet connectivity")
 #### ISRCTN ####
 tf <- function() {
 
+  # test
+  expect_error(
+    dbQueryHistory(
+      nodbi::src_duckdb(
+        dbdir = ":memory:")),
+    "Specify parameter"
+  )
+
   # create database object
   dbc <- suppressWarnings(nodbi::src_duckdb(
     dbdir = ":memory:",

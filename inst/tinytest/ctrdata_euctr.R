@@ -186,6 +186,35 @@ expect_true(tmpTest$n >= 0L)
 expect_true(is.character(tmpTest$success) | is.null(tmpTest$success))
 rm(tmpTest, q, hist, json, date.from, date.to, date.today)
 
+# test
+expect_error(
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
+      querytoupdate = 3.14159,
+      con = dbc)),
+  "needs to be an integer")
+
+# update database
+expect_true(
+  nodbi::docdb_delete(
+    src = dbc,
+    key = dbc$collection,
+    query = '{"_id": "2023-001105-31-3RD"}'))
+
+# test
+expect_message(
+  tmpTest <- suppressWarnings(
+    ctrLoadQueryIntoDb(
+      querytoupdate = "last",
+      con = dbc)),
+  "(Imported or updated)")
+
+# test
+expect_true(
+  any(tmpTest$success == "2023-001105-31-3RD")
+)
+
+
 #### ctrLoadQueryIntoDb results ####
 
 # get trials with results
