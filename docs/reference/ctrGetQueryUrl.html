@@ -101,6 +101,13 @@ The data frame (or tibble) can be passed as such as parameter
 <span class="r-in"><span><span class="co"># the address bar of the browser that shows results</span></span></span>
 <span class="r-in"><span><span class="co"># from a query in one of the trial registers</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu">ctrGetQueryUrl</span><span class="op">(</span><span class="op">)</span>, silent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> * Using clipboard content as register query URL: https://www.clinicaltrials.gov/search?distance=50&amp;cond=neuroblastoma&amp;aggFilters=phase:2,results:with&amp;primComp=2014-01-01_2014-12-31</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> * Appears specific for CTGOV REST API 2.0</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from CTGOV2: distance=50&amp;cond=neuroblastoma&amp;aggFilters=phase:2,results:with&amp;primComp=2014-01-01_2014-12-31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                      query-term</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 distance=50&amp;cond=neuroblastoma&amp;aggFilters=phase:2,results:with&amp;primComp=2014-01-01_2014-12-31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   query-register</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1         CTGOV2</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># extract query parameters from search result URL</span></span></span>
 <span class="r-in"><span><span class="co"># (URL was cut for the purpose of formatting only)</span></span></span>
