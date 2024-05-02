@@ -655,7 +655,7 @@ ctrLoadQueryIntoDbCtis <- function(
         file(fn), paste0(
           ' .elements[] | { ',
           '_id: "', id, '", part: "', part, '",',
-          'url, title, fileTypeLabel, documentIdentity
+          'url, title, fileTypeLabel, documentIdentity, documentTypeLabel
        }'),
        flags = jqr::jq_flags(pretty = FALSE),
        out = downloadsNdjsonCon
@@ -684,8 +684,17 @@ ctrLoadQueryIntoDbCtis <- function(
 
       # add destination file name
       dlFiles$filename <- paste0(
-        dlFiles$part, "_",
-        # robustly sanitise file name
+        # type in CTIS dlFiles$part
+        # type of document
+        abbreviate(
+          tools::toTitleCase(
+            stringi::stri_replace_all_fixed(
+              dlFiles$documentTypeLabel, 
+              c(" - Final", ": ", " (SmPC)", "(EU) ",
+                " (for publication)", ":", "\"", "/", "."), 
+              "", vectorize_all = FALSE)), 
+          minlength = 12L, named = FALSE), " - ",
+        # robustly sanitised file name
         gsub("[^[:alnum:] ._-]", "",  dlFiles$title),
         ".", dlFiles$fileTypeLabel)
 

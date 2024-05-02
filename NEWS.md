@@ -1,5 +1,8 @@
 # ctrdata 1.17.2.9000
 
+## Possibly breaking change
+- File names for documents downloaded from `CTIS` now start with the document type (e.g., "SbjctInfaICF - ..." as abbreviation of "Subject information and informed consent form (for publication)" and instead of the previous "parts2auth_...")
+
 ## Improvements 
 - Add retrieval of historic versions of trial records from CTGOV2 (for CTIS, they are automatically retrieved)
 - Added typing of newly appearing fields from CTIS
