@@ -715,9 +715,9 @@ ctrLoadQueryIntoDbCtis <- function(
   ## inform user -----------------------------------------------------
 
   #  find out number of trials imported into database
-  message("= Imported / updated ",
-          paste0(c(imported$n, resAll), collapse = " / "),
-          " records on ", length(idsTrials), " trial(s)")
+  message("= Imported ", imported$n, ", updated ",
+          paste0(resAll, collapse = " / "),
+          " record(s) on ", length(idsTrials), " trial(s)")
 
   # return
   return(imported)

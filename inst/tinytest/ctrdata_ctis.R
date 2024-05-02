@@ -20,7 +20,7 @@ expect_message(
       register = "CTIS",
       verbose = TRUE,
       con = dbc)),
-  "Imported / updated ")
+  "Imported .* updated ")
 
 # test
 expect_true(tmpTest$n >= 13L)
