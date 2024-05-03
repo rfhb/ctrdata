@@ -682,9 +682,10 @@ ctrLoadQueryIntoDbCtis <- function(
       rl <- unlist(sapply(rl$lengths, function(i) c(TRUE, rep(FALSE, i - 1L))))
       dlFiles <- dlFiles[rl, , drop = FALSE]
 
-      # add destination file name
-      dlFiles$filename <- paste0(
-        # type in CTIS dlFiles$part
+      # calculate prefix for document type
+      dlFiles$prefix <- paste0(
+        # type in CTIS 
+        dlFiles$part, " - ", 
         # type of document
         abbreviate(
           tools::toTitleCase(
@@ -693,11 +694,15 @@ ctrLoadQueryIntoDbCtis <- function(
               c(" - Final", ": ", " (SmPC)", "(EU) ",
                 " (for publication)", ":", "\"", "/", "."), 
               "", vectorize_all = FALSE)), 
-          minlength = 12L, named = FALSE), " - ",
+          minlength = 12L, named = FALSE))
+      
+      # add destination file name
+      dlFiles$filename <- paste0(
+        dlFiles$prefix, " - ",
         # robustly sanitised file name
         gsub("[^[:alnum:] ._-]", "",  dlFiles$title),
         ".", dlFiles$fileTypeLabel)
-
+      
       #### api_11: urls ####
 
       # calculate url
