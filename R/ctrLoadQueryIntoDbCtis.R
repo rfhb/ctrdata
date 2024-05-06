@@ -8,11 +8,12 @@
 #' @noRd
 #'
 #' @importFrom jqr jq jq_flags
-#' @importFrom utils read.table URLencode
+#' @importFrom tools toTitleCase
 #' @importFrom nodbi docdb_update
 #' @importFrom jsonlite stream_in fromJSON
 #' @importFrom stringi stri_extract_all_regex stri_replace_all_fixed
 #' @importFrom httr GET status_code content
+#' @importFrom digest digest
 #'
 ctrLoadQueryIntoDbCtis <- function(
     queryterm = queryterm,
@@ -231,7 +232,7 @@ ctrLoadQueryIntoDbCtis <- function(
   # this is imported as the main data into the database
 
   message("(2/5) Downloading and processing part I and parts II... (",
-          "estimate: ", signif(length(idsTrials) * 79 / 509, 1L), " Mb)")
+          "estimate: ", signif(length(idsTrials) * 110 / 660, 1L), " Mb)")
 
   urls <- sprintf(ctisEndpoints[2], idsTrials)
 
@@ -406,7 +407,7 @@ ctrLoadQueryIntoDbCtis <- function(
   dlFiles$filepathname <- file.path(
     tempDir, paste0("ctis_add_10_", dlFiles$applicationIds, ".json"))
 
-  message(" (estimate: ", signif(nrow(dlFiles) * 2.7 / 83, 1L), " Mb)")
+  message(" (estimate: ", signif(nrow(dlFiles) * 28 / 660, 1L), " Mb)")
 
   # "HTTP server doesn't seem to support byte ranges. Cannot resume."
   tmp <- ctrMultiDownload(
@@ -606,7 +607,7 @@ ctrLoadQueryIntoDbCtis <- function(
     # do downloads of list files
     message("- Downloading ", nrow(dlFiles),
             " lists with document information (estimate: ",
-            signif(nrow(dlFiles) * 0.009, 1L), " Mb)")
+            signif(nrow(dlFiles) * 106 / 660, 1L), " Mb)")
 
     fFilesListJson <- function(t, p, id) {
       file.path(tempDir, paste0("ctis_fileslist_", t, "_", p, "_", id, ".json"))
@@ -689,10 +690,10 @@ ctrLoadQueryIntoDbCtis <- function(
         abbreviate(
           tools::toTitleCase(
             stringi::stri_replace_all_fixed(
-              dlFiles$documentTypeLabel, 
+              dlFiles$documentTypeLabel,
               c(" - Final", ": ", " (SmPC)", "(EU) ",
-                " (for publication)", ":", "\"", "/", "."), 
-              "", vectorize_all = FALSE)), 
+                " (for publication)", ":", "\"", "/", "."),
+              "", vectorize_all = FALSE)),
           minlength = 12L, named = FALSE), " - ",
         # robustly sanitised file name
         gsub("[^[:alnum:] ._-]", "",  dlFiles$title),
