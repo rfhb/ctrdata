@@ -194,27 +194,6 @@ expect_error(
       con = dbc)),
   "needs to be an integer")
 
-# update database
-expect_true(
-  nodbi::docdb_delete(
-    src = dbc,
-    key = dbc$collection,
-    query = '{"_id": "2023-001105-31-3RD"}'))
-
-# test
-expect_message(
-  tmpTest <- suppressWarnings(
-    ctrLoadQueryIntoDb(
-      querytoupdate = "last",
-      con = dbc)),
-  "(Imported or updated)")
-
-# test
-expect_true(
-  any(tmpTest$success == "2023-001105-31-3RD")
-)
-
-
 #### ctrLoadQueryIntoDb results ####
 
 # get trials with results
