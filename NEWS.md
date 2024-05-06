@@ -6,7 +6,8 @@
 ## Improvements 
 - Add retrieval of historic versions of trial records from CTGOV2 (for CTIS, they are automatically retrieved)
 - Added typing of newly appearing fields from CTIS
-- Increase continuous integration testing from 91% to 93%
+- Increase continuous integration (CI) testing from 91% to 93%
+- Added missing CI for the combination of DuckDB and CTGOV2
 
 ## Bug fixes
 - Handle marginal case in `dbGetFieldsIntoDf()`
