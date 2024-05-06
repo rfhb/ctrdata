@@ -406,11 +406,9 @@ ctrLoadQueryIntoDbCtgov2 <- function(
 
         out <- file.path(tempDir, paste0("h_m_", i, ".json"))
         unlink(out)
-        fOut <- file(out, open = "at")
-        on.exit(try(close(fOut), silent = TRUE), add = TRUE)
 
         # put historic versions into top level array
-        cat(paste0('{"_id": "', i, '", "history": ['), file = fOut)
+        cat(paste0('{"_id": "', i, '", "history": ['), file = out, append = TRUE)
 
         fToMerge <- tmp[["destfile"]][grepl(i, tmp[["destfile"]])]
 
@@ -418,26 +416,28 @@ ctrLoadQueryIntoDbCtgov2 <- function(
         for (ii in seq_along(fToMerge)) {
 
           if (!file.exists(fToMerge[ii]) || !file.size(fToMerge[ii]) > 10L) next
-          if (ii > 1L) cat(",", file = fOut)
+          if (ii > 1L) cat(",", file = out, append = TRUE)
 
           vn <- as.numeric(jqr::jq(file(fToMerge[ii]), ' .studyVersion')) + 1L
 
           # add information about version
-          jqr::jq(file(fToMerge[ii]), paste0(
-            ' .study | .history_version = { "version_number": ', vn, ",",
-            ' "version_date": "', historyDf[["version_date"]][
-              historyDf[["_id"]] == i & historyDf[["version_number"]] == vn], '"} '
-          ),
-          flags = jqr::jq_flags(pretty = FALSE),
-          out = fOut
+          cat(
+            jqr::jq(file(fToMerge[ii]), paste0(
+              ' .study | .history_version = { "version_number": ', vn, ",",
+              ' "version_date": "', historyDf[["version_date"]][
+                historyDf[["_id"]] == i & historyDf[["version_number"]] == vn], '"} '
+            ),
+            flags = jqr::jq_flags(pretty = FALSE)
+            ),
+            file = out,
+            append = TRUE
           )
 
         }
 
-        cat(']}', file = fOut)
-        close(fOut)
+        cat(']}\n', file = out, append = TRUE)
         message(". ", appendLF = FALSE)
-        # line breaks in out do not seem to impact later jq use
+
       },
       USE.NAMES = FALSE
     )
