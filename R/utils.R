@@ -1223,10 +1223,11 @@ ctrTempDir <- function(verbose = FALSE) {
     if (length(.ctrdataenv$keeptempdir) &&
         !is.null(.ctrdataenv$keeptempdir)) {
       if (.ctrdataenv$keeptempdir) {
-        message("Since 'verbose = TRUE', not deleting ctrdata.tempdir ", tempDir)
+        message(
+          'ctrdata: "verbose = TRUE", not deleting temporary directory ', tempDir, "\r")
       } else {
-        try(unlink(tempDir, recursive = TRUE), silent = TRUE)
-        message("...deleted ctrdata.tempdir\r")
+        unlink(tempDir, recursive = TRUE)
+        message('ctrdata: deleted temporary directory\r')
       }
     }
     assign("keeptempdir", NULL, envir = .ctrdataenv)

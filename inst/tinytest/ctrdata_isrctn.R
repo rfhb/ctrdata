@@ -265,6 +265,7 @@ tmpFields <- suppressMessages(
   suppressWarnings(
     dbFindFields(
       namepart = ".*",
+      verbose = TRUE,
       con = dbc)))
 
 #### dbGetFieldsIntoDf ####

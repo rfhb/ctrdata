@@ -204,6 +204,13 @@ ctrLoadQueryIntoDbCtgov2 <- function(
                 failed = NULL))
   }
 
+  # exit if too many records
+  if (resultsEuNumTrials > 10000L) {
+    stop("These are ", resultsEuNumTrials, " (more than 10,000) trials, this may be ",
+         "unintended. Downloading more than 10,000 trials may not be supported ",
+         "by the register; consider correcting or splitting queries")
+  }
+
   ## download json -----------------------------------------------------
 
   # corresponds to trials
@@ -289,7 +296,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
 
   if (ctgov2history != "FALSE") {
 
-    message("* Checking and processing historic versions (may take some time)...")
+    message("* Checking and processing historic versions... ")
 
     ## 1 - get history overview for every trial
     urls <- as.vector(vapply(
@@ -298,7 +305,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
       FUN.VALUE = character(1L),
       USE.NAMES = FALSE
     ))
-    #
+
     files <- as.vector(vapply(
       X = urls,
       FUN = function(i) file.path(
@@ -309,14 +316,14 @@ ctrLoadQueryIntoDbCtgov2 <- function(
       FUN.VALUE = character(1L),
       USE.NAMES = FALSE
     ))
-    #
+
     tmp <- ctrMultiDownload(
       urls = urls,
       destfiles = files,
       resume = FALSE,
       verbose = verbose
     )
-    #
+
     # process
     historyDf <- lapply(
       X = files,
@@ -330,7 +337,15 @@ ctrLoadQueryIntoDbCtgov2 <- function(
             ))), verbose = FALSE)})
     #
     historyDf <- do.call(rbind, historyDf)
-    if (verbose) print(table(historyDf[["_id"]]))
+    if (verbose) {
+      message("Trial _id - number of versions")
+      msgTmp <- as.data.frame(table(historyDf[["_id"]]))
+      for (i in seq_len(nrow(msgTmp))) {
+        message(
+          msgTmp[i, 1, drop = TRUE], " - ",
+          msgTmp[i, 2, drop = TRUE])
+      }
+    }
     #
     # shift version number from API 0... to ctrdata 1...
     historyDf[["version_number"]] <- historyDf[["version_number"]] + 1L
@@ -339,7 +354,8 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     ##     values, adjust historyDf
     #
     # n versions per trial
-    if (grepl("^([1-9]+[0-9]+|[1-9]+)$", ctgov2history)) {
+    if (grepl("^([1-9]+[0-9]+L?|[1-9]+L?)$", ctgov2history)) {
+      ctgov2history <- sub("L$", "", ctgov2history)
       countVersions <- as.integer(ctgov2history)
       historyDf <- array2DF(tapply(
         historyDf, historyDf[["_id"]],
@@ -350,7 +366,8 @@ ctrLoadQueryIntoDbCtgov2 <- function(
         }))[, -1]
     }
     # last-but-one version
-    if (ctgov2history == "-1") {
+    if (grepl("^-1L?$", ctgov2history)) {
+      ctgov2history <- sub("L$", "", ctgov2history)
       historyDf <- array2DF(tapply(
         historyDf, historyDf[["_id"]],
         FUN = function(i) {
@@ -359,13 +376,13 @@ ctrLoadQueryIntoDbCtgov2 <- function(
         }))[, -1]
     }
     # only initial version
-    if (ctgov2history == "1") {
+    if (grepl("^1L?$", ctgov2history)) {
       historyDf <- historyDf[historyDf[["version_number"]] == 1L, ]
     }
     # selected versions
     if (grepl(":", ctgov2history)) {
-      minVersion <- as.numeric(sub("([0-9]+):([0-9]+)", "\\1", ctgov2history))
-      maxVersion <- as.numeric(sub("([0-9]+):([0-9]+)", "\\2", ctgov2history))
+      minVersion <- as.numeric(sub("([0-9]+)L?:([0-9]+)L?", "\\1", ctgov2history))
+      maxVersion <- as.numeric(sub("([0-9]+)L?:([0-9]+)L?", "\\2", ctgov2history))
       soughtVersion <- historyDf[["version_number"]] >= minVersion &
         historyDf[["version_number"]] <= maxVersion
       historyDf <- historyDf[soughtVersion, ]
@@ -375,7 +392,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
       ctgovEndpoints[4], historyDf[["_id"]], historyDf[["version_number"]] - 1L)
 
     ## 3 - handle historic versions
-    #
+
     # calculate file paths
     files <- as.vector(vapply(
       X = urls,

@@ -12,6 +12,12 @@ tf <- function() {
 
   # test
   expect_error(
+    dbQueryHistory(con = iris),
+    "Please specify in parameter"
+  )
+
+  # test
+  expect_error(
     dbQueryHistory(
       nodbi::src_sqlite(
         dbname = ":memory:")

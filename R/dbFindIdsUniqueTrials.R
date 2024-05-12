@@ -124,7 +124,7 @@ dbFindIdsUniqueTrials <- function(
     ))
 
     # inform user
-    message(" - Getting all trial identifiers...", appendLF = FALSE)
+    message("- Getting all trial identifiers...", appendLF = FALSE)
 
     # cache outdated
     if (cacheOutdated) {
@@ -321,7 +321,7 @@ dbFindIdsUniqueTrials <- function(
     ]
 
     # inform user
-    message(" - Finding duplicates among registers' and sponsor ids...")
+    message("- Finding duplicates among registers' and sponsor ids...")
 
     # find duplicates
     colsToCheck <- match(c(preferregister, "SPONSOR"), names(listofIds))
@@ -413,7 +413,7 @@ dbFindIdsUniqueTrials <- function(
 
     # inform user
     message(
-        " - Keeping ", paste0(countIds, collapse = " / "), " records",
+        "- Keeping ", paste0(countIds, collapse = " / "), " records",
         " from ", paste0(names(countIds), collapse = " / ")
     )
     message(
@@ -562,7 +562,7 @@ dfFindUniqueEuctrRecord <- function(
     # inform user about changes to data frame
     if (length(nms) > (tmp <- length(result))) {
         message(
-            " - ", tmp,
+            "- ", tmp,
             " EUCTR _id were not preferred EU Member State record for ",
             totalEuctr, " trials"
         )
