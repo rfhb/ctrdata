@@ -241,7 +241,7 @@ ctrLoadQueryIntoDbEuctr <- function(
 
   # remove calculated ndjson files in case of re-download import
   # because dbCTRLoadJSONFiles() imports all ndjson in the folder
-  try(unlink(tmp$ndjsonfile), silent = TRUE)
+  unlink(tmp$ndjsonfile)
 
   ## result-related information -----------------------------------------------
 
@@ -374,10 +374,10 @@ ctrLoadQueryIntoDbEuctr <- function(
     xmlFileList <- dir(path = tempDir, pattern = "EU-CTR.+Results.xml", full.names = TRUE)
     xmlFileList <- xmlFileList[vapply(xmlFileList, function(i) any(
       stringi::stri_detect_fixed(i, eudractnumbersimported)), logical(1L))]
-    on.exit(try(unlink(xmlFileList), silent = TRUE), add = TRUE)
+    on.exit(unlink(xmlFileList), add = TRUE)
     jsonFileList <- file.path(tempDir, paste0(
       "EU_Results_", sub(".+ ([0-9]{4}-[0-9]{6}-[0-9]{2}) .+", "\\1.ndjson", xmlFileList)))
-    on.exit(try(unlink(jsonFileList), silent = TRUE), add = TRUE)
+    on.exit(unlink(jsonFileList), add = TRUE)
 
     # run conversion (~2 s for 19 records)
     message("(2/4) Converting to NDJSON (estimate: ",
@@ -403,9 +403,6 @@ ctrLoadQueryIntoDbEuctr <- function(
       )
 
     }) # sapply xmlFileList
-
-    ## delete for any re-downloads
-    try(unlink(xmlFileList), silent = TRUE)
 
     # iterate over results files
     message("(3/4) Importing results into database (may take some time)...")
@@ -451,9 +448,6 @@ ctrLoadQueryIntoDbEuctr <- function(
         appendLF = FALSE)
 
     } # for f
-
-    ## delete for any re-downloads
-    try(unlink(jsonFileList), silent = TRUE)
 
     ## result history information ---------------------------------------------
 

@@ -409,8 +409,12 @@ ctrLoadQueryIntoDbCtgov2 <- function(
       FUN.VALUE = character(1L),
       USE.NAMES = FALSE
     ))
-    #
+
     # download
+    message(
+      "- Downloading ", length(files), " historic versions (estimate: ",
+      format(length(files) * 2.7 / 71, digits = 2), " MB total)...")
+
     tmp <- ctrMultiDownload(
       urls = urls,
       destfiles = files,
@@ -421,6 +425,12 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     ## 4 - merge versions by trial
     message("- Merging trial versions ", appendLF = FALSE)
 
+    # register deletion
+    on.exit(unlink(file.path(tempDir, paste0(
+      "h_m_", unique(historyDf[["_id"]]), ".json")
+    )), add = TRUE)
+
+    # do version merge
     res <- sapply(
       X = unique(historyDf[["_id"]]),
       FUN = function(i) {
@@ -470,7 +480,6 @@ ctrLoadQueryIntoDbCtgov2 <- function(
 
       message(". ", appendLF = FALSE)
       res <- nodbi::docdb_update(src = con, key = con$collection, query = "{}", value = f)
-      on.exit(try(unlink(f), silent = TRUE), add = TRUE)
       resAll <- c(resAll, res)
 
     }
@@ -484,10 +493,10 @@ ctrLoadQueryIntoDbCtgov2 <- function(
 
     # temporary file for trial ids and file names
     downloadsNdjson <- file.path(tempDir, "ctgov2_downloads.ndjson")
-    suppressMessages(unlink(downloadsNdjson))
+    unlink(downloadsNdjson)
     downloadsNdjsonCon <- file(downloadsNdjson, open = "at")
     on.exit(try(close(downloadsNdjsonCon), silent = TRUE), add = TRUE)
-    on.exit(try(unlink(downloadsNdjson), silent = TRUE), add = TRUE)
+    on.exit(unlink(downloadsNdjson), add = TRUE)
 
     # extract trial ids and file name and save in temporary file
     for (ndjsonFile in dir(
@@ -527,9 +536,9 @@ ctrLoadQueryIntoDbCtgov2 <- function(
   } # !is.null(documents.path)
 
   ## delete for any re-downloads
-  try(unlink(dir(
+  unlink(dir(
     path = tempDir, pattern = "ctgov_trials_[0-9]+.ndjson",
-    full.names = TRUE)), silent = TRUE)
+    full.names = TRUE))
 
   ## inform user -----------------------------------------------------
 

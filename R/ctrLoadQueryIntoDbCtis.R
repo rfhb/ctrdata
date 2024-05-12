@@ -112,7 +112,7 @@ ctrLoadQueryIntoDbCtis <- function(
 
   # temp file for mangled download
   fTrialsNdjson <- file.path(tempDir, "ctis_trials_1.ndjson")
-  on.exit(try(unlink(fTrialsNdjson), silent = TRUE), add = TRUE)
+  on.exit(unlink(fTrialsNdjson), add = TRUE)
   unlink(fTrialsNdjson)
 
   # need to iterate / paginate as total number cannot be determined
@@ -212,11 +212,6 @@ ctrLoadQueryIntoDbCtis <- function(
   # inform user
   message("found ", length(idsTrials), " trials")
 
-  # remove last download so as to become aware of
-  # any further trials if the query is re-run and
-  # previously downloaded files are used
-  unlink(tmp$destfile[1])
-
   # only count?
   if (only.count) {
     # return
@@ -245,7 +240,7 @@ ctrLoadQueryIntoDbCtis <- function(
 
   # convert partI and partsII details into ndjson file
   fPartIPartsIINdjson <- file.path(tempDir, "ctis_add_2.ndjson")
-  on.exit(try(unlink(fPartIPartsIINdjson), silent = TRUE), add = TRUE)
+  on.exit(unlink(fPartIPartsIINdjson), add = TRUE)
   unlink(fPartIPartsIINdjson)
   fPartIPartsIINdjsonCon <- file(fPartIPartsIINdjson, open = "at")
   on.exit(try(close(fPartIPartsIINdjsonCon), silent = TRUE), add = TRUE)
@@ -279,7 +274,7 @@ ctrLoadQueryIntoDbCtis <- function(
     ), file = i[2], sep = "\n")
     message(". ", appendLF = FALSE)
   }
-  try(unlink(paste0(fPartIPartsIINdjson, c("a", "b"))), silent = TRUE)
+  unlink(paste0(fPartIPartsIINdjson, c("a", "b")))
 
   ## api_3-9: more data ----------------------------------------------------
 
@@ -322,6 +317,12 @@ ctrLoadQueryIntoDbCtis <- function(
 
   message("\n(3/5) Downloading and processing additional data:")
 
+  # register deletion
+  on.exit(unlink(
+    file.path(tempDir, paste0("ctis_add_", 4:9, ".ndjson"))
+  ), add = TRUE)
+
+  # process
   for (e in 4:9) {
 
     urls <- sprintf(ctisEndpoints[e], idsTrials)
@@ -337,7 +338,6 @@ ctrLoadQueryIntoDbCtis <- function(
 
     # convert into ndjson file
     fAddNdjson <- file.path(tempDir, paste0("ctis_add_", e, ".ndjson"))
-    on.exit(try(unlink(fAddNdjson), silent = TRUE), add = TRUE)
     unlink(fAddNdjson)
 
     for (fi in seq_len(nrow(tmp))) {
@@ -383,7 +383,7 @@ ctrLoadQueryIntoDbCtis <- function(
   message("publicevaluation", appendLF = FALSE)
 
   fApplicationsJson <- file.path(tempDir, "ctis_add_10.json")
-  on.exit(try(unlink(fApplicationsJson), silent = TRUE), add = TRUE)
+  on.exit(unlink(fApplicationsJson), add = TRUE)
 
   # get ids of trial applications
   jqr::jq(
@@ -417,7 +417,7 @@ ctrLoadQueryIntoDbCtis <- function(
     verbose = verbose)
 
   fApplicationsNdjson <- file.path(tempDir, "ctis_add_10.ndjson")
-  on.exit(try(unlink(fApplicationsNdjson), silent = TRUE), add = TRUE)
+  on.exit(unlink(fApplicationsNdjson), add = TRUE)
   unlink(fApplicationsNdjson)
 
   for (i in seq_len(nrow(idsApplications))) {
@@ -476,7 +476,6 @@ ctrLoadQueryIntoDbCtis <- function(
 
     message(". ", appendLF = FALSE)
     res <- nodbi::docdb_update(src = con, key = con$collection, query = "{}", value = f)
-    on.exit(try(unlink(f), silent = TRUE), add = TRUE)
     resAll <- c(resAll, res)
 
   }
@@ -491,7 +490,7 @@ ctrLoadQueryIntoDbCtis <- function(
 
     # get temporary file
     downloadsNdjson <- file.path(tempDir, "ctis_downloads.ndjson")
-    on.exit(try(unlink(downloadsNdjson), silent = TRUE), add = TRUE)
+    on.exit(unlink(downloadsNdjson), add = TRUE)
 
     ## extract ids of lists per parts per trial
 
@@ -513,13 +512,17 @@ ctrLoadQueryIntoDbCtis <- function(
       flags = jqr::jq_flags(pretty = FALSE),
       out = downloadsNdjson
     )
-    try(unlink(fPartIPartsIINdjson), silent = TRUE)
+    unlink(fPartIPartsIINdjson)
+
+    # register deletion of outF
+    on.exit(unlink(file.path(tempDir, paste0(
+      "ctis_downloads_add_", 5L:9L, ".ndjson")
+    )), add = TRUE)
 
     # extract ids from additional data
     for (i in 5L:9L) {
       inF <- file.path(tempDir, paste0("ctis_add_", i, ".ndjson"))
       outF <- file.path(tempDir, paste0("ctis_downloads_add_", i, ".ndjson"))
-      on.exit(try(unlink(outF), silent = TRUE), add = TRUE)
       if (!file.exists(inF)) next
       jqr::jq(
         file(inF),
@@ -633,10 +636,10 @@ ctrLoadQueryIntoDbCtis <- function(
     epTypChars <- paste0(names(epTyp), "appl", "auth", collapse = "")
     epTypChars <- rawToChar(unique(charToRaw(epTypChars)))
 
-    try(unlink(downloadsNdjson), silent = TRUE)
+    unlink(downloadsNdjson)
     downloadsNdjsonCon <- file(downloadsNdjson, open = "at")
     on.exit(try(close(downloadsNdjsonCon), silent = TRUE), add = TRUE)
-    on.exit(try(unlink(downloadsNdjson), silent = TRUE), add = TRUE)
+    on.exit(unlink(downloadsNdjson), add = TRUE)
 
     for (fi in seq_len(nrow(tmp))) {
 
@@ -669,7 +672,7 @@ ctrLoadQueryIntoDbCtis <- function(
     # 3 - documents download
     close(downloadsNdjsonCon)
     dlFiles <- jsonlite::stream_in(file(downloadsNdjson), verbose = FALSE)
-    try(unlink(downloadsNdjson), silent = TRUE)
+    unlink(downloadsNdjson)
 
     # check if any documents
     if (!nrow(dlFiles)) {

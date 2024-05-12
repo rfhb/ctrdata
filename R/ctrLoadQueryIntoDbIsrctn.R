@@ -237,10 +237,10 @@ ctrLoadQueryIntoDbIsrctn <- function(
 
     # temporary file for trial ids and file names
     downloadsNdjson <- file.path(tempDir, "isrctn_downloads.ndjson")
-    suppressMessages(unlink(downloadsNdjson))
+    unlink(downloadsNdjson)
     downloadsNdjsonCon <- file(downloadsNdjson, open = "at")
     on.exit(try(close(downloadsNdjsonCon), silent = TRUE), add = TRUE)
-    on.exit(try(unlink(downloadsNdjson), silent = TRUE), add = TRUE)
+    on.exit(unlink(downloadsNdjson), add = TRUE)
 
     # extract trial ids and file name and save in temporary file
     for (ndjsonFile in dir(
@@ -286,9 +286,9 @@ ctrLoadQueryIntoDbIsrctn <- function(
   } # !is.null(documents.path)
 
   ## delete for any re-downloads
-  try(unlink(dir(
+  unlink(dir(
     path = tempDir, pattern = "isrctn_trials_.*.ndjson",
-    full.names = TRUE)), silent = TRUE)
+    full.names = TRUE))
 
   ## inform user -----------------------------------------------------
 
