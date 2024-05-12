@@ -60,15 +60,18 @@
 </ul></div>
 <div class="section level3">
 <h3 id="improvements-1-17-2-9000">Improvements<a class="anchor" aria-label="anchor" href="#improvements-1-17-2-9000"></a></h3>
-<ul><li>Add retrieval of historic versions of trial records from CTGOV2 (for CTIS, they are automatically retrieved)</li>
+<ul><li>Add retrieval of historic versions of trial records from CTGOV2 (automatically retrieved from CTIS, not available for other registers)</li>
 <li>Added typing of newly appearing fields from CTIS</li>
-<li>Increase continuous integration (CI) testing from 91% to 93%</li>
+<li>Increase continuous integration (CI) testing from 91% to 93.7%</li>
 <li>Added missing CI for the combination of DuckDB and CTGOV2</li>
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-1-17-2-9000">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-17-2-9000"></a></h3>
-<ul><li>Handle marginal case in <code><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code>
+<ul><li>Correct typing certain fields as (lists of) integers</li>
+<li>Handle marginal case in <code><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code>
 </li>
+<li>Changed <code>unlink</code> of intermediate files</li>
+<li>Minor vignettes corrections</li>
 </ul></div>
 </div>
     <div class="section level2">

@@ -4,13 +4,16 @@
 - File names for documents downloaded from `CTIS` now include the document type and use different separators (e.g., "parts2auth - SbjctInfaICF - ..." as abbreviation of "Subject information and informed consent form (for publication)", was previously "parts2auth_...")
 
 ## Improvements 
-- Add retrieval of historic versions of trial records from CTGOV2 (for CTIS, they are automatically retrieved)
+- Add retrieval of historic versions of trial records from CTGOV2 (automatically retrieved from CTIS, not available for other registers)
 - Added typing of newly appearing fields from CTIS
-- Increase continuous integration (CI) testing from 91% to 93%
+- Increase continuous integration (CI) testing from 91% to 93.7%
 - Added missing CI for the combination of DuckDB and CTGOV2
 
 ## Bug fixes
+- Correct typing certain fields as (lists of) integers
 - Handle marginal case in `dbGetFieldsIntoDf()`
+- Changed `unlink` of intermediate files
+- Minor vignettes corrections
 
 # ctrdata 1.17.2 (2024-02-25)
 
