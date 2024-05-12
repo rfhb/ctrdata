@@ -1,7 +1,7 @@
 ---
 title: "Retrieve clinical trial information"
 author: "Ralf Herold"
-date: 2024-01-14
+date: 2024-05-12
 output:
   rmarkdown::pdf_document:
     toc: true
@@ -52,7 +52,7 @@ ctrOpenSearchPagesInBrowser(
 
 ### Adjust search parameters and execute search in browser
 
-Refine the search until the trials of interest are listed in the browser. The total number of trials that can be retrieved with package `ctrdata` is intentionally limited to queries with at most 10000 result records.
+Refine the search until the trials of interest are listed in the browser. The total number of trials that can be retrieved with package `ctrdata` is intentionally limited to queries with at most 10,000 result records.
 
 ### Copy address from browser address bar to clipboard
 
@@ -91,10 +91,10 @@ ctrLoadQueryIntoDb(
 )$n
 # * Found search query from EUCTR: query=cancer&age=under-18&status=completed&phase=phase-one
 # * Checking trials in EUCTR...
-# Retrieved overview, multiple records of 97 trial(s) from 5 page(s) to be downloaded (estimate: 5 MB)
-# [1] 97
+# Retrieved overview, multiple records of 103 trial(s) from 6 page(s) to be downloaded (estimate: 10 MB)
+# [1] 103
 
-# Connect to a database and chose a table / collection
+# Connect to a database and chose a collection (table)
 db <- nodbi::src_sqlite(
   dbname = "sqlite_file.sql",
   collection = "test"
@@ -105,26 +105,23 @@ ctrLoadQueryIntoDb(
   queryterm = q,
   con = db
 )
-# * Found search query from EUCTR: query=cancer&age=under-18&status=completed&phase=phase-one
 # * Checking trials in EUCTR...
-# Retrieved overview, multiple records of 97 trial(s) from 5 page(s) to be downloaded (estimate: 5 MB)
+# Retrieved overview, multiple records of 103 trial(s) from 6 page(s) to be downloaded (estimate: 10 MB)
 # (1/3) Downloading trials...
-# Note: register server cannot compress data, transfer takes longer (estimate: 20 s)
-# Download status: 5 done; 0 in progress. Total size: 7.91 Mb (100%)... done!             
+# Note: register server cannot compress data, transfer takes longer (estimate: 100 s)
+# Download status: 6 done; 0 in progress. Total size: 8.73 Mb (100%)... done!             
 # (2/3) Converting to NDJSON (estimate: 2 s)...
 # (3/3) Importing records into database...
-# = Imported or updated 377 records on 97 trial(s) 
+# = Imported or updated 414 records on 103 trial(s)
 # No history found in expected format.
 # Updated history ("meta-info" in "test")
 # $n
-# [1] 377
+# [1] 414
 
 # Show which queries have been downloaded into database
 dbQueryHistory(con = db)
-#       query-timestamp query-register query-records
-# 1 2024-01-14 12:40:16          EUCTR           377
-#                                                   query-term
-# 1 query=cancer&age=under-18&status=completed&phase=phase-one
+#       query-timestamp query-register query-records                                                 query-term
+# 1 2024-05-12 17:56:11          EUCTR           414 query=cancer&age=under-18&status=completed&phase=phase-one
 ```
 
 With a file-base SQLite database, this takes about 20 seconds for about 300 records, with most of the time needed for internet-retrieval with is slow from this register. Speed is higher with other registers, with using MongoDB and with memory-based SQLite.
@@ -152,27 +149,27 @@ ctrLoadQueryIntoDb(
   euctrresults = TRUE,
   con = db
 )
-# * Found search query from EUCTR: query=cancer&age=under-18&status=completed&phase=phase-one
 # * Checking trials in EUCTR...
-# Retrieved overview, multiple records of 97 trial(s) from 5 page(s) to be downloaded (estimate: 5 MB)
+# Retrieved overview, multiple records of 103 trial(s) from 6 page(s) to be downloaded (estimate: 10 MB)
 # (1/3) Downloading trials...
-# Note: register server cannot compress data, transfer takes longer (estimate: 20 s)
-# Download status: 5 done; 0 in progress. Total size: 7.91 Mb (100%)... done!             
+# Note: register server cannot compress data, transfer takes longer (estimate: 100 s)
 # (2/3) Converting to NDJSON (estimate: 2 s)...
 # (3/3) Importing records into database...
-# = Imported or updated 377 records on 97 trial(s) 
-# * Checking results if available from EUCTR for 97 trials: 
-# (1/4) Downloading and extracting results (. = data, F = file[s] and data, x = none):
-# Download status: 97 done; 0 in progress. Total size: 48.64 Mb (100%)... done!             
-# Download status: 21 done; 0 in progress. Total size: 84.53 Kb (308%)... done!             
-# Download status: 21 done; 0 in progress. Total size: 84.53 Kb (308%)... done!             
-# Download status: 21 done; 0 in progress. Total size: 84.53 Kb (308%)... done!             
-# F . . . . F . . F . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+# = Imported or updated 414 records on 103 trial(s)
+# * Checking results if available from EUCTR for 103 trials: 
+# (1/4) Downloading results...
+# Download status: 103 done; 0 in progress. Total size: 59.71 Mb (100%)... done!             
+# Download status: 27 done; 0 in progress. Total size: 108.69 Kb (100%)... done!             
+# - extracting results (. = data, F = file[s] and data, x = none):
+# . . . . . . F . . . . F . . . . . . . F . . . . . . . . . . . . . . . . . . . . . . . . F . F F . F . .
+# F . . . F F . . . . . F . . . . . . F . . . F . 
 # (2/4) Converting to NDJSON (estimate: 8 s)...
 # (3/4) Importing results into database (may take some time)...
 # (4/4) Results history: not retrieved (euctrresultshistory = FALSE)
 # = Imported or updated results for 76 trials
 # Updated history ("meta-info" in "test")
+# $n
+# [1] 414
 ```
 
 With a file-base SQLite database, this takes about 4 minutes for about 300 records, with most of the time needed for merging result- and protocol-related information in SQLite; this is much faster with MongoDB and PostgreSQL.
@@ -188,16 +185,18 @@ ctrLoadQueryIntoDb(
   queryterm = "https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&recrs=e&age=0&intr=Drug",
   con = db
 )
-# * Appears specific for CTGOV CLASSIC
+# * Appears specific for CTGOV Classic website
 # * Found search query from CTGOV: cond=neuroblastoma&recrs=e&age=0&intr=Drug
-# * Checking trials in CTGOV classic...
-# Retrieved overview, records of 216 trial(s) are to be downloaded (estimate: 1.7 MB)
+# * Checking trials using CTGOV Classic website...
+# Retrieved overview, records of 226 trial(s) are to be downloaded (estimate: 1.8 MB)
 # (1/3) Downloading trial file...
-# Download status: 1 done; 0 in progress. Total size: 1.52 Mb (100%)... done!             
+# Download status: 1 done; 0 in progress. Total size: 1.59 Mb (100%)... done!             
 # (2/3) Converting to NDJSON (estimate: 10 s)...
 # (3/3) Importing records into database...
-# = Imported or updated 216 trial(s)               
+# = Imported or updated 226 trial(s)                 
 # Updated history ("meta-info" in "test")
+# $n
+# [1] 226
 ```
 
 With a file-base SQLite database, this takes about 10 seconds for about 200 records.
@@ -207,18 +206,32 @@ Note that in this example, a warning message may be issued from importing an NDJ
 
 ## Add records from CTIS register into the same collection
 
-As of April 2023, more than 160 trials are publicly accessible in CTIS, which has to be used since January 2023 for new clinical trials in the EU. Queries in the CTIS search interface can be automatically copied to the clipboard so that a user can paste them into `queryterm`, see [here](https://rfhb.github.io/ctrdata/#id_3-script-to-automatically-copy-users-query-from-web-browser). 
+As of May 2024, more than 750 trials are publicly accessible in CTIS, which has to be used since January 2023 for new clinical trials in the European Union (EU). Queries in the CTIS search interface can be automatically copied to the clipboard so that a user can paste them into `queryterm`, see [here](https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser). 
 
 ```{r}
 # Retrieve trials from another register:
 ctrLoadQueryIntoDb(
-  queryterm = "ageGroupCode=3",
+  queryterm = "ageGroupCode=2",
   register = "CTIS",
   con = db
 )
-
+# * Found search query from CTIS: ageGroupCode=2
+# * Checking trials in CTIS...
+# (1/5) Downloading trials list . found 78 trials
+# (2/5) Downloading and processing part I and parts II... (estimate: 10 Mb)
+# Download status: 78 done; 0 in progress. Total size: 16.26 Mb (100%)... done!             
+# . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+# (3/5) Downloading and processing additional data:
+# publicevents, summary, layperson, csr, cm, inspections, publicevaluation (estimate: 7 Mb)
+# Download status: 160 done; 0 in progress. Total size: 4.26 Mb (100%)... done!             
+# 78
+# (4/5) Importing records into database...
+# (5/5) Updating with additional data: . . .       
+# = Imported 78, updated 78 / 78 / 1 record(s) on 78 trial(s)
+# Updated history ("meta-info" in "test")
+# $n
+# [1] 78
 ```
-
 
 ## Add personal annotations
 
@@ -233,25 +246,19 @@ ctrLoadQueryIntoDb(
   annotation.mode = "append",
   con = db
 )
-# * Found search query from CTIS: ageGroupCode=3
-# * Checking trials in CTIS...
-# (1/5) Downloading trials list . . found 392 trials
-# (2/5) Downloading and processing part I and parts II... (estimate: 80 Mb)
-# Download status: 392 done; 0 in progress. Total size: 62.56 Mb (100%)... done!             
-# Download status: 2 done; 0 in progress. Total size: 30 b (100%)... done!             
-# Download status: 2 done; 0 in progress. Total size: 30 b (100%)... done!             
-# Download status: 2 done; 0 in progress. Total size: 30 b (100%)... done!             
-# . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-# (3/5) Downloading and processing additional data:
-# publicevents, summary, layperson, csr, cm, inspections, publicevaluation (estimate: 20 Mb)
-# Download status: 680 done; 0 in progress. Total size: 17.83 Mb (100%)... done!             
-# 390
-# (4/5) Importing records into database...
-# (5/5) Updating with additional data: . . . . .   
-# = Imported / updated 392 / 390 / 390 / 4 / 1 / 3 records on 392 trial(s)
+# * Appears specific for CTGOV Classic website
+# * Found search query from CTGOV: cond=neuroblastoma&recrs=e&age=0&intr=Drug&cntry=DE
+# * Checking trials using CTGOV Classic website...
+# Retrieved overview, records of 15 trial(s) are to be downloaded (estimate: 0.12 MB)
+# (1/3) Downloading trial file...
+# Download status: 1 done; 0 in progress. Total size: 86.91 Kb (100%)... done!             
+# (2/3) Converting to NDJSON (estimate: 0.8 s)...
+# (3/3) Importing records into database...
+# = Imported or updated 15 trial(s)                
+# = Annotated retrieved records (15 records)
 # Updated history ("meta-info" in "test")
 # $n
-# [1] 392
+# [1] 15
 ```
 
 ## Add information using trial identifiers
@@ -283,15 +290,15 @@ for (idSet in idSets) {
   # import
   setResult <- ctrLoadQueryIntoDb(
 
-    # for CTGOV classic, EUCTR, ISRCTN use:
+    # for CTGOV Classic, EUCTR, ISRCTN use:
     # queryterm = paste0(idSet, collapse = "+OR+"),
     
-    # for CTGOV use: 
-    queryterm = paste0("https://www.clinicaltrials.gov/search?term=", 
-                       paste0(idSet, collapse = " ")),
+    # for CTGOV2 use: 
+    queryterm = paste0("term=", paste0(idSet, collapse = " ")),
     
     # specify register that holds the information
-    # register = "CTGOV",
+    register = "CTGOV2",
+    
     con = db
   )
   
