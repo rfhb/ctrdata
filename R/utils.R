@@ -645,10 +645,10 @@ typeVars <- list(
   "number_of_arms" = "ctrInt",
   "enrollment"     = "ctrInt",
   "rank"           = "ctrInt",
-  "clinical_results.baseline.analyzed_list.analyzed.count_list.count.value" = "ctrInt",
-  "clinical_results.baseline.measure_list.measure.class_list.class.analyzed_list.analyzed.count_list.count.value" = "ctrInt",
-  "clinical_results.outcome_list.outcome.measure.analyzed_list.analyzed.count_list.count.value" = "ctrInt",
-  "clinical_results.outcome_list.outcome.measure.class_list.class.analyzed_list.analyzed.count_list.count.value" = "ctrInt",
+  "clinical_results.baseline.analyzed_list.analyzed.count_list.count.value" = "ctrIntList",
+  "clinical_results.baseline.measure_list.measure.class_list.class.analyzed_list.analyzed.count_list.count.value" = "ctrIntList",
+  "clinical_results.outcome_list.outcome.measure.analyzed_list.analyzed.count_list.count.value" = "ctrIntList",
+  "clinical_results.outcome_list.outcome.measure.class_list.class.analyzed_list.analyzed.count_list.count.value" = "ctrIntList",
   #
   # - ISRCTN
   "participants.targetEnrolment"     = "ctrInt",
@@ -936,10 +936,11 @@ typeField <- function(dv, fn) {
   if (!is.null(ft)) ft <- switch(
     typeVars[[fn]],
     "ctrInt" = 'as.integer(x = x)',
+    "ctrIntList" = 'sapply(x, function(i) {i[i == "NA"] <- NA; as.integer(i)}, USE.NAMES = FALSE)',
     "ctrYesNo" = 'sapply(x, function(i) if (is.na(i)) NA else
-       switch(i, "Yes" = TRUE, "No" = FALSE, NA), simplify = TRUE)',
+       switch(i, "Yes" = TRUE, "No" = FALSE, NA), simplify = TRUE, USE.NAMES = FALSE)',
     "ctrFalseTrue" = 'if (is.numeric(x)) as.logical(x) else
-       sapply(x, function(i) switch(i, "true" = TRUE, "false" = FALSE, NA))',
+       sapply(x, function(i) switch(i, "true" = TRUE, "false" = FALSE, NA), USE.NAMES = FALSE)',
     "ctrDate" = 'as.Date(x, tryFormats =
        c("%Y-%m-%d", "%Y-%m", "%Y-%m-%d %H:%M:%S", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M:%S%z"))',
     "ctrDateUs" = 'as.Date(x, tryFormats = c("%b %e, %Y", "%Y-%m-%d", "%Y-%m"))',
