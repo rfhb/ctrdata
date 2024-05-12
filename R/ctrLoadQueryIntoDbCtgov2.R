@@ -44,19 +44,23 @@ ctrLoadQueryIntoDbCtgov2 <- function(
   ## process parameters ------------------------------------------------
 
   ## check
-  ctgov2history <- as.character(ctgov2history)
+  if (!is.character(ctgov2history)) {
+    ctgov2history <- deparse(ctgov2history)
+  }
   if (!length(ctgov2history) ||
-      !grepl("^(FALSE|TRUE|-1|1|[0-9]+:[0-9]+|[1-9]+[0-9]+|[1-9]+)$", ctgov2history)) {
+      !grepl("^(FALSE|TRUE|-1L?|1L?|[0-9]+L?:[0-9]+L?|[1-9]+[0-9]+L?|[1-9]+L?)$", ctgov2history)) {
     message("Parameter 'ctgov2history' invalid, ignored: ", ctgov2history)
     ctgov2history <- "FALSE"
   }
 
   # append if to update
   queryterm <- paste0(queryterm, "&", queryupdateterm)
+
+  # mangle
   queryterm <- gsub("&$", "", queryterm)
   queryterm <- gsub("%20", " ", queryterm) # for URLencode
 
-  # translation to ClinicalTrials.gov REST API 2.0.0-draft
+  # translation to ClinicalTrials.gov REST API 2
   # https://clinicaltrials.gov/data-about-studies/learn-about-api
 
   # distance=50 seems to be added in webinterface
