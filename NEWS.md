@@ -1,4 +1,4 @@
-# ctrdata 1.17.2.9000
+# ctrdata 1.18.0
 
 ## Possibly breaking change
 - File names for documents downloaded from `CTIS` now include the document type and use different separators (e.g., "parts2auth - SbjctInfaICF - ..." as abbreviation of "Subject information and informed consent form (for publication)", was previously "parts2auth_...")
