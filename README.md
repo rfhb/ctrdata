@@ -145,19 +145,19 @@ The functions are listed in the approximate order of use in a user’s
 workflow (in bold, main functions). See also the [package documentation
 overview](https://rfhb.github.io/ctrdata/reference/index.html).
 
-| Function name                      | Function purpose                                                                                                               |
-|------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
-| `ctrOpenSearchPagesInBrowser()`    | Open search pages of registers or execute search in web browser                                                                |
-| `ctrFindActiveSubstanceSynonyms()` | Find synonyms and alternative names for an active substance                                                                    |
-| `ctrGetQueryUrl()`                 | Import from clipboard the URL of a search in one of the registers                                                              |
-| `ctrLoadQueryIntoDb()`             | **Retrieve (download) or update, and annotate, information on trials from a register and store in a collection in a database** |
-| `dbQueryHistory()`                 | Show the history of queries that were downloaded into the collection                                                           |
-| `dbFindIdsUniqueTrials()`          | **Get the identifiers of de-duplicated trials in the collection**                                                              |
-| `dbFindFields()`                   | Find names of variables (fields) in the collection                                                                             |
-| `dbGetFieldsIntoDf()`              | **Create a data frame (or tibble) from trial records in the database with the specified fields**                               |
-| `dfTrials2Long()`                  | Transform the data.frame from `dbGetFieldsIntoDf()` into a long name-value data.frame, including deeply nested fields          |
-| `dfName2Value()`                   | From a long name-value data.frame, extract values for variables (fields) of interest (e.g., endpoints)                         |
-| `dfMergeVariablesRelevel()`        | Merge variables into a new variable, optionally map values to a new set of levels                                              |
+| Function name | Function purpose |
+|----|----|
+| `ctrOpenSearchPagesInBrowser()` | Open search pages of registers or execute search in web browser |
+| `ctrFindActiveSubstanceSynonyms()` | Find synonyms and alternative names for an active substance |
+| `ctrGetQueryUrl()` | Import from clipboard the URL of a search in one of the registers |
+| `ctrLoadQueryIntoDb()` | **Retrieve (download) or update, and annotate, information on trials from a register and store in a collection in a database** |
+| `dbQueryHistory()` | Show the history of queries that were downloaded into the collection |
+| `dbFindIdsUniqueTrials()` | **Get the identifiers of de-duplicated trials in the collection** |
+| `dbFindFields()` | Find names of variables (fields) in the collection |
+| `dbGetFieldsIntoDf()` | **Create a data frame (or tibble) from trial records in the database with the specified fields** |
+| `dfTrials2Long()` | Transform the data.frame from `dbGetFieldsIntoDf()` into a long name-value data.frame, including deeply nested fields |
+| `dfName2Value()` | From a long name-value data.frame, extract values for variables (fields) of interest (e.g., endpoints) |
+| `dfMergeVariablesRelevel()` | Merge variables into a new variable, optionally map values to a new set of levels |
 
 ## Databases for use with `ctrdata`
 
@@ -174,14 +174,14 @@ equally be used with functions of other packages, such as `nodbi` (last
 row in table) or, in case of MongoDB as database backend, `mongolite`
 (see vignettes).
 
-| Purpose                                   | Function call                                                                                                           |
-|-------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
-| Create **SQLite** database connection     | `dbc <- nodbi::src_sqlite(dbname = "name_of_my_database", collection = "name_of_my_collection")`                        |
-| Create **MongoDB** database connection    | `dbc <- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")`                             |
-| Create **PostgreSQL** database connection | `dbc <- nodbi::src_postgres(dbname = "name_of_my_database"); dbc[["collection"]] <- "name_of_my_collection"`            |
-| Create **DuckDB** database connection     | `dbc <- nodbi::src_duckdb(dbdir = "name_of_my_database", collection = "name_of_my_collection")`                         |
-| Use connection with `ctrdata` functions   | `ctrdata::{ctrLoadQueryIntoDb, dbQueryHistory, dbFindIdsUniqueTrials, dbFindFields, dbGetFieldsIntoDf}(con = dbc, ...)` |
-| Use connection with `nodbi` functions     | e.g., `nodbi::docdb_query(src = dbc, key = dbc$collection, ...)`                                                        |
+| Purpose | Function call |
+|----|----|
+| Create **SQLite** database connection | `dbc <- nodbi::src_sqlite(dbname = "name_of_my_database", collection = "name_of_my_collection")` |
+| Create **MongoDB** database connection | `dbc <- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")` |
+| Create **PostgreSQL** database connection | `dbc <- nodbi::src_postgres(dbname = "name_of_my_database"); dbc[["collection"]] <- "name_of_my_collection"` |
+| Create **DuckDB** database connection | `dbc <- nodbi::src_duckdb(dbdir = "name_of_my_database", collection = "name_of_my_collection")` |
+| Use connection with `ctrdata` functions | `ctrdata::{ctrLoadQueryIntoDb, dbQueryHistory, dbFindIdsUniqueTrials, dbFindFields, dbGetFieldsIntoDf}(con = dbc, ...)` |
+| Use connection with `nodbi` functions | e.g., `nodbi::docdb_query(src = dbc, key = dbc$collection, ...)` |
 
 ## Data model of `ctrdata`
 
@@ -511,7 +511,7 @@ ctrLoadQueryIntoDb(
 Queries in the CTIS search interface can be automatically copied to the
 clipboard so that a user can paste them into `queryterm`, see
 [here](#2-script-to-automatically-copy-users-query-from-web-browser). As
-of 2024-04-27, there are more than 730 trials publicly accessible in
+of 2024-05-13, there are more than 780 trials publicly accessible in
 CTIS. See [below](#documents-example) for how to download documents from
 CTIS.
 
@@ -917,15 +917,41 @@ See also <https://app.codecov.io/gh/rfhb/ctrdata/tree/master/R>
 
 ``` r
 tinytest::test_all()
-# test_ctrdata_ctrfindactivesubstance.R    4 tests OK 1.4s
-# test_ctrdata_other_functions.R   63 tests OK 2.6s
-# test_ctrdata_sqlite_ctgov.R...   51 tests OK 1.1s
-# test_ctrdata_sqlite_ctgov2.R..   47 tests OK 1.6s
-# test_ctrdata_sqlite_ctis.R....  187 tests OK 9.2
-# test_ctrdata_sqlite_euctr.R...  101 tests OK 58.7s
-# test_ctrdata_sqlite_isrctn.R..   37 tests OK 17.2s
-# test_euctr_error_sample.R.....    8 tests OK 0.6s
-# All ok, 498 results (13m 17.2s)
+# test_ctrdata_ctrfindactivesubstance.R    4 tests OK 1.6s
+# test_ctrdata_duckdb_ctgov2.R..   50 tests OK 2.4s
+# test_ctrdata_duckdb_ctis.R....  172 tests OK 15.2s
+# test_ctrdata_mongo_local_ctgov.R   51 tests OK 57.7s
+# test_ctrdata_other_functions.R   64 tests OK 3.8s
+# test_ctrdata_postgres_ctgov2.R   50 tests OK 2.6s
+# test_ctrdata_sqlite_ctgov.R...   52 tests OK 56.0s
+# test_ctrdata_sqlite_ctgov2.R..   50 tests OK 2.3s
+# test_ctrdata_sqlite_ctis.R....  194 tests OK 12.5s
+# test_ctrdata_sqlite_euctr.R...  105 tests OK 1.3s
+# test_ctrdata_sqlite_isrctn.R..   38 tests OK 21.4s
+# test_euctr_error_sample.R.....    8 tests OK 0.9s
+# All ok, 838 results (38m 48.8s)
+
+covr::package_coverage(path = ".", type = "tests")
+# ctrdata Coverage: 93.68%
+# R/zzz.R: 80.95%
+# R/ctrRerunQuery.R: 89.16%
+# R/ctrLoadQueryIntoDbEuctr.R: 90.03%
+# R/utils.R: 90.89%
+# R/ctrLoadQueryIntoDbIsrctn.R: 92.11%
+# R/dbGetFieldsIntoDf.R: 93.06%
+# R/ctrLoadQueryIntoDbCtgov2.R: 94.05%
+# R/ctrLoadQueryIntoDb.R: 94.12%
+# R/ctrLoadQueryIntoDbCtis.R: 94.13%
+# R/ctrLoadQueryIntoDbCtgov.R: 95.04%
+# R/dbFindFields.R: 95.24%
+# R/ctrGetQueryUrl.R: 96.00%
+# R/ctrOpenSearchPagesInBrowser.R: 97.22%
+# R/dfMergeVariablesRelevel.R: 97.30%
+# R/dfTrials2Long.R: 97.35%
+# R/dbFindIdsUniqueTrials.R: 97.77%
+# R/dfName2Value.R: 98.61%
+# R/ctrFindActiveSubstanceSynonyms.R: 100.00%
+# R/dbQueryHistory.R: 100.00%
 ```
 
 ## Future features
