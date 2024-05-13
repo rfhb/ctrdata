@@ -2,6 +2,7 @@
 
 # set server
 httr::set_config(httr::timeout(seconds = 60))
+suppressWarnings(require(tibble))
 
 #### ctrLoadQueryIntoDb ####
 
