@@ -2,16 +2,18 @@
 
 - new development version
 
+- update user information about estimated download sizes for `CTIS`
+
 # ctrdata 1.18.0 (2024-05-13)
 
 ## Possibly breaking change
 - File names for documents downloaded from `CTIS` now include the document type and use different separators (e.g., "parts2auth - SbjctInfaICF - ..." as abbreviation of "Subject information and informed consent form (for publication)", was previously "parts2auth_...")
 
 ## Improvements 
-- Add retrieval of historic versions of trial records from CTGOV2 (automatically retrieved from CTIS, not available for other registers)
-- Added typing of newly appearing fields from CTIS
+- Add retrieval of historic versions of trial records from `CTGOV2` (automatically retrieved from `CTIS`, not available for other registers)
+- Added typing of newly appearing fields from `CTIS`
 - Increase testing coverage to 93.7% locally
-- Added missing CI for the combination of DuckDB and CTGOV2
+- Added missing CI for the combination of `DuckDB` and `CTGOV2`
 
 ## Bug fixes
 - Correct typing certain fields as (lists of) integers
