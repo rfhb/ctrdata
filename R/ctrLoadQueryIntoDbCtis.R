@@ -131,6 +131,13 @@ ctrLoadQueryIntoDbCtis <- function(
     message(". ", appendLF = FALSE)
 
     # early exit
+    if (!nrow(tmp)) {
+      warning("Could not be retrieved, check 'queryterm' and / or 'register'. ",
+              call. = FALSE
+      )
+      message("API call: ", url)
+      return(emptyReturn)
+    }
     if (tmp$status_code[1] != 200L) {
       warning("Could not be retrieved, check 'queryterm' and / or 'register'. ",
               "\nAPI returned: ", tmp$error[1],
