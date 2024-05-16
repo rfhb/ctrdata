@@ -1,8 +1,8 @@
 # ctrdata 1.18.0.9000
 
 - new development version
-
 - update user information about estimated download sizes for `CTIS`
+- reduce size of demo database in package, addressing `CRAN` notes
 
 # ctrdata 1.18.0 (2024-05-13)
 
