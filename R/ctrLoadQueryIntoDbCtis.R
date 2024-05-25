@@ -687,17 +687,29 @@ ctrLoadQueryIntoDbCtis <- function(
     } else {
 
       # remove duplicate files based on their title
+
+      # - robustly sanitise file name
+      dlFiles$title <- gsub("[^[:alnum:] ._-]", "",  dlFiles$title)
+
+      # - normalise punctuation found with various file titles
+      dlFiles$title <- gsub("_|, |: ", " ", dlFiles$title)
+      dlFiles$title <- gsub("  +", " ", dlFiles$title)
+
+      # - prefer from CTA part of highest order, see above
+      #   for rle, disregard file title capitalisation
       dlFiles$part <- ordered(dlFiles$part, orderedParts)
-      dlFiles <- dlFiles[order(dlFiles$title, dlFiles$part), , drop = FALSE]
-      rl <- rle(dlFiles$title)
+      dlFiles <- dlFiles[order(tolower(dlFiles$title), dlFiles$part), , drop = FALSE]
+      rl <- rle(tolower(dlFiles$title))
       rl <- unlist(sapply(rl$lengths, function(i) c(TRUE, rep(FALSE, i - 1L))))
+
+      # - create deduplicated files data frame
       dlFiles <- dlFiles[rl, , drop = FALSE]
 
       # calculate prefix for document type
       dlFiles$prefix <- paste0(
-        # type in CTIS
+        # - type in CTIS
         dlFiles$part, " - ",
-        # type of document
+        # - type of document
         abbreviate(
           tools::toTitleCase(
             stringi::stri_replace_all_fixed(
@@ -710,9 +722,8 @@ ctrLoadQueryIntoDbCtis <- function(
       # add destination file name
       dlFiles$filename <- paste0(
         dlFiles$prefix, " - ",
-        # robustly sanitised file name
-        gsub("[^[:alnum:] ._-]", "",  dlFiles$title),
-        ".", dlFiles$fileTypeLabel)
+        dlFiles$title, ".",
+        dlFiles$fileTypeLabel)
 
       #### api_11: urls ####
 
