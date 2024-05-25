@@ -1131,6 +1131,9 @@ ctrMultiDownload <- function(
     "headers" = character(length(toDo))
   )
 
+  # remove any duplicates
+  downloadValue <- unique(downloadValue)
+
   # does not error in case any of the individual requests fail
   # inspect the return value to find out which were successful
   # make no more than 3 attempts to complete downloading
