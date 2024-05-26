@@ -694,7 +694,7 @@ ctrLoadQueryIntoDbCtis <- function(
       # - normalise punctuation found with various file titles
       dlFiles$title <- gsub("_|, |: ", " ", dlFiles$title)
       dlFiles$title <- gsub("  +", " ", dlFiles$title)
-      dlFiles$title <- twimws(dlFiles$title)
+      dlFiles$title <- trimws(dlFiles$title)
 
       # - prefer from CTA part of highest order, see above
       #   for rle, disregard file title capitalisation
