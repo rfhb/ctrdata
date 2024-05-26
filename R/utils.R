@@ -1313,7 +1313,7 @@ ctrDocsDownload <- function(
   # check if destination document exists
   dlFiles$filepathname <- file.path(dlFiles$filepath, dlFiles$filename)
   dlFiles$fileexists <- file.exists(dlFiles$filepathname) &
-    file.size(dlFiles$filepathname) > 10L
+    file.size(dlFiles$filepathname) > 20L
 
   # placeholder or files
   if (is.null(documents.regexp)) {
