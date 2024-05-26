@@ -31,7 +31,7 @@ knitr::opts_chunk$set(
 
 General information on the `ctrdata` package is available here: [https://github.com/rfhb/ctrdata](https://github.com/rfhb/ctrdata).
 
-Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: Ralf Herold (2022). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.9.0. https://cran.r-project.org/package=ctrdata
+Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: Ralf Herold (2024). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.18.0. https://cran.r-project.org/package=ctrdata
 
 ## Preparations
 
