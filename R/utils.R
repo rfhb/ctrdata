@@ -310,6 +310,7 @@ typeVars <- list(
   "mscTrialNotificationsInfoList.mscNotificationsListInfo.date" = "ctrDate",
   "mscTrialNotificationsInfoList.mscNotificationsListInfo.submitDate" = "ctrDate",
   "mscTrialNotificationsInfoList.mscNotificationsListInfo.versions.versionDate" = "ctrDate",
+  "mscTrialNotificationsInfoList.mscNotificationsListInfo.withdrawDate" = "ctrDate",
   "primarySponsor.fromDate" = "ctrDate",
   "publicEvaluation.decisions.decisionDate" = "ctrDate",
   "publicEvaluation.partIAssessmentOutcomeDate" = "ctrDate",
