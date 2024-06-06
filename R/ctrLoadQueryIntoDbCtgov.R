@@ -228,7 +228,8 @@ ctrLoadQueryIntoDbCtgov <- function(
     message()
 
     # get document trial id and file name
-    dlFiles <- jsonlite::stream_in(file(downloadsNdjson), verbose = FALSE)
+    dlFiles <- jsonlite::stream_in(
+      file(downloadsNdjson), pagesize = 5000L, verbose = FALSE)
 
     # check if any documents
     if (!nrow(dlFiles)) {

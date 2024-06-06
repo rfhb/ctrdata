@@ -338,7 +338,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
               " .history.changes[] | { ",
               '"_id": "', sub(".+_(NCT[0-9]+)[.]json", "\\1", i), '", ',
               "version_number: .version, version_date: .date }"
-            ))), verbose = FALSE)})
+            ))), pagesize = 5000L, verbose = FALSE)})
     #
     historyDf <- do.call(rbind, historyDf)
     if (verbose) {
@@ -512,7 +512,8 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     close(downloadsNdjsonCon)
 
     # get document trial id and file name
-    dlFiles <- jsonlite::stream_in(file(downloadsNdjson), verbose = FALSE)
+    dlFiles <- jsonlite::stream_in(
+      file(downloadsNdjson), pagesize = 5000L, verbose = FALSE)
 
     # check if any documents
     if (!nrow(dlFiles)) {

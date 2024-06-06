@@ -400,7 +400,8 @@ ctrLoadQueryIntoDbCtis <- function(
     out = fApplicationsJson
   )
 
-  idsApplications <- jsonlite::stream_in(file(fApplicationsJson), verbose = FALSE)
+  idsApplications <- jsonlite::stream_in(
+    file(fApplicationsJson), pagesize = 5000L, verbose = FALSE)
 
   dlFiles <- apply(idsApplications, 1, function(r) {
     data.frame(
@@ -563,14 +564,16 @@ ctrLoadQueryIntoDbCtis <- function(
     }
 
     # convert and merge by ids
-    dlFiles <- jsonlite::stream_in(file(downloadsNdjson), verbose = FALSE)
+    dlFiles <- jsonlite::stream_in(
+      file(downloadsNdjson), pagesize = 5000L, verbose = FALSE)
     if (nrow(rfiIds1)) {dlFiles <- merge(dlFiles, rfiIds1, all.x = TRUE)}
     if (nrow(rfiIds2)) {dlFiles <- merge(dlFiles, rfiIds2, all.x = TRUE)}
     if (nrow(eventIds)) {dlFiles <- merge(dlFiles, eventIds, all.x = TRUE)}
     for (i in 5L:9L) {
       outF <- file.path(tempDir, paste0("ctis_downloads_add_", i, ".ndjson"))
       if (!file.exists(outF)) next
-      tmp <- jsonlite::stream_in(file(outF), verbose = FALSE)
+      tmp <- jsonlite::stream_in(
+        file(outF), pagesize = 5000L, verbose = FALSE)
       if (nrow(tmp)) {dlFiles <- merge(dlFiles, tmp, all.x = TRUE)}
     }
 
@@ -678,7 +681,8 @@ ctrLoadQueryIntoDbCtis <- function(
 
     # 3 - documents download
     close(downloadsNdjsonCon)
-    dlFiles <- jsonlite::stream_in(file(downloadsNdjson), verbose = FALSE)
+    dlFiles <- jsonlite::stream_in(
+      file(downloadsNdjson), pagesize = 5000L, verbose = FALSE)
     unlink(downloadsNdjson)
 
     # check if any documents
