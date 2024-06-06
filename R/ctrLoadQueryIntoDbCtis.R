@@ -252,6 +252,7 @@ ctrLoadQueryIntoDbCtis <- function(
   fPartIPartsIINdjsonCon <- file(fPartIPartsIINdjson, open = "at")
   on.exit(try(close(fPartIPartsIINdjsonCon), silent = TRUE), add = TRUE)
 
+  fi <- 0L
   for (fn in tmp[["destfile"]]) {
     if (!file.exists(fn)) next
     jqr::jq(
@@ -261,7 +262,8 @@ ctrLoadQueryIntoDbCtis <- function(
       flags = jqr::jq_flags(pretty = FALSE),
       out = fPartIPartsIINdjsonCon
     )
-    message(". ", appendLF = FALSE)
+    fi <- fi + 1L
+    message(fi, rep("\b", nchar(fi)), appendLF = FALSE)
   }
   close(fPartIPartsIINdjsonCon)
 
