@@ -205,6 +205,11 @@ ctrLoadQueryIntoDbCtgov <- function(
 
   if (!is.null(documents.path)) {
 
+    # user info
+    message(
+      "* Checking for documents...\n",
+      "- Getting links to documents")
+
     # temporary file for trial ids and file names
     downloadsNdjson <- file.path(tempDir, "ctgov_downloads.ndjson")
     unlink(downloadsNdjson)
@@ -225,7 +230,7 @@ ctrLoadQueryIntoDbCtgov <- function(
       message(". ", appendLF = FALSE)
     }
     close(downloadsNdjsonCon)
-    message()
+    message("\r", appendLF = FALSE)
 
     # get document trial id and file name
     dlFiles <- jsonlite::stream_in(

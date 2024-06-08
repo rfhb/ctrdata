@@ -1293,7 +1293,7 @@ ctrDocsDownload <- function(
   }
 
   # continue after if
-  message("* Downloading documents into 'documents.path' = ", documents.path)
+  message("- Downloading documents into 'documents.path' = ", documents.path)
 
   # canonical directory path
   documents.path <- normalizePath(documents.path, mustWork = TRUE)

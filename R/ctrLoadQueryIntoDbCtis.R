@@ -263,7 +263,7 @@ ctrLoadQueryIntoDbCtis <- function(
       out = fPartIPartsIINdjsonCon
     )
     fi <- fi + 1L
-    message(fi, rep("\b", nchar(fi)), appendLF = FALSE)
+    message(fi, "\r", appendLF = FALSE)
   }
   close(fPartIPartsIINdjsonCon)
 
@@ -284,6 +284,7 @@ ctrLoadQueryIntoDbCtis <- function(
     message(". ", appendLF = FALSE)
   }
   unlink(paste0(fPartIPartsIINdjson, c("a", "b")))
+  message("\r", appendLF = FALSE)
 
   ## api_3-9: more data ----------------------------------------------------
 
@@ -324,7 +325,7 @@ ctrLoadQueryIntoDbCtis <- function(
 
   }
 
-  message("\n(3/5) Downloading and processing additional data:")
+  message("(3/5) Downloading and processing additional data:")
 
   # register deletion
   on.exit(unlink(
@@ -467,13 +468,13 @@ ctrLoadQueryIntoDbCtis <- function(
       append = TRUE,
       sep = "\n")
 
-    message(i, rep("\b", nchar(i)), appendLF = FALSE)
+    message(i, "\r", appendLF = FALSE)
 
   }
 
   ## database import -----------------------------------------------------
 
-  message("\n(4/5) Importing records into database...")
+  message("(4/5) Importing records into database...")
 
   # dbCTRLoadJSONFiles operates on pattern = ".+_trials_.*.ndjson"
   imported <- dbCTRLoadJSONFiles(dir = tempDir, con = con, verbose = verbose)
@@ -496,7 +497,9 @@ ctrLoadQueryIntoDbCtis <- function(
   if (!is.null(documents.path)) {
 
     # 1 - get ids of lists (which include urls to download)
-    message("- Getting ids of lists with document information")
+    message(
+      "* Checking for documents...\n",
+      "- Getting ids of lists with document information")
 
     # get temporary file
     downloadsNdjson <- file.path(tempDir, "ctis_downloads.ndjson")
@@ -677,7 +680,7 @@ ctrLoadQueryIntoDbCtis <- function(
        out = downloadsNdjsonCon
       )
 
-      message(fi, rep("\b", nchar(fi)), appendLF = FALSE)
+      message(fi, "\r", appendLF = FALSE)
 
     } # for
 
