@@ -344,6 +344,7 @@ typeVars <- list(
   "publicevents.temporaryHaltList.submissionDate" = "ctrDate",
   "recruitmentStartDate" = "ctrDate",
   "submissionDate" = "ctrDate",
+  "summary.intermediateDate" = "ctrDate",
   "summary.submissionDate" = "ctrDate",
   "trialEndDate" = "ctrDate",
   "trialStartDate" = "ctrDate",
