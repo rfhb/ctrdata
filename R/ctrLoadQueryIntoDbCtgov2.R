@@ -84,13 +84,13 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     #
     "filter.advanced" = list(
       "extract" = list(
-        "resFirstPost=([0-9-]+)_?([0-9-]*)(&.+|$)",
-        "primComp=([0-9-]+)_?([0-9-]*)(&.+|$)",
-        "studyComp=([0-9-]+)_?([0-9-]*)(&.+|$)",
-        "lastUpdPost=([0-9-]+)_?([0-9-]*)(&.+|$)",
-        "firstPost=([0-9-]+)_?([0-9-]*)(&.+|$)",
-        "start=([0-9-]+)_?([0-9-]*)(&.+|$)",
-        "ageRange=([0-9a-z]+)_?([0-9a-z]*)(&.+|$)"
+        "resFirstPost=([0-9-]*)_?([0-9-]*)(&.+|$)",
+        "primComp=([0-9-]*)_?([0-9-]*)(&.+|$)",
+        "studyComp=([0-9-]*)_?([0-9-]*)(&.+|$)",
+        "lastUpdPost=([0-9-]*)_?([0-9-]*)(&.+|$)",
+        "firstPost=([0-9-]*)_?([0-9-]*)(&.+|$)",
+        "start=([0-9-]*)_?([0-9-]*)(&.+|$)",
+        "ageRange=([0-9a-z]*)_?([0-9a-z]*)(&.+|$)"
       ),
       "replace" = list(
         "AREA[ResultsFirstPostDate]RANGE[\\1,\\2]",

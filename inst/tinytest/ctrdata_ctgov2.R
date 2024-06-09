@@ -25,9 +25,9 @@ results:without,
 status:rec%20act,
 studyType:int%20exp%20exp_indiv,
 violation:y
-&resFirstPost=1990-01-01_2030-01-01
+&resFirstPost=_2030-01-01
 &lastUpdPost=1990-01-01_2030-01-01
-&studyComp=1990-01-01_2030-01-01
+&studyComp=1990-01-01_
 &titles=MyAcronym
 &outc=MyOutComeMeasure
 &spons=MySponsor
@@ -48,7 +48,7 @@ tmp1 <-
   )
 tmp1 <- tmp1[startsWith(tmp1, "API call: ")]
 
-refapicall <- "API call: https://www.clinicaltrials.gov/api/v2/studies?format=json&countTotal=true&pageSize=1&filter.advanced=AREA[MinimumAge]RANGE[18d, MAX] AND AREA[MaximumAge]RANGE[MIN, 64y] AND AREA[StudyFirstPostDate]RANGE[1990-01-01,2030-01-01] AND AREA[LastUpdatePostDate]RANGE[1990-01-01,2030-01-01] AND AREA[PrimaryCompletionDate]RANGE[1990-01-01,2030-01-01] AND AREA[ResultsFirstPostDate]RANGE[1990-01-01,2030-01-01] AND AREA[StartDate]RANGE[1990-01-01,2030-01-01] AND AREA[CompletionDate]RANGE[1990-01-01,2030-01-01]&query.locn=AREA[LocationFacility]MyFacility,AREA[LocationCity]USA,AREA[LocationCountry]United States&aggFilters=funderType:industry,phase:2,results:without,status:rec act,studyType:int exp exp_indiv,violation:y&query.cond=cancer&query.id=NCT05429502&query.intr=Investigational drug&query.lead=MySponsorLead&query.outc=MyOutComeMeasure&query.spons=MySponsor&query.term=krebs&query.titles=MyAcronym"
+refapicall <- "API call: https://www.clinicaltrials.gov/api/v2/studies?format=json&countTotal=true&pageSize=1&filter.advanced=AREA[MinimumAge]RANGE[18d, MAX] AND AREA[MaximumAge]RANGE[MIN, 64y] AND AREA[StudyFirstPostDate]RANGE[1990-01-01,2030-01-01] AND AREA[LastUpdatePostDate]RANGE[1990-01-01,2030-01-01] AND AREA[PrimaryCompletionDate]RANGE[1990-01-01,2030-01-01] AND AREA[ResultsFirstPostDate]RANGE[MIN,2030-01-01] AND AREA[StartDate]RANGE[1990-01-01,2030-01-01] AND AREA[CompletionDate]RANGE[1990-01-01,MAX]&query.locn=AREA[LocationFacility]MyFacility,AREA[LocationCity]USA,AREA[LocationCountry]United States&aggFilters=funderType:industry,phase:2,results:without,status:rec act,studyType:int exp exp_indiv,violation:y&query.cond=cancer&query.id=NCT05429502&query.intr=Investigational drug&query.lead=MySponsorLead&query.outc=MyOutComeMeasure&query.spons=MySponsor&query.term=krebs&query.titles=MyAcronym"
 # utils::browseURL(sub("API call: ", "", refapicall))
 
 hlpSplit <- function(x) {strsplit(x, "&| AND ")[[1]]}
@@ -76,7 +76,7 @@ tmp <- ctrLoadQueryIntoDb(
   queryterm = "https://www.clinicaltrials.gov/search?cond=Cancer&aggFilters=phase:0,status:ter,studyType:int&studyComp=_2015-12-31",
   con = dbc
 )
-expect_true(tmp$n > 130L)
+expect_true(tmp$n > 40L & tmp$n < 50L)
 
 #### documents.path ####
 
@@ -87,7 +87,7 @@ on.exit(unlink(tmpDir, recursive = TRUE), add = TRUE)
 expect_message(
   suppressWarnings(
     ctrLoadQueryIntoDb(
-      queryterm = "cond=Cancer&aggFilters=phase:0,status:ter,studyType:int&studyComp=_2015-12-31",
+      queryterm = "cond=Cancer&aggFilters=phase:0,status:ter,studyType:int&studyComp=2015-12-31_2020-12-31",
       register = "CTGOV",
       documents.path = tmpDir,
       documents.regexp = NULL,
@@ -100,14 +100,14 @@ expect_message(
 # test
 expect_true(
   length(
-    dir(pattern = ".pdf", path = tmpDir, recursive = TRUE)) > 20L
+    dir(pattern = ".pdf", path = tmpDir, recursive = TRUE)) > 10L
 )
 
 # test
 expect_message(
   suppressWarnings(
     ctrLoadQueryIntoDb(
-      queryterm = "cond=Cancer&aggFilters=phase:0,status:ter,studyType:int&studyComp=_2015-12-31",
+      queryterm = "cond=Cancer&aggFilters=phase:0,status:ter,studyType:int&studyComp=2015-12-31_2020-12-31",
       register = "CTGOV2",
       documents.path = tmpDir,
       documents.regexp = "sap_",
