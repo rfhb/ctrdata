@@ -1,10 +1,13 @@
 # ctrdata 1.18.0.9000
 
-- new development version
+## Improvements 
 - update register information, adding caveats and issues
 - update estimated download sizes, added typing new fields for `CTIS`
 - reduce size of demo database in package, addressing `CRAN` notes
 - avoid duplicate data and file retrievals
+
+## Bug fixes
+- Correct partial date brackets for `CTGOV2`
 
 # ctrdata 1.18.0 (2024-05-13)
 
