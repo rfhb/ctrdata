@@ -946,7 +946,7 @@ typeField <- function(dv, fn) {
     "ctrFalseTrue" = 'if (is.numeric(x)) as.logical(x) else
        sapply(x, function(i) switch(i, "true" = TRUE, "false" = FALSE, NA), USE.NAMES = FALSE)',
     "ctrDate" = 'as.Date(x, tryFormats =
-       c("%Y-%m-%d", "%Y-%m", "%Y-%m-%d %H:%M:%S", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M:%S%z"))',
+       c("%Y-%m-%d", "%Y-%m", "%Y-%m-%d %H:%M:%S", "%Y-%m-%dT%H:%M:%S", "%d/%m/%Y", "%Y-%m-%dT%H:%M:%S%z"))',
     "ctrDateUs" = 'as.Date(x, tryFormats = c("%b %e, %Y", "%Y-%m-%d", "%Y-%m"))',
     "ctrDateTime" = 'lubridate::ymd_hms(x)',
     "ctrDifftime" = 'as.difftime(as.numeric(lubridate::duration(
