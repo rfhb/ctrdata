@@ -6,27 +6,27 @@
 expect_true(
   suppressWarnings(
     ctrLoadQueryIntoDb(
-      queryterm = "ageGroupCode=2",
+      queryterm = "neuroblastoma",
       register = "CTIS",
       only.count = TRUE,
       verbose = TRUE,
-      con = dbc)[["n"]] >= 13L))
+      con = dbc)[["n"]] >= 10L))
 
 # test
 expect_message(
   tmpTest <- suppressWarnings(
     ctrLoadQueryIntoDb(
-      queryterm = "ageGroupCode=2",
+      queryterm = "neuroblastoma",
       register = "CTIS",
       verbose = TRUE,
       con = dbc)),
   "Imported .* updated ")
 
 # test
-expect_true(tmpTest$n >= 13L)
+expect_true(tmpTest$n >= 10L)
 
 # test
-expect_true(all(c("2023-504071-24-00", "2022-502144-12-00") %in% tmpTest$success))
+expect_true(all(c("2023-503684-42-00", "2024-512095-35-00") %in% tmpTest$success))
 
 # test
 expect_true(length(tmpTest$failed) == 0L)
@@ -34,25 +34,19 @@ expect_true(length(tmpTest$failed) == 0L)
 # clean up
 rm(tmpTest)
 
-# test
-expect_true(suppressWarnings(
-  ctrLoadQueryIntoDb(
-    queryterm = "https://euclinicaltrials.eu/ct-public-api-services/services/ct/publiclookup?basicSearchInputAND=cancer&msc=528",
-    con = dbc))[["n"]] >= 9L)
+# # test
+# expect_true(suppressWarnings(
+#   ctrLoadQueryIntoDb(
+#     queryterm = "https://euclinicaltrials.eu/app/#/search?basicSearchInputAND=cancer&msc=528",
+#     con = dbc))[["n"]] >= 9L)
 
-# test
-expect_true(suppressWarnings(
-  ctrLoadQueryIntoDb(
-    queryterm = "https://euclinicaltrials.eu/app/#/search?basicSearchInputAND=cancer&msc=528",
-    con = dbc))[["n"]] >= 9L)
-
-# test
-expect_true(
-  suppressWarnings(
-    ctrLoadQueryIntoDb(
-      queryterm = "basicSearchInputAND=infection&status=Ended",
-      register = "CTIS",
-      con = dbc))[["n"]] >= 2L)
+# # test
+# expect_true(
+#   suppressWarnings(
+#     ctrLoadQueryIntoDb(
+#       queryterm = "basicSearchInputAND=infection&status=Ended",
+#       register = "CTIS",
+#       con = dbc))[["n"]] >= 2L)
 
 # test
 expect_true(
@@ -70,19 +64,19 @@ expect_message(
       con = dbc)),
   "[0-9]+ trials have been updated")
 
-# test
-expect_true(
-  suppressWarnings(
-    ctrLoadQueryIntoDb(
-      queryterm = "https://euclinicaltrials.eu/app/#/search?number=2022-500271-31-00",
-      con = dbc))[["n"]] == 1L)
+# # test
+# expect_true(
+#   suppressWarnings(
+#     ctrLoadQueryIntoDb(
+#       queryterm = "https://euclinicaltrials.eu/app/#/search?number=2022-500271-31-00",
+#       con = dbc))[["n"]] == 1L)
 
-# test
-expect_true(
-  suppressWarnings(
-    ctrLoadQueryIntoDb(
-      queryterm = "https://euclinicaltrials.eu/app/#/search?number=2022-501559-99-00",
-      con = dbc))[["n"]] == 1L)
+# # test
+# expect_true(
+#   suppressWarnings(
+#     ctrLoadQueryIntoDb(
+#       queryterm = "https://euclinicaltrials.eu/app/#/search?number=2022-501559-99-00",
+#       con = dbc))[["n"]] == 1L)
 
 
 #### documents.path ####
@@ -94,7 +88,7 @@ if (!length(dbc$url) || grepl("localhost", dbc$url)) {
   expect_message(
     suppressWarnings(
       ctrLoadQueryIntoDb(
-        queryterm = "basicSearchInputAND=leukemia",
+        queryterm = "carcinoma",
         register = "CTIS",
         documents.path = tmpDir,
         con = dbc
@@ -111,7 +105,8 @@ if (!length(dbc$url) || grepl("localhost", dbc$url)) {
 expect_message(
   suppressWarnings(
     ctrLoadQueryIntoDb(
-      queryterm = "https://euclinicaltrials.eu/ct-public-api-services/services/ct/publiclookup?basicSearchInputAND=cancer&msc=528",
+      queryterm = "neuroblastoma",
+      register = "CTIS",
       annotation.text = "just_this",
       annotation.mode = "replace",
       con = dbc)),
@@ -171,7 +166,7 @@ tmpFields <- suppressMessages(
 
 # test
 expect_true(
-  length(tmpFields) > 3000L)
+  length(tmpFields) > 900L)
 
 #### dbGetFieldsIntoDf ####
 

@@ -1,5 +1,9 @@
 # ctrdata 1.18.0.9000
 
+## Changes
+- Initial support for revised `CTIS`, with mostly complete data and document download
+  Not yet implemented (in `CTIS`, and thus not in `ctrdata`): advanced queries, queries in URL 
+
 ## Improvements 
 - update register information, adding caveats and issues
 - update estimated download sizes, added typing new fields for `CTIS`
