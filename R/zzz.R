@@ -18,7 +18,7 @@
     "clinical trial registers when using their information. Call\n",
     "ctrOpenSearchPagesInBrowser(copyright = TRUE) and visit\n\n",
     "https://www.clinicaltrialsregister.eu/disclaimer.html\n",
-    "https://classic.clinicaltrials.gov/ct2/about-site/terms-conditions#Use\n",
+    "https://clinicaltrials.gov/about-site/terms-conditions#usage\n",
     "https://www.isrctn.com/page/faqs#usingISRCTN\n",
     "https://euclinicaltrials.eu/about-this-website/\n",
     "\nPlease cite this package, see citation(\"ctrdata\").\n",

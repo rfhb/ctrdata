@@ -24,7 +24,7 @@
 #' \ifelse{latex}{\out{\href{https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}}
 #'
 #' @param register String with abbreviation of register to query,
-#' either "EUCTR", "CTGOV", "ISRCTN" or "CTIS". Not needed
+#' either "EUCTR", "CTGOV2", "ISRCTN" or "CTIS". Not needed
 #' if \code{queryterm} provides a full URL to query results.
 #'
 #' @param querytoupdate Either the word "last", or the row number of
@@ -44,7 +44,7 @@
 #' @param documents.path If this is a relative or absolute
 #' path to a directory that exists or can be created,
 #' save any documents into it that are directly available from
-#' the register ("EUCTR", "CTGOV", "CTGOV2", "ISRCTN", "CTIS")
+#' the register ("EUCTR", "CTGOV2", "ISRCTN", "CTIS")
 #' such as PDFs on results, analysis plans, spreadsheets,
 #' patient information sheets, assessments or product information.
 #' Default is \code{NULL}, which disables saving documents.
@@ -55,13 +55,13 @@
 #' If set to \code{NULL}, empty placeholder files are saved for
 #' every document that could be saved. Default is
 #' \code{"prot|sample|statist|sap_|p1ar|p2ars|icf|ctalett|lay|^[0-9]+ "}.
-#' Used with "CTGOV", "CTGOV2", "ISRCTN" and "CTIS" (but not "EUCTR",
+#' Used with "CTGOV2", "ISRCTN" and "CTIS" (but not "EUCTR",
 #' for which all available documents are saved in any case).
 #'
 #' @param euctrresults If \code{TRUE}, also download available
 #' results when retrieving and loading trials from EUCTR. This
-#' slows down this function. (For "CTGOV", "CTGOV2" and "CTIS",
-#' all available results are always retrieved and loaded into the
+#' slows down this function. (For "CTGOV2" and "CTIS",
+#' available results are always retrieved and loaded into the
 #' collection.)
 #'
 #' @param euctrresultshistory If \code{TRUE}, also download
@@ -128,12 +128,13 @@
 #'   con = dbc
 #' )
 #'
-#' # Retrieve all information on about 2,000 ongoing
-#' # interventional cancer trials involving children
-#' # into the same collection as used before
+#' # Count ongoing interventional cancer trials involving children
+#' # Note this query is a classical CTGOV query and is translated
+#' # to a corresponding query for the current CTGOV2 webinterface
 #' ctrLoadQueryIntoDb(
-#'   queryterm = "cancer&recr=Open&type=Intr&age=0",
+#'   queryterm = "cond=cancer&recr=Open&type=Intr&age=0",
 #'   register = "CTGOV",
+#'   only.count = TRUE,
 #'   con = dbc
 #' )
 #'
@@ -148,9 +149,11 @@
 #'   con = dbc
 #' )
 #'
-#' # Retrieve all information on completed trials in CTIS
+#' # Retrieve information trials in CTIS mentioning neonates
 #' ctrLoadQueryIntoDb(
-#'   queryterm = "https://euclinicaltrials.eu/app/#/search?status=Ended",
+#'   queryterm = paste0("https://euclinicaltrials.eu/ctis-public/",
+#'   "search#searchCriteria={%22containAll%22:%22%22,",
+#'   "%22containAny%22:%22neonates%22,%22containNot%22:%22%22}"),
 #'   con = dbc
 #' )
 #' }
@@ -268,7 +271,7 @@ ctrLoadQueryIntoDb <- function(
     ## sanity checks
     if (grepl(regQueryterm, gsub("\\[", "", gsub("\\]", "", queryterm)))) {
       stop("Parameter 'queryterm' has unexpected characters: ",
-           queryterm, ", expected are: a-zA-Z0-9=?+&%_-,.#: []/\"",
+           queryterm, ", expected are: a-zA-Z0-9=?+&%_-,.#: []/\"{}",
            call. = FALSE
       )
     }
@@ -348,7 +351,6 @@ ctrLoadQueryIntoDb <- function(
   # call core functions
   imported <- switch(as.character(params$register),
                      "CTGOV2" = do.call(ctrLoadQueryIntoDbCtgov2, params),
-                     "CTGOV" = do.call(ctrLoadQueryIntoDbCtgov, params),
                      "EUCTR" = do.call(ctrLoadQueryIntoDbEuctr, params),
                      "ISRCTN" = do.call(ctrLoadQueryIntoDbIsrctn, params),
                      "CTIS" = do.call(ctrLoadQueryIntoDbCtis, params)

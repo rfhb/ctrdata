@@ -4,17 +4,20 @@
 #'
 #' An active substance can be identified by a recommended international
 #' nonproprietary name (INN), a trade or product name, or a company code(s).
-#' Retrieves the names of substance which are searched for by "CTGOV"
-#' when querying for a given active substance.
+#' To find likely synonyms, the function retrieves from CTGOV2 the field
+#' protocolSection.armsInterventionsModule.interventions.otherNames.
+#' Note this is not free of error and should be checked manually.
 #'
 #' @param activesubstance An active substance, in an atomic character vector
+#'
+#' @param verbose Print number of studies found in CTGOV2 for `activesubstance`
 #'
 #' @return A character vector of the active substance (input parameter) and
 #'  synonyms, or NULL if active substance was not found and may be invalid
 #'
 #' @importFrom httr GET set_config user_agent
-#' @importFrom utils packageDescription
-#' @importFrom xml2 read_html xml_find_all xml_text
+#' @importFrom utils packageDescription str
+#' @importFrom jqr jq
 #'
 #' @export
 #'
@@ -22,9 +25,18 @@
 #' \dontrun{
 #'
 #' ctrFindActiveSubstanceSynonyms(activesubstance = "imatinib")
-#' # [1] "imatinib" "gleevec" "sti 571" "glivec" "CGP 57148" "st1571"
+#' #  [1] "imatinib"                    "Carcemia"                    "Cemivil"
+#' #  [4] "CGP 57148"                   "CGP-57148B"                  "CGP57148B"
+#' #  [7] "Gleevac"                     "gleevec"                     "Gleevec (Imatinib Mesylate)"
+#' # [10] "Glevec"                      "glivec"                      "Imatinib"
+#' # [13] "imatinib mesylate"           "Imatinib-AFT"                "IND # 55666"
+#' # [16] "NSC #716051"                 "NSC-716051"                  "QTI571"
+#' # [19] "ST1571"                      "STI 571"                     "STI-571"
+#' # [22] "STI571"                      "tyrosine kinase inhibitors"
+#'
 #' }
-ctrFindActiveSubstanceSynonyms <- function(activesubstance = "") {
+ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE) {
+
   # check parameters
   if ((length(activesubstance) != 1L) ||
       !is.character(activesubstance) ||
@@ -35,15 +47,24 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "") {
     )
   }
 
-  # getting synonyms using httr since rvest::read_html
-  # does not close network connection in case of 404
-  ctgovfirstpageurl <-
-    utils::URLencode(
-      paste0(
-        "https://classic.clinicaltrials.gov/ct2/results/details?term=",
-        activesubstance
-      )
-    )
+  # using CTGOV2 API as per
+  # https://clinicaltrials.gov/data-api/about-api/api-migration#query-endpoints
+
+  # TODO
+  # activesubstance = "trametinib"
+  # activesubstance = "imatinib"
+  # activesubstance = "THISSHOULDNOTEXISTIHOPE"
+  # "https://clinicaltrials.gov/api/v2/studies?query.intr=trametinib&fields=protocolSection.armsInterventionsModule.interventions.otherNames|protocolSection.armsInterventionsModule.interventions.name&pageSize=1"
+
+  # parametrise endpoint
+  apiEndpoint <- sprintf(paste0(
+    "https://clinicaltrials.gov/api/v2/studies?",
+    "query.intr=%s&",
+    # alternative names are in these fields
+    "fields=protocolSection.armsInterventionsModule.interventions.otherNames|",
+    "protocolSection.armsInterventionsModule.interventions.name&",
+    "pageSize=%i"
+  ), activesubstance, 1000L)
 
   # set user agent for httr and curl to inform registers
   httr::set_config(httr::user_agent(
@@ -53,28 +74,62 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "") {
     )
   ))
 
-  # get webpage
-  tmp <- try(
-    {
-      httr::GET(url = ctgovfirstpageurl)
-    },
-    silent = TRUE
-  )
+  # call endpoint
+  tmp <- try(httr::GET(url = apiEndpoint), silent = TRUE)
 
   # check result
   if (inherits(tmp, "try-error") || tmp[["status_code"]] == 404L) {
-    # 404 means active substance not found, thus early exit
-    message("Check active substance '", activesubstance, "', may not exist.")
+    message("Cound not search for active substance, error ",
+            utils::str(tmp[min(length(tmp), 2L)]))
     return(NULL)
   }
 
-  # extract from table "Terms and Synonyms Searched:"
-  asx <- xml2::read_html(tmp)
-  asx <- xml2::xml_find_all(asx, '//*[@id="searchdetail"]/div[1]/div/table[1]/tbody/tr/td[1]')
-  asx <- trimws(xml2::xml_text(asx))
+  # digest results
+  nrec <- jqr::jq(
+    textConnection(rawToChar(tmp[["content"]])),
+    ' .studies | length ')
+
+  # inform user
+  if (verbose || nrec == 0L) message(
+    nrec, " studies found in CTGOV2 for active substance ", activesubstance)
+
+  # extract otherNames for name
+  asx <- jqr::jq(
+    textConnection(rawToChar(tmp[["content"]])), paste0(
+      ' .studies[] | .protocolSection.armsInterventionsModule.interventions
+      | select ( length > 0 ) | .[]
+      | select ( .name | test("^', activesubstance, '"; "i") and
+                       ( test( ", | or | and | & | [+] " ) | not ) )
+      | .otherNames | select( length > 0 ) | .[] ')
+  )
+
+  # for checking names for certain otherNames
+  if (FALSE) {
+    jqr::jq(
+      textConnection(rawToChar(tmp[["content"]])), paste0(
+        ' .studies[] | .protocolSection.armsInterventionsModule.interventions
+      | select ( length > 0 ) | .[]
+      | select ( .otherNames | select( length > 0 ) | .[]
+      | test("tyrosine kinase inhibitors"; "") )
+      ')
+    )
+  }
 
   # prepare and return output
+  asx <- gsub('"', "", asx)
+  asx <- sort(asx)
+  # remove some decorations
+  asx <- gsub("@|\U000AE|Trade name: ?| ?[(]?INN[)]?|[(]R[)]", "", asx)
+  # some otherNames are multiple active substances
+  asx <- asx[!grepl("(,|/| and | or )", asx)]
+  # remove descriptive elements
+  asx <- asx[!grepl("(intervent|treat|therapy|combin|none)", asx, ignore.case = TRUE)]
+  # deduplicate irrespective of case
+  asx <- asx[!duplicated(tolower(asx))]
+  asx <- unique(asx)
   asx <- c(activesubstance, asx)
-  return(unique(asx))
+
+  # return
+  return(asx)
 }
 # end ctrFindActiveSubstanceSynonyms

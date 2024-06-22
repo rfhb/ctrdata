@@ -723,10 +723,9 @@ ctgovVersion <- function(url, register) {
   # logic 1
   if (grepl(paste0(
     "clinicaltrials[.]gov/ct2/|",
-    # vvv These capture classic-specific parameters
-    "[?&]state=|[?&]city=|[?&]dist=|[?&]rsub=|",
-    "[?&]type=|[?&]rslt=|[?&]gndr=|[?&]cntry=|",
-    "[?&][a-z]+_[a-z]+="), url)) {
+    # these are classic-specific
+    "[?&]rsub=|[?&]type=|[?&]rslt=|[?&]gndr=|[?&]recrs=|[?&]phase=|",
+    "[?&]age=|[?&]cntry=|[?&][a-z]+_[a-z]+="), url)) { # e.g. strd_s
     message("* Appears specific for CTGOV Classic website")
     return("CTGOV")
   }
@@ -735,7 +734,7 @@ ctgovVersion <- function(url, register) {
   if (grepl(paste0(
     # clear identifiers of CTGOV2
     "aggFilters|clinicaltrials[.]gov/(search|study)[/?]|",
-    "[:][^/]|%3[aA]"), url)) {
+    "[?&]country=|[:][^/]|%3[aA]"), url)) {
     message("* Appears specific for CTGOV REST API 2.0")
     return("CTGOV2")
   }
@@ -745,6 +744,388 @@ ctgovVersion <- function(url, register) {
   return(register)
 
 }
+
+
+#' ctgovClassicToCurrent
+#'
+#' fully translates a user's search query URL from the classic website
+#' into a query for the current website, with all search parameters.
+#' added to accomodate classic website retirement as of 2024-06-25.
+#'
+#' @param url url intended for a search in the classic CTGOV website
+#'
+#' @keywords internal
+#' @noRd
+#'
+#' @returns string url suitable for a search current CTGOV website
+#'
+#' @examples
+#'
+#' TODO DECIDE
+#' ctgovClassicToCurrent("https://www.clinicaltrials.gov/ct2/show/NCT02703272")
+#' ctgovClassicToCurrent("https://classic.clinicaltrials.gov/ct2/show/NCT02703272?term=NCT02703272&draw=2&rank=1")
+#' ctgovClassicToCurrent("https://clinicaltrials.gov/ct2/results?cond=")
+#'
+#' OK
+#' ctgovClassicToCurrent(url = "https://www.clinicaltrials.gov/search?term=NCT04412252,%20NCT04368728")
+#' ctgovClassicToCurrent("https://classic.clinicaltrials.gov/ct2/results?cond=&term=NCT02703272&cntry=")
+#' ctgovClassicToCurrent("https://clinicaltrials.gov/ct2/results?cond=&term=NCT02703272&cntry=")
+#' ctgovClassicToCurrent("https://www.clinicaltrials.gov/search?distance=50&cond=Cancer")
+#'
+ctgovClassicToCurrent <- function(url, verbose = TRUE) {
+
+  # TODO handle queries with AREA expressions, such as below
+  # issues: many areas can only be used in API calls, but not in query urls
+  #
+  # term=AREA[MaximumAge]+RANGE[0+days,+28+days]
+  # - identify piece name, here MaximumAge
+  # - look up area of piece name: https://clinicaltrials.gov/data-api/about-api/study-data-structure
+  #   in this case, protocolSection.eligibilityModule.maximumAge
+  # - look up parameter: https://clinicaltrials.gov/data-api/about-api/search-areas
+  #   in this case, unclear if &query.patient=
+
+  # classic query with each and every parameter set, for testing
+  if (FALSE) {
+    url <- paste0(
+      "https://classic.clinicaltrials.gov/ct2/results?cond=myCondition&term=myTerm&type=Intr&",
+      "rslt=Without&recrs=b&recrs=a&recrs=f&recrs=d&recrs=g&recrs=h&recrs=e&recrs=i&recrs=m&",
+      "recrs=c&recrs=j&recrs=k&recrs=l&age_v=&age=0&age=1&age=2&gndr=Female&hlth=Y&intr=myIntervention&",
+      "titles=myTitleOrAcronym&outc=myOutcomeMeasure&spons=mySponsor&lead=myLeadSponsor&id=NCT12345678&",
+      "cntry=Germany&state=Berlin&city=Berlin&dist=&locn=myLocation&phase=4&phase=0&phase=1&phase=2&",
+      "phase=3&phase=5&fund=0123&fund=1&fund=2&u_prot=Y&u_sap=Y&u_icf=Y&f801=Yes&rsub=No&strd_s=01%2F14%2F1990&",
+      "strd_e=01%2F14%2F2030&prcd_s=01%2F14%2F1990&prcd_e=01%2F14%2F2030&sfpd_s=01%2F14%2F1990&",
+      "sfpd_e=01%2F14%2F2030&rfpd_s=01%2F14%2F1990&rfpd_e=&lupd_s=&lupd_e=01%2F14%2F2030&sort="
+    )
+  }
+
+  # apiParams is a kind of dictionary for
+  # mapping classic to current params
+  #
+  # - not matched:
+  #   CTGOV2 studyComp
+  #   CTGOV dist
+  #   CTGOV rsub
+  #
+  apiParams <- list(
+    #
+    # start aggFilters
+    #
+    "ages:" = list(
+      "extract" = c(
+        "age=0(&|$)",
+        "age=1(&|$)",
+        "age=2(&|$)"
+      ),
+      "replace" = c(
+        "child",
+        "adult",
+        "older"
+      ),
+      "collapse" = " ",
+      "out" = character()
+    ),
+    #
+    "phase:" = list(
+      "extract" = c(
+        "phase=4(&|$)",
+        "phase=0(&|$)",
+        "phase=1(&|$)",
+        "phase=2(&|$)",
+        "phase=3(&|$)"),
+      "replace" = c(
+        "0",
+        "1",
+        "2",
+        "3",
+        "4"),
+      "collapse" = " ",
+      "out" = character()
+    ),
+    #
+    "docs:" = list(
+      "extract" = c(
+        "u_prot=Y(&|$)",
+        "u_sap=Y(&|$)",
+        "u_icf=Y(&|$)"),
+      "replace" = c(
+        "prot",
+        "sap",
+        "icf"),
+      "collapse" = " ",
+      "out" = character()
+    ),
+    #
+    "results:" = list(
+      "extract" = c(
+        "rslt=With(&|$)",
+        "rslt=Without(&|$)"),
+      "replace" = c(
+        "with",
+        "without"),
+      "collapse" = " ",
+      "out" = character()
+    ),
+    #
+    "funderType:" = list(
+      "extract" = c(
+        "fund=[013]*[2][013]*(&|$)",
+        "fund=[123]*[0][123]*(&|$)",
+        "fund=[023]*[1][023]*(&|$)",
+        "fund=[012]*[3][012]*(&|$)"),
+      "replace" = c(
+        "industry", # 2
+        "nih",      # 0
+        "fed",      # 1
+        "other"),   # 3
+      "collapse" = " ",
+      "out" = character()
+    ),
+    #
+    "studyType:" = list(
+      "extract" = c(
+        "type=Intr",
+        "type=Obsr",
+        "type=PReg",
+        "type=Expn",
+        "ea_tmt=Yes",
+        "ea_idv=Yes",
+        "ea_int=Yes"
+      ),
+      "replace" = c(
+        "int", # Interventional
+        "obs", # Observational
+        "obs_patreg", # Patient registries
+        "exp",        # Expanded access
+        "exp_treat",  # Treatment IND/Protocol
+        "exp_indiv",  # Individual patients
+        "exp_inter"   # Intermediate-size population
+      ),
+      "collapse" = " ",
+      "out" = character()
+    ),
+    #
+    "sex:" = list(
+      "extract" = c(
+        "gndr=Female",
+        "gndr=Male"
+      ),
+      "replace" = c(
+        "f",
+        "m"
+      ),
+      "collapse" = " ",
+      "out" = character()
+    ),
+    #
+    "healthy:" = list(
+      "extract" = "hlth=Y",
+      "replace" = "y",
+      "collapse" = " ",
+      "out" = character()
+    ),
+    #
+    "violation:" = list(
+      "extract" = "f801=Yes",
+      "replace" = "y",
+      "collapse" = " ",
+      "out" = character()
+    ),
+    #
+    "status:" = list(
+      "extract" = c(
+        "recrs=a",
+        "recrs=d",
+        "recrs=b",
+        "recrs=e",
+        "recrs=h",
+        "recrs=f",
+        "recrs=g",
+        "recrs=i",
+        "recrs=m",
+        "recrs=c",
+        "recrs=j",
+        "recrs=k",
+        "recrs=l"
+      ),
+      "replace" = c(
+        "rec", # Recruiting
+        "act", # Active, not recruiting
+        "not", # Not yet recruiting
+        "com", # Completed
+        "ter", # Terminated
+        "enr", # Enrolling by invitation
+        "sus", # Suspended
+        "wit", # Withdrawn
+        "unk", # Unknown
+        "ava", # Available
+        "nla", # No longer available
+        "tna", # Temporarily not available
+        "afm"), # Approved for marketing
+      "collapse" = " ",
+      "out" = character()
+    ),
+    #
+    # end aggFilters
+    #
+    # dates
+    "dates" = list(
+      "extract" = list(
+        "strd_s=([0-9]{2})/([0-9]{2})/([0-9]{4})(&|$)",
+        "strd_e=([0-9]{2})/([0-9]{2})/([0-9]{4})(&|$)",
+        "prcd_s=([0-9]{2})/([0-9]{2})/([0-9]{4})(&|$)",
+        "prcd_e=([0-9]{2})/([0-9]{2})/([0-9]{4})(&|$)",
+        "sfpd_s=([0-9]{2})/([0-9]{2})/([0-9]{4})(&|$)",
+        "sfpd_e=([0-9]{2})/([0-9]{2})/([0-9]{4})(&|$)",
+        "rfpd_s=([0-9]{2})/([0-9]{2})/([0-9]{4})(&|$)",
+        "rfpd_e=([0-9]{2})/([0-9]{2})/([0-9]{4})(&|$)",
+        "lupd_s=([0-9]{2})/([0-9]{2})/([0-9]{4})(&|$)",
+        "lupd_e=([0-9]{2})/([0-9]{2})/([0-9]{4})(&|$)"
+      ),
+      "replace" = list(
+        "start=\\3-\\1-\\2_",
+        "start=_\\3-\\1-\\2",
+        "primComp=\\3-\\1-\\2_",
+        "primComp=_\\3-\\1-\\2",
+        "firstPost=\\3-\\1-\\2_",
+        "firstPost=_\\3-\\1-\\2",
+        "resFirstPost=\\3-\\1-\\2_",
+        "resFirstPost=_\\3-\\1-\\2",
+        "lastUpdPost=\\3-\\1-\\2_",
+        "lastUpdPost=_\\3-\\1-\\2"
+      ),
+      "collapse" = "@",
+      "out" = list()
+    ),
+    #
+    # translate simple terms
+    list(
+      "extract" = c(
+        "(cond|city|id|intr|lead|locn|outc|spons|state|titles)=(.+)(&|$)",
+        "(cntry)=(.+)(&|$)",
+        "(term)=([^A][^R][^E][^A]+.+)(&|$)",
+        "(term)=(AREA\\[M.+mumAge\\].+)"
+      ),
+      "replace" = c(
+        "&\\1=\\2",
+        "&country=\\2",
+        "&term=\\2",
+        "&query.term=\\2"
+      ),
+      "collapse" = "",
+      "out" = character()
+    )
+    #
+  ) # apiParams
+
+  ## now operate on the input
+
+  # mangle input
+  queryterm <- utils::URLdecode(url)
+  queryterm <- gsub("[+]", " ", queryterm)
+
+  # some specifics found by chance
+  queryterm <- sub("[?&]recr=Open", "&recrs=b&recrs=a&recrs=c", queryterm)
+  queryterm <- sub("[?&]recr=Closed", "&recrs=f&recrs=d&recrs=g&recrs=h&recrs=e&recrs=i&recrs=m&recrs=j&recrs=k&recrs=l", queryterm)
+
+  # split and focus on parameters
+  queryterm <- strsplit(queryterm, split = "[&?]")[[1]]
+  queryterm <- queryterm[!grepl("^https://", queryterm)]
+  queryterm <- queryterm[queryterm != ""]
+
+  # iterate over API terms
+  for (t in seq_along(queryterm)) {
+    for (a in seq_along(apiParams)) {
+      for (i in seq_along(apiParams[[a]][["extract"]])) {
+        if (grepl(apiParams[[a]][["extract"]][[i]], queryterm[t])) {
+          item <-
+            sub(apiParams[[a]][["extract"]][[i]],
+                apiParams[[a]][["replace"]][[i]],
+                queryterm[t]
+            )
+          apiParams[[a]][["out"]] <-
+            paste0(
+              c(apiParams[[a]][["out"]], item),
+              collapse = apiParams[[a]][["collapse"]]
+            )
+        } # if extract
+      } # extract
+    } # apiParams
+  } # queryterm
+
+  # merge
+  apiParams <- sapply(apiParams, "[[", "out")
+  apiParams <- apiParams[lapply(apiParams, length) > 0L]
+
+  # handle two dates parameters into one
+  if (length(apiParams[["dates"]])) {
+    tmpSplit <- strsplit(apiParams[["dates"]], "@", fixed = TRUE)[[1]]
+    apiParams[["dates"]] <- ""
+    for (t in unique(sub("(.+)=.+", "\\1", tmpSplit))) {
+      apiParams[["dates"]] <- paste0(c(
+        apiParams[["dates"]], paste0(
+          t, "=", sub(
+            "_+", "_",
+            paste0(
+              sub(".+=(.+)", "\\1", tmpSplit[grepl(t, tmpSplit)]),
+              collapse = "_")),
+          collapse = "")),
+        collapse = "&")
+    }}
+
+  # handle parts within aggFilter
+  for (t in seq_along(apiParams)) {
+    if (grepl(":", names(apiParams[t]))) apiParams[t] <- paste0(
+      names(apiParams[t]), paste0(
+        unique(strsplit(apiParams[[t]], " ")[[1]]), collapse = " ")
+    )
+  }
+
+  # merge other and aggFilter parts
+  apiParams <- paste0(
+    "https://clinicaltrials.gov/search?",
+    paste0(
+      unique(apiParams[!grepl(":", names(apiParams))]),
+      collapse = ""),
+    "&aggFilters=",
+    paste0(
+      unique(apiParams[grepl(":", names(apiParams))]),
+      collapse = ",")
+  )
+
+  # prettify
+  apiParams <- gsub("&aggFilters=$", "", apiParams)
+  apiParams <- gsub("search[?]&", "search?", apiParams)
+
+  ## inform user
+
+  # TODO
+  if (verbose) message(
+    "Since 2024-06-25, the classic CTGOV servers are no longer available. ",
+    "Package ctrdata has translated the classic CTGOV query URL from this ",
+    "call of function ctrLoadQueryIntoDb(queryterm = ...) into a query URL ",
+    "that works with the current CTGOV2. This is printed below and is also ",
+    "part of the return value of this function, ctrLoadQueryIntoDb(...)$url. ",
+    "This URL can be used with ctrdata functions. Note that the fields and ",
+    "data schema of trials differ between CTGOV and CTGOV2. "
+  )
+
+  message(
+    "\nReplace this URL:\n\n", url,
+    "\n\nwith this URL:\n\n", apiParams, "\n")
+
+  if (grepl("AREA", url)) warning(
+    "The input uses an AREA search expression. Many of these can apparently ",
+    "not be used in search query URLs (thus, a search cannot be shown in a web ",
+    "browser), but only in API calls. To show the expression, it is here returned ",
+    "as search parameter '&term=' or '&query.term='. It is recommended to manually ",
+    "construct a query for this case. See also ",
+    "https://clinicaltrials.gov/data-api/about-api/search-areas"
+  )
+
+  # return
+  return(apiParams)
+
+} # end ctgovClassicToCurrent
 
 
 #' Check, write, read cache object for ctrdata

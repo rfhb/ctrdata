@@ -1,48 +1,66 @@
 #' ctrdata: information on clinical trial registers
 #'
-#' Registers of clinical trials that can be accessed with
-#' package \link{ctrdata} as of September 2023.
+#' Registers of clinical trials from which protocol- and result-related information
+#' can be retrieved and analysed with package \link{ctrdata}, last updated
+#' 2024-06-23.
 #'
-#' - **EUCTR**: The European Union Clinical Trials Register contains
-#' close to 44,000 clinical trials (using one or more medicines as
-#' investigational medicinal product, IMP; in the European Union and beyond)
-#' - **CTGOV** and **CTGOV2**: ClinicalTrials.gov includes more than 495,000
-#' interventional and observational studies (both the current and
-#' the classic website are supported)
-#' - **ISRCTN**: The ISRCTN Registry includes almost 25,000
-#' interventional or observational health studies
-#' - **CTIS**: The EU Clinical Trials Information System started in January
-#' 2023, and includes more than 880 publicly
-#' accessible trials on 2024-05-25. How to automatically
-#' get a query URL: \ifelse{latex}{\out{\href{https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}}
+#' @section 1 - Overview:
 #'
+#' - **EUCTR**: The EU Clinical Trials Register contains close to 44,000 clinical
+#' trials (at least one investigational medicinal product, IMP;
+#' in the European Union and beyond; no new trials, but results for contained trials
+#' continue to be added)
+#' - **CTIS**: The EU Clinical Trials Information System started in January 2023
+#' for new clinical trials. It includes more than 4,100 publicly accessible trials.
+#' How to automatically get the CTIS search query URL: \ifelse{latex}{\out{\href{https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}}
+#' - **CTGOV2**: ClinicalTrials.gov includes close to 500,000 interventional and
+#' observational studies
+#' - **ISRCTN**: The ISRCTN Registry includes more than 25,000 interventional and
+#' observational health studies
 #'
-#' | **Material** | **EUCTR** | **CTGOV** | **CTGOV2**| **ISRCTN** | **CTIS** |
-#' | -------------- | :--------------: | :--------------: | :--------------: | :--------------: | :--------------: |
-#' | Home page | \href{https://www.clinicaltrialsregister.eu/}{link} | \href{https://classic.clinicaltrials.gov/}{link} | \href{https://www.clinicaltrials.gov/}{link} | \href{https://www.isrctn.com/}{link} | \href{https://euclinicaltrials.eu/}{link} |
-#' | About | \href{https://www.clinicaltrialsregister.eu/about.html}{link} | \href{https://classic.clinicaltrials.gov/ct2/about-site/background}{link} | \href{https://www.clinicaltrials.gov/about-site/about-ctg}{link} | \href{https://www.isrctn.com/page/about}{link} | \href{https://euclinicaltrials.eu/about-this-website/}{link} |
-#' | Terms and conditions, disclaimer | \href{https://www.clinicaltrialsregister.eu/disclaimer.html}{link} | \ifelse{latex}{\out{\href{https://https://classic.clinicaltrials.gov/ct2/results/details?term=clinicaltrials.gov/ct2/about-site/terms-conditions\#Use}{link}}}{\href{https://clinicaltrials.gov/ct2/about-site/terms-conditions#Use}{link}} | \href{https://www.clinicaltrials.gov/about-site/terms-conditions}{link} | \ifelse{latex}{\out{\href{https://www.isrctn.com/page/faqs\#usingISRCTN}{link}}}{\href{https://www.isrctn.com/page/faqs#usingISRCTN}{link}} | \href{https://euclinicaltrials.eu/guidance-and-q-as/}{link} |
-#' | How to search | \href{https://www.clinicaltrialsregister.eu/doc/How_to_Search_EU_CTR.pdf}{link} | \href{https://classic.clinicaltrials.gov/ct2/help/how-find/advanced}{link} | \href{https://www.clinicaltrials.gov/find-studies/how-to-search}{link} | \href{https://www.isrctn.com/page/search-tips}{link} | \href{https://euclinicaltrials.eu/search-tips-and-guidance/}{link} |
-#' | Search interface | \href{https://www.clinicaltrialsregister.eu/ctr-search/search}{link} | \href{https://classic.clinicaltrials.gov/ct2/search/advanced}{link} | \href{https://www.clinicaltrials.gov/}{link} | \href{https://www.isrctn.com/}{link} | \href{https://euclinicaltrials.eu/search-for-clinical-trials/}{link} |
-#' | Glossary | \href{https://www.clinicaltrialsregister.eu/doc/EU_Clinical_Trials_Register_Glossary.pdf}{link} | \href{https://classic.clinicaltrials.gov/ct2/about-studies/glossary}{link} | \href{https://www.clinicaltrials.gov/study-basics/glossary}{link} | \href{https://www.who.int/clinical-trials-registry-platform/network/who-data-set}{link} | |
-#' | FAQ, caveats, issues | \href{https://www.clinicaltrialsregister.eu/doc/EU_CTR_FAQ.pdf}{link} | \href{https://www.clinicaltrials.gov/about-site/selected-publications}{link} | \href{https://www.clinicaltrials.gov/about-site/selected-publications}{link} | \href{https://www.isrctn.com/page/faqs}{link} | \href{https://euclinicaltrials.eu/website-outages-and-system-releases/}{link} |
-#' | Expert / advanced search | \href{https://www.clinicaltrialsregister.eu/ctr-search/search}{link} | \href{https://classic.clinicaltrials.gov/ct2/results/refine?show_xprt=Y}{link} | | \href{https://www.isrctn.com/editAdvancedSearch}{link} | \href{https://euclinicaltrials.eu/ctis-public/search}{link} |
-#' | Example* | \ifelse{latex}{\out{\href{https://www.clinicaltrialsregister.eu/ctr-search/search?query=Infections\&age=newborn\&age=preterm-new-born-infants}{link}}}{\href{https://www.clinicaltrialsregister.eu/ctr-search/search?query=Infections&age=newborn&age=preterm-new-born-infants}{link}} | \ifelse{latex}{\out{\href{https://classic.clinicaltrials.gov/ct2/results/refine?term=AREA[MaximumAge]+RANGE[0+days,1+months]\&type=Intr\&cond=Infections\&intr=Investigational+Agent\&show_xprt=Y}{link}}}{\href{https://classic.clinicaltrials.gov/ct2/results/refine?term=AREA%5BMaximumAge%5D+RANGE%5B0+days,1+months%5D&type=Intr&cond=Infections&intr=Investigational+Agent&show_xprt=Y}{link}} | \ifelse{latex}{\out{\href{https://www.clinicaltrials.gov/search?ageRange=0M_1M\&cond=Infections\&aggFilters=studyType:int\&distance=50\&intr=Investigational+Agent}{link}}}{\href{https://www.clinicaltrials.gov/search?ageRange=0M_1M&cond=Infections&aggFilters=studyType:int&distance=50&intr=Investigational+Agent}{link}} | \ifelse{latex}{\out{\href{https://www.isrctn.com/search?q=\&filters=ageRange:Neonate,conditionCategory:Infections+and+Infestations\&searchType=advanced-search}{link}}}{\href{https://www.isrctn.com/search?q=&filters=ageRange:Neonate,conditionCategory:Infections+and+Infestations&searchType=advanced-search}{link}} | \ifelse{latex}{\out{\href{ TODO https://euclinicaltrials.eu/app/\#/search?basicSearchInputAND=infections\&ageGroupCode=2}{link}}}{\href{https://euclinicaltrials.eu/app/#/search?basicSearchInputAND=infections&ageGroupCode=2}{link}} |
-#' | Definitions | \href{https://eudract.ema.europa.eu/result.html}{link} | \href{https://prsinfo.clinicaltrials.gov/prs-xml-schemas.html}{link} | \href{https://www.clinicaltrials.gov/data-about-studies/study-data-structure}{link} | \href{https://www.isrctn.com/page/definitions}{link} | \href{https://www.ema.europa.eu/en/human-regulatory-overview/research-development/clinical-trials-human-medicines/clinical-trials-information-system-training-support}{link} |
+#' @section 2 - Notable changes:
 #'
-#' *The example is an expert search that retrieves interventional
-#' trials with neonates, investigating infectious conditions:
-#' The CTGOV expert search retrieves trials conducted exclusively with neonates.
-#' It is not yet clear why different sets of trials are shown in CTGOV (65) and
-#' CTGOV2 (14) for the same query parameters.
-#' EUCTR retrieves trials with neonates, but not only those exclusively in neonates.
-#' ISRCTN retrieves studies with interventions other than medicines.
-#' Thus, after loading trials with \link{ctrLoadQueryIntoDb}
-#' into a database collection, trials of interest have to be selected
-#' in a second step, based on values of fields of interest
-#' (e.g., using \code{f115_children_211years} from EUCTR for age criteria,
-#' \code{interventions.intervention.interventionType} from ISRCTN for type of study),
-#' which can be obtained from the collection using \link{dbGetFieldsIntoDf}.
+#' CTGOV was retired on 2024-06-25; `ctrdata` subsequently translates CTGOV queries to CTGOV2 queries.
+#' The new website (CTGOV2) can be used with `ctrdata` since 2023-08-27.
+#' CTIS was relaunched on 2024-06-17, changing the data structure and search syntax, to which `ctrdata` was updated.
+#' CTIS can be used with `ctrdata` since 2023-03-25.
+#' More information on changes: \href{https://rfhb.github.io/ctrdata/news/index.html}{here}
+#'
+#' @section 3 - References:
+#'
+#' | **Material** | **EUCTR** | **CTGOV2**| **ISRCTN** | **CTIS** |
+#' | -------------- | :--------------: | :--------------: | :--------------: | :--------------: |
+#' | Home page | \href{https://www.clinicaltrialsregister.eu/}{link} | \href{https://clinicaltrials.gov/}{link} | \href{https://www.isrctn.com/}{link} | \href{https://euclinicaltrials.eu/}{link} |
+#' | About | \href{https://www.clinicaltrialsregister.eu/about.html}{link} | \href{https://clinicaltrials.gov/about-site/about-ctg}{link} | \href{https://www.isrctn.com/page/about}{link} | \href{https://euclinicaltrials.eu/about-this-website/}{link} |
+#' | Terms and conditions, disclaimer | \href{https://www.clinicaltrialsregister.eu/disclaimer.html}{link} | \ifelse{latex}{\out{\href{https://clinicaltrials.gov/about-site/terms-conditions\#usage}{link}}}{\href{https://clinicaltrials.gov/about-site/terms-conditions#usage}{link}} | \ifelse{latex}{\out{\href{https://www.isrctn.com/page/faqs\#usingISRCTN}{link}}}{\href{https://www.isrctn.com/page/faqs#usingISRCTN}{link}} | \href{https://euclinicaltrials.eu/guidance-and-q-as/}{link} |
+#' | How to search | \href{https://www.clinicaltrialsregister.eu/doc/How_to_Search_EU_CTR.pdf}{link} | \href{https://clinicaltrials.gov/find-studies/how-to-search}{link} | \href{https://www.isrctn.com/page/search-tips}{link} | \href{https://euclinicaltrials.eu/search-tips-and-guidance/}{link} |
+#' | Search interface | \href{https://www.clinicaltrialsregister.eu/ctr-search/search}{link} | \href{https://clinicaltrials.gov/}{link} | \href{https://www.isrctn.com/}{link} | \href{https://euclinicaltrials.eu/search-for-clinical-trials/}{link} |
+#' | Glossary | \href{https://www.clinicaltrialsregister.eu/doc/EU_Clinical_Trials_Register_Glossary.pdf}{link} | \href{https://clinicaltrials.gov/study-basics/glossary}{link} | \href{https://www.who.int/clinical-trials-registry-platform/network/who-data-set}{link} | |
+#' | FAQ, caveats, issues | \href{https://www.clinicaltrialsregister.eu/doc/EU_CTR_FAQ.pdf}{link} | \href{https://clinicaltrials.gov/about-site/selected-publications}{link} | \href{https://www.isrctn.com/page/faqs}{link} | \href{https://euclinicaltrials.eu/website-outages-and-system-releases/}{link} |
+#' | Expert / advanced search | \href{https://www.clinicaltrialsregister.eu/ctr-search/search}{link} | \href{https://clinicaltrials.gov/find-studies/constructing-complex-search-queries}{link} | \href{https://www.isrctn.com/editAdvancedSearch}{link} | \href{https://euclinicaltrials.eu/ctis-public/search}{link} |
+#' | Definitions | \href{https://eudract.ema.europa.eu/result.html}{link} | \href{https://clinicaltrials.gov/data-about-studies/study-data-structure}{link} | \href{https://www.isrctn.com/page/definitions}{link} | \href{https://www.ema.europa.eu/en/human-regulatory-overview/research-development/clinical-trials-human-medicines/clinical-trials-information-system-training-support}{link} |
+#' | Example* | \ifelse{latex}{\out{\href{https://www.clinicaltrialsregister.eu/ctr-search/search?query=Infections\&age=newborn\&age=preterm-new-born-infants}{link}}}{\href{https://www.clinicaltrialsregister.eu/ctr-search/search?query=Infections&age=newborn&age=preterm-new-born-infants}{link}} | \ifelse{latex}{\out{\href{https://clinicaltrials.gov/search?ageRange=0M_1M\&cond=Infections\&aggFilters=studyType:int\&distance=50\&intr=Investigational+Agent}{link}}}{\href{https://clinicaltrials.gov/search?ageRange=0M_1M&cond=Infections&aggFilters=studyType:int&distance=50&intr=Investigational+Agent}{link}} | \ifelse{latex}{\out{\href{https://www.isrctn.com/search?q=\&filters=ageRange:Neonate,conditionCategory:Infections+and+Infestations\&searchType=advanced-search}{link}}}{\href{https://www.isrctn.com/search?q=&filters=ageRange:Neonate,conditionCategory:Infections+and+Infestations&searchType=advanced-search}{link}} | \ifelse{latex}{\out{\href{https://euclinicaltrials.eu/ctis-public/search\#searchCriteria={%22containAll%22:%22infection%22,%22containAny%22:%22neonates%22,%22containNot%22:%22%22}}{link}}}{\href{https://euclinicaltrials.eu/ctis-public/search#searchCriteria={%22containAll%22:%22infection%22,%22containAny%22:%22neonates%22,%22containNot%22:%22%22}}{link}} |
+#'
+#' @section 4 - Example explanation and ctrdata motivation:
+#'
+#' *The example is an expert search for interventional trials primarily with neonates, investigating infectious conditions.
+#' It shows that searches in registers may not be sufficient to identify the sought trials:
+#'
+#' - The CTGOV2 search retrieves trials conducted exclusively with neonates.
+#' - EUCTR retrieves trials with neonates, but not only those exclusively in neonates.
+#' - ISRCTN retrieves studies with interventions other than medicines.
+#' - CTIS retrieves trials that mention the words neonates and infection.
+#'
+#' To address this, trials can be retrieved with \link{ctrLoadQueryIntoDb}
+#' into a database collection and in a second step can be selected,
+#' based on values of relevant fields of all retrieved trial information,
+#' for example:
+#'
+#' - EUCTR field \code{f115_children_211years} for age criteria
+#' - ISRCTN field \code{interventions.intervention.interventionType} for type of study
+#' - CTIS fields \code{ageGroup} and \code{authorizedApplication.authorizedPartI.medicalConditions.medicalCondition}
+#'
+#' `ctrdata` helps identifying fields with function \link{dbGetFieldsIntoDf}.
 #'
 #' @name ctrdata-registers
 #' @docType data

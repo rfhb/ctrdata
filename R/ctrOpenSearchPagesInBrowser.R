@@ -1,6 +1,6 @@
 ### ctrdata package
 
-#' Open reigster to show query results or search page
+#' Open register to show query results or search page
 #'
 #' Open advanced search pages of register(s), or execute search in browser
 #'
@@ -9,8 +9,8 @@
 #'   or \link{dbQueryHistory} can be used. Can be left as empty string
 #'   (default) to open the advanced search page of \code{register}.
 #'
-#' @param register Register(s) to open, "EUCTR", "CTGOV", "CTGOV2",
-#'   "ISRCTN" or "CTIS". Default is empty string, and this open the
+#' @param register Register(s) to open, "EUCTR", "CTGOV2",
+#'   "ISRCTN" or "CTIS". Default is empty string, and this opens the
 #'   advanced search page of the register(s).
 #'
 #' @param copyright (Optional) If set to \code{TRUE}, opens only the
@@ -28,12 +28,10 @@
 #' ctrOpenSearchPagesInBrowser(copyright = TRUE)
 #'
 #' # Open specific register advanced search page
-#' ctrOpenSearchPagesInBrowser(register = "CTGOV")
 #' ctrOpenSearchPagesInBrowser(register = "CTGOV2")
 #' ctrOpenSearchPagesInBrowser(register = "CTIS")
 #' ctrOpenSearchPagesInBrowser(register = "EUCTR")
 #' ctrOpenSearchPagesInBrowser(register = "ISRCTN")
-#' ctrOpenSearchPagesInBrowser(url = "status=Ended", register = "CTIS")
 #'
 #' # Open all queries that were loaded into demo collection
 #' dbc <- nodbi::src_sqlite(
@@ -53,6 +51,7 @@ ctrOpenSearchPagesInBrowser <- function(
     url = "",
     register = "",
     copyright = FALSE) {
+
   ## in case a browser is not available
   ctrOpenUrl <- function(u) {
     try(utils::browseURL(u), silent = TRUE)
@@ -65,8 +64,7 @@ ctrOpenSearchPagesInBrowser <- function(
     sapply(
       c(
         "https://www.clinicaltrialsregister.eu/disclaimer.html",
-        "https://classic.clinicaltrials.gov/ct2/about-site/terms-conditions",
-        "https://www.clinicaltrials.gov/about-site/terms-conditions",
+        "https://clinicaltrials.gov/about-site/terms-conditions#usage",
         "https://www.isrctn.com/page/faqs#usingISRCTN",
         "https://euclinicaltrials.eu/about-this-website/"
       ),
@@ -78,9 +76,8 @@ ctrOpenSearchPagesInBrowser <- function(
   # - open register search page(s)
   if (is.atomic(url) && url == "") {
     url <- c(
-      "CTGOV" = "https://classic.clinicaltrials.gov/ct2/results/refine",
-      "CTGOV2" = "https://www.clinicaltrials.gov/#main-content",
-      "CTIS" = "https://euclinicaltrials.eu/app/#/search",
+      "CTGOV2" = "https://clinicaltrials.gov/#main-content",
+      "CTIS" = "https://euclinicaltrials.eu/ctis-public/search",
       "EUCTR" = "https://www.clinicaltrialsregister.eu/ctr-search/search",
       "ISRCTN" = "https://www.isrctn.com/editAdvancedSearch"
     )
@@ -112,6 +109,7 @@ ctrOpenSearchPagesInBrowser <- function(
     }
     register <- url[nr, "query-register", drop = TRUE]
     url <- url[nr, "query-term", drop = TRUE]
+    # TODO
     # if (!is.atomic(urlOrig)) urlOrig <- url
   }
 
@@ -122,13 +120,14 @@ ctrOpenSearchPagesInBrowser <- function(
 
     # - open parametrised search
     if (grepl(paste0(
-      pre, "term=", regCtgov, post,
+      # pre, "term=", regCtgov, post,
       pre, "id=", regCtgov2, post,
       pre, "number=", regCtis, post,
       pre, "query=", regEuctr, post,
       pre, "q=ISRCTN", regIsrctn, post, "^$"
     ), url)
     ) {
+
       # - open single study from url and register
       url <- sub(paste0(
         ".*?(", paste0(
@@ -137,20 +136,24 @@ ctrOpenSearchPagesInBrowser <- function(
         ), ").*"
       ), "\\1", url)
 
-      url <- switch(register,
-                    "CTGOV" = paste0("https://classic.clinicaltrials.gov/ct2/show/", url),
-                    "CTGOV2" = paste0("https://www.clinicaltrials.gov/study/", url, "#main-content"),
-                    "CTIS" = paste0("https://euclinicaltrials.eu/app/#/view/", url),
-                    "EUCTR" = paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=", url, "#tabs"),
-                    "ISRCTN" = paste0("https://www.isrctn.com/ISRCTN", url)
+      url <- switch(
+        register,
+        "CTGOV" = ctgovClassicToCurrent(url),
+        "CTGOV2" = paste0("https://clinicaltrials.gov/study/", url, "#main-content"),
+        "CTIS" = paste0("https://euclinicaltrials.eu/ctis-public/view", url),
+        "EUCTR" = paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=", url, "#tabs"),
+        "ISRCTN" = paste0("https://www.isrctn.com/ISRCTN", url)
       )
     } else {
-      url <- switch(register,
-                    "CTGOV" = paste0("https://classic.clinicaltrials.gov/ct2/results?", url),
-                    "CTGOV2" = paste0("https://www.clinicaltrials.gov/search?", url),
-                    "CTIS" = paste0("https://euclinicaltrials.eu/app/#/search?", url),
-                    "EUCTR" = paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?", url, "#tabs"),
-                    "ISRCTN" = paste0("https://www.isrctn.com/search?", url)
+
+      # - open search
+      url <- switch(
+        register,
+        "CTGOV" = ctgovClassicToCurrent(url),
+        "CTGOV2" = paste0("https://clinicaltrials.gov/search?", url),
+        "CTIS" = paste0("https://euclinicaltrials.eu/ctis-public/search?", url),
+        "EUCTR" = paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?", url, "#tabs"),
+        "ISRCTN" = paste0("https://www.isrctn.com/search?", url)
       )
     }
 

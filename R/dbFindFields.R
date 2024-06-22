@@ -106,10 +106,12 @@ dbFindFields <- function(namepart = ".*",
     # queries by sample
     if (sample) {
 
-      # adding query for EUCTR results data
+      # adding queries for records with results data
       queries <- c('{"trialInformation": {"$regex": ".+"}}',
-                   '{"clinical_results": {"$regex": ".+"}}', queries)
-      names(queries)[1:2] <- c("EUCTR", "CTGOV")
+                   '{"clinical_results": {"$regex": ".+"}}',
+                   '{"resultsSection.outcomeMeasuresModule": {"$regex": ".+"}}',
+                   queries)
+      names(queries)[1:2] <- c("EUCTR", "CTGOV", "CTGOV2")
       n <- 5L
       message(" (sampling ", n, " trial records) ", appendLF = FALSE)
 
