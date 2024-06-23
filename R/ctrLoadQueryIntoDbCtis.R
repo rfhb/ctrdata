@@ -42,7 +42,6 @@ ctrLoadQueryIntoDbCtis <- function(
 
   ## ctis api -----------------------------------------------------------
 
-  # TODO
   # https://euclinicaltrials.eu/ctis-public/assets/i18n/en.json
 
   ctisEndpoints <- paste0(
@@ -72,9 +71,11 @@ ctrLoadQueryIntoDbCtis <- function(
   # "HTTP server doesn't seem to support byte ranges. Cannot resume."
   message("(1/4) Downloading trials list...", appendLF = FALSE)
 
-  # queryterm to api parameters
-  # TODO
-  queryterm <- sprintf('{"containAll":"","containAny":"%s","containNot":""}', queryterm)
+  # queryterm comes from ctrGetQueryUrl()
+
+  # 2024-06-17 defined by ctrdata Tampermonkey script:
+  # https://euclinicaltrials.eu/ctis-public/search#searchCriteria=
+  # {"containAll":"infection","containAny":"neonates","containNot":""}
 
   # get overview
   initialData <- try(rawToChar(
@@ -82,13 +83,22 @@ ctrLoadQueryIntoDbCtis <- function(
       url = ctisEndpoints[1],
       handle = curl::new_handle(
         postfields = paste0(
-          # pagination
-          '{"pagination":{"page":1,"size":100},',
-          # queryterms
-          '"searchCriteria":', queryterm, ',',
-          '"sort":{"property":"decisionDate","direction":"DESC"}}'
-        )
-      )
+          # add pagination parameters
+          paste0(
+            '{"pagination":{"page":1,"size":',
+            ifelse(only.count, 1L, 100L), '},'),
+          # add search criteria
+          sub(
+            "searchCriteria=", '"searchCriteria":',
+            # handle empty search query terms
+            ifelse(
+              queryterm != "", queryterm,
+              'searchCriteria={"containAll":"","containAny":"","containNot":""}'),
+          ),
+          # remaining parameters needed for proper server response
+          ',"sort":{"property":"decisionDate","direction":"DESC"}}'
+        ) # paste
+      ) # curl
     )$content), silent = TRUE)
 
   # early exit
@@ -127,7 +137,7 @@ ctrLoadQueryIntoDbCtis <- function(
   importDateTime <- strftime(Sys.time(), "%Y-%m-%d %H:%M:%S")
 
   # temp file for mangled download
-  fTrialsNdjson <- file.path(tempDir, "ctis_trials_1.ndjson")
+  fTrialsNdjson <- file.path(tempDir, "ctis_add_api1.ndjson")
   unlink(fTrialsNdjson)
   on.exit(unlink(fTrialsNdjson), add = TRUE)
   fTrialsNdjsonCon <- file(fTrialsNdjson, open = "at")
@@ -225,7 +235,7 @@ ctrLoadQueryIntoDbCtis <- function(
   tmp <- ctrMultiDownload(urls, fPartIPartsIIJson(idsTrials), verbose = verbose)
 
   # convert partI and partsII details into ndjson file
-  fPartIPartsIINdjson <- file.path(tempDir, "ctis_add_2.ndjson")
+  fPartIPartsIINdjson <- file.path(tempDir, "ctis_trials_api2.ndjson")
   on.exit(unlink(fPartIPartsIINdjson), add = TRUE)
   unlink(fPartIPartsIINdjson)
   fPartIPartsIINdjsonCon <- file(fPartIPartsIINdjson, open = "at")
@@ -258,7 +268,7 @@ ctrLoadQueryIntoDbCtis <- function(
   resAll <- NULL
   message("(4/4) Updating with additional data: ", appendLF = FALSE)
 
-  for (f in dir(path = tempDir, pattern = "^ctis_add_[1-9]+[0-9]*.ndjson$", full.names = TRUE)) {
+  for (f in dir(path = tempDir, pattern = "^ctis_add_api[0-9]*.ndjson$", full.names = TRUE)) {
 
     message(". ", appendLF = FALSE)
     res <- nodbi::docdb_update(src = con, key = con$collection, query = "{}", value = f)
@@ -291,7 +301,6 @@ ctrLoadQueryIntoDbCtis <- function(
     unlink(fPartIPartsIINdjson)
 
     # 3 - documents download
-    close(downloadsNdjsonCon)
     dlFiles <- jsonlite::stream_in(
       file(downloadsNdjson), pagesize = 5000L, verbose = FALSE)
     unlink(downloadsNdjson)

@@ -320,33 +320,27 @@ ctrGetQueryUrl <- function(
     return(outdf(queryterm, register))
   }
 
-  # ctis
+  #### CTIS ####
   if (register == "CTIS") {
-    # some seem to use this
+
+    # 2024-06-17 defined by ctrdata Tampermonkey script:
+    # https://euclinicaltrials.eu/ctis-public/search#searchCriteria=
+    # {"containAll":"infection","containAny":"neonates","containNot":""}
+
+    # search for trials
+    queryterm <- sub("https://euclinicaltrials.eu/ctis-public/search#?", "", url)
+
+    # view a trial
     queryterm <- sub(
-      "https://euclinicaltrials.eu/ct-public-api-services/services/ct/publiclookup[?]", "", url
-    )
-    # or https://euclinicaltrials.eu/app/#/search?status=Ended
-    queryterm <- sub(
-      "https://euclinicaltrials.eu/app/#/search[?]?", "", queryterm
-    )
-    queryterm <- sub(
-      "https://euclinicaltrials.eu/app/#/view/", "", queryterm
+      "(https://euclinicaltrials.eu/ctis-public/view/)([-0-9]+)",
+      'searchCriteria={"containAll":"\\2","containAny":"","containNot":""}',
+      queryterm
     )
 
-    # remove unnecessary components
-    queryterm <- sub("&?paging=[-,0-9]+", "", queryterm)
-    queryterm <- sub("&?sorting=[-a-zA-Z]+", "", queryterm)
-    queryterm <- sub("&?isEeaOnly=false", "", queryterm)
-    queryterm <- sub("&?isNonEeaOnly=false", "", queryterm)
-    queryterm <- sub("&?isBothEeaNonEea=false", "", queryterm)
-
-    # url lists single trial
-    if (grepl(paste0("^", regCtis, "$"), queryterm)) {
-      queryterm <- paste0(
-        "number=", queryterm
-      )
-    }
+    # inform user
+    if (grepl("^http", queryterm) && queryterm == url) stop(
+      "Not a search query: ", url
+    )
 
     # return
     return(outdf(queryterm, register))
