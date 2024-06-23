@@ -1,14 +1,16 @@
 # ctrdata 1.18.0.9000
 
-## Changes
-- Initial support for revised `CTIS`, with mostly complete data and document download
-  Not yet implemented (in `CTIS`, and thus not in `ctrdata`): advanced queries, queries in URL 
+## Possibly breaking changes
+- `CTGOV` has retired on 2024-06-25 the classic website and API used by `ctrdata` since 2015. To support users, `ctrdata` now automatically translates and redirects queries to the current website. This helps with automatically updating previously loaded queries (`ctrLoadQueryIntoDb(querytoupdate = <n>)`), manually migrating queries and reproducible work on clinical trials information. This new functionality in `ctrdata` translates a user's search query URL from the classic website into a query for the current `CTGOV` website, for all search parameters with the exception of `AREA` fields, for which a warning with explanations is returned. Since the structure and format of data differs between data retrieved from the current API and previously retrieved from the classic API, `ctrdata` will continue to identify the current API as `register = "CTGOV2"`, to support the analysis stage. 
+
+- `CTIS` has been relaunched on 2024-06-17, and `ctrdata` has been fully updated to it. At the moment, `CTIS` provides basic searches and no search query URL. To support users, `ctrdata` includes an updated script that extract a user's search parameters to the clipboard and into the browser URL bar, and that searches for trials when opening such a query URL, see https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser.
 
 ## Improvements 
-- update register information, adding caveats and issues
-- update estimated download sizes, added typing new fields for `CTIS`
-- reduce size of demo database in package, addressing `CRAN` notes
-- avoid duplicate data and file retrievals
+- Reduced size of demo database in package, addressing `CRAN` notes
+- Adapted `ctrFindActiveSubstanceSynonyms()` to `CTGOV2` API, note: no more curated but terms used in studies are returned
+- Updated register information, adding caveats and issues
+- Updated estimated download sizes, added typing new fields for `CTIS`
+- Avoided duplicate data and file retrievals
 
 ## Bug fixes
 - Correct partial date brackets for `CTGOV2`

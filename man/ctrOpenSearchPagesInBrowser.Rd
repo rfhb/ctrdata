@@ -2,7 +2,7 @@
 % Please edit documentation in R/ctrOpenSearchPagesInBrowser.R
 \name{ctrOpenSearchPagesInBrowser}
 \alias{ctrOpenSearchPagesInBrowser}
-\title{Open reigster to show query results or search page}
+\title{Open register to show query results or search page}
 \usage{
 ctrOpenSearchPagesInBrowser(url = "", register = "", copyright = FALSE)
 }
@@ -12,8 +12,8 @@ browser with a previous search, the output of \link{ctrGetQueryUrl}
 or \link{dbQueryHistory} can be used. Can be left as empty string
 (default) to open the advanced search page of \code{register}.}
 
-\item{register}{Register(s) to open, "EUCTR", "CTGOV", "CTGOV2",
-"ISRCTN" or "CTIS". Default is empty string, and this open the
+\item{register}{Register(s) to open, "EUCTR", "CTGOV2",
+"ISRCTN" or "CTIS". Default is empty string, and this opens the
 advanced search page of the register(s).}
 
 \item{copyright}{(Optional) If set to \code{TRUE}, opens only the
@@ -33,12 +33,10 @@ Open advanced search pages of register(s), or execute search in browser
 ctrOpenSearchPagesInBrowser(copyright = TRUE)
 
 # Open specific register advanced search page
-ctrOpenSearchPagesInBrowser(register = "CTGOV")
 ctrOpenSearchPagesInBrowser(register = "CTGOV2")
 ctrOpenSearchPagesInBrowser(register = "CTIS")
 ctrOpenSearchPagesInBrowser(register = "EUCTR")
 ctrOpenSearchPagesInBrowser(register = "ISRCTN")
-ctrOpenSearchPagesInBrowser(url = "status=Ended", register = "CTIS")
 
 # Open all queries that were loaded into demo collection
 dbc <- nodbi::src_sqlite(

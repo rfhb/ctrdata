@@ -4,10 +4,12 @@
 \alias{ctrFindActiveSubstanceSynonyms}
 \title{Find synonyms of an active substance}
 \usage{
-ctrFindActiveSubstanceSynonyms(activesubstance = "")
+ctrFindActiveSubstanceSynonyms(activesubstance = "", verbose = FALSE)
 }
 \arguments{
 \item{activesubstance}{An active substance, in an atomic character vector}
+
+\item{verbose}{Print number of studies found in CTGOV2 for `activesubstance`}
 }
 \value{
 A character vector of the active substance (input parameter) and
@@ -16,13 +18,22 @@ A character vector of the active substance (input parameter) and
 \description{
 An active substance can be identified by a recommended international
 nonproprietary name (INN), a trade or product name, or a company code(s).
-Retrieves the names of substance which are searched for by "CTGOV"
-when querying for a given active substance.
+To find likely synonyms, the function retrieves from CTGOV2 the field
+protocolSection.armsInterventionsModule.interventions.otherNames.
+Note this is not free of error and should be checked manually.
 }
 \examples{
 \dontrun{
 
 ctrFindActiveSubstanceSynonyms(activesubstance = "imatinib")
-# [1] "imatinib" "gleevec" "sti 571" "glivec" "CGP 57148" "st1571"
+#  [1] "imatinib"                    "Carcemia"                    "Cemivil"
+#  [4] "CGP 57148"                   "CGP-57148B"                  "CGP57148B"
+#  [7] "Gleevac"                     "gleevec"                     "Gleevec (Imatinib Mesylate)"
+# [10] "Glevec"                      "glivec"                      "Imatinib"
+# [13] "imatinib mesylate"           "Imatinib-AFT"                "IND # 55666"
+# [16] "NSC #716051"                 "NSC-716051"                  "QTI571"
+# [19] "ST1571"                      "STI 571"                     "STI-571"
+# [22] "STI571"                      "tyrosine kinase inhibitors"
+
 }
 }

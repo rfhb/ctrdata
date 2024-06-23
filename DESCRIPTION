@@ -10,9 +10,8 @@ Description: A system for querying, retrieving and analyzing
         protocol- and results-related information on clinical trials from
         four public registers, the 'European Union Clinical Trials Register'
         ('EUCTR', <https://www.clinicaltrialsregister.eu/>), 
-        'ClinicalTrials.gov' ('CTGOV', using the classic interface at 
-        <https://classic.clinicaltrials.gov/>, and 'CTGOV2', using the 
-        current interface at <https://www.clinicaltrials.gov/>), the 
+        'ClinicalTrials.gov' (<https://www.clinicaltrials.gov/> and also 
+        translating queries the retired classic interface), the 
         'ISRCTN' (<http://www.isrctn.com/>) and the
         'European Union Clinical Trials Information System'
         ('CTIS', <https://euclinicaltrials.eu/>). 
