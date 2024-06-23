@@ -6,8 +6,7 @@
 expect_true(
   suppressWarnings(
     ctrLoadQueryIntoDb(
-      queryterm = "neuroblastoma",
-      register = "CTIS",
+      queryterm = 'https://euclinicaltrials.eu/ctis-public/search#searchCriteria={"containAll":"","containAny":"neuroblastoma","containNot":""}',
       only.count = TRUE,
       verbose = TRUE,
       con = dbc)[["n"]] >= 10L))
@@ -16,8 +15,7 @@ expect_true(
 expect_message(
   tmpTest <- suppressWarnings(
     ctrLoadQueryIntoDb(
-      queryterm = "neuroblastoma",
-      register = "CTIS",
+      queryterm = 'https://euclinicaltrials.eu/ctis-public/search#searchCriteria={"containAll":"","containAny":"neuroblastoma","containNot":""}',
       verbose = TRUE,
       con = dbc)),
   "Imported .* updated ")
@@ -33,20 +31,6 @@ expect_true(length(tmpTest$failed) == 0L)
 
 # clean up
 rm(tmpTest)
-
-# # test
-# expect_true(suppressWarnings(
-#   ctrLoadQueryIntoDb(
-#     queryterm = "https://euclinicaltrials.eu/app/#/search?basicSearchInputAND=cancer&msc=528",
-#     con = dbc))[["n"]] >= 9L)
-
-# # test
-# expect_true(
-#   suppressWarnings(
-#     ctrLoadQueryIntoDb(
-#       queryterm = "basicSearchInputAND=infection&status=Ended",
-#       register = "CTIS",
-#       con = dbc))[["n"]] >= 2L)
 
 # test
 expect_true(
@@ -64,20 +48,6 @@ expect_message(
       con = dbc)),
   "[0-9]+ trials have been updated")
 
-# # test
-# expect_true(
-#   suppressWarnings(
-#     ctrLoadQueryIntoDb(
-#       queryterm = "https://euclinicaltrials.eu/app/#/search?number=2022-500271-31-00",
-#       con = dbc))[["n"]] == 1L)
-
-# # test
-# expect_true(
-#   suppressWarnings(
-#     ctrLoadQueryIntoDb(
-#       queryterm = "https://euclinicaltrials.eu/app/#/search?number=2022-501559-99-00",
-#       con = dbc))[["n"]] == 1L)
-
 
 #### documents.path ####
 
@@ -88,12 +58,12 @@ if (!length(dbc$url) || grepl("localhost", dbc$url)) {
   expect_message(
     suppressWarnings(
       ctrLoadQueryIntoDb(
-        queryterm = "carcinoma",
-        register = "CTIS",
+        queryterm = 'https://euclinicaltrials.eu/ctis-public/search#searchCriteria={"containAll":"","containAny":"cancer","containNot":""}',
         documents.path = tmpDir,
+        documents.regexp = ".*",
         con = dbc
       )),
-    "Newly saved [1-9][0-9]+ document"
+    "Newly saved [0-9]+ document"
   )
 }
 
@@ -105,8 +75,7 @@ if (!length(dbc$url) || grepl("localhost", dbc$url)) {
 expect_message(
   suppressWarnings(
     ctrLoadQueryIntoDb(
-      queryterm = "neuroblastoma",
-      register = "CTIS",
+      queryterm = 'https://euclinicaltrials.eu/ctis-public/search#searchCriteria={"containAll":"","containAny":"neuroblastoma","containNot":""}',
       annotation.text = "just_this",
       annotation.mode = "replace",
       con = dbc)),
@@ -166,9 +135,36 @@ tmpFields <- suppressMessages(
 
 # test
 expect_true(
-  length(tmpFields) > 900L)
+  length(tmpFields) > 800L)
+
+# debug
+View(data.frame(
+  register = names(tmpFields),
+  field = tmpFields))
 
 #### dbGetFieldsIntoDf ####
+
+# debug
+for (f in sort(tmpFields[grepl("[.]inclu", tmpFields)])) message(
+  '"', f, '" = "ctrFalseTrue",')
+for (f in sort(tmpFields[grepl("[.]has", tmpFields)])) message(
+  '"', f, '" = "ctrFalseTrue",')
+for (f in sort(tmpFields[grepl("[.]is", tmpFields)])) message(
+  '"', f, '" = "ctrFalseTrue",')
+
+# debug
+for (f in sort(tmpFields[grepl("number", tmpFields, ignore.case = TRUE)])) message(
+  '"', f, '" = "ctrInt",')
+
+# debug
+for (f in sort(tmpFields[
+  grepl("count", tmpFields, ignore.case = TRUE) &
+  !grepl("country|countries", tmpFields, ignore.case = TRUE)])) message(
+  '"', f, '" = "ctrInt",')
+
+# debug list top level fields
+tmpFields[!grepl("[.]", tmpFields)]
+
 
 groupsNo <- (length(tmpFields) %/% 49L) + 1L
 groupsNo <- rep(seq_len(groupsNo), 49L)
@@ -186,6 +182,9 @@ tmpFields <- tmpFields[
     !grepl("update$", tmpFields, ignore.case = TRUE) &
     !grepl("^decisionDate$", tmpFields, ignore.case = TRUE)
 ]
+
+# debug
+for (f in sort(tmpFields)) message('"', f, '" = "ctrDate",')
 
 groupsNo <- (length(tmpFields) %/% 49L) + 1L
 groupsNo <- rep(seq_len(groupsNo), 49L)

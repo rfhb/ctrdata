@@ -77,7 +77,7 @@ tf <- function() {
     suppressMessages(
       ctrLoadQueryIntoDb(
         queryterm = "https://classic.clinicaltrials.gov/this*")),
-    "'queryterm' has unexpected characters")
+    "Not a search query")
 
   # test
   expect_error(
@@ -243,9 +243,11 @@ tf <- function() {
       "age=adult&term=cancer")
   )
 
-  # sapply(sapply(queryterms, "[[", 1),
-  #        function(i) ctrGetQueryUrl(url = i, register = "EUCTR")[["query-term"]],
-  #        USE.NAMES = FALSE, simplify = TRUE)
+  # for debugging
+  ctrGetQueryUrl(url = queryterms[[9]][1], register = "CTGOV")
+  sapply(sapply(queryterms, "[[", 1),
+         function(i) ctrGetQueryUrl(url = i, register = "EUCTR")[["query-term"]],
+         USE.NAMES = FALSE, simplify = TRUE)
 
   # test
   expect_true(all(
@@ -256,34 +258,36 @@ tf <- function() {
       logical(1L))
   ))
 
-  # CTGOV
+  # CTGOV to CTGOV2
   queryterms <- list(
-    c("cancer&age=adult",  # add term=
-      "term=cancer&age=adult"),
-    c("cancer", # add term=
+    c("cancer&age=1",
+      "term=cancer&aggFilters=ages:adult"),
+    c("cancer",
       "term=cancer"),
-    c("cancer&age=adult&phase=0", # add term=
-      "term=cancer&age=adult&phase=0"),
-    c("cancer&age=adult&phase=1&results=true", # add term=
-      "term=cancer&age=adult&phase=1&results=true"),
-    c("&age=adult&phase=1&abc=xyz&cancer&results=true", # add term=
-      "&age=adult&phase=1&abc=xyz&term=cancer&results=true"),
-    c("age=adult&cancer", # add term=
-      "age=adult&term=cancer"),
-    c("2010-024264-18", # add term=
+    c("cancer&age=1&phase=0",
+      "term=cancer&aggFilters=ages:adult,phase:1"),
+    c("cancer&age=1&phase=1&rslt=With",
+      "term=cancer&aggFilters=ages:adult,phase:2,results:with"),
+    c("&age=1&phase=1&abc=xyz&cancer&rslt=With",
+      "term=cancer&aggFilters=ages:adult,phase:2,results:with"),
+    c("age=1&cancer",
+      "term=cancer&aggFilters=ages:adult"),
+    c("2010-024264-18",
       "term=2010-024264-18"),
-    c("NCT1234567890", # add term=
+    c("NCT1234567890",
       "term=NCT1234567890"),
-    c("NCT1234567890+OR+NCT1234567890+AND+SOMETHING", # add term=
-      "term=NCT1234567890+OR+NCT1234567890+AND+SOMETHING"),
-    c("term=cancer&age=adult", # no change
-      "term=cancer&age=adult"),
-    c("age=adult&term=cancer", # no change
-      "age=adult&term=cancer"))
+    c("NCT1234567890+OR+NCT1234567890+AND+SOMETHING",
+      "term=NCT1234567890 OR NCT1234567890 AND SOMETHING"),
+    c("term=cancer&age=1",
+      "term=cancer&aggFilters=ages:adult"),
+    c("age=1&term=cancer",
+      "term=cancer&aggFilters=ages:adult"))
 
-  # sapply(sapply(queryterms, "[[", 1),
-  #        function(i) ctrGetQueryUrl(url = i, register = "CTGOV")[["query-term"]],
-  #        USE.NAMES = FALSE, simplify = TRUE)
+  # for debugging
+  #  ctrGetQueryUrl(url = queryterms[[9]][1], register = "CTGOV")
+  sapply(sapply(queryterms, "[[", 1),
+         function(i) ctrGetQueryUrl(url = i, register = "CTGOV")[["query-term"]],
+         USE.NAMES = FALSE, simplify = TRUE)
 
   # test
   expect_true(all(
@@ -296,21 +300,21 @@ tf <- function() {
 
   # URLs
   queryurls <- list(
-    # euctr
+    # EUCTR
     c("https://www.clinicaltrialsregister.eu/ctr-search/search?query=neuroblastoma",
       "query=neuroblastoma"),
     c("https://www.clinicaltrialsregister.eu/ctr-search/trial/2019-003713-33/NL",
       "query=2019-003713-33"),
     c("https://www.clinicaltrialsregister.eu/ctr-search/trial/2007-000371-42/results",
       "query=2007-000371-42"),
-    # ctgov
+    # CTGOV to CTGOV2
     c("https://classic.clinicaltrials.gov/ct2/results?cond=Neuroblastoma&term=&intr=Investigational+Agent&type=Intr",
-      "cond=Neuroblastoma&intr=Investigational+Agent&type=Intr"),
+      "cond=Neuroblastoma&intr=Investigational Agent&aggFilters=studyType:int"),
     c("https://classic.clinicaltrials.gov/ct2/show/NCT01492673?type=Intr&cond=Neuroblastoma&intr=Investigational+Agent&draw=2&rank=1",
       "term=NCT01492673"),
     c("https://classic.clinicaltrials.gov/ct2/show/NCT01492673",
       "term=NCT01492673"),
-    # isrctn
+    # ISRCTN
     c("https://www.isrctn.com/search?q=neuroblastoma&searchType=advanced-search",
       "q=neuroblastoma"),
     c("https://www.isrctn.com/search?q=&filters=condition:cancer",
@@ -321,9 +325,11 @@ tf <- function() {
       "q=ISRCTN70039829")
   )
 
-  # sapply(sapply(queryurls, "[[", 1),
-  #        function(i) ctrGetQueryUrl(url = i)[["query-term"]],
-  #        USE.NAMES = FALSE, simplify = TRUE)
+  # for debugging
+  ctrGetQueryUrl(url = queryurls[[4]][1], register = "CTGOV")
+  sapply(sapply(queryurls, "[[", 1),
+         function(i) ctrGetQueryUrl(url = i)[["query-term"]],
+         USE.NAMES = FALSE, simplify = TRUE)
 
   # test
   expect_true(all(
@@ -358,37 +364,38 @@ tf <- function() {
 
   # URLs for single studies
   queryurls <- list(
-    # euctr
+    # EUCTR
     c("https://www.clinicaltrialsregister.eu/ctr-search/trial/2007-000371-42/results",
       "https://www.clinicaltrialsregister.eu/ctr-search/search?query=2007-000371-42#tabs"),
-    # ctgov classic
+    # CTGOV to CTGOV2
     c("https://classic.clinicaltrials.gov/ct2/show/NCT01492673?cond=neuroblastoma",
-      "https://classic.clinicaltrials.gov/ct2/show/NCT01492673"),
-    # ctgov classic
+      "https://clinicaltrials.gov/search?term=NCT01492673"),
     c("https://clinicaltrials.gov/ct2/show/NCT01492673?cond=neuroblastoma",
-      "https://classic.clinicaltrials.gov/ct2/show/NCT01492673"),
-    # ctgov2
+      "https://clinicaltrials.gov/search?term=NCT01492673"),
     c("https://www.clinicaltrials.gov/study/NCT01467986?cond=neuroblastoma&intr=Investigational%20drug&aggFilters=ages:child",
-      "https://www.clinicaltrials.gov/study/NCT01467986#main-content"),
-    # isrctn
+      "https://clinicaltrials.gov/study/NCT01467986#main-content"),
+    # ISCRTN
     c("https://www.isrctn.com/ISRCTN70039829",
       "https://www.isrctn.com/ISRCTN70039829"),
-    # isrctn
     c("https://www.isrctn.com/ISRCTN61139514?q=&filters=condition:cancer",
       "https://www.isrctn.com/ISRCTN61139514")
   )
 
-  # sapply(sapply(queryurls, "[[", 1),
-  #        function(i) ctrOpenSearchPagesInBrowser(url = i),
-  #        USE.NAMES = FALSE, simplify = TRUE)
+  # https://clinicaltrials.gov/study/NCT04903899?cond=neuroblastoma
+
+  # for debugging
+  ctrOpenSearchPagesInBrowser(url = queryurls[[4]][1])
+  sapply(sapply(queryurls, "[[", 1),
+         function(i) ctrOpenSearchPagesInBrowser(url = i),
+         USE.NAMES = FALSE, simplify = TRUE)
 
   # test
   expect_true(all(
     vapply(queryurls, function(qt) {
-    suppressMessages(ctrOpenSearchPagesInBrowser(
-      url = qt[[1]]))[[1]] == qt[[2]]},
-    logical(1L))
-    ))
+      suppressMessages(ctrOpenSearchPagesInBrowser(
+        url = qt[[1]]))[[1]] == qt[[2]]},
+      logical(1L))
+  ))
 
   # clean up
   rm(queryurls)

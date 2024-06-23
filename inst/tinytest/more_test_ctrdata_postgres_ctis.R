@@ -32,10 +32,13 @@ tf <- function() {
   }, add = TRUE)
 
   # check server
-  httr::set_config(httr::timeout(60L))
-  if (httr::status_code(
-    httr::HEAD("https://euclinicaltrials.eu/data-protection-and-privacy/")) != 200L
-  ) return(exit_file("Reason: ISRCTN not working"))
+  testUrl <- "https://euclinicaltrials.eu/ctis-public/search"
+  testGet <- function() try(httr::HEAD(testUrl, httr::timeout(10L)), silent = TRUE)
+  testOnce <- testGet()
+
+  if (inherits(testOnce, "try-error") ||
+      httr::status_code(testOnce) != 200L
+  ) return(exit_file("Reason: CTIS not working"))
 
   # do tests
   source("ctrdata_ctis.R", local = TRUE)

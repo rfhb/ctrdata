@@ -11,8 +11,8 @@ tmpTest <- ctrFindActiveSubstanceSynonyms(activesubstance = "imatinib")
 
 # test
 expect_true(all(c(
-  "imatinib", "gleevec", "sti 571", "glivec", "CGP 57148", "st1571") %in%
-    tmpTest))
+  "imatinib", "gleevec", "sti 571", "glivec", "cgp 57148", "st1571") %in%
+    tolower(tmpTest)))
 
 # test
 expect_error(
@@ -27,7 +27,7 @@ expect_error(
 )
 
 # test
-expect_null(
-  suppressMessages(
-    ctrFindActiveSubstanceSynonyms("ISURELYDONOTEXIST"))
+expect_message(
+    ctrFindActiveSubstanceSynonyms("ISURELYDONOTEXIST"),
+    "0 studies"
 )

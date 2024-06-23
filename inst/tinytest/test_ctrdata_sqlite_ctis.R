@@ -36,7 +36,7 @@ tf <- function() {
   }, add = TRUE)
 
   # check server
-  testUrl <- "https://euclinicaltrials.eu/app/#/search"
+  testUrl <- "https://euclinicaltrials.eu/ctis-public/search"
   testGet <- function() try(httr::HEAD(testUrl, httr::timeout(10L)), silent = TRUE)
   testOnce <- testGet()
 

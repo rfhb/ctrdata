@@ -301,19 +301,19 @@ expect_true(
 expect_equal(
   ctrOpenSearchPagesInBrowser(
     url = "https://www.clinicaltrials.gov/search?cond=neuroblastoma&intr=Investigational%20drug&aggFilters=ages:child,status:com&rank=200&sort=EnrollmentCount%3Adesc%2CNumArmGroups"
-  ), "https://www.clinicaltrials.gov/search?cond=neuroblastoma&intr=Investigational drug&aggFilters=ages:child,status:com")
+  ), "https://clinicaltrials.gov/search?cond=neuroblastoma&intr=Investigational drug&aggFilters=ages:child,status:com")
 
 # test
 expect_equal(
   ctrOpenSearchPagesInBrowser(
     url = "https://www.clinicaltrials.gov/study/NCT01467986?cond=neuroblastoma&intr=Investigational%20drug&aggFilters=ages:child,status:com&rank=2"
-  ), "https://www.clinicaltrials.gov/study/NCT01467986#main-content")
+  ), "https://clinicaltrials.gov/study/NCT01467986#main-content")
 
 # test
 expect_equal(
   ctrOpenSearchPagesInBrowser(
-    url = "https://euclinicaltrials.eu/app/#/view/2022-502267-37-00"
-  ), "https://euclinicaltrials.eu/app/#/view/2022-502267-37-00")
+    url = "https://euclinicaltrials.eu/ctis-public/view/2023-508508-39-01"
+  ), "https://euclinicaltrials.eu/ctis-public/search?searchCriteria={\"containAll\":\"2023-508508-39-01\",\"containAny\":\"\",\"containNot\":\"\"}")
 
 # test
 expect_equal(
@@ -392,7 +392,7 @@ expect_error(
   ctrLoadQueryIntoDb(
     queryterm = "*",
     register = "CTGOV"
-  ), "unexpected character"
+  ), "string"
 )
 
 
