@@ -1,7 +1,7 @@
 // ==UserScript==
 //
 // @name         ctrdataURLcopier
-// @version      0.4
+// @version      0.5
 // @description  Copies to the clipboard the link to a user's search in trial registers (CTIS, EUCTR, CTGOV, ISRCTN) for use with R package ctrdata
 // @author       ralf.herold@mailbox.org
 //
@@ -10,69 +10,115 @@
 // @downloadURL  https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js
 // @supportURL   https://github.com/rfhb/ctrdata/issues
 //
-// @match        https://classic.clinicaltrials.gov/ct2/results?*
+// @match        https://classic.clinicaltrials.gov/ct2/results*
 // @match        https://classic.clinicaltrials.gov/ct2/show/*
 // @match        https://www.clinicaltrials.gov/search?*
 // @match        https://www.clinicaltrials.gov/study/*
 // @match        https://clinicaltrials.gov/search?*
 // @match        https://clinicaltrials.gov/study/*
 // @match        https://www.isrctn.com/search?*
-// @match        https://www.isrctn.com/ISRCTN*?q=*
-// @match        https://euclinicaltrials.eu/app/*
+// @match        https://www.isrctn.com/ISRCTN*
+// @match        https://euclinicaltrials.eu/ctis-public/*
+// @match        https://euclinicaltrials.eu/search-for-clinical-trials/*
+// @match        https://www.clinicaltrialsregister.eu/ctr-search/search?query=*
+// @match        https://www.clinicaltrialsregister.eu/ctr-search/trial/*
 //
 // @grant        unsafeWindow
 // @grant        GM_setClipboard
+// @grant        window.onurlchange
 //
 // ==/UserScript==
+
+function formatUrl(x) {
+
+    x = x.replace(/#.*/, '');
+    x = x.replace(/[&?]page.*?=[-,0-9]+/g, '');
+    x = x.replace(/[&?]Search=Search/, '');
+    x = x.replace(/[&?]draw=[0-9]+/, '');
+    x = x.replace(/[&?]rank=[0-9]+/, '');
+    x = x.replace(/[&?]tab=[a-z]+/, '');
+    x = x.replace(/[&?]lang=[a-z]+/, '');
+    x = x.replace(/[&?]totalResults=[0-9]+/g, '');
+    x = x.replace(/[a-z][a-z_]+=&|[a-z_]+=$/ig, ''); // keep &q=&
+
+    return (x)
+}
+
+// Register CTGOV
+if (window.onurlchange === null) {
+
+    window.addEventListener('urlchange', function () {
+
+        var queryUrl = window.location.href;
+        queryUrl = formatUrl(queryUrl);
+
+        console.log('[ctrdataURLcopier] Copied to clipboard:', queryUrl);
+        GM_setClipboard(queryUrl);
+
+    });
+    //}
+}
+
+// Registers except CTIS and CTGOV
 if (window.location.href.indexOf("euclinicaltrials") == -1) {
 
     var queryUrl = window.location.href;
-    queryUrl = queryUrl.replace(/&page.*?=[-,0-9]+/g, '');
-    queryUrl = queryUrl.replace(/&draw=[0-9]+/, '');
-    queryUrl = queryUrl.replace(/&rank=[0-9]+/, '');
-    queryUrl = queryUrl.replace(/&totalResults=[0-9]+/g, '');
-    queryUrl = queryUrl.replace(/[a-z][a-z_]+=&|[a-z_]+=$/ig, ''); // keep &q=&
+    queryUrl = formatUrl(queryUrl);
 
-    console.log(queryUrl);
+    console.log('[ctrdataURLcopier] Copied to clipboard:', queryUrl);
     GM_setClipboard(queryUrl);
 
 } else {
 
-    let origOpen = unsafeWindow.XMLHttpRequest.prototype.open;
+    // Register CTIS - example URLs created by this script:
+    // https://euclinicaltrials.eu/ctis-public/search#searchCriteria={"containAll":"","containAny":"lymphoma","containNot":""}
 
-    unsafeWindow.XMLHttpRequest.prototype.open = function (method, url) {
+    let origSend = unsafeWindow.XMLHttpRequest.prototype.send;
+    unsafeWindow.XMLHttpRequest.prototype.send = function (body) {
 
-        var queryUrl = url;
-        console.log(queryUrl);
+        let queryQuery = window.location.href;
+        let queryUrl = window.location.protocol + '//' + window.location.hostname + window.location.pathname;
 
-        queryUrl = queryUrl.replace(/&?paging=[-,0-9]+/, '');
-        queryUrl = queryUrl.replace(/&?sorting=[-a-zA-Z]+/, '');
-        queryUrl = queryUrl.replace(/&?isEeaOnly=false/, '');
-        queryUrl = queryUrl.replace(/&?isNonEeaOnly=false/, '');
-        queryUrl = queryUrl.replace(/&?isBothEeaNonEea=false/, '');
-        queryUrl = queryUrl.replace(/[?]$/, '');
-        queryUrl = queryUrl.replace(
-            'https://euclinicaltrials.eu/ct-public-api-services/services/ct/publiclookup',
-            'https://euclinicaltrials.eu/app/#/search');
-        queryUrl = queryUrl.replace(
-            /https:\/\/euclinicaltrials.eu\/ct-public-api-services\/services\/ct\/([-0-9]+)\/publicview/,
-            'https://euclinicaltrials.eu/app/#/view/$1');
+        let postBody = body ? JSON.parse(body) : {};
+        let searchCriteria = postBody.searchCriteria || {};
+        let postBodyString = JSON.stringify(searchCriteria, null, 0);
+        let filteredSearchCriteria = Object.entries(searchCriteria)
+            .filter(([key, value]) => value !== '')
+            .reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {});
 
-        console.log('[ctrdataURLcopier] Mangled query: ', queryUrl);
+        // handling a POST request coming from search within CTIS
+        if (JSON.stringify(filteredSearchCriteria, null, 0) != '{}') {
 
-        if (queryUrl.match('app/#/(search|view)')) {
+            postBodyString = 'searchCriteria=' + postBodyString;
+            queryUrl = queryUrl + '#' + postBodyString;
 
-            GM_setClipboard(queryUrl);
-            console.log('[ctrdataURLcopier] Copied to clipboard: ', queryUrl);
-
-            queryUrl = queryUrl.replace('https://euclinicaltrials.eu', '');
-            console.log('[ctrdataURLcopier] Window history updated with: ', queryUrl);
+            console.log('[ctrdataURLcopier] searchCriteria from POST body:', postBodyString);
             window.history.pushState({}, "", queryUrl);
+            // ^^^ does not work from iframe in https://euclinicaltrials.eu/search-for-clinical-trials/
+            GM_setClipboard(queryUrl);
+            console.log('[ctrdataURLcopier] Copied to clipboard:', queryUrl);
 
-        };
+            return origSend.apply(this, arguments);
+        }
 
-        return origOpen.apply(this, arguments);
+        // handling when CTIS is newly opened with anchor
+        if (queryQuery.indexOf("#") != -1) {
+
+            postBodyString = queryQuery.replace(/^.+#(.+)$/, '$1')
+            postBodyString = postBodyString.replace(/=/g, '":')
+            postBodyString = decodeURI(postBodyString);
+
+            console.log('[ctrdataURLcopier] string after # for POST body:', postBodyString);
+            arguments[0] = "{\"pagination\":{\"page\":1,\"size\":20},\"sort\":{\"property\":\"decisionDate\",\"direction\":\"DESC\"}," +
+                "\"" + postBodyString + "}";
+
+            alert("Click on 'Search results' to see\nthe studies found with the query");
+            window.history.pushState({}, "", decodeURI(queryQuery));
+            return origSend.apply(this, arguments);
+        }
+
+        // handling when CTIS is newly opened without an anchor
+        return origSend.apply(this, arguments);
     };
 
 }
-
