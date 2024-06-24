@@ -77,7 +77,7 @@ Retrieve and Analyze Clinical Trials in Public Registers.* R package
 version 1.17.2, <https://cran.r-project.org/package=ctrdata>”.
 
 <!--
-&#10;```r
+&#10;``` r
 citation("ctrdata")
 ```
 -->
@@ -424,8 +424,9 @@ whether loaded from `CTGOV` or `CTGOV2`. Thus, only a single version
 (the last retrieved) will be in the collection in the user’s database.
 
 Important differences exist between field names and contents of
-information retrieved using `CTGOV` or `CTGOV2`; see the [XML schemas
-for `CTGOV`](https://prsinfo.clinicaltrials.gov/prs-xml-schemas.html)
+information retrieved using `CTGOV` or `CTGOV2`; see the [XML schema for
+study records in
+`CTGOV`](https://web.archive.org/web/20240229211431/https://classic.clinicaltrials.gov/html/api/downloads/FullStudiesResponse.xsd)
 and the [REST API for
 `CTGOV2`](https://clinicaltrials.gov/data-api/api#extapi). For more
 details, call `help("ctrdata-registers")`. This is one of the reasons

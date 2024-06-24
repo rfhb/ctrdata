@@ -94,7 +94,7 @@
 </ul>
 <p>Remember to respect the registers’ terms and conditions (see <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>). Please cite this package in any publication as follows: “Ralf Herold (2024). <em>ctrdata: Retrieve and Analyze Clinical Trials in Public Registers.</em> R package version 1.17.2, <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a>”.</p>
 <!--
-&#10;```r
+&#10;``` r
 citation("ctrdata")
 ```
 -->
@@ -412,7 +412,7 @@ citation("ctrdata")
 <p>The new website and API introduced in July 2023 (<a href="https://www.clinicaltrials.gov/" class="external-link uri">https://www.clinicaltrials.gov/</a>) is identified in <code>ctrdata</code> as <code>CTGOV2</code>.</p>
 <p>The website and API which is now called “classic” (<a href="https://classic.clinicaltrials.gov/" class="external-link uri">https://classic.clinicaltrials.gov/</a>) is identified in <code>ctrdata</code> as <code>CTGOV</code>, and this is backwards-compatible with queries that were previously retrieved with <code>ctrdata</code>. As long as the classic website is available, <code>ctrdata</code> should work (it does not use the classic API, announced to be retired in June 2024; it is unclear if and when the classic website is retired).</p>
 <p>Both use the same trial identifier (e.g., NCT01234567) for the same trial. As a consequence, queries for the same trial retrieved using <code>CTGOV</code> or <code>CTGOV2</code> overwrite any previous record for that trial, whether loaded from <code>CTGOV</code> or <code>CTGOV2</code>. Thus, only a single version (the last retrieved) will be in the collection in the user’s database.</p>
-<p>Important differences exist between field names and contents of information retrieved using <code>CTGOV</code> or <code>CTGOV2</code>; see the <a href="https://prsinfo.clinicaltrials.gov/prs-xml-schemas.html" class="external-link">XML schemas for <code>CTGOV</code></a> and the <a href="https://clinicaltrials.gov/data-api/api#extapi" class="external-link">REST API for <code>CTGOV2</code></a>. For more details, call <code><a href="reference/ctrdata-registers.html">help("ctrdata-registers")</a></code>. This is one of the reasons why <code>ctrdata</code> handles the situation as if these were two different registers.</p>
+<p>Important differences exist between field names and contents of information retrieved using <code>CTGOV</code> or <code>CTGOV2</code>; see the <a href="https://web.archive.org/web/20240229211431/https://classic.clinicaltrials.gov/html/api/downloads/FullStudiesResponse.xsd" class="external-link">XML schema for study records in <code>CTGOV</code></a> and the <a href="https://clinicaltrials.gov/data-api/api#extapi" class="external-link">REST API for <code>CTGOV2</code></a>. For more details, call <code><a href="reference/ctrdata-registers.html">help("ctrdata-registers")</a></code>. This is one of the reasons why <code>ctrdata</code> handles the situation as if these were two different registers.</p>
 <ul>
 <li>Search used in this example: <a href="https://www.clinicaltrials.gov/search?cond=Neuroblastoma&amp;aggFilters=ages:child,results:with,studyType:int" class="external-link uri">https://www.clinicaltrials.gov/search?cond=Neuroblastoma&amp;aggFilters=ages:child,results:with,studyType:int</a>
 </li>

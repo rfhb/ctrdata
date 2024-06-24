@@ -310,7 +310,7 @@ The website and API which is now called "classic" (https://classic.clinicaltrial
 
 Both use the same trial identifier (e.g., NCT01234567) for the same trial. As a consequence, queries for the same trial retrieved using `CTGOV` or `CTGOV2` overwrite any previous record for that trial, whether loaded from `CTGOV` or `CTGOV2`. Thus, only a single version (the last retrieved) will be in the collection in the user's database. 
 
-Important differences exist between field names and contents of information retrieved using `CTGOV` or `CTGOV2`; see the [XML schemas for `CTGOV`](https://prsinfo.clinicaltrials.gov/prs-xml-schemas.html) and the [REST API for `CTGOV2`](https://clinicaltrials.gov/data-api/api#extapi). For more details, call `help("ctrdata-registers")`. This is one of the reasons why `ctrdata` handles the situation as if these were two different registers. 
+Important differences exist between field names and contents of information retrieved using `CTGOV` or `CTGOV2`; see the [XML schema for study records in `CTGOV`](https://web.archive.org/web/20240229211431/https://classic.clinicaltrials.gov/html/api/downloads/FullStudiesResponse.xsd) and the [REST API for `CTGOV2`](https://clinicaltrials.gov/data-api/api#extapi). For more details, call `help("ctrdata-registers")`. This is one of the reasons why `ctrdata` handles the situation as if these were two different registers. 
 
 * Search used in this example: https://www.clinicaltrials.gov/search?cond=Neuroblastoma&aggFilters=ages:child,results:with,studyType:int
 

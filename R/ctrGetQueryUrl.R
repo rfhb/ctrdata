@@ -33,7 +33,7 @@
 #' # user copied into the clipboard the URL from
 #' # the address bar of the browser that shows results
 #' # from a query in one of the trial registers
-#' try(ctrGetQueryUrl(), silent = TRUE)
+#' if (interactive()) try(ctrGetQueryUrl(), silent = TRUE)
 #'
 #' # extract query parameters from search result URL
 #' # (URL was cut for the purpose of formatting only)
@@ -49,8 +49,7 @@
 #' )
 #'
 #' ctrGetQueryUrl("https://www.clinicaltrialsregister.eu/ctr-search/trial/2007-000371-42/results")
-#' ctrGetQueryUrl("https://euclinicaltrials.eu/app/#/view/2022-500041-24-00")
-#' ctrGetQueryUrl("https://euclinicaltrials.eu/app/#/search?sponsorTypeCode=1")
+#' ctrGetQueryUrl("https://euclinicaltrials.eu/ctis-public/view/2022-500041-24-00")
 #' ctrGetQueryUrl("https://classic.clinicaltrials.gov/ct2/show/NCT01492673?cond=neuroblastoma")
 #' ctrGetQueryUrl("https://clinicaltrials.gov/ct2/show/NCT01492673?cond=neuroblastoma")
 #' ctrGetQueryUrl("https://clinicaltrials.gov/study/NCT01467986?aggFilters=ages:child")
