@@ -138,9 +138,9 @@ expect_true(
   length(tmpFields) > 800L)
 
 # debug
-View(data.frame(
-  register = names(tmpFields),
-  field = tmpFields))
+# View(data.frame(
+#   register = names(tmpFields),
+#   field = tmpFields))
 
 #### dbGetFieldsIntoDf ####
 
