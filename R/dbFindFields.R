@@ -111,9 +111,9 @@ dbFindFields <- function(namepart = ".*",
                    '{"clinical_results": {"$regex": ".+"}}',
                    '{"resultsSection.outcomeMeasuresModule": {"$regex": ".+"}}',
                    queries)
-      names(queries)[1:2] <- c("EUCTR", "CTGOV", "CTGOV2")
+      names(queries)[1:3] <- c("EUCTR", "CTGOV", "CTGOV2")
       n <- 5L
-      message(" (sampling ", n, " trial records) ", appendLF = FALSE)
+      message(" (sampling ", n, " trial records per register) ", appendLF = FALSE)
 
     } else {
 
