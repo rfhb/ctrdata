@@ -186,17 +186,32 @@ ctrLoadQueryIntoDb(
   con = db
 )
 # * Appears specific for CTGOV Classic website
-# * Found search query from CTGOV: cond=neuroblastoma&recrs=e&age=0&intr=Drug
-# * Checking trials using CTGOV Classic website...
-# Retrieved overview, records of 226 trial(s) are to be downloaded (estimate: 1.8 MB)
-# (1/3) Downloading trial file...
-# Download status: 1 done; 0 in progress. Total size: 1.59 Mb (100%)... done!             
-# (2/3) Converting to NDJSON (estimate: 10 s)...
+# Since 2024-06-25, the classic CTGOV servers are no longer available. Package 
+# ctrdata has translated the classic CTGOV query URL from this call of function 
+# ctrLoadQueryIntoDb(queryterm = ...) into a query URL that works with the current 
+# CTGOV2. This is printed below and is also part of the return value of this function, ctrLoadQueryIntoDb(...)$url. This URL can be used with ctrdata functions. 
+# Note that the fields and data schema of trials differ between CTGOV and CTGOV2. 
+# 
+# Replace this URL:
+# 
+# https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&recrs=e&age=0&intr=Drug
+# 
+# with this URL:
+# 
+# https://clinicaltrials.gov/search?cond=neuroblastoma&intr=Drug&aggFilters=ages:child,status:com
+# 
+# * Found search query from CTGOV2: cond=neuroblastoma&intr=Drug&aggFilters=ages:child,status:com
+# * Checking trials using CTGOV REST API 2.0, found 222 trials
+# (1/3) Downloading in 1 batch(es) (max. 1000 trials each; estimate: 22 MB total)
+# Download status: 1 done; 0 in progress. Total size: 9.79 Mb (615%)... done!             
+# (2/3) Converting to NDJSON...
 # (3/3) Importing records into database...
-# = Imported or updated 226 trial(s)                 
+# JSON file #: 1 / 1                               
+# = Imported or updated 222 trial(s)
+# No history found in expected format.
 # Updated history ("meta-info" in "test")
 # $n
-# [1] 226
+# [1] 222
 ```
 
 With a file-base SQLite database, this takes about 10 seconds for about 200 records.
@@ -206,31 +221,26 @@ Note that in this example, a warning message may be issued from importing an NDJ
 
 ## Add records from CTIS register into the same collection
 
-As of May 2024, more than 750 trials are publicly accessible in CTIS, which has to be used since January 2023 for new clinical trials in the European Union (EU). Queries in the CTIS search interface can be automatically copied to the clipboard so that a user can paste them into `queryterm`, see [here](https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser). 
+As of 23 June 2024, more than 4100 trials are publicly accessible in CTIS, which has to be used since January 2023 for new clinical trials in the European Union (EU). Queries in the CTIS search interface can be automatically copied to the clipboard so that a user can paste them into `queryterm`, see [here](https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser). 
 
 ```{r}
 # Retrieve trials from another register:
 ctrLoadQueryIntoDb(
-  queryterm = "ageGroupCode=2",
+  queryterm = 'searchCriteria={"containAll":"","containAny":"neonates","containNot":""}',
   register = "CTIS",
   con = db
 )
-# * Found search query from CTIS: ageGroupCode=2
+# * Found search query from CTIS: searchCriteria={"containAll":"","containAny":"neonates","containNot":""}
 # * Checking trials in CTIS...
-# (1/5) Downloading trials list . found 78 trials
-# (2/5) Downloading and processing part I and parts II... (estimate: 10 Mb)
-# Download status: 78 done; 0 in progress. Total size: 16.26 Mb (100%)... done!             
-# . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-# (3/5) Downloading and processing additional data:
-# publicevents, summary, layperson, csr, cm, inspections, publicevaluation (estimate: 7 Mb)
-# Download status: 160 done; 0 in progress. Total size: 4.26 Mb (100%)... done!             
-# 78
-# (4/5) Importing records into database...
-# (5/5) Updating with additional data: . . .       
-# = Imported 78, updated 78 / 78 / 1 record(s) on 78 trial(s)
+# (1/4) Downloading trial list(s), found 7 trials
+# (2/4) Downloading and processing trial data... (estimate: 0.6 Mb)
+# Download status: 7 done; 0 in progress. Total size: 262.58 Kb (100%)... done!             
+# (3/4) Importing records into database...
+# (4/4) Updating with additional data: .           
+# = Imported 7, updated 7 record(s) on 7 trial(s)
 # Updated history ("meta-info" in "test")
 # $n
-# [1] 78
+# [1] 7
 ```
 
 ## Add personal annotations
@@ -241,24 +251,42 @@ Annotations are useful for analyses, for example to specially identify subsets o
 
 ```{r}
 ctrLoadQueryIntoDb(
-  queryterm = "https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&recrs=e&age=0&intr=Drug&cntry=DE",
+  queryterm = paste0(
+    "https://classic.clinicaltrials.gov/ct2/results?", 
+    "cond=neuroblastoma&recrs=e&age=0&type=Intr&cntry=DE"),
   annotation.text = "site_DE ",
   annotation.mode = "append",
   con = db
 )
 # * Appears specific for CTGOV Classic website
-# * Found search query from CTGOV: cond=neuroblastoma&recrs=e&age=0&intr=Drug&cntry=DE
-# * Checking trials using CTGOV Classic website...
-# Retrieved overview, records of 15 trial(s) are to be downloaded (estimate: 0.12 MB)
-# (1/3) Downloading trial file...
-# Download status: 1 done; 0 in progress. Total size: 86.91 Kb (100%)... done!             
-# (2/3) Converting to NDJSON (estimate: 0.8 s)...
+# Since 2024-06-25, the classic CTGOV servers are no longer available. Package 
+# ctrdata has translated the classic CTGOV query URL from this call of function 
+# ctrLoadQueryIntoDb(queryterm = ...) into a query URL that works with the current 
+# CTGOV2. This is printed below and is also part of the return value of this function,
+# ctrLoadQueryIntoDb(...)$url. This URL can be used with ctrdata functions. 
+# Note that the fields and data schema of trials differ between CTGOV and CTGOV2. 
+# 
+# Replace this URL:
+# 
+# https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&recrs=e&age=0&type=Intr&cntry=DE
+# 
+# with this URL:
+# 
+# https://clinicaltrials.gov/search?cond=neuroblastoma&country=Germany&aggFilters=ages:child,studyType:int,status:com
+# 
+# * Found search query from CTGOV2:
+#   cond=neuroblastoma&country=Germany&aggFilters=ages:child,studyType:int,status:com
+# * Checking trials using CTGOV REST API 2.0, found 16 trials
+# (1/3) Downloading in 1 batch(es) (max. 1000 trials each; estimate: 1.6 MB total)
+# Download status: 1 done; 0 in progress. Total size: 487.83 Kb (492%)... done!             
+# (2/3) Converting to NDJSON...
 # (3/3) Importing records into database...
-# = Imported or updated 15 trial(s)                
-# = Annotated retrieved records (15 records)
+# JSON file #: 1 / 1                               
+# = Imported or updated 16 trial(s)
+# = Annotated retrieved records (16 records)
 # Updated history ("meta-info" in "test")
 # $n
-# [1] 15
+# [1] 16
 ```
 
 ## Add information using trial identifiers
@@ -290,9 +318,6 @@ for (idSet in idSets) {
   # import
   setResult <- ctrLoadQueryIntoDb(
 
-    # for CTGOV Classic, EUCTR, ISRCTN use:
-    # queryterm = paste0(idSet, collapse = "+OR+"),
-    
     # for CTGOV2 use: 
     queryterm = paste0("term=", paste0(idSet, collapse = " ")),
     
@@ -323,7 +348,14 @@ Not all registers automatically expand search terms to include alternative terms
 ctrFindActiveSubstanceSynonyms(
   activesubstance = "imatinib"
 )
-# [1] "imatinib"  "gleevec" "sti 571" "glivec" "CGP 57148" "st1571"
+#  [1] "imatinib"                    "Carcemia"                    "Cemivil"                    
+#  [4] "CGP 57148"                   "CGP-57148B"                  "CGP57148B"                  
+#  [7] "Gleevac"                     "Gleevec"                     "Gleevec (Imatinib Mesylate)"
+# [10] "Glevec"                      "Glivec"                      "Imatinib"                   
+# [13] "Imatinib Mesylate"           "Imatinib-AFT"                "NSC #716051"                
+# [16] "NSC-716051"                  "QTI571"                      "ST1571"                     
+# [19] "STI 571"                     "STI-571"                     "STI571"                     
+# [22] "tyrosine kinase inhibitors"  "Ziatir"                      "Zoleta"  
 ```
 
 These names can then be used in queries in any register.

@@ -138,33 +138,37 @@ expect_true(
   length(tmpFields) > 800L)
 
 # debug
-# View(data.frame(
-#   register = names(tmpFields),
-#   field = tmpFields))
+if (FALSE){
+
+  # debug
+  View(data.frame(
+    register = names(tmpFields),
+    field = tmpFields))
+
+  # debug
+  for (f in sort(tmpFields[grepl("[.]inclu", tmpFields)])) message(
+    '"', f, '" = "ctrFalseTrue",')
+  for (f in sort(tmpFields[grepl("[.]has", tmpFields)])) message(
+    '"', f, '" = "ctrFalseTrue",')
+  for (f in sort(tmpFields[grepl("[.]is", tmpFields)])) message(
+    '"', f, '" = "ctrFalseTrue",')
+
+  # debug
+  for (f in sort(tmpFields[grepl("number", tmpFields, ignore.case = TRUE)])) message(
+    '"', f, '" = "ctrInt",')
+
+  # debug
+  for (f in sort(tmpFields[
+    grepl("count", tmpFields, ignore.case = TRUE) &
+    !grepl("country|countries", tmpFields, ignore.case = TRUE)])) message(
+      '"', f, '" = "ctrInt",')
+
+  # debug list top level fields
+  tmpFields[!grepl("[.]", tmpFields)]
+
+}
 
 #### dbGetFieldsIntoDf ####
-
-# debug
-for (f in sort(tmpFields[grepl("[.]inclu", tmpFields)])) message(
-  '"', f, '" = "ctrFalseTrue",')
-for (f in sort(tmpFields[grepl("[.]has", tmpFields)])) message(
-  '"', f, '" = "ctrFalseTrue",')
-for (f in sort(tmpFields[grepl("[.]is", tmpFields)])) message(
-  '"', f, '" = "ctrFalseTrue",')
-
-# debug
-for (f in sort(tmpFields[grepl("number", tmpFields, ignore.case = TRUE)])) message(
-  '"', f, '" = "ctrInt",')
-
-# debug
-for (f in sort(tmpFields[
-  grepl("count", tmpFields, ignore.case = TRUE) &
-  !grepl("country|countries", tmpFields, ignore.case = TRUE)])) message(
-  '"', f, '" = "ctrInt",')
-
-# debug list top level fields
-tmpFields[!grepl("[.]", tmpFields)]
-
 
 groupsNo <- (length(tmpFields) %/% 49L) + 1L
 groupsNo <- rep(seq_len(groupsNo), 49L)
