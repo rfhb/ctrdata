@@ -135,6 +135,7 @@ typeVars <- list(
   "authorizedApplication.authorizedPartI.assessmentOutcomeDate" = "ctrDate",
   "authorizedApplication.authorizedPartI.conclusionDate" = "ctrDate",
   "authorizedApplication.authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialPeriod.fromDate" = "ctrDate",
+  "authorizedApplication.authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialPeriod.trialEndDate" = "ctrDate",
   "authorizedApplication.authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialPeriod.trialStartDate" = "ctrDate",
   "authorizedApplication.authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
   "authorizedApplication.authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
@@ -142,11 +143,13 @@ typeVars <- list(
   "authorizedApplication.authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.fromDate" = "ctrDate",
   "authorizedApplication.authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.toDate" = "ctrDate",
   "authorizedApplication.authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialPeriod.fromDate" = "ctrDate",
+  "authorizedApplication.authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialPeriod.trialEndDate" = "ctrDate",
   "authorizedApplication.authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialPeriod.trialStartDate" = "ctrDate",
   "authorizedApplication.authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialRecruitmentPeriod.fromDate" = "ctrDate",
   "authorizedApplication.authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
   "authorizedApplication.authorizedPartI.productRoleGroupInfos.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
   "authorizedApplication.authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialPeriod.fromDate" = "ctrDate",
+  "authorizedApplication.authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialPeriod.trialEndDate" = "ctrDate",
   "authorizedApplication.authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialPeriod.trialStartDate" = "ctrDate",
   "authorizedApplication.authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
   "authorizedApplication.authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.activeTrialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
@@ -154,6 +157,7 @@ typeVars <- list(
   "authorizedApplication.authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.fromDate" = "ctrDate",
   "authorizedApplication.authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.toDate" = "ctrDate",
   "authorizedApplication.authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialPeriod.fromDate" = "ctrDate",
+  "authorizedApplication.authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialPeriod.trialEndDate" = "ctrDate",
   "authorizedApplication.authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialPeriod.trialStartDate" = "ctrDate",
   "authorizedApplication.authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialRecruitmentPeriod.fromDate" = "ctrDate",
   "authorizedApplication.authorizedPartI.products.part1MedicinalProductRoleMscInfos.memberStateConcernedInfo.trialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
@@ -182,15 +186,26 @@ typeVars <- list(
   "authorizedApplication.authorizedPartsII.mscInfo.trialRecruitmentPeriod.fromDate" = "ctrDate",
   "authorizedApplication.authorizedPartsII.mscInfo.trialRecruitmentPeriod.recruitmentEndDate" = "ctrDate",
   "authorizedApplication.authorizedPartsII.mscInfo.trialRecruitmentPeriod.recruitmentStartDate" = "ctrDate",
+  "authorizedApplication.authorizedPartsII.mscInfo.trialRestartDate" = "ctrDate",
   "authorizedApplication.memberStatesConcerned.firstDecisionDate" = "ctrDate",
   "authorizedApplication.memberStatesConcerned.lastDecisionDate" = "ctrDate",
+  "correctiveMeasures.revertedDate" = "ctrDate",
+  "correctiveMeasures.sponsorActionRequiredByDate" = "ctrDate",
+  "correctiveMeasures.sponsorSubmitDate" = "ctrDate",
+  "events.seriousBreaches.awareDate" = "ctrDate",
+  "events.seriousBreaches.breachDate" = "ctrDate",
+  "events.seriousBreaches.submissionDate" = "ctrDate",
   "events.temporaryHaltList.haltDate" = "ctrDate",
+  "events.temporaryHaltList.plannedRestartDate" = "ctrDate",
   "events.temporaryHaltList.submitDate" = "ctrDate",
   "events.trialEvents.earlyTerminationReason.isLateCandidate" = "ctrDate",
   "events.trialEvents.events.date" = "ctrDate",
+  "events.trialGlobalEndDate" = "ctrDate",
   "events.urgentSafetyMeasures.eventDate" = "ctrDate",
   "events.urgentSafetyMeasures.submissionDate" = "ctrDate",
   "publishDate" = "ctrDate",
+  "results.laypersonResults.submissionDate" = "ctrDate",
+  "results.summaryResults.submissionDate" = "ctrDate",
   #
   # ctis until 2024-06-17
   "applications.ctMSCs.activeTrialPeriod.fromDate" = "ctrDate",
@@ -896,6 +911,9 @@ ctgovVersion <- function(url, register) {
 #' @keywords internal
 #' @noRd
 #'
+#' @importFrom countrycode countrycode
+#' @importFrom utils URLdecode
+#'
 #' @returns string url suitable for a search current CTGOV website
 #'
 #' @examples
@@ -1230,6 +1248,17 @@ ctgovClassicToCurrent <- function(url, verbose = TRUE) {
       unique(apiParams[grepl(":", names(apiParams))]),
       collapse = ",")
   )
+
+  # handle country
+  if (grepl("[?&]country=[^$&]", apiParams)) {
+
+    countryCode <- sub(".+([?&]country=)([A-Z]+)([$&]).*", "\\2", apiParams)
+    if (countryCode != apiParams) apiParams <-
+        sub("([?&]country=)([A-Z]+)([$&])",
+            paste0("\\1", countrycode::countrycode(
+              countryCode, "iso2c", "iso.name.en"), "\\3"),
+            apiParams)
+  }
 
   # prettify
   apiParams <- gsub("&aggFilters=$", "", apiParams)
