@@ -187,8 +187,10 @@ tmpFields <- tmpFields[
     !grepl("^decisionDate$", tmpFields, ignore.case = TRUE)
 ]
 
-# debug
-for (f in sort(tmpFields)) message('"', f, '" = "ctrDate",')
+if (FALSE){
+  # debug
+  for (f in sort(tmpFields)) message('"', f, '" = "ctrDate",')
+}
 
 groupsNo <- (length(tmpFields) %/% 49L) + 1L
 groupsNo <- rep(seq_len(groupsNo), 49L)
