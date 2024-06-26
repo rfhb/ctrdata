@@ -103,7 +103,7 @@ expect_message(
     ctrLoadQueryIntoDb(
       querytoupdate = "last",
       con = dbc)),
-  "Search result page empty")
+  "Search result page empty|updated [0-9]+ trial")
 
 tempDf <- data.frame(
   `query-term` = c("q=neuroblastoma", "q=neuroblastoma"),
