@@ -129,6 +129,17 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     ),
     #
     # other "query." terms
+    # the values apparently can include AREA expressions
+    #
+    # https://clinicaltrials.gov/find-studies/constructing-complex-search-queries#areaOp
+    # Declares which search area should be searched. Search areas are defined on the
+    # ClinicalTrials.gov Search Area page. In addition to specifying search areas,
+    # it is possible to specify a field from the study structure. Any field from the study
+    # structure is searchable.
+    #
+    # https://clinicaltrials.gov/data-api/api#extapi
+    # see /studies/ endpoint for relation of search areas to query parameters
+    #
     list(
       "extract" = "(cond|term|intr|titles|outc|spons|lead|id)=(.+)(&|$)",
       "replace" = "&query.\\1=\\2",
@@ -167,6 +178,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
   queryterm <- paste0(queryterm, collapse = "&")
 
   # adjust remaining quirks
+  queryterm <- sub("^&", "", queryterm)
   queryterm <- gsub("&&+", "&", queryterm)
   queryterm <- gsub("RANGE\\[,", "RANGE[MIN,", queryterm)
   queryterm <- stringi::stri_replace_all_regex(queryterm, "(RANGE\\[.+?),\\]", "$1,MAX]")
@@ -263,7 +275,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
       "Download not successful for ", urlToDownload)
 
     # convert to ndjson
-    message("(2/3) Converting to NDJSON...")
+    message("(2/3) Converting to NDJSON...\r", appendLF = FALSE)
     fTrialsNdjson <- file.path(tempDir, paste0("ctgov_trials_", pageNumber,".ndjson"))
     jqr::jq(
       file(fTrialJson),
