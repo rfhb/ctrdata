@@ -1,5 +1,6 @@
 
 <!-- README.md is generated from README.Rmd -->
+
 <!-- badges: start -->
 
 [![CRAN
@@ -282,7 +283,9 @@ ctrOpenSearchPagesInBrowser(copyright = TRUE)
 
 ``` r
 q <- ctrGetQueryUrl()
-# * Using clipboard content as register query URL: https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&age=under-18&phase=phase-one&status=completed
+# * Using clipboard content as register query URL:
+#  https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&
+#  age=under-18&phase=phase-one&status=completed
 # * Found search query from EUCTR: query=cancer&age=under-18&phase=phase-one&status=completed
 
 q
@@ -407,36 +410,35 @@ with(
 
 - Add records from another register (CTGOV) into the same collection
 
-Both the current and classic CTGOV website are supported by `ctrdata`
-since 2023-08-05:
-
 The new website and API introduced in July 2023
-(<https://www.clinicaltrials.gov/>) is identified in `ctrdata` as
-`CTGOV2`.
+(<https://www.clinicaltrials.gov/>) is supported by `ctrdata` since
+mid-2023 and identified in `ctrdata` as `CTGOV2`.
 
-The website and API which is now called “classic”
-(<https://classic.clinicaltrials.gov/>) is identified in `ctrdata` as
-`CTGOV`, and this is backwards-compatible with queries that were
-previously retrieved with `ctrdata`. As long as the classic website is
-available, `ctrdata` should work (it does not use the classic API,
-announced to be retired in June 2024; it is unclear if and when the
-classic website is retired).
+On 2024-06-25, `CTGOV` has retired the classic website and API used by
+`ctrdata` since 2015. To support users, `ctrdata` however automatically
+translates and redirects queries to the current website. This helps with
+automatically updating previously loaded queries
+(`ctrLoadQueryIntoDb(querytoupdate = <n>)`), manually migrating queries
+and reproducible work on clinical trials information. This new
+functionality in `ctrdata` translates a user’s search query URL from the
+classic website into a query for the current `CTGOV` website, for all
+search parameters. Going forward, users are recommended to change to use
+`CTGOV2` queries.
 
-Both use the same trial identifier (e.g., NCT01234567) for the same
-trial. As a consequence, queries for the same trial retrieved using
-`CTGOV` or `CTGOV2` overwrite any previous record for that trial,
-whether loaded from `CTGOV` or `CTGOV2`. Thus, only a single version
-(the last retrieved) will be in the collection in the user’s database.
-
-Important differences exist between field names and contents of
-information retrieved using `CTGOV` or `CTGOV2`; see the [XML schema for
-study records in
+As regards study data, important differences exist between field names
+and contents of information retrieved using `CTGOV` or `CTGOV2`; see the
+[XML schema for study records in
 `CTGOV`](https://web.archive.org/web/20240229211431/https://classic.clinicaltrials.gov/html/api/downloads/FullStudiesResponse.xsd)
 and the [REST API for
 `CTGOV2`](https://clinicaltrials.gov/data-api/api#extapi). For more
 details, call `help("ctrdata-registers")`. This is one of the reasons
 why `ctrdata` handles the situation as if these were two different
-registers.
+registers and will continue to identify the current API as
+`register = "CTGOV2"`, to support the analysis stage.
+
+Note that loading trials with `ctrdata` overwrites the previous record
+with `CTGOV2` data, whether the previous record was retrieved using
+`CTGOV` or `CTGOV` queries.
 
 - Search used in this example:
   <https://www.clinicaltrials.gov/search?cond=Neuroblastoma&aggFilters=ages:child,results:with,studyType:int>
@@ -474,7 +476,12 @@ ctrLoadQueryIntoDb(
   con = db
 )
 # * Appears specific for CTGOV Classic website
-# Since 2024-06-25, the classic CTGOV servers are no longer available. Package ctrdata has translated the classic CTGOV query URL from this call of function ctrLoadQueryIntoDb(queryterm = ...) into a query URL that works with the current CTGOV2. This is printed below and is also part of the return value of this function, ctrLoadQueryIntoDb(...)$url. This URL can be used with ctrdata functions. Note that the fields and data schema of trials differ between CTGOV and CTGOV2. 
+# Since 2024-06-25, the classic CTGOV servers are no longer available. Package 
+# ctrdata has translated the classic CTGOV query URL from this call of function 
+# ctrLoadQueryIntoDb(queryterm = ...) into a query URL that works with the current 
+# CTGOV2. This is printed below and is also part of the return value of this function,
+# ctrLoadQueryIntoDb(...)$url. This URL can be used with ctrdata functions. Note that
+# the fields and data schema of trials differ between CTGOV and CTGOV2. 
 # 
 # Replace this URL:
 # 

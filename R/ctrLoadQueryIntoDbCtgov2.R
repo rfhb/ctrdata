@@ -241,7 +241,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
   message("(1/3) Downloading in ",
           ceiling(resultsEuNumTrials / 1000L),
           " batch(es) (max. 1000 trials each; estimate: ",
-          format(resultsEuNumTrials * 149 / 9810, digits = 2), " Mb total)")
+          format(resultsEuNumTrials * 0.1, digits = 2), " Mb total)")
 
   # register
   on.exit(unlink(dir(tempDir, "ctgov_trials_[0-9]+.ndjson", full.names = TRUE)), add = TRUE)
@@ -306,7 +306,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
 
   ## database import -----------------------------------------------------
 
-  message("(3/3) Importing records into database...")
+  message("\n(3/3) Importing records into database...")
 
   # dbCTRLoadJSONFiles operates on pattern = ".+_trials_.*.ndjson"
   imported <- dbCTRLoadJSONFiles(dir = tempDir, con = con, verbose = verbose)
