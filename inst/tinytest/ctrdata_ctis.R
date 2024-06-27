@@ -125,6 +125,13 @@ expect_equal(
         con = dbc))),
   "")
 
+# get all trials
+ctrLoadQueryIntoDb(
+  queryterm = "", 
+  register = "CTIS",
+  con = dbc
+)
+
 # get all field names
 tmpFields <- suppressMessages(
   suppressWarnings(
@@ -182,9 +189,8 @@ for (i in unique(groupsNo)) {
 }
 
 tmpFields <- tmpFields[
-  grepl("date$", tmpFields, ignore.case = TRUE) &
-    !grepl("update$", tmpFields, ignore.case = TRUE) &
-    !grepl("^decisionDate$", tmpFields, ignore.case = TRUE)
+  grepl("[.]date$", tmpFields, ignore.case = TRUE) |
+    grepl("Date$", tmpFields, ignore.case = FALSE)
 ]
 
 if (FALSE) {
@@ -219,7 +225,7 @@ for (i in unique(groupsNo)) {
     unique(unlist(
       lapply(
         tmpData[ , -1, drop = FALSE],
-        function(i) sapply(i, function(ii) class(ii)))
+        function(i) sapply(i, function(ii) class(ii))[1])
     )) %in% c("Date", "POSIXct", "POSIXt")
   ))
 }
