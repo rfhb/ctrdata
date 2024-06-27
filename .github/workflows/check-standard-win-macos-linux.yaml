@@ -48,6 +48,8 @@ jobs:
       - uses: r-lib/actions/setup-pandoc@v2
 
       - uses: ankane/setup-mongodb@v1
+        with:
+          mongodb-version: 5
 
       - uses: ankane/setup-postgres@v1
         with:
