@@ -166,7 +166,7 @@ typeVars <- list(
   "correctiveMeasures.revertedDate" = "ctrDate",
   "correctiveMeasures.sponsorActionRequiredByDate" = "ctrDate",
   "correctiveMeasures.sponsorSubmitDate" = "ctrDate",
-  "decisionDate" = "ctrDate",
+  # "decisionDate" is a composite string
   "events.seriousBreaches.awareDate" = "ctrDate",
   "events.seriousBreaches.breachDate" = "ctrDate",
   "events.seriousBreaches.submissionDate" = "ctrDate",

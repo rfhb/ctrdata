@@ -189,8 +189,9 @@ for (i in unique(groupsNo)) {
 }
 
 tmpFields <- tmpFields[
-  grepl("[.]date$", tmpFields, ignore.case = TRUE) |
-    grepl("Date$", tmpFields, ignore.case = FALSE)
+  (grepl("[.]date$", tmpFields, ignore.case = TRUE) |
+    grepl("Date$", tmpFields, ignore.case = FALSE)) & 
+    !grepl("^decisionDate$", tmpFields, ignore.case = FALSE)
 ]
 
 if (FALSE) {
@@ -214,18 +215,11 @@ for (i in unique(groupsNo)) {
   tmpClass <- names(tmpClass[sapply(tmpClass, function(c) c == "character")])
   if (length(tmpClass)) print(tmpClass)
   #
-  # unique(unlist(
-  #   lapply(
-  #     tmpData[ , -1, drop = FALSE],
-  #     function(i) sapply(i, function(ii) class(ii))[1])
-  # )) %in% c("Date", "POSIXct", "POSIXt")
-  #
-  #
   expect_true(all(
     unique(unlist(
       lapply(
         tmpData[ , -1, drop = FALSE],
-        function(i) sapply(i, function(ii) class(ii))[1])
+        function(i) sapply(i, function(ii) class(ii)))
     )) %in% c("Date", "POSIXct", "POSIXt")
   ))
 }
