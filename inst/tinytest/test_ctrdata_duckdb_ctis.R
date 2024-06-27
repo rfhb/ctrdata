@@ -7,7 +7,7 @@ source("setup_ctrdata.R")
 if (!checkDuckdb())   exit_file("Reason: no DuckDB")
 if (!checkInternet()) exit_file("Reason: no internet connectivity")
 
-#### CTGOV ####
+#### CTIS ####
 tf <- function() {
 
   # test

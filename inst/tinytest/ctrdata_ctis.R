@@ -187,7 +187,7 @@ tmpFields <- tmpFields[
     !grepl("^decisionDate$", tmpFields, ignore.case = TRUE)
 ]
 
-if (FALSE){
+if (FALSE) {
   # debug
   for (f in sort(tmpFields)) message('"', f, '" = "ctrDate",')
 }
@@ -207,6 +207,13 @@ for (i in unique(groupsNo)) {
     function(i) sapply(i, function(ii) class(ii))[1])
   tmpClass <- names(tmpClass[sapply(tmpClass, function(c) c == "character")])
   if (length(tmpClass)) print(tmpClass)
+  #
+  # unique(unlist(
+  #   lapply(
+  #     tmpData[ , -1, drop = FALSE],
+  #     function(i) sapply(i, function(ii) class(ii))[1])
+  # )) %in% c("Date", "POSIXct", "POSIXt")
+  #
   #
   expect_true(all(
     unique(unlist(
