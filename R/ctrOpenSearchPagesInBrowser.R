@@ -109,8 +109,6 @@ ctrOpenSearchPagesInBrowser <- function(
     }
     register <- url[nr, "query-register", drop = TRUE]
     url <- url[nr, "query-term", drop = TRUE]
-    # TODO
-    # if (!is.atomic(urlOrig)) urlOrig <- url
   }
 
   # - open search or view from url and register

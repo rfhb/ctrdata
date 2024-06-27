@@ -50,12 +50,6 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE
   # using CTGOV2 API as per
   # https://clinicaltrials.gov/data-api/about-api/api-migration#query-endpoints
 
-  # TODO
-  # activesubstance = "trametinib"
-  # activesubstance = "imatinib"
-  # activesubstance = "THISSHOULDNOTEXISTIHOPE"
-  # "https://clinicaltrials.gov/api/v2/studies?query.intr=trametinib&fields=protocolSection.armsInterventionsModule.interventions.otherNames|protocolSection.armsInterventionsModule.interventions.name&pageSize=1"
-
   # parametrise endpoint
   apiEndpoint <- sprintf(paste0(
     "https://clinicaltrials.gov/api/v2/studies?",
@@ -102,18 +96,6 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE
                        ( test( ", | or | and | & | [+] " ) | not ) )
       | .otherNames | select( length > 0 ) | .[] ')
   )
-
-  # for checking names for certain otherNames
-  if (FALSE) {
-    jqr::jq(
-      textConnection(rawToChar(tmp[["content"]])), paste0(
-        ' .studies[] | .protocolSection.armsInterventionsModule.interventions
-      | select ( length > 0 ) | .[]
-      | select ( .otherNames | select( length > 0 ) | .[]
-      | test("tyrosine kinase inhibitors"; "") )
-      ')
-    )
-  }
 
   # prepare and return output
   asx <- gsub('"', "", asx)

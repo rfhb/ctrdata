@@ -58,7 +58,7 @@
 ctrGetQueryUrl <- function(
     url = "",
     register = "") {
-  
+
   # check parameters expectations
   if (!is.atomic(url) || !is.atomic(register) ||
       is.null(url) || is.null(register) ||
@@ -71,7 +71,7 @@ ctrGetQueryUrl <- function(
          call. = FALSE
     )
   }
-  
+
   # if no parameter specified,
   # check clipboard contents
   if (nchar(url) == 0L && register != "CTIS") {
@@ -94,7 +94,7 @@ ctrGetQueryUrl <- function(
     }
     message("* Using clipboard content as register query URL: ", url)
   }
-  
+
   # check parameter combination
   if (register != "" && startsWith(url, "http")) {
     warning("Full URL but also 'register' specified; ",
@@ -103,9 +103,9 @@ ctrGetQueryUrl <- function(
     )
     register <- ""
   }
-  
+
   ### identify register ####
-  
+
   # identify domain and register short name
   registerFromUrl <- switch(
     sub("^https://([a-zA-Z.]+?)/.*", "\\1", url),
@@ -118,7 +118,7 @@ ctrGetQueryUrl <- function(
     "isrctn.com" = "ISRCTN",
     "NONE"
   )
-  
+
   # check parameters expectations
   if (register != "" && registerFromUrl != "NONE" && register != registerFromUrl) {
     stop("ctrGetQueryUrl(): 'url' and / or 'register' mismatch, url: '",
@@ -128,10 +128,10 @@ ctrGetQueryUrl <- function(
   } else {
     if (registerFromUrl != "NONE") register <- registerFromUrl
   }
-  
+
   # handle any mismatch of ctgov label with expected parameters
   if (grepl("^CTGOV[2]?$", register)) register <- ctgovVersion(url, register)
-  
+
   # output value for return
   outdf <- function(qt, reg) {
     qt <- utils::URLdecode(qt)
@@ -145,12 +145,12 @@ ctrGetQueryUrl <- function(
     if (any("tibble" == .packages())) out <- tibble::as_tibble(out)
     return(out)
   }
-  
+
   ## identify query term per register
-  
+
   #### EUCTR ####
   if (register == "EUCTR") {
-    
+
     # search result page
     queryterm <- sub(".*/ctr-search/search[?](.*)", "\\1", url)
     # single trial page
@@ -165,24 +165,24 @@ ctrGetQueryUrl <- function(
       "(^|&|[&]?\\w+=\\w+&)([ a-zA-Z0-9+-]+)($|&\\w+=\\w+)",
       "\\1query=\\2\\3", queryterm
     )
-    
+
     # check if url was for results of single trial
     if (endsWith(url, ".*/results")) {
       queryterm <- paste0(queryterm)
     }
-    
+
     # inform user
     if (grepl("^http", queryterm) && queryterm == url) stop(
       "Not a search query: ", url
     )
-    
+
     # return
     return(outdf(queryterm, register))
   }
-  
+
   #### CTGOV classic ####
   if (register == "CTGOV") {
-    
+
     # mangle query term
     queryterm <- sub(
       paste0(".*/ct2/show/[recodsult/]*(", regCtgov, ")([?][a-z]+.*|$)"),
@@ -198,7 +198,7 @@ ctrGetQueryUrl <- function(
         "this as 'url'."
       )
     }
-    
+
     # expert search page
     queryterm <- sub(".*/ct2/results/refine[?](.*)", "\\1", queryterm)
     # search results page
@@ -208,35 +208,33 @@ ctrGetQueryUrl <- function(
       "(.*)&Search[a-zA-Z]*=(Search|Find)[a-zA-Z+]*",
       "\\1", queryterm
     )
-    
+
     # remove empty parameters
     queryterm <- gsub("[a-z_0-9]+=&", "", queryterm)
     queryterm <- sub("&[a-z_0-9]+=$", "", queryterm)
     queryterm <- sub("&Search=Apply", "", queryterm)
-    
+
     # correct naked terms
     queryterm <- sub(
       "(^|&|[&]?\\w+=\\w+&)(\\w+|[a-zA-z0-9+-.:]+)($|&\\w+=\\w+)",
       "\\1term=\\2\\3", queryterm
     )
-    
+
     # inform user
     if (grepl("^http", queryterm) && queryterm == url) stop(
       "Not a search query: ", url
     )
-    
+
     # translate classic to current
-    # TODO
-    # classicRoot <- "https://classic.clinicaltrials.gov/ct2/results/refine?"
     classicRoot <- "https://classic.clinicaltrials.gov/ct2/results?"
     url <- ctgovClassicToCurrent(url = paste0(classicRoot, queryterm))
     queryterm <- sub("https://clinicaltrials.gov/search[?][&]?", "", url)
     register <- "CTGOV2"
-    
+
     # return
     return(outdf(queryterm, register))
   }
-  
+
   #### ISRCTN ####
   if (register == "ISRCTN") {
     # single trial page
@@ -253,12 +251,12 @@ ctrGetQueryUrl <- function(
       "(^|&|[&]?\\w+=\\w+&)(\\w+|[ a-zA-Z0-9+-]+)($|&\\w+=\\w+)",
       "\\1q=\\2\\3", queryterm
     )
-    
+
     # inform user
     if (grepl("^http", queryterm) && queryterm == url) stop(
       "Not a search query: ", url
     )
-    
+
     # single trial
     if (nchar(queryterm) && grepl(regIsrctn, queryterm) &&
         grepl("[?&].+=[^&]+", url)) {
@@ -269,20 +267,20 @@ ctrGetQueryUrl <- function(
         "this as 'url'."
       )
     }
-    
+
     # return
     return(outdf(queryterm, register))
   }
-  
+
   #### CTGOV2 ####
   if (register == "CTGOV2") {
-    
+
     # extract search query
     queryterm <- sub(
       paste0("(.*/study/", regCtgov, "/?[?]|.*/search/?[?][&]?)([a-z]+.*$)"),
       "\\2", url
     )
-    
+
     # single trial page
     if (nchar(queryterm) && queryterm != url && grepl(regCtgov2, url)) {
       message(
@@ -296,58 +294,58 @@ ctrGetQueryUrl <- function(
       queryterm <-
         paste0(sub(paste0(".*study/(", regCtgov2, ").*"), "id=\\1", url))
     }
-    
+
     # inform user
     if (grepl("^http", queryterm) && queryterm == url) stop(
       "Not a search query: ", url
     )
-    
+
     # remove empty parameters, rank, sort
     queryterm <- gsub("[a-z_0-9]+=&", "", queryterm)
     queryterm <- sub("&[a-z_0-9]+=$", "", queryterm)
     queryterm <- sub("&rank=[0-9]+", "", queryterm)
     queryterm <- sub("&sort=[a-zA-Z%23,:]+(&|$)", "\\1", queryterm)
     queryterm <- sub("&viewType=[a-zA-Z]+(&|$)", "\\1", queryterm)
-    
+
     # correct naked terms
     queryterm <- sub(
       "(^|&|[&]?\\w+=\\w+&)(\\w+|[a-zA-z0-9+-.:]+)($|&\\w+=\\w+)",
       "\\1term=\\2\\3", queryterm
     )
-    
+
     # return
     return(outdf(queryterm, register))
   }
-  
+
   #### CTIS ####
   if (register == "CTIS") {
-    
+
     # 2024-06-17 defined by ctrdata Tampermonkey script:
     # https://euclinicaltrials.eu/ctis-public/search#searchCriteria=
     # {"containAll":"infection","containAny":"neonates","containNot":""}
-    
+
     # search for trials
     queryterm <- sub("https://euclinicaltrials.eu/ctis-public/search#?", "", url)
-    
+
     # view a trial
     queryterm <- sub(
       paste0(
-        "(https://euclinicaltrials.eu/ctis-public/view/|", 
-        "https://euclinicaltrials.eu/search-for-clinical-trials/&EUCT=)", 
+        "(https://euclinicaltrials.eu/ctis-public/view/|",
+        "https://euclinicaltrials.eu/search-for-clinical-trials/&EUCT=)",
         "([-0-9]+)"),
       'searchCriteria={"containAll":"\\2","containAny":"","containNot":""}',
       queryterm
     )
-    
+
     # inform user
     if (grepl("^http", queryterm) && queryterm == url) stop(
       "Not a search query: ", url
     )
-    
+
     # return
     return(outdf(queryterm, register))
   }
-  
+
   # default / NONE
   warning("ctrGetQueryUrl(): no clinical trial register ",
           "search URL found in parameter 'url' or in clipboard.",
