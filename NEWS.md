@@ -11,6 +11,7 @@
 - Updated register information, adding caveats and issues
 - Updated estimated download sizes, added typing new fields for `CTIS`
 - Avoided duplicate data and file retrievals
+- Split utils.R into files for functions and fields
 
 ## Bug fixes
 - Correct partial date brackets for `CTGOV2`
