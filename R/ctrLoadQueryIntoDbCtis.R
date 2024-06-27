@@ -312,7 +312,7 @@ ctrLoadQueryIntoDbCtis <- function(
         sep = "\n",
         append = TRUE)
 
-      # unlink(f)
+      unlink(f)
     }
 
     # 3 - documents download

@@ -229,8 +229,12 @@ ctrLoadQueryIntoDbCtgov2 <- function(
   message("(1/3) Downloading in ",
           ceiling(resultsEuNumTrials / 1000L),
           " batch(es) (max. 1000 trials each; estimate: ",
-          format(resultsEuNumTrials * 0.1, digits = 2), " MB total)")
+          format(resultsEuNumTrials * 149 / 9810, digits = 2), " Mb total)")
 
+  # register
+  on.exit(unlink(dir(tempDir, "ctgov_trials_[0-9]+.ndjson", full.names = TRUE)), add = TRUE)
+
+  # download and compile into ndjson
   while (TRUE) {
 
     # page url
