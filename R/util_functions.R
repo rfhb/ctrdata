@@ -92,9 +92,14 @@ ctgovVersion <- function(url, register) {
 
 #' ctgovClassicToCurrent
 #'
-#' fully translates a user's search query URL from the classic website
+#' Fully translates a user's search query URL from the classic website
 #' into a query for the current website, with all search parameters.
 #' added to accomodate classic website retirement as of 2024-06-25.
+#' Note this function only handles search queries, but not display
+#' URLs such as https://clinicaltrials.gov/ct2/show/NCT02703272.
+#' The function is to be called by ctrGetQueryUrl(), which turns
+#' search and display URLs into queries. See also
+#' ./inst/tinytest/more_test_ctrdata_param_checks.R
 #'
 #' @param url url intended for a search in the classic CTGOV website
 #'
@@ -108,42 +113,13 @@ ctgovVersion <- function(url, register) {
 #'
 #' @examples
 #'
-#' TODO DECIDE
-#' ctgovClassicToCurrent("https://www.clinicaltrials.gov/ct2/show/NCT02703272")
-#' ctgovClassicToCurrent("https://classic.clinicaltrials.gov/ct2/show/NCT02703272?term=NCT02703272&draw=2&rank=1")
-#' ctgovClassicToCurrent("https://clinicaltrials.gov/ct2/results?cond=")
-#'
-#' OK
-#' ctgovClassicToCurrent(url = "https://www.clinicaltrials.gov/search?term=NCT04412252,%20NCT04368728")
+#' ctgovClassicToCurrent("https://www.clinicaltrials.gov/search?term=NCT04412252,%20NCT04368728")
 #' ctgovClassicToCurrent("https://classic.clinicaltrials.gov/ct2/results?cond=&term=NCT02703272&cntry=")
 #' ctgovClassicToCurrent("https://clinicaltrials.gov/ct2/results?cond=&term=NCT02703272&cntry=")
 #' ctgovClassicToCurrent("https://www.clinicaltrials.gov/search?distance=50&cond=Cancer")
+#' ctgovClassicToCurrent("https://classic.clinicaltrials.gov/ct2/results?term=AREA[MaximumAge]+RANGE[0+days,+28+days]")
 #'
 ctgovClassicToCurrent <- function(url, verbose = TRUE) {
-
-  # TODO handle queries with AREA expressions, such as below
-  # issues: many areas can only be used in API calls, but not in query urls
-  #
-  # term=AREA[MaximumAge]+RANGE[0+days,+28+days]
-  # - identify piece name, here MaximumAge
-  # - look up area of piece name: https://clinicaltrials.gov/data-api/about-api/study-data-structure
-  #   in this case, protocolSection.eligibilityModule.maximumAge
-  # - look up parameter: https://clinicaltrials.gov/data-api/about-api/search-areas
-  #   in this case, unclear if &query.patient=
-
-  # classic query with each and every parameter set, for testing
-  if (FALSE) {
-    url <- paste0(
-      "https://classic.clinicaltrials.gov/ct2/results?cond=myCondition&term=myTerm&type=Intr&",
-      "rslt=Without&recrs=b&recrs=a&recrs=f&recrs=d&recrs=g&recrs=h&recrs=e&recrs=i&recrs=m&",
-      "recrs=c&recrs=j&recrs=k&recrs=l&age_v=&age=0&age=1&age=2&gndr=Female&hlth=Y&intr=myIntervention&",
-      "titles=myTitleOrAcronym&outc=myOutcomeMeasure&spons=mySponsor&lead=myLeadSponsor&id=NCT12345678&",
-      "cntry=Germany&state=Berlin&city=Berlin&dist=&locn=myLocation&phase=4&phase=0&phase=1&phase=2&",
-      "phase=3&phase=5&fund=0123&fund=1&fund=2&u_prot=Y&u_sap=Y&u_icf=Y&f801=Yes&rsub=No&strd_s=01%2F14%2F1990&",
-      "strd_e=01%2F14%2F2030&prcd_s=01%2F14%2F1990&prcd_e=01%2F14%2F2030&sfpd_s=01%2F14%2F1990&",
-      "sfpd_e=01%2F14%2F2030&rfpd_s=01%2F14%2F1990&rfpd_e=&lupd_s=&lupd_e=01%2F14%2F2030&sort="
-    )
-  }
 
   # apiParams is a kind of dictionary for
   # mapping classic to current params
@@ -347,16 +323,12 @@ ctgovClassicToCurrent <- function(url, verbose = TRUE) {
     # translate simple terms
     list(
       "extract" = c(
-        "(cond|city|id|intr|lead|locn|outc|spons|state|titles)=(.+)(&|$)",
-        "(cntry)=(.+)(&|$)",
-        "(term)=([^A][^R][^E][^A]+.+)(&|$)",
-        "(term)=(AREA\\[M.+mumAge\\].+)"
+        "(cond|city|id|intr|lead|locn|outc|spons|state|titles|term)=(.+)(&|$)",
+        "(cntry)=(.+)(&|$)"
       ),
       "replace" = c(
         "&\\1=\\2",
-        "&country=\\2",
-        "&term=\\2",
-        "&query.term=\\2"
+        "&country=\\2"
       ),
       "collapse" = "",
       "out" = character()
@@ -451,12 +423,13 @@ ctgovClassicToCurrent <- function(url, verbose = TRUE) {
   }
 
   # prettify
+  apiParams <- gsub("&&", "&", apiParams)
   apiParams <- gsub("&aggFilters=$", "", apiParams)
   apiParams <- gsub("search[?]&", "search?", apiParams)
 
   ## inform user
 
-  # TODO
+  # inform user
   if (verbose) message(
     "Since 2024-06-25, the classic CTGOV servers are no longer available. ",
     "Package ctrdata has translated the classic CTGOV query URL from this ",
@@ -467,18 +440,10 @@ ctgovClassicToCurrent <- function(url, verbose = TRUE) {
     "data schema of trials differ between CTGOV and CTGOV2. "
   )
 
+  # inform user
   message(
     "\nReplace this URL:\n\n", url,
     "\n\nwith this URL:\n\n", apiParams, "\n")
-
-  if (grepl("AREA", url)) warning(
-    "The input uses an AREA search expression. Many of these can apparently ",
-    "not be used in search query URLs (thus, a search cannot be shown in a web ",
-    "browser), but only in API calls. To show the expression, it is here returned ",
-    "as search parameter '&term=' or '&query.term='. It is recommended to manually ",
-    "construct a query for this case. See also ",
-    "https://clinicaltrials.gov/data-api/about-api/search-areas"
-  )
 
   # return
   return(apiParams)
