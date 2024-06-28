@@ -15,6 +15,7 @@
 
 ## Bug fixes
 - Correct partial date brackets for `CTGOV2`
+- Disable HTTP/2 multiplexing for `CTIS`
 
 # ctrdata 1.18.0 (2024-05-13)
 
