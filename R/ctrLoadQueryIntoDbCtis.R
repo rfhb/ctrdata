@@ -150,8 +150,7 @@ ctrLoadQueryIntoDbCtis <- function(
     # {...,"data":[{"ctNumber":"2023-510173-34-00","ctStatus"
     cat(
       jqr::jq(
-        textConnection(x),
-        paste0(
+        x, paste0(
           # extract trial records
           " .data | .[] ",
           # add canonical elements
@@ -161,12 +160,11 @@ ctrLoadQueryIntoDbCtis <- function(
           # keep only standardised fields
           "| del(.id, .ctNumber, .product, .endPoint, .eudraCtInfo, .ctTitle,
                .primaryEndPoint, .sponsor, .conditions) "
-        ),
-        flags = jqr::jq_flags(pretty = FALSE)
+        )
       ),
-      file = fTrialsNdjson,
-      sep = "\n",
-      append = TRUE)
+      file =  fTrialsNdjson,
+      append = TRUE,
+      sep = "\n")
 
     message(". ", appendLF = FALSE)
 
@@ -180,8 +178,7 @@ ctrLoadQueryIntoDbCtis <- function(
         postfields = paste0(
           # add pagination parameters
           paste0(
-            '{"pagination":{"page":', i, ',"size":',
-            ifelse(only.count, 1L, nRecords), '},'),
+            '{"pagination":{"page":', i, ',"size":', nRecords, '},'),
           # add search criteria
           sub(
             "searchCriteria=", '"searchCriteria":',
@@ -201,6 +198,10 @@ ctrLoadQueryIntoDbCtis <- function(
     )
   )
 
+  # important on 2024-06-29 disable HTTP/2 multiplexing
+  # as it leads to data loss with ctis servers
+  curl::multi_set(multiplex = FALSE, pool = pool)
+
   # run in parallel
   curl::multi_run(pool = pool)
 
@@ -217,7 +218,7 @@ ctrLoadQueryIntoDbCtis <- function(
   # this is imported as the main data into the database
 
   message("(2/4) Downloading and processing trial data... (",
-          "estimate: ", signif(length(idsTrials) * 27 / 312, 1L), " Mb)")
+          "estimate: ", signif(length(idsTrials) * 309 / 4305, 1L), " Mb)")
 
   urls <- sprintf(ctisEndpoints[2], idsTrials)
 
@@ -245,9 +246,7 @@ ctrLoadQueryIntoDbCtis <- function(
 
         cat(
           jqr::jqr(
-            mangleText(
-              readLines(f, warn = FALSE)
-            ),
+            mangleText(readLines(f, warn = FALSE)),
             # add _id to enable docdb_update()
             ' .["_id"] = .ctNumber ',
             flags = jqr::jq_flags(pretty = FALSE)
@@ -298,7 +297,7 @@ ctrLoadQueryIntoDbCtis <- function(
     on.exit(unlink(downloadsNdjson), add = TRUE)
 
     # iterate to get docs information
-    for (f in dir(tempDir, "ctis_trials_api2_.*.ndjson", full.names = TRUE)) {
+    for (f in dir(tempDir, "ctis_trials_api2_[0-9]+.ndjson", full.names = TRUE)) {
 
       cat(
         jqr::jqr(
@@ -354,12 +353,15 @@ ctrLoadQueryIntoDbCtis <- function(
         dlFiles$fileType)
 
       # calculate url
-      dlFiles$ctisurl <- sprintf(ctisEndpoints[3], dlFiles$`_id`, dlFiles$uuid)
+      dlFiles$ctisurl <- sprintf(
+        ctisEndpoints[3], dlFiles$`_id`, dlFiles$uuid)
 
       # get cdn download urls for cits urls
       resList <- data.frame(ctisurl = NULL, url = NULL)
       failure <- function(str) message(paste("Failed request:", str))
       success <- function(x) {
+        message(x$status)
+        if (x$status != 200L) return(NULL)
         resList <<- rbind(
           resList, cbind(
             ctisurl = x$url,
@@ -376,7 +378,15 @@ ctrLoadQueryIntoDbCtis <- function(
           data = NULL,
           pool = pool
         ))
+
+      # important on 2024-06-29 disable HTTP/2 multiplexing
+      # as it leads to data loss with ctis servers
+      curl::multi_set(multiplex = FALSE, pool = pool)
+
+      # go parallel
       curl::multi_run(pool = pool)
+
+      # merge with original files list
       dlFiles <- merge(dlFiles, resList)
 
       # do download
