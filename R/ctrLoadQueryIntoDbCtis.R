@@ -360,7 +360,6 @@ ctrLoadQueryIntoDbCtis <- function(
       resList <- data.frame(ctisurl = NULL, url = NULL)
       failure <- function(str) message(paste("Failed request:", str))
       success <- function(x) {
-        message(x$status)
         if (x$status != 200L) return(NULL)
         resList <<- rbind(
           resList, cbind(
@@ -391,7 +390,8 @@ ctrLoadQueryIntoDbCtis <- function(
 
       # do download
       resFiles <- ctrDocsDownload(
-        dlFiles[, c("_id", "filename", "url"), drop = FALSE],
+        dlFiles[!duplicated(dlFiles$filename),
+                c("_id", "filename", "url"), drop = FALSE],
         documents.path, documents.regexp, verbose)
 
     } # if (!nrow(dlFiles))
