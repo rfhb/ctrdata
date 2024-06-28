@@ -19,7 +19,7 @@
     "ctrOpenSearchPagesInBrowser(copyright = TRUE) and visit\n\n",
     "https://www.clinicaltrialsregister.eu/disclaimer.html\n",
     "https://clinicaltrials.gov/about-site/terms-conditions#usage\n",
-    "https://www.isrctn.com/page/faqs#usingISRCTN\n",
+    "https://www.isrctn.com/page/faqs#using-the-isrctn\n",
     "https://euclinicaltrials.eu/about-this-website/\n",
     "\nPlease cite this package, see citation(\"ctrdata\").\n",
     "\n", utils::packageVersion("ctrdata")

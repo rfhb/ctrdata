@@ -340,7 +340,7 @@ ctrLoadQueryIntoDb(
 # [1] 100
 ```
 
-* Using an example from classic CTGOV: https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug
+* Using an example from classic CTGOV: 
 
 ```{r load_ctgov}
 # Retrieve trials:

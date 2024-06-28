@@ -465,7 +465,6 @@ ctrLoadQueryIntoDb(
 ```
 
 - Using an example from classic CTGOV:
-  <https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug>
 
 ``` r
 # Retrieve trials:
