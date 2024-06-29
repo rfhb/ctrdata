@@ -779,6 +779,8 @@ addMetaData <- function(x, con) {
   # add metadata
   attr(x, "ctrdata-dbname")         <- con$db
   attr(x, "ctrdata-table")          <- con$collection
+  attr(x, "ctrdata-table-note")     <- "^^^ attr ctrdata-table will be removed by end 2024"
+  attr(x, "ctrdata-collection")     <- con$collection
   attr(x, "ctrdata-dbqueryhistory") <- dbQueryHistory(
     con = con,
     verbose = FALSE)

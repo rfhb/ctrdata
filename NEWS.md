@@ -11,6 +11,7 @@
 - Updated register information, adding caveats and issues
 - Updated estimated download sizes, added typing new fields for `CTIS`
 - Avoided duplicate data and file retrievals
+- New attribute `ctrdata-collection` for data frames with trial information; same content as attribute `ctrdata-table`, which will be removed by end 2024
 - Split utils.R into files for functions and fields
 
 ## Bug fixes
