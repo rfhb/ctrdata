@@ -407,7 +407,7 @@ with(
 
 </div>
 
-- Add records from another register (CTGOV) into the same collection
+- Add records from another register (CTGOV2) into the same collection
 
 The new website and API introduced in July 2023
 (<https://www.clinicaltrials.gov/>) is supported by `ctrdata` since
@@ -418,21 +418,20 @@ On 2024-06-25, `CTGOV` has retired the classic website and API used by
 translates and redirects queries to the current website. This helps with
 automatically updating previously loaded queries
 (`ctrLoadQueryIntoDb(querytoupdate = <n>)`), manually migrating queries
-and reproducible work on clinical trials information. This new
-functionality in `ctrdata` translates a user’s search query URL from the
-classic website into a query for the current `CTGOV` website, for all
-search parameters. Going forward, users are recommended to change to use
-`CTGOV2` queries.
+and reproducible work on clinical trials information. Going forward,
+users are recommended to change to use `CTGOV2` queries.
 
 As regards study data, important differences exist between field names
 and contents of information retrieved using `CTGOV` or `CTGOV2`; see the
-[XML schema for study records in
-`CTGOV`](https://web.archive.org/web/20240229211431/https://classic.clinicaltrials.gov/html/api/downloads/FullStudiesResponse.xsd)
-and the [REST API for
-`CTGOV2`](https://clinicaltrials.gov/data-api/api#extapi). For more
-details, call `help("ctrdata-registers")`. This is one of the reasons
-why `ctrdata` handles the situation as if these were two different
-registers and will continue to identify the current API as
+[schema for study protocols in
+`CTGOV`](https://prsinfo.clinicaltrials.gov/ProtocolRecordSchema.xsd),
+the [schema for study
+results](https://cdn.clinicaltrials.gov/documents/xsd/prs/RRSUploadSchema.xsd)
+and the [Study Data Structure for
+`CTGOV2`](https://clinicaltrials.gov/data-api/about-api/study-data-structure).
+For more details, call `help("ctrdata-registers")`. This is one of the
+reasons why `ctrdata` handles the situation as if these were two
+different registers and will continue to identify the current API as
 `register = "CTGOV2"`, to support the analysis stage.
 
 Note that loading trials with `ctrdata` overwrites the previous record
