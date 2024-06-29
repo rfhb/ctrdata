@@ -189,7 +189,8 @@ ctrLoadQueryIntoDb(
 # Since 2024-06-25, the classic CTGOV servers are no longer available. Package 
 # ctrdata has translated the classic CTGOV query URL from this call of function 
 # ctrLoadQueryIntoDb(queryterm = ...) into a query URL that works with the current 
-# CTGOV2. This is printed below and is also part of the return value of this function, ctrLoadQueryIntoDb(...)$url. This URL can be used with ctrdata functions. 
+# CTGOV2. This is printed below and is also part of the return value of this function,
+# ctrLoadQueryIntoDb(...)$url. This URL can be used with ctrdata functions. 
 # Note that the fields and data schema of trials differ between CTGOV and CTGOV2. 
 # 
 # Replace this URL:
@@ -221,7 +222,7 @@ Note that in this example, a warning message may be issued from importing an NDJ
 
 ## Add records from CTIS register into the same collection
 
-As of 23 June 2024, more than 4100 trials are publicly accessible in CTIS, which has to be used since January 2023 for new clinical trials in the European Union (EU). Queries in the CTIS search interface can be automatically copied to the clipboard so that a user can paste them into `queryterm`, see [here](https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser). 
+As of 29 June 2024, more than 4300 trials are publicly accessible in CTIS, which has to be used since January 2023 for new clinical trials in the European Union (EU). Queries in the CTIS search interface can be automatically copied to the clipboard so that a user can paste them into `queryterm`, see [here](https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser). 
 
 ```{r}
 # Retrieve trials from another register:

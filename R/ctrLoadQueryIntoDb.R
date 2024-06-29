@@ -77,8 +77,8 @@
 #' \code{"n:m"} for the nth to the mth versions, or
 #' \code{TRUE} for all versions
 #' of the trial record to be retrieved. Note that for register
-#' CTIS, historic versions are available in the `applications`
-#' field and are retrieved automatically.
+#' CTIS, historic versions were available in the `applications`
+#' field only before the register's relaunch on 2024-06-17.
 #'
 #' @param annotation.text Text to be including into the field
 #' "annotation" in the records retrieved with the query

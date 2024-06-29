@@ -1,7 +1,7 @@
 ---
 title: "Summarise and analyse clinical trial information"
 author: "Ralf Herold"
-date: 2024-05-12
+date: 2024-06-29
 output:
   rmarkdown::html_vignette:
     toc: true
@@ -15,8 +15,8 @@ vignette: >
   %\VignettePackage{ctrdata}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
-  editor_options:
-  chunk_output_type: console
+editor_options:
+chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -39,9 +39,9 @@ Here using MongoDB, which is faster than SQLite, can handle credentials, provide
 
 ```{r connect_mongodb}
 db <- nodbi::src_mongo(
-  url = "mongodb://localhost",
-  db = "my_database_name",
-  collection = "my_collection_name"
+url = "mongodb://localhost",
+db = "my_database_name",
+collection = "my_collection_name"
 )
 db
 # MongoDB 7.0.8 (uptime: 265661s)
@@ -49,7 +49,7 @@ db
 # Database: my_database_name
 # Collection: my_collection_name
 
-# empty collection
+# empty collection if exists
 nodbi::docdb_delete(db, db$collection)
 ```
 
@@ -62,51 +62,141 @@ library(ctrdata)
 # These two queries are similar, for completed interventional (drug)
 # trials with children with a neuroblastoma from either register
 ctrLoadQueryIntoDb(
-  # using queryterm and register...
-  queryterm = "query=neuroblastoma&age=under-18&status=completed",
-  register = "EUCTR",
-  euctrresults = TRUE,
-  con = db
+# using queryterm and register...
+queryterm = "query=neuroblastoma&age=under-18&status=completed",
+register = "EUCTR",
+euctrresults = TRUE,
+con = db
 )
+# [...]
+# $n
+# [1] 226
+
 ctrLoadQueryIntoDb(
-  # or using full URL of search results
-  queryterm =
-    "https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&recrs=e&age=0&intr=Drug",
-  con = db
+# ...or using full URL of search results
+queryterm = paste0(
+"https://classic.clinicaltrials.gov/ct2/results?", 
+"cond=neuroblastoma&recrs=e&age=0&intr=Drug"),
+con = db
 )
+# * Appears specific for CTGOV Classic website
+# Since 2024-06-25, the classic CTGOV servers are no longer available. Package ctrdata has translated 
+# the classic CTGOV query URL from this call of function ctrLoadQueryIntoDb(queryterm = ...) into a 
+# query URL that works with the current CTGOV2. This is printed below and is also part of the return 
+# value of this function, ctrLoadQueryIntoDb(...)$url. This URL can be used with ctrdata functions. 
+# Note that the fields and data schema of trials differ between CTGOV and CTGOV2. 
+# 
+# Replace this URL:
+# 
+# https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&recrs=e&age=0&intr=Drug
+# 
+# with this URL:
+# 
+# https://clinicaltrials.gov/search?cond=neuroblastoma&intr=Drug&aggFilters=ages:child,status:com
+# 
+# * Found search query from CTGOV2: cond=neuroblastoma&intr=Drug&aggFilters=ages:child,status:com
+# * Checking trials using CTGOV REST API 2.0, found 222 trials
+# (1/3) Downloading in 1 batch(es) (max. 1000 trials each; estimate: 22 Mb total)
+# Download status: 1 done; 0 in progress. Total size: 9.79 Mb (615%)... done!             
+# (2/3) Converting to NDJSON...
+# (3/3) Importing records into database...
+# JSON file #: 1 / 1                               
+# = Imported or updated 222 trial(s)
+# Updated history ("meta-info" in "my_collection_name")
+# $n
+# [1] 222
+
 dbQueryHistory(con = db)
-#       query-timestamp query-register query-records                                        query-term
-# 1 2024-05-12 18:39:52          EUCTR           210 query=neuroblastoma&age=under-18&status=completed
-# 2 2024-05-12 18:40:10          CTGOV           226        cond=neuroblastoma&recrs=e&age=0&intr=Drug
+#       query-timestamp query-register query-records                                                    query-term
+# 1 2024-06-29 09:01:16          EUCTR           226             query=neuroblastoma&age=under-18&status=completed
+# 2 2024-06-29 09:02:12         CTGOV2           222 cond=neuroblastoma&intr=Drug&aggFilters=ages:child,status:com
 ```
 
 ## Find fields / variables of interest
 
-Specify a part of the name of a variable of interest; all variables including deeply nested variable names are searched.
+Specify a part of the name of a variable of interest; all variables including deeply nested variable names are searched. Set `sample = TRUE` (default) to rapidly execute the function in large databases. 
 
 ```{r dbFindFields}
 #
 dbFindFields(namepart = "date", sample = FALSE, con = db)
 # Finding fields in database collection (may take some time)  .  .  .  .  . 
 # Field names cached for this session.
-#                                                                               CTGOV 
-#                                                                   "completion_date" 
-#                                                                               CTGOV 
-#                                                                "last_update_posted" 
-#                                                                               CTGOV 
-#                                                             "last_update_submitted" 
-#                                                                               CTGOV 
-#                                                          "last_update_submitted_qc" 
-#                                                                               CTGOV 
-#                                                           "primary_completion_date" 
-#                                                                               CTGOV 
-#                         "provided_document_section.provided_document.document_date" 
-#                                                                               CTGOV 
-#                                                     "required_header.download_date" 
-#                                                                               CTGOV 
-#                                                                        "start_date" 
-#                                                                               CTGOV 
-#                                                                 "verification_date" 
+#                                                                              CTGOV2 
+#         "annotationSection.annotationModule.unpostedAnnotation.unpostedEvents.date" 
+#                                                                              CTGOV2 
+#  "derivedSection.miscInfoModule.submissionTracking.estimatedResultsFirstSubmitDate" 
+#                                                                              CTGOV2 
+#      "derivedSection.miscInfoModule.submissionTracking.firstMcpInfo.postDateStruct" 
+#                                                                              CTGOV2 
+# "derivedSection.miscInfoModule.submissionTracking.firstMcpInfo.postDateStruct.date" 
+#                                                                              CTGOV2 
+# "derivedSection.miscInfoModule.submissionTracking.firstMcpInfo.postDateStruct.type" 
+#                                                                              CTGOV2 
+#      "derivedSection.miscInfoModule.submissionTracking.submissionInfos.releaseDate" 
+#                                                                              CTGOV2 
+#        "derivedSection.miscInfoModule.submissionTracking.submissionInfos.resetDate" 
+#                                                                              CTGOV2 
+#                                "documentSection.largeDocumentModule.largeDocs.date" 
+#                                                                              CTGOV2 
+#                          "documentSection.largeDocumentModule.largeDocs.uploadDate" 
+#                                                                              CTGOV2 
+#                                 "protocolSection.statusModule.completionDateStruct" 
+#                                                                              CTGOV2 
+#                            "protocolSection.statusModule.completionDateStruct.date" 
+#                                                                              CTGOV2 
+#                            "protocolSection.statusModule.completionDateStruct.type" 
+#                                                                              CTGOV2 
+#                              "protocolSection.statusModule.dispFirstPostDateStruct" 
+#                                                                              CTGOV2 
+#                         "protocolSection.statusModule.dispFirstPostDateStruct.date" 
+#                                                                              CTGOV2 
+#                         "protocolSection.statusModule.dispFirstPostDateStruct.type" 
+#                                                                              CTGOV2 
+#                                  "protocolSection.statusModule.dispFirstSubmitDate" 
+#                                                                              CTGOV2 
+#                                "protocolSection.statusModule.dispFirstSubmitQcDate" 
+#                                                                              CTGOV2 
+#                             "protocolSection.statusModule.lastUpdatePostDateStruct" 
+#                                                                              CTGOV2 
+#                        "protocolSection.statusModule.lastUpdatePostDateStruct.date" 
+#                                                                              CTGOV2 
+#                        "protocolSection.statusModule.lastUpdatePostDateStruct.type" 
+#                                                                              CTGOV2 
+#                                 "protocolSection.statusModule.lastUpdateSubmitDate" 
+#                                                                              CTGOV2 
+#                          "protocolSection.statusModule.primaryCompletionDateStruct" 
+#                                                                              CTGOV2 
+#                     "protocolSection.statusModule.primaryCompletionDateStruct.date" 
+#                                                                              CTGOV2 
+#                     "protocolSection.statusModule.primaryCompletionDateStruct.type" 
+#                                                                              CTGOV2 
+#                           "protocolSection.statusModule.resultsFirstPostDateStruct" 
+#                                                                              CTGOV2 
+#                      "protocolSection.statusModule.resultsFirstPostDateStruct.date" 
+#                                                                              CTGOV2 
+#                      "protocolSection.statusModule.resultsFirstPostDateStruct.type" 
+#                                                                              CTGOV2 
+#                               "protocolSection.statusModule.resultsFirstSubmitDate" 
+#                                                                              CTGOV2 
+#                             "protocolSection.statusModule.resultsFirstSubmitQcDate" 
+#                                                                              CTGOV2 
+#                                      "protocolSection.statusModule.startDateStruct" 
+#                                                                              CTGOV2 
+#                                 "protocolSection.statusModule.startDateStruct.date" 
+#                                                                              CTGOV2 
+#                                 "protocolSection.statusModule.startDateStruct.type" 
+#                                                                              CTGOV2 
+#                                   "protocolSection.statusModule.statusVerifiedDate" 
+#                                                                              CTGOV2 
+#                             "protocolSection.statusModule.studyFirstPostDateStruct" 
+#                                                                              CTGOV2 
+#                        "protocolSection.statusModule.studyFirstPostDateStruct.date" 
+#                                                                              CTGOV2 
+#                        "protocolSection.statusModule.studyFirstPostDateStruct.type" 
+#                                                                              CTGOV2 
+#                                 "protocolSection.statusModule.studyFirstSubmitDate" 
+#                                                                              CTGOV2 
+#                               "protocolSection.statusModule.studyFirstSubmitQcDate" 
 #                                                                               EUCTR 
 #    "e231_full_title_date_and_version_of_each_substudy_and_their_related_objectives" 
 #                                                                               EUCTR 
@@ -137,24 +227,31 @@ dbFindFields(namepart = "date", sample = FALSE, con = db)
 #            "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database"
 ```
 
-The search for fields is cached and thus accelerated during the R session, as long as no new `ctrLoadQueryIntoDb()` is executed.
+The search for fields is cached and thus accelerated during the R session; calling `ctrLoadQueryIntoDb()` or changing `sample = ...` invalidates the cache. 
 
 ## Data frame from database
 
-The fields of interest can be obtained from the database and are represented in an R data.frame:
+The fields of interest can be obtained from the database and are represented in an R data.frame, for example:
 
 ```{r dbGetFieldsIntoDf}
+#
 result <- dbGetFieldsIntoDf(
   c(
+    # EUCTR protocol-related information
     "f41_in_the_member_state",
     "f422_in_the_whole_clinical_trial",
     "a1_member_state_concerned",
     "p_end_of_trial_status",
     "n_date_of_competent_authority_decision",
     "a2_eudract_number",
-    "overall_status",
-    "start_date",
-    "primary_completion_date"
+    # EUCTR results-related information
+    "trialInformation.recruitmentStartDate", 
+    "trialInformation.globalEndOfTrialDate",
+    # CTGOV2
+    "protocolSection.statusModule.overallStatus" ,
+    "protocolSection.statusModule.startDateStruct.date" ,
+    "trialInformation.recruitmentStartDate",
+    "protocolSection.statusModule.primaryCompletionDateStruct.date"
   ),
   con = db
 )
@@ -174,14 +271,22 @@ attributes(result)
 # $`ctrdata-dbname`
 # [1] "my_database_name"
 # 
-# $`ctrdata-table`
+# $`ctrdata-table`  <-- this attribute will be retired by end 2024
+# [1] "my_collection_name"
+# 
+# $`ctrdata-table-note`
+# [1] "^^^ attr ctrdata-table will be removed by end 2024"
+# 
+# $`ctrdata-collection`
 # [1] "my_collection_name"
 # 
 # $`ctrdata-dbqueryhistory`
-#       query-timestamp query-register query-records                                        query-term
-# 1 2024-05-12 18:39:52          EUCTR           210 query=neuroblastoma&age=under-18&status=completed
-# 2 2024-05-12 18:40:10          CTGOV           226        cond=neuroblastoma&recrs=e&age=0&intr=Drug
+#       query-timestamp query-register query-records                                                    query-term
+# 1 2024-06-29 09:01:16          EUCTR           226             query=neuroblastoma&age=under-18&status=completed
+# 2 2024-06-29 09:02:12         CTGOV2           222 cond=neuroblastoma&intr=Drug&aggFilters=ages:child,status:com
 ```
+
+## De-duplicate records
 
 In the database, the variable "_id" is the unique index for a record. This "_id" is the NCT number for CTGOV records (e.g., "NCT00002560"), and it is the EudraCT number for EUCTR records including the postfix identifying the EU Member State (e.g., "2008-001436-12-NL").
 
@@ -198,11 +303,11 @@ ids <- dbFindIdsUniqueTrials(
   con = db
 )
 # Searching for duplicate trials... 
-# - Getting all trial identifiers (may take some time), 436 found in collection
+# - Getting all trial identifiers (may take some time), 448 found in collection
 # - Finding duplicates among registers' and sponsor ids...
-# - 159 EUCTR _id were not preferred EU Member State record for 54 trials
-# - Keeping 51 / 210 / 0 / 0 / 0 records from EUCTR / CTGOV / ISRCTN / CTIS / CTGOV2
-# = Returning keys (_id) of 261 records in collection "my_collection_name"
+# - 173 EUCTR _id were not preferred EU Member State record for 56 trials
+# - Keeping 53 / 0 / 0 / 0 / 205 records from EUCTR / CTGOV / ISRCTN / CTIS / CTGOV2
+# = Returning keys (_id) of 258 records in collection "my_collection_name"
 ```
 
 The unique ids can be used like this to de-duplicate the data.frame created above:
@@ -212,35 +317,85 @@ The unique ids can be used like this to de-duplicate the data.frame created abov
 result <- result[result[["_id"]] %in% ids, ]
 #
 nrow(result)
-# [1] 261
+# [1] 258
 ```
 
-## Simple analysis - dates
+
+## Reviewing a specific trial
+
+It will often be useful to inspect all data for a single, for example to understand the meaning and relation of fields, and to see neighbouring elements to fields of interest. 
+
+```{r ctis_load}
+#
+# Adding some trials from CTIS for a search similar to above
+ctrLoadQueryIntoDb(
+  queryterm = 'searchCriteria={"containAll":"","containAny":"neuroblastoma","containNot":""}',
+  register = "CTIS",
+  con = db
+)
+# $n
+# [1] 12
+# 
+# $success
+#  [1] "2023-509673-22-00" "2024-513141-37-00" "2024-511071-16-00" "2024-512095-35-00"
+#  [5] "2023-507178-41-00" "2023-506778-11-00" "2022-501725-21-00" "2023-504880-18-00"
+#  [9] "2023-508587-29-00" "2022-502668-20-00" "2023-504246-64-00" "2023-503684-42-00"
+```
+
+Identify a trial of interest by its `_id`, and use this in any standard database function. Retrieve the trial's full `JSON` representation that `ctrdata` had loaded into the database and visualise its nested structure of field names and values. 
+
+```{r single_trial_widget}
+# 
+# This example requires to install this package for visualisation:
+# remotes::install_github("hrbrmstr/jsonview")
+
+# Get a particular trial from any database supported 
+# by ctrdata (duckdb, SQLite, PostgreSQL, MongoDB):
+oneTrial <- nodbi::docdb_query(
+  src = db, 
+  key = db$collection, 
+  query = '{"_id":"2022-501725-21-00"}',
+  limit = 1L
+)
+
+# Create an interactive widget where nodes can be expanded:
+jsonview::json_tree_view(oneTrial)
+
+```
+
+![CtisNested](ctisnested.png)
+
+
+## Simple analysis of dates
 
 In a data.frame generated with `dbGetFieldsIntoDf()`, fields are typed as dates, logical, character or numbers.
 
 ```{r str_data_frame}
 #
 str(result)
-# 'data.frame':	261 obs. of  10 variables:
-#  $ _id                                   : chr  "2004-004386-15-DE" "2005-000915-80-IT" ...
-#  $ a1_member_state_concerned             : chr  "Germany - BfArM" "Italy - Italian Medicines Agency" ...
-#  $ a2_eudract_number                     : chr  "2004-004386-15" "2005-000915-80" "2005-001267-63" ...
-#  $ f41_in_the_member_state               : int  NA NA 5 37 70 24 100 35 10 24 ...
-#  $ f422_in_the_whole_clinical_trial      : int  230 NA 12 67 70 NA 100 156 2230 NA ...
-#  $ n_date_of_competent_authority_decision: Date, format: "2005-07-08" "2005-04-21" "2005-07-08" ...
-#  $ p_end_of_trial_status                 : chr  "Completed" "Completed" "Completed" "Completed" ...
-#  $ overall_status                        : chr  NA NA NA NA ...
-#  $ start_date                            : Date, format: NA NA NA ...
-#  $ primary_completion_date               : Date, format: NA NA NA ...
+# 'data.frame':	258 obs. of  12 variables:
+#  $ _id                                                          : chr  "2004-004386-15-DE" "2005-000915-80-IT" "2005-001267-63-IT" "2005-002089-13-GB" ...
+#  $ f41_in_the_member_state                                      : int  NA NA 5 37 70 24 100 35 10 24 ...
+#  $ f422_in_the_whole_clinical_trial                             : int  230 NA 12 67 70 NA 100 156 2230 NA ...
+#  $ a1_member_state_concerned                                    : chr  "Germany - BfArM" "...
+#  $ p_end_of_trial_status                                        : chr  "Completed" "Completed" "Completed" ...
+#  $ n_date_of_competent_authority_decision                       : Date, format: "2005-07-08" "2005-04-21" ...
+#  $ a2_eudract_number                                            : chr  "2004-004386-15" "2005-000915-80" ...
+#  $ trialInformation.recruitmentStartDate                        : Date, format: "2005-07-26" NA NA ...
+#  $ trialInformation.globalEndOfTrialDate                        : Date, format: "2006-10-27" NA NA ...
+#  $ protocolSection.statusModule.overallStatus                   : chr  NA NA NA NA ...
+#  $ protocolSection.statusModule.startDateStruct.date            : Date, format: NA NA NA ...
+#  $ protocolSection.statusModule.primaryCompletionDateStruct.date: Date, format: NA NA NA ...
 #  - attr(*, "ctrdata-dbname")= chr "my_database_name"
 #  - attr(*, "ctrdata-table")= chr "my_collection_name"
+#  - attr(*, "ctrdata-table-note")= chr "^^^ attr ctrdata-table will be removed by end 2024"
+#  - attr(*, "ctrdata-collection")= chr "my_collection_name"
 #  - attr(*, "ctrdata-dbqueryhistory")='data.frame':	2 obs. of  4 variables:
-#   ..$ query-timestamp: chr [1:2] "2024-05-12 18:39:52" "2024-05-12 18:40:10"
-#   ..$ query-register : chr [1:2] "EUCTR" "CTGOV"
-#   ..$ query-records  : int [1:2] 210 226
+#   ..$ query-timestamp: chr [1:2] "2024-06-29 09:01:16" "2024-06-29 09:02:12"
+#   ..$ query-register : chr [1:2] "EUCTR" "CTGOV2"
+#   ..$ query-records  : int [1:2] 226 222
 #   ..$ query-term     : chr [1:2] "query=neuroblastoma&age=under-18&status=completed"
-# "cond=neuroblastoma&recrs=e&age=0&intr=Drug"
+#    "cond=neuroblastoma&intr=Drug&aggFilters=ages:child,status:com"
 ```
 
 This typing facilitates using the respective type of data for analysis, for example of dates with base R graphics:
@@ -267,8 +422,10 @@ The field "n_date_of_competent_authority_decision" used above exists only in EUC
 result$trialstart <- dfMergeVariablesRelevel(
   result,
   colnames = c(
+    # EUCTR
     "n_date_of_competent_authority_decision",
-    "start_date"
+    # CTGOV2
+    "protocolSection.statusModule.startDateStruct.date"
   )
 )
 
@@ -296,16 +453,23 @@ mapped_values <- list(
     "Temporarily Halted", "Restarted",
     # CTGOV
     "Active, not recruiting", "Enrolling by invitation", 
-    "Not yet recruiting", "ACTIVE_NOT_RECRUITING",
+    "Not yet recruiting", 
+    # CTGOV2
+    "ACTIVE_NOT_RECRUITING", "ENROLLING_BY_INVITATION",
+    "RECRUITING", "TEMPORARILY_NOT_AVAILABLE",
     # CTIS
     "Ongoing, recruiting", "Ongoing, recruitment ended", 
     "Ongoing, not yet recruiting", "Authorised, not started"
   ),
+  #
   "completed" = c(
     "Completed", "COMPLETED", "Ended"),
+  #
   "other" = c(
     "GB - no longer in EU/EEA", "Trial now transitioned",
     "Withdrawn", "Suspended", "No longer available", 
+    "SUSPENDED", "NO_LONGER_AVAILABLE", "WITHDRAWN",
+    "WITHHELD", "UNKNOWN",
     "Terminated", "TERMINATED", "Prematurely Ended", 
     "Under evaluation")
 )
@@ -315,15 +479,17 @@ mapped_values <- list(
 tmp <- dfMergeVariablesRelevel(
   result,
   colnames = c(
-    "overall_status",
-    "p_end_of_trial_status"
+    # EUCTR
+    "p_end_of_trial_status",
+    # CTGOV2
+    "protocolSection.statusModule.overallStatus"
   ),
   levelslist = mapped_values
 )
 
 table(tmp)
-# ongoing completed     other 
-#       4       252         4 
+# ongoing completed  other 
+#       5       248      4 
 ```
 
 ## User annotations
@@ -350,45 +516,56 @@ result <- dbGetFieldsIntoDf(
 )
 
 str(result)
-# 'data.frame':	482 obs. of  3 variables:
-#  $ _id               : chr  "2004-004386-15-DE" "2004-004386-15-ES" "2004-004386-15-IT" ...
-#  $ record_last_import: Date, format: "2024-05-12" "2024-05-12" "2024-05-12" ...
-#  $ annotation        : chr  "test annotation" "test annotation" "test annotation" ...
+# 'data.frame':	494 obs. of  3 variables:
+#  $ _id               : chr  "2004-004386-15-DE" "2004-004386-15-ES" ...
+#  $ record_last_import: Date, format: "2024-06-29" "2024-06-29" ...
+#  $ annotation        : chr  "test annotation" "test annotation" ...
 ```
 
-## Analysing sample size using historic versions of trial records
+## Analysing sample sizes in historic versions of trial records
 
-Historic versions can set to be retrieved for CTGOV2 by specifying `ctgov2history = <...>` when using `ctrLoadQueryIntoDb()`; this functionality was added in `ctrdata` version 1.18.0. Historic versions are automatically retrieved for CTIS. The versions include all trial data available at the date of the respective version. 
+Historic versions can set to be retrieved for CTGOV2 by specifying `ctgov2history = <...>` when using `ctrLoadQueryIntoDb()`; this functionality was added in `ctrdata` version 1.18.0. The versions include all trial data available at the date of the respective version. 
 
 For CTGOV2 records, the historic versions are added as follows into the `ctrdata` data model of a trial record, where the ellipsis `...` represents all trial data fields: 
 
 `{"_id":"NCT01234567", "title": "Current title", ..., "history": [{"history_version": {"version_number": 1, "version_date": "2020-21-22 10:11:12"}, "title": "Original title", ...}, {"history_version": {"number": 2, "date": "2021-22-23 11:13:13"}, "title": "Later title", ...}]}`
 
-The example shows how planned or realised number of participants (sample size) changed over time for individual trials, using data from both registers. 
+The example shows how planned or realised number of participants (sample size) changed over time for individual trials, using available data (that is, only from `CTGOV2`; historic versions were available for `CTIS` only until its relaunch on 2024-06-17). 
 
 ```{r sample_size_over_time}
 #
 # load some trials from CTGOV2 specifying that 
 # for each trial, 5 versions should be retrieved
 ctrLoadQueryIntoDb(
-  queryterm = "https://clinicaltrials.gov/search?cond=neuroblastoma&aggFilters=phase:3,status:com", 
+  queryterm = "cond=neuroblastoma&aggFilters=phase:3,status:com", 
+  register = "CTGOV2", 
   con = db, 
   ctgov2history = 5L
 )
+# * Appears specific for CTGOV REST API 2.0
+# * Found search query from CTGOV2: cond=neuroblastoma&aggFilters=phase:3,status:com
+# * Checking trials using CTGOV REST API 2.0, found 24 trials
+# (1/3) Downloading in 1 batch(es) (max. 1000 trials each; estimate: 2.4 Mb total)
+# Download status: 1 done; 0 in progress. Total size: 1.11 Mb (482%)... done!             
+# (2/3) Converting to NDJSON...
+# (3/3) Importing records into database...
+# JSON file #: 1 / 1                               
+# * Checking and processing historic versions... 
+# Download status: 24 done; 0 in progress. Total size: 1.35 Mb (515%)... done!             
+# - Downloading 117 historic versions (estimate: 4.4 MB total)...
+# Download status: 117 done; 0 in progress. Total size: 4.14 Mb (532%)... done!             
+# - Merging trial versions . . . . . . . . . . . . . . . . . . . . . . . . 
+# - Updating trial records . . . . . . . . . . . . . . . . . . . . . . . . 
+# Updated 24 trial(s) with historic versions
+# = Imported or updated 24 trial(s)
+# Updated history ("meta-info" in "my_collection_name")
 
-ctrLoadQueryIntoDb(
-  queryterm = "https://euclinicaltrials.eu/app/#/search?basicSearchInputAND=cancer&ageGroupCode=2", 
-  con = db
-)
-
+# get relevant fields
 result <- dbGetFieldsIntoDf(
   fields = c(
     # CTGOV2
     "history.protocolSection.designModule.enrollmentInfo.count",
-    "history.history_version",
-    # CTIS
-    "applications.submissionDate",
-    "applications.partI.rowSubjectCount"
+    "history.history_version.version_date"
   ),
   con = db
 )
@@ -401,26 +578,22 @@ library(ggplot2)
 # mangle and plot
 result %>%
   unnest(cols = starts_with("history.")) %>%
-  unnest(cols = starts_with("applications.")) %>%
-  mutate(version_date = as.Date(version_date)) %>% 
-  mutate(count = dfMergeVariablesRelevel(., colnames = c(
-    "history.protocolSection.designModule.enrollmentInfo.count", 
-    "applications.partI.rowSubjectCount"))) %>% 
-  mutate(date = dfMergeVariablesRelevel(., colnames = c(
-    "applications.submissionDate", "version_date"))) %>% 
-  select(`_id`, count, date) %>% 
-  arrange(`_id`, date) %>%
   group_by(`_id`) %>%
   ggplot(
     mapping = aes(
-      x = date,
-      y = count,
+      x = history.history_version.version_date,
+      y = history.protocolSection.designModule.enrollmentInfo.count,
       colour = `_id`)
   ) +
   geom_step() +
   geom_point() +
   theme_light() +
-  guides(colour = "none")
+  guides(colour = "none") +
+  labs(
+    title = "Sample sizes in trials including patients with a neuroblastoma", 
+    subtitle = "Source: CTGOV2 records labelled as phase 3 and completed", 
+    caption = Sys.Date()
+  )
 
 ggsave("vignettes/samplesizechanges.png", width = 6, height = 4)
 ```
@@ -428,164 +601,184 @@ ggsave("vignettes/samplesizechanges.png", width = 6, height = 4)
 
 ## Analysing nested fields such as trial results
 
-The registers represent clinical trial information by nesting fields (e.g., several reporting groups within several measures within one of several endpoints). A visualisation of this hierarchical representation for CTGOV is this:
+The registers represent clinical trial information by nesting fields (e.g., several reporting groups within several measures within one of several endpoints). A visualisation of this hierarchical representation for CTGOV2 follows. Compare this with the outcome measures presented here: https://clinicaltrials.gov/study/NCT02139397?tab=results#outcome-measures, specifically "3. Determine the Progression Free Survival (PFS)..." 
 
 ```{r show_nesting}
-#
-dbFindFields("outcome", db)
-
+# Prepare
 # remotes::install_github("https://github.com/hrbrmstr/jsonview")
-result <- dbGetFieldsIntoDf("clinical_results.outcome_list.outcome", db)
-jsonview::json_tree_view(result[["clinical_results.outcome_list.outcome"]][
-  result[["_id"]] == "NCT00520936"
-])
+
+# Find top level nodes within resultsSection
+dbFindFields("^resultsSection[.][^.]+$", db, sample = FALSE)
+# Using cache of fields. 
+#                                         CTGOV2 
+#           "resultsSection.adverseEventsModule" 
+#                                         CTGOV2 
+# "resultsSection.baselineCharacteristicsModule" 
+#                                         CTGOV2 
+#                "resultsSection.moreInfoModule" 
+#                                         CTGOV2 
+#         "resultsSection.outcomeMeasuresModule" 
+#                                         CTGOV2 
+#         "resultsSection.participantFlowModule" 
+
+# Get relevant data
+result <- dbGetFieldsIntoDf("resultsSection.outcomeMeasuresModule", db)
+
+# Create interactive widget
+jsonview::json_tree_view(result[result[["_id"]] == "NCT02139397", -1])
+
 ```
-![CtgovNested](ctgovnested.png)
+![Ctgov2NestedResults](ctgov2nestedresults.png)
 
 The analysis of nested information such as the highlighted duration of response is facilitated with `ctrdata` as follows. The main steps are:
 
-- transform nested information to a long, name-value data frame and then
+1. Create a data from fields identified as shown in previous sections (using `dbGetFieldsIntoDf()`)
 
-- identify where the measures of interest (e.g. duration of response, blue circles above) are located in the information hierarchy by specifying the name and value of fields (`wherename`, `wherevalue`) and finally
+2. Transform nested information to a long, name-value data frame (using `dfTrials2Long()`)
 
-- obtain the value by specifying the name(s) of its value field(s) (`valuename`, red circles in figure above).
+3. Identify the measures of interest (e.g. PFS, blue circle above) by specifying the name and value of these fields (`wherename`, `wherevalue` in function `dfName2Value()`) and 
+
+4. Obtain values by specifying the name(s) of its value field(s) (red and green circles in figure above; `valuename` in function `dfName2Value()`).
+
+This is put together in the following example. Note that `CTGOV` fields are no longer downloadable (see NEWS.md) but may exist in previously created databases. 
 
 ```{r analyse_nested_data}
-# 1. Create data frame from results fields.
-# These are the key results fields from
-# CTGOV and from EUCTR:
+#
+#### 1. Create data frame from results fields
+# 
+# These are key results fields from
+# CTGOV2, CTGOV and from EUCTR:
 result <- dbGetFieldsIntoDf(
   fields = c(
+    # EUCTR
+    "trialInformation.populationAgeGroup",
+    "subjectDisposition.recruitmentDetails",
+    "baselineCharacteristics.baselineReportingGroups.baselineReportingGroup",
+    "endPoints.endPoint",
+    "subjectAnalysisSets",
+    "adverseEvents.seriousAdverseEvents.seriousAdverseEvent", 
+    # CTGOV2
+    "resultsSection.outcomeMeasuresModule",
+    "protocolSection.designModule.designInfo.allocation", 
+    "resultsSection.participantFlowModule",
     # CTGOV
     "clinical_results.baseline.analyzed_list.analyzed.count_list.count",
     "clinical_results.baseline.group_list.group",
     "clinical_results.baseline.analyzed_list.analyzed.units",
     "clinical_results.outcome_list.outcome",
-    "study_design_info.allocation",
-    # EUCTR
-    "@attributes.eudractNumber",
-    "trialInformation.populationAgeGroup",
-    "subjectDisposition.recruitmentDetails",
-    "baselineCharacteristics.baselineReportingGroups.baselineReportingGroup",
-    "endPoints.endPoint",
-    "trialChanges.hasGlobalInterruptions",
-    "subjectAnalysisSets",
-    "adverseEvents.seriousAdverseEvents.seriousAdverseEvent"
+    "study_design_info.allocation"
   ),
   con = db
 )
 
 # Keep only unique trial records
 result <- result[result[["_id"]] %in% dbFindIdsUniqueTrials(con = db), ]
-# Searching for duplicate trials... 
-# - Getting all trial identifiers (may take some time), 497 found in collection
-# - Finding duplicates among registers' and sponsor ids...
-# - 187 EUCTR _id were not preferred EU Member State record for 79 trials
-# - Keeping 69 / 184 / 20 / 0 / 13 records from EUCTR / CTGOV / CTGOV2 / ISRCTN / CTIS
-# = Returning keys (_id) of 286 records in collection "my_collection_name"
 
-# 2. The columns of the results data frame
-# contain nested lists of fields, example:
-str(result[["endPoints.endPoint"]][1])
-# List of 1
-#  $ :List of 12
-#   ..$ title                            : chr "Primary"
-#   ..$ readyForValues                   : chr "false"
-#   ..$ countable                        : chr "false"
-#   ..$ unit                             : chr "TBC"
-#   ..$ timeFrame                        : chr "TBC"
-#   ..$ type                             :List of 1
-#   .. ..$ value: chr "ENDPOINT_TYPE.primary"
-#   ..$ centralTendencyType              :List of 1
-#   .. ..$ value: chr "MEASURE_TYPE.arithmetic"
-#   ..$ dispersionType                   :List of 1
-#   .. ..$ value: chr "ENDPOINT_DISPERSION.standardDeviation"
-#   ..$ categories                       : chr ""
-#   ..$ armReportingGroups               : chr ""
-#   ..$ subjectAnalysisSetReportingGroups: chr ""
-#   ..$ statisticalAnalyses              : chr ""
 
-# All nested data are transformed to a long,
+#### 2. All nested data are transformed to a long,
 # name-value data.frame (resulting in several
 # hundred rows per trial record):
+# 
 long_result <- dfTrials2Long(df = result)
-# Total 162238 rows, 152 unique names of variables
+# Total 166677 rows, 157 unique names of variables
 
-# 3. Obtain values for fields of interest where
-# they related to measures of interest. The
-# parameters can be regular expressions.
-dor <- dfName2Value(
+
+result <- dbGetFieldsIntoDf("endPoints", db)
+jsonview::json_tree_view(result[result[["_id"]] == "2010-019348-37-IT", -1])
+
+
+#### 3. Obtain values for measures of interest 
+#
+# The parameters can be regular expressions.
+clinicalDuration <- dfName2Value(
   df = long_result,
   wherename = paste0(
-    "clinical_results.outcome_list.outcome.measure.title|",
-    "endPoints.endPoint.title"
+    "endPoints.endPoint.title|",
+    "resultsSection.outcomeMeasuresModule.outcomeMeasures.title"
   ),
-  wherevalue = "duration of response",
+  wherevalue = paste0(
+    "duration of response|DOR|",
+    "free survival|DFS|PFS|EFS"
+  ),
   valuename = paste0(
-    "clinical_results.*category_list.category.measurement_list.measurement.value|",
-    "endPoints.*armReportingGroup.tendencyValues.tendencyValue.value"
+    "resultsSection.*outcomeMeasures.classes.categories.measurements.value|",
+    "endPoints.*armReportingGroup.tendencyValues.tendencyValue.value|",
+    "resultsSection.outcomeMeasuresModule.outcomeMeasures.unitOfMeasure|",
+    "endPoints.endPoint.unit|",
+    "resultsSection.outcomeMeasuresModule.outcomeMeasures.groups.title|",
+    "endPoints.*armReportingGroup.armId"
   )
 )
-# Returning values for 7 out of 113 trials
+# Returning values for 45 out of 131 trials
 
-# Duration of response has been reported variably in
-# months and days. Here, just select trials reporting
-# duration of response in months:
-dor <- dor[
-  grepl("months",
-        dfName2Value(
-          df = long_result,
-          wherename = paste0(
-            "clinical_results.*outcome.measure.title|",
-            "endPoints.endPoint.title"
-          ),
-          wherevalue = "duration of response",
-          valuename = paste0(
-            "clinical_results.*measure.units|",
-            "endPoints.endPoint.unit"
-          )
-        )[["value"]],
-        ignore.case = TRUE
-  ),
-]
-# Returning values for 12 out of 113 trials
+# Duration has been reported with various units: 
+sort(unique(clinicalDuration[grepl("unit", clinicalDuration$name), "value"]))
 
-# the identifier is generated to identify repeated and
-# nested elements in a trial, so that it permits to
-# find the valuename that corresponds to the item
-# for which wherename has wherevalue)
-dor[, c("_id", "identifier", "value")]
-#                   _id identifier   value
-# 1   2010-019348-37-IT        8.2     7.0
-# 2   2010-019348-37-IT        8.3     8.1
-# 5   2013-003595-12-SK        6.2   999.0
-# 6   2013-003595-12-SK        6.3   999.0
-# 7   2013-003595-12-SK        6.4   999.0
-# 8   2013-003595-12-SK        6.5   999.0
-# 9   2013-003595-12-SK        6.6   999.0
-# 10  2013-003595-12-SK        6.7   999.0
-# 11  2014-000445-79-DE          3    40.5
-# 14 2014-005674-11-3RD        3.4 99999.0
-# 15  2015-000230-29-DE      5.1.1 99999.0
-# [...]
+# For convenience, `dplyr` and related functions can be used, as follows: 
+library(dplyr)
+library(tidyr)
+
+clinicalDuration %<>% 
+  as_tibble() %>%
+  mutate(
+    group_id = paste0(`_id`, "_", sub("([0-9]+)[.]?.*", "\\1", identifier)),
+    name_short = sub(".*[.](.+)", "\\1", name),
+    name_short = if_else(name_short == "unitOfMeasure", "unit", name_short)
+  ) %>%
+  group_by(group_id) %>% 
+  mutate(
+    is_duration = any(grepl("day|month|week|year", value, ignore.case = TRUE))) %>%
+  ungroup() %>% 
+  filter(is_duration) %>% 
+  select(name_short, value, where, group_id) %>% 
+  pivot_wider(id_cols = c(group_id, where), names_from = name_short, values_fn = list) %>%
+  unnest(c(value, unit)) %>% 
+  filter(!grepl("999[9]*", value)) %>%
+  rowwise() %>% 
+  mutate(
+    value = as.numeric(value),
+    arm_names = paste(armId, title, collapse = " / "),
+  ) %>% 
+  ungroup() %>% 
+  mutate(
+    days = case_when(
+      grepl("[wW]eek", unit) ~ value * 7,
+      grepl("[mM]onth", unit) ~ value * 30,
+      grepl("[yY]ear", unit) ~ value * 30,
+      .default = value
+    )) %>% 
+  select(!c(value, unit, armId, title))
+
+clinicalDuration
+# # A tibble: 163 x 4
+#    group_id            where                                                arm_names  days
+#    <chr>               <chr>                                                <chr>     <dbl>
+#  1 2010-019348-37-IT_8 Duration of response by treatment                    "Arm-235   211.
+#  2 2010-019348-37-IT_8 Duration of response by treatment                    "Arm-235   242.
+#  3 2010-019348-37-IT_8 Duration of response by treatment                    "Arm-235   146.
+#  4 2010-022951-49-LV_2 Progression-free Survival                            "Arm-648   108 
+#  5 2010-022951-49-LV_2 Progression-free Survival                            "Arm-648    51 
+#  6 2010-022951-49-LV_4 Progression Free Survival (PFS) in Participants wit  "Arm-648   156 
+#  7 2010-022951-49-LV_4 Progression Free Survival (PFS) in Participants wit  "Arm-648    51 
+#  8 2011-004168-30-DE_2 Progression-free survival PP population              "Arm-937   159 
+#  9 2011-004168-30-DE_2 Progression-free survival PP population              "Arm-937   132 
+# 10 2012-000510-10-GB_2 Progression Free Survival                            "Arm-782    NA 
 ```
+
 
 ## Analysing primary endpoints
 
 Text analysis has to be used for many fields of trial information from the registers. Here is an example to simply categorise the type of primary endpoint. In addition, the number of subjects are extracted and compared by type of primary endpoint.
 
 ```{r plot_endpoint_frequencies}
-# Several "measure" entries are in "primary_outcome".
-# They are concatenated into a list when specifying
-# the JSON path "primary_outcome.measure"
+#
 result <- dbGetFieldsIntoDf(
   c(
     # CTGOV
-    "primary_outcome.measure",
-    "enrollment",
+    "resultsSection.outcomeMeasuresModule.outcomeMeasures.title",
+    "protocolSection.designModule.enrollmentInfo.count",
     # EUCTR
     "e51_primary_end_points",
-    # "f11_trial_has_subjects_under_18"
     "f11_number_of_subjects_for_this_age_range"
   ),
   con = db
@@ -601,7 +794,7 @@ result <- result[
 result$pep <- dfMergeVariablesRelevel(
   df = result,
   colnames = c(
-    "primary_outcome.measure",
+    "resultsSection.outcomeMeasuresModule.outcomeMeasures.title",
     "e51_primary_end_points"
   )
 )
@@ -610,7 +803,7 @@ result$pep <- dfMergeVariablesRelevel(
 result$nsubj <- dfMergeVariablesRelevel(
   df = result,
   colnames = c(
-    "enrollment",
+    "protocolSection.designModule.enrollmentInfo.count",
     "f11_number_of_subjects_for_this_age_range"
   )
 )
@@ -626,7 +819,7 @@ result$pep_is_efs <- grepl(
 # Tabulate
 table(result$pep_is_efs)
 # FALSE  TRUE
-#   207    21
+#   211    33
 
 # Plot
 library(ggplot2)
@@ -640,7 +833,7 @@ ggplot(
   geom_boxplot() +
   scale_x_log10()
 # Warning message:
-# Removed 25 rows containing non-finite values (`stat_boxplot()`). 
+# Removed 24 rows containing non-finite values (`stat_boxplot()`). 
 
 ggsave("vignettes/boxpep.png", width = 6, height = 4)
 ```
@@ -666,73 +859,94 @@ normalise_string <- function(x) {
 # get trials into database
 ctrLoadQueryIntoDb(
   queryterm = paste0(
-    "https://clinicaltrials.gov/ct2/results?rslt=With&age=0&intr=Drug&", 
-    "phase=1&phase=2&strd_s=01%2F01%2F2010&strd_e=12%2F31%2F2012"), 
+    "https://clinicaltrials.gov/search?start=2010-01-01_2012-12-31", "
+    &intr=Drug&aggFilters=ages:child,phase:2 3,results:with"), 
   con = db)
+
+# see definitions linked in help("ctrdate-registers") or directly go to
+# https://clinicaltrials.gov/data-api/about-api/study-data-structure
 
 # get result set
 result <- dbGetFieldsIntoDf(c(
-  "start_date", 
-  "detailed_description.textblock", 
-  "official_title", 
-  "eligibility.maximum_age",
-  "study_design_info.allocation", "primary_outcome.measure", "arm_group.arm_group_type", 
-  "clinical_results.outcome_list.outcome.analysis_list.analysis.method",
-  "clinical_results.outcome_list.outcome.analysis_list.analysis.p_value",
-  "clinical_results.outcome_list.outcome.analysis_list.analysis.param_type",
-  "clinical_results.outcome_list.outcome.analysis_list.analysis.non_inferiority_type",
-  "clinical_results.baseline.analyzed_list.analyzed.units", 
-  "clinical_results.baseline.analyzed_list.analyzed.count_list.count.value"
+  "protocolSection.armsInterventionsModule.armGroups.type",
+  "protocolSection.designModule.designInfo.allocation",
+  "protocolSection.designModule.designInfo.interventionModel",
+  "protocolSection.designModule.designInfo.maskingInfo.masking",
+  "protocolSection.designModule.enrollmentInfo.count",
+  "protocolSection.statusModule.startDateStruct.date",
+  "protocolSection.outcomesModule.primaryOutcomes.measure",
+  "resultsSection.outcomeMeasuresModule.outcomeMeasures.analyses.statisticalMethod",
+  "resultsSection.outcomeMeasuresModule.outcomeMeasures.analyses.pValue"
 ), 
 con = db)
 
-# number of participants (last number is typically all groups summed up)
-# also see README.Rmd for alternative way, summing up non-total groups
-result$totalparticipants <- vapply(
-  result[["clinical_results.baseline.analyzed_list.analyzed.count_list.count.value"]],
-  FUN = function(x) rev(x)[1], numeric(1L))
+# # number of participants (last number is typically all groups summed up)
+# # also see README.Rmd for alternative way, summing up non-total groups
+# # result$totalparticipants <- vapply(
+# # result[["clinical_results.baseline.analyzed_list.analyzed.count_list.count.value"]],
+# # FUN = function(x) rev(x)[1], numeric(1L))
+# 
+# View(result)
+# 
+# result$totalparticipants <- result$protocolSection.designModule.enrollmentInfo.count
 
 # first reported p value for primary endpoint analysis
 result$pvalueprimaryanalysis <- vapply(
-  result[["clinical_results.outcome_list.outcome.analysis_list.analysis.p_value"]],
+  result[["resultsSection.outcomeMeasuresModule.outcomeMeasures.analyses.pValue"]],
   FUN = function(x) as.numeric(trimws(gsub("[<>=]", "", strsplit(x, " / ")[[1]][1]))), numeric(1))
 
 # statistical method used for primary endpoint analysis
 result$methodprimaryanalysis <- vapply(
-  result[["clinical_results.outcome_list.outcome.analysis_list.analysis.method"]],
+  result[["resultsSection.outcomeMeasuresModule.outcomeMeasures.analyses.statisticalMethod"]],
   FUN = function(x) normalise_string(strsplit(x, " / ")[[1]][1]), character(1))
 
-# based on allocation arms, keep trials that are likely to investigate safety and efficacy
-result$controlled <- grepl(
-  "Placebo|No Intervention", 
-  result$arm_group.arm_group_type, ignore.case = TRUE)
-
-table(result$controlled)
+# keep randomised, parallel-group, placebo-controlled, blinded clinical trials
+result$prct <- 
+  grepl("PLACEBO|NO_INT", result$protocolSection.armsInterventionsModule.armGroups.type) &
+  grepl("^RANDOM", result$protocolSection.designModule.designInfo.allocation) &
+  grepl("^PARALLEL", result$protocolSection.designModule.designInfo.interventionModel) &
+  !grepl("NONE", result$protocolSection.designModule.designInfo.maskingInfo.masking)
+#
+table(result$prct)
 # FALSE  TRUE 
-#   871   326
+#   923   281
+#
+result <- subset(result, prct == TRUE)
 
-result <- subset(result, controlled == TRUE)
+# helper
+library(ggplot2)
 
 # http://varianceexplained.org/statistics/interpreting-pvalue-histogram/
 # http://www.pnas.org/content/100/16/9440.full
 # plot p values
-library(ggplot2)
-ggplot(result, aes(pvalueprimaryanalysis)) + 
+ggplot(
+  result, 
+  aes(pvalueprimaryanalysis)) + 
   stat_ecdf(geom = "step") +
   labs(
-    title = "Paediatric phase 2 or 3 interventional trials\nwith randomisation to placebo or to no intervention", 
+    title = paste0(
+      "Paediatric phase 2 or 3 parallel-group interventional trials\n", 
+      "with randomisation to placebo or to no intervention"), 
     x = "Range of p values", 
     y = "Empirical cumulative density of p values\nof primary endpoint results") +
-  geom_vline(xintercept = 0.05, linetype = 3)
+  geom_vline(
+    xintercept = 0.05, 
+    linetype = 3)
+
 ggsave("vignettes/phase23_paed_p_values.png", width = 6, height = 4)
 
 # plot sample size v p value
-ggplot(result, aes(x = totalparticipants, y = pvalueprimaryanalysis)) +
+ggplot(
+  result, 
+  aes(
+    x = protocolSection.designModule.enrollmentInfo.count, 
+    y = pvalueprimaryanalysis)) +
   geom_point() + 
   ylim(0, 1) + 
   xlim(0, 1000) + 
   scale_x_log10() + 
   geom_hline(yintercept = 0.05, linetype = 3)
+
 ggsave("vignettes/phase23_paed_p_values_participants.png", width = 6, height = 4)
 
 # statistical method used for primary endpoint analysis
@@ -742,18 +956,18 @@ tmp <- data.frame(tmp)
 knitr::kable(tmp[1:10,])
 ```
 
-|Var1                                 | Freq|
-|:------------------------------------|----:|
-|Ancova                               |   51|
-|Mixed Models Analysis                |   19|
-|Cochran Mantel Haenszel              |   18|
-|Anova                                |   14|
-|t Test 2 Sided                       |   10|
-|Chi Squared                          |   10|
-|Fisher Exact                         |    9|
-|Wilcoxon (Mann Whitney)              |    6|
-|Mixed Model Repeated Measures (Mmrm) |    6|
-|Regression Logistic                  |    3|
+|Var1                                     | Freq|
+|:----------------------------------------|----:|
+|Ancova                                   |   49|
+|Cochran Mantel Haenszel                  |   17|
+|Mixed Models Analysis                    |   14|
+|Anova                                    |   11|
+|Chi Squared                              |   10|
+|Fisher Exact                             |    9|
+|t Test 2 Sided                           |    8|
+|Wilcoxon (Mann Whitney)                  |    5|
+|Mixed Model Repeated Measures (Mmrm)     |    4|
+|Mixed Model for Repeated Measures (Mmrm) |    3|
 
 ![phase23_paed_p_values](phase23_paed_p_values.png)
 
@@ -814,14 +1028,16 @@ number_authorised <- sapply(
 )
 table(number_authorised, exclude = "")
 # number_authorised
-#  0  1  2  3  4  6  8 15 
-# 26 18  7  5  3  2  1  1 
+#  0  1  2  3  4  6  7  8  9 15 
+# 26 18  7  5  3  2  1  1  1  1  
 
 result[["any_authorised"]] <- number_authorised > 0L
 
-# Plot
+# Helper
 library(ggplot2)
 library(scales)
+
+# Plot
 ggplot(
   data = result,
   aes(
@@ -862,36 +1078,38 @@ m <- mongo(
 
 # Number of records in  collection:
 m$count()
-# [1] 1490
+# [1] 2627
 
 # Number of EUCTR records, using JSON for query:
 m$count(query = '{"_id": {"$regex": "[0-9]{4}-[0-9]{6}-[0-9]{2}", "$options": "i"}}')
-# [1] 269
+# [1] 1422
 
 # Alternative:
 m$count(query = '{"ctrname": "EUCTR"}')
-# [1] 256
+# [1] 272
 
 # Number of CTGOV records:
 m$count(query = '{"_id": {"$regex": "NCT[0-9]{8}", "$options": "i"}}')
-# [1] 1220
+# [1] 1204
 
 # Alternative:
-m$count(query = '{"ctrname": "CTGOV"}')
-# [1] 1197
+m$count(query = '{"ctrname": "CTGOV2"}')
+# [1] 1204
 
-# To best define regular expressions for analyses,
-# inspect the field (here, primary_outcome.measure):
-# Regular expressions ("$regex") are case insensitive ("i")
+# To best define regular expressions for analyses, inspect the field:
 head(
   m$distinct(
-    key = "primary_outcome.measure",
-    query = '{"ctrname": "CTGOV"}'
+    # key = "resultsSection.outcomeMeasuresModule.outcomeMeasures.title",
+    key = "protocolSection.outcomesModule.primaryOutcomes.measure",
+    query = '{"ctrname": "CTGOV2"}'
   )
 )
-# [1] "% Calories Taken Orally"             "1-year Progression-free Survival"       
-# [3] "10-year Hematologic Cancer Rate"     "10-year Mortality Rate in Marrow Donors"
-# [5] "10-year Overall Cancer Incidence"    "17-hydroxyprogesterone Response to ACTH"
+# [1] "% Calories Taken Orally"
+# [2] "- To demonstrate that 123I-mIBG planar scintigraphy is sensitive ..."
+# [3] "1-year Progression-free Survival"
+# [4] "10-year Hematologic Cancer Rate"
+# [5] "10-year Mortality Rate in Marrow Donors"
+# [6] "10-year Overall Cancer Incidence"
 ```
 
 ### Aggregation
@@ -906,63 +1124,40 @@ out <- m$aggregate(
   # matches in primary_outcome.measure the
   # regular expression,
   pipeline =
-    '[{"$match": {"primary_outcome.measure":
+    '[{"$match": {"protocolSection.outcomesModule.primaryOutcomes.measure":
       {"$regex": "(progression|event|relapse|recurrence|disease)[- ]free",
                  "$options": "i"}}},
       {"$group": {"_id": "null", "count": {"$sum": 1}}}]'
 )
 out
 #    _id count
-# 1 null    51
+# 1 null    56
 
 # List records of trials with overall survival
 # as primary endpoint, and list start date
 out <- m$aggregate(
   pipeline =
-    '[{"$match": {"primary_outcome.measure":
+    '[{"$match": {"protocolSection.outcomesModule.primaryOutcomes.measure":
       {"$regex": "overall survival", "$options": "i"}}},
-      {"$project": {"_id": 1, "start_date": 1}}]'
+      {"$project": {"_id": 1, "protocolSection.statusModule.startDateStruct.date": 1}}]'
 )
 head(out)
-#           _id     start_date
-# 1 NCT00445965   January 2006
-# 2 NCT00793845    August 2008
-# 3 NCT00923351   June 2, 2007
-# 4 NCT00796510      July 2010
-# 5 NCT01182350 September 2011
-# 6 NCT01190930 August 9, 2010
+#           _id       date
+# 1 NCT00445965    2006-01
+# 2 NCT00923351 2007-06-02
+# 3 NCT00793845    2008-08
+# 4 NCT00499616 2007-10-08
+# 5 NCT01190930 2010-08-09
+# 6 NCT01514201 2012-02-01
 ```
 
 ### Mapreduce
 
-The following examples uses the map-reduce operation in MongoDB. Note this is deprecated starting in MongoDB 5. More information: https://docs.mongodb.com/manual/core/map-reduce/ Thus, below is the same query expressed as aggregation pipeline. 
+Since Mapreduce is deprecated starting in MongoDB 5 (https://docs.mongodb.com/manual/core/map-reduce/), use an aggregation pipeline:  
 
 ```{r mongodb_mapreduce}
 # Count number of trials by number of study
 # participants in bins of hundreds of participants:
-hist <- m$mapreduce(
-  map = "function() {emit(Math.floor(this.enrollment/100)*100, 1)}",
-  reduce = "function(id, counts) {return Array.sum(counts)}"
-)
-# read as: 141 trials had 0 to less than 100 participants
-hist[order(hist[["_id"]]), ]
-#      _id value
-# 33     0   707
-# 19   100   162
-# 30   200    76
-# 10   300    59
-# 6    400    30
-# 37   500    29
-# 26   600    17
-# 36   700    21
-# 27   800    13
-# 8    900     9
-# 35  1000     5
-# 23  1100     3
-# [...]
-
-# same as aggregation pipeline,
-# which is more future proof 
 m$aggregate(pipeline = '
 [
   {
@@ -973,7 +1168,7 @@ m$aggregate(pipeline = '
             "$floor": {
               "$divide": [
                 {
-                  "$toInt": "$enrollment"
+                  "$toInt": "$protocolSection.designModule.enrollmentInfo.count"
                 },
                 100
               ]
@@ -1000,15 +1195,17 @@ m$aggregate(pipeline = '
 ]
 ')
 #      _id count
-# 1     NA   317
-# 2      0   707
-# 3    100   162
-# 4    200    76
+# 1     NA  1450
+# 2      0   700
+# 3    100   165
+# 4    200    78
 # 5    300    59
 # 6    400    30
-# 7    500    29
-# 8    600    17
+# 7    500    32
+# 8    600    19
 # 9    700    21
 # 10   800    13
+# 11   900    10
+# 12  1000     5
 # [...]
 ```

@@ -72,8 +72,8 @@ is a time-consuming operation. Use
 \code{"n:m"} for the nth to the mth versions, or
 \code{TRUE} for all versions
 of the trial record to be retrieved. Note that for register
-CTIS, historic versions are available in the `applications`
-field and are retrieved automatically.}
+CTIS, historic versions were available in the `applications`
+field only before the register's relaunch on 2024-06-17.}
 
 \item{documents.path}{If this is a relative or absolute
 path to a directory that exists or can be created,

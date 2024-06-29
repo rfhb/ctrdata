@@ -29,8 +29,7 @@ aggregating and analysing this information; it can be used for the
   <https://www.clinicaltrialsregister.eu/>)
 - EU Clinical Trials Information System (“CTIS”,
   <https://euclinicaltrials.eu/>, see [example](#workflow-ctis-example))
-- ClinicalTrials.gov (“CTGOV” classic and the 2023 “CTGOV2”, see
-  [example](#workflow-ctgov-example))
+- ClinicalTrials.gov (“CTGOV2”, see [example](#workflow-ctgov-example))
 - ISRCTN Registry (<https://www.isrctn.com/>)
 
 The motivation is to investigate and understand trends in design and
@@ -38,7 +37,7 @@ conduct of trials, their availability for patients and to facilitate
 using their detailed results for research and meta-analyses. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2024-06-23 for version 1.19.0
+package. This README was reviewed on 2024-06-29 for version 1.19.0
 (major improvements: removed external dependencies; refactored
 [`dbGetFieldsIntoDf()`](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.html);
 🔔 retrieve historic CTGOV2 versions).

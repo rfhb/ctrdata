@@ -1,15 +1,16 @@
 # ctrdata 1.18.0.9000
 
 ## Possibly breaking changes
-- `CTGOV` has retired on 2024-06-25 the classic website and API used by `ctrdata` since 2015. To support users, `ctrdata` now automatically translates and redirects queries to the current website. This helps with automatically updating previously loaded queries (`ctrLoadQueryIntoDb(querytoupdate = <n>)`), manually migrating queries and reproducible work on clinical trials information. This new functionality in `ctrdata` translates a user's search query URL from the classic website into a query for the current `CTGOV` website, for all search parameters. Since the structure and format of data differs between data retrieved from the current API and previously retrieved from the classic API, `ctrdata` will continue to identify the current API as `register = "CTGOV2"`, to support the analysis stage. 
+- `CTGOV` has retired on 2024-06-25 the classic website and API used by `ctrdata` since 2015. To support users, `ctrdata` now automatically translates and redirects queries to the current website. This helps with automatically updating previously loaded queries (`ctrLoadQueryIntoDb(querytoupdate = <n>)`), manually migrating queries and reproducible work on clinical trials information. This new functionality in `ctrdata` translates a user's search query URL from the classic website into a query for the current `CTGOV` website, for all search parameters. Since the structure and format of data differs between data retrieved from the current API and previously retrieved from the classic API, `ctrdata` will continue to identify the current API as `register = "CTGOV2"`, to support the analysis stage. In addition, `ctrdata` documentation continues to include examples of analyses with `CTGOV` data, as this may have been downloaded earlier. 
 
-- `CTIS` has been relaunched on 2024-06-17, and `ctrdata` has been fully updated to it. At the moment, `CTIS` provides basic searches and no search query URL. To support users, `ctrdata` includes an updated script that extract a user's search parameters to the clipboard and into the browser URL bar, and that searches for trials when opening such a query URL, see https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser.
+- `CTIS` has been relaunched on 2024-06-17, and `ctrdata` has been fully updated to it. At the moment, `CTIS` provides basic searches and no search query URL. To support users, `ctrdata` includes an updated script that extracts a user's search parameters from the register search page to the clipboard and into the browser URL bar. In addition, the script triggers a search for trials when opening such a query URL, see https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser. File names of `CTIS` documents start now with the document type, e.g. `SbjctInfaICF - L1 SIS and ICF NL for publication.pdf`, since the prefix (document source) introduced in version 1.18.0 is no more applicable. 
 
 ## Improvements 
 - Reduced size of demo database in package, addressing `CRAN` notes
-- Adapted `ctrFindActiveSubstanceSynonyms()` to `CTGOV2` API, note: no more curated but terms used in studies are returned
+- Adapted `ctrFindActiveSubstanceSynonyms()` to `CTGOV2` API; this is now based on terms used in studies
+- Updated vignette and added inspecting a specific trial
 - Updated register information, adding caveats and issues
-- Updated estimated download sizes, added typing new fields for `CTIS`
+- Updated estimated download sizes and user information
 - Avoided duplicate data and file retrievals
 - New attribute `ctrdata-collection` for data frames with trial information; same content as attribute `ctrdata-table`, which will be removed by end 2024
 - Split utils.R into files for functions and fields
