@@ -385,7 +385,7 @@ ctrLoadQueryIntoDbEuctr <- function(
 
     sapply(seq_along(xmlFileList), function(f) {
 
-      cat(stringi::stri_replace_all_fixed(
+      writeLines(stringi::stri_replace_all_fixed(
         .ctrdataenv$ct$call(
           "parsexml",
           # read source xml file
@@ -399,7 +399,7 @@ ctrLoadQueryIntoDbEuctr <- function(
           "&", "'", "\n", "\r", "\t"),
         c("", "", "&amp;", "&apos;", " ", " ", " "),
         vectorize_all = FALSE),
-        file = jsonFileList[f]
+        con = file(jsonFileList[f])
       )
 
     }) # sapply xmlFileList
