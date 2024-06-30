@@ -1,7 +1,7 @@
 // ==UserScript==
 //
 // @name         ctrdataURLcopier
-// @version      0.5
+// @version      0.6
 // @description  Copies to the clipboard the link to a user's search in trial registers (CTIS, EUCTR, CTGOV, ISRCTN) for use with R package ctrdata
 // @author       ralf.herold@mailbox.org
 //
@@ -10,12 +10,8 @@
 // @downloadURL  https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js
 // @supportURL   https://github.com/rfhb/ctrdata/issues
 //
-// @match        https://classic.clinicaltrials.gov/ct2/results*
-// @match        https://classic.clinicaltrials.gov/ct2/show/*
-// @match        https://www.clinicaltrials.gov/search?*
-// @match        https://www.clinicaltrials.gov/study/*
-// @match        https://clinicaltrials.gov/search?*
-// @match        https://clinicaltrials.gov/study/*
+// @match        https://www.clinicaltrials.gov/*
+// @match        https://clinicaltrials.gov/*
 // @match        https://www.isrctn.com/search?*
 // @match        https://www.isrctn.com/ISRCTN*
 // @match        https://euclinicaltrials.eu/ctis-public/*
@@ -50,23 +46,31 @@ if (window.onurlchange === null) {
     window.addEventListener('urlchange', function () {
 
         var queryUrl = window.location.href;
+
         queryUrl = formatUrl(queryUrl);
 
-        console.log('[ctrdataURLcopier] Copied to clipboard:', queryUrl);
-        GM_setClipboard(queryUrl);
+        if (queryUrl.search(/search.+|study|ISRCTN/) > -1) {
 
+            console.log('[ctrdataURLcopier] Copied to clipboard [1]:', queryUrl);
+            GM_setClipboard(queryUrl);
+        }
     });
-    //}
-}
+
+};
 
 // Registers except CTIS and CTGOV
 if (window.location.href.indexOf("euclinicaltrials") == -1) {
 
     var queryUrl = window.location.href;
-    queryUrl = formatUrl(queryUrl);
 
-    console.log('[ctrdataURLcopier] Copied to clipboard:', queryUrl);
-    GM_setClipboard(queryUrl);
+    if (queryUrl.search(/search|study|ISRCTN/) > -1) {
+
+        queryUrl = formatUrl(queryUrl);
+
+        console.log('[ctrdataURLcopier] Copied to clipboard [2]:', queryUrl);
+        GM_setClipboard(queryUrl);
+
+    };
 
 } else {
 
@@ -96,7 +100,7 @@ if (window.location.href.indexOf("euclinicaltrials") == -1) {
             window.history.pushState({}, "", queryUrl);
             // ^^^ does not work from iframe in https://euclinicaltrials.eu/search-for-clinical-trials/
             GM_setClipboard(queryUrl);
-            console.log('[ctrdataURLcopier] Copied to clipboard:', queryUrl);
+            console.log('[ctrdataURLcopier] Copied to clipboard [3]:', queryUrl);
 
             return origSend.apply(this, arguments);
         }
