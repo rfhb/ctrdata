@@ -1,4 +1,4 @@
-# ctrdata 1.18.0.9000
+# ctrdata 1.19.0
 
 ## Possibly breaking changes
 - `CTGOV` has retired on 2024-06-25 the classic website and API used by `ctrdata` since 2015. To support users, `ctrdata` now automatically translates and redirects queries to the current website. This helps with automatically updating previously loaded queries (`ctrLoadQueryIntoDb(querytoupdate = <n>)`), manually migrating queries and reproducible work on clinical trials information. This new functionality in `ctrdata` translates a user's search query URL from the classic website into a query for the current `CTGOV` website, for all search parameters. Since the structure and format of data differs between data retrieved from the current API and previously retrieved from the classic API, `ctrdata` will continue to identify the current API as `register = "CTGOV2"`, to support the analysis stage. In addition, `ctrdata` documentation continues to include examples of analyses with `CTGOV` data, as this may have been downloaded earlier. 
