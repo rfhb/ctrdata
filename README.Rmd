@@ -313,7 +313,7 @@ The new website and API introduced in July 2023 (https://www.clinicaltrials.gov/
 
 On 2024-06-25, `CTGOV` has retired the classic website and API used by `ctrdata` since 2015. To support users, `ctrdata` however automatically translates and redirects queries to the current website. This helps with automatically updating previously loaded queries (`ctrLoadQueryIntoDb(querytoupdate = <n>)`), manually migrating queries and reproducible work on clinical trials information. Going forward, users are recommended to change to use `CTGOV2` queries. 
 
-As regards study data, important differences exist between field names and contents of information retrieved using `CTGOV` or `CTGOV2`; see the [schema for study protocols in `CTGOV`](https://prsinfo.clinicaltrials.gov/ProtocolRecordSchema.xsd), the [schema for study results](https://cdn.clinicaltrials.gov/documents/xsd/prs/RRSUploadSchema.xsd) and the [Study Data Structure for `CTGOV2`](https://clinicaltrials.gov/data-api/about-api/study-data-structure). For more details, call `help("ctrdata-registers")`. This is one of the reasons why `ctrdata` handles the situation as if these were two different registers and will continue to identify the current API as `register = "CTGOV2"`, to support the analysis stage. 
+As regards study data, important differences exist between field names and contents of information retrieved using `CTGOV` or `CTGOV2`; see the [schema for study protocols in `CTGOV`](https://cdn.clinicaltrials.gov/documents/xsd/prs/ProtocolRecordSchema.xsd), the [schema for study results](https://cdn.clinicaltrials.gov/documents/xsd/prs/RRSUploadSchema.xsd) and the [Study Data Structure for `CTGOV2`](https://clinicaltrials.gov/data-api/about-api/study-data-structure). For more details, call `help("ctrdata-registers")`. This is one of the reasons why `ctrdata` handles the situation as if these were two different registers and will continue to identify the current API as `register = "CTGOV2"`, to support the analysis stage. 
 
 Note that loading trials with `ctrdata` overwrites the previous record with `CTGOV2` data, whether the previous record was retrieved using `CTGOV` or `CTGOV` queries. 
 
@@ -874,7 +874,7 @@ covr::package_coverage(path = ".", type = "tests")
 
 * Authentication, expected to be required by CTGOV2; specifications not yet known (work not yet started).
 
-* Explore further registers such as [ICTRP](https://trialsearch.who.int/) (authentication needed), [JPRN](https://rctportal.niph.go.jp/), [jRCT](https://jrct.niph.go.jp/), [UMIN-CTR](https://www.umin.ac.jp/ctr/), ChiCTR (exploration is continually ongoing; added value, terms and conditions for programmatic access vary; no clear roadmap is established yet).
+* Explore further registers (exploration is continually ongoing; added value, terms and conditions for programmatic access vary; no clear roadmap is established yet).
 
 * ~~Retrieve previous versions of protocol- or results-related information. The challenges include, historic versions can only be retrieved one-by-one, do not include results, or are not in structured format.~~ (functionality available with version 1.17.2.9000 to the extent that seems reasonably possible at this time, namely for protocol-related information for CTIS and for protocol- and results-related information in CTGOV2)
 

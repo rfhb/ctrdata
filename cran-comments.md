@@ -13,7 +13,7 @@
 
 Explanation of NOTES: 
 - links are accessible manually but may respond with an HTML error 403 in test systems
-- https://eudract.ema.europa.eu/ may present an incomplete certificate chain.
+- https://eudract.ema.europa.eu/ may present an incomplete certificate chain
 
 
 ## Submission reason

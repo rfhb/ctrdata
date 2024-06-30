@@ -424,7 +424,7 @@ users are recommended to change to use `CTGOV2` queries.
 As regards study data, important differences exist between field names
 and contents of information retrieved using `CTGOV` or `CTGOV2`; see the
 [schema for study protocols in
-`CTGOV`](https://prsinfo.clinicaltrials.gov/ProtocolRecordSchema.xsd),
+`CTGOV`](https://cdn.clinicaltrials.gov/documents/xsd/prs/ProtocolRecordSchema.xsd),
 the [schema for study
 results](https://cdn.clinicaltrials.gov/documents/xsd/prs/RRSUploadSchema.xsd)
 and the [Study Data Structure for
@@ -1020,13 +1020,9 @@ covr::package_coverage(path = ".", type = "tests")
 - Authentication, expected to be required by CTGOV2; specifications not
   yet known (work not yet started).
 
-- Explore further registers such as
-  [ICTRP](https://trialsearch.who.int/) (authentication needed),
-  [JPRN](https://rctportal.niph.go.jp/),
-  [jRCT](https://jrct.niph.go.jp/),
-  [UMIN-CTR](https://www.umin.ac.jp/ctr/), ChiCTR (exploration is
-  continually ongoing; added value, terms and conditions for
-  programmatic access vary; no clear roadmap is established yet).
+- Explore further registers (exploration is continually ongoing; added
+  value, terms and conditions for programmatic access vary; no clear
+  roadmap is established yet).
 
 - ~~Retrieve previous versions of protocol- or results-related
   information. The challenges include, historic versions can only be

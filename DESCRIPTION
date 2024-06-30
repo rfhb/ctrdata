@@ -11,7 +11,7 @@ Description: A system for querying, retrieving and analyzing
         protocol- and results-related information on clinical trials from
         four public registers, the 'European Union Clinical Trials Register'
         ('EUCTR', <https://www.clinicaltrialsregister.eu/>), 
-        'ClinicalTrials.gov' (<https://www.clinicaltrials.gov/> and also 
+        'ClinicalTrials.gov' (<https://clinicaltrials.gov/> and also 
         translating queries the retired classic interface), the 
         'ISRCTN' (<http://www.isrctn.com/>) and the
         'European Union Clinical Trials Information System'
