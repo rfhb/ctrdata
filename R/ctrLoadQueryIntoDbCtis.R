@@ -230,7 +230,7 @@ ctrLoadQueryIntoDbCtis <- function(
   tmp <- ctrMultiDownload(urls, fPartIPartsIIJson(idsTrials), verbose = verbose)
 
   # convert partI and partsII details into ndjson file(s),
-  # each approximately 10MB for nrecords = 100L
+  # each approximately 10MB for nRecords = 100L
   nRecords <- 100L
   groupNo <- (nrow(tmp) %/% nRecords) + 1L
   groupNo <- rep(seq_len(groupNo), nRecords)
@@ -356,7 +356,7 @@ ctrLoadQueryIntoDbCtis <- function(
       dlFiles$ctisurl <- sprintf(
         ctisEndpoints[3], dlFiles$`_id`, dlFiles$uuid)
 
-      # get cdn download urls for cits urls
+      # get cdn download urls for CTIS urls
       resList <- data.frame(ctisurl = NULL, url = NULL)
       failure <- function(str) message(paste("Failed request:", str))
       success <- function(x) {
