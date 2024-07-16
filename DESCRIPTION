@@ -26,7 +26,7 @@ Description: A system for querying, retrieving and analyzing
         The package can be used for meta-analysis and trend-analysis of
         the design and conduct as well as of the results of clinical trials.
 License: MIT + file LICENSE
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2.9000
 Suggests: devtools, knitr, rmarkdown, RSQLite (>= 2.3.5), 
         mongolite, tinytest (>= 1.2.1), R.rsp, RPostgres, duckdb
 VignetteBuilder: R.rsp
