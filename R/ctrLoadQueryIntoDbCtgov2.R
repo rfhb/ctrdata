@@ -86,9 +86,11 @@ ctrLoadQueryIntoDbCtgov2 <- function(
        is.na(queryValues["state"]) &
        is.na(queryValues["city"]))) stop(
          "Parameter 'locStr' provided, but no 'country', 'state' or 'city'; ",
-         "please check in CTGOV; e.g., the names of a trial site should go ",
-         "into Facility Name in the webinterface or parameter 'locn'."
-  )
+         "please check in CTGOV; e.g., the name of a trial site should go ",
+         "into Facility Name in the webinterface or parameter 'locn' in the ",
+         "search URL.",
+         call. = FALSE
+       )
 
   # url to api
   apiParams <- list(
@@ -136,8 +138,8 @@ ctrLoadQueryIntoDbCtgov2 <- function(
         "AREA[LocationState]\\1",
         "AREA[LocationFacility]\\1"
       ),
-     "collapse" = ",",
-     "out" = character()
+      "collapse" = ",",
+      "out" = character()
     ),
     #
     # hand through aggFilters

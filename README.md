@@ -4,9 +4,7 @@
 <!-- badges: start -->
 
 [![CRAN
-status](https://www.r-pkg.org/badges/version/ctrdata)](https://CRAN.R-project.org/package=ctrdata)
-[![ctrdata status
-badge](https://rfhb.r-universe.dev/badges/ctrdata)](https://rfhb.r-universe.dev/ctrdata)
+status](https://www.r-pkg.org/badges/version-last-release/ctrdata)](https://cran.r-project.org/package=ctrdata)
 [![codecov](https://codecov.io/gh/rfhb/ctrdata/branch/master/graph/badge.svg)](https://app.codecov.io/gh/rfhb/ctrdata)
 [![R-CMD-CHECK-win-macos-linux-duckdb-mongodb-sqlite-postgres](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-win-macos-linux.yaml/badge.svg)](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-win-macos-linux.yaml)
 <!-- badges: end -->
@@ -37,10 +35,10 @@ conduct of trials, their availability for patients and to facilitate
 using their detailed results for research and meta-analyses. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2024-07-16 for version 1.19.0.9000
+package. This README was reviewed on 2024-07-18 for version 1.19.1
 (recent major improvements: removed external dependencies; refactored
 [`dbGetFieldsIntoDf()`](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.html);
-🔔 retrieve historic CTGOV2 versions).
+🔔 retrieve historic CTGOV2 versions; adapt to relaunched CTIS).
 
 ## Main features
 
@@ -74,7 +72,7 @@ Remember to respect the registers’ terms and conditions (see
 `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
 package in any publication as follows: “Ralf Herold (2024). *ctrdata:
 Retrieve and Analyze Clinical Trials in Public Registers.* R package
-version 1.17.2, <https://cran.r-project.org/package=ctrdata>”.
+version 1.19.1, <https://cran.r-project.org/package=ctrdata>”.
 
 <!--
 &#10;``` r
@@ -534,8 +532,8 @@ ctrLoadQueryIntoDb(
 Queries in the CTIS search interface can be automatically copied to the
 clipboard so that a user can paste them into `queryterm`, see
 [here](#2-script-to-automatically-copy-users-query-from-web-browser).
-Subsequent to the relaunch of CTIS on 2024-06-17, there are more than
-4200 trials publicly accessible in CTIS. See [below](#documents-example)
+Subsequent to the relaunch of CTIS on 2024-07-18, there are more than
+4700 trials publicly accessible in CTIS. See [below](#documents-example)
 for how to download documents from CTIS.
 
 ``` r
@@ -543,11 +541,10 @@ for how to download documents from CTIS.
 ctrLoadQueryIntoDb(
   queryterm = "",
   register = "CTIS",
-  only.count = TRUE,
-  con = db
+  only.count = TRUE
 )
 # $n
-# [1] 4194
+# [1] 4703
 
 # Retrieve trials from another register:
 ctrLoadQueryIntoDb(
@@ -1073,7 +1070,7 @@ covr::package_coverage(path = ".", type = "tests")
   (nevertheless, `dfMergeVariablesRelevel()` can be used to merge and
   map several variables / fields into one).
 
-## Trial records’ JSON in databases
+## Trial records in databases
 
 ### PostgreSQL
 
