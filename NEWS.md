@@ -1,4 +1,4 @@
-# ctrdata 1.19.0.9000
+# ctrdata 1.19.1
 
 ## Improvements
 - Revised translation of location elements from search URL to API call for `CTGOV2`
