@@ -1,6 +1,7 @@
 # ctrdata 1.19.1.9000
 
-- new dev version
+## Improvements
+- Added typing for newly appearing variables in `CTIS`
 
 # ctrdata 1.19.1
 

@@ -199,6 +199,7 @@ typeVars <- list(
   "events.unexpectedEvents.awareDate" = "ctrDate",
   "events.unexpectedEvents.submissionDate" = "ctrDate",
   "results.laypersonResults.submissionDate" = "ctrDate",
+  "results.laypersonResults.withdrawDate" = "ctrDate",
   #
   # ctis until 2024-06-17
   "applications.ctMSCs.activeTrialPeriod.fromDate" = "ctrDate",
