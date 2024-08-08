@@ -7,11 +7,11 @@
 #' @keywords internal
 #' @noRd
 #'
-#' @importFrom jqr jq jq_flags
+#' @importFrom jqr jq jqr jq_flags
 #' @importFrom tools toTitleCase
 #' @importFrom nodbi docdb_update
 #' @importFrom jsonlite stream_in fromJSON
-#' @importFrom stringi stri_extract_all_regex stri_replace_all_fixed
+#' @importFrom stringi stri_extract_all_regex stri_replace_all_fixed stri_replace_all_regex
 #' @importFrom httr GET status_code content
 #' @importFrom digest digest
 #'
@@ -119,7 +119,7 @@ ctrLoadQueryIntoDbCtis <- function(
   }
 
   # inform user
-  message("\b\b\b, found ", overview$totalRecords, " trials")
+  message("\b\b\b, found ", overview$totalRecords, " trials ", appendLF = FALSE)
 
   # only count?
   if (only.count) {
@@ -218,7 +218,7 @@ ctrLoadQueryIntoDbCtis <- function(
   # this is imported as the main data into the database
 
   message("(2/4) Downloading and processing trial data... (",
-          "estimate: ", signif(length(idsTrials) * 309 / 4305, 1L), " Mb)")
+          "estimate: ", signif(length(idsTrials) * 376 / 5117, 1L), " Mb)")
 
   urls <- sprintf(ctisEndpoints[2], idsTrials)
 
@@ -245,17 +245,15 @@ ctrLoadQueryIntoDbCtis <- function(
         if (!file.exists(f)) return()
 
         cat(
-          jqr::jqr(
-            mangleText(readLines(f, warn = FALSE)),
-            # add _id to enable docdb_update()
-            ' .["_id"] = .ctNumber ',
-            flags = jqr::jq_flags(pretty = FALSE)
-          ),
-          file = file.path(
-            tempDir,
-            sprintf("ctis_trials_api2_%i.ndjson", g)),
-          sep = "\n",
-          append = TRUE)
+          stringi::stri_replace_all_regex(
+          readLines(f, warn = FALSE),
+          '^\\{"ctNumber": *"([-0-9]+)",',
+          '{"_id": "$1", "ctNumber": "$1",'),
+        file = file.path(
+          tempDir,
+          sprintf("ctis_trials_api2_%i.ndjson", g)),
+        sep = "\n",
+        append = TRUE)
 
       })
 
@@ -303,8 +301,8 @@ ctrLoadQueryIntoDbCtis <- function(
         jqr::jqr(
           file(f),
           ' ._id as $_id | .documents[] | { $_id,
-      title, uuid, documentType, documentTypeLabel,
-      fileType, associatedEntityId } ',
+            title, uuid, documentType, documentTypeLabel,
+            fileType, associatedEntityId } ',
           flags = jqr::jq_flags(pretty = FALSE)
         ),
         file = downloadsNdjson,

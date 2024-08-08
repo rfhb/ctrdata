@@ -2,6 +2,7 @@
 
 ## Improvements
 - Added typing for newly appearing variables in `CTIS`
+- Accelerated `CTIS` trial data processing
 
 # ctrdata 1.19.1
 
