@@ -35,8 +35,8 @@ conduct of trials, their availability for patients and to facilitate
 using their detailed results for research and meta-analyses. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2024-07-18 for version 1.19.1
-(recent major improvements: removed external dependencies; refactored
+package. This README was reviewed on 2024-08-08 for version 1.19.1.9000
+(recent improvements: removed external dependencies; refactored
 [`dbGetFieldsIntoDf()`](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.html);
 🔔 retrieve historic CTGOV2 versions; adapt to relaunched CTIS).
 
@@ -66,7 +66,7 @@ package. This README was reviewed on 2024-07-18 for version 1.19.1
   easily access deeply-nested fields. Analysis can be done with `R` (see
   [vignette](https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html))
   or other systems, using the `JSON`-[structured information in the
-  database](#mongodb).
+  database](#trial-records-in-databases).
 
 Remember to respect the registers’ terms and conditions (see
 `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
@@ -777,9 +777,6 @@ result %<>%
       resultsSection.baselineCharacteristicsModule.denoms.counts.value[which_not_total])),
     num_arms_or_groups = max(number_of_arms, length(which_not_total))
   )
-
-# Inspect:
-View(result)
 
 # Example plot:
 library(ggplot2)

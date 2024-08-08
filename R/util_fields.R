@@ -161,7 +161,7 @@ typeVars <- list(
   "authorizedApplication.authorizedPartsII.mscInfo.trialRestartDate" = "ctrDate",
   "authorizedApplication.memberStatesConcerned.firstDecisionDate" = "ctrDate",
   "authorizedApplication.memberStatesConcerned.lastDecisionDate" = "ctrDate",
-  "correctiveMeasures.correctiveMeasureNotifications.unexpectedEventNotifications.submissionDate"= "ctrDate",
+  "correctiveMeasures.correctiveMeasureNotifications.unexpectedEventNotifications.submissionDate" = "ctrDate",
   "correctiveMeasures.correctiveMeasureNotifications.seriousBreachNotifications.submissionDate" = "ctrDate",
   "correctiveMeasures.revertedDate" = "ctrDate",
   "correctiveMeasures.sponsorActionRequiredByDate" = "ctrDate",
