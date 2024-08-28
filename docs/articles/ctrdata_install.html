@@ -119,28 +119,28 @@ local server.</p>
 <col width="50%">
 <col width="50%">
 </colgroup>
-<thead><tr>
+<thead><tr class="header">
 <th>Purpose</th>
 <th>Function call</th>
 </tr></thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td>Create <strong>SQLite</strong> database connection</td>
 <td><code>dbc &lt;- nodbi::src_sqlite(dbname = "name_of_my_database", collection = "name_of_my_collection")</code></td>
 </tr>
-<tr>
+<tr class="even">
 <td>Create <strong>MongoDB</strong> database connection</td>
 <td><code>dbc &lt;- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")</code></td>
 </tr>
-<tr>
+<tr class="odd">
 <td>Create <strong>PostgreSQL</strong> database connection</td>
 <td><code>dbc &lt;- nodbi::src_postgres(dbname = "name_of_my_database"); dbc[["collection"]] &lt;- "name_of_my_collection"</code></td>
 </tr>
-<tr>
+<tr class="even">
 <td>Create <strong>DuckDB</strong> database connection</td>
 <td><code>dbc &lt;- nodbi::src_duckdb(dbname = "name_of_my_database", collection = "name_of_my_collection")</code></td>
 </tr>
-<tr>
+<tr class="odd">
 <td>Use connection with <code>ctrdata</code> functions</td>
 <td><code>ctrdata::{ctrLoadQueryIntoDb, dbQueryHistory, dbFindIdsUniqueTrials, dbFindFields, dbGetFieldsIntoDf}(con = dbc, ...)</code></td>
 </tr>

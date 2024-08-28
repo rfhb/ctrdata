@@ -69,7 +69,7 @@
 <li>ClinicalTrials.gov (“CTGOV2”, see <a href="#workflow-ctgov-example">example</a>)</li>
 <li>ISRCTN Registry (<a href="https://www.isrctn.com/" class="external-link uri">https://www.isrctn.com/</a>)</li>
 </ul>
-<p>The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2024-08-08 for version 1.19.1.9000 (recent improvements: removed external dependencies; refactored <a href="https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.html"><code>dbGetFieldsIntoDf()</code></a>; 🔔 retrieve historic CTGOV2 versions; adapt to relaunched CTIS).</p>
+<p>The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2024-08-28 for version 1.19.1.9000 (recent improvements: removed external dependencies; refactored <a href="https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.html"><code>dbGetFieldsIntoDf()</code></a>; 🔔 retrieve historic CTGOV2 versions; adapt to relaunched CTIS).</p>
 <div class="section level2">
 <h2 id="main-features">Main features<a class="anchor" aria-label="anchor" href="#main-features"></a>
 </h2>
@@ -80,10 +80,13 @@
 </ul>
 <p>Remember to respect the registers’ terms and conditions (see <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>). Please cite this package in any publication as follows: “Ralf Herold (2024). <em>ctrdata: Retrieve and Analyze Clinical Trials in Public Registers.</em> R package version 1.19.1, <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a>”.</p>
 <!--
-&#10;``` r
+&#10;
+``` r
 citation("ctrdata")
+&#10;# find publications
+utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrdata%22")
 ```
--->
+&#10;-->
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>

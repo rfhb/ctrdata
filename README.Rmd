@@ -38,14 +38,14 @@ knitr::opts_chunk$set(
 
 # ctrdata for aggregating and analysing clinical trials
 
-The package `ctrdata` provides functions for retrieving (downloading) information on clinical trials from public registers, and for aggregating and analysing this information; it can be used for the
+The package `ctrdata` provides functions for retrieving (downloading), aggregating and analysing information on clinical trials from public registers. It can be used for the
 
 - EU Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/)
 - EU Clinical Trials Information System ("CTIS", https://euclinicaltrials.eu/, see [example](#workflow-ctis-example))
 - ClinicalTrials.gov ("CTGOV2", see [example](#workflow-ctgov-example))
 - ISRCTN Registry (https://www.isrctn.com/) 
 
-The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2024-08-08 for version 1.19.1.9000 (recent improvements: removed external dependencies; refactored [`dbGetFieldsIntoDf()`](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.html); `r emoji::emoji("bell")` retrieve historic CTGOV2 versions; adapt to relaunched CTIS).
+The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2024-08-28 for version 1.19.1.9000 (recent improvements: removed external dependencies; refactored [`dbGetFieldsIntoDf()`](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.html); `r emoji::emoji("bell")` retrieve historic CTGOV2 versions; adapt to relaunched CTIS).
 
 ## Main features
 
@@ -56,9 +56,14 @@ The motivation is to investigate and understand trends in design and conduct of 
 Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: "Ralf Herold (2024). _ctrdata: Retrieve and Analyze Clinical Trials in Public Registers._ R package version 1.19.1, https://cran.r-project.org/package=ctrdata". 
 
 <!--
+
 ```{r}
 citation("ctrdata")
+
+# find publications
+utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrdata%22")
 ```
+
 -->
 
 ## References

@@ -126,11 +126,13 @@ expect_equal(
   "")
 
 # get all trials
-ctrLoadQueryIntoDb(
-  queryterm = "", 
+tmp <- ctrLoadQueryIntoDb(
+  queryterm = "",
   register = "CTIS",
   con = dbc
 )
+# test
+expect_true(tmp$n > 5500L)
 
 # get all field names
 tmpFields <- suppressMessages(
@@ -142,7 +144,7 @@ tmpFields <- suppressMessages(
 
 # test
 expect_true(
-  length(tmpFields) > 800L)
+  length(tmpFields) > 1000L)
 
 # debug
 if (FALSE){
@@ -188,9 +190,10 @@ for (i in unique(groupsNo)) {
   expect_true(ncol(tmpData) > 0L)
 }
 
+# dates
 tmpFields <- tmpFields[
   (grepl("[.]date$", tmpFields, ignore.case = TRUE) |
-    grepl("Date$", tmpFields, ignore.case = FALSE)) & 
+    grepl("Date$", tmpFields, ignore.case = FALSE)) &
     !grepl("^decisionDate$", tmpFields, ignore.case = FALSE)
 ]
 

@@ -19,9 +19,9 @@ model](#data-model-of-ctrdata) • [Example workflow](#example-workflow) •
 
 # ctrdata for aggregating and analysing clinical trials
 
-The package `ctrdata` provides functions for retrieving (downloading)
-information on clinical trials from public registers, and for
-aggregating and analysing this information; it can be used for the
+The package `ctrdata` provides functions for retrieving (downloading),
+aggregating and analysing information on clinical trials from public
+registers. It can be used for the
 
 - EU Clinical Trials Register (“EUCTR”,
   <https://www.clinicaltrialsregister.eu/>)
@@ -35,7 +35,7 @@ conduct of trials, their availability for patients and to facilitate
 using their detailed results for research and meta-analyses. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2024-08-08 for version 1.19.1.9000
+package. This README was reviewed on 2024-08-28 for version 1.19.1.9000
 (recent improvements: removed external dependencies; refactored
 [`dbGetFieldsIntoDf()`](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.html);
 🔔 retrieve historic CTGOV2 versions; adapt to relaunched CTIS).
@@ -75,10 +75,13 @@ Retrieve and Analyze Clinical Trials in Public Registers.* R package
 version 1.19.1, <https://cran.r-project.org/package=ctrdata>”.
 
 <!--
-&#10;``` r
+&#10;
+``` r
 citation("ctrdata")
+&#10;# find publications
+utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrdata%22")
 ```
--->
+&#10;-->
 
 ## References
 

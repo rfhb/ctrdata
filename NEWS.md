@@ -4,6 +4,9 @@
 - Added typing for newly appearing variables in `CTIS`
 - Accelerated `CTIS` trial data processing
 
+## Bug fixes
+- Additional disabling of HTTP/2 multiplexing with `CTIS`
+
 # ctrdata 1.19.1
 
 ## Improvements
