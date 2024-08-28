@@ -2,7 +2,7 @@
 
 * local: R version 4.4.1 (2024-06-14) on x86_64-apple-darwin20 (ok)
 
-* Win-builder: R version 4.4.1 (2024-06-14 ucrt); R Under development (unstable) (2024-07-17 r86903 ucrt); R version 4.3.3 (2024-02-29 ucrt) (ok)
+* Win-builder: R Under development (unstable) (2024-08-27 r87062 ucrt); R version 4.4.1 (2024-06-14 ucrt); R version 4.3.3 (2024-02-29 ucrt) (ok)
 
 * GitHub actions: windows-2022, r: 'release'; macOS-latest, r: 'release'; macOS-latest, r: 'oldrel'; ubuntu-latest, r: 'devel' (ok)
 
@@ -20,7 +20,12 @@ Explanation of NOTES:
 
 ## Submission reason
 
-- Fixing bug translating `CTGOV2` websearch URL to API call
+### Bug fixes
+- Fix incomplete downloads from `CTIS` by disabling HTTP/2 multiplexing in another function
+
+### Improvement
+- Added typing for newly appearing variables in `CTIS`
+- Accelerated `CTIS` trial data processing
 
 
 ## Reverse dependency checks

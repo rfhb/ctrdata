@@ -1,11 +1,11 @@
-# ctrdata 1.19.1.9000
+# ctrdata 1.19.2
 
 ## Improvements
 - Added typing for newly appearing variables in `CTIS`
 - Accelerated `CTIS` trial data processing
 
 ## Bug fixes
-- Additional disabling of HTTP/2 multiplexing with `CTIS`
+- Fix incomplete downloads from `CTIS` by disabling HTTP/2 multiplexing in another function
 
 # ctrdata 1.19.1
 
