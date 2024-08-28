@@ -872,10 +872,15 @@ ctrMultiDownload <- function(
       stop("Download failed; last error: ", class(downloadValue), call. = FALSE)
     }
 
-    numI <- numI + 1L
-    toDo <- is.na(downloadValue[["success"]]) |
+    toDoThis <- is.na(downloadValue[["success"]]) |
       !downloadValue[["success"]] |
       !(downloadValue[["status_code"]] %in% c(200L, 206L, 416L))
+
+    # only count towards repeat attempts if
+    # the set of repeated urls is unchanged
+    if (identical(toDo, toDoThis)) numI <- numI + 1L
+
+    toDo <- toDoThis
 
   }
 
