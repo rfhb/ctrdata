@@ -32,14 +32,6 @@ ctrLoadQueryIntoDbCtis <- function(
   ## create empty temporary directory
   tempDir <- ctrTempDir(verbose)
 
-  ## output mangle helper -----------------------------------------------
-
-  mangleText <- function(t) {
-
-    stringi::stri_replace_all_fixed(str = t, pattern = "'", replacement = "&apos;")
-
-  }
-
   ## ctis api -----------------------------------------------------------
 
   # https://euclinicaltrials.eu/ctis-public/assets/i18n/en.json
@@ -54,18 +46,18 @@ ctrLoadQueryIntoDbCtis <- function(
       # - 1 trial overview - post method
       "/search",
       #
-      # - 2 trial information - %s is ctNumber
-      "/retrieve/%s", # partI and partsII
+      # - 2 trial information, partI and partsII
+      "/retrieve/%s", # %s is ctNumber
       #
       # - 3 download files
-      "/documents/%s/%s/download" # trial _id, document[].uuid
+      "/documents/%s/%s/download" # %s are trial _id, document[].uuid
       #
     )
   )
 
   ## api_1: overviews ---------------------------------------------------------
 
-  # this is for importing overview (recruitment, status etc.) into database
+  # for importing overview (recruitment, status etc.) into database
   message("* Checking trials in CTIS...")
 
   # "HTTP server doesn't seem to support byte ranges. Cannot resume."
@@ -218,7 +210,7 @@ ctrLoadQueryIntoDbCtis <- function(
   # this is imported as the main data into the database
 
   message("(2/4) Downloading and processing trial data... (",
-          "estimate: ", signif(length(idsTrials) * 376 / 5117, 1L), " Mb)")
+          "estimate: ", signif(length(idsTrials) * 405 / 5505, 1L), " Mb)")
 
   urls <- sprintf(ctisEndpoints[2], idsTrials)
 
@@ -227,7 +219,9 @@ ctrLoadQueryIntoDbCtis <- function(
   }
 
   # "HTTP server doesn't seem to support byte ranges. Cannot resume."
-  tmp <- ctrMultiDownload(urls, fPartIPartsIIJson(idsTrials), verbose = verbose)
+  tmp <- ctrMultiDownload(
+    urls, fPartIPartsIIJson(idsTrials),
+    multiplex = FALSE, verbose = verbose)
 
   # convert partI and partsII details into ndjson file(s),
   # each approximately 10MB for nRecords = 100L

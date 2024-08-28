@@ -811,6 +811,7 @@ ctrMultiDownload <- function(
     destfiles,
     progress = TRUE,
     resume = FALSE,
+    multiplex = TRUE,
     verbose = TRUE) {
 
   stopifnot(length(urls) == length(destfiles))
@@ -844,7 +845,7 @@ ctrMultiDownload <- function(
   # remove any duplicates
   downloadValue <- unique(downloadValue)
 
-  # does not error in case any of the individual requests fail
+  # does not error in case any of the individual requests fail.
   # inspect the return value to find out which were successful
   # make no more than 3 attempts to complete downloading
   while (any(toDo) && numI < 3L) {
@@ -855,7 +856,7 @@ ctrMultiDownload <- function(
       resume = canR,
       progress = progress,
       timeout = Inf,
-      multiplex = TRUE,
+      multiplex = multiplex,
       c(getOption("httr_config")[["options"]],
         accept_encoding = "gzip,deflate,zstd,br")
     )

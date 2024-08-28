@@ -289,7 +289,6 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     tmp <- ctrMultiDownload(
       urlToDownload,
       fTrialJson,
-      progress = TRUE,
       verbose = verbose)
 
     # inform user
@@ -362,7 +361,6 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     tmp <- ctrMultiDownload(
       urls = urls,
       destfiles = files,
-      resume = FALSE,
       verbose = verbose
     )
 
@@ -456,7 +454,6 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     tmp <- ctrMultiDownload(
       urls = urls,
       destfiles = files,
-      resume = FALSE,
       verbose = verbose
     )
 
