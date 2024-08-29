@@ -19,7 +19,7 @@ collection for field names, see below."><meta name="twitter:card" content="summa
 
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.19.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.19.2.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -126,41 +126,18 @@ Note: When <code>dbFindFields</code> is first called after
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">dbFindFields</span><span class="op">(</span>namepart <span class="op">=</span> <span class="st">"date"</span>, con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Finding fields in database collection</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  (sampling 5 trial records per register) </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  . </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  . </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  . </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  . </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  . </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  . </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  . </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  . </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Field names cached for this session.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                EUCTR </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             "n_date_of_competent_authority_decision" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                EUCTR </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 "n_date_of_ethics_committee_opinion" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                EUCTR </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              "p_date_of_the_global_end_of_the_trial" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                EUCTR </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> "trialChanges.globalAmendments.globalAmendment.date" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                EUCTR </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 "trialInformation.analysisStageDate" </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Using cache of fields. </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      CTGOV                      CTGOV </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          "completion_date"       "last_update_posted" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      CTGOV                      CTGOV </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    "last_update_submitted" "last_update_submitted_qc" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      CTGOV </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  "primary_completion_date" </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># view all 3350+ fields from all registers:</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">allFields</span> <span class="op">&lt;-</span> <span class="fu">dbFindFields</span><span class="op">(</span>con <span class="op">=</span> <span class="va">dbc</span>, sample <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Finding fields in database collection</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  (may take some time) </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  . </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  . </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  . </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  . </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  . </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Field names cached for this session.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Using cache of fields. </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/View.html" class="external-link">View</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  register <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">allFields</span><span class="op">)</span>,</span></span>
