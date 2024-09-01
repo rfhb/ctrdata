@@ -181,7 +181,7 @@ if (FALSE){
 
 groupsNo <- (length(tmpFields) %/% 49L) + 1L
 groupsNo <- rep(seq_len(groupsNo), 49L)
-groupsNo <- groupsNo[1:length(tmpFields)]
+groupsNo <- groupsNo[1:seq_along(tmpFields)]
 
 for (i in unique(groupsNo)) {
   message(i, " ", appendLF = FALSE)
@@ -193,7 +193,7 @@ for (i in unique(groupsNo)) {
 # dates
 tmpFields <- tmpFields[
   (grepl("[.]date$", tmpFields, ignore.case = TRUE) |
-    grepl("Date$", tmpFields, ignore.case = FALSE)) &
+     grepl("Date$", tmpFields, ignore.case = FALSE)) &
     !grepl("^decisionDate$", tmpFields, ignore.case = FALSE)
 ]
 
@@ -204,7 +204,7 @@ if (FALSE) {
 
 groupsNo <- (length(tmpFields) %/% 49L) + 1L
 groupsNo <- rep(seq_len(groupsNo), 49L)
-groupsNo <- groupsNo[1:length(tmpFields)]
+groupsNo <- groupsNo[1:seq_along(tmpFields)]
 
 for (i in unique(groupsNo)) {
   message(i, " ", appendLF = FALSE)
@@ -213,7 +213,7 @@ for (i in unique(groupsNo)) {
   expect_true(ncol(tmpData) > 0L)
   #
   tmpClass <- lapply(
-    tmpData[ , -1, drop = FALSE],
+    tmpData[, -1, drop = FALSE],
     function(i) sapply(i, function(ii) class(ii))[1])
   tmpClass <- names(tmpClass[sapply(tmpClass, function(c) c == "character")])
   if (length(tmpClass)) print(tmpClass)
@@ -221,7 +221,7 @@ for (i in unique(groupsNo)) {
   expect_true(all(
     unique(unlist(
       lapply(
-        tmpData[ , -1, drop = FALSE],
+        tmpData[, -1, drop = FALSE],
         function(i) sapply(i, function(ii) class(ii)))
     )) %in% c("Date", "POSIXct", "POSIXt")
   ))

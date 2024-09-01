@@ -10,12 +10,12 @@ output:
     number_sections: true
     latex_engine: xelatex
 vignette: >
-  %\VignetteIndexEntry{Summarise and analyse clinical trial information}
+%\VignetteIndexEntry{Summarise and analyse clinical trial information}
   %\VignetteKeywords{ctrdata,vignette}
   %\VignettePackage{ctrdata}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
-editor_options:
+  editor_options:
 chunk_output_type: console
 ---
 
@@ -39,9 +39,9 @@ Here using MongoDB, which is faster than SQLite, can handle credentials, provide
 
 ```{r connect_mongodb}
 db <- nodbi::src_mongo(
-url = "mongodb://localhost",
-db = "my_database_name",
-collection = "my_collection_name"
+  url = "mongodb://localhost",
+  db = "my_database_name",
+  collection = "my_collection_name"
 )
 db
 # MongoDB 7.0.8 (uptime: 265661s)
@@ -62,22 +62,22 @@ library(ctrdata)
 # These two queries are similar, for completed interventional (drug)
 # trials with children with a neuroblastoma from either register
 ctrLoadQueryIntoDb(
-# using queryterm and register...
-queryterm = "query=neuroblastoma&age=under-18&status=completed",
-register = "EUCTR",
-euctrresults = TRUE,
-con = db
+  # using queryterm and register...
+  queryterm = "query=neuroblastoma&age=under-18&status=completed",
+  register = "EUCTR",
+  euctrresults = TRUE,
+  con = db
 )
 # [...]
 # $n
 # [1] 226
 
 ctrLoadQueryIntoDb(
-# ...or using full URL of search results
-queryterm = paste0(
-"https://classic.clinicaltrials.gov/ct2/results?", 
-"cond=neuroblastoma&recrs=e&age=0&intr=Drug"),
-con = db
+  # ...or using full URL of search results
+  queryterm = paste0(
+    "https://classic.clinicaltrials.gov/ct2/results?",
+    "cond=neuroblastoma&recrs=e&age=0&intr=Drug"),
+  con = db
 )
 # * Appears specific for CTGOV Classic website
 # Since 2024-06-25, the classic CTGOV servers are no longer available. Package ctrdata has translated 
@@ -248,8 +248,8 @@ result <- dbGetFieldsIntoDf(
     "trialInformation.recruitmentStartDate", 
     "trialInformation.globalEndOfTrialDate",
     # CTGOV2
-    "protocolSection.statusModule.overallStatus" ,
-    "protocolSection.statusModule.startDateStruct.date" ,
+    "protocolSection.statusModule.overallStatus",
+    "protocolSection.statusModule.startDateStruct.date",
     "trialInformation.recruitmentStartDate",
     "protocolSection.statusModule.primaryCompletionDateStruct.date"
   ),
@@ -718,7 +718,7 @@ sort(unique(clinicalDuration[grepl("unit", clinicalDuration$name), "value"]))
 library(dplyr)
 library(tidyr)
 
-clinicalDuration %<>% 
+clinicalDuration %>% 
   as_tibble() %>%
   mutate(
     group_id = paste0(`_id`, "_", sub("([0-9]+)[.]?.*", "\\1", identifier)),
@@ -747,7 +747,7 @@ clinicalDuration %<>%
       grepl("[yY]ear", unit) ~ value * 30,
       .default = value
     )) %>% 
-  select(!c(value, unit, armId, title))
+  select(!c(value, unit, armId, title)) -> clinicalDuration
 
 clinicalDuration
 # # A tibble: 163 x 4
@@ -1007,10 +1007,11 @@ result <- merge(
   by.y = "Group.1",
   all.x = TRUE
 )
-result %<>% 
+result %>% 
   rowwise() %>% 
   mutate(startdatefirst = min(
-    x, x6_date_on_which_this_record_was_first_entered_in_the_eudract_database, na.rm = TRUE))
+    x, x6_date_on_which_this_record_was_first_entered_in_the_eudract_database, na.rm = TRUE)
+  ) -> result
 
 # Now de-duplicate
 result <- result[

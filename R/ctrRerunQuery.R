@@ -244,8 +244,9 @@ ctrRerunQuery <- function(
           # new trials found, construct
           # differential query to run
           resultsRssTrials <- vapply(
-            resultsRssTrials, FUN = function(x)
-              substr(resultsRss, x + 15, x + 28), character(1L))
+            resultsRssTrials, FUN = function(x) {
+              substr(resultsRss, x + 15, x + 28)
+            }, character(1L))
           #
           resultsRssTrials <- paste0(
             "query=",

@@ -81,7 +81,7 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE
   # digest results
   nrec <- jqr::jq(
     textConnection(rawToChar(tmp[["content"]])),
-    ' .studies | length ')
+    " .studies | length ")
 
   # inform user
   if (verbose || nrec == 0L) message(

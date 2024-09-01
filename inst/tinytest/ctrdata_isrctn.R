@@ -228,7 +228,7 @@ res <- suppressMessages(
 
 # test
 expect_true(
-  res[, "annotation", drop = TRUE] == "just_this" &
+  res[, "annotation", drop = TRUE] == "just_this" &&
     res[, "_id", drop = TRUE] == "98918118")
 
 # clean up
@@ -273,7 +273,7 @@ tmpFields <- suppressMessages(
 
 groupsNo <- (length(tmpFields) %/% 49L) + 1L
 groupsNo <- rep(seq_len(groupsNo), 49L)
-groupsNo <- groupsNo[1:length(tmpFields)]
+groupsNo <- groupsNo[1:seq_along(tmpFields)]
 
 for (i in unique(groupsNo)) {
   message(i, " ", appendLF = FALSE)
@@ -283,7 +283,7 @@ for (i in unique(groupsNo)) {
 }
 
 tmpFields <- tmpFields[grepl("date$", tmpFields, ignore.case = TRUE)]
-tmpFields <- tmpFields[1:min(length(tmpFields), 49L)]
+tmpFields <- tmpFields[1:min(seq_along(tmpFields), 49L)]
 
 tmpData <- dbGetFieldsIntoDf(fields = tmpFields, con = dbc)
 expect_true(nrow(tmpData) > 0L)

@@ -183,7 +183,7 @@ expect_message(
 expect_true(tmpTest$n >= 0L)
 
 # test
-expect_true(is.character(tmpTest$success) | is.null(tmpTest$success))
+expect_true(is.character(tmpTest$success) || is.null(tmpTest$success))
 rm(tmpTest, q, hist, json, date.from, date.to, date.today)
 
 # test
@@ -298,8 +298,8 @@ expect_true("list" == class(result[[
 
 # test
 tmp <- result[["dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation"]]
-expect_true((class(tmp) == "list" & (length(unlist(tmp)) > length(tmp)) &
-               all(class(unlist(tmp)) == "logical")) | (class(tmp) == "logical"))
+expect_true((class(tmp) == "list" && (length(unlist(tmp)) > length(tmp)) &&
+               all(class(unlist(tmp)) == "logical")) || (class(tmp) == "logical"))
 
 # test
 expect_true("logical" == class(result[[
@@ -636,7 +636,7 @@ expect_error(
 
 groupsNo <- (length(tmpFields) %/% 49L) + 1L
 groupsNo <- rep(seq_len(groupsNo), 49L)
-groupsNo <- groupsNo[1:length(tmpFields)]
+groupsNo <- groupsNo[1:seq_along(tmpFields)]
 
 for (i in unique(groupsNo)) {
   message(i, " ", appendLF = FALSE)
@@ -645,8 +645,8 @@ for (i in unique(groupsNo)) {
   expect_true(ncol(tmpData) > 0L)
 }
 
-tmpFields <- tmpFields[grepl("date$",tmpFields, ignore.case = TRUE)]
-tmpFields <- tmpFields[1:min(length(tmpFields), 49L)]
+tmpFields <- tmpFields[grepl("date$", tmpFields, ignore.case = TRUE)]
+tmpFields <- tmpFields[1:min(seq_along(tmpFields), 49L)]
 
 tmpData <- dbGetFieldsIntoDf(fields = tmpFields, con = dbc)
 expect_true(nrow(tmpData) > 0L)

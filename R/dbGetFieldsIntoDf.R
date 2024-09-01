@@ -107,7 +107,7 @@ dbGetFieldsIntoDf <- function(fields = "",
   dfi <- nodbi::docdb_query(
     src = con,
     key = con$collection,
-    query = '{}',
+    query = "{}",
     fields = paste0('{"', paste0(fields, collapse = '": 1, "'), '": 1}')
   )
 
@@ -122,7 +122,7 @@ dbGetFieldsIntoDf <- function(fields = "",
   # warn
   notFound <- setdiff(fields, names(dfi))
   if (length(notFound)) warning("No data could be extracted for '",
-    paste0(notFound, collapse = "', '"), "'.")
+                                paste0(notFound, collapse = "', '"), "'.")
 
   # recursively widen results if a column is a data frame
   # by adding the data frame's columns as result columns.

@@ -41,7 +41,7 @@ tf <- function() {
 
   if (inherits(testOnce, "try-error") &&
       grepl("SSL certificate.*local issuer certificate", testOnce)) {
-    # message("Switching off certificate verification")
+    message("Switching off certificate verification")
     httr::set_config(httr::config(ssl_verifypeer = FALSE))
     testOnce <- testGet()
   }

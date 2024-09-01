@@ -169,7 +169,6 @@ ctrLoadQueryIntoDbEuctr <- function(
     handle = h
   )
   # inform user about capabilities
-  stime <- curl::handle_data(h)[["times"]][["total"]]
   sgzip <- curl::parse_headers(tmp$headers)
   sgzip <- sgzip[grepl("Transfer-Encoding", sgzip)]
   sgzip <- grepl("gzip|deflate", sgzip)
@@ -372,8 +371,8 @@ ctrLoadQueryIntoDbEuctr <- function(
 
     # for each file of an imported trial create new ndjson file
     xmlFileList <- dir(path = tempDir, pattern = "EU-CTR.+Results.xml", full.names = TRUE)
-    xmlFileList <- xmlFileList[vapply(xmlFileList, function(i) any(
-      stringi::stri_detect_fixed(i, eudractnumbersimported)), logical(1L))]
+    xmlFileList <- xmlFileList[vapply(xmlFileList, function(i) {any(
+      stringi::stri_detect_fixed(i, eudractnumbersimported))}, logical(1L))]
     on.exit(unlink(xmlFileList), add = TRUE)
     jsonFileList <- file.path(tempDir, paste0(
       "EU_Results_", sub(".+ ([0-9]{4}-[0-9]{6}-[0-9]{2}) .+", "\\1.ndjson", xmlFileList)))
@@ -391,8 +390,8 @@ ctrLoadQueryIntoDbEuctr <- function(
           # read source xml file
           paste0(readLines(xmlFileList[f], warn = FALSE), collapse = ""),
           # important parameters
-          V8::JS('{trim: true, ignoreAttrs: false, mergeAttrs: true,
-                     explicitRoot: false, explicitArray: false, xmlns: false}')),
+          V8::JS("{trim: true, ignoreAttrs: false, mergeAttrs: true,
+                     explicitRoot: false, explicitArray: false, xmlns: false}")),
         # remove conversion remnants and conformity breaking characters
         c('"xmlns:ns0":"http://eudract.ema.europa.eu/schema/clinical_trial_result",',
           '"xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","xsi:nil":"true"',
@@ -511,7 +510,8 @@ ctrLoadQueryIntoDbEuctr <- function(
         if (any(res$status_code == c(200L, 206L))) {
           retdat <<- c(retdat, list(extractResultsInformation(res)))
           message("\r", pc, " downloaded", appendLF = FALSE)
-        }}
+        }
+      }
 
       # compose urls to access results page
       urls <- vapply(paste0(

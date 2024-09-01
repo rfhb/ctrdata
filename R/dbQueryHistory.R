@@ -69,7 +69,7 @@ dbQueryHistory <- function(con, verbose = FALSE) {
     countall <- length(nodbi::docdb_query(
       src = con,
       key = con$collection,
-      query = '{}',
+      query = "{}",
       fields = '{"_id": 1}'
     )[["_id"]])
     countall <- countall[countall != "meta-info"]

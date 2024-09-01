@@ -643,21 +643,22 @@ typeField <- function(dv, fn) {
   # expand to function
   if (!is.null(ft)) ft <- switch(
     typeVars[[fn]],
-    "ctrInt" = 'as.integer(x = x)',
+    "ctrInt" = "as.integer(x = x)",
     "ctrIntList" = 'sapply(x, function(i) {i[i == "NA"] <- NA; as.integer(i)}, USE.NAMES = FALSE)',
     "ctrYesNo" = 'sapply(x, function(i) if (is.na(i)) NA else
        switch(i, "Yes" = TRUE, "No" = FALSE, NA), simplify = TRUE, USE.NAMES = FALSE)',
     "ctrFalseTrue" = 'if (is.numeric(x)) as.logical(x) else
        sapply(x, function(i) switch(i, "true" = TRUE, "false" = FALSE, NA), USE.NAMES = FALSE)',
     "ctrDate" = 'as.Date(x, tryFormats =
-       c("%Y-%m-%d", "%Y-%m", "%Y-%m-%d %H:%M:%S", "%Y-%m-%dT%H:%M:%S", "%d/%m/%Y", "%Y-%m-%dT%H:%M:%S%z"))',
+       c("%Y-%m-%d", "%Y-%m", "%Y-%m-%d %H:%M:%S", "%Y-%m-%dT%H:%M:%S",
+    "%d/%m/%Y", "%Y-%m-%dT%H:%M:%S%z"))',
     "ctrDateUs" = 'as.Date(x, tryFormats = c("%b %e, %Y", "%Y-%m-%d", "%Y-%m"))',
-    "ctrDateTime" = 'lubridate::ymd_hms(x)',
+    "ctrDateTime" = "lubridate::ymd_hms(x)",
     "ctrDifftime" = 'as.difftime(as.numeric(lubridate::duration(
        tolower(x)), units = "days"), units = "days")',
-    "ctrDifftimeDays" = 'lubridate::ddays(x = as.numeric(x))',
-    "ctrDifftimeMonths" = 'lubridate::dmonths(x = as.numeric(x))',
-    "ctrDifftimeYears" = 'lubridate::dyears(x = as.numeric(x))',
+    "ctrDifftimeDays" = "lubridate::ddays(x = as.numeric(x))",
+    "ctrDifftimeMonths" = "lubridate::dmonths(x = as.numeric(x))",
+    "ctrDifftimeYears" = "lubridate::dyears(x = as.numeric(x))",
     NULL
   )
 
@@ -673,10 +674,11 @@ typeField <- function(dv, fn) {
     # - convert html entities to text and symbols
     if (any(htmlEnt) && all(sapply(dv, typeof) == "character")) {
       dv[htmlEnt] <-
-        lapply(dv[htmlEnt], function(i)
-          sapply(i, function(ii)
-            xml2::xml_text(xml2::read_html(charToRaw(ii))),
-            USE.NAMES = FALSE))
+        lapply(dv[htmlEnt], function(i) {
+          sapply(i, function(ii) {
+            xml2::xml_text(xml2::read_html(charToRaw(ii)))
+          }, USE.NAMES = FALSE)
+        })
     }
 
     # - check if possible and convert to numeric
@@ -698,7 +700,9 @@ typeField <- function(dv, fn) {
         if (length(i) > 1L) {
           rowI <- paste0(i[!is.na(i)], collapse = " / ")
           if (nchar(rowI)) rowI else NA
-        } else if (length(i) && !is.na(i)) i else NA
+        } else {
+          if (length(i) && !is.na(i)) i else NA
+        }
       })
     }
 
@@ -756,7 +760,8 @@ typeField <- function(dv, fn) {
   # make original classes (e.g., Date) reappear
   if (!is.list(dv)) dv <- as.list(dv)
   if (all(sapply(dv, length) <= 1L)) {
-    return(do.call("c", dv))}
+    return(do.call("c", dv))
+  }
 
   # return
   return(dv)
@@ -946,7 +951,7 @@ ctrTempDir <- function(verbose = FALSE) {
           'ctrdata: "verbose = TRUE", not deleting temporary directory ', tempDir, "\r")
       } else {
         unlink(tempDir, recursive = TRUE)
-        message('ctrdata: deleted temporary directory\r')
+        message("ctrdata: deleted temporary directory\r")
       }
     }
     assign("keeptempdir", NULL, envir = .ctrdataenv)
@@ -1252,7 +1257,6 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
         fdLines <- file(tempFiles[tempFile], open = "rt", blocking = TRUE)
         fLineOut <- tempfile(pattern = "tmpOneLine", tmpdir = dir, fileext = ".ndjson")
         on.exit(unlink(fLineOut), add = TRUE)
-        fTmp <- NULL
         while (TRUE) {
           tmpOneLine <- readLines(con = fdLines, n = 1L, warn = FALSE)
           if (length(tmpOneLine) == 0L || !nchar(tmpOneLine)) break
@@ -1271,8 +1275,8 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
 
       } else {
         nImported <- nImported + tmp
-        idSuccess <- c(idSuccess, annoDf[ , "_id", drop = TRUE])
-        idAnnotation <- c(idAnnotation, annoDf[ , "annotation", drop = TRUE])
+        idSuccess <- c(idSuccess, annoDf[, "_id", drop = TRUE])
+        idAnnotation <- c(idAnnotation, annoDf[, "annotation", drop = TRUE])
       }
 
       # close this file

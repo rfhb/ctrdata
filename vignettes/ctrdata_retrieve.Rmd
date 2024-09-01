@@ -10,12 +10,12 @@ output:
   rmarkdown::html_vignette:
     toc: true
 vignette: >
-  %\VignetteIndexEntry{Retrieve clinical trial information}
+%\VignetteIndexEntry{Retrieve clinical trial information}
   %\VignetteKeywords{ctrdata,vignette}
   %\VignettePackage{ctrdata}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
-editor_options:
+  editor_options:
   chunk_output_type: console
 ---
 
@@ -161,8 +161,8 @@ ctrLoadQueryIntoDb(
 # Download status: 103 done; 0 in progress. Total size: 59.71 Mb (100%)... done!             
 # Download status: 27 done; 0 in progress. Total size: 108.69 Kb (100%)... done!             
 # - extracting results (. = data, F = file[s] and data, x = none):
-# . . . . . . F . . . . F . . . . . . . F . . . . . . . . . . . . . . . . . . . . . . . . F . F F . F . .
-# F . . . F F . . . . . F . . . . . . F . . . F . 
+# . . . . . . F . . . . F . . . . . . . F . . . . . . . . . . . . . . . . . . . . . 
+# . . . F . F F . F . . F . . . F F . . . . . F . . . . . . F . . . F . 
 # (2/4) Converting to NDJSON (estimate: 8 s)...
 # (3/4) Importing results into database (may take some time)...
 # (4/4) Results history: not retrieved (euctrresultshistory = FALSE)
@@ -318,7 +318,7 @@ for (idSet in idSets) {
   
   # import
   setResult <- ctrLoadQueryIntoDb(
-
+    
     # for CTGOV2 use: 
     queryterm = paste0("term=", paste0(idSet, collapse = " ")),
     

@@ -76,7 +76,7 @@ tmp <- ctrLoadQueryIntoDb(
   queryterm = "https://www.clinicaltrials.gov/search?cond=Cancer&aggFilters=phase:0,status:ter,studyType:int&studyComp=_2015-12-31",
   con = dbc
 )
-expect_true(tmp$n > 40L & tmp$n < 50L)
+expect_true(tmp$n > 40L && tmp$n < 50L)
 
 #### documents.path ####
 
@@ -196,7 +196,7 @@ expect_true(length(tmpFields) > 340L)
 
 groupsNo <- (length(tmpFields) %/% 49L) + 1L
 groupsNo <- rep(seq_len(groupsNo), 49L)
-groupsNo <- groupsNo[1:length(tmpFields)]
+groupsNo <- groupsNo[1:seq_along(tmpFields)]
 
 expect_message(
   dbGetFieldsIntoDf(fields = tmpFields[1:50], con = dbc),
@@ -210,8 +210,8 @@ for (i in unique(groupsNo)) {
   expect_true(ncol(tmpData) > 0L)
 }
 
-tmpFields <- tmpFields[grepl("date$",tmpFields, ignore.case = TRUE)]
-tmpFields <- tmpFields[1:min(length(tmpFields), 49L)] # 36
+tmpFields <- tmpFields[grepl("date$", tmpFields, ignore.case = TRUE)]
+tmpFields <- tmpFields[1:min(seq_along(tmpFields), 49L)] # 36
 
 tmpData <- dbGetFieldsIntoDf(fields = tmpFields, con = dbc)
 expect_true(nrow(tmpData) > 0L)
@@ -222,7 +222,7 @@ expect_true(all(
     lapply(
       tmpData[, -1, drop = FALSE],
       function(i) sapply(i, function(ii) class(ii)))
-    )) %in% c("Date", "POSIXct", "POSIXt")
+  )) %in% c("Date", "POSIXct", "POSIXt")
 ))
 
 expect_error(

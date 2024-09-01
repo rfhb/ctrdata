@@ -178,7 +178,7 @@ typeVars <- list(
   "events.urgentSafetyMeasures.eventDate" = "ctrDate",
   "events.urgentSafetyMeasures.submissionDate" = "ctrDate",
   "publishDate" = "ctrDate",
-  "results.clinicalStudyReports.procedureOutcomeDate"= "ctrDate",
+  "results.clinicalStudyReports.procedureOutcomeDate" = "ctrDate",
   "results.clinicalStudyReports.submitDate" = "ctrDate",
   "results.laypersonResults.submissionDate" = "ctrDate",
   "results.summaryResults.submissionDate" = "ctrDate",
@@ -833,4 +833,3 @@ typeVars <- list(
   "resultsSection.outcomeMeasuresModule.outcomeMeasures.denoms.counts.value" = "ctrInt"
   #
 )
-

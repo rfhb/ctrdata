@@ -49,8 +49,9 @@ statusvalues <- list(
   "Firstvalues" = c("12", "23"),
   "Lastvalue"   = c("34"))
 
-df2 <- data.frame(var1 = c("A", "B", "C", NA),
-                  var2 = c("D", "E", "",  "G"))
+df2 <- data.frame(
+  var1 = c("A", "B", "C", NA),
+  var2 = c("D", "E", "",  "G"))
 
 # test
 expect_error(

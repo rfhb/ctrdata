@@ -1,9 +1,7 @@
-linters: with_defaults(
+linters: linters_with_defaults(
   indentation_linter(
     indent = 2L,
     hanging_indent_style = "never",
     assignment_as_infix = TRUE),
   line_length_linter(120),  # long lines
-  camel_case_linter = NULL, # prefer camel case
-  snake_case_linter = NULL, # dont flag snake case
   object_name_linter("camelCase")) # closing bracket must be on this line

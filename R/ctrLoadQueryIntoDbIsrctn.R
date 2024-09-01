@@ -171,9 +171,9 @@ ctrLoadQueryIntoDbIsrctn <- function(
   # prepare a file handle for temporary directory
   f <- file.path(
     tempDir, paste0("isrctn_",
-    # include query in file name for potential re-download
-    sapply(isrctndownloadurl, digest::digest, algo = "crc32"),
-    ".xml"))
+                    # include query in file name for potential re-download
+                    sapply(isrctndownloadurl, digest::digest, algo = "crc32"),
+                    ".xml"))
 
   # get (download) trials into single file f
   ctrMultiDownload(isrctndownloadurl, f, verbose = verbose)
@@ -203,12 +203,12 @@ ctrLoadQueryIntoDbIsrctn <- function(
         # read source xml file
         paste0(readLines(f, warn = FALSE), collapse = ""),
         # important parameters
-        V8::JS('{trim: true, ignoreAttrs: true, explicitArray: false}'))
+        V8::JS("{trim: true, ignoreAttrs: true, explicitArray: false}"))
     ),
     # processing
     paste0(
       # extract trial record(s)
-      ' .allTrials.fullTrial | (if type != "array" then .trial else .[].trial end) ' ,
+      ' .allTrials.fullTrial | (if type != "array" then .trial else .[].trial end) ',
       # add elements
       '| .["_id"] = .isrctn
        | .["ctrname"] = "ISRCTN"
@@ -270,7 +270,9 @@ ctrLoadQueryIntoDbIsrctn <- function(
 
     # check if any documents
     if (!nrow(dlFiles)) {
+
       message("= No documents identified for downloading.")
+
     } else {
 
       # calculate urls
@@ -283,7 +285,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
       #  libcurl understands deflate, gzip content encodings."
       httr::with_config(
         config = httr::config("http_content_decoding" = 0), {
-          resFiles <- ctrDocsDownload(
+          ctrDocsDownload(
             dlFiles[, c("_id", "filename", "url"), drop = FALSE],
             documents.path, documents.regexp, verbose)
         }, override = FALSE)

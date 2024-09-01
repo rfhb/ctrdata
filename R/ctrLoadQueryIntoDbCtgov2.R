@@ -82,8 +82,8 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     queryterm[!grepl("state=", queryterm)]
   # - if only locStr, warn user
   if (!is.na(queryValues["locStr"]) &&
-      (is.na(queryValues["country"]) &
-       is.na(queryValues["state"]) &
+      (is.na(queryValues["country"]) &&
+       is.na(queryValues["state"]) &&
        is.na(queryValues["city"]))) stop(
          "Parameter 'locStr' provided, but no 'country', 'state' or 'city'; ",
          "please check in CTGOV; e.g., the name of a trial site should go ",
@@ -224,7 +224,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
 
   # extract total number of trial records
   counts <- suppressMessages(httr::content(counts, as = "text"))
-  resultsEuNumTrials <- as.numeric(jqr::jq(counts, '.totalCount'))
+  resultsEuNumTrials <- as.numeric(jqr::jq(counts, " .totalCount "))
   message("\b\b\b, found ", resultsEuNumTrials, " trials")
 
   # early exit
@@ -297,13 +297,13 @@ ctrLoadQueryIntoDbCtgov2 <- function(
 
     # convert to ndjson
     message("(2/3) Converting to NDJSON...\r", appendLF = FALSE)
-    fTrialsNdjson <- file.path(tempDir, paste0("ctgov_trials_", pageNumber,".ndjson"))
+    fTrialsNdjson <- file.path(tempDir, paste0("ctgov_trials_", pageNumber, ".ndjson"))
     jqr::jq(
       file(fTrialJson),
       paste0(
         # extract trial records. studies seems always to be an array,
         # even for a single trial, thus no handling needed if array or not
-        ' .studies | .[] ',
+        " .studies | .[] ",
         # add elements
         '| .["_id"] = .protocolSection.identificationModule.nctId
          | .["ctrname"] = "CTGOV2"
@@ -349,11 +349,12 @@ ctrLoadQueryIntoDbCtgov2 <- function(
 
     files <- as.vector(vapply(
       X = urls,
-      FUN = function(i) file.path(
+      FUN = function(i) {file.path(
         tempDir, paste0(
           "h_ov_",
           sub(".+/(NCT[0-9]+)[?].+", "\\1", i),
-          ".json")),
+          ".json"))
+      },
       FUN.VALUE = character(1L),
       USE.NAMES = FALSE
     ))
@@ -436,12 +437,13 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     # calculate file paths
     files <- as.vector(vapply(
       X = urls,
-      FUN = function(i) file.path(
+      FUN = function(i) {file.path(
         tempDir, paste0(
           "h_v_",
           sub(".+/(NCT[0-9]+)/.+", "\\1", i), "_",
           sub(".+/([0-9]+)$", "\\1", i),
-          ".json")),
+          ".json"))
+      },
       FUN.VALUE = character(1L),
       USE.NAMES = FALSE
     ))
@@ -569,7 +571,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
         dlFiles$filename)
 
       # do download
-      resFiles <- ctrDocsDownload(
+      ctrDocsDownload(
         dlFiles[, c("_id", "filename", "url"), drop = FALSE],
         documents.path, documents.regexp, verbose)
 
