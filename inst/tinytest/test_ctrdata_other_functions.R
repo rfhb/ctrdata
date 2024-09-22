@@ -314,7 +314,7 @@ expect_equal(
 expect_equal(
   ctrOpenSearchPagesInBrowser(
     url = "https://euclinicaltrials.eu/ctis-public/view/2023-508508-39-01"
-  ), "https://euclinicaltrials.eu/ctis-public/search?searchCriteria={\"containAll\":\"2023-508508-39-01\",\"containAny\":\"\",\"containNot\":\"\"}")
+  ), "https://euclinicaltrials.eu/ctis-public/search?searchCriteria={\"number\":\"2023-508508-39-01\"}")
 
 # test
 expect_equal(

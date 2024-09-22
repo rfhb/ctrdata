@@ -6,7 +6,7 @@
 expect_true(
   suppressWarnings(
     ctrLoadQueryIntoDb(
-      queryterm = 'https://euclinicaltrials.eu/ctis-public/search#searchCriteria={"containAll":"","containAny":"neuroblastoma","containNot":""}',
+      queryterm = 'https://euclinicaltrials.eu/ctis-public/search#searchCriteria={"containAny":"neuroblastoma"}',
       only.count = TRUE,
       verbose = TRUE,
       con = dbc)[["n"]] >= 10L))
@@ -15,7 +15,7 @@ expect_true(
 expect_message(
   tmpTest <- suppressWarnings(
     ctrLoadQueryIntoDb(
-      queryterm = 'https://euclinicaltrials.eu/ctis-public/search#searchCriteria={"containAll":"","containAny":"neuroblastoma","containNot":""}',
+      queryterm = 'https://euclinicaltrials.eu/ctis-public/search#searchCriteria={"containAny":"neuroblastoma"}',
       verbose = TRUE,
       con = dbc)),
   "Imported .* updated ")
@@ -48,25 +48,6 @@ expect_message(
       con = dbc)),
   "[0-9]+ trials have been updated")
 
-
-#### documents.path ####
-
-tmpDir <- newTempDir()
-on.exit(unlink(tmpDir, recursive = TRUE), add = TRUE)
-
-if (!length(dbc$url) || grepl("localhost", dbc$url)) {
-  expect_message(
-    suppressWarnings(
-      ctrLoadQueryIntoDb(
-        queryterm = 'https://euclinicaltrials.eu/ctis-public/search#searchCriteria={"containAll":"","containAny":"cancer","containNot":""}',
-        documents.path = tmpDir,
-        documents.regexp = ".*",
-        con = dbc
-      )),
-    "Newly saved [0-9]+ document"
-  )
-}
-
 #### ctrLoadQueryIntoDb update ####
 
 #### annotating ####
@@ -75,7 +56,7 @@ if (!length(dbc$url) || grepl("localhost", dbc$url)) {
 expect_message(
   suppressWarnings(
     ctrLoadQueryIntoDb(
-      queryterm = 'https://euclinicaltrials.eu/ctis-public/search#searchCriteria={"containAll":"","containAny":"neuroblastoma","containNot":""}',
+      queryterm = 'https://euclinicaltrials.eu/ctis-public/search#searchCriteria={"containAny":"neuroblastoma"}',
       annotation.text = "just_this",
       annotation.mode = "replace",
       con = dbc)),
@@ -125,14 +106,13 @@ expect_equal(
         con = dbc))),
   "")
 
-# get all trials
+# get some more trials
 tmp <- ctrLoadQueryIntoDb(
-  queryterm = "",
-  register = "CTIS",
+  queryterm = "https://euclinicaltrials.eu/ctis-public/search#searchCriteria={%22status%22:[8]}",
   con = dbc
 )
 # test
-expect_true(tmp$n > 5500L)
+expect_true(tmp$n > 450L)
 
 # get all field names
 tmpFields <- suppressMessages(
@@ -144,7 +124,7 @@ tmpFields <- suppressMessages(
 
 # test
 expect_true(
-  length(tmpFields) > 1000L)
+  length(tmpFields) > 900L)
 
 # debug
 if (FALSE){
@@ -237,3 +217,45 @@ expect_message(
 
 # test
 expect_true(length(res) >= 20L)
+
+
+#### documents.path ####
+
+tmpDir <- newTempDir()
+on.exit(unlink(tmpDir, recursive = TRUE), add = TRUE)
+
+if (!length(dbc$url) || grepl("localhost", dbc$url)) {
+  expect_message(
+    suppressWarnings(
+      ctrLoadQueryIntoDb(
+        queryterm = 'https://euclinicaltrials.eu/ctis-public/search#searchCriteria={"containAny":"cancer","status":[3]}',
+        documents.path = tmpDir,
+        documents.regexp = "icf",
+        con = dbc
+      )),
+    "Newly saved [0-9]+ document"
+  )
+}
+
+
+# overview of types of documents
+if (FALSE) {
+
+  library(dplyr)
+  tmp <- dir(path = tmpDir, full.names = TRUE, recursive = TRUE)
+  tmp <- as_tibble(tmp)
+  tmp %>%
+    mutate(
+      size = file.size(value),
+      value = sub(paste0(tmpDir, "/"), "", value),
+      title = sub("^[0-9-]+/", "", value),
+      ctrnumber = sub("^(.+?)/.+", "\\1", value),
+      part = sub("(.+?) - .+", "\\1", title)
+    ) -> tmp
+
+  tmp %>%
+    count(part) %>%
+    arrange(desc(n)) %>%
+    print(n = 100L)
+
+}

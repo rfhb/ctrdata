@@ -319,20 +319,17 @@ ctrGetQueryUrl <- function(
   #### CTIS ####
   if (register == "CTIS") {
 
-    # 2024-06-17 defined by ctrdata Tampermonkey script:
+    # 2024-09-21 defined by ctrdata Tampermonkey script:
     # https://euclinicaltrials.eu/ctis-public/search#searchCriteria=
-    # {"containAll":"infection","containAny":"neonates","containNot":""}
+    # {"containAll":"infection","containAny":"neonates","status":[4]}
 
     # search for trials
     queryterm <- sub("https://euclinicaltrials.eu/ctis-public/search#?", "", url)
 
-    # view a trial
+    # if viewing a single trial
     queryterm <- sub(
-      paste0(
-        "(https://euclinicaltrials.eu/ctis-public/view/|",
-        "https://euclinicaltrials.eu/search-for-clinical-trials/&EUCT=)",
-        "([-0-9]+)"),
-      'searchCriteria={"containAll":"\\2","containAny":"","containNot":""}',
+     "https://euclinicaltrials.eu/ctis-public/view/([-0-9]+)",
+      'searchCriteria={"number":"\\1"}',
       queryterm
     )
 
