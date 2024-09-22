@@ -2,7 +2,7 @@
 #'
 #' Registers of clinical trials from which protocol- and result-related information
 #' can be retrieved and analysed with package \link{ctrdata}, last updated
-#' 2024-07-28.
+#' 2024-09-21.
 #'
 #' @section 1 - Overview:
 #'
@@ -11,7 +11,7 @@
 #' in the European Union and beyond; no new trials, but results for contained trials
 #' continue to be added)
 #' - **CTIS**: The EU Clinical Trials Information System started in January 2023
-#' for new clinical trials. It includes more than 5,500 publicly accessible trials.
+#' for new clinical trials. It includes more than 6,000 publicly accessible trials.
 #' How to automatically get the CTIS search query URL: \ifelse{latex}{\out{\href{https://rfhb.github.io/ctrdata/\#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}}
 #' - **CTGOV2**: ClinicalTrials.gov includes more than 500,000 interventional and
 #' observational studies

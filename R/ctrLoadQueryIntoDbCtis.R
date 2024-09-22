@@ -83,7 +83,7 @@ ctrLoadQueryIntoDbCtis <- function(
             # handle empty search query terms
             ifelse(
               queryterm != "", queryterm,
-              'searchCriteria={"containAll":"","containAny":"","containNot":""}'),
+              'searchCriteria={}'),
           ),
           # remaining parameters needed for proper server response
           ',"sort":{"property":"decisionDate","direction":"DESC"}}'
@@ -177,7 +177,7 @@ ctrLoadQueryIntoDbCtis <- function(
             # handle empty search query terms
             ifelse(
               queryterm != "", queryterm,
-              'searchCriteria={"containAll":"","containAny":"","containNot":""}'),
+              'searchCriteria={}'),
           ),
           # remaining parameters needed for proper server response
           ',"sort":{"property":"decisionDate","direction":"DESC"}}'
@@ -279,7 +279,7 @@ ctrLoadQueryIntoDbCtis <- function(
   if (!is.null(documents.path)) {
 
     # 1 - get ids of lists (which include urls to download)
-    message("* Checking for documents...")
+    message("* Checking for documents: ", appendLF = FALSE)
 
     # 2 - create data frame with info on documents (url, name, extension etc.)
 
@@ -290,6 +290,8 @@ ctrLoadQueryIntoDbCtis <- function(
 
     # iterate to get docs information
     for (f in dir(tempDir, "ctis_trials_api2_[0-9]+.ndjson", full.names = TRUE)) {
+
+      message(". ", appendLF = FALSE)
 
       cat(
         jqr::jqr(
@@ -313,7 +315,9 @@ ctrLoadQueryIntoDbCtis <- function(
 
     # check if any documents
     if (!nrow(dlFiles)) {
-      message("= No documents identified for downloading.")
+
+      message("\n= No documents identified for downloading.")
+
     } else {
 
       # remove duplicate files based on their title

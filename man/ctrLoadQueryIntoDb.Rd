@@ -81,16 +81,18 @@ save any documents into it that are directly available from
 the register ("EUCTR", "CTGOV2", "ISRCTN", "CTIS")
 such as PDFs on results, analysis plans, spreadsheets,
 patient information sheets, assessments or product information.
-Default is \code{NULL}, which disables saving documents.}
+Default is \code{NULL}, which disables saving documents.
+For "EUCTR", sets \code{euctrresults = TRUE} since documents
+are available only with results.}
 
 \item{documents.regexp}{Regular expression, case insensitive,
-to select documents, if saving documents is requested
+to select documents by filename, if saving documents is requested
 (see \code{documents.path}).
 If set to \code{NULL}, empty placeholder files are saved for
 every document that could be saved. Default is
 \code{"prot|sample|statist|sap_|p1ar|p2ars|icf|ctalett|lay|^[0-9]+ "}.
-Used with "CTGOV2", "ISRCTN" and "CTIS" (but not "EUCTR",
-for which all available documents are saved in any case).}
+Used with "CTGOV2", "ISRCTN" and "CTIS" (for "EUCTR", all documents
+are downloaded since they are few and have non-canonical filenames.)}
 
 \item{annotation.text}{Text to be including into the field
 "annotation" in the records retrieved with the query

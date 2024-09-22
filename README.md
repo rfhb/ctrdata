@@ -35,10 +35,7 @@ conduct of trials, their availability for patients and to facilitate
 using their detailed results for research and meta-analyses. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2024-08-28 for version 1.19.2
-(recent improvements: removed external dependencies; refactored
-[`dbGetFieldsIntoDf()`](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.html);
-🔔 retrieve historic CTGOV2 versions; adapt to relaunched CTIS).
+package. This README was reviewed on 2024-09-21 for version 1.19.2.9000.
 
 ## Main features
 
@@ -51,7 +48,7 @@ package. This README was reviewed on 2024-08-28 for version 1.19.2
   annotations can be made when downloading trials. Also, [trial
   documents](#documents-example) and [historic
   versions](https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html#analysing-sample-size-using-historic-versions-of-trial-records)
-  available in registers on trials can be downloaded.
+  as available in registers on trials can be downloaded.
 - Downloaded trial information is transformed and stored in a collection
   of a document-centric database, for fast and offline access.
   Information from different registers can be accumulated in a single
@@ -72,7 +69,7 @@ Remember to respect the registers’ terms and conditions (see
 `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
 package in any publication as follows: “Ralf Herold (2024). *ctrdata:
 Retrieve and Analyze Clinical Trials in Public Registers.* R package
-version 1.19.1, <https://cran.r-project.org/package=ctrdata>”.
+version 1.19.2, <https://cran.r-project.org/package=ctrdata>”.
 
 <!--
 &#10;
@@ -130,15 +127,20 @@ reflect the parameters the user specified for querying this register.
 
 In the web browser, install the [Tampermonkey browser
 extension](https://www.tampermonkey.net/), click on “New user script”
-and then on “Tools”, then enter into “Import from URL” this URL:
+and then on “Tools”, enter into “Import from URL” this URL:
 [`https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js`](https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js)
-and last click on “Install”.
+and then click on “Install”.
 
 The browser extension can be disabled and enabled by the user. When
 enabled, the URLs to all user’s queries in the registers are
 automatically copied to the clipboard and can be pasted into the
 `queryterm = ...` parameter of function
-[ctrLoadQueryIntoDb()](https://rfhb.github.io/ctrdata/reference/ctrLoadQueryIntoDb.html)
+[ctrLoadQueryIntoDb()](https://rfhb.github.io/ctrdata/reference/ctrLoadQueryIntoDb.html).
+
+With this script, search URLs such as
+<https://euclinicaltrials.eu/ctis-public/search#searchCriteria=>{“status”:\[3,4\]}
+open the search results in `CTIS` (other registers provide this
+functionality themselves).
 
 ## Overview of functions in `ctrdata`
 
@@ -314,7 +316,9 @@ db <- nodbi::src_sqlite(
   dbname = "some_database_name.sqlite_file",
   collection = "some_collection_name"
 )
+```
 
+``` r
 # Retrieve trials from public register:
 ctrLoadQueryIntoDb(
   queryterm = q,
@@ -547,51 +551,51 @@ ctrLoadQueryIntoDb(
   only.count = TRUE
 )
 # $n
-# [1] 4703
+# [1] 6045
 
 # Retrieve trials from another register:
 ctrLoadQueryIntoDb(
   queryterm = paste0(
     'https://euclinicaltrials.eu/ctis-public/search#', 
-    'searchCriteria={"containAll":"","containAny":"neonates","containNot":""}'),
+    'searchCriteria={"containAny":"neonate, neonates"}'),
   con = db
 )
-# * Found search query from CTIS: searchCriteria={"containAll":"","containAny":"neonates","containNot":""}
+# * Found search query from CTIS: searchCriteria={"containAny":"neonate, neonates"}
 # * Checking trials in CTIS...
-# (1/4) Downloading trials list, found 7 trials
-# (2/4) Downloading and processing trial data... (estimate: 0.6 Mb)
-# Download status: 7 done; 0 in progress. Total size: 262.58 Kb (100%)... done!             
+# (2/4) Downloading and processing trial data... (estimate: 1 Mb)
+# Download status: 16 done; 0 in progress. Total size: 660.02 Kb (100%)... done!             
 # (3/4) Importing records into database...
 # (4/4) Updating with additional data: .           
-# = Imported 7, updated 7 record(s) on 7 trial(s)
+# = Imported 16, updated 16 record(s) on 16 trial(s)
+# No history found in expected format.
 # Updated history ("meta-info" in "some_collection_name")
 # $n
-# [1] 7
+# [1] 16
 
 allFields <- dbFindFields(".*", db, sample = TRUE)
 # Finding fields in database collection (sampling 5 trial records per register)  .  .  .  .  .  .  .  . 
 # Field names cached for this session.
 
 length(allFields[grepl("CTIS", names(allFields))])
-# [1] 618
+# [1] 572
 
 # root field names in CTIS
 ctisFields <- allFields[grepl("CTIS", names(allFields))]
 ctisFields[!grepl("[.]", ctisFields)]
-#                CTIS                    CTIS                    CTIS                    CTIS
-#          "ageGroup" "authorizedApplication"    "correctiveMeasures"              "ctNumber"
-#                CTIS                    CTIS                    CTIS                    CTIS
-#    "ctPublicStatus"    "ctPublicStatusCode"               "ctrname"              "ctStatus"
-#                CTIS                    CTIS                    CTIS                    CTIS
-#      "decisionDate"   "decisionDateOverall"             "documents"                "events"
-#                CTIS                    CTIS                    CTIS                    CTIS
-#            "gender"           "lastUpdated"           "publishDate"    "record_last_import"
-#                CTIS                    CTIS                    CTIS                    CTIS
-# "recruitmentStatus"               "results"  "resultsFirstReceived"           "sponsorType"
-#                CTIS                    CTIS                    CTIS                    CTIS
-#       "startDateEU"      "therapeuticAreas"   "totalNumberEnrolled"        "trialCountries"
-#                CTIS                    CTIS
-#        "trialPhase"           "trialRegion"
+#                    CTIS                    CTIS                    CTIS                    CTIS 
+#              "ageGroup" "authorizedApplication"    "correctiveMeasures"              "ctNumber" 
+#                    CTIS                    CTIS                    CTIS                    CTIS 
+#    "ctPublicStatusCode"               "ctrname"              "ctStatus"          "decisionDate" 
+#                    CTIS                    CTIS                    CTIS                    CTIS 
+#   "decisionDateOverall"             "documents"                "events"                "gender" 
+#                    CTIS                    CTIS                    CTIS                    CTIS 
+# "lastPublicationUpdate"           "lastUpdated"           "publishDate"    "record_last_import" 
+#                    CTIS                    CTIS                    CTIS                    CTIS 
+#               "results"  "resultsFirstReceived"            "shortTitle"           "sponsorType" 
+#                    CTIS                    CTIS                    CTIS                    CTIS 
+#      "therapeuticAreas"   "totalNumberEnrolled"        "trialCountries"            "trialPhase" 
+#                    CTIS                    CTIS 
+#           "trialRegion"       "trialRegionCode" 
 
 # use an alternative to dbGetFieldsIntoDf()
 allData <- nodbi::docdb_query(src = db, key = db$collection, query = '{"ctrname":"CTIS"}')
@@ -599,12 +603,12 @@ allData <- nodbi::docdb_query(src = db, key = db$collection, query = '{"ctrname"
 # names of top-level data items
 sort(names(allData))
 #  [1] "_id"                   "ageGroup"              "authorizedApplication" "correctiveMeasures"   
-#  [5] "ctNumber"              "ctPublicStatus"        "ctPublicStatusCode"    "ctrname"              
-#  [9] "ctStatus"              "decisionDate"          "decisionDateOverall"   "documents"            
-# [13] "events"                "gender"                "lastUpdated"           "publishDate"          
-# [17] "record_last_import"    "recruitmentStatus"     "results"               "resultsFirstReceived" 
+#  [5] "ctNumber"              "ctPublicStatusCode"    "ctrname"               "ctStatus"             
+#  [9] "decisionDate"          "decisionDateOverall"   "documents"             "events"               
+# [13] "gender"                "lastPublicationUpdate" "lastUpdated"           "publishDate"          
+# [17] "record_last_import"    "results"               "resultsFirstReceived"  "shortTitle"           
 # [21] "sponsorType"           "startDateEU"           "therapeuticAreas"      "totalNumberEnrolled"  
-# [25] "trialCountries"        "trialPhase"            "trialRegion" 
+# [25] "trialCountries"        "trialPhase"            "trialRegion"           "trialRegionCode"
 
 # use yet another alternative
 oneTrial <- DBI::dbGetQuery(
@@ -619,7 +623,7 @@ if (require(jsonview)) json_tree_view(oneTrial[[1]])
 
 # total size of object
 format(object.size(allData), "MB")
-# [1] "1.4 Mb"
+# [1] "3.2 Mb"
 ```
 
 <div id="workflow-cross-trial-example">
@@ -1024,10 +1028,9 @@ covr::package_coverage(path = ".", type = "tests")
 - ~~Retrieve previous versions of protocol- or results-related
   information. The challenges include, historic versions can only be
   retrieved one-by-one, do not include results, or are not in structured
-  format.~~ (functionality available with version 1.17.2.9000 to the
-  extent that seems reasonably possible at this time, namely for
-  protocol-related information for CTIS and for protocol- and
-  results-related information in CTGOV2)
+  format. The functionality available with version 1.17.3 to the extent
+  that is possible at this time, namely for protocol- and
+  results-related information in CTGOV2, only~~
 
 ## Acknowledgements
 
