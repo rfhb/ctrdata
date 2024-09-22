@@ -354,10 +354,13 @@ ctrLoadQueryIntoDbCtis <- function(
 
       # do download
       ctrDocsDownload(
-        dlFiles[!duplicated(dlFiles$filename),
-                c("_id", "filename", "url"), drop = FALSE],
-        documents.path, documents.regexp,
-        multiplex = FALSE, verbose)
+        dlFiles[
+          !duplicated(dlFiles$filename),
+          c("_id", "filename", "url"), drop = FALSE],
+        documents.path,
+        documents.regexp,
+        multiplex = FALSE,
+        verbose = verbose)
 
     } # if (!nrow(dlFiles))
 

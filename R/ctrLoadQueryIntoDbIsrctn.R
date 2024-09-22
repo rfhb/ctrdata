@@ -287,7 +287,9 @@ ctrLoadQueryIntoDbIsrctn <- function(
         config = httr::config("http_content_decoding" = 0), {
           ctrDocsDownload(
             dlFiles[, c("_id", "filename", "url"), drop = FALSE],
-            documents.path, documents.regexp, verbose)
+            documents.path,
+            documents.regexp,
+            verbose = verbose)
         }, override = FALSE)
 
     } # if (!nrow(dlFiles))

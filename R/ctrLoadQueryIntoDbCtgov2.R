@@ -573,7 +573,9 @@ ctrLoadQueryIntoDbCtgov2 <- function(
       # do download
       ctrDocsDownload(
         dlFiles[, c("_id", "filename", "url"), drop = FALSE],
-        documents.path, documents.regexp, verbose)
+        documents.path,
+        documents.regexp,
+        verbose = verbose)
 
     } # if (!nrow(dlFiles))
 

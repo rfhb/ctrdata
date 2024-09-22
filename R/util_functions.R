@@ -800,8 +800,11 @@ addMetaData <- function(x, con) {
 #' ctrMultiDownload
 #'
 #' @param urls Vector of urls to be downloaded
-#'
+#' @param destfiles Vector of local file names into which to download
 #' @param progress Set to \code{FALSE} to not print progress bar
+#' @param resume Logical for dispatching to curl
+#' @param multipley Logical for using http/2
+#' @param verbose For debug message printing
 #'
 #' @keywords internal
 #' @noRd
@@ -1014,6 +1017,7 @@ ctrTempDir <- function(verbose = FALSE) {
 #' @param dlFiles data frame with columns _id, filename, url
 #' @param documents.path parameter from parent call
 #' @param documents.regexp parameter from parent call
+#' @param multiplex use http/2 or not
 #' @param verbose parameter from parent call
 #'
 #' @return number of documents
