@@ -196,7 +196,7 @@ expect_true(length(tmpFields) > 340L)
 
 groupsNo <- (length(tmpFields) %/% 49L) + 1L
 groupsNo <- rep(seq_len(groupsNo), 49L)
-groupsNo <- groupsNo[1:seq_along(tmpFields)]
+groupsNo <- groupsNo[seq_along(tmpFields)]
 
 expect_message(
   dbGetFieldsIntoDf(fields = tmpFields[1:50], con = dbc),

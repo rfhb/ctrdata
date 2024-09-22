@@ -123,7 +123,8 @@ expect_message(
 
 dbc <- nodbi::src_sqlite(
   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
-  collection = "my_trials")
+  collection = "my_trials",
+  RSQLite::SQLITE_RO)
 
 # get results
 result <- suppressMessages(
@@ -259,7 +260,7 @@ expect_true(
 
 groupsNo <- (length(tmpFields) %/% 49L) + 1L
 groupsNo <- rep(seq_len(groupsNo), 49L)
-groupsNo <- groupsNo[1:seq_along(tmpFields)]
+groupsNo <- groupsNo[seq_along(tmpFields)]
 
 for (i in unique(groupsNo)) {
   message(i, " ", appendLF = FALSE)

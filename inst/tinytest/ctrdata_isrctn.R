@@ -273,7 +273,7 @@ tmpFields <- suppressMessages(
 
 groupsNo <- (length(tmpFields) %/% 49L) + 1L
 groupsNo <- rep(seq_len(groupsNo), 49L)
-groupsNo <- groupsNo[1:seq_along(tmpFields)]
+groupsNo <- groupsNo[seq_along(tmpFields)]
 
 for (i in unique(groupsNo)) {
   message(i, " ", appendLF = FALSE)
