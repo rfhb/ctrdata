@@ -1,4 +1,4 @@
-# ctrdata 1.19.2.9000
+# ctrdata 1.19.3
 
 - Improve Tampermonkey script (this serves to copy searches in any register to the clipboard, and also can open a `CTIS` search from an URL, see https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser
 - Refactored parts of documents downloading for handling CDN links
