@@ -131,6 +131,8 @@ ctrLoadQueryIntoDbEuctr <- function(
   # check results parameters
   if (is.null(documents.path)) {
     documents.path <- tempDir
+  } else {
+    euctrresults <- TRUE
   }
   if (euctrresults &&
       (is.na(file.info(documents.path)[["isdir"]]) ||
