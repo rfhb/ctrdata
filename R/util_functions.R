@@ -860,7 +860,7 @@ ctrMultiDownload <- function(
   while (any(toDo) && numI < 3L) {
 
     args <- c(
-      urls = list(downloadValue$url[toDo]),
+      urls = list(utils::URLencode(downloadValue$url[toDo])),
       destfiles = list(downloadValue$destfile[toDo]),
       resume = canR,
       progress = progress,
