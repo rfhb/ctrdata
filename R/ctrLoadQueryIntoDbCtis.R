@@ -349,47 +349,15 @@ ctrLoadQueryIntoDbCtis <- function(
         dlFiles$fileType)
 
       # calculate url
-      dlFiles$ctisurl <- sprintf(
+      dlFiles$url <- sprintf(
         ctisEndpoints[3], dlFiles$`_id`, dlFiles$uuid)
-
-      # get cdn download urls for CTIS urls
-      resList <- data.frame(ctisurl = NULL, url = NULL)
-      failure <- function(str) message(paste("Failed request:", str))
-      success <- function(x) {
-        if (x$status != 200L) return(NULL)
-        resList <<- rbind(
-          resList, cbind(
-            ctisurl = x$url,
-            url = jsonlite::fromJSON(rawToChar(x$content))$url
-          ))
-      }
-
-      pool <- curl::new_pool()
-      sapply(dlFiles$ctisurl, function(i) {
-        curl::multi_add(
-          curl::new_handle(url = i),
-          done = success,
-          fail = failure,
-          data = NULL,
-          pool = pool
-        )
-      })
-
-      # important on 2024-06-29 disable HTTP/2 multiplexing
-      # as it leads to data loss with ctis servers
-      curl::multi_set(multiplex = FALSE, pool = pool)
-
-      # go parallel
-      curl::multi_run(pool = pool)
-
-      # merge with original files list
-      dlFiles <- merge(dlFiles, resList)
 
       # do download
       ctrDocsDownload(
         dlFiles[!duplicated(dlFiles$filename),
                 c("_id", "filename", "url"), drop = FALSE],
-        documents.path, documents.regexp, verbose)
+        documents.path, documents.regexp,
+        multiplex = FALSE, verbose)
 
     } # if (!nrow(dlFiles))
 

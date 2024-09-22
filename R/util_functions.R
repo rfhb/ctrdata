@@ -810,6 +810,7 @@ addMetaData <- function(x, con) {
 #'
 #' @importFrom curl multi_download
 #' @importFrom utils URLencode
+#' @importFrom jsonlite fromJSON
 #'
 ctrMultiDownload <- function(
     urls,
@@ -856,8 +857,8 @@ ctrMultiDownload <- function(
   while (any(toDo) && numI < 3L) {
 
     args <- c(
-      urls = list(utils::URLencode(downloadValue[toDo, "url", drop = TRUE])),
-      destfiles = list(downloadValue[toDo, "destfile", drop = TRUE]),
+      urls = list(downloadValue$url[toDo]),
+      destfiles = list(downloadValue$destfile[toDo]),
       resume = canR,
       progress = progress,
       timeout = Inf,
@@ -866,8 +867,38 @@ ctrMultiDownload <- function(
         accept_encoding = "gzip,deflate,zstd,br")
     )
 
+    # do download
     res <- do.call(curl::multi_download, args)
 
+    # check if download successful and CDN is likely to be used
+    cdnCheck <- (res$status_code %in% c(200L, 206L, 416L)) &
+      !grepl("[.]json$", res$destfile) &
+      sapply(res$headers, function(x)
+        if (length(x) >= 1)
+          any(grepl("application/json", x))
+        else FALSE)
+
+    # replace url with CDN url
+    if (any(cdnCheck)) {
+
+      message("Redirecting to CDN...")
+
+      # get CDN url
+      res$url[cdnCheck] <- sapply(
+        res$destfile[cdnCheck],
+        function(x) jsonlite::fromJSON(x)$url,
+        USE.NAMES = FALSE,
+        simplify = TRUE)
+
+      # remove files containing CDN url
+      unlink(res$destfile[cdnCheck])
+
+      # reset status
+      res$status_code[cdnCheck] <- NA
+
+    }
+
+    # update input
     downloadValue[toDo, ] <- res
 
     if (any(grepl(
@@ -877,9 +908,9 @@ ctrMultiDownload <- function(
       stop("Download failed; last error: ", class(downloadValue), call. = FALSE)
     }
 
-    toDoThis <- is.na(downloadValue[["success"]]) |
-      !downloadValue[["success"]] |
-      !(downloadValue[["status_code"]] %in% c(200L, 206L, 416L))
+    toDoThis <- is.na(downloadValue$success) |
+      !downloadValue$success |
+      !(downloadValue$status_code %in% c(200L, 206L, 416L))
 
     # only count towards repeat attempts if
     # the set of repeated urls is unchanged
@@ -994,6 +1025,7 @@ ctrDocsDownload <- function(
     dlFiles,
     documents.path,
     documents.regexp,
+    multiplex = TRUE,
     verbose) {
 
   # check and create directory
@@ -1052,7 +1084,8 @@ ctrDocsDownload <- function(
   } else {
 
     # inform
-    message("- Applying 'documents.regexp' to ", nrow(dlFiles), " documents")
+    message("- Applying 'documents.regexp' to ",
+            nrow(dlFiles), " missing documents")
 
     # apply regexp
     dlFiles <- dlFiles[
@@ -1068,6 +1101,7 @@ ctrDocsDownload <- function(
     tmp <- ctrMultiDownload(
       urls = dlFiles$url[!dlFiles$fileexists],
       destfiles = dlFiles$filepathname[!dlFiles$fileexists],
+      multiplex = multiplex,
       verbose = verbose)
 
     # check results
@@ -1091,7 +1125,7 @@ ctrDocsDownload <- function(
     "= Newly saved %i ",
     ifelse(is.null(documents.regexp), "placeholder ", ""),
     "document(s) for %i trial(s); ",
-    "%i document(s) for %i trial(s) already existed in %s"),
+    "%i of such document(s) for %i trial(s) already existed in %s"),
     tmp,
     length(unique(dlFiles$`_id`)),
     sum(dlFiles$fileexists),
