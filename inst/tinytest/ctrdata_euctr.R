@@ -609,6 +609,7 @@ tmpFields <- suppressMessages(
   suppressWarnings(
     dbFindFields(
       namepart = ".*",
+      sample = FALSE,
       con = dbc)))
 
 # test
