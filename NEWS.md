@@ -1,4 +1,4 @@
-# ctrdata 1.19.3.9000
+# ctrdata 1.19.4
 
 - Fix vignettes and update documentation website (pkgdown)
 - Make `dbFindFields()` more robust, specify scalar search fields to identify records
