@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.19.2.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.19.3.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -223,8 +223,8 @@ specifying parameter <code>documents.path</code>, see
 <span><span class="co"># Download status: 103 done; 0 in progress. Total size: 59.71 Mb (100%)... done!             </span></span>
 <span><span class="co"># Download status: 27 done; 0 in progress. Total size: 108.69 Kb (100%)... done!             </span></span>
 <span><span class="co"># - extracting results (. = data, F = file[s] and data, x = none):</span></span>
-<span><span class="co"># . . . . . . F . . . . F . . . . . . . F . . . . . . . . . . . . . . . . . . . . . . . . F . F F . F . .</span></span>
-<span><span class="co"># F . . . F F . . . . . F . . . . . . F . . . F . </span></span>
+<span><span class="co"># . . . . . . F . . . . F . . . . . . . F . . . . . . . . . . . . . . . . . . . . . </span></span>
+<span><span class="co"># . . . F . F F . F . . F . . . F F . . . . . F . . . . . . F . . . F . </span></span>
 <span><span class="co"># (2/4) Converting to NDJSON (estimate: 8 s)...</span></span>
 <span><span class="co"># (3/4) Importing results into database (may take some time)...</span></span>
 <span><span class="co"># (4/4) Results history: not retrieved (euctrresultshistory = FALSE)</span></span>
@@ -395,7 +395,7 @@ specified.</p>
 <span>  </span>
 <span>  <span class="co"># import</span></span>
 <span>  <span class="va">setResult</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
-<span></span>
+<span>    </span>
 <span>    <span class="co"># for CTGOV2 use: </span></span>
 <span>    queryterm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"term="</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">idSet</span>, collapse <span class="op">=</span> <span class="st">" "</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    </span>
@@ -481,7 +481,7 @@ R package ctrdata</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.9000.</p>
 </div>
 
     </footer>

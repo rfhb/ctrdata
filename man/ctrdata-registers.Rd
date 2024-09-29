@@ -7,21 +7,21 @@
 \description{
 Registers of clinical trials from which protocol- and result-related information
 can be retrieved and analysed with package \link{ctrdata}, last updated
-2024-09-21.
+2024-09-29.
 }
 \section{1 - Overview}{
 
 \itemize{
-\item \strong{EUCTR}: The EU Clinical Trials Register contains close to 44,000 clinical
+\item \strong{EUCTR}: The EU Clinical Trials Register contains more than 44,100 clinical
 trials (at least one investigational medicinal product, IMP;
 in the European Union and beyond; no new trials, but results for contained trials
 continue to be added)
 \item \strong{CTIS}: The EU Clinical Trials Information System started in January 2023
-for new clinical trials. It includes more than 6,000 publicly accessible trials.
+for new clinical trials. It includes more than 6,200 publicly accessible trials.
 How to automatically get the CTIS search query URL: \ifelse{latex}{\out{\href{https://rfhb.github.io/ctrdata/\#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}}
-\item \strong{CTGOV2}: ClinicalTrials.gov includes more than 500,000 interventional and
+\item \strong{CTGOV2}: ClinicalTrials.gov includes more than 510,000 interventional and
 observational studies
-\item \strong{ISRCTN}: The ISRCTN Registry includes more than 25,000 interventional and
+\item \strong{ISRCTN}: The ISRCTN Registry includes more than 25,400 interventional and
 observational health studies
 }
 }
@@ -52,7 +52,7 @@ More information on changes: \href{https://rfhb.github.io/ctrdata/news/index.htm
 }
 }
 
-\section{4 - Example explanation and ctrdata motivation}{
+\section{4 - Example and ctrdata motivation}{
 
 
 *The example is an expert search for interventional trials primarily with neonates, investigating infectious conditions.

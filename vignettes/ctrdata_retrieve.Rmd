@@ -10,7 +10,7 @@ output:
   rmarkdown::html_vignette:
     toc: true
 vignette: >
-%\VignetteIndexEntry{Retrieve clinical trial information}
+  %\VignetteIndexEntry{Retrieve clinical trial information}
   %\VignetteKeywords{ctrdata,vignette}
   %\VignettePackage{ctrdata}
   %\VignetteEncoding{UTF-8}

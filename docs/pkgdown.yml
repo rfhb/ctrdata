@@ -1,11 +1,11 @@
-pandoc: '3.3'
-pkgdown: 2.1.0
-pkgdown_sha: ~
+pandoc: '3.4'
+pkgdown: 2.1.1.9000
+pkgdown_sha: c0cbde4221b87c7e81273e804f210213129c3d83
 articles:
   ctrdata_install: ctrdata_install.html
   ctrdata_retrieve: ctrdata_retrieve.html
   ctrdata_summarise: ctrdata_summarise.html
-last_built: 2024-08-29T05:58Z
+last_built: 2024-09-29T16:07Z
 urls:
   reference: https://rfhb.github.io/ctrdata/reference
   article: https://rfhb.github.io/ctrdata/articles

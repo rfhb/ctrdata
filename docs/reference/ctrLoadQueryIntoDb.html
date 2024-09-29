@@ -21,7 +21,7 @@ records while keeping any user annotations of trial records."><meta name="twitte
 
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.19.2.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.19.3.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -162,18 +162,20 @@ save any documents into it that are directly available from
 the register ("EUCTR", "CTGOV2", "ISRCTN", "CTIS")
 such as PDFs on results, analysis plans, spreadsheets,
 patient information sheets, assessments or product information.
-Default is <code>NULL</code>, which disables saving documents.</p></dd>
+Default is <code>NULL</code>, which disables saving documents.
+For "EUCTR", sets <code>euctrresults = TRUE</code> since documents
+are available only with results.</p></dd>
 
 
 <dt id="arg-documents-regexp">documents.regexp<a class="anchor" aria-label="anchor" href="#arg-documents-regexp"></a></dt>
 <dd><p>Regular expression, case insensitive,
-to select documents, if saving documents is requested
+to select documents by filename, if saving documents is requested
 (see <code>documents.path</code>).
 If set to <code>NULL</code>, empty placeholder files are saved for
 every document that could be saved. Default is
 <code>"prot|sample|statist|sap_|p1ar|p2ars|icf|ctalett|lay|^[0-9]+ "</code>.
-Used with "CTGOV2", "ISRCTN" and "CTIS" (but not "EUCTR",
-for which all available documents are saved in any case).</p></dd>
+Used with "CTGOV2", "ISRCTN" and "CTIS" (for "EUCTR", all documents
+are downloaded since they are few and have non-canonical filenames.)</p></dd>
 
 
 <dt id="arg-annotation-text">annotation.text<a class="anchor" aria-label="anchor" href="#arg-annotation-text"></a></dt>
@@ -282,7 +284,7 @@ collection) to facilitate documentation.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.9000.</p>
 </div>
 
     </footer></div>

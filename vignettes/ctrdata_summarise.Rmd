@@ -10,7 +10,7 @@ output:
     number_sections: true
     latex_engine: xelatex
 vignette: >
-%\VignetteIndexEntry{Summarise and analyse clinical trial information}
+  %\VignetteIndexEntry{Summarise and analyse clinical trial information}
   %\VignetteKeywords{ctrdata,vignette}
   %\VignettePackage{ctrdata}
   %\VignetteEncoding{UTF-8}
