@@ -1,6 +1,6 @@
 # ctrdata 1.19.4.9000
 
-- New development version
+- Refactored `dbFindFields()` for speed and efficiency
 
 # ctrdata 1.19.4
 

@@ -97,63 +97,71 @@ dbFindFields <- function(namepart = ".*",
 
   ## get keyslist
   if (cacheOutdated) {
+
     # inform user
     message("Finding fields in database collection", appendLF = FALSE)
 
-    queries <- paste0('{"ctrname": "', sort(registerList), '"}')
-    names(queries) <- sort(registerList)
-
-    # queries by sample
     if (sample) {
-
-      # adding queries for records with results data
-      queries <- c(
-        '{"trialInformation.fullTitle": {"$regex": ".+"}}',
-        '{"clinical_results.outcome_list.outcome.description": {"$regex": ".+"}}',
-        '{"resultsSection.outcomeMeasuresModule.outcomeMeasures.type": {"$regex": ".+"}}',
-        queries)
-      names(queries)[1:3] <- c("EUCTR", "CTGOV", "CTGOV2")
       n <- 5L
       message(" (sampling ", n, " trial records per register) ", appendLF = FALSE)
-
     } else {
-
       message(" (may take some time) ", appendLF = FALSE)
       n <- -1L
-
     }
+
+    # construct queries
+    queries <- sapply(
+      registerList,
+      function(r) paste0('{"ctrname": "', r, '"}'),
+      simplify = TRUE,
+      USE.NAMES = TRUE)
+
+    # adding queries for records with results data, sequence important
+    queries <- c(
+      queries,
+      # "EUCTR" = '{"$and":[{"ctrname": "EUCTR"}, {"trialInformation.fullTitle": {"$regex": ".+"}}]}',
+      "EUCTR" = '{"trialInformation.fullTitle": {"$regex": ".+"}}',
+      "CTGOV" = '{"clinical_results.outcome_list.outcome.description": {"$regex": ".+"}}',
+      "CTGOV2" = '{"resultsSection.outcomeMeasuresModule.outcomeMeasures.type": {"$regex": ".+"}}')
 
     # get names
-    keyslist <- NULL
+    keyslist <- list()
 
     # iterate over registers
-    for (i in seq_along(queries)) {
+    for (r in registerList) {
 
-      message(" . ", appendLF = FALSE)
+      # iterate over queries for register
+      qs <- queries[names(queries) == r]
 
-      # iterate over query items
-      # get fields from register
-      keysAdd <- nodbi::docdb_query(
-        src = con,
-        key = con$collection,
-        query = queries[i],
-        listfields = TRUE,
-        limit = n
-      )
+      # when not sampling, get all records
+      if (!sample) qs <- qs[1]
 
-      # give keys name of register
-      if (!is.null(keysAdd)) names(keysAdd) <- rep(names(queries)[i], length(keysAdd))
+      # run queries from back
+      for (q in rev(qs)) {
+
+        message(". ", appendLF = FALSE)
+        keysAdd <- nodbi::docdb_query(
+          src = con,
+          key = con$collection,
+          query = q,
+          listfields = TRUE,
+          limit = n
+        )
+
+        # check if no need to run further queries
+        if (!is.null(keysAdd) &&
+            length(keysAdd) > 0L) break
+
+      } # for q in qs
 
       # accumulate keys
-      keyslist <- c(keyslist, keysAdd)
-    }
+      keyslist[r] <- list(keysAdd[keysAdd != "_id" & keysAdd != ""])
+
+    } # for r in registerList
     message()
 
-    # clean empty entries and exclude _id for consistency
-    keyslist <- keyslist[keyslist != "_id" & keyslist != ""]
-
     ## store keyslist to environment (cache)
-    if (length(keyslist) > 1) {
+    if (length(keyslist) > 0L) {
       ctrCache(
         xname = paste0("keyslist_", con$db, "/", con$collection),
         xvalue = keyslist
@@ -184,42 +192,52 @@ dbFindFields <- function(namepart = ".*",
   } # generate keyslist
 
   ## inform user of unexpected situation
-  if ((length(keyslist) == 0) || all(keyslist == "")) {
+  if (length(keyslist) == 0L) {
     warning("No keys could be extracted, please check database ",
             "and collection: ", con$db, "/", con$collection,
             call. = FALSE
     )
   }
 
-  ## now do the actual search and find for key name parts
-  fields <- keyslist[grepl(
+  # process keys
+
+  # remove duplicates within registers
+  keyslist <- lapply(keyslist, unique)
+
+  # remove duplicates within registers
+  keyslist <- lapply(keyslist, sort)
+
+  # mangle list into named vector
+  lenKeyslist <- sapply(keyslist, length)
+  keyslist <- unlist(keyslist)
+  names(keyslist) <- unlist(sapply(
+    seq_along(lenKeyslist),
+    function(i) rep(
+      names(lenKeyslist)[i],
+      times = lenKeyslist[i])
+  ), use.names = FALSE)
+
+  # now do the actual search and find for key name parts
+  keyslist <- keyslist[grepl(
     pattern = namepart, x = keyslist,
     ignore.case = TRUE, perl = TRUE
   )]
 
-  ## to remove duplicates
-  fieldsDf <- unique(data.frame(
-    register = names(fields),
-    field = fields,
-    stringsAsFactors = FALSE))
-
-  fieldsTbl <- table(fieldsDf[["register"]])
+  # user info
+  if (verbose) {
+    fieldsTbl <- table(names(keyslist))
+    message(
+      paste0(names(fieldsTbl), collapse = " / "), ": ",
+      paste0(fieldsTbl, collapse = " / "))
+  }
 
   # user info
-  if (verbose) message(
-    paste0(names(fieldsTbl), collapse = " / "), ": ",
-    paste0(fieldsTbl, collapse = " / "))
-
-  fields <- fieldsDf[["field"]]
-  names(fields) <- fieldsDf[["register"]]
-
-  # user info
-  if (verbose) message("Found ", length(fields), " fields.")
+  if (verbose) message("Found ", length(keyslist), " fields.")
 
   # return value if no fields found
-  if (!length(fields)) fields <- ""
+  if (!length(keyslist)) keyslist <- ""
 
   # return the match(es)
-  return(fields)
+  return(keyslist)
 
 } # end dbFindFields
