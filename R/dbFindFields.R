@@ -227,12 +227,10 @@ dbFindFields <- function(namepart = ".*",
   if (verbose) {
     fieldsTbl <- table(names(keyslist))
     message(
+      "Found ", length(keyslist), " fields in ",
       paste0(names(fieldsTbl), collapse = " / "), ": ",
       paste0(fieldsTbl, collapse = " / "))
   }
-
-  # user info
-  if (verbose) message("Found ", length(keyslist), " fields.")
 
   # return value if no fields found
   if (!length(keyslist)) keyslist <- ""

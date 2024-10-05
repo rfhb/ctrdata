@@ -115,6 +115,7 @@ ctrLoadQueryIntoDbCtis <- function(
 
   # only count?
   if (only.count) {
+    message()
     # return
     return(list(
       n = overview$totalRecords,

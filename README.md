@@ -35,7 +35,7 @@ conduct of trials, their availability for patients and to facilitate
 using their detailed results for research and meta-analyses. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2024-09-29 for version 1.19.4.
+package. This README was reviewed on 2024-10-06 for version 1.19.4.9000.
 
 ## Main features
 
@@ -419,7 +419,7 @@ The new website and API introduced in July 2023
 mid-2023 and identified in `ctrdata` as `CTGOV2`.
 
 On 2024-06-25, `CTGOV` has retired the classic website and API used by
-`ctrdata` since 2015. To support users, `ctrdata` however automatically
+`ctrdata` since 2015. To support users, `ctrdata` automatically
 translates and redirects queries to the current website. This helps with
 automatically updating previously loaded queries
 (`ctrLoadQueryIntoDb(querytoupdate = <n>)`), manually migrating queries
@@ -441,7 +441,7 @@ different registers and will continue to identify the current API as
 
 Note that loading trials with `ctrdata` overwrites the previous record
 with `CTGOV2` data, whether the previous record was retrieved using
-`CTGOV` or `CTGOV` queries.
+`CTGOV` or `CTGOV2` queries.
 
 - Search used in this example:
   <https://www.clinicaltrials.gov/search?cond=Neuroblastoma&aggFilters=ages:child,results:with,studyType:int>

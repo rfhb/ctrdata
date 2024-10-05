@@ -45,7 +45,7 @@ The package `ctrdata` provides functions for retrieving (downloading), aggregati
 - ClinicalTrials.gov ("CTGOV2", see [example](#workflow-ctgov-example))
 - ISRCTN Registry (https://www.isrctn.com/) 
 
-The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2024-09-29 for version 1.19.4.
+The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2024-10-06 for version 1.19.4.9000.
 
 ## Main features
 
@@ -317,11 +317,11 @@ with(
 
 The new website and API introduced in July 2023 (https://www.clinicaltrials.gov/) is supported by `ctrdata` since mid-2023 and identified in `ctrdata` as `CTGOV2`. 
 
-On 2024-06-25, `CTGOV` has retired the classic website and API used by `ctrdata` since 2015. To support users, `ctrdata` however automatically translates and redirects queries to the current website. This helps with automatically updating previously loaded queries (`ctrLoadQueryIntoDb(querytoupdate = <n>)`), manually migrating queries and reproducible work on clinical trials information. Going forward, users are recommended to change to use `CTGOV2` queries. 
+On 2024-06-25, `CTGOV` has retired the classic website and API used by `ctrdata` since 2015. To support users, `ctrdata` automatically translates and redirects queries to the current website. This helps with automatically updating previously loaded queries (`ctrLoadQueryIntoDb(querytoupdate = <n>)`), manually migrating queries and reproducible work on clinical trials information. Going forward, users are recommended to change to use `CTGOV2` queries. 
 
 As regards study data, important differences exist between field names and contents of information retrieved using `CTGOV` or `CTGOV2`; see the [schema for study protocols in `CTGOV`](https://cdn.clinicaltrials.gov/documents/xsd/prs/ProtocolRecordSchema.xsd), the [schema for study results](https://cdn.clinicaltrials.gov/documents/xsd/prs/RRSUploadSchema.xsd) and the [Study Data Structure for `CTGOV2`](https://clinicaltrials.gov/data-api/about-api/study-data-structure). For more details, call `help("ctrdata-registers")`. This is one of the reasons why `ctrdata` handles the situation as if these were two different registers and will continue to identify the current API as `register = "CTGOV2"`, to support the analysis stage. 
 
-Note that loading trials with `ctrdata` overwrites the previous record with `CTGOV2` data, whether the previous record was retrieved using `CTGOV` or `CTGOV` queries. 
+Note that loading trials with `ctrdata` overwrites the previous record with `CTGOV2` data, whether the previous record was retrieved using `CTGOV` or `CTGOV2` queries. 
 
 * Search used in this example: https://www.clinicaltrials.gov/search?cond=Neuroblastoma&aggFilters=ages:child,results:with,studyType:int
 
