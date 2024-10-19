@@ -1228,12 +1228,6 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
 
       ## get _id's
 
-      # main function for fast reading,
-      # switching off warning about final EOL missing
-      fd <- file(description = tempFiles[tempFile],
-                 open = "rt", blocking = TRUE)
-      on.exit(try(close(fd), silent = TRUE), add = TRUE)
-
       # inform user
       message(
         "JSON file #: ", tempFile, " / ", fc,
@@ -1316,9 +1310,6 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
         idSuccess <- c(idSuccess, annoDf[, "_id", drop = TRUE])
         idAnnotation <- c(idAnnotation, annoDf[, "annotation", drop = TRUE])
       }
-
-      # close this file
-      close(fd)
 
       # return values
       list(success = idSuccess,

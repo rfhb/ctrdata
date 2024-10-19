@@ -235,7 +235,7 @@ ctrLoadQueryIntoDbCtis <- function(
   for (g in unique(groupNo)) {
 
     sapply(
-      tmp[["destfile"]][groupNo == g], function(f) {
+      na.omit(tmp[["destfile"]][groupNo == g]), function(f) {
 
         if (!file.exists(f)) return()
 
@@ -271,7 +271,7 @@ ctrLoadQueryIntoDbCtis <- function(
   message(". ", appendLF = FALSE)
   updated <- nodbi::docdb_update(
     src = con, key = con$collection, query = "{}",
-    value = file.path(tempDir, "ctis_add_api1.ndjson"))
+    value = fTrialsNdjson)
 
   message("")
 
