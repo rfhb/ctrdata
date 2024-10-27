@@ -51,14 +51,14 @@ ctrOpenSearchPagesInBrowser <- function(
     url = "",
     register = "",
     copyright = FALSE) {
-
+  
   ## in case a browser is not available
   ctrOpenUrl <- function(u) {
     try(utils::browseURL(u), silent = TRUE)
   }
-
+  
   ## check combination of arguments to select action
-
+  
   # - open copyright or similar pages
   if (copyright) {
     sapply(
@@ -72,7 +72,7 @@ ctrOpenSearchPagesInBrowser <- function(
     )
     return(invisible(TRUE))
   }
-
+  
   # - open register search page(s)
   if (is.atomic(url) && url == "") {
     url <- c(
@@ -81,22 +81,22 @@ ctrOpenSearchPagesInBrowser <- function(
       "EUCTR" = "https://www.clinicaltrialsregister.eu/ctr-search/search",
       "ISRCTN" = "https://www.isrctn.com/editAdvancedSearch"
     )
-
+    
     if (is.atomic(register) &&
         sum(register %in% registerList, na.rm = TRUE) == 1L) {
       ctrOpenUrl(url[register])
     } else {
       sapply(url, ctrOpenUrl)
     }
-
+    
     return(invisible(TRUE))
   }
-
+  
   # - get shortened url and register
   if (is.atomic(url) && url != "") {
     url <- ctrGetQueryUrl(url = url, register = register)
   }
-
+  
   # - get from a data frame, such as from
   #   ctrQueryHistoryInDb() or ctrGetQueryUrl()
   if (is.data.frame(url) &&
@@ -110,12 +110,12 @@ ctrOpenSearchPagesInBrowser <- function(
     register <- url[nr, "query-register", drop = TRUE]
     url <- url[nr, "query-term", drop = TRUE]
   }
-
+  
   # - open search or view from url and register
   if (is.atomic(url) && url != "" && register != "") {
     pre <- "(^|[?&]*)"
     post <- "(&|$)|"
-
+    
     # - open parametrised search
     if (grepl(paste0(
       # pre, "term=", regCtgov, post,
@@ -125,7 +125,7 @@ ctrOpenSearchPagesInBrowser <- function(
       pre, "q=ISRCTN", regIsrctn, post, "^$"
     ), url)
     ) {
-
+      
       # - open single study from url and register
       url <- sub(paste0(
         ".*?(", paste0(
@@ -133,7 +133,7 @@ ctrOpenSearchPagesInBrowser <- function(
           collapse = "|"
         ), ").*"
       ), "\\1", url)
-
+      
       url <- switch(
         register,
         "CTGOV" = ctgovClassicToCurrent(url),
@@ -143,22 +143,27 @@ ctrOpenSearchPagesInBrowser <- function(
         "ISRCTN" = paste0("https://www.isrctn.com/ISRCTN", url)
       )
     } else {
-
+      
       # - open search
+      #   adjust to use expert search for CTGOV2
+      if (grepl("(|\\[|\\]|AREA)", url, ignore.case = FALSE) &&
+          (register == "CTGOV2")) register <- "CTGOV2expert"
+      #
       url <- switch(
         register,
         "CTGOV" = ctgovClassicToCurrent(url),
         "CTGOV2" = paste0("https://clinicaltrials.gov/search?", url),
+        "CTGOV2expert" = paste0("https://clinicaltrials.gov/expert-search?", url),
         "CTIS" = paste0("https://euclinicaltrials.eu/ctis-public/search?", url),
         "EUCTR" = paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?", url, "#tabs"),
         "ISRCTN" = paste0("https://www.isrctn.com/search?", url)
       )
     }
-
+    
     ctrOpenUrl(url)
     return(url)
   }
-
+  
   # if not returned before
   invisible(NULL)
 }

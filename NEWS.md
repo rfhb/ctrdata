@@ -1,6 +1,7 @@
 # ctrdata 1.19.4.9000
 
 - Refactored `dbFindFields()` for speed and efficiency
+- Accomodated newly available expert search in `CTGOV2`
 
 # ctrdata 1.19.4
 

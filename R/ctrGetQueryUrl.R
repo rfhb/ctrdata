@@ -276,8 +276,10 @@ ctrGetQueryUrl <- function(
 
     # extract search query
     queryterm <- sub(
-      paste0("(.*/study/", regCtgov, "/?[?]|.*/search/?[?][&]?)([a-z]+.*$)"),
-      "\\2", url
+      paste0(
+        "(.*/study/", regCtgov, 
+        "/?[?]|.*/(expert-search|search)/?[?][&]?)([a-z]+.*$)"),
+      "\\3", url
     )
 
     # single trial page
