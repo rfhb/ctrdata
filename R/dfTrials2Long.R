@@ -204,7 +204,7 @@ dfTrials2Long <- function(df) {
   out <- unique(out)
 
   # reset row numbering
-  row.names(dfi) <- NULL
+  row.names(out) <- NULL
 
   # inform
   message("\nTotal ", nrow(out), " rows, ",
