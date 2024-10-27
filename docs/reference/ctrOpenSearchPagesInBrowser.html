@@ -102,6 +102,56 @@ copyright pages of all registers.</p></dd>
 <span class="r-in"><span><span class="kw">for</span> <span class="op">(</span><span class="va">r</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dbh</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>    <span class="fu">ctrOpenSearchPagesInBrowser</span><span class="op">(</span><span class="va">dbh</span><span class="op">[</span><span class="va">r</span>, <span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Called from: eval(expr, p)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug: if (grepl(paste0(pre, "id=", regCtgov2, post, pre, "number=", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     regCtis, post, pre, "query=", regEuctr, post, pre, "q=ISRCTN", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     regIsrctn, post, "^$"), url)) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     url &lt;- sub(paste0(".*?(", paste0(c(regCtgov, regCtgov2, regCtis, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         regEuctr, regIsrctn), collapse = "|"), ").*"), "\\1", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         url)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     url &lt;- switch(register, CTGOV = ctgovClassicToCurrent(url), </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         CTGOV2 = paste0("https://clinicaltrials.gov/study/", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url, "#main-content"), CTIS = paste0("https://euclinicaltrials.eu/ctis-public/view", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url), EUCTR = paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url, "#tabs"), ISRCTN = paste0("https://www.isrctn.com/ISRCTN", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> } else {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (grepl("(|\\[|\\]|AREA)", url, ignore.case = FALSE) &amp;&amp; </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         (register == "CTGOV2")) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         register &lt;- "CTGOV2expert"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     url &lt;- switch(register, CTGOV = ctgovClassicToCurrent(url), </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         CTGOV2 = paste0("https://clinicaltrials.gov/search?", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url), CTGOV2expert = paste0("https://clinicaltrials.gov/expert-search?", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url), CTIS = paste0("https://euclinicaltrials.eu/ctis-public/search?", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url), EUCTR = paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url, "#tabs"), ISRCTN = paste0("https://www.isrctn.com/search?", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Called from: eval(expr, p)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug: if (grepl(paste0(pre, "id=", regCtgov2, post, pre, "number=", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     regCtis, post, pre, "query=", regEuctr, post, pre, "q=ISRCTN", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     regIsrctn, post, "^$"), url)) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     url &lt;- sub(paste0(".*?(", paste0(c(regCtgov, regCtgov2, regCtis, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         regEuctr, regIsrctn), collapse = "|"), ").*"), "\\1", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         url)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     url &lt;- switch(register, CTGOV = ctgovClassicToCurrent(url), </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         CTGOV2 = paste0("https://clinicaltrials.gov/study/", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url, "#main-content"), CTIS = paste0("https://euclinicaltrials.eu/ctis-public/view", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url), EUCTR = paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url, "#tabs"), ISRCTN = paste0("https://www.isrctn.com/ISRCTN", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> } else {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (grepl("(|\\[|\\]|AREA)", url, ignore.case = FALSE) &amp;&amp; </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         (register == "CTGOV2")) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         register &lt;- "CTGOV2expert"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     url &lt;- switch(register, CTGOV = ctgovClassicToCurrent(url), </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         CTGOV2 = paste0("https://clinicaltrials.gov/search?", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url), CTGOV2expert = paste0("https://clinicaltrials.gov/expert-search?", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url), CTIS = paste0("https://euclinicaltrials.eu/ctis-public/search?", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url), EUCTR = paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url, "#tabs"), ISRCTN = paste0("https://www.isrctn.com/search?", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Since 2024-06-25, the classic CTGOV servers are no longer available. Package ctrdata has translated the classic CTGOV query URL from this call of function ctrLoadQueryIntoDb(queryterm = ...) into a query URL that works with the current CTGOV2. This is printed below and is also part of the return value of this function, ctrLoadQueryIntoDb(...)$url. This URL can be used with ctrdata functions. Note that the fields and data schema of trials differ between CTGOV and CTGOV2. </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Replace this URL:</span>
@@ -111,6 +161,81 @@ copyright pages of all registers.</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> with this URL:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> https://clinicaltrials.gov/search?start=2018-01-01_2020-01-01&amp;term=AREA[MaximumAge] RANGE[0 days, 28 days]&amp;intr=Drugs, Investigational&amp;aggFilters=phase:3,studyType:int</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Called from: eval(expr, p)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug: if (grepl(paste0(pre, "id=", regCtgov2, post, pre, "number=", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     regCtis, post, pre, "query=", regEuctr, post, pre, "q=ISRCTN", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     regIsrctn, post, "^$"), url)) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     url &lt;- sub(paste0(".*?(", paste0(c(regCtgov, regCtgov2, regCtis, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         regEuctr, regIsrctn), collapse = "|"), ").*"), "\\1", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         url)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     url &lt;- switch(register, CTGOV = ctgovClassicToCurrent(url), </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         CTGOV2 = paste0("https://clinicaltrials.gov/study/", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url, "#main-content"), CTIS = paste0("https://euclinicaltrials.eu/ctis-public/view", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url), EUCTR = paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url, "#tabs"), ISRCTN = paste0("https://www.isrctn.com/ISRCTN", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> } else {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (grepl("(|\\[|\\]|AREA)", url, ignore.case = FALSE) &amp;&amp; </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         (register == "CTGOV2")) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         register &lt;- "CTGOV2expert"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     url &lt;- switch(register, CTGOV = ctgovClassicToCurrent(url), </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         CTGOV2 = paste0("https://clinicaltrials.gov/search?", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url), CTGOV2expert = paste0("https://clinicaltrials.gov/expert-search?", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url), CTIS = paste0("https://euclinicaltrials.eu/ctis-public/search?", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url), EUCTR = paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url, "#tabs"), ISRCTN = paste0("https://www.isrctn.com/search?", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Called from: eval(expr, p)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug: if (grepl(paste0(pre, "id=", regCtgov2, post, pre, "number=", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     regCtis, post, pre, "query=", regEuctr, post, pre, "q=ISRCTN", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     regIsrctn, post, "^$"), url)) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     url &lt;- sub(paste0(".*?(", paste0(c(regCtgov, regCtgov2, regCtis, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         regEuctr, regIsrctn), collapse = "|"), ").*"), "\\1", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         url)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     url &lt;- switch(register, CTGOV = ctgovClassicToCurrent(url), </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         CTGOV2 = paste0("https://clinicaltrials.gov/study/", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url, "#main-content"), CTIS = paste0("https://euclinicaltrials.eu/ctis-public/view", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url), EUCTR = paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url, "#tabs"), ISRCTN = paste0("https://www.isrctn.com/ISRCTN", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> } else {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (grepl("(|\\[|\\]|AREA)", url, ignore.case = FALSE) &amp;&amp; </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         (register == "CTGOV2")) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         register &lt;- "CTGOV2expert"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     url &lt;- switch(register, CTGOV = ctgovClassicToCurrent(url), </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         CTGOV2 = paste0("https://clinicaltrials.gov/search?", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url), CTGOV2expert = paste0("https://clinicaltrials.gov/expert-search?", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url), CTIS = paste0("https://euclinicaltrials.eu/ctis-public/search?", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url), EUCTR = paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url, "#tabs"), ISRCTN = paste0("https://www.isrctn.com/search?", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Called from: eval(expr, p)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug: if (grepl(paste0(pre, "id=", regCtgov2, post, pre, "number=", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     regCtis, post, pre, "query=", regEuctr, post, pre, "q=ISRCTN", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     regIsrctn, post, "^$"), url)) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     url &lt;- sub(paste0(".*?(", paste0(c(regCtgov, regCtgov2, regCtis, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         regEuctr, regIsrctn), collapse = "|"), ").*"), "\\1", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         url)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     url &lt;- switch(register, CTGOV = ctgovClassicToCurrent(url), </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         CTGOV2 = paste0("https://clinicaltrials.gov/study/", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url, "#main-content"), CTIS = paste0("https://euclinicaltrials.eu/ctis-public/view", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url), EUCTR = paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url, "#tabs"), ISRCTN = paste0("https://www.isrctn.com/ISRCTN", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> } else {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (grepl("(|\\[|\\]|AREA)", url, ignore.case = FALSE) &amp;&amp; </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         (register == "CTGOV2")) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         register &lt;- "CTGOV2expert"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     url &lt;- switch(register, CTGOV = ctgovClassicToCurrent(url), </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         CTGOV2 = paste0("https://clinicaltrials.gov/search?", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url), CTGOV2expert = paste0("https://clinicaltrials.gov/expert-search?", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url), CTIS = paste0("https://euclinicaltrials.eu/ctis-public/search?", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url), EUCTR = paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url, "#tabs"), ISRCTN = paste0("https://www.isrctn.com/search?", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             url))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
@@ -123,7 +248,7 @@ copyright pages of all registers.</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer></div>

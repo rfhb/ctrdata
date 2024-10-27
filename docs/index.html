@@ -137,52 +137,52 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <col width="50%">
 <col width="50%">
 </colgroup>
-<thead><tr>
+<thead><tr class="header">
 <th>Function name</th>
 <th>Function purpose</th>
 </tr></thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td><code><a href="reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser()</a></code></td>
 <td>Open search pages of registers or execute search in web browser</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code><a href="reference/ctrFindActiveSubstanceSynonyms.html">ctrFindActiveSubstanceSynonyms()</a></code></td>
 <td>Find synonyms and alternative names for an active substance</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code><a href="reference/ctrGetQueryUrl.html">ctrGetQueryUrl()</a></code></td>
 <td>Import from clipboard the URL of a search in one of the registers</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code></td>
 <td><strong>Retrieve (download) or update, and annotate, information on trials from a register and store in a collection in a database</strong></td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code><a href="reference/dbQueryHistory.html">dbQueryHistory()</a></code></td>
 <td>Show the history of queries that were downloaded into the collection</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code><a href="reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials()</a></code></td>
 <td><strong>Get the identifiers of de-duplicated trials in the collection</strong></td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code><a href="reference/dbFindFields.html">dbFindFields()</a></code></td>
 <td>Find names of variables (fields) in the collection</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code></td>
 <td><strong>Create a data frame (or tibble) from trial records in the database with the specified fields</strong></td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code><a href="reference/dfTrials2Long.html">dfTrials2Long()</a></code></td>
 <td>Transform the data.frame from <code><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code> into a long name-value data.frame, including deeply nested fields</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code><a href="reference/dfName2Value.html">dfName2Value()</a></code></td>
 <td>From a long name-value data.frame, extract values for variables (fields) of interest (e.g., endpoints)</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code><a href="reference/dfMergeVariablesRelevel.html">dfMergeVariablesRelevel()</a></code></td>
 <td>Merge variables into a new variable, optionally map values to a new set of levels</td>
 </tr>
@@ -200,32 +200,32 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <col width="50%">
 <col width="50%">
 </colgroup>
-<thead><tr>
+<thead><tr class="header">
 <th>Purpose</th>
 <th>Function call</th>
 </tr></thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td>Create <strong>SQLite</strong> database connection</td>
 <td><code>dbc &lt;- nodbi::src_sqlite(dbname = "name_of_my_database", collection = "name_of_my_collection")</code></td>
 </tr>
-<tr>
+<tr class="even">
 <td>Create <strong>MongoDB</strong> database connection</td>
 <td><code>dbc &lt;- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")</code></td>
 </tr>
-<tr>
+<tr class="odd">
 <td>Create <strong>PostgreSQL</strong> database connection</td>
 <td><code>dbc &lt;- nodbi::src_postgres(dbname = "name_of_my_database"); dbc[["collection"]] &lt;- "name_of_my_collection"</code></td>
 </tr>
-<tr>
+<tr class="even">
 <td>Create <strong>DuckDB</strong> database connection</td>
 <td><code>dbc &lt;- nodbi::src_duckdb(dbdir = "name_of_my_database", collection = "name_of_my_collection")</code></td>
 </tr>
-<tr>
+<tr class="odd">
 <td>Use connection with <code>ctrdata</code> functions</td>
 <td><code>ctrdata::{ctrLoadQueryIntoDb, dbQueryHistory, dbFindIdsUniqueTrials, dbFindFields, dbGetFieldsIntoDf}(con = dbc, ...)</code></td>
 </tr>
-<tr>
+<tr class="even">
 <td>Use connection with <code>nodbi</code> functions</td>
 <td>e.g., <code>nodbi::docdb_query(src = dbc, key = dbc$collection, ...)</code>
 </td>
@@ -571,7 +571,7 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span></span>
 <span><span class="co"># display full json tree</span></span>
 <span><span class="co"># remotes::install_github("hrbrmstr/jsonview")</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="http://github.com/hrbrmstr/jsonview" class="external-link">jsonview</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/pkg/jsonview/man/json_tree_view.html" class="external-link">json_tree_view</a></span><span class="op">(</span><span class="va">oneTrial</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va">jsonview</span><span class="op">)</span><span class="op">)</span> <span class="fu">json_tree_view</span><span class="op">(</span><span class="va">oneTrial</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># total size of object</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/object.size.html" class="external-link">object.size</a></span><span class="op">(</span><span class="va">allData</span><span class="op">)</span>, <span class="st">"MB"</span><span class="op">)</span></span>
@@ -1016,7 +1016,7 @@ Example JSON representation in SQLite
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>
