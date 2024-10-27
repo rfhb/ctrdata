@@ -203,6 +203,9 @@ dfTrials2Long <- function(df) {
   # remove double rows from duplicating e above
   out <- unique(out)
 
+  # reset row numbering
+  row.names(dfi) <- NULL
+
   # inform
   message("\nTotal ", nrow(out), " rows, ",
           length(unique(out[["name"]])),

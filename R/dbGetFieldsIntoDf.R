@@ -191,6 +191,9 @@ dbGetFieldsIntoDf <- function(fields = "",
   dfi <- addMetaData(
     dfi[order(dfi[["_id"]]), , drop = FALSE],
     con = con)
+  
+  # reset row numbering
+  row.names(dfi) <- NULL
 
   # return
   if (any("tibble" == .packages())) return(tibble::as_tibble(dfi))
