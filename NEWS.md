@@ -1,7 +1,11 @@
 # ctrdata 1.19.4.9000
 
+## Improvements
 - Refactored `dbFindFields()` for speed and efficiency
 - Accomodated newly available expert search in `CTGOV2`
+
+## Bug fix
+- Correct `CTGOV2` endpoint for document downloads
 
 # ctrdata 1.19.4
 

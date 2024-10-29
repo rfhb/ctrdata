@@ -26,23 +26,23 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     only.count,
     con, verbose,
     queryupdateterm) {
-
+  
   ## create empty temporary directory
   tempDir <- ctrTempDir(verbose)
-
+  
   ## ctgov api ---------------------------------------------------------
-
+  
   ctgovEndpoints <- c(
     # pageSize 0 delivers default 10
     "https://www.clinicaltrials.gov/api/v2/studies?format=json&countTotal=true&pageSize=1&%s",
     "https://www.clinicaltrials.gov/api/v2/studies?format=json&countTotal=true&pageSize=1000&%s",
-    "https://storage.googleapis.com/ctgov2-large-docs/%s/%s/%s",
+    "https://cdn.clinicaltrials.gov/large-docs/%s/%s/%s",
     "https://www.clinicaltrials.gov/api/int/studies/%s/history/%s",
     "https://www.clinicaltrials.gov/api/int/studies/%s?history=true"
   )
-
+  
   ## process parameters ------------------------------------------------
-
+  
   ## check
   if (!is.character(ctgov2history)) {
     ctgov2history <- deparse(ctgov2history)
@@ -52,26 +52,26 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     message("Parameter 'ctgov2history' invalid, ignored: ", ctgov2history)
     ctgov2history <- "FALSE"
   }
-
+  
   # append if to update
   queryterm <- paste0(queryterm, "&", queryupdateterm)
-
+  
   # mangle
   queryterm <- gsub("&$", "", queryterm)
   queryterm <- gsub("%20", " ", queryterm) # for URLencode
-
+  
   # translation to ClinicalTrials.gov REST API 2
   # https://clinicaltrials.gov/data-about-studies/learn-about-api
-
+  
   # distance=50 seems to be added in webinterface
   # even though not requested by user, removing it
   queryterm <- sub("([&]?)distance=50(&|$)", "&", queryterm)
-
+  
   # slice by "&"
   queryterm <- strsplit(queryterm, split = "&")[[1]]
   queryterm <- queryterm[!grepl("^https://", queryterm)]
   queryterm <- queryterm[queryterm != ""]
-
+  
   # location - special cases:
   # - if state and city identical, remove state
   queryValues <- sub("(.+)=(.*)", "\\2", queryterm)
@@ -91,7 +91,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
          "search URL.",
          call. = FALSE
        )
-
+  
   # url to api
   apiParams <- list(
     #
@@ -169,7 +169,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
       "out" = character()
     )
   )
-
+  
   # iterate over API terms
   for (t in seq_along(queryterm)) {
     for (a in seq_along(apiParams)) {
@@ -189,7 +189,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
       } # extract
     } # apiParams
   } # queryterm
-
+  
   # concatenate
   queryterm <- sapply(apiParams, "[[", "out")
   queryterm <- queryterm[seq_along(queryterm)[sapply(queryterm, length) > 0L]]
@@ -198,22 +198,22 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     if (nchar(nm)) queryterm[i] <- paste0(nm, "=", queryterm[i])
   }
   queryterm <- paste0(queryterm, collapse = "&")
-
+  
   # adjust remaining quirks
   queryterm <- sub("^&", "", queryterm)
   queryterm <- gsub("&&+", "&", queryterm)
   queryterm <- gsub("RANGE\\[,", "RANGE[MIN,", queryterm)
   queryterm <- stringi::stri_replace_all_regex(queryterm, "(RANGE\\[.+?),\\]", "$1,MAX]")
-
+  
   ## process query -----------------------------------------------------
-
+  
   # corresponds to count
   url <- sprintf(ctgovEndpoints[1], queryterm)
   if (verbose) message("API call: ", url)
   message("* Checking trials using CTGOV REST API 2.0...", appendLF = FALSE)
   url <- utils::URLencode(url)
   counts <- httr::GET(url)
-
+  
   # early exit
   if (httr::status_code(counts) != 200L) {
     warning("Could not be retrieved, check 'queryterm' and / or 'register'. ",
@@ -221,62 +221,62 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     message("API call: ", url)
     return(emptyReturn)
   }
-
+  
   # extract total number of trial records
   counts <- suppressMessages(httr::content(counts, as = "text"))
   resultsEuNumTrials <- as.numeric(jqr::jq(counts, " .totalCount "))
   message("\b\b\b, found ", resultsEuNumTrials, " trials")
-
+  
   # early exit
   if (!resultsEuNumTrials) {
     warning("No trials found, check 'queryterm' and 'register'")
     return(emptyReturn)
   }
-
+  
   # only count?
   if (only.count) {
-
+    
     # return
     return(list(n = resultsEuNumTrials,
                 success = NULL,
                 failed = NULL))
   }
-
+  
   # exit if too many records
   if (resultsEuNumTrials > 10000L) {
     stop("These are ", resultsEuNumTrials, " (more than 10,000) trials, this may be ",
          "unintended. Downloading more than 10,000 trials may not be supported ",
          "by the register; consider correcting or splitting queries")
   }
-
+  
   ## download json -----------------------------------------------------
-
+  
   # corresponds to trials
-
+  
   url <- sprintf(ctgovEndpoints[2], queryterm)
   url <- utils::URLencode(url)
-
+  
   pageNextToken <- ""
   pageNumber <- 1L
   importDateTime <- strftime(Sys.time(), "%Y-%m-%d %H:%M:%S")
-
+  
   message("(1/3) Downloading in ",
           ceiling(resultsEuNumTrials / 1000L),
           " batch(es) (max. 1000 trials each; estimate: ",
           format(resultsEuNumTrials * 0.1, digits = 2), " Mb total)")
-
+  
   # register
   on.exit(unlink(dir(tempDir, "ctgov_trials_[0-9]+.ndjson", full.names = TRUE)), add = TRUE)
-
+  
   # download and compile into ndjson
   while (TRUE) {
-
+    
     # page url
     urlToDownload <- ifelse(
       pageNextToken != "",
       paste0(url, "&pageToken=", pageNextToken),
       url)
-
+    
     # for download
     fTrialJson <- file.path(
       tempDir, paste0(
@@ -284,17 +284,17 @@ ctrLoadQueryIntoDbCtgov2 <- function(
         # include query in file name for potential re-download
         sapply(url, digest::digest, algo = "crc32"),
         "_", pageNumber, ".json"))
-
+    
     # do download
     tmp <- ctrMultiDownload(
       urlToDownload,
       fTrialJson,
       verbose = verbose)
-
+    
     # inform user
     if (tmp[1, "status_code", drop = TRUE] != 200L) message(
       "Download not successful for ", urlToDownload)
-
+    
     # convert to ndjson
     message("(2/3) Converting to NDJSON...\r", appendLF = FALSE)
     fTrialsNdjson <- file.path(tempDir, paste0("ctgov_trials_", pageNumber, ".ndjson"))
@@ -312,7 +312,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
       flags = jqr::jq_flags(pretty = FALSE),
       out = fTrialsNdjson
     )
-
+    
     # continue or exit
     pageNumber <- pageNumber + 1L
     # "nextPageToken":"NF0g5JGBlPMuwQY"} at end of json
@@ -322,23 +322,23 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     close(fTrialJsonCon)
     pageNextToken <- sub('.*"nextPageToken":"(.+?)".*', "\\1", pageNextTokenTest)
     if (pageNextToken == pageNextTokenTest) break
-
+    
   }
-
+  
   ## database import -----------------------------------------------------
-
+  
   message("\n(3/3) Importing records into database...")
-
+  
   # dbCTRLoadJSONFiles operates on pattern = ".+_trials_.*.ndjson"
   imported <- dbCTRLoadJSONFiles(dir = tempDir, con = con, verbose = verbose)
   message("")
-
+  
   ## download history---------------------------------------------------
-
+  
   if (ctgov2history != "FALSE") {
-
+    
     message("* Checking and processing historic versions... ")
-
+    
     ## 1 - get history overview for every trial
     urls <- as.vector(vapply(
       X = imported$success,
@@ -346,7 +346,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
       FUN.VALUE = character(1L),
       USE.NAMES = FALSE
     ))
-
+    
     files <- as.vector(vapply(
       X = urls,
       FUN = function(i) {file.path(
@@ -358,13 +358,13 @@ ctrLoadQueryIntoDbCtgov2 <- function(
       FUN.VALUE = character(1L),
       USE.NAMES = FALSE
     ))
-
+    
     tmp <- ctrMultiDownload(
       urls = urls,
       destfiles = files,
       verbose = verbose
     )
-
+    
     # process
     historyDf <- lapply(
       X = files,
@@ -390,7 +390,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     #
     # shift version number from API 0... to ctrdata 1...
     historyDf[["version_number"]] <- historyDf[["version_number"]] + 1L
-
+    
     ## 2 - for specific ctgov2history
     ##     values, adjust historyDf
     #
@@ -431,9 +431,9 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     # construct urls
     urls <- sprintf(
       ctgovEndpoints[4], historyDf[["_id"]], historyDf[["version_number"]] - 1L)
-
+    
     ## 3 - handle historic versions
-
+    
     # calculate file paths
     files <- as.vector(vapply(
       X = urls,
@@ -447,47 +447,47 @@ ctrLoadQueryIntoDbCtgov2 <- function(
       FUN.VALUE = character(1L),
       USE.NAMES = FALSE
     ))
-
+    
     # download
     message(
       "- Downloading ", length(files), " historic versions (estimate: ",
       format(length(files) * 2.7 / 71, digits = 2), " MB total)...")
-
+    
     tmp <- ctrMultiDownload(
       urls = urls,
       destfiles = files,
       verbose = verbose
     )
-
+    
     ## 4 - merge versions by trial
     message("- Merging trial versions ", appendLF = FALSE)
-
+    
     # register deletion
     on.exit(unlink(file.path(tempDir, paste0(
       "h_m_", unique(historyDf[["_id"]]), ".json")
     )), add = TRUE)
-
+    
     # do version merge
     res <- sapply(
       X = unique(historyDf[["_id"]]),
       FUN = function(i) {
-
+        
         out <- file.path(tempDir, paste0("h_m_", i, ".json"))
         unlink(out)
-
+        
         # put historic versions into top level array
         cat(paste0('{"_id": "', i, '", "history": ['), file = out, append = TRUE)
-
+        
         fToMerge <- tmp[["destfile"]][grepl(i, tmp[["destfile"]])]
-
+        
         # write history study versions into array
         for (ii in seq_along(fToMerge)) {
-
+          
           if (!file.exists(fToMerge[ii]) || !file.size(fToMerge[ii]) > 10L) next
           if (ii > 1L) cat(",", file = out, append = TRUE)
-
+          
           vn <- as.numeric(jqr::jq(file(fToMerge[ii]), ' .studyVersion')) + 1L
-
+          
           # add information about version
           cat(
             jqr::jq(file(fToMerge[ii]), paste0(
@@ -500,46 +500,46 @@ ctrLoadQueryIntoDbCtgov2 <- function(
             file = out,
             append = TRUE
           )
-
+          
         }
-
+        
         cat(']}\n', file = out, append = TRUE)
         message(". ", appendLF = FALSE)
-
+        
       },
       USE.NAMES = FALSE
     )
-
+    
     ## 5 - import
     message("\n- Updating trial records ", appendLF = FALSE)
     resAll <- NULL
     for (f in dir(path = tempDir, pattern = "^h_m_.*.json$", full.names = TRUE)) {
-
+      
       message(". ", appendLF = FALSE)
       res <- nodbi::docdb_update(src = con, key = con$collection, query = "{}", value = f)
       resAll <- c(resAll, res)
-
+      
     }
     message("\nUpdated ", sum(resAll), " trial(s) with historic versions")
-
+    
   }
-
+  
   ## download files-----------------------------------------------------
-
+  
   if (!is.null(documents.path)) {
-
+    
     # user info
     message(
       "* Checking for documents...\n",
       "- Getting links to documents")
-
+    
     # temporary file for trial ids and file names
     downloadsNdjson <- file.path(tempDir, "ctgov2_downloads.ndjson")
     unlink(downloadsNdjson)
     downloadsNdjsonCon <- file(downloadsNdjson, open = "at")
     on.exit(try(close(downloadsNdjsonCon), silent = TRUE), add = TRUE)
     on.exit(unlink(downloadsNdjson), add = TRUE)
-
+    
     # extract trial ids and file name and save in temporary file
     for (ndjsonFile in dir(
       path = tempDir, pattern = "^.+_trials_.*.ndjson$", full.names = TRUE)) {
@@ -553,46 +553,46 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     }
     close(downloadsNdjsonCon)
     message("\r", appendLF = FALSE)
-
+    
     # get document trial id and file name
     dlFiles <- jsonlite::stream_in(
       file(downloadsNdjson), pagesize = 5000L, verbose = FALSE)
-
+    
     # check if any documents
     if (!nrow(dlFiles)) {
       message("= No documents identified for downloading.")
     } else {
-
+      
       # calculate urls
       dlFiles$url <- sprintf(
         ctgovEndpoints[3],
         sub(".*([0-9]{2})$", "\\1", dlFiles$`_id`),
         dlFiles$`_id`,
         dlFiles$filename)
-
+      
       # do download
       ctrDocsDownload(
         dlFiles[, c("_id", "filename", "url"), drop = FALSE],
         documents.path,
         documents.regexp,
         verbose = verbose)
-
+      
     } # if (!nrow(dlFiles))
-
+    
   } # !is.null(documents.path)
-
+  
   ## delete for any re-downloads
   unlink(dir(
     path = tempDir, pattern = "ctgov_trials_[0-9]+.ndjson",
     full.names = TRUE))
-
+  
   ## inform user -----------------------------------------------------
-
+  
   # find out number of trials imported into database
   message("= Imported or updated ", imported$n, " trial(s)")
-
+  
   # return
   return(imported)
-
+  
 }
 # end ctrLoadQueryIntoDbCtogv2023
