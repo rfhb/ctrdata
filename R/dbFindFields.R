@@ -119,7 +119,6 @@ dbFindFields <- function(namepart = ".*",
     # adding queries for records with results data, sequence important
     queries <- c(
       queries,
-      # "EUCTR" = '{"$and":[{"ctrname": "EUCTR"}, {"trialInformation.fullTitle": {"$regex": ".+"}}]}',
       "EUCTR" = '{"trialInformation.fullTitle": {"$regex": ".+"}}',
       "CTGOV" = '{"clinical_results.outcome_list.outcome.description": {"$regex": ".+"}}',
       "CTGOV2" = '{"resultsSection.outcomeMeasuresModule.outcomeMeasures.type": {"$regex": ".+"}}')

@@ -111,7 +111,7 @@ ctrLoadQueryIntoDbCtis <- function(
   }
 
   # inform user
-  message("\b\b\b, found ", overview$totalRecords, " trials ", appendLF = FALSE)
+  message("\b\b\b, found ", overview$totalRecords, " trials ")
 
   # only count?
   if (only.count) {
@@ -223,7 +223,8 @@ ctrLoadQueryIntoDbCtis <- function(
   tmp <- ctrMultiDownload(
     urls, fPartIPartsIIJson(idsTrials),
     multiplex = FALSE, verbose = verbose)
-
+  message(" ")
+  
   # convert partI and partsII details into ndjson file(s),
   # each approximately 10MB for nRecords = 100L
   nRecords <- 100L
@@ -256,8 +257,6 @@ ctrLoadQueryIntoDbCtis <- function(
 
   }
 
-  message("\r", appendLF = FALSE)
-
   ## database import -----------------------------------------------------
 
   message("(3/4) Importing records into database...")
@@ -273,7 +272,7 @@ ctrLoadQueryIntoDbCtis <- function(
     src = con, key = con$collection, query = "{}",
     value = fTrialsNdjson)
 
-  message("")
+  message(" ")
 
   ## api_3: documents -------------------------------------------------------
 
@@ -308,7 +307,8 @@ ctrLoadQueryIntoDbCtis <- function(
 
       unlink(f)
     }
-
+    message(" ")
+    
     # 3 - documents download
     dlFiles <- jsonlite::stream_in(
       file(downloadsNdjson), pagesize = 5000L, verbose = FALSE)
@@ -317,7 +317,7 @@ ctrLoadQueryIntoDbCtis <- function(
     # check if any documents
     if (!nrow(dlFiles)) {
 
-      message("\n= No documents identified for downloading.")
+      message("= No documents identified for downloading.")
 
     } else {
 

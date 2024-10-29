@@ -69,7 +69,7 @@
 <li>ClinicalTrials.gov (“CTGOV2”, see <a href="#workflow-ctgov-example">example</a>)</li>
 <li>ISRCTN Registry (<a href="https://www.isrctn.com/" class="external-link uri">https://www.isrctn.com/</a>)</li>
 </ul>
-<p>The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2024-10-06 for version 1.19.4.9000.</p>
+<p>The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2024-10-29 for version 1.19.4.9000.</p>
 <div class="section level2">
 <h2 id="main-features">Main features<a class="anchor" aria-label="anchor" href="#main-features"></a>
 </h2>
@@ -78,7 +78,7 @@
 <li>Downloaded trial information is transformed and stored in a collection of a document-centric database, for fast and offline access. Information from different registers can be accumulated in a single collection. Uses <code>DuckDB</code>, <code>PostgreSQL</code>, <code>RSQLite</code> or <code>MongoDB</code>, via R package <code>nodbi</code>: see section <a href="#databases-that-can-be-used-with-ctrdata">Databases</a> below. Easily re-run any previous query in a collection to retrieve and update trial records.</li>
 <li>For analyses, convenience functions in <code>ctrdata</code> allow find synonyms of an active substance, to identify unique (de-duplicated) trial records across all registers, to merge and recode fields as well as to easily access deeply-nested fields. Analysis can be done with <code>R</code> (see <a href="https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html">vignette</a>) or other systems, using the <code>JSON</code>-<a href="#trial-records-in-databases">structured information in the database</a>.</li>
 </ul>
-<p>Remember to respect the registers’ terms and conditions (see <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>). Please cite this package in any publication as follows: “Ralf Herold (2024). <em>ctrdata: Retrieve and Analyze Clinical Trials in Public Registers.</em> R package version 1.19.2, <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a>”.</p>
+<p>Remember to respect the registers’ terms and conditions (see <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>). Please cite this package in any publication as follows: “Ralf Herold (2024). <em>ctrdata: Retrieve and Analyze Clinical Trials in Public Registers.</em> R package version 1.19.4, <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a>”.</p>
 <!--
 &#10;
 ``` r
@@ -124,7 +124,7 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <p>This is optional; it works with all registers supported by <code>ctrdata</code> but is recommended for CTIS because the URL in the web browser does not reflect the parameters the user specified for querying this register.</p>
 <p>In the web browser, install the <a href="https://www.tampermonkey.net/" class="external-link">Tampermonkey browser extension</a>, click on “New user script” and then on “Tools”, enter into “Import from URL” this URL: <a href="https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js" class="external-link"><code>https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js</code></a> and then click on “Install”.</p>
 <p>The browser extension can be disabled and enabled by the user. When enabled, the URLs to all user’s queries in the registers are automatically copied to the clipboard and can be pasted into the <code>queryterm = ...</code> parameter of function <a href="https://rfhb.github.io/ctrdata/reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a>.</p>
-<p>With this script, search URLs such as <a href="https://euclinicaltrials.eu/ctis-public/search#searchCriteria=" class="external-link uri">https://euclinicaltrials.eu/ctis-public/search#searchCriteria=</a>{“status”:[3,4]} open the search results in <code>CTIS</code> (other registers provide this functionality themselves).</p>
+<p>Additionally, this script retrieves results for <code>CTIS</code> search URLs such as <a href="https://euclinicaltrials.eu/ctis-public/search#searchCriteria=%7B%22status%22:%5B3,4%5D%7D" class="external-link">https://euclinicaltrials.eu/ctis-public/search#searchCriteria={“status”:[3,4]}</a>.</p>
 </div>
 </div>
 <div class="section level2">
@@ -134,8 +134,8 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <p>The functions are listed in the approximate order of use in a user’s workflow (in bold, main functions). See also the <a href="https://rfhb.github.io/ctrdata/reference/index.html">package documentation overview</a>.</p>
 <table class="table">
 <colgroup>
-<col width="50%">
-<col width="50%">
+<col width="21%">
+<col width="78%">
 </colgroup>
 <thead><tr class="header">
 <th>Function name</th>
@@ -197,8 +197,8 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <p>Besides ctrdata functions below, any such a connection object can equally be used with functions of other packages, such as <code>nodbi</code> (last row in table) or, in case of MongoDB as database backend, <code>mongolite</code> (see vignettes).</p>
 <table class="table">
 <colgroup>
-<col width="50%">
-<col width="50%">
+<col width="26%">
+<col width="73%">
 </colgroup>
 <thead><tr class="header">
 <th>Purpose</th>
@@ -323,30 +323,32 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span>  euctrresults <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># * Found search query from EUCTR: query=cancer&amp;age=under-18&amp;phase=phase-one&amp;status=completed</span></span>
+<span><span class="co"># * Found search query from EUCTR: </span></span>
+<span><span class="co">#   query=cancer&amp;age=under-18&amp;phase=phase-one&amp;status=completed</span></span>
 <span><span class="co"># * Checking trials in EUCTR...</span></span>
-<span><span class="co"># Retrieved overview, multiple records of 104 trial(s) from 6 page(s) to be downloaded (estimate: 10 MB)</span></span>
+<span><span class="co"># Retrieved overview, multiple records of 110 trial(s) from 6 page(s) to be downloaded (estimate: 10 MB)</span></span>
 <span><span class="co"># (1/3) Downloading trials...</span></span>
 <span><span class="co"># Note: register server cannot compress data, transfer takes longer (estimate: 100 s)</span></span>
-<span><span class="co"># Download status: 6 done; 0 in progress. Total size: 8.91 Mb (100%)... done!             </span></span>
+<span><span class="co"># Download status: 6 done; 0 in progress. Total size: 9.83 Mb (100%)... done!             </span></span>
 <span><span class="co"># (2/3) Converting to NDJSON (estimate: 2 s)...</span></span>
 <span><span class="co"># (3/3) Importing records into database...</span></span>
-<span><span class="co"># = Imported or updated 418 records on 104 trial(s)</span></span>
-<span><span class="co"># * Checking results if available from EUCTR for 104 trials: </span></span>
+<span><span class="co"># = Imported or updated 452 records on 110 trial(s)</span></span>
+<span><span class="co"># * Checking results if available from EUCTR for 110 trials: </span></span>
 <span><span class="co"># (1/4) Downloading results...</span></span>
-<span><span class="co"># Download status: 104 done; 0 in progress. Total size: 59.72 Mb (100%)... done!             </span></span>
-<span><span class="co"># Download status: 28 done; 0 in progress. Total size: 112.71 Kb (100%)... done!             </span></span>
+<span><span class="co"># Download status: 110 done; 0 in progress. Total size: 62.38 Mb (100%)... done!             </span></span>
+<span><span class="co"># Download status: 29 done; 0 in progress. Total size: 116.74 Kb (100%)... done!             </span></span>
+<span><span class="co"># Download status: 29 done; 0 in progress. Total size: 116.74 Kb (100%)... done!             </span></span>
 <span><span class="co"># - extracting results (. = data, F = file[s] and data, x = none):</span></span>
-<span><span class="co"># F . F F . F . . F . . . F F . . . . . . . . . . . . . . . . . . F . . . . . . F . .</span></span>
-<span><span class="co">#  . F . . . . . . . . . F . . . . F . . . . . F . . . . . . . . . . . </span></span>
-<span><span class="co"># (2/4) Converting to NDJSON (estimate: 8 s)...</span></span>
+<span><span class="co"># F . F F . F . . F . . . F F . . . . . . . . . . . . . . . . . F . . . F . . .</span></span>
+<span><span class="co"># . . . F . . . F . . . . . . . . . . F . . . . . . . . . . F . . . . . . . . . . . . </span></span>
+<span><span class="co"># (2/4) Converting to NDJSON (estimate: 9 s)...</span></span>
 <span><span class="co"># (3/4) Importing results into database (may take some time)...</span></span>
 <span><span class="co"># (4/4) Results history: not retrieved (euctrresultshistory = FALSE)</span></span>
-<span><span class="co"># = Imported or updated results for 76 trials</span></span>
+<span><span class="co"># = Imported or updated results for 81 trials</span></span>
 <span><span class="co"># No history found in expected format.</span></span>
 <span><span class="co"># Updated history ("meta-info" in "some_collection_name")</span></span>
 <span><span class="co"># $n</span></span>
-<span><span class="co"># [1] 418</span></span></code></pre></div>
+<span><span class="co"># [1] 452</span></span></code></pre></div>
 <p>Under the hood, EUCTR plain text and XML files from EUCTR, CTGOV, ISRCTN are converted using Javascript via <code>V8</code> in <code>R</code> into <code>NDJSON</code>, which is imported into the database collection.</p>
 <ul>
 <li>Analyse</li>
@@ -367,11 +369,11 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span><span class="co"># one record, for example for several EU Member States or in several registers:</span></span>
 <span><span class="va">uniqueids</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></span>
 <span><span class="co"># Searching for duplicate trials... </span></span>
-<span><span class="co"># - Getting all trial identifiers (may take some time), 418 found in collection</span></span>
+<span><span class="co"># - Getting all trial identifiers (may take some time), 452 found in collection</span></span>
 <span><span class="co"># - Finding duplicates among registers' and sponsor ids...</span></span>
-<span><span class="co"># - 314 EUCTR _id were not preferred EU Member State record for 104 trials</span></span>
-<span><span class="co"># - Keeping 104 / 0 / 0 / 0 / 0 records from EUCTR / CTGOV / CTGOV2 / ISRCTN / CTIS</span></span>
-<span><span class="co"># = Returning keys (_id) of 104 records in collection "some_collection_name"</span></span>
+<span><span class="co"># - 342 EUCTR _id were not preferred EU Member State record for 110 trials</span></span>
+<span><span class="co"># - Keeping 110 / 0 / 0 / 0 / 0 records from EUCTR / CTGOV / CTGOV2 / ISRCTN / CTIS</span></span>
+<span><span class="co"># = Returning keys (_id) of 110 records in collection "some_collection_name"</span></span>
 <span></span>
 <span><span class="co"># Keep only unique / de-duplicated records:</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span></span>
@@ -387,15 +389,15 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span>    <span class="va">a7_trial_is_part_of_a_paediatric_investigation_plan</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#                           a7_trial_is_part_of_a_paediatric_investigation_plan</span></span>
+<span><span class="co">#      a7_trial_is_part_of_a_paediatric_investigation_plan</span></span>
 <span><span class="co"># p_end_of_trial_status      FALSE TRUE</span></span>
-<span><span class="co">#   Completed                   50   23</span></span>
+<span><span class="co">#   Completed                   52   24</span></span>
 <span><span class="co">#   GB - no longer in EU/EEA     1    1</span></span>
-<span><span class="co">#   Ongoing                      4    3</span></span>
-<span><span class="co">#   Prematurely Ended            2    3</span></span>
-<span><span class="co">#   Restarted                    0    1</span></span>
+<span><span class="co">#   Ongoing                      0    2</span></span>
+<span><span class="co">#   Prematurely Ended            3    4</span></span>
+<span><span class="co">#   Restarted                    0    2</span></span>
 <span><span class="co">#   Temporarily Halted           1    1</span></span>
-<span><span class="co">#   Trial now transitioned       1    0</span></span></code></pre></div>
+<span><span class="co">#   Trial now transitioned       3    2</span></span></code></pre></div>
 <div id="workflow-ctgov-example">
 
 </div>
@@ -440,13 +442,14 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span>    <span class="st">"cond=neuroblastoma&amp;rslt=With&amp;recrs=e&amp;age=0&amp;intr=Drug"</span><span class="op">)</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># * Appears specific for CTGOV Classic website</span></span>
-<span><span class="co"># Since 2024-06-25, the classic CTGOV servers are no longer available. Package </span></span>
-<span><span class="co"># ctrdata has translated the classic CTGOV query URL from this call of function </span></span>
-<span><span class="co"># ctrLoadQueryIntoDb(queryterm = ...) into a query URL that works with the current </span></span>
-<span><span class="co"># CTGOV2. This is printed below and is also part of the return value of this function,</span></span>
-<span><span class="co"># ctrLoadQueryIntoDb(...)$url. This URL can be used with ctrdata functions. Note that</span></span>
-<span><span class="co"># the fields and data schema of trials differ between CTGOV and CTGOV2. </span></span>
+<span><span class="co"># Appears specific for CTGOV Classic website</span></span>
+<span><span class="co"># Since 2024-06-25, the classic CTGOV servers are no longer available. </span></span>
+<span><span class="co"># Package ctrdata has translated the classic CTGOV query URL from this call </span></span>
+<span><span class="co"># of function ctrLoadQueryIntoDb(queryterm = ...) into a query URL that works </span></span>
+<span><span class="co"># with the current CTGOV2. This is printed below and is also part of the return </span></span>
+<span><span class="co"># value of this function, ctrLoadQueryIntoDb(...)$url. This URL can be used </span></span>
+<span><span class="co"># with ctrdata functions. Note that the fields and data schema of trials differ </span></span>
+<span><span class="co"># between CTGOV and CTGOV2. </span></span>
 <span><span class="co"># </span></span>
 <span><span class="co"># Replace this URL:</span></span>
 <span><span class="co"># </span></span>
@@ -456,17 +459,18 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span><span class="co"># </span></span>
 <span><span class="co"># https://clinicaltrials.gov/search?cond=neuroblastoma&amp;intr=Drug&amp;aggFilters=ages:child,results:with,status:com</span></span>
 <span><span class="co"># </span></span>
-<span><span class="co"># * Found search query from CTGOV2: cond=neuroblastoma&amp;intr=Drug&amp;aggFilters=ages:child,results:with,status:com</span></span>
-<span><span class="co"># * Checking trials using CTGOV REST API 2.0, found 62 trials</span></span>
-<span><span class="co"># (1/3) Downloading in 1 batch(es) (max. 1000 trials each; estimate: 6.2 MB total)</span></span>
-<span><span class="co"># Download status: 1 done; 0 in progress. Total size: 7.12 Mb (937%)... done!             </span></span>
+<span><span class="co"># * Found search query from CTGOV2: cond=neuroblastoma&amp;intr=Drug&amp;aggFilters=</span></span>
+<span><span class="co"># ages:child,results:with,status:com</span></span>
+<span><span class="co"># * Checking trials using CTGOV REST API 2.0, found 65 trials</span></span>
+<span><span class="co"># (1/3) Downloading in 1 batch(es) (max. 1000 trials each; estimate: 6.5 Mb total)</span></span>
+<span><span class="co"># Download status: 1 done; 0 in progress. Total size: 7.30 Mb (914%)... done!             </span></span>
 <span><span class="co"># (2/3) Converting to NDJSON...</span></span>
 <span><span class="co"># (3/3) Importing records into database...</span></span>
 <span><span class="co"># JSON file #: 1 / 1                               </span></span>
-<span><span class="co"># = Imported or updated 62 trial(s)</span></span>
+<span><span class="co"># = Imported or updated 65 trial(s)</span></span>
 <span><span class="co"># Updated history ("meta-info" in "some_collection_name")</span></span>
 <span><span class="co"># $n</span></span>
-<span><span class="co"># [1] 62</span></span></code></pre></div>
+<span><span class="co"># [1] 65</span></span></code></pre></div>
 <ul>
 <li>Add records from a third register (ISRCTN) into the same collection</li>
 </ul>
@@ -479,15 +483,15 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span><span class="op">)</span></span>
 <span><span class="co"># * Found search query from ISRCTN: q=neuroblastoma</span></span>
 <span><span class="co"># * Checking trials in ISRCTN...</span></span>
-<span><span class="co"># Retrieved overview, records of 9 trial(s) are to be downloaded (estimate: 0.2 MB)</span></span>
+<span><span class="co"># Retrieved overview, records of 12 trial(s) are to be downloaded (estimate: 0.2 MB)</span></span>
 <span><span class="co"># (1/3) Downloading trial file... </span></span>
-<span><span class="co"># Download status: 1 done; 0 in progress. Total size: 93.28 Kb (100%)... done!             </span></span>
-<span><span class="co"># (2/3) Converting to NDJSON (estimate: 0.05 s)...</span></span>
+<span><span class="co"># Download status: 1 done; 0 in progress. Total size: 156.09 Kb (100%)... done!             </span></span>
+<span><span class="co"># (2/3) Converting to NDJSON (estimate: 0.07 s)...</span></span>
 <span><span class="co"># (3/3) Importing records into database...</span></span>
-<span><span class="co"># = Imported or updated 9 trial(s)                 </span></span>
+<span><span class="co"># = Imported or updated 12 trial(s)                </span></span>
 <span><span class="co"># Updated history ("meta-info" in "some_collection_name")</span></span>
 <span><span class="co"># $n</span></span>
-<span><span class="co"># [1] 9</span></span></code></pre></div>
+<span><span class="co"># [1] 12</span></span></code></pre></div>
 <div id="workflow-ctis-example">
 
 </div>
@@ -503,7 +507,7 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span>  only.count <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># $n</span></span>
-<span><span class="co"># [1] 6045</span></span>
+<span><span class="co"># [1] 6970</span></span>
 <span></span>
 <span><span class="co"># Retrieve trials from another register:</span></span>
 <span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
@@ -515,67 +519,80 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span><span class="co"># * Found search query from CTIS: searchCriteria={"containAny":"neonate, neonates"}</span></span>
 <span><span class="co"># * Checking trials in CTIS...</span></span>
 <span><span class="co"># (2/4) Downloading and processing trial data... (estimate: 1 Mb)</span></span>
-<span><span class="co"># Download status: 16 done; 0 in progress. Total size: 660.02 Kb (100%)... done!             </span></span>
+<span><span class="co"># Download status: 20 done; 0 in progress. Total size: 818.42 Kb (100%)... done!             </span></span>
 <span><span class="co"># (3/4) Importing records into database...</span></span>
 <span><span class="co"># (4/4) Updating with additional data: .           </span></span>
-<span><span class="co"># = Imported 16, updated 16 record(s) on 16 trial(s)</span></span>
-<span><span class="co"># No history found in expected format.</span></span>
+<span><span class="co"># = Imported 20, updated 20 record(s) on 20 trial(s)</span></span>
 <span><span class="co"># Updated history ("meta-info" in "some_collection_name")</span></span>
 <span><span class="co"># $n</span></span>
-<span><span class="co"># [1] 16</span></span>
+<span><span class="co"># [1] 20</span></span>
 <span></span>
 <span><span class="va">allFields</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbFindFields.html">dbFindFields</a></span><span class="op">(</span><span class="st">".*"</span>, <span class="va">db</span>, sample <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co"># Finding fields in database collection (sampling 5 trial records per register)  .  .  .  .  .  .  .  . </span></span>
 <span><span class="co"># Field names cached for this session.</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">allFields</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"CTIS"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">allFields</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co"># [1] 572</span></span>
+<span><span class="co"># [1] 628</span></span>
 <span></span>
 <span><span class="co"># root field names in CTIS</span></span>
 <span><span class="va">ctisFields</span> <span class="op">&lt;-</span> <span class="va">allFields</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"CTIS"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">allFields</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">ctisFields</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"[.]"</span>, <span class="va">ctisFields</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="co">#                    CTIS                    CTIS                    CTIS                    CTIS </span></span>
-<span><span class="co">#              "ageGroup" "authorizedApplication"    "correctiveMeasures"              "ctNumber" </span></span>
-<span><span class="co">#                    CTIS                    CTIS                    CTIS                    CTIS </span></span>
-<span><span class="co">#    "ctPublicStatusCode"               "ctrname"              "ctStatus"          "decisionDate" </span></span>
-<span><span class="co">#                    CTIS                    CTIS                    CTIS                    CTIS </span></span>
-<span><span class="co">#   "decisionDateOverall"             "documents"                "events"                "gender" </span></span>
-<span><span class="co">#                    CTIS                    CTIS                    CTIS                    CTIS </span></span>
-<span><span class="co"># "lastPublicationUpdate"           "lastUpdated"           "publishDate"    "record_last_import" </span></span>
-<span><span class="co">#                    CTIS                    CTIS                    CTIS                    CTIS </span></span>
-<span><span class="co">#               "results"  "resultsFirstReceived"            "shortTitle"           "sponsorType" </span></span>
-<span><span class="co">#                    CTIS                    CTIS                    CTIS                    CTIS </span></span>
-<span><span class="co">#      "therapeuticAreas"   "totalNumberEnrolled"        "trialCountries"            "trialPhase" </span></span>
-<span><span class="co">#                    CTIS                    CTIS </span></span>
-<span><span class="co">#           "trialRegion"       "trialRegionCode" </span></span>
+<span><span class="co">#                   CTIS                    CTIS                    CTIS </span></span>
+<span><span class="co">#             "ageGroup"     "ageRangeSecondary" "authorizedApplication" </span></span>
+<span><span class="co">#                   CTIS                    CTIS                    CTIS </span></span>
+<span><span class="co">#   "correctiveMeasures"              "ctNumber"    "ctPublicStatusCode" </span></span>
+<span><span class="co">#                   CTIS                    CTIS                    CTIS </span></span>
+<span><span class="co">#              "ctrname"              "ctStatus"          "decisionDate" </span></span>
+<span><span class="co">#                   CTIS                    CTIS                    CTIS </span></span>
+<span><span class="co">#  "decisionDateOverall"             "documents"                "events" </span></span>
+<span><span class="co">#                   CTIS                    CTIS                    CTIS </span></span>
+<span><span class="co">#               "gender" "lastPublicationUpdate"           "lastUpdated" </span></span>
+<span><span class="co">#                   CTIS                    CTIS                    CTIS </span></span>
+<span><span class="co">#          "publishDate"    "record_last_import"               "results" </span></span>
+<span><span class="co">#                   CTIS                    CTIS                    CTIS </span></span>
+<span><span class="co"># "resultsFirstReceived"            "shortTitle"           "sponsorType" </span></span>
+<span><span class="co">#                   CTIS                    CTIS                    CTIS </span></span>
+<span><span class="co">#          "startDateEU"      "therapeuticAreas"   "totalNumberEnrolled" </span></span>
+<span><span class="co">#                   CTIS                    CTIS                    CTIS</span></span>
+<span><span class="co">#       "trialCountries"            "trialPhase"           "trialRegion"</span></span>
+<span><span class="co">#                   CTIS </span></span>
+<span><span class="co">#      "trialRegionCode" </span></span>
 <span></span>
 <span><span class="co"># use an alternative to dbGetFieldsIntoDf()</span></span>
-<span><span class="va">allData</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/docdb_query.html" class="external-link">docdb_query</a></span><span class="op">(</span>src <span class="op">=</span> <span class="va">db</span>, key <span class="op">=</span> <span class="va">db</span><span class="op">$</span><span class="va">collection</span>, query <span class="op">=</span> <span class="st">'{"ctrname":"CTIS"}'</span><span class="op">)</span></span>
+<span><span class="va">allData</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/docdb_query.html" class="external-link">docdb_query</a></span><span class="op">(</span></span>
+<span>  src <span class="op">=</span> <span class="va">db</span>, </span>
+<span>  key <span class="op">=</span> <span class="va">db</span><span class="op">$</span><span class="va">collection</span>, </span>
+<span>  query <span class="op">=</span> <span class="st">'{"ctrname":"CTIS"}'</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># names of top-level data items</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">allData</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#  [1] "_id"                   "ageGroup"              "authorizedApplication" "correctiveMeasures"   </span></span>
-<span><span class="co">#  [5] "ctNumber"              "ctPublicStatusCode"    "ctrname"               "ctStatus"             </span></span>
-<span><span class="co">#  [9] "decisionDate"          "decisionDateOverall"   "documents"             "events"               </span></span>
-<span><span class="co"># [13] "gender"                "lastPublicationUpdate" "lastUpdated"           "publishDate"          </span></span>
-<span><span class="co"># [17] "record_last_import"    "results"               "resultsFirstReceived"  "shortTitle"           </span></span>
-<span><span class="co"># [21] "sponsorType"           "startDateEU"           "therapeuticAreas"      "totalNumberEnrolled"  </span></span>
-<span><span class="co"># [25] "trialCountries"        "trialPhase"            "trialRegion"           "trialRegionCode"</span></span>
+<span><span class="co">#  [1] "_id"                   "ageGroup"              "ageRangeSecondary"</span></span>
+<span><span class="co">#  [4] "authorizedApplication" "correctiveMeasures"    "ctNumber"</span></span>
+<span><span class="co">#  [7] "ctPublicStatusCode"    "ctrname"               "ctStatus"</span></span>
+<span><span class="co"># [10] "decisionDate"          "decisionDateOverall"   "documents"</span></span>
+<span><span class="co"># [13] "events"                "gender"                "lastPublicationUpdate"</span></span>
+<span><span class="co"># [16] "lastUpdated"           "publishDate"           "record_last_import"</span></span>
+<span><span class="co"># [19] "results"               "resultsFirstReceived"  "shortTitle"</span></span>
+<span><span class="co"># [22] "sponsorType"           "startDateEU"           "therapeuticAreas"</span></span>
+<span><span class="co"># [25] "totalNumberEnrolled"   "trialCountries"        "trialPhase"</span></span>
+<span><span class="co"># [28] "trialRegion"           "trialRegionCode"</span></span>
 <span></span>
 <span><span class="co"># use yet another alternative</span></span>
 <span><span class="va">oneTrial</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html" class="external-link">dbGetQuery</a></span><span class="op">(</span></span>
 <span>  <span class="va">db</span><span class="op">$</span><span class="va">con</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
 <span>    <span class="st">"SELECT json(json) FROM "</span>, <span class="va">db</span><span class="op">$</span><span class="va">collection</span>, </span>
 <span>    <span class="st">" WHERE jsonb_extract(json, '$.ctrname') == 'CTIS'"</span>,</span>
-<span>    <span class="st">" LIMIT 1;"</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="st">" LIMIT 1;"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># display full json tree</span></span>
 <span><span class="co"># remotes::install_github("hrbrmstr/jsonview")</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va">jsonview</span><span class="op">)</span><span class="op">)</span> <span class="fu">json_tree_view</span><span class="op">(</span><span class="va">oneTrial</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="http://github.com/hrbrmstr/jsonview" class="external-link">jsonview</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/pkg/jsonview/man/json_tree_view.html" class="external-link">json_tree_view</a></span><span class="op">(</span><span class="va">oneTrial</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># total size of object</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/object.size.html" class="external-link">object.size</a></span><span class="op">(</span><span class="va">allData</span><span class="op">)</span>, <span class="st">"MB"</span><span class="op">)</span></span>
-<span><span class="co"># [1] "3.2 Mb"</span></span></code></pre></div>
+<span><span class="co"># [1] "4 Mb"</span></span></code></pre></div>
 <div id="workflow-cross-trial-example">
 
 </div>
@@ -593,7 +610,7 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span></span>
 <span><span class="co"># get names of all fields / variables in the collaction</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="reference/dbFindFields.html">dbFindFields</a></span><span class="op">(</span><span class="st">".*"</span>, con <span class="op">=</span> <span class="va">db</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co"># [1] 1667</span></span>
+<span><span class="co"># [1] 1657</span></span>
 <span></span>
 <span><span class="fu"><a href="reference/dbFindFields.html">dbFindFields</a></span><span class="op">(</span><span class="st">"start.*date|date.*decision"</span>, con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></span>
 <span><span class="co"># Using cache of fields.</span></span>
@@ -628,10 +645,15 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span><span class="va">result</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/compound.html" class="external-link">%&lt;&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">`_id`</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rowwise.html" class="external-link">rowwise</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/c_across.html" class="external-link">c_across</a></span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">matches</a></span><span class="op">(</span><span class="st">"(date.*decision)|(start.*date)"</span><span class="op">)</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>isrctnStatus <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">if_else</a></span><span class="op">(</span><span class="va">trialDesign.overallEndDate</span> <span class="op">&lt;</span> <span class="va">record_last_import</span>, <span class="st">"Ongoing"</span>, <span class="st">"Completed"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>p_end_of_trial_status <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">if_else</a></span><span class="op">(</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">p_end_of_trial_status</span><span class="op">)</span> <span class="op">&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">n_date_of_competent_authority_decision</span><span class="op">)</span>, <span class="st">"Ongoing"</span>, <span class="va">p_end_of_trial_status</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>    start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/c_across.html" class="external-link">c_across</a></span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">matches</a></span><span class="op">(</span><span class="st">"(date.*decision)|(start.*date)"</span><span class="op">)</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>    ctStatus <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">ctStatus</span><span class="op">)</span>,</span>
+<span>    isrctnStatus <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">if_else</a></span><span class="op">(</span></span>
+<span>      <span class="va">trialDesign.overallEndDate</span> <span class="op">&lt;</span> <span class="va">record_last_import</span>, </span>
+<span>      <span class="st">"Ongoing"</span>, <span class="st">"Completed"</span><span class="op">)</span>,</span>
+<span>    p_end_of_trial_status <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">if_else</a></span><span class="op">(</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">p_end_of_trial_status</span><span class="op">)</span> <span class="op">&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">n_date_of_competent_authority_decision</span><span class="op">)</span>, </span>
+<span>      <span class="st">"Ongoing"</span>, <span class="va">p_end_of_trial_status</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">ungroup</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># - Merge fields from different registers with re-leveling</span></span>
@@ -645,15 +667,16 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span>    <span class="st">"Not yet recruiting"</span>, <span class="st">"ACTIVE_NOT_RECRUITING"</span>,</span>
 <span>    <span class="co"># CTIS</span></span>
 <span>    <span class="st">"Ongoing, recruiting"</span>, <span class="st">"Ongoing, recruitment ended"</span>, </span>
-<span>    <span class="st">"Ongoing, not yet recruiting"</span>, <span class="st">"Authorised, not started"</span></span>
+<span>    <span class="st">"Ongoing, not yet recruiting"</span>, <span class="st">"Authorised, not started"</span>,</span>
+<span>    <span class="st">"2"</span>, <span class="st">"3"</span>, <span class="st">"4"</span>, <span class="st">"5"</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  <span class="st">"completed"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>    <span class="st">"Completed"</span>, <span class="st">"COMPLETED"</span>, <span class="st">"Ended"</span><span class="op">)</span>,</span>
+<span>    <span class="st">"Completed"</span>, <span class="st">"COMPLETED"</span>, <span class="st">"Ended"</span>, <span class="st">"8"</span><span class="op">)</span>,</span>
 <span>  <span class="st">"other"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>    <span class="st">"GB - no longer in EU/EEA"</span>, <span class="st">"Trial now transitioned"</span>,</span>
 <span>    <span class="st">"Withdrawn"</span>, <span class="st">"Suspended"</span>, <span class="st">"No longer available"</span>, </span>
 <span>    <span class="st">"Terminated"</span>, <span class="st">"TERMINATED"</span>, <span class="st">"Prematurely Ended"</span>, </span>
-<span>    <span class="st">"Under evaluation"</span><span class="op">)</span></span>
+<span>    <span class="st">"Under evaluation"</span>, <span class="st">"6"</span>, <span class="st">"7"</span>, <span class="st">"9"</span>, <span class="st">"10"</span>, <span class="st">"11"</span>, <span class="st">"12"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">result</span><span class="op">[[</span><span class="st">"state"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dfMergeVariablesRelevel.html">dfMergeVariablesRelevel</a></span><span class="op">(</span></span>
 <span>  df <span class="op">=</span> <span class="va">result</span>, </span>
@@ -777,7 +800,7 @@ Neuroblastoma trials
 <span><span class="co"># Created directory ./files-euctr/</span></span>
 <span><span class="co"># Downloading trials...</span></span>
 <span><span class="co"># [...]</span></span>
-<span><span class="co"># = Imported or updated results for 121 trials</span></span>
+<span><span class="co"># = Imported or updated results for 125 trials</span></span>
 <span><span class="co"># = documents saved in './files-euctr'</span></span>
 <span></span>
 <span></span>
@@ -789,38 +812,15 @@ Neuroblastoma trials
 <span>  documents.path <span class="op">=</span> <span class="st">"./files-ctgov/"</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># * Appears specific for CTGOV Classic website</span></span>
-<span><span class="co"># Since 2024-06-25, the classic CTGOV servers are no longer available. Package </span></span>
-<span><span class="co"># ctrdata has translated the classic CTGOV query URL from this call of function </span></span>
-<span><span class="co"># ctrLoadQueryIntoDb(queryterm = ...) into a query URL that works with the current </span></span>
-<span><span class="co"># CTGOV2. This is printed below and is also part of the return value of this function,</span></span>
-<span><span class="co"># ctrLoadQueryIntoDb(...)$url. This URL can be used with ctrdata functions. Note that </span></span>
-<span><span class="co"># the fields and data schema of trials differ between CTGOV and CTGOV2. </span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># Replace this URL:</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># https://classic.clinicaltrials.gov/ct2/results?cond=Neuroblastoma&amp;type=Intr&amp;recrs=</span></span>
-<span><span class="co"># &amp;phase=1&amp;u_prot=Y&amp;u_sap=Y&amp;u_icf=Y</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># with this URL:</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># https://clinicaltrials.gov/search?cond=Neuroblastoma&amp;aggFilters=phase:2,</span></span>
-<span><span class="co"># docs:prot sap icf,studyType:int,status:com</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># * Found search query from CTGOV2: cond=Neuroblastoma&amp;aggFilters=phase:2,</span></span>
-<span><span class="co"># docs:prot sap icf,studyType:int,status:com</span></span>
-<span><span class="co"># * Checking trials using CTGOV REST API 2.0, found 26 trials</span></span>
-<span><span class="co"># [...]</span></span>
 <span><span class="co"># * Checking for documents...</span></span>
 <span><span class="co"># - Getting links to documents</span></span>
 <span><span class="co"># - Downloading documents into 'documents.path' = ./files-ctgov/</span></span>
-<span><span class="co"># - Created directory ./files-ctgov</span></span>
 <span><span class="co"># - Creating subfolder for each trial</span></span>
-<span><span class="co"># - Applying 'documents.regexp' to 34 documents</span></span>
-<span><span class="co"># - Downloading 34 missing documents</span></span>
-<span><span class="co"># Download status: 34 done; 0 in progress. Total size: 69.68 Mb (100%)... done!             </span></span>
-<span><span class="co"># = Newly saved 34 document(s) for 26 trial(s); 0 document(s) for 0 trial(s) </span></span>
-<span><span class="co"># already existed in ./files-ctgov</span></span>
+<span><span class="co"># - Applying 'documents.regexp' to 35 missing documents</span></span>
+<span><span class="co"># - Downloading 35 missing documents</span></span>
+<span><span class="co"># Download status: 35 done; 0 in progress. Total size: 76.67 Mb (100%)... done!             </span></span>
+<span><span class="co"># = Newly saved 35 document(s) for 27 trial(s); 0 of such document(s) for 0 </span></span>
+<span><span class="co"># trial(s) already existed in ./files-ctgov</span></span>
 <span></span>
 <span></span>
 <span><span class="co">### CTGOV2 files are downloaded, using the default of documents.regexp</span></span>
@@ -829,18 +829,16 @@ Neuroblastoma trials
 <span>  documents.path <span class="op">=</span> <span class="st">"./files-ctgov2/"</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># * Found search query from CTGOV2: cond=neuroblastoma&amp;aggFilters=phase:1,results:with</span></span>
-<span><span class="co"># [...]</span></span>
 <span><span class="co"># * Checking for documents...</span></span>
 <span><span class="co"># - Getting links to documents</span></span>
 <span><span class="co"># - Downloading documents into 'documents.path' = ./files-ctgov2/</span></span>
 <span><span class="co"># - Created directory ./files-ctgov2</span></span>
 <span><span class="co"># - Creating subfolder for each trial</span></span>
-<span><span class="co"># - Applying 'documents.regexp' to 35 documents</span></span>
-<span><span class="co"># - Downloading 35 missing documents</span></span>
-<span><span class="co"># Download status: 35 done; 0 in progress. Total size: 76.64 Mb (100%)... done!             </span></span>
-<span><span class="co"># = Newly saved 35 document(s) for 22 trial(s); 0 document(s) for 0 trial(s) already </span></span>
-<span><span class="co"># existed in ./files-ctgov2</span></span>
+<span><span class="co"># - Applying 'documents.regexp' to 37 missing documents</span></span>
+<span><span class="co"># - Downloading 37 missing documents</span></span>
+<span><span class="co"># Download status: 37 done; 0 in progress. Total size: 77.70 Mb (100%)... done!             </span></span>
+<span><span class="co"># = Newly saved 37 document(s) for 23 trial(s); 0 of such document(s) for 0 </span></span>
+<span><span class="co"># trial(s) already existed in .\files-ctgov2</span></span>
 <span></span>
 <span></span>
 <span><span class="co">### ISRCTN files are downloaded, using the default of documents.regexp</span></span>
@@ -856,42 +854,40 @@ Neuroblastoma trials
 <span><span class="co"># - Downloading documents into 'documents.path' = ./files-isrctn/</span></span>
 <span><span class="co"># - Created directory ./files-isrctn</span></span>
 <span><span class="co"># - Creating subfolder for each trial</span></span>
-<span><span class="co"># - Applying 'documents.regexp' to 41 documents</span></span>
-<span><span class="co"># - Downloading 26 missing documents</span></span>
-<span><span class="co"># Download status: 26 done; 0 in progress. Total size: 12.83 Mb (100%)... done!             </span></span>
-<span><span class="co"># Download status: 2 done; 0 in progress. Total size: 6.56 Kb (100%)... done!             </span></span>
-<span><span class="co"># = Newly saved 24 document(s) for 12 trial(s); 0 document(s) for 0 trial(s) </span></span>
-<span><span class="co"># already existed in ./files-isrctn</span></span>
+<span><span class="co"># - Applying 'documents.regexp' to 47 missing documents</span></span>
+<span><span class="co"># - Downloading 29 missing documents</span></span>
+<span><span class="co"># Download status: 29 done; 0 in progress. Total size: 13.11 Mb (100%)... done!             </span></span>
+<span><span class="co"># Download status: 4 done; 0 in progress. Total size: 13.12 Kb (100%)... done!             </span></span>
+<span><span class="co"># Download status: 4 done; 0 in progress. Total size: 13.12 Kb (100%)... done!             </span></span>
+<span><span class="co"># = Newly saved 25 document(s) for 14 trial(s); 0 of such document(s) for 0 trial(s) already existed in ./files-isrctn</span></span>
 <span></span>
 <span></span>
 <span><span class="co">### CTIS files are downloaded, using the default of documents.regexp</span></span>
 <span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
 <span>  queryterm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
 <span>    <span class="st">'https://euclinicaltrials.eu/ctis-public/search#'</span>, </span>
-<span>    <span class="st">'searchCriteria={"containAll":"","containAny":"cancer","containNot":""}'</span><span class="op">)</span>,</span>
+<span>    <span class="st">'searchCriteria={"containAny":"cancer"}'</span><span class="op">)</span>,</span>
 <span>  documents.path <span class="op">=</span> <span class="st">"./files-ctis/"</span>,</span>
+<span>  documents.regexp <span class="op">=</span> <span class="st">"sap"</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># * Found search query from CTIS: searchCriteria={"containAll":"","containAny":"cancer","containNot":""}</span></span>
+<span><span class="co"># * Found search query from CTIS: searchCriteria={"containAny":"cancer"}</span></span>
 <span><span class="co"># * Checking trials in CTIS...</span></span>
-<span><span class="co"># (1/4) Downloading trial list(s), found 1109 trials</span></span>
+<span><span class="co"># (1/4) Downloading trial list(s), found 1872 trials</span></span>
 <span><span class="co"># (2/4) Downloading and processing trial data... (estimate: 100 Mb)</span></span>
+<span><span class="co"># Download status: 1872 done; 0 in progress. Total size: 167.15 Mb (100%)... done!             </span></span>
 <span><span class="co"># (3/4) Importing records into database...</span></span>
 <span><span class="co"># (4/4) Updating with additional data: .             </span></span>
-<span><span class="co"># * Checking for documents...</span></span>
+<span><span class="co"># * Checking for documents: . . . . . . . . . . . . . . . . . . . </span></span>
 <span><span class="co"># - Downloading documents into 'documents.path' = ./files-ctis/</span></span>
-<span><span class="co"># - Created directory ./files-ctis</span></span>
 <span><span class="co"># - Creating subfolder for each trial</span></span>
-<span><span class="co"># - Applying 'documents.regexp' to 20 documents</span></span>
-<span><span class="co"># - Downloading 13 missing documents</span></span>
-<span><span class="co"># Download status: 13 done; 0 in progress. Total size: 8.07 Mb (100%)... done!             </span></span>
-<span><span class="co"># = Newly saved 13 document(s) for 4 trial(s); 0 document(s) for 0 trial(s) </span></span>
-<span><span class="co"># already existed in ./files-ctis</span></span>
-<span><span class="co"># = Imported 1109, updated 1109 record(s) on 1109 trial(s)</span></span>
-<span><span class="co"># No history found in expected format.</span></span>
-<span><span class="co"># Updated history ("meta-info" in "some_collection_name")</span></span>
-<span><span class="co"># $n</span></span>
-<span><span class="co"># [1] 1109</span></span></code></pre></div>
+<span><span class="co"># - Applying 'documents.regexp' to 16782 missing documents</span></span>
+<span><span class="co"># - Downloading 4 missing documents</span></span>
+<span><span class="co"># Download status: 4 done; 0 in progress. Total size: 5.62 Kb (100%)... done!             </span></span>
+<span><span class="co"># Redirecting to CDN...</span></span>
+<span><span class="co"># Download status: 4 done; 0 in progress. Total size: 3.08 Mb (100%)... done!             </span></span>
+<span><span class="co"># = Newly saved 4 document(s) for 3 trial(s); 0 of such document(s) for 0 </span></span>
+<span><span class="co"># trial(s) already existed in ./files-ctis</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="tests">Tests<a class="anchor" aria-label="anchor" href="#tests"></a>
@@ -968,10 +964,18 @@ Neuroblastoma trials
 <h2 id="trial-records-in-databases">Trial records in databases<a class="anchor" aria-label="anchor" href="#trial-records-in-databases"></a>
 </h2>
 <div class="section level3">
-<h3 id="postgresql">PostgreSQL<a class="anchor" aria-label="anchor" href="#postgresql"></a>
+<h3 id="sqlite">SQLite<a class="anchor" aria-label="anchor" href="#sqlite"></a>
 </h3>
-<figure><img src="https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_json_postgresql.jpg" alt="Example JSON representation in PostgreSQL"><figcaption aria-hidden="true">
-Example JSON representation in PostgreSQL
+<p>It is recommended to use nodbi &gt;= 0.10.7.9000 which builds on RSQLite &gt;= 2.3.7.9014 (releases expected in November 2024), because these versions enable file-based imports and thus are much faster:</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># install latest development versions:</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"ropensci/nodbi"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># requires compilation, for which under MS Windows</span></span>
+<span><span class="co"># automatically additional R Tools are installed:</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"r-dbi/RSQLite"</span><span class="op">)</span></span></code></pre></div>
+<figure><img src="https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_json_sqlite.jpg" alt="Example JSON representation in SQLite"><figcaption aria-hidden="true">
+Example JSON representation in SQLite
 </figcaption></figure>
 </div>
 <div class="section level3">
@@ -982,10 +986,10 @@ Example JSON representation in MongoDB
 </figcaption></figure>
 </div>
 <div class="section level3">
-<h3 id="sqlite">SQLite<a class="anchor" aria-label="anchor" href="#sqlite"></a>
+<h3 id="postgresql">PostgreSQL<a class="anchor" aria-label="anchor" href="#postgresql"></a>
 </h3>
-<figure><img src="https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_json_sqlite.jpg" alt="Example JSON representation in SQLite"><figcaption aria-hidden="true">
-Example JSON representation in SQLite
+<figure><img src="https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_json_postgresql.jpg" alt="Example JSON representation in PostgreSQL"><figcaption aria-hidden="true">
+Example JSON representation in PostgreSQL
 </figcaption></figure>
 </div>
 </div>
