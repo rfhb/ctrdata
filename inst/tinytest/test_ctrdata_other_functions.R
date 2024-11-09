@@ -456,7 +456,6 @@ dF <- data.frame(
 dL <- suppressMessages(
   dfTrials2Long(dF)
 )
-
 dL2 <- dfTrials2Long(
   df = dF[, 4:1]
 )
@@ -503,3 +502,4 @@ expect_true(
 
 # cleanup
 rm(dF, dL)
+

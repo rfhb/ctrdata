@@ -1308,15 +1308,12 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
 
         # step into line by line mode
         fdLines <- file(tempFiles[tempFile], open = "rt", blocking = TRUE)
-        fLineOut <- tempfile(pattern = "tmpOneLine", tmpdir = dir, fileext = ".ndjson")
-        on.exit(unlink(fLineOut), add = TRUE)
         while (TRUE) {
           tmpOneLine <- readLines(con = fdLines, n = 1L, warn = FALSE)
           if (length(tmpOneLine) == 0L || !nchar(tmpOneLine)) break
           id <- sub(".*\"_id\":[ ]*\"(.*?)\".*", "\\1", tmpOneLine)
-          cat(tmpOneLine, file = fLineOut)
           tmp <- suppressWarnings(suppressMessages(nodbi::docdb_create(
-            src = con, key = con$collection, value = fLineOut)))
+            src = con, key = con$collection, value = paste0("[", tmpOneLine, "]"))))
           nImported <- nImported + tmp
           if (tmp) idSuccess <- c(idSuccess, id)
           if (!tmp) idFailed <- c(idFailed, id)
