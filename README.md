@@ -34,7 +34,7 @@ conduct of trials, their availability for patients and to facilitate
 using their detailed results for research and meta-analyses. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2024-10-29 for version 1.19.4.9000.
+package. This README was reviewed on 2024-11-09 for version 1.19.4.9000.
 
 ## Main features
 
@@ -146,19 +146,19 @@ The functions are listed in the approximate order of use in a user’s
 workflow (in bold, main functions). See also the [package documentation
 overview](https://rfhb.github.io/ctrdata/reference/index.html).
 
-| Function name                      | Function purpose                                                                                                               |
-|------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
-| `ctrOpenSearchPagesInBrowser()`    | Open search pages of registers or execute search in web browser                                                                |
-| `ctrFindActiveSubstanceSynonyms()` | Find synonyms and alternative names for an active substance                                                                    |
-| `ctrGetQueryUrl()`                 | Import from clipboard the URL of a search in one of the registers                                                              |
-| `ctrLoadQueryIntoDb()`             | **Retrieve (download) or update, and annotate, information on trials from a register and store in a collection in a database** |
-| `dbQueryHistory()`                 | Show the history of queries that were downloaded into the collection                                                           |
-| `dbFindIdsUniqueTrials()`          | **Get the identifiers of de-duplicated trials in the collection**                                                              |
-| `dbFindFields()`                   | Find names of variables (fields) in the collection                                                                             |
-| `dbGetFieldsIntoDf()`              | **Create a data frame (or tibble) from trial records in the database with the specified fields**                               |
-| `dfTrials2Long()`                  | Transform the data.frame from `dbGetFieldsIntoDf()` into a long name-value data.frame, including deeply nested fields          |
-| `dfName2Value()`                   | From a long name-value data.frame, extract values for variables (fields) of interest (e.g., endpoints)                         |
-| `dfMergeVariablesRelevel()`        | Merge variables into a new variable, optionally map values to a new set of levels                                              |
+| Function name | Function purpose |
+|----|----|
+| `ctrOpenSearchPagesInBrowser()` | Open search pages of registers or execute search in web browser |
+| `ctrFindActiveSubstanceSynonyms()` | Find synonyms and alternative names for an active substance |
+| `ctrGetQueryUrl()` | Import from clipboard the URL of a search in one of the registers |
+| `ctrLoadQueryIntoDb()` | **Retrieve (download) or update, and annotate, information on trials from a register and store in a collection in a database** |
+| `dbQueryHistory()` | Show the history of queries that were downloaded into the collection |
+| `dbFindIdsUniqueTrials()` | **Get the identifiers of de-duplicated trials in the collection** |
+| `dbFindFields()` | Find names of variables (fields) in the collection |
+| `dbGetFieldsIntoDf()` | **Create a data frame (or tibble) from trial records in the database with the specified fields** |
+| `dfTrials2Long()` | Transform the data.frame from `dbGetFieldsIntoDf()` into a long name-value data.frame, including deeply nested fields |
+| `dfName2Value()` | From a long name-value data.frame, extract values for variables (fields) of interest (e.g., endpoints) |
+| `dfMergeVariablesRelevel()` | Merge variables into a new variable, optionally map values to a new set of levels |
 
 ## Databases for use with `ctrdata`
 
@@ -175,14 +175,14 @@ equally be used with functions of other packages, such as `nodbi` (last
 row in table) or, in case of MongoDB as database backend, `mongolite`
 (see vignettes).
 
-| Purpose                                   | Function call                                                                                                           |
-|-------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
-| Create **SQLite** database connection     | `dbc <- nodbi::src_sqlite(dbname = "name_of_my_database", collection = "name_of_my_collection")`                        |
-| Create **MongoDB** database connection    | `dbc <- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")`                             |
-| Create **PostgreSQL** database connection | `dbc <- nodbi::src_postgres(dbname = "name_of_my_database"); dbc[["collection"]] <- "name_of_my_collection"`            |
-| Create **DuckDB** database connection     | `dbc <- nodbi::src_duckdb(dbdir = "name_of_my_database", collection = "name_of_my_collection")`                         |
-| Use connection with `ctrdata` functions   | `ctrdata::{ctrLoadQueryIntoDb, dbQueryHistory, dbFindIdsUniqueTrials, dbFindFields, dbGetFieldsIntoDf}(con = dbc, ...)` |
-| Use connection with `nodbi` functions     | e.g., `nodbi::docdb_query(src = dbc, key = dbc$collection, ...)`                                                        |
+| Purpose | Function call |
+|----|----|
+| Create **SQLite** database connection | `dbc <- nodbi::src_sqlite(dbname = "name_of_my_database", collection = "name_of_my_collection")` |
+| Create **MongoDB** database connection | `dbc <- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")` |
+| Create **PostgreSQL** database connection | `dbc <- nodbi::src_postgres(dbname = "name_of_my_database"); dbc[["collection"]] <- "name_of_my_collection"` |
+| Create **DuckDB** database connection | `dbc <- nodbi::src_duckdb(dbdir = "name_of_my_database", collection = "name_of_my_collection")` |
+| Use connection with `ctrdata` functions | `ctrdata::{ctrLoadQueryIntoDb, dbQueryHistory, dbFindIdsUniqueTrials, dbFindFields, dbGetFieldsIntoDf}(con = dbc, ...)` |
+| Use connection with `nodbi` functions | e.g., `nodbi::docdb_query(src = dbc, key = dbc$collection, ...)` |
 
 ## Data model of `ctrdata`
 

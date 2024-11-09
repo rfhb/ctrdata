@@ -864,7 +864,6 @@ ctrMultiDownload <- function(
       destfiles = list(downloadValue$destfile[toDo]),
       resume = canR,
       progress = progress,
-      timeout = Inf,
       multiplex = multiplex,
       c(getOption("httr_config")[["options"]],
         accept_encoding = "gzip,deflate,zstd,br")
@@ -1053,20 +1052,13 @@ ctrDocsDownload <- function(
   documents.path <- normalizePath(documents.path, mustWork = TRUE)
   if (createdDir) message("- Created directory ", documents.path)
 
-  # documents download
-  message("- Creating subfolder for each trial")
-
   # add destination file directory path
   dlFiles$filepath <- file.path(documents.path, dlFiles$`_id`)
 
-  # create subdirectories by trial
-  invisible(sapply(
-    unique(dlFiles$filepath), function(i) if (!dir.exists(i))
-      dir.create(i, showWarnings = FALSE, recursive = TRUE)
-  ))
+  # create full filepathname
+  dlFiles$filepathname <- file.path(dlFiles$filepath, dlFiles$filename)
 
   # check if destination document exists
-  dlFiles$filepathname <- file.path(dlFiles$filepath, dlFiles$filename)
   dlFiles$fileexists <- file.exists(dlFiles$filepathname) &
     file.size(dlFiles$filepathname) > 20L
 
@@ -1074,6 +1066,12 @@ ctrDocsDownload <- function(
   if (is.null(documents.regexp)) {
 
     message("- Creating empty document placeholders (max. ", nrow(dlFiles), ")")
+
+    # create subdirectories by trial
+    invisible(sapply(
+      unique(dlFiles$filepath), function(i) if (!dir.exists(i))
+        dir.create(i, showWarnings = FALSE, recursive = TRUE)
+    ))
 
     # create empty files
     tmp <-
@@ -1096,10 +1094,33 @@ ctrDocsDownload <- function(
       grepl(documents.regexp, dlFiles$filename, ignore.case = TRUE), ,
       drop = FALSE]
 
+    # documents download
+    message("- Creating subfolder for each trial")
+
+    # create subdirectories by trial
+    invisible(sapply(
+      unique(dlFiles$filepath), function(i) if (!dir.exists(i))
+        dir.create(i, showWarnings = FALSE, recursive = TRUE)
+    ))
+
     # inform
     message("- Downloading ",
             nrow(dlFiles[!dlFiles$fileexists, , drop = FALSE]),
-            " missing documents")
+            " missing documents " , appendLF = FALSE)
+
+    # check and remove duplicate filepathname rows
+    duplicateFiles <- duplicated(tolower(dlFiles$filepathname))
+    if (any(duplicateFiles)) {
+      message(
+        "(excluding ", sum(duplicateFiles), " ",
+        "files with duplicate names for saving, e.g. ",
+        paste0(
+          sample(dlFiles$filepathname[duplicateFiles], 3),
+          collapse = ", "),
+        ") ", appendLF = FALSE)
+      dlFiles <- dlFiles[!duplicateFiles, , drop = FALSE]
+    }
+    message()
 
     # do download
     tmp <- ctrMultiDownload(

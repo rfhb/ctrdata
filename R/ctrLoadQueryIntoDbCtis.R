@@ -223,8 +223,7 @@ ctrLoadQueryIntoDbCtis <- function(
   tmp <- ctrMultiDownload(
     urls, fPartIPartsIIJson(idsTrials),
     multiplex = FALSE, verbose = verbose)
-  message(" ")
-  
+
   # convert partI and partsII details into ndjson file(s),
   # each approximately 10MB for nRecords = 100L
   nRecords <- 100L
@@ -308,7 +307,7 @@ ctrLoadQueryIntoDbCtis <- function(
       unlink(f)
     }
     message(" ")
-    
+
     # 3 - documents download
     dlFiles <- jsonlite::stream_in(
       file(downloadsNdjson), pagesize = 5000L, verbose = FALSE)
@@ -346,8 +345,9 @@ ctrLoadQueryIntoDbCtis <- function(
       # add destination file name
       dlFiles$filename <- paste0(
         dlFiles$prefix, " - ",
-        dlFiles$title, ".",
-        dlFiles$fileType)
+        dlFiles$title, " - ",
+        dlFiles$associatedEntityId,
+        ".", dlFiles$fileType)
 
       # calculate url
       dlFiles$url <- sprintf(
@@ -355,9 +355,7 @@ ctrLoadQueryIntoDbCtis <- function(
 
       # do download
       ctrDocsDownload(
-        dlFiles[
-          !duplicated(dlFiles$filename),
-          c("_id", "filename", "url"), drop = FALSE],
+        dlFiles[, c("_id", "filename", "url"), drop = FALSE],
         documents.path,
         documents.regexp,
         multiplex = FALSE,

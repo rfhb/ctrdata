@@ -89,7 +89,9 @@ are available only with results.}
 to select documents by filename, if saving documents is requested
 (see \code{documents.path}).
 If set to \code{NULL}, empty placeholder files are saved for
-every document that could be saved. Default is
+every document that could be saved, which is useful to get an overview
+on the number and types of documents available for download.
+Default is
 \code{"prot|sample|statist|sap_|p1ar|p2ars|icf|ctalett|lay|^[0-9]+ "}.
 Used with "CTGOV2", "ISRCTN" and "CTIS" (for "EUCTR", all documents
 are downloaded since they are few and have non-canonical filenames.)}

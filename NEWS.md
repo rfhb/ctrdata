@@ -2,7 +2,9 @@
 
 ## Improvements
 - Refactored `dbFindFields()` for speed and efficiency
-- Accomodated newly available expert search in `CTGOV2`
+- Accommodated newly available expert search in `CTGOV2`
+- Adapted to `curl` v6 having renamed the timeout parameter
+- Documents download (create only folders for trials with documents, exclude duplicate files)
 
 ## Bug fix
 - Correct `CTGOV2` endpoint for document downloads
