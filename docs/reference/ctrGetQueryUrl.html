@@ -9,7 +9,7 @@ from the clipboard, into which the URL of a register search was copied."><meta n
 
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.19.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.19.5.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -111,23 +111,19 @@ The data frame (or tibble) can be passed as such as parameter
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> https://clinicaltrials.gov/search?start=2015-01-01_2016-01-01&amp;term=AREA[MaximumAge] RANGE[0 days, 28 days]&amp;intr=Drugs, Investigational&amp;aggFilters=phase:3,studyType:int</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from CTGOV2: start=2015-01-01_2016-01-01&amp;term=AREA[MaximumAge] RANGE[0 days, 28 days]&amp;intr=Drugs, Investigational&amp;aggFilters=phase:3,studyType:int</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 2</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   `query-term`                                                  `query-register`</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> start=2015-01-01_2016-01-01&amp;term=AREA[MaximumAge] RANGE[0 da… CTGOV2          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                              query-term</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 start=2015-01-01_2016-01-01&amp;term=AREA[MaximumAge] RANGE[0 days, 28 days]&amp;intr=Drugs, Investigational&amp;aggFilters=phase:3,studyType:int</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   query-register</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1         CTGOV2</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">ctrGetQueryUrl</span><span class="op">(</span><span class="st">"https://www.clinicaltrialsregister.eu/ctr-search/trial/2007-000371-42/results"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from EUCTR: query=2007-000371-42</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 2</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   `query-term`         `query-register`</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> query=2007-000371-42 EUCTR           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             query-term query-register</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 query=2007-000371-42          EUCTR</span>
 <span class="r-in"><span><span class="fu">ctrGetQueryUrl</span><span class="op">(</span><span class="st">"https://euclinicaltrials.eu/ctis-public/view/2022-500041-24-00"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from CTIS: searchCriteria={"number":"2022-500041-24-00"}</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 2</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   `query-term`                                        `query-register`</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> <span style="color: #949494;">"</span>searchCriteria={\"number\":\"2022-500041-24-00\"}<span style="color: #949494;">"</span> CTIS            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                      query-term query-register</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 searchCriteria={"number":"2022-500041-24-00"}           CTIS</span>
 <span class="r-in"><span><span class="fu">ctrGetQueryUrl</span><span class="op">(</span><span class="st">"https://classic.clinicaltrials.gov/ct2/show/NCT01492673?cond=neuroblastoma"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Appears specific for CTGOV Classic website</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Note: 'url' shows a single trial (and is returned by the function) but also had search parameters: If interested in search results, click 'Return to List' in browser and use this as 'url'.</span>
@@ -141,10 +137,8 @@ The data frame (or tibble) can be passed as such as parameter
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> https://clinicaltrials.gov/search?term=NCT01492673</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from CTGOV2: term=NCT01492673</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 2</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   `query-term`     `query-register`</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> term=NCT01492673 CTGOV2          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         query-term query-register</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 term=NCT01492673         CTGOV2</span>
 <span class="r-in"><span><span class="fu">ctrGetQueryUrl</span><span class="op">(</span><span class="st">"https://clinicaltrials.gov/ct2/show/NCT01492673?cond=neuroblastoma"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Appears specific for CTGOV Classic website</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Note: 'url' shows a single trial (and is returned by the function) but also had search parameters: If interested in search results, click 'Return to List' in browser and use this as 'url'.</span>
@@ -158,24 +152,18 @@ The data frame (or tibble) can be passed as such as parameter
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> https://clinicaltrials.gov/search?term=NCT01492673</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from CTGOV2: term=NCT01492673</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 2</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   `query-term`     `query-register`</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> term=NCT01492673 CTGOV2          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         query-term query-register</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 term=NCT01492673         CTGOV2</span>
 <span class="r-in"><span><span class="fu">ctrGetQueryUrl</span><span class="op">(</span><span class="st">"https://clinicaltrials.gov/study/NCT01467986?aggFilters=ages:child"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Appears specific for CTGOV REST API 2.0</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Note: 'url' shows a single trial (and is returned by the function) but also had search parameters: If interested in search results, click on 'Search Results' in browser and use this as 'url'.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from CTGOV2: id=NCT01467986</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 2</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   `query-term`   `query-register`</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> id=NCT01467986 CTGOV2          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       query-term query-register</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 id=NCT01467986         CTGOV2</span>
 <span class="r-in"><span><span class="fu">ctrGetQueryUrl</span><span class="op">(</span><span class="st">"https://www.isrctn.com/ISRCTN70039829"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from ISRCTN: q=ISRCTN70039829</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 2</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   `query-term`     `query-register`</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> q=ISRCTN70039829 ISRCTN          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         query-term query-register</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 q=ISRCTN70039829         ISRCTN</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
