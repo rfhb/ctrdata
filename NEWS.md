@@ -1,13 +1,13 @@
-# ctrdata 1.19.4.9000
+# ctrdata 1.19.5
 
 ## Improvements
 - Refactored `dbFindFields()` for speed and efficiency
-- Accommodated newly available expert search in `CTGOV2`
-- Adapted to `curl` v6 having renamed the timeout parameter
-- Documents download (create only folders for trials with documents, exclude duplicate files)
+- Adapted to newly available expert search in `CTGOV2`
 
 ## Bug fix
 - Correct `CTGOV2` endpoint for document downloads
+- Adapted to `curl` v6 having renamed the timeout parameter
+- Documents download (folders only for trials with documents; excluding duplicates)
 
 # ctrdata 1.19.4
 

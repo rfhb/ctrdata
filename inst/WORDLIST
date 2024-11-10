@@ -84,6 +84,8 @@ duckdb
 endPoint
 endPoints
 etc
+eu
+euclinicaltrials
 euctr
 euctrresultsfilespath
 eudraCTNumber
@@ -118,6 +120,7 @@ otherNames
 paed
 perl
 pipleline
+pkgdown
 postgres
 procotol
 protocolSection
@@ -135,6 +138,7 @@ rmongodb
 rss
 rvest
 scr
+searchCriteria
 sqlite
 src
 stringi

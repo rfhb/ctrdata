@@ -504,6 +504,22 @@ ctrCache <- function(xname, xvalue = NULL, verbose = FALSE) {
 #'
 ctrDb <- function(con) {
 
+  ## ensure requirements
+  if (!requireNamespace("nodbi", quietly = TRUE)) {
+    stop("Install package 'nodbi' to use this function.",
+         call. = FALSE)
+  }
+  minV <- sub(
+    ".*nodbi[(<>=[:space:]]+([.0-9]+?)\\).*", "\\1",
+    utils::packageDescription("ctrdata", fields = "Imports")
+  )
+  if (!(utils::packageVersion("nodbi") >=
+        package_version(minV))) {
+    stop("Update package 'nodbi' to version ",
+         minV, " or later to use this function.",
+         call. = FALSE)
+  }
+
   ## postgres
   if (inherits(con, "src_postgres")) {
 

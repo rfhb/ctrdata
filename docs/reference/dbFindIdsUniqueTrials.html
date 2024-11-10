@@ -17,7 +17,7 @@ function to provide a vector of identifiers of deduplicated trials."><meta name=
 
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.19.4.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.19.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -149,7 +149,7 @@ Such differences are not considered by this function.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               CTGOV               CTGOV               CTGOV </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       "NCT04001712"       "NCT04041765"       "NCT05969327" </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"ctrdata-dbname")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "C:/Users/herold/AppData/Local/Programs/R/R-4.4.1/library/ctrdata/extdata/demo.sqlite"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/ctrdata/extdata/demo.sqlite"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"ctrdata-table")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "my_trials"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"ctrdata-table-note")</span>
@@ -157,18 +157,14 @@ Such differences are not considered by this function.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"ctrdata-collection")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "my_trials"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"ctrdata-dbqueryhistory")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       query-timestamp query-register query-records</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2024-05-16 14:05:23          EUCTR             5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2024-05-16 14:06:43          CTGOV             8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2024-05-16 14:07:32         ISRCTN             8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 2024-05-16 14:07:57         CTGOV2             5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 2024-06-23 16:14:56           CTIS             3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                       query-term</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                    query=&amp;age=newborn&amp;phase=phase-three&amp;dateFrom=2015-02-28&amp;dateTo=2015-03-31&amp;status=completed</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 term=AREA[MaximumAge]+RANGE[0+days,+28+days]&amp;intr=Drugs,+Investigational&amp;strd_s=01/01/2018&amp;strd_e=01/01/2020&amp;type=Intr&amp;phase=2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                                                                    q=&amp;filters=ageRange:Neonate,phase:Phase+III</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4                                  distance=50&amp;cond=neuroblastoma&amp;aggFilters=phase:2,results:with&amp;primComp=2014-01-01_2014-12-31</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5                                              searchCriteria={"containAll":"infection","containAny":"neonates","containNot":""}</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 4</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   `query-timestamp`   `query-register` `query-records` `query-term`             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 2024-05-16 14:05:23 EUCTR                          5 <span style="color: #949494;">"</span>query=&amp;age=newborn&amp;phas…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> 2024-05-16 14:06:43 CTGOV                          8 <span style="color: #949494;">"</span>term=AREA[MaximumAge]+R…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> 2024-05-16 14:07:32 ISRCTN                         8 <span style="color: #949494;">"</span>q=&amp;filters=ageRange:Neo…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> 2024-05-16 14:07:57 CTGOV2                         5 <span style="color: #949494;">"</span>distance=50&amp;cond=neurob…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> 2024-06-23 16:14:56 CTIS                           3 <span style="color: #949494;">"</span>searchCriteria={\"conta…</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

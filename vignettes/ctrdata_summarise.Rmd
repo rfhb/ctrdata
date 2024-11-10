@@ -650,7 +650,9 @@ This is put together in the following example. Note that `CTGOV` fields are no l
 # CTGOV2, CTGOV and from EUCTR:
 result <- dbGetFieldsIntoDf(
   fields = c(
-    # EUCTR
+    # EUCTR - note this requires to set parameter
+    # euctrresults = TRUE in ctrLoadQueryIntoDb()
+    # as shown above in section "User annotations"
     "trialInformation.populationAgeGroup",
     "subjectDisposition.recruitmentDetails",
     "baselineCharacteristics.baselineReportingGroups.baselineReportingGroup",

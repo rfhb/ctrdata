@@ -156,8 +156,8 @@ ctrLoadQueryIntoDbCtis <- function(
         )
       ),
       file =  fTrialsNdjson,
-      append = TRUE,
-      sep = "\n")
+      sep = "\n",
+      append = TRUE)
 
     message(". ", appendLF = FALSE)
 
