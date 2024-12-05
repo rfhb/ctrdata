@@ -41,7 +41,6 @@
 #'
 #' @importFrom nodbi docdb_query
 #' @importFrom stats na.omit
-#' @importFrom tibble as_tibble
 #'
 #' @export
 #'

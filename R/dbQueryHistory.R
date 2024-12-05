@@ -15,7 +15,6 @@
 #' (default \code{FALSE}).
 #'
 #' @importFrom nodbi docdb_query
-#' @importFrom tibble as_tibble
 #'
 #' @export
 #'
@@ -82,9 +81,7 @@ dbQueryHistory <- function(con, verbose = FALSE) {
   }
 
   # return
-  if (any("tibble" == .packages())) {
-    return(tibble::as_tibble(hist))
-  }
+  if (any("tibble" == .packages())) return(tibble::as_tibble(hist))
   return(hist)
 }
 # end ctrQueryHistoryInDb

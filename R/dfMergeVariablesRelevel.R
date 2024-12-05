@@ -16,7 +16,6 @@
 #'
 #' @return A vector, with the type of the columns to be merged
 #'
-#' @importFrom tibble as_tibble
 #' @importFrom dplyr c_across mutate rowwise
 #'
 #' @export

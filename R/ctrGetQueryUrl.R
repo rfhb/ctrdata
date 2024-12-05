@@ -26,7 +26,6 @@
 #' `url` to \link{ctrOpenSearchPagesInBrowser}.
 #'
 #' @importFrom clipr read_clip
-#' @importFrom tibble as_tibble
 #'
 #' @examples
 #'

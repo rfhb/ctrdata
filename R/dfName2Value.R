@@ -31,7 +31,6 @@
 #' function \link{dfTrials2Long} to identify matching elements,
 #' e.g endpoint descriptions and measurements.
 #'
-#' @importFrom tibble as_tibble
 #' @importFrom stringi stri_detect_regex
 #'
 #' @export
@@ -190,8 +189,7 @@ dfName2Value <- function(df, valuename = "",
   )
 
   # return
-  if (any("tibble" == .packages())) {
-    return(tibble::as_tibble(out))
-  }
+  if (any("tibble" == .packages())) return(tibble::as_tibble(out))
   return(out)
+  
 } # end dfName2Value

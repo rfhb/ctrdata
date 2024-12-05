@@ -22,7 +22,6 @@
 #' with the four columns: `_id`, `identifier`, `name`, `value`
 #'
 #' @importFrom stringi stri_extract_all_charclass stri_extract_first stri_replace_first
-#' @importFrom tibble as_tibble
 #' @importFrom xml2 xml_text read_html
 #'
 #' @export
