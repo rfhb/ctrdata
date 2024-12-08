@@ -40,7 +40,7 @@ HTMLWidgets.widget({
 
         el.innerHTML =
           '<input type="text" value="" id="jst_q" size="50" placeholder="Search field names or values"> ' +
-          '<button>Copy selected fields to clipboard</button> ' +
+          '<button>Copy selected fields to clipboard for use in ctrdata::dbGetFieldsIntoDf()</button> ' +
           '<div id="jst"></div>';
 
         $('#jst').jstree({
