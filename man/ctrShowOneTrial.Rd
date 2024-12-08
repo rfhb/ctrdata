@@ -14,8 +14,7 @@ ctrShowOneTrial(identifier = NULL, con = NULL)
 \link{ctrdata}.}
 }
 \value{
-Invisibly, the data frame resulting from \link{dfTrials2Long} for
-the trial with the identifier.
+Invisibly, the trial data for constructing an HTML widget.
 }
 \description{
 If used interactively, the function shows a widget of all data in the trial

@@ -13,8 +13,7 @@
 #'
 #' @inheritParams ctrDb
 #'
-#' @return Invisibly, the data frame resulting from \link{dfTrials2Long} for
-#' the trial with the identifier.
+#' @return Invisibly, the trial data for constructing an HTML widget.
 #'
 #' @export
 #'
@@ -116,11 +115,8 @@ ctrShowOneTrial <- function(
   itemsDf <- suppressMessages(
     dfTrials2Long(df = trialData))
 
-  # early exit if not interactive
-  if (!interactive()) return(itemsDf)
-
   # present
-  View(itemsDf)
+  if (F & interactive()) View(itemsDf)
 
   # mangle back into json
   trialData <- jsonlite::toJSON(trialData[1, -1])
@@ -129,12 +125,11 @@ ctrShowOneTrial <- function(
   trialData <- jqr::jq(trialData, " .[] ")
 
   # present widget
-  ctrViewOneTrial(message = list(
-    "data" = V8::JS(trialData)
-  ))
+  msg <- list("data" = V8::JS(trialData))
+  if (interactive()) ctrShowOneTrialWidget(message = msg)
 
   ## return
-  invisible(itemsDf)
+  invisible(msg)
 
 }
 
@@ -148,7 +143,7 @@ ctrShowOneTrial <- function(
 #'
 #' @noRd
 #'
-ctrViewOneTrial <- function(
+ctrShowOneTrialWidget <- function(
     message,
     width = NULL,
     height = NULL,
@@ -156,7 +151,7 @@ ctrViewOneTrial <- function(
 
   # create widget
   widget <- htmlwidgets::createWidget(
-    name = 'ctrViewOneTrial',
+    name = 'ctrShowOneTrialWidget',
     x = message,
     width = "95%",
     height = height,
@@ -164,30 +159,34 @@ ctrViewOneTrial <- function(
     elementId = elementId
   )
 
-  # save and serve widget in browser
-  # so that copy to clipboard works
-  tf <- tempfile(fileext = ".html")
-  htmlwidgets::saveWidget(
-    widget = widget,
-    file = tf
-  )
-  utils::browseURL(tf)
+  if (interactive()) {
+
+    # save and serve widget in browser
+    # so that copy to clipboard works
+    tf <- tempfile(fileext = ".html")
+    htmlwidgets::saveWidget(
+      widget = widget,
+      file = tf
+    )
+    utils::browseURL(tf)
+
+  }
 
   # return
-  invisible()
+  return(widget)
 
 }
 
-#' Shiny bindings for ctrViewOneTrial
+#' Shiny bindings for ctrShowOneTrialWidget
 #'
-#' Output and render functions for using ctrViewOneTrial within Shiny
+#' Output and render functions for using ctrShowOneTrialWidget within Shiny
 #' applications and interactive Rmd documents.
 #'
 #' @param outputId output variable to read from
 #' @param width,height Must be a valid CSS unit (like \code{'100\%'},
 #'   \code{'400px'}, \code{'auto'}) or a number, which will be coerced to a
 #'   string and have \code{'px'} appended.
-#' @param expr An expression that generates a ctrViewOneTrial
+#' @param expr An expression that generates a ctrShowOneTrialWidget
 #' @param env The environment in which to evaluate \code{expr}.
 #' @param quoted Is \code{expr} a quoted expression (with \code{quote()})? This
 #'   is useful if you want to save an expression in a variable.
@@ -195,19 +194,19 @@ ctrViewOneTrial <- function(
 #' @noRd
 #' @keywords internal
 #'
-ctrViewOneTrialOutput <- function(outputId, width = '100%', height = '400px'){
+ctrShowOneTrialOutput <- function(outputId, width = '100%', height = '400px'){
 
-  htmlwidgets::shinyWidgetOutput(outputId, 'ctrViewOneTrial', width, height, package = 'ctrdata')
+  htmlwidgets::shinyWidgetOutput(outputId, 'ctrShowOneTrialWidget', width, height, package = 'ctrdata')
 
 }
 #'
 #' @noRd
 #' @keywords internal
 #'
-renderCtrViewOneTrial <- function(expr, env = parent.frame(), quoted = FALSE) {
+renderCtrShowOneTrial <- function(expr, env = parent.frame(), quoted = FALSE) {
 
   if (!quoted) { expr <- substitute(expr) } # force quoted
 
-  htmlwidgets::shinyRenderWidget(expr, ctrViewOneTrialOutput, env, quoted = TRUE)
+  htmlwidgets::shinyRenderWidget(expr, ctrShowOneTrialOutput, env, quoted = TRUE)
 
 }
