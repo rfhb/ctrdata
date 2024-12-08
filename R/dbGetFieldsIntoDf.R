@@ -19,7 +19,8 @@
 #' the sought variable(s).
 #'
 #' @param fields Vector of one or more strings, with names of sought fields.
-#' See function \link{dbFindFields} for how to find names of fields.
+#' See function \link{dbFindFields} for how to find names of fields and
+#' \link{ctrShowOneTrial} for interactively selecting field names.
 #' Dot path notation ("field.subfield") without indices is supported.
 #' If compatibility with `nodbi::src_postgres()` is needed, specify fewer
 #' than 50 fields, consider also using parent fields e.g., `"a.b"` instead
@@ -190,7 +191,7 @@ dbGetFieldsIntoDf <- function(fields = "",
   dfi <- addMetaData(
     dfi[order(dfi[["_id"]]), , drop = FALSE],
     con = con)
-  
+
   # reset row numbering
   row.names(dfi) <- NULL
 

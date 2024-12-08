@@ -53,8 +53,9 @@ package. This README was reviewed on 2024-12-08 for version 1.19.5.9000.
   Information from different registers can be accumulated in a single
   collection. Uses `DuckDB`, `PostgreSQL`, `RSQLite` or `MongoDB`, via R
   package `nodbi`: see section
-  [Databases](#databases-that-can-be-used-with-ctrdata) below. Easily
-  re-run any previous query in a collection to retrieve and update trial
+  [Databases](#databases-that-can-be-used-with-ctrdata) below.
+  Interactively browse through trial structure and data. Easily re-run
+  any previous query in a collection to retrieve and update trial
   records.
 - For analyses, convenience functions in `ctrdata` allow find synonyms
   of an active substance, to identify unique (de-duplicated) trial
@@ -152,7 +153,7 @@ overview](https://rfhb.github.io/ctrdata/reference/index.html).
 | `ctrFindActiveSubstanceSynonyms()` | Find synonyms and alternative names for an active substance |
 | `ctrGetQueryUrl()` | Import from clipboard the URL of a search in one of the registers |
 | `ctrLoadQueryIntoDb()` | **Retrieve (download) or update, and annotate, information on trials from a register and store in a collection in a database** |
-| `ctrShowOneTrial()` | Show full structure and all data of a trial, select fields of interest |
+| `ctrShowOneTrial()` | 🔔 Show full structure and all data of a trial, interactively select fields of interest for `dbGetFieldsIntoDf()` |
 | `dbQueryHistory()` | Show the history of queries that were downloaded into the collection |
 | `dbFindIdsUniqueTrials()` | **Get the identifiers of de-duplicated trials in the collection** |
 | `dbFindFields()` | Find names of variables (fields) in the collection |

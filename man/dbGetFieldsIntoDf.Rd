@@ -8,7 +8,8 @@ dbGetFieldsIntoDf(fields = "", con, verbose = FALSE, ...)
 }
 \arguments{
 \item{fields}{Vector of one or more strings, with names of sought fields.
-See function \link{dbFindFields} for how to find names of fields.
+See function \link{dbFindFields} for how to find names of fields and
+\link{ctrShowOneTrial} for interactively selecting field names.
 Dot path notation ("field.subfield") without indices is supported.
 If compatibility with `nodbi::src_postgres()` is needed, specify fewer
 than 50 fields, consider also using parent fields e.g., `"a.b"` instead

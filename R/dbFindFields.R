@@ -9,6 +9,7 @@
 #' a value in the collection can be returned.
 #' Set \code{sample = FALSE} to force screening all records in the
 #' collection for field names, see below.
+#' See \link{ctrShowOneTrial} to interactively find fields.
 #'
 #' The full names of child fields are returned in dot notation (e.g.,
 #' \code{clinical_results.outcome_list.outcome.measure.class_list.class.title})

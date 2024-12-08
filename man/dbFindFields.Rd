@@ -40,6 +40,7 @@ previously loaded into a collection
 a value in the collection can be returned.
 Set \code{sample = FALSE} to force screening all records in the
 collection for field names, see below.
+See \link{ctrShowOneTrial} to interactively find fields.
 }
 \details{
 The full names of child fields are returned in dot notation (e.g.,
