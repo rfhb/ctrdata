@@ -58,8 +58,8 @@ Note: When \code{dbFindFields} is first called after
 
 dbc <- nodbi::src_sqlite(
     dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
-    collection = "my_trials"
-)
+    collection = "my_trials",
+   RSQLite::SQLITE_RO)
 
 dbFindFields(namepart = "date", con = dbc)[1:5]
 

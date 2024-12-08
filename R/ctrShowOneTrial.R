@@ -1,13 +1,23 @@
-#' Show structure and all data of a single trial
+#' Show full structure and all data of a trial
 #'
 #' If used interactively, the function shows a widget of all data in the trial
 #' as a tree of field names and values. The widget opens in the default browser.
 #' Fields names and values can be search and selected. Selected fields can be
 #' copied to the clipboard for use with function \link{dbGetFieldsIntoDf}.
-#' If used non-interactively, the data frame is shown that results from
-#' \link{dfTrials2Long} for the trial with the identifier.
-#' The trial is searched online if no database \code{con} is provided or if
-#' the trial is not found in the database.
+#' In addition, the data frame is shown that results from
+#' \link{dfTrials2Long} for the same trial.
+#' The trial is retrieved with \link{ctrLoadQueryIntoDb} if no database
+#' \code{con} is provided or if the trial is not in database \code{con}.
+#'
+#' This is the widget for CTIS trial 2022-501142-30-00:
+#' \if{html}{
+#'   \out{<div style="text-align: left">}
+#'   \figure{ctrdata_ctrShowOneTrial.jpg}{options: style="width:500px;max-width:75\%;"}
+#'   \out{</div>}
+#' }
+#' \if{latex}{
+#'   \out{\begin{center}}\figure{ctrdata_ctrShowOneTrial.jpg}\out{\end{center}}
+#' }
 #'
 #' @param identifier A trial identifier string
 #'
@@ -26,22 +36,34 @@
 #' @examples
 #' \dontrun{
 #'
+#' id <- "NCT00617929"
+#' ctrGetQueryUrl(url = id)
+#'
+#' # retrieve trial from register
+#' ctrShowOneTrial(identifier = id)
+#'
+#' }
+#'
 #' dbc <- nodbi::src_sqlite(
 #'    dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
 #'    collection = "my_trials",
 #'    RSQLite::SQLITE_RO)
 #'
-#' id <- "NCT00617929"
-#' id <- "2012-003632-23"
-#' id <- "80181452"
+#' # all such identifiers work
+#' id <- "2014-003556-31"
+#' id <- "2014-003556-31-SE"
+#' id <- "76463425"
+#' id <- "ISRCTN76463425"
+#' id <- "NCT03431558"
 #' id <- "2022-501142-30-00"
 #'
-#' ctrGetQueryUrl(url = id)
-#'
-#' ctrShowOneTrial(identifier = id)
+#' # show widget for user to explore and search content as well as to
+#' # select fields of interest and to click on "Copy names of selected
+#' # fields to clipboard..." to use them with dbGetFieldsIntoDf()
 #' ctrShowOneTrial(identifier = id, con = dbc)
 #'
-#' }
+#' # how to get a sample of identifiers of trials in database
+#' sample(dbFindIdsUniqueTrials(con = dbc), 5L)
 #'
 ctrShowOneTrial <- function(
     identifier = NULL,

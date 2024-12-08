@@ -49,12 +49,20 @@
 #'     )
 #' )
 #'
+#' # other examples
 #' ctrGetQueryUrl("https://www.clinicaltrialsregister.eu/ctr-search/trial/2007-000371-42/results")
 #' ctrGetQueryUrl("https://euclinicaltrials.eu/ctis-public/view/2022-500041-24-00")
 #' ctrGetQueryUrl("https://classic.clinicaltrials.gov/ct2/show/NCT01492673?cond=neuroblastoma")
 #' ctrGetQueryUrl("https://clinicaltrials.gov/ct2/show/NCT01492673?cond=neuroblastoma")
 #' ctrGetQueryUrl("https://clinicaltrials.gov/study/NCT01467986?aggFilters=ages:child")
 #' ctrGetQueryUrl("https://www.isrctn.com/ISRCTN70039829")
+#'
+#' # using identifiers of single trials
+#' ctrGetQueryUrl("70039829")
+#' ctrGetQueryUrl("ISRCTN70039829")
+#' ctrGetQueryUrl("NCT00617929")
+#' ctrGetQueryUrl("2022-501142-30-00")
+#' ctrGetQueryUrl("2012-003632-23")
 #'
 ctrGetQueryUrl <- function(
     url = "",
@@ -124,13 +132,14 @@ ctrGetQueryUrl <- function(
   if (registerFromUrl == "NONE" &&
       register == "") {
     registerFromUrl <- switch(
-      c(as.character(1:4)[sapply(
-        c(regCtgov2, regCtis, regEuctr, regIsrctn),
+      c(as.character(1:5)[sapply(
+        c(regCtgov2, regCtis, regEuctr, regIsrctn, paste0("ISRCTN", regIsrctn)),
         function(r) grepl(paste0("^", r, "$"), url))], "")[1],
       "1" = "CTGOV2",
       "2" = "CTIS",
       "3" = "EUCTR",
       "4" = "ISRCTN",
+      "5" = "ISRCTN",
       "NONE"
     )
   }
@@ -291,7 +300,7 @@ ctrGetQueryUrl <- function(
       )
     }
     queryterm <- sub(
-      paste0("^(", regIsrctn, ")$"),
+      paste0("(^", regIsrctn, "$)|^ISRCTN(", regIsrctn, "$)"),
       'q=\\1',
       queryterm
     )

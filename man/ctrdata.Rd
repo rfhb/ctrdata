@@ -18,8 +18,8 @@ The connection object is built using \code{nodbi} which allows to use
 different database backends.
 Specifying a \code{collection = "<my collection's name>"} is
 necessary for package \code{ctrdata}.
-The connection object is created in almost identical ways for
-these supported backends:\tabular{ll}{
+A connection object (here called \code{dbc}) is created in almost identical
+ways for these supported backends:\tabular{ll}{
    \emph{Database} \tab \emph{Connection object} \cr
    MongoDB \tab \code{dbc <- \link[nodbi:src_mongo]{nodbi::src_mongo}(db = "my_db", collection = "my_coll")} \cr
    DuckDB \tab \code{dbc <- \link[nodbi:src_duckdb]{nodbi::src_duckdb}(dbname = "my_db", collection = "my_coll")} \cr
@@ -40,10 +40,11 @@ see
 \section{3 - Get a data frame from the database collection}{
 
 
+\link{ctrShowOneTrial} (show widget to explore structure, fields and data of a trial),
 \link{dbFindFields} (find names of fields of interest in trial records in a collection),
 \link{dbGetFieldsIntoDf} (create a data frame with fields of interest from collection),
 \link{dbFindIdsUniqueTrials} (get de-duplicated identifiers of
-clinical trials' records that can be used to subset a data frame).
+clinical trials' records to subset a data frame).
 }
 
 \section{4 - Operate on a data frame with trial information}{

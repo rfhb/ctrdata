@@ -52,8 +52,8 @@
 #'
 #' dbc <- nodbi::src_sqlite(
 #'     dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
-#'     collection = "my_trials"
-#' )
+#'     collection = "my_trials",
+#'    RSQLite::SQLITE_RO)
 #'
 #' dbFindFields(namepart = "date", con = dbc)[1:5]
 #'
@@ -69,6 +69,7 @@ dbFindFields <- function(namepart = ".*",
                          con,
                          sample = TRUE,
                          verbose = FALSE) {
+
   ## sanity checks
   if (!is.atomic(namepart)) stop("'namepart' should be atomic.", call. = FALSE)
   if (length(namepart) > 1) stop("'namepart' should have one element.", call. = FALSE)

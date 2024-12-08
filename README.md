@@ -1103,13 +1103,3 @@ alt="Example JSON representation in MongoDB" />
 <figcaption aria-hidden="true">Example JSON representation in
 MongoDB</figcaption>
 </figure>
-
-### PostgreSQL
-
-<figure>
-<img
-src="https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_json_postgresql.jpg"
-alt="Example JSON representation in PostgreSQL" />
-<figcaption aria-hidden="true">Example JSON representation in
-PostgreSQL</figcaption>
-</figure>

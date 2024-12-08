@@ -40,13 +40,13 @@ HTMLWidgets.widget({
 
         el.innerHTML =
           '<input type="text" value="" id="jst_q" size="50" placeholder="Search field names or values"> ' +
-          '<button>Copy selected fields to clipboard for use in ctrdata::dbGetFieldsIntoDf()</button> ' +
+          '<button>Copy names of selected fields to clipboard for use in ctrdata::dbGetFieldsIntoDf()</button> ' +
           '<div id="jst"></div>';
 
         $('#jst').jstree({
           "core": { "data": jsonToJsTreeObject({ trial: x.data }) },
           // https://www.jstree.com/plugins/
-          "plugins": ["wholerow", "checkbox", "search"],
+          "plugins": ["wholerow", "checkbox", "search", "sort"],
           // https://www.jstree.com/api/#/?q=$.jstree.defaults.checkbox
           "checkbox": { "three_state": false, "cascade": "undetermined" }
         });

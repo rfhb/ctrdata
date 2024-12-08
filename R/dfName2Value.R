@@ -39,8 +39,8 @@
 #'
 #' dbc <- nodbi::src_sqlite(
 #'     dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
-#'     collection = "my_trials"
-#' )
+#'     collection = "my_trials",
+#'    RSQLite::SQLITE_RO)
 #'
 #' dfwide <- dbGetFieldsIntoDf(
 #'     fields = c(
@@ -191,5 +191,5 @@ dfName2Value <- function(df, valuename = "",
   # return
   if (any("tibble" == .packages())) return(tibble::as_tibble(out))
   return(out)
-  
+
 } # end dfName2Value

@@ -58,8 +58,8 @@ The connection object is built using <code>nodbi</code> which allows to use
 different database backends.
 Specifying a <code>collection = "&lt;my collection's name&gt;"</code> is
 necessary for package <code>ctrdata</code>.
-The connection object is created in almost identical ways for
-these supported backends:</p><table class="table table"><tr><td><em>Database</em></td><td><em>Connection object</em></td></tr><tr><td>MongoDB</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_mongo.html" class="external-link">nodbi::src_mongo</a>(db = "my_db", collection = "my_coll")</code></td></tr><tr><td>DuckDB</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_duckdb.html" class="external-link">nodbi::src_duckdb</a>(dbname = "my_db", collection = "my_coll")</code></td></tr><tr><td>SQLite</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">nodbi::src_sqlite</a>(dbname = "my_db", collection = "my_coll")</code></td></tr><tr><td>PostgreSQL</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_postgres.html" class="external-link">nodbi::src_postgres</a>(dbname = "my_db"); dbc[["collection"]] &lt;- "my_coll"</code></td></tr></table></div>
+A connection object (here called <code>dbc</code>) is created in almost identical
+ways for these supported backends:</p><table class="table table"><tr><td><em>Database</em></td><td><em>Connection object</em></td></tr><tr><td>MongoDB</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_mongo.html" class="external-link">nodbi::src_mongo</a>(db = "my_db", collection = "my_coll")</code></td></tr><tr><td>DuckDB</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_duckdb.html" class="external-link">nodbi::src_duckdb</a>(dbname = "my_db", collection = "my_coll")</code></td></tr><tr><td>SQLite</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">nodbi::src_sqlite</a>(dbname = "my_db", collection = "my_coll")</code></td></tr><tr><td>PostgreSQL</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_postgres.html" class="external-link">nodbi::src_postgres</a>(dbname = "my_db"); dbc[["collection"]] &lt;- "my_coll"</code></td></tr></table></div>
     <div class="section level2">
     <h2 id="-operate-on-a-clinical-trial-register">2 - Operate on a clinical trial register<a class="anchor" aria-label="anchor" href="#-operate-on-a-clinical-trial-register"></a></h2>
 
@@ -75,10 +75,11 @@ see
 
 
 
-<p><a href="dbFindFields.html">dbFindFields</a> (find names of fields of interest in trial records in a collection),
+<p><a href="ctrShowOneTrial.html">ctrShowOneTrial</a> (show widget to explore structure, fields and data of a trial),
+<a href="dbFindFields.html">dbFindFields</a> (find names of fields of interest in trial records in a collection),
 <a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a> (create a data frame with fields of interest from collection),
 <a href="dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a> (get de-duplicated identifiers of
-clinical trials' records that can be used to subset a data frame).</p>
+clinical trials' records to subset a data frame).</p>
     </div>
     <div class="section level2">
     <h2 id="-operate-on-a-data-frame-with-trial-information">4 - Operate on a data frame with trial information<a class="anchor" aria-label="anchor" href="#-operate-on-a-data-frame-with-trial-information"></a></h2>

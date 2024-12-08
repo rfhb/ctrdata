@@ -38,12 +38,10 @@
 #' # Open all queries that were loaded into demo collection
 #' dbc <- nodbi::src_sqlite(
 #'     dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
-#'     collection = "my_trials"
-#' )
+#'     collection = "my_trials",
+#'    RSQLite::SQLITE_RO)
 #'
-#' dbh <- dbQueryHistory(
-#'     con = dbc
-#' )
+#' dbh <- dbQueryHistory(con = dbc)
 #'
 #' for (r in seq_len(nrow(dbh))) {
 #'     ctrOpenSearchPagesInBrowser(dbh[r, ])

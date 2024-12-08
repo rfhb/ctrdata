@@ -118,6 +118,7 @@ The data frame (or tibble) can be passed as such as parameter
 <span class="r-out co"><span class="r-pr">#&gt;</span>   query-register</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1         CTGOV2</span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># other examples</span></span></span>
 <span class="r-in"><span><span class="fu">ctrGetQueryUrl</span><span class="op">(</span><span class="st">"https://www.clinicaltrialsregister.eu/ctr-search/trial/2007-000371-42/results"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from EUCTR: query=2007-000371-42</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             query-term query-register</span>
@@ -166,6 +167,29 @@ The data frame (or tibble) can be passed as such as parameter
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from ISRCTN: q=ISRCTN70039829</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         query-term query-register</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 q=ISRCTN70039829         ISRCTN</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># using identifiers of single trials</span></span></span>
+<span class="r-in"><span><span class="fu">ctrGetQueryUrl</span><span class="op">(</span><span class="st">"70039829"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from ISRCTN: q=70039829</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   query-term query-register</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 q=70039829         ISRCTN</span>
+<span class="r-in"><span><span class="fu">ctrGetQueryUrl</span><span class="op">(</span><span class="st">"ISRCTN70039829"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from ISRCTN: q=ISRCTN70039829</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         query-term query-register</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 q=ISRCTN70039829         ISRCTN</span>
+<span class="r-in"><span><span class="fu">ctrGetQueryUrl</span><span class="op">(</span><span class="st">"NCT00617929"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Not overruling register label CTGOV2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from CTGOV2: term=NCT00617929</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         query-term query-register</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 term=NCT00617929         CTGOV2</span>
+<span class="r-in"><span><span class="fu">ctrGetQueryUrl</span><span class="op">(</span><span class="st">"2022-501142-30-00"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from CTIS: searchCriteria={"number":"2022-501142-30-00"}</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                      query-term query-register</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 searchCriteria={"number":"2022-501142-30-00"}           CTIS</span>
+<span class="r-in"><span><span class="fu">ctrGetQueryUrl</span><span class="op">(</span><span class="st">"2012-003632-23"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from EUCTR: query=2012-003632-23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             query-term query-register</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 query=2012-003632-23          EUCTR</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

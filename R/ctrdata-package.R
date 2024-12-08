@@ -11,8 +11,8 @@
 #' different database backends.
 #' Specifying a \code{collection = "<my collection's name>"} is
 #' necessary for package `ctrdata`.
-#' The connection object is created in almost identical ways for
-#' these supported backends:
+#' A connection object (here called `dbc`) is created in almost identical
+#' ways for these supported backends:
 #'
 #' *Database* | *Connection object*
 #' -------- | ---------
@@ -30,10 +30,11 @@
 #'
 #' @section 3 - Get a data frame from the database collection:
 #'
+#' \link{ctrShowOneTrial} (show widget to explore structure, fields and data of a trial),
 #' \link{dbFindFields} (find names of fields of interest in trial records in a collection),
 #' \link{dbGetFieldsIntoDf} (create a data frame with fields of interest from collection),
 #' \link{dbFindIdsUniqueTrials} (get de-duplicated identifiers of
-#' clinical trials' records that can be used to subset a data frame).
+#' clinical trials' records to subset a data frame).
 #'
 #' @section 4 - Operate on a data frame with trial information:
 #'

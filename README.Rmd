@@ -931,7 +931,3 @@ devtools::install_github("r-dbi/RSQLite")
 ### MongoDB
 
 ![Example JSON representation in MongoDB](https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_json_mongodb.jpg)
-
-### PostgreSQL
-
-![Example JSON representation in PostgreSQL](https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_json_postgresql.jpg)

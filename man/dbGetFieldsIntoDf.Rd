@@ -53,7 +53,8 @@ the sought variable(s).
 
 dbc <- nodbi::src_sqlite(
    dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
-   collection = "my_trials")
+   collection = "my_trials",
+   RSQLite::SQLITE_RO)
 
 # get fields that are nested within another field
 # and can have multiple values with the nested field

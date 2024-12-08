@@ -42,8 +42,8 @@ matched using Perl regular expressions and ignoring case.
 
 dbc <- nodbi::src_sqlite(
     dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
-    collection = "my_trials"
-)
+    collection = "my_trials",
+   RSQLite::SQLITE_RO)
 
 dfwide <- dbGetFieldsIntoDf(
     fields = c(
