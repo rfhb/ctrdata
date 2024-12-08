@@ -11,3 +11,4 @@ revdep
 .future.R
 .vscode
 CRAN-SUBMISSION
+.bowerrc

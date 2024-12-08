@@ -1,0 +1,10 @@
+dependencies:
+  - name: jquery
+    version: 3
+    src: htmlwidgets/lib/jquery
+    script: dist/jquery.min.js
+  - name: jstree
+    version: 3.3.17
+    src: htmlwidgets/lib/jstree
+    script: dist/jstree.min.js
+    style: dist/themes/default/style.css
