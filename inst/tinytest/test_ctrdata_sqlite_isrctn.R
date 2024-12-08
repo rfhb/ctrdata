@@ -36,9 +36,8 @@ tf <- function() {
   }, add = TRUE)
 
   # check server
-  httr::set_config(httr::timeout(60L))
   if (httr::status_code(
-    httr::HEAD("https://www.isrctn.com/editAdvancedSearch")) != 200L
+    httr::HEAD("https://www.isrctn.com/search?q=")) != 200L
   ) return(exit_file("Reason: ISRCTN not working"))
 
   # do tests
