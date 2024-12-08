@@ -119,8 +119,10 @@ ctrGetQueryUrl <- function(
     "NONE"
   )
 
-  # identify register from identifier
-  if (registerFromUrl == "NONE") {
+  # identify register from trial identifier
+  # added after CTGOV was decomissioned
+  if (registerFromUrl == "NONE" &&
+      register == "") {
     registerFromUrl <- switch(
       c(as.character(1:4)[sapply(
         c(regCtgov2, regCtis, regEuctr, regIsrctn),

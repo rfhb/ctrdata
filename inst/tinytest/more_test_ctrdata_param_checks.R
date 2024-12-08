@@ -272,7 +272,7 @@ tf <- function() {
       "term=cancer&aggFilters=ages:adult,phase:2,results:with"),
     c("age=1&cancer",
       "term=cancer&aggFilters=ages:adult"),
-    c("term=2010-024264-18",
+    c("2010-024264-18",
       "term=2010-024264-18"),
     c("NCT1234567890",
       "term=NCT1234567890"),
@@ -383,6 +383,9 @@ tf <- function() {
 
   # https://clinicaltrials.gov/study/NCT04903899?cond=neuroblastoma
 
+  opts <- options()
+  options(browser = NULL)
+
   # for debugging
   ctrOpenSearchPagesInBrowser(url = queryurls[[4]][1])
   sapply(sapply(queryurls, "[[", 1),
@@ -396,6 +399,8 @@ tf <- function() {
         url = qt[[1]]))[[1]] == qt[[2]]},
       logical(1L))
   ))
+
+  options(opts)
 
   # clean up
   rm(queryurls)
