@@ -106,7 +106,8 @@ query of a register in a web browser to the clipboard, see
 <dt id="arg-register">register<a class="anchor" aria-label="anchor" href="#arg-register"></a></dt>
 <dd><p>String with abbreviation of register to query,
 either "EUCTR", "CTGOV2", "ISRCTN" or "CTIS". Not needed
-if <code>queryterm</code> provides a full URL to query results.</p></dd>
+if <code>queryterm</code> provides a full URL to query results
+or provides a single trial identifier.</p></dd>
 
 
 <dt id="arg-querytoupdate">querytoupdate<a class="anchor" aria-label="anchor" href="#arg-querytoupdate"></a></dt>
@@ -205,8 +206,9 @@ Default is <code>FALSE</code>.</p></dd>
 
 
 <dt id="arg-con">con<a class="anchor" aria-label="anchor" href="#arg-con"></a></dt>
-<dd><p>A connection object, see section
-`Databases` in <a href="ctrdata.html">ctrdata</a>.</p></dd>
+<dd><p>A database connection object, created with
+<code>nodbi</code>. See section `1 - Database connection` in
+<a href="ctrdata.html">ctrdata</a>.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>

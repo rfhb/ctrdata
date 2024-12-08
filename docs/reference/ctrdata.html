@@ -51,16 +51,15 @@ studies, and for obtaining documents, from public registers</p>
     <h2 id="-database-connection">1 - Database connection<a class="anchor" aria-label="anchor" href="#-database-connection"></a></h2>
 
 
-<p>Package <code>ctrdata</code> retrieves trial information and stores it in a
-database collection, which has to be given as a connection object
-to parameter <code>con</code> for several ctrdata functions; this
-connection object is created in almost identical ways for
-these supported backends:</p><table class="table table"><tr><td><em>Database</em></td><td><em>Connection object</em></td></tr><tr><td>MongoDB</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_mongo.html" class="external-link">nodbi::src_mongo</a>(db = "my_db", collection = "my_coll")</code></td></tr><tr><td>SQLite</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">nodbi::src_sqlite</a>(dbname = "my_db", collection = "my_coll")</code></td></tr><tr><td>PostgreSQL</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_postgres.html" class="external-link">nodbi::src_postgres</a>(dbname = "my_db"); dbc[["collection"]] &lt;- "my_coll"</code></td></tr><tr><td>DuckDB</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_duckdb.html" class="external-link">nodbi::src_duckdb</a>(dbname = "my_db", collection = "my_coll")</code></td></tr></table><p>Use a connection object with a <code>ctrdata</code> function, for example
-<a href="dbQueryHistory.html">dbQueryHistory</a>, or other packages, for example
-<a href="https://rdrr.io/pkg/mongolite/man/mongo.html" class="external-link">mongolite::mongo</a> or <a href="https://docs.ropensci.org/nodbi/reference/docdb_query.html" class="external-link">nodbi::docdb_query</a>.
-Use a demo database:
-<code>dbc &lt;- nodbi::src_sqlite(dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"), collection = "my_trials")</code></p>
-    </div>
+<p>Package <code>ctrdata</code> retrieves trial information and stores it in a database
+collection. Therefore, a database connection object has to be given to
+parameter <code>con</code> for several <code>ctrdata</code> functions.
+The connection object is built using <code>nodbi</code> which allows to use
+different database backends.
+Specifying a <code>collection = "&lt;my collection's name&gt;"</code> is
+necessary for package <code>ctrdata</code>.
+The connection object is created in almost identical ways for
+these supported backends:</p><table class="table table"><tr><td><em>Database</em></td><td><em>Connection object</em></td></tr><tr><td>MongoDB</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_mongo.html" class="external-link">nodbi::src_mongo</a>(db = "my_db", collection = "my_coll")</code></td></tr><tr><td>DuckDB</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_duckdb.html" class="external-link">nodbi::src_duckdb</a>(dbname = "my_db", collection = "my_coll")</code></td></tr><tr><td>SQLite</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">nodbi::src_sqlite</a>(dbname = "my_db", collection = "my_coll")</code></td></tr><tr><td>PostgreSQL</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_postgres.html" class="external-link">nodbi::src_postgres</a>(dbname = "my_db"); dbc[["collection"]] &lt;- "my_coll"</code></td></tr></table></div>
     <div class="section level2">
     <h2 id="-operate-on-a-clinical-trial-register">2 - Operate on a clinical trial register<a class="anchor" aria-label="anchor" href="#-operate-on-a-clinical-trial-register"></a></h2>
 

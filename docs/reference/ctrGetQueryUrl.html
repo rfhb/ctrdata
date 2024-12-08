@@ -63,7 +63,9 @@ For automatically copying the user's query of a register
 in a web browser to the clipboard, see
 <a href="https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser">here</a>.
 Can also contain a query term such as from
-<a href="dbQueryHistory.html">dbQueryHistory</a>()["query-term"].</p></dd>
+<a href="dbQueryHistory.html">dbQueryHistory</a>()["query-term"].
+Can also be an identifier of a trial, which based on its
+format will indicate to which register it relates.</p></dd>
 
 
 <dt id="arg-register">register<a class="anchor" aria-label="anchor" href="#arg-register"></a></dt>
@@ -87,10 +89,6 @@ The data frame (or tibble) can be passed as such as parameter
 <span class="r-in"><span><span class="co"># the address bar of the browser that shows results</span></span></span>
 <span class="r-in"><span><span class="co"># from a query in one of the trial registers</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu">ctrGetQueryUrl</span><span class="op">(</span><span class="op">)</span>, silent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> * Using clipboard content as register query URL: https://www.clinicaltrialsregister.eu/ctr-search/search?</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from EUCTR: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   query-term query-register</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                     EUCTR</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># extract query parameters from search result URL</span></span></span>
 <span class="r-in"><span><span class="co"># (URL was cut for the purpose of formatting only)</span></span></span>

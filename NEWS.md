@@ -1,6 +1,7 @@
 # ctrdata 1.19.5.9000
 
-- New development version
+## Improvements
+- New function `ctrShowOneTrial()` to inspect a trial structure and data, and to select fields for `dbGetFieldsIntoDf()`
 
 # ctrdata 1.19.5
 
