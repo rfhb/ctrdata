@@ -491,8 +491,9 @@ ctrCache <- function(xname, xvalue = NULL, verbose = FALSE) {
 
 #' Check and prepare nodbi connection object for ctrdata
 #'
-#' @param con A connection object, see section
-#' `Databases` in \link{ctrdata}.
+#' @param con A database connection object, created with
+#' \code{nodbi}. See section `1 - Database connection` in
+#' \link{ctrdata}.
 #'
 #' @keywords internal
 #'

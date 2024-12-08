@@ -7,12 +7,13 @@
 ctrDb(con)
 }
 \arguments{
-\item{con}{A connection object, see section
-`Databases` in \link{ctrdata}.}
+\item{con}{A database connection object, created with
+\code{nodbi}. See section \verb{1 - Database connection} in
+\link{ctrdata}.}
 }
 \value{
 Connection object as list, with collection
- element under root
+element under root
 }
 \description{
 Check and prepare nodbi connection object for ctrdata

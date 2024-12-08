@@ -11,8 +11,9 @@ dbFindFields(namepart = ".*", con, sample = TRUE, verbose = FALSE)
 including Perl-style) to be searched among all field names (keys)
 in the collection, case-insensitive. The default `".*"` lists all fields.}
 
-\item{con}{A connection object, see section
-`Databases` in \link{ctrdata}.}
+\item{con}{A database connection object, created with
+\code{nodbi}. See section \verb{1 - Database connection} in
+\link{ctrdata}.}
 
 \item{sample}{If \code{TRUE} (default), uses a sample of only 5 trial
 records per register to identify fields, to rapidly return a possibly

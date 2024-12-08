@@ -15,8 +15,9 @@ than 50 fields, consider also using parent fields e.g., `"a.b"` instead
 of `c("a.b.c.d", "a.b.c.e")`, accessing sought fields with
 \link{dfTrials2Long} followed by \link{dfName2Value} or other R functions.}
 
-\item{con}{A connection object, see section
-`Databases` in \link{ctrdata}.}
+\item{con}{A database connection object, created with
+\code{nodbi}. See section \verb{1 - Database connection} in
+\link{ctrdata}.}
 
 \item{verbose}{Printing additional information if set to \code{TRUE};
 (default \code{FALSE}).}
