@@ -512,5 +512,5 @@ id <- "2022-501142-30-00"
 
 df <- ctrShowOneTrial(identifier = id)
 
-expect_true(nrow(df) > 1000L)
-expect_true(ncol(df) == 4L)
+expect_true(is.list(df))
+expect_length(df, 1L)
