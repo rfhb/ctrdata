@@ -37,7 +37,8 @@ query of a register in a web browser to the clipboard, see
 
 \item{register}{String with abbreviation of register to query,
 either "EUCTR", "CTGOV2", "ISRCTN" or "CTIS". Not needed
-if \code{queryterm} provides a full URL to query results.}
+if \code{queryterm} provides a full URL to query results
+or provides a single trial identifier.}
 
 \item{querytoupdate}{Either the word "last", or the row number of
 a query in the data frame returned by \link{dbQueryHistory} that
@@ -114,8 +115,9 @@ number of trial records found in the register for the query.
 Does not load trial information into the database.
 Default is \code{FALSE}.}
 
-\item{con}{A connection object, see section
-`Databases` in \link{ctrdata}.}
+\item{con}{A database connection object, created with
+\code{nodbi}. See section \verb{1 - Database connection} in
+\link{ctrdata}.}
 
 \item{verbose}{Printing additional information if set to
 \code{TRUE}; default is \code{FALSE}.}

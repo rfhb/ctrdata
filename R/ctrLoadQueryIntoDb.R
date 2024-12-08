@@ -25,7 +25,8 @@
 #'
 #' @param register String with abbreviation of register to query,
 #' either "EUCTR", "CTGOV2", "ISRCTN" or "CTIS". Not needed
-#' if \code{queryterm} provides a full URL to query results.
+#' if \code{queryterm} provides a full URL to query results
+#' or provides a single trial identifier.
 #'
 #' @param querytoupdate Either the word "last", or the row number of
 #' a query in the data frame returned by \link{dbQueryHistory} that
@@ -182,6 +183,7 @@ ctrLoadQueryIntoDb <- function(
     only.count = FALSE,
     con = NULL,
     verbose = FALSE, ...) {
+
   ## check params
 
   # - deprecated
