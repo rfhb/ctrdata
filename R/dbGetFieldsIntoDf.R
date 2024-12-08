@@ -49,7 +49,8 @@
 #'
 #' dbc <- nodbi::src_sqlite(
 #'    dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
-#'    collection = "my_trials")
+#'    collection = "my_trials",
+#'    RSQLite::SQLITE_RO)
 #'
 #' # get fields that are nested within another field
 #' # and can have multiple values with the nested field
@@ -63,8 +64,10 @@
 #'   fields = "keyword",
 #'   con = dbc)
 #'
-dbGetFieldsIntoDf <- function(fields = "",
-                              con, verbose = FALSE, ...) {
+dbGetFieldsIntoDf <- function(
+    fields = "",
+    con,
+    verbose = FALSE, ...) {
 
   # check fields
   if (!is.vector(fields) ||
@@ -80,6 +83,14 @@ dbGetFieldsIntoDf <- function(fields = "",
 
   # remove NA, NULL if included in fields
   fields <- fields[!is.null(fields) & !is.na(fields)]
+
+  # early return if only _id is requested
+  if (length(fields) == 1L &&
+      fields == "_id") {
+    message('Only "_id" requested, calling dbFindIdsUniqueTrials()')
+    dfi <- dbFindIdsUniqueTrials(con = con)
+    return(dfi)
+  }
 
   # remove _id if included in fields
   fields <- unique(fields["_id" != fields])
