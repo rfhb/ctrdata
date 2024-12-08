@@ -60,6 +60,6 @@ dbc <- nodbi::src_sqlite(
     collection = "my_trials"
 )
 
-dbFindIdsUniqueTrials(con = dbc)
+dbFindIdsUniqueTrials(con = dbc)[1:10]
 
 }

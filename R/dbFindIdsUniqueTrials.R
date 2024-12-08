@@ -49,7 +49,7 @@
 #'     collection = "my_trials"
 #' )
 #'
-#' dbFindIdsUniqueTrials(con = dbc)
+#' dbFindIdsUniqueTrials(con = dbc)[1:10]
 #'
 dbFindIdsUniqueTrials <- function(
     preferregister = c("EUCTR", "CTGOV", "CTGOV2", "ISRCTN", "CTIS"),

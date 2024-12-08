@@ -22,22 +22,18 @@ If used interactively, the function shows a widget of all data in the trial
 as a tree of field names and values. The widget opens in the default browser.
 Fields names and values can be search and selected. Selected fields can be
 copied to the clipboard for use with function \link{dbGetFieldsIntoDf}.
-}
-\details{
 If used non-interactively, the data frame is shown that results from
 \link{dfTrials2Long} for the trial with the identifier.
-
-The trial is searched online if not database \code{con} is provided or if
+The trial is searched online if no database \code{con} is provided or if
 the trial is not found in the database.
 }
 \examples{
+\dontrun{
 
 dbc <- nodbi::src_sqlite(
    dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
    collection = "my_trials",
    RSQLite::SQLITE_RO)
-
-nodbi::docdb_query(dbc, dbc$collection, "{}", fields = '{"_id":1}')
 
 id <- "NCT00617929"
 id <- "2012-003632-23"
@@ -48,5 +44,7 @@ ctrGetQueryUrl(url = id)
 
 ctrShowOneTrial(identifier = id)
 ctrShowOneTrial(identifier = id, con = dbc)
+
+}
 
 }

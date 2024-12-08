@@ -69,7 +69,7 @@
 <li>ClinicalTrials.gov (“CTGOV2”, see <a href="#workflow-ctgov-example">example</a>)</li>
 <li>ISRCTN Registry (<a href="https://www.isrctn.com/" class="external-link uri">https://www.isrctn.com/</a>)</li>
 </ul>
-<p>The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2024-11-09 for version 1.19.4.9000.</p>
+<p>The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2024-12-08 for version 1.19.5.9000.</p>
 <div class="section level2">
 <h2 id="main-features">Main features<a class="anchor" aria-label="anchor" href="#main-features"></a>
 </h2>
@@ -159,30 +159,34 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <td><strong>Retrieve (download) or update, and annotate, information on trials from a register and store in a collection in a database</strong></td>
 </tr>
 <tr class="odd">
+<td><code><a href="reference/ctrShowOneTrial.html">ctrShowOneTrial()</a></code></td>
+<td>Show full structure and all data of a trial, select fields of interest</td>
+</tr>
+<tr class="even">
 <td><code><a href="reference/dbQueryHistory.html">dbQueryHistory()</a></code></td>
 <td>Show the history of queries that were downloaded into the collection</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code><a href="reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials()</a></code></td>
 <td><strong>Get the identifiers of de-duplicated trials in the collection</strong></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code><a href="reference/dbFindFields.html">dbFindFields()</a></code></td>
 <td>Find names of variables (fields) in the collection</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code></td>
 <td><strong>Create a data frame (or tibble) from trial records in the database with the specified fields</strong></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code><a href="reference/dfTrials2Long.html">dfTrials2Long()</a></code></td>
 <td>Transform the data.frame from <code><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code> into a long name-value data.frame, including deeply nested fields</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code><a href="reference/dfName2Value.html">dfName2Value()</a></code></td>
 <td>From a long name-value data.frame, extract values for variables (fields) of interest (e.g., endpoints)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code><a href="reference/dfMergeVariablesRelevel.html">dfMergeVariablesRelevel()</a></code></td>
 <td>Merge variables into a new variable, optionally map values to a new set of levels</td>
 </tr>

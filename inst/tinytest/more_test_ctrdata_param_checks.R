@@ -272,7 +272,7 @@ tf <- function() {
       "term=cancer&aggFilters=ages:adult,phase:2,results:with"),
     c("age=1&cancer",
       "term=cancer&aggFilters=ages:adult"),
-    c("2010-024264-18",
+    c("term=2010-024264-18",
       "term=2010-024264-18"),
     c("NCT1234567890",
       "term=NCT1234567890"),
