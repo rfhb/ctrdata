@@ -18,10 +18,10 @@
 #' @export
 #'
 #' @importFrom nodbi docdb_query src_sqlite
-#' @importFrom DBI dbDisconnect
 #' @importFrom jsonlite toJSON
 #' @importFrom jqr jq
 #' @importFrom V8 JS
+#' @importFrom utils View
 #'
 #' @examples
 #' \dontrun{
@@ -87,14 +87,13 @@ ctrShowOneTrial <- function(
       nodbi::src_sqlite(collection = "oneTrial"))
 
     # remove temporary database
-    on.exit(try(suppressWarnings(
-      DBI::dbDisconnect(conTemp$con, shutdown = TRUE)),
-      silent = TRUE), add = TRUE)
+    on.exit(try(rm(conTemp), silent = TRUE), add = TRUE)
 
     # get trial data
     loadResult <- suppressMessages(suppressWarnings(
       ctrLoadQueryIntoDb(
         queryterm = queryTerm,
+        euctrresults = TRUE,
         con = conTemp
       )))
 
