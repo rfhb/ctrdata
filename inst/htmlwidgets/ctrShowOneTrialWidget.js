@@ -1,8 +1,6 @@
-function $id(element) { return (document.getElementById(element)); }
-
 HTMLWidgets.widget({
 
-  name: 'ctrViewOneTrial',
+  name: 'ctrShowOneTrialWidget',
   type: 'output',
 
   factory: function (el, width, height) {
