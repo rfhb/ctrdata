@@ -16,7 +16,7 @@ of `c("a.b.c.d", "a.b.c.e")`, accessing sought fields with
 \link{dfTrials2Long} followed by \link{dfName2Value} or other R functions.}
 
 \item{con}{A database connection object, created with
-\code{nodbi}. See section \verb{1 - Database connection} in
+\code{nodbi}. See section `1 - Database connection` in
 \link{ctrdata}.}
 
 \item{verbose}{Printing additional information if set to \code{TRUE};

@@ -116,7 +116,7 @@ Does not load trial information into the database.
 Default is \code{FALSE}.}
 
 \item{con}{A database connection object, created with
-\code{nodbi}. See section \verb{1 - Database connection} in
+\code{nodbi}. See section `1 - Database connection` in
 \link{ctrdata}.}
 
 \item{verbose}{Printing additional information if set to

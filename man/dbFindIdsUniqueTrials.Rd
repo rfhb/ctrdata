@@ -29,7 +29,7 @@ that are conducted exclusively in third countries, that is, outside
 the European Union. Ignored if \code{prefermemberstate} is set to "3RD".}
 
 \item{con}{A database connection object, created with
-\code{nodbi}. See section \verb{1 - Database connection} in
+\code{nodbi}. See section `1 - Database connection` in
 \link{ctrdata}.}
 
 \item{verbose}{If \code{TRUE}, prints out the fields of registers used to
