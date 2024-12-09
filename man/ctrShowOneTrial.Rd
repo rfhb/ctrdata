@@ -21,8 +21,6 @@ If used interactively, the function shows a widget of all data in the trial
 as a tree of field names and values. The widget opens in the default browser.
 Fields names and values can be search and selected. Selected fields can be
 copied to the clipboard for use with function \link{dbGetFieldsIntoDf}.
-In addition, the data frame is shown that results from
-\link{dfTrials2Long} for the same trial.
 The trial is retrieved with \link{ctrLoadQueryIntoDb} if no database
 \code{con} is provided or if the trial is not in database \code{con}.
 }

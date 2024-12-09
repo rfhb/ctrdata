@@ -521,56 +521,72 @@ ctrDb <- function(con) {
          call. = FALSE)
   }
 
+  ## check constructor
+  if (!inherits(con, "docdb_src")) {
+    stop(
+      "Database connection object 'con' was not, ",
+      "but should be created with nodbi.",
+      call. = FALSE)
+  }
+
   ## postgres
   if (inherits(con, "src_postgres")) {
 
     if (is.null(con$collection)) {
-      stop("Specify attribute 'collection' with a table name, using ",
-           "<nodbi src_postgres object>[[\"collection\"]] <- \"test\"), ",
-           "for package ctrdata to work.",
-           call. = FALSE)
+      stop(
+        "Specify attribute 'collection' with a table name, using ",
+        "<nodbi src_postgres object>[[\"collection\"]] <- \"test\"), ",
+        "for package ctrdata to work.",
+        call. = FALSE)
     }
 
     # add database as element under root
-    con <- c(con,
-             "db" = con$dbname,
-             "ctrDb" = TRUE)
+    con <- c(
+      con,
+      "db" = con$dbname,
+      "ctrDb" = TRUE)
 
     ## return
-    return(structure(con,
-                     class = c("src_postgres", "docdb_src")))
+    return(structure(
+      con,
+      class = c("src_postgres", "docdb_src")))
   }
 
   ## sqlite
   if (inherits(con, "src_sqlite")) {
 
     if (is.null(con$collection)) {
-      stop("Specify parameter 'collection' with a table name, ",
-           "such as nodbi::src_sqlite(collection = 'test'), ",
-           "for package ctrdata to work.",
-           call. = FALSE)
+      stop(
+        "Specify parameter 'collection' with a table name, ",
+        "such as nodbi::src_sqlite(collection = 'test'), ",
+        "for package ctrdata to work.",
+        call. = FALSE)
     }
 
     # check
     if (inherits(try(nodbi::docdb_list(con), silent = TRUE), "try-error")) {
-      con <- nodbi::src_sqlite(dbname = con$dbname,
-                               collection = con$collection)
+      con <- nodbi::src_sqlite(
+        dbname = con$dbname,
+        collection = con$collection)
     }
 
     # add database as element under root
-    con <- c(con,
-             "db" = con$dbname,
-             "ctrDb" = TRUE)
+    con <- c(
+      con,
+      "db" = con$dbname,
+      "ctrDb" = TRUE)
 
     # print warning
     if (grepl(":memory:", con$dbname)) {
-      warning("Database not persisting",
-              call. = FALSE, noBreaks. = FALSE)
+      warning(
+        "Database not persisting",
+        call. = FALSE, noBreaks. = FALSE)
     }
 
     ## return
-    return(structure(con,
-                     class = c("src_sqlite", "docdb_src")))
+    return(structure(
+      con,
+      class = c("src_sqlite", "docdb_src")))
   }
 
   ## mongo
@@ -585,23 +601,26 @@ ctrDb <- function(con) {
     coll <- sub("^.*'(.*)'.*$", "\\1", coll)
 
     # add collection as element under root
-    con <- c(con,
-             "collection" = coll,
-             "ctrDb" = TRUE)
+    con <- c(
+      con,
+      "collection" = coll,
+      "ctrDb" = TRUE)
 
     ## return
-    return(structure(con,
-                     class = c("src_mongo", "docdb_src")))
+    return(structure(
+      con,
+      class = c("src_mongo", "docdb_src")))
   }
 
   ## duckdb
   if (inherits(con, "src_duckdb")) {
 
     if (is.null(con$collection)) {
-      stop("Specify parameter 'collection' with a table name, ",
-           "such as nodbi::src_duckdb(collection = 'test'), ",
-           "for package ctrdata to work.",
-           call. = FALSE)
+      stop(
+        "Specify parameter 'collection' with a table name, ",
+        "such as nodbi::src_duckdb(collection = 'test'), ",
+        "for package ctrdata to work.",
+        call. = FALSE)
     }
 
     # check
@@ -612,27 +631,32 @@ ctrDb <- function(con) {
     }
 
     # add database as element under root
-    con <- c(con,
-             "db" = attr(attr(con$con, "driver"), "dbdir"),
-             "ctrDb" = TRUE)
+    con <- c(
+      con,
+      "db" = attr(attr(con$con, "driver"), "dbdir"),
+      "ctrDb" = TRUE)
 
     # print warning about nodbi::src_duckdb()
     if (grepl(":memory:", attr(attr(con$con, "driver"), "dbdir"))) {
-      warning("Database not persisting\n",
-              call. = FALSE, noBreaks. = FALSE)
+      warning(
+        "Database not persisting\n",
+        call. = FALSE, noBreaks. = FALSE)
 
     }
 
     ## return
-    return(structure(con,
-                     class = c("src_duckdb", "docdb_src")))
+    return(structure(
+      con,
+      class = c("src_duckdb", "docdb_src")))
 
   }
 
   ## unprepared for other nodbi adapters so far
-  stop("Please specify in parameter 'con' a database connection. ",
-       "crdata supports src_mongo(), src_sqlite(), src_postgres() and src_duckdb().",
-       call. = FALSE)
+  stop(
+    "Please specify in parameter 'con' a database connection ",
+    "created with nodbi::src_...() functions. ctrdata currently ",
+    "supports src_mongo(), src_sqlite(), src_postgres() and src_duckdb().",
+    call. = FALSE)
 
 } # end ctrDb
 

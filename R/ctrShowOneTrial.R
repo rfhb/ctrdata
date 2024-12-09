@@ -4,8 +4,6 @@
 #' as a tree of field names and values. The widget opens in the default browser.
 #' Fields names and values can be search and selected. Selected fields can be
 #' copied to the clipboard for use with function \link{dbGetFieldsIntoDf}.
-#' In addition, the data frame is shown that results from
-#' \link{dfTrials2Long} for the same trial.
 #' The trial is retrieved with \link{ctrLoadQueryIntoDb} if no database
 #' \code{con} is provided or if the trial is not in database \code{con}.
 #'
@@ -129,15 +127,6 @@ ctrShowOneTrial <- function(
       !nrow(trialData)) {
     stop("No data found for trial ", identifier)
   }
-
-  ## user information
-
-  # transform
-  itemsDf <- suppressMessages(
-    dfTrials2Long(df = trialData))
-
-  # present
-  if (F & interactive()) View(itemsDf)
 
   # mangle back into json
   trialData <- jsonlite::toJSON(trialData[1, -1])
