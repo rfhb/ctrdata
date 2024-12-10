@@ -35,14 +35,16 @@ tf <- function() {
     silent = TRUE)
   }, add = TRUE)
 
-  # check server
-  if (httr::status_code(
-    httr::HEAD("https://classic.clinicaltrials.gov/ct2/search",
-               httr::timeout(10L))) != 200L
-  ) return(exit_file("Reason: CTGOV not working"))
-
   # do tests
   source("ctrdata_ctgov.R", local = TRUE)
 
 }
+
+# check server
+if (httr::status_code(
+  httr::HEAD("https://classic.clinicaltrials.gov/ct2/search",
+             httr::timeout(10L))) != 200L
+) return(exit_file("Reason: CTGOV not working"))
+
+# test
 tf()

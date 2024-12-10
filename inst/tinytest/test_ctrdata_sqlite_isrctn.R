@@ -9,7 +9,7 @@ if (!checkInternet()) exit_file("Reason: no internet connectivity")
 
 #### ISRCTN ####
 tf <- function() {
-  
+
   # test
   expect_error(
     dbQueryHistory(
@@ -18,12 +18,12 @@ tf <- function() {
     ),
     "Specify parameter"
   )
-  
+
   # create database object
   dbc <- suppressWarnings(nodbi::src_sqlite(
     dbname = ":memory:",
     collection = mongoLocalRwCollection))
-  
+
   # register clean-up
   on.exit(expr = {
     try({
@@ -34,19 +34,21 @@ tf <- function() {
     },
     silent = TRUE)
   }, add = TRUE)
-  
-  # check server
-  if (inherits(try(suppressWarnings(
-    ctrLoadQueryIntoDb(
-      "https://www.isrctn.com/search?q=neuroblastoma", 
-      only.count = TRUE)), 
-    silent = TRUE), 
-    "try-error")) {
-    exit_file("Reason: ISRCTN not working")
-  }
-  
+
   # do tests
   source("ctrdata_isrctn.R", local = TRUE)
-  
+
 }
+
+# check server
+if (inherits(try(suppressWarnings(
+  ctrLoadQueryIntoDb(
+    "https://www.isrctn.com/search?q=neuroblastoma",
+    only.count = TRUE)),
+  silent = TRUE),
+  "try-error")) {
+  exit_file("Reason: ISRCTN not working")
+}
+
+# run testfile
 tf()

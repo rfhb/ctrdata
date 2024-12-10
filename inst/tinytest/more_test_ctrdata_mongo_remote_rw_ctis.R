@@ -25,25 +25,19 @@ tf <- function() {
     silent = TRUE)
   })
 
-  # check server
-  testUrl <- "https://euclinicaltrials.eu/data-protection-and-privacy/"
-  testGet <- function() try(httr::HEAD(testUrl, httr::timeout(10L)), silent = TRUE)
-  testOnce <- testGet()
-
-  if (inherits(testOnce, "try-error") &&
-      grepl("SSL certificate.*local issuer certificate", testOnce)) {
-    # message("Switching off certificate verification")
-    httr::set_config(httr::config(ssl_verifypeer = FALSE))
-    testOnce <- testGet()
-  }
-  if (inherits(testOnce, "try-error") ||
-      httr::status_code(testOnce) != 200L
-  ) return(exit_file("Reason: CTIS not working"))
-
-  # clean up
-  rm(testUrl, testGet, testOnce)
-
   # do tests
   source("ctrdata_ctis.R", local = TRUE)
+
 }
+
+# check server
+testUrl <- "https://euclinicaltrials.eu/ctis-public/search"
+testGet <- function() try(httr::HEAD(testUrl, httr::timeout(10L)), silent = TRUE)
+testOnce <- testGet()
+
+if (inherits(testOnce, "try-error") ||
+    httr::status_code(testOnce) != 200L
+) return(exit_file("Reason: CTIS not working"))
+
+# test
 tf()

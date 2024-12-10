@@ -31,14 +31,20 @@ tf <- function() {
     silent = TRUE)
   }, add = TRUE)
 
-  # check server
-  httr::set_config(httr::timeout(60L))
-  if (httr::status_code(
-    httr::HEAD("https://www.isrctn.com/editAdvancedSearch")) != 200L
-  ) return(exit_file("Reason: ISRCTN not working"))
-
   # do tests
   source("ctrdata_isrctn.R", local = TRUE)
 
 }
+
+# check server
+if (inherits(try(suppressWarnings(
+  ctrLoadQueryIntoDb(
+    "https://www.isrctn.com/search?q=neuroblastoma",
+    only.count = TRUE)),
+  silent = TRUE),
+  "try-error")) {
+  exit_file("Reason: ISRCTN not working")
+}
+
+# run testfile
 tf()
