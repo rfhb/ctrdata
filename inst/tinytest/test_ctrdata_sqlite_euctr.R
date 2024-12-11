@@ -13,7 +13,7 @@ tf <- function() {
   # test
   expect_error(
     dbQueryHistory(con = iris),
-    "Please specify in parameter"
+    "connection"
   )
 
   # test
