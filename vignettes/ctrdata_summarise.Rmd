@@ -1,7 +1,7 @@
 ---
 title: "Summarise and analyse clinical trial information"
 author: "Ralf Herold"
-date: 2024-06-29
+date: 2024-12-11
 output:
   rmarkdown::html_vignette:
     toc: true
@@ -16,6 +16,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
   editor_options:
+    chunk_output_type: console
 chunk_output_type: console
 ---
 
@@ -121,6 +122,34 @@ Specify a part of the name of a variable of interest; all variables including de
 dbFindFields(namepart = "date", sample = FALSE, con = db)
 # Finding fields in database collection (may take some time)  .  .  .  .  . 
 # Field names cached for this session.
+#                                                                               EUCTR 
+#    "e231_full_title_date_and_version_of_each_substudy_and_their_related_objectives" 
+#                                                                               EUCTR 
+# "e231_full_title_date_and_version_of_each_substudy_and_their_related_objectives_es" 
+#                                                                               EUCTR 
+# "e231_full_title_date_and_version_of_each_substudy_and_their_related_objectives_it" 
+#                                                                               EUCTR 
+#                                            "n_date_of_competent_authority_decision" 
+#                                                                               EUCTR 
+#                                                "n_date_of_ethics_committee_opinion" 
+#                                                                               EUCTR 
+#                                             "p_date_of_the_global_end_of_the_trial" 
+#                                                                               EUCTR 
+#                                "trialChanges.globalAmendments.globalAmendment.date" 
+#                                                                               EUCTR 
+#                          "trialChanges.globalInterruptions.globalInterruption.date" 
+#                                                                               EUCTR 
+#                   "trialChanges.globalInterruptions.globalInterruption.restartDate" 
+#                                                                               EUCTR 
+#                                                "trialInformation.analysisStageDate" 
+#                                                                               EUCTR 
+#                                             "trialInformation.globalEndOfTrialDate" 
+#                                                                               EUCTR 
+#                                            "trialInformation.primaryCompletionDate" 
+#                                                                               EUCTR 
+#                                             "trialInformation.recruitmentStartDate" 
+#                                                                               EUCTR 
+#            "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database" 
 #                                                                              CTGOV2 
 #         "annotationSection.annotationModule.unpostedAnnotation.unpostedEvents.date" 
 #                                                                              CTGOV2 
@@ -197,34 +226,6 @@ dbFindFields(namepart = "date", sample = FALSE, con = db)
 #                                 "protocolSection.statusModule.studyFirstSubmitDate" 
 #                                                                              CTGOV2 
 #                               "protocolSection.statusModule.studyFirstSubmitQcDate" 
-#                                                                               EUCTR 
-#    "e231_full_title_date_and_version_of_each_substudy_and_their_related_objectives" 
-#                                                                               EUCTR 
-# "e231_full_title_date_and_version_of_each_substudy_and_their_related_objectives_es" 
-#                                                                               EUCTR 
-# "e231_full_title_date_and_version_of_each_substudy_and_their_related_objectives_it" 
-#                                                                               EUCTR 
-#                                            "n_date_of_competent_authority_decision" 
-#                                                                               EUCTR 
-#                                                "n_date_of_ethics_committee_opinion" 
-#                                                                               EUCTR 
-#                                             "p_date_of_the_global_end_of_the_trial" 
-#                                                                               EUCTR 
-#                                "trialChanges.globalAmendments.globalAmendment.date" 
-#                                                                               EUCTR 
-#                          "trialChanges.globalInterruptions.globalInterruption.date" 
-#                                                                               EUCTR 
-#                   "trialChanges.globalInterruptions.globalInterruption.restartDate" 
-#                                                                               EUCTR 
-#                                                "trialInformation.analysisStageDate" 
-#                                                                               EUCTR 
-#                                             "trialInformation.globalEndOfTrialDate" 
-#                                                                               EUCTR 
-#                                            "trialInformation.primaryCompletionDate" 
-#                                                                               EUCTR 
-#                                             "trialInformation.recruitmentStartDate" 
-#                                                                               EUCTR 
-#            "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database"
 ```
 
 The search for fields is cached and thus accelerated during the R session; calling `ctrLoadQueryIntoDb()` or changing `sample = ...` invalidates the cache. 
@@ -244,9 +245,11 @@ result <- dbGetFieldsIntoDf(
     "p_end_of_trial_status",
     "n_date_of_competent_authority_decision",
     "a2_eudract_number",
+    #
     # EUCTR results-related information
     "trialInformation.recruitmentStartDate", 
     "trialInformation.globalEndOfTrialDate",
+    #
     # CTGOV2
     "protocolSection.statusModule.overallStatus",
     "protocolSection.statusModule.startDateStruct.date",
@@ -303,11 +306,11 @@ ids <- dbFindIdsUniqueTrials(
   con = db
 )
 # Searching for duplicate trials... 
-# - Getting all trial identifiers (may take some time), 448 found in collection
+# - Getting all trial identifiers (may take some time), 479 found in collection
 # - Finding duplicates among registers' and sponsor ids...
-# - 173 EUCTR _id were not preferred EU Member State record for 56 trials
-# - Keeping 53 / 0 / 0 / 0 / 205 records from EUCTR / CTGOV / ISRCTN / CTIS / CTGOV2
-# = Returning keys (_id) of 258 records in collection "my_collection_name"
+# - 192 EUCTR _id were not preferred EU Member State record for 59 trials
+# - Keeping 57 / 0 / 0 / 0 / 211 records from EUCTR / CTGOV / ISRCTN / CTIS / CTGOV2
+# = Returning keys (_id) of 268 records in collection "my_collection_name
 ```
 
 The unique ids can be used like this to de-duplicate the data.frame created above:
@@ -317,7 +320,7 @@ The unique ids can be used like this to de-duplicate the data.frame created abov
 result <- result[result[["_id"]] %in% ids, ]
 #
 nrow(result)
-# [1] 258
+# [1] 268
 ```
 
 
@@ -329,17 +332,22 @@ It will often be useful to inspect all data for a single, for example to underst
 #
 # Adding some trials from CTIS for a search similar to above
 ctrLoadQueryIntoDb(
-  queryterm = 'searchCriteria={"containAll":"","containAny":"neuroblastoma","containNot":""}',
+  queryterm = 'searchCriteria={"containAny":"neuroblastoma"}',
   register = "CTIS",
   con = db
 )
 # $n
-# [1] 12
+# [1] 25
 # 
 # $success
-#  [1] "2023-509673-22-00" "2024-513141-37-00" "2024-511071-16-00" "2024-512095-35-00"
-#  [5] "2023-507178-41-00" "2023-506778-11-00" "2022-501725-21-00" "2023-504880-18-00"
-#  [9] "2023-508587-29-00" "2022-502668-20-00" "2023-504246-64-00" "2023-503684-42-00"
+#  [1] "2024-514917-36-00" "2024-518931-12-00" "2023-504246-64-02" "2024-517295-37-00" "2024-513470-22-00"
+#  [6] "2024-513843-10-00" "2022-501694-39-01" "2024-511404-17-00" "2024-511975-14-00" "2024-512102-25-00"
+# [11] "2024-515552-21-00" "2024-511259-16-00" "2023-507418-28-00" "2023-509673-22-00" "2024-513141-37-00"
+# [16] "2024-511071-16-00" "2024-512095-35-00" "2023-507178-41-00" "2023-506778-11-00" "2022-501725-21-00"
+# [21] "2023-504880-18-00" "2023-508587-29-00" "2022-502668-20-00" "2023-504246-64-00" "2023-503684-42-00"
+# 
+# $failed
+# NULL
 ```
 
 Identify a trial of interest by its `_id`, and use this in any standard database function. Retrieve the trial's full `JSON` representation that `ctrdata` had loaded into the database and visualise its nested structure of field names and values. 
@@ -373,7 +381,7 @@ In a data.frame generated with `dbGetFieldsIntoDf()`, fields are typed as dates,
 ```{r str_data_frame}
 #
 str(result)
-# 'data.frame':	258 obs. of  12 variables:
+# 'data.frame':	268 obs. of  12 variables:
 #  $ _id                                                          : chr  "2004-004386-15-DE" "2005-000915-80-IT" "2005-001267-63-IT" "2005-002089-13-GB" ...
 #  $ f41_in_the_member_state                                      : int  NA NA 5 37 70 24 100 35 10 24 ...
 #  $ f422_in_the_whole_clinical_trial                             : int  230 NA 12 67 70 NA 100 156 2230 NA ...
@@ -489,7 +497,7 @@ tmp <- dfMergeVariablesRelevel(
 
 table(tmp)
 # ongoing completed  other 
-#       5       248      4 
+#       5       256      6 
 ```
 
 ## User annotations
@@ -516,7 +524,7 @@ result <- dbGetFieldsIntoDf(
 )
 
 str(result)
-# 'data.frame':	494 obs. of  3 variables:
+# 'data.frame':	552 obs. of  3 variables:
 #  $ _id               : chr  "2004-004386-15-DE" "2004-004386-15-ES" ...
 #  $ record_last_import: Date, format: "2024-06-29" "2024-06-29" ...
 #  $ annotation        : chr  "test annotation" "test annotation" ...
@@ -682,8 +690,7 @@ result <- result[result[["_id"]] %in% dbFindIdsUniqueTrials(con = db), ]
 # hundred rows per trial record):
 # 
 long_result <- dfTrials2Long(df = result)
-# Total 166677 rows, 157 unique names of variables
-
+# Total 174667 rows, 157 unique names of variables
 
 result <- dbGetFieldsIntoDf("endPoints", db)
 jsonview::json_tree_view(result[result[["_id"]] == "2010-019348-37-IT", -1])
@@ -821,7 +828,7 @@ result$pep_is_efs <- grepl(
 # Tabulate
 table(result$pep_is_efs)
 # FALSE  TRUE
-#   211    33
+#   221    35
 
 # Plot
 library(ggplot2)
@@ -835,7 +842,7 @@ ggplot(
   geom_boxplot() +
   scale_x_log10()
 # Warning message:
-# Removed 24 rows containing non-finite values (`stat_boxplot()`). 
+# Removed 25 rows containing non-finite values (`stat_boxplot()`). 
 
 ggsave("vignettes/boxpep.png", width = 6, height = 4)
 ```
@@ -1107,12 +1114,12 @@ head(
     query = '{"ctrname": "CTGOV2"}'
   )
 )
-# [1] "% Calories Taken Orally"
-# [2] "- To demonstrate that 123I-mIBG planar scintigraphy is sensitive ..."
-# [3] "1-year Progression-free Survival"
-# [4] "10-year Hematologic Cancer Rate"
-# [5] "10-year Mortality Rate in Marrow Donors"
-# [6] "10-year Overall Cancer Incidence"
+# [1] "\"Off\" Time"
+# [2] "% Calories Taken Orally"
+# [3] "% Change in Frequency of Handwaving Episodes"
+# [4] "% of Patients in Whom a Sentinel Lymph Node is Identified"
+# [5] "% of Subjects With Successful Preparation Rated by Colonoscopist on a 4 Point Scale (1=Poor to 4 = Excellent)"
+# [6] "'Well-controlled Asthma Week' - a Derived Binary Variable (Yes/No)"
 ```
 
 ### Aggregation
@@ -1146,12 +1153,12 @@ out <- m$aggregate(
 )
 head(out)
 #           _id       date
-# 1 NCT00445965    2006-01
-# 2 NCT00923351 2007-06-02
-# 3 NCT00793845    2008-08
-# 4 NCT00499616 2007-10-08
-# 5 NCT01190930 2010-08-09
-# 6 NCT01514201 2012-02-01
+# 1 NCT00793845    2008-08
+# 2 NCT02918292 2017-07-03
+# 3 NCT01237327    2001-11
+# 4 NCT00112827    2004-11
+# 5 NCT00515073    2001-04
+# 6 NCT00027560    2001-07
 ```
 
 ### Mapreduce
@@ -1198,17 +1205,17 @@ m$aggregate(pipeline = '
 ]
 ')
 #      _id count
-# 1     NA  1450
-# 2      0   700
-# 3    100   165
-# 4    200    78
-# 5    300    59
-# 6    400    30
-# 7    500    32
-# 8    600    19
-# 9    700    21
-# 10   800    13
-# 11   900    10
-# 12  1000     5
+# 1     NA   350
+# 2      0  3096
+# 3    100   800
+# 4    200   429
+# 5    300   320
+# 6    400   182
+# 7    500   155
+# 8    600   126
+# 9    700    88
+# 10   800    73
+# 11   900    39
+# 12  1000    32
 # [...]
 ```

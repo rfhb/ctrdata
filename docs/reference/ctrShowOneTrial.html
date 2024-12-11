@@ -119,22 +119,14 @@ The trial is retrieved with <a href="ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb
 <span class="r-in"><span><span class="co"># select fields of interest and to click on "Copy names of selected</span></span></span>
 <span class="r-in"><span><span class="co"># fields to clipboard..." to use them with dbGetFieldsIntoDf()</span></span></span>
 <span class="r-in"><span><span class="fu">ctrShowOneTrial</span><span class="op">(</span>identifier <span class="op">=</span> <span class="va">id</span>, con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in utils::browseURL(tf):</span> 'browser' must be a non-empty character string</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> no such table: my_trials</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># how to get a sample of identifiers of trials in database</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span>, <span class="fl">5L</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Searching for duplicate trials... </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - Getting all trial identifiers...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  (may take some time)...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> , 29 found in collection</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> - Finding duplicates among registers' and sponsor ids...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> - 2 EUCTR _id were not preferred EU Member State record for 8 trials</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> - Keeping 3 / 8 / 5 / 8 / 3 records from EUCTR / CTGOV / CTGOV2 / ISRCTN / CTIS</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> = Returning keys (_id) of 27 records in collection "my_trials"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              ISRCTN               CTGOV              ISRCTN               EUCTR </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          "80181452"       "NCT03431558"          "76463425" "2014-002606-20-PT" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               EUCTR </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> "2014-003556-31-SE" </span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> No records found, check collection 'my_trials'</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
