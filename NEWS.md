@@ -3,6 +3,10 @@
 ## Improvements
 - New function `ctrShowOneTrial()` to inspect a trial structure and data, and to select fields for `dbGetFieldsIntoDf()`
 
+## Bug fix
+- Refactor `dfTrials2Long` to correct generating identifiers for single-item groups
+- Correct using certain testing conditions
+
 # ctrdata 1.19.5
 
 ## Improvements

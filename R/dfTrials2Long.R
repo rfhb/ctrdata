@@ -76,81 +76,62 @@ dfTrials2Long <- function(df) {
   conv <- seq_len(ncol(df))[conv]
   for (c in conv) df[, c] <- as.character(df[, c, drop = TRUE])
 
-  # iterative unnesting, by column
+  # get trial _id
+  id <- df[["_id"]]
+
+  # iterative unnesting, by column, by trial
   out <- lapply(
     seq_len(ncol(df))[-1],
     function(cc) {
-      # get item
-      ci <- df[[cc]]
-      # get item name
+
+      # get column name
       tn <- dfn[cc]
-      # inform user
+
+      # inform users
       message(tn, rep(" ", 200L - nchar(tn)), "\r", appendLF = FALSE)
-      # handle case when column is data frame, turn into list by row
-      if (is.data.frame(ci)) ci <- split(ci, seq_len(nrow(ci)))
-      # and by cell in column
-      lapply(ci, function(c) {
-        if (is.data.frame(c)) {
-          # unlist is numbering repeat item names
-          x <- unlist(flattenDf(c))
-          if (!is.null(names(x))) tn <- paste0(tn, ".", names(x))
-          if (is.null(x)) x <- NA
-          # compose
-          data.frame(
-            "name" = tn,
-            "value" = x,
-            check.names = FALSE,
-            stringsAsFactors = FALSE,
-            row.names = NULL)
-        } else {
-          # initialise
-          xx <- NULL
-          tnn <- NULL
-          # need to iterate since there may be repeats, e.g, 1, 2, 3.1, 3.2
-          sapply(seq_len(length(c)), function(i) {
-            # unlist is numbering repeat item names
-            x <- unlist(flattenDf(c[i]))
-            if (!is.null(names(x))) {
-              # any first numeric identifier?
-              tst <- stringi::stri_extract_first_regex(names(x), "[0-9]+")
-              if (all(!is.na(tst))) {
-                # if yes bring into middle
-                tn <- paste0(
-                  tn, ".", tst, ".",
-                  stringi::stri_replace_first_regex(names(x), "[0-9]+", ""))
-              } else {
-                # if no add using i
-                tn <- paste0(tn, ".", i, ".", names(x))
-              }
-            }
-            if (is.null(x)) x <- NA
-            xx <<- c(xx, x)
-            tnn <<- c(tnn, tn)
-          }, USE.NAMES = FALSE)
-          # compose
-          data.frame(
-            "name" = tnn,
-            "value" = xx,
-            check.names = FALSE,
-            stringsAsFactors = FALSE,
-            row.names = NULL)
-        } # if is.data.frame
-      })})
-  message(rep(" ", 200L), "\r", appendLF = FALSE)
 
-  # add _id to list elements and
-  # simplify into data frames
-  out <- lapply(
-    out, function(e) {
-      message(". ", appendLF = FALSE)
-      names(e) <- df[["_id"]]
-      do.call(rbind, c(e, stringsAsFactors = FALSE))
-    })
+      # get column as list,
+      # one item is one trial
+      ci <- df[[cc]]
+
+      # by trial (_id)
+      o <- lapply(seq_along(ci), function(ct) {
+
+        o <- unlist(flattenDf(ci[ct]))
+        o <- na.omit(o) # TODO
+        if (is.null(o) || !length(o)) return(NULL)
+
+        # check identifiers added by unlist
+        tst <- stringi::stri_extract_first_regex(names(o), "[0-9]+")
+
+        # construct new identifiers from column name and item name
+        tst[is.na(tst)] <- "0"
+        if (is.null(names(o))) {tnn <- paste0(tn, ".0")
+
+        } else {tnn <- paste0(
+          tn, ".", tst, ".", stringi::stri_replace_first_regex(
+            names(o), "[0-9]+", ""))
+        }
+
+        # construct tall df by _id by col
+        data.frame(
+          "_id" = id[ct],
+          "name" = tnn,
+          "value" = o,
+          check.names = FALSE,
+          stringsAsFactors = FALSE,
+          row.names = NULL)
+
+      })
+
+      # bind trials within column
+      as.data.frame(do.call(rbind, o), stringsAsFactors = FALSE)
+    }
+  )
+
+  # bind list items (were columns) into long df
   out <- do.call(rbind, c(out, stringsAsFactors = FALSE))
-  message(". ", appendLF = FALSE)
-
-  # remove rows where value is NA
-  out <- out[!is.na(out[["value"]]), , drop = FALSE]
+  message(rep(" ", 200L), "\r", appendLF = FALSE)
 
   # convert html entities
   htmlEnt <- grepl("&[#a-zA-Z]+;", out[["value"]])
@@ -160,56 +141,63 @@ dfTrials2Long <- function(df) {
     }, USE.NAMES = FALSE)
   message(". ", appendLF = FALSE)
 
-  # generate new data frame with target columns and order
-  out <- data.frame(
-    # process row.names to obtain trial id
-    "_id" = stringi::stri_extract_first(
-      str = row.names(out),
-      regex = c(paste0(regCtgov, "|", regIsrctn, "|",
-                       regEuctr, "-[3]?[A-Z]{2}|", regCtis))),
-    "identifier" = NA,
-    "name" = out[["name"]],
-    "value" = out[["value"]],
-    check.names = FALSE,
-    row.names = NULL,
-    stringsAsFactors = FALSE)
-  message(". ", appendLF = FALSE)
-
   # name can include from 0 to about 6 number groups, get all
   # and concatenate to oid-like string such as "1.2.3.4.5.6",
-  # e.g. "9.8.2" which should be extracted from the this name
+  # e.g. "9.8.2" which should be extracted from an example name:
   # clinical...class9.analyzed...count8.@attributes.value2
-  #
+
   # except where name is exactly one of dfn
   onlyHere <- vapply(out[["name"]], function(i) !any(i == dfn),
                      logical(1L), USE.NAMES = FALSE)
-  #
+
+  # collect identifiers
   out[["identifier"]][onlyHere] <- vapply(
     stringi::stri_extract_all_regex(out[["name"]][onlyHere], "[0-9]+([.]|$)"),
     function(i) paste0(gsub("[.]", "", i), collapse = "."), character(1L))
-  # defaults
-  out[["identifier"]] [out[["identifier"]] == "NA"] <- "0"
-  out[["identifier"]] [is.na(out[["identifier"]])]  <- "0"
   message(". ", appendLF = FALSE)
-  #
-  # remove numbers from variable name
+
+  # remove numbers from name
   out[["name"]][onlyHere] <- gsub(
-    "[0-9]+([.])|[0-9]+$|[.]?@attributes", "\\1",
+    "[0-9]+([.])|[.]?[0-9]+$|[.]+$|[.]?@attributes", "\\1",
     out[["name"]][onlyHere], perl = TRUE)
-  #
-  # remove any double separators
+
+  # remove double separators
   out[["name"]] <- gsub("[.][.]+", ".", out[["name"]], perl = TRUE)
 
-  # remove double rows from duplicating e above
+  # remove any duplicate rows
   out <- unique(out)
 
-  # reset row numbering
+  # helper to expand identifier into columns
+  sortByOid <- function(oid) {
+
+    oid <- strsplit(oid$identifier, ".", fixed = TRUE)
+    maxLen <- max(sapply(oid, length))
+    oid <- lapply(oid, function(i) c(as.numeric(i), rep(0, maxLen - length(i))))
+    oid <- do.call(rbind, oid)
+    oid <- data.frame(oid)
+    return(oid)
+
+  }
+
+  # add oid columns for subsequent sorting
+  out <- data.frame(out, sortByOid(oid = out), check.names = FALSE)
+
+  # sort on _id, name and all oid columns (since number of columns
+  # in oid varies, go by excluding columns not used for sorting)
+  oo <- with(out, do.call(order, out[, -match(c("value", "identifier"), names(out))]))
+  out <- out[oo, ]
+
+  # keep and sort columns
+  out <- out[c("_id", "identifier", "name", "value")]
+
+  # reset row numbers
   row.names(out) <- NULL
 
   # inform
-  message("\nTotal ", nrow(out), " rows, ",
-          length(unique(out[["name"]])),
-          " unique names of variables")
+  message(
+    "\nTotal ", nrow(out), " rows, ",
+    length(unique(out[["name"]])),
+    " unique names of variables")
 
   # output
   if (any("tibble" == .packages())) return(tibble::as_tibble(out))
