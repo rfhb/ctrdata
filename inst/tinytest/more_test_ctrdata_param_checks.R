@@ -150,7 +150,7 @@ tf <- function() {
   expect_error(
     ctrdata:::ctrDb(
       con = NULL
-    ), "specify in parameter 'con' a database connection")
+    ), "connection object .+ nodbi")
 
   # test if database connection
   # is opened by ctrDb

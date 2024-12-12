@@ -449,7 +449,7 @@ expect_error(
 dF <- data.frame(
   "_id" = paste0("NCT1234567", 1:5),
   alpha1 = 1:5,
-  beta = 1:5,
+  be2t3a = 1:5,
   gamma_1 = 1:5,
   check.names = FALSE
 )

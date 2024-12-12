@@ -76,6 +76,9 @@ dfTrials2Long <- function(df) {
   conv <- seq_len(ncol(df))[conv]
   for (c in conv) df[, c] <- as.character(df[, c, drop = TRUE])
 
+  # protect numbers in names
+  dfn <- gsub("([0-9]+)", "#\\1#", dfn)
+
   # get trial _id
   id <- df[["_id"]]
 
@@ -147,22 +150,34 @@ dfTrials2Long <- function(df) {
   # clinical...class9.analyzed...count8.@attributes.value2
 
   # except where name is exactly one of dfn
-  onlyHere <- vapply(out[["name"]], function(i) !any(i == dfn),
-                     logical(1L), USE.NAMES = FALSE)
+  onlyHere <- vapply(
+    out[["name"]], function(i) !any(i == dfn),
+    logical(1L), USE.NAMES = FALSE)
 
-  # collect identifiers
+  # collect all identifiers
   out[["identifier"]][onlyHere] <- vapply(
-    stringi::stri_extract_all_regex(out[["name"]][onlyHere], "[0-9]+([.]|$)"),
-    function(i) paste0(gsub("[.]", "", i), collapse = "."), character(1L))
+    stringi::stri_extract_all_regex(out[["name"]][onlyHere], "[#]?[0-9]+([.#]|$)"),
+    function(i) paste0(gsub("[.]", "", i[!grepl("^#", i)]), collapse = "."),
+    character(1L))
   message(". ", appendLF = FALSE)
 
   # remove numbers from name
-  out[["name"]][onlyHere] <- gsub(
-    "[0-9]+([.])|[.]?[0-9]+$|[.]+$|[.]?@attributes", "\\1",
-    out[["name"]][onlyHere], perl = TRUE)
+  regExps <- c(
+    "[.]?[0-9]+([.])",
+    "[.]?[0-9]+$",
+    "[.]+$",
+    "[.]?@attributes",
+    "#"
+  )
+  for (i in regExps) {
+    out[["name"]][onlyHere] <- gsub(
+      i, "\\1", out[["name"]][onlyHere])
+  }
 
-  # remove double separators
-  out[["name"]] <- gsub("[.][.]+", ".", out[["name"]], perl = TRUE)
+  # remove protection from numbers
+  out[["name"]][onlyHere] <- gsub(
+    "[#]([0-9]+)", "\\1",
+    out[["name"]][onlyHere], perl = TRUE)
 
   # remove any duplicate rows
   out <- unique(out)
@@ -182,8 +197,8 @@ dfTrials2Long <- function(df) {
   # add oid columns for subsequent sorting
   out <- data.frame(out, sortByOid(oid = out), check.names = FALSE)
 
-  # sort on _id, name and all oid columns (since number of columns
-  # in oid varies, go by excluding columns not used for sorting)
+  # sort on _id, then name, then all oid columns (since number of
+  # columns in oid varies, have to exclude columns unused for sort)
   oo <- with(out, do.call(order, out[, -match(c("value", "identifier"), names(out))]))
   out <- out[oo, ]
 

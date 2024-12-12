@@ -692,9 +692,9 @@ result <- result[result[["_id"]] %in% dbFindIdsUniqueTrials(con = db), ]
 long_result <- dfTrials2Long(df = result)
 # Total 174667 rows, 157 unique names of variables
 
+# explore 
 result <- dbGetFieldsIntoDf("endPoints", db)
 jsonview::json_tree_view(result[result[["_id"]] == "2010-019348-37-IT", -1])
-
 
 #### 3. Obtain values for measures of interest 
 #
