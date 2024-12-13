@@ -97,12 +97,19 @@ copyright pages of all registers.</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> RSQLite version has enabled accelerating docdb_create() and docdb_update() functions when used with value = &lt;NDJSON file name&gt;.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">dbh</span> <span class="op">&lt;-</span> <span class="fu"><a href="dbQueryHistory.html">dbQueryHistory</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> no such table: my_trials</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw">for</span> <span class="op">(</span><span class="va">r</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dbh</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>    <span class="fu">ctrOpenSearchPagesInBrowser</span><span class="op">(</span><span class="va">dbh</span><span class="op">[</span><span class="va">r</span>, <span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'dbh' not found</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Since 2024-06-25, the classic CTGOV servers are no longer available. Package ctrdata has translated the classic CTGOV query URL from this call of function ctrLoadQueryIntoDb(queryterm = ...) into a query URL that works with the current CTGOV2. This is printed below and is also part of the return value of this function, ctrLoadQueryIntoDb(...)$url. This URL can be used with ctrdata functions. Note that the fields and data schema of trials differ between CTGOV and CTGOV2. </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Replace this URL:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> term=AREA[MaximumAge]+RANGE[0+days,+28+days]&amp;intr=Drugs,+Investigational&amp;strd_s=01/01/2018&amp;strd_e=01/01/2020&amp;type=Intr&amp;phase=2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> with this URL:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> https://clinicaltrials.gov/search?start=2018-01-01_2020-01-01&amp;term=AREA[MaximumAge] RANGE[0 days, 28 days]&amp;intr=Drugs, Investigational&amp;aggFilters=phase:3,studyType:int</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

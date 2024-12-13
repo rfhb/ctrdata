@@ -36,15 +36,6 @@ This is the widget for CTIS trial 2022-501142-30-00:
 }
 }
 \examples{
-\dontrun{
-
-id <- "NCT00617929"
-ctrGetQueryUrl(url = id)
-
-# retrieve trial from register
-ctrShowOneTrial(identifier = id)
-
-}
 
 dbc <- nodbi::src_sqlite(
    dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
@@ -59,12 +50,16 @@ id <- "ISRCTN76463425"
 id <- "NCT03431558"
 id <- "2022-501142-30-00"
 
+# the id also works with
+# ctrGetQueryUrl(url = id) and
+# ctrLoadQueryIntoDb(queryterm = id, ...)
+
 # show widget for user to explore and search content as well as to
 # select fields of interest and to click on "Copy names of selected
 # fields to clipboard..." to use them with dbGetFieldsIntoDf()
 ctrShowOneTrial(identifier = id, con = dbc)
 
-# how to get a sample of identifiers of trials in database
+# get sample of identifiers of trials in database
 sample(dbFindIdsUniqueTrials(con = dbc), 5L)
 
 }
