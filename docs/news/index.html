@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.19.5.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.20.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,14 +39,14 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.19.5.9000" id="ctrdata-11959000">ctrdata 1.19.5.9000<a class="anchor" aria-label="anchor" href="#ctrdata-11959000"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.20.0" id="ctrdata-1200">ctrdata 1.20.0<a class="anchor" aria-label="anchor" href="#ctrdata-1200"></a></h2><p class="text-muted">CRAN release: 2024-12-14</p>
 <div class="section level3">
-<h3 id="improvements-1-19-5-9000">Improvements<a class="anchor" aria-label="anchor" href="#improvements-1-19-5-9000"></a></h3>
-<ul><li>New function <code><a href="../reference/ctrShowOneTrial.html">ctrShowOneTrial()</a></code> to inspect a trial structure and data, and to select fields for <code><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code>
-</li>
+<h3 id="improvements-1-20-0">Improvements<a class="anchor" aria-label="anchor" href="#improvements-1-20-0"></a></h3>
+<ul><li>New function <code><a href="../reference/ctrShowOneTrial.html">ctrShowOneTrial()</a></code> to inspect a trial structure and data, and to select fields for <code><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code>; in this context, make <code><a href="../reference/ctrGetQueryUrl.html">ctrGetQueryUrl()</a></code> work for identifiers of single trials</li>
+<li>Improve and update documentation</li>
 </ul></div>
 <div class="section level3">
-<h3 id="bug-fix-1-19-5-9000">Bug fix<a class="anchor" aria-label="anchor" href="#bug-fix-1-19-5-9000"></a></h3>
+<h3 id="bug-fix-1-20-0">Bug fix<a class="anchor" aria-label="anchor" href="#bug-fix-1-20-0"></a></h3>
 <ul><li>Refactor <code>dfTrials2Long</code> to correct generating identifiers for single-item groups</li>
 <li>Correct using certain testing conditions</li>
 </ul></div>
@@ -104,8 +104,10 @@
 <h2 class="pkg-version" data-toc-text="1.19.0" id="ctrdata-1190">ctrdata 1.19.0<a class="anchor" aria-label="anchor" href="#ctrdata-1190"></a></h2><p class="text-muted">CRAN release: 2024-06-30</p>
 <div class="section level3">
 <h3 id="possibly-breaking-changes-1-19-0">Possibly breaking changes<a class="anchor" aria-label="anchor" href="#possibly-breaking-changes-1-19-0"></a></h3>
-<ul><li><p><code>CTGOV</code> has retired on 2024-06-25 the classic website and API used by <code>ctrdata</code> since 2015. To support users, <code>ctrdata</code> now automatically translates and redirects queries to the current website. This helps with automatically updating previously loaded queries (<code>ctrLoadQueryIntoDb(querytoupdate = &lt;n&gt;)</code>), manually migrating queries and reproducible work on clinical trials information. This new functionality in <code>ctrdata</code> translates a user’s search query URL from the classic website into a query for the current <code>CTGOV</code> website, for all search parameters. Since the structure and format of data differs between data retrieved from the current API and previously retrieved from the classic API, <code>ctrdata</code> will continue to identify the current API as <code>register = "CTGOV2"</code>, to support the analysis stage. In addition, <code>ctrdata</code> documentation continues to include examples of analyses with <code>CTGOV</code> data, as this may have been downloaded earlier.</p></li>
-<li><p><code>CTIS</code> has been relaunched on 2024-06-17, and <code>ctrdata</code> has been fully updated to it. At the moment, <code>CTIS</code> provides basic searches and no search query URL. To support users, <code>ctrdata</code> includes an updated script that extracts a user’s search parameters from the register search page to the clipboard and into the browser URL bar. In addition, the script triggers a search for trials when opening such a query URL, see <a href="https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser" class="uri">https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser</a>. File names of <code>CTIS</code> documents start now with the document type, e.g. <code>SbjctInfaICF - L1 SIS and ICF NL for publication.pdf</code>, since the prefix (document source) introduced in version 1.18.0 is no more applicable.</p></li>
+<ul><li>
+<code>CTGOV</code> has retired on 2024-06-25 the classic website and API used by <code>ctrdata</code> since 2015. To support users, <code>ctrdata</code> now automatically translates and redirects queries to the current website. This helps with automatically updating previously loaded queries (<code>ctrLoadQueryIntoDb(querytoupdate = &lt;n&gt;)</code>), manually migrating queries and reproducible work on clinical trials information. This new functionality in <code>ctrdata</code> translates a user’s search query URL from the classic website into a query for the current <code>CTGOV</code> website, for all search parameters. Since the structure and format of data differs between data retrieved from the current API and previously retrieved from the classic API, <code>ctrdata</code> will continue to identify the current API as <code>register = "CTGOV2"</code>, to support the analysis stage. In addition, <code>ctrdata</code> documentation continues to include examples of analyses with <code>CTGOV</code> data, as this may have been downloaded earlier.</li>
+<li>
+<code>CTIS</code> has been relaunched on 2024-06-17, and <code>ctrdata</code> has been fully updated to it. At the moment, <code>CTIS</code> provides basic searches and no search query URL. To support users, <code>ctrdata</code> includes an updated script that extracts a user’s search parameters from the register search page to the clipboard and into the browser URL bar. In addition, the script triggers a search for trials when opening such a query URL, see <a href="https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser" class="uri">https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser</a>. File names of <code>CTIS</code> documents start now with the document type, e.g. <code>SbjctInfaICF - L1 SIS and ICF NL for publication.pdf</code>, since the prefix (document source) introduced in version 1.18.0 is no more applicable.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="improvements-1-19-0">Improvements<a class="anchor" aria-label="anchor" href="#improvements-1-19-0"></a></h3>
