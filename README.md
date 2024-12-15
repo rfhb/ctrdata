@@ -8,7 +8,8 @@ status](https://www.r-pkg.org/badges/version-last-release/ctrdata)](https://cran
 [![R-CMD-CHECK-win-macos-linux-duckdb-mongodb-sqlite-postgres](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-win-macos-linux.yaml/badge.svg)](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-win-macos-linux.yaml)
 <!-- badges: end -->
 
-[Main features](#main-features) • [Installation](#installation) •
+[Main features](#main-features) • [References](#references) •
+[Installation](#installation) •
 [Overview](#overview-of-functions-in-ctrdata) •
 [Databases](#databases-for-use-with-ctrdata) • [Data
 model](#data-model-of-ctrdata) • [Example workflow](#example-workflow) •
@@ -34,7 +35,7 @@ conduct of trials, their availability for patients and to facilitate
 using their detailed results for research and meta-analyses. `ctrdata`
 is a package for the [R](https://www.r-project.org/) system, but other
 systems and tools can be used with the databases created with the
-package. This README was reviewed on 2024-12-08 for version 1.19.5.9000.
+package. This README was reviewed on 2024-12-15 for version 1.20.0.9000.
 
 ## Main features
 
@@ -69,7 +70,7 @@ Remember to respect the registers’ terms and conditions (see
 `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
 package in any publication as follows: “Ralf Herold (2024). *ctrdata:
 Retrieve and Analyze Clinical Trials in Public Registers.* R package
-version 1.19.4, <https://cran.r-project.org/package=ctrdata>”.
+version 1.20.0, <https://cran.r-project.org/package=ctrdata>”.
 
 <!--
 &#10;
@@ -77,19 +78,28 @@ version 1.19.4, <https://cran.r-project.org/package=ctrdata>”.
 citation("ctrdata")
 &#10;# find publications
 utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrdata%22")
-```
+&#10;# mentioned but not used in 
+# * Sciannameo et al. (2024) Information Extraction from Medical Case Reports Using OpenAI InstructGPT. Computer Methods and Programs in Biomedicine [https://doi.org/10.1016/j.cmpb.2024.108326](https://doi.org/10.1016/j.cmpb.2024.108326)
+&#10;```
 &#10;-->
 
 ## References
 
-Package `ctrdata` has been used for unpublished work and for:
+Package `ctrdata` has been used for unpublished works and for these
+publications:
 
+- Alzheimer’s disease Horizon Scanning Report (2024) [link to PDF
+  file](https://www.ema.europa.eu/en/documents/report/alzheimers-disease-eu-horizon-scanning-report_en.pdf)
+  🔔
+- Kundu et al. (2024) Analysis of Factors Influencing Enrollment Success
+  in Hematology Malignancy Cancer Clinical Trials (2008-2023). Blood
+  Meeting Abstracts <https://doi.org/10.1182/blood-2024-207446> 🔔
 - Lasch et al. (2022) The Impact of COVID‐19 on the Initiation of
   Clinical Trials in Europe and the United States. Clinical Pharmacology
   & Therapeutics <https://doi.org/10.1002/cpt.2534>
-- Sood et al. Managing the Evidence Infodemic: Automation Approaches
-  Used for Developing NICE COVID-19 Living Guidelines. medRxiv
-  <https://doi.org/10.1101/2022.06.13.22276242> 🔔
+- Sood et al. (2022) Managing the Evidence Infodemic: Automation
+  Approaches Used for Developing NICE COVID-19 Living Guidelines.
+  medRxiv <https://doi.org/10.1101/2022.06.13.22276242>
 - Blogging on [Innovation coming to paediatric
   research](https://paediatricdata.eu/innovation-coming-to-paediatric-research/)
 - Cancer Research UK (2017) [The impact of collaboration: The value of

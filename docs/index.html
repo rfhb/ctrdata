@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.20.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.20.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,7 +58,7 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9">
-<p><a href="#main-features">Main features</a> • <a href="#installation">Installation</a> • <a href="#overview-of-functions-in-ctrdata">Overview</a> • <a href="#databases-for-use-with-ctrdata">Databases</a> • <a href="#data-model-of-ctrdata">Data model</a> • <a href="#example-workflow">Example workflow</a> • <a href="#workflow-cross-trial-example">Analysis across trials</a> • <a href="#tests">Tests</a> • <a href="#acknowledgements">Acknowledgements</a> • <a href="#future-features">Future</a></p>
+<p><a href="#main-features">Main features</a> • <a href="#references">References</a> • <a href="#installation">Installation</a> • <a href="#overview-of-functions-in-ctrdata">Overview</a> • <a href="#databases-for-use-with-ctrdata">Databases</a> • <a href="#data-model-of-ctrdata">Data model</a> • <a href="#example-workflow">Example workflow</a> • <a href="#workflow-cross-trial-example">Analysis across trials</a> • <a href="#tests">Tests</a> • <a href="#acknowledgements">Acknowledgements</a> • <a href="#future-features">Future</a></p>
 <div class="section level1">
 <div class="page-header"><h1 id="ctrdata-for-aggregating-and-analysing-clinical-trials">ctrdata for aggregating and analysing clinical trials<a class="anchor" aria-label="anchor" href="#ctrdata-for-aggregating-and-analysing-clinical-trials"></a>
 </h1></div>
@@ -69,7 +69,7 @@
 <li>ClinicalTrials.gov (“CTGOV2”, see <a href="#workflow-ctgov-example">example</a>)</li>
 <li>ISRCTN Registry (<a href="https://www.isrctn.com/" class="external-link uri">https://www.isrctn.com/</a>)</li>
 </ul>
-<p>The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2024-12-08 for version 1.19.5.9000.</p>
+<p>The motivation is to investigate and understand trends in design and conduct of trials, their availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can be used with the databases created with the package. This README was reviewed on 2024-12-15 for version 1.20.0.9000.</p>
 <div class="section level2">
 <h2 id="main-features">Main features<a class="anchor" aria-label="anchor" href="#main-features"></a>
 </h2>
@@ -78,24 +78,29 @@
 <li>Downloaded trial information is transformed and stored in a collection of a document-centric database, for fast and offline access. Information from different registers can be accumulated in a single collection. Uses <code>DuckDB</code>, <code>PostgreSQL</code>, <code>RSQLite</code> or <code>MongoDB</code>, via R package <code>nodbi</code>: see section <a href="#databases-that-can-be-used-with-ctrdata">Databases</a> below. Interactively browse through trial structure and data. Easily re-run any previous query in a collection to retrieve and update trial records.</li>
 <li>For analyses, convenience functions in <code>ctrdata</code> allow find synonyms of an active substance, to identify unique (de-duplicated) trial records across all registers, to merge and recode fields as well as to easily access deeply-nested fields. Analysis can be done with <code>R</code> (see <a href="https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html">vignette</a>) or other systems, using the <code>JSON</code>-<a href="#trial-records-in-databases">structured information in the database</a>.</li>
 </ul>
-<p>Remember to respect the registers’ terms and conditions (see <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>). Please cite this package in any publication as follows: “Ralf Herold (2024). <em>ctrdata: Retrieve and Analyze Clinical Trials in Public Registers.</em> R package version 1.19.4, <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a>”.</p>
+<p>Remember to respect the registers’ terms and conditions (see <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>). Please cite this package in any publication as follows: “Ralf Herold (2024). <em>ctrdata: Retrieve and Analyze Clinical Trials in Public Registers.</em> R package version 1.20.0, <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a>”.</p>
 <!--
 &#10;
 ``` r
 citation("ctrdata")
 &#10;# find publications
 utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrdata%22")
-```
+&#10;# mentioned but not used in
+# * Sciannameo et al. (2024) Information Extraction from Medical Case Reports Using OpenAI InstructGPT. Computer Methods and Programs in Biomedicine [https://doi.org/10.1016/j.cmpb.2024.108326](https://doi.org/10.1016/j.cmpb.2024.108326)
+&#10;```
 &#10;-->
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<p>Package <code>ctrdata</code> has been used for unpublished work and for:</p>
+<p>Package <code>ctrdata</code> has been used for unpublished works and for these publications:</p>
 <ul>
+<li>Alzheimer’s disease Horizon Scanning Report (2024) <a href="https://www.ema.europa.eu/en/documents/report/alzheimers-disease-eu-horizon-scanning-report_en.pdf" class="external-link">link to PDF file</a> 🔔</li>
+<li>Kundu et al. (2024) Analysis of Factors Influencing Enrollment Success in Hematology Malignancy Cancer Clinical Trials (2008-2023). Blood Meeting Abstracts <a href="https://doi.org/10.1182/blood-2024-207446" class="external-link uri">https://doi.org/10.1182/blood-2024-207446</a> 🔔</li>
 <li>Lasch et al. (2022) The Impact of COVID‐19 on the Initiation of Clinical Trials in Europe and the United States. Clinical Pharmacology &amp; Therapeutics <a href="https://doi.org/10.1002/cpt.2534" class="external-link uri">https://doi.org/10.1002/cpt.2534</a>
 </li>
-<li>Sood et al. Managing the Evidence Infodemic: Automation Approaches Used for Developing NICE COVID-19 Living Guidelines. medRxiv <a href="https://doi.org/10.1101/2022.06.13.22276242" class="external-link uri">https://doi.org/10.1101/2022.06.13.22276242</a> 🔔</li>
+<li>Sood et al. (2022) Managing the Evidence Infodemic: Automation Approaches Used for Developing NICE COVID-19 Living Guidelines. medRxiv <a href="https://doi.org/10.1101/2022.06.13.22276242" class="external-link uri">https://doi.org/10.1101/2022.06.13.22276242</a>
+</li>
 <li>Blogging on <a href="https://paediatricdata.eu/innovation-coming-to-paediatric-research/" class="external-link">Innovation coming to paediatric research</a>
 </li>
 <li>Cancer Research UK (2017) <a href="https://www.cancerresearchuk.org/about-us/we-develop-policy/policy-publications-and-research-tenders#Policy_publications4" class="external-link">The impact of collaboration: The value of UK medical research to EU science and health</a>
