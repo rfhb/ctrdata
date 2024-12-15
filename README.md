@@ -88,8 +88,8 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 Package `ctrdata` has been used for unpublished works and for these
 publications:
 
-- Alzheimer’s disease Horizon Scanning Report (2024) [link to PDF
-  file](https://www.ema.europa.eu/en/documents/report/alzheimers-disease-eu-horizon-scanning-report_en.pdf)
+- Alzheimer’s disease Horizon Scanning Report (2024) [PDF file, p
+  10](https://www.ema.europa.eu/en/documents/report/alzheimers-disease-eu-horizon-scanning-report_en.pdf#page=10)
   🔔
 - Kundu et al. (2024) Analysis of Factors Influencing Enrollment Success
   in Hematology Malignancy Cancer Clinical Trials (2008-2023). Blood
@@ -105,6 +105,9 @@ publications:
 - Cancer Research UK (2017) [The impact of collaboration: The value of
   UK medical research to EU science and
   health](https://www.cancerresearchuk.org/about-us/we-develop-policy/policy-publications-and-research-tenders#Policy_publications4)
+- EMA (2017) Results of juvenile animal studies (JAS) and impact on
+  anti-cancer medicine development and use in children [PDF file, p
+  34](https://www.ema.europa.eu/en/documents/scientific-guideline/results-juvenile-animal-studies-jas-and-impact-anti-cancer-medicine-development-and-use-children_en.pdf#page=34)
 
 ## Installation
 

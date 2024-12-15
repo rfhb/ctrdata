@@ -131,7 +131,15 @@ Note: When <code>dbFindFields</code> is first called after
 <span class="r-msg co"><span class="r-pr">#&gt;</span> RSQLite version has enabled accelerating docdb_create() and docdb_update() functions when used with value = &lt;NDJSON file name&gt;.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">dbFindFields</span><span class="op">(</span>namepart <span class="op">=</span> <span class="st">"date"</span>, con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Using cache of fields. </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Finding fields in database collection</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  (sampling 5 trial records per register) </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> . </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> . </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> . </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> . </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> . </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Field names cached for this session.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                EUCTR </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             "n_date_of_competent_authority_decision" </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                EUCTR </span>
@@ -146,7 +154,15 @@ Note: When <code>dbFindFields</code> is first called after
 <span class="r-in"><span><span class="co"># view all 3350+ fields from all registers:</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">allFields</span> <span class="op">&lt;-</span> <span class="fu">dbFindFields</span><span class="op">(</span>con <span class="op">=</span> <span class="va">dbc</span>, sample <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Using cache of fields. </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Finding fields in database collection</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  (may take some time) </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> . </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> . </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> . </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> . </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> . </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Field names cached for this session.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/View.html" class="external-link">View</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  register <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">allFields</span><span class="op">)</span>,</span></span>
