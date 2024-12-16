@@ -222,7 +222,7 @@ Note that in this example, a warning message may be issued from importing an NDJ
 
 ## Add records from CTIS register into the same collection
 
-As of 29 June 2024, more than 4300 trials are publicly accessible in CTIS, which has to be used since January 2023 for new clinical trials in the European Union (EU). Queries in the CTIS search interface can be automatically copied to the clipboard so that a user can paste them into `queryterm`, see [here](https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser). 
+As of 2024-12-15, more than 8000 trials are publicly accessible in CTIS, which has to be used since January 2023 for new clinical trials in the European Union (EU). Queries in the CTIS search interface can be automatically copied to the clipboard so that a user can paste them into `queryterm`, see [here](https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser). 
 
 ```{r}
 # Retrieve trials from another register:

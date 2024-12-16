@@ -557,8 +557,8 @@ Queries in the CTIS search interface can be automatically copied to the
 clipboard so that a user can paste them into `queryterm`, see
 [here](#2-script-to-automatically-copy-users-query-from-web-browser).
 Subsequent to the relaunch of CTIS on 2024-07-18, there are more than
-4700 trials publicly accessible in CTIS. See [below](#documents-example)
-for how to download documents from CTIS.
+8,000 trials publicly accessible in CTIS. See
+[below](#documents-example) for how to download documents from CTIS.
 
 ``` r
 # See how many trials are in CTIS publicly accessible:
