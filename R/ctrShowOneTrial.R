@@ -34,9 +34,10 @@
 #' @examples
 #'
 #' dbc <- nodbi::src_sqlite(
-#'    dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
-#'    collection = "my_trials",
-#'    RSQLite::SQLITE_RO)
+#'     dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+#'     collection = "my_trials",
+#'     RSQLite::SQLITE_RO
+#' )
 #'
 #' # all such identifiers work
 #' id <- "2014-003556-31"
@@ -99,7 +100,8 @@ ctrShowOneTrial <- function(
 
     # temporary database
     conTemp <- suppressMessages(
-      nodbi::src_sqlite(collection = "oneTrial"))
+      nodbi::src_sqlite(collection = "oneTrial")
+    )
 
     # remove temporary database
     on.exit(try(rm(conTemp), silent = TRUE), add = TRUE)
@@ -110,7 +112,13 @@ ctrShowOneTrial <- function(
         queryterm = queryTerm,
         euctrresults = TRUE,
         con = conTemp
-      )))
+      )
+    ))
+
+    # checks
+    if (loadResult$n != 1L) {
+      stop("Unexpected records found for trial ", identifier)
+    }
 
     # get data
     trialData <- getTrial(id = identifier, con = conTemp)
@@ -156,11 +164,11 @@ ctrShowOneTrialWidget <- function(
 
   # create widget
   widget <- htmlwidgets::createWidget(
-    name = 'ctrShowOneTrialWidget',
+    name = "ctrShowOneTrialWidget",
     x = message,
     width = "95%",
     height = height,
-    package = 'ctrdata',
+    package = "ctrdata",
     elementId = elementId
   )
 
@@ -199,10 +207,8 @@ ctrShowOneTrialWidget <- function(
 #' @noRd
 #' @keywords internal
 #'
-ctrShowOneTrialOutput <- function(outputId, width = '100%', height = '400px'){
-
-  htmlwidgets::shinyWidgetOutput(outputId, 'ctrShowOneTrialWidget', width, height, package = 'ctrdata')
-
+ctrShowOneTrialOutput <- function(outputId, width = "100%", height = "400px") {
+  htmlwidgets::shinyWidgetOutput(outputId, "ctrShowOneTrialWidget", width, height, package = "ctrdata")
 }
 #'
 #' @noRd
@@ -210,7 +216,9 @@ ctrShowOneTrialOutput <- function(outputId, width = '100%', height = '400px'){
 #'
 renderCtrShowOneTrial <- function(expr, env = parent.frame(), quoted = FALSE) {
 
-  if (!quoted) { expr <- substitute(expr) } # force quoted
+  if (!quoted) {
+    expr <- substitute(expr)
+  } # force quoted
 
   htmlwidgets::shinyRenderWidget(expr, ctrShowOneTrialOutput, env, quoted = TRUE)
 
