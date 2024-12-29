@@ -161,12 +161,13 @@ typeVars <- list(
   "authorizedApplication.authorizedPartsII.mscInfo.trialRestartDate" = "ctrDate",
   "authorizedApplication.memberStatesConcerned.firstDecisionDate" = "ctrDate",
   "authorizedApplication.memberStatesConcerned.lastDecisionDate" = "ctrDate",
-  "correctiveMeasures.correctiveMeasureNotifications.unexpectedEventNotifications.submissionDate" = "ctrDate",
   "correctiveMeasures.correctiveMeasureNotifications.seriousBreachNotifications.submissionDate" = "ctrDate",
+  "correctiveMeasures.correctiveMeasureNotifications.unexpectedEventNotifications.submissionDate" = "ctrDate",
+  "correctiveMeasures.correctiveMeasureNotifications.urgentSafetyNotifications.submissionDate" = "ctrDate",
   "correctiveMeasures.revertedDate" = "ctrDate",
   "correctiveMeasures.sponsorActionRequiredByDate" = "ctrDate",
   "correctiveMeasures.sponsorSubmitDate" = "ctrDate",
-  # "decisionDate" is a composite string
+  # "decisionDate" cannot be types, is string concatenating dates
   "events.seriousBreaches.awareDate" = "ctrDate",
   "events.seriousBreaches.breachDate" = "ctrDate",
   "events.seriousBreaches.submissionDate" = "ctrDate",

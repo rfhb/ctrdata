@@ -1,3 +1,8 @@
+# ctrdata 1.20.0.9000
+
+## Improvements
+- Added typing of fields newly appearing in CTIS
+
 # ctrdata 1.20.0
 
 ## Improvements
