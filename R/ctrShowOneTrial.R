@@ -8,6 +8,7 @@
 #' \code{con} is provided or if the trial is not in database \code{con}.
 #'
 #' This is the widget for CTIS trial 2022-501142-30-00:
+#'
 #' \if{html}{
 #'   \out{<span style="text-align: left">}
 #'   \figure{ctrdata_ctrShowOneTrial.jpg}{options: style="width:500px;max-width:75\%;"}

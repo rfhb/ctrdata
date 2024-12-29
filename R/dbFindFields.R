@@ -57,7 +57,7 @@
 #'
 #' dbFindFields(namepart = "date", con = dbc)[1:5]
 #'
-#' # view all 3350+ fields from all registers:
+#' # view all 1880+ fields from all registers:
 #'
 #' allFields <- dbFindFields(con = dbc, sample = FALSE)
 #'

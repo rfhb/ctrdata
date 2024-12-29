@@ -2,7 +2,6 @@
 % Please edit documentation in R/ctrdata-package.R
 \docType{package}
 \name{ctrdata}
-\alias{ctrdata-package}
 \alias{ctrdata}
 \title{ctrdata: get started, database connection, function overview}
 \description{

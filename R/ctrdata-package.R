@@ -42,7 +42,6 @@
 #' \link{dfName2Value} (get values for variable(s) of interest).
 #'
 #' @name ctrdata
-#' @docType package
 #' @author Ralf Herold \email{ralf.herold@@mailbox.org}
 #' @keywords package
 #' @md
