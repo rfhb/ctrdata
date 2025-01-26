@@ -215,7 +215,6 @@ dfTrials2Long <- function(df) {
     " unique names of variables")
 
   # output
-  if (any("tibble" == .packages())) return(tibble::as_tibble(out))
-  return(out)
+  return(dfOrTibble(out))
 
 } # end dfTrials2Long

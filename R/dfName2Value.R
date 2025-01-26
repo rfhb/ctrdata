@@ -189,7 +189,6 @@ dfName2Value <- function(df, valuename = "",
   )
 
   # return
-  if (any("tibble" == .packages())) return(tibble::as_tibble(out))
-  return(out)
+  return(dfOrTibble(out))
 
 } # end dfName2Value

@@ -1539,3 +1539,32 @@ dbCTRUpdateQueryHistory <- function(
             '")', call. = FALSE, immediate. = FALSE)
   }
 } # end dbCTRUpdateQueryHistory
+
+
+#' dfOrTibble
+#'
+#' @return tibble or data frame, depending on loaded packages
+#'
+#' @param df data frame input
+#'
+#' @keywords internal
+#' @noRd
+#'
+#' @importFrom tibble as_tibble
+#'
+dfOrTibble <- function(df) {
+
+  if (any(sapply(
+    .packages(), function(i)
+      any(i == c("tibble", "magrittr", "tidyr", "dplyr")))
+    )) {
+
+    return(tibble::as_tibble(df))
+
+  } else {
+
+    return(df)
+
+  }
+
+} # end dfOrTibble

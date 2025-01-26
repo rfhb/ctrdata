@@ -169,8 +169,7 @@ ctrGetQueryUrl <- function(
       check.names = FALSE,
       stringsAsFactors = FALSE
     )
-    if (any("tibble" == .packages())) out <- tibble::as_tibble(out)
-    return(out)
+    return(dfOrTibble(out))
   }
 
   ## identify query term per register
