@@ -48,6 +48,7 @@ dfMergeVariablesRelevel <- function(
     df = NULL,
     colnames = "",
     levelslist = NULL) {
+
   # initialise
   env <- new.env()
   evalq(warned <- FALSE, env)

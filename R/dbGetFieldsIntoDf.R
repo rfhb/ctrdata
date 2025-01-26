@@ -27,10 +27,14 @@
 #' of `c("a.b.c.d", "a.b.c.e")`, accessing sought fields with
 #' \link{dfTrials2Long} followed by \link{dfName2Value} or other R functions.
 #'
-#' @param verbose Printing additional information if set to \code{TRUE};
-#' (default \code{FALSE}).
+#' @param calculate Vector of one or more strings, which are names of functions
+#' in \link{dfCalculate} to calculate fields of the same name from other fields
+#' in the database.
 #'
 #' @inheritParams ctrDb
+#'
+#' @param verbose Printing additional information if set to \code{TRUE};
+#' (default \code{FALSE}).
 #'
 #' @param ... Do not use (captures deprecated parameter \code{stopifnodata})
 #'
@@ -39,9 +43,6 @@
 #' A column for the records' `_id` will always be included.
 #' The maximum number of rows of the returned data frame is equal to,
 #' or less than the number of trial records in the database collection.
-#'
-#' @importFrom nodbi docdb_query
-#' @importFrom stats na.omit
 #'
 #' @export
 #'
@@ -64,7 +65,101 @@
 #'   fields = "keyword",
 #'   con = dbc)
 #'
+#' # calculate new field(s) from data across trials
+#' dbGetFieldsIntoDf(
+#'   fields = "keyword",
+#'   calculate = c(".statusRecruitment", ".startDate"),
+#'   con = dbc)
+#'
 dbGetFieldsIntoDf <- function(
+    fields = "",
+    calculate = "",
+    con,
+    verbose = FALSE, ...) {
+
+  # handle changed signature
+  if (inherits(calculate, "docdb_src")) {
+    warning(
+      "The second parameter of dbGetFieldsIntoDf() has changed, please use ",
+      "the named parameter con = ... to specify the database connection. "
+    )
+    con <- calculate
+  }
+
+  # nullify if empty
+  fields <- fields[fields != ""]
+  calculate <- calculate[calculate != ""]
+
+  # get all unique fields needed for fcts
+  fctFields <- sapply(
+    calculate, function(i)
+      suppressMessages(dfCalculate(name = i)),
+    simplify = FALSE)
+
+  # merge fields with fields needed for fcts
+  getFields <- unique(unlist(c(fields, fctFields)))
+
+  # get data
+  out <- .dbGetFieldsIntoDf(
+    fields = getFields, con = con, verbose = verbose, ...)
+
+  # run functions
+  for (f in calculate) {
+    out <- dfCalculate(name = f, df = out)
+  }
+
+  # remove fields only needed for functions
+  out <- out[, unique(c("_id", calculate, fields))]
+
+  # return
+  return(ctrdata:::dfOrTibble(out))
+
+}
+
+
+#### TEST ####
+# TODO
+if (FALSE) {
+
+  dbc <- nodbi::src_sqlite(
+    dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+    collection = "my_trials",
+    RSQLite::SQLITE_RO)
+
+  library(tidyr)
+
+  dbGetFieldsIntoDf(
+    fields = c(
+      "_id",
+      "authorizedApplication.applicationInfo.decisions.applicationType",
+      "authorizedApplication.applicationInfo.decisions.assessmentOutcome"
+    ),
+    calculate = c(
+      ".statusRecruitment",
+      ".isPlatformTrial"
+    ),
+    con = dbc,
+    verbose = FALSE
+  )
+
+}
+
+
+#' .dbGetFieldsIntoDf
+#'
+#' internal workhorse
+#'
+#' @return tibble or data frame, depending on loaded packages
+#'
+#' @inheritParams dbGetFieldsIntoDf
+#'
+#' @importFrom nodbi docdb_query
+#' @importFrom stats na.omit
+#'
+#' @keywords internal
+#' @noRd
+#'
+.dbGetFieldsIntoDf <- function(
     fields = "",
     con,
     verbose = FALSE, ...) {
@@ -207,7 +302,6 @@ dbGetFieldsIntoDf <- function(
   row.names(dfi) <- NULL
 
   # return
-  if (any("tibble" == .packages())) return(tibble::as_tibble(dfi))
   return(dfi)
 
 } # end dbGetFieldsIntoDf

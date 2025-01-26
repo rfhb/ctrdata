@@ -4,7 +4,7 @@
 \alias{dbGetFieldsIntoDf}
 \title{Create data frame of specified fields from database collection}
 \usage{
-dbGetFieldsIntoDf(fields = "", con, verbose = FALSE, ...)
+dbGetFieldsIntoDf(fields = "", calculate = "", con, verbose = FALSE, ...)
 }
 \arguments{
 \item{fields}{Vector of one or more strings, with names of sought fields.
@@ -15,6 +15,10 @@ If compatibility with `nodbi::src_postgres()` is needed, specify fewer
 than 50 fields, consider also using parent fields e.g., `"a.b"` instead
 of `c("a.b.c.d", "a.b.c.e")`, accessing sought fields with
 \link{dfTrials2Long} followed by \link{dfName2Value} or other R functions.}
+
+\item{calculate}{Vector of one or more strings, which are names of functions
+in \link{dfCalculate} to calculate fields of the same name from other fields
+in the database.}
 
 \item{con}{A database connection object, created with
 \code{nodbi}. See section `1 - Database connection` in
@@ -66,6 +70,12 @@ dbGetFieldsIntoDf(
 # returned by concatenating values with a slash
 dbGetFieldsIntoDf(
   fields = "keyword",
+  con = dbc)
+
+# calculate new field(s) from data across trials
+dbGetFieldsIntoDf(
+  fields = "keyword",
+  calculate = c(".statusRecruitment", ".startDate"),
   con = dbc)
 
 }
