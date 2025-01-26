@@ -81,7 +81,7 @@ dbQueryHistory <- function(con, verbose = FALSE) {
   }
 
   # return
-  return(dfOrTibble(hist))
+  return(ctrdata:::dfOrTibble(hist))
 
 }
 # end ctrQueryHistoryInDb

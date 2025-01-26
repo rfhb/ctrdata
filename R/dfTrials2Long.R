@@ -215,6 +215,6 @@ dfTrials2Long <- function(df) {
     " unique names of variables")
 
   # output
-  return(dfOrTibble(out))
+  return(ctrdata:::dfOrTibble(out))
 
 } # end dfTrials2Long
