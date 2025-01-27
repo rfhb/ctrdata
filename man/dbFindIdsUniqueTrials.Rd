@@ -62,4 +62,17 @@ dbc <- nodbi::src_sqlite(
 
 dbFindIdsUniqueTrials(con = dbc)[1:10]
 
+# alternative as of ctrdata version 1.21.0,
+# using defaults of dbFindIdsUniqueTrials()
+df <- dbGetFieldsIntoDf(
+  fields = "keyword",
+  calculate = c(".isUniqueTrial"),
+  con = dbc)
+
+# using base R
+df[df[[".isUniqueTrial"]], ]
+
+# using dplyr
+# df \%>\% filter(.isUniqueTrial)
+
 }

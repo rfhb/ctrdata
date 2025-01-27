@@ -32,7 +32,6 @@
 #' find corresponding trial records
 #'
 #' @importFrom nodbi docdb_query
-#' @importFrom stats setNames
 #'
 #' @inheritParams ctrDb
 #'
@@ -51,12 +50,26 @@
 #'
 #' dbFindIdsUniqueTrials(con = dbc)[1:10]
 #'
+#' # alternative as of ctrdata version 1.21.0,
+#' # using defaults of dbFindIdsUniqueTrials()
+#' df <- dbGetFieldsIntoDf(
+#'   fields = "keyword",
+#'   calculate = c(".isUniqueTrial"),
+#'   con = dbc)
+#'
+#' # using base R
+#' df[df[[".isUniqueTrial"]], ]
+#'
+#' # using dplyr
+#' # df %>% filter(.isUniqueTrial)
+#'
 dbFindIdsUniqueTrials <- function(
     preferregister = c("EUCTR", "CTGOV", "CTGOV2", "ISRCTN", "CTIS"),
     prefermemberstate = "DE",
     include3rdcountrytrials = TRUE,
     con,
     verbose = FALSE) {
+
   # parameter checks
   if (!all(preferregister %in% registerList)) {
     stop("'preferregister' unknown: ", preferregister, call. = FALSE)
@@ -65,6 +78,7 @@ dbFindIdsUniqueTrials <- function(
       !any(prefermemberstate == countriesEUCTR)) {
     stop("'prefermemberstate' unknown: ", prefermemberstate, call. = FALSE)
   }
+
   # complete if preferregister does not have all
   preferregister <- unique(preferregister)
   preferregister <- union(preferregister, registerList)
@@ -164,6 +178,46 @@ dbFindIdsUniqueTrials <- function(
 
   # inform user
   message("\b\b\b, ", nrow(listofIds), " found in collection")
+
+  # call and return
+  listofIds <- .dbFindIdsUniqueTrials(
+    preferregister = preferregister,
+    prefermemberstate = prefermemberstate,
+    include3rdcountrytrials = include3rdcountrytrials,
+    listofIds = listofIds,
+    verbose = verbose)
+
+  # inform user
+  message(
+    "= Returning keys (_id) of ", length(listofIds),
+    " records in collection \"", con$collection, "\""
+  )
+
+  # return
+  return(listofIds)
+}
+
+
+#' .dbFindIdsUniqueTrials
+#'
+#' internal workhorse
+#'
+#' @return vector
+#'
+#' @inheritParams dbFindIdsUniqueTrials
+#'
+#' @importFrom stats setNames
+#' @importFrom stats na.omit
+#'
+#' @keywords internal
+#' @noRd
+#'
+.dbFindIdsUniqueTrials <- function(
+    preferregister = c("EUCTR", "CTGOV", "CTGOV2", "ISRCTN", "CTIS"),
+    prefermemberstate = "DE",
+    include3rdcountrytrials = TRUE,
+    listofIds = listofIds,
+    verbose = FALSE) {
 
   # copy attributes
   attribsids <- attributes(listofIds)
@@ -409,22 +463,18 @@ dbFindIdsUniqueTrials <- function(
   )
 
   # avoid returning list() if none found
-  if (length(listofIds) == 0) listofIds <- character()
+  if (length(listofIds) == 0L) listofIds <- character()
 
   # inform user
   message(
     "- Keeping ", paste0(countIds, collapse = " / "), " records",
     " from ", paste0(names(countIds), collapse = " / ")
   )
-  message(
-    "= Returning keys (_id) of ", length(listofIds),
-    " records in collection \"", con$collection, "\""
-  )
 
   # return
   return(listofIds)
 }
-# end dbFindIdsUniqueTrials
+# end .dbFindIdsUniqueTrials
 
 
 
@@ -466,7 +516,7 @@ dfFindUniqueEuctrRecord <- function(
     )
   }
   #
-  if (nrow(df) == 0) {
+  if (nrow(df) == 0L) {
     stop("Data frame does not contain records (0 rows).",
          call. = FALSE
     )
@@ -527,12 +577,12 @@ dfFindUniqueEuctrRecord <- function(
     recordnames <- nms[indexofrecords]
     #
     # fnd should be only a single string, may need to be checked
-    if (sum(fnd <- grepl(prefermemberstate, recordnames)) != 0) {
+    if (sum(fnd <- grepl(prefermemberstate, recordnames)) != 0L) {
       result <- recordnames[!fnd]
       return(result)
     }
     #
-    if (sum(fnd <- grepl("DE", recordnames)) != 0) {
+    if (sum(fnd <- grepl("DE", recordnames)) != 0L) {
       result <- recordnames[!fnd]
       return(result)
     }
