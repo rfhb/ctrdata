@@ -1585,7 +1585,7 @@ dfOrTibble <- function(df) {
 fctDescribe <- function(fct, txt, flds) {
 
   # handle match.call value
-  fct <- rev(fct)[1]
+  if (length(fct) > 0L) fct <- rev(as.character(fct))[1]
 
   # inform user
   message(
