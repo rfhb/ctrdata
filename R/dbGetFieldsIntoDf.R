@@ -155,6 +155,7 @@ dbGetFieldsIntoDf <- function(
 
   # run functions
   for (f in calculate) {
+    if (verbose) dfCalculate(name = f)
     out <- dfCalculate(name = f, df = out)
   }
 
