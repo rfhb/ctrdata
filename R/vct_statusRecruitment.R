@@ -9,13 +9,19 @@
 #' @importFrom dplyr if_else mutate case_when
 .statusRecruitment <- function(df = NULL) {
 
-  # check
+  # check generic, do not edit
   stopifnot(is.data.frame(df) || is.null(df))
+
 
   #### fields ####
   fldsNeeded <- list(
     "euctr" = c(
       "p_end_of_trial_status"
+      #
+      # in some trials, e.g. 2014-003556-31-GB,
+      # this fields includes a text description
+      # while p_end_of_trial_status is empty:
+      # "subjectDisposition.recruitmentDetails"
     ),
     "ctgov" = c(
       "last_known_status",
@@ -51,17 +57,6 @@
   # "ctStatus",
   # "recruitmentStatus"
 
-  # TODO delete
-  if (FALSE) {
-    dbc <- nodbi::src_sqlite(
-      dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
-      collection = "my_trials", RSQLite::SQLITE_RO)
-    allFields <- dbFindFields(con = dbc, sample = FALSE)
-    View(data.frame(register = names(allFields), field = allFields))
-    #
-    df <- ctrdata::dbGetFieldsIntoDf(fields = unlist(fldsNeeded), con = dbc)
-    View(df)
-  }
 
   #### describe ####
   if (is.null(df)) {
@@ -73,14 +68,16 @@ Simplifies them into categories "ongoing", "completed" and "other."
 Returns an ordered factor.
     '
 
+    # generic, do not edit
     fctDescribe(match.call()[[1]], txt, fldsNeeded)
     return(invisible(unlist(fldsNeeded)))
 
   } # end describe
 
+
   #### calculate ####
 
-  # check missing fields
+  # check generic, do not edit
   fctChkFlds(names(df), fldsNeeded)
 
   # mangle more than one field per register
@@ -151,6 +148,7 @@ Returns an ordered factor.
     levelslist = mapped_values
   )
 
+
   #### checks ####
   stopifnot(is.factor(vct))
   stopifnot(length(vct) == nrow(df))
@@ -159,13 +157,3 @@ Returns an ordered factor.
   return(vct)
 
 } # end .statusRecruitment
-
-
-# TODO delete
-if (FALSE) {
-
-  .statusRecruitment()
-
-  .statusRecruitment(df)
-
-}
