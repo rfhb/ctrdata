@@ -28,8 +28,10 @@
 #' \link{dfTrials2Long} followed by \link{dfName2Value} or other R functions.
 #'
 #' @param calculate Vector of one or more strings, which are names of functions
-#' in \link{dfCalculate} to calculate fields of the same name from other fields
-#' in the database.
+#' to calculate certain trial concepts from fields in the collection across
+#' different registers.
+#' See function \link{dfCalculate} for how to find names of functions that are
+#' available in `ctrdata` so far.
 #'
 #' @inheritParams ctrDb
 #'
@@ -68,7 +70,7 @@
 #' # calculate new field(s) from data across trials
 #' dbGetFieldsIntoDf(
 #'   fields = "keyword",
-#'   calculate = c(".statusRecruitment", ".startDate"),
+#'   calculate = c(".statusRecruitment", ".startDate", ".isPlatformTrial"),
 #'   con = dbc)
 #'
 dbGetFieldsIntoDf <- function(
@@ -84,6 +86,54 @@ dbGetFieldsIntoDf <- function(
       "the named parameter con = ... to specify the database connection. "
     )
     con <- calculate
+  }
+
+  # check fields
+  if (!is.vector(fields) ||
+      !all(class(fields) %in% "character")) {
+    stop("Input should be a vector of strings of field names.", call. = FALSE)
+  }
+
+  # deprecated
+  params <- list(...)
+  if (!is.null(params[["stopifnodata"]])) warning(
+    'Parameter "stopifnodata" is deprecated.'
+  )
+
+  # remove NA, NULL if included in fields
+  fields <- fields[!is.null(fields) & !is.na(fields)]
+
+  # early return if only _id is requested
+  if (length(fields) == 1L &&
+      fields == "_id") {
+    message('Only "_id" requested, calling dbFindIdsUniqueTrials()')
+    dfi <- dbFindIdsUniqueTrials(con = con)
+    return(dfi)
+  }
+
+  # remove _id if included in fields
+  fields <- unique(fields["_id" != fields])
+
+  # check if valid fields
+  if ((all(calculate == "" | is.na(calculate)) || (length(calculate) == 0L)) &&
+      (all(fields == "" | is.na(fields)) || (length(fields) == 0L))) {
+    stop("'fields' and 'calculate' are empty; ",
+         "please provide a vector of strings in one or both arguments. ",
+         "Function dbFindFields() helps to find fields in the collection. ",
+         "Function dfCalculate() helps to find functions to calculate ",
+         "from fields in the collection. ",
+         call. = FALSE)
+  }
+
+  # notify user for potential backend
+  # compatibility issues with PostgreSQL
+  if (length(fields) > 49L) {
+    message(
+      "If compatibility with nodbi::src_postgres() is needed, specify fewer ",
+      "than 50 (was: ", length(fields), ") fields; parent fields, ",
+      'e.g., "a.b" instead of c("a.b.c.d", "a.b.c.e"), can also be used ',
+      "and sought fields can be extracted with dfTrials2Long() followed by ",
+      "dfName2Value() or other R functions.")
   }
 
   # nullify if empty
@@ -119,34 +169,6 @@ dbGetFieldsIntoDf <- function(
 }
 
 
-#### TEST ####
-# TODO
-if (FALSE) {
-
-  dbc <- nodbi::src_sqlite(
-    dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
-    collection = "my_trials",
-    RSQLite::SQLITE_RO)
-
-  library(tidyr)
-
-  dbGetFieldsIntoDf(
-    fields = c(
-      "_id",
-      "authorizedApplication.applicationInfo.decisions.applicationType",
-      "authorizedApplication.applicationInfo.decisions.assessmentOutcome"
-    ),
-    calculate = c(
-      ".statusRecruitment",
-      ".isPlatformTrial"
-    ),
-    con = dbc,
-    verbose = FALSE
-  )
-
-}
-
-
 #' .dbGetFieldsIntoDf
 #'
 #' internal workhorse
@@ -165,48 +187,6 @@ if (FALSE) {
     fields = "",
     con,
     verbose = FALSE, ...) {
-
-  # check fields
-  if (!is.vector(fields) ||
-      !all(class(fields) %in% "character")) {
-    stop("Input should be a vector of strings of field names.", call. = FALSE)
-  }
-
-  # deprecated
-  params <- list(...)
-  if (!is.null(params[["stopifnodata"]])) warning(
-    'Parameter "stopifnodata" is deprecated.'
-  )
-
-  # remove NA, NULL if included in fields
-  fields <- fields[!is.null(fields) & !is.na(fields)]
-
-  # early return if only _id is requested
-  if (length(fields) == 1L &&
-      fields == "_id") {
-    message('Only "_id" requested, calling dbFindIdsUniqueTrials()')
-    dfi <- dbFindIdsUniqueTrials(con = con)
-    return(dfi)
-  }
-
-  # remove _id if included in fields
-  fields <- unique(fields["_id" != fields])
-
-  # check if valid fields
-  if (any(fields == "") || (length(fields) == 0)) {
-    stop("'fields' contains empty elements; ",
-         "please provide a vector of strings of field names. ",
-         "Function dbFindFields() can be used to find field names. ",
-         call. = FALSE)
-  }
-  if (length(fields) > 49L) {
-    message(
-      "If compatibility with nodbi::src_postgres() is needed, specify fewer ",
-      "than 50 (was: ", length(fields), ") fields; parent fields, ",
-      'e.g., "a.b" instead of c("a.b.c.d", "a.b.c.e"), can also be used ',
-      "and sought fields can be extracted with dfTrials2Long() followed by ",
-      "dfName2Value() or other R functions.")
-  }
 
   # check database connection
   if (is.null(con$ctrDb)) con <- ctrDb(con = con)
