@@ -9,8 +9,9 @@
 #' @importFrom dplyr if_else mutate case_when
 .startDate <- function(df = NULL) {
 
-  # check
+  # check generic, do not edit
   stopifnot(is.data.frame(df) || is.null(df))
+
 
   #### fields ####
   fldsNeeded <- list(
@@ -33,25 +34,11 @@
       "authorizedApplication.authorizedPartI.trialDetails.trialInformation.trialDuration.estimatedRecruitmentStartDate"
     ))
 
-  # not relevant after inspection
+  # not relevant after inspection:
+  #
   # ISRCTN
   # "trialDesign.overallStartDate"
 
-  # TODO delete
-  if (FALSE) {
-    dbc <- nodbi::src_sqlite(
-      dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
-      collection = "my_trials", RSQLite::SQLITE_RO)
-    dbc <- nodbi::src_sqlite(collection = "my_trials")
-    ctrdata::ctrLoadQueryIntoDb(
-      queryterm = 'https://euclinicaltrials.eu/ctis-public/search#searchCriteria={"medicalCondition":"solid","therapeuticAreaCode":[4],"trialPhaseCode":[5]}',
-      con = dbc)
-    allFields <- dbFindFields(con = dbc, sample = FALSE)
-    View(data.frame(register = names(allFields), field = allFields))
-    library(tidyr)
-    df <- dbGetFieldsIntoDf(fields = unlist(fldsNeeded), con = dbc)
-    View(df)
-  }
 
   #### describe ####
   if (is.null(df)) {
@@ -62,14 +49,16 @@ of if not available, on the opinion of the competent authority.
 Returns a date.
     '
 
+    # generic, do not edit
     fctDescribe(match.call()[[1]], txt, fldsNeeded)
     return(invisible(unlist(fldsNeeded)))
 
   } # end describe
 
+
   #### calculate ####
 
-  # check missing fields
+  # check generic, do not edit
   fctChkFlds(names(df), fldsNeeded)
 
   # mangle more than one field per register
@@ -112,6 +101,7 @@ Returns a date.
     df = df,
     colnames = unlist(fldsNeeded, use.names = FALSE)
   )
+
 
   #### checks ####
   stopifnot(inherits(vct, "Date") || inherits(vct, "POSIXct"))
