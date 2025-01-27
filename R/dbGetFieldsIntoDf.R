@@ -109,7 +109,9 @@ dbGetFieldsIntoDf <- function(
   }
 
   # remove fields only needed for functions
-  out <- out[, unique(c("_id", calculate, fields))]
+  rmFields <- setdiff(unlist(fctFields), c("_id", fields))
+  if (length(rmFields)) out <- out[
+    , -na.omit(match(rmFields, names(out)))]
 
   # return
   return(ctrdata:::dfOrTibble(out))
