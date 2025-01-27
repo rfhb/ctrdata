@@ -72,8 +72,11 @@ dfCalculate <- function(name = ".*", df = NULL) {
       pattern = paste0("^", name, "$"))) == 1L) {
 
       # TODO
-      return(do.call(name, list()))
-      # return(eval(parse(text = paste0("ctrdata::", name, "()"))))
+      if (exists(name)) {
+        return(do.call(name, list()))
+      } else {
+        return(eval(parse(text = paste0("ctrdata::", name, "()"))))
+      }
 
     }
 
@@ -100,8 +103,11 @@ dfCalculate <- function(name = ".*", df = NULL) {
   # apply function. not using do.call
   # when the package is not attached
   # TODO
-  # df[[name]] <- eval(parse(text = paste0("ctrdata::", name, "(df = df)")))
-  df[[name]] <- do.call(name, list(df))
+  if (exists(name)) {
+    df[[name]] <- do.call(name, list(df))
+  } else {
+    df[[name]] <- eval(parse(text = paste0("ctrdata::", name, "(df = df)")))
+  }
 
   # return
   return(ctrdata:::dfOrTibble(df))

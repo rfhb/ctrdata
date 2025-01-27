@@ -21,7 +21,9 @@ tf <- function() {
   df <- ctrdata::dbGetFieldsIntoDf(
     fields = "",
     calculate = dfCalculate(),
-    con = dbc)
+    con = dbc,
+    verbose = TRUE
+  )
 
   # test
   expect_equivalent(names(df), c("_id", dfCalculate()))
@@ -31,4 +33,3 @@ tf <- function() {
 
 }
 tf()
-
