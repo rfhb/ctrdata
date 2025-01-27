@@ -43,7 +43,7 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           cache-version: 1
-          extra-packages: remotes, DBI, RSQLite, nodbi, duckdb, rcmdcheck, covr, tibble
+          extra-packages: remotes, DBI, RSQLite, nodbi, duckdb, rcmdcheck, covr, tibble, stringdist, dplyr
 
       - uses: r-lib/actions/setup-pandoc@v2
 

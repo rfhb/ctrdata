@@ -7,6 +7,7 @@
 #' @noRd
 #' @export
 #' @importFrom dplyr if_else mutate case_when rowwise ungroup `%>%`
+#' @importFrom stringdist stringsimmatrix
 .isPlatformTrial <- function(df = NULL) {
 
   # check generic, do not edit

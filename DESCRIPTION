@@ -28,7 +28,8 @@ Description: A system for querying, retrieving and analyzing
 License: MIT + file LICENSE
 RoxygenNote: 7.3.2
 Suggests: devtools, knitr, rmarkdown, RSQLite, tibble, 
-        mongolite, tinytest (>= 1.2.1), R.rsp, RPostgres, duckdb
+        mongolite, tinytest (>= 1.2.1), R.rsp, RPostgres, duckdb,
+        stringdist
 VignetteBuilder: R.rsp
 NeedsCompilation: no
 Encoding: UTF-8
