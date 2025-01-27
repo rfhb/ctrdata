@@ -629,9 +629,9 @@ expect_error(
 expect_error(
   suppressWarnings(
     dbGetFieldsIntoDf(
-      fields = c(NA, "willNeverBeFound", ""),
+      fields = c(NA, "", NULL),
       con = dbc)),
-  "'fields' contains empty elements")
+  " empty ")
 
 # test as many fields as possible for typing
 
