@@ -1589,14 +1589,14 @@ fctDescribe <- function(fct, txt, flds) {
 
   # inform user
   message(
-    "\n==== ", fct, "\n",
+    "\n>>>> ", fct, "\n",
     "\n* Description:\n\n",
     trimws(gsub("([^\n])([\n])([^\n])", "\\1 \\3", txt)),
     "\n\n* Fields needed:\n\n",
     paste0(unlist(flds), "\n"),
     "\n* To show the implementation, call: ctrdata::", fct,
     '\nor, after package("ctrdata"), call: ', fct,
-    "\n\n===="
+    "\n\n<<<<"
   )
 
 }
