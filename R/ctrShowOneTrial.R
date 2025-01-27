@@ -117,7 +117,7 @@ ctrShowOneTrial <- function(
     ))
 
     # checks
-    if (loadResult$n != 1L) {
+    if (loadResult$n == 0L) {
       stop("Unexpected records found for trial ", identifier)
     }
 
