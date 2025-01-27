@@ -49,6 +49,7 @@ clinical trials' records to subset a data frame).
 \section{4 - Operate on a data frame with trial information}{
 
 
+\link{dfCalculate} (calculate a trial concept from fields across registers),
 \link{dfTrials2Long} (convert fields with nested elements into long format),
 \link{dfName2Value} (get values for variable(s) of interest).
 }

@@ -26,7 +26,7 @@ based on general understanding and any publications concerning the concept,
 which is printed to explain if no data frame is specified.
 }
 \details{
-The names of the functions can also be used for the argument `calculate = `
+The names of the functions can also be used for the argument `calculate`
 in \link{dbGetFieldsIntoDf} to achieve the same purpose already at the
 time that a data frame with data is generated from the trial collection.
 }
@@ -40,6 +40,9 @@ dfCalculate(name = "status")
 
 # describe a specific function
 dfCalculate(name = ".statusRecruitment")
+
+# print descriptions of all functions
+invisible(sapply(dfCalculate(), dfCalculate))
 
 # apply dfCalculate to data frame
 dbc <- nodbi::src_sqlite(
@@ -56,7 +59,7 @@ dfCalculate(
   name = ".statusRecruitment",
   df = trialsDf)
 
-# or use for constructing data frame
+# or use already when creating a trial data frame
 trialsDf <- dbGetFieldsIntoDf(
   calculate = ".startDate",
   con = dbc)

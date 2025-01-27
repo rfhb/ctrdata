@@ -1,6 +1,10 @@
 # ctrdata 1.20.0.9000
 
 ## Improvements
+- New feature: built-in functions that implement and calculate common trial concepts across different registers, see `dfCalculate()` and `dbGetFieldsIntoDf()` which should largely avoid that users have to code themselves and repeatedly common trial concepts, such as recruitment start date, trial investigating a medicine as intervention, trial being a platform trial etc. 
+
+## Bug fix
+- Correct `ctrShowOneTrial()` for certain EUCTR trials
 - Added typing of fields newly appearing in CTIS
 
 # ctrdata 1.20.0

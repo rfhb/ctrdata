@@ -7,7 +7,7 @@
 #' based on general understanding and any publications concerning the concept,
 #' which is printed to explain if no data frame is specified.
 #'
-#' The names of the functions can also be used for the argument `calculate = `
+#' The names of the functions can also be used for the argument `calculate`
 #' in \link{dbGetFieldsIntoDf} to achieve the same purpose already at the
 #' time that a data frame with data is generated from the trial collection.
 #'
@@ -35,6 +35,9 @@
 #' # describe a specific function
 #' dfCalculate(name = ".statusRecruitment")
 #'
+#' # print descriptions of all functions
+#' invisible(sapply(dfCalculate(), dfCalculate))
+#'
 #' # apply dfCalculate to data frame
 #' dbc <- nodbi::src_sqlite(
 #'    dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
@@ -50,7 +53,7 @@
 #'   name = ".statusRecruitment",
 #'   df = trialsDf)
 #'
-#' # or use for constructing data frame
+#' # or use already when creating a trial data frame
 #' trialsDf <- dbGetFieldsIntoDf(
 #'   calculate = ".startDate",
 #'   con = dbc)
@@ -69,8 +72,8 @@ dfCalculate <- function(name = ".*", df = NULL) {
       pattern = paste0("^", name, "$"))) == 1L) {
 
       # TODO
-      # do.call(name, list())
-      return(eval(parse(text = paste0("ctrdata::", name, "()"))))
+      return(do.call(name, list()))
+      # return(eval(parse(text = paste0("ctrdata::", name, "()"))))
 
     }
 
@@ -97,9 +100,8 @@ dfCalculate <- function(name = ".*", df = NULL) {
   # apply function. not using do.call
   # when the package is not attached
   # TODO
-  df[[name]] <- eval(parse(
-    text = paste0("ctrdata::", name, "(df = df)")))
-  # df[[name]] <- do.call(name, list(df))
+  # df[[name]] <- eval(parse(text = paste0("ctrdata::", name, "(df = df)")))
+  df[[name]] <- do.call(name, list(df))
 
   # return
   return(ctrdata:::dfOrTibble(df))
@@ -114,11 +116,16 @@ if (FALSE) {
 
   dfCalculate(".statusRecruitment")
 
+  # describe all
+  invisible(sapply(dfCalculate(), dfCalculate))
+
   dfCalculate(name = ".statusRecruitment", df = df)
 
   dfCalculate(name = "a")
 
   ctrdata::.statusRecruitment()
+
+  .statusRecruitment()
 
   .statusRecruitment
 
