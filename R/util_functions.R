@@ -1567,7 +1567,7 @@ dfOrTibble <- function(df) {
 
   }
 
-} # end ctrdata:::dfOrTibble
+} # end dfOrTibble
 
 
 #' fctDescribe

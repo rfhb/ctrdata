@@ -189,6 +189,6 @@ dfName2Value <- function(df, valuename = "",
   )
 
   # return
-  return(ctrdata:::dfOrTibble(out))
+  return(dfOrTibble(out))
 
 } # end dfName2Value

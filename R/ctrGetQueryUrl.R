@@ -169,7 +169,7 @@ ctrGetQueryUrl <- function(
       check.names = FALSE,
       stringsAsFactors = FALSE
     )
-    return(ctrdata:::dfOrTibble(out))
+    return(dfOrTibble(out))
   }
 
   ## identify query term per register

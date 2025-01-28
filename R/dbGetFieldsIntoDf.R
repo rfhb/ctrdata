@@ -165,7 +165,7 @@ dbGetFieldsIntoDf <- function(
     , -na.omit(match(rmFields, names(out)))]
 
   # return
-  return(ctrdata:::dfOrTibble(out))
+  return(dfOrTibble(out))
 
 }
 
