@@ -173,6 +173,7 @@ for (i in unique(groupsNo)) {
 # dates
 tmpFields <- tmpFields[
   (grepl("[.]date$", tmpFields, ignore.case = TRUE) |
+     grepl("^startDateEU$", tmpFields, ignore.case = TRUE) |
      grepl("Date$", tmpFields, ignore.case = FALSE)) &
     !grepl("^decisionDate$", tmpFields, ignore.case = FALSE)
 ]
