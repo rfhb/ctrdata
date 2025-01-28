@@ -70,7 +70,7 @@ Returns an ordered factor.
 
     # generic, do not edit
     fctDescribe(match.call()[[1]], txt, fldsNeeded)
-    return(invisible(unlist(fldsNeeded)))
+    return(invisible(fldsNeeded))
 
   } # end describe
 

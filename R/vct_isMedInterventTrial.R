@@ -72,7 +72,7 @@ Returns a logical.
 
     # generic, do not edit
     fctDescribe(match.call()[[1]], txt, fldsNeeded)
-    return(invisible(unlist(fldsNeeded)))
+    return(invisible(fldsNeeded))
 
   } # end describe
 
@@ -82,6 +82,9 @@ Returns a logical.
   # check generic, do not edit
   fctChkFlds(names(df), fldsNeeded)
 
+  # helper function
+  `%>%` <- dplyr::`%>%`
+
 
   #### ..EUCTR ####
   # all in EUCTR correspond to definition
@@ -89,7 +92,8 @@ Returns a logical.
     dplyr::rowwise() %>%
     dplyr::mutate(
       analysis_isDrugTrial = TRUE,
-      out = dplyr::if_else(ctrname == "EUCTR", analysis_isDrugTrial, NA)
+      out = dplyr::if_else(ctrname == "EUCTR",
+                           analysis_isDrugTrial, NA)
     ) %>%
     dplyr::ungroup() %>%
     .[["out"]] -> df$euctr
@@ -99,17 +103,15 @@ Returns a logical.
   df %>%
     dplyr::rowwise() %>%
     dplyr::mutate(
-      analysis_isDrugTrial = grepl(
-        "drug|biological",
-        intervention.intervention_type,
-        ignore.case = TRUE
-      ) &
-        grepl(
-          "interventional",
+      analysis_isDrugTrial =
+        stringi::stri_detect_fixed(
+          intervention.intervention_type,
+          "drug|biological", case_insensitive = TRUE) |
+        stringi::stri_detect_fixed(
           study_type,
-          ignore.case = TRUE
-        ),
-      out = dplyr::if_else(is.na(intervention.intervention_type), NA, analysis_isDrugTrial)
+          "interventional", case_insensitive = TRUE),
+      out = dplyr::if_else(is.na(intervention.intervention_type),
+                           NA, analysis_isDrugTrial)
     ) %>%
     dplyr::ungroup() %>%
     .[["out"]] -> df$ctgov
@@ -119,17 +121,15 @@ Returns a logical.
   df %>%
     dplyr::rowwise() %>%
     dplyr::mutate(
-      analysis_isDrugTrial = grepl(
-        "drug|biological",
-        protocolSection.armsInterventionsModule.interventions.type,
-        ignore.case = TRUE
-      ) &
-        grepl(
-          "interventional",
+      analysis_isDrugTrial =
+        stringi::stri_detect_fixed(
+          protocolSection.armsInterventionsModule.interventions.type,
+          "drug|biological", case_insensitive = TRUE) |
+        stringi::stri_detect_fixed(
           protocolSection.designModule.studyType,
-          ignore.case = TRUE
-        ),
-      out = dplyr::if_else(is.na(protocolSection.designModule.studyType), NA, analysis_isDrugTrial)
+          "interventional", case_insensitive = TRUE),
+      out = dplyr::if_else(is.na(protocolSection.designModule.studyType),
+                           NA, analysis_isDrugTrial)
     ) %>%
     dplyr::ungroup() %>%
     .[["out"]] -> df$ctgov2
@@ -139,12 +139,12 @@ Returns a logical.
   df %>%
     dplyr::rowwise() %>%
     dplyr::mutate(
-      analysis_isDrugTrial = grepl(
-        "drug",
-        interventions.intervention.interventionType,
-        ignore.case = TRUE
-      ),
-      out = dplyr::if_else(is.na(interventions.intervention.interventionType), NA, analysis_isDrugTrial)
+      analysis_isDrugTrial =
+        stringi::stri_detect_fixed(
+          interventions.intervention.interventionType,
+          "drug", case_insensitive = TRUE),
+      out = dplyr::if_else(is.na(interventions.intervention.interventionType),
+                           NA, analysis_isDrugTrial)
     ) %>%
     dplyr::ungroup() %>%
     .[["out"]] -> df$isrctn

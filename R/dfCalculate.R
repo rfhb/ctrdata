@@ -23,6 +23,7 @@
 #' concept and returns invisibly the names of fields needed for the calculation.
 #'
 #' @export
+#' @importFrom utils ls.str
 #'
 #' @examples
 #'
@@ -44,11 +45,13 @@
 #'    collection = "my_trials",
 #'    RSQLite::SQLITE_RO)
 #'
-#' # use with existing data frame
+#' # use with existing data frame,
+#' # first get fields needed
 #' trialsDf <- dbGetFieldsIntoDf(
-#'   fields = dfCalculate(name = ".statusRecruitment"),
+#'   fields = unlist(dfCalculate(name = ".statusRecruitment")),
 #'   con = dbc)
 #'
+#' # then calculate
 #' dfCalculate(
 #'   name = ".statusRecruitment",
 #'   df = trialsDf)
@@ -81,7 +84,7 @@ dfCalculate <- function(name = ".*", df = NULL) {
     }
 
     # get all functions
-    fcts <- capture.output(ls.str(
+    fcts <- capture.output(utils::ls.str(
       getNamespace("ctrdata"),
       all.names = TRUE,
       pattern = "^[.]")
@@ -110,7 +113,7 @@ dfCalculate <- function(name = ".*", df = NULL) {
   }
 
   # return
-  return(ctrdata:::dfOrTibble(df))
+  return(dfOrTibble(df))
 
 } # end dfCalculate
 

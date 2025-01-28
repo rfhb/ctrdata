@@ -50,11 +50,13 @@ dbc <- nodbi::src_sqlite(
    collection = "my_trials",
    RSQLite::SQLITE_RO)
 
-# use with existing data frame
+# use with existing data frame,
+# first get fields needed
 trialsDf <- dbGetFieldsIntoDf(
-  fields = dfCalculate(name = ".statusRecruitment"),
+  fields = unlist(dfCalculate(name = ".statusRecruitment")),
   con = dbc)
 
+# then calculate
 dfCalculate(
   name = ".statusRecruitment",
   df = trialsDf)
