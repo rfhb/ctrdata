@@ -8,6 +8,7 @@
 #' @export
 #' @importFrom dplyr if_else mutate case_when rowwise ungroup `%>%`
 #' @importFrom stringdist stringsimmatrix
+#' @importFrom stringi stri_count_fixed stri_detect_fixed
 .isPlatformTrial <- function(df = NULL) {
 
   # check generic, do not edit
@@ -19,24 +20,17 @@
     "euctr" = c(
       "a3_full_title_of_the_trial",
       "trialInformation.fullTitle",
-      "subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm.title",
-      "subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm.type.value",
       "subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.title"
     ),
     "ctgov" = c(
       "official_title",
       "detailed_description.textblock",
       "condition",
-      "number_of_arms",
-      "arm_group.arm_group_label",
-      "arm_group.arm_group_type",
       "clinical_results.participant_flow.period_list.period.title"
     ),
     "ctgov2" = c(
       "protocolSection.identificationModule.officialTitle",
       "protocolSection.descriptionModule.detailedDescription",
-      "protocolSection.armsInterventionsModule.armGroups.label",
-      "protocolSection.armsInterventionsModule.armGroups.type",
       "resultsSection.participantFlowModule.periods.title"
     ),
     "isrctn" = c(
@@ -47,10 +41,14 @@
     "ctis" = c(
       "authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.fullTitle",
       "authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.publicTitle",
-      "authorizedApplication.authorizedPartI.productRoleGroupInfos.productRoleName",
-      "authorizedApplication.authorizedPartI.productRoleGroupInfos.products.productDictionaryInfo.activeSubstanceName",
       "authorizedApplication.authorizedPartI.trialDetails.protocolInformation.studyDesign.periodDetails.title"
     ))
+
+  # merge with fields needed for nested function
+  fldsAdded <- suppressMessages(.numTestArmsSubstances())
+  fldsNeeded <- sapply(names(fldsNeeded), function(i) na.omit(c(
+    fldsNeeded[[i]], fldsAdded[[i]])), simplify = FALSE)
+
 
   # not relevant after inspection:
   #
@@ -71,7 +69,8 @@ As operational definition, at least one of these criteria is true:
 - trial has "platform", "basket" or "umbrella" in its title or description (for
 ISRCTN, this is the only criterion; some trials in EUCTR lack data in English)
 - trial has more than 2 active arms with different investigational medicines,
-after excluding comparator, auxiliary and placebo medicines
+after excluding comparator, auxiliary and placebo medicines (calculated with
+function .numTestArmsSubstances())
 - trial more than 2 periods, after excluding screening, extension and
 follow-up periods (for CTGOV and CTGOV2, this criterion requires results-related
 data)
@@ -85,7 +84,7 @@ Returns a logical.
 
     # generic, do not edit
     fctDescribe(match.call()[[1]], txt, fldsNeeded)
-    return(invisible(unlist(fldsNeeded)))
+    return(invisible(fldsNeeded))
 
   } # end describe
 
@@ -104,18 +103,8 @@ Returns a logical.
   # helper function
   `%>%` <- dplyr::`%>%`
 
-  # helper function
-  asTestSimilarity <- function(x) {
-
-    x <- tolower(unlist(x))
-    t <- stringdist::stringsimmatrix(x, x)
-
-    if (ncol(t) < 1L) return(0L)
-    diag(t) <- NA
-    if (all(is.na(t))) return(0L)
-    apply(t, 2, max, na.rm = TRUE)
-
-  }
+  # apply nested function
+  df$analysis_numberDifferentTestArms <- .numTestArmsSubstances(df = df)
 
 
   #### ..EUCTR ####
@@ -123,49 +112,15 @@ Returns a logical.
     dplyr::rowwise() %>%
     dplyr::mutate(
       analysis_titleRelevant =
-        grepl(
-          titleDefPlatform,
+        stringi::stri_detect_fixed(
           a3_full_title_of_the_trial,
-          ignore.case = TRUE
-        ) | grepl(
-          titleDefPlatform,
+          titleDefPlatform, case_insensitive=TRUE) |
+        stringi::stri_detect_fixed(
           trialInformation.fullTitle,
-          ignore.case = TRUE
-        ),
-      helper_multipleActiveArms =
-        stringi::stri_count_fixed(
-          subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm.type.value,
-          "ARM_TYPE.experimental"),
-      helper_asName =
-        list(strsplit(
-          subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm.title,
-          " / ", fixed = TRUE)[[1]]),
-      helper_prodRole =
-        list(strsplit(
-          subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm.type.value,
-          " / ", fixed = TRUE)[[1]]),
-      helper_isTest =
-        list(
-          sapply(helper_prodRole, function(i) i == "ARM_TYPE.experimental", USE.NAMES = FALSE)
-        ),
-      helper_asTest =
-        list(
-          sapply(seq_along(helper_asName), function(i) {
-            t <- helper_asName[i][helper_isTest[i]]
-            c <- nchar(t)
-            na.omit(t[c > 0L])
-          }, USE.NAMES = FALSE)
-        ),
-      helper_simTest = list(
-        asTestSimilarity(helper_asTest)
-      ),
-      analysis_numberDifferentTestArms = list(
-        helper_multipleActiveArms -
-          max(c(0L, sum(sapply(helper_simTest, function(i) i >= thresholdSimilar)) - 1L), na.rm = TRUE)
-      ),
+          titleDefPlatform, case_insensitive=TRUE),
       helper_periodTitle =
         list(strsplit(
-          clinical_results.participant_flow.period_list.period.title,
+          subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.title,
           " / ", fixed = TRUE)[[1]]
         ),
       analysis_numberTestPeriods = sum(
@@ -181,51 +136,17 @@ Returns a logical.
     .[["out"]] -> df$euctr
 
 
-    #### ..CTGOV ####
+  #### ..CTGOV ####
   df %>%
     dplyr::rowwise() %>%
     dplyr::mutate(
       analysis_titleRelevant =
-        grepl(
-          titleDefPlatform,
+        stringi::stri_detect_fixed(
           official_title,
-          ignore.case = TRUE
-        ) | grepl(
-          titleDefPlatform,
+          titleDefPlatform, case_insensitive=TRUE) |
+        stringi::stri_detect_fixed(
           detailed_description.textblock,
-          ignore.case = TRUE
-        ),
-      helper_multipleActiveArms =
-        stringi::stri_count_fixed(
-          arm_group.arm_group_type,
-          "Experimental"),
-      helper_asName =
-        list(strsplit(
-          arm_group.arm_group_label,
-          " / ", fixed = TRUE)[[1]]),
-      helper_prodRole =
-        list(strsplit(
-          arm_group.arm_group_type,
-          " / ", fixed = TRUE)[[1]]),
-      helper_isTest =
-        list(
-          sapply(helper_prodRole, function(i) i == "Experimental", USE.NAMES = FALSE)
-        ),
-      helper_asTest =
-        list(
-          sapply(seq_along(helper_asName), function(i) {
-            t <- helper_asName[i][helper_isTest[i]]
-            c <- nchar(t)
-            na.omit(t[c > 0L])
-          }, USE.NAMES = FALSE)
-        ),
-      helper_simTest = list(
-        asTestSimilarity(helper_asTest)
-      ),
-      analysis_numberDifferentTestArms = list(
-        helper_multipleActiveArms -
-          max(c(0L, sum(sapply(helper_simTest, function(i) i >= thresholdSimilar)) - 1L), na.rm = TRUE)
-      ),
+          titleDefPlatform, case_insensitive=TRUE),
       helper_periodTitle =
         list(strsplit(
           subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.title,
@@ -249,46 +170,12 @@ Returns a logical.
     dplyr::rowwise() %>%
     dplyr::mutate(
       analysis_titleRelevant =
-        grepl(
-          titleDefPlatform,
+        stringi::stri_detect_fixed(
           protocolSection.identificationModule.officialTitle,
-          ignore.case = TRUE
-        ) | grepl(
-          titleDefPlatform,
+          titleDefPlatform, case_insensitive=TRUE) |
+        stringi::stri_detect_fixed(
           protocolSection.descriptionModule.detailedDescription,
-          ignore.case = TRUE
-        ),
-      helper_multipleActiveArms =
-        stringi::stri_count_fixed(
-          protocolSection.armsInterventionsModule.armGroups.type,
-          "EXPERIMENTAL"),
-      helper_asName =
-        list(strsplit(
-          protocolSection.armsInterventionsModule.armGroups.label,
-          " / ", fixed = TRUE)[[1]]),
-      helper_prodRole =
-        list(strsplit(
-          protocolSection.armsInterventionsModule.armGroups.type,
-          " / ", fixed = TRUE)[[1]]),
-      helper_isTest =
-        list(
-          sapply(helper_prodRole, function(i) i == "EXPERIMENTAL", USE.NAMES = FALSE)
-        ),
-      helper_asTest =
-        list(
-          sapply(seq_along(helper_asName), function(i) {
-            t <- helper_asName[i][helper_isTest[i]]
-            c <- nchar(t)
-            na.omit(t[c > 0L])
-          }, USE.NAMES = FALSE)
-        ),
-      helper_simTest = list(
-        asTestSimilarity(helper_asTest)
-      ),
-      analysis_numberDifferentTestArms = list(
-        helper_multipleActiveArms -
-          max(c(0L, sum(sapply(helper_simTest, function(i) i >= thresholdSimilar)) - 1L), na.rm = TRUE)
-      ),
+          titleDefPlatform, case_insensitive=TRUE),
       helper_periodTitle =
         list(strsplit(
           resultsSection.participantFlowModule.periods.title,
@@ -304,7 +191,7 @@ Returns a logical.
         analysis_numberTestPeriods >= minNumPeriodsDefPlatform
     ) %>%
     dplyr::ungroup() %>%
-  .[["out"]] -> df$ctgov2
+    .[["out"]] -> df$ctgov2
 
 
   #### ..ISRCTN ####
@@ -312,25 +199,21 @@ Returns a logical.
     dplyr::rowwise() %>%
     dplyr::mutate(
       analysis_titleRelevant =
-        grepl(
-          titleDefPlatform,
+        stringi::stri_detect_fixed(
           trialDescription.scientificTitle,
-          ignore.case = TRUE
-        ) | grepl(
-          titleDefPlatform,
+          titleDefPlatform, case_insensitive=TRUE) |
+        stringi::stri_detect_fixed(
           trialDescription.title,
-          ignore.case = TRUE
-        ),
-      analysis_isDrugTrial = grepl(
-        "drug",
-        interventions.intervention.interventionType,
-        ignore.case = TRUE
-      ),
+          titleDefPlatform, case_insensitive=TRUE),
+      analysis_isDrugTrial =
+        stringi::stri_detect_fixed(
+          interventions.intervention.interventionType,
+          "drug", case_insensitive = TRUE),
       out = analysis_titleRelevant & analysis_isDrugTrial,
       out = dplyr::if_else(is.na(trialDescription.title), NA, out)
     ) %>%
     dplyr::ungroup() %>%
-  .[["out"]] -> df$isrctn
+    .[["out"]] -> df$isrctn
 
 
   #### ..CTIS ####
@@ -338,46 +221,12 @@ Returns a logical.
     dplyr::rowwise() %>%
     dplyr::mutate(
       analysis_titleRelevant =
-        grepl(
-          titleDefPlatform,
+        stringi::stri_detect_fixed(
           authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.fullTitle,
-          ignore.case = TRUE
-        ) | grepl(
-          titleDefPlatform,
+          titleDefPlatform, case_insensitive=TRUE) |
+        stringi::stri_detect_fixed(
           authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.publicTitle,
-          ignore.case = TRUE
-        ),
-      helper_multipleActiveArms =
-        stringi::stri_count_fixed(
-          authorizedApplication.authorizedPartI.productRoleGroupInfos.productRoleName,
-          "Test"),
-      helper_asName =
-        list(strsplit(
-          authorizedApplication.authorizedPartI.productRoleGroupInfos.products.productDictionaryInfo.activeSubstanceName,
-          " / ", fixed = TRUE)[[1]]),
-      helper_prodRole =
-        list(strsplit(
-          authorizedApplication.authorizedPartI.productRoleGroupInfos.productRoleName,
-          " / ", fixed = TRUE)[[1]]),
-      helper_isTest =
-        list(
-          sapply(helper_prodRole, function(i) i == "Test", USE.NAMES = FALSE)
-        ),
-      helper_asTest =
-        list(
-          sapply(seq_along(helper_asName), function(i) {
-            t <- helper_asName[i][helper_isTest[i]]
-            c <- nchar(t)
-            na.omit(t[c > 0L])
-          }, USE.NAMES = FALSE)
-        ),
-      helper_simTest = list(
-        asTestSimilarity(helper_asTest)
-      ),
-      analysis_numberDifferentTestArms = list(
-        helper_multipleActiveArms -
-          max(c(0L, sum(sapply(helper_simTest, function(i) i >= thresholdSimilar)) - 1L), na.rm = TRUE)
-      ),
+          titleDefPlatform, case_insensitive=TRUE),
       helper_periodTitle =
         list(strsplit(
           authorizedApplication.authorizedPartI.trialDetails.protocolInformation.studyDesign.periodDetails.title,
@@ -394,17 +243,6 @@ Returns a logical.
     ) %>%
     dplyr::ungroup() %>%
     .[["out"]] -> df$ctis
-
-
-
-
-
-
-
-
-
-
-
 
 
   # keep only register names
