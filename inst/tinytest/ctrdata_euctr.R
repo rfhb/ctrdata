@@ -631,7 +631,7 @@ expect_error(
     dbGetFieldsIntoDf(
       fields = c(NA, "", NULL),
       con = dbc)),
-  " empty ")
+  " empty")
 
 # test as many fields as possible for typing
 
