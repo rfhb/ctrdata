@@ -6,9 +6,9 @@
 
 #' @noRd
 #' @export
-#' @importFrom dplyr if_else mutate case_when rowwise ungroup `%>%`
+#' @importFrom dplyr mutate case_when pull `%>%`
 #' @importFrom stringdist stringsimmatrix
-#' @importFrom stringi stri_count_fixed stri_detect_fixed
+#' @importFrom stringi stri_count_fixed stri_detect_fixed stri_split_fixed
 .isPlatformTrial <- function(df = NULL) {
 
   # check generic, do not edit
@@ -25,7 +25,6 @@
     "ctgov" = c(
       "official_title",
       "detailed_description.textblock",
-      "condition",
       "clinical_results.participant_flow.period_list.period.title"
     ),
     "ctgov2" = c(
@@ -48,15 +47,7 @@
   fldsAdded <- suppressMessages(.numTestArmsSubstances())
   fldsNeeded <- sapply(names(fldsNeeded), function(i) na.omit(c(
     fldsNeeded[[i]], fldsAdded[[i]])), simplify = FALSE)
-
-
-  # not relevant after inspection:
-  #
-  # CTGOV2
-  # "protocolSection.armsInterventionsModule.interventions.name"
-  #
-  # ISRCTN
-  # "interventions.intervention.description"
+  fldsNeeded <- c("ctrname", fldsNeeded)
 
 
   #### describe ####
@@ -95,154 +86,180 @@ Returns a logical.
   fctChkFlds(names(df), fldsNeeded)
 
   # helper definitions
-  thresholdSimilar <- 0.8
   titleDefPlatform <- "basket|platform|umbrella"
+  periodExclPlatform <- "follow|exten"
   minNumArmsDefPlatform <- 3L
   minNumPeriodsDefPlatform <- 3L
 
   # helper function
   `%>%` <- dplyr::`%>%`
 
-  # apply nested function
-  df$analysis_numberDifferentTestArms <- .numTestArmsSubstances(df = df)
+  # helper function to handle
+  # NA | FALSE -> NA
+  # NA %orRmNa% FALSE -> FALSE
+  `%orRmNa%` <- function (i1, i2) {
+    mapply(
+      function(e1, e2) {
+        if (is.na(e1) && is.na(e2)) return(NA)
+        any(na.omit(c(e1, e2)))
+      }, i1, i2)
+  }
+
+  # apply nested function which provides values for each register
+  # therefore the following code needs to check against register
+  df$analysis_numTestArmsSubstances <- .numTestArmsSubstances(df = df)
 
 
   #### ..EUCTR ####
-  df %>%
-    dplyr::rowwise() %>%
-    dplyr::mutate(
-      analysis_titleRelevant =
-        stringi::stri_detect_fixed(
-          a3_full_title_of_the_trial,
-          titleDefPlatform, case_insensitive=TRUE) |
-        stringi::stri_detect_fixed(
-          trialInformation.fullTitle,
-          titleDefPlatform, case_insensitive=TRUE),
-      helper_periodTitle =
-        list(strsplit(
-          subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.title,
-          " / ", fixed = TRUE)[[1]]
-        ),
-      analysis_numberTestPeriods = sum(
-        sapply(
-          helper_periodTitle, function(i) !grepl("screen|follow|exten", unique(i), ignore.case = TRUE),
-          USE.NAMES = FALSE)
-      ),
-      out = analysis_titleRelevant |
-        analysis_numberDifferentTestArms >= minNumArmsDefPlatform |
-        analysis_numberTestPeriods >= minNumPeriodsDefPlatform
-    ) %>%
-    dplyr::ungroup() %>%
-    .[["out"]] -> df$euctr
+  df %>% dplyr::mutate(
+    #
+    analysis_titleRelevant = stringi::stri_detect_fixed(
+      a3_full_title_of_the_trial,
+      titleDefPlatform, case_insensitive = TRUE) %orRmNa%
+      stringi::stri_detect_fixed(
+        trialInformation.fullTitle,
+        titleDefPlatform, case_insensitive = TRUE),
+    #
+    helper_periodTitle = stringi::stri_split_fixed(
+      subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.title,
+      " / "),
+    #
+    analysis_numberTestPeriods = lapply(
+      helper_periodTitle,
+      function(i) {
+        i <- unique(tolower(na.omit(i)))
+        i <- i[!grepl(periodExclPlatform, i)]
+        i <- length(i)
+        if (i) i else NA
+      }),
+    #
+    out = dplyr::case_when(
+      ctrname == "EUCTR" ~ analysis_titleRelevant %orRmNa%
+        (analysis_numTestArmsSubstances >= minNumArmsDefPlatform |
+           analysis_numberTestPeriods >= minNumPeriodsDefPlatform)
+    )
+  ) %>%
+    dplyr::pull(out) -> df$euctr
 
 
   #### ..CTGOV ####
-  df %>%
-    dplyr::rowwise() %>%
-    dplyr::mutate(
-      analysis_titleRelevant =
-        stringi::stri_detect_fixed(
-          official_title,
-          titleDefPlatform, case_insensitive=TRUE) |
-        stringi::stri_detect_fixed(
-          detailed_description.textblock,
-          titleDefPlatform, case_insensitive=TRUE),
-      helper_periodTitle =
-        list(strsplit(
-          subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.title,
-          " / ", fixed = TRUE)[[1]]
-        ),
-      analysis_numberTestPeriods = sum(
-        sapply(
-          helper_periodTitle, function(i) !grepl("screen|follow|exten", unique(i), ignore.case = TRUE),
-          USE.NAMES = FALSE)
-      ),
-      out = analysis_titleRelevant |
-        analysis_numberDifferentTestArms >= minNumArmsDefPlatform |
-        analysis_numberTestPeriods >= minNumPeriodsDefPlatform
-    ) %>%
-    dplyr::ungroup() %>%
-    .[["out"]] -> df$ctgov
+  df %>% dplyr::mutate(
+    #
+    analysis_titleRelevant = stringi::stri_detect_fixed(
+      official_title,
+      titleDefPlatform, case_insensitive = TRUE) %orRmNa%
+      stringi::stri_detect_fixed(
+        detailed_description.textblock,
+        titleDefPlatform, case_insensitive = TRUE),
+    #
+    helper_periodTitle = stringi::stri_split_fixed(
+      clinical_results.participant_flow.period_list.period.title,
+      " / "),
+    #
+    analysis_numberTestPeriods = lapply(
+      helper_periodTitle,
+      function(i) {
+        i <- unique(tolower(na.omit(i)))
+        i <- i[!grepl(periodExclPlatform, i)]
+        i <- length(i)
+        if (i) i else NA
+      }),
+    #
+    out = dplyr::case_when(
+      ctrname == "CTGOV" ~ analysis_titleRelevant %orRmNa%
+        (analysis_numTestArmsSubstances >= minNumArmsDefPlatform |
+           analysis_numberTestPeriods >= minNumPeriodsDefPlatform)
+    )
+  ) %>%
+    dplyr::pull(out) -> df$ctgov
 
 
   #### ..CTGOV2 ####
-  df %>%
-    dplyr::rowwise() %>%
-    dplyr::mutate(
-      analysis_titleRelevant =
-        stringi::stri_detect_fixed(
-          protocolSection.identificationModule.officialTitle,
-          titleDefPlatform, case_insensitive=TRUE) |
-        stringi::stri_detect_fixed(
-          protocolSection.descriptionModule.detailedDescription,
-          titleDefPlatform, case_insensitive=TRUE),
-      helper_periodTitle =
-        list(strsplit(
-          resultsSection.participantFlowModule.periods.title,
-          " / ", fixed = TRUE)[[1]]
-        ),
-      analysis_numberTestPeriods = sum(
-        sapply(
-          helper_periodTitle, function(i) !grepl("screen|follow|exten", unique(i), ignore.case = TRUE),
-          USE.NAMES = FALSE)
-      ),
-      out = analysis_titleRelevant |
-        analysis_numberDifferentTestArms >= minNumArmsDefPlatform |
-        analysis_numberTestPeriods >= minNumPeriodsDefPlatform
-    ) %>%
-    dplyr::ungroup() %>%
-    .[["out"]] -> df$ctgov2
+  df %>% dplyr::mutate(
+    #
+    analysis_titleRelevant = stringi::stri_detect_fixed(
+      protocolSection.identificationModule.officialTitle,
+      titleDefPlatform, case_insensitive = TRUE) %orRmNa%
+      stringi::stri_detect_fixed(
+        protocolSection.descriptionModule.detailedDescription,
+        titleDefPlatform, case_insensitive = TRUE),
+    #
+    helper_periodTitle = stringi::stri_split_fixed(
+      resultsSection.participantFlowModule.periods.title,
+      " / "),
+    #
+    analysis_numberTestPeriods = lapply(
+      helper_periodTitle,
+      function(i) {
+        i <- unique(tolower(na.omit(i)))
+        i <- i[!grepl(periodExclPlatform, i)]
+        i <- length(i)
+        if (i) i else NA
+      }),
+    #
+    out = dplyr::case_when(
+      ctrname == "CTGOV2" ~ analysis_titleRelevant %orRmNa%
+        (analysis_numTestArmsSubstances >= minNumArmsDefPlatform |
+           analysis_numberTestPeriods >= minNumPeriodsDefPlatform)
+    )
+  ) %>%
+    dplyr::pull(out) -> df$ctgov2
 
 
   #### ..ISRCTN ####
-  df %>%
-    dplyr::rowwise() %>%
-    dplyr::mutate(
-      analysis_titleRelevant =
-        stringi::stri_detect_fixed(
-          trialDescription.scientificTitle,
-          titleDefPlatform, case_insensitive=TRUE) |
-        stringi::stri_detect_fixed(
-          trialDescription.title,
-          titleDefPlatform, case_insensitive=TRUE),
-      analysis_isDrugTrial =
-        stringi::stri_detect_fixed(
-          interventions.intervention.interventionType,
-          "drug", case_insensitive = TRUE),
-      out = analysis_titleRelevant & analysis_isDrugTrial,
-      out = dplyr::if_else(is.na(trialDescription.title), NA, out)
-    ) %>%
-    dplyr::ungroup() %>%
-    .[["out"]] -> df$isrctn
+  df %>% dplyr::mutate(
+    #
+    analysis_titleRelevant = stringi::stri_detect_fixed(
+      trialDescription.scientificTitle,
+      titleDefPlatform, case_insensitive = TRUE) %orRmNa%
+      stringi::stri_detect_fixed(
+        trialDescription.title,
+        titleDefPlatform, case_insensitive = TRUE),
+    #
+    analysis_isDrugTrial =
+      stringi::stri_detect_fixed(
+        interventions.intervention.interventionType,
+        "drug", case_insensitive = TRUE),
+    #
+    out = dplyr::case_when(
+      ctrname == "ISRCTN" ~ analysis_titleRelevant &
+        analysis_isDrugTrial
+    )
+  ) %>%
+    dplyr::pull(out) -> df$isrctn
 
 
   #### ..CTIS ####
-  df %>%
-    dplyr::rowwise() %>%
-    dplyr::mutate(
-      analysis_titleRelevant =
-        stringi::stri_detect_fixed(
-          authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.fullTitle,
-          titleDefPlatform, case_insensitive=TRUE) |
-        stringi::stri_detect_fixed(
-          authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.publicTitle,
-          titleDefPlatform, case_insensitive=TRUE),
-      helper_periodTitle =
-        list(strsplit(
-          authorizedApplication.authorizedPartI.trialDetails.protocolInformation.studyDesign.periodDetails.title,
-          " / ", fixed = TRUE)[[1]]
-        ),
-      analysis_numberTestPeriods = sum(
-        sapply(
-          helper_periodTitle, function(i) !grepl("screen|follow|exten", unique(i), ignore.case = TRUE),
-          USE.NAMES = FALSE)
-      ),
-      out = analysis_titleRelevant |
-        analysis_numberDifferentTestArms >= minNumArmsDefPlatform |
-        analysis_numberTestPeriods >= minNumPeriodsDefPlatform
-    ) %>%
-    dplyr::ungroup() %>%
-    .[["out"]] -> df$ctis
+  df %>% dplyr::mutate(
+    #
+    analysis_titleRelevant =
+      stringi::stri_detect_fixed(
+        authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.fullTitle,
+        titleDefPlatform, case_insensitive = TRUE) %orRmNa%
+      stringi::stri_detect_fixed(
+        authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.publicTitle,
+        titleDefPlatform, case_insensitive = TRUE),
+    #
+    helper_periodTitle = stringi::stri_split_fixed(
+      authorizedApplication.authorizedPartI.trialDetails.protocolInformation.studyDesign.periodDetails.title,
+      " / "),
+    #
+    analysis_numberTestPeriods = lapply(
+      helper_periodTitle,
+      function(i) {
+        i <- unique(tolower(na.omit(i)))
+        i <- i[!grepl(periodExclPlatform, i)]
+        i <- length(i)
+        if (i) i else NA
+      }),
+    #
+    out = dplyr::case_when(
+      ctrname == "CTIS" ~ analysis_titleRelevant %orRmNa%
+        (analysis_numTestArmsSubstances >= minNumArmsDefPlatform |
+           analysis_numberTestPeriods >= minNumPeriodsDefPlatform)
+    )
+  ) %>%
+    dplyr::pull(out) -> df$ctis
 
 
   # keep only register names
@@ -257,7 +274,7 @@ Returns a logical.
 
 
   #### checks ####
-  stopifnot(is.logical(vct))
+  stopifnot(is.logical(vct) || all(is.na(vct)))
   stopifnot(length(vct) == nrow(df))
 
   # return

@@ -6,9 +6,9 @@
 
 #' @noRd
 #' @export
-#' @importFrom dplyr if_else mutate case_when rowwise ungroup `%>%`
+#' @importFrom dplyr mutate case_when pull `%>%`
 #' @importFrom stringdist stringsimmatrix
-#' @importFrom stringi stri_count_fixed
+#' @importFrom stringi stri_count_fixed stri_split_fixed
 .numTestArmsSubstances <- function(df = NULL) {
 
   # check generic, do not edit
@@ -18,23 +18,19 @@
   #### fields ####
   fldsNeeded <- list(
     "euctr" = c(
-      "subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm.title",
-      "subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm.type.value"
+      "subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm"
     ),
     "ctgov" = c(
-      "arm_group.arm_group_label",
-      "arm_group.arm_group_type"
+      "arm_group"
     ),
     "ctgov2" = c(
-      "protocolSection.armsInterventionsModule.armGroups.label",
-      "protocolSection.armsInterventionsModule.armGroups.type"
+      "protocolSection.armsInterventionsModule.armGroups"
     ),
     "isrctn" = c(
       "trialDescription.title"
     ),
     "ctis" = c(
-      "authorizedApplication.authorizedPartI.productRoleGroupInfos.productRoleName",
-      "authorizedApplication.authorizedPartI.productRoleGroupInfos.products.productDictionaryInfo.activeSubstanceName"
+      "authorizedApplication.authorizedPartI.productRoleGroupInfos"
     ))
 
 
@@ -71,141 +67,124 @@ Returns an integer.
   # helper function
   `%>%` <- dplyr::`%>%`
 
-  # helper function
-  asTestSimilarity <- function(x) {
+  # helper function, to be call per group
+  asTestSimilarityArms <- function(x) {
 
-    x <- tolower(unlist(x))
+    # early exit
+    if (is.null(x) || !length(x) || all(is.na(x))) return(NULL)
+
+    # normalise
+    x <- tolower(x) # TODO removed unlist(x)
+
+    # early exit if single arm
+    if (length(x) == 1L) return(0L)
+
+    # calculate similarities
     t <- stringdist::stringsimmatrix(x, x)
 
-    if (ncol(t) < 1L) return(0L)
+    # early exit
+    if (ncol(t) < 1L) return(NA)
+
+    # extract max similarity of arm n with other arm(s)
     diag(t) <- NA
     if (all(is.na(t))) return(0L)
     apply(t, 2, max, na.rm = TRUE)
 
-  }
+  } # asTestSimilarityArms
+
+  # helper function, to be called per trial
+  asTestSimilarityTrial <- function(x) {
+
+    # collapse active substances into one string per treatment arm / group
+    t <- sapply(x, function(i) paste0(unique(i), collapse = " / "))
+
+    # return vector of similarities of treatment arms
+    asTestSimilarityArms(t)
+
+  } # end asTestSimilarityTrial
 
 
   #### ..EUCTR ####
-  df %>%
-    dplyr::rowwise() %>%
-    dplyr::mutate(
-      helper_multipleActiveArms =
-        stringi::stri_count_fixed(
-          subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm.type.value,
-          "ARM_TYPE.experimental"),
-      helper_asName =
-        list(strsplit(
-          subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm.title,
-          " / ", fixed = TRUE)[[1]]),
-      helper_prodRole =
-        list(strsplit(
-          subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm.type.value,
-          " / ", fixed = TRUE)[[1]]),
-      helper_isTest =
-        list(
-          sapply(helper_prodRole, function(i) i == "ARM_TYPE.experimental", USE.NAMES = FALSE)
-        ),
-      helper_asTest =
-        list(
-          sapply(seq_along(helper_asName), function(i) {
-            t <- helper_asName[i][helper_isTest[i]]
-            c <- nchar(t)
-            na.omit(t[c > 0L])
-          }, USE.NAMES = FALSE)
-        ),
-      helper_simTest = list(
-        asTestSimilarity(helper_asTest)
-      ),
-      analysis_numberDifferentTestArms = list(
-        helper_multipleActiveArms -
-          max(c(0L, sum(sapply(helper_simTest, function(i) i >= thresholdSimilar)) - 1L), na.rm = TRUE)
-      ),
-      out = analysis_numberDifferentTestArms
-    ) %>%
-    dplyr::ungroup() %>%
-    .[["out"]] -> df$euctr
+  df %>% dplyr::mutate(
+    #
+    helper_asNamesPerTestGroup = lapply(
+      subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm,
+      function(i) {if (any(names(i) == "title"))
+        as.list(i)[["title"]][
+          as.list(i)[["type"]][["value"]] == "ARM_TYPE.experimental"] else NA}),
+    #
+    helper_simTestGroupsInTrial = lapply(
+      helper_asNamesPerTestGroup, function(i) asTestSimilarityTrial(i)),
+    #
+    helper_numTestGroupsInTrial = sapply(
+      helper_simTestGroupsInTrial, length, USE.NAMES = FALSE, simplify = TRUE),
+    #
+    analysis_numDifferentTestGroupsInTrial = dplyr::case_when(
+      is.na(helper_asNamesPerTestGroup) ~ NA,
+      helper_numTestGroupsInTrial == 1L ~ 1L,
+      .default = sapply(helper_simTestGroupsInTrial, function(i)
+        sum(i < thresholdSimilar), simplify = TRUE)
+    ),
+    #
+    out = analysis_numDifferentTestGroupsInTrial
+  ) %>%
+    dplyr::pull(out) -> df$euctr
 
 
   #### ..CTGOV ####
-  df %>%
-    dplyr::rowwise() %>%
-    dplyr::mutate(
-      helper_multipleActiveArms =
-        stringi::stri_count_fixed(
-          arm_group.arm_group_type,
-          "Experimental"),
-      helper_asName =
-        list(strsplit(
-          arm_group.arm_group_label,
-          " / ", fixed = TRUE)[[1]]),
-      helper_prodRole =
-        list(strsplit(
-          arm_group.arm_group_type,
-          " / ", fixed = TRUE)[[1]]),
-      helper_isTest =
-        list(
-          sapply(helper_prodRole, function(i) i == "Experimental", USE.NAMES = FALSE)
-        ),
-      helper_asTest =
-        list(
-          sapply(seq_along(helper_asName), function(i) {
-            t <- helper_asName[i][helper_isTest[i]]
-            c <- nchar(t)
-            na.omit(t[c > 0L])
-          }, USE.NAMES = FALSE)
-        ),
-      helper_simTest = list(
-        asTestSimilarity(helper_asTest)
-      ),
-      analysis_numberDifferentTestArms = list(
-        helper_multipleActiveArms -
-          max(c(0L, sum(sapply(helper_simTest, function(i) i >= thresholdSimilar)) - 1L), na.rm = TRUE)
-      ),
-      out = analysis_numberDifferentTestArms
-    ) %>%
-    dplyr::ungroup() %>%
-    .[["out"]] -> df$ctgov
+  df %>% dplyr::mutate(
+    #
+    # helper_multipleActiveArms = stringi::stri_count_fixed(
+    #   arm_group.arm_group_type, "Experimental"),
+    #
+    helper_asNamesPerExpArm = lapply(
+      arm_group,
+      function(i) as.list(i)[["arm_group_label"]][
+        as.list(i)[["arm_group_type"]] == "Experimental"]),
+    #
+    helper_simExpArmsInTrial = lapply(
+      helper_asNamesPerExpArm, function(i) asTestSimilarityTrial(i)),
+    #
+    helper_numExpArmsInTrial = sapply(
+      helper_simExpArmsInTrial, length, USE.NAMES = FALSE, simplify = TRUE),
+    #
+    analysis_numDifferentExpArmsInTrial = dplyr::case_when(
+      helper_numExpArmsInTrial == 1L ~ 1L,
+      helper_numExpArmsInTrial > 1L ~
+        max(as.integer(helper_numExpArmsInTrial > 0L),
+            sapply(helper_simExpArmsInTrial, function(i)
+              sum(i < thresholdSimilar), simplify = TRUE)
+        )
+    ),
+    # if at least one test arm im trial
+    out = analysis_numDifferentExpArmsInTrial
+  ) %>%
+    dplyr::pull(out) -> df$ctgov
 
 
   #### ..CTGOV2 ####
-  df %>%
-    dplyr::rowwise() %>%
-    dplyr::mutate(
-      helper_multipleActiveArms =
-        stringi::stri_count_fixed(
-          protocolSection.armsInterventionsModule.armGroups.type,
-          "EXPERIMENTAL"),
-      helper_asName =
-        list(strsplit(
-          protocolSection.armsInterventionsModule.armGroups.label,
-          " / ", fixed = TRUE)[[1]]),
-      helper_prodRole =
-        list(strsplit(
-          protocolSection.armsInterventionsModule.armGroups.type,
-          " / ", fixed = TRUE)[[1]]),
-      helper_isTest =
-        list(
-          sapply(helper_prodRole, function(i) i == "EXPERIMENTAL", USE.NAMES = FALSE)
-        ),
-      helper_asTest =
-        list(
-          sapply(seq_along(helper_asName), function(i) {
-            t <- helper_asName[i][helper_isTest[i]]
-            c <- nchar(t)
-            na.omit(t[c > 0L])
-          }, USE.NAMES = FALSE)
-        ),
-      helper_simTest = list(
-        asTestSimilarity(helper_asTest)
-      ),
-      analysis_numberDifferentTestArms = list(
-        helper_multipleActiveArms -
-          max(c(0L, sum(sapply(helper_simTest, function(i) i >= thresholdSimilar)) - 1L), na.rm = TRUE)
-      ),
-      out = analysis_numberDifferentTestArms
-    ) %>%
-    dplyr::ungroup() %>%
-    .[["out"]] -> df$ctgov2
+  df %>% dplyr::mutate(
+    #
+    helper_asNamesPerExpArm = lapply(
+      protocolSection.armsInterventionsModule.armGroups,
+      function(i) i["label"][i["type"] == "EXPERIMENTAL"]),
+    #
+    helper_simExpArmsInTrial = lapply(
+      helper_asNamesPerExpArm, function(i) asTestSimilarityTrial(i)),
+    #
+    helper_numExpArmsInTrial = sapply(
+      helper_simExpArmsInTrial, length, USE.NAMES = FALSE, simplify = TRUE),
+    #
+    analysis_numDifferentExpArmsInTrial = dplyr::case_when(
+      is.na(helper_asNamesPerExpArm) ~ NA,
+      helper_numExpArmsInTrial == 1L ~ 1L,
+      helper_numExpArmsInTrial > 1L ~ sapply(helper_simExpArmsInTrial, function(i)
+        sum(i < thresholdSimilar), simplify = TRUE)
+    ),
+    #
+    out = analysis_numDifferentExpArmsInTrial
+  ) %>%
+    dplyr::pull(out) -> df$ctgov2
 
 
   #### ..ISRCTN ####
@@ -213,44 +192,30 @@ Returns an integer.
 
 
   #### ..CTIS ####
-  df %>%
-    dplyr::rowwise() %>%
-    dplyr::mutate(
-      helper_multipleActiveArms =
-        stringi::stri_count_fixed(
-          authorizedApplication.authorizedPartI.productRoleGroupInfos.productRoleName,
-          "Test"),
-      helper_asName =
-        list(strsplit(
-          authorizedApplication.authorizedPartI.productRoleGroupInfos.products.productDictionaryInfo.activeSubstanceName,
-          " / ", fixed = TRUE)[[1]]),
-      helper_prodRole =
-        list(strsplit(
-          authorizedApplication.authorizedPartI.productRoleGroupInfos.productRoleName,
-          " / ", fixed = TRUE)[[1]]),
-      helper_isTest =
-        list(
-          sapply(helper_prodRole, function(i) i == "Test", USE.NAMES = FALSE)
-        ),
-      helper_asTest =
-        list(
-          sapply(seq_along(helper_asName), function(i) {
-            t <- helper_asName[i][helper_isTest[i]]
-            c <- nchar(t)
-            na.omit(t[c > 0L])
-          }, USE.NAMES = FALSE)
-        ),
-      helper_simTest = list(
-        asTestSimilarity(helper_asTest)
-      ),
-      analysis_numberDifferentTestArms = list(
-        helper_multipleActiveArms -
-          max(c(0L, sum(sapply(helper_simTest, function(i) i >= thresholdSimilar)) - 1L), na.rm = TRUE)
-      ),
-      out = analysis_numberDifferentTestArms
-    ) %>%
-    dplyr::ungroup() %>%
-    .[["out"]] -> df$ctis
+  df %>% dplyr::mutate(
+    #
+    helper_asNamesPerTestGroup = lapply(
+      authorizedApplication.authorizedPartI.productRoleGroupInfos,
+      function(i) {if (any(names(i) == "products"))
+        lapply(i[["products"]], "[[", "productName")[
+          i[["productRoleName"]] == "Test"] else NA}),
+    #
+    helper_simTestGroupsInTrial = lapply(
+      helper_asNamesPerTestGroup, function(i) asTestSimilarityTrial(i)),
+    #
+    helper_numTestGroupsInTrial = sapply(
+      helper_simTestGroupsInTrial, length, USE.NAMES = FALSE, simplify = TRUE),
+    #
+    analysis_numDifferentTestGroupsInTrial = dplyr::case_when(
+      is.na(helper_asNamesPerTestGroup) ~ NA,
+      helper_numTestGroupsInTrial == 1L ~ 1L,
+      .default = sapply(helper_simTestGroupsInTrial, function(i)
+        sum(i < thresholdSimilar), simplify = TRUE)
+    ),
+    #
+    out = analysis_numDifferentTestGroupsInTrial
+  ) %>%
+    dplyr::pull(out) -> df$ctis
 
 
   # keep only register names
@@ -265,7 +230,7 @@ Returns an integer.
 
 
   #### checks ####
-  stopifnot(is.integer(vct))
+  stopifnot(is.integer(vct) || all(is.na(vct)))
   stopifnot(length(vct) == nrow(df))
 
   # return

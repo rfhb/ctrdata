@@ -6,7 +6,7 @@
 
 #' @noRd
 #' @export
-#' @importFrom dplyr if_else mutate case_when
+#' @importFrom dplyr if_else mutate
 .startDate <- function(df = NULL) {
 
   # check generic, do not edit

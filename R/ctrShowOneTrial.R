@@ -30,7 +30,6 @@
 #' @importFrom jsonlite toJSON
 #' @importFrom jqr jq
 #' @importFrom V8 JS
-#' @importFrom utils View
 #'
 #' @examples
 #'

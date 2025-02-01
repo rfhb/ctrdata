@@ -55,10 +55,9 @@ dfMergeVariablesRelevel <- function(
 
   # helper function
   getValuesOrNa <- function(x) {
+
     x <- na.omit(x)
-    if (!length(x)) {
-      return(NA)
-    }
+    if (!length(x)) return(NA)
 
     if (length(x) > 1L) {
       x <- as.character(x)

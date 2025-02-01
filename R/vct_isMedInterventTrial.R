@@ -6,7 +6,8 @@
 
 #' @noRd
 #' @export
-#' @importFrom dplyr if_else mutate rowwise ungroup `%>%`
+#' @importFrom dplyr if_else mutate pull `%>%`
+#' @importFrom stringi stri_detect_regex stri_detect_fixed
 .isMedIntervenTrial <- function(df = NULL) {
 
   # check generic, do not edit
@@ -19,15 +20,19 @@
       "ctrname"
     ),
     "ctgov" = c(
+      # "oversight_info.is_fda_regulated_drug",
       "intervention.intervention_type",
       "study_type"
     ),
     "ctgov2" = c(
+      # "protocolSection.oversightModule.isFdaRegulatedDrug",
       "protocolSection.armsInterventionsModule.interventions.type",
       "protocolSection.designModule.studyType"
     ),
     "isrctn" = c(
-      "interventions.intervention.interventionType"
+      # "trialDesign.trialType",
+      "interventions.intervention.interventionType",
+      "trialDesign.primaryStudyDesign"
     ),
     "ctis" = c(
       "ctrname"
@@ -56,16 +61,14 @@
 Calculates if record is a medicine-interventional trial, investigating one or
 more medicine, whether biological or not.
 
-For EUCTR and CTIS, this corresponds to the clinical trials as per the
+For EUCTR and CTIS, this corresponds to all records as per the
 definition of the EU Clinical Trial Regulation.
 
-For CTGOV and CTGOV2, this is based
+For CTGOV and CTGOV2, this is based on drug or biological as type
+of intervention, and interventional as type of study.
 
-
-and on the variable isFDARegulated, available since 2017.
-
-
-Builds on Lasch-F et al. https://doi.org/10.1002/cpt.2534
+For ISRCTN, this is based on drug or biological as type
+of intervention, and interventional as type of study.
 
 Returns a logical.
     '
@@ -88,78 +91,76 @@ Returns a logical.
 
   #### ..EUCTR ####
   # all in EUCTR correspond to definition
-  df %>%
-    dplyr::rowwise() %>%
-    dplyr::mutate(
-      analysis_isDrugTrial = TRUE,
-      out = dplyr::if_else(ctrname == "EUCTR",
-                           analysis_isDrugTrial, NA)
-    ) %>%
-    dplyr::ungroup() %>%
-    .[["out"]] -> df$euctr
+  df %>% dplyr::mutate(
+    #
+    analysis_isDrugTrial =
+      dplyr::case_when(ctrname == "EUCTR" ~ TRUE),
+    #
+    out = analysis_isDrugTrial
+  ) %>%
+    dplyr::pull(out) -> df$euctr
 
 
   #### ..CTGOV ####
-  df %>%
-    dplyr::rowwise() %>%
-    dplyr::mutate(
-      analysis_isDrugTrial =
-        stringi::stri_detect_fixed(
-          intervention.intervention_type,
-          "drug|biological", case_insensitive = TRUE) |
-        stringi::stri_detect_fixed(
-          study_type,
-          "interventional", case_insensitive = TRUE),
-      out = dplyr::if_else(is.na(intervention.intervention_type),
-                           NA, analysis_isDrugTrial)
-    ) %>%
-    dplyr::ungroup() %>%
-    .[["out"]] -> df$ctgov
+  df %>% dplyr::mutate(
+    #
+    analysis_isDrugTrial =
+      stringi::stri_detect_regex(
+        intervention.intervention_type,
+        "drug|biological", case_insensitive = TRUE) &
+      stringi::stri_detect_fixed(
+        study_type,
+        "interventional", case_insensitive = TRUE),
+    #
+    out = analysis_isDrugTrial
+  ) %>%
+  dplyr::pull(out) -> df$ctgov
 
 
   #### ..CTGOV2 ####
   df %>%
-    dplyr::rowwise() %>%
     dplyr::mutate(
+      #
       analysis_isDrugTrial =
-        stringi::stri_detect_fixed(
+        stringi::stri_detect_regex(
           protocolSection.armsInterventionsModule.interventions.type,
-          "drug|biological", case_insensitive = TRUE) |
+          "drug|biological", case_insensitive = TRUE) &
         stringi::stri_detect_fixed(
           protocolSection.designModule.studyType,
           "interventional", case_insensitive = TRUE),
-      out = dplyr::if_else(is.na(protocolSection.designModule.studyType),
-                           NA, analysis_isDrugTrial)
+      #
+      out = analysis_isDrugTrial
     ) %>%
-    dplyr::ungroup() %>%
-    .[["out"]] -> df$ctgov2
+    dplyr::pull(out) -> df$ctgov2
 
 
   #### ..ISRCTN ####
   df %>%
-    dplyr::rowwise() %>%
     dplyr::mutate(
+      #
       analysis_isDrugTrial =
         stringi::stri_detect_fixed(
           interventions.intervention.interventionType,
-          "drug", case_insensitive = TRUE),
-      out = dplyr::if_else(is.na(interventions.intervention.interventionType),
-                           NA, analysis_isDrugTrial)
+          "drug", case_insensitive = TRUE) &
+        stringi::stri_detect_regex(
+          trialDesign.primaryStudyDesign,
+          "interventional|biological|vaccine", case_insensitive = TRUE),
+      #
+      out = analysis_isDrugTrial
     ) %>%
-    dplyr::ungroup() %>%
-    .[["out"]] -> df$isrctn
+    dplyr::pull(out) -> df$isrctn
 
 
   #### ..CTIS ####
   # all in EUCTR correspond to definition
-  df %>%
-    dplyr::rowwise() %>%
-    dplyr::mutate(
-      analysis_isDrugTrial = TRUE,
-      out = dplyr::if_else(ctrname == "CTIS", analysis_isDrugTrial, NA)
-    ) %>%
-    dplyr::ungroup() %>%
-    .[["out"]] -> df$ctis
+  df %>% dplyr::mutate(
+    #
+    analysis_isDrugTrial =
+      dplyr::case_when(ctrname == "CTIS" ~ TRUE),
+    #
+    out = analysis_isDrugTrial
+  ) %>%
+    dplyr::pull(out) -> df$ctis
 
 
   # keep only register names
@@ -174,7 +175,7 @@ Returns a logical.
 
 
   #### checks ####
-  stopifnot(is.logical(vct))
+  stopifnot(is.logical(vct) || all(is.na(vct)))
   stopifnot(length(vct) == nrow(df))
 
   # return
