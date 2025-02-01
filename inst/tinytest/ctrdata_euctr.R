@@ -530,7 +530,7 @@ expect_false(any(c("2010-024264-18-GB") %in% trialsCtgov))
 # test
 expect_true(
   all(c("NCT00001209", "NCT00001436", "NCT00187109", "NCT01516567",
-        "2009-018077-31-DE") %in% trialsEuctr))
+        "2009-018077-31-BE") %in% trialsEuctr))
 
 # test
 expect_false(any(c("NCT01471782") %in% trialsEuctr))
