@@ -52,6 +52,10 @@ function to provide a vector of identifiers of deduplicated trials.
 Note that the content of records may differ between registers
 (and, for "EUCTR", between records for different Member States).
 Such differences are not considered by this function.
+
+Note that the trial concept ".isUniqueTrial" (which uses this function)
+can be calculated at the time of creating a data frame with
+\link{dbGetFieldIntoDf}, which often may be the preferred approach.
 }
 \examples{
 

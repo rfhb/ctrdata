@@ -8,7 +8,7 @@
 #' @export
 #' @importFrom dplyr if_else mutate pull `%>%`
 #' @importFrom stringi stri_detect_regex stri_detect_fixed
-.isMedIntervenTrial <- function(df = NULL) {
+.isMedIntervTrial <- function(df = NULL) {
 
   # check generic, do not edit
   stopifnot(is.data.frame(df) || is.null(df))
@@ -181,4 +181,4 @@ Returns a logical.
   # return
   return(vct)
 
-} # end .isMedIntervenTrial
+} # end .isMedIntervTrial

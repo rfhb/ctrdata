@@ -3,11 +3,11 @@
 \docType{data}
 \name{ctrdata-registers}
 \alias{ctrdata-registers}
-\title{ctrdata: information on clinical trial registers}
+\title{Information on clinical trial registers}
 \description{
-Information on registers of clinical trials from which package \link{ctrdata}
-can retrieve, aggregate and analyse protocol- and result-related information
-as well as documents, last updated 2024-12-27.
+Registers of the four clinical trial registers from which package
+\link{ctrdata} can retrieve, aggregate and analyse protocol- and
+result-related information as well as documents, last updated 2025-02-01.
 }
 \section{1 - Overview}{
 
@@ -16,11 +16,12 @@ as well as documents, last updated 2024-12-27.
 trials (at least one investigational medicinal product, IMP; in the European
 Union and beyond; results of trials continue to be added)
 \item \strong{CTIS}: The EU Clinical Trials Information System was launched in January
-2023 and holds more than 8,150 publicly accessible clinical trials
-(to automatically get CTIS search query URLs, see \ifelse{latex}{\out{\href{https://rfhb.github.io/ctrdata/\#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}})
-\item \strong{CTGOV2}: ClinicalTrials.gov holds more than 520,500 interventional and
+2023 and holds more than 8,500 publicly accessible clinical trials
+(to automatically get CTIS search query URLs, see
+\ifelse{latex}{\out{\href{https://rfhb.github.io/ctrdata/\#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}})
+\item \strong{CTGOV2}: ClinicalTrials.gov holds almost 525,000 interventional and
 observational studies
-\item \strong{ISRCTN}: The ISRCTN Registry holds more than 25,750 interventional and
+\item \strong{ISRCTN}: The ISRCTN Registry holds almost 26,000 interventional and
 observational health studies
 }
 }
@@ -30,7 +31,8 @@ observational health studies
 
 CTGOV "classic" was retired on 2024-06-25; \code{ctrdata} subsequently translates
 CTGOV queries to CTGOV2 queries. The new website ("CTGOV2") can be used with
-\code{ctrdata} since 2023-08-27.
+\code{ctrdata} since 2023-08-27. Database collections created with CTGOV queries
+can still be used since functions in \code{ctrdata} continue to support them.
 CTIS was relaunched on 2024-06-17, changing the data structure and search
 syntax, to which \code{ctrdata} was updated. CTIS can be used
 with \code{ctrdata} since 2023-03-25. More information on changes:

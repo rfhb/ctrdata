@@ -3,10 +3,10 @@
 \docType{package}
 \name{ctrdata}
 \alias{ctrdata}
-\title{ctrdata: get started, database connection, function overview}
+\title{Getting started, database connection, function overview}
 \description{
-A package for aggregating and analysing information on clinical
-studies, and for obtaining documents, from public registers
+\code{ctrdata} is a package for aggregating and analysing information on clinical
+studies, and for obtaining documents, from public trial registers
 }
 \section{1 - Database connection}{
 
@@ -41,17 +41,16 @@ see
 
 \link{ctrShowOneTrial} (show widget to explore structure, fields and data of a trial),
 \link{dbFindFields} (find names of fields of interest in trial records in a collection),
-\link{dbGetFieldsIntoDf} (create a data frame with fields of interest from collection),
-\link{dbFindIdsUniqueTrials} (get de-duplicated identifiers of
-clinical trials' records to subset a data frame).
+\link{dbGetFieldsIntoDf} (create a data frame with fields of interest and calculated trial concepts from collection),
+\link{dbFindIdsUniqueTrials} (get de-duplicated identifiers of clinical trials' records to subset a data frame).
 }
 
 \section{4 - Operate on a data frame with trial information}{
 
 
-\link{dfCalculate} (calculate a trial concept from fields across registers),
 \link{dfTrials2Long} (convert fields with nested elements into long format),
 \link{dfName2Value} (get values for variable(s) of interest).
+\link{dfCalculate} (calculate a trial concept from fields across registers),
 }
 
 \seealso{

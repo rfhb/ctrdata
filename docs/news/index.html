@@ -42,7 +42,12 @@
 <h2 class="pkg-version" data-toc-text="1.20.0.9000" id="ctrdata-12009000">ctrdata 1.20.0.9000<a class="anchor" aria-label="anchor" href="#ctrdata-12009000"></a></h2>
 <div class="section level3">
 <h3 id="improvements-1-20-0-9000">Improvements<a class="anchor" aria-label="anchor" href="#improvements-1-20-0-9000"></a></h3>
-<ul><li>Added typing of fields newly appearing in CTIS</li>
+<ul><li>New feature: built-in functions that implement and calculate common trial concepts across different registers, see <code><a href="../reference/dfCalculate.html">dfCalculate()</a></code> and <code><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code> which should largely avoid that users have to code themselves and repeatedly common trial concepts, such as recruitment start date, trial investigating a medicine as intervention, trial being a platform trial etc.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fix-1-20-0-9000">Bug fix<a class="anchor" aria-label="anchor" href="#bug-fix-1-20-0-9000"></a></h3>
+<ul><li>Correct <code><a href="../reference/ctrShowOneTrial.html">ctrShowOneTrial()</a></code> for certain EUCTR trials</li>
+<li>Added typing of fields newly appearing in CTIS</li>
 </ul></div>
 </div>
     <div class="section level2">
@@ -347,7 +352,7 @@
 <h2 class="pkg-version" data-toc-text="1.12.0" id="ctrdata-1120-2023-03-25">ctrdata 1.12.0 (2023-03-25)<a class="anchor" aria-label="anchor" href="#ctrdata-1120-2023-03-25"></a></h2><p class="text-muted">CRAN release: 2023-03-26</p>
 <ul><li>added first access to new register: CTIS, the EU Clinical Trial Information System</li>
 <li>stop (instead of warning) if register host errors (e.g. incorrect number of records)</li>
-<li>switch to use <code><a href="https://rdrr.io/pkg/curl/man/multi_download.html" class="external-link">curl::multi_download()</a></code> which can resume retrievals from registers</li>
+<li>switch to use <code><a href="https://jeroen.r-universe.dev/curl/reference/multi_download.html" class="external-link">curl::multi_download()</a></code> which can resume retrievals from registers</li>
 <li>require curl &gt;= 5.0</li>
 </ul></div>
     <div class="section level2">

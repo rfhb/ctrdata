@@ -103,7 +103,7 @@ Returns an ordered factor.
     )
   )[["out"]]
 
-  # merge
+  # merge, last update 2025-01-27
   mapped_values <- list(
     "ongoing" = c(
       # EUCTR

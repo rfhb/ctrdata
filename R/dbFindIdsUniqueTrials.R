@@ -13,6 +13,10 @@
 #' (and, for "EUCTR", between records for different Member States).
 #' Such differences are not considered by this function.
 #'
+#' Note that the trial concept ".isUniqueTrial" (which uses this function)
+#' can be calculated at the time of creating a data frame with
+#' \link{dbGetFieldIntoDf}, which often may be the preferred approach.
+#'
 #' @param preferregister A vector of the order of preference for
 #' registers from which to generate unique _id's, default
 #' \code{c("EUCTR", "CTGOV", "CTGOV2", "ISRCTN", "CTIS")}

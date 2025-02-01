@@ -114,7 +114,6 @@ The trial is retrieved with <a href="ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb
 <span class="r-in"><span><span class="co"># select fields of interest and to click on "Copy names of selected</span></span></span>
 <span class="r-in"><span><span class="co"># fields to clipboard..." to use them with dbGetFieldsIntoDf()</span></span></span>
 <span class="r-in"><span><span class="fu">ctrShowOneTrial</span><span class="op">(</span>identifier <span class="op">=</span> <span class="va">id</span>, con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in utils::browseURL(tf):</span> 'browser' must be a non-empty character string</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># get sample of identifiers of trials in database</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span>, <span class="fl">5L</span><span class="op">)</span></span></span>

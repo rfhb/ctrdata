@@ -2,14 +2,16 @@
 
 #' Calculate fields from data in other fields
 #'
-#' Across registers, calculate from fields in a data frame a common trial
-#' concept (e.g., status of recruitment) that is defined within ctrdata
-#' based on general understanding and any publications concerning the concept,
-#' which is printed to explain if no data frame is specified.
+#' Across registers, calculate a trial concept (e.g., status of recruitment)
+#' from fields in a data frame. The concept is defined within ctrdata
+#' based on common understanding and any relevant publications.
+#' Details of the function are printed to explain it, if no data frame is specified.
 #'
 #' The names of the functions can also be used for the argument `calculate`
 #' in \link{dbGetFieldsIntoDf} to achieve the same purpose already at the
 #' time that a data frame with data is generated from the trial collection.
+#' This approach will in most cases be more efficient and preferred over
+#' using \link{dfCalculate}.
 #'
 #' @param name String with name of function to be applied to `df`, or regular
 #' expression to list available functions.
@@ -17,10 +19,10 @@
 #' @param df Optional. Data frame with fields needed to apply function `name`.
 #'
 #' @returns Data frame with additional column of name `name` as calculated
-#' applying the function `name`. If `df` is not specified, either a list of
+#' applying the function `name`. If `df` is `NULL` (default), either a list of
 #' functions corresponding to `name` or, if exactly one function is identified,
 #' prints details of the function `name` to explain the implementation of the
-#' concept and returns invisibly the names of fields needed for the calculation.
+#' concept and to return invisibly the names of fields needed for its calculation.
 #'
 #' @export
 #' @importFrom utils ls.str
@@ -57,9 +59,12 @@
 #'   df = trialsDf)
 #'
 #' # or use already when creating a trial data frame
+#' # to subset to the unique records of clinical trials
 #' trialsDf <- dbGetFieldsIntoDf(
-#'   calculate = ".startDate",
+#'   calculate = ".isUniqueTrial",
 #'   con = dbc)
+#' trialsDf[trialsDf[[".isUniqueTrial"]], ]
+#'
 #'
 dfCalculate <- function(name = ".*", df = NULL) {
 

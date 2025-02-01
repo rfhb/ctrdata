@@ -116,6 +116,9 @@ names correspond to the register of the record.</p>
     <p>Note that the content of records may differ between registers
 (and, for "EUCTR", between records for different Member States).
 Such differences are not considered by this function.</p>
+<p>Note that the trial concept ".isUniqueTrial" (which uses this function)
+can be calculated at the time of creating a data frame with
+dbGetFieldIntoDf, which often may be the preferred approach.</p>
     </div>
 
     <div class="section level2">
@@ -141,6 +144,106 @@ Such differences are not considered by this function.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> "2014-002606-20-PT" "2014-003556-31-SE" "2022-501142-30-00" "2023-505613-24-00" </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                CTIS              ISRCTN </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> "2024-510663-34-00"          "20343063" </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># alternative as of ctrdata version 1.21.0,</span></span></span>
+<span class="r-in"><span><span class="co"># using defaults of dbFindIdsUniqueTrials()</span></span></span>
+<span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  fields <span class="op">=</span> <span class="st">"keyword"</span>,</span></span>
+<span class="r-in"><span>  calculate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">".isUniqueTrial"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> - Finding duplicates among registers' and sponsor ids...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> - 2 EUCTR _id were not preferred EU Member State record for 8 trials</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> - Keeping 3 / 8 / 5 / 8 / 3 records from EUCTR / CTGOV / CTGOV2 / ISRCTN / CTIS</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># using base R</span></span></span>
+<span class="r-in"><span><span class="va">df</span><span class="op">[</span><span class="va">df</span><span class="op">[[</span><span class="st">".isUniqueTrial"</span><span class="op">]</span><span class="op">]</span>, <span class="op">]</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                  _id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1           12949496</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2           13281214</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3           17473621</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  2012-003632-23-SE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  2014-002606-20-PT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  2014-003556-31-SE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  2022-501142-30-00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 2023-505613-24-00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 2024-510663-34-00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12          20343063</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13          61070850</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14          76463425</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15          80181452</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16          88261002</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17       NCT00617929</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18       NCT01125800</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19       NCT01483820</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20       NCT01505608</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21       NCT01592045</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22       NCT02620761</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23       NCT03280147</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24       NCT03325439</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25       NCT03431558</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26       NCT03876704</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27       NCT04001712</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28       NCT04041765</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29       NCT05969327</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                   keyword</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                                                                                    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                                                                                    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                                                                                    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                                                                                                    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                                                                                                    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8                                                                                                    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9                                                                                                    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10                                                                                                   &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11                                                                                                   &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12                                                                                                   &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13                                                                                                   &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14                                                                                                   &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15                                                                                                   &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16                                                                                                   &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17                                                                                                   &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18                                                                                                   &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19                                                                                                   &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20                                                                                                   &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21                                                                                                   &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22                                                                                                   &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23                                                              Neonate / Sepsis / Antibiotics / Duration</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24 Electroencephalographic neonatal seizures / Brivaracetam / Epilepsy / ENS / Newborns / Pharmacokinetic</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25                                               Bovine Lactoferrin, Neonatal infection, Low Birth Weight</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26                                                                                                   &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27                                                                                 early caffeine preterm</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28                                                                IgM-enriched Intravenous Immunoglobulin</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29                                                                                                   &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    .isUniqueTrial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1            TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2            TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3            TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5            TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6            TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8            TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9            TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29           TRUE</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># using dplyr</span></span></span>
+<span class="r-in"><span><span class="co"># df %&gt;% filter(.isUniqueTrial)</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

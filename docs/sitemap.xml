@@ -17,11 +17,13 @@
 <url><loc>https://rfhb.github.io/ctrdata/reference/ctrShowOneTrial.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/ctrdata-package.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/ctrdata-registers.html</loc></url>
+<url><loc>https://rfhb.github.io/ctrdata/reference/ctrdata-trial-concepts.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/ctrdata.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/dbFindFields.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/dbFindIdsUniqueTrials.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/dbQueryHistory.html</loc></url>
+<url><loc>https://rfhb.github.io/ctrdata/reference/dfCalculate.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/dfMergeVariablesRelevel.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/dfName2Value.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/dfTrials2Long.html</loc></url>

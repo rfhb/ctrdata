@@ -44,8 +44,8 @@
   if (is.null(df)) {
 
     txt <- '
-Calculates the date of start of the trial, based on the start of recruitment,
-of if not available, on the opinion of the competent authority.
+Calculates the date of start of the trial, based on the documented or planned
+start of recruitment, or on the date of opinion of the competent authority.
 Returns a date.
     '
 

@@ -11,15 +11,20 @@ ClinicalTrials
 Ctgov
 CtisNested
 DuckDB
+EMA
 EUCTR
+Enrollment
 EudraCT
 Github
 Haenszel
+Hematology
 HistogramNBtrials
 ISRCTN
 Infodemic
 Investigational
+JAS
 Javascript
+Kundu
 Lasch
 Mapreduce
 Mmrm
@@ -29,6 +34,7 @@ NDJSON
 NL
 NestedResults
 Neuroblastoma
+ORCID
 PostgreSQL
 RCurl
 RPostgres
@@ -98,6 +104,9 @@ gov
 httr
 installFindMongoBinaries
 investigational
+isMedIntervTrial
+isPlatformTrial
+isUniqueTrial
 jqr
 json
 jsonlite
@@ -116,6 +125,7 @@ mth
 ndjson
 nodbi
 nonproprietary
+numTestArmsSubstances
 otherNames
 paed
 perl
@@ -141,6 +151,8 @@ scr
 searchCriteria
 sqlite
 src
+startDate
+statusRecruitment
 stringi
 superseeds
 temporaryHaltList
