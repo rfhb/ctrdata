@@ -61,8 +61,8 @@ function to provide a vector of identifiers of deduplicated trials.</p>
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">dbFindIdsUniqueTrials</span><span class="op">(</span></span>
-<span>  preferregister <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"EUCTR"</span>, <span class="st">"CTGOV"</span>, <span class="st">"CTGOV2"</span>, <span class="st">"ISRCTN"</span>, <span class="st">"CTIS"</span><span class="op">)</span>,</span>
-<span>  prefermemberstate <span class="op">=</span> <span class="st">"DE"</span>,</span>
+<span>  preferregister <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CTGOV2"</span>, <span class="st">"EUCTR"</span>, <span class="st">"CTGOV"</span>, <span class="st">"ISRCTN"</span>, <span class="st">"CTIS"</span><span class="op">)</span>,</span>
+<span>  prefermemberstate <span class="op">=</span> <span class="st">"BE"</span>,</span>
 <span>  include3rdcountrytrials <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">con</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
@@ -76,12 +76,12 @@ function to provide a vector of identifiers of deduplicated trials.</p>
 <dl><dt id="arg-preferregister">preferregister<a class="anchor" aria-label="anchor" href="#arg-preferregister"></a></dt>
 <dd><p>A vector of the order of preference for
 registers from which to generate unique _id's, default
-<code>c("EUCTR", "CTGOV", "CTGOV2", "ISRCTN", "CTIS")</code></p></dd>
+<code>c("CTGOV2", "EUCTR", "CTGOV", "ISRCTN", "CTIS")</code></p></dd>
 
 
 <dt id="arg-prefermemberstate">prefermemberstate<a class="anchor" aria-label="anchor" href="#arg-prefermemberstate"></a></dt>
 <dd><p>Code of single EU Member State for which records
-should returned. If not available, a record for DE or lacking this, any
+should returned. If not available, a record for BE or lacking this, any
 random Member State's record for the trial will be returned.
 For a list of codes of EU  Member States, please see vector
 <code>countriesEUCTR</code>. Specifying "3RD" will return the Third Country
@@ -118,7 +118,7 @@ names correspond to the register of the record.</p>
 Such differences are not considered by this function.</p>
 <p>Note that the trial concept ".isUniqueTrial" (which uses this function)
 can be calculated at the time of creating a data frame with
-dbGetFieldIntoDf, which often may be the preferred approach.</p>
+<a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a>, which often may be the preferred approach.</p>
     </div>
 
     <div class="section level2">
@@ -136,10 +136,10 @@ dbGetFieldIntoDf, which often may be the preferred approach.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> , 29 found in collection</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - Finding duplicates among registers' and sponsor ids...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - 2 EUCTR _id were not preferred EU Member State record for 8 trials</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> - Keeping 3 / 8 / 5 / 8 / 3 records from EUCTR / CTGOV / CTGOV2 / ISRCTN / CTIS</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> - Keeping 5 / 3 / 8 / 8 / 3 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> = Returning keys (_id) of 27 records in collection "my_trials"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              ISRCTN              ISRCTN              ISRCTN               EUCTR </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          "12949496"          "13281214"          "17473621" "2012-003632-23-SE" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          "12949496"          "13281214"          "17473621" "2012-003632-23-CZ" </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               EUCTR               EUCTR                CTIS                CTIS </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> "2014-002606-20-PT" "2014-003556-31-SE" "2022-501142-30-00" "2023-505613-24-00" </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                CTIS              ISRCTN </span>
@@ -149,11 +149,11 @@ dbGetFieldIntoDf, which often may be the preferred approach.</p>
 <span class="r-in"><span><span class="co"># using defaults of dbFindIdsUniqueTrials()</span></span></span>
 <span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  fields <span class="op">=</span> <span class="st">"keyword"</span>,</span></span>
-<span class="r-in"><span>  calculate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">".isUniqueTrial"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  calculate <span class="op">=</span> <span class="st">".isUniqueTrial"</span>,</span></span>
 <span class="r-in"><span>  con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - Finding duplicates among registers' and sponsor ids...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - 2 EUCTR _id were not preferred EU Member State record for 8 trials</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> - Keeping 3 / 8 / 5 / 8 / 3 records from EUCTR / CTGOV / CTGOV2 / ISRCTN / CTIS</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> - Keeping 5 / 3 / 8 / 8 / 3 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># using base R</span></span></span>
 <span class="r-in"><span><span class="va">df</span><span class="op">[</span><span class="va">df</span><span class="op">[[</span><span class="st">".isUniqueTrial"</span><span class="op">]</span><span class="op">]</span>, <span class="op">]</span></span></span>

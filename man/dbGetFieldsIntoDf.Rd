@@ -75,9 +75,23 @@ dbGetFieldsIntoDf(
   con = dbc)
 
 # calculate new field(s) from data across trials
-dbGetFieldsIntoDf(
+df <- dbGetFieldsIntoDf(
   fields = "keyword",
-  calculate = c(".statusRecruitment", ".startDate", ".isPlatformTrial"),
+  calculate = c(".statusRecruitment", ".isUniqueTrial", ".startDate"),
   con = dbc)
+
+\dontrun{
+# with dplyr and ggplot2 loaded, just do
+df \%>\%
+  filter(.isUniqueTrial) \%>\%
+  count(.statusRecruitment)
+
+df \%>\%
+  filter(.isUniqueTrial) \%>\%
+  ggplot() +
+  stat_ecdf(aes(
+    x = .startDate,
+    colour = .statusRecruitment))
+}
 
 }
