@@ -12,6 +12,11 @@ countriesEUCTR <- c(
   "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL",
   "PL", "PT", "RO", "SK", "SE", "SI", "ES", "GB", "IS", "LI",
   "NO", "3RD")
+countriesActive <- c(
+  "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR",
+  "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL",
+  "PL", "PT", "RO", "SK", "SE", "SI", "ES",       "IS", "LI",
+  "NO", "3RD")
 #
 # regexpr
 # - queryterm and urls

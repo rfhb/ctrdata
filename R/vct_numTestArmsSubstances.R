@@ -149,6 +149,7 @@ Returns an integer.
       helper_simExpArmsInTrial, length, USE.NAMES = FALSE, simplify = TRUE),
     #
     analysis_numDifferentExpArmsInTrial = dplyr::case_when(
+      is.na(helper_asNamesPerExpArm) ~ NA,
       helper_numExpArmsInTrial == 1L ~ 1L,
       helper_numExpArmsInTrial > 1L ~
         max(as.integer(helper_numExpArmsInTrial > 0L),

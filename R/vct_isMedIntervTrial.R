@@ -6,7 +6,7 @@
 
 #' @noRd
 #' @export
-#' @importFrom dplyr if_else mutate pull `%>%`
+#' @importFrom dplyr if_else case_when mutate pull `%>%`
 #' @importFrom stringi stri_detect_regex stri_detect_fixed
 .isMedIntervTrial <- function(df = NULL) {
 
