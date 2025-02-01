@@ -6,7 +6,7 @@
 
 #' @noRd
 #' @export
-#' @importFrom dplyr if_else mutate case_when
+#' @importFrom dplyr if_else mutate case_when case_match pull `%>%`
 .statusRecruitment <- function(df = NULL) {
 
   # check generic, do not edit
@@ -16,6 +16,8 @@
   #### fields ####
   fldsNeeded <- list(
     "euctr" = c(
+      "trialInformation.globalEndOfTrialPremature",
+      "trialInformation.isGlobalEndOfTrialReached",
       "p_end_of_trial_status"
       #
       # in some trials, e.g. 2014-003556-31-GB,
@@ -36,26 +38,10 @@
       "participants.recruitmentStatusOverride"
     ),
     "ctis" = c(
-      "ctPublicStatus"
+      # "ctPublicStatus",
+      # "ctStatus"
+      "ctPublicStatusCode"
     ))
-
-  # not relevant after inspection:
-  #
-  # EUCTR
-  # "x5_trial_status",
-  # "subjectDisposition.recruitmentDetails",
-  # CTGOV
-  # "clinical_results.participant_flow.recruitment_details",
-  # CTGOV2
-  # "protocolSection.statusModule.whyStopped",
-  # "resultsSection.outcomeMeasuresModule.outcomeMeasures.reportingStatus",
-  # "resultsSection.participantFlowModule.recruitmentDetails",
-  # ISRCTN
-  # "trialDesign.overallStatusOverride",
-  # CTIS
-  # "ctPublicStatusCode",
-  # "ctStatus",
-  # "recruitmentStatus"
 
 
   #### describe ####
@@ -80,20 +66,42 @@ Returns an ordered factor.
   # check generic, do not edit
   fctChkFlds(names(df), fldsNeeded)
 
-  # mangle more than one field per register
-  df$ctgov <- dplyr::mutate(
-    df,
-    out = dplyr::if_else(
-      !is.na(last_known_status),
-      last_known_status, overall_status)
-  )[["out"]]
+  # helper function
+  `%>%` <- dplyr::`%>%`
 
-  # mangle more than one field per register
-  df$isrctn <- dplyr::mutate(
-    df,
+
+  #### .EUCTR ####
+  df %>% dplyr::mutate(
     out = dplyr::case_when(
-      !is.na(participants.recruitmentStatusOverride) ~
-        participants.recruitmentStatusOverride,
+      trialInformation.globalEndOfTrialPremature ~ "Prematurely Ended",
+      trialInformation.isGlobalEndOfTrialReached ~ "Completed",
+      .default = p_end_of_trial_status
+    )
+  ) %>%
+    dplyr::pull(out) -> df$euctr
+
+
+  #### .CTGOV ####
+  df %>% dplyr::mutate(
+    out = as.character(
+      # type is logical if all NA
+      dplyr::if_else(
+        !is.na(last_known_status),
+        last_known_status, overall_status)
+    )
+  ) %>%
+    dplyr::pull(out) -> df$ctgov
+
+  #### .CTGOV2 ####
+  df$ctgov2 <- as.character(
+    # type is logical if all NA
+    df$protocolSection.statusModule.overallStatus)
+
+  #### .ISRCTN ####
+  df %>% dplyr::mutate(
+    out = dplyr::case_when(
+      !is.na(participants.recruitmentStatusOverride)
+      ~ as.character(participants.recruitmentStatusOverride),
       Sys.Date() >
         participants.recruitmentEnd ~ "Completed",
       participants.recruitmentEnd >
@@ -101,7 +109,30 @@ Returns an ordered factor.
       Sys.Date() <
         participants.recruitmentStart ~ "Planned"
     )
-  )[["out"]]
+  ) %>%
+    dplyr::pull(out) -> df$isrctn
+
+  #### .CTIS ####
+  df %>% dplyr::mutate(
+    helper_ctPublicStatusCode = dplyr::case_match(
+      ctPublicStatusCode,
+      1 ~ "Under evaluation",
+      2 ~ "Authorised, recruitment pending",
+      3 ~ "Authorised, recruiting",
+      4 ~ "Ongoing, recruiting",
+      5 ~ "Ongoing, recruitment ended",
+      6 ~ "Temporarily halted",
+      7 ~ "Suspended",
+      8 ~ "Ended",
+      9 ~ "Expired",
+      10 ~ "Revoked",
+      11 ~ "Not authorised",
+      12 ~ "Cancelled"
+    ),
+    out = helper_ctPublicStatusCode
+  ) %>%
+    dplyr::pull(out) -> df$ctis
+
 
   # merge, last update 2025-01-27
   mapped_values <- list(
@@ -118,33 +149,30 @@ Returns an ordered factor.
       # ISRCTN
       "Ongoing",
       # CTIS
-      "Ongoing, recruiting", "Ongoing, recruitment ended",
-      "Ongoing, not yet recruiting", "Authorised, not started"
+      "Ongoing, recruiting", "Temporarily halted",
+      "Ongoing, not yet recruiting", "Authorised, not started",
+      "Authorised, recruitment pending", "Authorised, recruiting"
     ),
     #
     "completed" = c(
+      "Ongoing, recruitment ended",
       "Completed", "COMPLETED",
       "Ended"),
     #
     "other" = c(
+      "Under evaluation", "Not Authorised", "Not authorised",
+      "Expired", "Revoked", "Cancelled", "Withdrawn",
       "GB - no longer in EU/EEA", "Trial now transitioned",
-      "Withdrawn", "Suspended", "No longer available",
-      "SUSPENDED", "NO_LONGER_AVAILABLE", "WITHDRAWN",
-      "WITHHELD", "UNKNOWN",
-      "Terminated", "TERMINATED", "Prematurely Ended",
-      "Stopped",
-      "Under evaluation")
+      "Suspended", "No longer available",
+      "SUSPENDED", "NO_LONGER_AVAILABLE",
+      "WITHDRAWN", "WITHHELD", "UNKNOWN",
+      "Terminated", "TERMINATED", "Prematurely Ended", "Stopped")
   )
-
-  # keep only single fields per register or
-  # have been mangled to new single field
-  fldsIndicator <- sapply(fldsNeeded, length) > 1L
-  fldsNeeded <- ifelse(fldsIndicator, names(fldsNeeded), fldsNeeded)
 
   # merge into vector (ordered factor)
   vct <- dfMergeVariablesRelevel(
     df = df,
-    colnames = unlist(fldsNeeded, use.names = FALSE),
+    colnames = names(fldsNeeded),
     levelslist = mapped_values
   )
 
