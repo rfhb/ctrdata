@@ -6,6 +6,7 @@
 ## Bug fix
 - Correct `ctrShowOneTrial()` for certain EUCTR trials
 - Added typing of fields newly appearing in CTIS
+- `dbFindIdsUniqueTrials()` excludes GB records from `EUCTR` whenever there is at least one Member State or Third country record
 
 # ctrdata 1.20.0
 

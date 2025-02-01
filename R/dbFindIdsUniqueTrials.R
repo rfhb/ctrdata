@@ -15,14 +15,14 @@
 #'
 #' Note that the trial concept ".isUniqueTrial" (which uses this function)
 #' can be calculated at the time of creating a data frame with
-#' \link{dbGetFieldIntoDf}, which often may be the preferred approach.
+#' \link{dbGetFieldsIntoDf}, which often may be the preferred approach.
 #'
 #' @param preferregister A vector of the order of preference for
 #' registers from which to generate unique _id's, default
-#' \code{c("EUCTR", "CTGOV", "CTGOV2", "ISRCTN", "CTIS")}
+#' \code{c("CTGOV2", "EUCTR", "CTGOV", "ISRCTN", "CTIS")}
 #'
 #' @param prefermemberstate Code of single EU Member State for which records
-#' should returned. If not available, a record for DE or lacking this, any
+#' should returned. If not available, a record for BE or lacking this, any
 #' random Member State's record for the trial will be returned.
 #' For a list of codes of EU  Member States, please see vector
 #' \code{countriesEUCTR}. Specifying "3RD" will return the Third Country
@@ -58,7 +58,7 @@
 #' # using defaults of dbFindIdsUniqueTrials()
 #' df <- dbGetFieldsIntoDf(
 #'   fields = "keyword",
-#'   calculate = c(".isUniqueTrial"),
+#'   calculate = ".isUniqueTrial",
 #'   con = dbc)
 #'
 #' # using base R
@@ -68,8 +68,8 @@
 #' # df %>% filter(.isUniqueTrial)
 #'
 dbFindIdsUniqueTrials <- function(
-    preferregister = c("EUCTR", "CTGOV", "CTGOV2", "ISRCTN", "CTIS"),
-    prefermemberstate = "DE",
+    preferregister = c("CTGOV2", "EUCTR", "CTGOV", "ISRCTN", "CTIS"),
+    prefermemberstate = "BE",
     include3rdcountrytrials = TRUE,
     con,
     verbose = FALSE) {
@@ -217,8 +217,8 @@ dbFindIdsUniqueTrials <- function(
 #' @noRd
 #'
 .dbFindIdsUniqueTrials <- function(
-    preferregister = c("EUCTR", "CTGOV", "CTGOV2", "ISRCTN", "CTIS"),
-    prefermemberstate = "DE",
+    preferregister = c("CTGOV2", "EUCTR", "CTGOV", "ISRCTN", "CTIS"),
+    prefermemberstate = "BE",
     include3rdcountrytrials = TRUE,
     listofIds = listofIds,
     verbose = FALSE) {
@@ -504,9 +504,10 @@ dbFindIdsUniqueTrials <- function(
 #' @noRd
 #
 dfFindUniqueEuctrRecord <- function(
-    df = NULL,
-    prefermemberstate = "DE",
-    include3rdcountrytrials = TRUE) {
+    df = df,
+    prefermemberstate = prefermemberstate,
+    include3rdcountrytrials = include3rdcountrytrials) {
+
   # check parameters
   if (!any(class(df) %in% "data.frame")) {
     stop("Parameter df is not a data frame.", call. = FALSE)
@@ -533,7 +534,7 @@ dfFindUniqueEuctrRecord <- function(
          call. = FALSE
     )
   }
-
+  #
   # notify it mismatching parameters
   if (prefermemberstate == "3RD" && !include3rdcountrytrials) {
     warning("Preferred EUCTR version set to 3RD country trials, but ",
@@ -586,17 +587,29 @@ dfFindUniqueEuctrRecord <- function(
       return(result)
     }
     #
-    if (sum(fnd <- grepl("DE", recordnames)) != 0L) {
-      result <- recordnames[!fnd]
-      return(result)
-    }
+    # to exclude inactive country / ex member state records
+    includeRecordnames <- sub(
+      "^.+-([3A-Z]+)$", "\\1", recordnames) %in% countriesActive
     #
-    # default is to list all but first record
+    # default is to list all but first record.
     # the listed records are the duplicates
     # 3RD country trials would be listed first
     # hence selected, which is not desirable
     # unless chosen as prefermemberstate
-    return(rev(sort(recordnames))[-1])
+    result <- recordnames[includeRecordnames]
+    #
+    if (length(result) <= 1L && any(!includeRecordnames)) return(
+      recordnames[!includeRecordnames]
+    )
+    #
+    if (length(result) > 1L && any(!includeRecordnames)) return(
+      c(recordnames[!includeRecordnames],
+        sample(recordnames[includeRecordnames])[-1])
+    )
+    # else
+    return(
+      sample(recordnames[includeRecordnames])[-1]
+    )
   }
 
   # finds per trial the desired record;
