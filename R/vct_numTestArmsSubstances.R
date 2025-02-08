@@ -3,11 +3,12 @@
 #### history ####
 # 2025-01-27 first partly working version
 # 2025-01-31 working
+# 2025-02-08 adding euctr protocol, isrctn
 
 
 #' @noRd
 #' @export
-#' @importFrom dplyr mutate case_when pull `%>%`
+#' @importFrom dplyr mutate case_when if_else pull `%>%`
 #' @importFrom stringdist stringsimmatrix
 #' @importFrom stringi stri_count_fixed stri_split_fixed
 .numTestArmsSubstances <- function(df = NULL) {
@@ -19,6 +20,8 @@
   #### fields ####
   fldsNeeded <- list(
     "euctr" = c(
+      "e824_number_of_treatment_arms_in_the_trial",
+      "e81_controlled",
       "subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm"
     ),
     "ctgov" = c(
@@ -28,7 +31,9 @@
       "protocolSection.armsInterventionsModule.armGroups"
     ),
     "isrctn" = c(
-      "trialDescription.title"
+      "trialDesign.secondaryStudyDesign",
+      "interventions.intervention.interventionType",
+      "interventions.intervention.drugNames"
     ),
     "ctis" = c(
       "authorizedApplication.authorizedPartI.productRoleGroupInfos"
@@ -40,13 +45,10 @@
 
     txt <- '
 Calculates the number of active arms with different investigational medicines,
-after excluding comparator, auxiliary and placebo medicines. (No data found
-for ISRCTN to calculate.)
+after excluding comparator, auxiliary and placebo arms / medicines.
+For ISRCTN, this is imprecise because arms are not identified in a field.
 
-For EUCTR, requires that results have been included in the collection, using
-ctrLoadQueryIntoDb(queryterm = ..., euctrresults = TRUE, con = ...).
-
-Requires packages dplyr and stringdist to be installed; stringdist is used for
+Requires packages stringdist to be installed; stringdist is used for
 evaluating names of active substances, which are considered similar when the
 similarity is 0.8 or higher.
 
@@ -111,6 +113,13 @@ Returns an integer.
   #### . EUCTR ####
   df %>% dplyr::mutate(
     #
+    # protocol data
+    helper_protocol = dplyr::if_else(
+      e81_controlled,
+      e824_number_of_treatment_arms_in_the_trial - 1,
+      e824_number_of_treatment_arms_in_the_trial,
+    ),
+    # results data
     helper_asNamesPerTestGroup = lapply(
       subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm,
       function(i) {if (any(names(i) == "title"))
@@ -129,17 +138,17 @@ Returns an integer.
       .default = sapply(helper_simTestGroupsInTrial, function(i)
         sum(i < thresholdSimilar), simplify = TRUE)
     ),
-    #
-    out = analysis_numDifferentTestGroupsInTrial
+    out = if_else(
+      !is.na(analysis_numDifferentTestGroupsInTrial),
+      analysis_numDifferentTestGroupsInTrial,
+      helper_protocol
+    )
   ) %>%
     dplyr::pull(out) -> df$euctr
 
 
   #### . CTGOV ####
   df %>% dplyr::mutate(
-    #
-    # helper_multipleActiveArms = stringi::stri_count_fixed(
-    #   arm_group.arm_group_type, "Experimental"),
     #
     helper_asNamesPerExpArm = lapply(
       arm_group,
@@ -156,9 +165,8 @@ Returns an integer.
       is.na(helper_asNamesPerExpArm) ~ NA,
       helper_numExpArmsInTrial == 1L ~ 1L,
       helper_numExpArmsInTrial > 1L ~
-        max(as.integer(helper_numExpArmsInTrial > 0L),
-            sapply(helper_simExpArmsInTrial, function(i)
-              sum(i < thresholdSimilar), simplify = TRUE)
+        sapply(helper_simExpArmsInTrial, function(i)
+          sum(i < thresholdSimilar), simplify = TRUE
         )
     ),
     # if at least one test arm im trial
@@ -183,8 +191,10 @@ Returns an integer.
     analysis_numDifferentExpArmsInTrial = dplyr::case_when(
       is.na(helper_asNamesPerExpArm) ~ NA,
       helper_numExpArmsInTrial == 1L ~ 1L,
-      helper_numExpArmsInTrial > 1L ~ sapply(helper_simExpArmsInTrial, function(i)
-        sum(i < thresholdSimilar), simplify = TRUE)
+      helper_numExpArmsInTrial > 1L ~ sapply(
+        helper_simExpArmsInTrial, function(i)
+          sum(i < thresholdSimilar),
+        simplify = TRUE)
     ),
     #
     out = analysis_numDifferentExpArmsInTrial
@@ -193,7 +203,38 @@ Returns an integer.
 
 
   #### . ISRCTN ####
-  df$isrctn <- NA
+  df %>%
+    dplyr::mutate(
+      #
+      helper_drugNames = stringi::stri_split_fixed(
+        interventions.intervention.drugNames, ", "),
+      #
+      helper_numberDrugs = sapply(helper_drugNames, function(i)
+        length(i), USE.NAMES = FALSE, simplify = TRUE),
+      #
+      helper_simDrugNames = lapply(
+        helper_drugNames, function(i) asTestSimilarityTrial(i)),
+      #
+      analysis_numDifferentExpArmsInTrial = dplyr::case_when(
+        is.na(helper_numberDrugs) ~ NA,
+        helper_numberDrugs == 1L ~ 1L,
+        helper_numberDrugs > 1L ~ sapply(
+          helper_simDrugNames, function(i)
+            sum(i < thresholdSimilar),
+          simplify = TRUE
+        )
+      ),
+      #
+      helper_numberarms = if_else(
+        grepl("controlled|parallel.?group", trialDesign.secondaryStudyDesign, ignore.case = TRUE),
+        analysis_numDifferentExpArmsInTrial, 1L),
+      #
+      out = if_else(
+        grepl("Drug|Biological|Vaccine", interventions.intervention.interventionType, ignore.case = TRUE),
+        helper_numberarms, NA
+      )
+    ) %>%
+    dplyr::pull(out)-> df$isrctn
 
 
   #### . CTIS ####
