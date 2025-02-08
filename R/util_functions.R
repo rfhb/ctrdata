@@ -1612,6 +1612,8 @@ fctDescribe <- function(fct, txt, flds) {
     "\n\n<<<<"
   )
 
+  return(invisible(NULL))
+
 }
 
 
@@ -1629,10 +1631,14 @@ fctDescribe <- function(fct, txt, flds) {
 #'
 fctChkFlds <- function(dfFlds, flds) {
 
-  tmp <- sapply(unlist(flds), function(i) any(i == dfFlds))
-  tmp <- tmp[!tmp]
+  flds <- unlist(flds, use.names = FALSE)
 
-  if (length(tmp)) stop(
-    "Fields missing in 'df':\n", paste0(names(tmp), "\n"))
+  flds <- flds[!sapply(flds, function(i) any(i == dfFlds))]
+
+  if (length(flds)) stop(
+    "Fields missing in 'df':\n", paste0(flds, "\n"),
+    call. = FALSE)
+
+  return(invisible(NULL))
 
 }
