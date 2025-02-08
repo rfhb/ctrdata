@@ -82,7 +82,7 @@ Returns an integer.
   #### . EUCTR ####
   fldsEuctrProtocol <- fldsNeeded$euctr[-1]
   df %>%
-    dplyr::select(dplyr::all_of(fldsEuctrProt)) %>%
+    dplyr::select(dplyr::all_of(fldsEuctrProtocol)) %>%
     dplyr::mutate(out = rowSums(., na.rm = TRUE)) %>%
     dplyr::pull(out) -> df$helper_euctr_protocol
   df %>%
