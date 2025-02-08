@@ -2,6 +2,7 @@
 
 #### history ####
 # 2025-01-27 first partly working version
+# 2025-02-08 improved
 
 
 #' @noRd
@@ -9,6 +10,7 @@
 #' @importFrom dplyr mutate case_when pull `%>%`
 #' @importFrom stringdist stringsimmatrix
 #' @importFrom stringi stri_count_fixed stri_detect_fixed stri_split_fixed
+#' @importFrom tidyr unite
 .isPlatformTrial <- function(df = NULL) {
 
   # check generic, do not edit
@@ -38,6 +40,15 @@
       "interventions.intervention.interventionType"
     ),
     "ctis" = c(
+      # CTIS1
+      "title",
+      "applications.fullTitle",
+      "authorizedPartI.trialDetails.clinicalTrialIdentifiers.fullTitle",
+      "authorizedPartI.trialDetails.clinicalTrialIdentifiers.publicTitle",
+      "authorizedPartI.trialDetails.protocolInformation.studyDesign.periodDetails.title",
+      "authorizedPartI.trialDetails.protocolInformation.studyDesign.periodDetails.armDetails.title",
+      # CTIS2
+      # "shortTitle" is mostly an uninformative study code
       "authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.fullTitle",
       "authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.publicTitle",
       "authorizedApplication.authorizedPartI.trialDetails.protocolInformation.studyDesign.periodDetails.title"
@@ -57,14 +68,18 @@
 Calculates if the trial is likely a platform trial or not.
 As operational definition, at least one of these criteria is true:
 
-- trial has "platform", "basket" or "umbrella" in its title or description (for
-ISRCTN, this is the only criterion; some trials in EUCTR lack data in English)
+- trial has "platform", "basket", "umbrella", "multi-?arm" or "multi-?stage"
+in its title or description (for ISRCTN, this is the only criterion; some
+trials in EUCTR lack data in English)
 - trial has more than 2 active arms with different investigational medicines,
 after excluding comparator, auxiliary and placebo medicines (calculated with
 function .numTestArmsSubstances())
-- trial more than 2 periods, after excluding screening, extension and
-follow-up periods (for CTGOV and CTGOV2, this criterion requires results-related
-data)
+- trial more than 2 periods, after excluding safety run-in, screening, enrolling,
+extension and follow-up periods (for CTGOV and CTGOV2, this criterion requires
+results-related data)
+
+Requires that EUCTR results have been included in the collection, using
+ctrLoadQueryIntoDb(queryterm = ..., euctrresults = TRUE, con = ...).
 
 Requires packages dplyr and stringdist to be installed; stringdist is used for
 evaluating names of active substances, which are considered similar when the
@@ -86,8 +101,8 @@ Returns a logical.
   fctChkFlds(names(df), fldsNeeded)
 
   # helper definitions
-  titleDefPlatform <- "basket|platform|umbrella"
-  periodExclPlatform <- "follow|exten"
+  titleDefPlatform <- "basket|platform|umbrella|multi-?arm|multi-?stage"
+  periodExclPlatform <- "safe|enrol|screen|follow|exten"
   minNumArmsDefPlatform <- 3L
   minNumPeriodsDefPlatform <- 3L
 
@@ -110,7 +125,7 @@ Returns a logical.
   df$analysis_numTestArmsSubstances <- .numTestArmsSubstances(df = df)
 
 
-  #### ..EUCTR ####
+  #### . EUCTR ####
   df %>% dplyr::mutate(
     #
     analysis_titleRelevant = stringi::stri_detect_fixed(
@@ -142,7 +157,7 @@ Returns a logical.
     dplyr::pull(out) -> df$euctr
 
 
-  #### ..CTGOV ####
+  #### . CTGOV ####
   df %>% dplyr::mutate(
     #
     analysis_titleRelevant = stringi::stri_detect_fixed(
@@ -174,7 +189,7 @@ Returns a logical.
     dplyr::pull(out) -> df$ctgov
 
 
-  #### ..CTGOV2 ####
+  #### . CTGOV2 ####
   df %>% dplyr::mutate(
     #
     analysis_titleRelevant = stringi::stri_detect_fixed(
@@ -206,7 +221,7 @@ Returns a logical.
     dplyr::pull(out) -> df$ctgov2
 
 
-  #### ..ISRCTN ####
+  #### . ISRCTN ####
   df %>% dplyr::mutate(
     #
     analysis_titleRelevant = stringi::stri_detect_fixed(
@@ -229,36 +244,58 @@ Returns a logical.
     dplyr::pull(out) -> df$isrctn
 
 
-  #### ..CTIS ####
-  df %>% dplyr::mutate(
-    #
-    analysis_titleRelevant =
-      stringi::stri_detect_fixed(
-        authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.fullTitle,
-        titleDefPlatform, case_insensitive = TRUE) %orRmNa%
-      stringi::stri_detect_fixed(
-        authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.publicTitle,
-        titleDefPlatform, case_insensitive = TRUE),
-    #
-    helper_periodTitle = stringi::stri_split_fixed(
-      authorizedApplication.authorizedPartI.trialDetails.protocolInformation.studyDesign.periodDetails.title,
-      " / "),
-    #
-    analysis_numberTestPeriods = lapply(
-      helper_periodTitle,
-      function(i) {
-        i <- unique(tolower(na.omit(i)))
-        i <- i[!grepl(periodExclPlatform, i)]
-        i <- length(i)
-        if (i) i else NA
-      }),
-    #
-    out = dplyr::case_when(
-      ctrname == "CTIS" ~ analysis_titleRelevant %orRmNa%
-        (analysis_numTestArmsSubstances >= minNumArmsDefPlatform |
-           analysis_numberTestPeriods >= minNumPeriodsDefPlatform)
-    )
-  ) %>%
+  #### . CTIS ####
+  df %>%
+    tidyr::unite(
+      col = "periodTitle",
+      "authorizedPartI.trialDetails.protocolInformation.studyDesign.periodDetails.title",
+      "authorizedApplication.authorizedPartI.trialDetails.protocolInformation.studyDesign.periodDetails.title",
+      sep = " ",
+      remove = FALSE,
+      na.rm = TRUE
+    ) %>%
+    dplyr::mutate(
+      #
+      analysis_titleRelevant =
+        #
+        stringi::stri_detect_fixed(
+          title,
+          titleDefPlatform, case_insensitive = TRUE) %orRmNa%
+        stringi::stri_detect_fixed(
+          applications.fullTitle,
+          titleDefPlatform, case_insensitive = TRUE) %orRmNa%
+        stringi::stri_detect_fixed(
+          authorizedPartI.trialDetails.clinicalTrialIdentifiers.fullTitle,
+          titleDefPlatform, case_insensitive = TRUE) %orRmNa%
+        stringi::stri_detect_fixed(
+          authorizedPartI.trialDetails.clinicalTrialIdentifiers.publicTitle,
+          titleDefPlatform, case_insensitive = TRUE) %orRmNa%
+        #
+        stringi::stri_detect_fixed(
+          authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.fullTitle,
+          titleDefPlatform, case_insensitive = TRUE) %orRmNa%
+        stringi::stri_detect_fixed(
+          authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.publicTitle,
+          titleDefPlatform, case_insensitive = TRUE),
+      #
+      helper_periodTitle = stringi::stri_split_fixed(
+        periodTitle, " / "),
+      #
+      analysis_numberTestPeriods = lapply(
+        helper_periodTitle,
+        function(i) {
+          i <- unique(tolower(na.omit(i)))
+          i <- i[!grepl(periodExclPlatform, i)]
+          i <- length(i)
+          if (i) i else 1L
+        }),
+      #
+      out = dplyr::case_when(
+        ctrname == "CTIS" ~ analysis_titleRelevant %orRmNa%
+          (analysis_numTestArmsSubstances >= minNumArmsDefPlatform |
+             analysis_numberTestPeriods >= minNumPeriodsDefPlatform)
+      )
+    ) %>%
     dplyr::pull(out) -> df$ctis
 
 
