@@ -9,7 +9,7 @@
 #' @export
 #' @importFrom dplyr mutate case_when pull `%>%`
 #' @importFrom stringdist stringsimmatrix
-#' @importFrom stringi stri_count_fixed stri_detect_fixed stri_split_fixed
+#' @importFrom stringi stri_count_fixed stri_detect_regex stri_split_fixed
 #' @importFrom tidyr unite
 .isPlatformTrial <- function(df = NULL) {
 
@@ -73,7 +73,8 @@ in its title or description (for ISRCTN, this is the only criterion; some
 trials in EUCTR lack data in English)
 - trial has more than 2 active arms with different investigational medicines,
 after excluding comparator, auxiliary and placebo medicines (calculated with
-function .numTestArmsSubstances())
+function .numTestArmsSubstances(), not used for ISRCTN because it cannot be
+calculated precisely)
 - trial more than 2 periods, after excluding safety run-in, screening, enrolling,
 extension and follow-up periods (for CTGOV and CTGOV2, this criterion requires
 results-related data)
@@ -101,7 +102,7 @@ Returns a logical.
   fctChkFlds(names(df), fldsNeeded)
 
   # helper definitions
-  titleDefPlatform <- "basket|platform|umbrella|multi-?arm|multi-?stage"
+  titleDefPlatform <- "basket|platform|umbrella|multi.?arm|multi.?stage"
   periodExclPlatform <- "safe|enrol|screen|follow|exten"
   minNumArmsDefPlatform <- 3L
   minNumPeriodsDefPlatform <- 3L
@@ -128,10 +129,10 @@ Returns a logical.
   #### . EUCTR ####
   df %>% dplyr::mutate(
     #
-    analysis_titleRelevant = stringi::stri_detect_fixed(
+    analysis_titleRelevant = stringi::stri_detect_regex(
       a3_full_title_of_the_trial,
       titleDefPlatform, case_insensitive = TRUE) %orRmNa%
-      stringi::stri_detect_fixed(
+      stringi::stri_detect_regex(
         trialInformation.fullTitle,
         titleDefPlatform, case_insensitive = TRUE),
     #
@@ -160,10 +161,10 @@ Returns a logical.
   #### . CTGOV ####
   df %>% dplyr::mutate(
     #
-    analysis_titleRelevant = stringi::stri_detect_fixed(
+    analysis_titleRelevant = stringi::stri_detect_regex(
       official_title,
       titleDefPlatform, case_insensitive = TRUE) %orRmNa%
-      stringi::stri_detect_fixed(
+      stringi::stri_detect_regex(
         detailed_description.textblock,
         titleDefPlatform, case_insensitive = TRUE),
     #
@@ -192,10 +193,10 @@ Returns a logical.
   #### . CTGOV2 ####
   df %>% dplyr::mutate(
     #
-    analysis_titleRelevant = stringi::stri_detect_fixed(
+    analysis_titleRelevant = stringi::stri_detect_regex(
       protocolSection.identificationModule.officialTitle,
       titleDefPlatform, case_insensitive = TRUE) %orRmNa%
-      stringi::stri_detect_fixed(
+      stringi::stri_detect_regex(
         protocolSection.descriptionModule.detailedDescription,
         titleDefPlatform, case_insensitive = TRUE),
     #
@@ -224,21 +225,26 @@ Returns a logical.
   #### . ISRCTN ####
   df %>% dplyr::mutate(
     #
-    analysis_titleRelevant = stringi::stri_detect_fixed(
+    analysis_titleRelevant = stringi::stri_detect_regex(
       trialDescription.scientificTitle,
       titleDefPlatform, case_insensitive = TRUE) %orRmNa%
-      stringi::stri_detect_fixed(
+      stringi::stri_detect_regex(
         trialDescription.title,
         titleDefPlatform, case_insensitive = TRUE),
     #
     analysis_isDrugTrial =
-      stringi::stri_detect_fixed(
+      stringi::stri_detect_regex(
         interventions.intervention.interventionType,
-        "drug", case_insensitive = TRUE),
+        "drug|biological|vaccine",
+        case_insensitive = TRUE),
     #
     out = dplyr::case_when(
-      ctrname == "ISRCTN" ~ analysis_titleRelevant &
-        analysis_isDrugTrial
+      ctrname == "ISRCTN" ~ analysis_isDrugTrial & (
+        analysis_titleRelevant
+        # TODO
+        # %orRmNa%
+        # (analysis_numTestArmsSubstances >= minNumArmsDefPlatform)
+      )
     )
   ) %>%
     dplyr::pull(out) -> df$isrctn
@@ -258,23 +264,23 @@ Returns a logical.
       #
       analysis_titleRelevant =
         #
-        stringi::stri_detect_fixed(
+        stringi::stri_detect_regex(
           title,
           titleDefPlatform, case_insensitive = TRUE) %orRmNa%
-        stringi::stri_detect_fixed(
+        stringi::stri_detect_regex(
           applications.fullTitle,
           titleDefPlatform, case_insensitive = TRUE) %orRmNa%
-        stringi::stri_detect_fixed(
+        stringi::stri_detect_regex(
           authorizedPartI.trialDetails.clinicalTrialIdentifiers.fullTitle,
           titleDefPlatform, case_insensitive = TRUE) %orRmNa%
-        stringi::stri_detect_fixed(
+        stringi::stri_detect_regex(
           authorizedPartI.trialDetails.clinicalTrialIdentifiers.publicTitle,
           titleDefPlatform, case_insensitive = TRUE) %orRmNa%
         #
-        stringi::stri_detect_fixed(
+        stringi::stri_detect_regex(
           authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.fullTitle,
           titleDefPlatform, case_insensitive = TRUE) %orRmNa%
-        stringi::stri_detect_fixed(
+        stringi::stri_detect_regex(
           authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.publicTitle,
           titleDefPlatform, case_insensitive = TRUE),
       #
