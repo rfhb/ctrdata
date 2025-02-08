@@ -38,9 +38,11 @@
       "participants.recruitmentStatusOverride"
     ),
     "ctis" = c(
-      # "ctPublicStatus",
-      # "ctStatus"
       "ctPublicStatusCode"
+      # ctPublicStatus only used by CTIS1
+      # ctStatus had text in CTIS1 but in CTIS2
+      # has same integer as ctPublicStatusCode
+      # ctPublicStatusCode is in CTIS1 and CTIS2
     ))
 
 
@@ -70,7 +72,7 @@ Returns an ordered factor.
   `%>%` <- dplyr::`%>%`
 
 
-  #### .EUCTR ####
+  #### . EUCTR ####
   df %>% dplyr::mutate(
     out = dplyr::case_when(
       trialInformation.globalEndOfTrialPremature ~ "Prematurely Ended",
@@ -81,38 +83,36 @@ Returns an ordered factor.
     dplyr::pull(out) -> df$euctr
 
 
-  #### .CTGOV ####
+  #### . CTGOV ####
   df %>% dplyr::mutate(
     out = as.character(
       # type is logical if all NA
       dplyr::if_else(
         !is.na(last_known_status),
-        last_known_status, overall_status)
+        last_known_status,
+        overall_status)
     )
   ) %>%
     dplyr::pull(out) -> df$ctgov
 
-  #### .CTGOV2 ####
+  #### . CTGOV2 ####
   df$ctgov2 <- as.character(
     # type is logical if all NA
     df$protocolSection.statusModule.overallStatus)
 
-  #### .ISRCTN ####
+  #### . ISRCTN ####
   df %>% dplyr::mutate(
     out = dplyr::case_when(
       !is.na(participants.recruitmentStatusOverride)
       ~ as.character(participants.recruitmentStatusOverride),
-      Sys.Date() >
-        participants.recruitmentEnd ~ "Completed",
-      participants.recruitmentEnd >
-        participants.recruitmentStart ~ "Ongoing",
-      Sys.Date() <
-        participants.recruitmentStart ~ "Planned"
+      Sys.Date() > participants.recruitmentEnd ~ "Completed",
+      participants.recruitmentEnd > participants.recruitmentStart ~ "Ongoing",
+      Sys.Date() < participants.recruitmentStart ~ "Planned"
     )
   ) %>%
     dplyr::pull(out) -> df$isrctn
 
-  #### .CTIS ####
+  #### . CTIS ####
   df %>% dplyr::mutate(
     helper_ctPublicStatusCode = dplyr::case_match(
       ctPublicStatusCode,
