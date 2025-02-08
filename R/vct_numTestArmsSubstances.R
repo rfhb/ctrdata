@@ -230,7 +230,7 @@ Returns an integer.
         analysis_numDifferentExpArmsInTrial, 1L),
       #
       out = if_else(
-        grepl("Drug|Biological|Vaccine", interventions.intervention.interventionType, ignore.case = TRUE),
+        grepl("drug|biological|vaccine", interventions.intervention.interventionType, ignore.case = TRUE),
         helper_numberarms, NA
       )
     ) %>%
@@ -264,14 +264,12 @@ Returns an integer.
     dplyr::pull(out) -> df$ctis
 
 
-  # keep only register names
-  fldsNeeded <- names(fldsNeeded)
-  fldsNeeded <- intersect(fldsNeeded, names(df))
-
   # merge into vector (ordered factor)
-  vct <- dfMergeVariablesRelevel(
-    df = df,
-    colnames = fldsNeeded
+  vct <- as.integer(
+    dfMergeVariablesRelevel(
+      df = df,
+      colnames = names(fldsNeeded)
+    )
   )
 
 
