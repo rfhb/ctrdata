@@ -1330,7 +1330,7 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
       ## delete and import ----------------------------------------------------
 
       # delete any existing records
-      try({
+      tmp <- try({
         nodbi::docdb_delete(
           src = con,
           key = con$collection,
@@ -1338,6 +1338,14 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
             '{"_id": {"$in": [',
             paste0('"', ids, '"', collapse = ","), ']}}'))
       }, silent = TRUE)
+
+      # early exit
+      if (inherits(tmp, "try-error") &&
+          grepl("read.?only", tmp)) stop(
+            "Database is read-only, cannot load trial records.\n",
+            "Change database connection in parameter 'con = ...'",
+            call. = FALSE
+          )
 
       ## import
       tmp <- try({

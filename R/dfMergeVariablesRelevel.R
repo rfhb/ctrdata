@@ -23,9 +23,9 @@
 #' @examples
 #'
 #' dbc <- nodbi::src_sqlite(
-#'     dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
-#'     collection = "my_trials",
-#'    RSQLite::SQLITE_RO)
+#'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+#'   collection = "my_trials",
+#'   flags = RSQLite::SQLITE_RO)
 #'
 #' df <- dbGetFieldsIntoDf(
 #'     fields = c("overall_status", "x5_trial_status"),

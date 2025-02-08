@@ -28,9 +28,9 @@ Show history of queries loaded into a database collection
 \examples{
 
 dbc <- nodbi::src_sqlite(
-    dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
-    collection = "my_trials",
-   RSQLite::SQLITE_RO)
+  dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+  collection = "my_trials",
+  flags = RSQLite::SQLITE_RO)
 
 dbQueryHistory(con = dbc)
 

@@ -39,10 +39,9 @@ This is the widget for CTIS trial 2022-501142-30-00:
 \examples{
 
 dbc <- nodbi::src_sqlite(
-    dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
-    collection = "my_trials",
-    RSQLite::SQLITE_RO
-)
+  dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+  collection = "my_trials",
+  flags = RSQLite::SQLITE_RO)
 
 # all such identifiers work
 id <- "2014-003556-31"

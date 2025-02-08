@@ -13,6 +13,9 @@
 #' This approach will in most cases be more efficient and preferred over
 #' using \link{dfCalculate}.
 #'
+#' Note that the functions do not operate on historic versions (CTGOV2) but
+#' only on information from the latest record.
+#'
 #' @param name String with name of function to be applied to `df`, or regular
 #' expression to list available functions.
 #'
@@ -43,9 +46,9 @@
 #'
 #' # apply dfCalculate to data frame
 #' dbc <- nodbi::src_sqlite(
-#'    dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
-#'    collection = "my_trials",
-#'    RSQLite::SQLITE_RO)
+#'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+#'   collection = "my_trials",
+#'   flags = RSQLite::SQLITE_RO)
 #'
 #' # use with existing data frame,
 #' # first get fields needed

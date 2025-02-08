@@ -40,9 +40,9 @@ ctrOpenSearchPagesInBrowser(register = "ISRCTN")
 
 # Open all queries that were loaded into demo collection
 dbc <- nodbi::src_sqlite(
-    dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
-    collection = "my_trials",
-   RSQLite::SQLITE_RO)
+  dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+  collection = "my_trials",
+  flags = RSQLite::SQLITE_RO)
 
 dbh <- dbQueryHistory(con = dbc)
 
