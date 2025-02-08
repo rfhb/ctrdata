@@ -7,7 +7,7 @@
 
 #' @noRd
 #' @export
-#' @importFrom dplyr if_else mutate
+#' @importFrom dplyr mutate pull select `%>%`
 .startDate <- function(df = NULL) {
 
   # check generic, do not edit
@@ -59,16 +59,21 @@ Returns a date.
   # check generic, do not edit
   fctChkFlds(names(df), fldsNeeded)
 
+  # helper function
+  `%>%` <- dplyr::`%>%`
+
+  # helper function
+  pmaxInt <- function(...) pmax(..., na.rm = TRUE)
+
   # all registers
   df %>%
-    rowwise() %>%
-    mutate(
-      out = max(c_across(
-        unlist(fldsNeeded, use.names = FALSE)
-      ),
-      na.rm = TRUE)
+    dplyr::select(
+      unlist(fldsNeeded, use.names = FALSE)
     ) %>%
-    pull(out) -> vct
+    dplyr::mutate(
+      out = do.call(pmaxInt, (.))
+    ) %>%
+    dplyr::pull(out) -> vct
 
 
   #### checks ####
