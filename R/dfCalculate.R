@@ -75,8 +75,6 @@ dfCalculate <- function(name = ".*", df = NULL) {
   if (is.null(df)) {
 
     # describe
-
-    # if (exists(name)) {
     if (length(ls(
       getNamespace("ctrdata"),
       all.names = TRUE,
@@ -110,6 +108,9 @@ dfCalculate <- function(name = ".*", df = NULL) {
 
   # check
   stopifnot(is.data.frame(df))
+
+  # inform user
+  message("Calculating ", name, "... \r", appendLF = FALSE)
 
   # apply function. not using do.call
   # when the package is not attached

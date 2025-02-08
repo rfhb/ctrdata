@@ -163,6 +163,9 @@ dbGetFieldsIntoDf <- function(
   # merge fields with fields needed for fcts
   getFields <- unique(unlist(c(fields, fctFields)))
 
+  # inform user
+  message("Querying database...\r", appendLF = FALSE)
+
   # get data
   out <- .dbGetFieldsIntoDf(
     fields = getFields, con = con, verbose = verbose, ...)
