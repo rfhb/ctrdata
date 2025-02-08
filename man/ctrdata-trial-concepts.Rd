@@ -33,14 +33,16 @@ last updated 2025-02-01.
 it have one or more medicines (drugs or biological) as investigational
 (experimental) intervention? (irrespective of status of authorisation and
 of study design)
+\item \strong{.isPlatformTrial} (logical) is the trial possibly a (research) platform
+trial? (based on title, .numTestArmsSubstances, number of periods)
 \item \strong{.isUniqueTrial} (logical) is the trial record unique in the data frame
 of trial, based on the default parameters of \link{dbFindIdsUniqueTrials}?
 \item \strong{.numTestArmsSubstances} (integer) how many arms or groups have
 medicines that are investigational? (cannot be calculated for ISRCTN)
-\item \strong{.isPlatformTrial} (logical) is the trial possibly a (research) platform
-trial? (based on title, .numTestArmsSubstances, number of periods)
 \item \strong{.startDate} (date) the planned, authorised or documented date
 of start of recruitment
+\item \strong{.sampleSize} (integer) the achieved (or planned) number of subjects or
+participants recruited
 \item \strong{.statusRecruitment} (ordered factor) a status that is simplified to
 ongoing (includes temporarily halted), completed and other (includes
 planned, stopped, terminated)

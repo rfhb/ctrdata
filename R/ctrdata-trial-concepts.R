@@ -28,17 +28,20 @@
 #' (experimental) intervention? (irrespective of status of authorisation and
 #' of study design)
 #'
+#' - **.isPlatformTrial** (logical) is the trial possibly a (research) platform
+#' trial? (based on title, .numTestArmsSubstances, number of periods)
+#'
 #' - **.isUniqueTrial** (logical) is the trial record unique in the data frame
 #' of trial, based on the default parameters of \link{dbFindIdsUniqueTrials}?
 #'
 #' - **.numTestArmsSubstances** (integer) how many arms or groups have
 #' medicines that are investigational? (cannot be calculated for ISRCTN)
 #'
-#' - **.isPlatformTrial** (logical) is the trial possibly a (research) platform
-#' trial? (based on title, .numTestArmsSubstances, number of periods)
-#'
 #' - **.startDate** (date) the planned, authorised or documented date
 #' of start of recruitment
+#'
+#' - **.sampleSize** (integer) the achieved (or planned) number of subjects or
+#' participants recruited
 #'
 #' - **.statusRecruitment** (ordered factor) a status that is simplified to
 #' ongoing (includes temporarily halted), completed and other (includes
