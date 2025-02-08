@@ -2,6 +2,7 @@
 
 #### history ####
 # 2025-01-26 first version
+# 2025-02-08 simplified
 
 
 #' @noRd
@@ -17,6 +18,7 @@
   fldsNeeded <- list(
     "euctr" = c(
       "n_date_of_competent_authority_decision",
+      "n_date_of_ethics_committee_opinion",
       "trialInformation.recruitmentStartDate"
     ),
     "ctgov" = c(
@@ -31,13 +33,9 @@
     ),
     "ctis" = c(
       "startDateEU",
+      "authorizationDate",
       "authorizedApplication.authorizedPartI.trialDetails.trialInformation.trialDuration.estimatedRecruitmentStartDate"
     ))
-
-  # not relevant after inspection:
-  #
-  # ISRCTN
-  # "trialDesign.overallStartDate"
 
 
   #### describe ####
@@ -61,46 +59,16 @@ Returns a date.
   # check generic, do not edit
   fctChkFlds(names(df), fldsNeeded)
 
-  # mangle more than one field per register
-  df$euctr <- dplyr::mutate(
-    df,
-    out = dplyr::if_else(
-      !is.na(trialInformation.recruitmentStartDate),
-      trialInformation.recruitmentStartDate,
-      n_date_of_competent_authority_decision
-    )
-  )[["out"]]
-
-  # mangle more than one field per register
-  df$isrctn <- dplyr::mutate(
-    df,
-    out = dplyr::if_else(
-      !is.na(participants.recruitmentStart),
-      participants.recruitmentStart,
-      trialDesign.overallStartDate
-    )
-  )[["out"]]
-
-  # mangle more than one field per register
-  df$ctis <- dplyr::mutate(
-    df,
-    out = dplyr::if_else(
-      !is.na(startDateEU),
-      startDateEU,
-      authorizedApplication.authorizedPartI.trialDetails.trialInformation.trialDuration.estimatedRecruitmentStartDate
-    )
-  )[["out"]]
-
-  # keep only single fields per register or
-  # have been mangled to new single field
-  fldsIndicator <- sapply(fldsNeeded, length) > 1L
-  fldsNeeded <- ifelse(fldsIndicator, names(fldsNeeded), fldsNeeded)
-
-  # merge into vector (ordered factor)
-  vct <- dfMergeVariablesRelevel(
-    df = df,
-    colnames = unlist(fldsNeeded, use.names = FALSE)
-  )
+  # all registers
+  df %>%
+    rowwise() %>%
+    mutate(
+      out = max(c_across(
+        unlist(fldsNeeded, use.names = FALSE)
+      ),
+      na.rm = TRUE)
+    ) %>%
+    pull(out) -> vct
 
 
   #### checks ####
