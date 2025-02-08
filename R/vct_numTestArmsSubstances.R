@@ -2,6 +2,7 @@
 
 #### history ####
 # 2025-01-27 first partly working version
+# 2025-01-31 working
 
 
 #' @noRd
@@ -41,6 +42,9 @@
 Calculates the number of active arms with different investigational medicines,
 after excluding comparator, auxiliary and placebo medicines. (No data found
 for ISRCTN to calculate.)
+
+For EUCTR, requires that results have been included in the collection, using
+ctrLoadQueryIntoDb(queryterm = ..., euctrresults = TRUE, con = ...).
 
 Requires packages dplyr and stringdist to be installed; stringdist is used for
 evaluating names of active substances, which are considered similar when the
@@ -104,7 +108,7 @@ Returns an integer.
   } # end asTestSimilarityTrial
 
 
-  #### ..EUCTR ####
+  #### . EUCTR ####
   df %>% dplyr::mutate(
     #
     helper_asNamesPerTestGroup = lapply(
@@ -131,7 +135,7 @@ Returns an integer.
     dplyr::pull(out) -> df$euctr
 
 
-  #### ..CTGOV ####
+  #### . CTGOV ####
   df %>% dplyr::mutate(
     #
     # helper_multipleActiveArms = stringi::stri_count_fixed(
@@ -163,7 +167,7 @@ Returns an integer.
     dplyr::pull(out) -> df$ctgov
 
 
-  #### ..CTGOV2 ####
+  #### . CTGOV2 ####
   df %>% dplyr::mutate(
     #
     helper_asNamesPerExpArm = lapply(
@@ -188,11 +192,11 @@ Returns an integer.
     dplyr::pull(out) -> df$ctgov2
 
 
-  #### ..ISRCTN ####
+  #### . ISRCTN ####
   df$isrctn <- NA
 
 
-  #### ..CTIS ####
+  #### . CTIS ####
   df %>% dplyr::mutate(
     #
     helper_asNamesPerTestGroup = lapply(
