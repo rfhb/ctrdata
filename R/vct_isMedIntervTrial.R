@@ -139,12 +139,12 @@ Returns a logical.
     dplyr::mutate(
       #
       analysis_isDrugTrial =
-        stringi::stri_detect_fixed(
-          interventions.intervention.interventionType,
-          "drug", case_insensitive = TRUE) &
         stringi::stri_detect_regex(
+          interventions.intervention.interventionType,
+          "drug|biological|vaccine", case_insensitive = TRUE) &
+        stringi::stri_detect_fixed(
           trialDesign.primaryStudyDesign,
-          "interventional|biological|vaccine", case_insensitive = TRUE),
+          "interventional", case_insensitive = TRUE),
       #
       out = analysis_isDrugTrial
     ) %>%
