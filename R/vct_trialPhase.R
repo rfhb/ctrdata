@@ -82,6 +82,12 @@ Returns an ordered factor of levels "phase 1", "phase 1+2", "phase 2",
     ) %>%
     dplyr::pull(euctrphase) -> df$euctrphase
 
+  #### . CTIS ####
+  df$authorizedPartI.trialDetails.trialInformation.trialCategory.trialPhase <-
+    as.character(df$authorizedPartI.trialDetails.trialInformation.trialCategory.trialPhase)
+  df$authorizedApplication.authorizedPartI.trialDetails.trialInformation.trialCategory.trialPhase <-
+    as.character(df$authorizedApplication.authorizedPartI.trialDetails.trialInformation.trialCategory.trialPhase)
+  #
   # ctis value list
   #  1 Human Pharmacology (Phase I) - First administration to humans
   #  2 Human Pharmacology (Phase I) - Bioequivalence Study
@@ -94,6 +100,7 @@ Returns an ordered factor of levels "phase 1", "phase 1+2", "phase 2",
   #  9 Phase I and Phase II (Integrated) - Other
   # 10 Phase II and Phase III (Integrated)
   # 11 Phase III and phase IV (Integrated)
+
 
   # calculate for all
   phase_values <- list(
