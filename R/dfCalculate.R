@@ -2,10 +2,11 @@
 
 #' Calculate fields from data in other fields
 #'
-#' Across registers, calculate a trial concept (e.g., status of recruitment)
-#' from fields in a data frame. The concept is defined within ctrdata
-#' based on common understanding and any relevant publications.
-#' Details of the function are printed to explain it, if no data frame is specified.
+#' Across registers, calculate a trial concept (e.g., status of recruitment).
+#' The concept is defined within ctrdata based on common understanding and
+#' any relevant publications. Details of the implementation are printed,
+#' if no data frame is specified, to show the peculiarities of the registers
+#' for calculating the concept.
 #'
 #' The names of the functions can also be used for the argument `calculate`
 #' in \link{dbGetFieldsIntoDf} to achieve the same purpose already at the
