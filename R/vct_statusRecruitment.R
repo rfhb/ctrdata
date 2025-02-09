@@ -38,11 +38,8 @@
       "participants.recruitmentStatusOverride"
     ),
     "ctis" = c(
-      "ctPublicStatusCode"
-      # ctPublicStatus only used by CTIS1
-      # ctStatus had text in CTIS1 but in CTIS2
-      # has same integer as ctPublicStatusCode
-      # ctPublicStatusCode is in CTIS1 and CTIS2
+      "ctPublicStatusCode", # ctPublicStatusCode is in CTIS1 and CTIS2
+      "ctStatus" # text in CTIS1 but in CTIS2, same as ctPublicStatusCode
     ))
 
 
@@ -52,8 +49,12 @@
     txt <- '
 Calculates the status at the time of loading the trial records.
 Maps the categories that are in fields which specify the state of recruitment.
-Simplifies them into categories "ongoing", "completed" and "other."
-Returns an ordered factor.
+Simplifies the status into three categories "ongoing" (includes active, not yet
+recruiting; temporarily halted; suspended; authorised, not started and similar),
+"completed" (includes ended; ongoing, recuitment mended) and "other" (includes
+terminated; revoked).
+
+Returns a factor of these categories.
     '
 
     # generic, do not edit
@@ -74,43 +75,49 @@ Returns an ordered factor.
 
   #### . EUCTR ####
   df %>% dplyr::mutate(
-    out = dplyr::case_when(
+    helper = dplyr::case_when(
       trialInformation.globalEndOfTrialPremature ~ "Prematurely Ended",
       trialInformation.isGlobalEndOfTrialReached ~ "Completed",
       .default = p_end_of_trial_status
-    )
+    ),
+    out = tolower(helper)
   ) %>%
     dplyr::pull(out) -> df$euctr
 
 
   #### . CTGOV ####
   df %>% dplyr::mutate(
-    out = as.character(
+    helper = as.character(
       # type is logical if all NA
       dplyr::if_else(
         !is.na(last_known_status),
         last_known_status,
         overall_status)
-    )
+    ),
+    out = tolower(helper)
   ) %>%
     dplyr::pull(out) -> df$ctgov
 
+
   #### . CTGOV2 ####
-  df$ctgov2 <- as.character(
+  df$ctgov2 <- tolower(as.character(
     # type is logical if all NA
-    df$protocolSection.statusModule.overallStatus)
+    df$protocolSection.statusModule.overallStatus))
+
 
   #### . ISRCTN ####
   df %>% dplyr::mutate(
-    out = dplyr::case_when(
+    helper = dplyr::case_when(
       !is.na(participants.recruitmentStatusOverride)
       ~ as.character(participants.recruitmentStatusOverride),
       Sys.Date() > participants.recruitmentEnd ~ "Completed",
-      participants.recruitmentEnd > participants.recruitmentStart ~ "Ongoing",
-      Sys.Date() < participants.recruitmentStart ~ "Planned"
-    )
+      Sys.Date() < participants.recruitmentStart ~ "Planned",
+      participants.recruitmentEnd > participants.recruitmentStart ~ "Ongoing"
+    ),
+    out = tolower(helper)
   ) %>%
     dplyr::pull(out) -> df$isrctn
+
 
   #### . CTIS ####
   df %>% dplyr::mutate(
@@ -129,45 +136,42 @@ Returns an ordered factor.
       11 ~ "Not authorised",
       12 ~ "Cancelled"
     ),
-    out = helper_ctPublicStatusCode
+    helper = dplyr::case_when(
+      is.na(helper_ctPublicStatusCode) &
+        !is.na(ctStatus) ~ ctStatus,
+      .default = helper_ctPublicStatusCode
+    ),
+    out = tolower(helper)
   ) %>%
     dplyr::pull(out) -> df$ctis
 
 
-  # merge, last update 2025-01-27
+  # merge, last update 2025-02-08
   mapped_values <- list(
     "ongoing" = c(
-      # EUCTR
-      "Recruiting", "Active", "Ongoing",
-      "Temporarily Halted", "Restarted",
-      # CTGOV
-      "Active, not recruiting", "Enrolling by invitation",
-      "Not yet recruiting",
-      # CTGOV2
-      "ACTIVE_NOT_RECRUITING", "ENROLLING_BY_INVITATION",
-      "RECRUITING", "TEMPORARILY_NOT_AVAILABLE",
-      # ISRCTN
-      "Ongoing",
-      # CTIS
-      "Ongoing, recruiting", "Temporarily halted",
-      "Ongoing, not yet recruiting", "Authorised, not started",
-      "Authorised, recruitment pending", "Authorised, recruiting"
+      "active","active_not_recruiting", "active, not recruiting",
+      "authorised, not started", "authorised, recruiting",
+      "authorised, recruitment pending", "enrolling by invitation",
+      "enrolling_by_invitation", "not yet recruiting", "ongoing",
+      "ongoing, not yet recruiting", "ongoing, recruiting", "recruiting",
+      "restarted", "suspended", "temporarily halted", "temporarily_not_available"
     ),
     #
     "completed" = c(
-      "Ongoing, recruitment ended",
-      "Completed", "COMPLETED",
-      "Ended"),
+      "completed", "ended", "ongoing, recruitment ended"
+    ),
     #
     "other" = c(
-      "Under evaluation", "Not Authorised", "Not authorised",
-      "Expired", "Revoked", "Cancelled", "Withdrawn",
-      "GB - no longer in EU/EEA", "Trial now transitioned",
-      "Suspended", "No longer available",
-      "SUSPENDED", "NO_LONGER_AVAILABLE",
-      "WITHDRAWN", "WITHHELD", "UNKNOWN",
-      "Terminated", "TERMINATED", "Prematurely Ended", "Stopped")
+      "cancelled", "expired", "gb - no longer in eu/eea", "no longer available",
+      "no_longer_available", "not authorised", "prematurely ended", "revoked",
+      "stopped", "terminated", "trial now transitioned", "under evaluation",
+      "unknown", "withdrawn", "withheld"
+      )
   )
+
+  # check for unmapped values
+  # setdiff(unique(dfMergeVariablesRelevel(df, names(fldsNeeded))), unlist(mapped_values))
+
 
   # merge into vector (ordered factor)
   vct <- dfMergeVariablesRelevel(
@@ -175,6 +179,8 @@ Returns an ordered factor.
     colnames = names(fldsNeeded),
     levelslist = mapped_values
   )
+
+
 
 
   #### checks ####
