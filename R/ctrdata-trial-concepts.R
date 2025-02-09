@@ -51,6 +51,9 @@
 #' ongoing (includes temporarily halted), completed and other (includes
 #' planned, stopped, terminated)
 #'
+#' - **.trialPhase** (ordered factor) the phase(s) of medicine development
+#' with which a trial is associated
+#'
 #' @name ctrdata-trial-concepts
 #' @docType data
 #' @author Ralf Herold \email{ralf.herold@@mailbox.org}

@@ -49,6 +49,8 @@ participants recruited
 \item \strong{.statusRecruitment} (factor) a status that is simplified to
 ongoing (includes temporarily halted), completed and other (includes
 planned, stopped, terminated)
+\item \strong{.trialPhase} (ordered factor) the phase(s) of medicine development
+with which a trial is associated
 }
 }
 \author{
