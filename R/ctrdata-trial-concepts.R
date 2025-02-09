@@ -21,7 +21,11 @@
 #' calling \link{dbGetFieldsIntoDf} (parameter `calculate`) and
 #' \link{dfCalculate} (parameter `name`).
 #' Concepts will continue to be refined and added;
-#' last updated 2025-02-01.
+#' last updated 2025-02-09.
+#'
+#' - **.controlType** (factor) which type of internal or concurrent control is
+#' used in the trial? ("none", "no-treatment", "placebo", "active",
+#' "placebo+active" or "other")
 #'
 #' - **.isMedIntervTrial** (logical) is the trial interventional and does
 #' it have one or more medicines (drugs or biological) as investigational
@@ -43,7 +47,7 @@
 #' - **.sampleSize** (integer) the achieved (or planned) number of subjects or
 #' participants recruited
 #'
-#' - **.statusRecruitment** (ordered factor) a status that is simplified to
+#' - **.statusRecruitment** (factor) a status that is simplified to
 #' ongoing (includes temporarily halted), completed and other (includes
 #' planned, stopped, terminated)
 #'

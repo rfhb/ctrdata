@@ -27,8 +27,11 @@ The following trial concepts can be used by referencing their name when
 calling \link{dbGetFieldsIntoDf} (parameter \code{calculate}) and
 \link{dfCalculate} (parameter \code{name}).
 Concepts will continue to be refined and added;
-last updated 2025-02-01.
+last updated 2025-02-09.
 \itemize{
+\item \strong{.controlType} (factor) which type of internal or concurrent control is
+used in the trial? ("none", "no-treatment", "placebo", "active",
+"placebo+active" or "other")
 \item \strong{.isMedIntervTrial} (logical) is the trial interventional and does
 it have one or more medicines (drugs or biological) as investigational
 (experimental) intervention? (irrespective of status of authorisation and
@@ -43,7 +46,7 @@ medicines that are investigational? (cannot be calculated for ISRCTN)
 of start of recruitment
 \item \strong{.sampleSize} (integer) the achieved (or planned) number of subjects or
 participants recruited
-\item \strong{.statusRecruitment} (ordered factor) a status that is simplified to
+\item \strong{.statusRecruitment} (factor) a status that is simplified to
 ongoing (includes temporarily halted), completed and other (includes
 planned, stopped, terminated)
 }
