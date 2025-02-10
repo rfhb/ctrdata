@@ -237,8 +237,8 @@ dbGetFieldsIntoDf <- function(
 
   # remove fields only needed for functions
   rmFields <- setdiff(unlist(fctFields), c("_id", fields))
-  if (length(rmFields)) out <- out[
-    , -na.omit(match(rmFields, names(out)))]
+  rmFields <- na.omit(match(rmFields, names(out)))
+  if (length(rmFields)) out <- out[ , -rmFields]
 
   # return
   return(dfOrTibble(out))
