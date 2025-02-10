@@ -38,6 +38,8 @@
 #' - **.isUniqueTrial** (logical) is the trial record unique in the data frame
 #' of trial, based on the default parameters of \link{dbFindIdsUniqueTrials}?
 #'
+#' - **.numSites** (integer) how many sites does the trial have?
+#'
 #' - **.numTestArmsSubstances** (integer) how many arms or groups have
 #' medicines that are investigational? (cannot be calculated for ISRCTN or
 #' for phase 1 trials)

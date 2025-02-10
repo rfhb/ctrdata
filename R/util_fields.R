@@ -459,6 +459,7 @@ typeVars <- list(
   #
   "e83_the_trial_involves_single_site_in_the_member_state_concerned"    = "ctrYesNo",
   "e83_will_this_trial_be_conducted_at_a_single_site_globally"          = "ctrYesNo",
+  "e83single_site_trial"                                                = "ctrYesNo", # 2025-02-10
   "e83_single_site_trial"                                               = "ctrYesNo", # 2023-10-05
   "e84_multiple_sites_in_member_state"                                  = "ctrYesNo", # 2023-10-05
   "e84_will_this_trial_be_conducted_at_multiple_sites_globally"         = "ctrYesNo",
