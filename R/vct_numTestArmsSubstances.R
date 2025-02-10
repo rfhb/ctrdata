@@ -12,11 +12,11 @@
 #' @importFrom stringdist stringsimmatrix
 #' @importFrom stringi stri_count_fixed stri_split_fixed
 .numTestArmsSubstances <- function(df = NULL) {
-
+  
   # check generic, do not edit
   stopifnot(is.data.frame(df) || is.null(df))
-
-
+  
+  
   #### fields ####
   fldsNeeded <- list(
     "euctr" = c(
@@ -38,15 +38,17 @@
     "ctis" = c(
       "authorizedApplication.authorizedPartI.productRoleGroupInfos"
     ))
-
-
+  
+  
   #### describe ####
   if (is.null(df)) {
-
+    
     txt <- '
 Calculates the number of active arms with different investigational medicines,
 after excluding comparator, auxiliary and placebo arms / medicines.
 For ISRCTN, this is imprecise because arms are not identified in a field.
+Most registers provide no or only limited information on phase 1 trials,
+so that this number typically cannot be calculated for these trials.
 
 Requires packages stringdist to be installed; stringdist is used for
 evaluating names of active substances, which are considered similar when the
@@ -54,62 +56,62 @@ similarity is 0.8 or higher.
 
 Returns an integer.
     '
-
+    
     # generic, do not edit
     fctDescribe(match.call()[[1]], txt, fldsNeeded)
     return(invisible(fldsNeeded))
-
+    
   } # end describe
-
-
+  
+  
   #### calculate ####
-
+  
   # check generic, do not edit
   fctChkFlds(names(df), fldsNeeded)
-
+  
   # helper definitions
   thresholdSimilar <- 0.8
-
+  
   # helper function
   `%>%` <- dplyr::`%>%`
-
+  
   # helper function, to be call per group
   asTestSimilarityArms <- function(x) {
-
+    
     # early exit
     if (is.null(x) || !length(x) || all(is.na(x))) return(NULL)
-
+    
     # normalise
     x <- tolower(x) # TODO removed unlist(x)
-
+    
     # early exit if single arm
     if (length(x) == 1L) return(0L)
-
+    
     # calculate similarities
     t <- stringdist::stringsimmatrix(x, x)
-
+    
     # early exit
     if (ncol(t) < 1L) return(NA)
-
+    
     # extract max similarity of arm n with other arm(s)
     diag(t) <- NA
     if (all(is.na(t))) return(0L)
     apply(t, 2, max, na.rm = TRUE)
-
+    
   } # asTestSimilarityArms
-
+  
   # helper function, to be called per trial
   asTestSimilarityTrial <- function(x) {
-
+    
     # collapse active substances into one string per treatment arm / group
     t <- sapply(x, function(i) paste0(unique(i), collapse = " / "))
-
+    
     # return vector of similarities of treatment arms
     asTestSimilarityArms(t)
-
+    
   } # end asTestSimilarityTrial
-
-
+  
+  
   #### . EUCTR ####
   df %>% dplyr::mutate(
     #
@@ -136,7 +138,7 @@ Returns an integer.
       is.na(helper_asNamesPerTestGroup) ~ NA,
       helper_numTestGroupsInTrial == 1L ~ 1L,
       .default = sapply(helper_simTestGroupsInTrial, function(i)
-        sum(i < thresholdSimilar), simplify = TRUE)
+        max(sum(i < thresholdSimilar), 1L, na.rm = TRUE), simplify = TRUE)
     ),
     out = if_else(
       !is.na(analysis_numDifferentTestGroupsInTrial),
@@ -145,8 +147,8 @@ Returns an integer.
     )
   ) %>%
     dplyr::pull(out) -> df$euctr
-
-
+  
+  
   #### . CTGOV ####
   df %>% dplyr::mutate(
     #
@@ -166,15 +168,15 @@ Returns an integer.
       helper_numExpArmsInTrial == 1L ~ 1L,
       helper_numExpArmsInTrial > 1L ~
         sapply(helper_simExpArmsInTrial, function(i)
-          sum(i < thresholdSimilar), simplify = TRUE
+          max(sum(i < thresholdSimilar), 1L, na.rm = TRUE), simplify = TRUE
         )
     ),
     # if at least one test arm im trial
     out = analysis_numDifferentExpArmsInTrial
   ) %>%
     dplyr::pull(out) -> df$ctgov
-
-
+  
+  
   #### . CTGOV2 ####
   df %>% dplyr::mutate(
     #
@@ -193,15 +195,14 @@ Returns an integer.
       helper_numExpArmsInTrial == 1L ~ 1L,
       helper_numExpArmsInTrial > 1L ~ sapply(
         helper_simExpArmsInTrial, function(i)
-          sum(i < thresholdSimilar),
-        simplify = TRUE)
+          max(sum(i < thresholdSimilar), 1L, na.rm = TRUE), simplify = TRUE)
     ),
     #
     out = analysis_numDifferentExpArmsInTrial
   ) %>%
     dplyr::pull(out) -> df$ctgov2
-
-
+  
+  
   #### . ISRCTN ####
   df %>%
     dplyr::mutate(
@@ -235,8 +236,8 @@ Returns an integer.
       )
     ) %>%
     dplyr::pull(out)-> df$isrctn
-
-
+  
+  
   #### . CTIS ####
   df %>% dplyr::mutate(
     #
@@ -256,14 +257,14 @@ Returns an integer.
       is.na(helper_asNamesPerTestGroup) ~ NA,
       helper_numTestGroupsInTrial == 1L ~ 1L,
       .default = sapply(helper_simTestGroupsInTrial, function(i)
-        sum(i < thresholdSimilar), simplify = TRUE)
+        max(sum(i < thresholdSimilar), 1L, na.rm = TRUE), simplify = TRUE)
     ),
     #
     out = analysis_numDifferentTestGroupsInTrial
-  ) %>%
+  ) %>% 
     dplyr::pull(out) -> df$ctis
-
-
+  
+  
   # merge into vector (ordered factor)
   vct <- as.integer(
     dfMergeVariablesRelevel(
@@ -271,13 +272,13 @@ Returns an integer.
       colnames = names(fldsNeeded)
     )
   )
-
-
+  
+  
   #### checks ####
   stopifnot(is.integer(vct) || all(is.na(vct)))
   stopifnot(length(vct) == nrow(df))
-
+  
   # return
   return(vct)
-
+  
 } # end .numTestArmsSubstances
