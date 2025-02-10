@@ -164,16 +164,75 @@ dbGetFieldsIntoDf <- function(
   getFields <- unique(unlist(c(fields, fctFields)))
 
   # inform user
-  message("Querying database...\r", appendLF = FALSE)
+  message("Querying database (", length(getFields), " fields)...")
 
   # get data
-  out <- .dbGetFieldsIntoDf(
-    fields = getFields, con = con, verbose = verbose, ...)
+  out <- try(.dbGetFieldsIntoDf(
+    fields = getFields,
+    con = con,
+    verbose = verbose, ...),
+    silent = TRUE)
 
-  # run functions
-  for (f in calculate) {
-    if (verbose) dfCalculate(name = f)
-    out <- dfCalculate(name = f, df = out)
+  # check and switch to iterating
+  if (inherits(out, "try-error")) {
+
+    message(
+      "Database reports too many fields to obtain or ",
+      "calculate, switching to iterating over fields...")
+
+    # first get fields
+    if (!length(fields)) fields <- "_id"
+
+    # safe guard against many fields
+    iFields <- seq_along(fields) %/% 100L + 1L
+    for (i in seq_len(max(iFields))) {
+
+      outi <- try(.dbGetFieldsIntoDf(
+        fields = fields[iFields == i],
+        con = con,
+        verbose = verbose, ...),
+        silent = TRUE)
+
+      if (i == 1L) {
+        out <- outi
+      } else {
+        out <- dplyr::full_join(
+          out,
+          outi[, c("_id", i), drop = FALSE],
+          by = "_id")
+      }
+
+    }
+
+    # second, run functions
+    for (i in calculate) {
+
+      if (verbose) dfCalculate(name = i)
+
+      outi <- .dbGetFieldsIntoDf(
+        fields = unlist(suppressMessages(
+          dfCalculate(name = i))),
+        con = con,
+        verbose = verbose, ...)
+
+      outi <- dfCalculate(
+        name = i, df = outi)
+
+      out <- dplyr::full_join(
+        out,
+        outi[, c("_id", i), drop = FALSE],
+        by = "_id")
+
+    }
+
+  } else {
+
+    # run functions
+    for (i in calculate) {
+      if (verbose) dfCalculate(name = i)
+      out <- dfCalculate(name = i, df = out)
+    }
+
   }
 
   # remove fields only needed for functions
