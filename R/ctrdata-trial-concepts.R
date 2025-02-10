@@ -39,7 +39,8 @@
 #' of trial, based on the default parameters of \link{dbFindIdsUniqueTrials}?
 #'
 #' - **.numTestArmsSubstances** (integer) how many arms or groups have
-#' medicines that are investigational? (cannot be calculated for ISRCTN)
+#' medicines that are investigational? (cannot be calculated for ISRCTN or
+#' for phase 1 trials)
 #'
 #' - **.startDate** (date) the planned, authorised or documented date
 #' of start of recruitment

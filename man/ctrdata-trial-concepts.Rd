@@ -41,7 +41,8 @@ trial? (based on title, .numTestArmsSubstances, number of periods)
 \item \strong{.isUniqueTrial} (logical) is the trial record unique in the data frame
 of trial, based on the default parameters of \link{dbFindIdsUniqueTrials}?
 \item \strong{.numTestArmsSubstances} (integer) how many arms or groups have
-medicines that are investigational? (cannot be calculated for ISRCTN)
+medicines that are investigational? (cannot be calculated for ISRCTN or
+for phase 1 trials)
 \item \strong{.startDate} (date) the planned, authorised or documented date
 of start of recruitment
 \item \strong{.sampleSize} (integer) the achieved (or planned) number of subjects or
