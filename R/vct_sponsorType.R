@@ -92,7 +92,7 @@ Returns a factor with levels "',
   df %>% dplyr::mutate(
     #
     out = dplyr::case_match(
-      protocolSection.sponsorCollaboratorsModule.leadSponsor.class,
+      sponsors.lead_sponsor.agency_class,
       c("NIH", "U.S. Fed") ~ stn,
       c("Industry") ~ stc,
       c("Indiv", "Ambig", "Other", "Unknown") ~ sto
@@ -169,9 +169,9 @@ Returns a factor with levels "',
         function(i) if (all(is.na(i))) NA else any(i %in% ncs)
       ),
       # sequence matters, first
-      # value determines out
+      # value determines result
       helper4 = dplyr::coalesce(
-        helper1, helper2, helper3
+        helper3, helper2, helper1
       ),
       #
       out = dplyr::case_when(
