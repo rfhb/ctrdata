@@ -72,7 +72,7 @@ package. This README was reviewed on 2025-02-01 for version 1.20.0.9000.
 
 Remember to respect the registers’ terms and conditions (see
 `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
-package in any publication as follows: “Ralf Herold (2024). *ctrdata:
+package in any publication as follows: “Ralf Herold (2025). *ctrdata:
 Retrieve and Analyze Clinical Trials in Public Registers.* R package
 version 1.20.0, <https://cran.r-project.org/package=ctrdata>”.
 
@@ -392,46 +392,29 @@ loaded).
 ``` r
 # Get all records that have values in the fields of interest:
 result <- dbGetFieldsIntoDf(
-  fields = c(
-    "a7_trial_is_part_of_a_paediatric_investigation_plan",
-    "p_end_of_trial_status",
-    "a2_eudract_number"
-  ),
+  fields = c("a7_trial_is_part_of_a_paediatric_investigation_plan"),
+  calculate = c(".statusRecruitment", ".isUniqueTrial"),
   con = db
 )
 
-# Find unique (deduplicated) trial identifiers for trials that have more than
-# one record, for example for several EU Member States or in several registers:
-uniqueids <- dbFindIdsUniqueTrials(con = db)
-# Searching for duplicate trials... 
-# - Getting all trial identifiers (may take some time), 468 found in collection
-# - Finding duplicates among registers' and sponsor ids...
-# - 351 EUCTR _id were not preferred EU Member State record for 117 trials
-# - Keeping 117 / 0 / 0 / 0 / 0 records from EUCTR / CTGOV / CTGOV2 / ISRCTN / CTIS
-# = Returning keys (_id) of 117 records in collection "some_collection_name"
-
-# Keep only unique / de-duplicated records:
-result <- subset(
-  result,
-  subset = `_id` %in% uniqueids
-)
+# Querying database (35 fields)...
+# - Finding duplicates among registers' and sponsor ids...     
+# - 352 EUCTR _id were not preferred EU Member State record for 118 trials
+# - Keeping 0 / 118 / 0 / 0 / 0 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS
 
 # Tabulate the selected clinical trial information:
 with(
-  result,
+  result[result$.isUniqueTrial, ],
   table(
-    p_end_of_trial_status,
+    .statusRecruitment,
     a7_trial_is_part_of_a_paediatric_investigation_plan
   )
 )
 #      a7_trial_is_part_of_a_paediatric_investigation_plan
-# p_end_of_trial_status      FALSE TRUE
-#   Completed                   55   24
-#   GB - no longer in EU/EEA     1    1
-#   Ongoing                      1    2
-#   Prematurely Ended            3    4
-#   Temporarily Halted           1    1
-#   Trial now transitioned       4    4
+# .statusRecruitment FALSE TRUE
+#          ongoing       0    1
+#          completed    50   24
+#          other        16   13
 ```
 
 <div id="workflow-ctgov-example">
@@ -578,7 +561,7 @@ ctrLoadQueryIntoDb(
   only.count = TRUE
 )
 # $n
-# [1] 8573
+# [1] 8682
 
 # Retrieve trials from another register:
 ctrLoadQueryIntoDb(
@@ -609,26 +592,20 @@ length(allFields[grepl("CTIS", names(allFields))])
 # root field names in CTIS
 ctisFields <- allFields[grepl("CTIS", names(allFields))]
 ctisFields[!grepl("[.]", ctisFields)]
-#                   CTIS                    CTIS                    CTIS 
-#             "ageGroup"     "ageRangeSecondary" "authorizedApplication" 
-#                   CTIS                    CTIS                    CTIS 
-#   "correctiveMeasures"              "ctNumber"    "ctPublicStatusCode" 
-#                   CTIS                    CTIS                    CTIS 
-#              "ctrname"              "ctStatus"          "decisionDate" 
-#                   CTIS                    CTIS                    CTIS 
-#  "decisionDateOverall"             "documents"                "events" 
-#                   CTIS                    CTIS                    CTIS 
-#               "gender" "lastPublicationUpdate"           "lastUpdated" 
-#                   CTIS                    CTIS                    CTIS 
-#          "publishDate"    "record_last_import"               "results" 
-#                   CTIS                    CTIS                    CTIS 
-# "resultsFirstReceived"            "shortTitle"           "sponsorType" 
-#                   CTIS                    CTIS                    CTIS 
-#          "startDateEU"      "therapeuticAreas"   "totalNumberEnrolled" 
-#                   CTIS                    CTIS                    CTIS 
-#       "trialCountries"            "trialPhase"           "trialRegion" 
-#                   CTIS 
-#      "trialRegionCode" 
+   #                 CTIS                    CTIS                    CTIS                    CTIS 
+   #           "ageGroup"     "ageRangeSecondary" "authorizedApplication"    "correctiveMeasures" 
+   #                 CTIS                    CTIS                    CTIS                    CTIS 
+   #           "ctNumber"    "ctPublicStatusCode"               "ctrname"              "ctStatus" 
+   #                 CTIS                    CTIS                    CTIS                    CTIS 
+   #       "decisionDate"   "decisionDateOverall"             "documents"                "events" 
+   #                 CTIS                    CTIS                    CTIS                    CTIS 
+   #             "gender" "lastPublicationUpdate"           "lastUpdated"           "publishDate" 
+   #                 CTIS                    CTIS                    CTIS                    CTIS 
+   # "record_last_import"               "results"  "resultsFirstReceived"            "shortTitle" 
+   #                 CTIS                    CTIS                    CTIS                    CTIS 
+   #        "sponsorType"           "startDateEU"      "therapeuticAreas"   "totalNumberEnrolled" 
+   #                 CTIS                    CTIS                    CTIS                    CTIS 
+   #     "trialCountries"            "trialPhase"           "trialRegion"       "trialRegionCode" 
 
 # use an alternative to dbGetFieldsIntoDf()
 allData <- nodbi::docdb_query(
@@ -721,56 +698,28 @@ Analyse some simple result details, here from CTGOV2 (see this
 for more examples):
 
 ``` r
-# Get all records that have values in any of the specified fields:
+
 result <- dbGetFieldsIntoDf(
-  fields = c(
-    # fields from CTGOV2 only
-    "resultsSection.baselineCharacteristicsModule.denoms.counts.value",
-    "resultsSection.baselineCharacteristicsModule.denoms.units",
-    "resultsSection.baselineCharacteristicsModule.groups.title",
-    "protocolSection.armsInterventionsModule.armGroups.type",
-    "protocolSection.designModule.designInfo.allocation",
-    "protocolSection.contactsLocationsModule.locations.city",
-    "protocolSection.conditionsModule.conditions"
-  ),
+  calculate = c(
+    ".numSites", 
+    ".sampleSize", 
+    ".controlType", 
+    ".numTestArmsSubstances"),
   con = db
 )
 
-# Mangle to calculate:
-# - which columns with values for group counts are not labelled Total
-# - what are the numbers in each of the groups etc.
-result %<>% 
-  rowwise() %>% 
-  mutate(
-    number_of_arms = stringi::stri_count_fixed(
-      resultsSection.baselineCharacteristicsModule.groups.title, " / "), 
-    is_randomised = case_when(
-      protocolSection.designModule.designInfo.allocation == "RANDOMIZED" ~ TRUE,
-      protocolSection.designModule.designInfo.allocation == "NON_RANDOMIZED" ~ FALSE, 
-      number_of_arms == 1L ~ FALSE,
-      .default = FALSE
-    ),
-    which_not_total = list(which(strsplit(
-      resultsSection.baselineCharacteristicsModule.groups.title, " / ")[[1]] != "Total")),
-    num_sites = length(strsplit(protocolSection.contactsLocationsModule.locations.city, " / ")[[1]]),
-    num_participants = sum(as.integer(
-      resultsSection.baselineCharacteristicsModule.denoms.counts.value[which_not_total])),
-    num_arms_or_groups = max(number_of_arms, length(which_not_total))
-  )
-
-# Example plot:
 library(ggplot2)
 ggplot(data = result) +
   labs(
     title = "Trials including patients with a neuroblastoma",
-    subtitle = "ClinicalTrials.Gov, trials with results"
+    subtitle = "ClinicalTrials.Gov"
   ) +
   geom_point(
     mapping = aes(
-      x = num_sites,
-      y = num_participants,
-      size = num_arms_or_groups,
-      colour = is_randomised
+      x = .numSites,
+      y = .sampleSize,
+      size = .numTestArmsSubstances,
+      colour = .controlType
     )
   ) +
   scale_x_log10() +
@@ -778,8 +727,8 @@ ggplot(data = result) +
   labs(
     x = "Number of sites",
     y = "Total number of participants",
-    colour = "Randomised?", 
-    size = "# Arms / groups",
+    colour = "Control", 
+    size = "# Treatments",
     caption = Sys.Date()
   )
 ggsave(
