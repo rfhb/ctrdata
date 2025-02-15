@@ -18,16 +18,40 @@ tf <- function() {
     dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
     collection = "my_trials", RSQLite::SQLITE_RO)
 
-  df <- ctrdata::dbGetFieldsIntoDf(
-    fields = "",
-    calculate = dfCalculate(),
-    con = dbc,
-    verbose = TRUE
+  # only SQLite triggers message
+  expect_message(
+    df <- ctrdata::dbGetFieldsIntoDf(
+      fields = "",
+      calculate = dfCalculate(),
+      con = dbc,
+      verbose = FALSE
+    ),
+    "iterating over fields"
   )
 
   # test
   expect_equivalent(names(df), c("_id", dfCalculate()))
   expect_true(nrow(df) >= 29L)
+
+
+  # online tests
+
+  # check
+
+
+  # load with start / end
+
+
+  # matrix / list
+  # - register
+  # - function
+  # - result
+
+
+  # all data
+
+
+
 
   # end tests
 
