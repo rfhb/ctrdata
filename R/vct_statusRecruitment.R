@@ -138,7 +138,7 @@ Returns a factor of these categories.
     ),
     helper = dplyr::case_when(
       is.na(helper_ctPublicStatusCode) &
-        !is.na(ctStatus) ~ ctStatus,
+        !is.na(ctStatus) ~ as.character(ctStatus),
       .default = helper_ctPublicStatusCode
     ),
     out = tolower(helper)
