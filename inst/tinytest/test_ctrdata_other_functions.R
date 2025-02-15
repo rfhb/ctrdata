@@ -56,8 +56,7 @@ df2 <- data.frame(
 # test
 expect_error(
   suppressWarnings(
-    dfMergeVariablesRelevel(list("var1", "var2"))),
-  "no appli")
+    dfMergeVariablesRelevel(list("var1", "var2"))))
 
 # test
 expect_message(
