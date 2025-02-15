@@ -27,7 +27,7 @@ The following trial concepts can be used by referencing their name when
 calling \link{dbGetFieldsIntoDf} (parameter \code{calculate}) and
 \link{dfCalculate} (parameter \code{name}).
 Concepts will continue to be refined and added;
-last updated 2025-02-09.
+last updated 2025-02-15.
 \itemize{
 \item \strong{.controlType} (factor) which type of internal or concurrent control is
 used in the trial? ("none", "no-treatment", "placebo", "active",
@@ -53,6 +53,9 @@ simplified to not for profit, for profit or other
 \item \strong{.statusRecruitment} (factor) a status that is simplified to
 ongoing (includes temporarily halted), completed and other (includes
 planned, stopped, terminated)
+\item \strong{.trialObjectives} (string) identifies with letters those objectives
+that could be identified by text fragments, e.g. "E S PD D", with E
+(efficacy), S (safety), D (dose-finding)
 \item \strong{.trialPhase} (ordered factor) the phase(s) of medicine development
 with which a trial is associated
 }

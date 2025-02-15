@@ -21,7 +21,7 @@
 #' calling \link{dbGetFieldsIntoDf} (parameter `calculate`) and
 #' \link{dfCalculate} (parameter `name`).
 #' Concepts will continue to be refined and added;
-#' last updated 2025-02-09.
+#' last updated 2025-02-15.
 #'
 #' - **.controlType** (factor) which type of internal or concurrent control is
 #' used in the trial? ("none", "no-treatment", "placebo", "active",
