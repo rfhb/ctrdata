@@ -4,6 +4,9 @@
 #'
 #' Merge variables in a data frame such as returned by \link{dbGetFieldsIntoDf}
 #' into a new variable, and optionally also map its values to new levels.
+#' See \link{dfCalculate} for pre-defined cross-register trial concepts that
+#' are already implemented based on merging fields from different registers
+#' and calculating a new field.
 #'
 #' @param df A \link{data.frame} with the variables (columns) to be merged into
 #' one vector.
@@ -16,7 +19,7 @@
 #'
 #' @return A vector, with the type of the columns to be merged
 #'
-#' @importFrom dplyr c_across mutate rowwise
+#' @importFrom dplyr select
 #'
 #' @export
 #'
@@ -28,20 +31,27 @@
 #'   flags = RSQLite::SQLITE_RO)
 #'
 #' df <- dbGetFieldsIntoDf(
-#'     fields = c("overall_status", "x5_trial_status"),
-#'     con = dbc
+#'   fields = c(
+#'     "f11_trial_has_subjects_under_18",
+#'     "protocolSection.eligibilityModule.stdAges",
+#'     "participants.ageRange"
+#'   ),
+#'   con = dbc
 #' )
 #'
-#' statusvalues <- list(
-#'     "ongoing" = c("Recruiting", "Active", "Ongoing"),
-#'     "completed" = c("Completed", "Prematurely Ended", "Terminated"),
-#'     "other" = c("Withdrawn", "Suspended", "No longer available")
+#' newValues <- list(
+#'   "paediatric" = c("Neonate", "Child", "CHILD / ADULT",
+#'                    "CHILD / ADULT / OLDER_ADULT", "TRUE"),
+#'   "adultOnly" = c("Adult", "Senior"),
+#'   "other" = c("Not Specified", "All", "Mixed", "Other")
 #' )
 #'
-#' dfMergeVariablesRelevel(
+#' table(
+#'   dfMergeVariablesRelevel(
 #'     df = df,
-#'     colnames = 'contains("status")',
-#'     levelslist = statusvalues
+#'     colnames = 'matches("age|18")',
+#'     levelslist = newValues
+#'   )
 #' )
 #'
 dfMergeVariablesRelevel <- function(
@@ -49,52 +59,53 @@ dfMergeVariablesRelevel <- function(
     colnames = "",
     levelslist = NULL) {
 
+  # check
+  stopifnot(is.data.frame(df))
+  stopifnot(is.character(colnames))
+
   # initialise
   env <- new.env()
   evalq(warned <- FALSE, env)
 
-  # helper function
-  getValuesOrNa <- function(x) {
-
-    x <- na.omit(x)
-    if (!length(x)) return(NA)
-
-    if (length(x) > 1L) {
-      x <- as.character(x)
-      x <- paste0(x[nchar(x) > 0L], collapse = " / ")
-
-      if (!get("warned", envir = env)) {
-        message("More than one column had values, returning e.g. '", x, "'")
-        evalq(warned <- TRUE, env)
-      }
-    }
-
-    return(x)
-  }
-
-  # merge columns
+  # identify columns
   if (length(colnames) == 1L && grepl("[()]", colnames)) {
-    identifiedColumns <- names(
+
+    colnames <- names(
       dplyr::select(df, eval(parse(text = colnames)))
     )
-
     message(
       "Columns identified to be merged: ",
-      paste0(identifiedColumns, collapse = ", ")
+      paste0(colnames, collapse = ", ")
     )
-
-    out <- dplyr::mutate(
-      dplyr::rowwise(df),
-      out = getValuesOrNa(dplyr::c_across(eval(parse(text = colnames))))
-    )[["out"]]
-  } else {
-    out <- dplyr::mutate(
-      dplyr::rowwise(df),
-      out = getValuesOrNa(dplyr::c_across(colnames))
-    )[["out"]]
   }
 
-  # merge levels
+  # early exit
+  stopifnot(all(colnames %in% names(df)))
+  if (length(colnames) == 1L) return(df[[colnames]])
+
+  # mapply helper
+  merge2Cols <- function(x, y) {
+    mapply(function(x, y) {
+      x <- x[x != ""]; y <- y[y != ""]
+      # x <- na.omit(x); y <- na.omit(y)
+      if (!length(x) && !length(y)) return(NA)
+      if (length(x) && !is.na(x) && length(y) && !is.na(y)) {
+        if (!get("warned", envir = env)) {message(
+          "More than one column had values, returning e.g. '", x, " / ", y, "'")
+          evalq(warned <- TRUE, env)}
+        return(paste(c(x, y), collapse = " / "))}
+      if (!is.na(x)) return(x) else return(y)},
+      x, y, USE.NAMES = FALSE)
+  }
+
+  # merge
+  out <- Reduce(
+    f = merge2Cols,
+    x = as.list(df[, colnames[-1], drop = FALSE]),
+    init = df[, colnames[1], drop = TRUE]
+  )
+
+  # label levels
   if (!is.null(levelslist)) {
     out <- factor(out)
     levels(out) <- levelslist
