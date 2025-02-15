@@ -10,7 +10,6 @@
 #' @importFrom dplyr mutate case_when pull `%>%`
 #' @importFrom stringdist stringsimmatrix
 #' @importFrom stringi stri_count_fixed stri_detect_regex stri_split_fixed
-#' @importFrom tidyr unite
 .isPlatformTrial <- function(df = NULL) {
 
   # check generic, do not edit
@@ -252,14 +251,6 @@ Returns a logical.
 
   #### . CTIS ####
   df %>%
-    tidyr::unite(
-      col = "periodTitle",
-      "authorizedPartI.trialDetails.protocolInformation.studyDesign.periodDetails.title",
-      "authorizedApplication.authorizedPartI.trialDetails.protocolInformation.studyDesign.periodDetails.title",
-      sep = " ",
-      remove = FALSE,
-      na.rm = TRUE
-    ) %>%
     dplyr::mutate(
       #
       analysis_titleRelevant =
@@ -283,6 +274,11 @@ Returns a logical.
         stringi::stri_detect_regex(
           authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.publicTitle,
           titleDefPlatform, case_insensitive = TRUE),
+      #
+      periodTitle = dplyr::coalesce(
+        "authorizedPartI.trialDetails.protocolInformation.studyDesign.periodDetails.title",
+        "authorizedApplication.authorizedPartI.trialDetails.protocolInformation.studyDesign.periodDetails.title"
+      ),
       #
       helper_periodTitle = stringi::stri_split_fixed(
         periodTitle, " / "),
