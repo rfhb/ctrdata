@@ -48,6 +48,8 @@ for phase 1 trials)
 of start of recruitment
 \item \strong{.sampleSize} (integer) the achieved (or planned) number of subjects or
 participants recruited
+\item \strong{.sponsorType} (factor) a type or class of main or lead sponsor that is
+simplified to not for profit, for profit or other
 \item \strong{.statusRecruitment} (factor) a status that is simplified to
 ongoing (includes temporarily halted), completed and other (includes
 planned, stopped, terminated)
