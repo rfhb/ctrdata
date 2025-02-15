@@ -111,7 +111,10 @@ dfCalculate <- function(name = ".*", df = NULL) {
   stopifnot(is.data.frame(df))
 
   # inform user
-  message("Calculating ", name, "... \r", appendLF = FALSE)
+  message(
+    "Calculating ", name,
+    "...                            \r",
+    appendLF = FALSE)
 
   # apply function. not using do.call
   # when the package is not attached
