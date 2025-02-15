@@ -8,10 +8,10 @@ if (!at_home()) exit_file("Reason: not at_home")
 tf <- function() {
 
   # test
-  expect_true(length(dfCalculate()) >= 5L)
+  expect_true(length(dfCalculate()) >= 12L)
 
   # test
-  expect_true(length(unlist(sapply(dfCalculate(), dfCalculate))) > 70L)
+  expect_true(length(unique(unlist(sapply(dfCalculate(), dfCalculate)))) >= 130L)
 
   # get data
   dbc <- nodbi::src_sqlite(

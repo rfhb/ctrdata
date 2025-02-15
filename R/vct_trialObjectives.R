@@ -136,7 +136,7 @@ FU (follow-up).
       #
       out = dplyr::case_when(isMedIntervTrial ~ trimws(addObjectives), .default = NA_character_)
       #
-    ) %>% View()
+    ) %>%
     dplyr::pull(out) -> vct
 
 
