@@ -7,7 +7,7 @@
 #' @noRd
 #' @export
 #' @importFrom dplyr if_else mutate case_when coalesce `%>%`
-.trialObjective <- function(df = NULL) {
+.trialObjectives <- function(df = NULL) {
 
   # check generic, do not edit
   stopifnot(is.data.frame(df) || is.null(df))
@@ -183,4 +183,4 @@ FU (follow-up).
   # return
   return(vct)
 
-} # end .trialObjective
+} # end .trialObjectives

@@ -57,6 +57,10 @@
 #' ongoing (includes temporarily halted), completed and other (includes
 #' planned, stopped, terminated)
 #'
+#' - **.trialObjectives** (string) identifies with letters those objectives
+#' that could be identified by text fragments, e.g. "E S PD D", with E
+#' (efficacy), S (safety), D (dose-finding)
+#'
 #' - **.trialPhase** (ordered factor) the phase(s) of medicine development
 #' with which a trial is associated
 #'
