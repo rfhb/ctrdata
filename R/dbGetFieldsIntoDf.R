@@ -173,9 +173,23 @@ dbGetFieldsIntoDf <- function(
     verbose = verbose, ...),
     silent = TRUE)
 
-  # check and switch to iterating
+  # check and propagate error
+  if (inherits(out, "try-error") &&
+      grepl("No records with values", out)) stop(out, call. = FALSE)
+
+  # check other errors
   if (inherits(out, "try-error")) {
 
+    # PostgreSQL
+    if (grepl("fewer than 50 fields", out)) maxFields <- 49L
+
+    # SQLite Error : too many arguments on function json_object
+    if (grepl("too many arguments", out)) maxFields <- 100L
+
+    # propagate other errors
+    if (!exists("maxFields")) stop(out[1], call. = FALSE)
+
+    # switch to iterating
     message(
       "Database reports too many fields to obtain or ",
       "calculate, switching to iterating over fields...")
@@ -184,7 +198,7 @@ dbGetFieldsIntoDf <- function(
     if (!length(fields)) fields <- "_id"
 
     # safe guard against many fields
-    iFields <- seq_along(fields) %/% 100L + 1L
+    iFields <- seq_along(fields) %/% maxFields + 1L
     for (i in seq_len(max(iFields))) {
 
       outi <- try(.dbGetFieldsIntoDf(
@@ -278,7 +292,8 @@ dbGetFieldsIntoDf <- function(
 
   # early exit
   if (is.null(dfi) || !ncol(dfi)) stop(
-    "No records with values for any specified field."
+    "No records with values for any specified field.",
+    call. = FALSE
   )
 
   # user info
@@ -286,8 +301,9 @@ dbGetFieldsIntoDf <- function(
 
   # warn
   notFound <- setdiff(fields, names(dfi))
-  if (length(notFound)) warning("No data could be extracted for '",
-                                paste0(notFound, collapse = "', '"), "'.")
+  if (length(notFound)) warning(
+    "No data could be extracted for '",
+    paste0(notFound, collapse = "', '"), "'.")
 
   # recursively widen results if a column is a data frame
   # by adding the data frame's columns as result columns.
