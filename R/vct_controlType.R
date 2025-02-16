@@ -18,8 +18,11 @@
     "euctr" = c(
       "e81_controlled",
       "e816_cross_over",
+      "e817_other", # other controlled design
+      "e8171_other_trial_design_description",
       "e822_placebo",
       "e823_other", # other comparator
+      "e8231_comparator_description",
       "e824_number_of_treatment_arms_in_the_trial"
     ),
     "ctgov" = c(
@@ -83,13 +86,16 @@ Returns a factor with levels "none", "no-treatment", "placebo", "active",
     dplyr::mutate(
       out = dplyr::case_when(
         !e81_controlled ~ "none",
-        e822_placebo & (e823_other != "No") ~ "placebo+active",
+        e822_placebo & e823_other ~ "placebo+active",
+        e822_placebo & grepl("dos[ea]", e8231_comparator_description, TRUE) ~ "placebo+active",
         e822_placebo ~ "placebo",
         e816_cross_over ~ "crossover",
-        e823_other != "No" ~ "active",
-        e823_other == "No" ~ "no-treatment",
+        grepl("dos[ea]", e8231_comparator_description, TRUE) ~ "active",
+        grepl("no treat", e8231_comparator_description, TRUE) ~ "no-treatment",
+        e823_other ~ "other",
+        e81_controlled ~ "other",
         e824_number_of_treatment_arms_in_the_trial > 1L ~ "other",
-        .default = NA
+        .default = NA_character_
       )
     ) %>%
     dplyr::pull(out) -> df$euctr
@@ -105,7 +111,7 @@ Returns a factor with levels "none", "no-treatment", "placebo", "active",
         grepl("Active Comparator", arm_group.arm_group_type) ~ "active",
         grepl("No Intervention", arm_group.arm_group_type) ~ "no-treatment",
         !is.na(arm_group.arm_group_type) ~ "none",
-        .default = NA
+        .default = NA_character_
       )
     ) %>%
     dplyr::pull(out) -> df$ctgov
@@ -121,7 +127,7 @@ Returns a factor with levels "none", "no-treatment", "placebo", "active",
         grepl("ACTIVE_COMPARATOR", protocolSection.armsInterventionsModule.armGroups.type) ~ "active",
         grepl("NO_INTERVENTION", protocolSection.armsInterventionsModule.armGroups.type) ~ "no-treatment",
         !is.na(protocolSection.armsInterventionsModule.armGroups.type) ~ "none",
-        .default = NA
+        .default = NA_character_
       )
     ) %>%
     dplyr::pull(out) -> df$ctgov2
@@ -137,7 +143,7 @@ Returns a factor with levels "none", "no-treatment", "placebo", "active",
         grepl("active.?control", trialDesign.studyDesign, ignore.case = TRUE) ~ "active",
         grepl("[^no].?controlled", trialDesign.studyDesign, ignore.case = TRUE)  ~ "other",
         trialDesign.primaryStudyDesign == "Interventional" ~ "none",
-        .default = NA
+        .default = NA_character_
       )
     ) %>%
     dplyr::pull(out) -> df$isrctn
@@ -157,7 +163,7 @@ Returns a factor with levels "none", "no-treatment", "placebo", "active",
         grepl("comparator", authorizedApplication.authorizedPartI.productRoleGroupInfos.productRoleName, ignore.case = TRUE) ~ "active",
         !is.na(authorizedPartI.productRoleGroupInfos.productRoleName) ~ "none",
         !is.na(authorizedApplication.authorizedPartI.productRoleGroupInfos.productRoleName) ~ "none",
-        .default = NA
+        .default = NA_character_
       )
     ) %>%
     dplyr::pull(out) -> df$ctis

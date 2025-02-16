@@ -456,6 +456,7 @@ typeVars <- list(
   "e816_cross_over"     = "ctrYesNo",
   "e817_other"          = "ctrYesNo",
   "e822_placebo"        = "ctrYesNo",
+  "e823_other"          = "ctrYesNo",
   #
   "e83_the_trial_involves_single_site_in_the_member_state_concerned"    = "ctrYesNo",
   "e83_will_this_trial_be_conducted_at_a_single_site_globally"          = "ctrYesNo",
