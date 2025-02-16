@@ -137,7 +137,9 @@ FU (follow-up).
       out = dplyr::case_when(isMedIntervTrial ~ trimws(addObjectives), .default = NA_character_)
       #
     ) %>%
-    dplyr::pull(out) -> vct
+    dplyr::rename(.trialObjectives = out) %>%
+    dplyr::select(`_id`, .trialObjectives) -> vct
+    # dplyr::pull(out) -> vct
 
 
   #### . CTGOV ####
@@ -177,8 +179,10 @@ FU (follow-up).
 
 
   #### checks ####
-  stopifnot(inherits(vct, "character"))
-  stopifnot(length(vct) == nrow(df))
+  # stopifnot(inherits(vct, "character"))
+  # stopifnot(length(vct) == nrow(df))
+  # TODO
+  stopifnot(inherits(vct[[".trialObjectives"]], "character"))
 
   # return
   return(vct)

@@ -30,6 +30,7 @@
 #'
 #' @export
 #' @importFrom utils ls.str
+#' @importFrom dplyr left_join
 #'
 #' @examples
 #'
@@ -81,13 +82,8 @@ dfCalculate <- function(name = ".*", df = NULL) {
       all.names = TRUE,
       pattern = paste0("^", name, "$"))) == 1L) {
 
-      # TODO
-      if (exists(name)) {
-        return(do.call(name, list()))
-      } else {
-        return(eval(parse(text = paste0("ctrdata::", name, "()"))))
-      }
-
+      # return
+      return(do.call(name, list()))
     }
 
     # get all functions
@@ -116,39 +112,28 @@ dfCalculate <- function(name = ".*", df = NULL) {
     "...                            \r",
     appendLF = FALSE)
 
-  # apply function. not using do.call
-  # when the package is not attached
-  # TODO
-  if (exists(name)) {
-    df[[name]] <- do.call(name, list(df))
-  } else {
-    df[[name]] <- eval(parse(text = paste0("ctrdata::", name, "(df = df)")))
+  # apply function
+  # TODO is row order always retained?
+  # TODO or return always df with _id?
+  result <- do.call(name, list(df))
+
+  # handle result
+  if (is.vector(iris)) {
+    df[[name]] <- result
   }
+  if (is.data.frame(result) &&
+      ncol(result) >= 2L) {
+    df <- dplyr::left_join(
+      x = df,
+      y = result,
+      by = "_id"
+    )
+  }
+
+  # # TODO add multi-column return
+  # df[[name]] <- do.call(name, list(df))
 
   # return
   return(dfOrTibble(df))
 
 } # end dfCalculate
-
-
-# TODO delete
-if (FALSE) {
-
-  dfCalculate()
-
-  dfCalculate(".statusRecruitment")
-
-  # describe all
-  invisible(sapply(dfCalculate(), dfCalculate))
-
-  dfCalculate(name = ".statusRecruitment", df = df)
-
-  dfCalculate(name = "a")
-
-  ctrdata::.statusRecruitment()
-
-  .statusRecruitment()
-
-  .statusRecruitment
-
-}
