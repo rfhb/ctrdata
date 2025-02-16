@@ -177,7 +177,7 @@ dbGetFieldsIntoDf <- function(
   if (inherits(out, "try-error") &&
       grepl("No records with values", out)) stop(out, call. = FALSE)
 
-  # check other errors
+  # check errors if they can be handled by iterating
   if (inherits(out, "try-error")) {
 
     # PostgreSQL

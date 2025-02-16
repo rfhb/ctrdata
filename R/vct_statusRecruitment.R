@@ -173,21 +173,24 @@ Returns a factor of these categories.
   # setdiff(unique(dfMergeVariablesRelevel(df, names(fldsNeeded))), unlist(mapped_values))
 
 
-  # merge into vector (ordered factor)
-  vct <- dfMergeVariablesRelevel(
+  # merge into vector (factor)
+  df[[".statusRecruitment"]] <- dfMergeVariablesRelevel(
     df = df,
     colnames = names(fldsNeeded),
     levelslist = mapped_values
   )
 
-
+  # keep only outcome columns
+  df <- df[, c("_id", ".statusRecruitment"), drop = FALSE]
 
 
   #### checks ####
-  stopifnot(is.factor(vct))
-  stopifnot(length(vct) == nrow(df))
+  # stopifnot(is.factor(vct))
+  # stopifnot(length(vct) == nrow(df))
+  # TODO
+  stopifnot(inherits(df[[".statusRecruitment"]], "factor"))
 
   # return
-  return(vct)
+  return(df)
 
 } # end .statusRecruitment

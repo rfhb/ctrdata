@@ -78,13 +78,19 @@ Returns a logical.
   # apply function
   vct <- .dbFindIdsUniqueTrials(listofIds = df)
   vct <- df[["_id"]] %in% vct
+  df[[".isUniqueTrial"]] <- vct
+
+  # keep only outcome columns
+  df <- df[, c("_id", ".isUniqueTrial"), drop = FALSE]
 
 
   #### checks ####
-  stopifnot(inherits(vct, "logical"))
-  stopifnot(length(vct) == nrow(df))
+  # stopifnot(inherits(vct, "logical"))
+  # stopifnot(length(vct) == nrow(df))
+  # TODO
+  stopifnot(inherits(df[[".isUniqueTrial"]], "logical"))
 
   # return
-  return(vct)
+  return(df)
 
 } # end .isUniqueTrial

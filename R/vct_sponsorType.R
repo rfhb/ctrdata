@@ -188,18 +188,25 @@ Returns a factor with levels "',
   fldsNeeded <- intersect(fldsNeeded, names(df))
 
   # merge into vector (ordered factor)
-  vct <- factor(dfMergeVariablesRelevel(
-    df = df,
-    colnames = fldsNeeded
-  ),
-  levels = c(stn, stc, sto))
+  df[[".sponsorType"]] <- factor(
+    dfMergeVariablesRelevel(
+      df = df,
+      colnames = fldsNeeded
+    ),
+    levels = c(stn, stc, sto)
+  )
+
+  # keep only outcome columns
+  df <- df[, c("_id", ".sponsorType"), drop = FALSE]
 
 
   #### checks ####
-  stopifnot(is.factor(vct))
-  stopifnot(length(vct) == nrow(df))
+  # stopifnot(is.factor(vct))
+  # stopifnot(length(vct) == nrow(df))
+  # TODO
+  stopifnot(inherits(df[[".sponsorType"]], "factor"))
 
   # return
-  return(vct)
+  return(df)
 
 } # end .sponsorType

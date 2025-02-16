@@ -122,7 +122,8 @@ Returns a logical.
 
   # apply nested function which provides values for each register
   # therefore the following code needs to check against register
-  df$analysis_numTestArmsSubstances <- .numTestArmsSubstances(df = df)
+  df$analysis_numTestArmsSubstances <- .numTestArmsSubstances(
+    df = df)[[".numTestArmsSubstances"]]
 
 
   #### . EUCTR ####
@@ -145,7 +146,7 @@ Returns a logical.
         i <- unique(tolower(na.omit(i)))
         i <- i[!grepl(periodExclPlatform, i)]
         i <- length(i)
-        if (i) i else NA
+        if (i) i else NA_integer_
       }),
     #
     out = dplyr::case_when(
@@ -177,7 +178,7 @@ Returns a logical.
         i <- unique(tolower(na.omit(i)))
         i <- i[!grepl(periodExclPlatform, i)]
         i <- length(i)
-        if (i) i else NA
+        if (i) i else NA_integer_
       }),
     #
     out = dplyr::case_when(
@@ -209,7 +210,7 @@ Returns a logical.
         i <- unique(tolower(na.omit(i)))
         i <- i[!grepl(periodExclPlatform, i)]
         i <- length(i)
-        if (i) i else NA
+        if (i) i else NA_integer_
       }),
     #
     out = dplyr::case_when(
@@ -306,17 +307,22 @@ Returns a logical.
   fldsNeeded <- intersect(fldsNeeded, names(df))
 
   # merge into vector (ordered factor)
-  vct <- dfMergeVariablesRelevel(
+  df[[".isPlatformTrial"]] <- dfMergeVariablesRelevel(
     df = df,
     colnames = fldsNeeded
   )
 
+  # keep only outcome columns
+  df <- df[, c("_id", ".isPlatformTrial"), drop = FALSE]
+
 
   #### checks ####
-  stopifnot(is.logical(vct) || all(is.na(vct)))
-  stopifnot(length(vct) == nrow(df))
+  # stopifnot(is.logical(vct) || all(is.na(vct)))
+  # stopifnot(length(vct) == nrow(df))
+  # TODO
+  stopifnot(inherits(df[[".isPlatformTrial"]], "logical"))
 
   # return
-  return(vct)
+  return(df)
 
 } # end .isPlatformTrial

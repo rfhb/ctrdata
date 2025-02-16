@@ -163,7 +163,7 @@ Returns an integer.
     dplyr::pull(out) -> df$ctis
 
 
-  # merge into vector
+  # merge all
   df %>%
     dplyr::select(
       euctr,
@@ -174,17 +174,22 @@ Returns an integer.
     ) %>%
     dplyr::mutate(
       out = rowSums(., na.rm = TRUE),
-      out = if_else(out > 0L, out, NA),
+      out = if_else(out > 0L, out, NA_integer_),
       out = as.integer(out)
     ) %>%
-    dplyr::pull(out) -> vct
+    dplyr::pull(out) -> df[[".sampleSize"]]
+
+  # keep only outcome columns
+  df <- df[, c("_id", ".sampleSize"), drop = FALSE]
 
 
   #### checks ####
-  stopifnot(inherits(vct, "integer"))
-  stopifnot(length(vct) == nrow(df))
+  # stopifnot(inherits(vct, "integer"))
+  # stopifnot(length(vct) == nrow(df))
+  # TODO
+  stopifnot(inherits(df[[".sampleSize"]], "integer"))
 
   # return
-  return(vct)
+  return(df)
 
 } # end .sampleSize

@@ -115,20 +115,28 @@ dfCalculate <- function(name = ".*", df = NULL) {
   # apply function
   # TODO is row order always retained?
   # TODO or return always df with _id?
-  result <- do.call(name, list(df))
+  # reduce columns to those needed
+  fldsNeeded <- suppressMessages(c("_id", unlist(dfCalculate(name), use.names = FALSE)))
+  result <- do.call(name, list(df[, fldsNeeded, drop = FALSE]))
 
-  # handle result
-  if (is.vector(iris)) {
-    df[[name]] <- result
-  }
-  if (is.data.frame(result) &&
-      ncol(result) >= 2L) {
-    df <- dplyr::left_join(
-      x = df,
-      y = result,
-      by = "_id"
-    )
-  }
+  # TODO
+  # handle type of result, e.g. "logical",
+  # "integer", "numeric", "complex", "character"
+  # if (is.atomic(result)) {
+  #   df[[name]] <- result
+  # }
+  # if (is.data.frame(result) &&
+  #     ncol(result) >= 2L) {
+
+  # TODO keep this
+  stopifnot(is.data.frame(result) && ncol(result) >= 2L)
+
+  # merge
+  df <- dplyr::left_join(
+    x = df,
+    y = result,
+    by = "_id"
+  )
 
   # # TODO add multi-column return
   # df[[name]] <- do.call(name, list(df))

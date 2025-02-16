@@ -20,7 +20,7 @@ tf <- function() {
 
   # only SQLite triggers message
   expect_message(
-    df <- ctrdata::dbGetFieldsIntoDf(
+    df <- dbGetFieldsIntoDf(
       fields = "",
       calculate = dfCalculate(),
       con = dbc,

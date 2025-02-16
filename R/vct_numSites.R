@@ -93,7 +93,7 @@ Returns an integer.
       helper_numCities = sapply(helper_cities, length),
       out = dplyr::if_else(
         !is.na(location.facility.address.city),
-        helper_numCities, NA)
+        helper_numCities, NA_integer_)
     ) %>%
     dplyr::pull(out) -> df$ctgov
 
@@ -107,7 +107,7 @@ Returns an integer.
       helper_numCities = sapply(helper_cities, length),
       out = dplyr::if_else(
         !is.na(protocolSection.contactsLocationsModule.locations.city),
-        helper_numCities, NA)
+        helper_numCities, NA_integer_)
     ) %>%
     dplyr::pull(out) -> df$ctgov2
 
@@ -127,7 +127,7 @@ Returns an integer.
         sapply(function(i) max(0L, as.numeric(i), na.rm = TRUE)),
       out = dplyr::if_else(
         !is.na(participants.trialCentres.trialCentre.name),
-        helper_numCities + helper_shortCut, NA)
+        helper_numCities + helper_shortCut, NA_integer_)
     ) %>%
   dplyr::pull(out) -> df$isrctn
 
@@ -150,19 +150,24 @@ Returns an integer.
 
 
   # merge into vector
-  vct <- as.integer(
+  df[[".numSites"]] <- as.integer(
     dfMergeVariablesRelevel(
       df = df,
       colnames = names(fldsNeeded)
     )
   )
 
+  # keep only outcome columns
+  df <- df[, c("_id", ".numSites"), drop = FALSE]
+
 
   #### checks ####
-  stopifnot(inherits(vct, "integer"))
-  stopifnot(length(vct) == nrow(df))
+  # stopifnot(inherits(vct, "integer"))
+  # stopifnot(length(vct) == nrow(df))
+  # TODO
+  stopifnot(inherits(df[[".numSites"]], "integer"))
 
   # return
-  return(vct)
+  return(df)
 
 } # end .numSites

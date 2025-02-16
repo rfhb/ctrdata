@@ -164,19 +164,26 @@ Returns a factor with levels "none", "no-treatment", "placebo", "active",
 
 
   # merge into vector (ordered factor)
-  vct <- factor(dfMergeVariablesRelevel(
-    df = df,
-    colnames = names(fldsNeeded)
-  ), levels = c(
-    "none", "no-treatment", "placebo",
-    "active", "placebo+active", "other"))
+  df[[".controlType"]] <- factor(
+    dfMergeVariablesRelevel(
+      df = df,
+      colnames = names(fldsNeeded)
+    ), levels = c(
+      "none", "no-treatment", "placebo",
+      "active", "placebo+active", "other")
+  )
+
+  # keep only outcome columns
+  df <- df[, c("_id", ".controlType"), drop = FALSE]
 
 
   #### checks ####
-  stopifnot(inherits(vct, "factor"))
-  stopifnot(length(vct) == nrow(df))
+  # stopifnot(inherits(vct, "factor"))
+  # stopifnot(length(vct) == nrow(df))
+  # TODO
+  stopifnot(inherits(df[[".controlType"]], "factor"))
 
   # return
-  return(vct)
+  return(df)
 
-} # end .startDate
+} # end .controlType

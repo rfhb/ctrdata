@@ -167,18 +167,23 @@ Returns a logical.
   fldsNeeded <- names(fldsNeeded)
   fldsNeeded <- intersect(fldsNeeded, names(df))
 
-  # merge into vector (ordered factor)
-  vct <- dfMergeVariablesRelevel(
+  # merge into vector (logical)
+  df[[".isMedIntervTrial"]] <- dfMergeVariablesRelevel(
     df = df,
     colnames = fldsNeeded
   )
 
+  # keep only outcome columns
+  df <- df[, c("_id", ".isMedIntervTrial"), drop = FALSE]
+
 
   #### checks ####
-  stopifnot(is.logical(vct) || all(is.na(vct)))
-  stopifnot(length(vct) == nrow(df))
+  # stopifnot(is.logical(vct) || all(is.na(vct)))
+  # stopifnot(length(vct) == nrow(df))
+  # TODO
+  stopifnot(inherits(df[[".isMedIntervTrial"]], "logical"))
 
   # return
-  return(vct)
+  return(df)
 
 } # end .isMedIntervTrial

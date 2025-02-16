@@ -128,25 +128,32 @@ Returns an ordered factor of levels "phase 1", "phase 1+2", "phase 2",
                         "PHASE1 / PHASE2 / PHASE3 / PHASE4")
     # returned as NA = c("Not Applicable", "Not Specified")
   )
-  #
-  vct <- ordered(dfMergeVariablesRelevel(
-    df = df,
-    colnames = c(
-      "euctrphase",
-      unlist(fldsNeeded[-1], use.names = FALSE)
+
+  # merge
+  df[[".trialPhase"]] <- ordered(
+    dfMergeVariablesRelevel(
+      df = df,
+      colnames = c(
+        "euctrphase",
+        unlist(fldsNeeded[-1], use.names = FALSE)
+      ),
+      levelslist = phase_values
     ),
-    levelslist = phase_values
-  ),
-  levels = names(phase_values))
+    levels = names(phase_values)
+  )
+  # keep only outcome columns
+  df <- df[, c("_id", ".trialPhase"), drop = FALSE]
 
   # check missing levels
   # setdiff(unique(vct), names(phase_values))
 
   #### checks ####
-  stopifnot(inherits(vct, "ordered"))
-  stopifnot(length(vct) == nrow(df))
+  # stopifnot(inherits(vct, "ordered"))
+  # stopifnot(length(vct) == nrow(df))
+  # TODO
+  stopifnot(inherits(df[[".trialPhase"]], "ordered"))
 
   # return
-  return(vct)
+  return(df)
 
 } # end .trialPhase

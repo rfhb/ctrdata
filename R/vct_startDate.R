@@ -73,14 +73,21 @@ Returns a date.
     dplyr::mutate(
       out = do.call(pmaxInt, (.))
     ) %>%
-    dplyr::pull(out) -> vct
+    dplyr::pull(out) -> df[[".startDate"]]
+
+  # keep only outcome columns
+  df <- df[, c("_id", ".startDate"), drop = FALSE]
 
 
   #### checks ####
-  stopifnot(inherits(vct, "Date") || inherits(vct, "POSIXct"))
-  stopifnot(length(vct) == nrow(df))
+  # stopifnot(inherits(vct, "Date") || inherits(vct, "POSIXct"))
+  # stopifnot(length(vct) == nrow(df))
+  # TODO
+  stopifnot(
+    inherits(df[[".startDate"]], "Date") ||
+      inherits(df[[".startDate"]], "POSIXct"))
 
   # return
-  return(vct)
+  return(df)
 
 } # end .startDate

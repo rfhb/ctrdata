@@ -94,10 +94,10 @@ Returns an integer.
     t <- stringdist::stringsimmatrix(x, x)
 
     # early exit
-    if (ncol(t) < 1L) return(NA)
+    if (ncol(t) < 1L) return(NA_integer_)
 
     # extract max similarity of arm n with other arm(s)
-    diag(t) <- NA
+    diag(t) <- NA_integer_
     if (all(is.na(t))) return(0L)
     apply(t, 2, max, na.rm = TRUE)
 
@@ -138,7 +138,7 @@ Returns an integer.
       helper_simTestGroupsInTrial, length, USE.NAMES = FALSE, simplify = TRUE),
     #
     analysis_numDifferentTestGroupsInTrial = dplyr::case_when(
-      is.na(helper_asNamesPerTestGroup) ~ NA,
+      is.na(helper_asNamesPerTestGroup) ~ NA_integer_,
       helper_numTestGroupsInTrial == 1L ~ 1L,
       .default = sapply(helper_simTestGroupsInTrial, function(i)
         max(sum(i < thresholdSimilar), 1L, na.rm = TRUE), simplify = TRUE)
@@ -167,7 +167,7 @@ Returns an integer.
       helper_simExpArmsInTrial, length, USE.NAMES = FALSE, simplify = TRUE),
     #
     analysis_numDifferentExpArmsInTrial = dplyr::case_when(
-      is.na(helper_asNamesPerExpArm) ~ NA,
+      is.na(helper_asNamesPerExpArm) ~ NA_integer_,
       helper_numExpArmsInTrial == 1L ~ 1L,
       helper_numExpArmsInTrial > 1L ~
         sapply(helper_simExpArmsInTrial, function(i)
@@ -194,7 +194,7 @@ Returns an integer.
       helper_simExpArmsInTrial, length, USE.NAMES = FALSE, simplify = TRUE),
     #
     analysis_numDifferentExpArmsInTrial = dplyr::case_when(
-      is.na(helper_asNamesPerExpArm) ~ NA,
+      is.na(helper_asNamesPerExpArm) ~ NA_integer_,
       helper_numExpArmsInTrial == 1L ~ 1L,
       helper_numExpArmsInTrial > 1L ~ sapply(
         helper_simExpArmsInTrial, function(i)
@@ -220,7 +220,7 @@ Returns an integer.
         helper_drugNames, function(i) asTestSimilarityTrial(i)),
       #
       analysis_numDifferentExpArmsInTrial = dplyr::case_when(
-        is.na(helper_numberDrugs) ~ NA,
+        is.na(helper_numberDrugs) ~ NA_integer_,
         helper_numberDrugs == 1L ~ 1L,
         helper_numberDrugs > 1L ~ sapply(
           helper_simDrugNames, function(i)
@@ -235,7 +235,7 @@ Returns an integer.
       #
       out = if_else(
         grepl("drug|biological|vaccine", interventions.intervention.interventionType, ignore.case = TRUE),
-        helper_numberarms, NA
+        helper_numberarms, NA_integer_
       )
     ) %>%
     dplyr::pull(out)-> df$isrctn
@@ -257,7 +257,7 @@ Returns an integer.
       helper_simTestGroupsInTrialCtis1, length, USE.NAMES = FALSE, simplify = TRUE),
     #
     analysis_numDifferentTestGroupsInTrialCtis1 = dplyr::case_when(
-      is.na(helper_asNamesPerTestGroupCtis1) ~ NA,
+      is.na(helper_asNamesPerTestGroupCtis1) ~ NA_integer_,
       helper_numTestGroupsInTrialCtis1 == 1L ~ 1L,
       .default = sapply(helper_simTestGroupsInTrialCtis1, function(i)
         max(sum(i < thresholdSimilar), 1L, na.rm = TRUE), simplify = TRUE)
@@ -268,7 +268,7 @@ Returns an integer.
       authorizedApplication.authorizedPartI.productRoleGroupInfos,
       function(i) {if (any(names(i) == "products"))
         lapply(i[["products"]], "[[", "productName")[
-          i[["productRoleName"]] == "Test"] else NA}),
+          i[["productRoleName"]] == "Test"] else NA_integer_}),
     #
     helper_simTestGroupsInTrialCtis2 = lapply(
       helper_asNamesPerTestGroupCtis2, function(i) asTestSimilarityTrial(i)),
@@ -277,7 +277,7 @@ Returns an integer.
       helper_simTestGroupsInTrialCtis2, length, USE.NAMES = FALSE, simplify = TRUE),
     #
     analysis_numDifferentTestGroupsInTrialCtis2 = dplyr::case_when(
-      is.na(helper_asNamesPerTestGroupCtis2) ~ NA,
+      is.na(helper_asNamesPerTestGroupCtis2) ~ NA_integer_,
       helper_numTestGroupsInTrialCtis2 == 1L ~ 1L,
       .default = sapply(helper_simTestGroupsInTrialCtis2, function(i)
         max(sum(i < thresholdSimilar), 1L, na.rm = TRUE), simplify = TRUE)
@@ -289,26 +289,31 @@ Returns an integer.
         analysis_numDifferentTestGroupsInTrialCtis1,
       !is.na(analysis_numDifferentTestGroupsInTrialCtis2) ~
         analysis_numDifferentTestGroupsInTrialCtis2,
-      .default = NA
+      .default = NA_integer_
     )
   ) %>%
   dplyr::pull(out) -> df$ctis
 
 
   # merge into vector (ordered factor)
-  vct <- as.integer(
+  df[[".numTestArmsSubstances"]] <- as.integer(
     dfMergeVariablesRelevel(
       df = df,
       colnames = names(fldsNeeded)
     )
   )
 
+  # keep only outcome columns
+  df <- df[, c("_id", ".numTestArmsSubstances"), drop = FALSE]
+
 
   #### checks ####
-  stopifnot(is.integer(vct) || all(is.na(vct)))
-  stopifnot(length(vct) == nrow(df))
+  # stopifnot(is.integer(vct) || all(is.na(vct)))
+  # stopifnot(length(vct) == nrow(df))
+  # TODO
+  stopifnot(inherits(df[[".numTestArmsSubstances"]], "integer"))
 
   # return
-  return(vct)
+  return(df)
 
 } # end .numTestArmsSubstances
