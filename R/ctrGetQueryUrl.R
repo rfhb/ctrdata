@@ -132,14 +132,17 @@ ctrGetQueryUrl <- function(
   if (registerFromUrl == "NONE" &&
       register == "") {
     registerFromUrl <- switch(
-      c(as.character(1:5)[sapply(
-        c(regCtgov2, regCtis, regEuctr, regIsrctn, paste0("ISRCTN", regIsrctn)),
+      c(as.character(1:6)[sapply(
+        c(regCtgov2, regCtis, regEuctr,
+          regIsrctn, paste0("ISRCTN", regIsrctn),
+          paste0(regEuctr, "-[3A-Z]{2,3}")),
         function(r) grepl(paste0("^", r, "$"), url))], "")[1],
       "1" = "CTGOV2",
       "2" = "CTIS",
       "3" = "EUCTR",
       "4" = "ISRCTN",
       "5" = "ISRCTN",
+      "6" = "EUCTR",
       "NONE"
     )
   }
@@ -179,13 +182,20 @@ ctrGetQueryUrl <- function(
 
     # search result page
     queryterm <- sub(".*/ctr-search/search[?](.*)", "\\1", url)
+
+    # handle trial id, can only search without country
+    queryterm <- gsub(paste0(
+      "(.*", regEuctr, ")-[3A-Z]{2,3}(.*)"), "\\1\\2", queryterm)
+
     # single trial page
     queryterm <- sub(
       paste0(".*/ctr-search/trial/(", regEuctr, ")/.*"),
       "\\1", queryterm
     )
+
     # remove any intrapage anchor, e.g. #tableTop
     queryterm <- sub("#.+$", "", queryterm)
+
     # sanity correction for naked terms
     queryterm <- sub(
       "(^|&|[&]?\\w+=\\w+&)([ a-zA-Z0-9+-]+)($|&\\w+=\\w+)",
