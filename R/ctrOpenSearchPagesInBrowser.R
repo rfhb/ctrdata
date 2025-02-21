@@ -156,7 +156,7 @@ ctrOpenSearchPagesInBrowser <- function(
         "CTGOV" = ctgovClassicToCurrent(url),
         "CTGOV2" = paste0("https://clinicaltrials.gov/search?", url),
         "CTGOV2expert" = paste0("https://clinicaltrials.gov/expert-search?", url),
-        "CTIS" = paste0("https://euclinicaltrials.eu/ctis-public/search?", url),
+        "CTIS" = paste0("https://euclinicaltrials.eu/ctis-public/search#", url),
         "EUCTR" = paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?", url, "#tabs"),
         "ISRCTN" = paste0("https://www.isrctn.com/search?", url)
       )

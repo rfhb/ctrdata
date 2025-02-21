@@ -1,6 +1,6 @@
 ### ctrdata package
 
-#' Get query details
+#' Get register name and query parameters from search URL
 #'
 #' Extracts query parameters and register name from parameter `url` or
 #' from the clipboard, into which the URL of a register search was copied.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/ctrGetQueryUrl.R
 \name{ctrGetQueryUrl}
 \alias{ctrGetQueryUrl}
-\title{Get query details}
+\title{Get register name and query parameters from search URL}
 \usage{
 ctrGetQueryUrl(url = "", register = "")
 }
