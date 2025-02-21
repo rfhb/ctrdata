@@ -17,7 +17,7 @@
 #' Note that the functions do not operate on historic versions (CTGOV2) but
 #' only on information from the latest record.
 #'
-#' @param name String with name of function to be applied to `df`, or regular
+#' @param name String with name of a function to be applied to `df`, or regular
 #' expression to list available functions.
 #'
 #' @param df Optional. Data frame with fields needed to apply function `name`.
@@ -35,18 +35,18 @@
 #' @examples
 #'
 #' # list names of all available functions in ctrdata
-#' dfCalculate()
+#' dfCalculateConcept()
 #'
 #' # list names of functions for regular expression of name
-#' dfCalculate(name = "status")
+#' dfCalculateConcept(name = "status")
 #'
 #' # describe a specific function
-#' dfCalculate(name = ".statusRecruitment")
+#' dfCalculateConcept(name = ".statusRecruitment")
 #'
 #' # print descriptions of all functions
-#' invisible(sapply(dfCalculate(), dfCalculate))
+#' invisible(sapply(dfCalculateConcept(), dfCalculateConcept))
 #'
-#' # apply dfCalculate to data frame
+#' # apply dfCalculateConcept to data frame
 #' dbc <- nodbi::src_sqlite(
 #'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
 #'   collection = "my_trials",
@@ -55,11 +55,11 @@
 #' # use with existing data frame,
 #' # first get fields needed
 #' trialsDf <- dbGetFieldsIntoDf(
-#'   fields = unlist(dfCalculate(name = ".statusRecruitment")),
+#'   fields = unlist(dfCalculateConcept(name = ".statusRecruitment")),
 #'   con = dbc)
 #'
 #' # then calculate
-#' dfCalculate(
+#' dfCalculateConcept(
 #'   name = ".statusRecruitment",
 #'   df = trialsDf)
 #'
@@ -70,8 +70,7 @@
 #'   con = dbc)
 #' trialsDf[trialsDf[[".isUniqueTrial"]], ]
 #'
-#'
-dfCalculate <- function(name = ".*", df = NULL) {
+dfCalculateConcept <- function(name = ".*", df = NULL) {
 
   # function information
   if (is.null(df)) {
@@ -116,7 +115,7 @@ dfCalculate <- function(name = ".*", df = NULL) {
   # TODO is row order always retained?
   # TODO or return always df with _id?
   # reduce columns to those needed
-  fldsNeeded <- suppressMessages(c("_id", unlist(dfCalculate(name), use.names = FALSE)))
+  fldsNeeded <- suppressMessages(c("_id", unlist(dfCalculateConcept(name), use.names = FALSE)))
   result <- do.call(name, list(df[, fldsNeeded, drop = FALSE]))
 
   # TODO
@@ -144,4 +143,4 @@ dfCalculate <- function(name = ".*", df = NULL) {
   # return
   return(dfOrTibble(df))
 
-} # end dfCalculate
+} # end dfCalculateConcept

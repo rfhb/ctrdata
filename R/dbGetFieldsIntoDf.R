@@ -134,7 +134,7 @@ dbGetFieldsIntoDf <- function(
     stop("'fields' and 'calculate' are empty; ",
          "please provide a vector of strings in one or both arguments. ",
          "Function dbFindFields() helps to find fields in the collection. ",
-         "Function dfCalculate() helps to find functions to calculate ",
+         "Function dfCalculateConcept() helps to find functions to calculate ",
          "from fields in the collection. ",
          call. = FALSE)
   }
@@ -157,7 +157,7 @@ dbGetFieldsIntoDf <- function(
   # get all unique fields needed for fcts
   fctFields <- sapply(
     calculate, function(i)
-      suppressMessages(dfCalculate(name = i)),
+      suppressMessages(dfCalculateConcept(name = i)),
     simplify = FALSE)
 
   # merge fields with fields needed for fcts
@@ -221,15 +221,15 @@ dbGetFieldsIntoDf <- function(
     # second, run functions
     for (i in calculate) {
 
-      if (verbose) dfCalculate(name = i)
+      if (verbose) dfCalculateConcept(name = i)
 
       outi <- .dbGetFieldsIntoDf(
         fields = unlist(suppressMessages(
-          dfCalculate(name = i))),
+          dfCalculateConcept(name = i))),
         con = con,
         verbose = verbose, ...)
 
-      outi <- dfCalculate(
+      outi <- dfCalculateConcept(
         name = i, df = outi)
 
       out <- dplyr::full_join(
@@ -243,8 +243,8 @@ dbGetFieldsIntoDf <- function(
 
     # run functions
     for (i in calculate) {
-      if (verbose) dfCalculate(name = i)
-      out <- dfCalculate(name = i, df = out)
+      if (verbose) dfCalculateConcept(name = i)
+      out <- dfCalculateConcept(name = i, df = out)
     }
 
   }
