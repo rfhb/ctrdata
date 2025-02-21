@@ -112,22 +112,11 @@ dfCalculateConcept <- function(name = ".*", df = NULL) {
     appendLF = FALSE)
 
   # apply function
-  # TODO is row order always retained?
-  # TODO or return always df with _id?
-  # reduce columns to those needed
-  fldsNeeded <- suppressMessages(c("_id", unlist(dfCalculateConcept(name), use.names = FALSE)))
+  fldsNeeded <- suppressMessages(unique(
+    c("_id", unlist(dfCalculateConcept(name), use.names = FALSE))))
   result <- do.call(name, list(df[, fldsNeeded, drop = FALSE]))
 
-  # TODO
-  # handle type of result, e.g. "logical",
-  # "integer", "numeric", "complex", "character"
-  # if (is.atomic(result)) {
-  #   df[[name]] <- result
-  # }
-  # if (is.data.frame(result) &&
-  #     ncol(result) >= 2L) {
-
-  # TODO keep this
+  # check
   stopifnot(is.data.frame(result) && ncol(result) >= 2L)
 
   # merge
@@ -136,9 +125,6 @@ dfCalculateConcept <- function(name = ".*", df = NULL) {
     y = result,
     by = "_id"
   )
-
-  # # TODO add multi-column return
-  # df[[name]] <- do.call(name, list(df))
 
   # return
   return(dfOrTibble(df))
