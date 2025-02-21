@@ -44,6 +44,8 @@
 #' medicines that are investigational? (cannot be calculated for ISRCTN or
 #' for phase 1 trials)
 #'
+#' - **.resultsDate** (date) the planned or achieved date of results availability
+#'
 #' - **.startDate** (date) the planned, authorised or documented date
 #' of start of recruitment
 #'

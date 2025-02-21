@@ -92,6 +92,7 @@ typeVars <- list(
   # - ISRCTN
   "participants.recruitmentStart" = "ctrDateTime",
   "participants.recruitmentEnd"   = "ctrDateTime",
+  "results.intentToPublish"       = "ctrDateTime",
   "trialDesign.overallStartDate"  = "ctrDateTime",
   "trialDesign.overallEndDate"    = "ctrDateTime",
   #
