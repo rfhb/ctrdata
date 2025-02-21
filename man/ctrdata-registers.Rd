@@ -16,10 +16,12 @@ result-related information as well as documents, last updated 2025-02-15.
 trials (at least one investigational medicinal product, IMP; in the European
 Union and beyond), including about 25,000 trials with results, which continue
 to be added.
-\item \strong{CTIS}: The EU Clinical Trials Information System was launched in January
-2023 and holds more than 8,500 publicly accessible clinical trials, including
-65 trials with results and around 30 with a report
-(to automatically get CTIS search query URLs, see
+\item \strong{CTIS}: The EU Clinical Trials Information System, launched in 2023,
+holds more than 8,500 publicly accessible clinical trials, including
+around 100 with results or a report (only as PDF files).
+\emph{No results in structured format are foreseeably available}, thus
+ctrdata cannot load any CTIS results.
+(To automatically get CTIS search query URLs, see
 \ifelse{latex}{\out{\href{https://rfhb.github.io/ctrdata/\#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}})
 \item \strong{CTGOV2}: ClinicalTrials.gov holds more than 525,000 interventional and
 observational studies, including around 70,000 studies with results.
@@ -55,6 +57,9 @@ with \code{ctrdata} since 2023-03-25. More information on changes:
    Data dictionaries / definitions / structure reference \tab \href{https://eudract.ema.europa.eu/result.html}{link} \tab \href{https://cdn.clinicaltrials.gov/documents/xsd/public.xsd}{link}, \href{https://clinicaltrials.gov/data-about-studies/study-data-structure}{link}, \href{https://cdn.clinicaltrials.gov/documents/tutorial/content/index.html}{link} \tab \href{https://www.isrctn.com/page/definitions}{link} \tab \href{https://www.ema.europa.eu/en/human-regulatory-overview/research-development/clinical-trials-human-medicines/clinical-trials-information-system-ctis-training-support}{link} \cr
    Example* \tab \ifelse{latex}{\out{\href{https://www.clinicaltrialsregister.eu/ctr-search/search?query=Infections\&age=newborn\&age=preterm-new-born-infants}{link}}}{\href{https://www.clinicaltrialsregister.eu/ctr-search/search?query=Infections&age=newborn&age=preterm-new-born-infants}{link}} \tab \ifelse{latex}{\out{\href{https://clinicaltrials.gov/search?ageRange=0M_1M\&cond=Infections\&aggFilters=studyType:int\&distance=50\&intr=Investigational+Agent}{link}}}{\href{https://clinicaltrials.gov/search?ageRange=0M_1M&cond=Infections&aggFilters=studyType:int&distance=50&intr=Investigational+Agent}{link}} \tab \ifelse{latex}{\out{\href{https://www.isrctn.com/search?q=\&filters=ageRange:Neonate,conditionCategory:Infections+and+Infestations\&searchType=advanced-search}{link}}}{\href{https://www.isrctn.com/search?q=&filters=ageRange:Neonate,conditionCategory:Infections+and+Infestations&searchType=advanced-search}{link}} \tab \ifelse{latex}{\out{\href{https://euclinicaltrials.eu/ctis-public/search\#searchCriteria={"containAll":"infection","containAny":"neonates","containNot":""}}{link}}}{\href{https://euclinicaltrials.eu/ctis-public/search#searchCriteria={"containAll":"infection","containAny":"neonates"}}{link}} \cr
 }
+
+
+Some registers are expanding entered search terms using dictionaries.
 }
 
 \section{4 - Example and ctrdata motivation}{
