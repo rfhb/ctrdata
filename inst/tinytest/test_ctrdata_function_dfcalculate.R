@@ -8,10 +8,10 @@ if (!at_home()) exit_file("Reason: not at_home")
 tf <- function() {
 
   # test
-  expect_true(length(dfCalculate()) >= 12L)
+  expect_true(length(dfCalculateConcept()) >= 13L)
 
   # test
-  expect_true(length(unique(unlist(sapply(dfCalculate(), dfCalculate)))) >= 130L)
+  expect_true(length(unique(unlist(sapply(dfCalculateConcept(), dfCalculateConcept)))) >= 140L)
 
   # get data
   dbc <- nodbi::src_sqlite(
@@ -22,7 +22,7 @@ tf <- function() {
   expect_message(
     df <- dbGetFieldsIntoDf(
       fields = "",
-      calculate = dfCalculate(),
+      calculate = dfCalculateConcept(),
       con = dbc,
       verbose = FALSE
     ),
@@ -30,7 +30,7 @@ tf <- function() {
   )
 
   # test
-  expect_equivalent(names(df), c("_id", dfCalculate()))
+  expect_equivalent(names(df), c("_id", dfCalculateConcept()))
   expect_true(nrow(df) >= 29L)
 
 
