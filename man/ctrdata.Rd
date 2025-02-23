@@ -50,7 +50,7 @@ see
 
 \link{dfTrials2Long} (convert fields with nested elements into long format),
 \link{dfName2Value} (get values for variable(s) of interest).
-\link{dfCalculate} (calculate a trial concept from fields across registers),
+\link{dfCalculateConcept} (calculate a trial concept from fields across registers),
 }
 
 \seealso{

@@ -16,7 +16,7 @@ user's workflow as well as to provide consistency of analyses.
 \details{
 The implementation of trial concepts in \code{ctrdata} is based on current
 understanding, publication of data models and scientific papers as relevant.
-Call \link{dfCalculate} for one or more such functions to review the
+Call \link{dfCalculateConcept} for one or more such functions to review the
 explanation and the fields needed. As with other \code{R} functions,
 the code is printed when entering as command just the name of the function,
 e.g. \code{.startDate}.
@@ -25,7 +25,7 @@ to ask about or improve a concept.
 
 The following trial concepts can be used by referencing their name when
 calling \link{dbGetFieldsIntoDf} (parameter \code{calculate}) and
-\link{dfCalculate} (parameter \code{name}).
+\link{dfCalculateConcept} (parameter \code{name}).
 Concepts will continue to be refined and added;
 last updated 2025-02-15.
 \itemize{

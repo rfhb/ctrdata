@@ -31,7 +31,7 @@ The names of the functions can also be used for the argument `calculate`
 in \link{dbGetFieldsIntoDf} to achieve the same purpose already at the
 time that a data frame with data is generated from the trial collection.
 This approach will in most cases be more efficient and preferred over
-using \link{dfCalculate}.
+using \link{dfCalculateConcept}.
 
 Note that the functions do not operate on historic versions (CTGOV2) but
 only on information from the latest record.

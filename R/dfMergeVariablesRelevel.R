@@ -4,9 +4,9 @@
 #'
 #' Merge variables in a data frame such as returned by \link{dbGetFieldsIntoDf}
 #' into a new variable, and optionally also map its values to new levels.
-#' See \link{dfCalculate} for pre-defined cross-register trial concepts that
-#' are already implemented based on merging fields from different registers
-#' and calculating a new field.
+#' See \link{dfCalculateConcept} for pre-defined cross-register trial concepts
+#' that are already implemented based on merging fields from different
+#' registers and calculating a new field.
 #'
 #' @param df A \link{data.frame} with the variables (columns) to be merged into
 #' one vector.

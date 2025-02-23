@@ -30,8 +30,8 @@
 #' @param calculate Vector of one or more strings, which are names of functions
 #' to calculate certain trial concepts from fields in the collection across
 #' different registers.
-#' See function \link{dfCalculate} for how to find names of functions that are
-#' available in `ctrdata` so far.
+#' See function \link{dfCalculateConcept} for how to find names of functions
+#' that are available in `ctrdata` so far.
 #'
 #' @inheritParams ctrDb
 #'

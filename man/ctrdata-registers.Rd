@@ -39,8 +39,10 @@ CTGOV queries to CTGOV2 queries. The new website ("CTGOV2") can be used with
 \code{ctrdata} since 2023-08-27. Database collections created with CTGOV queries
 can still be used since functions in \code{ctrdata} continue to support them.
 CTIS was relaunched on 2024-06-17, changing the data structure and search
-syntax, to which \code{ctrdata} was updated. CTIS can be used
-with \code{ctrdata} since 2023-03-25. More information on changes:
+syntax, to which \code{ctrdata} was updated.
+CTIS can be used with \code{ctrdata} since 2023-03-25.
+EUCTR removed search parameter \verb{status=} as of February 2025.
+More information on changes:
 \href{https://rfhb.github.io/ctrdata/news/index.html}{here}.
 }
 

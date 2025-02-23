@@ -10,7 +10,7 @@
 #'
 #' The implementation of trial concepts in `ctrdata` is based on current
 #' understanding, publication of data models and scientific papers as relevant.
-#' Call \link{dfCalculate} for one or more such functions to review the
+#' Call \link{dfCalculateConcept} for one or more such functions to review the
 #' explanation and the fields needed. As with other `R` functions,
 #' the code is printed when entering as command just the name of the function,
 #' e.g. `.startDate`.
@@ -19,7 +19,7 @@
 #'
 #' The following trial concepts can be used by referencing their name when
 #' calling \link{dbGetFieldsIntoDf} (parameter `calculate`) and
-#' \link{dfCalculate} (parameter `name`).
+#' \link{dfCalculateConcept} (parameter `name`).
 #' Concepts will continue to be refined and added;
 #' last updated 2025-02-15.
 #'
