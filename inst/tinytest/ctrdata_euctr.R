@@ -68,7 +68,7 @@ expect_identical(
 
 # next
 q <- paste0("https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
-            "neuroblastoma&status=completed&phase=phase-one&country=pl")
+            "neuroblastoma&resultsstatus=trials-with-results&phase=phase-one&country=pl")
 
 # test
 expect_message(
@@ -530,7 +530,7 @@ expect_false(any(c("2010-024264-18-GB") %in% trialsCtgov))
 # test
 expect_true(
   all(c("NCT00001209", "NCT00001436", "NCT00187109", "NCT01516567",
-        "2009-018077-31-BE") %in% trialsEuctr))
+        "2013-003420-37-BE") %in% trialsEuctr))
 
 # test
 expect_false(any(c("NCT01471782") %in% trialsEuctr))

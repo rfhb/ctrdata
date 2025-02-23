@@ -6,8 +6,9 @@
 - Refactored `dfMergeVariablesRelevel()`, factored out returning data frame or tibble 
 
 ## Bug fix
-- Correct `ctrShowOneTrial()` and `ctrLoadQueryIntoDb()` for certain EUCTR trials
 - `dbFindIdsUniqueTrials()` excludes GB records from `EUCTR` whenever there is at least one Member State or Third country record
+- `EUCTR` no longer allows to search for the status of a clinical trial, adapted testing to it
+- Correct `ctrShowOneTrial()` and `ctrLoadQueryIntoDb()` for certain EUCTR trials
 - Early stopping if database collection is read-only
 - Added typing of fields newly appearing in CTIS
 - Documentation simplification and update

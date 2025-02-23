@@ -46,7 +46,7 @@ The package `ctrdata` provides functions for retrieving (downloading), aggregati
 - ClinicalTrials.gov ("CTGOV2", see [example](#workflow-ctgov-example))
 - ISRCTN Registry (https://www.isrctn.com/) 
 
-The motivation is to investigate the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can use the databases created with this package. This README was reviewed on 2025-02-01 for version 1.20.0.9000.
+The motivation is to investigate the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can use the databases created with this package. This README was reviewed on 2025-02-23 for version 1.20.0.9000.
 
 ## Main features
 
@@ -205,19 +205,19 @@ ctrOpenSearchPagesInBrowser(copyright = TRUE)
 
 * When trials of interest are listed in browser, _copy the address from the browser's address bar to the clipboard_ (you can automate this, see [here](#2-script-to-automatically-copy-users-query-from-web-browser))
 
-* Search used in this example: https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&age=under-18&phase=phase-one&status=completed
+* Search used in this example: https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&age=under-18&phase=phase-one&resultsstatus=trials-with-results
 
 * Get address from clipboard:
 ```{r get_clipboard}
 q <- ctrGetQueryUrl()
 # * Using clipboard content as register query URL:
 #  https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&
-#  age=under-18&phase=phase-one&status=completed
-# * Found search query from EUCTR: query=cancer&age=under-18&phase=phase-one&status=completed
+#  age=under-18&phase=phase-one&resultsstatus=trials-with-results
+# * Found search query from EUCTR: query=cancer&age=under-18&phase=phase-one&resultsstatus=trials-with-results
 
 q
-#                                                   query-term  query-register
-# 1 query=cancer&age=under-18&phase=phase-one&status=completed           EUCTR
+#                                                                    query-term  query-register
+# 1 query=cancer&age=under-18&phase=phase-one&resultsstatus=trials-with-results           EUCTR
 ```
 
 `r emoji::emoji("bell")` Queries in the trial registers can automatically copied to the clipboard (including for "CTIS", where the URL does not show the query) using our solution [here](#3-script-to-automatically-copy-users-query-from-web-browser). 
@@ -226,7 +226,7 @@ q
 ```{r get_url, include=FALSE}
 q <- paste0(
   "https://www.clinicaltrialsregister.eu/ctr-search/search?", 
-  "query=cancer&age=under-18&phase=phase-one&status=completed")
+  "query=cancer&age=under-18&phase=phase-one&resultsstatus=trials-with-results")
 ctrOpenSearchPagesInBrowser(q)
 ```
 
@@ -249,33 +249,33 @@ ctrLoadQueryIntoDb(
   euctrresults = TRUE,
   con = db
 )
-# * Found search query from EUCTR: 
-#   query=cancer&age=under-18&phase=phase-one&status=completed
+# * Found search query from EUCTR: query=cancer&age=under-18&phase=phase-one&resultsstatus=trials-with-results
 # * Checking trials in EUCTR...
-# Retrieved overview, multiple records of 117 trial(s) from 6 page(s) to be downloaded (estimate: 20 MB)
+# Retrieved overview, multiple records of 128 trial(s) from 7 page(s) to be downloaded (estimate: 20 MB)
 # (1/3) Downloading trials...
-# Note: register server cannot compress data, transfer takes longer (estimate: 100 s)
-# Download status: 6 done; 0 in progress. Total size: 10.12 Mb (100%)... done!             
-# (2/3) Converting to NDJSON (estimate: 2 s)...
+# Note: register server cannot compress data, transfer takes longer (estimate: 200 s)
+# Download status: 7 done; 0 in progress. Total size: 8.42 Mb (100%)... done!             
+# (2/3) Converting to NDJSON (estimate: 3 s)...
 # (3/3) Importing records into database...
-# = Imported or updated 468 records on 117 trial(s)
-# * Checking results if available from EUCTR for 117 trials: 
+# = Imported or updated 404 records on 128 trial(s)
+# * Checking results if available from EUCTR for 128 trials: 
 # (1/4) Downloading results...
-# Download status: 117 done; 0 in progress. Total size: 63.59 Mb (100%)... done!             
-# Download status: 33 done; 0 in progress. Total size: 345.31 Kb (100%)... done!             
-# Download status: 32 done; 0 in progress. Total size: 128.81 Kb (100%)... done!             
-# Download status: 32 done; 0 in progress. Total size: 128.81 Kb (100%)... done!             
+# Download status: 128 done; 0 in progress. Total size: 49.22 Mb (100%)... done!             
+# Download status: 69 done; 0 in progress. Total size: 40.27 Mb (100%)... done!             
+# Download status: 8 done; 0 in progress. Total size: 3.66 Mb (100%)... done!             
 # - extracting results (. = data, F = file[s] and data, x = none):
-# F . F F . F . . . F . . . F F . . . . . . . . . . . . . . . . . . . F . . . F . . . . . . F . . . . 
-# F . . . . . . . . . . . . . . F . . . . . . . . . F . . . . . . . . . 
-# (2/4) Converting to NDJSON (estimate: 9 s)...
+# . . . . . . . . . F . . . . . . . . . F . . . . F . . . . F F . . . . . . . . 
+# . . . . . . . . . F . . . . F . . F F . F . . . . F . . . . F . . . . . . . F 
+# . F . . F . . . . . F F . F . . . . . . . . . . . . . . . . F . . . . . . . . 
+# . . . . . F . . . . F 
+# (2/4) Converting to NDJSON (estimate: 10 s)...
 # (3/4) Importing results into database (may take some time)...
 # (4/4) Results history: not retrieved (euctrresultshistory = FALSE)
-# = Imported or updated results for 85 trials
+# = Imported or updated results for 128 trials
 # No history found in expected format.
 # Updated history ("meta-info" in "some_collection_name")
 # $n
-# [1] 468
+# [1] 404
 ```
 
 Under the hood, EUCTR plain text and XML files from EUCTR, CTGOV, ISRCTN are converted using Javascript via `V8` in `R` into `NDJSON`, which is imported into the database collection.
@@ -291,11 +291,10 @@ result <- dbGetFieldsIntoDf(
   calculate = c(".statusRecruitment", ".isUniqueTrial"),
   con = db
 )
-
 # Querying database (35 fields)...
 # - Finding duplicates among registers' and sponsor ids...     
-# - 352 EUCTR _id were not preferred EU Member State record for 118 trials
-# - Keeping 0 / 118 / 0 / 0 / 0 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS
+# - 276 EUCTR _id were not preferred EU Member State record for 128 trials
+# - Keeping 0 / 128 / 0 / 0 / 0 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS
 
 # Tabulate the selected clinical trial information:
 with(
@@ -305,11 +304,11 @@ with(
     a7_trial_is_part_of_a_paediatric_investigation_plan
   )
 )
-#      a7_trial_is_part_of_a_paediatric_investigation_plan
+#                   a7_trial_is_part_of_a_paediatric_investigation_plan
 # .statusRecruitment FALSE TRUE
-#          ongoing       0    1
-#          completed    50   24
-#          other        16   13
+#          ongoing       0    0
+#          completed    44   36
+#          other        22   15
 ```
 
 <div id="workflow-ctgov-example"></div>

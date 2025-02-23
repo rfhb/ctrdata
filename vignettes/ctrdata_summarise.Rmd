@@ -64,14 +64,14 @@ library(ctrdata)
 # trials with children with a neuroblastoma from either register
 ctrLoadQueryIntoDb(
   # using queryterm and register...
-  queryterm = "query=neuroblastoma&age=under-18&status=completed",
+  queryterm = "query=neuroblastoma&age=under-18&resultsstatus=trials-with-results",
   register = "EUCTR",
   euctrresults = TRUE,
   con = db
 )
 # [...]
 # $n
-# [1] 262
+# [1] 164
 
 ctrLoadQueryIntoDb(
   # ...or using a full URL of search results
@@ -80,21 +80,24 @@ ctrLoadQueryIntoDb(
 )
 # * Appears specific for CTGOV REST API 2.0
 # * Found search query from CTGOV2: cond=neuroblastoma&intr=Drug&aggFilters=ages:child,status:com
-# * Checking trials using CTGOV REST API 2.0, found 235 trials
+# * Checking trials using CTGOV REST API 2.0, found 236 trials
 # (1/3) Downloading in 1 batch(es) (max. 1000 trials each; estimate: 24 Mb total)
-# Download status: 1 done; 0 in progress. Total size: 10.40 Mb (598%)... done!             
+# Download status: 1 done; 0 in progress. Total size: 10.41 Mb (597%)... done!             
 # (2/3) Converting to NDJSON...
 # (3/3) Importing records into database...
 # JSON file #: 1 / 1                               
-# = Imported or updated 235 trial(s)
+# = Imported or updated 236 trial(s)
 # Updated history ("meta-info" in "my_collection_name")
 # $n
-# [1] 235
+# [1] 236
 
 dbQueryHistory(con = db)
-#       query-timestamp query-register query-records                                                    query-term
-# 1 2025-02-15 17:47:52          EUCTR           262             query=neuroblastoma&age=under-18&status=completed
-# 2 2025-02-15 17:48:02         CTGOV2           235 cond=neuroblastoma&intr=Drug&aggFilters=ages:child,status:com
+#       query-timestamp query-register query-records
+# 1 2025-02-23 20:29:47          EUCTR           164
+# 2 2025-02-23 20:29:49         CTGOV2           236
+#                                                           query-term
+# 1 query=neuroblastoma&age=under-18&resultsstatus=trials-with-results
+# 2      cond=neuroblastoma&intr=Drug&aggFilters=ages:child,status:com
 ```
 
 ## Find fields / variables of interest
@@ -269,9 +272,12 @@ attributes(result)
 # [1] "my_collection_name"
 # 
 # $`ctrdata-dbqueryhistory`
-#       query-timestamp query-register query-records                                                    query-term
-# 1 2025-02-15 17:47:52          EUCTR           262             query=neuroblastoma&age=under-18&status=completed
-# 2 2025-02-15 17:48:02         CTGOV2           235 cond=neuroblastoma&intr=Drug&aggFilters=ages:child,status:com
+#       query-timestamp query-register query-records
+# 1 2025-02-23 20:29:47          EUCTR           164
+# 2 2025-02-23 20:29:49         CTGOV2           236
+#                                                           query-term
+# 1 query=neuroblastoma&age=under-18&resultsstatus=trials-with-results
+# 2      cond=neuroblastoma&intr=Drug&aggFilters=ages:child,status:com
 ```
 
 ## De-duplicate records
@@ -291,17 +297,17 @@ ids <- dbFindIdsUniqueTrials(
   con = db
 )
 # Searching for duplicate trials... 
-# - Getting all trial identifiers (may take some time), 497 found in collection
+# - Getting all trial identifiers (may take some time), 400 found in collection
 # - Finding duplicates among registers' and sponsor ids...
-# - 200 EUCTR _id were not preferred EU Member State record for 64 trials
-# - Keeping 62 / 0 / 0 / 0 / 216 records from EUCTR / CTGOV / ISRCTN / CTIS / CTGOV2
-# = Returning keys (_id) of 278 records in collection "my_collection_name"
+# - 115 EUCTR _id were not preferred EU Member State record for 52 trials
+# - Keeping 49 / 0 / 0 / 0 / 218 records from EUCTR / CTGOV / ISRCTN / CTIS / CTGOV2
+# = Returning keys (_id) of 267 records in collection "my_collection_name"
 
 # Eliminate duplicate trials records:
 result <- result[result[["_id"]] %in% ids, ]
 
 nrow(result)
-# [1] 278
+# [1] 267
 ```
 
 An alternative is to calculate a column `isUniqueTrial` already at the time that a data.frame is created:
@@ -315,14 +321,14 @@ result <- dbGetFieldsIntoDf(
 )
 # Querying database (23 fields)...
 # - Finding duplicates among registers' and sponsor ids... 
-# - 151 EUCTR _id were not preferred EU Member State record for 58 trials
-# - Keeping 235 / 46 / 0 / 0 / 0 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS
+# - 81 EUCTR _id were not preferred EU Member State record for 43 trials
+# - Keeping 236 / 31 / 0 / 0 / 0 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS
 
 # Eliminate duplicate trials records:
 result <- result[result[[".isUniqueTrial"]], ]
 
 nrow(result)
-# [1] 307
+# [1] 267
 ```
 
 
@@ -339,16 +345,17 @@ ctrLoadQueryIntoDb(
   con = db
 )
 # $n
-# [1] 26
+# [1] 27
 # 
 # $success
-#  [1] "2024-519089-32-02" "2024-514917-36-00" "2024-518931-12-00" "2023-504246-64-02" "2024-517295-37-00"
-#  [6] "2024-513470-22-00" "2024-513843-10-00" "2022-501694-39-01" "2024-511404-17-00" "2024-511975-14-00"
-# [11] "2024-512102-25-00" "2024-515552-21-00" "2024-511259-16-00" "2023-507418-28-00" "2023-509673-22-00"
-# [16] "2024-513141-37-00" "2024-511071-16-00" "2024-512095-35-00" "2023-507178-41-00" "2023-506778-11-00"
-# [21] "2022-501725-21-00" "2023-504880-18-00" "2023-508587-29-00" "2022-502668-20-00" "2023-504246-64-00"
-# [26] "2023-503684-42-00"
-#
+#  [1] "2024-520436-15-00" "2024-519089-32-02" "2024-514917-36-00" "2024-518931-12-00"
+#  [5] "2023-504246-64-02" "2024-517295-37-00" "2024-513470-22-00" "2024-513843-10-00"
+#  [9] "2022-501694-39-01" "2024-511404-17-00" "2024-511975-14-00" "2024-512102-25-00"
+# [13] "2024-515552-21-00" "2024-511259-16-00" "2023-507418-28-00" "2023-509673-22-00"
+# [17] "2024-513141-37-00" "2024-511071-16-00" "2024-512095-35-00" "2023-507178-41-00"
+# [21] "2023-506778-11-00" "2022-501725-21-00" "2023-504880-18-00" "2023-508587-29-00"
+# [25] "2022-502668-20-00" "2023-504246-64-00" "2023-503684-42-00"
+# 
 # $failed
 # NULL
 ```
@@ -398,16 +405,16 @@ result <- dbGetFieldsIntoDf(
 )
 # Querying database (33 fields)...
 # - Finding duplicates among registers' and sponsor ids... 
-# - 151 EUCTR _id were not preferred EU Member State record for 58 trials
-# - Keeping 235 / 46 / 0 / 0 / 26 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS
+# - 81 EUCTR _id were not preferred EU Member State record for 43 trials
+# - Keeping 236 / 31 / 0 / 0 / 27 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS
 # Calculating .startDate...  
 
 str(result)
-# 'data.frame':	523 obs. of  4 variables:
+# 'data.frame':	427 obs. of  4 variables:
 #  $ _id           : chr  "2004-004386-15-DE" "2004-004386-15-ES" "2004-004386-15-GB" "2004-004386-15-IT" ...
 #  $ ctrname       : chr  "EUCTR" "EUCTR" "EUCTR" "EUCTR" ...
 #  $ .isUniqueTrial: logi  FALSE FALSE FALSE FALSE FALSE TRUE ...
-#  $ .startDate    : Date, format: "2005-07-26" "2005-11-15" "2005-07-26" "2005-08-29" ...
+#  $ .startDate    : Date, format: "2005-07-26" "2005-11-15" "2005-07-26" ...
 
 ```
 
@@ -437,7 +444,7 @@ Available calculations can be listed, and a specific documentation is shown as f
 
 ```{r dfcalculate}
 # List functions to calculate trial concepts across registers: 
-dfCalculate()
+dfCalculateConcept()
 #  [1] ".controlType"             ".isMedIntervTrial"        ".isPlatformTrial"        
 #  [4] ".isUniqueTrial"           ".numSites"                ".numTestArmsSubstances"  
 #  [7] ".primareEndpointEstimand" ".sampleSize"              ".sponsorType"            
@@ -448,7 +455,7 @@ dfCalculate()
 help("ctrdata-trial-concepts")
 
 # Show documentation of a specific calculation: 
-dfCalculate(name = ".isMedIntervTrial")
+dfCalculateConcept(name = ".isMedIntervTrial")
 #
 # >>>> .isMedIntervTrial
 # 
@@ -459,8 +466,10 @@ dfCalculate(name = ".isMedIntervTrial")
 # 
 # For EUCTR and CTIS, this corresponds to all records as per 
 # the definition of the EU Clinical Trial Regulation.
+#
 # For CTGOV and CTGOV2, this is based on drug or biological as 
 # type of intervention, and interventional as type of study.
+#
 # For ISRCTN, this is based on drug or biological as type of 
 # intervention, and interventional as type of study.
 # 
@@ -513,9 +522,9 @@ result <- dbGetFieldsIntoDf(
 )
 
 str(result)
-# 'data.frame':	577 obs. of  3 variables:
+# 'data.frame':	471 obs. of  3 variables:
 #  $ _id               : chr  "2004-004386-15-DE" "2004-004386-15-ES" "2004-004386-15-GB" "2004-004386-15-IT" ...
-#  $ record_last_import: Date, format: "2025-02-15" "2025-02-15" "2025-02-15" ...
+#  $ record_last_import: Date, format: "2025-02-23" "2025-02-23" "2025-02-23" ...
 #  $ annotation        : chr  "test annotation" "test annotation" "test annotation" "test annotation" ...
 ```
 
@@ -689,7 +698,7 @@ result <- result[result[["_id"]] %in% dbFindIdsUniqueTrials(con = db), ]
 # hundred rows per trial record):
 # 
 long_result <- dfTrials2Long(df = result)
-# Total 128644 rows, 157 unique names of variables
+# Total 130350 rows, 157 unique names of variables
 
 # explore 
 result <- dbGetFieldsIntoDf("endPoints", con = db)
@@ -717,7 +726,7 @@ clinicalDuration <- dfName2Value(
     "endPoints.*armReportingGroup.armId"
   )
 )
-# Returning values for 50 out of 144 trials
+# Returning values for 50 out of 145 trials
 
 # Duration has been reported with various units: 
 sort(unique(clinicalDuration[grepl("unit", clinicalDuration$name), "value", drop = TRUE]))
@@ -759,18 +768,18 @@ clinicalDuration %>%
 
 clinicalDuration
 # # A tibble: 184 × 4
-#    group_id             where                                                                arm_names  days
-#    <chr>                <chr>                                                                <chr>     <dbl>
-#  1 2010-022951-49-LT_2  Progression-free Survival                                            "Arm-648…   108
-#  2 2010-022951-49-LT_2  Progression-free Survival                                            "Arm-648…    51
-#  3 2010-022951-49-LT_4  Progression Free Survival (PFS) in Participants with Wild-type RAS   "Arm-648…   156
-#  4 2010-022951-49-LT_4  Progression Free Survival (PFS) in Participants with Wild-type RAS   "Arm-648…    51
-#  5 2011-004168-30-BE_2  Progression-free survival PP population                              "Arm-937…   159
-#  6 2011-004168-30-BE_2  Progression-free survival PP population                              "Arm-937…   132
-#  7 2012-000510-10-GB_2  Progression Free Survival                                            "Arm-782…    NA
-#  8 2012-004228-40-FR_4  Duration of Response (DOR)                                           "Arm-671…    NA
-#  9 2013-003595-12-3RD_3 Progression Free Survival (PFS) as assessed by the Investigator by … "Arm-115…    54
-# 10 2013-003595-12-3RD_3 Progression Free Survival (PFS) as assessed by the Investigator by … "Arm-115…    54 
+#    group_id            where                                                            arm_names  days
+#    <chr>               <chr>                                                            <chr>     <dbl>
+#  1 2010-022951-49-LV_2 Progression-free Survival                                        "Arm-648…   108
+#  2 2010-022951-49-LV_2 Progression-free Survival                                        "Arm-648…    51
+#  3 2010-022951-49-LV_4 Progression Free Survival (PFS) in Participants with Wild-type … "Arm-648…   156
+#  4 2010-022951-49-LV_4 Progression Free Survival (PFS) in Participants with Wild-type … "Arm-648…    51
+#  5 2011-004168-30-BE_2 Progression-free survival PP population                          "Arm-937…   159
+#  6 2011-004168-30-BE_2 Progression-free survival PP population                          "Arm-937…   132
+#  7 2012-000510-10-GB_2 Progression Free Survival                                        "Arm-782…    NA
+#  8 2012-004228-40-FR_4 Duration of Response (DOR)                                       "Arm-671…    NA
+#  9 2013-003595-12-HU_3 Progression Free Survival (PFS) as assessed by the Investigator… "Arm-115…    54
+# 10 2013-003595-12-HU_3 Progression Free Survival (PFS) as assessed by the Investigator… "Arm-115…    54
 ```
 
 
@@ -827,7 +836,7 @@ result$pep_is_efs <- grepl(
 # Tabulate
 table(result$pep_is_efs)
 # FALSE  TRUE
-#   233    38
+#   216    35
 
 # Plot
 library(ggplot2)
@@ -841,7 +850,7 @@ ggplot(
   geom_boxplot() +
   scale_x_log10()
 # Warning message:
-# Removed 25 rows containing non-finite values (`stat_boxplot()`). 
+# Removed 20 rows containing non-finite values (`stat_boxplot()`). 
 
 ggsave("vignettes/boxpep.png", width = 6, height = 4)
 ```
@@ -889,16 +898,6 @@ result <- dbGetFieldsIntoDf(c(
 ), 
 con = db)
 
-# # number of participants (last number is typically all groups summed up)
-# # also see README.Rmd for alternative way, summing up non-total groups
-# # result$totalparticipants <- vapply(
-# # result[["clinical_results.baseline.analyzed_list.analyzed.count_list.count.value"]],
-# # FUN = function(x) rev(x)[1], numeric(1L))
-# 
-# View(result)
-# 
-# result$totalparticipants <- result$protocolSection.designModule.enrollmentInfo.count
-
 # first reported p value for primary endpoint analysis
 result$pvalueprimaryanalysis <- vapply(
   result[["resultsSection.outcomeMeasuresModule.outcomeMeasures.analyses.pValue"]],
@@ -918,7 +917,7 @@ result$prct <-
 #
 table(result$prct)
 # FALSE   TRUE 
-#  4124   1561
+#  4133   1564
 #
 result <- subset(result, prct == TRUE)
 
@@ -1088,23 +1087,23 @@ m <- mongo(
 
 # Number of records in  collection:
 m$count()
-# [1] 6028
+# [1] 5933
 
 # Number of EUCTR records, using JSON for query:
-m$count(query = '{"_id": {"$regex": "[0-9]{4}-[0-9]{6}-[0-9]{2}", "$options": "i"}}')
-# [1] 342
+m$count(query = '{"_id": {"$regex": "[0-9]{4}-[0-9]{6}-[0-9RD]{2,3}", "$options": "i"}}')
+# [1] 235
 
 # Alternative:
 m$count(query = '{"ctrname": "EUCTR"}')
-# [1] 316
+# [1] 208
 
 # Number of CTGOV records:
 m$count(query = '{"_id": {"$regex": "NCT[0-9]{8}", "$options": "i"}}')
-# [1] 5685
+# [1] 5697
 
 # Alternative:
 m$count(query = '{"ctrname": "CTGOV2"}')
-# [1] 5685
+# [1] 5697
 
 # To best define regular expressions for analyses, inspect the field:
 head(
