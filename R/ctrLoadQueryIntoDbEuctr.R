@@ -410,6 +410,7 @@ ctrLoadQueryIntoDbEuctr <- function(
 
     # initiate counter
     importedresults <- 0L
+    eudractnumbersimportedresults <- NULL
 
     # import results data from ndjson files
     for (f in jsonFileList) {
@@ -437,10 +438,13 @@ ctrLoadQueryIntoDbEuctr <- function(
         warning(paste0(
           "Import of results failed for trial ", eudractNumber), immediate. = TRUE)
         tmp <- 0L
-      }
+      } else {
 
-      # however output is number of trials updated
-      importedresults <- importedresults + 1L
+        # output is number of trials updated
+        eudractnumbersimportedresults <- c(eudractnumbersimportedresults, eudractNumber)
+        importedresults <- importedresults + 1L
+
+      }
 
       # inform user on records
       message(
@@ -499,7 +503,7 @@ ctrLoadQueryIntoDbEuctr <- function(
       # this does not include the retrieval of information
       # about amendment to the study, as presented at the bottom
       # of the webpage for the respective trial results
-      message("(4/4) Retrieving results history:")
+      message("(4/4) Retrieving results history:                           ")
 
       # prepare download and save
       pool <- curl::new_pool(
@@ -518,7 +522,7 @@ ctrLoadQueryIntoDbEuctr <- function(
       # compose urls to access results page
       urls <- vapply(paste0(
         "https://www.clinicaltrialsregister.eu/ctr-search/trial/",
-        eudractnumbersimported, "/results"),
+        eudractnumbersimportedresults, "/results"),
         utils::URLencode, character(1L))
       # add urls to pool
       tmp <- lapply(
@@ -536,8 +540,7 @@ ctrLoadQueryIntoDbEuctr <- function(
         })
       # do download and save into batchresults
       retdat <- list()
-      tmp <- try(curl::multi_run(
-        pool = pool), silent = TRUE)
+      tmp <- try(curl::multi_run(pool = pool))
 
       # check plausibility
       if (inherits(tmp, "try-error") || tmp[["error"]] || !length(retdat)) {
