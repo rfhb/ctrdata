@@ -17,7 +17,7 @@
 
 
   #### fields ####
-  fldsNeeded <- list(
+  fldsHere <- list(
     "euctr" = c(
       "a3_full_title_of_the_trial",
       "trialInformation.fullTitle",
@@ -55,8 +55,8 @@
 
   # merge with fields needed for nested function
   fldsAdded <- suppressMessages(.numTestArmsSubstances())
-  fldsNeeded <- sapply(names(fldsNeeded), function(i) na.omit(c(
-    fldsNeeded[[i]], fldsAdded[[i]])), simplify = FALSE)
+  fldsNeeded <- sapply(names(fldsHere), function(i) na.omit(c(
+    fldsHere[[i]], fldsAdded[[i]])), simplify = FALSE)
   fldsNeeded <- c("ctrname", fldsNeeded)
 
 
@@ -124,6 +124,10 @@ Returns a logical.
   # therefore the following code needs to check against register
   df$analysis_numTestArmsSubstances <- .numTestArmsSubstances(
     df = df)[[".numTestArmsSubstances"]]
+  # remove columns needed exclusively for .numTestArmsSubstances
+  df <- df[, -match(
+    setdiff(unlist(fldsAdded), unlist(fldsHere)),
+    names(df)), drop = FALSE]
 
 
   #### . EUCTR ####
@@ -277,8 +281,8 @@ Returns a logical.
           titleDefPlatform, case_insensitive = TRUE),
       #
       periodTitle = dplyr::coalesce(
-        "authorizedPartI.trialDetails.protocolInformation.studyDesign.periodDetails.title",
-        "authorizedApplication.authorizedPartI.trialDetails.protocolInformation.studyDesign.periodDetails.title"
+        as.character(authorizedPartI.trialDetails.protocolInformation.studyDesign.periodDetails.title),
+        authorizedApplication.authorizedPartI.trialDetails.protocolInformation.studyDesign.periodDetails.title
       ),
       #
       helper_periodTitle = stringi::stri_split_fixed(
