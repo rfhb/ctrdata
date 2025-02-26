@@ -60,9 +60,9 @@ slows down this function. (For "CTGOV2" and "CTIS",
 available results are always retrieved and loaded into the
 collection.)}
 
-\item{euctrresultshistory}{If \code{TRUE}, also download
-available history of results publication in "EUCTR."
-This is quite time-consuming. Default is \code{FALSE}.}
+\item{euctrresultshistory}{If \code{TRUE}, download results and also
+the available history of results publication in "EUCTR."
+This somewhat time-consuming. Default is \code{FALSE}.}
 
 \item{ctgov2history}{For trials from CTGOV2, retrieve historic
 versions of the record. Default is \code{FALSE}, because this

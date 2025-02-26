@@ -6,7 +6,7 @@
 
 #' @noRd
 #' @export
-#' @importFrom dplyr if_else mutate case_when coalesce rename `%>%`
+#' @importFrom dplyr if_else mutate case_when rename `%>%`
 .trialObjectives <- function(df = NULL) {
 
   # check generic, do not edit
@@ -93,7 +93,7 @@ FU (follow-up).
   # helper function
   `%>%` <- dplyr::`%>%`
 
-  # helper function
+  # helper function similar to unite
   # TODO remove NAs effectively
   pasteCols <- function(...) apply(..., 1, paste, collapse = " ")
 

@@ -69,9 +69,9 @@
 #' available results are always retrieved and loaded into the
 #' collection.)
 #'
-#' @param euctrresultshistory If \code{TRUE}, also download
-#' available history of results publication in "EUCTR."
-#' This is quite time-consuming. Default is \code{FALSE}.
+#' @param euctrresultshistory If \code{TRUE}, download results and also
+#' the available history of results publication in "EUCTR."
+#' This somewhat time-consuming. Default is \code{FALSE}.
 #'
 #' @param ctgov2history For trials from CTGOV2, retrieve historic
 #' versions of the record. Default is \code{FALSE}, because this
@@ -213,6 +213,8 @@ ctrLoadQueryIntoDb <- function(
          call. = FALSE
     )
   }
+  if (euctrresultshistory) euctrresults <- TRUE
+
 
   ## obtain queryterm register --------------------------------------------
 

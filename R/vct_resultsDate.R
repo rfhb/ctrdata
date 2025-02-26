@@ -7,7 +7,7 @@
 
 #' @noRd
 #' @export
-#' @importFrom dplyr mutate pull select `%>%`
+#' @importFrom dplyr mutate pull coalesce `%>%`
 .resultsDate <- function(df = NULL) {
 
   # check generic, do not edit
@@ -17,11 +17,8 @@
   #### fields ####
   fldsNeeded <- list(
     "euctr" = c(
+      "firstreceived_results_date",
       "trialInformation.analysisStageDate"
-      # https://www.clinicaltrialsregister.eu/ctr-search/trial/2020-004272-17/results
-      # unfortunately this table is only imported with euctrhistory = TRUE
-      # This version publication date 12 Jan 2025
-      # First version publication date 12 Jan 2025
     ),
     "ctgov" = c(
       "results_first_posted"
@@ -33,8 +30,8 @@
       "results.intentToPublish"
     ),
     "ctis" = c(
-      "results.clinicalStudyReports.submitDate",
-      "results.summaryResults.submissionDate"
+      "results.summaryResults.submissionDate",
+      "results.clinicalStudyReports.submitDate"
       # not using this, could be a list
       # "results.laypersonResults.submissionDate"
     ))
@@ -46,10 +43,10 @@
     txt <- '
 Calculates the earliest date of results as recorded in the register.
 At that date, results may have been incomplete and may have been changed later.
-Requires that EUCTR results have been included in the collection, using
-ctrLoadQueryIntoDb(queryterm = ..., euctrresults = TRUE, con = ...).
+For EUCTR, requires that results and preferrably also their history of publication
+have been included in the collection, using
+ctrLoadQueryIntoDb(queryterm = ..., euctrresults{history} = TRUE, con = ...).
 Cannot be calculated for ISRCTN, which does not have a corresponding field.
-
 
 Returns a date.
     '
@@ -69,19 +66,22 @@ Returns a date.
   # helper function
   `%>%` <- dplyr::`%>%`
 
-  # helper function
-  pminInt <- function(...) pmin(..., na.rm = TRUE)
-
 
   #### CTIS ####
 
   # all registers
   df %>%
-    dplyr::select(
-      unlist(fldsNeeded, use.names = FALSE)
-    ) %>%
     dplyr::mutate(
-      out = do.call(pminInt, (.))
+      out = dplyr::coalesce(
+        # sequence matters
+        firstreceived_results_date,
+        trialInformation.analysisStageDate,
+        results_first_posted,
+        protocolSection.statusModule.resultsFirstPostDateStruct.date,
+        results.intentToPublish,
+        results.clinicalStudyReports.submitDate,
+        results.summaryResults.submissionDate
+      )
     ) %>%
     dplyr::pull(out) -> df[[".resultsDate"]]
 
