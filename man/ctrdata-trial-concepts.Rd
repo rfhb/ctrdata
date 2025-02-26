@@ -44,6 +44,8 @@ of trial, based on the default parameters of \link{dbFindIdsUniqueTrials}?
 \item \strong{.numTestArmsSubstances} (integer) how many arms or groups have
 medicines that are investigational? (cannot be calculated for ISRCTN or
 for phase 1 trials)
+\item \strong{.primaryEndpointDescription} (list of character) string containing
+protocol definition, details and time frames, concatenated with " == "
 \item \strong{.resultsDate} (date) the planned or achieved date of results availability
 \item \strong{.startDate} (date) the planned, authorised or documented date
 of start of recruitment
