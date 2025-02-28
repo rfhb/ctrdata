@@ -223,19 +223,24 @@ dbGetFieldsIntoDf <- function(
 
       if (verbose) dfCalculateConcept(name = i)
 
+      # inform user
+      message(
+        "Calculating ", i,
+        "...                            \r",
+        appendLF = FALSE)
+
       outi <- .dbGetFieldsIntoDf(
         fields = unlist(suppressMessages(
           dfCalculateConcept(name = i))),
         con = con,
         verbose = verbose, ...)
 
-      outi <- dfCalculateConcept(
-        name = i, df = outi)
+      outi <- do.call(i, list(outi))
 
+      # full join because outi has only
+      # _id and newly calculated columns
       out <- dplyr::full_join(
-        out,
-        outi[, c("_id", i), drop = FALSE],
-        by = "_id")
+        out, outi, by = "_id")
 
     }
 

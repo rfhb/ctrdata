@@ -121,10 +121,7 @@ dfCalculateConcept <- function(name = ".*", df = NULL) {
 
   # merge
   df <- dplyr::left_join(
-    x = df,
-    y = result,
-    by = "_id"
-  )
+    x = df, y = result, by = "_id")
 
   # return
   return(dfOrTibble(df))
