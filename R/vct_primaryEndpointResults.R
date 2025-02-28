@@ -39,34 +39,19 @@
       "endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.value", # ".0134 / 0.0031 / 0.0205 / 0.0053"
       "endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.method.value", # HYPOTHESIS_METHOD.other / HYPOTHESIS_METHOD.other
       "endPoints.endPoint.type.value", # ENDPOINT_TYPE.primary / ENDPOINT_TYPE.primary
-      "endPoints.endPoint" #,
-      # "endPoints.endPoint.subjectAnalysisSetReportingGroups.subjectAnalysisSetReportingGroup.subjects",
-      # "endPoints.endPoint.armReportingGroups.armReportingGroup.subjects",
-      # "adverseEvents.reportingGroups.reportingGroup.title"
-      # "endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.type.value", # ANALYSIS_TYPE.other / ANALYSIS_TYPE.other
-      # "endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.valueEqualityRelation", # " = / < "
-      # "endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.subjectAnalysisSetComparisonGroupId" # rarely completed
-      # "endPoints.endPoint.countable", # false/true
-      # "endPoints.endPoint.armReportingGroups.armReportingGroup.countableValues.countableValue.value" # many subgroups
+      "endPoints.endPoint"
     ),
     "ctgov" = c(
       "clinical_results.outcome_list.outcome.analysis_list.analysis.method", # Chi-squared / Chi-squared
       "clinical_results.outcome_list.outcome.analysis_list.analysis.p_value", # "&gt;0.1 / =0.1"
       "clinical_results.outcome_list.outcome.type",
-      "clinical_results.outcome_list.outcome" # length of this = number of endpoints
-      # "clinical_results.outcome_list.outcome.measure.analyzed_list.analyzed.count_list.count.@attributes.value" #
-      # "clinical_results.outcome_list.outcome.analysis_list.analysis.p_value_desc", # Favoring placebo, unadjusted for multiple comparisons
-      # "clinical_results.outcome_list.outcome.analysis_list.analysis.param_type", # Mean Difference (Net) / Mean Difference (Net)
-      # "clinical_results.outcome_list.outcome.analysis_list.analysis.param_value" # value of test statistic? "-1.3 / -0.2"
-      # "clinical_results.outcome_list.outcome.analysis_list.analysis.group_id_list" # label of group, not useful
-      # "clinical_results.outcome_list.outcome.measure.analyzed_list.analyzed.count_list.count.@attributes.group_id"
+      "clinical_results.outcome_list.outcome"
     ),
     "ctgov2" = c(
       "resultsSection.outcomeMeasuresModule.outcomeMeasures.analyses.pValue", # "0.0044 / 0.0919 / 0.2364"
       "resultsSection.outcomeMeasuresModule.outcomeMeasures.analyses.statisticalMethod", # "Chi-squared / t-test, 1 sided / t-test, 1 sided"
       "resultsSection.outcomeMeasuresModule.outcomeMeasures.type",
       "resultsSection.outcomeMeasuresModule.outcomeMeasures"
-      # "resultsSection.outcomeMeasuresModule.outcomeMeasures.denoms.counts.value"
     ),
     "isrctn" = c(
       # No relevant structured data
@@ -89,6 +74,7 @@ Recommended to be combined with .controlType, .sampleSize etc. for analyses.
 Returns new columns:
 .primaryEndpointFirstPvalue (discarding any inequality indicator, e.g. <=)
 .primaryEndpointFirstPmethod (normalised string, e.g. chisquared)
+.primaryEndpointFirstPsize (number included in test, across assignment groups)
     '
 
     # generic, do not edit
@@ -120,62 +106,6 @@ Returns new columns:
       trimws(.)
 
   }
-
-
-  # # helper function
-  # extractPathFromList <- function(o, p) {
-  #
-  #   # check path argument
-  #   stopifnot(is.vector(p) && is.character(p) && length(p) >= 1L)
-  #
-  #   # modify if path is in dot notation
-  #   if (length(p) == 1L && grepl("[.]", p)) p <- strsplit(p, ".", fixed = TRUE)[[1]]
-  #
-  #   # if o comes without extraction of column
-  #   # by applying [[1]], just do extraction here
-  #   if (!is.atomic(o) && length(o) == 1L) o <- o[[1]]
-  #
-  #   # this might indicate it is not
-  #   # a column with several rows
-  #   stopifnot(length(o) > 1L)
-  #
-  #   # iterate over path
-  #
-  #   # i=p[1]
-  #   # r=o[[2]]
-  #   #
-  #
-  #   for (i in p) {
-  #     o <- lapply(o, function(r) {
-  #       if (is.null(names(r))) {
-  #         if (is.atomic(r)) {
-  #           return(NA)
-  #         } else {
-  #           # message(lapply(r, "[[", i))
-  #           return(lapply(r, "[[", i))
-  #         }
-  #       } else {
-  #         r <- r[[i]]
-  #         if (is.atomic(r) && r == "") return(NA)
-  #         # message(r[[i]])
-  #         return(r[[i]])
-  #       }
-  #     })
-  #   }
-  #
-  #   # jsonview::json_tree_view(o)
-  #   return(o)
-  # }
-  #
-  #
-  # firstPsizeCtgov = mapply(
-  #   FUN = function(x, y) sum(x[y]),
-  #   x = extractPathFromList(
-  #     o = df$clinical_results.outcome_list.outcome[1812:1814],
-  #     p = "measure.analyzed_list.analyzed.count_list.count.@attributes.value"),
-  #   y = df$isPrimEpsCtgov[1812:1814],
-  #   SIMPLIFY = TRUE)
-  # #
 
 
   #### . EUCTR ####

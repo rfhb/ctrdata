@@ -46,8 +46,10 @@ medicines that are investigational? (cannot be calculated for ISRCTN or
 for phase 1 trials)
 \item \strong{.primaryEndpointDescription} (list of character) string containing
 protocol definition, details and time frames, concatenated with " == "
-\item \strong{.primaryEndpointResults} (columns of number, character) returning the
-statistical testing p value and method as reported, each in one new column
+\item \strong{.primaryEndpointResults} (columns of number, character, integer)
+returning the statistical testing p value and method as well as the number
+of subjects included in the test, each in one new column, for the first
+primary endpoint only
 \item \strong{.resultsDate} (date) the planned or achieved date of results availability
 \item \strong{.startDate} (date) the planned, authorised or documented date
 of start of recruitment

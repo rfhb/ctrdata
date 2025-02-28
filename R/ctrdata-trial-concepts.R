@@ -47,8 +47,10 @@
 #' - **.primaryEndpointDescription** (list of character) string containing
 #' protocol definition, details and time frames, concatenated with " == "
 #'
-#' - **.primaryEndpointResults** (columns of number, character) returning the
-#' statistical testing p value and method as reported, each in one new column
+#' - **.primaryEndpointResults** (columns of number, character, integer)
+#' returning the statistical testing p value and method as well as the number
+#' of subjects included in the test, each in one new column, for the first
+#' primary endpoint only
 #'
 #' - **.resultsDate** (date) the planned or achieved date of results availability
 #'
