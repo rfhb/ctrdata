@@ -7,6 +7,7 @@
 
 #' @noRd
 #' @importFrom dplyr if_else mutate case_when `%>%`
+#' @importFrom stringi stri_split_fixed
 .primaryEndpointDescription <- function(df = NULL) {
 
   # check generic, do not edit

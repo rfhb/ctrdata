@@ -494,6 +494,7 @@ typeVars <- list(
   "f335_emergency_situation" = "ctrYesNo",
   "f336_subjects_incapable_of_giving_consent_personally" = "ctrYesNo",
   #
+  "endPoints.endPoint.countable"               = "ctrFalseTrue",
   "trialInformation.analysisForPrimaryCompletion" = "ctrFalseTrue",
   "trialInformation.partOfPIP"                 = "ctrFalseTrue",
   "trialInformation.art45Related"              = "ctrFalseTrue",
