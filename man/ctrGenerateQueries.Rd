@@ -7,6 +7,8 @@
 ctrGenerateQueries(
   condition = NULL,
   intervention = NULL,
+  recruitment = NULL,
+  phase = NULL,
   startBefore = NULL,
   startAfter = NULL,
   completedBefore = NULL,
@@ -19,6 +21,11 @@ ctrGenerateQueries(
 \item{condition}{String with condition / disease}
 
 \item{intervention}{String with intervention}
+
+\item{recruitment}{String, one of "ongoing", "completed", "other"}
+
+\item{phase}{String, e.g. "phase 2" (note that "phase 2+3" is a specific
+category, not the union set of "phase 2" and "phase 3")}
 
 \item{startBefore}{String that can be interpreted as date, see example}
 
@@ -49,13 +56,10 @@ intervention and condition, see \link{ctrdata-registers}.
 \examples{
 
 urls <- ctrGenerateQueries(
-  condition = "cancer",
   intervention = "antibody",
-  startAfter = "2000-01-01",
-  startBefore = "2030-01-01",
-  completedAfter = "2000-01-01",
-  completedBefore = "2030-01-01",
-  onlyWithResults = TRUE)
+  recruitment = "ongoing",
+  phase = "phase 3",
+  startAfter = "2000-01-01")
 
 # open queries in register web interface
 sapply(urls, ctrOpenSearchPagesInBrowser)

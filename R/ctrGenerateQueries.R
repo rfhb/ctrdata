@@ -11,6 +11,9 @@
 #'
 #' @param condition String with condition / disease
 #' @param intervention String with intervention
+#' @param recruitment String, one of "ongoing", "completed", "other"
+#' @param phase String, e.g. "phase 2" (note that "phase 2+3" is a specific
+#' category, not the union set of "phase 2" and "phase 3")
 #' @param startBefore String that can be interpreted as date, see example
 #' @param startAfter String that can be interpreted as date
 #' @param completedBefore String that can be interpreted as date (does not work
@@ -29,13 +32,10 @@
 #' @examples
 #'
 #' urls <- ctrGenerateQueries(
-#'   condition = "cancer",
 #'   intervention = "antibody",
-#'   startAfter = "2000-01-01",
-#'   startBefore = "2030-01-01",
-#'   completedAfter = "2000-01-01",
-#'   completedBefore = "2030-01-01",
-#'   onlyWithResults = TRUE)
+#'   recruitment = "ongoing",
+#'   phase = "phase 3",
+#'   startAfter = "2000-01-01")
 #'
 #' # open queries in register web interface
 #' sapply(urls, ctrOpenSearchPagesInBrowser)
@@ -44,22 +44,24 @@
 #' # sapply(urls, ctrLoadQueryIntoDb, con = dbc)
 #'
 ctrGenerateQueries <- function(
-
-  condition = NULL,
-  intervention = NULL,
-
-  startBefore = NULL,
-  startAfter = NULL,
-  completedBefore = NULL,
-  completedAfter = NULL,
-
-  onlyWithResults = FALSE,
-
-  registers = c("EUCTR", "ISRCTN", "CTIS", "CTGOV2")
-
+    condition = NULL,
+    intervention = NULL,
+    recruitment = NULL,
+    phase = NULL,
+    startBefore = NULL,
+    startAfter = NULL,
+    completedBefore = NULL,
+    completedAfter = NULL,
+    onlyWithResults = FALSE,
+    registers = c("EUCTR", "ISRCTN", "CTIS", "CTGOV2")
 ) {
 
-  # starting point, open CTIS last
+  # register ordered
+
+  # check
+  stopifnot(all(registers %in% registerList[registerList != "CTGOV"]))
+
+  # starting point
   urls <- c(
     "CTGOV2" = "https://clinicaltrials.gov/search?",
     "EUCTR" = "https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
@@ -80,7 +82,7 @@ ctrGenerateQueries <- function(
       urls["EUCTR"], condition)
 
     urls["ISRCTN"] <- paste0(
-      urls["ISRCTN"], "filters=condition:", condition, ",")
+      urls["ISRCTN"], "&filters=condition:", condition)
 
   }
 
@@ -97,7 +99,110 @@ ctrGenerateQueries <- function(
       urls["EUCTR"], ifelse(!is.null(condition), " AND ", ""), intervention)
 
     urls["ISRCTN"] <- paste0(
-      urls["ISRCTN"], "filters=intervention:", intervention, ",")
+      urls["ISRCTN"], "&filters=intervention:", intervention)
+
+  }
+
+  # parameter: recruitment
+  if (!is.null(recruitment)) {
+
+    stopifnot(is.atomic(recruitment) && length(recruitment) == 1L)
+
+    # see also .statusRecruitment
+
+    urls["CTGOV2"] <- paste0(
+      urls["CTGOV2"], "&aggFilters=status:", c(
+        "ongoing" = "act rec",
+        "completed" = "com",
+        "other" = "ter sus wit unk not"
+      )[recruitment]
+    )
+
+    urls["CTIS"] <- paste0(
+      urls["CTIS"], '"status":[', c(
+        "ongoing" = "2,3,4,6,7",
+        "completed" = "5,8",
+        "other" = "1,9,10,11,12"
+      )[recruitment],
+      '],')
+
+    urls["EUCTR"] <- paste0(
+      urls["EUCTR"], c(
+        "ongoing" = "&status=ongoing&status=trial-now-transitioned&status=suspended-by-ca&status=temporarily-halted&status=restarted",
+        "completed" = "&status=completed",
+        "other" = "&status=prematurely-ended&status=prohibited-by-ca&status=not-authorised"
+      )[recruitment]
+    )
+
+    urls["ISRCTN"] <- paste0(
+      urls["ISRCTN"], c( # cannot accumulate
+        "ongoing" = "&filters=trialStatus:ongoing",
+        "completed" = "&filters=trialStatus:completed",
+        "other" = "&filters=trialStatus:stopped" # this is most frequent other category
+      )[recruitment])
+  }
+
+  # parameter: phase
+  if (!is.null(phase)) {
+
+    stopifnot(is.atomic(phase) && length(phase) == 1L)
+
+    # see also .statusRecruitment
+
+    urls["CTGOV2"] <- paste0(
+      urls["CTGOV2"], "&aggFilters=phase:", c(
+        "phase 1" = "0 1",
+        "phase 1+2" = "0 1 2",
+        "phase 2" = "2",
+        "phase 2+3" = "2 3",
+        "phase 3" = "3",
+        "phase 3+4" = "3 4",
+        "phase 1+2+3" = "0 1 2 3",
+        "phase 4" = "4",
+        "phase 1+2+3+4" = "0 1 2 3 4"
+      )[phase]
+    )
+
+    urls["CTIS"] <- paste0(
+      urls["CTIS"], '"trialPhaseCode":[', c(
+        "phase 1" = "1,2,3",
+        "phase 1+2" = "7,8,9",
+        "phase 2" = "4",
+        "phase 2+3" = "10",
+        "phase 3" = "5",
+        "phase 3+4" = "11",
+        "phase 1+2+3" = "10",
+        "phase 4" = "6",
+        "phase 1+2+3+4" = "6"
+      )[phase],
+      '],')
+
+    urls["EUCTR"] <- paste0(
+      urls["EUCTR"], c(
+        "phase 1" = "&phase=phase-one",
+        "phase 1+2" = "&phase=phase-one&phase=phase-two",
+        "phase 2" = "&phase=phase-two",
+        "phase 2+3" = "&phase=phase-two&phase=phase-three",
+        "phase 3" = "&phase=phase-three",
+        "phase 3+4" = "&phase=phase-three&phase=phase-four",
+        "phase 1+2+3" = "&phase=phase-one&phase=phase-two&phase=phase-three",
+        "phase 4" = "&phase=phase-four",
+        "phase 1+2+3+4" = "&phase=phase-one&phase=phase-two&phase=phase-three&phase=phase-four"
+      )[phase]
+    )
+
+    urls["ISRCTN"] <- paste0(
+      urls["ISRCTN"], "&filters=phase:", c( # cannot accumulate
+        "phase 1" = "Phase I",
+        "phase 1+2" = "Phase I/II",
+        "phase 2" = "Phase II",
+        "phase 2+3" = "Phase II/III",
+        "phase 3" = "Phase III",
+        "phase 3+4" = "Phase III/IV",
+        "phase 1+2+3" = "",
+        "phase 4" = "Phase IV",
+        "phase 1+2+3+4" = ""
+      )[phase])
 
   }
 
@@ -116,7 +221,7 @@ ctrGenerateQueries <- function(
       urls["EUCTR"], "&dateFrom=", startAfter)
 
     urls["ISRCTN"] <- paste0(
-      urls["ISRCTN"], "filters=LE+overallStartDate:", startAfter, ",")
+      urls["ISRCTN"], "&filters=GT+overallStartDate:", startAfter)
 
   }
 
@@ -128,8 +233,7 @@ ctrGenerateQueries <- function(
     urls["CTGOV2"] <- ifelse(
       grepl("&start=", urls["CTGOV2"]),
       sub("(&start=[-0-9]+_)", paste0("\\1", startBefore), urls["CTGOV2"]),
-      paste0("&start=_", startBefore)
-    )
+      paste0(urls["CTGOV2"], "&start=_", startBefore))
 
     urls["CTIS"] <- paste0(
       urls["CTIS"], '"eeaStartDateTo":"', startBefore, '",')
@@ -138,23 +242,7 @@ ctrGenerateQueries <- function(
       urls["EUCTR"], "&dateTo=", startBefore)
 
     urls["ISRCTN"] <- paste0(
-      urls["ISRCTN"], "filters=GT+overallStartDate:", startBefore, ",")
-
-  }
-
-  # parameter: completedBefore
-  if (!is.null(completedBefore)) {
-
-    completedBefore <- strftime(completedBefore, format = "%Y-%m-%d")
-
-    urls["CTGOV2"] <- paste0(
-      urls["CTGOV2"], "&primComp=", completedBefore, "_")
-
-    urls["CTIS"] <- paste0(
-      urls["CTIS"], '"eeaEndDateTo":"', completedBefore, '",')
-
-    urls["ISRCTN"] <- paste0(
-      urls["ISRCTN"], "filters=LE+overallEndDate:", completedBefore, ",")
+      urls["ISRCTN"], "&filters=LE+overallStartDate:", startBefore)
 
   }
 
@@ -163,17 +251,32 @@ ctrGenerateQueries <- function(
 
     completedAfter <- strftime(completedAfter, format = "%Y-%m-%d")
 
-    urls["CTGOV2"] <- ifelse(
-      grepl("&primComp=", urls["CTGOV2"]),
-      sub("(&primComp=[-0-9]+_)", paste0("\\1", startBefore), urls["CTGOV2"]),
-      paste0("&primComp=_", startBefore)
-    )
+    urls["CTGOV2"] <- paste0(
+      urls["CTGOV2"], "&primComp=", completedAfter, "_")
 
     urls["CTIS"] <- paste0(
       urls["CTIS"], '"eeaEndDateFrom":"', completedAfter, '",')
 
     urls["ISRCTN"] <- paste0(
-      urls["ISRCTN"], "filters=GT+overallEndDate:", completedAfter, ",")
+      urls["ISRCTN"], "&filters=GT+overallEndDate:", completedAfter)
+
+  }
+
+  # parameter: completedBefore
+  if (!is.null(completedBefore)) {
+
+    completedBefore <- strftime(completedBefore, format = "%Y-%m-%d")
+
+    urls["CTGOV2"] <- ifelse(
+      grepl("&primComp=", urls["CTGOV2"]),
+      sub("(&primComp=[-0-9]+_)", paste0("\\1", completedBefore), urls["CTGOV2"]),
+      paste0(urls["CTGOV2"], "&primComp=_", completedBefore))
+
+    urls["CTIS"] <- paste0(
+      urls["CTIS"], '"eeaEndDateTo":"', completedBefore, '",')
+
+    urls["ISRCTN"] <- paste0(
+      urls["ISRCTN"], "&filters=LE+overallEndDate:", completedBefore)
 
   }
 
@@ -190,26 +293,36 @@ ctrGenerateQueries <- function(
       urls["EUCTR"], "&resultsstatus=trials-with-results")
 
     urls["ISRCTN"] <- paste0(
-      urls["ISRCTN"], "filters=results:withResults,")
+      urls["ISRCTN"], "&filters=results:withResults")
 
   }
 
-  # finalising
+  # finalising CTIS
   urls["CTIS"] <- paste0(sub(",$", "", urls["CTIS"]), '}')
 
-  # finalising
-  urls["ISRCTN"] <- paste0(
-    gsub(",([$&])", "\\1", gsub(",filters=", ",", urls["ISRCTN"])),
-    ifelse(!grepl("q=", urls["ISRCTN"]), "&q=", "")
-  )
+  # finalising CTGOV2
+  ctgov2Filter <- stringi::stri_extract_all_regex(
+    urls["CTGOV2"], "[,&]aggFilters=[^,&]+")[[1]]
+  if (!all(is.na(ctgov2Filter))) urls["CTGOV2"] <- paste0(
+    stringi::stri_replace_all_regex(
+      urls["CTGOV2"], "[,&]aggFilters=[^,&]+", "")[[1]],
+    "&aggFilters=",
+    paste0(sub("&aggFilters=", "", ctgov2Filter), collapse = ","))
 
-  # TODO delete
-  # utils::URLdecode(urls)
-  # clipr::write_clip(urls["CTIS"])
-  # utils::browseURL(urls["CTIS"])
+  # finalising ISRCTN
+  isrctnFilter <- stringi::stri_extract_all_regex(
+    urls["ISRCTN"], "[,&]filters=[^,&]+")[[1]]
+  if (!all(is.na(isrctnFilter))) urls["ISRCTN"] <- paste0(
+    stringi::stri_replace_all_regex(
+      urls["ISRCTN"], "[,&]filters=[^,&]+", "")[[1]],
+    "&filters=",
+    paste0(sub("&filters=", "", isrctnFilter), collapse = ","))
+  if (!grepl("q=", urls["ISRCTN"])) urls["ISRCTN"] <-
+    paste0(urls["ISRCTN"], "&q=")
 
-  # select
-  urls <- urls[registers]
+  # select but put CTIS last so that it would open
+  # last and run script to retrieve the results
+  urls <- urls[registerList[registerList %in% registers]]
 
   # named vector
   return(urls)
