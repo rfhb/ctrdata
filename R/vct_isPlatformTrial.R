@@ -243,13 +243,7 @@ Returns a logical.
         case_insensitive = TRUE),
     #
     out = dplyr::case_when(
-      ctrname == "ISRCTN" ~ analysis_isDrugTrial & (
-        analysis_titleRelevant
-        # TODO
-        # %orRmNa%
-        # (analysis_numTestArmsSubstances >= minNumArmsDefPlatform)
-      )
-    )
+      ctrname == "ISRCTN" ~ analysis_isDrugTrial & analysis_titleRelevant)
   ) %>%
     dplyr::pull(out) -> df$isrctn
 
@@ -321,10 +315,8 @@ Returns a logical.
 
 
   #### checks ####
-  # stopifnot(is.logical(vct) || all(is.na(vct)))
-  # stopifnot(length(vct) == nrow(df))
-  # TODO
   stopifnot(inherits(df[[".isPlatformTrial"]], "logical"))
+  stopifnot(ncol(df) == 2L)
 
   # return
   return(df)

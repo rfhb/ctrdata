@@ -201,10 +201,8 @@ Returns a factor with levels "',
 
 
   #### checks ####
-  # stopifnot(is.factor(vct))
-  # stopifnot(length(vct) == nrow(df))
-  # TODO
   stopifnot(inherits(df[[".sponsorType"]], "factor"))
+  stopifnot(ncol(df) == 2L)
 
   # return
   return(df)

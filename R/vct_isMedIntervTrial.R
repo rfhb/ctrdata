@@ -178,10 +178,8 @@ Returns a logical.
 
 
   #### checks ####
-  # stopifnot(is.logical(vct) || all(is.na(vct)))
-  # stopifnot(length(vct) == nrow(df))
-  # TODO
   stopifnot(inherits(df[[".isMedIntervTrial"]], "logical"))
+  stopifnot(ncol(df) == 2L)
 
   # return
   return(df)

@@ -184,10 +184,8 @@ Returns a factor with levels "none", "no-treatment", "placebo", "active",
 
 
   #### checks ####
-  # stopifnot(inherits(vct, "factor"))
-  # stopifnot(length(vct) == nrow(df))
-  # TODO
   stopifnot(inherits(df[[".controlType"]], "factor"))
+  stopifnot(ncol(df) == 2L)
 
   # return
   return(df)

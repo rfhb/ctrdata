@@ -90,12 +90,10 @@ Returns a date.
 
 
   #### checks ####
-  # stopifnot(inherits(vct, "Date") || inherits(vct, "POSIXct"))
-  # stopifnot(length(vct) == nrow(df))
-  # TODO
   stopifnot(
     inherits(df[[".resultsDate"]], "Date") ||
       inherits(df[[".resultsDate"]], "POSIXct"))
+  stopifnot(ncol(df) == 2L)
 
   # return
   return(df)

@@ -109,8 +109,7 @@ Returns an integer.
 
   # directly using field, see above
 
-  # TODO
-  # for results data
+  # TODO for results data
   # num_participants = sum(as.integer(
   #   resultsSection.baselineCharacteristicsModule.denoms.counts.value[which_not_total]))
   # num_arms_or_groups = max(number_of_arms, length(which_not_total))
@@ -184,10 +183,8 @@ Returns an integer.
 
 
   #### checks ####
-  # stopifnot(inherits(vct, "integer"))
-  # stopifnot(length(vct) == nrow(df))
-  # TODO
   stopifnot(inherits(df[[".sampleSize"]], "integer"))
+  stopifnot(ncol(df) == 2L)
 
   # return
   return(df)

@@ -182,10 +182,8 @@ FU (follow-up).
 
 
   #### checks ####
-  # stopifnot(inherits(vct, "character"))
-  # stopifnot(length(vct) == nrow(df))
-  # TODO
   stopifnot(inherits(df[[".trialObjectives"]], "character"))
+  stopifnot(ncol(df) == 2L)
 
   # return
   return(df)

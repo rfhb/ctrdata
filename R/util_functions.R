@@ -32,8 +32,8 @@ regIsrctn <- "[0-9][0-9]{7}"
 # - CTIS e.g. 2022-501549-57-00
 regCtis <- "[0-9]{4}-[0-9]{6}-[0-9]{2}-[0-9]{2}"
 #
-# register list
-registerList <- c("EUCTR", "CTGOV", "ISRCTN", "CTIS", "CTGOV2")
+# register list, order important
+registerList <- c("EUCTR", "CTGOV", "CTGOV2", "ISRCTN", "CTIS")
 
 
 #### functions ####

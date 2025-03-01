@@ -148,10 +148,8 @@ Returns an ordered factor of levels "phase 1", "phase 1+2", "phase 2",
   # setdiff(unique(vct), names(phase_values))
 
   #### checks ####
-  # stopifnot(inherits(vct, "ordered"))
-  # stopifnot(length(vct) == nrow(df))
-  # TODO
   stopifnot(inherits(df[[".trialPhase"]], "ordered"))
+  stopifnot(ncol(df) == 2L)
 
   # return
   return(df)

@@ -308,10 +308,8 @@ Returns an integer.
 
 
   #### checks ####
-  # stopifnot(is.integer(vct) || all(is.na(vct)))
-  # stopifnot(length(vct) == nrow(df))
-  # TODO
   stopifnot(inherits(df[[".numTestArmsSubstances"]], "integer"))
+  stopifnot(ncol(df) == 2L)
 
   # return
   return(df)

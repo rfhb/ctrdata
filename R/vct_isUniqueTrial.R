@@ -85,10 +85,8 @@ Returns a logical.
 
 
   #### checks ####
-  # stopifnot(inherits(vct, "logical"))
-  # stopifnot(length(vct) == nrow(df))
-  # TODO
   stopifnot(inherits(df[[".isUniqueTrial"]], "logical"))
+  stopifnot(ncol(df) == 2L)
 
   # return
   return(df)

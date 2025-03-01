@@ -141,7 +141,6 @@ is a proportion of records lists several endpoints as primary).
   # helper function
   `%>%` <- dplyr::`%>%`
 
-  # TODO
   # helper function similar to unite
   pasteCols <- function(...) apply(
     ..., 1, function(i) paste(na.omit(i), collapse = " == "))
@@ -165,9 +164,9 @@ is a proportion of records lists several endpoints as primary).
   # keep only outcome columns
   df <- df[, c("_id", ".primaryEndpointDescription"), drop = FALSE]
 
-
   #### checks ####
   stopifnot(inherits(df[[".primaryEndpointDescription"]], "list"))
+  stopifnot(ncol(df) == 2L)
 
   # return
   return(df)

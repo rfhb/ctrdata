@@ -185,10 +185,8 @@ Returns a factor of these categories.
 
 
   #### checks ####
-  # stopifnot(is.factor(vct))
-  # stopifnot(length(vct) == nrow(df))
-  # TODO
   stopifnot(inherits(df[[".statusRecruitment"]], "factor"))
+  stopifnot(ncol(df) == 2L)
 
   # return
   return(df)

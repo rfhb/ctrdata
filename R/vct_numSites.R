@@ -162,10 +162,8 @@ Returns an integer.
 
 
   #### checks ####
-  # stopifnot(inherits(vct, "integer"))
-  # stopifnot(length(vct) == nrow(df))
-  # TODO
   stopifnot(inherits(df[[".numSites"]], "integer"))
+  stopifnot(ncol(df) == 2L)
 
   # return
   return(df)

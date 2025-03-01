@@ -80,12 +80,10 @@ Returns a date.
 
 
   #### checks ####
-  # stopifnot(inherits(vct, "Date") || inherits(vct, "POSIXct"))
-  # stopifnot(length(vct) == nrow(df))
-  # TODO
   stopifnot(
     inherits(df[[".startDate"]], "Date") ||
       inherits(df[[".startDate"]], "POSIXct"))
+  stopifnot(ncol(df) == 2L)
 
   # return
   return(df)
