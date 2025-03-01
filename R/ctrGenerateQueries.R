@@ -11,9 +11,11 @@
 #'
 #' @param condition String with condition / disease
 #' @param intervention String with intervention
-#' @param recruitment String, one of "ongoing", "completed", "other"
 #' @param phase String, e.g. "phase 2" (note that "phase 2+3" is a specific
 #' category, not the union set of "phase 2" and "phase 3")
+#' @param population String, e.g. "P" (paediatric), "A" (adult), "P+A"
+#' (adult and paediatric), "E" (elderly), "P+A+E" participants can be recruited
+#' @param recruitment String, one of "ongoing", "completed", "other"
 #' @param startBefore String that can be interpreted as date, see example
 #' @param startAfter String that can be interpreted as date
 #' @param completedBefore String that can be interpreted as date (does not work
@@ -46,8 +48,9 @@
 ctrGenerateQueries <- function(
     condition = NULL,
     intervention = NULL,
-    recruitment = NULL,
     phase = NULL,
+    population = NULL,
+    recruitment = NULL,
     startBefore = NULL,
     startAfter = NULL,
     completedBefore = NULL,
@@ -101,45 +104,6 @@ ctrGenerateQueries <- function(
     urls["ISRCTN"] <- paste0(
       urls["ISRCTN"], "&filters=intervention:", intervention)
 
-  }
-
-  # parameter: recruitment
-  if (!is.null(recruitment)) {
-
-    stopifnot(is.atomic(recruitment) && length(recruitment) == 1L)
-
-    # see also .statusRecruitment
-
-    urls["CTGOV2"] <- paste0(
-      urls["CTGOV2"], "&aggFilters=status:", c(
-        "ongoing" = "act rec",
-        "completed" = "com",
-        "other" = "ter sus wit unk not"
-      )[recruitment]
-    )
-
-    urls["CTIS"] <- paste0(
-      urls["CTIS"], '"status":[', c(
-        "ongoing" = "2,3,4,6,7",
-        "completed" = "5,8",
-        "other" = "1,9,10,11,12"
-      )[recruitment],
-      '],')
-
-    urls["EUCTR"] <- paste0(
-      urls["EUCTR"], c(
-        "ongoing" = "&status=ongoing&status=trial-now-transitioned&status=suspended-by-ca&status=temporarily-halted&status=restarted",
-        "completed" = "&status=completed",
-        "other" = "&status=prematurely-ended&status=prohibited-by-ca&status=not-authorised"
-      )[recruitment]
-    )
-
-    urls["ISRCTN"] <- paste0(
-      urls["ISRCTN"], c( # cannot accumulate
-        "ongoing" = "&filters=trialStatus:ongoing",
-        "completed" = "&filters=trialStatus:completed",
-        "other" = "&filters=trialStatus:stopped" # this is most frequent other category
-      )[recruitment])
   }
 
   # parameter: phase
@@ -204,6 +168,98 @@ ctrGenerateQueries <- function(
         "phase 1+2+3+4" = ""
       )[phase])
 
+  }
+
+  # parameter: population
+  if (!is.null(population)) {
+
+    stopifnot(is.atomic(population) && length(population) == 1L)
+
+    urls["CTGOV2"] <- paste0(
+      urls["CTGOV2"], "&aggFilters=ages:", c(
+        "P" = "child",
+        "A" = "adult",
+        "E" = "older",
+        "P+A" = "child adult",
+        "A+E" = "adult older",
+        "P+A+E" = "child adult older"
+      )[population]
+    )
+
+    urls["CTIS"] <- paste0(
+      urls["CTIS"], '"ageGroupCode":[', c(
+        # 1 = in utero
+        "P" = "2",
+        "A" = "3",
+        "E" = "4",
+        "P+A" = "2,3",
+        "A+E" = "3,4",
+        "P+A+E" = "2,3,4"
+      )[population],
+      '],')
+
+    urls["EUCTR"] <- paste0(
+      urls["EUCTR"], c(
+        # &age=in-utero
+        "A" = "&age=adult",
+        "P" = "&age=children&age=adolescent&age=infant-and-toddler&age=newborn&age=preterm-new-born-infants&age=under-18",
+        "P+A" = "&age=children&age=adolescent&age=infant-and-toddler&age=newborn&age=preterm-new-born-infants&age=under-18&age=adult",
+        "E" = "&age=elderly",
+        "A+E" = "&age=adult&age=elderly"
+      )[population]
+    )
+
+    urls["ISRCTN"] <- paste0(
+      urls["ISRCTN"], c(
+        # Not Specified
+        # Other
+        # Neonate
+        # Mixed
+        "A" = "&filters=ageRange:Adult",
+        "P" = "&filters=ageRange:Child",
+        "E" = "&filters=ageRange:Senior",
+        "P+A+E" = "&filters=ageRange:All"
+      )[population])
+
+  }
+
+  # parameter: recruitment
+  if (!is.null(recruitment)) {
+
+    stopifnot(is.atomic(recruitment) && length(recruitment) == 1L)
+
+    # see also .statusRecruitment
+
+    urls["CTGOV2"] <- paste0(
+      urls["CTGOV2"], "&aggFilters=status:", c(
+        "ongoing" = "act rec",
+        "completed" = "com",
+        "other" = "ter sus wit unk not"
+      )[recruitment]
+    )
+
+    urls["CTIS"] <- paste0(
+      urls["CTIS"], '"status":[', c(
+        "ongoing" = "2,3,4,6,7",
+        "completed" = "5,8",
+        "other" = "1,9,10,11,12"
+      )[recruitment],
+      '],')
+
+    urls["EUCTR"] <- paste0(
+      urls["EUCTR"], c(
+        "ongoing" = "&status=ongoing&status=trial-now-transitioned&status=suspended-by-ca&status=temporarily-halted&status=restarted",
+        "completed" = "&status=completed",
+        "other" = "&status=prematurely-ended&status=prohibited-by-ca&status=not-authorised"
+      )[recruitment]
+    )
+
+    urls["ISRCTN"] <- paste0(
+      urls["ISRCTN"], c( # cannot accumulate
+        "ongoing" = "&filters=trialStatus:ongoing",
+        "completed" = "&filters=trialStatus:completed",
+        "other" = "&filters=trialStatus:stopped" # this is most frequent other category
+      )[recruitment])
   }
 
   # parameter: startAfter

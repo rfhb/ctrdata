@@ -94,8 +94,9 @@ FU (follow-up).
   `%>%` <- dplyr::`%>%`
 
   # helper function similar to unite
-  # TODO remove NAs effectively
-  pasteCols <- function(...) apply(..., 1, paste, collapse = " ")
+  pasteCols <- function(...) apply(
+    ..., 1, function(i) paste(na.omit(i), collapse = " "))
+
 
   # all registers
 

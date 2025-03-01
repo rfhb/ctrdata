@@ -7,8 +7,9 @@
 ctrGenerateQueries(
   condition = NULL,
   intervention = NULL,
-  recruitment = NULL,
   phase = NULL,
+  population = NULL,
+  recruitment = NULL,
   startBefore = NULL,
   startAfter = NULL,
   completedBefore = NULL,
@@ -22,10 +23,13 @@ ctrGenerateQueries(
 
 \item{intervention}{String with intervention}
 
-\item{recruitment}{String, one of "ongoing", "completed", "other"}
-
 \item{phase}{String, e.g. "phase 2" (note that "phase 2+3" is a specific
 category, not the union set of "phase 2" and "phase 3")}
+
+\item{population}{String, e.g. "P" (paediatric), "A" (adult), "P+A"
+(adult and paediatric), "E" (elderly), "P+A+E" participants can be recruited}
+
+\item{recruitment}{String, one of "ongoing", "completed", "other"}
 
 \item{startBefore}{String that can be interpreted as date, see example}
 

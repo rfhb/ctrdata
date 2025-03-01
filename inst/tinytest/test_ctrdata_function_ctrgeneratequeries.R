@@ -99,6 +99,25 @@ tf <- function() {
   ), urls)
 
 
+  # generate 6
+  urls <- ctrGenerateQueries(
+    condition = "heart failure",
+    phase = "phase 2+3",
+    population = "P+A",
+    startAfter = "2000-01-01")
+
+  # test
+  expect_length(urls, 4)
+
+  # test
+  expect_equivalent(c(
+    "https://www.clinicaltrialsregister.eu/ctr-search/search?query=heart failure&phase=phase-two&phase=phase-three&age=children&age=adolescent&age=infant-and-toddler&age=newborn&age=preterm-new-born-infants&age=under-18&age=adult&dateFrom=2000-01-01",
+    "https://clinicaltrials.gov/search?cond=heart failure&start=2000-01-01_&aggFilters=phase:2 3,ages:child adult",
+    "https://www.isrctn.com/search?&filters=condition:heart failure,phase:Phase II/IIINA,GT+overallStartDate:2000-01-01&q=",
+    "https://euclinicaltrials.eu/ctis-public/search#searchCriteria={\"medicalCondition\":\"heart failure\",\"trialPhaseCode\":[10],\"ageGroupCode\":[2,3],\"eeaStartDateFrom\":\"2000-01-01\"}"
+  ), urls)
+
+
   # sapply(urls, ctrOpenSearchPagesInBrowser)
 
   # end tests
