@@ -11,7 +11,7 @@ tf <- function() {
   expect_true(length(dfCalculateConcept()) >= 15L)
 
   # test
-  expect_true(length(unique(unlist(sapply(dfCalculateConcept(), dfCalculateConcept)))) >= 160L)
+  expect_true(length(unique(unlist(sapply(dfCalculateConcept(), dfCalculateConcept)))) >= 190L)
 
   # get data
   dbc <- nodbi::src_sqlite(
@@ -31,7 +31,7 @@ tf <- function() {
 
   # test
   expect_true(all(grepl("_id|^[.][a-z]+[A-Z]", names(df))))
-  expect_true(ncol(df) >= 18L)
+  expect_true(ncol(df) >= 21L)
   expect_true(nrow(df) >= 29L)
 
 

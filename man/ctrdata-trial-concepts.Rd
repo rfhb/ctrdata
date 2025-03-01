@@ -61,10 +61,13 @@ simplified to not for profit, for profit or other
 ongoing (includes temporarily halted), completed and other (includes
 planned, stopped, terminated)
 \item \strong{.trialObjectives} (string) identifies with letters those objectives
-that could be identified by text fragments, e.g. "E S PD D", with E
-(efficacy), S (safety), D (dose-finding)
+that could be identified by text fragments, e.g. "E S PD D", with "E"
+(efficacy), "S" (safety), "D" (dose-finding)
 \item \strong{.trialPhase} (ordered factor) the phase(s) of medicine development
 with which a trial is associated
+\item \strong{.trialPopulation} (columns of factor, string and string) age groups
+(e.g., "P" for paediatric participants, "A" for adults, "E" for older than
+65 years, or "P+A"), inclusion and exclusion criteria texts
 }
 }
 \author{

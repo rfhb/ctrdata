@@ -141,10 +141,6 @@ is a proportion of records lists several endpoints as primary).
   # helper function
   `%>%` <- dplyr::`%>%`
 
-  # helper function similar to unite
-  pasteCols <- function(...) apply(
-    ..., 1, function(i) paste(na.omit(i), collapse = " == "))
-
   # helper function similar to unite and also splitting
   # by contained primary endpoints and unite across columns
   pasteCols <- function(...) apply(..., 1, function(i) {
