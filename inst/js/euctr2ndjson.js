@@ -58,7 +58,7 @@ function euctr2ndjson(txt, dt) {
           return 'xxxxxxxxxx"_id": "' + p1 + '-' + p2.toUpperCase() + '"'});
 
     // remove newlines within variable fields
-    txt = txt.replaceAll(/^([ABDEFGHNPX][.][1-9 I].+)$/gm, "\nxxxxxxxxxx$1");
+    txt = txt.replaceAll(/\n([ABDEFGHX][.][1-9I].+|[NP][.] .+)/gm, "\nxxxxxxxxxx$1");
     txt = txt.replaceAll(/\n/gm, " ");
     txt = txt.replaceAll(/xxxxxxxxxx/gm, "\n");
 
@@ -82,7 +82,8 @@ function euctr2ndjson(txt, dt) {
         p2 = p2.replaceAll(/^\s+|\s+$/g, "")
         return '"' + p1 + '": "' + p2 + '",';
     }
-    txt = txt.replaceAll(/^(.+?): (.*)$/gm, keyValueFormatter);
+    // capture not-yet-transformed and already transformed (e.g. "_id") identifiers
+    txt = txt.replaceAll(/^([ABDEFGHNPX][.].+?|["a-z0-9_]+?): (.*)$/gm, keyValueFormatter);
 
     // so far 6 ms
 
