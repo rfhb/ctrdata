@@ -48,6 +48,9 @@
 #'
 #' @export
 #'
+#' @importFrom dplyr full_join
+#' @importFrom stats na.omit
+#'
 #' @examples
 #'
 #' dbc <- nodbi::src_sqlite(
@@ -74,7 +77,9 @@
 #'   con = dbc)
 #'
 #' \dontrun{
-#' # with dplyr and ggplot2 loaded, just do
+#' library(dplyr)
+#' library(ggplot2)
+#'
 #' df %>%
 #'   filter(.isUniqueTrial) %>%
 #'   count(.statusRecruitment)

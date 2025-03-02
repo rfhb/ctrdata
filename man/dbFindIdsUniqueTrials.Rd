@@ -76,7 +76,9 @@ df <- dbGetFieldsIntoDf(
 # using base R
 df[df[[".isUniqueTrial"]], ]
 
-# using dplyr
-# df \%>\% filter(.isUniqueTrial)
+\dontrun{
+library(dplyr)
+df \%>\% filter(.isUniqueTrial)
+}
 
 }

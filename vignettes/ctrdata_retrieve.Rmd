@@ -1,7 +1,7 @@
 ---
 title: "Retrieve clinical trial information"
 author: "Ralf Herold"
-date: 2025-02-15
+date: 2025-03-02
 output:
   rmarkdown::pdf_document:
     toc: true
@@ -33,7 +33,7 @@ library(ctrdata)
 citation("ctrdata")
 ```
 
-Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: Ralf Herold (2025). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.20.0. https://cran.r-project.org/package=ctrdata
+Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: Ralf Herold (2025). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.21.0. https://cran.r-project.org/package=ctrdata
 
 ### Open register's advanced search page in browser
 
@@ -44,6 +44,7 @@ These functions open the browser, where the user can start searching for trials 
 ctrOpenSearchPagesInBrowser(
   copyright = TRUE
 )
+
 # Open browser with example search:
 ctrOpenSearchPagesInBrowser(
   url = "cancer&age=under-18",
@@ -71,7 +72,8 @@ clipr::write_clip(q)
 
 ```{r get_query_from_browser}
 q <- ctrGetQueryUrl()
-# * Using clipboard content as register query URL: https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&age=under-18&resultsstatus=trials-with-results
+# * Using clipboard content as register query URL: https://www.clinicaltrialsregister.eu/
+# ctr-search/search?query=cancer&age=under-18&resultsstatus=trials-with-results
 # * Found search query from EUCTR: query=cancer&age=under-18&resultsstatus=trials-with-results
 
 q
@@ -82,7 +84,9 @@ q
 ctrOpenSearchPagesInBrowser(url = q)
 ```
 
-### Retrieve protocol-related information, transform, save to database, check
+### Retrieve trial information, transform, save to database and check queries
+
+Note that in addition to protocol- and results-related information, also all trial documents that made publicly available by the registers, including any protocols, consent forms and results reports, can be downloaded by `ctrdata`, by specifying parameter `documents.path`, see `help(ctrLoadQueryIntoDb)`.
 
 ```{r execute_load_query, eval=FALSE}
 # Count number of trial records
@@ -91,7 +95,8 @@ ctrLoadQueryIntoDb(
   only.count = TRUE
 )$n
 # * Checking trials in EUCTR...
-# Retrieved overview, multiple records of 118 trial(s) from 6 page(s) to be downloaded (estimate: 20 MB)
+# Retrieved overview, multiple records of 376 trial(s) from 19 page(s) to be 
+# downloaded (estimate: 50 MB)
 # [1] 376
 
 # Connect to a database and chose a collection (table)
@@ -109,36 +114,44 @@ ctrLoadQueryIntoDb(
 # Show which queries have been downloaded into database
 dbQueryHistory(con = db)
 #       query-timestamp query-register query-records
-# 1 2025-02-23 20:45:27          EUCTR          1470
+# 1 2025-03-02 13:05:08          EUCTR          1470
 #                                                    query-term
 # 1 query=cancer&age=under-18&resultsstatus=trials-with-results
 ```
 
-With a file-base SQLite database, this takes about 20 seconds for about 300 records, with most of the time needed for internet-retrieval with is slow from this register. Speed is higher with other registers, with using MongoDB and with memory-based SQLite.
+With any database, this takes about 80 seconds for 1470 records of 376 trials (~55 ms/record), with most of the time needed for internet-retrieval which is slow from this register. 
+
 
 ## Repeat and update a previous query
 
-Instead of "last", an integer number can be specified for `querytoupdate` that corresponds to the number when using `dbQueryHistory()`.
+Previously executed queries can be repeated by specifying "last" or an integer number for parameter `querytoupdate`, where the number corresponds to the row number of the query shown with `dbQueryHistory()`. Where possible, the query to update first checks for new records in the register. Depending on the register and time since running the query last, an update (differential update) is possible or the original query is executed fully again.
 
 ```{r}
+# Show all queries
+dbQueryHistory(con = db)
+
+# Repeat last query
 ctrLoadQueryIntoDb(
   querytoupdate = "last",
+  only.count = TRUE,
   con = db
 )
+# First result page empty - no (new) trials found?
+# Updated history ("meta-info" in "test")
 ```
 
-Depending on the register, an update (differential update) is possible or the original query is executed fully again.
 
-## Retrieve results
+## Results-related trial information
 
-For EUCTR, result-related trial information has to be requested to be retrieved, because it will take longer to download and store. For CTGOV, any results are always included in the retrieval. Note that trial documents, including any results reports, can be downloaded by specifying parameter `documents.path`, see `help(ctrLoadQueryIntoDb)`.
+For CTGOV and CTGOV2, any results are always included in the retrieval. Only for EUCTR, result-related trial information has to be requested to be retrieved, because it will take longer to download and store. No results in structured electronic format are foreseeably available from ISRCTN and CTIS, thus `ctrdata` cannot load them, see `help(ctrLoadQueryIntoDb)`. The download or presence of results is not recorded in `dbQueryHistory()` because the availability of results increases over time. The following takes about 90 seconds for about 1470 records (~ 65 ms/record) of 376 trials. 
 
 ```{r}
-ctrLoadQueryIntoDb(
-  queryterm = q,
+Sys.time(); ctrLoadQueryIntoDb(
+  querytoupdate = "last",
+  forcetoupdate = TRUE,
   euctrresults = TRUE,
   con = db
-)
+); Sys.time(); 
 # * Checking trials in EUCTR...
 # Retrieved overview, multiple records of 376 trial(s) from 19 page(s) to be downloaded (estimate: 50 MB)
 # (1/3) Downloading trials...
@@ -148,11 +161,7 @@ ctrLoadQueryIntoDb(
 # = Imported or updated 1470 records on 376 trial(s) 
 # * Checking results if available from EUCTR for 376 trials: 
 # (1/4) Downloading results...
-# Download status: 376 done; 0 in progress. Total size: 45.77 Mb (100%)... done!             
-# Download status: 292 done; 0 in progress. Total size: 54.42 Mb (100%)... done!             
-# Download status: 208 done; 0 in progress. Total size: 38.73 Mb (100%)... done!             
-# Download status: 128 done; 0 in progress. Total size: 42.50 Mb (100%)... done!             
-# Download status: 40 done; 0 in progress. Total size: 23.10 Mb (100%)... done!             
+# Download status: 376 done; 0 in progress. Total size: 45.77 Mb (100%)... done!           
 # - extracting results (. = data, F = file[s] and data, x = none):
 # . . . . . F . F . . . F . F . . F . F . . . . . . . . . . . . . . . F . . . . 
 # . . . . . . . . . . . . . . . . . . F . . . . . . . . F . . . . . . . . . F . . 
@@ -173,119 +182,103 @@ ctrLoadQueryIntoDb(
 # [1] 1470
 ```
 
-With a file-base SQLite database, this takes about 30 seconds for about 500 records; it is similarly fast with MongoDB and PostgreSQL.
 
-The download or presence of results is not recorded in `dbQueryHistory()` because the availability of results increases over time.
+## Add trial information from several registers
 
-## Add information from another register
-
-The same collection can be used to store (and analyse) trial information from different registers. Example:
+The same collection can be used to store (and analyse) trial information from different registers, thus can include different and complementary sets of trials. The registers currently supported include CTIS, EUCTR, CTGOV, CTGOV2 and ISRCTN. This can be achieved by loading queries that the user defines specifically or that function `ctrGenerateQueries()` provides, as follows: 
 
 ```{r}
+# Loading specific query into same collection
 ctrLoadQueryIntoDb(
-  queryterm = "https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&recrs=e&age=0&intr=Drug",
+  queryterm = "cond=neuroblastoma&aggFilters=phase:2,ages:child,status:com",
+  register = "CTGOV2",
   con = db
 )
-# * Appears specific for CTGOV Classic website
-# Since 2024-06-25, the classic CTGOV servers are no longer available. Package ctrdata has translated the classic CTGOV query URL from this call of function ctrLoadQueryIntoDb(queryterm = ...) into a query URL that works with the current CTGOV2. This is printed below and is also part of the return value of this function, ctrLoadQueryIntoDb(...)$url. This URL can be used with ctrdata functions. Note that the fields and data schema of trials differ between CTGOV and CTGOV2. 
-# 
-# Replace this URL:
-# 
-# https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&recrs=e&age=0&intr=Drug
-# 
-# with this URL:
-# 
-# https://clinicaltrials.gov/search?cond=neuroblastoma&intr=Drug&aggFilters=ages:child,status:com
-# 
-# * Found search query from CTGOV2: cond=neuroblastoma&intr=Drug&aggFilters=ages:child,status:com
-# * Checking trials using CTGOV REST API 2.0, found 235 trials
-# (1/3) Downloading in 1 batch(es) (max. 1000 trials each; estimate: 24 Mb total)
-# Download status: 1 done; 0 in progress. Total size: 10.40 Mb (598%)... done!             
-# (2/3) Converting to NDJSON...
-# (3/3) Importing records into database...
-# JSON file #: 1 / 1                               
-# = Imported or updated 235 trial(s)
-# Updated history ("meta-info" in "test")
-# $n
-# [1] 235
-```
 
-With a file-based SQLite database, this takes a few seconds for more than 200 records.
-
-Note that in this example, a warning message may be issued from importing an NDJSON file with trial records. The warning arises from the high level of complexity of some of the XML content of some of the trial records. The issue can be resolved by increasing in the operating system the stack size available to R, see: https://github.com/rfhb/ctrdata/issues/22
-
-
-## Add records from CTIS register into the same collection
-
-As of 2025-02-15, more than 8600 trials are publicly accessible in CTIS, which has to be used since January 2023 for new clinical trials in the European Union (EU). Queries in the CTIS search interface can be automatically copied to the clipboard so that a user can paste them into `queryterm`, see [here](https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser). 
-
-```{r}
-# Retrieve trials from another register:
-ctrLoadQueryIntoDb(
-  queryterm = 'searchCriteria={"containAny":"neonates"}',
-  register = "CTIS",
-  con = db
+# Use same query details to obtain queries
+queries <- ctrGenerateQueries(
+  condition = "neuroblastoma",
+  recruitment = "completed",
+  phase = "phase 2",
+  population = "P"
 )
-# * Found search query from CTIS: searchCriteria={"containAny":"neonates"}
-# * Checking trials in CTIS...
-# (1/4) Downloading trial list(s), found 15 trials 
-# (2/4) Downloading and processing trial data... (estimate: 1 Mb)
-# Download status: 15 done; 0 in progress. Total size: 697.82 Kb (100%)... done!             
-# (3/4) Importing records into database...
-# (4/4) Updating with additional data: .           
-# = Imported 15, updated 15 record(s) on 15 trial(s)
-# Updated history ("meta-info" in "test")
-# $n
-# [1] 15
+
+# Open queries in registers' web interfaces
+sapply(queries, ctrOpenSearchPagesInBrowser)
+
+# Load all queries into database collection
+result <- lapply(queries, ctrLoadQueryIntoDb, con = db)
+
+# Show results of loading
+sapply(result, "[[", "n")
+# EUCTR CTGOV2 ISRCTN   CTIS 
+#   180    111      0      1 
+
+# Overview of queries
+dbQueryHistory(con = db)
+#       query-timestamp query-register query-records
+# 1 2025-03-02 13:05:08          EUCTR          1470
+# 2 2025-03-02 13:26:49          EUCTR             0
+# 3 2025-03-02 13:31:53          EUCTR          1470
+# 4 2025-03-02 13:49:09         CTGOV2           111
+# 5 2025-03-02 13:56:01          EUCTR           180
+# 6 2025-03-02 13:56:02         CTGOV2           111
+# 7 2025-03-02 13:56:03           CTIS             1
+#                                                                                                   query-term
+# 1                                                query=cancer&age=under-18&resultsstatus=trials-with-results
+# 2                                                query=cancer&age=under-18&resultsstatus=trials-with-results
+# 3                                                query=cancer&age=under-18&resultsstatus=trials-with-results
+# 4                                                cond=neuroblastoma&aggFilters=phase:2,ages:child,status:com
+# 5                             query=neuroblastoma&phase=phase-two&age=children&age=under-18&status=completed
+# 6                                                cond=neuroblastoma&aggFilters=phase:2,ages:child,status:com
+# 7 searchCriteria={"medicalCondition":"neuroblastoma","trialPhaseCode":[4],"ageGroupCode":[2],"status":[5,8]}
 ```
+
 
 ## Add personal annotations
 
-When downloading trial information, the user can specify an annotation to all records that are downloaded. By default, annotations are accumulated if trial records are loaded again or updated; alternatively, annotations can be replaced.
-
-Annotations are useful for analyses, for example to specially identify subsets of records in the database.
+When loading trial information, the user can specify an annotation string to each of the records that are loaded when calling `ctrLoadQueryIntoDb()`. 
+By default, new annotations are appended to any existing annotation of the trial record; alternatively, annotations can be replaced. Annotations are useful for analyses, for example to specially identify subsets of records and trials of interest in the collection
 
 ```{r}
+# Annotate a query in CTGOV2 defined above
 ctrLoadQueryIntoDb(
-  queryterm = "cond=neuroblastoma&country=Germany&aggFilters=ages:child,studyType:int,status:com",
-  register = "CTGOV2",
+  queryterm = queries["CTGOV2"],
   annotation.text = "site_DE ",
   annotation.mode = "append",
   con = db
 )
 # * Appears specific for CTGOV REST API 2.0
-# * Found search query from CTGOV2: cond=neuroblastoma&country=Germany&aggFilters=ages:child,studyType:int,status:com
-# * Checking trials using CTGOV REST API 2.0, found 16 trials
-# (1/3) Downloading in 1 batch(es) (max. 1000 trials each; estimate: 1.6 Mb total)
+# * Found search query from CTGOV2: cond=neuroblastoma&aggFilters=phase:2,ages:child,status:com
+# * Checking trials using CTGOV REST API 2.0, found 111 trials
+# (1/3) Downloading in 1 batch(es) (max. 1000 trials each; estimate: 11 Mb total)
 # (2/3) Converting to NDJSON...
 # (3/3) Importing records into database...
 # JSON file #: 1 / 1                               
-# = Imported or updated 16 trial(s)
-# = Annotated retrieved records (16 records)
+# = Imported or updated 111 trial(s)
+# = Annotated retrieved records (111 records)
 # Updated history ("meta-info" in "test")
 # $n
-# [1] 16
+# [1] 111
 ```
 
-## Add information using trial identifiers
+## Load information using trial identifiers
 
-When identifiers of clinical trials of interest are already known, this example shows how they can be processed to import the trial information into a database collection. This involves constructing a query that combines the identifiers and then iterating over the sets of identifiers. Note to combine identifiers using "+OR+" into the `queryterm`, and that `register` has to be specified. 
+When identifiers of clinical trials of interest are already known, this example shows how they can be processed to import the trial information into a database collection. This involves constructing a query that combines the identifiers and then iterating over the sets of identifiers. Note to combine identifiers into the `queryterm` depends on the specific register: 
 
 ```{r}
 # ids of trials of interest
 ctIds <- c(
-  "NCT00001209", "NCT00001436", "NCT00187109", "NCT01516567", "NCT01471782", "NCT03042429",
-  "NCT00357084", "NCT00357500", "NCT00365755", "NCT00407433", "NCT00410657", "NCT00436657",
-  "NCT00436852", "NCT00445965", "NCT00450307", "NCT00450827", "NCT00471679", "NCT00486564",
-  "NCT00492167", "NCT00499616", "NCT00503724", "NCT00509353", "NCT00520936", "NCT00536601",
-  "NCT00567567", "NCT00578864", "NCT00601003", "NCT00644696", "NCT00646230", "NCT00659984",
-  "NCT00716976", "NCT00743496", "NCT00793845", "NCT00806182", "NCT00831844", "NCT00867568",
-  "NCT00877110", "NCT00885326", "NCT00918320", "NCT00923351", "NCT00939770", "NCT00960739"
+  "NCT00001209", "NCT00001436", "NCT00187109", "NCT01516567", "NCT01471782", 
+  "NCT00357084", "NCT00357500", "NCT00365755", "NCT00407433", "NCT00410657", 
+  "NCT00436852", "NCT00445965", "NCT00450307", "NCT00450827", "NCT00471679", 
+  "NCT00492167", "NCT00499616", "NCT00503724"
+  
 )
 
-# split into sets of each 25 trial ids 
+# split into sets of each 10 trial ids 
 # (larger sets e.g. 50 may still work)
-idSets <- split(ctIds, ceiling(seq_along(ctIds) / 25))
+idSets <- split(ctIds, ceiling(seq_along(ctIds) / 10))
 
 # variable to collect import results
 result <- NULL
@@ -293,52 +286,55 @@ result <- NULL
 # iterate over sets of trial ids
 for (idSet in idSets) {
   
-  # import
   setResult <- ctrLoadQueryIntoDb(
-    
-    # for CTGOV2 use: 
     queryterm = paste0("term=", paste0(idSet, collapse = " ")),
-    
-    # specify register that holds the information
     register = "CTGOV2",
-    
     con = db
   )
   
-  # append results
+  # check that queried ids have
+  # successfully been loaded
+  stopifnot(identical(
+    sort(setResult$success), sort(idSet)))
+  
+  # append result
   result <- c(result, list(setResult))
 }
 
 # inspect results 
 as.data.frame(do.call(rbind, result))[, c("n", "failed")]
 #    n failed
-# 1 25   NULL
-# 2 17   NULL
+# 1 10   NULL
+# 2  8   NULL
+
+# queryterms for other registers for retrieving trials by their identifier: 
+#
+# CTIS (note the comma separated values): 
+# https://euclinicaltrials.eu/ctis-public/search#searchCriteria=
+# {"containAny":"2025-521008-22-00, 2024-519446-67-00, 2024-517647-31-00"}
+#
+# EUCTR (note the country suffix os to be removed, values separated with OR): 
+# https://www.clinicaltrialsregister.eu/ctr-search/search?
+# query=2008-001606-16+OR+2008-001721-34+OR+2008-002260-33
+#
 ```
 
-Note that from `CTIS`, trial information *identified by trial identifiers* can be retrieved only one-by-one, repeating queries for each trial such as https://euclinicaltrials.eu/app/#/search?number=2023-503994-39-00. 
 
 ## Find synonyms of active substance names
 
-Not all registers automatically expand search terms to include alternative terms, such as codes and other names of active substances. To obtain a character vector of synonyms for any active substance name, use:
+Not all registers automatically expand search terms to include alternative terms, such as codes and other names of active substances. The synonymous names can be used in queries in a register that does not offer search expansion. To obtain a character vector of synonyms for an active substance name: 
 
 ```{r}
+# Search for synonyms
 ctrFindActiveSubstanceSynonyms(
   activesubstance = "imatinib"
 )
-#  [1] "imatinib"                    "Carcemia"                    "Cemivil"                    
-#  [4] "CGP 57148"                   "CGP 57148B"                  "CGP-57148"                  
-#  [7] "CGP-57148B"                  "CGP57148"                    "CGP57148B"                  
-# [10] "Gleevac"                     "gleevec"                     "Gleevec (Imatinib Mesylate)"
-# [13] "Glevec"                      "glivec"                      "Imarech"                    
-# [16] "Imat"                        "Imatinib"                    "imatinib mesylate"          
-# [19] "Imatinib-AFT"                "Impentri"                    "IND # 55666"                
-# [22] "NSC-716051"                  "QTI571"                      "ST1571"                     
-# [25] "STI 571"                     "STI-571"                     "STI571"                     
-# [28] "tyrosine kinase inhibitors"  "Ziatir"                      "Zoleta"  
+#  [1] "imatinib"          "CGP 57148"         "CGP 57148B"       
+#  [4] "CGP57148B"         "Gleevec"           "GLIVEC"           
+#  [7] "Imatinib"          "Imatinib Mesylate" "NSC 716051"       
+# [10] "ST1571"            "STI 571"           "STI571"   
 ```
 
-These names can then be used in queries in any register.
 
 ```{r, include=FALSE}
 # cleanup
@@ -347,12 +343,9 @@ unlink("sqlite_file.sql")
 
 ## Using a MongoDB database
 
-This example works with a free service [here](https://www.mongodb.com/cloud/atlas). Note that the user name and password need to be encoded. The format of the connection string is documented at https://docs.mongodb.com/manual/reference/connection-string/.
-
-For recommended databases, see vignette [Install R package ctrdata](https://rfhb.github.io/ctrdata/#databases-that-can-be-used-with-ctrdata).
+This example works with a free service [here](https://www.mongodb.com/cloud/atlas). Note that the user name and password need to be encoded. The format of the connection string is documented at https://docs.mongodb.com/manual/reference/connection-string/. For recommended databases, see vignette [Install R package ctrdata](https://rfhb.github.io/ctrdata/#databases-that-can-be-used-with-ctrdata).
 
 ```{r remote_mongo}
-
 # Specify base uri for remote MongoDB server,
 #  as part of the encoded connection string
 db <- nodbi::src_mongo(

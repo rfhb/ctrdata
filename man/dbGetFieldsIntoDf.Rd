@@ -81,7 +81,9 @@ df <- dbGetFieldsIntoDf(
   con = dbc)
 
 \dontrun{
-# with dplyr and ggplot2 loaded, just do
+library(dplyr)
+library(ggplot2)
+
 df \%>\%
   filter(.isUniqueTrial) \%>\%
   count(.statusRecruitment)

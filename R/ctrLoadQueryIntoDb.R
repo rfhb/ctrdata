@@ -119,6 +119,11 @@
 #' collection name, as well as the query history of this database
 #' collection) to facilitate documentation.
 #'
+#' @export
+#'
+#' @importFrom httr set_config user_agent
+#' @importFrom utils packageDescription
+#'
 #' @examples
 #' \dontrun{
 #'
@@ -162,11 +167,6 @@
 #'   con = dbc
 #' )
 #' }
-#'
-#' @export
-#'
-#' @importFrom httr set_config user_agent
-#' @importFrom utils packageDescription
 #'
 ctrLoadQueryIntoDb <- function(
     queryterm = NULL,

@@ -64,8 +64,10 @@
 #' # using base R
 #' df[df[[".isUniqueTrial"]], ]
 #'
-#' # using dplyr
-#' # df %>% filter(.isUniqueTrial)
+#' \dontrun{
+#' library(dplyr)
+#' df %>% filter(.isUniqueTrial)
+#' }
 #'
 dbFindIdsUniqueTrials <- function(
     preferregister = c("CTGOV2", "EUCTR", "CTGOV", "ISRCTN", "CTIS"),

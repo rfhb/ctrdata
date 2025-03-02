@@ -2,7 +2,7 @@
 % Please edit documentation in R/dfCalculateConcept.R
 \name{dfCalculateConcept}
 \alias{dfCalculateConcept}
-\title{Calculate fields from data in other fields}
+\title{Calculate trial concept from various fields and registers}
 \usage{
 dfCalculateConcept(name = ".*", df = NULL)
 }

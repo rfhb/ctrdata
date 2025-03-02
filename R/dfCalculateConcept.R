@@ -1,6 +1,6 @@
 ### ctrdata package
 
-#' Calculate fields from data in other fields
+#' Calculate trial concept from various fields and registers
 #'
 #' Across registers, calculate a trial concept (e.g., status of recruitment).
 #' The concept is defined within ctrdata based on common understanding and
