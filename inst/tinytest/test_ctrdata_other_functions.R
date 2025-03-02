@@ -77,7 +77,7 @@ expect_true(
 
 # test
 expect_equal(
-  suppressWarnings(
+  suppressMessages(
     nchar(dfMergeVariablesRelevel(
       df = df1,
       colnames = c("var1", "var2")))),
@@ -85,14 +85,14 @@ expect_equal(
 
 # test
 expect_error(
-  suppressWarnings(
+  suppressMessages(
     dfMergeVariablesRelevel(
       df = cbind(df1, df1),
       colnames = 1:3)))
 
 # test
 expect_error(
-  suppressWarnings(
+  suppressMessages(
     dfMergeVariablesRelevel(
       df = df1,
       colnames = c("var1", "var2"),
@@ -101,16 +101,16 @@ expect_error(
 
 # test
 expect_equal(
-  sum(grepl(" / ", suppressWarnings(suppressMessages(
+  sum(grepl(" / ", suppressMessages(
     dfMergeVariablesRelevel(
-      df = df2, colnames = c("var1", "var2")))))), 2L)
+      df = df2, colnames = c("var1", "var2"))))), 2L)
 
 # test
 expect_equal(
-  sum(grepl(" / ", suppressWarnings(suppressMessages(
+  sum(grepl(" / ", suppressMessages(
     dfMergeVariablesRelevel(
       df = df2,
-      colnames = 'matches("var")'))))), 2L)
+      colnames = 'matches("var")')))), 2L)
 
 
 #### ctrGetQueryUrl ####
@@ -504,7 +504,10 @@ expect_true(
 # cleanup
 rm(dF, dL)
 
+
 #### ctrShowOneTrial ####
+
+if (!checkInternet()) exit_file("Reason: no internet connectivity")
 
 id <- "NCT00617929"
 id <- "2012-003632-23"
