@@ -125,9 +125,9 @@ can be calculated at the time of creating a data frame with
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">dbc</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">src_sqlite</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    dbname <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"demo.sqlite"</span>, package <span class="op">=</span> <span class="st">"ctrdata"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>    collection <span class="op">=</span> <span class="st">"my_trials"</span>,</span></span>
-<span class="r-in"><span>   <span class="fu">RSQLite</span><span class="fu">::</span><span class="va"><a href="https://rsqlite.r-dbi.org/reference/SQLite.html" class="external-link">SQLITE_RO</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span>  dbname <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"demo.sqlite"</span>, package <span class="op">=</span> <span class="st">"ctrdata"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  collection <span class="op">=</span> <span class="st">"my_trials"</span>,</span></span>
+<span class="r-in"><span>  flags <span class="op">=</span> <span class="fu">RSQLite</span><span class="fu">::</span><span class="va"><a href="https://rsqlite.r-dbi.org/reference/SQLite.html" class="external-link">SQLITE_RO</a></span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> RSQLite version has enabled accelerating docdb_create() and docdb_update() functions when used with value = &lt;NDJSON file name&gt;.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">dbFindIdsUniqueTrials</span><span class="op">(</span>con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span></span>
@@ -151,6 +151,8 @@ can be calculated at the time of creating a data frame with
 <span class="r-in"><span>  fields <span class="op">=</span> <span class="st">"keyword"</span>,</span></span>
 <span class="r-in"><span>  calculate <span class="op">=</span> <span class="st">".isUniqueTrial"</span>,</span></span>
 <span class="r-in"><span>  con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying database (24 fields)...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating .isUniqueTrial...                            </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - Finding duplicates among registers' and sponsor ids...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - 2 EUCTR _id were not preferred EU Member State record for 8 trials</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - Keeping 5 / 3 / 8 / 8 / 3 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS</span>
@@ -242,8 +244,10 @@ can be calculated at the time of creating a data frame with
 <span class="r-out co"><span class="r-pr">#&gt;</span> 28           TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 29           TRUE</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># using dplyr</span></span></span>
-<span class="r-in"><span><span class="co"># df %&gt;% filter(.isUniqueTrial)</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">df</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.isUniqueTrial</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

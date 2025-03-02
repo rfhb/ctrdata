@@ -69,16 +69,16 @@
 <li>ClinicalTrials.gov (“CTGOV2”, see <a href="#workflow-ctgov-example">example</a>)</li>
 <li>ISRCTN Registry (<a href="https://www.isrctn.com/" class="external-link uri">https://www.isrctn.com/</a>)</li>
 </ul>
-<p>The motivation is to investigate the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can use the databases created with this package. This README was reviewed on 2025-02-01 for version 1.20.0.9000.</p>
+<p>The motivation is to investigate the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can use the databases created with this package. This README was reviewed on 2025-03-02 for version 1.20.0.9000.</p>
 <div class="section level2">
 <h2 id="main-features">Main features<a class="anchor" aria-label="anchor" href="#main-features"></a>
 </h2>
 <ul>
 <li><p>Protocol- and results-related trial information is easily downloaded: Users define a query in a register’s web interface, then copy the URL and enter it into <code>ctrdata</code> which retrieves in one go all trials found. A <a href="#id_2-script-to-automatically-copy-users-query-from-web-browser">script</a> can automate copying the query URL from all registers. Personal annotations can be made when downloading trials. Also, <a href="#documents-example">trial documents</a> and <a href="https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html#analysing-sample-size-using-historic-versions-of-trial-records">historic versions</a> as available in registers on trials can be downloaded.</p></li>
 <li><p>Downloaded trial information is transformed and stored in a collection of a document-centric database, for fast and offline access. Information from different registers can be accumulated in a single collection. Uses <code>DuckDB</code>, <code>PostgreSQL</code>, <code>RSQLite</code> or <code>MongoDB</code>, via R package <code>nodbi</code>: see section <a href="#databases-that-can-be-used-with-ctrdata">Databases</a> below. Interactively browse through trial structure and data. Easily re-run any previous query in a collection to retrieve and update trial records.</p></li>
-<li><p>For analyses, convenience functions in <code>ctrdata</code> implement trial concepts canonically across registers 🔔, allow find synonyms of an active substance, to identify unique (de-duplicated) trial records across all registers, to merge and recode fields as well as to easily access deeply-nested fields. Analysis can be done with <code>R</code> (see <a href="https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html">vignette</a>) or other systems, using the <code>JSON</code>-<a href="#trial-records-in-databases">structured information in the database</a>.</p></li>
+<li><p>For analyses, convenience functions in <code>ctrdata</code> implement trial concepts canonically to simplify analyses across registers 🔔, allow find synonyms of an active substance, identify unique (de-duplicated) trial records across all registers, to merge and recode fields as well as to easily access deeply-nested fields. Analysis can be done with <code>R</code> (see <a href="https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html">vignette</a>) or other systems, using the <code>JSON</code>-<a href="#trial-records-in-databases">structured information in the database</a>.</p></li>
 </ul>
-<p>Remember to respect the registers’ terms and conditions (see <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>). Please cite this package in any publication as follows: “Ralf Herold (2024). <em>ctrdata: Retrieve and Analyze Clinical Trials in Public Registers.</em> R package version 1.20.0, <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a>”.</p>
+<p>Remember to respect the registers’ terms and conditions (see <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>). Please cite this package in any publication as follows: “Ralf Herold (2025). <em>ctrdata: Retrieve and Analyze Clinical Trials in Public Registers.</em> R package version 1.21.0, <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a>”.</p>
 <!--
 &#10;
 ``` r
@@ -123,15 +123,15 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span><span class="co"># Alternatively, install development version:</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"rfhb/ctrdata"</span>, build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p>These commands also install the package’s dependencies (<code>jsonlite</code>, <code>httr</code>, <code>curl</code>, <code>clipr</code>, <code>xml2</code>, <code>nodbi</code>, <code>stringi</code>, <code>tibble</code>, <code>lubridate</code>, <code>jqr</code>, <code>dplyr</code>, <code>zip</code> and <code>V8</code>).</p>
+<p>These commands also install the package’s dependencies (<code>jsonlite</code>, <code>httr</code>, <code>curl</code>, <code>clipr</code>, <code>xml2</code>, <code>nodbi</code>, <code>stringi</code>, <code>tibble</code>, <code>lubridate</code>, <code>jqr</code>, <code>dplyr</code>, <code>zip</code>, <code>readr</code>, <code>digest</code>, <code>countrycode</code>, <code>htmlwidgets</code>, <code>stringdist</code> and <code>V8</code>).</p>
 </div>
 <div class="section level3">
 <h3 id="id_2-script-to-automatically-copy-users-query-from-web-browser">2. Script to automatically copy user’s query from web browser<a class="anchor" aria-label="anchor" href="#id_2-script-to-automatically-copy-users-query-from-web-browser"></a>
 </h3>
-<p>This is optional; it works with all registers supported by <code>ctrdata</code> but is recommended for CTIS because the URL in the web browser does not reflect the parameters the user specified for querying this register.</p>
+<p>Optional; works with all registers supported by <code>ctrdata</code> and is recommended for CTIS so that its URL in the web browser reflects the user’s parameters for querying this register.</p>
 <p>In the web browser, install the <a href="https://www.tampermonkey.net/" class="external-link">Tampermonkey browser extension</a>, click on “New user script” and then on “Tools”, enter into “Import from URL” this URL: <a href="https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js" class="external-link"><code>https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js</code></a> and then click on “Install”.</p>
 <p>The browser extension can be disabled and enabled by the user. When enabled, the URLs to all user’s queries in the registers are automatically copied to the clipboard and can be pasted into the <code>queryterm = ...</code> parameter of function <a href="https://rfhb.github.io/ctrdata/reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a>.</p>
-<p>Additionally, this script retrieves results for <code>CTIS</code> search URLs such as <a href="https://euclinicaltrials.eu/ctis-public/search#searchCriteria=%7B%22status%22:%5B3,4%5D%7D" class="external-link">https://euclinicaltrials.eu/ctis-public/search#searchCriteria={“status”:[3,4]}</a>.</p>
+<p>Additionally, this script retrieves results for <code>CTIS</code> when opening search URLs such as <a href="https://euclinicaltrials.eu/ctis-public/search#searchCriteria=%7B%22status%22:%5B3,4%5D%7D" class="external-link">https://euclinicaltrials.eu/ctis-public/search#searchCriteria={“status”:[3,4]}</a>.</p>
 </div>
 </div>
 <div class="section level2">
@@ -158,33 +158,41 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <td>Find synonyms and alternative names for an active substance</td>
 </tr>
 <tr class="odd">
+<td><code><a href="reference/ctrGenerateQueries.html">ctrGenerateQueries()</a></code></td>
+<td><strong>From simple user parameters, generates queries for each register to find trials of interest</strong></td>
+</tr>
+<tr class="even">
 <td><code><a href="reference/ctrGetQueryUrl.html">ctrGetQueryUrl()</a></code></td>
 <td>Import from clipboard the URL of a search in one of the registers</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code></td>
 <td><strong>Retrieve (download) or update, and annotate, information on trials from a register and store in a collection in a database</strong></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code><a href="reference/ctrShowOneTrial.html">ctrShowOneTrial()</a></code></td>
 <td>🔔 Show full structure and all data of a trial, interactively select fields of interest for <code><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code>
 </td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code><a href="reference/dbQueryHistory.html">dbQueryHistory()</a></code></td>
 <td>Show the history of queries that were downloaded into the collection</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code><a href="reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials()</a></code></td>
 <td><strong>Get the identifiers of de-duplicated trials in the collection</strong></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code><a href="reference/dbFindFields.html">dbFindFields()</a></code></td>
 <td>Find names of variables (fields) in the collection</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code></td>
 <td><strong>Create a data frame (or tibble) from trial records in the database with the specified fields</strong></td>
+</tr>
+<tr class="odd">
+<td><code><a href="reference/dfCalculateConcept.html">dfCalculateConcept()</a></code></td>
+<td>Canonically calculate, across registers, concepts such as trial start or primary endpoint analysis method</td>
 </tr>
 <tr class="even">
 <td><code><a href="reference/dfTrials2Long.html">dfTrials2Long()</a></code></td>
@@ -205,8 +213,8 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <h2 id="databases-for-use-with-ctrdata">Databases for use with <code>ctrdata</code>
 <a class="anchor" aria-label="anchor" href="#databases-for-use-with-ctrdata"></a>
 </h2>
-<p>Package <code>ctrdata</code> retrieves trial information and stores it in a database collection, which has to be given as a connection object to parameter <code>con</code> for several <code>ctrdata</code> functions; this connection object is created in slightly different ways for the four supported database backends that can be used with <code>ctrdata</code> as shown in the table. For a speed comparison, see the <a href="https://github.com/ropensci/nodbi#benchmark" class="external-link">nodbi documentation</a>.</p>
-<p>Besides ctrdata functions below, any such a connection object can equally be used with functions of other packages, such as <code>nodbi</code> (last row in table) or, in case of MongoDB as database backend, <code>mongolite</code> (see vignettes).</p>
+<p>Package <code>ctrdata</code> retrieves trial information and stores it in a database collection, which has to be given as a connection object to parameter <code>con</code> for several <code>ctrdata</code> functions. This connection object is created almost identically for the four database backends supported by <code>ctrdata</code>, as shown in the table. For a speed comparison, see the <a href="https://github.com/ropensci/nodbi#benchmark" class="external-link">nodbi documentation</a>.</p>
+<p>Besides <code>ctrdata</code> functions below, such a connection object can be used with functions of other packages, such as <code>nodbi</code> (see last row in table) or, in case of MongoDB as database backend, <code>mongolite</code> (see vignettes).</p>
 <table class="table">
 <colgroup>
 <col width="50%">
@@ -222,16 +230,16 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <td><code>dbc &lt;- nodbi::src_sqlite(dbname = "name_of_my_database", collection = "name_of_my_collection")</code></td>
 </tr>
 <tr class="even">
+<td>Create <strong>DuckDB</strong> database connection</td>
+<td><code>dbc &lt;- nodbi::src_duckdb(dbdir = "name_of_my_database", collection = "name_of_my_collection")</code></td>
+</tr>
+<tr class="odd">
 <td>Create <strong>MongoDB</strong> database connection</td>
 <td><code>dbc &lt;- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Create <strong>PostgreSQL</strong> database connection</td>
 <td><code>dbc &lt;- nodbi::src_postgres(dbname = "name_of_my_database"); dbc[["collection"]] &lt;- "name_of_my_collection"</code></td>
-</tr>
-<tr class="even">
-<td>Create <strong>DuckDB</strong> database connection</td>
-<td><code>dbc &lt;- nodbi::src_duckdb(dbdir = "name_of_my_database", collection = "name_of_my_collection")</code></td>
 </tr>
 <tr class="odd">
 <td>Use connection with <code>ctrdata</code> functions</td>
@@ -249,9 +257,9 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <h2 id="data-model-of-ctrdata">Data model of <code>ctrdata</code>
 <a class="anchor" aria-label="anchor" href="#data-model-of-ctrdata"></a>
 </h2>
-<p>Package <code>ctrdata</code> uses the data models that are implicit in data retrieved from the different registers. No mapping is provided for any register’s data model to a putative target data model. The reasons include that registers’ data models are notably evolving over time and that there are only few data fields with similar values and meaning between the registers.</p>
-<p>Thus, the handling of data from different models of registers is to be done at the time of analysis. This approach allows a high level of flexibility, transparency and reproducibility. See examples in the help text for function <a href="https://rfhb.github.io/ctrdata/reference/dfMergeVariablesRelevel.html">dfMergeVariablesRelevel()</a> and section <a href="#workflow-cross-trial-example">Analysis across trials</a> below for how to align related fields from different registers for a joint analysis.</p>
-<p>In any of the <code>NoSQL</code> <a href="https://rfhb.github.io/ctrdata/index.html#databases-for-use-with-ctrdata">databases</a>, one clinical trial is one document, corresponding to one row in a <code>SQLite</code>, <code>PostgreSQL</code> or <code>DuckDB</code> table, and to one document in a <code>MongoDB</code> collection. The <code>NoSQL</code> backends allow documents to have different structures, which is used here to accommodate the different data models of registers. Package <code>ctrdata</code> stores in every such document:</p>
+<p>Package <code>ctrdata</code> uses the data models that are implicit in data as retrieved from the different registers. No mapping is provided for any register’s data model to a putative target data model. The reasons include that registers’ data models are continually evolving over time, that only few data fields have similar values and meaning between registers, and that the retrieved public data may not correspond to the registers’ internal data model. The structure of data for a specific trial can interactively be inspected and searched using function, see the section <a href="#workflow-data-model">below</a>.</p>
+<p>Thus, the handling of data from different models of registers is to be done at the time of analysis. This approach allows a high level of flexibility, transparency and reproducibility. To support analyses, <code>ctrdata</code> (from version 1.21.0) provides functions that calculate concepts of clinical trials across registers, which are commonly used in analyses, such as start dates, age groups and statistical tests of results. See <a href="https://rfhb.github.io/ctrdata/reference/dfCalculateConcept.html">dfCalculateConcept()</a> and the section <a href="#workflow-cross-trial-example">Analysis across trials</a> in the example workflow below. For further analyses, see examples of function <a href="https://rfhb.github.io/ctrdata/reference/dfMergeVariablesRelevel.html">dfMergeVariablesRelevel()</a> on how to align related fields from different registers for a joint analysis.</p>
+<p>In any of the <a href="https://rfhb.github.io/ctrdata/index.html#databases-for-use-with-ctrdata">databases</a>, one clinical trial is one document, corresponding to one row in a <code>SQLite</code>, <code>PostgreSQL</code> or <code>DuckDB</code> table, and to one document in a <code>MongoDB</code> collection. These <code>NoSQL</code> backends allow documents to have different structures, which is used here to accommodate the different models of data retrieved from the registers. Package <code>ctrdata</code> stores in every such document:</p>
 <ul>
 <li>field <code>_id</code> with the trial identification as provided by the register from which it was retrieved</li>
 <li>field <code>ctrname</code> with the name of the register (<code>EUCTR</code>, <code>CTGOV</code>, <code>CTGOV2</code>, <code>ISRCTN</code>, <code>CTIS</code>) from which that trial was retrieved</li>
@@ -307,25 +315,23 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <ul>
 <li><p>Adjust search parameters and execute search in browser</p></li>
 <li><p>When trials of interest are listed in browser, <em>copy the address from the browser’s address bar to the clipboard</em> (you can automate this, see <a href="#id_2-script-to-automatically-copy-users-query-from-web-browser">here</a>)</p></li>
-<li><p>Search used in this example: <a href="https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&amp;age=under-18&amp;phase=phase-one&amp;status=completed" class="external-link uri">https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&amp;age=under-18&amp;phase=phase-one&amp;status=completed</a></p></li>
+<li><p>Search used in this example: <a href="https://www.clinicaltrialsregister.eu/ctr-search/search?query=neuroblastoma&amp;phase=phase-two&amp;age=children" class="external-link uri">https://www.clinicaltrialsregister.eu/ctr-search/search?query=neuroblastoma&amp;phase=phase-two&amp;age=children</a></p></li>
 <li><p>Get address from clipboard:</p></li>
 </ul>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">q</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ctrGetQueryUrl.html">ctrGetQueryUrl</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co"># * Using clipboard content as register query URL:</span></span>
-<span><span class="co">#  https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&amp;</span></span>
-<span><span class="co">#  age=under-18&amp;phase=phase-one&amp;status=completed</span></span>
-<span><span class="co"># * Found search query from EUCTR: query=cancer&amp;age=under-18&amp;phase=phase-one&amp;status=completed</span></span>
+<span><span class="co"># * Using clipboard content as register query URL: https://www.clinicaltrialsregister.eu/</span></span>
+<span><span class="co"># ctr-search/search?query=neuroblastoma&amp;phase=phase-two&amp;age=children</span></span>
+<span><span class="co"># * Found search query from EUCTR: query=neuroblastoma&amp;phase=phase-two&amp;age=children</span></span>
 <span></span>
 <span><span class="va">q</span></span>
-<span><span class="co">#                                                   query-term  query-register</span></span>
-<span><span class="co"># 1 query=cancer&amp;age=under-18&amp;phase=phase-one&amp;status=completed           EUCTR</span></span></code></pre></div>
-<p>🔔 Queries in the trial registers can automatically copied to the clipboard (including for “CTIS”, where the URL does not show the query) using our solution <a href="#id_3-script-to-automatically-copy-users-query-from-web-browser">here</a>.</p>
+<span><span class="co">#                                         query-term query-register</span></span>
+<span><span class="co"># 1 query=neuroblastoma&amp;phase=phase-two&amp;age=children          EUCTR</span></span></code></pre></div>
+<p>🔔 Queries in the trial registers can automatically copied to the clipboard (including for “CTIS”, where the URL otherwise does not show the user’s query) using the solution <a href="#id_3-script-to-automatically-copy-users-query-from-web-browser">here</a>.</p>
 <ul>
 <li>Retrieve protocol-related information, transform and save to database:</li>
 </ul>
-<p>The database collection is specified first, using <code>nodbi</code> (see above for how to specify <code>PostgreSQL</code>, <code>RSQlite</code>, <code>DuckDB</code> or <code>MongoDB</code> as backend, see section <a href="#databases-that-can-be-used-with-ctrdata">Databases</a>).</p>
-<p>Then, trial information is retrieved and loaded into the collection:</p>
+<p>For loading the trial information, first a database collection is specified, using <code>nodbi</code> (see above for how to specify <code>PostgreSQL</code>, <code>RSQlite</code>, <code>DuckDB</code> or <code>MongoDB</code> as backend, see section <a href="#databases-that-can-be-used-with-ctrdata">Databases</a>):</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Connect to (or create) an SQLite database</span></span>
 <span><span class="co"># stored in a file on the local system:</span></span>
@@ -333,6 +339,7 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span>  dbname <span class="op">=</span> <span class="st">"some_database_name.sqlite_file"</span>,</span>
 <span>  collection <span class="op">=</span> <span class="st">"some_collection_name"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+<p>Then, the trial information is retrieved and loaded into the collection:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Retrieve trials from public register:</span></span>
 <span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
@@ -340,134 +347,122 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span>  euctrresults <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># * Found search query from EUCTR: </span></span>
-<span><span class="co">#   query=cancer&amp;age=under-18&amp;phase=phase-one&amp;status=completed</span></span>
 <span><span class="co"># * Checking trials in EUCTR...</span></span>
-<span><span class="co"># Retrieved overview, multiple records of 117 trial(s) from 6 page(s) to be downloaded (estimate: 20 MB)</span></span>
+<span><span class="co"># Retrieved overview, multiple records of 73 trial(s) from 4 page(s) to be downloaded (estimate: 9 MB)</span></span>
 <span><span class="co"># (1/3) Downloading trials...</span></span>
-<span><span class="co"># Note: register server cannot compress data, transfer takes longer (estimate: 100 s)</span></span>
-<span><span class="co"># Download status: 6 done; 0 in progress. Total size: 10.12 Mb (100%)... done!             </span></span>
-<span><span class="co"># (2/3) Converting to NDJSON (estimate: 2 s)...</span></span>
+<span><span class="co"># Note: register server cannot compress data, transfer takes longer (estimate: 90 s)</span></span>
+<span><span class="co"># Download status: 4 done; 0 in progress. Total size: 6.39 Mb (100%)... done!             </span></span>
+<span><span class="co"># (2/3) Converting to NDJSON (estimate: 1 s)...</span></span>
 <span><span class="co"># (3/3) Importing records into database...</span></span>
-<span><span class="co"># = Imported or updated 468 records on 117 trial(s)</span></span>
-<span><span class="co"># * Checking results if available from EUCTR for 117 trials: </span></span>
+<span><span class="co"># = Imported or updated 270 records on 73 trial(s) </span></span>
+<span><span class="co"># * Checking results if available from EUCTR for 73 trials: </span></span>
 <span><span class="co"># (1/4) Downloading results...</span></span>
-<span><span class="co"># Download status: 117 done; 0 in progress. Total size: 63.59 Mb (100%)... done!             </span></span>
-<span><span class="co"># Download status: 33 done; 0 in progress. Total size: 345.31 Kb (100%)... done!             </span></span>
-<span><span class="co"># Download status: 32 done; 0 in progress. Total size: 128.81 Kb (100%)... done!             </span></span>
-<span><span class="co"># Download status: 32 done; 0 in progress. Total size: 128.81 Kb (100%)... done!             </span></span>
+<span><span class="co"># Download status: 73 done; 0 in progress. Total size: 22.57 Mb (100%)... done!             </span></span>
+<span><span class="co"># Download status: 41 done; 0 in progress. Total size: 165.04 Kb (100%)... done!             </span></span>
+<span><span class="co"># Download status: 41 done; 0 in progress. Total size: 165.04 Kb (100%)... done!             </span></span>
 <span><span class="co"># - extracting results (. = data, F = file[s] and data, x = none):</span></span>
-<span><span class="co"># F . F F . F . . . F . . . F F . . . . . . . . . . . . . . . . . . . F . . . F . . . . . . F . . . . </span></span>
-<span><span class="co"># F . . . . . . . . . . . . . . F . . . . . . . . . F . . . . . . . . . </span></span>
-<span><span class="co"># (2/4) Converting to NDJSON (estimate: 9 s)...</span></span>
+<span><span class="co"># F F . . . . . . . F . . . F . . . F . . . . . F . . . . . . . F </span></span>
+<span><span class="co"># (2/4) Converting to NDJSON (estimate: 3 s)...</span></span>
 <span><span class="co"># (3/4) Importing results into database (may take some time)...</span></span>
 <span><span class="co"># (4/4) Results history: not retrieved (euctrresultshistory = FALSE)</span></span>
-<span><span class="co"># = Imported or updated results for 85 trials</span></span>
+<span><span class="co"># = Imported or updated results for 32 trials</span></span>
 <span><span class="co"># No history found in expected format.</span></span>
 <span><span class="co"># Updated history ("meta-info" in "some_collection_name")</span></span>
 <span><span class="co"># $n</span></span>
-<span><span class="co"># [1] 468</span></span></code></pre></div>
+<span><span class="co"># [1] 270</span></span></code></pre></div>
 <p>Under the hood, EUCTR plain text and XML files from EUCTR, CTGOV, ISRCTN are converted using Javascript via <code>V8</code> in <code>R</code> into <code>NDJSON</code>, which is imported into the database collection.</p>
+<ul>
+<li>Easily generate queries for each register and add records from several registers into the same collection</li>
+</ul>
+<p>The same parameters can be used to ask <code>ctrdata</code> to generate search queries that apply to each register, for opening the web interfaces and for loading the trial data into the collection:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Generate queries for each register</span></span>
+<span><span class="va">queries</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ctrGenerateQueries.html">ctrGenerateQueries</a></span><span class="op">(</span></span>
+<span>  condition <span class="op">=</span> <span class="st">"neuroblastoma"</span>,</span>
+<span>  recruitment <span class="op">=</span> <span class="st">"completed"</span>,</span>
+<span>  phase <span class="op">=</span> <span class="st">"phase 2"</span>,</span>
+<span>  population <span class="op">=</span> <span class="st">"P"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">queries</span></span>
+<span><span class="co"># EUCTR </span></span>
+<span><span class="co"># "https://www.clinicaltrialsregister.eu/ctr-search/search?query=neuroblastoma&amp;phase=phase-two</span></span>
+<span><span class="co"># &amp;age=children&amp;age=adolescent&amp;age=infant-and-toddler&amp;age=newborn&amp;age=preterm-new-born-infants</span></span>
+<span><span class="co"># &amp;age=under-18&amp;status=completed" </span></span>
+<span><span class="co"># CTGOV2 </span></span>
+<span><span class="co"># "https://clinicaltrials.gov/search?cond=neuroblastoma&amp;aggFilters=phase:2,ages:child,status:com" </span></span>
+<span><span class="co"># ISRCTN </span></span>
+<span><span class="co"># "https://www.isrctn.com/search?&amp;filters=condition:neuroblastoma,phase:Phase II,ageRange:Child,trialStatus:completed&amp;q=" </span></span>
+<span><span class="co"># CTIS </span></span>
+<span><span class="co"># "https://euclinicaltrials.eu/ctis-public/search#searchCriteria={\"medicalCondition\":</span></span>
+<span><span class="co"># \"neuroblastoma\",\"trialPhaseCode\":[4],\"ageGroupCode\":[2],\"status\":[5,8]}" </span></span>
+<span></span>
+<span><span class="co"># Open queries in registers' web interfaces</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">queries</span>, <span class="va">ctrOpenSearchPagesInBrowser</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Load all queries into database collection</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">queries</span>, <span class="va">ctrLoadQueryIntoDb</span>, con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">result</span>, <span class="st">"[["</span>, <span class="st">"n"</span><span class="op">)</span></span>
+<span><span class="co"># EUCTR CTGOV2 ISRCTN   CTIS </span></span>
+<span><span class="co">#   180    111      0      1 </span></span></code></pre></div>
 <ul>
 <li>Analyse</li>
 </ul>
 <p>Tabulate the status of trials that are part of an agreed paediatric development program (paediatric investigation plan, PIP). <code>ctrdata</code> functions return a data.frame (or a tibble, if package <code>tibble</code> is loaded).</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get all records that have values in the fields of interest:</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span>
-<span>  fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>    <span class="st">"a7_trial_is_part_of_a_paediatric_investigation_plan"</span>,</span>
-<span>    <span class="st">"p_end_of_trial_status"</span>,</span>
-<span>    <span class="st">"a2_eudract_number"</span></span>
-<span>  <span class="op">)</span>,</span>
+<span>  <span class="co"># Field of interest </span></span>
+<span>  fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a7_trial_is_part_of_a_paediatric_investigation_plan"</span><span class="op">)</span>,</span>
+<span>  <span class="co"># Trial concepts calculated across registers</span></span>
+<span>  calculate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">".statusRecruitment"</span>, <span class="st">".isUniqueTrial"</span><span class="op">)</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co"># Querying database (35 fields)...</span></span>
+<span><span class="co"># - Finding duplicates among registers' and sponsor ids...     </span></span>
+<span><span class="co"># - 114 EUCTR _id were not preferred EU Member State record for 40 trials</span></span>
+<span><span class="co"># - Keeping 111 / 34 / 0 / 0 / 1 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS</span></span>
 <span></span>
-<span><span class="co"># Find unique (deduplicated) trial identifiers for trials that have more than</span></span>
-<span><span class="co"># one record, for example for several EU Member States or in several registers:</span></span>
-<span><span class="va">uniqueids</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></span>
-<span><span class="co"># Searching for duplicate trials... </span></span>
-<span><span class="co"># - Getting all trial identifiers (may take some time), 468 found in collection</span></span>
-<span><span class="co"># - Finding duplicates among registers' and sponsor ids...</span></span>
-<span><span class="co"># - 351 EUCTR _id were not preferred EU Member State record for 117 trials</span></span>
-<span><span class="co"># - Keeping 117 / 0 / 0 / 0 / 0 records from EUCTR / CTGOV / CTGOV2 / ISRCTN / CTIS</span></span>
-<span><span class="co"># = Returning keys (_id) of 117 records in collection "some_collection_name"</span></span>
-<span></span>
-<span><span class="co"># Keep only unique / de-duplicated records:</span></span>
-<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span></span>
-<span>  <span class="va">result</span>,</span>
-<span>  subset <span class="op">=</span> <span class="va">`_id`</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">uniqueids</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Tabulate the selected clinical trial information:</span></span>
+<span><span class="co"># Tabulate the clinical trial information of interest</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span></span>
-<span>  <span class="va">result</span>,</span>
+<span>  <span class="va">result</span><span class="op">[</span><span class="va">result</span><span class="op">$</span><span class="va">.isUniqueTrial</span>, <span class="op">]</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span></span>
-<span>    <span class="va">p_end_of_trial_status</span>,</span>
+<span>    <span class="va">.statusRecruitment</span>,</span>
 <span>    <span class="va">a7_trial_is_part_of_a_paediatric_investigation_plan</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#      a7_trial_is_part_of_a_paediatric_investigation_plan</span></span>
-<span><span class="co"># p_end_of_trial_status      FALSE TRUE</span></span>
-<span><span class="co">#   Completed                   55   24</span></span>
-<span><span class="co">#   GB - no longer in EU/EEA     1    1</span></span>
-<span><span class="co">#   Ongoing                      1    2</span></span>
-<span><span class="co">#   Prematurely Ended            3    4</span></span>
-<span><span class="co">#   Temporarily Halted           1    1</span></span>
-<span><span class="co">#   Trial now transitioned       4    4</span></span></code></pre></div>
+<span><span class="co">#                   a7_trial_is_part_of_a_paediatric_investigation_plan</span></span>
+<span><span class="co"># .statusRecruitment FALSE TRUE</span></span>
+<span><span class="co">#          ongoing       0    0</span></span>
+<span><span class="co">#          completed    12    6</span></span>
+<span><span class="co">#          other         2    2</span></span></code></pre></div>
 <div id="workflow-ctgov-example">
 
 </div>
 <ul>
-<li>Add records from another register (CTGOV2) into the same collection</li>
+<li>Queries to CTGOV and CTGOV2</li>
 </ul>
 <p>The new website and API introduced in July 2023 (<a href="https://www.clinicaltrials.gov/" class="external-link uri">https://www.clinicaltrials.gov/</a>) is supported by <code>ctrdata</code> since mid-2023 and identified in <code>ctrdata</code> as <code>CTGOV2</code>.</p>
 <p>On 2024-06-25, <code>CTGOV</code> has retired the classic website and API used by <code>ctrdata</code> since 2015. To support users, <code>ctrdata</code> automatically translates and redirects queries to the current website. This helps with automatically updating previously loaded queries (<code>ctrLoadQueryIntoDb(querytoupdate = &lt;n&gt;)</code>), manually migrating queries and reproducible work on clinical trials information. Going forward, users are recommended to change to use <code>CTGOV2</code> queries.</p>
 <p>As regards study data, important differences exist between field names and contents of information retrieved using <code>CTGOV</code> or <code>CTGOV2</code>; see the <a href="https://cdn.clinicaltrials.gov/documents/xsd/prs/ProtocolRecordSchema.xsd" class="external-link">schema for study protocols in <code>CTGOV</code></a>, the <a href="https://cdn.clinicaltrials.gov/documents/xsd/prs/RRSUploadSchema.xsd" class="external-link">schema for study results</a> and the <a href="https://clinicaltrials.gov/data-api/about-api/study-data-structure" class="external-link">Study Data Structure for <code>CTGOV2</code></a>. For more details, call <code><a href="reference/ctrdata-registers.html">help("ctrdata-registers")</a></code>. This is one of the reasons why <code>ctrdata</code> handles the situation as if these were two different registers and will continue to identify the current API as <code>register = "CTGOV2"</code>, to support the analysis stage.</p>
 <p>Note that loading trials with <code>ctrdata</code> overwrites the previous record with <code>CTGOV2</code> data, whether the previous record was retrieved using <code>CTGOV</code> or <code>CTGOV2</code> queries.</p>
-<ul>
-<li>Search used in this example: <a href="https://www.clinicaltrials.gov/search?cond=Neuroblastoma&amp;aggFilters=ages:child,results:with,studyType:int" class="external-link uri">https://www.clinicaltrials.gov/search?cond=Neuroblastoma&amp;aggFilters=ages:child,results:with,studyType:int</a>
-</li>
-</ul>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Retrieve trials from another register:</span></span>
-<span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
-<span>  queryterm <span class="op">=</span> <span class="st">"cond=Neuroblastoma&amp;aggFilters=ages:child,results:with,studyType:int"</span>,</span>
-<span>  register <span class="op">=</span> <span class="st">"CTGOV2"</span>,</span>
-<span>  con <span class="op">=</span> <span class="va">db</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co"># * Appears specific for CTGOV REST API 2.0</span></span>
-<span><span class="co"># * Found search query from CTGOV2: cond=Neuroblastoma&amp;aggFilters=ages:child,results:with,studyType:int</span></span>
-<span><span class="co"># * Checking trials using CTGOV REST API 2.0, found 106 trials</span></span>
-<span><span class="co"># (1/3) Downloading in 1 batch(es) (max. 1000 trials each; estimate: 11 Mb total)</span></span>
-<span><span class="co"># Download status: 1 done; 0 in progress. Total size: 9.88 Mb (799%)... done!             </span></span>
-<span><span class="co"># (2/3) Converting to NDJSON...</span></span>
-<span><span class="co"># (3/3) Importing records into database...</span></span>
-<span><span class="co"># JSON file #: 1 / 1                               </span></span>
-<span><span class="co"># = Imported or updated 106 trial(s)</span></span>
-<span><span class="co"># Updated history ("meta-info" in "some_collection_name")</span></span>
-<span><span class="co"># $n</span></span>
-<span><span class="co"># [1] 106</span></span></code></pre></div>
-<ul>
-<li>Using an example from classic CTGOV:</li>
-</ul>
+<p>Example using a CTGOV query:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Retrieve trials:</span></span>
-<span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
-<span>  queryterm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
-<span>    <span class="st">"https://classic.clinicaltrials.gov/ct2/results?"</span>, </span>
-<span>    <span class="st">"cond=neuroblastoma&amp;rslt=With&amp;recrs=e&amp;age=0&amp;intr=Drug"</span><span class="op">)</span>,</span>
-<span>  con <span class="op">=</span> <span class="va">db</span></span>
-<span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># CTGOV search query URL</span></span>
+<span><span class="va">q</span> <span class="op">&lt;-</span> <span class="st">"https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&amp;rslt=With&amp;recrs=e&amp;age=0&amp;intr=Drug"</span></span>
+<span></span>
+<span><span class="co"># Open old URL (CTGOV) in current website (CTGOV2):</span></span>
+<span><span class="fu"><a href="reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser</a></span><span class="op">(</span><span class="va">q</span><span class="op">)</span></span>
 <span><span class="co"># * Appears specific for CTGOV Classic website</span></span>
 <span><span class="co"># Since 2024-06-25, the classic CTGOV servers are no longer available. </span></span>
-<span><span class="co"># Package ctrdata has translated the classic CTGOV query URL from this call of </span></span>
-<span><span class="co"># function ctrLoadQueryIntoDb(queryterm = ...) into a query URL that works with </span></span>
-<span><span class="co"># the current CTGOV2. This is printed below and is also part of the return value </span></span>
-<span><span class="co"># of this function, ctrLoadQueryIntoDb(...)$url. This URL can be used with ctrdata </span></span>
-<span><span class="co"># functions. Note that the fields and data schema of trials differ between CTGOV </span></span>
-<span><span class="co"># and CTGOV2. </span></span>
-<span><span class="co"># </span></span>
+<span><span class="co"># Package ctrdata has translated the classic CTGOV query URL from this call </span></span>
+<span><span class="co"># of function ctrLoadQueryIntoDb(queryterm = ...) into a query URL that works </span></span>
+<span><span class="co"># with the current CTGOV2. This is printed below and is also part of the return </span></span>
+<span><span class="co"># value of this function, ctrLoadQueryIntoDb(...)$url. This URL can be used with </span></span>
+<span><span class="co"># ctrdata functions. Note that the fields and data schema of trials differ </span></span>
+<span><span class="co"># between CTGOV and CTGOV2. </span></span>
+<span><span class="co">#</span></span>
 <span><span class="co"># Replace this URL:</span></span>
 <span><span class="co"># </span></span>
 <span><span class="co"># https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&amp;rslt=With&amp;recrs=e&amp;age=0&amp;intr=Drug</span></span>
@@ -477,45 +472,23 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span><span class="co"># https://clinicaltrials.gov/search?cond=neuroblastoma&amp;intr=Drug&amp;aggFilters=ages:child,results:with,status:com</span></span>
 <span><span class="co"># </span></span>
 <span><span class="co"># * Found search query from CTGOV2: cond=neuroblastoma&amp;intr=Drug&amp;aggFilters=ages:child,results:with,status:com</span></span>
-<span><span class="co"># * Checking trials using CTGOV REST API 2.0, found 69 trials</span></span>
-<span><span class="co"># (1/3) Downloading in 1 batch(es) (max. 1000 trials each; estimate: 6.9 Mb total)</span></span>
-<span><span class="co"># Download status: 1 done; 0 in progress. Total size: 7.57 Mb (880%)... done!             </span></span>
-<span><span class="co"># (2/3) Converting to NDJSON...</span></span>
-<span><span class="co"># (3/3) Importing records into database...</span></span>
-<span><span class="co"># JSON file #: 1 / 1                               </span></span>
-<span><span class="co"># = Imported or updated 69 trial(s)</span></span>
-<span><span class="co"># Updated history ("meta-info" in "some_collection_name")</span></span>
-<span><span class="co"># $n</span></span>
-<span><span class="co"># [1] 69</span></span></code></pre></div>
-<ul>
-<li>Add records from a third register (ISRCTN) into the same collection</li>
-</ul>
-<p>Search used in this example: <a href="https://www.isrctn.com/search?q=neuroblastoma" class="external-link uri">https://www.isrctn.com/search?q=neuroblastoma</a></p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Retrieve trials from another register:</span></span>
+<span></span>
+<span><span class="co"># Count trials:</span></span>
 <span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
-<span>  queryterm <span class="op">=</span> <span class="st">"https://www.isrctn.com/search?q=neuroblastoma"</span>,</span>
-<span>  con <span class="op">=</span> <span class="va">db</span></span>
+<span>  queryterm <span class="op">=</span> <span class="va">q</span>,</span>
+<span>  con <span class="op">=</span> <span class="va">db</span>, </span>
+<span>  only.count <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># * Found search query from ISRCTN: q=neuroblastoma</span></span>
-<span><span class="co"># * Checking trials in ISRCTN...</span></span>
-<span><span class="co"># Retrieved overview, records of 13 trial(s) are to be downloaded (estimate: 0.2 MB)</span></span>
-<span><span class="co"># (1/3) Downloading trial file... </span></span>
-<span><span class="co"># Download status: 1 done; 0 in progress. Total size: 178.41 Kb (100%)... done!             </span></span>
-<span><span class="co"># (2/3) Converting to NDJSON (estimate: 0.08 s)...</span></span>
-<span><span class="co"># (3/3) Importing records into database...</span></span>
-<span><span class="co"># = Imported or updated 13 trial(s)                </span></span>
-<span><span class="co"># Updated history ("meta-info" in "some_collection_name")</span></span>
 <span><span class="co"># $n</span></span>
-<span><span class="co"># [1] 13</span></span></code></pre></div>
+<span><span class="co"># [1] 70</span></span></code></pre></div>
 <div id="workflow-ctis-example">
 
 </div>
 <ul>
-<li>Add records from a fourth register (CTIS 🔔) into the same collection</li>
+<li>Queries to CTIS</li>
 </ul>
-<p>Queries in the CTIS search interface can be automatically copied to the clipboard so that a user can paste them into <code>queryterm</code>, see <a href="#id_2-script-to-automatically-copy-users-query-from-web-browser">here</a>. Subsequent to the relaunch of CTIS on 2024-07-18, there are more than 8,000 trials publicly accessible in CTIS. See <a href="#documents-example">below</a> for how to download documents from CTIS.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<p>Queries in the CTIS search interface can be automatically copied to the clipboard so that a user can paste them into <code>queryterm</code>, see <a href="#id_2-script-to-automatically-copy-users-query-from-web-browser">here</a>. Subsequent to the relaunch of CTIS on 2024-07-18, there are more than 8,700 trials publicly accessible in CTIS. See <a href="#documents-example">below</a> for how to download documents from CTIS.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># See how many trials are in CTIS publicly accessible:</span></span>
 <span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
 <span>  queryterm <span class="op">=</span> <span class="st">""</span>,</span>
@@ -523,93 +496,22 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span>  only.count <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># $n</span></span>
-<span><span class="co"># [1] 8573</span></span>
-<span></span>
-<span><span class="co"># Retrieve trials from another register:</span></span>
-<span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
-<span>  queryterm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
-<span>    <span class="st">'https://euclinicaltrials.eu/ctis-public/search#'</span>, </span>
-<span>    <span class="st">'searchCriteria={"containAny":"neonate, neonates"}'</span><span class="op">)</span>,</span>
+<span><span class="co"># [1] 8754</span></span></code></pre></div>
+<div id="workflow-data-model">
+
+</div>
+<ul>
+<li>Inspect and search structure of trial information</li>
+</ul>
+<p>For a given trial, function <a href="https://rfhb.github.io/ctrdata/reference/ctrShowOneTrial.html">ctrShowOneTrial()</a> enables the user to visualise the hiearchy of fields and contents in the user’s local web browser, to search for field names and field values, and to select and copy selected fields’ names for use with function <a href="https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a>.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># This opens a local browser for user interaction. </span></span>
+<span><span class="co"># If the trial identifier (_id) is not found in the</span></span>
+<span><span class="co"># specified collection, it will be retrieved from the register. </span></span>
+<span><span class="fu"><a href="reference/ctrShowOneTrial.html">ctrShowOneTrial</a></span><span class="op">(</span></span>
+<span>  identifier <span class="op">=</span> <span class="st">"2024-518931-12-00"</span>, </span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co"># * Found search query from CTIS: searchCriteria={"containAny":"neonate, neonates"}</span></span>
-<span><span class="co"># * Checking trials in CTIS...</span></span>
-<span><span class="co"># (1/4) Downloading trial list(s), found 22 trials </span></span>
-<span><span class="co"># (2/4) Downloading and processing trial data... (estimate: 2 Mb)</span></span>
-<span><span class="co"># Download status: 22 done; 0 in progress. Total size: 1.02 Mb (100%)... done!             </span></span>
-<span><span class="co"># (3/4) Importing records into database...</span></span>
-<span><span class="co"># (4/4) Updating with additional data: .           </span></span>
-<span><span class="co"># = Imported 22, updated 22 record(s) on 22 trial(s)</span></span>
-<span><span class="co"># Updated history ("meta-info" in "some_collection_name")</span></span>
-<span><span class="co"># $n</span></span>
-<span><span class="co"># [1] 22</span></span>
-<span></span>
-<span><span class="va">allFields</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbFindFields.html">dbFindFields</a></span><span class="op">(</span><span class="st">".*"</span>, <span class="va">db</span>, sample <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co"># Finding fields in database collection (sampling 5 trial records per register)  .  .  .  .  .  .  .  . </span></span>
-<span><span class="co"># Field names cached for this session.</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">allFields</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"CTIS"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">allFields</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co"># [1] 696</span></span>
-<span></span>
-<span><span class="co"># root field names in CTIS</span></span>
-<span><span class="va">ctisFields</span> <span class="op">&lt;-</span> <span class="va">allFields</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"CTIS"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">allFields</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="va">ctisFields</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"[.]"</span>, <span class="va">ctisFields</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="co">#                   CTIS                    CTIS                    CTIS </span></span>
-<span><span class="co">#             "ageGroup"     "ageRangeSecondary" "authorizedApplication" </span></span>
-<span><span class="co">#                   CTIS                    CTIS                    CTIS </span></span>
-<span><span class="co">#   "correctiveMeasures"              "ctNumber"    "ctPublicStatusCode" </span></span>
-<span><span class="co">#                   CTIS                    CTIS                    CTIS </span></span>
-<span><span class="co">#              "ctrname"              "ctStatus"          "decisionDate" </span></span>
-<span><span class="co">#                   CTIS                    CTIS                    CTIS </span></span>
-<span><span class="co">#  "decisionDateOverall"             "documents"                "events" </span></span>
-<span><span class="co">#                   CTIS                    CTIS                    CTIS </span></span>
-<span><span class="co">#               "gender" "lastPublicationUpdate"           "lastUpdated" </span></span>
-<span><span class="co">#                   CTIS                    CTIS                    CTIS </span></span>
-<span><span class="co">#          "publishDate"    "record_last_import"               "results" </span></span>
-<span><span class="co">#                   CTIS                    CTIS                    CTIS </span></span>
-<span><span class="co"># "resultsFirstReceived"            "shortTitle"           "sponsorType" </span></span>
-<span><span class="co">#                   CTIS                    CTIS                    CTIS </span></span>
-<span><span class="co">#          "startDateEU"      "therapeuticAreas"   "totalNumberEnrolled" </span></span>
-<span><span class="co">#                   CTIS                    CTIS                    CTIS </span></span>
-<span><span class="co">#       "trialCountries"            "trialPhase"           "trialRegion" </span></span>
-<span><span class="co">#                   CTIS </span></span>
-<span><span class="co">#      "trialRegionCode" </span></span>
-<span></span>
-<span><span class="co"># use an alternative to dbGetFieldsIntoDf()</span></span>
-<span><span class="va">allData</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/docdb_query.html" class="external-link">docdb_query</a></span><span class="op">(</span></span>
-<span>  src <span class="op">=</span> <span class="va">db</span>, </span>
-<span>  key <span class="op">=</span> <span class="va">db</span><span class="op">$</span><span class="va">collection</span>, </span>
-<span>  query <span class="op">=</span> <span class="st">'{"ctrname":"CTIS"}'</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># names of top-level data items</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">allData</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#  [1] "_id"                   "ageGroup"              "ageRangeSecondary"    </span></span>
-<span><span class="co">#  [4] "authorizedApplication" "correctiveMeasures"    "ctNumber"             </span></span>
-<span><span class="co">#  [7] "ctPublicStatusCode"    "ctrname"               "ctStatus"             </span></span>
-<span><span class="co"># [10] "decisionDate"          "decisionDateOverall"   "documents"            </span></span>
-<span><span class="co"># [13] "events"                "gender"                "lastPublicationUpdate"</span></span>
-<span><span class="co"># [16] "lastUpdated"           "publishDate"           "record_last_import"   </span></span>
-<span><span class="co"># [19] "results"               "resultsFirstReceived"  "shortTitle"           </span></span>
-<span><span class="co"># [22] "sponsorType"           "startDateEU"           "therapeuticAreas"     </span></span>
-<span><span class="co"># [25] "totalNumberEnrolled"   "trialCountries"        "trialPhase"           </span></span>
-<span><span class="co"># [28] "trialRegion"           "trialRegionCode" </span></span>
-<span></span>
-<span><span class="co"># use yet another alternative</span></span>
-<span><span class="va">oneTrial</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html" class="external-link">dbGetQuery</a></span><span class="op">(</span></span>
-<span>  <span class="va">db</span><span class="op">$</span><span class="va">con</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
-<span>    <span class="st">"SELECT json(json) FROM "</span>, <span class="va">db</span><span class="op">$</span><span class="va">collection</span>, </span>
-<span>    <span class="st">" WHERE jsonb_extract(json, '$.ctrname') == 'CTIS'"</span>,</span>
-<span>    <span class="st">" LIMIT 1;"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># display full json tree</span></span>
-<span><span class="co"># remotes::install_github("hrbrmstr/jsonview")</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="http://github.com/hrbrmstr/jsonview" class="external-link">jsonview</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/pkg/jsonview/man/json_tree_view.html" class="external-link">json_tree_view</a></span><span class="op">(</span><span class="va">oneTrial</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># total size of object</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/object.size.html" class="external-link">object.size</a></span><span class="op">(</span><span class="va">allData</span><span class="op">)</span>, <span class="st">"MB"</span><span class="op">)</span></span>
-<span><span class="co"># [1] "4.7 Mb"</span></span></code></pre></div>
+<span><span class="op">)</span></span></code></pre></div>
 <div id="workflow-cross-trial-example">
 
 </div>
@@ -618,7 +520,7 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 </ul>
 <p>Show cumulative start of trials over time. This uses the calculation of trial concepts as available since <code>ctrdata</code> version 1.21.0 🔔.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># use helper library</span></span>
+<code class="sourceCode R"><span><span class="co"># use helper package</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span></span>
@@ -634,7 +536,7 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span>    x <span class="op">=</span> <span class="va">.startDate</span>,</span>
 <span>    colour <span class="op">=</span> <span class="va">.statusRecruitment</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
-<span>    title <span class="op">=</span> <span class="st">"Evolution over time of a set of trials"</span>, </span>
+<span>    title <span class="op">=</span> <span class="st">"Evolution over time of selected trials"</span>, </span>
 <span>    subtitle <span class="op">=</span> <span class="st">"Data from EUCTR, CTIS, ISRCTN, CTGOV2"</span>,</span>
 <span>    x <span class="op">=</span> <span class="st">"Date of start (proposed or realised)"</span>, </span>
 <span>    y <span class="op">=</span> <span class="st">"Cumulative proportion of trials"</span>,</span>
@@ -653,56 +555,29 @@ Analysis across registers
 </ul>
 <p>Analyse some simple result details, here from CTGOV2 (see this <a href="https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html">vignette</a> for more examples):</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Get all records that have values in any of the specified fields:</span></span>
+<code class="sourceCode R"><span><span class="co"># use helper package</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span>
-<span>  fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>    <span class="co"># fields from CTGOV2 only</span></span>
-<span>    <span class="st">"resultsSection.baselineCharacteristicsModule.denoms.counts.value"</span>,</span>
-<span>    <span class="st">"resultsSection.baselineCharacteristicsModule.denoms.units"</span>,</span>
-<span>    <span class="st">"resultsSection.baselineCharacteristicsModule.groups.title"</span>,</span>
-<span>    <span class="st">"protocolSection.armsInterventionsModule.armGroups.type"</span>,</span>
-<span>    <span class="st">"protocolSection.designModule.designInfo.allocation"</span>,</span>
-<span>    <span class="st">"protocolSection.contactsLocationsModule.locations.city"</span>,</span>
-<span>    <span class="st">"protocolSection.conditionsModule.conditions"</span></span>
-<span>  <span class="op">)</span>,</span>
+<span>  calculate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>    <span class="st">".numSites"</span>, </span>
+<span>    <span class="st">".sampleSize"</span>, </span>
+<span>    <span class="st">".controlType"</span>, </span>
+<span>    <span class="st">".numTestArmsSubstances"</span><span class="op">)</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Mangle to calculate:</span></span>
-<span><span class="co"># - which columns with values for group counts are not labelled Total</span></span>
-<span><span class="co"># - what are the numbers in each of the groups etc.</span></span>
-<span><span class="va">result</span> <span class="op">%&lt;&gt;%</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rowwise.html" class="external-link">rowwise</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
-<span>    number_of_arms <span class="op">=</span> <span class="fu">stringi</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/stringi/man/stri_count.html" class="external-link">stri_count_fixed</a></span><span class="op">(</span></span>
-<span>      <span class="va">resultsSection.baselineCharacteristicsModule.groups.title</span>, <span class="st">" / "</span><span class="op">)</span>, </span>
-<span>    is_randomised <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
-<span>      <span class="va">protocolSection.designModule.designInfo.allocation</span> <span class="op">==</span> <span class="st">"RANDOMIZED"</span> <span class="op">~</span> <span class="cn">TRUE</span>,</span>
-<span>      <span class="va">protocolSection.designModule.designInfo.allocation</span> <span class="op">==</span> <span class="st">"NON_RANDOMIZED"</span> <span class="op">~</span> <span class="cn">FALSE</span>, </span>
-<span>      <span class="va">number_of_arms</span> <span class="op">==</span> <span class="fl">1L</span> <span class="op">~</span> <span class="cn">FALSE</span>,</span>
-<span>      .default <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span>    <span class="op">)</span>,</span>
-<span>    which_not_total <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/strsplit.html" class="external-link">strsplit</a></span><span class="op">(</span></span>
-<span>      <span class="va">resultsSection.baselineCharacteristicsModule.groups.title</span>, <span class="st">" / "</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">!=</span> <span class="st">"Total"</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>    num_sites <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/strsplit.html" class="external-link">strsplit</a></span><span class="op">(</span><span class="va">protocolSection.contactsLocationsModule.locations.city</span>, <span class="st">" / "</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,</span>
-<span>    num_participants <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span></span>
-<span>      <span class="va">resultsSection.baselineCharacteristicsModule.denoms.counts.value</span><span class="op">[</span><span class="va">which_not_total</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>    num_arms_or_groups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">number_of_arms</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">which_not_total</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Example plot:</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">result</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
-<span>    title <span class="op">=</span> <span class="st">"Trials including patients with a neuroblastoma"</span>,</span>
-<span>    subtitle <span class="op">=</span> <span class="st">"ClinicalTrials.Gov, trials with results"</span></span>
+<span>    title <span class="op">=</span> <span class="st">"Selected trials"</span>,</span>
+<span>    subtitle <span class="op">=</span> <span class="st">"Patients with a neuroblastoma"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span></span>
 <span>    mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span></span>
-<span>      x <span class="op">=</span> <span class="va">num_sites</span>,</span>
-<span>      y <span class="op">=</span> <span class="va">num_participants</span>,</span>
-<span>      size <span class="op">=</span> <span class="va">num_arms_or_groups</span>,</span>
-<span>      colour <span class="op">=</span> <span class="va">is_randomised</span></span>
+<span>      x <span class="op">=</span> <span class="va">.numSites</span>,</span>
+<span>      y <span class="op">=</span> <span class="va">.sampleSize</span>,</span>
+<span>      size <span class="op">=</span> <span class="va">.numTestArmsSubstances</span>,</span>
+<span>      colour <span class="op">=</span> <span class="va">.controlType</span></span>
 <span>    <span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_log10</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -710,8 +585,8 @@ Analysis across registers
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
 <span>    x <span class="op">=</span> <span class="st">"Number of sites"</span>,</span>
 <span>    y <span class="op">=</span> <span class="st">"Total number of participants"</span>,</span>
-<span>    colour <span class="op">=</span> <span class="st">"Randomised?"</span>, </span>
-<span>    size <span class="op">=</span> <span class="st">"# Arms / groups"</span>,</span>
+<span>    colour <span class="op">=</span> <span class="st">"Control"</span>, </span>
+<span>    size <span class="op">=</span> <span class="st">"# Treatments"</span>,</span>
 <span>    caption <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggsave</a></span><span class="op">(</span></span>
@@ -738,12 +613,10 @@ Neuroblastoma trials
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># * Found search query from EUCTR: query=cancer&amp;age=under-18&amp;phase=phase-one</span></span>
+<span><span class="co"># * Checking trials in EUCTR...</span></span>
 <span><span class="co"># [...]</span></span>
-<span><span class="co"># Created directory ./files-euctr/</span></span>
-<span><span class="co"># Downloading trials...</span></span>
-<span><span class="co"># [...]</span></span>
-<span><span class="co"># = Imported or updated results for 125 trials</span></span>
 <span><span class="co"># = documents saved in './files-euctr'</span></span>
+<span><span class="co"># Updated history ("meta-info" in "some_collection_name")</span></span>
 <span></span>
 <span></span>
 <span><span class="co">### CTGOV files are downloaded, here corresponding to the default of </span></span>
@@ -757,12 +630,13 @@ Neuroblastoma trials
 <span><span class="co"># * Checking for documents...</span></span>
 <span><span class="co"># - Getting links to documents</span></span>
 <span><span class="co"># - Downloading documents into 'documents.path' = ./files-ctgov/</span></span>
+<span><span class="co"># - Created directory ./files-ctgov</span></span>
+<span><span class="co"># - Applying 'documents.regexp' to 40 missing documents</span></span>
 <span><span class="co"># - Creating subfolder for each trial</span></span>
-<span><span class="co"># - Applying 'documents.regexp' to 35 missing documents</span></span>
-<span><span class="co"># - Downloading 35 missing documents</span></span>
-<span><span class="co"># Download status: 35 done; 0 in progress. Total size: 76.67 Mb (100%)... done!             </span></span>
-<span><span class="co"># = Newly saved 35 document(s) for 27 trial(s); 0 of such document(s) for 0 </span></span>
-<span><span class="co"># trial(s) already existed in ./files-ctgov</span></span>
+<span><span class="co"># - Downloading 40 missing documents </span></span>
+<span><span class="co"># Download status: 40 done; 0 in progress. Total size: 110.75 Mb (100%)... done!             </span></span>
+<span><span class="co"># = Newly saved 40 document(s) for 32 trial(s); 0 of such document(s) for 0 trial(s) </span></span>
+<span><span class="co"># already existed in ./files-ctgov</span></span>
 <span></span>
 <span></span>
 <span><span class="co">### CTGOV2 files are downloaded, using the default of documents.regexp</span></span>
@@ -776,11 +650,11 @@ Neuroblastoma trials
 <span><span class="co"># - Downloading documents into 'documents.path' = ./files-ctgov2/</span></span>
 <span><span class="co"># - Created directory ./files-ctgov2</span></span>
 <span><span class="co"># - Creating subfolder for each trial</span></span>
-<span><span class="co"># - Applying 'documents.regexp' to 37 missing documents</span></span>
-<span><span class="co"># - Downloading 37 missing documents</span></span>
-<span><span class="co"># Download status: 37 done; 0 in progress. Total size: 77.70 Mb (100%)... done!             </span></span>
-<span><span class="co"># = Newly saved 37 document(s) for 23 trial(s); 0 of such document(s) for 0 </span></span>
-<span><span class="co"># trial(s) already existed in .\files-ctgov2</span></span>
+<span><span class="co"># - Applying 'documents.regexp' to 42 missing documents</span></span>
+<span><span class="co"># - Downloading 42 missing documents</span></span>
+<span><span class="co"># Download status: 42 done; 0 in progress. Total size: 92.57 Mb (100%)... done!             </span></span>
+<span><span class="co"># = Newly saved 42 document(s) for 26 trial(s); 0 of such document(s) for 0 </span></span>
+<span><span class="co"># trial(s) already existed in ./files-ctgov2</span></span>
 <span></span>
 <span></span>
 <span><span class="co">### ISRCTN files are downloaded, using the default of documents.regexp</span></span>
@@ -794,41 +668,40 @@ Neuroblastoma trials
 <span><span class="co"># * Checking for documents...                      </span></span>
 <span><span class="co"># - Getting links to documents</span></span>
 <span><span class="co"># - Downloading documents into 'documents.path' = ./files-isrctn/</span></span>
-<span><span class="co"># - Created directory ./files-isrctn</span></span>
+<span><span class="co"># - Created directory /Users/ralfherold/Daten/mak/r/emea/ctrdata/files-isrctn</span></span>
+<span><span class="co"># - Applying 'documents.regexp' to 52 missing documents</span></span>
 <span><span class="co"># - Creating subfolder for each trial</span></span>
-<span><span class="co"># - Applying 'documents.regexp' to 47 missing documents</span></span>
-<span><span class="co"># - Downloading 29 missing documents</span></span>
-<span><span class="co"># Download status: 29 done; 0 in progress. Total size: 13.11 Mb (100%)... done!             </span></span>
-<span><span class="co"># Download status: 4 done; 0 in progress. Total size: 13.12 Kb (100%)... done!             </span></span>
-<span><span class="co"># Download status: 4 done; 0 in progress. Total size: 13.12 Kb (100%)... done!             </span></span>
-<span><span class="co"># = Newly saved 25 document(s) for 14 trial(s); 0 of such document(s) for 0 trial(s) already existed in ./files-isrctn</span></span>
+<span><span class="co"># - Downloading 32 missing documents </span></span>
+<span><span class="co"># Download status: 32 done; 0 in progress. Total size: 14.89 Mb (100%)... done!             </span></span>
+<span><span class="co"># = Newly saved 26 document(s) for 15 trial(s); 0 of such document(s) for 0 </span></span>
+<span><span class="co"># trial(s) already existed in ./files-isrctn</span></span>
 <span></span>
 <span></span>
 <span><span class="co">### CTIS files are downloaded, using the default of documents.regexp</span></span>
 <span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
 <span>  queryterm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
 <span>    <span class="st">'https://euclinicaltrials.eu/ctis-public/search#'</span>, </span>
-<span>    <span class="st">'searchCriteria={"containAny":"cancer"}'</span><span class="op">)</span>,</span>
+<span>    <span class="st">'searchCriteria={"containAny":"cancer","status":[8]}'</span><span class="op">)</span>,</span>
 <span>  documents.path <span class="op">=</span> <span class="st">"./files-ctis/"</span>,</span>
-<span>  documents.regexp <span class="op">=</span> <span class="st">"sap"</span>,</span>
+<span>  documents.regexp <span class="op">=</span> <span class="st">"icf"</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># * Found search query from CTIS: searchCriteria={"containAny":"cancer"}</span></span>
-<span><span class="co"># * Checking trials in CTIS...</span></span>
-<span><span class="co"># (1/4) Downloading trial list(s), found 1872 trials</span></span>
-<span><span class="co"># (2/4) Downloading and processing trial data... (estimate: 100 Mb)</span></span>
-<span><span class="co"># Download status: 1872 done; 0 in progress. Total size: 167.15 Mb (100%)... done!             </span></span>
-<span><span class="co"># (3/4) Importing records into database...</span></span>
-<span><span class="co"># (4/4) Updating with additional data: .             </span></span>
+<span><span class="co"># [...]</span></span>
 <span><span class="co"># * Checking for documents: . . . . . . . . . . . . . . . . . . . </span></span>
 <span><span class="co"># - Downloading documents into 'documents.path' = ./files-ctis/</span></span>
+<span><span class="co"># - Applying 'documents.regexp' to 1114 missing documents</span></span>
 <span><span class="co"># - Creating subfolder for each trial</span></span>
-<span><span class="co"># - Applying 'documents.regexp' to 16782 missing documents</span></span>
-<span><span class="co"># - Downloading 4 missing documents</span></span>
-<span><span class="co"># Download status: 4 done; 0 in progress. Total size: 5.62 Kb (100%)... done!             </span></span>
+<span><span class="co"># - Downloading 512 missing documents (excluding 2 files with duplicate names </span></span>
+<span><span class="co"># for saving, e.g. /Users/ralfherold/Daten/mak/r/emea/ctrdata/files-ctis/2022-</span></span>
+<span><span class="co"># 500694-14-00/SbjctInfaICF - L1 SIS and ICF Prescreening ICF clean placeholder</span></span>
+<span><span class="co"># - 137297.PDF, /Users/ralfherold/Daten/mak/r/emea/ctrdata/files-ctis/2022-</span></span>
+<span><span class="co"># 500694-14-00/SbjctInfaICF - L1 SIS and ICF Pregnant Partner ICF clean - </span></span>
+<span><span class="co"># 137297.PDF) </span></span>
+<span><span class="co"># Download status: 510 done; 0 in progress. Total size: 377.27 Kb (100%)... done!             </span></span>
 <span><span class="co"># Redirecting to CDN...</span></span>
-<span><span class="co"># Download status: 4 done; 0 in progress. Total size: 3.08 Mb (100%)... done!             </span></span>
-<span><span class="co"># = Newly saved 4 document(s) for 3 trial(s); 0 of such document(s) for 0 </span></span>
+<span><span class="co"># Download status: 127 done; 0 in progress. Total size: 47.66 Mb (100%)... done!             </span></span>
+<span><span class="co"># = Newly saved 510 document(s) for 35 trial(s); 0 of such document(s) for 0 </span></span>
 <span><span class="co"># trial(s) already existed in ./files-ctis</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -837,52 +710,73 @@ Neuroblastoma trials
 <p>See also <a href="https://app.codecov.io/gh/rfhb/ctrdata/tree/master/R" class="external-link uri">https://app.codecov.io/gh/rfhb/ctrdata/tree/master/R</a></p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">tinytest</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tinytest/man/run_test_dir.html" class="external-link">test_all</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co"># test_ctrdata_ctrfindactivesubstance.R    4 tests OK 1.6s</span></span>
-<span><span class="co"># test_ctrdata_duckdb_ctgov2.R..   50 tests OK 2.4s</span></span>
-<span><span class="co"># test_ctrdata_duckdb_ctis.R....  172 tests OK 15.2s</span></span>
-<span><span class="co"># test_ctrdata_mongo_local_ctgov.R   51 tests OK 57.7s</span></span>
-<span><span class="co"># test_ctrdata_other_functions.R   64 tests OK 3.8s</span></span>
-<span><span class="co"># test_ctrdata_postgres_ctgov2.R   50 tests OK 2.6s</span></span>
-<span><span class="co"># test_ctrdata_sqlite_ctgov.R...   52 tests OK 56.0s</span></span>
-<span><span class="co"># test_ctrdata_sqlite_ctgov2.R..   50 tests OK 2.3s</span></span>
-<span><span class="co"># test_ctrdata_sqlite_ctis.R....  194 tests OK 12.5s</span></span>
-<span><span class="co"># test_ctrdata_sqlite_euctr.R...  105 tests OK 1.3s</span></span>
-<span><span class="co"># test_ctrdata_sqlite_isrctn.R..   38 tests OK 21.4s</span></span>
-<span><span class="co"># test_euctr_error_sample.R.....    8 tests OK 0.9s</span></span>
-<span><span class="co"># All ok, 838 results (38m 48.8s)</span></span>
+<span><span class="co"># test_ctrdata_ctrfindactivesubstance.R    4 tests OK 0.8s</span></span>
+<span><span class="co"># test_ctrdata_duckdb_ctgov2.R..   78 tests OK 47.3s</span></span>
+<span><span class="co"># test_ctrdata_function_ctrgeneratequeries.R   12 tests OK 4ms</span></span>
+<span><span class="co"># test_ctrdata_function_dfcalculate.R   26 tests OK 2.0s</span></span>
+<span><span class="co"># test_ctrdata_other_functions.R   67 tests OK 3.1s</span></span>
+<span><span class="co"># test_ctrdata_postgres_ctgov2.R   50 tests OK 32.0s</span></span>
+<span><span class="co"># test_ctrdata_sqlite_ctgov.R...  108 tests OK 30.8s</span></span>
+<span><span class="co"># test_ctrdata_sqlite_ctgov2.R..   50 tests OK 26.8s</span></span>
+<span><span class="co"># test_ctrdata_sqlite_ctis.R....   63 tests OK 49.4s</span></span>
+<span><span class="co"># test_ctrdata_sqlite_euctr.R...  115 tests OK 44.2s</span></span>
+<span><span class="co"># test_ctrdata_sqlite_isrctn.R..   38 tests OK 12.5s</span></span>
+<span><span class="co"># test_euctr_error_sample.R.....    8 tests OK 0.2s</span></span>
+<span><span class="co"># All ok, 619 results (4m 9.2s)</span></span>
 <span></span>
 <span><span class="fu">covr</span><span class="fu">::</span><span class="fu"><a href="http://covr.r-lib.org/reference/package_coverage.html" class="external-link">package_coverage</a></span><span class="op">(</span>path <span class="op">=</span> <span class="st">"."</span>, type <span class="op">=</span> <span class="st">"tests"</span><span class="op">)</span></span>
-<span><span class="co"># ctrdata Coverage: 93.68%</span></span>
+<span><span class="co"># ctrdata Coverage: 94.06%</span></span>
+<span><span class="co"># R/ctrShowOneTrial.R: 57.89%</span></span>
+<span><span class="co"># R/dfCalculateConcept.R: 58.62%</span></span>
+<span><span class="co"># R/ctrRerunQuery.R: 74.85%</span></span>
 <span><span class="co"># R/zzz.R: 80.95%</span></span>
-<span><span class="co"># R/ctrRerunQuery.R: 89.16%</span></span>
-<span><span class="co"># R/ctrLoadQueryIntoDbEuctr.R: 90.03%</span></span>
-<span><span class="co"># R/utils.R: 90.89%</span></span>
-<span><span class="co"># R/ctrLoadQueryIntoDbIsrctn.R: 92.11%</span></span>
-<span><span class="co"># R/dbGetFieldsIntoDf.R: 93.06%</span></span>
-<span><span class="co"># R/ctrLoadQueryIntoDbCtgov2.R: 94.05%</span></span>
-<span><span class="co"># R/ctrLoadQueryIntoDb.R: 94.12%</span></span>
-<span><span class="co"># R/ctrLoadQueryIntoDbCtis.R: 94.13%</span></span>
-<span><span class="co"># R/ctrLoadQueryIntoDbCtgov.R: 95.04%</span></span>
-<span><span class="co"># R/dbFindFields.R: 95.24%</span></span>
-<span><span class="co"># R/ctrGetQueryUrl.R: 96.00%</span></span>
-<span><span class="co"># R/ctrOpenSearchPagesInBrowser.R: 97.22%</span></span>
-<span><span class="co"># R/dfMergeVariablesRelevel.R: 97.30%</span></span>
-<span><span class="co"># R/dfTrials2Long.R: 97.35%</span></span>
-<span><span class="co"># R/dbFindIdsUniqueTrials.R: 97.77%</span></span>
-<span><span class="co"># R/dfName2Value.R: 98.61%</span></span>
-<span><span class="co"># R/ctrFindActiveSubstanceSynonyms.R: 100.00%</span></span>
-<span><span class="co"># R/dbQueryHistory.R: 100.00%</span></span></code></pre></div>
+<span><span class="co"># R/dbGetFieldsIntoDf.R: 86.90%</span></span>
+<span><span class="co"># R/util_functions.R: 89.52%</span></span>
+<span><span class="co"># R/ctrLoadQueryIntoDbEuctr.R: 90.08%</span></span>
+<span><span class="co"># R/ctrGetQueryUrl.R: 90.09%</span></span>
+<span><span class="co"># R/ctrLoadQueryIntoDbIsrctn.R: 92.45%</span></span>
+<span><span class="co"># R/ctrLoadQueryIntoDbCtgov2.R: 92.90%</span></span>
+<span><span class="co"># R/ctrFindActiveSubstanceSynonyms.R: 93.62%</span></span>
+<span><span class="co"># R/dfMergeVariablesRelevel.R: 94.29%</span></span>
+<span><span class="co"># R/ctrLoadQueryIntoDb.R: 94.81%</span></span>
+<span><span class="co"># R/ctrLoadQueryIntoDbCtis.R: 95.26%</span></span>
+<span><span class="co"># R/dbFindFields.R: 95.88%</span></span>
+<span><span class="co"># R/vct_primaryEndpointResults.R: 96.27%</span></span>
+<span><span class="co"># R/ctrOpenSearchPagesInBrowser.R: 97.37%</span></span>
+<span><span class="co"># R/dbFindIdsUniqueTrials.R: 97.87%</span></span>
+<span><span class="co"># R/vct_numTestArmsSubstances.R: 97.95%</span></span>
+<span><span class="co"># R/ctrGenerateQueries.R: 100.00%</span></span>
+<span><span class="co"># R/dbQueryHistory.R: 100.00%</span></span>
+<span><span class="co"># R/dfName2Value.R: 100.00%</span></span>
+<span><span class="co"># R/dfTrials2Long.R: 100.00%</span></span>
+<span><span class="co"># R/vct_controlType.R: 100.00%</span></span>
+<span><span class="co"># R/vct_isMedIntervTrial.R: 100.00%</span></span>
+<span><span class="co"># R/vct_isPlatformTrial.R: 100.00%</span></span>
+<span><span class="co"># R/vct_isUniqueTrial.R: 100.00%</span></span>
+<span><span class="co"># R/vct_numSites.R: 100.00%</span></span>
+<span><span class="co"># R/vct_primaryEndpointDescription.R: 100.00%</span></span>
+<span><span class="co"># R/vct_resultsDate.R: 100.00%</span></span>
+<span><span class="co"># R/vct_sampleSize.R: 100.00%</span></span>
+<span><span class="co"># R/vct_sponsorType.R: 100.00%</span></span>
+<span><span class="co"># R/vct_startDate.R: 100.00%</span></span>
+<span><span class="co"># R/vct_statusRecruitment.R: 100.00%</span></span>
+<span><span class="co"># R/vct_trialObjectives.R: 100.00%</span></span>
+<span><span class="co"># R/vct_trialPhase.R: 100.00%</span></span>
+<span><span class="co"># R/vct_trialPopulation.R: 100.00%</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="future-features">Future features<a class="anchor" aria-label="anchor" href="#future-features"></a>
 </h2>
 <ul>
 <li><p>See project outline <a href="https://github.com/users/rfhb/projects/1" class="external-link uri">https://github.com/users/rfhb/projects/1</a></p></li>
-<li><p>Canonical definitions, filters, calculations are in the works (since August 2023) for data mangling and analyses across registers, e.g. to define study population, identify interventional trials, calculate study duration; public collaboration on these canonical scripts will speed up harmonising analyses.</p></li>
-<li><p>Merge results-related fields retrieved from different registers, such as corresponding endpoints (work not yet started). The challenge is the incomplete congruency and different structure of data fields.</p></li>
 <li><p>Authentication, expected to be required by CTGOV2; specifications not yet known (work not yet started).</p></li>
 <li><p>Explore further registers (exploration is continually ongoing; added value, terms and conditions for programmatic access vary; no clear roadmap is established yet).</p></li>
+</ul>
+<p>Implemented:</p>
+<ul>
 <li><p><del>Retrieve previous versions of protocol- or results-related information. The challenges include, historic versions can only be retrieved one-by-one, do not include results, or are not in structured format. The functionality available with version 1.17.3 to the extent that is possible at this time, namely for protocol- and results-related information in CTGOV2, only</del></p></li>
+<li><p><del>Canonical definitions, filters, calculations are in the works (since August 2023) for data mangling and analyses across registers, e.g. to define study population, identify interventional trials, calculate study duration; public collaboration on these canonical scripts will speed up harmonising analyses.</del></p></li>
+<li><p><del>Merge results-related fields retrieved from different registers, such as corresponding endpoints (work not yet started). The challenge is the incomplete congruency and different structure of data fields.</del></p></li>
 </ul>
 </div>
 <div class="section level2">
@@ -892,15 +786,15 @@ Neuroblastoma trials
 <li><p>Data providers and curators of the clinical trial registers. Please review and respect their copyrights and terms and conditions, see <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>.</p></li>
 <li><p>Package <code>ctrdata</code> has been made possible building on the work done for <a href="https://www.r-project.org/" class="external-link">R</a>, <a href="https://cran.r-project.org/package=clipr" class="external-link">clipr</a>. <a href="https://cran.r-project.org/package=curl" class="external-link">curl</a>, <a href="https://cran.r-project.org/package=dplyr" class="external-link">dplyr</a>, <a href="https://cran.r-project.org/package=duckdb" class="external-link">duckdb</a>, <a href="https://cran.r-project.org/package=httr" class="external-link">httr</a>, <a href="https://cran.r-project.org/package=jqr" class="external-link">jqr</a>, <a href="https://cran.r-project.org/package=jsonlite" class="external-link">jsonlite</a>, <a href="https://cran.r-project.org/package=lubridate" class="external-link">lubridate</a>, <a href="https://cran.r-project.org/package=mongolite" class="external-link">mongolite</a>, <a href="https://cran.r-project.org/package=nodbi" class="external-link">nodbi</a>, <a href="https://cran.r-project.org/package=RPostgres" class="external-link">RPostgres</a>, <a href="https://CRAN.R-project.org/package=RSQLite" class="external-link">RSQLite</a>, <a href="https://cran.r-project.org/package=rvest" class="external-link">rvest</a>, <a href="https://cran.r-project.org/package=stringi" class="external-link">stringi</a> and <a href="https://cran.r-project.org/package=xml2" class="external-link">xml2</a>.</p></li>
 </ul>
-<div class="section level3">
-<h3 id="issues-and-notes">Issues and notes<a class="anchor" aria-label="anchor" href="#issues-and-notes"></a>
-</h3>
-<ul>
-<li><p>Please file issues and bugs <a href="https://github.com/rfhb/ctrdata/issues" class="external-link">here</a>. Also check out how to handle some of the closed issues, e.g. on <a href="https://github.com/rfhb/ctrdata/issues/22" class="external-link">C stack usage too close to the limit</a> and on a <a href="https://github.com/rfhb/ctrdata/issues/19#issuecomment-820127139" class="external-link">SSL certificate problem: unable to get local issuer certificate</a></p></li>
-<li><p>Information in trial registers may not be fully correct; see for example <a href="https://doi.org/10.1136/bmj.k1452" class="external-link">this publication on CTGOV</a>.</p></li>
-<li><p>No attempts were made to harmonise field names between registers (nevertheless, <code><a href="reference/dfMergeVariablesRelevel.html">dfMergeVariablesRelevel()</a></code> can be used to merge and map several variables / fields into one).</p></li>
-</ul>
 </div>
+<div class="section level2">
+<h2 id="issues-and-notes">Issues and notes<a class="anchor" aria-label="anchor" href="#issues-and-notes"></a>
+</h2>
+<ul>
+<li><p>Information in trial registers may not be fully correct; see for example <a href="https://doi.org/10.1136/bmj.k1452" class="external-link">this publication on CTGOV</a>.</p></li>
+<li><p>A warning may be issued and a record not imported if the complexity of the XML content is too high for processing. The issue can be resolved by increasing in the operating system the stack size available to R, see: <a href="https://github.com/rfhb/ctrdata/issues/22" class="external-link uri">https://github.com/rfhb/ctrdata/issues/22</a></p></li>
+<li><p>Please file issues and bugs <a href="https://github.com/rfhb/ctrdata/issues" class="external-link">here</a>. Also check out how to handle some of the closed issues, e.g. on <a href="https://github.com/rfhb/ctrdata/issues/22" class="external-link">C stack usage too close to the limit</a> and on a <a href="https://github.com/rfhb/ctrdata/issues/19#issuecomment-820127139" class="external-link">SSL certificate problem: unable to get local issuer certificate</a>.</p></li>
+</ul>
 </div>
 <div class="section level2">
 <h2 id="trial-records-in-databases">Trial records in databases<a class="anchor" aria-label="anchor" href="#trial-records-in-databases"></a>

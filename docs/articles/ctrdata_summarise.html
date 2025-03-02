@@ -62,7 +62,7 @@
                         <h4 data-toc-skip class="author">Ralf
 Herold</h4>
             
-            <h4 data-toc-skip class="date">2024-12-11</h4>
+            <h4 data-toc-skip class="date">2025-03-02</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/rfhb/ctrdata/blob/HEAD/vignettes/ctrdata_summarise.Rmd" class="external-link"><code>vignettes/ctrdata_summarise.Rmd</code></a></small>
       <div class="d-none name"><code>ctrdata_summarise.Rmd</code></div>
@@ -74,13 +74,13 @@ Herold</h4>
 here: <a href="https://github.com/rfhb/ctrdata" class="external-link">https://github.com/rfhb/ctrdata</a>.</p>
 <p>Remember to respect the registers’ terms and conditions (see
 <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>). Please cite
-this package in any publication as follows: Ralf Herold (2024). ctrdata:
+this package in any publication as follows: Ralf Herold (2025). ctrdata:
 Retrieve and Analyze Clinical Trials in Public Registers. R package
-version 1.18.0. <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a></p>
+version 1.21.0. <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a></p>
 <div class="section level2">
 <h2 id="preparations">Preparations<a class="anchor" aria-label="anchor" href="#preparations"></a>
 </h2>
-<p>Here using MongoDB, which is faster than SQLite, can handle
+<p>Here using MongoDB, which may be faster than SQLite, can handle
 credentials, provides access to remote servers and can directly retrieve
 nested elements from paths. See <a href="../README.html">README.md</a> and
 <a href="ctrdata_retrieve.Rmd">Retrieve clinical trial information</a>
@@ -93,7 +93,7 @@ for examples using SQLite. Also PostgreSQL can be used as database, see
 <span>  collection <span class="op">=</span> <span class="st">"my_collection_name"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">db</span></span>
-<span><span class="co"># MongoDB 7.0.8 (uptime: 265661s)</span></span>
+<span><span class="co"># MongoDB  8.0.4 (uptime: 298113s) </span></span>
 <span><span class="co"># URL: mongodb://localhost</span></span>
 <span><span class="co"># Database: my_database_name</span></span>
 <span><span class="co"># Collection: my_collection_name</span></span>
@@ -103,60 +103,22 @@ for examples using SQLite. Also PostgreSQL can be used as database, see
 <p>See <a href="ctrdata_retrieve.Rmd">Retrieve clinical trial
 information</a> for more details.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#</span></span>
+<code class="sourceCode R"><span><span class="co"># Load package</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://cran.r-project.org/package=ctrdata" class="external-link">ctrdata</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># These two queries are similar, for completed interventional (drug)</span></span>
-<span><span class="co"># trials with children with a neuroblastoma from either register</span></span>
-<span><span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
-<span>  <span class="co"># using queryterm and register...</span></span>
-<span>  queryterm <span class="op">=</span> <span class="st">"query=neuroblastoma&amp;age=under-18&amp;status=completed"</span>,</span>
-<span>  register <span class="op">=</span> <span class="st">"EUCTR"</span>,</span>
-<span>  euctrresults <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  con <span class="op">=</span> <span class="va">db</span></span>
+<span><span class="co"># Model queries</span></span>
+<span><span class="va">queries</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ctrGenerateQueries.html">ctrGenerateQueries</a></span><span class="op">(</span></span>
+<span>  condition <span class="op">=</span> <span class="st">"neuroblastoma"</span>,</span>
+<span>  population <span class="op">=</span> <span class="st">"P"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># [...]</span></span>
-<span><span class="co"># $n</span></span>
-<span><span class="co"># [1] 226</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
-<span>  <span class="co"># ...or using full URL of search results</span></span>
-<span>  queryterm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
-<span>    <span class="st">"https://classic.clinicaltrials.gov/ct2/results?"</span>,</span>
-<span>    <span class="st">"cond=neuroblastoma&amp;recrs=e&amp;age=0&amp;intr=Drug"</span><span class="op">)</span>,</span>
-<span>  con <span class="op">=</span> <span class="va">db</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co"># * Appears specific for CTGOV Classic website</span></span>
-<span><span class="co"># Since 2024-06-25, the classic CTGOV servers are no longer available. Package ctrdata has translated </span></span>
-<span><span class="co"># the classic CTGOV query URL from this call of function ctrLoadQueryIntoDb(queryterm = ...) into a </span></span>
-<span><span class="co"># query URL that works with the current CTGOV2. This is printed below and is also part of the return </span></span>
-<span><span class="co"># value of this function, ctrLoadQueryIntoDb(...)$url. This URL can be used with ctrdata functions. </span></span>
-<span><span class="co"># Note that the fields and data schema of trials differ between CTGOV and CTGOV2. </span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># Replace this URL:</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&amp;recrs=e&amp;age=0&amp;intr=Drug</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># with this URL:</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># https://clinicaltrials.gov/search?cond=neuroblastoma&amp;intr=Drug&amp;aggFilters=ages:child,status:com</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># * Found search query from CTGOV2: cond=neuroblastoma&amp;intr=Drug&amp;aggFilters=ages:child,status:com</span></span>
-<span><span class="co"># * Checking trials using CTGOV REST API 2.0, found 222 trials</span></span>
-<span><span class="co"># (1/3) Downloading in 1 batch(es) (max. 1000 trials each; estimate: 22 Mb total)</span></span>
-<span><span class="co"># Download status: 1 done; 0 in progress. Total size: 9.79 Mb (615%)... done!             </span></span>
-<span><span class="co"># (2/3) Converting to NDJSON...</span></span>
-<span><span class="co"># (3/3) Importing records into database...</span></span>
-<span><span class="co"># JSON file #: 1 / 1                               </span></span>
-<span><span class="co"># = Imported or updated 222 trial(s)</span></span>
-<span><span class="co"># Updated history ("meta-info" in "my_collection_name")</span></span>
-<span><span class="co"># $n</span></span>
-<span><span class="co"># [1] 222</span></span>
+<span><span class="co"># Load trials from all queries into collection</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">queries</span>, <span class="va">ctrLoadQueryIntoDb</span>, euctrresults <span class="op">=</span> <span class="cn">TRUE</span>, con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/dbQueryHistory.html">dbQueryHistory</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></span>
-<span><span class="co">#       query-timestamp query-register query-records                                                    query-term</span></span>
-<span><span class="co"># 1 2024-06-29 09:01:16          EUCTR           226             query=neuroblastoma&amp;age=under-18&amp;status=completed</span></span>
-<span><span class="co"># 2 2024-06-29 09:02:12         CTGOV2           222 cond=neuroblastoma&amp;intr=Drug&amp;aggFilters=ages:child,status:com</span></span></code></pre></div>
+<span><span class="co"># Show results of loading</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">result</span>, <span class="st">"[["</span>, <span class="st">"n"</span><span class="op">)</span></span>
+<span><span class="co"># EUCTR CTGOV2 ISRCTN   CTIS </span></span>
+<span><span class="co">#   390    613      3     19</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="find-fields-variables-of-interest">Find fields / variables of interest<a class="anchor" aria-label="anchor" href="#find-fields-variables-of-interest"></a>
@@ -164,149 +126,65 @@ information</a> for more details.</p>
 <p>Specify a part of the name of a variable of interest; all variables
 including deeply nested variable names are searched. Set
 <code>sample = TRUE</code> (default) to rapidly execute the function in
-large databases.</p>
+large database collections. The search for fields is cached and thus
+accelerated during the R session; calling
+<code><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code> or changing <code>sample = ...</code>
+invalidates the cache.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#</span></span>
 <span><span class="fu"><a href="../reference/dbFindFields.html">dbFindFields</a></span><span class="op">(</span>namepart <span class="op">=</span> <span class="st">"date"</span>, sample <span class="op">=</span> <span class="cn">FALSE</span>, con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></span>
-<span><span class="co"># Finding fields in database collection (may take some time)  .  .  .  .  . </span></span>
+<span><span class="co"># Finding fields in database collection (may take some time) . . . . . </span></span>
 <span><span class="co"># Field names cached for this session.</span></span>
-<span><span class="co">#                                                                               EUCTR </span></span>
-<span><span class="co">#    "e231_full_title_date_and_version_of_each_substudy_and_their_related_objectives" </span></span>
-<span><span class="co">#                                                                               EUCTR </span></span>
-<span><span class="co"># "e231_full_title_date_and_version_of_each_substudy_and_their_related_objectives_es" </span></span>
-<span><span class="co">#                                                                               EUCTR </span></span>
-<span><span class="co"># "e231_full_title_date_and_version_of_each_substudy_and_their_related_objectives_it" </span></span>
-<span><span class="co">#                                                                               EUCTR </span></span>
-<span><span class="co">#                                            "n_date_of_competent_authority_decision" </span></span>
-<span><span class="co">#                                                                               EUCTR </span></span>
-<span><span class="co">#                                                "n_date_of_ethics_committee_opinion" </span></span>
-<span><span class="co">#                                                                               EUCTR </span></span>
-<span><span class="co">#                                             "p_date_of_the_global_end_of_the_trial" </span></span>
-<span><span class="co">#                                                                               EUCTR </span></span>
-<span><span class="co">#                                "trialChanges.globalAmendments.globalAmendment.date" </span></span>
-<span><span class="co">#                                                                               EUCTR </span></span>
-<span><span class="co">#                          "trialChanges.globalInterruptions.globalInterruption.date" </span></span>
-<span><span class="co">#                                                                               EUCTR </span></span>
-<span><span class="co">#                   "trialChanges.globalInterruptions.globalInterruption.restartDate" </span></span>
-<span><span class="co">#                                                                               EUCTR </span></span>
-<span><span class="co">#                                                "trialInformation.analysisStageDate" </span></span>
-<span><span class="co">#                                                                               EUCTR </span></span>
-<span><span class="co">#                                             "trialInformation.globalEndOfTrialDate" </span></span>
-<span><span class="co">#                                                                               EUCTR </span></span>
-<span><span class="co">#                                            "trialInformation.primaryCompletionDate" </span></span>
-<span><span class="co">#                                                                               EUCTR </span></span>
-<span><span class="co">#                                             "trialInformation.recruitmentStartDate" </span></span>
-<span><span class="co">#                                                                               EUCTR </span></span>
-<span><span class="co">#            "x6_date_on_which_this_record_was_first_entered_in_the_eudract_database" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#         "annotationSection.annotationModule.unpostedAnnotation.unpostedEvents.date" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#  "derivedSection.miscInfoModule.submissionTracking.estimatedResultsFirstSubmitDate" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#      "derivedSection.miscInfoModule.submissionTracking.firstMcpInfo.postDateStruct" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co"># "derivedSection.miscInfoModule.submissionTracking.firstMcpInfo.postDateStruct.date" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co"># "derivedSection.miscInfoModule.submissionTracking.firstMcpInfo.postDateStruct.type" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#      "derivedSection.miscInfoModule.submissionTracking.submissionInfos.releaseDate" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#        "derivedSection.miscInfoModule.submissionTracking.submissionInfos.resetDate" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#                                "documentSection.largeDocumentModule.largeDocs.date" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#                          "documentSection.largeDocumentModule.largeDocs.uploadDate" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#                                 "protocolSection.statusModule.completionDateStruct" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#                            "protocolSection.statusModule.completionDateStruct.date" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#                            "protocolSection.statusModule.completionDateStruct.type" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#                              "protocolSection.statusModule.dispFirstPostDateStruct" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#                         "protocolSection.statusModule.dispFirstPostDateStruct.date" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#                         "protocolSection.statusModule.dispFirstPostDateStruct.type" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#                                  "protocolSection.statusModule.dispFirstSubmitDate" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#                                "protocolSection.statusModule.dispFirstSubmitQcDate" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#                             "protocolSection.statusModule.lastUpdatePostDateStruct" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#                        "protocolSection.statusModule.lastUpdatePostDateStruct.date" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#                        "protocolSection.statusModule.lastUpdatePostDateStruct.type" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#                                 "protocolSection.statusModule.lastUpdateSubmitDate" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#                          "protocolSection.statusModule.primaryCompletionDateStruct" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#                     "protocolSection.statusModule.primaryCompletionDateStruct.date" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#                     "protocolSection.statusModule.primaryCompletionDateStruct.type" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#                           "protocolSection.statusModule.resultsFirstPostDateStruct" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#                      "protocolSection.statusModule.resultsFirstPostDateStruct.date" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#                      "protocolSection.statusModule.resultsFirstPostDateStruct.type" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#                               "protocolSection.statusModule.resultsFirstSubmitDate" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#                             "protocolSection.statusModule.resultsFirstSubmitQcDate" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#                                      "protocolSection.statusModule.startDateStruct" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#                                 "protocolSection.statusModule.startDateStruct.date" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#                                 "protocolSection.statusModule.startDateStruct.type" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#                                   "protocolSection.statusModule.statusVerifiedDate" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#                             "protocolSection.statusModule.studyFirstPostDateStruct" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#                        "protocolSection.statusModule.studyFirstPostDateStruct.date" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#                        "protocolSection.statusModule.studyFirstPostDateStruct.type" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#                                 "protocolSection.statusModule.studyFirstSubmitDate" </span></span>
-<span><span class="co">#                                                                              CTGOV2 </span></span>
-<span><span class="co">#                               "protocolSection.statusModule.studyFirstSubmitQcDate" </span></span></code></pre></div>
-<p>The search for fields is cached and thus accelerated during the R
-session; calling <code><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code> or changing
-<code>sample = ...</code> invalidates the cache.</p>
+<span><span class="co"># [...]</span></span>
+<span><span class="co">#                                                                            EUCTR </span></span>
+<span><span class="co"># "e231_full_title_date_and_version_of_each_substudy_and_their_related_objectives" </span></span>
+<span><span class="co"># [...]</span></span>
+<span><span class="co">#                                                                           CTGOV2 </span></span>
+<span><span class="co">#      "annotationSection.annotationModule.unpostedAnnotation.unpostedEvents.date" </span></span>
+<span><span class="co">#                                                                           CTGOV2 </span></span>
+<span><span class="co">#                            "protocolSection.statusModule.studyFirstSubmitQcDate" </span></span>
+<span><span class="co"># [...]</span></span>
+<span><span class="co">#                                                                             CTIS </span></span>
+<span><span class="co">#                                                                    "publishDate" </span></span>
+<span><span class="co">#                                                                             CTIS </span></span>
+<span><span class="co">#                                                                    "startDateEU" </span></span>
+<span><span class="co"># [...]</span></span>
+<span><span class="co">#                                                                           ISRCTN </span></span>
+<span><span class="co">#                                                     "trialDesign.overallEndDate" </span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="data-frame-from-database">Data frame from database<a class="anchor" aria-label="anchor" href="#data-frame-from-database"></a>
 </h2>
 <p>The fields of interest can be obtained from the database and are
-represented in an R data.frame, for example:</p>
+represented in an R data frame, for example:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#</span></span>
+<code class="sourceCode R"><span><span class="co"># Define vector of fields</span></span>
+<span><span class="va">fieldsOfInterest</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="co"># EUCTR protocol-related information</span></span>
+<span>  <span class="st">"f41_in_the_member_state"</span>,</span>
+<span>  <span class="st">"f422_in_the_whole_clinical_trial"</span>,</span>
+<span>  <span class="st">"a1_member_state_concerned"</span>,</span>
+<span>  <span class="co">#</span></span>
+<span>  <span class="co"># EUCTR results-related information</span></span>
+<span>  <span class="st">"trialInformation.recruitmentStartDate"</span>, </span>
+<span>  <span class="st">"trialInformation.globalEndOfTrialDate"</span>,</span>
+<span>  <span class="co">#</span></span>
+<span>  <span class="co"># CTGOV2</span></span>
+<span>  <span class="st">"protocolSection.statusModule.startDateStruct.date"</span>,</span>
+<span>  <span class="st">"trialInformation.recruitmentStartDate"</span>,</span>
+<span>  <span class="st">"protocolSection.statusModule.primaryCompletionDateStruct.date"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Create data frame with records of trials </span></span>
+<span><span class="co"># which for at least one field have a value</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>    <span class="co"># EUCTR protocol-related information</span></span>
-<span>    <span class="st">"f41_in_the_member_state"</span>,</span>
-<span>    <span class="st">"f422_in_the_whole_clinical_trial"</span>,</span>
-<span>    <span class="st">"a1_member_state_concerned"</span>,</span>
-<span>    <span class="st">"p_end_of_trial_status"</span>,</span>
-<span>    <span class="st">"n_date_of_competent_authority_decision"</span>,</span>
-<span>    <span class="st">"a2_eudract_number"</span>,</span>
-<span>    <span class="co">#</span></span>
-<span>    <span class="co"># EUCTR results-related information</span></span>
-<span>    <span class="st">"trialInformation.recruitmentStartDate"</span>, </span>
-<span>    <span class="st">"trialInformation.globalEndOfTrialDate"</span>,</span>
-<span>    <span class="co">#</span></span>
-<span>    <span class="co"># CTGOV2</span></span>
-<span>    <span class="st">"protocolSection.statusModule.overallStatus"</span>,</span>
-<span>    <span class="st">"protocolSection.statusModule.startDateStruct.date"</span>,</span>
-<span>    <span class="st">"trialInformation.recruitmentStartDate"</span>,</span>
-<span>    <span class="st">"protocolSection.statusModule.primaryCompletionDateStruct.date"</span></span>
-<span>  <span class="op">)</span>,</span>
+<span>  fields <span class="op">=</span> <span class="va">fieldsOfInterest</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span>
+<span><span class="co"># Querying database (7 fields)...</span></span>
+<span></span>
+<span><span class="co"># dim(result)</span></span>
+<span><span class="co"># [1] 984   8</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="metadata-from-data-frame">Metadata from data frame<a class="anchor" aria-label="anchor" href="#metadata-from-data-frame"></a>
@@ -334,9 +212,16 @@ query details. Metadata can be reused in R.</p>
 <span><span class="co"># [1] "my_collection_name"</span></span>
 <span><span class="co"># </span></span>
 <span><span class="co"># $`ctrdata-dbqueryhistory`</span></span>
-<span><span class="co">#       query-timestamp query-register query-records                                                    query-term</span></span>
-<span><span class="co"># 1 2024-06-29 09:01:16          EUCTR           226             query=neuroblastoma&amp;age=under-18&amp;status=completed</span></span>
-<span><span class="co"># 2 2024-06-29 09:02:12         CTGOV2           222 cond=neuroblastoma&amp;intr=Drug&amp;aggFilters=ages:child,status:com</span></span></code></pre></div>
+<span><span class="co">#       query-timestamp query-register query-records</span></span>
+<span><span class="co"># 1 2025-03-02 15:26:22          EUCTR           390</span></span>
+<span><span class="co"># 2 2025-03-02 15:26:25         CTGOV2           613</span></span>
+<span><span class="co"># 3 2025-03-02 15:26:26         ISRCTN             3</span></span>
+<span><span class="co"># 4 2025-03-02 15:26:28           CTIS            19</span></span>
+<span><span class="co">#                                                               query-term</span></span>
+<span><span class="co"># 1                                       query=neuroblastoma&amp;age=under-18</span></span>
+<span><span class="co"># 2                               cond=neuroblastoma&amp;aggFilters=ages:child</span></span>
+<span><span class="co"># 3                     &amp;filters=condition:neuroblastoma,ageRange:Child&amp;q=</span></span>
+<span><span class="co"># 4 searchCriteria={"medicalCondition":"neuroblastoma","ageGroupCode":[2]}</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="de-duplicate-records">De-duplicate records<a class="anchor" aria-label="anchor" href="#de-duplicate-records"></a>
@@ -344,16 +229,16 @@ query details. Metadata can be reused in R.</p>
 <p>In the database, the variable “_id” is the unique index for a record.
 This “_id” is the NCT number for CTGOV records (e.g., “NCT00002560”),
 and it is the EudraCT number for EUCTR records including the postfix
-identifying the EU Member State (e.g., “2008-001436-12-NL”).</p>
-<p>It is relevant to de-duplicate records because a trial can be
-registered in both CTGOV and EUCTR, and can have records by involved
-country in EUCTR.</p>
+identifying the EU Member State (e.g., “2008-001436-12-NL”). It is
+relevant to de-duplicate records because a trial can be registered in
+both CTGOV2 and EUCTR, and can have records by involved country in
+EUCTR.</p>
 <p>De-duplication is done at the analysis stage because this enables to
 select if a trial record should be taken from one or the other register,
-and from one or the other EU Member State.</p>
-<p>The basis of de-duplication is the recording of additional trial
-identifiers in supplementary fields (variables), which are checked and
-reported when using function <code><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials()</a></code>:</p>
+and from one or the other EU Member State. The basis of de-duplication
+is the recording of additional trial identifiers in supplementary fields
+(variables), which are checked and reported when using function
+<code><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials()</a></code>:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Obtain de-duplicated trial record ids</span></span>
 <span><span class="va">ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span><span class="op">(</span></span>
@@ -361,58 +246,86 @@ reported when using function <code><a href="../reference/dbFindIdsUniqueTrials.h
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># Searching for duplicate trials... </span></span>
-<span><span class="co"># - Getting all trial identifiers (may take some time), 479 found in collection</span></span>
+<span><span class="co"># - Getting all trial identifiers (may take some time), 1025 found in collection</span></span>
 <span><span class="co"># - Finding duplicates among registers' and sponsor ids...</span></span>
-<span><span class="co"># - 192 EUCTR _id were not preferred EU Member State record for 59 trials</span></span>
-<span><span class="co"># - Keeping 57 / 0 / 0 / 0 / 211 records from EUCTR / CTGOV / ISRCTN / CTIS / CTGOV2</span></span>
-<span><span class="co"># = Returning keys (_id) of 268 records in collection "my_collection_name</span></span></code></pre></div>
-<p>The unique ids can be used like this to de-duplicate the data.frame
-created above:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Eliminate duplicate trials records:</span></span>
+<span><span class="co"># - 284 EUCTR _id were not preferred EU Member State record for 109 trials</span></span>
+<span><span class="co"># - Keeping 106 / 0 / 423 / 1 / 19 records from EUCTR / CTGOV / CTGOV2 / ISRCTN / CTIS</span></span>
+<span><span class="co"># = Returning keys (_id) of 549 records in collection "my_collection_name"</span></span>
+<span></span>
+<span><span class="co"># Eliminate duplicate trials records:</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">[</span><span class="va">result</span><span class="op">[[</span><span class="st">"_id"</span><span class="op">]</span><span class="op">]</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">ids</span>, <span class="op">]</span></span>
-<span><span class="co">#</span></span>
+<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
-<span><span class="co"># [1] 268</span></span></code></pre></div>
+<span><span class="co"># [1] 513</span></span>
+<span><span class="co">#</span></span>
+<span><span class="co"># Note that "ids" are the identifiers of unique trials in the whole collection,</span></span>
+<span><span class="co"># whereas the data frame "result" only includes those trials in which any of </span></span>
+<span><span class="co"># the fields of interest had a value, thus explaining why "result" has fewer</span></span>
+<span><span class="co"># rows than "ids" has identifiers. </span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="use-trial-concepts-to-simplify-analyses">Use trial concepts to simplify analyses<a class="anchor" aria-label="anchor" href="#use-trial-concepts-to-simplify-analyses"></a>
+</h2>
+<p>An alternative is to calculate a column <code>isUniqueTrial</code>
+already at the time that a data frame is created. This uses one of the
+trial concepts that provide a canonical field, calculated from trial
+information of any register, see
+<code><a href="../reference/dfCalculateConcept.html">help(dfCalculateConcept)</a></code>.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Obtain data of interest</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span>
+<span>  fields <span class="op">=</span> <span class="va">fieldsOfInterest</span>, </span>
+<span>  calculate <span class="op">=</span> <span class="st">".isUniqueTrial"</span>,</span>
+<span>  con <span class="op">=</span> <span class="va">db</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co"># Querying database (30 fields)...</span></span>
+<span><span class="co"># - Finding duplicates among registers' and sponsor ids... </span></span>
+<span><span class="co"># - 132 EUCTR _id were not preferred EU Member State record for 83 trials</span></span>
+<span><span class="co"># - Keeping 613 / 50 / 0 / 1 / 19 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS</span></span>
+<span></span>
+<span><span class="co"># Eliminate duplicate trials records:</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">[</span><span class="va">result</span><span class="op">[[</span><span class="st">".isUniqueTrial"</span><span class="op">]</span><span class="op">]</span>, <span class="op">]</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
+<span><span class="co"># [1] 267</span></span>
+<span><span class="co">#</span></span>
+<span><span class="co"># Note this has used a different register as priority.</span></span>
+<span><span class="co"># Also, the data frame result includes all trials which</span></span>
+<span><span class="co"># had a value in at least one of the fields of interest</span></span>
+<span><span class="co"># or the fields needed to calculate the trial concept. </span></span>
+<span></span>
+<span><span class="co"># See description of concept .isUniqueTrial: </span></span>
+<span><span class="fu"><a href="../reference/dfCalculateConcept.html">dfCalculateConcept</a></span><span class="op">(</span><span class="st">".isUniqueTrial"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># See how concept .isUniqueTrial is implemented</span></span>
+<span><span class="va">.isUniqueTrial</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="reviewing-a-specific-trial">Reviewing a specific trial<a class="anchor" aria-label="anchor" href="#reviewing-a-specific-trial"></a>
 </h2>
-<p>It will often be useful to inspect all data for a single, for example
-to understand the meaning and relation of fields, and to see
-neighbouring elements to fields of interest.</p>
+<p>It will often be useful to inspect all data for a single trial,
+e.g. to understand the meaning and relation of fields, to see where
+certain information is stored, and to identify fields of interest.</p>
+<p>For a given trial, function <a href="https://rfhb.github.io/ctrdata/reference/ctrShowOneTrial.html">ctrShowOneTrial()</a>
+enables the user to visualise the hiearchy of fields and contents in the
+user’s local web browser, to search for field names and field values,
+and to select and copy selected fields’ names for use with function <a href="https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a>.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#</span></span>
-<span><span class="co"># Adding some trials from CTIS for a search similar to above</span></span>
-<span><span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
-<span>  queryterm <span class="op">=</span> <span class="st">'searchCriteria={"containAny":"neuroblastoma"}'</span>,</span>
-<span>  register <span class="op">=</span> <span class="st">"CTIS"</span>,</span>
-<span>  con <span class="op">=</span> <span class="va">db</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co"># $n</span></span>
-<span><span class="co"># [1] 25</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># $success</span></span>
-<span><span class="co">#  [1] "2024-514917-36-00" "2024-518931-12-00" "2023-504246-64-02" "2024-517295-37-00" "2024-513470-22-00"</span></span>
-<span><span class="co">#  [6] "2024-513843-10-00" "2022-501694-39-01" "2024-511404-17-00" "2024-511975-14-00" "2024-512102-25-00"</span></span>
-<span><span class="co"># [11] "2024-515552-21-00" "2024-511259-16-00" "2023-507418-28-00" "2023-509673-22-00" "2024-513141-37-00"</span></span>
-<span><span class="co"># [16] "2024-511071-16-00" "2024-512095-35-00" "2023-507178-41-00" "2023-506778-11-00" "2022-501725-21-00"</span></span>
-<span><span class="co"># [21] "2023-504880-18-00" "2023-508587-29-00" "2022-502668-20-00" "2023-504246-64-00" "2023-503684-42-00"</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># $failed</span></span>
-<span><span class="co"># NULL</span></span></code></pre></div>
-<p>Identify a trial of interest by its <code>_id</code>, and use this in
-any standard database function. Retrieve the trial’s full
-<code>JSON</code> representation that <code>ctrdata</code> had loaded
-into the database and visualise its nested structure of field names and
-values.</p>
+<code class="sourceCode R"><span><span class="co"># Opens a web browser for user interaction.</span></span>
+<span><span class="co"># If the trial is not found in the database,</span></span>
+<span><span class="co"># it will be loaded from the register. </span></span>
+<span><span class="co">#</span></span>
+<span><span class="co"># The search is for both, field names and values</span></span>
+<span><span class="fu"><a href="../reference/ctrShowOneTrial.html">ctrShowOneTrial</a></span><span class="op">(</span><span class="st">"2022-501725-21-00"</span>, con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></span></code></pre></div>
+<p><img src="ctisnested2.png" alt="CtisNested"> Alternatively, use any
+standard database function to retrieve the trial’s <code>JSON</code>
+representation that <code>ctrdata</code> had stored in the collection
+and visualise its nested structure of field names and values.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># </span></span>
-<span><span class="co"># This example requires to install this package for visualisation:</span></span>
-<span><span class="co"># remotes::install_github("hrbrmstr/jsonview")</span></span>
+<code class="sourceCode R"><span><span class="co"># Requires additional package for visualisation</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"hrbrmstr/jsonview"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Get a particular trial from any database supported </span></span>
-<span><span class="co"># by ctrdata (duckdb, SQLite, PostgreSQL, MongoDB):</span></span>
+<span><span class="co"># Works with DuckDb, SQLite, PostgreSQL, MongoDB</span></span>
 <span><span class="va">oneTrial</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/docdb_query.html" class="external-link">docdb_query</a></span><span class="op">(</span></span>
 <span>  src <span class="op">=</span> <span class="va">db</span>, </span>
 <span>  key <span class="op">=</span> <span class="va">db</span><span class="op">$</span><span class="va">collection</span>, </span>
@@ -420,51 +333,43 @@ values.</p>
 <span>  limit <span class="op">=</span> <span class="fl">1L</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Create an interactive widget where nodes can be expanded:</span></span>
+<span><span class="co"># Interactive widget where nodes can be expanded,</span></span>
+<span><span class="co"># note that fields and values cannot be searched</span></span>
 <span><span class="fu">jsonview</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonview/man/json_tree_view.html" class="external-link">json_tree_view</a></span><span class="op">(</span><span class="va">oneTrial</span><span class="op">)</span></span></code></pre></div>
-<div class="float">
-<img src="ctisnested.png" alt="CtisNested"><div class="figcaption">CtisNested</div>
-</div>
 </div>
 <div class="section level2">
 <h2 id="simple-analysis-of-dates">Simple analysis of dates<a class="anchor" aria-label="anchor" href="#simple-analysis-of-dates"></a>
 </h2>
-<p>In a data.frame generated with <code><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code>,
-fields are typed as dates, logical, character or numbers.</p>
+<p>In a data frame generated with <code><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code>,
+fields are typed as dates, logical, character or numbers. This typing
+facilitates using the data for analysis, for example of dates with base
+R graphics:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#</span></span>
+<code class="sourceCode R"><span><span class="co"># Get data of interest</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span>
+<span>  fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ctrname"</span><span class="op">)</span>,</span>
+<span>  calculate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">".isUniqueTrial"</span>, <span class="st">".startDate"</span><span class="op">)</span>,</span>
+<span>  con <span class="op">=</span> <span class="va">db</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co"># Querying database (33 fields)...</span></span>
+<span><span class="co"># - Finding duplicates among registers' and sponsor ids... </span></span>
+<span><span class="co"># - 132 EUCTR _id were not preferred EU Member State record for 83 trials</span></span>
+<span><span class="co"># - Keeping 613 / 50 / 0 / 1 / 19 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS</span></span>
+<span><span class="co"># Calculating .startDate...  </span></span>
+<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
-<span><span class="co"># 'data.frame': 268 obs. of  12 variables:</span></span>
-<span><span class="co">#  $ _id                                                          : chr  "2004-004386-15-DE" "2005-000915-80-IT" "2005-001267-63-IT" "2005-002089-13-GB" ...</span></span>
-<span><span class="co">#  $ f41_in_the_member_state                                      : int  NA NA 5 37 70 24 100 35 10 24 ...</span></span>
-<span><span class="co">#  $ f422_in_the_whole_clinical_trial                             : int  230 NA 12 67 70 NA 100 156 2230 NA ...</span></span>
-<span><span class="co">#  $ a1_member_state_concerned                                    : chr  "Germany - BfArM" "...</span></span>
-<span><span class="co">#  $ p_end_of_trial_status                                        : chr  "Completed" "Completed" "Completed" ...</span></span>
-<span><span class="co">#  $ n_date_of_competent_authority_decision                       : Date, format: "2005-07-08" "2005-04-21" ...</span></span>
-<span><span class="co">#  $ a2_eudract_number                                            : chr  "2004-004386-15" "2005-000915-80" ...</span></span>
-<span><span class="co">#  $ trialInformation.recruitmentStartDate                        : Date, format: "2005-07-26" NA NA ...</span></span>
-<span><span class="co">#  $ trialInformation.globalEndOfTrialDate                        : Date, format: "2006-10-27" NA NA ...</span></span>
-<span><span class="co">#  $ protocolSection.statusModule.overallStatus                   : chr  NA NA NA NA ...</span></span>
-<span><span class="co">#  $ protocolSection.statusModule.startDateStruct.date            : Date, format: NA NA NA ...</span></span>
-<span><span class="co">#  $ protocolSection.statusModule.primaryCompletionDateStruct.date: Date, format: NA NA NA ...</span></span>
-<span><span class="co">#  - attr(*, "ctrdata-dbname")= chr "my_database_name"</span></span>
-<span><span class="co">#  - attr(*, "ctrdata-table")= chr "my_collection_name"</span></span>
-<span><span class="co">#  - attr(*, "ctrdata-table-note")= chr "^^^ attr ctrdata-table will be removed by end 2024"</span></span>
-<span><span class="co">#  - attr(*, "ctrdata-collection")= chr "my_collection_name"</span></span>
-<span><span class="co">#  - attr(*, "ctrdata-dbqueryhistory")='data.frame':    2 obs. of  4 variables:</span></span>
-<span><span class="co">#   ..$ query-timestamp: chr [1:2] "2024-06-29 09:01:16" "2024-06-29 09:02:12"</span></span>
-<span><span class="co">#   ..$ query-register : chr [1:2] "EUCTR" "CTGOV2"</span></span>
-<span><span class="co">#   ..$ query-records  : int [1:2] 226 222</span></span>
-<span><span class="co">#   ..$ query-term     : chr [1:2] "query=neuroblastoma&amp;age=under-18&amp;status=completed"</span></span>
-<span><span class="co">#    "cond=neuroblastoma&amp;intr=Drug&amp;aggFilters=ages:child,status:com"</span></span></code></pre></div>
-<p>This typing facilitates using the respective type of data for
-analysis, for example of dates with base R graphics:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Open file for saving</span></span>
+<span><span class="co"># 'data.frame': 1025 obs. of  4 variables:</span></span>
+<span><span class="co">#  $ _id           : chr  "2004-004386-15-DE" "2004-004386-15-ES" "2004-004386-15-GB" "2004-004386-15-IT" ...</span></span>
+<span><span class="co">#  $ ctrname       : chr  "EUCTR" "EUCTR" "EUCTR" "EUCTR" ...</span></span>
+<span><span class="co">#  $ .isUniqueTrial: logi  FALSE FALSE FALSE FALSE FALSE FALSE ...</span></span>
+<span><span class="co">#  $ .startDate    : Date, format: "2005-07-26" "2005-11-15" "2005-07-26" ...</span></span>
+<span></span>
+<span><span class="co"># Open file for saving</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html" class="external-link">png</a></span><span class="op">(</span><span class="st">"vignettes/nb1.png"</span><span class="op">)</span></span>
-<span><span class="co"># Visualise trial start date</span></span>
+<span></span>
+<span><span class="co"># De-duplicate and visualise start date</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span></span>
-<span>  <span class="va">result</span><span class="op">[[</span><span class="st">"n_date_of_competent_authority_decision"</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>  <span class="va">result</span><span class="op">[</span><span class="va">result</span><span class="op">$</span><span class="va">.isUniqueTrial</span>, <span class="st">".startDate"</span><span class="op">]</span>,</span>
 <span>  breaks <span class="op">=</span> <span class="st">"years"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/box.html" class="external-link">box</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -474,194 +379,121 @@ analysis, for example of dates with base R graphics:</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="merge-corresponding-fields-from-registers">Merge corresponding fields from registers<a class="anchor" aria-label="anchor" href="#merge-corresponding-fields-from-registers"></a>
+<h2 id="cross-register-clinical-trial-concepts">Cross-register clinical trial concepts<a class="anchor" aria-label="anchor" href="#cross-register-clinical-trial-concepts"></a>
 </h2>
-<p>The field “n_date_of_competent_authority_decision” used above exists
-only in EUCTR, yet it corresponds to the field “start_date” in CTGOV.
-Thus, to give the start of the trial, the two fields can be merged for
-analysis, using the convenience function
-<code><a href="../reference/dfMergeVariablesRelevel.html">dfMergeVariablesRelevel()</a></code> in <code>ctrdata</code>
-package:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Merge two variables into a new variable:</span></span>
-<span><span class="va">result</span><span class="op">$</span><span class="va">trialstart</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfMergeVariablesRelevel.html">dfMergeVariablesRelevel</a></span><span class="op">(</span></span>
-<span>  <span class="va">result</span>,</span>
-<span>  colnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>    <span class="co"># EUCTR</span></span>
-<span>    <span class="st">"n_date_of_competent_authority_decision"</span>,</span>
-<span>    <span class="co"># CTGOV2</span></span>
-<span>    <span class="st">"protocolSection.statusModule.startDateStruct.date"</span></span>
-<span>  <span class="op">)</span></span>
-<span><span class="op">)</span></span>
+<p>A number of calculations across fields from different registers are
+available in <code>ctrdata</code>. This offers much convenience for
+users, because it provides a canonical understanding and implementation
+of the mapping of corresponding fields and value lists across different
+registers. Available calculations can be listed, and a specific
+documentation shown.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># See all concepts available at this time</span></span>
+<span><span class="fu"><a href="../reference/dfCalculateConcept.html">dfCalculateConcept</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#  [1] ".controlType"             ".isMedIntervTrial"        ".isPlatformTrial"        </span></span>
+<span><span class="co">#  [4] ".isUniqueTrial"           ".numSites"                ".numTestArmsSubstances"  </span></span>
+<span><span class="co">#  [7] ".primareEndpointEstimand" ".sampleSize"              ".sponsorType"            </span></span>
+<span><span class="co"># [10] ".startDate"               ".statusRecruitment"       ".trialObjective"         </span></span>
+<span><span class="co"># [13] ".trialPhase"</span></span>
 <span></span>
-<span><span class="co"># Plot from both registers</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html" class="external-link">png</a></span><span class="op">(</span><span class="st">"vignettes/nb2.png"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span></span>
-<span>  <span class="va">result</span><span class="op">[[</span><span class="st">"trialstart"</span><span class="op">]</span><span class="op">]</span>,</span>
-<span>  breaks <span class="op">=</span> <span class="st">"years"</span></span>
-<span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/box.html" class="external-link">box</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html" class="external-link">dev.off</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="float">
-<img src="nb2.png" alt="Histogram2"><div class="figcaption">Histogram2</div>
-</div>
-<p>In a more sophisticated use of
-<code><a href="../reference/dfMergeVariablesRelevel.html">dfMergeVariablesRelevel()</a></code>, values of the original variables
-can be mapped into new values of the merged variable, as follows:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># First, define how values of the new, merged variable</span></span>
-<span><span class="co"># (e.g., "ongoing") will result from values of the</span></span>
-<span><span class="co"># original variable (e.g, "Recruiting):</span></span>
-<span><span class="va">mapped_values</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>  <span class="st">"ongoing"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>    <span class="co"># EUCTR</span></span>
-<span>    <span class="st">"Recruiting"</span>, <span class="st">"Active"</span>, <span class="st">"Ongoing"</span>, </span>
-<span>    <span class="st">"Temporarily Halted"</span>, <span class="st">"Restarted"</span>,</span>
-<span>    <span class="co"># CTGOV</span></span>
-<span>    <span class="st">"Active, not recruiting"</span>, <span class="st">"Enrolling by invitation"</span>, </span>
-<span>    <span class="st">"Not yet recruiting"</span>, </span>
-<span>    <span class="co"># CTGOV2</span></span>
-<span>    <span class="st">"ACTIVE_NOT_RECRUITING"</span>, <span class="st">"ENROLLING_BY_INVITATION"</span>,</span>
-<span>    <span class="st">"RECRUITING"</span>, <span class="st">"TEMPORARILY_NOT_AVAILABLE"</span>,</span>
-<span>    <span class="co"># CTIS</span></span>
-<span>    <span class="st">"Ongoing, recruiting"</span>, <span class="st">"Ongoing, recruitment ended"</span>, </span>
-<span>    <span class="st">"Ongoing, not yet recruiting"</span>, <span class="st">"Authorised, not started"</span></span>
-<span>  <span class="op">)</span>,</span>
-<span>  <span class="co">#</span></span>
-<span>  <span class="st">"completed"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>    <span class="st">"Completed"</span>, <span class="st">"COMPLETED"</span>, <span class="st">"Ended"</span><span class="op">)</span>,</span>
-<span>  <span class="co">#</span></span>
-<span>  <span class="st">"other"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>    <span class="st">"GB - no longer in EU/EEA"</span>, <span class="st">"Trial now transitioned"</span>,</span>
-<span>    <span class="st">"Withdrawn"</span>, <span class="st">"Suspended"</span>, <span class="st">"No longer available"</span>, </span>
-<span>    <span class="st">"SUSPENDED"</span>, <span class="st">"NO_LONGER_AVAILABLE"</span>, <span class="st">"WITHDRAWN"</span>,</span>
-<span>    <span class="st">"WITHHELD"</span>, <span class="st">"UNKNOWN"</span>,</span>
-<span>    <span class="st">"Terminated"</span>, <span class="st">"TERMINATED"</span>, <span class="st">"Prematurely Ended"</span>, </span>
-<span>    <span class="st">"Under evaluation"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
+<span><span class="co"># Introduction to trial concepts</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/help.html" class="external-link">help</a></span><span class="op">(</span><span class="st">"ctrdata-trial-concepts"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Secondly, use the list of mapped</span></span>
-<span><span class="co"># values when merging two variable:</span></span>
-<span><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfMergeVariablesRelevel.html">dfMergeVariablesRelevel</a></span><span class="op">(</span></span>
-<span>  <span class="va">result</span>,</span>
-<span>  colnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>    <span class="co"># EUCTR</span></span>
-<span>    <span class="st">"p_end_of_trial_status"</span>,</span>
-<span>    <span class="co"># CTGOV2</span></span>
-<span>    <span class="st">"protocolSection.statusModule.overallStatus"</span></span>
-<span>  <span class="op">)</span>,</span>
-<span>  levelslist <span class="op">=</span> <span class="va">mapped_values</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">)</span></span>
-<span><span class="co"># ongoing completed  other </span></span>
-<span><span class="co">#       5       256      6 </span></span></code></pre></div>
+<span><span class="co"># Show documentation of a specific trial concept </span></span>
+<span><span class="co"># dfCalculateConcept(name = ".isMedIntervTrial")</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># &gt;&gt;&gt;&gt; .isMedIntervTrial</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># * Description:</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Calculates if record is a medicine-interventional trial, investigating one </span></span>
+<span><span class="co"># or more medicine, whether biological or not.</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># For EUCTR and CTIS, this corresponds to all records as per the definition of </span></span>
+<span><span class="co"># the EU Clinical Trial Regulation.</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># For CTGOV and CTGOV2, this is based on drug or biological as type of </span></span>
+<span><span class="co"># intervention, and interventional as type of study.</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># For ISRCTN, this is based on drug or biological as type of intervention, </span></span>
+<span><span class="co"># and interventional as type of study.</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Returns a logical.</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># * Fields needed:</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># ctrname</span></span>
+<span><span class="co"># intervention.intervention_type</span></span>
+<span><span class="co"># study_type</span></span>
+<span><span class="co"># protocolSection.armsInterventionsModule.interventions.type</span></span>
+<span><span class="co"># protocolSection.designModule.studyType</span></span>
+<span><span class="co"># interventions.intervention.interventionType</span></span>
+<span><span class="co"># trialDesign.primaryStudyDesign</span></span>
+<span><span class="co"># ctrname</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># * To show the implementation, call: ctrdata::.isMedIntervTrial</span></span>
+<span><span class="co"># or, after package("ctrdata"), call: .isMedIntervTrial</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># &lt;&lt;&lt;&lt;</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="user-annotations">User annotations<a class="anchor" aria-label="anchor" href="#user-annotations"></a>
+<h2 id="merging-fields-for-analysis">Merging fields for analysis<a class="anchor" aria-label="anchor" href="#merging-fields-for-analysis"></a>
 </h2>
-<p>When using <code><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code>, <code>ctrdata</code>
-adds to each record the fields <code>annotation</code> and
-<code>record_last_import</code>. The annotation field is a single string
-that the user specifies when retrieving trials (<a href="ctrdata_retrieve.Rmd">Retrieve clinical trial information</a>).
-The user can specify to append, prefix or replace any existing
-annotations when a trial record is loaded again, see example below. The
-last date and time when the trial record was imported is updated
-automatically when using <code><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code>. These fields
-can also be used for analysis. For example, string functions can be used
-for annotations, e.g. to split it into components. Since no annotations
-were specified when retrieving the trials in the steps above, there are
-so far no annotation fields and <code>stopifnodata</code> is set to
-<code>FALSE</code> to avoid the function raises an error to alert
-users:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#</span></span>
-<span><span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
-<span>  queryterm <span class="op">=</span> <span class="st">"query=neuroblastoma&amp;resultsstatus=trials-with-results"</span>,</span>
-<span>  register <span class="op">=</span> <span class="st">"EUCTR"</span>,</span>
-<span>  euctrresults <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  annotation.text <span class="op">=</span> <span class="st">"test annotation"</span>,</span>
-<span>  annotation.mode <span class="op">=</span> <span class="st">"append"</span>,</span>
-<span>  con <span class="op">=</span> <span class="va">db</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span>
-<span>  fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>    <span class="st">"annotation"</span>,</span>
-<span>    <span class="st">"record_last_import"</span></span>
-<span>  <span class="op">)</span>,</span>
-<span>  con <span class="op">=</span> <span class="va">db</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
-<span><span class="co"># 'data.frame': 552 obs. of  3 variables:</span></span>
-<span><span class="co">#  $ _id               : chr  "2004-004386-15-DE" "2004-004386-15-ES" ...</span></span>
-<span><span class="co">#  $ record_last_import: Date, format: "2024-06-29" "2024-06-29" ...</span></span>
-<span><span class="co">#  $ annotation        : chr  "test annotation" "test annotation" ...</span></span></code></pre></div>
+<p>With the function <code><a href="../reference/dfMergeVariablesRelevel.html">dfMergeVariablesRelevel()</a></code>, users have
+control how to merge values of a set of original variables to a new
+variable, optionally with a new set of values. For more, see
+<code><a href="../reference/dfMergeVariablesRelevel.html">help(dfMergeVariablesRelevel)</a></code>. This can be used for
+concepts that are very specific to the use case and / or not implemented
+so far, see <code><a href="../reference/dfCalculateConcept.html">dfCalculateConcept()</a></code>.</p>
 </div>
 <div class="section level2">
-<h2 id="analysing-sample-sizes-in-historic-versions-of-trial-records">Analysing sample sizes in historic versions of trial records<a class="anchor" aria-label="anchor" href="#analysing-sample-sizes-in-historic-versions-of-trial-records"></a>
+<h2 id="historic-versions-of-trial-records-and-changes-in-sample-sizes">Historic versions of trial records and changes in sample sizes<a class="anchor" aria-label="anchor" href="#historic-versions-of-trial-records-and-changes-in-sample-sizes"></a>
 </h2>
 <p>Historic versions can set to be retrieved for CTGOV2 by specifying
 <code>ctgov2history = &lt;...&gt;</code> when using
 <code><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code>; this functionality was added in
 <code>ctrdata</code> version 1.18.0. The versions include all trial data
-available at the date of the respective version.</p>
+available at the date of the respective version. Only CTGOV2 provides
+historic versions at this time; they were available for
+<code>CTIS</code> only until its relaunch on 2024-06-17.</p>
 <p>For CTGOV2 records, the historic versions are added as follows into
 the <code>ctrdata</code> data model of a trial record, where the
-ellipsis <code>...</code> represents all trial data fields:</p>
-<p><code>{"_id":"NCT01234567", "title": "Current title", ..., "history": [{"history_version": {"version_number": 1, "version_date": "2020-21-22 10:11:12"}, "title": "Original title", ...}, {"history_version": {"number": 2, "date": "2021-22-23 11:13:13"}, "title": "Later title", ...}]}</code></p>
+ellipsis <code>...</code> represents all trial data fields:
+<code>{"_id":"NCT01234567", "title": "Current title", ..., "history": [{"history_version": {"version_number": 1, "version_date": "2020-21-22 10:11:12"}, "title": "Original title", ...}, {"history_version": {"number": 2, "date": "2021-22-23 11:13:13"}, "title": "Later title", ...}]}</code></p>
 <p>The example shows how planned or realised number of participants
 (sample size) changed over time for individual trials, using available
-data (that is, only from <code>CTGOV2</code>; historic versions were
-available for <code>CTIS</code> only until its relaunch on
-2024-06-17).</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#</span></span>
-<span><span class="co"># load some trials from CTGOV2 specifying that </span></span>
+data</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Load previous query (above), specifying that </span></span>
 <span><span class="co"># for each trial, 5 versions should be retrieved</span></span>
 <span><span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
-<span>  queryterm <span class="op">=</span> <span class="st">"cond=neuroblastoma&amp;aggFilters=phase:3,status:com"</span>, </span>
-<span>  register <span class="op">=</span> <span class="st">"CTGOV2"</span>, </span>
+<span>  queryterm <span class="op">=</span> <span class="va">queries</span><span class="op">[</span><span class="st">"CTGOV2"</span><span class="op">]</span>, </span>
 <span>  con <span class="op">=</span> <span class="va">db</span>, </span>
 <span>  ctgov2history <span class="op">=</span> <span class="fl">5L</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># * Appears specific for CTGOV REST API 2.0</span></span>
-<span><span class="co"># * Found search query from CTGOV2: cond=neuroblastoma&amp;aggFilters=phase:3,status:com</span></span>
-<span><span class="co"># * Checking trials using CTGOV REST API 2.0, found 24 trials</span></span>
-<span><span class="co"># (1/3) Downloading in 1 batch(es) (max. 1000 trials each; estimate: 2.4 Mb total)</span></span>
-<span><span class="co"># Download status: 1 done; 0 in progress. Total size: 1.11 Mb (482%)... done!             </span></span>
-<span><span class="co"># (2/3) Converting to NDJSON...</span></span>
-<span><span class="co"># (3/3) Importing records into database...</span></span>
-<span><span class="co"># JSON file #: 1 / 1                               </span></span>
-<span><span class="co"># * Checking and processing historic versions... </span></span>
-<span><span class="co"># Download status: 24 done; 0 in progress. Total size: 1.35 Mb (515%)... done!             </span></span>
-<span><span class="co"># - Downloading 117 historic versions (estimate: 4.4 MB total)...</span></span>
-<span><span class="co"># Download status: 117 done; 0 in progress. Total size: 4.14 Mb (532%)... done!             </span></span>
-<span><span class="co"># - Merging trial versions . . . . . . . . . . . . . . . . . . . . . . . . </span></span>
-<span><span class="co"># - Updating trial records . . . . . . . . . . . . . . . . . . . . . . . . </span></span>
-<span><span class="co"># Updated 24 trial(s) with historic versions</span></span>
-<span><span class="co"># = Imported or updated 24 trial(s)</span></span>
-<span><span class="co"># Updated history ("meta-info" in "my_collection_name")</span></span>
 <span></span>
-<span><span class="co"># get relevant fields</span></span>
+<span><span class="co"># Get relevant fields</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span>
 <span>  fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>    <span class="co"># CTGOV2</span></span>
+<span>    <span class="co"># only CTGOV2 has structured historic information</span></span>
 <span>    <span class="st">"history.protocolSection.designModule.enrollmentInfo.count"</span>,</span>
 <span>    <span class="st">"history.history_version.version_date"</span></span>
 <span>  <span class="op">)</span>,</span>
+<span>  calculate <span class="op">=</span> <span class="st">".statusRecruitment"</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># helpers</span></span>
+<span><span class="co"># Helper packages</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># mangle and plot</span></span>
+<span><span class="co"># Mangle and plot</span></span>
 <span><span class="va">result</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"history."</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.statusRecruitment</span> <span class="op">==</span> <span class="st">"completed"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">history.protocolSection.designModule.enrollmentInfo.count</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">history.protocolSection.designModule.enrollmentInfo.count</span> <span class="op">&gt;</span> <span class="fl">0L</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">`_id`</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span></span>
 <span>    mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span></span>
@@ -672,6 +504,7 @@ available for <code>CTIS</code> only until its relaunch on
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_step</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_light</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_log10</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html" class="external-link">guides</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
 <span>    title <span class="op">=</span> <span class="st">"Sample sizes in trials including patients with a neuroblastoma"</span>, </span>
@@ -693,31 +526,23 @@ several endpoints). A visualisation of this hierarchical representation
 for CTGOV2 follows. Compare this with the outcome measures presented
 here: <a href="https://clinicaltrials.gov/study/NCT02139397?tab=results#outcome-measures" class="external-link uri">https://clinicaltrials.gov/study/NCT02139397?tab=results#outcome-measures</a>,
 specifically “3. Determine the Progression Free Survival (PFS)…”</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Prepare</span></span>
-<span><span class="co"># remotes::install_github("https://github.com/hrbrmstr/jsonview")</span></span>
-<span></span>
-<span><span class="co"># Find top level nodes within resultsSection</span></span>
-<span><span class="fu"><a href="../reference/dbFindFields.html">dbFindFields</a></span><span class="op">(</span><span class="st">"^resultsSection[.][^.]+$"</span>, <span class="va">db</span>, sample <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="co"># Using cache of fields. </span></span>
-<span><span class="co">#                                         CTGOV2 </span></span>
-<span><span class="co">#           "resultsSection.adverseEventsModule" </span></span>
-<span><span class="co">#                                         CTGOV2 </span></span>
-<span><span class="co"># "resultsSection.baselineCharacteristicsModule" </span></span>
-<span><span class="co">#                                         CTGOV2 </span></span>
-<span><span class="co">#                "resultsSection.moreInfoModule" </span></span>
-<span><span class="co">#                                         CTGOV2 </span></span>
-<span><span class="co">#         "resultsSection.outcomeMeasuresModule" </span></span>
-<span><span class="co">#                                         CTGOV2 </span></span>
-<span><span class="co">#         "resultsSection.participantFlowModule" </span></span>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Since version 1.20.0, an interactive widget is built into ctrdata</span></span>
+<span><span class="co"># and can be used to search in all field names and all values </span></span>
+<span><span class="fu"><a href="../reference/ctrShowOneTrial.html">ctrShowOneTrial</a></span><span class="op">(</span><span class="st">"NCT02139397"</span>, con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></span></code></pre></div>
+<p><img src="ctgov2nestedresults1.png" alt="Ctgov2NestedResults">
+Alternative:</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Helper package</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"https://github.com/hrbrmstr/jsonview"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Get relevant data</span></span>
-<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span><span class="st">"resultsSection.outcomeMeasuresModule"</span>, <span class="va">db</span><span class="op">)</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span><span class="st">"resultsSection.outcomeMeasuresModule"</span>, con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Create interactive widget</span></span>
 <span><span class="fu">jsonview</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonview/man/json_tree_view.html" class="external-link">json_tree_view</a></span><span class="op">(</span><span class="va">result</span><span class="op">[</span><span class="va">result</span><span class="op">[[</span><span class="st">"_id"</span><span class="op">]</span><span class="op">]</span> <span class="op">==</span> <span class="st">"NCT02139397"</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <div class="float">
-<img src="ctgov2nestedresults.png" alt="Ctgov2NestedResults"><div class="figcaption">Ctgov2NestedResults</div>
+<img src="ctgov2nestedresults2.png" alt="Ctgov2NestedResults"><div class="figcaption">Ctgov2NestedResults</div>
 </div>
 <p>The analysis of nested information such as the highlighted duration
 of response is facilitated with <code>ctrdata</code> as follows. The
@@ -730,18 +555,17 @@ sections (using <code><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsI
 <li><p>Identify the measures of interest (e.g. PFS, blue circle above)
 by specifying the name and value of these fields
 (<code>wherename</code>, <code>wherevalue</code> in function
-<code><a href="../reference/dfName2Value.html">dfName2Value()</a></code>) and</p></li>
+<code><a href="../reference/dfName2Value.html">dfName2Value()</a></code>)</p></li>
 <li><p>Obtain values by specifying the name(s) of its value field(s)
 (red and green circles in figure above; <code>valuename</code> in
-function <code><a href="../reference/dfName2Value.html">dfName2Value()</a></code>).</p></li>
+function <code><a href="../reference/dfName2Value.html">dfName2Value()</a></code>)</p></li>
+<li><p>Tabulate the results of interest</p></li>
 </ol>
 <p>This is put together in the following example. Note that
 <code>CTGOV</code> fields are no longer downloadable (see NEWS.md) but
 may exist in previously created databases.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#</span></span>
-<span><span class="co">#### 1. Create data frame from results fields</span></span>
-<span><span class="co"># </span></span>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#### 1. Create data frame from results fields</span></span>
 <span><span class="co"># These are key results fields from</span></span>
 <span><span class="co"># CTGOV2, CTGOV and from EUCTR:</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span>
@@ -766,29 +590,35 @@ may exist in previously created databases.</p>
 <span>    <span class="st">"clinical_results.outcome_list.outcome"</span>,</span>
 <span>    <span class="st">"study_design_info.allocation"</span></span>
 <span>  <span class="op">)</span>,</span>
+<span>  calculate <span class="op">=</span> <span class="st">".isUniqueTrial"</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Keep only unique trial records</span></span>
-<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">[</span><span class="va">result</span><span class="op">[[</span><span class="st">"_id"</span><span class="op">]</span><span class="op">]</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>, <span class="op">]</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">[</span><span class="va">result</span><span class="op">[[</span><span class="st">".isUniqueTrial"</span><span class="op">]</span><span class="op">]</span>, <span class="op">]</span></span>
 <span></span>
 <span></span>
 <span><span class="co">#### 2. All nested data are transformed to a long,</span></span>
-<span><span class="co"># name-value data.frame (resulting in several</span></span>
-<span><span class="co"># hundred rows per trial record):</span></span>
+<span><span class="co"># Name value data frame (which has several hundred</span></span>
+<span><span class="co"># rows for each trial, with one row per field):</span></span>
 <span><span class="co"># </span></span>
 <span><span class="va">long_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfTrials2Long.html">dfTrials2Long</a></span><span class="op">(</span>df <span class="op">=</span> <span class="va">result</span><span class="op">)</span></span>
-<span><span class="co"># Total 174667 rows, 157 unique names of variables</span></span>
+<span><span class="co"># Total 89253 rows, 159 unique names of variables</span></span>
+<span><span class="va">long_result</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">10000</span>, <span class="fl">80000</span><span class="op">)</span>, <span class="op">]</span></span>
+<span><span class="co"># # A tibble: 3 × 4</span></span>
+<span><span class="co">#   `_id`             identifier name                                                        value</span></span>
+<span><span class="co">#   &lt;chr&gt;             &lt;chr&gt;      &lt;chr&gt;                                                       &lt;chr&gt;</span></span>
+<span><span class="co"># 1 2007-000371-42-PL 36         adverseEvents.seriousAdverseEvents.seriousAdverseEvent.dic… false</span></span>
+<span><span class="co"># 2 2013-003595-12-CZ 13.3       adverseEvents.seriousAdverseEvents.seriousAdverseEvent.val… 0    </span></span>
+<span><span class="co"># 3 NCT02124772       25.3       resultsSection.outcomeMeasuresModule.outcomeMeasures.denom… OG002</span></span>
 <span></span>
-<span><span class="co"># explore </span></span>
-<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span><span class="st">"endPoints"</span>, <span class="va">db</span><span class="op">)</span></span>
-<span><span class="fu">jsonview</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonview/man/json_tree_view.html" class="external-link">json_tree_view</a></span><span class="op">(</span><span class="va">result</span><span class="op">[</span><span class="va">result</span><span class="op">[[</span><span class="st">"_id"</span><span class="op">]</span><span class="op">]</span> <span class="op">==</span> <span class="st">"2010-019348-37-IT"</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co">#### 3. Obtain values for measures of interest </span></span>
+<span><span class="co">#### 3. and 4. Obtain values for measures of interest </span></span>
 <span><span class="co">#</span></span>
-<span><span class="co"># The parameters can be regular expressions.</span></span>
+<span><span class="co"># The parameters can be regular expressions</span></span>
 <span><span class="va">clinicalDuration</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfName2Value.html">dfName2Value</a></span><span class="op">(</span></span>
 <span>  df <span class="op">=</span> <span class="va">long_result</span>,</span>
+<span>  <span class="co"># 3. Identify measures of interest</span></span>
 <span>  wherename <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
 <span>    <span class="st">"endPoints.endPoint.title|"</span>,</span>
 <span>    <span class="st">"resultsSection.outcomeMeasuresModule.outcomeMeasures.title"</span></span>
@@ -797,6 +627,7 @@ may exist in previously created databases.</p>
 <span>    <span class="st">"duration of response|DOR|"</span>,</span>
 <span>    <span class="st">"free survival|DFS|PFS|EFS"</span></span>
 <span>  <span class="op">)</span>,</span>
+<span>  <span class="co"># 4. Obtain result values for measure</span></span>
 <span>  valuename <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
 <span>    <span class="st">"resultsSection.*outcomeMeasures.classes.categories.measurements.value|"</span>,</span>
 <span>    <span class="st">"endPoints.*armReportingGroup.tendencyValues.tendencyValue.value|"</span>,</span>
@@ -806,15 +637,25 @@ may exist in previously created databases.</p>
 <span>    <span class="st">"endPoints.*armReportingGroup.armId"</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># Returning values for 45 out of 131 trials</span></span>
+<span><span class="co"># Returning values for 53 out of 683 trials</span></span>
 <span></span>
-<span><span class="co"># Duration has been reported with various units: </span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">clinicalDuration</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"unit"</span>, <span class="va">clinicalDuration</span><span class="op">$</span><span class="va">name</span><span class="op">)</span>, <span class="st">"value"</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># For convenience, `dplyr` and related functions can be used, as follows: </span></span>
+<span><span class="co">#### 5. Tabulate the results</span></span>
+<span></span>
+<span><span class="co"># PFS / EFS duration has been reported with various units:</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">clinicalDuration</span><span class="op">[</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"unit"</span>, <span class="va">clinicalDuration</span><span class="op">$</span><span class="va">name</span><span class="op">)</span>, <span class="st">"value"</span>, drop <span class="op">=</span> <span class="cn">TRUE</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># [1] "3 year EFS"                               "Days"                                    </span></span>
+<span><span class="co"># [3] "Estimated probability"                    "L/hr"                                    </span></span>
+<span><span class="co"># [5] "months"                                   "Months"                                  </span></span>
+<span><span class="co"># [7] "number of participants with No VOD/Death" "Participants"                            </span></span>
+<span><span class="co"># [9] "percent of probability"                   "percent probability" </span></span>
+<span></span>
+<span><span class="co"># Helper packages for convenience</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># Mangle data for tabulation</span></span>
 <span><span class="va">clinicalDuration</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">as_tibble</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
@@ -846,92 +687,79 @@ may exist in previously created databases.</p>
 <span>    <span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">value</span>, <span class="va">unit</span>, <span class="va">armId</span>, <span class="va">title</span><span class="op">)</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">clinicalDuration</span></span>
 <span></span>
-<span><span class="va">clinicalDuration</span></span>
-<span><span class="co"># # A tibble: 163 x 4</span></span>
-<span><span class="co">#    group_id            where                                                arm_names  days</span></span>
-<span><span class="co">#    &lt;chr&gt;               &lt;chr&gt;                                                &lt;chr&gt;     &lt;dbl&gt;</span></span>
-<span><span class="co">#  1 2010-019348-37-IT_8 Duration of response by treatment                    "Arm-235   211.</span></span>
-<span><span class="co">#  2 2010-019348-37-IT_8 Duration of response by treatment                    "Arm-235   242.</span></span>
-<span><span class="co">#  3 2010-019348-37-IT_8 Duration of response by treatment                    "Arm-235   146.</span></span>
-<span><span class="co">#  4 2010-022951-49-LV_2 Progression-free Survival                            "Arm-648   108 </span></span>
-<span><span class="co">#  5 2010-022951-49-LV_2 Progression-free Survival                            "Arm-648    51 </span></span>
-<span><span class="co">#  6 2010-022951-49-LV_4 Progression Free Survival (PFS) in Participants wit  "Arm-648   156 </span></span>
-<span><span class="co">#  7 2010-022951-49-LV_4 Progression Free Survival (PFS) in Participants wit  "Arm-648    51 </span></span>
-<span><span class="co">#  8 2011-004168-30-DE_2 Progression-free survival PP population              "Arm-937   159 </span></span>
-<span><span class="co">#  9 2011-004168-30-DE_2 Progression-free survival PP population              "Arm-937   132 </span></span>
-<span><span class="co"># 10 2012-000510-10-GB_2 Progression Free Survival                            "Arm-782    NA </span></span></code></pre></div>
+<span><span class="va">clinicalDuration</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">clinicalDuration</span><span class="op">)</span><span class="op">)</span>, <span class="fl">10L</span><span class="op">)</span>, <span class="op">]</span></span>
+<span><span class="co"># # A tibble: 10 × 4</span></span>
+<span><span class="co">#    group_id             where                                                    arm_names  days</span></span>
+<span><span class="co">#    &lt;chr&gt;                &lt;chr&gt;                                                    &lt;chr&gt;     &lt;dbl&gt;</span></span>
+<span><span class="co">#  1 NCT01962103_22       Phase 2: Progression-Free Survival (PFS)                 " Phase …  91  </span></span>
+<span><span class="co">#  2 NCT02162732_4        Progression Free Survival (PFS) Interval Will be Measur… " Neurob… 283  </span></span>
+<span><span class="co">#  3 2014-004685-25-DE_11 PFS as Determined by the Investigator using RANO criter… ""         NA  </span></span>
+<span><span class="co">#  4 NCT01355679_4        Activity of Treatments Chosen Based on Progression Free… " Guided…  59  </span></span>
+<span><span class="co">#  5 2014-004697-41-IT_16 Duration of Response (DOR) as Determined by the Investi… "Arm-104… 396  </span></span>
+<span><span class="co">#  6 NCT02162732_4        Progression Free Survival (PFS) Interval Will be Measur… " Neurob… 163  </span></span>
+<span><span class="co">#  7 NCT01483820_3        Number of Days Participants Experienced Progression Fre… " TPI 28…  46  </span></span>
+<span><span class="co">#  8 NCT01505608_5        Progression Free Survival (PFS) of Participants Using D… " Arm A-… 125  </span></span>
+<span><span class="co">#  9 NCT02139397_3        Determine the Progression Free Survival (PFS) of Partic… " Phase …  51.2</span></span>
+<span><span class="co"># 10 NCT04029688_14       Part 1b: PFS in Participants With Neuroblastoma From SE… " Part 1…  54  </span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="analysing-primary-endpoints">Analysing primary endpoints<a class="anchor" aria-label="anchor" href="#analysing-primary-endpoints"></a>
 </h2>
 <p>Text analysis has to be used for many fields of trial information
 from the registers. Here is an example to simply categorise the type of
-primary endpoint. In addition, the number of subjects are extracted and
-compared by type of primary endpoint.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#</span></span>
+primary endpoint. In addition, the number of subjects are compared by
+type of primary endpoint. The example uses trial concepts introduced in
+earlier sections, see <code><a href="../reference/dfCalculateConcept.html">dfCalculateConcept()</a></code>.</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Get relevant data</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>    <span class="co"># CTGOV</span></span>
-<span>    <span class="st">"resultsSection.outcomeMeasuresModule.outcomeMeasures.title"</span>,</span>
-<span>    <span class="st">"protocolSection.designModule.enrollmentInfo.count"</span>,</span>
-<span>    <span class="co"># EUCTR</span></span>
-<span>    <span class="st">"e51_primary_end_points"</span>,</span>
-<span>    <span class="st">"f11_number_of_subjects_for_this_age_range"</span></span>
+<span>  calculate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>    <span class="st">".isUniqueTrial"</span>,</span>
+<span>    <span class="st">".sampleSize"</span>,</span>
+<span>    <span class="st">".trialPopulation"</span>,</span>
+<span>    <span class="st">".primaryEndpointDescription"</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co"># Querying database (75 fields)...</span></span>
+<span><span class="co"># - Finding duplicates among registers' and sponsor ids... </span></span>
+<span><span class="co"># - 132 EUCTR _id were not preferred EU Member State record for 83 trials</span></span>
+<span><span class="co"># - Keeping 613 / 50 / 0 / 1 / 19 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS</span></span>
+<span><span class="co"># Calculating .primaryEndpointDescription... </span></span>
 <span></span>
 <span><span class="co"># De-duplicate</span></span>
-<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">[</span></span>
-<span>  <span class="va">result</span><span class="op">[[</span><span class="st">"_id"</span><span class="op">]</span><span class="op">]</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span></span>
-<span>    <span class="fu"><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>,</span>
-<span><span class="op">]</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">[</span><span class="va">result</span><span class="op">[[</span><span class="st">".isUniqueTrial"</span><span class="op">]</span><span class="op">]</span>, <span class="op">]</span></span>
 <span></span>
-<span><span class="co"># Merge primary endpoint (pep)</span></span>
-<span><span class="va">result</span><span class="op">$</span><span class="va">pep</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfMergeVariablesRelevel.html">dfMergeVariablesRelevel</a></span><span class="op">(</span></span>
-<span>  df <span class="op">=</span> <span class="va">result</span>,</span>
-<span>  colnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>    <span class="st">"resultsSection.outcomeMeasuresModule.outcomeMeasures.title"</span>,</span>
-<span>    <span class="st">"e51_primary_end_points"</span></span>
-<span>  <span class="op">)</span></span>
-<span><span class="op">)</span></span>
+<span><span class="co"># For primary endpoint of interest, use regular expression on text to</span></span>
+<span><span class="co"># identify time to the respective event (mostly includes death events)</span></span>
+<span><span class="va">regex</span> <span class="op">&lt;-</span> <span class="st">"((progression|event|relapse|recurrence|disease)[- ]free)|pfs|dfs|efs)"</span></span>
 <span></span>
-<span><span class="co"># Merge number of subjects</span></span>
-<span><span class="va">result</span><span class="op">$</span><span class="va">nsubj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfMergeVariablesRelevel.html">dfMergeVariablesRelevel</a></span><span class="op">(</span></span>
-<span>  df <span class="op">=</span> <span class="va">result</span>,</span>
-<span>  colnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>    <span class="st">"protocolSection.designModule.enrollmentInfo.count"</span>,</span>
-<span>    <span class="st">"f11_number_of_subjects_for_this_age_range"</span></span>
-<span>  <span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># For primary endpoint of interest,</span></span>
-<span><span class="co"># use regular expression on text:</span></span>
+<span><span class="co"># .primaryEndpointDescription is in each cell a list of one or more </span></span>
+<span><span class="co"># items with an endpoint description; grepl works on each such item</span></span>
 <span><span class="va">result</span><span class="op">$</span><span class="va">pep_is_efs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span></span>
-<span>  pattern <span class="op">=</span> <span class="st">"((progression|event|relapse|recurrence|disease)[- ]free)|pfs|dfs|efs)"</span>,</span>
-<span>  x <span class="op">=</span> <span class="va">result</span><span class="op">$</span><span class="va">pep</span>,</span>
+<span>  pattern <span class="op">=</span> <span class="va">regex</span>,</span>
+<span>  x <span class="op">=</span> <span class="va">result</span><span class="op">$</span><span class="va">.primaryEndpointDescription</span>,</span>
 <span>  ignore.case <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Tabulate</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">pep_is_efs</span><span class="op">)</span></span>
 <span><span class="co"># FALSE  TRUE</span></span>
-<span><span class="co">#   221    35</span></span>
+<span><span class="co">#   606    76</span></span>
 <span></span>
 <span><span class="co"># Plot</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">result</span>,</span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span></span>
-<span>    x <span class="op">=</span> <span class="va">nsubj</span>,</span>
+<span>    x <span class="op">=</span> <span class="va">.sampleSize</span>,</span>
 <span>    y <span class="op">=</span> <span class="va">pep_is_efs</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html" class="external-link">geom_boxplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_log10</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co"># Warning message:</span></span>
-<span><span class="co"># Removed 25 rows containing non-finite values (`stat_boxplot()`). </span></span>
+<span><span class="co"># Removed 90 rows containing non-finite values (`stat_boxplot()`). </span></span>
 <span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggsave</a></span><span class="op">(</span><span class="st">"vignettes/boxpep.png"</span>, width <span class="op">=</span> <span class="fl">6</span>, height <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
 <div class="float">
@@ -941,105 +769,58 @@ compared by type of primary endpoint.</p>
 <div class="section level2">
 <h2 id="analysis-methods-and-p-values">Analysis methods and p values<a class="anchor" aria-label="anchor" href="#analysis-methods-and-p-values"></a>
 </h2>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># helper </span></span>
-<span><span class="va">normalise_string</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  </span>
-<span>  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">","</span>, <span class="st">""</span>,  <span class="va">x</span><span class="op">)</span></span>
-<span>  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"-"</span>, <span class="st">" "</span>, <span class="va">x</span><span class="op">)</span></span>
-<span>  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/chartr.html" class="external-link">tolower</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span>  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">tools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/tools/toTitleCase.html" class="external-link">toTitleCase</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span>  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"[ ]+"</span>, <span class="st">" "</span>, <span class="va">x</span><span class="op">)</span></span>
-<span>  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/trimws.html" class="external-link">trimws</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span>  <span class="va">x</span></span>
-<span>  </span>
-<span><span class="op">}</span></span>
+<p>It may be interesting to review results of the primary endpoint in a
+set of trials, for a therapeutic area or a types of endpoints or
+designs. The results of null-hypothesis significance testing (NHST) may
+show an interesting distribution of p values (see also Robinson-D 2014,
+<a href="http://varianceexplained.org/statistics/interpreting-pvalue-histogram/" class="external-link uri">http://varianceexplained.org/statistics/interpreting-pvalue-histogram/</a>,
+which refers to cases with many p values, possibly from a single
+experiment). When analysed robustly in a well-defined set of trials,
+such distributions may allow assumptions about equipoise, forking path
+or reporting preferences.</p>
+<p>The example merely shows the technical approach, without asserting
+relevance. For a robust analysis, consider further trial concepts (in
+particular, “.trialObjectives”, “.controlType”, “.isMedIntervTrial”,
+“.trialPhase”), see <code><a href="../reference/dfCalculateConcept.html">dfCalculateConcept()</a></code>.</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Get result set</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span>
+<span>  calculate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>    <span class="st">".isUniqueTrial"</span>,</span>
+<span>    <span class="st">".sampleSize"</span>,</span>
+<span>    <span class="st">".primaryEndpointResults"</span></span>
+<span>  <span class="op">)</span>, </span>
+<span>  con <span class="op">=</span> <span class="va">db</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co"># Querying database (53 fields)...</span></span>
 <span></span>
-<span><span class="co"># get trials into database</span></span>
-<span><span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
-<span>  queryterm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
-<span>    <span class="st">"https://clinicaltrials.gov/search?start=2010-01-01_2012-12-31"</span>, <span class="st">"</span></span>
-<span><span class="st">    &amp;intr=Drug&amp;aggFilters=ages:child,phase:2 3,results:with"</span><span class="op">)</span>, </span>
-<span>  con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></span>
+<span><span class="co"># De-duplicate</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">[</span><span class="va">result</span><span class="op">[[</span><span class="st">".isUniqueTrial"</span><span class="op">]</span><span class="op">]</span>, <span class="op">]</span></span>
 <span></span>
-<span><span class="co"># see definitions linked in help("ctrdate-registers") or directly go to</span></span>
-<span><span class="co"># https://clinicaltrials.gov/data-api/about-api/study-data-structure</span></span>
-<span></span>
-<span><span class="co"># get result set</span></span>
-<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>  <span class="st">"protocolSection.armsInterventionsModule.armGroups.type"</span>,</span>
-<span>  <span class="st">"protocolSection.designModule.designInfo.allocation"</span>,</span>
-<span>  <span class="st">"protocolSection.designModule.designInfo.interventionModel"</span>,</span>
-<span>  <span class="st">"protocolSection.designModule.designInfo.maskingInfo.masking"</span>,</span>
-<span>  <span class="st">"protocolSection.designModule.enrollmentInfo.count"</span>,</span>
-<span>  <span class="st">"protocolSection.statusModule.startDateStruct.date"</span>,</span>
-<span>  <span class="st">"protocolSection.outcomesModule.primaryOutcomes.measure"</span>,</span>
-<span>  <span class="st">"resultsSection.outcomeMeasuresModule.outcomeMeasures.analyses.statisticalMethod"</span>,</span>
-<span>  <span class="st">"resultsSection.outcomeMeasuresModule.outcomeMeasures.analyses.pValue"</span></span>
-<span><span class="op">)</span>, </span>
-<span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># # number of participants (last number is typically all groups summed up)</span></span>
-<span><span class="co"># # also see README.Rmd for alternative way, summing up non-total groups</span></span>
-<span><span class="co"># # result$totalparticipants &lt;- vapply(</span></span>
-<span><span class="co"># # result[["clinical_results.baseline.analyzed_list.analyzed.count_list.count.value"]],</span></span>
-<span><span class="co"># # FUN = function(x) rev(x)[1], numeric(1L))</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># View(result)</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># result$totalparticipants &lt;- result$protocolSection.designModule.enrollmentInfo.count</span></span>
-<span></span>
-<span><span class="co"># first reported p value for primary endpoint analysis</span></span>
-<span><span class="va">result</span><span class="op">$</span><span class="va">pvalueprimaryanalysis</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span></span>
-<span>  <span class="va">result</span><span class="op">[[</span><span class="st">"resultsSection.outcomeMeasuresModule.outcomeMeasures.analyses.pValue"</span><span class="op">]</span><span class="op">]</span>,</span>
-<span>  FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/trimws.html" class="external-link">trimws</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"[&lt;&gt;=]"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/strsplit.html" class="external-link">strsplit</a></span><span class="op">(</span><span class="va">x</span>, <span class="st">" / "</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># statistical method used for primary endpoint analysis</span></span>
-<span><span class="va">result</span><span class="op">$</span><span class="va">methodprimaryanalysis</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span></span>
-<span>  <span class="va">result</span><span class="op">[[</span><span class="st">"resultsSection.outcomeMeasuresModule.outcomeMeasures.analyses.statisticalMethod"</span><span class="op">]</span><span class="op">]</span>,</span>
-<span>  FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu">normalise_string</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/strsplit.html" class="external-link">strsplit</a></span><span class="op">(</span><span class="va">x</span>, <span class="st">" / "</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># keep randomised, parallel-group, placebo-controlled, blinded clinical trials</span></span>
-<span><span class="va">result</span><span class="op">$</span><span class="va">prct</span> <span class="op">&lt;-</span> </span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"PLACEBO|NO_INT"</span>, <span class="va">result</span><span class="op">$</span><span class="va">protocolSection.armsInterventionsModule.armGroups.type</span><span class="op">)</span> <span class="op">&amp;</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"^RANDOM"</span>, <span class="va">result</span><span class="op">$</span><span class="va">protocolSection.designModule.designInfo.allocation</span><span class="op">)</span> <span class="op">&amp;</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"^PARALLEL"</span>, <span class="va">result</span><span class="op">$</span><span class="va">protocolSection.designModule.designInfo.interventionModel</span><span class="op">)</span> <span class="op">&amp;</span></span>
-<span>  <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"NONE"</span>, <span class="va">result</span><span class="op">$</span><span class="va">protocolSection.designModule.designInfo.maskingInfo.masking</span><span class="op">)</span></span>
-<span><span class="co">#</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">prct</span><span class="op">)</span></span>
-<span><span class="co"># FALSE  TRUE </span></span>
-<span><span class="co">#   923   281</span></span>
-<span><span class="co">#</span></span>
-<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">result</span>, <span class="va">prct</span> <span class="op">==</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># helper</span></span>
+<span><span class="co"># Helper package</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># http://varianceexplained.org/statistics/interpreting-pvalue-histogram/</span></span>
-<span><span class="co"># http://www.pnas.org/content/100/16/9440.full</span></span>
-<span><span class="co"># plot p values</span></span>
+<span><span class="co"># Plot p values ECDF</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span></span>
-<span>  <span class="va">result</span>, </span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">pvalueprimaryanalysis</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  data <span class="op">=</span> <span class="va">result</span>, </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">.primaryEndpointFirstPvalue</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_ecdf.html" class="external-link">stat_ecdf</a></span><span class="op">(</span>geom <span class="op">=</span> <span class="st">"step"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
-<span>    title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
-<span>      <span class="st">"Paediatric phase 2 or 3 parallel-group interventional trials\n"</span>, </span>
-<span>      <span class="st">"with randomisation to placebo or to no intervention"</span><span class="op">)</span>, </span>
+<span>    title <span class="op">=</span> <span class="st">"Trials with children with a neuroblastoma"</span>, </span>
 <span>    x <span class="op">=</span> <span class="st">"Range of p values"</span>, </span>
-<span>    y <span class="op">=</span> <span class="st">"Empirical cumulative density of p values\nof primary endpoint results"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    y <span class="op">=</span> <span class="st">"Empirical cumulative density of p values\nfrom primary endpoint primary analysis"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span></span>
 <span>    xintercept <span class="op">=</span> <span class="fl">0.05</span>, </span>
 <span>    linetype <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggsave</a></span><span class="op">(</span><span class="st">"vignettes/phase23_paed_p_values.png"</span>, width <span class="op">=</span> <span class="fl">6</span>, height <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># plot sample size v p value</span></span>
+<span><span class="co"># Plot sample size vs. p value</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span></span>
-<span>  <span class="va">result</span>, </span>
+<span>  data <span class="op">=</span> <span class="va">result</span>, </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span></span>
-<span>    x <span class="op">=</span> <span class="va">protocolSection.designModule.enrollmentInfo.count</span>, </span>
-<span>    y <span class="op">=</span> <span class="va">pvalueprimaryanalysis</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    x <span class="op">=</span> <span class="va">.sampleSize</span>, </span>
+<span>    y <span class="op">=</span> <span class="va">.primaryEndpointFirstPvalue</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">ylim</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">xlim</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1000</span><span class="op">)</span> <span class="op">+</span> </span>
@@ -1048,11 +829,12 @@ compared by type of primary endpoint.</p>
 <span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggsave</a></span><span class="op">(</span><span class="st">"vignettes/phase23_paed_p_values_participants.png"</span>, width <span class="op">=</span> <span class="fl">6</span>, height <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># statistical method used for primary endpoint analysis</span></span>
-<span><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">methodprimaryanalysis</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Statistical method used for primary endpoint analysis</span></span>
+<span><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">.primaryEndpointFirstPmethod</span><span class="op">)</span></span>
 <span><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="va">tmp</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/rev.html" class="external-link">rev</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">)</span></span>
-<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,<span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">Var1</th>
@@ -1060,44 +842,36 @@ compared by type of primary endpoint.</p>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">Ancova</td>
-<td align="right">49</td>
-</tr>
-<tr class="even">
-<td align="left">Cochran Mantel Haenszel</td>
-<td align="right">17</td>
-</tr>
-<tr class="odd">
-<td align="left">Mixed Models Analysis</td>
-<td align="right">14</td>
-</tr>
-<tr class="even">
-<td align="left">Anova</td>
-<td align="right">11</td>
-</tr>
-<tr class="odd">
-<td align="left">Chi Squared</td>
-<td align="right">10</td>
-</tr>
-<tr class="even">
-<td align="left">Fisher Exact</td>
-<td align="right">9</td>
-</tr>
-<tr class="odd">
-<td align="left">t Test 2 Sided</td>
-<td align="right">8</td>
-</tr>
-<tr class="even">
-<td align="left">Wilcoxon (Mann Whitney)</td>
-<td align="right">5</td>
-</tr>
-<tr class="odd">
-<td align="left">Mixed Model Repeated Measures (Mmrm)</td>
+<td align="left">logrank</td>
 <td align="right">4</td>
 </tr>
 <tr class="even">
-<td align="left">Mixed Model for Repeated Measures (Mmrm)</td>
+<td align="left">fisherexact</td>
 <td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">wilcoxon</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">regressioncox</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">mcnemar</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">exactonesidedbinomialtest</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">cochranarmitagetrendtest</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">chisquared</td>
+<td align="right">1</td>
 </tr>
 </tbody>
 </table>
@@ -1114,10 +888,10 @@ compared by type of primary endpoint.</p>
 <p>The information about the status of authorisation (licensing) of a
 medicine used in a trial is recorded in EUCTR in the field
 <code>dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation</code>.
-A corresponding field in CTGOV is not known. The status is in the tree
-starting from the <code>dimp</code> element.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#</span></span>
+A corresponding field in CTGOV, CTGOV2 and ISRCTN is not known. The
+status is in the tree starting from the <code>dimp</code> element.</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Helper package</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Get results</span></span>
@@ -1130,58 +904,40 @@ starting from the <code>dimp</code> element.</p>
 <span>    <span class="st">"f422_in_the_whole_clinical_trial"</span>,</span>
 <span>    <span class="st">"a2_eudract_number"</span></span>
 <span>  <span class="op">)</span>,</span>
+<span>  calculate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>    <span class="st">".isUniqueTrial"</span>,</span>
+<span>    <span class="st">".startDate"</span></span>
+<span>    <span class="op">)</span>, </span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Find first date of authorisation in EU member state</span></span>
-<span><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html" class="external-link">aggregate</a></span><span class="op">(</span></span>
-<span>  <span class="va">result</span><span class="op">[[</span><span class="st">"n_date_of_competent_authority_decision"</span><span class="op">]</span><span class="op">]</span>,</span>
-<span>  by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">result</span><span class="op">[[</span><span class="st">"a2_eudract_number"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,</span>
-<span>  FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span></span>
-<span>  x <span class="op">=</span> <span class="va">result</span>,</span>
-<span>  y <span class="op">=</span> <span class="va">tmp</span>,</span>
-<span>  by.x <span class="op">=</span> <span class="st">"a2_eudract_number"</span>,</span>
-<span>  by.y <span class="op">=</span> <span class="st">"Group.1"</span>,</span>
-<span>  all.x <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span>
-<span><span class="va">result</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rowwise.html" class="external-link">rowwise</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>startdatefirst <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span></span>
-<span>    <span class="va">x</span>, <span class="va">x6_date_on_which_this_record_was_first_entered_in_the_eudract_database</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op">-&gt;</span> <span class="va">result</span></span>
-<span></span>
-<span><span class="co"># Now de-duplicate</span></span>
-<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">[</span></span>
-<span>  <span class="va">result</span><span class="op">[[</span><span class="st">"_id"</span><span class="op">]</span><span class="op">]</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span></span>
-<span>    <span class="fu"><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span><span class="op">(</span></span>
-<span>      include3rdcountrytrials <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>      con <span class="op">=</span> <span class="va">db</span><span class="op">)</span>,</span>
-<span><span class="op">]</span></span>
+<span><span class="co"># De-duplicate</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">[</span><span class="va">result</span><span class="op">[[</span><span class="st">".isUniqueTrial"</span><span class="op">]</span><span class="op">]</span>, <span class="op">]</span></span>
 <span></span>
 <span><span class="co"># How many of the investigational medicinal product(s)</span></span>
-<span><span class="co"># used in the trial are authorised?</span></span>
+<span><span class="co"># that are being used in the trial are authorised?</span></span>
 <span><span class="va">number_authorised</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span></span>
 <span>  <span class="va">result</span><span class="op">[[</span><span class="st">"dimp.d21_imp_to_be_used_in_the_trial_has_a_marketing_authorisation"</span><span class="op">]</span><span class="op">]</span>,</span>
-<span>  <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">i</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span></span>
+<span>  <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span> <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="cn">NA</span> <span class="kw">else</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">i</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">number_authorised</span>, exclude <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span>
 <span><span class="co"># number_authorised</span></span>
-<span><span class="co">#  0  1  2  3  4  6  7  8  9 15 </span></span>
-<span><span class="co"># 26 18  7  5  3  2  1  1  1  1  </span></span>
+<span><span class="co">#    0    1    2    3    4    5    6    7   13 &lt;NA&gt; </span></span>
+<span><span class="co">#   19   12    5    2    3    3    1    1    1  636</span></span>
 <span></span>
 <span><span class="va">result</span><span class="op">[[</span><span class="st">"any_authorised"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">number_authorised</span> <span class="op">&gt;</span> <span class="fl">0L</span></span>
 <span></span>
-<span><span class="co"># Helper</span></span>
+<span><span class="co"># Helper packages</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://scales.r-lib.org" class="external-link">scales</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="va">result</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">result</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">any_authorised</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span></span>
-<span>    x <span class="op">=</span> <span class="va">startdatefirst</span>,</span>
+<span>    x <span class="op">=</span> <span class="va">.startDate</span>,</span>
 <span>    fill <span class="op">=</span> <span class="va">any_authorised</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span> <span class="op">+</span></span>
@@ -1191,8 +947,8 @@ starting from the <code>dimp</code> element.</p>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html" class="external-link">geom_histogram</a></span><span class="op">(</span>binwidth <span class="op">=</span> <span class="fl">2</span> <span class="op">*</span> <span class="fl">365.25</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
-<span>    title <span class="op">=</span> <span class="st">"Neuroblastoma trials in EU"</span>,</span>
-<span>    x <span class="op">=</span> <span class="st">"Year of trial authorisation (or entered in EUCTR)"</span>,</span>
+<span>    title <span class="op">=</span> <span class="st">"Selected clinical trials in EU"</span>,</span>
+<span>    x <span class="op">=</span> <span class="st">"Year of trial start"</span>,</span>
 <span>    y <span class="op">=</span> <span class="st">"Number of trials"</span>,</span>
 <span>    fill <span class="op">=</span> <span class="st">"Medicine\nauthorised?"</span></span>
 <span>  <span class="op">)</span></span>
@@ -1207,57 +963,56 @@ starting from the <code>dimp</code> element.</p>
 </h2>
 <p>Here is an example of analysis functions that can be run directly on
 a MongoDB server, which are fast and do not consume R resources.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Load library for database access</span></span>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Load package for database access</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://jeroen.r-universe.dev/mongolite" class="external-link">mongolite</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Create R object m to access the</span></span>
-<span><span class="co"># collection db created above:</span></span>
+<span><span class="co"># collection db created above</span></span>
 <span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://jeroen.r-universe.dev/mongolite/reference/mongo.html" class="external-link">mongo</a></span><span class="op">(</span></span>
 <span>  url <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">db</span><span class="op">[[</span><span class="st">"url"</span><span class="op">]</span><span class="op">]</span>, <span class="st">"/"</span>, <span class="va">db</span><span class="op">[[</span><span class="st">"db"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,</span>
 <span>  collection <span class="op">=</span> <span class="va">db</span><span class="op">[[</span><span class="st">"collection"</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Number of records in  collection:</span></span>
+<span><span class="co"># Number of records in  collection</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="fu">count</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co"># [1] 2627</span></span>
+<span><span class="co"># [1] 1026</span></span>
 <span></span>
-<span><span class="co"># Number of EUCTR records, using JSON for query:</span></span>
-<span><span class="va">m</span><span class="op">$</span><span class="fu">count</span><span class="op">(</span>query <span class="op">=</span> <span class="st">'{"_id": {"$regex": "[0-9]{4}-[0-9]{6}-[0-9]{2}", "$options": "i"}}'</span><span class="op">)</span></span>
-<span><span class="co"># [1] 1422</span></span>
+<span><span class="co"># Number of EUCTR records, using JSON for query</span></span>
+<span><span class="va">m</span><span class="op">$</span><span class="fu">count</span><span class="op">(</span>query <span class="op">=</span> <span class="st">'{"_id": {"$regex": "[0-9]{4}-[0-9]{6}-[0-9]{2}-[3A-Z]{2,3}", "$options": "i"}}'</span><span class="op">)</span></span>
+<span><span class="co"># [1] 390</span></span>
 <span></span>
-<span><span class="co"># Alternative:</span></span>
+<span><span class="co"># Alternative</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="fu">count</span><span class="op">(</span>query <span class="op">=</span> <span class="st">'{"ctrname": "EUCTR"}'</span><span class="op">)</span></span>
-<span><span class="co"># [1] 272</span></span>
+<span><span class="co"># [1] 390</span></span>
 <span></span>
-<span><span class="co"># Number of CTGOV records:</span></span>
+<span><span class="co"># Number of CTGOV records</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="fu">count</span><span class="op">(</span>query <span class="op">=</span> <span class="st">'{"_id": {"$regex": "NCT[0-9]{8}", "$options": "i"}}'</span><span class="op">)</span></span>
-<span><span class="co"># [1] 1204</span></span>
+<span><span class="co"># [1] 613</span></span>
 <span></span>
-<span><span class="co"># Alternative:</span></span>
+<span><span class="co"># Alternative</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="fu">count</span><span class="op">(</span>query <span class="op">=</span> <span class="st">'{"ctrname": "CTGOV2"}'</span><span class="op">)</span></span>
-<span><span class="co"># [1] 1204</span></span>
+<span><span class="co"># [1] 613</span></span>
 <span></span>
 <span><span class="co"># To best define regular expressions for analyses, inspect the field:</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span></span>
 <span>  <span class="va">m</span><span class="op">$</span><span class="fu">distinct</span><span class="op">(</span></span>
-<span>    <span class="co"># key = "resultsSection.outcomeMeasuresModule.outcomeMeasures.title",</span></span>
 <span>    key <span class="op">=</span> <span class="st">"protocolSection.outcomesModule.primaryOutcomes.measure"</span>,</span>
 <span>    query <span class="op">=</span> <span class="st">'{"ctrname": "CTGOV2"}'</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># [1] "\"Off\" Time"</span></span>
-<span><span class="co"># [2] "% Calories Taken Orally"</span></span>
-<span><span class="co"># [3] "% Change in Frequency of Handwaving Episodes"</span></span>
-<span><span class="co"># [4] "% of Patients in Whom a Sentinel Lymph Node is Identified"</span></span>
-<span><span class="co"># [5] "% of Subjects With Successful Preparation Rated by Colonoscopist on a 4 Point Scale (1=Poor to 4 = Excellent)"</span></span>
-<span><span class="co"># [6] "'Well-controlled Asthma Week' - a Derived Binary Variable (Yes/No)"</span></span></code></pre></div>
+<span><span class="co"># [1] "- To demonstrate that 123I-mIBG planar scintigraphy is sensitive and ...</span></span>
+<span><span class="co"># [2] "1-year Progression-free Survival"                                                                                                                              </span></span>
+<span><span class="co"># [3] "18F-mFBG PET Scan identification of Neuroblastoma on the LAFOV PET/CT"                                                                                         </span></span>
+<span><span class="co"># [4] "1p36 deletion status and its association with UBE4B"                                                                                                           </span></span>
+<span><span class="co"># [5] "2-year progression free survival"                                                                                                                              </span></span>
+<span><span class="co"># [6] "2-year progression free survival (PFS)" </span></span></code></pre></div>
 <div class="section level3">
 <h3 id="aggregation">Aggregation<a class="anchor" aria-label="anchor" href="#aggregation"></a>
 </h3>
 <p>The following example uses the aggregation pipeline in MongoDB. See
 here for details on mongo’s aggregation pipleline: <a href="https://docs.mongodb.org/manual/core/aggregation-pipeline/" class="external-link uri">https://docs.mongodb.org/manual/core/aggregation-pipeline/</a></p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#</span></span>
 <span><span class="co"># Total count of PFS, EFS, RFS or DFS</span></span>
 <span><span class="va">out</span> <span class="op">&lt;-</span> <span class="va">m</span><span class="op">$</span><span class="fu">aggregate</span><span class="op">(</span></span>
@@ -1272,7 +1027,7 @@ here for details on mongo’s aggregation pipleline: <a href="https://docs.mongo
 <span><span class="op">)</span></span>
 <span><span class="va">out</span></span>
 <span><span class="co">#    _id count</span></span>
-<span><span class="co"># 1 null    56</span></span>
+<span><span class="co"># 1 null    64</span></span>
 <span></span>
 <span><span class="co"># List records of trials with overall survival</span></span>
 <span><span class="co"># as primary endpoint, and list start date</span></span>
@@ -1283,20 +1038,20 @@ here for details on mongo’s aggregation pipleline: <a href="https://docs.mongo
 <span><span class="st">      {"$project": {"_id": 1, "protocolSection.statusModule.startDateStruct.date": 1}}]'</span></span>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span>
-<span><span class="co">#           _id       date</span></span>
-<span><span class="co"># 1 NCT00793845    2008-08</span></span>
-<span><span class="co"># 2 NCT02918292 2017-07-03</span></span>
-<span><span class="co"># 3 NCT01237327    2001-11</span></span>
-<span><span class="co"># 4 NCT00112827    2004-11</span></span>
-<span><span class="co"># 5 NCT00515073    2001-04</span></span>
-<span><span class="co"># 6 NCT00027560    2001-07</span></span></code></pre></div>
+<span><span class="co">#          _id       date</span></span>
+<span><span class="co"># 1 NCT00445965    2006-01</span></span>
+<span><span class="co"># 2 NCT00801931 2007-09-06</span></span>
+<span><span class="co"># 3 NCT05303727    2022-08</span></span>
+<span><span class="co"># 4 NCT02176967 2014-08-08</span></span>
+<span><span class="co"># 5 NCT02558244    2016-01</span></span>
+<span><span class="co"># 6 NCT04897880 2019-01-09</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="mapreduce">Mapreduce<a class="anchor" aria-label="anchor" href="#mapreduce"></a>
 </h3>
 <p>Since Mapreduce is deprecated starting in MongoDB 5 (<a href="https://docs.mongodb.com/manual/core/map-reduce/" class="external-link uri">https://docs.mongodb.com/manual/core/map-reduce/</a>), use
 an aggregation pipeline:</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Count number of trials by number of study</span></span>
 <span><span class="co"># participants in bins of hundreds of participants:</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="fu">aggregate</span><span class="op">(</span>pipeline <span class="op">=</span> <span class="st">'</span></span>
@@ -1336,18 +1091,18 @@ an aggregation pipeline:</p>
 <span><span class="st">]</span></span>
 <span><span class="st">'</span><span class="op">)</span></span>
 <span><span class="co">#      _id count</span></span>
-<span><span class="co"># 1     NA   350</span></span>
-<span><span class="co"># 2      0  3096</span></span>
-<span><span class="co"># 3    100   800</span></span>
-<span><span class="co"># 4    200   429</span></span>
-<span><span class="co"># 5    300   320</span></span>
-<span><span class="co"># 6    400   182</span></span>
-<span><span class="co"># 7    500   155</span></span>
-<span><span class="co"># 8    600   126</span></span>
-<span><span class="co"># 9    700    88</span></span>
-<span><span class="co"># 10   800    73</span></span>
-<span><span class="co"># 11   900    39</span></span>
-<span><span class="co"># 12  1000    32</span></span>
+<span><span class="co"># 1     NA   463</span></span>
+<span><span class="co"># 2      0   419</span></span>
+<span><span class="co"># 3    100    67</span></span>
+<span><span class="co"># 4    200    18</span></span>
+<span><span class="co"># 5    300    12</span></span>
+<span><span class="co"># 6    400     8</span></span>
+<span><span class="co"># 7    500     9</span></span>
+<span><span class="co"># 8    600     6</span></span>
+<span><span class="co"># 9    700     1</span></span>
+<span><span class="co"># 10   800     2</span></span>
+<span><span class="co"># 11   900     1</span></span>
+<span><span class="co"># 12  1000     5</span></span>
 <span><span class="co"># [...]</span></span></code></pre></div>
 </div>
 </div>

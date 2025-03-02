@@ -11,6 +11,7 @@
 <url><loc>https://rfhb.github.io/ctrdata/news/index.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/ctrDb.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/ctrFindActiveSubstanceSynonyms.html</loc></url>
+<url><loc>https://rfhb.github.io/ctrdata/reference/ctrGenerateQueries.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/ctrGetQueryUrl.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/ctrLoadQueryIntoDb.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/ctrOpenSearchPagesInBrowser.html</loc></url>
@@ -23,7 +24,7 @@
 <url><loc>https://rfhb.github.io/ctrdata/reference/dbFindIdsUniqueTrials.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/dbQueryHistory.html</loc></url>
-<url><loc>https://rfhb.github.io/ctrdata/reference/dfCalculate.html</loc></url>
+<url><loc>https://rfhb.github.io/ctrdata/reference/dfCalculateConcept.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/dfMergeVariablesRelevel.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/dfName2Value.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/dfTrials2Long.html</loc></url>
