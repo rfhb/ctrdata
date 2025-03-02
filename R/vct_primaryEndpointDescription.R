@@ -142,10 +142,19 @@ is a proportion of records lists several endpoints as primary).
   `%>%` <- dplyr::`%>%`
 
   # helper function similar to unite and also splitting
-  # by contained primary endpoints and unite across columns
+  # by contained primary endpoints and unite corresponding
+  # parts of endpoints from across columns
   pasteCols <- function(...) apply(..., 1, function(i) {
-    s <- stringi::stri_split_fixed(na.omit(i), " / ")
-    list(apply(data.frame(s), 1, paste, collapse = " == "))[[1]]
+    # using a positive lookahead, which is a non-consuming pattern
+    # that only checks for an uppercase letter to the right of the
+    # separator without adding it to the match, preserving it in the output
+    s <- stringi::stri_split_regex(na.omit(i), " / (?=[0-9A-Z])")
+    # in different number of splits per column, append NA
+    # to splits of less than max length, to fill data frame
+    l <- sapply(s, length)
+    if (length(unique(l)) != 1L) s <- lapply(
+      s, function(i) c(i, NA[seq_len(max(l) - length(i))]))
+    unlist(apply(data.frame(s), 1, paste, collapse = " == "))
   })
 
 
