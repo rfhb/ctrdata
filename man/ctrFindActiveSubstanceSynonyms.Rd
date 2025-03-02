@@ -20,20 +20,18 @@ An active substance can be identified by a recommended international
 nonproprietary name (INN), a trade or product name, or a company code(s).
 To find likely synonyms, the function retrieves from CTGOV2 the field
 protocolSection.armsInterventionsModule.interventions.otherNames.
-Note this is not free of error and should be checked manually.
+Note this does not seem to be based on choices from a dictionary but
+may be manually filled, thus is not free of error and needs to be checked.
 }
 \examples{
 \dontrun{
 
 ctrFindActiveSubstanceSynonyms(activesubstance = "imatinib")
-#  [1] "imatinib"                    "Carcemia"                    "Cemivil"
-#  [4] "CGP 57148"                   "CGP-57148B"                  "CGP57148B"
-#  [7] "Gleevac"                     "gleevec"                     "Gleevec (Imatinib Mesylate)"
-# [10] "Glevec"                      "glivec"                      "Imatinib"
-# [13] "imatinib mesylate"           "Imatinib-AFT"                "IND # 55666"
-# [16] "NSC #716051"                 "NSC-716051"                  "QTI571"
-# [19] "ST1571"                      "STI 571"                     "STI-571"
-# [22] "STI571"                      "tyrosine kinase inhibitors"
+#  [1] "imatinib"          "CGP 57148"         "CGP 57148B"
+#  [4] "CGP57148B"         "Gleevec"           "GLIVEC"
+#  [7] "Imatinib"          "Imatinib Mesylate" "NSC 716051"
+# [10] "ST1571"            "STI 571"           "STI571"
 
 }
+
 }
