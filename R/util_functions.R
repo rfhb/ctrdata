@@ -1161,7 +1161,9 @@ ctrDocsDownload <- function(
         "(excluding ", sum(duplicateFiles), " ",
         "files with duplicate names for saving, e.g. ",
         paste0(
-          sample(dlFiles$filepathname[duplicateFiles], 3),
+          sample(
+            dlFiles$filepathname[duplicateFiles],
+            min(length(dlFiles$filepathname[duplicateFiles]), 3L)),
           collapse = ", "),
         ") ", appendLF = FALSE)
       dlFiles <- dlFiles[!duplicateFiles, , drop = FALSE]
