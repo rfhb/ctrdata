@@ -340,7 +340,7 @@ ctrGenerateQueries <- function(
   if (onlyWithResults) {
 
     urls["CTGOV2"] <- paste0(
-      urls["CTGOV2"], "&intr=", intervention)
+      urls["CTGOV2"], "&aggFilters=results:with")
 
     urls["CTIS"] <- paste0(
       urls["CTIS"], '"hasClinicalStudyReport":true,')

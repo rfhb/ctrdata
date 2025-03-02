@@ -24,7 +24,7 @@ tf <- function() {
   # test
   expect_equivalent(c(
     "https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer AND antibody&dateFrom=2000-01-01&dateTo=2030-01-01&resultsstatus=trials-with-results",
-    "https://clinicaltrials.gov/search?cond=cancer&intr=antibody&start=2000-01-01_2030-01-01&primComp=2000-01-01_2030-01-01&intr=antibody",
+    "https://clinicaltrials.gov/search?cond=cancer&intr=antibody&start=2000-01-01_2030-01-01&primComp=2000-01-01_2030-01-01&aggFilters=results:with",
     "https://www.isrctn.com/search?&filters=condition:cancer,intervention:antibody,GT+overallStartDate:2000-01-01,LE+overallStartDate:2030-01-01,GT+overallEndDate:2000-01-01,LE+overallEndDate:2030-01-01,results:withResults&q=",
     "https://euclinicaltrials.eu/ctis-public/search#searchCriteria={\"medicalCondition\":\"cancer\",\"containAll\":\"antibody\",\"eeaStartDateFrom\":\"2000-01-01\",\"eeaStartDateTo\":\"2030-01-01\",\"eeaEndDateFrom\":\"2000-01-01\",\"eeaEndDateTo\":\"2030-01-01\",\"hasClinicalStudyReport\":true}"
   ), urls)
