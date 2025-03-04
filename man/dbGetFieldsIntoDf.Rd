@@ -77,7 +77,7 @@ dbGetFieldsIntoDf(
 # calculate new field(s) from data across trials
 df <- dbGetFieldsIntoDf(
   fields = "keyword",
-  calculate = c(".statusRecruitment", ".isUniqueTrial", ".startDate"),
+  calculate = c("f.statusRecruitment", "f.isUniqueTrial", "f.startDate"),
   con = dbc)
 
 \dontrun{

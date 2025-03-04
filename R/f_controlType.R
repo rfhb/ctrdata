@@ -1,13 +1,44 @@
-# function definition for dfCalculate
-
 #### history ####
 # 2025-01-26 first version
 
-
-#' @noRd
+#' Calculate type of control data collected in a study
+#'
+#' Trial concept calculated: type of internal control.
+#' ICH E10 lists as types of control: placebo concurrent control, no-treatment
+#' concurrent control, dose-response concurrent control, active (positive)
+#' concurrent control, external (including historical) control, multiple control
+#' groups. Dose-controlled trials are currently not identified.
+#' External (including historical) controls are so far not identified in specific
+#' register fields. Cross-over designs, where identifiable, have active controls.
+#'
+#' @param df data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
+#' prints fields needed in `df` for calculating this trial concept, which can
+#' be used with \link{dfCalculateConcept}.
+#'
+#' @return data frame with columns `_id` and `.controlType`, which is
+#' a factor with levels `none`, `no-treatment`, `placebo`, `active`,
+#' `placebo+active` and `other`.
+#'
 #' @export
+#'
 #' @importFrom dplyr if_else mutate case_when `%>%`
-.controlType <- function(df = NULL) {
+#'
+#' @examples
+#' # fields needed
+#' f.controlType()
+#'
+#' \dontrun{
+#'
+#' # apply trial concept when creating data frame
+#' dbc <- nodbi::src_sqlite(
+#'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+#'   collection = "my_trials", flags = RSQLite::SQLITE_RO)
+#' trialsDf <- dbGetFieldsIntoDf(
+#'   calculate = "f.controlType",
+#'   con = dbc)
+#' }
+#'
+f.controlType <- function(df = NULL) {
 
   # check generic, do not edit
   stopifnot(is.data.frame(df) || is.null(df))
@@ -43,31 +74,12 @@
       "authorizedApplication.authorizedPartI.productRoleGroupInfos.productRoleName"
     ))
 
-  # not relevant after inspection:
-  #
-
 
   #### describe ####
   if (is.null(df)) {
 
-    txt <- '
-Calculates the type of control(s) data collected within a clinical trial.
-ICH E10 lists as types of control: placebo concurrent control, no-treatment
-concurrent control, dose-response concurrent control, active (positive)
-concurrent control, external (including historical) control, multiple control
-groups.
-
-Dose-controlled trials are currently not identified.
-External (including historical) controls are so far not identified in specific
-register fields. Cross-over designs, where identifiable, have active controls.
-
-Returns a factor with levels "none", "no-treatment", "placebo", "active",
-"placebo+active" and "other".
-    '
-
     # generic, do not edit
-    fctDescribe(match.call()[[1]], txt, fldsNeeded)
-    return(invisible(fldsNeeded))
+    return(fldsNeeded)
 
   } # end describe
 

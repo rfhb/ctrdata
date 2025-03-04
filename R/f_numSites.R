@@ -1,14 +1,39 @@
-# function definition for dfCalculate
-
 #### history ####
 # 2025-02-10 first version
 
-
-#' @noRd
+#' Calculate number of sites of a study
+#'
+#' Trial concept calculated: number of the sites where the trial is conducted.
+#' EUCTR lacks information on number of sites outside of the EEA;
+#' for each non-EEA country mentioned, at least one site is assumed.
+#'
+#' @param df data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
+#' prints fields needed in `df` for calculating this trial concept, which can
+#' be used with \link{dfCalculateConcept}.
+#'
+#' @return data frame with columns `_id` and `.numSites`, an integer.
+#'
 #' @export
+#'
 #' @importFrom dplyr if_else mutate case_when `%>%`
 #' @importFrom stringi stri_extract_all_regex stri_split_regex
-.numSites <- function(df = NULL) {
+#'
+#' @examples
+#' # fields needed
+#' f.numSites()
+#'
+#' \dontrun{
+#'
+#' # apply trial concept when creating data frame
+#' dbc <- nodbi::src_sqlite(
+#'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+#'   collection = "my_trials", flags = RSQLite::SQLITE_RO)
+#' trialsDf <- dbGetFieldsIntoDf(
+#'   calculate = "f.numSites",
+#'   con = dbc)
+#' }
+#'
+f.numSites <- function(df = NULL) {
 
   # check generic, do not edit
   stopifnot(is.data.frame(df) || is.null(df))
@@ -43,17 +68,8 @@
   #### describe ####
   if (is.null(df)) {
 
-    txt <- '
-Calculates the number of the sites where the trial is conducted.
-EUCTR lacks information on number of sites outside of the EEA;
-for each non-EEA country mentioned, at least one site is assumed.
-
-Returns an integer.
-    '
-
     # generic, do not edit
-    fctDescribe(match.call()[[1]], txt, fldsNeeded)
-    return(invisible(fldsNeeded))
+    return(fldsNeeded)
 
   } # end describe
 

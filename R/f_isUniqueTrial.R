@@ -1,12 +1,35 @@
-# function definition for dfCalculate
-
 #### history ####
 # 2025-01-27 first version
 
-
-#' @noRd
+#' Calculate if record is unique for a study
+#'
+#' Trial concept calculated: Applies function dbFindIdsUniqueTrials() with
+#' its defaults.
+#'
+#' @param df data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
+#' prints fields needed in `df` for calculating this trial concept, which can
+#' be used with \link{dfCalculateConcept}.
+#'
+#' @return data frame with columns `_id` and `.isUniqueTrial`, a logical.
+#'
 #' @export
-.isUniqueTrial <- function(df = NULL) {
+#'
+#' @examples
+#' # fields needed
+#' f.isUniqueTrial()
+#'
+#' \dontrun{
+#'
+#' # apply trial concept when creating data frame
+#' dbc <- nodbi::src_sqlite(
+#'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+#'   collection = "my_trials", flags = RSQLite::SQLITE_RO)
+#' trialsDf <- dbGetFieldsIntoDf(
+#'   calculate = "f.isUniqueTrial",
+#'   con = dbc)
+#' }
+#'
+f.isUniqueTrial <- function(df = NULL) {
 
   # check generic, do not edit
   stopifnot(is.data.frame(df) || is.null(df))
@@ -58,14 +81,8 @@
   #### describe ####
   if (is.null(df)) {
 
-    txt <- '
-Applies function dbFindIdsUniqueTrials() with its defaults.
-Returns a logical.
-    '
-
     # generic, do not edit
-    fctDescribe(match.call()[[1]], txt, fldsNeeded)
-    return(invisible(fldsNeeded))
+    return(fldsNeeded)
 
   } # end describe
 
@@ -91,4 +108,4 @@ Returns a logical.
   # return
   return(df)
 
-} # end .isUniqueTrial
+} # end f.isUniqueTrial

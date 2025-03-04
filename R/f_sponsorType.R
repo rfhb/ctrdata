@@ -1,16 +1,41 @@
-# function definition for dfCalculate
-# function definition for dfCalculate
-
 #### history ####
 # 2025-01-27 first partly working version
 # 2025-02-08 improved
 
-
-#' @noRd
+#' Calculate type of control data collected in a study
+#'
+#' Trial concept calculated: type or class of the lead or main sponsor of the
+#' trial. Some information is not yet mapped (e.g., "NETWORK" in CTGOV2).
+#' No specific field is available in ISRCTN.
+#'
+#' @param df data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
+#' prints fields needed in `df` for calculating this trial concept, which can
+#' be used with \link{dfCalculateConcept}.
+#'
+#' @return data frame with columns `_id` and `.sponsorType`, which is
+#' a factor with levels `For profit`, `Not for profit` or `Other`.
+#'
 #' @export
+#'
 #' @importFrom dplyr mutate case_when case_match coalesce pull `%>%`
 #' @importFrom stringi stri_split_fixed
-.sponsorType <- function(df = NULL) {
+#'
+#' @examples
+#' # fields needed
+#' f.sponsorType()
+#'
+#' \dontrun{
+#'
+#' # apply trial concept when creating data frame
+#' dbc <- nodbi::src_sqlite(
+#'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+#'   collection = "my_trials", flags = RSQLite::SQLITE_RO)
+#' trialsDf <- dbGetFieldsIntoDf(
+#'   calculate = "f.sponsorType",
+#'   con = dbc)
+#' }
+#'
+f.sponsorType <- function(df = NULL) {
 
   # check generic, do not edit
   stopifnot(is.data.frame(df) || is.null(df))
@@ -52,21 +77,8 @@
   #### describe ####
   if (is.null(df)) {
 
-    txt <- paste0('
-Calculates the type or class of the lead or main sponsor of the trial.
-
-Some information is not yet mapped (e.g., "NETWORK" in CTGOV2).
-No specific field is available in ISRCTN (which retrieves information on
-the type of funder via http://data.crossref.org/fundingdata/registry).
-
-Returns a factor with levels "',
-                  paste(c(stc, stn, sto), collapse = '", "'),
-                  '"'
-    )
-
     # generic, do not edit
-    fctDescribe(match.call()[[1]], txt, fldsNeeded)
-    return(invisible(fldsNeeded))
+    return(fldsNeeded)
 
   } # end describe
 

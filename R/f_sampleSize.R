@@ -1,13 +1,37 @@
-# function definition for dfCalculate
-
 #### history ####
 # 2025-02-08 first version
 
-
-#' @noRd
+#' Calculate sample size of a study
+#'
+#' Trial concept calculated: sample size of the trial, preferring
+#' results-related over protocol-related information.
+#'
+#' @param df data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
+#' prints fields needed in `df` for calculating this trial concept, which can
+#' be used with \link{dfCalculateConcept}.
+#'
+#' @return data frame with columns `_id` and `.sampleSize`, an integer.
+#'
 #' @export
+#'
 #' @importFrom dplyr if_else mutate pull select `%>%`
-.sampleSize <- function(df = NULL) {
+#'
+#' @examples
+#' # fields needed
+#' f.sampleSize()
+#'
+#' \dontrun{
+#'
+#' # apply trial concept when creating data frame
+#' dbc <- nodbi::src_sqlite(
+#'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+#'   collection = "my_trials", flags = RSQLite::SQLITE_RO)
+#' trialsDf <- dbGetFieldsIntoDf(
+#'   calculate = "f.sampleSize",
+#'   con = dbc)
+#' }
+#'
+f.sampleSize <- function(df = NULL) {
 
   # check generic, do not edit
   stopifnot(is.data.frame(df) || is.null(df))
@@ -56,16 +80,8 @@
   #### describe ####
   if (is.null(df)) {
 
-    txt <- '
-Calculates the sample size of the trial, preferring results-related over
-protocol-related information.
-
-Returns an integer.
-    '
-
     # generic, do not edit
-    fctDescribe(match.call()[[1]], txt, fldsNeeded)
-    return(invisible(fldsNeeded))
+    return(fldsNeeded)
 
   } # end describe
 
@@ -189,4 +205,4 @@ Returns an integer.
   # return
   return(df)
 
-} # end .sampleSize
+} # end f.sampleSize

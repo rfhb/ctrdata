@@ -1,15 +1,43 @@
-# function definition for dfCalculate
-
 #### history ####
 # 2025-01-26 first version
 
-# @export
-
-#' @noRd
+#' Calculate in- and exclusion criteria and age groups
+#'
+#' Trial concept calculated: inclusion and exclusion criteria as well as
+#' age groups that can participate in a trial, based on from protocol-related
+#' information.
+#'
+#' @param df data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
+#' prints fields needed in `df` for calculating this trial concept, which can
+#' be used with \link{dfCalculateConcept}.
+#'
+#' @return data frame with columns `_id` and new columns:
+#' .trialPopulationAgeGroup (factor, "P", "A", "P+A", "E", "A+E", "P+A+E"),
+#' .trialPopulationInclusion (string),
+#' .trialPopulationExclusion (string).
+#'
+#' @export
+#'
 #' @importFrom dplyr mutate select case_when if_else `%>%`
 #' @importFrom stringi stri_replace_all_regex stri_split_fixed
 #' @importFrom lubridate as.period
-.trialPopulation <- function(df = NULL) {
+#'
+#' @examples
+#' # fields needed
+#' f.trialPopulation()
+#'
+#' \dontrun{
+#'
+#' # apply trial concept when creating data frame
+#' dbc <- nodbi::src_sqlite(
+#'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+#'   collection = "my_trials", flags = RSQLite::SQLITE_RO)
+#' trialsDf <- dbGetFieldsIntoDf(
+#'   calculate = "f.trialPopulation",
+#'   con = dbc)
+#' }
+#'
+f.trialPopulation <- function(df = NULL) {
 
   # check generic, do not edit
   stopifnot(is.data.frame(df) || is.null(df))
@@ -55,19 +83,8 @@
   #### describe ####
   if (is.null(df)) {
 
-    txt <- '
-Calculates from protocol-related information the age groups that can
-participate in a trial.
-
-Returns new columns:
-.trialPopulationAgeGroup (factor, "P", "A", "P+A", "E", "A+E", "P+A+E")
-.trialPopulationInclusion (string)
-.trialPopulationExclusion (string)
-    '
-
     # generic, do not edit
-    fctDescribe(match.call()[[1]], txt, fldsNeeded)
-    return(invisible(fldsNeeded))
+    return(fldsNeeded)
 
   } # end describe
 
@@ -295,4 +312,4 @@ Returns new columns:
   # return
   return(df)
 
-} # end .trialPopulation
+} # end f.trialPopulation

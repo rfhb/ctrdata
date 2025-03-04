@@ -13,9 +13,6 @@
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Retrieve and Analyze Clinical Trials in Public Registers">
 <meta name="description" content="A system for querying, retrieving and analyzing protocol- and results-related information on clinical trials from four public registers, the European Union Clinical Trials Register (EUCTR, &lt;https://www.clinicaltrialsregister.eu/&gt;), ClinicalTrials.gov (&lt;https://clinicaltrials.gov/&gt; and also translating queries the retired classic interface), the ISRCTN (&lt;http://www.isrctn.com/&gt;) and the European Union Clinical Trials Information System (CTIS, &lt;https://euclinicaltrials.eu/&gt;). Trial information is downloaded, converted and stored in a database (PostgreSQL, SQLite, DuckDB or MongoDB; via package nodbi). Documents in registers associated with trials can also be downloaded. Other functions implement trial concepts canonically across registers, identify deduplicated records, easily find and extract variables (fields) of interest even from complex nested data as used by the registers, merge variables and update queries. The package can be used for meta-analysis and trend-analysis of the design and conduct as well as of the results of clinical trials across registers.">
 <meta property="og:description" content="A system for querying, retrieving and analyzing protocol- and results-related information on clinical trials from four public registers, the European Union Clinical Trials Register (EUCTR, &lt;https://www.clinicaltrialsregister.eu/&gt;), ClinicalTrials.gov (&lt;https://clinicaltrials.gov/&gt; and also translating queries the retired classic interface), the ISRCTN (&lt;http://www.isrctn.com/&gt;) and the European Union Clinical Trials Information System (CTIS, &lt;https://euclinicaltrials.eu/&gt;). Trial information is downloaded, converted and stored in a database (PostgreSQL, SQLite, DuckDB or MongoDB; via package nodbi). Documents in registers associated with trials can also be downloaded. Other functions implement trial concepts canonically across registers, identify deduplicated records, easily find and extract variables (fields) of interest even from complex nested data as used by the registers, merge variables and update queries. The package can be used for meta-analysis and trend-analysis of the design and conduct as well as of the results of clinical trials across registers.">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:creator" content="@rfhb">
-<meta name="twitter:site" content="@rfhb">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -69,7 +66,7 @@
 <li>ClinicalTrials.gov (“CTGOV2”, see <a href="#workflow-ctgov-example">example</a>)</li>
 <li>ISRCTN Registry (<a href="https://www.isrctn.com/" class="external-link uri">https://www.isrctn.com/</a>)</li>
 </ul>
-<p>The motivation is to investigate the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can use the databases created with this package. This README was reviewed on 2025-03-02 for version 1.20.0.9000.</p>
+<p>The motivation is to investigate the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can use the databases created with this package. This README was reviewed on 2025-03-04 for version 1.20.0.9000.</p>
 <div class="section level2">
 <h2 id="main-features">Main features<a class="anchor" aria-label="anchor" href="#main-features"></a>
 </h2>
@@ -416,7 +413,7 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span>  <span class="co"># Field of interest </span></span>
 <span>  fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a7_trial_is_part_of_a_paediatric_investigation_plan"</span><span class="op">)</span>,</span>
 <span>  <span class="co"># Trial concepts calculated across registers</span></span>
-<span>  calculate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">".statusRecruitment"</span>, <span class="st">".isUniqueTrial"</span><span class="op">)</span>,</span>
+<span>  calculate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"f.statusRecruitment"</span>, <span class="st">"f.isUniqueTrial"</span><span class="op">)</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># Querying database (35 fields)...</span></span>
@@ -526,7 +523,7 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span></span>
 <span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span>
 <span>  fields <span class="op">=</span> <span class="st">""</span>,</span>
-<span>  calculate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">".statusRecruitment"</span>, <span class="st">".isUniqueTrial"</span>, <span class="st">".startDate"</span><span class="op">)</span>,</span>
+<span>  calculate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"f.statusRecruitment"</span>, <span class="st">"f.isUniqueTrial"</span>, <span class="st">"f.startDate"</span><span class="op">)</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">df</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -560,10 +557,10 @@ Analysis across registers
 <span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span>
 <span>  calculate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>    <span class="st">".numSites"</span>, </span>
-<span>    <span class="st">".sampleSize"</span>, </span>
-<span>    <span class="st">".controlType"</span>, </span>
-<span>    <span class="st">".numTestArmsSubstances"</span><span class="op">)</span>,</span>
+<span>    <span class="st">"f.numSites"</span>, </span>
+<span>    <span class="st">"f.sampleSize"</span>, </span>
+<span>    <span class="st">"f.controlType"</span>, </span>
+<span>    <span class="st">"f.numTestArmsSubstances"</span><span class="op">)</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
 <span></span>

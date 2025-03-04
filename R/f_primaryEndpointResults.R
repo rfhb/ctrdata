@@ -1,14 +1,44 @@
-# function definition for dfCalculate
-
 #### history ####
 # 2025-01-26 first version
 
-# @export
-
-#' @noRd
+#' Calculate type of control data collected in a study
+#'
+#' Trial concept calculated: Calculates several results-related elements of
+#' the primary analysis of the primary endpoint. Requires loading
+#' results-related information.
+#' For CTIS and ISRCTN, such information is not available in structured format.
+#' Recommended to be combined with .controlType, .sampleSize etc. for analyses.
+#'
+#' @param df data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
+#' prints fields needed in `df` for calculating this trial concept, which can
+#' be used with \link{dfCalculateConcept}.
+#'
+#' @return data frame with columns `_id` and new columns:
+#' .primaryEndpointFirstPvalue (discarding any inequality indicator, e.g. <=),
+#' .primaryEndpointFirstPmethod (normalised string, e.g. chisquared),
+#' .primaryEndpointFirstPsize (number included in test, across assignment groups).
+#'
+#' @export
+#'
 #' @importFrom dplyr mutate select coalesce `%>%`
 #' @importFrom stringi stri_split_fixed
-.primaryEndpointResults <- function(df = NULL) {
+#'
+#' @examples
+#' # fields needed
+#' f.primaryEndpointResults()
+#'
+#' \dontrun{
+#'
+#' # apply trial concept when creating data frame
+#' dbc <- nodbi::src_sqlite(
+#'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+#'   collection = "my_trials", flags = RSQLite::SQLITE_RO)
+#' trialsDf <- dbGetFieldsIntoDf(
+#'   calculate = "f.primaryEndpointResults",
+#'   con = dbc)
+#' }
+#'
+f.primaryEndpointResults <- function(df = NULL) {
 
   # check generic, do not edit
   stopifnot(is.data.frame(df) || is.null(df))
@@ -63,22 +93,8 @@
   #### describe ####
   if (is.null(df)) {
 
-    txt <- '
-Calculates several results-related elements of the primary analysis of the
-primary endpoint. Requires loading results-related information.
-For CTIS and ISRCTN, such information is not available in a structured format.
-
-Recommended to be combined with .controlType, .sampleSize etc. for analyses.
-
-Returns new columns:
-.primaryEndpointFirstPvalue (discarding any inequality indicator, e.g. <=)
-.primaryEndpointFirstPmethod (normalised string, e.g. chisquared)
-.primaryEndpointFirstPsize (number included in test, across assignment groups)
-    '
-
     # generic, do not edit
-    fctDescribe(match.call()[[1]], txt, fldsNeeded)
-    return(invisible(fldsNeeded))
+    return(fldsNeeded)
 
   } # end describe
 
@@ -286,4 +302,4 @@ Returns new columns:
   # return
   return(df)
 
-} # end .primaryEndpointResults
+} # end f.primaryEndpointResults

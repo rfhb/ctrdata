@@ -62,7 +62,7 @@
                         <h4 data-toc-skip class="author">Ralf
 Herold</h4>
             
-            <h4 data-toc-skip class="date">2025-03-02</h4>
+            <h4 data-toc-skip class="date">2025-03-04</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/rfhb/ctrdata/blob/HEAD/vignettes/ctrdata_summarise.Rmd" class="external-link"><code>vignettes/ctrdata_summarise.Rmd</code></a></small>
       <div class="d-none name"><code>ctrdata_summarise.Rmd</code></div>
@@ -275,7 +275,7 @@ information of any register, see
 <code class="sourceCode R"><span><span class="co"># Obtain data of interest</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span>
 <span>  fields <span class="op">=</span> <span class="va">fieldsOfInterest</span>, </span>
-<span>  calculate <span class="op">=</span> <span class="st">".isUniqueTrial"</span>,</span>
+<span>  calculate <span class="op">=</span> <span class="st">"f.isUniqueTrial"</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># Querying database (30 fields)...</span></span>
@@ -348,7 +348,7 @@ R graphics:</p>
 <code class="sourceCode R"><span><span class="co"># Get data of interest</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span>
 <span>  fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ctrname"</span><span class="op">)</span>,</span>
-<span>  calculate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">".isUniqueTrial"</span>, <span class="st">".startDate"</span><span class="op">)</span>,</span>
+<span>  calculate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"f.isUniqueTrial"</span>, <span class="st">"f.startDate"</span><span class="op">)</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># Querying database (33 fields)...</span></span>
@@ -479,7 +479,7 @@ data</p>
 <span>    <span class="st">"history.protocolSection.designModule.enrollmentInfo.count"</span>,</span>
 <span>    <span class="st">"history.history_version.version_date"</span></span>
 <span>  <span class="op">)</span>,</span>
-<span>  calculate <span class="op">=</span> <span class="st">".statusRecruitment"</span>,</span>
+<span>  calculate <span class="op">=</span> <span class="st">"f.statusRecruitment"</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -590,7 +590,7 @@ may exist in previously created databases.</p>
 <span>    <span class="st">"clinical_results.outcome_list.outcome"</span>,</span>
 <span>    <span class="st">"study_design_info.allocation"</span></span>
 <span>  <span class="op">)</span>,</span>
-<span>  calculate <span class="op">=</span> <span class="st">".isUniqueTrial"</span>,</span>
+<span>  calculate <span class="op">=</span> <span class="st">"f.isUniqueTrial"</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -714,10 +714,10 @@ earlier sections, see <code><a href="../reference/dfCalculateConcept.html">dfCal
 <code class="sourceCode R"><span><span class="co"># Get relevant data</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span>
 <span>  calculate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>    <span class="st">".isUniqueTrial"</span>,</span>
-<span>    <span class="st">".sampleSize"</span>,</span>
-<span>    <span class="st">".trialPopulation"</span>,</span>
-<span>    <span class="st">".primaryEndpointDescription"</span></span>
+<span>    <span class="st">"f.isUniqueTrial"</span>,</span>
+<span>    <span class="st">"f.sampleSize"</span>,</span>
+<span>    <span class="st">"f.trialPopulation"</span>,</span>
+<span>    <span class="st">"f.primaryEndpointDescription"</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
@@ -786,9 +786,9 @@ particular, “.trialObjectives”, “.controlType”, “.isMedIntervTrial”,
 <code class="sourceCode R"><span><span class="co"># Get result set</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span>
 <span>  calculate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>    <span class="st">".isUniqueTrial"</span>,</span>
-<span>    <span class="st">".sampleSize"</span>,</span>
-<span>    <span class="st">".primaryEndpointResults"</span></span>
+<span>    <span class="st">"f.isUniqueTrial"</span>,</span>
+<span>    <span class="st">"f.sampleSize"</span>,</span>
+<span>    <span class="st">"f.primaryEndpointResults"</span></span>
 <span>  <span class="op">)</span>, </span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
@@ -905,8 +905,8 @@ status is in the tree starting from the <code>dimp</code> element.</p>
 <span>    <span class="st">"a2_eudract_number"</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  calculate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>    <span class="st">".isUniqueTrial"</span>,</span>
-<span>    <span class="st">".startDate"</span></span>
+<span>    <span class="st">"f.isUniqueTrial"</span>,</span>
+<span>    <span class="st">"f.startDate"</span></span>
 <span>    <span class="op">)</span>, </span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>

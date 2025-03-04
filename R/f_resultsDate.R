@@ -1,14 +1,43 @@
-# function definition for dfCalculate
-
 #### history ####
 # 2025-01-26 first version
 # 2025-02-08 simplified
 
-
-#' @noRd
+#' Calculate date of results of a study
+#'
+#' Trial concept calculated: earliest date of results as recorded in the
+#' register. At that date, results may have been incomplete and may have
+#' been changed later.
+#' For EUCTR, requires that results and preferrably also their history of
+#' publication have been included in the collection, using
+#' ctrLoadQueryIntoDb(queryterm = ..., euctrresultshistory = TRUE, con = ...).
+#' Cannot be calculated for ISRCTN, which does not have a corresponding field.
+#'
+#' @param df data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
+#' prints fields needed in `df` for calculating this trial concept, which can
+#' be used with \link{dfCalculateConcept}.
+#'
+#' @return data frame with columns `_id` and `.resultsDate`, a date.
+#'
 #' @export
+#'
 #' @importFrom dplyr mutate pull coalesce `%>%`
-.resultsDate <- function(df = NULL) {
+#'
+#' @examples
+#' # fields needed
+#' f.resultsDate()
+#'
+#' \dontrun{
+#'
+#' # apply trial concept when creating data frame
+#' dbc <- nodbi::src_sqlite(
+#'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+#'   collection = "my_trials", flags = RSQLite::SQLITE_RO)
+#' trialsDf <- dbGetFieldsIntoDf(
+#'   calculate = "f.resultsDate",
+#'   con = dbc)
+#' }
+#'
+f.resultsDate <- function(df = NULL) {
 
   # check generic, do not edit
   stopifnot(is.data.frame(df) || is.null(df))
@@ -40,20 +69,8 @@
   #### describe ####
   if (is.null(df)) {
 
-    txt <- '
-Calculates the earliest date of results as recorded in the register.
-At that date, results may have been incomplete and may have been changed later.
-For EUCTR, requires that results and preferrably also their history of publication
-have been included in the collection, using
-ctrLoadQueryIntoDb(queryterm = ..., euctrresults{history} = TRUE, con = ...).
-Cannot be calculated for ISRCTN, which does not have a corresponding field.
-
-Returns a date.
-    '
-
     # generic, do not edit
-    fctDescribe(match.call()[[1]], txt, fldsNeeded)
-    return(invisible(fldsNeeded))
+    return(fldsNeeded)
 
   } # end describe
 
@@ -98,4 +115,4 @@ Returns a date.
   # return
   return(df)
 
-} # end .resultsDate
+} # end f.resultsDate

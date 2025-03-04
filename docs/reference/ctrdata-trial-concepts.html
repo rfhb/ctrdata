@@ -11,7 +11,7 @@ recruitment, require to analyse several fields against various
 pre-defined values. In addition, the structure and value sets of data
 differ between all ctrdata-registers.
 The included trial concepts are intended to simplify and accelerate a
-user's workflow as well as to provide consistency of analyses."><meta name="twitter:card" content="summary_large_image"><meta name="twitter:creator" content="@rfhb"><meta name="twitter:site" content="@rfhb"></head><body>
+user's workflow as well as to provide consistency of analyses."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -69,50 +69,50 @@ understanding, publication of data models and scientific papers as relevant.
 Call <a href="dfCalculateConcept.html">dfCalculateConcept</a> for one or more such functions to review the
 explanation and the fields needed. As with other <code>R</code> functions,
 the code is printed when entering as command just the name of the function,
-e.g. <code>.startDate</code>.
-Raise an issue <a href="https://github.com/rfhb/ctrdata/issues" class="external-link">here</a>
+e.g. <code>f.startDate</code>.
+Please raise an issue <a href="https://github.com/rfhb/ctrdata/issues" class="external-link">here</a>
 to ask about or improve a concept.</p>
 <p>The following trial concepts can be used by referencing their name when
 calling <a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a> (parameter <code>calculate</code>) and
 <a href="dfCalculateConcept.html">dfCalculateConcept</a> (parameter <code>name</code>).
 Concepts will continue to be refined and added;
-last updated 2025-02-15.</p><ul><li><p><strong>.controlType</strong> (factor) which type of internal or concurrent control is
+last updated 2025-02-15.</p><ul><li><p><a href="f.controlType.html">f.controlType</a> (factor) which type of internal or concurrent control is
 used in the trial? ("none", "no-treatment", "placebo", "active",
 "placebo+active" or "other")</p></li>
-<li><p><strong>.isMedIntervTrial</strong> (logical) is the trial interventional and does
+<li><p><a href="f.isMedIntervTrial.html">f.isMedIntervTrial</a> (logical) is the trial interventional and does
 it have one or more medicines (drugs or biological) as investigational
 (experimental) intervention? (irrespective of status of authorisation and
 of study design)</p></li>
-<li><p><strong>.isPlatformTrial</strong> (logical) is the trial possibly a (research) platform
-trial? (based on title, .numTestArmsSubstances, number of periods)</p></li>
-<li><p><strong>.isUniqueTrial</strong> (logical) is the trial record unique in the data frame
+<li><p><a href="f.isPlatformTrial.html">f.isPlatformTrial</a> (logical) is the trial possibly a (research) platform
+trial? (based on title, f.numTestArmsSubstances, number of periods)</p></li>
+<li><p><a href="f.isUniqueTrial.html">f.isUniqueTrial</a> (logical) is the trial record unique in the data frame
 of trial, based on the default parameters of <a href="dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a>?</p></li>
-<li><p><strong>.numSites</strong> (integer) how many sites does the trial have?</p></li>
-<li><p><strong>.numTestArmsSubstances</strong> (integer) how many arms or groups have
+<li><p><a href="f.numSites.html">f.numSites</a> (integer) how many sites does the trial have?</p></li>
+<li><p><a href="f.numTestArmsSubstances.html">f.numTestArmsSubstances</a> (integer) how many arms or groups have
 medicines that are investigational? (cannot be calculated for ISRCTN or
 for phase 1 trials)</p></li>
-<li><p><strong>.primaryEndpointDescription</strong> (list of character) string containing
+<li><p><a href="f.primaryEndpointDescription.html">f.primaryEndpointDescription</a> (list of character) string containing
 protocol definition, details and time frames, concatenated with " == "</p></li>
-<li><p><strong>.primaryEndpointResults</strong> (columns of number, character, integer)
+<li><p><a href="f.primaryEndpointResults.html">f.primaryEndpointResults</a> (columns of number, character, integer)
 returning the statistical testing p value and method as well as the number
 of subjects included in the test, each in one new column, for the first
 primary endpoint only</p></li>
-<li><p><strong>.resultsDate</strong> (date) the planned or achieved date of results availability</p></li>
-<li><p><strong>.startDate</strong> (date) the planned, authorised or documented date
+<li><p><a href="f.resultsDate.html">f.resultsDate</a> (date) the planned or achieved date of results availability</p></li>
+<li><p><a href="f.startDate.html">f.startDate</a> (date) the planned, authorised or documented date
 of start of recruitment</p></li>
-<li><p><strong>.sampleSize</strong> (integer) the achieved (or planned) number of subjects or
+<li><p><a href="f.sampleSize.html">f.sampleSize</a> (integer) the achieved (or planned) number of subjects or
 participants recruited</p></li>
-<li><p><strong>.sponsorType</strong> (factor) a type or class of main or lead sponsor that is
+<li><p><a href="f.sponsorType.html">f.sponsorType</a> (factor) a type or class of main or lead sponsor that is
 simplified to not for profit, for profit or other</p></li>
-<li><p><strong>.statusRecruitment</strong> (factor) a status that is simplified to
+<li><p><a href="f.statusRecruitment.html">f.statusRecruitment</a> (factor) a status that is simplified to
 ongoing (includes temporarily halted), completed and other (includes
 planned, stopped, terminated)</p></li>
-<li><p><strong>.trialObjectives</strong> (string) identifies with letters those objectives
+<li><p><a href="f.trialObjectives.html">f.trialObjectives</a> (string) identifies with letters those objectives
 that could be identified by text fragments, e.g. "E S PD D", with "E"
 (efficacy), "S" (safety), "D" (dose-finding)</p></li>
-<li><p><strong>.trialPhase</strong> (ordered factor) the phase(s) of medicine development
+<li><p><a href="f.trialPhase.html">f.trialPhase</a> (ordered factor) the phase(s) of medicine development
 with which a trial is associated</p></li>
-<li><p><strong>.trialPopulation</strong> (columns of factor, string and string) age groups
+<li><p><a href="f.trialPopulation.html">f.trialPopulation</a> (columns of factor, string and string) age groups
 (e.g., "P" for paediatric participants, "A" for adults, "E" for older than
 65 years, or "P+A"), inclusion and exclusion criteria texts</p></li>
 </ul></div>

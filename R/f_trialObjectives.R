@@ -1,13 +1,47 @@
-# function definition for dfCalculate
-
 #### history ####
 # 2025-01-26 first version
 
-
-#' @noRd
+#' Calculate objectives of a study
+#'
+#' Trial concept calculated: objectives of the trial, by searching for text
+#' fragments found in fields describing its purpose, objective, background
+#' or hypothesis, after applying .isMedIntervTrial, because the text
+#' fragments are tailored to medicinal product interventional trials.
+#' This is a simplification, and it is expected that the criteria will be
+#' further refined. The text fragments only apply to English.
+#'
+#' @param df data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
+#' prints fields needed in `df` for calculating this trial concept, which can
+#' be used with \link{dfCalculateConcept}.
+#'
+#' @return data frame with columns `_id` and `.trialObjectives`, which is
+#' a string with letters separated by a space, such as
+#' E (efficacy, including cure, survival, effectiveness);
+#' A (activity, including reponse, remission, seroconversion);
+#' S (safety); PK; PD (including biomarker);
+#' D (dose-finding, determining recommended dose);
+#' LT (long-term); and FU (follow-up).
+#'
 #' @export
+#'
 #' @importFrom dplyr if_else mutate case_when rename `%>%`
-.trialObjectives <- function(df = NULL) {
+#'
+#' @examples
+#' # fields needed
+#' f.trialObjectives()
+#'
+#' \dontrun{
+#'
+#' # apply trial concept when creating data frame
+#' dbc <- nodbi::src_sqlite(
+#'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+#'   collection = "my_trials", flags = RSQLite::SQLITE_RO)
+#' trialsDf <- dbGetFieldsIntoDf(
+#'   calculate = "f.trialObjectives",
+#'   con = dbc)
+#' }
+#'
+f.trialObjectives <- function(df = NULL) {
 
   # check generic, do not edit
   stopifnot(is.data.frame(df) || is.null(df))
@@ -43,38 +77,16 @@
     ))
 
   # merge with fields needed for nested function
-  fldsAdded <- suppressMessages(.isMedIntervTrial())
+  fldsAdded <- suppressMessages(f.isMedIntervTrial())
   fldsNeeded <- sapply(names(fldsHere), function(i) na.omit(c(
     fldsHere[[i]], fldsAdded[[i]])), simplify = FALSE)
-
 
 
   #### describe ####
   if (is.null(df)) {
 
-    txt <- '
-Calculates objectives of the trial, by searching for text fragments found in
-fields describing its purpose, objective, background or hypothesis, after
-applying .isMedIntervTrial, because the text fragments are tailored
-to medicinal product interventional trials.
-
-This is a simplification, and it is expected that the criteria will be
-further refined. The text fragments only apply to English.
-
-Returns a string with letters separated by a space, such as
-E (efficacy, including cure, survival, effectiveness);
-A (activity, including reponse, remission, seroconversion);
-S (safety);
-PK;
-PD (including biomarker);
-D (dose-finding, determining recommended dose);
-LT (long-term); and
-FU (follow-up).
-    '
-
     # generic, do not edit
-    fctDescribe(match.call()[[1]], txt, fldsNeeded)
-    return(invisible(fldsNeeded))
+    return(fldsNeeded)
 
   } # end describe
 
@@ -86,7 +98,7 @@ FU (follow-up).
 
   # apply nested function which provides values for each register
   # therefore the following code needs to check against register
-  df$isMedIntervTrial <- .isMedIntervTrial(
+  df$isMedIntervTrial <- f.isMedIntervTrial(
     df = df)[[".isMedIntervTrial"]]
 
 
@@ -189,4 +201,4 @@ FU (follow-up).
   # return
   return(df)
 
-} # end .trialObjectives
+} # end f.trialObjectives

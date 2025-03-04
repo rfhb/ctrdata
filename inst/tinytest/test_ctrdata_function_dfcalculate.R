@@ -12,8 +12,8 @@ tf <- function() {
 
   # test
   expect_true(length(unique(unlist(
-    suppressMessages(sapply(dfCalculateConcept(),
-                            dfCalculateConcept))))) >= 190L)
+    sapply(dfCalculateConcept(), dfCalculateConcept)
+    ))) >= 190L)
 
   # get data
   if (!checkSqlite()) exit_file("Reason: no SQLite")

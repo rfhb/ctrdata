@@ -27,7 +27,7 @@ were recursively expanded from simply nested data (e.g., "externalRefs"
 to columns "externalRefs.doi", "externalRefs.eudraCTNumber" etc.).
 For an alternative way for handling the complex nested data, see
 dfTrials2Long followed by dfName2Value for extracting
-the sought variable(s).'><meta name="twitter:card" content="summary_large_image"><meta name="twitter:creator" content="@rfhb"><meta name="twitter:site" content="@rfhb"></head><body>
+the sought variable(s).'></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -181,15 +181,15 @@ or less than the number of trial records in the database collection.</p>
 <span class="r-in"><span><span class="co"># calculate new field(s) from data across trials</span></span></span>
 <span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu">dbGetFieldsIntoDf</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  fields <span class="op">=</span> <span class="st">"keyword"</span>,</span></span>
-<span class="r-in"><span>  calculate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">".statusRecruitment"</span>, <span class="st">".isUniqueTrial"</span>, <span class="st">".startDate"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  calculate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"f.statusRecruitment"</span>, <span class="st">"f.isUniqueTrial"</span>, <span class="st">"f.startDate"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Querying database (44 fields)...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating .statusRecruitment...                            </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating .isUniqueTrial...                            </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating f.statusRecruitment...                            </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating f.isUniqueTrial...                            </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - Finding duplicates among registers' and sponsor ids...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - 2 EUCTR _id were not preferred EU Member State record for 8 trials</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - Keeping 5 / 3 / 8 / 8 / 3 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating .startDate...                            </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating f.startDate...                            </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>

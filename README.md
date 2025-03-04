@@ -36,7 +36,7 @@ interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
 `ctrdata` is a package for the [R](https://www.r-project.org/) system,
 but other systems and tools can use the databases created with this
-package. This README was reviewed on 2025-03-02 for version 1.20.0.9000.
+package. This README was reviewed on 2025-03-04 for version 1.20.0.9000.
 
 ## Main features
 
@@ -442,7 +442,7 @@ result <- dbGetFieldsIntoDf(
   # Field of interest 
   fields = c("a7_trial_is_part_of_a_paediatric_investigation_plan"),
   # Trial concepts calculated across registers
-  calculate = c(".statusRecruitment", ".isUniqueTrial"),
+  calculate = c("f.statusRecruitment", "f.isUniqueTrial"),
   con = db
 )
 # Querying database (35 fields)...
@@ -600,7 +600,7 @@ library(ggplot2)
 
 df <- dbGetFieldsIntoDf(
   fields = "",
-  calculate = c(".statusRecruitment", ".isUniqueTrial", ".startDate"),
+  calculate = c("f.statusRecruitment", "f.isUniqueTrial", "f.startDate"),
   con = db)
 
 df %>%
@@ -643,10 +643,10 @@ library(ggplot2)
 
 result <- dbGetFieldsIntoDf(
   calculate = c(
-    ".numSites", 
-    ".sampleSize", 
-    ".controlType", 
-    ".numTestArmsSubstances"),
+    "f.numSites", 
+    "f.sampleSize", 
+    "f.controlType", 
+    "f.numTestArmsSubstances"),
   con = db
 )
 

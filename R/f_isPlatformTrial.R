@@ -1,16 +1,56 @@
-# function definition for dfCalculate
-
 #### history ####
 # 2025-01-27 first partly working version
 # 2025-02-08 improved
 
-
-#' @noRd
+#' Calculate if study is likely a platform trial or not
+#'
+#' Trial concept calculated: platform trial.
+#' As operational definition, at least one of these criteria is true:
+#' a. trial has "platform", "basket", "umbrella", "multi-?arm" or "multi-?stage"
+#' in its title or description (for ISRCTN, this is the only criterion; some
+#' trials in EUCTR lack data in English),
+#' b. trial has more than 2 active arms with different investigational medicines,
+#' after excluding comparator, auxiliary and placebo medicines (calculated with
+#' function .numTestArmsSubstances(), not used for ISRCTN because it cannot be
+#' calculated precisely),
+#' c. trial more than 2 periods, after excluding safety run-in, screening,
+#' enrolling, extension and follow-up periods (for CTGOV and CTGOV2, this
+#' criterion requires results-related data).
+#' Requires that EUCTR results have been included in the collection, using
+#' ctrLoadQueryIntoDb(queryterm = ..., euctrresults = TRUE, con = ...).
+#' Requires packages dplyr and stringdist to be installed; stringdist is used
+#' for evaluating names of active substances, which are considered similar when
+#' the similarity is 0.8 or higher.
+#'
+#' @param df data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
+#' prints fields needed in `df` for calculating this trial concept, which can
+#' be used with \link{dfCalculateConcept}.
+#'
+#' @return data frame with columns `_id` and `.isPlatformTrial`, a logical.
+#'
 #' @export
+#'
 #' @importFrom dplyr mutate case_when pull `%>%`
 #' @importFrom stringdist stringsimmatrix
 #' @importFrom stringi stri_count_fixed stri_detect_regex stri_split_fixed
-.isPlatformTrial <- function(df = NULL) {
+#'
+#' @examples
+#' # fields needed
+#' f.isPlatformTrial()
+#'
+#' \dontrun{
+#'
+#' # apply trial concept when creating data frame
+#' dbc <- nodbi::src_sqlite(
+#'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+#'   collection = "my_trials", flags = RSQLite::SQLITE_RO)
+#' trialsDf <- dbGetFieldsIntoDf(
+#'   calculate = "f.isPlatformTrial",
+#'   con = dbc)
+#' }
+#'
+#'
+f.isPlatformTrial <- function(df = NULL) {
 
   # check generic, do not edit
   stopifnot(is.data.frame(df) || is.null(df))
@@ -54,7 +94,7 @@
     ))
 
   # merge with fields needed for nested function
-  fldsAdded <- suppressMessages(.numTestArmsSubstances())
+  fldsAdded <- suppressMessages(f.numTestArmsSubstances())
   fldsNeeded <- sapply(names(fldsHere), function(i) na.omit(c(
     fldsHere[[i]], fldsAdded[[i]])), simplify = FALSE)
   fldsNeeded <- c("ctrname", fldsNeeded)
@@ -63,34 +103,8 @@
   #### describe ####
   if (is.null(df)) {
 
-    txt <- '
-Calculates if the trial is likely a platform trial or not.
-As operational definition, at least one of these criteria is true:
-
-- trial has "platform", "basket", "umbrella", "multi-?arm" or "multi-?stage"
-in its title or description (for ISRCTN, this is the only criterion; some
-trials in EUCTR lack data in English)
-- trial has more than 2 active arms with different investigational medicines,
-after excluding comparator, auxiliary and placebo medicines (calculated with
-function .numTestArmsSubstances(), not used for ISRCTN because it cannot be
-calculated precisely)
-- trial more than 2 periods, after excluding safety run-in, screening, enrolling,
-extension and follow-up periods (for CTGOV and CTGOV2, this criterion requires
-results-related data)
-
-Requires that EUCTR results have been included in the collection, using
-ctrLoadQueryIntoDb(queryterm = ..., euctrresults = TRUE, con = ...).
-
-Requires packages dplyr and stringdist to be installed; stringdist is used for
-evaluating names of active substances, which are considered similar when the
-similarity is 0.8 or higher.
-
-Returns a logical.
-    '
-
     # generic, do not edit
-    fctDescribe(match.call()[[1]], txt, fldsNeeded)
-    return(invisible(fldsNeeded))
+    return(fldsNeeded)
 
   } # end describe
 
@@ -122,7 +136,7 @@ Returns a logical.
 
   # apply nested function which provides values for each register
   # therefore the following code needs to check against register
-  df$analysis_numTestArmsSubstances <- .numTestArmsSubstances(
+  df$analysis_numTestArmsSubstances <- f.numTestArmsSubstances(
     df = df)[[".numTestArmsSubstances"]]
   # remove columns needed exclusively for .numTestArmsSubstances
   df <- df[, -match(
@@ -321,4 +335,4 @@ Returns a logical.
   # return
   return(df)
 
-} # end .isPlatformTrial
+} # end f.isPlatformTrial

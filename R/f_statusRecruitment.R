@@ -1,13 +1,42 @@
-# function definition for dfCalculate
-
 #### history ####
 # 2025-01-26 first version
 
-
-#' @noRd
+#' Calculate status of recruitment of a study
+#'
+#' Trial concept calculated: status of recruitment at the time of loading
+#' the trial records. Maps the categories that are in fields which specify
+#' the state of recruitment. Simplifies the status into three categories.
+#'
+#' @param df data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
+#' prints fields needed in `df` for calculating this trial concept, which can
+#' be used with \link{dfCalculateConcept}.
+#'
+#' @return data frame with columns `_id` and `.statusRecruitment`, which is
+#' a factor with levels `ongoing` (includes active, not yet recruiting;
+#' temporarily halted; suspended; authorised, not started and similar),
+#' `completed` (includes ended; ongoing, recuitment mended) and
+#' `other` (includes terminated; revoked).
+#'
 #' @export
+#'
 #' @importFrom dplyr if_else mutate case_when case_match pull `%>%`
-.statusRecruitment <- function(df = NULL) {
+#'
+#' @examples
+#' # fields needed
+#' f.statusRecruitment()
+#'
+#' \dontrun{
+#'
+#' # apply trial concept when creating data frame
+#' dbc <- nodbi::src_sqlite(
+#'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+#'   collection = "my_trials", flags = RSQLite::SQLITE_RO)
+#' trialsDf <- dbGetFieldsIntoDf(
+#'   calculate = "f.statusRecruitment",
+#'   con = dbc)
+#' }
+#'
+f.statusRecruitment <- function(df = NULL) {
 
   # check generic, do not edit
   stopifnot(is.data.frame(df) || is.null(df))
@@ -46,20 +75,8 @@
   #### describe ####
   if (is.null(df)) {
 
-    txt <- '
-Calculates the status at the time of loading the trial records.
-Maps the categories that are in fields which specify the state of recruitment.
-Simplifies the status into three categories "ongoing" (includes active, not yet
-recruiting; temporarily halted; suspended; authorised, not started and similar),
-"completed" (includes ended; ongoing, recuitment mended) and "other" (includes
-terminated; revoked).
-
-Returns a factor of these categories.
-    '
-
     # generic, do not edit
-    fctDescribe(match.call()[[1]], txt, fldsNeeded)
-    return(invisible(fldsNeeded))
+    return(fldsNeeded)
 
   } # end describe
 
@@ -191,4 +208,4 @@ Returns a factor of these categories.
   # return
   return(df)
 
-} # end .statusRecruitment
+} # end f.statusRecruitment

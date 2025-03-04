@@ -1,14 +1,44 @@
-# function definition for dfCalculate
-
 #### history ####
 # 2025-01-27 first version
 
-
-#' @noRd
+#' Calculate if study is a medicine-interventional study
+#'
+#' Trial concept calculated: Calculates if record is a medicine-interventional
+#' trial, investigating one or more medicine, whether biological or not.
+#' For EUCTR and CTIS, this corresponds to all records as per the definition
+#' of the EU Clinical Trial Regulation.
+#' For CTGOV and CTGOV2, this is based on drug or biological as type
+#' of intervention, and interventional as type of study.
+#' For ISRCTN, this is based on drug or biological as type
+#' of intervention, and interventional as type of study.
+#'
+#' @param df data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
+#' prints fields needed in `df` for calculating this trial concept, which can
+#' be used with \link{dfCalculateConcept}.
+#'
+#' @return data frame with colums `_id` and `.isMedIntervTrial`, a logical.
+#'
 #' @export
+#'
 #' @importFrom dplyr if_else case_when mutate pull `%>%`
 #' @importFrom stringi stri_detect_regex stri_detect_fixed
-.isMedIntervTrial <- function(df = NULL) {
+#'
+#' @examples
+#' # fields needed
+#' f.isMedIntervTrial()
+#'
+#' \dontrun{
+#'
+#' # apply trial concept when creating data frame
+#' dbc <- nodbi::src_sqlite(
+#'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+#'   collection = "my_trials", flags = RSQLite::SQLITE_RO)
+#' trialsDf <- dbGetFieldsIntoDf(
+#'   calculate = "f.isMedIntervTrial",
+#'   con = dbc)
+#' }
+#'
+f.isMedIntervTrial <- function(df = NULL) {
 
   # check generic, do not edit
   stopifnot(is.data.frame(df) || is.null(df))
@@ -57,25 +87,8 @@
   #### describe ####
   if (is.null(df)) {
 
-    txt <- '
-Calculates if record is a medicine-interventional trial, investigating one or
-more medicine, whether biological or not.
-
-For EUCTR and CTIS, this corresponds to all records as per the
-definition of the EU Clinical Trial Regulation.
-
-For CTGOV and CTGOV2, this is based on drug or biological as type
-of intervention, and interventional as type of study.
-
-For ISRCTN, this is based on drug or biological as type
-of intervention, and interventional as type of study.
-
-Returns a logical.
-    '
-
     # generic, do not edit
-    fctDescribe(match.call()[[1]], txt, fldsNeeded)
-    return(invisible(fldsNeeded))
+    return(fldsNeeded)
 
   } # end describe
 
@@ -184,4 +197,4 @@ Returns a logical.
   # return
   return(df)
 
-} # end .isMedIntervTrial
+} # end f.isMedIntervTrial

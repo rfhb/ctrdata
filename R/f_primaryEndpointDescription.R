@@ -1,14 +1,44 @@
-# function definition for dfCalculate
-
 #### history ####
 # 2025-02-26 first version
 
-# @export
-
-#' @noRd
+#' Calculate details of a primary endpoint of a study
+#'
+#' Trial concept calculated: full description of the primary endpoint,
+#' concatenating with " == " its title, description, time frame of assessment.
+#' The details vary by register. The text description can be used for
+#' identifying trials of interest or for analysing trends in primary
+#' endpoints, which among the set of all endpoints are most often used
+#' for determining the number of participants sought for the study.
+#'
+#' @param df data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
+#' prints fields needed in `df` for calculating this trial concept, which can
+#' be used with \link{dfCalculateConcept}.
+#'
+#' @return data frame with columns `_id` and `.primaryEndpointDescription`,
+#' which is a list (that is, one or more items in one vector per row; the
+#' background is that some trials have several endpoints as primary).
+#'
+#' @export
+#'
 #' @importFrom dplyr if_else mutate case_when `%>%`
 #' @importFrom stringi stri_split_fixed
-.primaryEndpointDescription <- function(df = NULL) {
+#'
+#' @examples
+#' # fields needed
+#' f.primaryEndpointDescription()
+#'
+#' \dontrun{
+#'
+#' # apply trial concept when creating data frame
+#' dbc <- nodbi::src_sqlite(
+#'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+#'   collection = "my_trials", flags = RSQLite::SQLITE_RO)
+#' trialsDf <- dbGetFieldsIntoDf(
+#'   calculate = "f.primaryEndpointDescription",
+#'   con = dbc)
+#' }
+#'
+f.primaryEndpointDescription <- function(df = NULL) {
 
   # check generic, do not edit
   stopifnot(is.data.frame(df) || is.null(df))
@@ -107,28 +137,12 @@
 
     ))
 
-  # not relevant after inspection:
-  #
-
 
   #### describe ####
   if (is.null(df)) {
 
-    txt <- '
-Calculates the full description of the primary endpoint, including e.g. its
-title, description, timeframe of assessment. The details vary by register.
-The text description can be used for identifying trials of interest or for
-analysing trends in primary endpoints, which among the set of all endpoints
-are most often used for determining the number of participants sought for the
-study.
-
-Returns a list (that is, one or more items in one vector per row; the reason
-is a proportion of records lists several endpoints as primary).
-    '
-
     # generic, do not edit
-    fctDescribe(match.call()[[1]], txt, fldsNeeded)
-    return(invisible(fldsNeeded))
+    return(fldsNeeded)
 
   } # end describe
 

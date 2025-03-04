@@ -9,7 +9,7 @@ register into a collection. This function returns deduplicated
 identifiers for all trials in the collection, respecting the
 register(s) preferred by the user. All registers are recording
 identifiers also from other registers, which are used by this
-function to provide a vector of identifiers of deduplicated trials."><meta name="twitter:card" content="summary_large_image"><meta name="twitter:creator" content="@rfhb"><meta name="twitter:site" content="@rfhb"></head><body>
+function to provide a vector of identifiers of deduplicated trials."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -149,10 +149,10 @@ can be calculated at the time of creating a data frame with
 <span class="r-in"><span><span class="co"># using defaults of dbFindIdsUniqueTrials()</span></span></span>
 <span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  fields <span class="op">=</span> <span class="st">"keyword"</span>,</span></span>
-<span class="r-in"><span>  calculate <span class="op">=</span> <span class="st">".isUniqueTrial"</span>,</span></span>
+<span class="r-in"><span>  calculate <span class="op">=</span> <span class="st">"f.isUniqueTrial"</span>,</span></span>
 <span class="r-in"><span>  con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Querying database (24 fields)...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating .isUniqueTrial...                            </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating f.isUniqueTrial...                            </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - Finding duplicates among registers' and sponsor ids...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - 2 EUCTR _id were not preferred EU Member State record for 8 trials</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - Keeping 5 / 3 / 8 / 8 / 3 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS</span>

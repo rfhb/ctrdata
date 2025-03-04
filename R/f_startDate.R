@@ -1,14 +1,39 @@
-# function definition for dfCalculate
-
 #### history ####
 # 2025-01-26 first version
 # 2025-02-08 simplified
 
-
-#' @noRd
+#' Calculate start date of a study
+#'
+#' Trial concept calculated: start of the trial, based on the
+#' documented or planned start of recruitment, or on the date of opinion
+#' of the competent authority.
+#'
+#' @param df data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
+#' prints fields needed in `df` for calculating this trial concept, which can
+#' be used with \link{dfCalculateConcept}.
+#'
+#' @return data frame with columns `_id` and `.startDate`, a date.
+#'
 #' @export
+#'
 #' @importFrom dplyr mutate pull select `%>%`
-.startDate <- function(df = NULL) {
+#'
+#' @examples
+#' # fields needed
+#' f.startDate()
+#'
+#' \dontrun{
+#'
+#' # apply trial concept when creating data frame
+#' dbc <- nodbi::src_sqlite(
+#'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+#'   collection = "my_trials", flags = RSQLite::SQLITE_RO)
+#' trialsDf <- dbGetFieldsIntoDf(
+#'   calculate = "f.startDate",
+#'   con = dbc)
+#' }
+#'
+f.startDate <- function(df = NULL) {
 
   # check generic, do not edit
   stopifnot(is.data.frame(df) || is.null(df))
@@ -41,15 +66,8 @@
   #### describe ####
   if (is.null(df)) {
 
-    txt <- '
-Calculates the date of start of the trial, based on the documented or planned
-start of recruitment, or on the date of opinion of the competent authority.
-Returns a date.
-    '
-
     # generic, do not edit
-    fctDescribe(match.call()[[1]], txt, fldsNeeded)
-    return(invisible(fldsNeeded))
+    return(fldsNeeded)
 
   } # end describe
 
@@ -88,4 +106,4 @@ Returns a date.
   # return
   return(df)
 
-} # end .startDate
+} # end f.startDate

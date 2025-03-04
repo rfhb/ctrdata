@@ -1,7 +1,7 @@
 ---
 title: "Summarise and analyse clinical trial information"
 author: "Ralf Herold"
-date: 2025-03-02
+date: 2025-03-04
 output:
   rmarkdown::html_vignette:
     toc: true
@@ -212,7 +212,7 @@ An alternative is to calculate a column `isUniqueTrial` already at the time that
 # Obtain data of interest
 result <- dbGetFieldsIntoDf(
   fields = fieldsOfInterest, 
-  calculate = ".isUniqueTrial",
+  calculate = "f.isUniqueTrial",
   con = db
 )
 # Querying database (30 fields)...
@@ -283,7 +283,7 @@ This typing facilitates using the data for analysis, for example of dates with b
 # Get data of interest
 result <- dbGetFieldsIntoDf(
   fields = c("ctrname"),
-  calculate = c(".isUniqueTrial", ".startDate"),
+  calculate = c("f.isUniqueTrial", "f.startDate"),
   con = db
 )
 # Querying database (33 fields)...
@@ -404,7 +404,7 @@ result <- dbGetFieldsIntoDf(
     "history.protocolSection.designModule.enrollmentInfo.count",
     "history.history_version.version_date"
   ),
-  calculate = ".statusRecruitment",
+  calculate = "f.statusRecruitment",
   con = db
 )
 
@@ -505,7 +505,7 @@ result <- dbGetFieldsIntoDf(
     "clinical_results.outcome_list.outcome",
     "study_design_info.allocation"
   ),
-  calculate = ".isUniqueTrial",
+  calculate = "f.isUniqueTrial",
   con = db
 )
 
@@ -627,10 +627,10 @@ Text analysis has to be used for many fields of trial information from the regis
 # Get relevant data
 result <- dbGetFieldsIntoDf(
   calculate = c(
-    ".isUniqueTrial",
-    ".sampleSize",
-    ".trialPopulation",
-    ".primaryEndpointDescription"
+    "f.isUniqueTrial",
+    "f.sampleSize",
+    "f.trialPopulation",
+    "f.primaryEndpointDescription"
   ),
   con = db
 )
@@ -690,9 +690,9 @@ The example merely shows the technical approach, without asserting relevance. Fo
 # Get result set
 result <- dbGetFieldsIntoDf(
   calculate = c(
-    ".isUniqueTrial",
-    ".sampleSize",
-    ".primaryEndpointResults"
+    "f.isUniqueTrial",
+    "f.sampleSize",
+    "f.primaryEndpointResults"
   ), 
   con = db
 )
@@ -774,8 +774,8 @@ result <- dbGetFieldsIntoDf(
     "a2_eudract_number"
   ),
   calculate = c(
-    ".isUniqueTrial",
-    ".startDate"
+    "f.isUniqueTrial",
+    "f.startDate"
     ), 
   con = db
 )

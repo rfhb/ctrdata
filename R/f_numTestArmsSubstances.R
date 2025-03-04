@@ -1,17 +1,48 @@
-# function definition for dfCalculate
-
 #### history ####
 # 2025-01-27 first partly working version
 # 2025-01-31 working
 # 2025-02-08 adding euctr protocol, isrctn
 
-
-#' @noRd
+#' Calculate type of control data collected in a study
+#'
+#' Trial concept calculated: number of active arms with different
+#' investigational medicines, after excluding comparator, auxiliary and placebo
+#' arms / medicines.
+#' For ISRCTN, this is imprecise because arms are not identified in a field.
+#' Most registers provide no or only limited information on phase 1 trials,
+#' so that this number typically cannot be calculated for these trials.
+#' Requires packages stringdist to be installed; stringdist is used for
+#' evaluating names of active substances, which are considered similar when
+#' the similarity is 0.8 or higher.
+#'
+#' @param df data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
+#' prints fields needed in `df` for calculating this trial concept, which can
+#' be used with \link{dfCalculateConcept}.
+#'
+#' @return data frame with columns `_id` and `.numTestArmsSubstances`, an integer
+#'
 #' @export
+#'
 #' @importFrom dplyr mutate case_when if_else pull `%>%`
 #' @importFrom stringdist stringsimmatrix
 #' @importFrom stringi stri_count_fixed stri_split_fixed
-.numTestArmsSubstances <- function(df = NULL) {
+#'
+#' @examples
+#' # fields needed
+#' f.controlType()
+#'
+#' \dontrun{
+#'
+#' # apply trial concept when creating data frame
+#' dbc <- nodbi::src_sqlite(
+#'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+#'   collection = "my_trials", flags = RSQLite::SQLITE_RO)
+#' trialsDf <- dbGetFieldsIntoDf(
+#'   calculate = "f.numTestArmsSubstances",
+#'   con = dbc)
+#' }
+#'
+f.numTestArmsSubstances <- function(df = NULL) {
 
   # check generic, do not edit
   stopifnot(is.data.frame(df) || is.null(df))
@@ -46,23 +77,8 @@
   #### describe ####
   if (is.null(df)) {
 
-    txt <- '
-Calculates the number of active arms with different investigational medicines,
-after excluding comparator, auxiliary and placebo arms / medicines.
-For ISRCTN, this is imprecise because arms are not identified in a field.
-Most registers provide no or only limited information on phase 1 trials,
-so that this number typically cannot be calculated for these trials.
-
-Requires packages stringdist to be installed; stringdist is used for
-evaluating names of active substances, which are considered similar when the
-similarity is 0.8 or higher.
-
-Returns an integer.
-    '
-
     # generic, do not edit
-    fctDescribe(match.call()[[1]], txt, fldsNeeded)
-    return(invisible(fldsNeeded))
+    return(fldsNeeded)
 
   } # end describe
 
@@ -314,4 +330,4 @@ Returns an integer.
   # return
   return(df)
 
-} # end .numTestArmsSubstances
+} # end f.numTestArmsSubstances

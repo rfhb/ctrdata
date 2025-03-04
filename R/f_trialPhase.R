@@ -1,13 +1,39 @@
-# function definition for dfCalculate
-
 #### history ####
 # 2025-08-09 first version
 
-
-#' @noRd
+#' Calculate phase of a clinical trial
+#'
+#' Trial concept calculated: phase of a clinical trial as per ICH E8(R1).
+#'
+#' @param df data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
+#' prints fields needed in `df` for calculating this trial concept, which can
+#' be used with \link{dfCalculateConcept}.
+#'
+#' @return data frame with columns `_id` and `.trialPhase`, which is
+#' an ordered factor with levels 'phase 1', 'phase 1+2', 'phase 2',
+#' 'phase 2+3', 'phase 2+4', 'phase 3', 'phase 3+4', 'phase 1+2+3',
+#' 'phase 4', 'phase 1+2+3+4'.
+#'
 #' @export
+#'
 #' @importFrom dplyr if_else mutate case_when `%>%`
-.trialPhase <- function(df = NULL) {
+#'
+#' @examples
+#' # fields needed
+#' f.trialPhase()
+#'
+#' \dontrun{
+#'
+#' # apply trial concept when creating data frame
+#' dbc <- nodbi::src_sqlite(
+#'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+#'   collection = "my_trials", flags = RSQLite::SQLITE_RO)
+#' trialsDf <- dbGetFieldsIntoDf(
+#'   calculate = "f.trialPhase",
+#'   con = dbc)
+#' }
+#'
+f.trialPhase <- function(df = NULL) {
 
   # check generic, do not edit
   stopifnot(is.data.frame(df) || is.null(df))
@@ -39,17 +65,8 @@
   #### describe ####
   if (is.null(df)) {
 
-    txt <- '
-Calculates the phase of a clinical trial as per ICH E8(R1).
-
-Returns an ordered factor of levels "phase 1", "phase 1+2", "phase 2",
-"phase 2+3", "phase 2+4", "phase 3", "phase 3+4", "phase 1+2+3",  "phase 4",
-"phase 1+2+3+4".
-    '
-
     # generic, do not edit
-    fctDescribe(match.call()[[1]], txt, fldsNeeded)
-    return(invisible(fldsNeeded))
+    return(fldsNeeded)
 
   } # end describe
 
@@ -154,4 +171,4 @@ Returns an ordered factor of levels "phase 1", "phase 1+2", "phase 2",
   # return
   return(df)
 
-} # end .trialPhase
+} # end f.trialPhase

@@ -13,14 +13,13 @@ reference:
 - title: "Operate on data frame from dbGetFieldsIntoDf"
 - contents:
   - starts_with("df[^L]")
+- title: "Calculate trial concepts"
+- contents:
+  - starts_with("f[.]")
 development:
   mode: release
 template:
   bootstrap: 5
-  opengraph:
-    twitter:
-      creator: "@rfhb"
-      card: summary_large_image
   params:
     docsearch:
       api_key: c06ec790dbbaffba8e7b188f745a4353
