@@ -19,6 +19,7 @@
 #' @importFrom httr GET set_config user_agent
 #' @importFrom utils packageDescription str
 #' @importFrom jqr jq
+#' @importFrom stats quantile
 #'
 #' @export
 #'
@@ -111,7 +112,7 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE
 
   # remove less frequent occurrences
   asx <- sort(table(asx))
-  asx <- names(asx[asx > quantile(asx, 2/3)])
+  asx <- names(asx[asx > stats::quantile(asx, 2/3)])
 
   # deduplicate irrespective of case
   asx <- asx[!duplicated(tolower(asx))]

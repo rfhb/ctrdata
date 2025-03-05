@@ -159,6 +159,9 @@ dbGetFieldsIntoDf <- function(
   fields <- fields[fields != ""]
   calculate <- calculate[calculate != ""]
 
+  # check if function exists
+  stopifnot(!length(calculate) || all(calculate %in% dfCalculateConcept()))
+
   # get all unique fields needed for fcts
   fctFields <- sapply(
     calculate, function(i)

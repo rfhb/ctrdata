@@ -13,9 +13,9 @@ be used with \link{dfCalculateConcept}.}
 }
 \value{
 data frame with columns `_id` and new columns:
-.trialPopulationAgeGroup (factor, "P", "A", "P+A", "E", "A+E", "P+A+E"),
-.trialPopulationInclusion (string),
-.trialPopulationExclusion (string).
+`.trialPopulationAgeGroup` (factor, "P", "A", "P+A", "E", "A+E", "P+A+E"),
+`.trialPopulationInclusion` (string),
+`.trialPopulationExclusion` (string).
 }
 \description{
 Trial concept calculated: inclusion and exclusion criteria as well as

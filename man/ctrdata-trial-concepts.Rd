@@ -8,26 +8,27 @@
 \code{ctrdata} includes (since version 1.21.0) functions that implement selected
 trial concepts. Concepts of clinical trials, such as their start or status of
 recruitment, require to analyse several fields against various
-pre-defined values. In addition, the structure and value sets of data
-differ between all \link{ctrdata-registers}.
-The included trial concepts are intended to simplify and accelerate a
-user's workflow as well as to provide consistency of analyses.
+pre-defined values. The structure and value sets of fields differ between
+all \link{ctrdata-registers}. In this situation, the implemented trial
+concepts simplify and accelerate a user's analysis workflow and also increase
+analysis consistency.
 }
 \details{
-The implementation of trial concepts in \code{ctrdata} is based on current
-understanding, publication of data models and scientific papers as relevant.
-Call \link{dfCalculateConcept} for one or more such functions to review the
-explanation and the fields needed. As with other \code{R} functions,
-the code is printed when entering as command just the name of the function,
+The implementation of trial concepts in \code{ctrdata} has not been validated
+with any formal approach, but has been checked for plausibility and
+against expectations. The implementation is based on current
+understanding, on public data models and on scientific papers, as relevant.
+As with other \code{R} functions, call \code{help("f.startDate")} or print its
+implementation code by entering the name of the function as command,
 e.g. \code{f.startDate}.
 Please raise an issue \href{https://github.com/rfhb/ctrdata/issues}{here}
-to ask about or improve a concept.
+to ask about or improve a trial concept.
 
 The following trial concepts can be used by referencing their name when
 calling \link{dbGetFieldsIntoDf} (parameter \code{calculate}) and
 \link{dfCalculateConcept} (parameter \code{name}).
 Concepts will continue to be refined and added;
-last updated 2025-02-15.
+last updated 2025-03-05.
 \itemize{
 \item \link{f.controlType} (factor) which type of internal or concurrent control is
 used in the trial? ("none", "no-treatment", "placebo", "active",

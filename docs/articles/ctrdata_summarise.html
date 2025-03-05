@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.20.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.20.0.9900</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,7 +62,7 @@
                         <h4 data-toc-skip class="author">Ralf
 Herold</h4>
             
-            <h4 data-toc-skip class="date">2025-03-04</h4>
+            <h4 data-toc-skip class="date">2025-03-05</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/rfhb/ctrdata/blob/HEAD/vignettes/ctrdata_summarise.Rmd" class="external-link"><code>vignettes/ctrdata_summarise.Rmd</code></a></small>
       <div class="d-none name"><code>ctrdata_summarise.Rmd</code></div>
@@ -298,7 +298,7 @@ information of any register, see
 <span><span class="fu"><a href="../reference/dfCalculateConcept.html">dfCalculateConcept</a></span><span class="op">(</span><span class="st">".isUniqueTrial"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># See how concept .isUniqueTrial is implemented</span></span>
-<span><span class="va">.isUniqueTrial</span></span></code></pre></div>
+<span><span class="va">f.isUniqueTrial</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="reviewing-a-specific-trial">Reviewing a specific trial<a class="anchor" aria-label="anchor" href="#reviewing-a-specific-trial"></a>
@@ -400,41 +400,7 @@ documentation shown.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/help.html" class="external-link">help</a></span><span class="op">(</span><span class="st">"ctrdata-trial-concepts"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Show documentation of a specific trial concept </span></span>
-<span><span class="co"># dfCalculateConcept(name = ".isMedIntervTrial")</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># &gt;&gt;&gt;&gt; .isMedIntervTrial</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># * Description:</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># Calculates if record is a medicine-interventional trial, investigating one </span></span>
-<span><span class="co"># or more medicine, whether biological or not.</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># For EUCTR and CTIS, this corresponds to all records as per the definition of </span></span>
-<span><span class="co"># the EU Clinical Trial Regulation.</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># For CTGOV and CTGOV2, this is based on drug or biological as type of </span></span>
-<span><span class="co"># intervention, and interventional as type of study.</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># For ISRCTN, this is based on drug or biological as type of intervention, </span></span>
-<span><span class="co"># and interventional as type of study.</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># Returns a logical.</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># * Fields needed:</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># ctrname</span></span>
-<span><span class="co"># intervention.intervention_type</span></span>
-<span><span class="co"># study_type</span></span>
-<span><span class="co"># protocolSection.armsInterventionsModule.interventions.type</span></span>
-<span><span class="co"># protocolSection.designModule.studyType</span></span>
-<span><span class="co"># interventions.intervention.interventionType</span></span>
-<span><span class="co"># trialDesign.primaryStudyDesign</span></span>
-<span><span class="co"># ctrname</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># * To show the implementation, call: ctrdata::.isMedIntervTrial</span></span>
-<span><span class="co"># or, after package("ctrdata"), call: .isMedIntervTrial</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># &lt;&lt;&lt;&lt;</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/help.html" class="external-link">help</a></span><span class="op">(</span><span class="st">"f.isMedIntervTrial"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="merging-fields-for-analysis">Merging fields for analysis<a class="anchor" aria-label="anchor" href="#merging-fields-for-analysis"></a>

@@ -13,9 +13,9 @@ be used with \link{dfCalculateConcept}.}
 }
 \value{
 data frame with columns `_id` and new columns:
-.primaryEndpointFirstPvalue (discarding any inequality indicator, e.g. <=),
-.primaryEndpointFirstPmethod (normalised string, e.g. chisquared),
-.primaryEndpointFirstPsize (number included in test, across assignment groups).
+`.primaryEndpointFirstPvalue` (discarding any inequality indicator, e.g. <=),
+`.primaryEndpointFirstPmethod` (normalised string, e.g. chisquared),
+`.primaryEndpointFirstPsize` (number included in test, across assignment groups).
 }
 \description{
 Trial concept calculated: Calculates several results-related elements of

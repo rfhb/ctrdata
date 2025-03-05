@@ -14,9 +14,9 @@
 #' be used with \link{dfCalculateConcept}.
 #'
 #' @return data frame with columns `_id` and new columns:
-#' .primaryEndpointFirstPvalue (discarding any inequality indicator, e.g. <=),
-#' .primaryEndpointFirstPmethod (normalised string, e.g. chisquared),
-#' .primaryEndpointFirstPsize (number included in test, across assignment groups).
+#' `.primaryEndpointFirstPvalue` (discarding any inequality indicator, e.g. <=),
+#' `.primaryEndpointFirstPmethod` (normalised string, e.g. chisquared),
+#' `.primaryEndpointFirstPsize` (number included in test, across assignment groups).
 #'
 #' @export
 #'

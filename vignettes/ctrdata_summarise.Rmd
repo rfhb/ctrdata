@@ -1,7 +1,7 @@
 ---
 title: "Summarise and analyse clinical trial information"
 author: "Ralf Herold"
-date: 2025-03-04
+date: 2025-03-05
 output:
   rmarkdown::html_vignette:
     toc: true
@@ -235,7 +235,7 @@ nrow(result)
 dfCalculateConcept(".isUniqueTrial")
 
 # See how concept .isUniqueTrial is implemented
-.isUniqueTrial
+f.isUniqueTrial
 ```
 
 
@@ -333,41 +333,7 @@ dfCalculateConcept()
 help("ctrdata-trial-concepts")
 
 # Show documentation of a specific trial concept 
-# dfCalculateConcept(name = ".isMedIntervTrial")
-# 
-# >>>> .isMedIntervTrial
-# 
-# * Description:
-# 
-# Calculates if record is a medicine-interventional trial, investigating one 
-# or more medicine, whether biological or not.
-# 
-# For EUCTR and CTIS, this corresponds to all records as per the definition of 
-# the EU Clinical Trial Regulation.
-# 
-# For CTGOV and CTGOV2, this is based on drug or biological as type of 
-# intervention, and interventional as type of study.
-# 
-# For ISRCTN, this is based on drug or biological as type of intervention, 
-# and interventional as type of study.
-# 
-# Returns a logical.
-# 
-# * Fields needed:
-# 
-# ctrname
-# intervention.intervention_type
-# study_type
-# protocolSection.armsInterventionsModule.interventions.type
-# protocolSection.designModule.studyType
-# interventions.intervention.interventionType
-# trialDesign.primaryStudyDesign
-# ctrname
-# 
-# * To show the implementation, call: ctrdata::.isMedIntervTrial
-# or, after package("ctrdata"), call: .isMedIntervTrial
-# 
-# <<<<
+help("f.isMedIntervTrial")
 ```
 
 

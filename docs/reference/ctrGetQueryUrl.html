@@ -9,7 +9,7 @@ from the clipboard, into which the URL of a register search was copied."></head>
 
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.20.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.20.0.9900</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -89,6 +89,11 @@ The data frame (or tibble) can be passed as such as parameter
 <span class="r-in"><span><span class="co"># the address bar of the browser that shows results</span></span></span>
 <span class="r-in"><span><span class="co"># from a query in one of the trial registers</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu">ctrGetQueryUrl</span><span class="op">(</span><span class="op">)</span>, silent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> * Using clipboard content as register query URL: https://clinicaltrials.gov/search?cond=neuroblastoma&amp;aggFilters=phase:2,ages:child,status:com</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> * Appears specific for CTGOV REST API 2.0</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from CTGOV2: cond=neuroblastoma&amp;aggFilters=phase:2,ages:child,status:com</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                    query-term query-register</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 cond=neuroblastoma&amp;aggFilters=phase:2,ages:child,status:com         CTGOV2</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># extract query parameters from search result URL</span></span></span>
 <span class="r-in"><span><span class="co"># (URL was cut for the purpose of formatting only)</span></span></span>

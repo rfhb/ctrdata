@@ -93,6 +93,9 @@ dfCalculateConcept <- function(name = ".*", df = NULL) {
   # check
   stopifnot(is.data.frame(df))
 
+  # check if function exists
+  stopifnot(all(name %in% dfCalculateConcept()))
+
   # inform user
   message(
     "Calculating ", name,

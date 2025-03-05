@@ -28,9 +28,7 @@ The trial is retrieved with \link{ctrLoadQueryIntoDb} if no database
 This is the widget for CTIS trial 2022-501142-30-00:
 
 \if{html}{
-  \out{<span style="text-align: left">}
-  \figure{ctrdata_ctrShowOneTrial.jpg}{options: style="width:500px;max-width:75\%;"}
-  \out{</span>}
+  \figure{ctrdata_ctrShowOneTrial.jpg}
 }
 \if{latex}{
   \out{\begin{center}}\figure{ctrdata_ctrShowOneTrial.jpg}\out{\end{center}}

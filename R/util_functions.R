@@ -1585,40 +1585,6 @@ dfOrTibble <- function(df) {
 } # end dfOrTibble
 
 
-#' fctDescribe
-#'
-#' Called for its side effect to print a formatted description
-#' of a function, called from dfCalculate or dbGetFieldsIntoDf
-#'
-#' @param fct name of a function
-#' @param txt description of a function
-#' @param flds fields needed for a function
-#'
-#' @keywords internal
-#' @noRd
-#'
-fctDescribe <- function(fct, txt, flds) {
-
-  # handle match.call value
-  if (length(fct) > 0L) fct <- rev(as.character(fct))[1]
-
-  # inform user
-  message(
-    "\n>>>> ", fct, "\n",
-    "\n* Description:\n\n",
-    trimws(gsub("([^\n])([\n])([^\n])", "\\1 \\3", txt)),
-    "\n\n* Fields needed:\n\n",
-    paste0(unlist(flds), "\n"),
-    "\n* To show the implementation, call: ctrdata::", fct,
-    '\nor, after package("ctrdata"), call: ', fct,
-    "\n\n<<<<"
-  )
-
-  return(invisible(NULL))
-
-}
-
-
 #' fctChkFlds
 #'
 #' Calls for its side effect to stop if arguments
