@@ -7,7 +7,7 @@
 #'
 #' @param df data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
 #' prints fields needed in `df` for calculating this trial concept, which can
-#' be used with \link{dfCalculateConcept}.
+#' be used with \link{dbGetFieldsIntoDf}.
 #'
 #' @return data frame with columns `_id` and `.trialPhase`, which is
 #' an ordered factor with levels `phase 1`, `phase 1+2`, `phase 2`,

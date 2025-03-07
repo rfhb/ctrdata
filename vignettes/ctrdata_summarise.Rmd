@@ -206,7 +206,7 @@ nrow(result)
 
 ## Use trial concepts to simplify analyses
 
-An alternative is to calculate a column `isUniqueTrial` already at the time that a data frame is created. This uses one of the trial concepts that provide a canonical field, calculated from trial information of any register, see `help(dfCalculateConcept)`. 
+An alternative is to calculate a column `isUniqueTrial` already at the time that a data frame is created. This uses one of the trial concepts that provide a canonical field, calculated from trial information of any register, see `help(ctrdata-trial-concepts)`. 
 
 ```{r unique}
 # Obtain data of interest
@@ -232,7 +232,7 @@ nrow(result)
 # or the fields needed to calculate the trial concept. 
 
 # See description of concept .isUniqueTrial: 
-dfCalculateConcept(".isUniqueTrial")
+help("f.isUniqueTrial")
 
 # See how concept .isUniqueTrial is implemented
 f.isUniqueTrial
@@ -321,13 +321,12 @@ value lists across different registers.
 Available calculations can be listed, and a specific documentation shown.
 
 ```{r dfcalculate}
-# See all concepts available at this time
-dfCalculateConcept()
-#  [1] ".controlType"             ".isMedIntervTrial"        ".isPlatformTrial"        
-#  [4] ".isUniqueTrial"           ".numSites"                ".numTestArmsSubstances"  
-#  [7] ".primareEndpointEstimand" ".sampleSize"              ".sponsorType"            
-# [10] ".startDate"               ".statusRecruitment"       ".trialObjective"         
-# [13] ".trialPhase"
+# All concepts available at this time
+#  [1] "f.controlType"             "f.isMedIntervTrial"        "f.isPlatformTrial"        
+#  [4] "f.isUniqueTrial"           "f.numSites"                "f.numTestArmsSubstances"  
+#  [7] "f.primareEndpointEstimand" "f.sampleSize"              "f.sponsorType"            
+# [10] "f.startDate"               "f.statusRecruitment"       "f.trialObjective"         
+# [13] "f.trialPhase"
 
 # Introduction to trial concepts
 help("ctrdata-trial-concepts")
@@ -343,7 +342,7 @@ With the function `dfMergeVariablesRelevel()`, users have control how to merge
 values of a set of original variables to a new variable, optionally with 
 a new set of values. For more, see `help(dfMergeVariablesRelevel)`. 
 This can be used for concepts that are very specific to the use case and / or 
-not implemented so far, see `dfCalculateConcept()`. 
+not implemented so far, see `help(ctrdata-trial-concepts)`. 
 
 
 ## Historic versions of trial records and changes in sample sizes
@@ -587,7 +586,7 @@ clinicalDuration[sample(seq_len(nrow(clinicalDuration)), 10L), ]
 
 ## Analysing primary endpoints
 
-Text analysis has to be used for many fields of trial information from the registers. Here is an example to simply categorise the type of primary endpoint. In addition, the number of subjects are compared by type of primary endpoint. The example uses trial concepts introduced in earlier sections, see `dfCalculateConcept()`. 
+Text analysis has to be used for many fields of trial information from the registers. Here is an example to simply categorise the type of primary endpoint. In addition, the number of subjects are compared by type of primary endpoint. The example uses trial concepts introduced in earlier sections, see `help(ctrdata-trial-concepts)`. 
 
 ```{r plot_endpoint_frequencies}
 # Get relevant data
@@ -650,7 +649,7 @@ It may be interesting to review results of the primary endpoint in a set of tria
 The results of null-hypothesis significance testing (NHST) may show an interesting distribution of p values (see also Robinson-D 2014, http://varianceexplained.org/statistics/interpreting-pvalue-histogram/, which refers to cases with many p values, possibly from a single experiment). 
 When analysed robustly in a well-defined set of trials, such distributions may allow assumptions about equipoise, forking path or reporting preferences. 
 
-The example merely shows the technical approach, without asserting relevance. For a robust analysis, consider further trial concepts (in particular, ".trialObjectives", ".controlType", ".isMedIntervTrial", ".trialPhase"), see `dfCalculateConcept()`. 
+The example merely shows the technical approach, without asserting relevance. For a robust analysis, consider further trial concepts (in particular, "f.trialObjectives", "f.controlType", "f.isMedIntervTrial", "f.trialPhase"), see `help(ctrdata-trial-concepts)`. 
 
 ```{r analyse_results_data}
 # Get result set

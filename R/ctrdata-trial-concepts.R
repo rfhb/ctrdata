@@ -19,8 +19,7 @@
 #' to ask about or improve a trial concept.
 #'
 #' The following trial concepts can be used by referencing their name when
-#' calling \link{dbGetFieldsIntoDf} (parameter `calculate`) and
-#' \link{dfCalculateConcept} (parameter `name`).
+#' calling \link{dbGetFieldsIntoDf} (parameter `calculate`).
 #' Concepts will continue to be refined and added;
 #' last updated 2025-03-05.
 #'

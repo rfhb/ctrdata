@@ -25,8 +25,7 @@ Please raise an issue \href{https://github.com/rfhb/ctrdata/issues}{here}
 to ask about or improve a trial concept.
 
 The following trial concepts can be used by referencing their name when
-calling \link{dbGetFieldsIntoDf} (parameter \code{calculate}) and
-\link{dfCalculateConcept} (parameter \code{name}).
+calling \link{dbGetFieldsIntoDf} (parameter \code{calculate}).
 Concepts will continue to be refined and added;
 last updated 2025-03-05.
 \itemize{

@@ -12,7 +12,7 @@
 #'
 #' @param df data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
 #' prints fields needed in `df` for calculating this trial concept, which can
-#' be used with \link{dfCalculateConcept}.
+#' be used with \link{dbGetFieldsIntoDf}.
 #'
 #' @return data frame with columns `_id` and `.trialObjectives`, which is
 #' a string with letters separated by a space, such as
@@ -24,7 +24,7 @@
 #'
 #' @export
 #'
-#' @importFrom dplyr if_else mutate case_when rename `%>%`
+#' @importFrom dplyr if_else mutate case_when rename left_join `%>%`
 #'
 #' @examples
 #' # fields needed
@@ -98,9 +98,11 @@ f.trialObjectives <- function(df = NULL) {
 
   # apply nested function which provides values for each register
   # therefore the following code needs to check against register
-  df$isMedIntervTrial <- f.isMedIntervTrial(
-    df = df)[[".isMedIntervTrial"]]
-
+  # TODO
+  # df$isMedIntervTrial <- f.isMedIntervTrial(
+  #   df = df)[[".isMedIntervTrial"]]
+  df <- dplyr::left_join(
+    df, f.isMedIntervTrial(df = df), by = "_id")
 
   # helper function
   `%>%` <- dplyr::`%>%`
@@ -158,7 +160,7 @@ f.trialObjectives <- function(df = NULL) {
   # identify symbols
   df %>%
     dplyr::select(
-      `_id`, txt, isMedIntervTrial) %>%
+      `_id`, txt, .isMedIntervTrial) %>%
     dplyr::mutate(
       addObjectives = "",
       # symbols are accumulated
@@ -186,7 +188,7 @@ f.trialObjectives <- function(df = NULL) {
       addObjectives = paste0(addObjectives, dplyr::if_else(
         grepl("dose.find|dose.range|rptd|determine.*dose|dose.determ|rp2d|recommended dose", txt, TRUE), "D ", "")),
       #
-      out = dplyr::case_when(isMedIntervTrial ~ trimws(addObjectives), .default = NA_character_)
+      out = dplyr::case_when(.isMedIntervTrial ~ trimws(addObjectives), .default = NA_character_)
       #
     ) %>%
     dplyr::rename(.trialObjectives = out) %>%

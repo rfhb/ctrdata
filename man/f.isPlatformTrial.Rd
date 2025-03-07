@@ -9,15 +9,20 @@ f.isPlatformTrial(df = NULL)
 \arguments{
 \item{df}{data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
 prints fields needed in `df` for calculating this trial concept, which can
-be used with \link{dfCalculateConcept}.}
+be used with \link{dbGetFieldsIntoDf}.}
 }
 \value{
-data frame with columns `_id` and `.isPlatformTrial`, a logical.
+data frame with columns `_id` and `.isPlatformTrial`, a logical,
+`.numTestArmsSubstances`, an integer, and `.idsRelatedTrials`, a list of
+identifiers of trials calculated to be related (e.g., based on CTIS'
+`associatedClinicalTrials` and otherwise on additional identifiers in the
+record).
 }
 \description{
-Trial concept calculated: platform trial.
+Trial concept calculated: platform trial, research platform.
 As operational definition, at least one of these criteria is true:
-a. trial has "platform", "basket", "umbrella", "multi-?arm" or "multi-?stage"
+a. trial has "platform", "basket", "umbrella", "multi.?arm", "multi.?stage"
+or "master protocol"
 in its title or description (for ISRCTN, this is the only criterion; some
 trials in EUCTR lack data in English),
 b. trial has more than 2 active arms with different investigational medicines,
@@ -32,6 +37,12 @@ ctrLoadQueryIntoDb(queryterm = ..., euctrresults = TRUE, con = ...).
 Requires packages dplyr and stringdist to be installed; stringdist is used
 for evaluating names of active substances, which are considered similar when
 the similarity is 0.8 or higher.
+}
+\details{
+Publication references considered:
+E-PEARL WP2 2020 https://tinyurl.com/eupearld21terminology (which did not
+include all basket trials in the definition, as done here)
+Williams RJ et al. 2022 https://doi.org/10.1136/bmj-2021-067745
 }
 \examples{
 # fields needed

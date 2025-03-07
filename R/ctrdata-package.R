@@ -39,7 +39,6 @@
 #'
 #' \link{dfTrials2Long} (convert fields with nested elements into long format),
 #' \link{dfName2Value} (get values for variable(s) of interest).
-#' \link{dfCalculateConcept} (calculate a trial concept from fields across registers),
 #'
 #' @name ctrdata
 #' @author Ralf Herold \email{ralf.herold@@mailbox.org}

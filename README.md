@@ -178,7 +178,6 @@ overview](https://rfhb.github.io/ctrdata/reference/index.html).
 | `dbFindIdsUniqueTrials()` | **Get the identifiers of de-duplicated trials in the collection** |
 | `dbFindFields()` | Find names of variables (fields) in the collection |
 | `dbGetFieldsIntoDf()` | **Create a data frame (or tibble) from trial records in the database with the specified fields** |
-| `dfCalculateConcept()` | Canonically calculate, across registers, concepts such as trial start or primary endpoint analysis method |
 | `dfTrials2Long()` | Transform the data.frame from `dbGetFieldsIntoDf()` into a long name-value data.frame, including deeply nested fields |
 | `dfName2Value()` | From a long name-value data.frame, extract values for variables (fields) of interest (e.g., endpoints) |
 | `dfMergeVariablesRelevel()` | Merge variables into a new variable, optionally map values to a new set of levels |
@@ -225,7 +224,7 @@ flexibility, transparency and reproducibility. To support analyses,
 concepts of clinical trials across registers, which are commonly used in
 analyses, such as start dates, age groups and statistical tests of
 results. See
-[dfCalculateConcept()](https://rfhb.github.io/ctrdata/reference/dfCalculateConcept.html)
+[help(ctrdata-trial-concepts)](https://rfhb.github.io/ctrdata/reference/ctrdata-trial-concepts.html)
 and the section [Analysis across trials](#workflow-cross-trial-example)
 in the example workflow below. For further analyses, see examples of
 function
@@ -818,7 +817,6 @@ tinytest::test_all()
 covr::package_coverage(path = ".", type = "tests")
 # ctrdata Coverage: 94.06%
 # R/ctrShowOneTrial.R: 57.89%
-# R/dfCalculateConcept.R: 58.62%
 # R/ctrRerunQuery.R: 74.85%
 # R/zzz.R: 80.95%
 # R/dbGetFieldsIntoDf.R: 86.90%

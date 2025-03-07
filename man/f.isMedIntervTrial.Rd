@@ -9,7 +9,7 @@ f.isMedIntervTrial(df = NULL)
 \arguments{
 \item{df}{data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
 prints fields needed in `df` for calculating this trial concept, which can
-be used with \link{dfCalculateConcept}.}
+be used with \link{dbGetFieldsIntoDf}.}
 }
 \value{
 data frame with colums `_id` and `.isMedIntervTrial`, a logical.
