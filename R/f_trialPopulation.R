@@ -9,7 +9,7 @@
 #'
 #' @param df data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
 #' prints fields needed in `df` for calculating this trial concept, which can
-#' be used with \link{dfCalculateConcept}.
+#' be used with \link{dbGetFieldsIntoDf}.
 #'
 #' @return data frame with columns `_id` and new columns:
 #' `.trialPopulationAgeGroup` (factor, "P", "A", "P+A", "E", "A+E", "P+A+E"),
@@ -156,12 +156,12 @@ f.trialPopulation <- function(df = NULL) {
       .trialPopulationAgeGroup = dplyr::case_when(
         eligibility.maximum_age >= lubridate::as.period("65 years") &
           eligibility.minimum_age < lubridate::as.period("18 years") ~ "P+A+E",
-        eligibility.maximum_age > lubridate::as.period("18 years") &
+        eligibility.maximum_age >= lubridate::as.period("18 years") &
           eligibility.minimum_age < lubridate::as.period("18 years") ~ "P+A",
         eligibility.maximum_age >= lubridate::as.period("65 years") &
-          eligibility.minimum_age > lubridate::as.period("18 years") ~ "A+E",
+          eligibility.minimum_age >= lubridate::as.period("18 years") ~ "A+E",
         eligibility.maximum_age < lubridate::as.period("18 years") ~ "P",
-        eligibility.minimum_age > lubridate::as.period("18 years") ~ "A",
+        eligibility.minimum_age >= lubridate::as.period("18 years") ~ "A",
         .default = .trialPopulationAgeGroup
       ),
       #
@@ -172,14 +172,14 @@ f.trialPopulation <- function(df = NULL) {
         is.na(eligibility.criteria.textblock), .trialPopulationInclusion,
         trimws(stringi::stri_replace_all_regex(
           eligibility.criteria.textblock,
-          "^Inclusion Criteria:(.+)Exclusion Criteria:(.+)$", "$1"
+          "^(|Patient )Inclusion Criteria:(.+)(|Patient )Exclusion Criteria:(.+)$", "$2"
         ))),
       #
       .trialPopulationExclusion = dplyr::if_else(
         is.na(eligibility.criteria.textblock), .trialPopulationExclusion,
         trimws(stringi::stri_replace_all_regex(
           eligibility.criteria.textblock,
-          "^Inclusion Criteria:(.+)Exclusion Criteria:(.+)$", "$2"
+          "^(|Patient )Inclusion Criteria:(.+)(|Patient )Exclusion Criteria:(.+)$", "$4"
         )))
       #
     ) -> df
@@ -192,12 +192,12 @@ f.trialPopulation <- function(df = NULL) {
       .trialPopulationAgeGroup = dplyr::case_when(
         protocolSection.eligibilityModule.maximumAge >= lubridate::as.period("65 years") &
           protocolSection.eligibilityModule.minimumAge < lubridate::as.period("18 years") ~ "P+A+E",
-        protocolSection.eligibilityModule.maximumAge > lubridate::as.period("18 years") &
+        protocolSection.eligibilityModule.maximumAge >= lubridate::as.period("18 years") &
           protocolSection.eligibilityModule.minimumAge < lubridate::as.period("18 years") ~ "P+A",
         protocolSection.eligibilityModule.maximumAge >= lubridate::as.period("65 years") &
-          protocolSection.eligibilityModule.minimumAge > lubridate::as.period("18 years") ~ "A+E",
+          protocolSection.eligibilityModule.minimumAge >= lubridate::as.period("18 years") ~ "A+E",
         protocolSection.eligibilityModule.maximumAge < lubridate::as.period("18 years") ~ "P",
-        protocolSection.eligibilityModule.minimumAge > lubridate::as.period("18 years") ~ "A",
+        protocolSection.eligibilityModule.minimumAge >= lubridate::as.period("18 years") ~ "A",
         .default = .trialPopulationAgeGroup
       ),
       #
@@ -208,14 +208,14 @@ f.trialPopulation <- function(df = NULL) {
         is.na(protocolSection.eligibilityModule.eligibilityCriteria), .trialPopulationInclusion,
         trimws(stringi::stri_replace_all_regex(
           protocolSection.eligibilityModule.eligibilityCriteria,
-          "^Inclusion Criteria:(.+)Exclusion Criteria:(.+)$", "$1"
+          "^(|Patient )Inclusion Criteria:(.+)(|Patient )Exclusion Criteria:(.+)$", "$2"
         ))),
       #
       .trialPopulationExclusion = dplyr::if_else(
         is.na(protocolSection.eligibilityModule.eligibilityCriteria), .trialPopulationExclusion,
         trimws(stringi::stri_replace_all_regex(
           protocolSection.eligibilityModule.eligibilityCriteria,
-          "^Inclusion Criteria:(.+)Exclusion Criteria:(.+)$", "$2"
+          "^(|Patient )Inclusion Criteria:(.+)(|Patient )Exclusion Criteria:(.+)$", "$4"
         )))
       #
     ) -> df
