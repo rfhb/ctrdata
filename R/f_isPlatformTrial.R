@@ -4,9 +4,10 @@
 
 #' Calculate if study is likely a platform trial or not
 #'
-#' Trial concept calculated: platform trial.
+#' Trial concept calculated: platform trial, research platform.
 #' As operational definition, at least one of these criteria is true:
-#' a. trial has "platform", "basket", "umbrella", "multi-?arm" or "multi-?stage"
+#' a. trial has "platform", "basket", "umbrella", "multi.?arm", "multi.?stage"
+#' or "master protocol"
 #' in its title or description (for ISRCTN, this is the only criterion; some
 #' trials in EUCTR lack data in English),
 #' b. trial has more than 2 active arms with different investigational medicines,
@@ -22,17 +23,28 @@
 #' for evaluating names of active substances, which are considered similar when
 #' the similarity is 0.8 or higher.
 #'
+#' Publication references considered:
+#' E-PEARL WP2 2020 https://tinyurl.com/eupearld21terminology (which did not
+#' include all basket trials in the definition, as done here)
+#' Williams RJ et al. 2022 https://doi.org/10.1136/bmj-2021-067745
+
+#'
 #' @param df data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
 #' prints fields needed in `df` for calculating this trial concept, which can
-#' be used with \link{dfCalculateConcept}.
+#' be used with \link{dbGetFieldsIntoDf}.
 #'
-#' @return data frame with columns `_id` and `.isPlatformTrial`, a logical.
+#' @return data frame with columns `_id` and `.isPlatformTrial`, a logical,
+#' `.numTestArmsSubstances`, an integer, and `.idsRelatedTrials`, a list of
+#' identifiers of trials calculated to be related (e.g., based on CTIS'
+#' `associatedClinicalTrials` and otherwise on additional identifiers in the
+#' record).
 #'
 #' @export
 #'
-#' @importFrom dplyr mutate case_when pull `%>%`
+#' @importFrom dplyr mutate case_when pull left_join `%>%`
 #' @importFrom stringdist stringsimmatrix
 #' @importFrom stringi stri_count_fixed stri_detect_regex stri_split_fixed
+#' @importFrom tidyr pivot_longer
 #'
 #' @examples
 #' # fields needed
@@ -86,11 +98,21 @@ f.isPlatformTrial <- function(df = NULL) {
       "authorizedPartI.trialDetails.clinicalTrialIdentifiers.publicTitle",
       "authorizedPartI.trialDetails.protocolInformation.studyDesign.periodDetails.title",
       "authorizedPartI.trialDetails.protocolInformation.studyDesign.periodDetails.armDetails.title",
+      #
+      "authorizedPartI.trialDetails.associatedClinicalTrials.parentClinicalTrialId",
+      "authorizedPartI.trialDetails.associatedClinicalTrials.ctNumber",
+      "authorizedPartsII.mscInfo.clinicalTrialId",
+
       # CTIS2
       # "shortTitle" is mostly an uninformative study code
       "authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.fullTitle",
       "authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.publicTitle",
-      "authorizedApplication.authorizedPartI.trialDetails.protocolInformation.studyDesign.periodDetails.title"
+      "authorizedApplication.authorizedPartI.trialDetails.protocolInformation.studyDesign.periodDetails.title",
+      #
+      "authorizedApplication.authorizedPartI.trialDetails.associatedClinicalTrials.parentClinicalTrialId",
+      "authorizedApplication.authorizedPartI.trialDetails.associatedClinicalTrials.ctNumber",
+      "authorizedApplication.authorizedPartsII.mscInfo.clinicalTrialId"
+
     ))
 
   # merge with fields needed for nested function
@@ -115,10 +137,13 @@ f.isPlatformTrial <- function(df = NULL) {
   fctChkFlds(names(df), fldsNeeded)
 
   # helper definitions
-  titleDefPlatform <- "basket|platform|umbrella|multi.?arm|multi.?stage"
-  periodExclPlatform <- "safe|enrol|screen|follow|exten"
   minNumArmsDefPlatform <- 3L
   minNumPeriodsDefPlatform <- 3L
+  periodExclPlatform <- "safe|enrol|screen|follow|extens"
+  titleDefPlatform <- paste0(
+    "basket|platform|umbrella|multi.?arm|multi.?stage|",
+    "master protocol|sub.?protocol|sub.?study"
+  )
 
   # helper function
   `%>%` <- dplyr::`%>%`
@@ -136,12 +161,41 @@ f.isPlatformTrial <- function(df = NULL) {
 
   # apply nested function which provides values for each register
   # therefore the following code needs to check against register
-  df$analysis_numTestArmsSubstances <- f.numTestArmsSubstances(
-    df = df)[[".numTestArmsSubstances"]]
+  df <- dplyr::left_join(
+    df, f.numTestArmsSubstances(df = df), by = "_id")
+
   # remove columns needed exclusively for .numTestArmsSubstances
   df <- df[, -match(
     setdiff(unlist(fldsAdded), unlist(fldsHere)),
     names(df)), drop = FALSE]
+
+  # apply nested function which provides a table
+  # mapping all trial identifiers against all registers
+  rowColsList <- function(...) {
+    apply(..., 1, function(i) {
+      i <- sort(unique(na.omit(unlist(i))))
+      i[i != ""]
+    })
+  }
+
+  # get mapping table
+  df <- dplyr::left_join(
+    df,
+    .dbMapIdsTrials(con = parent.frame()$con) %>%
+      dplyr::mutate(
+        sponsorIds = stringi::stri_split_fixed(
+          SPONSOR, " / ")) %>%
+      dplyr::mutate(EUCTR = dplyr::if_else(
+        !is.na(EUCTR), `_id`, EUCTR)) %>%
+      dplyr::select(!c(`_id`, ctrname, SPONSOR)) %>%
+      dplyr::mutate(.idsRelatedTrials = rowColsList(.)) %>%
+      dplyr::select(!sponsorIds) %>%
+      tidyr::pivot_longer(cols = !.idsRelatedTrials) %>%
+      dplyr::select(!name) %>%
+      dplyr::rename("_id" = value) %>%
+      unique(),
+    by = "_id"
+  )
 
 
   #### . EUCTR ####
@@ -169,7 +223,7 @@ f.isPlatformTrial <- function(df = NULL) {
     #
     out = dplyr::case_when(
       ctrname == "EUCTR" ~ analysis_titleRelevant %orRmNa%
-        (analysis_numTestArmsSubstances >= minNumArmsDefPlatform |
+        (.numTestArmsSubstances >= minNumArmsDefPlatform |
            analysis_numberTestPeriods >= minNumPeriodsDefPlatform)
     )
   ) %>%
@@ -201,7 +255,7 @@ f.isPlatformTrial <- function(df = NULL) {
     #
     out = dplyr::case_when(
       ctrname == "CTGOV" ~ analysis_titleRelevant %orRmNa%
-        (analysis_numTestArmsSubstances >= minNumArmsDefPlatform |
+        (.numTestArmsSubstances >= minNumArmsDefPlatform |
            analysis_numberTestPeriods >= minNumPeriodsDefPlatform)
     )
   ) %>%
@@ -233,7 +287,7 @@ f.isPlatformTrial <- function(df = NULL) {
     #
     out = dplyr::case_when(
       ctrname == "CTGOV2" ~ analysis_titleRelevant %orRmNa%
-        (analysis_numTestArmsSubstances >= minNumArmsDefPlatform |
+        (.numTestArmsSubstances >= minNumArmsDefPlatform |
            analysis_numberTestPeriods >= minNumPeriodsDefPlatform)
     )
   ) %>%
@@ -265,6 +319,8 @@ f.isPlatformTrial <- function(df = NULL) {
   #### . CTIS ####
   df %>%
     dplyr::mutate(
+      #
+      # TODO associatedTrials
       #
       analysis_titleRelevant =
         #
@@ -307,7 +363,7 @@ f.isPlatformTrial <- function(df = NULL) {
       #
       out = dplyr::case_when(
         ctrname == "CTIS" ~ analysis_titleRelevant %orRmNa%
-          (analysis_numTestArmsSubstances >= minNumArmsDefPlatform |
+          (.numTestArmsSubstances >= minNumArmsDefPlatform |
              analysis_numberTestPeriods >= minNumPeriodsDefPlatform)
       )
     ) %>%
@@ -325,12 +381,17 @@ f.isPlatformTrial <- function(df = NULL) {
   )
 
   # keep only outcome columns
-  df <- df[, c("_id", ".isPlatformTrial"), drop = FALSE]
+  df <- df[, c(
+    "_id",
+    ".isPlatformTrial",
+    ".idsRelatedTrials"
+  ), drop = FALSE]
 
 
   #### checks ####
   stopifnot(inherits(df[[".isPlatformTrial"]], "logical"))
-  stopifnot(ncol(df) == 2L)
+  stopifnot(inherits(df[[".idsRelatedTrials"]], "list"))
+  stopifnot(ncol(df) == 3L)
 
   # return
   return(df)
