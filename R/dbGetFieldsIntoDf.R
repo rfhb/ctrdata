@@ -156,15 +156,10 @@ dbGetFieldsIntoDf <- function(
   calculate <- calculate[calculate != ""]
 
   # get all functions
-  fcts <- capture.output(utils::ls.str(
+  fcts <- as.character(utils::ls.str(
     getNamespace("ctrdata"),
     all.names = TRUE,
-    pattern = "^f[.][a-z]")
-  )
-  fcts <- sub(
-    "^(.+?) :.+", "\\1",
-    fcts[grepl("function \\(df = NULL\\)|functionWithTrace", fcts)]
-  )
+    pattern = "^f[.][a-z]"))
 
   # check if function exists
   stopifnot(!length(calculate) || all(calculate %in% fcts))
