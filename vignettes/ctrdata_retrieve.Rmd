@@ -1,22 +1,15 @@
 ---
 title: "Retrieve clinical trial information"
 author: "Ralf Herold"
-date: 2025-03-02
+date: 2025-03-08
 output:
-  rmarkdown::pdf_document:
-    toc: true
-    number_sections: true
-    latex_engine: xelatex
   rmarkdown::html_vignette:
     toc: true
 vignette: >
   %\VignetteIndexEntry{Retrieve clinical trial information}
-  %\VignetteKeywords{ctrdata,vignette}
-  %\VignettePackage{ctrdata}
-  %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
-  editor_options:
-    chunk_output_type: console
+  %\VignetteEncoding{UTF-8} 
+editor_options:
   chunk_output_type: console
 ---
 
@@ -28,7 +21,7 @@ knitr::opts_chunk$set(eval = FALSE)
 
 ### Attach package `ctrdata`
 
-```{r attach_ctrdata}
+```{r}
 library(ctrdata)
 citation("ctrdata")
 ```
@@ -39,16 +32,16 @@ Remember to respect the registers' terms and conditions (see `ctrOpenSearchPages
 
 These functions open the browser, where the user can start searching for trials of interest.
 
-```{r show_brower_search_pages}
+```{r}
 # Please review and respect register copyrights:
 ctrOpenSearchPagesInBrowser(
-  copyright = TRUE
+copyright = TRUE
 )
 
 # Open browser with example search:
 ctrOpenSearchPagesInBrowser(
-  url = "cancer&age=under-18",
-  register = "EUCTR"
+url = "cancer&age=under-18",
+register = "EUCTR"
 )
 ```
 
@@ -58,7 +51,9 @@ Refine the search until the trials of interest are listed in the browser. The to
 
 ### Copy address from browser address bar to clipboard
 
-Use functions or keyboard shortcuts according to the operating system. See [here](https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser) for our automation to copy the URLs of a user's queries in any of the supported clinical trial registers. 
+Use functions or keyboard shortcuts according to the operating system. 
+
+See [here](https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser) for our automation to copy the URLs of a user's queries in any of the supported clinical trial registers. 
 
 ### Get address from clipboard
 
@@ -69,8 +64,7 @@ q <- "https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&age=u
 clipr::write_clip(q)
 ```
 
-
-```{r get_query_from_browser}
+```{r}
 q <- ctrGetQueryUrl()
 # * Using clipboard content as register query URL: https://www.clinicaltrialsregister.eu/
 # ctr-search/search?query=cancer&age=under-18&resultsstatus=trials-with-results
@@ -84,11 +78,11 @@ q
 ctrOpenSearchPagesInBrowser(url = q)
 ```
 
-### Retrieve trial information, transform, save to database and check queries
+### Connect database, retrieve, transform, save and check
 
 Note that in addition to protocol- and results-related information, also all trial documents that made publicly available by the registers, including any protocols, consent forms and results reports, can be downloaded by `ctrdata`, by specifying parameter `documents.path`, see `help(ctrLoadQueryIntoDb)`.
 
-```{r execute_load_query, eval=FALSE}
+```{r}
 # Count number of trial records
 ctrLoadQueryIntoDb(
   queryterm = q,
@@ -341,7 +335,50 @@ ctrFindActiveSubstanceSynonyms(
 unlink("sqlite_file.sql")
 ```
 
-## Using a MongoDB database
+
+## Find platform trials
+
+The interest is increasing to design and use integrated research platforms, clinical research platforms, platform trials, multi-arm multi-stage (MAMS) and master protocol research programs (MPRPs). Additional concepts and terms used include basket and umbrella trials, and in particular complex trials. Please see the references below for further information. `ctrdata` can help finding such research and analysing the study information, as follows: 
+
+```{r}
+# Generate queries to identify trials
+urls <- ctrGenerateQueries(
+  searchPhrase = paste0(
+    "basket OR platform OR umbrella OR master protocol OR ",
+    "multiarm OR multistage OR subprotocol OR substudy OR ",
+    "multi-arm OR multi-stage OR sub-protocol OR sub-study"
+  ))
+
+# See 
+help("ctrGenerateQueries")
+
+# Open queries in register web interface
+sapply(urls, ctrOpenSearchPagesInBrowser)
+
+# Count number of studies found in the register
+result <- lapply(urls, ctrLoadQueryIntoDb, only.count = TRUE)
+
+sapply(result, "[[", "n")
+# EUCTR CTGOV2 ISRCTN   CTIS 
+#  2808   2372   1426    289
+
+# For analysis, consider using trial concepts, see
+help("ctrdata-trial-concepts")
+
+# and see examples in
+vignette("ctrdata_summarise")
+
+```
+
+References:
+
+- EU-PEARL. 2023. ‘D2.1. Report on Terminology, References and Scenarios for Platform Trials and Master Protocols’. https://web.archive.org/web/20230314024441/https://eu-pearl.eu/wp-content/uploads/2020/06/EU-PEARL_D2.1_Report-on-Terminology-and-Scenarios-for-Platform-Trials-and-Masterprotocols.pdf
+- EC / EMA / HMA. 2022. ‘Complex Clinical Trials – Questions and Answers’. EMA/298712/2022. https://health.ec.europa.eu/system/files/2022-06/medicinal_qa_complex_clinical-trials_en.pdf 
+- Williams RJ et al. 2022. ‘Approach for Reporting Master Protocol Study Designs on ClinicalTrials.Gov: Qualitative Analysis’. The BMJ 377 (June):e067745. https://doi.org/10.1136/bmj-2021-067745
+- Clinical Trials Facilitation and Coordination Group (CTFG). 2019. ‘Recommendation Paper on the Initiation and Conduct of Complex Clinical Trials’. http://www.hma.eu/fileadmin/dateien/Human_Medicines/01-About_HMA/Working_Groups/CTFG/2019_02_CTFG_Recommendation_paper_on_Complex_Clinical_Trials.pdf 
+
+
+## Example using MongoDB
 
 This example works with a free service [here](https://www.mongodb.com/cloud/atlas). Note that the user name and password need to be encoded. The format of the connection string is documented at https://docs.mongodb.com/manual/reference/connection-string/. For recommended databases, see vignette [Install R package ctrdata](https://rfhb.github.io/ctrdata/#databases-that-can-be-used-with-ctrdata).
 

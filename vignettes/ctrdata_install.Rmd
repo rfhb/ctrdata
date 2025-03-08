@@ -1,20 +1,14 @@
 ---
 title: "Install R package ctrdata"
 author: "Ralf Herold"
-date: 2025-03-02
+date: 2025-03-08
 output:
-  rmarkdown::pdf_document:
-    toc: true
-    number_sections: true
-    latex_engine: xelatex
   rmarkdown::html_vignette:
     toc: true
 vignette: >
   %\VignetteIndexEntry{Install R package ctrdata}
-  %\VignetteKeywords{ctrdata,vignette}
-  %\VignettePackage{ctrdata}
-  %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8} 
 editor_options:
   chunk_output_type: console
 ---
@@ -23,7 +17,7 @@ editor_options:
 knitr::opts_chunk$set(eval = FALSE)
 ```
 
-# Install package `ctrdata` on an R system
+## Install package `ctrdata` on an R system
 
 The R Project website ([https://www.r-project.org/](https://www.r-project.org/)) provides installers for the R system. It can be used with software products and graphical user interfaces such as [R Studio](https://www.rstudio.com/products/RStudio/), or [Microsoft R Open](https://mran.microsoft.com/open/), or from [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=Ikuyadeu.r). 
 
@@ -57,7 +51,7 @@ Create **MongoDB** database connection | `dbc <- nodbi::src_mongo(db = "name_of_
 Create **PostgreSQL** database connection | `dbc <- nodbi::src_postgres(dbname = "name_of_my_database"); dbc[["collection"]] <- "name_of_my_collection"`
 Use connection with `ctrdata` functions | `ctrdata::{ctrLoadQueryIntoDb, dbQueryHistory, dbFindIdsUniqueTrials, dbFindFields, dbGetFieldsIntoDf}(con = dbc, ...)`
 
-## Attach package `ctrdata`
+## Attach and reference package `ctrdata`
 
 After completing the installation, attach the package from the user's library. This will also check the availability of the additional installation requirements as mentioned above:
 

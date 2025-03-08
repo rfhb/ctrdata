@@ -1,20 +1,14 @@
 ---
 title: "Summarise and analyse clinical trial information"
 author: "Ralf Herold"
-date: 2025-03-05
+date: 2025-03-08
 output:
   rmarkdown::html_vignette:
     toc: true
-  rmarkdown::pdf_document:
-    toc: true
-    number_sections: true
-    latex_engine: xelatex
 vignette: >
   %\VignetteIndexEntry{Summarise and analyse clinical trial information}
-  %\VignetteKeywords{ctrdata,vignette}
-  %\VignettePackage{ctrdata}
-  %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8} 
 editor_options:
   chunk_output_type: console
 ---
@@ -321,18 +315,23 @@ value lists across different registers.
 Available calculations can be listed, and a specific documentation shown.
 
 ```{r dfcalculate}
-# All concepts available at this time
-#  [1] "f.controlType"             "f.isMedIntervTrial"        "f.isPlatformTrial"        
-#  [4] "f.isUniqueTrial"           "f.numSites"                "f.numTestArmsSubstances"  
-#  [7] "f.primareEndpointEstimand" "f.sampleSize"              "f.sponsorType"            
-# [10] "f.startDate"               "f.statusRecruitment"       "f.trialObjective"         
-# [13] "f.trialPhase"
-
-# Introduction to trial concepts
+# Introduction and overview of available trial concepts
 help("ctrdata-trial-concepts")
 
 # Show documentation of a specific trial concept 
 help("f.isMedIntervTrial")
+
+# List concepts available at this time
+as.character(utils::ls.str(
+  getNamespace("ctrdata"),
+  all.names = TRUE,
+  pattern = "^f[.][a-z]"))
+#  [1] "f.controlType"                "f.isMedIntervTrial"           "f.isUniqueTrial"             
+#  [4] "f.likelyPlatformTrial"        "f.numSites"                   "f.numTestArmsSubstances"     
+#  [7] "f.primaryEndpointDescription" "f.primaryEndpointResults"     "f.resultsDate"               
+# [10] "f.sampleSize"                 "f.sponsorType"                "f.startDate"                 
+# [13] "f.statusRecruitment"          "f.trialObjectives"            "f.trialPhase"                
+# [16] "f.trialPopulation" 
 ```
 
 
@@ -791,7 +790,7 @@ ggsave("vignettes/nbtrials.png", width = 6, height = 4)
 ```
 ![HistogramNBtrials](nbtrials.png)
 
-## Analyses using aggregation pipeline and mapreduce
+## Analyses using MongoDB pipeline
 
 Here is an example of analysis functions that can be run directly on a MongoDB server, which are fast and do not consume R resources.
 
