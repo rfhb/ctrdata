@@ -101,7 +101,7 @@ f.numTestArmsSubstances <- function(df = NULL) {
     if (is.null(x) || !length(x) || all(is.na(x))) return(NULL)
 
     # normalise
-    x <- tolower(x) # TODO removed unlist(x)
+    x <- tolower(x)
 
     # early exit if single arm
     if (length(x) == 1L) return(0L)

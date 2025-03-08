@@ -98,9 +98,6 @@ f.trialObjectives <- function(df = NULL) {
 
   # apply nested function which provides values for each register
   # therefore the following code needs to check against register
-  # TODO
-  # df$isMedIntervTrial <- f.isMedIntervTrial(
-  #   df = df)[[".isMedIntervTrial"]]
   df <- dplyr::left_join(
     df, f.isMedIntervTrial(df = df), by = "_id")
 

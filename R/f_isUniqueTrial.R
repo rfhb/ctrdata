@@ -95,14 +95,10 @@ f.isUniqueTrial <- function(df = NULL) {
   # check generic, do not edit
   fctChkFlds(names(df), fldsNeeded)
 
-  # apply function
-
-  # TODO will no more work if a con is needed
-  # vct <- .dbFindIdsUniqueTrials(listofIds = df)
-
-  # TODO access object con in the parent environment
+  # apply function, access object con in calling environment
   vct <- dbFindIdsUniqueTrials(con = parent.frame()$con)
 
+  # calculate result
   df[[".isUniqueTrial"]] <- df[["_id"]] %in% vct
 
   # keep only outcome columns

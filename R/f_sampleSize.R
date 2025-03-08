@@ -125,7 +125,7 @@ f.sampleSize <- function(df = NULL) {
 
   # directly using field, see above
 
-  # TODO for results data
+  # TODO alternative, using results data
   # num_participants = sum(as.integer(
   #   resultsSection.baselineCharacteristicsModule.denoms.counts.value[which_not_total]))
   # num_arms_or_groups = max(number_of_arms, length(which_not_total))

@@ -101,7 +101,7 @@ dfTrials2Long <- function(df) {
       o <- lapply(seq_along(ci), function(ct) {
 
         o <- unlist(flattenDf(ci[ct]))
-        o <- na.omit(o) # TODO
+        o <- na.omit(o)
         if (is.null(o) || !length(o)) return(NULL)
 
         # check identifiers added by unlist

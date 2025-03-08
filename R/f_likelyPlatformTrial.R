@@ -319,8 +319,6 @@ f.likelyPlatformTrial <- function(df = NULL) {
   df %>%
     dplyr::mutate(
       #
-      # TODO associatedTrials
-      #
       analysis_titleRelevant =
         #
         stringi::stri_detect_regex(
