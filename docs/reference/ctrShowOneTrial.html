@@ -17,7 +17,7 @@ con is provided or if the trial is not in database con."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.20.0.9900</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.20.0.9990</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -112,13 +112,11 @@ The trial is retrieved with <a href="ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb
 <span class="r-in"><span><span class="co"># select fields of interest and to click on "Copy names of selected</span></span></span>
 <span class="r-in"><span><span class="co"># fields to clipboard..." to use them with dbGetFieldsIntoDf()</span></span></span>
 <span class="r-in"><span><span class="fu">ctrShowOneTrial</span><span class="op">(</span>identifier <span class="op">=</span> <span class="va">id</span>, con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in utils::browseURL(tf):</span> 'browser' must be a non-empty character string</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># get sample of identifiers of trials in database</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span>, <span class="fl">5L</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Searching for duplicate trials... </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - Getting all trial identifiers...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  (may take some time)...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> , 29 found in collection</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - Finding duplicates among registers' and sponsor ids...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - 2 EUCTR _id were not preferred EU Member State record for 8 trials</span>

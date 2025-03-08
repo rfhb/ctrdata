@@ -9,7 +9,7 @@ its defaults."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.20.0.9900</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.20.0.9990</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,7 +58,7 @@ its defaults.</p>
 <dl><dt id="arg-df">df<a class="anchor" aria-label="anchor" href="#arg-df"></a></dt>
 <dd><p>data frame such as from <a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a>. If `NULL`,
 prints fields needed in `df` for calculating this trial concept, which can
-be used with <a href="dfCalculateConcept.html">dfCalculateConcept</a>.</p></dd>
+be used with <a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -70,29 +70,7 @@ be used with <a href="dfCalculateConcept.html">dfCalculateConcept</a>.</p></dd>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># fields needed</span></span></span>
 <span class="r-in"><span><span class="fu">f.isUniqueTrial</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "_id"                                                                                               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [2] "ctrname"                                                                                           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [3] "a2_eudract_number"                                                                                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "a52_us_nct_clinicaltrialsgov_registry_number"                                                      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] "trialInformation.usctnIdentifier"                                                                  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [6] "a51_isrctn_international_standard_randomised_controlled_trial_number"                              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "trialInformation.isrctnIdentifier"                                                                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [8] "a41_sponsors_protocol_code_number"                                                                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] "id_info.secondary_id"                                                                              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10] "id_info.org_study_id"                                                                              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [11] "id_info.nct_id"                                                                                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [12] "id_info.nct_alias"                                                                                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "externalRefs.eudraCTNumber"                                                                        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [14] "externalRefs.clinicalTrialsGovNumber"                                                              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [15] "isrctn"                                                                                            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [16] "externalRefs.protocolSerialNumber"                                                                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [17] "ctNumber"                                                                                          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [18] "eudraCtInfo.eudraCtCode"                                                                           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [19] "authorizedPartI.trialDetails.clinicalTrialIdentifiers.secondaryIdentifyingNumbers.nctNumber.number"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [20] "protocolSection.identificationModule.nctId"                                                        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [21] "protocolSection.identificationModule.secondaryIdInfos.id"                                          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [22] "protocolSection.identificationModule.nctIdAliases"                                                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [23] "protocolSection.identificationModule.orgStudyIdInfo.id"                                            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ctrname"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span></span></span>

@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.20.0.9900</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.20.0.9990</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -188,18 +188,14 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <td><strong>Create a data frame (or tibble) from trial records in the database with the specified fields</strong></td>
 </tr>
 <tr class="odd">
-<td><code><a href="reference/dfCalculateConcept.html">dfCalculateConcept()</a></code></td>
-<td>Canonically calculate, across registers, concepts such as trial start or primary endpoint analysis method</td>
-</tr>
-<tr class="even">
 <td><code><a href="reference/dfTrials2Long.html">dfTrials2Long()</a></code></td>
 <td>Transform the data.frame from <code><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code> into a long name-value data.frame, including deeply nested fields</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code><a href="reference/dfName2Value.html">dfName2Value()</a></code></td>
 <td>From a long name-value data.frame, extract values for variables (fields) of interest (e.g., endpoints)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code><a href="reference/dfMergeVariablesRelevel.html">dfMergeVariablesRelevel()</a></code></td>
 <td>Merge variables into a new variable, optionally map values to a new set of levels</td>
 </tr>
@@ -255,7 +251,7 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <a class="anchor" aria-label="anchor" href="#data-model-of-ctrdata"></a>
 </h2>
 <p>Package <code>ctrdata</code> uses the data models that are implicit in data as retrieved from the different registers. No mapping is provided for any register’s data model to a putative target data model. The reasons include that registers’ data models are continually evolving over time, that only few data fields have similar values and meaning between registers, and that the retrieved public data may not correspond to the registers’ internal data model. The structure of data for a specific trial can interactively be inspected and searched using function, see the section <a href="#workflow-data-model">below</a>.</p>
-<p>Thus, the handling of data from different models of registers is to be done at the time of analysis. This approach allows a high level of flexibility, transparency and reproducibility. To support analyses, <code>ctrdata</code> (from version 1.21.0) provides functions that calculate concepts of clinical trials across registers, which are commonly used in analyses, such as start dates, age groups and statistical tests of results. See <a href="https://rfhb.github.io/ctrdata/reference/dfCalculateConcept.html">dfCalculateConcept()</a> and the section <a href="#workflow-cross-trial-example">Analysis across trials</a> in the example workflow below. For further analyses, see examples of function <a href="https://rfhb.github.io/ctrdata/reference/dfMergeVariablesRelevel.html">dfMergeVariablesRelevel()</a> on how to align related fields from different registers for a joint analysis.</p>
+<p>Thus, the handling of data from different models of registers is to be done at the time of analysis. This approach allows a high level of flexibility, transparency and reproducibility. To support analyses, <code>ctrdata</code> (from version 1.21.0) provides functions that calculate concepts of clinical trials across registers, which are commonly used in analyses, such as start dates, age groups and statistical tests of results. See <a href="https://rfhb.github.io/ctrdata/reference/ctrdata-trial-concepts.html">help(ctrdata-trial-concepts)</a> and the section <a href="#workflow-cross-trial-example">Analysis across trials</a> in the example workflow below. For further analyses, see examples of function <a href="https://rfhb.github.io/ctrdata/reference/dfMergeVariablesRelevel.html">dfMergeVariablesRelevel()</a> on how to align related fields from different registers for a joint analysis.</p>
 <p>In any of the <a href="https://rfhb.github.io/ctrdata/index.html#databases-for-use-with-ctrdata">databases</a>, one clinical trial is one document, corresponding to one row in a <code>SQLite</code>, <code>PostgreSQL</code> or <code>DuckDB</code> table, and to one document in a <code>MongoDB</code> collection. These <code>NoSQL</code> backends allow documents to have different structures, which is used here to accommodate the different models of data retrieved from the registers. Package <code>ctrdata</code> stores in every such document:</p>
 <ul>
 <li>field <code>_id</code> with the trial identification as provided by the register from which it was retrieved</li>
@@ -724,7 +720,6 @@ Neuroblastoma trials
 <span><span class="fu">covr</span><span class="fu">::</span><span class="fu"><a href="http://covr.r-lib.org/reference/package_coverage.html" class="external-link">package_coverage</a></span><span class="op">(</span>path <span class="op">=</span> <span class="st">"."</span>, type <span class="op">=</span> <span class="st">"tests"</span><span class="op">)</span></span>
 <span><span class="co"># ctrdata Coverage: 94.06%</span></span>
 <span><span class="co"># R/ctrShowOneTrial.R: 57.89%</span></span>
-<span><span class="co"># R/dfCalculateConcept.R: 58.62%</span></span>
 <span><span class="co"># R/ctrRerunQuery.R: 74.85%</span></span>
 <span><span class="co"># R/zzz.R: 80.95%</span></span>
 <span><span class="co"># R/dbGetFieldsIntoDf.R: 86.90%</span></span>

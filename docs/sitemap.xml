@@ -24,14 +24,13 @@
 <url><loc>https://rfhb.github.io/ctrdata/reference/dbFindIdsUniqueTrials.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/dbQueryHistory.html</loc></url>
-<url><loc>https://rfhb.github.io/ctrdata/reference/dfCalculateConcept.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/dfMergeVariablesRelevel.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/dfName2Value.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/dfTrials2Long.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/f.controlType.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/f.isMedIntervTrial.html</loc></url>
-<url><loc>https://rfhb.github.io/ctrdata/reference/f.isPlatformTrial.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/f.isUniqueTrial.html</loc></url>
+<url><loc>https://rfhb.github.io/ctrdata/reference/f.likelyPlatformTrial.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/f.numSites.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/f.numTestArmsSubstances.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/f.primaryEndpointDescription.html</loc></url>

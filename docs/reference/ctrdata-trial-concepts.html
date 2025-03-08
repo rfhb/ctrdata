@@ -19,7 +19,7 @@ analysis consistency."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.20.0.9900</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.20.0.9990</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -74,8 +74,7 @@ e.g. <code>f.startDate</code>.
 Please raise an issue <a href="https://github.com/rfhb/ctrdata/issues" class="external-link">here</a>
 to ask about or improve a trial concept.</p>
 <p>The following trial concepts can be used by referencing their name when
-calling <a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a> (parameter <code>calculate</code>) and
-<a href="dfCalculateConcept.html">dfCalculateConcept</a> (parameter <code>name</code>).
+calling <a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a> (parameter <code>calculate</code>).
 Concepts will continue to be refined and added;
 last updated 2025-03-05.</p><ul><li><p><a href="f.controlType.html">f.controlType</a> (factor) which type of internal or concurrent control is
 used in the trial? ("none", "no-treatment", "placebo", "active",
@@ -84,10 +83,10 @@ used in the trial? ("none", "no-treatment", "placebo", "active",
 it have one or more medicines (drugs or biological) as investigational
 (experimental) intervention? (irrespective of status of authorisation and
 of study design)</p></li>
-<li><p><a href="f.isPlatformTrial.html">f.isPlatformTrial</a> (logical) is the trial possibly a (research) platform
-trial? (based on title, f.numTestArmsSubstances, number of periods)</p></li>
 <li><p><a href="f.isUniqueTrial.html">f.isUniqueTrial</a> (logical) is the trial record unique in the data frame
 of trial, based on the default parameters of <a href="dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a>?</p></li>
+<li><p><a href="f.likelyPlatformTrial.html">f.likelyPlatformTrial</a> (logical) is the trial possibly a (research) platform
+trial? (based on title, f.numTestArmsSubstances, number of periods)</p></li>
 <li><p><a href="f.numSites.html">f.numSites</a> (integer) how many sites does the trial have?</p></li>
 <li><p><a href="f.numTestArmsSubstances.html">f.numTestArmsSubstances</a> (integer) how many arms or groups have
 medicines that are investigational? (cannot be calculated for ISRCTN or

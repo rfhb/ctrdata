@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.20.0.9900</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.20.0.9990</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,7 +62,7 @@
                         <h4 data-toc-skip class="author">Ralf
 Herold</h4>
             
-            <h4 data-toc-skip class="date">2025-03-02</h4>
+            <h4 data-toc-skip class="date">2025-03-08</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/rfhb/ctrdata/blob/HEAD/vignettes/ctrdata_retrieve.Rmd" class="external-link"><code>vignettes/ctrdata_retrieve.Rmd</code></a></small>
       <div class="d-none name"><code>ctrdata_retrieve.Rmd</code></div>
@@ -93,13 +93,13 @@ for trials of interest.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Please review and respect register copyrights:</span></span>
 <span><span class="fu"><a href="../reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser</a></span><span class="op">(</span></span>
-<span>  copyright <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>copyright <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Open browser with example search:</span></span>
 <span><span class="fu"><a href="../reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser</a></span><span class="op">(</span></span>
-<span>  url <span class="op">=</span> <span class="st">"cancer&amp;age=under-18"</span>,</span>
-<span>  register <span class="op">=</span> <span class="st">"EUCTR"</span></span>
+<span>url <span class="op">=</span> <span class="st">"cancer&amp;age=under-18"</span>,</span>
+<span>register <span class="op">=</span> <span class="st">"EUCTR"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -114,7 +114,8 @@ browser. The total number of trials that can be retrieved with package
 <h3 id="copy-address-from-browser-address-bar-to-clipboard">Copy address from browser address bar to clipboard<a class="anchor" aria-label="anchor" href="#copy-address-from-browser-address-bar-to-clipboard"></a>
 </h3>
 <p>Use functions or keyboard shortcuts according to the operating
-system. See <a href="https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser">here</a>
+system.</p>
+<p>See <a href="https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser">here</a>
 for our automation to copy the URLs of a user’s queries in any of the
 supported clinical trial registers.</p>
 </div>
@@ -136,8 +137,7 @@ supported clinical trial registers.</p>
 <span><span class="fu"><a href="../reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser</a></span><span class="op">(</span>url <span class="op">=</span> <span class="va">q</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="retrieve-trial-information-transform-save-to-database-and-check-queries">Retrieve trial information, transform, save to database and check
-queries<a class="anchor" aria-label="anchor" href="#retrieve-trial-information-transform-save-to-database-and-check-queries"></a>
+<h3 id="connect-database-retrieve-transform-save-and-check">Connect database, retrieve, transform, save and check<a class="anchor" aria-label="anchor" href="#connect-database-retrieve-transform-save-and-check"></a>
 </h3>
 <p>Note that in addition to protocol- and results-related information,
 also all trial documents that made publicly available by the registers,
@@ -417,14 +417,69 @@ active substance name:</p>
 <span><span class="co"># [10] "ST1571"            "STI 571"           "STI571"   </span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="using-a-mongodb-database">Using a MongoDB database<a class="anchor" aria-label="anchor" href="#using-a-mongodb-database"></a>
+<h2 id="find-platform-trials">Find platform trials<a class="anchor" aria-label="anchor" href="#find-platform-trials"></a>
+</h2>
+<p>The interest is increasing to design and use integrated research
+platforms, clinical research platforms, platform trials, multi-arm
+multi-stage (MAMS) and master protocol research programs (MPRPs).
+Additional concepts and terms used include basket and umbrella trials,
+and in particular complex trials. Please see the references below for
+further information. <code>ctrdata</code> can help finding such research
+and analysing the study information, as follows:</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Generate queries to identify trials</span></span>
+<span><span class="va">urls</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ctrGenerateQueries.html">ctrGenerateQueries</a></span><span class="op">(</span></span>
+<span>  searchPhrase <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
+<span>    <span class="st">"basket OR platform OR umbrella OR master protocol OR "</span>,</span>
+<span>    <span class="st">"multiarm OR multistage OR subprotocol OR substudy OR "</span>,</span>
+<span>    <span class="st">"multi-arm OR multi-stage OR sub-protocol OR sub-study"</span></span>
+<span>  <span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># See </span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/help.html" class="external-link">help</a></span><span class="op">(</span><span class="st">"ctrGenerateQueries"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Open queries in register web interface</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">urls</span>, <span class="va">ctrOpenSearchPagesInBrowser</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Count number of studies found in the register</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">urls</span>, <span class="va">ctrLoadQueryIntoDb</span>, only.count <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">result</span>, <span class="st">"[["</span>, <span class="st">"n"</span><span class="op">)</span></span>
+<span><span class="co"># EUCTR CTGOV2 ISRCTN   CTIS </span></span>
+<span><span class="co">#  2808   2372   1426    289</span></span>
+<span></span>
+<span><span class="co"># For analysis, consider using trial concepts, see</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/help.html" class="external-link">help</a></span><span class="op">(</span><span class="st">"ctrdata-trial-concepts"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># and see examples in</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"ctrdata_summarise"</span><span class="op">)</span></span></code></pre></div>
+<p>References:</p>
+<ul>
+<li>EU-PEARL. 2023. ‘D2.1. Report on Terminology, References and
+Scenarios for Platform Trials and Master Protocols’. <a href="https://web.archive.org/web/20230314024441/https://eu-pearl.eu/wp-content/uploads/2020/06/EU-PEARL_D2.1_Report-on-Terminology-and-Scenarios-for-Platform-Trials-and-Masterprotocols.pdf" class="external-link uri">https://web.archive.org/web/20230314024441/https://eu-pearl.eu/wp-content/uploads/2020/06/EU-PEARL_D2.1_Report-on-Terminology-and-Scenarios-for-Platform-Trials-and-Masterprotocols.pdf</a>
+</li>
+<li>EC / EMA / HMA. 2022. ‘Complex Clinical Trials – Questions and
+Answers’. EMA/298712/2022. <a href="https://health.ec.europa.eu/system/files/2022-06/medicinal_qa_complex_clinical-trials_en.pdf" class="external-link uri">https://health.ec.europa.eu/system/files/2022-06/medicinal_qa_complex_clinical-trials_en.pdf</a>
+</li>
+<li>Williams RJ et al. 2022. ‘Approach for Reporting Master Protocol
+Study Designs on ClinicalTrials.Gov: Qualitative Analysis’. The BMJ 377
+(June):e067745. <a href="https://doi.org/10.1136/bmj-2021-067745" class="external-link uri">https://doi.org/10.1136/bmj-2021-067745</a>
+</li>
+<li>Clinical Trials Facilitation and Coordination Group (CTFG). 2019.
+‘Recommendation Paper on the Initiation and Conduct of Complex Clinical
+Trials’. <a href="http://www.hma.eu/fileadmin/dateien/Human_Medicines/01-About_HMA/Working_Groups/CTFG/2019_02_CTFG_Recommendation_paper_on_Complex_Clinical_Trials.pdf" class="external-link uri">http://www.hma.eu/fileadmin/dateien/Human_Medicines/01-About_HMA/Working_Groups/CTFG/2019_02_CTFG_Recommendation_paper_on_Complex_Clinical_Trials.pdf</a>
+</li>
+</ul>
+</div>
+<div class="section level2">
+<h2 id="example-using-mongodb">Example using MongoDB<a class="anchor" aria-label="anchor" href="#example-using-mongodb"></a>
 </h2>
 <p>This example works with a free service <a href="https://www.mongodb.com/cloud/atlas" class="external-link">here</a>. Note that the user
 name and password need to be encoded. The format of the connection
 string is documented at <a href="https://docs.mongodb.com/manual/reference/connection-string/" class="external-link uri">https://docs.mongodb.com/manual/reference/connection-string/</a>.
 For recommended databases, see vignette <a href="https://rfhb.github.io/ctrdata/#databases-that-can-be-used-with-ctrdata">Install
 R package ctrdata</a>.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Specify base uri for remote MongoDB server,</span></span>
 <span><span class="co">#  as part of the encoded connection string</span></span>
 <span><span class="va">db</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_mongo.html" class="external-link">src_mongo</a></span><span class="op">(</span></span>

@@ -12,6 +12,7 @@
 - Early stopping if database collection is read-only
 - Added typing of fields newly appearing in CTIS
 - Documentation simplification and update
+- Changing vignettes from PDF to HTML
 
 # ctrdata 1.20.0
 

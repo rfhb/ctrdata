@@ -3,11 +3,13 @@
 for each registers with which ctrdata works, see ctrdata-registers.
 Search terms that are expanded to concepts such as from MeSH and MedDRA
 by the search implementations in registers include the
-intervention and condition, see ctrdata-registers."><meta property="og:description" content="From high-level search terms provided by the user, generate specific queries
+'intervention' and 'condition', see ctrdata-registers.
+Logical operators only work with 'searchPhrase'."><meta property="og:description" content="From high-level search terms provided by the user, generate specific queries
 for each registers with which ctrdata works, see ctrdata-registers.
 Search terms that are expanded to concepts such as from MeSH and MedDRA
 by the search implementations in registers include the
-intervention and condition, see ctrdata-registers."></head><body>
+'intervention' and 'condition', see ctrdata-registers.
+Logical operators only work with 'searchPhrase'."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -15,7 +17,7 @@ intervention and condition, see ctrdata-registers."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.20.0.9900</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.20.0.9990</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,12 +54,14 @@ intervention and condition, see ctrdata-registers."></head><body>
 for each registers with which ctrdata works, see <a href="ctrdata-registers.html">ctrdata-registers</a>.
 Search terms that are expanded to concepts such as from MeSH and MedDRA
 by the search implementations in registers include the
-intervention and condition, see <a href="ctrdata-registers.html">ctrdata-registers</a>.</p>
+'intervention' and 'condition', see <a href="ctrdata-registers.html">ctrdata-registers</a>.
+Logical operators only work with 'searchPhrase'.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ctrGenerateQueries</span><span class="op">(</span></span>
+<span>  searchPhrase <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  condition <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  intervention <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  phase <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -76,7 +80,13 @@ intervention and condition, see <a href="ctrdata-registers.html">ctrdata-registe
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-condition">condition<a class="anchor" aria-label="anchor" href="#arg-condition"></a></dt>
+<dl><dt id="arg-searchphrase">searchPhrase<a class="anchor" aria-label="anchor" href="#arg-searchphrase"></a></dt>
+<dd><p>String with optional logical operators ("AND", "OR")
+that will be searched in selected fields of registers that can handle logical
+operators (general or title fields), should not include quotation marks</p></dd>
+
+
+<dt id="arg-condition">condition<a class="anchor" aria-label="anchor" href="#arg-condition"></a></dt>
 <dd><p>String with condition / disease</p></dd>
 
 
@@ -136,28 +146,55 @@ input to functions <a href="ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a> and
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">urls</span> <span class="op">&lt;-</span> <span class="fu">ctrGenerateQueries</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  intervention <span class="op">=</span> <span class="st">"antibody"</span>,</span></span>
-<span class="r-in"><span>  recruitment <span class="op">=</span> <span class="st">"ongoing"</span>,</span></span>
 <span class="r-in"><span>  phase <span class="op">=</span> <span class="st">"phase 3"</span>,</span></span>
 <span class="r-in"><span>  startAfter <span class="op">=</span> <span class="st">"2000-01-01"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># open queries in register web interface</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">urls</span>, <span class="va">ctrOpenSearchPagesInBrowser</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from EUCTR: query=antibody&amp;phase=phase-three&amp;status=ongoing&amp;status=trial-now-transitioned&amp;status=suspended-by-ca&amp;status=temporarily-halted&amp;status=restarted&amp;dateFrom=2000-01-01</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from EUCTR: query=antibody&amp;phase=phase-three&amp;dateFrom=2000-01-01</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Appears specific for CTGOV REST API 2.0</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from CTGOV2: intr=antibody&amp;start=2000-01-01_&amp;aggFilters=phase:3,status:act rec</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from ISRCTN: &amp;filters=intervention:antibody,phase:Phase III,trialStatus:ongoing,GT+overallStartDate:2000-01-01&amp;q=</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from CTIS: searchCriteria={"containAll":"antibody","trialPhaseCode":[5],"status":[2,3,4,6,7],"eeaStartDateFrom":"2000-01-01"}</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                              EUCTR </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> "https://www.clinicaltrialsregister.eu/ctr-search/search?query=antibody&amp;phase=phase-three&amp;status=ongoing&amp;status=trial-now-transitioned&amp;status=suspended-by-ca&amp;status=temporarily-halted&amp;status=restarted&amp;dateFrom=2000-01-01#tabs" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                             CTGOV2 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                              "https://clinicaltrials.gov/search?intr=antibody&amp;start=2000-01-01_&amp;aggFilters=phase:3,status:act rec" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                             ISRCTN </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                               "https://www.isrctn.com/search?&amp;filters=intervention:antibody,phase:Phase III,trialStatus:ongoing,GT+overallStartDate:2000-01-01&amp;q=" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                               CTIS </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                    "https://euclinicaltrials.eu/ctis-public/search#searchCriteria={\"containAll\":\"antibody\",\"trialPhaseCode\":[5],\"status\":[2,3,4,6,7],\"eeaStartDateFrom\":\"2000-01-01\"}" </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from CTGOV2: intr=antibody&amp;start=2000-01-01_&amp;aggFilters=phase:3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from ISRCTN: &amp;filters=intervention:antibody,phase:Phase III,GT+overallStartDate:2000-01-01&amp;q=</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from CTIS: searchCriteria={"containAll":"antibody","trialPhaseCode":[5],"eeaStartDateFrom":"2000-01-01"}</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                    EUCTR </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                      "https://www.clinicaltrialsregister.eu/ctr-search/search?query=antibody&amp;phase=phase-three&amp;dateFrom=2000-01-01#tabs" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                   CTGOV2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   "https://clinicaltrials.gov/search?intr=antibody&amp;start=2000-01-01_&amp;aggFilters=phase:3" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                   ISRCTN </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                         "https://www.isrctn.com/search?&amp;filters=intervention:antibody,phase:Phase III,GT+overallStartDate:2000-01-01&amp;q=" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                     CTIS </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "https://euclinicaltrials.eu/ctis-public/search#searchCriteria={\"containAll\":\"antibody\",\"trialPhaseCode\":[5],\"eeaStartDateFrom\":\"2000-01-01\"}" </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">urls</span> <span class="op">&lt;-</span> <span class="fu">ctrGenerateQueries</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  searchPhrase <span class="op">=</span> <span class="st">"antibody AND covid"</span>,</span></span>
+<span class="r-in"><span>  recruitment <span class="op">=</span> <span class="st">"completed"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># load queries into database collection</span></span></span>
 <span class="r-in"><span><span class="co"># sapply(urls, ctrLoadQueryIntoDb, con = dbc)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># find research platform and platform trials</span></span></span>
+<span class="r-in"><span><span class="va">urls</span> <span class="op">&lt;-</span> <span class="fu">ctrGenerateQueries</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  searchPhrase <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span> <span class="st">"basket OR platform OR umbrella OR master protocol OR "</span>,</span></span>
+<span class="r-in"><span> <span class="st">"multiarm OR multistage OR subprotocol OR substudy OR "</span>,</span></span>
+<span class="r-in"><span> <span class="st">"multi-arm OR multi-stage OR sub-protocol OR sub-study"</span></span></span>
+<span class="r-in"><span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># open queries in register web interface</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">urls</span>, <span class="va">ctrOpenSearchPagesInBrowser</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from EUCTR: query="basket" OR "platform" OR "umbrella" OR "master protocol" OR "multiarm" OR "multistage" OR "subprotocol" OR "substudy" OR "multi-arm" OR "multi-stage" OR "sub-protocol" OR "sub-study"</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> * Appears specific for CTGOV REST API 2.0</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from CTGOV2: titles="basket" OR "platform" OR "umbrella" OR "master protocol" OR "multiarm" OR "multistage" OR "subprotocol" OR "substudy" OR "multi-arm" OR "multi-stage" OR "sub-protocol" OR "sub-study"</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from ISRCTN: q="basket" OR "platform" OR "umbrella" OR "master protocol" OR "multiarm" OR "multistage" OR "subprotocol" OR "substudy" OR "multi-arm" OR "multi-stage" OR "sub-protocol" OR "sub-study"</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from CTIS: searchCriteria={"containAny":"basket, platform, umbrella, master protocol, multiarm, multistage, subprotocol, substudy, multi-arm, multi-stage, sub-protocol, sub-study"}</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                                EUCTR </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "https://www.clinicaltrialsregister.eu/ctr-search/search?query=\"basket\" OR \"platform\" OR \"umbrella\" OR \"master protocol\" OR \"multiarm\" OR \"multistage\" OR \"subprotocol\" OR \"substudy\" OR \"multi-arm\" OR \"multi-stage\" OR \"sub-protocol\" OR \"sub-study\"#tabs" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                               CTGOV2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                           "https://clinicaltrials.gov/search?titles=\"basket\" OR \"platform\" OR \"umbrella\" OR \"master protocol\" OR \"multiarm\" OR \"multistage\" OR \"subprotocol\" OR \"substudy\" OR \"multi-arm\" OR \"multi-stage\" OR \"sub-protocol\" OR \"sub-study\"" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                               ISRCTN </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                    "https://www.isrctn.com/search?q=\"basket\" OR \"platform\" OR \"umbrella\" OR \"master protocol\" OR \"multiarm\" OR \"multistage\" OR \"subprotocol\" OR \"substudy\" OR \"multi-arm\" OR \"multi-stage\" OR \"sub-protocol\" OR \"sub-study\"" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                                 CTIS </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                       "https://euclinicaltrials.eu/ctis-public/search#searchCriteria={\"containAny\":\"basket, platform, umbrella, master protocol, multiarm, multistage, subprotocol, substudy, multi-arm, multi-stage, sub-protocol, sub-study\"}" </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
