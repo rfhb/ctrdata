@@ -44,6 +44,7 @@
 #' @importFrom stringdist stringsimmatrix
 #' @importFrom stringi stri_count_fixed stri_detect_regex stri_split_fixed
 #' @importFrom tidyr pivot_longer
+#' @importFrom rlang .data
 #'
 #' @examples
 #' # fields needed
@@ -178,41 +179,62 @@ f.likelyPlatformTrial <- function(df = NULL) {
   }
 
   # get mapping table
+  # df <- dplyr::left_join(
+  #   df,
+  #   .dbMapIdsTrials(con = parent.frame()$con) %>%
+  #     dplyr::mutate(
+  #       sponsorIds = stringi::stri_split_fixed(
+  #         .data$SPONSOR, " / ")) %>%
+  #     dplyr::mutate(EUCTR = dplyr::if_else(
+  #       !is.na(.data$EUCTR), .data$`_id`, .data$EUCTR)) %>%
+  #     dplyr::select(!c("_id", "ctrname", "SPONSOR")) %>%
+  #     dplyr::mutate(.idsRelatedTrials = rowColsList(.data)) %>%
+  #     dplyr::select(!"sponsorIds") %>%
+  #     tidyr::pivot_longer(cols = !".idsRelatedTrials") %>%
+  #     dplyr::select(!"name") %>%
+  #     dplyr::rename("_id" = .data$value) %>%
+  #     unique(),
+  #   by = "_id"
+  # )
+  df2 <- .dbMapIdsTrials(con = parent.frame()$con)
+  #
+  dplyr::mutate(
+    df2, sponsorIds = stringi::stri_split_fixed(
+      .data$SPONSOR, " / ")) %>%
+    dplyr::mutate(EUCTR = dplyr::if_else(
+      !is.na(.data$EUCTR), .data$`_id`, .data$EUCTR)) -> df2
+  #
+  dplyr::mutate(
+    df2, .idsRelatedTrials = rowColsList(
+      dplyr::select(df2, !c("_id", "ctrname", "SPONSOR"))
+    )) %>%
+    dplyr::select(!"sponsorIds") %>%
+    tidyr::pivot_longer(
+      cols = !".idsRelatedTrials") %>%
+    dplyr::select(!"name") %>%
+    dplyr::rename("_id" = .data$value) %>%
+    unique() -> df2
+  #
   df <- dplyr::left_join(
-    df,
-    .dbMapIdsTrials(con = parent.frame()$con) %>%
-      dplyr::mutate(
-        sponsorIds = stringi::stri_split_fixed(
-          SPONSOR, " / ")) %>%
-      dplyr::mutate(EUCTR = dplyr::if_else(
-        !is.na(EUCTR), `_id`, EUCTR)) %>%
-      dplyr::select(!c(`_id`, ctrname, SPONSOR)) %>%
-      dplyr::mutate(.idsRelatedTrials = rowColsList(.)) %>%
-      dplyr::select(!sponsorIds) %>%
-      tidyr::pivot_longer(cols = !.idsRelatedTrials) %>%
-      dplyr::select(!name) %>%
-      dplyr::rename("_id" = value) %>%
-      unique(),
-    by = "_id"
-  )
+    df, df2, by = "_id")
 
 
   #### . EUCTR ####
   df %>% dplyr::mutate(
     #
     analysis_titleRelevant = stringi::stri_detect_regex(
-      a3_full_title_of_the_trial,
+      .data$a3_full_title_of_the_trial,
       titleDefPlatform, case_insensitive = TRUE) %orRmNa%
       stringi::stri_detect_regex(
-        trialInformation.fullTitle,
+        .data$trialInformation.fullTitle,
         titleDefPlatform, case_insensitive = TRUE),
     #
     helper_periodTitle = stringi::stri_split_fixed(
-      subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.title,
+      .data$subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.title,
       " / "),
     #
     analysis_numberTestPeriods = lapply(
-      helper_periodTitle,
+      .data$helper_periodTitle,
       function(i) {
         i <- unique(tolower(na.omit(i)))
         i <- i[!grepl(periodExclPlatform, i)]
@@ -221,30 +243,30 @@ f.likelyPlatformTrial <- function(df = NULL) {
       }),
     #
     out = dplyr::case_when(
-      ctrname == "EUCTR" ~ analysis_titleRelevant %orRmNa%
-        (.numTestArmsSubstances >= minNumArmsDefPlatform |
-           analysis_numberTestPeriods >= minNumPeriodsDefPlatform)
+      ctrname == "EUCTR" ~ .data$analysis_titleRelevant %orRmNa%
+        (.data$.numTestArmsSubstances >= minNumArmsDefPlatform |
+           .data$analysis_numberTestPeriods >= minNumPeriodsDefPlatform)
     )
   ) %>%
-    dplyr::pull(out) -> df$euctr
+    dplyr::pull("out") -> df$euctr
 
 
   #### . CTGOV ####
   df %>% dplyr::mutate(
     #
     analysis_titleRelevant = stringi::stri_detect_regex(
-      official_title,
+      .data$official_title,
       titleDefPlatform, case_insensitive = TRUE) %orRmNa%
       stringi::stri_detect_regex(
-        detailed_description.textblock,
+        .data$detailed_description.textblock,
         titleDefPlatform, case_insensitive = TRUE),
     #
     helper_periodTitle = stringi::stri_split_fixed(
-      clinical_results.participant_flow.period_list.period.title,
+      .data$clinical_results.participant_flow.period_list.period.title,
       " / "),
     #
     analysis_numberTestPeriods = lapply(
-      helper_periodTitle,
+      .data$helper_periodTitle,
       function(i) {
         i <- unique(tolower(na.omit(i)))
         i <- i[!grepl(periodExclPlatform, i)]
@@ -254,29 +276,29 @@ f.likelyPlatformTrial <- function(df = NULL) {
     #
     out = dplyr::case_when(
       ctrname == "CTGOV" ~ analysis_titleRelevant %orRmNa%
-        (.numTestArmsSubstances >= minNumArmsDefPlatform |
-           analysis_numberTestPeriods >= minNumPeriodsDefPlatform)
+        (.data$.numTestArmsSubstances >= minNumArmsDefPlatform |
+           .data$analysis_numberTestPeriods >= minNumPeriodsDefPlatform)
     )
   ) %>%
-    dplyr::pull(out) -> df$ctgov
+    dplyr::pull("out") -> df$ctgov
 
 
   #### . CTGOV2 ####
   df %>% dplyr::mutate(
     #
     analysis_titleRelevant = stringi::stri_detect_regex(
-      protocolSection.identificationModule.officialTitle,
+      .data$protocolSection.identificationModule.officialTitle,
       titleDefPlatform, case_insensitive = TRUE) %orRmNa%
       stringi::stri_detect_regex(
-        protocolSection.descriptionModule.detailedDescription,
+        .data$protocolSection.descriptionModule.detailedDescription,
         titleDefPlatform, case_insensitive = TRUE),
     #
     helper_periodTitle = stringi::stri_split_fixed(
-      resultsSection.participantFlowModule.periods.title,
+      .data$resultsSection.participantFlowModule.periods.title,
       " / "),
     #
     analysis_numberTestPeriods = lapply(
-      helper_periodTitle,
+      .data$helper_periodTitle,
       function(i) {
         i <- unique(tolower(na.omit(i)))
         i <- i[!grepl(periodExclPlatform, i)]
@@ -285,34 +307,35 @@ f.likelyPlatformTrial <- function(df = NULL) {
       }),
     #
     out = dplyr::case_when(
-      ctrname == "CTGOV2" ~ analysis_titleRelevant %orRmNa%
-        (.numTestArmsSubstances >= minNumArmsDefPlatform |
-           analysis_numberTestPeriods >= minNumPeriodsDefPlatform)
+      ctrname == "CTGOV2" ~ .data$analysis_titleRelevant %orRmNa%
+        (.data$.numTestArmsSubstances >= minNumArmsDefPlatform |
+           .data$analysis_numberTestPeriods >= minNumPeriodsDefPlatform)
     )
   ) %>%
-    dplyr::pull(out) -> df$ctgov2
+    dplyr::pull("out") -> df$ctgov2
 
 
   #### . ISRCTN ####
   df %>% dplyr::mutate(
     #
     analysis_titleRelevant = stringi::stri_detect_regex(
-      trialDescription.scientificTitle,
+      .data$trialDescription.scientificTitle,
       titleDefPlatform, case_insensitive = TRUE) %orRmNa%
       stringi::stri_detect_regex(
-        trialDescription.title,
+        .data$trialDescription.title,
         titleDefPlatform, case_insensitive = TRUE),
     #
     analysis_isDrugTrial =
       stringi::stri_detect_regex(
-        interventions.intervention.interventionType,
+        .data$interventions.intervention.interventionType,
         "drug|biological|vaccine",
         case_insensitive = TRUE),
     #
     out = dplyr::case_when(
-      ctrname == "ISRCTN" ~ analysis_isDrugTrial & analysis_titleRelevant)
+      ctrname == "ISRCTN" ~ .data$analysis_isDrugTrial &
+        .data$analysis_titleRelevant)
   ) %>%
-    dplyr::pull(out) -> df$isrctn
+    dplyr::pull("out") -> df$isrctn
 
 
   #### . CTIS ####
@@ -322,35 +345,35 @@ f.likelyPlatformTrial <- function(df = NULL) {
       analysis_titleRelevant =
         #
         stringi::stri_detect_regex(
-          title,
+          .data$title,
           titleDefPlatform, case_insensitive = TRUE) %orRmNa%
         stringi::stri_detect_regex(
-          applications.fullTitle,
+          .data$applications.fullTitle,
           titleDefPlatform, case_insensitive = TRUE) %orRmNa%
         stringi::stri_detect_regex(
-          authorizedPartI.trialDetails.clinicalTrialIdentifiers.fullTitle,
+          .data$authorizedPartI.trialDetails.clinicalTrialIdentifiers.fullTitle,
           titleDefPlatform, case_insensitive = TRUE) %orRmNa%
         stringi::stri_detect_regex(
-          authorizedPartI.trialDetails.clinicalTrialIdentifiers.publicTitle,
+          .data$authorizedPartI.trialDetails.clinicalTrialIdentifiers.publicTitle,
           titleDefPlatform, case_insensitive = TRUE) %orRmNa%
         #
         stringi::stri_detect_regex(
-          authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.fullTitle,
+          .data$authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.fullTitle,
           titleDefPlatform, case_insensitive = TRUE) %orRmNa%
         stringi::stri_detect_regex(
-          authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.publicTitle,
+          .data$authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.publicTitle,
           titleDefPlatform, case_insensitive = TRUE),
       #
       periodTitle = dplyr::coalesce(
-        as.character(authorizedPartI.trialDetails.protocolInformation.studyDesign.periodDetails.title),
-        authorizedApplication.authorizedPartI.trialDetails.protocolInformation.studyDesign.periodDetails.title
+        as.character(.data$authorizedPartI.trialDetails.protocolInformation.studyDesign.periodDetails.title),
+        .data$authorizedApplication.authorizedPartI.trialDetails.protocolInformation.studyDesign.periodDetails.title
       ),
       #
       helper_periodTitle = stringi::stri_split_fixed(
-        periodTitle, " / "),
+        .data$periodTitle, " / "),
       #
       analysis_numberTestPeriods = lapply(
-        helper_periodTitle,
+        .data$helper_periodTitle,
         function(i) {
           i <- unique(tolower(na.omit(i)))
           i <- i[!grepl(periodExclPlatform, i)]
@@ -359,12 +382,12 @@ f.likelyPlatformTrial <- function(df = NULL) {
         }),
       #
       out = dplyr::case_when(
-        ctrname == "CTIS" ~ analysis_titleRelevant %orRmNa%
-          (.numTestArmsSubstances >= minNumArmsDefPlatform |
-             analysis_numberTestPeriods >= minNumPeriodsDefPlatform)
+        ctrname == "CTIS" ~ .data$analysis_titleRelevant %orRmNa%
+          (.data$.numTestArmsSubstances >= minNumArmsDefPlatform |
+             .data$analysis_numberTestPeriods >= minNumPeriodsDefPlatform)
       )
     ) %>%
-    dplyr::pull(out) -> df$ctis
+    dplyr::pull("out") -> df$ctis
 
 
   # keep only register names

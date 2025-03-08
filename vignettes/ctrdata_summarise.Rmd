@@ -842,7 +842,7 @@ head(
 
 ### Aggregation
 
-The following example uses the aggregation pipeline in MongoDB. See here for details on mongo's aggregation pipleline: https://docs.mongodb.org/manual/core/aggregation-pipeline/
+The following example uses the aggregation pipeline in MongoDB. See here for details on mongo's aggregation pipleline: https://www.mongodb.com/docs/manual/core/aggregation-pipeline/
 
 ```{r mongodb_aggregation_pipeline}
 #
@@ -881,7 +881,7 @@ head(out)
 
 ### Mapreduce
 
-Since Mapreduce is deprecated starting in MongoDB 5 (https://docs.mongodb.com/manual/core/map-reduce/), use an aggregation pipeline:  
+Since Mapreduce is deprecated starting in MongoDB 5 (https://www.mongodb.com/docs/manual/core/map-reduce/), use an aggregation pipeline:  
 
 ```{r mongodb_mapreduce}
 # Count number of trials by number of study

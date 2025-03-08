@@ -21,6 +21,7 @@
 #' @export
 #'
 #' @importFrom dplyr mutate pull coalesce `%>%`
+#' @importFrom rlang .data
 #'
 #' @examples
 #' # fields needed
@@ -91,16 +92,16 @@ f.resultsDate <- function(df = NULL) {
     dplyr::mutate(
       out = dplyr::coalesce(
         # sequence matters
-        firstreceived_results_date,
-        trialInformation.analysisStageDate,
-        results_first_posted,
-        protocolSection.statusModule.resultsFirstPostDateStruct.date,
-        results.intentToPublish,
-        results.clinicalStudyReports.submitDate,
-        results.summaryResults.submissionDate
+        .data$firstreceived_results_date,
+        .data$trialInformation.analysisStageDate,
+        .data$results_first_posted,
+        .data$protocolSection.statusModule.resultsFirstPostDateStruct.date,
+        .data$results.intentToPublish,
+        .data$results.clinicalStudyReports.submitDate,
+        .data$results.summaryResults.submissionDate
       )
     ) %>%
-    dplyr::pull(out) -> df[[".resultsDate"]]
+    dplyr::pull("out") -> df[[".resultsDate"]]
 
   # keep only outcome columns
   df <- df[, c("_id", ".resultsDate"), drop = FALSE]

@@ -22,6 +22,7 @@
 #'
 #' @importFrom dplyr if_else case_when mutate pull `%>%`
 #' @importFrom stringi stri_detect_regex stri_detect_fixed
+#' @importFrom rlang .data
 #'
 #' @examples
 #' # fields needed
@@ -107,11 +108,11 @@ f.isMedIntervTrial <- function(df = NULL) {
   df %>% dplyr::mutate(
     #
     analysis_isDrugTrial =
-      dplyr::case_when(ctrname == "EUCTR" ~ TRUE),
+      dplyr::case_when(.data$ctrname == "EUCTR" ~ TRUE),
     #
-    out = analysis_isDrugTrial
+    out = .data$analysis_isDrugTrial
   ) %>%
-    dplyr::pull(out) -> df$euctr
+    dplyr::pull("out") -> df$euctr
 
 
   #### ..CTGOV ####
@@ -119,15 +120,15 @@ f.isMedIntervTrial <- function(df = NULL) {
     #
     analysis_isDrugTrial =
       stringi::stri_detect_regex(
-        intervention.intervention_type,
+        .data$intervention.intervention_type,
         "drug|biological", case_insensitive = TRUE) &
       stringi::stri_detect_fixed(
-        study_type,
+        .data$study_type,
         "interventional", case_insensitive = TRUE),
     #
-    out = analysis_isDrugTrial
+    out = .data$analysis_isDrugTrial
   ) %>%
-  dplyr::pull(out) -> df$ctgov
+    dplyr::pull("out") -> df$ctgov
 
 
   #### ..CTGOV2 ####
@@ -136,15 +137,15 @@ f.isMedIntervTrial <- function(df = NULL) {
       #
       analysis_isDrugTrial =
         stringi::stri_detect_regex(
-          protocolSection.armsInterventionsModule.interventions.type,
+          .data$protocolSection.armsInterventionsModule.interventions.type,
           "drug|biological", case_insensitive = TRUE) &
         stringi::stri_detect_fixed(
-          protocolSection.designModule.studyType,
+          .data$protocolSection.designModule.studyType,
           "interventional", case_insensitive = TRUE),
       #
-      out = analysis_isDrugTrial
+      out = .data$analysis_isDrugTrial
     ) %>%
-    dplyr::pull(out) -> df$ctgov2
+    dplyr::pull("out") -> df$ctgov2
 
 
   #### ..ISRCTN ####
@@ -153,15 +154,15 @@ f.isMedIntervTrial <- function(df = NULL) {
       #
       analysis_isDrugTrial =
         stringi::stri_detect_regex(
-          interventions.intervention.interventionType,
+          .data$interventions.intervention.interventionType,
           "drug|biological|vaccine", case_insensitive = TRUE) &
         stringi::stri_detect_fixed(
-          trialDesign.primaryStudyDesign,
+          .data$trialDesign.primaryStudyDesign,
           "interventional", case_insensitive = TRUE),
       #
-      out = analysis_isDrugTrial
+      out = .data$analysis_isDrugTrial
     ) %>%
-    dplyr::pull(out) -> df$isrctn
+    dplyr::pull("out") -> df$isrctn
 
 
   #### ..CTIS ####
@@ -169,11 +170,11 @@ f.isMedIntervTrial <- function(df = NULL) {
   df %>% dplyr::mutate(
     #
     analysis_isDrugTrial =
-      dplyr::case_when(ctrname == "CTIS" ~ TRUE),
+      dplyr::case_when(.data$ctrname == "CTIS" ~ TRUE),
     #
-    out = analysis_isDrugTrial
+    out = .data$analysis_isDrugTrial
   ) %>%
-    dplyr::pull(out) -> df$ctis
+    dplyr::pull("out") -> df$ctis
 
 
   # keep only register names

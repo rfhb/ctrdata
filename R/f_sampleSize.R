@@ -15,6 +15,7 @@
 #' @export
 #'
 #' @importFrom dplyr if_else mutate pull select `%>%`
+#' @importFrom rlang .data
 #'
 #' @examples
 #' # fields needed
@@ -97,23 +98,24 @@ f.sampleSize <- function(df = NULL) {
 
   #### . EUCTR ####
   fldsEuctrProtocol <- fldsNeeded$euctr[-1]
-  df %>%
-    dplyr::select(dplyr::all_of(fldsEuctrProtocol)) %>%
-    dplyr::mutate(out = rowSums(., na.rm = TRUE)) %>%
-    dplyr::pull(out) -> df$helper_euctr_protocol
+  dplyr::mutate(
+    df, out = rowSums(
+      dplyr::select(
+        df, fldsEuctrProtocol), na.rm = TRUE)) %>%
+    dplyr::pull("out") -> df$helper_euctr_protocol
   df %>%
     mutate(
       helper_euctr_results = sapply(
-        trialInformation.countrySubjectCounts.countrySubjectCount.subjects,
+        .data$trialInformation.countrySubjectCounts.countrySubjectCount.subjects,
         function(i) sum(i, na.rm = TRUE),
         USE.NAMES = FALSE, simplify = TRUE),
       out = dplyr::if_else(
-        helper_euctr_results > 0L,
-        helper_euctr_results,
-        helper_euctr_protocol
+        .data$helper_euctr_results > 0L,
+        .data$helper_euctr_results,
+        .data$helper_euctr_protocol
       )
     ) %>%
-    dplyr::pull(out) -> df$euctr
+    dplyr::pull("out") -> df$euctr
 
 
   #### . CTGOV ####
@@ -150,49 +152,51 @@ f.sampleSize <- function(df = NULL) {
   df %>%
     dplyr::mutate(
       out = if_else(
-        !is.na(participants.totalFinalEnrolment),
-        participants.totalFinalEnrolment,
-        participants.targetEnrolment
+        !is.na(.data$participants.totalFinalEnrolment),
+        .data$participants.totalFinalEnrolment,
+        .data$participants.targetEnrolment
       )
     ) %>%
-    dplyr::pull(out) -> df$isrctn
+    dplyr::pull("out") -> df$isrctn
 
 
   #### . CTIS ####
   df %>%
     mutate(
       helper_ctis1 = sapply(
-        authorizedPartsII.recruitmentSubjectCount,
+        .data$authorizedPartsII.recruitmentSubjectCount,
         function(i) sum(i, na.rm = TRUE),
         USE.NAMES = FALSE, simplify = TRUE),
       helper_ctis2 = sapply(
-        authorizedApplication.authorizedPartsII.recruitmentSubjectCount,
+        .data$authorizedApplication.authorizedPartsII.recruitmentSubjectCount,
         function(i) sum(i, na.rm = TRUE),
         USE.NAMES = FALSE, simplify = TRUE)
-    ) %>%
-    dplyr::select(c(
-      helper_ctis1, authorizedPartI.rowSubjectCount,
-      helper_ctis2, authorizedApplication.authorizedPartI.rowSubjectCount
-    )) %>%
-    dplyr::mutate(out = rowSums(., na.rm = TRUE)) %>%
-    dplyr::pull(out) -> df$ctis
-
+    ) -> df
+  dplyr::mutate(
+    df, out = rowSums(
+      dplyr::select(
+        df, c(
+          "helper_ctis1", "authorizedPartI.rowSubjectCount",
+          "helper_ctis2", "authorizedApplication.authorizedPartI.rowSubjectCount"
+        )), na.rm = TRUE)) %>%
+    dplyr::pull("out") -> df$ctis
 
   # merge all
-  df %>%
-    dplyr::select(
-      euctr,
-      enrollment,
-      protocolSection.designModule.enrollmentInfo.count,
-      isrctn,
-      ctis
-    ) %>%
-    dplyr::mutate(
-      out = rowSums(., na.rm = TRUE),
-      out = if_else(out > 0L, out, NA_integer_),
-      out = as.integer(out)
-    ) %>%
-    dplyr::pull(out) -> df[[".sampleSize"]]
+  dplyr::mutate(
+    df,
+    out = rowSums(
+      dplyr::select(
+        df,c(
+          "euctr",
+          "enrollment",
+          "protocolSection.designModule.enrollmentInfo.count",
+          "isrctn",
+          "ctis"
+        )), na.rm = TRUE),
+    out = if_else(.data$out > 0L, .data$out, NA_integer_),
+    out = as.integer(.data$out)
+  ) %>%
+    dplyr::pull("out") -> df[[".sampleSize"]]
 
   # keep only outcome columns
   df <- df[, c("_id", ".sampleSize"), drop = FALSE]

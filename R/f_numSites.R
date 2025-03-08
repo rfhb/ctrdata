@@ -17,6 +17,7 @@
 #'
 #' @importFrom dplyr if_else mutate case_when `%>%`
 #' @importFrom stringi stri_extract_all_regex stri_split_regex
+#' @importFrom rlang .data
 #'
 #' @examples
 #' # fields needed
@@ -88,81 +89,81 @@ f.numSites <- function(df = NULL) {
     dplyr::mutate(
       helper_nonEEA = stringi::stri_split_regex(
         stringi::stri_replace_all_regex(
-          e863_trial_sites_planned_in,
+          .data$e863_trial_sites_planned_in,
           pattern = "United|Federation|Republic",
           replacement = ""),
         " +"),
       helper_numNonEEA = sapply(
-        helper_nonEEA, length),
-      out = helper_numNonEEA +
-        e851_number_of_sites_anticipated_in_the_eea
+        .data$helper_nonEEA, length),
+      out = .data$helper_numNonEEA +
+        .data$e851_number_of_sites_anticipated_in_the_eea
     ) %>%
-    dplyr::pull(out) -> df$euctr
+    dplyr::pull("out") -> df$euctr
 
 
   #### . CTGOV ####
   df %>%
     dplyr::mutate(
       helper_cities = stringi::stri_split_regex(
-        location.facility.address.city,
+        .data$location.facility.address.city,
         " / "),
-      helper_numCities = sapply(helper_cities, length),
+      helper_numCities = sapply(.data$helper_cities, length),
       out = dplyr::if_else(
-        !is.na(location.facility.address.city),
-        helper_numCities, NA_integer_)
+        !is.na(.data$location.facility.address.city),
+        .data$helper_numCities, NA_integer_)
     ) %>%
-    dplyr::pull(out) -> df$ctgov
+    dplyr::pull("out") -> df$ctgov
 
 
   #### . CTGOV2 ####
   df %>%
     dplyr::mutate(
       helper_cities = stringi::stri_split_regex(
-        protocolSection.contactsLocationsModule.locations.city,
+        .data$protocolSection.contactsLocationsModule.locations.city,
         " / "),
-      helper_numCities = sapply(helper_cities, length),
+      helper_numCities = sapply(.data$helper_cities, length),
       out = dplyr::if_else(
-        !is.na(protocolSection.contactsLocationsModule.locations.city),
-        helper_numCities, NA_integer_)
+        !is.na(.data$protocolSection.contactsLocationsModule.locations.city),
+        .data$helper_numCities, NA_integer_)
     ) %>%
-    dplyr::pull(out) -> df$ctgov2
+    dplyr::pull("out") -> df$ctgov2
 
 
   #### . ISRCTN ####
   df %>%
     dplyr::mutate(
       helper_numCities = stringi::stri_split_regex(
-        participants.trialCentres.trialCentre.name,
+        .data$participants.trialCentres.trialCentre.name,
         " / ") %>%
         sapply(length),
       helper_shortCut = stringi::stri_extract_all_regex(
-        participants.trialCentres.trialCentre.name,
+        .data$participants.trialCentres.trialCentre.name,
         # trial 76463425 reads, "and 58 other sites"
         "[0-9]+[^/]+?sites") %>%
         stringi::stri_extract_all_regex("[0-9]+") %>%
         sapply(function(i) max(0L, as.numeric(i), na.rm = TRUE)),
       out = dplyr::if_else(
-        !is.na(participants.trialCentres.trialCentre.name),
-        helper_numCities + helper_shortCut, NA_integer_)
+        !is.na(.data$participants.trialCentres.trialCentre.name),
+        .data$helper_numCities + .data$helper_shortCut, NA_integer_)
     ) %>%
-  dplyr::pull(out) -> df$isrctn
+  dplyr::pull("out") -> df$isrctn
 
 
   #### . CTIS ####
   df %>%
     dplyr::mutate(
       helper_numSitesCtis1 = sapply(
-        authorizedPartsII.trialSites.id, length),
+        .data$authorizedPartsII.trialSites.id, length),
       helper_numSitesCtis2 = sapply(
-        authorizedApplication.authorizedPartsII.trialSites.id, length),
+        .data$authorizedApplication.authorizedPartsII.trialSites.id, length),
       out = dplyr::case_when(
-        !is.na(authorizedPartsII.trialSites.id) ~
-          helper_numSitesCtis1,
-        !is.na(authorizedApplication.authorizedPartsII.trialSites.id) ~
-          helper_numSitesCtis2
+        !is.na(.data$authorizedPartsII.trialSites.id) ~
+          .data$helper_numSitesCtis1,
+        !is.na(.data$authorizedApplication.authorizedPartsII.trialSites.id) ~
+          .data$helper_numSitesCtis2
       )
     ) %>%
-    dplyr::pull(out) -> df$ctis
+    dplyr::pull("out") -> df$ctis
 
 
   # merge into vector

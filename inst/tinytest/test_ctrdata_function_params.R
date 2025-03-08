@@ -117,7 +117,7 @@ tf <- function() {
             ctrLoadQueryIntoDb(
               queryterm = "",
               con = dbc))),
-        "Cannot use 'queryterm' ")
+        "'queryterm'")
     }
   }
 

@@ -375,12 +375,12 @@ References:
 - EU-PEARL. 2023. ‘D2.1. Report on Terminology, References and Scenarios for Platform Trials and Master Protocols’. https://web.archive.org/web/20230314024441/https://eu-pearl.eu/wp-content/uploads/2020/06/EU-PEARL_D2.1_Report-on-Terminology-and-Scenarios-for-Platform-Trials-and-Masterprotocols.pdf
 - EC / EMA / HMA. 2022. ‘Complex Clinical Trials – Questions and Answers’. EMA/298712/2022. https://health.ec.europa.eu/system/files/2022-06/medicinal_qa_complex_clinical-trials_en.pdf 
 - Williams RJ et al. 2022. ‘Approach for Reporting Master Protocol Study Designs on ClinicalTrials.Gov: Qualitative Analysis’. The BMJ 377 (June):e067745. https://doi.org/10.1136/bmj-2021-067745
-- Clinical Trials Facilitation and Coordination Group (CTFG). 2019. ‘Recommendation Paper on the Initiation and Conduct of Complex Clinical Trials’. http://www.hma.eu/fileadmin/dateien/Human_Medicines/01-About_HMA/Working_Groups/CTFG/2019_02_CTFG_Recommendation_paper_on_Complex_Clinical_Trials.pdf 
+- Clinical Trials Facilitation and Coordination Group (CTFG). 2019. ‘Recommendation Paper on the Initiation and Conduct of Complex Clinical Trials’.  https://www.hma.eu/fileadmin/dateien/Human_Medicines/01-About_HMA/Working_Groups/CTFG/2019_02_CTFG_Recommendation_paper_on_Complex_Clinical_Trials.pdf 
 
 
 ## Example using MongoDB
 
-This example works with a free service [here](https://www.mongodb.com/cloud/atlas). Note that the user name and password need to be encoded. The format of the connection string is documented at https://docs.mongodb.com/manual/reference/connection-string/. For recommended databases, see vignette [Install R package ctrdata](https://rfhb.github.io/ctrdata/#databases-that-can-be-used-with-ctrdata).
+This example works with a free service [here](https://www.mongodb.com/cloud/atlas). Note that the user name and password need to be encoded. The format of the connection string is documented at https://www.mongodb.com/docs/manual/reference/connection-string/. For recommended databases, see vignette [Install R package ctrdata](https://rfhb.github.io/ctrdata/#databases-that-can-be-used-with-ctrdata).
 
 ```{r remote_mongo}
 # Specify base uri for remote MongoDB server,

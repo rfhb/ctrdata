@@ -19,6 +19,7 @@
 #'
 #' @importFrom dplyr mutate case_when case_match coalesce pull `%>%`
 #' @importFrom stringi stri_split_fixed
+#' @importFrom rlang .data
 #'
 #' @examples
 #' # fields needed
@@ -70,9 +71,9 @@ f.sponsorType <- function(df = NULL) {
 
   # helper definitions
   # sponsor type
-  stc <- "For profit"
-  stn <- "Not for profit"
-  sto <- "Other"
+  stc <- "for profit"
+  stn <- "not for profit"
+  sto <- "other"
 
   #### describe ####
   if (is.null(df)) {
@@ -93,24 +94,24 @@ f.sponsorType <- function(df = NULL) {
   df %>% dplyr::mutate(
     #
     out = dplyr::case_when(
-      b1_sponsor.b31_and_b32_status_of_the_sponsor == "Commercial" ~ stc,
-      b1_sponsor.b31_and_b32_status_of_the_sponsor == "Non-Commercial" ~ stn
+      .data$b1_sponsor.b31_and_b32_status_of_the_sponsor == "Commercial" ~ stc,
+      .data$b1_sponsor.b31_and_b32_status_of_the_sponsor == "Non-Commercial" ~ stn
     )
   ) %>%
-    dplyr::pull(out) -> df$euctr
+    dplyr::pull("out") -> df$euctr
 
 
   #### . CTGOV ####
   df %>% dplyr::mutate(
     #
     out = dplyr::case_match(
-      sponsors.lead_sponsor.agency_class,
+      .data$sponsors.lead_sponsor.agency_class,
       c("NIH", "U.S. Fed") ~ stn,
       c("Industry") ~ stc,
       c("Indiv", "Ambig", "Other", "Unknown") ~ sto
     )
   ) %>%
-    dplyr::pull(out) -> df$ctgov
+    dplyr::pull("out") -> df$ctgov
 
 
   #### . CTGOV2 ####
@@ -130,24 +131,24 @@ f.sponsorType <- function(df = NULL) {
   df %>% dplyr::mutate(
     #
     out = dplyr::case_match(
-      protocolSection.sponsorCollaboratorsModule.leadSponsor.class,
+      .data$protocolSection.sponsorCollaboratorsModule.leadSponsor.class,
       c("NIH", "FED", "OTHER_GOV") ~ stn,
       c("INDUSTRY") ~ stc,
       c("INDIV", "AMBIG", "OTHER", "UNKNOWN") ~ sto
     )
   ) %>%
-    dplyr::pull(out) -> df$ctgov2
+    dplyr::pull("out") -> df$ctgov2
 
 
   #### . ISRCTN ####
   df %>% dplyr::mutate(
     #
     out = dplyr::case_match(
-      ctrname,
+      .data$ctrname,
       "ISRCTN" ~ sto
     )
   ) %>%
-    dplyr::pull(out) -> df$isrctn
+    dplyr::pull("out") -> df$isrctn
 
 
   #### . CTIS ####
@@ -169,30 +170,30 @@ f.sponsorType <- function(df = NULL) {
     dplyr::mutate(
       helper1 = !sapply(
         # seems systematically filled
-        authorizedApplication.authorizedPartI.sponsors.isCommercial, any),
+        .data$authorizedApplication.authorizedPartI.sponsors.isCommercial, any),
       helper2 = sapply(
         # CTIS1?
-        primarySponsor.commercial,
+        .data$primarySponsor.commercial,
         function(i) i == "Non-Commercial"),
       helper3 = sapply(
         stringi::stri_split_fixed(
           # filled only sometimes
-          df$sponsorType, ", "),
+          .data$sponsorType, ", "),
         function(i) if (all(is.na(i))) NA else any(i %in% ncs)
       ),
       # sequence matters, first
       # value determines result
       helper4 = dplyr::coalesce(
-        helper3, helper2, helper1
+        .data$helper3, .data$helper2, .data$helper1
       ),
       #
       out = dplyr::case_when(
-        helper4 ~ stn,
-        !helper4 ~ stc,
-        !is.na(helper4) ~ sto
+        .data$helper4 ~ stn,
+        !.data$helper4 ~ stc,
+        !is.na(.data$helper4) ~ sto
       )
     ) %>%
-    dplyr::pull(out) -> df$ctis
+    dplyr::pull("out") -> df$ctis
 
 
   # keep only register names

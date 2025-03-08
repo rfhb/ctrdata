@@ -36,6 +36,7 @@
 #' find corresponding trial records
 #'
 #' @importFrom nodbi docdb_query
+#' @importFrom stats setNames
 #'
 #' @inheritParams ctrDb
 #'

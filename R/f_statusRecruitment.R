@@ -20,6 +20,7 @@
 #' @export
 #'
 #' @importFrom dplyr if_else mutate case_when case_match pull `%>%`
+#' @importFrom rlang .data
 #'
 #' @examples
 #' # fields needed
@@ -93,13 +94,13 @@ f.statusRecruitment <- function(df = NULL) {
   #### . EUCTR ####
   df %>% dplyr::mutate(
     helper = dplyr::case_when(
-      trialInformation.globalEndOfTrialPremature ~ "Prematurely Ended",
-      trialInformation.isGlobalEndOfTrialReached ~ "Completed",
-      .default = p_end_of_trial_status
+      .data$trialInformation.globalEndOfTrialPremature ~ "Prematurely Ended",
+      .data$trialInformation.isGlobalEndOfTrialReached ~ "Completed",
+      .default = .data$p_end_of_trial_status
     ),
-    out = tolower(helper)
+    out = tolower(.data$helper)
   ) %>%
-    dplyr::pull(out) -> df$euctr
+    dplyr::pull("out") -> df$euctr
 
 
   #### . CTGOV ####
@@ -107,13 +108,13 @@ f.statusRecruitment <- function(df = NULL) {
     helper = as.character(
       # type is logical if all NA
       dplyr::if_else(
-        !is.na(last_known_status),
-        last_known_status,
-        overall_status)
+        !is.na(.data$last_known_status),
+        .data$last_known_status,
+        .data$overall_status)
     ),
-    out = tolower(helper)
+    out = tolower(.data$helper)
   ) %>%
-    dplyr::pull(out) -> df$ctgov
+    dplyr::pull("out") -> df$ctgov
 
 
   #### . CTGOV2 ####
@@ -125,21 +126,21 @@ f.statusRecruitment <- function(df = NULL) {
   #### . ISRCTN ####
   df %>% dplyr::mutate(
     helper = dplyr::case_when(
-      !is.na(participants.recruitmentStatusOverride)
-      ~ as.character(participants.recruitmentStatusOverride),
-      Sys.Date() > participants.recruitmentEnd ~ "Completed",
-      Sys.Date() < participants.recruitmentStart ~ "Planned",
-      participants.recruitmentEnd > participants.recruitmentStart ~ "Ongoing"
+      !is.na(.data$participants.recruitmentStatusOverride)
+      ~ as.character(.data$participants.recruitmentStatusOverride),
+      Sys.Date() > .data$participants.recruitmentEnd ~ "Completed",
+      Sys.Date() < .data$participants.recruitmentStart ~ "Planned",
+      .data$participants.recruitmentEnd > .data$participants.recruitmentStart ~ "Ongoing"
     ),
-    out = tolower(helper)
+    out = tolower(.data$helper)
   ) %>%
-    dplyr::pull(out) -> df$isrctn
+    dplyr::pull("out") -> df$isrctn
 
 
   #### . CTIS ####
   df %>% dplyr::mutate(
     helper_ctPublicStatusCode = dplyr::case_match(
-      ctPublicStatusCode,
+      .data$ctPublicStatusCode,
       1 ~ "Under evaluation",
       2 ~ "Authorised, recruitment pending",
       3 ~ "Authorised, recruiting",
@@ -154,13 +155,13 @@ f.statusRecruitment <- function(df = NULL) {
       12 ~ "Cancelled"
     ),
     helper = dplyr::case_when(
-      is.na(helper_ctPublicStatusCode) &
-        !is.na(ctStatus) ~ as.character(ctStatus),
-      .default = helper_ctPublicStatusCode
+      is.na(.data$helper_ctPublicStatusCode) &
+        !is.na(.data$ctStatus) ~ as.character(.data$ctStatus),
+      .default = .data$helper_ctPublicStatusCode
     ),
-    out = tolower(helper)
+    out = tolower(.data$helper)
   ) %>%
-    dplyr::pull(out) -> df$ctis
+    dplyr::pull("out") -> df$ctis
 
 
   # merge, last update 2025-02-08

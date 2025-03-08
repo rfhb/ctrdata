@@ -1,6 +1,6 @@
 ## Test environments
 
-* local: R version 4.4.2 Patched (2024-11-08 r87310) on aarch64-apple-darwin20 (ok)
+* local: R Under development (unstable) (2025-02-15 r87725) on aarch64-apple-darwin20 (ok)
 
 * Win-builder: R version 4.4.2 (2024-10-31 ucrt); R version 4.3.3 (2024-02-29 ucrt) ; R Under development (unstable) (2024-12-12 r87438 ucrt) (ok)
 
@@ -11,22 +11,18 @@
 
 ## Local R CMD check results
 
-0 errors | 0 warnings | 2 notes 
+0 errors | 0 warnings | 0 notes 
 
-Explanation of NOTES: 
-
-* frequent use of non-standard evaluation in f.* functions
 
 ## Submission reason
 
-- Correct certain testing conditions
-- Refactor `dfTrials2Long` to correct generating identifiers for marginal cases
-- New function `ctrShowOneTrial()` with a widget to inspect a trial structure and data
-- Change dependency to Suggests
+- New features and functions 
+- Corrected testing, typing
+
 
 ## Reverse dependency checks
 
-No reverse dependencies detected at this time. 
+No reverse dependencies found. 
 
 
 ----

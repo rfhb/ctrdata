@@ -17,6 +17,7 @@
 #' @export
 #'
 #' @importFrom dplyr if_else mutate case_when `%>%`
+#' @importFrom rlang .data
 #'
 #' @examples
 #' # fields needed
@@ -84,20 +85,20 @@ f.trialPhase <- function(df = NULL) {
   df %>%
     dplyr::mutate(
       euctrphase = case_when(
-        e71_human_pharmacology_phase_i &
-          e72_therapeutic_exploratory_phase_ii &
-          e73_therapeutic_confirmatory_phase_iii ~ "phase 1+2+3",
-        e71_human_pharmacology_phase_i &
-          e72_therapeutic_exploratory_phase_ii ~ "phase 1+2",
-        e72_therapeutic_exploratory_phase_ii &
-          e73_therapeutic_confirmatory_phase_iii ~ "phase 2+3",
-        e71_human_pharmacology_phase_i ~ "phase 1",
-        e72_therapeutic_exploratory_phase_ii ~ "phase 2",
-        e73_therapeutic_confirmatory_phase_iii ~ "phase 3",
-        e74_therapeutic_use_phase_iv ~ "phase 4"
+        .data$e71_human_pharmacology_phase_i &
+          .data$e72_therapeutic_exploratory_phase_ii &
+          .data$e73_therapeutic_confirmatory_phase_iii ~ "phase 1+2+3",
+        .data$e71_human_pharmacology_phase_i &
+          .data$e72_therapeutic_exploratory_phase_ii ~ "phase 1+2",
+        .data$e72_therapeutic_exploratory_phase_ii &
+          .data$e73_therapeutic_confirmatory_phase_iii ~ "phase 2+3",
+        .data$e71_human_pharmacology_phase_i ~ "phase 1",
+        .data$e72_therapeutic_exploratory_phase_ii ~ "phase 2",
+        .data$e73_therapeutic_confirmatory_phase_iii ~ "phase 3",
+        .data$e74_therapeutic_use_phase_iv ~ "phase 4"
       )
     ) %>%
-    dplyr::pull(euctrphase) -> df$euctrphase
+    dplyr::pull("euctrphase") -> df$euctrphase
 
   #### . CTIS ####
   df$authorizedPartI.trialDetails.trialInformation.trialCategory.trialPhase <-

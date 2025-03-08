@@ -84,14 +84,13 @@ f.startDate <- function(df = NULL) {
   pmaxInt <- function(...) pmax(..., na.rm = TRUE)
 
   # all registers
-  df %>%
-    dplyr::select(
-      unlist(fldsNeeded, use.names = FALSE)
-    ) %>%
-    dplyr::mutate(
-      out = do.call(pmaxInt, (.))
-    ) %>%
-    dplyr::pull(out) -> df[[".startDate"]]
+  dplyr::mutate(
+    df, out = do.call(
+      pmaxInt,
+      dplyr::select(
+        df, unlist(fldsNeeded, use.names = FALSE)
+      ))) %>%
+    dplyr::pull("out") -> df[[".startDate"]]
 
   # keep only outcome columns
   df <- df[, c("_id", ".startDate"), drop = FALSE]

@@ -22,6 +22,7 @@
 #'
 #' @importFrom dplyr mutate select coalesce `%>%`
 #' @importFrom stringi stri_split_fixed
+#' @importFrom rlang .data
 #'
 #' @examples
 #' # fields needed
@@ -112,13 +113,12 @@ f.primaryEndpointResults <- function(df = NULL) {
 
     # this is quite drastic but minimises
     # ambiguities and different spellings
-    x %>%
-      tolower(.) %>%
-      gsub("two", "2", .) %>%
-      gsub("[ ]+", "", .) %>%
-      gsub("[^a-z1-2 ]", "", .) %>%
-      gsub("hypothesis|method", "", .) %>%
-      trimws(.)
+    trimws(
+      gsub("hypothesis|method", "",
+           gsub("[^a-z1-2 ]", "",
+                gsub("[ ]+", "",
+                     gsub("two", "2",
+                          tolower(x))))))
 
   }
 
@@ -150,18 +150,18 @@ f.primaryEndpointResults <- function(df = NULL) {
     dplyr::mutate(
       #
       firstPvalueEuctr = vapply(
-        endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.value,
+        .data$endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.value,
         FUN = function(x) as.numeric(trimws(gsub("[^0-9.,]", "", stringi::stri_split_fixed(x, " / ")[[1]][1]))),
         numeric(1L), USE.NAMES = FALSE),
       #
       firstPmethodEuctr = vapply(
-        endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.method.value,
+        .data$endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.method.value,
         FUN = function(x) normalise_string(stringi::stri_split_fixed(x, " / ")[[1]][1]),
         character(1L), USE.NAMES = FALSE),
       #
       # only use information from the first primary endpoint
       isPrimEpsEuctr = sapply(
-        endPoints.endPoint.type.value,
+        .data$endPoints.endPoint.type.value,
         function(x) which(stringi::stri_split_fixed(x, " / ")[[1]] == "ENDPOINT_TYPE.primary")[1],
         USE.NAMES = FALSE),
       #
@@ -180,8 +180,8 @@ f.primaryEndpointResults <- function(df = NULL) {
             return(sum(as.numeric(x[y])))
           } else return(NA_integer_)
         },
-        x = endPoints.endPoint,
-        y = isPrimEpsEuctr,
+        x = .data$endPoints.endPoint,
+        y = .data$isPrimEpsEuctr,
         SIMPLIFY = TRUE, USE.NAMES = FALSE
       )
       #
@@ -193,18 +193,18 @@ f.primaryEndpointResults <- function(df = NULL) {
     dplyr::mutate(
       #
       firstPvalueCtgov = vapply(
-        clinical_results.outcome_list.outcome.analysis_list.analysis.p_value,
+        .data$clinical_results.outcome_list.outcome.analysis_list.analysis.p_value,
         FUN = function(x) as.numeric(trimws(gsub("[^0-9.,]", "", stringi::stri_split_fixed(x, " / ")[[1]][1]))),
         numeric(1L), USE.NAMES = FALSE),
       #
       firstPmethodCtgov = vapply(
-        clinical_results.outcome_list.outcome.analysis_list.analysis.method,
+        .data$clinical_results.outcome_list.outcome.analysis_list.analysis.method,
         FUN = function(x) normalise_string(stringi::stri_split_fixed(x, " / ")[[1]][1]),
         character(1L), USE.NAMES = FALSE),
       #
       # only use information from the first primary endpoint
       isPrimEpsCtgov = sapply(
-        clinical_results.outcome_list.outcome.type,
+        .data$clinical_results.outcome_list.outcome.type,
         function(x) which(stringi::stri_split_fixed(x, " / ")[[1]] == "Primary")[1],
         USE.NAMES = FALSE),
       #
@@ -220,8 +220,8 @@ f.primaryEndpointResults <- function(df = NULL) {
             return(sum(as.numeric(x[y])))
           } else return(NA_integer_)
         },
-        x = clinical_results.outcome_list.outcome,
-        y = isPrimEpsCtgov,
+        x = .data$clinical_results.outcome_list.outcome,
+        y = .data$isPrimEpsCtgov,
         SIMPLIFY = TRUE, USE.NAMES = FALSE
       )
       #
@@ -233,18 +233,18 @@ f.primaryEndpointResults <- function(df = NULL) {
     dplyr::mutate(
       #
       firstPvalueCtgov2 = vapply(
-        resultsSection.outcomeMeasuresModule.outcomeMeasures.analyses.pValue,
+        .data$resultsSection.outcomeMeasuresModule.outcomeMeasures.analyses.pValue,
         FUN = function(x) as.numeric(trimws(gsub("[^0-9.,]", "", stringi::stri_split_fixed(x, " / ")[[1]][1]))),
         numeric(1L), USE.NAMES = FALSE),
       #
       firstPmethodCtgov2 = vapply(
-        resultsSection.outcomeMeasuresModule.outcomeMeasures.analyses.statisticalMethod,
+        .data$resultsSection.outcomeMeasuresModule.outcomeMeasures.analyses.statisticalMethod,
         FUN = function(x) normalise_string(stringi::stri_split_fixed(x, " / ")[[1]][1]),
         character(1L), USE.NAMES = FALSE),
       #
       # only use information from the first primary endpoint
       isPrimEpsCtgov2 = sapply(
-        resultsSection.outcomeMeasuresModule.outcomeMeasures.type,
+        .data$resultsSection.outcomeMeasuresModule.outcomeMeasures.type,
         function(x) which(stringi::stri_split_fixed(x, " / ")[[1]] == "PRIMARY")[1],
         USE.NAMES = FALSE),
       #
@@ -260,8 +260,8 @@ f.primaryEndpointResults <- function(df = NULL) {
             return(sum(as.numeric(x[y])))
           } else return(NA_integer_)
         },
-        x = resultsSection.outcomeMeasuresModule.outcomeMeasures,
-        y = isPrimEpsCtgov2,
+        x = .data$resultsSection.outcomeMeasuresModule.outcomeMeasures,
+        y = .data$isPrimEpsCtgov2,
         SIMPLIFY = TRUE, USE.NAMES = FALSE
       )
       #
@@ -278,19 +278,19 @@ f.primaryEndpointResults <- function(df = NULL) {
   df %>%
     dplyr::mutate(
       .primaryEndpointFirstPvalue = dplyr::coalesce(
-        firstPvalueEuctr, firstPvalueCtgov2, firstPvalueCtgov),
+        .data$firstPvalueEuctr, .data$firstPvalueCtgov2, .data$firstPvalueCtgov),
       .primaryEndpointFirstPmethod = dplyr::coalesce(
-        firstPmethodEuctr, firstPmethodCtgov2, firstPmethodCtgov),
+        .data$firstPmethodEuctr, .data$firstPmethodCtgov2, .data$firstPmethodCtgov),
       .primaryEndpointFirstPsize = dplyr::coalesce(
-        firstPsizeEuctr, firstPsizeCtgov2, firstPsizeCtgov)
+        .data$firstPsizeEuctr, .data$firstPsizeCtgov2, .data$firstPsizeCtgov)
     ) %>%
     # keep only outcome columns
-    dplyr::select(
+    dplyr::select(c(
       "_id",
-      .primaryEndpointFirstPvalue,
-      .primaryEndpointFirstPmethod,
-      .primaryEndpointFirstPsize
-    ) -> df
+      ".primaryEndpointFirstPvalue",
+      ".primaryEndpointFirstPmethod",
+      ".primaryEndpointFirstPsize"
+    )) -> df
 
 
   #### checks ####

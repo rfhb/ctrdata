@@ -25,6 +25,7 @@
 #' @export
 #'
 #' @importFrom dplyr if_else mutate case_when rename left_join `%>%`
+#' @importFrom rlang .data
 #'
 #' @examples
 #' # fields needed
@@ -149,48 +150,54 @@ f.trialObjectives <- function(df = NULL) {
 
 
   # merge column contents
-  df %>%
-    dplyr::select(unlist(fldsHere, use.names = FALSE)) %>%
-    dplyr::mutate(txt = pasteCols(.), txt = gsub("NA.?", "", txt)) %>%
-    dplyr::pull(txt) -> df$txt
+  dplyr::mutate(
+    df,
+    txt = pasteCols(
+      dplyr::select(
+        df, unlist(fldsHere, use.names = FALSE)
+      )),
+    txt = gsub("NA.?", "", .data$txt)) %>%
+    dplyr::pull("txt") -> df$txt
+
 
   # identify symbols
   df %>%
-    dplyr::select(
-      `_id`, txt, .isMedIntervTrial) %>%
+    dplyr::select(c(
+      "_id", "txt", ".isMedIntervTrial")) %>%
     dplyr::mutate(
       addObjectives = "",
       # symbols are accumulated
-      addObjectives = paste0(addObjectives, dplyr::if_else(
-        grepl("efficac|efficien|effective|benefit|survival| cure|protection|death| OS ", txt, TRUE), "E ", "")),
-      addObjectives = paste0(addObjectives, dplyr::if_else(
-        grepl("safety|tolerabil|mtd|side effect|feasibility|AES|adverse ", txt, TRUE), "S ", "")),
-      addObjectives = paste0(addObjectives, dplyr::if_else(
+      addObjectives = paste0(.data$addObjectives, dplyr::if_else(
+        grepl("efficac|efficien|effective|benefit|survival| cure|protection|death| OS ", .data$txt, TRUE), "E ", "")),
+      addObjectives = paste0(.data$addObjectives, dplyr::if_else(
+        grepl("safety|tolerabil|mtd|side effect|feasibility|AES|adverse ", .data$txt, TRUE), "S ", "")),
+      addObjectives = paste0(.data$addObjectives, dplyr::if_else(
         grepl(paste0(
           "pharmacodynam|mtd|recommended dose|function|biomarker|improvement|",
           "expression|immunohistochemistry|IHC|reduction|level.? of"
-        ), txt, TRUE), "PD ", "")),
-      addObjectives = paste0(addObjectives, dplyr::if_else(
-        grepl("pharmacokine|pk |absor[bp]", txt, TRUE), "PK ", "")),
-      addObjectives = paste0(addObjectives, dplyr::if_else(
-        grepl("long.?term|long.?last", txt, TRUE), "LT ", "")),
-      addObjectives = paste0(addObjectives, dplyr::if_else(
-        grepl("follow.?up", txt, TRUE), "FU ", "")),
-      addObjectives = paste0(addObjectives, dplyr::if_else(
+        ), .data$txt, TRUE), "PD ", "")),
+      addObjectives = paste0(.data$addObjectives, dplyr::if_else(
+        grepl("pharmacokine|pk |absor[bp]", .data$txt, TRUE), "PK ", "")),
+      addObjectives = paste0(.data$addObjectives, dplyr::if_else(
+        grepl("long.?term|long.?last", .data$txt, TRUE), "LT ", "")),
+      addObjectives = paste0(.data$addObjectives, dplyr::if_else(
+        grepl("follow.?up", .data$txt, TRUE), "FU ", "")),
+      addObjectives = paste0(.data$addObjectives, dplyr::if_else(
         grepl(paste0(
           "response|activity|progression|immunogenic|remission|seroconversion|EFS|PFS|DFS|RFS|CR[ \\)]|",
           "time on|time to|time in|recurrence|CCR|ORR|incidence|score|respond|quality of life|PRO|",
           "disabilit|control|immunity"
-        ), txt, TRUE), "A ", "")),
-      addObjectives = paste0(addObjectives, dplyr::if_else(
-        grepl("dose.find|dose.range|rptd|determine.*dose|dose.determ|rp2d|recommended dose", txt, TRUE), "D ", "")),
+        ), .data$txt, TRUE), "A ", "")),
+      addObjectives = paste0(.data$addObjectives, dplyr::if_else(
+        grepl("dose.find|dose.range|rptd|determine.*dose|dose.determ|rp2d|recommended dose", .data$txt, TRUE), "D ", "")),
       #
-      out = dplyr::case_when(.isMedIntervTrial ~ trimws(addObjectives), .default = NA_character_)
+      out = dplyr::case_when(
+        .data$.isMedIntervTrial ~
+          trimws(.data$addObjectives), .default = NA_character_)
       #
     ) %>%
-    dplyr::rename(.trialObjectives = out) %>%
-    dplyr::select(`_id`, .trialObjectives) -> df
-  # dplyr::pull(out) -> vct
+    dplyr::rename(.trialObjectives = .data$out) %>%
+    dplyr::select(c("_id", ".trialObjectives")) -> df
 
 
   #### checks ####

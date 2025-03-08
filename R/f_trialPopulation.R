@@ -21,6 +21,7 @@
 #' @importFrom dplyr mutate select case_when if_else `%>%`
 #' @importFrom stringi stri_replace_all_regex stri_split_fixed
 #' @importFrom lubridate as.period
+#' @importFrom rlang .data
 #'
 #' @examples
 #' # fields needed
@@ -104,10 +105,9 @@ f.trialPopulation <- function(df = NULL) {
 
 
   #### . EUCTR ####
-  df %>%
-    dplyr::mutate(
-      #
-      euctrAnyPaediatric = dplyr::select(
+  dplyr::mutate(
+    df, euctrAnyPaediatric = anyCols(
+      dplyr::select(
         df, c(
           "f111_in_utero",
           "f112_preterm_newborn_infants_up_to_gestational_age__37_weeks",
@@ -116,69 +116,73 @@ f.trialPopulation <- function(df = NULL) {
           "f115_children_211years",
           "f116_adolescents_1217_years",
           "f11_trial_has_subjects_under_18"
-        )) %>% anyCols(.),
-      #
+        ))
+    )) %>%
+    dplyr::pull("euctrAnyPaediatric") -> df$euctrAnyPaediatric
+
+  #
+  df %>%
+    dplyr::mutate(
       # initialise
       .trialPopulationInclusion = NA_character_,
       .trialPopulationExclusion = NA_character_,
       .trialPopulationAgeGroup = NA_character_,
       #
       .trialPopulationAgeGroup = dplyr::case_when(
-        euctrAnyPaediatric & f12_adults_1864_years ~ "P+A",
-        f12_adults_1864_years & f13_elderly_65_years ~ "A+E",
-        euctrAnyPaediatric & f12_adults_1864_years &
-          f13_elderly_65_years ~ "P+A+E",
-        euctrAnyPaediatric ~ "P",
-        f12_adults_1864_years ~ "A",
-        f13_elderly_65_years ~ "E",
-        .default = .trialPopulationAgeGroup
+        .data$euctrAnyPaediatric & .data$f12_adults_1864_years ~ "P+A",
+        .data$f12_adults_1864_years & .data$f13_elderly_65_years ~ "A+E",
+        .data$euctrAnyPaediatric & .data$f12_adults_1864_years &
+          .data$f13_elderly_65_years ~ "P+A+E",
+        .data$euctrAnyPaediatric ~ "P",
+        .data$f12_adults_1864_years ~ "A",
+        .data$f13_elderly_65_years ~ "E",
+        .default = .data$.trialPopulationAgeGroup
       ),
       #
       .trialPopulationInclusion = dplyr::if_else(
-        !is.na(e3_principal_inclusion_criteria),
-        e3_principal_inclusion_criteria,
-        .trialPopulationInclusion
+        !is.na(.data$e3_principal_inclusion_criteria),
+        .data$e3_principal_inclusion_criteria,
+        .data$.trialPopulationInclusion
       ),
       #
       .trialPopulationExclusion = dplyr::if_else(
-        !is.na(e4_principal_exclusion_criteria),
-        e4_principal_exclusion_criteria,
-        .trialPopulationExclusion
+        !is.na(.data$e4_principal_exclusion_criteria),
+        .data$e4_principal_exclusion_criteria,
+        .data$.trialPopulationExclusion
       )
       #
     ) -> df
-
 
   #### . CTGOV ####
   df %>%
     dplyr::mutate(
       #
       .trialPopulationAgeGroup = dplyr::case_when(
-        eligibility.maximum_age >= lubridate::as.period("65 years") &
-          eligibility.minimum_age < lubridate::as.period("18 years") ~ "P+A+E",
-        eligibility.maximum_age >= lubridate::as.period("18 years") &
-          eligibility.minimum_age < lubridate::as.period("18 years") ~ "P+A",
-        eligibility.maximum_age >= lubridate::as.period("65 years") &
-          eligibility.minimum_age >= lubridate::as.period("18 years") ~ "A+E",
-        eligibility.maximum_age < lubridate::as.period("18 years") ~ "P",
-        eligibility.minimum_age >= lubridate::as.period("18 years") ~ "A",
-        .default = .trialPopulationAgeGroup
+        .data$eligibility.maximum_age >= lubridate::as.period("65 years") &
+          .data$eligibility.minimum_age < lubridate::as.period("18 years") ~ "P+A+E",
+        .data$eligibility.maximum_age >= lubridate::as.period("18 years") &
+          .data$eligibility.minimum_age < lubridate::as.period("18 years") ~ "P+A",
+        .data$eligibility.maximum_age >= lubridate::as.period("65 years") &
+          .data$eligibility.minimum_age >= lubridate::as.period("18 years") ~ "A+E",
+        .data$eligibility.maximum_age < lubridate::as.period("18 years") ~ "P",
+        .data$eligibility.minimum_age >= lubridate::as.period("18 years") ~ "A",
+        .default = .data$.trialPopulationAgeGroup
       ),
       #
       eligibility.criteria.textblock = gsub(
-        "[\n\r]+", "", eligibility.criteria.textblock),
+        "[\n\r]+", "", .data$eligibility.criteria.textblock),
       #
       .trialPopulationInclusion = dplyr::if_else(
-        is.na(eligibility.criteria.textblock), .trialPopulationInclusion,
+        is.na(.data$eligibility.criteria.textblock), .data$.trialPopulationInclusion,
         trimws(stringi::stri_replace_all_regex(
-          eligibility.criteria.textblock,
+          .data$eligibility.criteria.textblock,
           "^(|Patient )Inclusion Criteria:(.+)(|Patient )Exclusion Criteria:(.+)$", "$2"
         ))),
       #
       .trialPopulationExclusion = dplyr::if_else(
-        is.na(eligibility.criteria.textblock), .trialPopulationExclusion,
+        is.na(.data$eligibility.criteria.textblock), .data$.trialPopulationExclusion,
         trimws(stringi::stri_replace_all_regex(
-          eligibility.criteria.textblock,
+          .data$eligibility.criteria.textblock,
           "^(|Patient )Inclusion Criteria:(.+)(|Patient )Exclusion Criteria:(.+)$", "$4"
         )))
       #
@@ -190,31 +194,31 @@ f.trialPopulation <- function(df = NULL) {
     dplyr::mutate(
       #
       .trialPopulationAgeGroup = dplyr::case_when(
-        protocolSection.eligibilityModule.maximumAge >= lubridate::as.period("65 years") &
-          protocolSection.eligibilityModule.minimumAge < lubridate::as.period("18 years") ~ "P+A+E",
-        protocolSection.eligibilityModule.maximumAge >= lubridate::as.period("18 years") &
-          protocolSection.eligibilityModule.minimumAge < lubridate::as.period("18 years") ~ "P+A",
-        protocolSection.eligibilityModule.maximumAge >= lubridate::as.period("65 years") &
-          protocolSection.eligibilityModule.minimumAge >= lubridate::as.period("18 years") ~ "A+E",
-        protocolSection.eligibilityModule.maximumAge < lubridate::as.period("18 years") ~ "P",
-        protocolSection.eligibilityModule.minimumAge >= lubridate::as.period("18 years") ~ "A",
-        .default = .trialPopulationAgeGroup
+        .data$protocolSection.eligibilityModule.maximumAge >= lubridate::as.period("65 years") &
+          .data$protocolSection.eligibilityModule.minimumAge < lubridate::as.period("18 years") ~ "P+A+E",
+        .data$protocolSection.eligibilityModule.maximumAge >= lubridate::as.period("18 years") &
+          .data$protocolSection.eligibilityModule.minimumAge < lubridate::as.period("18 years") ~ "P+A",
+        .data$protocolSection.eligibilityModule.maximumAge >= lubridate::as.period("65 years") &
+          .data$protocolSection.eligibilityModule.minimumAge >= lubridate::as.period("18 years") ~ "A+E",
+        .data$protocolSection.eligibilityModule.maximumAge < lubridate::as.period("18 years") ~ "P",
+        .data$protocolSection.eligibilityModule.minimumAge >= lubridate::as.period("18 years") ~ "A",
+        .default = .data$.trialPopulationAgeGroup
       ),
       #
       protocolSection.eligibilityModule.eligibilityCriteria = gsub(
-        "[\n\r]+", "", protocolSection.eligibilityModule.eligibilityCriteria),
+        "[\n\r]+", "", .data$protocolSection.eligibilityModule.eligibilityCriteria),
       #
       .trialPopulationInclusion = dplyr::if_else(
-        is.na(protocolSection.eligibilityModule.eligibilityCriteria), .trialPopulationInclusion,
+        is.na(.data$protocolSection.eligibilityModule.eligibilityCriteria), .data$.trialPopulationInclusion,
         trimws(stringi::stri_replace_all_regex(
-          protocolSection.eligibilityModule.eligibilityCriteria,
+          .data$protocolSection.eligibilityModule.eligibilityCriteria,
           "^(|Patient )Inclusion Criteria:(.+)(|Patient )Exclusion Criteria:(.+)$", "$2"
         ))),
       #
       .trialPopulationExclusion = dplyr::if_else(
-        is.na(protocolSection.eligibilityModule.eligibilityCriteria), .trialPopulationExclusion,
+        is.na(.data$protocolSection.eligibilityModule.eligibilityCriteria), .data$.trialPopulationExclusion,
         trimws(stringi::stri_replace_all_regex(
-          protocolSection.eligibilityModule.eligibilityCriteria,
+          .data$protocolSection.eligibilityModule.eligibilityCriteria,
           "^(|Patient )Inclusion Criteria:(.+)(|Patient )Exclusion Criteria:(.+)$", "$4"
         )))
       #
@@ -226,7 +230,7 @@ f.trialPopulation <- function(df = NULL) {
     dplyr::mutate(
       #
       .trialPopulationAgeGroup = dplyr::case_match(
-        participants.ageRange,
+        .data$participants.ageRange,
         "Adult" ~ "A",
         "All" ~ "P+A+E",
         "Child" ~ "P",
@@ -235,19 +239,19 @@ f.trialPopulation <- function(df = NULL) {
         # "Mixed" ~ "P",
         # "Not Specified" ~ "P",
         # "Other" ~ "P",
-        .default = .trialPopulationAgeGroup
+        .default = .data$.trialPopulationAgeGroup
       ),
       #
       .trialPopulationInclusion = dplyr::if_else(
-        is.na(participants.inclusion),
-        .trialPopulationInclusion,
-        participants.inclusion
+        is.na(.data$participants.inclusion),
+        .data$.trialPopulationInclusion,
+        .data$participants.inclusion
       ),
       #
       .trialPopulationExclusion = dplyr::if_else(
-        is.na(participants.exclusion),
-        .trialPopulationExclusion,
-        participants.exclusion
+        is.na(.data$participants.exclusion),
+        .data$.trialPopulationExclusion,
+        .data$participants.exclusion
       )
       #
     ) -> df
@@ -258,31 +262,31 @@ f.trialPopulation <- function(df = NULL) {
     dplyr::mutate(
       #
       # ageGroups are variably concatenated, normalise
-      ageGroup = sapply(df$ageGroup, function(i)
+      ageGroup = sapply(.data$ageGroup, function(i)
         paste0(sort(stringi::stri_split_fixed(i, ", ")[[1]]), collapse = ", "),
         USE.NAMES = FALSE),
       #
       .trialPopulationAgeGroup = dplyr::case_match(
-        ageGroup,
+        .data$ageGroup,
         "0-17 years, 18-64 years, 65+ years" ~ "P+A+E",
         "0-17 years, 18-64 years" ~ "P+A",
         "18-64 years, 65+ years" ~ "A+E",
         "0-17 years" ~ "P",
         "18-64 years" ~ "A",
         "65+ years" ~ "E",
-        .default = .trialPopulationAgeGroup
+        .default = .data$.trialPopulationAgeGroup
       ),
       #
       .trialPopulationInclusion = dplyr::if_else(
-        is.na(authorizedApplication.authorizedPartI.trialDetails.trialInformation.eligibilityCriteria.principalInclusionCriteria.principalInclusionCriteria),
-        .trialPopulationInclusion,
-        authorizedApplication.authorizedPartI.trialDetails.trialInformation.eligibilityCriteria.principalInclusionCriteria.principalInclusionCriteria
+        is.na(.data$authorizedApplication.authorizedPartI.trialDetails.trialInformation.eligibilityCriteria.principalInclusionCriteria.principalInclusionCriteria),
+        .data$.trialPopulationInclusion,
+        .data$authorizedApplication.authorizedPartI.trialDetails.trialInformation.eligibilityCriteria.principalInclusionCriteria.principalInclusionCriteria
       ),
       #
       .trialPopulationExclusion = dplyr::if_else(
-        is.na(authorizedApplication.authorizedPartI.trialDetails.trialInformation.eligibilityCriteria.principalExclusionCriteria.principalExclusionCriteria),
-        .trialPopulationExclusion,
-        authorizedApplication.authorizedPartI.trialDetails.trialInformation.eligibilityCriteria.principalExclusionCriteria.principalExclusionCriteria
+        is.na(.data$authorizedApplication.authorizedPartI.trialDetails.trialInformation.eligibilityCriteria.principalExclusionCriteria.principalExclusionCriteria),
+        .data$.trialPopulationExclusion,
+        .data$authorizedApplication.authorizedPartI.trialDetails.trialInformation.eligibilityCriteria.principalExclusionCriteria.principalExclusionCriteria
       )
       #
     ) -> df
@@ -292,12 +296,12 @@ f.trialPopulation <- function(df = NULL) {
 
   # keep only outcome columns
   df %>%
-    dplyr::select(
+    dplyr::select(c(
       "_id",
-      .trialPopulationInclusion,
-      .trialPopulationExclusion,
-      .trialPopulationAgeGroup,
-    ) -> df
+      ".trialPopulationInclusion",
+      ".trialPopulationExclusion",
+      ".trialPopulationAgeGroup"
+    )) -> df
 
   # factorise
   df$.trialPopulationAgeGroup <- factor(df$.trialPopulationAgeGroup)

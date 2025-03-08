@@ -22,6 +22,7 @@
 #' @export
 #'
 #' @importFrom dplyr if_else mutate case_when `%>%`
+#' @importFrom rlang .data
 #'
 #' @examples
 #' # fields needed
@@ -97,88 +98,88 @@ f.controlType <- function(df = NULL) {
   df %>%
     dplyr::mutate(
       out = dplyr::case_when(
-        !e81_controlled ~ "none",
-        e822_placebo & e823_other ~ "placebo+active",
-        e822_placebo & grepl("dos[ea]", e8231_comparator_description, TRUE) ~ "placebo+active",
-        e822_placebo ~ "placebo",
-        e816_cross_over ~ "crossover",
-        grepl("dos[ea]", e8231_comparator_description, TRUE) ~ "active",
-        grepl("no treat", e8231_comparator_description, TRUE) ~ "no-treatment",
-        e823_other ~ "other",
-        e81_controlled ~ "other",
-        e824_number_of_treatment_arms_in_the_trial > 1L ~ "other",
+        !.data$e81_controlled ~ "none",
+        .data$e822_placebo & .data$e823_other ~ "placebo+active",
+        .data$e822_placebo & grepl("dos[ea]", .data$e8231_comparator_description, TRUE) ~ "placebo+active",
+        .data$e822_placebo ~ "placebo",
+        .data$e816_cross_over ~ "crossover",
+        grepl("dos[ea]", .data$e8231_comparator_description, TRUE) ~ "active",
+        grepl("no treat", .data$e8231_comparator_description, TRUE) ~ "no-treatment",
+        .data$e823_other ~ "other",
+        .data$e81_controlled ~ "other",
+        .data$e824_number_of_treatment_arms_in_the_trial > 1L ~ "other",
         .default = NA_character_
       )
     ) %>%
-    dplyr::pull(out) -> df$euctr
+    dplyr::pull("out") -> df$euctr
 
 
   #### . CTGOV ####
   df %>%
     dplyr::mutate(
       out = dplyr::case_when(
-        grepl("Placebo Comparator", arm_group.arm_group_type) &
-          grepl("Active Comparator", arm_group.arm_group_type) ~ "placebo+active",
-        grepl("Placebo Comparator", arm_group.arm_group_type) ~ "placebo",
-        grepl("Active Comparator", arm_group.arm_group_type) ~ "active",
-        grepl("No Intervention", arm_group.arm_group_type) ~ "no-treatment",
-        !is.na(arm_group.arm_group_type) ~ "none",
+        grepl("Placebo Comparator", .data$arm_group.arm_group_type) &
+          grepl("Active Comparator", .data$arm_group.arm_group_type) ~ "placebo+active",
+        grepl("Placebo Comparator", .data$arm_group.arm_group_type) ~ "placebo",
+        grepl("Active Comparator", .data$arm_group.arm_group_type) ~ "active",
+        grepl("No Intervention", .data$arm_group.arm_group_type) ~ "no-treatment",
+        !is.na(.data$arm_group.arm_group_type) ~ "none",
         .default = NA_character_
       )
     ) %>%
-    dplyr::pull(out) -> df$ctgov
+    dplyr::pull("out") -> df$ctgov
 
 
   #### . CTGOV2 ####
   df %>%
     dplyr::mutate(
       out = dplyr::case_when(
-        grepl("PLACEBO_COMPARATOR", protocolSection.armsInterventionsModule.armGroups.type) &
-          grepl("ACTIVE_COMPARATOR", protocolSection.armsInterventionsModule.armGroups.type) ~ "placebo+active",
-        grepl("PLACEBO_COMPARATOR", protocolSection.armsInterventionsModule.armGroups.type) ~ "placebo",
-        grepl("ACTIVE_COMPARATOR", protocolSection.armsInterventionsModule.armGroups.type) ~ "active",
-        grepl("NO_INTERVENTION", protocolSection.armsInterventionsModule.armGroups.type) ~ "no-treatment",
-        !is.na(protocolSection.armsInterventionsModule.armGroups.type) ~ "none",
+        grepl("PLACEBO_COMPARATOR", .data$protocolSection.armsInterventionsModule.armGroups.type) &
+          grepl("ACTIVE_COMPARATOR", .data$protocolSection.armsInterventionsModule.armGroups.type) ~ "placebo+active",
+        grepl("PLACEBO_COMPARATOR", .data$protocolSection.armsInterventionsModule.armGroups.type) ~ "placebo",
+        grepl("ACTIVE_COMPARATOR", .data$protocolSection.armsInterventionsModule.armGroups.type) ~ "active",
+        grepl("NO_INTERVENTION", .data$protocolSection.armsInterventionsModule.armGroups.type) ~ "no-treatment",
+        !is.na(.data$protocolSection.armsInterventionsModule.armGroups.type) ~ "none",
         .default = NA_character_
       )
     ) %>%
-    dplyr::pull(out) -> df$ctgov2
+    dplyr::pull("out") -> df$ctgov2
 
 
   #### . ISRCTN ####
   df %>%
     dplyr::mutate(
       out = dplyr::case_when(
-        grepl("placebo.?control", trialDesign.studyDesign, ignore.case = TRUE) &
-          grepl("active.?control", trialDesign.studyDesign, ignore.case = TRUE) ~ "placebo+active",
-        grepl("placebo.?control", trialDesign.studyDesign, ignore.case = TRUE) ~ "placebo",
-        grepl("active.?control", trialDesign.studyDesign, ignore.case = TRUE) ~ "active",
-        grepl("[^no].?controlled", trialDesign.studyDesign, ignore.case = TRUE)  ~ "other",
-        trialDesign.primaryStudyDesign == "Interventional" ~ "none",
+        grepl("placebo.?control", .data$trialDesign.studyDesign, ignore.case = TRUE) &
+          grepl("active.?control", .data$trialDesign.studyDesign, ignore.case = TRUE) ~ "placebo+active",
+        grepl("placebo.?control", .data$trialDesign.studyDesign, ignore.case = TRUE) ~ "placebo",
+        grepl("active.?control", .data$trialDesign.studyDesign, ignore.case = TRUE) ~ "active",
+        grepl("[^no].?controlled", .data$trialDesign.studyDesign, ignore.case = TRUE)  ~ "other",
+        .data$trialDesign.primaryStudyDesign == "Interventional" ~ "none",
         .default = NA_character_
       )
     ) %>%
-    dplyr::pull(out) -> df$isrctn
+    dplyr::pull("out") -> df$isrctn
 
 
   #### . CTIS ####
   df %>%
     dplyr::mutate(
       out = dplyr::case_when(
-        grepl("placebo", authorizedPartI.productRoleGroupInfos.productRoleName, ignore.case = TRUE) &
-          grepl("comparator", authorizedPartI.productRoleGroupInfos.productRoleName, ignore.case = TRUE) ~ "placebo+active",
-        grepl("placebo", authorizedApplication.authorizedPartI.productRoleGroupInfos.productRoleName, ignore.case = TRUE) &
-          grepl("comparator", authorizedApplication.authorizedPartI.productRoleGroupInfos.productRoleName, ignore.case = TRUE) ~ "placebo+active",
-        grepl("placebo", authorizedPartI.productRoleGroupInfos.productRoleName, ignore.case = TRUE) ~ "placebo",
-        grepl("placebo", authorizedApplication.authorizedPartI.productRoleGroupInfos.productRoleName, ignore.case = TRUE) ~ "placebo",
-        grepl("comparator", authorizedPartI.productRoleGroupInfos.productRoleName, ignore.case = TRUE) ~ "active",
-        grepl("comparator", authorizedApplication.authorizedPartI.productRoleGroupInfos.productRoleName, ignore.case = TRUE) ~ "active",
-        !is.na(authorizedPartI.productRoleGroupInfos.productRoleName) ~ "none",
-        !is.na(authorizedApplication.authorizedPartI.productRoleGroupInfos.productRoleName) ~ "none",
+        grepl("placebo", .data$authorizedPartI.productRoleGroupInfos.productRoleName, ignore.case = TRUE) &
+          grepl("comparator", .data$authorizedPartI.productRoleGroupInfos.productRoleName, ignore.case = TRUE) ~ "placebo+active",
+        grepl("placebo", .data$authorizedApplication.authorizedPartI.productRoleGroupInfos.productRoleName, ignore.case = TRUE) &
+          grepl("comparator", .data$authorizedApplication.authorizedPartI.productRoleGroupInfos.productRoleName, ignore.case = TRUE) ~ "placebo+active",
+        grepl("placebo", .data$authorizedPartI.productRoleGroupInfos.productRoleName, ignore.case = TRUE) ~ "placebo",
+        grepl("placebo", .data$authorizedApplication.authorizedPartI.productRoleGroupInfos.productRoleName, ignore.case = TRUE) ~ "placebo",
+        grepl("comparator", .data$authorizedPartI.productRoleGroupInfos.productRoleName, ignore.case = TRUE) ~ "active",
+        grepl("comparator", .data$authorizedApplication.authorizedPartI.productRoleGroupInfos.productRoleName, ignore.case = TRUE) ~ "active",
+        !is.na(.data$authorizedPartI.productRoleGroupInfos.productRoleName) ~ "none",
+        !is.na(.data$authorizedApplication.authorizedPartI.productRoleGroupInfos.productRoleName) ~ "none",
         .default = NA_character_
       )
     ) %>%
-    dplyr::pull(out) -> df$ctis
+    dplyr::pull("out") -> df$ctis
 
 
   # merge into vector (ordered factor)

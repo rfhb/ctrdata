@@ -1263,7 +1263,7 @@ a MongoDB server, which are fast and do not consume R resources.</p>
 <div id="aggregation" class="section level3">
 <h3>Aggregation</h3>
 <p>The following example uses the aggregation pipeline in MongoDB. See
-here for details on mongo’s aggregation pipleline: <a href="https://docs.mongodb.org/manual/core/aggregation-pipeline/" class="uri">https://docs.mongodb.org/manual/core/aggregation-pipeline/</a></p>
+here for details on mongo’s aggregation pipleline: <a href="https://www.mongodb.com/docs/manual/core/aggregation-pipeline/" class="uri">https://www.mongodb.com/docs/manual/core/aggregation-pipeline/</a></p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="co">#</span></span>
 <span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a><span class="co"># Total count of PFS, EFS, RFS or DFS</span></span>
 <span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a>out <span class="ot">&lt;-</span> m<span class="sc">$</span><span class="fu">aggregate</span>(</span>
@@ -1299,8 +1299,8 @@ here for details on mongo’s aggregation pipleline: <a href="https://docs.mongo
 </div>
 <div id="mapreduce" class="section level3">
 <h3>Mapreduce</h3>
-<p>Since Mapreduce is deprecated starting in MongoDB 5 (<a href="https://docs.mongodb.com/manual/core/map-reduce/" class="uri">https://docs.mongodb.com/manual/core/map-reduce/</a>), use
-an aggregation pipeline:</p>
+<p>Since Mapreduce is deprecated starting in MongoDB 5 (<a href="https://www.mongodb.com/docs/manual/core/map-reduce/" class="uri">https://www.mongodb.com/docs/manual/core/map-reduce/</a>),
+use an aggregation pipeline:</p>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="co"># Count number of trials by number of study</span></span>
 <span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a><span class="co"># participants in bins of hundreds of participants:</span></span>
 <span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a>m<span class="sc">$</span><span class="fu">aggregate</span>(<span class="at">pipeline =</span> <span class="st">&#39;</span></span>

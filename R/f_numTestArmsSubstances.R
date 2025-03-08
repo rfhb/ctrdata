@@ -26,6 +26,7 @@
 #' @importFrom dplyr mutate case_when if_else pull `%>%`
 #' @importFrom stringdist stringsimmatrix
 #' @importFrom stringi stri_count_fixed stri_split_fixed
+#' @importFrom rlang .data
 #'
 #' @examples
 #' # fields needed
@@ -136,90 +137,90 @@ f.numTestArmsSubstances <- function(df = NULL) {
     #
     # protocol data
     helper_protocol = dplyr::if_else(
-      e81_controlled,
-      e824_number_of_treatment_arms_in_the_trial - 1,
-      e824_number_of_treatment_arms_in_the_trial,
+      .data$e81_controlled,
+      .data$e824_number_of_treatment_arms_in_the_trial - 1,
+      .data$e824_number_of_treatment_arms_in_the_trial,
     ),
     # results data
     helper_asNamesPerTestGroup = lapply(
-      subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm,
+      .data$subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm,
       function(i) {if (any(names(i) == "title"))
         as.list(i)[["title"]][
           as.list(i)[["type"]][["value"]] == "ARM_TYPE.experimental"] else NA}),
     #
     helper_simTestGroupsInTrial = lapply(
-      helper_asNamesPerTestGroup, function(i) asTestSimilarityTrial(i)),
+      .data$helper_asNamesPerTestGroup, function(i) asTestSimilarityTrial(i)),
     #
     helper_numTestGroupsInTrial = sapply(
-      helper_simTestGroupsInTrial, length, USE.NAMES = FALSE, simplify = TRUE),
+      .data$helper_simTestGroupsInTrial, length, USE.NAMES = FALSE, simplify = TRUE),
     #
     analysis_numDifferentTestGroupsInTrial = dplyr::case_when(
-      is.na(helper_asNamesPerTestGroup) ~ NA_integer_,
-      helper_numTestGroupsInTrial == 1L ~ 1L,
-      .default = sapply(helper_simTestGroupsInTrial, function(i)
+      is.na(.data$helper_asNamesPerTestGroup) ~ NA_integer_,
+      .data$helper_numTestGroupsInTrial == 1L ~ 1L,
+      .default = sapply(.data$helper_simTestGroupsInTrial, function(i)
         max(sum(i < thresholdSimilar), 1L, na.rm = TRUE), simplify = TRUE)
     ),
     out = if_else(
-      !is.na(analysis_numDifferentTestGroupsInTrial),
-      analysis_numDifferentTestGroupsInTrial,
-      helper_protocol
+      !is.na(.data$analysis_numDifferentTestGroupsInTrial),
+      .data$analysis_numDifferentTestGroupsInTrial,
+      .data$helper_protocol
     )
   ) %>%
-    dplyr::pull(out) -> df$euctr
+    dplyr::pull("out") -> df$euctr
 
 
   #### . CTGOV ####
   df %>% dplyr::mutate(
     #
     helper_asNamesPerExpArm = lapply(
-      arm_group,
+      .data$arm_group,
       function(i) as.list(i)[["arm_group_label"]][
         as.list(i)[["arm_group_type"]] == "Experimental"]),
     #
     helper_simExpArmsInTrial = lapply(
-      helper_asNamesPerExpArm, function(i) asTestSimilarityTrial(i)),
+      .data$helper_asNamesPerExpArm, function(i) asTestSimilarityTrial(i)),
     #
     helper_numExpArmsInTrial = sapply(
-      helper_simExpArmsInTrial, length, USE.NAMES = FALSE, simplify = TRUE),
+      .data$helper_simExpArmsInTrial, length, USE.NAMES = FALSE, simplify = TRUE),
     #
     analysis_numDifferentExpArmsInTrial = dplyr::case_when(
-      is.na(helper_asNamesPerExpArm) ~ NA_integer_,
-      helper_numExpArmsInTrial == 1L ~ 1L,
-      helper_numExpArmsInTrial > 1L ~
-        sapply(helper_simExpArmsInTrial, function(i)
+      is.na(.data$helper_asNamesPerExpArm) ~ NA_integer_,
+      .data$helper_numExpArmsInTrial == 1L ~ 1L,
+      .data$helper_numExpArmsInTrial > 1L ~
+        sapply(.data$helper_simExpArmsInTrial, function(i)
           max(sum(i < thresholdSimilar), 1L, na.rm = TRUE), simplify = TRUE
         )
     ),
     # if at least one test arm im trial
-    out = analysis_numDifferentExpArmsInTrial
+    out = .data$analysis_numDifferentExpArmsInTrial
   ) %>%
-    dplyr::pull(out) -> df$ctgov
+    dplyr::pull("out") -> df$ctgov
 
 
   #### . CTGOV2 ####
   df %>% dplyr::mutate(
     #
     helper_asNamesPerExpArm = lapply(
-      protocolSection.armsInterventionsModule.armGroups,
+      .data$protocolSection.armsInterventionsModule.armGroups,
       function(i) i["label"][i["type"] == "EXPERIMENTAL"]),
     #
     helper_simExpArmsInTrial = lapply(
-      helper_asNamesPerExpArm, function(i) asTestSimilarityTrial(i)),
+      .data$helper_asNamesPerExpArm, function(i) asTestSimilarityTrial(i)),
     #
     helper_numExpArmsInTrial = sapply(
-      helper_simExpArmsInTrial, length, USE.NAMES = FALSE, simplify = TRUE),
+      .data$helper_simExpArmsInTrial, length, USE.NAMES = FALSE, simplify = TRUE),
     #
     analysis_numDifferentExpArmsInTrial = dplyr::case_when(
-      is.na(helper_asNamesPerExpArm) ~ NA_integer_,
-      helper_numExpArmsInTrial == 1L ~ 1L,
-      helper_numExpArmsInTrial > 1L ~ sapply(
-        helper_simExpArmsInTrial, function(i)
+      is.na(.data$helper_asNamesPerExpArm) ~ NA_integer_,
+      .data$helper_numExpArmsInTrial == 1L ~ 1L,
+      .data$helper_numExpArmsInTrial > 1L ~ sapply(
+        .data$helper_simExpArmsInTrial, function(i)
           max(sum(i < thresholdSimilar), 1L, na.rm = TRUE), simplify = TRUE)
     ),
     #
-    out = analysis_numDifferentExpArmsInTrial
+    out = .data$analysis_numDifferentExpArmsInTrial
   ) %>%
-    dplyr::pull(out) -> df$ctgov2
+    dplyr::pull("out") -> df$ctgov2
 
 
   #### . ISRCTN ####
@@ -227,88 +228,88 @@ f.numTestArmsSubstances <- function(df = NULL) {
     dplyr::mutate(
       #
       helper_drugNames = stringi::stri_split_fixed(
-        interventions.intervention.drugNames, ", "),
+        .data$interventions.intervention.drugNames, ", "),
       #
-      helper_numberDrugs = sapply(helper_drugNames, function(i)
+      helper_numberDrugs = sapply(.data$helper_drugNames, function(i)
         length(i), USE.NAMES = FALSE, simplify = TRUE),
       #
       helper_simDrugNames = lapply(
-        helper_drugNames, function(i) asTestSimilarityTrial(i)),
+        .data$helper_drugNames, function(i) asTestSimilarityTrial(i)),
       #
       analysis_numDifferentExpArmsInTrial = dplyr::case_when(
-        is.na(helper_numberDrugs) ~ NA_integer_,
-        helper_numberDrugs == 1L ~ 1L,
-        helper_numberDrugs > 1L ~ sapply(
-          helper_simDrugNames, function(i)
+        is.na(.data$helper_numberDrugs) ~ NA_integer_,
+        .data$helper_numberDrugs == 1L ~ 1L,
+        .data$helper_numberDrugs > 1L ~ sapply(
+          .data$helper_simDrugNames, function(i)
             sum(i < thresholdSimilar),
           simplify = TRUE
         )
       ),
       #
       helper_numberarms = if_else(
-        grepl("controlled|parallel.?group", trialDesign.secondaryStudyDesign, ignore.case = TRUE),
-        analysis_numDifferentExpArmsInTrial, 1L),
+        grepl("controlled|parallel.?group", .data$trialDesign.secondaryStudyDesign, ignore.case = TRUE),
+        .data$analysis_numDifferentExpArmsInTrial, 1L),
       #
       out = if_else(
-        grepl("drug|biological|vaccine", interventions.intervention.interventionType, ignore.case = TRUE),
-        helper_numberarms, NA_integer_
+        grepl("drug|biological|vaccine", .data$interventions.intervention.interventionType, ignore.case = TRUE),
+        .data$helper_numberarms, NA_integer_
       )
     ) %>%
-    dplyr::pull(out)-> df$isrctn
+    dplyr::pull("out")-> df$isrctn
 
 
   #### . CTIS ####
   df %>% dplyr::mutate(
     #
     helper_asNamesPerTestGroupCtis1 = lapply(
-      authorizedPartI.productRoleGroupInfos,
+      .data$authorizedPartI.productRoleGroupInfos,
       function(i) {if (any(names(i) == "products"))
         lapply(i[["products"]], "[[", "productName")[
           i[["productRoleName"]] == "Test"] else NA}),
     #
     helper_simTestGroupsInTrialCtis1 = lapply(
-      helper_asNamesPerTestGroupCtis1, function(i) asTestSimilarityTrial(i)),
+      .data$helper_asNamesPerTestGroupCtis1, function(i) asTestSimilarityTrial(i)),
     #
     helper_numTestGroupsInTrialCtis1 = sapply(
-      helper_simTestGroupsInTrialCtis1, length, USE.NAMES = FALSE, simplify = TRUE),
+      .data$helper_simTestGroupsInTrialCtis1, length, USE.NAMES = FALSE, simplify = TRUE),
     #
     analysis_numDifferentTestGroupsInTrialCtis1 = dplyr::case_when(
-      is.na(helper_asNamesPerTestGroupCtis1) ~ NA_integer_,
-      helper_numTestGroupsInTrialCtis1 == 1L ~ 1L,
-      .default = sapply(helper_simTestGroupsInTrialCtis1, function(i)
+      is.na(.data$helper_asNamesPerTestGroupCtis1) ~ NA_integer_,
+      .data$helper_numTestGroupsInTrialCtis1 == 1L ~ 1L,
+      .default = sapply(.data$helper_simTestGroupsInTrialCtis1, function(i)
         max(sum(i < thresholdSimilar), 1L, na.rm = TRUE), simplify = TRUE)
     ),
     #
     #
     helper_asNamesPerTestGroupCtis2 = lapply(
-      authorizedApplication.authorizedPartI.productRoleGroupInfos,
+      .data$authorizedApplication.authorizedPartI.productRoleGroupInfos,
       function(i) {if (any(names(i) == "products"))
         lapply(i[["products"]], "[[", "productName")[
           i[["productRoleName"]] == "Test"] else NA_integer_}),
     #
     helper_simTestGroupsInTrialCtis2 = lapply(
-      helper_asNamesPerTestGroupCtis2, function(i) asTestSimilarityTrial(i)),
+      .data$helper_asNamesPerTestGroupCtis2, function(i) asTestSimilarityTrial(i)),
     #
     helper_numTestGroupsInTrialCtis2 = sapply(
-      helper_simTestGroupsInTrialCtis2, length, USE.NAMES = FALSE, simplify = TRUE),
+      .data$helper_simTestGroupsInTrialCtis2, length, USE.NAMES = FALSE, simplify = TRUE),
     #
     analysis_numDifferentTestGroupsInTrialCtis2 = dplyr::case_when(
-      is.na(helper_asNamesPerTestGroupCtis2) ~ NA_integer_,
-      helper_numTestGroupsInTrialCtis2 == 1L ~ 1L,
-      .default = sapply(helper_simTestGroupsInTrialCtis2, function(i)
+      is.na(.data$helper_asNamesPerTestGroupCtis2) ~ NA_integer_,
+      .data$helper_numTestGroupsInTrialCtis2 == 1L ~ 1L,
+      .default = sapply(.data$helper_simTestGroupsInTrialCtis2, function(i)
         max(sum(i < thresholdSimilar), 1L, na.rm = TRUE), simplify = TRUE)
     ),
     #
     #
     out = dplyr::case_when(
-      !is.na(analysis_numDifferentTestGroupsInTrialCtis1) ~
-        analysis_numDifferentTestGroupsInTrialCtis1,
-      !is.na(analysis_numDifferentTestGroupsInTrialCtis2) ~
-        analysis_numDifferentTestGroupsInTrialCtis2,
+      !is.na(.data$analysis_numDifferentTestGroupsInTrialCtis1) ~
+        .data$analysis_numDifferentTestGroupsInTrialCtis1,
+      !is.na(.data$analysis_numDifferentTestGroupsInTrialCtis2) ~
+        .data$analysis_numDifferentTestGroupsInTrialCtis2,
       .default = NA_integer_
     )
   ) %>%
-  dplyr::pull(out) -> df$ctis
+    dplyr::pull("out") -> df$ctis
 
 
   # merge into vector (ordered factor)

@@ -20,8 +20,8 @@
 #'
 #' @export
 #'
-#' @importFrom dplyr if_else mutate case_when `%>%`
-#' @importFrom stringi stri_split_fixed
+#' @importFrom dplyr mutate select
+#' @importFrom stringi stri_split_regex
 #'
 #' @examples
 #' # fields needed
@@ -152,9 +152,6 @@ f.primaryEndpointDescription <- function(df = NULL) {
   # check generic, do not edit
   fctChkFlds(names(df), fldsNeeded)
 
-  # helper function
-  `%>%` <- dplyr::`%>%`
-
   # helper function similar to unite and also splitting
   # by contained primary endpoints and unite corresponding
   # parts of endpoints from across columns
@@ -174,9 +171,11 @@ f.primaryEndpointDescription <- function(df = NULL) {
 
   #### . all ####
   dplyr::mutate(
-    df, .primaryEndpointDescription = dplyr::select(
+    df,
+    .primaryEndpointDescription = pasteCols(dplyr::select(
       df, unlist(fldsNeeded, use.names = FALSE)
-    ) %>% pasteCols(.)
+    )
+    )
   ) -> df
 
 
