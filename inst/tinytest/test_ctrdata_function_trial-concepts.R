@@ -8,15 +8,10 @@ source("setup_ctrdata.R")
 tf <- function() {
 
   # get all functions
-  fcts <- capture.output(utils::ls.str(
+  fcts <- as.character(utils::ls.str(
     getNamespace("ctrdata"),
     all.names = TRUE,
-    pattern = "^f[.][a-z]")
-  )
-  fcts <- sub(
-    "^(.+?) :.+", "\\1",
-    fcts[grepl("function \\(df = NULL\\)|functionWithTrace", fcts)]
-  )
+    pattern = "^f[.][a-z]"))
 
   # get all unique fields needed for fcts
   fctFields <- sapply(
@@ -55,7 +50,7 @@ tf <- function() {
   # factors
   expect_length(table(dF$.controlType, exclude = NULL), 6L)
   expect_length(table(dF$.isMedIntervTrial, exclude = NULL), 2L)
-  expect_length(table(dF$.isPlatformTrial, exclude = NULL), 1L)
+  expect_length(table(dF$.likelyPlatformTrial, exclude = NULL), 1L)
   expect_length(table(dF$.isUniqueTrial, exclude = NULL), 2L)
   expect_length(table(dF$.statusRecruitment, exclude = NULL), 3L)
   expect_length(table(dF$.trialPopulationAgeGroup, exclude = NULL), 4L)

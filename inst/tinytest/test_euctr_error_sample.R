@@ -11,7 +11,7 @@ tf <- function() {
 
   fileFrom <- dir(
     # path = "./inst/tinytest",
-    pattern = "sample_error_trials_euctr.txt",
+    pattern = "test_error_trials_euctr.txt",
     full.names = TRUE)
 
   fileTo <- tempfile(
