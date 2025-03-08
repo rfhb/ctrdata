@@ -36,10 +36,10 @@ used in the trial? ("none", "no-treatment", "placebo", "active",
 it have one or more medicines (drugs or biological) as investigational
 (experimental) intervention? (irrespective of status of authorisation and
 of study design)
-\item \link{f.isPlatformTrial} (logical) is the trial possibly a (research) platform
-trial? (based on title, f.numTestArmsSubstances, number of periods)
 \item \link{f.isUniqueTrial} (logical) is the trial record unique in the data frame
 of trial, based on the default parameters of \link{dbFindIdsUniqueTrials}?
+\item \link{f.likelyPlatformTrial} (logical) is the trial possibly a (research) platform
+trial? (based on title, f.numTestArmsSubstances, number of periods)
 \item \link{f.numSites} (integer) how many sites does the trial have?
 \item \link{f.numTestArmsSubstances} (integer) how many arms or groups have
 medicines that are investigational? (cannot be calculated for ISRCTN or

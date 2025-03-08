@@ -32,11 +32,11 @@
 #' (experimental) intervention? (irrespective of status of authorisation and
 #' of study design)
 #'
-#' - \link{f.isPlatformTrial} (logical) is the trial possibly a (research) platform
-#' trial? (based on title, f.numTestArmsSubstances, number of periods)
-#'
 #' - \link{f.isUniqueTrial} (logical) is the trial record unique in the data frame
 #' of trial, based on the default parameters of \link{dbFindIdsUniqueTrials}?
+#'
+#' - \link{f.likelyPlatformTrial} (logical) is the trial possibly a (research) platform
+#' trial? (based on title, f.numTestArmsSubstances, number of periods)
 #'
 #' - \link{f.numSites} (integer) how many sites does the trial have?
 #'

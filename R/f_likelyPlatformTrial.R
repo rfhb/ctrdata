@@ -12,7 +12,7 @@
 #' trials in EUCTR lack data in English),
 #' b. trial has more than 2 active arms with different investigational medicines,
 #' after excluding comparator, auxiliary and placebo medicines (calculated with
-#' function .numTestArmsSubstances(), not used for ISRCTN because it cannot be
+#' \link{f.numTestArmsSubstances}; not used for ISRCTN because it cannot be
 #' calculated precisely),
 #' c. trial more than 2 periods, after excluding safety run-in, screening,
 #' enrolling, extension and follow-up periods (for CTGOV and CTGOV2, this
@@ -33,11 +33,10 @@
 #' prints fields needed in `df` for calculating this trial concept, which can
 #' be used with \link{dbGetFieldsIntoDf}.
 #'
-#' @return data frame with columns `_id` and `.isPlatformTrial`, a logical,
-#' `.numTestArmsSubstances`, an integer, and `.idsRelatedTrials`, a list of
-#' identifiers of trials calculated to be related (e.g., based on CTIS'
-#' `associatedClinicalTrials` and otherwise on additional identifiers in the
-#' record).
+#' @return data frame with columns `_id` and `.likelyPlatformTrial`, a logical,
+#' and `.idsRelatedTrials`, a list of identifiers of trials calculated to be
+#' related (e.g., based on CTIS' `associatedClinicalTrials` and otherwise on
+#' additional identifiers in the record).
 #'
 #' @export
 #'
@@ -48,7 +47,7 @@
 #'
 #' @examples
 #' # fields needed
-#' f.isPlatformTrial()
+#' f.likelyPlatformTrial()
 #'
 #' \dontrun{
 #'
@@ -57,12 +56,12 @@
 #'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
 #'   collection = "my_trials", flags = RSQLite::SQLITE_RO)
 #' trialsDf <- dbGetFieldsIntoDf(
-#'   calculate = "f.isPlatformTrial",
+#'   calculate = "f.likelyPlatformTrial",
 #'   con = dbc)
 #' }
 #'
 #'
-f.isPlatformTrial <- function(df = NULL) {
+f.likelyPlatformTrial <- function(df = NULL) {
 
   # check generic, do not edit
   stopifnot(is.data.frame(df) || is.null(df))
@@ -375,7 +374,7 @@ f.isPlatformTrial <- function(df = NULL) {
   fldsNeeded <- intersect(fldsNeeded, names(df))
 
   # merge into vector (ordered factor)
-  df[[".isPlatformTrial"]] <- dfMergeVariablesRelevel(
+  df[[".likelyPlatformTrial"]] <- dfMergeVariablesRelevel(
     df = df,
     colnames = fldsNeeded
   )
@@ -383,17 +382,17 @@ f.isPlatformTrial <- function(df = NULL) {
   # keep only outcome columns
   df <- df[, c(
     "_id",
-    ".isPlatformTrial",
+    ".likelyPlatformTrial",
     ".idsRelatedTrials"
   ), drop = FALSE]
 
 
   #### checks ####
-  stopifnot(inherits(df[[".isPlatformTrial"]], "logical"))
+  stopifnot(inherits(df[[".likelyPlatformTrial"]], "logical"))
   stopifnot(inherits(df[[".idsRelatedTrials"]], "list"))
   stopifnot(ncol(df) == 3L)
 
   # return
   return(df)
 
-} # end f.isPlatformTrial
+} # end f.likelyPlatformTrial
