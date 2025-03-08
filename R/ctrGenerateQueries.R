@@ -7,8 +7,12 @@
 #' for each registers with which ctrdata works, see \link{ctrdata-registers}.
 #' Search terms that are expanded to concepts such as from MeSH and MedDRA
 #' by the search implementations in registers include the
-#' intervention and condition, see \link{ctrdata-registers}.
+#' 'intervention' and 'condition', see \link{ctrdata-registers}.
+#' Logical operators only work with 'searchPhrase'.
 #'
+#' @param searchPhrase String with optional logical operators ("AND", "OR")
+#' that will be searched in selected fields of registers that can handle logical
+#' operators (general or title fields), should not include quotation marks
 #' @param condition String with condition / disease
 #' @param intervention String with intervention
 #' @param phase String, e.g. "phase 2" (note that "phase 2+3" is a specific
@@ -35,17 +39,32 @@
 #'
 #' urls <- ctrGenerateQueries(
 #'   intervention = "antibody",
-#'   recruitment = "ongoing",
 #'   phase = "phase 3",
 #'   startAfter = "2000-01-01")
 #'
 #' # open queries in register web interface
 #' sapply(urls, ctrOpenSearchPagesInBrowser)
 #'
+#' urls <- ctrGenerateQueries(
+#'   searchPhrase = "antibody AND covid",
+#'   recruitment = "completed")
+#'
 #' # load queries into database collection
 #' # sapply(urls, ctrLoadQueryIntoDb, con = dbc)
 #'
+#' # find research platform and platform trials
+#' urls <- ctrGenerateQueries(
+#'   searchPhrase = paste0(
+#'  "basket OR platform OR umbrella OR master protocol OR ",
+#'  "multiarm OR multistage OR subprotocol OR substudy OR ",
+#'  "multi-arm OR multi-stage OR sub-protocol OR sub-study"
+#' ))
+#'
+#' # open queries in register web interface
+#' sapply(urls, ctrOpenSearchPagesInBrowser)
+#'
 ctrGenerateQueries <- function(
+    searchPhrase = NULL,
     condition = NULL,
     intervention = NULL,
     phase = NULL,
@@ -59,12 +78,11 @@ ctrGenerateQueries <- function(
     registers = c("EUCTR", "ISRCTN", "CTIS", "CTGOV2")
 ) {
 
-  # register ordered
-
   # check
   stopifnot(all(registers %in% registerList[registerList != "CTGOV"]))
 
-  # starting point
+
+  #### start ####
   urls <- c(
     "CTGOV2" = "https://clinicaltrials.gov/search?",
     "EUCTR" = "https://www.clinicaltrialsregister.eu/ctr-search/search?query=",
@@ -72,7 +90,76 @@ ctrGenerateQueries <- function(
     "CTIS" = "https://euclinicaltrials.eu/ctis-public/search#searchCriteria={"
   )
 
-  # parameter: condition
+
+  #### searchPhrase ####
+  if (!is.null(searchPhrase)) {
+
+    # mangle searchPhrase
+
+    searchPhraseA <- strsplit(searchPhrase, "( OR | AND )")[[1]]
+
+    searchPhraseB <- stringi::stri_replace_all_regex(
+      searchPhrase,
+      paste0("(", searchPhraseA, ")"),
+      '"$1"',
+      vectorize_all = FALSE
+    )
+
+    searchPhraseC <- gsub("( OR | AND )", ", ", searchPhrase)
+
+    if (grepl(" AND ", searchPhrase) && grepl(" OR ", searchPhrase)) {
+      warning(
+        'Cannot use both "AND" and "OR" with CTIS. ',
+        'Using "OR" to obtain largest set, can be ',
+        "refined after ctrLoadQueryIntoDb(). ",
+        call. = FALSE
+      )
+    }
+
+    # ctgov2
+    urls["CTGOV2"] <- paste0(
+      urls["CTGOV2"], "titles=", searchPhraseB)
+    # "basket" OR "platform" OR "umbrella" OR "master protocol" OR "multiarm" OR "multistage" OR "subprotocol" OR "substudy" OR "multi-arm" OR "multi-stage" OR "sub-protocol" OR "sub-study"
+    # title search 2372
+    # https://clinicaltrials.gov/search?titles=%22basket%22%20OR%20%22platform%22%20OR%20%22umbrella%22%20OR%20%22master%20protocol%22%20OR%20%22multiarm%22%20OR%20%22multistage%22%20OR%20%22subprotocol%22%20OR%20%22substudy%22%20OR%20%22multi-arm%22%20OR%20%22multi-stage%22%20OR%20%22sub-protocol%22%20OR%20%22sub-study%22
+
+    # ctis
+    urls["CTIS"] <- paste0(
+      urls["CTIS"], ifelse(
+        grepl(" AND ", searchPhrase),
+        '"containAll":"',
+        '"containAny":"'
+      ), searchPhraseC, '",')
+    # "Contain any of these terms:" 289
+    # https://euclinicaltrials.eu/ctis-public/search#searchCriteria={%22containAny%22:%22basket,%20platform,%20umbrella,%20multiarm,%20multistage,%20master%20protocol,%20subprotocol,%20substudy,%20multi-arm,%20multi-stage,%20sub-protocol,%20sub-study%22}
+    # basket, platform, umbrella, master protocol, multiarm, multistage, subprotocol, substudy, multi-arm, multi-stage, sub-protocol, sub-study
+
+    # euctr
+    urls["EUCTR"] <- paste0(
+      urls["EUCTR"], searchPhraseB)
+    # "basket" OR "platform" OR "umbrella" OR "master protocol" OR "multiarm" OR "multistage" OR "subprotocol" OR "substudy" OR "multi-arm" OR "multi-stage" OR "sub-protocol" OR "sub-study"
+    # general text search 2808
+    # https://www.clinicaltrialsregister.eu/ctr-search/search?query=%22basket%22+OR+%22platform%22+OR+%22umbrella%22+OR+%22master+protocol%22+OR+%22multiarm%22+OR+%22multistage%22+OR+%22subprotocol%22+OR+%22substudy%22+OR+%22multi-arm%22+OR+%22multi-stage%22+OR+%22sub-protocol%22+OR+%22sub-study%22
+
+    #
+    urls["ISRCTN"] <- paste0(
+      urls["ISRCTN"], "q=", searchPhraseB)
+    # "basket" OR "platform" OR "umbrella" OR "master protocol" OR "multiarm" OR "multistage" OR "subprotocol" OR "substudy" OR "multi-arm" OR "multi-stage" OR "sub-protocol" OR "sub-study"
+    # text search 1426
+    # https://www.isrctn.com/search?q=%22basket%22+OR+%22platform%22+OR+%22umbrella%22+OR+%22master+protocol%22+OR+%22multiarm%22+OR+%22multistage%22+OR+%22subprotocol%22+OR+%22substudy%22+OR+%22multi-arm%22+OR+%22multi-stage%22+OR+%22sub-protocol%22+OR+%22sub-study%22&searchType=advanced
+
+  }
+
+
+  #### clinical trial / interventional ####
+
+  # ISRCTN not possible
+  # EUCTR by definition
+  # CTIS by definition
+  # CTGOV interventional possible, but not limited to medicines
+
+
+  #### condition ####
   if (!is.null(condition)) {
 
     urls["CTGOV2"] <- paste0(
@@ -89,7 +176,8 @@ ctrGenerateQueries <- function(
 
   }
 
-  # parameter: intervention
+
+  #### intervention ####
   if (!is.null(intervention)) {
 
     urls["CTGOV2"] <- paste0(
@@ -106,7 +194,8 @@ ctrGenerateQueries <- function(
 
   }
 
-  # parameter: phase
+
+  #### phase ####
   if (!is.null(phase)) {
 
     stopifnot(is.atomic(phase) && length(phase) == 1L)
@@ -170,7 +259,8 @@ ctrGenerateQueries <- function(
 
   }
 
-  # parameter: population
+
+  #### population ####
   if (!is.null(population)) {
 
     stopifnot(is.atomic(population) && length(population) == 1L)
@@ -223,7 +313,7 @@ ctrGenerateQueries <- function(
 
   }
 
-  # parameter: recruitment
+  #### recruitment ####
   if (!is.null(recruitment)) {
 
     stopifnot(is.atomic(recruitment) && length(recruitment) == 1L)
@@ -262,7 +352,8 @@ ctrGenerateQueries <- function(
       )[recruitment])
   }
 
-  # parameter: startAfter
+
+  #### startAfter ####
   if (!is.null(startAfter)) {
 
     startAfter <- strftime(startAfter, format = "%Y-%m-%d")
@@ -281,7 +372,8 @@ ctrGenerateQueries <- function(
 
   }
 
-  # parameter: startBefore
+
+  #### startBefore ####
   if (!is.null(startBefore)) {
 
     startBefore <- strftime(startBefore, format = "%Y-%m-%d")
@@ -302,7 +394,8 @@ ctrGenerateQueries <- function(
 
   }
 
-  # parameter: completedAfter
+
+  #### completedAfter ####
   if (!is.null(completedAfter)) {
 
     completedAfter <- strftime(completedAfter, format = "%Y-%m-%d")
@@ -318,7 +411,8 @@ ctrGenerateQueries <- function(
 
   }
 
-  # parameter: completedBefore
+
+  #### completedBefore ####
   if (!is.null(completedBefore)) {
 
     completedBefore <- strftime(completedBefore, format = "%Y-%m-%d")
@@ -336,7 +430,8 @@ ctrGenerateQueries <- function(
 
   }
 
-  # parameter: onlyWithResults
+
+  #### onlyWithResults ####
   if (onlyWithResults) {
 
     urls["CTGOV2"] <- paste0(
