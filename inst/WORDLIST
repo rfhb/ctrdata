@@ -143,7 +143,6 @@ linux
 logrank
 lubridate
 macos
-mapreduce
 mcnemar
 md
 medRxiv
@@ -178,7 +177,6 @@ queryterm
 querytorerun
 querytoupdate
 rd
-recuitment
 regex
 regexp
 registers’

@@ -79,6 +79,9 @@ urls <- ctrGenerateQueries(
   searchPhrase = "antibody AND covid",
   recruitment = "completed")
 
+# count trials found
+sapply(urls, ctrLoadQueryIntoDb, only.count = TRUE)
+
 # load queries into database collection
 # sapply(urls, ctrLoadQueryIntoDb, con = dbc)
 

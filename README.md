@@ -1,5 +1,6 @@
 
 <!-- README.md is generated from README.Rmd -->
+
 <!-- badges: start -->
 
 [![CRAN
@@ -63,7 +64,7 @@ package. This README was reviewed on 2025-03-09 for version 1.21.0.
 
 - For analyses, convenience functions in `ctrdata` implement canonical
   [trial
-  lconcepts](https://rfhb.github.io/ctrdata/reference/ctrdata-trial-concepts.html)
+  concepts](https://rfhb.github.io/ctrdata/reference/ctrdata-trial-concepts.html)
   to simplify analyses across registers 🔔, allow find synonyms of an
   active substance, identify unique (de-duplicated) trial records across
   all registers, to merge and recode fields as well as to easily access
