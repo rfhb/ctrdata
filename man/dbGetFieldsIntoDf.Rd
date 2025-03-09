@@ -78,6 +78,8 @@ df <- dbGetFieldsIntoDf(
   calculate = c("f.statusRecruitment", "f.isUniqueTrial", "f.startDate"),
   con = dbc)
 
+table(df$.statusRecruitment, exclude = NULL)
+
 \dontrun{
 library(dplyr)
 library(ggplot2)

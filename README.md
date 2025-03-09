@@ -459,9 +459,10 @@ with(
 )
 #                   a7_trial_is_part_of_a_paediatric_investigation_plan
 # .statusRecruitment FALSE TRUE
-#          ongoing       0    0
-#          completed    12    6
-#          other         2    2
+#        ongoing         3    2
+#        completed      13    5
+#        ended early     5    4
+#        other           9    4
 ```
 
 <div id="workflow-ctgov-example">
@@ -557,7 +558,7 @@ ctrLoadQueryIntoDb(
   only.count = TRUE
 )
 # $n
-# [1] 8754
+# [1] 8783
 ```
 
 <div id="workflow-data-model">

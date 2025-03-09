@@ -14,8 +14,9 @@
 #' @return data frame with columns `_id` and `.statusRecruitment`, which is
 #' a factor with levels `ongoing` (includes active, not yet recruiting;
 #' temporarily halted; suspended; authorised, not started and similar),
-#' `completed` (includes ended; ongoing, recuitment mended) and
-#' `other` (includes terminated; revoked).
+#' `completed` (includes ended; ongoing, recruitment ended),
+#' `ended early` (includes prematurely ended, terminated early) and
+#' `other` (includes revoked, withdrawn, planned, stopped).
 #'
 #' @export
 #'
@@ -68,6 +69,10 @@ f.statusRecruitment <- function(df = NULL) {
       "participants.recruitmentStatusOverride"
     ),
     "ctis" = c(
+      # "decisionDate",
+      "authorizedApplication.memberStatesConcerned.mscName", # for counting notifications
+      "mscTrialNotificationsInfoList.mscNotificationsListInfo.notificationType", # CTIS1 e.g. early termination
+      "events.trialEvents.events.notificationType", # CTIS2, e.g. early termination
       "ctPublicStatusCode", # ctPublicStatusCode is in CTIS1 and CTIS2
       "ctStatus" # text in CTIS1 but in CTIS2, same as ctPublicStatusCode
     ))
@@ -96,7 +101,7 @@ f.statusRecruitment <- function(df = NULL) {
     helper = dplyr::case_when(
       .data$trialInformation.globalEndOfTrialPremature ~ "Prematurely Ended",
       .data$trialInformation.isGlobalEndOfTrialReached ~ "Completed",
-      .default = .data$p_end_of_trial_status
+      .default = as.character(.data$p_end_of_trial_status)
     ),
     out = tolower(.data$helper)
   ) %>%
@@ -120,6 +125,7 @@ f.statusRecruitment <- function(df = NULL) {
   #### . CTGOV2 ####
   df$ctgov2 <- tolower(as.character(
     # type is logical if all NA
+    # "trial is terminated (that is, stopped prematurely)"
     df$protocolSection.statusModule.overallStatus))
 
 
@@ -148,16 +154,31 @@ f.statusRecruitment <- function(df = NULL) {
       5 ~ "Ongoing, recruitment ended",
       6 ~ "Temporarily halted",
       7 ~ "Suspended",
-      8 ~ "Ended",
+      8 ~ "Ended", # includes early termination
       9 ~ "Expired",
       10 ~ "Revoked",
       11 ~ "Not authorised",
       12 ~ "Cancelled"
     ),
+    helper_event1 = sapply(
+      .data$mscTrialNotificationsInfoList.mscNotificationsListInfo.notificationType,
+      function(i) grepl("^(|Global end of trial / )Early Termination", i, ignore.case = TRUE)
+    ),
+    helper_event2 = stringi::stri_count_fixed(
+      .data$events.trialEvents.events.notificationType,
+      "EARLY_TERMINATION"
+    ),
+    helper_event3 = sapply(
+      stringi::stri_split_fixed(
+      .data$authorizedApplication.memberStatesConcerned.mscName,
+      " / "), function(i) if (all(is.na(i))) NA else length(i)
+    ),
     helper = dplyr::case_when(
+      .data$helper_event1 ~ "terminated early",
+      .data$helper_event2 == .data$helper_event3 ~ "terminated early",
       is.na(.data$helper_ctPublicStatusCode) &
         !is.na(.data$ctStatus) ~ as.character(.data$ctStatus),
-      .default = .data$helper_ctPublicStatusCode
+      .default = as.character(.data$helper_ctPublicStatusCode)
     ),
     out = tolower(.data$helper)
   ) %>%
@@ -179,12 +200,16 @@ f.statusRecruitment <- function(df = NULL) {
       "completed", "ended", "ongoing, recruitment ended"
     ),
     #
+    "ended early" = c(
+      "prematurely ended", "terminated early", "terminated"
+    ),
+    #
     "other" = c(
       "cancelled", "expired", "gb - no longer in eu/eea", "no longer available",
-      "no_longer_available", "not authorised", "prematurely ended", "revoked",
-      "stopped", "terminated", "trial now transitioned", "under evaluation",
+      "no_longer_available", "not authorised", "revoked",
+      "stopped", "trial now transitioned", "under evaluation",
       "unknown", "withdrawn", "withheld"
-      )
+    )
   )
 
   # check for unmapped values

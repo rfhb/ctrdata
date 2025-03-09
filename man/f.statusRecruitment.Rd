@@ -15,8 +15,9 @@ be used with \link{dbGetFieldsIntoDf}.}
 data frame with columns `_id` and `.statusRecruitment`, which is
 a factor with levels `ongoing` (includes active, not yet recruiting;
 temporarily halted; suspended; authorised, not started and similar),
-`completed` (includes ended; ongoing, recuitment mended) and
-`other` (includes terminated; revoked).
+`completed` (includes ended; ongoing, recruitment ended),
+`ended early` (includes prematurely ended, terminated early) and
+`other` (includes revoked, withdrawn, planned, stopped).
 }
 \description{
 Trial concept calculated: status of recruitment at the time of loading

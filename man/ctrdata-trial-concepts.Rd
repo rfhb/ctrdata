@@ -59,8 +59,9 @@ participants recruited
 \item \link{f.sponsorType} (factor) a type or class of main or lead sponsor that is
 simplified to "not for profit", "for profit" or "other"
 \item \link{f.statusRecruitment} (factor) a status that is simplified to
-ongoing (includes temporarily halted), completed and other (includes
-planned, stopped, terminated)
+"ongoing" (includes temporarily halted), "completed", "ended early" (includes
+terminated or ended prematurely) and "other" (includes planned, stopped,
+withdrawn)
 \item \link{f.trialObjectives} (string) identifies with letters those objectives
 that could be identified by text fragments, e.g. "E S PD D", with "E"
 (efficacy), "S" (safety), "D" (dose-finding)

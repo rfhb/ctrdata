@@ -19,7 +19,9 @@
 #' category, not the union set of "phase 2" and "phase 3")
 #' @param population String, e.g. "P" (paediatric), "A" (adult), "P+A"
 #' (adult and paediatric), "E" (elderly), "P+A+E" participants can be recruited
-#' @param recruitment String, one of "ongoing", "completed", "other"
+#' @param recruitment String, one of "ongoing", "completed", "other" (
+#' which includes "ended early" but this cannot be searched; use trial concept
+#' \link{f.statusRecruitment} to identify this status)
 #' @param startBefore String that can be interpreted as date, see example
 #' @param startAfter String that can be interpreted as date
 #' @param completedBefore String that can be interpreted as date (does not work
@@ -200,7 +202,7 @@ ctrGenerateQueries <- function(
 
     stopifnot(is.atomic(phase) && length(phase) == 1L)
 
-    # see also .statusRecruitment
+    # see also f.trialPhase
 
     urls["CTGOV2"] <- paste0(
       urls["CTGOV2"], "&aggFilters=phase:", c(
@@ -318,7 +320,7 @@ ctrGenerateQueries <- function(
 
     stopifnot(is.atomic(recruitment) && length(recruitment) == 1L)
 
-    # see also .statusRecruitment
+    # see also f.statusRecruitment
 
     urls["CTGOV2"] <- paste0(
       urls["CTGOV2"], "&aggFilters=status:", c(

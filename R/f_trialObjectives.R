@@ -192,8 +192,8 @@ f.trialObjectives <- function(df = NULL) {
         grepl("dose.find|dose.range|rptd|determine.*dose|dose.determ|rp2d|recommended dose", .data$txt, TRUE), "D ", "")),
       #
       out = dplyr::case_when(
-        .data$.isMedIntervTrial ~
-          trimws(.data$addObjectives), .default = NA_character_)
+        .data$.isMedIntervTrial ~ trimws(.data$addObjectives),
+        .default = NA_character_)
       #
     ) %>%
     dplyr::rename(.trialObjectives = .data$out) %>%

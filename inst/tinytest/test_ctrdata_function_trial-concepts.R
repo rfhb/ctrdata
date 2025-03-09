@@ -52,7 +52,7 @@ tf <- function() {
   expect_length(table(dF$.isMedIntervTrial, exclude = NULL), 2L)
   expect_length(table(dF$.likelyPlatformTrial, exclude = NULL), 1L)
   expect_length(table(dF$.isUniqueTrial, exclude = NULL), 2L)
-  expect_length(table(dF$.statusRecruitment, exclude = NULL), 3L)
+  expect_length(table(dF$.statusRecruitment, exclude = NULL), 4L)
   expect_length(table(dF$.trialPopulationAgeGroup, exclude = NULL), 4L)
   expect_length(table(dF$.sponsorType, exclude = NULL), 3L)
   expect_length(table(dF$.trialPhase, exclude = NULL), 10L)

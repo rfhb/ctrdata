@@ -34,7 +34,9 @@ category, not the union set of "phase 2" and "phase 3")}
 \item{population}{String, e.g. "P" (paediatric), "A" (adult), "P+A"
 (adult and paediatric), "E" (elderly), "P+A+E" participants can be recruited}
 
-\item{recruitment}{String, one of "ongoing", "completed", "other"}
+\item{recruitment}{String, one of "ongoing", "completed", "other" (
+which includes "ended early" but this cannot be searched; use trial concept
+\link{f.statusRecruitment} to identify this status)}
 
 \item{startBefore}{String that can be interpreted as date, see example}
 
