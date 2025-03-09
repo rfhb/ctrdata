@@ -7,14 +7,14 @@
 \description{
 Registers of the four clinical trial registers from which package
 \link{ctrdata} can retrieve, aggregate and analyse protocol- and
-result-related information as well as documents, last updated 2025-03-02.
+result-related information as well as documents, last updated 2025-03-09.
 }
 \section{1 - Overview}{
 
 \itemize{
 \item \strong{EUCTR}: The EU Clinical Trials Register holds more than 44,300 clinical
 trials (at least one investigational medicinal product, IMP; in the European
-Union and beyond), including about 25,000 trials with results, which continue
+Union and beyond), including almost 25,000 trials with results, which continue
 to be added (can be loaded by \code{ctrdata}).
 \item \strong{CTIS}: The EU Clinical Trials Information System, launched in 2023,
 holds more than 8,700 publicly accessible clinical trials, including
@@ -23,11 +23,11 @@ around 100 with results or a report (only as PDF files).
 thus \code{ctrdata} cannot load any CTIS results.
 (To automatically get CTIS search query URLs, see
 \ifelse{latex}{\out{\href{https://rfhb.github.io/ctrdata/\#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}})
-\item \strong{CTGOV2}: ClinicalTrials.gov holds more than 528,000 interventional and
-observational studies, including around 70,000 studies with results
-(can be loaded by \code{ctrdata}).
+\item \strong{CTGOV2}: ClinicalTrials.gov holds more than 529,000 interventional and
+observational studies, including almost 66,000 interventional studies with
+results (can be loaded by \code{ctrdata}).
 \item \strong{ISRCTN}: The ISRCTN Registry holds more than 26,000 interventional and
-observational health studies, including more than 14,000 studies with
+observational health studies, including almost 14,200 studies with
 results (only as references).
 \emph{No results in a structured electronic format are foreseeably available},
 thus \code{ctrdata} cannot load any ISRCTN results.

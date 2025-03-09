@@ -32,14 +32,15 @@
 #' # apply trial concept when creating data frame
 #' dbc <- nodbi::src_sqlite(
 #'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
-#'   collection = "my_trials", flags = RSQLite::SQLITE_RO)
+#'   collection = "my_trials", flags = RSQLite::SQLITE_RO
+#' )
 #' trialsDf <- dbGetFieldsIntoDf(
 #'   calculate = "f.primaryEndpointDescription",
-#'   con = dbc)
+#'   con = dbc
+#' )
 #' }
 #'
 f.primaryEndpointDescription <- function(df = NULL) {
-
   # check generic, do not edit
   stopifnot(is.data.frame(df) || is.null(df))
 
@@ -68,7 +69,7 @@ f.primaryEndpointDescription <- function(df = NULL) {
       #
       # V, S
       # protocol-related information
-      "e51_primary_end_points",        # V, often V + S
+      "e51_primary_end_points", # V, often V + S
       "e511_timepoints_of_evaluation_of_this_end_point" # part of S
       #
       # results-related information
@@ -88,8 +89,7 @@ f.primaryEndpointDescription <- function(df = NULL) {
       # Analysis of Change from Baseline after two years of treatment / Alzheimer&apos;s
       # Disease Co-operative Study — Activities of Daily Living (Mild Cognitive Impairment Version)
       # (ADCS-MCI-ADL) Mixed Model Repeated Measures (MMRM) Analysis of Change from Baseline at Visit 16 (Week 104) ..."
-
-      # not useful:
+      #
       # "baselineCharacteristics.baselineReportingGroups.baselineReportingGroup.description", # only groups
       # "endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.analysisSpecification.value" # ANALYSIS_SPEC.preSpecified
       # "endPoints.endPoint.type.value", # ENDPOINT_TYPE.primary
@@ -122,28 +122,27 @@ f.primaryEndpointDescription <- function(df = NULL) {
       # "trialDescription.studyHypothesis"
     ),
     "ctis" = c(
-
+      #
       # S, V
       "authorizedApplication.authorizedPartI.trialDetails.trialInformation.endPoint.primaryEndPoints.endPoint", # V, S " / "
-      # "authorizedApplication.authorizedPartI.trialDetails.trialInformation.endPoint.primaryEndPoints.isPrimary"# ,
+      # "authorizedApplication.authorizedPartI.trialDetails.trialInformation.endPoint.primaryEndPoints.isPrimary"
       #
-      "authorizedPartI.trialDetails.trialInformation.endPoint.primaryEndPoints.endPoint"#, # V, S " / "
+      "authorizedPartI.trialDetails.trialInformation.endPoint.primaryEndPoints.endPoint" # V, S " / "
       # "authorizedPartI.trialDetails.trialInformation.endPoint.primaryEndPoints.isPrimary"
       #
       # P
       # "authorizedPartI.trialDetails.trialInformation.eligibilityCriteria.principalInclusionCriteria.principalInclusionCriteria"
-
+      #
       # I
-
-    ))
+      #
+    )
+  )
 
 
   #### describe ####
   if (is.null(df)) {
-
     # generic, do not edit
     return(fldsNeeded)
-
   } # end describe
 
 
@@ -155,18 +154,23 @@ f.primaryEndpointDescription <- function(df = NULL) {
   # helper function similar to unite and also splitting
   # by contained primary endpoints and unite corresponding
   # parts of endpoints from across columns
-  pasteCols <- function(...) apply(..., 1, function(i) {
-    # using a positive lookahead, which is a non-consuming pattern
-    # that only checks for an uppercase letter to the right of the
-    # separator without adding it to the match, preserving it in the output
-    s <- stringi::stri_split_regex(na.omit(i), " / (?=[0-9A-Z])")
-    # in different number of splits per column, append NA
-    # to splits of less than max length, to fill data frame
-    l <- sapply(s, length)
-    if (length(unique(l)) != 1L) s <- lapply(
-      s, function(i) c(i, NA[seq_len(max(l) - length(i))]))
-    unlist(apply(data.frame(s), 1, paste, collapse = " == "))
-  })
+  pasteCols <- function(...) {
+    apply(..., 1, function(i) {
+      # using a positive lookahead, which is a non-consuming pattern
+      # that only checks for an uppercase letter to the right of the
+      # separator without adding it to the match, preserving it in the output
+      s <- stringi::stri_split_regex(na.omit(i), " / (?=[0-9A-Z])")
+      # in different number of splits per column, append NA
+      # to splits of less than max length, to fill data frame
+      l <- sapply(s, length)
+      if (length(unique(l)) != 1L) {
+        s <- lapply(
+          s, function(i) c(i, NA[seq_len(max(l) - length(i))])
+        )
+      }
+      unlist(apply(data.frame(s), 1, paste, collapse = " == "))
+    })
+  }
 
 
   #### . all ####
@@ -174,8 +178,7 @@ f.primaryEndpointDescription <- function(df = NULL) {
     df,
     .primaryEndpointDescription = pasteCols(dplyr::select(
       df, unlist(fldsNeeded, use.names = FALSE)
-    )
-    )
+    ))
   ) -> df
 
 
@@ -188,5 +191,4 @@ f.primaryEndpointDescription <- function(df = NULL) {
 
   # return
   return(df)
-
 } # end .primaryEndpointDescription

@@ -19,7 +19,7 @@ knitr::opts_chunk$set(eval = FALSE)
 
 ## Install package `ctrdata` on an R system
 
-The R Project website ([https://www.r-project.org/](https://www.r-project.org/)) provides installers for the R system. It can be used with software products and graphical user interfaces such as [R Studio](https://posit.co/products/open-source/rstudio/), or from [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=REditorSupport.r). 
+The R Project website ([https://www.r-project.org/](https://www.r-project.org/)) provides installers for the R system. It can be used with software products and graphical user interfaces such as [R Studio](https://posit.co/products/open-source/rstudio/), or from [Visual Studio Code](https://github.com/REditorSupport/vscode-R). 
 
 General information on the `ctrdata` package is available here: [https://rfhb.github.io/ctrdata/](https://rfhb.github.io/ctrdata/).
 

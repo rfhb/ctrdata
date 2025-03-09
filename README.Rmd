@@ -46,7 +46,7 @@ The package `ctrdata` provides functions for retrieving (downloading), aggregati
 - ClinicalTrials.gov ("CTGOV2", see [example](#workflow-ctgov-example))
 - ISRCTN Registry (https://www.isrctn.com/) 
 
-The motivation is to investigate the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can use the databases created with this package. This README was reviewed on 2025-03-04 for version 1.20.0.9900.
+The motivation is to investigate the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can use the databases created with this package. This README was reviewed on 2025-03-09 for version 1.20.0.9990.
 
 ## Main features
 
@@ -185,12 +185,12 @@ library(ctrdata)
 help("ctrdata")
 ```
 
-* Information on trial registers and how they can be used with `ctrdata` (last updated 2025-02-01):
+* Information on trial registers and how they can be used with `ctrdata` (last updated 2025-03-09):
 ```{r help_registers}
 help("ctrdata-registers")
 ```
 
-* Trial concepts across registers provided by `ctrdata` (new 2025-02-01 `r emoji::emoji("bell")`):
+* Trial concepts across registers provided by `ctrdata` (new 2025-03-09 `r emoji::emoji("bell")`):
 ```{r help_trial_concepts}
 help("ctrdata-trial-concepts")
 ```

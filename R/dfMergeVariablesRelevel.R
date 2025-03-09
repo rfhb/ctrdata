@@ -87,7 +87,6 @@ dfMergeVariablesRelevel <- function(
   merge2Cols <- function(x, y) {
     mapply(function(x, y) {
       x <- x[x != ""]; y <- y[y != ""]
-      # x <- na.omit(x); y <- na.omit(y)
       if (!length(x) && !length(y)) return(NA)
       if (length(x) && !is.na(x) && length(y) && !is.na(y)) {
         if (!get("warned", envir = env)) {message(

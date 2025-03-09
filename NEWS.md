@@ -1,4 +1,4 @@
-# ctrdata 1.20.0.9900
+# ctrdata 1.20.0.9990
 
 ## Improvements
 - New feature: built-in functions that implement and calculate common trial concepts across different registers, see `help("ctrdata-trial-concepts")` which should largely avoid that users have to code themselves and repeatedly common trial concepts, such as recruitment start date, trial investigating a medicine as intervention, trial being a platform trial etc. 

@@ -149,8 +149,6 @@ f.likelyPlatformTrial <- function(df = NULL) {
   `%>%` <- dplyr::`%>%`
 
   # helper function to handle
-  # NA | FALSE -> NA
-  # NA %orRmNa% FALSE -> FALSE
   `%orRmNa%` <- function (i1, i2) {
     mapply(
       function(e1, e2) {
@@ -179,23 +177,6 @@ f.likelyPlatformTrial <- function(df = NULL) {
   }
 
   # get mapping table
-  # df <- dplyr::left_join(
-  #   df,
-  #   .dbMapIdsTrials(con = parent.frame()$con) %>%
-  #     dplyr::mutate(
-  #       sponsorIds = stringi::stri_split_fixed(
-  #         .data$SPONSOR, " / ")) %>%
-  #     dplyr::mutate(EUCTR = dplyr::if_else(
-  #       !is.na(.data$EUCTR), .data$`_id`, .data$EUCTR)) %>%
-  #     dplyr::select(!c("_id", "ctrname", "SPONSOR")) %>%
-  #     dplyr::mutate(.idsRelatedTrials = rowColsList(.data)) %>%
-  #     dplyr::select(!"sponsorIds") %>%
-  #     tidyr::pivot_longer(cols = !".idsRelatedTrials") %>%
-  #     dplyr::select(!"name") %>%
-  #     dplyr::rename("_id" = .data$value) %>%
-  #     unique(),
-  #   by = "_id"
-  # )
   df2 <- .dbMapIdsTrials(con = parent.frame()$con)
   #
   dplyr::mutate(

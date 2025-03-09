@@ -21,7 +21,7 @@
 #' The following trial concepts can be used by referencing their name when
 #' calling \link{dbGetFieldsIntoDf} (parameter `calculate`).
 #' Concepts will continue to be refined and added;
-#' last updated 2025-03-05.
+#' last updated 2025-03-09.
 #'
 #' - \link{f.controlType} (factor) which type of internal or concurrent control is
 #' used in the trial? ("none", "no-treatment", "placebo", "active",
@@ -35,8 +35,9 @@
 #' - \link{f.isUniqueTrial} (logical) is the trial record unique in the data frame
 #' of trial, based on the default parameters of \link{dbFindIdsUniqueTrials}?
 #'
-#' - \link{f.likelyPlatformTrial} (logical) is the trial possibly a (research) platform
-#' trial? (based on title, f.numTestArmsSubstances, number of periods)
+#' - \link{f.likelyPlatformTrial} (logical) is the trial possibly a (research)
+#' platform trial, and what are related trials? (based on trial title,
+#' f.numTestArmsSubstances, number of periods)
 #'
 #' - \link{f.numSites} (integer) how many sites does the trial have?
 #'
@@ -61,7 +62,7 @@
 #' participants recruited
 #'
 #' - \link{f.sponsorType} (factor) a type or class of main or lead sponsor that is
-#' simplified to not for profit, for profit or other
+#' simplified to "not for profit", "for profit" or "other"
 #'
 #' - \link{f.statusRecruitment} (factor) a status that is simplified to
 #' ongoing (includes temporarily halted), completed and other (includes

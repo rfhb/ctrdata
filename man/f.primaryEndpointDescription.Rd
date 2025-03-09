@@ -33,10 +33,12 @@ f.primaryEndpointDescription()
 # apply trial concept when creating data frame
 dbc <- nodbi::src_sqlite(
   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
-  collection = "my_trials", flags = RSQLite::SQLITE_RO)
+  collection = "my_trials", flags = RSQLite::SQLITE_RO
+)
 trialsDf <- dbGetFieldsIntoDf(
   calculate = "f.primaryEndpointDescription",
-  con = dbc)
+  con = dbc
+)
 }
 
 }
