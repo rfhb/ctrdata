@@ -118,6 +118,23 @@ tf <- function() {
   ), urls)
 
 
+  # generate 7
+  urls <- ctrGenerateQueries(
+    searchPhrase = "antibody AND covid",
+    recruitment = "completed")
+
+  # test
+  expect_length(urls, 4)
+
+  # test
+  expect_equivalent(c(
+    "https://www.clinicaltrialsregister.eu/ctr-search/search?query=\"antibody\" AND \"covid\"&status=completed",
+    "https://clinicaltrials.gov/search?titles=\"antibody\" AND \"covid\"&aggFilters=status:com",
+    "https://www.isrctn.com/search?q=\"antibody\" AND \"covid\"&filters=trialStatus:completed",
+    "https://euclinicaltrials.eu/ctis-public/search#searchCriteria={\"containAll\":\"antibody, covid\",\"status\":[5,8]}"
+  ), urls)
+
+
   # sapply(urls, ctrOpenSearchPagesInBrowser)
 
   # end tests

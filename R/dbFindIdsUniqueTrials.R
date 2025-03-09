@@ -36,6 +36,7 @@
 #' find corresponding trial records
 #'
 #' @importFrom nodbi docdb_query
+#' @importFrom stats setNames
 #'
 #' @inheritParams ctrDb
 #'
@@ -58,7 +59,7 @@
 #' # using defaults of dbFindIdsUniqueTrials()
 #' df <- dbGetFieldsIntoDf(
 #'   fields = "keyword",
-#'   calculate = ".isUniqueTrial",
+#'   calculate = "f.isUniqueTrial",
 #'   con = dbc)
 #'
 #' # using base R
@@ -92,6 +93,82 @@ dbFindIdsUniqueTrials <- function(
   # objective: create a vector of database record identifiers (_id)
   # that represent unique records of clinical trials, based on user's
   # preferences for selecting the preferred from any multiple records
+
+  # create mapping table
+  listofIds <- .dbMapIdsTrials(
+    preferregister = preferregister,
+    con = con,
+    verbose = verbose)
+
+  # keep attributes when selecting
+  attribsids <- attributes(listofIds)
+  listofIds <- listofIds[, c("_id", "EUCTR", "ctrname")]
+  names(listofIds)[2] <- "a2_eudract_number"
+
+  # find unique, preferred country version of euctr
+  listofIds <- dfFindUniqueEuctrRecord(
+    df = listofIds,
+    prefermemberstate = prefermemberstate,
+    include3rdcountrytrials = include3rdcountrytrials
+  )
+
+  # prepare output
+  listofIds <- setNames(
+    object = listofIds[["_id"]],
+    nm = listofIds[["ctrname"]]
+  )
+  listofIds <- sort(listofIds)
+
+  # count
+  countIds <- table(names(listofIds))
+
+  # sort by user's input
+  countIds <- countIds[preferregister]
+  countIds[is.na(countIds)] <- 0L
+  countIds <- setNames(countIds, preferregister)
+
+  # append attributes
+  attributes(listofIds) <- c(
+    attributes(listofIds),
+    attribsids[startsWith(names(attribsids), "ctrdata-")]
+  )
+
+  # avoid returning list() if none found
+  if (length(listofIds) == 0L) listofIds <- character()
+
+  # inform user
+  message(
+    "- Keeping ", paste0(countIds, collapse = " / "), " records",
+    " from ", paste0(names(countIds), collapse = " / ")
+  )
+
+  # inform user
+  message(
+    "= Returning keys (_id) of ", length(listofIds),
+    " records in collection \"", con$collection, "\""
+  )
+
+  # return
+  return(listofIds)
+}
+
+
+
+#' create table with mapping of _id to all other ids
+#'
+#' @return vector
+#'
+#' @inheritParams dbFindIdsUniqueTrials
+#'
+#' @importFrom stats na.omit
+#'
+#' @keywords internal
+#' @noRd
+#'
+.dbMapIdsTrials <- function(
+    preferregister = c("CTGOV2", "EUCTR", "CTGOV", "ISRCTN", "CTIS"),
+    con,
+    verbose = FALSE) {
 
   ## check database connection
   if (is.null(con$ctrDb)) con <- ctrDb(con = con)
@@ -154,7 +231,7 @@ dbFindIdsUniqueTrials <- function(
     # get identifiers
     listofIds <- try(
       suppressMessages(suppressWarnings(
-        dbGetFieldsIntoDf(
+        .dbGetFieldsIntoDf(
           fields = fields,
           con = con,
           verbose = FALSE
@@ -184,49 +261,6 @@ dbFindIdsUniqueTrials <- function(
 
   # inform user
   message("\b\b\b, ", nrow(listofIds), " found in collection")
-
-  # call and return
-  listofIds <- .dbFindIdsUniqueTrials(
-    preferregister = preferregister,
-    prefermemberstate = prefermemberstate,
-    include3rdcountrytrials = include3rdcountrytrials,
-    listofIds = listofIds,
-    verbose = verbose)
-
-  # inform user
-  message(
-    "= Returning keys (_id) of ", length(listofIds),
-    " records in collection \"", con$collection, "\""
-  )
-
-  # return
-  return(listofIds)
-}
-
-
-#' .dbFindIdsUniqueTrials
-#'
-#' internal workhorse
-#'
-#' @return vector
-#'
-#' @inheritParams dbFindIdsUniqueTrials
-#'
-#' @importFrom stats setNames
-#' @importFrom stats na.omit
-#'
-#' @keywords internal
-#' @noRd
-#'
-.dbFindIdsUniqueTrials <- function(
-    preferregister = c("CTGOV2", "EUCTR", "CTGOV", "ISRCTN", "CTIS"),
-    prefermemberstate = "BE",
-    include3rdcountrytrials = TRUE,
-    listofIds = listofIds,
-    verbose = FALSE) {
-
-  # copy attributes
-  attribsids <- attributes(listofIds)
 
   # target fields for adding cols for mangling below
   fields <- c(
@@ -427,60 +461,20 @@ dbFindIdsUniqueTrials <- function(
     }
 
     # add to output set
-    outSet <- rbind(outSet, tmp,
-                    make.row.names = FALSE,
-                    stringsAsFactors = FALSE
+    outSet <- rbind(
+      outSet, tmp,
+      make.row.names = FALSE,
+      stringsAsFactors = FALSE
     )
   }
-  rm(tmp)
 
-  # keep necessary columns
-  listofIds <- outSet[, c("_id", "EUCTR", "ctrname")]
-  names(listofIds)[2] <- "a2_eudract_number"
-  rm(outSet)
-
-  # find unique, preferred country version of euctr
-  listofIds <- dfFindUniqueEuctrRecord(
-    df = listofIds,
-    prefermemberstate = prefermemberstate,
-    include3rdcountrytrials = include3rdcountrytrials
-  )
-
-  # prepare output
-  listofIds <- setNames(
-    object = listofIds[["_id"]],
-    nm = listofIds[["ctrname"]]
-  )
-
-  listofIds <- sort(listofIds)
-
-  # count
-  countIds <- table(names(listofIds))
-
-  # sort by user's input
-  countIds <- countIds[preferregister]
-  countIds[is.na(countIds)] <- 0L
-  countIds <- setNames(countIds, preferregister)
-
-  # append attributes
-  attributes(listofIds) <- c(
-    attributes(listofIds),
-    attribsids[startsWith(names(attribsids), "ctrdata-")]
-  )
-
-  # avoid returning list() if none found
-  if (length(listofIds) == 0L) listofIds <- character()
-
-  # inform user
-  message(
-    "- Keeping ", paste0(countIds, collapse = " / "), " records",
-    " from ", paste0(names(countIds), collapse = " / ")
-  )
+  # add meta data
+  outSet <- addMetaData(outSet, con = con)
 
   # return
-  return(listofIds)
+  return(outSet)
+
 }
-# end .dbFindIdsUniqueTrials
 
 
 

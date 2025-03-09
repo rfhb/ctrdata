@@ -30,8 +30,6 @@
 #' @param calculate Vector of one or more strings, which are names of functions
 #' to calculate certain trial concepts from fields in the collection across
 #' different registers.
-#' See function \link{dfCalculateConcept} for how to find names of functions
-#' that are available in `ctrdata` so far.
 #'
 #' @inheritParams ctrDb
 #'
@@ -73,8 +71,10 @@
 #' # calculate new field(s) from data across trials
 #' df <- dbGetFieldsIntoDf(
 #'   fields = "keyword",
-#'   calculate = c(".statusRecruitment", ".isUniqueTrial", ".startDate"),
+#'   calculate = c("f.statusRecruitment", "f.isUniqueTrial", "f.startDate"),
 #'   con = dbc)
+#'
+#' table(df$.statusRecruitment, exclude = NULL)
 #'
 #' \dontrun{
 #' library(dplyr)
@@ -139,8 +139,6 @@ dbGetFieldsIntoDf <- function(
     stop("'fields' and 'calculate' are empty; ",
          "please provide a vector of strings in one or both arguments. ",
          "Function dbFindFields() helps to find fields in the collection. ",
-         "Function dfCalculateConcept() helps to find functions to calculate ",
-         "from fields in the collection. ",
          call. = FALSE)
   }
 
@@ -159,10 +157,18 @@ dbGetFieldsIntoDf <- function(
   fields <- fields[fields != ""]
   calculate <- calculate[calculate != ""]
 
+  # get all functions
+  fcts <- as.character(utils::ls.str(
+    getNamespace("ctrdata"),
+    all.names = TRUE,
+    pattern = "^f[.][a-z]"))
+
+  # check if function exists
+  stopifnot(!length(calculate) || all(calculate %in% fcts))
+
   # get all unique fields needed for fcts
   fctFields <- sapply(
-    calculate, function(i)
-      suppressMessages(dfCalculateConcept(name = i)),
+    calculate, function(i) do.call(i, list()),
     simplify = FALSE)
 
   # merge fields with fields needed for fcts
@@ -207,7 +213,7 @@ dbGetFieldsIntoDf <- function(
     for (i in seq_len(max(iFields))) {
 
       outi <- try(.dbGetFieldsIntoDf(
-        fields = fields[iFields == i],
+        fields = unique(unlist(fields[iFields == i])),
         con = con,
         verbose = verbose, ...),
         silent = TRUE)
@@ -226,8 +232,6 @@ dbGetFieldsIntoDf <- function(
     # second, run functions
     for (i in calculate) {
 
-      if (verbose) dfCalculateConcept(name = i)
-
       # inform user
       message(
         "Calculating ", i,
@@ -235,13 +239,12 @@ dbGetFieldsIntoDf <- function(
         appendLF = FALSE)
 
       outi <- .dbGetFieldsIntoDf(
-        fields = unlist(suppressMessages(
-          dfCalculateConcept(name = i))),
+        fields = unique(unlist(fctFields[i])),
         con = con,
         verbose = verbose, ...)
 
+      # calculate trial concept
       outi <- do.call(i, list(outi))
-
       # full join because outi has only
       # _id and newly calculated columns
       out <- dplyr::full_join(
@@ -253,16 +256,22 @@ dbGetFieldsIntoDf <- function(
 
     # run functions
     for (i in calculate) {
-      if (verbose) dfCalculateConcept(name = i)
-      out <- dfCalculateConcept(name = i, df = out)
+
+      # calculate trial concept
+      outi <- do.call(i, list(out))
+      # full join because outi has only
+      # _id and newly calculated columns
+      out <- dplyr::full_join(
+        out, outi, by = "_id")
+
     }
 
-  }
+    # remove fields only needed for functions
+    rmFields <- setdiff(unlist(fctFields), c("_id", fields))
+    rmFields <- na.omit(match(rmFields, names(out)))
+    if (length(rmFields)) out <- out[ , -rmFields]
 
-  # remove fields only needed for functions
-  rmFields <- setdiff(unlist(fctFields), c("_id", fields))
-  rmFields <- na.omit(match(rmFields, names(out)))
-  if (length(rmFields)) out <- out[ , -rmFields]
+  }
 
   # return
   return(dfOrTibble(out))

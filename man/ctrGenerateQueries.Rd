@@ -5,6 +5,7 @@
 \title{Generates queries that work across registers}
 \usage{
 ctrGenerateQueries(
+  searchPhrase = NULL,
   condition = NULL,
   intervention = NULL,
   phase = NULL,
@@ -19,6 +20,10 @@ ctrGenerateQueries(
 )
 }
 \arguments{
+\item{searchPhrase}{String with optional logical operators ("AND", "OR")
+that will be searched in selected fields of registers that can handle logical
+operators (general or title fields), should not include quotation marks}
+
 \item{condition}{String with condition / disease}
 
 \item{intervention}{String with intervention}
@@ -29,7 +34,9 @@ category, not the union set of "phase 2" and "phase 3")}
 \item{population}{String, e.g. "P" (paediatric), "A" (adult), "P+A"
 (adult and paediatric), "E" (elderly), "P+A+E" participants can be recruited}
 
-\item{recruitment}{String, one of "ongoing", "completed", "other"}
+\item{recruitment}{String, one of "ongoing", "completed", "other" (
+which includes "ended early" but this cannot be searched; use trial concept
+\link{f.statusRecruitment} to identify this status)}
 
 \item{startBefore}{String that can be interpreted as date, see example}
 
@@ -55,20 +62,35 @@ From high-level search terms provided by the user, generate specific queries
 for each registers with which ctrdata works, see \link{ctrdata-registers}.
 Search terms that are expanded to concepts such as from MeSH and MedDRA
 by the search implementations in registers include the
-intervention and condition, see \link{ctrdata-registers}.
+'intervention' and 'condition', see \link{ctrdata-registers}.
+Logical operators only work with 'searchPhrase'.
 }
 \examples{
 
 urls <- ctrGenerateQueries(
   intervention = "antibody",
-  recruitment = "ongoing",
   phase = "phase 3",
   startAfter = "2000-01-01")
 
 # open queries in register web interface
 sapply(urls, ctrOpenSearchPagesInBrowser)
 
+urls <- ctrGenerateQueries(
+  searchPhrase = "antibody AND covid",
+  recruitment = "completed")
+
 # load queries into database collection
 # sapply(urls, ctrLoadQueryIntoDb, con = dbc)
+
+# find research platform and platform trials
+urls <- ctrGenerateQueries(
+  searchPhrase = paste0(
+ "basket OR platform OR umbrella OR master protocol OR ",
+ "multiarm OR multistage OR subprotocol OR substudy OR ",
+ "multi-arm OR multi-stage OR sub-protocol OR sub-study"
+))
+
+# open queries in register web interface
+sapply(urls, ctrOpenSearchPagesInBrowser)
 
 }

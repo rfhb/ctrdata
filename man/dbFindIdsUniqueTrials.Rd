@@ -70,7 +70,7 @@ dbFindIdsUniqueTrials(con = dbc)[1:10]
 # using defaults of dbFindIdsUniqueTrials()
 df <- dbGetFieldsIntoDf(
   fields = "keyword",
-  calculate = ".isUniqueTrial",
+  calculate = "f.isUniqueTrial",
   con = dbc)
 
 # using base R

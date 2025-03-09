@@ -19,6 +19,7 @@
 #' @importFrom httr GET set_config user_agent
 #' @importFrom utils packageDescription str
 #' @importFrom jqr jq
+#' @importFrom stats quantile
 #'
 #' @export
 #'
@@ -30,18 +31,16 @@
 #' #  [4] "CGP57148B"         "Gleevec"           "GLIVEC"
 #' #  [7] "Imatinib"          "Imatinib Mesylate" "NSC 716051"
 #' # [10] "ST1571"            "STI 571"           "STI571"
-#'
 #' }
 #'
 ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE) {
-
   # check parameters
   if ((length(activesubstance) != 1L) ||
-      !is.character(activesubstance) ||
-      (nchar(activesubstance) == 0L)) {
+    !is.character(activesubstance) ||
+    (nchar(activesubstance) == 0L)) {
     stop("ctrFindActiveSubstanceSynonyms(): ",
-         "activesubstance should be a single string.",
-         call. = FALSE
+      "activesubstance should be a single string.",
+      call. = FALSE
     )
   }
 
@@ -71,8 +70,10 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE
 
   # check result
   if (inherits(tmp, "try-error") || tmp[["status_code"]] == 404L) {
-    message("Cound not search for active substance, error ",
-            utils::str(tmp[min(length(tmp), 2L)]))
+    message(
+      "Cound not search for active substance, error ",
+      utils::str(tmp[min(length(tmp), 2L)])
+    )
     return(NULL)
   }
 
@@ -83,10 +84,11 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE
   nrec <- jqr::jq(textConnection(jsn), " .studies | length ")
 
   # inform user
-  if (verbose || nrec == 0L) message(
-    nrec, " studies found in CTGOV2 for active substance ", activesubstance)
-
-  # jsonview::json_tree_view(jsn)
+  if (verbose || nrec == 0L) {
+    message(
+      nrec, " studies found in CTGOV2 for active substance ", activesubstance
+    )
+  }
 
   # extract otherNames for name
   asx <- jqr::jq(textConnection(jsn), paste0(
@@ -94,7 +96,8 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE
     | select ( length > 0 ) | .[]
     | select ( .name | test("^', activesubstance, '( |$)"; "i") )
     | .otherNames | select( length > 0 ) | .[]
-  '))
+  '
+  ))
 
   # cleanup
 
@@ -111,7 +114,7 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE
 
   # remove less frequent occurrences
   asx <- sort(table(asx))
-  asx <- names(asx[asx > quantile(asx, 2/3)])
+  asx <- names(asx[asx > stats::quantile(asx, 2 / 3)])
 
   # deduplicate irrespective of case
   asx <- asx[!duplicated(tolower(asx))]

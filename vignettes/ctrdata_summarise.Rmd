@@ -1,20 +1,14 @@
 ---
 title: "Summarise and analyse clinical trial information"
 author: "Ralf Herold"
-date: 2025-03-02
+date: 2025-03-08
 output:
   rmarkdown::html_vignette:
     toc: true
-  rmarkdown::pdf_document:
-    toc: true
-    number_sections: true
-    latex_engine: xelatex
 vignette: >
   %\VignetteIndexEntry{Summarise and analyse clinical trial information}
-  %\VignetteKeywords{ctrdata,vignette}
-  %\VignettePackage{ctrdata}
-  %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8} 
 editor_options:
   chunk_output_type: console
 ---
@@ -206,13 +200,13 @@ nrow(result)
 
 ## Use trial concepts to simplify analyses
 
-An alternative is to calculate a column `isUniqueTrial` already at the time that a data frame is created. This uses one of the trial concepts that provide a canonical field, calculated from trial information of any register, see `help(dfCalculateConcept)`. 
+An alternative is to calculate a column `isUniqueTrial` already at the time that a data frame is created. This uses one of the trial concepts that provide a canonical field, calculated from trial information of any register, see `help(ctrdata-trial-concepts)`. 
 
 ```{r unique}
 # Obtain data of interest
 result <- dbGetFieldsIntoDf(
   fields = fieldsOfInterest, 
-  calculate = ".isUniqueTrial",
+  calculate = "f.isUniqueTrial",
   con = db
 )
 # Querying database (30 fields)...
@@ -232,10 +226,10 @@ nrow(result)
 # or the fields needed to calculate the trial concept. 
 
 # See description of concept .isUniqueTrial: 
-dfCalculateConcept(".isUniqueTrial")
+help("f.isUniqueTrial")
 
 # See how concept .isUniqueTrial is implemented
-.isUniqueTrial
+f.isUniqueTrial
 ```
 
 
@@ -283,7 +277,7 @@ This typing facilitates using the data for analysis, for example of dates with b
 # Get data of interest
 result <- dbGetFieldsIntoDf(
   fields = c("ctrname"),
-  calculate = c(".isUniqueTrial", ".startDate"),
+  calculate = c("f.isUniqueTrial", "f.startDate"),
   con = db
 )
 # Querying database (33 fields)...
@@ -321,53 +315,23 @@ value lists across different registers.
 Available calculations can be listed, and a specific documentation shown.
 
 ```{r dfcalculate}
-# See all concepts available at this time
-dfCalculateConcept()
-#  [1] ".controlType"             ".isMedIntervTrial"        ".isPlatformTrial"        
-#  [4] ".isUniqueTrial"           ".numSites"                ".numTestArmsSubstances"  
-#  [7] ".primareEndpointEstimand" ".sampleSize"              ".sponsorType"            
-# [10] ".startDate"               ".statusRecruitment"       ".trialObjective"         
-# [13] ".trialPhase"
-
-# Introduction to trial concepts
+# Introduction and overview of available trial concepts
 help("ctrdata-trial-concepts")
 
 # Show documentation of a specific trial concept 
-# dfCalculateConcept(name = ".isMedIntervTrial")
-# 
-# >>>> .isMedIntervTrial
-# 
-# * Description:
-# 
-# Calculates if record is a medicine-interventional trial, investigating one 
-# or more medicine, whether biological or not.
-# 
-# For EUCTR and CTIS, this corresponds to all records as per the definition of 
-# the EU Clinical Trial Regulation.
-# 
-# For CTGOV and CTGOV2, this is based on drug or biological as type of 
-# intervention, and interventional as type of study.
-# 
-# For ISRCTN, this is based on drug or biological as type of intervention, 
-# and interventional as type of study.
-# 
-# Returns a logical.
-# 
-# * Fields needed:
-# 
-# ctrname
-# intervention.intervention_type
-# study_type
-# protocolSection.armsInterventionsModule.interventions.type
-# protocolSection.designModule.studyType
-# interventions.intervention.interventionType
-# trialDesign.primaryStudyDesign
-# ctrname
-# 
-# * To show the implementation, call: ctrdata::.isMedIntervTrial
-# or, after package("ctrdata"), call: .isMedIntervTrial
-# 
-# <<<<
+help("f.isMedIntervTrial")
+
+# List concepts available at this time
+as.character(utils::ls.str(
+  getNamespace("ctrdata"),
+  all.names = TRUE,
+  pattern = "^f[.][a-z]"))
+#  [1] "f.controlType"                "f.isMedIntervTrial"           "f.isUniqueTrial"             
+#  [4] "f.likelyPlatformTrial"        "f.numSites"                   "f.numTestArmsSubstances"     
+#  [7] "f.primaryEndpointDescription" "f.primaryEndpointResults"     "f.resultsDate"               
+# [10] "f.sampleSize"                 "f.sponsorType"                "f.startDate"                 
+# [13] "f.statusRecruitment"          "f.trialObjectives"            "f.trialPhase"                
+# [16] "f.trialPopulation" 
 ```
 
 
@@ -377,7 +341,7 @@ With the function `dfMergeVariablesRelevel()`, users have control how to merge
 values of a set of original variables to a new variable, optionally with 
 a new set of values. For more, see `help(dfMergeVariablesRelevel)`. 
 This can be used for concepts that are very specific to the use case and / or 
-not implemented so far, see `dfCalculateConcept()`. 
+not implemented so far, see `help(ctrdata-trial-concepts)`. 
 
 
 ## Historic versions of trial records and changes in sample sizes
@@ -404,7 +368,7 @@ result <- dbGetFieldsIntoDf(
     "history.protocolSection.designModule.enrollmentInfo.count",
     "history.history_version.version_date"
   ),
-  calculate = ".statusRecruitment",
+  calculate = "f.statusRecruitment",
   con = db
 )
 
@@ -505,7 +469,7 @@ result <- dbGetFieldsIntoDf(
     "clinical_results.outcome_list.outcome",
     "study_design_info.allocation"
   ),
-  calculate = ".isUniqueTrial",
+  calculate = "f.isUniqueTrial",
   con = db
 )
 
@@ -621,16 +585,16 @@ clinicalDuration[sample(seq_len(nrow(clinicalDuration)), 10L), ]
 
 ## Analysing primary endpoints
 
-Text analysis has to be used for many fields of trial information from the registers. Here is an example to simply categorise the type of primary endpoint. In addition, the number of subjects are compared by type of primary endpoint. The example uses trial concepts introduced in earlier sections, see `dfCalculateConcept()`. 
+Text analysis has to be used for many fields of trial information from the registers. Here is an example to simply categorise the type of primary endpoint. In addition, the number of subjects are compared by type of primary endpoint. The example uses trial concepts introduced in earlier sections, see `help(ctrdata-trial-concepts)`. 
 
 ```{r plot_endpoint_frequencies}
 # Get relevant data
 result <- dbGetFieldsIntoDf(
   calculate = c(
-    ".isUniqueTrial",
-    ".sampleSize",
-    ".trialPopulation",
-    ".primaryEndpointDescription"
+    "f.isUniqueTrial",
+    "f.sampleSize",
+    "f.trialPopulation",
+    "f.primaryEndpointDescription"
   ),
   con = db
 )
@@ -684,15 +648,15 @@ It may be interesting to review results of the primary endpoint in a set of tria
 The results of null-hypothesis significance testing (NHST) may show an interesting distribution of p values (see also Robinson-D 2014, http://varianceexplained.org/statistics/interpreting-pvalue-histogram/, which refers to cases with many p values, possibly from a single experiment). 
 When analysed robustly in a well-defined set of trials, such distributions may allow assumptions about equipoise, forking path or reporting preferences. 
 
-The example merely shows the technical approach, without asserting relevance. For a robust analysis, consider further trial concepts (in particular, ".trialObjectives", ".controlType", ".isMedIntervTrial", ".trialPhase"), see `dfCalculateConcept()`. 
+The example merely shows the technical approach, without asserting relevance. For a robust analysis, consider further trial concepts (in particular, "f.trialObjectives", "f.controlType", "f.isMedIntervTrial", "f.trialPhase"), see `help(ctrdata-trial-concepts)`. 
 
 ```{r analyse_results_data}
 # Get result set
 result <- dbGetFieldsIntoDf(
   calculate = c(
-    ".isUniqueTrial",
-    ".sampleSize",
-    ".primaryEndpointResults"
+    "f.isUniqueTrial",
+    "f.sampleSize",
+    "f.primaryEndpointResults"
   ), 
   con = db
 )
@@ -774,8 +738,8 @@ result <- dbGetFieldsIntoDf(
     "a2_eudract_number"
   ),
   calculate = c(
-    ".isUniqueTrial",
-    ".startDate"
+    "f.isUniqueTrial",
+    "f.startDate"
     ), 
   con = db
 )
@@ -826,7 +790,7 @@ ggsave("vignettes/nbtrials.png", width = 6, height = 4)
 ```
 ![HistogramNBtrials](nbtrials.png)
 
-## Analyses using aggregation pipeline and mapreduce
+## Analyses using MongoDB pipeline
 
 Here is an example of analysis functions that can be run directly on a MongoDB server, which are fast and do not consume R resources.
 
@@ -878,7 +842,7 @@ head(
 
 ### Aggregation
 
-The following example uses the aggregation pipeline in MongoDB. See here for details on mongo's aggregation pipleline: https://docs.mongodb.org/manual/core/aggregation-pipeline/
+The following example uses the aggregation pipeline in MongoDB. See here for details on mongo's aggregation pipleline: https://www.mongodb.com/docs/manual/core/aggregation-pipeline/
 
 ```{r mongodb_aggregation_pipeline}
 #
@@ -917,7 +881,7 @@ head(out)
 
 ### Mapreduce
 
-Since Mapreduce is deprecated starting in MongoDB 5 (https://docs.mongodb.com/manual/core/map-reduce/), use an aggregation pipeline:  
+Since Mapreduce is deprecated starting in MongoDB 5 (https://www.mongodb.com/docs/manual/core/map-reduce/), use an aggregation pipeline:  
 
 ```{r mongodb_mapreduce}
 # Count number of trials by number of study

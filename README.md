@@ -36,7 +36,7 @@ interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
 `ctrdata` is a package for the [R](https://www.r-project.org/) system,
 but other systems and tools can use the databases created with this
-package. This README was reviewed on 2025-03-02 for version 1.20.0.9000.
+package. This README was reviewed on 2025-03-09 for version 1.20.0.9990.
 
 ## Main features
 
@@ -178,7 +178,6 @@ overview](https://rfhb.github.io/ctrdata/reference/index.html).
 | `dbFindIdsUniqueTrials()` | **Get the identifiers of de-duplicated trials in the collection** |
 | `dbFindFields()` | Find names of variables (fields) in the collection |
 | `dbGetFieldsIntoDf()` | **Create a data frame (or tibble) from trial records in the database with the specified fields** |
-| `dfCalculateConcept()` | Canonically calculate, across registers, concepts such as trial start or primary endpoint analysis method |
 | `dfTrials2Long()` | Transform the data.frame from `dbGetFieldsIntoDf()` into a long name-value data.frame, including deeply nested fields |
 | `dfName2Value()` | From a long name-value data.frame, extract values for variables (fields) of interest (e.g., endpoints) |
 | `dfMergeVariablesRelevel()` | Merge variables into a new variable, optionally map values to a new set of levels |
@@ -225,7 +224,7 @@ flexibility, transparency and reproducibility. To support analyses,
 concepts of clinical trials across registers, which are commonly used in
 analyses, such as start dates, age groups and statistical tests of
 results. See
-[dfCalculateConcept()](https://rfhb.github.io/ctrdata/reference/dfCalculateConcept.html)
+[help(ctrdata-trial-concepts)](https://rfhb.github.io/ctrdata/reference/ctrdata-trial-concepts.html)
 and the section [Analysis across trials](#workflow-cross-trial-example)
 in the example workflow below. For further analyses, see examples of
 function
@@ -285,13 +284,13 @@ help("ctrdata")
 ```
 
 - Information on trial registers and how they can be used with `ctrdata`
-  (last updated 2025-02-01):
+  (last updated 2025-03-09):
 
 ``` r
 help("ctrdata-registers")
 ```
 
-- Trial concepts across registers provided by `ctrdata` (new 2025-02-01
+- Trial concepts across registers provided by `ctrdata` (new 2025-03-09
   🔔):
 
 ``` r
@@ -442,7 +441,7 @@ result <- dbGetFieldsIntoDf(
   # Field of interest 
   fields = c("a7_trial_is_part_of_a_paediatric_investigation_plan"),
   # Trial concepts calculated across registers
-  calculate = c(".statusRecruitment", ".isUniqueTrial"),
+  calculate = c("f.statusRecruitment", "f.isUniqueTrial"),
   con = db
 )
 # Querying database (35 fields)...
@@ -460,9 +459,10 @@ with(
 )
 #                   a7_trial_is_part_of_a_paediatric_investigation_plan
 # .statusRecruitment FALSE TRUE
-#          ongoing       0    0
-#          completed    12    6
-#          other         2    2
+#        ongoing         3    2
+#        completed      13    5
+#        ended early     5    4
+#        other           9    4
 ```
 
 <div id="workflow-ctgov-example">
@@ -558,7 +558,7 @@ ctrLoadQueryIntoDb(
   only.count = TRUE
 )
 # $n
-# [1] 8754
+# [1] 8783
 ```
 
 <div id="workflow-data-model">
@@ -600,7 +600,7 @@ library(ggplot2)
 
 df <- dbGetFieldsIntoDf(
   fields = "",
-  calculate = c(".statusRecruitment", ".isUniqueTrial", ".startDate"),
+  calculate = c("f.statusRecruitment", "f.isUniqueTrial", "f.startDate"),
   con = db)
 
 df %>%
@@ -643,10 +643,10 @@ library(ggplot2)
 
 result <- dbGetFieldsIntoDf(
   calculate = c(
-    ".numSites", 
-    ".sampleSize", 
-    ".controlType", 
-    ".numTestArmsSubstances"),
+    "f.numSites", 
+    "f.sampleSize", 
+    "f.controlType", 
+    "f.numTestArmsSubstances"),
   con = db
 )
 
@@ -818,7 +818,6 @@ tinytest::test_all()
 covr::package_coverage(path = ".", type = "tests")
 # ctrdata Coverage: 94.06%
 # R/ctrShowOneTrial.R: 57.89%
-# R/dfCalculateConcept.R: 58.62%
 # R/ctrRerunQuery.R: 74.85%
 # R/zzz.R: 80.95%
 # R/dbGetFieldsIntoDf.R: 86.90%

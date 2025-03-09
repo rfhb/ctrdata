@@ -46,7 +46,7 @@ The package `ctrdata` provides functions for retrieving (downloading), aggregati
 - ClinicalTrials.gov ("CTGOV2", see [example](#workflow-ctgov-example))
 - ISRCTN Registry (https://www.isrctn.com/) 
 
-The motivation is to investigate the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can use the databases created with this package. This README was reviewed on 2025-03-02 for version 1.20.0.9000.
+The motivation is to investigate the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can use the databases created with this package. This README was reviewed on 2025-03-09 for version 1.20.0.9990.
 
 ## Main features
 
@@ -128,7 +128,6 @@ Function name | Function purpose
 `dbFindIdsUniqueTrials()` | **Get the identifiers of de-duplicated trials in the collection**
 `dbFindFields()` | Find names of variables (fields) in the collection
 `dbGetFieldsIntoDf()` | **Create a data frame (or tibble) from trial records in the database with the specified fields**
-`dfCalculateConcept()` | Canonically calculate, across registers, concepts such as trial start or primary endpoint analysis method
 `dfTrials2Long()` | Transform the data.frame from `dbGetFieldsIntoDf()` into a long name-value data.frame, including deeply nested fields
 `dfName2Value()` | From a long name-value data.frame, extract values for variables (fields) of interest (e.g., endpoints)
 `dfMergeVariablesRelevel()` | Merge variables into a new variable, optionally map values to a new set of levels
@@ -153,7 +152,7 @@ Use connection with `nodbi` functions | e.g., `nodbi::docdb_query(src = dbc, key
 
 Package `ctrdata` uses the data models that are implicit in data as retrieved from the different registers. No mapping is provided for any register's data model to a putative target data model. The reasons include that registers' data models are continually evolving over time, that only few data fields have similar values and meaning between registers, and that the retrieved public data may not correspond to the registers' internal data model. The structure of data for a specific trial can interactively be inspected and searched using function, see the section [below](#workflow-data-model). 
 
-Thus, the handling of data from different models of registers is to be done at the time of analysis. This approach allows a high level of flexibility, transparency and reproducibility. To support analyses, `ctrdata` (from version 1.21.0) provides functions that calculate concepts of clinical trials across registers, which are commonly used in analyses, such as start dates, age groups and statistical tests of results. See [dfCalculateConcept()](https://rfhb.github.io/ctrdata/reference/dfCalculateConcept.html) and the section [Analysis across trials](#workflow-cross-trial-example) in the example workflow below. For further analyses, see examples of function [dfMergeVariablesRelevel()](https://rfhb.github.io/ctrdata/reference/dfMergeVariablesRelevel.html) on how to align related fields from different registers for a joint analysis. 
+Thus, the handling of data from different models of registers is to be done at the time of analysis. This approach allows a high level of flexibility, transparency and reproducibility. To support analyses, `ctrdata` (from version 1.21.0) provides functions that calculate concepts of clinical trials across registers, which are commonly used in analyses, such as start dates, age groups and statistical tests of results. See [help(ctrdata-trial-concepts)](https://rfhb.github.io/ctrdata/reference/ctrdata-trial-concepts.html) and the section [Analysis across trials](#workflow-cross-trial-example) in the example workflow below. For further analyses, see examples of function [dfMergeVariablesRelevel()](https://rfhb.github.io/ctrdata/reference/dfMergeVariablesRelevel.html) on how to align related fields from different registers for a joint analysis. 
 
 In any of the [databases](https://rfhb.github.io/ctrdata/index.html#databases-for-use-with-ctrdata), one clinical trial is one document, corresponding to one row in a `SQLite`, `PostgreSQL` or `DuckDB` table, and to one document in a `MongoDB` collection. These `NoSQL` backends allow documents to have different structures, which is used here to accommodate the different models of data retrieved from the registers. Package `ctrdata` stores in every such document: 
 
@@ -186,12 +185,12 @@ library(ctrdata)
 help("ctrdata")
 ```
 
-* Information on trial registers and how they can be used with `ctrdata` (last updated 2025-02-01):
+* Information on trial registers and how they can be used with `ctrdata` (last updated 2025-03-09):
 ```{r help_registers}
 help("ctrdata-registers")
 ```
 
-* Trial concepts across registers provided by `ctrdata` (new 2025-02-01 `r emoji::emoji("bell")`):
+* Trial concepts across registers provided by `ctrdata` (new 2025-03-09 `r emoji::emoji("bell")`):
 ```{r help_trial_concepts}
 help("ctrdata-trial-concepts")
 ```
@@ -325,7 +324,7 @@ result <- dbGetFieldsIntoDf(
   # Field of interest 
   fields = c("a7_trial_is_part_of_a_paediatric_investigation_plan"),
   # Trial concepts calculated across registers
-  calculate = c(".statusRecruitment", ".isUniqueTrial"),
+  calculate = c("f.statusRecruitment", "f.isUniqueTrial"),
   con = db
 )
 # Querying database (35 fields)...
@@ -343,9 +342,10 @@ with(
 )
 #                   a7_trial_is_part_of_a_paediatric_investigation_plan
 # .statusRecruitment FALSE TRUE
-#          ongoing       0    0
-#          completed    12    6
-#          other         2    2
+#        ongoing         3    2
+#        completed      13    5
+#        ended early     5    4
+#        other           9    4
 ```
 
 
@@ -411,7 +411,7 @@ ctrLoadQueryIntoDb(
   only.count = TRUE
 )
 # $n
-# [1] 8754
+# [1] 8783
 ```
 
 
@@ -444,7 +444,7 @@ library(ggplot2)
 
 df <- dbGetFieldsIntoDf(
   fields = "",
-  calculate = c(".statusRecruitment", ".isUniqueTrial", ".startDate"),
+  calculate = c("f.statusRecruitment", "f.isUniqueTrial", "f.startDate"),
   con = db)
 
 df %>%
@@ -480,10 +480,10 @@ library(ggplot2)
 
 result <- dbGetFieldsIntoDf(
   calculate = c(
-    ".numSites", 
-    ".sampleSize", 
-    ".controlType", 
-    ".numTestArmsSubstances"),
+    "f.numSites", 
+    "f.sampleSize", 
+    "f.controlType", 
+    "f.numTestArmsSubstances"),
   con = db
 )
 
@@ -657,7 +657,6 @@ tinytest::test_all()
 covr::package_coverage(path = ".", type = "tests")
 # ctrdata Coverage: 94.06%
 # R/ctrShowOneTrial.R: 57.89%
-# R/dfCalculateConcept.R: 58.62%
 # R/ctrRerunQuery.R: 74.85%
 # R/zzz.R: 80.95%
 # R/dbGetFieldsIntoDf.R: 86.90%

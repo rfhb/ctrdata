@@ -18,9 +18,7 @@ of `c("a.b.c.d", "a.b.c.e")`, accessing sought fields with
 
 \item{calculate}{Vector of one or more strings, which are names of functions
 to calculate certain trial concepts from fields in the collection across
-different registers.
-See function \link{dfCalculateConcept} for how to find names of functions
-that are available in `ctrdata` so far.}
+different registers.}
 
 \item{con}{A database connection object, created with
 \code{nodbi}. See section `1 - Database connection` in
@@ -77,8 +75,10 @@ dbGetFieldsIntoDf(
 # calculate new field(s) from data across trials
 df <- dbGetFieldsIntoDf(
   fields = "keyword",
-  calculate = c(".statusRecruitment", ".isUniqueTrial", ".startDate"),
+  calculate = c("f.statusRecruitment", "f.isUniqueTrial", "f.startDate"),
   con = dbc)
+
+table(df$.statusRecruitment, exclude = NULL)
 
 \dontrun{
 library(dplyr)

@@ -31,7 +31,6 @@ ctrFindActiveSubstanceSynonyms(activesubstance = "imatinib")
 #  [4] "CGP57148B"         "Gleevec"           "GLIVEC"
 #  [7] "Imatinib"          "Imatinib Mesylate" "NSC 716051"
 # [10] "ST1571"            "STI 571"           "STI571"
-
 }
 
 }

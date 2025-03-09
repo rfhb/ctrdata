@@ -119,105 +119,6 @@ expect_message(
       con = dbc)),
   "Imported or updated ")
 
-#### ctrLoadQueryIntoDb results ####
-
-dbc <- nodbi::src_sqlite(
-  dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
-  collection = "my_trials",
-  RSQLite::SQLITE_RO)
-
-# get results
-result <- suppressMessages(
-  suppressWarnings(
-    dbGetFieldsIntoDf(
-      fields = c(
-        "primary_outcome.measure",
-        "start_date",
-        "clinical_results.baseline.analyzed_list.analyzed.count_list.count",
-        "clinical_results.baseline.group_list.group",
-        "clinical_results.baseline.analyzed_list.analyzed.units",
-        "clinical_results.outcome_list.outcome",
-        "clinical_results",
-        "study_design_info.allocation",
-        "eligibility.maximum_age",
-        "location.facility.name",
-        "location"
-      ),
-      con = dbc)
-  ))
-
-# test
-expect_equal(
-  rev(sort(sapply(
-    result[["location"]],
-    function(x) {
-      if (all(is.na(x))) return(0L) else
-        length(x[["facility"]][["name"]])
-    })))
-  [1:2], c(12, 7))
-
-# test
-expect_true("character" == class(result[[
-  "study_design_info.allocation"]]))
-
-# test
-expect_true("character" == class(result[[
-  "primary_outcome.measure"]]))
-
-# test
-expect_true(
-  any(grepl(" / ", result[["primary_outcome.measure"]])))
-
-# test
-expect_true("Date" == class(result[[
-  "start_date"]]))
-
-# test
-expect_true("difftime" == class(result[[
-  "eligibility.maximum_age"]]))
-
-# test
-expect_true(
-  any(grepl(" / ", result[["location.facility.name"]])))
-
-# test
-expect_true(
-  length(unlist(strsplit(
-    result[["location.facility.name"]], " / "))) >= 22L)
-
-# test
-expect_true("list" == class(result[[
-  "clinical_results.baseline.group_list.group"]]))
-
-# convert to long
-df <- suppressMessages(
-  dfTrials2Long(
-    df = result
-  ))
-
-# test
-expect_identical(
-  names(df),
-  c("_id", "identifier", "name", "value")
-)
-
-# test
-expect_true(
-  nrow(df) > 1000L
-)
-
-# test
-expect_error(
-  suppressWarnings(
-    suppressMessages(
-      ctrLoadQueryIntoDb(
-        queryterm = "term=ET743OVC3006",
-        register = "CTGOV",
-        annotation.text = "something",
-        annotation.mode = "WRONG",
-        con = dbc))),
-  "'annotation.mode' incorrect")
-
 #### documents.path ####
 
 if (!length(dbc$url) || grepl("localhost", dbc$url)) {
@@ -291,3 +192,105 @@ expect_true(all(
 # tmpc <- sapply(result, class, USE.NAMES = FALSE)
 # tmpc <- unlist(tmpc)
 # tmpc <- table(tmpc)
+
+#### ctrLoadQueryIntoDb results ####
+
+if (!checkSqlite())   exit_file("Reason: no SQLite")
+
+dbcRO <- nodbi::src_sqlite(
+  dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+  collection = "my_trials",
+  flags = RSQLite::SQLITE_RO)
+
+# get results
+result <- suppressMessages(
+  suppressWarnings(
+    dbGetFieldsIntoDf(
+      fields = c(
+        "primary_outcome.measure",
+        "start_date",
+        "clinical_results.baseline.analyzed_list.analyzed.count_list.count",
+        "clinical_results.baseline.group_list.group",
+        "clinical_results.baseline.analyzed_list.analyzed.units",
+        "clinical_results.outcome_list.outcome",
+        "clinical_results",
+        "study_design_info.allocation",
+        "eligibility.maximum_age",
+        "location.facility.name",
+        "location"
+      ),
+      con = dbcRO)
+  ))
+
+# test
+expect_equal(
+  rev(sort(sapply(
+    result[["location"]],
+    function(x) {
+      if (all(is.na(x))) return(0L) else
+        length(x[["facility"]][["name"]])
+    })))
+  [1:2], c(12, 7))
+
+# test
+expect_true("character" == class(result[[
+  "study_design_info.allocation"]]))
+
+# test
+expect_true("character" == class(result[[
+  "primary_outcome.measure"]]))
+
+# test
+expect_true(
+  any(grepl(" / ", result[["primary_outcome.measure"]])))
+
+# test
+expect_true("Date" == class(result[[
+  "start_date"]]))
+
+# test
+expect_true("difftime" == class(result[[
+  "eligibility.maximum_age"]]))
+
+# test
+expect_true(
+  any(grepl(" / ", result[["location.facility.name"]])))
+
+# test
+expect_true(
+  length(unlist(strsplit(
+    result[["location.facility.name"]], " / "))) >= 22L)
+
+# test
+expect_true("list" == class(result[[
+  "clinical_results.baseline.group_list.group"]]))
+
+# convert to long
+df <- suppressMessages(
+  dfTrials2Long(
+    df = result
+  ))
+
+# test
+expect_identical(
+  names(df),
+  c("_id", "identifier", "name", "value")
+)
+
+# test
+expect_true(
+  nrow(df) > 1000L
+)
+
+# test
+expect_error(
+  suppressWarnings(
+    suppressMessages(
+      ctrLoadQueryIntoDb(
+        queryterm = "term=ET743OVC3006",
+        register = "CTGOV",
+        annotation.text = "something",
+        annotation.mode = "WRONG",
+        con = dbcRO))),
+  "'annotation.mode' incorrect")
+

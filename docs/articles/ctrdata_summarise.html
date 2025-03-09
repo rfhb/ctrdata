@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.20.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.20.0.9990</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,7 +62,7 @@
                         <h4 data-toc-skip class="author">Ralf
 Herold</h4>
             
-            <h4 data-toc-skip class="date">2025-03-02</h4>
+            <h4 data-toc-skip class="date">2025-03-08</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/rfhb/ctrdata/blob/HEAD/vignettes/ctrdata_summarise.Rmd" class="external-link"><code>vignettes/ctrdata_summarise.Rmd</code></a></small>
       <div class="d-none name"><code>ctrdata_summarise.Rmd</code></div>
@@ -270,12 +270,12 @@ is the recording of additional trial identifiers in supplementary fields
 already at the time that a data frame is created. This uses one of the
 trial concepts that provide a canonical field, calculated from trial
 information of any register, see
-<code><a href="../reference/dfCalculateConcept.html">help(dfCalculateConcept)</a></code>.</p>
+<code>help(ctrdata-trial-concepts)</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Obtain data of interest</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span>
 <span>  fields <span class="op">=</span> <span class="va">fieldsOfInterest</span>, </span>
-<span>  calculate <span class="op">=</span> <span class="st">".isUniqueTrial"</span>,</span>
+<span>  calculate <span class="op">=</span> <span class="st">"f.isUniqueTrial"</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># Querying database (30 fields)...</span></span>
@@ -295,10 +295,10 @@ information of any register, see
 <span><span class="co"># or the fields needed to calculate the trial concept. </span></span>
 <span></span>
 <span><span class="co"># See description of concept .isUniqueTrial: </span></span>
-<span><span class="fu"><a href="../reference/dfCalculateConcept.html">dfCalculateConcept</a></span><span class="op">(</span><span class="st">".isUniqueTrial"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/help.html" class="external-link">help</a></span><span class="op">(</span><span class="st">"f.isUniqueTrial"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># See how concept .isUniqueTrial is implemented</span></span>
-<span><span class="va">.isUniqueTrial</span></span></code></pre></div>
+<span><span class="va">f.isUniqueTrial</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="reviewing-a-specific-trial">Reviewing a specific trial<a class="anchor" aria-label="anchor" href="#reviewing-a-specific-trial"></a>
@@ -348,7 +348,7 @@ R graphics:</p>
 <code class="sourceCode R"><span><span class="co"># Get data of interest</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span>
 <span>  fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ctrname"</span><span class="op">)</span>,</span>
-<span>  calculate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">".isUniqueTrial"</span>, <span class="st">".startDate"</span><span class="op">)</span>,</span>
+<span>  calculate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"f.isUniqueTrial"</span>, <span class="st">"f.startDate"</span><span class="op">)</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># Querying database (33 fields)...</span></span>
@@ -388,53 +388,23 @@ of the mapping of corresponding fields and value lists across different
 registers. Available calculations can be listed, and a specific
 documentation shown.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># See all concepts available at this time</span></span>
-<span><span class="fu"><a href="../reference/dfCalculateConcept.html">dfCalculateConcept</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#  [1] ".controlType"             ".isMedIntervTrial"        ".isPlatformTrial"        </span></span>
-<span><span class="co">#  [4] ".isUniqueTrial"           ".numSites"                ".numTestArmsSubstances"  </span></span>
-<span><span class="co">#  [7] ".primareEndpointEstimand" ".sampleSize"              ".sponsorType"            </span></span>
-<span><span class="co"># [10] ".startDate"               ".statusRecruitment"       ".trialObjective"         </span></span>
-<span><span class="co"># [13] ".trialPhase"</span></span>
-<span></span>
-<span><span class="co"># Introduction to trial concepts</span></span>
+<code class="sourceCode R"><span><span class="co"># Introduction and overview of available trial concepts</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/help.html" class="external-link">help</a></span><span class="op">(</span><span class="st">"ctrdata-trial-concepts"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Show documentation of a specific trial concept </span></span>
-<span><span class="co"># dfCalculateConcept(name = ".isMedIntervTrial")</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># &gt;&gt;&gt;&gt; .isMedIntervTrial</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># * Description:</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># Calculates if record is a medicine-interventional trial, investigating one </span></span>
-<span><span class="co"># or more medicine, whether biological or not.</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># For EUCTR and CTIS, this corresponds to all records as per the definition of </span></span>
-<span><span class="co"># the EU Clinical Trial Regulation.</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># For CTGOV and CTGOV2, this is based on drug or biological as type of </span></span>
-<span><span class="co"># intervention, and interventional as type of study.</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># For ISRCTN, this is based on drug or biological as type of intervention, </span></span>
-<span><span class="co"># and interventional as type of study.</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># Returns a logical.</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># * Fields needed:</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># ctrname</span></span>
-<span><span class="co"># intervention.intervention_type</span></span>
-<span><span class="co"># study_type</span></span>
-<span><span class="co"># protocolSection.armsInterventionsModule.interventions.type</span></span>
-<span><span class="co"># protocolSection.designModule.studyType</span></span>
-<span><span class="co"># interventions.intervention.interventionType</span></span>
-<span><span class="co"># trialDesign.primaryStudyDesign</span></span>
-<span><span class="co"># ctrname</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># * To show the implementation, call: ctrdata::.isMedIntervTrial</span></span>
-<span><span class="co"># or, after package("ctrdata"), call: .isMedIntervTrial</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># &lt;&lt;&lt;&lt;</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/help.html" class="external-link">help</a></span><span class="op">(</span><span class="st">"f.isMedIntervTrial"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># List concepts available at this time</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/ls_str.html" class="external-link">ls.str</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/ns-reflect.html" class="external-link">getNamespace</a></span><span class="op">(</span><span class="st">"ctrdata"</span><span class="op">)</span>,</span>
+<span>  all.names <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  pattern <span class="op">=</span> <span class="st">"^f[.][a-z]"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#  [1] "f.controlType"                "f.isMedIntervTrial"           "f.isUniqueTrial"             </span></span>
+<span><span class="co">#  [4] "f.likelyPlatformTrial"        "f.numSites"                   "f.numTestArmsSubstances"     </span></span>
+<span><span class="co">#  [7] "f.primaryEndpointDescription" "f.primaryEndpointResults"     "f.resultsDate"               </span></span>
+<span><span class="co"># [10] "f.sampleSize"                 "f.sponsorType"                "f.startDate"                 </span></span>
+<span><span class="co"># [13] "f.statusRecruitment"          "f.trialObjectives"            "f.trialPhase"                </span></span>
+<span><span class="co"># [16] "f.trialPopulation" </span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="merging-fields-for-analysis">Merging fields for analysis<a class="anchor" aria-label="anchor" href="#merging-fields-for-analysis"></a>
@@ -444,7 +414,7 @@ control how to merge values of a set of original variables to a new
 variable, optionally with a new set of values. For more, see
 <code><a href="../reference/dfMergeVariablesRelevel.html">help(dfMergeVariablesRelevel)</a></code>. This can be used for
 concepts that are very specific to the use case and / or not implemented
-so far, see <code><a href="../reference/dfCalculateConcept.html">dfCalculateConcept()</a></code>.</p>
+so far, see <code>help(ctrdata-trial-concepts)</code>.</p>
 </div>
 <div class="section level2">
 <h2 id="historic-versions-of-trial-records-and-changes-in-sample-sizes">Historic versions of trial records and changes in sample sizes<a class="anchor" aria-label="anchor" href="#historic-versions-of-trial-records-and-changes-in-sample-sizes"></a>
@@ -479,7 +449,7 @@ data</p>
 <span>    <span class="st">"history.protocolSection.designModule.enrollmentInfo.count"</span>,</span>
 <span>    <span class="st">"history.history_version.version_date"</span></span>
 <span>  <span class="op">)</span>,</span>
-<span>  calculate <span class="op">=</span> <span class="st">".statusRecruitment"</span>,</span>
+<span>  calculate <span class="op">=</span> <span class="st">"f.statusRecruitment"</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -590,7 +560,7 @@ may exist in previously created databases.</p>
 <span>    <span class="st">"clinical_results.outcome_list.outcome"</span>,</span>
 <span>    <span class="st">"study_design_info.allocation"</span></span>
 <span>  <span class="op">)</span>,</span>
-<span>  calculate <span class="op">=</span> <span class="st">".isUniqueTrial"</span>,</span>
+<span>  calculate <span class="op">=</span> <span class="st">"f.isUniqueTrial"</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -709,15 +679,15 @@ may exist in previously created databases.</p>
 from the registers. Here is an example to simply categorise the type of
 primary endpoint. In addition, the number of subjects are compared by
 type of primary endpoint. The example uses trial concepts introduced in
-earlier sections, see <code><a href="../reference/dfCalculateConcept.html">dfCalculateConcept()</a></code>.</p>
+earlier sections, see <code>help(ctrdata-trial-concepts)</code>.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get relevant data</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span>
 <span>  calculate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>    <span class="st">".isUniqueTrial"</span>,</span>
-<span>    <span class="st">".sampleSize"</span>,</span>
-<span>    <span class="st">".trialPopulation"</span>,</span>
-<span>    <span class="st">".primaryEndpointDescription"</span></span>
+<span>    <span class="st">"f.isUniqueTrial"</span>,</span>
+<span>    <span class="st">"f.sampleSize"</span>,</span>
+<span>    <span class="st">"f.trialPopulation"</span>,</span>
+<span>    <span class="st">"f.primaryEndpointDescription"</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
@@ -780,15 +750,15 @@ such distributions may allow assumptions about equipoise, forking path
 or reporting preferences.</p>
 <p>The example merely shows the technical approach, without asserting
 relevance. For a robust analysis, consider further trial concepts (in
-particular, “.trialObjectives”, “.controlType”, “.isMedIntervTrial”,
-“.trialPhase”), see <code><a href="../reference/dfCalculateConcept.html">dfCalculateConcept()</a></code>.</p>
+particular, “f.trialObjectives”, “f.controlType”, “f.isMedIntervTrial”,
+“f.trialPhase”), see <code>help(ctrdata-trial-concepts)</code>.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get result set</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span>
 <span>  calculate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>    <span class="st">".isUniqueTrial"</span>,</span>
-<span>    <span class="st">".sampleSize"</span>,</span>
-<span>    <span class="st">".primaryEndpointResults"</span></span>
+<span>    <span class="st">"f.isUniqueTrial"</span>,</span>
+<span>    <span class="st">"f.sampleSize"</span>,</span>
+<span>    <span class="st">"f.primaryEndpointResults"</span></span>
 <span>  <span class="op">)</span>, </span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
@@ -905,8 +875,8 @@ status is in the tree starting from the <code>dimp</code> element.</p>
 <span>    <span class="st">"a2_eudract_number"</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  calculate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>    <span class="st">".isUniqueTrial"</span>,</span>
-<span>    <span class="st">".startDate"</span></span>
+<span>    <span class="st">"f.isUniqueTrial"</span>,</span>
+<span>    <span class="st">"f.startDate"</span></span>
 <span>    <span class="op">)</span>, </span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
@@ -959,7 +929,7 @@ status is in the tree starting from the <code>dimp</code> element.</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="analyses-using-aggregation-pipeline-and-mapreduce">Analyses using aggregation pipeline and mapreduce<a class="anchor" aria-label="anchor" href="#analyses-using-aggregation-pipeline-and-mapreduce"></a>
+<h2 id="analyses-using-mongodb-pipeline">Analyses using MongoDB pipeline<a class="anchor" aria-label="anchor" href="#analyses-using-mongodb-pipeline"></a>
 </h2>
 <p>Here is an example of analysis functions that can be run directly on
 a MongoDB server, which are fast and do not consume R resources.</p>

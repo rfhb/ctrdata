@@ -4,7 +4,7 @@
 #'
 #' Merge variables in a data frame such as returned by \link{dbGetFieldsIntoDf}
 #' into a new variable, and optionally also map its values to new levels.
-#' See \link{dfCalculateConcept} for pre-defined cross-register trial concepts
+#' See \link{ctrdata-trial-concepts} for pre-defined cross-register concepts
 #' that are already implemented based on merging fields from different
 #' registers and calculating a new field.
 #'
@@ -87,7 +87,6 @@ dfMergeVariablesRelevel <- function(
   merge2Cols <- function(x, y) {
     mapply(function(x, y) {
       x <- x[x != ""]; y <- y[y != ""]
-      # x <- na.omit(x); y <- na.omit(y)
       if (!length(x) && !length(y)) return(NA)
       if (length(x) && !is.na(x) && length(y) && !is.na(y)) {
         if (!get("warned", envir = env)) {message(

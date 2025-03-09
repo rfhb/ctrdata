@@ -3,78 +3,80 @@
 #' `ctrdata` includes (since version 1.21.0) functions that implement selected
 #' trial concepts. Concepts of clinical trials, such as their start or status of
 #' recruitment, require to analyse several fields against various
-#' pre-defined values. In addition, the structure and value sets of data
-#' differ between all \link{ctrdata-registers}.
-#' The included trial concepts are intended to simplify and accelerate a
-#' user's workflow as well as to provide consistency of analyses.
+#' pre-defined values. The structure and value sets of fields differ between
+#' all \link{ctrdata-registers}. In this situation, the implemented trial
+#' concepts simplify and accelerate a user's analysis workflow and also increase
+#' analysis consistency.
 #'
-#' The implementation of trial concepts in `ctrdata` is based on current
-#' understanding, publication of data models and scientific papers as relevant.
-#' Call \link{dfCalculateConcept} for one or more such functions to review the
-#' explanation and the fields needed. As with other `R` functions,
-#' the code is printed when entering as command just the name of the function,
-#' e.g. `.startDate`.
-#' Raise an issue \href{https://github.com/rfhb/ctrdata/issues}{here}
-#' to ask about or improve a concept.
+#' The implementation of trial concepts in `ctrdata` has not been validated
+#' with any formal approach, but has been checked for plausibility and
+#' against expectations. The implementation is based on current
+#' understanding, on public data models and on scientific papers, as relevant.
+#' As with other `R` functions, call \code{help("f.startDate")} or print its
+#' implementation code by entering the name of the function as command,
+#' e.g. `f.startDate`.
+#' Please raise an issue \href{https://github.com/rfhb/ctrdata/issues}{here}
+#' to ask about or improve a trial concept.
 #'
 #' The following trial concepts can be used by referencing their name when
-#' calling \link{dbGetFieldsIntoDf} (parameter `calculate`) and
-#' \link{dfCalculateConcept} (parameter `name`).
+#' calling \link{dbGetFieldsIntoDf} (parameter `calculate`).
 #' Concepts will continue to be refined and added;
-#' last updated 2025-02-15.
+#' last updated 2025-03-09.
 #'
-#' - **.controlType** (factor) which type of internal or concurrent control is
+#' - \link{f.controlType} (factor) which type of internal or concurrent control is
 #' used in the trial? ("none", "no-treatment", "placebo", "active",
 #' "placebo+active" or "other")
 #'
-#' - **.isMedIntervTrial** (logical) is the trial interventional and does
+#' - \link{f.isMedIntervTrial} (logical) is the trial interventional and does
 #' it have one or more medicines (drugs or biological) as investigational
 #' (experimental) intervention? (irrespective of status of authorisation and
 #' of study design)
 #'
-#' - **.isPlatformTrial** (logical) is the trial possibly a (research) platform
-#' trial? (based on title, .numTestArmsSubstances, number of periods)
-#'
-#' - **.isUniqueTrial** (logical) is the trial record unique in the data frame
+#' - \link{f.isUniqueTrial} (logical) is the trial record unique in the data frame
 #' of trial, based on the default parameters of \link{dbFindIdsUniqueTrials}?
 #'
-#' - **.numSites** (integer) how many sites does the trial have?
+#' - \link{f.likelyPlatformTrial} (logical) is the trial possibly a (research)
+#' platform trial, and what are related trials? (based on trial title,
+#' f.numTestArmsSubstances, number of periods)
 #'
-#' - **.numTestArmsSubstances** (integer) how many arms or groups have
+#' - \link{f.numSites} (integer) how many sites does the trial have?
+#'
+#' - \link{f.numTestArmsSubstances} (integer) how many arms or groups have
 #' medicines that are investigational? (cannot be calculated for ISRCTN or
 #' for phase 1 trials)
 #'
-#' - **.primaryEndpointDescription** (list of character) string containing
+#' - \link{f.primaryEndpointDescription} (list of character) string containing
 #' protocol definition, details and time frames, concatenated with " == "
 #'
-#' - **.primaryEndpointResults** (columns of number, character, integer)
+#' - \link{f.primaryEndpointResults} (columns of number, character, integer)
 #' returning the statistical testing p value and method as well as the number
 #' of subjects included in the test, each in one new column, for the first
 #' primary endpoint only
 #'
-#' - **.resultsDate** (date) the planned or achieved date of results availability
+#' - \link{f.resultsDate} (date) the planned or achieved date of results availability
 #'
-#' - **.startDate** (date) the planned, authorised or documented date
+#' - \link{f.startDate} (date) the planned, authorised or documented date
 #' of start of recruitment
 #'
-#' - **.sampleSize** (integer) the achieved (or planned) number of subjects or
+#' - \link{f.sampleSize} (integer) the achieved (or planned) number of subjects or
 #' participants recruited
 #'
-#' - **.sponsorType** (factor) a type or class of main or lead sponsor that is
-#' simplified to not for profit, for profit or other
+#' - \link{f.sponsorType} (factor) a type or class of main or lead sponsor that is
+#' simplified to "not for profit", "for profit" or "other"
 #'
-#' - **.statusRecruitment** (factor) a status that is simplified to
-#' ongoing (includes temporarily halted), completed and other (includes
-#' planned, stopped, terminated)
+#' - \link{f.statusRecruitment} (factor) a status that is simplified to
+#' "ongoing" (includes temporarily halted), "completed", "ended early" (includes
+#' terminated or ended prematurely) and "other" (includes planned, stopped,
+#' withdrawn)
 #'
-#' - **.trialObjectives** (string) identifies with letters those objectives
+#' - \link{f.trialObjectives} (string) identifies with letters those objectives
 #' that could be identified by text fragments, e.g. "E S PD D", with "E"
 #' (efficacy), "S" (safety), "D" (dose-finding)
 #'
-#' - **.trialPhase** (ordered factor) the phase(s) of medicine development
+#' - \link{f.trialPhase} (ordered factor) the phase(s) of medicine development
 #' with which a trial is associated
 #'
-#' - **.trialPopulation** (columns of factor, string and string) age groups
+#' - \link{f.trialPopulation} (columns of factor, string and string) age groups
 #' (e.g., "P" for paediatric participants, "A" for adults, "E" for older than
 #' 65 years, or "P+A"), inclusion and exclusion criteria texts
 #'

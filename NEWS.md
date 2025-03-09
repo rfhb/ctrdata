@@ -1,7 +1,7 @@
-# ctrdata 1.20.0.9900
+# ctrdata 1.20.0.9990
 
 ## Improvements
-- New feature: built-in functions that implement and calculate common trial concepts across different registers, see `dfCalculateConcept()` and `dbGetFieldsIntoDf()` which should largely avoid that users have to code themselves and repeatedly common trial concepts, such as recruitment start date, trial investigating a medicine as intervention, trial being a platform trial etc. 
+- New feature: built-in functions that implement and calculate common trial concepts across different registers, see `help("ctrdata-trial-concepts")` which should largely avoid that users have to code themselves and repeatedly common trial concepts, such as recruitment start date, trial investigating a medicine as intervention, trial being a platform trial etc. 
 - New feature: function `ctrGenerateQueries()` to search all registers from a user's single input, e.g. intervention, phase, dates
 - Refactored `dfMergeVariablesRelevel()`, factored out returning data frame or tibble 
 
@@ -12,6 +12,7 @@
 - Early stopping if database collection is read-only
 - Added typing of fields newly appearing in CTIS
 - Documentation simplification and update
+- Changing vignettes from PDF to HTML
 
 # ctrdata 1.20.0
 
