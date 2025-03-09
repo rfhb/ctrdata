@@ -202,7 +202,10 @@ f.numTestArmsSubstances <- function(df = NULL) {
     #
     helper_asNamesPerExpArm = lapply(
       .data$protocolSection.armsInterventionsModule.armGroups,
-      function(i) i["label"][i["type"] == "EXPERIMENTAL"]),
+      function(i){
+        if (!any(names(i) == "type")) return(NA)
+        i["label"][i["type"] == "EXPERIMENTAL"]
+      }),
     #
     helper_simExpArmsInTrial = lapply(
       .data$helper_asNamesPerExpArm, function(i) asTestSimilarityTrial(i)),
