@@ -194,7 +194,10 @@ dbFindIdsUniqueTrials <- function(
     # ctis
     "ctNumber",
     "eudraCtInfo.eudraCtCode",
-    "authorizedPartI.trialDetails.clinicalTrialIdentifiers.secondaryIdentifyingNumbers.nctNumber.number",
+    # "authorizedPartI.trialDetails.clinicalTrialIdentifiers.secondaryIdentifyingNumbers.nctNumber.number",                # ctis1
+    # "authorizedPartI.trialDetails.clinicalTrialIdentifiers.secondaryIdentifyingNumbers.whoUniversalTrialNumber.number",  # ctis1
+    "authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.secondaryIdentifyingNumbers.nctNumber.number", # ctis2
+    # "authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.secondaryIdentifyingNumbers.whoUniversalTrialNumber.number", # ctis2
     # ctgov2
     "protocolSection.identificationModule.nctId",
     "protocolSection.identificationModule.secondaryIdInfos.id",
@@ -266,7 +269,7 @@ dbFindIdsUniqueTrials <- function(
   fields <- c(
     "_id",
     "ctrname",
-    # euctr
+    # euctr 8
     "a2_eudract_number",
     "a52_us_nct_clinicaltrialsgov_registry_number",
     "trialInformation.usctnIdentifier",
@@ -275,7 +278,7 @@ dbFindIdsUniqueTrials <- function(
     "a51_isrctn_international_standard_randomised_controlled_trial_number",
     "trialInformation.isrctnIdentifier",
     "a41_sponsors_protocol_code_number",
-    # ctgov
+    # ctgov 8
     "id_info.secondary_id",
     "id_info.org_study_id",
     "id_info.nct_id",
@@ -284,18 +287,20 @@ dbFindIdsUniqueTrials <- function(
     "id_info.secondary_id",
     "id_info.secondary_id",
     "id_info.org_study_id",
-    # isrctn
+    # isrctn 5
     "externalRefs.eudraCTNumber",
     "externalRefs.clinicalTrialsGovNumber",
     "externalRefs.clinicalTrialsGovNumber",
     "isrctn",
     "externalRefs.protocolSerialNumber",
-    # ctis
+    # ctis 4
     "ctNumber",
     "eudraCtInfo.eudraCtCode",
-    "authorizedPartI.trialDetails.clinicalTrialIdentifiers.secondaryIdentifyingNumbers.nctNumber.number",
-    "authorizedPartI.trialDetails.clinicalTrialIdentifiers.secondaryIdentifyingNumbers.nctNumber.number",
-    # ctgov2
+    # "authorizedPartI.trialDetails.clinicalTrialIdentifiers.secondaryIdentifyingNumbers.nctNumber.number", # ctis1
+    # "authorizedPartI.trialDetails.clinicalTrialIdentifiers.secondaryIdentifyingNumbers.nctNumber.number", # ctis1
+    "authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.secondaryIdentifyingNumbers.nctNumber.number", # ctis2
+    "authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.secondaryIdentifyingNumbers.nctNumber.number", # ctis2
+    # ctgov2 6
     "protocolSection.identificationModule.nctId",
     "protocolSection.identificationModule.nctId",
     "protocolSection.identificationModule.secondaryIdInfos.id",
@@ -327,16 +332,17 @@ dbFindIdsUniqueTrials <- function(
   # for mapping identifiers across registers
   names(listofIds) <- c(
     "_id", "ctrname",
-    # euctr
-    "euctr.1", "ctgov.1a", "ctgov.1b", "ctgov2.1a", "ctgov2.1b", "isrctn.1a", "isrctn.1b", "sponsor.1",
-    # ctgov
+    # euctr 8
+    "euctr.1", "ctgov.1a", "ctgov.1b", "ctgov2.1a", "ctgov2.1b", "isrctn.1a",
+    "isrctn.1b", "sponsor.1",
+    # ctgov 8
     "euctr.2a", "euctr.2b", "ctgov.2a", "ctgov2.2", "ctgov.2b", "isrctn.2",
     "sponsor.2a", "sponsor.2b",
-    # isrctn
+    # isrctn 5
     "euctr.3", "ctgov.3", "ctgov2.3", "isrctn.3", "sponsor.3",
-    # ctis
+    # ctis 4
     "ctis.1", "euctr.4", "ctgov.4", "ctgov2.4",
-    # ctgov2
+    # ctgov2 6
     "ctgov2.5", "ctgov.5a", "euctr.5", "sponsor.4a", "ctgov.5b", "sponsor.4b"
   )
 

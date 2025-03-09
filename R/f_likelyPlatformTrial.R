@@ -43,7 +43,7 @@
 #' @importFrom dplyr mutate case_when pull left_join `%>%`
 #' @importFrom stringdist stringsimmatrix
 #' @importFrom stringi stri_count_fixed stri_detect_regex stri_split_fixed
-#' @importFrom tidyr pivot_longer
+#' @importFrom tidyr pivot_longer unnest
 #' @importFrom rlang .data
 #'
 #' @examples
@@ -179,25 +179,50 @@ f.likelyPlatformTrial <- function(df = NULL) {
   # get mapping table
   df2 <- .dbMapIdsTrials(con = parent.frame()$con)
   #
-  dplyr::mutate(
-    df2, sponsorIds = stringi::stri_split_fixed(
-      .data$SPONSOR, " / ")) %>%
-    dplyr::mutate(EUCTR = dplyr::if_else(
-      !is.na(.data$EUCTR), .data$`_id`, .data$EUCTR)) -> df2
+  # keep only mapped columns, split sponsor into list
+  df2 %>%
+    dplyr::select(!c("_id", "ctrname")) %>%
+    dplyr::mutate(
+      SPONSOR = stringi::stri_split_fixed(
+        .data$SPONSOR, " / ")) -> df2
   #
   dplyr::mutate(
+    # add all columns into single list
     df2, .idsRelatedTrials = rowColsList(
-      dplyr::select(df2, !c("_id", "ctrname", "SPONSOR"))
+      dplyr::select(df2, names(df2))
     )) %>%
-    dplyr::select(!"sponsorIds") %>%
+    # keep only the register columns
+    dplyr::select(!c("SPONSOR")) %>%
+    # expand list items into their own rows
+    tidyr::unnest(.data$.idsRelatedTrials) %>%
+    # wide to long
     tidyr::pivot_longer(
       cols = !".idsRelatedTrials") %>%
+    # remove register name
     dplyr::select(!"name") %>%
-    dplyr::rename("_id" = .data$value) %>%
-    unique() -> df2
+    dplyr::filter(.data$value != "") %>%
+    dplyr::filter(.data$value != .data$.idsRelatedTrials) %>%
+    unique() %>%
+    # turn rows of .idsRelatedTrials by
+    # trial identifier into list which
+    # does not include that identifier
+    dplyr::summarise(.idsRelatedTrials = list(
+      unique(.data$.idsRelatedTrials[
+        .data$.idsRelatedTrials != .data$value
+      ])), .by = .data$value) %>%
+    dplyr::rename("_id" = .data$value) -> df2
   #
+  # merge column into df
   df <- dplyr::left_join(
     df, df2, by = "_id")
+  #
+  # ensure .idsRelatedTrials is a list
+  # and has standard value if empty
+  df %>% dplyr::mutate(
+    .idsRelatedTrials = lapply(
+      .data$.idsRelatedTrials,
+      function(i) if (is.null(i)) NA else i
+    )) -> df
 
 
   #### . EUCTR ####
