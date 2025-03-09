@@ -17,7 +17,7 @@ Logical operators only work with 'searchPhrase'."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.20.0.9990</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.21.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -105,7 +105,9 @@ category, not the union set of "phase 2" and "phase 3")</p></dd>
 
 
 <dt id="arg-recruitment">recruitment<a class="anchor" aria-label="anchor" href="#arg-recruitment"></a></dt>
-<dd><p>String, one of "ongoing", "completed", "other"</p></dd>
+<dd><p>String, one of "ongoing", "completed", "other" (
+which includes "ended early" but this cannot be searched; use trial concept
+<a href="f.statusRecruitment.html">f.statusRecruitment</a> to identify this status)</p></dd>
 
 
 <dt id="arg-startbefore">startBefore<a class="anchor" aria-label="anchor" href="#arg-startbefore"></a></dt>

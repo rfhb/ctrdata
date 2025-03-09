@@ -1,9 +1,9 @@
-\.DS_Store
+\.DS_Store$
 \.git.*
-\.RData
-\.Rhistory
+\.RData$
+\.Rhistory$
 \.Rproj*
-\.travis.yml
+\.travis.yml$
 ^_gh-pages$
 ^_pkgdown\.yml$
 ^.*\.Rproj$
@@ -23,9 +23,9 @@
 cran-comments.md
 ^revdep$
 some_database_name.sqlite_file
-.future.R
+.future.R$
 ^cran-comments\.md$
-codecov.yml
+codecov.yml$
 ^CRAN-SUBMISSION$
 \.vscode
 ^tools

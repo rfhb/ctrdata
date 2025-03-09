@@ -36,7 +36,7 @@ interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
 `ctrdata` is a package for the [R](https://www.r-project.org/) system,
 but other systems and tools can use the databases created with this
-package. This README was reviewed on 2025-03-09 for version 1.20.0.9990.
+package. This README was reviewed on 2025-03-09 for version 1.21.0.
 
 ## Main features
 
@@ -61,12 +61,13 @@ package. This README was reviewed on 2025-03-09 for version 1.20.0.9990.
   any previous query in a collection to retrieve and update trial
   records.
 
-- For analyses, convenience functions in `ctrdata` implement trial
-  concepts canonically to simplify analyses across registers 🔔, allow
-  find synonyms of an active substance, identify unique (de-duplicated)
-  trial records across all registers, to merge and recode fields as well
-  as to easily access deeply-nested fields. Analysis can be done with
-  `R` (see
+- For analyses, convenience functions in `ctrdata` implement canonical
+  [trial
+  lconcepts](https://rfhb.github.io/ctrdata/reference/ctrdata-trial-concepts.html)
+  to simplify analyses across registers 🔔, allow find synonyms of an
+  active substance, identify unique (de-duplicated) trial records across
+  all registers, to merge and recode fields as well as to easily access
+  deeply-nested fields. Analysis can be done with `R` (see
   [vignette](https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html))
   or other systems, using the `JSON`-[structured information in the
   database](#trial-records-in-databases).

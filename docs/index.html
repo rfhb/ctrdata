@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.20.0.9990</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.21.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -66,14 +66,14 @@
 <li>ClinicalTrials.gov (“CTGOV2”, see <a href="#workflow-ctgov-example">example</a>)</li>
 <li>ISRCTN Registry (<a href="https://www.isrctn.com/" class="external-link uri">https://www.isrctn.com/</a>)</li>
 </ul>
-<p>The motivation is to investigate the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can use the databases created with this package. This README was reviewed on 2025-03-04 for version 1.20.0.9900.</p>
+<p>The motivation is to investigate the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can use the databases created with this package. This README was reviewed on 2025-03-09 for version 1.21.0.</p>
 <div class="section level2">
 <h2 id="main-features">Main features<a class="anchor" aria-label="anchor" href="#main-features"></a>
 </h2>
 <ul>
 <li><p>Protocol- and results-related trial information is easily downloaded: Users define a query in a register’s web interface, then copy the URL and enter it into <code>ctrdata</code> which retrieves in one go all trials found. A <a href="#id_2-script-to-automatically-copy-users-query-from-web-browser">script</a> can automate copying the query URL from all registers. Personal annotations can be made when downloading trials. Also, <a href="#documents-example">trial documents</a> and <a href="https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html#analysing-sample-size-using-historic-versions-of-trial-records">historic versions</a> as available in registers on trials can be downloaded.</p></li>
 <li><p>Downloaded trial information is transformed and stored in a collection of a document-centric database, for fast and offline access. Information from different registers can be accumulated in a single collection. Uses <code>DuckDB</code>, <code>PostgreSQL</code>, <code>RSQLite</code> or <code>MongoDB</code>, via R package <code>nodbi</code>: see section <a href="#databases-that-can-be-used-with-ctrdata">Databases</a> below. Interactively browse through trial structure and data. Easily re-run any previous query in a collection to retrieve and update trial records.</p></li>
-<li><p>For analyses, convenience functions in <code>ctrdata</code> implement trial concepts canonically to simplify analyses across registers 🔔, allow find synonyms of an active substance, identify unique (de-duplicated) trial records across all registers, to merge and recode fields as well as to easily access deeply-nested fields. Analysis can be done with <code>R</code> (see <a href="https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html">vignette</a>) or other systems, using the <code>JSON</code>-<a href="#trial-records-in-databases">structured information in the database</a>.</p></li>
+<li><p>For analyses, convenience functions in <code>ctrdata</code> implement canonical <a href="https://rfhb.github.io/ctrdata/reference/ctrdata-trial-concepts.html">trial lconcepts</a> to simplify analyses across registers 🔔, allow find synonyms of an active substance, identify unique (de-duplicated) trial records across all registers, to merge and recode fields as well as to easily access deeply-nested fields. Analysis can be done with <code>R</code> (see <a href="https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html">vignette</a>) or other systems, using the <code>JSON</code>-<a href="#trial-records-in-databases">structured information in the database</a>.</p></li>
 </ul>
 <p>Remember to respect the registers’ terms and conditions (see <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>). Please cite this package in any publication as follows: “Ralf Herold (2025). <em>ctrdata: Retrieve and Analyze Clinical Trials in Public Registers.</em> R package version 1.21.0, <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a>”.</p>
 <!--
@@ -288,12 +288,12 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/help.html" class="external-link">help</a></span><span class="op">(</span><span class="st">"ctrdata"</span><span class="op">)</span></span></code></pre></div>
 <ul>
-<li>Information on trial registers and how they can be used with <code>ctrdata</code> (last updated 2025-02-01):</li>
+<li>Information on trial registers and how they can be used with <code>ctrdata</code> (last updated 2025-03-09):</li>
 </ul>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/help.html" class="external-link">help</a></span><span class="op">(</span><span class="st">"ctrdata-registers"</span><span class="op">)</span></span></code></pre></div>
 <ul>
-<li>Trial concepts across registers provided by <code>ctrdata</code> (new 2025-02-01 🔔):</li>
+<li>Trial concepts across registers provided by <code>ctrdata</code> (new 2025-03-09 🔔):</li>
 </ul>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/help.html" class="external-link">help</a></span><span class="op">(</span><span class="st">"ctrdata-trial-concepts"</span><span class="op">)</span></span></code></pre></div>
@@ -427,9 +427,10 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span><span class="op">)</span></span>
 <span><span class="co">#                   a7_trial_is_part_of_a_paediatric_investigation_plan</span></span>
 <span><span class="co"># .statusRecruitment FALSE TRUE</span></span>
-<span><span class="co">#          ongoing       0    0</span></span>
-<span><span class="co">#          completed    12    6</span></span>
-<span><span class="co">#          other         2    2</span></span></code></pre></div>
+<span><span class="co">#        ongoing         3    2</span></span>
+<span><span class="co">#        completed      13    5</span></span>
+<span><span class="co">#        ended early     5    4</span></span>
+<span><span class="co">#        other           9    4</span></span></code></pre></div>
 <div id="workflow-ctgov-example">
 
 </div>
@@ -489,7 +490,7 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span>  only.count <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># $n</span></span>
-<span><span class="co"># [1] 8754</span></span></code></pre></div>
+<span><span class="co"># [1] 8783</span></span></code></pre></div>
 <div id="workflow-data-model">
 
 </div>

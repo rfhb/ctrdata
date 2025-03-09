@@ -11,7 +11,7 @@ the state of recruitment. Simplifies the status into three categories."></head><
 
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.20.0.9990</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.21.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,8 +69,9 @@ be used with <a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a>.</p></dd>
     <p>data frame with columns `_id` and `.statusRecruitment`, which is
 a factor with levels `ongoing` (includes active, not yet recruiting;
 temporarily halted; suspended; authorised, not started and similar),
-`completed` (includes ended; ongoing, recuitment mended) and
-`other` (includes terminated; revoked).</p>
+`completed` (includes ended; ongoing, recruitment ended),
+`ended early` (includes prematurely ended, terminated early) and
+`other` (includes revoked, withdrawn, planned, stopped).</p>
     </div>
 
     <div class="section level2">
@@ -94,7 +95,11 @@ temporarily halted; suspended; authorised, not started and similar),
 <span class="r-out co"><span class="r-pr">#&gt;</span> [3] "participants.recruitmentStatusOverride"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ctis</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ctPublicStatusCode" "ctStatus"          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "authorizedApplication.memberStatesConcerned.mscName"                    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "mscTrialNotificationsInfoList.mscNotificationsListInfo.notificationType"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "events.trialEvents.events.notificationType"                             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "ctPublicStatusCode"                                                     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5] "ctStatus"                                                               </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
