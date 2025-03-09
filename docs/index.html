@@ -141,61 +141,61 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <col width="50%">
 <col width="50%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th>Function name</th>
 <th>Function purpose</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><code><a href="reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser()</a></code></td>
 <td>Open search pages of registers or execute search in web browser</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code><a href="reference/ctrFindActiveSubstanceSynonyms.html">ctrFindActiveSubstanceSynonyms()</a></code></td>
 <td>Find synonyms and alternative names for an active substance</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code><a href="reference/ctrGenerateQueries.html">ctrGenerateQueries()</a></code></td>
 <td><strong>From simple user parameters, generates queries for each register to find trials of interest</strong></td>
 </tr>
-<tr class="even">
+<tr>
 <td><code><a href="reference/ctrGetQueryUrl.html">ctrGetQueryUrl()</a></code></td>
 <td>Import from clipboard the URL of a search in one of the registers</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code></td>
 <td><strong>Retrieve (download) or update, and annotate, information on trials from a register and store in a collection in a database</strong></td>
 </tr>
-<tr class="even">
+<tr>
 <td><code><a href="reference/ctrShowOneTrial.html">ctrShowOneTrial()</a></code></td>
 <td>🔔 Show full structure and all data of a trial, interactively select fields of interest for <code><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code>
 </td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code><a href="reference/dbQueryHistory.html">dbQueryHistory()</a></code></td>
 <td>Show the history of queries that were downloaded into the collection</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code><a href="reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials()</a></code></td>
 <td><strong>Get the identifiers of de-duplicated trials in the collection</strong></td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code><a href="reference/dbFindFields.html">dbFindFields()</a></code></td>
 <td>Find names of variables (fields) in the collection</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code></td>
 <td><strong>Create a data frame (or tibble) from trial records in the database with the specified fields</strong></td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code><a href="reference/dfTrials2Long.html">dfTrials2Long()</a></code></td>
 <td>Transform the data.frame from <code><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code> into a long name-value data.frame, including deeply nested fields</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code><a href="reference/dfName2Value.html">dfName2Value()</a></code></td>
 <td>From a long name-value data.frame, extract values for variables (fields) of interest (e.g., endpoints)</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code><a href="reference/dfMergeVariablesRelevel.html">dfMergeVariablesRelevel()</a></code></td>
 <td>Merge variables into a new variable, optionally map values to a new set of levels</td>
 </tr>
@@ -213,32 +213,32 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <col width="50%">
 <col width="50%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th>Purpose</th>
 <th>Function call</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td>Create <strong>SQLite</strong> database connection</td>
 <td><code>dbc &lt;- nodbi::src_sqlite(dbname = "name_of_my_database", collection = "name_of_my_collection")</code></td>
 </tr>
-<tr class="even">
+<tr>
 <td>Create <strong>DuckDB</strong> database connection</td>
 <td><code>dbc &lt;- nodbi::src_duckdb(dbdir = "name_of_my_database", collection = "name_of_my_collection")</code></td>
 </tr>
-<tr class="odd">
+<tr>
 <td>Create <strong>MongoDB</strong> database connection</td>
 <td><code>dbc &lt;- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")</code></td>
 </tr>
-<tr class="even">
+<tr>
 <td>Create <strong>PostgreSQL</strong> database connection</td>
 <td><code>dbc &lt;- nodbi::src_postgres(dbname = "name_of_my_database"); dbc[["collection"]] &lt;- "name_of_my_collection"</code></td>
 </tr>
-<tr class="odd">
+<tr>
 <td>Use connection with <code>ctrdata</code> functions</td>
 <td><code>ctrdata::{ctrLoadQueryIntoDb, dbQueryHistory, dbFindIdsUniqueTrials, dbFindFields, dbGetFieldsIntoDf}(con = dbc, ...)</code></td>
 </tr>
-<tr class="even">
+<tr>
 <td>Use connection with <code>nodbi</code> functions</td>
 <td>e.g., <code>nodbi::docdb_query(src = dbc, key = dbc$collection, ...)</code>
 </td>
