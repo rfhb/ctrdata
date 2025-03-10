@@ -160,7 +160,8 @@ f.numSites <- function(df = NULL) {
         !is.na(.data$authorizedPartsII.trialSites.id) ~
           .data$helper_numSitesCtis1,
         !is.na(.data$authorizedApplication.authorizedPartsII.trialSites.id) ~
-          .data$helper_numSitesCtis2
+          .data$helper_numSitesCtis2,
+        .default = NA_integer_
       )
     ) %>%
     dplyr::pull("out") -> df$ctis

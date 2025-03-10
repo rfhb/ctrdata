@@ -77,5 +77,50 @@ tf <- function() {
   expect_true(sum(nchar(unlist(dF$.trialPopulationInclusion))) > 25000L)
   expect_true(sum(nchar(unlist(dF$.trialPopulationExclusion))) > 22000L)
 
+
+  # test robustness against NAs
+
+  # local test helper function
+  ltf <- function(ifn, idf, con) do.call(ifn, list(idf))
+
+  # f = fcts[7]
+  for (f in fcts) {
+
+    # info
+    message(f)
+
+    # get regular data
+    dF <- dbGetFieldsIntoDf(
+      fields = unlist(fctFields[f]),
+      con = dbc,
+      verbose = FALSE
+    )
+
+    # generate empty df
+    for (c in seq_len(ncol(dF))[-1]) {
+      # message(c, ": ", class(dF[[c]])[1])
+      v <- is.na(dF[[c]])
+      # replace all values with first na value
+      dF[[c]][!v] <- dF[[c]][v][1]
+     }
+
+    # test 1 - check condition that all are NA
+    expect_true(all(unlist(sapply(dF[, -1], is.na))))
+
+    # run function f, include in helper
+    # so that f.isUniqueTrial can access
+    # con in the parent environment
+    res <- try(ltf(f, dF, dbc), silent = TRUE)
+
+    if (inherits(res, "try-error")) message(">>> failed: ", f)
+
+    # test 2
+    expect_false(inherits(res, "try-error"))
+
+    # test 3
+    expect_equal(nrow(dF), nrow(res))
+
+  }
+
 }
 tf()

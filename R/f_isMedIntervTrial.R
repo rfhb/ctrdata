@@ -108,7 +108,9 @@ f.isMedIntervTrial <- function(df = NULL) {
   df %>% dplyr::mutate(
     #
     analysis_isDrugTrial =
-      dplyr::case_when(.data$ctrname == "EUCTR" ~ TRUE),
+      dplyr::case_when(
+        .data$ctrname == "EUCTR" ~ TRUE
+      ),
     #
     out = .data$analysis_isDrugTrial
   ) %>%

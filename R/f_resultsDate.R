@@ -98,7 +98,8 @@ f.resultsDate <- function(df = NULL) {
         .data$protocolSection.statusModule.resultsFirstPostDateStruct.date,
         .data$results.intentToPublish,
         .data$results.clinicalStudyReports.submitDate,
-        .data$results.summaryResults.submissionDate
+        .data$results.summaryResults.submissionDate,
+        .ptype = as.Date(character(0L))
       )
     ) %>%
     dplyr::pull("out") -> df[[".resultsDate"]]

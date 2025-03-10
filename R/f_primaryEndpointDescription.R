@@ -168,7 +168,8 @@ f.primaryEndpointDescription <- function(df = NULL) {
           s, function(i) c(i, NA[seq_len(max(l) - length(i))])
         )
       }
-      unlist(apply(data.frame(s), 1, paste, collapse = " == "))
+      o <- unlist(apply(data.frame(s), 1, paste, collapse = " == "))
+      if (!length(o)) NA else o
     })
   }
 
@@ -181,13 +182,16 @@ f.primaryEndpointDescription <- function(df = NULL) {
     ))
   ) -> df
 
-
   # keep only outcome columns
   df <- df[, c("_id", ".primaryEndpointDescription"), drop = FALSE]
 
+
   #### checks ####
-  stopifnot(inherits(df[[".primaryEndpointDescription"]], "list"))
   stopifnot(ncol(df) == 2L)
+  stopifnot(
+    inherits(df[[".primaryEndpointDescription"]], "list") ||
+    inherits(df[[".primaryEndpointDescription"]], "logical") # if NA
+  )
 
   # return
   return(df)

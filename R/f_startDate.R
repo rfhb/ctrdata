@@ -81,12 +81,12 @@ f.startDate <- function(df = NULL) {
   `%>%` <- dplyr::`%>%`
 
   # helper function
-  pmaxInt <- function(...) pmax(..., na.rm = TRUE)
+  pmaxDate <- function(...) as.Date(pmax(..., na.rm = TRUE))
 
   # all registers
   dplyr::mutate(
     df, out = do.call(
-      pmaxInt,
+      pmaxDate,
       dplyr::select(
         df, unlist(fldsNeeded, use.names = FALSE)
       ))) %>%

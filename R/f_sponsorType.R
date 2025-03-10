@@ -37,11 +37,11 @@
 #' }
 #'
 f.sponsorType <- function(df = NULL) {
-  
+
   # check generic, do not edit
   stopifnot(is.data.frame(df) || is.null(df))
-  
-  
+
+
   #### fields ####
   fldsNeeded <- list(
     "euctr" = c(
@@ -68,40 +68,41 @@ f.sponsorType <- function(df = NULL) {
       # CTIS2
       "authorizedApplication.authorizedPartI.sponsors.isCommercial"
     ))
-  
+
   # helper definitions
   # sponsor type
   stc <- "for profit"
   stn <- "not for profit"
   sto <- "other"
-  
+
   #### describe ####
   if (is.null(df)) {
-    
+
     # generic, do not edit
     return(fldsNeeded)
-    
+
   } # end describe
-  
-  
+
+
   #### calculate ####
-  
+
   # check generic, do not edit
   fctChkFlds(names(df), fldsNeeded)
-  
-  
+
+
   #### . EUCTR ####
   df %>% dplyr::mutate(
     #
     out = dplyr::case_match(
       as.character(.data$b1_sponsor.b31_and_b32_status_of_the_sponsor),
       "Commercial" ~ stc,
-      "Non-Commercial" ~ stn
+      "Non-Commercial" ~ stn,
+      .default = NA_character_
     )
   ) %>%
     dplyr::pull("out") -> df$euctr
-  
-  
+
+
   #### . CTGOV ####
   df %>% dplyr::mutate(
     #
@@ -109,12 +110,13 @@ f.sponsorType <- function(df = NULL) {
       as.character(.data$sponsors.lead_sponsor.agency_class),
       c("NIH", "U.S. Fed") ~ stn,
       c("Industry") ~ stc,
-      c("Indiv", "Ambig", "Other", "Unknown") ~ sto
+      c("Indiv", "Ambig", "Other", "Unknown") ~ sto,
+      .default = NA_character_
     )
   ) %>%
     dplyr::pull("out") -> df$ctgov
-  
-  
+
+
   #### . CTGOV2 ####
   #
   # https://clinicaltrials.gov/data-api/about-api/study-data-structure
@@ -135,23 +137,25 @@ f.sponsorType <- function(df = NULL) {
       as.character(.data$protocolSection.sponsorCollaboratorsModule.leadSponsor.class),
       c("NIH", "FED", "OTHER_GOV") ~ stn,
       c("INDUSTRY") ~ stc,
-      c("INDIV", "AMBIG", "OTHER", "UNKNOWN") ~ sto
+      c("INDIV", "AMBIG", "OTHER", "UNKNOWN") ~ sto,
+      .default = NA_character_
     )
   ) %>%
     dplyr::pull("out") -> df$ctgov2
-  
-  
+
+
   #### . ISRCTN ####
   df %>% dplyr::mutate(
     #
     out = dplyr::case_match(
-      .data$ctrname,
-      "ISRCTN" ~ sto
+      as.character(.data$ctrname),
+      "ISRCTN" ~ sto,
+      .default = NA_character_
     )
   ) %>%
     dplyr::pull("out") -> df$isrctn
-  
-  
+
+
   #### . CTIS ####
   ncs <- c(
     "Hospital/Clinic/Other health care facility",
@@ -191,16 +195,17 @@ f.sponsorType <- function(df = NULL) {
       out = dplyr::case_when(
         .data$helper4 ~ stn,
         !.data$helper4 ~ stc,
-        !is.na(.data$helper4) ~ sto
+        !is.na(.data$helper4) ~ sto,
+        .default = NA_character_
       )
     ) %>%
     dplyr::pull("out") -> df$ctis
-  
-  
+
+
   # keep only register names
   fldsNeeded <- names(fldsNeeded)
   fldsNeeded <- intersect(fldsNeeded, names(df))
-  
+
   # merge into vector (ordered factor)
   df[[".sponsorType"]] <- factor(
     dfMergeVariablesRelevel(
@@ -209,16 +214,16 @@ f.sponsorType <- function(df = NULL) {
     ),
     levels = c(stn, stc, sto)
   )
-  
+
   # keep only outcome columns
   df <- df[, c("_id", ".sponsorType"), drop = FALSE]
-  
-  
+
+
   #### checks ####
   stopifnot(inherits(df[[".sponsorType"]], "factor"))
   stopifnot(ncol(df) == 2L)
-  
+
   # return
   return(df)
-  
+
 } # end .sponsorType

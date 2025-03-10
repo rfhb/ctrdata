@@ -114,11 +114,12 @@ f.primaryEndpointResults <- function(df = NULL) {
     # this is quite drastic but minimises
     # ambiguities and different spellings
     trimws(
-      gsub("hypothesis|method", "",
-           gsub("[^a-z1-2 ]", "",
-                gsub("[ ]+", "",
-                     gsub("two", "2",
-                          tolower(x))))))
+    gsub("hypothesis|method", "",
+    gsub("[^a-z1-2 ]", "",
+    gsub("[ ]+", "",
+    gsub("two", "2",
+    tolower(x)
+    )))))
 
   }
 
@@ -278,11 +279,11 @@ f.primaryEndpointResults <- function(df = NULL) {
   df %>%
     dplyr::mutate(
       .primaryEndpointFirstPvalue = dplyr::coalesce(
-        .data$firstPvalueEuctr, .data$firstPvalueCtgov2, .data$firstPvalueCtgov),
+        .data$firstPvalueEuctr, .data$firstPvalueCtgov2, .data$firstPvalueCtgov, .ptype = double()),
       .primaryEndpointFirstPmethod = dplyr::coalesce(
-        .data$firstPmethodEuctr, .data$firstPmethodCtgov2, .data$firstPmethodCtgov),
+        .data$firstPmethodEuctr, .data$firstPmethodCtgov2, .data$firstPmethodCtgov, .ptype = character()),
       .primaryEndpointFirstPsize = dplyr::coalesce(
-        .data$firstPsizeEuctr, .data$firstPsizeCtgov2, .data$firstPsizeCtgov)
+        .data$firstPsizeEuctr, .data$firstPsizeCtgov2, .data$firstPsizeCtgov, .ptype = numeric())
     ) %>%
     # keep only outcome columns
     dplyr::select(c(

@@ -95,7 +95,8 @@ f.trialPhase <- function(df = NULL) {
         .data$e71_human_pharmacology_phase_i ~ "phase 1",
         .data$e72_therapeutic_exploratory_phase_ii ~ "phase 2",
         .data$e73_therapeutic_confirmatory_phase_iii ~ "phase 3",
-        .data$e74_therapeutic_use_phase_iv ~ "phase 4"
+        .data$e74_therapeutic_use_phase_iv ~ "phase 4", 
+        .default = NA_character_
       )
     ) %>%
     dplyr::pull("euctrphase") -> df$euctrphase
