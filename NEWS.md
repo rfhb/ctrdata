@@ -1,6 +1,7 @@
 # ctrdata 1.21.0.9000
 
-- new development version
+## Bug fix 
+- Updated `f.sponsorType` to better handle NAs
 
 # ctrdata 1.21.0
 
