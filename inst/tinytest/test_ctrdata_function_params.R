@@ -223,6 +223,8 @@ tf <- function() {
       "query=cancer&age=adult"),
     c("cancer", # add query=
       "query=cancer"),
+    c("(cancer OR pneumonia)", # add query=
+      "query=(cancer OR pneumonia)"),
     c("cancer+AND breast&age=adult&phase=0", # add query=
       "query=cancer+AND breast&age=adult&phase=0"),
     c("cancer&age=adult&phase=0", # add query=
