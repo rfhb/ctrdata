@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.21.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.21.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,12 +39,20 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.21.0" id="ctrdata-1210">ctrdata 1.21.0<a class="anchor" aria-label="anchor" href="#ctrdata-1210"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.21.0.9000" id="ctrdata-12109000">ctrdata 1.21.0.9000<a class="anchor" aria-label="anchor" href="#ctrdata-12109000"></a></h2>
+<div class="section level3">
+<h3 id="bug-fix-1-21-0-9000">Bug fix<a class="anchor" aria-label="anchor" href="#bug-fix-1-21-0-9000"></a></h3>
+<ul><li>Updated all <code>f...</code> clinical trial concept functions to better handle fields that only have NAs</li>
+<li>Enabled round brackets for nesting logical operators in <code>queryterm</code>, thanks <a href="https://github.com/jacksknnr" class="external-link">@jacksknnr</a> (<a href="https://github.com/rfhb/ctrdata/issues/46" class="external-link">#46</a>)</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.21.0" id="ctrdata-1210">ctrdata 1.21.0<a class="anchor" aria-label="anchor" href="#ctrdata-1210"></a></h2><p class="text-muted">CRAN release: 2025-03-09</p>
 <div class="section level3">
 <h3 id="improvements-1-21-0">Improvements<a class="anchor" aria-label="anchor" href="#improvements-1-21-0"></a></h3>
 <ul><li>New feature: built-in functions that implement and calculate common trial concepts across different registers, see <code><a href="../reference/ctrdata-trial-concepts.html">help("ctrdata-trial-concepts")</a></code> which should largely avoid that users have to code themselves and repeatedly common trial concepts, such as recruitment start date, trial investigating a medicine as intervention, trial being a platform trial etc.</li>
 <li>New feature: function <code><a href="../reference/ctrGenerateQueries.html">ctrGenerateQueries()</a></code> to search all registers from a user’s single input, e.g. intervention, phase, dates</li>
-<li>Refactored <code><a href="../reference/dfMergeVariablesRelevel.html">dfMergeVariablesRelevel()</a></code>, factored out returning data frame or tibble</li>
+<li>Refactored <code><a href="../reference/dfMergeVariablesRelevel.html">dfMergeVariablesRelevel()</a></code>, factored out returning data frame or tibble, thanks <a href="https://github.com/machado-t" class="external-link">@machado-t</a> (<a href="https://github.com/rfhb/ctrdata/issues/45" class="external-link">#45</a>)</li>
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fix-1-21-0">Bug fix<a class="anchor" aria-label="anchor" href="#bug-fix-1-21-0"></a></h3>
