@@ -76,6 +76,10 @@ f.trialPopulation <- function(df = NULL) {
     ),
     "ctis" = c(
       "ageGroup",
+      # ctis1
+      "authorizedPartI.trialDetails.trialInformation.eligibilityCriteria.principalInclusionCriteria.principalInclusionCriteria",
+      "authorizedPartI.trialDetails.trialInformation.eligibilityCriteria.principalExclusionCriteria.principalExclusionCriteria",
+      # ctis2
       "authorizedApplication.authorizedPartI.trialDetails.trialInformation.eligibilityCriteria.principalInclusionCriteria.principalInclusionCriteria",
       "authorizedApplication.authorizedPartI.trialDetails.trialInformation.eligibilityCriteria.principalExclusionCriteria.principalExclusionCriteria"
     ))
@@ -277,12 +281,24 @@ f.trialPopulation <- function(df = NULL) {
         .default = .data$.trialPopulationAgeGroup
       ),
       #
+      # ctis1
+      .trialPopulationInclusion = dplyr::if_else(
+        is.na(.data$authorizedPartI.trialDetails.trialInformation.eligibilityCriteria.principalInclusionCriteria.principalInclusionCriteria),
+        .data$.trialPopulationInclusion,
+        .data$authorizedPartI.trialDetails.trialInformation.eligibilityCriteria.principalInclusionCriteria.principalInclusionCriteria
+      ),
+      #
+      .trialPopulationExclusion = dplyr::if_else(
+        is.na(.data$authorizedPartI.trialDetails.trialInformation.eligibilityCriteria.principalExclusionCriteria.principalExclusionCriteria),
+        .data$.trialPopulationExclusion,
+        .data$authorizedPartI.trialDetails.trialInformation.eligibilityCriteria.principalExclusionCriteria.principalExclusionCriteria
+      ),
+      # ctis2
       .trialPopulationInclusion = dplyr::if_else(
         is.na(.data$authorizedApplication.authorizedPartI.trialDetails.trialInformation.eligibilityCriteria.principalInclusionCriteria.principalInclusionCriteria),
         .data$.trialPopulationInclusion,
         .data$authorizedApplication.authorizedPartI.trialDetails.trialInformation.eligibilityCriteria.principalInclusionCriteria.principalInclusionCriteria
       ),
-      #
       .trialPopulationExclusion = dplyr::if_else(
         is.na(.data$authorizedApplication.authorizedPartI.trialDetails.trialInformation.eligibilityCriteria.principalExclusionCriteria.principalExclusionCriteria),
         .data$.trialPopulationExclusion,
