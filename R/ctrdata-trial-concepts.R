@@ -80,6 +80,8 @@
 #' (e.g., "P" for paediatric participants, "A" for adults, "E" for older than
 #' 65 years, or "P+A"), inclusion and exclusion criteria texts
 #'
+#' - \link{f.trialTitle} (string) full or scientific title of the study
+#'
 #' @name ctrdata-trial-concepts
 #' @docType data
 #' @author Ralf Herold \email{ralf.herold@@mailbox.org}

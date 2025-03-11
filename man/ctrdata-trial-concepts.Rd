@@ -70,6 +70,7 @@ with which a trial is associated
 \item \link{f.trialPopulation} (columns of factor, string and string) age groups
 (e.g., "P" for paediatric participants, "A" for adults, "E" for older than
 65 years, or "P+A"), inclusion and exclusion criteria texts
+\item \link{f.trialTitle} (string) full or scientific title of the study
 }
 }
 \author{
