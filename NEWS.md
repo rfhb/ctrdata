@@ -1,14 +1,15 @@
 # ctrdata 1.21.0.9000
 
 ## Bug fix 
-- Updated `f.sponsorType` to better handle NAs
+- Updated all `f...` clinical trial concept functions to better handle fields that only have NAs
+- Enabled round brackets for nesting logical operators in `queryterm`, thanks @jacksknnr (#46)
 
 # ctrdata 1.21.0
 
 ## Improvements
 - New feature: built-in functions that implement and calculate common trial concepts across different registers, see `help("ctrdata-trial-concepts")` which should largely avoid that users have to code themselves and repeatedly common trial concepts, such as recruitment start date, trial investigating a medicine as intervention, trial being a platform trial etc. 
 - New feature: function `ctrGenerateQueries()` to search all registers from a user's single input, e.g. intervention, phase, dates
-- Refactored `dfMergeVariablesRelevel()`, factored out returning data frame or tibble 
+- Refactored `dfMergeVariablesRelevel()`, factored out returning data frame or tibble, thanks @machado-t (#45)
 
 ## Bug fix
 - `dbFindIdsUniqueTrials()` excludes GB records from `EUCTR` whenever there is at least one Member State or Third country record

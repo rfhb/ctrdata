@@ -280,7 +280,8 @@ ctrLoadQueryIntoDb <- function(
     if (grepl(regQueryterm, gsub(
       "\\[", "", gsub("\\]", "", utils::URLencode(queryterm))))) {
       stop("Parameter 'queryterm' has unexpected characters: ",
-           queryterm, ", expected are: a-zA-Z0-9=?+&%_-,.#: []/\"{}",
+           queryterm, ", expected are: ",
+           gsub("^\\[\\^(.+)\\]$", "\\1", regQueryterm),
            call. = FALSE
       )
     }

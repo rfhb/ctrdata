@@ -20,7 +20,7 @@ countriesActive <- c(
 #
 # regexpr
 # - queryterm and urls
-regQueryterm <- "[^-.a-zA-Z0-9=?+&#%_:\"/, {}]"
+regQueryterm <- "[^-.a-zA-Z0-9=?+&#%_:\"/, {}\\(\\)]"
 # - EudraCT e.g. 2010-022945-52
 regEuctr <- "[0-9]{4}-[0-9]{6}-[0-9]{2}"
 # - CTGOV

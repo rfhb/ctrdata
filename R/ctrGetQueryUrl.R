@@ -198,8 +198,12 @@ ctrGetQueryUrl <- function(
 
     # sanity correction for naked terms
     queryterm <- sub(
-      "(^|&|[&]?\\w+=\\w+&)([ a-zA-Z0-9+-]+)($|&\\w+=\\w+)",
-      "\\1query=\\2\\3", queryterm
+      paste0(
+        "(^|&|[&]?\\w+=\\w+&)(",
+        gsub("[=&^]", "", regQueryterm),
+        "+)($|&\\w+=\\w+)"),
+      "\\1query=\\2\\3",
+      queryterm
     )
 
     # check if url was for results of single trial
