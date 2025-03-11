@@ -40,7 +40,7 @@
 #'
 #' @export
 #'
-#' @importFrom dplyr mutate case_when pull left_join `%>%`
+#' @importFrom dplyr mutate case_when pull left_join coalesce `%>%`
 #' @importFrom stringdist stringsimmatrix
 #' @importFrom stringi stri_count_fixed stri_detect_regex stri_split_fixed
 #' @importFrom tidyr pivot_longer unnest
