@@ -13,17 +13,15 @@ be used with \link{dbGetFieldsIntoDf}.}
 }
 \value{
 data frame with columns `_id` and `.likelyPlatformTrial`, a logical,
-and `.idsRelatedTrials`, a list of identifiers of trials calculated to be
-related (e.g., based on CTIS' `associatedClinicalTrials` and otherwise on
-additional identifiers in the record).
+(e.g., based on CTIS' `associatedClinicalTrials`) and `.maybeRelatedTrials`,
+a list (based on similar terms within brackets in the title).
 }
 \description{
 Trial concept calculated: platform trial, research platform.
 As operational definition, at least one of these criteria is true:
 a. trial has "platform", "basket", "umbrella", "multi.?arm", "multi.?stage"
-or "master protocol"
-in its title or description (for ISRCTN, this is the only criterion; some
-trials in EUCTR lack data in English),
+or "master protocol" in its title or description (for ISRCTN, this is the
+only criterion; some trials in EUCTR lack data in English),
 b. trial has more than 2 active arms with different investigational medicines,
 after excluding comparator, auxiliary and placebo medicines (calculated with
 \link{f.numTestArmsSubstances}; not used for ISRCTN because it cannot be
@@ -34,8 +32,8 @@ criterion requires results-related data).
 Requires that EUCTR results have been included in the collection, using
 ctrLoadQueryIntoDb(queryterm = ..., euctrresults = TRUE, con = ...).
 Requires packages dplyr and stringdist to be installed; stringdist is used
-for evaluating names of active substances, which are considered similar when
-the similarity is 0.8 or higher.
+for evaluating terms in brackets in the trial title, where trials may be
+related if the term similarity is 0.7 or higher.
 }
 \details{
 Publication references considered:
