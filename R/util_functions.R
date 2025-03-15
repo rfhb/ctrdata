@@ -865,7 +865,7 @@ ctrMultiDownload <- function(
     urls,
     destfiles,
     progress = TRUE,
-    resume = FALSE,
+    resume = TRUE,
     multiplex = TRUE,
     verbose = TRUE) {
 
