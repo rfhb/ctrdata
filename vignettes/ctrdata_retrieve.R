@@ -47,7 +47,7 @@ knitr::opts_chunk$set(eval = FALSE)
 # 
 # # Connect to a database and chose a collection (table)
 # db <- nodbi::src_sqlite(
-#   dbname = "sqlite_file.sql",
+#   dbname = "database.sqlite",
 #   collection = "test"
 # )
 # 

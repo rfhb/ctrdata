@@ -3,6 +3,7 @@
 ## Bug fix 
 - Fixed all `f...` clinical trial concept functions to handle NAs, included in testing
 - Fixed round brackets for nesting logical operators in `queryterm`, thanks @jacksknnr (#46)
+- Fixed CRAN NOTE on package size
 
 # ctrdata 1.21.0
 

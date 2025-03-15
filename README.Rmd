@@ -32,7 +32,7 @@ knitr::opts_chunk$set(
 [Databases](#databases-for-use-with-ctrdata) •
 [Data model](#data-model-of-ctrdata) •
 [Example workflow](#example-workflow) •
-[Analysis across trials](#workflow-cross-trial-example) •
+[Analysis across registers](#workflow-across-registers-example) •
 [Tests](#tests) •
 [Acknowledgements](#acknowledgements) •
 [Future](#future-features)
@@ -152,7 +152,7 @@ Use connection with `nodbi` functions | e.g., `nodbi::docdb_query(src = dbc, key
 
 Package `ctrdata` uses the data models that are implicit in data as retrieved from the different registers. No mapping is provided for any register's data model to a putative target data model. The reasons include that registers' data models are continually evolving over time, that only few data fields have similar values and meaning between registers, and that the retrieved public data may not correspond to the registers' internal data model. The structure of data for a specific trial can interactively be inspected and searched using function, see the section [below](#workflow-data-model). 
 
-Thus, the handling of data from different models of registers is to be done at the time of analysis. This approach allows a high level of flexibility, transparency and reproducibility. To support analyses, `ctrdata` (from version 1.21.0) provides functions that calculate concepts of clinical trials across registers, which are commonly used in analyses, such as start dates, age groups and statistical tests of results. See [help(ctrdata-trial-concepts)](https://rfhb.github.io/ctrdata/reference/ctrdata-trial-concepts.html) and the section [Analysis across trials](#workflow-cross-trial-example) in the example workflow below. For further analyses, see examples of function [dfMergeVariablesRelevel()](https://rfhb.github.io/ctrdata/reference/dfMergeVariablesRelevel.html) on how to align related fields from different registers for a joint analysis. 
+Thus, the handling of data from different models of registers is to be done at the time of analysis. This approach allows a high level of flexibility, transparency and reproducibility. To support analyses, `ctrdata` (from version 1.21.0) provides functions that calculate concepts of clinical trials across registers, which are commonly used in analyses, such as start dates, age groups and statistical tests of results. See [help(ctrdata-trial-concepts)](https://rfhb.github.io/ctrdata/reference/ctrdata-trial-concepts.html) and the section [Analysis across trials](#workflow-across-registers-example) in the example workflow below. For further analyses, see examples of function [dfMergeVariablesRelevel()](https://rfhb.github.io/ctrdata/reference/dfMergeVariablesRelevel.html) on how to align related fields from different registers for a joint analysis. 
 
 In any of the [databases](https://rfhb.github.io/ctrdata/index.html#databases-for-use-with-ctrdata), one clinical trial is one document, corresponding to one row in a `SQLite`, `PostgreSQL` or `DuckDB` table, and to one document in a `MongoDB` collection. These `NoSQL` backends allow documents to have different structures, which is used here to accommodate the different models of data retrieved from the registers. Package `ctrdata` stores in every such document: 
 
@@ -236,7 +236,7 @@ For loading the trial information, first a database collection is specified, usi
 # Connect to (or create) an SQLite database
 # stored in a file on the local system:
 db <- nodbi::src_sqlite(
-  dbname = "some_database_name.sqlite_file",
+  dbname = "some_database_name.sqlite",
   collection = "some_collection_name"
 )
 ```
@@ -431,8 +431,8 @@ ctrShowOneTrial(
 ```
 
 
-<div id="workflow-cross-trial-example"></div>
-* Analysis across trials
+<div id="workflow-across-registers-example"></div>
+* Analysis across registers
 
 Show cumulative start of trials over time. This uses the calculation of trial 
 concepts as available since `ctrdata` version 1.21.0 `r emoji::emoji("bell")`.
@@ -625,7 +625,7 @@ ctrLoadQueryIntoDb(
 
 ```{r cleanup, include=FALSE}
 # cleanup
-unlink("some_database_name.sqlite_file")
+unlink("some_database_name.sqlite")
 unlink("./files-ctis/", recursive = TRUE)
 unlink("./files-euctr/", recursive = TRUE)
 unlink("./files-ctgov/", recursive = TRUE)

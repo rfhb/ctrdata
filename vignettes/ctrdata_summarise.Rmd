@@ -1,7 +1,7 @@
 ---
 title: "Summarise and analyse clinical trial information"
 author: "Ralf Herold"
-date: 2025-03-08
+date: 2025-03-15
 output:
   rmarkdown::html_vignette:
     toc: true
@@ -414,8 +414,8 @@ The registers represent clinical trial information by nesting fields (e.g., seve
 # and can be used to search in all field names and all values 
 ctrShowOneTrial("NCT02139397", con = db)
 ```
-![Ctgov2NestedResults](ctgov2nestedresults1.png)
-Alternative: 
+
+See example for `ctrShowOneTrial()` in section [Reviewing a specific trial](#reviewing-a-specific-trial). An alternative is: 
 
 ```{r show_nesting}
 # Helper package
