@@ -1,4 +1,4 @@
-# ctrdata 1.21.0.9000
+# ctrdata 1.21.1
 
 ## Bug fix 
 - Fixed all `f...` clinical trial concept functions to handle NAs, included in testing

@@ -255,11 +255,11 @@ knitr::opts_chunk$set(eval = FALSE)
 # nrow(df)
 # 
 # # Number of recognised set of trials
-# length(unique(df$.maybeRelatedTrial))
+# length(unique(df$.maybeRelatedTrials))
 # # 571
 # 
 # # Trials with which _id are mission?
-# missingIds <- na.omit(setdiff(unlist(df$.maybeRelatedTrial), df$`_id`))
+# missingIds <- na.omit(setdiff(unlist(df$.maybeRelatedTrials), df$`_id`))
 # 
 # # Load missing trials by _id
 # res <- list()
