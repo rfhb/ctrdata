@@ -91,10 +91,11 @@ records while keeping any user annotations of trial records.</p>
 
 <dl><dt id="arg-queryterm">queryterm<a class="anchor" aria-label="anchor" href="#arg-queryterm"></a></dt>
 <dd><p>Either a string with the full URL of a search
-query in a register, or the data frame returned by the
-<a href="ctrGetQueryUrl.html">ctrGetQueryUrl</a> or the
-<a href="dbQueryHistory.html">dbQueryHistory</a> functions, or, together with parameter
-<code>register</code>, a string with query elements of a search URL.
+query in a register, or the data frame returned by
+<a href="ctrGetQueryUrl.html">ctrGetQueryUrl</a> or <a href="dbQueryHistory.html">dbQueryHistory</a>,
+or an `_id` in the format of one of the trial registers,
+or, together with <code>register</code>, a string with query
+elements of a search URL.
 The query details are recorded in the <code>collection</code> for
 later use to update records.
 For "CTIS", <code>queryterm</code> can be an empty string to obtain
@@ -106,8 +107,9 @@ query of a register in a web browser to the clipboard, see
 <dt id="arg-register">register<a class="anchor" aria-label="anchor" href="#arg-register"></a></dt>
 <dd><p>String with abbreviation of register to query,
 either "EUCTR", "CTGOV2", "ISRCTN" or "CTIS". Not needed
-if <code>queryterm</code> provides a full URL to query results
-or provides a single trial identifier.</p></dd>
+if <code>queryterm</code> has a full URL to query results,
+or has a single trial identifier, or comes from
+<a href="ctrGetQueryUrl.html">ctrGetQueryUrl</a> or <a href="dbQueryHistory.html">dbQueryHistory</a>.</p></dd>
 
 
 <dt id="arg-querytoupdate">querytoupdate<a class="anchor" aria-label="anchor" href="#arg-querytoupdate"></a></dt>

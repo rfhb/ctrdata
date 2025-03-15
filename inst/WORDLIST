@@ -130,7 +130,6 @@ github
 gov
 hiearchy
 httr
-idsRelatedTrials
 installFindMongoBinaries
 investigational
 isMedIntervTrial
@@ -139,10 +138,12 @@ jqr
 json
 jsonlite
 likelyPlatformTrial
+likelyRelatedTrials
 linux
 logrank
 lubridate
 macos
+maybeRelatedTrials
 mcnemar
 md
 medRxiv
@@ -210,6 +211,7 @@ trialPhase
 trialPopulationAgeGroup
 trialPopulationExclusion
 trialPopulationInclusion
+trialTitle
 trials’
 uri
 utf

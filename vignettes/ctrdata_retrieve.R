@@ -8,13 +8,13 @@ knitr::opts_chunk$set(eval = FALSE)
 ## -----------------------------------------------------------------------------
 # # Please review and respect register copyrights:
 # ctrOpenSearchPagesInBrowser(
-# copyright = TRUE
+#   copyright = TRUE
 # )
 # 
 # # Open browser with example search:
 # ctrOpenSearchPagesInBrowser(
-# url = "cancer&age=under-18",
-# register = "EUCTR"
+#   url = "cancer&age=under-18",
+#   register = "EUCTR"
 # )
 
 ## ----include=FALSE------------------------------------------------------------
@@ -181,6 +181,88 @@ knitr::opts_chunk$set(eval = FALSE)
 # # [1] 111
 
 ## -----------------------------------------------------------------------------
+# # Search for synonyms
+# ctrFindActiveSubstanceSynonyms(
+#   activesubstance = "imatinib"
+# )
+# #  [1] "imatinib"          "CGP 57148"         "CGP 57148B"
+# #  [4] "CGP57148B"         "Gleevec"           "GLIVEC"
+# #  [7] "Imatinib"          "Imatinib Mesylate" "NSC 716051"
+# # [10] "ST1571"            "STI 571"           "STI571"
+
+## ----include=FALSE------------------------------------------------------------
+# # cleanup
+# unlink("sqlite_file.sql")
+
+## -----------------------------------------------------------------------------
+# # Generate queries to identify trials
+# urls <- ctrGenerateQueries(
+#   searchPhrase = paste0(
+#     "basket OR platform OR umbrella OR master protocol OR ",
+#     "multiarm OR multistage OR subprotocol OR substudy OR ",
+#     "multi-arm OR multi-stage OR sub-protocol OR sub-study"),
+#   startAfter = "2010-01-01")
+# 
+# # See
+# help("ctrGenerateQueries")
+# 
+# # Open queries in register web interface
+# sapply(urls, ctrOpenSearchPagesInBrowser)
+# 
+# # Count number of studies found in the register
+# result <- lapply(urls, ctrLoadQueryIntoDb, only.count = TRUE)
+# 
+# sapply(result, "[[", "n")
+# # EUCTR CTGOV2 ISRCTN   CTIS
+# #  2808   2377   1429    290
+# 
+# # and see examples in
+# vignette("ctrdata_summarise")
+# 
+# # Load studies, include EUCTR results data for analysis
+# result <- lapply(urls, ctrLoadQueryIntoDb, con = db, euctrresults = TRUE)
+# 
+# # See next section for adding related trials
+
+## -----------------------------------------------------------------------------
+# # Use a trial concept to calculate related identifiers
+# help("ctrdata-trial-concepts")
+# #
+# dbQueryHistory(con = db)
+# #
+# df <- dbGetFieldsIntoDf(
+#   fields = "ctrname",
+#   calculate = c(
+#     "f.isUniqueTrial",
+#     "f.likelyPlatformTrial",
+#     "f.trialTitle"
+#   ),
+#   con = db
+# )
+# # reduce to unique trials
+# df <- df[df$.isUniqueTrial,]
+# nrow(df)
+# 
+# # Number of recognised set of trials
+# length(unique(df$.maybeRelatedTrial))
+# # 571
+# 
+# # Trials with which _id are mission?
+# missingIds <- na.omit(setdiff(unlist(df$.maybeRelatedTrial), df$`_id`))
+# 
+# # Load missing trials by _id
+# res <- list()
+# for (i in seq_along(missingIds)) {
+#   message(i, ": ", missingIds[i])
+#   res <- c(res, suppressMessages(
+#     list(ctrLoadQueryIntoDb(missingIds[i], euctrresults = TRUE, con = db))))
+# }
+# 
+# # Trials that could not be loaded are likely phase 1 trials
+# # which are not publicly accessible in the in EUCTR register
+# missingIds[which(sapply(res, "[[", "n") == 0L)]
+
+## -----------------------------------------------------------------------------
 # # ids of trials of interest
 # ctIds <- c(
 #   "NCT00001209", "NCT00001436", "NCT00187109", "NCT01516567", "NCT01471782",
@@ -231,49 +313,6 @@ knitr::opts_chunk$set(eval = FALSE)
 # # https://www.clinicaltrialsregister.eu/ctr-search/search?
 # # query=2008-001606-16+OR+2008-001721-34+OR+2008-002260-33
 # #
-
-## -----------------------------------------------------------------------------
-# # Search for synonyms
-# ctrFindActiveSubstanceSynonyms(
-#   activesubstance = "imatinib"
-# )
-# #  [1] "imatinib"          "CGP 57148"         "CGP 57148B"
-# #  [4] "CGP57148B"         "Gleevec"           "GLIVEC"
-# #  [7] "Imatinib"          "Imatinib Mesylate" "NSC 716051"
-# # [10] "ST1571"            "STI 571"           "STI571"
-
-## ----include=FALSE------------------------------------------------------------
-# # cleanup
-# unlink("sqlite_file.sql")
-
-## -----------------------------------------------------------------------------
-# # Generate queries to identify trials
-# urls <- ctrGenerateQueries(
-#   searchPhrase = paste0(
-#     "basket OR platform OR umbrella OR master protocol OR ",
-#     "multiarm OR multistage OR subprotocol OR substudy OR ",
-#     "multi-arm OR multi-stage OR sub-protocol OR sub-study"
-#   ))
-# 
-# # See
-# help("ctrGenerateQueries")
-# 
-# # Open queries in register web interface
-# sapply(urls, ctrOpenSearchPagesInBrowser)
-# 
-# # Count number of studies found in the register
-# result <- lapply(urls, ctrLoadQueryIntoDb, only.count = TRUE)
-# 
-# sapply(result, "[[", "n")
-# # EUCTR CTGOV2 ISRCTN   CTIS
-# #  2808   2372   1426    289
-# 
-# # For analysis, consider using trial concepts, see
-# help("ctrdata-trial-concepts")
-# 
-# # and see examples in
-# vignette("ctrdata_summarise")
-# 
 
 ## ----remote_mongo-------------------------------------------------------------
 # # Specify base uri for remote MongoDB server,

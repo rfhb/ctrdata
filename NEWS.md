@@ -1,8 +1,8 @@
 # ctrdata 1.21.0.9000
 
 ## Bug fix 
-- Updated all `f...` clinical trial concept functions to better handle fields that only have NAs
-- Enabled round brackets for nesting logical operators in `queryterm`, thanks @jacksknnr (#46)
+- Fixed all `f...` clinical trial concept functions to handle NAs, included in testing
+- Fixed round brackets for nesting logical operators in `queryterm`, thanks @jacksknnr (#46)
 
 # ctrdata 1.21.0
 

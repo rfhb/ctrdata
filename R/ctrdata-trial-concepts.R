@@ -21,10 +21,10 @@
 #' The following trial concepts can be used by referencing their name when
 #' calling \link{dbGetFieldsIntoDf} (parameter `calculate`).
 #' Concepts will continue to be refined and added;
-#' last updated 2025-03-09.
+#' last updated 2025-03-15.
 #'
-#' - \link{f.controlType} (factor) which type of internal or concurrent control is
-#' used in the trial? ("none", "no-treatment", "placebo", "active",
+#' - \link{f.controlType} (factor) which type of internal or concurrent control
+#' is used in the trial? ("none", "no-treatment", "placebo", "active",
 #' "placebo+active" or "other")
 #'
 #' - \link{f.isMedIntervTrial} (logical) is the trial interventional and does
@@ -32,8 +32,8 @@
 #' (experimental) intervention? (irrespective of status of authorisation and
 #' of study design)
 #'
-#' - \link{f.isUniqueTrial} (logical) is the trial record unique in the data frame
-#' of trial, based on the default parameters of \link{dbFindIdsUniqueTrials}?
+#' - \link{f.isUniqueTrial} (logical) is the trial record unique in the data
+#' frame of trial, based on default parameters of \link{dbFindIdsUniqueTrials}?
 #'
 #' - \link{f.likelyPlatformTrial} (logical) is the trial possibly a (research)
 #' platform trial, and what are related trials? (based on trial title,
@@ -58,11 +58,11 @@
 #' - \link{f.startDate} (date) the planned, authorised or documented date
 #' of start of recruitment
 #'
-#' - \link{f.sampleSize} (integer) the achieved (or planned) number of subjects or
-#' participants recruited
+#' - \link{f.sampleSize} (integer) the achieved (or planned) number of subjects
+#' or participants recruited
 #'
-#' - \link{f.sponsorType} (factor) a type or class of main or lead sponsor that is
-#' simplified to "not for profit", "for profit" or "other"
+#' - \link{f.sponsorType} (factor) a type or class of main or lead sponsor that
+#' is simplified to "not for profit", "for profit" or "other"
 #'
 #' - \link{f.statusRecruitment} (factor) a status that is simplified to
 #' "ongoing" (includes temporarily halted), "completed", "ended early" (includes

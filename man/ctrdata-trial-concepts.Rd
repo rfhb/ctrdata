@@ -27,17 +27,17 @@ to ask about or improve a trial concept.
 The following trial concepts can be used by referencing their name when
 calling \link{dbGetFieldsIntoDf} (parameter \code{calculate}).
 Concepts will continue to be refined and added;
-last updated 2025-03-09.
+last updated 2025-03-15.
 \itemize{
-\item \link{f.controlType} (factor) which type of internal or concurrent control is
-used in the trial? ("none", "no-treatment", "placebo", "active",
+\item \link{f.controlType} (factor) which type of internal or concurrent control
+is used in the trial? ("none", "no-treatment", "placebo", "active",
 "placebo+active" or "other")
 \item \link{f.isMedIntervTrial} (logical) is the trial interventional and does
 it have one or more medicines (drugs or biological) as investigational
 (experimental) intervention? (irrespective of status of authorisation and
 of study design)
-\item \link{f.isUniqueTrial} (logical) is the trial record unique in the data frame
-of trial, based on the default parameters of \link{dbFindIdsUniqueTrials}?
+\item \link{f.isUniqueTrial} (logical) is the trial record unique in the data
+frame of trial, based on default parameters of \link{dbFindIdsUniqueTrials}?
 \item \link{f.likelyPlatformTrial} (logical) is the trial possibly a (research)
 platform trial, and what are related trials? (based on trial title,
 f.numTestArmsSubstances, number of periods)
@@ -54,10 +54,10 @@ primary endpoint only
 \item \link{f.resultsDate} (date) the planned or achieved date of results availability
 \item \link{f.startDate} (date) the planned, authorised or documented date
 of start of recruitment
-\item \link{f.sampleSize} (integer) the achieved (or planned) number of subjects or
-participants recruited
-\item \link{f.sponsorType} (factor) a type or class of main or lead sponsor that is
-simplified to "not for profit", "for profit" or "other"
+\item \link{f.sampleSize} (integer) the achieved (or planned) number of subjects
+or participants recruited
+\item \link{f.sponsorType} (factor) a type or class of main or lead sponsor that
+is simplified to "not for profit", "for profit" or "other"
 \item \link{f.statusRecruitment} (factor) a status that is simplified to
 "ongoing" (includes temporarily halted), "completed", "ended early" (includes
 terminated or ended prematurely) and "other" (includes planned, stopped,

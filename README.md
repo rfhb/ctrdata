@@ -37,7 +37,7 @@ interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
 `ctrdata` is a package for the [R](https://www.r-project.org/) system,
 but other systems and tools can use the databases created with this
-package. This README was reviewed on 2025-03-09 for version 1.21.0.
+package. This README was reviewed on 2025-03-15 for version 1.21.0.9000.
 
 ## Main features
 
@@ -172,7 +172,7 @@ overview](https://rfhb.github.io/ctrdata/reference/index.html).
 |----|----|
 | `ctrOpenSearchPagesInBrowser()` | Open search pages of registers or execute search in web browser |
 | `ctrFindActiveSubstanceSynonyms()` | Find synonyms and alternative names for an active substance |
-| `ctrGenerateQueries()` | **From simple user parameters, generates queries for each register to find trials of interest** |
+| `ctrGenerateQueries()` | 🔔 **From simple user parameters, generates queries for each register to find trials of interest** |
 | `ctrGetQueryUrl()` | Import from clipboard the URL of a search in one of the registers |
 | `ctrLoadQueryIntoDb()` | **Retrieve (download) or update, and annotate, information on trials from a register and store in a collection in a database** |
 | `ctrShowOneTrial()` | 🔔 Show full structure and all data of a trial, interactively select fields of interest for `dbGetFieldsIntoDf()` |

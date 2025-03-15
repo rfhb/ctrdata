@@ -12,10 +12,11 @@
 #' records while keeping any user annotations of trial records.
 #'
 #' @param queryterm Either a string with the full URL of a search
-#' query in a register, or the data frame returned by the
-#' \link{ctrGetQueryUrl} or the
-#' \link{dbQueryHistory} functions, or, together with parameter
-#' \code{register}, a string with query elements of a search URL.
+#' query in a register, or the data frame returned by
+#' \link{ctrGetQueryUrl} or \link{dbQueryHistory},
+#' or an `_id` in the format of one of the trial registers,
+#' or, together with \code{register}, a string with query
+#' elements of a search URL.
 #' The query details are recorded in the \code{collection} for
 #' later use to update records.
 #' For "CTIS", \code{queryterm} can be an empty string to obtain
@@ -25,8 +26,9 @@
 #'
 #' @param register String with abbreviation of register to query,
 #' either "EUCTR", "CTGOV2", "ISRCTN" or "CTIS". Not needed
-#' if \code{queryterm} provides a full URL to query results
-#' or provides a single trial identifier.
+#' if \code{queryterm} has a full URL to query results,
+#' or has a single trial identifier, or comes from
+#' \link{ctrGetQueryUrl} or \link{dbQueryHistory}.
 #'
 #' @param querytoupdate Either the word "last", or the row number of
 #' a query in the data frame returned by \link{dbQueryHistory} that

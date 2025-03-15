@@ -35,13 +35,13 @@ These functions open the browser, where the user can start searching for trials 
 ```{r}
 # Please review and respect register copyrights:
 ctrOpenSearchPagesInBrowser(
-copyright = TRUE
+  copyright = TRUE
 )
 
 # Open browser with example search:
 ctrOpenSearchPagesInBrowser(
-url = "cancer&age=under-18",
-register = "EUCTR"
+  url = "cancer&age=under-18",
+  register = "EUCTR"
 )
 ```
 
@@ -256,9 +256,116 @@ ctrLoadQueryIntoDb(
 # [1] 111
 ```
 
+
+## Find synonyms of active substance names
+
+Not all registers automatically expand search terms to include alternative terms, such as codes and other names of active substances. The synonymous names can be used in queries in a register that does not offer search expansion. To obtain a character vector of synonyms for an active substance name: 
+
+```{r}
+# Search for synonyms
+ctrFindActiveSubstanceSynonyms(
+  activesubstance = "imatinib"
+)
+#  [1] "imatinib"          "CGP 57148"         "CGP 57148B"       
+#  [4] "CGP57148B"         "Gleevec"           "GLIVEC"           
+#  [7] "Imatinib"          "Imatinib Mesylate" "NSC 716051"       
+# [10] "ST1571"            "STI 571"           "STI571"   
+```
+
+
+```{r, include=FALSE}
+# cleanup
+unlink("sqlite_file.sql")
+```
+
+
+## Find platform trials
+
+The interest is increasing to design and use integrated research platforms, clinical research platforms, platform trials, multi-arm multi-stage (MAMS) and master protocol research programs (MPRPs). Additional concepts and terms used include basket and umbrella trials, and in particular complex trials. Please see the references below for further information. `ctrdata` can help finding such research and analysing the study information, as follows: 
+
+```{r}
+# Generate queries to identify trials
+urls <- ctrGenerateQueries(
+  searchPhrase = paste0(
+    "basket OR platform OR umbrella OR master protocol OR ",
+    "multiarm OR multistage OR subprotocol OR substudy OR ",
+    "multi-arm OR multi-stage OR sub-protocol OR sub-study"), 
+  startAfter = "2010-01-01")
+
+# See 
+help("ctrGenerateQueries")
+
+# Open queries in register web interface
+sapply(urls, ctrOpenSearchPagesInBrowser)
+
+# Count number of studies found in the register
+result <- lapply(urls, ctrLoadQueryIntoDb, only.count = TRUE)
+
+sapply(result, "[[", "n")
+# EUCTR CTGOV2 ISRCTN   CTIS 
+#  2808   2377   1429    290
+
+# and see examples in
+vignette("ctrdata_summarise")
+
+# Load studies, include EUCTR results data for analysis
+result <- lapply(urls, ctrLoadQueryIntoDb, con = db, euctrresults = TRUE)
+
+# See next section for adding related trials
+```
+
+References:
+
+- EU-PEARL. 2023. ‘D2.1. Report on Terminology, References and Scenarios for Platform Trials and Master Protocols’. https://web.archive.org/web/20230314024441/https://eu-pearl.eu/wp-content/uploads/2020/06/EU-PEARL_D2.1_Report-on-Terminology-and-Scenarios-for-Platform-Trials-and-Masterprotocols.pdf
+- EC / EMA / HMA. 2022. ‘Complex Clinical Trials – Questions and Answers’. EMA/298712/2022. https://health.ec.europa.eu/system/files/2022-06/medicinal_qa_complex_clinical-trials_en.pdf 
+- Williams RJ et al. 2022. ‘Approach for Reporting Master Protocol Study Designs on ClinicalTrials.Gov: Qualitative Analysis’. The BMJ 377 (June):e067745. https://doi.org/10.1136/bmj-2021-067745
+- Clinical Trials Facilitation and Coordination Group (CTFG). 2019. ‘Recommendation Paper on the Initiation and Conduct of Complex Clinical Trials’.  https://www.hma.eu/fileadmin/dateien/Human_Medicines/01-About_HMA/Working_Groups/CTFG/2019_02_CTFG_Recommendation_paper_on_Complex_Clinical_Trials.pdf 
+
+
 ## Load information using trial identifiers
 
-When identifiers of clinical trials of interest are already known, this example shows how they can be processed to import the trial information into a database collection. This involves constructing a query that combines the identifiers and then iterating over the sets of identifiers. Note to combine identifiers into the `queryterm` depends on the specific register: 
+When identifiers of clinical trials of interest are already known, this example shows how they can be processed to import the trial information into a database collection. This involves constructing a query that combines the identifiers and then iterating over the sets of identifiers. Note to combine identifiers into the `queryterm` depends on the specific register. 
+
+```{r}
+# Use a trial concept to calculate related identifiers
+help("ctrdata-trial-concepts")
+#
+dbQueryHistory(con = db)
+#
+df <- dbGetFieldsIntoDf(
+  fields = "ctrname",
+  calculate = c(
+    "f.isUniqueTrial",
+    "f.likelyPlatformTrial",
+    "f.trialTitle"
+  ),
+  con = db
+)
+# reduce to unique trials
+df <- df[df$.isUniqueTrial,]
+nrow(df)
+
+# Number of recognised set of trials
+length(unique(df$.maybeRelatedTrial))
+# 571
+
+# Trials with which _id are mission? 
+missingIds <- na.omit(setdiff(unlist(df$.maybeRelatedTrial), df$`_id`))
+
+# Load missing trials by _id
+res <- list()
+for (i in seq_along(missingIds)) {
+  message(i, ": ", missingIds[i])
+  res <- c(res, suppressMessages(
+    list(ctrLoadQueryIntoDb(missingIds[i], euctrresults = TRUE, con = db))))
+}
+
+# Trials that could not be loaded are likely phase 1 trials 
+# which are not publicly accessible in the in EUCTR register
+missingIds[which(sapply(res, "[[", "n") == 0L)]
+```
+
+The above loads one trial after the other, just using the `_id` of the trial, from which `ctrdata` infers the concerned register. Alternatively, batches of `_id`s can be loaded from some registers (not CTIS), as follows. 
 
 ```{r}
 # ids of trials of interest
@@ -312,70 +419,6 @@ as.data.frame(do.call(rbind, result))[, c("n", "failed")]
 # query=2008-001606-16+OR+2008-001721-34+OR+2008-002260-33
 #
 ```
-
-
-## Find synonyms of active substance names
-
-Not all registers automatically expand search terms to include alternative terms, such as codes and other names of active substances. The synonymous names can be used in queries in a register that does not offer search expansion. To obtain a character vector of synonyms for an active substance name: 
-
-```{r}
-# Search for synonyms
-ctrFindActiveSubstanceSynonyms(
-  activesubstance = "imatinib"
-)
-#  [1] "imatinib"          "CGP 57148"         "CGP 57148B"       
-#  [4] "CGP57148B"         "Gleevec"           "GLIVEC"           
-#  [7] "Imatinib"          "Imatinib Mesylate" "NSC 716051"       
-# [10] "ST1571"            "STI 571"           "STI571"   
-```
-
-
-```{r, include=FALSE}
-# cleanup
-unlink("sqlite_file.sql")
-```
-
-
-## Find platform trials
-
-The interest is increasing to design and use integrated research platforms, clinical research platforms, platform trials, multi-arm multi-stage (MAMS) and master protocol research programs (MPRPs). Additional concepts and terms used include basket and umbrella trials, and in particular complex trials. Please see the references below for further information. `ctrdata` can help finding such research and analysing the study information, as follows: 
-
-```{r}
-# Generate queries to identify trials
-urls <- ctrGenerateQueries(
-  searchPhrase = paste0(
-    "basket OR platform OR umbrella OR master protocol OR ",
-    "multiarm OR multistage OR subprotocol OR substudy OR ",
-    "multi-arm OR multi-stage OR sub-protocol OR sub-study"
-  ))
-
-# See 
-help("ctrGenerateQueries")
-
-# Open queries in register web interface
-sapply(urls, ctrOpenSearchPagesInBrowser)
-
-# Count number of studies found in the register
-result <- lapply(urls, ctrLoadQueryIntoDb, only.count = TRUE)
-
-sapply(result, "[[", "n")
-# EUCTR CTGOV2 ISRCTN   CTIS 
-#  2808   2372   1426    289
-
-# For analysis, consider using trial concepts, see
-help("ctrdata-trial-concepts")
-
-# and see examples in
-vignette("ctrdata_summarise")
-
-```
-
-References:
-
-- EU-PEARL. 2023. ‘D2.1. Report on Terminology, References and Scenarios for Platform Trials and Master Protocols’. https://web.archive.org/web/20230314024441/https://eu-pearl.eu/wp-content/uploads/2020/06/EU-PEARL_D2.1_Report-on-Terminology-and-Scenarios-for-Platform-Trials-and-Masterprotocols.pdf
-- EC / EMA / HMA. 2022. ‘Complex Clinical Trials – Questions and Answers’. EMA/298712/2022. https://health.ec.europa.eu/system/files/2022-06/medicinal_qa_complex_clinical-trials_en.pdf 
-- Williams RJ et al. 2022. ‘Approach for Reporting Master Protocol Study Designs on ClinicalTrials.Gov: Qualitative Analysis’. The BMJ 377 (June):e067745. https://doi.org/10.1136/bmj-2021-067745
-- Clinical Trials Facilitation and Coordination Group (CTFG). 2019. ‘Recommendation Paper on the Initiation and Conduct of Complex Clinical Trials’.  https://www.hma.eu/fileadmin/dateien/Human_Medicines/01-About_HMA/Working_Groups/CTFG/2019_02_CTFG_Recommendation_paper_on_Complex_Clinical_Trials.pdf 
 
 
 ## Example using MongoDB

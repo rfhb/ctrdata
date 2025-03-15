@@ -93,13 +93,13 @@ for trials of interest.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Please review and respect register copyrights:</span></span>
 <span><span class="fu"><a href="../reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser</a></span><span class="op">(</span></span>
-<span>copyright <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  copyright <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Open browser with example search:</span></span>
 <span><span class="fu"><a href="../reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser</a></span><span class="op">(</span></span>
-<span>url <span class="op">=</span> <span class="st">"cancer&amp;age=under-18"</span>,</span>
-<span>register <span class="op">=</span> <span class="st">"EUCTR"</span></span>
+<span>  url <span class="op">=</span> <span class="st">"cancer&amp;age=under-18"</span>,</span>
+<span>  register <span class="op">=</span> <span class="st">"EUCTR"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -338,6 +338,81 @@ in the collection</p>
 <span><span class="co"># [1] 111</span></span></code></pre></div>
 </div>
 <div class="section level2">
+<h2 id="find-synonyms-of-active-substance-names">Find synonyms of active substance names<a class="anchor" aria-label="anchor" href="#find-synonyms-of-active-substance-names"></a>
+</h2>
+<p>Not all registers automatically expand search terms to include
+alternative terms, such as codes and other names of active substances.
+The synonymous names can be used in queries in a register that does not
+offer search expansion. To obtain a character vector of synonyms for an
+active substance name:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Search for synonyms</span></span>
+<span><span class="fu"><a href="../reference/ctrFindActiveSubstanceSynonyms.html">ctrFindActiveSubstanceSynonyms</a></span><span class="op">(</span></span>
+<span>  activesubstance <span class="op">=</span> <span class="st">"imatinib"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#  [1] "imatinib"          "CGP 57148"         "CGP 57148B"       </span></span>
+<span><span class="co">#  [4] "CGP57148B"         "Gleevec"           "GLIVEC"           </span></span>
+<span><span class="co">#  [7] "Imatinib"          "Imatinib Mesylate" "NSC 716051"       </span></span>
+<span><span class="co"># [10] "ST1571"            "STI 571"           "STI571"   </span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="find-platform-trials">Find platform trials<a class="anchor" aria-label="anchor" href="#find-platform-trials"></a>
+</h2>
+<p>The interest is increasing to design and use integrated research
+platforms, clinical research platforms, platform trials, multi-arm
+multi-stage (MAMS) and master protocol research programs (MPRPs).
+Additional concepts and terms used include basket and umbrella trials,
+and in particular complex trials. Please see the references below for
+further information. <code>ctrdata</code> can help finding such research
+and analysing the study information, as follows:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Generate queries to identify trials</span></span>
+<span><span class="va">urls</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ctrGenerateQueries.html">ctrGenerateQueries</a></span><span class="op">(</span></span>
+<span>  searchPhrase <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
+<span>    <span class="st">"basket OR platform OR umbrella OR master protocol OR "</span>,</span>
+<span>    <span class="st">"multiarm OR multistage OR subprotocol OR substudy OR "</span>,</span>
+<span>    <span class="st">"multi-arm OR multi-stage OR sub-protocol OR sub-study"</span><span class="op">)</span>, </span>
+<span>  startAfter <span class="op">=</span> <span class="st">"2010-01-01"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># See </span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/help.html" class="external-link">help</a></span><span class="op">(</span><span class="st">"ctrGenerateQueries"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Open queries in register web interface</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">urls</span>, <span class="va">ctrOpenSearchPagesInBrowser</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Count number of studies found in the register</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">urls</span>, <span class="va">ctrLoadQueryIntoDb</span>, only.count <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">result</span>, <span class="st">"[["</span>, <span class="st">"n"</span><span class="op">)</span></span>
+<span><span class="co"># EUCTR CTGOV2 ISRCTN   CTIS </span></span>
+<span><span class="co">#  2808   2377   1429    290</span></span>
+<span></span>
+<span><span class="co"># and see examples in</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"ctrdata_summarise"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Load studies, include EUCTR results data for analysis</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">urls</span>, <span class="va">ctrLoadQueryIntoDb</span>, con <span class="op">=</span> <span class="va">db</span>, euctrresults <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># See next section for adding related trials</span></span></code></pre></div>
+<p>References:</p>
+<ul>
+<li>EU-PEARL. 2023. ‘D2.1. Report on Terminology, References and
+Scenarios for Platform Trials and Master Protocols’. <a href="https://web.archive.org/web/20230314024441/https://eu-pearl.eu/wp-content/uploads/2020/06/EU-PEARL_D2.1_Report-on-Terminology-and-Scenarios-for-Platform-Trials-and-Masterprotocols.pdf" class="external-link uri">https://web.archive.org/web/20230314024441/https://eu-pearl.eu/wp-content/uploads/2020/06/EU-PEARL_D2.1_Report-on-Terminology-and-Scenarios-for-Platform-Trials-and-Masterprotocols.pdf</a>
+</li>
+<li>EC / EMA / HMA. 2022. ‘Complex Clinical Trials – Questions and
+Answers’. EMA/298712/2022. <a href="https://health.ec.europa.eu/system/files/2022-06/medicinal_qa_complex_clinical-trials_en.pdf" class="external-link uri">https://health.ec.europa.eu/system/files/2022-06/medicinal_qa_complex_clinical-trials_en.pdf</a>
+</li>
+<li>Williams RJ et al. 2022. ‘Approach for Reporting Master Protocol
+Study Designs on ClinicalTrials.Gov: Qualitative Analysis’. The BMJ 377
+(June):e067745. <a href="https://doi.org/10.1136/bmj-2021-067745" class="external-link uri">https://doi.org/10.1136/bmj-2021-067745</a>
+</li>
+<li>Clinical Trials Facilitation and Coordination Group (CTFG). 2019.
+‘Recommendation Paper on the Initiation and Conduct of Complex Clinical
+Trials’. <a href="https://www.hma.eu/fileadmin/dateien/Human_Medicines/01-About_HMA/Working_Groups/CTFG/2019_02_CTFG_Recommendation_paper_on_Complex_Clinical_Trials.pdf" class="external-link uri">https://www.hma.eu/fileadmin/dateien/Human_Medicines/01-About_HMA/Working_Groups/CTFG/2019_02_CTFG_Recommendation_paper_on_Complex_Clinical_Trials.pdf</a>
+</li>
+</ul>
+</div>
+<div class="section level2">
 <h2 id="load-information-using-trial-identifiers">Load information using trial identifiers<a class="anchor" aria-label="anchor" href="#load-information-using-trial-identifiers"></a>
 </h2>
 <p>When identifiers of clinical trials of interest are already known,
@@ -345,8 +420,49 @@ this example shows how they can be processed to import the trial
 information into a database collection. This involves constructing a
 query that combines the identifiers and then iterating over the sets of
 identifiers. Note to combine identifiers into the <code>queryterm</code>
-depends on the specific register:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+depends on the specific register.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Use a trial concept to calculate related identifiers</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/help.html" class="external-link">help</a></span><span class="op">(</span><span class="st">"ctrdata-trial-concepts"</span><span class="op">)</span></span>
+<span><span class="co">#</span></span>
+<span><span class="fu"><a href="../reference/dbQueryHistory.html">dbQueryHistory</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></span>
+<span><span class="co">#</span></span>
+<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span>
+<span>  fields <span class="op">=</span> <span class="st">"ctrname"</span>,</span>
+<span>  calculate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>    <span class="st">"f.isUniqueTrial"</span>,</span>
+<span>    <span class="st">"f.likelyPlatformTrial"</span>,</span>
+<span>    <span class="st">"f.trialTitle"</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  con <span class="op">=</span> <span class="va">db</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co"># reduce to unique trials</span></span>
+<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span><span class="op">[</span><span class="va">df</span><span class="op">$</span><span class="va">.isUniqueTrial</span>,<span class="op">]</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Number of recognised set of trials</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">.maybeRelatedTrial</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># 571</span></span>
+<span></span>
+<span><span class="co"># Trials with which _id are mission? </span></span>
+<span><span class="va">missingIds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html" class="external-link">na.omit</a></span><span class="op">(</span><span class="fu"><a href="https://generics.r-lib.org/reference/setops.html" class="external-link">setdiff</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">.maybeRelatedTrial</span><span class="op">)</span>, <span class="va">df</span><span class="op">$</span><span class="va">`_id`</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Load missing trials by _id</span></span>
+<span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">missingIds</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="va">i</span>, <span class="st">": "</span>, <span class="va">missingIds</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span></span>
+<span>  <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">res</span>, <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressMessages</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span><span class="va">missingIds</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, euctrresults <span class="op">=</span> <span class="cn">TRUE</span>, con <span class="op">=</span> <span class="va">db</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># Trials that could not be loaded are likely phase 1 trials </span></span>
+<span><span class="co"># which are not publicly accessible in the in EUCTR register</span></span>
+<span><span class="va">missingIds</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">res</span>, <span class="st">"[["</span>, <span class="st">"n"</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0L</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
+<p>The above loads one trial after the other, just using the
+<code>_id</code> of the trial, from which <code>ctrdata</code> infers
+the concerned register. Alternatively, batches of <code>_id</code>s can
+be loaded from some registers (not CTIS), as follows.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># ids of trials of interest</span></span>
 <span><span class="va">ctIds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"NCT00001209"</span>, <span class="st">"NCT00001436"</span>, <span class="st">"NCT00187109"</span>, <span class="st">"NCT01516567"</span>, <span class="st">"NCT01471782"</span>, </span>
@@ -399,79 +515,6 @@ depends on the specific register:</p>
 <span><span class="co">#</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="find-synonyms-of-active-substance-names">Find synonyms of active substance names<a class="anchor" aria-label="anchor" href="#find-synonyms-of-active-substance-names"></a>
-</h2>
-<p>Not all registers automatically expand search terms to include
-alternative terms, such as codes and other names of active substances.
-The synonymous names can be used in queries in a register that does not
-offer search expansion. To obtain a character vector of synonyms for an
-active substance name:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Search for synonyms</span></span>
-<span><span class="fu"><a href="../reference/ctrFindActiveSubstanceSynonyms.html">ctrFindActiveSubstanceSynonyms</a></span><span class="op">(</span></span>
-<span>  activesubstance <span class="op">=</span> <span class="st">"imatinib"</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#  [1] "imatinib"          "CGP 57148"         "CGP 57148B"       </span></span>
-<span><span class="co">#  [4] "CGP57148B"         "Gleevec"           "GLIVEC"           </span></span>
-<span><span class="co">#  [7] "Imatinib"          "Imatinib Mesylate" "NSC 716051"       </span></span>
-<span><span class="co"># [10] "ST1571"            "STI 571"           "STI571"   </span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="find-platform-trials">Find platform trials<a class="anchor" aria-label="anchor" href="#find-platform-trials"></a>
-</h2>
-<p>The interest is increasing to design and use integrated research
-platforms, clinical research platforms, platform trials, multi-arm
-multi-stage (MAMS) and master protocol research programs (MPRPs).
-Additional concepts and terms used include basket and umbrella trials,
-and in particular complex trials. Please see the references below for
-further information. <code>ctrdata</code> can help finding such research
-and analysing the study information, as follows:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Generate queries to identify trials</span></span>
-<span><span class="va">urls</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ctrGenerateQueries.html">ctrGenerateQueries</a></span><span class="op">(</span></span>
-<span>  searchPhrase <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
-<span>    <span class="st">"basket OR platform OR umbrella OR master protocol OR "</span>,</span>
-<span>    <span class="st">"multiarm OR multistage OR subprotocol OR substudy OR "</span>,</span>
-<span>    <span class="st">"multi-arm OR multi-stage OR sub-protocol OR sub-study"</span></span>
-<span>  <span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># See </span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/help.html" class="external-link">help</a></span><span class="op">(</span><span class="st">"ctrGenerateQueries"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Open queries in register web interface</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">urls</span>, <span class="va">ctrOpenSearchPagesInBrowser</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Count number of studies found in the register</span></span>
-<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">urls</span>, <span class="va">ctrLoadQueryIntoDb</span>, only.count <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">result</span>, <span class="st">"[["</span>, <span class="st">"n"</span><span class="op">)</span></span>
-<span><span class="co"># EUCTR CTGOV2 ISRCTN   CTIS </span></span>
-<span><span class="co">#  2808   2372   1426    289</span></span>
-<span></span>
-<span><span class="co"># For analysis, consider using trial concepts, see</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/help.html" class="external-link">help</a></span><span class="op">(</span><span class="st">"ctrdata-trial-concepts"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># and see examples in</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"ctrdata_summarise"</span><span class="op">)</span></span></code></pre></div>
-<p>References:</p>
-<ul>
-<li>EU-PEARL. 2023. ‘D2.1. Report on Terminology, References and
-Scenarios for Platform Trials and Master Protocols’. <a href="https://web.archive.org/web/20230314024441/https://eu-pearl.eu/wp-content/uploads/2020/06/EU-PEARL_D2.1_Report-on-Terminology-and-Scenarios-for-Platform-Trials-and-Masterprotocols.pdf" class="external-link uri">https://web.archive.org/web/20230314024441/https://eu-pearl.eu/wp-content/uploads/2020/06/EU-PEARL_D2.1_Report-on-Terminology-and-Scenarios-for-Platform-Trials-and-Masterprotocols.pdf</a>
-</li>
-<li>EC / EMA / HMA. 2022. ‘Complex Clinical Trials – Questions and
-Answers’. EMA/298712/2022. <a href="https://health.ec.europa.eu/system/files/2022-06/medicinal_qa_complex_clinical-trials_en.pdf" class="external-link uri">https://health.ec.europa.eu/system/files/2022-06/medicinal_qa_complex_clinical-trials_en.pdf</a>
-</li>
-<li>Williams RJ et al. 2022. ‘Approach for Reporting Master Protocol
-Study Designs on ClinicalTrials.Gov: Qualitative Analysis’. The BMJ 377
-(June):e067745. <a href="https://doi.org/10.1136/bmj-2021-067745" class="external-link uri">https://doi.org/10.1136/bmj-2021-067745</a>
-</li>
-<li>Clinical Trials Facilitation and Coordination Group (CTFG). 2019.
-‘Recommendation Paper on the Initiation and Conduct of Complex Clinical
-Trials’. <a href="https://www.hma.eu/fileadmin/dateien/Human_Medicines/01-About_HMA/Working_Groups/CTFG/2019_02_CTFG_Recommendation_paper_on_Complex_Clinical_Trials.pdf" class="external-link uri">https://www.hma.eu/fileadmin/dateien/Human_Medicines/01-About_HMA/Working_Groups/CTFG/2019_02_CTFG_Recommendation_paper_on_Complex_Clinical_Trials.pdf</a>
-</li>
-</ul>
-</div>
-<div class="section level2">
 <h2 id="example-using-mongodb">Example using MongoDB<a class="anchor" aria-label="anchor" href="#example-using-mongodb"></a>
 </h2>
 <p>This example works with a free service <a href="https://www.mongodb.com/cloud/atlas" class="external-link">here</a>. Note that the user
@@ -479,7 +522,7 @@ name and password need to be encoded. The format of the connection
 string is documented at <a href="https://www.mongodb.com/docs/manual/reference/connection-string/" class="external-link uri">https://www.mongodb.com/docs/manual/reference/connection-string/</a>.
 For recommended databases, see vignette <a href="https://rfhb.github.io/ctrdata/#databases-that-can-be-used-with-ctrdata">Install
 R package ctrdata</a>.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Specify base uri for remote MongoDB server,</span></span>
 <span><span class="co">#  as part of the encoded connection string</span></span>
 <span><span class="va">db</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_mongo.html" class="external-link">src_mongo</a></span><span class="op">(</span></span>

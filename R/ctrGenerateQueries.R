@@ -60,10 +60,10 @@
 #' # find research platform and platform trials
 #' urls <- ctrGenerateQueries(
 #'   searchPhrase = paste0(
-#'  "basket OR platform OR umbrella OR master protocol OR ",
-#'  "multiarm OR multistage OR subprotocol OR substudy OR ",
-#'  "multi-arm OR multi-stage OR sub-protocol OR sub-study"
-#' ))
+#'    "basket OR platform OR umbrella OR master protocol OR ",
+#'    "multiarm OR multistage OR subprotocol OR substudy OR ",
+#'    "multi-arm OR multi-stage OR sub-protocol OR sub-study"),
+#'  startAfter = "2010-01-01")
 #'
 #' # open queries in register web interface
 #' sapply(urls, ctrOpenSearchPagesInBrowser)
