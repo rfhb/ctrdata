@@ -26,15 +26,15 @@
 #' E-PEARL WP2 2020 https://tinyurl.com/eupearld21terminology (which did not
 #' include all basket trials in the definition, as done here)
 #' Williams RJ et al. 2022 https://doi.org/10.1136/bmj-2021-067745
-
 #'
 #' @param df data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
 #' prints fields needed in `df` for calculating this trial concept, which can
 #' be used with \link{dbGetFieldsIntoDf}.
 #'
 #' @return data frame with columns `_id` and `.likelyPlatformTrial`, a logical,
-#' (e.g., based on CTIS' `associatedClinicalTrials`) and `.maybeRelatedTrials`,
-#' a list (based on similar terms within brackets in the title).
+#' `.likelyRelatedTrials`, a list (e.g., from CTIS' `associatedClinicalTrials`)
+#' and `.maybeRelatedTrials`, a list (based on similar short terms within
+#' a first set of brackets or before a colon in the title).
 #'
 #' @export
 #'
@@ -151,15 +151,6 @@ f.likelyPlatformTrial <- function(df = NULL) {
   # helper function
   `%>%` <- dplyr::`%>%`
 
-  # helper function to handle
-  `%orRmNa%` <- function (i1, i2) {
-    mapply(
-      function(e1, e2) {
-        if (is.na(e1) && is.na(e2)) return(NA)
-        any(na.omit(c(e1, e2)))
-      }, i1, i2)
-  }
-
   # apply nested function which provides values for each register
   # therefore the following code needs to check against register
   if(!any(names(df) == ".numTestArmsSubstances")) df <- dplyr::left_join(
@@ -192,24 +183,24 @@ f.likelyPlatformTrial <- function(df = NULL) {
 
   # get and mangle mapping table
   df2 <- .dbMapIdsTrials(con = parent.frame()$con)
-  #
-  df2$.likelyRelatedTrial <- rowColsList(
+  df2$.likelyRelatedTrials <- rowColsList(
     dplyr::select(df2, registerList))
   df2 <- tidyr::unnest(
-    df2, cols = .data$.likelyRelatedTrial)
-  df2 %>%
+    df2, cols = .data$.likelyRelatedTrials)
+  df2 <- df2 %>%
     dplyr::select(!c(registerList, "SPONSOR")) %>%
     tidyr::pivot_longer(cols = !"_id") %>%
     dplyr::filter(.data$name != "EUCTR") %>% # since this has no country suffix
     dplyr::filter(.data$name != "ctrname") %>%
     dplyr::filter(.data$value != "") %>%
+    # TODO actually broaden this column to include _id to have all identifiers together
     dplyr::filter(.data$value != .data$`_id`) %>%
     dplyr::select(!"name") %>%
     unique() %>%
-    dplyr::rename(".likelyRelatedTrial" = .data$value) %>%
+    dplyr::rename(".likelyRelatedTrials" = .data$value) %>%
     dplyr::summarise(
-      .likelyRelatedTrial = list(.data$.likelyRelatedTrial),
-      .by = .data$`_id`) -> df2
+      .likelyRelatedTrials = list(.data$.likelyRelatedTrials),
+      .by = .data$`_id`)
 
   # merge column into df
   tnc <- nrow(df)
@@ -219,6 +210,10 @@ f.likelyPlatformTrial <- function(df = NULL) {
   # safety check
   stopifnot(tnc == nrow(df))
 
+  # simplify and replace NULL with NA
+  df[[".likelyRelatedTrials"]][
+    !sapply(df[[".likelyRelatedTrials"]], length)] <- NA
+
   # helper function, column vector
   indexSimilarX <- function(x) {
 
@@ -227,7 +222,7 @@ f.likelyPlatformTrial <- function(df = NULL) {
       x, x, method = c(
         # help("stringdist-metrics")
         "osa", "lv", "dl", "hamming", "lcs", "qgram",
-        "cosine", "jaccard", "jw","soundex")[1])
+        "cosine", "jaccard", "jw","soundex")[9])
 
     # blank diagonal
     diag(t) <- NA_integer_
@@ -241,7 +236,8 @@ f.likelyPlatformTrial <- function(df = NULL) {
 
   } # indexSimilarX
 
-  # analyse trial title
+  # analyse trial title,
+  # number of arms and substances
   df %>% dplyr::mutate(
     #
     # is title relevant
@@ -249,23 +245,56 @@ f.likelyPlatformTrial <- function(df = NULL) {
       .data$.trialTitle, titleDefPlatform, case_insensitive = TRUE),
     #
     #
-    # get from title related trials, based on Williams RJ
-    titleRefs = stringi::stri_replace_last_regex(
+    # TODO An ... (AG10) in ... Phase 3 ATTRibute-CM Trial (AG10-301)
+    # TODO Master:A ... Disease MACARONI-23 ISA:A Phase ...
+    #
+    # get from title bracketed references, e.g. as per Williams RJ
+    # Refining ..., TransPORTEC platform trials – p53abn - RED (RAINBO-p53abnRED) Randomized
+    # ... canceR patients with ... disease (UMBRELLA)
+    titleBracketedRefs = stringi::stri_replace_first_regex(
       .data$.trialTitle, "^.+[(](.*?)[)].+$", "$1"
     ),
-    titleRefs = if_else(
-      .data$titleRefs == .data$.trialTitle |
-        nchar(.data$titleRefs) < 5L,
-      NA_character_, gsub("[^a-zA-Z0-9]", "", .data$titleRefs)
+    titleBracketedRefs = if_else(
+      .data$titleBracketedRefs == .data$.trialTitle |
+        nchar(.data$titleBracketedRefs) < 5L,
+      NA_character_, gsub("[^a-zA-Z0-9]", "", .data$titleBracketedRefs)
+    ),
+    #
+    # get delimited reference such as:
+    # RAINBO: Refining ... features, TransPORTEC platform trials (MMRd-GREEN)
+    # CARE1: FIRST LINE ... IN PATIENTS
+    # RECLAIM: an Adaptive Platform Trial ... Post-Acute ... (PASC)
+    # COSENSE-1: A ... precision medicine platform ...
+    # NeoART – A phase Ib/II platform ... adenocarcinoma
+    titleColonedRefs = stringi::stri_replace_first_regex(
+      .data$.trialTitle, "^(.+?)(: | - ).+$", "$1"
+    ),
+    titleColonedRefs = if_else(
+      .data$titleColonedRefs == .data$.trialTitle |
+        nchar(.data$titleColonedRefs) < 5L |
+        nchar(.data$titleColonedRefs) > 25L,
+      NA_character_, gsub("[^a-zA-Z0-9]", "", .data$titleColonedRefs)
+    ),
+    #
+    # select one of the terms found
+    titleRefs = dplyr::if_else(
+      !is.na(.data$titleBracketedRefs),
+      .data$titleBracketedRefs, .data$titleColonedRefs
     ),
     #
     # identify rows of possibly related trials
-    .maybeRelatedTrial = indexSimilarX(.data$titleRefs),
+    # TODO add 'contained in' e.g. RAINBO-p53abnRED, RAINBO
+    .maybeRelatedTrials = indexSimilarX(.data$titleRefs),
     #
     # turn row indices to ids of possibly related trials
-    .maybeRelatedTrial = lapply(
-      .data$.maybeRelatedTrial,
-      function(r) if (all(is.na(r))) NA_character_ else .data$`_id`[r]
+    .maybeRelatedTrials = mapply(
+      function(a, b, c) if (all(is.na(a)))
+        NA_character_ else unique(na.omit(c(.data$`_id`[a], b, c))),
+      a = .data$.maybeRelatedTrials,
+      b = .data$.likelyRelatedTrials,
+      c = .data$`_id`,
+      USE.NAMES = FALSE,
+      SIMPLIFY = FALSE
     ),
     #
     #
@@ -402,15 +431,15 @@ f.likelyPlatformTrial <- function(df = NULL) {
   df <- df[, c(
     "_id",
     ".likelyPlatformTrial",
-    ".likelyRelatedTrial",
-    ".maybeRelatedTrial"
+    ".likelyRelatedTrials",
+    ".maybeRelatedTrials"
   ), drop = FALSE]
 
 
   #### checks ####
   stopifnot(inherits(df[[".likelyPlatformTrial"]], "logical"))
-  stopifnot(inherits(df[[".likelyRelatedTrial"]], "list"))
-  stopifnot(inherits(df[[".maybeRelatedTrial"]], "list"))
+  stopifnot(inherits(df[[".likelyRelatedTrials"]], "list"))
+  stopifnot(inherits(df[[".maybeRelatedTrials"]], "list"))
   stopifnot(ncol(df) == 4L)
 
   # return

@@ -13,8 +13,9 @@ be used with \link{dbGetFieldsIntoDf}.}
 }
 \value{
 data frame with columns `_id` and `.likelyPlatformTrial`, a logical,
-(e.g., based on CTIS' `associatedClinicalTrials`) and `.maybeRelatedTrials`,
-a list (based on similar terms within brackets in the title).
+`.likelyRelatedTrials`, a list (e.g., from CTIS' `associatedClinicalTrials`)
+and `.maybeRelatedTrials`, a list (based on similar short terms within
+a first set of brackets or before a colon in the title).
 }
 \description{
 Trial concept calculated: platform trial, research platform.

@@ -78,6 +78,9 @@ tf <- function() {
   expect_true(sum(nchar(unlist(dF$.trialPopulationExclusion))) > 23000L)
   expect_true(sum(nchar(unlist(dF$.trialTitle))) > 5500)
 
+  # lists
+  expect_length(na.omit(unique(unlist(dF$.likelyRelatedTrials))), 15L)
+  expect_length(na.omit(unique(unlist(dF$.maybeRelatedTrials))), 0L)
 
   # test robustness against NAs
 
