@@ -20,7 +20,8 @@ data frame with columns `_id` and new columns:
 \description{
 Trial concept calculated: inclusion and exclusion criteria as well as
 age groups that can participate in a trial, based on from protocol-related
-information.
+information. (See \link{dfMergeVariablesRelevel} example for healthy
+volunteers.)
 }
 \examples{
 # fields needed

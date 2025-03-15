@@ -214,6 +214,22 @@ f.trialPopulation <- function(df = NULL) {
         .default = .data$.trialPopulationAgeGroup
       ),
       #
+      #
+      .trialPopulationAgeGroup = dplyr::case_when(
+        !is.na(.data$.trialPopulationAgeGroup) ~ .data$.trialPopulationAgeGroup,
+        # CHILD / ADULT / OLDER_ADULT
+        grepl("CHILD", .data$protocolSection.eligibilityModule.stdAges) &
+          grepl("ADULT", .data$protocolSection.eligibilityModule.stdAges) &
+          grepl("OLDER_ADULT", .data$protocolSection.eligibilityModule.stdAges) ~ "P+A+E",
+        grepl("CHILD", .data$protocolSection.eligibilityModule.stdAges) &
+          grepl("ADULT", .data$protocolSection.eligibilityModule.stdAges) ~ "P+A",
+        grepl("ADULT", .data$protocolSection.eligibilityModule.stdAges) &
+          grepl("OLDER_ADULT", .data$protocolSection.eligibilityModule.stdAges) ~ "A+E",
+        grepl("CHILD", .data$protocolSection.eligibilityModule.stdAges) ~ "P",
+        grepl("ADULT", .data$protocolSection.eligibilityModule.stdAges) ~ "A",
+        grepl("OLDER_ADULT", .data$protocolSection.eligibilityModule.stdAges) ~ "E"
+      ),
+      #
       protocolSection.eligibilityModule.eligibilityCriteria = gsub(
         "[\n\r]+", "", .data$protocolSection.eligibilityModule.eligibilityCriteria),
       #
