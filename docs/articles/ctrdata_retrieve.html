@@ -158,7 +158,7 @@ downloaded by <code>ctrdata</code>, by specifying parameter
 <span></span>
 <span><span class="co"># Connect to a database and chose a collection (table)</span></span>
 <span><span class="va">db</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">src_sqlite</a></span><span class="op">(</span></span>
-<span>  dbname <span class="op">=</span> <span class="st">"database.sqlite"</span>,</span>
+<span>  dbname <span class="op">=</span> <span class="st">"database_name.sql"</span>,</span>
 <span>  collection <span class="op">=</span> <span class="st">"test"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -372,7 +372,7 @@ and analysing the study information, as follows:</p>
 <span>    <span class="st">"basket OR platform OR umbrella OR master protocol OR "</span>,</span>
 <span>    <span class="st">"multiarm OR multistage OR subprotocol OR substudy OR "</span>,</span>
 <span>    <span class="st">"multi-arm OR multi-stage OR sub-protocol OR sub-study"</span><span class="op">)</span>, </span>
-<span>  startAfter <span class="op">=</span> <span class="st">"2010-01-01"</span><span class="op">)</span></span>
+<span>  startAfter <span class="op">=</span> <span class="st">"2015-01-01"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># See </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/help.html" class="external-link">help</a></span><span class="op">(</span><span class="st">"ctrGenerateQueries"</span><span class="op">)</span></span>
@@ -384,8 +384,8 @@ and analysing the study information, as follows:</p>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">queries</span>, <span class="va">ctrLoadQueryIntoDb</span>, only.count <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">result</span>, <span class="st">"[["</span>, <span class="st">"n"</span><span class="op">)</span></span>
-<span><span class="co"># EUCTR CTGOV2 ISRCTN   CTIS </span></span>
-<span><span class="co">#  2808   2377   1429    290</span></span>
+<span> <span class="co"># EUCTR CTGOV2 ISRCTN   CTIS </span></span>
+<span> <span class="co">#  1635   1952   1074    223</span></span>
 <span></span>
 <span><span class="co"># and see examples in</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"ctrdata_summarise"</span><span class="op">)</span></span>
@@ -424,9 +424,8 @@ depends on the specific register.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Use a trial concept to calculate related identifiers</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/help.html" class="external-link">help</a></span><span class="op">(</span><span class="st">"ctrdata-trial-concepts"</span><span class="op">)</span></span>
-<span><span class="co">#</span></span>
-<span><span class="fu"><a href="../reference/dbQueryHistory.html">dbQueryHistory</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></span>
-<span><span class="co">#</span></span>
+<span></span>
+<span><span class="co"># Get data from trials loaded above</span></span>
 <span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span>
 <span>  fields <span class="op">=</span> <span class="st">"ctrname"</span>,</span>
 <span>  calculate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
@@ -436,8 +435,20 @@ depends on the specific register.</p>
 <span>  <span class="op">)</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># reduce to unique trials</span></span>
-<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span><span class="op">[</span><span class="va">df</span><span class="op">$</span><span class="va">.isUniqueTrial</span>,<span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Show names of calculated columns in the</span></span>
+<span><span class="co"># data frame with possible platform trials</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span>
+<span><span class="co"># [1] "_id"                 </span></span>
+<span><span class="co"># [2] "ctrname"             </span></span>
+<span><span class="co"># [3] ".isUniqueTrial"      </span></span>
+<span><span class="co"># [4] ".likelyPlatformTrial"</span></span>
+<span><span class="co"># [5] ".likelyRelatedTrials"</span></span>
+<span><span class="co"># [6] ".maybeRelatedTrials" </span></span>
+<span><span class="co"># [7] ".trialTitle" </span></span>
+<span></span>
+<span><span class="co"># Reduce to unique trials</span></span>
+<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span><span class="op">[</span><span class="va">df</span><span class="op">$</span><span class="va">.isUniqueTrial</span>, <span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Number of recognised set of trials</span></span>
