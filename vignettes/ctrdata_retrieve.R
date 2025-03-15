@@ -47,7 +47,7 @@ knitr::opts_chunk$set(eval = FALSE)
 # 
 # # Connect to a database and chose a collection (table)
 # db <- nodbi::src_sqlite(
-#   dbname = "database.sqlite",
+#   dbname = "database_name.sql",
 #   collection = "test"
 # )
 # 
@@ -196,40 +196,39 @@ knitr::opts_chunk$set(eval = FALSE)
 
 ## -----------------------------------------------------------------------------
 # # Generate queries to identify trials
-# urls <- ctrGenerateQueries(
+# queries <- ctrGenerateQueries(
 #   searchPhrase = paste0(
 #     "basket OR platform OR umbrella OR master protocol OR ",
 #     "multiarm OR multistage OR subprotocol OR substudy OR ",
 #     "multi-arm OR multi-stage OR sub-protocol OR sub-study"),
-#   startAfter = "2010-01-01")
+#   startAfter = "2015-01-01")
 # 
 # # See
 # help("ctrGenerateQueries")
 # 
 # # Open queries in register web interface
-# sapply(urls, ctrOpenSearchPagesInBrowser)
+# sapply(queries, ctrOpenSearchPagesInBrowser)
 # 
 # # Count number of studies found in the register
-# result <- lapply(urls, ctrLoadQueryIntoDb, only.count = TRUE)
+# result <- lapply(queries, ctrLoadQueryIntoDb, only.count = TRUE)
 # 
 # sapply(result, "[[", "n")
-# # EUCTR CTGOV2 ISRCTN   CTIS
-# #  2808   2377   1429    290
+#  # EUCTR CTGOV2 ISRCTN   CTIS
+#  #  1635   1952   1074    223
 # 
 # # and see examples in
 # vignette("ctrdata_summarise")
 # 
 # # Load studies, include EUCTR results data for analysis
-# result <- lapply(urls, ctrLoadQueryIntoDb, con = db, euctrresults = TRUE)
+# result <- lapply(queries, ctrLoadQueryIntoDb, con = db, euctrresults = TRUE)
 # 
 # # See next section for adding related trials
 
 ## -----------------------------------------------------------------------------
 # # Use a trial concept to calculate related identifiers
 # help("ctrdata-trial-concepts")
-# #
-# dbQueryHistory(con = db)
-# #
+# 
+# # Get data from trials loaded above
 # df <- dbGetFieldsIntoDf(
 #   fields = "ctrname",
 #   calculate = c(
@@ -239,8 +238,20 @@ knitr::opts_chunk$set(eval = FALSE)
 #   ),
 #   con = db
 # )
-# # reduce to unique trials
-# df <- df[df$.isUniqueTrial,]
+# 
+# # Show names of calculated columns in the
+# # data frame with possible platform trials
+# names(df)
+# # [1] "_id"
+# # [2] "ctrname"
+# # [3] ".isUniqueTrial"
+# # [4] ".likelyPlatformTrial"
+# # [5] ".likelyRelatedTrials"
+# # [6] ".maybeRelatedTrials"
+# # [7] ".trialTitle"
+# 
+# # Reduce to unique trials
+# df <- df[df$.isUniqueTrial, ]
 # nrow(df)
 # 
 # # Number of recognised set of trials

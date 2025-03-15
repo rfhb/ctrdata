@@ -22,7 +22,7 @@
 ^README\.Rmd$
 cran-comments.md
 ^revdep$
-^.*sqlite$
+^.*sql$
 .future.R$
 ^cran-comments\.md$
 codecov.yml$

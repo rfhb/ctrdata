@@ -55,7 +55,7 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9">
-<p><a href="#main-features">Main features</a> • <a href="#references">References</a> • <a href="#installation">Installation</a> • <a href="#overview-of-functions-in-ctrdata">Overview</a> • <a href="#databases-for-use-with-ctrdata">Databases</a> • <a href="#data-model-of-ctrdata">Data model</a> • <a href="#example-workflow">Example workflow</a> • <a href="#workflow-cross-trial-example">Analysis across trials</a> • <a href="#tests">Tests</a> • <a href="#acknowledgements">Acknowledgements</a> • <a href="#future-features">Future</a></p>
+<p><a href="#main-features">Main features</a> • <a href="#references">References</a> • <a href="#installation">Installation</a> • <a href="#overview-of-functions-in-ctrdata">Overview</a> • <a href="#databases-for-use-with-ctrdata">Databases</a> • <a href="#data-model-of-ctrdata">Data model</a> • <a href="#example-workflow">Example workflow</a> • <a href="#workflow-across-registers-example">Analysis across registers</a> • <a href="#tests">Tests</a> • <a href="#acknowledgements">Acknowledgements</a> • <a href="#future-features">Future</a></p>
 <div class="section level1">
 <div class="page-header"><h1 id="ctrdata-for-aggregating-and-analysing-clinical-trials">ctrdata for aggregating and analysing clinical trials<a class="anchor" aria-label="anchor" href="#ctrdata-for-aggregating-and-analysing-clinical-trials"></a>
 </h1></div>
@@ -252,7 +252,7 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <a class="anchor" aria-label="anchor" href="#data-model-of-ctrdata"></a>
 </h2>
 <p>Package <code>ctrdata</code> uses the data models that are implicit in data as retrieved from the different registers. No mapping is provided for any register’s data model to a putative target data model. The reasons include that registers’ data models are continually evolving over time, that only few data fields have similar values and meaning between registers, and that the retrieved public data may not correspond to the registers’ internal data model. The structure of data for a specific trial can interactively be inspected and searched using function, see the section <a href="#workflow-data-model">below</a>.</p>
-<p>Thus, the handling of data from different models of registers is to be done at the time of analysis. This approach allows a high level of flexibility, transparency and reproducibility. To support analyses, <code>ctrdata</code> (from version 1.21.0) provides functions that calculate concepts of clinical trials across registers, which are commonly used in analyses, such as start dates, age groups and statistical tests of results. See <a href="https://rfhb.github.io/ctrdata/reference/ctrdata-trial-concepts.html">help(ctrdata-trial-concepts)</a> and the section <a href="#workflow-cross-trial-example">Analysis across trials</a> in the example workflow below. For further analyses, see examples of function <a href="https://rfhb.github.io/ctrdata/reference/dfMergeVariablesRelevel.html">dfMergeVariablesRelevel()</a> on how to align related fields from different registers for a joint analysis.</p>
+<p>Thus, the handling of data from different models of registers is to be done at the time of analysis. This approach allows a high level of flexibility, transparency and reproducibility. To support analyses, <code>ctrdata</code> (from version 1.21.0) provides functions that calculate concepts of clinical trials across registers, which are commonly used in analyses, such as start dates, age groups and statistical tests of results. See <a href="https://rfhb.github.io/ctrdata/reference/ctrdata-trial-concepts.html">help(ctrdata-trial-concepts)</a> and the section <a href="#workflow-across-registers-example">Analysis across trials</a> in the example workflow below. For further analyses, see examples of function <a href="https://rfhb.github.io/ctrdata/reference/dfMergeVariablesRelevel.html">dfMergeVariablesRelevel()</a> on how to align related fields from different registers for a joint analysis.</p>
 <p>In any of the <a href="https://rfhb.github.io/ctrdata/index.html#databases-for-use-with-ctrdata">databases</a>, one clinical trial is one document, corresponding to one row in a <code>SQLite</code>, <code>PostgreSQL</code> or <code>DuckDB</code> table, and to one document in a <code>MongoDB</code> collection. These <code>NoSQL</code> backends allow documents to have different structures, which is used here to accommodate the different models of data retrieved from the registers. Package <code>ctrdata</code> stores in every such document:</p>
 <ul>
 <li>field <code>_id</code> with the trial identification as provided by the register from which it was retrieved</li>
@@ -330,7 +330,7 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <code class="sourceCode R"><span><span class="co"># Connect to (or create) an SQLite database</span></span>
 <span><span class="co"># stored in a file on the local system:</span></span>
 <span><span class="va">db</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">src_sqlite</a></span><span class="op">(</span></span>
-<span>  dbname <span class="op">=</span> <span class="st">"some_database_name.sqlite_file"</span>,</span>
+<span>  dbname <span class="op">=</span> <span class="st">"some_database_name.sqlite"</span>,</span>
 <span>  collection <span class="op">=</span> <span class="st">"some_collection_name"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Then, the trial information is retrieved and loaded into the collection:</p>
@@ -507,11 +507,11 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span>  identifier <span class="op">=</span> <span class="st">"2024-518931-12-00"</span>, </span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div id="workflow-cross-trial-example">
+<div id="workflow-across-registers-example">
 
 </div>
 <ul>
-<li>Analysis across trials</li>
+<li>Analysis across registers</li>
 </ul>
 <p>Show cumulative start of trials over time. This uses the calculation of trial concepts as available since <code>ctrdata</code> version 1.21.0 🔔.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">

@@ -347,8 +347,8 @@ specified, using `nodbi` (see above for how to specify `PostgreSQL`,
 # Connect to (or create) an SQLite database
 # stored in a file on the local system:
 db <- nodbi::src_sqlite(
-  dbname = "some_database_name.sqlite",
-  collection = "some_collection_name"
+  dbname = "database_name.sql",
+  collection = "collection_name"
 )
 ```
 

@@ -236,8 +236,8 @@ For loading the trial information, first a database collection is specified, usi
 # Connect to (or create) an SQLite database
 # stored in a file on the local system:
 db <- nodbi::src_sqlite(
-  dbname = "some_database_name.sqlite",
-  collection = "some_collection_name"
+  dbname = "database_name.sql",
+  collection = "collection_name"
 )
 ```
 
@@ -625,7 +625,7 @@ ctrLoadQueryIntoDb(
 
 ```{r cleanup, include=FALSE}
 # cleanup
-unlink("some_database_name.sqlite")
+unlink("database_name.sql")
 unlink("./files-ctis/", recursive = TRUE)
 unlink("./files-euctr/", recursive = TRUE)
 unlink("./files-ctgov/", recursive = TRUE)

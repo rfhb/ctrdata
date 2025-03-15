@@ -158,7 +158,7 @@ downloaded by <code>ctrdata</code>, by specifying parameter
 <span></span>
 <span><span class="co"># Connect to a database and chose a collection (table)</span></span>
 <span><span class="va">db</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">src_sqlite</a></span><span class="op">(</span></span>
-<span>  dbname <span class="op">=</span> <span class="st">"sqlite_file.sql"</span>,</span>
+<span>  dbname <span class="op">=</span> <span class="st">"database.sqlite"</span>,</span>
 <span>  collection <span class="op">=</span> <span class="st">"test"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -367,7 +367,7 @@ further information. <code>ctrdata</code> can help finding such research
 and analysing the study information, as follows:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Generate queries to identify trials</span></span>
-<span><span class="va">urls</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ctrGenerateQueries.html">ctrGenerateQueries</a></span><span class="op">(</span></span>
+<span><span class="va">queries</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ctrGenerateQueries.html">ctrGenerateQueries</a></span><span class="op">(</span></span>
 <span>  searchPhrase <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
 <span>    <span class="st">"basket OR platform OR umbrella OR master protocol OR "</span>,</span>
 <span>    <span class="st">"multiarm OR multistage OR subprotocol OR substudy OR "</span>,</span>
@@ -378,10 +378,10 @@ and analysing the study information, as follows:</p>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/help.html" class="external-link">help</a></span><span class="op">(</span><span class="st">"ctrGenerateQueries"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Open queries in register web interface</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">urls</span>, <span class="va">ctrOpenSearchPagesInBrowser</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">queries</span>, <span class="va">ctrOpenSearchPagesInBrowser</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Count number of studies found in the register</span></span>
-<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">urls</span>, <span class="va">ctrLoadQueryIntoDb</span>, only.count <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">queries</span>, <span class="va">ctrLoadQueryIntoDb</span>, only.count <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">result</span>, <span class="st">"[["</span>, <span class="st">"n"</span><span class="op">)</span></span>
 <span><span class="co"># EUCTR CTGOV2 ISRCTN   CTIS </span></span>
@@ -391,7 +391,7 @@ and analysing the study information, as follows:</p>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"ctrdata_summarise"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Load studies, include EUCTR results data for analysis</span></span>
-<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">urls</span>, <span class="va">ctrLoadQueryIntoDb</span>, con <span class="op">=</span> <span class="va">db</span>, euctrresults <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">queries</span>, <span class="va">ctrLoadQueryIntoDb</span>, con <span class="op">=</span> <span class="va">db</span>, euctrresults <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># See next section for adding related trials</span></span></code></pre></div>
 <p>References:</p>

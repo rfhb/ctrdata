@@ -24,7 +24,7 @@
 #' @return A data frame (or tibble, if \code{tibble} is loaded)
 #' with column names `query-term` and `query-register`.
 #' The data frame (or tibble) can be passed as such as parameter
-#' `query-term` to \link{ctrLoadQueryIntoDb} and as parameter
+#' `queryterm` to \link{ctrLoadQueryIntoDb} and as parameter
 #' `url` to \link{ctrOpenSearchPagesInBrowser}.
 #'
 #' @importFrom clipr read_clip
