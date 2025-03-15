@@ -172,7 +172,7 @@ typeVars <- list(
   "correctiveMeasures.revertedDate" = "ctrDate",
   "correctiveMeasures.sponsorActionRequiredByDate" = "ctrDate",
   "correctiveMeasures.sponsorSubmitDate" = "ctrDate",
-  # "decisionDate" cannot be types, is string concatenating dates
+  # "decisionDate" cannot be typed, is a string concatenating dates
   "events.seriousBreaches.awareDate" = "ctrDate",
   "events.seriousBreaches.breachDate" = "ctrDate",
   "events.seriousBreaches.submissionDate" = "ctrDate",

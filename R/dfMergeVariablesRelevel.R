@@ -29,30 +29,20 @@
 #'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
 #'   collection = "my_trials",
 #'   flags = RSQLite::SQLITE_RO)
-#'
 #' df <- dbGetFieldsIntoDf(
 #'   fields = c(
-#'     "f11_trial_has_subjects_under_18",
-#'     "protocolSection.eligibilityModule.stdAges",
-#'     "participants.ageRange"
+#'     "protocolSection.eligibilityModule.healthyVolunteers",
+#'     "f31_healthy_volunteers",
+#'     "eligibility.healthy_volunteers"
 #'   ),
 #'   con = dbc
-#' )
-#'
-#' newValues <- list(
-#'   "paediatric" = c("Neonate", "Child", "CHILD / ADULT",
-#'                    "CHILD / ADULT / OLDER_ADULT", "TRUE"),
-#'   "adultOnly" = c("Adult", "Senior"),
-#'   "other" = c("Not Specified", "All", "Mixed", "Other")
 #' )
 #'
 #' table(
 #'   dfMergeVariablesRelevel(
 #'     df = df,
-#'     colnames = 'matches("age|18")',
-#'     levelslist = newValues
-#'   )
-#' )
+#'     colnames = 'matches("healthy")'
+#' ))
 #'
 dfMergeVariablesRelevel <- function(
     df = NULL,

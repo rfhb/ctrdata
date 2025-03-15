@@ -5,7 +5,8 @@
 #'
 #' Trial concept calculated: inclusion and exclusion criteria as well as
 #' age groups that can participate in a trial, based on from protocol-related
-#' information.
+#' information. (See \link{dfMergeVariablesRelevel} example for healthy
+#' volunteers.)
 #'
 #' @param df data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
 #' prints fields needed in `df` for calculating this trial concept, which can
@@ -58,16 +59,20 @@ f.trialPopulation <- function(df = NULL) {
       "f11_trial_has_subjects_under_18",
       "f12_adults_1864_years",
       "f13_elderly_65_years"
+      # "f31_healthy_volunteers"
     ),
     "ctgov" = c(
       "eligibility.criteria.textblock",
       "eligibility.maximum_age",
       "eligibility.minimum_age"
+      # "eligibility.healthy_volunteers"
     ),
     "ctgov2" = c(
       "protocolSection.eligibilityModule.maximumAge",
       "protocolSection.eligibilityModule.minimumAge",
-      "protocolSection.eligibilityModule.eligibilityCriteria"
+      "protocolSection.eligibilityModule.eligibilityCriteria",
+      "protocolSection.eligibilityModule.stdAges"
+      # "protocolSection.eligibilityModule.healthyVolunteers"
     ),
     "isrctn" = c(
       "participants.ageRange",
