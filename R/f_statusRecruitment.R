@@ -39,11 +39,11 @@
 #' }
 #'
 f.statusRecruitment <- function(df = NULL) {
-  
+
   # check generic, do not edit
   stopifnot(is.data.frame(df) || is.null(df))
-  
-  
+
+
   #### fields ####
   fldsNeeded <- list(
     "euctr" = c(
@@ -76,26 +76,26 @@ f.statusRecruitment <- function(df = NULL) {
       "ctPublicStatusCode", # ctPublicStatusCode is in CTIS1 and CTIS2
       "ctStatus" # text in CTIS1 but in CTIS2, same as ctPublicStatusCode
     ))
-  
-  
+
+
   #### describe ####
   if (is.null(df)) {
-    
+
     # generic, do not edit
     return(fldsNeeded)
-    
+
   } # end describe
-  
-  
+
+
   #### calculate ####
-  
+
   # check generic, do not edit
   fctChkFlds(names(df), fldsNeeded)
-  
+
   # helper function
   `%>%` <- dplyr::`%>%`
-  
-  
+
+
   #### . EUCTR ####
   df %>% dplyr::mutate(
     helper = dplyr::case_when(
@@ -106,8 +106,8 @@ f.statusRecruitment <- function(df = NULL) {
     out = tolower(.data$helper)
   ) %>%
     dplyr::pull("out") -> df$euctr
-  
-  
+
+
   #### . CTGOV ####
   df %>% dplyr::mutate(
     helper = as.character(
@@ -120,19 +120,19 @@ f.statusRecruitment <- function(df = NULL) {
     out = tolower(.data$helper)
   ) %>%
     dplyr::pull("out") -> df$ctgov
-  
-  
+
+
   #### . CTGOV2 ####
   df$ctgov2 <- tolower(as.character(
     # type is logical if all NA
     # "trial is terminated (that is, stopped prematurely)"
     df$protocolSection.statusModule.overallStatus))
-  
-  
+
+
   #### . ISRCTN ####
   df %>% dplyr::mutate(
     helper = dplyr::case_when(
-      !is.na(.data$participants.recruitmentStatusOverride) ~ 
+      !is.na(.data$participants.recruitmentStatusOverride) ~
         as.character(.data$participants.recruitmentStatusOverride),
       Sys.Date() > .data$participants.recruitmentEnd ~ "Completed",
       Sys.Date() < .data$participants.recruitmentStart ~ "Planned",
@@ -141,8 +141,8 @@ f.statusRecruitment <- function(df = NULL) {
     out = tolower(.data$helper)
   ) %>%
     dplyr::pull("out") -> df$isrctn
-  
-  
+
+
   #### . CTIS ####
   df %>% dplyr::mutate(
     helper_ctPublicStatusCode = dplyr::case_match(
@@ -164,9 +164,9 @@ f.statusRecruitment <- function(df = NULL) {
       .data$mscTrialNotificationsInfoList.mscNotificationsListInfo.notificationType,
       function(i) grepl("^(|Global end of trial / )Early Termination", i, ignore.case = TRUE)
     ),
-    helper_event2 = stringi::stri_count_fixed(
+    helper_event2 = sapply(
       .data$events.trialEvents.events.notificationType,
-      "EARLY_TERMINATION"
+      function(i) stringi::stri_count_fixed(paste0(i, collapse = " "), "EARLY_TERMINATION")
     ),
     helper_event3 = sapply(
       stringi::stri_split_fixed(
@@ -183,8 +183,8 @@ f.statusRecruitment <- function(df = NULL) {
     out = tolower(.data$helper)
   ) %>%
     dplyr::pull("out") -> df$ctis
-  
-  
+
+
   # merge, last update 2025-02-08
   mapped_values <- list(
     "ongoing" = c(
@@ -211,27 +211,27 @@ f.statusRecruitment <- function(df = NULL) {
       "unknown", "withdrawn", "withheld"
     )
   )
-  
+
   # check for unmapped values
   # setdiff(unique(dfMergeVariablesRelevel(df, names(fldsNeeded))), unlist(mapped_values))
-  
-  
+
+
   # merge into vector (factor)
   df[[".statusRecruitment"]] <- dfMergeVariablesRelevel(
     df = df,
     colnames = names(fldsNeeded),
     levelslist = mapped_values
   )
-  
+
   # keep only outcome columns
   df <- df[, c("_id", ".statusRecruitment"), drop = FALSE]
-  
-  
+
+
   #### checks ####
   stopifnot(inherits(df[[".statusRecruitment"]], "factor"))
   stopifnot(ncol(df) == 2L)
-  
+
   # return
   return(df)
-  
+
 } # end f.statusRecruitment

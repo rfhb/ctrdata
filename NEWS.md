@@ -1,6 +1,7 @@
 # ctrdata 1.21.1.9000
 
-- New development version
+## Bug fix 
+- Fix digesting marginal cases in notifications in `f.statusRecruitment()`
 
 # ctrdata 1.21.1
 
