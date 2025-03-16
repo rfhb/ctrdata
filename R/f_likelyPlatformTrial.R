@@ -193,7 +193,6 @@ f.likelyPlatformTrial <- function(df = NULL) {
     dplyr::filter(.data$name != "EUCTR") %>% # since this has no country suffix
     dplyr::filter(.data$name != "ctrname") %>%
     dplyr::filter(.data$value != "") %>%
-    # TODO actually broaden this column to include _id to have all identifiers together
     dplyr::filter(.data$value != .data$`_id`) %>%
     dplyr::select(!"name") %>%
     unique() %>%
@@ -283,7 +282,8 @@ f.likelyPlatformTrial <- function(df = NULL) {
     ),
     #
     # identify rows of possibly related trials
-    # TODO add 'contained in' e.g. RAINBO-p53abnRED, RAINBO
+    # 'contained in' e.g. RAINBO-p53abnRED, RAINBO
+    # is realised by using Jaro Winkler distance
     .maybeRelatedTrials = indexSimilarX(.data$titleRefs),
     #
     # turn row indices to ids of possibly related trials

@@ -7,7 +7,7 @@
 #' for each registers with which ctrdata works, see \link{ctrdata-registers}.
 #' Search terms that are expanded to concepts such as from MeSH and MedDRA
 #' by the search implementations in registers include the
-#' 'intervention' and 'condition', see \link{ctrdata-registers}.
+#' 'intervention' and 'condition'.
 #' Logical operators only work with 'searchPhrase'.
 #'
 #' @param searchPhrase String with optional logical operators ("AND", "OR")
