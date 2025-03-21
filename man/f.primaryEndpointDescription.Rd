@@ -28,8 +28,6 @@ for determining the number of participants sought for the study.
 # fields needed
 f.primaryEndpointDescription()
 
-\dontrun{
-
 # apply trial concept when creating data frame
 dbc <- nodbi::src_sqlite(
   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
@@ -39,6 +37,6 @@ trialsDf <- dbGetFieldsIntoDf(
   calculate = "f.primaryEndpointDescription",
   con = dbc
 )
-}
+trialsDf
 
 }

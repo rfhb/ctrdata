@@ -22,16 +22,15 @@
 #' # fields needed
 #' f.startDate()
 #'
-#' \dontrun{
-#'
 #' # apply trial concept when creating data frame
 #' dbc <- nodbi::src_sqlite(
 #'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
 #'   collection = "my_trials", flags = RSQLite::SQLITE_RO)
 #' trialsDf <- dbGetFieldsIntoDf(
+#'   field = "ctrname",
 #'   calculate = "f.startDate",
 #'   con = dbc)
-#' }
+#' trialsDf
 #'
 f.startDate <- function(df = NULL) {
 

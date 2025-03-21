@@ -32,8 +32,6 @@ further refined. The text fragments only apply to English.
 # fields needed
 f.trialObjectives()
 
-\dontrun{
-
 # apply trial concept when creating data frame
 dbc <- nodbi::src_sqlite(
   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
@@ -41,6 +39,6 @@ dbc <- nodbi::src_sqlite(
 trialsDf <- dbGetFieldsIntoDf(
   calculate = "f.trialObjectives",
   con = dbc)
-}
+trialsDf
 
 }

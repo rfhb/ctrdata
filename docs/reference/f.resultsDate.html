@@ -102,8 +102,6 @@ be used with <a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a>.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2] "results.clinicalStudyReports.submitDate"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># apply trial concept when creating data frame</span></span></span>
 <span class="r-in"><span><span class="va">dbc</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">src_sqlite</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  dbname <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"demo.sqlite"</span>, package <span class="op">=</span> <span class="st">"ctrdata"</span><span class="op">)</span>,</span></span>
@@ -111,7 +109,23 @@ be used with <a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a>.</p></dd>
 <span class="r-in"><span><span class="va">trialsDf</span> <span class="op">&lt;-</span> <span class="fu"><a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  calculate <span class="op">=</span> <span class="st">"f.resultsDate"</span>,</span></span>
 <span class="r-in"><span>  con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying database (7 fields)...</span>
+<span class="r-in"><span><span class="va">trialsDf</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                  _id .resultsDate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1           13281214   2020-11-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2           17473621   2024-08-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  2012-003632-23-CZ   2019-01-31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  2012-003632-23-SE   2019-01-31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  2014-003556-31-GB   2021-09-28</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  2014-003556-31-SE   2021-09-28</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7           76463425   2019-05-10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8        NCT00617929   2017-01-20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9        NCT01125800   2016-03-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10       NCT01483820   2016-10-28</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11       NCT01505608   2016-10-28</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12       NCT01592045   2015-09-23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13       NCT02620761   2022-09-16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14       NCT03325439   2024-01-16</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

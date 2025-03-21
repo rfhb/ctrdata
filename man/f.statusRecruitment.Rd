@@ -28,8 +28,6 @@ the state of recruitment. Simplifies the status into three categories.
 # fields needed
 f.statusRecruitment()
 
-\dontrun{
-
 # apply trial concept when creating data frame
 dbc <- nodbi::src_sqlite(
   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
@@ -37,6 +35,6 @@ dbc <- nodbi::src_sqlite(
 trialsDf <- dbGetFieldsIntoDf(
   calculate = "f.statusRecruitment",
   con = dbc)
-}
+trialsDf
 
 }

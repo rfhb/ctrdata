@@ -162,8 +162,6 @@ Williams RJ et al. 2022 https://doi.org/10.1136/bmj-2021-067745</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [7] "authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.fullTitle"                 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># apply trial concept when creating data frame</span></span></span>
 <span class="r-in"><span><span class="va">dbc</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">src_sqlite</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  dbname <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"demo.sqlite"</span>, package <span class="op">=</span> <span class="st">"ctrdata"</span><span class="op">)</span>,</span></span>
@@ -171,8 +169,76 @@ Williams RJ et al. 2022 https://doi.org/10.1136/bmj-2021-067745</p>
 <span class="r-in"><span><span class="va">trialsDf</span> <span class="op">&lt;-</span> <span class="fu"><a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  calculate <span class="op">=</span> <span class="st">"f.likelyPlatformTrial"</span>,</span></span>
 <span class="r-in"><span>  con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
-<span class="r-in"><span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying database (23 fields)...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Searching for duplicate trials... </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> - Getting all trial identifiers...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> , 31 found in collection</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> - Finding duplicates among registers' and sponsor ids...</span>
+<span class="r-in"><span><span class="va">trialsDf</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                  _id .likelyPlatformTrial        .likelyRelatedTrials</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1           12949496                FALSE              2014-002988-16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2           13281214                FALSE              2015-004526-33</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3           17473621                FALSE                          NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  2012-003632-23-CZ                FALSE 2012-003632-23, NCT01818492</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  2012-003632-23-SE                FALSE 2012-003632-23, NCT01818492</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  2014-002606-20-PT                FALSE              2014-002606-20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  2014-003556-31-GB                FALSE 2014-003556-31, NCT02386839</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  2014-003556-31-SE                FALSE 2014-003556-31, NCT02386839</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  2022-500244-37-00                FALSE                          NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 2022-501142-30-00                FALSE                          NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 2023-505613-24-00                FALSE                 NCT04665037</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 2023-508143-51-01                FALSE              2021-004994-30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 2024-510663-34-00                FALSE                 NCT04494412</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14          20343063                FALSE                          NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15          61070850                FALSE                          NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16          76463425                FALSE                 NCT01727609</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17          80181452                FALSE                 NCT01035190</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18          88261002                FALSE              2012-004260-22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19       NCT00617929                FALSE                          NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20       NCT01125800                FALSE              2010-019348-37</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21       NCT01483820                FALSE                          NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22       NCT01505608                FALSE                          NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23       NCT01592045                FALSE                          NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24       NCT02620761                FALSE                          NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25       NCT03280147                FALSE                          NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26       NCT03325439                FALSE              2015-002756-27</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27       NCT03431558                FALSE                          NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28       NCT03876704                FALSE                          NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29       NCT04001712                FALSE                          NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30       NCT04041765                FALSE                          NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31       NCT05969327                FALSE                          NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    .maybeRelatedTrials</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7                   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8                   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9                   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10                  NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11                  NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12                  NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13                  NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14                  NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15                  NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16                  NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17                  NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18                  NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19                  NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20                  NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21                  NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22                  NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23                  NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24                  NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25                  NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26                  NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27                  NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28                  NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29                  NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30                  NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31                  NA</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

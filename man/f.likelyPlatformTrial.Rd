@@ -46,8 +46,6 @@ Williams RJ et al. 2022 https://doi.org/10.1136/bmj-2021-067745
 # fields needed
 f.likelyPlatformTrial()
 
-\dontrun{
-
 # apply trial concept when creating data frame
 dbc <- nodbi::src_sqlite(
   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
@@ -55,7 +53,6 @@ dbc <- nodbi::src_sqlite(
 trialsDf <- dbGetFieldsIntoDf(
   calculate = "f.likelyPlatformTrial",
   con = dbc)
-}
-
+trialsDf
 
 }

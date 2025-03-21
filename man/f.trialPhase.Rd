@@ -24,8 +24,6 @@ Trial concept calculated: phase of a clinical trial as per ICH E8(R1).
 # fields needed
 f.trialPhase()
 
-\dontrun{
-
 # apply trial concept when creating data frame
 dbc <- nodbi::src_sqlite(
   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
@@ -33,6 +31,6 @@ dbc <- nodbi::src_sqlite(
 trialsDf <- dbGetFieldsIntoDf(
   calculate = "f.trialPhase",
   con = dbc)
-}
+trialsDf
 
 }

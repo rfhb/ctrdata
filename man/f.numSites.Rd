@@ -23,8 +23,6 @@ for each non-EEA country mentioned, at least one site is assumed.
 # fields needed
 f.numSites()
 
-\dontrun{
-
 # apply trial concept when creating data frame
 dbc <- nodbi::src_sqlite(
   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
@@ -32,6 +30,6 @@ dbc <- nodbi::src_sqlite(
 trialsDf <- dbGetFieldsIntoDf(
   calculate = "f.numSites",
   con = dbc)
-}
+trialsDf
 
 }

@@ -25,8 +25,6 @@
 #' # fields needed
 #' f.sponsorType()
 #'
-#' \dontrun{
-#'
 #' # apply trial concept when creating data frame
 #' dbc <- nodbi::src_sqlite(
 #'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
@@ -34,7 +32,7 @@
 #' trialsDf <- dbGetFieldsIntoDf(
 #'   calculate = "f.sponsorType",
 #'   con = dbc)
-#' }
+#' trialsDf
 #'
 f.sponsorType <- function(df = NULL) {
 

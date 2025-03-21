@@ -29,15 +29,14 @@ register fields. Cross-over designs, where identifiable, have active controls.
 # fields needed
 f.controlType()
 
-\dontrun{
-
 # apply trial concept when creating data frame
 dbc <- nodbi::src_sqlite(
   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
   collection = "my_trials", flags = RSQLite::SQLITE_RO)
 trialsDf <- dbGetFieldsIntoDf(
+  field = "ctrname",
   calculate = "f.controlType",
   con = dbc)
-}
+trialsDf
 
 }

@@ -23,8 +23,6 @@
 #' # fields needed
 #' f.numSites()
 #'
-#' \dontrun{
-#'
 #' # apply trial concept when creating data frame
 #' dbc <- nodbi::src_sqlite(
 #'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
@@ -32,7 +30,7 @@
 #' trialsDf <- dbGetFieldsIntoDf(
 #'   calculate = "f.numSites",
 #'   con = dbc)
-#' }
+#' trialsDf
 #'
 f.numSites <- function(df = NULL) {
 

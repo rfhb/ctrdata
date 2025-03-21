@@ -28,8 +28,6 @@ Recommended to be combined with .controlType, .sampleSize etc. for analyses.
 # fields needed
 f.primaryEndpointResults()
 
-\dontrun{
-
 # apply trial concept when creating data frame
 dbc <- nodbi::src_sqlite(
   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
@@ -37,6 +35,6 @@ dbc <- nodbi::src_sqlite(
 trialsDf <- dbGetFieldsIntoDf(
   calculate = "f.primaryEndpointResults",
   con = dbc)
-}
+trialsDf
 
 }

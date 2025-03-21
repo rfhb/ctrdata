@@ -21,8 +21,6 @@
 #' # fields needed
 #' f.sampleSize()
 #'
-#' \dontrun{
-#'
 #' # apply trial concept when creating data frame
 #' dbc <- nodbi::src_sqlite(
 #'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
@@ -30,7 +28,7 @@
 #' trialsDf <- dbGetFieldsIntoDf(
 #'   calculate = "f.sampleSize",
 #'   con = dbc)
-#' }
+#' trialsDf
 #'
 f.sampleSize <- function(df = NULL) {
 

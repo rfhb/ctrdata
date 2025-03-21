@@ -28,8 +28,6 @@ of intervention, and interventional as type of study.
 # fields needed
 f.isMedIntervTrial()
 
-\dontrun{
-
 # apply trial concept when creating data frame
 dbc <- nodbi::src_sqlite(
   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
@@ -37,6 +35,6 @@ dbc <- nodbi::src_sqlite(
 trialsDf <- dbGetFieldsIntoDf(
   calculate = "f.isMedIntervTrial",
   con = dbc)
-}
+trialsDf
 
 }

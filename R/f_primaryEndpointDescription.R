@@ -27,8 +27,6 @@
 #' # fields needed
 #' f.primaryEndpointDescription()
 #'
-#' \dontrun{
-#'
 #' # apply trial concept when creating data frame
 #' dbc <- nodbi::src_sqlite(
 #'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
@@ -38,7 +36,7 @@
 #'   calculate = "f.primaryEndpointDescription",
 #'   con = dbc
 #' )
-#' }
+#' trialsDf
 #'
 f.primaryEndpointDescription <- function(df = NULL) {
   # check generic, do not edit

@@ -32,8 +32,6 @@
 #' # fields needed
 #' f.controlType()
 #'
-#' \dontrun{
-#'
 #' # apply trial concept when creating data frame
 #' dbc <- nodbi::src_sqlite(
 #'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
@@ -41,7 +39,7 @@
 #' trialsDf <- dbGetFieldsIntoDf(
 #'   calculate = "f.numTestArmsSubstances",
 #'   con = dbc)
-#' }
+#' trialsDf
 #'
 f.numTestArmsSubstances <- function(df = NULL) {
 

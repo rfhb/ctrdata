@@ -22,8 +22,6 @@ its defaults.
 # fields needed
 f.isUniqueTrial()
 
-\dontrun{
-
 # apply trial concept when creating data frame
 dbc <- nodbi::src_sqlite(
   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
@@ -31,6 +29,6 @@ dbc <- nodbi::src_sqlite(
 trialsDf <- dbGetFieldsIntoDf(
   calculate = "f.isUniqueTrial",
   con = dbc)
-}
+trialsDf
 
 }

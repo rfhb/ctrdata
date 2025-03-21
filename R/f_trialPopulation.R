@@ -28,8 +28,6 @@
 #' # fields needed
 #' f.trialPopulation()
 #'
-#' \dontrun{
-#'
 #' # apply trial concept when creating data frame
 #' dbc <- nodbi::src_sqlite(
 #'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
@@ -37,7 +35,7 @@
 #' trialsDf <- dbGetFieldsIntoDf(
 #'   calculate = "f.trialPopulation",
 #'   con = dbc)
-#' }
+#' trialsDf
 #'
 f.trialPopulation <- function(df = NULL) {
 
@@ -335,9 +333,9 @@ f.trialPopulation <- function(df = NULL) {
   df %>%
     dplyr::select(c(
       "_id",
+      ".trialPopulationAgeGroup",
       ".trialPopulationInclusion",
-      ".trialPopulationExclusion",
-      ".trialPopulationAgeGroup"
+      ".trialPopulationExclusion"
     )) -> df
 
   # factorise

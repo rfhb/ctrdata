@@ -27,8 +27,6 @@
 #' # fields needed
 #' f.resultsDate()
 #'
-#' \dontrun{
-#'
 #' # apply trial concept when creating data frame
 #' dbc <- nodbi::src_sqlite(
 #'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
@@ -36,7 +34,7 @@
 #' trialsDf <- dbGetFieldsIntoDf(
 #'   calculate = "f.resultsDate",
 #'   con = dbc)
-#' }
+#' trialsDf
 #'
 f.resultsDate <- function(df = NULL) {
 

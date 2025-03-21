@@ -21,8 +21,6 @@ Trial concept calculated: scientific or full title of the study.
 # fields needed
 f.resultsDate()
 
-\dontrun{
-
 # apply trial concept when creating data frame
 dbc <- nodbi::src_sqlite(
   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
@@ -30,6 +28,6 @@ dbc <- nodbi::src_sqlite(
 trialsDf <- dbGetFieldsIntoDf(
   calculate = "f.trialTitle",
   con = dbc)
-}
+trialsDf
 
 }

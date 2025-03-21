@@ -48,8 +48,6 @@
 #' # fields needed
 #' f.likelyPlatformTrial()
 #'
-#' \dontrun{
-#'
 #' # apply trial concept when creating data frame
 #' dbc <- nodbi::src_sqlite(
 #'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
@@ -57,8 +55,7 @@
 #' trialsDf <- dbGetFieldsIntoDf(
 #'   calculate = "f.likelyPlatformTrial",
 #'   con = dbc)
-#' }
-#'
+#' trialsDf
 #'
 f.likelyPlatformTrial <- function(df = NULL) {
 

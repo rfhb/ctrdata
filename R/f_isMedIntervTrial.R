@@ -28,8 +28,6 @@
 #' # fields needed
 #' f.isMedIntervTrial()
 #'
-#' \dontrun{
-#'
 #' # apply trial concept when creating data frame
 #' dbc <- nodbi::src_sqlite(
 #'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
@@ -37,7 +35,7 @@
 #' trialsDf <- dbGetFieldsIntoDf(
 #'   calculate = "f.isMedIntervTrial",
 #'   con = dbc)
-#' }
+#' trialsDf
 #'
 f.isMedIntervTrial <- function(df = NULL) {
 

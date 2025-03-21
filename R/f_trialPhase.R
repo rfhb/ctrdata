@@ -23,8 +23,6 @@
 #' # fields needed
 #' f.trialPhase()
 #'
-#' \dontrun{
-#'
 #' # apply trial concept when creating data frame
 #' dbc <- nodbi::src_sqlite(
 #'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
@@ -32,7 +30,7 @@
 #' trialsDf <- dbGetFieldsIntoDf(
 #'   calculate = "f.trialPhase",
 #'   con = dbc)
-#' }
+#' trialsDf
 #'
 f.trialPhase <- function(df = NULL) {
 
@@ -95,7 +93,7 @@ f.trialPhase <- function(df = NULL) {
         .data$e71_human_pharmacology_phase_i ~ "phase 1",
         .data$e72_therapeutic_exploratory_phase_ii ~ "phase 2",
         .data$e73_therapeutic_confirmatory_phase_iii ~ "phase 3",
-        .data$e74_therapeutic_use_phase_iv ~ "phase 4", 
+        .data$e74_therapeutic_use_phase_iv ~ "phase 4",
         .default = NA_character_
       )
     ) %>%

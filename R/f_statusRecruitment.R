@@ -27,8 +27,6 @@
 #' # fields needed
 #' f.statusRecruitment()
 #'
-#' \dontrun{
-#'
 #' # apply trial concept when creating data frame
 #' dbc <- nodbi::src_sqlite(
 #'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
@@ -36,7 +34,7 @@
 #' trialsDf <- dbGetFieldsIntoDf(
 #'   calculate = "f.statusRecruitment",
 #'   con = dbc)
-#' }
+#' trialsDf
 #'
 f.statusRecruitment <- function(df = NULL) {
 

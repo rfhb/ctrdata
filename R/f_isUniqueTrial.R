@@ -18,8 +18,6 @@
 #' # fields needed
 #' f.isUniqueTrial()
 #'
-#' \dontrun{
-#'
 #' # apply trial concept when creating data frame
 #' dbc <- nodbi::src_sqlite(
 #'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
@@ -27,7 +25,7 @@
 #' trialsDf <- dbGetFieldsIntoDf(
 #'   calculate = "f.isUniqueTrial",
 #'   con = dbc)
-#' }
+#' trialsDf
 #'
 f.isUniqueTrial <- function(df = NULL) {
 
@@ -35,7 +33,7 @@ f.isUniqueTrial <- function(df = NULL) {
   stopifnot(is.data.frame(df) || is.null(df))
 
   #### fields ####
-  
+
   # need at least one field
   fldsNeeded <- "ctrname"
 

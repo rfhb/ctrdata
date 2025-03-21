@@ -27,8 +27,6 @@ volunteers.)
 # fields needed
 f.trialPopulation()
 
-\dontrun{
-
 # apply trial concept when creating data frame
 dbc <- nodbi::src_sqlite(
   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
@@ -36,6 +34,6 @@ dbc <- nodbi::src_sqlite(
 trialsDf <- dbGetFieldsIntoDf(
   calculate = "f.trialPopulation",
   con = dbc)
-}
+trialsDf
 
 }

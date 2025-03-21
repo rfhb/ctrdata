@@ -24,8 +24,6 @@ No specific field is available in ISRCTN.
 # fields needed
 f.sponsorType()
 
-\dontrun{
-
 # apply trial concept when creating data frame
 dbc <- nodbi::src_sqlite(
   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
@@ -33,6 +31,6 @@ dbc <- nodbi::src_sqlite(
 trialsDf <- dbGetFieldsIntoDf(
   calculate = "f.sponsorType",
   con = dbc)
-}
+trialsDf
 
 }
