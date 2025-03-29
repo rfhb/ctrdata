@@ -60,6 +60,7 @@ f.isMedIntervTrial <- function(df = NULL) {
     ),
     "isrctn" = c(
       # "trialDesign.trialType",
+      # https://www.isrctn.com/page/definitions#intervention-type
       "interventions.intervention.interventionType",
       "trialDesign.primaryStudyDesign"
     ),

@@ -34,7 +34,12 @@ Suggests: devtools, knitr, rmarkdown, RSQLite, mongolite, tinytest (>= 1.2.1),
 VignetteBuilder: knitr
 NeedsCompilation: no
 Encoding: UTF-8
-Authors@R: person(given = "Ralf", family = "Herold", role = c("aut", "cre"),
+Authors@R: c(person(given = "Ralf", family = "Herold", role = c("aut", "cre"),
         email = "ralf.herold@mailbox.org", comment = c(ORCID =
-        "0000-0002-8148-6748"))
+        "0000-0002-8148-6748")), 
+        person(given = "Marek", family = "Kubica", role = "cph",
+        comment = "node-xml2js library"),
+        person(given = "Ivan", family = "Bozhanov", role = "cph",
+        comment = "jstree library")
+        )
 Language: en-GB

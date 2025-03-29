@@ -4,9 +4,8 @@
 # npm install -g bower
 #
 # htmlwidgets::scaffoldWidget("ctrViewOneTrial", bowerPkg = "jstree")
-#
-# cleanup
-#
+# https://libraries.io/bower/jstree
+# Ivan Bozhanov, MIT License
 rm -rf ./lib/jquery/src
 rm ./lib/jquery/dist/*map
 rm ./lib/jquery/dist/jquery.js

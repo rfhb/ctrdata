@@ -19,5 +19,11 @@ Useful links:
 \author{
 \strong{Maintainer}: Ralf Herold \email{ralf.herold@mailbox.org} (\href{https://orcid.org/0000-0002-8148-6748}{ORCID})
 
+Other contributors:
+\itemize{
+  \item Marek Kubica (node-xml2js library) [copyright holder]
+  \item Ivan Bozhanov (jstree library) [copyright holder]
+}
+
 }
 \keyword{internal}

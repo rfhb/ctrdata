@@ -85,9 +85,9 @@ version 1.21.1, <https://cran.r-project.org/package=ctrdata>”.
 citation("ctrdata")
 &#10;# find publications
 utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrdata%22")
-&#10;# mentioned but not used in 
+&#10;# mentioned but not used in
 # * Sciannameo et al. (2024) Information Extraction from Medical Case Reports Using OpenAI InstructGPT. Computer Methods and Programs in Biomedicine [https://doi.org/10.1016/j.cmpb.2024.108326](https://doi.org/10.1016/j.cmpb.2024.108326)
-&#10;```
+```
 &#10;-->
 
 ## References
@@ -160,7 +160,7 @@ automatically copied to the clipboard and can be pasted into the
 
 Additionally, this script retrieves results for `CTIS` when opening
 search URLs such as
-[https://euclinicaltrials.eu/ctis-public/search#searchCriteria={“status”:\[3,4\]}](https://euclinicaltrials.eu/ctis-public/search#searchCriteria=%7B%22status%22:%5B3,4%5D%7D).
+\[<https://euclinicaltrials.eu/ctis-public/search#searchCriteria=>{“status”:\[3,4\]}\](<https://euclinicaltrials.eu/ctis-public/search#searchCriteria=>{“status”:\[3,4\]}).
 
 ## Overview of functions in `ctrdata`
 
@@ -327,7 +327,7 @@ q <- ctrGetQueryUrl()
 # * Found search query from EUCTR: query=neuroblastoma&phase=phase-two&age=children
 
 q
-#                                         query-term query-register
+#  query-term query-register
 # 1 query=neuroblastoma&phase=phase-two&age=children          EUCTR
 ```
 
@@ -365,17 +365,17 @@ ctrLoadQueryIntoDb(
 # Retrieved overview, multiple records of 73 trial(s) from 4 page(s) to be downloaded (estimate: 9 MB)
 # (1/3) Downloading trials...
 # Note: register server cannot compress data, transfer takes longer (estimate: 90 s)
-# Download status: 4 done; 0 in progress. Total size: 6.39 Mb (100%)... done!             
+# Download status: 4 done; 0 in progress. Total size: 6.39 Mb (100%)... done!
 # (2/3) Converting to NDJSON (estimate: 1 s)...
 # (3/3) Importing records into database...
-# = Imported or updated 270 records on 73 trial(s) 
-# * Checking results if available from EUCTR for 73 trials: 
+# = Imported or updated 270 records on 73 trial(s)
+# * Checking results if available from EUCTR for 73 trials:
 # (1/4) Downloading results...
-# Download status: 73 done; 0 in progress. Total size: 22.57 Mb (100%)... done!             
-# Download status: 41 done; 0 in progress. Total size: 165.04 Kb (100%)... done!             
-# Download status: 41 done; 0 in progress. Total size: 165.04 Kb (100%)... done!             
+# Download status: 73 done; 0 in progress. Total size: 22.57 Mb (100%)... done!
+# Download status: 41 done; 0 in progress. Total size: 165.04 Kb (100%)... done!
+# Download status: 41 done; 0 in progress. Total size: 165.04 Kb (100%)... done!
 # - extracting results (. = data, F = file[s] and data, x = none):
-# F F . . . . . . . F . . . F . . . F . . . . . F . . . . . . . F 
+# F F . . . . . . . F . . . F . . . F . . . . . F . . . . . . . F
 # (2/4) Converting to NDJSON (estimate: 3 s)...
 # (3/4) Importing results into database (may take some time)...
 # (4/4) Results history: not retrieved (euctrresultshistory = FALSE)
@@ -407,17 +407,17 @@ queries <- ctrGenerateQueries(
 )
 
 queries
-# EUCTR 
+# EUCTR
 # "https://www.clinicaltrialsregister.eu/ctr-search/search?query=neuroblastoma&phase=phase-two
 # &age=children&age=adolescent&age=infant-and-toddler&age=newborn&age=preterm-new-born-infants
-# &age=under-18&status=completed" 
-# CTGOV2 
-# "https://clinicaltrials.gov/search?cond=neuroblastoma&aggFilters=phase:2,ages:child,status:com" 
-# ISRCTN 
-# "https://www.isrctn.com/search?&filters=condition:neuroblastoma,phase:Phase II,ageRange:Child,trialStatus:completed&q=" 
-# CTIS 
+# &age=under-18&status=completed"
+# CTGOV2
+# "https://clinicaltrials.gov/search?cond=neuroblastoma&aggFilters=phase:2,ages:child,status:com"
+# ISRCTN
+# "https://www.isrctn.com/search?&filters=condition:neuroblastoma,phase:Phase II,ageRange:Child,trialStatus:completed&q="
+# CTIS
 # "https://euclinicaltrials.eu/ctis-public/search#searchCriteria={\"medicalCondition\":
-# \"neuroblastoma\",\"trialPhaseCode\":[4],\"ageGroupCode\":[2],\"status\":[5,8]}" 
+# \"neuroblastoma\",\"trialPhaseCode\":[4],\"ageGroupCode\":[2],\"status\":[5,8]}"
 
 # Open queries in registers' web interfaces
 sapply(queries, ctrOpenSearchPagesInBrowser)
@@ -426,8 +426,8 @@ sapply(queries, ctrOpenSearchPagesInBrowser)
 result <- lapply(queries, ctrLoadQueryIntoDb, con = db)
 
 sapply(result, "[[", "n")
-# EUCTR CTGOV2 ISRCTN   CTIS 
-#   180    111      0      1 
+# EUCTR CTGOV2 ISRCTN   CTIS
+#   180    111      0      1
 ```
 
 - Analyse
@@ -440,14 +440,14 @@ loaded).
 ``` r
 # Get all records that have values in the fields of interest:
 result <- dbGetFieldsIntoDf(
-  # Field of interest 
+  # Field of interest
   fields = c("a7_trial_is_part_of_a_paediatric_investigation_plan"),
   # Trial concepts calculated across registers
   calculate = c("f.statusRecruitment", "f.isUniqueTrial"),
   con = db
 )
 # Querying database (35 fields)...
-# - Finding duplicates among registers' and sponsor ids...     
+# - Finding duplicates among registers' and sponsor ids...
 # - 114 EUCTR _id were not preferred EU Member State record for 40 trials
 # - Keeping 111 / 34 / 0 / 0 / 1 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS
 
@@ -459,7 +459,7 @@ with(
     a7_trial_is_part_of_a_paediatric_investigation_plan
   )
 )
-#                   a7_trial_is_part_of_a_paediatric_investigation_plan
+#      a7_trial_is_part_of_a_paediatric_investigation_plan
 # .statusRecruitment FALSE TRUE
 #        ongoing         3    2
 #        completed      13    5
@@ -511,28 +511,28 @@ q <- "https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&rslt=Wit
 # Open old URL (CTGOV) in current website (CTGOV2):
 ctrOpenSearchPagesInBrowser(q)
 # * Appears specific for CTGOV Classic website
-# Since 2024-06-25, the classic CTGOV servers are no longer available. 
-# Package ctrdata has translated the classic CTGOV query URL from this call 
-# of function ctrLoadQueryIntoDb(queryterm = ...) into a query URL that works 
-# with the current CTGOV2. This is printed below and is also part of the return 
-# value of this function, ctrLoadQueryIntoDb(...)$url. This URL can be used with 
-# ctrdata functions. Note that the fields and data schema of trials differ 
-# between CTGOV and CTGOV2. 
+# Since 2024-06-25, the classic CTGOV servers are no longer available.
+# Package ctrdata has translated the classic CTGOV query URL from this call
+# of function ctrLoadQueryIntoDb(queryterm = ...) into a query URL that works
+# with the current CTGOV2. This is printed below and is also part of the return
+# value of this function, ctrLoadQueryIntoDb(...)$url. This URL can be used with
+# ctrdata functions. Note that the fields and data schema of trials differ
+# between CTGOV and CTGOV2.
 #
 # Replace this URL:
-# 
+#
 # https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug
-# 
+#
 # with this URL:
-# 
+#
 # https://clinicaltrials.gov/search?cond=neuroblastoma&intr=Drug&aggFilters=ages:child,results:with,status:com
-# 
+#
 # * Found search query from CTGOV2: cond=neuroblastoma&intr=Drug&aggFilters=ages:child,results:with,status:com
 
 # Count trials:
 ctrLoadQueryIntoDb(
   queryterm = q,
-  con = db, 
+  con = db,
   only.count = TRUE
 )
 # $n
@@ -577,11 +577,11 @@ and to select and copy selected fields’ names for use with function
 [dbGetFieldsIntoDf()](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.html).
 
 ``` r
-# This opens a local browser for user interaction. 
+# This opens a local browser for user interaction.
 # If the trial identifier (_id) is not found in the
-# specified collection, it will be retrieved from the register. 
+# specified collection, it will be retrieved from the register.
 ctrShowOneTrial(
-  identifier = "2024-518931-12-00", 
+  identifier = "2024-518931-12-00",
   con = db
 )
 ```
@@ -603,18 +603,20 @@ library(ggplot2)
 df <- dbGetFieldsIntoDf(
   fields = "",
   calculate = c("f.statusRecruitment", "f.isUniqueTrial", "f.startDate"),
-  con = db)
+  con = db
+)
 
 df %>%
   filter(.isUniqueTrial) %>%
   ggplot() +
   stat_ecdf(aes(
     x = .startDate,
-    colour = .statusRecruitment)) + 
+    colour = .statusRecruitment
+  )) +
   labs(
-    title = "Evolution over time of selected trials", 
+    title = "Evolution over time of selected trials",
     subtitle = "Data from EUCTR, CTIS, ISRCTN, CTGOV2",
-    x = "Date of start (proposed or realised)", 
+    x = "Date of start (proposed or realised)",
     y = "Cumulative proportion of trials",
     colour = "Current status",
     caption = Sys.Date()
@@ -645,10 +647,11 @@ library(ggplot2)
 
 result <- dbGetFieldsIntoDf(
   calculate = c(
-    "f.numSites", 
-    "f.sampleSize", 
-    "f.controlType", 
-    "f.numTestArmsSubstances"),
+    "f.numSites",
+    "f.sampleSize",
+    "f.controlType",
+    "f.numTestArmsSubstances"
+  ),
   con = db
 )
 
@@ -670,7 +673,7 @@ ggplot(data = result) +
   labs(
     x = "Number of sites",
     y = "Total number of participants",
-    colour = "Control", 
+    colour = "Control",
     size = "# Treatments",
     caption = Sys.Date()
   )
@@ -696,7 +699,7 @@ alt="Neuroblastoma trials" />
 
 ``` r
 ### EUCTR document files can be downloaded when results are requested
-# All files are downloaded and saved (documents.regexp is not used with EUCTR) 
+# All files are downloaded and saved (documents.regexp is not used with EUCTR)
 ctrLoadQueryIntoDb(
   queryterm = "query=cancer&age=under-18&phase=phase-one",
   register = "EUCTR",
@@ -711,7 +714,7 @@ ctrLoadQueryIntoDb(
 # Updated history ("meta-info" in "some_collection_name")
 
 
-### CTGOV files are downloaded, here corresponding to the default of 
+### CTGOV files are downloaded, here corresponding to the default of
 # documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|ctalett|lay|^[0-9]+ "
 ctrLoadQueryIntoDb(
   queryterm = "cond=Neuroblastoma&type=Intr&recrs=e&phase=1&u_prot=Y&u_sap=Y&u_icf=Y",
@@ -725,9 +728,9 @@ ctrLoadQueryIntoDb(
 # - Created directory ./files-ctgov
 # - Applying 'documents.regexp' to 40 missing documents
 # - Creating subfolder for each trial
-# - Downloading 40 missing documents 
-# Download status: 40 done; 0 in progress. Total size: 110.75 Mb (100%)... done!             
-# = Newly saved 40 document(s) for 32 trial(s); 0 of such document(s) for 0 trial(s) 
+# - Downloading 40 missing documents
+# Download status: 40 done; 0 in progress. Total size: 110.75 Mb (100%)... done!
+# = Newly saved 40 document(s) for 32 trial(s); 0 of such document(s) for 0 trial(s)
 # already existed in ./files-ctgov
 
 
@@ -744,8 +747,8 @@ ctrLoadQueryIntoDb(
 # - Creating subfolder for each trial
 # - Applying 'documents.regexp' to 42 missing documents
 # - Downloading 42 missing documents
-# Download status: 42 done; 0 in progress. Total size: 92.57 Mb (100%)... done!             
-# = Newly saved 42 document(s) for 26 trial(s); 0 of such document(s) for 0 
+# Download status: 42 done; 0 in progress. Total size: 92.57 Mb (100%)... done!
+# = Newly saved 42 document(s) for 26 trial(s); 0 of such document(s) for 0
 # trial(s) already existed in ./files-ctgov2
 
 
@@ -757,43 +760,44 @@ ctrLoadQueryIntoDb(
 )
 # * Found search query from ISRCTN: q=alzheimer
 # [...]
-# * Checking for documents...                      
+# * Checking for documents...
 # - Getting links to documents
 # - Downloading documents into 'documents.path' = ./files-isrctn/
 # - Created directory /Users/ralfherold/Daten/mak/r/emea/ctrdata/files-isrctn
 # - Applying 'documents.regexp' to 52 missing documents
 # - Creating subfolder for each trial
-# - Downloading 32 missing documents 
-# Download status: 32 done; 0 in progress. Total size: 14.89 Mb (100%)... done!             
-# = Newly saved 26 document(s) for 15 trial(s); 0 of such document(s) for 0 
+# - Downloading 32 missing documents
+# Download status: 32 done; 0 in progress. Total size: 14.89 Mb (100%)... done!
+# = Newly saved 26 document(s) for 15 trial(s); 0 of such document(s) for 0
 # trial(s) already existed in ./files-isrctn
 
 
 ### CTIS files are downloaded, using the default of documents.regexp
 ctrLoadQueryIntoDb(
   queryterm = paste0(
-    'https://euclinicaltrials.eu/ctis-public/search#', 
-    'searchCriteria={"containAny":"cancer","status":[8]}'),
+    "https://euclinicaltrials.eu/ctis-public/search#",
+    'searchCriteria={"containAny":"cancer","status":[8]}'
+  ),
   documents.path = "./files-ctis/",
   documents.regexp = "icf",
   con = db
 )
 # * Found search query from CTIS: searchCriteria={"containAny":"cancer"}
 # [...]
-# * Checking for documents: . . . . . . . . . . . . . . . . . . . 
+# * Checking for documents: . . . . . . . . . . . . . . . . . . .
 # - Downloading documents into 'documents.path' = ./files-ctis/
 # - Applying 'documents.regexp' to 1114 missing documents
 # - Creating subfolder for each trial
-# - Downloading 512 missing documents (excluding 2 files with duplicate names 
+# - Downloading 512 missing documents (excluding 2 files with duplicate names
 # for saving, e.g. /Users/ralfherold/Daten/mak/r/emea/ctrdata/files-ctis/2022-
 # 500694-14-00/SbjctInfaICF - L1 SIS and ICF Prescreening ICF clean placeholder
 # - 137297.PDF, /Users/ralfherold/Daten/mak/r/emea/ctrdata/files-ctis/2022-
-# 500694-14-00/SbjctInfaICF - L1 SIS and ICF Pregnant Partner ICF clean - 
-# 137297.PDF) 
-# Download status: 510 done; 0 in progress. Total size: 377.27 Kb (100%)... done!             
+# 500694-14-00/SbjctInfaICF - L1 SIS and ICF Pregnant Partner ICF clean -
+# 137297.PDF)
+# Download status: 510 done; 0 in progress. Total size: 377.27 Kb (100%)... done!
 # Redirecting to CDN...
-# Download status: 127 done; 0 in progress. Total size: 47.66 Mb (100%)... done!             
-# = Newly saved 510 document(s) for 35 trial(s); 0 of such document(s) for 0 
+# Download status: 127 done; 0 in progress. Total size: 47.66 Mb (100%)... done!
+# = Newly saved 510 document(s) for 35 trial(s); 0 of such document(s) for 0
 # trial(s) already existed in ./files-ctis
 ```
 
