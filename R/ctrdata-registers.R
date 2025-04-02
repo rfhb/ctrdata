@@ -78,8 +78,10 @@
 #' - ISRCTN field \code{interventions.intervention.interventionType} for type of study
 #' - CTIS fields \code{ageGroup} and \code{authorizedApplication.authorizedPartI.medicalConditions.medicalCondition}
 #'
-#' `ctrdata` supports users in identifying fields with functions
-#' \link{dbFindFields} and \link{ctrShowOneTrial}.
+#' `ctrdata` supports users with pre-defined \link{ctrdata-trial-concepts} and
+#' these cover the example above, and with functions \link{dbFindFields} and
+#' \link{ctrShowOneTrial} for finding fields of interest and reviewing data
+#' structure, respectively.
 #'
 #' @name ctrdata-registers
 #' @docType data

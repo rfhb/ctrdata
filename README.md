@@ -37,7 +37,7 @@ interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
 `ctrdata` is a package for the [R](https://www.r-project.org/) system,
 but other systems and tools can use the databases created with this
-package. This README was reviewed on 2025-03-16 for version 1.21.1.9000.
+package. This README was reviewed on 2025-04-02 for version 1.21.1.9000.
 
 ## Main features
 
@@ -807,58 +807,60 @@ See also <https://app.codecov.io/gh/rfhb/ctrdata/tree/master/R>
 
 ``` r
 tinytest::test_all()
-# test_ctrdata_ctrfindactivesubstance.R    4 tests OK 0.8s
-# test_ctrdata_duckdb_ctgov2.R..   78 tests OK 47.3s
-# test_ctrdata_function_ctrgeneratequeries.R   12 tests OK 4ms
-# test_ctrdata_function_dfcalculate.R   26 tests OK 2.0s
-# test_ctrdata_other_functions.R   67 tests OK 3.1s
-# test_ctrdata_postgres_ctgov2.R   50 tests OK 32.0s
-# test_ctrdata_sqlite_ctgov.R...  108 tests OK 30.8s
-# test_ctrdata_sqlite_ctgov2.R..   50 tests OK 26.8s
-# test_ctrdata_sqlite_ctis.R....   63 tests OK 49.4s
-# test_ctrdata_sqlite_euctr.R...  115 tests OK 44.2s
-# test_ctrdata_sqlite_isrctn.R..   38 tests OK 12.5s
+# test_ctrdata_duckdb_ctgov2.R..   78 tests OK 48.7s
+# test_ctrdata_function_activesubstance.R    4 tests OK 1.3s
+# test_ctrdata_function_ctrgeneratequeries.R   14 tests OK 5ms
+# test_ctrdata_function_params.R   25 tests OK 1.0s
+# test_ctrdata_function_trial-concepts.R   80 tests OK 4.6s
+# test_ctrdata_function_various.R   67 tests OK 3.4s
+# test_ctrdata_postgres_ctgov2.R   50 tests OK 32.1s
+# test_ctrdata_sqlite_ctgov.R...   46 tests OK 28.9s
+# test_ctrdata_sqlite_ctgov2.R..   50 tests OK 27.0s
+# test_ctrdata_sqlite_ctis.R....   63 tests OK 56.9s
+# test_ctrdata_sqlite_euctr.R...  115 tests OK 46.3s
+# test_ctrdata_sqlite_isrctn.R..   38 tests OK 10.6s
 # test_euctr_error_sample.R.....    8 tests OK 0.2s
-# All ok, 619 results (4m 9.2s)
+# All ok, 638 results (4m 21.4s)
 
 covr::package_coverage(path = ".", type = "tests")
-# ctrdata Coverage: 94.06%
+# ctrdata Coverage: 94.30%
 # R/ctrShowOneTrial.R: 57.89%
 # R/ctrRerunQuery.R: 74.85%
 # R/zzz.R: 80.95%
-# R/dbGetFieldsIntoDf.R: 86.90%
-# R/util_functions.R: 89.52%
+# R/dbGetFieldsIntoDf.R: 86.99%
+# R/util_functions.R: 89.86%
 # R/ctrLoadQueryIntoDbEuctr.R: 90.08%
-# R/ctrGetQueryUrl.R: 90.09%
+# R/ctrFindActiveSubstanceSynonyms.R: 90.38%
+# R/ctrGetQueryUrl.R: 92.04%
 # R/ctrLoadQueryIntoDbIsrctn.R: 92.45%
-# R/ctrLoadQueryIntoDbCtgov2.R: 92.90%
-# R/ctrFindActiveSubstanceSynonyms.R: 93.62%
+# R/ctrLoadQueryIntoDbCtgov2.R: 92.72%
 # R/dfMergeVariablesRelevel.R: 94.29%
-# R/ctrLoadQueryIntoDb.R: 94.81%
 # R/ctrLoadQueryIntoDbCtis.R: 95.26%
 # R/dbFindFields.R: 95.88%
-# R/vct_primaryEndpointResults.R: 96.27%
+# R/f_primaryEndpointResults.R: 96.00%
+# R/ctrLoadQueryIntoDb.R: 96.77%
 # R/ctrOpenSearchPagesInBrowser.R: 97.37%
-# R/dbFindIdsUniqueTrials.R: 97.87%
-# R/vct_numTestArmsSubstances.R: 97.95%
-# R/ctrGenerateQueries.R: 100.00%
+# R/ctrGenerateQueries.R: 97.51%
+# R/dbFindIdsUniqueTrials.R: 98.78%
+# R/f_numTestArmsSubstances.R: 98.92%
+# R/f_likelyPlatformTrial.R: 99.13%
 # R/dbQueryHistory.R: 100.00%
 # R/dfName2Value.R: 100.00%
 # R/dfTrials2Long.R: 100.00%
-# R/vct_controlType.R: 100.00%
-# R/vct_isMedIntervTrial.R: 100.00%
-# R/vct_isPlatformTrial.R: 100.00%
-# R/vct_isUniqueTrial.R: 100.00%
-# R/vct_numSites.R: 100.00%
-# R/vct_primaryEndpointDescription.R: 100.00%
-# R/vct_resultsDate.R: 100.00%
-# R/vct_sampleSize.R: 100.00%
-# R/vct_sponsorType.R: 100.00%
-# R/vct_startDate.R: 100.00%
-# R/vct_statusRecruitment.R: 100.00%
-# R/vct_trialObjectives.R: 100.00%
-# R/vct_trialPhase.R: 100.00%
-# R/vct_trialPopulation.R: 100.00%
+# R/f_controlType.R: 100.00%
+# R/f_isMedIntervTrial.R: 100.00%
+# R/f_isUniqueTrial.R: 100.00%
+# R/f_numSites.R: 100.00%
+# R/f_primaryEndpointDescription.R: 100.00%
+# R/f_resultsDate.R: 100.00%
+# R/f_sampleSize.R: 100.00%
+# R/f_sponsorType.R: 100.00%
+# R/f_startDate.R: 100.00%
+# R/f_statusRecruitment.R: 100.00%
+# R/f_trialObjectives.R: 100.00%
+# R/f_trialPhase.R: 100.00%
+# R/f_trialPopulation.R: 100.00%
+# R/f_trialTitle.R: 100.00%
 ```
 
 ## Future features

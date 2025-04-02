@@ -35,9 +35,11 @@
 #' - \link{f.isUniqueTrial} (logical) is the trial record unique in the data
 #' frame of trial, based on default parameters of \link{dbFindIdsUniqueTrials}?
 #'
-#' - \link{f.likelyPlatformTrial} (logical) is the trial possibly a (research)
+#' - \link{f.likelyPlatformTrial} (logical, list of likely related trials, and
+#' a list of possibly related trials) is the trial possibly a (research)
 #' platform trial, and what are related trials? (based on trial title,
-#' f.numTestArmsSubstances, number of periods)
+#' f.numTestArmsSubstances, number of periods; similarity of terms in parts of
+#' trial titles)
 #'
 #' - \link{f.numSites} (integer) how many sites does the trial have?
 #'
@@ -58,7 +60,7 @@
 #' - \link{f.startDate} (date) the planned, authorised or documented date
 #' of start of recruitment
 #'
-#' - \link{f.sampleSize} (integer) the achieved (or planned) number of subjects
+#' - \link{f.sampleSize} (integer) the planned or achieved number of subjects
 #' or participants recruited
 #'
 #' - \link{f.sponsorType} (factor) a type or class of main or lead sponsor that

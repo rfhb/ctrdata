@@ -38,9 +38,11 @@ it have one or more medicines (drugs or biological) as investigational
 of study design)
 \item \link{f.isUniqueTrial} (logical) is the trial record unique in the data
 frame of trial, based on default parameters of \link{dbFindIdsUniqueTrials}?
-\item \link{f.likelyPlatformTrial} (logical) is the trial possibly a (research)
+\item \link{f.likelyPlatformTrial} (logical, list of likely related trials, and
+a list of possibly related trials) is the trial possibly a (research)
 platform trial, and what are related trials? (based on trial title,
-f.numTestArmsSubstances, number of periods)
+f.numTestArmsSubstances, number of periods; similarity of terms in parts of
+trial titles)
 \item \link{f.numSites} (integer) how many sites does the trial have?
 \item \link{f.numTestArmsSubstances} (integer) how many arms or groups have
 medicines that are investigational? (cannot be calculated for ISRCTN or
@@ -54,7 +56,7 @@ primary endpoint only
 \item \link{f.resultsDate} (date) the planned or achieved date of results availability
 \item \link{f.startDate} (date) the planned, authorised or documented date
 of start of recruitment
-\item \link{f.sampleSize} (integer) the achieved (or planned) number of subjects
+\item \link{f.sampleSize} (integer) the planned or achieved number of subjects
 or participants recruited
 \item \link{f.sponsorType} (factor) a type or class of main or lead sponsor that
 is simplified to "not for profit", "for profit" or "other"

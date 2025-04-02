@@ -90,8 +90,10 @@ selected based on values of relevant fields, for example:
 \item CTIS fields \code{ageGroup} and \code{authorizedApplication.authorizedPartI.medicalConditions.medicalCondition}
 }
 
-\code{ctrdata} supports users in identifying fields with functions
-\link{dbFindFields} and \link{ctrShowOneTrial}.
+\code{ctrdata} supports users with pre-defined \link{ctrdata-trial-concepts} and
+these cover the example above, and with functions \link{dbFindFields} and
+\link{ctrShowOneTrial} for finding fields of interest and reviewing data
+structure, respectively.
 }
 
 \author{

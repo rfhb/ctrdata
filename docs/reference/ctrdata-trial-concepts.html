@@ -85,9 +85,11 @@ it have one or more medicines (drugs or biological) as investigational
 of study design)</p></li>
 <li><p><a href="f.isUniqueTrial.html">f.isUniqueTrial</a> (logical) is the trial record unique in the data
 frame of trial, based on default parameters of <a href="dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a>?</p></li>
-<li><p><a href="f.likelyPlatformTrial.html">f.likelyPlatformTrial</a> (logical) is the trial possibly a (research)
+<li><p><a href="f.likelyPlatformTrial.html">f.likelyPlatformTrial</a> (logical, list of likely related trials, and
+a list of possibly related trials) is the trial possibly a (research)
 platform trial, and what are related trials? (based on trial title,
-f.numTestArmsSubstances, number of periods)</p></li>
+f.numTestArmsSubstances, number of periods; similarity of terms in parts of
+trial titles)</p></li>
 <li><p><a href="f.numSites.html">f.numSites</a> (integer) how many sites does the trial have?</p></li>
 <li><p><a href="f.numTestArmsSubstances.html">f.numTestArmsSubstances</a> (integer) how many arms or groups have
 medicines that are investigational? (cannot be calculated for ISRCTN or
@@ -101,7 +103,7 @@ primary endpoint only</p></li>
 <li><p><a href="f.resultsDate.html">f.resultsDate</a> (date) the planned or achieved date of results availability</p></li>
 <li><p><a href="f.startDate.html">f.startDate</a> (date) the planned, authorised or documented date
 of start of recruitment</p></li>
-<li><p><a href="f.sampleSize.html">f.sampleSize</a> (integer) the achieved (or planned) number of subjects
+<li><p><a href="f.sampleSize.html">f.sampleSize</a> (integer) the planned or achieved number of subjects
 or participants recruited</p></li>
 <li><p><a href="f.sponsorType.html">f.sponsorType</a> (factor) a type or class of main or lead sponsor that
 is simplified to "not for profit", "for profit" or "other"</p></li>
