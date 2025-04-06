@@ -74,6 +74,7 @@ records while keeping any user annotations of trial records.</p>
 <span>  euctrresults <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  euctrresultshistory <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  ctgov2history <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  ctishistory <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  documents.path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  documents.regexp <span class="op">=</span> <span class="st">"prot|sample|statist|sap_|p1ar|p2ars|icf|ctalett|lay|^[0-9]+ "</span>,</span>
 <span>  annotation.text <span class="op">=</span> <span class="st">""</span>,</span>
@@ -156,6 +157,14 @@ is a time-consuming operation. Use
 of the trial record to be retrieved. Note that for register
 CTIS, historic versions were available in the `applications`
 field only before the register's relaunch on 2024-06-17.</p></dd>
+
+
+<dt id="arg-ctishistory">ctishistory<a class="anchor" aria-label="anchor" href="#arg-ctishistory"></a></dt>
+<dd><p>If <code>TRUE</code>, and only when using <code>querytoupdate</code>,
+move the current CTIS record into an array <code>history</code> with the record
+which holds one or more historic versions, before updating the rest of the
+record from CTIS. Default is <code>FALSE</code>, because this is a time-consuming
+operation. See "Historic versions" in <code><a href="../articles/ctrdata_summarise.html">vignette("ctrdata_summarise")</a></code>.</p></dd>
 
 
 <dt id="arg-documents-path">documents.path<a class="anchor" aria-label="anchor" href="#arg-documents-path"></a></dt>

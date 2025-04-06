@@ -1,5 +1,8 @@
 # ctrdata 1.21.1.9000
 
+## Improvements
+- When using `querytoupdate` for CTIS, set `ctishistory = TRUE` to create historic versions from previously downloaded trial record, see `vignette("ctrdata_summarise")`
+
 ## Bug fix 
 - Fix digesting marginal cases in notifications in `f.statusRecruitment()`
 

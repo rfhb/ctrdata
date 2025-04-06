@@ -111,8 +111,6 @@ duckdb
 endPoint
 endPoints
 etc
-eu
-euclinicaltrials
 euctr
 euctrresults
 euctrresultsfilespath
@@ -135,8 +133,10 @@ investigational
 isMedIntervTrial
 isUniqueTrial
 jqr
+js
 json
 jsonlite
+jstree
 likelyPlatformTrial
 likelyRelatedTrials
 linux
@@ -190,7 +190,6 @@ rss
 rvest
 sampleSize
 scr
-searchCriteria
 searchPhrase
 sponsorType
 sqlite
