@@ -89,33 +89,22 @@ LT (long-term); and FU (follow-up).</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># fields needed</span></span></span>
 <span class="r-in"><span><span class="fu">f.trialObjectives</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $euctr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "e21_main_objective_of_the_trial"           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [2] "e61_diagnosis"                             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [3] "e610_pharmacogenetic"                      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "e611_pharmacogenomic"                      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] "e612_pharmacoeconomic"                     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [6] "e613_others"                               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "e6131_other_scope_of_the_trial_description"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [8] "e62_prophylaxis"                           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] "e63_therapy"                               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10] "e64_safety"                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [11] "e65_efficacy"                              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [12] "e66_pharmacokinetic"                       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "e67_pharmacodynamic"                       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [14] "e68_bioequivalence"                        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [15] "e69_dose_response"                         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [16] "ctrname"                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "e21_main_objective_of_the_trial" "e64_safety"                     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "e65_efficacy"                    "e66_pharmacokinetic"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5] "e67_pharmacodynamic"             "e69_dose_response"              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [7] "ctrname"                        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ctgov</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "detailed_description.textblock"    "study_design_info.primary_purpose"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "intervention.intervention_type"    "study_type"                       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5] "has_expanded_access"              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "brief_summary.textblock"           "detailed_description.textblock"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "study_design_info.primary_purpose" "intervention.intervention_type"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5] "study_type"                       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ctgov2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "protocolSection.descriptionModule.detailedDescription"     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "protocolSection.designModule.designInfo.primaryPurpose"    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "protocolSection.armsInterventionsModule.interventions.type"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "protocolSection.designModule.studyType"                    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "protocolSection.descriptionModule.briefSummary"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "protocolSection.descriptionModule.detailedDescription"     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "protocolSection.designModule.designInfo.primaryPurpose"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "protocolSection.armsInterventionsModule.interventions.type"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5] "protocolSection.designModule.studyType"                    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $isrctn</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "trialDescription.studyHypothesis"           </span>
@@ -126,9 +115,11 @@ LT (long-term); and FU (follow-up).</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ctis</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "authorizedPartI.trialDetails.trialInformation.trialObjective.mainObjective"                                     </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2] "authorizedPartI.trialDetails.trialInformation.trialObjective.trialScopes.otherDescription"                      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "authorizedApplication.authorizedPartI.trialDetails.trialInformation.trialObjective.mainObjective"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "authorizedApplication.authorizedPartI.trialDetails.trialInformation.trialObjective.trialScopes.otherDescription"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5] "ctrname"                                                                                                        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "authorizedPartI.trialDetails.trialInformation.trialObjective.trialScopes.code"                                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "authorizedApplication.authorizedPartI.trialDetails.trialInformation.trialObjective.mainObjective"               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5] "authorizedApplication.authorizedPartI.trialDetails.trialInformation.trialObjective.trialScopes.otherDescription"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6] "authorizedApplication.authorizedPartI.trialDetails.trialInformation.trialObjective.trialScopes.code"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [7] "ctrname"                                                                                                        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># apply trial concept when creating data frame</span></span></span>
@@ -138,37 +129,37 @@ LT (long-term); and FU (follow-up).</p>
 <span class="r-in"><span><span class="va">trialsDf</span> <span class="op">&lt;-</span> <span class="fu"><a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  calculate <span class="op">=</span> <span class="st">"f.trialObjectives"</span>,</span></span>
 <span class="r-in"><span>  con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying database (33 fields)...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying database (27 fields)...</span>
 <span class="r-in"><span><span class="va">trialsDf</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                  _id .trialObjectives</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1           12949496           S PD A</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2           13281214           E PD A</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3           17473621             &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  2012-003632-23-CZ       E S PK A D</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  2012-003632-23-CZ    E S PD PK A D</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5  2012-003632-23-SE    E S PD PK A D</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6  2014-002606-20-PT              E S</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 7  2014-003556-31-GB           E S LT</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 8  2014-003556-31-SE           E S LT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  2022-500244-37-00                A</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 2022-501142-30-00                A</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 2023-505613-24-00             PK A</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12 2023-508143-51-01               PD</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13 2024-510663-34-00               PK</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  2022-500244-37-00            E S A</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 2022-501142-30-00            E S A</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 2023-505613-24-00           S PK A</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 2023-508143-51-01             S PD</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 2024-510663-34-00             S PK</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 14          20343063            E S A</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15          61070850                E</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 16          76463425             &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 17          80181452              E A</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 18          88261002                A</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 19       NCT00617929              E A</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20       NCT01125800                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21       NCT01483820                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22       NCT01505608                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23       NCT01592045                A</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24       NCT02620761          PD PK A</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20       NCT01125800        E S PD PK</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21       NCT01483820            E S A</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22       NCT01505608              S A</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23       NCT01592045           S PK A</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24       NCT02620761        PD PK A D</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 25       NCT03280147         E S FU A</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26       NCT03325439                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26       NCT03325439             PK A</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 27       NCT03431558           E PD A</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28       NCT03876704                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28       NCT03876704           S PD A</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 29       NCT04001712           E PD A</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 30       NCT04041765           E PD A</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 31       NCT05969327              E A</span>
