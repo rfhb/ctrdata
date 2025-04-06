@@ -49,18 +49,14 @@ f.isMedIntervTrial <- function(df = NULL) {
       "ctrname"
     ),
     "ctgov" = c(
-      # "oversight_info.is_fda_regulated_drug",
       "intervention.intervention_type",
       "study_type"
     ),
     "ctgov2" = c(
-      # "protocolSection.oversightModule.isFdaRegulatedDrug",
       "protocolSection.armsInterventionsModule.interventions.type",
       "protocolSection.designModule.studyType"
     ),
     "isrctn" = c(
-      # "trialDesign.trialType",
-      # https://www.isrctn.com/page/definitions#intervention-type
       "interventions.intervention.interventionType",
       "trialDesign.primaryStudyDesign"
     ),
@@ -72,16 +68,21 @@ f.isMedIntervTrial <- function(df = NULL) {
   #
   # CTGOV
   # "study_design_info.intervention_model" e.g. parallel
-  # "study_design_info.allocation",
-  # "study_design_info.primary_purpose",
+  # "study_design_info.allocation"
+  # "study_design_info.primary_purpose"
+  # "oversight_info.is_fda_regulated_drug"
   #
   # CTGOV2
   # "protocolSection.armsInterventionsModule.armGroups.type" not specific
   # "protocolSection.oversightModule.isFdaRegulatedDrug" often empty
   # "protocolSection.oversightModule.isFdaRegulatedDevice"
+  # study type is either interventional or expanded access
+  # "protocolSection.statusModule.expandedAccessInfo.hasExpandedAccess"
   #
   # ISRCTN
   # "interventions.intervention.description"
+  # "trialDesign.trialType"
+
 
 
   #### describe ####
@@ -138,9 +139,11 @@ f.isMedIntervTrial <- function(df = NULL) {
       #
       analysis_isDrugTrial =
         stringi::stri_detect_regex(
+          # https://clinicaltrials.gov/data-api/about-api/study-data-structure#enum-InterventionType
           .data$protocolSection.armsInterventionsModule.interventions.type,
           "drug|biological", case_insensitive = TRUE) &
         stringi::stri_detect_fixed(
+          # https://clinicaltrials.gov/data-api/about-api/study-data-structure#enum-StudyType
           .data$protocolSection.designModule.studyType,
           "interventional", case_insensitive = TRUE),
       #
@@ -155,6 +158,7 @@ f.isMedIntervTrial <- function(df = NULL) {
       #
       analysis_isDrugTrial =
         stringi::stri_detect_regex(
+          # https://www.isrctn.com/page/definitions#intervention-type
           .data$interventions.intervention.interventionType,
           "drug|biological|vaccine", case_insensitive = TRUE) &
         stringi::stri_detect_fixed(
