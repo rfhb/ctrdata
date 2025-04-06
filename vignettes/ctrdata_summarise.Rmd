@@ -346,9 +346,72 @@ not implemented so far, see `help(ctrdata-trial-concepts)`.
 
 ## Historic versions of trial records and changes in sample sizes
 
-Historic versions can set to be retrieved for CTGOV2 by specifying `ctgov2history = <...>` when using `ctrLoadQueryIntoDb()`; this functionality was added in `ctrdata` version 1.18.0. The versions include all trial data available at the date of the respective version. Only CTGOV2 provides historic versions at this time; they were available for `CTIS` only until its relaunch on 2024-06-17. 
+Historic versions can set to be retrieved for CTGOV2 by specifying `ctgov2history = <...>` when using `ctrLoadQueryIntoDb()`; this functionality was added in `ctrdata` version 1.18.0. The versions include all trial data available at the date of the respective version. Only CTGOV2 provides historic versions at this time (CTIS only until its relaunch on 2024-06-17) as part of their respective APIs. Nevertheless, historic versions can be created for CTIS by specifying `querytoupdate = <...>, ctishistory = TRUE` when using `ctrLoadQueryIntoDb()`; this functionality thus is not provided by the register but triggered by the user, it was added in `ctrdata` version 1.21.1.9000.
 
-For CTGOV2 records, the historic versions are added as follows into the `ctrdata` data model of a trial record, where the ellipsis `...` represents all trial data fields: `{"_id":"NCT01234567", "title": "Current title", ..., "history": [{"history_version": {"version_number": 1, "version_date": "2020-21-22 10:11:12"}, "title": "Original title", ...}, {"history_version": {"number": 2, "date": "2021-22-23 11:13:13"}, "title": "Later title", ...}]}`
+The following schema represents two clinical trial records (one each from CTGOV2 and CTIS) with the array of `history: [...]` versions as part of a trial's record (the ellipsis `...` represents all other data fields): 
+
+```{r, results='asis'}
+'
+[
+  {
+   "_id":"NCT01234567", 
+   "title": "Current title", 
+   "clinical_results": ..., 
+   ..., 
+   "history": [
+     {
+      "history_version": {
+        "version_number": 1, 
+        "version_date": "2020-21-22 10:11:12"}, 
+      "title": "Original title", 
+      "clinical_results": ..., 
+      ...
+     }, 
+     {
+      "history_version": {
+        "version_number": 2, 
+        "version_date": "2021-22-23 11:13:13"}, 
+      "title": "Later title", 
+      "clinical_results": ..., 
+      ...
+     }
+   ]
+  },
+  {
+   "_id":"2022-502051-56-00", 
+   "title": "Current title", 
+   "ctrname": "CTIS", 
+   "lastUpdated": "2025-04-07"
+   "authorizedPartsII": ...,
+   ..., 
+   "history": [
+     {
+      "history_version": {
+        "version_number": 0, 
+        "version_date": "2025-04-06"}, 
+      "title": "Intermediate title", 
+      "ctrname": "CTIS", 
+      "lastUpdated": "2025-04-06"
+      "authorizedPartsII": ...,
+      ...
+     }, 
+     {
+      "history_version": {
+        "version_number": 0, 
+        "version_date": "2025-04-05"}, 
+      "title": "Original title", 
+      "ctrname": "CTIS", 
+      "lastUpdated": "2025-04-05"
+      "authorizedPartsII": ...,
+      ...
+     }
+   ]
+  },
+  ...
+]
+'
+```
+
 
 The example shows how planned or realised number of participants (sample size) changed over time for individual trials, using available data 
 

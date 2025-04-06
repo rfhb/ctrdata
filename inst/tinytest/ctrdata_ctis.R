@@ -46,9 +46,107 @@ expect_message(
       querytoupdate = "last",
       only.count = TRUE,
       con = dbc)),
-  "[0-9]+ trials have been updated")
+  "Imported .* trial")
 
 #### ctrLoadQueryIntoDb update ####
+
+hist <- dbQueryHistory(con = dbc)
+
+expect_message(
+  suppressWarnings(
+    tmpTest <- ctrLoadQueryIntoDb(
+      querytoupdate = 1L,
+      ctishistory = TRUE,
+      only.count = TRUE,
+      con = dbc)),
+  "Imported .* trial")
+expect_true(tmpTest$n >= 0L)
+expect_true(tmpTest$queryterm == hist[1L, 4L])
+
+expect_message(
+  suppressWarnings(
+    tmpTest <- ctrLoadQueryIntoDb(
+      querytoupdate = 1L,
+      ctishistory = TRUE,
+      only.count = FALSE,
+      con = dbc)),
+  "updating")
+expect_true(tmpTest$n >= 0L)
+expect_true(tmpTest$queryterm == hist[1L, 4L])
+
+expect_message(
+  suppressWarnings(
+    tmpTest <- ctrLoadQueryIntoDb(
+      querytoupdate = 1L,
+      ctishistory = FALSE,
+      only.count = TRUE,
+      con = dbc)),
+  "Imported .* trial")
+expect_true(tmpTest$n >= 0L)
+expect_true(tmpTest$queryterm == hist[1L, 4L])
+
+expect_message(
+  suppressWarnings(
+    tmpTest <- ctrLoadQueryIntoDb(
+      querytoupdate = 1L,
+      ctishistory = FALSE,
+      only.count = FALSE,
+      con = dbc)),
+  "updating")
+expect_true(tmpTest$n >= 0L)
+expect_true(tmpTest$queryterm == hist[1L, 4L])
+
+# test full load
+hist <- hist[nrow(hist), ]
+hist[1L, "query-timestamp"] <- "2025-01-01 00:00:00"
+json <- jsonlite::toJSON(list("queries" = hist))
+expect_equal(
+  nodbi::docdb_update(
+    src = dbc,
+    key = dbc$collection,
+    value = as.character(json),
+    query = '{"_id": "meta-info"}'), 1L)
+
+expect_message(
+  suppressWarnings(
+    tmpTest <- ctrLoadQueryIntoDb(
+      querytoupdate = 1L,
+      ctishistory = TRUE,
+      only.count = TRUE,
+      con = dbc)),
+  "Imported .* trial")
+expect_true(tmpTest$n >= 0L)
+expect_true(tmpTest$queryterm == hist[1L, 4L])
+
+expect_message(
+  suppressWarnings(
+    tmpTest <- ctrLoadQueryIntoDb(
+      querytoupdate = 1L,
+      ctishistory = FALSE,
+      only.count = TRUE,
+      con = dbc)),
+  "Imported .* trial")
+expect_true(tmpTest$n >= 0L)
+expect_true(tmpTest$queryterm == hist[1L, 4L])
+
+expect_warning(
+  suppressMessages(
+    tmpTest <- ctrLoadQueryIntoDb(
+      querytoupdate = 1L,
+      ctishistory = TRUE,
+      only.count = FALSE,
+      con = dbc)),
+  "updating")
+expect_true(tmpTest$n >= 0L)
+expect_true(tmpTest$queryterm == hist[1L, 4L])
+
+dF <- dbGetFieldsIntoDf(c(
+  "lastUpdated",
+  "history.history_version.version_date"), con = dbc)
+expect_inherits(dF[[2]], "Date")
+expect_inherits(dF[[3]], "Date")
+
+rm(tmpTest, dF)
 
 #### annotating ####
 

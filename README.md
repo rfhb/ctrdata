@@ -49,7 +49,7 @@ package. This README was reviewed on 2025-04-02 for version 1.21.1.9000.
   can automate copying the query URL from all registers. Personal
   annotations can be made when downloading trials. Also, [trial
   documents](#documents-example) and [historic
-  versions](https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html#analysing-sample-size-using-historic-versions-of-trial-records)
+  versions](https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html#historic-versions-of-trial-records-and-changes-in-sample-sizes)
   as available in registers on trials can be downloaded.
 
 - Downloaded trial information is transformed and stored in a collection
@@ -249,12 +249,12 @@ every such document:
   `CTGOV2`, `ISRCTN`, `CTIS`) from which that trial was retrieved
 - field `record_last_import` with the date and time when that document
   was last updated using `ctrLoadQueryIntoDb()`
-- only for `CTGOV2`: object `history` with a historic version of the
-  trial and with `history_version`, which contains the fields
+- only for `CTGOV2` and `CTIS`: object `history` with a historic version
+  of the trial and with `history_version`, which contains the fields
   `version_number` (starting from 1) and `version_date`
 - all original fields as provided by the register for that trial (see
-  examples
-  [below](https://rfhb.github.io/ctrdata/index.html#trial-records-json-in-databases))
+  example in
+  [vignette](https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html#historic-versions-of-trial-records-and-changes-in-sample-sizes))
 
 For visualising the data structure for a trial, see this [vignette
 section](https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html#analysing-nested-fields-such-as-trial-results).

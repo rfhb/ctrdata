@@ -12,6 +12,7 @@ ctrLoadQueryIntoDb(
   euctrresults = FALSE,
   euctrresultshistory = FALSE,
   ctgov2history = FALSE,
+  ctishistory = TRUE,
   documents.path = NULL,
   documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|icf|ctalett|lay|^[0-9]+ ",
   annotation.text = "",
@@ -77,6 +78,12 @@ is a time-consuming operation. Use
 of the trial record to be retrieved. Note that for register
 CTIS, historic versions were available in the `applications`
 field only before the register's relaunch on 2024-06-17.}
+
+\item{ctishistory}{If \code{TRUE}, and only when using \code{querytoupdate},
+move the current CTIS record into an array \code{history} with the record
+which holds one or more historic versions, before updating the rest of the
+record from CTIS. Default is \code{FALSE}, because this is a time-consuming
+operation. See "Historic versions" in \code{vignette("ctrdata_summarise")}.}
 
 \item{documents.path}{If this is a relative or absolute
 path to a directory that exists or can be created,

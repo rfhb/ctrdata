@@ -1,4 +1,4 @@
-## ----setup, include=FALSE-----------------------------------------------------
+## ----setup, include=FALSE----------------------------------------------------------------------------------
 knitr::opts_chunk$set(
   eval = FALSE,
   warning = FALSE,
@@ -6,7 +6,7 @@ knitr::opts_chunk$set(
   results = "hide"
 )
 
-## ----connect_mongodb----------------------------------------------------------
+## ----connect_mongodb---------------------------------------------------------------------------------------
 # db <- nodbi::src_mongo(
 #   url = "mongodb://localhost",
 #   db = "my_database_name",
@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 # # empty collection if exists
 # nodbi::docdb_delete(db, db$collection)
 
-## ----ctrLoadQueryIntoDb-------------------------------------------------------
+## ----ctrLoadQueryIntoDb------------------------------------------------------------------------------------
 # # Load package
 # library(ctrdata)
 # 
@@ -39,7 +39,7 @@ knitr::opts_chunk$set(
 # # EUCTR CTGOV2 ISRCTN   CTIS
 # #   390    613      3     19
 
-## ----dbFindFields-------------------------------------------------------------
+## ----dbFindFields------------------------------------------------------------------------------------------
 # #
 # dbFindFields(namepart = "date", sample = FALSE, con = db)
 # # Finding fields in database collection (may take some time) . . . . .
@@ -61,7 +61,7 @@ knitr::opts_chunk$set(
 # #                                                                           ISRCTN
 # #                                                     "trialDesign.overallEndDate"
 
-## ----dbGetFieldsIntoDf--------------------------------------------------------
+## ----dbGetFieldsIntoDf-------------------------------------------------------------------------------------
 # # Define vector of fields
 # fieldsOfInterest <- c(
 #   # EUCTR protocol-related information
@@ -90,7 +90,7 @@ knitr::opts_chunk$set(
 # # dim(result)
 # # [1] 984   8
 
-## ----attributes---------------------------------------------------------------
+## ----attributes--------------------------------------------------------------------------------------------
 # attributes(result)
 # # [...]
 # #
@@ -121,7 +121,7 @@ knitr::opts_chunk$set(
 # # 3                     &filters=condition:neuroblastoma,ageRange:Child&q=
 # # 4 searchCriteria={"medicalCondition":"neuroblastoma","ageGroupCode":[2]}
 
-## ----dbFindIdsUniqueTrials----------------------------------------------------
+## ----dbFindIdsUniqueTrials---------------------------------------------------------------------------------
 # # Obtain de-duplicated trial record ids
 # ids <- dbFindIdsUniqueTrials(
 #   preferregister = "EUCTR",
@@ -145,7 +145,7 @@ knitr::opts_chunk$set(
 # # the fields of interest had a value, thus explaining why "result" has fewer
 # # rows than "ids" has identifiers.
 
-## ----unique-------------------------------------------------------------------
+## ----unique------------------------------------------------------------------------------------------------
 # # Obtain data of interest
 # result <- dbGetFieldsIntoDf(
 #   fields = fieldsOfInterest,
@@ -174,7 +174,7 @@ knitr::opts_chunk$set(
 # # See how concept .isUniqueTrial is implemented
 # f.isUniqueTrial
 
-## ----single_trial_widget------------------------------------------------------
+## ----single_trial_widget-----------------------------------------------------------------------------------
 # # Opens a web browser for user interaction.
 # # If the trial is not found in the database,
 # # it will be loaded from the register.
@@ -182,7 +182,7 @@ knitr::opts_chunk$set(
 # # The search is for both, field names and values
 # ctrShowOneTrial("2022-501725-21-00", con = db)
 
-## ----single_trial_widget_jsonview---------------------------------------------
+## ----single_trial_widget_jsonview--------------------------------------------------------------------------
 # # Requires additional package for visualisation
 # remotes::install_github("hrbrmstr/jsonview")
 # 
@@ -198,7 +198,7 @@ knitr::opts_chunk$set(
 # # note that fields and values cannot be searched
 # jsonview::json_tree_view(oneTrial)
 
-## ----str_data_frame-----------------------------------------------------------
+## ----str_data_frame----------------------------------------------------------------------------------------
 # # Get data of interest
 # result <- dbGetFieldsIntoDf(
 #   fields = c("ctrname"),
@@ -229,7 +229,7 @@ knitr::opts_chunk$set(
 # box()
 # dev.off()
 
-## ----dfcalculate--------------------------------------------------------------
+## ----dfcalculate-------------------------------------------------------------------------------------------
 # # Introduction and overview of available trial concepts
 # help("ctrdata-trial-concepts")
 # 
@@ -248,7 +248,68 @@ knitr::opts_chunk$set(
 # # [13] "f.statusRecruitment"          "f.trialObjectives"            "f.trialPhase"
 # # [16] "f.trialPopulation"
 
-## ----sample_size_over_time----------------------------------------------------
+## ----results='asis'----------------------------------------------------------------------------------------
+# '
+# [
+#   {
+#    "_id":"NCT01234567",
+#    "title": "Current title",
+#    "clinical_results": ...,
+#    ...,
+#    "history": [
+#      {
+#       "history_version": {
+#         "version_number": 1,
+#         "version_date": "2020-21-22 10:11:12"},
+#       "title": "Original title",
+#       "clinical_results": ...,
+#       ...
+#      },
+#      {
+#       "history_version": {
+#         "version_number": 2,
+#         "version_date": "2021-22-23 11:13:13"},
+#       "title": "Later title",
+#       "clinical_results": ...,
+#       ...
+#      }
+#    ]
+#   },
+#   {
+#    "_id":"2022-502051-56-00",
+#    "title": "Current title",
+#    "ctrname": "CTIS",
+#    "lastUpdated": "2025-04-07"
+#    "authorizedPartsII": ...,
+#    ...,
+#    "history": [
+#      {
+#       "history_version": {
+#         "version_number": 0,
+#         "version_date": "2025-04-06"},
+#       "title": "Intermediate title",
+#       "ctrname": "CTIS",
+#       "lastUpdated": "2025-04-06"
+#       "authorizedPartsII": ...,
+#       ...
+#      },
+#      {
+#       "history_version": {
+#         "version_number": 0,
+#         "version_date": "2025-04-05"},
+#       "title": "Original title",
+#       "ctrname": "CTIS",
+#       "lastUpdated": "2025-04-05"
+#       "authorizedPartsII": ...,
+#       ...
+#      }
+#    ]
+#   },
+#   ...
+# ]
+# '
+
+## ----sample_size_over_time---------------------------------------------------------------------------------
 # # Load previous query (above), specifying that
 # # for each trial, 5 versions should be retrieved
 # ctrLoadQueryIntoDb(
@@ -299,12 +360,12 @@ knitr::opts_chunk$set(
 # 
 # ggsave("vignettes/samplesizechanges.png", width = 6, height = 4)
 
-## ----ctrShowOneTrial----------------------------------------------------------
+## ----ctrShowOneTrial---------------------------------------------------------------------------------------
 # # Since version 1.20.0, an interactive widget is built into ctrdata
 # # and can be used to search in all field names and all values
 # ctrShowOneTrial("NCT02139397", con = db)
 
-## ----show_nesting-------------------------------------------------------------
+## ----show_nesting------------------------------------------------------------------------------------------
 # # Helper package
 # remotes::install_github("https://github.com/hrbrmstr/jsonview")
 # 
@@ -314,7 +375,7 @@ knitr::opts_chunk$set(
 # # Create interactive widget
 # jsonview::json_tree_view(result[result[["_id"]] == "NCT02139397", -1])
 
-## ----analyse_nested_data------------------------------------------------------
+## ----analyse_nested_data-----------------------------------------------------------------------------------
 # #### 1. Create data frame from results fields
 # # These are key results fields from
 # # CTGOV2, CTGOV and from EUCTR:
@@ -452,7 +513,7 @@ knitr::opts_chunk$set(
 # #  9 NCT02139397_3        Determine the Progression Free Survival (PFS) of Partic… " Phase …  51.2
 # # 10 NCT04029688_14       Part 1b: PFS in Participants With Neuroblastoma From SE… " Part 1…  54
 
-## ----plot_endpoint_frequencies------------------------------------------------
+## ----plot_endpoint_frequencies-----------------------------------------------------------------------------
 # # Get relevant data
 # result <- dbGetFieldsIntoDf(
 #   calculate = c(
@@ -505,7 +566,7 @@ knitr::opts_chunk$set(
 # 
 # ggsave("vignettes/boxpep.png", width = 6, height = 4)
 
-## ----analyse_results_data-----------------------------------------------------
+## ----analyse_results_data----------------------------------------------------------------------------------
 # # Get result set
 # result <- dbGetFieldsIntoDf(
 #   calculate = c(
@@ -559,7 +620,7 @@ knitr::opts_chunk$set(
 # tmp <- data.frame(tmp)
 # knitr::kable(tmp)
 
-## ----product_status-----------------------------------------------------------
+## ----product_status----------------------------------------------------------------------------------------
 # # Helper package
 # library(dplyr)
 # 
@@ -624,7 +685,7 @@ knitr::opts_chunk$set(
 # 
 # ggsave("vignettes/nbtrials.png", width = 6, height = 4)
 
-## ----mongolite----------------------------------------------------------------
+## ----mongolite---------------------------------------------------------------------------------------------
 # # Load package for database access
 # library(mongolite)
 # 
@@ -669,7 +730,7 @@ knitr::opts_chunk$set(
 # # [5] "2-year progression free survival"
 # # [6] "2-year progression free survival (PFS)"
 
-## ----mongodb_aggregation_pipeline---------------------------------------------
+## ----mongodb_aggregation_pipeline--------------------------------------------------------------------------
 # #
 # # Total count of PFS, EFS, RFS or DFS
 # out <- m$aggregate(
@@ -703,7 +764,7 @@ knitr::opts_chunk$set(
 # # 5 NCT02558244    2016-01
 # # 6 NCT04897880 2019-01-09
 
-## ----mongodb_mapreduce--------------------------------------------------------
+## ----mongodb_mapreduce-------------------------------------------------------------------------------------
 # # Count number of trials by number of study
 # # participants in bins of hundreds of participants:
 # m$aggregate(pipeline = '

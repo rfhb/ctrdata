@@ -21,6 +21,7 @@ ctrLoadQueryIntoDbCtis <- function(
     euctrresults,
     euctrresultshistory,
     ctgov2history,
+    ctishistory,
     documents.path,
     documents.regexp,
     annotation.text,
@@ -115,7 +116,9 @@ ctrLoadQueryIntoDbCtis <- function(
 
   # only count?
   if (only.count) {
-    message()
+    message(
+      "= Not done (only.count = TRUE): Imported ",
+      overview$totalRecords, " trial(s)")
     # return
     return(list(
       n = overview$totalRecords,
@@ -368,7 +371,8 @@ ctrLoadQueryIntoDbCtis <- function(
   ## inform user -----------------------------------------------------
 
   #  find out number of trials imported into database
-  message("= Imported ", imported$n, ", updated ", updated,
+  message("= Imported ", imported$n,
+          ", updated ", updated,
           " record(s) on ", length(idsTrials), " trial(s)")
 
   # return

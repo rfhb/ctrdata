@@ -50,7 +50,7 @@ The motivation is to investigate the design and conduct of trials of interest, t
 
 ## Main features
 
-* Protocol- and results-related trial information is easily downloaded: Users define a query in a register's web interface, then copy the URL and enter it into `ctrdata` which retrieves in one go all trials found. A [script](#2-script-to-automatically-copy-users-query-from-web-browser) can automate copying the query URL from all registers. Personal annotations can be made when downloading trials. Also, [trial documents](#documents-example) and [historic versions](https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html#analysing-sample-size-using-historic-versions-of-trial-records) as available in registers on trials can be downloaded. 
+* Protocol- and results-related trial information is easily downloaded: Users define a query in a register's web interface, then copy the URL and enter it into `ctrdata` which retrieves in one go all trials found. A [script](#2-script-to-automatically-copy-users-query-from-web-browser) can automate copying the query URL from all registers. Personal annotations can be made when downloading trials. Also, [trial documents](#documents-example) and [historic versions](https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html#historic-versions-of-trial-records-and-changes-in-sample-sizes) as available in registers on trials can be downloaded. 
 
 * Downloaded trial information is transformed and stored in a collection of a document-centric database, for fast and offline access. Information from different registers can be accumulated in a single collection. Uses `DuckDB`, `PostgreSQL`, `RSQLite` or `MongoDB`, via R package `nodbi`: see section [Databases](#databases-that-can-be-used-with-ctrdata) below. Interactively browse through trial structure and data. Easily re-run any previous query in a collection to retrieve and update trial records. 
 
@@ -158,8 +158,8 @@ In any of the [databases](https://rfhb.github.io/ctrdata/index.html#databases-fo
 - field `_id` with the trial identification as provided by the register from which it was retrieved
 - field `ctrname` with the name of the register (`EUCTR`, `CTGOV`, `CTGOV2`, `ISRCTN`, `CTIS`) from which that trial was retrieved
 - field `record_last_import` with the date and time when that document was last updated using `ctrLoadQueryIntoDb()`
-- only for `CTGOV2`: object `history` with a historic version of the trial and with `history_version`, which contains the fields `version_number` (starting from 1) and `version_date`
-- all original fields as provided by the register for that trial (see examples [below](https://rfhb.github.io/ctrdata/index.html#trial-records-json-in-databases))
+- only for `CTGOV2` and `CTIS`: object `history` with a historic version of the trial and with `history_version`, which contains the fields `version_number` (starting from 1) and `version_date`
+- all original fields as provided by the register for that trial (see example in [vignette](https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html#historic-versions-of-trial-records-and-changes-in-sample-sizes))
 
 For visualising the data structure for a trial, see this 
 [vignette section](https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html#analysing-nested-fields-such-as-trial-results). 

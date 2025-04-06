@@ -9,10 +9,15 @@
 #'
 #' @importFrom httr content GET
 #' @importFrom stringi stri_extract_all_regex
+#' @importFrom jqr jq
+#' @importFrom jsonlite toJSON
+#' @importFrom nodbi docdb_query docdb_update
 #'
 ctrRerunQuery <- function(
     querytoupdate = querytoupdate,
     forcetoupdate = forcetoupdate,
+    ctishistory = ctishistory,
+    only.count = only.count,
     con = con,
     verbose = verbose,
     queryupdateterm = queryupdateterm) {
@@ -21,7 +26,7 @@ ctrRerunQuery <- function(
   con <- ctrDb(con)
 
   ## prepare
-  failed <- FALSE
+  failed <- NULL
 
   ## handle query history -----------------------------------------------------
   rerunquery <- dbQueryHistory(con = con,
@@ -110,29 +115,29 @@ ctrRerunQuery <- function(
       # if "lup_s" is already in query term, just re-run full query to avoid
       # multiple queries in history that only differ in the timestamp:
       if (grepl("&lup_[se]=[0-9]{2}", queryterm)) {
-        #
+
         # remove queryupdateterm, thus running full again
         queryupdateterm <- ""
         warning("Query has date(s) for start or end of last update ",
                 "('&lup_'); running again with these limits",
                 call. = FALSE, immediate. = TRUE)
-        #
+
       } else {
-        #
+
         queryupdateterm <- strftime(
           strptime(initialday,
                    format = "%Y-%m-%d"),
           format = "%m/%d/%Y")
-        #
+
         queryupdateterm <- paste0("&lup_s=", queryupdateterm)
-        #
+
         if (verbose) {
           message("DEBUG: Updating using this additional query term: ",
                   queryupdateterm)
         }
-        #
+
       }
-      #
+
       message("Rerunning query: ", queryterm,
               "\nLast run: ", initialday)
     } # end ctgov
@@ -147,29 +152,29 @@ ctrRerunQuery <- function(
       # if "lastUpdPost" is already in query term, just re-run full query to avoid
       # multiple queries in history that only differ in the timestamp:
       if (grepl("&lastUpdPost=[0-9]{2}", queryterm)) {
-        #
+
         # remove queryupdateterm, thus running full again
         queryupdateterm <- ""
         warning("Query has date(s) for start or end of last update ",
                 "('&lastUpdPost'); running again with these limits",
                 call. = FALSE, immediate. = TRUE)
-        #
+
       } else {
-        #
+
         queryupdateterm <- strftime(
           strptime(initialday,
                    format = "%Y-%m-%d"),
           format = "%Y-%m-%d")
-        #
+
         queryupdateterm <- paste0("&lastUpdPost=", queryupdateterm, "_")
-        #
+
         if (verbose) {
           message("DEBUG: Updating using this additional query term: ",
                   queryupdateterm)
         }
-        #
+
       }
-      #
+
       message("Rerunning query: ", queryterm,
               "\nLast run: ", initialday)
     } # end ctgov2
@@ -183,16 +188,16 @@ ctrRerunQuery <- function(
 
       # check if update request is in time window of the register (7 days)
       if (difftime(Sys.Date(), initialday, units = "days") > 7L) {
-        #
+
         warning("'querytoupdate=", querytoupdate, "' not possible because ",
                 "it was last run more than 7 days ago and the register ",
                 "provides information on changes only for the last 7 days. ",
                 "Reverting to normal download. ",
                 call. = FALSE, immediate. = TRUE)
-        #
+
         message("Rerunning query: ", queryterm,
                 "\nLast run: ", initialday)
-        #
+
       } else {
         #
         # obtain rss feed with list of recently updated trials
@@ -228,9 +233,8 @@ ctrRerunQuery <- function(
           # only for EUCTR, update history here because
           # for EUCTR the query to be used with function
           # ctrLoadQueryIntoDb cannot be specified to only
-          # query for updated trials;
-          # unless technical failure of retrieval
-          if (!failed) dbCTRUpdateQueryHistory(
+          # query for updated trials
+          dbCTRUpdateQueryHistory(
             register = register,
             queryterm = queryterm,
             recordnumber = 0L,
@@ -238,7 +242,7 @@ ctrRerunQuery <- function(
             verbose = verbose)
           #
           # set indicator
-          failed <- TRUE
+          failed <- emptyReturn
           #
         } else {
           # new trials found, construct
@@ -284,31 +288,31 @@ ctrRerunQuery <- function(
       # if already in query term, just re-run full query to avoid
       # multiple queries in history that only differ in timestamp:
       if (grepl("lastEdited:", queryterm)) {
-        #
+
         # remove queryupdateterm, thus running full again
         queryupdateterm <- ""
         warning("Query has date(s) for start or end of last update ",
                 "('lastEdited'); running again with these limits",
                 immediate. = TRUE)
-        #
+
       } else {
-        #
+
         queryupdateterm <- strftime(
           strptime(initialday,
                    format = "%Y-%m-%d"),
           format = "%Y-%m-%d")
-        #
+
         queryupdateterm <- paste0(" AND lastEdited GE ",
                                   queryupdateterm,
                                   "T00:00:00.000Z")
-        #
+
         if (verbose) {
           message("DEBUG: Updating using this additional query term: ",
                   queryupdateterm)
         }
-        #
+
       }
-      #
+
       message("Rerunning query: ", queryterm,
               "\nLast run: ", initialday)
     } # end isrctn
@@ -316,42 +320,301 @@ ctrRerunQuery <- function(
     # ctis ------------------------------------------------------------------
     if (register == "CTIS") {
 
-      # obtain rss feed with list of recently updated trials
-      rssquery <- utils::URLencode(
-        paste0(
-          "https://euclinicaltrials.eu/ct-public-api-services/services/ct/rss?",
-          queryterm))
+      # principles:
+      # - historic ctis versions are only created in ctrRerunQuery
+      #   because the user needs to "trigger" creating a version,
+      #   since ctis does not on its own offer an API for retrieving
+      #   versions of a record
+      # - in ctrRerunQuery, updating trials identified in the last
+      #   seven days is straightforward and can readily include
+      #   creating historic versions
+      # - for rerunning older queries,
+      #   we need to get the concerned ids and this is only possible
+      #   with a full ctrLoadQueryIntoDb but into a separate database
+      #   so that we do not overwrite existing records;
+      #   over the resulting $success trial identifiers,
+      #   then iterate
 
-      if (verbose) message("DEBUG (rss url): ", rssquery)
+      # helper function
+      getIdsFromQuery <- function(queryterm) {
 
-      resultsRss <- try(httr::content(
-        httr::GET(url = rssquery),
-        encoding = "UTF-8",
-        as = "text"), silent = TRUE)
+        # initialise
+        idsUpdatedTrials <- NULL
+        pageNumber <- 1L
 
-      message(
-        "Since the query was last run, ",
-        length(stringi::stri_extract_all_regex(
-          resultsRss, "<item [^>]+>\\s*<title>")[[1]]),
-        " trials have been updated.")
+        # iterate
+        while (TRUE) {
 
-      # issues: returned data do not include trial identifiers, thus no efficient loading possible;
-      # returned data include all trials found with search, not only those updated or added in last
-      # seven days; timestamp is the same for every trial listed, corresponding to time when called.
-      # checked from: 2023-04-22 to last: 2023-10-28
+          # based on ctrLoadQueryIntoDb.R#77
+          initialData <- try(rawToChar(
+            curl::curl_fetch_memory(
+              url = "https://euclinicaltrials.eu/ctis-public-api/search",
+              handle = curl::new_handle(
+                postfields = paste0(
+                  # add pagination parameters
+                  '{"pagination":{"page":', pageNumber, ",",
+                  # empirically found this as max
+                  '"size":999},',
+                  # add search criteria
+                  sub(
+                    "searchCriteria=", '"searchCriteria":',
+                    # handle empty search query terms
+                    ifelse(
+                      queryterm != "", queryterm,
+                      'searchCriteria={}'),
+                  ),
+                  # remaining parameters needed for proper server response
+                  ',"sort":{"property":"decisionDate","direction":"DESC"}}'
+                ) # paste
+              ) # curl
+            )$content), silent = TRUE)
 
-      warning("'querytoupdate=", querytoupdate, "' not possible because no effcient way ",
-              "was found thus far to retrieve from CTIS only recently changed trials ",
-              "(last checked 2023-10-28). Reverting to normal download. ",
-              call. = FALSE, immediate. = TRUE)
+          # TODO
+          # jsonview::json_tree_view(initialData)
+          # jqr::jq(initialData, " .data | length ")
 
-      # end issues
+          # accumulate trial identifiers
+          idsUpdatedTrials <- c(
+            idsUpdatedTrials, gsub(
+              '"', "",
+              jqr::jq(initialData, " .data[].ctNumber ")
+            ))
 
-      message("Rerunning query: ", queryterm,
-              "\nLast run: ", initialday)
+          # length(trialIds)
+
+          pageNumber <- pageNumber + 1L
+
+          if (jqr::jq(initialData, ".pagination.nextPage") == "false") break
+
+        } # while
+
+        return(idsUpdatedTrials)
+
+      } # end getIdsFromQuery
+
+      # helper function
+      getIdsFromRss <- function(queryterm) {
+
+        # ctis: studies added or updated in the last 7 days:
+        # "https://euclinicaltrials.eu/ctis-public-api/rss/updates.rss?
+        # search_criteria={"ageGroupCode":[2],"therapeuticAreaCode":[4]}"
+
+        # obtain rss feed with list of recently updated trials
+        rssquery <- paste0(
+          "https://euclinicaltrials.eu/ctis-public-api/rss/updates.rss?search_criteria=",
+          utils::URLencode(sub("searchCriteria=", "", queryterm)))
+
+        if (verbose) message("DEBUG (rss url): ", utils::URLdecode(rssquery))
+
+        resultsRss <- httr::content(
+          httr::GET(url = rssquery),
+          encoding = "UTF-8",
+          as = "text")
+
+        idsUpdatedTrials <- stringi::stri_extract_all_regex(
+          # <link>https://euclinicaltrials.eu/search-for-clinical-trials/?lang=en&amp;EUCT=2024-516838-35-00</link>
+          resultsRss, "EUCT=[-0-9]+</link>")[[1]]
+        idsUpdatedTrials <- na.omit(stringi::stri_replace_all_regex(
+          idsUpdatedTrials, "EUCT=([-0-9]+)</link>", "$1"))
+
+        return(idsUpdatedTrials)
+
+      } # end getIdsFromRss
+
+      # helper function
+      updateOrLoadTrial <- function(trialId, con, ctishistory) {
+
+        message(". ", appendLF = FALSE)
+
+        # get existing data in collection
+        if (ctishistory) {
+          exstJson <- nodbi::docdb_query(
+            src = con,
+            key = con$collection,
+            query = paste0('{"_id":"', trialId, '"}'))
+        }
+
+        # get new data
+        result <- suppressMessages(
+          ctrdata:::ctrLoadQueryIntoDbCtis(
+            queryterm = paste0('searchCriteria={"number":"', trialId, '"}'),
+            con = con,
+            documents.path = NULL,
+            only.count = FALSE,
+            verbose = FALSE
+          ))
+        result$updated <- 0L
+
+        # if record existed
+        if (ctishistory && nrow(exstJson)) {
+
+          # move existing data into historical version
+          exstJson <- jsonlite::toJSON(exstJson)
+          exstJson <- jqr::jq(
+            exstJson, paste0(
+              '{ _id: .[] | ._id,
+                history: [
+                 .[] | del(.history) | .history_version = {
+                 version_date: .lastUpdated,
+                 version_number: 0},
+                if has("history") then .history[] else empty end
+               ] }'
+            ))
+
+          # temporary file and cleanup
+          tfname <- tempfile()
+          on.exit(try(unlink(tfname), silent = TRUE), add = TRUE)
+          cat(exstJson, file = tfname, sep = "\n")
+
+          # TODO
+          # jsonview::json_tree_view(exstJson)
+
+          # update record, adding historical versions
+          # avoid SQL issues by using file-based json
+          result$updated <- nodbi::docdb_update(
+            src = con,
+            key = con$collection,
+            value = tfname,
+            query = '{}'
+          )
+
+        } # if record existed
+
+        # default return
+        return(result)
+
+      } # end updateOrLoadTrial
+
+      # helper function
+      histCreateRet <- function(res) {
+
+        # querytermoriginal, queryupdateterm, queryterm, register
+
+        # construct return object
+        ret <- NULL
+        ret$n <- sum(sapply(res, "[[", "n"))
+        ret$success <- unlist(sapply(res, "[[", "success"), use.names = FALSE)
+        ret$failed <- NULL
+        ret$queryterm <- querytermoriginal
+        ret$updated <- sum(sapply(res, "[[", "updated"))
+
+        # annotate
+        if (ret$n > 0L) {
+          dbCTRUpdateQueryHistory(
+            register = register,
+            queryterm = querytermoriginal,
+            recordnumber = ret$n,
+            con = con,
+            verbose = verbose
+          )
+        }
+
+        # add meta-data
+        ret <- addMetaData(x = ret, con = con)
+
+        # failed is indicator to not run main function
+        return(list(
+          "querytermoriginal" = querytermoriginal,
+          "queryupdateterm"   = queryupdateterm,
+          "queryterm"         = queryterm,
+          "register"          = register,
+          "failed"            = ret))
+
+      }
+
+      #### .dispatch ####
+      if (difftime(Sys.Date(), initialday, units = "days") <= 7L) {
+
+        # get
+        idsUpdatedTrials <- getIdsFromRss(queryterm)
+
+        # early exit if only.count
+        if (only.count) {
+          res <- NULL
+          res$n <- length(idsUpdatedTrials)
+          res$queryterm <- querytermoriginal
+          message("Imported or updated ", res$n, " trial(s)")
+          return(list(failed = res))
+        }
+
+        # user interim info
+        message(
+          "Query finds ", length(idsUpdatedTrials)," trials, ",
+          "loading and updating trials one-by-one (estimate: ",
+          signif(length(idsUpdatedTrials) * 8 / 23L / 60L, 2L), " min)")
+
+        # iterate
+        res <- list()
+        for (trialId in idsUpdatedTrials) res <- c(
+          res, list(updateOrLoadTrial(trialId, con, ctishistory)))
+
+        # info
+        message("\n",
+          sum(sapply(res, "[[", "updated")), " updated, ",
+          sum(sapply(res, "[[", "n")) - sum(sapply(res, "[[", "updated")),
+          " new records")
+
+        # return and signal to ctrLoadQueryIntoDb to exit early
+        return(histCreateRet(res))
+
+      } else {
+
+        if (ctishistory) {
+
+          # get
+          idsUpdatedTrials <- getIdsFromQuery(queryterm)
+
+          # early exit if only.count
+          if (only.count) {
+            res <- NULL
+            res$n <- length(idsUpdatedTrials)
+            res$queryterm <- querytermoriginal
+            message("Imported or updated ", res$n, " trial(s)")
+            return(list(failed = res))
+          }
+
+          # user interim info
+          warning(
+            "Query finds ", length(idsUpdatedTrials)," trials, ",
+            "loading and updating trials one-by-one (estimate: ",
+            signif(length(idsUpdatedTrials) * 78 / 233L / 60L, 2L), " min)")
+
+          # iterate
+          res <- list()
+          for (trialId in idsUpdatedTrials) res <- c(
+            res, list(updateOrLoadTrial(trialId, con, ctishistory)))
+
+          # info
+          message("\n",
+            sum(sapply(res, "[[", "updated")), " updated, ",
+            sum(sapply(res, "[[", "n")) - sum(sapply(res, "[[", "updated")),
+            " new records")
+
+          # return and signal to ctrLoadQueryIntoDb to exit early
+          return(histCreateRet(res))
+
+        } else {
+
+          # rerunning original query
+          warning(
+            "'querytoupdate=", querytoupdate, "' not possible because no effcient way ",
+            "was found so far to query CTIS for data only from recently changed trials ",
+            "(last checked 2025-04-05). Reverting to normal download. ",
+            call. = FALSE, immediate. = TRUE)
+
+          # standard case in main function ctrLoadQueryIntoDb
+          message("Rerunning query: ", queryterm,
+                  "\nLast run: ", initialday)
+
+        } # if ctishistory
+
+      } # if difftime
+
     } # end ctis
 
   } # forcetoupdate
+
+  #### return ####
 
   ## return main parameters needed
   return(list(
