@@ -358,6 +358,7 @@ typeVars <- list(
   "eeaEndDate" = "ctrDate",
   "eeaStartDate" = "ctrDate",
   "endDate" = "ctrDate",
+  "lastUpdated" = "ctrDate",
   "layperson.submissionDate" = "ctrDate",
   "memberStatesConcerned.activeTrialPeriod.fromDate" = "ctrDate",
   "memberStatesConcerned.activeTrialPeriod.trialEndDate" = "ctrDate",
