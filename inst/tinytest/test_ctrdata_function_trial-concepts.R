@@ -22,7 +22,7 @@ tf <- function() {
   expect_true(length(fcts) >= 17L)
 
   # test
-  expect_true(length(unique(unlist(fctFields))) >= 170L)
+  expect_true(length(unique(unlist(fctFields))) >= 179L)
 
   # get data
   if (!checkSqlite()) exit_file("Reason: no SQLite")
@@ -56,7 +56,7 @@ tf <- function() {
   expect_length(table(dF$.trialPopulationAgeGroup, exclude = NULL), 5L)
   expect_length(table(dF$.sponsorType, exclude = NULL), 3L)
   expect_length(table(dF$.trialPhase, exclude = NULL), 10L)
-  expect_length(table(dF$.trialObjectives, exclude = NULL), 17L)
+  expect_true(length(table(dF$.trialObjectives, exclude = NULL)) >= 18L)
 
   # integers
   expect_true(sum(dF$.numSites, na.rm = TRUE) >= 250L)
@@ -127,4 +127,6 @@ tf <- function() {
   }
 
 }
+
+# run function
 tf()

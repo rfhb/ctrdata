@@ -49,16 +49,32 @@ f.trialObjectives <- function(df = NULL) {
   #### fields ####
   fldsHere <- list(
     "euctr" = c(
-      "e21_main_objective_of_the_trial" # free text
+      "e21_main_objective_of_the_trial", # free text
+      # "e61_diagnosis",
+      # "e610_pharmacogenetic",
+      # "e611_pharmacogenomic",
+      # "e612_pharmacoeconomic",
+      # "e613_others",
+      # "e6131_other_scope_of_the_trial_description",
+      # "e62_prophylaxis",
+      # "e63_therapy",
+      "e64_safety",
+      "e65_efficacy",
+      "e66_pharmacokinetic",
+      "e67_pharmacodynamic",
+      # "e68_bioequivalence",
+      "e69_dose_response"
       # "trialInformation.mainObjective", # incomplete, results
       # "x4_clinical_trial_type", # e.g. outside EU/EEA, EEA CTA
       # "e7131_other_trial_type_description" # rarely filled, free text short
     ),
     "ctgov" = c(
+      "brief_summary.textblock", # free text
       "detailed_description.textblock", # free text but more background than purpose
       "study_design_info.primary_purpose" # keyword
     ),
     "ctgov2" = c(
+      "protocolSection.descriptionModule.briefSummary", # free text
       "protocolSection.descriptionModule.detailedDescription", # free text clearly stating purposes
       "protocolSection.designModule.designInfo.primaryPurpose" # keyword, e.g. TREATMENT
     ),
@@ -70,9 +86,11 @@ f.trialObjectives <- function(df = NULL) {
       # CTIS1
       "authorizedPartI.trialDetails.trialInformation.trialObjective.mainObjective", # free text
       "authorizedPartI.trialDetails.trialInformation.trialObjective.trialScopes.otherDescription", # keywords, rarely filled
+      "authorizedPartI.trialDetails.trialInformation.trialObjective.trialScopes.code", # see code list below
       # CTIS2
       "authorizedApplication.authorizedPartI.trialDetails.trialInformation.trialObjective.mainObjective", # free text
-      "authorizedApplication.authorizedPartI.trialDetails.trialInformation.trialObjective.trialScopes.otherDescription" # keywords, rarely filled
+      "authorizedApplication.authorizedPartI.trialDetails.trialInformation.trialObjective.trialScopes.otherDescription", # keywords, rarely filled
+      "authorizedApplication.authorizedPartI.trialDetails.trialInformation.trialObjective.trialScopes.code"
     ))
 
   # merge with fields needed for nested function
@@ -107,9 +125,11 @@ f.trialObjectives <- function(df = NULL) {
   pasteCols <- function(...) apply(
     ..., 1, function(i) paste(na.omit(i), collapse = " "))
 
+  # helper function, x is a vector of logicals
+  naFT <- function(x) return(!is.na(x) & x)
 
-  # all registers
 
+  #### all registers ####
 
   #### . CTGOV ####
   # https://clinicaltrials.gov/data-api/about-api/api-migration#model
@@ -146,36 +166,73 @@ f.trialObjectives <- function(df = NULL) {
   # Quality of life
   # Not Specified
 
+  #### . CTIS ####
+  # Home	Clinical trial scope
+  # CODE	NAME
+  # 1  Diagnosis
+  # 2  Prophylaxis
+  # 3  Therapy
+  # 4  Safety
+  # 5  Efficacy
+  # 6  Pharmacokinetic
+  # 7  Pharmacodynamic
+  # 8  Bioequivalence
+  # 9  Dose response
+  # 10 Pharmacogenetic
+  # 11 Pharmacogenomic
+  # 12 Pharmacoeconomic
+  # 13 Other
 
   # merge column contents
   dplyr::mutate(
     df,
     txt = pasteCols(
       dplyr::select(
-        df, unlist(fldsHere, use.names = FALSE)
+        df, c(
+          fldsHere[[c("euctr")]][1], # code trial objectives
+          unlist(fldsHere[c("ctgov", "ctgov2", "isrctn")], use.names = FALSE),
+          fldsHere[[c("ctis")]][-c(3,6)] # code trial objectives
+        )
       )),
     txt = gsub("NA.?", "", .data$txt)) %>%
     dplyr::pull("txt") -> df$txt
 
+  # shrink
+  df %>%
+    dplyr::select(c(
+      "_id", "txt", ".isMedIntervTrial",
+      fldsHere[[c("euctr")]][-1],
+      fldsHere[[c("ctis")]][c(3,6)])
+    ) -> df
 
   # identify symbols
   df %>%
-    dplyr::select(c(
-      "_id", "txt", ".isMedIntervTrial")) %>%
     dplyr::mutate(
       addObjectives = "",
       # symbols are accumulated
       addObjectives = paste0(.data$addObjectives, dplyr::if_else(
-        grepl("efficac|efficien|effective|benefit|survival| cure|protection|death| OS ", .data$txt, TRUE), "E ", "")),
+        naFT(.data$e65_efficacy) |
+          grepl("5", .data$authorizedPartI.trialDetails.trialInformation.trialObjective.trialScopes.code) |
+          grepl("5", .data$authorizedApplication.authorizedPartI.trialDetails.trialInformation.trialObjective.trialScopes.code) |
+          grepl("efficac|efficien|effective|benefit|survival| cure|protection|death| OS ", .data$txt, TRUE), "E ", "")),
       addObjectives = paste0(.data$addObjectives, dplyr::if_else(
-        grepl("safety|tolerabil|mtd|side effect|feasibility|AES|adverse ", .data$txt, TRUE), "S ", "")),
+        naFT(.data$e64_safety) |
+          grepl("4", .data$authorizedPartI.trialDetails.trialInformation.trialObjective.trialScopes.code) |
+          grepl("4", .data$authorizedApplication.authorizedPartI.trialDetails.trialInformation.trialObjective.trialScopes.code) |
+          grepl("safety|tolerabil|mtd|side effect|feasibility|AES|adverse ", .data$txt, TRUE), "S ", "")),
       addObjectives = paste0(.data$addObjectives, dplyr::if_else(
-        grepl(paste0(
-          "pharmacodynam|mtd|recommended dose|function|biomarker|improvement|",
-          "expression|immunohistochemistry|IHC|reduction|level.? of"
-        ), .data$txt, TRUE), "PD ", "")),
+        naFT(.data$e67_pharmacodynamic) |
+          grepl("7", .data$authorizedPartI.trialDetails.trialInformation.trialObjective.trialScopes.code) |
+          grepl("7", .data$authorizedApplication.authorizedPartI.trialDetails.trialInformation.trialObjective.trialScopes.code) |
+          grepl(paste0(
+            "pharmacodynam|mtd|recommended dose|function|biomarker|improvement|",
+            "expression|immunohistochemistry|IHC|reduction|level.? of"
+          ), .data$txt, TRUE), "PD ", "")),
       addObjectives = paste0(.data$addObjectives, dplyr::if_else(
-        grepl("pharmacokine|pk |absor[bp]", .data$txt, TRUE), "PK ", "")),
+        naFT(.data$e66_pharmacokinetic) |
+          grepl("6", .data$authorizedPartI.trialDetails.trialInformation.trialObjective.trialScopes.code) |
+          grepl("6", .data$authorizedApplication.authorizedPartI.trialDetails.trialInformation.trialObjective.trialScopes.code) |
+          grepl("pharmacokine|pk |absor[bp]", .data$txt, TRUE), "PK ", "")),
       addObjectives = paste0(.data$addObjectives, dplyr::if_else(
         grepl("long.?term|long.?last", .data$txt, TRUE), "LT ", "")),
       addObjectives = paste0(.data$addObjectives, dplyr::if_else(
@@ -187,7 +244,10 @@ f.trialObjectives <- function(df = NULL) {
           "disabilit|control|immunity"
         ), .data$txt, TRUE), "A ", "")),
       addObjectives = paste0(.data$addObjectives, dplyr::if_else(
-        grepl("dose.find|dose.range|rptd|determine.*dose|dose.determ|rp2d|recommended dose", .data$txt, TRUE), "D ", "")),
+        naFT(.data$e69_dose_response) |
+          grepl("9", .data$authorizedPartI.trialDetails.trialInformation.trialObjective.trialScopes.code) |
+          grepl("9", .data$authorizedApplication.authorizedPartI.trialDetails.trialInformation.trialObjective.trialScopes.code) |
+          grepl("dose.find|dose.range|rptd|determine.*dose|dose.determ|rp2d|recommended dose", .data$txt, TRUE), "D ", "")),
       #
       out = dplyr::case_when(
         .data$.isMedIntervTrial ~ trimws(.data$addObjectives),
