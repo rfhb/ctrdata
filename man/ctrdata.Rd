@@ -5,20 +5,18 @@
 \alias{ctrdata}
 \title{Getting started, database connection, function overview}
 \description{
-\code{ctrdata} is a package for aggregating and analysing information on clinical
+\code{ctrdata} is a package for aggregating and analysing data on clinical
 studies, and for obtaining documents, from public trial registers
 }
 \section{1 - Database connection}{
 
-Package \code{ctrdata} retrieves trial information and stores it in a database
-collection. Therefore, a database connection object has to be given to
+Package \code{ctrdata} retrieves trial data and stores it in a database
+collection. A database connection object has to be specified in
 parameter \code{con} for several \code{ctrdata} functions.
 The connection object is built using \code{nodbi} which allows to use
-different database backends.
-Specifying a \code{collection = "<my collection's name>"} is
-necessary for package \code{ctrdata}.
-A connection object (here called \code{dbc}) is created in almost identical
-ways for these supported backends:\tabular{ll}{
+different database backends in an identical way.
+Specifying a parameter \code{collection = "<my collection's name>"} is
+necessary for package \code{ctrdata}.\tabular{ll}{
    \emph{Database} \tab \emph{Connection object} \cr
    MongoDB \tab \code{dbc <- \link[nodbi:src_mongo]{nodbi::src_mongo}(db = "my_db", collection = "my_coll")} \cr
    DuckDB \tab \code{dbc <- \link[nodbi:src_duckdb]{nodbi::src_duckdb}(dbname = "my_db", collection = "my_coll")} \cr
@@ -27,29 +25,34 @@ ways for these supported backends:\tabular{ll}{
 }
 }
 
-\section{2 - Operate on a clinical trial register}{
+\section{2 - Operate on trial registers}{
 
 
-\link{ctrOpenSearchPagesInBrowser},
-\link{ctrLoadQueryIntoDb} (load trial records into database collection);
-see
-\link{ctrdata-registers} for details on registers and how to search.
+\link{ctrGenerateQueries} (generate from simple user input specific queries
+for registers EUCTR, CTIS, CTGOV2 and ISRCTN),
+\link{ctrOpenSearchPagesInBrowser} (open queries in browser),
+see \href{https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js}{script}
+(automatically copy user search in any register to clipboard),
+see \link{ctrdata-registers} for details on registers and how to search,
+\link{ctrLoadQueryIntoDb} (load trial records found with query into database collection).
 }
 
-\section{3 - Get a data frame from the database collection}{
+\section{3 - Get data frame from collection}{
 
 
 \link{ctrShowOneTrial} (show widget to explore structure, fields and data of a trial),
 \link{dbFindFields} (find names of fields of interest in trial records in a collection),
 \link{dbGetFieldsIntoDf} (create a data frame with fields of interest and calculated trial concepts from collection),
+\link{ctrdata-trial-concepts} (calculate pre-defined trial concepts for every register),
 \link{dbFindIdsUniqueTrials} (get de-duplicated identifiers of clinical trials' records to subset a data frame).
 }
 
-\section{4 - Operate on a data frame with trial information}{
+\section{4 - Operate on a trial data frame}{
 
 
 \link{dfTrials2Long} (convert fields with nested elements into long format),
-\link{dfName2Value} (get values for variable(s) of interest).
+\link{dfName2Value} (get values for variable(s) of interest),
+\link{ctrdata-trial-concepts} (calculate pre-defined trial concepts for every register).
 }
 
 \seealso{

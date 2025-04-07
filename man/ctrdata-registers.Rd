@@ -7,7 +7,7 @@
 \description{
 Registers of the four clinical trial registers from which package
 \link{ctrdata} can retrieve, aggregate and analyse protocol- and
-result-related information as well as documents, last updated 2025-03-09.
+result-related information as well as documents, last updated 2025-04-06.
 }
 \section{1 - Overview}{
 
@@ -59,7 +59,7 @@ More information on changes:
    Expert / advanced search \tab \href{https://www.clinicaltrialsregister.eu/ctr-search/search}{link} \tab \href{https://clinicaltrials.gov/expert-search}{link} \tab \href{https://www.isrctn.com/editAdvancedSearch}{link} \tab \href{https://euclinicaltrials.eu/ctis-public/search}{link} \cr
    Glossary / related information \tab \href{https://www.clinicaltrialsregister.eu/doc/EU_Clinical_Trials_Register_Glossary.pdf}{link} \tab \href{https://clinicaltrials.gov/study-basics/glossary}{link} \tab \href{https://www.who.int/clinical-trials-registry-platform/network/who-data-set}{link} \tab \href{https://accelerating-clinical-trials.europa.eu/}{link} \cr
    FAQ, caveats, issues \tab \href{https://www.clinicaltrialsregister.eu/doc/EU_CTR_FAQ.pdf}{link} \tab \href{https://clinicaltrials.gov/policy/faq}{link}, \href{https://clinicaltrials.gov/about-site/selected-publications}{link} \tab \href{https://www.isrctn.com/page/faqs}{link} \tab \href{https://euclinicaltrials.eu/website-outages-and-system-releases/}{link} \cr
-   Data dictionaries / definitions / structure reference \tab \href{https://eudract.ema.europa.eu/result.html}{link} \tab \href{https://cdn.clinicaltrials.gov/documents/xsd/public.xsd}{link}, \href{https://clinicaltrials.gov/data-about-studies/study-data-structure}{link}, \href{https://cdn.clinicaltrials.gov/documents/tutorial/content/index.html}{link} \tab \href{https://www.isrctn.com/page/definitions}{link} \tab \href{https://www.ema.europa.eu/en/human-regulatory-overview/research-development/clinical-trials-human-medicines/clinical-trials-information-system-ctis-training-support}{link} \cr
+   Data dictionaries / definitions / structure reference \tab \href{https://eudract.ema.europa.eu/result.html}{link} \tab \href{https://cdn.clinicaltrials.gov/documents/xsd/public.xsd}{link}, \href{https://clinicaltrials.gov/data-about-studies/study-data-structure}{link}, \href{https://cdn.clinicaltrials.gov/documents/tutorial/content/index.html}{link} \tab \href{https://www.isrctn.com/page/definitions}{link} \tab \href{https://www.ema.europa.eu/en/human-regulatory-overview/research-development/clinical-trials-human-medicines/clinical-trials-information-system-ctis-training-support}{link} (XLSX files) \cr
    Example* \tab \ifelse{latex}{\out{\href{https://www.clinicaltrialsregister.eu/ctr-search/search?query=Infections\&age=newborn\&age=preterm-new-born-infants}{link}}}{\href{https://www.clinicaltrialsregister.eu/ctr-search/search?query=Infections&age=newborn&age=preterm-new-born-infants}{link}} \tab \ifelse{latex}{\out{\href{https://clinicaltrials.gov/search?ageRange=0M_1M\&cond=Infections\&aggFilters=studyType:int\&distance=50\&intr=Investigational+Agent}{link}}}{\href{https://clinicaltrials.gov/search?ageRange=0M_1M&cond=Infections&aggFilters=studyType:int&distance=50&intr=Investigational+Agent}{link}} \tab \ifelse{latex}{\out{\href{https://www.isrctn.com/search?q=\&filters=ageRange:Neonate,conditionCategory:Infections+and+Infestations\&searchType=advanced-search}{link}}}{\href{https://www.isrctn.com/search?q=&filters=ageRange:Neonate,conditionCategory:Infections+and+Infestations&searchType=advanced-search}{link}} \tab \ifelse{latex}{\out{\href{https://euclinicaltrials.eu/ctis-public/search\#searchCriteria={"containAll":"infection","containAny":"neonates","containNot":""}}{link}}}{\href{https://euclinicaltrials.eu/ctis-public/search#searchCriteria={"containAll":"infection","containAny":"neonates"}}{link}} \cr
 }
 
@@ -70,7 +70,9 @@ Some registers are expanding entered search terms using dictionaries.
 \section{4 - Example and ctrdata motivation}{
 
 
-*The example is an expert search for interventional trials primarily with
+See \code{vignette("ctrdata_summarise")} for several other examples.
+
+*This example is an expert search for interventional trials primarily with
 neonates, investigating treatments for infectious conditions. It shows that
 searches in the web interface of most registers are not sufficient to
 identify the trials of interest:
