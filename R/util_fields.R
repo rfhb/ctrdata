@@ -830,3 +830,261 @@ typeVars <- list(
   "resultsSection.outcomeMeasuresModule.outcomeMeasures.denoms.counts.value" = "ctrInt"
   #
 )
+
+
+#### country code mapping ####
+countryTable <- read.table(
+  sep = ",",
+  strip.white = TRUE,
+  fill = TRUE,
+  na.strings = "",
+  quote = "",
+  text = "
+  1, Afghanistan, AF, AFG
+  2, Aland Islands, AX, ALA
+  3, Albania, AL, ALB
+  4, Algeria, DZ, DZA
+  5, American Samoa, AS, ASM
+  6, Andorra, AD, AND
+  7, Angola, AO, AGO
+  8, Anguilla, AI, AIA
+  9, Antarctica, AQ, ATA
+ 10, Antigua and Barbuda, AG, ATG
+ 11, Argentina, AR, ARG
+ 12, Armenia, AM, ARM
+ 13, Aruba, AW, ABW
+ 14, Australia, AU, AUS
+ 15, Austria, AT, AUT
+ 16, Azerbaijan, AZ, AZE
+ 17, Bahamas, BS, BHS
+ 18, Bahrain, BH, BHR
+ 19, Bangladesh, BD, BGD
+ 20, Barbados, BB, BRB
+ 21, Belarus, BY, BLR
+ 22, Belgium, BE, BEL
+ 23, Belize, BZ, BLZ
+ 24, Benin, BJ, BEN
+ 25, Bermuda, BM, BMU
+ 26, Bhutan, BT, BTN
+ 27, Bolivia, BO, BOL
+ 28, Bosnia and Herzegovina, BA, BIH
+ 29, Botswana, BW, BWA
+ 30, Bouvet Island, BV, BVT
+ 31, Brazil, BR, BRA
+ 32, British Virgin Islands, VG, VGB
+ 33, British Indian Ocean Territory, IO, IOT
+ 34, Brunei Darussalam, BN, BRN
+ 35, Bulgaria, BG, BGR
+ 36, Burkina Faso, BF, BFA
+ 37, Burundi, BI, BDI
+ 38, Cambodia, KH, KHM
+ 39, Cameroon, CM, CMR
+ 40, Canada, CA, CAN
+ 41, Cape Verde, CV, CPV
+ 42, Cayman Islands, KY, CYM
+ 43, Central African Republic, CF, CAF
+ 44, Chad, TD, TCD
+ 45, Chile, CL, CHL
+ 46, China, CN, CHN
+ 47, Hong KongSpecial Administrative Region of China, HK, HKG
+ 48, MacaoSpecial Administrative Region of China, MO, MAC
+ 49, Christmas Island, CX, CXR
+ 50, Cocos (Keeling) Islands, CC, CCK
+ 51, Colombia, CO, COL
+ 52, Comoros, KM, COM
+ 53, Congo (Brazzaville), CG, COG
+ 54, CongoDemocratic Republic of the, CD, COD
+ 55, Cook Islands, CK, COK
+ 56, Costa Rica, CR, CRI
+ 57, Cote d'Ivoire, CI, CIV
+ 58, Croatia, HR, HRV
+ 59, Cuba, CU, CUB
+ 60, Cyprus, CY, CYP
+ 61, Czech Republic, CZ, CZE
+ 62, Denmark, DK, DNK
+ 63, Djibouti, DJ, DJI
+ 64, Dominica, DM, DMA
+ 65, Dominican Republic, DO, DOM
+ 66, Ecuador, EC, ECU
+ 67, Egypt, EG, EGY
+ 68, El Salvador, SV, SLV
+ 69, Equatorial Guinea, GQ, GNQ
+ 70, Eritrea, ER, ERI
+ 71, Estonia, EE, EST
+ 72, Ethiopia, ET, ETH
+ 73, Falkland Islands (Malvinas), FK, FLK
+ 74, Faroe Islands, FO, FRO
+ 75, Fiji, FJ, FJI
+ 76, Finland, FI, FIN
+ 77, France, FR, FRA
+ 78, French Guiana, GF, GUF
+ 79, French Polynesia, PF, PYF
+ 80, French Southern Territories, TF, ATF
+ 81, Gabon, GA, GAB
+ 82, Gambia, GM, GMB
+ 83, Georgia, GE, GEO
+ 84, Germany, DE, DEU
+ 85, Ghana, GH, GHA
+ 86, Gibraltar, GI, GIB
+ 87, Greece, GR, GRC
+ 88, Greenland, GL, GRL
+ 89, Grenada, GD, GRD
+ 90, Guadeloupe, GP, GLP
+ 91, Guam, GU, GUM
+ 92, Guatemala, GT, GTM
+ 93, Guernsey, GG, GGY
+ 94, Guinea, GN, GIN
+ 95, Guinea-Bissau, GW, GNB
+ 96, Guyana, GY, GUY
+ 97, Haiti, HT, HTI
+ 98, Heard Island and Mcdonald Islands, HM, HMD
+ 99, Holy See (Vatican City State), VA, VAT
+100, Honduras, HN, HND
+101, Hungary, HU, HUN
+102, Iceland, IS, ISL
+103, India, IN, IND
+104, Indonesia, ID, IDN
+105, IranIslamic Republic of, IR, IRN
+106, Iraq, IQ, IRQ
+107, Ireland, IE, IRL
+108, Isle of Man, IM, IMN
+109, Israel, IL, ISR
+110, Italy, IT, ITA
+111, Jamaica, JM, JAM
+112, Japan, JP, JPN
+113, Jersey, JE, JEY
+114, Jordan, JO, JOR
+115, Kazakhstan, KZ, KAZ
+116, Kenya, KE, KEN
+117, Kiribati, KI, KIR
+118, KoreaDemocratic People's Republic of, KP, PRK
+119, KoreaRepublic of, KR, KOR
+120, Kuwait, KW, KWT
+121, Kyrgyzstan, KG, KGZ
+122, Lao PDR, LA, LAO
+123, Latvia, LV, LVA
+124, Lebanon, LB, LBN
+125, Lesotho, LS, LSO
+126, Liberia, LR, LBR
+127, Libya, LY, LBY
+128, Liechtenstein, LI, LIE
+129, Lithuania, LT, LTU
+130, Luxembourg, LU, LUX
+131, MacedoniaRepublic of, MK, MKD
+132, Madagascar, MG, MDG
+133, Malawi, MW, MWI
+134, Malaysia, MY, MYS
+135, Maldives, MV, MDV
+136, Mali, ML, MLI
+137, Malta, MT, MLT
+138, Marshall Islands, MH, MHL
+139, Martinique, MQ, MTQ
+140, Mauritania, MR, MRT
+141, Mauritius, MU, MUS
+142, Mayotte, YT, MYT
+143, Mexico, MX, MEX
+144, MicronesiaFederated States of, FM, FSM
+145, Moldova, MD, MDA
+146, Monaco, MC, MCO
+147, Mongolia, MN, MNG
+148, Montenegro, ME, MNE
+149, Montserrat, MS, MSR
+150, Morocco, MA, MAR
+151, Mozambique, MZ, MOZ
+152, Myanmar, MM, MMR
+153, Namibia, NA, NAM
+154, Nauru, NR, NRU
+155, Nepal, NP, NPL
+156, Netherlands, NL, NLD
+157, Netherlands Antilles, AN, ANT
+158, New Caledonia, NC, NCL
+159, New Zealand, NZ, NZL
+160, Nicaragua, NI, NIC
+161, Niger, NE, NER
+162, Nigeria, NG, NGA
+163, Niue, NU, NIU
+164, Norfolk Island, NF, NFK
+165, Northern Mariana Islands, MP, MNP
+166, Norway, NO, NOR
+167, Oman, OM, OMN
+168, Pakistan, PK, PAK
+169, Palau, PW, PLW
+170, Palestinian TerritoryOccupied, PS, PSE
+171, Panama, PA, PAN
+172, Papua New Guinea, PG, PNG
+173, Paraguay, PY, PRY
+174, Peru, PE, PER
+175, Philippines, PH, PHL
+176, Pitcairn, PN, PCN
+177, Poland, PL, POL
+178, Portugal, PT, PRT
+179, Puerto Rico, PR, PRI
+180, Qatar, QA, QAT
+181, Reunion, RE, REU
+182, Romania, RO, ROU
+183, Russian Federation, RU, RUS
+184, Rwanda, RW, RWA
+185, Saint-Barthelemy, BL, BLM
+186, Saint Helena, SH, SHN
+187, Saint Kitts and Nevis, KN, KNA
+188, Saint Lucia, LC, LCA
+189, Saint-Martin (French part), MF, MAF
+190, Saint Pierre and Miquelon, PM, SPM
+191, Saint Vincent and Grenadines, VC, VCT
+192, Samoa, WS, WSM
+193, San Marino, SM, SMR
+194, Sao Tome and Principe, ST, STP
+195, Saudi Arabia, SA, SAU
+196, Senegal, SN, SEN
+197, Serbia, RS, SRB
+198, Seychelles, SC, SYC
+199, Sierra Leone, SL, SLE
+200, Singapore, SG, SGP
+201, Slovakia, SK, SVK
+202, Slovenia, SI, SVN
+203, Solomon Islands, SB, SLB
+204, Somalia, SO, SOM
+205, South Africa, ZA, ZAF
+206, South Georgia and the South Sandwich Islands, GS, SGS
+207, South Sudan, SS, SSD
+208, Spain, ES, ESP
+209, Sri Lanka, LK, LKA
+210, Sudan, SD, SDN
+211, Suriname *, SR, SUR
+212, Svalbard and Jan Mayen Islands, SJ, SJM
+213, Swaziland, SZ, SWZ
+214, Sweden, SE, SWE
+215, Switzerland, CH, CHE
+216, Syrian Arab Republic (Syria), SY, SYR
+217, TaiwanRepublic of China, TW, TWN
+218, Tajikistan, TJ, TJK
+219, Tanzania *United Republic of, TZ, TZA
+220, Thailand, TH, THA
+221, Timor-Leste, TL, TLS
+222, Togo, TG, TGO
+223, Tokelau, TK, TKL
+224, Tonga, TO, TON
+225, Trinidad and Tobago, TT, TTO
+226, Tunisia, TN, TUN
+227, Turkey, TR, TUR
+228, Turkmenistan, TM, TKM
+229, Turks and Caicos Islands, TC, TCA
+230, Tuvalu, TV, TUV
+231, Uganda, UG, UGA
+232, Ukraine, UA, UKR
+233, United Arab Emirates, AE, ARE
+234, United Kingdom, GB, GBR
+235, United States of America, US, USA
+236, United States Minor Outlying Islands, UM, UMI
+237, Uruguay, UY, URY
+238, Uzbekistan, UZ, UZB
+239, Vanuatu, VU, VUT
+240, Venezuela (Bolivarian Republic of), VE, VEN
+241, Viet Nam, VN, VNM
+242, Virgin IslandsUS, VI, VIR
+243, Wallis and Futuna Islands, WF, WLF
+244, Western Sahara, EH, ESH
+245, Yemen, YE, YEM
+246, Zambia, ZM, ZMB
+247, Zimbabwe, ZW, ZWE
+  ")

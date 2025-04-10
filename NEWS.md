@@ -3,6 +3,7 @@
 ## Improvements
 - When using `querytoupdate` for CTIS, set `ctishistory = TRUE` to create historic versions from previously downloaded trial record, see `vignette("ctrdata_summarise")`
 - Trial concept `f.trialObjectives()` improved with structured data from CTIS and EUCTR
+- `ctrGenerateQueries()` now also covers countries of trial conduct
 
 ## Bug fix 
 - Fix digesting marginal cases in notifications in `f.statusRecruitment()`

@@ -5,22 +5,23 @@
 #' Open advanced search pages of register(s), or execute search in browser
 #'
 #' @param url of search results page to show in the browser. To open the
-#'   browser with a previous search, the output of \link{ctrGetQueryUrl}
-#'   or \link{dbQueryHistory} can be used. Can be left as empty string
-#'   (default) to open the advanced search page of \code{register}.
+#' browser with a previous search, the output of \link{ctrGetQueryUrl}
+#' or \link{dbQueryHistory} can be used. Can be left as empty string
+#' (default) to open the advanced search page of \code{register}.
 #'
 #' @param register Register(s) to open, "EUCTR", "CTGOV2",
-#'   "ISRCTN" or "CTIS". Default is empty string, and this opens the
-#'   advanced search page of the register(s).
+#' "ISRCTN" or "CTIS". Default is empty string, and this opens the
+#' advanced search page of the registers (including the expert search
+#' page in the case of CTGOV).
 #'
 #' @param copyright (Optional) If set to \code{TRUE}, opens only the
-#'   copyright pages of all registers.
+#' copyright pages of all registers.
 #'
 #' @export
 #'
 #' @returns (String) Full URL corresponding to the shortened \code{url}
-#'   in conjunction with \code{register} if any, or invisibly
-#'   \code{TRUE} if no \code{url} is specified.
+#' in conjunction with \code{register} if any, or invisibly
+#' \code{TRUE} if no \code{url} is specified.
 #'
 #' @importFrom utils browseURL
 #'
@@ -77,6 +78,7 @@ ctrOpenSearchPagesInBrowser <- function(
   if (is.atomic(url) && url == "") {
     url <- c(
       "CTGOV2" = "https://clinicaltrials.gov/#main-content",
+      "CTGOV2expert" = "https://clinicaltrials.gov/expert-search",
       "CTIS" = "https://euclinicaltrials.eu/ctis-public/search",
       "EUCTR" = "https://www.clinicaltrialsregister.eu/ctr-search/search",
       "ISRCTN" = "https://www.isrctn.com/editAdvancedSearch"

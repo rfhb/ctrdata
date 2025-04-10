@@ -60,8 +60,11 @@ ctrLoadQueryIntoDbCtgov2 <- function(
   queryterm <- gsub("&$", "", queryterm)
   queryterm <- gsub("%20", " ", queryterm) # for URLencode
 
-  # translation to ClinicalTrials.gov REST API 2
-  # https://clinicaltrials.gov/data-about-studies/learn-about-api
+  # - translation to ClinicalTrials.gov REST API 2
+  #   https://clinicaltrials.gov/data-about-studies/learn-about-api
+
+  # - input CTGOV expert search is implicitly handled as it starts with "term="
+  # - other input search terms are mapped to expert search terms for API call
 
   # distance=50 seems to be added in webinterface
   # even though not requested by user, removing it

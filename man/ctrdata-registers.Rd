@@ -64,7 +64,8 @@ More information on changes:
 }
 
 
-Some registers are expanding entered search terms using dictionaries.
+Some registers are expanding entered search terms using dictionaries
+(\href{https://clinicaltrials.gov/data-api/about-api/search-areas}{example}).
 }
 
 \section{4 - Example and ctrdata motivation}{

@@ -436,7 +436,7 @@ ctrRerunQuery <- function(
 
         # get new data
         result <- suppressMessages(
-          ctrdata:::ctrLoadQueryIntoDbCtis(
+          ctrLoadQueryIntoDbCtis(
             queryterm = paste0('searchCriteria={"number":"', trialId, '"}'),
             con = con,
             documents.path = NULL,

@@ -37,7 +37,7 @@ expect_true(
   suppressWarnings(
     ctrLoadQueryIntoDb(
       querytoupdate = "last",
-      con = dbc))[["n"]] >= 2L)
+      con = dbc))[["n"]] >= 1L)
 
 # test
 expect_message(

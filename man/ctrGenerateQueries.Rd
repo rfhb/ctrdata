@@ -16,7 +16,7 @@ ctrGenerateQueries(
   completedBefore = NULL,
   completedAfter = NULL,
   onlyWithResults = FALSE,
-  registers = c("EUCTR", "ISRCTN", "CTIS", "CTGOV2")
+  countries = NULL
 )
 }
 \arguments{
@@ -50,7 +50,8 @@ with EUCTR)}
 
 \item{onlyWithResults}{Logical}
 
-\item{registers}{Vector of register names, default all registers}
+\item{countries}{Vector of country names, two- or three-letter
+ISO 3166 codes}
 }
 \value{
 Named vector of URLs for finding trials in the registers and as
@@ -91,7 +92,8 @@ urls <- ctrGenerateQueries(
    "basket OR platform OR umbrella OR master protocol OR ",
    "multiarm OR multistage OR subprotocol OR substudy OR ",
    "multi-arm OR multi-stage OR sub-protocol OR sub-study"),
- startAfter = "2010-01-01")
+ startAfter = "2010-01-01",
+ countries = c("DE", "US", "United Kingdom"))
 
 # open queries in register web interface
 sapply(urls, ctrOpenSearchPagesInBrowser)

@@ -14,15 +14,16 @@ or \link{dbQueryHistory} can be used. Can be left as empty string
 
 \item{register}{Register(s) to open, "EUCTR", "CTGOV2",
 "ISRCTN" or "CTIS". Default is empty string, and this opens the
-advanced search page of the register(s).}
+advanced search page of the registers (including the expert search
+page in the case of CTGOV).}
 
 \item{copyright}{(Optional) If set to \code{TRUE}, opens only the
 copyright pages of all registers.}
 }
 \value{
 (String) Full URL corresponding to the shortened \code{url}
-  in conjunction with \code{register} if any, or invisibly
-  \code{TRUE} if no \code{url} is specified.
+in conjunction with \code{register} if any, or invisibly
+\code{TRUE} if no \code{url} is specified.
 }
 \description{
 Open advanced search pages of register(s), or execute search in browser
