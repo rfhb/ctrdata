@@ -6,9 +6,8 @@
 #' From high-level search terms provided by the user, generate specific queries
 #' for each registers with which ctrdata works, see \link{ctrdata-registers}.
 #' Search terms that are expanded to concepts such as from MeSH and MedDRA
-#' by the search implementations in registers include the
-#' 'intervention' and 'condition'.
-#' Logical operators only work with 'searchPhrase'.
+#' by the search implementations in registers include the 'intervention' and
+#' 'condition'. Logical operators only work with 'searchPhrase'.
 #'
 #' @param searchPhrase String with optional logical operators ("AND", "OR")
 #' that will be searched in selected fields of registers that can handle logical
@@ -22,8 +21,10 @@
 #' @param recruitment String, one of "ongoing", "completed", "other" (
 #' which includes "ended early" but this cannot be searched; use trial concept
 #' \link{f.statusRecruitment} to identify this status)
-#' @param startBefore String that can be interpreted as date, see example
-#' @param startAfter String that can be interpreted as date
+#' @param startBefore String that can be interpreted as date (for EUCTR, when
+#' trial was first registered)
+#' @param startAfter String that can be interpreted as date (for EUCTR, when
+#' trial was first registered)
 #' @param completedBefore String that can be interpreted as date (does not work
 #' with EUCTR)
 #' @param completedAfter String that can be interpreted as date (does not work
@@ -50,7 +51,8 @@
 #'
 #' urls <- ctrGenerateQueries(
 #'   searchPhrase = "antibody AND covid",
-#'   recruitment = "completed")
+#'   recruitment = "completed",
+#'   )
 #'
 #' # count trials found
 #' sapply(urls, ctrLoadQueryIntoDb, only.count = TRUE)
@@ -64,7 +66,7 @@
 #'    "basket OR platform OR umbrella OR master protocol OR ",
 #'    "multiarm OR multistage OR subprotocol OR substudy OR ",
 #'    "multi-arm OR multi-stage OR sub-protocol OR sub-study"),
-#'  startAfter = "2010-01-01",
+#'  startAfter = "01/31/2010",
 #'  countries = c("DE", "US", "United Kingdom"))
 #'
 #' # open queries in register web interface
@@ -81,12 +83,31 @@ ctrGenerateQueries <- function(
     startAfter = NULL,
     completedBefore = NULL,
     completedAfter = NULL,
+    onlyMedIntervTrials = TRUE,
     onlyWithResults = FALSE,
     countries = NULL
 ) {
 
   # check
   stopifnot(all(countries %in% unlist(countryTable)))
+
+  # helper for date conversions
+  queryDate <- function(x) {
+
+    x <- lubridate::as_date(x, format = c(
+      "%Y-%m-%d %H:%M:%OS",
+      "%Y/%m/%d %H:%M:%OS",
+      "%Y-%m-%d %H:%M",
+      "%Y/%m/%d %H:%M",
+      "%Y-%m-%d",
+      "%Y/%m/%d",
+      "%m/%d/%Y",
+      "%d/%m/%Y",
+      "%d.%m.%Y"
+    ))
+
+    return(strftime(x, format = "%Y-%m-%d"))
+  }
 
   # map to row in table
   countryIndex <- seq_len(nrow(countryTable))[apply(
@@ -430,7 +451,7 @@ ctrGenerateQueries <- function(
   #### startAfter ####
   if (!is.null(startAfter)) {
 
-    startAfter <- strftime(startAfter, format = "%Y-%m-%d")
+    startAfter <- queryDate(startAfter)
 
     urls["CTGOV2"] <- paste0(
       urls["CTGOV2"], "&start=", startAfter, "_")
@@ -442,6 +463,9 @@ ctrGenerateQueries <- function(
     urls["CTIS"] <- paste0(
       urls["CTIS"], '"eeaStartDateFrom":"', startAfter, '",')
 
+    # https://www.clinicaltrialsregister.eu/doc/How_to_Search_EU_CTR.pdf
+    # date when the trial was first entered into the EudraCT database
+    # by a national competent authority or third country data provider
     urls["EUCTR"] <- paste0(
       urls["EUCTR"], "&dateFrom=", startAfter)
 
@@ -454,7 +478,7 @@ ctrGenerateQueries <- function(
   #### startBefore ####
   if (!is.null(startBefore)) {
 
-    startBefore <- strftime(startBefore, format = "%Y-%m-%d")
+    startBefore <- queryDate(startBefore)
 
     urls["CTGOV2"] <- ifelse(
       grepl("&start=", urls["CTGOV2"]),
@@ -481,7 +505,7 @@ ctrGenerateQueries <- function(
   #### completedAfter ####
   if (!is.null(completedAfter)) {
 
-    completedAfter <- strftime(completedAfter, format = "%Y-%m-%d")
+    completedAfter <- queryDate(completedAfter)
 
     urls["CTGOV2"] <- paste0(
       urls["CTGOV2"], "&primComp=", completedAfter, "_")
@@ -502,7 +526,7 @@ ctrGenerateQueries <- function(
   #### completedBefore ####
   if (!is.null(completedBefore)) {
 
-    completedBefore <- strftime(completedBefore, format = "%Y-%m-%d")
+    completedBefore <- queryDate(completedBefore)
 
     urls["CTGOV2"] <- ifelse(
       grepl("&primComp=", urls["CTGOV2"]),
