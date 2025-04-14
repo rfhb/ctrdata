@@ -61,7 +61,7 @@ expect_message(
       con = dbc)),
   "Imported .* trial")
 expect_true(tmpTest$n >= 0L)
-expect_true(tmpTest$queryterm == hist[1L, 4L])
+expect_true(tmpTest$queryterm == hist[["query-term"]][2L])
 
 expect_message(
   suppressWarnings(
@@ -72,7 +72,7 @@ expect_message(
       con = dbc)),
   "updating")
 expect_true(tmpTest$n >= 0L)
-expect_true(tmpTest$queryterm == hist[1L, 4L])
+expect_true(tmpTest$queryterm == hist[["query-term"]][2L])
 
 expect_message(
   suppressWarnings(
@@ -83,7 +83,7 @@ expect_message(
       con = dbc)),
   "Imported .* trial")
 expect_true(tmpTest$n >= 0L)
-expect_true(tmpTest$queryterm == hist[1L, 4L])
+expect_true(tmpTest$queryterm == hist[["query-term"]][2L])
 
 expect_message(
   suppressWarnings(
@@ -94,7 +94,7 @@ expect_message(
       con = dbc)),
   "updating")
 expect_true(tmpTest$n >= 0L)
-expect_true(tmpTest$queryterm == hist[1L, 4L])
+expect_true(tmpTest$queryterm == hist[["query-term"]][2L])
 
 # test full load
 hist <- hist[nrow(hist), ]
@@ -116,7 +116,7 @@ expect_message(
       con = dbc)),
   "Imported .* trial")
 expect_true(tmpTest$n >= 0L)
-expect_true(tmpTest$queryterm == hist[1L, 4L])
+expect_true(tmpTest$queryterm == hist[["query-term"]][1L])
 
 expect_message(
   suppressWarnings(
@@ -127,7 +127,7 @@ expect_message(
       con = dbc)),
   "Imported .* trial")
 expect_true(tmpTest$n >= 0L)
-expect_true(tmpTest$queryterm == hist[1L, 4L])
+expect_true(tmpTest$queryterm == hist[["query-term"]][1L])
 
 expect_warning(
   suppressMessages(
@@ -138,7 +138,7 @@ expect_warning(
       con = dbc)),
   "updating")
 expect_true(tmpTest$n >= 0L)
-expect_true(tmpTest$queryterm == hist[1L, 4L])
+expect_true(tmpTest$queryterm == hist[["query-term"]][1L])
 
 dF <- dbGetFieldsIntoDf(c(
   "lastUpdated",
@@ -146,7 +146,7 @@ dF <- dbGetFieldsIntoDf(c(
 expect_inherits(dF[[2]], "Date")
 expect_inherits(dF[[3]], "Date")
 
-rm(tmpTest, dF)
+rm(tmpTest, dF, hist)
 
 #### annotating ####
 
@@ -210,7 +210,7 @@ tmp <- ctrLoadQueryIntoDb(
   con = dbc
 )
 # test
-expect_true(tmp$n > 125L)
+expect_true(tmp$n > 165L)
 
 # get all field names
 tmpFields <- suppressMessages(
@@ -222,7 +222,7 @@ tmpFields <- suppressMessages(
 
 # test
 expect_true(
-  length(tmpFields) > 950L)
+  length(tmpFields) > 960L)
 
 # debug
 if (FALSE){
@@ -315,7 +315,7 @@ expect_message(
   " [0-9]+ records")
 
 # test
-expect_true(length(res) >= 150L)
+expect_true(length(res) >= 190L)
 
 
 #### documents.path ####
