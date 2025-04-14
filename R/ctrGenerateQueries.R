@@ -547,6 +547,32 @@ ctrGenerateQueries <- function(
   }
 
 
+  #### onlyMedIntervTrials ####
+  if (onlyMedIntervTrials)  {
+
+    # not needed for CTIS, EUCTR
+
+    urls["CTGOV2"] <- paste0(
+      urls["CTGOV2"], "&aggFilters=studyType:int")
+
+    urls["CTGOV2expert"] <- paste0(
+      urls["CTGOV2expert"], "AND (AREA[StudyType]INTERVENTIONAL) ")
+
+    urls["ISRCTN"] <- paste0(
+      urls["ISRCTN"],
+      "&filters=primaryStudyDesign:Interventional",
+      if (is.null(phase)) paste0(
+        # this was found to implement boolean or
+        # phases as proxy for investigational medicines
+        "&filters=phase:Phase 0,phase:Phase I,",
+        "phase:Phase II,phase:Phase III,phase:Phase IV,",
+        "phase:Phase I/II,phase:Phase II/III,phase:Phase III/IV"
+      )
+    )
+
+  }
+
+
   #### onlyWithResults ####
   if (onlyWithResults) {
 
@@ -636,14 +662,17 @@ ctrGenerateQueries <- function(
 
   # ISRCTN
   isrctnFilter <- stringi::stri_extract_all_regex(
-    urls["ISRCTN"], "[,&]filters=[^,&]+")[[1]]
+    urls["ISRCTN"], "[,&]filters=[^&]+")[[1]]
   if (!all(is.na(isrctnFilter))) urls["ISRCTN"] <- paste0(
     stringi::stri_replace_all_regex(
-      urls["ISRCTN"], "[,&]filters=[^,&]+", "")[[1]],
+      urls["ISRCTN"], "[,&]filters=[^&]+", "")[[1]],
     "&filters=",
     paste0(sub("&filters=", "", isrctnFilter), collapse = ","))
   if (!grepl("q=", urls["ISRCTN"])) urls["ISRCTN"] <-
-    paste0(urls["ISRCTN"], "&q=")
+    sub("[?]([&])?", "?&q=\\1", urls["ISRCTN"])
+
+  # all prettify normalise
+  urls <- trimws(gsub("  +", " ", urls))
 
   # put CTIS last so that it would open
   urls <- urls[c("EUCTR", "ISRCTN", "CTGOV2", "CTGOV2expert", "CTIS")]

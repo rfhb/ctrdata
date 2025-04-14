@@ -53,6 +53,8 @@ ctrLoadQueryIntoDbIsrctn <- function(
   apiterm <- strsplit(apiterm, ",")[[1]]
   # - remove naked q
   apiterm <- apiterm[!grepl("^q=$", apiterm)]
+  # - remove naked q elsewhere
+  apiterm <- sub("(^|&)q=($|&)", "", apiterm)
   # - translate "LE+lastEdited:2021-04-01"
   #   into      "lastEdited LE 2021-04-01T00:00:00.000Z"
   apiterm <- vapply(
@@ -68,7 +70,6 @@ ctrLoadQueryIntoDbIsrctn <- function(
     character(1L),
     USE.NAMES = FALSE
   )
-  #
   # - quote anything right of colon; this is an advanced search URL:
   #   https://www.isrctn.com/search?q=&filters=phase%3APhase+III
   #   which needs to be changed to phase:"Phase III", noting
@@ -80,13 +81,23 @@ ctrLoadQueryIntoDbIsrctn <- function(
     character(1L),
     USE.NAMES = FALSE
   )
-  # - put q in brackets to respect logical operators
-  qtoquote <- grepl("^q=.+$", apiterm)
-  apiterm[qtoquote] <- sub("^q=(.+)$", "q=(\\1)", apiterm[qtoquote])
-  # - collapse
-  apiterm <- paste0(apiterm, collapse = " AND ")
-  # - add empty q if q is missing
-  if (!startsWith(apiterm, "q=")) apiterm <- paste0("q=", apiterm)
+  # - cleanup
+  apiterm <- apiterm[apiterm != ""]
+  apiterm <- sub("^q=", "", apiterm)
+  # - check if fields are repeated, which would
+  #   indicate they are alternatives, boolean or
+  field <- sub("^(.+):.+$", "\\1", apiterm)
+  field <- ifelse(duplicated(field), " OR ", ") AND (")
+  numF <- length(field)
+  if (numF > 1L) {
+    apiterm[-c(1, numF)] <- paste0(field[-c(1, numF)], apiterm[-c(1, numF)])
+    apiterm[1] <- paste0("(", apiterm[1])
+    apiterm[numF] <- paste0(field[numF], apiterm[numF], ")")
+  }
+  # - concat
+  apiterm <- trimws(paste0(trimws(apiterm), collapse = " "))
+  # - prefix with q removed above
+  apiterm <- paste0("q=", apiterm)
   # - inform user
   if (verbose) message("DEBUG: apiterm is ", apiterm)
 
