@@ -301,6 +301,7 @@ ctrLoadQueryIntoDb <- function(
   } # if not querytoupdate
 
   # check annotation parameters
+  annotation.text <- as.character(annotation.text)
   if (annotation.text != "" &&
       !any(annotation.mode == c("append", "prepend", "replace"))) {
     stop("'annotation.mode' incorrect", call. = FALSE)
@@ -380,7 +381,8 @@ ctrLoadQueryIntoDb <- function(
   ## annotate records ---------------------------------------------------------
 
   # add annotations
-  if ((annotation.text != "") &&
+  if (!only.count &&
+      (annotation.text != "") &&
       (length(imported$success) > 0L)) {
     # dispatch
     dbCTRAnnotateQueryRecords(
@@ -401,11 +403,8 @@ ctrLoadQueryIntoDb <- function(
 
   ## finalise
 
-  # only count?
-  if (only.count) {
-    # return number of trials
-    return(imported)
-  }
+  # early exit if only count
+  if (only.count) {return(imported)}
 
   # add query parameters to database
   if (imported$n > 0L || !is.null(querytoupdate)) {
