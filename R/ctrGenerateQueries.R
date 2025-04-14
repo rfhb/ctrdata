@@ -410,16 +410,16 @@ ctrGenerateQueries <- function(
     urls["CTGOV2expert"] <- paste0(
       urls["CTGOV2expert"], ' AND (', c(
         "ongoing" = paste0(
-          'AREA[LocationStatus]"ACTIVE_NOT_RECRUITING" OR ',
-          'AREA[LocationStatus]"ENROLLING_BY_INVITATION" OR ',
-          'AREA[LocationStatus]"RECRUITING"'),
-        "completed" = 'AREA[LocationStatus]"COMPLETED"',
+          'AREA[OverallStatus]"ACTIVE_NOT_RECRUITING" OR ',
+          'AREA[OverallStatus]"ENROLLING_BY_INVITATION" OR ',
+          'AREA[OverallStatus]"RECRUITING"'),
+        "completed" = 'AREA[OverallStatus]"COMPLETED"',
         "other" = paste0(
-          'AREA[LocationStatus]"NOT_YET_RECRUITING" OR ',
-          'AREA[LocationStatus]"SUSPENDED" OR ',
-          'AREA[LocationStatus]"TERMINATED" OR ',
-          'AREA[LocationStatus]"WITHDRAWN" OR ',
-          'AREA[LocationStatus]"AVAILABLE"')
+          'AREA[OverallStatus]"NOT_YET_RECRUITING" OR ',
+          'AREA[OverallStatus]"SUSPENDED" OR ',
+          'AREA[OverallStatus]"TERMINATED" OR ',
+          'AREA[OverallStatus]"WITHDRAWN" OR ',
+          'AREA[OverallStatus]"AVAILABLE"')
       )[recruitment],
       ') ')
 
