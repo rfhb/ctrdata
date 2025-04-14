@@ -6,23 +6,7 @@ of the EU Clinical Trial Regulation.
 For CTGOV and CTGOV2, this is based on drug or biological as type
 of intervention, and interventional as type of study.
 For ISRCTN, this is based on drug or biological as type
-of intervention, and interventional as type of study.
-Trial concept calculated: Calculates if record is a medicine-interventional
-trial, investigating one or more medicine, whether biological or not.
-For EUCTR and CTIS, this corresponds to all records as per the definition
-of the EU Clinical Trial Regulation.
-For CTGOV and CTGOV2, this is based on drug or biological as type
-of intervention, and interventional as type of study.
-For ISRCTN, this is based on drug or biological as type
 of intervention, and interventional as type of study."><meta property="og:description" content="Trial concept calculated: Calculates if record is a medicine-interventional
-trial, investigating one or more medicine, whether biological or not.
-For EUCTR and CTIS, this corresponds to all records as per the definition
-of the EU Clinical Trial Regulation.
-For CTGOV and CTGOV2, this is based on drug or biological as type
-of intervention, and interventional as type of study.
-For ISRCTN, this is based on drug or biological as type
-of intervention, and interventional as type of study.
-Trial concept calculated: Calculates if record is a medicine-interventional
 trial, investigating one or more medicine, whether biological or not.
 For EUCTR and CTIS, this corresponds to all records as per the definition
 of the EU Clinical Trial Regulation.
@@ -65,7 +49,7 @@ of intervention, and interventional as type of study."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Calculate if study is a medicine-interventional study</h1>
-      <small class="dont-index">Source: <a href="https://github.com/rfhb/ctrdata/blob/HEAD/R/f_isExtensionTrial.R" class="external-link"><code>R/f_isExtensionTrial.R</code></a>, <a href="https://github.com/rfhb/ctrdata/blob/HEAD/R/f_isMedIntervTrial.R" class="external-link"><code>R/f_isMedIntervTrial.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/rfhb/ctrdata/blob/HEAD/R/f_isMedIntervTrial.R" class="external-link"><code>R/f_isMedIntervTrial.R</code></a></small>
       <div class="d-none name"><code>f.isMedIntervTrial.Rd</code></div>
     </div>
 
@@ -78,21 +62,11 @@ For CTGOV and CTGOV2, this is based on drug or biological as type
 of intervention, and interventional as type of study.
 For ISRCTN, this is based on drug or biological as type
 of intervention, and interventional as type of study.</p>
-<p>Trial concept calculated: Calculates if record is a medicine-interventional
-trial, investigating one or more medicine, whether biological or not.
-For EUCTR and CTIS, this corresponds to all records as per the definition
-of the EU Clinical Trial Regulation.
-For CTGOV and CTGOV2, this is based on drug or biological as type
-of intervention, and interventional as type of study.
-For ISRCTN, this is based on drug or biological as type
-of intervention, and interventional as type of study.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">f.isMedIntervTrial</span><span class="op">(</span>df <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">f.isMedIntervTrial</span><span class="op">(</span>df <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">f.isMedIntervTrial</span><span class="op">(</span>df <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -108,74 +82,11 @@ be used with <a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a>.</p></dd>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>data frame with colums `_id` and `.isMedIntervTrial`, a logical.</p>
-<p>data frame with colums `_id` and `.isMedIntervTrial`, a logical.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># fields needed</span></span></span>
-<span class="r-in"><span><span class="fu">f.isMedIntervTrial</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $euctr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ctrname"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ctgov</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "intervention.intervention_type" "study_type"                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ctgov2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "protocolSection.armsInterventionsModule.interventions.type"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "protocolSection.designModule.studyType"                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $isrctn</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "interventions.intervention.interventionType"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "trialDesign.primaryStudyDesign"             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ctis</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ctrname"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># apply trial concept when creating data frame</span></span></span>
-<span class="r-in"><span><span class="va">dbc</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">src_sqlite</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  dbname <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"demo.sqlite"</span>, package <span class="op">=</span> <span class="st">"ctrdata"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  collection <span class="op">=</span> <span class="st">"my_trials"</span>, flags <span class="op">=</span> <span class="fu">RSQLite</span><span class="fu">::</span><span class="va"><a href="https://rsqlite.r-dbi.org/reference/SQLite.html" class="external-link">SQLITE_RO</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">trialsDf</span> <span class="op">&lt;-</span> <span class="fu"><a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  calculate <span class="op">=</span> <span class="st">"f.isMedIntervTrial"</span>,</span></span>
-<span class="r-in"><span>  con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying database (7 fields)...</span>
-<span class="r-in"><span><span class="va">trialsDf</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                  _id .isMedIntervTrial</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1           12949496              TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2           13281214              TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3           17473621             FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  2012-003632-23-CZ              TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  2012-003632-23-SE              TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  2014-002606-20-PT              TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  2014-003556-31-GB              TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  2014-003556-31-SE              TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  2022-500244-37-00              TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 2022-501142-30-00              TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 2023-505613-24-00              TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12 2023-508143-51-01              TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13 2024-510663-34-00              TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14          20343063              TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15          61070850              TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16          76463425             FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17          80181452              TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18          88261002              TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19       NCT00617929              TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20       NCT01125800              TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21       NCT01483820              TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22       NCT01505608              TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23       NCT01592045              TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24       NCT02620761              TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25       NCT03280147              TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26       NCT03325439              TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27       NCT03431558              TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28       NCT03876704              TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29       NCT04001712              TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30       NCT04041765              TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31       NCT05969327              TRUE</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># fields needed</span></span></span>
 <span class="r-in"><span><span class="fu">f.isMedIntervTrial</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $euctr</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ctrname"</span>

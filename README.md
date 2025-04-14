@@ -37,7 +37,7 @@ interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
 `ctrdata` is a package for the [R](https://www.r-project.org/) system,
 but other systems and tools can use the databases created with this
-package. This README was reviewed on 2025-04-02 for version 1.21.1.9000.
+package. This README was reviewed on 2025-04-13 for version 1.21.1.9000.
 
 ## Main features
 
@@ -801,46 +801,32 @@ ctrLoadQueryIntoDb(
 # trial(s) already existed in ./files-ctis
 ```
 
-## Tests
+## Tests and coverage
 
 See also <https://app.codecov.io/gh/rfhb/ctrdata/tree/master/R>
 
 ``` r
 tinytest::test_all()
-# test_ctrdata_duckdb_ctgov2.R..   78 tests OK 48.7s
-# test_ctrdata_function_activesubstance.R    4 tests OK 1.3s
-# test_ctrdata_function_ctrgeneratequeries.R   14 tests OK 5ms
-# test_ctrdata_function_params.R   25 tests OK 1.0s
-# test_ctrdata_function_trial-concepts.R   80 tests OK 4.6s
-# test_ctrdata_function_various.R   67 tests OK 3.4s
-# test_ctrdata_postgres_ctgov2.R   50 tests OK 32.1s
-# test_ctrdata_sqlite_ctgov.R...   46 tests OK 28.9s
-# test_ctrdata_sqlite_ctgov2.R..   50 tests OK 27.0s
-# test_ctrdata_sqlite_ctis.R....   63 tests OK 56.9s
-# test_ctrdata_sqlite_euctr.R...  115 tests OK 46.3s
-# test_ctrdata_sqlite_isrctn.R..   38 tests OK 10.6s
-# test_euctr_error_sample.R.....    8 tests OK 0.2s
-# All ok, 638 results (4m 21.4s)
 
 covr::package_coverage(path = ".", type = "tests")
-# ctrdata Coverage: 94.30%
+# ctrdata Coverage: 94.69%
 # R/ctrShowOneTrial.R: 57.89%
-# R/ctrRerunQuery.R: 74.85%
 # R/zzz.R: 80.95%
 # R/dbGetFieldsIntoDf.R: 86.99%
-# R/util_functions.R: 89.86%
+# R/ctrRerunQuery.R: 89.18%
+# R/util_functions.R: 89.81%
 # R/ctrLoadQueryIntoDbEuctr.R: 90.08%
 # R/ctrFindActiveSubstanceSynonyms.R: 90.38%
 # R/ctrGetQueryUrl.R: 92.04%
-# R/ctrLoadQueryIntoDbIsrctn.R: 92.45%
-# R/ctrLoadQueryIntoDbCtgov2.R: 92.72%
+# R/ctrLoadQueryIntoDbCtgov2.R: 92.68%
+# R/ctrLoadQueryIntoDbIsrctn.R: 92.81%
 # R/dfMergeVariablesRelevel.R: 94.29%
-# R/ctrLoadQueryIntoDbCtis.R: 95.26%
+# R/ctrLoadQueryIntoDbCtis.R: 95.34%
 # R/dbFindFields.R: 95.88%
 # R/f_primaryEndpointResults.R: 96.00%
-# R/ctrLoadQueryIntoDb.R: 96.77%
-# R/ctrOpenSearchPagesInBrowser.R: 97.37%
-# R/ctrGenerateQueries.R: 97.51%
+# R/ctrLoadQueryIntoDb.R: 96.86%
+# R/ctrGenerateQueries.R: 97.31%
+# R/ctrOpenSearchPagesInBrowser.R: 97.40%
 # R/dbFindIdsUniqueTrials.R: 98.78%
 # R/f_numTestArmsSubstances.R: 98.92%
 # R/f_likelyPlatformTrial.R: 99.13%
@@ -879,19 +865,20 @@ Implemented:
 - ~~Retrieve previous versions of protocol- or results-related
   information. The challenges include, historic versions can only be
   retrieved one-by-one, do not include results, or are not in structured
-  format. The functionality available with version 1.17.3 to the extent
-  that is possible at this time, namely for protocol- and
-  results-related information in CTGOV2, only~~
+  format. The functionality available at this time, is to retrieve any
+  version in CTGOV2, and to create a version when re-running a CTIS
+  query and retrieving new data.~~
 
 - ~~Canonical definitions, filters, calculations are in the works (since
-  August 2023) for data mangling and analyses across registers, e.g. to
-  define study population, identify interventional trials, calculate
-  study duration; public collaboration on these canonical scripts will
-  speed up harmonising analyses.~~
+  August 2023, released in version 1.20.0) for data mangling and
+  analyses across registers, e.g. to define study population, identify
+  interventional trials, calculate study duration; public collaboration
+  on these canonical scripts will speed up harmonising analyses.~~
 
 - ~~Merge results-related fields retrieved from different registers,
-  such as corresponding endpoints (work not yet started). The challenge
-  is the incomplete congruency and different structure of data fields.~~
+  such as corresponding endpoints. The challenge is the incomplete
+  congruency and different structure of data fields. This has largely
+  been implemented as per the previous bullet point.~~
 
 ## Acknowledgements
 

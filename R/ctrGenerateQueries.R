@@ -29,9 +29,10 @@
 #' with EUCTR)
 #' @param completedAfter String that can be interpreted as date (does not work
 #' with EUCTR)
+#' @param onlyMedIntervTrials Logical, default \code{TRUE}, which indicates if
+#' queries should search only for medicine interventional clinical trial
 #' @param onlyWithResults Logical
-#' @param countries Vector of country names, two- or three-letter
-#' ISO 3166 codes
+#' @param countries Vector of country names, two- or three-letter ISO 3166 codes
 #'
 #' @returns Named vector of URLs for finding trials in the registers and as
 #' input to functions \link{ctrLoadQueryIntoDb} and

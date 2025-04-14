@@ -1,10 +1,10 @@
 ## Test environments
 
-* local: R Under development (unstable) (2025-03-10 r87922) on aarch64-apple-darwin20 (ok)
+* local: R version 4.5.0 (2025-04-11) on aarch64-apple-darwin20 (ok)
 
-* Win-builder: R Under development (unstable); R version 4.3.3 (2024-02-29 ucrt) (2025-03-12 r87950 ucrt) (ok)
+* Win-builder:  (ok)
 
-* macOS builder: r-release-macosx-arm64|4.4.2|macosx|macOS 13.3.1 (22E261) (ok)
+* macOS builder: r-release-macosx-arm64|4.4.2|macosx|macOS 13.3.1 (22E261)|Mac mini|Apple M1||en_US.UTF-8|macOS 11.3|clang-1403.0.22.14.1|GNU Fortran (GCC) 14.2.0 (ok)
 
 * GitHub actions: windows-2022, r: 'release'; macOS-latest, r: 'release'; macOS-latest, r: 'oldrel'; ubuntu-latest, r: 'devel' (ok)
 
@@ -16,11 +16,7 @@
 
 ## Submission reason
 
-- Fix user-reported bug, unrelated to recent release
-
-- Fix CRAN "NOTE installed size is  5.3Mb"
-
-- Cannot fix CRAN "ERROR Installation failed. Flavor: r-devel-linux-x86_64-debian-gcc" because this is caused by "Error: ERROR: no permission to install to directory ‘/home/hornik/tmp/R.check/r-devel-gcc/Work/build/Packages’"
+- Several fixes of issues discovered in rare use cases
 
 
 ## Reverse dependency checks
