@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.21.1.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.22.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,17 +39,21 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.21.1.9000" id="ctrdata-12119000">ctrdata 1.21.1.9000<a class="anchor" aria-label="anchor" href="#ctrdata-12119000"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.22.0" id="ctrdata-1220">ctrdata 1.22.0<a class="anchor" aria-label="anchor" href="#ctrdata-1220"></a></h2><p class="text-muted">CRAN release: 2025-04-14</p>
 <div class="section level3">
-<h3 id="improvements-1-21-1-9000">Improvements<a class="anchor" aria-label="anchor" href="#improvements-1-21-1-9000"></a></h3>
+<h3 id="improvements-1-22-0">Improvements<a class="anchor" aria-label="anchor" href="#improvements-1-22-0"></a></h3>
 <ul><li>When using <code>querytoupdate</code> for CTIS, set <code>ctishistory = TRUE</code> to create historic versions from previously downloaded trial record, see <code><a href="../articles/ctrdata_summarise.html">vignette("ctrdata_summarise")</a></code>
 </li>
-<li>
-<code><a href="../reference/ctrGenerateQueries.html">ctrGenerateQueries()</a></code> now also covers countries of trial conduct and now defaults to interventional trials with medicines</li>
 <li>Trial concept <code><a href="../reference/f.trialObjectives.html">f.trialObjectives()</a></code> improved with structured data from CTIS and EUCTR</li>
+<li>
+<code><a href="../reference/ctrGenerateQueries.html">ctrGenerateQueries()</a></code> now defaults to interventional trials with medicines</li>
+<li>
+<code><a href="../reference/ctrGenerateQueries.html">ctrGenerateQueries()</a></code> additionally provides a CTGOV expert search query</li>
+<li>
+<code><a href="../reference/ctrGenerateQueries.html">ctrGenerateQueries()</a></code> now also covers countries of trial conduct</li>
 </ul></div>
 <div class="section level3">
-<h3 id="bug-fix-1-21-1-9000">Bug fix<a class="anchor" aria-label="anchor" href="#bug-fix-1-21-1-9000"></a></h3>
+<h3 id="bug-fix-1-22-0">Bug fix<a class="anchor" aria-label="anchor" href="#bug-fix-1-22-0"></a></h3>
 <ul><li>Fixed for <code>ISRCTN</code> API term mangling</li>
 <li>Fixed digesting marginal cases in notifications in <code><a href="../reference/f.statusRecruitment.html">f.statusRecruitment()</a></code>
 </li>
