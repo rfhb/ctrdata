@@ -37,7 +37,7 @@ interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
 `ctrdata` is a package for the [R](https://www.r-project.org/) system,
 but other systems and tools can use the databases created with this
-package. This README was reviewed on 2025-04-13 for version 1.21.1.9000.
+package. This README was reviewed on 2025-04-24 for version 1.22.0.9000.
 
 ## Main features
 
@@ -77,7 +77,7 @@ Remember to respect the registers’ terms and conditions (see
 `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
 package in any publication as follows: “Ralf Herold (2025). *ctrdata:
 Retrieve and Analyze Clinical Trials in Public Registers.* R package
-version 1.21.1, <https://cran.r-project.org/package=ctrdata>”.
+version 1.22.0, <https://cran.r-project.org/package=ctrdata>”.
 
 <!--
 &#10;
@@ -92,15 +92,24 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 
 ## References
 
-Package `ctrdata` has been used for unpublished works and for these
+Package `ctrdata` has been used for unpublished works and these
 publications:
 
+- Jong et al. (2025) Experiences with Low-Intervention Clinical
+  Trials—the New Category under the European Union Clinical Trials
+  Regulation. Clinical Trials
+  <https://doi.org/10.1177/17407745241309293>
+- Lopez-Rey et al. (2025) Use of Bayesian Approaches in Oncology
+  Clinical Trials: A Cross-Sectional Analysis’. Frontiers in
+  Pharmacology <https://doi.org/10.3389/fphar.2025.1548997>
+- Russek et al. (2025) Supplementing Single-Arm Trials with External
+  Control Arms—Evaluation of German Real-World Data. Clinical
+  Pharmacology & Therapeutics <https://doi.org/10.1002/cpt.3684>
 - Alzheimer’s disease Horizon Scanning Report (2024) [PDF file, p
   10](https://www.ema.europa.eu/en/documents/report/alzheimers-disease-eu-horizon-scanning-report_en.pdf#page=10)
-  🔔
 - Kundu et al. (2024) Analysis of Factors Influencing Enrollment Success
   in Hematology Malignancy Cancer Clinical Trials (2008-2023). Blood
-  Meeting Abstracts <https://doi.org/10.1182/blood-2024-207446> 🔔
+  Meeting Abstracts <https://doi.org/10.1182/blood-2024-207446>
 - Lasch et al. (2022) The Impact of COVID‐19 on the Initiation of
   Clinical Trials in Europe and the United States. Clinical Pharmacology
   & Therapeutics <https://doi.org/10.1002/cpt.2534>

@@ -17,7 +17,7 @@ function to provide a vector of identifiers of deduplicated trials."></head><bod
 
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.22.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.22.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -132,17 +132,17 @@ can be calculated at the time of creating a data frame with
 <span class="r-in"><span><span class="fu">dbFindIdsUniqueTrials</span><span class="op">(</span>con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Searching for duplicate trials... </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - Getting all trial identifiers...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> , 31 found in collection</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> , 53 found in collection</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - Finding duplicates among registers' and sponsor ids...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> - 2 EUCTR _id were not preferred EU Member State record for 9 trials</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> - Keeping 5 / 3 / 8 / 8 / 5 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> = Returning keys (_id) of 29 records in collection "my_trials"</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> - 18 EUCTR _id were not preferred EU Member State record for 15 trials</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> - Keeping 5 / 9 / 8 / 8 / 5 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> = Returning keys (_id) of 35 records in collection "my_trials"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              ISRCTN              ISRCTN              ISRCTN               EUCTR </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          "12949496"          "13281214"          "17473621" "2012-003632-23-CZ" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               EUCTR               EUCTR                CTIS                CTIS </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> "2014-002606-20-PT" "2014-003556-31-SE" "2022-500244-37-00" "2022-501142-30-00" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                CTIS                CTIS </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> "2023-505613-24-00" "2023-508143-51-01" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          "12949496"          "13281214"          "17473621" "2004-004386-15-IT" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               EUCTR               EUCTR               EUCTR               EUCTR </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "2010-022951-49-LT" "2012-003632-23-CZ" "2012-005398-30-IT" "2014-002606-20-PT" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               EUCTR               EUCTR </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "2014-003556-31-SE" "2016-002004-10-BE" </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># alternative as of ctrdata version 1.21.0,</span></span></span>
 <span class="r-in"><span><span class="co"># using defaults of dbFindIdsUniqueTrials()</span></span></span>
@@ -153,11 +153,11 @@ can be calculated at the time of creating a data frame with
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Querying database (2 fields)...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Searching for duplicate trials... </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - Getting all trial identifiers...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> , 31 found in collection</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> , 53 found in collection</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - Finding duplicates among registers' and sponsor ids...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> - 2 EUCTR _id were not preferred EU Member State record for 9 trials</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> - Keeping 5 / 3 / 8 / 8 / 5 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> = Returning keys (_id) of 29 records in collection "my_trials"</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> - 18 EUCTR _id were not preferred EU Member State record for 15 trials</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> - Keeping 5 / 9 / 8 / 8 / 5 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> = Returning keys (_id) of 35 records in collection "my_trials"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># using base R</span></span></span>
 <span class="r-in"><span><span class="va">df</span><span class="op">[</span><span class="va">df</span><span class="op">[[</span><span class="st">".isUniqueTrial"</span><span class="op">]</span><span class="op">]</span>, <span class="op">]</span></span></span>
@@ -165,92 +165,110 @@ can be calculated at the time of creating a data frame with
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1           12949496</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2           13281214</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3           17473621</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  2012-003632-23-SE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  2014-002606-20-PT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  2014-003556-31-SE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  2022-500244-37-00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 2022-501142-30-00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 2023-505613-24-00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12 2023-508143-51-01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13 2024-510663-34-00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14          20343063</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15          61070850</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16          76463425</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17          80181452</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18          88261002</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19       NCT00617929</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20       NCT01125800</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21       NCT01483820</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22       NCT01505608</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23       NCT01592045</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24       NCT02620761</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25       NCT03280147</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26       NCT03325439</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27       NCT03431558</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28       NCT03876704</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29       NCT04001712</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30       NCT04041765</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31       NCT05969327</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  2004-004386-15-ES</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 2010-022951-49-LV</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 2012-003632-23-SE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14 2012-005398-30-IT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15 2014-002606-20-PT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17 2014-003556-31-SE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18 2016-002004-10-BE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25 2017-001828-22-ES</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27 2018-002601-57-ES</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31 2022-500244-37-00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32 2022-501142-30-00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33 2023-505613-24-00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34 2023-508143-51-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35 2024-510663-34-00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36          20343063</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37          61070850</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38          76463425</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39          80181452</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40          88261002</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41       NCT00617929</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42       NCT01125800</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43       NCT01483820</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44       NCT01505608</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45       NCT01592045</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46       NCT02620761</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47       NCT03280147</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48       NCT03325439</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49       NCT03431558</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50       NCT03876704</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 51       NCT04001712</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 52       NCT04041765</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 53       NCT05969327</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                   keyword</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                                                                                                    &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                                                                                                    &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3                                                                                                    &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5                                                                                                    &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6                                                                                                    &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8                                                                                                    &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9                                                                                                    &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10                                                                                                   &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 11                                                                                                   &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12                                                                                                   &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 13                                                                                                   &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 14                                                                                                   &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15                                                                                                   &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16                                                                                                   &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 17                                                                                                   &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 18                                                                                                   &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19                                                                                                   &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20                                                                                                   &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21                                                                                                   &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22                                                                                                   &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23                                                                                                   &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24                                                                                                   &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25                                                              Neonate / Sepsis / Antibiotics / Duration</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26 Electroencephalographic neonatal seizures / Brivaracetam / Epilepsy / ENS / Newborns / Pharmacokinetic</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27                                               Bovine Lactoferrin, Neonatal infection, Low Birth Weight</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28                                                                                                   &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29                                                                                 early caffeine preterm</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30                                                                IgM-enriched Intravenous Immunoglobulin</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25                                                                                                   &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27                                                                                                   &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 31                                                                                                   &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32                                                                                                   &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33                                                                                                   &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34                                                                                                   &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35                                                                                                   &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36                                                                                                   &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37                                                                                                   &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38                                                                                                   &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39                                                                                                   &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40                                                                                                   &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41                                                                                                   &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42                                                                                                   &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43                                                                                                   &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44                                                                                                   &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45                                                                                                   &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46                                                                                                   &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47                                                              Neonate / Sepsis / Antibiotics / Duration</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48 Electroencephalographic neonatal seizures / Brivaracetam / Epilepsy / ENS / Newborns / Pharmacokinetic</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49                                               Bovine Lactoferrin, Neonatal infection, Low Birth Weight</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50                                                                                                   &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 51                                                                                 early caffeine preterm</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 52                                                                IgM-enriched Intravenous Immunoglobulin</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 53                                                                                                   &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    .isUniqueTrial</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1            TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2            TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3            TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5            TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6            TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8            TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9            TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10           TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 11           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12           TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 13           TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 14           TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16           TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 17           TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 18           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24           TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 25           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26           TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 27           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30           TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 31           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 51           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 52           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 53           TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>

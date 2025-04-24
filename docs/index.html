@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.22.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.22.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -66,7 +66,7 @@
 <li>ClinicalTrials.gov (“CTGOV2”, see <a href="#workflow-ctgov-example">example</a>)</li>
 <li>ISRCTN Registry (<a href="https://www.isrctn.com/" class="external-link uri">https://www.isrctn.com/</a>)</li>
 </ul>
-<p>The motivation is to investigate the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can use the databases created with this package. This README was reviewed on 2025-04-13 for version 1.21.1.9000.</p>
+<p>The motivation is to investigate the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can use the databases created with this package. This README was reviewed on 2025-04-24 for version 1.22.0.9000.</p>
 <div class="section level2">
 <h2 id="main-features">Main features<a class="anchor" aria-label="anchor" href="#main-features"></a>
 </h2>
@@ -75,7 +75,7 @@
 <li><p>Downloaded trial information is transformed and stored in a collection of a document-centric database, for fast and offline access. Information from different registers can be accumulated in a single collection. Uses <code>DuckDB</code>, <code>PostgreSQL</code>, <code>RSQLite</code> or <code>MongoDB</code>, via R package <code>nodbi</code>: see section <a href="#databases-that-can-be-used-with-ctrdata">Databases</a> below. Interactively browse through trial structure and data. Easily re-run any previous query in a collection to retrieve and update trial records.</p></li>
 <li><p>For analyses, convenience functions in <code>ctrdata</code> implement canonical <a href="https://rfhb.github.io/ctrdata/reference/ctrdata-trial-concepts.html">trial concepts</a> to simplify analyses across registers 🔔, allow find synonyms of an active substance, identify unique (de-duplicated) trial records across all registers, to merge and recode fields as well as to easily access deeply-nested fields. Analysis can be done with <code>R</code> (see <a href="https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html">vignette</a>) or other systems, using the <code>JSON</code>-<a href="#trial-records-in-databases">structured information in the database</a>.</p></li>
 </ul>
-<p>Remember to respect the registers’ terms and conditions (see <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>). Please cite this package in any publication as follows: “Ralf Herold (2025). <em>ctrdata: Retrieve and Analyze Clinical Trials in Public Registers.</em> R package version 1.21.1, <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a>”.</p>
+<p>Remember to respect the registers’ terms and conditions (see <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>). Please cite this package in any publication as follows: “Ralf Herold (2025). <em>ctrdata: Retrieve and Analyze Clinical Trials in Public Registers.</em> R package version 1.22.0, <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a>”.</p>
 <!--
 &#10;
 ``` r
@@ -90,10 +90,18 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<p>Package <code>ctrdata</code> has been used for unpublished works and for these publications:</p>
+<p>Package <code>ctrdata</code> has been used for unpublished works and these publications:</p>
 <ul>
-<li>Alzheimer’s disease Horizon Scanning Report (2024) <a href="https://www.ema.europa.eu/en/documents/report/alzheimers-disease-eu-horizon-scanning-report_en.pdf#page=10" class="external-link">PDF file, p 10</a> 🔔</li>
-<li>Kundu et al. (2024) Analysis of Factors Influencing Enrollment Success in Hematology Malignancy Cancer Clinical Trials (2008-2023). Blood Meeting Abstracts <a href="https://doi.org/10.1182/blood-2024-207446" class="external-link uri">https://doi.org/10.1182/blood-2024-207446</a> 🔔</li>
+<li>Jong et al. (2025) Experiences with Low-Intervention Clinical Trials—the New Category under the European Union Clinical Trials Regulation. Clinical Trials <a href="https://doi.org/10.1177/17407745241309293" class="external-link uri">https://doi.org/10.1177/17407745241309293</a>
+</li>
+<li>Lopez-Rey et al. (2025) Use of Bayesian Approaches in Oncology Clinical Trials: A Cross-Sectional Analysis’. Frontiers in Pharmacology <a href="https://doi.org/10.3389/fphar.2025.1548997" class="external-link uri">https://doi.org/10.3389/fphar.2025.1548997</a>
+</li>
+<li>Russek et al. (2025) Supplementing Single-Arm Trials with External Control Arms—Evaluation of German Real-World Data. Clinical Pharmacology &amp; Therapeutics <a href="https://doi.org/10.1002/cpt.3684" class="external-link uri">https://doi.org/10.1002/cpt.3684</a>
+</li>
+<li>Alzheimer’s disease Horizon Scanning Report (2024) <a href="https://www.ema.europa.eu/en/documents/report/alzheimers-disease-eu-horizon-scanning-report_en.pdf#page=10" class="external-link">PDF file, p 10</a>
+</li>
+<li>Kundu et al. (2024) Analysis of Factors Influencing Enrollment Success in Hematology Malignancy Cancer Clinical Trials (2008-2023). Blood Meeting Abstracts <a href="https://doi.org/10.1182/blood-2024-207446" class="external-link uri">https://doi.org/10.1182/blood-2024-207446</a>
+</li>
 <li>Lasch et al. (2022) The Impact of COVID‐19 on the Initiation of Clinical Trials in Europe and the United States. Clinical Pharmacology &amp; Therapeutics <a href="https://doi.org/10.1002/cpt.2534" class="external-link uri">https://doi.org/10.1002/cpt.2534</a>
 </li>
 <li>Sood et al. (2022) Managing the Evidence Infodemic: Automation Approaches Used for Developing NICE COVID-19 Living Guidelines. medRxiv <a href="https://doi.org/10.1101/2022.06.13.22276242" class="external-link uri">https://doi.org/10.1101/2022.06.13.22276242</a>

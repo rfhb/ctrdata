@@ -325,6 +325,26 @@ ctrGetQueryUrl <- function(
   #### CTGOV2 ####
   if (register == "CTGOV2") {
 
+    # handle api calls
+    if (grepl("/api/v2/", url)) {
+
+      message(
+        "* Found API call for CTGOV2, translating to URL query yet ",
+        "this is likely incomplete and imperfect, check the result.")
+
+      # TODO is likely incomplete
+      url <- sub("/api/v2/studies[?]", "/expert-search?", url)
+      url <- sub("&query[.]term=", "&term=", url)
+      url <- sub("&query[.][a-z]+=", " AND ", url)
+
+      # &filter.overallStatus=COMPLETED&pageSize=1000
+
+      # 'AREA[OverallStatus](COMPLETED)'
+
+      url <- gsub("([?]|&)(format|pageSize)=[^&]+?(&|$)", "\\1", url)
+
+    }
+
     # extract search query
     queryterm <- sub(
       paste0(
