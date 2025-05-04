@@ -1,6 +1,7 @@
 # ctrdata 1.22.0.9000
 
-- New development version
+## Bug fix
+- Fixed for specific trial(s) from EUCTR conversion to `NDJSON`
 
 # ctrdata 1.22.0
 
@@ -190,7 +191,7 @@ See also https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
 ## Improvements
 
 ### Major 
-- **No external tools required any more** (`Cygwin`, `perl`, `cat`, `sed`, `php` functionality for transforming text, XML and NDJSON replaced by Javascript using `R` package `V8`); addresses personally communicated concerns and faciliates use of package `ctrdata` in more environments (e.g., https://github.com/rfhb/ctrdata/issues/26); consequently, this might be a breaking change for analysing certain fields, see above which fields are affected. 
+- **No external tools required any more** (`Cygwin`, `perl`, `cat`, `sed`, `php` functionality for transforming text, XML and `NDJSON` replaced by Javascript using `R` package `V8`); addresses personally communicated concerns and faciliates use of package `ctrdata` in more environments (e.g., https://github.com/rfhb/ctrdata/issues/26); consequently, this might be a breaking change for analysing certain fields, see above which fields are affected. 
 
 ### Other
 - added results summary download for CTIS
@@ -323,7 +324,7 @@ See also https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
 
 # ctrdata 1.9.0 (2022-03-13)
 
-- chunked trial batches in ndjson files for accelerated database import
+- chunked trial batches in `NDJSON` files for accelerated database import
 - if package dplyr is loaded, functions return a tibble instead of a data frame
 - update and correct documentation
 - `dbFindFields()` returns a vector of fields which now has as names the register in which a field occurs

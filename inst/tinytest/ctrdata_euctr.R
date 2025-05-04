@@ -31,30 +31,50 @@ expect_true(
         only.count = TRUE)))[["n"]] >= 2L)
 
 # test
-expect_true(
-  suppressWarnings(
-    suppressMessages(
-      ctrLoadQueryIntoDb(
-        queryterm = "2016-004774-17",
-        register = "EUCTR",
-        con = dbc)))[["n"]] >= 1L)
+suppressWarnings(
+  suppressMessages(
+    tmp <- ctrLoadQueryIntoDb(
+      queryterm = "2016-004774-17",
+      register = "EUCTR",
+      con = dbc)))
+expect_true(tmp[["n"]] >= 3L)
+
+# test
+suppressWarnings(
+  suppressMessages(
+    tmp <- ctrLoadQueryIntoDb(
+      queryterm = "2011-003866-34",
+      register = "EUCTR",
+      con = dbc)))
+expect_true(tmp[["n"]] >= 1L)
 
 # correct _id association
 
 # test
+suppressWarnings(
+  suppressMessages(
+    tmp <- ctrLoadQueryIntoDb(
+      queryterm = "2005-001267-63+OR+2008-003606-33",
+      register = "EUCTR",
+      euctrresults = TRUE,
+      con = dbc)))
 expect_true(
   setequal(
-    suppressWarnings(
-      suppressMessages(
-        ctrLoadQueryIntoDb(
-          queryterm = "2005-001267-63+OR+2008-003606-33",
-          register = "EUCTR",
-          euctrresults = TRUE,
-          con = dbc
-        )[["success"]])),
+    tmp[["success"]],
     c("2008-003606-33-GB",
       "2005-001267-63-AT",
       "2005-001267-63-IT")))
+
+# _id's check prep
+tmp <- nodbi::docdb_query(
+  dbc, dbc$collection,
+  query = '{}',
+  fields = '{"_id": 1}')[[1]]
+tmp <- tmp[tmp != "meta-info"]
+
+# test
+expect_true(all(grepl("^[0-9]{4}-[0-9]{6}-[0-9]{2}-[3A-Z]{2,3}$", tmp)))
+rm(tmp)
 
 # test
 expect_identical(
@@ -79,7 +99,7 @@ expect_message(
   "Imported or updated")
 
 # test
-expect_true(tmpTest$n > 10L)
+expect_true(tmpTest$n >= 14L)
 
 # test
 expect_true(all(
@@ -446,6 +466,17 @@ tmpTest <- suppressMessages(suppressWarnings(
 expect_true("character" %in% class(tmpTest))
 expect_true(length(tmpTest) >= 4L)
 rm(tmpTest)
+
+# _id's check prep
+tmp <- nodbi::docdb_query(
+  dbc, dbc$collection,
+  query = '{}',
+  fields = '{"_id": 1}')[[1]]
+tmp <- tmp[tmp != "meta-info"]
+
+# test
+expect_true(all(grepl("^[0-9]{4}-[0-9]{6}-[0-9]{2}-[3A-Z]{2,3}$", tmp)))
+rm(tmp)
 
 
 #### annotations #####
