@@ -100,6 +100,65 @@ dbFindIdsUniqueTrials <- function(
     con = con,
     verbose = verbose)
 
+  # inform user
+  message("- Finding duplicates among registers' and sponsor ids...")
+
+  # find duplicates
+  colsToCheck <- match(c(preferregister, "SPONSOR"), names(listofIds))
+  outSet <- NULL
+  for (i in seq_along(preferregister)) {
+
+    # to be added
+    tmp <- listofIds[
+      listofIds[["ctrname"]] == preferregister[i], ,
+      drop = FALSE
+    ]
+    row.names(tmp) <- NULL
+
+    # check if second etc. set has identifiers
+    # in the previously rbind'ed sets
+    if (i > 1L && nrow(tmp)) {
+      # check for duplicates
+      dupes <- mapply(
+        function(c1, c2) {
+          tmpIs <- intersect(
+            unlist(strsplit(c1, " / ")),
+            unlist(strsplit(c2, " / "))
+          )
+          if (length(tmpIs)) {
+            # map found intersecting names back
+            # to the rows of the input data frame
+            grepl(paste0(tmpIs, collapse = "|"), c1)
+          } else {
+            rep(FALSE, times = length(c1))
+          }
+        },
+        tmp[, colsToCheck, drop = FALSE],
+        outSet[, colsToCheck, drop = FALSE],
+        SIMPLIFY = FALSE
+      )
+
+      # mangle dupes for marginal cases, e.g. one record
+      dupes <- do.call(cbind, dupes)
+      dupes <- as.data.frame(dupes)
+
+      # keep uniques
+      tmp <- tmp[rowSums(dupes) == 0L, , drop = FALSE]
+      rm(dupes)
+    }
+
+    # add to output set
+    outSet <- rbind(
+      outSet, tmp,
+      make.row.names = FALSE,
+      stringsAsFactors = FALSE
+    )
+  }
+
+  # write back
+  listofIds <- outSet
+  rm(outSet)
+
   # keep attributes when selecting
   attribsids <- attributes(listofIds)
   listofIds <- listofIds[, c("_id", "EUCTR", "ctrname")]
@@ -151,6 +210,7 @@ dbFindIdsUniqueTrials <- function(
   # return
   return(listofIds)
 }
+# end dbFindIdsUniqueTrials
 
 
 
@@ -420,67 +480,11 @@ dbFindIdsUniqueTrials <- function(
     drop = FALSE
   ]
 
-  # inform user
-  message("- Finding duplicates among registers' and sponsor ids...")
-
-  # find duplicates
-  colsToCheck <- match(c(preferregister, "SPONSOR"), names(listofIds))
-  outSet <- NULL
-  for (i in seq_along(preferregister)) {
-    # to be added
-    tmp <- listofIds[
-      listofIds[["ctrname"]] == preferregister[i], ,
-      drop = FALSE
-    ]
-    row.names(tmp) <- NULL
-
-    # check if second etc. set has identifiers
-    # in the previously rbind'ed sets
-    if (i > 1L && nrow(tmp)) {
-      # check for duplicates
-      dupes <- mapply(
-        function(c1, c2) {
-          tmpIs <- intersect(
-            unlist(strsplit(c1, " / ")),
-            unlist(strsplit(c2, " / "))
-          )
-          if (length(tmpIs)) {
-            # map found intersecting names back
-            # to the rows of the input data frame
-            grepl(paste0(tmpIs, collapse = "|"), c1)
-          } else {
-            rep(FALSE, times = length(c1))
-          }
-        },
-        tmp[, colsToCheck, drop = FALSE],
-        outSet[, colsToCheck, drop = FALSE],
-        SIMPLIFY = FALSE
-      )
-
-      # mangle dupes for marginal cases, e.g. one record
-      dupes <- do.call(cbind, dupes)
-      dupes <- as.data.frame(dupes)
-
-      # keep uniques
-      tmp <- tmp[rowSums(dupes) == 0L, , drop = FALSE]
-      rm(dupes)
-    }
-
-    # add to output set
-    outSet <- rbind(
-      outSet, tmp,
-      make.row.names = FALSE,
-      stringsAsFactors = FALSE
-    )
-  }
-
-  # add meta data
-  outSet <- addMetaData(outSet, con = con)
-
   # return
-  return(outSet)
+  return(addMetaData(listofIds, con = con))
 
 }
+# end .dbMapIdsTrials
 
 
 

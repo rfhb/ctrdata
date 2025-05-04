@@ -1,8 +1,12 @@
 # ctrdata 1.22.0.9000
 
 ## Bug fix
-- Fixed for specific trial(s) from EUCTR conversion to `NDJSON` in Javascript
-- Adapt test after SQLite since 3.48.0 (in RSQLite 2.3.10 since 2025-05-02) accepts now up to 1000 arguments
+- Adapt test after SQLite 3.48.0 (in RSQLite 2.3.10 since 2025-05-02) accepts now up to 1000 arguments
+- Fixed for rare specific trial(s) from EUCTR conversion to `NDJSON` in Javascript
+- Revised `dbFindIdsUniqueTrials()` to work with more than 80,000 records
+
+## Internal
+- Modify internal function `.dbMapIdsTrials()` to use both CTIS1 and CTIS2 field names, and defer de-duplication to parent function
 
 # ctrdata 1.22.0
 
