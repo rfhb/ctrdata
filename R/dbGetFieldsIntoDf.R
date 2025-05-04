@@ -48,6 +48,7 @@
 #'
 #' @importFrom dplyr full_join
 #' @importFrom stats na.omit
+#' @importFrom utils ls.str
 #'
 #' @examples
 #'
@@ -195,6 +196,7 @@ dbGetFieldsIntoDf <- function(
     if (grepl("fewer than 50 fields", out)) maxFields <- 49L
 
     # SQLite Error : too many arguments on function json_object
+    # SQLite increased on 2025-01-14 (3.48.0) from 127 to 1000
     if (grepl("too many arguments", out)) maxFields <- 100L
 
     # propagate other errors
@@ -202,7 +204,7 @@ dbGetFieldsIntoDf <- function(
 
     # switch to iterating
     message(
-      "Database reports too many fields to obtain or ",
+      "Database reports too many fields to obtain or to ",
       "calculate, switching to iterating over fields...")
 
     # first get fields

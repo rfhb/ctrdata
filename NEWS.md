@@ -1,7 +1,8 @@
 # ctrdata 1.22.0.9000
 
 ## Bug fix
-- Fixed for specific trial(s) from EUCTR conversion to `NDJSON`
+- Fixed for specific trial(s) from EUCTR conversion to `NDJSON` in Javascript
+- Adapt test after SQLite since 3.48.0 (in RSQLite 2.3.10 since 2025-05-02) accepts now up to 1000 arguments
 
 # ctrdata 1.22.0
 

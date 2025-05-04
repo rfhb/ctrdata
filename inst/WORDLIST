@@ -38,7 +38,6 @@ MeSH
 MedDRA
 MongoDB
 NCT
-NDJSON
 NHST
 NL
 NestedResults
@@ -154,7 +153,6 @@ mongoDB
 mongodb
 mongolite
 mth
-ndjson
 nodbi
 nonproprietary
 numSites
