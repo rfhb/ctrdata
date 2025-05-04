@@ -130,7 +130,7 @@
 #' @export
 #'
 #' @importFrom httr set_config user_agent
-#' @importFrom utils packageDescription
+#' @importFrom utils packageVersion
 #'
 #' @examples
 #' \dontrun{
@@ -310,7 +310,7 @@ ctrLoadQueryIntoDb <- function(
   # set user agent for httr and curl to inform registers
   httr::set_config(httr::user_agent(
     paste0(
-      "ctrdata/", utils::packageDescription("ctrdata")$Version,
+      "ctrdata/", utils::packageVersion("ctrdata"),
       " (https://cran.r-project.org/package=ctrdata)"
     )
   ))

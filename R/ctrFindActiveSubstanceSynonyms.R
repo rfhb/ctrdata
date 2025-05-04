@@ -17,7 +17,7 @@
 #'  synonyms, or NULL if active substance was not found and may be invalid
 #'
 #' @importFrom httr GET set_config user_agent
-#' @importFrom utils packageDescription str
+#' @importFrom utils packageVersion str
 #' @importFrom jqr jq
 #' @importFrom stats quantile
 #'
@@ -60,7 +60,7 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE
   # set user agent for httr and curl to inform registers
   httr::set_config(httr::user_agent(
     paste0(
-      "ctrdata/", utils::packageDescription("ctrdata")$Version,
+      "ctrdata/", utils::packageVersion("ctrdata"),
       " (https://cran.r-project.org/package=ctrdata)"
     )
   ))
