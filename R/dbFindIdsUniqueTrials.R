@@ -108,16 +108,14 @@ dbFindIdsUniqueTrials <- function(
   outSet <- NULL
   for (i in seq_along(preferregister)) {
 
-    # to be added
-    tmp <- listofIds[
-      listofIds[["ctrname"]] == preferregister[i], ,
-      drop = FALSE
-    ]
+    # subset to be checked and non-dupes to be added
+    tmp <- listofIds[listofIds[["ctrname"]] == preferregister[i], , drop = FALSE]
     row.names(tmp) <- NULL
 
     # check if second etc. set has identifiers
     # in the previously rbind'ed sets
     if (i > 1L && nrow(tmp)) {
+
       # check for duplicates
       dupes <- mapply(
         function(c1, c2) {
@@ -128,7 +126,9 @@ dbFindIdsUniqueTrials <- function(
           if (length(tmpIs)) {
             # map found intersecting names back
             # to the rows of the input data frame
-            grepl(paste0(tmpIs, collapse = "|"), c1)
+            unlist(sapply(
+              tmpIs, function(i) grepl(i, c1),
+              USE.NAMES = FALSE, simplify = FALSE))
           } else {
             rep(FALSE, times = length(c1))
           }
@@ -145,7 +145,8 @@ dbFindIdsUniqueTrials <- function(
       # keep uniques
       tmp <- tmp[rowSums(dupes) == 0L, , drop = FALSE]
       rm(dupes)
-    }
+
+    } # if
 
     # add to output set
     outSet <- rbind(
@@ -153,16 +154,14 @@ dbFindIdsUniqueTrials <- function(
       make.row.names = FALSE,
       stringsAsFactors = FALSE
     )
-  }
 
-  # write back
-  listofIds <- outSet
-  rm(outSet)
+  } # for preferregister
 
   # keep attributes when selecting
   attribsids <- attributes(listofIds)
-  listofIds <- listofIds[, c("_id", "EUCTR", "ctrname")]
+  listofIds <- outSet[, c("_id", "EUCTR", "ctrname")]
   names(listofIds)[2] <- "a2_eudract_number"
+  rm(outSet)
 
   # find unique, preferred country version of euctr
   listofIds <- dfFindUniqueEuctrRecord(
