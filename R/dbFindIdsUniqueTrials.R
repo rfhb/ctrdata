@@ -225,10 +225,7 @@ dbFindIdsUniqueTrials <- function(
 #' @keywords internal
 #' @noRd
 #'
-.dbMapIdsTrials <- function(
-    preferregister = c("CTGOV2", "EUCTR", "CTGOV", "ISRCTN", "CTIS"),
-    con,
-    verbose = FALSE) {
+.dbMapIdsTrials <- function(con, verbose = FALSE, ...) {
 
   ## check database connection
   if (is.null(con$ctrDb)) con <- ctrDb(con = con)
@@ -237,6 +234,7 @@ dbFindIdsUniqueTrials <- function(
   message("Searching for duplicate trials... ")
 
   # fields for database query
+  # TODO accommodate also ctis1?
   fields <- c(
     "ctrname",
     # euctr
@@ -253,11 +251,10 @@ dbFindIdsUniqueTrials <- function(
     "isrctn",
     # ctis
     "ctNumber",
-    "eudraCtInfo.eudraCtCode",
-    # "authorizedPartI.trialDetails.clinicalTrialIdentifiers.secondaryIdentifyingNumbers.nctNumber.number",                # ctis1
-    # "authorizedPartI.trialDetails.clinicalTrialIdentifiers.secondaryIdentifyingNumbers.whoUniversalTrialNumber.number",  # ctis1
+    "eudraCtInfo.eudraCtCode", # ctis1
+    "authorizedApplication.eudraCt.eudraCtCode", # ctis2
+    "authorizedPartI.trialDetails.clinicalTrialIdentifiers.secondaryIdentifyingNumbers.nctNumber.number", # ctis1
     "authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.secondaryIdentifyingNumbers.nctNumber.number", # ctis2
-    # "authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.secondaryIdentifyingNumbers.whoUniversalTrialNumber.number", # ctis2
     # ctgov2
     "protocolSection.identificationModule.nctId",
     "protocolSection.identificationModule.secondaryIdInfos.id",
@@ -325,7 +322,8 @@ dbFindIdsUniqueTrials <- function(
   # inform user
   message("\b\b\b, ", nrow(listofIds), " found in collection")
 
-  # target fields for adding cols for mangling below
+  # target fields for adding cols for mangling below,
+  # intentionally repeating fields to match expected cols
   fields <- c(
     "_id",
     "ctrname",
@@ -355,9 +353,10 @@ dbFindIdsUniqueTrials <- function(
     "externalRefs.protocolSerialNumber",
     # ctis 4
     "ctNumber",
-    "eudraCtInfo.eudraCtCode",
-    # "authorizedPartI.trialDetails.clinicalTrialIdentifiers.secondaryIdentifyingNumbers.nctNumber.number", # ctis1
-    # "authorizedPartI.trialDetails.clinicalTrialIdentifiers.secondaryIdentifyingNumbers.nctNumber.number", # ctis1
+    "eudraCtInfo.eudraCtCode", # ctis1
+    "authorizedApplication.eudraCt.eudraCtCode", # ctis2
+    "authorizedPartI.trialDetails.clinicalTrialIdentifiers.secondaryIdentifyingNumbers.nctNumber.number", # ctis1
+    "authorizedPartI.trialDetails.clinicalTrialIdentifiers.secondaryIdentifyingNumbers.nctNumber.number", # ctis1
     "authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.secondaryIdentifyingNumbers.nctNumber.number", # ctis2
     "authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.secondaryIdentifyingNumbers.nctNumber.number", # ctis2
     # ctgov2 6
@@ -390,48 +389,57 @@ dbFindIdsUniqueTrials <- function(
   # rename columns for content mangling, needs to
   # correspond to columns and sequence in "fields"
   # for mapping identifiers across registers
+  # ctrname dot number of register suffix repeat
   names(listofIds) <- c(
     "_id", "ctrname",
-    # euctr 8
+    # 1 - euctr
     "euctr.1", "ctgov.1a", "ctgov.1b", "ctgov2.1a", "ctgov2.1b", "isrctn.1a",
     "isrctn.1b", "sponsor.1",
-    # ctgov 8
+    # 2 - ctgov
     "euctr.2a", "euctr.2b", "ctgov.2a", "ctgov2.2", "ctgov.2b", "isrctn.2",
     "sponsor.2a", "sponsor.2b",
-    # isrctn 5
+    # 3 - isrctn
     "euctr.3", "ctgov.3", "ctgov2.3", "isrctn.3", "sponsor.3",
-    # ctis 4
-    "ctis.1", "euctr.4", "ctgov.4", "ctgov2.4",
-    # ctgov2 6
+    # 4 - ctis
+    "ctis.1", "euctr.4a", "euctr.4b", "ctgov.4a", "ctgov2.4a", "ctgov.4b", "ctgov2.4b",
+    # 5 - ctgov2
     "ctgov2.5", "ctgov.5a", "euctr.5", "sponsor.4a", "ctgov.5b", "sponsor.4b"
   )
 
   # keep only relevant content
-  # - in certain raw value columns
+  # in certain raw value columns
   colsToMangle <- list(
+    #
     c("ctgov.1a", regCtgov),
     c("ctgov.1b", regCtgov),
     c("ctgov.2a", regCtgov),
     c("ctgov.2b", regCtgov),
     c("ctgov.3", regCtgov),
-    c("ctgov.4", regCtgov),
+    c("ctgov.4a", regCtgov),
+    c("ctgov.4b", regCtgov),
     c("ctgov.5a", regCtgov),
     c("ctgov.5b", regCtgov),
+    #
     c("ctgov2.1", regCtgov2),
     c("ctgov2.2", regCtgov2),
     c("ctgov2.3", regCtgov2),
-    c("ctgov2.4", regCtgov2),
+    c("ctgov2.4a", regCtgov2),
+    c("ctgov2.4b", regCtgov2),
     c("ctgov2.5", regCtgov2),
+    #
     c("isrctn.1a", regIsrctn),
     c("isrctn.1b", regIsrctn),
     c("isrctn.2", regIsrctn),
     c("isrctn.3", regIsrctn),
+    #
     c("euctr.1", regEuctr),
     c("euctr.2a", regEuctr),
     c("euctr.2b", regEuctr),
     c("euctr.3", regEuctr),
-    c("euctr.4", regEuctr),
+    c("euctr.4a", regEuctr),
+    c("euctr.4b", regEuctr),
     c("euctr.5", regEuctr),
+    #
     c("ctis.1", regCtis)
   )
 
