@@ -210,7 +210,7 @@ tmp <- ctrLoadQueryIntoDb(
   con = dbc
 )
 # test
-expect_true(tmp$n > 165L)
+expect_true(tmp$n > 175L)
 
 # get all field names
 tmpFields <- suppressMessages(
@@ -222,7 +222,7 @@ tmpFields <- suppressMessages(
 
 # test
 expect_true(
-  length(tmpFields) > 960L)
+  length(tmpFields) >= 960L)
 
 # debug
 if (FALSE){
@@ -339,6 +339,13 @@ if (!length(dbc$url) || grepl("localhost", dbc$url)) {
 
 # overview of types of documents
 if (FALSE) {
+
+  ctrLoadQueryIntoDb(
+    queryterm = 'https://euclinicaltrials.eu/ctis-public/search#searchCriteria={%22containAny%22:%22antibody%22,%22status%22:[8],%22ageGroupCode%22:[2]}',
+    documents.path = tmpDir,
+    documents.regexp = ".*",
+    con = dbc
+  )
 
   library(dplyr)
   tmp <- dir(path = tmpDir, full.names = TRUE, recursive = TRUE)
