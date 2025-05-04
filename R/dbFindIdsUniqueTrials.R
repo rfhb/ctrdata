@@ -554,84 +554,86 @@ dfFindUniqueEuctrRecord <- function(
   totalEuctr <- length(totalEuctr)
 
   # as a first step, handle 3rd country trials e.g. 2010-022945-52-3RD
-  # if retained, these trials would count as record for a trial
+  # if retained, these trials would count as record for a trial. note
+  # that for any 3rd country trial there is at least one member state
+  # record as well in EUCTR and is kept even if removing 3rd country
   if (!include3rdcountrytrials) {
     df <- df[!grepl("-3RD", df[["_id"]]), , drop = FALSE]
   }
 
-  # count number of records by eudract number
-  tbl <- table(df[["_id"]], df[["a2_eudract_number"]])
-  tbl <- as.matrix(tbl)
-  # nms has names of all records
-  nms <- dimnames(tbl)[[1]]
-
-  # nrs has eudract numbers for which is there more than 1 record
-  nrs <- colSums(tbl)
-  nrs <- nrs[nrs > 1]
-  nrs <- names(nrs)
-
-  # nst is a list of nrs trials of a logical vector along nms
-  # that indicates if the indexed record belongs to the trial
-  nms2 <- substr(nms, 1, 14)
-  nst <- lapply(nrs, function(x) nms2 %in% x)
-
   # helper function to find the Member State version
   removeMSversions <- function(indexofrecords) {
-    # given a vector of records (nnnn-nnnnnnn-nn-MS) of a single trial, this
-    # returns all those _ids of records that do not correspond to the preferred
-    # Member State record, based on the user's choices and defaults.
+
+    # the returned record names are the duplicates.
+
+    # given a vector of records (nnnn-nnnnnnn-nn-MS) of a single trial,
+    # this returns all those _ids of records that do not correspond to
+    # the preferred MS record, based on the user's choices and defaults.
     # Function uses prefermemberstate, nms from the caller environment
-    recordnames <- nms[indexofrecords]
-    #
+    recordnames <- unlist(indexofrecords, use.names = FALSE)
+
+    # early exit if only single record, irrespective of preference
+    # an empty return is needed to avoid deleting this record
+    if (length(recordnames) == 1L) return(NULL)
+
+    # preferred MS found, return all but this record, early exit.
     # fnd should be only a single string, may need to be checked
-    if (sum(fnd <- grepl(prefermemberstate, recordnames)) != 0L) {
+    if (sum(fnd <- grepl(prefermemberstate, recordnames)) > 0L) {
       result <- recordnames[!fnd]
       return(result)
     }
-    #
+
+    # continue because preferred MS record was not found
+    # and because there are two or more record names
+
     # to exclude inactive country / ex member state records
+    # unless there is only this one (ex) member state record
+    # (intended behaviour as per changes for version 1.21.0)
     includeRecordnames <- sub(
       "^.+-([3A-Z]+)$", "\\1", recordnames) %in% countriesActive
+    activeRecordnames <- recordnames[includeRecordnames]
+    inactiveRecordnames <- recordnames[!includeRecordnames]
     #
     # default is to list all but first record.
-    # the listed records are the duplicates
     # 3RD country trials would be listed first
     # hence selected, which is not desirable
     # unless chosen as prefermemberstate
-    result <- recordnames[includeRecordnames]
+    arl <- length(activeRecordnames)
+    irl <- length(inactiveRecordnames)
     #
-    if (length(result) <= 1L && any(!includeRecordnames)) return(
-      recordnames[!includeRecordnames]
-    )
-    #
-    if (length(result) > 1L && any(!includeRecordnames)) return(
-      c(recordnames[!includeRecordnames],
-        sample(recordnames[includeRecordnames])[-1])
-    )
-    # else
-    return(
-      sample(recordnames[includeRecordnames])[-1]
-    )
+    # output
+    return(c(
+      sample(activeRecordnames, max(0L, arl - 1L)),
+      sample(inactiveRecordnames, max(0L, irl - ifelse(arl > 0L, 0L, 1L)))
+    ))
   }
+
+  # turn input df into list
+  euctrDf <- na.omit(df[, c("_id", "a2_eudract_number"), drop = FALSE])
+  euctrDf <- euctrDf[euctrDf$a2_eudract_number != "", , drop = FALSE]
+  nst <- tapply(euctrDf, euctrDf$a2_eudract_number, "[[", "_id", simplify = FALSE)
 
   # finds per trial the desired record;
   # uses prefermemberstate and nms
-  result <- lapply(
-    nst,
-    function(x) removeMSversions(x)
-  )
+  result <- lapply(nst, function(x) removeMSversions(indexofrecords = x))
   result <- unlist(result, use.names = FALSE)
 
-  # eleminate the unwanted EUCTR records
+  # limit to eudract country versions
+  result <- result[grepl(paste0(regEuctr, "-[3A-Z]{2,3}"), result)]
+
+  # eliminate the unwanted EUCTR records
   df <- df[!(df[["_id"]] %in% result), , drop = FALSE]
 
   # also eliminate the meta-info record
   df <- df[!(df[["_id"]] == "meta-info"), , drop = FALSE]
 
+  # remove row names
+  row.names(df) <- NULL
+
   # inform user about changes to data frame
-  if (length(nms) > (tmp <- length(result))) {
+  if (length(result) > 0L) {
     message(
-      "- ", tmp,
+      "- ", length(result),
       " EUCTR _id were not preferred EU Member State record for ",
       totalEuctr, " trials"
     )
