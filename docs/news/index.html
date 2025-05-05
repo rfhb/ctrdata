@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.22.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.22.1.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,15 +39,19 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.22.0.9000" id="ctrdata-12209000">ctrdata 1.22.0.9000<a class="anchor" aria-label="anchor" href="#ctrdata-12209000"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.22.1.9000" id="ctrdata-12219000">ctrdata 1.22.1.9000<a class="anchor" aria-label="anchor" href="#ctrdata-12219000"></a></h2>
+<ul><li>New development version</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.22.1" id="ctrdata-1221">ctrdata 1.22.1<a class="anchor" aria-label="anchor" href="#ctrdata-1221"></a></h2>
 <div class="section level3">
-<h3 id="bug-fix-1-22-0-9000">Bug fix<a class="anchor" aria-label="anchor" href="#bug-fix-1-22-0-9000"></a></h3>
-<ul><li>Adapt test after SQLite 3.48.0 (in RSQLite 2.3.10 since 2025-05-02) accepts now up to 1000 arguments</li>
-<li>Fixed for rare specific trial(s) from EUCTR conversion to <code>NDJSON</code> in Javascript</li>
-<li>Revised <code><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials()</a></code> to work with more than 80,000 records</li>
+<h3 id="bug-fix-1-22-1">Bug fix<a class="anchor" aria-label="anchor" href="#bug-fix-1-22-1"></a></h3>
+<ul><li>Adapt testing after SQLite 3.48.0 (in RSQLite 2.3.10 since 2025-05-02) accepts now up to 1000 arguments</li>
+<li>Fixed EUCTR conversion to <code>NDJSON</code> in Javascript for rare specific trial(s), thanks <a href="https://github.com/machado-t" class="external-link">@machado-t</a> (<a href="https://github.com/rfhb/ctrdata/issues/45" class="external-link">#45</a>)</li>
+<li>Revised <code><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials()</a></code> to work with more than 80,000 records, thanks <a href="https://github.com/machado-t" class="external-link">@machado-t</a> (<a href="https://github.com/rfhb/ctrdata/issues/48" class="external-link">#48</a>)</li>
 </ul></div>
 <div class="section level3">
-<h3 id="internal-1-22-0-9000">Internal<a class="anchor" aria-label="anchor" href="#internal-1-22-0-9000"></a></h3>
+<h3 id="internal-1-22-1">Internal<a class="anchor" aria-label="anchor" href="#internal-1-22-1"></a></h3>
 <ul><li>Modify internal function <code>.dbMapIdsTrials()</code> to use both CTIS1 and CTIS2 field names, and defer de-duplication to parent function</li>
 </ul></div>
 </div>
