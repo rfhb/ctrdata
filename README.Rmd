@@ -112,7 +112,7 @@ In the web browser, install the [Tampermonkey browser extension](https://www.tam
 
 The browser extension can be disabled and enabled by the user. When enabled, the URLs to all user's queries in the registers are automatically copied to the clipboard and can be pasted into the `queryterm = ...` parameter of function [ctrLoadQueryIntoDb()](https://rfhb.github.io/ctrdata/reference/ctrLoadQueryIntoDb.html). 
 
-Additionally, this script retrieves results for `CTIS` when opening search URLs such as [`https://euclinicaltrials.eu/ctis-public/search#searchCriteria={"status":[3,4]}`](<https://euclinicaltrials.eu/ctis-public/search#searchCriteria={"status":[3,4]}>). 
+Additionally, this script retrieves results for `CTIS` when opening search URLs such as [`https://euclinicaltrials.eu/ctis-public/search#searchCriteria={"status":[3,4]}`](<https://euclinicaltrials.eu/ctis-public/search#searchCriteria={"status":[3,4]}>). After changing the URL in the browser, a "Reload page" is needed to conduct the search and show results.
 
 ## Overview of functions in `ctrdata`
 

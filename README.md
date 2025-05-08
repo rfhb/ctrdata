@@ -170,6 +170,8 @@ automatically copied to the clipboard and can be pasted into the
 Additionally, this script retrieves results for `CTIS` when opening
 search URLs such as
 [`https://euclinicaltrials.eu/ctis-public/search#searchCriteria={"status":[3,4]}`](https://euclinicaltrials.eu/ctis-public/search#searchCriteria=%7B%22status%22:%5B3,4%5D%7D).
+After changing the URL in the browser, a “Reload page” is needed to
+conduct the search and show results.
 
 ## Overview of functions in `ctrdata`
 
