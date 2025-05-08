@@ -66,7 +66,7 @@
 <li>ClinicalTrials.gov (“CTGOV2”, see <a href="#workflow-ctgov-example">example</a>)</li>
 <li>ISRCTN Registry (<a href="https://www.isrctn.com/" class="external-link uri">https://www.isrctn.com/</a>)</li>
 </ul>
-<p>The motivation is to investigate the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can use the databases created with this package. This README was reviewed on 2025-04-24 for version 1.22.0.9000.</p>
+<p>The motivation is to investigate the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can use the databases created with this package. This README was reviewed on 2025-05-07 for version 1.22.1.9000.</p>
 <div class="section level2">
 <h2 id="main-features">Main features<a class="anchor" aria-label="anchor" href="#main-features"></a>
 </h2>
@@ -136,7 +136,7 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <p>Optional; works with all registers supported by <code>ctrdata</code> and is recommended for CTIS so that its URL in the web browser reflects the user’s parameters for querying this register.</p>
 <p>In the web browser, install the <a href="https://www.tampermonkey.net/" class="external-link">Tampermonkey browser extension</a>, click on “New user script” and then on “Tools”, enter into “Import from URL” this URL: <a href="https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js" class="external-link"><code>https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js</code></a> and then click on “Install”.</p>
 <p>The browser extension can be disabled and enabled by the user. When enabled, the URLs to all user’s queries in the registers are automatically copied to the clipboard and can be pasted into the <code>queryterm = ...</code> parameter of function <a href="https://rfhb.github.io/ctrdata/reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a>.</p>
-<p>Additionally, this script retrieves results for <code>CTIS</code> when opening search URLs such as [<a href="https://euclinicaltrials.eu/ctis-public/search#searchCriteria=" class="external-link uri">https://euclinicaltrials.eu/ctis-public/search#searchCriteria=</a>{“status”:[3,4]}](<a href="https://euclinicaltrials.eu/ctis-public/search#searchCriteria=" class="external-link uri">https://euclinicaltrials.eu/ctis-public/search#searchCriteria=</a>{“status”:[3,4]}).</p>
+<p>Additionally, this script retrieves results for <code>CTIS</code> when opening search URLs such as <a href="https://euclinicaltrials.eu/ctis-public/search#searchCriteria=%7B%22status%22:%5B3,4%5D%7D" class="external-link"><code>https://euclinicaltrials.eu/ctis-public/search#searchCriteria={"status":[3,4]}</code></a>.</p>
 </div>
 </div>
 <div class="section level2">
@@ -796,14 +796,6 @@ Neuroblastoma trials
 <div class="section level3">
 <h3 id="sqlite">SQLite<a class="anchor" aria-label="anchor" href="#sqlite"></a>
 </h3>
-<p>It is recommended to use nodbi &gt;= 0.10.7.9000 which builds on RSQLite &gt;= 2.3.7.9014 (releases expected in November 2024), because these versions enable file-based imports and thus are much faster:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install latest development versions:</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"ropensci/nodbi"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># requires compilation, for which under MS Windows</span></span>
-<span><span class="co"># automatically additional R Tools are installed:</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"r-dbi/RSQLite"</span><span class="op">)</span></span></code></pre></div>
 <figure><img src="https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_json_sqlite.jpg" alt="Example JSON representation in SQLite"><figcaption aria-hidden="true">
 Example JSON representation in SQLite
 </figcaption></figure>

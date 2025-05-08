@@ -46,7 +46,7 @@ The package `ctrdata` provides functions for retrieving (downloading), aggregati
 - ClinicalTrials.gov ("CTGOV2", see [example](#workflow-ctgov-example))
 - ISRCTN Registry (https://www.isrctn.com/) 
 
-The motivation is to investigate the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can use the databases created with this package. This README was reviewed on 2025-04-24 for version 1.22.0.9000.
+The motivation is to investigate the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can use the databases created with this package. This README was reviewed on 2025-05-07 for version 1.22.1.9000.
 
 ## Main features
 
@@ -112,7 +112,7 @@ In the web browser, install the [Tampermonkey browser extension](https://www.tam
 
 The browser extension can be disabled and enabled by the user. When enabled, the URLs to all user's queries in the registers are automatically copied to the clipboard and can be pasted into the `queryterm = ...` parameter of function [ctrLoadQueryIntoDb()](https://rfhb.github.io/ctrdata/reference/ctrLoadQueryIntoDb.html). 
 
-Additionally, this script retrieves results for `CTIS` when opening search URLs such as [https://euclinicaltrials.eu/ctis-public/search#searchCriteria={"status":[3,4]}](https://euclinicaltrials.eu/ctis-public/search#searchCriteria={"status":[3,4]}). 
+Additionally, this script retrieves results for `CTIS` when opening search URLs such as [`https://euclinicaltrials.eu/ctis-public/search#searchCriteria={"status":[3,4]}`](<https://euclinicaltrials.eu/ctis-public/search#searchCriteria={"status":[3,4]}>). 
 
 ## Overview of functions in `ctrdata`
 
@@ -741,18 +741,6 @@ Implemented:
 ## Trial records in databases
 
 ### SQLite
-
-It is recommended to use nodbi >= 0.10.7.9000 which builds on RSQLite >= 2.3.7.9014 (releases expected in November 2024), because these versions enable file-based imports and thus are much faster:
-
-```{r}
-# install latest development versions:
-devtools::install_github("ropensci/nodbi")
-
-# requires compilation, for which under MS Windows
-# automatically additional R Tools are installed:
-devtools::install_github("r-dbi/RSQLite")
-```
-
 
 ![Example JSON representation in SQLite](https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_json_sqlite.jpg)
 

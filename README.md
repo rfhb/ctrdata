@@ -37,7 +37,7 @@ interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
 `ctrdata` is a package for the [R](https://www.r-project.org/) system,
 but other systems and tools can use the databases created with this
-package. This README was reviewed on 2025-04-24 for version 1.22.0.9000.
+package. This README was reviewed on 2025-05-07 for version 1.22.1.9000.
 
 ## Main features
 
@@ -169,7 +169,7 @@ automatically copied to the clipboard and can be pasted into the
 
 Additionally, this script retrieves results for `CTIS` when opening
 search URLs such as
-\[<https://euclinicaltrials.eu/ctis-public/search#searchCriteria=>{“status”:\[3,4\]}\](<https://euclinicaltrials.eu/ctis-public/search#searchCriteria=>{“status”:\[3,4\]}).
+[`https://euclinicaltrials.eu/ctis-public/search#searchCriteria={"status":[3,4]}`](https://euclinicaltrials.eu/ctis-public/search#searchCriteria=%7B%22status%22:%5B3,4%5D%7D).
 
 ## Overview of functions in `ctrdata`
 
@@ -934,19 +934,6 @@ Implemented:
 ## Trial records in databases
 
 ### SQLite
-
-It is recommended to use nodbi \>= 0.10.7.9000 which builds on RSQLite
-\>= 2.3.7.9014 (releases expected in November 2024), because these
-versions enable file-based imports and thus are much faster:
-
-``` r
-# install latest development versions:
-devtools::install_github("ropensci/nodbi")
-
-# requires compilation, for which under MS Windows
-# automatically additional R Tools are installed:
-devtools::install_github("r-dbi/RSQLite")
-```
 
 <figure>
 <img

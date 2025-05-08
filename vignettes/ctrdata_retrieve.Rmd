@@ -360,7 +360,7 @@ nrow(df)
 length(unique(df$.maybeRelatedTrials))
 # 571
 
-# Trials with which _id are mission? 
+# Trials with which _id are missing? 
 missingIds <- na.omit(setdiff(unlist(df$.maybeRelatedTrials), df$`_id`))
 
 # Load missing trials by _id

@@ -10,7 +10,7 @@ knitr::opts_chunk$set(eval = FALSE)
 # ctrOpenSearchPagesInBrowser(
 #   copyright = TRUE
 # )
-# 
+#
 # # Open browser with example search:
 # ctrOpenSearchPagesInBrowser(
 #   url = "cancer&age=under-18",
@@ -26,11 +26,11 @@ knitr::opts_chunk$set(eval = FALSE)
 # # * Using clipboard content as register query URL: https://www.clinicaltrialsregister.eu/
 # # ctr-search/search?query=cancer&age=under-18&resultsstatus=trials-with-results
 # # * Found search query from EUCTR: query=cancer&age=under-18&resultsstatus=trials-with-results
-# 
+#
 # q
 # #                                                    query-term  query-register
 # # 1 query=cancer&age=under-18&resultsstatus=trials-with-results           EUCTR
-# 
+#
 # # To check, this opens a browser with the query
 # ctrOpenSearchPagesInBrowser(url = q)
 
@@ -44,19 +44,19 @@ knitr::opts_chunk$set(eval = FALSE)
 # # Retrieved overview, multiple records of 376 trial(s) from 19 page(s) to be
 # # downloaded (estimate: 50 MB)
 # # [1] 376
-# 
+#
 # # Connect to a database and chose a collection (table)
 # db <- nodbi::src_sqlite(
 #   dbname = "database_name.sql",
 #   collection = "test"
 # )
-# 
+#
 # # Retrieve records, download into database
 # ctrLoadQueryIntoDb(
 #   queryterm = q,
 #   con = db
 # )
-# 
+#
 # # Show which queries have been downloaded into database
 # dbQueryHistory(con = db)
 # #       query-timestamp query-register query-records
@@ -67,7 +67,7 @@ knitr::opts_chunk$set(eval = FALSE)
 ## -----------------------------------------------------------------------------
 # # Show all queries
 # dbQueryHistory(con = db)
-# 
+#
 # # Repeat last query
 # ctrLoadQueryIntoDb(
 #   querytoupdate = "last",
@@ -120,7 +120,7 @@ knitr::opts_chunk$set(eval = FALSE)
 #   register = "CTGOV2",
 #   con = db
 # )
-# 
+#
 # # Use same query details to obtain queries
 # queries <- ctrGenerateQueries(
 #   condition = "neuroblastoma",
@@ -128,18 +128,18 @@ knitr::opts_chunk$set(eval = FALSE)
 #   phase = "phase 2",
 #   population = "P"
 # )
-# 
+#
 # # Open queries in registers' web interfaces
 # sapply(queries, ctrOpenSearchPagesInBrowser)
-# 
+#
 # # Load all queries into database collection
 # result <- lapply(queries, ctrLoadQueryIntoDb, con = db)
-# 
+#
 # # Show results of loading
 # sapply(result, "[[", "n")
 # # EUCTR CTGOV2 ISRCTN   CTIS
 # #   180    111      0      1
-# 
+#
 # # Overview of queries
 # dbQueryHistory(con = db)
 # #       query-timestamp query-register query-records
@@ -202,32 +202,32 @@ knitr::opts_chunk$set(eval = FALSE)
 #     "multiarm OR multistage OR subprotocol OR substudy OR ",
 #     "multi-arm OR multi-stage OR sub-protocol OR sub-study"),
 #   startAfter = "2015-01-01")
-# 
+#
 # # See
 # help("ctrGenerateQueries")
-# 
+#
 # # Open queries in register web interface
 # sapply(queries, ctrOpenSearchPagesInBrowser)
-# 
+#
 # # Count number of studies found in the register
 # result <- lapply(queries, ctrLoadQueryIntoDb, only.count = TRUE)
-# 
+#
 # sapply(result, "[[", "n")
 #  # EUCTR CTGOV2 ISRCTN   CTIS
 #  #  1635   1952   1074    223
-# 
+#
 # # and see examples in
 # vignette("ctrdata_summarise")
-# 
+#
 # # Load studies, include EUCTR results data for analysis
 # result <- lapply(queries, ctrLoadQueryIntoDb, con = db, euctrresults = TRUE)
-# 
+#
 # # See next section for adding related trials
 
 ## -----------------------------------------------------------------------------
 # # Use a trial concept to calculate related identifiers
 # help("ctrdata-trial-concepts")
-# 
+#
 # # Get data from trials loaded above
 # df <- dbGetFieldsIntoDf(
 #   fields = "ctrname",
@@ -238,7 +238,7 @@ knitr::opts_chunk$set(eval = FALSE)
 #   ),
 #   con = db
 # )
-# 
+#
 # # Show names of calculated columns in the
 # # data frame with possible platform trials
 # names(df)
@@ -249,18 +249,18 @@ knitr::opts_chunk$set(eval = FALSE)
 # # [5] ".likelyRelatedTrials"
 # # [6] ".maybeRelatedTrials"
 # # [7] ".trialTitle"
-# 
+#
 # # Reduce to unique trials
 # df <- df[df$.isUniqueTrial, ]
 # nrow(df)
-# 
+#
 # # Number of recognised set of trials
 # length(unique(df$.maybeRelatedTrials))
 # # 571
-# 
-# # Trials with which _id are mission?
+#
+# # Trials with which _id are missing?
 # missingIds <- na.omit(setdiff(unlist(df$.maybeRelatedTrials), df$`_id`))
-# 
+#
 # # Load missing trials by _id
 # res <- list()
 # for (i in seq_along(missingIds)) {
@@ -268,7 +268,7 @@ knitr::opts_chunk$set(eval = FALSE)
 #   res <- c(res, suppressMessages(
 #     list(ctrLoadQueryIntoDb(missingIds[i], euctrresults = TRUE, con = db))))
 # }
-# 
+#
 # # Trials that could not be loaded are likely phase 1 trials
 # # which are not publicly accessible in the in EUCTR register
 # missingIds[which(sapply(res, "[[", "n") == 0L)]
@@ -280,40 +280,40 @@ knitr::opts_chunk$set(eval = FALSE)
 #   "NCT00357084", "NCT00357500", "NCT00365755", "NCT00407433", "NCT00410657",
 #   "NCT00436852", "NCT00445965", "NCT00450307", "NCT00450827", "NCT00471679",
 #   "NCT00492167", "NCT00499616", "NCT00503724"
-# 
+#
 # )
-# 
+#
 # # split into sets of each 10 trial ids
 # # (larger sets e.g. 50 may still work)
 # idSets <- split(ctIds, ceiling(seq_along(ctIds) / 10))
-# 
+#
 # # variable to collect import results
 # result <- NULL
-# 
+#
 # # iterate over sets of trial ids
 # for (idSet in idSets) {
-# 
+#
 #   setResult <- ctrLoadQueryIntoDb(
 #     queryterm = paste0("term=", paste0(idSet, collapse = " ")),
 #     register = "CTGOV2",
 #     con = db
 #   )
-# 
+#
 #   # check that queried ids have
 #   # successfully been loaded
 #   stopifnot(identical(
 #     sort(setResult$success), sort(idSet)))
-# 
+#
 #   # append result
 #   result <- c(result, list(setResult))
 # }
-# 
+#
 # # inspect results
 # as.data.frame(do.call(rbind, result))[, c("n", "failed")]
 # #    n failed
 # # 1 10   NULL
 # # 2  8   NULL
-# 
+#
 # # queryterms for other registers for retrieving trials by their identifier:
 # #
 # # CTIS (note the comma separated values):
@@ -333,7 +333,7 @@ knitr::opts_chunk$set(eval = FALSE)
 #   url = "mongodb+srv://DWbJ7Wh:bdTHh5cS@cluster0-b9wpw.mongodb.net",
 #   db = "dbperm",
 #   collection = "dbperm")
-# 
+#
 # # Since the above access is read-only,
 # # just obtain fields of interest:
 # dbGetFieldsIntoDf(

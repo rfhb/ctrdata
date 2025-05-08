@@ -455,7 +455,7 @@ depends on the specific register.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">.maybeRelatedTrials</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co"># 571</span></span>
 <span></span>
-<span><span class="co"># Trials with which _id are mission? </span></span>
+<span><span class="co"># Trials with which _id are missing? </span></span>
 <span><span class="va">missingIds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html" class="external-link">na.omit</a></span><span class="op">(</span><span class="fu"><a href="https://generics.r-lib.org/reference/setops.html" class="external-link">setdiff</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">.maybeRelatedTrials</span><span class="op">)</span>, <span class="va">df</span><span class="op">$</span><span class="va">`_id`</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Load missing trials by _id</span></span>
