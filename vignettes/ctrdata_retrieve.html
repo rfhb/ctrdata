@@ -733,7 +733,7 @@ depends on the specific register.</p>
 <span id="cb11-31"><a href="#cb11-31" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">unique</span>(df<span class="sc">$</span>.maybeRelatedTrials))</span>
 <span id="cb11-32"><a href="#cb11-32" tabindex="-1"></a><span class="co"># 571</span></span>
 <span id="cb11-33"><a href="#cb11-33" tabindex="-1"></a></span>
-<span id="cb11-34"><a href="#cb11-34" tabindex="-1"></a><span class="co"># Trials with which _id are mission? </span></span>
+<span id="cb11-34"><a href="#cb11-34" tabindex="-1"></a><span class="co"># Trials with which _id are missing? </span></span>
 <span id="cb11-35"><a href="#cb11-35" tabindex="-1"></a>missingIds <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(<span class="fu">setdiff</span>(<span class="fu">unlist</span>(df<span class="sc">$</span>.maybeRelatedTrials), df<span class="sc">$</span><span class="st">`</span><span class="at">_id</span><span class="st">`</span>))</span>
 <span id="cb11-36"><a href="#cb11-36" tabindex="-1"></a></span>
 <span id="cb11-37"><a href="#cb11-37" tabindex="-1"></a><span class="co"># Load missing trials by _id</span></span>

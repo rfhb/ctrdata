@@ -689,6 +689,7 @@ typeField <- function(dv, fn) {
   # expand to function
   if (!is.null(ft)) ft <- switch(
     typeVars[[fn]],
+    "ctrFactor" = "as.factor(x = x)",
     "ctrInt" = "as.integer(x = x)",
     "ctrIntList" = 'sapply(x, function(i) {i[i == "NA"] <- NA; as.integer(i)}, USE.NAMES = FALSE)',
     "ctrYesNo" = 'sapply(x, function(i) if (is.na(i)) NA else

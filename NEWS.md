@@ -1,6 +1,6 @@
 # ctrdata 1.22.1.9000 
 
-- New development version
+- Adding typing for some CTGOV2 fields
 
 # ctrdata 1.22.1
 

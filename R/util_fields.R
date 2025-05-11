@@ -5,6 +5,15 @@
 # mapping field names to typing function for typeField()
 typeVars <- list(
   #
+  ### . category ###
+  #
+  # - EUCTR
+  # - CTGOV
+  # - CTGOV2
+  # - ISRCTN
+  # - CTIS
+  #
+  #
   #### . dates ####
   #
   # - ctrdata intern
@@ -423,7 +432,7 @@ typeVars <- list(
   "trialGlobalEndDate" = "ctrDate",
   #
   #
-  #### . factors / logical ####
+  #### . logical ####
   #
   # - EUCTR Yes / No / Information not present in EudraCT
   "a7_trial_is_part_of_a_paediatric_investigation_plan" = "ctrYesNo",
@@ -513,6 +522,12 @@ typeVars <- list(
   "has_expanded_access"            = "ctrYesNo",
   "oversight_info.has_dmc"         = "ctrYesNo",
   "eligibility.healthy_volunteers" = "ctrYesNo",
+  #
+  # - CTGOV2
+  "protocolSection.statusModule.expandedAccessInfo.hasExpandedAccess" = "ctrFalseTrue",
+  "protocolSection.oversightModule.oversightHasDmc"     = "ctrFalseTrue",
+  "protocolSection.eligibilityModule.healthyVolunteers" = "ctrFalseTrue",
+  "hasResults" = "ctrFalseTrue",
   #
   # - ISRCTN
   "trialDescription.acknowledgment" = "ctrFalseTrue",
