@@ -46,7 +46,8 @@ tmp1 <-
     ),
     type = "message"
   )
-tmp1 <- tmp1[startsWith(tmp1, "API call: ")]
+tmp1 <- tmp1[grepl("API call: ", tmp1)]
+tmp1 <- sub("^.*(API call: )", "\\1", tmp1)
 
 refapicall <- "API call: https://www.clinicaltrials.gov/api/v2/studies?format=json&countTotal=true&pageSize=1&filter.advanced=AREA[MinimumAge]RANGE[18d, MAX] AND AREA[MaximumAge]RANGE[MIN, 64y] AND AREA[StudyFirstPostDate]RANGE[1990-01-01,2030-01-01] AND AREA[LastUpdatePostDate]RANGE[1990-01-01,2030-01-01] AND AREA[PrimaryCompletionDate]RANGE[1990-01-01,2030-01-01] AND AREA[ResultsFirstPostDate]RANGE[MIN,2030-01-01] AND AREA[StartDate]RANGE[1990-01-01,2030-01-01] AND AREA[CompletionDate]RANGE[1990-01-01,MAX]&query.locn=AREA[LocationFacility]MyFacility,AREA[LocationCountry]United States&aggFilters=funderType:industry,phase:2,results:without,status:rec act,studyType:int exp exp_indiv,violation:y&query.cond=cancer&query.id=NCT05429502&query.intr=Investigational drug&query.lead=MySponsorLead&query.outc=MyOutComeMeasure&query.spons=MySponsor&query.term=krebs&query.titles=MyAcronym"
 # utils::browseURL(sub("API call: ", "", refapicall))
