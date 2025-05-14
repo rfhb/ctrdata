@@ -11,20 +11,20 @@ dbGetFieldsIntoDf(fields = "", calculate = "", con, verbose = FALSE, ...)
 See function \link{dbFindFields} for how to find names of fields and
 \link{ctrShowOneTrial} for interactively selecting field names.
 Dot path notation ("field.subfield") without indices is supported.
-If compatibility with `nodbi::src_postgres()` is needed, specify fewer
-than 50 fields, consider also using parent fields e.g., `"a.b"` instead
-of `c("a.b.c.d", "a.b.c.e")`, accessing sought fields with
-\link{dfTrials2Long} followed by \link{dfName2Value} or other R functions.}
+If compatibility with \link[nodbi:src_postgres]{nodbi::src_postgres} is
+needed, specify fewer than 50 fields, or use parent fields such as `"a.b"`
+instead of `c("a.b.c.d", "a.b.c.e")` and then access sought fields with
+\link{dfTrials2Long} followed by \link{dfName2Value} or with other R functions.}
 
 \item{calculate}{Vector of one or more strings, which are names of functions
 to calculate certain trial concepts from fields in the collection across
-different registers.}
+different registers. See \link{ctrdata-trial-concepts} for available functions.}
 
 \item{con}{A database connection object, created with
 \code{nodbi}. See section `1 - Database connection` in
 \link{ctrdata}.}
 
-\item{verbose}{Printing additional information if set to \code{TRUE};
+\item{verbose}{If \code{TRUE}, prints additional information
 (default \code{FALSE}).}
 
 \item{...}{Do not use (captures deprecated parameter \code{stopifnodata})}
@@ -38,19 +38,20 @@ or less than the number of trial records in the database collection.
 }
 \description{
 Fields in the collection are retrieved from all records into a data
-frame (or tibble). Within a given trial record, a fields can be
-hierarchical and structured, that is, nested.
-Th function uses the field names to appropriately type the values
-that it returns, harmonising original values (e.g. "Information not present
-in EudraCT" to `NA`, "Yes" to `TRUE`, "false" to `FALSE`,
-date strings to dates or time differences, number strings to numbers).
-The function simplifies the structure of nested data and
+frame (or tibble). The function uses the field names to appropriately type
+the values that it returns, harmonising original values (e.g.,
+"Yes" to `TRUE`, "false" to `FALSE`, "Information not present in EudraCT" to
+`NA`, date strings to dates or time differences, number strings to numbers).
+}
+\details{
+Within a given trial record, a field can be hierarchical and structured,
+that is, nested. The function simplifies the structure of nested data and
 may concatenate multiple strings in a field using " / " (see example)
 and may have widened the returned data frame with additional columns that
 were recursively expanded from simply nested data (e.g., "externalRefs"
 to columns "externalRefs.doi", "externalRefs.eudraCTNumber" etc.).
-For an alternative way for handling the complex nested data, see
-\link{dfTrials2Long} followed by \link{dfName2Value} for extracting
+For an alternative ways for handling complex nested data, see
+\link{dfTrials2Long} and \link{dfName2Value} for extracting
 the sought variable(s).
 }
 \examples{

@@ -128,8 +128,8 @@ Default is \code{FALSE}.}
 \code{nodbi}. See section `1 - Database connection` in
 \link{ctrdata}.}
 
-\item{verbose}{Printing additional information if set to
-\code{TRUE}; default is \code{FALSE}.}
+\item{verbose}{If \code{TRUE}, prints additional information
+(default \code{FALSE}).}
 
 \item{...}{Do not use (capture deprecated parameters).}
 }

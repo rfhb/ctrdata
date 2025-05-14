@@ -462,7 +462,8 @@ ctgovClassicToCurrent <- function(url, verbose = TRUE) {
 #'
 #' @param xvalue value of variable to write
 #'
-#' @param verbose set to `TRUE` to print debug info
+#' @param verbose If \code{TRUE}, prints additional information
+#' (default \code{FALSE}).
 #'
 #' @keywords internal
 #' @noRd
@@ -847,7 +848,8 @@ addMetaData <- function(x, con) {
 #' @param progress Set to \code{FALSE} to not print progress bar
 #' @param resume Logical for dispatching to curl
 #' @param multipley Logical for using http/2
-#' @param verbose For debug message printing
+#' @param verbose If \code{TRUE}, prints additional information
+#' (default \code{FALSE}).
 #'
 #' @keywords internal
 #' @noRd
@@ -1060,7 +1062,7 @@ ctrTempDir <- function(verbose = FALSE) {
 #' @param documents.path parameter from parent call
 #' @param documents.regexp parameter from parent call
 #' @param multiplex use http/2 or not
-#' @param verbose parameter from parent call
+#' @param verbose print parameter from parent call
 #'
 #' @return number of documents
 #'

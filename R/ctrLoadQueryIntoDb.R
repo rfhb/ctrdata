@@ -113,8 +113,8 @@
 #'
 #' @inheritParams ctrDb
 #'
-#' @param verbose Printing additional information if set to
-#' \code{TRUE}; default is \code{FALSE}.
+#' @param verbose If \code{TRUE}, prints additional information
+#' (default \code{FALSE}).
 #'
 #' @param ... Do not use (capture deprecated parameters).
 #'
