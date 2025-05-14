@@ -37,7 +37,7 @@ interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
 `ctrdata` is a package for the [R](https://www.r-project.org/) system,
 but other systems and tools can use the databases created with this
-package. This README was reviewed on 2025-05-07 for version 1.22.1.9000.
+package. This README was reviewed on 2025-05-14 for version 1.22.1.9000.
 
 ## Main features
 
@@ -818,6 +818,20 @@ See also <https://app.codecov.io/gh/rfhb/ctrdata/tree/master/R>
 
 ``` r
 tinytest::test_all()
+# test_ctrdata_duckdb_ctgov2.R..   78 tests OK 48.6s
+# test_ctrdata_function_activesubstance.R    4 tests OK 0.8s
+# test_ctrdata_function_ctrgeneratequeries.R   14 tests OK 15ms
+# test_ctrdata_function_params.R   25 tests OK 1.1s
+# test_ctrdata_function_trial-concepts.R   80 tests OK 3.3s
+# test_ctrdata_function_various.R   67 tests OK 3.4s
+# test_ctrdata_postgres_ctgov2.R   50 tests OK 33.0s
+# test_ctrdata_sqlite_ctgov.R...   46 tests OK 30.2s
+# test_ctrdata_sqlite_ctgov2.R..   50 tests OK 26.9s
+# test_ctrdata_sqlite_ctis.R....   87 tests OK 1.4s
+# test_ctrdata_sqlite_euctr.R...  118 tests OK 50.1s
+# test_ctrdata_sqlite_isrctn.R..   38 tests OK 12.8s
+# test_euctr_error_sample.R.....    8 tests OK 0.2s
+# All ok, 665 results (4m 54.8s)
 
 covr::package_coverage(path = ".", type = "tests")
 # ctrdata Coverage: 94.69%

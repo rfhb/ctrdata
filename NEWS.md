@@ -1,6 +1,8 @@
 # ctrdata 1.22.1.9000 
 
-- Adding typing for some CTGOV2 fields
+- Adding typing for further CTGOV2 and CTIS fields
+- Adapt a test to modified terminal output in certain IDEs
+- Updated documentation
 
 # ctrdata 1.22.1
 
