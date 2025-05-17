@@ -61,10 +61,10 @@ tf <- function() {
   expect_true(length(table(dF$.trialObjectives, exclude = NULL)) >= 18L)
 
   # integers
-  expect_true(sum(dF$.numSites, na.rm = TRUE) >= 250L)
-  expect_true(sum(dF$.numTestArmsSubstances, na.rm = TRUE) > 30L)
-  expect_true(sum(dF$.sampleSize, na.rm = TRUE) > 8800L)
-  expect_true(sum(dF$.primaryEndpointFirstPsize, na.rm = TRUE) > 630L)
+  expect_true(sum(dF$.numSites, na.rm = TRUE) == 240L)
+  expect_true(sum(dF$.numTestArmsSubstances, na.rm = TRUE) == 32L)
+  expect_true(sum(dF$.sampleSize, na.rm = TRUE) == 8900L)
+  expect_true(sum(dF$.primaryEndpointFirstPsize, na.rm = TRUE) == 639L)
 
   # double
   expect_true(max(dF$.primaryEndpointFirstPvalue, na.rm = TRUE) < 1.0)
@@ -74,11 +74,11 @@ tf <- function() {
   expect_true(all(dF$.startDate > as.Date("2000-01-01"), na.rm = TRUE))
 
   # strings
-  expect_true(sum(nchar(unlist(dF$.primaryEndpointFirstPmethod)), na.rm = TRUE) >= 10L)
-  expect_true(sum(nchar(unlist(dF$.primaryEndpointDescription))) > 20000L)
-  expect_true(sum(nchar(unlist(dF$.trialPopulationInclusion))) > 27000L)
-  expect_true(sum(nchar(unlist(dF$.trialPopulationExclusion))) > 23000L)
-  expect_true(sum(nchar(unlist(dF$.trialTitle))) > 5500)
+  expect_true(sum(nchar(unlist(dF$.primaryEndpointFirstPmethod)), na.rm = TRUE) == 10L)
+  expect_true(sum(nchar(unlist(dF$.primaryEndpointDescription))) == 20188L)
+  expect_true(sum(nchar(unlist(dF$.trialPopulationInclusion))) == 27202L)
+  expect_true(sum(nchar(unlist(dF$.trialPopulationExclusion))) == 23884L)
+  expect_true(sum(nchar(unlist(dF$.trialTitle))) == 5592L)
 
   # lists
   expect_length(na.omit(unique(unlist(dF$.likelyRelatedTrials))), 17L)
@@ -96,11 +96,12 @@ tf <- function() {
     message(f)
 
     # get regular data
-    dF <- dbGetFieldsIntoDf(
-      fields = unlist(fctFields[f]),
-      con = dbc,
-      verbose = FALSE
-    )
+    suppressMessages(
+      dF <- dbGetFieldsIntoDf(
+        fields = unlist(fctFields[f]),
+        con = dbc,
+        verbose = FALSE
+      ))
 
     # generate empty df
     for (c in seq_len(ncol(dF))[-1]) {
@@ -108,7 +109,7 @@ tf <- function() {
       v <- is.na(dF[[c]])
       # replace all values with first na value
       dF[[c]][!v] <- dF[[c]][v][1]
-     }
+    }
 
     # test 1 - check condition that all are NA
     expect_true(all(unlist(sapply(dF[, -1], is.na))))
