@@ -83,14 +83,16 @@ f.numSites <- function(df = NULL) {
 
 
   #### . EUCTR ####
+  nonEEA <- countryTable[countryTable$V3 %in% countriesActive, ][["V2"]]
   df %>%
     dplyr::mutate(
       helper_nonEEA = stringi::stri_split_regex(
         stringi::stri_replace_all_regex(
           .data$e863_trial_sites_planned_in,
-          pattern = "United|Federation|Republic",
+          pattern = paste0(c(nonEEA, "United", "Federation", "Republic"), collapse = "|"),
           replacement = ""),
-        " +"),
+        # including a letter to avoid including empty strings
+        "[a-z] +"),
       helper_numNonEEA = sapply(
         .data$helper_nonEEA, length),
       out = .data$helper_numNonEEA +
