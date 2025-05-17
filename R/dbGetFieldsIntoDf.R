@@ -372,8 +372,8 @@ dbGetFieldsIntoDf <- function(
     if (nm[i] == "_id") next
     if (inherits(dfi[[i]], "data.frame") && !ncol(dfi[[i]])) next
 
-    # simplify and replace NULL with NA
-    dfi[[i]][!sapply(dfi[[i]], length)] <- NA
+    # simplify and replace NULL or logi NA with NA_character_
+    dfi[[i]][!sapply(dfi[[i]], length)] <- NA_character_
 
     # type column (NOTE this should not be a data frame because
     # the extraction would result in a data frame and this would

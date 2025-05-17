@@ -713,8 +713,8 @@ typeField <- function(dv, fn) {
   # clean up text
   if (is.null(ft)) {
 
-    # - if NA as string, change to NA
-    dv[grepl("^N/?A$|^ND$", dv)] <- NA
+    # - if NA or similar is a string, change to NA
+    if (typeof(dv) == "character") dv[grepl("^N/?A$|^ND$", dv)] <- NA_character_
 
     # - check if any html entities
     htmlEnt <- grepl("&[#a-zA-Z]+;", dv)
@@ -729,8 +729,11 @@ typeField <- function(dv, fn) {
         })
     }
 
-    # - check if possible and convert to numeric
-    if (all(is.numeric(dv) | is.na(dv))) dv <- as.numeric(dv)
+    # - check if conversion to numeric works
+    if ((typeof(dv) == "character") && any(!is.na(dv))) {
+      dvn <- suppressWarnings(as.numeric(dv))
+      if (identical(is.na(dv), is.na(dvn))) return(dvn)
+    }
 
     # - collapse unless list structure is heterogenous
     rowN1 <- sapply(dv, function(i) is.null(names(i)))
@@ -747,9 +750,9 @@ typeField <- function(dv, fn) {
         i <- sub("^Information not present in EudraCT", "", i)
         if (length(i) > 1L) {
           rowI <- paste0(i[!is.na(i)], collapse = " / ")
-          if (nchar(rowI)) rowI else NA
+          if (nchar(rowI)) rowI else NA_character_
         } else {
-          if (length(i) && !is.na(i)) i else NA
+          if (length(i) && !is.na(i)) i else NA_character_
         }
       })
     }
@@ -1571,7 +1574,7 @@ dfOrTibble <- function(df) {
   if (any(sapply(
     .packages(), function(i)
       any(i == c("tibble", "magrittr", "tidyr", "dplyr")))
-    )) {
+  )) {
 
     return(tibble::as_tibble(df))
 
