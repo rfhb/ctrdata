@@ -92,26 +92,51 @@ dfMergeVariablesRelevel <- function(
   #   init = df[, colnames[1], drop = TRUE]
   # )
 
-  # out merging fields
-  out <- tidyr::unite(
-    df[, colnames, drop = FALSE],
-    out, na.rm = TRUE, sep = " / "
-  )[["out"]]
 
-  # cleaning string
-  # TODO delete
-  # out <- c("d / f", " / d / s / / ", " a / ", " / d / s /  / ")
-  out <- trimws(gsub(" / ($)|(^) / |( / ) */ ", "\\1", out))
 
-  # try keeping the type
-  if (!any(grepl(" / ", out))) {
+  # # out merging fields
+  # out <- tidyr::unite(
+  #   df[, colnames, drop = FALSE],
+  #   out, na.rm = TRUE, sep = " / "
+  # )[["out"]]
+  #
+  # # cleaning string
+  # # TODO delete
+  # # out <- c("d / f", " / d / s / / ", " a / ", " / d / s /  / ")
+  # out <- trimws(gsub(" / ($)|(^) / |( / ) */ ", "\\1", out))
+  #
+  # # try keeping the type
+  # if (!any(grepl(" / ", out))) {
+  #   out <- do.call(
+  #     dplyr::coalesce, as.list(df[, colnames, drop = FALSE]))
+  # } else {
+  #   message(
+  #     "More than one column had values, returning e.g. '",
+  #     out[grepl(" / ", out)][1], "'"
+  #   )
+  # }
+
+  # check
+  if(all(apply(df[, colnames, drop = FALSE], 1,
+           function(r) length(na.omit(r))) <= 1L)) {
+
     out <- do.call(
       dplyr::coalesce, as.list(df[, colnames, drop = FALSE]))
+
   } else {
+
+    out <- tidyr::unite(
+      df[, colnames, drop = FALSE],
+      out, na.rm = TRUE, sep = " / "
+    )[["out"]]
+
+    out <- trimws(gsub(" / ($)|(^) / |( / ) */ ", "\\1", out))
+
     message(
       "More than one column had values, returning e.g. '",
       out[grepl(" / ", out)][1], "'"
     )
+
   }
 
   # label levels
