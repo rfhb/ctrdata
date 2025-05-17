@@ -126,9 +126,10 @@ dbFindIdsUniqueTrials <- function(
           if (length(tmpIs)) {
             # map found intersecting names back
             # to the rows of the input data frame
-            unlist(sapply(
-              tmpIs, function(i) grepl(i, c1),
-              USE.NAMES = FALSE, simplify = FALSE))
+            sapply(
+              c1, function(i) any(sapply(
+                tmpIs, function(ii) grepl(ii, i))),
+              USE.NAMES = FALSE, simplify = TRUE)
           } else {
             rep(FALSE, times = length(c1))
           }
