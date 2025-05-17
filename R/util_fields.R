@@ -851,6 +851,7 @@ typeVars <- list(
   "authorizedPartI.trialDetails.trialInformation.endPoint.primaryEndPoints.number"          = "ctrInt",
   "authorizedPartI.trialDetails.trialInformation.endPoint.secondaryEndPoints.number"        = "ctrInt",
   "authorizedPartI.trialDetails.trialInformation.trialObjective.secondaryObjectives.number" = "ctrInt",
+  "authorizedPartsII.recruitmentSubjectCount" = "ctrInt",
   #
   # - CTGOV2
   "history.history_version.version_number" = "ctrInt",

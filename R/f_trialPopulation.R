@@ -161,6 +161,7 @@ f.trialPopulation <- function(df = NULL) {
       #
     ) -> df
 
+
   #### . CTGOV ####
   df %>%
     dplyr::mutate(
