@@ -56,15 +56,17 @@ df2 <- data.frame(
 # test
 expect_error(
   suppressWarnings(
-    dfMergeVariablesRelevel(list("var1", "var2"))))
+    dfMergeVariablesRelevel(
+      list("var1", "var2"))
+  ))
 
 # test
 expect_message(
   suppressWarnings(
     dfMergeVariablesRelevel(
       df = df1,
-      colnames = c("var1", "var2"))),
-  "More than one column had values, returning")
+      colnames = c("var1", "var2"))
+  ), "More than one column had values, returning")
 
 # test
 expect_true(
@@ -73,22 +75,25 @@ expect_true(
       suppressMessages(
         dfMergeVariablesRelevel(
           df = df1,
-          colnames = c("var1", "var2"))))))
+          colnames = c("var1", "var2"))
+      ))))
 
 # test
 expect_equal(
   suppressMessages(
-    nchar(dfMergeVariablesRelevel(
-      df = df1,
-      colnames = c("var1", "var2")))),
-  c(5, 5, 5))
+    nchar(
+      dfMergeVariablesRelevel(
+        df = df1,
+        colnames = c("var1", "var2"))
+    )), c(5, 5, 5))
 
 # test
 expect_error(
   suppressMessages(
     dfMergeVariablesRelevel(
       df = cbind(df1, df1),
-      colnames = 1:3)))
+      colnames = 1:3)
+  ))
 
 # test
 expect_error(
@@ -96,21 +101,92 @@ expect_error(
     dfMergeVariablesRelevel(
       df = df1,
       colnames = c("var1", "var2"),
-      levelslist = 1:2)),
-  "number of levels differs")
+      levelslist = 1:2)
+  ), "number of levels differs")
 
 # test
 expect_equal(
   sum(grepl(" / ", suppressMessages(
     dfMergeVariablesRelevel(
-      df = df2, colnames = c("var1", "var2"))))), 2L)
+      df = df2, colnames = c("var1", "var2"))
+  ))), 2L)
 
 # test
 expect_equal(
   sum(grepl(" / ", suppressMessages(
     dfMergeVariablesRelevel(
       df = df2,
-      colnames = 'matches("var")')))), 2L)
+      colnames = 'matches("var")')
+  ))), 2L)
+
+
+df3 <- data.frame(
+  var1 = rep(Sys.Date(), 4),
+  var2 = rep(Sys.time(), 4),
+  var3 = rep(NA, 4),
+  var4 = as.Date(rep(NA, 4)),
+  var5 = sample(c(FALSE, TRUE), size = 4, replace = TRUE),
+  var6 = sample(c(FALSE, NA), size = 4, replace = TRUE)
+)
+# str(df3)
+
+expect_message(
+  tmp <- class(
+    dfMergeVariablesRelevel(
+      df = df3,
+      colnames = names(df3)[c(1,2)])
+  ), "More than one column had values, returning")
+expect_equal(tmp, "character")
+
+expect_equal(
+  class(
+    dfMergeVariablesRelevel(
+      df = df3,
+      colnames = names(df3)[c(1,3)])
+  ), "Date")
+
+expect_equal(
+  class(
+    dfMergeVariablesRelevel(
+      df = df3,
+      colnames = names(df3)[c(1,4)])
+  ), "Date")
+
+expect_equal(
+  class(
+    dfMergeVariablesRelevel(
+      df = df3,
+      colnames = names(df3)[c(2,4)])
+  )[1], "POSIXct")
+
+expect_equal(
+  class(
+    dfMergeVariablesRelevel(
+      df = df3,
+      colnames = names(df3)[c(3,4)])
+  ), "Date")
+
+expect_equal(
+  class(
+    dfMergeVariablesRelevel(
+      df = df3,
+      colnames = names(df3)[c(5,6)])
+  ), "character")
+
+expect_equal(
+  class(
+    dfMergeVariablesRelevel(
+      df = df3,
+      colnames = names(df3)[c(3,5)])
+  ), "logical")
+
+expect_equal(
+  class(
+    dfMergeVariablesRelevel(
+      df = df3,
+      colnames = names(df3)[c(1,5)])
+  ), "character")
+
 
 
 #### ctrGetQueryUrl ####
