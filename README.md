@@ -37,7 +37,7 @@ interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
 `ctrdata` is a package for the [R](https://www.r-project.org/) system,
 but other systems and tools can use the databases created with this
-package. This README was reviewed on 2025-05-17 for version 1.22.1.9000.
+package. This README was reviewed on 2025-05-17 for version 1.22.2.
 
 ## Main features
 
@@ -77,7 +77,7 @@ Remember to respect the registers’ terms and conditions (see
 `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
 package in any publication as follows: “Ralf Herold (2025). *ctrdata:
 Retrieve and Analyze Clinical Trials in Public Registers.* R package
-version 1.22.0, <https://cran.r-project.org/package=ctrdata>”.
+version 1.22.2, <https://cran.r-project.org/package=ctrdata>”.
 
 <!--
 &#10;
@@ -819,40 +819,42 @@ ctrLoadQueryIntoDb(
 See also <https://app.codecov.io/gh/rfhb/ctrdata/tree/master/R>
 
 ``` r
+# 2025-05-17
+
 tinytest::test_all()
-# test_ctrdata_duckdb_ctgov2.R..   78 tests OK 48.6s
+# test_ctrdata_duckdb_ctgov2.R..   78 tests OK 46.4s
 # test_ctrdata_function_activesubstance.R    4 tests OK 0.8s
-# test_ctrdata_function_ctrgeneratequeries.R   14 tests OK 15ms
-# test_ctrdata_function_params.R   25 tests OK 1.1s
-# test_ctrdata_function_trial-concepts.R   80 tests OK 3.3s
-# test_ctrdata_function_various.R   67 tests OK 3.4s
-# test_ctrdata_postgres_ctgov2.R   50 tests OK 33.0s
-# test_ctrdata_sqlite_ctgov.R...   46 tests OK 30.2s
-# test_ctrdata_sqlite_ctgov2.R..   50 tests OK 26.9s
-# test_ctrdata_sqlite_ctis.R....   87 tests OK 1.4s
-# test_ctrdata_sqlite_euctr.R...  118 tests OK 50.1s
-# test_ctrdata_sqlite_isrctn.R..   38 tests OK 12.8s
+# test_ctrdata_function_ctrgeneratequeries.R   14 tests OK 18ms
+# test_ctrdata_function_params.R   25 tests OK 0.8s
+# test_ctrdata_function_trial-concepts.R   80 tests OK 3.2s
+# test_ctrdata_function_various.R   76 tests OK 3.7s
+# test_ctrdata_postgres_ctgov2.R   50 tests OK 32.4s
+# test_ctrdata_sqlite_ctgov.R...   46 tests OK 29.0s
+# test_ctrdata_sqlite_ctgov2.R..   50 tests OK 25.9s
+# test_ctrdata_sqlite_ctis.R....   87 tests OK 1.2s
+# test_ctrdata_sqlite_euctr.R...  118 tests OK 47.7s
+# test_ctrdata_sqlite_isrctn.R..   38 tests OK 12.0s
 # test_euctr_error_sample.R.....    8 tests OK 0.2s
-# All ok, 665 results (4m 54.8s)
+# All ok, 674 results (4m 36.8s)
 
 covr::package_coverage(path = ".", type = "tests")
-# ctrdata Coverage: 94.69%
+# ctrdata Coverage: 94.27%
 # R/ctrShowOneTrial.R: 57.89%
+# R/dbGetFieldsIntoDf.R: 80.14%
 # R/zzz.R: 80.95%
-# R/dbGetFieldsIntoDf.R: 86.99%
-# R/ctrRerunQuery.R: 89.18%
-# R/util_functions.R: 89.81%
+# R/ctrRerunQuery.R: 86.23%
+# R/ctrGetQueryUrl.R: 89.32%
+# R/util_functions.R: 89.84%
 # R/ctrLoadQueryIntoDbEuctr.R: 90.08%
 # R/ctrFindActiveSubstanceSynonyms.R: 90.38%
-# R/ctrGetQueryUrl.R: 92.04%
 # R/ctrLoadQueryIntoDbCtgov2.R: 92.68%
 # R/ctrLoadQueryIntoDbIsrctn.R: 92.81%
-# R/dfMergeVariablesRelevel.R: 94.29%
 # R/ctrLoadQueryIntoDbCtis.R: 95.34%
 # R/dbFindFields.R: 95.88%
 # R/f_primaryEndpointResults.R: 96.00%
+# R/dfMergeVariablesRelevel.R: 96.55%
 # R/ctrLoadQueryIntoDb.R: 96.86%
-# R/ctrGenerateQueries.R: 97.31%
+# R/ctrGenerateQueries.R: 97.32%
 # R/ctrOpenSearchPagesInBrowser.R: 97.40%
 # R/dbFindIdsUniqueTrials.R: 98.78%
 # R/f_numTestArmsSubstances.R: 98.92%
