@@ -81,6 +81,12 @@ f.numSites <- function(df = NULL) {
   # helper function
   `%>%` <- dplyr::`%>%`
 
+  # helper function
+  lengthWoNA <- function(...) {
+    if (all(is.na(...))) return(NA)
+    return(length(na.omit(...)))
+  }
+
 
   #### . EUCTR ####
   nonEEA <- countryTable[countryTable$V3 %in% countriesActive, ][["V2"]]
@@ -153,9 +159,9 @@ f.numSites <- function(df = NULL) {
   df %>%
     dplyr::mutate(
       helper_numSitesCtis1 = sapply(
-        .data$authorizedPartsII.trialSites.id, length),
+        .data$authorizedPartsII.trialSites.id, lengthWoNA),
       helper_numSitesCtis2 = sapply(
-        .data$authorizedApplication.authorizedPartsII.trialSites.id, length),
+        .data$authorizedApplication.authorizedPartsII.trialSites.id, lengthWoNA),
       out = dplyr::case_when(
         !is.na(.data$authorizedPartsII.trialSites.id) ~
           .data$helper_numSitesCtis1,
