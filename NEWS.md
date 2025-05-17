@@ -1,4 +1,4 @@
-# ctrdata 1.22.1.9000 
+# ctrdata 1.22.2 
 
 - Added typing for further CTGOV2 and CTIS fields
 - Adapt a test to modified terminal output in certain IDEs
