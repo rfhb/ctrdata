@@ -121,28 +121,6 @@ f.primaryEndpointResults <- function(df = NULL) {
 
   }
 
-  # TODO alternative, generic but not as fast
-  # dfl <- dfTrials2Long(df)
-  # dfName2Value(
-  #   dfl,
-  #   valuename = paste0(
-  #     "endPoints.endPoint.armReportingGroups.armReportingGroup.subjects|",
-  #     "clinical_results.outcome_list.outcome.measure.analyzed_list.analyzed.count_list.count.value|",
-  #     "resultsSection.outcomeMeasuresModule.outcomeMeasures.denoms.counts.value"),
-  #   wherename = paste0(
-  #     "endPoints.endPoint.type.value|",
-  #     "clinical_results.outcome_list.outcome.type|",
-  #     "resultsSection.outcomeMeasuresModule.outcomeMeasures.type"),
-  #   wherevalue = paste0(
-  #     "ENDPOINT_TYPE.primary|",
-  #     "Primary|",
-  #     "PRIMARY")
-  # ) %>%
-  #   # select first primary endpoint
-  #   dplyr::filter(grepl("^(0|1)([.]|$)", identifier)) %>%
-  #   dplyr::select(`_id`, "identifier", "value") %>%
-  #   dplyr::mutate(.primaryEndpointFirstPsize = sum(value), .by = `_id`) %>%
-  #   dplyr::left_join(x = df, y = ., by = "_id")
 
   #### . EUCTR ####
   df %>%

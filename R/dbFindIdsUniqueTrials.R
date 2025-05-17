@@ -234,7 +234,6 @@ dbFindIdsUniqueTrials <- function(
   message("Searching for duplicate trials... ")
 
   # fields for database query
-  # TODO accommodate also ctis1?
   fields <- c(
     "ctrname",
     # euctr

@@ -136,7 +136,7 @@ f.numTestArmsSubstances <- function(df = NULL) {
     # protocol data
     helper_protocol = dplyr::if_else(
       .data$e81_controlled,
-      .data$e824_number_of_treatment_arms_in_the_trial - 1,
+      .data$e824_number_of_treatment_arms_in_the_trial - 1L,
       .data$e824_number_of_treatment_arms_in_the_trial,
     ),
     # results data

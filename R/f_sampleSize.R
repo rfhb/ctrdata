@@ -125,27 +125,6 @@ f.sampleSize <- function(df = NULL) {
 
   # directly using field, see above
 
-  # TODO alternative, using results data
-  # num_participants = sum(as.integer(
-  #   resultsSection.baselineCharacteristicsModule.denoms.counts.value[which_not_total]))
-  # num_arms_or_groups = max(number_of_arms, length(which_not_total))
-  # number_of_arms = stringi::stri_count_fixed(
-  # resultsSection.baselineCharacteristicsModule.groups.title, " / "),
-  # num_participants = sum(as.integer(
-  # resultsSection.baselineCharacteristicsModule.denoms.counts.value[which_not_total])),
-  #   number_of_arms = stringi::stri_count_fixed(
-  #     resultsSection.baselineCharacteristicsModule.groups.title, " / "),
-  #   which_not_total = list(which(strsplit(
-  #     resultsSection.baselineCharacteristicsModule.groups.title, " / ")[[1]] != "Total")),
-  #   num_sites = length(strsplit(protocolSection.contactsLocationsModule.locations.city, " / ")[[1]]),
-  #   num_participants = sum(as.integer(
-  #     resultsSection.baselineCharacteristicsModule.denoms.counts.value[which_not_total])),
-  #   num_arms_or_groups = max(number_of_arms, length(which_not_total))
-  # )
-  # which_not_total = list(which(strsplit(
-  #   resultsSection.baselineCharacteristicsModule.groups.title, " / ")[[1]] != "Total")),
-
-
   #### . ISRCTN ####
   df %>%
     dplyr::mutate(

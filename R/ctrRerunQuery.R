@@ -369,10 +369,6 @@ ctrRerunQuery <- function(
               ) # curl
             )$content), silent = TRUE)
 
-          # TODO
-          # jsonview::json_tree_view(initialData)
-          # jqr::jq(initialData, " .data | length ")
-
           # accumulate trial identifiers
           idsUpdatedTrials <- c(
             idsUpdatedTrials, gsub(
@@ -465,9 +461,6 @@ ctrRerunQuery <- function(
           tfname <- tempfile()
           on.exit(try(unlink(tfname), silent = TRUE), add = TRUE)
           cat(exstJson, file = tfname, sep = "\n")
-
-          # TODO
-          # jsonview::json_tree_view(exstJson)
 
           # update record, adding historical versions
           # avoid SQL issues by using file-based json

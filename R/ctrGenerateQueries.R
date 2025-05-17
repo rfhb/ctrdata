@@ -557,7 +557,7 @@ ctrGenerateQueries <- function(
       urls["CTGOV2"], "&aggFilters=studyType:int")
 
     urls["CTGOV2expert"] <- paste0(
-      # TODO
+      # TODO could be further tightened as follows but unclear for CTGOV
       # https://www.clinicaltrials.gov/data-api/about-api/study-data-structure#enum-PrimaryPurpose
       # AND (AREA[DesignPrimaryPurpose](DIAGNOSTIC OR PREVENTION OR TREATMENT))
       # AND (AREA[InterventionType](DRUG OR BIOLOGICAL))

@@ -70,52 +70,6 @@ dfMergeVariablesRelevel <- function(
   stopifnot(all(colnames %in% names(df)))
   if (length(colnames) == 1L) return(df[[colnames]])
 
-  # TODO delete
-  # # mapply helper
-  # merge2Cols <- function(x, y) {
-  #   mapply(function(x, y) {
-  #     x <- x[x != ""]; y <- y[y != ""]
-  #     if (!length(x) && !length(y)) return(NA)
-  #     if (length(x) && !is.na(x) && length(y) && !is.na(y)) {
-  #       if (!get("warned", envir = env)) {message(
-  #         "More than one column had values, returning e.g. '", x, " / ", y, "'")
-  #         evalq(warned <- TRUE, env)}
-  #       return(paste(c(x, y), collapse = " / "))}
-  #     if (!is.na(x)) return(x) else return(y)},
-  #     x, y, USE.NAMES = FALSE)
-  # }
-  #
-  # # merge
-  # out <- Reduce(
-  #   f = merge2Cols,
-  #   x = as.list(df[, colnames[-1], drop = FALSE]),
-  #   init = df[, colnames[1], drop = TRUE]
-  # )
-
-
-
-  # # out merging fields
-  # out <- tidyr::unite(
-  #   df[, colnames, drop = FALSE],
-  #   out, na.rm = TRUE, sep = " / "
-  # )[["out"]]
-  #
-  # # cleaning string
-  # # TODO delete
-  # # out <- c("d / f", " / d / s / / ", " a / ", " / d / s /  / ")
-  # out <- trimws(gsub(" / ($)|(^) / |( / ) */ ", "\\1", out))
-  #
-  # # try keeping the type
-  # if (!any(grepl(" / ", out))) {
-  #   out <- do.call(
-  #     dplyr::coalesce, as.list(df[, colnames, drop = FALSE]))
-  # } else {
-  #   message(
-  #     "More than one column had values, returning e.g. '",
-  #     out[grepl(" / ", out)][1], "'"
-  #   )
-  # }
-
   # check
   if(all(apply(df[, colnames, drop = FALSE], 1,
            function(r) length(na.omit(r))) <= 1L)) {
