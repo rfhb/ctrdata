@@ -115,7 +115,7 @@ expect_message(
       only.count = TRUE,
       con = dbc)),
   "Imported .* trial")
-expect_true(tmpTest$n >= 0L)
+expect_true(tmpTest$n >= 10L)
 expect_true(tmpTest$queryterm == hist[["query-term"]][1L])
 
 expect_message(
@@ -126,7 +126,7 @@ expect_message(
       only.count = TRUE,
       con = dbc)),
   "Imported .* trial")
-expect_true(tmpTest$n >= 0L)
+expect_true(tmpTest$n >= 10L)
 expect_true(tmpTest$queryterm == hist[["query-term"]][1L])
 
 expect_warning(
@@ -137,7 +137,7 @@ expect_warning(
       only.count = FALSE,
       con = dbc)),
   "updating")
-expect_true(tmpTest$n >= 0L)
+expect_true(tmpTest$n >= 10L)
 expect_true(tmpTest$queryterm == hist[["query-term"]][1L])
 
 dF <- dbGetFieldsIntoDf(c(
