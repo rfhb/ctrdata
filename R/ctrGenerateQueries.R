@@ -352,7 +352,7 @@ ctrGenerateQueries <- function(
         "P+A" = 'AREA[StdAge]"CHILD" OR AREA[StdAge]"ADULT"',
         "A+E" = 'AREA[StdAge]"ADULT" OR AREA[StdAge]"OLDER_ADULT"',
         "P+A+E" = 'AREA[StdAge]"CHILD" OR AREA[StdAge]"ADULT" OR AREA[StdAge]"OLDER_ADULT"'
-      )[phase],
+      )[population],
       ') ')
 
     urls["CTIS"] <- paste0(
@@ -641,7 +641,8 @@ ctrGenerateQueries <- function(
 
     urls["ISRCTN"] <- paste0(
       urls["ISRCTN"],
-      paste0("&filters=recruitmentCountry:", countryTable[countryIndex, 2], collapse = "")
+      paste0("&filters=recruitmentCountry:",
+             countryTable[countryIndex, 2], collapse = "")
     )
 
   }

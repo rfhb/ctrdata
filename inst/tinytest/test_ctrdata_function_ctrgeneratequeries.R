@@ -7,7 +7,6 @@ if (!at_home()) exit_file("Reason: not at_home")
 # tests
 tf <- function() {
 
-
   # generate 1
   urls <- ctrGenerateQueries(
     condition = "cancer",
@@ -120,8 +119,8 @@ tf <- function() {
   expect_equivalent(c(
     "https://www.clinicaltrialsregister.eu/ctr-search/search?query=heart failure&phase=phase-two&phase=phase-three&age=children&age=adolescent&age=infant-and-toddler&age=newborn&age=preterm-new-born-infants&age=under-18&age=adult&dateFrom=2000-01-01&country=de&country=se",
     "https://www.isrctn.com/search?&q=&filters=condition:heart failure,phase:Phase II/IIINA,GT+overallStartDate:2000-01-01,primaryStudyDesign:Interventional,recruitmentCountry:Germany,recruitmentCountry:Sweden",
-    "https://clinicaltrials.gov/expert-search?term=AREA[ConditionSearch]\"heart failure\" AND (AREA[Phase]\"PHASE2\" OR AREA[Phase]\"PHASE3\") AND (NA) AND AREA[StartDate]RANGE[2000-01-01,MAX] AND (AREA[StudyType]INTERVENTIONAL) AND (AREA[LocationCountry]\"Germany\" OR AREA[LocationCountry]\"Sweden\")",
-    "https://clinicaltrials.gov/expert-search?term=AREA[ConditionSearch]\"heart failure\" AND (AREA[Phase]\"PHASE2\" OR AREA[Phase]\"PHASE3\") AND (NA) AND AREA[StartDate]RANGE[2000-01-01,MAX] AND (AREA[StudyType]INTERVENTIONAL) AND (AREA[LocationCountry]\"Germany\" OR AREA[LocationCountry]\"Sweden\")",
+    "https://clinicaltrials.gov/expert-search?term=AREA[ConditionSearch]\"heart failure\" AND (AREA[Phase]\"PHASE2\" OR AREA[Phase]\"PHASE3\") AND (AREA[StdAge]\"CHILD\" OR AREA[StdAge]\"ADULT\") AND AREA[StartDate]RANGE[2000-01-01,MAX] AND (AREA[StudyType]INTERVENTIONAL) AND (AREA[LocationCountry]\"Germany\" OR AREA[LocationCountry]\"Sweden\")",
+    "https://clinicaltrials.gov/expert-search?term=AREA[ConditionSearch]\"heart failure\" AND (AREA[Phase]\"PHASE2\" OR AREA[Phase]\"PHASE3\") AND (AREA[StdAge]\"CHILD\" OR AREA[StdAge]\"ADULT\") AND AREA[StartDate]RANGE[2000-01-01,MAX] AND (AREA[StudyType]INTERVENTIONAL) AND (AREA[LocationCountry]\"Germany\" OR AREA[LocationCountry]\"Sweden\")",
     "https://euclinicaltrials.eu/ctis-public/search#searchCriteria={\"medicalCondition\":\"heart failure\",\"trialPhaseCode\":[10],\"ageGroupCode\":[2,3],\"eeaStartDateFrom\":\"2000-01-01\",\"msc\":[84,214]}"
    ), urls)
 
