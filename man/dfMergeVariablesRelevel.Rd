@@ -2,7 +2,7 @@
 % Please edit documentation in R/dfMergeVariablesRelevel.R
 \name{dfMergeVariablesRelevel}
 \alias{dfMergeVariablesRelevel}
-\title{Merge variables, keeping type, and optionally relevel factors}
+\title{Merge variables, keeping type where possible, optionally relevel factors}
 \usage{
 dfMergeVariablesRelevel(df = NULL, colnames = "", levelslist = NULL)
 }

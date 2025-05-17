@@ -12,7 +12,7 @@ ctrLoadQueryIntoDb(
   euctrresults = FALSE,
   euctrresultshistory = FALSE,
   ctgov2history = FALSE,
-  ctishistory = TRUE,
+  ctishistory = FALSE,
   documents.path = NULL,
   documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|icf|ctalett|lay|^[0-9]+ ",
   annotation.text = "",
@@ -48,10 +48,8 @@ a query in the data frame returned by \link{dbQueryHistory} that
 should be run to retrieve any new or update trial records since
 this query was run the last time.
 This parameter takes precedence over \code{queryterm}.
-For "EUCTR", updates are available only for the last seven days;
-the query is run again if more time has passed since it was
-run last.
-Does not work with "CTIS" at this time.}
+For "EUCTR" and "CTIS", updates are available only for the last seven days;
+the query is run again if more time has passed since it was run last.}
 
 \item{forcetoupdate}{If \code{TRUE}, run again the query
 given in \code{querytoupdate}, irrespective of when it was

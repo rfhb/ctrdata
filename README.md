@@ -37,7 +37,7 @@ interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
 `ctrdata` is a package for the [R](https://www.r-project.org/) system,
 but other systems and tools can use the databases created with this
-package. This README was reviewed on 2025-05-14 for version 1.22.1.9000.
+package. This README was reviewed on 2025-05-17 for version 1.22.1.9000.
 
 ## Main features
 
@@ -418,17 +418,16 @@ queries <- ctrGenerateQueries(
 )
 
 queries
-# EUCTR
-# "https://www.clinicaltrialsregister.eu/ctr-search/search?query=neuroblastoma&phase=phase-two
-# &age=children&age=adolescent&age=infant-and-toddler&age=newborn&age=preterm-new-born-infants
-# &age=under-18&status=completed"
-# CTGOV2
-# "https://clinicaltrials.gov/search?cond=neuroblastoma&aggFilters=phase:2,ages:child,status:com"
-# ISRCTN
-# "https://www.isrctn.com/search?&filters=condition:neuroblastoma,phase:Phase II,ageRange:Child,trialStatus:completed&q="
-# CTIS
-# "https://euclinicaltrials.eu/ctis-public/search#searchCriteria={\"medicalCondition\":
-# \"neuroblastoma\",\"trialPhaseCode\":[4],\"ageGroupCode\":[2],\"status\":[5,8]}"
+# EUCTR 
+# "https://www.clinicaltrialsregister.eu/ctr-search/search?query=neuroblastoma&phase=phase-two&age=children&age=adolescent&age=infant-and-toddler&age=newborn&age=preterm-new-born-infants&age=under-18&status=completed" 
+# ISRCTN 
+# "https://www.isrctn.com/search?&q=&filters=condition:neuroblastoma,phase:Phase II,ageRange:Child,trialStatus:completed,primaryStudyDesign:Interventional" 
+# CTGOV2 
+# "https://clinicaltrials.gov/search?cond=neuroblastoma&aggFilters=phase:2,ages:child,status:com,studyType:int" 
+# CTGOV2expert 
+# "https://clinicaltrials.gov/expert-search?term=AREA[ConditionSearch]\"neuroblastoma\" AND (AREA[Phase]\"PHASE2\") AND (AREA[StdAge]\"CHILD\") AND (AREA[OverallStatus]\"COMPLETED\") AND (AREA[StudyType]INTERVENTIONAL)" 
+# CTIS 
+# "https://euclinicaltrials.eu/ctis-public/search#searchCriteria={\"medicalCondition\":\"neuroblastoma\",\"trialPhaseCode\":[4],\"ageGroupCode\":[2],\"status\":[5,8]}" 
 
 # Open queries in registers' web interfaces
 sapply(queries, ctrOpenSearchPagesInBrowser)
@@ -437,8 +436,8 @@ sapply(queries, ctrOpenSearchPagesInBrowser)
 result <- lapply(queries, ctrLoadQueryIntoDb, con = db)
 
 sapply(result, "[[", "n")
-# EUCTR CTGOV2 ISRCTN   CTIS
-#   180    111      0      1
+# EUCTR       ISRCTN       CTGOV2 CTGOV2expert         CTIS 
+#   180            0          110          110            1
 ```
 
 - Analyse
@@ -457,10 +456,13 @@ result <- dbGetFieldsIntoDf(
   calculate = c("f.statusRecruitment", "f.isUniqueTrial"),
   con = db
 )
-# Querying database (35 fields)...
+# Querying database (16 fields)...
+# Searching for duplicate trials... 
+# - Getting all trial identifiers (may take some time), 381 found in collection
 # - Finding duplicates among registers' and sponsor ids...
-# - 114 EUCTR _id were not preferred EU Member State record for 40 trials
-# - Keeping 111 / 34 / 0 / 0 / 1 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS
+# - 174 EUCTR _id were not preferred EU Member State record for 66 trials
+# - Keeping 110 / 60 / 0 / 0 / 0 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS
+# = Returning keys (_id) of 170 records in collection "collection_name"
 
 # Tabulate the clinical trial information of interest
 with(
@@ -470,12 +472,12 @@ with(
     a7_trial_is_part_of_a_paediatric_investigation_plan
   )
 )
-#      a7_trial_is_part_of_a_paediatric_investigation_plan
+#                   a7_trial_is_part_of_a_paediatric_investigation_plan
 # .statusRecruitment FALSE TRUE
-#        ongoing         3    2
-#        completed      13    5
-#        ended early     5    4
-#        other           9    4
+#        ongoing         2    3
+#        completed      12    5
+#        ended early     7    3
+#        other           9    3
 ```
 
 <div id="workflow-ctgov-example">
@@ -547,7 +549,7 @@ ctrLoadQueryIntoDb(
   only.count = TRUE
 )
 # $n
-# [1] 70
+# [1] 71
 ```
 
 <div id="workflow-ctis-example">
@@ -571,7 +573,7 @@ ctrLoadQueryIntoDb(
   only.count = TRUE
 )
 # $n
-# [1] 8783
+# [1] 9181
 ```
 
 <div id="workflow-data-model">

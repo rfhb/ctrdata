@@ -1,7 +1,11 @@
 # ctrdata 1.22.1.9000 
 
-- Adding typing for further CTGOV2 and CTIS fields
+- Added typing for further CTGOV2 and CTIS fields
 - Adapt a test to modified terminal output in certain IDEs
+- Refactored `dfMergeVariablesRelevel()` and keep type if rows include only a single value
+- Fixed counting trial sites outside the EEA for EUCTR
+- Fixed regression in `dbFindIdsUniqueTrials()`
+- Fixed typo in `ctrGenerateQueries()`
 - Updated documentation
 
 # ctrdata 1.22.1
@@ -24,7 +28,7 @@
 - `ctrGenerateQueries()` now also covers countries of trial conduct 
 
 ## Bug fix
-- Fixed for `ISRCTN` API term mangling
+- Fixed `ISRCTN` API term mangling
 - Fixed digesting marginal cases in notifications in `f.statusRecruitment()`
 - Fixed `ctrGenerateQueries` to handle 'or' as needed for certain filters
 

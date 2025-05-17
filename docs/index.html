@@ -66,7 +66,7 @@
 <li>ClinicalTrials.gov (“CTGOV2”, see <a href="#workflow-ctgov-example">example</a>)</li>
 <li>ISRCTN Registry (<a href="https://www.isrctn.com/" class="external-link uri">https://www.isrctn.com/</a>)</li>
 </ul>
-<p>The motivation is to investigate the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can use the databases created with this package. This README was reviewed on 2025-05-14 for version 1.22.1.9000.</p>
+<p>The motivation is to investigate the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can use the databases created with this package. This README was reviewed on 2025-05-17 for version 1.22.1.9000.</p>
 <div class="section level2">
 <h2 id="main-features">Main features<a class="anchor" aria-label="anchor" href="#main-features"></a>
 </h2>
@@ -387,17 +387,16 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">queries</span></span>
-<span><span class="co"># EUCTR</span></span>
-<span><span class="co"># "https://www.clinicaltrialsregister.eu/ctr-search/search?query=neuroblastoma&amp;phase=phase-two</span></span>
-<span><span class="co"># &amp;age=children&amp;age=adolescent&amp;age=infant-and-toddler&amp;age=newborn&amp;age=preterm-new-born-infants</span></span>
-<span><span class="co"># &amp;age=under-18&amp;status=completed"</span></span>
-<span><span class="co"># CTGOV2</span></span>
-<span><span class="co"># "https://clinicaltrials.gov/search?cond=neuroblastoma&amp;aggFilters=phase:2,ages:child,status:com"</span></span>
-<span><span class="co"># ISRCTN</span></span>
-<span><span class="co"># "https://www.isrctn.com/search?&amp;filters=condition:neuroblastoma,phase:Phase II,ageRange:Child,trialStatus:completed&amp;q="</span></span>
-<span><span class="co"># CTIS</span></span>
-<span><span class="co"># "https://euclinicaltrials.eu/ctis-public/search#searchCriteria={\"medicalCondition\":</span></span>
-<span><span class="co"># \"neuroblastoma\",\"trialPhaseCode\":[4],\"ageGroupCode\":[2],\"status\":[5,8]}"</span></span>
+<span><span class="co"># EUCTR </span></span>
+<span><span class="co"># "https://www.clinicaltrialsregister.eu/ctr-search/search?query=neuroblastoma&amp;phase=phase-two&amp;age=children&amp;age=adolescent&amp;age=infant-and-toddler&amp;age=newborn&amp;age=preterm-new-born-infants&amp;age=under-18&amp;status=completed" </span></span>
+<span><span class="co"># ISRCTN </span></span>
+<span><span class="co"># "https://www.isrctn.com/search?&amp;q=&amp;filters=condition:neuroblastoma,phase:Phase II,ageRange:Child,trialStatus:completed,primaryStudyDesign:Interventional" </span></span>
+<span><span class="co"># CTGOV2 </span></span>
+<span><span class="co"># "https://clinicaltrials.gov/search?cond=neuroblastoma&amp;aggFilters=phase:2,ages:child,status:com,studyType:int" </span></span>
+<span><span class="co"># CTGOV2expert </span></span>
+<span><span class="co"># "https://clinicaltrials.gov/expert-search?term=AREA[ConditionSearch]\"neuroblastoma\" AND (AREA[Phase]\"PHASE2\") AND (AREA[StdAge]\"CHILD\") AND (AREA[OverallStatus]\"COMPLETED\") AND (AREA[StudyType]INTERVENTIONAL)" </span></span>
+<span><span class="co"># CTIS </span></span>
+<span><span class="co"># "https://euclinicaltrials.eu/ctis-public/search#searchCriteria={\"medicalCondition\":\"neuroblastoma\",\"trialPhaseCode\":[4],\"ageGroupCode\":[2],\"status\":[5,8]}" </span></span>
 <span></span>
 <span><span class="co"># Open queries in registers' web interfaces</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">queries</span>, <span class="va">ctrOpenSearchPagesInBrowser</span><span class="op">)</span></span>
@@ -406,8 +405,8 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">queries</span>, <span class="va">ctrLoadQueryIntoDb</span>, con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">result</span>, <span class="st">"[["</span>, <span class="st">"n"</span><span class="op">)</span></span>
-<span><span class="co"># EUCTR CTGOV2 ISRCTN   CTIS</span></span>
-<span><span class="co">#   180    111      0      1</span></span></code></pre></div>
+<span><span class="co"># EUCTR       ISRCTN       CTGOV2 CTGOV2expert         CTIS </span></span>
+<span><span class="co">#   180            0          110          110            1</span></span></code></pre></div>
 <ul>
 <li>Analyse</li>
 </ul>
@@ -421,10 +420,13 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span>  calculate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"f.statusRecruitment"</span>, <span class="st">"f.isUniqueTrial"</span><span class="op">)</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># Querying database (35 fields)...</span></span>
+<span><span class="co"># Querying database (16 fields)...</span></span>
+<span><span class="co"># Searching for duplicate trials... </span></span>
+<span><span class="co"># - Getting all trial identifiers (may take some time), 381 found in collection</span></span>
 <span><span class="co"># - Finding duplicates among registers' and sponsor ids...</span></span>
-<span><span class="co"># - 114 EUCTR _id were not preferred EU Member State record for 40 trials</span></span>
-<span><span class="co"># - Keeping 111 / 34 / 0 / 0 / 1 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS</span></span>
+<span><span class="co"># - 174 EUCTR _id were not preferred EU Member State record for 66 trials</span></span>
+<span><span class="co"># - Keeping 110 / 60 / 0 / 0 / 0 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS</span></span>
+<span><span class="co"># = Returning keys (_id) of 170 records in collection "collection_name"</span></span>
 <span></span>
 <span><span class="co"># Tabulate the clinical trial information of interest</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span></span>
@@ -434,12 +436,12 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span>    <span class="va">a7_trial_is_part_of_a_paediatric_investigation_plan</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#      a7_trial_is_part_of_a_paediatric_investigation_plan</span></span>
+<span><span class="co">#                   a7_trial_is_part_of_a_paediatric_investigation_plan</span></span>
 <span><span class="co"># .statusRecruitment FALSE TRUE</span></span>
-<span><span class="co">#        ongoing         3    2</span></span>
-<span><span class="co">#        completed      13    5</span></span>
-<span><span class="co">#        ended early     5    4</span></span>
-<span><span class="co">#        other           9    4</span></span></code></pre></div>
+<span><span class="co">#        ongoing         2    3</span></span>
+<span><span class="co">#        completed      12    5</span></span>
+<span><span class="co">#        ended early     7    3</span></span>
+<span><span class="co">#        other           9    3</span></span></code></pre></div>
 <div id="workflow-ctgov-example">
 
 </div>
@@ -483,7 +485,7 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span>  only.count <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># $n</span></span>
-<span><span class="co"># [1] 70</span></span></code></pre></div>
+<span><span class="co"># [1] 71</span></span></code></pre></div>
 <div id="workflow-ctis-example">
 
 </div>
@@ -499,7 +501,7 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span>  only.count <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># $n</span></span>
-<span><span class="co"># [1] 8783</span></span></code></pre></div>
+<span><span class="co"># [1] 9181</span></span></code></pre></div>
 <div id="workflow-data-model">
 
 </div>

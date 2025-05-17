@@ -1,7 +1,7 @@
 ---
 title: "Retrieve clinical trial information"
 author: "Ralf Herold"
-date: 2025-03-08
+date: 2025-05-17
 output:
   rmarkdown::html_vignette:
     toc: true
@@ -302,8 +302,8 @@ sapply(queries, ctrOpenSearchPagesInBrowser)
 result <- lapply(queries, ctrLoadQueryIntoDb, only.count = TRUE)
 
 sapply(result, "[[", "n")
- # EUCTR CTGOV2 ISRCTN   CTIS 
- #  1635   1952   1074    223
+# EUCTR       ISRCTN       CTGOV2 CTGOV2expert         CTIS 
+#  1635          165         1538         1538          231
 
 # and see examples in
 vignette("ctrdata_summarise")

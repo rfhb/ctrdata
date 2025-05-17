@@ -213,8 +213,8 @@ knitr::opts_chunk$set(eval = FALSE)
 # result <- lapply(queries, ctrLoadQueryIntoDb, only.count = TRUE)
 # 
 # sapply(result, "[[", "n")
-#  # EUCTR CTGOV2 ISRCTN   CTIS
-#  #  1635   1952   1074    223
+# # EUCTR       ISRCTN       CTGOV2 CTGOV2expert         CTIS
+# #  1635          165         1538         1538          231
 # 
 # # and see examples in
 # vignette("ctrdata_summarise")
