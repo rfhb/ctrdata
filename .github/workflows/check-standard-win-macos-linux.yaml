@@ -47,6 +47,11 @@ jobs:
           cache-version: 1
           extra-packages: remotes, DBI, RSQLite, nodbi, duckdb, rcmdcheck, covr, tibble, stringdist, dplyr
 
+      - name: Install dev nodbi
+        if: ${{ (matrix.config.os == 'ubuntu-latest') }}
+        run: remotes::install_github("ropensci/nodbi")
+        shell: Rscript {0}
+
       - uses: r-lib/actions/setup-pandoc@v2
 
       - uses: ankane/setup-mongodb@v1
