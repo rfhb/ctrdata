@@ -134,7 +134,7 @@ f.likelyPlatformTrial <- function(df = NULL) {
   fctChkFlds(names(df), fldsNeeded)
 
   # helper definitions
-  indexThreshold <- 0.7
+  indexThreshold <- 0.77
   platformThreshold <- 0.3
   minNumArmsDefPlatform <- 2L
   minNumPeriodsDefPlatform <- 2L
