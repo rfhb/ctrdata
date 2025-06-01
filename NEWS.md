@@ -1,6 +1,7 @@
 # ctrdata 1.22.2.9000
 
-new development version
+- Added dev version of `nodbi` to GitHub Action
+- Improved `f.likelyPlatfromTrial` (mangling title excerpts, add a missing default, sort ids in `.maybeRelatedTrials`, added back associated trials)
 
 # ctrdata 1.22.2 
 

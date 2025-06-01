@@ -247,6 +247,9 @@ f.likelyPlatformTrial <- function(df = NULL) {
   # number of arms and substances
   df %>% dplyr::mutate(
     #
+    # normalise to work with regex
+    .trialTitle = gsub("\n|\r|  +", " ", .data$.trialTitle),
+    #
     # is title relevant
     analysis_titleRelevant = stringi::stri_detect_regex(
       .data$.trialTitle, titleDefPlatform, case_insensitive = TRUE),
@@ -263,7 +266,11 @@ f.likelyPlatformTrial <- function(df = NULL) {
     ),
     titleBracketedRefs = if_else(
       .data$titleBracketedRefs == .data$.trialTitle |
-        nchar(.data$titleBracketedRefs) < 5L,
+        nchar(.data$titleBracketedRefs) < 5L |
+        # TODO add more abbreviations that are not
+        # short names of (platform) clinical trials
+        grepl("NSCLC|mCRPC|SCCHN",
+              .data$titleBracketedRefs, ignore.case = TRUE),
       NA_character_, gsub("[^a-zA-Z0-9]", "", .data$titleBracketedRefs)
     ),
     #
@@ -279,7 +286,7 @@ f.likelyPlatformTrial <- function(df = NULL) {
     titleColonedRefs = if_else(
       .data$titleColonedRefs == .data$.trialTitle |
         nchar(.data$titleColonedRefs) < 5L |
-        nchar(.data$titleColonedRefs) > 25L,
+        nchar(.data$titleColonedRefs) > 35L,
       NA_character_, gsub("[^a-zA-Z0-9]", "", .data$titleColonedRefs)
     ),
     #
@@ -297,7 +304,7 @@ f.likelyPlatformTrial <- function(df = NULL) {
     # turn row indices to ids of possibly related trials
     .maybeRelatedTrials = mapply(
       function(a, b, c) if (all(is.na(a)))
-        NA_character_ else unique(na.omit(c(.data$`_id`[a], b, c))),
+        NA_character_ else sort(unique(na.omit(c(.data$`_id`[a], b, c)))),
       a = .data$.maybeRelatedTrials,
       b = .data$.likelyRelatedTrials,
       c = .data$`_id`,
