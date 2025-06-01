@@ -22,7 +22,7 @@ tf <- function() {
   expect_true(length(fcts) >= 17L)
 
   # test
-  expect_true(length(unique(unlist(fctFields))) >= 179L)
+  expect_true(length(unique(unlist(fctFields))) >= 180L)
 
   # get data
   if (!checkSqlite()) exit_file("Reason: no SQLite")
@@ -46,8 +46,8 @@ tf <- function() {
 
   # test
   expect_true(all(grepl("_id|^[.][a-z]+[A-Z]", names(dF))))
-  expect_true(ncol(dF) >= 24L)
-  expect_true(nrow(dF) >= 31L)
+  expect_true(ncol(dF) == 24L)
+  expect_true(nrow(dF) == 31L)
 
   # factors
   expect_length(table(dF$.controlType, exclude = NULL), 6L)
@@ -81,8 +81,8 @@ tf <- function() {
   expect_true(sum(nchar(unlist(dF$.trialTitle))) == 5592L)
 
   # lists
-  expect_length(na.omit(unique(unlist(dF$.likelyRelatedTrials))), 17L)
-  expect_length(na.omit(unique(unlist(dF$.maybeRelatedTrials))), 0L)
+  expect_length(na.omit(unique(unlist(dF$.likelyRelatedTrials))), 18L)
+  expect_length(na.omit(unique(unlist(dF$.maybeRelatedTrials))), 0L) # since no platform trial or similar
 
   # test robustness against NAs
 
