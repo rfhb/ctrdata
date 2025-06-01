@@ -330,7 +330,9 @@ f.likelyPlatformTrial <- function(df = NULL) {
       }),
     #
     .analysis_numberTestPeriods = dplyr::case_when(
-      ctrname == "EUCTR" ~ .data$analysis_numberTestPeriods)
+      ctrname == "EUCTR" ~ .data$analysis_numberTestPeriods,
+      .default = .data$analysis_numberTestPeriods)
+    #
   ) -> df
 
 
@@ -351,7 +353,8 @@ f.likelyPlatformTrial <- function(df = NULL) {
       }),
     #
     .analysis_numberTestPeriods = dplyr::case_when(
-      ctrname == "CTGOV" ~ .data$analysis_numberTestPeriods)
+      ctrname == "CTGOV" ~ .data$analysis_numberTestPeriods,
+      .default = .data$analysis_numberTestPeriods)
     #
   ) -> df
 
@@ -373,7 +376,8 @@ f.likelyPlatformTrial <- function(df = NULL) {
       }),
     #
     .analysis_numberTestPeriods = dplyr::case_when(
-      ctrname == "CTGOV2" ~ .data$analysis_numberTestPeriods)
+      ctrname == "CTGOV2" ~ .data$analysis_numberTestPeriods,
+      .default = .data$analysis_numberTestPeriods)
     #
   ) -> df
 
@@ -389,7 +393,9 @@ f.likelyPlatformTrial <- function(df = NULL) {
     #
     analysis_titleRelevant = dplyr::case_when(
       ctrname == "ISRCTN" ~ .data$analysis_isDrugTrial &
-        .data$analysis_titleRelevant)
+        .data$analysis_titleRelevant,
+      .default = .data$analysis_titleRelevant)
+    #
   ) -> df
 
 
@@ -397,8 +403,8 @@ f.likelyPlatformTrial <- function(df = NULL) {
   df %>%
     dplyr::mutate(
       #
-      periodTitle = dplyr::coalesce(
-        as.character(.data$authorizedPartI.trialDetails.protocolInformation.studyDesign.periodDetails.title),
+      periodTitle = dplyr::coalesce(as.character(
+        .data$authorizedPartI.trialDetails.protocolInformation.studyDesign.periodDetails.title),
         .data$authorizedApplication.authorizedPartI.trialDetails.protocolInformation.studyDesign.periodDetails.title
       ),
       #
@@ -415,7 +421,8 @@ f.likelyPlatformTrial <- function(df = NULL) {
         }),
       #
       .analysis_numberTestPeriods = dplyr::case_when(
-        ctrname == "CTIS" ~ .data$analysis_numberTestPeriods)
+        ctrname == "CTIS" ~ .data$analysis_numberTestPeriods,
+        .default = .data$analysis_numberTestPeriods)
       #
     ) -> df
 
