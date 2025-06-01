@@ -13,11 +13,13 @@ be used with \link{dbGetFieldsIntoDf}.}
 }
 \value{
 data frame with columns `_id` and `.likelyPlatformTrial`, a logical,
-and two complementary columns, each with lists of identifiers found within
-the database collection: `.likelyRelatedTrials` (based on other identifiers
-of the trial record, including `associatedClinicalTrials` from CTIS) and
-`.maybeRelatedTrials` (based on similar short terms within a first set of
-brackets or before a colon in the trial title).
+and two complementary columns, each with lists of identifiers:
+`.likelyRelatedTrials` (based on other identifiers provided in the trial
+record, including `associatedClinicalTrials` from CTIS; listing identifiers
+whether or not the trial with the other identifier is in the database
+collection) and `.maybeRelatedTrials` (based on similar short terms in the
+first set of brackets or before a colon in the trial title; only listing
+identifiers from the database collection).
 }
 \description{
 Trial concept calculated: platform trial, research platform.
@@ -32,17 +34,16 @@ calculated precisely),
 c. trial more than 2 periods, after excluding safety run-in, screening,
 enrolling, extension and follow-up periods (for CTGOV and CTGOV2, this
 criterion requires results-related data).
-Requires that EUCTR results have been included in the collection, using
-ctrLoadQueryIntoDb(queryterm = ..., euctrresults = TRUE, con = ...).
+For EUCTR, requires that results have been included in the collection, using
+`ctrLoadQueryIntoDb(queryterm = ..., euctrresults = TRUE, con = ...)`.
 Requires packages dplyr and stringdist to be installed; stringdist is used
 for evaluating terms in brackets in the trial title, where trials may be
-related if the term similarity is 0.7 or higher.
+related if the term similarity is 0.77 or higher.
 }
 \details{
 Publication references considered:
-E-PEARL WP2 2020 https://tinyurl.com/eupearld21terminology (which did not
-include all basket trials in the definition, as done here)
-Williams RJ et al. 2022 https://doi.org/10.1136/bmj-2021-067745
+\href{https://web.archive.org/web/20230314024441/https://eu-pearl.eu/wp-content/uploads/2020/06/EU-PEARL_D2.1_Report-on-Terminology-and-Scenarios-for-Platform-Trials-and-Masterprotocols.pdf}{EU-PEARL WP2 2020}
+and \href{https://doi.org/10.1136/bmj-2021-067745}{Williams RJ et al. 2022}
 }
 \examples{
 # fields needed
