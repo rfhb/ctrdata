@@ -850,7 +850,7 @@ addMetaData <- function(x, con) {
 #' @param destfiles Vector of local file names into which to download
 #' @param progress Set to \code{FALSE} to not print progress bar
 #' @param resume Logical for dispatching to curl
-#' @param multipley Logical for using http/2
+#' @param multiplex Logical for using http/2
 #' @param verbose If \code{TRUE}, prints additional information
 #' (default \code{FALSE}).
 #'
