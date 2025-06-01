@@ -23,6 +23,10 @@ Fields names and values can be search and selected. Selected fields can be
 copied to the clipboard for use with function \link{dbGetFieldsIntoDf}.
 The trial is retrieved with \link{ctrLoadQueryIntoDb} if no database
 \code{con} is provided or if the trial is not in database \code{con}.
+For use in a Shiny app, see output and render functions in source code
+\ifelse{latex}{\out{
+\href{https://github.com/rfhb/ctrdata/blob/master/R/ctrShowOneTrial.R\#L190}{here}}}{
+\href{https://github.com/rfhb/ctrdata/blob/master/R/ctrShowOneTrial.R#L190}{here}}.
 }
 \details{
 This is the widget for CTIS trial 2022-501142-30-00:
@@ -41,6 +45,9 @@ dbc <- nodbi::src_sqlite(
   collection = "my_trials",
   flags = RSQLite::SQLITE_RO)
 
+# get sample of identifiers of trials in database
+sample(dbFindIdsUniqueTrials(con = dbc), 5L)
+
 # all such identifiers work
 id <- "2014-003556-31"
 id <- "2014-003556-31-SE"
@@ -49,7 +56,7 @@ id <- "ISRCTN76463425"
 id <- "NCT03431558"
 id <- "2022-501142-30-00"
 
-# the id also works with
+# note these ids also work with
 # ctrGetQueryUrl(url = id) and
 # ctrLoadQueryIntoDb(queryterm = id, ...)
 
@@ -57,8 +64,5 @@ id <- "2022-501142-30-00"
 # select fields of interest and to click on "Copy names of selected
 # fields to clipboard..." to use them with dbGetFieldsIntoDf()
 ctrShowOneTrial(identifier = id, con = dbc)
-
-# get sample of identifiers of trials in database
-sample(dbFindIdsUniqueTrials(con = dbc), 5L)
 
 }

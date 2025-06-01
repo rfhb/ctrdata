@@ -4,12 +4,18 @@ as a tree of field names and values. The widget opens in the default browser.
 Fields names and values can be search and selected. Selected fields can be
 copied to the clipboard for use with function dbGetFieldsIntoDf.
 The trial is retrieved with ctrLoadQueryIntoDb if no database
-con is provided or if the trial is not in database con."><meta property="og:description" content="If used interactively, the function shows a widget of all data in the trial
+con is provided or if the trial is not in database con.
+For use in a Shiny app, see output and render functions in source code
+
+here."><meta property="og:description" content="If used interactively, the function shows a widget of all data in the trial
 as a tree of field names and values. The widget opens in the default browser.
 Fields names and values can be search and selected. Selected fields can be
 copied to the clipboard for use with function dbGetFieldsIntoDf.
 The trial is retrieved with ctrLoadQueryIntoDb if no database
-con is provided or if the trial is not in database con."></head><body>
+con is provided or if the trial is not in database con.
+For use in a Shiny app, see output and render functions in source code
+
+here."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -55,7 +61,10 @@ as a tree of field names and values. The widget opens in the default browser.
 Fields names and values can be search and selected. Selected fields can be
 copied to the clipboard for use with function <a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a>.
 The trial is retrieved with <a href="ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a> if no database
-<code>con</code> is provided or if the trial is not in database <code>con</code>.</p>
+<code>con</code> is provided or if the trial is not in database <code>con</code>.
+For use in a Shiny app, see output and render functions in source code
+
+<a href="https://github.com/rfhb/ctrdata/blob/master/R/ctrShowOneTrial.R#L190" class="external-link">here</a>.</p>
     </div>
 
     <div class="section level2">
@@ -95,24 +104,6 @@ The trial is retrieved with <a href="ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb
 <span class="r-in"><span>  collection <span class="op">=</span> <span class="st">"my_trials"</span>,</span></span>
 <span class="r-in"><span>  flags <span class="op">=</span> <span class="fu">RSQLite</span><span class="fu">::</span><span class="va"><a href="https://rsqlite.r-dbi.org/reference/SQLite.html" class="external-link">SQLITE_RO</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># all such identifiers work</span></span></span>
-<span class="r-in"><span><span class="va">id</span> <span class="op">&lt;-</span> <span class="st">"2014-003556-31"</span></span></span>
-<span class="r-in"><span><span class="va">id</span> <span class="op">&lt;-</span> <span class="st">"2014-003556-31-SE"</span></span></span>
-<span class="r-in"><span><span class="va">id</span> <span class="op">&lt;-</span> <span class="st">"76463425"</span></span></span>
-<span class="r-in"><span><span class="va">id</span> <span class="op">&lt;-</span> <span class="st">"ISRCTN76463425"</span></span></span>
-<span class="r-in"><span><span class="va">id</span> <span class="op">&lt;-</span> <span class="st">"NCT03431558"</span></span></span>
-<span class="r-in"><span><span class="va">id</span> <span class="op">&lt;-</span> <span class="st">"2022-501142-30-00"</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># the id also works with</span></span></span>
-<span class="r-in"><span><span class="co"># ctrGetQueryUrl(url = id) and</span></span></span>
-<span class="r-in"><span><span class="co"># ctrLoadQueryIntoDb(queryterm = id, ...)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># show widget for user to explore and search content as well as to</span></span></span>
-<span class="r-in"><span><span class="co"># select fields of interest and to click on "Copy names of selected</span></span></span>
-<span class="r-in"><span><span class="co"># fields to clipboard..." to use them with dbGetFieldsIntoDf()</span></span></span>
-<span class="r-in"><span><span class="fu">ctrShowOneTrial</span><span class="op">(</span>identifier <span class="op">=</span> <span class="va">id</span>, con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in utils::browseURL(tf):</span> 'browser' must be a non-empty character string</span>
-<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># get sample of identifiers of trials in database</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span>, <span class="fl">5L</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Searching for duplicate trials... </span>
@@ -127,6 +118,24 @@ The trial is retrieved with <a href="ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb
 <span class="r-out co"><span class="r-pr">#&gt;</span>          "20343063" "2014-002606-20-PT" "2014-003556-31-SE"          "80181452" </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               CTGOV </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       "NCT03876704" </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># all such identifiers work</span></span></span>
+<span class="r-in"><span><span class="va">id</span> <span class="op">&lt;-</span> <span class="st">"2014-003556-31"</span></span></span>
+<span class="r-in"><span><span class="va">id</span> <span class="op">&lt;-</span> <span class="st">"2014-003556-31-SE"</span></span></span>
+<span class="r-in"><span><span class="va">id</span> <span class="op">&lt;-</span> <span class="st">"76463425"</span></span></span>
+<span class="r-in"><span><span class="va">id</span> <span class="op">&lt;-</span> <span class="st">"ISRCTN76463425"</span></span></span>
+<span class="r-in"><span><span class="va">id</span> <span class="op">&lt;-</span> <span class="st">"NCT03431558"</span></span></span>
+<span class="r-in"><span><span class="va">id</span> <span class="op">&lt;-</span> <span class="st">"2022-501142-30-00"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># note these ids also work with</span></span></span>
+<span class="r-in"><span><span class="co"># ctrGetQueryUrl(url = id) and</span></span></span>
+<span class="r-in"><span><span class="co"># ctrLoadQueryIntoDb(queryterm = id, ...)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># show widget for user to explore and search content as well as to</span></span></span>
+<span class="r-in"><span><span class="co"># select fields of interest and to click on "Copy names of selected</span></span></span>
+<span class="r-in"><span><span class="co"># fields to clipboard..." to use them with dbGetFieldsIntoDf()</span></span></span>
+<span class="r-in"><span><span class="fu">ctrShowOneTrial</span><span class="op">(</span>identifier <span class="op">=</span> <span class="va">id</span>, con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in utils::browseURL(tf):</span> 'browser' must be a non-empty character string</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

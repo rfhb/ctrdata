@@ -37,7 +37,7 @@ interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
 `ctrdata` is a package for the [R](https://www.r-project.org/) system,
 but other systems and tools can use the databases created with this
-package. This README was reviewed on 2025-05-17 for version 1.22.2.
+package. This README was reviewed on 2025-05-31 for version 1.22.2.9000.
 
 ## Main features
 
@@ -296,8 +296,8 @@ library(ctrdata)
 help("ctrdata")
 ```
 
-- Information on trial registers and how they can be used with `ctrdata`
-  (last updated 2025-03-09):
+- Information on trial registers, their contents and how they can be
+  used with `ctrdata` (last updated 2025-05-31):
 
 ``` r
 help("ctrdata-registers")

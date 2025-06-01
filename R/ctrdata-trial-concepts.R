@@ -21,7 +21,7 @@
 #' The following trial concepts can be used by referencing their name when
 #' calling \link{dbGetFieldsIntoDf} (parameter `calculate`).
 #' Concepts will continue to be refined and added;
-#' last updated 2025-03-15.
+#' last updated 2025-05-31.
 #'
 #' - \link{f.controlType} (factor) which type of internal or concurrent control
 #' is used in the trial? ("none", "no-treatment", "placebo", "active",
@@ -36,10 +36,10 @@
 #' frame of trial, based on default parameters of \link{dbFindIdsUniqueTrials}?
 #'
 #' - \link{f.likelyPlatformTrial} (logical, list of likely related trials, and
-#' a list of possibly related trials) is the trial possibly a (research)
+#' list of maybe related trials) is the trial possibly a (research)
 #' platform trial, and what are related trials? (based on trial title,
-#' f.numTestArmsSubstances, number of periods; similarity of terms in parts of
-#' trial titles)
+#' f.numTestArmsSubstances, number of periods; identifiers of related trials;
+#' similarity of terms in parts of trial titles)
 #'
 #' - \link{f.numSites} (integer) how many sites does the trial have?
 #'

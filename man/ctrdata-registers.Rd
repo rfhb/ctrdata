@@ -7,27 +7,27 @@
 \description{
 Registers of the four clinical trial registers from which package
 \link{ctrdata} can retrieve, aggregate and analyse protocol- and
-result-related information as well as documents, last updated 2025-05-14.
+result-related information as well as documents, last updated 2025-05-31.
 }
 \section{1 - Overview}{
 
 \itemize{
 \item \strong{EUCTR}: The EU Clinical Trials Register holds more than 44,300 clinical
 trials (at least one investigational medicinal product, IMP; in the European
-Union and beyond), including more than 25,000 trials with results, which
+Union and beyond), including more than 25,100 trials with results, which
 continue to be added (and can be loaded by \code{ctrdata}).
 \item \strong{CTIS}: The EU Clinical Trials Information System, launched in 2023,
-holds more than 9,100 publicly accessible clinical trials, including
-around 100 with results or a report (only as PDF files).
+holds more than 9,200 publicly accessible clinical trials, including
+around 180 with results or a report (only as PDF files).
 \emph{No results in a structured electronic format are foreseeably available},
 thus \code{ctrdata} cannot load any CTIS results.
 (To automatically get CTIS search query URLs, see
 \ifelse{latex}{\out{\href{https://rfhb.github.io/ctrdata/\#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}})
-\item \strong{CTGOV2}: ClinicalTrials.gov holds more than 537,000 interventional and
-observational studies, including almost 67,000 interventional studies with
+\item \strong{CTGOV2}: ClinicalTrials.gov holds about 540,000 interventional and
+observational studies, including almost 71,000 interventional studies with
 results (can be loaded by \code{ctrdata}).
-\item \strong{ISRCTN}: The ISRCTN Registry holds more than 26,300 interventional and
-observational health studies, including almost 14,300 studies with
+\item \strong{ISRCTN}: The ISRCTN Registry holds more than 26,400 interventional and
+observational health studies, including almost 14,400 studies with
 results (only as references).
 \emph{No results in a structured electronic format are foreseeably available},
 thus \code{ctrdata} cannot load any ISRCTN results.
@@ -58,9 +58,9 @@ More information on changes:
    Search interface \tab \href{https://www.clinicaltrialsregister.eu/ctr-search/search}{link} \tab \href{https://clinicaltrials.gov/}{link} \tab \href{https://www.isrctn.com/}{link} \tab \href{https://euclinicaltrials.eu/search-for-clinical-trials/}{link} \cr
    Expert / advanced search \tab \href{https://www.clinicaltrialsregister.eu/ctr-search/search}{link} \tab \href{https://clinicaltrials.gov/expert-search}{link} \tab \href{https://www.isrctn.com/editAdvancedSearch}{link} \tab \href{https://euclinicaltrials.eu/ctis-public/search}{link} \cr
    Glossary / related information \tab \href{https://www.clinicaltrialsregister.eu/doc/EU_Clinical_Trials_Register_Glossary.pdf}{link} \tab \href{https://clinicaltrials.gov/study-basics/glossary}{link} \tab \href{https://www.who.int/clinical-trials-registry-platform/network/who-data-set}{link} \tab \href{https://accelerating-clinical-trials.europa.eu/}{link} \cr
-   FAQ, caveats, issues \tab \href{https://www.clinicaltrialsregister.eu/doc/EU_CTR_FAQ.pdf}{link} \tab \href{https://clinicaltrials.gov/policy/faq}{link}, \href{https://clinicaltrials.gov/about-site/selected-publications}{link} \tab \href{https://www.isrctn.com/page/faqs}{link} \tab \href{https://euclinicaltrials.eu/website-outages-and-system-releases/}{link} \cr
-   Data dictionaries / definitions / structure reference \tab \href{https://eudract.ema.europa.eu/result.html}{link}, \href{https://eudract.ema.europa.eu/docs/technical/EudraCT\%20protocol\%20related\%20data\%20dictionary.xls}{link}, \href{https://eudract.ema.europa.eu/docs/technical/V7_V8_Country_List_20210804.xlsx}{link} \tab \href{https://cdn.clinicaltrials.gov/documents/xsd/public.xsd}{link}, \href{https://clinicaltrials.gov/data-about-studies/study-data-structure}{link}, \href{https://cdn.clinicaltrials.gov/documents/tutorial/content/index.html}{link} \tab \href{https://www.isrctn.com/page/definitions}{link} \tab \href{https://www.ema.europa.eu/en/human-regulatory-overview/research-development/clinical-trials-human-medicines/clinical-trials-information-system-ctis-training-support}{link} (XLSX files) \cr
-   Example* \tab \ifelse{latex}{\out{\href{https://www.clinicaltrialsregister.eu/ctr-search/search?query=Infections\&age=newborn\&age=preterm-new-born-infants}{link}}}{\href{https://www.clinicaltrialsregister.eu/ctr-search/search?query=Infections&age=newborn&age=preterm-new-born-infants}{link}} \tab \ifelse{latex}{\out{\href{https://clinicaltrials.gov/search?ageRange=0M_1M\&cond=Infections\&aggFilters=studyType:int\&distance=50\&intr=Investigational+Agent}{link}}}{\href{https://clinicaltrials.gov/search?ageRange=0M_1M&cond=Infections&aggFilters=studyType:int&distance=50&intr=Investigational+Agent}{link}} \tab \ifelse{latex}{\out{\href{https://www.isrctn.com/search?q=\&filters=ageRange:Neonate,conditionCategory:Infections+and+Infestations\&searchType=advanced-search}{link}}}{\href{https://www.isrctn.com/search?q=&filters=ageRange:Neonate,conditionCategory:Infections+and+Infestations&searchType=advanced-search}{link}} \tab \ifelse{latex}{\out{\href{https://euclinicaltrials.eu/ctis-public/search\#searchCriteria={"containAll":"infection","containAny":"neonates","containNot":""}}{link}}}{\href{https://euclinicaltrials.eu/ctis-public/search#searchCriteria={"containAll":"infection","containAny":"neonates"}}{link}} \cr
+   FAQ / caveats / examples \tab \href{https://www.clinicaltrialsregister.eu/doc/EU_CTR_FAQ.pdf}{link} \tab \href{https://clinicaltrials.gov/policy/faq}{link}, \href{https://clinicaltrials.gov/about-site/selected-publications}{link}, \href{https://clinicaltrials.gov/submit-studies/prs-help/support-training-materials#example-studies}{link} \tab \href{https://www.isrctn.com/page/faqs}{link} \tab \href{https://euclinicaltrials.eu/website-outages-and-system-releases/}{link} \cr
+   Data dictionaries / structure \tab \href{https://eudract.ema.europa.eu/result.html}{link}, \href{https://eudract.ema.europa.eu/docs/technical/EudraCT\%20protocol\%20related\%20data\%20dictionary.xls}{link}, \href{https://eudract.ema.europa.eu/docs/technical/V7_V8_Country_List_20210804.xlsx}{link} \tab \href{https://cdn.clinicaltrials.gov/documents/xsd/public.xsd}{link}, \href{https://clinicaltrials.gov/data-about-studies/study-data-structure}{link}, \href{https://cdn.clinicaltrials.gov/documents/tutorial/content/index.html}{link} \tab \href{https://www.isrctn.com/page/definitions}{link} \tab \href{https://www.ema.europa.eu/en/human-regulatory-overview/research-development/clinical-trials-human-medicines/clinical-trials-information-system-ctis-training-support}{link} (see XLSX files) \cr
+   Example* (see below) \tab \ifelse{latex}{\out{\href{https://www.clinicaltrialsregister.eu/ctr-search/search?query=Infections\&age=newborn\&age=preterm-new-born-infants}{link}}}{\href{https://www.clinicaltrialsregister.eu/ctr-search/search?query=Infections&age=newborn&age=preterm-new-born-infants}{link}} \tab \ifelse{latex}{\out{\href{https://clinicaltrials.gov/search?ageRange=0M_1M\&cond=Infections\&aggFilters=studyType:int\&distance=50\&intr=Investigational+Agent}{link}}}{\href{https://clinicaltrials.gov/search?ageRange=0M_1M&cond=Infections&aggFilters=studyType:int&distance=50&intr=Investigational+Agent}{link}} \tab \ifelse{latex}{\out{\href{https://www.isrctn.com/search?q=\&filters=ageRange:Neonate,conditionCategory:Infections+and+Infestations\&searchType=advanced-search}{link}}}{\href{https://www.isrctn.com/search?q=&filters=ageRange:Neonate,conditionCategory:Infections+and+Infestations&searchType=advanced-search}{link}} \tab \ifelse{latex}{\out{\href{https://euclinicaltrials.eu/ctis-public/search\#searchCriteria={"containAll":"infection","containAny":"neonates","containNot":""}}{link}}}{\href{https://euclinicaltrials.eu/ctis-public/search#searchCriteria={"containAll":"infection","containAny":"neonates"}}{link}} \cr
 }
 
 

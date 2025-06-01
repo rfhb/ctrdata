@@ -1,12 +1,14 @@
 ### ctrdata package
 
-#' Create data frame of specified fields from database collection
+#' Create data frame of specified fields or trial concepts from database collection
 #'
 #' Fields in the collection are retrieved from all records into a data
 #' frame (or tibble). The function uses the field names to appropriately type
 #' the values that it returns, harmonising original values (e.g.,
 #' "Yes" to `TRUE`, "false" to `FALSE`, "Information not present in EudraCT" to
 #' `NA`, date strings to dates or time differences, number strings to numbers).
+#' Trial concepts are calculated for all records and included in the data frame
+#' (or tibble).
 #'
 #' Within a given trial record, a field can be hierarchical and structured,
 #' that is, nested. The function simplifies the structure of nested data and
@@ -28,7 +30,7 @@
 #' \link{dfTrials2Long} followed by \link{dfName2Value} or with other R functions.
 #'
 #' @param calculate Vector of one or more strings, which are names of functions
-#' to calculate certain trial concepts from fields in the collection across
+#' to calculate certain trial concepts from fields in the collection, across
 #' different registers. See \link{ctrdata-trial-concepts} for available functions.
 #'
 #' @inheritParams ctrDb
@@ -41,8 +43,9 @@
 #' @return A data frame (or tibble, if \code{tibble} is loaded)
 #' with columns corresponding to the sought fields.
 #' A column for the records' `_id` will always be included.
-#' The maximum number of rows of the returned data frame is equal to,
-#' or less than the number of trial records in the database collection.
+#' The maximum number of rows of the returned data frame is equal to the number
+#' of trial records in the database collection, or less if none of the fields
+#' has a value in a record (and thus not included in the return value).
 #'
 #' @export
 #'

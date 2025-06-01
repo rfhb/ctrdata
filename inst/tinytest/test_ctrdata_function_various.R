@@ -585,12 +585,18 @@ rm(dF, dL)
 
 if (!checkInternet()) exit_file("Reason: no internet connectivity")
 
-id <- "NCT00617929"
-id <- "2012-003632-23"
-id <- "80181452"
+# id <- "NCT00617929"
+# id <- "2012-003632-23"
+# id <- "80181452"
+
 id <- "2022-501142-30-00"
-
 df <- ctrShowOneTrial(identifier = id)
-
 expect_true(is.list(df))
 expect_length(df, 1L)
+
+df <- ctrdata:::ctrShowOneTrialWidget(df)
+expect_true(is.list(df))
+expect_length(df, 8L)
+
+id <- "1234-123456-12-12"
+expect_error(ctrShowOneTrial(identifier = id), "nexpected record")

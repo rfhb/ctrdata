@@ -41,9 +41,9 @@ knitr::opts_chunk$set(eval = FALSE)
 #   only.count = TRUE
 # )$n
 # # * Checking trials in EUCTR...
-# # Retrieved overview, multiple records of 376 trial(s) from 19 page(s) to be
+# # Retrieved overview, multiple records of 386 trial(s) from 20 page(s) to be
 # # downloaded (estimate: 50 MB)
-# # [1] 376
+# # [1] 386
 # 
 # # Connect to a database and chose a collection (table)
 # db <- nodbi::src_sqlite(
@@ -60,7 +60,7 @@ knitr::opts_chunk$set(eval = FALSE)
 # # Show which queries have been downloaded into database
 # dbQueryHistory(con = db)
 # #       query-timestamp query-register query-records
-# # 1 2025-03-02 13:05:08          EUCTR          1470
+# # 1 2025-05-31 13:15:38          EUCTR          1531
 # #                                                    query-term
 # # 1 query=cancer&age=under-18&resultsstatus=trials-with-results
 
@@ -85,33 +85,33 @@ knitr::opts_chunk$set(eval = FALSE)
 #   con = db
 # ); Sys.time();
 # # * Checking trials in EUCTR...
-# # Retrieved overview, multiple records of 376 trial(s) from 19 page(s) to be downloaded (estimate: 50 MB)
+# # Retrieved overview, multiple records of 386 trial(s) from 20 page(s) to be
+# # downloaded (estimate: 50 MB)
 # # (1/3) Downloading trials...
 # # Note: register server cannot compress data, transfer takes longer (estimate: 500 s)
 # # (2/3) Converting to NDJSON (estimate: 8 s)...
 # # (3/3) Importing records into database...
-# # = Imported or updated 1470 records on 376 trial(s)
-# # * Checking results if available from EUCTR for 376 trials:
+# # = Imported or updated 1531 records on 386 trial(s)
+# # * Checking results if available from EUCTR for 386 trials:
 # # (1/4) Downloading results...
-# # Download status: 376 done; 0 in progress. Total size: 45.77 Mb (100%)... done!
 # # - extracting results (. = data, F = file[s] and data, x = none):
-# # . . . . . F . F . . . F . F . . F . F . . . . . . . . . . . . . . . F . . . .
-# # . . . . . . . . . . . . . . . . . . F . . . . . . . . F . . . . . . . . . F . .
-# # . . F . F . . . . . F . . . . . F . . . F . . . . . . . . . F F . F . . . . . F
-# # . . . . . . F F . F F . . . . F F . . . F F . . . . . . . . . . . F . . . . . .
-# # F . F . . . . . . . F . . . . . . F F . . . F . . F . . . . . F F F . . . . . .
-# # . . F . F . . . . . F . . F . . . . F F F . . F . . . . F F . F . . . . . . . .
-# # . . . . . . F . F . . . . . . . . . . F F . . . . . . . . F . F . . . . . . . F
-# # . . F F . . . . F F . . F . . . . F F . . . F . . . . . . . . . . F . . . . . .
-# # . . . . . . F . F . . . . . . . F . F . . . F . . . . . . . . . . . F . F . F .
-# # . . F F F . . . . . . . . . . . F
+# # . F . . . . . F . F . . . F . F . . F . . . . F . . . . . . . . . . . . . . .
+# # F . . F . . . . . . . . . . . . . . . . . F . . . . . . . . . . . F . . . . .
+# # . . . . . F . . . . . F . . . . . F . . . . . . . . . . . . . . F F . F . . .
+# # F . . . . . . . . . F F . F F . . . . F F . . . F . . . . . . . . . . . F . .
+# # . . . . . F . . F . . . . F . . . . F . . . . F . . . . . . F F . . . F . . F
+# # . . . F . . F F F . . . F . . . F F . . . . . . F . F . . . . . . F F F . . F
+# # . . . . F F . F . . . . F . . . . . . . . . F . F . . . . . . . . F F . . . .
+# # . . . . . . . F . F . . . . . . . . . F . . F F F . . . . F F . . . . F . . .
+# # F F . . F . . . . . . . . . . F . . . . . . . . . . . F . F . . . . . F . F .
+# # . . F . . . . . . . . . . . F F . . F . . . . F F F . . . . . . . . .
 # # (2/4) Converting to NDJSON (estimate: 40 s)...
 # # (3/4) Importing results into database (may take some time)...
 # # (4/4) Results history: not retrieved (euctrresultshistory = FALSE)
-# # = Imported or updated results for 376 trials
+# # = Imported or updated results for 386 trials
 # # Updated history ("meta-info" in "test")
 # # $n
-# # [1] 1470
+# # [1] 1531
 
 ## -----------------------------------------------------------------------------
 # # Loading specific query into same collection
