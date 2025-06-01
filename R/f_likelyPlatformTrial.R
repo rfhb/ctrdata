@@ -1,6 +1,6 @@
 #### history ####
 # 2025-01-27 first partly working version
-# 2025-02-08 improved
+# 2025-02-08, 2025-05-31 improved
 
 #' Calculate if study is likely a platform trial or not
 #'
@@ -32,9 +32,11 @@
 #' be used with \link{dbGetFieldsIntoDf}.
 #'
 #' @return data frame with columns `_id` and `.likelyPlatformTrial`, a logical,
-#' `.likelyRelatedTrials`, a list (e.g., from CTIS' `associatedClinicalTrials`)
-#' and `.maybeRelatedTrials`, a list (based on similar short terms within
-#' a first set of brackets or before a colon in the title).
+#' and two complementary columns, each with lists of identifiers found within
+#' the database collection: `.likelyRelatedTrials` (based on other identifiers
+#' of the trial record, including `associatedClinicalTrials` from CTIS) and
+#' `.maybeRelatedTrials` (based on similar short terms within a first set of
+#' brackets or before a colon in the trial title).
 #'
 #' @export
 #'
