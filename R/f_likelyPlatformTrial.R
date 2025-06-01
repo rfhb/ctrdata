@@ -89,25 +89,22 @@ f.likelyPlatformTrial <- function(df = NULL) {
     ),
     "ctis" = c(
       # CTIS1
-      "title",
       # "applications.fullTitle",
       # "authorizedPartI.trialDetails.clinicalTrialIdentifiers.fullTitle",
       # "authorizedPartI.trialDetails.clinicalTrialIdentifiers.publicTitle",
       "authorizedPartI.trialDetails.protocolInformation.studyDesign.periodDetails.title",
       # "authorizedPartI.trialDetails.protocolInformation.studyDesign.periodDetails.armDetails.title",
-      #
       # "authorizedPartI.trialDetails.associatedClinicalTrials.parentClinicalTrialId",
-      # "authorizedPartI.trialDetails.associatedClinicalTrials.ctNumber",
+      "authorizedPartI.trialDetails.associatedClinicalTrials.ctNumber",
       # "authorizedPartsII.mscInfo.clinicalTrialId",
-
+      #
       # CTIS2
       # "shortTitle" is mostly an uninformative study code
       # "authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.fullTitle",
       # "authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.publicTitle",
-      "authorizedApplication.authorizedPartI.trialDetails.protocolInformation.studyDesign.periodDetails.title"
-      #
+      "authorizedApplication.authorizedPartI.trialDetails.protocolInformation.studyDesign.periodDetails.title",
       # "authorizedApplication.authorizedPartI.trialDetails.associatedClinicalTrials.parentClinicalTrialId",
-      # "authorizedApplication.authorizedPartI.trialDetails.associatedClinicalTrials.ctNumber",
+      "authorizedApplication.authorizedPartI.trialDetails.associatedClinicalTrials.ctNumber"
       # "authorizedApplication.authorizedPartsII.mscInfo.clinicalTrialId"
     ))
 
@@ -180,16 +177,28 @@ f.likelyPlatformTrial <- function(df = NULL) {
     }, simplify = FALSE)
   }
 
-  # get and mangle mapping table
+  # get and mangle mapping table, add ids associated trials
   df2 <- .dbMapIdsTrials(con = parent.frame()$con)
+  df2 <- dplyr::left_join(df2, df[, c("_id",
+    "authorizedPartI.trialDetails.associatedClinicalTrials.ctNumber",
+    "authorizedApplication.authorizedPartI.trialDetails.associatedClinicalTrials.ctNumber"
+  )], by = "_id")
+  # collapse into single column that is a list
   df2$.likelyRelatedTrials <- rowColsList(
-    dplyr::select(df2, registerList))
+    dplyr::select(df2, c(
+      registerList,
+      "authorizedPartI.trialDetails.associatedClinicalTrials.ctNumber",
+      "authorizedApplication.authorizedPartI.trialDetails.associatedClinicalTrials.ctNumber"
+    )))
+  # expand rows for each list item
   df2 <- tidyr::unnest(
     df2, cols = .data$.likelyRelatedTrials)
+  # mangle, revert to one list in one row per trial
   df2 <- df2 %>%
-    dplyr::select(!c(registerList, "SPONSOR")) %>%
+    dplyr::select(c("_id", "ctrname", ".likelyRelatedTrials")) %>%
     tidyr::pivot_longer(cols = !"_id") %>%
-    dplyr::filter(.data$name != "EUCTR") %>% # since this has no country suffix
+    # since value has no country suffix as needed for _id
+    dplyr::filter(.data$name != "EUCTR") %>%
     dplyr::filter(.data$name != "ctrname") %>%
     dplyr::filter(.data$value != "") %>%
     dplyr::filter(.data$value != .data$`_id`) %>%
