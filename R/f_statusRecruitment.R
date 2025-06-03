@@ -144,7 +144,7 @@ f.statusRecruitment <- function(df = NULL) {
   #### . CTIS ####
   df %>% dplyr::mutate(
     helper_ctPublicStatusCode = dplyr::case_match(
-      .data$ctPublicStatusCode,
+      as.integer(.data$ctPublicStatusCode),
       1 ~ "Under evaluation",
       2 ~ "Authorised, recruitment pending",
       3 ~ "Authorised, recruiting",
