@@ -30,6 +30,7 @@
 #'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
 #'   collection = "my_trials",
 #'   flags = RSQLite::SQLITE_RO)
+#'
 #' df <- dbGetFieldsIntoDf(
 #'   fields = c(
 #'     "protocolSection.eligibilityModule.healthyVolunteers",
