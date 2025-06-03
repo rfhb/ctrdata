@@ -696,7 +696,7 @@ typeField <- function(dv, fn) {
     "ctrYesNo" = 'sapply(x, function(i) if (is.na(i)) NA else
        switch(i, "Yes" = TRUE, "No" = FALSE, NA), simplify = TRUE, USE.NAMES = FALSE)',
     "ctrFalseTrue" = 'if (is.numeric(x)) as.logical(x) else
-       sapply(x, function(i) switch(i, "true" = TRUE, "false" = FALSE, NA), USE.NAMES = FALSE)',
+       sapply(x, function(i) switch(tolower(i), "true" = TRUE, "false" = FALSE, NA), USE.NAMES = FALSE)',
     "ctrDate" = 'as.Date(x, tryFormats =
        c("%Y-%m-%d", "%Y-%m", "%Y-%m-%d %H:%M:%S", "%Y-%m-%dT%H:%M:%S",
     "%d/%m/%Y", "%Y-%m-%dT%H:%M:%S%z"))',

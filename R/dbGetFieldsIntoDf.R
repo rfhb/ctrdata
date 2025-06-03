@@ -376,6 +376,8 @@ dbGetFieldsIntoDf <- function(
     if (inherits(dfi[[i]], "data.frame") && !ncol(dfi[[i]])) next
 
     # simplify and replace NULL or logi NA with NA_character_
+    # being aware that logi NA can indicate all rows are empty
+    # or is a vector with logical values, then to be typed
     dfi[[i]][!sapply(dfi[[i]], length)] <- NA_character_
 
     # type column (NOTE this should not be a data frame because
