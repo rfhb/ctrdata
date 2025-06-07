@@ -31,19 +31,20 @@ b. trial has more than 2 active arms with different investigational medicines,
 after excluding comparator, auxiliary and placebo medicines (calculated with
 \link{f.numTestArmsSubstances}; not used for ISRCTN because it cannot be
 calculated precisely),
-c. trial more than 2 periods, after excluding safety run-in, screening,
+c. trial has more than 2 periods, after excluding safety run-in, screening,
 enrolling, extension and follow-up periods (for CTGOV and CTGOV2, this
 criterion requires results-related data).
+}
+\details{
 For EUCTR, requires that results have been included in the collection, using
 `ctrLoadQueryIntoDb(queryterm = ..., euctrresults = TRUE, con = ...)`.
 Requires packages dplyr and stringdist to be installed; stringdist is used
 for evaluating terms in brackets in the trial title, where trials may be
 related if the term similarity is 0.77 or higher.
-}
-\details{
+
 Publication references considered:
 \href{https://web.archive.org/web/20230314024441/https://eu-pearl.eu/wp-content/uploads/2020/06/EU-PEARL_D2.1_Report-on-Terminology-and-Scenarios-for-Platform-Trials-and-Masterprotocols.pdf}{EU-PEARL WP2 2020}
-and \href{https://doi.org/10.1136/bmj-2021-067745}{Williams RJ et al. 2022}
+and Williams RJ et al. 2022, \doi{10.1136/bmj-2021-067745}
 }
 \examples{
 # fields needed

@@ -332,7 +332,7 @@ ctrGetQueryUrl <- function(
         "* Found API call for CTGOV2, translating to URL query yet ",
         "this is likely incomplete and imperfect, check the result.")
 
-      # TODO
+      # TODO api to queryurl
       url <- sub("/api/v2/studies[?]", "/expert-search?", url)
       url <- sub("&query[.]term=", "&term=", url)
       url <- sub("&query[.][a-z]+=", " AND ", url)
