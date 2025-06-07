@@ -833,7 +833,6 @@ typeVars <- list(
   "authorizedApplication.authorizedPartsII.recruitmentSubjectCount" = "ctrInt",
   #
   # ctis until 2024-06-17
-  "totalNumberEnrolled"     = "ctrInt",
   "totalPartIISubjectCount" = "ctrInt",
   "authorizedPartI.rowSubjectCount" = "ctrInt",
   "applications.mscExtendedInfoList.numberSubjects" = "ctrInt",

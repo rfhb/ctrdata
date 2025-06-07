@@ -13,10 +13,10 @@ knitr::opts_chunk$set(
 #   collection = "my_collection_name"
 # )
 # db
-# # MongoDB  8.0.4 (uptime: 298113s)
-# # URL: mongodb://localhost
-# # Database: my_database_name
-# # Collection: my_collection_name
+# # src: MongoDB
+# # ver: 8.0.10
+# # db(s): my_database_name
+# # size(s): 107 MB
 # 
 # # empty collection if exists
 # nodbi::docdb_delete(db, db$collection)

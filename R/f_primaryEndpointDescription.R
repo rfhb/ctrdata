@@ -42,7 +42,7 @@ f.primaryEndpointDescription <- function(df = NULL) {
   # check generic, do not edit
   stopifnot(is.data.frame(df) || is.null(df))
 
-  # four estimand components
+  # four estimand attributes
   #
   # - V *variable* (or outcome) to be obtained or measured for each individual
   #   participant that is required to address the scientific question,
@@ -111,9 +111,12 @@ f.primaryEndpointDescription <- function(df = NULL) {
       # "clinical_results.outcome_list.outcome.type"
     ),
     "ctgov2" = c(
+      #
       "protocolSection.outcomesModule.primaryOutcomes.measure",
       "protocolSection.outcomesModule.primaryOutcomes.description",
       "protocolSection.outcomesModule.primaryOutcomes.timeFrame"
+      #
+      # resultsSection.outcomeMeasuresModule.outcomeMeasures.timeFrame
     ),
     "isrctn" = c(
       "trialDescription.primaryOutcome"

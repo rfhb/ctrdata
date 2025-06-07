@@ -19,7 +19,7 @@
 #'
 #' @return A vector, with the type of the columns to be merged
 #'
-#' @importFrom dplyr select
+#' @importFrom dplyr select coalesce
 #' @importFrom tidyr unite
 #'
 #' @export
@@ -72,8 +72,8 @@ dfMergeVariablesRelevel <- function(
   if (length(colnames) == 1L) return(df[[colnames]])
 
   # check
-  if(all(apply(df[, colnames, drop = FALSE], 1,
-           function(r) length(na.omit(r))) <= 1L)) {
+  if (all(apply(df[, colnames, drop = FALSE], 1,
+                function(r) length(na.omit(r))) <= 1L)) {
 
     out <- do.call(
       dplyr::coalesce, as.list(df[, colnames, drop = FALSE]))
