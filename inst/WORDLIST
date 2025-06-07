@@ -64,13 +64,11 @@ analyzing
 armsInterventionsModule
 associatedClinicalTrials
 backends
-bmj
 chisquared
 clipr
 cochranarmitagetrendtest
 codecov
 colums
-com
 controlType
 csv
 ctgov
@@ -117,7 +115,6 @@ euctrresults
 euctrresultsfilespath
 euctrresultshistory
 eudraCTNumber
-eupearld
 exactonesidedbinomialtest
 externalRefs
 faciliates
@@ -158,7 +155,6 @@ nodbi
 nonproprietary
 numSites
 numTestArmsSubstances
-org
 otherNames
 paed
 perl
@@ -203,7 +199,6 @@ tendencyValue
 testthat
 tibble
 tinytest
-tinyurl
 travis
 trialObjectives
 trialPhase
