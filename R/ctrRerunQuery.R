@@ -460,7 +460,9 @@ ctrRerunQuery <- function(
           # temporary file and cleanup
           tfname <- tempfile()
           on.exit(try(unlink(tfname), silent = TRUE), add = TRUE)
-          cat(exstJson, file = tfname, sep = "\n")
+          # TODO
+          # cat(exstJson, file = tfname, sep = "\n")
+          writeLines(exstJson, con = file(tfname))
 
           # update record, adding historical versions
           # avoid SQL issues by using file-based json

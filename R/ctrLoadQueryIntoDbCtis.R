@@ -129,9 +129,12 @@ ctrLoadQueryIntoDbCtis <- function(
 
   # prepare to retrieve overviews
   importDateTime <- strftime(Sys.time(), "%Y-%m-%d %H:%M:%S")
-  fTrialsNdjson <- file.path(tempDir, "ctis_add_api1.ndjson")
-  unlink(fTrialsNdjson)
-  on.exit(unlink(fTrialsNdjson), add = TRUE)
+  fTrialsNdjsonApi1 <- file.path(tempDir, "ctis_add_api1.ndjson")
+  unlink(fTrialsNdjsonApi1)
+  # TODO
+  fTrialsNdjsonApi1Con <- file(fTrialsNdjsonApi1, open = "at")
+  on.exit(try(close(fTrialsNdjsonApi1Con), silent = TRUE), add = TRUE)
+  on.exit(try(unlink(fTrialsNdjsonApi1), silent = TRUE), add = TRUE)
 
   # parallel running helper functions
   failure <- function(str) message(paste("Failed request:", str))
@@ -144,7 +147,8 @@ ctrLoadQueryIntoDbCtis <- function(
     if (is.list(x)) x <- rawToChar(x$content)
 
     # {...,"data":[{"ctNumber":"2023-510173-34-00","ctStatus"
-    cat(
+    # TODO
+    writeLines(
       jqr::jq(
         x, paste0(
           # extract trial records
@@ -158,9 +162,25 @@ ctrLoadQueryIntoDbCtis <- function(
                .primaryEndPoint, .sponsor, .conditions) "
         )
       ),
-      file =  fTrialsNdjson,
-      sep = "\n",
-      append = TRUE)
+      con =  fTrialsNdjsonApi1Con)
+
+    # cat(
+    #   jqr::jq(
+    #     x, paste0(
+    #       # extract trial records
+    #       " .data | .[] ",
+    #       # add canonical elements
+    #       '| .["_id"] = .ctNumber ',
+    #       '| .["ctrname"] = "CTIS" ',
+    #       '| .["record_last_import"] = "', importDateTime, '" ',
+    #       # keep only standardised fields
+    #       "| del(.id, .ctNumber, .product, .endPoint, .eudraCtInfo, .ctTitle,
+    #            .primaryEndPoint, .sponsor, .conditions) "
+    #     )
+    #   ),
+    #   file =  fTrialsNdjsonApi1,
+    #   sep = "\n",
+    #   append = TRUE)
 
     message(". ", appendLF = FALSE)
 
@@ -201,13 +221,16 @@ ctrLoadQueryIntoDbCtis <- function(
   # run in parallel
   curl::multi_run(pool = pool)
 
+  # close
+  close(fTrialsNdjsonApi1Con)
+
   # user info
   message("\r", appendLF = FALSE)
 
   # get ids
   idsTrials <- gsub(
     '"', "", as.character(
-      jqr::jq(file(fTrialsNdjson), ' ."_id" ')))
+      jqr::jq(file(fTrialsNdjsonApi1), ' ."_id" ')))
 
   ## api_2: per trial partI, partsII ------------------------------------------
 
@@ -237,24 +260,37 @@ ctrLoadQueryIntoDbCtis <- function(
   # mangle and save as ndjson
   for (g in unique(groupNo)) {
 
+    # TODO
+    fTrialsNdjsonApi2 <- file.path(tempDir, sprintf("ctis_trials_api2_%i.ndjson", g))
+    fTrialsNdjsonApi2Con <- file(fTrialsNdjsonApi2, open = "at")
+    on.exit(try(close(fTrialsNdjsonApi2Con), silent = TRUE), add = TRUE)
+
     sapply(
       na.omit(tmp[["destfile"]][groupNo == g]), function(f) {
 
         if (!file.exists(f)) return()
 
-        cat(
+        writeLines(
           stringi::stri_replace_all_regex(
             readLines(f, warn = FALSE),
             '^\\{"ctNumber": *"([-0-9]+)",',
             '{"_id": "$1", "ctNumber": "$1",'),
-          file = file.path(
-            tempDir,
-            sprintf("ctis_trials_api2_%i.ndjson", g)),
-          sep = "\n",
-          append = TRUE)
+          con = fTrialsNdjsonApi2Con)
+
+        # cat(
+        #   stringi::stri_replace_all_regex(
+        #     readLines(f, warn = FALSE),
+        #     '^\\{"ctNumber": *"([-0-9]+)",',
+        #     '{"_id": "$1", "ctNumber": "$1",'),
+        #   file = file.path(
+        #     tempDir,
+        #     sprintf("ctis_trials_api2_%i.ndjson", g)),
+        #   sep = "\n",
+        #   append = TRUE)
 
       })
 
+    close(fTrialsNdjsonApi2Con)
     message(g * nRecords, "...\r", appendLF = FALSE)
 
   }
@@ -272,7 +308,7 @@ ctrLoadQueryIntoDbCtis <- function(
   message(". ", appendLF = FALSE)
   updated <- nodbi::docdb_update(
     src = con, key = con$collection, query = "{}",
-    value = fTrialsNdjson)
+    value = fTrialsNdjsonApi1)
 
   message(" ")
 
@@ -288,14 +324,18 @@ ctrLoadQueryIntoDbCtis <- function(
     # get temporary file
     downloadsNdjson <- file.path(tempDir, "ctis_downloads.ndjson")
     unlink(downloadsNdjson)
-    on.exit(unlink(downloadsNdjson), add = TRUE)
+    # on.exit(unlink(downloadsNdjson), add = TRUE)
+    # TODO
+    downloadsNdjsonCon <- file(downloadsNdjson, open = "at")
+    on.exit(try(close(downloadsNdjsonCon), silent = TRUE), add = TRUE)
+    on.exit(try(unlink(downloadsNdjson), silent = TRUE), add = TRUE)
 
     # iterate to get docs information
     for (f in dir(tempDir, "ctis_trials_api2_[0-9]+.ndjson", full.names = TRUE)) {
 
       message(". ", appendLF = FALSE)
 
-      cat(
+      writeLines(
         jqr::jqr(
           file(f),
           " ._id as $_id | .documents[] | { $_id,
@@ -303,13 +343,24 @@ ctrLoadQueryIntoDbCtis <- function(
             fileType, associatedEntityId } ",
           flags = jqr::jq_flags(pretty = FALSE)
         ),
-        file = downloadsNdjson,
-        sep = "\n",
-        append = TRUE)
+        con = downloadsNdjsonCon)
+
+      # cat(
+      #   jqr::jqr(
+      #     file(f),
+      #     " ._id as $_id | .documents[] | { $_id,
+      #       title, uuid, documentType, documentTypeLabel,
+      #       fileType, associatedEntityId } ",
+      #     flags = jqr::jq_flags(pretty = FALSE)
+      #   ),
+      #   file = downloadsNdjson,
+      #   sep = "\n",
+      #   append = TRUE)
 
       unlink(f)
     }
     message(" ")
+    close(downloadsNdjsonCon)
 
     # 3 - documents download
     dlFiles <- jsonlite::stream_in(
