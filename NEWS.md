@@ -1,4 +1,4 @@
-# ctrdata 1.22.2.9000
+# ctrdata 1.22.3
 
 - Added dev version of `nodbi` to GitHub Action
 - Added typing to CTIS field for `f.statusRecruitment`
