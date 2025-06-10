@@ -12,6 +12,7 @@
 #' @importFrom jqr jq
 #' @importFrom jsonlite toJSON
 #' @importFrom nodbi docdb_query docdb_update
+#' @importFrom curl curl_fetch_memory
 #'
 ctrRerunQuery <- function(
     querytoupdate = querytoupdate,
@@ -113,7 +114,7 @@ ctrRerunQuery <- function(
       # &rcv_s=&rcv_e=&lup_s=01%2F01%2F2015&lup_e=12%2F31%2F2016
 
       # if "lup_s" is already in query term, just re-run full query to avoid
-      # multiple queries in history that only differ in the timestamp:
+      # multiple queries in history that only differ in timestamp:
       if (grepl("&lup_[se]=[0-9]{2}", queryterm)) {
 
         # remove queryupdateterm, thus running full again
@@ -150,7 +151,7 @@ ctrRerunQuery <- function(
       # https://www.clinicaltrials.gov/search?cond=Cancer&lastUpdPost=2022-01-01_2023-12-31
 
       # if "lastUpdPost" is already in query term, just re-run full query to avoid
-      # multiple queries in history that only differ in the timestamp:
+      # multiple queries in history that only differ in timestamp:
       if (grepl("&lastUpdPost=[0-9]{2}", queryterm)) {
 
         # remove queryupdateterm, thus running full again
@@ -460,8 +461,6 @@ ctrRerunQuery <- function(
           # temporary file and cleanup
           tfname <- tempfile()
           on.exit(try(unlink(tfname), silent = TRUE), add = TRUE)
-          # TODO
-          # cat(exstJson, file = tfname, sep = "\n")
           writeLines(exstJson, con = file(tfname))
 
           # update record, adding historical versions

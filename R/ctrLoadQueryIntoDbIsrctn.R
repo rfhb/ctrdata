@@ -188,7 +188,11 @@ ctrLoadQueryIntoDbIsrctn <- function(
                     ".xml"))
 
   # get (download) trials into single file f
-  ctrMultiDownload(isrctndownloadurl, f, verbose = verbose)
+  ctrMultiDownload(
+    urls = isrctndownloadurl,
+    destfiles = f,
+    verbose = verbose
+  )
 
   # inform user
   if (!file.exists(f) || file.size(f) == 0L) {

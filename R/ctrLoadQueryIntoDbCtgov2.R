@@ -285,6 +285,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
 
   # download and compile into ndjson
   while (TRUE) {
+
     # page url
     urlToDownload <- ifelse(
       pageNextToken != "",
@@ -304,17 +305,14 @@ ctrLoadQueryIntoDbCtgov2 <- function(
 
     # do download
     tmp <- ctrMultiDownload(
-      urlToDownload,
-      fTrialJson,
+      urls = urlToDownload,
+      destfiles = fTrialJson,
       verbose = verbose
     )
 
     # inform user
-    if (tmp[1, "status_code", drop = TRUE] != 200L) {
-      message(
-        "Download not successful for ", urlToDownload
-      )
-    }
+    if (!tmp$success) message(
+        "Download not successful for ", urlToDownload)
 
     # convert to ndjson
     message("(2/3) Converting to NDJSON...\r", appendLF = FALSE)

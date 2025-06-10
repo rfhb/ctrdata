@@ -330,4 +330,3 @@ expect_message(
   ),
   "Newly saved [0-9]+ document[(]s[)] for [0-9]+ trial"
 )
-

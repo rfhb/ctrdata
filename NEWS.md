@@ -1,6 +1,6 @@
 # ctrdata 1.22.3.9000
 
-new development version
+- Replaced `curl` with `httr2` for retrieving files faster and with less error handling
 
 # ctrdata 1.22.3
 

@@ -227,8 +227,10 @@ ctrLoadQueryIntoDbCtis <- function(
 
   # "HTTP server doesn't seem to support byte ranges. Cannot resume."
   tmp <- ctrMultiDownload(
-    urls, fPartIPartsIIJson(idsTrials),
-    multiplex = FALSE, verbose = verbose)
+    urls = urls,
+    destfiles = fPartIPartsIIJson(idsTrials),
+    verbose = verbose
+  )
 
   # convert partI and partsII details into ndjson file(s),
   # each approximately 10MB for nRecords = 100L
@@ -245,7 +247,8 @@ ctrLoadQueryIntoDbCtis <- function(
     on.exit(try(close(fTrialsNdjsonApi2Con), silent = TRUE), add = TRUE)
 
     sapply(
-      na.omit(tmp[["destfile"]][groupNo == g]), function(f) {
+      X = na.omit(tmp$destfile[groupNo == g]),
+      FUN = function(f) {
 
         if (!file.exists(f)) return()
 
