@@ -12,7 +12,7 @@
 #' @importFrom jqr jq
 #' @importFrom jsonlite toJSON
 #' @importFrom nodbi docdb_query docdb_update
-#' @importFrom curl curl_fetch_memory
+#' @importFrom httr2 req_perform req_body_json request
 #'
 ctrRerunQuery <- function(
     querytoupdate = querytoupdate,
@@ -346,41 +346,62 @@ ctrRerunQuery <- function(
         # iterate
         while (TRUE) {
 
-          # based on ctrLoadQueryIntoDb.R#77
+          # based on ctrLoadQueryIntoDbCtis.R#77
+          # initialData <- try(rawToChar(
+          #   curl::curl_fetch_memory(
+          #     url = "https://euclinicaltrials.eu/ctis-public-api/search",
+          #     handle = curl::new_handle(
+          #       postfields = paste0(
+          #         # add pagination parameters
+          #         '{"pagination":{"page":', pageNumber, ",",
+          #         # empirically found this as max
+          #         '"size":999},',
+          #         # add search criteria
+          #         sub(
+          #           "searchCriteria=", '"searchCriteria":',
+          #           # handle empty search query terms
+          #           ifelse(
+          #             queryterm != "", queryterm,
+          #             'searchCriteria={}'),
+          #         ),
+          #         # remaining parameters needed for proper server response
+          #         ',"sort":{"property":"decisionDate","direction":"DESC"}}'
+          #       ) # paste
+          #     ) # curl
+          #   )$content), silent = TRUE)
+
           initialData <- try(rawToChar(
-            curl::curl_fetch_memory(
-              url = "https://euclinicaltrials.eu/ctis-public-api/search",
-              handle = curl::new_handle(
-                postfields = paste0(
-                  # add pagination parameters
-                  '{"pagination":{"page":', pageNumber, ",",
-                  # empirically found this as max
-                  '"size":999},',
-                  # add search criteria
-                  sub(
-                    "searchCriteria=", '"searchCriteria":',
-                    # handle empty search query terms
-                    ifelse(
-                      queryterm != "", queryterm,
-                      'searchCriteria={}'),
-                  ),
-                  # remaining parameters needed for proper server response
-                  ',"sort":{"property":"decisionDate","direction":"DESC"}}'
-                ) # paste
-              ) # curl
-            )$content), silent = TRUE)
+            httr2::req_perform(
+              req = httr2::req_body_json(
+                req = httr2::request(base_url = ctisEndpoints[1]),
+                data = jsonlite::fromJSON(
+                  paste0(
+                    # add pagination parameters
+                    '{"pagination":{"page":', pageNumber, ",",
+                    # empirically found this as max
+                    '"size":999},',
+                    # add search criteria
+                    sub(
+                      "searchCriteria=", '"searchCriteria":',
+                      # handle empty search query terms
+                      ifelse(
+                        queryterm != "", queryterm,
+                        'searchCriteria={}'),
+                    ),
+                    # remaining parameters needed for proper server response
+                    ',"sort":{"property":"decisionDate","direction":"DESC"}}'
+                  ))
+              )
+            )$body),
+            silent = TRUE)
 
           # accumulate trial identifiers
           idsUpdatedTrials <- c(
             idsUpdatedTrials, gsub(
-              '"', "",
-              jqr::jq(initialData, " .data[].ctNumber ")
+              '"', "", jqr::jq(initialData, " .data[].ctNumber ")
             ))
 
-          # length(trialIds)
-
           pageNumber <- pageNumber + 1L
-
           if (jqr::jq(initialData, ".pagination.nextPage") == "false") break
 
         } # while

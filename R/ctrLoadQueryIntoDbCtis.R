@@ -12,8 +12,8 @@
 #' @importFrom nodbi docdb_update
 #' @importFrom jsonlite stream_in fromJSON
 #' @importFrom stringi stri_extract_all_regex stri_replace_all_fixed stri_replace_all_regex
-#' @importFrom httr GET status_code content
 #' @importFrom digest digest
+#' @importFrom httr2 req_perform req_body_json request
 #'
 ctrLoadQueryIntoDbCtis <- function(
     queryterm = queryterm,
@@ -71,26 +71,46 @@ ctrLoadQueryIntoDbCtis <- function(
   # {"containAll":"infection","containAny":"neonates","containNot":""}
 
   # get page data
+  # TODO
+  # initialData <- try(rawToChar(
+  #   curl::curl_fetch_memory(
+  #     url = ctisEndpoints[1],
+  #     handle = curl::new_handle(
+  #       postfields = paste0(
+  #         # add pagination parameters
+  #         '{"pagination":{"page":1,"size":1},',
+  #         # add search criteria
+  #         sub(
+  #           "searchCriteria=", '"searchCriteria":',
+  #           # handle empty search query terms
+  #           ifelse(
+  #             queryterm != "", queryterm,
+  #             'searchCriteria={}')
+  #         ),
+  #         # remaining parameters needed for proper server response
+  #         ',"sort":{"property":"decisionDate","direction":"DESC"}}'
+  #       ) # paste
+  #     ) # curl
+  #   )$content), silent = TRUE)
+
   initialData <- try(rawToChar(
-    curl::curl_fetch_memory(
-      url = ctisEndpoints[1],
-      handle = curl::new_handle(
-        postfields = paste0(
-          # add pagination parameters
-          '{"pagination":{"page":1,"size":1},',
-          # add search criteria
-          sub(
-            "searchCriteria=", '"searchCriteria":',
-            # handle empty search query terms
-            ifelse(
-              queryterm != "", queryterm,
-              'searchCriteria={}'),
-          ),
-          # remaining parameters needed for proper server response
-          ',"sort":{"property":"decisionDate","direction":"DESC"}}'
-        ) # paste
-      ) # curl
-    )$content), silent = TRUE)
+    httr2::req_perform(
+      req = httr2::req_body_json(
+        req = httr2::request(base_url = ctisEndpoints[1]),
+        data = jsonlite::fromJSON(
+          paste0(
+            # add pagination parameters
+            '{"pagination":{"page":1,"size":1},',
+            # add search criteria
+            sub("searchCriteria=", '"searchCriteria":',
+                # handle empty search query terms
+                ifelse(queryterm != "", queryterm, 'searchCriteria={}')),
+            # remaining parameters needed for proper server response
+            ',"sort":{"property":"decisionDate","direction":"DESC"}}'
+          ))
+      )
+    )$body),
+    silent = TRUE)
 
   # early exit
   if (inherits(initialData, "try-error")) {
@@ -129,26 +149,131 @@ ctrLoadQueryIntoDbCtis <- function(
 
   # prepare to retrieve overviews
   importDateTime <- strftime(Sys.time(), "%Y-%m-%d %H:%M:%S")
+
+  # fTrialsNdjsonApi1 <- file.path(tempDir, "ctis_add_api1.ndjson")
+  # unlink(fTrialsNdjsonApi1)
+  # fTrialsNdjsonApi1Con <- file(fTrialsNdjsonApi1, open = "at")
+  # on.exit(try(close(fTrialsNdjsonApi1Con), silent = TRUE), add = TRUE)
+  # on.exit(try(unlink(fTrialsNdjsonApi1), silent = TRUE), add = TRUE)
+  #
+  # # parallel running helper functions
+  # failure <- function(str) message(paste("Failed request:", str))
+  # pool <- curl::new_pool()
+
+  nRecords <- 100L
+
+  # # main function for handling results
+  # success <- function(x) {
+  #
+  #   if (is.list(x)) x <- rawToChar(x$content)
+  #
+  #   # {...,"data":[{"ctNumber":"2023-510173-34-00","ctStatus"
+  #   writeLines(
+  #     jqr::jq(
+  #       x, paste0(
+  #         # extract trial records
+  #         " .data | .[] ",
+  #         # add canonical elements
+  #         '| .["_id"] = .ctNumber ',
+  #         '| .["ctrname"] = "CTIS" ',
+  #         '| .["record_last_import"] = "', importDateTime, '" ',
+  #         # keep only standardised fields
+  #         "| del(.id, .ctNumber, .product, .endPoint, .eudraCtInfo, .ctTitle,
+  #              .primaryEndPoint, .sponsor, .conditions) "
+  #       )
+  #     ),
+  #     con =  fTrialsNdjsonApi1Con)
+  #
+  #   message(". ", appendLF = FALSE)
+  #
+  # }
+  #
+  # # create POST requests
+  # sapply(seq_len(overview$totalPages %/% nRecords + 1L), function(i) {
+  #   curl::multi_add(
+  #     curl::new_handle(
+  #       url = ctisEndpoints[1],
+  #       postfields = paste0(
+  #         # add pagination parameters
+  #         paste0(
+  #           '{"pagination":{"page":', i, ',"size":', nRecords, "},"),
+  #         # add search criteria
+  #         sub(
+  #           "searchCriteria=", '"searchCriteria":',
+  #           # handle empty search query terms
+  #           ifelse(
+  #             queryterm != "", queryterm,
+  #             'searchCriteria={}'),
+  #         ),
+  #         # remaining parameters needed for proper server response
+  #         ',"sort":{"property":"decisionDate","direction":"DESC"}}'
+  #       ) # paste
+  #     ), # handle
+  #     done = success,
+  #     fail = failure,
+  #     data = NULL,
+  #     pool = pool
+  #   )
+  # })
+  #
+  # # important on 2024-06-29 disable HTTP/2 multiplexing
+  # # as it leads to data loss with ctis servers
+  # curl::multi_set(multiplex = FALSE, pool = pool)
+  #
+  # # run in parallel
+  # curl::multi_run(pool = pool)
+  #
+  # # close
+  # close(fTrialsNdjsonApi1Con)
+
+
+  # TODO new
+
+  pageNo <- seq_len(overview$totalPages %/% nRecords + 1L)
+
+  fTrialsJsonApi1PageFiles <- file.path(
+    tempDir, paste0("ctis_api1_page_", pageNo, ".json"))
+
+  on.exit(unlink(dir(tempDir, "ctis_api1_page_.*.json", full.names = TRUE)), add = TRUE)
+
+  jsonApi1Pages <- paste0(
+    # add pagination parameters
+    paste0(
+      '{"pagination":{"page":', pageNo, ',"size":', nRecords, "},"),
+    # add search criteria
+    sub(
+      "searchCriteria=", '"searchCriteria":',
+      # handle empty search query terms
+      ifelse(
+        queryterm != "", queryterm,
+        'searchCriteria={}'),
+    ),
+    # remaining parameters needed for proper server response
+    ',"sort":{"property":"decisionDate","direction":"DESC"}}'
+  )
+
+  # download files
+  tmp <- ctrMultiDownload(
+    urls = rep.int(ctisEndpoints[1], length(pageNo)),
+    destfiles = fTrialsJsonApi1PageFiles,
+    data = jsonApi1Pages,
+    verbose = verbose
+  )
+
+  # prepare files
   fTrialsNdjsonApi1 <- file.path(tempDir, "ctis_add_api1.ndjson")
   unlink(fTrialsNdjsonApi1)
   fTrialsNdjsonApi1Con <- file(fTrialsNdjsonApi1, open = "at")
   on.exit(try(close(fTrialsNdjsonApi1Con), silent = TRUE), add = TRUE)
   on.exit(try(unlink(fTrialsNdjsonApi1), silent = TRUE), add = TRUE)
 
-  # parallel running helper functions
-  failure <- function(str) message(paste("Failed request:", str))
-  pool <- curl::new_pool()
-  nRecords <- 100L
-
-  # main function for handling results
-  success <- function(x) {
-
-    if (is.list(x)) x <- rawToChar(x$content)
-
+  # iterate over json files and create ndjson
+  invisible(sapply(
+    fTrialsJsonApi1PageFiles,
     # {...,"data":[{"ctNumber":"2023-510173-34-00","ctStatus"
-    writeLines(
+    function(i) writeLines(
       jqr::jq(
-        x, paste0(
+        file(i), paste0(
           # extract trial records
           " .data | .[] ",
           # add canonical elements
@@ -156,52 +281,15 @@ ctrLoadQueryIntoDbCtis <- function(
           '| .["ctrname"] = "CTIS" ',
           '| .["record_last_import"] = "', importDateTime, '" ',
           # keep only standardised fields
-          "| del(.id, .ctNumber, .product, .endPoint, .eudraCtInfo, .ctTitle,
-               .primaryEndPoint, .sponsor, .conditions) "
-        )
-      ),
-      con =  fTrialsNdjsonApi1Con)
+          "| del(.id, .ctNumber, .product, .endPoint, .eudraCtInfo,
+                 .ctTitle, .primaryEndPoint, .sponsor, .conditions) "
+        )),
+      con =  fTrialsNdjsonApi1Con),
+    USE.NAMES = FALSE))
+  writeLines("", con = fTrialsNdjsonApi1Con)
 
-    message(". ", appendLF = FALSE)
-
-  }
-
-  # create POST requests
-  sapply(seq_len(overview$totalPages %/% nRecords + 1L), function(i) {
-    curl::multi_add(
-      curl::new_handle(
-        url = ctisEndpoints[1],
-        postfields = paste0(
-          # add pagination parameters
-          paste0(
-            '{"pagination":{"page":', i, ',"size":', nRecords, "},"),
-          # add search criteria
-          sub(
-            "searchCriteria=", '"searchCriteria":',
-            # handle empty search query terms
-            ifelse(
-              queryterm != "", queryterm,
-              'searchCriteria={}'),
-          ),
-          # remaining parameters needed for proper server response
-          ',"sort":{"property":"decisionDate","direction":"DESC"}}'
-        ) # paste
-      ), # handle
-      done = success,
-      fail = failure,
-      data = NULL,
-      pool = pool
-    )
-  })
-
-  # important on 2024-06-29 disable HTTP/2 multiplexing
-  # as it leads to data loss with ctis servers
-  curl::multi_set(multiplex = FALSE, pool = pool)
-
-  # run in parallel
-  curl::multi_run(pool = pool)
-
-  # close
+  # cleanup and close
+  unlink(dir(tempDir, "ctis_api1_page_.*.json", full.names = TRUE))
   close(fTrialsNdjsonApi1Con)
 
   # user info

@@ -849,6 +849,7 @@ addMetaData <- function(x, con) {
 #' @param urls Vector of urls to be downloaded
 #' @param destfiles Vector of local file names into which to download
 #' @param progress Set to \code{FALSE} to not print progress bar
+#' @param data JSON string
 #' @param verbose If \code{TRUE}, prints additional information
 #' (default \code{FALSE}).
 #'
@@ -858,13 +859,14 @@ addMetaData <- function(x, con) {
 #' @return Data frame with columns such as status_code etc
 #'
 #' @importFrom utils URLencode
-#' @importFrom jsonlite fromJSON
-#' @importFrom httr2 request req_throttle req_perform_parallel
-#' @importFrom dplyr left_join
+#' @importFrom jsonlite fromJSON toJSON validate
+#' @importFrom httr2 request req_throttle req_perform_parallel req_body_json
+#' @importFrom dplyr rows_update
 #'
 ctrMultiDownload <- function(
     urls,
     destfiles,
+    data = NULL,
     progress = TRUE,
     verbose = TRUE) {
 
@@ -882,9 +884,17 @@ ctrMultiDownload <- function(
          (is.na(file.size(destfiles)) |
             file.size(destfiles) > 20L)] <- FALSE
 
+  # mangle data
+  if (is.null(data)) data <- rep.int(NA, length(toDo))
+  data <- sapply(data, function(i) ifelse(
+    is.null(i) || is.na(i) || !jsonlite::validate(i), NA,
+    jsonlite::toJSON(jsonlite::fromJSON(i), auto_unbox = TRUE)),
+    USE.NAMES = FALSE)
+
   downloadValue <- data.frame(
     "success" = !toDo,
     "destfile" = destfiles,
+    "data" = data,
     "url" = utils::URLencode(urls),
     "status_code" = rep.int(NA_integer_, length(toDo)),
     "urlResolved" = rep.int(NA_character_, length(toDo)),
@@ -904,22 +914,62 @@ ctrMultiDownload <- function(
       downloadValue$urlResolved[!is.na(downloadValue$urlResolved)]
 
     # do download
+
+    # args <- c(
+    #   urls = list(utils::URLencode(downloadValue$url[toDo])),
+    #   destfiles = list(downloadValue$destfile[toDo]),
+    #   resume = FALSE,
+    #   progress = progress,
+    #   multiplex = FALSE,
+    #   c(getOption("httr_config")[["options"]],
+    #     accept_encoding = "gzip,deflate,zstd,br")
+    # )
+    #
+    # # do download
+    # system.time(
+    #   res <- do.call(curl::multi_download, args)
+    # )
+
+    # system.time(
     res <- httr2::req_perform_parallel(
-      reqs = lapply(
-        downloadValue$url,
-        function(i) httr2::req_throttle(
-          httr2::request(i),
-          # TODO hard-coded throttling, max 4 MB/s
-          # ensures that you never make more
-          # than capacity requests in fill_time_s
-          capacity = 20L * 10L,
-          fill_time_s = 10L
-        )),
+      reqs = mapply(
+        FUN = function(u, d) {
+          # start with basic request
+          r <- httr2::request(u)
+
+          # curl::curl_options("vers")
+          r <- httr2::req_options(r, http_version = 2)
+
+          # conditionally add body
+          if (!is.na(d)) r <-
+            httr2::req_body_json(r, jsonlite::fromJSON(d))
+          # hard-coded throttling, max 4 MB/s
+          r <- httr2::req_throttle(
+            req = r,
+            # ensures that you never make more
+            # than capacity requests in fill_time_s
+            capacity = 20L * 60L,
+            fill_time_s = 60L
+          )
+          return(r)
+        },
+        u = downloadValue$url,
+        d = downloadValue$data,
+        SIMPLIFY = FALSE,
+        USE.NAMES = FALSE
+      ),
       paths = downloadValue$destfile,
       on_error = "continue",
       progress = progress,
       max_active = 10L
     )
+    # )
+
+    # helper
+    body2json <- function(x) {
+      if (is.null(x)) return(NA)
+      as.character(jsonlite::toJSON(x, auto_unbox = TRUE))
+    }
 
     # mangle results info
     res <- lapply(
@@ -932,7 +982,8 @@ ctrMultiDownload <- function(
             "url" = r$request$url,
             "destfile" = NA_character_,
             "content_type" = NA_character_,
-            "urlResolved" = NA_character_
+            "urlResolved" = NA_character_,
+            "data" = body2json(r$request$body$data)
           )
         )
         if (inherits(r, "httr2_error")) return(
@@ -942,7 +993,8 @@ ctrMultiDownload <- function(
             "url" = r$request$url,
             "destfile" = as.character(r$resp$body),
             "content_type" = NA_character_,
-            "urlResolved" = NA_character_
+            "urlResolved" = NA_character_,
+            "data" = body2json(r$request$body$data)
           )
         ) # else
         return(
@@ -952,7 +1004,8 @@ ctrMultiDownload <- function(
             "url" = r[["url"]],
             "destfile" = as.character(r[["body"]]),
             "content_type" = r[["headers"]]$`content-type`,
-            "urlResolved" = NA_character_
+            "urlResolved" = NA_character_,
+            "data" = body2json(r$request$body$data)
           )
         )})
     res <- as.data.frame(do.call(rbind, res))
@@ -990,9 +1043,10 @@ ctrMultiDownload <- function(
     downloadValue <- dplyr::rows_update(
       downloadValue,
       # do not include destfile as this may be NA in res
-      res[, c("success", "status_code", "url", "content_type",
-              "urlResolved"), drop = FALSE],
-      by = "url"
+      res[, c("success", "status_code", "url", "urlResolved",
+              "content_type", "data"), drop = FALSE],
+      by = c("url", "data")[seq_len(
+        ifelse(all(is.na(downloadValue$data)), 1L, 2L))]
     )
 
     if (inherits(downloadValue, "try-error")) {

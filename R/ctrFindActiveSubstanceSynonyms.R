@@ -66,7 +66,9 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE
   ))
 
   # call endpoint
-  tmp <- try(httr::GET(url = apiEndpoint), silent = TRUE)
+  # TODO
+  # tmp <- try(httr::GET(url = apiEndpoint), silent = TRUE)
+  tmp <- try(httr2::req_perform(httr2::request(base_url = apiEndpoint)), silent = TRUE)
 
   # check result
   if (inherits(tmp, "try-error") || tmp[["status_code"]] == 404L) {
@@ -78,7 +80,7 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE
   }
 
   # get content
-  jsn <- rawToChar(tmp[["content"]])
+  jsn <- rawToChar(tmp[["body"]])
 
   # digest results
   nrec <- jqr::jq(textConnection(jsn), " .studies | length ")
