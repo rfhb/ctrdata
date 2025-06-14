@@ -50,10 +50,10 @@ ctrdataUseragent <- paste0(
 #' @param url url or data frame with query term
 #' @param register any of the register names
 #'
+#' @returns string
+#'
 #' @keywords internal
 #' @noRd
-#'
-#' @returns string
 #'
 #' @examples
 #'
@@ -112,13 +112,12 @@ ctgovVersion <- function(url, register) {
 #'
 #' @param url url intended for a search in the classic CTGOV website
 #'
+#' @returns string url suitable for a search current CTGOV website
+#'
 #' @keywords internal
 #' @noRd
 #'
-#' @importFrom countrycode countrycode
 #' @importFrom utils URLdecode
-#'
-#' @returns string url suitable for a search current CTGOV website
 #'
 #' @examples
 #'
@@ -424,10 +423,22 @@ ctgovClassicToCurrent <- function(url, verbose = TRUE) {
   if (grepl("[?&]country=[^$&]", apiParams)) {
 
     countryCode <- sub(".+([?&]country=)([A-Z]+)([$&]).*", "\\2", apiParams)
+
+    # TODO
+
+    # # translate from 2 letter ISO to English name
+    # f (countryCode != apiParams) apiParams <-
+    #   sub("([?&]country=)([A-Z]+)([$&])",
+    #       paste0("\\1", countrycode::countrycode(
+    #         countryCode, "iso2c", "iso.name.en"), "\\3"),
+    #       apiParams)
+
+    # translate from 2 letter ISO to English name
     if (countryCode != apiParams) apiParams <-
         sub("([?&]country=)([A-Z]+)([$&])",
-            paste0("\\1", countrycode::countrycode(
-              countryCode, "iso2c", "iso.name.en"), "\\3"),
+            paste0("\\1", countryTable[which(
+              countryCode == countryTable[, 3]
+            ), 2, drop == TRUE][1], "\\3"),
             apiParams)
   }
 
