@@ -304,7 +304,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
       tempDir, paste0(
         "ctgov_trials_",
         # include query in file name for potential re-download
-        sapply(url, digest::digest, algo = "crc32"),
+        sapply(url, rlang::hash),
         "_", pageNumber, ".json"
       )
     )
