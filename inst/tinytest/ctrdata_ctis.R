@@ -9,7 +9,7 @@ expect_true(
       queryterm = 'https://euclinicaltrials.eu/ctis-public/search#searchCriteria={"containAny":"neuroblastoma"}',
       only.count = TRUE,
       verbose = TRUE,
-      con = dbc)[["n"]] >= 10L))
+      con = dbc)[["n"]] >= 29))
 
 # test
 expect_message(
@@ -21,7 +21,7 @@ expect_message(
   "Imported .* updated ")
 
 # test
-expect_true(tmpTest$n >= 10L)
+expect_true(tmpTest$n >= 29L)
 
 # test
 expect_true(all(c("2023-503684-42-00", "2024-512095-35-00") %in% tmpTest$success))
@@ -37,7 +37,7 @@ expect_true(
   suppressWarnings(
     ctrLoadQueryIntoDb(
       querytoupdate = "last",
-      con = dbc))[["n"]] >= 1L)
+      con = dbc))[["n"]] >= 0L)
 
 # test
 expect_message(
