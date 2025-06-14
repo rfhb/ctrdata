@@ -28,8 +28,9 @@
 #' dbQueryHistory(con = dbc)
 #'
 dbQueryHistory <- function(con, verbose = FALSE) {
+
   ## check database connection
-  if (is.null(con$ctrDb)) con <- ctrDb(con = con)
+  con <- ctrDb(con = con)
 
   # debug
   if (verbose) message("Running dbQueryHistory ...")
