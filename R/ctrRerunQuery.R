@@ -7,12 +7,11 @@
 #' @keywords internal
 #' @noRd
 #'
-#' @importFrom httr content GET
 #' @importFrom stringi stri_extract_all_regex
 #' @importFrom jqr jq
 #' @importFrom jsonlite toJSON
 #' @importFrom nodbi docdb_query docdb_update
-#' @importFrom httr2 req_perform req_body_json request
+#' @importFrom httr2 req_perform req_body_json request req_user_agent
 #'
 ctrRerunQuery <- function(
     querytoupdate = querytoupdate,
@@ -208,17 +207,25 @@ ctrRerunQuery <- function(
         #
         if (verbose) message("DEBUG (rss url): ", rssquery)
         #
-        resultsRss <- try(httr::content(
-          httr::GET(url = rssquery),
-          encoding = "UTF-8",
-          as = "text"), silent = TRUE)
-
+        # TODO
+        # resultsRss <- try(httr::content(
+        #   httr::GET(url = rssquery),
+        #   encoding = "UTF-8",
+        #   as = "text"), silent = TRUE)
+        resultsRss <- try(rawToChar(
+          httr2::req_perform(
+            httr2::req_user_agent(
+              httr2::request(
+                rssquery),
+              ctrdataUseragent
+            ))$body), silent = TRUE)
+        #
         # check plausibility
         if (inherits(resultsRss, "try-error")) {
           stop("Download from EUCTR failed; last error: ",
                class(resultsRss), call. = FALSE)
         }
-
+        #
         # inform user
         if (verbose) message("DEBUG (rss content): ", resultsRss)
         #
@@ -372,8 +379,11 @@ ctrRerunQuery <- function(
 
           initialData <- try(rawToChar(
             httr2::req_perform(
-              req = httr2::req_body_json(
-                req = httr2::request(base_url = ctisEndpoints[1]),
+              httr2::req_body_json(
+                httr2::req_user_agent(
+                  httr2::request(
+                    "https://euclinicaltrials.eu/ctis-public-api/search"),
+                  ctrdataUseragent),
                 data = jsonlite::fromJSON(
                   paste0(
                     # add pagination parameters
@@ -391,9 +401,7 @@ ctrRerunQuery <- function(
                     # remaining parameters needed for proper server response
                     ',"sort":{"property":"decisionDate","direction":"DESC"}}'
                   ))
-              )
-            )$body),
-            silent = TRUE)
+              ))$body), silent = TRUE)
 
           # accumulate trial identifiers
           idsUpdatedTrials <- c(
@@ -424,10 +432,19 @@ ctrRerunQuery <- function(
 
         if (verbose) message("DEBUG (rss url): ", utils::URLdecode(rssquery))
 
-        resultsRss <- httr::content(
-          httr::GET(url = rssquery),
-          encoding = "UTF-8",
-          as = "text")
+        # TODO
+        # resultsRss <- httr::content(
+        #   httr::GET(url = rssquery),
+        #   encoding = "UTF-8",
+        #   as = "text")
+
+        resultsRss <- try(rawToChar(
+          httr2::req_perform(
+            httr2::req_user_agent(
+              httr2::request(
+                rssquery),
+              ctrdataUseragent
+            ))$body), silent = TRUE)
 
         idsUpdatedTrials <- stringi::stri_extract_all_regex(
           # <link>https://euclinicaltrials.eu/search-for-clinical-trials/?lang=en&amp;EUCT=2024-516838-35-00</link>
@@ -443,6 +460,13 @@ ctrRerunQuery <- function(
       updateOrLoadTrial <- function(trialId, con, ctishistory) {
 
         message(". ", appendLF = FALSE)
+
+        # check if exists
+        recExists <- nodbi::docdb_query(
+          src = con,
+          key = con$collection,
+          query = paste0('{"_id":"', trialId, '"}'),
+          fields = '{"_id":1}')
 
         # get existing data in collection
         if (ctishistory) {
@@ -461,9 +485,9 @@ ctrRerunQuery <- function(
             only.count = FALSE,
             verbose = FALSE
           ))
-        result$updated <- 0L
+        result$updated <- length(recExists)
 
-        # if record existed
+        # if historical version is to be created
         if (ctishistory && nrow(exstJson)) {
 
           # move existing data into historical version
@@ -493,7 +517,7 @@ ctrRerunQuery <- function(
             query = '{}'
           )
 
-        } # if record existed
+        } # if historical version
 
         # default return
         return(result)
@@ -544,7 +568,7 @@ ctrRerunQuery <- function(
         idsUpdatedTrials <- getIdsFromRss(queryterm)
 
         # early exit if only.count
-        if (only.count) {
+        if (only.count || !length(idsUpdatedTrials)) {
           res <- NULL
           res$n <- length(idsUpdatedTrials)
           res$queryterm <- querytermoriginal

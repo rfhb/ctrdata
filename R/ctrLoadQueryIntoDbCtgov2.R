@@ -10,8 +10,9 @@
 #' @importFrom jqr jq jq_flags
 #' @importFrom utils URLencode
 #' @importFrom jsonlite stream_in
-#' @importFrom httr GET status_code content
 #' @importFrom stringi stri_replace_all_regex
+#' @importFrom httr2 req_perform req_user_agent request
+#' @importFrom rlang hash
 #'
 ctrLoadQueryIntoDbCtgov2 <- function(
     queryterm = queryterm,
@@ -219,13 +220,19 @@ ctrLoadQueryIntoDbCtgov2 <- function(
   url <- sprintf(ctgovEndpoints[1], queryterm)
   if (verbose) message("API call: ", url)
   message("* Checking trials using CTGOV REST API 2.0...", appendLF = FALSE)
+  #
   url <- utils::URLencode(url)
-  counts <- httr::GET(url)
+  counts <- try(httr2::req_perform(
+    httr2::req_user_agent(
+      httr2::request(url),
+      ctrdataUseragent
+    )), silent = TRUE)
 
   # early exit
-  if (httr::status_code(counts) != 200L) {
+  if (inherits(counts, "try-error") ||
+      counts$status_code != 200L) {
     warning("Could not be retrieved, check 'queryterm' and / or 'register'. ",
-      "\nAPI returned: ", httr::content(counts),
+      "\nAPI returned: ", rawToChar(counts$body),
       call. = FALSE
     )
     message("API call: ", url)
@@ -233,7 +240,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
   }
 
   # extract total number of trial records
-  counts <- suppressMessages(httr::content(counts, as = "text"))
+  counts <- suppressMessages(rawToChar(counts$body))
   resultsEuNumTrials <- as.numeric(jqr::jq(counts, " .totalCount "))
   message("\b\b\b, found ", resultsEuNumTrials, " trials")
 

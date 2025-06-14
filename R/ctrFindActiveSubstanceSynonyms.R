@@ -16,10 +16,10 @@
 #' @return A character vector of the active substance (input parameter) and
 #'  synonyms, or NULL if active substance was not found and may be invalid
 #'
-#' @importFrom httr GET set_config user_agent
 #' @importFrom utils packageVersion str
 #' @importFrom jqr jq
 #' @importFrom stats quantile
+#' @importFrom httr2 req_perform req_user_agent request
 #'
 #' @export
 #'
@@ -57,18 +57,22 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE
     "pageSize=%i"
   ), activesubstance, 1000L)
 
-  # set user agent for httr and curl to inform registers
-  httr::set_config(httr::user_agent(
-    paste0(
-      "ctrdata/", utils::packageVersion("ctrdata"),
-      " (https://cran.r-project.org/package=ctrdata)"
-    )
-  ))
+  # TODO
+  # # set user agent for httr and curl to inform registers
+  # httr::set_config(httr::user_agent(
+  #   paste0(
+  #     "ctrdata/", utils::packageVersion("ctrdata"),
+  #     " (https://cran.r-project.org/package=ctrdata)"
+  #   )
+  # ))
 
   # call endpoint
-  # TODO
   # tmp <- try(httr::GET(url = apiEndpoint), silent = TRUE)
-  tmp <- try(httr2::req_perform(httr2::request(base_url = apiEndpoint)), silent = TRUE)
+  tmp <- try(httr2::req_perform(
+    httr2::req_user_agent(
+      httr2::request(
+        base_url = apiEndpoint),
+      ctrdataUseragent)), silent = TRUE)
 
   # check result
   if (inherits(tmp, "try-error") || tmp[["status_code"]] == 404L) {
@@ -86,11 +90,8 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE
   nrec <- jqr::jq(textConnection(jsn), " .studies | length ")
 
   # inform user
-  if (verbose || nrec == 0L) {
-    message(
-      nrec, " studies found in CTGOV2 for active substance ", activesubstance
-    )
-  }
+  if (verbose || nrec == 0L) message(
+    nrec, " studies found in CTGOV2 for active substance ", activesubstance)
 
   # extract otherNames for name
   asx <- jqr::jq(textConnection(jsn), paste0(
@@ -98,10 +99,7 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE
     | select ( length > 0 ) | .[]
     | select ( .name | test("^', activesubstance, '( |$)"; "i") )
     | .otherNames | select( length > 0 ) | .[]
-  '
-  ))
-
-  # cleanup
+  '))
 
   # prepare output
   asx <- gsub('"', "", asx)
@@ -122,7 +120,7 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE
   asx <- asx[!duplicated(tolower(asx))]
   asx <- unique(asx)
   asx <- sort(asx)
-  asx <- c(activesubstance, asx)
+  asx <- c(activesubstance, asx[asx != activesubstance])
 
   # return
   return(asx)

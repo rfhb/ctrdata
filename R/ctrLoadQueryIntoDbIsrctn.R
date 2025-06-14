@@ -9,9 +9,10 @@
 #'
 #' @importFrom jsonlite toJSON
 #' @importFrom nodbi docdb_query
-#' @importFrom utils URLdecode
-#' @importFrom httr with_config config
+#' @importFrom utils URLdecode URLencode
+#' @importFrom httr2 req_perform req_user_agent request
 #' @importFrom V8 JS
+#' @importFrom rlang hash
 #'
 ctrLoadQueryIntoDbIsrctn <- function(
     queryterm = queryterm,
@@ -106,28 +107,40 @@ ctrLoadQueryIntoDbIsrctn <- function(
   message("* Checking trials in ISRCTN...")
 
   # - check number of trials to be downloaded
-  isrctnfirstpageurl <- paste0(
+  isrctnfirstpageurl <- utils::URLencode(paste0(
     queryIsrctnRoot, queryIsrctnType2, apiterm, queryupdateterm
-  )
+  ))
   #
-  tmp <- try(
-    suppressWarnings(
-      xml2::read_xml(
-        x = url(utils::URLencode(isrctnfirstpageurl))
-      )
-    ),
-    silent = TRUE
-  )
+  # TODO
+  # tmp <- try(
+  #   suppressWarnings(
+  #     xml2::read_xml(
+  #       x = url(utils::URLencode(isrctnfirstpageurl))
+  #     )
+  #   ),
+  #   silent = TRUE
+  # )
+  # #
+  # if (inherits(tmp, "try-error")) {
+  #   stop("Host ", queryIsrctnRoot, " not working as expected, ",
+  #        "cannot continue: ", tmp[[1]],
+  #        call. = FALSE
+  #   )
+  # }
   #
-  if (inherits(tmp, "try-error")) {
-    stop("Host ", queryIsrctnRoot, " not working as expected, ",
-         "cannot continue: ", tmp[[1]],
-         call. = FALSE
-    )
-  }
+  # tmp <- try(xml2::xml_attr(tmp, "totalCount"), silent = TRUE)
   #
-  tmp <- try(xml2::xml_attr(tmp, "totalCount"), silent = TRUE)
-  #
+
+  tmp <- try(sub(
+    '.*totalCount=\"([0-9]+)\" .*', "\\1",
+    rawToChar(
+      httr2::req_perform(
+        httr2::req_user_agent(
+          httr2::request(
+            isrctnfirstpageurl),
+          ctrdataUseragent
+        ))$body)), silent = TRUE)
+
   # safeguard against no or unintended large numbers
   tmp <- suppressWarnings(as.integer(tmp))
   if (is.na(tmp) || !length(tmp)) {
@@ -182,10 +195,11 @@ ctrLoadQueryIntoDbIsrctn <- function(
 
   # prepare a file handle for temporary directory
   f <- file.path(
-    tempDir, paste0("isrctn_",
-                    # include query in file name for potential re-download
-                    sapply(isrctndownloadurl, digest::digest, algo = "crc32"),
-                    ".xml"))
+    tempDir, paste0(
+      "isrctn_",
+      # include query in file name for potential re-download
+      sapply(isrctndownloadurl, rlang::hash),
+      ".xml"))
 
   # get (download) trials into single file f
   ctrMultiDownload(
@@ -296,17 +310,18 @@ ctrLoadQueryIntoDbIsrctn <- function(
         "https://www.isrctn.com/editorial/retrieveFile/%s/%s",
         dlFiles$fileref1, dlFiles$fileref2)
 
+      # TODO
       # do download with special config to avoid error
       # "Unrecognized content encoding type.
       #  libcurl understands deflate, gzip content encodings."
-      httr::with_config(
-        config = httr::config("http_content_decoding" = 0), {
-          ctrDocsDownload(
-            dlFiles[, c("_id", "filename", "url"), drop = FALSE],
-            documents.path,
-            documents.regexp,
-            verbose = verbose)
-        }, override = FALSE)
+      # httr::with_config(
+      #   config = httr::config("http_content_decoding" = 0), {
+      ctrDocsDownload(
+        dlFiles[, c("_id", "filename", "url"), drop = FALSE],
+        documents.path,
+        documents.regexp,
+        verbose = verbose)
+      # }, override = FALSE)
 
     } # if (!nrow(dlFiles))
 

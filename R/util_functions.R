@@ -35,6 +35,10 @@ regCtis <- "[0-9]{4}-[0-9]{6}-[0-9]{2}-[0-9]{2}"
 # register list, order important
 registerList <- c("EUCTR", "CTGOV", "CTGOV2", "ISRCTN", "CTIS")
 
+ctrdataUseragent <- paste0(
+  "ctrdata/", utils::packageVersion("ctrdata"),
+  " (https://cran.r-project.org/package=ctrdata)"
+)
 
 #### functions ####
 
@@ -860,7 +864,7 @@ addMetaData <- function(x, con) {
 #'
 #' @importFrom utils URLencode
 #' @importFrom jsonlite fromJSON toJSON validate
-#' @importFrom httr2 request req_throttle req_perform_parallel req_body_json
+#' @importFrom httr2 request req_throttle req_perform_parallel req_body_json req_user_agent
 #' @importFrom dplyr rows_update
 #'
 ctrMultiDownload <- function(
@@ -936,6 +940,7 @@ ctrMultiDownload <- function(
         FUN = function(u, d) {
           # start with basic request
           r <- httr2::request(u)
+          r <- httr2::req_user_agent(r, ctrdataUseragent)
 
           # curl::curl_options("vers")
           r <- httr2::req_options(r, http_version = 2)
@@ -943,6 +948,7 @@ ctrMultiDownload <- function(
           # conditionally add body
           if (!is.na(d)) r <-
             httr2::req_body_json(r, jsonlite::fromJSON(d))
+
           # hard-coded throttling, max 4 MB/s
           r <- httr2::req_throttle(
             req = r,

@@ -7,13 +7,12 @@
 #' @keywords internal
 #' @noRd
 #'
-#' @importFrom httr content GET status_code config
 #' @importFrom nodbi docdb_query docdb_update
 #' @importFrom zip unzip
 #' @importFrom stringi stri_replace_all_fixed stri_detect_fixed
 #' @importFrom readr write_file read_file
-#' @importFrom digest digest
-#' @importFrom httr2 req_perform_parallel request req_options req_throttle
+#' @importFrom rlang hash
+#' @importFrom httr2 req_perform_parallel request req_options req_throttle req_user_agent
 #'
 ctrLoadQueryIntoDbEuctr <- function(
     queryterm = queryterm,
@@ -55,13 +54,17 @@ ctrLoadQueryIntoDbEuctr <- function(
   q <- utils::URLencode(paste0(queryEuRoot, queryEuType1, queryterm))
   if (verbose) message("DEBUG: queryterm is ", q)
   #
-  resultsEuPages <- try(
-    httr::GET(url = q),
-    silent = TRUE)
+  # TODO
+  resultsEuPages <- try(httr2::req_perform(
+    httr2::req_user_agent(
+      httr2::request(q),
+      ctrdataUseragent
+    )), silent = TRUE)
   #
   if (inherits(resultsEuPages, "try-error") ||
-      httr::status_code(resultsEuPages) != 200L) {
-    if (grepl("SSL certificate.*local issuer certificate", resultsEuPages)) {
+      resultsEuPages$status_code != 200L) {
+    if (grepl("SSL certificate.*local issuer certificate",
+              rawToChar(resultsEuPages$body))) {
       stop("Host ", queryEuRoot, " cannot be queried as expected, error:\n",
            trimws(resultsEuPages), "\nFor a potential workaround, check ",
            "https://github.com/rfhb/ctrdata/issues/19#issuecomment-820127139",
@@ -72,7 +75,7 @@ ctrLoadQueryIntoDbEuctr <- function(
     }
   }
   # - get content of response
-  resultsEuPages <- httr::content(resultsEuPages, as = "text")
+  resultsEuPages <- rawToChar(resultsEuPages$body)
 
   # get number of trials identified by query
   resultsEuNumTrials <- sub(
@@ -181,11 +184,11 @@ ctrLoadQueryIntoDbEuctr <- function(
 
   # check host, takes around 1s
   initialData <- httr2::req_perform(
-    req = httr2::request(
-      base_url = paste0(
-        queryEuRoot, queryEuType3,
-        "query=2008-003606-33", "&page=1", queryEuPost)
-    ))$headers
+    httr2::req_user_agent(
+      httr2::request(
+        paste0(queryEuRoot, queryEuType3,
+               "query=2008-003606-33", "&page=1", queryEuPost)),
+      ctrdataUseragent))$headers
   names(initialData) <- tolower(names(initialData))
 
   # inform user
@@ -207,7 +210,7 @@ ctrLoadQueryIntoDbEuctr <- function(
     tempDir, paste0(
       "euctr_trials_",
       # appending hash of query for re-download
-      sapply(urls, digest::digest, algo = "crc32"),
+      sapply(urls, rlang::hash),
       ".txt"
     ))
 
@@ -297,10 +300,8 @@ ctrLoadQueryIntoDbEuctr <- function(
     # prepare download and save
 
     # urls
-    urls <- vapply(
-      paste0(queryEuRoot, queryEuType4,
-             eudractnumbersimported),
-      utils::URLencode, character(1L), USE.NAMES = FALSE)
+    urls <- paste0(queryEuRoot, queryEuType4,
+                   eudractnumbersimported)
 
     # destfiles
     fp <- file.path(
@@ -586,6 +587,7 @@ ctrLoadQueryIntoDbEuctr <- function(
           FUN = function(u) {
             # start with basic request
             r <- httr2::request(u)
+            r <- httr2::req_user_agent(r, ctrdataUseragent)
 
             # curl::curl_options("vers")
             r <- httr2::req_options(r, range = "0-30000")

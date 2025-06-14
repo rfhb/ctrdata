@@ -12,8 +12,7 @@
 #' @importFrom nodbi docdb_update
 #' @importFrom jsonlite stream_in fromJSON
 #' @importFrom stringi stri_extract_all_regex stri_replace_all_fixed stri_replace_all_regex
-#' @importFrom digest digest
-#' @importFrom httr2 req_perform req_body_json request
+#' @importFrom httr2 req_perform req_body_json request req_user_agent
 #'
 ctrLoadQueryIntoDbCtis <- function(
     queryterm = queryterm,
@@ -95,8 +94,11 @@ ctrLoadQueryIntoDbCtis <- function(
 
   initialData <- try(rawToChar(
     httr2::req_perform(
-      req = httr2::req_body_json(
-        req = httr2::request(base_url = ctisEndpoints[1]),
+      httr2::req_body_json(
+        httr2::req_user_agent(
+          httr2::request(
+            ctisEndpoints[1]),
+          ctrdataUseragent),
         data = jsonlite::fromJSON(
           paste0(
             # add pagination parameters
@@ -108,9 +110,7 @@ ctrLoadQueryIntoDbCtis <- function(
             # remaining parameters needed for proper server response
             ',"sort":{"property":"decisionDate","direction":"DESC"}}'
           ))
-      )
-    )$body),
-    silent = TRUE)
+      ))$body), silent = TRUE)
 
   # early exit
   if (inherits(initialData, "try-error")) {
