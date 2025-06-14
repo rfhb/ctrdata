@@ -127,8 +127,7 @@
 #'
 #' @export
 #'
-#' @importFrom httr set_config user_agent
-#' @importFrom utils packageVersion
+#' @importFrom utils packageVersion URLencode
 #'
 #' @examples
 #' \dontrun{
@@ -305,13 +304,14 @@ ctrLoadQueryIntoDb <- function(
     stop("'annotation.mode' incorrect", call. = FALSE)
   }
 
-  # set user agent for httr and curl to inform registers
-  httr::set_config(httr::user_agent(
-    paste0(
-      "ctrdata/", utils::packageVersion("ctrdata"),
-      " (https://cran.r-project.org/package=ctrdata)"
-    )
-  ))
+  # TODO
+  # # set user agent for httr and curl to inform registers
+  # httr::set_config(httr::user_agent(
+  #   paste0(
+  #     "ctrdata/", utils::packageVersion("ctrdata"),
+  #     " (https://cran.r-project.org/package=ctrdata)"
+  #   )
+  # ))
 
   ## handle querytoupdate -----------------------------------------------------
 

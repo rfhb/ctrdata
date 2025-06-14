@@ -274,7 +274,6 @@ ctrLoadQueryIntoDbCtgov2 <- function(
   # corresponds to trials
 
   url <- sprintf(ctgovEndpoints[2], queryterm)
-  url <- utils::URLencode(url)
 
   pageNextToken <- ""
   pageNumber <- 1L
