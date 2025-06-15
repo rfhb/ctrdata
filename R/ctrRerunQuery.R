@@ -400,7 +400,7 @@ ctrRerunQuery <- function(
                     ),
                     # remaining parameters needed for proper server response
                     ',"sort":{"property":"decisionDate","direction":"DESC"}}'
-                  ))
+                  ), simplifyVector = FALSE)
               ))$body), silent = TRUE)
 
           # accumulate trial identifiers
@@ -477,14 +477,15 @@ ctrRerunQuery <- function(
         }
 
         # get new data
-        result <- suppressMessages(
-          ctrLoadQueryIntoDbCtis(
-            queryterm = paste0('searchCriteria={"number":"', trialId, '"}'),
-            con = con,
-            documents.path = NULL,
-            only.count = FALSE,
-            verbose = FALSE
-          ))
+        result <- suppressWarnings(
+          suppressMessages(
+            ctrLoadQueryIntoDbCtis(
+              queryterm = paste0('searchCriteria={"number":"', trialId, '"}'),
+              con = con,
+              documents.path = NULL,
+              only.count = FALSE,
+              verbose = FALSE
+            )))
         result$updated <- length(recExists)
 
         # if historical version is to be created

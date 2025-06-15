@@ -903,7 +903,8 @@ ctrMultiDownload <- function(
   if (is.null(data)) data <- rep.int(NA, length(toDo))
   data <- sapply(data, function(i) ifelse(
     is.null(i) || is.na(i) || !jsonlite::validate(i), NA,
-    jsonlite::toJSON(jsonlite::fromJSON(i), auto_unbox = TRUE)),
+    jsonlite::toJSON(jsonlite::fromJSON(
+      i, simplifyVector = FALSE), auto_unbox = TRUE)),
     USE.NAMES = FALSE)
 
   downloadValue <- data.frame(
@@ -958,7 +959,8 @@ ctrMultiDownload <- function(
 
           # conditionally add body
           if (!is.na(d)) r <-
-            httr2::req_body_json(r, jsonlite::fromJSON(d))
+            httr2::req_body_json(r, jsonlite::fromJSON(
+              d, simplifyVector = FALSE))
 
           # hard-coded throttling, max 4 MB/s
           r <- httr2::req_throttle(
@@ -1044,7 +1046,7 @@ ctrMultiDownload <- function(
       res$urlResolved[cdnCheck] <- sapply(
         res$destfile[cdnCheck],
         # x can be a JSON string, URL or file
-        function(x) jsonlite::fromJSON(x)$url,
+        function(x) jsonlite::fromJSON(x, simplifyVector = FALSE)$url,
         USE.NAMES = FALSE,
         simplify = TRUE)
 

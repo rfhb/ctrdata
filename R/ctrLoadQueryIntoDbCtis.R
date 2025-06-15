@@ -109,7 +109,7 @@ ctrLoadQueryIntoDbCtis <- function(
                 ifelse(queryterm != "", queryterm, 'searchCriteria={}')),
             # remaining parameters needed for proper server response
             ',"sort":{"property":"decisionDate","direction":"DESC"}}'
-          ))
+          ), simplifyVector = FALSE)
       ))$body), silent = TRUE)
 
   # early exit
