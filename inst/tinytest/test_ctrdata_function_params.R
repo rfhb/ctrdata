@@ -344,7 +344,9 @@ tf <- function() {
   ))
 
   #### clipboard ####
-  if (Sys.info()[["sysname"]] != "Linux") {
+
+  # change after changing from clipr to readr
+  if (interactive()) {
 
     clipr::write_clip(
       queryurls[[1]][1],
