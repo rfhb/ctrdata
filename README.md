@@ -37,7 +37,7 @@ interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
 `ctrdata` is a package for the [R](https://www.r-project.org/) system,
 but other systems and tools can use the databases created with this
-package. This README was reviewed on 2025-06-08 for version 1.22.3.
+package. This README was reviewed on 2025-06-15 for version 1.22.3.9000.
 
 ## Main features
 
@@ -917,20 +917,23 @@ Implemented:
 
 - Package `ctrdata` has been made possible building on the work done for
   [R](https://www.r-project.org/),
-  [clipr](https://cran.r-project.org/package=clipr).
-  [curl](https://cran.r-project.org/package=curl),
   [dplyr](https://cran.r-project.org/package=dplyr),
   [duckdb](https://cran.r-project.org/package=duckdb),
-  [httr](https://cran.r-project.org/package=httr),
+  [htmlwidgets](https://cran.r-project.org/package=htmlwidgets),
+  [httr2](https://cran.r-project.org/package=httr2),
   [jqr](https://cran.r-project.org/package=jqr),
   [jsonlite](https://cran.r-project.org/package=jsonlite),
   [lubridate](https://cran.r-project.org/package=lubridate),
   [mongolite](https://cran.r-project.org/package=mongolite),
   [nodbi](https://cran.r-project.org/package=nodbi),
+  [readr](https://cran.r-project.org/package=readr).
+  [rlang](https://cran.r-project.org/package=rlang),
   [RPostgres](https://cran.r-project.org/package=RPostgres),
   [RSQLite](https://CRAN.R-project.org/package=RSQLite),
-  [rvest](https://cran.r-project.org/package=rvest),
+  [stringdist](https://cran.r-project.org/package=stringdist) and
   [stringi](https://cran.r-project.org/package=stringi) and
+  [tidyr](https://cran.r-project.org/package=tidyr),
+  [V8](https://cran.r-project.org/package=V8),
   [xml2](https://cran.r-project.org/package=xml2).
 
 ## Issues and notes

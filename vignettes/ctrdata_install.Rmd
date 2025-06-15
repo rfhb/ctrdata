@@ -1,7 +1,7 @@
 ---
 title: "Install R package ctrdata"
 author: "Ralf Herold"
-date: 2025-05-17
+date: 2025-06-15
 output:
   rmarkdown::html_vignette:
     toc: true
@@ -59,4 +59,4 @@ After completing the installation, attach the package from the user's library. T
 library(ctrdata)
 ```
 
-Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: Ralf Herold (2025). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.22.0. https://cran.r-project.org/package=ctrdata
+Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: Ralf Herold (2025). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.22.3. https://cran.r-project.org/package=ctrdata
