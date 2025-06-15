@@ -1681,8 +1681,6 @@ dbCTRUpdateQueryHistory <- function(
 #' @keywords internal
 #' @noRd
 #'
-#' @importFrom tibble as_tibble
-#'
 dfOrTibble <- function(df) {
 
   if (any(sapply(
