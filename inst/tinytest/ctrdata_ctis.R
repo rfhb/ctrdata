@@ -190,6 +190,9 @@ expect_equivalent(
   c("character", "integer")
 )
 
+#
+expect_true(sum(tmpDf$totalNumberEnrolled, na.rm = TRUE) > 2900L)
+
 # clean up
 rm(tmpDf)
 
@@ -210,7 +213,7 @@ tmp <- ctrLoadQueryIntoDb(
   con = dbc
 )
 # test
-expect_true(tmp$n > 175L)
+expect_true(tmp$n > 200L)
 
 # get all field names
 tmpFields <- suppressMessages(
@@ -315,7 +318,7 @@ expect_message(
   " [0-9]+ records")
 
 # test
-expect_true(length(res) >= 190L)
+expect_true(length(res) >= 240L)
 
 
 #### documents.path ####
