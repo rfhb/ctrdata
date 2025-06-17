@@ -920,6 +920,12 @@ ctrMultiDownload <- function(
   # remove any duplicates
   downloadValue <- unique(downloadValue)
 
+  # helper
+  body2json <- function(x) {
+    if (is.null(x)) return(NA)
+    as.character(jsonlite::toJSON(x, auto_unbox = TRUE))
+  }
+
   # does not error in case any of the individual requests fail.
   # inspect the return value to find out which were successful
   # make no more than 3 attempts to complete downloading
@@ -946,49 +952,45 @@ ctrMultiDownload <- function(
     #   res <- do.call(curl::multi_download, args)
     # )
 
+    reqs <- mapply(
+      FUN = function(u, d) {
+        # start with basic request
+        r <- httr2::request(u)
+        r <- httr2::req_user_agent(r, ctrdataUseragent)
+
+        # curl::curl_options("vers")
+        r <- httr2::req_options(r, http_version = 2)
+
+        # conditionally add body
+        if (!is.na(d)) r <-
+          httr2::req_body_json(r, jsonlite::fromJSON(
+            d, simplifyVector = FALSE))
+
+        # hard-coded throttling, max 4 MB/s
+        r <- httr2::req_throttle(
+          req = r,
+          # ensures that you never make more
+          # than capacity requests in fill_time_s
+          capacity = 20L * 60L,
+          fill_time_s = 60L
+        )
+        return(r)
+      },
+      u = downloadValue$url,
+      d = downloadValue$data,
+      SIMPLIFY = FALSE,
+      USE.NAMES = FALSE
+    )
+
     # system.time(
     res <- httr2::req_perform_parallel(
-      reqs = mapply(
-        FUN = function(u, d) {
-          # start with basic request
-          r <- httr2::request(u)
-          r <- httr2::req_user_agent(r, ctrdataUseragent)
-
-          # curl::curl_options("vers")
-          r <- httr2::req_options(r, http_version = 2)
-
-          # conditionally add body
-          if (!is.na(d)) r <-
-            httr2::req_body_json(r, jsonlite::fromJSON(
-              d, simplifyVector = FALSE))
-
-          # hard-coded throttling, max 4 MB/s
-          r <- httr2::req_throttle(
-            req = r,
-            # ensures that you never make more
-            # than capacity requests in fill_time_s
-            capacity = 20L * 60L,
-            fill_time_s = 60L
-          )
-          return(r)
-        },
-        u = downloadValue$url,
-        d = downloadValue$data,
-        SIMPLIFY = FALSE,
-        USE.NAMES = FALSE
-      ),
+      reqs,
       paths = downloadValue$destfile,
       on_error = "continue",
       progress = progress,
       max_active = 10L
     )
     # )
-
-    # helper
-    body2json <- function(x) {
-      if (is.null(x)) return(NA)
-      as.character(jsonlite::toJSON(x, auto_unbox = TRUE))
-    }
 
     # mangle results info
     res <- lapply(

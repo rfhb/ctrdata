@@ -60,7 +60,7 @@ knitr::opts_chunk$set(eval = FALSE)
 # # Show which queries have been downloaded into database
 # dbQueryHistory(con = db)
 # #       query-timestamp query-register query-records
-# # 1 2025-05-31 13:15:38          EUCTR          1531
+# # 1 2025-06-15 22:06:10          EUCTR          1531
 # #                                                    query-term
 # # 1 query=cancer&age=under-18&resultsstatus=trials-with-results
 
@@ -78,12 +78,12 @@ knitr::opts_chunk$set(eval = FALSE)
 # # Updated history ("meta-info" in "test")
 
 ## -----------------------------------------------------------------------------
-# Sys.time(); ctrLoadQueryIntoDb(
+# ctrLoadQueryIntoDb(
 #   querytoupdate = "last",
 #   forcetoupdate = TRUE,
 #   euctrresults = TRUE,
 #   con = db
-# ); Sys.time();
+# )
 # # * Checking trials in EUCTR...
 # # Retrieved overview, multiple records of 386 trial(s) from 20 page(s) to be
 # # downloaded (estimate: 50 MB)
@@ -137,26 +137,26 @@ knitr::opts_chunk$set(eval = FALSE)
 # 
 # # Show results of loading
 # sapply(result, "[[", "n")
-# # EUCTR CTGOV2 ISRCTN   CTIS
-# #   180    111      0      1
+# # EUCTR       ISRCTN       CTGOV2 CTGOV2expert         CTIS
+# #   180            0          110          110            1
 # 
 # # Overview of queries
 # dbQueryHistory(con = db)
 # #       query-timestamp query-register query-records
-# # 1 2025-03-02 13:05:08          EUCTR          1470
-# # 2 2025-03-02 13:26:49          EUCTR             0
-# # 3 2025-03-02 13:31:53          EUCTR          1470
-# # 4 2025-03-02 13:49:09         CTGOV2           111
-# # 5 2025-03-02 13:56:01          EUCTR           180
-# # 6 2025-03-02 13:56:02         CTGOV2           111
-# # 7 2025-03-02 13:56:03           CTIS             1
-# #                                                                                                   query-term
-# # 1                                                query=cancer&age=under-18&resultsstatus=trials-with-results
-# # 2                                                query=cancer&age=under-18&resultsstatus=trials-with-results
-# # 3                                                query=cancer&age=under-18&resultsstatus=trials-with-results
-# # 4                                                cond=neuroblastoma&aggFilters=phase:2,ages:child,status:com
-# # 5                             query=neuroblastoma&phase=phase-two&age=children&age=under-18&status=completed
-# # 6                                                cond=neuroblastoma&aggFilters=phase:2,ages:child,status:com
+# # 1 2025-06-15 22:06:10          EUCTR          1531
+# # 2 2025-06-15 22:09:10          EUCTR             0
+# # 3 2025-06-15 22:21:08         CTGOV2           110
+# # 4 2025-06-15 22:22:21          EUCTR           180
+# # 5 2025-06-15 22:22:23         CTGOV2           110
+# # 6 2025-06-15 22:22:24         CTGOV2           110
+# # 7 2025-06-15 22:22:26           CTIS             1
+# # #vquery-term
+# # 1 query=cancer&age=under-18&resultsstatus=trials-with-results
+# # 2vquery=cancer&age=under-18&resultsstatus=trials-with-results
+# # 3vcond=neuroblastoma&aggFilters=phase:2,ages:child,status:com
+# # 4 query=neuroblastoma&phase=phase-two&age=children&age=adolescent&age=infant-and-toddler&age=newborn&age=preterm-new-born-infants&age=under-18&status=completed
+# # 5 cond=neuroblastoma&aggFilters=phase:2,ages:child,status:com,studyType:int
+# # 6 term=AREA[ConditionSearch]"neuroblastoma" AND (AREA[Phase]"PHASE2") AND (AREA[StdAge]"CHILD") AND (AREA[OverallStatus]"COMPLETED") AND (AREA[StudyType]INTERVENTIONAL)
 # # 7 searchCriteria={"medicalCondition":"neuroblastoma","trialPhaseCode":[4],"ageGroupCode":[2],"status":[5,8]}
 
 ## -----------------------------------------------------------------------------
@@ -192,7 +192,7 @@ knitr::opts_chunk$set(eval = FALSE)
 
 ## ----include=FALSE------------------------------------------------------------
 # # cleanup
-# unlink("sqlite_file.sql")
+# unlink("database_name.sql")
 
 ## -----------------------------------------------------------------------------
 # # Generate queries to identify trials
@@ -279,9 +279,7 @@ knitr::opts_chunk$set(eval = FALSE)
 #   "NCT00001209", "NCT00001436", "NCT00187109", "NCT01516567", "NCT01471782",
 #   "NCT00357084", "NCT00357500", "NCT00365755", "NCT00407433", "NCT00410657",
 #   "NCT00436852", "NCT00445965", "NCT00450307", "NCT00450827", "NCT00471679",
-#   "NCT00492167", "NCT00499616", "NCT00503724"
-# 
-# )
+#   "NCT00492167", "NCT00499616", "NCT00503724")
 # 
 # # split into sets of each 10 trial ids
 # # (larger sets e.g. 50 may still work)
@@ -324,6 +322,10 @@ knitr::opts_chunk$set(eval = FALSE)
 # # https://www.clinicaltrialsregister.eu/ctr-search/search?
 # # query=2008-001606-16+OR+2008-001721-34+OR+2008-002260-33
 # #
+
+## ----include=FALSE------------------------------------------------------------
+# # cleanup
+# unlink("database_name.sql")
 
 ## ----remote_mongo-------------------------------------------------------------
 # # Specify base uri for remote MongoDB server,
