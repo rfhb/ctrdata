@@ -97,7 +97,7 @@ f.sponsorType <- function(df = NULL) {
       split = " / "),
     #
     out = sapply(
-      helper, function(r) {
+      .data$helper, function(r) {
         if (all(is.na(r))) return(NA_character_)
         if (any(r == "Commercial")) return(stc)
         if (all(r == "Non-Commercial")) return(stn)
