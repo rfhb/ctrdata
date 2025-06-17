@@ -136,6 +136,7 @@ ctrLoadQueryIntoDbEuctr <- function(
     documents.path <- tempDir
   } else {
     euctrresults <- TRUE
+    message("Note: Running with euctrresults = TRUE to download documents")
   }
   if (euctrresults &&
       (is.na(file.info(documents.path)[["isdir"]]) ||

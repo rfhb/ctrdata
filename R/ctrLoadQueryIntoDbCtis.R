@@ -305,7 +305,7 @@ ctrLoadQueryIntoDbCtis <- function(
   # this is imported as the main data into the database
 
   message("(2/4) Downloading and processing trial data... (",
-          "estimate: ", signif(length(idsTrials) * 405 / 5505, 1L), " Mb)")
+          "estimate: ", signif(length(idsTrials) * 12 / 96, 1L), " Mb)")
 
   urls <- sprintf(ctisEndpoints[2], idsTrials)
 
