@@ -6,14 +6,15 @@
 #'
 #' Trial concept calculated: type or class of the lead or main sponsor of the
 #' trial. Some information is not yet mapped (e.g., "NETWORK" in CTGOV2).
-#' No specific field is available in ISRCTN.
+#' No specific field is available in ISRCTN. If several sponsors, sponsor type
+#' is deemed `for profit` if any sponsor is commercial.
 #'
 #' @param df data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
 #' prints fields needed in `df` for calculating this trial concept, which can
 #' be used with \link{dbGetFieldsIntoDf}.
 #'
 #' @return data frame with columns `_id` and `.sponsorType`, which is
-#' a factor with levels `For profit`, `Not for profit` or `Other`.
+#' a factor with levels `for profit`, `not for profit` or `other`.
 #'
 #' @export
 #'
@@ -91,11 +92,17 @@ f.sponsorType <- function(df = NULL) {
   #### . EUCTR ####
   df %>% dplyr::mutate(
     #
-    out = dplyr::case_match(
+    helper = strsplit(
       as.character(.data$b1_sponsor.b31_and_b32_status_of_the_sponsor),
-      "Commercial" ~ stc,
-      "Non-Commercial" ~ stn,
-      .default = NA_character_
+      split = " / "),
+    #
+    out = sapply(
+      helper, function(r) {
+        if (all(is.na(r))) return(NA_character_)
+        if (any(r == "Commercial")) return(stc)
+        if (all(r == "Non-Commercial")) return(stn)
+        return(NA_character_)
+      }
     )
   ) %>%
     dplyr::pull("out") -> df$euctr

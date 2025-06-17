@@ -3,6 +3,7 @@
 - Replaced `curl` with `httr2` and further centralised retrieving files
 - Reduced dependencies using equivalent alternative functions
 - Add typing of newly appearing CTIS fields
+- Add multiple sponsors in EUCTR for `f.sponsorType()`
 
 # ctrdata 1.22.3
 
