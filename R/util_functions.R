@@ -1369,11 +1369,25 @@ ctrDocsDownload <- function(
             " missing documents " , appendLF = FALSE)
 
     # check and remove duplicate filepathname rows
+    duplicateUrls <- duplicated(tolower(dlFiles$url))
+    if (any(duplicateUrls)) {
+      message(
+        "(excluding ", sum(duplicateUrls), " documents ",
+        "from duplicate URLs, e.g. for trial ids ",
+        paste0(
+          sample(
+            dlFiles$`_id`[duplicateUrls],
+            min(length(dlFiles$`_id`[duplicateUrls]), 3L)),
+          collapse = ", "),
+        ") ", appendLF = FALSE)
+      dlFiles <- dlFiles[!duplicateUrls, , drop = FALSE]
+    }
+
     duplicateFiles <- duplicated(tolower(dlFiles$filepathname))
     if (any(duplicateFiles)) {
       message(
-        "(excluding ", sum(duplicateFiles), " ",
-        "files with duplicate names for saving, e.g. ",
+        "(excluding ", sum(duplicateFiles), " documents ",
+        "with duplicate names, e.g. ",
         paste0(
           sample(
             dlFiles$filepathname[duplicateFiles],
@@ -1382,6 +1396,7 @@ ctrDocsDownload <- function(
         ") ", appendLF = FALSE)
       dlFiles <- dlFiles[!duplicateFiles, , drop = FALSE]
     }
+
     message()
 
     # do download
