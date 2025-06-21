@@ -110,28 +110,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
 
   # - check number of trials to be downloaded
   isrctnfirstpageurl <- utils::URLencode(paste0(
-    queryIsrctnRoot, queryIsrctnType2, apiterm, queryupdateterm
-  ))
-  #
-  # TODO
-  # tmp <- try(
-  #   suppressWarnings(
-  #     xml2::read_xml(
-  #       x = url(utils::URLencode(isrctnfirstpageurl))
-  #     )
-  #   ),
-  #   silent = TRUE
-  # )
-  # #
-  # if (inherits(tmp, "try-error")) {
-  #   stop("Host ", queryIsrctnRoot, " not working as expected, ",
-  #        "cannot continue: ", tmp[[1]],
-  #        call. = FALSE
-  #   )
-  # }
-  #
-  # tmp <- try(xml2::xml_attr(tmp, "totalCount"), silent = TRUE)
-  #
+    queryIsrctnRoot, queryIsrctnType2, apiterm, queryupdateterm))
 
   tmp <- try(sub(
     '.*totalCount=\"([0-9]+)\" .*', "\\1",
@@ -307,12 +286,11 @@ ctrLoadQueryIntoDbIsrctn <- function(
 
     } else {
 
-      # TODO
-
+      # check for which ids fileref2 could not be determined
       ids <- unique(dlFiles[is.na(dlFiles$fileref2), "_id", drop = TRUE])
 
       # need to go to webpage to obtain full download url since fileref2
-      # cannot be determined in most cases from data in the ndjsonFile
+      # in most cases cannot be determined from data in the ndjsonFile
       if (length(ids)) {
 
         message("correct with web pages ", appendLF = FALSE)
@@ -348,18 +326,11 @@ ctrLoadQueryIntoDbIsrctn <- function(
         "https://www.isrctn.com/editorial/retrieveFile/%s/%s",
         dlFiles$fileref1, dlFiles$fileref2)
 
-      # TODO
-      # do download with special config to avoid error
-      # "Unrecognized content encoding type.
-      #  libcurl understands deflate, gzip content encodings."
-      # httr::with_config(
-      #   config = httr::config("http_content_decoding" = 0), {
       ctrDocsDownload(
         dlFiles[, c("_id", "filename", "url"), drop = FALSE],
         documents.path,
         documents.regexp,
         verbose = verbose)
-      # }, override = FALSE)
 
     } # if (!nrow(dlFiles))
 

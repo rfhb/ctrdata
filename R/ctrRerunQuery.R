@@ -207,11 +207,6 @@ ctrRerunQuery <- function(
         #
         if (verbose) message("DEBUG (rss url): ", rssquery)
         #
-        # TODO
-        # resultsRss <- try(httr::content(
-        #   httr::GET(url = rssquery),
-        #   encoding = "UTF-8",
-        #   as = "text"), silent = TRUE)
         resultsRss <- try(rawToChar(
           httr2::req_perform(
             httr2::req_user_agent(
@@ -431,12 +426,6 @@ ctrRerunQuery <- function(
           utils::URLencode(sub("searchCriteria=", "", queryterm)))
 
         if (verbose) message("DEBUG (rss url): ", utils::URLdecode(rssquery))
-
-        # TODO
-        # resultsRss <- httr::content(
-        #   httr::GET(url = rssquery),
-        #   encoding = "UTF-8",
-        #   as = "text")
 
         resultsRss <- try(rawToChar(
           httr2::req_perform(

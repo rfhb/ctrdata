@@ -34,7 +34,8 @@ regCtis <- "[0-9]{4}-[0-9]{6}-[0-9]{2}-[0-9]{2}"
 #
 # register list, order important
 registerList <- c("EUCTR", "CTGOV", "CTGOV2", "ISRCTN", "CTIS")
-
+#
+# user agent for all server requests
 ctrdataUseragent <- paste0(
   "ctrdata/", utils::packageVersion("ctrdata"),
   " (https://cran.r-project.org/package=ctrdata)"
@@ -424,15 +425,6 @@ ctgovClassicToCurrent <- function(url, verbose = TRUE) {
   if (grepl("[?&]country=[^$&]", apiParams)) {
 
     countryCode <- sub(".+([?&]country=)([A-Z]+)([$&]).*", "\\2", apiParams)
-
-    # TODO
-
-    # # translate from 2 letter ISO to English name
-    # f (countryCode != apiParams) apiParams <-
-    #   sub("([?&]country=)([A-Z]+)([$&])",
-    #       paste0("\\1", countrycode::countrycode(
-    #         countryCode, "iso2c", "iso.name.en"), "\\3"),
-    #       apiParams)
 
     # translate from 2 letter ISO to English name
     if (countryCode != apiParams) apiParams <-
@@ -927,132 +919,6 @@ ctrMultiDownload <- function(
     as.character(jsonlite::toJSON(x, auto_unbox = TRUE))
   }
 
-  # TODO helper
-  # path <- tempfile(fileext = ".cookie")
-  # on.exit(unlink(path), add = TRUE)
-
-  # # if (grepl("clinicaltrialsregister[.]eu", urls[1])) {
-  # if (FALSE) {
-  #
-  #   # does not error in case any of the individual requests fail.
-  #   # inspect the return value to find out which were successful
-  #   # make no more than 3 attempts to complete downloading
-  #   while (any(toDo) && numI < 3L) {
-  #
-  #     # use urlResolved if this has been filled below in CDN check
-  #     downloadValue$url[!is.na(downloadValue$urlResolved)] <-
-  #       downloadValue$urlResolved[!is.na(downloadValue$urlResolved)]
-  #
-  #     # construct arguments
-  #     args <- c(
-  #       urls = list(downloadValue$url[toDo]),
-  #       destfiles = list(downloadValue$destfile[toDo]),
-  #       resume = TRUE,
-  #       progress = TRUE,
-  #       multiplex = TRUE,
-  #       c(getOption("httr_config")[["options"]],
-  #         accept_encoding = "gzip,deflate,zstd,br")
-  #     )
-  #
-  #     # add in data if needed
-  #     if (any(!is.na(downloadValue$data[toDo]))) args <- c(
-  #       args, postfields = list(downloadValue$data[toDo])
-  #     )
-  #
-  #     # do download
-  #     res <- do.call(curl::multi_download, args)
-  #
-  #     # TODO
-  #     # # alternative
-  #     # pool <- curl::new_pool(
-  #     #   total_con = 100L,
-  #     #   host_con = 6L,
-  #     #   max_streams = 10L,
-  #     #   multiplex = TRUE)
-  #     #
-  #     # sapply(i, function(i)
-  #     #   curl::multi_add(
-  #     #     ...,
-  #     #     pool = pool
-  #     #   )
-  #     # )
-  #     #
-  #     # res <- curl::multi_run(pool = pool)
-  #
-  #     # add in variables needed for matching
-  #     res$content_type <- res$type[toDo]
-  #     res$data <- downloadValue$data[toDo]
-  #
-  #     # names(res)
-  #     # "success"     "status_code" "resumefrom"  "url"
-  #     # "destfile"    "error"       "type"
-  #     # "modified"    "time"        "headers"
-  #
-  #     # check if download successful but CDN is likely used
-  #     cdnCheck <- !is.na(res$status_code) &
-  #       !is.na(res$destfile) &
-  #       !is.na(res$content_type) &
-  #       (res$status_code %in% c(200L, 206L, 416L)) &
-  #       !grepl("[.]json$", res$destfile) &
-  #       grepl("application/json", res$content_type)
-  #
-  #     # replace url with CDN url and prepare to iterate
-  #     if (any(cdnCheck)) {
-  #
-  #       message("Redirecting to CDN...")
-  #
-  #       # get CDN url
-  #       res$urlResolved[cdnCheck] <- sapply(
-  #         res$destfile[cdnCheck],
-  #         # x can be a JSON string, URL or file
-  #         function(x) jsonlite::fromJSON(x, simplifyVector = FALSE)$url,
-  #         USE.NAMES = FALSE,
-  #         simplify = TRUE)
-  #
-  #       # remove files containing CDN url
-  #       unlink(res$destfile[cdnCheck])
-  #
-  #       # reset status
-  #       res$status_code[cdnCheck] <- NA
-  #
-  #     } else {
-  #
-  #       res$urlResolved <- NA_character_
-  #
-  #     }
-  #
-  #     # update input, mind row order
-  #     downloadValue <- dplyr::rows_update(
-  #       downloadValue,
-  #       # do not include destfile as this may be NA in res
-  #       res[, c("success", "status_code", "url", "urlResolved",
-  #               "content_type", "data"), drop = FALSE],
-  #       by = c("url", "data")[seq_len(
-  #         ifelse(all(is.na(downloadValue$data)), 1L, 2L))]
-  #     )
-  #
-  #     if (inherits(downloadValue, "try-error")) {
-  #       stop("Download failed; last error: ", class(downloadValue), call. = FALSE)
-  #     }
-  #
-  #     toDoThis <- is.na(downloadValue$success) |
-  #       is.na(downloadValue$status_code) |
-  #       !downloadValue$success |
-  #       !(downloadValue$status_code %in% c(200L, 206L, 416L))
-  #
-  #     # only count towards repeat attempts if
-  #     # the set of repeated urls is unchanged
-  #     if (identical(toDo, toDoThis)) numI <- numI + 1L
-  #
-  #     toDo <- toDoThis
-  #
-  #     # TODO
-  #     message("To do: ", sum(toDo), " requests")
-  #
-  #   }
-  #
-  # } else {
-
   # does not error in case any of the individual requests fail.
   # inspect the return value to find out which were successful
   # make no more than 3 attempts to complete downloading
@@ -1202,9 +1068,6 @@ ctrMultiDownload <- function(
 
   }
 
-  # TODO
-  # }
-
   # finalise
   if (any(toDo)) {
 
@@ -1217,7 +1080,7 @@ ctrMultiDownload <- function(
 
   }
 
-  # TODO
+  # inform user
   if (verbose) message("Done: ", numI, " iteration(s)")
 
   # return

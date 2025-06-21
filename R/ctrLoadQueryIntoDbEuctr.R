@@ -58,7 +58,6 @@ ctrLoadQueryIntoDbEuctr <- function(
   q <- utils::URLencode(paste0(queryEuRoot, queryEuType1, queryterm))
   if (verbose) message("DEBUG: queryterm is ", q)
   #
-  # TODO
   initialData <- try(
     httr2::req_perform(
       httr2::req_user_agent(
@@ -162,44 +161,9 @@ ctrLoadQueryIntoDbEuctr <- function(
 
   ## download all text files from pages
 
-  # # new handle
-  # h <- do.call(
-  #   curl::new_handle,
-  #   c(accept_encoding = "gzip,deflate,zstd,br",
-  #     getOption("httr_config")[["options"]])
-  # )
-  #
-  # # test fetch
-  # tmp <- curl::curl_fetch_memory(
-  #   url = paste0(
-  #     queryEuRoot, queryEuType3,
-  #     "query=2008-003606-33", "&page=1", queryEuPost),
-  #   handle = h
-  # )
-  # # inform user about capabilities
-  # sgzip <- curl::parse_headers(tmp$headers)
-  # sgzip <- sgzip[grepl("Transfer-Encoding", sgzip)]
-  # sgzip <- grepl("gzip|deflate", sgzip)
-  # if (length(sgzip) && !sgzip) {
-  #   message("Note: register server cannot compress data, ",
-  #           "transfer takes longer (estimate: ",
-  #           signif(resultsEuNumTrials * 1.2, 1L), " s)")
-  # }
-  #
-  # # TODO
-
-  # # check host, takes around 1s
-  # initialData <- httr2::req_perform(
-  #   httr2::req_user_agent(
-  #     httr2::request(
-  #       paste0(queryEuRoot, queryEuType3,
-  #              "query=2008-003606-33", "&page=1", queryEuPost)),
-  #     ctrdataUseragent))$headers
-
+  # inform user
   initialData <- initialData$headers
   names(initialData) <- tolower(names(initialData))
-
-  # inform user
   if (is.null(initialData$`content-encoding`) ||
       !grepl("gzip|deflate", initialData$`content-encoding`)) message(
         "Note: register server cannot compress data, ",
@@ -211,7 +175,7 @@ ctrLoadQueryIntoDbEuctr <- function(
 
   # generate vector with URLs of all pages
   urls <- paste0(queryEuRoot, queryEuType3,
-           queryterm, "&page=", 1:resultsEuNumPages, queryEuPost)
+                 queryterm, "&page=", 1:resultsEuNumPages, queryEuPost)
 
   # generate vector with file names for saving pages
   fp <- file.path(
@@ -538,55 +502,6 @@ ctrLoadQueryIntoDbEuctr <- function(
       # of the webpage for the respective trial results
       message("(4/4) Retrieving results history:                           ")
 
-      # TODO start
-
-      # # prepare download and save
-      # pool <- curl::new_pool(
-      #   multiplex = TRUE)
-      # #
-      # pc <- 0L
-      # curlSuccess <- function(res) {
-      #   pc <<- pc + 1L
-      #   # incomplete data is 206L but some results pages are complete
-      #   if (any(res$status_code == c(200L, 206L))) {
-      #     retdat <<- c(retdat, list(extractResultsInformation(res)))
-      #     message("\r", pc, " downloaded", appendLF = FALSE)
-      #   }
-      # }
-      #
-      # # compose urls to access results page
-      # urls <- vapply(paste0(
-      #   "https://www.clinicaltrialsregister.eu/ctr-search/trial/",
-      #   eudractnumbersimportedresults, "/results"),
-      #   utils::URLencode, character(1L))
-      # # add urls to pool
-      # tmp <- lapply(
-      #   seq_along(urls),
-      #   function(i) {
-      #     h <- curl::new_handle(
-      #       url = urls[i],
-      #       range = "0-30000", # only top of page needed
-      #       accept_encoding = "identity")
-      #     curl::handle_setopt(h, .list = getOption("httr_config")[["options"]])
-      #     curl::multi_add(
-      #       handle = h,
-      #       done = curlSuccess,
-      #       pool = pool)
-      #   })
-      # # do download and save into batchresults
-      # retdat <- list()
-      # tmp <- try(curl::multi_run(pool = pool))
-      #
-      # # check plausibility
-      # if (inherits(tmp, "try-error") || tmp[["error"]] || !length(retdat)) {
-      #   stop("Download from EUCTR failed; last error with one or more of:\n",
-      #        paste0(urls, collapse = "\n"), call. = FALSE
-      #   )
-      # }
-
-      # TODO end
-
-      # system.time(
       res <- httr2::req_perform_parallel(
         reqs = lapply(
           paste0(
@@ -604,8 +519,8 @@ ctrLoadQueryIntoDbEuctr <- function(
               req = r,
               # ensures that you never make more
               # than capacity requests in fill_time_s
-              capacity = 20L * 60L,
-              fill_time_s = 60L
+              capacity = 100L * 10L,
+              fill_time_s = 10L
             )
             return(r)
           }
@@ -613,48 +528,10 @@ ctrLoadQueryIntoDbEuctr <- function(
         on_error = "continue",
         max_active = 10L
       )
-      # )
 
       # mangle results info
       message("- processing...", appendLF = FALSE)
       retdat <- lapply(res, extractResultsInformation)
-
-      #         res,
-      #   function(r) {
-      #     if (inherits(r, "httr2_failure")) return(
-      #       data.frame(
-      #         "success" = FALSE,
-      #         "status_code" = NA_integer_,
-      #         "url" = r$request$url,
-      #         "destfile" = NA_character_,
-      #         "content_type" = NA_character_,
-      #         "urlResolved" = NA_character_,
-      #         "data" = body2json(r$request$body$data)
-      #       )
-      #     )
-      #     if (inherits(r, "httr2_error")) return(
-      #       data.frame(
-      #         "success" = FALSE,
-      #         "status_code" = r$status,
-      #         "url" = r$request$url,
-      #         "destfile" = as.character(r$resp$body),
-      #         "content_type" = NA_character_,
-      #         "urlResolved" = NA_character_,
-      #         "data" = body2json(r$request$body$data)
-      #       )
-      #     ) # else
-      #     return(
-      #       data.frame(
-      #         "success" = TRUE,
-      #         "status_code" = r[["status_code"]],
-      #         "url" = r[["url"]],
-      #         "destfile" = as.character(r[["body"]]),
-      #         "content_type" = r[["headers"]]$`content-type`,
-      #         "urlResolved" = NA_character_,
-      #         "data" = body2json(r$request$body$data)
-      #       )
-      #     )})
-      # res <- as.data.frame(do.call(rbind, res))
 
       # combine results
       resultHistory <- do.call(

@@ -305,15 +305,6 @@ ctrLoadQueryIntoDb <- function(
     stop("'annotation.mode' incorrect", call. = FALSE)
   }
 
-  # TODO
-  # # set user agent for httr and curl to inform registers
-  # httr::set_config(httr::user_agent(
-  #   paste0(
-  #     "ctrdata/", utils::packageVersion("ctrdata"),
-  #     " (https://cran.r-project.org/package=ctrdata)"
-  #   )
-  # ))
-
   ## handle querytoupdate -----------------------------------------------------
 
   # initialise variable that is filled if an update is to be made

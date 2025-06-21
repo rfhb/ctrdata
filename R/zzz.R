@@ -28,16 +28,6 @@
   # initialise
   initTranformers()
 
-  # TODO delete
-  # # inform user
-  # if (.Platform$OS.type == "windows" &&
-  #     length(Sys.glob("c:\\cygw*\\bin\\bash.exe"))) {
-  #   packageStartupMessage(
-  #     "\nNote: Cygwin seems to be installed on the user's system.\n",
-  #     "This is no more needed for package ctrdata as of v1.16.0.\n",
-  #     "Users may chose to delete its folder (look for c:\\cygw*).\n")
-  # }
-
   # return
   invisible()
 

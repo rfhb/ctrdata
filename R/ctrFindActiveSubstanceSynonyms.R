@@ -57,15 +57,6 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE
     "pageSize=%i"
   ), activesubstance, 1000L)
 
-  # TODO
-  # # set user agent for httr and curl to inform registers
-  # httr::set_config(httr::user_agent(
-  #   paste0(
-  #     "ctrdata/", utils::packageVersion("ctrdata"),
-  #     " (https://cran.r-project.org/package=ctrdata)"
-  #   )
-  # ))
-
   # call endpoint
   # tmp <- try(httr::GET(url = apiEndpoint), silent = TRUE)
   tmp <- try(httr2::req_perform(
