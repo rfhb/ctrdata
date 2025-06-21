@@ -66,7 +66,7 @@
 <li>ClinicalTrials.gov (“CTGOV2”, see <a href="#workflow-ctgov-example">example</a>)</li>
 <li>ISRCTN Registry (<a href="https://www.isrctn.com/" class="external-link uri">https://www.isrctn.com/</a>)</li>
 </ul>
-<p>The motivation is to investigate the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can use the databases created with this package. This README was reviewed on 2025-06-08 for version 1.22.3.</p>
+<p>The motivation is to investigate the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can use the databases created with this package. This README was reviewed on 2025-06-21 for version 1.22.3.9000.</p>
 <div class="section level2">
 <h2 id="main-features">Main features<a class="anchor" aria-label="anchor" href="#main-features"></a>
 </h2>
@@ -80,10 +80,6 @@
 &#10;
 ``` r
 citation("ctrdata")
-&#10;# find publications
-utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrdata%22")
-&#10;# mentioned but not used in
-# * Sciannameo et al. (2024) Information Extraction from Medical Case Reports Using OpenAI InstructGPT. Computer Methods and Programs in Biomedicine [https://doi.org/10.1016/j.cmpb.2024.108326](https://doi.org/10.1016/j.cmpb.2024.108326)
 ```
 &#10;-->
 </div>
@@ -113,6 +109,21 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <li>EMA (2017) Results of juvenile animal studies (JAS) and impact on anti-cancer medicine development and use in children <a href="https://www.ema.europa.eu/en/documents/scientific-guideline/results-juvenile-animal-studies-jas-and-impact-anti-cancer-medicine-development-and-use-children_en.pdf#page=34" class="external-link">PDF file, p 34</a>
 </li>
 </ul>
+<!--
+&#10;
+``` r
+# find publications using ctrdata
+utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrdata%22")
+&#10;# Ferreira, Francisca Santos (2024)
+# Reporte de redes de investigação nos ensaios clínicos pediátricos registados no EudraCT
+# https://repositorio.ulisboa.pt/handle/10400.5/101030
+&#10;# ctrdata is mentioned but not used in
+# Sciannameo et al. (2024)
+# Information Extraction from Medical Case Reports Using OpenAI InstructGPT.
+# Computer Methods and Programs in Biomedicine
+# [https://doi.org/10.1016/j.cmpb.2024.108326](https://doi.org/10.1016/j.cmpb.2024.108326)
+```
+&#10;-->
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -796,7 +807,7 @@ Neuroblastoma trials
 </h2>
 <ul>
 <li><p>Data providers and curators of the clinical trial registers. Please review and respect their copyrights and terms and conditions, see <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>.</p></li>
-<li><p>Package <code>ctrdata</code> has been made possible building on the work done for <a href="https://www.r-project.org/" class="external-link">R</a>, <a href="https://cran.r-project.org/package=clipr" class="external-link">clipr</a>. <a href="https://cran.r-project.org/package=curl" class="external-link">curl</a>, <a href="https://cran.r-project.org/package=dplyr" class="external-link">dplyr</a>, <a href="https://cran.r-project.org/package=duckdb" class="external-link">duckdb</a>, <a href="https://cran.r-project.org/package=httr" class="external-link">httr</a>, <a href="https://cran.r-project.org/package=jqr" class="external-link">jqr</a>, <a href="https://cran.r-project.org/package=jsonlite" class="external-link">jsonlite</a>, <a href="https://cran.r-project.org/package=lubridate" class="external-link">lubridate</a>, <a href="https://cran.r-project.org/package=mongolite" class="external-link">mongolite</a>, <a href="https://cran.r-project.org/package=nodbi" class="external-link">nodbi</a>, <a href="https://cran.r-project.org/package=RPostgres" class="external-link">RPostgres</a>, <a href="https://CRAN.R-project.org/package=RSQLite" class="external-link">RSQLite</a>, <a href="https://cran.r-project.org/package=rvest" class="external-link">rvest</a>, <a href="https://cran.r-project.org/package=stringi" class="external-link">stringi</a> and <a href="https://cran.r-project.org/package=xml2" class="external-link">xml2</a>.</p></li>
+<li><p>Package <code>ctrdata</code> has been made possible building on the work done for <a href="https://www.r-project.org/" class="external-link">R</a>, <a href="https://cran.r-project.org/package=dplyr" class="external-link">dplyr</a>, <a href="https://cran.r-project.org/package=duckdb" class="external-link">duckdb</a>, <a href="https://cran.r-project.org/package=htmlwidgets" class="external-link">htmlwidgets</a>, <a href="https://cran.r-project.org/package=httr2" class="external-link">httr2</a>, <a href="https://cran.r-project.org/package=jqr" class="external-link">jqr</a>, <a href="https://cran.r-project.org/package=jsonlite" class="external-link">jsonlite</a>, <a href="https://cran.r-project.org/package=lubridate" class="external-link">lubridate</a>, <a href="https://cran.r-project.org/package=mongolite" class="external-link">mongolite</a>, <a href="https://cran.r-project.org/package=nodbi" class="external-link">nodbi</a>, <a href="https://cran.r-project.org/package=readr" class="external-link">readr</a>. <a href="https://cran.r-project.org/package=rlang" class="external-link">rlang</a>, <a href="https://cran.r-project.org/package=RPostgres" class="external-link">RPostgres</a>, <a href="https://CRAN.R-project.org/package=RSQLite" class="external-link">RSQLite</a>, <a href="https://cran.r-project.org/package=stringdist" class="external-link">stringdist</a> and <a href="https://cran.r-project.org/package=stringi" class="external-link">stringi</a> and <a href="https://cran.r-project.org/package=tidyr" class="external-link">tidyr</a>, <a href="https://cran.r-project.org/package=V8" class="external-link">V8</a>, <a href="https://cran.r-project.org/package=xml2" class="external-link">xml2</a>.</p></li>
 </ul>
 </div>
 <div class="section level2">

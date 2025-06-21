@@ -1,10 +1,11 @@
 # ctrdata 1.22.3.9000
 
-- Replaced `curl` with `httr2` and further centralised retrieving files
-- Reduced dependencies using equivalent alternative functions
+- Replaced `curl` with `httr2` and further centralised file retrieving
+- Reduced library dependencies using equivalent alternative functions
 - Improved identifying and downloading more documents from ISRCTN
+- Cover multiple sponsors in EUCTR for `f.sponsorType()`
+- Change priority of CTIS fields for `f.sponsorType()`
 - Added typing of newly appearing CTIS fields
-- Added multiple sponsors in EUCTR for `f.sponsorType()`
 
 # ctrdata 1.22.3
 

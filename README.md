@@ -37,7 +37,7 @@ interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
 `ctrdata` is a package for the [R](https://www.r-project.org/) system,
 but other systems and tools can use the databases created with this
-package. This README was reviewed on 2025-06-15 for version 1.22.3.9000.
+package. This README was reviewed on 2025-06-21 for version 1.22.3.9000.
 
 ## Main features
 
@@ -83,10 +83,6 @@ version 1.22.2, <https://cran.r-project.org/package=ctrdata>”.
 &#10;
 ``` r
 citation("ctrdata")
-&#10;# find publications
-utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrdata%22")
-&#10;# mentioned but not used in
-# * Sciannameo et al. (2024) Information Extraction from Medical Case Reports Using OpenAI InstructGPT. Computer Methods and Programs in Biomedicine [https://doi.org/10.1016/j.cmpb.2024.108326](https://doi.org/10.1016/j.cmpb.2024.108326)
 ```
 &#10;-->
 
@@ -124,6 +120,22 @@ publications:
 - EMA (2017) Results of juvenile animal studies (JAS) and impact on
   anti-cancer medicine development and use in children [PDF file, p
   34](https://www.ema.europa.eu/en/documents/scientific-guideline/results-juvenile-animal-studies-jas-and-impact-anti-cancer-medicine-development-and-use-children_en.pdf#page=34)
+
+<!--
+&#10;
+``` r
+# find publications using ctrdata
+utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrdata%22")
+&#10;# Ferreira, Francisca Santos (2024)
+# Reporte de redes de investigação nos ensaios clínicos pediátricos registados no EudraCT
+# https://repositorio.ulisboa.pt/handle/10400.5/101030
+&#10;# ctrdata is mentioned but not used in
+# Sciannameo et al. (2024) 
+# Information Extraction from Medical Case Reports Using OpenAI InstructGPT. 
+# Computer Methods and Programs in Biomedicine 
+# [https://doi.org/10.1016/j.cmpb.2024.108326](https://doi.org/10.1016/j.cmpb.2024.108326)
+```
+&#10;-->
 
 ## Installation
 

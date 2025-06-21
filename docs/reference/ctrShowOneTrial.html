@@ -108,16 +108,13 @@ For use in a Shiny app, see output and render functions in source code
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span>, <span class="fl">5L</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Searching for duplicate trials... </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - Getting all trial identifiers...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  (may take some time)...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> , 31 found in collection</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - Finding duplicates among registers' and sponsor ids...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - 2 EUCTR _id were not preferred EU Member State record for 11 trials</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - Keeping 5 / 3 / 8 / 8 / 5 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> = Returning keys (_id) of 29 records in collection "my_trials"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              ISRCTN               EUCTR               EUCTR              ISRCTN </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          "20343063" "2014-002606-20-PT" "2014-003556-31-SE"          "80181452" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               CTGOV </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "NCT03876704" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         CTGOV        ISRCTN        ISRCTN        ISRCTN         CTGOV </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "NCT03325439"    "80181452"    "61070850"    "13281214" "NCT03280147" </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># all such identifiers work</span></span></span>
 <span class="r-in"><span><span class="va">id</span> <span class="op">&lt;-</span> <span class="st">"2014-003556-31"</span></span></span>

@@ -62,7 +62,7 @@
                         <h4 data-toc-skip class="author">Ralf
 Herold</h4>
             
-            <h4 data-toc-skip class="date">2025-05-31</h4>
+            <h4 data-toc-skip class="date">2025-06-15</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/rfhb/ctrdata/blob/HEAD/vignettes/ctrdata_retrieve.Rmd" class="external-link"><code>vignettes/ctrdata_retrieve.Rmd</code></a></small>
       <div class="d-none name"><code>ctrdata_retrieve.Rmd</code></div>
@@ -83,7 +83,7 @@ Herold</h4>
 <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>). Please cite
 this package in any publication as follows: Ralf Herold (2025). ctrdata:
 Retrieve and Analyze Clinical Trials in Public Registers. R package
-version 1.21.0. <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a></p>
+version 1.22.3. <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a></p>
 </div>
 <div class="section level3">
 <h3 id="open-registers-advanced-search-page-in-browser">Open register’s advanced search page in browser<a class="anchor" aria-label="anchor" href="#open-registers-advanced-search-page-in-browser"></a>
@@ -171,7 +171,7 @@ downloaded by <code>ctrdata</code>, by specifying parameter
 <span><span class="co"># Show which queries have been downloaded into database</span></span>
 <span><span class="fu"><a href="../reference/dbQueryHistory.html">dbQueryHistory</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></span>
 <span><span class="co">#       query-timestamp query-register query-records</span></span>
-<span><span class="co"># 1 2025-05-31 13:15:38          EUCTR          1531</span></span>
+<span><span class="co"># 1 2025-06-15 22:06:10          EUCTR          1531</span></span>
 <span><span class="co">#                                                    query-term</span></span>
 <span><span class="co"># 1 query=cancer&amp;age=under-18&amp;resultsstatus=trials-with-results</span></span></code></pre></div>
 <p>With any database, this takes about 80 seconds for 1531 records of
@@ -213,16 +213,16 @@ available from ISRCTN and CTIS, thus <code>ctrdata</code> cannot load
 them, see <code><a href="../reference/ctrLoadQueryIntoDb.html">help(ctrLoadQueryIntoDb)</a></code>. The download or
 presence of results is not recorded in <code><a href="../reference/dbQueryHistory.html">dbQueryHistory()</a></code>
 because the availability of results increases over time. The following
-only takes about 90 seconds for about 1470 records (~ 65 ms/record) of
-376 trials, if run in the same R session as the above commands and thus
+only takes about 100 seconds for about 1530 records (~ 65 ms/record) of
+386 trials, if run in the same R session as the above commands and thus
 re-using previous downloads of unprocessed source data.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
 <span>  querytoupdate <span class="op">=</span> <span class="st">"last"</span>,</span>
 <span>  forcetoupdate <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  euctrresults <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
-<span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>; </span>
+<span><span class="op">)</span></span>
 <span><span class="co"># * Checking trials in EUCTR...</span></span>
 <span><span class="co"># Retrieved overview, multiple records of 386 trial(s) from 20 page(s) to be </span></span>
 <span><span class="co"># downloaded (estimate: 50 MB)</span></span>
@@ -285,26 +285,26 @@ queries that the user defines specifically or that function
 <span></span>
 <span><span class="co"># Show results of loading</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">result</span>, <span class="st">"[["</span>, <span class="st">"n"</span><span class="op">)</span></span>
-<span><span class="co"># EUCTR CTGOV2 ISRCTN   CTIS </span></span>
-<span><span class="co">#   180    111      0      1 </span></span>
+<span><span class="co"># EUCTR       ISRCTN       CTGOV2 CTGOV2expert         CTIS </span></span>
+<span><span class="co">#   180            0          110          110            1 </span></span>
 <span></span>
 <span><span class="co"># Overview of queries</span></span>
 <span><span class="fu"><a href="../reference/dbQueryHistory.html">dbQueryHistory</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></span>
 <span><span class="co">#       query-timestamp query-register query-records</span></span>
-<span><span class="co"># 1 2025-03-02 13:05:08          EUCTR          1470</span></span>
-<span><span class="co"># 2 2025-03-02 13:26:49          EUCTR             0</span></span>
-<span><span class="co"># 3 2025-03-02 13:31:53          EUCTR          1470</span></span>
-<span><span class="co"># 4 2025-03-02 13:49:09         CTGOV2           111</span></span>
-<span><span class="co"># 5 2025-03-02 13:56:01          EUCTR           180</span></span>
-<span><span class="co"># 6 2025-03-02 13:56:02         CTGOV2           111</span></span>
-<span><span class="co"># 7 2025-03-02 13:56:03           CTIS             1</span></span>
-<span><span class="co">#                                                                                                   query-term</span></span>
-<span><span class="co"># 1                                                query=cancer&amp;age=under-18&amp;resultsstatus=trials-with-results</span></span>
-<span><span class="co"># 2                                                query=cancer&amp;age=under-18&amp;resultsstatus=trials-with-results</span></span>
-<span><span class="co"># 3                                                query=cancer&amp;age=under-18&amp;resultsstatus=trials-with-results</span></span>
-<span><span class="co"># 4                                                cond=neuroblastoma&amp;aggFilters=phase:2,ages:child,status:com</span></span>
-<span><span class="co"># 5                             query=neuroblastoma&amp;phase=phase-two&amp;age=children&amp;age=under-18&amp;status=completed</span></span>
-<span><span class="co"># 6                                                cond=neuroblastoma&amp;aggFilters=phase:2,ages:child,status:com</span></span>
+<span><span class="co"># 1 2025-06-15 22:06:10          EUCTR          1531</span></span>
+<span><span class="co"># 2 2025-06-15 22:09:10          EUCTR             0</span></span>
+<span><span class="co"># 3 2025-06-15 22:21:08         CTGOV2           110</span></span>
+<span><span class="co"># 4 2025-06-15 22:22:21          EUCTR           180</span></span>
+<span><span class="co"># 5 2025-06-15 22:22:23         CTGOV2           110</span></span>
+<span><span class="co"># 6 2025-06-15 22:22:24         CTGOV2           110</span></span>
+<span><span class="co"># 7 2025-06-15 22:22:26           CTIS             1</span></span>
+<span><span class="co"># #vquery-term</span></span>
+<span><span class="co"># 1 query=cancer&amp;age=under-18&amp;resultsstatus=trials-with-results</span></span>
+<span><span class="co"># 2vquery=cancer&amp;age=under-18&amp;resultsstatus=trials-with-results</span></span>
+<span><span class="co"># 3vcond=neuroblastoma&amp;aggFilters=phase:2,ages:child,status:com</span></span>
+<span><span class="co"># 4 query=neuroblastoma&amp;phase=phase-two&amp;age=children&amp;age=adolescent&amp;age=infant-and-toddler&amp;age=newborn&amp;age=preterm-new-born-infants&amp;age=under-18&amp;status=completed</span></span>
+<span><span class="co"># 5 cond=neuroblastoma&amp;aggFilters=phase:2,ages:child,status:com,studyType:int</span></span>
+<span><span class="co"># 6 term=AREA[ConditionSearch]"neuroblastoma" AND (AREA[Phase]"PHASE2") AND (AREA[StdAge]"CHILD") AND (AREA[OverallStatus]"COMPLETED") AND (AREA[StudyType]INTERVENTIONAL)</span></span>
 <span><span class="co"># 7 searchCriteria={"medicalCondition":"neuroblastoma","trialPhaseCode":[4],"ageGroupCode":[2],"status":[5,8]}</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -479,9 +479,7 @@ be loaded from some registers (not CTIS), as follows.</p>
 <span>  <span class="st">"NCT00001209"</span>, <span class="st">"NCT00001436"</span>, <span class="st">"NCT00187109"</span>, <span class="st">"NCT01516567"</span>, <span class="st">"NCT01471782"</span>, </span>
 <span>  <span class="st">"NCT00357084"</span>, <span class="st">"NCT00357500"</span>, <span class="st">"NCT00365755"</span>, <span class="st">"NCT00407433"</span>, <span class="st">"NCT00410657"</span>, </span>
 <span>  <span class="st">"NCT00436852"</span>, <span class="st">"NCT00445965"</span>, <span class="st">"NCT00450307"</span>, <span class="st">"NCT00450827"</span>, <span class="st">"NCT00471679"</span>, </span>
-<span>  <span class="st">"NCT00492167"</span>, <span class="st">"NCT00499616"</span>, <span class="st">"NCT00503724"</span></span>
-<span>  </span>
-<span><span class="op">)</span></span>
+<span>  <span class="st">"NCT00492167"</span>, <span class="st">"NCT00499616"</span>, <span class="st">"NCT00503724"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># split into sets of each 10 trial ids </span></span>
 <span><span class="co"># (larger sets e.g. 50 may still work)</span></span>
