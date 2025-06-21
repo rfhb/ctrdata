@@ -162,6 +162,8 @@ f.sponsorType <- function(df = NULL) {
 
 
   #### . CTIS ####
+  # lists are likely derived from OMS;
+  # items are not in CTIS List Values
   ncs <- c(
     "Hospital/Clinic/Other health care facility",
     "Patient organisation/association",
@@ -179,7 +181,7 @@ f.sponsorType <- function(df = NULL) {
   df %>%
     dplyr::mutate(
       helper1 = !sapply(
-        # seems systematically filled
+        # seems systematically filled, CT.04.02 Field: Organisation type
         .data$authorizedApplication.authorizedPartI.sponsors.isCommercial, any),
       helper2 = sapply(
         # CTIS1?
@@ -194,7 +196,7 @@ f.sponsorType <- function(df = NULL) {
       # sequence matters, first
       # value determines result
       helper4 = dplyr::coalesce(
-        .data$helper3, .data$helper2, .data$helper1
+        .data$helper1, .data$helper2, .data$helper3
       ),
       #
       out = dplyr::case_when(
