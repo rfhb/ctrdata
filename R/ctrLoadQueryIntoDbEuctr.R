@@ -44,44 +44,49 @@ ctrLoadQueryIntoDbEuctr <- function(
 
   queryEuRoot  <- "https://www.clinicaltrialsregister.eu/"
   queryEuType1 <- "ctr-search/search?"
+  # based on download link after form is submitted:
   queryEuType3 <- "ctr-search/rest/download/full?"
+  # from download results as pdf, xml download was found:
   queryEuType4 <- "ctr-search/rest/download/result/zip/xml/"
   queryEuPost  <- paste0(
     "&mode=current_page&format=text&dContent=full",
     "&number=current_page&submit-download=Download")
+  # protocol data for single country trial as text, no gzip version accessible:
+  # https://www.clinicaltrialsregister.eu/ctr-search/rest/download/trial/2008-006649-18/GB
 
-  # get first result page
+  # get first trial search result page
   q <- utils::URLencode(paste0(queryEuRoot, queryEuType1, queryterm))
   if (verbose) message("DEBUG: queryterm is ", q)
   #
   # TODO
-  resultsEuPages <- try(httr2::req_perform(
-    httr2::req_user_agent(
-      httr2::request(q),
-      ctrdataUseragent
-    )), silent = TRUE)
+  initialData <- try(
+    httr2::req_perform(
+      httr2::req_user_agent(
+        httr2::request(q),
+        ctrdataUseragent
+      )),
+    silent = TRUE)
   #
-  if (inherits(resultsEuPages, "try-error") ||
-      resultsEuPages$status_code != 200L) {
+  if (inherits(initialData, "try-error") ||
+      initialData$status_code != 200L) {
     if (grepl("SSL certificate.*local issuer certificate",
-              rawToChar(resultsEuPages$body))) {
+              rawToChar(initialData$body))) {
       stop("Host ", queryEuRoot, " cannot be queried as expected, error:\n",
-           trimws(resultsEuPages), "\nFor a potential workaround, check ",
+           trimws(initialData), "\nFor a potential workaround, check ",
            "https://github.com/rfhb/ctrdata/issues/19#issuecomment-820127139",
            call. = FALSE)
     } else {
       stop("Host ", queryEuRoot, " not working as expected, ",
-           "cannot continue: ", resultsEuPages[[1]], call. = FALSE)
+           "cannot continue: ", initialData[[1]], call. = FALSE)
     }
   }
   # - get content of response
-  resultsEuPages <- rawToChar(resultsEuPages$body)
+  resultsEuPages <- rawToChar(initialData$body)
 
   # get number of trials identified by query
   resultsEuNumTrials <- sub(
     ".*Trials with a EudraCT protocol \\(([0-9,.]*)\\).*",
-    "\\1",
-    resultsEuPages)
+    "\\1", resultsEuPages)
   #
   resultsEuNumTrials <- suppressWarnings(
     as.integer(gsub("[,.]", "", resultsEuNumTrials)))
@@ -183,13 +188,15 @@ ctrLoadQueryIntoDbEuctr <- function(
   #
   # # TODO
 
-  # check host, takes around 1s
-  initialData <- httr2::req_perform(
-    httr2::req_user_agent(
-      httr2::request(
-        paste0(queryEuRoot, queryEuType3,
-               "query=2008-003606-33", "&page=1", queryEuPost)),
-      ctrdataUseragent))$headers
+  # # check host, takes around 1s
+  # initialData <- httr2::req_perform(
+  #   httr2::req_user_agent(
+  #     httr2::request(
+  #       paste0(queryEuRoot, queryEuType3,
+  #              "query=2008-003606-33", "&page=1", queryEuPost)),
+  #     ctrdataUseragent))$headers
+
+  initialData <- initialData$headers
   names(initialData) <- tolower(names(initialData))
 
   # inform user
