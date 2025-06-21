@@ -224,9 +224,10 @@ ctrLoadQueryIntoDb <- function(
 
   ## obtain queryterm register --------------------------------------------
 
-  # - if not querytoupdate
+  # if not querytoupdate
   if (is.null(querytoupdate)) {
-    # check queryterm
+
+    # - check queryterm
     if (!is.data.frame(queryterm)) {
       # obtain url and register
       queryterm <- try(

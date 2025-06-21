@@ -289,21 +289,21 @@ expect_message(
 expect_message(
   ctrGetQueryUrl(
     url = "https://clinicaltrials.gov/search?cond=neuroblastoma&intr=Investigational%20drug&aggFilters=ages:child,status:com&rank=8&sort=EnrollmentCount%3Adesc%2CNumArmGroups"),
-  "REST API")
+  "Found search query from CTGOV2")
 
 # test
 expect_message(
   ctrGetQueryUrl(
     url = "cond=neuroblastoma&intr=Investigational%20Drug&aggFilters=ages%3Achild%2Cstatus%3Acom&sort=EnrollmentCount%3Adesc%2CNumArmGroups",
     register = "CTGOV"),
-  "REST API")
+  "Found search query from CTGOV2")
 
 # test
 expect_message(
   ctrGetQueryUrl(
     url =
       "https://clinicaltrials.gov/study/NCT01467986?cond=neuroblastoma&intr=Investigational%20drug&aggFilters=ages:child,status:com&rank=2"),
-  "REST API")
+  "Found search query from CTGOV2")
 
 # test
 expect_message(
@@ -316,7 +316,7 @@ expect_message(
   ctrGetQueryUrl(
     url = "cond=Neuroblastoma&aggFilters=ages:child,results:with,studyType:int",
     register = "CTGOV"),
-  "REST API")
+  "Found search query from CTGOV2")
 
 # test
 expect_equal(

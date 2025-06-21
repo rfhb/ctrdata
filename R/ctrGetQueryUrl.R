@@ -156,7 +156,8 @@ ctrGetQueryUrl <- function(
   }
 
   # handle any mismatch of ctgov label with expected parameters
-  if (grepl("^CTGOV[2]?$", register)) register <- ctgovVersion(url, register)
+  if (grepl("^CTGOV[2]?$", register)) register <- ctgovVersion(
+    url, register, verbose = FALSE)
 
   # output value for return
   outdf <- function(qt, reg) {

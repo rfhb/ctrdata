@@ -47,8 +47,9 @@ ctrdataUseragent <- paste0(
 #' Checks for mismatch between label CTGOV and CTGOV2
 #' and tries to guess the correct label
 #'
-#' @param url url or data frame with query term
+#' @param url URL or data frame with query term
 #' @param register any of the register names
+#' @param verbose print detected API version
 #'
 #' @returns string
 #'
@@ -67,7 +68,7 @@ ctrdataUseragent <- paste0(
 #' ctgovVersion("term=NCT04412252,%20NCT04368728", "CTGOV2")
 #' ctgovVersion("https://www.clinicaltrials.gov/search?distance=50&cond=Cancer", "")
 #'
-ctgovVersion <- function(url, register) {
+ctgovVersion <- function(url, register, verbose = FALSE) {
 
   # in case the input is from dbQueryHistory
   if (!is.atomic(url)) try({url <- url[["query-term"]]}, silent = TRUE)
@@ -79,7 +80,7 @@ ctgovVersion <- function(url, register) {
     # these are classic-specific
     "[?&]rsub=|[?&]type=|[?&]rslt=|[?&]gndr=|[?&]recrs=|[?&]phase=|",
     "[?&]age=|[?&]cntry=|[?&][a-z]+_[a-z]+="), url)) { # e.g. strd_s
-    message("* Appears specific for CTGOV Classic website")
+    if (verbose) message("* Appears specific for CTGOV Classic website")
     return("CTGOV")
   }
 
@@ -88,12 +89,12 @@ ctgovVersion <- function(url, register) {
     # clear identifiers of CTGOV2
     "aggFilters|clinicaltrials[.]gov/(search|study)[/?]|",
     "[?&]country=|[:][^/]|%3[aA]"), url)) {
-    message("* Appears specific for CTGOV REST API 2.0")
+    if (verbose) message("* Appears specific for CTGOV REST API 2.0")
     return("CTGOV2")
   }
 
   # default return
-  message("Not overruling register label ", register)
+  if (verbose) message("Not overruling register label ", register)
   return(register)
 
 }
