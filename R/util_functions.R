@@ -1067,6 +1067,8 @@ ctrMultiDownload <- function(
       function(u, d) {
         # start with basic request
         r <- httr2::request(u)
+
+        # add user agent
         r <- httr2::req_user_agent(r, ctrdataUseragent)
 
         # curl::curl_options("vers")
@@ -1077,14 +1079,17 @@ ctrMultiDownload <- function(
           httr2::req_body_json(r, jsonlite::fromJSON(
             d, simplifyVector = FALSE))
 
-          # hard-coded throttling, max 4 MB/s
+        # TODO hard-coded throttling, max 4 MB/s
         r <- httr2::req_throttle(
           req = r,
+          # TODO change from hard-coded to options
           # ensures that you never make more
           # than capacity requests in fill_time_s
-            capacity = 20L * 60L,
-            fill_time_s = 60L
+          capacity = 100L * 10L,
+          fill_time_s = 10L
         )
+
+        # return
         return(r)
       },
       u = downloadValue$url,
@@ -1099,7 +1104,7 @@ ctrMultiDownload <- function(
       paths = downloadValue$destfile,
       on_error = "continue",
       progress = progress,
-        max_active = 10L
+      max_active = 20L
     )
 
     # mangle results info
