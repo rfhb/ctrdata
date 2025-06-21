@@ -308,31 +308,40 @@ ctrLoadQueryIntoDbIsrctn <- function(
     } else {
 
       # TODO
-      # need to go to webpage to obtain full download url
-      # since fileref2 cannot be determined in most cases
-      # from data in the ndjsonFile
-      message("correct with web pages ", appendLF = FALSE)
-      webPageInfo <- sapply(
-        unique(dlFiles[is.na(dlFiles$fileref2), "_id", drop = TRUE]),
-        function(i) {
-          i <- rvest::read_html_live(paste0(queryIsrctnRoot, "ISRCTN", i))
-          i <- rvest::html_elements(i, "a")
-          i <- rvest::html_attr(i, "href")
-          i <- i[grepl("/editorial/retrieveFile/", i)][1]
-          message(". ", appendLF = FALSE)
-          return(sub(".+/(.*?)$", "\\1", i))
-        }
-      )
-      message("")
-      #
-      webPageInfo <- data.frame(
-        `_id` = names(webPageInfo),
-        fileref2 = webPageInfo,
-        row.names = NULL,
-        check.names = FALSE)
-      #
-      dlFiles <- dplyr::rows_update(
-        dlFiles, webPageInfo, by = "_id")
+
+      ids <- unique(dlFiles[is.na(dlFiles$fileref2), "_id", drop = TRUE])
+
+      # need to go to webpage to obtain full download url since fileref2
+      # cannot be determined in most cases from data in the ndjsonFile
+      if (length(ids)) {
+
+        message("correct with web pages ", appendLF = FALSE)
+
+        webPageInfo <- sapply(
+          ids,
+          function(i) {
+            sess <- rvest::read_html_live(paste0(queryIsrctnRoot, "ISRCTN", i))
+            i <- rvest::html_elements(sess, "a")
+            i <- rvest::html_attr(i, "href")
+            i <- i[grepl("/editorial/retrieveFile/", i)][1]
+            i <- sub(".+/(.*?)$", "\\1", i)
+            sess$session$close()
+            message(". ", appendLF = FALSE)
+            return(i)
+          }
+        )
+        message("")
+
+        webPageInfo <- data.frame(
+          `_id` = names(webPageInfo),
+          fileref2 = webPageInfo,
+          row.names = NULL,
+          check.names = FALSE)
+
+        dlFiles <- dplyr::rows_update(
+          dlFiles, webPageInfo, by = "_id")
+
+      } # if ids
 
       # calculate urls
       dlFiles$url <- sprintf(
