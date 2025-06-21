@@ -29,8 +29,7 @@ ctrRerunQuery <- function(
   failed <- NULL
 
   ## handle query history -----------------------------------------------------
-  rerunquery <- dbQueryHistory(con = con,
-                               verbose = verbose)
+  rerunquery <- dbQueryHistory(con = con, verbose = verbose)
 
   # check parameters
   if (is.null(rerunquery) || !nrow(rerunquery))
@@ -42,8 +41,9 @@ ctrRerunQuery <- function(
     querytoupdate <- nrow(rerunquery)
 
   # check parameters
-  if (!is.integer(querytoupdate))
+  if (!(as.integer(querytoupdate) == querytoupdate))
     stop("'querytoupdate' needs to be an integer number", call. = FALSE)
+  querytoupdate <- as.integer(querytoupdate)
 
   # try to select the query to be updated
   if (querytoupdate > nrow(rerunquery) ||
