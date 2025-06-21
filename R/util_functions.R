@@ -1157,7 +1157,7 @@ ctrMultiDownload <- function(
     # replace url with CDN url and prepare to iterate
     if (any(cdnCheck)) {
 
-        message("Redirecting to CDN...")
+      if (verbose) message("Redirecting to CDN...")
 
       # get CDN url
       res$urlResolved[cdnCheck] <- sapply(
@@ -1202,7 +1202,8 @@ ctrMultiDownload <- function(
 
   }
 
-  }
+  # TODO
+  # }
 
   # finalise
   if (any(toDo)) {
@@ -1210,20 +1211,14 @@ ctrMultiDownload <- function(
     # remove any files from failed downloads
     unlink(downloadValue[toDo, c("destfile"), drop = TRUE])
 
-    if (verbose) {
-      message(
-        "Download failed for: status code / url(s):"
-      )
-      apply(
-        downloadValue[toDo, c("status_code", "url"), drop = FALSE],
-        1, function(r) message(r[1], " / ", r[2], "\n", appendLF = FALSE)
-      )
-    }
+    message("Download failed for: status code / url(s):")
+    apply(downloadValue[toDo, c("status_code", "url"), drop = FALSE],
+          1, function(r) message(r[1], " / ", r[2], "\n", appendLF = FALSE))
 
   }
 
   # TODO
-  message("Done: ", numI, " iteration(s)")
+  if (verbose) message("Done: ", numI, " iteration(s)")
 
   # return
   return(downloadValue[!toDo, , drop = FALSE])
@@ -1267,8 +1262,8 @@ ctrTempDir <- function(verbose = FALSE) {
     if (length(.ctrdataenv$keeptempdir) &&
         !is.null(.ctrdataenv$keeptempdir)) {
       if (.ctrdataenv$keeptempdir) {
-        message(
-          'ctrdata: "verbose = TRUE", not deleting temporary directory ', tempDir, "\r")
+        message('ctrdata: "verbose = TRUE", not deleting ',
+                'temporary directory ', tempDir, "\r")
       } else {
         unlink(tempDir, recursive = TRUE)
         message("ctrdata: deleted temporary directory\r")
