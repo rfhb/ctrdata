@@ -56,6 +56,12 @@ ctrRerunQuery <- function(
   queryterm  <- rerunquery[querytoupdate, "query-term", drop = TRUE]
   register   <- rerunquery[querytoupdate, "query-register", drop = TRUE]
 
+  # secondary check parameters in case history queries need
+  # to be translated or otherwise manipulated as for new queries
+  query <- ctrGetQueryUrl(url = queryterm, register = register)
+  queryterm <- query$`query-term`
+  register <- query$`query-register`
+
   # when was this query last run?
   #
   # - dates of all the same queries
@@ -64,35 +70,20 @@ ctrRerunQuery <- function(
       rerunquery[["query-term"]]]
   #
   # - remove time, keep date
-  initialday <- substr(
-    initialday,
-    start = 1,
-    stop = 10)
+  initialday <- substr(initialday, start = 1, stop = 10)
   #
   # - change to Date class and get
   #   index of latest (max) date,
-  initialdayindex <- try(
-    which.max(
-      as.Date(initialday,
-              format = "%Y-%m-%d")))
+  initialdayindex <- try(which.max(as.Date(initialday, format = "%Y-%m-%d")))
   if (!inherits(initialdayindex, "try-error")) {
     # - keep initial (reference) date of this query
     initialday <- initialday[initialdayindex]
+    message("* Query last run: ", rerunquery[
+      initialdayindex, "query-timestamp", drop = TRUE])
   } else {
-    # - fallback to number (querytoupdate)
-    #   as specified by user
+    # - fallback to number (querytoupdate) as specified by user
     initialday <- rerunquery[querytoupdate, "query-timestamp", drop = TRUE]
-  }
-
-  # secondary check parameters
-  if (!length(queryterm) || queryterm == "") {
-    stop("Parameter 'queryterm' is empty - cannot update query ",
-         querytoupdate, call. = FALSE)
-  }
-  #
-  if (!any(register == registerList)) {
-    stop("Parameter 'register' not known - cannot update query ",
-         querytoupdate, call. = FALSE)
+    message("* Query last run: ", initialday)
   }
 
   ## adapt updating procedure to respective register
@@ -101,6 +92,9 @@ ctrRerunQuery <- function(
   # mangle parameter only if not forcetoupdate,
   # which just returns parameters of original query
   if (!forcetoupdate) {
+
+    # inform user
+    message("* Checking for new or updated trials...")
 
     # ctgov --------------------------------------------------------------------
     if (register == "CTGOV") {
