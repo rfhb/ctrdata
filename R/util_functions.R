@@ -938,7 +938,8 @@ ctrMultiDownload <- function(
         r <- httr2::req_user_agent(r, ctrdataUseragent)
 
         # curl::curl_options("vers")
-        r <- httr2::req_options(r, http_version = 2)
+        # keep important option 2L for euctr
+        r <- httr2::req_options(r, http_version = 2L)
 
         # conditionally add body
         if (!is.na(d)) r <-
