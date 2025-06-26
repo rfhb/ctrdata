@@ -184,7 +184,6 @@ ctrLoadQueryIntoDbCtis <- function(
         )),
       con =  fTrialsNdjsonApi1Con),
     USE.NAMES = FALSE))
-  writeLines("", con = fTrialsNdjsonApi1Con)
 
   # cleanup and close
   unlink(dir(tempDir, "ctis_api1_page_.*.json", full.names = TRUE))

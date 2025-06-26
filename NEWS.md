@@ -4,6 +4,7 @@
 - Reduced library dependencies using equivalent alternative functions
 - Improved identifying and downloading more documents from ISRCTN
 - Cover multiple sponsors in EUCTR for `f.sponsorType()`
+- Fixed `ctrLoadQueryIntoDb()` for certain CTIS queries
 - Change priority of CTIS fields for `f.sponsorType()`
 - Added typing of newly appearing CTIS fields
 
