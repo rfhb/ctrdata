@@ -36,11 +36,11 @@
 ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE) {
   # check parameters
   if ((length(activesubstance) != 1L) ||
-    !is.character(activesubstance) ||
-    (nchar(activesubstance) == 0L)) {
+      !is.character(activesubstance) ||
+      (nchar(activesubstance) == 0L)) {
     stop("ctrFindActiveSubstanceSynonyms(): ",
-      "activesubstance should be a single string.",
-      call. = FALSE
+         "activesubstance should be a single string.",
+         call. = FALSE
     )
   }
 

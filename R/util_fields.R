@@ -532,17 +532,17 @@ typeVars <- list(
   "provided_document_section.provided_document.document_has_sap" = "ctrFalseTrue",
   #
   # - CTGOV2
-  "documentSection.largeDocumentModule.largeDocs.hasIcf"= "ctrFalseTrue",
-  "documentSection.largeDocumentModule.largeDocs.hasProtocol"= "ctrFalseTrue",
-  "documentSection.largeDocumentModule.largeDocs.hasSap"= "ctrFalseTrue",
+  "documentSection.largeDocumentModule.largeDocs.hasIcf"      = "ctrFalseTrue",
+  "documentSection.largeDocumentModule.largeDocs.hasProtocol" = "ctrFalseTrue",
+  "documentSection.largeDocumentModule.largeDocs.hasSap"      = "ctrFalseTrue",
   "hasResults" = "ctrFalseTrue",
-  "protocolSection.eligibilityModule.healthyVolunteers"= "ctrFalseTrue",
-  "protocolSection.oversightModule.isFdaRegulatedDevice"= "ctrFalseTrue",
-  "protocolSection.oversightModule.isFdaRegulatedDrug"= "ctrFalseTrue",
-  "protocolSection.oversightModule.oversightHasDmc"= "ctrFalseTrue",
-  "protocolSection.statusModule.expandedAccessInfo.hasExpandedAccess"= "ctrFalseTrue",
-  "resultsSection.moreInfoModule.certainAgreement.piSponsorEmployee"= "ctrFalseTrue",
-  "resultsSection.moreInfoModule.certainAgreement.restrictiveAgreement"= "ctrFalseTrue",
+  "protocolSection.eligibilityModule.healthyVolunteers"  = "ctrFalseTrue",
+  "protocolSection.oversightModule.isFdaRegulatedDevice" = "ctrFalseTrue",
+  "protocolSection.oversightModule.isFdaRegulatedDrug"   = "ctrFalseTrue",
+  "protocolSection.oversightModule.oversightHasDmc"      = "ctrFalseTrue",
+  "protocolSection.statusModule.expandedAccessInfo.hasExpandedAccess"   = "ctrFalseTrue",
+  "resultsSection.moreInfoModule.certainAgreement.piSponsorEmployee"    = "ctrFalseTrue",
+  "resultsSection.moreInfoModule.certainAgreement.restrictiveAgreement" = "ctrFalseTrue",
   #
   # - ISRCTN
   "trialDescription.acknowledgment" = "ctrFalseTrue",

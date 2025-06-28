@@ -170,6 +170,7 @@ f.sponsorType <- function(df = NULL) {
     "Educational Institution",
     "Health care"
   )
+  # TODO categories currently not used
   cos <- c(
     "Industry",
     "Laboratory/Research/Testing facility",

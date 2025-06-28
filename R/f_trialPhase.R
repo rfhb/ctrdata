@@ -161,7 +161,7 @@ f.trialPhase <- function(df = NULL) {
   # keep only outcome columns
   df <- df[, c("_id", ".trialPhase"), drop = FALSE]
 
-  # check missing levels
+  # check missing levels:
   # setdiff(unique(vct), names(phase_values))
 
   #### checks ####

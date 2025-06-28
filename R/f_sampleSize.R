@@ -163,7 +163,7 @@ f.sampleSize <- function(df = NULL) {
     df,
     out = rowSums(
       dplyr::select(
-        df,c(
+        df, c(
           "euctr",
           "enrollment",
           "protocolSection.designModule.enrollmentInfo.count",

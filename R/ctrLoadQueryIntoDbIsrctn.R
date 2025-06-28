@@ -308,7 +308,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
             return(i)
           }
         )
-        message("")
+        message()
 
         webPageInfo <- data.frame(
           `_id` = names(webPageInfo),

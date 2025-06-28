@@ -49,7 +49,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     ctgov2history <- deparse(ctgov2history)
   }
   if (!length(ctgov2history) ||
-    !grepl("^(FALSE|TRUE|-1L?|1L?|[0-9]+L?:[0-9]+L?|[1-9]+[0-9]+L?|[1-9]+L?)$", ctgov2history)) {
+      !grepl("^(FALSE|TRUE|-1L?|1L?|[0-9]+L?:[0-9]+L?|[1-9]+[0-9]+L?|[1-9]+L?)$", ctgov2history)) {
     message("Parameter 'ctgov2history' invalid, ignored: ", ctgov2history)
     ctgov2history <- "FALSE"
   }
@@ -81,16 +81,16 @@ ctrLoadQueryIntoDbCtgov2 <- function(
   queryValues <- sub("(.+)=(.*)", "\\2", queryterm)
   names(queryValues) <- sub("(.+)=(.*)", "\\1", queryterm)
   if (!is.na(queryValues["state"]) &&
-    !is.na(queryValues["city"]) &&
-    (queryValues["state"] == queryValues["city"])) {
+      !is.na(queryValues["city"]) &&
+      (queryValues["state"] == queryValues["city"])) {
     queryterm <-
       queryterm[!grepl("state=", queryterm)]
   }
   # - if only locStr, warn user
   if (!is.na(queryValues["locStr"]) &&
-    (is.na(queryValues["country"]) &&
-      is.na(queryValues["state"]) &&
-      is.na(queryValues["city"]))) {
+      (is.na(queryValues["country"]) &&
+       is.na(queryValues["state"]) &&
+       is.na(queryValues["city"]))) {
     stop(
       "Parameter 'locStr' provided, but no 'country', 'state' or 'city'; ",
       "please check in CTGOV; e.g., the name of a trial site should go ",
@@ -232,8 +232,8 @@ ctrLoadQueryIntoDbCtgov2 <- function(
   if (inherits(counts, "try-error") ||
       counts$status_code != 200L) {
     warning("Could not be retrieved, check 'queryterm' and / or 'register'. ",
-      "\nAPI returned: ", rawToChar(counts$body),
-      call. = FALSE
+            "\nAPI returned: ", rawToChar(counts$body),
+            call. = FALSE
     )
     message("API call: ", url)
     return(emptyReturn)
@@ -318,7 +318,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
 
     # inform user
     if (!nrow(resDf) == 1L || !resDf$success) message(
-        "Download not successful for ", urlToDownload)
+      "Download not successful for ", urlToDownload)
 
     # convert to ndjson
     message("- Converting to NDJSON...\r", appendLF = FALSE)
@@ -355,7 +355,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
 
   # dbCTRLoadJSONFiles operates on pattern = ".+_trials_.*.ndjson"
   imported <- dbCTRLoadJSONFiles(dir = tempDir, con = con, verbose = verbose)
-  message("")
+  message()
 
   ## download history---------------------------------------------------
 

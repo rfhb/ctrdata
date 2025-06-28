@@ -79,9 +79,6 @@ f.trialTitle <- function(df = NULL) {
   # check generic, do not edit
   fctChkFlds(names(df), fldsNeeded)
 
-  # helper function
-  `%>%` <- dplyr::`%>%`
-
   # helper function similar to unite
   pasteCols <- function(...) apply(
     ..., 1, function(i) paste(na.omit(i)[1], collapse = " "))

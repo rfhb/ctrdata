@@ -217,7 +217,6 @@ f.trialPopulation <- function(df = NULL) {
       #
       .trialPopulationAgeGroup = dplyr::case_when(
         !is.na(.data$.trialPopulationAgeGroup) ~ .data$.trialPopulationAgeGroup,
-        # CHILD / ADULT / OLDER_ADULT
         grepl("CHILD", .data$protocolSection.eligibilityModule.stdAges) &
           grepl("ADULT", .data$protocolSection.eligibilityModule.stdAges) &
           grepl("OLDER_ADULT", .data$protocolSection.eligibilityModule.stdAges) ~ "P+A+E",

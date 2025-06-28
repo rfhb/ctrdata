@@ -186,7 +186,7 @@ f.statusRecruitment <- function(df = NULL) {
   # merge, last update 2025-02-08
   mapped_values <- list(
     "ongoing" = c(
-      "active","active_not_recruiting", "active, not recruiting",
+      "active", "active_not_recruiting", "active, not recruiting",
       "authorised, not started", "authorised, recruiting",
       "authorised, recruitment pending", "enrolling by invitation",
       "enrolling_by_invitation", "not yet recruiting", "ongoing",
@@ -210,7 +210,7 @@ f.statusRecruitment <- function(df = NULL) {
     )
   )
 
-  # check for unmapped values
+  # check for unmapped values:
   # setdiff(unique(dfMergeVariablesRelevel(df, names(fldsNeeded))), unlist(mapped_values))
 
 

@@ -371,8 +371,8 @@ ctrLoadQueryIntoDbEuctr <- function(
 
     # for each file of an imported trial create new ndjson file
     xmlFileList <- dir(path = tempDir, pattern = "EU-CTR.+Results.xml", full.names = TRUE)
-    xmlFileList <- xmlFileList[vapply(xmlFileList, function(i) {any(
-      stringi::stri_detect_fixed(i, eudractnumbersimported))}, logical(1L))]
+    xmlFileList <- xmlFileList[vapply(xmlFileList, function(i) any(
+      stringi::stri_detect_fixed(i, eudractnumbersimported)), logical(1L))]
     on.exit(unlink(xmlFileList), add = TRUE)
     jsonFileList <- file.path(tempDir, paste0(
       "EU_Results_", sub(".+ ([0-9]{4}-[0-9]{6}-[0-9]{2}) .+", "\\1.ndjson", xmlFileList)))

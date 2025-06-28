@@ -342,30 +342,6 @@ ctrRerunQuery <- function(
         # iterate
         while (TRUE) {
 
-          # based on ctrLoadQueryIntoDbCtis.R#77
-          # initialData <- try(rawToChar(
-          #   curl::curl_fetch_memory(
-          #     url = "https://euclinicaltrials.eu/ctis-public-api/search",
-          #     handle = curl::new_handle(
-          #       postfields = paste0(
-          #         # add pagination parameters
-          #         '{"pagination":{"page":', pageNumber, ",",
-          #         # empirically found this as max
-          #         '"size":999},',
-          #         # add search criteria
-          #         sub(
-          #           "searchCriteria=", '"searchCriteria":',
-          #           # handle empty search query terms
-          #           ifelse(
-          #             queryterm != "", queryterm,
-          #             'searchCriteria={}'),
-          #         ),
-          #         # remaining parameters needed for proper server response
-          #         ',"sort":{"property":"decisionDate","direction":"DESC"}}'
-          #       ) # paste
-          #     ) # curl
-          #   )$content), silent = TRUE)
-
           initialData <- try(rawToChar(
             httr2::req_perform(
               httr2::req_body_json(
@@ -562,7 +538,7 @@ ctrRerunQuery <- function(
 
         # user interim info
         message(
-          "Query finds ", length(idsUpdatedTrials)," trials, ",
+          "Query finds ", length(idsUpdatedTrials), " trials, ",
           "loading and updating trials one-by-one (estimate: ",
           signif(length(idsUpdatedTrials) * 8 / 23L / 60L, 2L), " min)")
 
@@ -573,9 +549,9 @@ ctrRerunQuery <- function(
 
         # info
         message("\n",
-          sum(sapply(res, "[[", "updated")), " updated, ",
-          sum(sapply(res, "[[", "n")) - sum(sapply(res, "[[", "updated")),
-          " new records")
+                sum(sapply(res, "[[", "updated")), " updated, ",
+                sum(sapply(res, "[[", "n")) - sum(sapply(res, "[[", "updated")),
+                " new records")
 
         # return and signal to ctrLoadQueryIntoDb to exit early
         return(histCreateRet(res))
@@ -598,7 +574,7 @@ ctrRerunQuery <- function(
 
           # user interim info
           warning(
-            "Query finds ", length(idsUpdatedTrials)," trials, ",
+            "Query finds ", length(idsUpdatedTrials), " trials, ",
             "loading and updating trials one-by-one (estimate: ",
             signif(length(idsUpdatedTrials) * 78 / 233L / 60L, 2L), " min)")
 
@@ -608,7 +584,8 @@ ctrRerunQuery <- function(
             res, list(updateOrLoadTrial(trialId, con, ctishistory)))
 
           # info
-          message("\n",
+          message(
+            "\n",
             sum(sapply(res, "[[", "updated")), " updated, ",
             sum(sapply(res, "[[", "n")) - sum(sapply(res, "[[", "updated")),
             " new records")

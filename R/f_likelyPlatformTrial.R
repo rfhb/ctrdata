@@ -151,12 +151,12 @@ f.likelyPlatformTrial <- function(df = NULL) {
 
   # apply nested function which provides values for each register
   # therefore the following code needs to check against register
-  if(!any(names(df) == ".numTestArmsSubstances")) df <- dplyr::left_join(
+  if (!any(names(df) == ".numTestArmsSubstances")) df <- dplyr::left_join(
     df, f.numTestArmsSubstances(df = df), by = "_id")
 
   # apply nested function which provides values for each register
   # therefore the following code needs to check against register
-  if(!any(names(df) == ".trialTitle")) df <- dplyr::left_join(
+  if (!any(names(df) == ".trialTitle")) df <- dplyr::left_join(
     df, f.trialTitle(df = df), by = "_id")
 
   # remove columns needed exclusively for nested functions
@@ -231,7 +231,7 @@ f.likelyPlatformTrial <- function(df = NULL) {
       x, x, method = c(
         # help("stringdist-metrics")
         "osa", "lv", "dl", "hamming", "lcs", "qgram",
-        "cosine", "jaccard", "jw","soundex")[9])
+        "cosine", "jaccard", "jw", "soundex")[9])
 
     # blank diagonal
     diag(t) <- NA_integer_

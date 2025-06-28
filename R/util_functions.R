@@ -72,7 +72,7 @@ ctrdataUseragent <- paste0(
 ctgovVersion <- function(url, register, verbose = FALSE) {
 
   # in case the input is from dbQueryHistory
-  if (!is.atomic(url)) try({url <- url[["query-term"]]}, silent = TRUE)
+  if (!is.atomic(url)) try(url <- url[["query-term"]], silent = TRUE)
   if (inherits(url, "try-error") || is.null(url)) return(register)
 
   # logic 1

@@ -115,7 +115,7 @@ f.trialObjectives <- function(df = NULL) {
 
   # apply nested function which provides values for each register
   # therefore the following code needs to check against register
-  if(!any(names(df) == ".isMedIntervTrial")) df <- dplyr::left_join(
+  if (!any(names(df) == ".isMedIntervTrial")) df <- dplyr::left_join(
     df, f.isMedIntervTrial(df = df), by = "_id")
 
   # helper function
@@ -191,7 +191,7 @@ f.trialObjectives <- function(df = NULL) {
         df, c(
           fldsHere[[c("euctr")]][1], # code trial objectives
           unlist(fldsHere[c("ctgov", "ctgov2", "isrctn")], use.names = FALSE),
-          fldsHere[[c("ctis")]][-c(3,6)] # code trial objectives
+          fldsHere[[c("ctis")]][-c(3, 6)] # code trial objectives
         )
       )),
     txt = gsub("NA.?", "", .data$txt)) %>%
@@ -202,7 +202,7 @@ f.trialObjectives <- function(df = NULL) {
     dplyr::select(c(
       "_id", "txt", ".isMedIntervTrial",
       fldsHere[[c("euctr")]][-1],
-      fldsHere[[c("ctis")]][c(3,6)])
+      fldsHere[[c("ctis")]][c(3, 6)])
     ) -> df
 
   # identify symbols

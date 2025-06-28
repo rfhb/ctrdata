@@ -337,7 +337,7 @@ ctrLoadQueryIntoDb <- function(
   } # if querytermtoupdate
 
   # continue with database if needed
-  if (!only.count) {con <- ctrDb(con)}
+  if (!only.count) con <- ctrDb(con)
 
   ## . main function -----------------------------------------------------
 
@@ -394,7 +394,7 @@ ctrLoadQueryIntoDb <- function(
   ## finalise
 
   # early exit if only count
-  if (only.count) {return(imported)}
+  if (only.count) return(imported)
 
   # add query parameters to database
   if (imported$n > 0L || !is.null(querytoupdate)) {
