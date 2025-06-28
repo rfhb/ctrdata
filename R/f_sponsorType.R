@@ -2,12 +2,12 @@
 # 2025-01-27 first partly working version
 # 2025-02-08 improved
 
-#' Calculate type of control data collected in a study
+#' Calculate type of sponsor of a study
 #'
-#' Trial concept calculated: type or class of the lead or main sponsor of the
-#' trial. Some information is not yet mapped (e.g., "NETWORK" in CTGOV2).
-#' No specific field is available in ISRCTN. If several sponsors, sponsor type
-#' is deemed `for profit` if any sponsor is commercial.
+#' Trial concept calculated: type or class of the sponsor(s) of the study.
+#' No specific field is available in ISRCTN; thus, sponsor type is set to
+#' `other`. Note: If several sponsors, sponsor type is deemed `for profit`
+#' \emph{if any sponsor is commercial}.
 #'
 #' @param df data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
 #' prints fields needed in `df` for calculating this trial concept, which can
@@ -65,6 +65,7 @@ f.sponsorType <- function(df = NULL) {
       "sponsorType",
       "primarySponsor.commercial",
       # CTIS2
+      "authorizedApplication.authorizedPartI.sponsors.commercial",
       "authorizedApplication.authorizedPartI.sponsors.isCommercial"
     ))
 
@@ -164,13 +165,7 @@ f.sponsorType <- function(df = NULL) {
   #### . CTIS ####
   # lists are likely derived from OMS;
   # items are not in CTIS List Values
-  ncs <- c(
-    "Hospital/Clinic/Other health care facility",
-    "Patient organisation/association",
-    "Educational Institution",
-    "Health care"
-  )
-  # TODO categories currently not used
+  #
   cos <- c(
     "Industry",
     "Laboratory/Research/Testing facility",
@@ -179,31 +174,54 @@ f.sponsorType <- function(df = NULL) {
     "Pharmaceutical association/federation"
   )
   #
+  # TODO categories currently not used
+  ncs <- c(
+    "Hospital/Clinic/Other health care facility",
+    "Patient organisation/association",
+    "Educational Institution",
+    "Health care"
+  )
+  #
   df %>%
     dplyr::mutate(
-      helper1 = !sapply(
+      # helpers are true if any sponsor is commercial
+      #
+      helper1 = sapply(
         # seems systematically filled, CT.04.02 Field: Organisation type
         .data$authorizedApplication.authorizedPartI.sponsors.isCommercial, any),
+      #
       helper2 = sapply(
-        # CTIS1?
+        # field possibly from CTIS1
         .data$primarySponsor.commercial,
-        function(i) i == "Non-Commercial"),
+        function(i) i == "Commercial"),
+      #
       helper3 = sapply(
         stringi::stri_split_fixed(
-          # filled only sometimes
           .data$sponsorType, ", "),
-        function(i) if (all(is.na(i))) NA else any(i %in% ncs)
+        function(i) if (all(is.na(i))) NA else any(i %in% cos)
       ),
-      # sequence matters, first
-      # value determines result
-      helper4 = dplyr::coalesce(
-        .data$helper1, .data$helper2, .data$helper3
+      #
+      helper4 = sapply(
+        stringi::stri_split_fixed(
+          .data$authorizedApplication.authorizedPartI.sponsors.commercial, " / "),
+        function(i) {
+          ii <- (i == "Commercial") | (i == TRUE)
+          if (all(is.na(ii))) NA else any(ii)
+        }),
+      #
+      helper5 = mapply(
+        function(h1, h2, h3, h4) {
+          if (all(is.na(c(h1, h2, h3, h4)))) return(NA)
+          sum(h1, h2, h3, h4, na.rm = TRUE)
+        },
+        h1 = .data$helper1, h2 = .data$helper2,
+        h3 = .data$helper3, h4 = .data$helper4
       ),
       #
       out = dplyr::case_when(
-        .data$helper4 ~ stn,
-        !.data$helper4 ~ stc,
-        !is.na(.data$helper4) ~ sto,
+        .data$helper5 >= 1L ~ stc,
+        !(.data$helper5 >= 1L) ~ stn,
+        !is.na(.data$helper5) ~ sto,
         .default = NA_character_
       )
     ) %>%

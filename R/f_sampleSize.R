@@ -97,7 +97,8 @@ f.sampleSize <- function(df = NULL) {
   #### . EUCTR ####
   fldsEuctrProtocol <- fldsNeeded$euctr[-1]
   dplyr::mutate(
-    df, out = rowSums(
+    df,
+    out = rowSums(
       dplyr::select(
         df, fldsEuctrProtocol), na.rm = TRUE)) %>%
     dplyr::pull("out") -> df$helper_euctr_protocol
@@ -150,7 +151,8 @@ f.sampleSize <- function(df = NULL) {
         USE.NAMES = FALSE, simplify = TRUE)
     ) -> df
   dplyr::mutate(
-    df, out = rowSums(
+    df,
+    out = rowSums(
       dplyr::select(
         df, c(
           "helper_ctis1", "authorizedPartI.rowSubjectCount",
