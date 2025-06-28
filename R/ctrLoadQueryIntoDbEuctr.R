@@ -520,14 +520,14 @@ ctrLoadQueryIntoDbEuctr <- function(
               req = r,
               # ensures that you never make more
               # than capacity requests in fill_time_s
-              capacity = 100L * 10L,
+              capacity = 20L * 10L,
               fill_time_s = 10L
             )
             return(r)
           }
         ),
         on_error = "continue",
-        max_active = 10L
+        max_active = 5L
       )
 
       # mangle results info

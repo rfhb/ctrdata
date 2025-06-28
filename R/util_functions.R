@@ -952,7 +952,7 @@ ctrMultiDownload <- function(
           # TODO change from hard-coded to options
           # ensures that you never make more
           # than capacity requests in fill_time_s
-          capacity = 100L * 10L,
+          capacity = 20L * 10L,
           fill_time_s = 10L
         )
 
@@ -971,7 +971,7 @@ ctrMultiDownload <- function(
       paths = downloadValue$destfile,
       on_error = "continue",
       progress = progress,
-      max_active = 20L
+      max_active = 5L
     )
 
     # mangle results info
