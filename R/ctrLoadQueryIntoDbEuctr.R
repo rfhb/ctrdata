@@ -527,7 +527,7 @@ ctrLoadQueryIntoDbEuctr <- function(
           }
         ),
         on_error = "continue",
-        max_active = 5L
+        max_active = 6L # as in curl multi_set
       )
 
       # mangle results info

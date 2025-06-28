@@ -946,10 +946,9 @@ ctrMultiDownload <- function(
           httr2::req_body_json(r, jsonlite::fromJSON(
             d, simplifyVector = FALSE))
 
-        # TODO hard-coded throttling, max 4 MB/s
+        # hard-coded throttling
         r <- httr2::req_throttle(
           req = r,
-          # TODO change from hard-coded to options
           # ensures that you never make more
           # than capacity requests in fill_time_s
           capacity = 20L * 10L,
@@ -971,7 +970,7 @@ ctrMultiDownload <- function(
       paths = downloadValue$destfile,
       on_error = "continue",
       progress = progress,
-      max_active = 5L
+      max_active = 6L # as in curl multi_set
     )
 
     # mangle results info
