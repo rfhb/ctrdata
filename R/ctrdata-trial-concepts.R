@@ -63,7 +63,7 @@
 #' - \link{f.sampleSize} (integer) the planned or achieved number of subjects
 #' or participants recruited
 #'
-#' - \link{f.sponsorType} (factor) a type or class of main or lead sponsor that
+#' - \link{f.sponsorType} (factor) a type or class of sponsor(s) that
 #' is simplified to "not for profit", "for profit" or "other"
 #'
 #' - \link{f.statusRecruitment} (factor) a status that is simplified to

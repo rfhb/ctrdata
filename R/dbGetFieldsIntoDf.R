@@ -161,6 +161,11 @@ dbGetFieldsIntoDf <- function(
   fields <- fields[fields != ""]
   calculate <- calculate[calculate != ""]
 
+  # user info
+  if (length(calculate)) message(
+    "Review trial concepts definitions, ",
+    'call \'help("ctrdata-trial-concepts")\'')
+
   # get all functions
   fcts <- as.character(utils::ls.str(
     getNamespace("ctrdata"),
@@ -262,6 +267,11 @@ dbGetFieldsIntoDf <- function(
     # run functions
     for (i in calculate) {
 
+      # inform user
+      message(
+        "Calculating ", i,
+        "...                            \r",
+        appendLF = FALSE)
       # calculate trial concept
       outi <- do.call(i, list(out))
       # full join because outi has only

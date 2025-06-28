@@ -169,7 +169,10 @@ the sought variable(s).</p>
 <span class="r-in"><span>  fields <span class="op">=</span> <span class="st">"keyword"</span>,</span></span>
 <span class="r-in"><span>  calculate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"f.statusRecruitment"</span>, <span class="st">"f.isUniqueTrial"</span>, <span class="st">"f.startDate"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Review trial concepts definitions, call 'help("ctrdata-trial-concepts")'</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Querying database (25 fields)...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating f.statusRecruitment...                            </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating f.isUniqueTrial...                            </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Searching for duplicate trials... </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - Getting all trial identifiers...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> , 31 found in collection</span>
@@ -177,6 +180,7 @@ the sought variable(s).</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - 2 EUCTR _id were not preferred EU Member State record for 11 trials</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - Keeping 5 / 3 / 8 / 8 / 5 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> = Returning keys (_id) of 29 records in collection "my_trials"</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating f.startDate...                            </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">.statusRecruitment</span>, exclude <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>

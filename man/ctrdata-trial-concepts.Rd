@@ -58,7 +58,7 @@ primary endpoint only
 of start of recruitment
 \item \link{f.sampleSize} (integer) the planned or achieved number of subjects
 or participants recruited
-\item \link{f.sponsorType} (factor) a type or class of main or lead sponsor that
+\item \link{f.sponsorType} (factor) a type or class of sponsor(s) that
 is simplified to "not for profit", "for profit" or "other"
 \item \link{f.statusRecruitment} (factor) a status that is simplified to
 "ongoing" (includes temporarily halted), "completed", "ended early" (includes
