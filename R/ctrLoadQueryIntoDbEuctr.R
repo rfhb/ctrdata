@@ -166,12 +166,12 @@ ctrLoadQueryIntoDbEuctr <- function(
   names(initialData) <- tolower(names(initialData))
   if (is.null(initialData$`content-encoding`) ||
       !grepl("gzip|deflate", initialData$`content-encoding`)) message(
-        "Note: register server cannot compress data, ",
+        "Note: Server cannot compress data, ",
         "transfer takes longer (estimate: ",
         signif(resultsEuNumTrials * 1.2, 1L), " s)")
 
   # inform user
-  message("(1/3) Downloading trials...")
+  message("- Downloading trials...")
 
   # generate vector with URLs of all pages
   urls <- paste0(queryEuRoot, queryEuType3,
@@ -187,13 +187,13 @@ ctrLoadQueryIntoDbEuctr <- function(
     ))
 
   # do download and saving
-  tmp <- ctrMultiDownload(
+  resDf <- ctrMultiDownload(
     urls = urls,
     destfiles = fp,
     verbose = verbose
   )
 
-  if (nrow(tmp) != resultsEuNumPages) {
+  if (nrow(resDf) != resultsEuNumPages) {
     message("Download from EUCTR failed; incorrect number of records")
     return(invisible(emptyReturn))
   }
@@ -203,23 +203,23 @@ ctrLoadQueryIntoDbEuctr <- function(
   if (length(.ctrdataenv$ct) == 0L) initTranformers()
 
   # run conversion (~12s for 563 trials)
-  message("(2/3) Converting to NDJSON (estimate: ",
+  message("- Converting to NDJSON (estimate: ",
           signif(resultsEuNumTrials * 0.02, 1L), " s)...")
 
-  tmp$ndjsonfile <- sub("[.]txt$", ".ndjson", tmp$destfile)
+  resDf$ndjsonfile <- sub("[.]txt$", ".ndjson", resDf$destfile)
 
-  sapply(seq_len(nrow(tmp)), function(r) {
+  sapply(seq_len(nrow(resDf)), function(r) {
     readr::write_file(
       .ctrdataenv$ct$call(
-        "euctr2ndjson", readr::read_file(tmp$destfile[r]),
+        "euctr2ndjson", readr::read_file(resDf$destfile[r]),
         format(Sys.time(), "%Y-%m-%d %H:%M:%S")),
-      file = tmp$ndjsonfile[r])
+      file = resDf$ndjsonfile[r])
   })
 
   ## import into database -----------------------------------------------
 
   # run import into database from json files
-  message("(3/3) Importing records into database...")
+  message("- Importing records into database...")
   if (verbose) message("DEBUG: ", tempDir)
 
   imported <- dbCTRLoadJSONFiles(dir = tempDir,
@@ -237,7 +237,7 @@ ctrLoadQueryIntoDbEuctr <- function(
 
   # remove calculated ndjson files in case of re-download import
   # because dbCTRLoadJSONFiles() imports all ndjson in the folder
-  unlink(tmp$ndjsonfile)
+  unlink(resDf$ndjsonfile)
 
   ## result-related information -----------------------------------------------
 
@@ -267,7 +267,7 @@ ctrLoadQueryIntoDbEuctr <- function(
     # latest version: "2007-000371-42"
 
     # inform user
-    message("(1/4) Downloading results...")
+    message("- Downloading results...")
 
     # prepare download and save
 
@@ -284,22 +284,23 @@ ctrLoadQueryIntoDbEuctr <- function(
       ))
 
     # do download and save
-    tmp <- ctrMultiDownload(
+    resDf <- ctrMultiDownload(
       urls = urls,
       destfiles = fp,
       verbose = verbose
     )
 
     # work only on successful downloads
-    tmp <- tmp[tmp$success, , drop = FALSE]
+    resDf <- resDf[resDf$success, , drop = FALSE]
 
     # inform user
     message(
-      "- extracting results (. = data, F = file[s] and data, x = none):")
+      "- extracting results (. = data, F = file[s] and data, x = none): ",
+      appendLF = FALSE)
 
     # unzip downloaded files and move non-XML extracted files
-    tmp <- lapply(
-      tmp[["destfile"]], function(f) {
+    lapply(
+      resDf[["destfile"]], function(f) {
 
         if (file.exists(f) &&
             file.size(f) != 0L) {
@@ -308,10 +309,10 @@ ctrLoadQueryIntoDbEuctr <- function(
           # characters under windows, thus only
           # obtain file names and extract with
           # extra package
-          tmp <- utils::unzip(
+          unzFiles <- utils::unzip(
             zipfile = f,
             list = TRUE)$Name
-          if (is.null(tmp)) return(NULL)
+          if (is.null(unzFiles)) return(NULL)
           try(zip::unzip(
             zipfile = f,
             exdir = tempDir),
@@ -319,9 +320,9 @@ ctrLoadQueryIntoDbEuctr <- function(
 
           # results in files such as
           # EU-CTR 2008-003606-33 v1 - Results.xml
-          nonXmlFiles <- tmp[!grepl("Results[.]xml$", tmp)]
+          nonXmlFiles <- unzFiles[!grepl("Results[.]xml$", unzFiles)]
           euctrnr <- gsub(paste0(".*(", regEuctr, ").*"),
-                          "\\1", tmp[grepl("Results[.]xml$", tmp)])[1]
+                          "\\1", unzFiles[grepl("Results[.]xml$", unzFiles)])[1]
 
           # any non-XML file
           if (length(nonXmlFiles)) {
@@ -350,7 +351,7 @@ ctrLoadQueryIntoDbEuctr <- function(
             } # if paths
           } else {
             # only XML data file
-            if (any(grepl("Results[.]xml$", tmp)))
+            if (any(grepl("Results[.]xml$", unzFiles)))
               message(". ", appendLF = FALSE)
           }
 
@@ -378,7 +379,7 @@ ctrLoadQueryIntoDbEuctr <- function(
     on.exit(unlink(jsonFileList), add = TRUE)
 
     # run conversion (~2 s for 19 records)
-    message("(2/4) Converting to NDJSON (estimate: ",
+    message("- Converting to NDJSON (estimate: ",
             signif(length(xmlFileList) * 2 / 19, 1L), " s)...")
 
     sapply(seq_along(xmlFileList), function(f) {
@@ -403,7 +404,7 @@ ctrLoadQueryIntoDbEuctr <- function(
     }) # sapply xmlFileList
 
     # iterate over results files
-    message("(3/4) Importing results into database (may take some time)...")
+    message("- Importing results into database (may take some time)...")
 
     # initiate counter
     importedresults <- 0L
@@ -418,7 +419,7 @@ ctrLoadQueryIntoDbEuctr <- function(
         "\"", "", as.character(jqr::jq(file(f), " .eudractNumber ")))
 
       # update database with results
-      tmp <- try({
+      res <- try({
         tmpnodbi <-
           nodbi::docdb_update(
             src = con,
@@ -431,10 +432,10 @@ ctrLoadQueryIntoDbEuctr <- function(
       silent = TRUE)
 
       # inform user on failed trial
-      if (inherits(tmp, "try-error")) {
+      if (inherits(res, "try-error")) {
         warning(paste0(
           "Import of results failed for trial ", eudractNumber), immediate. = TRUE)
-        tmp <- 0L
+        res <- 0L
       } else {
 
         # output is number of trials updated
@@ -500,7 +501,7 @@ ctrLoadQueryIntoDbEuctr <- function(
       # this does not include the retrieval of information
       # about amendment to the study, as presented at the bottom
       # of the webpage for the respective trial results
-      message("(4/4) Retrieving results history:                           ")
+      message("- Retrieving results history:                           ")
 
       res <- httr2::req_perform_parallel(
         reqs = lapply(
@@ -556,7 +557,7 @@ ctrLoadQueryIntoDbEuctr <- function(
 
             # update record
             message(". ", appendLF = FALSE)
-            tmp <- nodbi::docdb_update(
+            res <- nodbi::docdb_update(
               src = con,
               key = con$collection,
               value = list(
@@ -567,7 +568,7 @@ ctrLoadQueryIntoDbEuctr <- function(
             )
 
             # return if successful
-            ifelse(inherits(tmp, "try-error"), 0L, 1L)
+            ifelse(inherits(res, "try-error"), 0L, 1L)
           }
         }) # apply resultsHistory
 
@@ -580,7 +581,7 @@ ctrLoadQueryIntoDbEuctr <- function(
 
     } else {
 
-      message("(4/4) Results history: not retrieved ",
+      message("- Results history: not retrieved ",
               "(euctrresultshistory = FALSE)",
               appendLF = FALSE)
 

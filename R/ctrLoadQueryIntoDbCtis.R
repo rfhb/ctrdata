@@ -61,7 +61,7 @@ ctrLoadQueryIntoDbCtis <- function(
   message("* Checking trials in CTIS...")
 
   # "HTTP server doesn't seem to support byte ranges. Cannot resume."
-  message("(1/4) Downloading trial list(s)...", appendLF = FALSE)
+  message("- Downloading trial list(s)...", appendLF = FALSE)
 
   # queryterm comes from ctrGetQueryUrl()
 
@@ -151,7 +151,7 @@ ctrLoadQueryIntoDbCtis <- function(
   )
 
   # download files
-  tmp <- ctrMultiDownload(
+  ctrMultiDownload(
     urls = rep.int(ctisEndpoints[1], length(pageNo)),
     destfiles = fTrialsJsonApi1PageFiles,
     data = jsonApi1Pages,
@@ -166,7 +166,7 @@ ctrLoadQueryIntoDbCtis <- function(
   on.exit(try(unlink(fTrialsNdjsonApi1), silent = TRUE), add = TRUE)
 
   # iterate over json files and create ndjson
-  invisible(sapply(
+  sapply(
     fTrialsJsonApi1PageFiles,
     # {...,"data":[{"ctNumber":"2023-510173-34-00","ctStatus"
     function(i) writeLines(
@@ -183,7 +183,7 @@ ctrLoadQueryIntoDbCtis <- function(
                  .ctTitle, .primaryEndPoint, .sponsor, .conditions) "
         )),
       con =  fTrialsNdjsonApi1Con),
-    USE.NAMES = FALSE))
+    USE.NAMES = FALSE)
 
   # cleanup and close
   unlink(dir(tempDir, "ctis_api1_page_.*.json", full.names = TRUE))
@@ -201,7 +201,7 @@ ctrLoadQueryIntoDbCtis <- function(
 
   # this is imported as the main data into the database
 
-  message("(2/4) Downloading and processing trial data... (",
+  message("- Downloading and processing trial data... (",
           "estimate: ", signif(length(idsTrials) * 12 / 96, 1L), " Mb)")
 
   urls <- sprintf(ctisEndpoints[2], idsTrials)
@@ -211,7 +211,7 @@ ctrLoadQueryIntoDbCtis <- function(
   }
 
   # "HTTP server doesn't seem to support byte ranges. Cannot resume."
-  tmp <- ctrMultiDownload(
+  resDf <- ctrMultiDownload(
     urls = urls,
     destfiles = fPartIPartsIIJson(idsTrials),
     verbose = verbose
@@ -220,7 +220,7 @@ ctrLoadQueryIntoDbCtis <- function(
   # convert partI and partsII details into ndjson file(s),
   # each approximately 10MB for nRecords = 100L
   nRecords <- 100L
-  groupNo <- (nrow(tmp) %/% nRecords) + 1L
+  groupNo <- (nrow(resDf) %/% nRecords) + 1L
   groupNo <- rep(seq_len(groupNo), nRecords)
   on.exit(unlink(dir(tempDir, "ctis_trials_api2_.*.ndjson", full.names = TRUE)), add = TRUE)
 
@@ -232,7 +232,7 @@ ctrLoadQueryIntoDbCtis <- function(
     on.exit(try(close(fTrialsNdjsonApi2Con), silent = TRUE), add = TRUE)
 
     sapply(
-      X = na.omit(tmp$destfile[groupNo == g]),
+      X = na.omit(resDf$destfile[groupNo == g]),
       FUN = function(f) {
 
         if (!file.exists(f)) return()
@@ -253,13 +253,13 @@ ctrLoadQueryIntoDbCtis <- function(
 
   ## database import -----------------------------------------------------
 
-  message("(3/4) Importing records into database...")
+  message("- Importing records into database...")
 
   # dbCTRLoadJSONFiles operates on pattern = ".+_trials_.*.ndjson"
   imported <- dbCTRLoadJSONFiles(dir = tempDir, con = con, verbose = verbose)
 
   # additional ndjson file
-  message("(4/4) Updating with additional data: ", appendLF = FALSE)
+  message("- Updating with additional data: ", appendLF = FALSE)
 
   message(". ", appendLF = FALSE)
   updated <- nodbi::docdb_update(

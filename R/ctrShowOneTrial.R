@@ -145,7 +145,7 @@ ctrShowOneTrial <- function(
   if (interactive()) ctrShowOneTrialWidget(message = msg)
 
   ## return
-  invisible(msg)
+  return(invisible(msg))
 
 }
 

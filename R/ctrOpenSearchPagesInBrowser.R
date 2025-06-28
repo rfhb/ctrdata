@@ -169,6 +169,6 @@ ctrOpenSearchPagesInBrowser <- function(
   }
 
   # if not returned before
-  invisible(NULL)
+  return(invisible(NULL))
 }
 # end ctrOpenSearchPagesInBrowser

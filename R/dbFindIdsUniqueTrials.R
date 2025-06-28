@@ -109,12 +109,12 @@ dbFindIdsUniqueTrials <- function(
   for (i in seq_along(preferregister)) {
 
     # subset to be checked and non-dupes to be added
-    tmp <- listofIds[listofIds[["ctrname"]] == preferregister[i], , drop = FALSE]
-    row.names(tmp) <- NULL
+    subDf <- listofIds[listofIds[["ctrname"]] == preferregister[i], , drop = FALSE]
+    row.names(subDf) <- NULL
 
     # check if second etc. set has identifiers
     # in the previously rbind'ed sets
-    if (i > 1L && nrow(tmp)) {
+    if (i > 1L && nrow(subDf)) {
 
       # check for duplicates
       dupes <- mapply(
@@ -134,7 +134,7 @@ dbFindIdsUniqueTrials <- function(
             rep(FALSE, times = length(c1))
           }
         },
-        tmp[, colsToCheck, drop = FALSE],
+        subDf[, colsToCheck, drop = FALSE],
         outSet[, colsToCheck, drop = FALSE],
         SIMPLIFY = FALSE
       )
@@ -144,14 +144,14 @@ dbFindIdsUniqueTrials <- function(
       dupes <- as.data.frame(dupes)
 
       # keep uniques
-      tmp <- tmp[rowSums(dupes) == 0L, , drop = FALSE]
+      subDf <- subDf[rowSums(dupes) == 0L, , drop = FALSE]
       rm(dupes)
 
     } # if
 
     # add to output set
     outSet <- rbind(
-      outSet, tmp,
+      outSet, subDf,
       make.row.names = FALSE,
       stringsAsFactors = FALSE
     )
@@ -452,7 +452,7 @@ dbFindIdsUniqueTrials <- function(
   #   that each of the columns holds
   #   a single character vector,
   #   possibly collapsed with " / "
-  invisible(sapply(
+  sapply(
     colsToMangle,
     function(ctm) {
       colMangled <- regmatches(
@@ -462,7 +462,7 @@ dbFindIdsUniqueTrials <- function(
       colMangled[!lengths(colMangled)] <- ""
       listofIds[[ctm[[1]]]] <<- unlist(colMangled)
     }
-  ))
+  )
   # - merge columns for register ids and sponsor ids
   for (reg in c(registerList, "SPONSOR")) {
     listofIds[[reg]] <- apply(

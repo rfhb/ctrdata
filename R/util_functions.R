@@ -492,10 +492,10 @@ ctrCache <- function(xname, xvalue = NULL, verbose = FALSE) {
   # check and read any value for xname variable
   if (verbose) message("- Checking cache...")
   if (exists(x = xname, envir = .ctrdataenv)) {
-    tmp <- try(get(x = xname, envir = .ctrdataenv), silent = TRUE)
-    if (inherits(tmp, "try-error")) return(NULL)
+    val <- try(get(x = xname, envir = .ctrdataenv), silent = TRUE)
+    if (inherits(val, "try-error")) return(NULL)
     if (verbose) message("- Returning ", xname, " ")
-    return(tmp)
+    return(val)
   }
 
   # default
@@ -1214,20 +1214,20 @@ ctrDocsDownload <- function(
     message("- Creating empty document placeholders (max. ", nrow(dlFiles), ")")
 
     # create subdirectories by trial
-    invisible(sapply(
+    sapply(
       unique(dlFiles$filepath), function(i) if (!dir.exists(i))
         dir.create(i, showWarnings = FALSE, recursive = TRUE)
-    ))
+    )
 
     # create empty files
-    tmp <-
+    filesCount <-
       sapply(
         dlFiles$filepathname,
         function(i) if (!file.exists(i))
           file.create(i, showWarnings = TRUE),
         USE.NAMES = FALSE)
 
-    tmp <- sum(unlist(tmp), na.rm = TRUE)
+    filesCount <- sum(unlist(filesCount), na.rm = TRUE)
 
   } else {
 
@@ -1244,10 +1244,10 @@ ctrDocsDownload <- function(
     message("- Creating subfolder for each trial")
 
     # create subdirectories by trial
-    invisible(sapply(
+    sapply(
       unique(dlFiles$filepath), function(i) if (!dir.exists(i))
         dir.create(i, showWarnings = FALSE, recursive = TRUE)
-    ))
+    )
 
     # inform
     message("- Downloading ",
@@ -1286,22 +1286,22 @@ ctrDocsDownload <- function(
     message()
 
     # do download
-    tmp <- ctrMultiDownload(
+    filesCount <- ctrMultiDownload(
       urls = dlFiles$url[!dlFiles$fileexists],
       destfiles = dlFiles$filepathname[!dlFiles$fileexists],
       verbose = verbose
     )
 
     # check results
-    if (!nrow(tmp)) tmp <- 0L else {
+    if (!nrow(filesCount)) filesCount <- 0L else {
 
       # handle failures despite success is true
-      suppressMessages(invisible(sapply(
-        tmp$destfile[!tmp$success],
+      suppressMessages(sapply(
+        filesCount$destfile[!filesCount$success],
         # delete but only micro files, possible remnants
         function(f) if (file.size(f) < 20L) unlink(f)
-      )))
-      tmp <- sum(tmp$success, na.omit = TRUE)
+      ))
+      filesCount <- sum(filesCount$success, na.omit = TRUE)
 
     }
 
@@ -1313,7 +1313,7 @@ ctrDocsDownload <- function(
     ifelse(is.null(documents.regexp), "placeholder ", ""),
     "document(s) for %i trial(s); ",
     "%i of such document(s) for %i trial(s) already existed in %s"),
-    tmp,
+    filesCount,
     length(unique(dlFiles$`_id`)),
     sum(dlFiles$fileexists),
     length(unique(dlFiles$`_id`[dlFiles$fileexists])),
@@ -1321,7 +1321,7 @@ ctrDocsDownload <- function(
   ))
 
   # return
-  return(tmp)
+  return(filesCount)
 
 } # end ctrDocsDownload
 
@@ -1446,7 +1446,7 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
       ## delete and import ----------------------------------------------------
 
       # delete any existing records
-      tmp <- try({
+      res <- try({
         nodbi::docdb_delete(
           src = con,
           key = con$collection,
@@ -1456,15 +1456,15 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
       }, silent = TRUE)
 
       # early exit
-      if (inherits(tmp, "try-error") &&
-          grepl("read.?only", tmp)) stop(
+      if (inherits(res, "try-error") &&
+          grepl("read.?only", res)) stop(
             "Database is read-only, cannot load trial records.\n",
             "Change database connection in parameter 'con = ...'",
             call. = FALSE
           )
 
       ## import
-      tmp <- try({
+      res <- try({
         suppressWarnings(
           suppressMessages(
             nodbi::docdb_create(
@@ -1474,7 +1474,7 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
             )))}, silent = TRUE)
 
       ## return values for lapply
-      if (inherits(tmp, "try-error") || tmp == 0L || tmp != nrow(annoDf)) {
+      if (inherits(res, "try-error") || res == 0L || res != nrow(annoDf)) {
 
         # step into line by line mode
         fdLines <- file(tempFiles[tempFile], open = "rt", blocking = TRUE)
@@ -1482,19 +1482,19 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
           tmpOneLine <- readLines(con = fdLines, n = 1L, warn = FALSE)
           if (length(tmpOneLine) == 0L || !nchar(tmpOneLine)) break
           id <- sub(".*\"_id\":[ ]*\"(.*?)\".*", "\\1", tmpOneLine)
-          tmp <- suppressWarnings(suppressMessages(nodbi::docdb_create(
+          res <- suppressWarnings(suppressMessages(nodbi::docdb_create(
             src = con, key = con$collection, value = paste0("[", tmpOneLine, "]"))))
-          nImported <- nImported + tmp
-          if (tmp) idSuccess <- c(idSuccess, id)
-          if (!tmp) idFailed <- c(idFailed, id)
-          if (!tmp) warning("Failed to load: ", id, call. = FALSE)
-          if (tmp) idAnnotation <- c(idAnnotation, annoDf[
+          nImported <- nImported + res
+          if (res) idSuccess <- c(idSuccess, id)
+          if (!res) idFailed <- c(idFailed, id)
+          if (!res) warning("Failed to load: ", id, call. = FALSE)
+          if (res) idAnnotation <- c(idAnnotation, annoDf[
             annoDf[["_id"]] == id, "annotation", drop = TRUE][1])
         }
         close(fdLines)
 
       } else {
-        nImported <- nImported + tmp
+        nImported <- nImported + res
         idSuccess <- c(idSuccess, annoDf[, "_id", drop = TRUE])
         idAnnotation <- c(idAnnotation, annoDf[, "annotation", drop = TRUE])
       }
@@ -1636,7 +1636,7 @@ dbCTRUpdateQueryHistory <- function(
     newHist <- rbind(hist, newHist)
     newHist <- list("queries" = newHist)
 
-    tmp <- suppressMessages(
+    res <- suppressMessages(
       nodbi::docdb_update(
         src = con,
         key = con$collection,
@@ -1652,7 +1652,7 @@ dbCTRUpdateQueryHistory <- function(
       "queries" = newHist))
 
     # write new document
-    tmp <- suppressMessages(
+    res <- suppressMessages(
       nodbi::docdb_create(
         src = con,
         key = con$collection,
@@ -1661,7 +1661,7 @@ dbCTRUpdateQueryHistory <- function(
   }
 
   # inform user
-  if (tmp == 1L) {
+  if (res == 1L) {
     message('Updated history ("meta-info" in "', con$collection, '")')
   } else {
     warning('Could not update history ("meta-info" in "', con$collection,

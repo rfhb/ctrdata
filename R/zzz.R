@@ -29,6 +29,6 @@
   initTranformers()
 
   # return
-  invisible()
+  return(invisible(NULL))
 
 } # .onAttach

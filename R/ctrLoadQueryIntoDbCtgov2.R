@@ -219,7 +219,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
   # corresponds to count
   url <- sprintf(ctgovEndpoints[1], queryterm)
   if (verbose) message("API call: ", url)
-  message("* Checking trials using CTGOV REST API 2.0...", appendLF = FALSE)
+  message("* Checking trials in CTGOV...", appendLF = FALSE)
   #
   url <- utils::URLencode(url)
   counts <- try(httr2::req_perform(
@@ -280,7 +280,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
   importDateTime <- strftime(Sys.time(), "%Y-%m-%d %H:%M:%S")
 
   message(
-    "(1/3) Downloading in ",
+    "- Downloading in ",
     ceiling(resultsEuNumTrials / 1000L),
     " batch(es) (max. 1000 trials each; estimate: ",
     format(resultsEuNumTrials * 0.1, digits = 2), " Mb total)"
@@ -310,18 +310,18 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     )
 
     # do download
-    tmp <- ctrMultiDownload(
+    resDf <- ctrMultiDownload(
       urls = urlToDownload,
       destfiles = fTrialJson,
       verbose = verbose
     )
 
     # inform user
-    if (!tmp$success) message(
+    if (!nrow(resDf) == 1L || !resDf$success) message(
         "Download not successful for ", urlToDownload)
 
     # convert to ndjson
-    message("(2/3) Converting to NDJSON...\r", appendLF = FALSE)
+    message("- Converting to NDJSON...\r", appendLF = FALSE)
     fTrialsNdjson <- file.path(tempDir, paste0("ctgov_trials_", pageNumber, ".ndjson"))
     jqr::jq(
       file(fTrialJson),
@@ -351,7 +351,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
 
   ## database import -----------------------------------------------------
 
-  message("\n(3/3) Importing records into database...")
+  message("\n- Importing records into database...")
 
   # dbCTRLoadJSONFiles operates on pattern = ".+_trials_.*.ndjson"
   imported <- dbCTRLoadJSONFiles(dir = tempDir, con = con, verbose = verbose)
@@ -385,7 +385,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
       USE.NAMES = FALSE
     ))
 
-    tmp <- ctrMultiDownload(
+    ctrMultiDownload(
       urls = urls,
       destfiles = files,
       verbose = verbose
@@ -492,7 +492,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
       format(length(files) * 2.7 / 71, digits = 2), " MB total)..."
     )
 
-    tmp <- ctrMultiDownload(
+    resDf <- ctrMultiDownload(
       urls = urls,
       destfiles = files,
       verbose = verbose
@@ -507,7 +507,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     ))), add = TRUE)
 
     # do version merge
-    res <- sapply(
+    sapply(
       X = unique(historyDf[["_id"]]),
       FUN = function(i) {
 
@@ -520,7 +520,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
         writeLines(paste0('{"_id": "', i, '", "history": ['),
                    con = outCon, sep = "")
 
-        fToMerge <- tmp[["destfile"]][grepl(i, tmp[["destfile"]])]
+        fToMerge <- resDf[["destfile"]][grepl(i, resDf[["destfile"]])]
 
         # write history study versions into array
         for (ii in seq_along(fToMerge)) {

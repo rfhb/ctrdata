@@ -58,24 +58,23 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE
   ), activesubstance, 1000L)
 
   # call endpoint
-  # tmp <- try(httr::GET(url = apiEndpoint), silent = TRUE)
-  tmp <- try(httr2::req_perform(
+  res <- try(httr2::req_perform(
     httr2::req_user_agent(
       httr2::request(
         base_url = apiEndpoint),
       ctrdataUseragent)), silent = TRUE)
 
   # check result
-  if (inherits(tmp, "try-error") || tmp[["status_code"]] == 404L) {
+  if (inherits(res, "try-error") || res[["status_code"]] == 404L) {
     message(
       "Cound not search for active substance, error ",
-      utils::str(tmp[min(length(tmp), 2L)])
+      utils::str(res[min(length(res), 2L)])
     )
     return(NULL)
   }
 
   # get content
-  jsn <- rawToChar(tmp[["body"]])
+  jsn <- rawToChar(res[["body"]])
 
   # digest results
   nrec <- jqr::jq(textConnection(jsn), " .studies | length ")

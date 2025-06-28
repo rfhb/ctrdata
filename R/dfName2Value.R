@@ -170,12 +170,12 @@ dfName2Value <- function(df, valuename = "",
 
   # value column is character
   # try to convert it to numeric
-  tmp <- suppressWarnings(
+  val <- suppressWarnings(
     as.numeric(out[["value"]])
   )
   # use if converted ok
-  if (all(is.na(tmp) == is.na(out[["value"]]))) {
-    out["value"] <- tmp
+  if (all(is.na(val) == is.na(out[["value"]]))) {
+    out["value"] <- val
   }
   # remove any duplicates such as
   # from duplicate where... criteria
