@@ -295,7 +295,7 @@ ctrLoadQueryIntoDbEuctr <- function(
 
     # inform user
     message(
-      "- extracting results (. = data, F = file[s] and data, x = none): ",
+      "- Extracting results (. = data, F = file[s] and data, x = none): ",
       appendLF = FALSE)
 
     # unzip downloaded files and move non-XML extracted files
@@ -503,32 +503,33 @@ ctrLoadQueryIntoDbEuctr <- function(
       # of the webpage for the respective trial results
       message("- Retrieving results history:                           ")
 
-      res <- httr2::req_perform_parallel(
-        reqs = lapply(
-          paste0(
-            "https://www.clinicaltrialsregister.eu/ctr-search/trial/",
-            eudractnumbersimportedresults, "/results"),
-          FUN = function(u) {
-            # start with basic request
-            r <- httr2::request(u)
-            r <- httr2::req_user_agent(r, ctrdataUseragent)
+      res <- suppressWarnings(
+        httr2::req_perform_parallel(
+          reqs = lapply(
+            paste0(
+              "https://www.clinicaltrialsregister.eu/ctr-search/trial/",
+              eudractnumbersimportedresults, "/results"),
+            FUN = function(u) {
+              # start with basic request
+              r <- httr2::request(u)
+              r <- httr2::req_user_agent(r, ctrdataUseragent)
 
-            # curl::curl_options("vers")
-            r <- httr2::req_options(r, range = "0-30000")
+              # curl::curl_options("vers")
+              r <- httr2::req_options(r, range = "0-30000")
 
-            r <- httr2::req_throttle(
-              req = r,
-              # ensures that you never make more
-              # than capacity requests in fill_time_s
-              capacity = 20L * 10L,
-              fill_time_s = 10L
-            )
-            return(r)
-          }
-        ),
-        on_error = "continue",
-        max_active = 6L # as in curl multi_set
-      )
+              r <- httr2::req_throttle(
+                req = r,
+                # ensures that you never make more
+                # than capacity requests in fill_time_s
+                capacity = 20L * 10L,
+                fill_time_s = 10L
+              )
+              return(r)
+            }
+          ),
+          on_error = "continue",
+          max_active = 6L # as in curl multi_set
+        ))
 
       # mangle results info
       message("- processing...", appendLF = FALSE)

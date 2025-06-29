@@ -965,13 +965,14 @@ ctrMultiDownload <- function(
     )
 
     # do download
-    res <- httr2::req_perform_parallel(
-      reqs,
-      paths = downloadValue$destfile,
-      on_error = "continue",
-      progress = progress,
-      max_active = 6L # as in curl multi_set
-    )
+    res <- suppressWarnings(
+      httr2::req_perform_parallel(
+        reqs,
+        paths = downloadValue$destfile,
+        on_error = "continue",
+        progress = progress,
+        max_active = 6L # as in curl multi_set
+      ))
 
     # mangle results info
     res <- lapply(
@@ -1057,8 +1058,8 @@ ctrMultiDownload <- function(
 
     toDoThis <- is.na(downloadValue$success) |
       is.na(downloadValue$status_code) |
-      !downloadValue$success |
-      !(downloadValue$status_code %in% c(200L, 206L, 416L))
+      # OK, Partial Content, Not Found, Range Not Satisfiable
+      !(downloadValue$status_code %in% c(200L, 206L, 404L, 416L))
 
     # only count towards repeat attempts if
     # the set of repeated urls is unchanged
@@ -1068,11 +1069,14 @@ ctrMultiDownload <- function(
 
   }
 
+  # remove any files from failed downloads
+  unlink(downloadValue$destfile[downloadValue$status_code %in% c(404L, 416L)])
+
   # finalise
   if (any(toDo)) {
 
     # remove any files from failed downloads
-    unlink(downloadValue[toDo, c("destfile"), drop = TRUE])
+    unlink(downloadValue$destfile[toDo])
 
     message("Download failed for: status code / url(s):")
     apply(downloadValue[toDo, c("status_code", "url"), drop = FALSE],
