@@ -41,6 +41,9 @@ f.numSites <- function(df = NULL) {
   #### fields ####
   fldsNeeded <- list(
     "euctr" = c(
+      "e83single_site_trial",
+      "e841_number_of_sites_anticipated_in_member_state_concerned",
+      "e85_the_trial_involves_multiple_member_states",
       "e851_number_of_sites_anticipated_in_the_eea",
       "e863_trial_sites_planned_in"
     ),
@@ -99,10 +102,25 @@ f.numSites <- function(df = NULL) {
           replacement = ""),
         # including a letter to avoid including empty strings
         "[a-z] +"),
+      #
       helper_numNonEEA = sapply(
-        .data$helper_nonEEA, length),
-      out = .data$helper_numNonEEA +
-        .data$e851_number_of_sites_anticipated_in_the_eea
+        .data$helper_nonEEA, lengthWoNA),
+      #
+      helper_numEEA = dplyr::case_when(
+        !is.na(.data$e851_number_of_sites_anticipated_in_the_eea) ~
+          .data$e851_number_of_sites_anticipated_in_the_eea,
+        !is.na(.data$e841_number_of_sites_anticipated_in_member_state_concerned) &
+          !.data$e85_the_trial_involves_multiple_member_states ~
+          .data$e841_number_of_sites_anticipated_in_member_state_concerned,
+        .data$e83single_site_trial ~ 1L,
+        .default = NA_integer_
+      ),
+      #
+      out = mapply(
+        function(h1, h2) if (all(is.na(c(h1, h2)))) NA else sum(h1, h2, na.rm = TRUE),
+        h1 = .data$helper_numNonEEA,
+        h2 = .data$helper_numEEA
+        )
     ) %>%
     dplyr::pull("out") -> df$euctr
 
