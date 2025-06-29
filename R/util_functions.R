@@ -939,7 +939,7 @@ ctrMultiDownload <- function(
 
         # curl::curl_options("vers")
         # keep important option 2L for euctr
-        r <- httr2::req_options(r, http_version = 2L)
+        r <- httr2::req_options(r, http_version = 2)
 
         # conditionally add body
         if (!is.na(d)) r <-

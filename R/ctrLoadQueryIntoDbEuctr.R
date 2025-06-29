@@ -61,7 +61,9 @@ ctrLoadQueryIntoDbEuctr <- function(
   initialData <- try(
     httr2::req_perform(
       httr2::req_user_agent(
-        httr2::request(q),
+        httr2::req_options(
+          httr2::request(q),
+          http_version = 2),
         ctrdataUseragent
       )),
     silent = TRUE)
@@ -175,7 +177,7 @@ ctrLoadQueryIntoDbEuctr <- function(
 
   # generate vector with URLs of all pages
   urls <- paste0(queryEuRoot, queryEuType3,
-                 queryterm, "&page=", 1:resultsEuNumPages, queryEuPost)
+    queryterm, "&page=", 1:resultsEuNumPages, queryEuPost)
 
   # generate vector with file names for saving pages
   fp <- file.path(
@@ -515,6 +517,7 @@ ctrLoadQueryIntoDbEuctr <- function(
               r <- httr2::req_user_agent(r, ctrdataUseragent)
 
               # curl::curl_options("vers")
+              r <- httr2::req_options(r, http_version = 2)
               r <- httr2::req_options(r, range = "0-30000")
 
               r <- httr2::req_throttle(
