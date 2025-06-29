@@ -48,18 +48,18 @@ studies, and for obtaining documents, from public trial registers</p>
 
 
     <div class="section level2">
-    <h2 id="-database-connection">1 - Database connection<a class="anchor" aria-label="anchor" href="#-database-connection"></a></h2>
+    <h2 id="-define-a-database-connection">1 - Define a database connection<a class="anchor" aria-label="anchor" href="#-define-a-database-connection"></a></h2>
 
 
 <p>Package <code>ctrdata</code> retrieves trial data and stores it in a database
-collection. A database connection object has to be specified in
-parameter <code>con</code> for several <code>ctrdata</code> functions.
-The connection object is built using <code>nodbi</code> which allows to use
-different database backends in an identical way.
-Specifying a parameter <code>collection = "&lt;my collection's name&gt;"</code> is
-necessary for package <code>ctrdata</code>.</p><table class="table table"><tr><td><em>Database</em></td><td><em>Connection object</em></td></tr><tr><td>MongoDB</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_mongo.html" class="external-link">nodbi::src_mongo</a>(db = "my_db", collection = "my_coll")</code></td></tr><tr><td>DuckDB</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_duckdb.html" class="external-link">nodbi::src_duckdb</a>(dbname = "my_db", collection = "my_coll")</code></td></tr><tr><td>SQLite</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">nodbi::src_sqlite</a>(dbname = "my_db", collection = "my_coll")</code></td></tr><tr><td>PostgreSQL</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_postgres.html" class="external-link">nodbi::src_postgres</a>(dbname = "my_db"); dbc[["collection"]] &lt;- "my_coll"</code></td></tr></table></div>
+collection. The connection is specified using <code>nodbi</code>, which allows to
+use different database backends in an identical way.
+A database connection object is specified once and then can be used as
+parameter <code>con</code> in subsequent calls of <code>ctrdata</code> functions.
+Specifying <code>collection = "&lt;my trial data collection's name&gt;"</code>
+indicates the table in the database that package <code>ctrdata</code> should use.</p><table class="table table"><tr><td><em>Database</em></td><td><em>Connection object</em></td></tr><tr><td>SQLite</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">nodbi::src_sqlite</a>(dbname = "my_db", collection = "my_coll")</code></td></tr><tr><td>DuckDB</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_duckdb.html" class="external-link">nodbi::src_duckdb</a>(dbname = "my_db", collection = "my_coll")</code></td></tr><tr><td>MongoDB</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_mongo.html" class="external-link">nodbi::src_mongo</a>(db = "my_db", collection = "my_coll")</code></td></tr><tr><td>PostgreSQL</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_postgres.html" class="external-link">nodbi::src_postgres</a>(dbname = "my_db"); dbc[["collection"]] &lt;- "my_coll"</code></td></tr></table></div>
     <div class="section level2">
-    <h2 id="-operate-on-trial-registers">2 - Operate on trial registers<a class="anchor" aria-label="anchor" href="#-operate-on-trial-registers"></a></h2>
+    <h2 id="-load-information-from-clinical-trial-registers">2 - Load information from clinical trial registers<a class="anchor" aria-label="anchor" href="#-load-information-from-clinical-trial-registers"></a></h2>
 
 
 
@@ -72,7 +72,7 @@ see <a href="ctrdata-registers.html">ctrdata-registers</a> for details on regist
 <a href="ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a> (load trial records found with query into database collection).</p>
     </div>
     <div class="section level2">
-    <h2 id="-get-data-frame-from-collection">3 - Get data frame from collection<a class="anchor" aria-label="anchor" href="#-get-data-frame-from-collection"></a></h2>
+    <h2 id="-use-database-with-downloaded-trial-information">3 - Use database with downloaded trial information<a class="anchor" aria-label="anchor" href="#-use-database-with-downloaded-trial-information"></a></h2>
 
 
 
@@ -83,7 +83,7 @@ see <a href="ctrdata-registers.html">ctrdata-registers</a> for details on regist
 <a href="dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a> (get de-duplicated identifiers of clinical trials' records to subset a data frame).</p>
     </div>
     <div class="section level2">
-    <h2 id="-operate-on-a-trial-data-frame">4 - Operate on a trial data frame<a class="anchor" aria-label="anchor" href="#-operate-on-a-trial-data-frame"></a></h2>
+    <h2 id="-operate-on-a-trial-data-frame-from-dbgetfieldsintodf">4 - Operate on a trial data frame from dbGetFieldsIntoDf<a class="anchor" aria-label="anchor" href="#-operate-on-a-trial-data-frame-from-dbgetfieldsintodf"></a></h2>
 
 
 

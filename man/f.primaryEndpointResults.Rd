@@ -2,7 +2,7 @@
 % Please edit documentation in R/f_primaryEndpointResults.R
 \name{f.primaryEndpointResults}
 \alias{f.primaryEndpointResults}
-\title{Calculate type of control data collected in a study}
+\title{Calculate details of a study's primary endpoint analysis and testing}
 \usage{
 f.primaryEndpointResults(df = NULL)
 }

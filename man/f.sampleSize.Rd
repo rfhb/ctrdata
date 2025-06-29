@@ -16,7 +16,8 @@ data frame with columns `_id` and `.sampleSize`, an integer.
 }
 \description{
 Trial concept calculated: sample size of the trial, preferring
-results-related over protocol-related information.
+results-related (achieved recruitment) over protocol-related information
+(planned sample size).
 }
 \examples{
 # fields needed

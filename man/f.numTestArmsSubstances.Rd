@@ -2,7 +2,7 @@
 % Please edit documentation in R/f_numTestArmsSubstances.R
 \name{f.numTestArmsSubstances}
 \alias{f.numTestArmsSubstances}
-\title{Calculate type of control data collected in a study}
+\title{Calculate number of arms or groups with investigational medicines in a study}
 \usage{
 f.numTestArmsSubstances(df = NULL)
 }

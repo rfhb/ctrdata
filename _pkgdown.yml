@@ -4,10 +4,10 @@ home:
 reference:
 - contents:
   - starts_with("ctrdata")
-- title: "Download information from clinical trial registers"
+- title: "Load information from clinical trial registers"
 - contents:
   - starts_with("ctr[A-Z]")
-- title: "Using database with downloaded trial information"
+- title: "Use database with downloaded trial information"
 - contents:
   - starts_with("db")
 - title: "Operate on data frame from dbGetFieldsIntoDf"

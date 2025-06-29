@@ -8,24 +8,24 @@
 \code{ctrdata} is a package for aggregating and analysing data on clinical
 studies, and for obtaining documents, from public trial registers
 }
-\section{1 - Database connection}{
+\section{1 - Define a database connection}{
 
 Package \code{ctrdata} retrieves trial data and stores it in a database
-collection. A database connection object has to be specified in
-parameter \code{con} for several \code{ctrdata} functions.
-The connection object is built using \code{nodbi} which allows to use
-different database backends in an identical way.
-Specifying a parameter \code{collection = "<my collection's name>"} is
-necessary for package \code{ctrdata}.\tabular{ll}{
+collection. The connection is specified using \code{nodbi}, which allows to
+use different database backends in an identical way.
+A database connection object is specified once and then can be used as
+parameter \code{con} in subsequent calls of \code{ctrdata} functions.
+Specifying \code{collection = "<my trial data collection's name>"}
+indicates the table in the database that package \code{ctrdata} should use.\tabular{ll}{
    \emph{Database} \tab \emph{Connection object} \cr
-   MongoDB \tab \code{dbc <- \link[nodbi:src_mongo]{nodbi::src_mongo}(db = "my_db", collection = "my_coll")} \cr
-   DuckDB \tab \code{dbc <- \link[nodbi:src_duckdb]{nodbi::src_duckdb}(dbname = "my_db", collection = "my_coll")} \cr
    SQLite \tab \code{dbc <- \link[nodbi:src_sqlite]{nodbi::src_sqlite}(dbname = "my_db", collection = "my_coll")} \cr
+   DuckDB \tab \code{dbc <- \link[nodbi:src_duckdb]{nodbi::src_duckdb}(dbname = "my_db", collection = "my_coll")} \cr
+   MongoDB \tab \code{dbc <- \link[nodbi:src_mongo]{nodbi::src_mongo}(db = "my_db", collection = "my_coll")} \cr
    PostgreSQL \tab \code{dbc <- \link[nodbi:src_postgres]{nodbi::src_postgres}(dbname = "my_db"); dbc[["collection"]] <- "my_coll"} \cr
 }
 }
 
-\section{2 - Operate on trial registers}{
+\section{2 - Load information from clinical trial registers}{
 
 
 \link{ctrGenerateQueries} (generate from simple user input specific queries
@@ -37,7 +37,7 @@ see \link{ctrdata-registers} for details on registers and how to search,
 \link{ctrLoadQueryIntoDb} (load trial records found with query into database collection).
 }
 
-\section{3 - Get data frame from collection}{
+\section{3 - Use database with downloaded trial information}{
 
 
 \link{ctrShowOneTrial} (show widget to explore structure, fields and data of a trial),
@@ -47,7 +47,7 @@ see \link{ctrdata-registers} for details on registers and how to search,
 \link{dbFindIdsUniqueTrials} (get de-duplicated identifiers of clinical trials' records to subset a data frame).
 }
 
-\section{4 - Operate on a trial data frame}{
+\section{4 - Operate on a trial data frame from dbGetFieldsIntoDf}{
 
 
 \link{dfTrials2Long} (convert fields with nested elements into long format),

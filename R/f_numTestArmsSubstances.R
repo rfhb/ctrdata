@@ -3,7 +3,7 @@
 # 2025-01-31 working
 # 2025-02-08 adding euctr protocol, isrctn
 
-#' Calculate type of control data collected in a study
+#' Calculate number of arms or groups with investigational medicines in a study
 #'
 #' Trial concept calculated: number of active arms with different
 #' investigational medicines, after excluding comparator, auxiliary and placebo

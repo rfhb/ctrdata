@@ -1,7 +1,7 @@
 #### history ####
 # 2025-01-26 first version
 
-#' Calculate type of control data collected in a study
+#' Calculate details of a study's primary endpoint analysis and testing
 #'
 #' Trial concept calculated: Calculates several results-related elements of
 #' the primary analysis of the primary endpoint. Requires loading

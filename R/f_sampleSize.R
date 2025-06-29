@@ -4,7 +4,8 @@
 #' Calculate sample size of a study
 #'
 #' Trial concept calculated: sample size of the trial, preferring
-#' results-related over protocol-related information.
+#' results-related (achieved recruitment) over protocol-related information
+#' (planned sample size).
 #'
 #' @param df data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
 #' prints fields needed in `df` for calculating this trial concept, which can
