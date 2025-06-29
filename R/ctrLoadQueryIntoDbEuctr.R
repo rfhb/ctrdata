@@ -171,7 +171,7 @@ ctrLoadQueryIntoDbEuctr <- function(
         signif(resultsEuNumTrials * 1.2, 1L), " s)")
 
   # inform user
-  message("- Downloading trials...")
+  message("- Downloading trial pages...")
 
   # generate vector with URLs of all pages
   urls <- paste0(queryEuRoot, queryEuType3,
@@ -598,7 +598,7 @@ ctrLoadQueryIntoDbEuctr <- function(
               importedresultshistory, " trials")
     }
     if (documents.path != tempDir) {
-      message("= documents saved in '", documents.path, "'")
+      message("= Documents saved in '", documents.path, "'")
     }
 
   } # if euctrresults

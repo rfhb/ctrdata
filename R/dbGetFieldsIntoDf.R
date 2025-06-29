@@ -163,7 +163,7 @@ dbGetFieldsIntoDf <- function(
 
   # user info
   if (length(calculate)) message(
-    "Review trial concepts definitions, ",
+    "To review trial concepts details, ",
     'call \'help("ctrdata-trial-concepts")\'')
 
   # get all functions
