@@ -74,8 +74,11 @@ be used with <a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a>.</p></dd>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># fields needed</span></span></span>
 <span class="r-in"><span><span class="fu">f.numSites</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $euctr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "e851_number_of_sites_anticipated_in_the_eea"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "e863_trial_sites_planned_in"                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "e83single_site_trial"                                      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "e841_number_of_sites_anticipated_in_member_state_concerned"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "e85_the_trial_involves_multiple_member_states"             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "e851_number_of_sites_anticipated_in_the_eea"               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5] "e863_trial_sites_planned_in"                               </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ctgov</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "location.facility.address.city"</span>
@@ -98,8 +101,8 @@ be used with <a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a>.</p></dd>
 <span class="r-in"><span><span class="va">trialsDf</span> <span class="op">&lt;-</span> <span class="fu"><a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  calculate <span class="op">=</span> <span class="st">"f.numSites"</span>,</span></span>
 <span class="r-in"><span>  con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Review trial concepts definitions, call 'help("ctrdata-trial-concepts")'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying database (7 fields)...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> To review trial concepts details, call 'help("ctrdata-trial-concepts")'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying database (10 fields)...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating f.numSites...                            </span>
 <span class="r-in"><span><span class="va">trialsDf</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                  _id .numSites</span>

@@ -22,7 +22,7 @@ tf <- function() {
   expect_true(length(fcts) >= 17L)
 
   # test
-  expect_true(length(unique(unlist(fctFields))) >= 180L)
+  expect_true(length(unique(unlist(fctFields))) >= 184L)
 
   # get data
   if (!checkSqlite()) exit_file("Reason: no SQLite")
