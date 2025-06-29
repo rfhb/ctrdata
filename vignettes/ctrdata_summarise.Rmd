@@ -1,7 +1,7 @@
 ---
 title: "Summarise and analyse clinical trial information"
 author: "Ralf Herold"
-date: 2025-06-07
+date: 2025-06-29
 output:
   rmarkdown::html_vignette:
     toc: true
@@ -25,7 +25,7 @@ knitr::opts_chunk$set(
 
 General information on the `ctrdata` package is available here: [https://github.com/rfhb/ctrdata](https://github.com/rfhb/ctrdata).
 
-Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: Ralf Herold (2025). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.22.1. https://cran.r-project.org/package=ctrdata
+Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: Ralf Herold (2025). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.22.3. https://cran.r-project.org/package=ctrdata
 
 ## Preparations
 
@@ -41,7 +41,7 @@ db
 # src: MongoDB
 # ver: 8.0.10
 # db(s): my_database_name
-# size(s): 107 MB
+# size(s): 0 MB
 
 # empty collection if exists
 nodbi::docdb_delete(db, db$collection)
