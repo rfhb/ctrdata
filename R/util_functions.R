@@ -1038,7 +1038,7 @@ ctrMultiDownload <- function(
       unlink(res$destfile[cdnCheck])
 
       # reset status
-      res$status_code[cdnCheck] <- NA
+      res$success[cdnCheck] <- NA
 
     }
 
@@ -1064,7 +1064,7 @@ ctrMultiDownload <- function(
 
     # only count towards repeat attempts if
     # the set of repeated urls is unchanged
-    if (identical(toDo, toDoThis)) numI <- numI + 1L
+    if (identical(toDo, toDoThis) & !any(cdnCheck)) numI <- numI + 1L
 
     toDo <- toDoThis
 
@@ -1301,17 +1301,9 @@ ctrDocsDownload <- function(
     )
 
     # check results
-    if (!nrow(filesCount)) filesCount <- 0L else {
-
-      # handle failures despite success is true
-      suppressMessages(sapply(
-        filesCount$destfile[!filesCount$success],
-        # delete but only micro files, possible remnants
-        function(f) if (file.size(f) < 20L) unlink(f)
-      ))
-      filesCount <- sum(filesCount$success, na.omit = TRUE)
-
-    }
+    filesCount <- ifelse(
+      !nrow(filesCount), 0L,
+      sum(filesCount$success, na.rm = TRUE))
 
   } # is.null(documents.regexp)
 
