@@ -958,8 +958,8 @@ ctrMultiDownload <- function(
         # return
         return(r)
       },
-      u = downloadValue$url,
-      d = downloadValue$data,
+      u = downloadValue$url[toDo],
+      d = downloadValue$data[toDo],
       SIMPLIFY = FALSE,
       USE.NAMES = FALSE
     )
@@ -968,7 +968,7 @@ ctrMultiDownload <- function(
     res <- suppressWarnings(
       httr2::req_perform_parallel(
         reqs,
-        paths = downloadValue$destfile,
+        paths = downloadValue$destfile[toDo],
         on_error = "continue",
         progress = progress,
         max_active = 6L # as in curl multi_set
@@ -1056,10 +1056,11 @@ ctrMultiDownload <- function(
       stop("Download failed; last error: ", class(downloadValue), call. = FALSE)
     }
 
+    # only check success because this is filled initially by !toDo
+    # and status_code where this is NA as it reflects the latest action
     toDoThis <- is.na(downloadValue$success) |
-      is.na(downloadValue$status_code) |
       # OK, Partial Content, Not Found, Range Not Satisfiable
-      !(downloadValue$status_code %in% c(200L, 206L, 404L, 416L))
+      !(downloadValue$status_code %in% c(NA, 200L, 206L, 404L, 416L))
 
     # only count towards repeat attempts if
     # the set of repeated urls is unchanged
@@ -1083,6 +1084,10 @@ ctrMultiDownload <- function(
           1, function(r) message(r[1], " / ", r[2], "\n", appendLF = FALSE))
 
   }
+
+  # if previously downloaded, success may not reflect on disk;
+  # thus safeguard by unsetting success if file does not exist
+  downloadValue$success <- file.exists(downloadValue$destfile)
 
   # inform user
   if (verbose) message("Done: ", numI, " iteration(s)")
