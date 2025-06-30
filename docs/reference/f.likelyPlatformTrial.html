@@ -123,10 +123,11 @@ and Williams RJ et al. 2022, <a href="https://doi.org/10.1136/bmj-2021-067745" c
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $euctr</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.title"   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "e824_number_of_treatment_arms_in_the_trial"                            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "e81_controlled"                                                        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5] "a3_full_title_of_the_trial"                                            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "e822_placebo"                                                          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "e823_other"                                                            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "e824_number_of_treatment_arms_in_the_trial"                            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5] "subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6] "a3_full_title_of_the_trial"                                            </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ctgov</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "clinical_results.participant_flow.period_list.period.title"</span>
@@ -141,8 +142,8 @@ and Williams RJ et al. 2022, <a href="https://doi.org/10.1136/bmj-2021-067745" c
 <span class="r-out co"><span class="r-pr">#&gt;</span> $isrctn</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "interventions.intervention.interventionType"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2] "trialDesign.secondaryStudyDesign"           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "interventions.intervention.interventionType"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "interventions.intervention.drugNames"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "interventions.intervention.drugNames"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "interventions.intervention.interventionType"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [5] "trialDescription.scientificTitle"           </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ctis</span>
@@ -164,8 +165,11 @@ and Williams RJ et al. 2022, <a href="https://doi.org/10.1136/bmj-2021-067745" c
 <span class="r-in"><span>  calculate <span class="op">=</span> <span class="st">"f.likelyPlatformTrial"</span>,</span></span>
 <span class="r-in"><span>  con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> To review trial concepts details, call 'help("ctrdata-trial-concepts")'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying database (24 fields)...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying database (25 fields)...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating f.likelyPlatformTrial...                            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Called from: eval(expr, p)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug at /Users/ralfherold/Daten/mak/r/emea/ctrdata/R/f_numTestArmsSubstances.R#318: df[[".numTestArmsSubstances"]] &lt;- as.integer(dfMergeVariablesRelevel(df = df, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     colnames = names(fldsNeeded)))</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Searching for duplicate trials... </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - Getting all trial identifiers...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> , 31 found in collection</span>
