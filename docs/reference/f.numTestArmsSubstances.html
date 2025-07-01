@@ -90,30 +90,27 @@ be used with <a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a>.</p></dd>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># fields needed</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="f.controlType.html">f.controlType</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">f.numTestArmsSubstances</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $euctr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "e81_controlled"                            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "e816_cross_over"                           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "e817_other"                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "e8171_other_trial_design_description"      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5] "e822_placebo"                              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [6] "e823_other"                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [7] "e8231_comparator_description"              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [8] "e824_number_of_treatment_arms_in_the_trial"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "e822_placebo"                                                          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "e823_other"                                                            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "e824_number_of_treatment_arms_in_the_trial"                            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ctgov</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "arm_group.arm_group_type"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "arm_group"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ctgov2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "protocolSection.designModule.designInfo.interventionModel"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "protocolSection.armsInterventionsModule.armGroups.type"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "protocolSection.armsInterventionsModule.armGroups"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $isrctn</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "trialDesign.studyDesign"        "trialDesign.primaryStudyDesign"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "trialDesign.secondaryStudyDesign"           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "interventions.intervention.drugNames"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "interventions.intervention.interventionType"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ctis</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "authorizedPartI.productRoleGroupInfos.productRoleName"                      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "authorizedApplication.authorizedPartI.productRoleGroupInfos.productRoleName"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "authorizedPartI.productRoleGroupInfos"                      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "authorizedApplication.authorizedPartI.productRoleGroupInfos"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># apply trial concept when creating data frame</span></span></span>
@@ -126,9 +123,6 @@ be used with <a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a>.</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> To review trial concepts details, call 'help("ctrdata-trial-concepts")'</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Querying database (11 fields)...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating f.numTestArmsSubstances...                            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Called from: eval(expr, p)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug at /Users/ralfherold/Daten/mak/r/emea/ctrdata/R/f_numTestArmsSubstances.R#318: df[[".numTestArmsSubstances"]] &lt;- as.integer(dfMergeVariablesRelevel(df = df, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     colnames = names(fldsNeeded)))</span>
 <span class="r-in"><span><span class="va">trialsDf</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                  _id .numTestArmsSubstances</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1           12949496                      1</span>

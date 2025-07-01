@@ -30,7 +30,7 @@
 #'
 #' @examples
 #' # fields needed
-#' f.controlType()
+#' f.numTestArmsSubstances()
 #'
 #' # apply trial concept when creating data frame
 #' dbc <- nodbi::src_sqlite(

@@ -18,7 +18,7 @@
 #'
 #' @examples
 #' # fields needed
-#' f.resultsDate()
+#' f.trialTitle()
 #'
 #' # apply trial concept when creating data frame
 #' dbc <- nodbi::src_sqlite(

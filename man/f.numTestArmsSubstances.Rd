@@ -27,7 +27,7 @@ the similarity is 0.8 or higher.
 }
 \examples{
 # fields needed
-f.controlType()
+f.numTestArmsSubstances()
 
 # apply trial concept when creating data frame
 dbc <- nodbi::src_sqlite(

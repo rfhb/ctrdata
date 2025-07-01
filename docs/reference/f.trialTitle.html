@@ -66,22 +66,22 @@ be used with <a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a>.</p></dd>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># fields needed</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="f.resultsDate.html">f.resultsDate</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">f.trialTitle</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $euctr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "firstreceived_results_date"         "trialInformation.analysisStageDate"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "a3_full_title_of_the_trial"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ctgov</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "results_first_posted"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "official_title"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ctgov2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "protocolSection.statusModule.resultsFirstPostDateStruct.date"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "protocolSection.identificationModule.officialTitle"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $isrctn</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "results.intentToPublish"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "trialDescription.scientificTitle"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ctis</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "results.summaryResults.submissionDate"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "results.clinicalStudyReports.submitDate"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "authorizedPartI.trialDetails.clinicalTrialIdentifiers.fullTitle"                      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "authorizedApplication.authorizedPartI.trialDetails.clinicalTrialIdentifiers.fullTitle"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># apply trial concept when creating data frame</span></span></span>
