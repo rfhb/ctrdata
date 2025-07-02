@@ -106,7 +106,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
 
   ## checks -------------------------------------------------------------------
 
-  message("* Checking trials in ISRCTN...")
+  message("* Checking trials in ISRCTN...", appendLF = FALSE)
 
   # - check number of trials to be downloaded
   isrctnfirstpageurl <- utils::URLencode(paste0(
@@ -136,11 +136,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
   # otherwise continue
 
   # inform user
-  message(
-    "- Retrieved overview, records of ", resCount, " ",
-    "trial(s) are to be downloaded (estimate: ",
-    signif(resCount * 0.018, 1L), " MB)"
-  )
+  message("\b\b\b, found ", resCount, " trials ")
 
   # only count?
   if (only.count) {
@@ -167,7 +163,10 @@ ctrLoadQueryIntoDbIsrctn <- function(
   tempDir <- ctrTempDir(verbose)
 
   # inform user
-  message("- Downloading trial file... ")
+  message(
+    "- Downloading trial file (estimate: ",
+    signif(resCount * 0.018, 1L), " MB)"
+  )
 
   # construct API call setting limit to number found above
   isrctndownloadurl <- paste0(

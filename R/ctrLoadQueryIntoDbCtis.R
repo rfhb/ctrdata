@@ -58,10 +58,7 @@ ctrLoadQueryIntoDbCtis <- function(
   ## api_1: overviews ---------------------------------------------------------
 
   # for importing overview (recruitment, status etc.) into database
-  message("* Checking trials in CTIS...")
-
-  # "HTTP server doesn't seem to support byte ranges. Cannot resume."
-  message("- Downloading trial list(s)...", appendLF = FALSE)
+  message("* Checking trials in CTIS...", appendLF = FALSE)
 
   # queryterm comes from ctrGetQueryUrl()
 

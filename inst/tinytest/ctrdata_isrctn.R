@@ -61,7 +61,7 @@ expect_message(
       only.count = TRUE,
       verbose = TRUE,
       con = dbc)),
-  "Retrieved overview")
+  "Checking trials in ISRCTN")
 
 # test
 expect_true(tmpTest$n < 250L)
@@ -75,7 +75,7 @@ expect_message(
       only.count = TRUE,
       verbose = TRUE,
       con = dbc)),
-  "are to be downloaded")
+  "found [0-9]+ trials")
 
 # test
 expect_true(tmpTest$n < 15L)

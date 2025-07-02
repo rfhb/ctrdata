@@ -37,9 +37,6 @@ ctrLoadQueryIntoDbEuctr <- function(
     "\\1query=\\2\\3",
     queryterm)
 
-  # inform user
-  message("* Checking trials in EUCTR...")
-
   ## euctr api ----------------------------------------------------------------
 
   euctrEndpoints <- paste0(
@@ -63,6 +60,9 @@ ctrLoadQueryIntoDbEuctr <- function(
       "ctr-search/rest/download/result/zip/xml/%s"
     )
   )
+
+  # inform user
+  message("* Checking trials in EUCTR...", appendLF = FALSE)
 
   # get first trial search result page
   if (verbose) message("DEBUG: ", sprintf(euctrEndpoints[1], queryterm))
@@ -121,11 +121,7 @@ ctrLoadQueryIntoDbEuctr <- function(
   }
 
   # inform user
-  message(
-    "- Retrieved overview, multiple records of ",
-    resultsEuNumTrials, " trial(s) from ",
-    resultsEuNumPages, " batch(es) to be downloaded ",
-    "(estimate: ", signif(resultsEuNumTrials * 0.12, 1L), " MB)")
+  message("\b\b\b, found ", resultsEuNumTrials, " trials ")
 
   # only count?
   if (only.count) {
@@ -154,7 +150,7 @@ ctrLoadQueryIntoDbEuctr <- function(
     documents.path <- tempDir
   } else {
     euctrresults <- TRUE
-    message("Note: Running with euctrresults = TRUE to download documents")
+    message("- Running with euctrresults = TRUE to download documents")
   }
   if (euctrresults &&
       (is.na(file.info(documents.path)[["isdir"]]) ||
@@ -176,7 +172,9 @@ ctrLoadQueryIntoDbEuctr <- function(
   ## download all text files from pages
 
   # inform user
-  message("- Downloading and processing batches...")
+  message(
+    "- Downloading in ", resultsEuNumPages, " batch(es) (20 trials each; ",
+    "estimate: ", signif(resultsEuNumTrials * 0.12, 1L), " MB)")
 
   # vector with URLs of all summaries
   urls <- sprintf(
