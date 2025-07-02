@@ -1,7 +1,7 @@
 ---
 title: "Retrieve clinical trial information"
 author: "Ralf Herold"
-date: 2025-06-29
+date: 2025-07-02
 output:
   rmarkdown::html_vignette:
     toc: true
@@ -88,9 +88,8 @@ ctrLoadQueryIntoDb(
   queryterm = q,
   only.count = TRUE
 )$n
-# * Checking trials in EUCTR...
-# Retrieved overview, multiple records of 390 trial(s) from 20 page(s) to be 
-# downloaded (estimate: 50 MB)
+# * Found search query from EUCTR: query=cancer&age=under-18&resultsstatus=trials-with-results
+# * Checking trials in EUCTR, found 390 trials 
 # [1] 390
 
 # Connect to a database and chose a collection (table)
@@ -104,16 +103,27 @@ ctrLoadQueryIntoDb(
   queryterm = q,
   con = db
 )
+# * Found search query from EUCTR: query=cancer&age=under-18&resultsstatus=trials-with-results
+# * Checking trials in EUCTR, found 390 trials 
+# - Downloading in 20 batch(es) (20 trials each; estimate: 50 MB)
+# - Downloading 1541 records of 390 trials (estimate: 90 s)            
+# - Converting to NDJSON (estimate: 3 s) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+# - Importing records into database...
+# = Imported or updated 1541 records on 390 trial(s) 
+# No history found in expected format.
+# Updated history ("meta-info" in "test")
+# $n
+# [1] 1541
 
 # Show which queries have been downloaded into database
 dbQueryHistory(con = db)
 #       query-timestamp query-register query-records
-# 1 2025-06-29 15:06:10          EUCTR          1541
+# 1 2025-07-02 20:27:25          EUCTR          1541
 #                                                    query-term
 # 1 query=cancer&age=under-18&resultsstatus=trials-with-results
 ```
 
-With any database, this takes about 80 seconds for 1531 records of 386 trials (~55 ms/record), with most of the time needed for internet-retrieval which is slow from this register. 
+With any database, this takes about 90 seconds for 1541 records of 390 trials (~60 ms/record). 
 
 
 ## Repeat and update a previous query
@@ -130,21 +140,19 @@ ctrLoadQueryIntoDb(
   only.count = TRUE,
   con = db
 )
-# * Found search query from EUCTR: query=cancer&age=under-18&resultsstatus=trials-with-results
-# * Query last run: 2025-06-29 15:30:47
+# Found search query from EUCTR: query=cancer&age=under-18&resultsstatus=trials-with-results
+# * Query last run: 2025-07-02 20:27:25
 # * Checking for new or updated trials...
-# Rerunning query: query=cancer&age=under-18&resultsstatus=trials-with-results
-# Last run: 2025-06-29
-# * Checking trials in EUCTR...
-# Retrieved overview, multiple records of 2 trial(s) from 1 page(s) to be downloaded (estimate: 0.3 MB)
+# First result page empty - no (new) trials found?
+# Updated history ("meta-info" in "test")
 # $n
-# [1] 2
+# [1] 0
 ```
 
 
 ## Results-related trial information
 
-For CTGOV and CTGOV2, any results are always included in the retrieval. Only for EUCTR, result-related trial information has to be requested to be retrieved, because it will take longer to download and store. No results in structured electronic format are foreseeably available from ISRCTN and CTIS, thus `ctrdata` cannot load them, see `help(ctrLoadQueryIntoDb)`. The download or presence of results is not recorded in `dbQueryHistory()` because the availability of results increases over time. The following only takes about 100 seconds for about 1530 records (~ 65 ms/record) of 386 trials, if run in the same R session as the above commands and thus re-using previous downloads of unprocessed source data. 
+For CTGOV and CTGOV2, any results are always included in the retrieval. Only for EUCTR, result-related trial information has to be requested to be retrieved, because it will take longer to download and store. No results in structured electronic format are foreseeably available from ISRCTN and CTIS, thus `ctrdata` cannot load them, see `help(ctrLoadQueryIntoDb)`. The download or presence of results is not recorded in `dbQueryHistory()` because the availability of results increases over time. The following takes in total only 120 seconds for 1541 records (~ 80 ms/record) of 390 trials, if run in the same R session as the above commands and thus re-using previous downloads of trials. 
 
 ```{r}
 ctrLoadQueryIntoDb(
@@ -154,28 +162,26 @@ ctrLoadQueryIntoDb(
   con = db
 )
 # * Found search query from EUCTR: query=cancer&age=under-18&resultsstatus=trials-with-results
-# * Query last run: 2025-06-29 15:30:47
-# * Checking trials in EUCTR...
-# Retrieved overview, multiple records of 390 trial(s) from 20 page(s) to be downloaded (estimate: 50 MB)
-# Note: Server cannot compress data, transfer takes longer (estimate: 500 s)
-# - Downloading trial pages...
-# - Converting to NDJSON (estimate: 8 s)...
+# * Query last run: 2025-07-02 20:27:25
+# * Checking trials in EUCTR, found 390 trials 
+# - Downloading in 20 batch(es) (20 trials each; estimate: 50 MB)
+# - Downloading 1541 records of 390 trials (estimate: 90 s)
+# - Converting to NDJSON (estimate: 3 s) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 # - Importing records into database...
 # = Imported or updated 1541 records on 390 trial(s) 
 # * Checking results if available from EUCTR for 390 trials: 
 # - Downloading results...
-# - Extracting results (. = data, F = file[s] and data, x = none): . . . . . F 
-# . . F . . . . F . . . . F . . F . . . . . . . . . F . F . . . . . . . . . . 
-# . F . . . . . . . . . . . . . . . F . F . . . . . F . F . . . F . F . . . . 
-# . F . F . . . F . . . . . . . . . . . . . . . F . . . F F . . . . . . F . F 
-# . . F . . . . . . . . . . . F . . . . . . . . . . . . . . . . F F . F . . .
-# F . . . F F . . . . . . . . . . . F F . F . . . . . . F . . . F F . . F . . 
-# . . . . . . . . . . F . . . . . F . . . . . . F F . F . . F . . . . F F F . 
-# . . . . . . F . . F . . . . . . . . . . . F . . . . . . . . . . F . . . . . 
-# . . . . . . . . F F . . . . F . . F . . . F . . F F F . . . . . F . . . . . 
-# . . . . . . F . F . . . . . . . . . . F F . F F . . . . F F . . . F F F . . 
-# F . . . . F F . F . . . . . . F . . . . . . . . F . . . . . . F . . F F F .
-# . . . F 
+# - Extracting results (. = data, F = file[s] and data, x = none): F F . . . . 
+# F . . F . . . F . . F F F . . . . F F F . . F . . . . F F . F . . . . . . . . 
+# F . . . . . . . . . . . F . F . . . . . . . F . . . . . . . . . . . . . . . F 
+# . . . . . . F . . F F F . . . . F F . . F . . . . . . . . . . . F . . . . . . 
+# . F . . . . . . . . . . . F . . . . . . F . . . . . . . . . F . F . . . . . .
+# . . . . . F . . . F F . . F . . . . . . . . . . . . F . . . . . F . . . . . . 
+# F . . . . . F . . . F F . . . . . . F . F . . . . . F . . F . . . . F . . . . 
+# . . . . . . . . . F F . F . . . F . . . F F . . . . . . . . . . . F . . . . F 
+# . . . . . . F F . F . . . . . . . . . . F F . F F . . . . F F . . . F . F . . 
+# . F . . . . . . . . . . . F . F . . . . . F . F . . . F . F . . F . F . . F . 
+# . . . F F F . . . . . . . . . . . . F . . . . . . . . . . . . . . 
 # - Converting to NDJSON (estimate: 40 s)...
 # - Importing results into database (may take some time)...
 # - Results history: not retrieved (euctrresultshistory = FALSE)
@@ -197,6 +203,16 @@ ctrLoadQueryIntoDb(
   register = "CTGOV2",
   con = db
 )
+# * Found search query from CTGOV2: cond=neuroblastoma&aggFilters=phase:2,ages:child,status:com
+# * Checking trials in CTGOV, found 110 trials
+# - Downloading in 1 batch(es) (max. 1000 trials each; estimate: 11 Mb total)
+# - Converting to NDJSON...
+# - Importing records into database...
+# JSON file #: 1 / 1                               
+# = Imported or updated 110 trial(s)
+# Updated history ("meta-info" in "test")
+# $n
+# [1] 110
 
 # Use same query details to obtain queries
 queries <- ctrGenerateQueries(
@@ -220,21 +236,23 @@ sapply(result, "[[", "n")
 # Overview of queries
 dbQueryHistory(con = db)
 #       query-timestamp query-register query-records
-# 1 2025-06-29 15:30:47          EUCTR          1541
-# 2 2025-06-29 15:34:46          EUCTR          1541
-# 3 2025-06-29 15:36:24         CTGOV2           110
-# 4 2025-06-29 15:37:46          EUCTR           180
-# 5 2025-06-29 15:37:47         CTGOV2           110
-# 6 2025-06-29 15:37:48         CTGOV2           110
-# 7 2025-06-29 15:37:49           CTIS             1
-# query-term
+# 1 2025-07-02 20:27:25          EUCTR          1541
+# 2 2025-07-02 20:30:46          EUCTR             0
+# 3 2025-07-02 20:33:38          EUCTR          1541
+# 4 2025-07-02 20:39:41         CTGOV2           110
+# 5 2025-07-02 20:40:18          EUCTR           180
+# 6 2025-07-02 20:40:20         CTGOV2           110
+# 7 2025-07-02 20:40:21         CTGOV2           110
+# 8 2025-07-02 20:40:22           CTIS             1
+#query-term
 # 1 query=cancer&age=under-18&resultsstatus=trials-with-results
 # 2 query=cancer&age=under-18&resultsstatus=trials-with-results
-# 3 cond=neuroblastoma&aggFilters=phase:2,ages:child,status:com
-# 4 query=neuroblastoma&phase=phase-two&age=children&age=adolescent&age=infant-and-toddler&age=newborn&age=preterm-new-born-infants&age=under-18&status=completed
-# 5 cond=neuroblastoma&aggFilters=phase:2,ages:child,status:com,studyType:int
-# 6 term=AREA[ConditionSearch]"neuroblastoma" AND (AREA[Phase]"PHASE2") AND (AREA[StdAge]"CHILD") AND (AREA[OverallStatus]"COMPLETED") AND (AREA[StudyType]INTERVENTIONAL)
-# 7 searchCriteria={"medicalCondition":"neuroblastoma","trialPhaseCode":[4],"ageGroupCode":[2],"status":[5,8]}
+# 3 query=cancer&age=under-18&resultsstatus=trials-with-results
+# 4 cond=neuroblastoma&aggFilters=phase:2,ages:child,status:com
+# 5 query=neuroblastoma&phase=phase-two&age=children&age=adolescent&age=infant-and-toddler&age=newborn&age=preterm-new-born-infants&age=under-18&status=completed
+# 6 cond=neuroblastoma&aggFilters=phase:2,ages:child,status:com,studyType:int
+# 7 term=AREA[ConditionSearch]"neuroblastoma" AND (AREA[Phase]"PHASE2") AND (AREA[StdAge]"CHILD") AND (AREA[OverallStatus]"COMPLETED") AND (AREA[StudyType]INTERVENTIONAL)
+# 8 searchCriteria={"medicalCondition":"neuroblastoma","trialPhaseCode":[4],"ageGroupCode":[2],"status":[5,8]}
 ```
 
 
@@ -316,9 +334,6 @@ sapply(result, "[[", "n")
 # since each trial can have multiple records in this
 # register, the number is higher when actually loaded
 
-# and see examples in
-vignette("ctrdata_summarise")
-
 # Connect to a database and chose a collection (table)
 db <- nodbi::src_sqlite(
   dbname = "database_name.sql",
@@ -330,7 +345,7 @@ result <- lapply(queries, ctrLoadQueryIntoDb, con = db, euctrresults = TRUE)
 
 sapply(result, "[[", "n")
 # EUCTR       ISRCTN       CTGOV2 CTGOV2expert         CTIS 
-#  7673          165         1559         1559          237 
+#  7673          166         1562         1562          243 
 
 # See next section for adding related trials
 ```
@@ -362,16 +377,16 @@ df <- dbGetFieldsIntoDf(
   con = db
 )
 # To review trial concepts details, call 'help("ctrdata-trial-concepts")'
-# Querying database (24 fields)...
+# Querying database (25 fields)...
 # Searching for duplicate trials...                         
-# - Getting all trial identifiers (may take some time), 9634 found in collection
+# - Getting all trial identifiers (may take some time), 9644 found in collection
 # - Finding duplicates among registers' and sponsor ids...
-# - 5599 EUCTR _id were not preferred EU Member State record for 1766 trials
-# - Keeping 1559 / 1480 / 0 / 123 / 95 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS
-# = Returning keys (_id) of 3257 records in collection "test"
+# - 5596 EUCTR _id were not preferred EU Member State record for 1767 trials
+# - Keeping 1562 / 1479 / 0 / 124 / 98 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS
+# = Returning keys (_id) of 3263 records in collection "test"
 # Searching for duplicate trials... ..                            
-# - Getting all trial identifiers, 9634 found in collection
-# Calculating f.trialTitle...  
+# - Getting all trial identifiers, 9644 found in collection
+# Calculating f.trialTitle...    
 
 # Show names of calculated columns in the
 # data frame with possible platform trials
@@ -387,10 +402,11 @@ names(df)
 # Reduce to unique trials
 df <- df[df$.isUniqueTrial, ]
 nrow(df)
+# [1] 3263
 
 # Number of recognised set of trials
 length(unique(df$.maybeRelatedTrials))
-# 183
+# 181
 
 # Trials with which _id are missing? 
 missingIds <- na.omit(setdiff(unlist(df$.maybeRelatedTrials), df$`_id`))

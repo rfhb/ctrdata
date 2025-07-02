@@ -183,10 +183,10 @@ input to functions <a href="ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a> and
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">urls</span>, <span class="va">ctrLoadQueryIntoDb</span>, only.count <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from EUCTR: query="antibody" AND "covid"&amp;status=completed</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Checking trials in EUCTR...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Retrieved overview, multiple records of 35 trial(s) from 2 page(s) to be downloaded (estimate: 5 MB)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> , found 35 trials </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from ISRCTN: q="antibody" AND "covid"&amp;filters=trialStatus:completed,primaryStudyDesign:Interventional,phase:Phase 0,phase:Phase I,phase:Phase II,phase:Phase III,phase:Phase IV,phase:Phase I/II,phase:Phase II/III,phase:Phase III/IV</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Checking trials in ISRCTN...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Retrieved overview, records of 89 trial(s) are to be downloaded (estimate: 2 MB)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> , found 89 trials </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from CTGOV2: titles="antibody" AND "covid"&amp;aggFilters=status:com,studyType:int</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Checking trials in CTGOV...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> , found 51 trials</span>
@@ -195,7 +195,6 @@ input to functions <a href="ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a> and
 <span class="r-msg co"><span class="r-pr">#&gt;</span> , found 51 trials</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from CTIS: searchCriteria={"containAll":"antibody, covid","status":[5,8]}</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Checking trials in CTIS...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> - Downloading trial list(s)...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> , found 7 trials </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> = Not done (only.count = TRUE): Imported 7 trial(s)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           EUCTR                                          </span>

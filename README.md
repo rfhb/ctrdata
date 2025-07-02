@@ -37,7 +37,7 @@ interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
 `ctrdata` is a package for the [R](https://www.r-project.org/) system,
 but other systems and tools can use the databases created with this
-package. This README was reviewed on 2025-06-29 for version 1.22.3.9000.
+package. This README was reviewed on 2025-07-02 for version 1.22.3.9000.
 
 ## Main features
 
@@ -386,16 +386,16 @@ ctrLoadQueryIntoDb(
 )
 # * Found search query from EUCTR: query=neuroblastoma&phase=phase-two&age=children
 # * Checking trials in EUCTR...
-# Retrieved overview, multiple records of 73 trial(s) from 4 page(s) to be downloaded (estimate: 9 MB)
-# Note: Server cannot compress data, transfer takes longer (estimate: 90 s)
-# - Downloading trial pages...
-# - Converting to NDJSON (estimate: 1 s)...                           
+# - Retrieved overview, multiple records of 73 trial(s) from 4 batch(es) to be downloaded (estimate: 9 MB)
+# - Downloading and processing batches...
+# - Downloading 270 records of 73 trials (estimate: 20 s)             
+# - Converting to NDJSON (estimate: 0.6 s) . . . . . .                    
 # - Importing records into database...
 # = Imported or updated 270 records on 73 trial(s) 
 # * Checking results if available from EUCTR for 73 trials: 
 # - Downloading results...
-# - Extracting results (. = data, F = file[s] and data, x = none): 
-#   . F . . . . . . . F . . . F . . . . . . . F . . . F . F F . . . . 
+# - Extracting results (. = data, F = file[s] and data, x = none): . . . F . . .
+# F . . F . . . . . . . F . F F . . . . . . F . . . . 
 # - Converting to NDJSON (estimate: 3 s)...
 # - Importing results into database (may take some time)...
 # - Results history: not retrieved (euctrresultshistory = FALSE)
@@ -483,10 +483,10 @@ with(
 )
 #                   a7_trial_is_part_of_a_paediatric_investigation_plan
 # .statusRecruitment FALSE TRUE
-#        ongoing         2    1
-#        completed      12    6
-#        ended early     5    4
-#        other           9    3
+#        ongoing         1    0
+#        completed      11    6
+#        ended early     6    4
+#        other          11    5
 ```
 
 <div id="workflow-ctgov-example">
@@ -550,7 +550,7 @@ ctrOpenSearchPagesInBrowser(q)
 #
 # * Found search query from CTGOV2: cond=neuroblastoma&intr=Drug&aggFilters=ages:child,results:with,status:com
 
-# Count trials:
+# Count trials
 ctrLoadQueryIntoDb(
   queryterm = q,
   con = db,
@@ -581,7 +581,7 @@ ctrLoadQueryIntoDb(
   only.count = TRUE
 )
 # $n
-# [1] 9454
+# [1] 9477
 ```
 
 <div id="workflow-data-model">
@@ -732,6 +732,7 @@ alt="Neuroblastoma trials" />
 
 ``` r
 ### EUCTR document files can be downloaded when results are requested
+
 # All files are downloaded and saved (documents.regexp is not used with EUCTR)
 ctrLoadQueryIntoDb(
   queryterm = "query=cancer&age=under-18&phase=phase-one",
@@ -741,12 +742,28 @@ ctrLoadQueryIntoDb(
   con = db
 )
 # * Found search query from EUCTR: query=cancer&age=under-18&phase=phase-one
-# * Checking trials in EUCTR...
-# Retrieved overview, multiple records of 249 trial(s) from 13 page(s) to be downloaded (estimate: 30 MB)
-# Note: Running with euctrresults = TRUE to download documents
-# Created directory ./files-euctr/
-# [...]
-# = Documents saved in './files-euctr'
+# * Checking trials in EUCTR, found 249 trials 
+# - Running with euctrresults = TRUE to download documents
+# - Downloading in 13 batch(es) (20 trials each; estimate: 30 MB)
+# - Downloading 794 records of 249 trials (estimate: 40 s)
+# - Converting to NDJSON (estimate: 2 s) . . . . . . . . . . . . . . . . 
+# - Importing records into database...
+# = Imported or updated 794 records on 249 trial(s)  
+# * Checking results if available from EUCTR for 249 trials: 
+# - Downloading results...
+# - Extracting results (. = data, F = file[s] and data, x = none): F . . . . F 
+# . . F F . F . . . . F . . . . F . . . . . . . F . . . . . . . . . F F . . . . . 
+# . . . . . . . . F . . . . F . . F . . F . . . . . . . . . . F . F . . F . . . . 
+# . . . F F . . . . . . . . . . . . . . . . . . F F . F . . . . . . . . . . . . . 
+# . . . . . . . 
+# - Converting to NDJSON (estimate: 10 s)...
+# - Importing results into database (may take some time)...
+# - Results history: not retrieved (euctrresultshistory = FALSE)
+# = Imported or updated results for 133 trials
+# = Documents saved in './files-euctr/'
+# Updated history ("meta-info" in "collection_name")
+# $n
+# [1] 794
 
 ### CTGOV files are downloaded, here corresponding to the default of
 # documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|icf|ctalett|lay|^[0-9]+ "
@@ -756,15 +773,33 @@ ctrLoadQueryIntoDb(
   documents.path = "./files-ctgov/",
   con = db
 )
+# Since 2024-06-25, the classic CTGOV servers are no longer available. Package 
+# ctrdata has translated the classic CTGOV query URL from this call of function 
+# ctrLoadQueryIntoDb(queryterm = ...) into a query URL that works with the
+# current CTGOV2. This is printed below and is also part of the return value of
+# this function, ctrLoadQueryIntoDb(...)$url. This URL can be used with ctrdata
+# functions. Note that the fields and data schema of trials differ between CTGOV
+# and CTGOV2. 
+# 
+# * Found search query from CTGOV2: cond=Neuroblastoma&aggFilters=phase:2,
+# docs:prot sap icf,studyType:int,status:com
+# * Checking trials in CTGOV, found 32 trials
+# - Downloading in 1 batch(es) (max. 1000 trials each; estimate: 3.2 Mb total)
+# - Converting to NDJSON...
+# - Importing records into database...
+# JSON file #: 1 / 1                               
 # * Checking for documents...
 # - Getting links to documents
 # - Downloading documents into 'documents.path' = ./files-ctgov/
-# - Created directory ./files-ctgov
 # - Applying 'documents.regexp' to 40 missing documents
 # - Creating subfolder for each trial
-# - Downloading 40 missing documents 
-# = Newly saved 40 document(s) for 32 trial(s); 0 of such document(s) for 
-# 0 trial(s) already existed in ./files-ctgov
+# - Downloading 0 missing documents 
+# = Newly saved 0 document(s) for 32 trial(s); 40 of such document(s) for 32 
+# trial(s) already existed in ./files-ctgov
+# = Imported or updated 32 trial(s)
+# Updated history ("meta-info" in "collection_name")
+# $n
+# [1] 32
 
 
 ### CTGOV2 files are downloaded, using the default of documents.regexp
@@ -773,15 +808,24 @@ ctrLoadQueryIntoDb(
   documents.path = "./files-ctgov2/",
   con = db
 )
+# * Found search query from CTGOV2: cond=neuroblastoma&aggFilters=phase:1,results:with
+# * Checking trials in CTGOV, found 40 trials
+# - Downloading in 1 batch(es) (max. 1000 trials each; estimate: 4 Mb total)
+# - Converting to NDJSON...
+# - Importing records into database...
+# JSON file #: 1 / 1                               
 # * Checking for documents...
 # - Getting links to documents
 # - Downloading documents into 'documents.path' = ./files-ctgov2/
-# - Created directory ./files-ctgov2
 # - Applying 'documents.regexp' to 43 missing documents
 # - Creating subfolder for each trial
-# - Downloading 43 missing documents 
-# = Newly saved 43 document(s) for 27 trial(s); 0 of such document(s) for 
-# 0 trial(s) already existed in ./files-ctgov2
+# - Downloading 0 missing documents 
+# = Newly saved 0 document(s) for 27 trial(s); 43 of such document(s) for 27 
+# trial(s) already existed in ./files-ctgov2
+# = Imported or updated 40 trial(s)
+# Updated history ("meta-info" in "collection_name")
+# $n
+# [1] 40
 
 
 ### ISRCTN files are downloaded, using the default of documents.regexp
@@ -790,15 +834,23 @@ ctrLoadQueryIntoDb(
   documents.path = "./files-isrctn/",
   con = db
 )
+# * Found search query from ISRCTN: q=alzheimer
+# * Checking trials in ISRCTN, found 334 trials 
+# - Downloading trial file (estimate: 6 MB)
+# - Converting to NDJSON (estimate: 2 s)...
+# - Importing records into database...
 # * Checking for documents...                      
 # - Getting links to documents from data . correct with web pages . . . . . . . . 
 # - Downloading documents into 'documents.path' = ./files-isrctn/
-# - Created directory ./files-isrctn
 # - Applying 'documents.regexp' to 54 missing documents
 # - Creating subfolder for each trial
-# - Downloading 34 missing documents 
-# = Newly saved 34 document(s) for 16 trial(s); 0 of such document(s) for 
-# 0 trial(s) already existed in ./files-isrctn
+# - Downloading 0 missing documents 
+# = Newly saved 0 document(s) for 16 trial(s); 34 of such document(s) for 16 
+# trial(s) already existed in ./files-isrctn
+# = Imported or updated 334 trial(s)
+# Updated history ("meta-info" in "collection_name")
+# $n
+# [1] 344
 
 
 ### CTIS files are downloaded, using a specific documents.regexp
@@ -807,22 +859,29 @@ ctrLoadQueryIntoDb(
     "https://euclinicaltrials.eu/ctis-public/search#",
     'searchCriteria={"containAny":"cancer","status":[8]}'),
   documents.path = "./files-ctis/",
-  documents.regexp = "icf",
+  documents.regexp = "and icf",
   con = db
 )
+# * Found search query from CTIS: searchCriteria={"containAny":"cancer","status":[8]}
+# * Checking trials in CTIS, found 231 trials 
+# - Downloading and processing trial data... (estimate: 30 Mb)
+# - Importing records into database...
+# - Updating with additional data: .               
 # * Checking for documents: . . .  
 # - Downloading documents into 'documents.path' = ./files-ctis/
-# - Created directory ./files-ctis
-# - Applying 'documents.regexp' to 2798 missing documents
+# - Applying 'documents.regexp' to 2894 missing documents
 # - Creating subfolder for each trial
-# - Downloading 1419 missing documents (excluding 4 documents with duplicate names, 
-# e.g. ./files-ctis/2022-500694-14-00/SbjctInfaICF - L1 SIS and ICF Pregnant 
-# Partner ICF clean - 137297.PDF, ./files-ctis/2024-512227-36-00/SbjctInfaICF - 
-# L1 SIS and ICF Part 2C2D Dutch Redacted - 180599.PDF, ./files-ctis/
-# 2022-500694-14-00/SbjctInfaICF - L1 SIS and ICF Prescreening ICF clean 
-# placeholder - 137297.PDF) 
-# = Newly saved 1415 document(s) for 98 trial(s); 0 of such document(s) for 
-# 0 trial(s) already existed in ./files-ctis
+# - Downloading 0 missing documents (excluding 4 documents with duplicate names, 
+# e.g. ./files-ctis/2024-512227-36-00/SbjctInfaICF - L1 SIS and ICF Part 2C2D 
+# Dutch Redacted - 180599.PDF, ./files-ctis/2022-500694-14-00/SbjctInfaICF - 
+# L1 SIS and ICF Prescreening ICF clean placeholder - 137297.PDF, ./files-ctis
+# /2022-500694-14-00/SbjctInfaICF - L1 SIS and ICF Pregnant Partner ICF clean - 137297.PDF) 
+# = Newly saved 0 document(s) for 67 trial(s); 741 of such document(s) for 67 
+# trial(s) already existed in ./files-ctis
+# = Imported 231, updated 231 record(s) on 231 trial(s)
+# Updated history ("meta-info" in "collection_name")
+# $n
+# [1] 231
 ```
 
 ## Tests and coverage
@@ -830,46 +889,46 @@ ctrLoadQueryIntoDb(
 See also <https://app.codecov.io/gh/rfhb/ctrdata/tree/master/R>
 
 ``` r
-# 2025-05-17
+# 2025-07-02
 
 tinytest::test_all()
-# test_ctrdata_duckdb_ctgov2.R..   78 tests OK 46.4s
+# test_ctrdata_duckdb_ctgov2.R..   78 tests OK 48.3s
 # test_ctrdata_function_activesubstance.R    4 tests OK 0.8s
-# test_ctrdata_function_ctrgeneratequeries.R   14 tests OK 18ms
-# test_ctrdata_function_params.R   25 tests OK 0.8s
-# test_ctrdata_function_trial-concepts.R   80 tests OK 3.2s
-# test_ctrdata_function_various.R   76 tests OK 3.7s
-# test_ctrdata_postgres_ctgov2.R   50 tests OK 32.4s
-# test_ctrdata_sqlite_ctgov.R...   46 tests OK 29.0s
-# test_ctrdata_sqlite_ctgov2.R..   50 tests OK 25.9s
-# test_ctrdata_sqlite_ctis.R....   87 tests OK 1.2s
-# test_ctrdata_sqlite_euctr.R...  118 tests OK 47.7s
-# test_ctrdata_sqlite_isrctn.R..   38 tests OK 12.0s
+# test_ctrdata_function_ctrgeneratequeries.R   14 tests OK 17ms
+# test_ctrdata_function_params.R   25 tests OK 0.6s
+# test_ctrdata_function_trial-concepts.R   80 tests OK 3.3s
+# test_ctrdata_function_various.R   79 tests OK 4.8s
+# test_ctrdata_postgres_ctgov2.R   50 tests OK 30.8s
+# test_ctrdata_sqlite_ctgov.R...   46 tests OK 28.1s
+# test_ctrdata_sqlite_ctgov2.R..   50 tests OK 26.0s
+# test_ctrdata_sqlite_ctis.R....   90 tests OK 1.4s
+# test_ctrdata_sqlite_euctr.R...  118 tests OK 54.2s
+# test_ctrdata_sqlite_isrctn.R..   38 tests OK 16.1s
 # test_euctr_error_sample.R.....    8 tests OK 0.2s
-# All ok, 674 results (4m 36.8s)
+# All ok, 680 results (4m 58.7s)
 
 covr::package_coverage(path = ".", type = "tests")
-# ctrdata Coverage: 94.27%
-# R/ctrShowOneTrial.R: 57.89%
-# R/dbGetFieldsIntoDf.R: 80.14%
-# R/zzz.R: 80.95%
-# R/ctrRerunQuery.R: 86.23%
-# R/ctrGetQueryUrl.R: 89.32%
-# R/util_functions.R: 89.84%
-# R/ctrLoadQueryIntoDbEuctr.R: 90.08%
-# R/ctrFindActiveSubstanceSynonyms.R: 90.38%
-# R/ctrLoadQueryIntoDbCtgov2.R: 92.68%
-# R/ctrLoadQueryIntoDbIsrctn.R: 92.81%
-# R/ctrLoadQueryIntoDbCtis.R: 95.34%
+# ctrdata Coverage: 93.32%
+# R/ctrLoadQueryIntoDbIsrctn.R: 65.05%
+# R/ctrShowOneTrial.R: 77.19%
+# R/dbGetFieldsIntoDf.R: 81.05%
+# R/util_functions.R: 87.01%
+# R/ctrRerunQuery.R: 87.62%
+# R/ctrGetQueryUrl.R: 89.18%
+# R/ctrFindActiveSubstanceSynonyms.R: 89.36%
+# R/ctrLoadQueryIntoDbEuctr.R: 91.03%
+# R/ctrLoadQueryIntoDbCtgov2.R: 92.93%
 # R/dbFindFields.R: 95.88%
 # R/f_primaryEndpointResults.R: 96.00%
+# R/ctrLoadQueryIntoDbCtis.R: 96.32%
 # R/dfMergeVariablesRelevel.R: 96.55%
-# R/ctrLoadQueryIntoDb.R: 96.86%
+# R/ctrLoadQueryIntoDb.R: 96.73%
 # R/ctrGenerateQueries.R: 97.32%
 # R/ctrOpenSearchPagesInBrowser.R: 97.40%
+# R/f_sponsorType.R: 98.45%
 # R/dbFindIdsUniqueTrials.R: 98.78%
-# R/f_numTestArmsSubstances.R: 98.92%
-# R/f_likelyPlatformTrial.R: 99.13%
+# R/f_numTestArmsSubstances.R: 98.93%
+# R/f_likelyPlatformTrial.R: 99.19%
 # R/dbQueryHistory.R: 100.00%
 # R/dfName2Value.R: 100.00%
 # R/dfTrials2Long.R: 100.00%
@@ -880,13 +939,13 @@ covr::package_coverage(path = ".", type = "tests")
 # R/f_primaryEndpointDescription.R: 100.00%
 # R/f_resultsDate.R: 100.00%
 # R/f_sampleSize.R: 100.00%
-# R/f_sponsorType.R: 100.00%
 # R/f_startDate.R: 100.00%
 # R/f_statusRecruitment.R: 100.00%
 # R/f_trialObjectives.R: 100.00%
 # R/f_trialPhase.R: 100.00%
 # R/f_trialPopulation.R: 100.00%
 # R/f_trialTitle.R: 100.00%
+# R/zzz.R: 100.00%
 ```
 
 ## Future features
