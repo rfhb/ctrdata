@@ -125,7 +125,7 @@ expect_message(
       querytoupdate = "last",
       con = dbc,
       verbose = TRUE)),
-  "Updating using this additional query term")
+  "additional term")
 
 
 # new query (last edited before)

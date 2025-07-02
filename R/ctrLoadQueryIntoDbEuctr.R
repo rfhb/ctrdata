@@ -42,57 +42,66 @@ ctrLoadQueryIntoDbEuctr <- function(
 
   ## euctr api ----------------------------------------------------------------
 
-  queryEuRoot  <- "https://www.clinicaltrialsregister.eu/"
-  queryEuType1 <- "ctr-search/search?"
-  # based on download link after form is submitted:
-  queryEuType3 <- "ctr-search/rest/download/full?"
-  # from download results as pdf, xml download was found:
-  queryEuType4 <- "ctr-search/rest/download/result/zip/xml/"
-  queryEuPost  <- paste0(
-    "&mode=current_page&format=text&dContent=full",
-    "&number=current_page&submit-download=Download")
-  # protocol data for single country trial as text, no gzip version accessible:
-  # https://www.clinicaltrialsregister.eu/ctr-search/rest/download/trial/2008-006649-18/GB
+  euctrEndpoints <- paste0(
+    #
+    # root
+    "https://www.clinicaltrialsregister.eu/",
+    #
+    # endpoints
+    c(
+      # search
+      "ctr-search/search?%s",
+      #
+      # download summary file per webpage
+      "ctr-search/rest/download/summary?%s&page=%i&mode=current_page",
+      #
+      # protocol data for single country trial as text, no gzip version accessible:
+      # /ctr-search/rest/download/trial/2008-006649-18/GB
+      "ctr-search/rest/download/trial/%s/%s",
+      #
+      # from download results as pdf, xml download was found:
+      "ctr-search/rest/download/result/zip/xml/%s"
+    )
+  )
 
   # get first trial search result page
-  q <- utils::URLencode(paste0(queryEuRoot, queryEuType1, queryterm))
-  if (verbose) message("DEBUG: queryterm is ", q)
-  #
+  if (verbose) message("DEBUG: ", sprintf(euctrEndpoints[1], queryterm))
   initialData <- try(
     httr2::req_perform(
       httr2::req_user_agent(
-        httr2::req_options(
-          httr2::request(q),
-          http_version = 2),
+        httr2::request(
+          utils::URLencode(
+            sprintf(euctrEndpoints[1], queryterm))),
         ctrdataUseragent
       )),
     silent = TRUE)
-  #
+
+  # check host
   if (inherits(initialData, "try-error") ||
       initialData$status_code != 200L) {
     if (grepl("SSL certificate.*local issuer certificate",
               rawToChar(initialData$body))) {
-      stop("Host ", queryEuRoot, " cannot be queried as expected, error:\n",
-           trimws(initialData), "\nFor a potential workaround, check ",
-           "https://github.com/rfhb/ctrdata/issues/19#issuecomment-820127139",
-           call. = FALSE)
+      stop(
+        "Host https://www.clinicaltrialsregister.eu/ cannot be queried as expected,
+        error:\n", trimws(initialData), "\nFor a potential workaround, check ",
+        "https://github.com/rfhb/ctrdata/issues/19#issuecomment-820127139",
+        call. = FALSE)
     } else {
-      stop("Host ", queryEuRoot, " not working as expected, ",
-           "cannot continue: ", initialData[[1]], call. = FALSE)
+      stop(
+        "Host https://www.clinicaltrialsregister.eu/ not working as ",
+        "expected, cannot continue: ", initialData[[1]], call. = FALSE)
     }
   }
-  # - get content of response
-  resultsEuPages <- rawToChar(initialData$body)
 
   # get number of trials identified by query
+  resultsEuPages <- rawToChar(initialData$body)
   resultsEuNumTrials <- sub(
     ".*Trials with a EudraCT protocol \\(([0-9,.]*)\\).*",
     "\\1", resultsEuPages)
-  #
   resultsEuNumTrials <- suppressWarnings(
     as.integer(gsub("[,.]", "", resultsEuNumTrials)))
-  #
-  # no trials found even though host may have been online
+
+  # no trials found
   if (!is.integer(resultsEuNumTrials)) {
     message("ctrLoadQueryIntoDb(): register does not deliver ",
             "search results as expected, check if working with ",
@@ -100,22 +109,23 @@ ctrLoadQueryIntoDbEuctr <- function(
     return(invisible(emptyReturn))
   }
 
-  # calculate number of results pages
-  resultsEuNumPages  <- ceiling(resultsEuNumTrials / 20)
+  # calculate number of trial pages, euctr paging is fixed
+  resultsEuNumPages  <- ceiling(resultsEuNumTrials / 20L)
 
   # check for plausibility and stop function without erro
   if (is.na(resultsEuNumPages) ||
       is.na(resultsEuNumTrials) ||
-      (resultsEuNumTrials == 0)) {
+      (resultsEuNumTrials == 0L)) {
     message("First result page empty - no (new) trials found?")
     return(invisible(emptyReturn))
   }
 
   # inform user
-  message("Retrieved overview, multiple records of ",
-          resultsEuNumTrials, " trial(s) from ",
-          resultsEuNumPages, " page(s) to be downloaded ",
-          "(estimate: ", signif(resultsEuNumTrials * 0.13, 1L), " MB)")
+  message(
+    "- Retrieved overview, multiple records of ",
+    resultsEuNumTrials, " trial(s) from ",
+    resultsEuNumPages, " batch(es) to be downloaded ",
+    "(estimate: ", signif(resultsEuNumTrials * 0.12, 1L), " MB)")
 
   # only count?
   if (only.count) {
@@ -134,10 +144,12 @@ ctrLoadQueryIntoDbEuctr <- function(
 
   ## protocol-related information ---------------------------------------------
 
+  #### . summary text files ####
+
   ## create empty temporary directory
   tempDir <- ctrTempDir(verbose)
 
-  # check results parameters
+  # check parameters relevant for results
   if (is.null(documents.path)) {
     documents.path <- tempDir
   } else {
@@ -164,26 +176,20 @@ ctrLoadQueryIntoDbEuctr <- function(
   ## download all text files from pages
 
   # inform user
-  initialData <- initialData$headers
-  names(initialData) <- tolower(names(initialData))
-  if (is.null(initialData$`content-encoding`) ||
-      !grepl("gzip|deflate", initialData$`content-encoding`)) message(
-        "Note: Server cannot compress data, ",
-        "transfer takes longer (estimate: ",
-        signif(resultsEuNumTrials * 1.2, 1L), " s)")
+  message("- Downloading and processing batches...")
 
-  # inform user
-  message("- Downloading trial pages...")
+  # vector with URLs of all summaries
+  urls <- sprintf(
+    euctrEndpoints[2],
+    queryterm,
+    1:resultsEuNumPages)
 
-  # generate vector with URLs of all pages
-  urls <- paste0(queryEuRoot, queryEuType3,
-    queryterm, "&page=", 1:resultsEuNumPages, queryEuPost)
-
-  # generate vector with file names for saving pages
+  #  vector with file names
   fp <- file.path(
     tempDir, paste0(
-      "euctr_trials_",
-      # appending hash of query for re-download
+      "euctr_summary_",
+      # appending hash of query for
+      # caching if query is re-run
       sapply(urls, rlang::hash),
       ".txt"
     ))
@@ -200,23 +206,106 @@ ctrLoadQueryIntoDbEuctr <- function(
     return(invisible(emptyReturn))
   }
 
+  #### . trial by country text files ####
+
+  ptrn <- paste0(countriesEUCTR, collapse = "|")
+  ptrn <- paste0("[0-9]{4}-[0-9]{6}-[0-9]{2}|", ptrn)
+  ptrn <- paste0("3rd|", ptrn) # 3RD trial urls need lowercase
+
+  #get trial number and protocol countries
+  trialsList <- unlist(lapply(
+    resDf$destfile, function(f) {
+
+      t <- stringi::stri_extract_all_regex(
+        readLines(con = file(f), warn = FALSE),
+        "EudraCT Number: .+|Trial protocol: .+",
+        omit_no_match = TRUE, simplify = TRUE
+      )[,1]
+      t <- t[t != ""]
+
+      # fix input for mapping to countriesEUCTR
+      t <- stringi::stri_replace_all_fixed(t, "Outside EU/EEA", "3rd")
+      t <- stringi::stri_replace_all_fixed(t, "(GB - no longer in EU/EEA)", "")
+
+      # all in one pattern extraction
+      p <- stringi::stri_extract_all_regex(
+        t, ptrn, omit_no_match = TRUE, simplify = F)
+
+      # mangling list which has even number of elements
+      lapply(
+        seq_len(length(p) / 2L),
+        function(i) unlist(c(p[i * 2L - 1L], p[i * 2L])))
+    }
+  ), recursive = FALSE)
+
+  # create download urls
+  urls <- unlist(sapply(
+    trialsList, function(i)
+      sprintf(euctrEndpoints[3], i[1L], i[-1L])))
+
+  #  vector with file names
+  fp <- file.path(
+    tempDir, paste0(
+      "euctr_trial_",
+      # appending hash of query for
+      # caching if query is re-run
+      sapply(urls, rlang::hash),
+      ".txt"
+    ))
+
+  # inform user
+  message("- Downloading ", length(urls), " records of ", resultsEuNumTrials,
+          " trials (estimate: ", signif(length(urls) * 16 / 287, 1L), " s)")
+
+  # do download and save
+  resDf <- ctrMultiDownload(
+    urls = urls,
+    destfiles = fp,
+    verbose = verbose
+  )
+
   ## convert euctr to ndjson -----------------------------------------------
 
   if (length(.ctrdataenv$ct) == 0L) initTranformers()
 
-  # run conversion (~12s for 563 trials)
+  # run conversion
   message("- Converting to NDJSON (estimate: ",
-          signif(resultsEuNumTrials * 0.02, 1L), " s)...")
+          signif(nrow(resDf) * 0.6 / 277, 1L),
+          " s) ", appendLF = FALSE)
 
-  resDf$ndjsonfile <- sub("[.]txt$", ".ndjson", resDf$destfile)
+  ti <- format(Sys.time(), "%Y-%m-%d %H:%M:%S")
+  rl <- nrow(resDf)
 
-  sapply(seq_len(nrow(resDf)), function(r) {
-    readr::write_file(
-      .ctrdataenv$ct$call(
-        "euctr2ndjson", readr::read_file(resDf$destfile[r]),
-        format(Sys.time(), "%Y-%m-%d %H:%M:%S")),
-      file = resDf$ndjsonfile[r])
-  })
+  # register
+  on.exit(unlink(dir(tempDir, "euctr_trials_[0-9]+.ndjson", full.names = TRUE)), add = TRUE)
+
+  # convert trial records and add to chunks
+  # corresponding to 50 trial records each
+  invisible(sapply(seq_len(rl %/% 50L + 1L), function(i) {
+
+    message(". ", appendLF = FALSE)
+    fo <- file.path(tempDir, paste0("euctr_trials_", i, ".ndjson"))
+    unlink(fo)
+    bs <- 50L
+
+    # write out batches of trial records
+    # for rapid importing into database
+    invisible(sapply(1:bs, function(r) {
+
+      if (((i - 1L) * bs + r) > rl) return()
+      fi <- resDf$destfile[(i - 1L) * bs + r]
+
+      invisible(
+        readr::write_file(
+          .ctrdataenv$ct$call(
+            # parameters to function call
+            "euctr2ndjson", readr::read_file(fi), ti),
+          file = fo, append = TRUE)
+      )
+
+    })) # single batch
+  })) # across batches
+  message()
 
   ## import into database -----------------------------------------------
 
@@ -228,6 +317,10 @@ ctrLoadQueryIntoDbEuctr <- function(
                                  con = con,
                                  verbose = verbose)
 
+  # remove calculated ndjson files in case of re-download import
+  # because dbCTRLoadJSONFiles() imports all ndjson in the folder
+  unlink(dir(tempDir, "euctr_trials_[0-9]+.ndjson", full.names = TRUE))
+
   # inform user on final import outcome
   message("= Imported or updated ",
           imported$n, " records on ",
@@ -236,10 +329,6 @@ ctrLoadQueryIntoDbEuctr <- function(
   # read in the eudract numbers of the
   # trials just retrieved and imported
   eudractnumbersimported <- imported$success
-
-  # remove calculated ndjson files in case of re-download import
-  # because dbCTRLoadJSONFiles() imports all ndjson in the folder
-  unlink(resDf$ndjsonfile)
 
   ## result-related information -----------------------------------------------
 
@@ -274,8 +363,7 @@ ctrLoadQueryIntoDbEuctr <- function(
     # prepare download and save
 
     # urls
-    urls <- paste0(queryEuRoot, queryEuType4,
-                   eudractnumbersimported)
+    urls <- sprintf(euctrEndpoints[4], eudractnumbersimported)
 
     # destfiles
     fp <- file.path(
@@ -531,7 +619,7 @@ ctrLoadQueryIntoDbEuctr <- function(
             }
           ),
           on_error = "continue",
-          max_active = 6L # as in curl multi_set
+          max_active = 10L
         ))
 
       # mangle results info
