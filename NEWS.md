@@ -1,4 +1,4 @@
-# ctrdata 1.22.3.9000
+# ctrdata 1.23.0
 
 ## Improvements
 - Refactored for EUCTR protocol data `ctrLoadQueryIntoDb()` for large speed gain
