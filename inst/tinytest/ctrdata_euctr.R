@@ -678,7 +678,6 @@ for (i in unique(groupsNo)) {
 }
 
 tmpFields <- tmpFields[grepl("date$", tmpFields, ignore.case = TRUE)]
-tmpFields <- tmpFields[1:min(seq_along(tmpFields), 49L)]
 
 tmpData <- dbGetFieldsIntoDf(fields = tmpFields, con = dbc)
 expect_true(nrow(tmpData) > 0L)
