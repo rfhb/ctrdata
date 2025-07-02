@@ -102,7 +102,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
   # - prefix with q removed above
   apiterm <- paste0("q=", apiterm)
   # - inform user
-  if (verbose) message("DEBUG: apiterm is ", apiterm)
+  if (verbose) message("DEBUG: ", apiterm)
 
   ## checks -------------------------------------------------------------------
 
@@ -137,7 +137,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
 
   # inform user
   message(
-    "Retrieved overview, records of ", resCount, " ",
+    "- Retrieved overview, records of ", resCount, " ",
     "trial(s) are to be downloaded (estimate: ",
     signif(resCount * 0.018, 1L), " MB)"
   )

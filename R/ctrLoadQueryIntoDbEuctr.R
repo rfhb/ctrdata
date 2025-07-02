@@ -449,7 +449,7 @@ ctrLoadQueryIntoDbEuctr <- function(
       # inform user on records
       message(
         importedresults,
-        " trials' records updated with results\r",
+        " trial records updated with results\r",
         appendLF = FALSE)
 
     } # for f

@@ -971,7 +971,7 @@ ctrMultiDownload <- function(
         paths = downloadValue$destfile[toDo],
         on_error = "continue",
         progress = progress,
-        max_active = 6L # as in curl multi_set
+        max_active = 10L # default
       ))
 
     # mangle results info
@@ -1024,7 +1024,7 @@ ctrMultiDownload <- function(
     # replace url with CDN url and prepare to iterate
     if (any(cdnCheck)) {
 
-      if (verbose) message("Redirecting to CDN...")
+      message("- Resolving CDN and redirecting...")
 
       # get CDN url
       res$urlResolved[cdnCheck] <- sapply(

@@ -126,7 +126,7 @@ ctrRerunQuery <- function(
         queryupdateterm <- paste0("&lup_s=", queryupdateterm)
 
         if (verbose) {
-          message("DEBUG: Updating using this additional query term: ",
+          message("DEBUG: additional term: ",
                   queryupdateterm)
         }
 
@@ -163,7 +163,7 @@ ctrRerunQuery <- function(
         queryupdateterm <- paste0("&lastUpdPost=", queryupdateterm, "_")
 
         if (verbose) {
-          message("DEBUG: Updating using this additional query term: ",
+          message("DEBUG: additional term: ",
                   queryupdateterm)
         }
 
@@ -263,7 +263,7 @@ ctrRerunQuery <- function(
           queryterm <- resultsRssTrials
           #
           if (verbose) {
-            message("DEBUG: Updating using this queryterm: ",
+            message("DEBUG: additional term: ",
                     queryupdateterm)
           }
           #
@@ -304,7 +304,7 @@ ctrRerunQuery <- function(
                                   "T00:00:00.000Z")
 
         if (verbose) {
-          message("DEBUG: Updating using this additional query term: ",
+          message("DEBUG: additional term: ",
                   queryupdateterm)
         }
 
@@ -540,7 +540,7 @@ ctrRerunQuery <- function(
         message(
           "Query finds ", length(idsUpdatedTrials), " trials, ",
           "loading and updating trials one-by-one (estimate: ",
-          signif(length(idsUpdatedTrials) * 8 / 23L / 60L, 2L), " min)")
+          signif(length(idsUpdatedTrials) * 8 / 23 / 60, 2L), " min)")
 
         # iterate
         res <- list()
@@ -576,7 +576,7 @@ ctrRerunQuery <- function(
           warning(
             "Query finds ", length(idsUpdatedTrials), " trials, ",
             "loading and updating trials one-by-one (estimate: ",
-            signif(length(idsUpdatedTrials) * 78 / 233L / 60L, 2L), " min)")
+            signif(length(idsUpdatedTrials) * 78 / 233 / 60, 2L), " min)")
 
           # iterate
           res <- list()
