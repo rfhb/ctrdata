@@ -149,7 +149,7 @@ ctrOpenSearchPagesInBrowser <- function(
       # - open search
       #   adjust to use expert search for CTGOV2
       if (grepl(
-        "(\\[|\\]|AREA\\[|RANGE\\[|SEARCH\\[|EXPANSION\\[|COVERAGE\\[)",
+        "^term=\\(.+\\)$|\\[|\\]|AREA\\[|RANGE\\[|SEARCH\\[|EXPANSION\\[|COVERAGE\\[",
         url, ignore.case = FALSE) &&
         (register == "CTGOV2")) register <- "CTGOV2expert"
       #

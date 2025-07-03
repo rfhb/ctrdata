@@ -144,6 +144,7 @@ ctrGenerateQueries <- function(
     searchPhraseC <- gsub("( OR | AND )", ", ", searchPhrase)
 
     searchPhraseD <- stringi::stri_extract_all_regex(searchPhrase, "( OR | AND )")[[1]][1]
+    if (all(is.na(searchPhraseD))) searchPhraseD <- ""
 
     if (grepl(" AND ", searchPhrase) && grepl(" OR ", searchPhrase)) {
       warning(
@@ -156,15 +157,14 @@ ctrGenerateQueries <- function(
 
     # ctgov2
     urls["CTGOV2"] <- paste0(
-      urls["CTGOV2"], "titles=", searchPhraseB)
-    # "basket" OR "platform" OR "umbrella" OR "master protocol" OR "multiarm" OR "multistage" OR "subprotocol" OR "substudy" OR "multi-arm" OR "multi-stage" OR "sub-protocol" OR "sub-study"
-    # title search 2372
-    # https://clinicaltrials.gov/search?titles=%22basket%22%20OR%20%22platform%22%20OR%20%22umbrella%22%20OR%20%22master%20protocol%22%20OR%20%22multiarm%22%20OR%20%22multistage%22%20OR%20%22subprotocol%22%20OR%20%22substudy%22%20OR%20%22multi-arm%22%20OR%20%22multi-stage%22%20OR%20%22sub-protocol%22%20OR%20%22sub-study%22
+      urls["CTGOV2"], "term=", searchPhraseB)
 
     # ctgov2expert
     urls["CTGOV2expert"] <- paste0(
-      urls["CTGOV2expert"], " AND (",
-      paste0('AREA[TitleSearch]"', searchPhraseA, '"', collapse = searchPhraseD),
+        # urls["CTGOV2expert"], " AND (",
+        # paste0('AREA[TitleSearch]"', searchPhraseA, '"', collapse = searchPhraseD),
+      urls["CTGOV2expert"], "(",
+      paste0('"', searchPhraseA, '"', collapse = searchPhraseD),
       ") "
     )
 
@@ -175,23 +175,14 @@ ctrGenerateQueries <- function(
         '"containAll":"',
         '"containAny":"'
       ), searchPhraseC, '",')
-    # "Contain any of these terms:" 289
-    # https://euclinicaltrials.eu/ctis-public/search#searchCriteria={%22containAny%22:%22basket,%20platform,%20umbrella,%20multiarm,%20multistage,%20master%20protocol,%20subprotocol,%20substudy,%20multi-arm,%20multi-stage,%20sub-protocol,%20sub-study%22}
-    # basket, platform, umbrella, master protocol, multiarm, multistage, subprotocol, substudy, multi-arm, multi-stage, sub-protocol, sub-study
 
     # euctr
     urls["EUCTR"] <- paste0(
       urls["EUCTR"], searchPhraseB)
-    # "basket" OR "platform" OR "umbrella" OR "master protocol" OR "multiarm" OR "multistage" OR "subprotocol" OR "substudy" OR "multi-arm" OR "multi-stage" OR "sub-protocol" OR "sub-study"
-    # general text search 2808
-    # https://www.clinicaltrialsregister.eu/ctr-search/search?query=%22basket%22+OR+%22platform%22+OR+%22umbrella%22+OR+%22master+protocol%22+OR+%22multiarm%22+OR+%22multistage%22+OR+%22subprotocol%22+OR+%22substudy%22+OR+%22multi-arm%22+OR+%22multi-stage%22+OR+%22sub-protocol%22+OR+%22sub-study%22
 
-    #
+    # isrctn
     urls["ISRCTN"] <- paste0(
       urls["ISRCTN"], "q=", searchPhraseB)
-    # "basket" OR "platform" OR "umbrella" OR "master protocol" OR "multiarm" OR "multistage" OR "subprotocol" OR "substudy" OR "multi-arm" OR "multi-stage" OR "sub-protocol" OR "sub-study"
-    # text search 1426
-    # https://www.isrctn.com/search?q=%22basket%22+OR+%22platform%22+OR+%22umbrella%22+OR+%22master+protocol%22+OR+%22multiarm%22+OR+%22multistage%22+OR+%22subprotocol%22+OR+%22substudy%22+OR+%22multi-arm%22+OR+%22multi-stage%22+OR+%22sub-protocol%22+OR+%22sub-study%22&searchType=advanced
 
   }
 

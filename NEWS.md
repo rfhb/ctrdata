@@ -1,6 +1,6 @@
 # ctrdata 1.23.0.9000
 
-- new development version
+- Expanded functionality of `ctrGenerateQueries()` for CTGOV2 expert searches
 
 # ctrdata 1.23.0
 

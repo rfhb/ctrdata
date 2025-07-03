@@ -137,9 +137,45 @@ tf <- function() {
   expect_equivalent(c(
     "https://www.clinicaltrialsregister.eu/ctr-search/search?query=\"antibody\" AND \"covid\"&status=completed",
     "https://www.isrctn.com/search?q=\"antibody\" AND \"covid\"&filters=trialStatus:completed,primaryStudyDesign:Interventional,phase:Phase 0,phase:Phase I,phase:Phase II,phase:Phase III,phase:Phase IV,phase:Phase I/II,phase:Phase II/III,phase:Phase III/IV",
-    "https://clinicaltrials.gov/search?titles=\"antibody\" AND \"covid\"&aggFilters=status:com,studyType:int",
-    "https://clinicaltrials.gov/expert-search?term=(AREA[TitleSearch]\"antibody\" AND AREA[TitleSearch]\"covid\") AND (AREA[OverallStatus]\"COMPLETED\") AND (AREA[StudyType]INTERVENTIONAL)",
+    "https://clinicaltrials.gov/search?term=\"antibody\" AND \"covid\"&aggFilters=status:com,studyType:int",
+    "https://clinicaltrials.gov/expert-search?term=(\"antibody\" AND \"covid\") AND (AREA[OverallStatus]\"COMPLETED\") AND (AREA[StudyType]INTERVENTIONAL)",
     "https://euclinicaltrials.eu/ctis-public/search#searchCriteria={\"containAll\":\"antibody, covid\",\"status\":[5,8]}"
+  ), urls)
+
+
+  # generate 8
+  urls <- ctrGenerateQueries(
+    searchPhrase = "cancer institute")
+
+  # test
+  expect_length(urls, 5L)
+
+  # test
+  expect_equivalent(c(
+    "https://www.clinicaltrialsregister.eu/ctr-search/search?query=\"cancer institute\"",
+    "https://www.isrctn.com/search?q=\"cancer institute\"&filters=primaryStudyDesign:Interventional,phase:Phase 0,phase:Phase I,phase:Phase II,phase:Phase III,phase:Phase IV,phase:Phase I/II,phase:Phase II/III,phase:Phase III/IV",
+    "https://clinicaltrials.gov/search?term=\"cancer institute\"&aggFilters=studyType:int",
+    "https://clinicaltrials.gov/expert-search?term=(\"cancer institute\") AND (AREA[StudyType]INTERVENTIONAL)",
+    "https://euclinicaltrials.eu/ctis-public/search#searchCriteria={\"containAny\":\"cancer institute\"}"
+  ), urls)
+
+
+  # generate 9
+  urls <- ctrGenerateQueries(
+    searchPhrase = "cancer institute",
+    onlyMedIntervTrials = FALSE)
+  urls <- sapply(urls, ctrOpenSearchPagesInBrowser)
+
+  # test
+  expect_length(urls, 5L)
+
+  # test
+  expect_equivalent(c(
+    "https://www.clinicaltrialsregister.eu/ctr-search/search?query=\"cancer institute\"#tabs",
+    "https://www.isrctn.com/search?q=\"cancer institute\"",
+    "https://clinicaltrials.gov/search?term=\"cancer institute\"",
+    "https://clinicaltrials.gov/expert-search?term=(\"cancer institute\")",
+    "https://euclinicaltrials.eu/ctis-public/search#searchCriteria={\"containAny\":\"cancer institute\"}"
   ), urls)
 
 
