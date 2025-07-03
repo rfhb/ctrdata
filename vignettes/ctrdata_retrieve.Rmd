@@ -26,7 +26,7 @@ library(ctrdata)
 citation("ctrdata")
 ```
 
-Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: Ralf Herold (2025). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.22.3. https://cran.r-project.org/package=ctrdata
+Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: Ralf Herold (2025). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.23.0. https://cran.r-project.org/package=ctrdata
 
 ### Open register's advanced search page in browser
 

@@ -12,7 +12,7 @@
 
 <meta name="author" content="Ralf Herold" />
 
-<meta name="date" content="2025-06-29" />
+<meta name="date" content="2025-07-02" />
 
 <title>Retrieve clinical trial information</title>
 
@@ -341,7 +341,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Retrieve clinical trial information</h1>
 <h4 class="author">Ralf Herold</h4>
-<h4 class="date">2025-06-29</h4>
+<h4 class="date">2025-07-02</h4>
 
 
 <div id="TOC">
@@ -447,32 +447,41 @@ downloaded by <code>ctrdata</code>, by specifying parameter
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  <span class="at">queryterm =</span> q,</span>
 <span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>  <span class="at">only.count =</span> <span class="cn">TRUE</span></span>
 <span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>)<span class="sc">$</span>n</span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co"># * Checking trials in EUCTR...</span></span>
-<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co"># Retrieved overview, multiple records of 390 trial(s) from 20 page(s) to be </span></span>
-<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="co"># downloaded (estimate: 50 MB)</span></span>
-<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co"># [1] 390</span></span>
-<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a></span>
-<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co"># Connect to a database and chose a collection (table)</span></span>
-<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>db <span class="ot">&lt;-</span> nodbi<span class="sc">::</span><span class="fu">src_sqlite</span>(</span>
-<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>  <span class="at">dbname =</span> <span class="st">&quot;database_name.sql&quot;</span>,</span>
-<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a>  <span class="at">collection =</span> <span class="st">&quot;test&quot;</span></span>
-<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a>)</span>
-<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a></span>
-<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a><span class="co"># Retrieve records, load into database</span></span>
-<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a><span class="fu">ctrLoadQueryIntoDb</span>(</span>
-<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a>  <span class="at">queryterm =</span> q,</span>
-<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a>  <span class="at">con =</span> db</span>
-<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a>)</span>
-<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a></span>
-<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a><span class="co"># Show which queries have been downloaded into database</span></span>
-<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a><span class="fu">dbQueryHistory</span>(<span class="at">con =</span> db)</span>
-<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a><span class="co">#       query-timestamp query-register query-records</span></span>
-<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a><span class="co"># 1 2025-06-29 15:06:10          EUCTR          1541</span></span>
-<span id="cb4-27"><a href="#cb4-27" tabindex="-1"></a><span class="co">#                                                    query-term</span></span>
-<span id="cb4-28"><a href="#cb4-28" tabindex="-1"></a><span class="co"># 1 query=cancer&amp;age=under-18&amp;resultsstatus=trials-with-results</span></span></code></pre></div>
-<p>With any database, this takes about 80 seconds for 1531 records of
-386 trials (~55 ms/record), with most of the time needed for
-internet-retrieval which is slow from this register.</p>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co"># * Found search query from EUCTR: query=cancer&amp;age=under-18&amp;resultsstatus=trials-with-results</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co"># * Checking trials in EUCTR, found 390 trials </span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="co"># [1] 390</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co"># Connect to a database and chose a collection (table)</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>db <span class="ot">&lt;-</span> nodbi<span class="sc">::</span><span class="fu">src_sqlite</span>(</span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>  <span class="at">dbname =</span> <span class="st">&quot;database_name.sql&quot;</span>,</span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>  <span class="at">collection =</span> <span class="st">&quot;test&quot;</span></span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a>)</span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a></span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="co"># Retrieve records, load into database</span></span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a><span class="fu">ctrLoadQueryIntoDb</span>(</span>
+<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a>  <span class="at">queryterm =</span> q,</span>
+<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a>  <span class="at">con =</span> db</span>
+<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a>)</span>
+<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a><span class="co"># * Found search query from EUCTR: query=cancer&amp;age=under-18&amp;resultsstatus=trials-with-results</span></span>
+<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a><span class="co"># * Checking trials in EUCTR, found 390 trials </span></span>
+<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a><span class="co"># - Downloading in 20 batch(es) (20 trials each; estimate: 50 MB)</span></span>
+<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a><span class="co"># - Downloading 1541 records of 390 trials (estimate: 90 s)            </span></span>
+<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a><span class="co"># - Converting to NDJSON (estimate: 3 s) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . </span></span>
+<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a><span class="co"># - Importing records into database...</span></span>
+<span id="cb4-27"><a href="#cb4-27" tabindex="-1"></a><span class="co"># = Imported or updated 1541 records on 390 trial(s) </span></span>
+<span id="cb4-28"><a href="#cb4-28" tabindex="-1"></a><span class="co"># No history found in expected format.</span></span>
+<span id="cb4-29"><a href="#cb4-29" tabindex="-1"></a><span class="co"># Updated history (&quot;meta-info&quot; in &quot;test&quot;)</span></span>
+<span id="cb4-30"><a href="#cb4-30" tabindex="-1"></a><span class="co"># $n</span></span>
+<span id="cb4-31"><a href="#cb4-31" tabindex="-1"></a><span class="co"># [1] 1541</span></span>
+<span id="cb4-32"><a href="#cb4-32" tabindex="-1"></a></span>
+<span id="cb4-33"><a href="#cb4-33" tabindex="-1"></a><span class="co"># Show which queries have been downloaded into database</span></span>
+<span id="cb4-34"><a href="#cb4-34" tabindex="-1"></a><span class="fu">dbQueryHistory</span>(<span class="at">con =</span> db)</span>
+<span id="cb4-35"><a href="#cb4-35" tabindex="-1"></a><span class="co">#       query-timestamp query-register query-records</span></span>
+<span id="cb4-36"><a href="#cb4-36" tabindex="-1"></a><span class="co"># 1 2025-07-02 20:27:25          EUCTR          1541</span></span>
+<span id="cb4-37"><a href="#cb4-37" tabindex="-1"></a><span class="co">#                                                    query-term</span></span>
+<span id="cb4-38"><a href="#cb4-38" tabindex="-1"></a><span class="co"># 1 query=cancer&amp;age=under-18&amp;resultsstatus=trials-with-results</span></span></code></pre></div>
+<p>With any database, this takes about 90 seconds for 1541 records of
+390 trials (~60 ms/record).</p>
 </div>
 </div>
 <div id="repeat-and-update-a-previous-query" class="section level2">
@@ -493,15 +502,13 @@ possible or the original query is executed fully again.</p>
 <span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>  <span class="at">only.count =</span> <span class="cn">TRUE</span>,</span>
 <span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>  <span class="at">con =</span> db</span>
 <span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>)</span>
-<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="co"># * Found search query from EUCTR: query=cancer&amp;age=under-18&amp;resultsstatus=trials-with-results</span></span>
-<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="co"># * Query last run: 2025-06-29 15:30:47</span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="co"># Found search query from EUCTR: query=cancer&amp;age=under-18&amp;resultsstatus=trials-with-results</span></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="co"># * Query last run: 2025-07-02 20:27:25</span></span>
 <span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="co"># * Checking for new or updated trials...</span></span>
-<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="co"># Rerunning query: query=cancer&amp;age=under-18&amp;resultsstatus=trials-with-results</span></span>
-<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="co"># Last run: 2025-06-29</span></span>
-<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="co"># * Checking trials in EUCTR...</span></span>
-<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="co"># Retrieved overview, multiple records of 2 trial(s) from 1 page(s) to be downloaded (estimate: 0.3 MB)</span></span>
-<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a><span class="co"># $n</span></span>
-<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a><span class="co"># [1] 2</span></span></code></pre></div>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="co"># First result page empty - no (new) trials found?</span></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="co"># Updated history (&quot;meta-info&quot; in &quot;test&quot;)</span></span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="co"># $n</span></span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="co"># [1] 0</span></span></code></pre></div>
 </div>
 <div id="results-related-trial-information" class="section level2">
 <h2>Results-related trial information</h2>
@@ -513,9 +520,9 @@ available from ISRCTN and CTIS, thus <code>ctrdata</code> cannot load
 them, see <code>help(ctrLoadQueryIntoDb)</code>. The download or
 presence of results is not recorded in <code>dbQueryHistory()</code>
 because the availability of results increases over time. The following
-only takes about 100 seconds for about 1530 records (~ 65 ms/record) of
-386 trials, if run in the same R session as the above commands and thus
-re-using previous downloads of unprocessed source data.</p>
+takes in total only 120 seconds for 1541 records (~ 80 ms/record) of 390
+trials, if run in the same R session as the above commands and thus
+re-using previous downloads of trials.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">ctrLoadQueryIntoDb</span>(</span>
 <span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="at">querytoupdate =</span> <span class="st">&quot;last&quot;</span>,</span>
 <span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="at">forcetoupdate =</span> <span class="cn">TRUE</span>,</span>
@@ -523,35 +530,33 @@ re-using previous downloads of unprocessed source data.</p>
 <span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>  <span class="at">con =</span> db</span>
 <span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>)</span>
 <span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="co"># * Found search query from EUCTR: query=cancer&amp;age=under-18&amp;resultsstatus=trials-with-results</span></span>
-<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="co"># * Query last run: 2025-06-29 15:30:47</span></span>
-<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="co"># * Checking trials in EUCTR...</span></span>
-<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="co"># Retrieved overview, multiple records of 390 trial(s) from 20 page(s) to be downloaded (estimate: 50 MB)</span></span>
-<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a><span class="co"># Note: Server cannot compress data, transfer takes longer (estimate: 500 s)</span></span>
-<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a><span class="co"># - Downloading trial pages...</span></span>
-<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a><span class="co"># - Converting to NDJSON (estimate: 8 s)...</span></span>
-<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a><span class="co"># - Importing records into database...</span></span>
-<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a><span class="co"># = Imported or updated 1541 records on 390 trial(s) </span></span>
-<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a><span class="co"># * Checking results if available from EUCTR for 390 trials: </span></span>
-<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a><span class="co"># - Downloading results...</span></span>
-<span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a><span class="co"># - Extracting results (. = data, F = file[s] and data, x = none): . . . . . F </span></span>
-<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a><span class="co"># . . F . . . . F . . . . F . . F . . . . . . . . . F . F . . . . . . . . . . </span></span>
-<span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a><span class="co"># . F . . . . . . . . . . . . . . . F . F . . . . . F . F . . . F . F . . . . </span></span>
-<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a><span class="co"># . F . F . . . F . . . . . . . . . . . . . . . F . . . F F . . . . . . F . F </span></span>
-<span id="cb6-22"><a href="#cb6-22" tabindex="-1"></a><span class="co"># . . F . . . . . . . . . . . F . . . . . . . . . . . . . . . . F F . F . . .</span></span>
-<span id="cb6-23"><a href="#cb6-23" tabindex="-1"></a><span class="co"># F . . . F F . . . . . . . . . . . F F . F . . . . . . F . . . F F . . F . . </span></span>
-<span id="cb6-24"><a href="#cb6-24" tabindex="-1"></a><span class="co"># . . . . . . . . . . F . . . . . F . . . . . . F F . F . . F . . . . F F F . </span></span>
-<span id="cb6-25"><a href="#cb6-25" tabindex="-1"></a><span class="co"># . . . . . . F . . F . . . . . . . . . . . F . . . . . . . . . . F . . . . . </span></span>
-<span id="cb6-26"><a href="#cb6-26" tabindex="-1"></a><span class="co"># . . . . . . . . F F . . . . F . . F . . . F . . F F F . . . . . F . . . . . </span></span>
-<span id="cb6-27"><a href="#cb6-27" tabindex="-1"></a><span class="co"># . . . . . . F . F . . . . . . . . . . F F . F F . . . . F F . . . F F F . . </span></span>
-<span id="cb6-28"><a href="#cb6-28" tabindex="-1"></a><span class="co"># F . . . . F F . F . . . . . . F . . . . . . . . F . . . . . . F . . F F F .</span></span>
-<span id="cb6-29"><a href="#cb6-29" tabindex="-1"></a><span class="co"># . . . F </span></span>
-<span id="cb6-30"><a href="#cb6-30" tabindex="-1"></a><span class="co"># - Converting to NDJSON (estimate: 40 s)...</span></span>
-<span id="cb6-31"><a href="#cb6-31" tabindex="-1"></a><span class="co"># - Importing results into database (may take some time)...</span></span>
-<span id="cb6-32"><a href="#cb6-32" tabindex="-1"></a><span class="co"># - Results history: not retrieved (euctrresultshistory = FALSE)</span></span>
-<span id="cb6-33"><a href="#cb6-33" tabindex="-1"></a><span class="co"># = Imported or updated results for 390 trials</span></span>
-<span id="cb6-34"><a href="#cb6-34" tabindex="-1"></a><span class="co"># Updated history (&quot;meta-info&quot; in &quot;test&quot;)</span></span>
-<span id="cb6-35"><a href="#cb6-35" tabindex="-1"></a><span class="co"># $n</span></span>
-<span id="cb6-36"><a href="#cb6-36" tabindex="-1"></a><span class="co"># [1] 1541</span></span></code></pre></div>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="co"># * Query last run: 2025-07-02 20:27:25</span></span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="co"># * Checking trials in EUCTR, found 390 trials </span></span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="co"># - Downloading in 20 batch(es) (20 trials each; estimate: 50 MB)</span></span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a><span class="co"># - Downloading 1541 records of 390 trials (estimate: 90 s)</span></span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a><span class="co"># - Converting to NDJSON (estimate: 3 s) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . </span></span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a><span class="co"># - Importing records into database...</span></span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a><span class="co"># = Imported or updated 1541 records on 390 trial(s) </span></span>
+<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a><span class="co"># * Checking results if available from EUCTR for 390 trials: </span></span>
+<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a><span class="co"># - Downloading results...</span></span>
+<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a><span class="co"># - Extracting results (. = data, F = file[s] and data, x = none): F F . . . . </span></span>
+<span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a><span class="co"># F . . F . . . F . . F F F . . . . F F F . . F . . . . F F . F . . . . . . . . </span></span>
+<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a><span class="co"># F . . . . . . . . . . . F . F . . . . . . . F . . . . . . . . . . . . . . . F </span></span>
+<span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a><span class="co"># . . . . . . F . . F F F . . . . F F . . F . . . . . . . . . . . F . . . . . . </span></span>
+<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a><span class="co"># . F . . . . . . . . . . . F . . . . . . F . . . . . . . . . F . F . . . . . .</span></span>
+<span id="cb6-22"><a href="#cb6-22" tabindex="-1"></a><span class="co"># . . . . . F . . . F F . . F . . . . . . . . . . . . F . . . . . F . . . . . . </span></span>
+<span id="cb6-23"><a href="#cb6-23" tabindex="-1"></a><span class="co"># F . . . . . F . . . F F . . . . . . F . F . . . . . F . . F . . . . F . . . . </span></span>
+<span id="cb6-24"><a href="#cb6-24" tabindex="-1"></a><span class="co"># . . . . . . . . . F F . F . . . F . . . F F . . . . . . . . . . . F . . . . F </span></span>
+<span id="cb6-25"><a href="#cb6-25" tabindex="-1"></a><span class="co"># . . . . . . F F . F . . . . . . . . . . F F . F F . . . . F F . . . F . F . . </span></span>
+<span id="cb6-26"><a href="#cb6-26" tabindex="-1"></a><span class="co"># . F . . . . . . . . . . . F . F . . . . . F . F . . . F . F . . F . F . . F . </span></span>
+<span id="cb6-27"><a href="#cb6-27" tabindex="-1"></a><span class="co"># . . . F F F . . . . . . . . . . . . F . . . . . . . . . . . . . . </span></span>
+<span id="cb6-28"><a href="#cb6-28" tabindex="-1"></a><span class="co"># - Converting to NDJSON (estimate: 40 s)...</span></span>
+<span id="cb6-29"><a href="#cb6-29" tabindex="-1"></a><span class="co"># - Importing results into database (may take some time)...</span></span>
+<span id="cb6-30"><a href="#cb6-30" tabindex="-1"></a><span class="co"># - Results history: not retrieved (euctrresultshistory = FALSE)</span></span>
+<span id="cb6-31"><a href="#cb6-31" tabindex="-1"></a><span class="co"># = Imported or updated results for 390 trials</span></span>
+<span id="cb6-32"><a href="#cb6-32" tabindex="-1"></a><span class="co"># Updated history (&quot;meta-info&quot; in &quot;test&quot;)</span></span>
+<span id="cb6-33"><a href="#cb6-33" tabindex="-1"></a><span class="co"># $n</span></span>
+<span id="cb6-34"><a href="#cb6-34" tabindex="-1"></a><span class="co"># [1] 1541</span></span></code></pre></div>
 </div>
 <div id="add-trial-information-from-several-registers" class="section level2">
 <h2>Add trial information from several registers</h2>
@@ -567,44 +572,56 @@ queries that the user defines specifically or that function
 <span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>  <span class="at">register =</span> <span class="st">&quot;CTGOV2&quot;</span>,</span>
 <span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>  <span class="at">con =</span> db</span>
 <span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>)</span>
-<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a></span>
-<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co"># Use same query details to obtain queries</span></span>
-<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>queries <span class="ot">&lt;-</span> <span class="fu">ctrGenerateQueries</span>(</span>
-<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a>  <span class="at">condition =</span> <span class="st">&quot;neuroblastoma&quot;</span>,</span>
-<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a>  <span class="at">recruitment =</span> <span class="st">&quot;completed&quot;</span>,</span>
-<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a>  <span class="at">phase =</span> <span class="st">&quot;phase 2&quot;</span>,</span>
-<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a>  <span class="at">population =</span> <span class="st">&quot;P&quot;</span></span>
-<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a>)</span>
-<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a></span>
-<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a><span class="co"># Open queries in registers&#39; web interfaces</span></span>
-<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a><span class="fu">sapply</span>(queries, ctrOpenSearchPagesInBrowser)</span>
-<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a></span>
-<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a><span class="co"># Load all queries into database collection</span></span>
-<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">lapply</span>(queries, ctrLoadQueryIntoDb, <span class="at">con =</span> db)</span>
-<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a></span>
-<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a><span class="co"># Show results of loading</span></span>
-<span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a><span class="fu">sapply</span>(result, <span class="st">&quot;[[&quot;</span>, <span class="st">&quot;n&quot;</span>)</span>
-<span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a><span class="co"># EUCTR       ISRCTN       CTGOV2 CTGOV2expert         CTIS </span></span>
-<span id="cb7-25"><a href="#cb7-25" tabindex="-1"></a><span class="co">#   180            0          110          110            1 </span></span>
-<span id="cb7-26"><a href="#cb7-26" tabindex="-1"></a></span>
-<span id="cb7-27"><a href="#cb7-27" tabindex="-1"></a><span class="co"># Overview of queries</span></span>
-<span id="cb7-28"><a href="#cb7-28" tabindex="-1"></a><span class="fu">dbQueryHistory</span>(<span class="at">con =</span> db)</span>
-<span id="cb7-29"><a href="#cb7-29" tabindex="-1"></a><span class="co">#       query-timestamp query-register query-records</span></span>
-<span id="cb7-30"><a href="#cb7-30" tabindex="-1"></a><span class="co"># 1 2025-06-29 15:30:47          EUCTR          1541</span></span>
-<span id="cb7-31"><a href="#cb7-31" tabindex="-1"></a><span class="co"># 2 2025-06-29 15:34:46          EUCTR          1541</span></span>
-<span id="cb7-32"><a href="#cb7-32" tabindex="-1"></a><span class="co"># 3 2025-06-29 15:36:24         CTGOV2           110</span></span>
-<span id="cb7-33"><a href="#cb7-33" tabindex="-1"></a><span class="co"># 4 2025-06-29 15:37:46          EUCTR           180</span></span>
-<span id="cb7-34"><a href="#cb7-34" tabindex="-1"></a><span class="co"># 5 2025-06-29 15:37:47         CTGOV2           110</span></span>
-<span id="cb7-35"><a href="#cb7-35" tabindex="-1"></a><span class="co"># 6 2025-06-29 15:37:48         CTGOV2           110</span></span>
-<span id="cb7-36"><a href="#cb7-36" tabindex="-1"></a><span class="co"># 7 2025-06-29 15:37:49           CTIS             1</span></span>
-<span id="cb7-37"><a href="#cb7-37" tabindex="-1"></a><span class="co"># query-term</span></span>
-<span id="cb7-38"><a href="#cb7-38" tabindex="-1"></a><span class="co"># 1 query=cancer&amp;age=under-18&amp;resultsstatus=trials-with-results</span></span>
-<span id="cb7-39"><a href="#cb7-39" tabindex="-1"></a><span class="co"># 2 query=cancer&amp;age=under-18&amp;resultsstatus=trials-with-results</span></span>
-<span id="cb7-40"><a href="#cb7-40" tabindex="-1"></a><span class="co"># 3 cond=neuroblastoma&amp;aggFilters=phase:2,ages:child,status:com</span></span>
-<span id="cb7-41"><a href="#cb7-41" tabindex="-1"></a><span class="co"># 4 query=neuroblastoma&amp;phase=phase-two&amp;age=children&amp;age=adolescent&amp;age=infant-and-toddler&amp;age=newborn&amp;age=preterm-new-born-infants&amp;age=under-18&amp;status=completed</span></span>
-<span id="cb7-42"><a href="#cb7-42" tabindex="-1"></a><span class="co"># 5 cond=neuroblastoma&amp;aggFilters=phase:2,ages:child,status:com,studyType:int</span></span>
-<span id="cb7-43"><a href="#cb7-43" tabindex="-1"></a><span class="co"># 6 term=AREA[ConditionSearch]&quot;neuroblastoma&quot; AND (AREA[Phase]&quot;PHASE2&quot;) AND (AREA[StdAge]&quot;CHILD&quot;) AND (AREA[OverallStatus]&quot;COMPLETED&quot;) AND (AREA[StudyType]INTERVENTIONAL)</span></span>
-<span id="cb7-44"><a href="#cb7-44" tabindex="-1"></a><span class="co"># 7 searchCriteria={&quot;medicalCondition&quot;:&quot;neuroblastoma&quot;,&quot;trialPhaseCode&quot;:[4],&quot;ageGroupCode&quot;:[2],&quot;status&quot;:[5,8]}</span></span></code></pre></div>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co"># * Found search query from CTGOV2: cond=neuroblastoma&amp;aggFilters=phase:2,ages:child,status:com</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co"># * Checking trials in CTGOV, found 110 trials</span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co"># - Downloading in 1 batch(es) (max. 1000 trials each; estimate: 11 Mb total)</span></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="co"># - Converting to NDJSON...</span></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="co"># - Importing records into database...</span></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="co"># JSON file #: 1 / 1                               </span></span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="co"># = Imported or updated 110 trial(s)</span></span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="co"># Updated history (&quot;meta-info&quot; in &quot;test&quot;)</span></span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="co"># $n</span></span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a><span class="co"># [1] 110</span></span>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a></span>
+<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a><span class="co"># Use same query details to obtain queries</span></span>
+<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a>queries <span class="ot">&lt;-</span> <span class="fu">ctrGenerateQueries</span>(</span>
+<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a>  <span class="at">condition =</span> <span class="st">&quot;neuroblastoma&quot;</span>,</span>
+<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a>  <span class="at">recruitment =</span> <span class="st">&quot;completed&quot;</span>,</span>
+<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a>  <span class="at">phase =</span> <span class="st">&quot;phase 2&quot;</span>,</span>
+<span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a>  <span class="at">population =</span> <span class="st">&quot;P&quot;</span></span>
+<span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a>)</span>
+<span id="cb7-25"><a href="#cb7-25" tabindex="-1"></a></span>
+<span id="cb7-26"><a href="#cb7-26" tabindex="-1"></a><span class="co"># Open queries in registers&#39; web interfaces</span></span>
+<span id="cb7-27"><a href="#cb7-27" tabindex="-1"></a><span class="fu">sapply</span>(queries, ctrOpenSearchPagesInBrowser)</span>
+<span id="cb7-28"><a href="#cb7-28" tabindex="-1"></a></span>
+<span id="cb7-29"><a href="#cb7-29" tabindex="-1"></a><span class="co"># Load all queries into database collection</span></span>
+<span id="cb7-30"><a href="#cb7-30" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">lapply</span>(queries, ctrLoadQueryIntoDb, <span class="at">con =</span> db)</span>
+<span id="cb7-31"><a href="#cb7-31" tabindex="-1"></a></span>
+<span id="cb7-32"><a href="#cb7-32" tabindex="-1"></a><span class="co"># Show results of loading</span></span>
+<span id="cb7-33"><a href="#cb7-33" tabindex="-1"></a><span class="fu">sapply</span>(result, <span class="st">&quot;[[&quot;</span>, <span class="st">&quot;n&quot;</span>)</span>
+<span id="cb7-34"><a href="#cb7-34" tabindex="-1"></a><span class="co"># EUCTR       ISRCTN       CTGOV2 CTGOV2expert         CTIS </span></span>
+<span id="cb7-35"><a href="#cb7-35" tabindex="-1"></a><span class="co">#   180            0          110          110            1 </span></span>
+<span id="cb7-36"><a href="#cb7-36" tabindex="-1"></a></span>
+<span id="cb7-37"><a href="#cb7-37" tabindex="-1"></a><span class="co"># Overview of queries</span></span>
+<span id="cb7-38"><a href="#cb7-38" tabindex="-1"></a><span class="fu">dbQueryHistory</span>(<span class="at">con =</span> db)</span>
+<span id="cb7-39"><a href="#cb7-39" tabindex="-1"></a><span class="co">#       query-timestamp query-register query-records</span></span>
+<span id="cb7-40"><a href="#cb7-40" tabindex="-1"></a><span class="co"># 1 2025-07-02 20:27:25          EUCTR          1541</span></span>
+<span id="cb7-41"><a href="#cb7-41" tabindex="-1"></a><span class="co"># 2 2025-07-02 20:30:46          EUCTR             0</span></span>
+<span id="cb7-42"><a href="#cb7-42" tabindex="-1"></a><span class="co"># 3 2025-07-02 20:33:38          EUCTR          1541</span></span>
+<span id="cb7-43"><a href="#cb7-43" tabindex="-1"></a><span class="co"># 4 2025-07-02 20:39:41         CTGOV2           110</span></span>
+<span id="cb7-44"><a href="#cb7-44" tabindex="-1"></a><span class="co"># 5 2025-07-02 20:40:18          EUCTR           180</span></span>
+<span id="cb7-45"><a href="#cb7-45" tabindex="-1"></a><span class="co"># 6 2025-07-02 20:40:20         CTGOV2           110</span></span>
+<span id="cb7-46"><a href="#cb7-46" tabindex="-1"></a><span class="co"># 7 2025-07-02 20:40:21         CTGOV2           110</span></span>
+<span id="cb7-47"><a href="#cb7-47" tabindex="-1"></a><span class="co"># 8 2025-07-02 20:40:22           CTIS             1</span></span>
+<span id="cb7-48"><a href="#cb7-48" tabindex="-1"></a><span class="co">#query-term</span></span>
+<span id="cb7-49"><a href="#cb7-49" tabindex="-1"></a><span class="co"># 1 query=cancer&amp;age=under-18&amp;resultsstatus=trials-with-results</span></span>
+<span id="cb7-50"><a href="#cb7-50" tabindex="-1"></a><span class="co"># 2 query=cancer&amp;age=under-18&amp;resultsstatus=trials-with-results</span></span>
+<span id="cb7-51"><a href="#cb7-51" tabindex="-1"></a><span class="co"># 3 query=cancer&amp;age=under-18&amp;resultsstatus=trials-with-results</span></span>
+<span id="cb7-52"><a href="#cb7-52" tabindex="-1"></a><span class="co"># 4 cond=neuroblastoma&amp;aggFilters=phase:2,ages:child,status:com</span></span>
+<span id="cb7-53"><a href="#cb7-53" tabindex="-1"></a><span class="co"># 5 query=neuroblastoma&amp;phase=phase-two&amp;age=children&amp;age=adolescent&amp;age=infant-and-toddler&amp;age=newborn&amp;age=preterm-new-born-infants&amp;age=under-18&amp;status=completed</span></span>
+<span id="cb7-54"><a href="#cb7-54" tabindex="-1"></a><span class="co"># 6 cond=neuroblastoma&amp;aggFilters=phase:2,ages:child,status:com,studyType:int</span></span>
+<span id="cb7-55"><a href="#cb7-55" tabindex="-1"></a><span class="co"># 7 term=AREA[ConditionSearch]&quot;neuroblastoma&quot; AND (AREA[Phase]&quot;PHASE2&quot;) AND (AREA[StdAge]&quot;CHILD&quot;) AND (AREA[OverallStatus]&quot;COMPLETED&quot;) AND (AREA[StudyType]INTERVENTIONAL)</span></span>
+<span id="cb7-56"><a href="#cb7-56" tabindex="-1"></a><span class="co"># 8 searchCriteria={&quot;medicalCondition&quot;:&quot;neuroblastoma&quot;,&quot;trialPhaseCode&quot;:[4],&quot;ageGroupCode&quot;:[2],&quot;status&quot;:[5,8]}</span></span></code></pre></div>
 </div>
 <div id="add-personal-annotations" class="section level2">
 <h2>Add personal annotations</h2>
@@ -684,23 +701,20 @@ and analysing the study information, as follows:</p>
 <span id="cb10-23"><a href="#cb10-23" tabindex="-1"></a><span class="co"># since each trial can have multiple records in this</span></span>
 <span id="cb10-24"><a href="#cb10-24" tabindex="-1"></a><span class="co"># register, the number is higher when actually loaded</span></span>
 <span id="cb10-25"><a href="#cb10-25" tabindex="-1"></a></span>
-<span id="cb10-26"><a href="#cb10-26" tabindex="-1"></a><span class="co"># and see examples in</span></span>
-<span id="cb10-27"><a href="#cb10-27" tabindex="-1"></a><span class="fu">vignette</span>(<span class="st">&quot;ctrdata_summarise&quot;</span>)</span>
-<span id="cb10-28"><a href="#cb10-28" tabindex="-1"></a></span>
-<span id="cb10-29"><a href="#cb10-29" tabindex="-1"></a><span class="co"># Connect to a database and chose a collection (table)</span></span>
-<span id="cb10-30"><a href="#cb10-30" tabindex="-1"></a>db <span class="ot">&lt;-</span> nodbi<span class="sc">::</span><span class="fu">src_sqlite</span>(</span>
-<span id="cb10-31"><a href="#cb10-31" tabindex="-1"></a>  <span class="at">dbname =</span> <span class="st">&quot;database_name.sql&quot;</span>,</span>
-<span id="cb10-32"><a href="#cb10-32" tabindex="-1"></a>  <span class="at">collection =</span> <span class="st">&quot;test&quot;</span></span>
-<span id="cb10-33"><a href="#cb10-33" tabindex="-1"></a>)</span>
+<span id="cb10-26"><a href="#cb10-26" tabindex="-1"></a><span class="co"># Connect to a database and chose a collection (table)</span></span>
+<span id="cb10-27"><a href="#cb10-27" tabindex="-1"></a>db <span class="ot">&lt;-</span> nodbi<span class="sc">::</span><span class="fu">src_sqlite</span>(</span>
+<span id="cb10-28"><a href="#cb10-28" tabindex="-1"></a>  <span class="at">dbname =</span> <span class="st">&quot;database_name.sql&quot;</span>,</span>
+<span id="cb10-29"><a href="#cb10-29" tabindex="-1"></a>  <span class="at">collection =</span> <span class="st">&quot;test&quot;</span></span>
+<span id="cb10-30"><a href="#cb10-30" tabindex="-1"></a>)</span>
+<span id="cb10-31"><a href="#cb10-31" tabindex="-1"></a></span>
+<span id="cb10-32"><a href="#cb10-32" tabindex="-1"></a><span class="co"># Load studies, include EUCTR results data for analysis</span></span>
+<span id="cb10-33"><a href="#cb10-33" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">lapply</span>(queries, ctrLoadQueryIntoDb, <span class="at">con =</span> db, <span class="at">euctrresults =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb10-34"><a href="#cb10-34" tabindex="-1"></a></span>
-<span id="cb10-35"><a href="#cb10-35" tabindex="-1"></a><span class="co"># Load studies, include EUCTR results data for analysis</span></span>
-<span id="cb10-36"><a href="#cb10-36" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">lapply</span>(queries, ctrLoadQueryIntoDb, <span class="at">con =</span> db, <span class="at">euctrresults =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb10-37"><a href="#cb10-37" tabindex="-1"></a></span>
-<span id="cb10-38"><a href="#cb10-38" tabindex="-1"></a><span class="fu">sapply</span>(result, <span class="st">&quot;[[&quot;</span>, <span class="st">&quot;n&quot;</span>)</span>
-<span id="cb10-39"><a href="#cb10-39" tabindex="-1"></a><span class="co"># EUCTR       ISRCTN       CTGOV2 CTGOV2expert         CTIS </span></span>
-<span id="cb10-40"><a href="#cb10-40" tabindex="-1"></a><span class="co">#  7673          165         1559         1559          237 </span></span>
-<span id="cb10-41"><a href="#cb10-41" tabindex="-1"></a></span>
-<span id="cb10-42"><a href="#cb10-42" tabindex="-1"></a><span class="co"># See next section for adding related trials</span></span></code></pre></div>
+<span id="cb10-35"><a href="#cb10-35" tabindex="-1"></a><span class="fu">sapply</span>(result, <span class="st">&quot;[[&quot;</span>, <span class="st">&quot;n&quot;</span>)</span>
+<span id="cb10-36"><a href="#cb10-36" tabindex="-1"></a><span class="co"># EUCTR       ISRCTN       CTGOV2 CTGOV2expert         CTIS </span></span>
+<span id="cb10-37"><a href="#cb10-37" tabindex="-1"></a><span class="co">#  7673          166         1562         1562          243 </span></span>
+<span id="cb10-38"><a href="#cb10-38" tabindex="-1"></a></span>
+<span id="cb10-39"><a href="#cb10-39" tabindex="-1"></a><span class="co"># See next section for adding related trials</span></span></code></pre></div>
 <p>References:</p>
 <ul>
 <li><a href="https://web.archive.org/web/20230314024441/https://eu-pearl.eu/wp-content/uploads/2020/06/EU-PEARL_D2.1_Report-on-Terminology-and-Scenarios-for-Platform-Trials-and-Masterprotocols.pdf">EU-PEARL.
@@ -740,16 +754,16 @@ depends on the specific register.</p>
 <span id="cb11-12"><a href="#cb11-12" tabindex="-1"></a>  <span class="at">con =</span> db</span>
 <span id="cb11-13"><a href="#cb11-13" tabindex="-1"></a>)</span>
 <span id="cb11-14"><a href="#cb11-14" tabindex="-1"></a><span class="co"># To review trial concepts details, call &#39;help(&quot;ctrdata-trial-concepts&quot;)&#39;</span></span>
-<span id="cb11-15"><a href="#cb11-15" tabindex="-1"></a><span class="co"># Querying database (24 fields)...</span></span>
+<span id="cb11-15"><a href="#cb11-15" tabindex="-1"></a><span class="co"># Querying database (25 fields)...</span></span>
 <span id="cb11-16"><a href="#cb11-16" tabindex="-1"></a><span class="co"># Searching for duplicate trials...                         </span></span>
-<span id="cb11-17"><a href="#cb11-17" tabindex="-1"></a><span class="co"># - Getting all trial identifiers (may take some time), 9634 found in collection</span></span>
+<span id="cb11-17"><a href="#cb11-17" tabindex="-1"></a><span class="co"># - Getting all trial identifiers (may take some time), 9644 found in collection</span></span>
 <span id="cb11-18"><a href="#cb11-18" tabindex="-1"></a><span class="co"># - Finding duplicates among registers&#39; and sponsor ids...</span></span>
-<span id="cb11-19"><a href="#cb11-19" tabindex="-1"></a><span class="co"># - 5599 EUCTR _id were not preferred EU Member State record for 1766 trials</span></span>
-<span id="cb11-20"><a href="#cb11-20" tabindex="-1"></a><span class="co"># - Keeping 1559 / 1480 / 0 / 123 / 95 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS</span></span>
-<span id="cb11-21"><a href="#cb11-21" tabindex="-1"></a><span class="co"># = Returning keys (_id) of 3257 records in collection &quot;test&quot;</span></span>
+<span id="cb11-19"><a href="#cb11-19" tabindex="-1"></a><span class="co"># - 5596 EUCTR _id were not preferred EU Member State record for 1767 trials</span></span>
+<span id="cb11-20"><a href="#cb11-20" tabindex="-1"></a><span class="co"># - Keeping 1562 / 1479 / 0 / 124 / 98 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS</span></span>
+<span id="cb11-21"><a href="#cb11-21" tabindex="-1"></a><span class="co"># = Returning keys (_id) of 3263 records in collection &quot;test&quot;</span></span>
 <span id="cb11-22"><a href="#cb11-22" tabindex="-1"></a><span class="co"># Searching for duplicate trials... ..                            </span></span>
-<span id="cb11-23"><a href="#cb11-23" tabindex="-1"></a><span class="co"># - Getting all trial identifiers, 9634 found in collection</span></span>
-<span id="cb11-24"><a href="#cb11-24" tabindex="-1"></a><span class="co"># Calculating f.trialTitle...  </span></span>
+<span id="cb11-23"><a href="#cb11-23" tabindex="-1"></a><span class="co"># - Getting all trial identifiers, 9644 found in collection</span></span>
+<span id="cb11-24"><a href="#cb11-24" tabindex="-1"></a><span class="co"># Calculating f.trialTitle...    </span></span>
 <span id="cb11-25"><a href="#cb11-25" tabindex="-1"></a></span>
 <span id="cb11-26"><a href="#cb11-26" tabindex="-1"></a><span class="co"># Show names of calculated columns in the</span></span>
 <span id="cb11-27"><a href="#cb11-27" tabindex="-1"></a><span class="co"># data frame with possible platform trials</span></span>
@@ -765,25 +779,26 @@ depends on the specific register.</p>
 <span id="cb11-37"><a href="#cb11-37" tabindex="-1"></a><span class="co"># Reduce to unique trials</span></span>
 <span id="cb11-38"><a href="#cb11-38" tabindex="-1"></a>df <span class="ot">&lt;-</span> df[df<span class="sc">$</span>.isUniqueTrial, ]</span>
 <span id="cb11-39"><a href="#cb11-39" tabindex="-1"></a><span class="fu">nrow</span>(df)</span>
-<span id="cb11-40"><a href="#cb11-40" tabindex="-1"></a></span>
-<span id="cb11-41"><a href="#cb11-41" tabindex="-1"></a><span class="co"># Number of recognised set of trials</span></span>
-<span id="cb11-42"><a href="#cb11-42" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">unique</span>(df<span class="sc">$</span>.maybeRelatedTrials))</span>
-<span id="cb11-43"><a href="#cb11-43" tabindex="-1"></a><span class="co"># 183</span></span>
-<span id="cb11-44"><a href="#cb11-44" tabindex="-1"></a></span>
-<span id="cb11-45"><a href="#cb11-45" tabindex="-1"></a><span class="co"># Trials with which _id are missing? </span></span>
-<span id="cb11-46"><a href="#cb11-46" tabindex="-1"></a>missingIds <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(<span class="fu">setdiff</span>(<span class="fu">unlist</span>(df<span class="sc">$</span>.maybeRelatedTrials), df<span class="sc">$</span><span class="st">`</span><span class="at">_id</span><span class="st">`</span>))</span>
-<span id="cb11-47"><a href="#cb11-47" tabindex="-1"></a></span>
-<span id="cb11-48"><a href="#cb11-48" tabindex="-1"></a><span class="co"># Load missing trials by _id</span></span>
-<span id="cb11-49"><a href="#cb11-49" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb11-50"><a href="#cb11-50" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(missingIds)) {</span>
-<span id="cb11-51"><a href="#cb11-51" tabindex="-1"></a>  <span class="fu">message</span>(i, <span class="st">&quot;: &quot;</span>, missingIds[i])</span>
-<span id="cb11-52"><a href="#cb11-52" tabindex="-1"></a>  res <span class="ot">&lt;-</span> <span class="fu">c</span>(res, <span class="fu">suppressMessages</span>(</span>
-<span id="cb11-53"><a href="#cb11-53" tabindex="-1"></a>    <span class="fu">list</span>(<span class="fu">ctrLoadQueryIntoDb</span>(missingIds[i], <span class="at">euctrresults =</span> <span class="cn">TRUE</span>, <span class="at">con =</span> db))))</span>
-<span id="cb11-54"><a href="#cb11-54" tabindex="-1"></a>}</span>
-<span id="cb11-55"><a href="#cb11-55" tabindex="-1"></a></span>
-<span id="cb11-56"><a href="#cb11-56" tabindex="-1"></a><span class="co"># Trials that could not be loaded are likely phase 1 trials </span></span>
-<span id="cb11-57"><a href="#cb11-57" tabindex="-1"></a><span class="co"># which are not publicly accessible in the in EUCTR register</span></span>
-<span id="cb11-58"><a href="#cb11-58" tabindex="-1"></a>missingIds[<span class="fu">which</span>(<span class="fu">sapply</span>(res, <span class="st">&quot;[[&quot;</span>, <span class="st">&quot;n&quot;</span>) <span class="sc">==</span> <span class="dv">0</span><span class="dt">L</span>)]</span></code></pre></div>
+<span id="cb11-40"><a href="#cb11-40" tabindex="-1"></a><span class="co"># [1] 3263</span></span>
+<span id="cb11-41"><a href="#cb11-41" tabindex="-1"></a></span>
+<span id="cb11-42"><a href="#cb11-42" tabindex="-1"></a><span class="co"># Number of recognised set of trials</span></span>
+<span id="cb11-43"><a href="#cb11-43" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">unique</span>(df<span class="sc">$</span>.maybeRelatedTrials))</span>
+<span id="cb11-44"><a href="#cb11-44" tabindex="-1"></a><span class="co"># 181</span></span>
+<span id="cb11-45"><a href="#cb11-45" tabindex="-1"></a></span>
+<span id="cb11-46"><a href="#cb11-46" tabindex="-1"></a><span class="co"># Trials with which _id are missing? </span></span>
+<span id="cb11-47"><a href="#cb11-47" tabindex="-1"></a>missingIds <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(<span class="fu">setdiff</span>(<span class="fu">unlist</span>(df<span class="sc">$</span>.maybeRelatedTrials), df<span class="sc">$</span><span class="st">`</span><span class="at">_id</span><span class="st">`</span>))</span>
+<span id="cb11-48"><a href="#cb11-48" tabindex="-1"></a></span>
+<span id="cb11-49"><a href="#cb11-49" tabindex="-1"></a><span class="co"># Load missing trials by _id</span></span>
+<span id="cb11-50"><a href="#cb11-50" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb11-51"><a href="#cb11-51" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(missingIds)) {</span>
+<span id="cb11-52"><a href="#cb11-52" tabindex="-1"></a>  <span class="fu">message</span>(i, <span class="st">&quot;: &quot;</span>, missingIds[i])</span>
+<span id="cb11-53"><a href="#cb11-53" tabindex="-1"></a>  res <span class="ot">&lt;-</span> <span class="fu">c</span>(res, <span class="fu">suppressMessages</span>(</span>
+<span id="cb11-54"><a href="#cb11-54" tabindex="-1"></a>    <span class="fu">list</span>(<span class="fu">ctrLoadQueryIntoDb</span>(missingIds[i], <span class="at">euctrresults =</span> <span class="cn">TRUE</span>, <span class="at">con =</span> db))))</span>
+<span id="cb11-55"><a href="#cb11-55" tabindex="-1"></a>}</span>
+<span id="cb11-56"><a href="#cb11-56" tabindex="-1"></a></span>
+<span id="cb11-57"><a href="#cb11-57" tabindex="-1"></a><span class="co"># Trials that could not be loaded are likely phase 1 trials </span></span>
+<span id="cb11-58"><a href="#cb11-58" tabindex="-1"></a><span class="co"># which are not publicly accessible in the in EUCTR register</span></span>
+<span id="cb11-59"><a href="#cb11-59" tabindex="-1"></a>missingIds[<span class="fu">which</span>(<span class="fu">sapply</span>(res, <span class="st">&quot;[[&quot;</span>, <span class="st">&quot;n&quot;</span>) <span class="sc">==</span> <span class="dv">0</span><span class="dt">L</span>)]</span></code></pre></div>
 <p>The above loads one trial after the other, just using the
 <code>_id</code> of the trial, from which <code>ctrdata</code> infers
 the concerned register. Alternatively, batches of <code>_id</code>s can
