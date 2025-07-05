@@ -479,7 +479,7 @@ ctrLoadQueryIntoDbEuctr <- function(
           paste0(readLines(xmlFileList[f], warn = FALSE), collapse = ""),
           # important parameters
           V8::JS("{trim: true, ignoreAttrs: false, mergeAttrs: true,
-                     explicitRoot: false, explicitArray: false, xmlns: false}")),
+                   explicitRoot: false, explicitArray: false, xmlns: false}")),
         # remove conversion remnants and conformity breaking characters
         c('"xmlns:ns0":"http://eudract.ema.europa.eu/schema/clinical_trial_result",',
           '"xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","xsi:nil":"true"',
@@ -506,7 +506,7 @@ ctrLoadQueryIntoDbEuctr <- function(
       eudractNumber <- gsub(
         "\"", "", as.character(jqr::jq(file(f), " .eudractNumber ")))
 
-      # update database with results
+      # update record(s) with results
       res <- try({
         tmpnodbi <-
           nodbi::docdb_update(

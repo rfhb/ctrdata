@@ -55,12 +55,6 @@
 #'   recruitment = "completed",
 #'   )
 #'
-#' # count trials found
-#' sapply(urls, ctrLoadQueryIntoDb, only.count = TRUE)
-#'
-#' # load queries into database collection
-#' # sapply(urls, ctrLoadQueryIntoDb, con = dbc)
-#'
 #' # find research platform and platform trials
 #' urls <- ctrGenerateQueries(
 #'   searchPhrase = paste0(
@@ -72,6 +66,15 @@
 #'
 #' # open queries in register web interface
 #' sapply(urls, ctrOpenSearchPagesInBrowser)
+#'
+#' \dontrun{
+#' # count trials found
+#' sapply(urls, ctrLoadQueryIntoDb, only.count = TRUE)
+#'
+#' # load queries into database collection
+#' dbc <- nodbi::src_sqlite(collection = "my_collection")
+#' sapply(urls, ctrLoadQueryIntoDb, con = dbc)
+#' }
 #'
 ctrGenerateQueries <- function(
     searchPhrase = NULL,
