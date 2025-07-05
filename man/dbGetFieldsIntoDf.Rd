@@ -4,7 +4,7 @@
 \alias{dbGetFieldsIntoDf}
 \title{Create data frame of specified fields or trial concepts from database collection}
 \usage{
-dbGetFieldsIntoDf(fields = "", calculate = "", con, verbose = FALSE, ...)
+dbGetFieldsIntoDf(fields = "", calculate = "", con, verbose = FALSE)
 }
 \arguments{
 \item{fields}{Vector of one or more strings, with names of sought fields.
@@ -26,16 +26,14 @@ different registers. See \link{ctrdata-trial-concepts} for available functions.}
 
 \item{verbose}{If \code{TRUE}, prints additional information
 (default \code{FALSE}).}
-
-\item{...}{Do not use (captures deprecated parameter \code{stopifnodata})}
 }
 \value{
 A data frame (or tibble, if \code{tibble} is loaded)
 with columns corresponding to the sought fields.
-A column for the records' `_id` will always be included.
+A column with the record `_id` will always be included.
 The maximum number of rows of the returned data frame is equal to the number
 of trial records in the database collection, or less if none of the fields
-has a value in a record (and thus not included in the return value).
+has a value in a record.
 }
 \description{
 Fields in the collection are retrieved from all records into a data
@@ -43,8 +41,7 @@ frame (or tibble). The function uses the field names to appropriately type
 the values that it returns, harmonising original values (e.g.,
 "Yes" to `TRUE`, "false" to `FALSE`, "Information not present in EudraCT" to
 `NA`, date strings to dates or time differences, number strings to numbers).
-Trial concepts are calculated for all records and included in the data frame
-(or tibble).
+Trial concepts are calculated for all records and included in the return value.
 }
 \details{
 Within a given trial record, a field can be hierarchical and structured,
@@ -71,7 +68,7 @@ dbGetFieldsIntoDf(
   con = dbc)
 
 # fields that are lists of string values are
-# returned by concatenating values with a slash
+# returned by concatenating values with " / "
 dbGetFieldsIntoDf(
   fields = "keyword",
   con = dbc)

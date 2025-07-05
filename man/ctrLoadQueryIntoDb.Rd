@@ -19,8 +19,7 @@ ctrLoadQueryIntoDb(
   annotation.mode = "append",
   only.count = FALSE,
   con = NULL,
-  verbose = FALSE,
-  ...
+  verbose = FALSE
 )
 }
 \arguments{
@@ -128,8 +127,6 @@ Default is \code{FALSE}.}
 
 \item{verbose}{If \code{TRUE}, prints additional information
 (default \code{FALSE}).}
-
-\item{...}{Do not use (capture deprecated parameters).}
 }
 \value{
 A list with elements

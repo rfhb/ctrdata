@@ -7,8 +7,7 @@
 #' the values that it returns, harmonising original values (e.g.,
 #' "Yes" to `TRUE`, "false" to `FALSE`, "Information not present in EudraCT" to
 #' `NA`, date strings to dates or time differences, number strings to numbers).
-#' Trial concepts are calculated for all records and included in the data frame
-#' (or tibble).
+#' Trial concepts are calculated for all records and included in the return value.
 #'
 #' Within a given trial record, a field can be hierarchical and structured,
 #' that is, nested. The function simplifies the structure of nested data and
@@ -38,14 +37,12 @@
 #' @param verbose If \code{TRUE}, prints additional information
 #' (default \code{FALSE}).
 #'
-#' @param ... Do not use (captures deprecated parameter \code{stopifnodata})
-#'
 #' @return A data frame (or tibble, if \code{tibble} is loaded)
 #' with columns corresponding to the sought fields.
-#' A column for the records' `_id` will always be included.
+#' A column with the record `_id` will always be included.
 #' The maximum number of rows of the returned data frame is equal to the number
 #' of trial records in the database collection, or less if none of the fields
-#' has a value in a record (and thus not included in the return value).
+#' has a value in a record.
 #'
 #' @export
 #'
@@ -67,7 +64,7 @@
 #'   con = dbc)
 #'
 #' # fields that are lists of string values are
-#' # returned by concatenating values with a slash
+#' # returned by concatenating values with " / "
 #' dbGetFieldsIntoDf(
 #'   fields = "keyword",
 #'   con = dbc)
@@ -100,7 +97,7 @@ dbGetFieldsIntoDf <- function(
     fields = "",
     calculate = "",
     con,
-    verbose = FALSE, ...) {
+    verbose = FALSE) {
 
   # handle changed signature
   if (inherits(calculate, "docdb_src")) {
@@ -116,12 +113,6 @@ dbGetFieldsIntoDf <- function(
       !all(class(fields) %in% "character")) {
     stop("Input should be a vector of strings of field names.", call. = FALSE)
   }
-
-  # deprecated
-  params <- list(...)
-  if (!is.null(params[["stopifnodata"]])) warning(
-    'Parameter "stopifnodata" is deprecated.'
-  )
 
   # remove NA, NULL if included in fields
   fields <- fields[!is.null(fields) & !is.na(fields)]
@@ -190,7 +181,7 @@ dbGetFieldsIntoDf <- function(
   out <- try(.dbGetFieldsIntoDf(
     fields = getFields,
     con = con,
-    verbose = verbose, ...),
+    verbose = verbose),
     silent = TRUE)
 
   # check and propagate error
@@ -225,7 +216,7 @@ dbGetFieldsIntoDf <- function(
       outi <- try(.dbGetFieldsIntoDf(
         fields = unique(unlist(fields[iFields == i])),
         con = con,
-        verbose = verbose, ...),
+        verbose = verbose),
         silent = TRUE)
 
       if (i == 1L) {
@@ -251,7 +242,7 @@ dbGetFieldsIntoDf <- function(
       outi <- .dbGetFieldsIntoDf(
         fields = unique(unlist(fctFields[i])),
         con = con,
-        verbose = verbose, ...)
+        verbose = verbose)
 
       # calculate trial concept
       outi <- do.call(i, list(outi))
@@ -311,7 +302,7 @@ dbGetFieldsIntoDf <- function(
 .dbGetFieldsIntoDf <- function(
     fields = "",
     con,
-    verbose = FALSE, ...) {
+    verbose = FALSE) {
 
   # check database connection
   if (is.null(con$ctrDb)) con <- ctrDb(con = con)

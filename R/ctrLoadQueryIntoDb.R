@@ -114,8 +114,6 @@
 #' @param verbose If \code{TRUE}, prints additional information
 #' (default \code{FALSE}).
 #'
-#' @param ... Do not use (capture deprecated parameters).
-#'
 #' @return A list with elements
 #' `n` (number of trial records newly imported or updated),
 #' `success` (a vector of _id's of successfully loaded records),
@@ -188,29 +186,9 @@ ctrLoadQueryIntoDb <- function(
     annotation.mode = "append",
     only.count = FALSE,
     con = NULL,
-    verbose = FALSE, ...) {
+    verbose = FALSE) {
 
   ## check params
-
-  # - deprecated
-  params <- list(...)
-  if (!is.null(params$euctrresultspdfpath)) {
-    warning("Parameter 'euctrresultspdfpath' is deprecated, ",
-            "use 'documents.path'",
-            call. = FALSE
-    )
-    documents.path <- params$euctrresultspdfpath
-  }
-  if (!is.null(params$euctrresultsfilespath)) {
-    warning("Parameter 'euctrresultsfilespath' is deprecated, ",
-            "use 'documents.path'",
-            call. = FALSE
-    )
-    documents.path <- params$euctrresultsfilespath
-  }
-  if (!is.null(params$parallelretrievals)) {
-    warning("Parameter 'parallelretrievals' is deprecated and ignored")
-  }
 
   # - parameters consistent
   if (!is.null(querytoupdate) && !is.null(queryterm)) {

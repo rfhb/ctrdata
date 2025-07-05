@@ -1,6 +1,7 @@
 # ctrdata 1.23.0.9000
 
 - Expanded functionality of `ctrGenerateQueries()` for CTGOV2 expert searches
+- Remove long deprecated optional parameters (`ctrLoadQueryIntoDb()`, `dbGetFieldsIntoDf()`)
 
 # ctrdata 1.23.0
 

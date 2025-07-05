@@ -421,36 +421,6 @@ expect_equal(
 
 if (checkInternet()) {
 
-  # test
-  expect_warning(
-    ctrLoadQueryIntoDb(
-      queryterm = "somethingnonexisting",
-      register = "EUCTR",
-      euctrresultsfilespath = "something",
-      only.count = TRUE
-    ), "deprecated"
-  )
-
-  # test
-  expect_warning(
-    ctrLoadQueryIntoDb(
-      queryterm = "somethingnonexisting",
-      register = "EUCTR",
-      euctrresultspdfpath = "something",
-      only.count = TRUE
-    ), "deprecated"
-  )
-
-  # test
-  expect_warning(
-    ctrLoadQueryIntoDb(
-      queryterm = "somethingnonexisting",
-      register = "EUCTR",
-      parallelretrievals = 99L,
-      only.count = TRUE
-    ), "ignored"
-  )
-
 }
 
 # test

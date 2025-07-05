@@ -225,7 +225,10 @@ dbFindIdsUniqueTrials <- function(
 #' @keywords internal
 #' @noRd
 #'
-.dbMapIdsTrials <- function(con, verbose = FALSE, ...) {
+.dbMapIdsTrials <- function(
+    preferregister = preferregister,
+    con,
+    verbose = FALSE) {
 
   ## check database connection
   if (is.null(con$ctrDb)) con <- ctrDb(con = con)
