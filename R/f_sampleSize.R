@@ -89,7 +89,7 @@ f.sampleSize <- function(df = NULL) {
   #### calculate ####
 
   # check generic, do not edit
-  fctChkFlds(names(df), fldsNeeded)
+  df <- fctChkFlds(df, fldsNeeded)
 
   # helper function
   `%>%` <- dplyr::`%>%`

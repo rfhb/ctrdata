@@ -49,7 +49,7 @@ f.isUniqueTrial <- function(df = NULL) {
   #### calculate ####
 
   # check generic, do not edit
-  fctChkFlds(names(df), fldsNeeded)
+  df <- fctChkFlds(df, fldsNeeded)
 
   # apply function, access object con in calling environment
   vct <- dbFindIdsUniqueTrials(con = parent.frame()$con)

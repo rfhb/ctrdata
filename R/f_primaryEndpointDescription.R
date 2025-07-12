@@ -148,7 +148,7 @@ f.primaryEndpointDescription <- function(df = NULL) {
   #### calculate ####
 
   # check generic, do not edit
-  fctChkFlds(names(df), fldsNeeded)
+  df <- fctChkFlds(df, fldsNeeded)
 
   # helper function similar to unite and also splitting
   # by contained primary endpoints and unite corresponding

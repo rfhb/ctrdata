@@ -1700,25 +1700,28 @@ dfOrTibble <- function(df) {
 #' fctChkFlds
 #'
 #' Calls for its side effect to stop if arguments
-#' are not conforming to expectations (flds needs
-#' to be a subset of dfFlds)
+#' are not conforming to expectations
 #'
-#' @param dfFlds names of fields of a data frame
+#' @returns df with flds columns
+#'
+#' @param df data frame
 #' @param flds fields needed for a function
 #'
 #' @keywords internal
 #' @noRd
 #'
-fctChkFlds <- function(dfFlds, flds) {
+fctChkFlds <- function(df, flds) {
 
   flds <- unlist(flds, use.names = FALSE)
 
-  flds <- flds[!sapply(flds, function(i) any(i == dfFlds))]
+  nms <- names(df)
 
-  if (length(flds)) stop(
-    "Fields missing in 'df':\n", paste0(flds, "\n"),
+  fldsM <- flds[!sapply(flds, function(i) any(i == nms))]
+
+  if (length(fldsM)) stop(
+    "Fields missing in 'df':\n", paste0(fldsM, "\n"),
     call. = FALSE)
 
-  return(invisible(NULL))
+  return(df[, c("_id", flds), drop = FALSE])
 
 }

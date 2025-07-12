@@ -111,7 +111,7 @@ f.trialObjectives <- function(df = NULL) {
   #### calculate ####
 
   # check generic, do not edit
-  fctChkFlds(names(df), fldsNeeded)
+  df <- fctChkFlds(df, fldsNeeded)
 
   # apply nested function which provides values for each register
   # therefore the following code needs to check against register

@@ -133,7 +133,7 @@ f.likelyPlatformTrial <- function(df = NULL) {
   #### calculate ####
 
   # check generic, do not edit
-  fctChkFlds(names(df), fldsNeeded)
+  df <- fctChkFlds(df, fldsNeeded)
 
   # helper definitions
   indexThreshold <- 0.77
