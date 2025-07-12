@@ -1163,45 +1163,24 @@ here for details on mongo’s aggregation pipleline: <a href="https://www.mongod
 <div class="section level3">
 <h3 id="mapreduce">Mapreduce<a class="anchor" aria-label="anchor" href="#mapreduce"></a>
 </h3>
-<p>Since Mapreduce is deprecated starting in MongoDB 5 (<a href="https://www.mongodb.com/docs/manual/core/map-reduce/" class="external-link uri">https://www.mongodb.com/docs/manual/core/map-reduce/</a>),
+<p>Since Mapreduce is deprecated since MongoDB version 5 (<a href="https://www.mongodb.com/docs/manual/core/map-reduce/" class="external-link uri">https://www.mongodb.com/docs/manual/core/map-reduce/</a>),
 use an aggregation pipeline:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Count number of trials by number of study</span></span>
 <span><span class="co"># participants in bins of hundreds of participants:</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="fu">aggregate</span><span class="op">(</span>pipeline <span class="op">=</span> <span class="st">'</span></span>
-<span><span class="st">[</span></span>
-<span><span class="st">  {</span></span>
-<span><span class="st">    "$project": {</span></span>
-<span><span class="st">      "flooredNumber": {</span></span>
-<span><span class="st">        "$multiply": [</span></span>
-<span><span class="st">          {</span></span>
-<span><span class="st">            "$floor": {</span></span>
-<span><span class="st">              "$divide": [</span></span>
-<span><span class="st">                {</span></span>
-<span><span class="st">                  "$toInt": "$protocolSection.designModule.enrollmentInfo.count"</span></span>
-<span><span class="st">                },</span></span>
-<span><span class="st">                100</span></span>
-<span><span class="st">              ]</span></span>
-<span><span class="st">            }</span></span>
-<span><span class="st">          },</span></span>
-<span><span class="st">          100</span></span>
-<span><span class="st">        ]</span></span>
-<span><span class="st">      }</span></span>
-<span><span class="st">    }</span></span>
-<span><span class="st">  },</span></span>
-<span><span class="st">  {</span></span>
-<span><span class="st">    "$group": {</span></span>
+<span><span class="st">[{"$project": {</span></span>
+<span><span class="st">    "flooredNumber": {</span></span>
+<span><span class="st">      "$multiply": [</span></span>
+<span><span class="st">        { "$floor": {</span></span>
+<span><span class="st">            "$divide": [</span></span>
+<span><span class="st">               { "$toInt": "$protocolSection.designModule.enrollmentInfo.count"},</span></span>
+<span><span class="st">                100 ] } },</span></span>
+<span><span class="st">          100] } } },</span></span>
+<span><span class="st">  { "$group": { </span></span>
 <span><span class="st">      "_id": "$flooredNumber",</span></span>
-<span><span class="st">      "count": {</span></span>
-<span><span class="st">        "$count": {}</span></span>
-<span><span class="st">      }</span></span>
-<span><span class="st">    }</span></span>
-<span><span class="st">  },</span></span>
-<span><span class="st">  {</span></span>
-<span><span class="st">    "$sort": {</span></span>
-<span><span class="st">      "_id": 1</span></span>
-<span><span class="st">    }</span></span>
-<span><span class="st">  }</span></span>
+<span><span class="st">      "count": { "$count": {} } } },</span></span>
+<span><span class="st">  { "$sort": { "_id": 1 } }</span></span>
 <span><span class="st">]</span></span>
 <span><span class="st">'</span><span class="op">)</span></span>
 <span><span class="co">#     _id count</span></span>

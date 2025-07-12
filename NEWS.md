@@ -1,5 +1,6 @@
 # ctrdata 1.23.0.9000
 
+- Added trial concept `f.assignmentType()`
 - Expanded functionality of `ctrGenerateQueries()` for CTGOV2 expert searches
 - Remove long deprecated optional parameters (`ctrLoadQueryIntoDb()`, `dbGetFieldsIntoDf()`)
 
