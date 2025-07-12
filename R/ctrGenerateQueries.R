@@ -164,8 +164,6 @@ ctrGenerateQueries <- function(
 
     # ctgov2expert
     urls["CTGOV2expert"] <- paste0(
-        # urls["CTGOV2expert"], " AND (",
-        # paste0('AREA[TitleSearch]"', searchPhraseA, '"', collapse = searchPhraseD),
       urls["CTGOV2expert"], "(",
       paste0('"', searchPhraseA, '"', collapse = searchPhraseD),
       ") "
@@ -190,7 +188,7 @@ ctrGenerateQueries <- function(
   }
 
 
-  #### clinical trial / interventional ####
+  #### interventional clinical trial ####
 
   # ISRCTN not possible
   # EUCTR by definition
@@ -561,7 +559,7 @@ ctrGenerateQueries <- function(
       urls["ISRCTN"],
       "&filters=primaryStudyDesign:Interventional",
       if (is.null(phase)) paste0(
-        # this was found to implement boolean or
+        # this was found to implement a boolean filter;
         # phases as proxy for investigational medicines
         "&filters=phase:Phase 0,phase:Phase I,",
         "phase:Phase II,phase:Phase III,phase:Phase IV,",

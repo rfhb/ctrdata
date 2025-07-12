@@ -64,26 +64,6 @@ f.isMedIntervTrial <- function(df = NULL) {
       "ctrname"
     ))
 
-  # not relevant after inspection:
-  #
-  # CTGOV
-  # "study_design_info.intervention_model" e.g. parallel
-  # "study_design_info.allocation"
-  # "study_design_info.primary_purpose"
-  # "oversight_info.is_fda_regulated_drug"
-  #
-  # CTGOV2
-  # "protocolSection.armsInterventionsModule.armGroups.type" not specific
-  # "protocolSection.oversightModule.isFdaRegulatedDrug" often empty
-  # "protocolSection.oversightModule.isFdaRegulatedDevice"
-  # study type is either interventional or expanded access
-  # "protocolSection.statusModule.expandedAccessInfo.hasExpandedAccess"
-  #
-  # ISRCTN
-  # "interventions.intervention.description"
-  # "trialDesign.trialType"
-
-
 
   #### describe ####
   if (is.null(df)) {

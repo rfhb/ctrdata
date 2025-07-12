@@ -49,8 +49,8 @@ f.controlType <- function(df = NULL) {
     "euctr" = c(
       "e81_controlled",
       "e816_cross_over",
-      "e817_other", # other controlled design
-      "e8171_other_trial_design_description",
+      # "e817_other", # TODO other controlled design
+      # "e8171_other_trial_design_description", # TODO
       "e822_placebo",
       "e823_other", # other comparator
       "e8231_comparator_description",
@@ -60,7 +60,7 @@ f.controlType <- function(df = NULL) {
       "arm_group.arm_group_type"
     ),
     "ctgov2" = c(
-      "protocolSection.designModule.designInfo.interventionModel",
+      # "protocolSection.designModule.designInfo.interventionModel", # TODO
       "protocolSection.armsInterventionsModule.armGroups.type"
     ),
     "isrctn" = c(
@@ -117,6 +117,8 @@ f.controlType <- function(df = NULL) {
   df %>%
     dplyr::mutate(
       out = dplyr::case_when(
+        # Experimental | Active Comparator |Placebo Comparator | Sham
+        # Comparator | No Intervention | Other
         grepl("Placebo Comparator", .data$arm_group.arm_group_type) &
           grepl("Active Comparator", .data$arm_group.arm_group_type) ~ "placebo+active",
         grepl("Placebo Comparator", .data$arm_group.arm_group_type) ~ "placebo",
