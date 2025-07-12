@@ -19,10 +19,10 @@ tf <- function() {
     simplify = FALSE)
 
   # test
-  expect_true(length(fcts) >= 17L)
+  expect_true(length(fcts) >= 18L)
 
   # test
-  expect_true(length(unique(unlist(fctFields))) >= 184L)
+  expect_true(length(unique(unlist(fctFields))) >= 187L)
 
   # get data
   if (!checkSqlite()) exit_file("Reason: no SQLite")
@@ -46,10 +46,11 @@ tf <- function() {
 
   # test
   expect_true(all(grepl("_id|^[.][a-z]+[A-Z]", names(dF))))
-  expect_true(ncol(dF) == 24L)
+  expect_true(ncol(dF) == 25L)
   expect_true(nrow(dF) == 31L)
 
   # factors
+  expect_length(table(dF$.assignmentType, exclude = NULL), 2L)
   expect_length(table(dF$.controlType, exclude = NULL), 6L)
   expect_length(table(dF$.isMedIntervTrial, exclude = NULL), 2L)
   expect_length(table(dF$.likelyPlatformTrial, exclude = NULL), 1L)

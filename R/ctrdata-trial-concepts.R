@@ -23,6 +23,9 @@
 #' Concepts will continue to be refined and added;
 #' last updated 2025-05-31.
 #'
+#' - \link{f.assignmentType} (factor) was the assignment to treatment based on
+#' randomisation or not? ("R" or "NR")
+#'
 #' - \link{f.controlType} (factor) which type of internal or concurrent control
 #' is used in the trial? ("none", "no-treatment", "placebo", "active",
 #' "placebo+active" or "other")
