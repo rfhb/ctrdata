@@ -185,7 +185,7 @@ f.controlType <- function(df = NULL) {
   df[[".controlType"]] <- factor(
     dfMergeVariablesRelevel(
       df = df,
-      colnames = names(fldsNeeded)
+      colnames = names(fldsNeeded)[names(fldsNeeded) != ""]
     ), levels = c(
       "none", "no-treatment", "placebo",
       "active", "placebo+active", "other")

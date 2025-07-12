@@ -195,7 +195,7 @@ f.numSites <- function(df = NULL) {
   df[[".numSites"]] <- as.integer(
     dfMergeVariablesRelevel(
       df = df,
-      colnames = names(fldsNeeded)
+      colnames = names(fldsNeeded)[names(fldsNeeded) != ""]
     )
   )
 

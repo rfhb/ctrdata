@@ -318,7 +318,7 @@ f.numTestArmsSubstances <- function(df = NULL) {
   df[[".numTestArmsSubstances"]] <- as.integer(
     dfMergeVariablesRelevel(
       df = df,
-      colnames = names(fldsNeeded)
+      colnames = names(fldsNeeded)[names(fldsNeeded) != ""]
     )
   )
 

@@ -217,7 +217,7 @@ f.statusRecruitment <- function(df = NULL) {
   # merge into vector (factor)
   df[[".statusRecruitment"]] <- dfMergeVariablesRelevel(
     df = df,
-    colnames = names(fldsNeeded),
+    colnames = names(fldsNeeded)[names(fldsNeeded) != ""],
     levelslist = mapped_values
   )
 
