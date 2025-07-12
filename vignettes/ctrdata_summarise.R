@@ -847,39 +847,18 @@ knitr::opts_chunk$set(
 # # Count number of trials by number of study
 # # participants in bins of hundreds of participants:
 # m$aggregate(pipeline = '
-# [
-#   {
-#     "$project": {
-#       "flooredNumber": {
-#         "$multiply": [
-#           {
-#             "$floor": {
-#               "$divide": [
-#                 {
-#                   "$toInt": "$protocolSection.designModule.enrollmentInfo.count"
-#                 },
-#                 100
-#               ]
-#             }
-#           },
-#           100
-#         ]
-#       }
-#     }
-#   },
-#   {
-#     "$group": {
+# [{"$project": {
+#     "flooredNumber": {
+#       "$multiply": [
+#         { "$floor": {
+#             "$divide": [
+#                { "$toInt": "$protocolSection.designModule.enrollmentInfo.count"},
+#                 100 ] } },
+#           100] } } },
+#   { "$group": {
 #       "_id": "$flooredNumber",
-#       "count": {
-#         "$count": {}
-#       }
-#     }
-#   },
-#   {
-#     "$sort": {
-#       "_id": 1
-#     }
-#   }
+#       "count": { "$count": {} } } },
+#   { "$sort": { "_id": 1 } }
 # ]
 # ')
 # #     _id count
