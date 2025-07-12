@@ -9,7 +9,7 @@
 #' prints fields needed in `df` for calculating this trial concept, which can
 #' be used with \link{dbGetFieldsIntoDf}.
 #'
-#' @return data frame with columns `_id` and `.trialPhase`, which is
+#' @returns data frame with columns `_id` and `.trialPhase`, which is
 #' an ordered factor with levels `phase 1`, `phase 1+2`, `phase 2`,
 #' `phase 2+3`, `phase 2+4`, `phase 3`, `phase 3+4`, `phase 1+2+3`,
 #' `phase 4`, `phase 1+2+3+4`.

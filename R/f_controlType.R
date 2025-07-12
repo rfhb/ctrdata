@@ -15,7 +15,7 @@
 #' prints fields needed in `df` for calculating this trial concept, which can
 #' be used with \link{dbGetFieldsIntoDf}.
 #'
-#' @return data frame with columns `_id` and `.controlType`, which is
+#' @returns data frame with columns `_id` and `.controlType`, which is
 #' a factor with levels `none`, `no-treatment`, `placebo`, `active`,
 #' `placebo+active` and `other`.
 #'

@@ -37,7 +37,7 @@
 #' @param verbose If \code{TRUE}, prints additional information
 #' (default \code{FALSE}).
 #'
-#' @return A data frame (or tibble, if \code{tibble} is loaded)
+#' @returns A data frame (or tibble, if \code{tibble} is loaded)
 #' with columns corresponding to the sought fields.
 #' A column with the record `_id` will always be included.
 #' The maximum number of rows of the returned data frame is equal to the number
@@ -289,7 +289,7 @@ dbGetFieldsIntoDf <- function(
 #'
 #' internal workhorse
 #'
-#' @return tibble or data frame, depending on loaded packages
+#' @returns tibble or data frame, depending on loaded packages
 #'
 #' @inheritParams dbGetFieldsIntoDf
 #'

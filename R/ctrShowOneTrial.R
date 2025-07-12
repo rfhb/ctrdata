@@ -26,7 +26,7 @@
 #'
 #' @inheritParams ctrDb
 #'
-#' @return Invisibly, the trial data for constructing an HTML widget.
+#' @returns Invisibly, the trial data for constructing an HTML widget.
 #'
 #' @export
 #'

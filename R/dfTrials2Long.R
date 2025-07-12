@@ -18,7 +18,7 @@
 #'  one or more variables as obtained from
 #'  \link{dbGetFieldsIntoDf}
 #'
-#' @return A data frame  (or tibble, if \code{tibble} is loaded)
+#' @returns A data frame  (or tibble, if \code{tibble} is loaded)
 #' with the four columns: `_id`, `identifier`, `name`, `value`
 #'
 #' @importFrom stringi stri_extract_all_charclass stri_extract_first stri_replace_first

@@ -4,7 +4,7 @@
 #'
 #' @inheritParams ctrDb
 #'
-#' @return A data frame (or tibble, if \code{tibble} is loaded)
+#' @returns A data frame (or tibble, if \code{tibble} is loaded)
 #'  with columns: `query-timestamp`, `query-register`,
 #'  `query-records` (note: this is the number of records loaded when last
 #'  executing \link{ctrLoadQueryIntoDb}, not the total record number) and

@@ -114,7 +114,7 @@
 #' @param verbose If \code{TRUE}, prints additional information
 #' (default \code{FALSE}).
 #'
-#' @return A list with elements
+#' @returns A list with elements
 #' `n` (number of trial records newly imported or updated),
 #' `success` (a vector of _id's of successfully loaded records),
 #' `failed` (a vector of identifiers of records that failed to load)

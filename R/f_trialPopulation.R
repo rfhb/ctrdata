@@ -13,7 +13,7 @@
 #' prints fields needed in `df` for calculating this trial concept, which can
 #' be used with \link{dbGetFieldsIntoDf}.
 #'
-#' @return data frame with columns `_id` and new columns:
+#' @returns data frame with columns `_id` and new columns:
 #' `.trialPopulationAgeGroup` (factor, "P", "A", "P+A", "E", "A+E", "P+A+E"),
 #' `.trialPopulationInclusion` (string),
 #' `.trialPopulationExclusion` (string).

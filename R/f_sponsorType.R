@@ -13,7 +13,7 @@
 #' prints fields needed in `df` for calculating this trial concept, which can
 #' be used with \link{dbGetFieldsIntoDf}.
 #'
-#' @return data frame with columns `_id` and `.sponsorType`, which is
+#' @returns data frame with columns `_id` and `.sponsorType`, which is
 #' a factor with levels `for profit`, `not for profit` or `other`.
 #'
 #' @export

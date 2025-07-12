@@ -13,7 +13,7 @@
 #'
 #' @param verbose Print number of studies found in CTGOV2 for `activesubstance`
 #'
-#' @return A character vector of the active substance (input parameter) and
+#' @returns A character vector of the active substance (input parameter) and
 #'  synonyms, or NULL if active substance was not found and may be invalid
 #'
 #' @importFrom utils packageVersion str

@@ -16,7 +16,7 @@
 #' prints fields needed in `df` for calculating this trial concept, which can
 #' be used with \link{dbGetFieldsIntoDf}.
 #'
-#' @return data frame with colums `_id` and `.isMedIntervTrial`, a logical.
+#' @returns data frame with colums `_id` and `.isMedIntervTrial`, a logical.
 #'
 #' @export
 #'

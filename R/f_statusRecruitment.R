@@ -11,7 +11,7 @@
 #' prints fields needed in `df` for calculating this trial concept, which can
 #' be used with \link{dbGetFieldsIntoDf}.
 #'
-#' @return data frame with columns `_id` and `.statusRecruitment`, which is
+#' @returns data frame with columns `_id` and `.statusRecruitment`, which is
 #' a factor with levels `ongoing` (includes active, not yet recruiting;
 #' temporarily halted; suspended; authorised, not started and similar),
 #' `completed` (includes ended; ongoing, recruitment ended),

@@ -22,7 +22,7 @@
 #' @param wherevalue (optional) A character string with the value of
 #' the variable identified by `wherename` (e.g., "response")
 #'
-#' @return A data frame (or tibble, if \code{tibble} is loaded)
+#' @returns A data frame (or tibble, if \code{tibble} is loaded)
 #' that includes the values of interest, with columns
 #' `_id`, `identifier`, `name`, `value` and `where` (with the
 #' contents of `wherevalue` found at `wherename`).

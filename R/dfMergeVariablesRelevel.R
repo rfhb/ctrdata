@@ -17,7 +17,7 @@
 #' @param levelslist A names list with one slice each for a new value to be
 #' used for a vector of old values (optional).
 #'
-#' @return A vector, with the type of the columns to be merged
+#' @returns A vector, with the type of the columns to be merged
 #'
 #' @importFrom dplyr select coalesce
 #' @importFrom tidyr unite

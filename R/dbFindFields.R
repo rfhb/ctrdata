@@ -40,7 +40,7 @@
 #'
 #' @inheritParams ctrDb
 #'
-#' @return Vector of strings with full names of field(s) found,
+#' @returns Vector of strings with full names of field(s) found,
 #' ordered by register and alphabet, see examples. Names of the vector
 #' are the names of the register holding the respective fields. The field
 #' names can be fed into \link{dbGetFieldsIntoDf} to extract the

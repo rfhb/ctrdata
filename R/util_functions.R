@@ -476,7 +476,7 @@ ctgovClassicToCurrent <- function(url, verbose = TRUE) {
 #' @keywords internal
 #' @noRd
 #'
-#' @return value of variable or `NULL` if variable does not exist
+#' @returns value of variable or `NULL` if variable does not exist
 #'
 ctrCache <- function(xname, xvalue = NULL, verbose = FALSE) {
 
@@ -514,7 +514,7 @@ ctrCache <- function(xname, xvalue = NULL, verbose = FALSE) {
 #' @importFrom nodbi src_sqlite src_duckdb docdb_list
 #' @importFrom utils capture.output
 #'
-#' @return Connection object as list, with collection
+#' @returns Connection object as list, with collection
 #'  element under root
 #'
 ctrDb <- function(con) {
@@ -682,7 +682,7 @@ ctrDb <- function(con) {
 #'
 #' @param fn a field name
 #'
-#' @return a typed vector, same length as dv
+#' @returns a typed vector, same length as dv
 #'
 #' @importFrom xml2 xml_text read_html
 #' @importFrom lubridate duration ymd_hms dyears dmonths ddays
@@ -864,7 +864,7 @@ addMetaData <- function(x, con) {
 #' @keywords internal
 #' @noRd
 #'
-#' @return Data frame with columns such as status_code etc
+#' @returns Data frame with columns such as status_code etc
 #'
 #' @importFrom utils URLencode
 #' @importFrom jsonlite fromJSON toJSON validate
@@ -1104,7 +1104,7 @@ ctrMultiDownload <- function(
 #' create empty temporary directory on localhost for
 #' downloading from register into temporary directory
 #'
-#' @return path to existing directory
+#' @returns path to existing directory
 #'
 #' @keywords internal
 #' @noRd
@@ -1173,7 +1173,7 @@ ctrTempDir <- function(verbose = FALSE) {
 #' @param multiplex use http/2 or not
 #' @param verbose print parameter from parent call
 #'
-#' @return number of documents
+#' @returns number of documents
 #'
 #' @keywords internal
 #' @noRd
@@ -1376,7 +1376,7 @@ initTranformers <- function() {
 #'
 #' @inheritParams ctrLoadQueryIntoDb
 #'
-#' @return List with elements n (number of imported trials),
+#' @returns List with elements n (number of imported trials),
 #' _id's of successfully imported trials and
 #' _id's of trials that failed to import
 #'
@@ -1672,7 +1672,7 @@ dbCTRUpdateQueryHistory <- function(
 
 #' dfOrTibble
 #'
-#' @return tibble or data frame, depending on loaded packages
+#' @returns tibble or data frame, depending on loaded packages
 #'
 #' @param df data frame input
 #'
