@@ -243,8 +243,9 @@ ctrGenerateQueries <- function(
   if (!is.null(phase)) {
 
     stopifnot(is.atomic(phase) && length(phase) == 1L)
-
-    # see also f_trialPhase.R
+    if (!grepl("phase ", phase)) stop(
+      "Parameter 'phase' should include the word ",
+      '"phase", see help("f.trialPhase")')
 
     urls["CTGOV2"] <- paste0(
       urls["CTGOV2"], "&aggFilters=phase:", c(
@@ -323,6 +324,9 @@ ctrGenerateQueries <- function(
   if (!is.null(population)) {
 
     stopifnot(is.atomic(population) && length(population) == 1L)
+    if (grepl("[^PAE+]+", population)) stop(
+      "Parameter 'population' should include only ",
+      'P, A + E; see help("f.trialPopulation")')
 
     urls["CTGOV2"] <- paste0(
       urls["CTGOV2"], "&aggFilters=ages:", c(
