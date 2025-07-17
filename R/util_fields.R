@@ -607,6 +607,8 @@ typeVars <- list(
   "events.temporaryHaltList.reasonList.isSmRequiredForRestart" = "ctrFalseTrue",
   "events.trialEvents.earlyTerminationReason.isLateCandidate" = "ctrFalseTrue",
   #
+  "resultsFirstReceived" = "ctrYesNo",
+  #
   # ctis until 2024-06-17
   "applications.ctMSCs.hasRecruitmentStarted" = "ctrFalseTrue",
   "applications.ctMSCs.isProposedRms" = "ctrFalseTrue",
