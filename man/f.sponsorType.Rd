@@ -13,13 +13,14 @@ be used with \link{dbGetFieldsIntoDf}.}
 }
 \value{
 data frame with columns `_id` and `.sponsorType`, which is
-a factor with levels `for profit`, `not for profit` or `other`.
+a factor with levels `for profit`, `not for profit`, `mixed` (not and for
+profit sponsors) or `other`.
 }
 \description{
 Trial concept calculated: type or class of the sponsor(s) of the study.
 No specific field is available in ISRCTN; thus, sponsor type is set to
-`other`. Note: If several sponsors, sponsor type is deemed `for profit`
-\emph{if any sponsor is commercial}.
+`other`. Note: If several sponsors, sponsor type is deemed `mixed`
+\emph{if there is both, a commercial and a non-commercial sponsor(s)}.
 }
 \examples{
 # fields needed

@@ -1,24 +1,26 @@
 #### history ####
 # 2025-01-27 first partly working version
 # 2025-02-08 improved
+# 2025-07-18 changed categorisation
 
 #' Calculate type of sponsor of a study
 #'
 #' Trial concept calculated: type or class of the sponsor(s) of the study.
 #' No specific field is available in ISRCTN; thus, sponsor type is set to
-#' `other`. Note: If several sponsors, sponsor type is deemed `for profit`
-#' \emph{if any sponsor is commercial}.
+#' `other`. Note: If several sponsors, sponsor type is deemed `mixed`
+#' \emph{if there is both, a commercial and a non-commercial sponsor(s)}.
 #'
 #' @param df data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
 #' prints fields needed in `df` for calculating this trial concept, which can
 #' be used with \link{dbGetFieldsIntoDf}.
 #'
 #' @returns data frame with columns `_id` and `.sponsorType`, which is
-#' a factor with levels `for profit`, `not for profit` or `other`.
+#' a factor with levels `for profit`, `not for profit`, `mixed` (not and for
+#' profit sponsors) or `other`.
 #'
 #' @export
 #'
-#' @importFrom dplyr mutate case_when case_match coalesce pull `%>%`
+#' @importFrom dplyr mutate case_match pull `%>%`
 #' @importFrom stringi stri_split_fixed
 #' @importFrom rlang .data
 #'
@@ -37,6 +39,18 @@
 #'
 f.sponsorType <- function(df = NULL) {
 
+
+  # Ravinetto-R et al. 2015 https://doi.org/10.1186/s12914-015-0073-8
+  # "Previously there was a description of the features of non-commercial
+  # clinical trials (i.e. those conducted without the participation of the
+  # pharmaceutical industry) and of non-commercial sponsors (i.e. universities,
+  # hospitals, public scientific organisations, non-profit institutions,
+  # patient organisations or individual researchers) [17].
+  # The new [EU] regulation is much more explicit in acknowledging the
+  # importance of clinical trials conducted by non-commercial sponsors,
+  # which often rely on external funding from funds or charities."
+
+
   # check generic, do not edit
   stopifnot(is.data.frame(df) || is.null(df))
 
@@ -44,9 +58,15 @@ f.sponsorType <- function(df = NULL) {
   #### fields ####
   fldsNeeded <- list(
     "euctr" = c(
+      # EudraCT protocol related data dictionary.xls
+      # "A commercial sponsor is a person or organisation that takes
+      # responsibility for a trial which is part of the development programme
+      # for a marketing authorisation of a medicinal product at the time of
+      # the application"
       "b1_sponsor.b31_and_b32_status_of_the_sponsor"
     ),
     "ctgov" = c(
+      "sponsors.collaborator.agency_class",
       "sponsors.lead_sponsor.agency_class"
     ),
     "ctgov2" = c(
@@ -55,16 +75,19 @@ f.sponsorType <- function(df = NULL) {
       # which shows for
       # protocolSection.sponsorCollaboratorsModule.leadSponsor.class
       # https://clinicaltrials.gov/data-api/about-api/study-data-structure#enum-AgencyClass
+      "protocolSection.sponsorCollaboratorsModule.collaborators.class",
       "protocolSection.sponsorCollaboratorsModule.leadSponsor.class"
     ),
     "isrctn" = c(
+      # parties.funderId is an oid
       "ctrname"
     ),
     "ctis" = c(
-      # CTIS1
       "sponsorType",
-      "primarySponsor.commercial",
-      # CTIS2
+      "primarySponsor.commercial", # CTIS1?
+      "primarySponsor.isCommercial", # CTIS1?
+      "coSponsors.commercial", # CTIS1?
+      "coSponsors.isCommercial", # CTIS1?
       "authorizedApplication.authorizedPartI.sponsors.commercial",
       "authorizedApplication.authorizedPartI.sponsors.isCommercial"
     ))
@@ -73,6 +96,7 @@ f.sponsorType <- function(df = NULL) {
   # sponsor type
   stc <- "for profit"
   stn <- "not for profit"
+  stm <- "mixed"
   sto <- "other"
 
   #### describe ####
@@ -100,6 +124,8 @@ f.sponsorType <- function(df = NULL) {
     out = sapply(
       .data$helper, function(r) {
         if (all(is.na(r))) return(NA_character_)
+        # values are limited to Commercial or Non-commercial
+        if (any(r == "Commercial") & any(r == "Non-Commercial")) return(stm)
         if (any(r == "Commercial")) return(stc)
         if (all(r == "Non-Commercial")) return(stn)
         return(NA_character_)
@@ -112,19 +138,30 @@ f.sponsorType <- function(df = NULL) {
   #### . CTGOV ####
   df %>% dplyr::mutate(
     #
-    out = dplyr::case_match(
-      as.character(.data$sponsors.lead_sponsor.agency_class),
-      c("NIH", "U.S. Fed") ~ stn,
-      c("Industry") ~ stc,
-      c("Indiv", "Ambig", "Other", "Unknown") ~ sto,
-      .default = NA_character_
+    helper = strsplit(
+      as.character(.data$sponsors.collaborator.agency_class),
+      split = " / "),
+    #
+    out = mapply(
+      function(a, b, c) {
+        r <- na.omit(unique(a, b))
+        if (all(is.na(r))) return(NA_character_)
+        if (any(r == "Industry") & any(grepl("Non-Commercial|NIH|U.S. Fed", r))) return(stm)
+        if (any(r == "Industry")) return(stc)
+        if (all(grepl("Non-Commercial|NIH|U.S. Fed", r))) return(stn)
+        return(sto)
+      },
+      a = .data$sponsors.lead_sponsor.agency_class,
+      b = .data$helper,
+      USE.NAMES = FALSE
     )
+    #
   ) %>%
     dplyr::pull("out") -> df$ctgov
 
 
   #### . CTGOV2 ####
-  #
+
   # https://clinicaltrials.gov/data-api/about-api/study-data-structure
   # protocolSection.sponsorCollaboratorsModule.leadSponsor.class:
   # NIH - NIH
@@ -136,16 +173,27 @@ f.sponsorType <- function(df = NULL) {
   # AMBIG - AMBIG
   # OTHER - OTHER
   # UNKNOWN - UNKNOWN
-  #
+
   df %>% dplyr::mutate(
     #
-    out = dplyr::case_match(
-      as.character(.data$protocolSection.sponsorCollaboratorsModule.leadSponsor.class),
-      c("NIH", "FED", "OTHER_GOV") ~ stn,
-      c("INDUSTRY") ~ stc,
-      c("INDIV", "AMBIG", "OTHER", "UNKNOWN") ~ sto,
-      .default = NA_character_
+    helper = strsplit(
+      as.character(.data$protocolSection.sponsorCollaboratorsModule.collaborators.class),
+      split = " / "),
+    #
+    out = mapply(
+      function(a, b, c) {
+        r <- na.omit(unique(a, b))
+        if (all(is.na(r))) return(NA_character_)
+        if (any(r == "INDUSTRY") & any(grepl("NIH|FED|OTHER_GOV|FED|NETWORK", r))) return(stm)
+        if (any(r == "INDUSTRY")) return(stc)
+        if (all(grepl("NIH|FED|OTHER_GOV|FED|NETWORK", r))) return(stn)
+        return(sto)
+      },
+      a = .data$protocolSection.sponsorCollaboratorsModule.leadSponsor.class,
+      b = .data$helper,
+      USE.NAMES = FALSE
     )
+    #
   ) %>%
     dplyr::pull("out") -> df$ctgov2
 
@@ -174,7 +222,6 @@ f.sponsorType <- function(df = NULL) {
     "Pharmaceutical association/federation"
   )
   #
-  # TODO categories currently not used
   ncs <- c(
     "Hospital/Clinic/Other health care facility",
     "Patient organisation/association",
@@ -184,46 +231,87 @@ f.sponsorType <- function(df = NULL) {
   #
   df %>%
     dplyr::mutate(
-      # helpers are true if any sponsor is commercial
       #
       helper1 = sapply(
-        # seems systematically filled, CT.04.02 Field: Organisation type
-        .data$authorizedApplication.authorizedPartI.sponsors.isCommercial, any),
+        stringi::stri_split_fixed(.data$sponsorType, ", "),
+        function(i) {
+          r <- na.omit(i)
+          if (!length(r)) return(NA_character_)
+          if (any(r %in% cos) & any(r %in% ncs)) return(stm)
+          if (all(r %in% cos)) return(stc)
+          if (all(r %in% ncs)) return(stn)
+        }),
       #
       helper2 = sapply(
-        # field possibly from CTIS1
         .data$primarySponsor.commercial,
-        function(i) i == "Commercial"),
-      #
+        function(i) {
+          if (is.na(i)) return(NA_character_)
+          if (i == "Commercial") stc else stn
+        }),
       helper3 = sapply(
-        stringi::stri_split_fixed(
-          .data$sponsorType, ", "),
-        function(i) if (all(is.na(i))) NA else any(i %in% cos)
-      ),
+        .data$primarySponsor.isCommercial,
+        function(i) {
+          if (is.na(i)) return(NA_character_)
+          if (i == TRUE) stc else stn
+        }),
       #
       helper4 = sapply(
         stringi::stri_split_fixed(
-          .data$authorizedApplication.authorizedPartI.sponsors.commercial, " / "),
+          .data$coSponsors.commercial, " / "),
         function(i) {
-          ii <- (i == "Commercial") | (i == TRUE)
-          if (all(is.na(ii))) NA else any(ii)
+          r <- na.omit(i)
+          if (!length(r)) return(NA)
+          if (any(r == "Commercial") & any(r  == "Non-Commercial")) return(stm)
+          if (all(r == "Commercial")) return(stc)
+          if (all(r == "Non-Commercial")) return(stn)
+        }),
+      helper5 = sapply(
+        .data$coSponsors.isCommercial,
+        function(i) {
+          r <- na.omit(i)
+          if (!length(r)) return(NA)
+          if (any(r == TRUE) & any(r == FALSE)) return(stm)
+          if (all(r)) return(stc)
+          if (!all(r)) return(stn)
         }),
       #
-      helper5 = mapply(
-        function(h1, h2, h3, h4) {
-          if (all(is.na(c(h1, h2, h3, h4)))) return(NA)
-          sum(h1, h2, h3, h4, na.rm = TRUE)
+      helper6 = sapply(
+        stringi::stri_split_fixed(
+          .data$authorizedApplication.authorizedPartI.sponsors.commercial, " / "),
+        function(i) {
+          r <- na.omit(i)
+          if (!length(r)) return(NA)
+          if (any(r == "Commercial") & any(r  == "Non-Commercial")) return(stm)
+          if (all(r == "Commercial")) return(stc)
+          if (all(r == "Non-Commercial")) return(stn)
+        }),
+      helper7 = sapply(
+        .data$authorizedApplication.authorizedPartI.sponsors.isCommercial,
+        function(i) {
+          r <- na.omit(i)
+          if (!length(r)) return(NA)
+          if (any(r == TRUE) & any(r == FALSE)) return(stm)
+          if (all(r)) return(stc)
+          if (!all(r)) return(stn)
+        }),      #
+      out = mapply(
+        function(h1, h2, h3, h4, h5, h6, h7) {
+          r <- na.omit(c(h1, h2, h3, h4, h5, h6, h7))
+          if (!length(r)) return(NA)
+          if (any(r == "for profit") & any(r  == "not for profit")) return(stm)
+          if (all(r == "for profit")) return(stc)
+          if (all(r == "not for profit")) return(stn)
         },
-        h1 = .data$helper1, h2 = .data$helper2,
-        h3 = .data$helper3, h4 = .data$helper4
-      ),
-      #
-      out = dplyr::case_when(
-        .data$helper5 >= 1L ~ stc,
-        !(.data$helper5 >= 1L) ~ stn,
-        !is.na(.data$helper5) ~ sto,
-        .default = NA_character_
+        h1 = .data$helper1,
+        h2 = .data$helper2,
+        h3 = .data$helper3,
+        h4 = .data$helper4,
+        h5 = .data$helper5,
+        h6 = .data$helper6,
+        h7 = .data$helper7,
+        USE.NAMES = FALSE
       )
+      #
     ) %>%
     dplyr::pull("out") -> df$ctis
 
@@ -238,7 +326,7 @@ f.sponsorType <- function(df = NULL) {
       df = df,
       colnames = fldsNeeded
     ),
-    levels = c(stn, stc, sto)
+    levels = c(stn, stm, stc, sto)
   )
 
   # keep only outcome columns
