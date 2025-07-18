@@ -76,11 +76,15 @@ to ask about or improve a trial concept.</p>
 <p>The following trial concepts can be used by referencing their name when
 calling <a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a> (parameter <code>calculate</code>).
 Concepts will continue to be refined and added;
-last updated 2025-05-31.</p><ul><li><p><a href="f.assignmentType.html">f.assignmentType</a> (factor) was the assignment to treatment based on
+last updated 2025-07-18.</p><ul><li><p><a href="f.assignmentType.html">f.assignmentType</a> (factor) was the assignment to treatment based on
 randomisation or not? ("R" or "NR")</p></li>
 <li><p><a href="f.controlType.html">f.controlType</a> (factor) which type of internal or concurrent control
 is used in the trial? ("none", "no-treatment", "placebo", "active",
 "placebo+active" or "other")</p></li>
+<li><p><a href="f.externalLinks.html">f.externalLinks</a> (character) provides links to publications or
+other external references</p></li>
+<li><p><a href="f.hasResults.html">f.hasResults</a> (logical) are any types of results recorded, e.g.,
+structured data, reports or publications</p></li>
 <li><p><a href="f.isMedIntervTrial.html">f.isMedIntervTrial</a> (logical) is the trial interventional and does
 it have one or more medicines (drugs or biological) as investigational
 (experimental) intervention? (irrespective of status of authorisation and
@@ -98,17 +102,17 @@ medicines that are investigational? (cannot be calculated for ISRCTN or
 for phase 1 trials)</p></li>
 <li><p><a href="f.primaryEndpointDescription.html">f.primaryEndpointDescription</a> (list of character) string containing
 protocol definition, details and time frames, concatenated with " == "</p></li>
-<li><p><a href="f.primaryEndpointResults.html">f.primaryEndpointResults</a> (columns of number, character, integer)
-returning the statistical testing p value and method as well as the number
-of subjects included in the test, each in one new column, for the first
-primary endpoint only</p></li>
+<li><p><a href="f.primaryEndpointResults.html">f.primaryEndpointResults</a> (columns of number, character, integer,
+logical) returning the statistical testing p value and method as well as the
+number of subjects included in the test and if the record includes results,
+each in one new column, for the first primary endpoint only</p></li>
 <li><p><a href="f.resultsDate.html">f.resultsDate</a> (date) the planned or achieved date of results availability</p></li>
 <li><p><a href="f.startDate.html">f.startDate</a> (date) the planned, authorised or documented date
 of start of recruitment</p></li>
 <li><p><a href="f.sampleSize.html">f.sampleSize</a> (integer) the planned or achieved number of subjects
 or participants recruited</p></li>
 <li><p><a href="f.sponsorType.html">f.sponsorType</a> (factor) a type or class of sponsor(s) that
-is simplified to "not for profit", "for profit" or "other"</p></li>
+is simplified to "not for profit", "for profit", "mixed" or "other"</p></li>
 <li><p><a href="f.statusRecruitment.html">f.statusRecruitment</a> (factor) a status that is simplified to
 "ongoing" (includes temporarily halted), "completed", "ended early" (includes
 terminated or ended prematurely) and "other" (includes planned, stopped,

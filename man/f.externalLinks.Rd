@@ -2,7 +2,7 @@
 % Please edit documentation in R/f_externalLinks.R
 \name{f.externalLinks}
 \alias{f.externalLinks}
-\title{Calculate the external from a study's register record}
+\title{Calculate the external references from a study's register record}
 \usage{
 f.externalLinks(df = NULL)
 }

@@ -37,7 +37,7 @@ interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
 `ctrdata` is a package for the [R](https://www.r-project.org/) system,
 but other systems and tools can use the databases created with this
-package. This README was reviewed on 2025-07-12 for version 1.23.0.9000.
+package. This README was reviewed on 2025-07-19 for version 1.23.0.9000.
 
 ## Main features
 

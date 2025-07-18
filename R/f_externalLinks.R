@@ -1,7 +1,7 @@
 #### history ####
 # 2025-07-18 first version
 
-#' Calculate the external from a study's register record
+#' Calculate the external references from a study's register record
 #'
 #' Trial concept calculated: Calculates the links e.g. to publications or
 #' other external files referenced from a study record.

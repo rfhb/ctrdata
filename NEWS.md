@@ -1,8 +1,9 @@
 # ctrdata 1.23.0.9000
 
-- Added trial concept `f.assignmentType()`
+- Added trial concepts `f.assignmentType()`, `f.externalLinks()`, `f.hasResults()`
+- Modified trial concept `f.sponsorType()` to include a "mixed" category
 - Expanded functionality of `ctrGenerateQueries()` for CTGOV2 expert searches
-- Remove long deprecated optional parameters (`ctrLoadQueryIntoDb()`, `dbGetFieldsIntoDf()`)
+- Remove long deprecated parameters (`ctrLoadQueryIntoDb()`, `dbGetFieldsIntoDf()`)
 
 # ctrdata 1.23.0
 
