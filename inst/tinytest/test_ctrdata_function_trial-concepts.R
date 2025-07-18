@@ -76,6 +76,7 @@ tf <- function() {
   expect_true(all(dF$.startDate > as.Date("2000-01-01"), na.rm = TRUE))
 
   # strings
+  expect_true(sum(nchar(dF$.externalLinks), na.rm = TRUE) == 2403L)
   expect_true(sum(nchar(unlist(dF$.primaryEndpointFirstPmethod)), na.rm = TRUE) == 10L)
   expect_true(sum(nchar(unlist(dF$.primaryEndpointDescription))) == 20188L)
   expect_true(sum(nchar(unlist(dF$.trialPopulationInclusion))) == 27202L)
