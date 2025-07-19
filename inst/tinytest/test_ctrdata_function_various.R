@@ -209,6 +209,18 @@ tmpTest <- suppressMessages(
 # test
 expect_true("data.frame" %in% class(tmpTest))
 
+tmpTest <- suppressMessages(
+  ctrGetQueryUrl(
+    url = "https://classic.clinicaltrials.gov/ct2/results?type=Intr&cntry=CL&city=Santiago"))
+# via web ui:
+# https://clinicaltrials.gov/search?country=Chile&aggFilters=studyType:int&locStr=Santiago,%20Chile&state=Santiago%20Metropolitan%20Region
+
+# test
+expect_equal(
+  tmpTest$`query-term`,
+  "country=Chile&city=Santiago&aggFilters=studyType:int"
+)
+
 # test
 expect_warning(
   ctrGetQueryUrl(

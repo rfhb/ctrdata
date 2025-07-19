@@ -431,7 +431,7 @@ ctgovClassicToCurrent <- function(url, verbose = TRUE) {
         sub("([?&]country=)([A-Z]+)([$&])",
             paste0("\\1", countryTable[which(
               countryCode == countryTable[, 3]
-            ), 2, drop == TRUE][1], "\\3"),
+            ), 2, drop = TRUE][1], "\\3"),
             apiParams)
   }
 
@@ -520,10 +520,6 @@ ctrCache <- function(xname, xvalue = NULL, verbose = FALSE) {
 ctrDb <- function(con) {
 
   ## ensure requirements
-  if (!requireNamespace("nodbi", quietly = TRUE)) {
-    stop("Install package 'nodbi' to use this function.",
-         call. = FALSE)
-  }
   minV <- sub(
     ".*nodbi[(<>=[:space:]]+([.0-9]+?)\\).*", "\\1",
     utils::packageDescription("ctrdata", fields = "Imports")

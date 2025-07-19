@@ -4,6 +4,7 @@
 - Modified trial concept `f.sponsorType()` to include a "mixed" category
 - Expanded functionality of `ctrGenerateQueries()` for CTGOV2 expert searches
 - Remove long deprecated parameters (`ctrLoadQueryIntoDb()`, `dbGetFieldsIntoDf()`)
+- Increased testing coverage to 
 
 # ctrdata 1.23.0
 

@@ -206,10 +206,10 @@ dbGetFieldsIntoDf <- function(
       "Database reports too many fields to obtain or to ",
       "calculate, switching to iterating over fields...")
 
-    # first get fields
+    # first, get fields
     if (!length(fields)) fields <- "_id"
 
-    # safe guard against many fields
+    # iterate over field batches
     iFields <- seq_along(fields) %/% maxFields + 1L
     for (i in seq_len(max(iFields))) {
 
@@ -218,6 +218,8 @@ dbGetFieldsIntoDf <- function(
         con = con,
         verbose = verbose),
         silent = TRUE)
+
+      if (inherits(outi, "try-error")) next
 
       if (i == 1L) {
         out <- outi
@@ -246,10 +248,16 @@ dbGetFieldsIntoDf <- function(
 
       # calculate trial concept
       outi <- do.call(i, list(outi))
+
       # full join because outi has only
       # _id and newly calculated columns
-      out <- dplyr::full_join(
-        out, outi, by = "_id")
+      if (inherits(out, "try-error")) {
+        # in case of error with first above
+        out <- outi
+      } else {
+        out <- dplyr::full_join(
+          out, outi, by = "_id")
+      }
 
     }
 

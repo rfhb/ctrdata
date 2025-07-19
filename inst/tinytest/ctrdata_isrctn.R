@@ -231,24 +231,55 @@ expect_true(
   res[, "annotation", drop = TRUE] == "just_this" &&
     res[, "_id", drop = TRUE] == "98918118")
 
-# clean up
-rm(res)
-
 # test
 suppressWarnings(
   suppressMessages(
-    tmpDf <- dbGetFieldsIntoDf(
+    res <- dbGetFieldsIntoDf(
       fields = c(
         "participants.totalFinalEnrolment"
       ), con = dbc)))
 #
 expect_equivalent(
-  sapply(tmpDf, typeof),
+  sapply(res, typeof),
   c("character", "integer")
 )
 
+expect_message(
+  res <- suppressWarnings(
+    dbGetFieldsIntoDf(
+      fields = c("_id"),
+      con = dbc)),
+  "calling dbFindIdsUniqueTrials")
+
+# test
+expect_true(length(res) >= 14L)
+
+expect_warning(
+  res <- dbGetFieldsIntoDf(
+    fields = c("_id"),
+    dbc),
+  "use the named parameter con")
+
+# test
+expect_true(length(res) >= 14L)
+
+if (any(class(dbc) %in% c("src_sqlite", "src_postgres"))) {
+
+  expect_message(
+    res <- suppressWarnings(dbGetFieldsIntoDf(
+      fields = c("ctrname", paste0("f_", 1:1000))[-1],
+      calculate = "f.statusRecruitment",
+      con = dbc)),
+    "switching to iterating")
+
+  # test
+  expect_true(ncol(res) == 2L)
+  expect_true(nrow(res) >= 14L)
+
+}
+
 # clean up
-rm(tmpDf)
+rm(res)
 
 #### dbFindFields ####
 
@@ -319,6 +350,7 @@ rm(res)
 #### ctrLoadQueryIntoDb documents ####
 
 tmpDir <- newTempDir()
+unlink(tmpDir, recursive = TRUE)
 on.exit(unlink(tmpDir, recursive = TRUE), add = TRUE)
 
 expect_message(
