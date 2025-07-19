@@ -318,18 +318,15 @@ rm(res)
 
 #### ctrLoadQueryIntoDb documents ####
 
-if (interactive()) {
+tmpDir <- newTempDir()
+on.exit(unlink(tmpDir, recursive = TRUE), add = TRUE)
 
-  tmpDir <- newTempDir()
-  on.exit(unlink(tmpDir, recursive = TRUE), add = TRUE)
-
-  expect_message(
-    ctrLoadQueryIntoDb(
-      queryterm = "https://www.isrctn.com/search?q=alzheimer",
-      con = dbc,
-      documents.path = tmpDir,
-      documents.regexp = ".*"
-    ),
-    "Newly saved [0-9]+ document[(]s[)] for [0-9]+ trial"
-  )
-}
+expect_message(
+  ctrLoadQueryIntoDb(
+    queryterm = "https://www.isrctn.com/search?q=alzheimer",
+    con = dbc,
+    documents.path = tmpDir,
+    documents.regexp = ".*"
+  ),
+  "Newly saved [0-9]+ document[(]s[)] for [0-9]+ trial"
+)

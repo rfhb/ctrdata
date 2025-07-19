@@ -2,6 +2,9 @@
 #
 # note: update
 # https://github.com/rfhb/ctrdata/settings/secrets/actions/CACHE_VERSION
+#
+# runner images contents
+# https://github.com/actions/runner-images?tab=readme-ov-file
 
 on: [push, pull_request, workflow_dispatch]
 
@@ -45,7 +48,7 @@ jobs:
         with:
           cache: always
           cache-version: 1
-          extra-packages: remotes, DBI, RSQLite, nodbi, duckdb, rcmdcheck, covr, tibble, stringdist, dplyr
+          extra-packages: remotes, DBI, RSQLite, nodbi, duckdb, rcmdcheck, covr, tibble, stringdist, dplyr, chromote
 
       - name: Install dev nodbi
         if: ${{ (matrix.config.os == 'ubuntu-latest') }}
