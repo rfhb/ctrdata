@@ -1,5 +1,6 @@
 #### history ####
 # 2025-01-26 first version
+# 2025-07-20 include "other"
 
 #' Calculate type of control data collected in a study
 #'
@@ -49,18 +50,18 @@ f.controlType <- function(df = NULL) {
     "euctr" = c(
       "e81_controlled",
       "e816_cross_over",
-      # "e817_other", # TODO other controlled design
-      # "e8171_other_trial_design_description", # TODO
       "e822_placebo",
       "e823_other", # other comparator
       "e8231_comparator_description",
-      "e824_number_of_treatment_arms_in_the_trial"
+      "e824_number_of_treatment_arms_in_the_trial",
+      # if any results were loaded, also look at
+      "subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm.type.value"
     ),
     "ctgov" = c(
       "arm_group.arm_group_type"
     ),
     "ctgov2" = c(
-      # "protocolSection.designModule.designInfo.interventionModel", # TODO
+      # https://clinicaltrials.gov/data-api/about-api/study-data-structure#enum-ArmGroupType
       "protocolSection.armsInterventionsModule.armGroups.type"
     ),
     "isrctn" = c(
@@ -96,7 +97,30 @@ f.controlType <- function(df = NULL) {
   #### . EUCTR ####
   df %>%
     dplyr::mutate(
+      #
+      helper = .data$subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm.type.value,
+      #
       out = dplyr::case_when(
+        # EudraCT result related data Dictionary_V2_for publication (2)
+        # Subject disposition, C33, picklist:
+        # Experimental
+        # active comparator
+        # placebo
+        # no intervention
+        # other
+        grepl("ARM_TYPE.placeboComp", .data$helper) &
+          grepl("ARM_TYPE.activeComp", .data$helper) ~ "placebo+active",
+        grepl("ARM_TYPE.placeboComp", .data$helper) ~ "placebo",
+        grepl("ARM_TYPE.activeComp", .data$helper) ~ "active",
+        grepl("ARM_TYPE.experimental", .data$helper) ~ "active",
+        grepl("ARM_TYPE.noImp", .data$helper) ~ "no-treatment",
+        grepl("ARM_TYPE.other", .data$helper) ~ "other",
+        #
+        # e81: If 'Yes' selected, E.8.1.1-E.8.1.7.1 applying to the design of the
+        # trial should be completed. In a controlled trial, the tested product is
+        # compared to a reference treatment. The reference treatment can be, for
+        # example, a placebo, a product known to be effective, a surgical procedure,
+        # or a different dose of the same product.
         !.data$e81_controlled ~ "none",
         .data$e822_placebo & .data$e823_other ~ "placebo+active",
         .data$e822_placebo & grepl("dos[ea]", .data$e8231_comparator_description, TRUE) ~ "placebo+active",
