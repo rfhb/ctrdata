@@ -1,4 +1,4 @@
-# ctrdata 1.23.0.9000
+# ctrdata 1.24.0
 
 - Added parameter `euctrprotocolsall` for loading from EUCTR; if `FALSE`, this speeds up loading as only a single and no all records of a trial are loaded
 - Tightened query for medicine-interventional trials in `ctrGenerateQueries()` for CTGOV2
