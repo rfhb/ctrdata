@@ -15,7 +15,7 @@
 ## Submission reason
 
 - improve four trial concepts functions
-- bug fix for CTGOV2 search URLs
+- bug fix for certain CTGOV2 search URLs
 - removed long deprecated parameters
 - increased testing coverage
 

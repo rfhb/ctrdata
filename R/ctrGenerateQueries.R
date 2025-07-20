@@ -188,14 +188,6 @@ ctrGenerateQueries <- function(
   }
 
 
-  #### interventional clinical trial ####
-
-  # ISRCTN not possible
-  # EUCTR by definition
-  # CTIS by definition
-  # CTGOV interventional possible, but not limited to medicines
-
-
   #### condition ####
   if (!is.null(condition)) {
 
@@ -550,21 +542,65 @@ ctrGenerateQueries <- function(
     # not needed for CTIS, EUCTR
 
     urls["CTGOV2"] <- paste0(
-      urls["CTGOV2"], "&aggFilters=studyType:int")
+      urls["CTGOV2"],
+      "&aggFilters=studyType:int"
+    )
+    #
+    if (grepl("&intr=", urls["CTGOV2"])) {
+      urls["CTGOV2"] <- sub(
+        "(^.+)&intr=(.+)(&.+$|$)",
+        paste0(
+          "\\1&intr=(",
+          sub("(^.+)&intr=(.+)(&.+$|$)", "\\2", urls["CTGOV2"]),
+          ") AND (Drug OR Biological)\\3"
+        ),
+        urls["CTGOV2"]
+      )
+    } else {
+      urls["CTGOV2"] <- paste0(
+        urls["CTGOV2"], "&intr=Drug OR Biological"
+      )
+    }
+    #
+    if (grepl("&term=", urls["CTGOV2"])) {
+      urls["CTGOV2"] <- sub(
+        "(^.+&)term=(.+)(&.+$|$)",
+        paste0(
+          "\\1&term=(",
+          sub("(^.+)&term=(.+)(&.+$|$)", "\\2", urls["CTGOV2"]),
+          ") AND (AREA[DesignPrimaryPurpose](DIAGNOSTIC OR PREVENTION OR TREATMENT))\\3"
+        ),
+        urls["CTGOV2"]
+      )
+    } else {
+      urls["CTGOV2"] <- paste0(
+        urls["CTGOV2"], "&term=AREA[DesignPrimaryPurpose](DIAGNOSTIC OR PREVENTION OR TREATMENT)"
+      )
+    }
+
+
+    # https://clinicaltrials.gov/search?cond=cancer&start=2020-01-01_
+    # &intr=Drug%20OR%20Biological
+    # &term=AREA%5BDesignPrimaryPurpose%5D(DIAGNOSTIC%20OR%20PREVENTION%20OR%20TREATMENT)
+    # &aggFilters=phase:3,studyType:int
 
     urls["CTGOV2expert"] <- paste0(
-      # TODO could be further tightened as follows but unclear for CTGOV
+      urls["CTGOV2expert"],
+      "AND (AREA[StudyType]INTERVENTIONAL) ",
       # https://www.clinicaltrials.gov/data-api/about-api/study-data-structure#enum-PrimaryPurpose
-      # AND (AREA[DesignPrimaryPurpose](DIAGNOSTIC OR PREVENTION OR TREATMENT))
-      # AND (AREA[InterventionType](DRUG OR BIOLOGICAL))
-      urls["CTGOV2expert"], "AND (AREA[StudyType]INTERVENTIONAL) ")
+      "AND (AREA[DesignPrimaryPurpose](DIAGNOSTIC OR PREVENTION OR TREATMENT)) ",
+      # this for compatibility with the CTGOV2 search
+      # https://www.clinicaltrials.gov/data-api/about-api/search-areas#InterventionSearch
+      # https://clinicaltrials.gov/data-api/about-api/study-data-structure#enum-InterventionType
+      "AND (AREA[InterventionSearch](DRUG OR BIOLOGICAL)) "
+    )
 
     urls["ISRCTN"] <- paste0(
       urls["ISRCTN"],
       "&filters=primaryStudyDesign:Interventional",
       if (is.null(phase)) paste0(
         # this was found to implement a boolean filter;
-        # phases as proxy for investigational medicines
+        # phases are proxy for investigational medicines
         "&filters=phase:Phase 0,phase:Phase I,",
         "phase:Phase II,phase:Phase III,phase:Phase IV,",
         "phase:Phase I/II,phase:Phase II/III,phase:Phase III/IV"
