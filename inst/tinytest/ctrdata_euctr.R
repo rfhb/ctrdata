@@ -36,6 +36,16 @@ suppressWarnings(
     tmp <- ctrLoadQueryIntoDb(
       queryterm = "2016-004774-17",
       register = "EUCTR",
+      euctrprotocolsall = FALSE,
+      con = dbc)))
+expect_true(tmp[["n"]] == 1L)
+
+# test
+suppressWarnings(
+  suppressMessages(
+    tmp <- ctrLoadQueryIntoDb(
+      queryterm = "2016-004774-17",
+      register = "EUCTR",
       con = dbc)))
 expect_true(tmp[["n"]] >= 3L)
 
