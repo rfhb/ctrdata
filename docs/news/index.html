@@ -40,12 +40,16 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.23.0.9000" id="ctrdata-12309000">ctrdata 1.23.0.9000<a class="anchor" aria-label="anchor" href="#ctrdata-12309000"></a></h2>
-<ul><li>Added trial concepts <code><a href="../reference/f.assignmentType.html">f.assignmentType()</a></code>, <code><a href="../reference/f.externalLinks.html">f.externalLinks()</a></code>, <code><a href="../reference/f.hasResults.html">f.hasResults()</a></code>
+<ul><li>Added parameter <code>euctrprotocolsall</code> for loading from EUCTR; if <code>FALSE</code>, this speeds up loading as only a single and no all records of a trial are loaded</li>
+<li>Tightened query for medicine-interventional trials in <code><a href="../reference/ctrGenerateQueries.html">ctrGenerateQueries()</a></code> for CTGOV2</li>
+<li>Added trial concepts <code><a href="../reference/f.assignmentType.html">f.assignmentType()</a></code>, <code><a href="../reference/f.externalLinks.html">f.externalLinks()</a></code>, <code><a href="../reference/f.hasResults.html">f.hasResults()</a></code>
 </li>
-<li>Modified trial concept <code><a href="../reference/f.sponsorType.html">f.sponsorType()</a></code> to include a “mixed” category</li>
+<li>Improved trial concept <code><a href="../reference/f.controlType.html">f.controlType()</a></code> and added “mixed”to <code><a href="../reference/f.sponsorType.html">f.sponsorType()</a></code>
+</li>
 <li>Expanded functionality of <code><a href="../reference/ctrGenerateQueries.html">ctrGenerateQueries()</a></code> for CTGOV2 expert searches</li>
-<li>Added parameter <code>euctrprotocolsall</code> for loading from EUCTR; if <code>FALSE</code>, this speeds up loading as only a single and no all records of a trial are loaded</li>
-<li>Removed long deprecated parameters (<code><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code>, <code><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code>)</li>
+<li>Bug fix for subsetting data frames when calculating trial concepts</li>
+<li>Removed long deprecated parameters from <code><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code>, <code><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code>
+</li>
 <li>Increased testing coverage to more than 94% of code lines</li>
 </ul></div>
     <div class="section level2">

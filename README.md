@@ -15,8 +15,8 @@ status](https://www.r-pkg.org/badges/version-last-release/ctrdata)](https://cran
 [Databases](#databases-for-use-with-ctrdata) • [Data
 model](#data-model-of-ctrdata) • [Example workflow](#example-workflow) •
 [Analysis across registers](#workflow-across-registers-example) •
-[Tests](#tests) • [Acknowledgements](#acknowledgements) •
-[Future](#future-features)
+[Tests, coverage](#tests-and-coverage) •
+[Acknowledgements](#acknowledgements) • [Future](#future-features)
 
 # ctrdata for aggregating and analysing clinical trials
 
@@ -199,9 +199,9 @@ overview](https://rfhb.github.io/ctrdata/reference/index.html).
 | `ctrLoadQueryIntoDb()` | **Retrieve (download) or update, and annotate, information on trials from a register and store in a collection in a database** |
 | `ctrShowOneTrial()` | 🔔 Show full structure and all data of a trial, interactively select fields of interest for `dbGetFieldsIntoDf()` |
 | `dbQueryHistory()` | Show the history of queries that were downloaded into the collection |
-| `dbFindIdsUniqueTrials()` | **Get the identifiers of de-duplicated trials in the collection** |
+| `dbFindIdsUniqueTrials()` | Get the identifiers of de-duplicated trials in the collection |
 | `dbFindFields()` | Find names of variables (fields) in the collection |
-| `dbGetFieldsIntoDf()` | **Create a data frame (or tibble) from trial records in the database with the specified fields** |
+| `dbGetFieldsIntoDf()` | **Create a data frame (or tibble) from trial records in the database with the specified fields**, 🔔 see [trial concepts](https://rfhb.github.io/ctrdata/reference/ctrdata-trial-concepts.html) for calculating concepts across registers |
 | `dfTrials2Long()` | Transform the data.frame from `dbGetFieldsIntoDf()` into a long name-value data.frame, including deeply nested fields |
 | `dfName2Value()` | From a long name-value data.frame, extract values for variables (fields) of interest (e.g., endpoints) |
 | `dfMergeVariablesRelevel()` | Merge variables into a new variable, optionally map values to a new set of levels |

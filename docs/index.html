@@ -55,7 +55,7 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9">
-<p><a href="#main-features">Main features</a> • <a href="#references">References</a> • <a href="#installation">Installation</a> • <a href="#overview-of-functions-in-ctrdata">Overview</a> • <a href="#databases-for-use-with-ctrdata">Databases</a> • <a href="#data-model-of-ctrdata">Data model</a> • <a href="#example-workflow">Example workflow</a> • <a href="#workflow-across-registers-example">Analysis across registers</a> • <a href="#tests">Tests</a> • <a href="#acknowledgements">Acknowledgements</a> • <a href="#future-features">Future</a></p>
+<p><a href="#main-features">Main features</a> • <a href="#references">References</a> • <a href="#installation">Installation</a> • <a href="#overview-of-functions-in-ctrdata">Overview</a> • <a href="#databases-for-use-with-ctrdata">Databases</a> • <a href="#data-model-of-ctrdata">Data model</a> • <a href="#example-workflow">Example workflow</a> • <a href="#workflow-across-registers-example">Analysis across registers</a> • <a href="#tests-and-coverage">Tests, coverage</a> • <a href="#acknowledgements">Acknowledgements</a> • <a href="#future-features">Future</a></p>
 <div class="section level1">
 <div class="page-header"><h1 id="ctrdata-for-aggregating-and-analysing-clinical-trials">ctrdata for aggregating and analysing clinical trials<a class="anchor" aria-label="anchor" href="#ctrdata-for-aggregating-and-analysing-clinical-trials"></a>
 </h1></div>
@@ -197,7 +197,7 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 </tr>
 <tr>
 <td><code><a href="reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials()</a></code></td>
-<td><strong>Get the identifiers of de-duplicated trials in the collection</strong></td>
+<td>Get the identifiers of de-duplicated trials in the collection</td>
 </tr>
 <tr>
 <td><code><a href="reference/dbFindFields.html">dbFindFields()</a></code></td>
@@ -205,7 +205,8 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 </tr>
 <tr>
 <td><code><a href="reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code></td>
-<td><strong>Create a data frame (or tibble) from trial records in the database with the specified fields</strong></td>
+<td>
+<strong>Create a data frame (or tibble) from trial records in the database with the specified fields</strong>, 🔔 see <a href="https://rfhb.github.io/ctrdata/reference/ctrdata-trial-concepts.html">trial concepts</a> for calculating concepts across registers</td>
 </tr>
 <tr>
 <td><code><a href="reference/dfTrials2Long.html">dfTrials2Long()</a></code></td>

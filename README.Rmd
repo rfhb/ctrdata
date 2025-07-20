@@ -33,7 +33,7 @@ knitr::opts_chunk$set(
 [Data model](#data-model-of-ctrdata) •
 [Example workflow](#example-workflow) •
 [Analysis across registers](#workflow-across-registers-example) •
-[Tests](#tests) •
+[Tests, coverage](#tests-and-coverage) •
 [Acknowledgements](#acknowledgements) •
 [Future](#future-features)
 
@@ -141,9 +141,9 @@ Function name | Function purpose
 `ctrLoadQueryIntoDb()` | **Retrieve (download) or update, and annotate, information on trials from a register and store in a collection in a database**
 `ctrShowOneTrial()` | `r emoji::emoji("bell")` Show full structure and all data of a trial, interactively select fields of interest for `dbGetFieldsIntoDf()`
 `dbQueryHistory()` | Show the history of queries that were downloaded into the collection
-`dbFindIdsUniqueTrials()` | **Get the identifiers of de-duplicated trials in the collection**
+`dbFindIdsUniqueTrials()` | Get the identifiers of de-duplicated trials in the collection
 `dbFindFields()` | Find names of variables (fields) in the collection
-`dbGetFieldsIntoDf()` | **Create a data frame (or tibble) from trial records in the database with the specified fields**
+`dbGetFieldsIntoDf()` | **Create a data frame (or tibble) from trial records in the database with the specified fields**, `r emoji::emoji("bell")` see [trial concepts](https://rfhb.github.io/ctrdata/reference/ctrdata-trial-concepts.html) for calculating concepts across registers
 `dfTrials2Long()` | Transform the data.frame from `dbGetFieldsIntoDf()` into a long name-value data.frame, including deeply nested fields
 `dfName2Value()` | From a long name-value data.frame, extract values for variables (fields) of interest (e.g., endpoints)
 `dfMergeVariablesRelevel()` | Merge variables into a new variable, optionally map values to a new set of levels

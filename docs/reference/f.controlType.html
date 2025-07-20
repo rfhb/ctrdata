@@ -88,12 +88,13 @@ a factor with levels `none`, `no-treatment`, `placebo`, `active`,
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># fields needed</span></span></span>
 <span class="r-in"><span><span class="fu">f.controlType</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $euctr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "e81_controlled"                            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "e816_cross_over"                           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "e822_placebo"                              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "e823_other"                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5] "e8231_comparator_description"              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [6] "e824_number_of_treatment_arms_in_the_trial"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "e81_controlled"                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "e816_cross_over"                                                                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "e822_placebo"                                                                     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "e823_other"                                                                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5] "e8231_comparator_description"                                                     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6] "e824_number_of_treatment_arms_in_the_trial"                                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [7] "subjectDisposition.postAssignmentPeriods.postAssignmentPeriod.arms.arm.type.value"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ctgov</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "arm_group.arm_group_type"</span>
@@ -118,41 +119,41 @@ a factor with levels `none`, `no-treatment`, `placebo`, `active`,
 <span class="r-in"><span>  calculate <span class="op">=</span> <span class="st">"f.controlType"</span>,</span></span>
 <span class="r-in"><span>  con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> To review trial concepts details, call 'help("ctrdata-trial-concepts")'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying database (13 fields)...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying database (14 fields)...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating f.controlType...                            </span>
 <span class="r-in"><span><span class="va">trialsDf</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                  _id ctrname .controlType</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1           12949496  ISRCTN         none</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2           13281214  ISRCTN         none</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3           17473621  ISRCTN        other</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  2012-003632-23-CZ   EUCTR         none</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  2012-003632-23-SE   EUCTR         none</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  2012-003632-23-CZ   EUCTR       active</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  2012-003632-23-SE   EUCTR       active</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6  2014-002606-20-PT   EUCTR         none</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  2014-003556-31-GB   EUCTR         none</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  2014-003556-31-SE   EUCTR         none</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  2014-003556-31-GB   EUCTR       active</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  2014-003556-31-SE   EUCTR       active</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9  2022-500244-37-00    CTIS      placebo</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10 2022-501142-30-00    CTIS       active</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 2023-505613-24-00    CTIS         none</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12 2023-508143-51-01    CTIS         none</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13 2024-510663-34-00    CTIS         none</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 2023-505613-24-00    CTIS       active</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 2023-508143-51-01    CTIS       active</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 2024-510663-34-00    CTIS       active</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 14          20343063  ISRCTN      placebo</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15          61070850  ISRCTN        other</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 16          76463425  ISRCTN        other</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 17          80181452  ISRCTN      placebo</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 18          88261002  ISRCTN      placebo</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19       NCT00617929  CTGOV2         none</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20       NCT01125800  CTGOV2         none</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21       NCT01483820  CTGOV2         none</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19       NCT00617929  CTGOV2       active</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20       NCT01125800  CTGOV2       active</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21       NCT01483820  CTGOV2       active</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 22       NCT01505608  CTGOV2       active</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23       NCT01592045  CTGOV2         none</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23       NCT01592045  CTGOV2       active</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 24       NCT02620761   CTGOV      placebo</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 25       NCT03280147   CTGOV       active</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26       NCT03325439   CTGOV         none</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26       NCT03325439   CTGOV       active</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 27       NCT03431558   CTGOV      placebo</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 28       NCT03876704   CTGOV       active</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 29       NCT04001712   CTGOV       active</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 30       NCT04041765   CTGOV      placebo</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31       NCT05969327   CTGOV no-treatment</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31       NCT05969327   CTGOV       active</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
