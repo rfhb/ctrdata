@@ -3,8 +3,9 @@
 - Added trial concepts `f.assignmentType()`, `f.externalLinks()`, `f.hasResults()`
 - Modified trial concept `f.sponsorType()` to include a "mixed" category
 - Expanded functionality of `ctrGenerateQueries()` for CTGOV2 expert searches
-- Remove long deprecated parameters (`ctrLoadQueryIntoDb()`, `dbGetFieldsIntoDf()`)
-- Increased testing coverage to 
+- Added parameter `euctrprotocolsall` for loading from EUCTR; if `FALSE`, this speeds up loading as only a single and no all records of a trial are loaded
+- Removed long deprecated parameters (`ctrLoadQueryIntoDb()`, `dbGetFieldsIntoDf()`)
+- Increased testing coverage to more than 94% of code lines
 
 # ctrdata 1.23.0
 

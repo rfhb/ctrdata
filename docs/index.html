@@ -66,7 +66,7 @@
 <li>ClinicalTrials.gov (“CTGOV2”, see <a href="#workflow-ctgov-example">example</a>)</li>
 <li>ISRCTN Registry (<a href="https://www.isrctn.com/" class="external-link uri">https://www.isrctn.com/</a>)</li>
 </ul>
-<p>The motivation is to investigate the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can use the databases created with this package. This README was reviewed on 2025-07-19 for version 1.23.0.9000.</p>
+<p>The motivation is to investigate the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can use the databases created with this package. This README was reviewed on 2025-07-20 for version 1.23.0.9000.</p>
 <div class="section level2">
 <h2 id="main-features">Main features<a class="anchor" aria-label="anchor" href="#main-features"></a>
 </h2>
@@ -139,7 +139,7 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span><span class="co"># Alternatively, install development version:</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"rfhb/ctrdata"</span>, build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p>These commands also install the package’s dependencies (<code>jsonlite</code>, <code>httr</code>, <code>curl</code>, <code>clipr</code>, <code>xml2</code>, <code>nodbi</code>, <code>stringi</code>, <code>tibble</code>, <code>lubridate</code>, <code>jqr</code>, <code>dplyr</code>, <code>zip</code>, <code>readr</code>, <code>digest</code>, <code>countrycode</code>, <code>htmlwidgets</code>, <code>stringdist</code> and <code>V8</code>).</p>
+<p>These commands also install the package’s dependencies (<code>jsonlite</code>, <code>httr2</code>, <code>xml2</code>, <code>nodbi</code>, <code>stringi</code>, <code>lubridate</code>, <code>jqr</code>, <code>dplyr</code>, <code>zip</code>, <code>readr</code>, <code>rlang</code>, <code>htmlwidgets</code>, <code>stringdist</code> and <code>V8</code>).</p>
 </div>
 <div class="section level3">
 <h3 id="id_2-script-to-automatically-copy-users-query-from-web-browser">2. Script to automatically copy user’s query from web browser<a class="anchor" aria-label="anchor" href="#id_2-script-to-automatically-copy-users-query-from-web-browser"></a>
@@ -358,19 +358,20 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
 <span>  queryterm <span class="op">=</span> <span class="va">q</span>,</span>
 <span>  euctrresults <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  euctrprotocolsall <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co"># new since 2025-07-20, loads single </span></span>
+<span>  <span class="co"># instead of all available country versions of a trial in EUCTR</span></span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># * Found search query from EUCTR: query=neuroblastoma&amp;phase=phase-two&amp;age=children</span></span>
-<span><span class="co"># * Checking trials in EUCTR...</span></span>
-<span><span class="co"># - Retrieved overview, multiple records of 73 trial(s) from 4 batch(es) to be downloaded (estimate: 9 MB)</span></span>
-<span><span class="co"># - Downloading and processing batches...</span></span>
-<span><span class="co"># - Downloading 270 records of 73 trials (estimate: 20 s)             </span></span>
-<span><span class="co"># - Converting to NDJSON (estimate: 0.6 s) . . . . . .                    </span></span>
+<span><span class="co"># * Checking trials in EUCTR, found 73 trials </span></span>
+<span><span class="co"># - Downloading in 4 batch(es) (20 trials each; estimate: 9 MB)</span></span>
+<span><span class="co"># - Downloading 73 records of 73 trials (estimate: 4 s)               </span></span>
+<span><span class="co"># - Converting to NDJSON (estimate: 0.2 s) . .                          </span></span>
 <span><span class="co"># - Importing records into database...</span></span>
-<span><span class="co"># = Imported or updated 270 records on 73 trial(s) </span></span>
+<span><span class="co"># = Imported or updated 73 records on 73 trial(s)  </span></span>
 <span><span class="co"># * Checking results if available from EUCTR for 73 trials: </span></span>
 <span><span class="co"># - Downloading results...</span></span>
-<span><span class="co"># - Extracting results (. = data, F = file[s] and data, x = none): . . . F . . .</span></span>
+<span><span class="co"># - Extracting results (. = data, F = file[s] and data, x = none): . . . F . . . </span></span>
 <span><span class="co"># F . . F . . . . . . . F . F F . . . . . . F . . . . </span></span>
 <span><span class="co"># - Converting to NDJSON (estimate: 3 s)...</span></span>
 <span><span class="co"># - Importing results into database (may take some time)...</span></span>
@@ -379,7 +380,7 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span><span class="co"># No history found in expected format.</span></span>
 <span><span class="co"># Updated history ("meta-info" in "collection_name")</span></span>
 <span><span class="co"># $n</span></span>
-<span><span class="co"># [1] 270</span></span></code></pre></div>
+<span><span class="co"># [1] 73</span></span></code></pre></div>
 <p>Under the hood, EUCTR plain text and XML files from EUCTR, CTGOV, ISRCTN are converted using Javascript via <code>V8</code> in <code>R</code> into <code>NDJSON</code>, which is imported into the database collection.</p>
 <ul>
 <li>Easily generate queries for each register and add records from several registers into the same collection</li>
@@ -395,16 +396,25 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">queries</span></span>
-<span><span class="co"># EUCTR </span></span>
-<span><span class="co"># "https://www.clinicaltrialsregister.eu/ctr-search/search?query=neuroblastoma&amp;phase=phase-two&amp;age=children&amp;age=adolescent&amp;age=infant-and-toddler&amp;age=newborn&amp;age=preterm-new-born-infants&amp;age=under-18&amp;status=completed" </span></span>
-<span><span class="co"># ISRCTN </span></span>
-<span><span class="co"># "https://www.isrctn.com/search?&amp;q=&amp;filters=condition:neuroblastoma,phase:Phase II,ageRange:Child,trialStatus:completed,primaryStudyDesign:Interventional" </span></span>
-<span><span class="co"># CTGOV2 </span></span>
-<span><span class="co"># "https://clinicaltrials.gov/search?cond=neuroblastoma&amp;aggFilters=phase:2,ages:child,status:com,studyType:int" </span></span>
-<span><span class="co"># CTGOV2expert </span></span>
-<span><span class="co"># "https://clinicaltrials.gov/expert-search?term=AREA[ConditionSearch]\"neuroblastoma\" AND (AREA[Phase]\"PHASE2\") AND (AREA[StdAge]\"CHILD\") AND (AREA[OverallStatus]\"COMPLETED\") AND (AREA[StudyType]INTERVENTIONAL)" </span></span>
-<span><span class="co"># CTIS </span></span>
-<span><span class="co"># "https://euclinicaltrials.eu/ctis-public/search#searchCriteria={\"medicalCondition\":\"neuroblastoma\",\"trialPhaseCode\":[4],\"ageGroupCode\":[2],\"status\":[5,8]}" </span></span>
+<span><span class="co"># EUCTR "https://www.clinicaltrialsregister.eu/ctr-search/search?query=</span></span>
+<span><span class="co">#neuroblastoma&amp;phase=phase-two&amp;age=children&amp;age=adolescent&amp;age=infant-and-</span></span>
+<span><span class="co">#toddler&amp;age=newborn&amp;age=preterm-new-born-infants&amp;age=under-18&amp;status=completed" </span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># ISRCTN "https://www.isrctn.com/search?&amp;q=&amp;filters=condition:neuroblastoma,</span></span>
+<span><span class="co">#phase:Phase II,ageRange:Child,trialStatus:completed,primaryStudyDesign:</span></span>
+<span><span class="co">#Interventional" </span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># CTGOV2 "https://clinicaltrials.gov/search?cond=neuroblastoma&amp;aggFilters=</span></span>
+<span><span class="co">#phase:2,ages:child,status:com,studyType:int" </span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># CTGOV2expert "https://clinicaltrials.gov/expert-search?term=AREA</span></span>
+<span><span class="co">#[ConditionSearch]\"neuroblastoma\" AND (AREA[Phase]\"PHASE2\") AND </span></span>
+<span><span class="co">#(AREA[StdAge]\"CHILD\") AND (AREA[OverallStatus]\"COMPLETED\") AND </span></span>
+<span><span class="co">#(AREA[StudyType]INTERVENTIONAL)" </span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># CTIS "https://euclinicaltrials.eu/ctis-public/search#searchCriteria=</span></span>
+<span><span class="co">#{\"medicalCondition\":\"neuroblastoma\",\"trialPhaseCode\":[4],</span></span>
+<span><span class="co">#\"ageGroupCode\":[2],\"status\":[5,8]}"  </span></span>
 <span></span>
 <span><span class="co"># Open queries in registers' web interfaces</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">queries</span>, <span class="va">ctrOpenSearchPagesInBrowser</span><span class="op">)</span></span>
@@ -414,7 +424,7 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">result</span>, <span class="st">"[["</span>, <span class="st">"n"</span><span class="op">)</span></span>
 <span><span class="co"># EUCTR       ISRCTN       CTGOV2 CTGOV2expert         CTIS </span></span>
-<span><span class="co">#   180            0          110          110            1</span></span></code></pre></div>
+<span><span class="co">#   180            0          111          111            1</span></span></code></pre></div>
 <ul>
 <li>Analyse</li>
 </ul>
@@ -428,13 +438,14 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span>  calculate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"f.statusRecruitment"</span>, <span class="st">"f.isUniqueTrial"</span><span class="op">)</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co"># To review trial concepts details, call 'help("ctrdata-trial-concepts")'</span></span>
 <span><span class="co"># Querying database (16 fields)...</span></span>
-<span><span class="co"># Searching for duplicate trials... </span></span>
-<span><span class="co"># - Getting all trial identifiers (may take some time), 381 found in collection</span></span>
+<span><span class="co"># Searching for duplicate trials...                             </span></span>
+<span><span class="co"># - Getting all trial identifiers (may take some time), 322 found in collection</span></span>
 <span><span class="co"># - Finding duplicates among registers' and sponsor ids...</span></span>
-<span><span class="co"># - 174 EUCTR _id were not preferred EU Member State record for 66 trials</span></span>
-<span><span class="co"># - Keeping 110 / 60 / 0 / 0 / 0 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS</span></span>
-<span><span class="co"># = Returning keys (_id) of 170 records in collection "collection_name"</span></span>
+<span><span class="co"># - 114 EUCTR _id were not preferred EU Member State record for 66 trials</span></span>
+<span><span class="co"># - Keeping 111 / 60 / 0 / 0 / 0 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS</span></span>
+<span><span class="co"># = Returning keys (_id) of 171 records in collection "collection_name"</span></span>
 <span></span>
 <span><span class="co"># Tabulate the clinical trial information of interest</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span></span>
@@ -446,10 +457,10 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span><span class="op">)</span></span>
 <span><span class="co">#                   a7_trial_is_part_of_a_paediatric_investigation_plan</span></span>
 <span><span class="co"># .statusRecruitment FALSE TRUE</span></span>
-<span><span class="co">#        ongoing         1    0</span></span>
+<span><span class="co">#        ongoing         4    3</span></span>
 <span><span class="co">#        completed      11    6</span></span>
-<span><span class="co">#        ended early     6    4</span></span>
-<span><span class="co">#        other          11    5</span></span></code></pre></div>
+<span><span class="co">#        ended early     7    3</span></span>
+<span><span class="co">#        other           8    2</span></span></code></pre></div>
 <div id="workflow-ctgov-example">
 
 </div>
@@ -477,13 +488,16 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span><span class="co">#</span></span>
 <span><span class="co"># Replace this URL:</span></span>
 <span><span class="co">#</span></span>
-<span><span class="co"># https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&amp;rslt=With&amp;recrs=e&amp;age=0&amp;intr=Drug</span></span>
+<span><span class="co"># https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&amp;rslt=</span></span>
+<span><span class="co">#With&amp;recrs=e&amp;age=0&amp;intr=Drug</span></span>
 <span><span class="co">#</span></span>
 <span><span class="co"># with this URL:</span></span>
 <span><span class="co">#</span></span>
-<span><span class="co"># https://clinicaltrials.gov/search?cond=neuroblastoma&amp;intr=Drug&amp;aggFilters=ages:child,results:with,status:com</span></span>
+<span><span class="co"># https://clinicaltrials.gov/search?cond=neuroblastoma&amp;intr=Drug&amp;aggFilters=</span></span>
+<span><span class="co">#ages:child,results:with,status:com</span></span>
 <span><span class="co">#</span></span>
-<span><span class="co"># * Found search query from CTGOV2: cond=neuroblastoma&amp;intr=Drug&amp;aggFilters=ages:child,results:with,status:com</span></span>
+<span><span class="co"># * Found search query from CTGOV2: cond=neuroblastoma&amp;intr=Drug&amp;aggFilters=</span></span>
+<span><span class="co">#ages:child,results:with,status:com</span></span>
 <span></span>
 <span><span class="co"># Count trials</span></span>
 <span><span class="fu"><a href="reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
@@ -508,7 +522,7 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span>  only.count <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># $n</span></span>
-<span><span class="co"># [1] 9477</span></span></code></pre></div>
+<span><span class="co"># [1] 9582</span></span></code></pre></div>
 <div id="workflow-data-model">
 
 </div>
@@ -637,32 +651,35 @@ Neuroblastoma trials
 <span>  queryterm <span class="op">=</span> <span class="st">"query=cancer&amp;age=under-18&amp;phase=phase-one"</span>,</span>
 <span>  register <span class="op">=</span> <span class="st">"EUCTR"</span>,</span>
 <span>  euctrresults <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  euctrprotocolsall <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co"># new since 2025-07-20, loads single </span></span>
+<span>  <span class="co"># instead of all available country versions of a trial in EUCTR</span></span>
 <span>  documents.path <span class="op">=</span> <span class="st">"./files-euctr/"</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># * Found search query from EUCTR: query=cancer&amp;age=under-18&amp;phase=phase-one</span></span>
 <span><span class="co"># * Checking trials in EUCTR, found 249 trials </span></span>
 <span><span class="co"># - Running with euctrresults = TRUE to download documents</span></span>
+<span><span class="co"># Created directory ./files-euctr/</span></span>
 <span><span class="co"># - Downloading in 13 batch(es) (20 trials each; estimate: 30 MB)</span></span>
-<span><span class="co"># - Downloading 794 records of 249 trials (estimate: 40 s)</span></span>
-<span><span class="co"># - Converting to NDJSON (estimate: 2 s) . . . . . . . . . . . . . . . . </span></span>
+<span><span class="co"># - Downloading 249 records of 249 trials (estimate: 10 s)             </span></span>
+<span><span class="co"># - Converting to NDJSON (estimate: 0.5 s) . . . . .                      </span></span>
 <span><span class="co"># - Importing records into database...</span></span>
-<span><span class="co"># = Imported or updated 794 records on 249 trial(s)  </span></span>
+<span><span class="co"># = Imported or updated 249 records on 249 trial(s)</span></span>
 <span><span class="co"># * Checking results if available from EUCTR for 249 trials: </span></span>
 <span><span class="co"># - Downloading results...</span></span>
-<span><span class="co"># - Extracting results (. = data, F = file[s] and data, x = none): F . . . . F </span></span>
-<span><span class="co"># . . F F . F . . . . F . . . . F . . . . . . . F . . . . . . . . . F F . . . . . </span></span>
-<span><span class="co"># . . . . . . . . F . . . . F . . F . . F . . . . . . . . . . F . F . . F . . . . </span></span>
-<span><span class="co"># . . . F F . . . . . . . . . . . . . . . . . . F F . F . . . . . . . . . . . . . </span></span>
-<span><span class="co"># . . . . . . . </span></span>
+<span><span class="co"># - Extracting results (. = data, F = file[s] and data, x = none): F . . . . F</span></span>
+<span><span class="co"># . . F F . F . . . . F . . . . F . . . . . . . F . F . . F . . . . . . . F F </span></span>
+<span><span class="co"># . . . . . . . . . . . . . . . . . . . F F . F . . . . . . . . . . . . . . . </span></span>
+<span><span class="co"># . . . . . . . . . . . F . . . . . . . . . F F . . . . . . . . . . . . . . F</span></span>
+<span><span class="co"># . . . . F . . F . . F . . . . </span></span>
 <span><span class="co"># - Converting to NDJSON (estimate: 10 s)...</span></span>
 <span><span class="co"># - Importing results into database (may take some time)...</span></span>
 <span><span class="co"># - Results history: not retrieved (euctrresultshistory = FALSE)</span></span>
-<span><span class="co"># = Imported or updated results for 133 trials</span></span>
-<span><span class="co"># = Documents saved in './files-euctr/'</span></span>
+<span><span class="co"># = Imported or updated results for 135 trials</span></span>
+<span><span class="co"># = Documents saved in './files-euctr'</span></span>
 <span><span class="co"># Updated history ("meta-info" in "collection_name")</span></span>
 <span><span class="co"># $n</span></span>
-<span><span class="co"># [1] 794</span></span>
+<span><span class="co"># [1] 249</span></span>
 <span></span>
 <span><span class="co">### CTGOV files are downloaded, here corresponding to the default of</span></span>
 <span><span class="co"># documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|icf|ctalett|lay|^[0-9]+ "</span></span>
@@ -674,27 +691,33 @@ Neuroblastoma trials
 <span><span class="op">)</span></span>
 <span><span class="co"># Since 2024-06-25, the classic CTGOV servers are no longer available. Package </span></span>
 <span><span class="co"># ctrdata has translated the classic CTGOV query URL from this call of function </span></span>
-<span><span class="co"># ctrLoadQueryIntoDb(queryterm = ...) into a query URL that works with the</span></span>
-<span><span class="co"># current CTGOV2. This is printed below and is also part of the return value of</span></span>
-<span><span class="co"># this function, ctrLoadQueryIntoDb(...)$url. This URL can be used with ctrdata</span></span>
-<span><span class="co"># functions. Note that the fields and data schema of trials differ between CTGOV</span></span>
-<span><span class="co"># and CTGOV2. </span></span>
+<span><span class="co"># ctrLoadQueryIntoDb(queryterm = ...) into a query URL that works with the current</span></span>
+<span><span class="co"># CTGOV2. This is printed below and is also part of the return value of this function, ctrLoadQueryIntoDb(...)$url. This URL can be used with ctrdata functions. Note </span></span>
+<span><span class="co"># that the fields and data schema of trials differ between CTGOV and CTGOV2. </span></span>
 <span><span class="co"># </span></span>
-<span><span class="co"># * Found search query from CTGOV2: cond=Neuroblastoma&amp;aggFilters=phase:2,</span></span>
-<span><span class="co"># docs:prot sap icf,studyType:int,status:com</span></span>
-<span><span class="co"># * Checking trials in CTGOV, found 32 trials</span></span>
+<span><span class="co"># Replace this URL:</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># https://classic.clinicaltrials.gov/ct2/results?cond=Neuroblastoma&amp;type=Intr&amp;recrs=e&amp;phase=1&amp;u_prot=Y&amp;u_sap=Y&amp;u_icf=Y</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># with this URL:</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># https://clinicaltrials.gov/search?cond=Neuroblastoma&amp;aggFilters=phase:2,docs:</span></span>
+<span><span class="co">#prot sap icf,studyType:int,status:com</span></span>
+<span><span class="co">#</span></span>
+<span><span class="co"># * Found search query from CTGOV2: cond=Neuroblastoma&amp;aggFilters=phase:2,docs:prot sap icf,studyType:int,status:com</span></span>
+<span><span class="co"># * Checking trials in CTGOV2, found 32 trials</span></span>
 <span><span class="co"># - Downloading in 1 batch(es) (max. 1000 trials each; estimate: 3.2 Mb total)</span></span>
-<span><span class="co"># - Converting to NDJSON...</span></span>
+<span><span class="co"># - Load and convert batch 1...</span></span>
 <span><span class="co"># - Importing records into database...</span></span>
 <span><span class="co"># JSON file #: 1 / 1                               </span></span>
 <span><span class="co"># * Checking for documents...</span></span>
 <span><span class="co"># - Getting links to documents</span></span>
 <span><span class="co"># - Downloading documents into 'documents.path' = ./files-ctgov/</span></span>
+<span><span class="co"># - Created directory ./files-ctgov</span></span>
 <span><span class="co"># - Applying 'documents.regexp' to 40 missing documents</span></span>
 <span><span class="co"># - Creating subfolder for each trial</span></span>
-<span><span class="co"># - Downloading 0 missing documents </span></span>
-<span><span class="co"># = Newly saved 0 document(s) for 32 trial(s); 40 of such document(s) for 32 </span></span>
-<span><span class="co"># trial(s) already existed in ./files-ctgov</span></span>
+<span><span class="co"># - Downloading 40 missing documents </span></span>
+<span><span class="co"># = Newly saved 40 document(s) for 32 trial(s); 0 of such document(s) for 0 trial(s) already existed in ./files-ctgov</span></span>
 <span><span class="co"># = Imported or updated 32 trial(s)</span></span>
 <span><span class="co"># Updated history ("meta-info" in "collection_name")</span></span>
 <span><span class="co"># $n</span></span>
@@ -708,18 +731,19 @@ Neuroblastoma trials
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># * Found search query from CTGOV2: cond=neuroblastoma&amp;aggFilters=phase:1,results:with</span></span>
-<span><span class="co"># * Checking trials in CTGOV, found 40 trials</span></span>
+<span><span class="co"># * Checking trials in CTGOV2, found 40 trials</span></span>
 <span><span class="co"># - Downloading in 1 batch(es) (max. 1000 trials each; estimate: 4 Mb total)</span></span>
-<span><span class="co"># - Converting to NDJSON...</span></span>
+<span><span class="co"># - Load and convert batch 1...</span></span>
 <span><span class="co"># - Importing records into database...</span></span>
 <span><span class="co"># JSON file #: 1 / 1                               </span></span>
 <span><span class="co"># * Checking for documents...</span></span>
 <span><span class="co"># - Getting links to documents</span></span>
 <span><span class="co"># - Downloading documents into 'documents.path' = ./files-ctgov2/</span></span>
+<span><span class="co"># - Created directory ./files-ctgov2</span></span>
 <span><span class="co"># - Applying 'documents.regexp' to 43 missing documents</span></span>
 <span><span class="co"># - Creating subfolder for each trial</span></span>
-<span><span class="co"># - Downloading 0 missing documents </span></span>
-<span><span class="co"># = Newly saved 0 document(s) for 27 trial(s); 43 of such document(s) for 27 </span></span>
+<span><span class="co"># - Downloading 43 missing documents </span></span>
+<span><span class="co"># = Newly saved 43 document(s) for 27 trial(s); 0 of such document(s) for 0 </span></span>
 <span><span class="co"># trial(s) already existed in ./files-ctgov2</span></span>
 <span><span class="co"># = Imported or updated 40 trial(s)</span></span>
 <span><span class="co"># Updated history ("meta-info" in "collection_name")</span></span>
@@ -734,22 +758,23 @@ Neuroblastoma trials
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># * Found search query from ISRCTN: q=alzheimer</span></span>
-<span><span class="co"># * Checking trials in ISRCTN, found 334 trials </span></span>
+<span><span class="co"># * Checking trials in ISRCTN, found 335 trials </span></span>
 <span><span class="co"># - Downloading trial file (estimate: 6 MB)</span></span>
 <span><span class="co"># - Converting to NDJSON (estimate: 2 s)...</span></span>
 <span><span class="co"># - Importing records into database...</span></span>
 <span><span class="co"># * Checking for documents...                      </span></span>
 <span><span class="co"># - Getting links to documents from data . correct with web pages . . . . . . . . </span></span>
 <span><span class="co"># - Downloading documents into 'documents.path' = ./files-isrctn/</span></span>
+<span><span class="co"># - Created directory ./files-isrctn</span></span>
 <span><span class="co"># - Applying 'documents.regexp' to 54 missing documents</span></span>
 <span><span class="co"># - Creating subfolder for each trial</span></span>
-<span><span class="co"># - Downloading 0 missing documents </span></span>
-<span><span class="co"># = Newly saved 0 document(s) for 16 trial(s); 34 of such document(s) for 16 </span></span>
+<span><span class="co"># - Downloading 34 missing documents </span></span>
+<span><span class="co"># = Newly saved 34 document(s) for 16 trial(s); 0 of such document(s) for 0 </span></span>
 <span><span class="co"># trial(s) already existed in ./files-isrctn</span></span>
-<span><span class="co"># = Imported or updated 334 trial(s)</span></span>
+<span><span class="co"># = Imported or updated 335 trial(s)</span></span>
 <span><span class="co"># Updated history ("meta-info" in "collection_name")</span></span>
 <span><span class="co"># $n</span></span>
-<span><span class="co"># [1] 344</span></span>
+<span><span class="co"># [1] 335</span></span>
 <span></span>
 <span></span>
 <span><span class="co">### CTIS files are downloaded, using a specific documents.regexp</span></span>
@@ -762,25 +787,25 @@ Neuroblastoma trials
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># * Found search query from CTIS: searchCriteria={"containAny":"cancer","status":[8]}</span></span>
-<span><span class="co"># * Checking trials in CTIS, found 231 trials </span></span>
-<span><span class="co"># - Downloading and processing trial data... (estimate: 30 Mb)</span></span>
-<span><span class="co"># - Importing records into database...</span></span>
+<span><span class="co"># * Checking trials in CTIS, found 254 trials </span></span>
+<span><span class="co"># - Downloading and processing trial data... (estimate: 30 Mb)        </span></span>
+<span><span class="co"># - Importing records into database...                                    </span></span>
 <span><span class="co"># - Updating with additional data: .               </span></span>
-<span><span class="co"># * Checking for documents: . . .  </span></span>
+<span><span class="co"># * Checking for documents . . .  </span></span>
 <span><span class="co"># - Downloading documents into 'documents.path' = ./files-ctis/</span></span>
-<span><span class="co"># - Applying 'documents.regexp' to 2894 missing documents</span></span>
+<span><span class="co"># - Created directory ./files-ctis</span></span>
+<span><span class="co"># - Applying 'documents.regexp' to 3323 missing documents</span></span>
 <span><span class="co"># - Creating subfolder for each trial</span></span>
-<span><span class="co"># - Downloading 0 missing documents (excluding 4 documents with duplicate names, </span></span>
-<span><span class="co"># e.g. ./files-ctis/2024-512227-36-00/SbjctInfaICF - L1 SIS and ICF Part 2C2D </span></span>
-<span><span class="co"># Dutch Redacted - 180599.PDF, ./files-ctis/2022-500694-14-00/SbjctInfaICF - </span></span>
-<span><span class="co"># L1 SIS and ICF Prescreening ICF clean placeholder - 137297.PDF, ./files-ctis</span></span>
-<span><span class="co"># /2022-500694-14-00/SbjctInfaICF - L1 SIS and ICF Pregnant Partner ICF clean - 137297.PDF) </span></span>
-<span><span class="co"># = Newly saved 0 document(s) for 67 trial(s); 741 of such document(s) for 67 </span></span>
-<span><span class="co"># trial(s) already existed in ./files-ctis</span></span>
-<span><span class="co"># = Imported 231, updated 231 record(s) on 231 trial(s)</span></span>
+<span><span class="co"># - Downloading 775 missing documents (excluding 4 documents with duplicate </span></span>
+<span><span class="co"># names, e.g. ./files-ctis/2024-512477-27-00/SbjctInfaICF - L1 SIS and ICF </span></span>
+<span><span class="co"># Main ICF German Redacted - 145056.PDF) </span></span>
+<span><span class="co"># - Resolving CDN and redirecting...                                      </span></span>
+<span><span class="co"># = Newly saved 771 document(s) for 73 trial(s); 0 of such document(s) for </span></span>
+<span><span class="co"># 0 trial(s) already existed in ./files-ctis</span></span>
+<span><span class="co"># = Imported 254, updated 254 record(s) on 254 trial(s)</span></span>
 <span><span class="co"># Updated history ("meta-info" in "collection_name")</span></span>
 <span><span class="co"># $n</span></span>
-<span><span class="co"># [1] 231</span></span></code></pre></div>
+<span><span class="co"># [1] 254</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="tests-and-coverage">Tests and coverage<a class="anchor" aria-label="anchor" href="#tests-and-coverage"></a>

@@ -14,10 +14,10 @@
 
 ## Submission reason
 
-- Refactored functions for speed
-- Replaced `curl` with `httr2` calls
-- Reduced dependencies
-- Bug fixes
+- improve four trial concepts functions
+- bug fix for CTGOV2 search URLs
+- removed long deprecated parameters
+- increased testing coverage
 
 
 ## Reverse dependency checks

@@ -41,6 +41,7 @@ MongoDB
 NCT
 NHST
 NL
+NR
 NestedResults
 Neuroblastoma
 ORCID
@@ -62,6 +63,7 @@ WP
 activesubstance
 analyzing
 armsInterventionsModule
+assignmentType
 associatedClinicalTrials
 backends
 chisquared
@@ -115,6 +117,7 @@ euctrresultsfilespath
 euctrresultshistory
 eudraCTNumber
 exactonesidedbinomialtest
+externalLinks
 externalRefs
 faciliates
 fields’
@@ -123,6 +126,7 @@ firstreceived
 fisherexact
 github
 gov
+hasResults
 hiearchy
 htmlwidgets
 httr

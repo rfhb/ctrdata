@@ -302,12 +302,13 @@ knitr::opts_chunk$set(
 #   getNamespace("ctrdata"),
 #   all.names = TRUE,
 #   pattern = "^f[.][a-z]"))
-# #  [1] "f.assignmentType"             "f.controlType"                "f.isMedIntervTrial"
-# #  [4] "f.isUniqueTrial"              "f.likelyPlatformTrial"        "f.numSites"
-# #  [7] "f.numTestArmsSubstances"      "f.primaryEndpointDescription" "f.primaryEndpointResults"
-# # [10] "f.resultsDate"                "f.sampleSize"                 "f.sponsorType"
-# # [13] "f.startDate"                  "f.statusRecruitment"          "f.trialObjectives"
-# # [16] "f.trialPhase"                 "f.trialPopulation"            "f.trialTitle"
+# #  [1] "f.assignmentType"             "f.controlType"                "f.externalLinks"
+# #  [4] "f.hasResults"                 "f.isMedIntervTrial"           "f.isUniqueTrial"
+# #  [7] "f.likelyPlatformTrial"        "f.numSites"                   "f.numTestArmsSubstances"
+# # [10] "f.primaryEndpointDescription" "f.primaryEndpointResults"     "f.resultsDate"
+# # [13] "f.sampleSize"                 "f.sponsorType"                "f.startDate"
+# # [16] "f.statusRecruitment"          "f.trialObjectives"            "f.trialPhase"
+# # [19] "f.trialPopulation"            "f.trialTitle"
 
 ## ----results='asis'-----------------------------------------------------------
 # '

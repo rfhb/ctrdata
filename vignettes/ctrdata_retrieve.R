@@ -42,7 +42,7 @@ knitr::opts_chunk$set(eval = FALSE)
 # )$n
 # # * Found search query from EUCTR: query=cancer&age=under-18&resultsstatus=trials-with-results
 # # * Checking trials in EUCTR, found 390 trials
-# # [1] 390
+# # [1] 392
 # 
 # # Connect to a database and chose a collection (table)
 # db <- nodbi::src_sqlite(
@@ -56,23 +56,42 @@ knitr::opts_chunk$set(eval = FALSE)
 #   con = db
 # )
 # # * Found search query from EUCTR: query=cancer&age=under-18&resultsstatus=trials-with-results
-# # * Checking trials in EUCTR, found 390 trials
+# # * Checking trials in EUCTR, found 392 trials
 # # - Downloading in 20 batch(es) (20 trials each; estimate: 50 MB)
-# # - Downloading 1541 records of 390 trials (estimate: 90 s)
-# # - Converting to NDJSON (estimate: 3 s) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+# # - Downloading 1544 records of 392 trials (estimate: 90 s)
+# # - Converting to NDJSON (estimate: 3 s) . . . . . . . . . . . . . . . . . . .
+# #   . . . . . . . . . . . .
 # # - Importing records into database...
-# # = Imported or updated 1541 records on 390 trial(s)
+# # = Imported or updated 1544 records on 392 trial(s)
 # # No history found in expected format.
 # # Updated history ("meta-info" in "test")
 # # $n
-# # [1] 1541
+# # [1] 1544
 # 
 # # Show which queries have been downloaded into database
 # dbQueryHistory(con = db)
 # #       query-timestamp query-register query-records
-# # 1 2025-07-02 20:27:25          EUCTR          1541
+# # 1 2025-07-20 10:27:25          EUCTR          1544
 # #                                                    query-term
 # # 1 query=cancer&age=under-18&resultsstatus=trials-with-results
+
+## -----------------------------------------------------------------------------
+# # Retrieve records, load into database
+# ctrLoadQueryIntoDb(
+#   queryterm = q,
+#   euctrprotocolsall = FALSE,
+#   con = db
+# )
+# # * Found search query from EUCTR: query=cancer&age=under-18&resultsstatus=trials-with-results
+# # * Checking trials in EUCTR, found 392 trials
+# # - Downloading in 20 batch(es) (20 trials each; estimate: 50 MB)
+# # - Downloading 392 records of 392 trials (estimate: 20 s)
+# # - Converting to NDJSON (estimate: 0.8 s) . . . . . . . .
+# # - Importing records into database...
+# # = Imported or updated 392 records on 392 trial(s)
+# # Updated history ("meta-info" in "test")
+# # $n
+# # [1] 392
 
 ## -----------------------------------------------------------------------------
 # # Show all queries
