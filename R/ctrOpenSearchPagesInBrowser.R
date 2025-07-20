@@ -146,13 +146,24 @@ ctrOpenSearchPagesInBrowser <- function(
       )
     } else {
 
-      # - open search
-      #   adjust to use expert search for CTGOV2
-      if (grepl(
-        "^term=\\(.+\\)$|\\[|\\]|AREA\\[|RANGE\\[|SEARCH\\[|EXPANSION\\[|COVERAGE\\[",
-        url, ignore.case = FALSE) &&
-        (register == "CTGOV2")) register <- "CTGOV2expert"
-      #
+      # adjust to use expert search for CTGOV2 if
+      # the url only contains the parameter term
+      # so as to be able to use Focus Your Search
+      # in the non-expert user interface of CTGOV2
+      if (
+        grepl(
+          # this identifies if essie syntax is used
+          "^term=\\(.+\\)$|\\[|\\]|AREA\\[|RANGE\\[|SEARCH\\[|EXPANSION\\[|COVERAGE\\[",
+          url) &&
+        !grepl(
+          # this tests for parameters other than term, see
+          # https://clinicaltrials.gov/data-api/api#extapi
+          "&(?!term)[a-z.FST]*=", url, perl = TRUE) &&
+        (register == "CTGOV2")) {
+        register <- "CTGOV2expert"
+      }
+
+      # - prepare final url
       url <- switch(
         register,
         "CTGOV" = ctgovClassicToCurrent(url),
@@ -164,7 +175,9 @@ ctrOpenSearchPagesInBrowser <- function(
       )
     }
 
+    # - open search
     ctrOpenUrl(url)
+
     return(url)
   }
 
