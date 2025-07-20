@@ -130,8 +130,9 @@ f.assignmentType <- function(df = NULL) {
     dplyr::mutate(
       out = dplyr::case_when(
         .data$ctrname != "ISRCTN" ~ NA_character_,
-        grepl("(^| )random", .data$trialDesign.studyDesign, ignore.case = TRUE)  ~ "R",
-        !grepl("(^| )random", .data$trialDesign.studyDesign, ignore.case = TRUE)  ~ "NR"
+        grepl("(^| )random", .data$trialDesign.studyDesign, ignore.case = TRUE) &
+          !grepl("no[nt][ -]*random", .data$trialDesign.studyDesign, ignore.case = TRUE) ~ "R",
+        TRUE ~ "NR"
       )
     ) %>%
     dplyr::pull("out") -> df$isrctn
