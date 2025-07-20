@@ -22,7 +22,7 @@ tf <- function() {
   expect_true(length(fcts) >= 20L)
 
   # test
-  expect_true(length(unique(unlist(fctFields))) >= 209L)
+  expect_true(length(unique(unlist(fctFields))) >= 210L)
 
   # get data
   if (!checkSqlite()) exit_file("Reason: no SQLite")
@@ -92,7 +92,7 @@ tf <- function() {
   # local test helper function
   ltf <- function(ifn, idf, con) do.call(ifn, list(idf))
 
-  # f = fcts[7]
+  # f = fcts[5]
   for (f in fcts) {
 
     # info
