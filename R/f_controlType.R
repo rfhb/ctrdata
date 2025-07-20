@@ -147,6 +147,8 @@ f.controlType <- function(df = NULL) {
           grepl("Active Comparator", .data$arm_group.arm_group_type) ~ "placebo+active",
         grepl("Placebo Comparator", .data$arm_group.arm_group_type) ~ "placebo",
         grepl("Active Comparator", .data$arm_group.arm_group_type) ~ "active",
+        grepl("Experimental", .data$arm_group.arm_group_type) ~ "active",
+        grepl("Other", .data$arm_group.arm_group_type) ~ "other",
         grepl("No Intervention", .data$arm_group.arm_group_type) ~ "no-treatment",
         !is.na(.data$arm_group.arm_group_type) ~ "none",
         .default = NA_character_
@@ -159,10 +161,13 @@ f.controlType <- function(df = NULL) {
   df %>%
     dplyr::mutate(
       out = dplyr::case_when(
+        # https://clinicaltrials.gov/data-api/about-api/study-data-structure#enum-ArmGroupType
         grepl("PLACEBO_COMPARATOR", .data$protocolSection.armsInterventionsModule.armGroups.type) &
           grepl("ACTIVE_COMPARATOR", .data$protocolSection.armsInterventionsModule.armGroups.type) ~ "placebo+active",
         grepl("PLACEBO_COMPARATOR", .data$protocolSection.armsInterventionsModule.armGroups.type) ~ "placebo",
         grepl("ACTIVE_COMPARATOR", .data$protocolSection.armsInterventionsModule.armGroups.type) ~ "active",
+        grepl("EXPERIMENTAL", .data$protocolSection.armsInterventionsModule.armGroups.type) ~ "active",
+        grepl("OTHER", .data$protocolSection.armsInterventionsModule.armGroups.type) ~ "other",
         grepl("NO_INTERVENTION", .data$protocolSection.armsInterventionsModule.armGroups.type) ~ "no-treatment",
         !is.na(.data$protocolSection.armsInterventionsModule.armGroups.type) ~ "none",
         .default = NA_character_
@@ -175,6 +180,7 @@ f.controlType <- function(df = NULL) {
   df %>%
     dplyr::mutate(
       out = dplyr::case_when(
+
         grepl("placebo.?control", .data$trialDesign.studyDesign, ignore.case = TRUE) &
           grepl("active.?control", .data$trialDesign.studyDesign, ignore.case = TRUE) ~ "placebo+active",
         grepl("placebo.?control", .data$trialDesign.studyDesign, ignore.case = TRUE) ~ "placebo",
@@ -191,14 +197,20 @@ f.controlType <- function(df = NULL) {
   df %>%
     dplyr::mutate(
       out = dplyr::case_when(
+        # CT05.01.08	Field: Medicinal product role in trial
+        # Lookup list: Test, Comparator, Auxiliary, Placebo
+        # Role of the medicinal product in the trial. Reference list 77.
         grepl("placebo", .data$authorizedPartI.productRoleGroupInfos.productRoleName, ignore.case = TRUE) &
           grepl("comparator", .data$authorizedPartI.productRoleGroupInfos.productRoleName, ignore.case = TRUE) ~ "placebo+active",
         grepl("placebo", .data$authorizedApplication.authorizedPartI.productRoleGroupInfos.productRoleName, ignore.case = TRUE) &
           grepl("comparator", .data$authorizedApplication.authorizedPartI.productRoleGroupInfos.productRoleName, ignore.case = TRUE) ~ "placebo+active",
         grepl("placebo", .data$authorizedPartI.productRoleGroupInfos.productRoleName, ignore.case = TRUE) ~ "placebo",
         grepl("placebo", .data$authorizedApplication.authorizedPartI.productRoleGroupInfos.productRoleName, ignore.case = TRUE) ~ "placebo",
+        grepl("test", .data$authorizedPartI.productRoleGroupInfos.productRoleName, ignore.case = TRUE) ~ "active",
+        grepl("test", .data$authorizedApplication.authorizedPartI.productRoleGroupInfos.productRoleName, ignore.case = TRUE) ~ "active",
         grepl("comparator", .data$authorizedPartI.productRoleGroupInfos.productRoleName, ignore.case = TRUE) ~ "active",
         grepl("comparator", .data$authorizedApplication.authorizedPartI.productRoleGroupInfos.productRoleName, ignore.case = TRUE) ~ "active",
+        # no other category available
         !is.na(.data$authorizedPartI.productRoleGroupInfos.productRoleName) ~ "none",
         !is.na(.data$authorizedApplication.authorizedPartI.productRoleGroupInfos.productRoleName) ~ "none",
         .default = NA_character_
