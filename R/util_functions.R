@@ -1710,7 +1710,7 @@ dfOrTibble <- function(df) {
 #'
 fctChkFlds <- function(df, flds) {
 
-  flds <- unlist(flds, use.names = FALSE)
+  flds <- unique(unlist(flds, use.names = FALSE))
 
   nms <- names(df)
 
