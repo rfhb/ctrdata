@@ -19,6 +19,7 @@ ctrLoadQueryIntoDbCtis <- function(
     register,
     euctrresults,
     euctrresultshistory,
+    euctrprotocolsall,
     ctgov2history,
     ctishistory,
     documents.path,
@@ -270,7 +271,7 @@ ctrLoadQueryIntoDbCtis <- function(
   if (!is.null(documents.path)) {
 
     # 1 - get ids of lists (which include urls to download)
-    message("* Checking for documents: ", appendLF = FALSE)
+    message("* Checking for documents ", appendLF = FALSE)
 
     # 2 - create data frame with info on documents (url, name, extension etc.)
 

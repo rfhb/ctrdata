@@ -19,6 +19,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     register,
     euctrresults,
     euctrresultshistory,
+    euctrprotocolsall,
     ctgov2history,
     ctishistory,
     documents.path,
@@ -219,7 +220,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
   # corresponds to count
   url <- sprintf(ctgovEndpoints[1], queryterm)
   if (verbose) message("API call: ", url)
-  message("* Checking trials in CTGOV...", appendLF = FALSE)
+  message("* Checking trials in CTGOV2...", appendLF = FALSE)
   #
   url <- utils::URLencode(url)
   counts <- try(httr2::req_perform(
@@ -292,6 +293,9 @@ ctrLoadQueryIntoDbCtgov2 <- function(
   # download and compile into ndjson
   while (TRUE) {
 
+    # user info
+    message("- Load and convert batch ", pageNumber, "...\r", appendLF = FALSE)
+
     # page url
     urlToDownload <- ifelse(
       pageNextToken != "",
@@ -321,7 +325,6 @@ ctrLoadQueryIntoDbCtgov2 <- function(
       "Download not successful for ", urlToDownload)
 
     # convert to ndjson
-    message("- Converting to NDJSON...\r", appendLF = FALSE)
     fTrialsNdjson <- file.path(tempDir, paste0("ctgov_trials_", pageNumber, ".ndjson"))
     jqr::jq(
       file(fTrialJson),

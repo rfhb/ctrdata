@@ -11,6 +11,7 @@ ctrLoadQueryIntoDb(
   forcetoupdate = FALSE,
   euctrresults = FALSE,
   euctrresultshistory = FALSE,
+  euctrprotocolsall = TRUE,
   ctgov2history = FALSE,
   ctishistory = FALSE,
   documents.path = NULL,
@@ -28,9 +29,8 @@ query in a register, or the data frame returned by
 \link{ctrGetQueryUrl} or \link{dbQueryHistory},
 or an `_id` in the format of one of the trial registers,
 or, together with \code{register}, a string with query
-elements of a search URL.
-The query details are recorded in the \code{collection} for
-later use to update records.
+elements of a search URL. The query details are recorded in the
+\code{collection} for later use, e.g. to update records.
 For "CTIS", \code{queryterm} can be an empty string to obtain
 all trial records. For automatically copying the user's
 query of a register in a web browser to the clipboard, see
@@ -54,15 +54,20 @@ the query is run again if more time has passed since it was run last.}
 given in \code{querytoupdate}, irrespective of when it was
 run last. Default is \code{FALSE}.}
 
-\item{euctrresults}{If \code{TRUE}, also download available
+\item{euctrresults}{If \code{TRUE}, also load available
 results when retrieving and loading trials from EUCTR. This
 slows down this function. (For "CTGOV2" and "CTIS",
 available results are always retrieved and loaded into the
 collection.)}
 
-\item{euctrresultshistory}{If \code{TRUE}, download results and also
+\item{euctrresultshistory}{If \code{TRUE}, load results and also
 the available history of results publication in "EUCTR."
 This somewhat time-consuming. Default is \code{FALSE}.}
+
+\item{euctrprotocolsall}{If \code{TRUE}, load all available records of
+protocol-related data (that is, versions from all EU Member States and any
+third country where the trial is conducted); if \code{FALSE}, only a single
+record per trial is loaded, to accelerate loading. Default is \code{TRUE}}
 
 \item{ctgov2history}{For trials from CTGOV2, retrieve historic
 versions of the record. Default is \code{FALSE}, because this

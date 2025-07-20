@@ -21,6 +21,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
     register,
     euctrresults,
     euctrresultshistory,
+    euctrprotocolsall,
     ctgov2history,
     ctishistory,
     documents.path,

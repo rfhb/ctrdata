@@ -17,6 +17,8 @@ countriesActive <- c(
   "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL",
   "PL", "PT", "RO", "SK", "SE", "SI", "ES",       "IS", "LI",
   "NO", "3RD")
+countriesPreferred <- c(
+  "BE", "ES", "DE", "FR", "IT", "NL", "DK", "AT", "PL", "PT")
 #
 # regexpr
 # - queryterm and urls
