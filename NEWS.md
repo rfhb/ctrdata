@@ -1,3 +1,7 @@
+# ctrdata 1.24.0.9000
+
+- New development version
+
 # ctrdata 1.24.0
 
 - Added parameter `euctrprotocolsall` for loading from EUCTR; if `FALSE`, this speeds up loading as only a single and no all records of a trial are loaded
