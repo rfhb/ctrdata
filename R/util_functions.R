@@ -432,8 +432,8 @@ ctgovClassicToCurrent <- function(url, verbose = TRUE) {
     if (countryCode != apiParams) apiParams <-
         sub("([?&]country=)([A-Z]+)([$&])",
             paste0("\\1", countryTable[which(
-              countryCode == countryTable[, 3]
-            ), 2, drop = TRUE][1], "\\3"),
+              countryCode == countryTable[, "A2"]
+            ), "ISO3166name", drop = TRUE][1], "\\3"),
             apiParams)
   }
 

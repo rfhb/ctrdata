@@ -1,6 +1,6 @@
 # ctrdata 1.24.0.9000
 
-- New development version
+- Bug fix for `ctrGenerateQueries()` (country reference list, parameter chaining)
 
 # ctrdata 1.24.0
 

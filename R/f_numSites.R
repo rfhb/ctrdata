@@ -92,7 +92,7 @@ f.numSites <- function(df = NULL) {
 
 
   #### . EUCTR ####
-  nonEEA <- countryTable[countryTable$V3 %in% countriesActive, ][["V2"]]
+  nonEEA <- countryTable[countryTable[["A2"]] %in% countriesActive, ][["ISO3166name"]]
   df %>%
     dplyr::mutate(
       helper_nonEEA = stringi::stri_split_regex(

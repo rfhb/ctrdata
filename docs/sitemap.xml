@@ -1,14 +1,18 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://rfhb.github.io/ctrdata/404.html</loc></url>
-<url><loc>https://rfhb.github.io/ctrdata/LICENSE-text.html</loc></url>
-<url><loc>https://rfhb.github.io/ctrdata/LICENSE.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/articles/ctrdata_install.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/articles/ctrdata_retrieve.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/articles/index.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/authors.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/index.html</loc></url>
+<url><loc>https://rfhb.github.io/ctrdata/LICENSE-text.html</loc></url>
+<url><loc>https://rfhb.github.io/ctrdata/LICENSE.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/news/index.html</loc></url>
+<url><loc>https://rfhb.github.io/ctrdata/reference/ctrdata-package.html</loc></url>
+<url><loc>https://rfhb.github.io/ctrdata/reference/ctrdata-registers.html</loc></url>
+<url><loc>https://rfhb.github.io/ctrdata/reference/ctrdata-trial-concepts.html</loc></url>
+<url><loc>https://rfhb.github.io/ctrdata/reference/ctrdata.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/ctrDb.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/ctrFindActiveSubstanceSynonyms.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/ctrGenerateQueries.html</loc></url>
@@ -16,10 +20,6 @@
 <url><loc>https://rfhb.github.io/ctrdata/reference/ctrLoadQueryIntoDb.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/ctrOpenSearchPagesInBrowser.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/ctrShowOneTrial.html</loc></url>
-<url><loc>https://rfhb.github.io/ctrdata/reference/ctrdata-package.html</loc></url>
-<url><loc>https://rfhb.github.io/ctrdata/reference/ctrdata-registers.html</loc></url>
-<url><loc>https://rfhb.github.io/ctrdata/reference/ctrdata-trial-concepts.html</loc></url>
-<url><loc>https://rfhb.github.io/ctrdata/reference/ctrdata.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/dbFindFields.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/dbFindIdsUniqueTrials.html</loc></url>
 <url><loc>https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.html</loc></url>

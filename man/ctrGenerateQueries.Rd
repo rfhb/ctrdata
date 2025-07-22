@@ -33,7 +33,8 @@ operators (general or title fields), should not include quotation marks}
 category, not the union set of "phase 2" and "phase 3")}
 
 \item{population}{String, e.g. "P" (paediatric), "A" (adult), "P+A"
-(adult and paediatric), "E" (elderly), "P+A+E" participants can be recruited}
+(adult and paediatric), "E" (elderly), "P+A+E" participants can be recruited.
+For ISRCTN, works only for "P", "A" or "E" but \emph{not mixed} populations.}
 
 \item{recruitment}{String, one of "ongoing", "completed", "other" (
 which includes "ended early" but this cannot be searched; use trial concept
