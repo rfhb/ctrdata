@@ -171,7 +171,7 @@ dfName2Value <- function(df, valuename = "",
   # value column is character
   # try to convert it to numeric
   val <- suppressWarnings(
-    as.numeric(out[["value"]])
+    as.numeric(gsub(",", "", out[["value"]]))
   )
   # use if converted ok
   if (all(is.na(val) == is.na(out[["value"]]))) {

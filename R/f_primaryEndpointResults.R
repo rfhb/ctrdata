@@ -154,7 +154,7 @@ f.primaryEndpointResults <- function(df = NULL) {
               y <- grepl("subjectAnalysisSetReportingGroups.+subjects[0-9]*", names(x))
             }
             if (!length(y) || !any(y)) return(NA_integer_)
-            return(sum(as.numeric(x[y])))
+            return(sum(as.numeric(gsub(",", "", x[y]))))
           } else return(NA_integer_)
         },
         x = .data$endPoints.endPoint,
@@ -194,7 +194,7 @@ f.primaryEndpointResults <- function(df = NULL) {
             x <- unlist(x)
             y <- grepl("measure.analyzed_list.analyzed.count_list.count.@attributes.value[0-9]*", names(x))
             if (!length(y) || !any(y)) return(NA_integer_)
-            return(sum(as.numeric(x[y])))
+            return(sum(as.numeric(gsub(",", "", x[y]))))
           } else return(NA_integer_)
         },
         x = .data$clinical_results.outcome_list.outcome,
@@ -234,7 +234,7 @@ f.primaryEndpointResults <- function(df = NULL) {
             x <- unlist(x)
             y <- grepl("denoms.counts.value[0-9]*", names(x))
             if (!length(y) || !any(y)) return(NA_integer_)
-            return(sum(as.numeric(x[y])))
+            return(sum(as.numeric(gsub(",", "", x[y]))))
           } else return(NA_integer_)
         },
         x = .data$resultsSection.outcomeMeasuresModule.outcomeMeasures,

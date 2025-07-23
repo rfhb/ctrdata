@@ -737,7 +737,7 @@ typeField <- function(dv, fn) {
 
     # - check if conversion to numeric works
     if ((typeof(dv) == "character") && any(!is.na(dv))) {
-      dvn <- suppressWarnings(as.numeric(dv))
+      dvn <- suppressWarnings(as.numeric(gsub(",", "", dv)))
       if (identical(is.na(dv), is.na(dvn))) return(dvn)
     }
 
