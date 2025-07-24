@@ -7,28 +7,28 @@
 \description{
 Registers of the four clinical trial registers from which package
 \link{ctrdata} can retrieve, aggregate and analyse protocol- and
-result-related information as well as documents, last updated 2025-05-31.
+result-related information as well as documents, last updated 2025-07-24.
 }
 \section{1 - Overview}{
 
 \itemize{
 \item \strong{EUCTR}: The EU Clinical Trials Register holds more than 44,300 clinical
 trials (at least one investigational medicinal product, IMP; in the European
-Union and beyond), including more than 25,100 trials with results, which
+Union and beyond), including more than 25,300 trials with results, which
 continue to be added (and can be loaded by \code{ctrdata}).
 \item \strong{CTIS}: The EU Clinical Trials Information System, launched in 2023,
-holds more than 9,200 publicly accessible clinical trials, including
-around 180 with results or a report (only as PDF files).
+holds more than 9,600 publicly accessible clinical trials, including
+around 230 with results or a report (only as PDF files).
 \emph{No results in a structured electronic format are foreseeably available},
 thus \code{ctrdata} cannot load any CTIS results.
 (To automatically get CTIS search query URLs, see
 \ifelse{latex}{\out{\href{https://rfhb.github.io/ctrdata/\#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}})
-\item \strong{CTGOV2}: ClinicalTrials.gov holds about 540,000 interventional and
-observational studies, including almost 71,000 interventional studies with
+\item \strong{CTGOV2}: ClinicalTrials.gov holds about 546,000 interventional and
+observational studies, including almost 68,000 interventional studies with
 results (can be loaded by \code{ctrdata}).
-\item \strong{ISRCTN}: The ISRCTN Registry holds more than 26,400 interventional and
-observational health studies, including almost 14,400 studies with
-results (only as references).
+\item \strong{ISRCTN}: The ISRCTN Registry holds more than 26,600 interventional and
+observational health studies, including almost 14,500 studies with
+results (as references).
 \emph{No results in a structured electronic format are foreseeably available},
 thus \code{ctrdata} cannot load any ISRCTN results.
 }

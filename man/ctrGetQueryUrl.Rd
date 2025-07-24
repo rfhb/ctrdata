@@ -32,6 +32,15 @@ The data frame (or tibble) can be passed as such as parameter
 Extracts query parameters and register name from parameter `url` or
 from the clipboard, into which the URL of a register search was copied.
 }
+\details{
+To obtain the search query from CTIS, consider installing the
+\href{https://www.tampermonkey.net/}{Tampermonkey browser extension},
+click on the extension icon, "Create a new script", "Utility" and then
+"Import from this URL":
+`https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js`
+This will copy query URLs from all registers into the clipboard; see
+\link{ctrOpenSearchPagesInBrowser} for additional uses.
+}
 \examples{
 
 # user copied into the clipboard the URL from

@@ -81,6 +81,12 @@ urls <- ctrGenerateQueries(
 # open queries in register web interface
 sapply(urls, ctrOpenSearchPagesInBrowser)
 
+# For CTIS to accept such a search URL and show results, consider installing
+# the Tampermonkey browser extension from https://www.tampermonkey.net/,
+# click on the extension icon, "Create a new script", "Utility" and then
+# "Import from this URL":
+# https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js
+
 urls <- ctrGenerateQueries(
   searchPhrase = "antibody AND covid",
   recruitment = "completed",

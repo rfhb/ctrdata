@@ -24,17 +24,18 @@ ctrLoadQueryIntoDb(
 )
 }
 \arguments{
-\item{queryterm}{Either a string with the full URL of a search
-query in a register, or the data frame returned by
+\item{queryterm}{Either a single string with the full URL of a search
+query in a register, e.g. one of the strings returned by
+\link{ctrGenerateQueries}, or a single-row data frame returned by
 \link{ctrGetQueryUrl} or \link{dbQueryHistory},
-or an `_id` in the format of one of the trial registers,
+or an `_id` in the format of one of the trial registers (e.g., "NCT..."),
 or, together with \code{register}, a string with query
 elements of a search URL. The query details are recorded in the
 \code{collection} for later use, e.g. to update records.
 For "CTIS", \code{queryterm} can be an empty string to obtain
 all trial records. For automatically copying the user's
-query of a register in a web browser to the clipboard, see
-\ifelse{latex}{\out{\href{https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}}}
+query of a register in a web browser to the clipboard, see the
+information on a browser extension script in \link{ctrGetQueryUrl}.}
 
 \item{register}{String with abbreviation of register to query,
 either "EUCTR", "CTGOV2", "ISRCTN" or "CTIS". Not needed
@@ -160,24 +161,25 @@ records while keeping any user annotations of trial records.
 \examples{
 \dontrun{
 
-dbc <- nodbi::src_sqlite(collection = "my_collection")
-
-# Retrieve protocol- and results-related information
-# on two specific trials identified by their EU number
-ctrLoadQueryIntoDb(
-  queryterm = "2005-001267-63+OR+2008-003606-33",
-  register = "EUCTR",
-  euctrresults = TRUE,
-  con = dbc
-)
-
 # Count ongoing interventional cancer trials involving children
 # Note this query is a classical CTGOV query and is translated
 # to a corresponding query for the current CTGOV2 webinterface
 ctrLoadQueryIntoDb(
   queryterm = "cond=cancer&recr=Open&type=Intr&age=0",
   register = "CTGOV",
-  only.count = TRUE,
+  only.count = TRUE
+)
+
+dbc <- nodbi::src_sqlite(collection = "my_collection")
+
+# Retrieve protocol- and results-related information
+# on two specific trials identified by their EU number,
+# including protocol versions from all Member States
+ctrLoadQueryIntoDb(
+  queryterm = "2005-001267-63+OR+2008-003606-33",
+  register = "EUCTR",
+  euctrresults = TRUE,
+  euctrprotocolsall = TRUE,
   con = dbc
 )
 

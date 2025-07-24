@@ -13,8 +13,8 @@
 #' (and, for "EUCTR", between records for different Member States).
 #' Such differences are not considered by this function.
 #'
-#' Note that the trial concept ".isUniqueTrial" (which uses this function)
-#' can be calculated at the time of creating a data frame with
+#' Note that the trial concept \link{f.isUniqueTrial} (which uses this
+#' function) can be calculated at the time of creating a data frame with
 #' \link{dbGetFieldsIntoDf}, which often may be the preferred approach.
 #'
 #' @param preferregister A vector of the order of preference for

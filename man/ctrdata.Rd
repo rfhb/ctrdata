@@ -43,7 +43,7 @@ see \link{ctrdata-registers} for details on registers and how to search,
 \link{ctrShowOneTrial} (show widget to explore structure, fields and data of a trial),
 \link{dbFindFields} (find names of fields of interest in trial records in a collection),
 \link{dbGetFieldsIntoDf} (create a data frame with fields of interest and calculated trial concepts from collection),
-\link{ctrdata-trial-concepts} (calculate pre-defined trial concepts for every register),
+\link{ctrdata-trial-concepts} (calculate pre-defined trial concepts across registers),
 \link{dbFindIdsUniqueTrials} (get de-duplicated identifiers of clinical trials' records to subset a data frame).
 }
 

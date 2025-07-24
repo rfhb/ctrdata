@@ -26,7 +26,12 @@ in conjunction with \code{register} if any, or invisibly
 \code{TRUE} if no \code{url} is specified.
 }
 \description{
-Open advanced search pages of register(s), or execute search in browser
+Open advanced search pages of register(s), or execute search in browser.
+For CTIS to accept a search URL and show results, consider installing the
+\href{https://www.tampermonkey.net/}{Tampermonkey browser extension},
+click on the extension icon, "Create a new script", "Utility" and then
+"Import from this URL":
+`https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js`
 }
 \examples{
 

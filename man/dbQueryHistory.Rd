@@ -2,7 +2,7 @@
 % Please edit documentation in R/dbQueryHistory.R
 \name{dbQueryHistory}
 \alias{dbQueryHistory}
-\title{Show history of queries loaded into a database collection}
+\title{Show history of queries loaded into collection}
 \usage{
 dbQueryHistory(con, verbose = FALSE)
 }
@@ -23,7 +23,7 @@ A data frame (or tibble, if \code{tibble} is loaded)
  \link{ctrLoadQueryIntoDb} loaded trial records into this collection.
 }
 \description{
-Show history of queries loaded into a database collection
+Show history of queries loaded into collection
 }
 \examples{
 

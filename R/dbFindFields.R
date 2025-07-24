@@ -2,13 +2,12 @@
 
 #' Find names of fields in the database collection
 #'
-#' Given part of the name of a field of interest to the user, this
+#' Given a part of the name of fields that are of interest to the user, this
 #' function returns the full field names used in records that were
-#' previously loaded into a collection
-#' (using \link{ctrLoadQueryIntoDb}). Only names of fields that have
-#' a value in the collection can be returned.
+#' previously loaded into a collection (using \link{ctrLoadQueryIntoDb}).
+#' Only names of fields that have a value in the collection can be returned.
 #' Set \code{sample = FALSE} to force screening all records in the
-#' collection for field names, see below.
+#' collection for field names, which can take long.
 #' See \link{ctrShowOneTrial} to interactively find fields.
 #'
 #' The full names of child fields are returned in dot notation (e.g.,
@@ -57,7 +56,7 @@
 #'
 #' dbFindFields(namepart = "date", con = dbc)[1:5]
 #'
-#' # view all 1880+ fields from all registers:
+#' # view names of all 3838 fields from all registers:
 #'
 #' allFields <- dbFindFields(con = dbc, sample = FALSE)
 #'

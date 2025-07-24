@@ -2,7 +2,12 @@
 
 #' Open register to show query results or search page
 #'
-#' Open advanced search pages of register(s), or execute search in browser
+#' Open advanced search pages of register(s), or execute search in browser.
+#' For CTIS to accept a search URL and show results, consider installing the
+#' \href{https://www.tampermonkey.net/}{Tampermonkey browser extension},
+#' click on the extension icon, "Create a new script", "Utility" and then
+#' "Import from this URL":
+#' `https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js`
 #'
 #' @param url of search results page to show in the browser. To open the
 #' browser with a previous search, the output of \link{ctrGetQueryUrl}

@@ -94,23 +94,41 @@ used for a vector of old values (optional).</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="st">"ctrname"</span>,</span></span>
 <span class="r-in"><span>    <span class="st">"protocolSection.eligibilityModule.healthyVolunteers"</span>,</span></span>
+<span class="r-in"><span>    <span class="st">"authorizedPartI.trialDetails.trialInformation.populationOfTrialSubjects.clinicalTrialGroups.name"</span>,</span></span>
+<span class="r-in"><span>    <span class="st">"authorizedApplication.authorizedPartI.trialDetails.trialInformation.populationOfTrialSubjects.clinicalTrialGroups.name"</span>,</span></span>
 <span class="r-in"><span>    <span class="st">"f31_healthy_volunteers"</span>,</span></span>
-<span class="r-in"><span>    <span class="st">"eligibility.healthy_volunteers"</span></span></span>
+<span class="r-in"><span>    <span class="st">"eligibility.healthy_volunteers"</span>,</span></span>
+<span class="r-in"><span>    <span class="st">"participants.participantType"</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span>,</span></span>
 <span class="r-in"><span>  con <span class="op">=</span> <span class="va">dbc</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying database (3 fields)...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying database (7 fields)...</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">df</span><span class="op">$</span><span class="va">ctis1healthy</span> <span class="op">&lt;-</span> <span class="st">"Healthy volunteers"</span> <span class="op">==</span></span></span>
+<span class="r-in"><span>  <span class="va">df</span><span class="op">$</span><span class="va">authorizedPartI.trialDetails.trialInformation.populationOfTrialSubjects.clinicalTrialGroups.name</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">df</span><span class="op">$</span><span class="va">ctis2healthy</span> <span class="op">&lt;-</span> <span class="st">"Healthy volunteers"</span> <span class="op">==</span></span></span>
+<span class="r-in"><span>  <span class="va">df</span><span class="op">$</span><span class="va">authorizedApplication.authorizedPartI.trialDetails.trialInformation.populationOfTrialSubjects.clinicalTrialGroups.name</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">df</span><span class="op">$</span><span class="va">isrctnhealthy</span> <span class="op">&lt;-</span> <span class="st">"Healthy volunteer"</span> <span class="op">==</span></span></span>
+<span class="r-in"><span>  <span class="va">df</span><span class="op">$</span><span class="va">participants.participantType</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">df</span><span class="op">$</span><span class="va">ctrname</span>,</span></span>
 <span class="r-in"><span>  <span class="fu">dfMergeVariablesRelevel</span><span class="op">(</span></span></span>
 <span class="r-in"><span>    df <span class="op">=</span> <span class="va">df</span>,</span></span>
 <span class="r-in"><span>    colnames <span class="op">=</span> <span class="st">'matches("healthy")'</span></span></span>
 <span class="r-in"><span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Columns identified to be merged: protocolSection.eligibilityModule.healthyVolunteers, f31_healthy_volunteers, eligibility.healthy_volunteers</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> FALSE </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    16 </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Columns identified to be merged: protocolSection.eligibilityModule.healthyVolunteers, f31_healthy_volunteers, eligibility.healthy_volunteers, ctis1healthy, ctis2healthy, isrctnhealthy</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   CTGOV      6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   CTGOV2     5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   CTIS       4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   EUCTR      5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ISRCTN     8</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

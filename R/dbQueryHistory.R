@@ -1,6 +1,6 @@
 ### ctrdata package
 
-#' Show history of queries loaded into a database collection
+#' Show history of queries loaded into collection
 #'
 #' @inheritParams ctrDb
 #'

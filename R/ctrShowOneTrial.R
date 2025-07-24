@@ -8,10 +8,8 @@
 #' \code{con} is provided or if the trial is not in database \code{con}.
 #' For use in a Shiny app, see output and render functions in source code
 #' \ifelse{latex}{\out{
-#' \href{https://github.com/rfhb/ctrdata/blob/master/R/ctrShowOneTrial.R\#L190}{here}}}{
-#' \href{https://github.com/rfhb/ctrdata/blob/master/R/ctrShowOneTrial.R#L190}{here}}.
-#'
-#'
+#' \href{https://github.com/rfhb/ctrdata/blob/master/R/ctrShowOneTrial.R\#L196}{here}}}{
+#' \href{https://github.com/rfhb/ctrdata/blob/master/R/ctrShowOneTrial.R#L196}{here}}.
 #'
 #' This is the widget for CTIS trial 2022-501142-30-00:
 #'
@@ -22,7 +20,7 @@
 #'   \out{\begin{center}}\figure{ctrdata_ctrShowOneTrial.jpg}\out{\end{center}}
 #' }
 #'
-#' @param identifier A trial identifier string
+#' @param identifier A trial identifier (`_id`) string, see examples
 #'
 #' @inheritParams ctrDb
 #'

@@ -70,6 +70,7 @@ chisquared
 cochranarmitagetrendtest
 codecov
 colums
+com
 controlType
 csv
 ctgov
@@ -81,6 +82,7 @@ ctrLoadQueryIntoDb
 ctrOpenSearchPagesInBrowser
 ctrQueryHistoryInDb
 ctrShowOneTrial
+ctrdataURLcopier
 cygw
 cygwin
 db
@@ -125,6 +127,7 @@ findCTRkey
 firstreceived
 fisherexact
 github
+githubusercontent
 gov
 hasResults
 hiearchy
@@ -186,6 +189,7 @@ regressioncox
 relevel
 reponse
 resultsDate
+rfhb
 rlang
 rmongodb
 rss

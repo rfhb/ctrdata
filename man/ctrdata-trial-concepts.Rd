@@ -27,7 +27,7 @@ to ask about or improve a trial concept.
 The following trial concepts can be used by referencing their name when
 calling \link{dbGetFieldsIntoDf} (parameter \code{calculate}).
 Concepts will continue to be refined and added;
-last updated 2025-07-18.
+last updated 2025-07-24.
 \itemize{
 \item \link{f.assignmentType} (factor) was the assignment to treatment based on
 randomisation or not? ("R" or "NR")
@@ -43,22 +43,23 @@ it have one or more medicines (drugs or biological) as investigational
 (experimental) intervention? (irrespective of status of authorisation and
 of study design)
 \item \link{f.isUniqueTrial} (logical) is the trial record unique in the data
-frame of trial, based on default parameters of \link{dbFindIdsUniqueTrials}?
+frame of trial records, based on default parameters of
+\link{dbFindIdsUniqueTrials}?
 \item \link{f.likelyPlatformTrial} (logical, list of likely related trials, and
 list of maybe related trials) is the trial possibly a (research)
 platform trial, and what are related trials? (based on trial title,
-f.numTestArmsSubstances, number of periods; identifiers of related trials;
+\code{f.numTestArmsSubstances}, number of periods; identifiers of related trials;
 similarity of terms in parts of trial titles)
 \item \link{f.numSites} (integer) how many sites does the trial have?
-\item \link{f.numTestArmsSubstances} (integer) how many arms or groups have
-medicines that are investigational? (cannot be calculated for ISRCTN or
-for phase 1 trials)
+\item \link{f.numTestArmsSubstances} (integer) how many arms or groups in the
+trial have medicines that are investigational? (cannot be calculated for
+ISRCTN or for phase 1 trials)
 \item \link{f.primaryEndpointDescription} (list of character) string containing
 protocol definition, details and time frames, concatenated with " == "
 \item \link{f.primaryEndpointResults} (columns of number, character, integer,
 logical) returning the statistical testing p value and method as well as the
-number of subjects included in the test and if the record includes results,
-each in one new column, for the first primary endpoint only
+number of subjects included in the test, each in one new column, for the
+first primary endpoint only
 \item \link{f.resultsDate} (date) the planned or achieved date of results availability
 \item \link{f.startDate} (date) the planned, authorised or documented date
 of start of recruitment
@@ -71,10 +72,10 @@ is simplified to "not for profit", "for profit", "mixed" or "other"
 terminated or ended prematurely) and "other" (includes planned, stopped,
 withdrawn)
 \item \link{f.trialObjectives} (string) identifies with letters those objectives
-that could be identified by text fragments, e.g. "E S PD D", with "E"
+that could be identified in text fragments, e.g. "E S PD D", with "E"
 (efficacy), "S" (safety), "D" (dose-finding)
 \item \link{f.trialPhase} (ordered factor) the phase(s) of medicine development
-with which a trial is associated
+with which a trial is associated ("phase 1", "phase 1+2" etc.)
 \item \link{f.trialPopulation} (columns of factor, string and string) age groups
 (e.g., "P" for paediatric participants, "A" for adults, "E" for older than
 65 years, or "P+A"), inclusion and exclusion criteria texts

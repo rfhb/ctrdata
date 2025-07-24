@@ -7,7 +7,7 @@
 ctrShowOneTrial(identifier = NULL, con = NULL)
 }
 \arguments{
-\item{identifier}{A trial identifier string}
+\item{identifier}{A trial identifier (`_id`) string, see examples}
 
 \item{con}{A database connection object, created with
 \code{nodbi}. See section `1 - Database connection` in
@@ -25,8 +25,8 @@ The trial is retrieved with \link{ctrLoadQueryIntoDb} if no database
 \code{con} is provided or if the trial is not in database \code{con}.
 For use in a Shiny app, see output and render functions in source code
 \ifelse{latex}{\out{
-\href{https://github.com/rfhb/ctrdata/blob/master/R/ctrShowOneTrial.R\#L190}{here}}}{
-\href{https://github.com/rfhb/ctrdata/blob/master/R/ctrShowOneTrial.R#L190}{here}}.
+\href{https://github.com/rfhb/ctrdata/blob/master/R/ctrShowOneTrial.R\#L196}{here}}}{
+\href{https://github.com/rfhb/ctrdata/blob/master/R/ctrShowOneTrial.R#L196}{here}}.
 }
 \details{
 This is the widget for CTIS trial 2022-501142-30-00:
