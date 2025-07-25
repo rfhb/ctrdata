@@ -1,7 +1,8 @@
-# ctrdata 1.24.0.9000
+# ctrdata 1.24.1
 
 - Bug fix for `ctrGenerateQueries()` (country reference list, parameter chaining)
 - Handle conversion of numbers with thousands separator
+- Fixed documentation gaps
 
 # ctrdata 1.24.0
 

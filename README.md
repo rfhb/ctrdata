@@ -11,12 +11,13 @@ status](https://www.r-pkg.org/badges/version-last-release/ctrdata)](https://cran
 
 [Main features](#main-features) • [References](#references) •
 [Installation](#installation) •
-[Overview](#overview-of-functions-in-ctrdata) •
-[Databases](#databases-for-use-with-ctrdata) • [Data
-model](#data-model-of-ctrdata) • [Example workflow](#example-workflow) •
-[Analysis across registers](#workflow-across-registers-example) •
-[Tests, coverage](#tests-and-coverage) •
-[Acknowledgements](#acknowledgements) • [Future](#future-features)
+[Overview](#overview-of-functions-in-ctrdata) • [Data
+model](#data-model-of-ctrdata) •
+[Databases](#databases-for-use-with-ctrdata) • [Example
+workflow](#example-workflow) • [Analysis across
+registers](#workflow-across-registers-example) • [Tests,
+coverage](#tests-and-coverage) • [Acknowledgements](#acknowledgements) •
+[Future](#future-features)
 
 # ctrdata for aggregating and analysing clinical trials
 
@@ -37,14 +38,15 @@ interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
 `ctrdata` is a package for the [R](https://www.r-project.org/) system,
 but other systems and tools can use the databases created with this
-package. This README was reviewed on 2025-07-20 for version 1.23.0.9000.
+package. This README was reviewed on 2025-07-24 for version 1.23.0.9000.
 
 ## Main features
 
-- Protocol- and results-related trial information is easily downloaded:
-  Users define a query in a register’s web interface, then copy the URL
-  and enter it into `ctrdata` which retrieves in one go all trials
-  found. A
+- Trial information is easily found and downloaded: Users generate
+  queries with `ctrdata` for all registers or define a query in a
+  register’s web interface, then copy the URL and enter it into
+  `ctrdata` which retrieves in one go all protocol- and results-related
+  trials data. A
   [script](#2-script-to-automatically-copy-users-query-from-web-browser)
   can automate copying the query URL from all registers. Personal
   annotations can be made when downloading trials. Also, [trial
@@ -52,32 +54,28 @@ package. This README was reviewed on 2025-07-20 for version 1.23.0.9000.
   versions](https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html#historic-versions-of-trial-records-and-changes-in-sample-sizes)
   as available in registers on trials can be downloaded.
 
-- Downloaded trial information is transformed and stored in a collection
-  of a document-centric database, for fast and offline access.
-  Information from different registers can be accumulated in a single
-  collection. Uses `DuckDB`, `PostgreSQL`, `RSQLite` or `MongoDB`, via R
-  package `nodbi`: see section
-  [Databases](#databases-that-can-be-used-with-ctrdata) below.
-  Interactively browse through trial structure and data. Easily re-run
-  any previous query in a collection to retrieve and update trial
-  records.
+- Downloaded trial information is stored in a document-centric database,
+  for fast and offline access. Information from different registers can
+  be accumulated in a single collection. Uses `RSQLite`, `DuckDB`,
+  `PostgreSQL` or `MongoDB`, see
+  [Databases](#databases-that-can-be-used-with-ctrdata). Interactively
+  browse through trial structure and data. Easily re-run any previous
+  query in a collection to update trial records.
 
-- For analyses, convenience functions in `ctrdata` implement canonical
-  [trial
+- For analyses, `ctrdata` functions implement canonical [trial
   concepts](https://rfhb.github.io/ctrdata/reference/ctrdata-trial-concepts.html)
-  to simplify analyses across registers 🔔, allow find synonyms of an
-  active substance, identify unique (de-duplicated) trial records across
-  all registers, to merge and recode fields as well as to easily access
-  deeply-nested fields. Analysis can be done with `R` (see
+  to simplify analyses across registers, find synonyms of an active
+  substance, identify unique (de-duplicated) trial records across all
+  registers, merge and recode fields as well as easily access
+  deeply-nested fields. Analyses can be done with `R` (see
   [vignette](https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html))
-  or other systems, using the `JSON`-[structured information in the
-  database](#trial-records-in-databases).
+  and other systems, using the stored `JSON`-structured data.
 
-Remember to respect the registers’ terms and conditions (see
-`ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
-package in any publication as follows: “Ralf Herold (2025). *ctrdata:
-Retrieve and Analyze Clinical Trials in Public Registers.* R package
-version 1.23.0, <https://cran.r-project.org/package=ctrdata>”.
+Respect the registers’ terms and conditions, see
+`ctrOpenSearchPagesInBrowser(copyright = TRUE)`. Please cite the package
+in a publication as follows: “Ralf Herold (2025). *ctrdata: Retrieve and
+Analyze Clinical Trials in Public Registers.* R package version 1.23.0,
+<https://cran.r-project.org/package=ctrdata>”.
 
 <!--
 &#10;
@@ -186,48 +184,21 @@ conduct the search and show results.
 
 ## Overview of functions in `ctrdata`
 
-The functions are listed in the approximate order of use in a user’s
-workflow (in bold, main functions). See also the [package documentation
+Selected functions are listed in the approximate order of use in a
+user’s workflow (in bold, main functions). See all functions in the
+[package documentation
 overview](https://rfhb.github.io/ctrdata/reference/index.html).
 
 | Function name | Function purpose |
 |----|----|
+| `ctrGenerateQueries()` | From simple user parameters, generates queries for each register to find trials of interest |
 | `ctrOpenSearchPagesInBrowser()` | Open search pages of registers or execute search in web browser |
-| `ctrFindActiveSubstanceSynonyms()` | Find synonyms and alternative names for an active substance |
-| `ctrGenerateQueries()` | 🔔 **From simple user parameters, generates queries for each register to find trials of interest** |
-| `ctrGetQueryUrl()` | Import from clipboard the URL of a search in one of the registers |
-| `ctrLoadQueryIntoDb()` | **Retrieve (download) or update, and annotate, information on trials from a register and store in a collection in a database** |
-| `ctrShowOneTrial()` | 🔔 Show full structure and all data of a trial, interactively select fields of interest for `dbGetFieldsIntoDf()` |
-| `dbQueryHistory()` | Show the history of queries that were downloaded into the collection |
-| `dbFindIdsUniqueTrials()` | Get the identifiers of de-duplicated trials in the collection |
+| `ctrLoadQueryIntoDb()` | Retrieve (download) or update, and annotate, information on trials from a register and store in a collection in a database |
+| `ctrShowOneTrial()` | Show full structure and all data of a trial, interactively select fields of interest for `dbGetFieldsIntoDf()` |
 | `dbFindFields()` | Find names of variables (fields) in the collection |
-| `dbGetFieldsIntoDf()` | **Create a data frame (or tibble) from trial records in the database with the specified fields**, 🔔 see [trial concepts](https://rfhb.github.io/ctrdata/reference/ctrdata-trial-concepts.html) for calculating concepts across registers |
+| `dbGetFieldsIntoDf()` | Create a data frame (or tibble) from trial records in the database with specific fields and trial concepts of interest calculated across registered, see [trial concepts](https://rfhb.github.io/ctrdata/reference/ctrdata-trial-concepts.html) for 20 trial concepts available |
 | `dfTrials2Long()` | Transform the data.frame from `dbGetFieldsIntoDf()` into a long name-value data.frame, including deeply nested fields |
 | `dfName2Value()` | From a long name-value data.frame, extract values for variables (fields) of interest (e.g., endpoints) |
-| `dfMergeVariablesRelevel()` | Merge variables into a new variable, optionally map values to a new set of levels |
-
-## Databases for use with `ctrdata`
-
-Package `ctrdata` retrieves trial information and stores it in a
-database collection, which has to be given as a connection object to
-parameter `con` for several `ctrdata` functions. This connection object
-is created almost identically for the four database backends supported
-by `ctrdata`, as shown in the table. For a speed comparison, see the
-[nodbi documentation](https://github.com/ropensci/nodbi#benchmark).
-
-Besides `ctrdata` functions below, such a connection object can be used
-with functions of other packages, such as `nodbi` (see last row in
-table) or, in case of MongoDB as database backend, `mongolite` (see
-vignettes).
-
-| Purpose | Function call |
-|----|----|
-| Create **SQLite** database connection | `dbc <- nodbi::src_sqlite(dbname = "name_of_my_database", collection = "name_of_my_collection")` |
-| Create **DuckDB** database connection | `dbc <- nodbi::src_duckdb(dbdir = "name_of_my_database", collection = "name_of_my_collection")` |
-| Create **MongoDB** database connection | `dbc <- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")` |
-| Create **PostgreSQL** database connection | `dbc <- nodbi::src_postgres(dbname = "name_of_my_database"); dbc[["collection"]] <- "name_of_my_collection"` |
-| Use connection with `ctrdata` functions | `ctrdata::{ctrLoadQueryIntoDb, dbQueryHistory, dbFindIdsUniqueTrials, dbFindFields, dbGetFieldsIntoDf}(con = dbc, ...)` |
-| Use connection with `nodbi` functions | e.g., `nodbi::docdb_query(src = dbc, key = dbc$collection, ...)` |
 
 ## Data model of `ctrdata`
 
@@ -281,6 +252,29 @@ every such document:
 For visualising the data structure for a trial, see this [vignette
 section](https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html#analysing-nested-fields-such-as-trial-results).
 
+## Databases for use with `ctrdata`
+
+Package `ctrdata` retrieves trial data and stores it in a database
+collection, which has to be given as a connection object to parameter
+`con` for several `ctrdata` functions. This connection object is created
+almost identically for the four database backends supported by
+`ctrdata`, as shown in the table. For a speed comparison, see the [nodbi
+documentation](https://github.com/ropensci/nodbi#benchmark).
+
+Besides `ctrdata` functions below, such a connection object can be used
+with functions of other packages, such as `nodbi` (see last row in
+table) or, in case of MongoDB as database backend, `mongolite` (see
+vignettes).
+
+| Purpose | Function call |
+|----|----|
+| Create **SQLite** database connection | `dbc <- nodbi::src_sqlite(dbname = "name_of_my_database", collection = "name_of_my_collection")` |
+| Create **DuckDB** database connection | `dbc <- nodbi::src_duckdb(dbdir = "name_of_my_database", collection = "name_of_my_collection")` |
+| Create **MongoDB** database connection | `dbc <- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")` |
+| Create **PostgreSQL** database connection | `dbc <- nodbi::src_postgres(dbname = "name_of_my_database"); dbc[["collection"]] <- "name_of_my_collection"` |
+| Use connection with `ctrdata` functions | `ctrdata::{ctrLoadQueryIntoDb, dbQueryHistory, dbFindIdsUniqueTrials, dbFindFields, dbGetFieldsIntoDf}(con = dbc, ...)` |
+| Use connection with `nodbi` functions | e.g., `nodbi::docdb_query(src = dbc, key = dbc$collection, ...)` |
+
 ## Vignettes
 
 - [Install R package
@@ -308,17 +302,10 @@ help("ctrdata")
 ```
 
 - Information on trial registers, their contents and how they can be
-  used with `ctrdata` (last updated 2025-05-31):
+  used with `ctrdata` (last updated 2025-07-24):
 
 ``` r
 help("ctrdata-registers")
-```
-
-- Trial concepts across registers provided by `ctrdata` (new 2025-03-09
-  🔔):
-
-``` r
-help("ctrdata-trial-concepts")
 ```
 
 - Open registers’ advanced search pages in browser:
@@ -333,9 +320,7 @@ ctrOpenSearchPagesInBrowser(copyright = TRUE)
 - Adjust search parameters and execute search in browser
 
 - When trials of interest are listed in browser, *copy the address from
-  the browser’s address bar to the clipboard* (you can automate this,
-  see
-  [here](#2-script-to-automatically-copy-users-query-from-web-browser))
+  the browser’s address bar to the clipboard*
 
 - Search used in this example:
   <https://www.clinicaltrialsregister.eu/ctr-search/search?query=neuroblastoma&phase=phase-two&age=children>
@@ -353,10 +338,10 @@ q
 # 1 query=neuroblastoma&phase=phase-two&age=children          EUCTR
 ```
 
-🔔 Queries in the trial registers can automatically copied to the
-clipboard (including for “CTIS”, where the URL otherwise does not show
-the user’s query) using the solution
-[here](#3-script-to-automatically-copy-users-query-from-web-browser).
+Queries in the trial registers can automatically copied to the clipboard
+(including for “CTIS”, where the URL otherwise does not show the user’s
+query), see
+[here](#2-script-to-automatically-copy-users-query-from-web-browser).
 
 - Retrieve protocol-related information, transform and save to database:
 
@@ -427,25 +412,31 @@ queries <- ctrGenerateQueries(
 )
 
 queries
-# EUCTR "https://www.clinicaltrialsregister.eu/ctr-search/search?query=
-#neuroblastoma&phase=phase-two&age=children&age=adolescent&age=infant-and-
-#toddler&age=newborn&age=preterm-new-born-infants&age=under-18&status=completed" 
-# 
-# ISRCTN "https://www.isrctn.com/search?&q=&filters=condition:neuroblastoma,
-#phase:Phase II,ageRange:Child,trialStatus:completed,primaryStudyDesign:
-#Interventional" 
-# 
-# CTGOV2 "https://clinicaltrials.gov/search?cond=neuroblastoma&aggFilters=
-#phase:2,ages:child,status:com,studyType:int" 
-# 
-# CTGOV2expert "https://clinicaltrials.gov/expert-search?term=AREA
-#[ConditionSearch]\"neuroblastoma\" AND (AREA[Phase]\"PHASE2\") AND 
-#(AREA[StdAge]\"CHILD\") AND (AREA[OverallStatus]\"COMPLETED\") AND 
-#(AREA[StudyType]INTERVENTIONAL)" 
-# 
-# CTIS "https://euclinicaltrials.eu/ctis-public/search#searchCriteria=
-#{\"medicalCondition\":\"neuroblastoma\",\"trialPhaseCode\":[4],
-#\"ageGroupCode\":[2],\"status\":[5,8]}"  
+# EUCTR 
+#"https://www.clinicaltrialsregister.eu/ctr-search/search?query=neuroblastoma&
+# phase=phase-two&age=children&age=adolescent&age=infant-and-toddler&age=
+# newborn&age=preterm-new-born-infants&age=under-18&status=completed" 
+#
+# ISRCTN 
+# "https://www.isrctn.com/search?&q=&filters=condition:neuroblastoma,phase:
+# Phase II,ageRange:Child,trialStatus:completed,primaryStudyDesign:Interventional" 
+#
+# CTGOV2 
+# "https://clinicaltrials.gov/search?cond=neuroblastoma&intr=Drug OR
+# Biological&term=AREA[DesignPrimaryPurpose](DIAGNOSTIC OR PREVENTION OR
+# TREATMENT)&aggFilters=phase:2,ages:child,status:com,studyType:int" 
+#
+# CTGOV2expert 
+# "https://clinicaltrials.gov/expert-search?term=AREA[ConditionSearch]
+# \"neuroblastoma\" AND (AREA[Phase]\"PHASE2\") AND (AREA[StdAge]\"CHILD\") 
+# AND (AREA[OverallStatus]\"COMPLETED\") AND (AREA[StudyType]INTERVENTIONAL) 
+# AND (AREA[DesignPrimaryPurpose](DIAGNOSTIC OR PREVENTION OR TREATMENT)) AND
+# (AREA[InterventionSearch](DRUG OR BIOLOGICAL))" 
+#
+# CTIS 
+# "https://euclinicaltrials.eu/ctis-public/search#searchCriteria=
+# {\"medicalCondition\":\"neuroblastoma\",\"trialPhaseCode\":[4],
+# \"ageGroupCode\":[2],\"status\":[5,8]}"   
 
 # Open queries in registers' web interfaces
 sapply(queries, ctrOpenSearchPagesInBrowser)
@@ -455,7 +446,7 @@ result <- lapply(queries, ctrLoadQueryIntoDb, con = db)
 
 sapply(result, "[[", "n")
 # EUCTR       ISRCTN       CTGOV2 CTGOV2expert         CTIS 
-#   180            0          111          111            1
+#   180            0          104          104            1
 ```
 
 - Analyse
@@ -620,6 +611,13 @@ ctrShowOneTrial(
 )
 ```
 
+<figure>
+<img
+src="https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/ctrdata_ctrShowOneTrial.jpg"
+alt="ctrShowOneTrial" />
+<figcaption aria-hidden="true">ctrShowOneTrial</figcaption>
+</figure>
+
 <div id="workflow-across-registers-example">
 
 </div>
@@ -627,9 +625,14 @@ ctrShowOneTrial(
 - Analysis across registers
 
 Show cumulative start of trials over time. This uses the calculation of
-trial concepts as available since `ctrdata` version 1.21.0 🔔.
+one of the trial concepts that are implemented in `ctrdata` version
+1.21.0.
 
 ``` r
+# explore 20 pre-defined concepts for 
+# trial analysis across registers
+help("ctrdata-trial-concepts")
+
 # use helper packages
 library(dplyr)
 library(ggplot2)
@@ -983,26 +986,6 @@ covr::package_coverage(path = ".", type = "tests")
   value, terms and conditions for programmatic access vary; no clear
   roadmap is established yet).
 
-Implemented:
-
-- ~~Retrieve previous versions of protocol- or results-related
-  information. The challenges include, historic versions can only be
-  retrieved one-by-one, do not include results, or are not in structured
-  format. The functionality available at this time, is to retrieve any
-  version in CTGOV2, and to create a version when re-running a CTIS
-  query and retrieving new data.~~
-
-- ~~Canonical definitions, filters, calculations are in the works (since
-  August 2023, released in version 1.20.0) for data mangling and
-  analyses across registers, e.g. to define study population, identify
-  interventional trials, calculate study duration; public collaboration
-  on these canonical scripts will speed up harmonising analyses.~~
-
-- ~~Merge results-related fields retrieved from different registers,
-  such as corresponding endpoints. The challenge is the incomplete
-  congruency and different structure of data fields. This has largely
-  been implemented as per the previous bullet point.~~
-
 ## Acknowledgements
 
 - Data providers and curators of the clinical trial registers. Please
@@ -1042,30 +1025,9 @@ Implemented:
   see: <https://github.com/rfhb/ctrdata/issues/22>
 
 - Please file issues and bugs
-  [here](https://github.com/rfhb/ctrdata/issues). Also check out how to
-  handle some of the closed issues, e.g. on [C stack usage too close to
-  the limit](https://github.com/rfhb/ctrdata/issues/22) and on a [SSL
+  [here](https://github.com/rfhb/ctrdata/issues).
+
+- Check out any relevant closed issues, e.g. on [C stack usage too close
+  to the limit](https://github.com/rfhb/ctrdata/issues/22) and on a [SSL
   certificate problem: unable to get local issuer
   certificate](https://github.com/rfhb/ctrdata/issues/19#issuecomment-820127139).
-
-## Trial records in databases
-
-### SQLite
-
-<figure>
-<img
-src="https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_json_sqlite.jpg"
-alt="Example JSON representation in SQLite" />
-<figcaption aria-hidden="true">Example JSON representation in
-SQLite</figcaption>
-</figure>
-
-### MongoDB
-
-<figure>
-<img
-src="https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_json_mongodb.jpg"
-alt="Example JSON representation in MongoDB" />
-<figcaption aria-hidden="true">Example JSON representation in
-MongoDB</figcaption>
-</figure>

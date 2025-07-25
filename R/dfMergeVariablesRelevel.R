@@ -35,23 +35,24 @@
 #'   fields = c(
 #'     "ctrname",
 #'     "protocolSection.eligibilityModule.healthyVolunteers",
-#'     "authorizedPartI.trialDetails.trialInformation.populationOfTrialSubjects.clinicalTrialGroups.name",
-#'     "authorizedApplication.authorizedPartI.trialDetails.trialInformation.populationOfTrialSubjects.clinicalTrialGroups.name",
 #'     "f31_healthy_volunteers",
 #'     "eligibility.healthy_volunteers",
-#'     "participants.participantType"
+#'     "participants.participantType",
+#'     paste0(
+#'       "authorizedPartI.trialDetails.trialInformation.",
+#'       "populationOfTrialSubjects.clinicalTrialGroups.name"
+#'     ),
+#'     paste0(
+#'       "authorizedApplication.authorizedPartI.trialDetails.trialInformation.",
+#'       "populationOfTrialSubjects.clinicalTrialGroups.name"
+#'     )
 #'   ),
 #'   con = dbc
 #' )
 #'
-#' df$ctis1healthy <- "Healthy volunteers" ==
-#'   df$authorizedPartI.trialDetails.trialInformation.populationOfTrialSubjects.clinicalTrialGroups.name
-#'
-#' df$ctis2healthy <- "Healthy volunteers" ==
-#'   df$authorizedApplication.authorizedPartI.trialDetails.trialInformation.populationOfTrialSubjects.clinicalTrialGroups.name
-#'
-#' df$isrctnhealthy <- "Healthy volunteer" ==
-#'   df$participants.participantType
+#' df$isrctnhealthy <- "Healthy volunteer" == df[, 6]
+#' df$ctis1healthy <- "Healthy volunteers" == df[ ,7]
+#' df$ctis2healthy <- "Healthy volunteers" == df[, 8]
 #'
 #' table(
 #'   df$ctrname,
