@@ -38,7 +38,7 @@ interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
 `ctrdata` is a package for the [R](https://www.r-project.org/) system,
 but other systems and tools can use the databases created with this
-package. This README was reviewed on 2025-07-24 for version 1.23.0.9000.
+package. This README was reviewed on 2025-07-24 for version 1.23.1.
 
 ## Main features
 
@@ -573,8 +573,8 @@ ctrLoadQueryIntoDb(
 Queries in the CTIS search interface can be automatically copied to the
 clipboard so that a user can paste them into `queryterm`, see
 [here](#2-script-to-automatically-copy-users-query-from-web-browser).
-Subsequent to the relaunch of CTIS on 2024-07-18, there are more than
-8,700 trials publicly accessible in CTIS. See
+Subsequent to the relaunch of CTIS on 2024-07-24, there are more than
+9,600 trials publicly accessible in CTIS. See
 [below](#documents-example) for how to download documents from CTIS.
 
 ``` r

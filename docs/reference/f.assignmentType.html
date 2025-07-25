@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.24.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.24.1.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -102,20 +102,38 @@ of assignment).</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Querying database (8 fields)...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating f.assignmentType...                            </span>
 <span class="r-in"><span><span class="va">trialsDf</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 31 × 3</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    `_id`             ctrname .assignmentType</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 12949496          ISRCTN  R              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 13281214          ISRCTN  R              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 17473621          ISRCTN  R              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 2012-003632-23-CZ EUCTR   NR             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 2012-003632-23-SE EUCTR   NR             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 2014-002606-20-PT EUCTR   R              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 2014-003556-31-GB EUCTR   NR             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 2014-003556-31-SE EUCTR   NR             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 2022-500244-37-00 CTIS    NR             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 2022-501142-30-00 CTIS    R              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 21 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                  _id ctrname .assignmentType</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1           12949496  ISRCTN               R</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2           13281214  ISRCTN               R</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3           17473621  ISRCTN               R</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  2012-003632-23-CZ   EUCTR              NR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  2012-003632-23-SE   EUCTR              NR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  2014-002606-20-PT   EUCTR               R</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  2014-003556-31-GB   EUCTR              NR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  2014-003556-31-SE   EUCTR              NR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  2022-500244-37-00    CTIS              NR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 2022-501142-30-00    CTIS               R</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 2023-505613-24-00    CTIS              NR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 2023-508143-51-01    CTIS              NR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 2024-510663-34-00    CTIS              NR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14          20343063  ISRCTN               R</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15          61070850  ISRCTN               R</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16          76463425  ISRCTN               R</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17          80181452  ISRCTN               R</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18          88261002  ISRCTN               R</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19       NCT00617929  CTGOV2              NR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20       NCT01125800  CTGOV2              NR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21       NCT01483820  CTGOV2              NR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22       NCT01505608  CTGOV2               R</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23       NCT01592045  CTGOV2               R</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24       NCT02620761   CTGOV               R</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25       NCT03280147   CTGOV               R</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26       NCT03325439   CTGOV              NR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27       NCT03431558   CTGOV               R</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28       NCT03876704   CTGOV               R</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29       NCT04001712   CTGOV               R</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30       NCT04041765   CTGOV               R</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31       NCT05969327   CTGOV               R</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
