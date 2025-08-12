@@ -180,7 +180,6 @@ f.controlType <- function(df = NULL) {
   df %>%
     dplyr::mutate(
       out = dplyr::case_when(
-
         grepl("placebo.?control", .data$trialDesign.studyDesign, ignore.case = TRUE) &
           grepl("active.?control", .data$trialDesign.studyDesign, ignore.case = TRUE) ~ "placebo+active",
         grepl("placebo.?control", .data$trialDesign.studyDesign, ignore.case = TRUE) ~ "placebo",

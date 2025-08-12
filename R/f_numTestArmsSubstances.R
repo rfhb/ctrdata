@@ -107,7 +107,10 @@ f.numTestArmsSubstances <- function(df = NULL) {
     if (length(x) == 1L) return(0L)
 
     # calculate similarities
-    t <- stringdist::stringsimmatrix(x, x)
+    t <- stringdist::stringsimmatrix(
+      x, x, method = c(
+        "osa", "lv", "dl", "hamming", "lcs", "qgram",
+        "cosine", "jaccard", "jw", "soundex")[1])
 
     # early exit
     if (ncol(t) < 1L) return(NA_integer_)

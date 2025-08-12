@@ -608,38 +608,6 @@ be loaded from some registers (not CTIS), as follows.</p>
 <span><span class="co"># https://www.clinicaltrialsregister.eu/ctr-search/search?</span></span>
 <span><span class="co"># query=2008-001606-16+OR+2008-001721-34+OR+2008-002260-33</span></span></code></pre></div>
 </div>
-<div class="section level2">
-<h2 id="example-using-mongodb">Example using MongoDB<a class="anchor" aria-label="anchor" href="#example-using-mongodb"></a>
-</h2>
-<p>This example works with a free service <a href="https://www.mongodb.com/cloud/atlas" class="external-link">here</a>. Note that the user
-name and password need to be encoded. The format of the connection
-string is documented at <a href="https://www.mongodb.com/docs/manual/reference/connection-string/" class="external-link uri">https://www.mongodb.com/docs/manual/reference/connection-string/</a>.
-For recommended databases, see vignette <a href="https://rfhb.github.io/ctrdata/#databases-that-can-be-used-with-ctrdata">Install
-R package ctrdata</a>.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Specify base uri for remote MongoDB server,</span></span>
-<span><span class="co">#  as part of the encoded connection string</span></span>
-<span><span class="va">db</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_mongo.html" class="external-link">src_mongo</a></span><span class="op">(</span></span>
-<span>  <span class="co"># Note: this provides read-only access</span></span>
-<span>  url <span class="op">=</span> <span class="st">"mongodb+srv://DWbJ7Wh:bdTHh5cS@cluster0-b9wpw.mongodb.net"</span>,</span>
-<span>  db <span class="op">=</span> <span class="st">"dbperm"</span>,</span>
-<span>  collection <span class="op">=</span> <span class="st">"dbperm"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Since the above access is read-only,</span></span>
-<span><span class="co"># just obtain fields of interest:</span></span>
-<span><span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span>
-<span>  fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>    <span class="st">"a2_eudract_number"</span>,</span>
-<span>    <span class="st">"e71_human_pharmacology_phase_i"</span><span class="op">)</span>,</span>
-<span>  con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></span>
-<span><span class="co">#                  _id a2_eudract_number e71_human_pharmacology_phase_i</span></span>
-<span><span class="co"># 1 2010-024264-18-3RD    2010-024264-18                           TRUE</span></span>
-<span><span class="co"># 2  2010-024264-18-AT    2010-024264-18                           TRUE</span></span>
-<span><span class="co"># 3  2010-024264-18-DE    2010-024264-18                           TRUE</span></span>
-<span><span class="co"># 4  2010-024264-18-GB    2010-024264-18                           TRUE</span></span>
-<span><span class="co"># 5  2010-024264-18-IT    2010-024264-18                           TRUE</span></span>
-<span><span class="co"># 6  2010-024264-18-NL    2010-024264-18                           TRUE</span></span></code></pre></div>
-</div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>

@@ -46,16 +46,8 @@ mongoRemoteRwCollection <- tmpName
 mongoRemoteRwDb <- "users"
 
 # credentials
-
-mongoRemoteRoUrl <-
-  "mongodb+srv://DWbJ7Wh:bdTHh5cS@cluster0.b9wpw.mongodb.net/"
-# permissions are restricted to "find" in "dbperm" in "dbperm"
-# no other functions can be executed, no login possible
-
-mongoRemoteRwUrl <-
-  Sys.getenv(x = "ctrdatamongouri")
-# this environment variable is set on development
-# and continuous integration systems
+mongoRemoteRoUrl <- Sys.getenv(x = "CTRDATAMONGOURIRO")
+mongoRemoteRwUrl <- Sys.getenv(x = "CTRDATAMONGOURI")
 
 
 #### helper functions system detection ####
@@ -107,6 +99,9 @@ checkMongoLocal <- function() {
 
 
 checkMongoRemoteRo <- function() {
+
+  if (mongoRemoteRoUrl == "") return(FALSE)
+
   tmp <- try(
     nodbi::src_mongo(
       collection = tmpName,
@@ -122,6 +117,9 @@ checkMongoRemoteRo <- function() {
 }
 
 checkMongoRemoteRw <- function() {
+
+  if (mongoRemoteRwUrl == "") return(FALSE)
+
   tmp <- try(
     nodbi::src_mongo(
       collection = tmpName,

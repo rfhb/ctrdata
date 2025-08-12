@@ -375,7 +375,6 @@ substance names</a></li>
 platform trials</a></li>
 <li><a href="#load-information-using-trial-identifiers" id="toc-load-information-using-trial-identifiers">Load information using
 trial identifiers</a></li>
-<li><a href="#example-using-mongodb" id="toc-example-using-mongodb">Example using MongoDB</a></li>
 </ul>
 </div>
 
@@ -888,36 +887,6 @@ be loaded from some registers (not CTIS), as follows.</p>
 <span id="cb13-45"><a href="#cb13-45" tabindex="-1"></a><span class="co"># EUCTR (note the country suffix os to be removed, values separated with OR): </span></span>
 <span id="cb13-46"><a href="#cb13-46" tabindex="-1"></a><span class="co"># https://www.clinicaltrialsregister.eu/ctr-search/search?</span></span>
 <span id="cb13-47"><a href="#cb13-47" tabindex="-1"></a><span class="co"># query=2008-001606-16+OR+2008-001721-34+OR+2008-002260-33</span></span></code></pre></div>
-</div>
-<div id="example-using-mongodb" class="section level2">
-<h2>Example using MongoDB</h2>
-<p>This example works with a free service <a href="https://www.mongodb.com/cloud/atlas">here</a>. Note that the user
-name and password need to be encoded. The format of the connection
-string is documented at <a href="https://www.mongodb.com/docs/manual/reference/connection-string/" class="uri">https://www.mongodb.com/docs/manual/reference/connection-string/</a>.
-For recommended databases, see vignette <a href="https://rfhb.github.io/ctrdata/#databases-that-can-be-used-with-ctrdata">Install
-R package ctrdata</a>.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="co"># Specify base uri for remote MongoDB server,</span></span>
-<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="co">#  as part of the encoded connection string</span></span>
-<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>db <span class="ot">&lt;-</span> nodbi<span class="sc">::</span><span class="fu">src_mongo</span>(</span>
-<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>  <span class="co"># Note: this provides read-only access</span></span>
-<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>  <span class="at">url =</span> <span class="st">&quot;mongodb+srv://DWbJ7Wh:bdTHh5cS@cluster0-b9wpw.mongodb.net&quot;</span>,</span>
-<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a>  <span class="at">db =</span> <span class="st">&quot;dbperm&quot;</span>,</span>
-<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a>  <span class="at">collection =</span> <span class="st">&quot;dbperm&quot;</span>)</span>
-<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a></span>
-<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a><span class="co"># Since the above access is read-only,</span></span>
-<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a><span class="co"># just obtain fields of interest:</span></span>
-<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a><span class="fu">dbGetFieldsIntoDf</span>(</span>
-<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a>  <span class="at">fields =</span> <span class="fu">c</span>(</span>
-<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a>    <span class="st">&quot;a2_eudract_number&quot;</span>,</span>
-<span id="cb14-14"><a href="#cb14-14" tabindex="-1"></a>    <span class="st">&quot;e71_human_pharmacology_phase_i&quot;</span>),</span>
-<span id="cb14-15"><a href="#cb14-15" tabindex="-1"></a>  <span class="at">con =</span> db)</span>
-<span id="cb14-16"><a href="#cb14-16" tabindex="-1"></a><span class="co">#                  _id a2_eudract_number e71_human_pharmacology_phase_i</span></span>
-<span id="cb14-17"><a href="#cb14-17" tabindex="-1"></a><span class="co"># 1 2010-024264-18-3RD    2010-024264-18                           TRUE</span></span>
-<span id="cb14-18"><a href="#cb14-18" tabindex="-1"></a><span class="co"># 2  2010-024264-18-AT    2010-024264-18                           TRUE</span></span>
-<span id="cb14-19"><a href="#cb14-19" tabindex="-1"></a><span class="co"># 3  2010-024264-18-DE    2010-024264-18                           TRUE</span></span>
-<span id="cb14-20"><a href="#cb14-20" tabindex="-1"></a><span class="co"># 4  2010-024264-18-GB    2010-024264-18                           TRUE</span></span>
-<span id="cb14-21"><a href="#cb14-21" tabindex="-1"></a><span class="co"># 5  2010-024264-18-IT    2010-024264-18                           TRUE</span></span>
-<span id="cb14-22"><a href="#cb14-22" tabindex="-1"></a><span class="co"># 6  2010-024264-18-NL    2010-024264-18                           TRUE</span></span></code></pre></div>
 </div>
 
 

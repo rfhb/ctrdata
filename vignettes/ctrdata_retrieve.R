@@ -394,27 +394,3 @@ knitr::opts_chunk$set(eval = FALSE)
 # # cleanup
 # unlink("database_name.sql")
 
-## ----remote_mongo-------------------------------------------------------------
-# # Specify base uri for remote MongoDB server,
-# #  as part of the encoded connection string
-# db <- nodbi::src_mongo(
-#   # Note: this provides read-only access
-#   url = "mongodb+srv://DWbJ7Wh:bdTHh5cS@cluster0-b9wpw.mongodb.net",
-#   db = "dbperm",
-#   collection = "dbperm")
-# 
-# # Since the above access is read-only,
-# # just obtain fields of interest:
-# dbGetFieldsIntoDf(
-#   fields = c(
-#     "a2_eudract_number",
-#     "e71_human_pharmacology_phase_i"),
-#   con = db)
-# #                  _id a2_eudract_number e71_human_pharmacology_phase_i
-# # 1 2010-024264-18-3RD    2010-024264-18                           TRUE
-# # 2  2010-024264-18-AT    2010-024264-18                           TRUE
-# # 3  2010-024264-18-DE    2010-024264-18                           TRUE
-# # 4  2010-024264-18-GB    2010-024264-18                           TRUE
-# # 5  2010-024264-18-IT    2010-024264-18                           TRUE
-# # 6  2010-024264-18-NL    2010-024264-18                           TRUE
-
