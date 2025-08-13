@@ -47,7 +47,7 @@ mongoRemoteRwDb <- "users"
 
 # credentials
 mongoRemoteRoUrl <- Sys.getenv(x = "CTRDATAMONGOURIRO")
-mongoRemoteRwUrl <- Sys.getenv(x = "CTRDATAMONGOURI")
+mongoRemoteRwUrl <- Sys.getenv(x = "CTRDATAMONGOURIRW")
 
 
 #### helper functions system detection ####

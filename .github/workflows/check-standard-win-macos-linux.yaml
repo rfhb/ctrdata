@@ -34,7 +34,8 @@ jobs:
       RSPM: ${{ matrix.config.rspm }}
       GITHUB_PAT: ${{ secrets.GHPAT }}
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-      CTRDATAMONGOURI: ${{ secrets.CTRDATAMONGOURI }}
+      CTRDATAMONGOURIRO: ${{ secrets.CTRDATAMONGOURIRO }}
+      CTRDATAMONGOURIRW: ${{ secrets.CTRDATAMONGOURIRW }}
 
     steps:
       - uses: actions/checkout@v4
