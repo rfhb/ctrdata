@@ -66,7 +66,7 @@ ctrLoadQueryIntoDbEuctr <- function(
   message("* Checking trials in EUCTR...", appendLF = FALSE)
 
   # get first trial search result page
-  if (verbose) message("DEBUG: ", sprintf(euctrEndpoints[1], queryterm))
+  if (verbose) message("\nDEBUG: ", sprintf(euctrEndpoints[1], queryterm))
   initialData <- try(
     httr2::req_perform(
       httr2::req_user_agent(
@@ -377,11 +377,17 @@ ctrLoadQueryIntoDbEuctr <- function(
 
     # destfiles
     fp <- file.path(
-      tempDir, paste0(
+      tempDir,
+      eudractnumbersimported,
+      paste0(
         "euctr_results_",
         eudractnumbersimported,
         ".zip"
       ))
+
+    # create subfolders
+    if (verbose) message("DEBUG: creating folders per trial")
+    sapply(fp, function(i) dir.create(dirname(i), showWarnings = FALSE))
 
     # do download and save
     resDf <- ctrMultiDownload(
@@ -391,6 +397,7 @@ ctrLoadQueryIntoDbEuctr <- function(
     )
 
     # work only on successful downloads
+    unlink(dirname(resDf$destfile[!resDf$success]), recursive = TRUE)
     resDf <- resDf[resDf$success, , drop = FALSE]
 
     # inform user
@@ -399,7 +406,7 @@ ctrLoadQueryIntoDbEuctr <- function(
       appendLF = FALSE)
 
     # unzip downloaded files and move non-XML extracted files
-    lapply(
+    resF <- lapply(
       resDf[["destfile"]], function(f) {
 
         if (file.exists(f) &&
@@ -409,13 +416,20 @@ ctrLoadQueryIntoDbEuctr <- function(
           # characters under windows, thus only
           # obtain file names and extract with
           # extra package
-          unzFiles <- utils::unzip(
+          unzFiles <- try(utils::unzip(
             zipfile = f,
-            list = TRUE)$Name
-          if (is.null(unzFiles)) return(NULL)
+            list = TRUE)$Name,
+            silent = TRUE)
+          if(inherits(unzFiles, "try-error") ||
+             is.null(unzFiles)) {
+            warning("No zipped content, deleting ", f,
+                    call. = FALSE, immediate. = TRUE)
+            unlink(dirname(f), recursive = TRUE)
+            return(0L)
+          }
           try(zip::unzip(
             zipfile = f,
-            exdir = tempDir),
+            exdir = dirname(f)),
             silent = TRUE)
 
           # results in files such as
@@ -451,26 +465,30 @@ ctrLoadQueryIntoDbEuctr <- function(
             } # if paths
           } else {
             # only XML data file
-            if (any(grepl("Results[.]xml$", unzFiles)))
+            if (any(grepl("Results[.]xml$", unzFiles))) {
               message(". ", appendLF = FALSE)
-          }
-
+            }
+          } # length nonXmlFiles
+          return(1L)
         } else {
           # unsuccessful
           message("x ", appendLF = FALSE)
+          return(0L)
         }
+      } #  function f
+    ) # lapply fp
 
-      }) # lapply fp
-
-    # line break
-    message("", appendLF = TRUE)
+    # user feedback and line break
+    message("\n- Data found for ", sum(unlist(resF)), " trials", appendLF = TRUE)
 
     ## convert xml to ndjson -----------------------------------------------
 
     if (length(.ctrdataenv$ct) == 0L) initTranformers()
 
     # for each file of an imported trial create new ndjson file
-    xmlFileList <- dir(path = tempDir, pattern = "EU-CTR.+Results.xml", full.names = TRUE)
+    xmlFileList <- dir(
+      path = tempDir, pattern = "EU-CTR.+Results.xml",
+      recursive = TRUE, full.names = TRUE)
     xmlFileList <- xmlFileList[vapply(xmlFileList, function(i) any(
       stringi::stri_detect_fixed(i, eudractnumbersimported)), logical(1L))]
     on.exit(unlink(xmlFileList), add = TRUE)
@@ -504,7 +522,7 @@ ctrLoadQueryIntoDbEuctr <- function(
     }) # sapply xmlFileList
 
     # iterate over results files
-    message("- Importing results into database (may take some time)...")
+    message("- Importing ", length(jsonFileList), " results into database (may take some time)...")
 
     # initiate counter
     importedresults <- 0L
