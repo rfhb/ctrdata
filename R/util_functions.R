@@ -1088,7 +1088,7 @@ ctrMultiDownload <- function(
   downloadValue$success <- file.exists(downloadValue$destfile)
 
   # inform user
-  if (verbose) message("Done: ", numI, " iteration(s)")
+  if (verbose) message("DEBUG: ", numI, " iteration(s)")
 
   # return
   return(downloadValue[!toDo, , drop = FALSE])
@@ -1126,8 +1126,7 @@ ctrTempDir <- function(verbose = FALSE) {
   # (that is, only downloaded files are kept).
   if (interactive()) options(ctrdata.tempdir = tempDir)
 
-  # register deleting tempDir when exiting session
-  assign("keeptempdir", verbose, envir = .ctrdataenv)
+  # helper
   delCtrdataTempDir <- function(x) {
     if (length(.ctrdataenv$keeptempdir) &&
         !is.null(.ctrdataenv$keeptempdir)) {
@@ -1141,6 +1140,9 @@ ctrTempDir <- function(verbose = FALSE) {
     }
     assign("keeptempdir", NULL, envir = .ctrdataenv)
   }
+
+  # register deleting tempDir when exiting session
+  assign("keeptempdir", verbose, envir = .ctrdataenv)
   reg.finalizer(
     e = .ctrdataenv,
     f = delCtrdataTempDir,
