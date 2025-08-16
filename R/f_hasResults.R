@@ -39,26 +39,26 @@ f.hasResults <- function(df = NULL) {
   #### fields ####
   fldsNeeded <- list(
     "euctr" = c(
-      "endPoints.endPoint"
+      "endPoints.endPoint.readyForValues"
     ),
     "ctgov" = c(
       "results_reference.citation",
-      "clinical_results.outcome_list.outcome"
+      "clinical_results.outcome_list.outcome.type"
     ),
     "ctgov2" = c(
       "hasResults",
       "protocolSection.referencesModule.references.type",
       "protocolSection.statusModule.resultsFirstSubmitDate",
-      "resultsSection.outcomeMeasuresModule.outcomeMeasures"
+      "resultsSection.outcomeMeasuresModule.outcomeMeasures.type"
     ),
     "isrctn" = c(
       "results.publicationStage"
       # "results.publicationDetails"
     ),
     "ctis" = c(
-      "results.clinicalStudyReports",
-      "results.laypersonResults",
-      "results.summaryResults",
+      "results.clinicalStudyReports.id",
+      "results.laypersonResults.id",
+      "results.summaryResults.id",
       "resultsFirstReceived"
     )
   )
@@ -86,7 +86,7 @@ f.hasResults <- function(df = NULL) {
   df %>%
     dplyr::mutate(
       #
-      .hasResults = !is.na(.data$endPoints.endPoint)
+      .hasResults = !is.na(.data$endPoints.endPoint.readyForValues)
       #
     ) -> df
 
@@ -96,7 +96,7 @@ f.hasResults <- function(df = NULL) {
     dplyr::mutate(
       #
       .hasResults = .data$.hasResults |
-        !is.na(.data$clinical_results.outcome_list.outcome) |
+        !is.na(.data$clinical_results.outcome_list.outcome.type) |
         !is.na(.data$results_reference.citation)
       #
     ) -> df
@@ -109,7 +109,7 @@ f.hasResults <- function(df = NULL) {
       .hasResults = .data$.hasResults |
         !is.na(.data$hasResults) |
         !is.na(.data$protocolSection.statusModule.resultsFirstSubmitDate) |
-        !is.na(.data$resultsSection.outcomeMeasuresModule.outcomeMeasures) | (
+        !is.na(.data$resultsSection.outcomeMeasuresModule.outcomeMeasures.type) | (
           !is.na(.data$protocolSection.referencesModule.references.type) &
             grepl("RESULT", .data$protocolSection.referencesModule.references.type))
       #
@@ -132,9 +132,9 @@ f.hasResults <- function(df = NULL) {
     dplyr::mutate(
       #
       .hasResults = .data$.hasResults |
-        !is.na(.data$results.clinicalStudyReports) |
-        !is.na(.data$results.laypersonResults) |
-        !is.na(.data$results.summaryResults) |
+        !is.na(.data$results.clinicalStudyReports.id) |
+        !is.na(.data$results.laypersonResults.id) |
+        !is.na(.data$results.summaryResults.id) |
         (!is.na(.data$resultsFirstReceived) &
            .data$resultsFirstReceived)
       #
