@@ -112,20 +112,38 @@ profit sponsors) or `other`.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Querying database (13 fields)...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating f.sponsorType...                            </span>
 <span class="r-in"><span><span class="va">trialsDf</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 31 × 2</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    `_id`             .sponsorType  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 12949496          other         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 13281214          other         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 17473621          other         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 2012-003632-23-CZ for profit    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 2012-003632-23-SE for profit    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 2014-002606-20-PT for profit    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 2014-003556-31-GB for profit    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 2014-003556-31-SE for profit    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 2022-500244-37-00 mixed         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 2022-501142-30-00 not for profit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 21 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                  _id   .sponsorType</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1           12949496          other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2           13281214          other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3           17473621          other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  2012-003632-23-CZ     for profit</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  2012-003632-23-SE     for profit</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  2014-002606-20-PT     for profit</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  2014-003556-31-GB     for profit</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  2014-003556-31-SE     for profit</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  2022-500244-37-00          mixed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 2022-501142-30-00 not for profit</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 2023-505613-24-00     for profit</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 2023-508143-51-01 not for profit</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 2024-510663-34-00     for profit</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14          20343063          other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15          61070850          other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16          76463425          other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17          80181452          other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18          88261002          other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19       NCT00617929          other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20       NCT01125800     for profit</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21       NCT01483820          other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22       NCT01505608          other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23       NCT01592045     for profit</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24       NCT02620761          other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25       NCT03280147          other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26       NCT03325439     for profit</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27       NCT03431558          other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28       NCT03876704          other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29       NCT04001712          other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30       NCT04041765          other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31       NCT05969327          other</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

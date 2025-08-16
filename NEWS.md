@@ -1,6 +1,8 @@
 # ctrdata 1.24.1.9000
 
-- New development version
+- Refined indicator variables for `f.hasResults`
+- Save EUCTR results in folders by trial, in analogy to documents for other registers
+- Avoid further situations in which temporary files are deleted despite `verbose = TRUE`
 
 # ctrdata 1.24.1
 
