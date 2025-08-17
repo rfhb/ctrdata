@@ -1,8 +1,13 @@
 # ctrdata 1.24.1.9000
 
-- Refined indicator variables for `f.hasResults`
+## Enhancement
+- Retrying requests to CTIS, which apparently started to refuse or throttle responses 
+
+## Possibly breaking down-stream workflows 
 - Save EUCTR results in folders by trial, in analogy to documents for other registers
-- Avoid further situations in which temporary files are deleted despite `verbose = TRUE`
+
+## Bug fixes
+- Refined indicator variables for `f.hasResults`
 
 # ctrdata 1.24.1
 
