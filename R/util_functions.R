@@ -868,6 +868,8 @@ addMetaData <- function(x, con) {
 #' @importFrom jsonlite fromJSON toJSON validate
 #' @importFrom httr2 request req_throttle req_perform_parallel req_body_json req_user_agent
 #' @importFrom dplyr rows_update
+#' @importFrom rlang hash !!!
+#' @importFrom stats runif
 #'
 ctrMultiDownload <- function(
     urls,
@@ -876,8 +878,12 @@ ctrMultiDownload <- function(
     progress = TRUE,
     verbose = TRUE) {
 
+  # check params
   stopifnot(length(urls) == length(destfiles))
   if (!length(urls)) return(data.frame())
+
+  # make operator accessible
+  `!!!` <- rlang::`!!!`
 
   # starting values
   numI <- 1L
@@ -920,7 +926,7 @@ ctrMultiDownload <- function(
   # does not error in case any of the individual requests fail.
   # inspect the return value to find out which were successful
   # make no more than 3 attempts to complete downloading
-  while (any(toDo) && numI < 3L) {
+  while (any(toDo) && numI < 5L) {
 
     # use urlResolved if this has been filled below in CDN check
     downloadValue$url[!is.na(downloadValue$urlResolved)] <-
@@ -928,9 +934,14 @@ ctrMultiDownload <- function(
 
     # construct requests
     reqs <- mapply(
-      function(u, d) {
+      function(u, d, f) {
         # start with basic request
         r <- httr2::request(u)
+
+        # add unique header
+        hdr <- rlang::hash(runif(n = 1L))
+        names(hdr) <- paste0(sample(letters, size = 10L), collapse = "")
+        r <- httr2::req_headers(r, !!!hdr)
 
         # add user agent
         r <- httr2::req_user_agent(r, ctrdataUseragent)
@@ -953,20 +964,27 @@ ctrMultiDownload <- function(
           fill_time_s = 10L
         )
 
+        # adding file path
+        r$fp <- f
+
         # return
         return(r)
       },
       u = downloadValue$url[toDo],
       d = downloadValue$data[toDo],
+      f = downloadValue$destfile[toDo],
       SIMPLIFY = FALSE,
       USE.NAMES = FALSE
     )
+
+    # randomise to minimise 403 errors
+    reqs <- reqs[sample.int(length(reqs))]
 
     # do download
     res <- suppressWarnings(
       httr2::req_perform_parallel(
         reqs,
-        paths = downloadValue$destfile[toDo],
+        paths = sapply(reqs, "[[", "fp"),
         on_error = "continue",
         progress = progress,
         max_active = 10L # default
@@ -1063,8 +1081,19 @@ ctrMultiDownload <- function(
     # only count towards repeat attempts if
     # the set of repeated urls is unchanged
     if (identical(toDo, toDoThis) & !any(cdnCheck)) numI <- numI + 1L
-
     toDo <- toDoThis
+
+    # adding delay since status code indicates
+    # server refused request immediately again
+    rfsd <- downloadValue$status_code %in% c(403L, 429L)
+    if (isTRUE(any(rfsd))) {
+      wt <- as.integer(runif(n = 1L) * 50L)
+      message(
+        "- Server refused ", sum(rfsd), " requests; ",
+        "waiting ", wt, " sec before retry        \r",
+        appendLF = FALSE)
+      Sys.sleep(wt)
+    }
 
   }
 
