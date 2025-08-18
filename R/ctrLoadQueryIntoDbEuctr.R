@@ -401,6 +401,8 @@ ctrLoadQueryIntoDbEuctr <- function(
     resDf <- resDf[resDf$success, , drop = FALSE]
 
     # inform user
+    if (documents.path != tempDir) message(
+      "- Downloading documents into 'documents.path' = ", documents.path)
     message(
       "- Extracting results (. = data, F = file[s] and data, x = none): ",
       appendLF = FALSE)
@@ -442,13 +444,16 @@ ctrLoadQueryIntoDbEuctr <- function(
           if (length(nonXmlFiles)) {
             message("F ", appendLF = FALSE)
             if (documents.path != tempDir) {
+              # create user specified directory
+              dir.create(file.path(
+                documents.path, euctrnr),
+                showWarnings = FALSE)
               # move results file(s) to user specified directory
               saved <- try(suppressWarnings(
-                file.rename(
-                  from = file.path(tempDir, nonXmlFiles),
-                  to = file.path(documents.path,
-                                 paste0(euctrnr, "--", basename(nonXmlFiles))
-                  ))), silent = TRUE)
+                  file.rename(
+                    from = file.path(dirname(f), nonXmlFiles),
+                    to = file.path(documents.path, euctrnr, basename(nonXmlFiles))
+                  )), silent = TRUE)
               # inform user
               if (inherits(saved, "try-error")) {
                 warning("Could not save ", nonXmlFiles, "; ", trimws(saved),
