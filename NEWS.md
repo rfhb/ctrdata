@@ -2,6 +2,7 @@
 
 ## Enhancement
 - Retrying requests to CTIS, which apparently started to refuse or throttle responses 
+- Revise how EUCTR trials are updated with results data to accelerate operations
 
 ## Possibly breaking down-stream workflows 
 - Save EUCTR results in folders by trial, in analogy to documents for other registers

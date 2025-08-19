@@ -7,12 +7,13 @@
 #' @keywords internal
 #' @noRd
 #'
-#' @importFrom nodbi docdb_query docdb_update
+#' @importFrom nodbi docdb_update
 #' @importFrom zip unzip
-#' @importFrom stringi stri_replace_all_fixed stri_detect_fixed
+#' @importFrom stringi stri_replace_all_fixed stri_detect_fixed stri_extract_all_regex
 #' @importFrom readr write_file read_file
 #' @importFrom rlang hash
 #' @importFrom httr2 req_perform_parallel request req_options req_throttle req_user_agent
+#' @importFrom V8 JS
 #'
 ctrLoadQueryIntoDbEuctr <- function(
     queryterm = queryterm,
@@ -280,8 +281,8 @@ ctrLoadQueryIntoDbEuctr <- function(
 
   # run conversion
   message("- Converting to NDJSON (estimate: ",
-          signif(nrow(resDf) * 0.6 / 277, 1L),
-          " s) ", appendLF = FALSE)
+          signif(nrow(resDf) * 5.7 / 2100, 1L),
+          " s)... ", appendLF = FALSE)
 
   ti <- format(Sys.time(), "%Y-%m-%d %H:%M:%S")
   rl <- nrow(resDf)
@@ -291,9 +292,9 @@ ctrLoadQueryIntoDbEuctr <- function(
 
   # convert trial records and add to chunks
   # corresponding to 50 trial records each
+  # print(system.time(
   invisible(sapply(seq_len(rl %/% 50L + 1L), function(i) {
 
-    message(". ", appendLF = FALSE)
     fo <- file.path(tempDir, paste0("euctr_trials_", i, ".ndjson"))
     unlink(fo)
     bs <- 50L
@@ -308,13 +309,14 @@ ctrLoadQueryIntoDbEuctr <- function(
       invisible(
         readr::write_file(
           .ctrdataenv$ct$call(
-            # parameters to function call
+            # parameters to js function call
             "euctr2ndjson", readr::read_file(fi), ti),
           file = fo, append = TRUE)
       )
 
     })) # single batch
   })) # across batches
+  # )) # print system time
   message()
 
   ## import into database -----------------------------------------------
@@ -450,10 +452,10 @@ ctrLoadQueryIntoDbEuctr <- function(
                 showWarnings = FALSE)
               # move results file(s) to user specified directory
               saved <- try(suppressWarnings(
-                  file.rename(
-                    from = file.path(dirname(f), nonXmlFiles),
-                    to = file.path(documents.path, euctrnr, basename(nonXmlFiles))
-                  )), silent = TRUE)
+                file.rename(
+                  from = file.path(dirname(f), nonXmlFiles),
+                  to = file.path(documents.path, euctrnr, basename(nonXmlFiles))
+                )), silent = TRUE)
               # inform user
               if (inherits(saved, "try-error")) {
                 warning("Could not save ", nonXmlFiles, "; ", trimws(saved),
@@ -491,43 +493,86 @@ ctrLoadQueryIntoDbEuctr <- function(
     if (length(.ctrdataenv$ct) == 0L) initTranformers()
 
     # for each file of an imported trial create new ndjson file
+
+    # - get all result xml files
     xmlFileList <- dir(
       path = tempDir, pattern = "EU-CTR.+Results.xml",
       recursive = TRUE, full.names = TRUE)
+
+    # - keep those related to protocol data just imported
     xmlFileList <- xmlFileList[vapply(xmlFileList, function(i) any(
       stringi::stri_detect_fixed(i, eudractnumbersimported)), logical(1L))]
+
+    # - mark for removal
     on.exit(unlink(xmlFileList), add = TRUE)
+
+    # - create target ndjson file names
     jsonFileList <- file.path(tempDir, paste0(
-      "EU_Results_", sub(".+ ([0-9]{4}-[0-9]{6}-[0-9]{2}) .+", "\\1.ndjson", xmlFileList)))
+      "EU_Results_", sub(
+        ".+ ([0-9]{4}-[0-9]{6}-[0-9]{2}) .+",
+        "\\1.ndjson", xmlFileList)))
+
+    # - mark for removal
     on.exit(unlink(jsonFileList), add = TRUE)
 
-    # run conversion (~2 s for 19 records)
+    # iterate conversion over eudract result files
     message("- Converting to NDJSON (estimate: ",
-            signif(length(xmlFileList) * 2 / 19, 1L), " s)...")
+            signif(length(xmlFileList) * 6.13 / 201, 1L), " s)...")
 
+    # run conversion
+    # print(system.time(
     sapply(seq_along(xmlFileList), function(f) {
 
-      writeLines(stringi::stri_replace_all_fixed(
-        .ctrdataenv$ct$call(
-          "parsexml",
-          # read source xml file
-          paste0(readLines(xmlFileList[f], warn = FALSE), collapse = ""),
-          # important parameters
-          V8::JS("{trim: true, ignoreAttrs: false, mergeAttrs: true,
-                   explicitRoot: false, explicitArray: false, xmlns: false}")),
-        # remove conversion remnants and conformity breaking characters
-        c('"xmlns:ns0":"http://eudract.ema.europa.eu/schema/clinical_trial_result",',
-          '"xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","xsi:nil":"true"',
-          "&", "'", "\n", "\r", "\t"),
-        c("", "", "&amp;", "&apos;", " ", " ", " "),
-        vectorize_all = FALSE),
+      # get eudract id
+      idEuctr <- sub(
+        paste0(".+", .Platform$file.sep, "(",
+               regEuctr, ")", .Platform$file.sep, ".+"),
+        "\\1", xmlFileList[f])
+
+      # get country specific eudract id
+      idTrials <- imported$success[grepl(idEuctr, imported$success)]
+
+      # convert xml to ndjson, correct and save
+      writeLines(
+        stringi::stri_replace_all_fixed(
+          stringi::stri_replace_all_fixed(
+            #
+            # convert xml to ndjson
+            .ctrdataenv$ct$call(
+              "parsexml",
+              # read source file
+              paste0(readLines(xmlFileList[f], warn = FALSE), collapse = ""),
+              # important parameters for conversion
+              V8::JS("{trim: true, ignoreAttrs: false, mergeAttrs: true,
+                      explicitRoot: false, explicitArray: false, xmlns: false}")),
+            #
+            # remove remnants, replace conformity-breaking characters
+            pattern = c(
+              '"xmlns:ns0":"http://eudract.ema.europa.eu/schema/clinical_trial_result",',
+              '"xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","xsi:nil":"true"',
+              "&", "'", "\n", "\r", "\t"),
+            replacement = c(
+              "", "",
+              "&amp;", "&apos;", " ", " ", " "),
+            vectorize_all = FALSE),
+          #
+          # add country specific eudract id
+          pattern = paste0(
+            '{"eudractNumber":"', idEuctr, '",'),
+          replacement = paste0(
+            '{"eudractNumber":"', idEuctr, '","_id":"', idTrials,'",'),
+          vectorize_all = TRUE),
+        #
         con = file(jsonFileList[f])
       )
 
     }) # sapply xmlFileList
 
+    # )) # print system time
+
     # iterate over results files
-    message("- Importing ", length(jsonFileList), " results into database (may take some time)...")
+    message("- Importing ", length(jsonFileList),
+            " results into database (may take some time)...")
 
     # initiate counter
     importedresults <- 0L
@@ -538,8 +583,11 @@ ctrLoadQueryIntoDbEuctr <- function(
 
       if (!file.exists(f) || file.size(f) == 0L) next
 
-      eudractNumber <- gsub(
-        "\"", "", as.character(jqr::jq(file(f), " .eudractNumber ")))
+      # get eudract id
+      eudractNumber <- sub(
+        paste0(".+", .Platform$file.sep, "(",
+               regEuctr, ")", .Platform$file.sep, ".+"),
+        "\\1", f)
 
       # update record(s) with results
       res <- try({
@@ -548,21 +596,24 @@ ctrLoadQueryIntoDbEuctr <- function(
             src = con,
             key = con$collection,
             value = f,
-            query = paste0('{"a2_eudract_number": "', eudractNumber, '"}')
-          )
+            query = '{}')
         max(tmpnodbi, na.rm = TRUE)
       },
       silent = TRUE)
 
       # inform user on failed trial
       if (inherits(res, "try-error")) {
+
         warning(paste0(
-          "Import of results failed for trial ", eudractNumber), immediate. = TRUE)
+          "Import of results failed for trial ", eudractNumber),
+        immediate. = TRUE)
         res <- 0L
+
       } else {
 
         # output is number of trials updated
-        eudractnumbersimportedresults <- c(eudractnumbersimportedresults, eudractNumber)
+        eudractnumbersimportedresults <- c(
+          eudractnumbersimportedresults, eudractNumber)
         importedresults <- importedresults + 1L
 
       }
@@ -596,6 +647,7 @@ ctrLoadQueryIntoDbEuctr <- function(
           "\\1", eudractNumber)
 
         # extract information about results
+
         tmpFirstDate <- as.Date(trimws(
           sub(".+First version publication date</div>.*?<div>(.+?)</div>.*",
               "\\1", ifelse(grepl("First version publication date", wpText),
@@ -615,10 +667,11 @@ ctrLoadQueryIntoDbEuctr <- function(
           ))))
 
         # return
-        return(list("eudractNumber" = eudractNumber,
-                    "tmpFirstDate" = tmpFirstDate,
-                    "tmpThisDate" = tmpThisDate,
-                    "tmpChanges" = tmpChanges))
+        return(list(
+          "eudractNumber" = eudractNumber,
+          "tmpFirstDate" = tmpFirstDate,
+          "tmpThisDate" = tmpThisDate,
+          "tmpChanges" = tmpChanges))
       }
 
       # this does not include the retrieval of information

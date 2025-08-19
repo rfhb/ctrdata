@@ -1116,9 +1116,6 @@ ctrMultiDownload <- function(
   # thus safeguard by unsetting success if file does not exist
   downloadValue$success <- file.exists(downloadValue$destfile)
 
-  # reset
-  message("")
-
   # inform user
   if (verbose) message("DEBUG: ", numI, " iteration(s)")
 
