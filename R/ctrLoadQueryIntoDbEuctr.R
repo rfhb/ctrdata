@@ -596,7 +596,7 @@ ctrLoadQueryIntoDbEuctr <- function(
             src = con,
             key = con$collection,
             value = f,
-            query = '{}')
+            query = "{}")
         max(tmpnodbi, na.rm = TRUE)
       },
       silent = TRUE)

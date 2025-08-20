@@ -474,7 +474,7 @@ ctrRerunQuery <- function(
             src = con,
             key = con$collection,
             value = tfname,
-            query = '{}'
+            query = "{}"
           )
 
         } # if historical version

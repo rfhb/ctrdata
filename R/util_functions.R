@@ -1415,12 +1415,14 @@ initTranformers <- function() {
 dbCTRLoadJSONFiles <- function(dir, con, verbose) {
 
   # find files
-  tempFiles <- dir(path = dir,
-                   pattern = "^.+_trials_.*.ndjson$",
-                   full.names = TRUE)
+  tempFiles <- dir(
+    path = dir,
+    pattern = "^.+_trials_.*.ndjson$",
+    full.names = TRUE)
 
   # check
-  if (!length(tempFiles)) stop("no .+_trials_.*.ndjson files found in ", dir)
+  if (!length(tempFiles)) stop(
+    "no .+_trials_.*.ndjson files found in ", dir)
 
   # initialise counters
   fc <- length(tempFiles)
@@ -1447,7 +1449,8 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
         appendLF = FALSE)
 
       # get all ids using jq, safet than regex
-      ids <- gsub("\"", "", as.vector(jqr::jq(file(tempFiles[tempFile]), " ._id ")))
+      ids <- gsub("\"", "", as.vector(
+        jqr::jq(file(tempFiles[tempFile]), " ._id ")))
 
       ## existing annotations -------------------------------------------------
 
@@ -1461,6 +1464,7 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
             paste0('"', ids, '"', collapse = ","), "]}}"),
           fields = '{"_id": 1, "annotation": 1}')
       }, silent = TRUE)
+
       if (!inherits(annoDf, "try-error") && length(annoDf[["_id"]])) {
         annoDf <- merge(
           data.frame("_id" = ids, check.names = FALSE, stringsAsFactors = FALSE),
@@ -1469,6 +1473,7 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
         annoDf <-
           data.frame("_id" = ids, check.names = FALSE, stringsAsFactors = FALSE)
       }
+
       if (is.null(annoDf[["annotation"]]))
         annoDf[["annotation"]] <- rep(NA, length(ids))
 
@@ -1503,36 +1508,44 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
             )))}, silent = TRUE)
 
       ## return values for lapply
+      # handle res and generate return values
       if (inherits(res, "try-error") || res == 0L || res != nrow(annoDf)) {
 
-        # step into line by line mode
+        # is res failed, step into line by line mode
         fdLines <- file(tempFiles[tempFile], open = "rt", blocking = TRUE)
+
         while (TRUE) {
+
           tmpOneLine <- readLines(con = fdLines, n = 1L, warn = FALSE)
           if (length(tmpOneLine) == 0L || !nchar(tmpOneLine)) break
           id <- sub(".*\"_id\":[ ]*\"(.*?)\".*", "\\1", tmpOneLine)
           res <- suppressWarnings(suppressMessages(nodbi::docdb_create(
             src = con, key = con$collection, value = paste0("[", tmpOneLine, "]"))))
+
           nImported <- nImported + res
           if (res) idSuccess <- c(idSuccess, id)
           if (!res) idFailed <- c(idFailed, id)
           if (!res) warning("Failed to load: ", id, call. = FALSE)
           if (res) idAnnotation <- c(idAnnotation, annoDf[
             annoDf[["_id"]] == id, "annotation", drop = TRUE][1])
+
         }
         close(fdLines)
 
       } else {
+
         nImported <- nImported + res
         idSuccess <- c(idSuccess, annoDf[, "_id", drop = TRUE])
         idAnnotation <- c(idAnnotation, annoDf[, "annotation", drop = TRUE])
+
       }
 
-      # return values
-      list(success = idSuccess,
-           failed = idFailed,
-           n = nImported,
-           annotations = idAnnotation)
+      # return values for lapply
+      list(
+        success = idSuccess,
+        failed = idFailed,
+        n = nImported,
+        annotations = idAnnotation)
 
     }) # sapply tempFiles
 
@@ -1543,10 +1556,11 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
   annotations <- as.vector(unlist(sapply(retimp, "[[", "annotations")))
 
   # return
-  return(list(n = n,
-              success = success,
-              failed = failed,
-              annotations = annotations))
+  return(list(
+    n = n,
+    success = success,
+    failed = failed,
+    annotations = annotations))
 
 } # end dbCTRLoadJSONFiles
 
