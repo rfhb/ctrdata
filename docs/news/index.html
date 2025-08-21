@@ -41,17 +41,24 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.24.1.9000" id="ctrdata-12419000">ctrdata 1.24.1.9000<a class="anchor" aria-label="anchor" href="#ctrdata-12419000"></a></h2>
 <div class="section level3">
-<h3 id="enhancement-1-24-1-9000">Enhancement<a class="anchor" aria-label="anchor" href="#enhancement-1-24-1-9000"></a></h3>
-<ul><li>Retrying requests to CTIS, which apparently started to refuse or throttle responses</li>
-<li>Revise how EUCTR trials are updated with results data to accelerate operations</li>
-</ul></div>
-<div class="section level3">
 <h3 id="possibly-breaking-down-stream-workflows-1-24-1-9000">Possibly breaking down-stream workflows<a class="anchor" aria-label="anchor" href="#possibly-breaking-down-stream-workflows-1-24-1-9000"></a></h3>
 <ul><li>Save EUCTR results in folders by trial, in analogy to documents for other registers</li>
 </ul></div>
 <div class="section level3">
+<h3 id="enhancement-1-24-1-9000">Enhancement<a class="anchor" aria-label="anchor" href="#enhancement-1-24-1-9000"></a></h3>
+<ul><li>Revised how EUCTR trials are loaded and updated with results to accelerate operations</li>
+<li>Added retrying requests to CTIS, which apparently started to refuse or throttle responses</li>
+<li>Added incrementing numbers of historic versions of CTIS created with <code>querytoupdate = ...</code>
+</li>
+<li>Simplified, accelerated loading NDJSON files, minimising deletion and re-loading</li>
+</ul></div>
+<div class="section level3">
 <h3 id="bug-fixes-1-24-1-9000">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-24-1-9000"></a></h3>
-<ul><li>Refined indicator variables for <code>f.hasResults</code>
+<ul><li>Refined indicator variables for <code><a href="../reference/f.hasResults.html">f.hasResults()</a></code>
+</li>
+<li>Added missing status code in <code><a href="../reference/f.statusRecruitment.html">f.statusRecruitment()</a></code>
+</li>
+<li>Corrected missing value handling in <code><a href="../reference/f.sponsorType.html">f.sponsorType()</a></code>
 </li>
 </ul></div>
 </div>

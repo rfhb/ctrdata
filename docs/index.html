@@ -66,7 +66,7 @@
 <li>ClinicalTrials.gov (“CTGOV2”, see <a href="#workflow-ctgov-example">example</a>)</li>
 <li>ISRCTN Registry (<a href="https://www.isrctn.com/" class="external-link uri">https://www.isrctn.com/</a>)</li>
 </ul>
-<p>The motivation is to investigate the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can use the databases created with this package. This README was reviewed on 2025-08-13 for version 1.24.1.9000.</p>
+<p>The motivation is to investigate the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. <code>ctrdata</code> is a package for the <a href="https://www.r-project.org/" class="external-link">R</a> system, but other systems and tools can use the databases created with this package. This README was reviewed on 2025-08-21 for version 1.24.1.9000.</p>
 <div class="section level2">
 <h2 id="main-features">Main features<a class="anchor" aria-label="anchor" href="#main-features"></a>
 </h2>
@@ -340,15 +340,16 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span><span class="co"># * Checking trials in EUCTR, found 73 trials </span></span>
 <span><span class="co"># - Downloading in 4 batch(es) (20 trials each; estimate: 9 MB)</span></span>
 <span><span class="co"># - Downloading 73 records of 73 trials (estimate: 4 s)               </span></span>
-<span><span class="co"># - Converting to NDJSON (estimate: 0.2 s) . .                          </span></span>
+<span><span class="co"># - Converting to NDJSON (estimate: 0.2 s)...                           </span></span>
 <span><span class="co"># - Importing records into database...</span></span>
 <span><span class="co"># = Imported or updated 73 records on 73 trial(s)  </span></span>
 <span><span class="co"># * Checking results if available from EUCTR for 73 trials: </span></span>
 <span><span class="co"># - Downloading results...</span></span>
-<span><span class="co"># - Extracting results (. = data, F = file[s] and data, x = none): . . . F . . . </span></span>
-<span><span class="co"># F . . F . . . . . . . F . F F . . . . . . F . . . . </span></span>
-<span><span class="co"># - Converting to NDJSON (estimate: 3 s)...</span></span>
-<span><span class="co"># - Importing results into database (may take some time)...</span></span>
+<span><span class="co"># - Extracting results (. = data, F = file[s] and data, x = none): . . . F . . </span></span>
+<span><span class="co"># . F . . F . . . . . . . F . F F . . . . . . F . . . . </span></span>
+<span><span class="co"># - Data found for 33 trials</span></span>
+<span><span class="co"># - Converting to NDJSON (estimate: 1 s)...</span></span>
+<span><span class="co"># - Importing 33 results into database (may take some time)...</span></span>
 <span><span class="co"># - Results history: not retrieved (euctrresultshistory = FALSE)</span></span>
 <span><span class="co"># = Imported or updated results for 33 trials</span></span>
 <span><span class="co"># No history found in expected format.</span></span>
@@ -421,11 +422,11 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span><span class="co"># To review trial concepts details, call 'help("ctrdata-trial-concepts")'</span></span>
 <span><span class="co"># Querying database (16 fields)...</span></span>
 <span><span class="co"># Searching for duplicate trials...                             </span></span>
-<span><span class="co"># - Getting all trial identifiers (may take some time), 322 found in collection</span></span>
+<span><span class="co"># - Getting all trial identifiers (may take some time), 315 found in collection</span></span>
 <span><span class="co"># - Finding duplicates among registers' and sponsor ids...</span></span>
 <span><span class="co"># - 114 EUCTR _id were not preferred EU Member State record for 66 trials</span></span>
-<span><span class="co"># - Keeping 111 / 60 / 0 / 0 / 0 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS</span></span>
-<span><span class="co"># = Returning keys (_id) of 171 records in collection "collection_name"</span></span>
+<span><span class="co"># - Keeping 104 / 60 / 0 / 0 / 0 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS</span></span>
+<span><span class="co"># = Returning keys (_id) of 164 records in collection "collection_name"</span></span>
 <span></span>
 <span><span class="co"># Tabulate the clinical trial information of interest</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span></span>
@@ -440,7 +441,7 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span><span class="co">#        ongoing         6    4</span></span>
 <span><span class="co">#        completed      11    5</span></span>
 <span><span class="co">#        ended early     7    3</span></span>
-<span><span class="co">#        other           8    1</span></span></code></pre></div>
+<span><span class="co">#        other           8    2</span></span></code></pre></div>
 <div id="workflow-ctgov-example">
 
 </div>
@@ -502,7 +503,7 @@ utils::browseURL("https://scholar.google.com/scholar?hl=en&as_sdt=0,5&q=%22ctrda
 <span>  only.count <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># $n</span></span>
-<span><span class="co"># [1] 9752</span></span></code></pre></div>
+<span><span class="co"># [1] 9793</span></span></code></pre></div>
 <div id="workflow-data-model">
 
 </div>
@@ -588,8 +589,8 @@ Analysis across registers
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># To review trial concepts details, call 'help("ctrdata-trial-concepts")'</span></span>
-<span><span class="co"># Querying database (52 fields)...</span></span>
-<span><span class="co"># Calculating f.numTestArmsSubstances...</span></span>
+<span><span class="co"># Querying database (50 fields)...</span></span>
+<span><span class="co"># Calculating f.numTestArmsSubstances... </span></span>
 <span></span>
 <span><span class="va">result</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.isUniqueTrial</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -666,6 +667,7 @@ Neuroblastoma trials
 <span><span class="co"># Updated history ("meta-info" in "collection_name")</span></span>
 <span><span class="co"># $n</span></span>
 <span><span class="co"># [1] 249</span></span>
+<span></span>
 <span></span>
 <span><span class="co">### CTGOV files are downloaded, here corresponding to the default of</span></span>
 <span><span class="co"># documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|icf|ctalett|lay|^[0-9]+ "</span></span>
@@ -798,40 +800,42 @@ Neuroblastoma trials
 </h2>
 <p>See also <a href="https://app.codecov.io/gh/rfhb/ctrdata/tree/master/R" class="external-link uri">https://app.codecov.io/gh/rfhb/ctrdata/tree/master/R</a></p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># 2025-08-13</span></span>
+<code class="sourceCode R"><span><span class="co"># 2025-08-21</span></span>
 <span></span>
 <span><span class="fu">tinytest</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tinytest/man/run_test_dir.html" class="external-link">test_all</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co"># test_ctrdata_duckdb_ctgov2.R..   78 tests OK 48.7s</span></span>
-<span><span class="co"># test_ctrdata_function_activesubstance.R    4 tests OK 0.8s</span></span>
-<span><span class="co"># test_ctrdata_function_ctrgeneratequeries.R   10 tests OK 0.2s</span></span>
-<span><span class="co"># test_ctrdata_function_params.R   25 tests OK 1.3s</span></span>
-<span><span class="co"># test_ctrdata_function_trial-concepts.R   92 tests OK 4.1s</span></span>
-<span><span class="co"># test_ctrdata_function_various.R   77 tests OK 4.4s</span></span>
-<span><span class="co"># test_ctrdata_postgres_ctgov2.R   50 tests OK 31.3s</span></span>
-<span><span class="co"># test_ctrdata_sqlite_ctgov.R...   46 tests OK 27.7s</span></span>
+<span><span class="co"># test_ctrdata_duckdb_ctgov2.R..   78 tests OK 49.9s</span></span>
+<span><span class="co"># test_ctrdata_function_activesubstance.R    4 tests OK 0.9s</span></span>
+<span><span class="co"># test_ctrdata_function_ctrgeneratequeries.R   10 tests OK 0.3s</span></span>
+<span><span class="co"># test_ctrdata_function_params.R   25 tests OK 1.2s</span></span>
+<span><span class="co"># test_ctrdata_function_trial-concepts.R   92 tests OK 3.8s</span></span>
+<span><span class="co"># test_ctrdata_function_various.R   79 tests OK 3.0s</span></span>
+<span><span class="co"># test_ctrdata_mongo_local_ctis.R   91 tests OK 3.5s</span></span>
+<span><span class="co"># test_ctrdata_mongo_remote_ro.R    4 tests OK 6.6s</span></span>
+<span><span class="co"># test_ctrdata_postgres_ctgov2.R   50 tests OK 30.6s</span></span>
+<span><span class="co"># test_ctrdata_sqlite_ctgov.R...   46 tests OK 28.9s</span></span>
 <span><span class="co"># test_ctrdata_sqlite_ctgov2.R..   50 tests OK 25.7s</span></span>
-<span><span class="co"># test_ctrdata_sqlite_ctis.R....   90 tests OK 1.6s</span></span>
-<span><span class="co"># test_ctrdata_sqlite_euctr.R...  119 tests OK 40.1s</span></span>
-<span><span class="co"># test_ctrdata_sqlite_isrctn.R..   45 tests OK 16.7s</span></span>
+<span><span class="co"># test_ctrdata_sqlite_ctis.R....   92 tests OK 1.7s</span></span>
+<span><span class="co"># test_ctrdata_sqlite_euctr.R...  119 tests OK 55.1s</span></span>
+<span><span class="co"># test_ctrdata_sqlite_isrctn.R..   45 tests OK 16.9s</span></span>
 <span><span class="co"># test_euctr_error_sample.R.....    8 tests OK 0.2s</span></span>
-<span><span class="co"># All ok, 694 results (5m 0.1s)</span></span>
+<span><span class="co"># All ok, 793 results (8m 53.4s)</span></span>
 <span></span>
 <span><span class="fu">covr</span><span class="fu">::</span><span class="fu"><a href="http://covr.r-lib.org/reference/package_coverage.html" class="external-link">package_coverage</a></span><span class="op">(</span>path <span class="op">=</span> <span class="st">"."</span>, type <span class="op">=</span> <span class="st">"tests"</span><span class="op">)</span></span>
-<span><span class="co"># ctrdata Coverage: 94.95%</span></span>
-<span><span class="co"># R/ctrShowOneTrial.R: 77.19%</span></span>
-<span><span class="co"># R/util_functions.R: 87.99%</span></span>
+<span><span class="co"># ctrdata Coverage: 94.58%</span></span>
+<span><span class="co"># R/ctrRerunQuery.R: 81.42%</span></span>
+<span><span class="co"># R/ctrShowOneTrial.R: 84.21%</span></span>
+<span><span class="co"># R/ctrLoadQueryIntoDbEuctr.R: 87.78%</span></span>
 <span><span class="co"># R/ctrGetQueryUrl.R: 89.18%</span></span>
 <span><span class="co"># R/ctrFindActiveSubstanceSynonyms.R: 89.36%</span></span>
-<span><span class="co"># R/ctrRerunQuery.R: 90.48%</span></span>
-<span><span class="co"># R/ctrLoadQueryIntoDbEuctr.R: 90.98%</span></span>
-<span><span class="co"># R/f_sponsorType.R: 91.96%</span></span>
+<span><span class="co"># R/util_functions.R: 90.15%</span></span>
+<span><span class="co"># R/f_sponsorType.R: 92.00%</span></span>
 <span><span class="co"># R/ctrLoadQueryIntoDbCtgov2.R: 92.93%</span></span>
 <span><span class="co"># R/dbGetFieldsIntoDf.R: 95.39%</span></span>
 <span><span class="co"># R/ctrLoadQueryIntoDbIsrctn.R: 95.70%</span></span>
 <span><span class="co"># R/dbFindFields.R: 95.88%</span></span>
 <span><span class="co"># R/f_primaryEndpointResults.R: 96.00%</span></span>
-<span><span class="co"># R/ctrLoadQueryIntoDbCtis.R: 96.32%</span></span>
 <span><span class="co"># R/ctrLoadQueryIntoDb.R: 96.40%</span></span>
+<span><span class="co"># R/ctrLoadQueryIntoDbCtis.R: 96.53%</span></span>
 <span><span class="co"># R/dfMergeVariablesRelevel.R: 96.55%</span></span>
 <span><span class="co"># R/ctrGenerateQueries.R: 97.13%</span></span>
 <span><span class="co"># R/ctrOpenSearchPagesInBrowser.R: 97.50%</span></span>

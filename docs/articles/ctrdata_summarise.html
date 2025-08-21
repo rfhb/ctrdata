@@ -62,7 +62,7 @@
                         <h4 data-toc-skip class="author">Ralf
 Herold</h4>
             
-            <h4 data-toc-skip class="date">2025-07-19</h4>
+            <h4 data-toc-skip class="date">2025-08-21</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/rfhb/ctrdata/blob/HEAD/vignettes/ctrdata_summarise.Rmd" class="external-link"><code>vignettes/ctrdata_summarise.Rmd</code></a></small>
       <div class="d-none name"><code>ctrdata_summarise.Rmd</code></div>
@@ -76,7 +76,7 @@ here: <a href="https://github.com/rfhb/ctrdata" class="external-link">https://gi
 <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>). Please cite
 this package in any publication as follows: Ralf Herold (2025). ctrdata:
 Retrieve and Analyze Clinical Trials in Public Registers. R package
-version 1.23.0. <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a></p>
+version 1.24.1. <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a></p>
 <div class="section level2">
 <h2 id="preparations">Preparations<a class="anchor" aria-label="anchor" href="#preparations"></a>
 </h2>
@@ -113,66 +113,74 @@ information</a> for more details.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Load trials from all queries into collection</span></span>
-<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">queries</span>, <span class="va">ctrLoadQueryIntoDb</span>, euctrresults <span class="op">=</span> <span class="cn">TRUE</span>, con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></span>
-<span><span class="co"># * Found search query from EUCTR: query=neuroblastoma&amp;age=children&amp;age=adolescent</span></span>
-<span><span class="co"># &amp;age=infant-and-toddler&amp;age=newborn&amp;age=preterm-new-born-infants&amp;age=under-18</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span></span>
+<span>  <span class="va">queries</span>, </span>
+<span>  <span class="va">ctrLoadQueryIntoDb</span>, </span>
+<span>  euctrresults <span class="op">=</span> <span class="cn">TRUE</span>, </span>
+<span>  euctrprotocolsall <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></span>
+<span><span class="co"># * Found search query from EUCTR: query=neuroblastoma&amp;age=children&amp;</span></span>
+<span><span class="co"># age=adolescent&amp;age=infant-and-toddler&amp;age=newborn&amp;age=preterm-new-born-</span></span>
+<span><span class="co"># infants&amp;age=under-18</span></span>
 <span><span class="co"># * Checking trials in EUCTR, found 106 trials </span></span>
 <span><span class="co"># - Downloading in 6 batch(es) (20 trials each; estimate: 10 MB)</span></span>
-<span><span class="co"># - Downloading 390 records of 106 trials (estimate: 20 s)            </span></span>
-<span><span class="co"># - Converting to NDJSON (estimate: 0.8 s) . . . . . . . .                </span></span>
+<span><span class="co"># - Downloading 106 records of 106 trials (estimate: 6 s)             </span></span>
+<span><span class="co"># - Converting to NDJSON (estimate: 0.3 s)...                           </span></span>
 <span><span class="co"># - Importing records into database...</span></span>
-<span><span class="co"># = Imported or updated 390 records on 106 trial(s)</span></span>
+<span><span class="co"># = Imported or updated 106 records on 106 trial(s)</span></span>
 <span><span class="co"># * Checking results if available from EUCTR for 106 trials: </span></span>
 <span><span class="co"># - Downloading results...</span></span>
 <span><span class="co"># - Extracting results (. = data, F = file[s] and data, x = none): . F . . F . </span></span>
-<span><span class="co"># F . F . . F . . . . F . . F F . . . . . . . F . . F . F . . . . . F . . . . </span></span>
+<span><span class="co"># F . F . . F . . . . F . . F F . . . . . . . . F . . F . F . . . . . F . . . . </span></span>
 <span><span class="co"># F . . F . . </span></span>
-<span><span class="co"># - Converting to NDJSON (estimate: 5 s)...</span></span>
-<span><span class="co"># - Importing results into database (may take some time)...</span></span>
+<span><span class="co"># - Data found for 51 trials</span></span>
+<span><span class="co"># - Converting to NDJSON (estimate: 2 s)...</span></span>
+<span><span class="co"># - Importing 51 results into database (may take some time)...</span></span>
 <span><span class="co"># - Results history: not retrieved (euctrresultshistory = FALSE)</span></span>
-<span><span class="co"># = Imported or updated results for 50 trials</span></span>
-<span><span class="co"># No history found in expected format.</span></span>
+<span><span class="co"># = Imported or updated results for 51 trials</span></span>
 <span><span class="co"># Updated history ("meta-info" in "my_collection_name")</span></span>
-<span><span class="co"># * Found search query from ISRCTN: &amp;q=&amp;filters=condition:neuroblastoma,ageRange:</span></span>
-<span><span class="co"># Child,primaryStudyDesign:Interventional,phase:Phase 0,phase:Phase I,phase:Phase</span></span>
-<span><span class="co"># II,phase:Phase III,phase:Phase IV,phase:Phase I/II,phase:Phase II/III,phase:</span></span>
-<span><span class="co"># Phase III/IV</span></span>
+<span><span class="co"># * Found search query from ISRCTN: &amp;q=&amp;filters=condition:neuroblastoma,</span></span>
+<span><span class="co"># ageRange:Child,primaryStudyDesign:Interventional,phase:Phase 0,phase:</span></span>
+<span><span class="co"># Phase I,phase:Phase II,phase:Phase III,phase:Phase IV,phase:Phase I/II,</span></span>
+<span><span class="co"># phase:Phase II/III,phase:Phase III/IV</span></span>
 <span><span class="co"># * Checking trials in ISRCTN, found 1 trials </span></span>
 <span><span class="co"># - Downloading trial file (estimate: 0.02 MB)</span></span>
 <span><span class="co"># - Converting to NDJSON (estimate: 0.006 s)...</span></span>
 <span><span class="co"># - Importing records into database...</span></span>
 <span><span class="co"># = Imported or updated 1 trial(s)                 </span></span>
 <span><span class="co"># Updated history ("meta-info" in "my_collection_name")</span></span>
-<span><span class="co"># * Found search query from CTGOV2: cond=neuroblastoma&amp;aggFilters=ages:child,studyType:int</span></span>
-<span><span class="co"># * Checking trials in CTGOV, found 533 trials</span></span>
-<span><span class="co"># - Downloading in 1 batch(es) (max. 1000 trials each; estimate: 53 Mb total)</span></span>
-<span><span class="co"># - Converting to NDJSON...</span></span>
+<span><span class="co"># * Found search query from CTGOV2: cond=neuroblastoma&amp;intr=Drug OR Biological&amp;term=AREA[DesignPrimaryPurpose](DIAGNOSTIC OR PREVENTION OR TREATMENT)&amp;aggFilters=ages:child,studyType:int</span></span>
+<span><span class="co"># * Checking trials in CTGOV2, found 467 trials</span></span>
+<span><span class="co"># - Downloading in 1 batch(es) (max. 1000 trials each; estimate: 47 Mb total)</span></span>
+<span><span class="co"># - Load and convert batch 1...</span></span>
 <span><span class="co"># - Importing records into database...</span></span>
 <span><span class="co"># JSON file #: 1 / 1                               </span></span>
-<span><span class="co"># = Imported or updated 533 trial(s)</span></span>
+<span><span class="co"># = Imported or updated 467 trial(s)</span></span>
 <span><span class="co"># Updated history ("meta-info" in "my_collection_name")</span></span>
 <span><span class="co"># * Found search query from CTGOV2: term=AREA[ConditionSearch]"neuroblastoma" </span></span>
-<span><span class="co"># AND (AREA[StdAge]"CHILD") AND (AREA[StudyType]INTERVENTIONAL)</span></span>
-<span><span class="co"># * Checking trials in CTGOV, found 533 trials</span></span>
-<span><span class="co"># - Downloading in 1 batch(es) (max. 1000 trials each; estimate: 53 Mb total)</span></span>
-<span><span class="co"># - Converting to NDJSON...</span></span>
+<span><span class="co"># AND (AREA[StdAge]"CHILD") AND (AREA[StudyType]INTERVENTIONAL) AND </span></span>
+<span><span class="co"># (AREA[DesignPrimaryPurpose](DIAGNOSTIC OR PREVENTION OR TREATMENT)) AND </span></span>
+<span><span class="co"># (AREA[InterventionSearch](DRUG OR BIOLOGICAL))</span></span>
+<span><span class="co"># * Checking trials in CTGOV2, found 467 trials</span></span>
+<span><span class="co"># - Downloading in 1 batch(es) (max. 1000 trials each; estimate: 47 Mb total)</span></span>
+<span><span class="co"># - Load and convert batch 1...</span></span>
 <span><span class="co"># - Importing records into database...</span></span>
 <span><span class="co"># JSON file #: 1 / 1                               </span></span>
-<span><span class="co"># = Imported or updated 533 trial(s)</span></span>
+<span><span class="co"># = Imported or updated 467 trial(s)</span></span>
 <span><span class="co"># Updated history ("meta-info" in "my_collection_name")</span></span>
 <span><span class="co"># * Found search query from CTIS: searchCriteria={"medicalCondition":</span></span>
 <span><span class="co"># "neuroblastoma","ageGroupCode":[2]}</span></span>
-<span><span class="co"># * Checking trials in CTIS, found 21 trials </span></span>
+<span><span class="co"># * Checking trials in CTIS, found 22 trials </span></span>
 <span><span class="co"># - Downloading and processing trial data... (estimate: 3 Mb)</span></span>
 <span><span class="co"># - Importing records into database...</span></span>
 <span><span class="co"># - Updating with additional data: .               </span></span>
-<span><span class="co"># = Imported 21, updated 21 record(s) on 21 trial(s)</span></span>
+<span><span class="co"># = Imported 22, updated 22 record(s) on 22 trial(s)</span></span>
 <span><span class="co"># Updated history ("meta-info" in "my_collection_name")</span></span>
 <span></span>
 <span><span class="co"># Show results of loading</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">result</span>, <span class="st">"[["</span>, <span class="st">"n"</span><span class="op">)</span></span>
 <span><span class="co"># EUCTR       ISRCTN       CTGOV2 CTGOV2expert         CTIS </span></span>
-<span><span class="co">#   390            1          533          533           21 </span></span></code></pre></div>
+<span><span class="co">#   106            1          467          467           21 </span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="find-fields-variables-of-interest">Find fields / variables of interest<a class="anchor" aria-label="anchor" href="#find-fields-variables-of-interest"></a>
@@ -190,21 +198,21 @@ invalidates the cache.</p>
 <span><span class="co"># Finding fields in database collection (may take some time) . . . . . </span></span>
 <span><span class="co"># Field names cached for this session.</span></span>
 <span><span class="co"># [...]</span></span>
-<span><span class="co">#                                                                            EUCTR </span></span>
-<span><span class="co"># "e231_full_title_date_and_version_of_each_substudy_and_their_related_objectives" </span></span>
+<span><span class="co">#                                                                       EUCTR</span></span>
+<span><span class="co">#                                    "n_date_of_competent_authority_decision"</span></span>
 <span><span class="co"># [...]</span></span>
-<span><span class="co">#                                                                           CTGOV2 </span></span>
-<span><span class="co">#      "annotationSection.annotationModule.unpostedAnnotation.unpostedEvents.date" </span></span>
-<span><span class="co">#                                                                           CTGOV2 </span></span>
-<span><span class="co">#                            "protocolSection.statusModule.studyFirstSubmitQcDate" </span></span>
+<span><span class="co">#                                                                      CTGOV2 </span></span>
+<span><span class="co"># "annotationSection.annotationModule.unpostedAnnotation.unpostedEvents.date"</span></span>
+<span><span class="co">#                                                                      CTGOV2 </span></span>
+<span><span class="co">#                       "protocolSection.statusModule.studyFirstSubmitQcDate" </span></span>
 <span><span class="co"># [...]</span></span>
-<span><span class="co">#                                                                             CTIS </span></span>
-<span><span class="co">#                                                                    "publishDate" </span></span>
-<span><span class="co">#                                                                             CTIS </span></span>
-<span><span class="co">#                                                                    "startDateEU" </span></span>
+<span><span class="co">#                                                                        CTIS </span></span>
+<span><span class="co">#                                                               "publishDate" </span></span>
+<span><span class="co">#                                                                        CTIS </span></span>
+<span><span class="co">#                                                               "startDateEU" </span></span>
 <span><span class="co"># [...]</span></span>
-<span><span class="co">#                                                                           ISRCTN </span></span>
-<span><span class="co">#                                                     "trialDesign.overallEndDate" </span></span></code></pre></div>
+<span><span class="co">#                                                                      ISRCTN </span></span>
+<span><span class="co">#                                                "trialDesign.overallEndDate" </span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="data-frame-from-database">Data frame from database<a class="anchor" aria-label="anchor" href="#data-frame-from-database"></a>
@@ -239,7 +247,7 @@ represented in an R data frame, for example:</p>
 <span><span class="co"># Querying database (7 fields)...</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
-<span><span class="co"># [1] 916   8</span></span></code></pre></div>
+<span><span class="co"># [1] 567   8</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="metadata-from-data-frame">Metadata from data frame<a class="anchor" aria-label="anchor" href="#metadata-from-data-frame"></a>
@@ -267,23 +275,21 @@ query details. Metadata can be reused in R.</p>
 <span><span class="co"># [1] "my_collection_name"</span></span>
 <span><span class="co"># </span></span>
 <span><span class="co"># $`ctrdata-dbqueryhistory`</span></span>
-<span><span class="co">#       query-timestamp query-register query-records</span></span>
-<span><span class="co"># 1 2025-07-02 21:08:50          EUCTR           390</span></span>
-<span><span class="co"># 2 2025-07-02 21:08:51         ISRCTN             1</span></span>
-<span><span class="co"># 3 2025-07-02 21:08:54         CTGOV2           533</span></span>
-<span><span class="co"># 4 2025-07-02 21:08:56         CTGOV2           533</span></span>
-<span><span class="co"># 5 2025-07-02 21:08:57           CTIS            21</span></span>
-<span><span class="co">#                                                               query-term</span></span>
-<span><span class="co"># 1                                       query=neuroblastoma&amp;age=under-18</span></span>
-<span><span class="co"># 2                               cond=neuroblastoma&amp;aggFilters=ages:child</span></span>
-<span><span class="co"># 3                     &amp;filters=condition:neuroblastoma,ageRange:Child&amp;q=</span></span>
-<span><span class="co"># 4 searchCriteria={"medicalCondition":"neuroblastoma","ageGroupCode":[2]}</span></span>
-<span><span class="co"># query-term</span></span>
-<span><span class="co"># 1 query=neuroblastoma&amp;age=children&amp;age=adolescent&amp;age=infant-and-toddler&amp;age=newborn&amp;age=preterm-new-born-infants&amp;age=under-18</span></span>
-<span><span class="co"># 2 &amp;q=&amp;filters=condition:neuroblastoma,ageRange:Child,primaryStudyDesign:Interventional,phase:Phase 0,phase:Phase I,phase:Phase II,phase:Phase III,phase:Phase IV,phase:Phase I/II,phase:Phase II/III,phase:Phase III/IV</span></span>
-<span><span class="co"># 3 cond=neuroblastoma&amp;aggFilters=ages:child,studyType:int</span></span>
-<span><span class="co"># 4 term=AREA[ConditionSearch]"neuroblastoma" AND (AREA[StdAge]"CHILD") AND (AREA[StudyType]INTERVENTIONAL)</span></span>
-<span><span class="co"># 5 searchCriteria={"medicalCondition":"neuroblastoma","ageGroupCode":[2]}</span></span></code></pre></div>
+<span><span class="co"># A tibble: 6 × 4</span></span>
+<span><span class="co">#   `query-timestamp`   `query-register` `query-records`</span></span>
+<span><span class="co">#   &lt;chr&gt;               &lt;chr&gt;                      &lt;int&gt;</span></span>
+<span><span class="co"># 1 2025-08-21 12:06:09 EUCTR                        106</span></span>
+<span><span class="co"># 2 2025-08-21 12:06:10 ISRCTN                         1</span></span>
+<span><span class="co"># 3 2025-08-21 12:06:13 CTGOV2                       467</span></span>
+<span><span class="co"># 4 2025-08-21 12:06:16 CTGOV2                       467</span></span>
+<span><span class="co"># 5 2025-08-21 12:06:19 CTIS                          22</span></span>
+<span><span class="co"># `query-term`                                           </span></span>
+<span><span class="co"># &lt;chr&gt;</span></span>
+<span><span class="co"># "query=neuroblastoma&amp;age=children&amp;age=adolescent&amp;age=i…</span></span>
+<span><span class="co"># "&amp;q=&amp;filters=condition:neuroblastoma,ageRange:Child,pr…</span></span>
+<span><span class="co"># "cond=neuroblastoma&amp;intr=Drug OR Biological&amp;term=AREA[…</span></span>
+<span><span class="co"># "term=AREA[ConditionSearch]\"neuroblastoma\" AND (AREA…</span></span>
+<span><span class="co"># "searchCriteria={\"medicalCondition\":\"neuroblastoma\…</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="de-duplicate-records">De-duplicate records<a class="anchor" aria-label="anchor" href="#de-duplicate-records"></a>
@@ -308,17 +314,16 @@ is the recording of additional trial identifiers in supplementary fields
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># Searching for duplicate trials... </span></span>
-<span><span class="co"># - Getting all trial identifiers, 945 found in collection</span></span>
+<span><span class="co"># - Getting all trial identifiers, 596 found in collection</span></span>
 <span><span class="co"># - Finding duplicates among registers' and sponsor ids...</span></span>
-<span><span class="co"># - 284 EUCTR _id were not preferred EU Member State record for 110 trials</span></span>
-<span><span class="co"># - Keeping 106 / 0 / 369 / 0 / 8 records from EUCTR / CTGOV / CTGOV2 / ISRCTN / CTIS</span></span>
-<span><span class="co"># = Returning keys (_id) of 483 records in collection "my_collection_name"</span></span>
+<span><span class="co"># - Keeping 106 / 0 / 315 / 0 / 9 records from EUCTR / CTGOV / CTGOV2 / ISRCTN / CTIS</span></span>
+<span><span class="co"># = Returning keys (_id) of 430 records in collection "my_collection_name"</span></span>
 <span></span>
 <span><span class="co"># Eliminate duplicate trials records:</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">[</span><span class="va">result</span><span class="op">[[</span><span class="st">"_id"</span><span class="op">]</span><span class="op">]</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">ids</span>, <span class="op">]</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
-<span><span class="co"># [1] 433</span></span>
+<span><span class="co"># [1] 415</span></span>
 <span><span class="co">#</span></span>
 <span><span class="co"># Note that "ids" are the identifiers of unique trials in the whole collection,</span></span>
 <span><span class="co"># whereas the data frame "result" only includes those trials in which any of </span></span>
@@ -343,17 +348,16 @@ information of any register, see
 <span><span class="co"># To review trial concepts details, call 'help("ctrdata-trial-concepts")'</span></span>
 <span><span class="co"># Querying database (8 fields)...</span></span>
 <span><span class="co"># Searching for duplicate trials...                         </span></span>
-<span><span class="co"># - Getting all trial identifiers, 945 found in collection</span></span>
+<span><span class="co"># - Getting all trial identifiers, 596 found in collection</span></span>
 <span><span class="co"># - Finding duplicates among registers' and sponsor ids...</span></span>
-<span><span class="co"># - 132 EUCTR _id were not preferred EU Member State record for 89 trials</span></span>
-<span><span class="co"># - Keeping 533 / 50 / 0 / 0 / 11 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS</span></span>
-<span><span class="co"># = Returning keys (_id) of 594 records in collection "my_collection_name"</span></span>
+<span><span class="co"># - Keeping 467 / 52 / 0 / 0 / 12 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS</span></span>
+<span><span class="co"># = Returning keys (_id) of 531 records in collection "my_collection_name"</span></span>
 <span></span>
 <span><span class="co"># Eliminate duplicate trials records:</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">[</span><span class="va">result</span><span class="op">[[</span><span class="st">".isUniqueTrial"</span><span class="op">]</span><span class="op">]</span>, <span class="op">]</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
-<span><span class="co"># [1] 594</span></span>
+<span><span class="co"># [1] 531</span></span>
 <span><span class="co">#</span></span>
 <span><span class="co"># Note this has used a different register as priority.</span></span>
 <span><span class="co"># Also, the data frame result includes all trials which</span></span>
@@ -419,11 +423,11 @@ R graphics:</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
-<span><span class="co"># 'data.frame': 945 obs. of  4 variables:</span></span>
-<span><span class="co">#  $ _id           : chr  "2004-004386-15-DE" "2004-004386-15-ES" ...</span></span>
-<span><span class="co">#  $ ctrname       : chr  "EUCTR" "EUCTR" "EUCTR" "EUCTR" ...</span></span>
-<span><span class="co">#  $ .isUniqueTrial: logi  FALSE FALSE FALSE FALSE FALSE FALSE ...</span></span>
-<span><span class="co">#  $ .startDate    : Date, format: "2005-07-26" "2005-11-15" "2005-07-26" ...</span></span>
+<span><span class="co"># tibble [596 × 4] (S3: tbl_df/tbl/data.frame)</span></span>
+<span><span class="co">#  $ _id           : chr [1:596] "2004-004386-15-ES" "2005-000915-80-IT" ...</span></span>
+<span><span class="co">#  $ ctrname       : chr [1:596] "EUCTR" "EUCTR" "EUCTR" "EUCTR" ...</span></span>
+<span><span class="co">#  $ .isUniqueTrial: logi [1:596] FALSE FALSE FALSE FALSE TRUE TRUE ...</span></span>
+<span><span class="co">#  $ .startDate    : Date[1:596], format: "2005-11-15" "2005-04-21" "2005-07-08" ...</span></span>
 <span></span>
 <span><span class="co"># Open file for saving</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html" class="external-link">png</a></span><span class="op">(</span><span class="st">"vignettes/nb1.png"</span><span class="op">)</span></span>
@@ -487,11 +491,11 @@ so far, see <code>help(ctrdata-trial-concepts)</code>.</p>
 <code>ctrdata</code> version 1.18.0. The versions include all trial data
 available at the date of the respective version. Only CTGOV2 provides
 historic versions at this time (CTIS only until its relaunch on
-2024-06-17) as part of their respective APIs. Nevertheless, historic
-versions can be created for CTIS by specifying
-<code>querytoupdate = &lt;...&gt;, ctishistory = TRUE</code> when using
-<code><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code>; this functionality thus is not
-provided by the register but triggered by the user, it was added in
+2024-06-17) as part of their respective APIs.</p>
+<p>Nevertheless, historic versions can also be created for CTIS by
+specifying <code>querytoupdate = &lt;...&gt;, ctishistory = TRUE</code>
+when using <code><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code>; this functionality thus is
+not provided by the register but triggered by the user, it was added in
 <code>ctrdata</code> version 1.21.1.9000.</p>
 <p>The following schema represents two clinical trial records (one each
 from CTGOV2 and CTIS) with the array of <code>history: [...]</code>
@@ -568,18 +572,22 @@ data</p>
 <span>  con <span class="op">=</span> <span class="va">db</span>, </span>
 <span>  ctgov2history <span class="op">=</span> <span class="fl">5L</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># * Found search query from CTGOV2: cond=neuroblastoma&amp;aggFilters=ages:child,studyType:int</span></span>
-<span><span class="co"># * Checking trials in CTGOV, found 533 trials</span></span>
-<span><span class="co"># - Downloading in 1 batch(es) (max. 1000 trials each; estimate: 53 Mb total)</span></span>
-<span><span class="co"># - Converting to NDJSON...</span></span>
+<span><span class="co"># * Found search query from CTGOV2: cond=neuroblastoma&amp;intr=Drug OR Biological&amp;term=AREA[DesignPrimaryPurpose](DIAGNOSTIC OR PREVENTION OR TREATMENT)&amp;aggFilters=ages:child,studyType:int</span></span>
+<span><span class="co"># * Checking trials in CTGOV2, found 467 trials</span></span>
+<span><span class="co"># - Downloading in 1 batch(es) (max. 1000 trials each; estimate: 47 Mb total)</span></span>
+<span><span class="co"># - Load and convert batch 1...</span></span>
 <span><span class="co"># - Importing records into database...</span></span>
 <span><span class="co"># JSON file #: 1 / 1                               </span></span>
 <span><span class="co"># * Checking and processing historic versions... </span></span>
-<span><span class="co"># - Downloading 2448 historic versions (estimate: 93 MB total)...         </span></span>
-<span><span class="co"># - Merging trial versions . . . . . . . . . . . . . . . . . . . . . . . . . . </span></span>
-<span><span class="co"># - Updating trial records . . . . . . . . . . . . . . . . . . . . . . . . . .</span></span>
-<span><span class="co"># Updated 533 trial(s) with historic versions</span></span>
-<span><span class="co"># = Imported or updated 533 trial(s)</span></span>
+<span><span class="co"># - Downloading 2148 historic versions (estimate: 82 MB total)...         </span></span>
+<span><span class="co"># - Merging trial versions . . . . . . . . . . . . . . . . . . . . . . . . . .</span></span>
+<span><span class="co"># - Updating trial records . . . . . . . . . . . . . . . . . . . . . . . . . . </span></span>
+<span><span class="co"># Updated 467 trial(s) with historic versions</span></span>
+<span><span class="co"># = Imported or updated 467 trial(s)</span></span>
+<span><span class="co"># No history found in expected format.</span></span>
+<span><span class="co"># Updated history ("meta-info" in "my_collection_name")</span></span>
+<span><span class="co"># $n</span></span>
+<span><span class="co"># [1] 467</span></span>
 <span></span>
 <span><span class="co"># Get relevant fields</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span>
@@ -712,14 +720,14 @@ may exist in previously created databases.</p>
 <span><span class="co"># rows for each trial, with one row per field):</span></span>
 <span><span class="co"># </span></span>
 <span><span class="va">long_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfTrials2Long.html">dfTrials2Long</a></span><span class="op">(</span>df <span class="op">=</span> <span class="va">result</span><span class="op">)</span></span>
-<span><span class="co"># Total 91138 rows, 159 unique names of variables</span></span>
+<span><span class="co"># Total 95118 rows, 160 unique names of variables</span></span>
 <span><span class="va">long_result</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">10000</span>, <span class="fl">80000</span><span class="op">)</span>, <span class="op">]</span></span>
 <span><span class="co"># # A tibble: 3 × 4</span></span>
-<span><span class="co">#   `_id`             identifier name                                                        value</span></span>
-<span><span class="co">#   &lt;chr&gt;             &lt;chr&gt;      &lt;chr&gt;                                                       &lt;chr&gt;</span></span>
-<span><span class="co"># 1 2007-000371-42-PL 36         adverseEvents.seriousAdverseEvents.seriousAdverseEvent.dic… false</span></span>
-<span><span class="co"># 2 2013-003595-12-CZ 13.3       adverseEvents.seriousAdverseEvents.seriousAdverseEvent.val… 0    </span></span>
-<span><span class="co"># 3 NCT02124772       25.3       resultsSection.outcomeMeasuresModule.outcomeMeasures.denom… OG002</span></span>
+<span><span class="co">#   `_id`             identifier name                                                       value</span></span>
+<span><span class="co">#   &lt;chr&gt;             &lt;chr&gt;      &lt;chr&gt;                                                      &lt;chr&gt;</span></span>
+<span><span class="co"># 1 2007-000371-42-DE 36         adverseEvents.seriousAdverseEvents.seriousAdverseEvent.di… false</span></span>
+<span><span class="co"># 2 2013-000885-13-FR 92         adverseEvents.seriousAdverseEvents.seriousAdverseEvent.di… false</span></span>
+<span><span class="co"># 3 NCT01747876       1          resultsSection.outcomeMeasuresModule.outcomeMeasures.repo… POST…</span></span>
 <span></span>
 <span></span>
 <span><span class="co">#### 3. and 4. Obtain values for measures of interest </span></span>
@@ -746,7 +754,7 @@ may exist in previously created databases.</p>
 <span>    <span class="st">"endPoints.*armReportingGroup.armId"</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># Returning values for 55 out of 594 trials</span></span>
+<span><span class="co"># Returning values for 56 out of 531 trials</span></span>
 <span></span>
 <span></span>
 <span><span class="co">#### 5. Tabulate the results</span></span>
@@ -805,18 +813,18 @@ may exist in previously created databases.</p>
 <span></span>
 <span><span class="va">clinicalDuration</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">clinicalDuration</span><span class="op">)</span><span class="op">)</span>, <span class="fl">10L</span><span class="op">)</span>, <span class="op">]</span></span>
 <span><span class="co"># # A tibble: 10 × 4</span></span>
-<span><span class="co">#    group_id             where                                               arm_names  days</span></span>
-<span><span class="co">#    &lt;chr&gt;                &lt;chr&gt;                                               &lt;chr&gt;     &lt;dbl&gt;</span></span>
-<span><span class="co">#  1 2014-004697-41-DE_9  PFS as Determined by the Investigator Using RANO C… "Arm-104…  42  </span></span>
-<span><span class="co">#  2 NCT01587703_54       Progression Free Survival-Part 2                    " Partic…  72  </span></span>
-<span><span class="co">#  3 NCT01742286_4        Progression Free Survival (PFS) Based on Investiga… " ALK-ac…  NA  </span></span>
-<span><span class="co">#  4 NCT01483820_3        Number of Days Participants Experienced Progressio… " TPI 28…  46  </span></span>
-<span><span class="co">#  5 NCT01587703_55       Progression Free Survival-Besylate Sub-study        " All Pa… 105  </span></span>
-<span><span class="co">#  6 NCT01121588_8        Progression-Free Survival (PFS) Based on Investiga… " ALCL A…  42  </span></span>
-<span><span class="co">#  7 NCT02139397_3        Determine the Progression Free Survival (PFS) of P… " Phase …  51.2</span></span>
-<span><span class="co">#  8 2014-004685-25-IE_11 PFS as Determined by the Investigator using RANO c… ""         NA  </span></span>
-<span><span class="co">#  9 NCT01742286_3        Duration of Response (DoR) Per Investigator Assess… " ALK-ac…  NA  </span></span>
-<span><span class="co"># 10 NCT04029688_13       Part 1a: Progression Free Survival (PFS) in Partic… " Part 1…  24  </span></span></code></pre></div>
+<span><span class="co">#    group_id             where                                                              arm_names  days</span></span>
+<span><span class="co">#    &lt;chr&gt;                &lt;chr&gt;                                                              &lt;chr&gt;     &lt;dbl&gt;</span></span>
+<span><span class="co">#  1 NCT01121588_8        Progression-Free Survival (PFS) Based on Investigator Assessement  " ALCL A…  NA  </span></span>
+<span><span class="co">#  2 NCT01587703_54       Progression Free Survival-Part 2                                   " Partic… 240  </span></span>
+<span><span class="co">#  3 NCT01483820_3        Number of Days Participants Experienced Progression Free Survival… " TPI 28…  46  </span></span>
+<span><span class="co">#  4 NCT01742286_4        Progression Free Survival (PFS) Based on Investigator Assessment   " ALK-ac…  57  </span></span>
+<span><span class="co">#  5 NCT01587703_52       Progression Free Survival-Part 1 QD                                " Part 1…   9  </span></span>
+<span><span class="co">#  6 NCT01505608_5        Progression Free Survival (PFS) of Participants Using Days Until … " Arm A-… 125  </span></span>
+<span><span class="co">#  7 NCT01962103_22       Phase 2: Progression-Free Survival (PFS)                           " Phase …  35.7</span></span>
+<span><span class="co">#  8 NCT01742286_3        Duration of Response (DoR) Per Investigator Assessment             " ALK-ac…  NA  </span></span>
+<span><span class="co">#  9 2014-004685-25-ES_12 Duration of Response (DOR) as Determined by the Investigator usin… ""         NA  </span></span>
+<span><span class="co"># 10 NCT02761915_8        To Evaluate Anti-tumour Activity (Progression Free Survival)       " Dose L… 113  </span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="analysing-primary-endpoints">Analysing primary endpoints<a class="anchor" aria-label="anchor" href="#analysing-primary-endpoints"></a>
@@ -837,15 +845,6 @@ earlier sections, see <code>help(ctrdata-trial-concepts)</code>.</p>
 <span>  <span class="op">)</span>,</span>
 <span>  con <span class="op">=</span> <span class="va">db</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># To review trial concepts details, call 'help("ctrdata-trial-concepts")'</span></span>
-<span><span class="co"># Querying database (56 fields)...</span></span>
-<span><span class="co"># Searching for duplicate trials...                         </span></span>
-<span><span class="co"># - Getting all trial identifiers, 945 found in collection</span></span>
-<span><span class="co"># - Finding duplicates among registers' and sponsor ids...</span></span>
-<span><span class="co"># - 132 EUCTR _id were not preferred EU Member State record for 89 trials</span></span>
-<span><span class="co"># - Keeping 533 / 50 / 0 / 0 / 11 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS</span></span>
-<span><span class="co"># = Returning keys (_id) of 594 records in collection "my_collection_name"</span></span>
-<span><span class="co"># Calculating f.primaryEndpointDescription...  </span></span>
 <span></span>
 <span><span class="co"># De-duplicate</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">[</span><span class="va">result</span><span class="op">[[</span><span class="st">".isUniqueTrial"</span><span class="op">]</span><span class="op">]</span>, <span class="op">]</span></span>
@@ -865,7 +864,7 @@ earlier sections, see <code>help(ctrdata-trial-concepts)</code>.</p>
 <span><span class="co"># Tabulate</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">pep_is_efs</span><span class="op">)</span></span>
 <span><span class="co"># FALSE  TRUE</span></span>
-<span><span class="co">#   525    69</span></span>
+<span><span class="co">#   464    67</span></span>
 <span></span>
 <span><span class="co"># Plot</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
@@ -946,7 +945,6 @@ particular, “f.trialObjectives”, “f.controlType”, “f.isMedIntervTrial�
 <span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggsave</a></span><span class="op">(</span><span class="st">"vignettes/phase23_paed_p_values_participants.png"</span>, width <span class="op">=</span> <span class="fl">6</span>, height <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
 <span></span>
-<span></span>
 <span><span class="co"># Statistical method used for primary endpoint analysis</span></span>
 <span><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">.primaryEndpointFirstPmethod</span><span class="op">)</span></span>
 <span><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="va">tmp</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/rev.html" class="external-link">rev</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span>
@@ -971,11 +969,11 @@ particular, “f.trialObjectives”, “f.controlType”, “f.isMedIntervTrial�
 <td align="right">1</td>
 </tr>
 <tr class="even">
-<td align="left">regressioncox</td>
+<td align="left">ttest2sided</td>
 <td align="right">1</td>
 </tr>
 <tr class="odd">
-<td align="left">mcnemar</td>
+<td align="left">regressioncox</td>
 <td align="right">1</td>
 </tr>
 <tr class="even">
@@ -1037,8 +1035,8 @@ status is in the tree starting from the <code>dimp</code> element.</p>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">number_authorised</span>, exclude <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span>
 <span><span class="co"># number_authorised</span></span>
-<span><span class="co">#    0    1    2    3    4    5    6    7   13 &lt;NA&gt; </span></span>
-<span><span class="co">#   20   10    6    3    2    3    1    1    1  547 </span></span>
+<span><span class="co">#    0    1    2    3    4    5    7 &lt;NA&gt; </span></span>
+<span><span class="co">#   19   13    7    4    2    3    1  482</span></span>
 <span></span>
 <span><span class="va">result</span><span class="op">[[</span><span class="st">"any_authorised"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">number_authorised</span> <span class="op">&gt;</span> <span class="fl">0L</span></span>
 <span></span>
@@ -1091,23 +1089,23 @@ a MongoDB server, which are fast and do not consume R resources.</p>
 <span></span>
 <span><span class="co"># Number of records in  collection</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="fu">count</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co"># [1] 946</span></span>
+<span><span class="co"># [1] 597</span></span>
 <span></span>
 <span><span class="co"># Number of EUCTR records, using JSON for query</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="fu">count</span><span class="op">(</span>query <span class="op">=</span> <span class="st">'{"_id": {"$regex": "[0-9]{4}-[0-9]{6}-[0-9]{2}-[3A-Z]{2,3}", "$options": "i"}}'</span><span class="op">)</span></span>
-<span><span class="co"># [1] 390</span></span>
+<span><span class="co"># [1] 106</span></span>
 <span></span>
 <span><span class="co"># Alternative</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="fu">count</span><span class="op">(</span>query <span class="op">=</span> <span class="st">'{"ctrname": "EUCTR"}'</span><span class="op">)</span></span>
-<span><span class="co"># [1] 390</span></span>
+<span><span class="co"># [1] 106</span></span>
 <span></span>
 <span><span class="co"># Number of CTGOV records</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="fu">count</span><span class="op">(</span>query <span class="op">=</span> <span class="st">'{"_id": {"$regex": "NCT[0-9]{8}", "$options": "i"}}'</span><span class="op">)</span></span>
-<span><span class="co"># [1] 533</span></span>
+<span><span class="co"># [1] 467</span></span>
 <span></span>
 <span><span class="co"># Alternative</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="fu">count</span><span class="op">(</span>query <span class="op">=</span> <span class="st">'{"ctrname": "CTGOV2"}'</span><span class="op">)</span></span>
-<span><span class="co"># [1] 533</span></span>
+<span><span class="co"># [1] 467</span></span>
 <span></span>
 <span><span class="co"># To best define regular expressions for analyses, inspect the field:</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span></span>
@@ -1142,7 +1140,7 @@ here for details on mongo’s aggregation pipleline: <a href="https://www.mongod
 <span><span class="op">)</span></span>
 <span><span class="va">out</span></span>
 <span><span class="co">#    _id count</span></span>
-<span><span class="co"># 1 null    59</span></span>
+<span><span class="co"># 1 null    56</span></span>
 <span></span>
 <span><span class="co"># List records of trials with overall survival</span></span>
 <span><span class="co"># as primary endpoint, and list start date</span></span>
@@ -1185,20 +1183,19 @@ use an aggregation pipeline:</p>
 <span><span class="st">]</span></span>
 <span><span class="st">'</span><span class="op">)</span></span>
 <span><span class="co">#     _id count</span></span>
-<span><span class="co"># 1    NA   448</span></span>
-<span><span class="co"># 2     0   396</span></span>
-<span><span class="co"># 3   100    58</span></span>
-<span><span class="co"># 4   200    15</span></span>
+<span><span class="co"># 1    NA   157</span></span>
+<span><span class="co"># 2     0   357</span></span>
+<span><span class="co"># 3   100    48</span></span>
+<span><span class="co"># 4   200    11</span></span>
 <span><span class="co"># 5   300     4</span></span>
 <span><span class="co"># 6   400     6</span></span>
-<span><span class="co"># 7   500     6</span></span>
-<span><span class="co"># 8   600     6</span></span>
+<span><span class="co"># 7   500     4</span></span>
+<span><span class="co"># 8   600     4</span></span>
 <span><span class="co"># 9   700     1</span></span>
 <span><span class="co"># 10  800     2</span></span>
 <span><span class="co"># 11  900     1</span></span>
-<span><span class="co"># 12 1300     1</span></span>
-<span><span class="co"># 13 1400     1</span></span>
-<span><span class="co"># 14 3300     1</span></span></code></pre></div>
+<span><span class="co"># 12 1400     1</span></span>
+<span><span class="co"># 13 3300     1</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

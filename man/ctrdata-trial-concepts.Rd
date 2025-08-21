@@ -27,7 +27,7 @@ to ask about or improve a trial concept.
 The following trial concepts can be used by referencing their name when
 calling \link{dbGetFieldsIntoDf} (parameter \code{calculate}).
 Concepts will continue to be refined and added;
-last updated 2025-07-24.
+last updated 2025-08-21.
 \itemize{
 \item \link{f.assignmentType} (factor) was the assignment to treatment based on
 randomisation or not? ("R" or "NR")
@@ -69,8 +69,8 @@ or participants recruited
 is simplified to "not for profit", "for profit", "mixed" or "other"
 \item \link{f.statusRecruitment} (factor) a status that is simplified to
 "ongoing" (includes temporarily halted), "completed", "ended early" (includes
-terminated or ended prematurely) and "other" (includes planned, stopped,
-withdrawn)
+terminated or ended prematurely) and "other" (includes planned, not yet
+recruiting, stopped, withdrawn)
 \item \link{f.trialObjectives} (string) identifies with letters those objectives
 that could be identified in text fragments, e.g. "E S PD D", with "E"
 (efficacy), "S" (safety), "D" (dose-finding)

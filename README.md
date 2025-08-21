@@ -38,7 +38,7 @@ interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
 `ctrdata` is a package for the [R](https://www.r-project.org/) system,
 but other systems and tools can use the databases created with this
-package. This README was reviewed on 2025-08-13 for version 1.24.1.9000.
+package. This README was reviewed on 2025-08-21 for version 1.24.1.9000.
 
 ## Main features
 
@@ -374,15 +374,16 @@ ctrLoadQueryIntoDb(
 # * Checking trials in EUCTR, found 73 trials 
 # - Downloading in 4 batch(es) (20 trials each; estimate: 9 MB)
 # - Downloading 73 records of 73 trials (estimate: 4 s)               
-# - Converting to NDJSON (estimate: 0.2 s) . .                          
+# - Converting to NDJSON (estimate: 0.2 s)...                           
 # - Importing records into database...
 # = Imported or updated 73 records on 73 trial(s)  
 # * Checking results if available from EUCTR for 73 trials: 
 # - Downloading results...
-# - Extracting results (. = data, F = file[s] and data, x = none): . . . F . . . 
-# F . . F . . . . . . . F . F F . . . . . . F . . . . 
-# - Converting to NDJSON (estimate: 3 s)...
-# - Importing results into database (may take some time)...
+# - Extracting results (. = data, F = file[s] and data, x = none): . . . F . . 
+# . F . . F . . . . . . . F . F F . . . . . . F . . . . 
+# - Data found for 33 trials
+# - Converting to NDJSON (estimate: 1 s)...
+# - Importing 33 results into database (may take some time)...
 # - Results history: not retrieved (euctrresultshistory = FALSE)
 # = Imported or updated results for 33 trials
 # No history found in expected format.
@@ -468,11 +469,11 @@ result <- dbGetFieldsIntoDf(
 # To review trial concepts details, call 'help("ctrdata-trial-concepts")'
 # Querying database (16 fields)...
 # Searching for duplicate trials...                             
-# - Getting all trial identifiers (may take some time), 322 found in collection
+# - Getting all trial identifiers (may take some time), 315 found in collection
 # - Finding duplicates among registers' and sponsor ids...
 # - 114 EUCTR _id were not preferred EU Member State record for 66 trials
-# - Keeping 111 / 60 / 0 / 0 / 0 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS
-# = Returning keys (_id) of 171 records in collection "collection_name"
+# - Keeping 104 / 60 / 0 / 0 / 0 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS
+# = Returning keys (_id) of 164 records in collection "collection_name"
 
 # Tabulate the clinical trial information of interest
 with(
@@ -487,7 +488,7 @@ with(
 #        ongoing         6    4
 #        completed      11    5
 #        ended early     7    3
-#        other           8    1
+#        other           8    2
 ```
 
 <div id="workflow-ctgov-example">
@@ -585,7 +586,7 @@ ctrLoadQueryIntoDb(
   only.count = TRUE
 )
 # $n
-# [1] 9752
+# [1] 9793
 ```
 
 <div id="workflow-data-model">
@@ -698,8 +699,8 @@ result <- dbGetFieldsIntoDf(
   con = db
 )
 # To review trial concepts details, call 'help("ctrdata-trial-concepts")'
-# Querying database (52 fields)...
-# Calculating f.numTestArmsSubstances...
+# Querying database (50 fields)...
+# Calculating f.numTestArmsSubstances... 
 
 result %>%
   filter(.isUniqueTrial) %>%
@@ -783,6 +784,7 @@ ctrLoadQueryIntoDb(
 # Updated history ("meta-info" in "collection_name")
 # $n
 # [1] 249
+
 
 ### CTGOV files are downloaded, here corresponding to the default of
 # documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|icf|ctalett|lay|^[0-9]+ "
@@ -916,40 +918,42 @@ ctrLoadQueryIntoDb(
 See also <https://app.codecov.io/gh/rfhb/ctrdata/tree/master/R>
 
 ``` r
-# 2025-08-13
+# 2025-08-21
 
 tinytest::test_all()
-# test_ctrdata_duckdb_ctgov2.R..   78 tests OK 48.7s
-# test_ctrdata_function_activesubstance.R    4 tests OK 0.8s
-# test_ctrdata_function_ctrgeneratequeries.R   10 tests OK 0.2s
-# test_ctrdata_function_params.R   25 tests OK 1.3s
-# test_ctrdata_function_trial-concepts.R   92 tests OK 4.1s
-# test_ctrdata_function_various.R   77 tests OK 4.4s
-# test_ctrdata_postgres_ctgov2.R   50 tests OK 31.3s
-# test_ctrdata_sqlite_ctgov.R...   46 tests OK 27.7s
+# test_ctrdata_duckdb_ctgov2.R..   78 tests OK 49.9s
+# test_ctrdata_function_activesubstance.R    4 tests OK 0.9s
+# test_ctrdata_function_ctrgeneratequeries.R   10 tests OK 0.3s
+# test_ctrdata_function_params.R   25 tests OK 1.2s
+# test_ctrdata_function_trial-concepts.R   92 tests OK 3.8s
+# test_ctrdata_function_various.R   79 tests OK 3.0s
+# test_ctrdata_mongo_local_ctis.R   91 tests OK 3.5s
+# test_ctrdata_mongo_remote_ro.R    4 tests OK 6.6s
+# test_ctrdata_postgres_ctgov2.R   50 tests OK 30.6s
+# test_ctrdata_sqlite_ctgov.R...   46 tests OK 28.9s
 # test_ctrdata_sqlite_ctgov2.R..   50 tests OK 25.7s
-# test_ctrdata_sqlite_ctis.R....   90 tests OK 1.6s
-# test_ctrdata_sqlite_euctr.R...  119 tests OK 40.1s
-# test_ctrdata_sqlite_isrctn.R..   45 tests OK 16.7s
+# test_ctrdata_sqlite_ctis.R....   92 tests OK 1.7s
+# test_ctrdata_sqlite_euctr.R...  119 tests OK 55.1s
+# test_ctrdata_sqlite_isrctn.R..   45 tests OK 16.9s
 # test_euctr_error_sample.R.....    8 tests OK 0.2s
-# All ok, 694 results (5m 0.1s)
+# All ok, 793 results (8m 53.4s)
 
 covr::package_coverage(path = ".", type = "tests")
-# ctrdata Coverage: 94.95%
-# R/ctrShowOneTrial.R: 77.19%
-# R/util_functions.R: 87.99%
+# ctrdata Coverage: 94.58%
+# R/ctrRerunQuery.R: 81.42%
+# R/ctrShowOneTrial.R: 84.21%
+# R/ctrLoadQueryIntoDbEuctr.R: 87.78%
 # R/ctrGetQueryUrl.R: 89.18%
 # R/ctrFindActiveSubstanceSynonyms.R: 89.36%
-# R/ctrRerunQuery.R: 90.48%
-# R/ctrLoadQueryIntoDbEuctr.R: 90.98%
-# R/f_sponsorType.R: 91.96%
+# R/util_functions.R: 90.15%
+# R/f_sponsorType.R: 92.00%
 # R/ctrLoadQueryIntoDbCtgov2.R: 92.93%
 # R/dbGetFieldsIntoDf.R: 95.39%
 # R/ctrLoadQueryIntoDbIsrctn.R: 95.70%
 # R/dbFindFields.R: 95.88%
 # R/f_primaryEndpointResults.R: 96.00%
-# R/ctrLoadQueryIntoDbCtis.R: 96.32%
 # R/ctrLoadQueryIntoDb.R: 96.40%
+# R/ctrLoadQueryIntoDbCtis.R: 96.53%
 # R/dfMergeVariablesRelevel.R: 96.55%
 # R/ctrGenerateQueries.R: 97.13%
 # R/ctrOpenSearchPagesInBrowser.R: 97.50%

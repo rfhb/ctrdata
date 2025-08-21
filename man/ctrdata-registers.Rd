@@ -12,22 +12,22 @@ result-related information as well as documents, last updated 2025-07-24.
 \section{1 - Overview}{
 
 \itemize{
-\item \strong{EUCTR}: The EU Clinical Trials Register holds more than 44,300 clinical
+\item \strong{EUCTR}: The EU Clinical Trials Register holds more than 44,350 clinical
 trials (at least one investigational medicinal product, IMP; in the European
-Union and beyond), including more than 25,300 trials with results, which
+Union and beyond), including more than 25,400 trials with results, which
 continue to be added (and can be loaded by \code{ctrdata}).
 \item \strong{CTIS}: The EU Clinical Trials Information System, launched in 2023,
-holds more than 9,600 publicly accessible clinical trials, including
-around 230 with results or a report (only as PDF files).
+holds aobut 9,800 publicly accessible clinical trials, including
+more than 270 with results or a report (only as PDF files).
 \emph{No results in a structured electronic format are foreseeably available},
 thus \code{ctrdata} cannot load any CTIS results.
 (To automatically get CTIS search query URLs, see
 \ifelse{latex}{\out{\href{https://rfhb.github.io/ctrdata/\#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}})
-\item \strong{CTGOV2}: ClinicalTrials.gov holds about 546,000 interventional and
-observational studies, including almost 68,000 interventional studies with
+\item \strong{CTGOV2}: ClinicalTrials.gov holds more than 550,000 interventional and
+observational studies, including almost 70,000 interventional studies with
 results (can be loaded by \code{ctrdata}).
-\item \strong{ISRCTN}: The ISRCTN Registry holds more than 26,600 interventional and
-observational health studies, including almost 14,500 studies with
+\item \strong{ISRCTN}: The ISRCTN Registry holds almost 26,800 interventional and
+observational health studies, including more than 14,600 studies with
 results (as references).
 \emph{No results in a structured electronic format are foreseeably available},
 thus \code{ctrdata} cannot load any ISRCTN results.
