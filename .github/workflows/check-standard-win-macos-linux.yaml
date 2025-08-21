@@ -62,6 +62,7 @@ jobs:
 
       - uses: ankane/setup-postgres@v1
         with:
+          postgres-version: 17
           database: test
 
       - uses: r-lib/actions/check-r-package@v2
