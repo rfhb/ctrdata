@@ -1,15 +1,16 @@
 # ctrdata 1.24.1.9000
 
-## Enhancement
-- Retrying requests to CTIS, which apparently started to refuse or throttle responses 
-- Revise how EUCTR trials are updated with results data to accelerate operations
-
 ## Possibly breaking down-stream workflows 
 - Save EUCTR results in folders by trial, in analogy to documents for other registers
 
+## Enhancement
+- Revised how EUCTR trials are loaded and updated with results to accelerate operations
+- Added retrying requests to CTIS, which apparently started to refuse or throttle responses 
+- Added incrementing numbers of historic versions of CTIS created with `querytoupdate = ...`
 - Simplified, accelerated loading NDJSON files, minimising deletion and re-loading
+
 ## Bug fixes
-- Refined indicator variables for `f.hasResults`
+- Refined indicator variables for `f.hasResults()`
 - Added missing status code in `f.statusRecruitment()`
 - Corrected missing value handling in `f.sponsorType()`
 

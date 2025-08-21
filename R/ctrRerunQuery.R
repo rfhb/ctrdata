@@ -78,13 +78,11 @@ ctrRerunQuery <- function(
   if (!inherits(initialdayindex, "try-error")) {
     # - keep initial (reference) date of this query
     initialday <- initialday[initialdayindex]
-    message("* Query last run: ", rerunquery[
-      initialdayindex, "query-timestamp", drop = TRUE])
   } else {
     # - fallback to number (querytoupdate) as specified by user
     initialday <- rerunquery[querytoupdate, "query-timestamp", drop = TRUE]
-    message("* Query last run: ", initialday)
   }
+  message("* Query last run: ", initialday)
 
   ## adapt updating procedure to respective register
   querytermoriginal <- queryterm
@@ -132,8 +130,8 @@ ctrRerunQuery <- function(
 
       }
 
-      message("Rerunning query: ", queryterm,
-              "\nLast run: ", initialday)
+      message("- Rerunning query: ", queryterm,
+              "\n- Last run: ", initialday)
     } # end ctgov
 
     # ctgov2 -------------------------------------------------------------------
@@ -169,8 +167,8 @@ ctrRerunQuery <- function(
 
       }
 
-      message("Rerunning query: ", queryterm,
-              "\nLast run: ", initialday)
+      message("- Rerunning query: ", queryterm,
+              "\n- Last run: ", initialday)
     } # end ctgov2
 
     # euctr -------------------------------------------------------------------
@@ -189,8 +187,8 @@ ctrRerunQuery <- function(
                 "Reverting to normal download. ",
                 call. = FALSE, immediate. = TRUE)
 
-        message("Rerunning query: ", queryterm,
-                "\nLast run: ", initialday)
+        message("- Rerunning query: ", queryterm,
+                "\n- Last run: ", initialday)
 
       } else {
         #
@@ -267,8 +265,8 @@ ctrRerunQuery <- function(
                     queryupdateterm)
           }
           #
-          message("Rerunning query: ", queryupdateterm,
-                  "\nLast run: ", initialday)
+          message("- Rerunning query: ", queryupdateterm,
+                  "\n- Last run: ", initialday)
         }
         #
       }
@@ -310,8 +308,8 @@ ctrRerunQuery <- function(
 
       }
 
-      message("Rerunning query: ", queryterm,
-              "\nLast run: ", initialday)
+      message("- Rerunning query: ", queryterm,
+              "\n- Last run: ", initialday)
     } # end isrctn
 
     # ctis ------------------------------------------------------------------
@@ -445,22 +443,32 @@ ctrRerunQuery <- function(
               only.count = FALSE,
               verbose = FALSE
             )))
-        result$updated <- length(recExists)
+        result$updated <- nrow(recExists)
 
         # if historical version is to be created
         if (ctishistory && nrow(exstJson)) {
 
           # move existing data into historical version
+          # - lastUpdated is part of ctisEndpoints[1],
+          #   the /search overview obtained from CTIS;
+          #   there is no reference information about
+          #   the meaning of this field, however
+          # - versionNumber incremented every time
           exstJson <- jsonlite::toJSON(exstJson)
           exstJson <- jqr::jq(
             exstJson, paste0(
-              '{ _id: .[] | ._id,
-                history: [
-                 .[] | del(.history) | .history_version = {
-                 version_date: .lastUpdated,
-                 version_number: 0},
-                if has("history") then .history[] else empty end
-               ] }'
+              '( .[] | ( if has("history") then
+                  ( [ .history[] | .history_version | .version_number ] | max + 1 )
+                  else 1 end )
+                ) as $n |
+                { _id: .[] | ._id,
+                 history: .[] | [
+                    ( del(.history) | .history_version = {
+                         version_date: .lastUpdated,
+                         version_number: $n }),
+                    if has("history") then .history[] else empty end
+                  ]
+                 }'
             ))
 
           # temporary file and cleanup
@@ -521,94 +529,107 @@ ctrRerunQuery <- function(
 
       }
 
-      #### .dispatch ####
-      if (difftime(Sys.Date(), initialday, units = "days") <= 7L) {
+      #### . dispatch ####
 
-        # get
-        idsUpdatedTrials <- getIdsFromRss(queryterm)
+      # separate out decision alternatives for best overview
+
+      useRss <- difftime(Sys.Date(), initialday, units = "days") <= 7L
+
+      # - alternative 1
+      if (!ctishistory & !useRss) {
+
+        # rerunning original query
+        warning(
+          "'querytoupdate=", querytoupdate, "' not possible because no ",
+          "effcient way was found so far to query CTIS for data only from ",
+          "recently changed trials (last checked 2025-08-21). Reverting to ",
+          "normal download. ", call. = FALSE, immediate. = TRUE)
+
+        # standard case in main function ctrLoadQueryIntoDb
+        message("- Rerunning query: ", queryterm,
+                "\n- Last run: ", initialday)
+
+        # go to default return at bottom
+
+      } # not ctishistory and not useRss
+
+      # - alternative 2
+      if (ctishistory | useRss) {
+
+        # - get idsUpdatedTrials for processing
+        if (useRss) {
+
+          idsUpdatedTrials <- getIdsFromRss(queryterm)
+
+          # prepare for early exit if only.count
+          if (only.count) message(
+            "= Not done (only.count = TRUE): Imported ",
+            length(idsUpdatedTrials), " trial(s)")
+
+        } else {
+
+          # rerunning original query
+          warning(
+            "'querytoupdate=", querytoupdate, "' not possible because no ",
+            "effcient way was found so far to query CTIS for data only from ",
+            "recently changed trials (last checked 2025-08-21). Need to ",
+            "download iteratively. ", call. = FALSE, immediate. = TRUE)
+
+          res <- ctisApi1(
+            queryterm, only.count,
+            "https://euclinicaltrials.eu/ctis-public-api/search",
+            ctrTempDir(verbose), verbose)
+
+          # prepare for early exit if only.count
+          if (only.count) {
+            idsUpdatedTrials <- rep.int(1L, res$n)
+          } else {
+            idsUpdatedTrials <- res$idsTrials
+          }
+
+        }
 
         # early exit if only.count
         if (only.count || !length(idsUpdatedTrials)) {
           res <- NULL
           res$n <- length(idsUpdatedTrials)
           res$queryterm <- querytermoriginal
-          message("Imported or updated ", res$n, " trial(s)")
+          # failed is indicator to not run main function
           return(list(failed = res))
         }
 
         # user interim info
         message(
-          "Query finds ", length(idsUpdatedTrials), " trials, ",
-          "loading and updating trials one-by-one (estimate: ",
-          signif(length(idsUpdatedTrials) * 8 / 23 / 60, 2L), " min)")
+          ifelse(
+            ctishistory,
+            "- Creating historic versions when updating trials\n", ""
+          ),
+          "- Loading and updating ", length(idsUpdatedTrials),
+          " trials one-by-one (estimate: ",
+          ifelse(
+            ctishistory,
+            signif(length(idsUpdatedTrials) * 25 / 40, 2L),
+            signif(length(idsUpdatedTrials) * 20 / 40, 2L)
+          ), " s) ")
 
         # iterate
         res <- list()
-        for (trialId in idsUpdatedTrials) res <- c(
-          res, list(updateOrLoadTrial(trialId, con, ctishistory)))
+        # print(system.time(
+          for (trialId in idsUpdatedTrials) res <- c(
+            res, list(updateOrLoadTrial(trialId, con, ctishistory)))
+        # ))
 
         # info
-        message("\n",
-                sum(sapply(res, "[[", "updated")), " updated, ",
-                sum(sapply(res, "[[", "n")) - sum(sapply(res, "[[", "updated")),
-                " new records")
+        message(
+          "\r= ",
+          sum(sapply(res, "[[", "updated")), " updated, ",
+          sum(sapply(res, "[[", "n")) - sum(sapply(res, "[[", "updated")),
+          " new records")
 
         # return and signal to ctrLoadQueryIntoDb to exit early
         return(histCreateRet(res))
 
-      } else {
-
-        if (ctishistory) {
-
-          # get
-          idsUpdatedTrials <- getIdsFromQuery(queryterm)
-
-          # early exit if only.count
-          if (only.count) {
-            res <- NULL
-            res$n <- length(idsUpdatedTrials)
-            res$queryterm <- querytermoriginal
-            message("Imported or updated ", res$n, " trial(s)")
-            return(list(failed = res))
-          }
-
-          # user interim info
-          warning(
-            "Query finds ", length(idsUpdatedTrials), " trials, ",
-            "loading and updating trials one-by-one (estimate: ",
-            signif(length(idsUpdatedTrials) * 78 / 233 / 60, 2L), " min)")
-
-          # iterate
-          res <- list()
-          for (trialId in idsUpdatedTrials) res <- c(
-            res, list(updateOrLoadTrial(trialId, con, ctishistory)))
-
-          # info
-          message(
-            "\n",
-            sum(sapply(res, "[[", "updated")), " updated, ",
-            sum(sapply(res, "[[", "n")) - sum(sapply(res, "[[", "updated")),
-            " new records")
-
-          # return and signal to ctrLoadQueryIntoDb to exit early
-          return(histCreateRet(res))
-
-        } else {
-
-          # rerunning original query
-          warning(
-            "'querytoupdate=", querytoupdate, "' not possible because no effcient way ",
-            "was found so far to query CTIS for data only from recently changed trials ",
-            "(last checked 2025-04-05). Reverting to normal download. ",
-            call. = FALSE, immediate. = TRUE)
-
-          # standard case in main function ctrLoadQueryIntoDb
-          message("Rerunning query: ", queryterm,
-                  "\nLast run: ", initialday)
-
-        } # if ctishistory
-
-      } # if difftime
+      } # ctishistory or useRss
 
     } # end ctis
 

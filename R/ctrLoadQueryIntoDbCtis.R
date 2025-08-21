@@ -58,142 +58,20 @@ ctrLoadQueryIntoDbCtis <- function(
 
   ## api_1: overviews ---------------------------------------------------------
 
-  # for importing overview (recruitment, status etc.) into database
-  message("* Checking trials in CTIS...", appendLF = FALSE)
-
-  # queryterm comes from ctrGetQueryUrl()
-
-  # 2024-06-17 defined by ctrdata Tampermonkey script:
-  # https://euclinicaltrials.eu/ctis-public/search#searchCriteria=
-  # {"containAll":"infection","containAny":"neonates"}
-
-  initialData <- try(rawToChar(
-    httr2::req_perform(
-      httr2::req_body_json(
-        httr2::req_user_agent(
-          httr2::request(
-            ctisEndpoints[1]),
-          ctrdataUseragent),
-        data = jsonlite::fromJSON(
-          paste0(
-            # add pagination parameters
-            '{"pagination":{"page":1,"size":1},',
-            # add search criteria
-            sub("searchCriteria=", '"searchCriteria":',
-                # handle empty search query terms
-                ifelse(queryterm != "", queryterm, 'searchCriteria={}')),
-            # remaining parameters needed for proper server response
-            ',"sort":{"property":"decisionDate","direction":"DESC"}}'
-          ), simplifyVector = FALSE)
-      ))$body), silent = TRUE)
+  res <- ctisApi1(
+    queryterm,
+    only.count,
+    ctisEndpoints,
+    tempDir,
+    verbose)
 
   # early exit
-  if (inherits(initialData, "try-error")) {
-    warning("Could not be retrieved, check 'queryterm' and / or 'register'. ",
-            "\nAPI returned: ", initialData$error[1], call. = FALSE
-    )
-    message("API parameters from URL: ", queryterm)
-    return(emptyReturn)
-  }
+  if (setequal(names(res), names(emptyReturn))) return(res)
 
-  # get overview
-  overview <- jsonlite::fromJSON(
-    jqr::jq(initialData, " .pagination "))
-
-  # early exit
-  if (overview$totalRecords == 0L) {
-    message("No trials found? Check 'queryterm' and / or 'register'.")
-    return(emptyReturn)
-  }
-
-  # inform user
-  message("\b\b\b, found ", overview$totalRecords, " trials ")
-
-  # only count?
-  if (only.count) {
-    message(
-      "= Not done (only.count = TRUE): Imported ",
-      overview$totalRecords, " trial(s)")
-    # return
-    return(list(
-      n = overview$totalRecords,
-      success = NULL,
-      failed = NULL
-    ))
-  }
-
-  # prepare to retrieve overviews
-  importDateTime <- strftime(Sys.time(), "%Y-%m-%d %H:%M:%S")
-  nRecords <- 100L
-  pageNo <- seq_len(overview$totalPages %/% nRecords + 1L)
-
-  fTrialsJsonApi1PageFiles <- file.path(
-    tempDir, paste0("ctis_api1_page_", pageNo, ".json"))
-
-  on.exit(unlink(dir(tempDir, "ctis_api1_page_.*.json", full.names = TRUE)), add = TRUE)
-
-  jsonApi1Pages <- paste0(
-    # add pagination parameters
-    paste0(
-      '{"pagination":{"page":', pageNo, ',"size":', nRecords, "},"),
-    # add search criteria
-    sub(
-      "searchCriteria=", '"searchCriteria":',
-      # handle empty search query terms
-      ifelse(
-        queryterm != "", queryterm,
-        'searchCriteria={}'),
-    ),
-    # remaining parameters needed for proper server response
-    ',"sort":{"property":"decisionDate","direction":"DESC"}}'
-  )
-
-  # download files
-  ctrMultiDownload(
-    urls = rep.int(ctisEndpoints[1], length(pageNo)),
-    destfiles = fTrialsJsonApi1PageFiles,
-    data = jsonApi1Pages,
-    verbose = verbose
-  )
-
-  # prepare files
-  fTrialsNdjsonApi1 <- file.path(tempDir, "ctis_add_api1.ndjson")
-  unlink(fTrialsNdjsonApi1)
-  fTrialsNdjsonApi1Con <- file(fTrialsNdjsonApi1, open = "at")
-  on.exit(try(close(fTrialsNdjsonApi1Con), silent = TRUE), add = TRUE)
+  # further processing
+  idsTrials <- res$idsTrials
+  fTrialsNdjsonApi1 <- res$fTrialsNdjsonApi1
   on.exit(try(unlink(fTrialsNdjsonApi1), silent = TRUE), add = TRUE)
-
-  # iterate over json files and create ndjson
-  sapply(
-    fTrialsJsonApi1PageFiles,
-    # {...,"data":[{"ctNumber":"2023-510173-34-00","ctStatus"
-    function(i) writeLines(
-      jqr::jq(
-        file(i), paste0(
-          # extract trial records
-          " .data | .[] ",
-          # add canonical elements
-          '| .["_id"] = .ctNumber ',
-          '| .["ctrname"] = "CTIS" ',
-          '| .["record_last_import"] = "', importDateTime, '" ',
-          # keep only standardised fields
-          "| del(.id, .ctNumber, .product, .endPoint, .eudraCtInfo,
-                 .ctTitle, .primaryEndPoint, .sponsor, .conditions) "
-        )),
-      con =  fTrialsNdjsonApi1Con),
-    USE.NAMES = FALSE)
-
-  # cleanup and close
-  unlink(dir(tempDir, "ctis_api1_page_.*.json", full.names = TRUE))
-  close(fTrialsNdjsonApi1Con)
-
-  # user info
-  message("\r", appendLF = FALSE)
-
-  # get ids
-  idsTrials <- gsub(
-    '"', "", as.character(
-      jqr::jq(file(fTrialsNdjsonApi1), ' ."_id" ')))
 
   ## api_2: per trial partI, partsII ------------------------------------------
 
@@ -370,3 +248,154 @@ ctrLoadQueryIntoDbCtis <- function(
   return(imported)
 }
 # end ctrLoadQueryIntoDbCtis
+
+
+ctisApi1 <- function(
+    queryterm,
+    only.count,
+    ctisEndpoints,
+    tempDir,
+    verbose) {
+
+  # for importing overview (recruitment, status etc.) into database
+  message("* Checking trials in CTIS...", appendLF = FALSE)
+
+  # queryterm comes from ctrGetQueryUrl()
+
+  # 2024-06-17 defined by ctrdata Tampermonkey script:
+  # https://euclinicaltrials.eu/ctis-public/search#searchCriteria=
+  # {"containAll":"infection","containAny":"neonates"}
+
+  initialData <- try(rawToChar(
+    httr2::req_perform(
+      httr2::req_body_json(
+        httr2::req_user_agent(
+          httr2::request(
+            ctisEndpoints[1]),
+          ctrdataUseragent),
+        data = jsonlite::fromJSON(
+          paste0(
+            # add pagination parameters
+            '{"pagination":{"page":1,"size":1},',
+            # add search criteria
+            sub("searchCriteria=", '"searchCriteria":',
+                # handle empty search query terms
+                ifelse(queryterm != "", queryterm, 'searchCriteria={}')),
+            # remaining parameters needed for proper server response
+            ',"sort":{"property":"decisionDate","direction":"DESC"}}'
+          ), simplifyVector = FALSE)
+      ))$body), silent = TRUE)
+
+  # early exit
+  if (inherits(initialData, "try-error")) {
+    warning("Could not be retrieved, check 'queryterm' and / or 'register'. ",
+            "\nAPI returned: ", initialData$error[1], call. = FALSE
+    )
+    message("API parameters from URL: ", queryterm)
+    return(emptyReturn)
+  }
+
+  # get overview
+  overview <- jsonlite::fromJSON(
+    jqr::jq(initialData, " .pagination "))
+
+  # early exit
+  if (overview$totalRecords == 0L) {
+    message("No trials found? Check 'queryterm' and / or 'register'.")
+    return(emptyReturn)
+  }
+
+  # inform user
+  message("\b\b\b, found ", overview$totalRecords, " trials ")
+
+  # only count?
+  if (only.count) {
+    message(
+      "= Not done (only.count = TRUE): Imported ",
+      overview$totalRecords, " trial(s)")
+    # return
+    return(list(
+      n = overview$totalRecords,
+      success = NULL,
+      failed = NULL
+    ))
+  }
+
+  # prepare to retrieve overviews
+  importDateTime <- strftime(Sys.time(), "%Y-%m-%d %H:%M:%S")
+  nRecords <- 100L
+  pageNo <- seq_len(overview$totalPages %/% nRecords + 1L)
+
+  fTrialsJsonApi1PageFiles <- file.path(
+    tempDir, paste0("ctis_api1_page_", pageNo, ".json"))
+
+  on.exit(unlink(dir(tempDir, "ctis_api1_page_.*.json", full.names = TRUE)), add = TRUE)
+
+  jsonApi1Pages <- paste0(
+    # add pagination parameters
+    paste0(
+      '{"pagination":{"page":', pageNo, ',"size":', nRecords, "},"),
+    # add search criteria
+    sub(
+      "searchCriteria=", '"searchCriteria":',
+      # handle empty search query terms
+      ifelse(
+        queryterm != "", queryterm,
+        'searchCriteria={}'),
+    ),
+    # remaining parameters needed for proper server response
+    ',"sort":{"property":"decisionDate","direction":"DESC"}}'
+  )
+
+  # download files
+  ctrMultiDownload(
+    urls = rep.int(ctisEndpoints[1], length(pageNo)),
+    destfiles = fTrialsJsonApi1PageFiles,
+    data = jsonApi1Pages,
+    verbose = verbose
+  )
+
+  # prepare files
+  fTrialsNdjsonApi1 <- file.path(tempDir, "ctis_add_api1.ndjson")
+  unlink(fTrialsNdjsonApi1)
+  fTrialsNdjsonApi1Con <- file(fTrialsNdjsonApi1, open = "at")
+  on.exit(try(close(fTrialsNdjsonApi1Con), silent = TRUE), add = TRUE)
+
+  # iterate over json files and create ndjson
+  sapply(
+    fTrialsJsonApi1PageFiles,
+    # {...,"data":[{"ctNumber":"2023-510173-34-00","ctStatus"
+    function(i) writeLines(
+      jqr::jq(
+        file(i), paste0(
+          # extract trial records
+          " .data | .[] ",
+          # add canonical elements
+          '| .["_id"] = .ctNumber ',
+          '| .["ctrname"] = "CTIS" ',
+          '| .["record_last_import"] = "', importDateTime, '" ',
+          # keep only standardised fields
+          "| del(.id, .ctNumber, .product, .endPoint, .eudraCtInfo,
+                 .ctTitle, .primaryEndPoint, .sponsor, .conditions) "
+        )),
+      con =  fTrialsNdjsonApi1Con),
+    USE.NAMES = FALSE)
+
+  # cleanup and close
+  unlink(dir(tempDir, "ctis_api1_page_.*.json", full.names = TRUE))
+  close(fTrialsNdjsonApi1Con)
+
+  # user info
+  message("\r", appendLF = FALSE)
+
+  # get ids
+  idsTrials <- gsub(
+    '"', "", as.character(
+      jqr::jq(file(fTrialsNdjsonApi1), ' ."_id" ')))
+
+  # return
+  return(list(
+    idsTrials = idsTrials,
+    fTrialsNdjsonApi1 = fTrialsNdjsonApi1))
+
+}
