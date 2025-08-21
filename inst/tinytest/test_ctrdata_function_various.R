@@ -565,7 +565,9 @@ rm(dF, dL)
 
 #### ctrShowOneTrial ####
 
-if (!checkInternet()) exit_file("Reason: no internet connectivity")
+expect_true(is.list(ctrdata:::ctrShowOneTrialOutput("x")))
+
+expect_true(is.function(ctrdata:::renderCtrShowOneTrial("")))
 
 # id <- "NCT00617929"
 # id <- "2012-003632-23"
