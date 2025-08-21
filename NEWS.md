@@ -7,6 +7,7 @@
 ## Possibly breaking down-stream workflows 
 - Save EUCTR results in folders by trial, in analogy to documents for other registers
 
+- Simplified, accelerated loading NDJSON files, minimising deletion and re-loading
 ## Bug fixes
 - Refined indicator variables for `f.hasResults`
 - Added missing status code in `f.statusRecruitment()`

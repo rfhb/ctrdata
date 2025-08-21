@@ -1452,7 +1452,16 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
       ids <- gsub("\"", "", as.vector(
         jqr::jq(file(tempFiles[tempFile]), " ._id ")))
 
-      ## existing annotations -------------------------------------------------
+      ## existing data -------------------------------------------------
+
+      # get ids
+      dbIds <- try({
+        nodbi::docdb_query(
+          src = con,
+          key = con$collection,
+          query = "{}",
+          fields = '{"_id": 1}')
+      }, silent = TRUE)
 
       # get annotations
       annoDf <- try({
@@ -1477,17 +1486,66 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
       if (is.null(annoDf[["annotation"]]))
         annoDf[["annotation"]] <- rep(NA, length(ids))
 
-      ## delete and import ----------------------------------------------------
+      ## import ----------------------------------------------------
 
-      # delete any existing records
-      res <- try({
-        nodbi::docdb_delete(
-          src = con,
-          key = con$collection,
-          query = paste0(
-            '{"_id": {"$in": [',
-            paste0('"', ids, '"', collapse = ","), ']}}'))
-      }, silent = TRUE)
+      # separation into delete and create, or update
+      # because update may be a frequent use case and
+      # using this may accelerate and may avoid table
+      # records that remain being marked for deletion
+
+      if (inherits(dbIds, "try-error") ||
+          is.null(dbIds) ||
+          length(setdiff(ids, dbIds[["_id"]])) > 0L) {
+
+        # only if relevant records exist
+        if (!inherits(dbIds, "try-error") &&
+            !is.null(dbIds) &&
+            length(intersect(ids, dbIds[["_id"]])) > 0L) {
+
+          # delete
+          res <- try({
+            nodbi::docdb_delete(
+              src = con,
+              key = con$collection,
+              query = paste0(
+                '{"_id": {"$in": [',
+                paste0('"', intersect(ids, dbIds[["_id"]]),
+                       '"', collapse = ","), ']}}'))
+          }, silent = TRUE)
+
+          # early exit
+          if (inherits(res, "try-error") &&
+              grepl("read.?only", res)) stop(
+                "Database is read-only, cannot load trial records.\n",
+                "Change database connection in parameter 'con = ...'",
+                call. = FALSE
+              )
+        }
+
+        # create
+        res <- try({
+          suppressWarnings(
+            suppressMessages(
+              nodbi::docdb_create(
+                src = con,
+                key = con$collection,
+                value = tempFiles[tempFile]
+              )))}, silent = TRUE)
+
+      } else {
+
+        # update
+        res <- try({
+          suppressWarnings(
+            suppressMessages(
+              nodbi::docdb_update(
+                src = con,
+                key = con$collection,
+                query = "{}",
+                value = tempFiles[tempFile]
+              )))}, silent = TRUE)
+
+      }
 
       # early exit
       if (inherits(res, "try-error") &&
@@ -1497,21 +1555,12 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
             call. = FALSE
           )
 
-      ## import
-      res <- try({
-        suppressWarnings(
-          suppressMessages(
-            nodbi::docdb_create(
-              src = con,
-              key = con$collection,
-              value = tempFiles[tempFile]
-            )))}, silent = TRUE)
-
-      ## return values for lapply
       # handle res and generate return values
-      if (inherits(res, "try-error") || res == 0L || res != nrow(annoDf)) {
+      if (inherits(res, "try-error") ||
+          res == 0L ||
+          res != nrow(annoDf)) {
 
-        # is res failed, step into line by line mode
+        # if res failed, step into line by line mode
         fdLines <- file(tempFiles[tempFile], open = "rt", blocking = TRUE)
 
         while (TRUE) {
