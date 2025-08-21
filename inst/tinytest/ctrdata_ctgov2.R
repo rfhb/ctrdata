@@ -128,7 +128,7 @@ expect_message(
       ctgov2history = 3,
       con = dbc
     )),
-  "Updating trial records"
+  "processing historic versions"
 )
 
 # test
@@ -139,7 +139,7 @@ expect_message(
       ctgov2history = "2:4",
       con = dbc
     )),
-  "Updating trial records"
+  "processing historic versions"
 )
 
 # test
@@ -150,7 +150,7 @@ expect_message(
       ctgov2history = -1,
       con = dbc
     )),
-  "Updating trial records"
+  "processing historic versions"
 )
 
 #### ctrLoadQueryIntoDb update ####
