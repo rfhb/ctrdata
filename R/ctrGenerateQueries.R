@@ -12,27 +12,39 @@
 #' @param searchPhrase String with optional logical operators ("AND", "OR")
 #' that will be searched in selected fields of registers that can handle logical
 #' operators (general or title fields), should not include quotation marks
+#'
 #' @param condition String with condition / disease
+#'
 #' @param intervention String with intervention
+#'
 #' @param phase String, e.g. "phase 2" (note that "phase 2+3" is a specific
 #' category, not the union set of "phase 2" and "phase 3")
+#'
 #' @param population String, e.g. "P" (paediatric), "A" (adult), "P+A"
 #' (adult and paediatric), "E" (elderly), "P+A+E" participants can be recruited.
 #' For ISRCTN, works only for "P", "A" or "E" but \emph{not mixed} populations.
+#'
 #' @param recruitment String, one of "ongoing", "completed", "other" (
 #' which includes "ended early" but this cannot be searched; use trial concept
 #' \link{f.statusRecruitment} to identify this status)
+#'
 #' @param startBefore String that can be interpreted as date (for EUCTR, when
 #' trial was first registered)
+#'
 #' @param startAfter String that can be interpreted as date (for EUCTR, when
 #' trial was first registered)
+#'
 #' @param completedBefore String that can be interpreted as date (does not work
 #' with EUCTR)
+#'
 #' @param completedAfter String that can be interpreted as date (does not work
 #' with EUCTR)
+#'
 #' @param onlyMedIntervTrials Logical, default \code{TRUE}, which indicates if
 #' queries should search only for medicine interventional clinical trial
+#'
 #' @param onlyWithResults Logical
+#'
 #' @param countries Vector of country names, two- or three-letter ISO 3166 codes
 #'
 #' @returns Named vector of URLs for finding trials in the registers and as
@@ -57,22 +69,23 @@
 #' # "Import from this URL":
 #' # https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js
 #'
-#' urls <- ctrGenerateQueries(
-#'   searchPhrase = "antibody AND covid",
-#'   recruitment = "completed",
-#'   )
-#'
-#' # find research platform and platform trials
+#' # find potential research platform and platform trials
 #' urls <- ctrGenerateQueries(
 #'   searchPhrase = paste0(
 #'    "basket OR platform OR umbrella OR master protocol OR ",
 #'    "multiarm OR multistage OR subprotocol OR substudy OR ",
 #'    "multi-arm OR multi-stage OR sub-protocol OR sub-study"),
+#'  phase = "phase 3",
 #'  startAfter = "01/31/2010",
 #'  countries = c("DE", "US", "United Kingdom"))
 #'
 #' # open queries in register web interface
 #' sapply(urls, ctrOpenSearchPagesInBrowser)
+#'
+#' urls <- ctrGenerateQueries(
+#'   searchPhrase = "antibody AND covid",
+#'   recruitment = "completed",
+#'   )
 #'
 #' \dontrun{
 #' # count trials found
@@ -80,7 +93,7 @@
 #'
 #' # load queries into database collection
 #' dbc <- nodbi::src_sqlite(collection = "my_collection")
-#' sapply(urls, ctrLoadQueryIntoDb, con = dbc)
+#' sapply(urls, ctrLoadQueryIntoDb, con = dbc, euctrprotocolsall = FALSE)
 #' }
 #'
 ctrGenerateQueries <- function(

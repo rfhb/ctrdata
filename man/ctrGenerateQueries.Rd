@@ -87,22 +87,23 @@ sapply(urls, ctrOpenSearchPagesInBrowser)
 # "Import from this URL":
 # https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js
 
-urls <- ctrGenerateQueries(
-  searchPhrase = "antibody AND covid",
-  recruitment = "completed",
-  )
-
-# find research platform and platform trials
+# find potential research platform and platform trials
 urls <- ctrGenerateQueries(
   searchPhrase = paste0(
    "basket OR platform OR umbrella OR master protocol OR ",
    "multiarm OR multistage OR subprotocol OR substudy OR ",
    "multi-arm OR multi-stage OR sub-protocol OR sub-study"),
+ phase = "phase 3",
  startAfter = "01/31/2010",
  countries = c("DE", "US", "United Kingdom"))
 
 # open queries in register web interface
 sapply(urls, ctrOpenSearchPagesInBrowser)
+
+urls <- ctrGenerateQueries(
+  searchPhrase = "antibody AND covid",
+  recruitment = "completed",
+  )
 
 \dontrun{
 # count trials found
@@ -110,7 +111,7 @@ sapply(urls, ctrLoadQueryIntoDb, only.count = TRUE)
 
 # load queries into database collection
 dbc <- nodbi::src_sqlite(collection = "my_collection")
-sapply(urls, ctrLoadQueryIntoDb, con = dbc)
+sapply(urls, ctrLoadQueryIntoDb, con = dbc, euctrprotocolsall = FALSE)
 }
 
 }
