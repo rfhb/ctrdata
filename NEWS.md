@@ -9,6 +9,7 @@
 
 ## Bug fixes
 - Refined indicator variables for `f.hasResults`
+- Added missing status code in `f.statusRecruitment()`
 
 # ctrdata 1.24.1
 

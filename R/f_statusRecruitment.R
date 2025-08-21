@@ -55,10 +55,13 @@ f.statusRecruitment <- function(df = NULL) {
       # "subjectDisposition.recruitmentDetails"
     ),
     "ctgov" = c(
+      # http://clinicaltrials.gov/ct2/html/images/info/public.xsd
       "last_known_status",
       "overall_status"
     ),
     "ctgov2" = c(
+      # https://clinicaltrials.gov/data-api/about-api/study-data-structure#enum-Status
+      # https://clinicaltrials.gov/policy/protocol-definitions#OverallStatus
       "protocolSection.statusModule.overallStatus"
     ),
     "isrctn" = c(
@@ -109,6 +112,14 @@ f.statusRecruitment <- function(df = NULL) {
   #### . CTGOV ####
   df %>% dplyr::mutate(
     helper = as.character(
+      # http://clinicaltrials.gov/ct2/html/images/info/public.xsd
+      # "If a study is open (overall status of recruiting, not yet recruiting, or expanded
+      # access available), the overall status is supposed to be verified occasionally, and
+      # updated when it changes.  If the status has not been verified in 2 years, and the
+      # current date is past the study primary completion date or completion date, then the
+      # status is inconsistent.  In this case, the inconsistent value is kept in the new
+      # last_known_status tag and the overall_status tag is changed to "Unknown status"."
+      #
       # type is logical if all NA
       dplyr::if_else(
         !is.na(.data$last_known_status),
@@ -182,15 +193,15 @@ f.statusRecruitment <- function(df = NULL) {
   ) %>%
     dplyr::pull("out") -> df$ctis
 
+  #### mapping ####
 
-  # merge, last update 2025-02-08
+  # merge, last update 2025-08-21
   mapped_values <- list(
     "ongoing" = c(
-      "active", "active_not_recruiting", "active, not recruiting",
-      "authorised, not started", "authorised, recruiting",
-      "authorised, recruitment pending", "enrolling by invitation",
-      "enrolling_by_invitation", "not yet recruiting", "ongoing",
-      "ongoing, not yet recruiting", "ongoing, recruiting", "recruiting",
+      "active", "available", "ongoing, not yet recruiting",
+      "authorised, recruitment pending", "authorised, not started",
+      "enrolling by invitation", "enrolling_by_invitation",
+      "ongoing", "ongoing, recruiting", "recruiting", "authorised, recruiting",
       "restarted", "suspended", "temporarily halted", "temporarily_not_available"
     ),
     #
@@ -203,9 +214,12 @@ f.statusRecruitment <- function(df = NULL) {
     ),
     #
     "other" = c(
-      "cancelled", "expired", "gb - no longer in eu/eea", "no longer available",
-      "no_longer_available", "not authorised", "revoked",
-      "stopped", "trial now transitioned", "under evaluation",
+      "active, not recruiting", "active_not_recruiting",
+      "not yet recruiting", "not_yet_recruiting",
+      "cancelled", "expired", "gb - no longer in eu/eea",
+      "no longer available", "no_longer_available",
+      "not authorised", "revoked", "stopped",
+      "trial now transitioned", "under evaluation",
       "unknown", "withdrawn", "withheld"
     )
   )
