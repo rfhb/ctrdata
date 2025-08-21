@@ -260,7 +260,7 @@ f.sponsorType <- function(df = NULL) {
           .data$coSponsors.commercial, " / "),
         function(i) {
           r <- na.omit(i)
-          if (!length(r)) return(NA)
+          if (!length(r)) return(NA_character_)
           if (any(r == "Commercial") & any(r  == "Non-Commercial")) return(stm)
           if (all(r == "Commercial")) return(stc)
           if (all(r == "Non-Commercial")) return(stn)
@@ -269,7 +269,7 @@ f.sponsorType <- function(df = NULL) {
         .data$coSponsors.isCommercial,
         function(i) {
           r <- na.omit(i)
-          if (!length(r)) return(NA)
+          if (!length(r)) return(NA_character_)
           if (any(r == TRUE) & any(r == FALSE)) return(stm)
           if (all(r)) return(stc)
           if (!all(r)) return(stn)
@@ -280,7 +280,7 @@ f.sponsorType <- function(df = NULL) {
           .data$authorizedApplication.authorizedPartI.sponsors.commercial, " / "),
         function(i) {
           r <- na.omit(i)
-          if (!length(r)) return(NA)
+          if (!length(r)) return(NA_character_)
           if (any(r == "Commercial") & any(r  == "Non-Commercial")) return(stm)
           if (all(r == "Commercial")) return(stc)
           if (all(r == "Non-Commercial")) return(stn)
@@ -289,7 +289,7 @@ f.sponsorType <- function(df = NULL) {
         .data$authorizedApplication.authorizedPartI.sponsors.isCommercial,
         function(i) {
           r <- na.omit(i)
-          if (!length(r)) return(NA)
+          if (!length(r)) return(NA_character_)
           if (any(r == TRUE) & any(r == FALSE)) return(stm)
           if (all(r)) return(stc)
           if (!all(r)) return(stn)
@@ -297,10 +297,11 @@ f.sponsorType <- function(df = NULL) {
       out = mapply(
         function(h1, h2, h3, h4, h5, h6, h7) {
           r <- na.omit(c(h1, h2, h3, h4, h5, h6, h7))
-          if (!length(r)) return(NA)
+          if (!length(r)) return(NA_character_)
           if (any(r == "for profit") & any(r  == "not for profit")) return(stm)
           if (all(r == "for profit")) return(stc)
           if (all(r == "not for profit")) return(stn)
+          NA_character_
         },
         h1 = .data$helper1,
         h2 = .data$helper2,

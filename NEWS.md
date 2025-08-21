@@ -10,6 +10,7 @@
 ## Bug fixes
 - Refined indicator variables for `f.hasResults`
 - Added missing status code in `f.statusRecruitment()`
+- Corrected missing value handling in `f.sponsorType()`
 
 # ctrdata 1.24.1
 
