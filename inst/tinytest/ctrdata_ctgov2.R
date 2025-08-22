@@ -73,6 +73,7 @@ tmp <- ctrLoadQueryIntoDb(
   con = dbc
 )
 expect_true(tmp$n >= 6L)
+print(tmp)
 expect_true(all(c("NCT00152126", "NCT00578864", "NCT01467986", "NCT01492673", "NCT02130869", "NCT03042429") %in% tmp$success))
 
 # test
@@ -81,6 +82,7 @@ tmp <- ctrLoadQueryIntoDb(
   con = dbc
 )
 expect_true(tmp$n > 40L && tmp$n < 50L)
+print(tmp)
 
 #### documents.path ####
 
@@ -90,7 +92,7 @@ on.exit(unlink(tmpDir, recursive = TRUE), add = TRUE)
 # test
 expect_message(
   suppressWarnings(
-    ctrLoadQueryIntoDb(
+    tmp <- ctrLoadQueryIntoDb(
       queryterm = "cond=Cancer&aggFilters=phase:0,status:ter,studyType:int&studyComp=2015-12-31_2020-12-31",
       register = "CTGOV",
       documents.path = tmpDir,
@@ -100,6 +102,7 @@ expect_message(
     )),
   "Newly saved [0-9]+ placeholder document[(]s[)] for [0-9]+ trial"
 )
+print(tmp)
 
 # test
 expect_true(
@@ -107,10 +110,10 @@ expect_true(
     dir(pattern = ".pdf", path = tmpDir, recursive = TRUE)) > 10L
 )
 
-# test
+# test xxx
 expect_message(
   suppressWarnings(
-    ctrLoadQueryIntoDb(
+    tmp <- ctrLoadQueryIntoDb(
       queryterm = "cond=Cancer&aggFilters=phase:0,status:ter,studyType:int&studyComp=2015-12-31_2020-12-31",
       register = "CTGOV2",
       documents.path = tmpDir,
@@ -120,56 +123,61 @@ expect_message(
     )),
   "Newly saved [0-9]+ document[(]s[)] for [0-9]+ trial"
 )
+print(tmp)
 
 #### ctgov2history ####
 
 # test
 expect_message(
   suppressWarnings(
-    ctrLoadQueryIntoDb(
+    tmp <- ctrLoadQueryIntoDb(
       queryterm = "https://clinicaltrials.gov/search?cond=neuroblastoma&aggFilters=phase:3,status:com",
       ctgov2history = 3,
       con = dbc
     )),
   "processing historic versions"
 )
+print(tmp)
 
-# test
+# test xxx
 expect_message(
   suppressWarnings(
-    ctrLoadQueryIntoDb(
+    tmp <- ctrLoadQueryIntoDb(
       queryterm = "https://clinicaltrials.gov/search?cond=neuroblastoma&aggFilters=phase:3,status:com",
       ctgov2history = "2:4",
       con = dbc
     )),
   "processing historic versions"
 )
+print(tmp)
 
-# test
+# test xxx
 expect_message(
   suppressWarnings(
-    ctrLoadQueryIntoDb(
+    tmp <- ctrLoadQueryIntoDb(
       queryterm = "https://clinicaltrials.gov/search?cond=neuroblastoma&aggFilters=phase:3,status:com",
       ctgov2history = -1,
       con = dbc
     )),
   "processing historic versions"
 )
+print(tmp)
 
 #### ctrLoadQueryIntoDb update ####
 
 # test
 expect_message(
   suppressWarnings(
-    ctrLoadQueryIntoDb(
+    tmp <- ctrLoadQueryIntoDb(
       querytoupdate = 2L,
       con = dbc)),
   "Rerunning query")
+print(tmp)
 
 # test
 expect_message(
   suppressWarnings(
-    ctrLoadQueryIntoDb(
+    tmp <- ctrLoadQueryIntoDb(
       queryterm = "cond=Neuroblastoma&lastUpdPost=2022-01-01_2023-12-31&aggFilters=phase:1,results:with,studyType:int",
       register = "CTGOV2",
       con = dbc,
@@ -177,21 +185,24 @@ expect_message(
     )),
   "Imported or updated [0-9]+ trial"
 )
+print(tmp)
 
 # test
 expect_warning(
-  ctrLoadQueryIntoDb(
+  tmp <- ctrLoadQueryIntoDb(
     querytoupdate = "last",
     con = dbc
   ),
   "running again with these limits"
 )
+print(tmp)
 
 # test
 tmp <- dbQueryHistory(con = dbc)
 print(tmp)
-message(tmp)
-message(str(tmp))
+Sys.sleep(10L)
+tmp <- dbQueryHistory(con = dbc)
+print(tmp)
 expect_equal(dim(tmp), c(10L, 4L))
 
 #### dbFindFields ####
