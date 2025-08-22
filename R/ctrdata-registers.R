@@ -12,7 +12,7 @@
 #' continue to be added (and can be loaded by `ctrdata`).
 #'
 #' - **CTIS**: The EU Clinical Trials Information System, launched in 2023,
-#' holds aobut 9,800 publicly accessible clinical trials, including
+#' holds about 9,800 publicly accessible clinical trials, including
 #' more than 270 with results or a report (only as PDF files).
 #' _No results in a structured electronic format are foreseeably available_,
 #' thus `ctrdata` cannot load any CTIS results.

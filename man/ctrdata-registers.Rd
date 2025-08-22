@@ -17,7 +17,7 @@ trials (at least one investigational medicinal product, IMP; in the European
 Union and beyond), including more than 25,400 trials with results, which
 continue to be added (and can be loaded by \code{ctrdata}).
 \item \strong{CTIS}: The EU Clinical Trials Information System, launched in 2023,
-holds aobut 9,800 publicly accessible clinical trials, including
+holds about 9,800 publicly accessible clinical trials, including
 more than 270 with results or a report (only as PDF files).
 \emph{No results in a structured electronic format are foreseeably available},
 thus \code{ctrdata} cannot load any CTIS results.

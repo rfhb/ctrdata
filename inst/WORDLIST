@@ -39,6 +39,7 @@ MeSH
 MedDRA
 MongoDB
 NCT
+NDJSON
 NHST
 NL
 NR
@@ -149,7 +150,6 @@ logrank
 lubridate
 macos
 maybeRelatedTrials
-mcnemar
 md
 medRxiv
 mongo
@@ -218,6 +218,7 @@ trialPopulationExclusion
 trialPopulationInclusion
 trialTitle
 trials’
+ttest
 uri
 utf
 valuename
