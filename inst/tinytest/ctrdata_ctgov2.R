@@ -73,7 +73,6 @@ tmp <- ctrLoadQueryIntoDb(
   con = dbc
 )
 expect_true(tmp$n >= 6L)
-print(tmp)
 expect_true(all(c("NCT00152126", "NCT00578864", "NCT01467986", "NCT01492673", "NCT02130869", "NCT03042429") %in% tmp$success))
 
 # test
@@ -82,7 +81,6 @@ tmp <- ctrLoadQueryIntoDb(
   con = dbc
 )
 expect_true(tmp$n > 40L && tmp$n < 50L)
-print(tmp)
 
 #### documents.path ####
 
@@ -97,7 +95,6 @@ expect_message(
       register = "CTGOV",
       documents.path = tmpDir,
       documents.regexp = NULL,
-      verbose = TRUE,
       con = dbc
     )),
   "Newly saved [0-9]+ placeholder document[(]s[)] for [0-9]+ trial"
@@ -110,20 +107,18 @@ expect_true(
     dir(pattern = ".pdf", path = tmpDir, recursive = TRUE)) > 10L
 )
 
-# test xxx
-#expect_message(
-  #suppressWarnings(
+# test
+expect_message(
+  suppressWarnings(
     tmp <- ctrLoadQueryIntoDb(
       queryterm = "cond=Cancer&aggFilters=phase:0,status:ter,studyType:int&studyComp=2015-12-31_2020-12-31",
       register = "CTGOV2",
       documents.path = tmpDir,
       documents.regexp = "sap_",
-      verbose = TRUE,
       con = dbc
-    )#),
-#  "Newly saved [0-9]+ document[(]s[)] for [0-9]+ trial"
-#)
-print(tmp)
+    )),
+  "Newly saved [0-9]+ document[(]s[)] for [0-9]+ trial"
+)
 
 #### ctgov2history ####
 
@@ -137,9 +132,8 @@ expect_message(
     )),
   "processing historic versions"
 )
-print(tmp)
 
-# test xxx
+# test
 expect_message(
   suppressWarnings(
     tmp <- ctrLoadQueryIntoDb(
@@ -149,9 +143,8 @@ expect_message(
     )),
   "processing historic versions"
 )
-print(tmp)
 
-# test xxx
+# test
 expect_message(
   suppressWarnings(
     tmp <- ctrLoadQueryIntoDb(
@@ -161,7 +154,6 @@ expect_message(
     )),
   "processing historic versions"
 )
-print(tmp)
 
 #### ctrLoadQueryIntoDb update ####
 
@@ -172,7 +164,6 @@ expect_message(
       querytoupdate = 2L,
       con = dbc)),
   "Rerunning query")
-print(tmp)
 
 # test
 expect_message(
@@ -180,12 +171,10 @@ expect_message(
     tmp <- ctrLoadQueryIntoDb(
       queryterm = "cond=Neuroblastoma&lastUpdPost=2022-01-01_2023-12-31&aggFilters=phase:1,results:with,studyType:int",
       register = "CTGOV2",
-      con = dbc,
-      verbose = TRUE
+      con = dbc
     )),
   "Imported or updated [0-9]+ trial"
 )
-print(tmp)
 
 # test
 expect_warning(
@@ -195,12 +184,8 @@ expect_warning(
   ),
   "running again with these limits"
 )
-print(tmp)
 
 # test
-tmp <- dbQueryHistory(con = dbc)
-print(tmp)
-Sys.sleep(10L)
 tmp <- dbQueryHistory(con = dbc)
 print(tmp)
 expect_equal(dim(tmp), c(10L, 4L))
