@@ -3,6 +3,9 @@
 # set server
 httr::set_config(httr::timeout(seconds = 60))
 
+# remove any existing database
+nodbi::docdb_delete(dbc, dbc$collection)
+
 #### ctrLoadQueryIntoDb ####
 
 # test

@@ -1,5 +1,8 @@
 ## RH 2019-09-28
 
+# remove any existing database
+nodbi::docdb_delete(dbc, dbc$collection)
+
 #### ctrLoadQueryIntoDb ####
 
 # test

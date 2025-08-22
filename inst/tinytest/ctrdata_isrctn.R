@@ -4,6 +4,9 @@
 httr::set_config(httr::timeout(seconds = 60))
 suppressWarnings(require(tibble))
 
+# remove any existing database
+nodbi::docdb_delete(dbc, dbc$collection)
+
 #### ctrLoadQueryIntoDb ####
 
 # test with slightly incorrect url
