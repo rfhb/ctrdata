@@ -99,7 +99,6 @@ expect_message(
     )),
   "Newly saved [0-9]+ placeholder document[(]s[)] for [0-9]+ trial"
 )
-print(tmp)
 
 # test
 expect_true(

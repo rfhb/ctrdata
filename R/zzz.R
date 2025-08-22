@@ -32,3 +32,32 @@
   return(invisible(NULL))
 
 } # .onAttach
+
+# helper
+delCtrdataTempDir <- function(x) {delCtrdataTempDirHelper()}
+
+delCtrdataTempDirHelper <- function() {
+
+  # same as in function ctrTempDir()
+  tempDir <- options()[["ctrdata.tempdir"]]
+  if (is.null(tempDir)) return(invisible())
+  keepDir <- file.path(tempDir, ".keepDir")
+  if (!length(keepDir)) return(invisible())
+
+  if (file.exists(keepDir)) {
+    message('ctrdata: "verbose = TRUE", not deleting ',
+            "temporary directory; re-use for ctrdata ",
+            'by calling\noptions(ctrdata.tempdir = "',
+            tempDir, '")')
+  } else {
+    unlink(tempDir, recursive = TRUE)
+    message("ctrdata: deleted temporary directory.\r")
+  }
+
+}
+
+reg.finalizer(
+  e = globalenv(),
+  f = delCtrdataTempDir,
+  onexit = TRUE
+)

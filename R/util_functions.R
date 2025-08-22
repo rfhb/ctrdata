@@ -1138,51 +1138,36 @@ ctrMultiDownload <- function(
 #'
 ctrTempDir <- function(verbose = FALSE) {
 
-  # get temporary space
+  # verbose has the purpose to persist the temporary folder
+  # beyond sessions, e.g. for debugging or for keeping the
+  # originally downloaded files.
+
+  # from ctrdata 1.16.0.9000, only downloaded files are kept;
+  # calculated files are deleted after ctrLoadQueryIntoDb()
+
+  # create temporary folder, unless
+  # a folder is specified as option
   tempDir <- getOption(
     "ctrdata.tempdir",
     default = tempfile(pattern = "ctrDATA"))
 
-  # create and normalise for OS
   dir.create(tempDir, showWarnings = FALSE, recursive = TRUE)
+
   tempDir <- normalizePath(tempDir, mustWork = TRUE)
+  keepDir <- file.path(tempDir, ".keepDir")
 
-  # retain tempdir for session to accelerate,
-  # but only if session is user-interactive.
-  # from ctrdata 1.16.0.9000 onwards, all
-  # intermediate files are deleted before
-  # finalising a ctrLoadQueryIntoDb() call
-  # (that is, only downloaded files are kept).
-  if (interactive()) options(ctrdata.tempdir = tempDir)
+  options(ctrdata.tempdir = tempDir)
 
-  # helper
-  delCtrdataTempDir <- function(x) {
-    if (length(.ctrdataenv$keeptempdir) &&
-        !is.null(.ctrdataenv$keeptempdir)) {
-      if (.ctrdataenv$keeptempdir) {
-        message('ctrdata: "verbose = TRUE", not deleting ',
-                'temporary directory ', tempDir, "\r")
-      } else {
-        unlink(tempDir, recursive = TRUE)
-        message("ctrdata: deleted temporary directory\r")
-      }
-    }
-    assign("keeptempdir", NULL, envir = .ctrdataenv)
-  }
+  # empty file to indicate if to keep or not folder
+  if (verbose) file.create(keepDir) else unlink(keepDir)
 
-  # register deleting tempDir when exiting session
-  assign("keeptempdir", verbose, envir = .ctrdataenv)
-  reg.finalizer(
-    e = .ctrdataenv,
-    f = delCtrdataTempDir,
-    onexit = TRUE
-  )
+  # see zzz.R for reg.finalizer()
 
   # inform user
   if (verbose) message(
     "\nDEBUG: ", tempDir,
     "\nUsing any previously downloaded files of the ",
-    length(dir(path = tempDir)),
+    length(dir(path = tempDir, pattern = "^[.]")),
     " files existing in this folder.\n")
 
   # return
