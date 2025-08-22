@@ -189,6 +189,9 @@ expect_warning(
 
 # test
 tmp <- dbQueryHistory(con = dbc)
+print(tmp)
+message(tmp)
+message(str(tmp))
 expect_equal(dim(tmp), c(10L, 4L))
 
 #### dbFindFields ####
