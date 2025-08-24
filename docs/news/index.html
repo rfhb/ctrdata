@@ -42,15 +42,16 @@
 <h2 class="pkg-version" data-toc-text="1.24.1.9000" id="ctrdata-12419000">ctrdata 1.24.1.9000<a class="anchor" aria-label="anchor" href="#ctrdata-12419000"></a></h2>
 <div class="section level3">
 <h3 id="possibly-breaking-down-stream-workflows-1-24-1-9000">Possibly breaking down-stream workflows<a class="anchor" aria-label="anchor" href="#possibly-breaking-down-stream-workflows-1-24-1-9000"></a></h3>
-<ul><li>Save EUCTR results in folders by trial, in analogy to documents for other registers</li>
+<ul><li>Save EUCTR result files in folders by trial, as done for documents for all registers</li>
 </ul></div>
 <div class="section level3">
 <h3 id="enhancement-1-24-1-9000">Enhancement<a class="anchor" aria-label="anchor" href="#enhancement-1-24-1-9000"></a></h3>
-<ul><li>Revised how EUCTR trials are loaded and updated with results to accelerate operations</li>
-<li>Added retrying requests to CTIS, which apparently started to refuse or throttle responses</li>
-<li>Added incrementing numbers of historic versions of CTIS created with <code>querytoupdate = ...</code>
+<ul><li>Revised how EUCTR trials are loaded and updated with results, accelerated operations</li>
+<li>Added retrying requests, to handle refuse or throttle responses (e.g., CTIS, <a href="https://github.com/rfhb/ctrdata/issues/55" class="external-link">#55</a>)</li>
+<li>Added incrementing numbers of historic versions of CTIS when running <code><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code>
 </li>
-<li>Simplified, accelerated loading NDJSON files, minimising deletion and re-loading</li>
+<li>Simplified, accelerated loading NDJSON files, minimising database record deletions</li>
+<li>Changed deleting and preserving temporary files (see also news for version 1.17.0)</li>
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-1-24-1-9000">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-24-1-9000"></a></h3>

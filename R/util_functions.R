@@ -1087,6 +1087,7 @@ ctrMultiDownload <- function(
     # server refused request immediately again
     rfsd <- downloadValue$status_code %in% c(403L, 429L)
     if (isTRUE(any(rfsd))) {
+      unlink(downloadValue$destfile[rfsd])
       wt <- as.integer(runif(n = 1L) * 50L)
       message(
         "- Server refused ", sum(rfsd), " requests; ",
@@ -1098,7 +1099,8 @@ ctrMultiDownload <- function(
   }
 
   # remove any files from failed downloads
-  unlink(downloadValue$destfile[downloadValue$status_code %in% c(404L, 416L)])
+  unlink(downloadValue$destfile[downloadValue$status_code %in% c(
+    404L, 416L, 403L, 429L)])
 
   # finalise
   if (any(toDo)) {
@@ -1477,6 +1479,8 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
       # because update may be a frequent use case and
       # using this may accelerate and may avoid table
       # records that remain being marked for deletion
+
+      if (verbose) message("DBUG: ", tempFiles[tempFile])
 
       if (inherits(dbIds, "try-error") ||
           is.null(dbIds) ||

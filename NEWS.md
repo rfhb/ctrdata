@@ -1,14 +1,14 @@
 # ctrdata 1.24.1.9000
 
 ## Possibly breaking down-stream workflows 
-- Save EUCTR results in folders by trial, in analogy to documents for other registers
+- Save EUCTR result files in folders by trial, as done for documents for all registers
 
 ## Enhancement
-- Revised how EUCTR trials are loaded and updated with results to accelerate operations
-- Added retrying requests to CTIS, which apparently started to refuse or throttle responses 
-- Added incrementing numbers of historic versions of CTIS created with `querytoupdate = ...`
-- Simplified, accelerated loading NDJSON files, minimising deletion and re-loading
-- Changed deleting / preserving temporary files, see also `options(ctrdata.tempdir = "<user_specified_folder>")`
+- Revised how EUCTR trials are loaded and updated with results, accelerated operations
+- Added retrying requests, to handle refuse or throttle responses (e.g., CTIS, #55)
+- Added incrementing numbers of historic versions of CTIS when running `ctrLoadQueryIntoDb()`
+- Simplified, accelerated loading NDJSON files, minimising database record deletions
+- Changed deleting and preserving temporary files (see also news for version 1.17.0) 
 
 ## Bug fixes
 - Refined indicator variables for `f.hasResults()`
