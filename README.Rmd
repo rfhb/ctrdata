@@ -46,7 +46,7 @@ The package `ctrdata` provides functions for retrieving (downloading), aggregati
 - ClinicalTrials.gov ("CTGOV2", see [example](#workflow-ctgov-example))
 - ISRCTN Registry (https://www.isrctn.com/) 
 
-The motivation is to investigate the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can use the databases created with this package. This README was reviewed on 2025-08-21 for version 1.24.1.9000.
+The motivation is to investigate the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can use the databases created with this package. This README was reviewed on 2025-08-27 for version 1.25.0.9000.
 
 ## Main features
 
@@ -56,7 +56,7 @@ The motivation is to investigate the design and conduct of trials of interest, t
 
 * For analyses, `ctrdata` functions implement canonical [trial concepts](https://rfhb.github.io/ctrdata/reference/ctrdata-trial-concepts.html) to simplify analyses across registers, find synonyms of an active substance, identify unique (de-duplicated) trial records across all registers, merge and recode fields as well as easily access deeply-nested fields. Analyses can be done with `R` (see [vignette](https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html)) and other systems, using the stored `JSON`-structured data. 
 
-Respect the registers' terms and conditions, see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`. Please cite the package in a publication as follows: "Ralf Herold (2025). _ctrdata: Retrieve and Analyze Clinical Trials in Public Registers._ R package version 1.23.0, https://cran.r-project.org/package=ctrdata". 
+Respect the registers' terms and conditions, see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`. Please cite the package in a publication as follows: "Ralf Herold (2025). _ctrdata: Retrieve and Analyze Clinical Trials in Public Registers._ R package version 1.25.0, https://cran.r-project.org/package=ctrdata". 
 
 <!--
 
@@ -748,37 +748,34 @@ unlink("./files-isrctn/", recursive = TRUE)
 See also [https://app.codecov.io/gh/rfhb/ctrdata/tree/master/R](https://app.codecov.io/gh/rfhb/ctrdata/tree/master/R)
 
 ```{r}
-# 2025-08-21
+# 2025-08-27
 
 tinytest::test_all()
-# test_ctrdata_duckdb_ctgov2.R..   78 tests OK 49.9s
+# test_ctrdata_duckdb_ctgov2.R..   78 tests OK 57.0s
 # test_ctrdata_function_activesubstance.R    4 tests OK 0.9s
-# test_ctrdata_function_ctrgeneratequeries.R   10 tests OK 0.3s
-# test_ctrdata_function_params.R   25 tests OK 1.2s
-# test_ctrdata_function_trial-concepts.R   92 tests OK 3.8s
-# test_ctrdata_function_various.R   79 tests OK 3.0s
-# test_ctrdata_mongo_local_ctis.R   91 tests OK 3.5s
-# test_ctrdata_mongo_remote_ro.R    4 tests OK 6.6s
-# test_ctrdata_postgres_ctgov2.R   50 tests OK 30.6s
-# test_ctrdata_sqlite_ctgov.R...   46 tests OK 28.9s
-# test_ctrdata_sqlite_ctgov2.R..   50 tests OK 25.7s
-# test_ctrdata_sqlite_ctis.R....   92 tests OK 1.7s
-# test_ctrdata_sqlite_euctr.R...  119 tests OK 55.1s
-# test_ctrdata_sqlite_isrctn.R..   45 tests OK 16.9s
+# test_ctrdata_function_ctrgeneratequeries.R   10 tests OK 0.2s
+# test_ctrdata_function_params.R   25 tests OK 1.3s
+# test_ctrdata_function_trial-concepts.R   92 tests OK 4.0s
+# test_ctrdata_function_various.R   79 tests OK 3.2s
+# test_ctrdata_mongo_local_euctr.R  117 tests OK 57.7s
+# test_ctrdata_mongo_remote_ro.R    4 tests OK 6.7s
+# test_ctrdata_sqlite_ctgov.R...   46 tests OK 27.8s
+# test_ctrdata_sqlite_ctis.R....   92 tests OK 3.4s
+# test_ctrdata_sqlite_isrctn.R..   45 tests OK 21.5s
 # test_euctr_error_sample.R.....    8 tests OK 0.2s
-# All ok, 793 results (8m 53.4s)
 
 covr::package_coverage(path = ".", type = "tests")
-# ctrdata Coverage: 94.58%
-# R/ctrRerunQuery.R: 81.42%
+# ctrdata Coverage: 94.06%
+# R/zzz.R: 55.56%
+# R/ctrRerunQuery.R: 78.64%
 # R/ctrShowOneTrial.R: 84.21%
 # R/ctrLoadQueryIntoDbEuctr.R: 87.78%
 # R/ctrGetQueryUrl.R: 89.18%
 # R/ctrFindActiveSubstanceSynonyms.R: 89.36%
-# R/util_functions.R: 90.15%
+# R/dbGetFieldsIntoDf.R: 89.47%
+# R/util_functions.R: 89.57%
 # R/f_sponsorType.R: 92.00%
 # R/ctrLoadQueryIntoDbCtgov2.R: 92.93%
-# R/dbGetFieldsIntoDf.R: 95.39%
 # R/ctrLoadQueryIntoDbIsrctn.R: 95.70%
 # R/dbFindFields.R: 95.88%
 # R/f_primaryEndpointResults.R: 96.00%
@@ -809,7 +806,6 @@ covr::package_coverage(path = ".", type = "tests")
 # R/f_trialPhase.R: 100.00%
 # R/f_trialPopulation.R: 100.00%
 # R/f_trialTitle.R: 100.00%
-# R/zzz.R: 100.00%
 ```
 
 
