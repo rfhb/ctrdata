@@ -63,15 +63,12 @@ function euctr2ndjson(txt, dt) {
     txt = txt.replaceAll(/\n/g, " ");
     txt = txt.replaceAll(/xxxxxxxxxx/g, "\n");
 
-    // bring back newlines around identifier for end of arrays
-    // txt = txt.replaceAll(/X.9 ENDSPONSOR: TRUE/gm, "\nX.9 ENDSPONSOR: TRUE"); // not needed?!
-
     // clean up
     txt = txt.replaceAll(/\n\n+/g, "\n/");
 
     // add information
-    txt = txt.replaceAll(/^("_id":.+")/gm, "$1\nrecord last import: " + dt);
     txt = txt.replaceAll(/^("_id":.+")/gm, "$1\nctrname: EUCTR");
+    txt = txt.replaceAll(/^("_id":.+")/gm, "$1\nrecord_last_import: " + dt);
 
     // so far 6 ms
 

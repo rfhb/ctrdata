@@ -1,6 +1,7 @@
 # ctrdata 1.25.0.9000
 
-New development version
+## Bug fix
+- Re-added field missing from EUCTR conversion
 
 # ctrdata 1.25.0
 
