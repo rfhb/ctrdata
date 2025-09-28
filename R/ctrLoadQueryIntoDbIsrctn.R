@@ -35,13 +35,13 @@ ctrLoadQueryIntoDbIsrctn <- function(
 
   ## isrctn api ---------------------------------------------------------------
 
-  # ISRCTN translation to API v0.4 2021-02-04
+  # ISRCTN translation to API draft v0.6 2023-08-18
   # - limit can be set to arbitrarily high number
+  # - default instead of deprecated internal format
   # - no pagination or batching
-  # - internal means XML
   queryIsrctnRoot <- "https://www.isrctn.com/"
-  queryIsrctnType1 <- "api/query/format/internal?limit="
-  queryIsrctnType2 <- "api/query/format/internal?limit=0&"
+  queryIsrctnType1 <- "api/query/format/default?limit="
+  queryIsrctnType2 <- "api/query/format/default?limit=0&"
   #
   # convert parameters from search queryterm such as
   # "q=neuroblastoma+OR+lymphoma&filters=phase%3APhase+III%2CLE+lastEdited%3A2021-01-01"

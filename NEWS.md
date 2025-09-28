@@ -2,6 +2,7 @@
 
 ## Bug fix
 - Re-added field missing from EUCTR conversion
+- Changes API call after long deprecated by ISRCTN
 
 # ctrdata 1.25.0
 
