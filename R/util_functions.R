@@ -682,8 +682,8 @@ ctrDb <- function(con) {
 #'
 #' @returns a typed vector, same length as dv
 #'
-#' @importFrom xml2 xml_text read_html
 #' @importFrom lubridate duration ymd_hms dyears dmonths ddays
+#' @importFrom rvest html_text read_html
 #'
 #' @keywords internal
 #' @noRd
@@ -730,7 +730,7 @@ typeField <- function(dv, fn) {
       dv[htmlEnt] <-
         lapply(dv[htmlEnt], function(i) {
           sapply(i, function(ii) {
-            xml2::xml_text(xml2::read_html(charToRaw(ii)))
+            rvest::html_text(rvest::read_html(charToRaw(i)))
           }, USE.NAMES = FALSE)
         })
     }

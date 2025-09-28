@@ -22,7 +22,7 @@
 #' with the four columns: `_id`, `identifier`, `name`, `value`
 #'
 #' @importFrom stringi stri_extract_all_charclass stri_extract_first stri_replace_first
-#' @importFrom xml2 xml_text read_html
+#' @importFrom rvest html_text read_html
 #'
 #' @export
 #'
@@ -140,7 +140,7 @@ dfTrials2Long <- function(df) {
   htmlEnt <- grepl("&[#a-zA-Z]+;", out[["value"]])
   if (any(htmlEnt)) out[["value"]][htmlEnt] <-
     sapply(out[["value"]][htmlEnt], function(i) {
-      xml2::xml_text(xml2::read_html(charToRaw(i)))
+      rvest::html_text(rvest::read_html(charToRaw(i)))
     }, USE.NAMES = FALSE)
   message(". ", appendLF = FALSE)
 
