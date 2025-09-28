@@ -38,7 +38,7 @@ interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
 `ctrdata` is a package for the [R](https://www.r-project.org/) system,
 but other systems and tools can use the databases created with this
-package. This README was reviewed on 2025-08-27 for version 1.25.0.9000.
+package. This README was reviewed on 2025-09-27 for version 1.25.0.9000.
 
 ## Main features
 
@@ -918,24 +918,25 @@ ctrLoadQueryIntoDb(
 See also <https://app.codecov.io/gh/rfhb/ctrdata/tree/master/R>
 
 ``` r
-# 2025-08-27
+# 2025-09-28
 
 tinytest::test_all()
-# test_ctrdata_duckdb_ctgov2.R..   78 tests OK 57.0s
-# test_ctrdata_function_activesubstance.R    4 tests OK 0.9s
+# test_ctrdata_duckdb_ctgov2.R..   78 tests OK 56.9s
+# test_ctrdata_function_activesubstance.R    4 tests OK 0.8s
 # test_ctrdata_function_ctrgeneratequeries.R   10 tests OK 0.2s
-# test_ctrdata_function_params.R   25 tests OK 1.3s
-# test_ctrdata_function_trial-concepts.R   92 tests OK 4.0s
-# test_ctrdata_function_various.R   79 tests OK 3.2s
-# test_ctrdata_mongo_local_euctr.R  117 tests OK 57.7s
-# test_ctrdata_mongo_remote_ro.R    4 tests OK 6.7s
-# test_ctrdata_sqlite_ctgov.R...   46 tests OK 27.8s
-# test_ctrdata_sqlite_ctis.R....   92 tests OK 3.4s
-# test_ctrdata_sqlite_isrctn.R..   45 tests OK 21.5s
+# test_ctrdata_function_params.R   25 tests OK 2.4s
+# test_ctrdata_function_trial-concepts.R   92 tests OK 3.7s
+# test_ctrdata_function_various.R   79 tests OK 4.1s
+# test_ctrdata_mongo_local_euctr.R  117 tests OK 58.1s
+# test_ctrdata_mongo_remote_ro.R    4 tests OK 6.3s
+# test_ctrdata_sqlite_ctgov.R...   46 tests OK 29.2s
+# test_ctrdata_sqlite_ctis.R....   92 tests OK 3.3s
+# test_ctrdata_sqlite_isrctn.R..   47 tests OK 15.8s
 # test_euctr_error_sample.R.....    8 tests OK 0.2s
+# 602 test OK (6m 17.3s)
 
 covr::package_coverage(path = ".", type = "tests")
-# ctrdata Coverage: 94.06%
+# ctrdata Coverage: 94.08%
 # R/zzz.R: 55.56%
 # R/ctrRerunQuery.R: 78.64%
 # R/ctrShowOneTrial.R: 84.21%
@@ -943,7 +944,7 @@ covr::package_coverage(path = ".", type = "tests")
 # R/ctrGetQueryUrl.R: 89.18%
 # R/ctrFindActiveSubstanceSynonyms.R: 89.36%
 # R/dbGetFieldsIntoDf.R: 89.47%
-# R/util_functions.R: 89.57%
+# R/util_functions.R: 89.68%
 # R/f_sponsorType.R: 92.00%
 # R/ctrLoadQueryIntoDbCtgov2.R: 92.93%
 # R/ctrLoadQueryIntoDbIsrctn.R: 95.70%
