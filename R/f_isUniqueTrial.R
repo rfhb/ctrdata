@@ -23,6 +23,7 @@
 #'   dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
 #'   collection = "my_trials", flags = RSQLite::SQLITE_RO)
 #' trialsDf <- dbGetFieldsIntoDf(
+#'   fields = "ctrname",
 #'   calculate = "f.isUniqueTrial",
 #'   con = dbc)
 #' trialsDf

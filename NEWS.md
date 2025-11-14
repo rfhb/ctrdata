@@ -2,7 +2,8 @@
 
 ## Bug fix
 - Re-added field missing from EUCTR conversion
-- Changes API call after long deprecated by ISRCTN
+- Changed API call after long deprecated by ISRCTN
+- Ordered messages from `dbFindIdsUniqueTrials()`, `f.isUniqueTrial()`
 
 # ctrdata 1.25.0
 

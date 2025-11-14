@@ -196,8 +196,9 @@ dbFindIdsUniqueTrials <- function(
   if (length(listofIds) == 0L) listofIds <- character()
 
   # inform user
+  countIds <- countIds[order(names(countIds))]
   message(
-    "- Keeping ", paste0(countIds, collapse = " / "), " records",
+    "- Unique are ", paste0(countIds, collapse = " / "), " records",
     " from ", paste0(names(countIds), collapse = " / ")
   )
 
