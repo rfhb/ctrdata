@@ -2,32 +2,34 @@
 #'
 #' Registers of the four clinical trial registers from which package
 #' \link{ctrdata} can retrieve, aggregate and analyse protocol- and
-#' result-related information as well as documents, last updated 2025-07-24.
+#' result-related information as well as documents, last updated 2025-11-14.
 #'
 #' @section 1 - Overview:
 #'
-#' - **EUCTR**: The EU Clinical Trials Register holds more than 44,350 clinical
-#' trials (at least one investigational medicinal product, IMP; in the European
-#' Union and beyond), including more than 25,400 trials with results, which
-#' continue to be added (and can be loaded by `ctrdata`).
+#' - **EUCTR**: The EU Clinical Trials Register holds 44,364 clinical trials
+#' (at least one investigational medicinal product, IMP; in the European
+#' Union and beyond), including more than 25,600 trials with results, which
+#' continue to be added.
 #'
 #' - **CTIS**: The EU Clinical Trials Information System, launched in 2023,
-#' holds about 9,800 publicly accessible clinical trials, including
-#' more than 270 with results or a report (only as PDF files).
-#' _No results in a structured electronic format are foreseeably available_,
-#' thus `ctrdata` cannot load any CTIS results.
+#' holds almost 10,400 publicly accessible clinical trials, including
+#' more than 420 with results or a report.
 #' (To automatically get CTIS search query URLs, see
 #' \ifelse{latex}{\out{\href{https://rfhb.github.io/ctrdata/\#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}})
 #'
-#' - **CTGOV2**: ClinicalTrials.gov holds more than 550,000 interventional and
-#' observational studies, including almost 70,000 interventional studies with
-#' results (can be loaded by `ctrdata`).
+#' - **CTGOV2**: ClinicalTrials.gov holds more than 557,000 interventional and
+#' observational studies, including more than 70,500 interventional studies
+#' with results.
 #'
-#' - **ISRCTN**: The ISRCTN Registry holds almost 26,800 interventional and
-#' observational health studies, including more than 14,600 studies with
-#' results (as references).
-#' _No results in a structured electronic format are foreseeably available_,
-#' thus `ctrdata` cannot load any ISRCTN results.
+#' - **ISRCTN**: The ISRCTN Registry holds almost 7,200 interventional and
+#' observational health studies, including more than 14,800 studies with
+#' results.
+#'
+#' | | **CTGOV2**| **CTIS** | **EUCTR** | **ISRCTN** |
+#' | -- | :--: | :--: | :--: | :--: |
+#' | Protocol-related information | Structured | Structured | Structured | Structured |
+#' | Result-related information | Structured,<br>publication links | Documents | Structured,<br>documents | Publication links |
+#' | Documents | Primarily<br>protocol, SAP | Protocol, info sheets,<br>SAP, results | Reports | Protocol, info sheets,<br>SAP, results |
 #'
 #' @section 2 - Notable changes:
 #'

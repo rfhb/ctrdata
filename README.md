@@ -29,9 +29,10 @@ It can be used with the
 - EU Clinical Trials Register (“EUCTR”,
   <https://www.clinicaltrialsregister.eu/>)
 - EU Clinical Trials Information System (“CTIS”,
-  <https://euclinicaltrials.eu/>, see [example](#workflow-ctis-example))
-- ClinicalTrials.gov (“CTGOV2”, see [example](#workflow-ctgov-example))
-- ISRCTN Registry (<https://www.isrctn.com/>)
+  <https://euclinicaltrials.eu/>, [example](#workflow-ctis-example))
+- ClinicalTrials.gov (“CTGOV2”, <https://clinicaltrials.gov/>,
+  [example](#workflow-ctgov-example))
+- ISRCTN Registry (“ISRCTN”, <https://www.isrctn.com/>)
 
 The motivation is to investigate the design and conduct of trials of
 interest, to describe their trends and availability for patients and to

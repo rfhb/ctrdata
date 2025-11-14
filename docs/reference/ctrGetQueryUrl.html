@@ -122,20 +122,24 @@ This will copy query URLs from all registers into the clipboard; see
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> https://clinicaltrials.gov/search?start=2015-01-01_2016-01-01&amp;term=AREA[MaximumAge] RANGE[0 days, 28 days]&amp;intr=Drugs, Investigational&amp;aggFilters=phase:3,studyType:int</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from CTGOV2: start=2015-01-01_2016-01-01&amp;term=AREA[MaximumAge] RANGE[0 days, 28 days]&amp;intr=Drugs, Investigational&amp;aggFilters=phase:3,studyType:int</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                              query-term</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 start=2015-01-01_2016-01-01&amp;term=AREA[MaximumAge] RANGE[0 days, 28 days]&amp;intr=Drugs, Investigational&amp;aggFilters=phase:3,studyType:int</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   query-register</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1         CTGOV2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   `query-term`                                                  `query-register`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> start=2015-01-01_2016-01-01&amp;term=AREA[MaximumAge] RANGE[0 da… CTGOV2          </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># other examples</span></span></span>
 <span class="r-in"><span><span class="fu">ctrGetQueryUrl</span><span class="op">(</span><span class="st">"https://www.clinicaltrialsregister.eu/ctr-search/trial/2007-000371-42/results"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from EUCTR: query=2007-000371-42</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             query-term query-register</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 query=2007-000371-42          EUCTR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   `query-term`         `query-register`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> query=2007-000371-42 EUCTR           </span>
 <span class="r-in"><span><span class="fu">ctrGetQueryUrl</span><span class="op">(</span><span class="st">"https://euclinicaltrials.eu/ctis-public/view/2022-500041-24-00"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from CTIS: searchCriteria={"number":"2022-500041-24-00"}</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                      query-term query-register</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 searchCriteria={"number":"2022-500041-24-00"}           CTIS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   `query-term`                                        `query-register`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> <span style="color: #949494;">"</span>searchCriteria={\"number\":\"2022-500041-24-00\"}<span style="color: #949494;">"</span> CTIS            </span>
 <span class="r-in"><span><span class="fu">ctrGetQueryUrl</span><span class="op">(</span><span class="st">"https://classic.clinicaltrials.gov/ct2/show/NCT01492673?cond=neuroblastoma"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Note: 'url' shows a single trial (and is returned by the function) but also had search parameters: If interested in search results, click 'Return to List' in browser and use this as 'url'.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Since 2024-06-25, the classic CTGOV servers are no longer available. Package ctrdata has translated the classic CTGOV query URL from this call of function ctrLoadQueryIntoDb(queryterm = ...) into a query URL that works with the current CTGOV2. This is printed below and is also part of the return value of this function, ctrLoadQueryIntoDb(...)$url. This URL can be used with ctrdata functions. Note that the fields and data schema of trials differ between CTGOV and CTGOV2. </span>
@@ -148,8 +152,10 @@ This will copy query URLs from all registers into the clipboard; see
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> https://clinicaltrials.gov/search?term=NCT01492673</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from CTGOV2: term=NCT01492673</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         query-term query-register</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 term=NCT01492673         CTGOV2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   `query-term`     `query-register`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> term=NCT01492673 CTGOV2          </span>
 <span class="r-in"><span><span class="fu">ctrGetQueryUrl</span><span class="op">(</span><span class="st">"https://clinicaltrials.gov/ct2/show/NCT01492673?cond=neuroblastoma"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Note: 'url' shows a single trial (and is returned by the function) but also had search parameters: If interested in search results, click 'Return to List' in browser and use this as 'url'.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Since 2024-06-25, the classic CTGOV servers are no longer available. Package ctrdata has translated the classic CTGOV query URL from this call of function ctrLoadQueryIntoDb(queryterm = ...) into a query URL that works with the current CTGOV2. This is printed below and is also part of the return value of this function, ctrLoadQueryIntoDb(...)$url. This URL can be used with ctrdata functions. Note that the fields and data schema of trials differ between CTGOV and CTGOV2. </span>
@@ -162,39 +168,55 @@ This will copy query URLs from all registers into the clipboard; see
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> https://clinicaltrials.gov/search?term=NCT01492673</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from CTGOV2: term=NCT01492673</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         query-term query-register</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 term=NCT01492673         CTGOV2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   `query-term`     `query-register`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> term=NCT01492673 CTGOV2          </span>
 <span class="r-in"><span><span class="fu">ctrGetQueryUrl</span><span class="op">(</span><span class="st">"https://clinicaltrials.gov/study/NCT01467986?aggFilters=ages:child"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Note: 'url' shows a single trial (and is returned by the function) but also had search parameters: If interested in search results, click on 'Search Results' in browser and use this as 'url'.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from CTGOV2: id=NCT01467986</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       query-term query-register</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 id=NCT01467986         CTGOV2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   `query-term`   `query-register`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> id=NCT01467986 CTGOV2          </span>
 <span class="r-in"><span><span class="fu">ctrGetQueryUrl</span><span class="op">(</span><span class="st">"https://www.isrctn.com/ISRCTN70039829"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from ISRCTN: q=ISRCTN70039829</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         query-term query-register</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 q=ISRCTN70039829         ISRCTN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   `query-term`     `query-register`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> q=ISRCTN70039829 ISRCTN          </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># using identifiers of single trials</span></span></span>
 <span class="r-in"><span><span class="fu">ctrGetQueryUrl</span><span class="op">(</span><span class="st">"70039829"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from ISRCTN: q=70039829</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   query-term query-register</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 q=70039829         ISRCTN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   `query-term` `query-register`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> q=70039829   ISRCTN          </span>
 <span class="r-in"><span><span class="fu">ctrGetQueryUrl</span><span class="op">(</span><span class="st">"ISRCTN70039829"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from ISRCTN: q=ISRCTN70039829</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         query-term query-register</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 q=ISRCTN70039829         ISRCTN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   `query-term`     `query-register`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> q=ISRCTN70039829 ISRCTN          </span>
 <span class="r-in"><span><span class="fu">ctrGetQueryUrl</span><span class="op">(</span><span class="st">"NCT00617929"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from CTGOV2: term=NCT00617929</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         query-term query-register</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 term=NCT00617929         CTGOV2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   `query-term`     `query-register`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> term=NCT00617929 CTGOV2          </span>
 <span class="r-in"><span><span class="fu">ctrGetQueryUrl</span><span class="op">(</span><span class="st">"2022-501142-30-00"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from CTIS: searchCriteria={"number":"2022-501142-30-00"}</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                      query-term query-register</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 searchCriteria={"number":"2022-501142-30-00"}           CTIS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   `query-term`                                        `query-register`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> <span style="color: #949494;">"</span>searchCriteria={\"number\":\"2022-501142-30-00\"}<span style="color: #949494;">"</span> CTIS            </span>
 <span class="r-in"><span><span class="fu">ctrGetQueryUrl</span><span class="op">(</span><span class="st">"2012-003632-23"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> * Found search query from EUCTR: query=2012-003632-23</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             query-term query-register</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 query=2012-003632-23          EUCTR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   `query-term`         `query-register`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> query=2012-003632-23 EUCTR           </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
@@ -207,7 +229,7 @@ This will copy query URLs from all registers into the clipboard; see
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>

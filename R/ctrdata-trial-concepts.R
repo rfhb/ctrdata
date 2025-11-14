@@ -21,7 +21,7 @@
 #' The following trial concepts can be used by referencing their name when
 #' calling \link{dbGetFieldsIntoDf} (parameter `calculate`).
 #' Concepts will continue to be refined and added;
-#' last updated 2025-08-21.
+#' last updated 2025-11-14.
 #'
 #' - \link{f.assignmentType} (factor) was the assignment to treatment based on
 #' randomisation or not? ("R" or "NR")

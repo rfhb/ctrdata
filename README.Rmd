@@ -42,9 +42,9 @@ knitr::opts_chunk$set(
 The package `ctrdata` provides functions for retrieving (downloading), aggregating and analysing clinical trials using information (structured protocol and result data, as well as documents) from public registers. It can be used with the
 
 - EU Clinical Trials Register ("EUCTR", https://www.clinicaltrialsregister.eu/)
-- EU Clinical Trials Information System ("CTIS", https://euclinicaltrials.eu/, see [example](#workflow-ctis-example))
-- ClinicalTrials.gov ("CTGOV2", see [example](#workflow-ctgov-example))
-- ISRCTN Registry (https://www.isrctn.com/) 
+- EU Clinical Trials Information System ("CTIS", https://euclinicaltrials.eu/, [example](#workflow-ctis-example))
+- ClinicalTrials.gov ("CTGOV2", https://clinicaltrials.gov/, [example](#workflow-ctgov-example))
+- ISRCTN Registry ("ISRCTN", https://www.isrctn.com/) 
 
 The motivation is to investigate the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can use the databases created with this package. This README was reviewed on 2025-11-14 for version 1.25.0.9000.
 

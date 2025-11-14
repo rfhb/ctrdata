@@ -7,30 +7,31 @@
 \description{
 Registers of the four clinical trial registers from which package
 \link{ctrdata} can retrieve, aggregate and analyse protocol- and
-result-related information as well as documents, last updated 2025-07-24.
+result-related information as well as documents, last updated 2025-11-14.
 }
 \section{1 - Overview}{
 
 \itemize{
-\item \strong{EUCTR}: The EU Clinical Trials Register holds more than 44,350 clinical
-trials (at least one investigational medicinal product, IMP; in the European
-Union and beyond), including more than 25,400 trials with results, which
-continue to be added (and can be loaded by \code{ctrdata}).
+\item \strong{EUCTR}: The EU Clinical Trials Register holds 44,364 clinical trials
+(at least one investigational medicinal product, IMP; in the European
+Union and beyond), including more than 25,600 trials with results, which
+continue to be added.
 \item \strong{CTIS}: The EU Clinical Trials Information System, launched in 2023,
-holds about 9,800 publicly accessible clinical trials, including
-more than 270 with results or a report (only as PDF files).
-\emph{No results in a structured electronic format are foreseeably available},
-thus \code{ctrdata} cannot load any CTIS results.
+holds almost 10,400 publicly accessible clinical trials, including
+more than 420 with results or a report.
 (To automatically get CTIS search query URLs, see
 \ifelse{latex}{\out{\href{https://rfhb.github.io/ctrdata/\#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}})
-\item \strong{CTGOV2}: ClinicalTrials.gov holds more than 550,000 interventional and
-observational studies, including almost 70,000 interventional studies with
-results (can be loaded by \code{ctrdata}).
-\item \strong{ISRCTN}: The ISRCTN Registry holds almost 26,800 interventional and
-observational health studies, including more than 14,600 studies with
-results (as references).
-\emph{No results in a structured electronic format are foreseeably available},
-thus \code{ctrdata} cannot load any ISRCTN results.
+\item \strong{CTGOV2}: ClinicalTrials.gov holds more than 557,000 interventional and
+observational studies, including more than 70,500 interventional studies
+with results.
+\item \strong{ISRCTN}: The ISRCTN Registry holds almost 7,200 interventional and
+observational health studies, including more than 14,800 studies with
+results.
+}\tabular{lcccc}{
+    \tab \strong{CTGOV2} \tab \strong{CTIS} \tab \strong{EUCTR} \tab \strong{ISRCTN} \cr
+   Protocol-related information \tab Structured \tab Structured \tab Structured \tab Structured \cr
+   Result-related information \tab Structured,\if{html}{\out{<br>}}publication links \tab Documents \tab Structured,\if{html}{\out{<br>}}documents \tab Publication links \cr
+   Documents \tab Primarily\if{html}{\out{<br>}}protocol, SAP \tab Protocol, info sheets,\if{html}{\out{<br>}}SAP, results \tab Reports \tab Protocol, info sheets,\if{html}{\out{<br>}}SAP, results \cr
 }
 }
 

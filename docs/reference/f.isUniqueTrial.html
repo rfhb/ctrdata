@@ -77,6 +77,7 @@ be used with <a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a>.</p></dd>
 <span class="r-in"><span>  dbname <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"demo.sqlite"</span>, package <span class="op">=</span> <span class="st">"ctrdata"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  collection <span class="op">=</span> <span class="st">"my_trials"</span>, flags <span class="op">=</span> <span class="fu">RSQLite</span><span class="fu">::</span><span class="va"><a href="https://rsqlite.r-dbi.org/reference/SQLite.html" class="external-link">SQLITE_RO</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">trialsDf</span> <span class="op">&lt;-</span> <span class="fu"><a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  fields <span class="op">=</span> <span class="st">"ctrname"</span>,</span></span>
 <span class="r-in"><span>  calculate <span class="op">=</span> <span class="st">"f.isUniqueTrial"</span>,</span></span>
 <span class="r-in"><span>  con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> To review trial concepts details, call 'help("ctrdata-trial-concepts")'</span>
@@ -87,41 +88,23 @@ be used with <a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a>.</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> , 31 found in collection</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - Finding duplicates among registers' and sponsor ids...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - 2 EUCTR _id were not preferred EU Member State record for 11 trials</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> - Keeping 5 / 3 / 8 / 8 / 5 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> - Unique are 8 / 5 / 5 / 3 / 8 records from CTGOV / CTGOV2 / CTIS / EUCTR / ISRCTN</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> = Returning keys (_id) of 29 records in collection "my_trials"</span>
 <span class="r-in"><span><span class="va">trialsDf</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                  _id .isUniqueTrial</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1           12949496           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2           13281214           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3           17473621           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  2012-003632-23-CZ           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  2012-003632-23-SE          FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  2014-002606-20-PT           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  2014-003556-31-GB          FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  2014-003556-31-SE           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  2022-500244-37-00           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 2022-501142-30-00           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 2023-505613-24-00           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12 2023-508143-51-01           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13 2024-510663-34-00           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14          20343063           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15          61070850           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16          76463425           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17          80181452           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18          88261002           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19       NCT00617929           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20       NCT01125800           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21       NCT01483820           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22       NCT01505608           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23       NCT01592045           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24       NCT02620761           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25       NCT03280147           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26       NCT03325439           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27       NCT03431558           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28       NCT03876704           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29       NCT04001712           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30       NCT04041765           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31       NCT05969327           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 31 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    `_id`             ctrname .isUniqueTrial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 12949496          ISRCTN  TRUE          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 13281214          ISRCTN  TRUE          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 17473621          ISRCTN  TRUE          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 2012-003632-23-CZ EUCTR   TRUE          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 2012-003632-23-SE EUCTR   FALSE         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 2014-002606-20-PT EUCTR   TRUE          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 2014-003556-31-GB EUCTR   FALSE         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 2014-003556-31-SE EUCTR   TRUE          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 2022-500244-37-00 CTIS    TRUE          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 2022-501142-30-00 CTIS    TRUE          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 21 more rows</span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
@@ -134,7 +117,7 @@ be used with <a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a>.</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>
