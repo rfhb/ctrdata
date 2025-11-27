@@ -17,7 +17,8 @@ and extract variables (fields) of interest even from complex nested data
 as used by the registers, merge variables and update queries. The
 package can be used for monitoring, meta- and trend-analysis of the
 design and conduct as well as of the results of clinical trials across
-registers.
+registers. See overview in Herold, R. (2025)
+[doi:10.1017/rsm.2025.10061](https://doi.org/10.1017/rsm.2025.10061)
 
 ## See also
 

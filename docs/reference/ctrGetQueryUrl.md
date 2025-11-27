@@ -55,6 +55,12 @@ for additional uses.
 # the address bar of the browser that shows results
 # from a query in one of the trial registers
 if (interactive()) try(ctrGetQueryUrl(), silent = TRUE)
+#> * Using clipboard content as register query URL: https://www.isrctn.com/search?q=&searchType=advanced
+#> * Found search query from ISRCTN: q=&searchType=advanced
+#> # A tibble: 1 × 2
+#>   `query-term`           `query-register`
+#>   <chr>                  <chr>           
+#> 1 q=&searchType=advanced ISRCTN          
 
 # extract query parameters from search result URL
 # (URL was cut for the purpose of formatting only)
