@@ -317,12 +317,19 @@ ctrLoadQueryIntoDbCtgov2 <- function(
       )
     )
 
-    # do download
-    resDf <- ctrMultiDownload(
+    # do download, wrap in try so as to remove all downloaded
+    # files because their pageToken cannot be used later again
+    resDf <- try({
+      ctrMultiDownload(
         urls = urlToDownload,
         destfiles = fTrialJson,
         verbose = verbose
-    )
+      )}, silent = TRUE)
+    #
+    if (inherits(resDf, "try-error")) {
+      unlink(sub("(.+_)([0-9]+)([.]json)", "\\1*\\3", fTrialJson))
+      stop("Download failed: ", as.character(resDf))
+    }
 
     # inform user
     if (!nrow(resDf) == 1L || !resDf$success) message(
