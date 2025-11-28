@@ -34,6 +34,8 @@ ctrLoadQueryIntoDbCtgov2 <- function(
 
   ## ctgov api ---------------------------------------------------------
 
+  # https://clinicaltrials.gov/data-api/about-api/api-migration#query-endpoints
+
   ctgovEndpoints <- c(
     # pageSize 0 delivers default 10
     "https://www.clinicaltrials.gov/api/v2/studies?format=json&countTotal=true&pageSize=1&%s",
@@ -297,6 +299,8 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     message("- Load and convert batch ", pageNumber, "...\r", appendLF = FALSE)
 
     # page url
+    # Request for each subsequent page must have
+    # the same parameters as for the first page
     urlToDownload <- ifelse(
       pageNextToken != "",
       paste0(url, "&pageToken=", pageNextToken),
@@ -315,9 +319,9 @@ ctrLoadQueryIntoDbCtgov2 <- function(
 
     # do download
     resDf <- ctrMultiDownload(
-      urls = urlToDownload,
-      destfiles = fTrialJson,
-      verbose = verbose
+        urls = urlToDownload,
+        destfiles = fTrialJson,
+        verbose = verbose
     )
 
     # inform user
@@ -345,8 +349,9 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     pageNumber <- pageNumber + 1L
     # "nextPageToken":"NF0g5JGBlPMuwQY"} at end of json
     fTrialJsonCon <- file(fTrialJson, open = "rb")
-    seek(fTrialJsonCon, where = file.size(fTrialJson) - 40L)
+    seek(fTrialJsonCon, where = file.size(fTrialJson) - 80L)
     pageNextTokenTest <- readChar(fTrialJsonCon, 1000L)
+    # [1] "sResults\":false}\n],\"nextPageToken\":\"ZVNj7o2Elu8o3lpsWs7z46b-mpOQJJxuZPCs1P0dkA\"}"
     close(fTrialJsonCon)
     pageNextToken <- sub('.*"nextPageToken":"(.+?)".*', "\\1", pageNextTokenTest)
     if (pageNextToken == pageNextTokenTest) break

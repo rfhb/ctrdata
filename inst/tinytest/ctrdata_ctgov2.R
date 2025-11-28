@@ -82,6 +82,7 @@ tmp <- ctrLoadQueryIntoDb(
 )
 expect_true(tmp$n > 40L && tmp$n < 50L)
 
+
 #### documents.path ####
 
 tmpDir <- newTempDir()
@@ -231,3 +232,12 @@ expect_error(
   dbGetFieldsIntoDf(fields = c("nonexistingfield", "anothernonexisting"), con = dbc),
   "No records with values"
 )
+
+#### large query ####
+
+# test
+tmp <- ctrLoadQueryIntoDb(
+  queryterm = "https://clinicaltrials.gov/search?cond=parkinson&aggFilters=funderType:industry,studyType:int",
+  con = dbc
+)
+expect_true(tmp$n > 1180L)

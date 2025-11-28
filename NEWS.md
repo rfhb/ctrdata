@@ -4,6 +4,7 @@
 - Re-added field missing from EUCTR conversion
 - Changed API call after long deprecated by ISRCTN
 - Ordered messages from `dbFindIdsUniqueTrials()`, `f.isUniqueTrial()`
+- Adapt to extended tokens used by CTGOV2
 
 # ctrdata 1.25.0
 
