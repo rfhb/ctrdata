@@ -9,6 +9,7 @@
 - Ordered messages from
   [`dbFindIdsUniqueTrials()`](https://rfhb.github.io/ctrdata/reference/dbFindIdsUniqueTrials.md),
   [`f.isUniqueTrial()`](https://rfhb.github.io/ctrdata/reference/f.isUniqueTrial.md)
+- Adapt to extended tokens used by CTGOV2
 
 ## ctrdata 1.25.0
 
