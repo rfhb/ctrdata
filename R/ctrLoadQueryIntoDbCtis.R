@@ -347,8 +347,42 @@ ctisApi1 <- function(
     ',"sort":{"property":"decisionDate","direction":"DESC"}}'
   )
 
+  # add workaround for CTIS issue https://github.com/rfhb/ctrdata/issues/59
+  # upstream issue is that CTIS provides at most 10000 trial summary data
+  # change directly the query parameters send in body of POST request
+  if (length(pageNo) >= (floor(10000L / nRecords) + 1L)) {
+
+    if (length(pageNo) >= (floor(20000L / nRecords) + 1L)) stop(
+      "Cannot download more than 20.000 trials from CTIS."
+    )
+
+    message("- Workaround CTIS issue https://github.com/rfhb/ctrdata/issues/59")
+
+    # [101] "{\"pagination\":{\"page\":101,\"size\":100},\"searchCriteria\":{},
+    # \"sort\":{\"property\":\"decisionDate\",\"direction\":\"DESC\"}}"
+
+    indicesToCorrect <- seq.int(floor(10000L / nRecords) + 1L, length(pageNo))
+
+    jsonApi1Pages[indicesToCorrect] <- sub(
+      '"direction":"DESC"',
+      '"direction":"ASC"',
+      jsonApi1Pages[indicesToCorrect])
+
+    jsonApi1Pages[indicesToCorrect] <- stringi::stri_replace_all_regex(
+      jsonApi1Pages[indicesToCorrect],
+      paste0('"page":', indicesToCorrect, ","),
+      paste0('"page":', indicesToCorrect - floor(10000L / nRecords), ","),
+      vectorize_all = TRUE
+    )
+
+    # this workaround leads to loading some trials twice
+    # which however is compensated below by unique and
+    # does not impact the database import above
+
+  }
+
   # download files
-  ctrMultiDownload(
+  res <- ctrMultiDownload(
     urls = rep.int(ctisEndpoints[1], length(pageNo)),
     destfiles = fTrialsJsonApi1PageFiles,
     data = jsonApi1Pages,
@@ -389,9 +423,9 @@ ctisApi1 <- function(
   message("\r", appendLF = FALSE)
 
   # get ids
-  idsTrials <- gsub(
+  idsTrials <- unique(gsub(
     '"', "", as.character(
-      jqr::jq(file(fTrialsNdjsonApi1), ' ."_id" ')))
+      jqr::jq(file(fTrialsNdjsonApi1), ' ."_id" '))))
 
   # return
   return(list(

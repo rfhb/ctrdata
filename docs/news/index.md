@@ -2,6 +2,12 @@
 
 ## ctrdata 1.25.0.9000
 
+### Enhancement
+
+- Work around upstream issue
+  ([\#59](https://github.com/rfhb/ctrdata/issues/59), CTIS delivering at
+  most 10000 trials per query)
+
 ### Bug fix
 
 - Re-added field missing from EUCTR conversion

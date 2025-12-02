@@ -273,7 +273,7 @@ help("ctrdata")
 ```
 
 - Information on trial registers, their contents and how they can be
-  used with `ctrdata` (last updated 2025-07-24):
+  used with `ctrdata` (last updated 2025-11-25):
 
 ``` r
 
