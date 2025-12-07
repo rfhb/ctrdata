@@ -1,12 +1,12 @@
 ## Test environments
 
-* local: R Under development (unstable) (2025-08-22 r88678) on aarch64-apple-darwin20 (ok)
+* local: R version 4.5.1 Patched (2025-09-12 r88822) on aarch64-apple-darwin20 (ok)
 
-* Win-builder:R Under development (unstable) (2025-08-24 r88696 ucrt); R version 4.4.3 (2025-02-28 ucrt); R version 4.5.1 (2025-06-13 ucrt) (ok)
+* Win-builder:R version 4.4.3 (2025-02-28 ucrt); R Under development (unstable) (2025-12-06 r89118 ucrt); R version 4.5.2 (2025-10-31 ucrt) (ok)
 
 * GitHub actions: windows-2022, r: 'release'; macOS-latest, r: 'release'; macOS-latest, r: 'oldrel'; ubuntu-latest, r: 'devel' (ok)
 
-* macOS builder: r-devel-macosx-arm64|4.5.1|macosx|macOS 13.3.1 (22E261)|Mac mini|Apple M1||en_US.UTF-8|macOS 11.3|clang-1403.0.22.14.1|GNU Fortran (GCC) 14.2.0 (ok)
+* macOS builder: currently not working
 
 ## Local R CMD check results
 
@@ -15,9 +15,10 @@
 
 ## Submission reason
 
-- Upstream changes (register server requires handling more response types) 
-- Improvements, speed-ups in file and database operations
-- Minor bug fixes in helper functions
+- Workaround for an upstream issue with one of the registers
+- Change API call to new endpoint of one register
+- Bug fixes (adapt to longer pagination token of one register)
+- Add CITATION file with recent reference publication
 
 
 ## Reverse dependency checks

@@ -87,30 +87,43 @@ citation("ctrdata")
 
 ## References
 
+An introduction to the package, together with worked examples and
+technical explanations is in:
+
+- Herold R. Aggregating and analysing clinical trials data from multiple
+  public registers using R package ctrdata. Research Synthesis Methods.
+  Published online 2025:1-33
+  [doi:10.1017/rsm.2025.10061](https://doi.org/10.1017/rsm.2025.10061)
+
 Package `ctrdata` has been used for unpublished works and these
 publications:
 
 - Jong et al. (2025) Experiences with Low-Intervention Clinical
   Trials—the New Category under the European Union Clinical Trials
   Regulation. Clinical Trials
-  <https://doi.org/10.1177/17407745241309293>
+  [doi:10.1177/17407745241309293](https://doi.org/10.1177/17407745241309293)
 - Lopez-Rey et al. (2025) Use of Bayesian Approaches in Oncology
   Clinical Trials: A Cross-Sectional Analysis’. Frontiers in
-  Pharmacology <https://doi.org/10.3389/fphar.2025.1548997>
+  Pharmacology
+  [doi:10.3389/fphar.2025.1548997](https://doi.org/10.3389/fphar.2025.1548997)
 - Russek et al. (2025) Supplementing Single-Arm Trials with External
   Control Arms—Evaluation of German Real-World Data. Clinical
-  Pharmacology & Therapeutics <https://doi.org/10.1002/cpt.3684>
+  Pharmacology & Therapeutics
+  [doi:doi.org/10.1002/cpt.3684](https://doi.org/10.1002/cpt.3684)
 - Alzheimer’s disease Horizon Scanning Report (2024) [PDF file, p
   10](https://www.ema.europa.eu/en/documents/report/alzheimers-disease-eu-horizon-scanning-report_en.pdf#page=10)
 - Kundu et al. (2024) Analysis of Factors Influencing Enrollment Success
   in Hematology Malignancy Cancer Clinical Trials (2008-2023). Blood
-  Meeting Abstracts <https://doi.org/10.1182/blood-2024-207446>
+  Meeting Abstracts
+  [doi:10.1182/blood-2024-207446](https://doi.org/10.1182/blood-2024-207446)
 - Lasch et al. (2022) The Impact of COVID‐19 on the Initiation of
   Clinical Trials in Europe and the United States. Clinical Pharmacology
-  & Therapeutics <https://doi.org/10.1002/cpt.2534>
+  & Therapeutics
+  [doi:10.1002/cpt.2534](https://doi.org/10.1002/cpt.2534)
 - Sood et al. (2022) Managing the Evidence Infodemic: Automation
   Approaches Used for Developing NICE COVID-19 Living Guidelines.
-  medRxiv <https://doi.org/10.1101/2022.06.13.22276242>
+  medRxiv
+  [doi:10.1101/2022.06.13.22276242](https://doi.org/10.1101/2022.06.13.22276242)
 - Blogging on [Innovation coming to paediatric
   research](https://paediatricdata.eu/innovation-coming-to-paediatric-research/)
 - Cancer Research UK (2017) [The impact of collaboration: The value of
