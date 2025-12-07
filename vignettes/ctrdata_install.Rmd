@@ -51,12 +51,22 @@ Create **MongoDB** database connection | `dbc <- nodbi::src_mongo(db = "name_of_
 Create **PostgreSQL** database connection | `dbc <- nodbi::src_postgres(dbname = "name_of_my_database"); dbc[["collection"]] <- "name_of_my_collection"`
 Use connection with `ctrdata` functions | `ctrdata::{ctrLoadQueryIntoDb, dbQueryHistory, dbFindIdsUniqueTrials, dbFindFields, dbGetFieldsIntoDf}(con = dbc, ...)`
 
-## Attach and reference package `ctrdata`
+## Attach package `ctrdata`
 
-After completing the installation, attach the package from the user's library. This will also check the availability of the additional installation requirements as mentioned above:
+After completing the installation, attach the package from the user's library:
 
 ```{r attach_ctrdata}
 library(ctrdata)
 ```
 
-Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this package in any publication as follows: Ralf Herold (2025). ctrdata: Retrieve and Analyze Clinical Trials in Public Registers. R package version 1.23.0. https://cran.r-project.org/package=ctrdata
+## Credit to clinical trial registers
+
+Remember to respect the registers' terms and conditions (see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`). 
+
+## Quote or reference `ctrdata`
+
+In any publication, please cite this package as follows: 
+
+```{r cite_ctrdata, eval=TRUE, results='asis', echo=c(-1)}
+cat(rev(format(citation("ctrdata"), style = "text")), sep = " or <br/>")
+```

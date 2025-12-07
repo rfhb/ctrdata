@@ -1,0 +1,13 @@
+## R package reference generated from DESCRIPTION metadata
+citation(auto = meta)
+
+## RSM publication
+bibentry(
+  bibtype = "Article",
+  title = "Aggregating and analysing clinical trials data from multiple public registers using R package ctrdata",
+  doi = "10.1017/rsm.2025.10061",
+  journal = "Research Synthesis Methods",
+  author = person("Ralf", "Herold"),
+  year = "2025",
+  pages = "1–33"
+)

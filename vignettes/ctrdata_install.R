@@ -12,3 +12,6 @@ knitr::opts_chunk$set(eval = FALSE)
 ## ----attach_ctrdata-----------------------------------------------------------
 # library(ctrdata)
 
+## ----cite_ctrdata, eval=TRUE, results='asis', echo=c(-1)----------------------
+cat(rev(format(citation("ctrdata"), style = "text")), sep = " or <br/>")
+

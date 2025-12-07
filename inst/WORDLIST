@@ -73,6 +73,7 @@ codecov
 colums
 com
 controlType
+cpt
 csv
 ctgov
 ctis
@@ -127,6 +128,7 @@ fields’
 findCTRkey
 firstreceived
 fisherexact
+fphar
 github
 githubusercontent
 gov
@@ -162,6 +164,7 @@ nodbi
 nonproprietary
 numSites
 numTestArmsSubstances
+org
 otherNames
 paed
 perl
@@ -192,6 +195,7 @@ resultsDate
 rfhb
 rlang
 rmongodb
+rsm
 rss
 rvest
 sampleSize

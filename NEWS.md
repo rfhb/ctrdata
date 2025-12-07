@@ -2,6 +2,7 @@
 
 ## Enhancement
 - Work around upstream issue (#59, CTIS delivering at most 10000 trials per query)
+- Add CITATION file with recent reference publication
 
 ## Bug fix
 - Re-added field missing from EUCTR conversion
