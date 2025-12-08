@@ -67,6 +67,7 @@ trialsDf <- dbGetFieldsIntoDf(
 #> To review trial concepts details, call 'help("ctrdata-trial-concepts")'
 #> Querying database (18 fields)...
 #> Calculating f.sampleSize...                            
+
 trialsDf
 #> # A tibble: 31 × 2
 #>    `_id`             .sampleSize

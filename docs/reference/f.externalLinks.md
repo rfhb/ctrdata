@@ -63,6 +63,7 @@ trialsDf <- dbGetFieldsIntoDf(
 #> To review trial concepts details, call 'help("ctrdata-trial-concepts")'
 #> Querying database (9 fields)...
 #> Calculating f.externalLinks...                            
+
 trialsDf
 #> # A tibble: 10 × 2
 #>    `_id`       .externalLinks                                                   

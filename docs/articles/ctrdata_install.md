@@ -55,19 +55,29 @@ local server.
 | Create **PostgreSQL** database connection | `dbc <- nodbi::src_postgres(dbname = "name_of_my_database"); dbc[["collection"]] <- "name_of_my_collection"` |
 | Use connection with `ctrdata` functions | `ctrdata::{ctrLoadQueryIntoDb, dbQueryHistory, dbFindIdsUniqueTrials, dbFindFields, dbGetFieldsIntoDf}(con = dbc, ...)` |
 
-## Attach and reference package `ctrdata`
+## Attach package `ctrdata`
 
 After completing the installation, attach the package from the user’s
-library. This will also check the availability of the additional
-installation requirements as mentioned above:
+library:
 
 ``` r
 
 library(ctrdata)
 ```
 
+## Credit to clinical trial registers
+
 Remember to respect the registers’ terms and conditions (see
-`ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
-package in any publication as follows: Ralf Herold (2025). ctrdata:
-Retrieve and Analyze Clinical Trials in Public Registers. R package
-version 1.23.0. <https://cran.r-project.org/package=ctrdata>
+`ctrOpenSearchPagesInBrowser(copyright = TRUE)`).
+
+## Quote or reference `ctrdata`
+
+In any publication, please cite this package as follows:
+
+Herold R (2025). “Aggregating and analysing clinical trials data from
+multiple public registers using R package ctrdata.” *Research Synthesis
+Methods*, 1–33. <doi:10.1017/rsm.2025.10061>
+<https://doi.org/10.1017/rsm.2025.10061>. or  
+Herold R (2025). *ctrdata: Retrieve and Analyze Clinical Trials Data
+from Public Registers*. R package version 1.25.1,
+<https://cran.r-project.org/package=ctrdata>.

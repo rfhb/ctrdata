@@ -46,7 +46,7 @@ The package `ctrdata` provides functions for retrieving (downloading), aggregati
 - ClinicalTrials.gov ("CTGOV2", https://clinicaltrials.gov/, [example](#workflow-ctgov-example))
 - ISRCTN Registry ("ISRCTN", https://www.isrctn.com/) 
 
-The motivation is to investigate the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can use the databases created with this package. This README was reviewed on 2025-11-30 for version 1.25.0.9000.
+The motivation is to investigate the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can use the databases created with this package. This README was reviewed on 2025-12-08 for version 1.25.1.
 
 ## Main features
 
@@ -56,15 +56,12 @@ The motivation is to investigate the design and conduct of trials of interest, t
 
 * For analyses, `ctrdata` functions implement canonical [trial concepts](https://rfhb.github.io/ctrdata/reference/ctrdata-trial-concepts.html) to simplify analyses across registers, find synonyms of an active substance, identify unique (de-duplicated) trial records across all registers, merge and recode fields as well as easily access deeply-nested fields. Analyses can be done with `R` (see [vignette](https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html)) and other systems, using the stored `JSON`-structured data. 
 
-Respect the registers' terms and conditions, see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`. Please cite the package in a publication as follows: "Ralf Herold (2025). _ctrdata: Retrieve and Analyze Clinical Trials in Public Registers._ R package version 1.25.0, https://cran.r-project.org/package=ctrdata". 
+Respect the registers' terms and conditions, see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`. Please cite the package in any publication or work as follows: 
 
-<!--
-
-```{r}
-citation("ctrdata")
+```{r, eval=TRUE, results='asis', echo=FALSE}
+cat(rev(format(citation("ctrdata"), style = "text")), sep = " or <br/>")
 ```
 
--->
 
 ## References
 

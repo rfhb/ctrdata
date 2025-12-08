@@ -60,6 +60,7 @@ trialsDf <- dbGetFieldsIntoDf(
 #> To review trial concepts details, call 'help("ctrdata-trial-concepts")'
 #> Querying database (11 fields)...
 #> Calculating f.startDate...                            
+
 trialsDf
 #> # A tibble: 31 × 3
 #>    `_id`             ctrname .startDate

@@ -62,6 +62,7 @@ trialsDf <- dbGetFieldsIntoDf(
 #> To review trial concepts details, call 'help("ctrdata-trial-concepts")'
 #> Querying database (7 fields)...
 #> Calculating f.isMedIntervTrial...                            
+
 trialsDf
 #> # A tibble: 31 × 2
 #>    `_id`             .isMedIntervTrial
