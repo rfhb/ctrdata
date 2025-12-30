@@ -1,6 +1,6 @@
 # ctrdata 1.25.1.9000
 
-- new development version
+- Handle expired CDN deep links
 
 # ctrdata 1.25.1
 

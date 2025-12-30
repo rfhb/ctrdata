@@ -910,6 +910,7 @@ ctrMultiDownload <- function(
     "data" = data,
     "url" = utils::URLencode(urls),
     "status_code" = rep.int(NA_integer_, length(toDo)),
+    "isCdn" = rep.int(NA_integer_, length(toDo)),
     "urlResolved" = rep.int(NA_character_, length(toDo)),
     "content_type" = rep.int(NA_character_, length(toDo))
   )
@@ -925,7 +926,7 @@ ctrMultiDownload <- function(
 
   # does not error in case any of the individual requests fail.
   # inspect the return value to find out which were successful
-  # make no more than 3 attempts to complete downloading
+  # make no more than 5 attempts to complete downloading
   while (any(toDo) && numI < 5L) {
 
     # use urlResolved if this has been filled below in CDN check
@@ -961,7 +962,7 @@ ctrMultiDownload <- function(
           # ensures that you never make more
           # than capacity requests in fill_time_s
           capacity = 20L * 10L,
-          fill_time_s = 10L
+          fill_time_s = 15L
         )
 
         # adding file path
@@ -1001,6 +1002,7 @@ ctrMultiDownload <- function(
             "url" = r$request$url,
             "destfile" = NA_character_,
             "content_type" = NA_character_,
+            "isCdn" = NA_integer_,
             "urlResolved" = NA_character_,
             "data" = body2json(r$request$body$data)
           )
@@ -1012,6 +1014,7 @@ ctrMultiDownload <- function(
             "url" = r$request$url,
             "destfile" = as.character(r$resp$body),
             "content_type" = NA_character_,
+            "isCdn" = NA_integer_,
             "urlResolved" = NA_character_,
             "data" = body2json(r$request$body$data)
           )
@@ -1023,6 +1026,7 @@ ctrMultiDownload <- function(
             "url" = r[["url"]],
             "destfile" = as.character(r[["body"]]),
             "content_type" = r[["headers"]]$`content-type`,
+            "isCdn" = NA_integer_,
             "urlResolved" = NA_character_,
             "data" = body2json(r$request$body$data)
           )
@@ -1030,7 +1034,7 @@ ctrMultiDownload <- function(
     res <- as.data.frame(do.call(rbind, res))
 
     # check if download successful but CDN is likely used
-    cdnCheck <- !is.na(res$status_code) &
+    res$isCdn <- !is.na(res$status_code) &
       !is.na(res$destfile) &
       !is.na(res$content_type) &
       (res$status_code %in% c(200L, 206L, 416L)) &
@@ -1038,23 +1042,23 @@ ctrMultiDownload <- function(
       grepl("application/json", res$content_type)
 
     # replace url with CDN url and prepare to iterate
-    if (any(cdnCheck)) {
+    if (any(res$isCdn)) {
 
       message("- Resolving CDN and redirecting...")
 
       # get CDN url
-      res$urlResolved[cdnCheck] <- sapply(
-        res$destfile[cdnCheck],
+      res$urlResolved[res$isCdn] <- sapply(
+        res$destfile[res$isCdn],
         # x can be a JSON string, URL or file
         function(x) jsonlite::fromJSON(x, simplifyVector = FALSE)$url,
         USE.NAMES = FALSE,
         simplify = TRUE)
 
       # remove files containing CDN url
-      unlink(res$destfile[cdnCheck])
+      unlink(res$destfile[res$isCdn])
 
       # reset status
-      res$success[cdnCheck] <- NA
+      res$success[res$isCdn] <- NA
 
     }
 
@@ -1062,14 +1066,34 @@ ctrMultiDownload <- function(
     downloadValue <- dplyr::rows_update(
       downloadValue,
       # do not include destfile as this may be NA in res
-      res[, c("success", "status_code", "url", "urlResolved",
-              "content_type", "data"), drop = FALSE],
+      res[, c("success", "status_code", "url", "isCdn",
+              "urlResolved", "content_type", "data"), drop = FALSE],
       by = c("url", "data")[seq_len(
         ifelse(all(is.na(downloadValue$data)), 1L, 2L))]
     )
 
     if (inherits(downloadValue, "try-error")) {
       stop("Download failed; last error: ", class(downloadValue), call. = FALSE)
+    }
+
+    # handle when CDN deep link is likely expired
+    redoCdn <- downloadValue$status_code == 403L
+    if (isTRUE(any(redoCdn))) {
+      downloadValue$urlResolved[redoCdn] <- NA_character_
+    }
+
+    # adding delay since status code indicates
+    # server refused request immediately again
+    rfsd <- downloadValue$status_code %in% c(403L, 429L)
+    if (isTRUE(any(rfsd))) {
+      unlink(downloadValue$destfile[rfsd])
+    }
+    if (isTRUE(any(rfsd & !downloadValue$isCdn))) {
+      wt <- as.integer(runif(n = 1L) * 55L)
+      message(
+        "- Server refused ", sum(rfsd), " requests; ",
+        "waiting ", wt, " sec before retry        ")
+      Sys.sleep(wt)
     }
 
     # only check success because this is filled initially by !toDo
@@ -1080,27 +1104,14 @@ ctrMultiDownload <- function(
 
     # only count towards repeat attempts if
     # the set of repeated urls is unchanged
-    if (identical(toDo, toDoThis) & !any(cdnCheck)) numI <- numI + 1L
+    if (identical(toDo, toDoThis) & !any(downloadValue$isCdn)) numI <- numI + 1L
     toDo <- toDoThis
 
-    # adding delay since status code indicates
-    # server refused request immediately again
-    rfsd <- downloadValue$status_code %in% c(403L, 429L)
-    if (isTRUE(any(rfsd))) {
-      unlink(downloadValue$destfile[rfsd])
-      wt <- as.integer(runif(n = 1L) * 50L)
-      message(
-        "- Server refused ", sum(rfsd), " requests; ",
-        "waiting ", wt, " sec before retry        \r",
-        appendLF = FALSE)
-      Sys.sleep(wt)
-    }
-
-  }
+  } # while
 
   # remove any files from failed downloads
   unlink(downloadValue$destfile[downloadValue$status_code %in% c(
-    404L, 416L, 403L, 429L)])
+    403L, 404L, 416L, 429L)])
 
   # finalise
   if (any(toDo)) {
