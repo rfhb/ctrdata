@@ -64,7 +64,7 @@ expect_message(
       con = dbc)),
   "Imported .* trial")
 expect_true(tmpTest$n >= 0L)
-expect_true(tmpTest$queryterm == hist[["query-term"]][2L])
+expect_true(tmpTest$queryterm == rev(hist[["query-term"]])[1L])
 
 expect_message(
   suppressWarnings(
@@ -73,9 +73,9 @@ expect_message(
       ctishistory = TRUE,
       only.count = FALSE,
       con = dbc)),
-  "updating")
+  "updat")
 expect_true(tmpTest$n >= 0L)
-expect_true(tmpTest$queryterm == hist[["query-term"]][2L])
+expect_true(tmpTest$queryterm == rev(hist[["query-term"]])[1L])
 
 expect_message(
   suppressWarnings(
@@ -86,7 +86,7 @@ expect_message(
       con = dbc)),
   "Imported .* trial")
 expect_true(tmpTest$n >= 0L)
-expect_true(tmpTest$queryterm == hist[["query-term"]][2L])
+expect_true(tmpTest$queryterm == rev(hist[["query-term"]])[1L])
 
 expect_message(
   suppressWarnings(
@@ -95,9 +95,9 @@ expect_message(
       ctishistory = FALSE,
       only.count = FALSE,
       con = dbc)),
-  "updating")
+  "updat")
 expect_true(tmpTest$n >= 0L)
-expect_true(tmpTest$queryterm == hist[["query-term"]][2L])
+expect_true(tmpTest$queryterm == rev(hist[["query-term"]])[1L])
 
 # test full load
 hist <- hist[nrow(hist), ]
@@ -384,5 +384,16 @@ if (FALSE) {
     count(part) %>%
     arrange(desc(n)) %>%
     print(n = 100L)
+  # # A tibble: 8 × 2
+  # part             n
+  # <chr>        <int>
+  #   1 Protocol       168
+  # 2 SbjctInfaICF   130
+  # 3 SynpssofthPr    37
+  # 4 RcrtmntArrng    21
+  # 5 LyprsnsSmmoR    16
+  # 6 SmmryofPrdcC     8
+  # 7 SmmryofRslts     6
+  # 8 ClnclStdyRpr     4
 
 }
