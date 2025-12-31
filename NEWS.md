@@ -1,6 +1,7 @@
 # ctrdata 1.25.1.9000
 
 - For `dbFindIdsUniqueTrials()` with CTIS, only include trial record with highest resubmission number
+- Update user info, clarify history is updated only if at least one trial is loaded
 - Handle expired CDN deep links
 
 # ctrdata 1.25.1

@@ -166,7 +166,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
   # inform user
   message(
     "- Downloading trial file (estimate: ",
-    signif(resCount * 0.018, 1L), " MB)"
+    signif(resCount * 0.018, 1L), " MB)..."
   )
 
   # construct API call setting limit to number found above

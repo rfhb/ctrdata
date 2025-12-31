@@ -7,25 +7,25 @@
 \description{
 Registers of the four clinical trial registers from which package
 \link{ctrdata} can retrieve, aggregate and analyse protocol- and
-result-related information as well as documents, last updated 2025-11-27.
+result-related information as well as documents, last updated 2025-12-31.
 }
 \section{1 - Overview}{
 
 \itemize{
-\item \strong{EUCTR}: The EU Clinical Trials Register is complete with 44,364
+\item \strong{EUCTR}: The EU Clinical Trials Register is complete with 44,366
 clinical trials (at least one investigational medicinal product, IMP; in
-the European Union and beyond), including more than 25,700 trials with
+the European Union and beyond), including more than 25,800 trials with
 results, which continue to be added.
 \item \strong{CTIS}: The EU Clinical Trials Information System, launched in 2023,
-holds almost 10,500 publicly accessible clinical trials, including
-more than 450 with results or a report.
+holds more than 10,650 publicly accessible clinical trials, including
+more than 520 with results or a report.
 (To automatically get CTIS search query URLs, see
 \ifelse{latex}{\out{\href{https://rfhb.github.io/ctrdata/\#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}})
-\item \strong{CTGOV2}: ClinicalTrials.gov holds more than 559,000 interventional and
-observational studies, including more than 75,000 interventional studies
+\item \strong{CTGOV2}: ClinicalTrials.gov holds almost 564,000 interventional and
+observational studies, including more than 17,000 interventional studies
 with results.
-\item \strong{ISRCTN}: The ISRCTN Registry holds more than 27,300 interventional and
-observational health studies, including more than 14,800 studies with
+\item \strong{ISRCTN}: The ISRCTN Registry holds almost 27,500 interventional and
+observational health studies, including almost 15,000 studies with
 results.
 }\tabular{lcccc}{
     \tab \strong{CTGOV2} \tab \strong{CTIS} \tab \strong{EUCTR} \tab \strong{ISRCTN} \cr

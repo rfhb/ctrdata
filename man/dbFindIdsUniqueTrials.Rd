@@ -53,6 +53,9 @@ Note that the content of records may differ between registers
 (and, for "EUCTR", between records for different Member States).
 Such differences are not considered by this function.
 
+Note that for "CTIS", the trial with the latest (highest) resubmission
+number (last two digits of `id`, clinical trial number) is identified.
+
 Note that the trial concept \link{f.isUniqueTrial} (which uses this
 function) can be calculated at the time of creating a data frame with
 \link{dbGetFieldsIntoDf}, which often may be the preferred approach.

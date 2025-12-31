@@ -610,7 +610,7 @@ ctrRerunQuery <- function(
             ctishistory,
             signif(length(idsUpdatedTrials) * 25 / 40, 2L),
             signif(length(idsUpdatedTrials) * 20 / 40, 2L)
-          ), " s) ")
+          ), " s)...")
 
         # iterate
         res <- list()

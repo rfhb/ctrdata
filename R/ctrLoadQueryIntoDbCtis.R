@@ -78,7 +78,7 @@ ctrLoadQueryIntoDbCtis <- function(
   # this is imported as the main data into the database
 
   message("- Downloading and processing trial data... (",
-          "estimate: ", signif(length(idsTrials) * 12 / 96, 1L), " Mb)")
+          "estimate: ", signif(length(idsTrials) * 12 / 96, 1L), " MB)")
 
   urls <- sprintf(ctisEndpoints[2], idsTrials)
 
@@ -320,6 +320,10 @@ ctisApi1 <- function(
       failed = NULL
     ))
   }
+
+  # user info
+  message("- Downloading and processing trial list... (",
+          "estimate: ", signif(overview$totalRecords * 3.2 / 1751, 1L), " s)")
 
   # prepare to retrieve overviews
   importDateTime <- strftime(Sys.time(), "%Y-%m-%d %H:%M:%S")

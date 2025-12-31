@@ -23,7 +23,8 @@ A data frame (or tibble, if \code{tibble} is loaded)
  \link{ctrLoadQueryIntoDb} loaded trial records into this collection.
 }
 \description{
-Show history of queries loaded into collection
+Note that a new entry is added to the history of queries when
+\link{ctrLoadQueryIntoDb} retrieves at least 1 clinical trial.
 }
 \examples{
 

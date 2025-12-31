@@ -286,7 +286,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     "- Downloading in ",
     ceiling(resultsEuNumTrials / 1000L),
     " batch(es) (max. 1000 trials each; estimate: ",
-    format(resultsEuNumTrials * 0.1, digits = 2), " Mb total)"
+    format(resultsEuNumTrials * 0.1, digits = 2), " MB total)"
   )
 
   # register
