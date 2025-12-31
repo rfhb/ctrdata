@@ -888,6 +888,12 @@ ctrMultiDownload <- function(
   # starting values
   numI <- 1L
 
+  # helper
+  body2json <- function(x) {
+    if (is.null(x)) return(NA)
+    as.character(jsonlite::toJSON(x, auto_unbox = TRUE))
+  }
+
   # do not again download files that already exist
   # or that do not have an (arbitrary) minimal size.
   # nchar("Request failed.") is 15L
@@ -896,7 +902,7 @@ ctrMultiDownload <- function(
          (is.na(file.size(destfiles)) |
             file.size(destfiles) > 20L)] <- FALSE
 
-  # mangle data
+  # mangle data and prepare for request body
   if (is.null(data)) data <- rep.int(NA, length(toDo))
   data <- sapply(data, function(i) ifelse(
     is.null(i) || is.na(i) || !jsonlite::validate(i), NA,
@@ -904,6 +910,7 @@ ctrMultiDownload <- function(
       i, simplifyVector = FALSE), auto_unbox = TRUE)),
     USE.NAMES = FALSE)
 
+  # master data frame from all input
   downloadValue <- data.frame(
     "success" = !toDo,
     "destfile" = destfiles,
@@ -918,22 +925,16 @@ ctrMultiDownload <- function(
   # remove any duplicates
   downloadValue <- unique(downloadValue)
 
-  # helper
-  body2json <- function(x) {
-    if (is.null(x)) return(NA)
-    as.character(jsonlite::toJSON(x, auto_unbox = TRUE))
-  }
-
   # does not error in case any of the individual requests fail.
-  # inspect the return value to find out which were successful
-  # make no more than 5 attempts to complete downloading
+  # inspect the return value to find out which were successful.
+  # make no more than 5 attempts to complete function call.
   while (any(toDo) && numI < 5L) {
 
     # use urlResolved if this has been filled below in CDN check
     downloadValue$url[!is.na(downloadValue$urlResolved)] <-
       downloadValue$urlResolved[!is.na(downloadValue$urlResolved)]
 
-    # construct requests
+    # construct requests to do
     reqs <- mapply(
       function(u, d, f) {
         # start with basic request
@@ -947,7 +948,6 @@ ctrMultiDownload <- function(
         # add user agent
         r <- httr2::req_user_agent(r, ctrdataUseragent)
 
-        # curl::curl_options("vers")
         # keep important option 2L for euctr
         r <- httr2::req_options(r, http_version = 2)
 
@@ -959,10 +959,10 @@ ctrMultiDownload <- function(
         # hard-coded throttling
         r <- httr2::req_throttle(
           req = r,
-          # ensures that you never make more
+          # ensures that function never makes more
           # than capacity requests in fill_time_s
           capacity = 20L * 10L,
-          fill_time_s = 15L
+          fill_time_s = 20L
         )
 
         # adding file path
@@ -978,10 +978,10 @@ ctrMultiDownload <- function(
       USE.NAMES = FALSE
     )
 
-    # randomise to minimise 403 errors
+    # randomise to minimise errors
     reqs <- reqs[sample.int(length(reqs))]
 
-    # do download
+    # do download now
     res <- suppressWarnings(
       httr2::req_perform_parallel(
         reqs,
@@ -1033,7 +1033,8 @@ ctrMultiDownload <- function(
         )})
     res <- as.data.frame(do.call(rbind, res))
 
-    # check if download successful but CDN is likely used
+    # check successful downloads if result is a CDN link
+    # set isCdn to TRUE for next iteration to download from CDN
     res$isCdn <- !is.na(res$status_code) &
       !is.na(res$destfile) &
       !is.na(res$content_type) &
@@ -1046,10 +1047,9 @@ ctrMultiDownload <- function(
 
       message("- Resolving CDN and redirecting...")
 
-      # get CDN url
+      # get CDN url from downloaded file
       res$urlResolved[res$isCdn] <- sapply(
         res$destfile[res$isCdn],
-        # x can be a JSON string, URL or file
         function(x) jsonlite::fromJSON(x, simplifyVector = FALSE)$url,
         USE.NAMES = FALSE,
         simplify = TRUE)
@@ -1072,32 +1072,36 @@ ctrMultiDownload <- function(
         ifelse(all(is.na(downloadValue$data)), 1L, 2L))]
     )
 
+    # user info and stop
     if (inherits(downloadValue, "try-error")) {
       stop("Download failed; last error: ", class(downloadValue), call. = FALSE)
     }
 
     # handle when CDN deep link is likely expired
-    redoCdn <- downloadValue$status_code == 403L
+    redoCdn <- downloadValue$isCdn &
+      # TODO remove 403L?
+      (downloadValue$status_code %in% c(403L, 404L, 410L))
     if (isTRUE(any(redoCdn))) {
       downloadValue$urlResolved[redoCdn] <- NA_character_
     }
 
-    # adding delay since status code indicates
-    # server refused request immediately again
+    # when status code indicates server refused request
     rfsd <- downloadValue$status_code %in% c(403L, 429L)
-    if (isTRUE(any(rfsd))) {
-      unlink(downloadValue$destfile[rfsd])
-    }
+    # - remove any downloads thus far
+    if (isTRUE(any(rfsd))) unlink(downloadValue$destfile[rfsd])
+    # - add delay if at least one request was refused
+    #   that was not likely for an expired CDN link
     if (isTRUE(any(rfsd & !downloadValue$isCdn))) {
-      wt <- as.integer(runif(n = 1L) * 55L)
+      wt <- as.integer(runif(n = 1L) * 45L) + 14L
       message(
-        "- Server refused ", sum(rfsd), " requests; ",
-        "waiting ", wt, " sec before retry        ")
+        "- Server refused some requests; waiting ",
+        wt, " sec before retrying        ")
       Sys.sleep(wt)
     }
 
-    # only check success because this is filled initially by !toDo
-    # and status_code where this is NA as it reflects the latest action
+    # only check success because this is filled initially by !toDo;
+    # check status_code where it is NA as this is the latest action;
+    # status_code is NA where this iteration determined it as isCdn
     toDoThis <- is.na(downloadValue$success) |
       # OK, Partial Content, Not Found, Range Not Satisfiable
       !(downloadValue$status_code %in% c(NA, 200L, 206L, 404L, 416L))
@@ -1105,10 +1109,21 @@ ctrMultiDownload <- function(
     # only count towards repeat attempts if
     # the set of repeated urls is unchanged
     if (identical(toDo, toDoThis) &
+        # isCdn is FALSE if download was from CDN
         isTRUE(!any(downloadValue$isCdn))) {
       numI <- numI + 1L
     }
     toDo <- toDoThis
+
+    # use info
+    if (verbose) {
+      message("numI ", numI)
+      message("length(toDo) ", length(toDo))
+      message("sum(toDo) ", sum(toDo))
+      message("sum(rfsd) ", sum(rfsd))
+      message("sum(isCdn) ", sum(downloadValue$isCdn))
+      message("sum(rfsd & !isCdn) ", sum(rfsd & !downloadValue$isCdn))
+    }
 
   } # while
 
