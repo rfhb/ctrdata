@@ -4,8 +4,9 @@ Retrieves information on clinical trials from registers and stores it in
 a collection in a database. Main function of
 [ctrdata](https://rfhb.github.io/ctrdata/reference/ctrdata.md) for
 accessing registers. A collection can store trial information from
-different queries or different registers. Query details are stored in
-the collection and can be accessed using
+different queries or different registers. When at least one trial is
+loaded, query details are stored in the collection and can be accessed
+using
 [dbQueryHistory](https://rfhb.github.io/ctrdata/reference/dbQueryHistory.md).
 A previous query can be re-run, which replaces or adds trial records
 while keeping any user annotations of trial records.
@@ -70,8 +71,8 @@ ctrLoadQueryIntoDb(
   that should be run to retrieve any new or update trial records since
   this query was run the last time. This parameter takes precedence over
   `queryterm`. For "EUCTR" and "CTIS", updates are available only for
-  the last seven days; the query is run again if more time has passed
-  since it was run last.
+  the last seven days; the query is run again fully if more time has
+  passed since it was run last.
 
 - forcetoupdate:
 

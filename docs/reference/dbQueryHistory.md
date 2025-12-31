@@ -1,6 +1,8 @@
 # Show history of queries loaded into collection
 
-Show history of queries loaded into collection
+Note that a new entry is added to the history of queries when
+[ctrLoadQueryIntoDb](https://rfhb.github.io/ctrdata/reference/ctrLoadQueryIntoDb.md)
+retrieves at least 1 clinical trial.
 
 ## Usage
 

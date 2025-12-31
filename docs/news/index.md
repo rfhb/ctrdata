@@ -2,9 +2,16 @@
 
 ## ctrdata 1.25.1.9000
 
-- new development version
+- For
+  [`dbFindIdsUniqueTrials()`](https://rfhb.github.io/ctrdata/reference/dbFindIdsUniqueTrials.md)
+  with CTIS, only include trial record with highest resubmission number
+- Update user info, clarify history is updated only if at least one
+  trial is loaded
+- Handle expired CDN deep links
 
 ## ctrdata 1.25.1
+
+CRAN release: 2025-12-08
 
 ### Enhancement
 

@@ -3,14 +3,16 @@
 and stores it in a collection in a database. Main function
 of ctrdata for accessing registers.
 A collection can store trial information from different queries
-or different registers. Query details are stored in the
+or different registers.
+When at least one trial is loaded, query details are stored in the
 collection and can be accessed using dbQueryHistory.
 A previous query can be re-run, which replaces or adds trial
 records while keeping any user annotations of trial records."><meta property="og:description" content="Retrieves information on clinical trials from registers
 and stores it in a collection in a database. Main function
 of ctrdata for accessing registers.
 A collection can store trial information from different queries
-or different registers. Query details are stored in the
+or different registers.
+When at least one trial is loaded, query details are stored in the
 collection and can be accessed using dbQueryHistory.
 A previous query can be re-run, which replaces or adds trial
 records while keeping any user annotations of trial records."></head><body>
@@ -58,7 +60,8 @@ records while keeping any user annotations of trial records."></head><body>
 and stores it in a collection in a database. Main function
 of <a href="ctrdata.html">ctrdata</a> for accessing registers.
 A collection can store trial information from different queries
-or different registers. Query details are stored in the
+or different registers.
+When at least one trial is loaded, query details are stored in the
 collection and can be accessed using <a href="dbQueryHistory.html">dbQueryHistory</a>.
 A previous query can be re-run, which replaces or adds trial
 records while keeping any user annotations of trial records.</p>
@@ -120,7 +123,7 @@ should be run to retrieve any new or update trial records since
 this query was run the last time.
 This parameter takes precedence over <code>queryterm</code>.
 For "EUCTR" and "CTIS", updates are available only for the last seven days;
-the query is run again if more time has passed since it was run last.</p></dd>
+the query is run again fully if more time has passed since it was run last.</p></dd>
 
 
 <dt id="arg-forcetoupdate">forcetoupdate<a class="anchor" aria-label="anchor" href="#arg-forcetoupdate"></a></dt>
