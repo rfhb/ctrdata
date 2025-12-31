@@ -1104,7 +1104,10 @@ ctrMultiDownload <- function(
 
     # only count towards repeat attempts if
     # the set of repeated urls is unchanged
-    if (identical(toDo, toDoThis) & !any(downloadValue$isCdn)) numI <- numI + 1L
+    if (identical(toDo, toDoThis) &
+        isTRUE(!any(downloadValue$isCdn))) {
+      numI <- numI + 1L
+    }
     toDo <- toDoThis
 
   } # while
