@@ -116,7 +116,8 @@ dbFindIdsUniqueTrials <- function(
     # in the previously rbind'ed sets
     if (i > 1L && nrow(subDf)) {
 
-      # check for duplicates
+      # check for duplicates against
+      # identifiers in outSet so far
       dupes <- mapply(
         function(c1, c2) {
           tmpIs <- intersect(
@@ -136,18 +137,30 @@ dbFindIdsUniqueTrials <- function(
         },
         subDf[, colsToCheck, drop = FALSE],
         outSet[, colsToCheck, drop = FALSE],
-        SIMPLIFY = FALSE
+        SIMPLIFY = FALSE,
+        USE.NAMES = FALSE
       )
 
       # mangle dupes for marginal cases, e.g. one record
       dupes <- do.call(cbind, dupes)
       dupes <- as.data.frame(dupes)
 
-      # keep uniques
+      # keep uniques by removing rows from register set
       subDf <- subDf[rowSums(dupes) == 0L, , drop = FALSE]
-      rm(dupes)
 
     } # if
+
+    # special case: checking ctis resubmission number,
+    # keep trial record with latest = highest number
+    if (preferregister[i] == "CTIS") {
+
+      ctisBase <- sub("-[0-9]{2}$", "", subDf$CTIS)
+      ctisResub <- as.numeric(sub(".+-([0-9]{2})$", "\\1", subDf$CTIS))
+      subDf <- subDf[order(ctisBase, -ctisResub), ]
+      dupes <- duplicated(ctisBase)
+      subDf <- subDf[!dupes, , drop = FALSE]
+
+    }
 
     # add to output set
     outSet <- rbind(
@@ -562,6 +575,9 @@ dfFindUniqueEuctrRecord <- function(
     )
     include3rdcountrytrials <- TRUE
   }
+
+  # early exit
+  if (!any(df[["ctrname"]] == "EUCTR")) return(df)
 
   # count total
   totalEuctr <- unique(df[["a2_eudract_number"]])
