@@ -10,7 +10,7 @@ registers](#workflow-across-registers-example) • [Tests,
 coverage](#tests-and-coverage) • [Acknowledgements](#acknowledgements) •
 [Future](#future-features)
 
-The package `ctrdata` provides functions for retrieving (downloading),
+Package `ctrdata` provides functions for retrieving (downloading),
 aggregating and analysing clinical trials using information (structured
 protocol and result data, as well as documents) from public registers.
 It can be used with the
@@ -23,36 +23,36 @@ It can be used with the
   [example](#workflow-ctgov-example))
 - ISRCTN Registry (“ISRCTN”, <https://www.isrctn.com/>)
 
-The motivation is to investigate the design and conduct of trials of
+Additional registers are being explored. The package facilitates
+investigating across registers the design and conduct of trials of
 interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
 `ctrdata` is a package for the [R](https://www.r-project.org/) system,
 but other systems and tools can use the databases created with this
-package. This README was reviewed on 2025-12-08 for version 1.25.1.
+package. This README was reviewed on 2026-01-02 for version 1.25.1.9000.
 
 ## Main features
 
-- Trial information is easily found and downloaded: Users generate
-  queries with `ctrdata` for all registers or define a query in a
-  register’s web interface, then copy the URL and enter it into
-  `ctrdata` which retrieves in one go all protocol- and results-related
-  trials data. A
+- Trial information is easily found and downloaded: `ctrdata` generates
+  queries for all registers or takes a user query in a register’s web
+  interface, then `ctrdata` retrieves in one go all protocol- and
+  results-related trials data. A
   [script](#id_2-script-to-automatically-copy-users-query-from-web-browser)
-  can automate copying the query URL from all registers. Personal
-  annotations can be made when downloading trials. Also, [trial
-  documents](#documents-example) and [historic
+  can automate using the query URL from all registers. Annotations can
+  be made when downloading trials, [trial documents](#documents-example)
+  and [historic
   versions](https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html#historic-versions-of-trial-records-and-changes-in-sample-sizes)
-  as available in registers on trials can be downloaded.
+  can be downloaded.
 
 - Downloaded trial information is stored in a document-centric database,
   for fast and offline access. Information from different registers can
   be accumulated in a single collection. Uses `RSQLite`, `DuckDB`,
   `PostgreSQL` or `MongoDB`, see
   [Databases](#databases-that-can-be-used-with-ctrdata). Interactively
-  browse through trial structure and data. Easily re-run any previous
-  query in a collection to update trial records.
+  browse through trial structure and data. Easily re-run a previous
+  query to update trial records.
 
-- For analyses, `ctrdata` functions implement canonical [trial
+- For analyses, `ctrdata` functions suggest canonical [trial
   concepts](https://rfhb.github.io/ctrdata/reference/ctrdata-trial-concepts.html)
   to simplify analyses across registers, find synonyms of an active
   substance, identify unique (de-duplicated) trial records across all
@@ -65,13 +65,13 @@ Respect the registers’ terms and conditions, see
 `ctrOpenSearchPagesInBrowser(copyright = TRUE)`. Please cite the package
 in any publication or work as follows:
 
-Herold R (2025). “Aggregating and analysing clinical trials data from
-multiple public registers using R package ctrdata.” *Research Synthesis
-Methods*, 1–33. <doi:10.1017/rsm.2025.10061>
-<https://doi.org/10.1017/rsm.2025.10061>. or  
-Herold R (2025). *ctrdata: Retrieve and Analyze Clinical Trials Data
-from Public Registers*. R package version 1.25.1,
-<https://cran.r-project.org/package=ctrdata>.
+> Herold R (2025). “Aggregating and analysing clinical trials data from
+> multiple public registers using R package ctrdata.” *Research
+> Synthesis Methods*, 1–33. <doi:10.1017/rsm.2025.10061>
+> <https://doi.org/10.1017/rsm.2025.10061>. or  
+> Herold R (2025). *ctrdata: Retrieve and Analyze Clinical Trials Data
+> from Public Registers*. R package version 1.25.1.9000,
+> <https://cran.r-project.org/package=ctrdata>.
 
 ## References
 
