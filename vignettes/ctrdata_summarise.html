@@ -391,10 +391,9 @@ version 1.24.1. <a href="https://cran.r-project.org/package=ctrdata" class="uri"
 <h2>Preparations</h2>
 <p>Here using MongoDB, which may be faster than SQLite, can handle
 credentials, provides access to remote servers and can directly retrieve
-nested elements from paths. See <a href="../README.md">README.md</a> and
-<a href="ctrdata_retrieve.Rmd">Retrieve clinical trial information</a>
-for examples using SQLite. Also PostgreSQL can be used as database, see
-<a href="ctrdata_install.Rmd">Install R package ctrdata</a>.</p>
+nested elements from paths. See <a href="ctrdata_retrieve.html">Retrieve
+clinical trial information</a> for examples using SQLite. Also
+PostgreSQL can be used as database, see <a href="ctrdata_install.html">Install R package ctrdata</a>.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>db <span class="ot">&lt;-</span> nodbi<span class="sc">::</span><span class="fu">src_mongo</span>(</span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>  <span class="at">url =</span> <span class="st">&quot;mongodb://localhost&quot;</span>,</span>
 <span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>  <span class="at">db =</span> <span class="st">&quot;my_database_name&quot;</span>,</span>
@@ -408,7 +407,7 @@ for examples using SQLite. Also PostgreSQL can be used as database, see
 <span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a></span>
 <span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a><span class="co"># empty collection if exists</span></span>
 <span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a>nodbi<span class="sc">::</span><span class="fu">docdb_delete</span>(db, db<span class="sc">$</span>collection)</span></code></pre></div>
-<p>See <a href="ctrdata_retrieve.Rmd">Retrieve clinical trial
+<p>See <a href="ctrdata_retrieve.html">Retrieve clinical trial
 information</a> for more details.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Load package</span></span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">library</span>(ctrdata)</span>

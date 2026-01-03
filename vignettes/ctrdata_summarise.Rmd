@@ -29,7 +29,7 @@ Remember to respect the registers' terms and conditions (see `ctrOpenSearchPages
 
 ## Preparations
 
-Here using MongoDB, which may be faster than SQLite, can handle credentials, provides access to remote servers and can directly retrieve nested elements from paths. See [README.md](../README.md) and [Retrieve clinical trial information](ctrdata_retrieve.Rmd) for examples using SQLite. Also PostgreSQL can be used as database, see [Install R package ctrdata](ctrdata_install.Rmd).
+Here using MongoDB, which may be faster than SQLite, can handle credentials, provides access to remote servers and can directly retrieve nested elements from paths. See [Retrieve clinical trial information](ctrdata_retrieve.html) for examples using SQLite. Also PostgreSQL can be used as database, see [Install R package ctrdata](ctrdata_install.html).
 
 ```{r connect_mongodb}
 db <- nodbi::src_mongo(
@@ -47,7 +47,7 @@ db
 nodbi::docdb_delete(db, db$collection)
 ```
 
-See [Retrieve clinical trial information](ctrdata_retrieve.Rmd) for more details.
+See [Retrieve clinical trial information](ctrdata_retrieve.html) for more details.
 
 ```{r ctrLoadQueryIntoDb}
 # Load package

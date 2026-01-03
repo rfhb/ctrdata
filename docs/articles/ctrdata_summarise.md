@@ -13,13 +13,11 @@ version 1.24.1. <https://cran.r-project.org/package=ctrdata>
 
 Here using MongoDB, which may be faster than SQLite, can handle
 credentials, provides access to remote servers and can directly retrieve
-nested elements from paths. See
-[README.md](https://rfhb.github.io/ctrdata/README.md) and [Retrieve
-clinical trial
-information](https://rfhb.github.io/ctrdata/articles/ctrdata_retrieve.Rmd)
+nested elements from paths. See [Retrieve clinical trial
+information](https://rfhb.github.io/ctrdata/articles/ctrdata_retrieve.md)
 for examples using SQLite. Also PostgreSQL can be used as database, see
 [Install R package
-ctrdata](https://rfhb.github.io/ctrdata/articles/ctrdata_install.Rmd).
+ctrdata](https://rfhb.github.io/ctrdata/articles/ctrdata_install.md).
 
 ``` r
 
@@ -39,7 +37,7 @@ nodbi::docdb_delete(db, db$collection)
 ```
 
 See [Retrieve clinical trial
-information](https://rfhb.github.io/ctrdata/articles/ctrdata_retrieve.Rmd)
+information](https://rfhb.github.io/ctrdata/articles/ctrdata_retrieve.md)
 for more details.
 
 ``` r

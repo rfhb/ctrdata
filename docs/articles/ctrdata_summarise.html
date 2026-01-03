@@ -82,10 +82,9 @@ version 1.24.1. <a href="https://cran.r-project.org/package=ctrdata" class="exte
 </h2>
 <p>Here using MongoDB, which may be faster than SQLite, can handle
 credentials, provides access to remote servers and can directly retrieve
-nested elements from paths. See <a href="../README.html">README.md</a> and
-<a href="ctrdata_retrieve.Rmd">Retrieve clinical trial information</a>
-for examples using SQLite. Also PostgreSQL can be used as database, see
-<a href="ctrdata_install.Rmd">Install R package ctrdata</a>.</p>
+nested elements from paths. See <a href="ctrdata_retrieve.html">Retrieve
+clinical trial information</a> for examples using SQLite. Also
+PostgreSQL can be used as database, see <a href="ctrdata_install.html">Install R package ctrdata</a>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">db</span> <span class="op">&lt;-</span> <span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/src_mongo.html" class="external-link">src_mongo</a></span><span class="op">(</span></span>
 <span>  url <span class="op">=</span> <span class="st">"mongodb://localhost"</span>,</span>
@@ -100,7 +99,7 @@ for examples using SQLite. Also PostgreSQL can be used as database, see
 <span></span>
 <span><span class="co"># empty collection if exists</span></span>
 <span><span class="fu">nodbi</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/nodbi/reference/docdb_delete.html" class="external-link">docdb_delete</a></span><span class="op">(</span><span class="va">db</span>, <span class="va">db</span><span class="op">$</span><span class="va">collection</span><span class="op">)</span></span></code></pre></div>
-<p>See <a href="ctrdata_retrieve.Rmd">Retrieve clinical trial
+<p>See <a href="ctrdata_retrieve.html">Retrieve clinical trial
 information</a> for more details.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load package</span></span>
