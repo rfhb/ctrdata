@@ -298,9 +298,9 @@ f.sponsorType <- function(df = NULL) {
         function(h1, h2, h3, h4, h5, h6, h7) {
           r <- na.omit(c(h1, h2, h3, h4, h5, h6, h7))
           if (!length(r)) return(NA_character_)
-          if (any(r == "for profit") & any(r  == "not for profit")) return(stm)
-          if (all(r == "for profit")) return(stc)
-          if (all(r == "not for profit")) return(stn)
+          if (any(r == stc) & any(r  == stn)) return(stm)
+          if (all(r == stc)) return(stc)
+          if (all(r == stn)) return(stn)
           NA_character_
         },
         h1 = .data$helper1,
