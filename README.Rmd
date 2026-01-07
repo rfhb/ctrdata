@@ -37,6 +37,7 @@ knitr::opts_chunk$set(
 [Acknowledgements](#acknowledgements) •
 [Future](#future-features)
 
+
 # ctrdata for aggregating and analysing clinical trials
 
 Package `ctrdata` provides functions for retrieving (downloading), aggregating and analysing clinical trials using information (structured protocol and result data, as well as documents) from public registers. It can be used with the
@@ -46,7 +47,8 @@ Package `ctrdata` provides functions for retrieving (downloading), aggregating a
 - ClinicalTrials.gov ("CTGOV2", https://clinicaltrials.gov/, [example](#workflow-ctgov-example))
 - ISRCTN Registry ("ISRCTN", https://www.isrctn.com/) 
 
-Additional registers are being explored. The package facilitates investigating across registers the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can use the databases created with this package. This README was reviewed on 2026-01-03 for version 1.25.1.9000.
+Additional registers are being explored. The package facilitates investigating across registers the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can use the databases created with this package. This README was reviewed on 2026-01-07 for version 1.25.1.9000.
+
 
 ## Main features
 
@@ -73,16 +75,18 @@ An introduction to the package, together with worked examples and technical expl
 
 Package `ctrdata` has been used for unpublished works and these publications: 
 
-* Jong et al. (2025) Experiences with Low-Intervention Clinical Trials—the New Category under the European Union Clinical Trials Regulation. Clinical Trials [doi:10.1177/17407745241309293](https://doi.org/10.1177/17407745241309293)
-* Lopez-Rey et al. (2025) Use of Bayesian Approaches in Oncology Clinical Trials: A Cross-Sectional Analysis’. Frontiers in Pharmacology [doi:10.3389/fphar.2025.1548997](https://doi.org/10.3389/fphar.2025.1548997)
-* Russek et al. (2025) Supplementing Single-Arm Trials with External Control Arms—Evaluation of German Real-World Data. Clinical Pharmacology & Therapeutics [doi:doi.org/10.1002/cpt.3684](https://doi.org/10.1002/cpt.3684)
-* Alzheimer’s disease Horizon Scanning Report (2024) [PDF file, p 10](https://www.ema.europa.eu/en/documents/report/alzheimers-disease-eu-horizon-scanning-report_en.pdf#page=10)
-* Kundu et al. (2024) Analysis of Factors Influencing Enrollment Success in Hematology Malignancy Cancer Clinical Trials (2008-2023). Blood Meeting Abstracts [doi:10.1182/blood-2024-207446](https://doi.org/10.1182/blood-2024-207446)
-* Lasch et al. (2022) The Impact of COVID‐19 on the Initiation of Clinical Trials in Europe and the United States. Clinical Pharmacology & Therapeutics [doi:10.1002/cpt.2534](https://doi.org/10.1002/cpt.2534)
-* Sood et al. (2022) Managing the Evidence Infodemic: Automation Approaches Used for Developing NICE COVID-19 Living Guidelines. medRxiv [doi:10.1101/2022.06.13.22276242](https://doi.org/10.1101/2022.06.13.22276242) 
-* Blogging on [Innovation coming to paediatric research](https://paediatricdata.eu/innovation-coming-to-paediatric-research/) 
-* Cancer Research UK (2017) [The impact of collaboration: The value of UK medical research to EU science and health](https://www.cancerresearchuk.org/about-us/we-develop-policy/policy-publications-and-research-tenders#Policy_publications4)
-* EMA (2017) Results of juvenile animal studies (JAS) and impact on anti-cancer medicine development and use in children [PDF file, p 34](https://www.ema.europa.eu/en/documents/scientific-guideline/results-juvenile-animal-studies-jas-and-impact-anti-cancer-medicine-development-and-use-children_en.pdf#page=34)
+- Jong et al. (2025) Experiences with Low-Intervention Clinical Trials -- the New Category under the European Union Clinical Trials Regulation. Clinical Trials <https://doi.org/10.1177/17407745241309293>
+- Lopez-Rey et al. (2025) Use of Bayesian Approaches in Oncology Clinical Trials: A Cross-Sectional Analysis’. Frontiers in Pharmacology <https://doi.org/10.3389/fphar.2025.1548997>
+- Russek et al. (2025) Supplementing Single-Arm Trials with External Control Arms—Evaluation of German Real-World Data. Clinical Pharmacology & Therapeutics <https://doi.org/10.1002/cpt.3684> 
+- Clinical Studies Sweden (2025) National Summary of Clinical Trials in Human Medicines Based on CTIS Data [link](https://www.kliniskastudier.se/english/news-archive/news-archive/2025-11-27-national-summary-of-clinical-trials-in-human-medicines-based-on-ctis-data)
+- Alzheimer’s disease Horizon Scanning Report (2024) [link](https://www.ema.europa.eu/en/documents/report/alzheimers-disease-eu-horizon-scanning-report_en.pdf)
+- Kundu et al. (2024) Analysis of Factors Influencing Enrollment Success in Hematology Malignancy Cancer Clinical Trials (2008-2023). Blood Meeting Abstracts <https://doi.org/10.1182/blood-2024-207446>
+- Sood et al. (2022) Managing the evidence infodemic: Automation approaches used for developing NICE COVID-19 living guidelines. <https://doi.org/10.1101/2022.06.13.22276242> 
+- Lasch et al. (2022) The Impact of COVID‐19 on the Initiation of Clinical Trials in Europe and the United States. <https://doi.org/10.1002/cpt.2534> 
+- Blog post (2018) Innovation coming to paediatric research <https://paediatricdata.eu/innovation-coming-to-paediatric-research/>
+- Cancer Research UK (2017) The impact of collaboration: The value of UK medical research to EU science and health. [link](https://www.ukri.org/wp-content/uploads/2023/02/MRC-150223-Theimpactofcollaboraton-ThevalueofUK-medicalresearchtoEUscienceandhealth.pdf)
+- EMA (2017) Results of juvenile animal studies (JAS) and impact on anti-cancer medicine development and use in children [PDF file, p 34](https://www.ema.europa.eu/en/documents/scientific-guideline/results-juvenile-animal-studies-jas-and-impact-anti-cancer-medicine-development-and-use-children_en.pdf#page=34)
+
 
 <!--
 
