@@ -102,10 +102,6 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE
   # normalise a bit
   asx <- gsub("[-]", " ", asx)
 
-  # remove less frequent occurrences
-  asx <- sort(table(asx))
-  asx <- names(asx[asx > stats::quantile(asx, 2 / 3)])
-
   # deduplicate irrespective of case
   asx <- asx[!duplicated(tolower(asx))]
   asx <- unique(asx)

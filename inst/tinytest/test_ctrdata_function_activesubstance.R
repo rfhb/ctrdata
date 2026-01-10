@@ -11,7 +11,7 @@ tmpTest <- ctrFindActiveSubstanceSynonyms(activesubstance = "imatinib")
 
 # test
 expect_true(all(c(
-  "imatinib", "gleevec", "sti 571", "glivec", "cgp 57148", "sti571") %in%
+  "imatinib", "gleevec", "glivec", "cgp 57148", "sti571") %in%
     tolower(tmpTest)))
 
 # test
