@@ -99,7 +99,8 @@
 #' move the current CTIS record into an array \code{history} with the record
 #' which holds one or more historic versions, before updating the rest of the
 #' record from CTIS. Default is \code{FALSE}, because this is a time-consuming
-#' operation. See "Historic versions" in \code{vignette("ctrdata_summarise")}.
+#' operation. See "Historic versions..." in vignette
+#' \href{../doc/ctrdata_summarise.html}{ctrdata_summarise}.
 #'
 #' @param annotation.text Text to be including into the field
 #' "annotation" in the records retrieved with the query

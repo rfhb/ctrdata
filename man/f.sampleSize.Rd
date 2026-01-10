@@ -17,7 +17,10 @@ data frame with columns `_id` and `.sampleSize`, an integer.
 \description{
 Trial concept calculated: sample size of the trial, preferring
 results-related (achieved recruitment) over protocol-related information
-(planned sample size).
+(planned sample size). Thus, the calculated number depends on the status of
+the recruitment (see \link{f.statusRecruitment}) and on the availability of
+results data; \emph{for "CTIS", the number always corresponds to the
+planned sample size}.
 }
 \examples{
 # fields needed

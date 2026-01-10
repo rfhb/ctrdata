@@ -158,10 +158,10 @@ dbFindIdsUniqueTrials <- function(
     if (preferregister[i] == "CTIS") {
 
       ctisBase <- sub("-[0-9]{2}$", "", subDf$CTIS)
-      ctisResub <- as.numeric(sub(".+-([0-9]{2})$", "\\1", subDf$CTIS))
+      ctisResub <- as.numeric(sub("^.+-([0-9]{2})$", "\\1", subDf$CTIS))
       subDf <- subDf[order(ctisBase, -ctisResub), ]
-      dupes <- duplicated(ctisBase)
-      subDf <- subDf[!dupes, , drop = FALSE]
+      ctisBase <- sub("-[0-9]{2}$", "", subDf$CTIS)
+      subDf <- subDf[!duplicated(ctisBase), , drop = FALSE]
 
     }
 

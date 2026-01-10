@@ -90,7 +90,8 @@ field only before the register's relaunch on 2024-06-17.}
 move the current CTIS record into an array \code{history} with the record
 which holds one or more historic versions, before updating the rest of the
 record from CTIS. Default is \code{FALSE}, because this is a time-consuming
-operation. See "Historic versions" in \code{vignette("ctrdata_summarise")}.}
+operation. See "Historic versions..." in vignette
+\href{../doc/ctrdata_summarise.html}{ctrdata_summarise}.}
 
 \item{documents.path}{If this is a relative or absolute
 path to a directory that exists or can be created,

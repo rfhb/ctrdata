@@ -26,7 +26,6 @@ HistogramNBtrials
 ICH
 IDEs
 ISRCTN
-Infodemic
 Investigational
 JAS
 Javascript
@@ -73,7 +72,6 @@ codecov
 colums
 com
 controlType
-cpt
 csv
 ctgov
 ctis
@@ -128,7 +126,6 @@ fields’
 findCTRkey
 firstreceived
 fisherexact
-fphar
 github
 githubusercontent
 gov
@@ -136,6 +133,7 @@ hasResults
 hiearchy
 htmlwidgets
 httr
+infodemic
 installFindMongoBinaries
 investigational
 isMedIntervTrial
@@ -153,7 +151,6 @@ lubridate
 macos
 maybeRelatedTrials
 md
-medRxiv
 mongo
 mongo's
 mongoDB
@@ -164,7 +161,6 @@ nodbi
 nonproprietary
 numSites
 numTestArmsSubstances
-org
 otherNames
 paed
 perl

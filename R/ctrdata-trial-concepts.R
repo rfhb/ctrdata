@@ -21,7 +21,7 @@
 #' The following trial concepts can be used by referencing their name when
 #' calling \link{dbGetFieldsIntoDf} (parameter `calculate`).
 #' Concepts will continue to be refined and added;
-#' last updated 2025-11-14.
+#' last updated 2026-01-08.
 #'
 #' - \link{f.assignmentType} (factor) was the assignment to treatment based on
 #' randomisation or not? ("R" or "NR")
@@ -71,7 +71,8 @@
 #' of start of recruitment
 #'
 #' - \link{f.sampleSize} (integer) the planned or achieved number of subjects
-#' or participants recruited
+#' or participants recruited (depending on status of recruitment and
+#' availability of results; for "CTIS" always planned number)
 #'
 #' - \link{f.sponsorType} (factor) a type or class of sponsor(s) that
 #' is simplified to "not for profit", "for profit", "mixed" or "other"

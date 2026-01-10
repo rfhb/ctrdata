@@ -7,7 +7,7 @@
 \description{
 Registers of the four clinical trial registers from which package
 \link{ctrdata} can retrieve, aggregate and analyse protocol- and
-result-related information as well as documents, last updated 2025-12-31.
+result-related information as well as documents, last updated 2026-01-08.
 }
 \section{1 - Overview}{
 
@@ -17,7 +17,7 @@ clinical trials (at least one investigational medicinal product, IMP; in
 the European Union and beyond), including more than 25,800 trials with
 results, which continue to be added.
 \item \strong{CTIS}: The EU Clinical Trials Information System, launched in 2023,
-holds more than 10,650 publicly accessible clinical trials, including
+holds more than 10,670 publicly accessible clinical trials, including
 more than 520 with results or a report.
 (To automatically get CTIS search query URLs, see
 \ifelse{latex}{\out{\href{https://rfhb.github.io/ctrdata/\#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}})
@@ -72,7 +72,8 @@ Some registers are expanding entered search terms using dictionaries
 \section{4 - Example and ctrdata motivation}{
 
 
-See \code{vignette("ctrdata_summarise")} for several other examples.
+See vignette \href{../doc/ctrdata_summarise.html}{ctrdata_summarise} for
+several other examples.
 
 *This example is an expert search for interventional trials primarily with
 neonates, investigating treatments for infectious conditions. It shows that
