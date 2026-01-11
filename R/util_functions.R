@@ -961,8 +961,21 @@ ctrMultiDownload <- function(
           req = r,
           # ensures that function never makes more
           # than capacity requests in fill_time_s
-          capacity = 20L * 10L,
-          fill_time_s = 20L
+          capacity = 40L,
+          fill_time_s = 2L
+        )
+
+        r <- httr2::req_retry(
+          req = r,
+          max_tries = 10L,
+          max_seconds = NULL,
+          retry_on_failure = FALSE,
+          is_transient = function(resp) httr2::resp_status(resp) %in% c(403, 429, 500, 503),
+          # backoff = NULL,
+          # after = NULL,
+          # failure_realm = NULL,
+          # failure_threshold = Inf,
+          failure_timeout = 60L
         )
 
         # adding file path
