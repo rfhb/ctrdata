@@ -120,8 +120,8 @@ ctrLoadQueryIntoDb(
   record into an array `history` with the record which holds one or more
   historic versions, before updating the rest of the record from CTIS.
   Default is `FALSE`, because this is a time-consuming operation. See
-  "Historic versions" in
-  [`vignette("ctrdata_summarise")`](https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.md).
+  "Historic versions..." in vignette
+  [ctrdata_summarise](https://rfhb.github.io/ctrdata/doc/ctrdata_summarise.md).
 
 - documents.path:
 

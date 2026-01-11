@@ -27,7 +27,7 @@ The following trial concepts can be used by referencing their name when
 calling
 [dbGetFieldsIntoDf](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.md)
 (parameter `calculate`). Concepts will continue to be refined and added;
-last updated 2025-11-14.
+last updated 2026-01-11.
 
 - [f.assignmentType](https://rfhb.github.io/ctrdata/reference/f.assignmentType.md)
   (factor) was the assignment to treatment based on randomisation or
@@ -91,7 +91,8 @@ last updated 2025-11-14.
 
 - [f.sampleSize](https://rfhb.github.io/ctrdata/reference/f.sampleSize.md)
   (integer) the planned or achieved number of subjects or participants
-  recruited
+  recruited (depending on status of recruitment and availability of
+  results; for "CTIS" always planned number)
 
 - [f.sponsorType](https://rfhb.github.io/ctrdata/reference/f.sponsorType.md)
   (factor) a type or class of sponsor(s) that is simplified to "not for
