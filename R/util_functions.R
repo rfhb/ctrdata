@@ -866,7 +866,7 @@ addMetaData <- function(x, con) {
 #'
 #' @importFrom utils URLencode
 #' @importFrom jsonlite fromJSON toJSON validate
-#' @importFrom httr2 request req_throttle req_perform_parallel req_body_json req_user_agent
+#' @importFrom httr2 request req_url req_headers req_throttle req_perform_parallel req_body_json req_user_agent req_perform req_retry req_options resp_status
 #' @importFrom dplyr rows_update
 #' @importFrom rlang hash !!!
 #' @importFrom stats runif
@@ -884,9 +884,6 @@ ctrMultiDownload <- function(
 
   # make operator accessible
   `!!!` <- rlang::`!!!`
-
-  # starting values
-  numI <- 1L
 
   # helper
   body2json <- function(x) {
@@ -917,257 +914,174 @@ ctrMultiDownload <- function(
     "data" = data,
     "url" = utils::URLencode(urls),
     "status_code" = rep.int(NA_integer_, length(toDo)),
-    "isCdn" = rep.int(NA_integer_, length(toDo)),
     "urlResolved" = rep.int(NA_character_, length(toDo)),
     "content_type" = rep.int(NA_character_, length(toDo))
   )
 
+  # early exit
+  if (!any(toDo)) return(downloadValue[!toDo, , drop = FALSE])
+
   # remove any duplicates
   downloadValue <- unique(downloadValue)
 
-  # does not error in case any of the individual requests fail.
-  # inspect the return value to find out which were successful.
-  # make no more than 5 attempts to complete function call.
-  while (any(toDo) && numI < 5L) {
+  # use urlResolved if this has been filled below in CDN check
+  downloadValue$url[!is.na(downloadValue$urlResolved)] <-
+    downloadValue$urlResolved[!is.na(downloadValue$urlResolved)]
 
-    # use urlResolved if this has been filled below in CDN check
-    downloadValue$url[!is.na(downloadValue$urlResolved)] <-
-      downloadValue$urlResolved[!is.na(downloadValue$urlResolved)]
+  # construct requests to do
+  reqs <- mapply(
+    function(u, d, f) {
+      # start with basic request
+      r <- httr2::request(u)
 
-    # construct requests to do
-    reqs <- mapply(
-      function(u, d, f) {
-        # start with basic request
-        r <- httr2::request(u)
+      # add unique header
+      hdr <- rlang::hash(runif(n = 1L))
+      names(hdr) <- paste0(sample(letters, size = 10L), collapse = "")
+      r <- httr2::req_headers(r, !!!hdr)
 
-        # add unique header
-        hdr <- rlang::hash(runif(n = 1L))
-        names(hdr) <- paste0(sample(letters, size = 10L), collapse = "")
-        r <- httr2::req_headers(r, !!!hdr)
+      # add user agent
+      r <- httr2::req_user_agent(r, ctrdataUseragent)
 
-        # add user agent
-        r <- httr2::req_user_agent(r, ctrdataUseragent)
+      # keep important option 2L for euctr
+      r <- httr2::req_options(r, http_version = 2)
 
-        # keep important option 2L for euctr
-        r <- httr2::req_options(r, http_version = 2)
+      # conditionally add body
+      if (!is.na(d)) r <-
+        httr2::req_body_json(r, jsonlite::fromJSON(
+          d, simplifyVector = FALSE))
 
-        # conditionally add body
-        if (!is.na(d)) r <-
-          httr2::req_body_json(r, jsonlite::fromJSON(
-            d, simplifyVector = FALSE))
+      # hard-coded throttling
+      r <- httr2::req_throttle(
+        req = r,
+        # ensures that function never makes more
+        # than capacity requests in fill_time_s
+        capacity = 40L,
+        fill_time_s = 2L
+      )
 
-        # hard-coded throttling
-        r <- httr2::req_throttle(
-          req = r,
-          # ensures that function never makes more
-          # than capacity requests in fill_time_s
-          capacity = 40L,
-          fill_time_s = 2L
+      # include retries in request
+      r <- httr2::req_retry(
+        req = r,
+        max_tries = 10L,
+        max_seconds = NULL,
+        retry_on_failure = FALSE,
+        # adapt to return codes found with some registers
+        is_transient = function(resp) httr2::resp_status(resp) %in% c(403, 429, 500, 503),
+        failure_timeout = 60L
+      )
+
+      # adding file path
+      r$fp <- f
+
+      # return
+      return(r)
+    },
+    u = downloadValue$url[toDo],
+    d = downloadValue$data[toDo],
+    f = downloadValue$destfile[toDo],
+    SIMPLIFY = FALSE,
+    USE.NAMES = FALSE
+  )
+
+  # randomise to minimise errors
+  reqs <- reqs[sample.int(length(reqs))]
+
+  # using a httr2 mock function to handle CDN
+  cdnResolve <- function(req) {
+
+    # check specifically for CTIS links
+    # to be adjusted for other registers
+    if (!grepl("/download$", req$url)) return(NULL)
+
+    # execute request
+    message(". ", appendLF = FALSE)
+    resp <- httr2::req_perform(req, path = req$fp)
+
+    # inspect response, exit early
+    if (resp$status_code != 200L |
+        !(!grepl("[.]json$", req$fp) &
+          resp$headers$`Content-Type` == "application/json")
+    ) return(resp)
+
+    # extract url from downloaded json
+    cdnUrl <- gsub('"', "", as.character(
+      jqr::jq(file(req$fp), " .url ")))
+    unlink(req$fp)
+    req <- httr2::req_url(req = req, url = cdnUrl)
+
+    # do download of resolved url and return
+    httr2::req_perform(req = req, path = req$fp)
+
+  }
+
+  # parallel requests
+  res <- httr2::req_perform_parallel(
+    reqs,
+    paths = sapply(reqs, "[[", "fp"),
+    on_error = "continue",
+    progress = TRUE,
+    max_active = 10L,
+    mock = cdnResolve
+  )
+
+  # mangle results data
+  res <- lapply(
+    res,
+    function(r) {
+      if (inherits(r, "httr2_failure")) return(
+        data.frame(
+          "success" = FALSE,
+          "status_code" = NA_integer_,
+          "url" = r$request$url,
+          "destfile" = NA_character_, # TODO
+          "content_type" = NA_character_,
+          "urlResolved" = NA_character_,
+          "data" = body2json(r$request$body$data)
         )
-
-        r <- httr2::req_retry(
-          req = r,
-          max_tries = 10L,
-          max_seconds = NULL,
-          retry_on_failure = FALSE,
-          is_transient = function(resp) httr2::resp_status(resp) %in% c(403, 429, 500, 503),
-          # backoff = NULL,
-          # after = NULL,
-          # failure_realm = NULL,
-          # failure_threshold = Inf,
-          failure_timeout = 60L
+      )
+      if (inherits(r, "httr2_error")) return(
+        data.frame(
+          "success" = FALSE,
+          "status_code" = r$status,
+          "url" = r$request$url,
+          "destfile" = as.character(r$resp$body),
+          "content_type" = NA_character_,
+          "urlResolved" = NA_character_,
+          "data" = body2json(r$request$body$data)
         )
-
-        # adding file path
-        r$fp <- f
-
-        # return
-        return(r)
-      },
-      u = downloadValue$url[toDo],
-      d = downloadValue$data[toDo],
-      f = downloadValue$destfile[toDo],
-      SIMPLIFY = FALSE,
-      USE.NAMES = FALSE
-    )
-
-    # randomise to minimise errors
-    reqs <- reqs[sample.int(length(reqs))]
-
-    # do download now, but first check a
-    # criterion that is specific for CTIS
-    # to decide on method for requests
-    if (!all(grepl("/download$", downloadValue$url[toDo]))) {
-
-      # parallel
-
-      res <- suppressWarnings(
-        httr2::req_perform_parallel(
-          reqs,
-          paths = sapply(reqs, "[[", "fp"),
-          on_error = "continue",
-          progress = progress,
-          max_active = 10L
-        ))
-
-    } else {
-
-      # iteratively
-
-      # - for CTIS documents where it seems the
-      #   CDN deep link is valid only very briefly
-
-      # helper returns the next request or end
-      nextReq <- function(resp, req) {
-        if (resp$headers$`Content-Type` == "application/json") {
-          cdnUrl <- gsub('"', "", as.character(
-            jqr::jq(file(req$fp), " .url ")))
-          unlink(req$fp)
-          return(httr2::req_url(req, url = cdnUrl))
-        }
-        # use req as is
-        return(NULL)
-      }
-
-      # perform requests
-      res <- lapply(
-        seq_along(reqs),
-        function(i) {
-
-          # inform user
-          message(i, "\r", appendLF = FALSE)
-
-          # request to resolve followed
-          # by request to download file
-          thisRes <- httr2::req_perform_iterative(
-            req = reqs[[i]],
-            next_req = nextReq,
-            path = reqs[[i]]$fp,
-            max_reqs = 2L,
-            on_error = "return",
-            progress = TRUE
-          )
-
-          # keep only CDN download info
-          return(thisRes[[2]])
-        })
-
-    }
-
-    # mangle results info
-    res <- lapply(
-      res,
-      function(r) {
-        if (inherits(r, "httr2_failure")) return(
-          data.frame(
-            "success" = FALSE,
-            "status_code" = NA_integer_,
-            "url" = r$request$url,
-            "destfile" = NA_character_,
-            "content_type" = NA_character_,
-            "isCdn" = NA_integer_,
-            "urlResolved" = NA_character_,
-            "data" = body2json(r$request$body$data)
-          )
+      ) # else
+      return(
+        data.frame(
+          "success" = TRUE,
+          "status_code" = r[["status_code"]],
+          "url" = r[["url"]],
+          "destfile" = as.character(r[["body"]]),
+          "content_type" = r[["headers"]]$`content-type`,
+          "urlResolved" = NA_character_,
+          "data" = body2json(r$request$body$data)
         )
-        if (inherits(r, "httr2_error")) return(
-          data.frame(
-            "success" = FALSE,
-            "status_code" = r$status,
-            "url" = r$request$url,
-            "destfile" = as.character(r$resp$body),
-            "content_type" = NA_character_,
-            "isCdn" = NA_integer_,
-            "urlResolved" = NA_character_,
-            "data" = body2json(r$request$body$data)
-          )
-        ) # else
-        return(
-          data.frame(
-            "success" = TRUE,
-            "status_code" = r[["status_code"]],
-            "url" = r[["url"]],
-            "destfile" = as.character(r[["body"]]),
-            "content_type" = r[["headers"]]$`content-type`,
-            "isCdn" = NA_integer_,
-            "urlResolved" = NA_character_,
-            "data" = body2json(r$request$body$data)
-          )
-        )})
-    res <- as.data.frame(do.call(rbind, res))
+      )})
+  res <- as.data.frame(do.call(rbind, res))
 
-    # check successful downloads if result is a CDN link
-    # set isCdn to TRUE for next iteration to download from CDN
-    res$isCdn <- !is.na(res$status_code) &
-      !is.na(res$destfile) &
-      !is.na(res$content_type) &
-      (res$status_code %in% c(200L, 206L, 416L)) &
-      !grepl("[.]json$", res$destfile) &
-      grepl("application/json", res$content_type)
+  # update input, mind row order
+  downloadValue <- dplyr::rows_update(
+    downloadValue,
+    res[, c("success", "status_code", "url", "destfile",
+            "urlResolved", "content_type", "data"), drop = FALSE],
+    by = "destfile"
+  )
 
-    # replace url with CDN url and prepare to iterate
-    if (any(res$isCdn)) {
+  # user info and stop
+  if (inherits(downloadValue, "try-error")) {
+    stop("Download failed; last error: ", class(downloadValue), call. = FALSE)
+  }
 
-      message("- Resolving CDN and redirecting...")
-
-      # get CDN url from downloaded file
-      res$urlResolved[res$isCdn] <- sapply(
-        res$destfile[res$isCdn],
-        function(x) jsonlite::fromJSON(x, simplifyVector = FALSE)$url,
-        USE.NAMES = FALSE,
-        simplify = TRUE)
-
-      # remove files containing CDN url
-      unlink(res$destfile[res$isCdn])
-
-      # reset status
-      res$success[res$isCdn] <- NA_integer_
-
-    }
-
-    # update input, mind row order
-    downloadValue <- dplyr::rows_update(
-      downloadValue,
-      # do not include destfile as this may be NA in res
-      res[, c("success", "status_code", "url", "isCdn", "destfile",
-              "urlResolved", "content_type", "data"), drop = FALSE],
-      # by = c("url", "data")[seq_len(
-      #   ifelse(all(is.na(downloadValue$data)), 1L, 2L))]
-      by = "destfile"
-    )
-
-    # user info and stop
-    if (inherits(downloadValue, "try-error")) {
-      stop("Download failed; last error: ", class(downloadValue), call. = FALSE)
-    }
-
-    # only check success because this is filled initially by !toDo;
-    # check status_code where it is NA as this is the latest action;
-    # status_code is NA where this iteration determined it as isCdn
-    toDoThis <- is.na(downloadValue$success) |
-      # OK, Partial Content, Not Found, Range Not Satisfiable
-      !(downloadValue$status_code %in% c(NA, 200L, 206L, 404L, 416L))
-
-    # only count towards repeat attempts if
-    # the set of repeated urls is unchanged
-    if (identical(toDo, toDoThis) &
-        # isCdn is FALSE if download was from CDN
-        isTRUE(!any(downloadValue$isCdn))) {
-      numI <- numI + 1L
-    }
-    toDo <- toDoThis
-
-    # user info
-    if (verbose) {
-      message("numI ", numI)
-      message("length(toDo) ", length(toDo))
-      message("sum(toDo) ", sum(toDo))
-      message("sum(rfsd) ", sum(rfsd))
-      message("sum(isCdn) ", sum(downloadValue$isCdn))
-      message("sum(rfsd & !isCdn) ", sum(rfsd & !downloadValue$isCdn))
-    }
-
-  } # while
+  # only check success because this is filled initially by !toDo;
+  # check status_code where it is NA as this is the latest action;
+  # status_code is NA where this iteration determined it as isCdn
+  toDo <- is.na(downloadValue$success) |
+    # OK, Partial Content, Not Found, Range Not Satisfiable
+    !(downloadValue$status_code %in% c(NA, 200L, 206L, 404L, 416L))
 
   # remove any files from failed downloads
   unlink(downloadValue$destfile[downloadValue$status_code %in% c(
@@ -1188,9 +1102,6 @@ ctrMultiDownload <- function(
   # if previously downloaded, success may not reflect on disk;
   # thus safeguard by unsetting success if file does not exist
   downloadValue$success <- file.exists(downloadValue$destfile)
-
-  # inform user
-  if (verbose) message("DEBUG: ", numI, " iteration(s)")
 
   # return
   return(downloadValue[!toDo, , drop = FALSE])
@@ -1378,14 +1289,13 @@ ctrDocsDownload <- function(
       dlFiles <- dlFiles[!duplicateFiles, , drop = FALSE]
     }
 
-    message()
-
     # do download
     filesCount <- ctrMultiDownload(
       urls = dlFiles$url[!dlFiles$fileexists],
       destfiles = dlFiles$filepathname[!dlFiles$fileexists],
       verbose = verbose
     )
+    message()
 
     # check results
     filesCount <- ifelse(
