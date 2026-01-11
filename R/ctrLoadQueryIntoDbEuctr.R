@@ -161,7 +161,7 @@ ctrLoadQueryIntoDbEuctr <- function(
       dir.create(documents.path, recursive = TRUE, showWarnings = FALSE),
       silent = TRUE)
     if (!inherits(createdDir, "try-errror") && createdDir) {
-      message("Created directory ", documents.path)
+      message("- Created directory ", documents.path)
     } else {
       warning("Directory could not be created for 'documents.path' ",
               documents.path, ", ignored", call. = FALSE)

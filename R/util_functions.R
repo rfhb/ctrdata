@@ -1295,7 +1295,7 @@ ctrDocsDownload <- function(
       destfiles = dlFiles$filepathname[!dlFiles$fileexists],
       verbose = verbose
     )
-    message()
+    message("\n\r", appendLF = FALSE)
 
     # check results
     filesCount <- ifelse(

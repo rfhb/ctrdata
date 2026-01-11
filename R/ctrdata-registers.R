@@ -2,7 +2,7 @@
 #'
 #' Registers of the four clinical trial registers from which package
 #' \link{ctrdata} can retrieve, aggregate and analyse protocol- and
-#' result-related information as well as documents, last updated 2026-01-08.
+#' result-related information as well as documents, last updated 2026-01-11.
 #'
 #' @section 1 - Overview:
 #'
@@ -12,16 +12,16 @@
 #' results, which continue to be added.
 #'
 #' - **CTIS**: The EU Clinical Trials Information System, launched in 2023,
-#' holds more than 10,670 publicly accessible clinical trials, including
+#' holds more than 10,680 publicly accessible clinical trials, including
 #' more than 520 with results or a report.
 #' (To automatically get CTIS search query URLs, see
 #' \ifelse{latex}{\out{\href{https://rfhb.github.io/ctrdata/\#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}})
 #'
-#' - **CTGOV2**: ClinicalTrials.gov holds almost 564,000 interventional and
-#' observational studies, including more than 17,000 interventional studies
+#' - **CTGOV2**: ClinicalTrials.gov holds more than 565,000 interventional and
+#' observational studies, including more than 71,000 interventional studies
 #' with results.
 #'
-#' - **ISRCTN**: The ISRCTN Registry holds almost 27,500 interventional and
+#' - **ISRCTN**: The ISRCTN Registry holds more than 27,500 interventional and
 #' observational health studies, including almost 15,000 studies with
 #' results.
 #'
